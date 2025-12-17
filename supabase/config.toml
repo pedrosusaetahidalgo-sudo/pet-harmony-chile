@@ -1,0 +1,28 @@
+project_id = "oexonzohpigriynmrbdr"
+
+[functions.breed-tips]
+verify_jwt = false
+
+[functions.generate-places]
+verify_jwt = false
+
+[functions.medical-suggestions]
+verify_jwt = false
+
+[functions.analyze-dog-behavior]
+verify_jwt = false
+
+[functions.moderate-service-promotion]
+verify_jwt = false
+
+[functions.get-google-maps-key]
+verify_jwt = false
+
+[functions.webpay-init]
+verify_jwt = true
+
+[functions.webpay-confirm]
+verify_jwt = false
+
+[functions.generate-shelters]
+verify_jwt = false

@@ -1,0 +1,166 @@
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Heart, PawPrint, Bell, Crown, MessageSquare } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useAuth } from "@/hooks/useAuth";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+import { CartButton } from "@/components/CartButton";
+
+export const Header = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [profile, setProfile] = useState<any>(null);
+  const [userStats, setUserStats] = useState<any>(null);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    if (user) {
+      loadProfile();
+      loadUnreadMessages();
+      setupRealtimeSubscription();
+    }
+  }, [user]);
+
+  const setupRealtimeSubscription = () => {
+    const channel = supabase
+      .channel('header-messages')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'messages'
+        },
+        () => loadUnreadMessages()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  };
+
+  const loadProfile = async () => {
+    const { data } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user?.id)
+      .single();
+    
+    setProfile(data);
+
+    const { data: stats } = await supabase
+      .from('user_stats')
+      .select('*')
+      .eq('user_id', user?.id)
+      .single();
+
+    setUserStats(stats);
+  };
+
+  const loadUnreadMessages = async () => {
+    if (!user) return;
+
+    const { data: conversations } = await supabase
+      .from('conversations')
+      .select('id')
+      .or(`participant1_id.eq.${user.id},participant2_id.eq.${user.id}`);
+
+    if (!conversations || conversations.length === 0) return;
+
+    const convIds = conversations.map(c => c.id);
+
+    const { count } = await supabase
+      .from('messages')
+      .select('*', { count: 'exact', head: true })
+      .in('conversation_id', convIds)
+      .neq('sender_id', user.id)
+      .is('read_at', null);
+
+    setUnreadCount(count || 0);
+  };
+
+  return (
+    <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
+      <div className="flex h-16 items-center px-4 gap-4">
+        <SidebarTrigger className="hover:bg-accent rounded-lg p-2 transition-colors" />
+        <div 
+          className="flex items-center gap-2 flex-1 cursor-pointer hover:opacity-80 transition-opacity"
+          onClick={() => navigate('/feed')}
+        >
+          <div className="relative">
+            <Heart className="h-6 w-6 text-primary fill-primary" />
+            <PawPrint className="h-3 w-3 text-secondary absolute -bottom-0.5 -right-0.5" />
+          </div>
+          <span className="font-bold text-lg bg-warm-gradient bg-clip-text text-transparent hidden sm:inline">
+            Paw Friend
+          </span>
+        </div>
+
+        {/* User Section */}
+        {user && (
+          <div className="flex items-center gap-2">
+            <CartButton />
+            
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="relative hover:bg-accent"
+            >
+              <Bell className="h-5 w-5" />
+              <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+            </Button>
+
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="relative hover:bg-accent"
+              onClick={() => navigate('/chat')}
+            >
+              <MessageSquare className="h-5 w-5" />
+              {unreadCount > 0 && (
+                <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-red-500 hover:bg-red-600">
+                  {unreadCount}
+                </Badge>
+              )}
+            </Button>
+
+            <div 
+              className="flex items-center gap-2 hover:bg-accent px-2 py-1 rounded-lg transition-colors cursor-pointer"
+              onClick={() => navigate('/profile')}
+            >
+              <div className="relative">
+                <Avatar className="h-8 w-8 ring-2 ring-primary/20">
+                  <AvatarImage src={profile?.avatar_url} />
+                  <AvatarFallback className="bg-warm-gradient text-white text-sm font-semibold">
+                    {profile?.display_name?.[0] || user?.email?.[0].toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                {userStats && userStats.level > 1 && (
+                  <div className="absolute -top-1 -right-1 bg-yellow-400 rounded-full p-0.5">
+                    <Crown className="h-3 w-3 text-yellow-900" />
+                  </div>
+                )}
+              </div>
+              <div className="hidden md:block">
+                <div className="flex items-center gap-1">
+                  <span className="font-semibold text-sm">
+                    {profile?.display_name || user?.email?.split("@")[0]}
+                  </span>
+                  {userStats && (
+                    <Badge variant="outline" className="text-xs px-1.5 py-0 h-5">
+                      Nv.{userStats.level}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </header>
+  );
+};

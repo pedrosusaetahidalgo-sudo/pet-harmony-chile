@@ -1,0 +1,32 @@
+// Paw Friend - Android Build Configuration for Google Play
+// These variables are used by the Capacitor Android project
+
+ext {
+    // Minimum API level required (Android 7.0 Nougat)
+    minSdkVersion = 24
+    
+    // Compile SDK version (Android 15)
+    compileSdkVersion = 35
+    
+    // Target SDK version (Required: Android 15 / API 35 for new apps on Google Play)
+    targetSdkVersion = 35
+    
+    // Build tools version
+    buildToolsVersion = '35.0.0'
+    
+    // AndroidX libraries
+    androidxActivityVersion = '1.8.0'
+    androidxAppCompatVersion = '1.6.1'
+    androidxCoordinatorLayoutVersion = '1.2.0'
+    androidxCoreVersion = '1.12.0'
+    androidxFragmentVersion = '1.6.2'
+    
+    // Google Play Services
+    playServicesLocationVersion = '21.0.1'
+    
+    // Kotlin version (if using Kotlin)
+    kotlinVersion = '1.9.20'
+    
+    // Gradle plugin version
+    androidGradlePluginVersion = '8.2.0'
+}

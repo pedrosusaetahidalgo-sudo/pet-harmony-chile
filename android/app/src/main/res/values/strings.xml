@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Paw Friend</string>
+    <string name="title_activity_main">Paw Friend</string>
+    <string name="package_name">cl.pawfriend.app</string>
+    <string name="custom_url_scheme">cl.pawfriend.app</string>
+    <!-- Google OAuth Web Client ID -->
+    <string name="server_client_id">707954104528-87df2bmt6jeaqe9s6h3tjpdrqth3v03r.apps.googleusercontent.com</string>
+</resources>

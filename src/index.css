@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    --background: 270 20% 98%;
+    --foreground: 270 15% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 270 15% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 270 15% 10%;
+
+    --primary: 270 70% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 280 60% 75%;
+    --secondary-foreground: 270 15% 10%;
+
+    --muted: 270 20% 95%;
+    --muted-foreground: 270 10% 45%;
+
+    --accent: 290 65% 70%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 270 20% 88%;
+    --input: 270 20% 88%;
+    --ring: 270 70% 65%;
+
+    --radius: 0.75rem;
+
+    --warm-gradient: linear-gradient(135deg, hsl(270 70% 65%), hsl(290 65% 70%));
+    --nature-gradient: linear-gradient(135deg, hsl(280 60% 75%), hsl(260 75% 60%));
+    --hero-gradient: linear-gradient(180deg, hsl(270 20% 98%), hsl(270 15% 95%));
+    --medical-gradient: linear-gradient(135deg, hsl(260 75% 65%), hsl(270 70% 70%));
+    --appointment-gradient: linear-gradient(135deg, hsl(280 65% 65%), hsl(290 60% 72%));
+
+    --shadow-soft: 0 4px 20px -4px hsl(270 70% 65% / 0.15);
+    --shadow-medium: 0 8px 30px -6px hsl(270 70% 65% / 0.2);
+
+    --medical: 260 75% 65%;
+    --medical-foreground: 0 0% 100%;
+    --medical-light: 260 65% 92%;
+    
+    --appointment: 280 65% 65%;
+    --appointment-foreground: 0 0% 100%;
+    --appointment-light: 280 55% 92%;
+
+    --sidebar-background: 270 15% 96%;
+    --sidebar-foreground: 270 20% 20%;
+    --sidebar-primary: 270 70% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 270 20% 90%;
+    --sidebar-accent-foreground: 270 20% 20%;
+    --sidebar-border: 270 15% 85%;
+    --sidebar-ring: 270 70% 65%;
+  }
+
+  .dark {
+    --background: 270 25% 8%;
+    --foreground: 270 10% 95%;
+
+    --card: 270 20% 12%;
+    --card-foreground: 270 10% 95%;
+
+    --popover: 270 20% 12%;
+    --popover-foreground: 270 10% 95%;
+
+    --primary: 270 70% 65%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 280 60% 75%;
+    --secondary-foreground: 270 15% 10%;
+
+    --muted: 270 20% 18%;
+    --muted-foreground: 270 10% 65%;
+
+    --accent: 290 65% 70%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62.8% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 270 20% 20%;
+    --input: 270 20% 20%;
+    --ring: 270 70% 65%;
+
+    --warm-gradient: linear-gradient(135deg, hsl(270 70% 55%), hsl(290 65% 60%));
+    --nature-gradient: linear-gradient(135deg, hsl(280 60% 65%), hsl(260 75% 50%));
+    --hero-gradient: linear-gradient(180deg, hsl(270 25% 8%), hsl(270 20% 12%));
+    --medical-gradient: linear-gradient(135deg, hsl(260 75% 55%), hsl(270 70% 60%));
+    --appointment-gradient: linear-gradient(135deg, hsl(280 65% 55%), hsl(290 60% 62%));
+
+    --shadow-soft: 0 4px 20px -4px hsl(270 70% 65% / 0.25);
+    --shadow-medium: 0 8px 30px -6px hsl(270 70% 65% / 0.3);
+
+    --medical: 260 75% 60%;
+    --medical-foreground: 0 0% 100%;
+    --medical-light: 260 65% 25%;
+    
+    --appointment: 280 65% 60%;
+    --appointment-foreground: 0 0% 100%;
+    --appointment-light: 280 55% 25%;
+
+    --sidebar-background: 270 20% 15%;
+    --sidebar-foreground: 270 10% 85%;
+    --sidebar-primary: 270 70% 65%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 270 20% 22%;
+    --sidebar-accent-foreground: 270 10% 85%;
+    --sidebar-border: 270 15% 25%;
+    --sidebar-ring: 270 70% 65%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
