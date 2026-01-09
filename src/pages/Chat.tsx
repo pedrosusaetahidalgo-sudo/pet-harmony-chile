@@ -9,18 +9,24 @@ import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
+import { useStartConversation } from "@/hooks/useStartConversation";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 const Chat = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [conversations, setConversations] = useState<any[]>([]);
   const [profiles, setProfiles] = useState<Map<string, any>>(new Map());
+  const [followedUsers, setFollowedUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [showNewMessage, setShowNewMessage] = useState(false);
 
   useEffect(() => {
     if (user) {
       loadConversations();
+      loadFollowedUsers();
       setupRealtimeSubscription();
     }
   }, [user]);
@@ -111,9 +117,53 @@ const Chat = () => {
     }
   };
 
+  const loadFollowedUsers = async () => {
+    if (!user) return;
+    
+    try {
+      // Get users the current user is following
+      const { data: followingData } = await supabase
+        .from("user_follows")
+        .select("following_id")
+        .eq("follower_id", user.id);
+      
+      if (!followingData || followingData.length === 0) {
+        setFollowedUsers([]);
+        return;
+      }
+      
+      const followingIds = followingData.map(f => f.following_id);
+      
+      // Check which of these users also follow back (mutual follow)
+      const { data: mutualFollows } = await supabase
+        .from("user_follows")
+        .select("follower_id")
+        .eq("following_id", user.id)
+        .in("follower_id", followingIds);
+      
+      const mutualFollowIds = new Set(mutualFollows?.map(m => m.follower_id) || []);
+      
+      // Get profiles of mutually followed users
+      const { data: profilesData } = await supabase
+        .from("profiles")
+        .select("id, display_name, avatar_url")
+        .in("id", Array.from(mutualFollowIds));
+      
+      setFollowedUsers(profilesData || []);
+    } catch (error) {
+      console.error('Error loading followed users:', error);
+    }
+  };
+
+  const { startConversation } = useStartConversation();
+  
   const filteredConversations = conversations.filter(conv => {
     const otherUser = profiles.get(conv.otherUserId);
     return otherUser?.display_name?.toLowerCase().includes(searchQuery.toLowerCase());
+  });
+
+  const filteredFollowedUsers = followedUsers.filter(user => {
+    return user.display_name?.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
   if (loading) {
@@ -131,21 +181,71 @@ const Chat = () => {
 
   return (
     <AppLayout>
-      <div className="container max-w-2xl mx-auto p-4">
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold mb-2 bg-warm-gradient bg-clip-text text-transparent">
+      <div className="container max-w-2xl mx-auto p-4 sm:p-6">
+        <div className="mb-6 flex items-center justify-between gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold bg-warm-gradient bg-clip-text text-transparent">
             Mensajes
           </h1>
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar conversaciones..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
+          <Button
+            onClick={() => setShowNewMessage(!showNewMessage)}
+            size="sm"
+            className="bg-warm-gradient hover:opacity-90"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Nuevo
+          </Button>
         </div>
+        
+        {/* Search Bar - Instagram-like */}
+        <div className="relative mb-4">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder={showNewMessage ? "Buscar entre usuarios que sigues..." : "Buscar conversaciones..."}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 h-11 rounded-xl border-2 focus:border-primary transition-all"
+          />
+        </div>
+
+        {/* New Message - Show followed users */}
+        {showNewMessage && (
+          <Card className="mb-4 border-2">
+            <CardContent className="p-4">
+              <h3 className="font-semibold mb-3 text-sm">Nuevo mensaje</h3>
+              {filteredFollowedUsers.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  {searchQuery ? "No se encontraron usuarios" : "Sigue a usuarios para poder enviarles mensajes"}
+                </p>
+              ) : (
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {filteredFollowedUsers.map((followedUser) => (
+                    <div
+                      key={followedUser.id}
+                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 cursor-pointer transition-colors"
+                      onClick={() => {
+                        startConversation(followedUser.id);
+                        setShowNewMessage(false);
+                        setSearchQuery("");
+                      }}
+                    >
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={followedUser.avatar_url} />
+                        <AvatarFallback className="bg-warm-gradient text-white">
+                          {followedUser.display_name?.[0] || '?'}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm truncate">
+                          {followedUser.display_name || 'Usuario'}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {filteredConversations.length === 0 ? (
           <Card>
@@ -158,7 +258,7 @@ const Chat = () => {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-1">
             {filteredConversations.map((conv) => {
               const otherUser = profiles.get(conv.otherUserId);
               const isUnread = conv.unreadCount > 0;
@@ -166,25 +266,34 @@ const Chat = () => {
               return (
                 <Card 
                   key={conv.id}
-                  className="cursor-pointer hover:shadow-md transition-all"
+                  className="cursor-pointer hover:bg-muted/50 transition-all border-0 shadow-none rounded-lg"
                   onClick={() => navigate(`/chat/${conv.id}`)}
                 >
-                  <CardContent className="p-4">
+                  <CardContent className="p-3 sm:p-4">
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-14 w-14 ring-2 ring-primary/20">
+                      <Avatar className="h-12 w-12 sm:h-14 sm:w-14 ring-2 ring-primary/20 flex-shrink-0">
                         <AvatarImage src={otherUser?.avatar_url} />
-                        <AvatarFallback className="bg-warm-gradient text-white">
-                          {otherUser?.display_name?.[0] || '?'}
+                        <AvatarFallback className="bg-warm-gradient text-white text-sm">
+                          {(() => {
+                            if (otherUser?.display_name) {
+                              const nameParts = otherUser.display_name.trim().split(/\s+/);
+                              if (nameParts.length >= 2) {
+                                return `${nameParts[0][0].toUpperCase()}.${nameParts[nameParts.length - 1][0].toUpperCase()}.`;
+                              }
+                              return otherUser.display_name[0].toUpperCase();
+                            }
+                            return '?';
+                          })()}
                         </AvatarFallback>
                       </Avatar>
                       
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <h3 className={`font-semibold truncate ${isUnread ? 'text-foreground' : 'text-muted-foreground'}`}>
+                          <h3 className={`font-semibold truncate text-sm sm:text-base ${isUnread ? 'text-foreground' : 'text-foreground'}`}>
                             {otherUser?.display_name || 'Usuario'}
                           </h3>
                           {conv.lastMessage && (
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">
                               {formatDistanceToNow(new Date(conv.lastMessage.created_at), {
                                 addSuffix: true,
                                 locale: es
@@ -193,13 +302,13 @@ const Chat = () => {
                           )}
                         </div>
                         
-                        <div className="flex items-center justify-between">
-                          <p className={`text-sm truncate ${isUnread ? 'font-semibold text-foreground' : 'text-muted-foreground'}`}>
+                        <div className="flex items-center justify-between gap-2">
+                          <p className={`text-sm truncate flex-1 ${isUnread ? 'font-medium text-foreground' : 'text-muted-foreground'}`}>
                             {conv.lastMessage?.content || 'Sin mensajes aún'}
                           </p>
                           {isUnread && (
-                            <div className="flex-shrink-0 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center ml-2">
-                              {conv.unreadCount}
+                            <div className="flex-shrink-0 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 min-w-[20px] flex items-center justify-center">
+                              {conv.unreadCount > 9 ? '9+' : conv.unreadCount}
                             </div>
                           )}
                         </div>

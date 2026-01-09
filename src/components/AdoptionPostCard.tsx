@@ -17,6 +17,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Heart, MapPin, Calendar, MessageCircle, Eye, Check, X } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { useStartConversation } from "@/hooks/useStartConversation";
+import { useNavigate } from "react-router-dom";
 
 interface AdoptionPostCardProps {
   post: any;
@@ -26,6 +28,8 @@ interface AdoptionPostCardProps {
 
 export function AdoptionPostCard({ post, onUpdate, isOwner }: AdoptionPostCardProps) {
   const { user } = useAuth();
+  const navigate = useNavigate();
+  const { startConversation } = useStartConversation();
   const [showInterestDialog, setShowInterestDialog] = useState(false);
   const [showMessagesDialog, setShowMessagesDialog] = useState(false);
   const [interestMessage, setInterestMessage] = useState("");
@@ -150,9 +154,17 @@ export function AdoptionPostCard({ post, onUpdate, isOwner }: AdoptionPostCardPr
             {post.good_with_cats && <span className="flex items-center gap-1"><Check className="h-3 w-3 text-secondary" /> Gatos</span>}
           </div>
 
+          {/* Show only general location (city/commune) for privacy, not exact address */}
           <div className="flex items-center gap-2 text-xs text-muted-foreground pt-2 border-t">
             <MapPin className="h-3 w-3 flex-shrink-0" />
-            <span className="truncate">{post.location}</span>
+            <span className="truncate">
+              {(() => {
+                // Extract only city/commune, not full address
+                const location = post.location || "";
+                const parts = location.split(",");
+                return parts.length > 1 ? parts.slice(-2).join(", ").trim() : location;
+              })()}
+            </span>
           </div>
 
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -257,13 +269,22 @@ export function AdoptionPostCard({ post, onUpdate, isOwner }: AdoptionPostCardPr
                   <div className="flex items-start gap-3">
                     <Avatar className="h-10 w-10">
                       <AvatarFallback className="bg-warm-gradient text-white">
-                        {interest.profiles?.display_name?.[0] || "U"}
+                        {/* Show only first letter for privacy */}
+                        {interest.profiles?.display_name?.[0]?.toUpperCase() || "U"}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center justify-between">
+                        {/* Hide full name for privacy - show only first name initial and last name initial */}
                         <span className="font-semibold">
-                          {interest.profiles?.display_name || "Usuario"}
+                          {(() => {
+                            const name = interest.profiles?.display_name || "Usuario";
+                            const nameParts = name.trim().split(/\s+/);
+                            if (nameParts.length >= 2) {
+                              return `${nameParts[0][0]}. ${nameParts[nameParts.length - 1][0]}.`;
+                            }
+                            return `${name[0]}.`;
+                          })()}
                         </span>
                         <span className="text-xs text-muted-foreground">
                           {format(new Date(interest.created_at), "d MMM", { locale: es })}
@@ -272,6 +293,20 @@ export function AdoptionPostCard({ post, onUpdate, isOwner }: AdoptionPostCardPr
                       {interest.message && (
                         <p className="text-sm text-muted-foreground">{interest.message}</p>
                       )}
+                      {/* Secure contact button - opens messaging instead of showing direct contact */}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mt-2"
+                        onClick={async () => {
+                          // Navigate to chat with this user securely
+                          await startConversation(interest.interested_user_id);
+                          setShowMessagesDialog(false);
+                        }}
+                      >
+                        <MessageCircle className="h-3 w-3 mr-2" />
+                        Contactar de forma segura
+                      </Button>
                     </div>
                   </div>
                 </Card>

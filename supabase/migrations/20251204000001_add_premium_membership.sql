@@ -56,7 +56,7 @@ USING (
   EXISTS (
     SELECT 1 FROM public.profiles
     WHERE profiles.id = auth.uid()
-    -- AND profiles.is_admin = true
+    AND profiles.is_admin = true
   )
 );
 
@@ -110,5 +110,3 @@ COMMENT ON COLUMN public.profiles.premium_start_date IS 'Date when premium membe
 COMMENT ON COLUMN public.profiles.premium_end_date IS 'Date when premium membership expires';
 COMMENT ON COLUMN public.profiles.premium_plan IS 'Type of premium plan: monthly or yearly';
 
-ALTER TABLE public.profiles
-ADD COLUMN IF NOT EXISTS is_admin BOOLEAN NOT NULL DEFAULT false;

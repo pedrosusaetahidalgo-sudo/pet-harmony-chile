@@ -4,11 +4,11 @@ const config: CapacitorConfig = {
   appId: 'cl.pawfriend.app',
   appName: 'Paw Friend',
   webDir: 'dist',
-  server: {
-    // For development - comment this out for production build
-    url: 'https://9c3ef547-1a05-4427-a6e6-d3f86a6365e3.lovableproject.com?forceHideBadge=true',
-    cleartext: true
-  },
+  // For development with live reload, uncomment the server section:
+  // server: {
+  //   url: 'https://9c3ef547-1a05-4427-a6e6-d3f86a6365e3.lovableproject.com?forceHideBadge=true',
+  //   cleartext: true
+  // },
   android: {
     buildOptions: {
       keystorePath: 'pawfriend-release-key.keystore',

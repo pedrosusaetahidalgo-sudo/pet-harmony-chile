@@ -44,13 +44,17 @@ export const useGoogleAuth = () => {
     setLoading(true);
 
     try {
+      // TEMPORARY: Force web OAuth flow for testing (no SHA-1 required)
+      // TODO: Re-enable native flow after adding SHA-1 to Google Cloud Console
+      const FORCE_WEB_OAUTH = true; // Set to false to use native flow when SHA-1 is configured
+      
       const isNative = Capacitor.isNativePlatform();
 
-      if (isNative && GoogleAuth) {
-        // Native flow using Capacitor plugin
+      if (isNative && GoogleAuth && !FORCE_WEB_OAUTH) {
+        // Native flow using Capacitor plugin (requires SHA-1 fingerprint)
         return await handleNativeGoogleAuth();
       } else {
-        // Web flow using Supabase OAuth
+        // Web flow using Supabase OAuth (works without SHA-1)
         return await handleWebGoogleAuth();
       }
     } catch (error: any) {

@@ -1,0 +1,20 @@
+{
+    "logs": [
+        {
+            "outputFile": "cl.pawfriend.app-mergeDebugResources-27:/values-v29/values-v29.xml",
+            "map": [
+                {
+                    "source": "/Users/nitish/.gradle/caches/8.9/transforms/ccfeb0fedb1fa7eb3f3ea2054b82a1fa/transformed/jetified-core-splashscreen-1.0.1/res/values-v29/values-v29.xml",
+                    "from": {
+                        "startLines": "2,7",
+                        "startColumns": "4,4",
+                        "startOffsets": "55,374",
+                        "endLines": "6,8",
+                        "endColumns": "12,12",
+                        "endOffsets": "369,464"
+                    }
+                }
+            ]
+        }
+    ]
+}

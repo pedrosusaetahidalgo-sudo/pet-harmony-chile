@@ -8,6 +8,8 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { useFollows } from "@/hooks/useFollows";
+import { UserPlus, UserCheck, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -53,6 +55,7 @@ const PetCard = ({
   const [likesCount, setLikesCount] = useState(initialLikes);
   const [commentsCount, setCommentsCount] = useState(initialComments);
   const [showComments, setShowComments] = useState(false);
+  const { followStatus, follow, unfollow, isFollowing: isFollowLoading } = useFollows(ownerId);
 
   useEffect(() => {
     if (user) {
@@ -144,7 +147,14 @@ const PetCard = ({
             <Avatar className="h-9 w-9 border-2 border-primary shadow-sm">
               <AvatarImage src={ownerAvatar} alt={ownerName} />
               <AvatarFallback className="bg-warm-gradient text-white font-semibold text-sm">
-                {ownerName.charAt(0)}
+                {(() => {
+                  // Show initials from real name (e.g., "Pedro Susaeta" -> "P.S.")
+                  const nameParts = ownerName.trim().split(/\s+/);
+                  if (nameParts.length >= 2) {
+                    return `${nameParts[0][0].toUpperCase()}.${nameParts[nameParts.length - 1][0].toUpperCase()}.`;
+                  }
+                  return ownerName.charAt(0).toUpperCase();
+                })()}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
@@ -154,12 +164,45 @@ const PetCard = ({
               )}
             </div>
           </div>
-          {location && (
-            <div className="flex items-center gap-1 text-xs text-muted-foreground flex-shrink-0 ml-2">
-              <MapPin className="h-3 w-3" />
-              <span className="hidden sm:inline">{location}</span>
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            {location && (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground flex-shrink-0">
+                <MapPin className="h-3 w-3" />
+                <span className="hidden sm:inline">{location}</span>
+              </div>
+            )}
+            {/* Follow/Unfollow Button */}
+            {ownerId && user && user.id !== ownerId && followStatus && (
+              <Button
+                variant={followStatus.isFollowing ? "outline" : "default"}
+                size="sm"
+                className="h-8 text-xs px-3"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (followStatus.isFollowing) {
+                    unfollow();
+                  } else {
+                    follow();
+                  }
+                }}
+                disabled={isFollowLoading}
+              >
+                {isFollowLoading ? (
+                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                ) : followStatus.isFollowing ? (
+                  <>
+                    <UserCheck className="h-3 w-3 mr-1" />
+                    Siguiendo
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="h-3 w-3 mr-1" />
+                    Seguir
+                  </>
+                )}
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Image */}

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Plus, TrendingUp, Users, MapPin, Video, PawPrint, Trophy } from "lucide-react";
-import { DogBehaviorAnalyzer } from "@/components/DogBehaviorAnalyzer";
+// DogBehaviorAnalyzer temporarily removed - will be implemented in different tab later
 import { OnboardingTutorial } from "@/components/OnboardingTutorial";
 import { CreatePost } from "@/components/CreatePost";
 import { PetProfileCard } from "@/components/PetProfileCard";
@@ -12,6 +12,8 @@ import TopRatedProviders from "@/components/TopRatedProviders";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import {
@@ -24,19 +26,26 @@ import {
 } from "@/components/ui/dialog";
 
 const Feed = () => {
+  const { user } = useAuth();
   const [showAnalyzer, setShowAnalyzer] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
   const [posts, setPosts] = useState<any[]>([]);
+  const [followingPosts, setFollowingPosts] = useState<any[]>([]);
   const [pets, setPets] = useState<any[]>([]);
+  const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [loadingPets, setLoadingPets] = useState(true);
+  const [loadingFollowing, setLoadingFollowing] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     loadPosts();
     loadPets();
-  }, []);
+    if (user) {
+      loadProfile();
+    }
+  }, [user]);
 
   const loadPosts = async () => {
     setLoading(true);
@@ -81,19 +90,96 @@ const Feed = () => {
     setLoadingPets(false);
   };
 
+  const loadProfile = async () => {
+    if (!user) return;
+    const { data } = await supabase
+      .from("profiles")
+      .select("display_name, avatar_url")
+      .eq("id", user.id)
+      .single();
+    
+    if (data) setProfile(data);
+  };
+
+  const loadFollowingPosts = async () => {
+    if (!user) return;
+    setLoadingFollowing(true);
+    
+    try {
+      // Get list of users the current user is following
+      const { data: followingData } = await supabase
+        .from("user_follows")
+        .select("following_id")
+        .eq("follower_id", user.id);
+      
+      if (!followingData || followingData.length === 0) {
+        setFollowingPosts([]);
+        setLoadingFollowing(false);
+        return;
+      }
+      
+      const followingIds = followingData.map(f => f.following_id);
+      
+      // Get posts from followed users
+      const { data, error } = await supabase
+        .from("posts")
+        .select(`
+          *,
+          profiles:user_id (
+            display_name,
+            avatar_url
+          ),
+          pets:pet_id (
+            name,
+            photo_url
+          )
+        `)
+        .in("user_id", followingIds)
+        .order("created_at", { ascending: false });
+      
+      if (!error && data) {
+        setFollowingPosts(data);
+      }
+    } catch (error) {
+      console.error("Error loading following posts:", error);
+    } finally {
+      setLoadingFollowing(false);
+    }
+  };
+
   return (
     <>
       <OnboardingTutorial onComplete={() => setShowTutorial(false)} />
     <div className="w-full px-3 sm:px-4 py-4 sm:py-6 max-w-4xl mx-auto animate-fade-in">
         {/* Header */}
         <div className="flex flex-col gap-3 mb-4 sm:mb-6">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold mb-1 bg-warm-gradient bg-clip-text text-transparent">
-              Pet Social
-            </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Descubre las aventuras de otras mascotas
-            </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold mb-1 bg-warm-gradient bg-clip-text text-transparent">
+                Pet Social
+              </h1>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Descubre las aventuras de otras mascotas
+              </p>
+            </div>
+            {/* User Avatar */}
+            {profile && (
+              <Avatar className="h-10 w-10 border-2 border-primary shadow-sm">
+                <AvatarImage src={profile.avatar_url || undefined} />
+                <AvatarFallback className="bg-warm-gradient text-white font-semibold text-sm">
+                  {(() => {
+                    if (profile.display_name) {
+                      const nameParts = profile.display_name.trim().split(/\s+/);
+                      if (nameParts.length >= 2) {
+                        return `${nameParts[0][0].toUpperCase()}.${nameParts[nameParts.length - 1][0].toUpperCase()}.`;
+                      }
+                      return profile.display_name[0].toUpperCase();
+                    }
+                    return user?.email?.[0]?.toUpperCase() || "U";
+                  })()}
+                </AvatarFallback>
+              </Avatar>
+            )}
           </div>
           <div className="grid grid-cols-2 gap-2">
             <Dialog open={showCreatePost} onOpenChange={setShowCreatePost}>
@@ -116,24 +202,7 @@ const Feed = () => {
                 }} />
               </DialogContent>
             </Dialog>
-            <Dialog open={showAnalyzer} onOpenChange={setShowAnalyzer}>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="w-full h-10 border-2 text-xs sm:text-sm">
-                  <Video className="mr-1 h-4 w-4" />
-                  <span className="hidden sm:inline">Analizar</span>
-                  <span className="sm:hidden">Video</span>
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Analizador de Lenguaje Corporal</DialogTitle>
-                  <DialogDescription>
-                    Sube un video de tu perro y descubre qué está comunicando
-                  </DialogDescription>
-                </DialogHeader>
-                <DogBehaviorAnalyzer />
-              </DialogContent>
-            </Dialog>
+            {/* Body language analyzer temporarily removed - will be implemented in different tab later */}
           </div>
         </div>
 
@@ -147,16 +216,13 @@ const Feed = () => {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="all" className="w-full">
+        <Tabs defaultValue="pets" className="w-full" onValueChange={(value) => {
+          if (value === "following" && user) {
+            loadFollowingPosts();
+          }
+        }}>
           <div className="overflow-x-auto -mx-3 px-3 pb-2 scrollbar-hide">
             <TabsList className="inline-flex w-auto min-w-full bg-muted/50 p-1 rounded-xl">
-              <TabsTrigger 
-                value="all" 
-                className="rounded-lg text-xs whitespace-nowrap px-2.5 data-[state=active]:bg-warm-gradient data-[state=active]:text-white"
-              >
-                <TrendingUp className="h-3.5 w-3.5 mr-1" />
-                Todos
-              </TabsTrigger>
               <TabsTrigger 
                 value="pets"
                 className="rounded-lg text-xs whitespace-nowrap px-2.5 data-[state=active]:bg-warm-gradient data-[state=active]:text-white"
@@ -178,23 +244,10 @@ const Feed = () => {
                 <Users className="h-3.5 w-3.5 mr-1" />
                 Siguiendo
               </TabsTrigger>
-              <TabsTrigger 
-                value="popular"
-                className="rounded-lg text-xs whitespace-nowrap px-2.5 data-[state=active]:bg-warm-gradient data-[state=active]:text-white"
-              >
-                Populares
-              </TabsTrigger>
-              <TabsTrigger 
-                value="nearby"
-                className="rounded-lg text-xs whitespace-nowrap px-2.5 data-[state=active]:bg-warm-gradient data-[state=active]:text-white"
-              >
-                <MapPin className="h-3.5 w-3.5 mr-1" />
-                Cerca
-              </TabsTrigger>
             </TabsList>
           </div>
 
-            <TabsContent value="all" className="space-y-4 mt-4">
+            <TabsContent value="pets" className="space-y-4 mt-4">
               {loading ? (
                 <div className="text-center py-12">
                   <p className="text-muted-foreground">Cargando publicaciones...</p>
@@ -264,9 +317,40 @@ const Feed = () => {
           </TabsContent>
 
             <TabsContent value="following" className="space-y-6 mt-6">
-              <div className="text-center py-12 text-muted-foreground">
-                <p>Comienza a seguir a otras mascotas para ver sus publicaciones aquí</p>
-              </div>
+              {!user ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <p>Inicia sesión para ver las publicaciones de usuarios que sigues</p>
+                </div>
+              ) : loadingFollowing ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">Cargando publicaciones...</p>
+                </div>
+              ) : followingPosts.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p className="font-medium mb-2">No sigues a nadie todavía</p>
+                  <p className="text-sm">Comienza a seguir a otros usuarios para ver sus publicaciones aquí</p>
+                </div>
+              ) : (
+                followingPosts.map((post) => (
+                  <PetCard
+                    key={post.id}
+                    postId={post.id}
+                    petName={post.pets?.name || ""}
+                    petImage={post.image_url || post.pets?.photo_url || ""}
+                    ownerName={post.profiles?.display_name || "Usuario"}
+                    ownerAvatar={post.profiles?.avatar_url}
+                    ownerId={post.user_id}
+                    description={post.content}
+                    likes={post.likes_count || 0}
+                    comments={post.comments_count || 0}
+                    timeAgo={formatDistanceToNow(new Date(post.created_at), {
+                      addSuffix: true,
+                      locale: es,
+                    })}
+                  />
+                ))
+              )}
             </TabsContent>
 
             <TabsContent value="popular" className="space-y-6 mt-6">
@@ -294,11 +378,6 @@ const Feed = () => {
                 ))}
             </TabsContent>
 
-            <TabsContent value="nearby" className="space-y-6 mt-6">
-              <div className="text-center py-12 text-muted-foreground">
-                <p>Activa la ubicación para ver mascotas cerca de ti</p>
-              </div>
-            </TabsContent>
         </Tabs>
       </div>
     </>

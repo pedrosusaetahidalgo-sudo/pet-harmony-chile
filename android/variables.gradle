@@ -28,5 +28,5 @@ ext {
     kotlinVersion = '1.9.20'
     
     // Gradle plugin version
-    androidGradlePluginVersion = '8.2.0'
+    androidGradlePluginVersion = '8.5.2'
 }

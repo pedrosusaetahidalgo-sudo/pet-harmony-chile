@@ -34,90 +34,89 @@ const TopRatedProviders = () => {
   const loadRankings = async () => {
     setLoading(true);
     try {
-      // Load top walkers
-      const { data: walkersData } = await supabase
-        .from("dog_walker_profiles")
+      // Load from unified service_providers table - global and unique ranking
+      const { data: allProvidersData } = await supabase
+        .from("service_providers")
         .select(`
           id,
           user_id,
           rating,
           total_reviews,
           is_verified,
-          profiles:user_id (display_name, avatar_url)
+          status,
+          display_name,
+          avatar_url,
+          provider_service_offerings!inner(service_type)
         `)
-        .eq("is_active", true)
+        .eq("status", "approved")
         .gt("total_reviews", 0)
         .order("rating", { ascending: false })
-        .order("total_reviews", { ascending: false })
-        .limit(10);
+        .order("total_reviews", { ascending: false });
 
-      // Load top sitters
-      const { data: sittersData } = await supabase
-        .from("dogsitter_profiles")
-        .select(`
-          id,
-          user_id,
-          rating,
-          total_reviews,
-          is_verified,
-          profiles:user_id (display_name, avatar_url)
-        `)
-        .eq("is_active", true)
-        .gt("total_reviews", 0)
-        .order("rating", { ascending: false })
-        .order("total_reviews", { ascending: false })
-        .limit(10);
+      if (!allProvidersData) {
+        setWalkers([]);
+        setSitters([]);
+        setVets([]);
+        setTrainers([]);
+        setLoading(false);
+        return;
+      }
 
-      // Load top vets
-      const { data: vetsData } = await supabase
-        .from("vet_profiles")
-        .select(`
-          id,
-          user_id,
-          rating,
-          total_reviews,
-          is_verified,
-          profiles:user_id (display_name, avatar_url)
-        `)
-        .eq("is_active", true)
-        .gt("total_reviews", 0)
-        .order("rating", { ascending: false })
-        .order("total_reviews", { ascending: false })
-        .limit(10);
+      // Get unique providers (one entry per user_id, best rating)
+      const uniqueProviders = new Map();
+      allProvidersData.forEach(provider => {
+        const existing = uniqueProviders.get(provider.user_id);
+        if (!existing || provider.rating > existing.rating) {
+          uniqueProviders.set(provider.user_id, provider);
+        }
+      });
 
-      // Load top trainers
-      const { data: trainersData } = await supabase
-        .from("trainer_profiles")
-        .select(`
-          id,
-          user_id,
-          rating,
-          total_reviews,
-          is_verified,
-          profiles:user_id (display_name, avatar_url)
-        `)
-        .eq("is_active", true)
-        .gt("total_reviews", 0)
-        .order("rating", { ascending: false })
-        .order("total_reviews", { ascending: false })
-        .limit(10);
+      // Group by service type
+      const walkersList: RankedProvider[] = [];
+      const sittersList: RankedProvider[] = [];
+      const vetsList: RankedProvider[] = [];
+      const trainersList: RankedProvider[] = [];
 
-      const formatProviders = (data: any[], type: string): RankedProvider[] => 
-        (data || []).map(p => ({
-          id: p.id,
-          user_id: p.user_id,
-          display_name: p.profiles?.display_name || "Profesional",
-          avatar_url: p.profiles?.avatar_url,
-          rating: p.rating || 0,
-          total_reviews: p.total_reviews || 0,
-          is_verified: p.is_verified || false,
-          type
-        }));
+      uniqueProviders.forEach(provider => {
+        const serviceTypes = provider.provider_service_offerings?.map((o: any) => o.service_type) || [];
+        
+        const providerData: RankedProvider = {
+          id: provider.id,
+          user_id: provider.user_id,
+          display_name: provider.display_name || "Profesional",
+          avatar_url: provider.avatar_url,
+          rating: provider.rating || 0,
+          total_reviews: provider.total_reviews || 0,
+          is_verified: provider.is_verified || false,
+          type: serviceTypes[0] || "unknown"
+        };
 
-      setWalkers(formatProviders(walkersData, "walker"));
-      setSitters(formatProviders(sittersData, "sitter"));
-      setVets(formatProviders(vetsData, "vet"));
-      setTrainers(formatProviders(trainersData, "trainer"));
+        // Add to appropriate lists based on service types
+        if (serviceTypes.includes("dog_walker")) {
+          walkersList.push({ ...providerData, type: "walker" });
+        }
+        if (serviceTypes.includes("dogsitter")) {
+          sittersList.push({ ...providerData, type: "sitter" });
+        }
+        if (serviceTypes.includes("veterinarian")) {
+          vetsList.push({ ...providerData, type: "vet" });
+        }
+        if (serviceTypes.includes("trainer")) {
+          trainersList.push({ ...providerData, type: "trainer" });
+        }
+      });
+
+      // Sort each list and limit to top 10
+      const sortAndLimit = (list: RankedProvider[]) => 
+        list.sort((a, b) => {
+          if (b.rating !== a.rating) return b.rating - a.rating;
+          return b.total_reviews - a.total_reviews;
+        }).slice(0, 10);
+
+      setWalkers(sortAndLimit(walkersList));
+      setSitters(sortAndLimit(sittersList));
+      setVets(sortAndLimit(vetsList));
+      setTrainers(sortAndLimit(trainersList));
     } catch (error) {
       console.error("Error loading rankings:", error);
     } finally {

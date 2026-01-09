@@ -196,21 +196,44 @@ export default function Home() {
         
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
-            <Avatar className="h-16 w-16 ring-4 ring-background shadow-lg">
-              <AvatarImage src={profile?.avatar_url || undefined} />
-              <AvatarFallback className="bg-warm-gradient text-white text-xl font-bold">
-                {profile?.display_name?.[0] || user?.email?.[0]?.toUpperCase() || "U"}
-              </AvatarFallback>
-            </Avatar>
+            <div className="relative">
+              <Avatar className="h-16 w-16 ring-4 ring-background shadow-lg">
+                <AvatarImage src={profile?.avatar_url || undefined} />
+                <AvatarFallback className="bg-warm-gradient text-white text-xl font-bold">
+                  {(() => {
+                    // Show initials from real name (e.g., "Pedro Susaeta" -> "P.S.")
+                    if (profile?.display_name) {
+                      const nameParts = profile.display_name.trim().split(/\s+/);
+                      if (nameParts.length >= 2) {
+                        return `${nameParts[0][0].toUpperCase()}.${nameParts[nameParts.length - 1][0].toUpperCase()}.`;
+                      }
+                      return profile.display_name[0].toUpperCase();
+                    }
+                    return user?.email?.[0]?.toUpperCase() || "U";
+                  })()}
+                </AvatarFallback>
+              </Avatar>
+              {/* Show level badge if user has level > 1 */}
+              {stats && stats.level > 1 && (
+                <div className="absolute -bottom-1 -right-1 bg-yellow-400 rounded-full p-1 border-2 border-background shadow-lg">
+                  <Crown className="h-4 w-4 text-yellow-900" />
+                </div>
+              )}
+            </div>
             <div>
               <h1 className="text-2xl md:text-3xl font-bold">
-                {greeting()}, {profile?.display_name || "Amigo"}! 👋
+                {greeting()}, {profile?.display_name || user?.email?.split("@")[0] || "Amigo"}! 👋
               </h1>
               <p className="text-muted-foreground mt-1">
                 {pets.length > 0 
                   ? `Tienes ${pets.length} mascota${pets.length > 1 ? 's' : ''} registrada${pets.length > 1 ? 's' : ''}`
                   : "¡Comienza agregando tu primera mascota!"
                 }
+                {stats && (
+                  <span className="ml-2">
+                    • Nivel {stats.level}
+                  </span>
+                )}
               </p>
             </div>
           </div>

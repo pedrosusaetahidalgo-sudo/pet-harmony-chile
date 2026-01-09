@@ -12,6 +12,7 @@ import { Dog } from "lucide-react";
 import { FaFacebook } from "react-icons/fa";
 import { LegalFooter } from "@/components/LegalFooter";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
+import { useFacebookAuth } from "@/hooks/useFacebookAuth";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -20,6 +21,7 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { signInWithFacebook, loading: facebookLoading } = useFacebookAuth();
 
   useEffect(() => {
     // Handle OAuth callback and clean URL parameters
@@ -137,21 +139,10 @@ const Auth = () => {
   };
 
   const handleFacebookLogin = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'facebook',
-        options: {
-          redirectTo: `${window.location.origin}/home`,
-        },
-      });
-
-      if (error) throw error;
-    } catch (error: any) {
-      toast({
-        title: "Error al conectar con Facebook",
-        description: error.message,
-        variant: "destructive",
-      });
+    const result = await signInWithFacebook();
+    if (!result.success && result.error) {
+      // Error is already handled in the hook with toast
+      console.error('Facebook login error:', result.error);
     }
   };
 
@@ -184,9 +175,10 @@ const Auth = () => {
                     variant="outline"
                     className="w-full"
                     onClick={handleFacebookLogin}
+                    disabled={facebookLoading}
                   >
                     <FaFacebook className="mr-2 h-4 w-4 text-blue-600" />
-                    Continuar con Facebook
+                    {facebookLoading ? "Conectando..." : "Continuar con Facebook"}
                   </Button>
                 </div>
 

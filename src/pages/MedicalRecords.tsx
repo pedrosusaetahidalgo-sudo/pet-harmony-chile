@@ -8,6 +8,7 @@ import { Calendar, FileText, Syringe, Pill, Stethoscope, Activity, MapPin, User,
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AddMedicalRecord } from "@/components/AddMedicalRecord";
+import { MedicalDocumentsTab } from "@/components/medical/MedicalDocumentsTab";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -39,7 +40,8 @@ const MedicalRecords = () => {
         .from("medical_records")
         .select("*")
         .eq("pet_id", selectedPetId)
-        .order("date", { ascending: false });
+        .order("date", { ascending: false }) // Most recent first for chronological timeline
+        .order("created_at", { ascending: false }); // Secondary sort by creation time
       
       if (error) throw error;
       return data || [];
@@ -158,13 +160,20 @@ const MedicalRecords = () => {
 
             {selectedPetId ? (
               <Tabs defaultValue="timeline" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsList className="grid w-full grid-cols-3 mb-6">
                   <TabsTrigger 
                     value="timeline" 
                     className="data-[state=active]:bg-medical-gradient data-[state=active]:text-white"
                   >
                     <Heart className="h-4 w-4 mr-2" />
                     Timeline
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="documents"
+                    className="data-[state=active]:bg-primary data-[state=active]:text-white"
+                  >
+                    <FileText className="h-4 w-4 mr-2" />
+                    Documentos
                   </TabsTrigger>
                   <TabsTrigger 
                     value="upcoming"
@@ -196,7 +205,15 @@ const MedicalRecords = () => {
                               {year}
                             </h2>
                             <div className="relative space-y-6 pl-8 before:absolute before:left-3 before:top-0 before:bottom-0 before:w-0.5 before:bg-border">
-                              {records.map((record: any) => (
+                              {records
+                                .sort((a: any, b: any) => {
+                                  // Sort by date descending (most recent first), then by created_at
+                                  const dateA = new Date(a.date).getTime();
+                                  const dateB = new Date(b.date).getTime();
+                                  if (dateA !== dateB) return dateB - dateA;
+                                  return new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime();
+                                })
+                                .map((record: any) => (
                                 <div key={record.id} className="relative">
                                   <div className={`absolute -left-8 top-6 w-10 h-10 rounded-full flex items-center justify-center shadow-soft ${getRecordColor(record.record_type)}`}>
                                     {getRecordIcon(record.record_type)}
@@ -269,6 +286,10 @@ const MedicalRecords = () => {
                         ))}
                     </div>
                   )}
+                </TabsContent>
+
+                <TabsContent value="documents" className="space-y-4">
+                  <MedicalDocumentsTab petId={selectedPetId} />
                 </TabsContent>
 
                 <TabsContent value="upcoming" className="space-y-4">

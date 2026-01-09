@@ -12,6 +12,8 @@ import { es } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { GoogleCalendarSync, requestCalendarPermission } from "@/lib/googleCalendar";
+import { Calendar as CalendarIcon, RefreshCw } from "lucide-react";
 
 interface ProviderAvailabilityManagerProps {
   providerType: "dog_walker" | "dogsitter" | "veterinarian" | "trainer";
@@ -36,6 +38,9 @@ export const ProviderAvailabilityManager = ({
   const [existingAvailability, setExistingAvailability] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [calendarSyncEnabled, setCalendarSyncEnabled] = useState(false);
+  const [syncingCalendar, setSyncingCalendar] = useState(false);
+  const [calendarSync] = useState(() => new GoogleCalendarSync());
 
   useEffect(() => {
     if (user) {
@@ -85,6 +90,82 @@ export const ProviderAvailabilityManager = ({
         ? prev.filter(s => s !== slot)
         : [...prev, slot].sort()
     );
+  };
+
+  const syncWithGoogleCalendar = async () => {
+    if (!selectedDate || !user) return;
+
+    try {
+      setSyncingCalendar(true);
+      
+      // Request calendar permission if not already granted
+      const token = await requestCalendarPermission();
+      if (token) {
+        calendarSync.setAccessToken(token);
+        setCalendarSyncEnabled(true);
+      }
+
+      if (!calendarSync.isAvailable()) {
+        toast({
+          title: "Sincronización de calendario",
+          description: "Para sincronizar con Google Calendar, primero debes autorizar el acceso. Esta función estará disponible próximamente.",
+          variant: "default",
+        });
+        return;
+      }
+
+      // Sync availability for next 30 days
+      const startDate = selectedDate || new Date();
+      const endDate = addDays(startDate, 30);
+
+      const unavailableSlots = await calendarSync.syncAvailabilityWithCalendar(
+        user.id,
+        startDate,
+        endDate
+      );
+
+      // Update availability based on calendar busy times
+      for (const unavailable of unavailableSlots) {
+        const existing = existingAvailability.find(a => a.date === unavailable.date);
+        const availableSlots = timeSlots.filter(slot => !unavailable.time_slots.includes(slot));
+
+        if (existing) {
+          await supabase
+            .from('provider_availability')
+            .update({
+              time_slots: availableSlots,
+              updated_at: new Date().toISOString()
+            })
+            .eq('id', existing.id);
+        } else {
+          await supabase
+            .from('provider_availability')
+            .insert({
+              user_id: user.id,
+              provider_type: providerType,
+              date: unavailable.date,
+              time_slots: availableSlots,
+              is_available: true
+            });
+        }
+      }
+
+      toast({
+        title: "Calendario sincronizado",
+        description: "Tu disponibilidad se ha actualizado según tu Google Calendar"
+      });
+
+      loadAvailability();
+    } catch (error) {
+      console.error('Error syncing calendar:', error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "No se pudo sincronizar con Google Calendar"
+      });
+    } finally {
+      setSyncingCalendar(false);
+    }
   };
 
   const saveAvailability = async () => {
@@ -264,6 +345,32 @@ export const ProviderAvailabilityManager = ({
                 </div>
               </>
             )}
+
+            {/* Google Calendar Sync */}
+            <div className="pt-2 border-t">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={syncWithGoogleCalendar}
+                disabled={syncingCalendar}
+                className="w-full mb-2"
+              >
+                {syncingCalendar ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                    Sincronizando...
+                  </>
+                ) : (
+                  <>
+                    <CalendarIcon className="h-4 w-4 mr-2" />
+                    Sincronizar con Google Calendar
+                  </>
+                )}
+              </Button>
+              <p className="text-xs text-muted-foreground text-center">
+                Sincroniza tu disponibilidad con tu Google Calendar para evitar conflictos
+              </p>
+            </div>
 
             <div className="flex gap-2">
               <Button

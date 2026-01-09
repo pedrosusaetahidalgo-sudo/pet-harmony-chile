@@ -34,7 +34,8 @@ import {
   ShoppingBag,
   ArrowRight,
   Lock,
-  Play
+  Play,
+  Flame
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -44,6 +45,8 @@ import { MissionCard } from "@/components/pawgame/MissionCard";
 import { BadgeGallery } from "@/components/pawgame/BadgeGallery";
 import { PetPawProgress } from "@/components/pawgame/PetPawProgress";
 import { PawShopRewards } from "@/components/pawgame/PawShopRewards";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 interface GuardianLevel {
   id: string;
@@ -117,6 +120,11 @@ const PawGame = () => {
   useEffect(() => {
     if (user) {
       loadGameData();
+      // Check if user has seen tutorial
+      const hasSeenTutorial = localStorage.getItem("hasSeenPawGameTutorial");
+      if (!hasSeenTutorial) {
+        setShowTutorial(true);
+      }
     }
   }, [user]);
 
@@ -322,64 +330,218 @@ const PawGame = () => {
         </TabsList>
 
         {/* Missions Tab */}
-        <TabsContent value="missions" className="mt-6 space-y-6">
-          {/* Daily Missions */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-blue-500" />
-              Misiones Diarias
-              <Badge variant="secondary" className="ml-2">Reinicia en 8h</Badge>
-            </h3>
-            <div className="grid md:grid-cols-2 gap-4">
-              {missions.filter(m => m.mission_type === 'daily').slice(0, 4).map((mission) => (
-                <MissionCard 
-                  key={mission.id} 
-                  mission={mission} 
-                  userLevel={userProgress?.current_level || 1}
-                  onNavigate={navigate}
-                />
-              ))}
-            </div>
+        <TabsContent value="missions" className="mt-6 space-y-4">
+          {/* Tutorial Button */}
+          <div className="flex justify-end mb-4">
+            <Dialog open={showTutorial} onOpenChange={setShowTutorial}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Play className="h-4 w-4 mr-2" />
+                  Ver Tutorial
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-2xl flex items-center gap-2">
+                    <PawPrint className="h-6 w-6 text-primary" />
+                    Bienvenido al Paw Game
+                  </DialogTitle>
+                  <DialogDescription>
+                    Aprende cómo ganar puntos, subir de nivel y desbloquear recompensas
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-6 py-4">
+                  <div>
+                    <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                      <Star className="h-5 w-5 text-yellow-500" />
+                      ¿Cómo ganar PawPoints?
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Realiza acciones en la app para ganar puntos y subir de nivel:
+                    </p>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span><strong>Reservas:</strong> Reserva servicios (paseadores, cuidadores, veterinarios) - +15 a +50 pts</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span><strong>Paseos:</strong> Completa paseos con tu mascota - +15 pts</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span><strong>Visitas al veterinario:</strong> Registra citas y vacunas - +50 pts</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span><strong>Adopción:</strong> Adopta una mascota - +100 pts</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span><strong>Publicaciones:</strong> Comparte momentos en Pet Social - +5 pts</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span><strong>Misiones:</strong> Completa misiones diarias, semanales y mensuales - +10 a +200 pts</span>
+                      </li>
+                    </ul>
+                  </div>
+                  
+                  <div>
+                    <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                      <Trophy className="h-5 w-5 text-yellow-500" />
+                      Niveles y Recompensas
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      A medida que subes de nivel, desbloqueas:
+                    </p>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start gap-2">
+                        <Crown className="h-4 w-4 text-yellow-500 mt-0.5 flex-shrink-0" />
+                        <span><strong>Multiplicadores de puntos:</strong> Gana más puntos por acción</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Award className="h-4 w-4 text-purple-500 mt-0.5 flex-shrink-0" />
+                        <span><strong>Insignias y logros:</strong> Desbloquea logros especiales</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <Gift className="h-4 w-4 text-pink-500 mt-0.5 flex-shrink-0" />
+                        <span><strong>Recompensas en la tienda:</strong> Canjea puntos por descuentos y premios</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                      <Flame className="h-5 w-5 text-orange-500" />
+                      Racha de Días
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      Mantén una racha activa usando la app diariamente. Las rachas más largas te dan bonificaciones adicionales.
+                    </p>
+                  </div>
+
+                  <div className="pt-4 border-t">
+                    <Button 
+                      className="w-full" 
+                      onClick={() => {
+                        localStorage.setItem("hasSeenPawGameTutorial", "true");
+                        setShowTutorial(false);
+                      }}
+                    >
+                      ¡Entendido! Empecemos
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
 
-          {/* Weekly Missions */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Target className="h-5 w-5 text-emerald-500" />
-              Misiones Semanales
-              <Badge variant="outline" className="ml-2">4 días restantes</Badge>
-            </h3>
-            <div className="grid md:grid-cols-2 gap-4">
-              {missions.filter(m => m.mission_type === 'weekly').slice(0, 4).map((mission) => (
-                <MissionCard 
-                  key={mission.id} 
-                  mission={mission} 
-                  userLevel={userProgress?.current_level || 1}
-                  onNavigate={navigate}
-                />
-              ))}
-            </div>
-          </div>
+          {/* Expandable Mission Lists */}
+          <Accordion type="multiple" defaultValue={["daily", "weekly"]} className="space-y-4">
+            {/* Daily Missions */}
+            <AccordionItem value="daily" className="border rounded-lg px-4">
+              <AccordionTrigger className="hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5 text-blue-500" />
+                  <h3 className="text-lg font-semibold">Misiones Diarias</h3>
+                  <Badge variant="secondary" className="ml-2">
+                    {missions.filter(m => m.mission_type === 'daily').length} disponibles
+                  </Badge>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="grid md:grid-cols-2 gap-4 pt-2">
+                  {missions.filter(m => m.mission_type === 'daily').map((mission) => (
+                    <MissionCard 
+                      key={mission.id} 
+                      mission={mission} 
+                      userLevel={userProgress?.current_level || 1}
+                      onNavigate={navigate}
+                    />
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
 
-          {/* Story Missions */}
-          <div>
-            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <BookOpen className="h-5 w-5 text-purple-500" />
-              Historia del Guardián
-              <Badge className="ml-2 bg-purple-500/10 text-purple-600">Capítulo 1</Badge>
-            </h3>
-            <div className="grid md:grid-cols-2 gap-4">
-              {missions.filter(m => m.mission_type === 'story').slice(0, 4).map((mission) => (
-                <MissionCard 
-                  key={mission.id} 
-                  mission={mission} 
-                  userLevel={userProgress?.current_level || 1}
-                  onNavigate={navigate}
-                  isStory
-                />
-              ))}
-            </div>
-          </div>
+            {/* Weekly Missions */}
+            <AccordionItem value="weekly" className="border rounded-lg px-4">
+              <AccordionTrigger className="hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <Target className="h-5 w-5 text-emerald-500" />
+                  <h3 className="text-lg font-semibold">Misiones Semanales</h3>
+                  <Badge variant="outline" className="ml-2">
+                    {missions.filter(m => m.mission_type === 'weekly').length} disponibles
+                  </Badge>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="grid md:grid-cols-2 gap-4 pt-2">
+                  {missions.filter(m => m.mission_type === 'weekly').map((mission) => (
+                    <MissionCard 
+                      key={mission.id} 
+                      mission={mission} 
+                      userLevel={userProgress?.current_level || 1}
+                      onNavigate={navigate}
+                    />
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
+            {/* Monthly Missions (if any) */}
+            {missions.filter(m => m.mission_type === 'monthly').length > 0 && (
+              <AccordionItem value="monthly" className="border rounded-lg px-4">
+                <AccordionTrigger className="hover:no-underline">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="h-5 w-5 text-purple-500" />
+                    <h3 className="text-lg font-semibold">Misiones Mensuales</h3>
+                    <Badge variant="outline" className="ml-2">
+                      {missions.filter(m => m.mission_type === 'monthly').length} disponibles
+                    </Badge>
+                  </div>
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="grid md:grid-cols-2 gap-4 pt-2">
+                    {missions.filter(m => m.mission_type === 'monthly').map((mission) => (
+                      <MissionCard 
+                        key={mission.id} 
+                        mission={mission} 
+                        userLevel={userProgress?.current_level || 1}
+                        onNavigate={navigate}
+                      />
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            )}
+
+            {/* Story Missions */}
+            <AccordionItem value="story" className="border rounded-lg px-4">
+              <AccordionTrigger className="hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <BookOpen className="h-5 w-5 text-purple-500" />
+                  <h3 className="text-lg font-semibold">Historia del Guardián</h3>
+                  <Badge className="ml-2 bg-purple-500/10 text-purple-600">
+                    Capítulo 1
+                  </Badge>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent>
+                <div className="grid md:grid-cols-2 gap-4 pt-2">
+                  {missions.filter(m => m.mission_type === 'story').map((mission) => (
+                    <MissionCard 
+                      key={mission.id} 
+                      mission={mission} 
+                      userLevel={userProgress?.current_level || 1}
+                      onNavigate={navigate}
+                      isStory
+                    />
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </TabsContent>
 
         {/* Badges Tab */}

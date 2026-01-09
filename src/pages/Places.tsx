@@ -9,6 +9,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import petFriendlyPlace from "@/assets/pet-friendly-place.jpg";
+import { searchGooglePlaces, getPlacePhotoUrl, mapGooglePlaceType } from "@/lib/googlePlaces";
 
 interface Place {
   id: string;
@@ -32,7 +33,7 @@ interface UserLocation {
 }
 
 const Places = () => {
-  const [selectedType, setSelectedType] = useState("todos");
+  const [selectedType, setSelectedType] = useState("veterinaria");
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -66,20 +67,62 @@ const Places = () => {
   }, [toast]);
 
   const { data: places, isLoading } = useQuery({
-    queryKey: ["places", selectedType],
+    queryKey: ["places", selectedType, userLocation],
     queryFn: async () => {
-      let query = supabase.from("places").select("*");
-      
-      if (selectedType !== "todos") {
-        query = query.eq("place_type", selectedType);
-      }
+      // First, get places from database
+      const query = supabase
+        .from("places")
+        .select("*")
+        .eq("place_type", selectedType);
 
-      const { data, error } = await query;
+      const { data: dbPlaces, error } = await query;
       if (error) throw error;
 
+      // Enhance with Google Places data if available
+      const enhancedPlaces = await Promise.all(
+        (dbPlaces || []).map(async (place: any) => {
+          // Try to find matching Google Place by name and location
+          if (userLocation && place.latitude && place.longitude) {
+            try {
+              const googlePlaces = await searchGooglePlaces(
+                `${place.name} ${selectedType}`,
+                { lat: place.latitude, lng: place.longitude },
+                1000, // 1km radius
+                mapGooglePlaceType([selectedType])
+              );
+
+              // Find best match
+              const match = googlePlaces.find(
+                (gp) =>
+                  Math.abs(gp.geometry.location.lat - place.latitude) < 0.01 &&
+                  Math.abs(gp.geometry.location.lng - place.longitude) < 0.01
+              );
+
+              if (match) {
+                // Enhance with Google Places data
+                return {
+                  ...place,
+                  name: match.name || place.name,
+                  address: match.formatted_address || place.address,
+                  rating: match.rating || place.rating,
+                  phone: match.phone_number || place.phone,
+                  website: match.website || place.website,
+                  google_place_id: match.place_id,
+                  google_photo_reference: match.photos?.[0]?.photo_reference,
+                };
+              }
+            } catch (error) {
+              console.error('Error enhancing place with Google data:', error);
+            }
+          }
+
+          return place;
+        })
+      );
+
       // Calculate distances if user location is available
-      if (userLocation && data) {
-        const placesWithDistance = data.map((place: any) => ({
+      if (userLocation && enhancedPlaces) {
+        const placesWithDistance = enhancedPlaces.map((place: any) => ({
           ...place,
           distance: calculateDistance(
             userLocation.latitude,
@@ -93,7 +136,7 @@ const Places = () => {
         return placesWithDistance.sort((a, b) => (a.distance || 0) - (b.distance || 0));
       }
 
-      return data;
+      return enhancedPlaces;
     },
   });
 
@@ -206,23 +249,20 @@ const Places = () => {
         )}
 
         <Tabs value={selectedType} onValueChange={setSelectedType}>
-          <TabsList className="w-full h-auto grid grid-cols-3 gap-2 bg-muted/50 p-2 rounded-xl border border-border/50">
-            <TabsTrigger value="todos" className="text-xs md:text-sm data-[state=active]:bg-primary data-[state=active]:text-white">
-              Todos
-            </TabsTrigger>
-            <TabsTrigger value="veterinaria" className="text-xs md:text-sm data-[state=active]:bg-primary data-[state=active]:text-white">
+          <TabsList className="w-full h-auto flex flex-wrap gap-2 bg-muted/50 p-3 sm:p-4 rounded-xl border border-border/50">
+            <TabsTrigger value="veterinaria" className="text-xs sm:text-sm px-3 sm:px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-white">
               Veterinarias
             </TabsTrigger>
-            <TabsTrigger value="parque" className="text-xs md:text-sm data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TabsTrigger value="parque" className="text-xs sm:text-sm px-3 sm:px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-white">
               Parques
             </TabsTrigger>
-            <TabsTrigger value="peluqueria" className="text-xs md:text-sm data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TabsTrigger value="peluqueria" className="text-xs sm:text-sm px-3 sm:px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-white">
               Peluquerías
             </TabsTrigger>
-            <TabsTrigger value="tienda" className="text-xs md:text-sm data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TabsTrigger value="tienda" className="text-xs sm:text-sm px-3 sm:px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-white">
               Tiendas
             </TabsTrigger>
-            <TabsTrigger value="hotel" className="text-xs md:text-sm data-[state=active]:bg-primary data-[state=active]:text-white">
+            <TabsTrigger value="hotel" className="text-xs sm:text-sm px-3 sm:px-4 py-2 data-[state=active]:bg-primary data-[state=active]:text-white">
               Hoteles
             </TabsTrigger>
           </TabsList>
@@ -256,15 +296,23 @@ const Places = () => {
                 <p>No se encontraron lugares con "{searchQuery}"</p>
               </div>
             ) : (
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-2 sm:p-0">
                 {filteredPlaces?.map((place: Place) => (
                   <Card key={place.id} className="overflow-hidden hover:shadow-medium transition-shadow group">
                     <CardContent className="p-0">
                       <div className="relative h-48 overflow-hidden">
                         <img 
-                          src={petFriendlyPlace} 
+                          src={
+                            place.google_photo_reference
+                              ? getPlacePhotoUrl(place.google_photo_reference, 800)
+                              : place.photos?.[0] || petFriendlyPlace
+                          }
                           alt={place.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            // Fallback to default image if Google photo fails
+                            (e.target as HTMLImageElement).src = petFriendlyPlace;
+                          }}
                         />
                         <div className="absolute top-4 right-4">
                           <Badge className="bg-white/95 text-foreground backdrop-blur-sm border-0 shadow-sm">

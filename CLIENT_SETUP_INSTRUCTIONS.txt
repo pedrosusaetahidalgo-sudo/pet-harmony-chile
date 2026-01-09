@@ -1,0 +1,107 @@
+═══════════════════════════════════════════════════════════════════════════════
+                    SUPABASE DASHBOARD SETUP INSTRUCTIONS
+═══════════════════════════════════════════════════════════════════════════════
+
+Hi! To get the app fully working, we need to configure a few things in your 
+Supabase dashboard. This will take about 5-10 minutes.
+
+Here's exactly what to do:
+
+───────────────────────────────────────────────────────────────────────────────
+STEP 1: ENABLE GOOGLE SIGN-IN
+───────────────────────────────────────────────────────────────────────────────
+
+1. Go to your Supabase Dashboard:
+   https://supabase.com/dashboard/project/gwailbjlvevkhwcrovfd
+
+2. In the left sidebar, click on "Authentication"
+
+3. Click on "Providers" (or "Providers" tab)
+
+4. Find "Google" in the list and click on it
+
+5. Toggle the switch to ENABLE Google provider
+
+6. Fill in these credentials:
+   
+   Client ID (Web application):
+   707954104528-87df2bmt6jeaqe9s6h3tjpdrqth3v03r.apps.googleusercontent.com
+   
+   Client Secret:
+   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
+
+7. Click "Save"
+
+✅ This enables Google Sign-In in your app!
+
+───────────────────────────────────────────────────────────────────────────────
+STEP 2: ADD EDGE FUNCTION SECRETS
+───────────────────────────────────────────────────────────────────────────────
+
+1. In your Supabase Dashboard, click on "Edge Functions" in the left sidebar
+
+2. Click on "Secrets" (or look for a "Secrets" tab/button)
+
+3. You need to add 3 secrets. Click "Add Secret" for each one:
+
+   SECRET #1:
+   Name:  GOOGLE_MAPS_API_KEY
+   Value: AIzaSyC38TZuq_ecRV44OLgSn21ET-pjDVCu6ek
+   
+   SECRET #2:
+   Name:  FLOOW_API_KEY
+   Value: 385F03FE-E4C7-4E6F-AF79-5B6B6L86BDCC
+   
+   SECRET #3:
+   Name:  FLOOW_API_SECRET
+   Value: ffea655c55e75f4d0aa75b6a3e44b23e3f62311f
+
+4. Click "Save" after adding each secret
+
+✅ This enables Maps and Payment features!
+
+───────────────────────────────────────────────────────────────────────────────
+STEP 3: VERIFY DATABASE MIGRATIONS
+───────────────────────────────────────────────────────────────────────────────
+
+1. In your Supabase Dashboard, click on "Database" in the left sidebar
+
+2. Click on "Migrations" (or look for migrations section)
+
+3. Check if all migrations are applied (they should show as "Applied" or 
+   have a green checkmark)
+
+4. If any migrations are pending, click "Apply" or "Run" on them
+
+✅ This ensures your database has all the required tables!
+
+───────────────────────────────────────────────────────────────────────────────
+WHAT HAPPENS AFTER YOU DO THIS:
+───────────────────────────────────────────────────────────────────────────────
+
+✅ Google Sign-In will work
+✅ Maps will load correctly
+✅ Payment system will be ready (once we integrate Floow API)
+✅ All edge functions will have access to required secrets
+
+───────────────────────────────────────────────────────────────────────────────
+NEED HELP?
+───────────────────────────────────────────────────────────────────────────────
+
+If you can't find any of these options:
+- Make sure you're logged into the correct Supabase project
+- The project URL should be: gwailbjlvevkhwcrovfd.supabase.co
+- If you need help, let me know which step you're on and I'll guide you!
+
+───────────────────────────────────────────────────────────────────────────────
+QUICK CHECKLIST:
+───────────────────────────────────────────────────────────────────────────────
+
+[ ] Step 1: Google OAuth provider enabled with credentials
+[ ] Step 2: All 3 edge function secrets added
+[ ] Step 3: Database migrations verified/applied
+
+Once you complete these steps, let me know and we can test everything!
+
+═══════════════════════════════════════════════════════════════════════════════
+

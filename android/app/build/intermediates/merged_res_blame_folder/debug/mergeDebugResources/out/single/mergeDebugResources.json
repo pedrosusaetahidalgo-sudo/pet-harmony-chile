@@ -1,0 +1,54 @@
+[
+    {
+        "merged": "cl.pawfriend.app-debug-29:/xml_config.xml.flat",
+        "source": "cl.pawfriend.app-main-31:/xml/config.xml"
+    },
+    {
+        "merged": "cl.pawfriend.app-debug-29:/mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "cl.pawfriend.app-main-31:/mipmap-hdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "cl.pawfriend.app-debug-29:/mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "cl.pawfriend.app-main-31:/mipmap-xxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "cl.pawfriend.app-debug-29:/mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "cl.pawfriend.app-main-31:/mipmap-xhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "cl.pawfriend.app-debug-29:/mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "cl.pawfriend.app-main-31:/mipmap-xxxhdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "cl.pawfriend.app-debug-29:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "cl.pawfriend.app-main-31:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "cl.pawfriend.app-debug-29:/mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "cl.pawfriend.app-main-31:/mipmap-mdpi/ic_launcher_round.png"
+    },
+    {
+        "merged": "cl.pawfriend.app-debug-29:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "cl.pawfriend.app-main-31:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "cl.pawfriend.app-debug-29:/xml_network_security_config.xml.flat",
+        "source": "cl.pawfriend.app-main-31:/xml/network_security_config.xml"
+    },
+    {
+        "merged": "cl.pawfriend.app-debug-29:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "cl.pawfriend.app-main-31:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "cl.pawfriend.app-debug-29:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "cl.pawfriend.app-main-31:/mipmap-xhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "cl.pawfriend.app-debug-29:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "cl.pawfriend.app-main-31:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "cl.pawfriend.app-debug-29:/xml_file_paths.xml.flat",
+        "source": "cl.pawfriend.app-main-31:/xml/file_paths.xml"
+    }
+]

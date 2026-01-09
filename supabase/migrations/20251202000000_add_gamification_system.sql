@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS public.points_history (
 
 -- Create indexes for performance
 CREATE INDEX IF NOT EXISTS idx_user_achievements_user_id ON public.user_achievements(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_achievements_achievement_id ON public.user_achievements(achievement_id);
 CREATE INDEX IF NOT EXISTS idx_user_missions_user_id ON public.user_missions(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_missions_mission_id ON public.user_missions(mission_id);
 CREATE INDEX IF NOT EXISTS idx_points_history_user_id ON public.points_history(user_id);

@@ -53,6 +53,7 @@ interface ProviderData {
   rating: number;
   total_reviews: number;
   price: number;
+  address?: string;
   services?: Record<string, boolean>;
 }
 
@@ -154,11 +155,13 @@ export const EnhancedBookingDialog = ({
   const canProceed = () => {
     switch (currentStep) {
       case 1:
-        return selectedDate && selectedTime;
+        return selectedDate && selectedTime && availableSlots.includes(selectedTime);
       case 2:
         return selectedPets.length > 0;
       case 3:
-        return address.trim().length > 0;
+        // For dogsitters, address is not required (they drop off at provider's location)
+        // For others, address is required (pickup/visit at user's location)
+        return serviceType && (providerType === "dogsitter" || address.trim().length > 0);
       case 4:
         return true;
       default:
@@ -221,6 +224,49 @@ export const EnhancedBookingDialog = ({
     setCoordinates(null);
     setInstructions("");
   };
+
+  // Determine pickup/dropoff logic based on service type
+  const getServiceLocationLogic = () => {
+    switch (providerType) {
+      case "dog_walker":
+        return {
+          label: "Dirección de recogida",
+          description: "El paseador recogerá a tu mascota en esta dirección",
+          placeholder: "Ingresa la dirección donde recogerán a tu mascota",
+          isPickup: true
+        };
+      case "dogsitter":
+        return {
+          label: "Dirección de entrega",
+          description: "Llevarás a tu mascota a la dirección del cuidador",
+          placeholder: "La dirección del cuidador se mostrará después de confirmar",
+          isPickup: false
+        };
+      case "veterinarian":
+        return {
+          label: "Dirección de visita",
+          description: "El veterinario visitará a tu mascota en esta dirección",
+          placeholder: "Ingresa la dirección donde se realizará la visita",
+          isPickup: true
+        };
+      case "trainer":
+        return {
+          label: "Dirección de entrenamiento",
+          description: "El entrenador visitará a tu mascota en esta dirección",
+          placeholder: "Ingresa la dirección donde se realizará el entrenamiento",
+          isPickup: true
+        };
+      default:
+        return {
+          label: "Dirección",
+          description: "",
+          placeholder: "Ingresa la dirección",
+          isPickup: true
+        };
+    }
+  };
+
+  const locationLogic = getServiceLocationLogic();
 
   const getServiceOptions = () => {
     switch (providerType) {
@@ -464,19 +510,43 @@ export const EnhancedBookingDialog = ({
               )}
 
               <div className="space-y-2">
-                <Label>Dirección</Label>
-                <PlacesAutocomplete
-                  value={address}
-                  onChange={setAddress}
-                  onPlaceSelect={(place) => {
-                    setAddress(place.address);
-                    setCoordinates({
-                      lat: place.lat,
-                      lng: place.lng
-                    });
-                  }}
-                  placeholder="Ingresa la dirección"
-                />
+                <div className="flex items-center gap-2">
+                  <Label>{locationLogic.label}</Label>
+                  {locationLogic.description && (
+                    <span className="text-xs text-muted-foreground">({locationLogic.description})</span>
+                  )}
+                </div>
+                {providerType === "dogsitter" ? (
+                  // For sitters, show provider's address (they drop off at sitter's location)
+                  <Card className="bg-muted/50 p-4">
+                    <div className="flex items-start gap-3">
+                      <MapPin className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium text-sm mb-1">Dirección del cuidador</p>
+                        <p className="text-sm text-muted-foreground">
+                          {provider.address || "La dirección se confirmará después de la reserva"}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-2">
+                          Llevarás a tu mascota a esta dirección
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                ) : (
+                  // For walkers, vets, trainers: user provides their address (pickup/visit at user's location)
+                  <PlacesAutocomplete
+                    value={address}
+                    onChange={setAddress}
+                    onPlaceSelect={(place) => {
+                      setAddress(place.address);
+                      setCoordinates({
+                        lat: place.lat,
+                        lng: place.lng
+                      });
+                    }}
+                    placeholder={locationLogic.placeholder}
+                  />
+                )}
               </div>
 
               <div className="space-y-2">
@@ -521,9 +591,13 @@ export const EnhancedBookingDialog = ({
                   <div className="flex items-center justify-between py-2 border-b">
                     <div className="flex items-center gap-2">
                       <MapPin className="h-4 w-4 text-primary" />
-                      <span>Dirección</span>
+                      <span>{locationLogic.label}</span>
                     </div>
-                    <span className="font-medium text-right max-w-[200px] truncate">{address}</span>
+                    <span className="font-medium text-right max-w-[200px] truncate">
+                      {providerType === "dogsitter" 
+                        ? (provider.address || "Dirección del cuidador")
+                        : address}
+                    </span>
                   </div>
 
                   <div className="flex items-center justify-between py-2 pt-4 border-t-2">
