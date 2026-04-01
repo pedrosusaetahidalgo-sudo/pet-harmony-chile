@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -82,7 +83,8 @@ export const EnhancedBookingDialog = ({
   const { user } = useAuth();
   const { toast } = useToast();
   const { addToCart } = useCart();
-  
+  const navigate = useNavigate();
+
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [pets, setPets] = useState<Pet[]>([]);
@@ -421,7 +423,7 @@ export const EnhancedBookingDialog = ({
                   <CardContent className="p-6 text-center">
                     <PawPrint className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
                     <p className="text-muted-foreground mb-3">No tienes mascotas registradas</p>
-                    <Button variant="outline" onClick={() => window.location.href = '/add-pet'}>
+                    <Button variant="outline" onClick={() => navigate('/add-pet')}>
                       Agregar Mascota
                     </Button>
                   </CardContent>

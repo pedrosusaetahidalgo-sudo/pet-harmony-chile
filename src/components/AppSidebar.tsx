@@ -1,6 +1,6 @@
 import { Compass, Heart, User, Plus, Calendar, MapPin, MessageSquare, PawPrint, LogOut, Home, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { Button } from "@/components/ui/button";
@@ -49,10 +49,16 @@ const serviceItems = [
 export function AppSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { isAdmin } = useIsAdmin();
   const currentPath = location.pathname;
   const isCollapsed = state === "collapsed";
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/auth");
+  };
 
   const isActive = (path: string) => currentPath === path;
 
@@ -206,7 +212,7 @@ export function AppSidebar() {
                     variant="outline"
                     size="sm"
                     className="flex-1 hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-all"
-                    onClick={() => window.location.href = '/profile'}
+                    onClick={() => navigate('/profile')}
                   >
                     <User className="h-4 w-4 mr-2" />
                     Perfil
@@ -215,7 +221,7 @@ export function AppSidebar() {
                     variant="outline"
                     size="sm"
                     className="hover:bg-muted transition-all"
-                    onClick={() => window.location.href = '/settings'}
+                    onClick={() => navigate('/settings')}
                   >
                     <Settings className="h-4 w-4" />
                   </Button>
@@ -223,7 +229,7 @@ export function AppSidebar() {
                     variant="outline"
                     size="sm"
                     className="hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-all"
-                    onClick={signOut}
+                    onClick={handleSignOut}
                   >
                     <LogOut className="h-4 w-4" />
                   </Button>
@@ -234,7 +240,7 @@ export function AppSidebar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => window.location.href = '/profile'}
+                  onClick={() => navigate('/profile')}
                   className="hover:bg-primary/10"
                 >
                   <User className="h-5 w-5" />
@@ -242,7 +248,7 @@ export function AppSidebar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => window.location.href = '/settings'}
+                  onClick={() => navigate('/settings')}
                   className="hover:bg-muted"
                 >
                   <Settings className="h-5 w-5" />
@@ -250,7 +256,7 @@ export function AppSidebar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={signOut}
+                  onClick={handleSignOut}
                   className="hover:bg-destructive/10"
                 >
                   <LogOut className="h-5 w-5" />
