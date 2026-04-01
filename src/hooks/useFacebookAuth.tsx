@@ -51,7 +51,7 @@ export const useFacebookAuth = () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'facebook',
       options: {
-        redirectTo: `${window.location.origin}/home`,
+        redirectTo: `${window.location.origin}/auth`,
         scopes: 'email',
       },
     });

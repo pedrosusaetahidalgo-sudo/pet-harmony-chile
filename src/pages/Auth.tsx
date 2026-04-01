@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Dog } from "lucide-react";
+import { Dog, Mail } from "lucide-react";
 import { FaFacebook } from "react-icons/fa";
 import { LegalFooter } from "@/components/LegalFooter";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
@@ -19,21 +19,20 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [confirmationSent, setConfirmationSent] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
   const { signInWithFacebook, loading: facebookLoading } = useFacebookAuth();
 
   useEffect(() => {
-    // Handle OAuth callback and clean URL parameters
     const handleOAuthCallback = async () => {
       const hashParams = new URLSearchParams(window.location.hash.substring(1));
       const queryParams = new URLSearchParams(window.location.search);
-      
-      // Check if this is an OAuth callback
+
       if (hashParams.has('access_token') || queryParams.has('code')) {
         try {
           const { data: { session }, error } = await supabase.auth.getSession();
-          
+
           if (error) {
             console.error('OAuth callback error:', error);
             toast({
@@ -42,10 +41,9 @@ const Auth = () => {
               variant: "destructive",
             });
           }
-          
-          // Clean the URL to prevent 400 error on refresh
+
           window.history.replaceState({}, document.title, window.location.pathname);
-          
+
           if (session) {
             navigate("/home");
           }
@@ -57,17 +55,14 @@ const Auth = () => {
 
     handleOAuthCallback();
 
-    // Check if user is already logged in
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
         navigate("/home");
       }
     });
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" && session) {
-        // Clean URL before navigating
         window.history.replaceState({}, document.title, window.location.pathname);
         navigate("/home");
       }
@@ -81,9 +76,9 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const redirectUrl = `${window.location.origin}/home`;
-      
-      const { error } = await supabase.auth.signUp({
+      const redirectUrl = `${window.location.origin}/auth`;
+
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -96,14 +91,31 @@ const Auth = () => {
 
       if (error) throw error;
 
-      toast({
-        title: "¡Cuenta creada!",
-        description: "Bienvenido a Paw Friend",
-      });
+      // Check if email confirmation is required
+      if (data.user && !data.session) {
+        // User created but no session = email confirmation required
+        setConfirmationSent(true);
+        toast({
+          title: "¡Revisa tu correo!",
+          description: "Te enviamos un enlace de confirmación a " + email,
+        });
+      } else if (data.session) {
+        // Email confirmation disabled, user is logged in directly
+        toast({
+          title: "¡Cuenta creada!",
+          description: "Bienvenido a Paw Friend",
+        });
+      }
     } catch (error: any) {
+      let message = error.message;
+      if (message.includes("already registered")) {
+        message = "Este email ya está registrado. Intenta iniciar sesión.";
+      } else if (message.includes("password")) {
+        message = "La contraseña debe tener al menos 6 caracteres.";
+      }
       toast({
         title: "Error al crear cuenta",
-        description: error.message,
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -128,9 +140,15 @@ const Auth = () => {
         description: "Has iniciado sesión exitosamente",
       });
     } catch (error: any) {
+      let message = error.message;
+      if (message.includes("Invalid login credentials")) {
+        message = "Email o contraseña incorrectos.";
+      } else if (message.includes("Email not confirmed")) {
+        message = "Debes confirmar tu email antes de iniciar sesión. Revisa tu bandeja de entrada.";
+      }
       toast({
         title: "Error al iniciar sesión",
-        description: error.message,
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -141,10 +159,39 @@ const Auth = () => {
   const handleFacebookLogin = async () => {
     const result = await signInWithFacebook();
     if (!result.success && result.error) {
-      // Error is already handled in the hook with toast
       console.error('Facebook login error:', result.error);
     }
   };
+
+  // Show confirmation screen after signup
+  if (confirmationSent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1 flex flex-col items-center">
+            <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-4">
+              <Mail className="w-8 h-8 text-white" />
+            </div>
+            <CardTitle className="text-2xl font-bold text-center">¡Revisa tu correo!</CardTitle>
+            <CardDescription className="text-center text-base">
+              Enviamos un enlace de confirmación a <strong>{email}</strong>.
+              <br /><br />
+              Haz clic en el enlace del correo para activar tu cuenta y luego vuelve aquí para iniciar sesión.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setConfirmationSent(false)}
+            >
+              Volver a Iniciar Sesión
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background p-4">
@@ -164,7 +211,7 @@ const Auth = () => {
               <TabsTrigger value="signin">Iniciar Sesión</TabsTrigger>
               <TabsTrigger value="signup">Registrarse</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4">
                 {/* Social Login Buttons */}
@@ -220,7 +267,7 @@ const Auth = () => {
                 </Button>
               </form>
             </TabsContent>
-            
+
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
                 {/* Social Login Buttons */}

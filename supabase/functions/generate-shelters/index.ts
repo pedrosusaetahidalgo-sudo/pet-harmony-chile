@@ -29,7 +29,6 @@ interface ShelterData {
   ai_processed_at?: string | null;
 }
 
-// Chilean communes for realistic shelter locations
 const chileanCommunes = [
   { name: "Providencia", lat: -33.4289, lng: -70.6108 },
   { name: "Las Condes", lat: -33.4103, lng: -70.5675 },
@@ -48,7 +47,6 @@ const chileanCommunes = [
   { name: "Quilicura", lat: -33.3654, lng: -70.7334 },
 ];
 
-// Shelter name templates
 const shelterTemplates = [
   { prefix: "Refugio", suffix: ["Patitas Felices", "Huellas de Amor", "Vida Animal", "Segunda Oportunidad", "Amigos Peludos"] },
   { prefix: "Fundación", suffix: ["Rescate Animal", "Adopta Chile", "Protección Animal", "Cuatro Patas", "Amor Animal"] },
@@ -63,15 +61,14 @@ serve(async (req) => {
 
   try {
     const { action, count = 15 } = await req.json();
-    
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
-    
+    const anthropicApiKey = Deno.env.get("ANTHROPIC_API_KEY");
+
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     if (action === "generate") {
-      // Check existing shelters
       const { data: existing } = await supabase
         .from("adoption_shelters")
         .select("id")
@@ -84,21 +81,20 @@ serve(async (req) => {
         );
       }
 
-      // Generate shelter data
       const shelters: ShelterData[] = [];
       for (let i = 0; i < count; i++) {
         const commune = chileanCommunes[i % chileanCommunes.length];
         const template = shelterTemplates[Math.floor(Math.random() * shelterTemplates.length)];
         const suffix = template.suffix[Math.floor(Math.random() * template.suffix.length)];
-        
+
         const name = `${template.prefix} ${suffix}`;
-        const type = template.prefix === "Fundación" ? "fundacion" 
+        const type = template.prefix === "Fundación" ? "fundacion"
           : template.prefix === "ONG" ? "ong"
           : template.prefix === "Casa de Acogida" ? "independiente"
           : "refugio";
 
-        const animalTypes = Math.random() > 0.3 
-          ? ["perro", "gato"] 
+        const animalTypes = Math.random() > 0.3
+          ? ["perro", "gato"]
           : Math.random() > 0.5 ? ["perro"] : ["gato"];
 
         const petSizes = Math.random() > 0.2
@@ -106,14 +102,9 @@ serve(async (req) => {
           : Math.random() > 0.5 ? ["pequeño", "mediano"] : ["mediano", "grande"];
 
         const specialtiesOptions = [
-          "rescate de calle",
-          "gatos senior",
-          "perros medianos",
-          "cachorros abandonados",
-          "mascotas con discapacidad",
-          "rehabilitación conductual",
-          "gatos ferales",
-          "perros grandes",
+          "rescate de calle", "gatos senior", "perros medianos",
+          "cachorros abandonados", "mascotas con discapacidad",
+          "rehabilitación conductual", "gatos ferales", "perros grandes",
         ];
 
         const specialties = [
@@ -121,16 +112,12 @@ serve(async (req) => {
         ];
 
         shelters.push({
-          name,
-          type,
-          commune: commune.name,
-          city: "Santiago",
+          name, type,
+          commune: commune.name, city: "Santiago",
           latitude: commune.lat + (Math.random() - 0.5) * 0.02,
           longitude: commune.lng + (Math.random() - 0.5) * 0.02,
           address: `Calle ${Math.floor(Math.random() * 1000) + 1}, ${commune.name}`,
-          animal_types: animalTypes,
-          pet_sizes: petSizes,
-          specialties,
+          animal_types: animalTypes, pet_sizes: petSizes, specialties,
           formality_level: type === "ong" || type === "fundacion" ? "establecido" : "semi_formal",
           contact_email: `contacto@${name.toLowerCase().replace(/\s+/g, "").substring(0, 20)}.cl`,
           website: Math.random() > 0.3 ? `https://www.${name.toLowerCase().replace(/\s+/g, "").substring(0, 15)}.cl` : null,
@@ -144,115 +131,68 @@ serve(async (req) => {
         });
       }
 
-      // Use Lovable AI to generate descriptions if available
-      if (lovableApiKey) {
-        console.log("Using Lovable AI to generate descriptions...");
-        
+      if (anthropicApiKey) {
+        console.log("Using Claude API to generate descriptions...");
+
         for (const shelter of shelters) {
           try {
-            const organizationType = shelter.type === 'ong' 
-              ? 'ONG de rescate animal' 
-              : shelter.type === 'fundacion' 
-              ? 'fundación de protección animal' 
-              : shelter.type === 'independiente' 
-              ? 'casa de acogida independiente' 
+            const organizationType = shelter.type === 'ong'
+              ? 'ONG de rescate animal'
+              : shelter.type === 'fundacion'
+              ? 'fundación de protección animal'
+              : shelter.type === 'independiente'
+              ? 'casa de acogida independiente'
               : 'refugio de animales';
-            
-            const prompt = `Genera una descripción breve, amigable y emotiva (exactamente 2 oraciones, máximo 150 palabras en total) para un ${organizationType} llamado "${shelter.name}" ubicado en ${shelter.commune}, Santiago de Chile. 
 
-CONTEXTO:
-- Se especializan en: ${shelter.specialties.join(', ')}
-- Trabajan principalmente con: ${shelter.animal_types.join(' y ')}
-- Tipo de organización: ${organizationType}
-
-REQUISITOS:
-- Exactamente 2 oraciones
-- Tono cálido, emotivo y motivador
-- Debe inspirar a las personas a adoptar
-- Menciona brevemente la especialidad o enfoque
-- Adaptado al contexto chileno
-- Sin información de contacto (solo descripción)`;
-
-            const systemPrompt = `Eres un escritor especializado en crear descripciones breves, emotivas y motivadoras para organizaciones de rescate animal en Chile. 
-
-DIRECTRICES:
-- Genera exactamente 2 oraciones, máximo 150 palabras en total
-- Tono: Cálido, empático, y motivador
-- Objetivo: Inspirar a las personas a considerar la adopción
-- Estilo: Profesional pero cercano, sin ser excesivamente dramático
-- Contexto: Adaptado a la realidad chilena
-- No incluyas: Información de contacto, precios, o detalles técnicos
-- Enfócate en: El propósito de la organización, su especialidad, y el impacto positivo
-
-FORMATO:
-- Primera oración: Presenta la organización y su propósito
-- Segunda oración: Destaca su especialidad o enfoque único
-
-Responde SOLO con las 2 oraciones, sin títulos, sin formato adicional, sin explicaciones.`;
-
-            const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+            const response = await fetch("https://api.anthropic.com/v1/messages", {
               method: "POST",
               headers: {
-                "Authorization": `Bearer ${lovableApiKey}`,
+                "x-api-key": anthropicApiKey,
+                "anthropic-version": "2023-06-01",
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                model: "google/gemini-2.5-flash",
-                messages: [
-                  { role: "system", content: systemPrompt },
-                  { role: "user", content: prompt }
-                ],
+                model: "claude-sonnet-4-5-20241022",
                 max_tokens: 200,
+                system: "Genera exactamente 2 oraciones emotivas y motivadoras para organizaciones de rescate animal en Chile. Solo responde con las 2 oraciones, sin formato adicional.",
+                messages: [
+                  {
+                    role: "user",
+                    content: `Genera descripción para ${organizationType} "${shelter.name}" en ${shelter.commune}, Santiago. Se especializan en ${shelter.specialties.join(', ')} y trabajan con ${shelter.animal_types.join(' y ')}.`
+                  }
+                ],
               }),
             });
 
             if (response.ok) {
               const data = await response.json();
-              let aiContent = data.choices?.[0]?.message?.content?.trim() || null;
-              
-              // Limpiar y validar el contenido
+              let aiContent = data.content?.[0]?.text?.trim() || null;
+
               if (aiContent) {
-                // Remover títulos o formato adicional si existe
-                aiContent = aiContent
-                  .replace(/^#{1,3}\s+/gm, '') // Remover markdown headers
-                  .replace(/\*\*/g, '') // Remover bold
-                  .replace(/\*/g, '') // Remover italic
-                  .trim();
-                
-                // Asegurar que tenga al menos 2 oraciones
-                const sentences = aiContent.split(/[.!?]+/).filter(s => s.trim().length > 0);
-                if (sentences.length < 2) {
-                  // Si solo hay una oración, crear una segunda
-                  const orgType = shelter.type === 'ong' ? 'ONG' : shelter.type === 'fundacion' ? 'fundación' : shelter.type === 'independiente' ? 'casa de acogida' : 'refugio';
-                  aiContent = `${aiContent} Se especializan en ${shelter.specialties[0]} y buscan hogares amorosos para ${shelter.animal_types.join(' y ')}.`;
-                }
+                aiContent = aiContent.replace(/^#{1,3}\s+/gm, '').replace(/\*\*/g, '').replace(/\*/g, '').trim();
               }
-              
+
               shelter.ai_description = aiContent;
               shelter.description = aiContent || undefined;
               shelter.ai_processed_at = new Date().toISOString();
             } else {
-              throw new Error(`AI API error: ${response.status}`);
+              throw new Error(`Claude API error: ${response.status}`);
             }
           } catch (aiError) {
             console.error("AI description error:", aiError);
-            // Fallback description
             const orgType = shelter.type === 'ong' ? 'ONG' : shelter.type === 'fundacion' ? 'fundación' : shelter.type === 'independiente' ? 'casa de acogida' : 'refugio';
             shelter.description = `${shelter.name} es un ${orgType} dedicado al rescate y cuidado de ${shelter.animal_types.join(" y ")}. Ubicado en ${shelter.commune}, Santiago, buscan hogares amorosos para sus animales y se especializan en ${shelter.specialties[0]}.`;
             shelter.ai_processed_at = new Date().toISOString();
           }
-          
-          // Small delay to avoid rate limiting
+
           await new Promise(resolve => setTimeout(resolve, 200));
         }
       } else {
-        // Generate basic descriptions without AI
         for (const shelter of shelters) {
           shelter.description = `${shelter.name} es un ${shelter.type === 'ong' ? 'organización sin fines de lucro' : shelter.type === 'fundacion' ? 'fundación' : shelter.type === 'independiente' ? 'hogar de acogida independiente' : 'refugio'} dedicado al rescate y adopción responsable de ${shelter.animal_types.join(" y ")}. Ubicado en ${shelter.commune}, Santiago, trabaja con animales ${shelter.specialties[0]}.`;
         }
       }
 
-      // Insert shelters
       const { data: inserted, error: insertError } = await supabase
         .from("adoption_shelters")
         .insert(shelters)
