@@ -176,21 +176,38 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center space-y-4">
-          <PawPrint className="h-12 w-12 text-primary mx-auto animate-bounce" />
-          <p className="text-muted-foreground">Cargando tu espacio...</p>
+      <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6 animate-fade-in">
+        {/* Skeleton Welcome Header */}
+        <div className="rounded-2xl bg-muted/40 p-6 md:p-8 space-y-4">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-2xl skeleton" />
+            <div className="space-y-2">
+              <div className="h-6 w-48 skeleton" />
+              <div className="h-4 w-32 skeleton" />
+            </div>
+          </div>
+        </div>
+        {/* Skeleton Quick Actions */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {[1,2,3,4].map(i => (
+            <div key={i} className="h-24 rounded-xl skeleton" />
+          ))}
+        </div>
+        {/* Skeleton Content Cards */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="h-64 rounded-xl skeleton" />
+          <div className="h-64 rounded-xl skeleton" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6">
+    <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6 animate-fade-in-up">
       {showTutorial && <OnboardingTutorial onComplete={handleTutorialComplete} />}
       
       {/* Welcome Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 p-6 md:p-8">
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 p-6 md:p-8 animate-fade-in-down">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
         <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
         

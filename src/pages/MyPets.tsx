@@ -108,14 +108,35 @@ const MyPets = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
+      <div className="container px-4 py-8 max-w-6xl mx-auto animate-fade-in">
+        <div className="flex items-center justify-between mb-8">
+          <div className="space-y-2">
+            <div className="h-8 w-40 skeleton" />
+            <div className="h-4 w-64 skeleton" />
+          </div>
+          <div className="h-10 w-40 skeleton" />
+        </div>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1,2,3].map(i => (
+            <div key={i} className="rounded-xl overflow-hidden border border-border">
+              <div className="h-48 skeleton" />
+              <div className="p-4 space-y-3">
+                <div className="h-5 w-32 skeleton" />
+                <div className="h-4 w-48 skeleton" />
+                <div className="flex gap-2">
+                  <div className="h-8 w-20 skeleton" />
+                  <div className="h-8 w-20 skeleton" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container px-4 py-8 max-w-6xl mx-auto">
+    <div className="container px-4 py-8 max-w-6xl mx-auto animate-fade-in-up">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-2">Mis Mascotas</h1>
@@ -125,7 +146,7 @@ const MyPets = () => {
           </div>
           <Button
             onClick={() => navigate("/add-pet")}
-            className="bg-warm-gradient hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:scale-105"
+            className="bg-warm-gradient hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:scale-105 btn-press"
           >
             <Plus className="mr-2 h-5 w-5" />
             Agregar Mascota
@@ -133,9 +154,9 @@ const MyPets = () => {
         </div>
 
         {pets.length === 0 ? (
-          <Card>
+          <Card className="animate-scale-in">
             <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-              <Heart className="h-16 w-16 text-muted-foreground/50 mb-4" />
+              <Heart className="h-16 w-16 text-muted-foreground/50 mb-4 animate-float" />
               <h3 className="text-xl font-semibold mb-2">
                 No tienes mascotas registradas
               </h3>
@@ -145,7 +166,7 @@ const MyPets = () => {
               </p>
               <Button
                 onClick={() => navigate("/add-pet")}
-                className="bg-warm-gradient hover:opacity-90 transition-opacity"
+                className="bg-warm-gradient hover:opacity-90 transition-opacity btn-press"
               >
                 <Plus className="mr-2 h-5 w-5" />
                 Agregar Mi Primera Mascota
@@ -154,8 +175,8 @@ const MyPets = () => {
           </Card>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {pets.map((pet) => (
-              <Card key={pet.id} className="overflow-hidden hover:shadow-lg transition-shadow">
+            {pets.map((pet, index) => (
+              <Card key={pet.id} className={`overflow-hidden card-hover animate-fade-in-up stagger-${Math.min(index + 1, 8)}`}>
                 <div className="relative h-48 bg-muted">
                   {pet.photo_url ? (
                     <img

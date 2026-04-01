@@ -44,7 +44,7 @@ const Index = () => {
 
       {/* Features Section */}
       <section className="container px-4 py-20">
-        <div className="text-center mb-12 space-y-4 animate-fade-in">
+        <div className="text-center mb-12 space-y-4 animate-fade-in-up">
           <Badge className="bg-primary/10 text-primary border-primary/20 text-sm px-4 py-1">
             ✨ Características Principales
           </Badge>
