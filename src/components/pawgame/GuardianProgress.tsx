@@ -31,18 +31,32 @@ interface GuardianProgressProps {
   progressPercent: number;
 }
 
+// 10 Tiers with unique colors and icons
+const TIERS = [
+  { min: 1, max: 1, name: "Cachorro Curioso", icon: Zap, gradient: "from-gray-400 to-gray-500", color: "text-gray-400" },
+  { min: 2, max: 2, name: "Explorador Novato", icon: Zap, gradient: "from-green-400 to-emerald-500", color: "text-green-400" },
+  { min: 3, max: 4, name: "Guardián Aprendiz", icon: Star, gradient: "from-emerald-500 to-teal-500", color: "text-emerald-400" },
+  { min: 5, max: 7, name: "Protector de Patitas", icon: Star, gradient: "from-cyan-500 to-blue-500", color: "text-cyan-400" },
+  { min: 8, max: 10, name: "Héroe Animal", icon: Star, gradient: "from-blue-500 to-indigo-500", color: "text-blue-400" },
+  { min: 11, max: 15, name: "Campeón de Huellas", icon: Trophy, gradient: "from-indigo-500 to-purple-500", color: "text-indigo-400" },
+  { min: 16, max: 20, name: "Maestro Guardian", icon: Trophy, gradient: "from-purple-500 to-pink-500", color: "text-purple-400" },
+  { min: 21, max: 30, name: "Leyenda Peluda", icon: Crown, gradient: "from-pink-500 to-rose-500", color: "text-pink-400" },
+  { min: 31, max: 40, name: "Guardián Supremo", icon: Crown, gradient: "from-amber-500 to-orange-500", color: "text-amber-400" },
+  { min: 41, max: 999, name: "Deidad de las Mascotas", icon: Crown, gradient: "from-yellow-400 via-amber-400 to-orange-400", color: "text-yellow-300" },
+];
+
+const getTier = (level: number) => {
+  return TIERS.find(t => level >= t.min && level <= t.max) || TIERS[0];
+};
+
 const getLevelIcon = (level: number) => {
-  if (level >= 40) return <Crown className="h-8 w-8 text-yellow-400" />;
-  if (level >= 25) return <Trophy className="h-8 w-8 text-purple-400" />;
-  if (level >= 10) return <Star className="h-8 w-8 text-blue-400" />;
-  return <Zap className="h-8 w-8 text-emerald-400" />;
+  const tier = getTier(level);
+  const Icon = tier.icon;
+  return <Icon className={`h-8 w-8 ${tier.color}`} />;
 };
 
 const getLevelGradient = (level: number) => {
-  if (level >= 40) return "from-yellow-500 via-amber-500 to-orange-500";
-  if (level >= 25) return "from-purple-500 via-pink-500 to-rose-500";
-  if (level >= 10) return "from-blue-500 via-cyan-500 to-teal-500";
-  return "from-emerald-500 via-green-500 to-lime-500";
+  return getTier(level).gradient;
 };
 
 export const GuardianProgress = ({ 
@@ -69,7 +83,7 @@ export const GuardianProgress = ({
               </div>
             </div>
             <div>
-              <h3 className="font-bold text-lg">{currentLevel?.level_name || "Cachorro Curioso"}</h3>
+              <h3 className="font-bold text-lg">{currentLevel?.level_name || getTier(level).name}</h3>
               <p className="text-sm text-muted-foreground">{currentLevel?.description || "Comenzando tu aventura"}</p>
               {multiplier > 1 && (
                 <Badge variant="secondary" className="mt-1 bg-yellow-500/10 text-yellow-600">
