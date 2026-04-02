@@ -979,8 +979,8 @@ function generatePDF(pet: PetData, records: any[]) {
     .header h1 { font-size: 20px; color: #7c3aed; font-weight: 700; }
     .header .subtitle { font-size: 10px; color: #666; }
     .header .date { font-size: 10px; color: #999; text-align: right; }
-    .header .logo { font-size: 16px; color: #7c3aed; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-    .header .logo-icon { width: 28px; height: 28px; background: #7c3aed; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; }
+    .header .logo { font-size: 22px; color: #7c3aed; font-weight: 800; display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; }
+    .header .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, #7c3aed, #a855f7); border-radius: 10px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(124,58,237,0.3); }
 
     .section { margin-bottom: 14px; }
     .section-title { font-size: 12px; font-weight: 700; color: #7c3aed; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 4px; border-bottom: 1px solid #e5e7eb; margin-bottom: 8px; }
@@ -1028,7 +1028,7 @@ function generatePDF(pet: PetData, records: any[]) {
       <div class="subtitle">Documento generado digitalmente \u2014 pawfriend.cl</div>
     </div>
     <div class="date">
-      <div class="logo"><div class="logo-icon">🐾</div> Paw Friend</div>
+      <div class="logo"><div class="logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" fill="white"/></svg></div> Paw Friend</div>
       <div>Emitido: ${now}</div>
     </div>
   </div>
@@ -1105,7 +1105,7 @@ function generatePDF(pet: PetData, records: any[]) {
   </div>` : ""}
 
   <div class="footer">
-    <div class="brand">Paw Friend \u2014 pawfriend.cl</div>
+    <div class="brand">🐾 Paw Friend — pawfriend.cl</div>
     <div>Este documento es informativo y no reemplaza la evaluaci\u00f3n cl\u00ednica profesional.</div>
     <div>Documento privado \u2014 Solo para uso del tutor y profesionales autorizados.</div>
   </div>
