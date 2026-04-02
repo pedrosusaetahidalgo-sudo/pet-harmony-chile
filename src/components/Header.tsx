@@ -1,14 +1,46 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Heart, PawPrint, Bell, Crown, MessageSquare } from "lucide-react";
+import { Heart, PawPrint, Bell, Crown, MessageSquare, Clock, AlertCircle, UserPlus, MessageCircle, Calendar, CheckCircle, Star, Trophy, Flame } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
+import { useNotifications } from "@/hooks/useNotifications";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { ScrollArea } from "@/components/ui/scroll-area";
+
+const notificationIconMap: Record<string, { icon: React.ElementType; color: string }> = {
+  reminder_due: { icon: Clock, color: "text-amber-500" },
+  reminder_overdue: { icon: AlertCircle, color: "text-red-500" },
+  new_follower: { icon: UserPlus, color: "text-blue-500" },
+  post_liked: { icon: Heart, color: "text-pink-500" },
+  post_commented: { icon: MessageCircle, color: "text-green-500" },
+  booking_confirmed: { icon: Calendar, color: "text-purple-500" },
+  booking_completed: { icon: CheckCircle, color: "text-green-500" },
+  new_review: { icon: Star, color: "text-amber-500" },
+  level_up: { icon: Trophy, color: "text-yellow-500" },
+  streak_milestone: { icon: Flame, color: "text-orange-500" },
+};
+
+function getNotificationIcon(type: string) {
+  return notificationIconMap[type] || { icon: Bell, color: "text-gray-400" };
+}
+
+function timeAgo(dateStr: string): string {
+  const now = Date.now();
+  const diff = now - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return "ahora";
+  if (mins < 60) return `hace ${mins}m`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `hace ${hours}h`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `hace ${days}d`;
+  return `hace ${Math.floor(days / 7)}sem`;
+}
 
 
 export const Header = () => {
@@ -16,12 +48,13 @@ export const Header = () => {
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [userStats, setUserStats] = useState<any>(null);
-  const [unreadCount, setUnreadCount] = useState(0);
+  const [msgUnreadCount, setMsgUnreadCount] = useState(0);
+  const { notifications, unreadCount: notifUnreadCount, markAsRead, markAllRead } = useNotifications();
 
   useEffect(() => {
     if (user) {
       loadProfile();
-      loadUnreadMessages();
+      loadUnreadMsgs();
       const cleanup = setupRealtimeSubscription();
       return cleanup;
     }
@@ -37,7 +70,7 @@ export const Header = () => {
           schema: 'public',
           table: 'messages'
         },
-        () => loadUnreadMessages()
+        () => loadUnreadMsgs()
       )
       .subscribe();
 
@@ -62,7 +95,7 @@ export const Header = () => {
     }
   };
 
-  const loadUnreadMessages = async () => {
+  const loadUnreadMsgs = async () => {
     if (!user) return;
 
     const { data: conversations } = await supabase
@@ -81,7 +114,7 @@ export const Header = () => {
       .neq('sender_id', user.id)
       .is('read_at', null);
 
-    setUnreadCount(count || 0);
+    setMsgUnreadCount(count || 0);
   };
 
   return (
@@ -113,16 +146,57 @@ export const Header = () => {
                   className="relative hover:bg-accent min-h-[44px] min-w-[44px]"
                 >
                   <Bell className="h-5 w-5" />
+                  {notifUnreadCount > 0 && (
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-destructive hover:bg-destructive/90">
+                      {notifUnreadCount > 9 ? "9+" : notifUnreadCount}
+                    </Badge>
+                  )}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-80 p-0" align="end">
-                <div className="p-3 border-b">
+                <div className="p-3 border-b flex items-center justify-between">
                   <h4 className="font-semibold text-sm">Notificaciones</h4>
+                  {notifUnreadCount > 0 && (
+                    <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => markAllRead()}>
+                      Marcar todas como leídas
+                    </Button>
+                  )}
                 </div>
-                <div className="p-4 text-center text-sm text-muted-foreground">
-                  <Bell className="h-8 w-8 mx-auto mb-2 text-muted-foreground/40" />
-                  <p>No tienes notificaciones nuevas</p>
-                </div>
+                {notifications.length === 0 ? (
+                  <div className="p-6 text-center text-sm text-muted-foreground">
+                    <Bell className="h-8 w-8 mx-auto mb-2 text-muted-foreground/40" />
+                    <p className="font-medium">Todo al día</p>
+                    <p>Sin notificaciones. 🎉</p>
+                  </div>
+                ) : (
+                  <ScrollArea className="max-h-[320px]">
+                    {notifications.map((n) => {
+                      const { icon: Icon, color } = getNotificationIcon(n.type);
+                      return (
+                        <div
+                          key={n.id}
+                          className={`flex items-start gap-3 p-3 hover:bg-accent cursor-pointer transition-colors border-b last:border-b-0 ${!n.is_read ? "bg-primary/5" : ""}`}
+                          onClick={() => {
+                            if (!n.is_read) markAsRead(n.id);
+                            if (n.action_url) navigate(n.action_url);
+                          }}
+                        >
+                          <div className={`mt-0.5 flex-shrink-0 ${color}`}>
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className={`text-sm leading-snug ${!n.is_read ? "font-semibold" : ""}`}>{n.title}</p>
+                            <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{n.body}</p>
+                            <p className="text-xs text-muted-foreground/70 mt-1">{timeAgo(n.created_at)}</p>
+                          </div>
+                          {!n.is_read && (
+                            <div className="mt-2 h-2 w-2 rounded-full bg-primary flex-shrink-0" />
+                          )}
+                        </div>
+                      );
+                    })}
+                  </ScrollArea>
+                )}
                 <Separator />
                 <div className="p-2">
                   <Button variant="ghost" size="sm" className="w-full text-xs" onClick={() => navigate('/settings')}>
@@ -141,9 +215,9 @@ export const Header = () => {
                   className="relative hover:bg-accent min-h-[44px] min-w-[44px]"
                 >
                   <MessageSquare className="h-5 w-5" />
-                  {unreadCount > 0 && (
+                  {msgUnreadCount > 0 && (
                     <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-destructive hover:bg-destructive/90">
-                      {unreadCount}
+                      {msgUnreadCount}
                     </Badge>
                   )}
                 </Button>
@@ -157,8 +231,8 @@ export const Header = () => {
                 </div>
                 <div className="p-4 text-center text-sm text-muted-foreground">
                   <MessageSquare className="h-8 w-8 mx-auto mb-2 text-muted-foreground/40" />
-                  {unreadCount > 0
-                    ? <p>Tienes {unreadCount} mensaje{unreadCount > 1 ? "s" : ""} sin leer</p>
+                  {msgUnreadCount > 0
+                    ? <p>Tienes {msgUnreadCount} mensaje{msgUnreadCount > 1 ? "s" : ""} sin leer</p>
                     : <p>No tienes mensajes nuevos</p>
                   }
                 </div>

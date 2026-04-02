@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useBlockedUsers } from "@/hooks/useBlockedUsers";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -27,6 +28,7 @@ import {
 
 const Feed = () => {
   const { user } = useAuth();
+  const { filterBlocked } = useBlockedUsers();
   const [showAnalyzer, setShowAnalyzer] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [showCreatePost, setShowCreatePost] = useState(false);
@@ -257,14 +259,14 @@ const Feed = () => {
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2" />
                   <p className="text-sm text-muted-foreground">Cargando publicaciones...</p>
                 </div>
-              ) : posts.length === 0 ? (
+              ) : filterBlocked(posts, "user_id").length === 0 ? (
                 <div className="text-center py-8">
                   <p className="text-muted-foreground">
                     No hay publicaciones todavía. ¡Sé el primero en compartir!
                   </p>
                 </div>
               ) : (
-                posts
+                filterBlocked(posts, "user_id")
                   .filter((post) => {
                     if (!searchQuery.trim()) return true;
                     const q = searchQuery.toLowerCase();
@@ -300,7 +302,7 @@ const Feed = () => {
                 <div className="text-center py-12">
                   <p className="text-muted-foreground">Cargando mascotas...</p>
                 </div>
-              ) : pets.length === 0 ? (
+              ) : filterBlocked(pets, "owner_id").length === 0 ? (
                 <div className="text-center py-12">
                   <p className="text-muted-foreground">
                     No hay mascotas registradas todavía.
@@ -308,7 +310,7 @@ const Feed = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {pets
+                  {filterBlocked(pets, "owner_id")
                     .filter((pet) => {
                       if (!searchQuery.trim()) return true;
                       const q = searchQuery.toLowerCase();
@@ -365,7 +367,7 @@ const Feed = () => {
                   </Button>
                 </div>
               ) : (
-                followingPosts.map((post) => (
+                filterBlocked(followingPosts, "user_id").map((post) => (
                   <PetCard
                     key={post.id}
                     postId={post.id}
@@ -387,7 +389,7 @@ const Feed = () => {
             </TabsContent>
 
             <TabsContent value="popular" className="space-y-6 mt-6">
-              {posts
+              {filterBlocked(posts, "user_id")
                 .filter((p) => (p.likes_count || 0) > 0)
                 .sort((a, b) => (b.likes_count || 0) - (a.likes_count || 0))
                 .slice(0, 10)

@@ -47,6 +47,7 @@ const BlockUserButton = ({
       });
 
       // Invalidate relevant queries
+      queryClient.invalidateQueries({ queryKey: ["blocked-users", user.id] });
       queryClient.invalidateQueries({ queryKey: ["blocked", user.id, targetUserId] });
       queryClient.invalidateQueries({ queryKey: ["follows", user.id, targetUserId] });
     } catch (error: any) {
@@ -68,15 +69,34 @@ const BlockUserButton = ({
   };
 
   return (
-    <Button
-      variant={variant}
-      className={sizeClasses[size]}
-      disabled
-      title="Próximamente"
-    >
-      <Ban className="h-4 w-4 mr-2" />
-      Bloquear
-    </Button>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant={variant}
+          className={sizeClasses[size]}
+          disabled={isBlocking}
+        >
+          {isBlocking ? (
+            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          ) : (
+            <Ban className="h-4 w-4 mr-2" />
+          )}
+          Bloquear
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Bloquear usuario</AlertDialogTitle>
+          <AlertDialogDescription>
+            Este usuario no podrá contactarte ni ver tu contenido. Esta acción se puede deshacer más adelante.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancelar</AlertDialogCancel>
+          <AlertDialogAction onClick={handleBlock}>Bloquear</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 
