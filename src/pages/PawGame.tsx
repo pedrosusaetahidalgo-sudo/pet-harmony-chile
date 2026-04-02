@@ -116,6 +116,7 @@ const PawGame = () => {
   const [userBadges, setUserBadges] = useState<string[]>([]);
   const [pets, setPets] = useState<Pet[]>([]);
   const [activeTab, setActiveTab] = useState("missions");
+  const [showTutorial, setShowTutorial] = useState(false);
 
   useEffect(() => {
     if (user) {
