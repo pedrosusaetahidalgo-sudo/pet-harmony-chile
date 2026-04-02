@@ -8,20 +8,21 @@ interface Props {
 
 interface State {
   hasError: boolean;
+  errorMessage: string;
 }
 
 class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, errorMessage: "" };
   }
 
-  static getDerivedStateFromError(): State {
-    return { hasError: true };
+  static getDerivedStateFromError(error: Error): State {
+    return { hasError: true, errorMessage: error.message || "Error desconocido" };
   }
 
-  componentDidCatch(error: Error) {
-    console.error("ErrorBoundary caught:", error);
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error("ErrorBoundary caught:", error, errorInfo.componentStack);
   }
 
   render() {
@@ -30,8 +31,11 @@ class ErrorBoundary extends Component<Props, State> {
         <div className="flex flex-col items-center justify-center min-h-[50vh] p-8 text-center animate-fade-in">
           <AlertCircle className="h-12 w-12 text-destructive mb-4" />
           <h2 className="text-xl font-semibold mb-2">Algo salió mal</h2>
-          <p className="text-muted-foreground mb-6">
+          <p className="text-muted-foreground mb-4">
             Hubo un error al cargar esta página.
+          </p>
+          <p className="text-xs text-muted-foreground bg-muted rounded p-2 mb-6 max-w-md font-mono break-all">
+            {this.state.errorMessage}
           </p>
           <div className="flex gap-3">
             <Button onClick={() => this.setState({ hasError: false })}>

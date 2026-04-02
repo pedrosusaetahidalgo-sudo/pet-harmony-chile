@@ -209,9 +209,9 @@ const PawGame = () => {
 
       setPets(petsData || []);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error loading game data:', error);
-      toast.error("No se pudo cargar la información del juego");
+      // Don't crash - just show the page with empty data
     } finally {
       setLoading(false);
     }
