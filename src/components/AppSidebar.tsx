@@ -38,6 +38,7 @@ const petItems = [
 ];
 
 const serviceItems = [
+  { title: "Calendario", url: "/calendar", icon: Calendar },
   { title: "Paseadores", url: "/dog-walkers", icon: Dog },
   { title: "Veterinarios", url: "/home-vets", icon: Stethoscope },
   { title: "Cuidadores", url: "/dog-sitters", icon: ShieldCheck },
