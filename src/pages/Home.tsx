@@ -57,6 +57,7 @@ interface Appointment {
 interface Profile {
   display_name: string | null;
   avatar_url: string | null;
+  is_premium?: boolean;
 }
 
 interface PawGameProgress {
@@ -103,7 +104,7 @@ export default function Home() {
       // Load profile
       const { data: profileData } = await supabase
         .from("profiles")
-        .select("display_name, avatar_url")
+        .select("display_name, avatar_url, is_premium")
         .eq("id", user.id)
         .maybeSingle();
       
@@ -327,6 +328,24 @@ export default function Home() {
         )}
       </div>
 
+      {/* Premium Upsell - show after user has pets */}
+      {pets.length > 0 && !profile?.is_premium && (
+        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-secondary/5">
+          <CardContent className="p-4 flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Crown className="h-8 w-8 text-primary" />
+              <div>
+                <p className="font-semibold text-sm">Paw Friend Premium</p>
+                <p className="text-xs text-muted-foreground">2x puntos, ficha completa, sin comisiones</p>
+              </div>
+            </div>
+            <Button size="sm" variant="outline" onClick={() => navigate('/premium')}>
+              Desde $4.990/mes
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Featured Partner Ad */}
       <PartnerAd placement="home" className="mb-6" />
 
@@ -346,16 +365,16 @@ export default function Home() {
           </CardHeader>
           <CardContent>
             {pets.length === 0 ? (
-              <div className="text-center py-8">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-                  <PawPrint className="h-8 w-8 text-primary" />
+              <div className="text-center py-6">
+                <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
+                  <PawPrint className="h-7 w-7 text-primary" />
                 </div>
-                <p className="text-muted-foreground mb-4">
-                  Aún no tienes mascotas registradas
-                </p>
-                <Button onClick={() => navigate("/add-pet")} variant="outline">
+                <p className="font-medium mb-1">Agrega tu primera mascota</p>
+                <p className="text-xs text-muted-foreground mb-1">Ficha clínica + recordatorios automáticos</p>
+                <p className="text-xs text-primary font-medium mb-4">🎮 Gana recordatorios de salud al registrar</p>
+                <Button onClick={() => navigate("/add-pet")} size="sm">
                   <Plus className="h-4 w-4 mr-2" />
-                  Agregar mi primera mascota
+                  Agregar mascota
                 </Button>
               </div>
             ) : (

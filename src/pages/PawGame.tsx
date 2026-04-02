@@ -40,6 +40,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { track, EVENTS } from "@/lib/analytics";
 import { GuardianProgress } from "@/components/pawgame/GuardianProgress";
 import { MissionCard } from "@/components/pawgame/MissionCard";
 import { BadgeGallery } from "@/components/pawgame/BadgeGallery";
@@ -336,7 +337,18 @@ const PawGame = () => {
         .update({ points: (currentProfile?.points || 0) + bonusPoints } as any)
         .eq('id', user.id);
 
-      toast.success(`¡Check-in diario! +${bonusPoints} PawPoints 🔥 Racha: ${newStreak} días`);
+      track({ event: EVENTS.STREAK_CLAIMED, properties: { streak: newStreak, points: bonusPoints } });
+
+      // Milestone celebrations
+      if (newStreak === 7) {
+        toast.success("🏆 ¡Racha de 7 días! Eres un Guardián dedicado. +25 puntos bonus");
+        await supabase.from('profiles').update({ points: (currentProfile?.points || 0) + bonusPoints + 25 } as any).eq('id', user.id);
+      } else if (newStreak === 30) {
+        toast.success("🎖️ ¡30 días seguidos! Eres una Leyenda Peluda. +100 puntos bonus");
+        await supabase.from('profiles').update({ points: (currentProfile?.points || 0) + bonusPoints + 100 } as any).eq('id', user.id);
+      } else {
+        toast.success(`¡Check-in diario! +${bonusPoints} PawPoints 🔥 Racha: ${newStreak} días`);
+      }
       loadGameData();
     } catch (error) {
       console.error('Check-in error:', error);

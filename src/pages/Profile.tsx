@@ -168,8 +168,22 @@ const Profile = () => {
                       <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
                         <Settings className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
-                        <Share2 className="h-4 w-4" />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 sm:flex-none"
+                        onClick={() => {
+                          const shareUrl = `https://pawfriend.cl/user/${user?.id}`;
+                          if (navigator.share) {
+                            navigator.share({ title: 'Paw Friend', text: `Mira mi perfil en Paw Friend`, url: shareUrl });
+                          } else {
+                            navigator.clipboard.writeText(shareUrl);
+                            toast({ title: "Link copiado", description: "Comparte tu perfil con amigos" });
+                          }
+                        }}
+                      >
+                        <Share2 className="h-4 w-4 mr-2" />
+                        Compartir
                       </Button>
                     </div>
                   </div>

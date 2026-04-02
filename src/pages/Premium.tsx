@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -17,11 +17,16 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { PremiumBadge } from "@/components/PremiumBadge";
+import { track, EVENTS } from "@/lib/analytics";
 
 const Premium = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   const [selectedPlan, setSelectedPlan] = useState<"monthly" | "yearly" | null>(null);
+
+  useEffect(() => {
+    track({ event: EVENTS.PREMIUM_VIEWED });
+  }, []);
 
   // Get user's premium status
   const { data: profile } = useQuery({
@@ -91,6 +96,7 @@ const Premium = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-profile", user?.id] });
+      track({ event: EVENTS.PREMIUM_CONVERTED, properties: { plan: selectedPlan } });
       toast({
         title: "¡Bienvenido a Premium!",
         description: "Tu suscripción Premium ha sido activada",

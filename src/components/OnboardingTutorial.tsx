@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { X, ArrowRight, ArrowLeft, Home, PawPrint, Calendar, MapPin, Heart, Trophy } from "lucide-react";
@@ -48,6 +49,7 @@ interface OnboardingTutorialProps {
 }
 
 export const OnboardingTutorial = ({ onComplete }: OnboardingTutorialProps) => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
 
@@ -120,6 +122,18 @@ export const OnboardingTutorial = ({ onComplete }: OnboardingTutorialProps) => {
             <p className="text-center text-muted-foreground text-lg leading-relaxed mb-6">
               {step.description}
             </p>
+
+            {/* Action CTAs per step */}
+            {currentStep === 1 && (
+              <Button size="sm" className="w-full mt-3" onClick={() => { onComplete(); navigate('/add-pet'); }}>
+                Agregar mi mascota ahora
+              </Button>
+            )}
+            {currentStep === 2 && (
+              <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => { onComplete(); navigate('/dog-walkers'); }}>
+                Explorar servicios
+              </Button>
+            )}
 
             {/* Progress Indicators */}
             <div className="flex gap-1.5 justify-center mb-6">
