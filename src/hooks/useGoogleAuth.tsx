@@ -2,9 +2,11 @@ import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Capacitor } from "@capacitor/core";
+import { logger } from "@/lib/logger";
 
 // Dynamic import for Capacitor Google Auth (only available on native)
-let GoogleAuth: any = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic plugin with no shared type
+let GoogleAuth: Record<string, (...args: unknown[]) => Promise<unknown>> | null = null;
 
 // Check if we're on a native platform and load the plugin
 const initGoogleAuth = async () => {
@@ -20,7 +22,7 @@ const initGoogleAuth = async () => {
         grantOfflineAccess: true,
       });
     } catch (error) {
-      console.log('Google Auth plugin not available:', error);
+      logger.debug('Google Auth plugin not available:', error);
     }
   }
 };
@@ -57,9 +59,9 @@ export const useGoogleAuth = () => {
         // Web flow using Supabase OAuth (works without SHA-1)
         return await handleWebGoogleAuth();
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Google Sign-In error:', error);
-      
+
       const errorMessage = getErrorMessage(error);
       toast({
         title: "Error al iniciar sesión con Google",
@@ -103,11 +105,12 @@ export const useGoogleAuth = () => {
       }
 
       throw new Error('No se pudo crear la sesión');
-    } catch (error: any) {
+    } catch (error: unknown) {
       // Handle user cancellation gracefully
-      if (error.message?.includes('popup_closed') || 
-          error.message?.includes('cancelled') ||
-          error.code === '12501') {
+      const err = error as { message?: string; code?: string };
+      if (err.message?.includes('popup_closed') ||
+          err.message?.includes('cancelled') ||
+          err.code === '12501') {
         return { success: false, error: 'Inicio de sesión cancelado' };
       }
       throw error;
@@ -144,7 +147,7 @@ export const useGoogleAuth = () => {
       try {
         await GoogleAuth.signOut();
       } catch (error) {
-        console.log('Google sign out error:', error);
+        logger.warn('Google sign out error:', error);
       }
     }
   }, []);
@@ -158,7 +161,7 @@ export const useGoogleAuth = () => {
         const result = await GoogleAuth.refresh();
         return result?.authentication?.idToken;
       } catch (error) {
-        console.log('Token refresh error:', error);
+        logger.warn('Token refresh error:', error);
         return null;
       }
     }
@@ -176,8 +179,9 @@ export const useGoogleAuth = () => {
 /**
  * Get user-friendly error message
  */
-function getErrorMessage(error: any): string {
-  const message = error?.message || error?.toString() || '';
+function getErrorMessage(error: unknown): string {
+  const err = error as { message?: string };
+  const message = err?.message || String(error) || '';
   
   if (message.includes('popup_closed') || message.includes('cancelled')) {
     return 'Inicio de sesión cancelado por el usuario';

@@ -22,7 +22,8 @@ import { calculateDistance } from "@/lib/distance";
 import { cn } from "@/lib/utils";
 
 // Fix Leaflet default marker icon issue with bundlers (Vite/Webpack)
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+// Leaflet bundler workaround: remove broken default icon URL resolver
+delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",

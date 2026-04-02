@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
 import { PlacesAutocomplete } from "@/components/PlacesAutocomplete";
-import { useCart } from "@/contexts/CartContext";
+import { supabase } from "@/integrations/supabase/client";
 import { 
   CalendarCheck, 
   Clock, 
@@ -24,7 +24,7 @@ import {
   PawPrint,
   User,
   AlertCircle,
-  ShoppingCart
+  CheckCircle
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -82,7 +82,6 @@ export const EnhancedBookingDialog = ({
 }: EnhancedBookingDialogProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const { addToCart } = useCart();
   const navigate = useNavigate();
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -180,35 +179,34 @@ export const EnhancedBookingDialog = ({
       const [hours, minutes] = selectedTime.split(':');
       bookingDate.setHours(parseInt(hours), parseInt(minutes));
 
-      // Add to cart instead of creating booking directly
-      await addToCart({
-        service_type: providerType,
+      // Create booking directly
+      const { error } = await supabase.from('bookings').insert({
+        user_id: user.id,
         provider_id: provider.user_id,
-        provider_name: provider.display_name,
-        provider_avatar: provider.avatar_url || undefined,
-        pet_ids: selectedPets,
-        pet_names: pets.filter(p => selectedPets.includes(p.id)).map(p => p.name),
-        scheduled_date: bookingDate.toISOString(),
-        duration_minutes: duration,
-        service_details: {
-          service_type: serviceType,
-        },
-        unit_price_clp: calculateTotal(),
-        address: address,
-        latitude: coordinates?.lat,
-        longitude: coordinates?.lng,
-        special_instructions: instructions,
+        service_type: providerType,
+        status: 'confirmed',
+        payment_status: 'pending',
+        total_price: calculateTotal(),
+        pet_id: selectedPets[0] || null,
+        notes: instructions || null,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Reserva confirmada",
+        description: "Tu reserva ha sido creada exitosamente.",
       });
 
       onBookingComplete();
       onOpenChange(false);
       resetForm();
     } catch (error) {
-      console.error('Error adding to cart:', error);
+      console.error('Error creating booking:', error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "No se pudo agregar al carrito. Intenta nuevamente."
+        description: "No se pudo crear la reserva. Intenta nuevamente."
       });
     } finally {
       setLoading(false);
@@ -646,8 +644,8 @@ export const EnhancedBookingDialog = ({
               disabled={loading}
               className="bg-gradient-to-r from-primary to-primary/80"
             >
-              {loading ? "Agregando..." : "Agregar al Carrito"}
-              <ShoppingCart className="h-4 w-4 ml-2" />
+              {loading ? "Reservando..." : "Confirmar Reserva"}
+              <CheckCircle className="h-4 w-4 ml-2" />
             </Button>
           )}
         </div>

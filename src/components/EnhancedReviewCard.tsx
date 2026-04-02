@@ -89,7 +89,8 @@ const EnhancedReviewCard = ({ reviewType, review, providerId, isProvider }: Enha
         : "vet_reviews";
 
       await supabase
-        .from(tableName as any)
+        // Table name is dynamic based on reviewType; cast required for Supabase typed client
+        .from(tableName as "walk_reviews" | "dogsitter_reviews" | "vet_reviews")
         .update({
           provider_response: response,
           provider_response_date: new Date().toISOString()

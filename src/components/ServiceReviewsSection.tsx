@@ -24,7 +24,7 @@ const ServiceReviewsSection = ({
   isVerified = false,
   isProvider = false
 }: ServiceReviewsSectionProps) => {
-  const [reviews, setReviews] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<Record<string, unknown>[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<"recent" | "highest" | "lowest" | "helpful">("recent");
   const [filterRating, setFilterRating] = useState<string>("all");
@@ -36,7 +36,9 @@ const ServiceReviewsSection = ({
     loadReviews();
   }, [providerId, providerType, sortBy, filterRating]);
 
-  const getTableName = () => {
+  type ReviewTableName = "walk_reviews" | "dogsitter_reviews" | "vet_reviews" | "training_reviews";
+
+  const getTableName = (): ReviewTableName => {
     switch (providerType) {
       case "walk":
         return "walk_reviews";
@@ -69,7 +71,7 @@ const ServiceReviewsSection = ({
       const providerColumn = getProviderColumn();
 
       let query = supabase
-        .from(tableName as any)
+        .from(tableName)
         .select(`
           *,
           owner:owner_id (
@@ -108,13 +110,13 @@ const ServiceReviewsSection = ({
 
       // Calculate distribution
       const allReviews = await supabase
-        .from(tableName as any)
+        .from(tableName)
         .select("rating")
         .eq(providerColumn, providerId);
 
       if (allReviews.data) {
         const dist = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-        allReviews.data.forEach((r: any) => {
+        allReviews.data.forEach((r: { rating: number }) => {
           if (r.rating >= 1 && r.rating <= 5) {
             dist[r.rating as keyof typeof dist]++;
           }
@@ -154,7 +156,7 @@ const ServiceReviewsSection = ({
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="flex items-center gap-2 flex-1">
             <Filter className="h-4 w-4 text-muted-foreground" />
-            <Select value={sortBy} onValueChange={(v) => setSortBy(v as any)}>
+            <Select value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
               <SelectTrigger className="flex-1">
                 <SelectValue placeholder="Ordenar por" />
               </SelectTrigger>

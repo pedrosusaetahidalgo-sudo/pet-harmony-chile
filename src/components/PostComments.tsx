@@ -74,7 +74,7 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      setComments(data as any || []);
+      setComments((data as Comment[]) || []);
     } catch (error) {
       console.error('Error loading comments:', error);
     } finally {

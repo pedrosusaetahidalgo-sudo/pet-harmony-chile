@@ -33,6 +33,7 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { getGreeting } from "@/lib/format";
 import { useGamification } from "@/hooks/useGamification";
 import { useReminders } from "@/hooks/useReminders";
 import PointsWidget from "@/components/PointsWidget";
@@ -178,12 +179,6 @@ export default function Home() {
     },
   ];
 
-  const greeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "¡Buenos días";
-    if (hour < 18) return "¡Buenas tardes";
-    return "¡Buenas noches";
-  };
 
   if (loading) {
     return (
@@ -242,7 +237,7 @@ export default function Home() {
             </div>
             <div>
               <h1 className="text-2xl md:text-3xl font-bold">
-                {greeting()}, {profile?.display_name || user?.email?.split("@")[0] || "Amigo"}!
+                {getGreeting()}, {profile?.display_name || user?.email?.split("@")[0] || "Amigo"} 👋
               </h1>
               <p className="text-muted-foreground mt-1">
                 {pets.length > 0 

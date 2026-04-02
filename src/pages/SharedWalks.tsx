@@ -56,7 +56,7 @@ const SharedWalks = () => {
       setLoading(true);
       
       // Load all shared walks
-      const { data: walksData } = await (supabase as any)
+      const { data: walksData } = await supabase
         .from('shared_walks')
         .select(`
           *,
@@ -73,7 +73,7 @@ const SharedWalks = () => {
 
       // Load user's walks
       if (user) {
-        const { data: myWalksData } = await (supabase as any)
+        const { data: myWalksData } = await supabase
           .from('shared_walks')
           .select(`
             *,
@@ -102,7 +102,7 @@ const SharedWalks = () => {
 
   const joinWalk = async (walkId: string) => {
     try {
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from('shared_walk_participants')
         .insert({
           walk_id: walkId,

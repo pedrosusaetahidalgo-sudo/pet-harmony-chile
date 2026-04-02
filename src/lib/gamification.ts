@@ -78,7 +78,7 @@ export async function awardPoints(
 ): Promise<void> {
   // This will be implemented as a Supabase function call
   // For now, it's a placeholder
-  console.log(`Awarding ${points} points to user ${userId} for ${actionType}`);
+  // TODO: implement as Supabase function call
 }
 
 /**

@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
-import { CartProvider } from "./contexts/CartContext";
+
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -20,7 +20,7 @@ const MyPets = lazy(() => import("./pages/MyPets"));
 const AddPet = lazy(() => import("./pages/AddPet"));
 const MedicalRecords = lazy(() => import("./pages/MedicalRecords"));
 const Adoption = lazy(() => import("./pages/Adoption"));
-const Gamification = lazy(() => import("./pages/Gamification"));
+
 const PawGame = lazy(() => import("./pages/PawGame"));
 const DogWalkers = lazy(() => import("./pages/DogWalkers"));
 const HomeVets = lazy(() => import("./pages/HomeVets"));
@@ -65,7 +65,6 @@ const PageLoader = () => (
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <CartProvider>
         <Toaster />
         <Sonner />
         <BrowserRouter>
@@ -81,7 +80,7 @@ const App = () => (
               <Route path="/add-pet" element={<ProtectedRoute><AppLayout><AddPet /></AppLayout></ProtectedRoute>} />
               <Route path="/medical-records" element={<ProtectedRoute><AppLayout><MedicalRecords /></AppLayout></ProtectedRoute>} />
               <Route path="/adoption" element={<ProtectedRoute><AppLayout><Adoption /></AppLayout></ProtectedRoute>} />
-              <Route path="/gamification" element={<ProtectedRoute><AppLayout><Gamification /></AppLayout></ProtectedRoute>} />
+
               <Route path="/paw-game" element={<ProtectedRoute><AppLayout><PawGame /></AppLayout></ProtectedRoute>} />
               <Route path="/dog-walkers" element={<ProtectedRoute><AppLayout><DogWalkers /></AppLayout></ProtectedRoute>} />
               <Route path="/home-vets" element={<ProtectedRoute><AppLayout><HomeVets /></AppLayout></ProtectedRoute>} />
@@ -112,7 +111,6 @@ const App = () => (
           </Suspense>
           </ErrorBoundary>
         </BrowserRouter>
-      </CartProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

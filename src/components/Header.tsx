@@ -9,7 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
-import { CartButton } from "@/components/CartButton";
+
 
 export const Header = () => {
   const { user } = useAuth();
@@ -56,7 +56,7 @@ export const Header = () => {
 
       setProfile(data);
       // Use profile data for level/points (single source of truth)
-      setUserStats(data ? { level: (data as any).level || 1, points: (data as any).points || 0 } : null);
+      setUserStats(data ? { level: data.level || 1, points: data.points || 0 } : null);
     } catch (error) {
       console.error("Error loading profile:", error);
     }
@@ -104,8 +104,6 @@ export const Header = () => {
         {/* User Section */}
         {user && (
           <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-            <CartButton />
-
             {/* Notifications Popover */}
             <Popover>
               <PopoverTrigger asChild>

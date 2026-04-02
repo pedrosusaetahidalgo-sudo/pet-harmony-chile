@@ -2,14 +2,16 @@
  * Analytics Event Tracking
  * Foundation for product analytics - tracks key user events
  *
- * Events are logged to console in development.
+ * Events are logged via logger in development.
  * Replace with actual analytics provider (Mixpanel, Amplitude, PostHog)
  * when ready for production analytics.
  */
 
+import { logger } from "@/lib/logger";
+
 interface TrackEvent {
   event: string;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
   userId?: string;
 }
 
@@ -92,7 +94,7 @@ export function track({ event, properties, userId }: TrackEvent): void {
   };
 
   if (IS_DEV) {
-    console.log("[Analytics]", payload.event, payload.properties);
+    logger.debug("[Analytics]", payload.event, payload.properties);
   }
 
   // TODO: Replace with actual analytics provider
@@ -105,9 +107,9 @@ export function track({ event, properties, userId }: TrackEvent): void {
 /**
  * Identify a user for analytics
  */
-export function identify(userId: string, traits?: Record<string, any>): void {
+export function identify(userId: string, traits?: Record<string, unknown>): void {
   if (IS_DEV) {
-    console.log("[Analytics] Identify:", userId, traits);
+    logger.debug("[Analytics] Identify:", userId, traits);
   }
 
   // TODO: Replace with actual analytics provider

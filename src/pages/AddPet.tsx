@@ -156,7 +156,7 @@ const AddPet = () => {
         activity_level: formData.activity_level || null,
         behavior_notes: formData.behavior_notes || null,
         insurance_provider: formData.insurance_provider || null,
-      } as any);
+      });
 
       if (error) throw error;
 
@@ -181,7 +181,7 @@ const AddPet = () => {
             { pet_id: newPet.id, owner_id: user?.id, type: "checkup", title: `Control veterinario de ${formData.name}`, due_date: in90days.toISOString().split("T")[0] },
             { pet_id: newPet.id, owner_id: user?.id, type: "vaccine", title: `Revisar vacunas de ${formData.name}`, due_date: in30days.toISOString().split("T")[0] },
             { pet_id: newPet.id, owner_id: user?.id, type: "grooming", title: `Baño y peluquería de ${formData.name}`, due_date: in30days.toISOString().split("T")[0], is_recurring: true, recurrence_interval: "monthly" },
-          ] as any[]);
+          ]);
         }
       } catch (reminderError) {
         console.error("Error creating default reminders:", reminderError);

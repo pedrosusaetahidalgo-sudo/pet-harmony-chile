@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Header } from "@/components/Header";
-import { CartDrawer } from "@/components/CartDrawer";
+
 import { PremiumBanner } from "@/components/PremiumBanner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/hooks/useAuth";
@@ -56,7 +56,6 @@ export function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider defaultOpen={true}>
       <LayoutInner>{children}</LayoutInner>
-      <CartDrawer />
     </SidebarProvider>
   );
 }

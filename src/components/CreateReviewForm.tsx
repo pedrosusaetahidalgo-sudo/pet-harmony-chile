@@ -109,7 +109,8 @@ const CreateReviewForm = ({ reviewType, bookingId, providerId, onSuccess, onCanc
       }
 
       const { data: review, error } = await supabase
-        .from(tableName as any)
+        // Table name is dynamic based on reviewType; cast required for Supabase typed client
+        .from(tableName as "walk_reviews" | "dogsitter_reviews" | "vet_reviews")
         .insert(reviewData)
         .select()
         .maybeSingle();

@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { useCart } from "@/contexts/CartContext";
+
 import { Loader2 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 
 const PaymentResult = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { clearCart } = useCart();
   const [status, setStatus] = useState<'processing' | 'success' | 'error'>('processing');
 
   useEffect(() => {
@@ -31,7 +30,6 @@ const PaymentResult = () => {
         if (error) throw error;
 
         if (data?.success) {
-          await clearCart();
           setStatus('success');
           navigate(`/payment-success?order=${data.order_number || ''}`);
         } else {
@@ -46,7 +44,7 @@ const PaymentResult = () => {
     };
 
     confirmPayment();
-  }, [searchParams, navigate, clearCart]);
+  }, [searchParams, navigate]);
 
   return (
     <AppLayout>

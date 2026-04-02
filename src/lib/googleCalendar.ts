@@ -177,7 +177,7 @@ export class GoogleCalendarSync {
 export async function requestCalendarPermission(): Promise<string | null> {
   // This would typically use Google OAuth 2.0 flow
   // For now, return null - implementation depends on OAuth setup
-  console.log('Google Calendar OAuth not yet implemented');
+  // TODO: Google Calendar OAuth not yet implemented
   return null;
 }
 

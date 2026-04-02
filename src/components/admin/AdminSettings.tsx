@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { Settings, Save, RefreshCw } from "lucide-react";
 import { useState, useEffect } from "react";
+import type { Json } from "@/integrations/supabase/types";
 
 const AdminSettings = () => {
   const queryClient = useQueryClient();
@@ -31,7 +32,7 @@ const AdminSettings = () => {
     if (config) {
       const feeConfig = config.find(c => c.config_key === "platform_fee");
       if (feeConfig?.config_value) {
-        const value = feeConfig.config_value as any;
+        const value = feeConfig.config_value as Record<string, number>;
         setPlatformFee({
           percentage: value.percentage || 5,
           min_fee_clp: value.min_fee_clp || 500,
@@ -42,7 +43,7 @@ const AdminSettings = () => {
   }, [config]);
 
   const updateConfigMutation = useMutation({
-    mutationFn: async ({ key, value }: { key: string; value: any }) => {
+    mutationFn: async ({ key, value }: { key: string; value: Json }) => {
       const { error } = await supabase
         .from("platform_config")
         .update({ config_value: value })

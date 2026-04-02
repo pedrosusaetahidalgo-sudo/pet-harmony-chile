@@ -3,6 +3,8 @@
  * Fetches real place data (name, address, rating, photos) from Google Places API
  */
 
+import { logger } from "@/lib/logger";
+
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
 export interface GooglePlace {
@@ -38,7 +40,7 @@ export async function searchGooglePlaces(
   type?: string
 ): Promise<GooglePlace[]> {
   if (!GOOGLE_MAPS_API_KEY) {
-    console.warn('Google Maps API key not configured');
+    logger.warn('Google Maps API key not configured');
     return [];
   }
 
@@ -57,7 +59,8 @@ export async function searchGooglePlaces(
     const data = await response.json();
 
     if (data.status === 'OK' && data.results) {
-      return data.results.map((place: any) => ({
+      // Google Places API response shape matches GooglePlace with `formatted_phone_number` instead of `phone_number`
+      return data.results.map((place: GooglePlace & { formatted_phone_number?: string }) => ({
         place_id: place.place_id,
         name: place.name,
         formatted_address: place.formatted_address,
@@ -85,7 +88,7 @@ export async function searchGooglePlaces(
  */
 export async function getPlaceDetails(placeId: string): Promise<GooglePlace | null> {
   if (!GOOGLE_MAPS_API_KEY) {
-    console.warn('Google Maps API key not configured');
+    logger.warn('Google Maps API key not configured');
     return null;
   }
 

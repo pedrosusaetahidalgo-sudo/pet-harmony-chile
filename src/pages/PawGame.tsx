@@ -322,7 +322,7 @@ const PawGame = () => {
         .update({
           streak_days: newStreak,
           last_activity_date: new Date().toISOString(),
-        } as any)
+        })
         .eq('user_id', user.id);
 
       // Award check-in points via awardPoints utility (handles daily limit)

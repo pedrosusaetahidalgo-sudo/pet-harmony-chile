@@ -52,14 +52,14 @@ export const useReminders = () => {
       const { error } = await supabase.from("pet_reminders").insert({
         ...reminder,
         owner_id: user?.id,
-      } as any);
+      });
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pet-reminders"] });
       toast({ title: "Recordatorio creado" });
     },
-    onError: (error: any) => {
+    onError: (error: Error) => {
       toast({ title: "Error", description: error.message, variant: "destructive" });
     },
   });
@@ -68,7 +68,7 @@ export const useReminders = () => {
     mutationFn: async (id: string) => {
       const { error } = await supabase
         .from("pet_reminders")
-        .update({ is_completed: true, completed_at: new Date().toISOString() } as any)
+        .update({ is_completed: true, completed_at: new Date().toISOString() })
         .eq("id", id);
       if (error) throw error;
     },

@@ -204,7 +204,7 @@ export const RequestRoleVerification = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="requested_role">Tipo de Servicio</Label>
-            <Select onValueChange={(value) => setValue('requested_role', value as any)}>
+            <Select onValueChange={(value) => setValue('requested_role', value as RoleRequestFormData['requested_role'])}>
               <SelectTrigger>
                 <SelectValue placeholder="Selecciona el tipo de servicio" />
               </SelectTrigger>
