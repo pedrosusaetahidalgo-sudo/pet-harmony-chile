@@ -41,6 +41,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { track, EVENTS } from "@/lib/analytics";
+import { getLevelFromPoints } from "@/lib/levels";
+import { awardPoints } from "@/lib/points";
 import { GuardianProgress } from "@/components/pawgame/GuardianProgress";
 import { MissionCard } from "@/components/pawgame/MissionCard";
 import { BadgeGallery } from "@/components/pawgame/BadgeGallery";
@@ -313,7 +315,6 @@ const PawGame = () => {
       const yesterdayStr = yesterday.toISOString().split('T')[0];
       const isConsecutive = lastDate === yesterdayStr;
       const newStreak = isConsecutive ? (userProgress?.streak_days || 0) + 1 : 1;
-      const bonusPoints = Math.min(newStreak * 5, 50); // 5 pts per streak day, max 50
 
       // Update streak tracking (not points) on guardian progress
       await supabase
@@ -324,39 +325,35 @@ const PawGame = () => {
         } as any)
         .eq('user_id', user.id);
 
-      // Record daily check-in points via transaction (trigger syncs to user_stats)
-      await supabase.from('paw_point_transactions').insert({
-        user_id: user.id,
-        points_amount: bonusPoints,
-        transaction_type: 'earned',
-        source_type: 'daily_checkin',
-        description: `Check-in diario - racha ${newStreak} días`,
-      });
+      // Award check-in points via awardPoints utility (handles daily limit)
+      const result = await awardPoints(user.id, 'daily_checkin');
 
-      track({ event: EVENTS.STREAK_CLAIMED, properties: { streak: newStreak, points: bonusPoints } });
+      track({ event: EVENTS.STREAK_CLAIMED, properties: { streak: newStreak, points: result.points } });
 
-      // Milestone celebrations — award bonus via separate transaction
+      // Milestone celebrations via awardPoints (handles one-time check)
       if (newStreak === 7) {
-        await supabase.from('paw_point_transactions').insert({
-          user_id: user.id,
-          points_amount: 25,
-          transaction_type: 'earned',
-          source_type: 'streak_milestone',
-          description: 'Bonus racha 7 días',
-        });
-        toast.success("🏆 ¡Racha de 7 días! Eres un Guardián dedicado. +25 puntos bonus");
+        const streakResult = await awardPoints(user.id, 'streak_7');
+        if (streakResult.awarded) {
+          toast.success("🏆 ¡Racha de 7 días! Eres un Guardián dedicado. +25 puntos bonus");
+        }
       } else if (newStreak === 30) {
-        await supabase.from('paw_point_transactions').insert({
-          user_id: user.id,
-          points_amount: 100,
-          transaction_type: 'earned',
-          source_type: 'streak_milestone',
-          description: 'Bonus racha 30 días',
-        });
-        toast.success("🎖️ ¡30 días seguidos! Eres una Leyenda Peluda. +100 puntos bonus");
-      } else {
-        toast.success(`¡Check-in diario! +${bonusPoints} PawPoints 🔥 Racha: ${newStreak} días`);
+        const streakResult = await awardPoints(user.id, 'streak_30');
+        if (streakResult.awarded) {
+          toast.success("🎖️ ¡30 días seguidos! Eres una Leyenda Peluda. +100 puntos bonus");
+        }
+      } else if (newStreak === 90) {
+        const streakResult = await awardPoints(user.id, 'streak_90');
+        if (streakResult.awarded) {
+          toast.success("💎 ¡90 días seguidos! Eres un Paw Master. +300 puntos bonus");
+        }
       }
+
+      if (result.awarded) {
+        toast.success(`¡Check-in diario! +${result.points} PawPoints 🔥 Racha: ${newStreak} días`);
+      } else if (result.error === 'Daily limit reached') {
+        toast.info("Ya hiciste check-in hoy. ¡Vuelve mañana!");
+      }
+
       loadGameData();
     } catch (error) {
       console.error('Check-in error:', error);
@@ -386,9 +383,8 @@ const PawGame = () => {
     );
   }
 
-  const progressPercent = currentLevel && nextLevel && userProgress
-    ? ((userProgress.total_paw_points - currentLevel.min_points) / (nextLevel.min_points - currentLevel.min_points)) * 100
-    : 0;
+  const levelInfo = getLevelFromPoints(userProgress?.total_paw_points || 0);
+  const progressPercent = levelInfo.progressPercent;
 
   return (
     <div className="container px-4 py-6 max-w-7xl mx-auto animate-fade-in space-y-6">

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { getLevelFromPoints, type LevelInfo } from "@/lib/levels";
 
 export interface UserGamification {
   points: number;
@@ -163,8 +164,11 @@ export const useGamification = (userId?: string) => {
     },
   });
 
+  const levelInfo: LevelInfo | null = stats ? getLevelFromPoints(stats.points) : null;
+
   return {
     stats,
+    levelInfo,
     achievements: achievements || [],
     missions: missions || [],
     isLoading,
