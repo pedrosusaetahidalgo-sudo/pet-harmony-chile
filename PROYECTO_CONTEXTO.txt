@@ -1,0 +1,201 @@
+========================================
+CONTEXTO COMPLETO - PAW FRIEND (pawfriend.cl)
+Red Social para Mascotas en Chile
+========================================
+
+STACK TECNOLÓGICO:
+- Frontend: React 18 + TypeScript + Vite
+- Styling: Tailwind CSS + shadcn/ui (50+ componentes)
+- State: TanStack React Query + React Context
+- Forms: React Hook Form + Zod
+- Routing: React Router v6 (40+ rutas, lazy loading)
+- Maps: Google Maps API + Leaflet
+- Backend: Supabase (PostgreSQL + Auth + Storage + Edge Functions)
+- Auth: Supabase Auth (Google OAuth, Facebook OAuth, Email/Password)
+- AI: Claude API (Anthropic) via Supabase Edge Functions
+- Pagos: Webpay Plus (Transbank Chile)
+- Mobile: Capacitor (iOS/Android)
+- Deploy: GitHub Pages (docs/ folder) con dominio pawfriend.cl
+
+REPOSITORIO: github.com/pedrosusaetahidalgo-sudo/pet-harmony-chile
+DOMINIO: pawfriend.cl
+SUPABASE PROJECT REF: gwailbjlvevkhwcrovfd
+
+========================================
+FEATURES PRINCIPALES
+========================================
+
+1. PERFILES DE MASCOTAS
+   - Crear perfil con foto, raza, peso, color, personalidad
+   - Historial médico completo (vacunas, consultas, cirugías)
+   - Documentos médicos (upload PDF/imagen, compartir con veterinarios)
+   - Alergias y condiciones crónicas
+
+2. RED SOCIAL (FEED)
+   - Posts con fotos
+   - Likes, comentarios
+   - Seguir/dejar de seguir usuarios
+   - Tabs: Descubre, Siguiendo, Trending
+
+3. SERVICIOS PARA MASCOTAS
+   - Paseadores de perros
+   - Cuidadores (dog sitters)
+   - Entrenadores caninos
+   - Veterinarios a domicilio
+   - Paseos compartidos/grupales
+   - Sistema de booking con carrito y checkout
+   - Reviews y ratings
+
+4. MAPA INTERACTIVO
+   - Lugares pet-friendly (Google Places API)
+   - Mascotas perdidas con geolocalización
+   - Refugios y adopción
+   - Proveedores de servicios cercanos
+
+5. ADOPCIÓN
+   - Posts de adopción
+   - Refugios (generados con IA)
+   - Sistema de interés/mensajes
+
+6. GAMIFICATION (PAW GAME)
+   - PawPoints por acciones
+   - Niveles de guardián
+   - Misiones diarias/semanales/historia
+   - Badges/logros
+   - Tienda de recompensas
+   - Progreso por mascota
+
+7. CHAT/MENSAJES
+   - Conversaciones directas
+   - Mensajes en tiempo real (Supabase Realtime)
+
+8. PANEL ADMIN
+   - Gestión de usuarios
+   - Gestión de proveedores de servicios
+   - Moderación de contenido (IA)
+   - Configuración de plataforma
+   - Gestión de anuncios/partners
+
+9. PAGOS (WEBPAY PLUS)
+   - Carrito de compras
+   - Checkout con Transbank
+   - Comisión de plataforma (5%)
+   - Balance de proveedores
+
+10. PREMIUM
+    - Plan premium con beneficios
+    - Badge premium
+
+========================================
+EDGE FUNCTIONS (SUPABASE - DENO)
+========================================
+
+11 funciones, todas migradas a Claude API (Anthropic):
+- analyze-dog-behavior: Análisis de comportamiento canino por video/imágenes (vision)
+- breed-tips: Consejos por raza
+- medical-suggestions: Sugerencias médicas veterinarias
+- moderate-service-promotion: Moderación de contenido con IA
+- generate-shelters: Generación de refugios ficticios
+- generate-places: Generación de lugares pet-friendly
+- generate-medical-summary: Resumen médico PDF
+- generate-medical-zip: Descarga ZIP de documentos
+- get-google-maps-key: Sirve API key de Maps
+- webpay-init: Iniciar transacción Webpay
+- webpay-confirm: Confirmar pago Webpay
+
+========================================
+BASE DE DATOS (68 TABLAS)
+========================================
+
+Core: profiles, pets, medical_records, medical_documents, medical_share_tokens
+Social: posts, post_likes, post_comments, user_follows, user_blocks, messages, conversations
+Servicios: service_providers, provider_service_offerings, provider_availability, walk_bookings, dogsitter_bookings, training_bookings, vet_bookings
+Adopción: adoption_posts, adoption_interests, adoption_shelters
+Gamification: paw_missions, user_missions, paw_badges, user_paw_badges, guardian_levels, user_guardian_progress, daily_challenges, paw_shop_rewards, paw_point_transactions
+Pagos: orders, order_items, cart_items, subscriptions, balance_transactions
+Ubicación: places, lost_pets, shared_walks
+Admin: platform_config, partners, user_roles
+
+RLS (Row Level Security) activo en todas las tablas con políticas por usuario.
+
+========================================
+DISEÑO ACTUAL
+========================================
+
+- Paleta: Morado primario (270° 70% 60%), rosa/púrpura secundario
+- Gradientes suaves purple
+- Sidebar estilo Mac Dock (iconos con efecto magnification en cascada)
+- Mobile: sidebar offcanvas (slide-over drawer)
+- Desktop: sidebar colapsable a dock de iconos
+- Skeleton loaders en páginas principales
+- Error Boundary global
+- Animaciones sutiles: fadeIn, scaleIn (0.25-0.35s)
+- Tipografía: escala h1-h6 definida
+- Sombras: 6 niveles (xs a xl) con tinte purple
+
+========================================
+DATOS SEED (DEMO)
+========================================
+
+8 usuarios demo (password: demo1234):
+- camila.silva@demo.cl, matias.rojas@demo.cl, valentina.munoz@demo.cl
+- sebastian.diaz@demo.cl, francisca.lagos@demo.cl, nicolas.herrera@demo.cl
+- isidora.parra@demo.cl, tomas.gonzalez@demo.cl
+
+17 mascotas (13 perros + 4 gatos) con fotos de Unsplash
+8 posts en el feed social
+
+========================================
+ARCHIVOS CLAVE
+========================================
+
+src/App.tsx - Router principal (40+ rutas con lazy loading)
+src/index.css - Design system completo (colores, sombras, animaciones)
+src/integrations/supabase/client.ts - Cliente Supabase
+src/integrations/supabase/types.ts - Tipos de la DB (3700 líneas)
+src/components/AppSidebar.tsx - Sidebar Mac Dock
+src/components/AppLayout.tsx - Layout principal
+src/components/Header.tsx - Header con notificaciones
+src/components/ErrorBoundary.tsx - Manejo de errores
+src/hooks/useAuth.tsx - Auth state
+src/pages/ - 32 páginas
+
+========================================
+ISSUES CONOCIDOS
+========================================
+
+1. PawGame puede mostrar "Algo salió mal" (crash en componentes hijos)
+2. Google Maps no funciona si la API key no tiene Maps JavaScript API habilitada
+3. Edge functions necesitan ANTHROPIC_API_KEY en Supabase Secrets
+4. Los usuarios demo no pueden hacer login por email (error de schema en auth)
+5. Usuarios reales (Google OAuth) funcionan correctamente
+6. Facebook OAuth no está configurado aún
+
+========================================
+MONETIZACIÓN PLANIFICADA
+========================================
+
+Tier 1 (inmediato): Comisión 5% en servicios, Plan Premium $4.990/mes, Promociones de proveedores
+Tier 2 (mediano plazo): Marketplace de productos, Seguros para mascotas, Telemedicina
+Tier 3 (largo plazo): Suscripción Paw Club, Data insights, API para clínicas
+
+========================================
+CONFIGURACIÓN REQUERIDA
+========================================
+
+Supabase Dashboard:
+- Authentication > Settings > Confirm email: OFF
+- Authentication > URL Configuration > Site URL: https://pawfriend.cl
+- Authentication > URL Configuration > Redirect URLs: https://pawfriend.cl/**
+- Edge Functions > Secrets: ANTHROPIC_API_KEY
+
+Google Cloud Console:
+- Maps JavaScript API: habilitada
+- Places API: habilitada
+- Google OAuth configured
+
+.env local (NO en git):
+- VITE_SUPABASE_URL
+- VITE_SUPABASE_PUBLISHABLE_KEY
+- VITE_GOOGLE_CLIENT_ID_WEB
+- VITE_GOOGLE_MAPS_API_KEY

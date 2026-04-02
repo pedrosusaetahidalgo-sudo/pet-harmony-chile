@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Plus, Edit, Trash2, Heart } from "lucide-react";
+import { Plus, Edit, Trash2, Heart, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
@@ -247,25 +247,35 @@ const MyPets = () => {
                     <BreedTips breed={pet.breed} species={pet.species} />
                   )}
 
-                  <div className="flex gap-2 pt-2">
+                  <div className="flex flex-col gap-2 pt-2">
                     <Button
-                      variant="outline"
                       size="sm"
-                      className="flex-1"
-                      onClick={() => navigate(`/edit-pet/${pet.id}`)}
+                      className="w-full"
+                      onClick={() => navigate(`/pet/${pet.id}/clinical`)}
                     >
-                      <Edit className="mr-2 h-4 w-4" />
-                      Editar
+                      <FileText className="mr-2 h-4 w-4" />
+                      Ficha Clínica
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 text-destructive hover:text-destructive"
-                      onClick={() => setDeleteId(pet.id)}
-                    >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Eliminar
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => navigate(`/edit-pet/${pet.id}`)}
+                      >
+                        <Edit className="mr-2 h-4 w-4" />
+                        Editar
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1 text-destructive hover:text-destructive"
+                        onClick={() => setDeleteId(pet.id)}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Eliminar
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>

@@ -44,6 +44,7 @@ const Settings = lazy(() => import("./pages/Settings"));
 const Maps = lazy(() => import("./pages/Maps"));
 const Premium = lazy(() => import("./pages/Premium"));
 const ProviderDashboard = lazy(() => import("./components/provider/ProviderDashboard"));
+const PetClinicalRecord = lazy(() => import("./pages/PetClinicalRecord"));
 
 const queryClient = new QueryClient();
 
@@ -93,6 +94,7 @@ const App = () => (
               <Route path="/settings" element={<ProtectedRoute><AppLayout><Settings /></AppLayout></ProtectedRoute>} />
               <Route path="/premium" element={<ProtectedRoute><Premium /></ProtectedRoute>} />
               <Route path="/provider/dashboard" element={<ProtectedRoute><AppLayout><ProviderDashboard /></AppLayout></ProtectedRoute>} />
+              <Route path="/pet/:petId/clinical" element={<ProtectedRoute><AppLayout><PetClinicalRecord /></AppLayout></ProtectedRoute>} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
