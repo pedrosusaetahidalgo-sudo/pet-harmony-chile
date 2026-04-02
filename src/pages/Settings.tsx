@@ -34,18 +34,19 @@ const Settings = () => {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const avatarOptions = [
-    "https://api.dicebear.com/9.x/thumbs/svg?seed=Luna&backgroundColor=e8dbf5&shapeColor=7c3aed",
-    "https://api.dicebear.com/9.x/thumbs/svg?seed=Rocky&backgroundColor=ddd6fe&shapeColor=8b5cf6",
-    "https://api.dicebear.com/9.x/thumbs/svg?seed=Simba&backgroundColor=f3e8ff&shapeColor=a855f7",
-    "https://api.dicebear.com/9.x/thumbs/svg?seed=Nala&backgroundColor=ede9fe&shapeColor=6d28d9",
-    "https://api.dicebear.com/9.x/thumbs/svg?seed=Max&backgroundColor=fae8ff&shapeColor=c026d3",
-    "https://api.dicebear.com/9.x/thumbs/svg?seed=Miso&backgroundColor=e0e7ff&shapeColor=4f46e5",
-    "https://api.dicebear.com/9.x/thumbs/svg?seed=Buddy&backgroundColor=ede9fe&shapeColor=7c3aed",
-    "https://api.dicebear.com/9.x/thumbs/svg?seed=Pelusa&backgroundColor=f5f3ff&shapeColor=8b5cf6",
-    "https://api.dicebear.com/9.x/thumbs/svg?seed=Canela&backgroundColor=ddd6fe&shapeColor=a78bfa",
-    "https://api.dicebear.com/9.x/thumbs/svg?seed=Toby&backgroundColor=e8dbf5&shapeColor=9333ea",
+  const avatarSeeds = ["Luna", "Rocky", "Simba", "Nala", "Max", "Miso", "Buddy", "Pelusa", "Canela", "Toby"];
+  const avatarColors = [
+    { bg: "e8dbf5", shape: "7c3aed", label: "Morado" },
+    { bg: "dbeafe", shape: "2563eb", label: "Azul" },
+    { bg: "d1fae5", shape: "059669", label: "Verde" },
+    { bg: "fce7f3", shape: "db2777", label: "Rosa" },
+    { bg: "ffedd5", shape: "ea580c", label: "Naranja" },
+    { bg: "fef3c7", shape: "d97706", label: "Amarillo" },
   ];
+  const [selectedColor, setSelectedColor] = useState(0);
+  const avatarOptions = avatarSeeds.map(seed =>
+    `https://api.dicebear.com/9.x/thumbs/svg?seed=${seed}&backgroundColor=${avatarColors[selectedColor].bg}&shapeColor=${avatarColors[selectedColor].shape}`
+  );
 
   const [healthReminders, setHealthReminders] = useState(true);
   const [messages, setMessages] = useState(true);
@@ -150,8 +151,22 @@ const Settings = () => {
 
             <Separator />
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               <Label>Elige tu Avatar</Label>
+              <div className="flex gap-2 mb-2">
+                {avatarColors.map((color, i) => (
+                  <button
+                    key={color.label}
+                    type="button"
+                    onClick={() => setSelectedColor(i)}
+                    className={`w-8 h-8 rounded-full transition-all hover:scale-110 ${
+                      selectedColor === i ? "ring-2 ring-offset-2 ring-foreground scale-110" : ""
+                    }`}
+                    style={{ backgroundColor: `#${color.bg}`, border: `2px solid #${color.shape}` }}
+                    title={color.label}
+                  />
+                ))}
+              </div>
               <div className="grid grid-cols-5 gap-3">
                 {avatarOptions.map((url, i) => (
                   <button
