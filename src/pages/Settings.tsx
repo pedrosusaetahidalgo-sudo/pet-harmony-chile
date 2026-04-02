@@ -72,17 +72,23 @@ const Settings = () => {
       }
       if (error) {
         console.error("Error loading profile:", error);
+        toast({ title: "Error", description: "No se pudo cargar el perfil", variant: "destructive" });
       }
     };
 
     loadProfile();
 
     const loadNotificationPrefs = async () => {
-      const { data: prefs } = await supabase
+      const { data: prefs, error: prefsError } = await supabase
         .from('notification_preferences')
         .select('*')
         .eq('user_id', user.id)
         .maybeSingle();
+
+      if (prefsError) {
+        console.error("Error loading notification preferences:", prefsError);
+        toast({ title: "Error", description: "No se pudieron cargar las preferencias de notificación", variant: "destructive" });
+      }
 
       if (prefs) {
         setHealthReminders(prefs.reminder_notifications);

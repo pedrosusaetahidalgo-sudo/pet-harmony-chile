@@ -185,6 +185,10 @@ const AddPet = () => {
         }
       } catch (reminderError) {
         console.error("Error creating default reminders:", reminderError);
+        toast({
+          title: "Mascota creada",
+          description: "Los recordatorios automáticos no se pudieron crear. Puedes agregarlos manualmente.",
+        });
       }
 
       track({ event: EVENTS.PET_CREATED, properties: { species: formData.species, breed: formData.breed } });

@@ -37,8 +37,10 @@ import { AdvancedServiceFilters } from "@/components/AdvancedServiceFilters";
 import { EnhancedBookingDialog } from "@/components/EnhancedBookingDialog";
 import { ProviderProfileCard } from "@/components/ProviderProfileCard";
 import { format } from "date-fns";
+import { logger } from "@/lib/logger";
 
 type ServiceType = 'walkers' | 'vets' | 'sitters' | 'trainers';
+type ProfileTable = "dog_walker_profiles" | "vet_profiles" | "dogsitter_profiles" | "trainer_profiles";
 
 interface FilterState {
   searchTerm: string;
@@ -53,7 +55,7 @@ interface ServiceConfig {
   title: string;
   subtitle: string;
   icon: LucideIcon;
-  profileTable: string;
+  profileTable: ProfileTable;
   providerType: string;
   serviceName: string;
   maxPrice: number;
@@ -474,7 +476,7 @@ const ServiceDirectory = () => {
   const checkIfProvider = async () => {
     if (!user) return;
     const { data } = await supabase
-      .from(config.profileTable as any)
+      .from(config.profileTable)
       .select('id')
       .eq('user_id', user.id)
       .maybeSingle();
@@ -486,7 +488,7 @@ const ServiceDirectory = () => {
       setLoading(true);
 
       const { data: providersData, error } = await supabase
-        .from(config.profileTable as any)
+        .from(config.profileTable)
         .select('*')
         .eq('is_active', true)
         .order('rating', { ascending: false });
@@ -494,19 +496,27 @@ const ServiceDirectory = () => {
       if (error) throw error;
 
       if (providersData && providersData.length > 0) {
-        const userIds = (providersData as any[]).map((p: any) => p.user_id);
-        const { data: profilesData } = await supabase
+        const userIds = (providersData as Record<string, unknown>[]).map((p) => p.user_id as string);
+        const { data: profilesData, error: profilesError } = await supabase
           .from('profiles')
           .select('id, display_name, avatar_url')
           .in('id', userIds);
 
+        if (profilesError) {
+          logger.error('Error loading profiles', profilesError);
+        }
+
         // Load availability
-        const { data: availData } = await supabase
+        const { data: availData, error: availError } = await supabase
           .from('provider_availability')
           .select('user_id, date')
           .eq('provider_type', config.providerType)
           .eq('is_available', true)
           .gte('date', format(new Date(), 'yyyy-MM-dd'));
+
+        if (availError) {
+          logger.error('Error loading availability', availError);
+        }
 
         const availMap: Record<string, string[]> = {};
         availData?.forEach(a => {
@@ -516,7 +526,7 @@ const ServiceDirectory = () => {
         setAvailabilityDates(availMap);
 
         const profilesMap = new Map(profilesData?.map(p => [p.id, p]) || []);
-        setProviders((providersData as any[]).map((provider: any) => ({
+        setProviders((providersData as Record<string, unknown>[]).map((provider: Record<string, unknown>) => ({
           ...provider,
           profiles: profilesMap.get(provider.user_id)
         })));

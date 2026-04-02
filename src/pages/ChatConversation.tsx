@@ -54,7 +54,7 @@ const ChatConversation = () => {
         },
         (payload) => {
           setMessages(prev => [...prev, payload.new]);
-          markAsRead();
+          markAsRead().catch(() => { /* silent: mark-as-read failure is non-critical */ });
         }
       )
       .subscribe();
