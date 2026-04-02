@@ -97,13 +97,14 @@ const MyPets = () => {
   const calculateAge = (birthDate: string) => {
     const birth = new Date(birthDate);
     const now = new Date();
-    const years = now.getFullYear() - birth.getFullYear();
-    const months = now.getMonth() - birth.getMonth();
+    let years = now.getFullYear() - birth.getFullYear();
+    let months = now.getMonth() - birth.getMonth();
+    if (months < 0) { years--; months += 12; }
 
-    if (years === 0) {
-      return `${months} ${months === 1 ? "mes" : "meses"}`;
-    }
-    return `${years} ${years === 1 ? "año" : "años"}`;
+    if (years === 0 && months === 0) return "Menos de 1 mes";
+    if (years === 0) return `${months} ${months === 1 ? "mes" : "meses"}`;
+    if (months === 0) return `${years} ${years === 1 ? "año" : "años"}`;
+    return `${years} ${years === 1 ? "año" : "años"}, ${months} ${months === 1 ? "mes" : "meses"}`;
   };
 
   if (loading) {

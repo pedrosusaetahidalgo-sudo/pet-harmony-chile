@@ -37,8 +37,8 @@ function calculateAge(birthDate: string): string {
 
   if (years === 0 && months === 0) return "Menos de 1 mes";
   if (years === 0) return `${months} ${months === 1 ? "mes" : "meses"}`;
-  if (months === 0) return `${years} ${years === 1 ? "ano" : "anos"}`;
-  return `${years} ${years === 1 ? "ano" : "anos"}, ${months} ${months === 1 ? "mes" : "meses"}`;
+  if (months === 0) return `${years} ${years === 1 ? "año" : "años"}`;
+  return `${years} ${years === 1 ? "año" : "años"}, ${months} ${months === 1 ? "mes" : "meses"}`;
 }
 
 function formatDate(dateString: string): string {

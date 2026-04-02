@@ -17,6 +17,15 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    outDir: 'docs'  // ← Build directo a docs/
+    outDir: 'docs',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'query-vendor': ['@tanstack/react-query'],
+          'ui-vendor': ['@radix-ui/react-dialog', '@radix-ui/react-tabs', '@radix-ui/react-select'],
+        }
+      }
+    }
   }
 }));

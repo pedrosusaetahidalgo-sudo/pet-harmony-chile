@@ -46,7 +46,15 @@ const Premium = lazy(() => import("./pages/Premium"));
 const ProviderDashboard = lazy(() => import("./components/provider/ProviderDashboard"));
 const PetClinicalRecord = lazy(() => import("./pages/PetClinicalRecord"));
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000,
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-screen">
