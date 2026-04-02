@@ -13,6 +13,7 @@ import { FaFacebook } from "react-icons/fa";
 import { LegalFooter } from "@/components/LegalFooter";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { useFacebookAuth } from "@/hooks/useFacebookAuth";
+import { track, EVENTS } from "@/lib/analytics";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -23,6 +24,16 @@ const Auth = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { signInWithFacebook, loading: facebookLoading } = useFacebookAuth();
+
+  // Redirect new users to /add-pet, returning users to /home
+  const redirectUser = async (userId: string) => {
+    const { data: pets } = await supabase
+      .from("pets")
+      .select("id")
+      .eq("owner_id", userId)
+      .limit(1);
+    navigate(pets && pets.length > 0 ? "/home" : "/add-pet");
+  };
 
   useEffect(() => {
     const handleOAuthCallback = async () => {
@@ -45,7 +56,7 @@ const Auth = () => {
           window.history.replaceState({}, document.title, window.location.pathname);
 
           if (session) {
-            navigate("/home");
+            redirectUser(session.user.id);
           }
         } catch (err) {
           console.error('Error processing OAuth callback:', err);
@@ -57,14 +68,14 @@ const Auth = () => {
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session) {
-        navigate("/home");
+        redirectUser(session.user.id);
       }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_IN" && session) {
         window.history.replaceState({}, document.title, window.location.pathname);
-        navigate("/home");
+        redirectUser(session.user.id);
       }
     });
 
@@ -101,6 +112,7 @@ const Auth = () => {
         });
       } else if (data.session) {
         // Email confirmation disabled, user is logged in directly
+        track({ event: EVENTS.SIGNUP_COMPLETED, userId: data.user?.id });
         toast({
           title: "¡Cuenta creada!",
           description: "Bienvenido a Paw Friend",
@@ -135,6 +147,7 @@ const Auth = () => {
 
       if (error) throw error;
 
+      track({ event: EVENTS.LOGIN_COMPLETED });
       toast({
         title: "¡Bienvenido de vuelta!",
         description: "Has iniciado sesión exitosamente",

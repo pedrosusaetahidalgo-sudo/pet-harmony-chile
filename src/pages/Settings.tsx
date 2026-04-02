@@ -134,6 +134,22 @@ const Settings = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {/* Profile Completion */}
+            {(() => {
+              const filled = [displayName, bio, location, avatarUrl].filter(Boolean).length;
+              const pct = Math.round((filled / 4) * 100);
+              return pct < 100 ? (
+                <div className="p-3 rounded-lg bg-primary/5 border border-primary/10">
+                  <div className="flex justify-between text-xs mb-1.5">
+                    <span className="font-medium">Perfil {pct}% completo</span>
+                    <span className="text-muted-foreground">{filled}/4</span>
+                  </div>
+                  <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                    <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${pct}%` }} />
+                  </div>
+                </div>
+              ) : null;
+            })()}
             <div className="flex items-center gap-4">
               <Avatar className="h-16 w-16">
                 {avatarUrl ? (

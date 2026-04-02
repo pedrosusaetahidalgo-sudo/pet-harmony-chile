@@ -328,10 +328,17 @@ const Feed = () => {
                   <p className="text-muted-foreground">Cargando publicaciones...</p>
                 </div>
               ) : followingPosts.length === 0 ? (
-                <div className="text-center py-12 text-muted-foreground">
-                  <Users className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p className="font-medium mb-2">No sigues a nadie todavía</p>
-                  <p className="text-sm">Comienza a seguir a otros usuarios para ver sus publicaciones aquí</p>
+                <div className="text-center py-8">
+                  <Users className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
+                  <p className="font-medium mb-1">No sigues a nadie todavía</p>
+                  <p className="text-sm text-muted-foreground mb-4">Descubre mascotas y sus dueños</p>
+                  <Button variant="outline" size="sm" onClick={() => {
+                    const tabsList = document.querySelector('[value="pets"]');
+                    if (tabsList) (tabsList as HTMLElement).click();
+                  }}>
+                    <PawPrint className="h-4 w-4 mr-2" />
+                    Explorar Mascotas
+                  </Button>
                 </div>
               ) : (
                 followingPosts.map((post) => (

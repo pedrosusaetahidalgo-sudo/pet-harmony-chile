@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { track, EVENTS } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -167,9 +168,11 @@ const AddPet = () => {
         console.error("Error creating default reminders:", reminderError);
       }
 
+      track({ event: EVENTS.PET_CREATED, properties: { species: formData.species, breed: formData.breed } });
+
       toast({
-        title: "¡Mascota agregada!",
-        description: `${formData.name} ahora tiene ficha clínica y recordatorios de salud`,
+        title: "¡Mascota agregada! 🎉",
+        description: `${formData.name} tiene ficha clínica y recordatorios de salud. ¡Explora su perfil!`,
       });
 
       navigate("/my-pets");
