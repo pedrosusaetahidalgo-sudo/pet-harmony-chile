@@ -5,115 +5,115 @@
 /* ============================================
    PAW FRIEND DESIGN SYSTEM v2
    ============================================
-   Direction: Warm, trustworthy, elegant, pet-friendly
-   Palette: Warm amber/terracotta primary, sage green accents
+   Direction: Warm purple, trustworthy, pet-friendly
+   Palette: Refined purple primary, soft pink secondary
    Tone: Caring, confident, approachable, premium
    ============================================ */
 
 @layer base {
   :root {
     /* ── Core Surfaces ── */
-    --background: 30 25% 98%;
-    --foreground: 25 20% 12%;
+    --background: 270 20% 98%;
+    --foreground: 270 15% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 25 20% 12%;
+    --card-foreground: 270 15% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 25 20% 12%;
+    --popover-foreground: 270 15% 10%;
 
     /* ── Brand Colors ── */
-    --primary: 24 75% 50%;
+    --primary: 270 70% 60%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 150 25% 45%;
+    --secondary: 280 55% 70%;
     --secondary-foreground: 0 0% 100%;
 
-    --accent: 30 40% 94%;
-    --accent-foreground: 25 20% 12%;
+    --accent: 270 30% 94%;
+    --accent-foreground: 270 15% 10%;
 
     /* ── Functional Colors ── */
-    --muted: 30 15% 94%;
-    --muted-foreground: 25 10% 42%;
+    --muted: 270 15% 94%;
+    --muted-foreground: 270 10% 42%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
     /* ── Borders & Inputs ── */
-    --border: 30 15% 88%;
-    --input: 30 15% 88%;
-    --ring: 24 75% 50%;
+    --border: 270 15% 88%;
+    --input: 270 15% 88%;
+    --ring: 270 70% 60%;
 
     /* ── Radius ── */
     --radius: 0.75rem;
 
     /* ── Gradients ── */
-    --warm-gradient: linear-gradient(135deg, hsl(24 75% 50%), hsl(18 70% 45%));
-    --nature-gradient: linear-gradient(135deg, hsl(150 25% 45%), hsl(160 30% 40%));
-    --hero-gradient: linear-gradient(180deg, hsl(30 30% 97%), hsl(30 20% 95%));
-    --medical-gradient: linear-gradient(135deg, hsl(150 30% 45%), hsl(160 25% 40%));
-    --appointment-gradient: linear-gradient(135deg, hsl(24 65% 52%), hsl(18 60% 48%));
+    --warm-gradient: linear-gradient(135deg, hsl(270 70% 60%), hsl(290 60% 65%));
+    --nature-gradient: linear-gradient(135deg, hsl(280 55% 70%), hsl(260 65% 58%));
+    --hero-gradient: linear-gradient(180deg, hsl(270 20% 98%), hsl(270 15% 95%));
+    --medical-gradient: linear-gradient(135deg, hsl(260 65% 60%), hsl(270 60% 65%));
+    --appointment-gradient: linear-gradient(135deg, hsl(280 60% 60%), hsl(290 55% 67%));
 
-    /* ── Shadows (warm-tinted) ── */
-    --shadow-xs: 0 1px 2px 0 hsl(25 20% 12% / 0.04);
-    --shadow-sm: 0 1px 3px 0 hsl(25 20% 12% / 0.06), 0 1px 2px -1px hsl(25 20% 12% / 0.06);
-    --shadow-base: 0 4px 6px -1px hsl(25 20% 12% / 0.06), 0 2px 4px -2px hsl(25 20% 12% / 0.06);
-    --shadow-md: 0 10px 15px -3px hsl(25 20% 12% / 0.07), 0 4px 6px -4px hsl(25 20% 12% / 0.07);
-    --shadow-lg: 0 20px 25px -5px hsl(25 20% 12% / 0.07), 0 8px 10px -6px hsl(25 20% 12% / 0.07);
-    --shadow-xl: 0 25px 50px -12px hsl(25 20% 12% / 0.15);
+    /* ── Shadows ── */
+    --shadow-xs: 0 1px 2px 0 hsl(270 15% 10% / 0.04);
+    --shadow-sm: 0 1px 3px 0 hsl(270 15% 10% / 0.06), 0 1px 2px -1px hsl(270 15% 10% / 0.06);
+    --shadow-base: 0 4px 6px -1px hsl(270 15% 10% / 0.06), 0 2px 4px -2px hsl(270 15% 10% / 0.06);
+    --shadow-md: 0 10px 15px -3px hsl(270 15% 10% / 0.07), 0 4px 6px -4px hsl(270 15% 10% / 0.07);
+    --shadow-lg: 0 20px 25px -5px hsl(270 70% 60% / 0.1), 0 8px 10px -6px hsl(270 15% 10% / 0.07);
+    --shadow-xl: 0 25px 50px -12px hsl(270 70% 60% / 0.18);
 
     /* ── Semantic Colors ── */
-    --medical: 150 30% 45%;
+    --medical: 260 65% 60%;
     --medical-foreground: 0 0% 100%;
-    --medical-light: 150 25% 94%;
+    --medical-light: 260 50% 94%;
 
-    --appointment: 24 65% 52%;
+    --appointment: 280 60% 60%;
     --appointment-foreground: 0 0% 100%;
-    --appointment-light: 30 40% 94%;
+    --appointment-light: 280 40% 94%;
 
     /* ── Sidebar ── */
-    --sidebar-background: 30 20% 97%;
-    --sidebar-foreground: 25 15% 25%;
-    --sidebar-primary: 24 75% 50%;
+    --sidebar-background: 270 15% 97%;
+    --sidebar-foreground: 270 15% 20%;
+    --sidebar-primary: 270 70% 60%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 30 20% 93%;
-    --sidebar-accent-foreground: 25 15% 25%;
-    --sidebar-border: 30 15% 90%;
-    --sidebar-ring: 24 75% 50%;
+    --sidebar-accent: 270 15% 93%;
+    --sidebar-accent-foreground: 270 15% 20%;
+    --sidebar-border: 270 12% 90%;
+    --sidebar-ring: 270 70% 60%;
   }
 
   .dark {
-    --background: 25 15% 7%;
-    --foreground: 30 10% 93%;
+    --background: 270 20% 7%;
+    --foreground: 270 10% 93%;
 
-    --card: 25 15% 10%;
-    --card-foreground: 30 10% 93%;
+    --card: 270 15% 10%;
+    --card-foreground: 270 10% 93%;
 
-    --popover: 25 15% 10%;
-    --popover-foreground: 30 10% 93%;
+    --popover: 270 15% 10%;
+    --popover-foreground: 270 10% 93%;
 
-    --primary: 24 75% 55%;
+    --primary: 270 70% 65%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 150 25% 40%;
+    --secondary: 280 55% 65%;
     --secondary-foreground: 0 0% 100%;
 
-    --accent: 30 20% 16%;
-    --accent-foreground: 30 10% 93%;
+    --accent: 270 20% 16%;
+    --accent-foreground: 270 10% 93%;
 
-    --muted: 25 15% 15%;
-    --muted-foreground: 30 10% 60%;
+    --muted: 270 15% 15%;
+    --muted-foreground: 270 10% 60%;
 
     --destructive: 0 62.8% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 25 15% 18%;
-    --input: 25 15% 18%;
-    --ring: 24 75% 55%;
+    --border: 270 15% 18%;
+    --input: 270 15% 18%;
+    --ring: 270 70% 65%;
 
-    --warm-gradient: linear-gradient(135deg, hsl(24 70% 48%), hsl(18 65% 42%));
-    --nature-gradient: linear-gradient(135deg, hsl(150 25% 38%), hsl(160 30% 35%));
-    --hero-gradient: linear-gradient(180deg, hsl(25 15% 7%), hsl(25 12% 10%));
+    --warm-gradient: linear-gradient(135deg, hsl(270 65% 55%), hsl(290 55% 58%));
+    --nature-gradient: linear-gradient(135deg, hsl(280 50% 60%), hsl(260 60% 50%));
+    --hero-gradient: linear-gradient(180deg, hsl(270 20% 7%), hsl(270 15% 10%));
 
     --shadow-xs: 0 1px 2px 0 hsl(0 0% 0% / 0.15);
     --shadow-sm: 0 1px 3px 0 hsl(0 0% 0% / 0.2), 0 1px 2px -1px hsl(0 0% 0% / 0.2);
@@ -122,22 +122,22 @@
     --shadow-lg: 0 20px 25px -5px hsl(0 0% 0% / 0.3), 0 8px 10px -6px hsl(0 0% 0% / 0.3);
     --shadow-xl: 0 25px 50px -12px hsl(0 0% 0% / 0.4);
 
-    --medical: 150 30% 40%;
+    --medical: 260 60% 55%;
     --medical-foreground: 0 0% 100%;
-    --medical-light: 150 20% 18%;
+    --medical-light: 260 40% 18%;
 
-    --appointment: 24 60% 50%;
+    --appointment: 280 55% 55%;
     --appointment-foreground: 0 0% 100%;
-    --appointment-light: 30 20% 18%;
+    --appointment-light: 280 35% 18%;
 
-    --sidebar-background: 25 12% 12%;
-    --sidebar-foreground: 30 10% 85%;
-    --sidebar-primary: 24 75% 55%;
+    --sidebar-background: 270 15% 10%;
+    --sidebar-foreground: 270 10% 85%;
+    --sidebar-primary: 270 70% 65%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 25 15% 18%;
-    --sidebar-accent-foreground: 30 10% 85%;
-    --sidebar-border: 25 12% 20%;
-    --sidebar-ring: 24 75% 55%;
+    --sidebar-accent: 270 15% 18%;
+    --sidebar-accent-foreground: 270 10% 85%;
+    --sidebar-border: 270 12% 20%;
+    --sidebar-ring: 270 70% 65%;
   }
 }
 
