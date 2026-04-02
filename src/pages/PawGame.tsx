@@ -314,6 +314,7 @@ const PawGame = () => {
       const newStreak = isConsecutive ? (userProgress?.streak_days || 0) + 1 : 1;
       const bonusPoints = Math.min(newStreak * 5, 50); // 5 pts per streak day, max 50
 
+      // Update guardian progress
       await supabase
         .from('user_guardian_progress')
         .update({
@@ -322,6 +323,18 @@ const PawGame = () => {
           total_paw_points: (userProgress?.total_paw_points || 0) + bonusPoints,
         } as any)
         .eq('user_id', user.id);
+
+      // Also update profiles.points so it syncs with gamification bar
+      const { data: currentProfile } = await supabase
+        .from('profiles')
+        .select('points')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      await supabase
+        .from('profiles')
+        .update({ points: (currentProfile?.points || 0) + bonusPoints } as any)
+        .eq('id', user.id);
 
       toast.success(`¡Check-in diario! +${bonusPoints} PawPoints 🔥 Racha: ${newStreak} días`);
       loadGameData();
