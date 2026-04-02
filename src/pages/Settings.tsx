@@ -35,16 +35,16 @@ const Settings = () => {
   const [saving, setSaving] = useState(false);
 
   const avatarOptions = [
-    "https://api.dicebear.com/7.x/adventurer/svg?seed=Luna&backgroundColor=b6e3f4",
-    "https://api.dicebear.com/7.x/adventurer/svg?seed=Rocky&backgroundColor=c0aede",
-    "https://api.dicebear.com/7.x/adventurer/svg?seed=Simba&backgroundColor=ffd5dc",
-    "https://api.dicebear.com/7.x/adventurer/svg?seed=Nala&backgroundColor=d1f4d1",
-    "https://api.dicebear.com/7.x/adventurer/svg?seed=Max&backgroundColor=ffdfba",
-    "https://api.dicebear.com/7.x/lorelei/svg?seed=Miso&backgroundColor=b6e3f4",
-    "https://api.dicebear.com/7.x/lorelei/svg?seed=Buddy&backgroundColor=c0aede",
-    "https://api.dicebear.com/7.x/lorelei/svg?seed=Pelusa&backgroundColor=ffd5dc",
-    "https://api.dicebear.com/7.x/fun-emoji/svg?seed=happy&backgroundColor=d1f4d1",
-    "https://api.dicebear.com/7.x/fun-emoji/svg?seed=love&backgroundColor=ffdfba",
+    "https://api.dicebear.com/9.x/thumbs/svg?seed=Luna&backgroundColor=e8dbf5&shapeColor=7c3aed",
+    "https://api.dicebear.com/9.x/thumbs/svg?seed=Rocky&backgroundColor=ddd6fe&shapeColor=8b5cf6",
+    "https://api.dicebear.com/9.x/thumbs/svg?seed=Simba&backgroundColor=f3e8ff&shapeColor=a855f7",
+    "https://api.dicebear.com/9.x/thumbs/svg?seed=Nala&backgroundColor=ede9fe&shapeColor=6d28d9",
+    "https://api.dicebear.com/9.x/thumbs/svg?seed=Max&backgroundColor=fae8ff&shapeColor=c026d3",
+    "https://api.dicebear.com/9.x/thumbs/svg?seed=Miso&backgroundColor=e0e7ff&shapeColor=4f46e5",
+    "https://api.dicebear.com/9.x/thumbs/svg?seed=Buddy&backgroundColor=ede9fe&shapeColor=7c3aed",
+    "https://api.dicebear.com/9.x/thumbs/svg?seed=Pelusa&backgroundColor=f5f3ff&shapeColor=8b5cf6",
+    "https://api.dicebear.com/9.x/thumbs/svg?seed=Canela&backgroundColor=ddd6fe&shapeColor=a78bfa",
+    "https://api.dicebear.com/9.x/thumbs/svg?seed=Toby&backgroundColor=e8dbf5&shapeColor=9333ea",
   ];
 
   const [healthReminders, setHealthReminders] = useState(true);

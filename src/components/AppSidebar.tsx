@@ -65,16 +65,16 @@ function DockIcon({ item, isActive, hoveredIndex, index, onClick }: {
         <button
           onClick={onClick}
           className={`
-            relative flex items-center justify-center w-10 h-10 rounded-xl
+            relative flex items-center justify-center w-9 h-9 rounded-lg
             transition-all duration-200 ease-out origin-center
             ${isActive
-              ? "bg-primary text-primary-foreground shadow-md"
+              ? "bg-primary text-primary-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground hover:bg-accent"
             }
           `}
           style={{ transform: `scale(${scale})`, zIndex: scale > 1 ? 10 : 1 }}
         >
-          <Icon className="h-5 w-5" />
+          <Icon className="h-4 w-4" />
           {isActive && (
             <span className="absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-primary" />
           )}
@@ -129,7 +129,7 @@ export function AppSidebar() {
               className="flex items-center justify-center py-4 hover:opacity-80 transition-opacity cursor-pointer"
             >
               <div className="relative">
-                <Heart className="h-7 w-7 text-primary fill-primary" />
+                <Heart className="h-6 w-6 text-primary fill-primary" />
                 <PawPrint className="h-3 w-3 text-secondary absolute -bottom-0.5 -right-0.5" />
               </div>
             </button>
@@ -169,10 +169,10 @@ export function AppSidebar() {
               <TooltipTrigger asChild>
                 <button
                   onClick={() => handleNavigate('/profile')}
-                  className="flex items-center justify-center w-10 h-10 rounded-xl hover:bg-accent transition-colors"
+                  className="flex items-center justify-center w-9 h-9 rounded-lg hover:bg-accent transition-colors"
                 >
-                  <Avatar className="h-7 w-7">
-                    <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
+                  <Avatar className="h-6 w-6">
+                    <AvatarFallback className="bg-primary text-primary-foreground text-[10px] font-semibold">
                       {user.email?.[0].toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
@@ -184,9 +184,9 @@ export function AppSidebar() {
               <TooltipTrigger asChild>
                 <button
                   onClick={() => handleNavigate('/settings')}
-                  className="flex items-center justify-center w-10 h-10 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                  className="flex items-center justify-center w-9 h-9 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
                 >
-                  <Settings className="h-5 w-5" />
+                  <Settings className="h-4 w-4" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right">Configuración</TooltipContent>
@@ -195,9 +195,9 @@ export function AppSidebar() {
               <TooltipTrigger asChild>
                 <button
                   onClick={handleSignOut}
-                  className="flex items-center justify-center w-10 h-10 rounded-xl text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                  className="flex items-center justify-center w-9 h-9 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
                 >
-                  <LogOut className="h-5 w-5" />
+                  <LogOut className="h-4 w-4" />
                 </button>
               </TooltipTrigger>
               <TooltipContent side="right">Cerrar Sesión</TooltipContent>
@@ -217,7 +217,7 @@ export function AppSidebar() {
           className="flex items-center justify-center gap-3 px-4 py-3 w-full hover:opacity-80 transition-opacity cursor-pointer"
         >
           <div className="relative flex-shrink-0">
-            <Heart className="h-7 w-7 text-primary fill-primary" />
+            <Heart className="h-6 w-6 text-primary fill-primary" />
             <PawPrint className="h-3 w-3 text-secondary absolute -bottom-0.5 -right-0.5" />
           </div>
           <span className="font-bold text-lg gradient-text block whitespace-nowrap">
