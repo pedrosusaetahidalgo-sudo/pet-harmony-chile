@@ -931,6 +931,122 @@ function TabCompartir({ petId }: { petId: string }) {
 
 // --- Main Page ---
 
+// --- PDF Generation ---
+
+function generatePDF(pet: PetData, records: any[]) {
+  const age = pet.birth_date ? calculateAge(pet.birth_date) : "No especificada";
+  const now = new Date().toLocaleDateString("es-CL");
+
+  const allergies = [
+    ...(pet.allergies_food || []).map(a => `Alimentaria: ${a}`),
+    ...(pet.allergies_medication || []).map(a => `Medicamento: ${a}`),
+    ...(pet.allergies_environmental || []).map(a => `Ambiental: ${a}`),
+  ];
+
+  const meds = (pet.current_medications || [])
+    .map((m: any) => `${m.name}${m.dose ? ` - ${m.dose}` : ""}${m.frequency ? ` (${m.frequency})` : ""}`)
+    .join("\n    ");
+
+  const sortedRecords = [...records].sort((a, b) =>
+    new Date(b.date || b.visit_date || 0).getTime() - new Date(a.date || a.visit_date || 0).getTime()
+  );
+
+  const historyLines = sortedRecords.slice(0, 20).map(r => {
+    const date = r.date || r.visit_date || "";
+    const formattedDate = date ? new Date(date).toLocaleDateString("es-CL") : "Sin fecha";
+    const type = (r.record_type || "").toUpperCase();
+    const clinic = r.clinic_name ? ` | ${r.clinic_name}` : "";
+    const vet = r.veterinarian_name ? ` | Dr. ${r.veterinarian_name}` : "";
+    return `  ${formattedDate}  [${type}]  ${r.title || ""}${clinic}${vet}${r.description ? `\n    ${r.description}` : ""}`;
+  }).join("\n\n");
+
+  const content = `
+═══════════════════════════════════════════════════
+              FICHA CLÍNICA VETERINARIA
+                    Paw Friend
+═══════════════════════════════════════════════════
+Fecha de emisión: ${now}
+
+───────────────────────────────────────────────────
+  DATOS DEL PACIENTE
+───────────────────────────────────────────────────
+  Nombre:         ${pet.name}
+  Especie:        ${pet.species || "-"}
+  Raza:           ${pet.breed || "No especificada"}
+  Sexo:           ${pet.gender || "No especificado"}
+  Edad:           ${age}
+  Peso:           ${pet.weight ? `${pet.weight} kg` : "No registrado"}
+  Tamaño:         ${pet.size || "No especificado"}
+  Color:          ${pet.color || "No especificado"}
+  Microchip:      ${pet.microchip_number || "No registrado"}
+  Esterilizado/a: ${pet.neutered ? "Sí" : "No"}
+  Tipo sangre:    ${pet.blood_type || "No registrado"}
+  Adoptado/a:     ${pet.is_adopted ? "Sí" : "No"}
+
+───────────────────────────────────────────────────
+  ALERGIAS
+───────────────────────────────────────────────────
+${allergies.length > 0 ? allergies.map(a => `  ⚠ ${a}`).join("\n") : "  Sin alergias registradas"}
+
+───────────────────────────────────────────────────
+  MEDICAMENTOS ACTUALES
+───────────────────────────────────────────────────
+${meds || "  Sin medicamentos registrados"}
+
+───────────────────────────────────────────────────
+  ALIMENTACIÓN Y HÁBITOS
+───────────────────────────────────────────────────
+  Dieta:          ${pet.diet_type || "No especificada"}
+  Marca:          ${pet.diet_brand || "No especificada"}
+  Frecuencia:     ${pet.diet_frequency || "No especificada"}
+  Actividad:      ${pet.activity_level || "No especificada"}
+  Entorno:        ${pet.living_environment || "No especificado"}
+  Otras mascotas: ${pet.cohabitation_pets ?? "No especificado"}
+  Niños en casa:  ${pet.cohabitation_children === true ? "Sí" : pet.cohabitation_children === false ? "No" : "No especificado"}
+
+───────────────────────────────────────────────────
+  CONTACTO DE EMERGENCIA
+───────────────────────────────────────────────────
+  Veterinario:    ${pet.emergency_vet_name || "No registrado"}
+  Teléfono:       ${pet.emergency_vet_phone || "No registrado"}
+  Clínica pref.:  ${pet.preferred_clinic || "No registrada"}
+  Seguro:         ${pet.insurance_provider || "No registrado"}
+
+───────────────────────────────────────────────────
+  HISTORIAL MÉDICO (${sortedRecords.length} registros)
+───────────────────────────────────────────────────
+${historyLines || "  Sin registros médicos"}
+
+───────────────────────────────────────────────────
+  NOTAS
+───────────────────────────────────────────────────
+  ${pet.behavior_notes || "Sin notas adicionales"}
+  ${pet.medical_notes || ""}
+  ${pet.special_needs || ""}
+
+═══════════════════════════════════════════════════
+  Generado por Paw Friend (pawfriend.cl)
+  Este documento es informativo y no reemplaza
+  la evaluación clínica profesional.
+═══════════════════════════════════════════════════
+`.trim();
+
+  // Create and download text file (universal, no dependencies)
+  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `ficha-clinica-${pet.name.toLowerCase().replace(/\s+/g, "-")}-${now.replace(/\//g, "-")}.txt`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+
+  toast.success("Ficha clínica descargada");
+}
+
+// --- Main Page ---
+
 const PetClinicalRecord = () => {
   const { petId } = useParams<{ petId: string }>();
   const navigate = useNavigate();
@@ -940,15 +1056,27 @@ const PetClinicalRecord = () => {
     queryKey: ["pet-clinical", petId],
     queryFn: async () => {
       if (!petId) return null;
-
       const { data, error } = await supabase
         .from("pets")
         .select("*")
         .eq("id", petId)
         .maybeSingle();
-
       if (error) throw error;
       return data as PetData | null;
+    },
+    enabled: !!petId && !authLoading,
+  });
+
+  const { data: medicalRecords = [] } = useQuery({
+    queryKey: ["pet-medical-records-pdf", petId],
+    queryFn: async () => {
+      if (!petId) return [];
+      const { data } = await supabase
+        .from("medical_records")
+        .select("*")
+        .eq("pet_id", petId)
+        .order("date", { ascending: false });
+      return data || [];
     },
     enabled: !!petId && !authLoading,
   });
@@ -994,12 +1122,23 @@ const PetClinicalRecord = () => {
         Volver
       </Button>
 
-      {/* Page title */}
-      <div>
-        <h1 className="text-2xl font-bold">Ficha Clinica</h1>
-        <p className="text-sm text-muted-foreground">
-          Registro veterinario completo de {pet.name}
-        </p>
+      {/* Page title + PDF button */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Ficha Clínica</h1>
+          <p className="text-sm text-muted-foreground">
+            Registro veterinario completo de {pet.name}
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => generatePDF(pet, medicalRecords)}
+          className="flex items-center gap-2"
+        >
+          <Download className="h-4 w-4" />
+          <span className="hidden sm:inline">Descargar PDF</span>
+        </Button>
       </div>
 
       {/* Header Card */}
