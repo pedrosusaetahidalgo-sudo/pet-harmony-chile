@@ -157,17 +157,18 @@ const MyPets = () => {
         {pets.length === 0 ? (
           <Card className="animate-scale-in">
             <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-              <Heart className="h-16 w-16 text-muted-foreground/50 mb-4" />
+              <Heart className="h-16 w-16 text-primary/40 mb-4" />
               <h3 className="text-xl font-semibold mb-2">
-                No tienes mascotas registradas
+                Agrega tu primera mascota
               </h3>
-              <p className="text-muted-foreground mb-6 max-w-md">
-                Comienza agregando el perfil de tu primera mascota para conectar con
-                otros dueños y gestionar su historial médico.
+              <p className="text-muted-foreground mb-2 max-w-md">
+                Crea el perfil de tu compañero peludo, gestiona su salud y conecta con otros dueños.
+              </p>
+              <p className="text-sm text-primary font-medium mb-6">
+                🎮 Gana recordatorios automáticos de salud al registrar tu mascota
               </p>
               <Button
                 onClick={() => navigate("/add-pet")}
-                className="bg-warm-gradient hover:opacity-90 transition-opacity"
               >
                 <Plus className="mr-2 h-5 w-5" />
                 Agregar Mi Primera Mascota

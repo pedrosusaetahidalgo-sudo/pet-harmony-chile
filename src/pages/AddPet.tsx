@@ -140,9 +140,36 @@ const AddPet = () => {
 
       if (error) throw error;
 
+      // Auto-create default reminders for the new pet
+      try {
+        const { data: newPet } = await supabase
+          .from("pets")
+          .select("id")
+          .eq("owner_id", user?.id)
+          .eq("name", formData.name)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (newPet) {
+          const today = new Date();
+          const in30days = new Date(today); in30days.setDate(today.getDate() + 30);
+          const in90days = new Date(today); in90days.setDate(today.getDate() + 90);
+          const in365days = new Date(today); in365days.setDate(today.getDate() + 365);
+
+          await supabase.from("pet_reminders").insert([
+            { pet_id: newPet.id, owner_id: user?.id, type: "checkup", title: `Control veterinario de ${formData.name}`, due_date: in90days.toISOString().split("T")[0] },
+            { pet_id: newPet.id, owner_id: user?.id, type: "vaccine", title: `Revisar vacunas de ${formData.name}`, due_date: in30days.toISOString().split("T")[0] },
+            { pet_id: newPet.id, owner_id: user?.id, type: "grooming", title: `Baño y peluquería de ${formData.name}`, due_date: in30days.toISOString().split("T")[0], is_recurring: true, recurrence_interval: "monthly" },
+          ] as any[]);
+        }
+      } catch (reminderError) {
+        console.error("Error creating default reminders:", reminderError);
+      }
+
       toast({
         title: "¡Mascota agregada!",
-        description: "El perfil de tu mascota ha sido creado exitosamente",
+        description: `${formData.name} ahora tiene ficha clínica y recordatorios de salud`,
       });
 
       navigate("/my-pets");

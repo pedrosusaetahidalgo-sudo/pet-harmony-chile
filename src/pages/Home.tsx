@@ -282,40 +282,50 @@ export default function Home() {
       </div>
 
       {/* Paw Game Widget - New Gamification System */}
-      {stats && (
-        <div className="space-y-4">
-          <PointsWidget 
-            points={stats.points} 
-            level={stats.level}
-            showProgress={true}
-          />
-          
-          {/* Active Missions */}
-          {missions && missions.length > 0 && (
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="font-semibold text-lg flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-yellow-500" />
-                  Misiones Activas
-                </h3>
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => navigate("/paw-game")}
-                >
-                  Ver todas
-                  <ArrowRight className="h-4 w-4 ml-1" />
-                </Button>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {missions.slice(0, 2).map((mission) => (
-                  <MissionCard key={mission.id} mission={mission} />
-                ))}
-              </div>
-              </div>
-            )}
-        </div>
-      )}
+      {/* Gamification - visible to ALL users */}
+      <div className="space-y-4">
+        <PointsWidget
+          points={stats?.points || 0}
+          level={stats?.level || 1}
+          showProgress={true}
+        />
+
+        {/* Active Missions or Welcome CTA */}
+        {missions && missions.length > 0 ? (
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-lg flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-yellow-500" />
+                Misiones Activas
+              </h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate("/paw-game")}
+              >
+                Ver todas
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {missions.slice(0, 2).map((mission) => (
+                <MissionCard key={mission.id} mission={mission} />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <Card className="border-dashed">
+            <CardContent className="p-4 text-center">
+              <Sparkles className="h-6 w-6 text-yellow-500 mx-auto mb-2" />
+              <p className="font-medium text-sm">Gana puntos cuidando a tus mascotas</p>
+              <p className="text-xs text-muted-foreground mb-3">Agrega tu mascota, completa su ficha y gana recompensas</p>
+              <Button size="sm" variant="outline" onClick={() => navigate("/paw-game")}>
+                Ver Paw Game
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+      </div>
 
       {/* Featured Partner Ad */}
       <PartnerAd placement="home" className="mb-6" />
