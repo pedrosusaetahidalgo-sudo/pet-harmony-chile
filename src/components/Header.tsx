@@ -3,6 +3,8 @@ import { Heart, PawPrint, Bell, Crown, MessageSquare } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -109,32 +111,78 @@ export const Header = () => {
           <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             <CartButton />
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative hover:bg-accent min-h-[44px] min-w-[44px]"
-            >
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-destructive rounded-full"></span>
-            </Button>
+            {/* Notifications Popover */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative hover:bg-accent min-h-[44px] min-w-[44px]"
+                >
+                  <Bell className="h-5 w-5" />
+                  <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-destructive rounded-full"></span>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-0" align="end">
+                <div className="p-3 border-b">
+                  <h4 className="font-semibold text-sm">Notificaciones</h4>
+                </div>
+                <div className="p-4 text-center text-sm text-muted-foreground">
+                  <Bell className="h-8 w-8 mx-auto mb-2 text-muted-foreground/40" />
+                  <p>No tienes notificaciones nuevas</p>
+                </div>
+                <Separator />
+                <div className="p-2">
+                  <Button variant="ghost" size="sm" className="w-full text-xs" onClick={() => navigate('/settings')}>
+                    Configurar notificaciones
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
 
-            <Button
-              variant="ghost"
-              size="icon"
-              className="relative hover:bg-accent min-h-[44px] min-w-[44px]"
-              onClick={() => navigate('/chat')}
-            >
-              <MessageSquare className="h-5 w-5" />
-              {unreadCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-destructive hover:bg-destructive/90">
-                  {unreadCount}
-                </Badge>
-              )}
-            </Button>
+            {/* Messages Popover */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative hover:bg-accent min-h-[44px] min-w-[44px]"
+                >
+                  <MessageSquare className="h-5 w-5" />
+                  {unreadCount > 0 && (
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-destructive hover:bg-destructive/90">
+                      {unreadCount}
+                    </Badge>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80 p-0" align="end">
+                <div className="p-3 border-b flex items-center justify-between">
+                  <h4 className="font-semibold text-sm">Mensajes</h4>
+                  <Button variant="ghost" size="sm" className="text-xs h-7" onClick={() => navigate('/chat')}>
+                    Ver todos
+                  </Button>
+                </div>
+                <div className="p-4 text-center text-sm text-muted-foreground">
+                  <MessageSquare className="h-8 w-8 mx-auto mb-2 text-muted-foreground/40" />
+                  {unreadCount > 0
+                    ? <p>Tienes {unreadCount} mensaje{unreadCount > 1 ? "s" : ""} sin leer</p>
+                    : <p>No tienes mensajes nuevos</p>
+                  }
+                </div>
+                <Separator />
+                <div className="p-2">
+                  <Button variant="ghost" size="sm" className="w-full text-xs" onClick={() => navigate('/chat')}>
+                    Ir a mensajes
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
 
+            {/* User avatar → Home */}
             <div
               className="flex items-center gap-2 hover:bg-accent px-1.5 sm:px-2 py-1 rounded-lg transition-colors cursor-pointer min-h-[44px]"
-              onClick={() => navigate('/profile')}
+              onClick={() => navigate('/home')}
             >
               <div className="relative flex-shrink-0">
                 <Avatar className="h-8 w-8 ring-2 ring-primary/20">

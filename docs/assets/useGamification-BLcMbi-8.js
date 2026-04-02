@@ -1,0 +1,13 @@
+import{b as h,u,c as w}from"./query-vendor-DSTpQw6r.js";import{u as v,s}from"./index-DDuV7OGp.js";import"./react-vendor-9miG1rdg.js";import"./ui-vendor-BLRmv1vB.js";const Q=g=>{const{user:n}=v(),e=n==null?void 0:n.id,d=h(),{data:_,isLoading:l}=u({queryKey:["gamification",e],queryFn:async()=>{if(!e)return null;const{data:o,error:i}=await s.from("profiles").select("points, level, total_bookings, total_reviews, total_posts, total_adoptions, total_lost_pet_help").eq("id",e).maybeSingle();if(i)throw i;return o},enabled:!!e}),{data:m}=u({queryKey:["achievements",e],queryFn:async()=>{if(!e)return[];const{data:o,error:i}=await s.from("user_achievements").select(`
+          id,
+          unlocked_at,
+          achievements:achievement_id (
+            id,
+            code,
+            name,
+            description,
+            icon,
+            points_reward,
+            category
+          )
+        `).eq("user_id",e).order("unlocked_at",{ascending:!1});if(i)throw i;return(o||[]).map(t=>({id:t.id,code:t.achievements.code,name:t.achievements.name,description:t.achievements.description,icon:t.achievements.icon,points_reward:t.achievements.points_reward,category:t.achievements.category,unlocked_at:t.unlocked_at}))},enabled:!!e}),{data:y}=u({queryKey:["missions",e],queryFn:async()=>{if(!e)return[];const{data:o,error:i}=await s.from("missions").select("*").eq("is_active",!0).order("mission_type",{ascending:!0});if(i)throw i;const{data:t,error:c}=await s.from("user_missions").select("*").eq("user_id",e);if(c)throw c;return(o||[]).map(a=>{const r=(t||[]).find(f=>f.mission_id===a.id);return{id:a.id,code:a.code,name:a.name,description:a.description,mission_type:a.mission_type,action_type:a.action_type,target_count:a.target_count,points_reward:a.points_reward,progress:(r==null?void 0:r.progress)||0,completed:(r==null?void 0:r.completed)||!1,expires_at:(r==null?void 0:r.expires_at)||a.end_date}})},enabled:!!e}),p=w({mutationFn:async({points:o,actionType:i,actionId:t,description:c})=>{if(!(n!=null&&n.id))throw new Error("User not authenticated");const{data:a,error:r}=await s.rpc("award_points",{p_user_id:n.id,p_points:o,p_action_type:i,p_action_id:t||null,p_description:c||null});if(r)throw r;return a},onSuccess:()=>{d.invalidateQueries({queryKey:["gamification",e]}),d.invalidateQueries({queryKey:["achievements",e]}),d.invalidateQueries({queryKey:["missions",e]})}});return{stats:_,achievements:m||[],missions:y||[],isLoading:l,awardPoints:p.mutate,isAwarding:p.isPending}};export{Q as useGamification};
