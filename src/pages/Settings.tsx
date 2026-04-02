@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import {
   User,
@@ -31,7 +31,21 @@ const Settings = () => {
   const [displayName, setDisplayName] = useState("");
   const [bio, setBio] = useState("");
   const [location, setLocation] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const avatarOptions = [
+    "https://api.dicebear.com/7.x/adventurer/svg?seed=Luna&backgroundColor=b6e3f4",
+    "https://api.dicebear.com/7.x/adventurer/svg?seed=Rocky&backgroundColor=c0aede",
+    "https://api.dicebear.com/7.x/adventurer/svg?seed=Simba&backgroundColor=ffd5dc",
+    "https://api.dicebear.com/7.x/adventurer/svg?seed=Nala&backgroundColor=d1f4d1",
+    "https://api.dicebear.com/7.x/adventurer/svg?seed=Max&backgroundColor=ffdfba",
+    "https://api.dicebear.com/7.x/lorelei/svg?seed=Miso&backgroundColor=b6e3f4",
+    "https://api.dicebear.com/7.x/lorelei/svg?seed=Buddy&backgroundColor=c0aede",
+    "https://api.dicebear.com/7.x/lorelei/svg?seed=Pelusa&backgroundColor=ffd5dc",
+    "https://api.dicebear.com/7.x/fun-emoji/svg?seed=happy&backgroundColor=d1f4d1",
+    "https://api.dicebear.com/7.x/fun-emoji/svg?seed=love&backgroundColor=ffdfba",
+  ];
 
   const [healthReminders, setHealthReminders] = useState(true);
   const [messages, setMessages] = useState(true);
@@ -45,7 +59,7 @@ const Settings = () => {
     const loadProfile = async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("display_name, bio, location")
+        .select("display_name, bio, location, avatar_url")
         .eq("id", user.id)
         .maybeSingle();
 
@@ -53,6 +67,7 @@ const Settings = () => {
         setDisplayName(data.display_name || "");
         setBio(data.bio || "");
         setLocation(data.location || "");
+        setAvatarUrl(data.avatar_url || "");
       }
       if (error) {
         console.error("Error loading profile:", error);
@@ -73,6 +88,7 @@ const Settings = () => {
         display_name: displayName,
         bio,
         location,
+        avatar_url: avatarUrl,
         updated_at: new Date().toISOString(),
       });
 
@@ -119,6 +135,9 @@ const Settings = () => {
           <CardContent className="space-y-4">
             <div className="flex items-center gap-4">
               <Avatar className="h-16 w-16">
+                {avatarUrl ? (
+                  <AvatarImage src={avatarUrl} alt="Avatar" />
+                ) : null}
                 <AvatarFallback className="text-xl bg-primary text-primary-foreground">
                   {userInitial}
                 </AvatarFallback>
@@ -130,6 +149,24 @@ const Settings = () => {
             </div>
 
             <Separator />
+
+            <div className="space-y-2">
+              <Label>Elige tu Avatar</Label>
+              <div className="grid grid-cols-5 gap-3">
+                {avatarOptions.map((url, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setAvatarUrl(url)}
+                    className={`rounded-full overflow-hidden border-2 transition-all hover:scale-110 ${
+                      avatarUrl === url ? "border-primary ring-2 ring-primary/30 scale-110" : "border-transparent"
+                    }`}
+                  >
+                    <img src={url} alt={`Avatar ${i + 1}`} className="w-full h-full" />
+                  </button>
+                ))}
+              </div>
+            </div>
 
             <div className="space-y-2">
               <Label htmlFor="displayName">Nombre para mostrar</Label>

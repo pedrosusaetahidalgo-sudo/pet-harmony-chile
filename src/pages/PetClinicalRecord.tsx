@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useMedicalRecords } from "@/hooks/useMedicalRecords";
 import { useMedicalDocuments, MedicalDocument } from "@/hooks/useMedicalDocuments";
 import { useMedicalSharing } from "@/hooks/useMedicalSharing";
+import { useReminders } from "@/hooks/useReminders";
 import { format, differenceInYears, differenceInMonths } from "date-fns";
 import { es } from "date-fns/locale";
 import { toast } from "sonner";
@@ -14,7 +15,7 @@ import {
   Heart, Shield, Pill, Syringe, Stethoscope, FileText, Share2,
   AlertTriangle, Dog, Cat, Calendar, MapPin, Phone, Building,
   Activity, Home as HomeIcon, Baby, Scale, Clipboard, Clock,
-  ArrowLeft, Copy, ExternalLink, Download, Trash2, Link2,
+  ArrowLeft, Copy, ExternalLink, Download, Trash2, Link2, Plus,
 } from "lucide-react";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,8 +25,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
+import PremiumGate from "@/components/PremiumGate";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 // --- Helpers ---
 
@@ -1127,6 +1131,9 @@ const PetClinicalRecord = () => {
   const { petId } = useParams<{ petId: string }>();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
+  const { addReminder } = useReminders();
+  const [showReminderForm, setShowReminderForm] = useState(false);
+  const [reminderData, setReminderData] = useState({ type: "vaccine", title: "", due_date: "" });
 
   const { data: pet, isLoading: petLoading, error } = useQuery({
     queryKey: ["pet-clinical", petId],
@@ -1304,6 +1311,74 @@ const PetClinicalRecord = () => {
               </Button>
             </CardContent>
           </Card>
+          <Card>
+            <CardContent className="p-4 text-center">
+              <p className="text-sm text-muted-foreground mb-3">
+                Programa recordatorios de vacunas, controles y medicamentos
+              </p>
+              <Dialog open={showReminderForm} onOpenChange={setShowReminderForm}>
+                <DialogTrigger asChild>
+                  <Button variant="outline" size="sm">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Agregar Recordatorio
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Nuevo Recordatorio</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 pt-2">
+                    <div className="space-y-2">
+                      <Label>Tipo</Label>
+                      <Select value={reminderData.type} onValueChange={(v) => setReminderData(d => ({...d, type: v}))}>
+                        <SelectTrigger><SelectValue /></SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="vaccine">Vacuna</SelectItem>
+                          <SelectItem value="checkup">Control veterinario</SelectItem>
+                          <SelectItem value="medication">Medicamento</SelectItem>
+                          <SelectItem value="grooming">Peluquería</SelectItem>
+                          <SelectItem value="weight">Control de peso</SelectItem>
+                          <SelectItem value="custom">Otro</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Título</Label>
+                      <Input
+                        value={reminderData.title}
+                        onChange={(e) => setReminderData(d => ({...d, title: e.target.value}))}
+                        placeholder="Ej: Vacuna antirrábica"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Fecha</Label>
+                      <Input
+                        type="date"
+                        value={reminderData.due_date}
+                        onChange={(e) => setReminderData(d => ({...d, due_date: e.target.value}))}
+                      />
+                    </div>
+                    <Button
+                      className="w-full"
+                      disabled={!reminderData.title || !reminderData.due_date}
+                      onClick={() => {
+                        addReminder.mutate({
+                          pet_id: pet.id,
+                          type: reminderData.type,
+                          title: reminderData.title,
+                          due_date: reminderData.due_date,
+                        });
+                        setShowReminderForm(false);
+                        setReminderData({ type: "vaccine", title: "", due_date: "" });
+                      }}
+                    >
+                      Crear Recordatorio
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="historial" className="mt-4">
@@ -1330,7 +1405,9 @@ const PetClinicalRecord = () => {
         </TabsContent>
 
         <TabsContent value="compartir" className="mt-4">
-          <TabCompartir petId={pet.id} />
+          <PremiumGate feature="Compartir ficha clínica" description="Comparte la ficha clínica de tu mascota con veterinarios mediante un enlace seguro.">
+            <TabCompartir petId={pet.id} />
+          </PremiumGate>
         </TabsContent>
       </Tabs>
     </div>

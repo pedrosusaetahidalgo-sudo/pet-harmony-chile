@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { Compass, Heart, Plus, Calendar, MapPin, MessageSquare, PawPrint, LogOut, Home, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2 } from "lucide-react";
+import { Compass, Heart, Plus, Calendar, MapPin, MessageSquare, PawPrint, LogOut, Home, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -35,7 +35,7 @@ const allItems = [
   { title: "Historial Médico", url: "/medical-records", icon: Calendar, section: "pets" },
   { title: "Paseadores", url: "/dog-walkers", icon: Dog, section: "services" },
   { title: "Veterinarios", url: "/home-vets", icon: Stethoscope, section: "services" },
-  { title: "Cuidadores", url: "/dog-sitters", icon: Home, section: "services" },
+  { title: "Cuidadores", url: "/dog-sitters", icon: ShieldCheck, section: "services" },
   { title: "Entrenadores", url: "/dog-trainers", icon: GraduationCap, section: "services" },
   { title: "Paseos Grupales", url: "/shared-walks", icon: Users, section: "services" },
 ];
