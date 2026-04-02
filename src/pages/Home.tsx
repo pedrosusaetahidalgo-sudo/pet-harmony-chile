@@ -28,7 +28,8 @@ import {
   Gamepad2,
   Trophy,
   Zap,
-  Crown
+  Crown,
+  X
 } from "lucide-react";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -79,6 +80,9 @@ export default function Home() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [showPremiumBanner, setShowPremiumBanner] = useState(() => {
+    return !sessionStorage.getItem("premium_banner_dismissed");
+  });
   const [loading, setLoading] = useState(true);
   const { stats, missions, achievements } = useGamification();
   const { upcomingReminders, overdueReminders, completeReminder } = useReminders();
@@ -201,7 +205,7 @@ export default function Home() {
     );
   }
 
-  return (
+  return (<>
     <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6 animate-fade-in">
       {showTutorial && <OnboardingTutorial onComplete={handleTutorialComplete} />}
       
@@ -328,23 +332,7 @@ export default function Home() {
         )}
       </div>
 
-      {/* Premium Upsell - show after user has pets */}
-      {pets.length > 0 && !profile?.is_premium && (
-        <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-secondary/5">
-          <CardContent className="p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Crown className="h-8 w-8 text-primary" />
-              <div>
-                <p className="font-semibold text-sm">Paw Friend Premium</p>
-                <p className="text-xs text-muted-foreground">2x puntos, ficha completa, sin comisiones</p>
-              </div>
-            </div>
-            <Button size="sm" variant="outline" onClick={() => navigate('/premium')}>
-              Desde $4.990/mes
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+      {/* Premium Upsell - floating banner */}
 
       {/* Featured Partner Ad */}
       <PartnerAd placement="home" className="mb-6" />
@@ -556,5 +544,30 @@ export default function Home() {
         </CardContent>
       </Card>
     </div>
-  );
+
+    {/* Floating Premium Banner */}
+    {showPremiumBanner && pets.length > 0 && !profile?.is_premium && (
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-lg animate-fade-in-up">
+        <div className="bg-card border border-primary/20 rounded-xl shadow-lg p-3 flex items-center gap-3">
+          <Crown className="h-6 w-6 text-primary flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-sm">Paw Friend Premium</p>
+            <p className="text-xs text-muted-foreground truncate">2x puntos · Ficha completa · Sin comisiones</p>
+          </div>
+          <Button size="sm" onClick={() => navigate('/premium')} className="flex-shrink-0">
+            Ver planes
+          </Button>
+          <button
+            onClick={() => {
+              setShowPremiumBanner(false);
+              sessionStorage.setItem("premium_banner_dismissed", "true");
+            }}
+            className="p-1 rounded-full hover:bg-muted transition-colors flex-shrink-0"
+          >
+            <X className="h-4 w-4 text-muted-foreground" />
+          </button>
+        </div>
+      </div>
+    )}
+  </>;
 }
