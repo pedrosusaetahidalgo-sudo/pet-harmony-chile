@@ -22,8 +22,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useParams, useNavigate } from "react-router-dom";
 import { ProfessionalBadges } from "@/components/ProfessionalBadges";
 import { useStartConversation } from "@/hooks/useStartConversation";
-import dogProfile from "@/assets/dog-profile-1.jpg";
-import catProfile from "@/assets/cat-profile-1.jpg";
+const dogProfileUrl = "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop&crop=faces";
+const catProfileUrl = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=400&fit=crop&crop=faces";
 
 const UserProfile = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -345,9 +345,10 @@ const UserProfile = () => {
                   key={post.id}
                   className="relative aspect-square group cursor-pointer overflow-hidden rounded-md sm:rounded-lg"
                 >
-                  <img 
-                    src={post.image_url || dogProfile} 
+                  <img
+                    src={post.image_url || dogProfileUrl}
                     alt="Post"
+                    loading="lazy"
                     className="w-full h-full object-cover transition-transform group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 sm:gap-4 text-white">
@@ -381,9 +382,10 @@ const UserProfile = () => {
                 >
                   <CardContent className="p-0">
                     <div className="relative aspect-square overflow-hidden">
-                      <img 
-                        src={pet.photo_url || (pet.species === 'perro' ? dogProfile : catProfile)} 
+                      <img
+                        src={pet.photo_url || (pet.species === 'perro' ? dogProfileUrl : catProfileUrl)}
                         alt={pet.name}
+                        loading="lazy"
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform"
                       />
                     </div>

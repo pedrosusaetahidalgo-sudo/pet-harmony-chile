@@ -210,6 +210,7 @@ const PetCard = ({
           <img
             src={petImage}
             alt={petName}
+            loading="lazy"
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
           />
         </div>

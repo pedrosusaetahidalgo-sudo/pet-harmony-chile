@@ -36,7 +36,7 @@ export function AdoptionPostCard({ post, onUpdate, isOwner }: AdoptionPostCardPr
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [interests, setInterests] = useState<any[]>([]);
 
-  const mainPhoto = post.photos?.[0] || "/placeholder.svg";
+  const mainPhoto = post.photos?.[0] || "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=400&fit=crop&crop=faces";
   const age = post.age_years > 0 || post.age_months > 0
     ? `${post.age_years > 0 ? `${post.age_years} año${post.age_years > 1 ? 's' : ''}` : ''} ${post.age_months > 0 ? `${post.age_months} mes${post.age_months > 1 ? 'es' : ''}` : ''}`.trim()
     : "Edad no especificada";
@@ -106,6 +106,7 @@ export function AdoptionPostCard({ post, onUpdate, isOwner }: AdoptionPostCardPr
           <img 
             src={mainPhoto} 
             alt={post.pet_name}
+            loading="lazy"
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
           />
           <div className="absolute top-2 right-2">

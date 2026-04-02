@@ -1,7 +1,9 @@
 import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
+import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Separator } from "@/components/ui/separator";
@@ -51,6 +53,21 @@ export function AppSidebar() {
   const isMobile = useIsMobile();
   const { setOpenMobile } = useSidebar();
   const currentPath = location.pathname;
+
+  const { data: userPets } = useQuery({
+    queryKey: ["user-pets-count", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data } = await supabase
+        .from("pets")
+        .select("id")
+        .eq("owner_id", user.id)
+        .limit(1);
+      return data || [];
+    },
+    enabled: !!user?.id,
+  });
+  const hasPets = (userPets?.length ?? 0) > 0;
 
   const handleSignOut = async () => {
     await signOut();
@@ -111,18 +128,26 @@ export function AppSidebar() {
           <SidebarGroupLabel className="text-[10px] px-3 mb-0.5">Mascotas</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0">
-              {petItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    isActive={isActive(item.url)}
-                    onClick={() => handleNavigate(item.url)}
-                    className="h-8 text-xs rounded-md"
-                  >
-                    <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {petItems.map((item) => {
+                const showGlow = !hasPets && item.url === "/add-pet";
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      isActive={isActive(item.url)}
+                      onClick={() => handleNavigate(item.url)}
+                      className={`h-8 text-xs rounded-md ${showGlow ? "animate-pulse-glow" : ""}`}
+                    >
+                      <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                      <span>{item.title}</span>
+                      {showGlow && (
+                        <span className="ml-auto text-[9px] font-medium text-primary whitespace-nowrap">
+                          ¡Primera mascota!
+                        </span>
+                      )}
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

@@ -199,7 +199,13 @@
   50% { transform: translateY(-4px); }
 }
 
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.3); }
+  50% { box-shadow: 0 0 8px 4px rgba(139, 92, 246, 0.15); }
+}
+
 /* ── Animation Utilities ── */
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
 .animate-fade-in { animation: fadeIn 0.3s ease-out both; }
 .animate-fade-in-up { animation: fadeInUp 0.35s ease-out both; }
 .animate-fade-in-down { animation: fadeInDown 0.3s ease-out both; }
@@ -299,4 +305,38 @@ button:focus-visible,
   input[type="text"], input[type="email"], input[type="password"],
   input[type="search"], input[type="tel"], input[type="url"],
   input[type="number"], textarea, select { font-size: 16px; }
+}
+
+/* ============================================
+   LEAFLET MAP OVERRIDES
+   ============================================ */
+
+/* Remove default Leaflet popup chrome so MapPinPopup cards render cleanly */
+.leaflet-popup-custom .leaflet-popup-content-wrapper {
+  padding: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+.leaflet-popup-custom .leaflet-popup-content {
+  margin: 0;
+  min-width: 280px;
+}
+.leaflet-popup-custom .leaflet-popup-tip {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Custom marker resets */
+.custom-marker {
+  background: transparent !important;
+  border: none !important;
+}
+.user-location-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Hide scrollbar on filter chips row */
+.leaflet-container {
+  font-family: inherit;
 }

@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
-import petFriendlyPlace from "@/assets/pet-friendly-place.jpg";
+const petFriendlyPlaceUrl = "https://images.unsplash.com/photo-1450778869180-cfd0620544af?w=800&h=600&fit=crop";
 import { searchGooglePlaces, getPlacePhotoUrl, mapGooglePlaceType } from "@/lib/googlePlaces";
 import { calculateDistance } from "@/lib/distance";
 
@@ -296,13 +296,14 @@ const Places = () => {
                           src={
                             place.google_photo_reference
                               ? getPlacePhotoUrl(place.google_photo_reference, 800)
-                              : place.photos?.[0] || petFriendlyPlace
+                              : place.photos?.[0] || petFriendlyPlaceUrl
                           }
                           alt={place.name}
+                          loading="lazy"
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                           onError={(e) => {
                             // Fallback to default image if Google photo fails
-                            (e.target as HTMLImageElement).src = petFriendlyPlace;
+                            (e.target as HTMLImageElement).src = petFriendlyPlaceUrl;
                           }}
                         />
                         <div className="absolute top-4 right-4">

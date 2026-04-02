@@ -30,8 +30,8 @@ import {
   Brain,
   Search
 } from "lucide-react";
-import dogProfile from "@/assets/dog-profile-1.jpg";
-import catProfile from "@/assets/cat-profile-1.jpg";
+const dogProfileUrl = "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop&crop=faces";
+const catProfileUrl = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=400&fit=crop&crop=faces";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -253,7 +253,7 @@ const Index = () => {
           <PetCard
             postId="example-1"
             petName="Max"
-            petImage={dogProfile}
+            petImage={dogProfileUrl}
             ownerName="María González"
             location="Santiago, Chile"
             description="¡Primer día en el parque! Max está súper feliz corriendo con sus nuevos amigos 🐕"
@@ -264,7 +264,7 @@ const Index = () => {
           <PetCard
             postId="example-2"
             petName="Luna"
-            petImage={catProfile}
+            petImage={catProfileUrl}
             ownerName="Carlos Pérez"
             location="Valparaíso, Chile"
             description="Luna descubrió su nuevo lugar favorito. Le encanta ver los pájaros desde aquí 🐱"
@@ -275,7 +275,7 @@ const Index = () => {
           <PetCard
             postId="example-3"
             petName="Rocky"
-            petImage={dogProfile}
+            petImage={dogProfileUrl}
             ownerName="Ana Martínez"
             location="Viña del Mar, Chile"
             description="Rocky y yo disfrutando del atardecer en la playa. ¡Momentos perfectos! 🌅"
