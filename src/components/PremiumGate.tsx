@@ -1,44 +1,47 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Crown } from "lucide-react";
+import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
+import { Crown, Lock } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { usePlan } from "@/hooks/usePlan";
 
-interface PremiumGateProps {
+interface Props {
   feature: string;
-  description?: string;
-  children: React.ReactNode;
-  isPremium?: boolean;
+  currentUsage?: number;
+  children: ReactNode;
+  fallback?: ReactNode;
 }
 
-const PremiumGate = ({ feature, description, children, isPremium = false }: PremiumGateProps) => {
+export function PremiumGate({ feature, currentUsage, children, fallback }: Props) {
   const navigate = useNavigate();
+  const { checkAccess } = usePlan();
+  const access = checkAccess(feature, currentUsage);
 
-  if (isPremium) return <>{children}</>;
+  if (access.allowed) return <>{children}</>;
+
+  if (fallback) return <>{fallback}</>;
 
   return (
     <div className="relative">
-      <div className="opacity-40 pointer-events-none select-none blur-[1px]">
+      <div className="blur-[2px] opacity-40 pointer-events-none select-none">
         {children}
       </div>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <Card className="max-w-sm mx-4 shadow-lg border-primary/20">
-          <CardContent className="p-6 text-center">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Crown className="h-6 w-6 text-primary" />
-            </div>
-            <h3 className="font-semibold text-lg mb-1">Función Premium</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              {description || `${feature} está disponible con el plan Premium.`}
-            </p>
-            <Button onClick={() => navigate("/premium")} className="w-full">
-              <Crown className="h-4 w-4 mr-2" />
-              Ver planes desde $4.990/mes
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/60 backdrop-blur-sm rounded-xl p-6 text-center">
+        <div className="h-12 w-12 rounded-full bg-amber-100 flex items-center justify-center mb-3">
+          <Lock className="h-6 w-6 text-amber-600" />
+        </div>
+        <p className="text-sm font-medium mb-1">Función Premium</p>
+        <p className="text-xs text-muted-foreground mb-4 max-w-[240px]">
+          {access.reason}
+        </p>
+        <Button
+          size="sm"
+          onClick={() => navigate("/premium")}
+          className="gap-2"
+        >
+          <Crown className="h-3.5 w-3.5" />
+          {access.upgradeRequired === 'premium_plus' ? 'Mejorar a Premium+' : 'Ver planes'}
+        </Button>
       </div>
     </div>
   );
-};
-
-export default PremiumGate;
+}

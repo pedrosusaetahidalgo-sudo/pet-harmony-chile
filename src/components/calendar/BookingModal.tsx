@@ -7,6 +7,9 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
+import { usePlan } from "@/hooks/usePlan";
+import { calculateBookingCommission } from "@/lib/commissions";
+import { formatCLP } from "@/lib/plans";
 import { CheckCircle2, Loader2 } from "lucide-react";
 
 interface Props {
@@ -18,6 +21,7 @@ interface Props {
 export function BookingModal({ slot, open, onClose }: Props) {
   const { user } = useAuth();
   const { toast } = useToast();
+  const { planId } = usePlan();
   const queryClient = useQueryClient();
   const [petId, setPetId] = useState("");
   const [notes, setNotes] = useState("");
@@ -35,7 +39,9 @@ export function BookingModal({ slot, open, onClose }: Props) {
     enabled: !!user?.id,
   });
 
-  const price = new Intl.NumberFormat("es-CL", { style: "currency", currency: "CLP", maximumFractionDigits: 0 }).format(slot.price);
+  const { userPays, userFee } = calculateBookingCommission(slot.price, planId);
+  const price = formatCLP(slot.price);
+  const totalPrice = formatCLP(userPays);
   const profile = slot.provider?.profiles;
 
   const handleConfirm = async () => {
@@ -127,9 +133,24 @@ export function BookingModal({ slot, open, onClose }: Props) {
                 />
               </div>
 
-              <div className="flex items-center justify-between pt-2 border-t">
-                <span className="text-sm text-muted-foreground">Total</span>
-                <span className="text-lg font-bold text-primary">{price}</span>
+              <div className="pt-2 border-t space-y-1.5">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Servicio</span>
+                  <span>{price}</span>
+                </div>
+                {userFee > 0 && (
+                  <>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-muted-foreground">Tarifa de servicio (5%)</span>
+                      <span>{formatCLP(userFee)}</span>
+                    </div>
+                    <p className="text-[11px] text-amber-600">Con Premium pagas $0 de tarifa</p>
+                  </>
+                )}
+                <div className="flex items-center justify-between text-sm font-bold pt-1">
+                  <span>Total</span>
+                  <span className="text-lg text-primary">{totalPrice}</span>
+                </div>
               </div>
 
               <Button
@@ -140,7 +161,7 @@ export function BookingModal({ slot, open, onClose }: Props) {
                 {step === "processing" ? (
                   <><Loader2 className="h-4 w-4 animate-spin mr-2" />Procesando...</>
                 ) : (
-                  `Confirmar y pagar — ${price}`
+                  `Confirmar y pagar — ${totalPrice}`
                 )}
               </Button>
             </div>

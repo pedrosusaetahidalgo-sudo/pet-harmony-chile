@@ -25,7 +25,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import PremiumGate from "@/components/PremiumGate";
+import { PremiumGate } from "@/components/PremiumGate";
 import { PetAssistant } from "@/components/ai/PetAssistant";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
@@ -1433,7 +1433,7 @@ const PetClinicalRecord = () => {
         </TabsContent>
 
         <TabsContent value="compartir" className="mt-4">
-          <PremiumGate feature="Compartir ficha clínica" description="Comparte la ficha clínica de tu mascota con veterinarios mediante un enlace seguro." isPremium={!!userProfile?.is_premium}>
+          <PremiumGate feature="share_clinical">
             <TabCompartir petId={pet.id} />
           </PremiumGate>
         </TabsContent>
