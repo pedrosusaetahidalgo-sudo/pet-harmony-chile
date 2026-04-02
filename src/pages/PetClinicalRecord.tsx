@@ -26,6 +26,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import PremiumGate from "@/components/PremiumGate";
+import { PetAssistant } from "@/components/ai/PetAssistant";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -1133,6 +1134,7 @@ const PetClinicalRecord = () => {
   const { user, loading: authLoading } = useAuth();
   const { addReminder } = useReminders();
   const [showReminderForm, setShowReminderForm] = useState(false);
+  const [showAssistant, setShowAssistant] = useState(false);
   const [reminderData, setReminderData] = useState({ type: "vaccine", title: "", due_date: "" });
 
   // Fetch premium status for PremiumGate
@@ -1288,6 +1290,16 @@ const PetClinicalRecord = () => {
 
       {/* Header Card */}
       <PetHeader pet={pet} />
+
+      {/* AI Assistant */}
+      {showAssistant ? (
+        <PetAssistant petId={pet.id} petName={pet.name} onClose={() => setShowAssistant(false)} />
+      ) : (
+        <Button variant="outline" size="sm" onClick={() => setShowAssistant(true)} className="gap-2 mb-4">
+          <Stethoscope className="h-3.5 w-3.5" />
+          Preguntar a la IA sobre {pet.name}
+        </Button>
+      )}
 
       {/* Tabs */}
       <Tabs defaultValue="resumen" className="w-full">

@@ -38,6 +38,7 @@ import { useReminders } from "@/hooks/useReminders";
 import PointsWidget from "@/components/PointsWidget";
 import MissionCard from "@/components/MissionCard";
 import { PartnerAd } from "@/components/PartnerAd";
+import { PetAssistant } from "@/components/ai/PetAssistant";
 
 interface Pet {
   id: string;
@@ -84,6 +85,7 @@ export default function Home() {
     return !sessionStorage.getItem("premium_banner_dismissed");
   });
   const [loading, setLoading] = useState(true);
+  const [assistantPet, setAssistantPet] = useState<Pet | null>(null);
   const { stats, missions, achievements } = useGamification();
   const { upcomingReminders, overdueReminders, completeReminder } = useReminders();
 
@@ -366,28 +368,51 @@ export default function Home() {
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-2 gap-3">
-                {pets.map((pet) => (
-                  <div 
-                    key={pet.id}
-                    className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted cursor-pointer transition-colors"
-                    onClick={() => navigate("/my-pets")}
-                  >
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={pet.photo_url || undefined} />
-                      <AvatarFallback className="bg-secondary/20">
-                        <PawPrint className="h-5 w-5 text-secondary" />
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="min-w-0">
-                      <p className="font-medium truncate">{pet.name}</p>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {pet.breed || pet.species}
-                      </p>
+              <>
+                <div className="grid grid-cols-2 gap-3">
+                  {pets.map((pet) => (
+                    <div
+                      key={pet.id}
+                      className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted cursor-pointer transition-colors"
+                      onClick={() => navigate("/my-pets")}
+                    >
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={pet.photo_url || undefined} />
+                        <AvatarFallback className="bg-secondary/20">
+                          <PawPrint className="h-5 w-5 text-secondary" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium truncate">{pet.name}</p>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {pet.breed || pet.species}
+                        </p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 flex-shrink-0"
+                        title={`Preguntar a la IA sobre ${pet.name}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setAssistantPet(assistantPet?.id === pet.id ? null : pet);
+                        }}
+                      >
+                        <Stethoscope className="h-3.5 w-3.5 text-primary" />
+                      </Button>
                     </div>
+                  ))}
+                </div>
+                {assistantPet && (
+                  <div className="mt-3">
+                    <PetAssistant
+                      petId={assistantPet.id}
+                      petName={assistantPet.name}
+                      onClose={() => setAssistantPet(null)}
+                    />
                   </div>
-                ))}
-              </div>
+                )}
+              </>
             )}
           </CardContent>
         </Card>
