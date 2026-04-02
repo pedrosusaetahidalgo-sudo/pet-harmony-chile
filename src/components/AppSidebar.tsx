@@ -85,7 +85,7 @@ export function AppSidebar() {
         </button>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 overflow-y-auto">
+      <SidebarContent className="px-2 overflow-y-auto overflow-x-hidden">
         <SidebarGroup className="py-1">
           <SidebarGroupLabel className="text-[10px] px-3 mb-0.5">Principal</SidebarGroupLabel>
           <SidebarGroupContent>

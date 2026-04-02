@@ -13,7 +13,7 @@ function LayoutInner({ children }: AppLayoutProps) {
   const isMobile = useIsMobile();
 
   return (
-    <div className="min-h-screen flex w-full bg-background">
+    <div className="min-h-screen flex w-full bg-background overflow-x-hidden">
       {/* Sidebar - fixed on desktop, offcanvas on mobile */}
       <AppSidebar />
 
