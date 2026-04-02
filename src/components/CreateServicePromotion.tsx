@@ -38,7 +38,7 @@ export const CreateServicePromotion = ({ onSuccess }: { onSuccess?: () => void }
           description: data.description,
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 

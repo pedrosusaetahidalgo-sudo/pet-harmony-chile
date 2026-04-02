@@ -100,7 +100,7 @@ export const useMedicalRecords = (petId?: string) => {
           notes: params.notes || null,
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data as MedicalRecord;
@@ -125,7 +125,7 @@ export const useMedicalRecords = (petId?: string) => {
         .eq('id', id)
         .eq('owner_id', user.id)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data as MedicalRecord;

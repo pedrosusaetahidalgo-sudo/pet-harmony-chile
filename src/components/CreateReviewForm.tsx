@@ -112,7 +112,7 @@ const CreateReviewForm = ({ reviewType, bookingId, providerId, onSuccess, onCanc
         .from(tableName as any)
         .insert(reviewData)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 

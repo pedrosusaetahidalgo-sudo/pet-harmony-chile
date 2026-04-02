@@ -140,7 +140,7 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies }: AddMedicalReco
           notes,
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -151,7 +151,7 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies }: AddMedicalReco
           .from("pets")
           .select("owner_id")
           .eq("id", petId)
-          .single();
+          .maybeSingle();
 
         if (pet?.owner_id) {
           await supabase.rpc("award_points", {

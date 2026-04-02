@@ -93,7 +93,7 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
         good_with_cats: data.good_with_cats || false,
         photos: photoUrls,
         location: data.location,
-      }).select().single();
+      }).select().maybeSingle();
 
       if (error) throw error;
 

@@ -69,7 +69,7 @@ export const useMedicalSharing = (petId?: string) => {
           expires_at: expiresAt.toISOString(),
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data as ShareToken;

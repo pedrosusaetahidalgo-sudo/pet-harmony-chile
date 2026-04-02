@@ -247,13 +247,15 @@ const Feed = () => {
             </TabsList>
           </div>
 
-            <TabsContent value="pets" className="space-y-4 mt-4">
+            {/* Feed Posts - shown above tabs */}
+            <div className="space-y-4 mb-6">
               {loading ? (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">Cargando publicaciones...</p>
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">Cargando publicaciones...</p>
                 </div>
               ) : posts.length === 0 ? (
-                <div className="text-center py-12">
+                <div className="text-center py-8">
                   <p className="text-muted-foreground">
                     No hay publicaciones todavía. ¡Sé el primero en compartir!
                   </p>
@@ -278,7 +280,7 @@ const Feed = () => {
                   />
                 ))
               )}
-            </TabsContent>
+            </div>
 
             <TabsContent value="pets" className="mt-6">
               {loadingPets ? (

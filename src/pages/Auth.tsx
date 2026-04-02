@@ -156,6 +156,36 @@ const Auth = () => {
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast({
+        title: "Ingresa tu email",
+        description: "Escribe tu email arriba y luego haz clic en '¿Olvidaste tu contraseña?'",
+        variant: "destructive",
+      });
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/auth`,
+      });
+      if (error) throw error;
+      toast({
+        title: "Revisa tu correo",
+        description: "Te enviamos un enlace para restablecer tu contraseña.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "No se pudo enviar el correo de recuperación.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleFacebookLogin = async () => {
     const result = await signInWithFacebook();
     if (!result.success && result.error) {
@@ -265,6 +295,14 @@ const Auth = () => {
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
                 </Button>
+                <button
+                  type="button"
+                  className="w-full text-sm text-muted-foreground hover:text-primary transition-colors pt-2"
+                  onClick={handleForgotPassword}
+                  disabled={loading}
+                >
+                  ¿Olvidaste tu contraseña?
+                </button>
               </form>
             </TabsContent>
 

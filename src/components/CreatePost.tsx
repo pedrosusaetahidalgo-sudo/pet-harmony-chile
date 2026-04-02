@@ -122,7 +122,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
         content: content.trim(),
         image_url: imageUrl,
         pet_id: petId || null,
-      }).select().single();
+      }).select().maybeSingle();
 
       if (error) throw error;
 

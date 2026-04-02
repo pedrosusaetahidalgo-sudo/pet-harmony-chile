@@ -128,7 +128,7 @@ export const useMedicalDocuments = (petId?: string) => {
           notes: params.notes || null,
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) {
         // Clean up uploaded file if database insert fails
@@ -161,7 +161,7 @@ export const useMedicalDocuments = (petId?: string) => {
         .select('file_url')
         .eq('id', documentId)
         .eq('owner_id', user.id)
-        .single();
+        .maybeSingle();
 
       if (fetchError) throw fetchError;
 

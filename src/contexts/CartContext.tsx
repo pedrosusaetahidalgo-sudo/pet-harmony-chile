@@ -78,7 +78,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       .from('platform_config')
       .select('config_value')
       .eq('config_key', 'platform_fee')
-      .single();
+      .maybeSingle();
     
     if (data && !error) {
       setFeeConfig(data.config_value as unknown as PlatformFeeConfig);
@@ -92,7 +92,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       .from('profiles')
       .select('is_premium, premium_end_date')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
     
     if (data && !error) {
       // Check if premium is still active
@@ -127,14 +127,14 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
             .from(profileTable)
             .select('user_id')
             .eq('user_id', item.provider_id)
-            .single();
+            .maybeSingle();
           
           if (profile) {
             const { data: profileInfo } = await supabase
               .from('profiles')
               .select('display_name, avatar_url')
               .eq('id', item.provider_id)
-              .single();
+              .maybeSingle();
             
             if (profileInfo) {
               providerName = profileInfo.display_name || 'Proveedor';
@@ -206,7 +206,7 @@ export const CartProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
           special_instructions: item.special_instructions,
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 

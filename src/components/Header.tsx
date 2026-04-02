@@ -44,21 +44,25 @@ export const Header = () => {
   };
 
   const loadProfile = async () => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user?.id)
-      .single();
-    
-    setProfile(data);
+    try {
+      const { data } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user?.id)
+        .maybeSingle();
 
-    const { data: stats } = await supabase
-      .from('user_stats')
-      .select('*')
-      .eq('user_id', user?.id)
-      .single();
+      setProfile(data);
 
-    setUserStats(stats);
+      const { data: stats } = await supabase
+        .from('user_stats')
+        .select('*')
+        .eq('user_id', user?.id)
+        .maybeSingle();
+
+      setUserStats(stats);
+    } catch (error) {
+      console.error("Error loading profile:", error);
+    }
   };
 
   const loadUnreadMessages = async () => {

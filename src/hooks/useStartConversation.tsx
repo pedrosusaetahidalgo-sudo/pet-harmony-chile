@@ -84,6 +84,7 @@ export const useStartConversation = () => {
         .maybeSingle();
 
       if (error) throw error;
+      if (!newConv) throw new Error("No se pudo crear la conversación");
 
       navigate(`/chat/${newConv.id}`);
     } catch (error) {

@@ -102,7 +102,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
         status: "active",
         latitude: data.latitude || null,
         longitude: data.longitude || null,
-      }).select().single();
+      }).select().maybeSingle();
 
       if (error) throw error;
 

@@ -206,7 +206,7 @@ export const useMyProviderProfile = () => {
           .update(params)
           .eq('user_id', user.id)
           .select()
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
         return data;
@@ -216,7 +216,7 @@ export const useMyProviderProfile = () => {
           .from('profiles')
           .select('display_name, avatar_url, bio')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
 
         const { data, error } = await supabase
           .from('service_providers')
@@ -229,7 +229,7 @@ export const useMyProviderProfile = () => {
             ...params,
           })
           .select()
-          .single();
+          .maybeSingle();
 
         if (error) throw error;
         return data;
@@ -260,7 +260,7 @@ export const useMyProviderProfile = () => {
           .from('profiles')
           .select('display_name, avatar_url, bio')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
 
         const { data: newProvider, error: providerError } = await supabase
           .from('service_providers')
@@ -272,7 +272,7 @@ export const useMyProviderProfile = () => {
             status: 'approved', // AUTO-APROBACIÓN
           })
           .select()
-          .single();
+          .maybeSingle();
 
         if (providerError) throw providerError;
         providerId = newProvider.id;
@@ -294,7 +294,7 @@ export const useMyProviderProfile = () => {
           onConflict: 'provider_id,service_type',
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;
@@ -318,7 +318,7 @@ export const useMyProviderProfile = () => {
         .update({ is_active: isActive })
         .eq('id', serviceId)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;
@@ -391,7 +391,7 @@ export const useAdminServiceProviders = () => {
         .update(updateData)
         .eq('id', providerId)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;
@@ -418,7 +418,7 @@ export const useAdminServiceProviders = () => {
         })
         .eq('id', providerId)
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;

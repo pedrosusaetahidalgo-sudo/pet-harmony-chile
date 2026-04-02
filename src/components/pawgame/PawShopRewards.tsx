@@ -132,7 +132,7 @@ export const PawShopRewards = ({ userPoints, userId, onPurchase }: PawShopReward
         .from('user_guardian_progress')
         .select('total_paw_points')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
 
       if (currentProgress) {
         await supabase

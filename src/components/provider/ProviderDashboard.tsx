@@ -27,7 +27,7 @@ const ProviderDashboard = () => {
         .from("provider_balances")
         .select("*")
         .eq("provider_id", user.id)
-        .single();
+        .maybeSingle();
 
       if (balanceError && balanceError.code !== "PGRST116") {
         throw balanceError;
