@@ -22,7 +22,6 @@ import {
 } from "@/components/ui/sidebar";
 
 const allItems = [
-  { title: "Inicio", url: "/home", icon: Home, section: "main" },
   { title: "Paw Game", url: "/paw-game", icon: Gamepad2, section: "main" },
   { title: "Pet Social", url: "/feed", icon: Heart, section: "main" },
   { title: "Mapa", url: "/maps", icon: Map, section: "main" },
@@ -122,13 +121,21 @@ export function AppSidebar() {
 
     return (
       <div className="fixed left-0 top-0 bottom-0 z-30 w-16 flex flex-col items-center bg-background/80 backdrop-blur-xl border-r border-border/40">
-        {/* Logo */}
-        <div className="flex items-center justify-center py-4">
-          <div className="relative">
-            <Heart className="h-7 w-7 text-primary fill-primary" />
-            <PawPrint className="h-3 w-3 text-secondary absolute -bottom-0.5 -right-0.5" />
-          </div>
-        </div>
+        {/* Logo - clickable to Home */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => handleNavigate("/home")}
+              className="flex items-center justify-center py-4 hover:opacity-80 transition-opacity cursor-pointer"
+            >
+              <div className="relative">
+                <Heart className="h-7 w-7 text-primary fill-primary" />
+                <PawPrint className="h-3 w-3 text-secondary absolute -bottom-0.5 -right-0.5" />
+              </div>
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="right">Inicio</TooltipContent>
+        </Tooltip>
 
         {/* Dock Icons */}
         <div
@@ -205,7 +212,10 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible={isMobile ? "offcanvas" : "icon"} className="border-r border-border/40">
       <SidebarHeader className="border-b border-border/50">
-        <div className="flex items-center justify-center gap-3 px-4 py-3">
+        <button
+          onClick={() => handleNavigate("/home")}
+          className="flex items-center justify-center gap-3 px-4 py-3 w-full hover:opacity-80 transition-opacity cursor-pointer"
+        >
           <div className="relative flex-shrink-0">
             <Heart className="h-7 w-7 text-primary fill-primary" />
             <PawPrint className="h-3 w-3 text-secondary absolute -bottom-0.5 -right-0.5" />
@@ -213,7 +223,7 @@ export function AppSidebar() {
           <span className="font-bold text-lg gradient-text block whitespace-nowrap">
             Paw Friend
           </span>
-        </div>
+        </button>
       </SidebarHeader>
 
       <SidebarContent className="px-2">

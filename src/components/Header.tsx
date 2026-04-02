@@ -115,7 +115,7 @@ export const Header = () => {
               className="relative hover:bg-accent min-h-[44px] min-w-[44px]"
             >
               <Bell className="h-5 w-5" />
-              <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full"></span>
+              <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-destructive rounded-full"></span>
             </Button>
 
             <Button
@@ -126,7 +126,7 @@ export const Header = () => {
             >
               <MessageSquare className="h-5 w-5" />
               {unreadCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-red-500 hover:bg-red-600">
+                <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-destructive hover:bg-destructive/90">
                   {unreadCount}
                 </Badge>
               )}
