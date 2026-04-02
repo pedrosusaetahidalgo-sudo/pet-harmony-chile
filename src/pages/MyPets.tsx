@@ -136,7 +136,7 @@ const MyPets = () => {
   }
 
   return (
-    <div className="container px-4 py-8 max-w-6xl mx-auto animate-fade-in-up">
+    <div className="container px-4 py-8 max-w-6xl mx-auto animate-fade-in">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-2">Mis Mascotas</h1>
@@ -146,7 +146,7 @@ const MyPets = () => {
           </div>
           <Button
             onClick={() => navigate("/add-pet")}
-            className="bg-warm-gradient hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:scale-105 btn-press"
+            className="bg-warm-gradient hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:scale-105"
           >
             <Plus className="mr-2 h-5 w-5" />
             Agregar Mascota
@@ -156,7 +156,7 @@ const MyPets = () => {
         {pets.length === 0 ? (
           <Card className="animate-scale-in">
             <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-              <Heart className="h-16 w-16 text-muted-foreground/50 mb-4 animate-float" />
+              <Heart className="h-16 w-16 text-muted-foreground/50 mb-4" />
               <h3 className="text-xl font-semibold mb-2">
                 No tienes mascotas registradas
               </h3>
@@ -166,7 +166,7 @@ const MyPets = () => {
               </p>
               <Button
                 onClick={() => navigate("/add-pet")}
-                className="bg-warm-gradient hover:opacity-90 transition-opacity btn-press"
+                className="bg-warm-gradient hover:opacity-90 transition-opacity"
               >
                 <Plus className="mr-2 h-5 w-5" />
                 Agregar Mi Primera Mascota
@@ -176,7 +176,7 @@ const MyPets = () => {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {pets.map((pet, index) => (
-              <Card key={pet.id} className={`overflow-hidden card-hover animate-fade-in-up stagger-${Math.min(index + 1, 8)}`}>
+              <Card key={pet.id} className="overflow-hidden card-hover">
                 <div className="relative h-48 bg-muted">
                   {pet.photo_url ? (
                     <img

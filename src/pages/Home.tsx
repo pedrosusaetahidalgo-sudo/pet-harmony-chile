@@ -187,12 +187,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-        {/* Skeleton Quick Actions */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[1,2,3,4].map(i => (
-            <div key={i} className="h-24 rounded-xl skeleton" />
-          ))}
-        </div>
         {/* Skeleton Content Cards */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="h-64 rounded-xl skeleton" />
@@ -203,13 +197,11 @@ export default function Home() {
   }
 
   return (
-    <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6 animate-fade-in-up">
+    <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6 animate-fade-in">
       {showTutorial && <OnboardingTutorial onComplete={handleTutorialComplete} />}
       
       {/* Welcome Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 p-6 md:p-8 animate-fade-in-down">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-secondary/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 p-6 md:p-8 animate-fade-in">
         
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -239,7 +231,7 @@ export default function Home() {
             </div>
             <div>
               <h1 className="text-2xl md:text-3xl font-bold">
-                {greeting()}, {profile?.display_name || user?.email?.split("@")[0] || "Amigo"}! 👋
+                {greeting()}, {profile?.display_name || user?.email?.split("@")[0] || "Amigo"}!
               </h1>
               <p className="text-muted-foreground mt-1">
                 {pets.length > 0 

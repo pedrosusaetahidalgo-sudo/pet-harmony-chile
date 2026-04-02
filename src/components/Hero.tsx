@@ -12,31 +12,31 @@ const Hero = () => {
     <section className="relative overflow-hidden bg-hero-gradient">
       <div className="container px-4 py-20 md:py-32">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-8 animate-fade-in-up">
-            <div className="inline-block animate-fade-in stagger-1">
+          <div className="space-y-8 animate-fade-in">
+            <div className="inline-block">
               <span className="inline-flex items-center rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary border border-primary/20">
-                <Heart className="mr-2 h-4 w-4 fill-primary animate-pulse" />
+                <Heart className="mr-2 h-4 w-4 fill-primary" />
                 Red Social para Mascotas en Chile
               </span>
             </div>
 
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight animate-fade-in stagger-2">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
               Conecta, Cuida y Comparte la Vida de tu{" "}
-              <span className="bg-warm-gradient bg-clip-text text-transparent animate-gradient">
+              <span className="bg-warm-gradient bg-clip-text text-transparent">
                 Mascota
               </span>
             </h1>
 
-            <p className="text-lg text-muted-foreground max-w-xl animate-fade-in stagger-3">
+            <p className="text-lg text-muted-foreground max-w-xl">
               La plataforma donde cada mascota tiene su propia red social. Gestiona su salud,
               descubre lugares pet-friendly y conecta con otros dueños que comparten tu pasión por
               el bienestar animal.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 animate-fade-in stagger-4">
+            <div className="flex flex-col sm:flex-row gap-4">
               <Button
                 size="lg"
-                className="bg-warm-gradient hover:opacity-90 transition-all text-base btn-press shadow-lg hover:shadow-xl"
+                className="bg-primary hover:bg-primary/90 transition-all text-base shadow-lg hover:shadow-xl"
                 onClick={() => navigate(user ? "/home" : "/auth")}
               >
                 {user ? "Ir al Inicio" : "Comenzar Gratis"}
@@ -45,14 +45,14 @@ const Hero = () => {
               <Button
                 size="lg"
                 variant="outline"
-                className="text-base btn-press hover:bg-primary/5"
+                className="text-base hover:bg-primary/5"
                 onClick={() => navigate("/places")}
               >
                 Explorar
               </Button>
             </div>
 
-            <div className="flex flex-wrap gap-6 pt-4 animate-fade-in stagger-5">
+            <div className="flex flex-wrap gap-6 pt-4">
               <div className="flex items-center gap-2 transition-smooth hover:scale-105 cursor-default">
                 <div className="rounded-full bg-secondary/10 p-2">
                   <MapPin className="h-5 w-5 text-secondary" />
@@ -85,7 +85,7 @@ const Hero = () => {
             </div>
 
             {/* Floating Cards */}
-            <div className="absolute -bottom-6 -left-6 bg-card border border-border rounded-2xl p-4 shadow-soft max-w-[200px] hidden lg:block animate-float">
+            <div className="absolute -bottom-6 -left-6 bg-card border border-border rounded-2xl p-4 shadow-soft max-w-[200px] hidden lg:block">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                   <Heart className="h-6 w-6 text-primary fill-primary" />
@@ -97,7 +97,7 @@ const Hero = () => {
               </div>
             </div>
 
-            <div className="absolute -top-4 -right-4 bg-card border border-border rounded-2xl p-3 shadow-soft hidden lg:block animate-float" style={{ animationDelay: '1.5s' }}>
+            <div className="absolute -top-4 -right-4 bg-card border border-border rounded-2xl p-3 shadow-soft hidden lg:block">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 rounded-full bg-green-500/10 flex items-center justify-center">
                   <MapPin className="h-4 w-4 text-green-500" />
@@ -112,9 +112,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Decorative background elements */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-96 h-96 bg-secondary/5 rounded-full blur-3xl pointer-events-none" />
     </section>
   );
 };
