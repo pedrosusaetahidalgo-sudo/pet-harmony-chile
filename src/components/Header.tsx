@@ -114,7 +114,6 @@ export const Header = () => {
                   className="relative hover:bg-accent min-h-[44px] min-w-[44px]"
                 >
                   <Bell className="h-5 w-5" />
-                  <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-destructive rounded-full"></span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-80 p-0" align="end">
