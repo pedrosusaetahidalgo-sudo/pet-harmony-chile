@@ -140,11 +140,11 @@ const TopRatedProviders = () => {
   const getNavigationRoute = (type: string) => {
     switch (type) {
       case "walker":
-        return "/dog-walkers";
+        return "/services/walkers";
       case "sitter":
-        return "/dog-sitters";
+        return "/services/sitters";
       case "vet":
-        return "/home-vets";
+        return "/services/vets";
       default:
         return "/";
     }
@@ -253,7 +253,7 @@ const TopRatedProviders = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-3"
-                onClick={() => navigate("/dog-walkers")}
+                onClick={() => navigate("/services/walkers")}
               >
                 Ver todos los paseadores
               </Button>
@@ -269,7 +269,7 @@ const TopRatedProviders = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-3"
-                onClick={() => navigate("/dog-sitters")}
+                onClick={() => navigate("/services/sitters")}
               >
                 Ver todos los cuidadores
               </Button>
@@ -285,7 +285,7 @@ const TopRatedProviders = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-3"
-                onClick={() => navigate("/home-vets")}
+                onClick={() => navigate("/services/vets")}
               >
                 Ver todos los veterinarios
               </Button>

@@ -58,10 +58,10 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
     if (type === "service" && data.services?.[0]) {
       const firstService = data.services[0];
       const routes: Record<string, string> = {
-        dog_walker: "/dog-walkers",
-        dogsitter: "/dog-sitters",
-        veterinarian: "/home-vets",
-        trainer: "/dog-trainers",
+        dog_walker: "/services/walkers",
+        dogsitter: "/services/sitters",
+        veterinarian: "/services/vets",
+        trainer: "/services/trainers",
       };
       navigate(routes[firstService.service_type] || "/home");
       onClose?.();
@@ -191,10 +191,11 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
             <img
               src={data.photo_url}
               alt={data.pet_name}
+              loading="lazy"
               className="w-full h-full object-cover"
             />
             <div className="absolute top-2 left-2">
-              <Badge 
+              <Badge
                 className={isLost ? "bg-red-500" : "bg-green-500"}
               >
                 {isLost ? "🔍 Perdida" : "✅ Encontrada"}
@@ -283,6 +284,7 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
             <img
               src={photoUrl}
               alt={data.pet_name}
+              loading="lazy"
               className="w-full h-full object-cover"
             />
             <Badge className="absolute top-2 left-2 bg-orange-500">

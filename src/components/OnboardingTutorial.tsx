@@ -130,7 +130,7 @@ export const OnboardingTutorial = ({ onComplete }: OnboardingTutorialProps) => {
               </Button>
             )}
             {currentStep === 2 && (
-              <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => { onComplete(); navigate('/dog-walkers'); }}>
+              <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => { onComplete(); navigate('/services/walkers'); }}>
                 Explorar servicios
               </Button>
             )}

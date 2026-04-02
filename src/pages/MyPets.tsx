@@ -184,6 +184,7 @@ const MyPets = () => {
                     <img
                       src={pet.photo_url}
                       alt={pet.name}
+                      loading="lazy"
                       className="w-full h-full object-cover"
                     />
                   ) : (

@@ -159,7 +159,7 @@ export default function Home() {
     { 
       title: "Paseadores", 
       icon: Dog, 
-      href: "/dog-walkers",
+      href: "/services/walkers",
       color: "from-blue-500 to-cyan-500",
       description: "Reservar paseo"
     },
@@ -433,7 +433,7 @@ export default function Home() {
                 <p className="text-muted-foreground mb-4">
                   No tienes citas próximas
                 </p>
-                <Button onClick={() => navigate("/home-vets")} variant="outline">
+                <Button onClick={() => navigate("/services/vets")} variant="outline">
                   <Stethoscope className="h-4 w-4 mr-2" />
                   Agendar consulta
                 </Button>
@@ -523,7 +523,7 @@ export default function Home() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             <div 
               className="p-3 rounded-xl bg-background/80 backdrop-blur cursor-pointer hover:shadow-md transition-all group text-center"
-              onClick={() => navigate("/home-vets")}
+              onClick={() => navigate("/services/vets")}
             >
               <div className="w-10 h-10 mx-auto rounded-lg bg-emerald-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                 <Stethoscope className="h-5 w-5 text-emerald-500" />
@@ -533,7 +533,7 @@ export default function Home() {
             
             <div 
               className="p-3 rounded-xl bg-background/80 backdrop-blur cursor-pointer hover:shadow-md transition-all group text-center"
-              onClick={() => navigate("/dog-sitters")}
+              onClick={() => navigate("/services/sitters")}
             >
               <div className="w-10 h-10 mx-auto rounded-lg bg-purple-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
                 <Heart className="h-5 w-5 text-purple-500" />

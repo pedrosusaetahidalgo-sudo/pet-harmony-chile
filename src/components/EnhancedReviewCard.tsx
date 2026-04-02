@@ -154,6 +154,7 @@ const EnhancedReviewCard = ({ reviewType, review, providerId, isProvider }: Enha
               key={index}
               src={photo}
               alt={`Foto ${index + 1}`}
+              loading="lazy"
               className="rounded-lg w-full h-24 object-cover"
             />
           ))}

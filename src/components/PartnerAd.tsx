@@ -100,6 +100,7 @@ export const PartnerAd = ({ placement, category, className }: PartnerAdProps) =>
             <img
               src={partner.ad_image_url}
               alt={partner.brand_name}
+              loading="lazy"
               className="w-full h-32 object-cover"
             />
           )}

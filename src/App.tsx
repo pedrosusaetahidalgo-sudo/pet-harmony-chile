@@ -22,11 +22,8 @@ const MedicalRecords = lazy(() => import("./pages/MedicalRecords"));
 const Adoption = lazy(() => import("./pages/Adoption"));
 
 const PawGame = lazy(() => import("./pages/PawGame"));
-const DogWalkers = lazy(() => import("./pages/DogWalkers"));
-const HomeVets = lazy(() => import("./pages/HomeVets"));
+const ServiceDirectory = lazy(() => import("./pages/ServiceDirectory"));
 const SharedWalks = lazy(() => import("./pages/SharedWalks"));
-const DogSitters = lazy(() => import("./pages/DogSitters"));
-const DogTrainers = lazy(() => import("./pages/DogTrainers"));
 const LostPets = lazy(() => import("./pages/LostPets"));
 const Chat = lazy(() => import("./pages/Chat"));
 const ChatConversation = lazy(() => import("./pages/ChatConversation"));
@@ -82,11 +79,13 @@ const App = () => (
               <Route path="/adoption" element={<ProtectedRoute><AppLayout><Adoption /></AppLayout></ProtectedRoute>} />
 
               <Route path="/paw-game" element={<ProtectedRoute><AppLayout><PawGame /></AppLayout></ProtectedRoute>} />
-              <Route path="/dog-walkers" element={<ProtectedRoute><AppLayout><DogWalkers /></AppLayout></ProtectedRoute>} />
-              <Route path="/home-vets" element={<ProtectedRoute><AppLayout><HomeVets /></AppLayout></ProtectedRoute>} />
+              <Route path="/services/:type" element={<ProtectedRoute><AppLayout><ServiceDirectory /></AppLayout></ProtectedRoute>} />
+              {/* Legacy redirects to new unified service routes */}
+              <Route path="/dog-walkers" element={<Navigate to="/services/walkers" replace />} />
+              <Route path="/home-vets" element={<Navigate to="/services/vets" replace />} />
+              <Route path="/dog-sitters" element={<Navigate to="/services/sitters" replace />} />
+              <Route path="/dog-trainers" element={<Navigate to="/services/trainers" replace />} />
               <Route path="/shared-walks" element={<ProtectedRoute><AppLayout><SharedWalks /></AppLayout></ProtectedRoute>} />
-              <Route path="/dog-sitters" element={<ProtectedRoute><AppLayout><DogSitters /></AppLayout></ProtectedRoute>} />
-              <Route path="/dog-trainers" element={<ProtectedRoute><AppLayout><DogTrainers /></AppLayout></ProtectedRoute>} />
               <Route path="/lost-pets" element={<ProtectedRoute><AppLayout><LostPets /></AppLayout></ProtectedRoute>} />
               <Route path="/maps" element={<ProtectedRoute><AppLayout><Maps /></AppLayout></ProtectedRoute>} />
               <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />

@@ -31,10 +31,10 @@ const ServiceDetailCard = ({ provider, compact = false }: ServiceDetailCardProps
     const firstService = provider.services?.[0];
     if (firstService) {
       const routes: Record<string, string> = {
-        dog_walker: "/dog-walkers",
-        dogsitter: "/dog-sitters",
-        veterinarian: "/home-vets",
-        trainer: "/dog-trainers",
+        dog_walker: "/services/walkers",
+        dogsitter: "/services/sitters",
+        veterinarian: "/services/vets",
+        trainer: "/services/trainers",
       };
       navigate(routes[firstService.service_type] || "/home");
     }

@@ -1,7 +1,8 @@
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, Search } from "lucide-react";
+import { MessageSquare, MessageCircle, Search } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -249,15 +250,7 @@ const Chat = () => {
         )}
 
         {filteredConversations.length === 0 ? (
-          <Card>
-            <CardContent className="p-12 text-center">
-              <MessageSquare className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-              <h3 className="text-lg font-semibold mb-2">No hay conversaciones</h3>
-              <p className="text-muted-foreground">
-                Comienza a seguir a otros usuarios para chatear con ellos
-              </p>
-            </CardContent>
-          </Card>
+          <EmptyState icon={MessageCircle} title="Sin conversaciones" description="Reserva un servicio o sigue a alguien para empezar a chatear" actionLabel="Ver servicios" actionUrl="/services/walkers" />
         ) : (
           <div className="space-y-1">
             {filteredConversations.map((conv) => {

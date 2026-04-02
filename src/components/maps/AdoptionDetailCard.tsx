@@ -50,6 +50,7 @@ const AdoptionDetailCard = ({ post, compact = false }: AdoptionDetailCardProps) 
             <img
               src={photoUrl}
               alt={post.pet_name}
+              loading="lazy"
               className="w-16 h-16 rounded-lg object-cover"
             />
           ) : (
@@ -113,6 +114,7 @@ const AdoptionDetailCard = ({ post, compact = false }: AdoptionDetailCardProps) 
           <img
             src={photoUrl}
             alt={post.pet_name}
+            loading="lazy"
             className="w-full h-full object-cover"
           />
           <Badge className="absolute top-3 left-3 bg-orange-500 shadow-lg">

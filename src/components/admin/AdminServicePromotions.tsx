@@ -222,7 +222,7 @@ const AdminServicePromotions = () => {
                     <div className="grid grid-cols-3 gap-2">
                       {selectedPromotion.images.map((url: string, index: number) => (
                         <a key={index} href={url} target="_blank" rel="noopener noreferrer">
-                          <img src={url} alt={`Imagen ${index + 1}`} className="w-full h-24 object-cover rounded" />
+                          <img src={url} alt={`Imagen ${index + 1}`} loading="lazy" className="w-full h-24 object-cover rounded" />
                         </a>
                       ))}
                     </div>

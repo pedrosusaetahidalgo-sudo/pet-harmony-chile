@@ -18,7 +18,7 @@ export function PremiumBanner() {
   };
 
   return (
-    <div className="sticky top-0 z-[60] bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-500 text-white px-3 py-1.5 flex items-center justify-center gap-2 text-xs font-medium shadow-md">
+    <div className="sticky top-0 z-[60] bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-500 text-white px-3 py-1.5 flex items-center justify-center gap-2 text-xs font-medium shadow-md pt-[var(--safe-area-top)]">
       <Sparkles className="h-3.5 w-3.5 flex-shrink-0" />
       <span className="truncate">
         Desbloquea todo con <strong>Paw Premium</strong>

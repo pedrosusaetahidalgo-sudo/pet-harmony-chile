@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Plus, TrendingUp, Users, MapPin, Video, PawPrint, Trophy } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
 // DogBehaviorAnalyzer temporarily removed - will be implemented in different tab later
 import { OnboardingTutorial } from "@/components/OnboardingTutorial";
 import { CreatePost } from "@/components/CreatePost";
@@ -260,11 +261,7 @@ const Feed = () => {
                   <p className="text-sm text-muted-foreground">Cargando publicaciones...</p>
                 </div>
               ) : filterBlocked(posts, "user_id").length === 0 ? (
-                <div className="text-center py-8">
-                  <p className="text-muted-foreground">
-                    No hay publicaciones todavía. ¡Sé el primero en compartir!
-                  </p>
-                </div>
+                <EmptyState icon={PawPrint} title="No hay publicaciones todavía" description="¡Sé el primero en compartir una foto de tu mascota!" actionLabel="Publicar" onAction={() => setShowCreatePost(true)} />
               ) : (
                 filterBlocked(posts, "user_id")
                   .filter((post) => {
@@ -303,11 +300,7 @@ const Feed = () => {
                   <p className="text-muted-foreground">Cargando mascotas...</p>
                 </div>
               ) : filterBlocked(pets, "owner_id").length === 0 ? (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">
-                    No hay mascotas registradas todavía.
-                  </p>
-                </div>
+                <EmptyState icon={Search} title="No hay mascotas registradas" description="Explora el feed para descubrir mascotas" />
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {filterBlocked(pets, "owner_id")
@@ -354,18 +347,7 @@ const Feed = () => {
                   <p className="text-muted-foreground">Cargando publicaciones...</p>
                 </div>
               ) : followingPosts.length === 0 ? (
-                <div className="text-center py-8">
-                  <Users className="h-10 w-10 mx-auto mb-3 text-muted-foreground/50" />
-                  <p className="font-medium mb-1">No sigues a nadie todavía</p>
-                  <p className="text-sm text-muted-foreground mb-4">Descubre mascotas y sus dueños</p>
-                  <Button variant="outline" size="sm" onClick={() => {
-                    const tabsList = document.querySelector('[value="pets"]');
-                    if (tabsList) (tabsList as HTMLElement).click();
-                  }}>
-                    <PawPrint className="h-4 w-4 mr-2" />
-                    Explorar Mascotas
-                  </Button>
-                </div>
+                <EmptyState icon={Users} title="No sigues a nadie todavía" description="Sigue a otros dueños para ver sus publicaciones" actionLabel="Explorar" actionUrl="/feed" />
               ) : (
                 filterBlocked(followingPosts, "user_id").map((post) => (
                   <PetCard

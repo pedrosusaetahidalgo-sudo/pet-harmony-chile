@@ -8,7 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, MapPin, Phone, Mail, Award, CheckCircle } from "lucide-react";
+import { AlertCircle, MapPin, Phone, Mail, Award, CheckCircle, Search } from "lucide-react";
+import { EmptyState } from "@/components/EmptyState";
 import LostPetsMap from "@/components/LostPetsMap";
 import ReportLostPetForm from "@/components/ReportLostPetForm";
 import { formatDistanceToNow } from "date-fns";
@@ -128,6 +129,7 @@ const LostPets = () => {
                           <img
                             src={pet.photo_url}
                             alt={pet.pet_name}
+                            loading="lazy"
                             className="w-20 h-20 rounded-lg object-cover"
                           />
                         )}
@@ -190,9 +192,7 @@ const LostPets = () => {
                   </Card>
                 ))}
                 {(!lostPetsList || lostPetsList.length === 0) && (
-                  <p className="text-center text-muted-foreground py-8">
-                    No hay mascotas perdidas reportadas
-                  </p>
+                  <EmptyState icon={Search} title="No hay reportes de mascotas perdidas" description="¡Buenas noticias! No hay mascotas perdidas en tu zona" />
                 )}
               </TabsContent>
 
@@ -205,6 +205,7 @@ const LostPets = () => {
                           <img
                             src={pet.photo_url}
                             alt={pet.pet_name}
+                            loading="lazy"
                             className="w-20 h-20 rounded-lg object-cover"
                           />
                         )}
@@ -248,9 +249,7 @@ const LostPets = () => {
                   </Card>
                 ))}
                 {(!foundPetsList || foundPetsList.length === 0) && (
-                  <p className="text-center text-muted-foreground py-8">
-                    No hay mascotas encontradas reportadas
-                  </p>
+                  <EmptyState icon={Search} title="No hay reportes de mascotas encontradas" description="Reporta si encuentras una mascota perdida" />
                 )}
               </TabsContent>
             </Tabs>

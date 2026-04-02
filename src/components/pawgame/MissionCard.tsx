@@ -65,17 +65,17 @@ const getActionIcon = (action: string) => {
 
 const getActionPath = (action: string) => {
   const paths: Record<string, string> = {
-    'walk': '/dog-walkers',
+    'walk': '/services/walkers',
     'vaccine': '/medical-records',
     'social': '/shared-walks',
     'adopt': '/adoption',
     'explore': '/maps',
     'post': '/feed',
-    'review': '/dog-walkers',
+    'review': '/services/walkers',
     'chat': '/chat',
     'search': '/maps',
     'appointment': '/medical-records',
-    'vet': '/home-vets',
+    'vet': '/services/vets',
     'pet': '/my-pets',
   };
   return paths[action] || '/home';

@@ -218,7 +218,7 @@ const Settings = () => {
                       avatarUrl === url ? "border-primary ring-2 ring-primary/30 scale-110" : "border-transparent"
                     }`}
                   >
-                    <img src={url} alt={`Avatar ${i + 1}`} className="w-full h-full" />
+                    <img src={url} alt={`Avatar ${i + 1}`} loading="lazy" className="w-full h-full" />
                   </button>
                 ))}
               </div>

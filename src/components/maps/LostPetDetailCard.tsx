@@ -46,6 +46,7 @@ const LostPetDetailCard = ({ pet, compact = false }: LostPetDetailCardProps) => 
             <img
               src={pet.photo_url}
               alt={pet.pet_name}
+              loading="lazy"
               className="w-16 h-16 rounded-lg object-cover"
             />
           )}
@@ -101,6 +102,7 @@ const LostPetDetailCard = ({ pet, compact = false }: LostPetDetailCardProps) => 
           <img
             src={pet.photo_url}
             alt={pet.pet_name}
+            loading="lazy"
             className="w-full h-full object-cover"
           />
           <div className="absolute top-3 left-3 flex gap-2">

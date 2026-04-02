@@ -90,6 +90,7 @@ const LostPetsMap = ({ pets }: LostPetsMapProps) => {
                   <img
                     src={selectedPet.photo_url}
                     alt={selectedPet.pet_name}
+                    loading="lazy"
                     className="w-full h-24 object-cover rounded-md mb-2"
                   />
                 )}

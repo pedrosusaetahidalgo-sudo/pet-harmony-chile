@@ -10,6 +10,11 @@
    Tone: Caring, confident, approachable, premium
    ============================================ */
 
+:root {
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+}
+
 @layer base {
   :root {
     /* ── Core Surfaces ── */

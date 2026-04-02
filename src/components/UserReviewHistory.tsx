@@ -139,6 +139,7 @@ const UserReviewHistory = () => {
                     key={index}
                     src={photo}
                     alt={`Foto ${index + 1}`}
+                    loading="lazy"
                     className="h-20 w-20 rounded-lg object-cover flex-shrink-0"
                   />
                 ))}

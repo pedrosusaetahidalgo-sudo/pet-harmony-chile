@@ -409,6 +409,7 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
               <img
                 src={viewingDocument.url}
                 alt={viewingDocument.title}
+                loading="lazy"
                 className="w-full h-auto rounded-lg"
               />
             ) : (

@@ -39,10 +39,10 @@ const petItems = [
 
 const serviceItems = [
   { title: "Calendario", url: "/calendar", icon: Calendar },
-  { title: "Paseadores", url: "/dog-walkers", icon: Dog },
-  { title: "Veterinarios", url: "/home-vets", icon: Stethoscope },
-  { title: "Cuidadores", url: "/dog-sitters", icon: ShieldCheck },
-  { title: "Entrenadores", url: "/dog-trainers", icon: GraduationCap },
+  { title: "Paseadores", url: "/services/walkers", icon: Dog },
+  { title: "Veterinarios", url: "/services/vets", icon: Stethoscope },
+  { title: "Cuidadores", url: "/services/sitters", icon: ShieldCheck },
+  { title: "Entrenadores", url: "/services/trainers", icon: GraduationCap },
   { title: "Paseos", url: "/shared-walks", icon: Users },
 ];
 
