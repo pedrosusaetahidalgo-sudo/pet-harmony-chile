@@ -9,6 +9,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { useStartConversation } from "@/hooks/useStartConversation";
 import { SERVICE_TYPE_LABELS, SERVICE_TYPE_ICONS, type ServiceProvider } from "@/hooks/useServiceProviders";
+import { calculateDistance } from "@/lib/distance";
 
 interface MapPinPopupProps {
   type: "service" | "lost" | "adoption" | "shelter";
@@ -17,28 +18,6 @@ interface MapPinPopupProps {
   userLocation?: { lat: number; lng: number };
   onClose?: () => void;
 }
-
-/**
- * Calculate distance between two coordinates using Haversine formula
- */
-export const calculateDistance = (
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number => {
-  const R = 6371; // Earth's radius in km
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return Math.round(R * c * 10) / 10; // Round to 1 decimal place
-};
 
 const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopupProps) => {
   const navigate = useNavigate();

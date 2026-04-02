@@ -22,7 +22,8 @@ export const Header = () => {
     if (user) {
       loadProfile();
       loadUnreadMessages();
-      setupRealtimeSubscription();
+      const cleanup = setupRealtimeSubscription();
+      return cleanup;
     }
   }, [user]);
 

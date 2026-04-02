@@ -6,7 +6,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://pawfriend.cl",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
@@ -16,16 +16,24 @@ serve(async (req) => {
   }
 
   try {
-    const { pet_id } = await req.json();
-
-    if (!pet_id) {
-      throw new Error("pet_id is required");
-    }
-
     // Initialize Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Authenticate user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) throw new Error("No authorization header");
+
+    const token = authHeader.replace("Bearer ", "");
+    const { data: userData, error: userError } = await supabase.auth.getUser(token);
+    if (userError || !userData.user) throw new Error("User not authenticated");
+
+    const { pet_id } = await req.json();
+
+    if (!pet_id || typeof pet_id !== "string") {
+      throw new Error("pet_id is required and must be a string");
+    }
 
     // Get all documents for the pet
     const { data: documents, error: docsError } = await supabase
@@ -85,7 +93,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: error.message || "Failed to generate medical ZIP",
+        error: "Failed to generate medical ZIP. Please try again later.",
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

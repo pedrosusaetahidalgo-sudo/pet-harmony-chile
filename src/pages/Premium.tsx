@@ -29,7 +29,7 @@ const Premium = () => {
   }, []);
 
   // Get user's premium status
-  const { data: profile } = useQuery({
+  const { data: profile, isError, refetch } = useQuery({
     queryKey: ["user-profile", user?.id],
     queryFn: async () => {
       if (!user) return null;
@@ -150,6 +150,17 @@ const Premium = () => {
       minimumFractionDigits: 0,
     }).format(amount);
   };
+
+  if (isError) {
+    return (
+      <AppLayout>
+        <div className="flex flex-col items-center justify-center p-8 text-center">
+          <p className="text-muted-foreground">No pudimos cargar la información de Premium. Intenta de nuevo.</p>
+          <Button variant="outline" onClick={() => refetch()} className="mt-4">Reintentar</Button>
+        </div>
+      </AppLayout>
+    );
+  }
 
   const isPremium = profile?.is_premium;
   const premiumEndDate = profile?.premium_end_date

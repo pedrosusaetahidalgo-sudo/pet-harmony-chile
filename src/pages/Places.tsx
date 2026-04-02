@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import petFriendlyPlace from "@/assets/pet-friendly-place.jpg";
 import { searchGooglePlaces, getPlacePhotoUrl, mapGooglePlaceType } from "@/lib/googlePlaces";
+import { calculateDistance } from "@/lib/distance";
 
 interface Place {
   id: string;
@@ -66,7 +67,7 @@ const Places = () => {
     }
   }, [toast]);
 
-  const { data: places, isLoading } = useQuery({
+  const { data: places, isLoading, isError, refetch } = useQuery({
     queryKey: ["places", selectedType, userLocation],
     queryFn: async () => {
       // First, get places from database
@@ -165,21 +166,6 @@ const Places = () => {
     },
   });
 
-  // Haversine formula to calculate distance
-  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-    const R = 6371; // Earth's radius in km
-    const dLat = ((lat2 - lat1) * Math.PI) / 180;
-    const dLon = ((lon2 - lon1) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c;
-  };
-
   // Filter places by search query
   const filteredPlaces = places?.filter((place: Place) =>
     place.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -268,7 +254,12 @@ const Places = () => {
           </TabsList>
 
           <TabsContent value={selectedType} className="mt-6">
-            {isLoading ? (
+            {isError ? (
+              <div className="flex flex-col items-center justify-center p-8 text-center">
+                <p className="text-muted-foreground">No pudimos cargar los lugares. Intenta de nuevo.</p>
+                <Button variant="outline" onClick={() => refetch()} className="mt-4">Reintentar</Button>
+              </div>
+            ) : isLoading ? (
               <div className="flex justify-center items-center py-12">
                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
               </div>

@@ -953,11 +953,11 @@ function generatePDF(pet: PetData, records: any[]) {
   const meds = pet.current_medications || [];
 
   const sortedRecords = [...records].sort((a, b) =>
-    new Date(b.date || b.visit_date || 0).getTime() - new Date(a.date || a.visit_date || 0).getTime()
+    new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()
   );
 
   const recordRows = sortedRecords.map(r => {
-    const date = r.date || r.visit_date || "";
+    const date = r.date || "";
     const formattedDate = date ? new Date(date).toLocaleDateString("es-CL") : "\u2014";
     return `<tr>
       <td>${formattedDate}</td>

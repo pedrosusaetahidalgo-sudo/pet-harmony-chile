@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://pawfriend.cl",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
@@ -25,8 +25,29 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
+    // Authenticate user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) throw new Error("No authorization header");
+
+    const authToken = authHeader.replace("Bearer ", "");
+    const { data: userData, error: userError } = await supabaseClient.auth.getUser(authToken);
+    if (userError || !userData.user) throw new Error("User not authenticated");
+
+    logStep("User authenticated", { userId: userData.user.id });
+
     const { token, order_id } = await req.json();
-    
+
+    // Input validation
+    if (!token && !order_id) {
+      throw new Error("Either token or order_id is required");
+    }
+    if (token && typeof token !== "string") {
+      throw new Error("token must be a string");
+    }
+    if (order_id && typeof order_id !== "string") {
+      throw new Error("order_id must be a string");
+    }
+
     logStep("Confirming payment", { token: token?.slice(0, 10), order_id });
 
     // In production, confirm with Transbank Webpay API
@@ -112,7 +133,7 @@ serve(async (req) => {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: errorMessage });
     return new Response(
-      JSON.stringify({ success: false, error: errorMessage }),
+      JSON.stringify({ success: false, error: "An internal error occurred while confirming the payment." }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
     );
   }

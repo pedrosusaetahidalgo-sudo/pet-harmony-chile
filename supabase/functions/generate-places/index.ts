@@ -3,7 +3,7 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://pawfriend.cl",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
@@ -13,7 +13,38 @@ serve(async (req) => {
   }
 
   try {
+    // Initialize Supabase client for auth
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseAuth = createClient(supabaseUrl, supabaseKey);
+
+    // Authenticate user
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Authorization required" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const authToken = authHeader.replace("Bearer ", "");
+    const { data: userData, error: userError } = await supabaseAuth.auth.getUser(authToken);
+    if (userError || !userData.user) {
+      return new Response(
+        JSON.stringify({ error: "User not authenticated" }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const { city = "Santiago", region = "Metropolitana" } = await req.json();
+
+    // Input validation
+    if (typeof city !== "string" || typeof region !== "string") {
+      return new Response(
+        JSON.stringify({ error: "city and region must be strings" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
 
     const ANTHROPIC_API_KEY = Deno.env.get("ANTHROPIC_API_KEY");
     if (!ANTHROPIC_API_KEY) {
@@ -171,12 +202,8 @@ IMPORTANTE:
       throw new Error(`Error al procesar respuesta de IA: ${parseError instanceof Error ? parseError.message : 'Error desconocido'}`);
     }
 
-    // Insert places into database
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    const { data: insertedPlaces, error: insertError } = await supabase
+    // Insert places into database (reuse auth client)
+    const { data: insertedPlaces, error: insertError } = await supabaseAuth
       .from("places")
       .insert(
         places.map((place: any) => ({
@@ -212,7 +239,7 @@ IMPORTANTE:
   } catch (error) {
     console.error("Error in generate-places function:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Error desconocido" }),
+      JSON.stringify({ error: "Error al generar lugares. Por favor, intenta de nuevo más tarde." }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   }

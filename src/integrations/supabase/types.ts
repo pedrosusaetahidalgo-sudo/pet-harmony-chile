@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievements: {
+        Row: {
+          category: string
+          code: string
+          created_at: string
+          description: string
+          icon: string | null
+          id: string
+          is_active: boolean
+          name: string
+          points_reward: number
+          requirement_type: string | null
+          requirement_value: number | null
+        }
+        Insert: {
+          category: string
+          code: string
+          created_at?: string
+          description: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          points_reward?: number
+          requirement_type?: string | null
+          requirement_value?: number | null
+        }
+        Update: {
+          category?: string
+          code?: string
+          created_at?: string
+          description?: string
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          points_reward?: number
+          requirement_type?: string | null
+          requirement_value?: number | null
+        }
+        Relationships: []
+      }
       activities: {
         Row: {
           category: string
@@ -436,6 +478,35 @@ export type Database = {
         }
         Relationships: []
       }
+      comprehensive_medical_records: {
+        Row: {
+          date: string | null
+          id: string
+          notes: string | null
+          patient_id: string | null
+        }
+        Insert: {
+          date?: string | null
+          id?: string
+          notes?: string | null
+          patient_id?: string | null
+        }
+        Update: {
+          date?: string | null
+          id?: string
+          notes?: string | null
+          patient_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comprehensive_medical_records_patient_id_fkey"
+            columns: ["patient_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       conversations: {
         Row: {
           created_at: string
@@ -577,6 +648,8 @@ export type Database = {
           owner_id: string
           payment_status: string
           pet_ids: string[]
+          platform_fee_amount: number | null
+          provider_payout_amount: number | null
           service_type: string
           special_instructions: string | null
           start_date: string
@@ -599,6 +672,8 @@ export type Database = {
           owner_id: string
           payment_status?: string
           pet_ids: string[]
+          platform_fee_amount?: number | null
+          provider_payout_amount?: number | null
           service_type: string
           special_instructions?: string | null
           start_date: string
@@ -621,6 +696,8 @@ export type Database = {
           owner_id?: string
           payment_status?: string
           pet_ids?: string[]
+          platform_fee_amount?: number | null
+          provider_payout_amount?: number | null
           service_type?: string
           special_instructions?: string | null
           start_date?: string
@@ -946,55 +1023,181 @@ export type Database = {
           },
         ]
       }
+      medical_documents: {
+        Row: {
+          created_at: string | null
+          file_size: number | null
+          file_url: string
+          id: string
+          issued_at: string | null
+          mime_type: string | null
+          notes: string | null
+          owner_id: string
+          pet_id: string
+          title: string
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          file_size?: number | null
+          file_url: string
+          id?: string
+          issued_at?: string | null
+          mime_type?: string | null
+          notes?: string | null
+          owner_id: string
+          pet_id: string
+          title: string
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          file_size?: number | null
+          file_url?: string
+          id?: string
+          issued_at?: string | null
+          mime_type?: string | null
+          notes?: string | null
+          owner_id?: string
+          pet_id?: string
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_documents_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       medical_records: {
         Row: {
           clinic_name: string | null
           created_at: string
           date: string
           description: string | null
+          diagnosis: string | null
           document_url: string | null
           id: string
+          next_checkup_date: string | null
           next_date: string | null
           notes: string | null
+          owner_id: string
           pet_id: string
+          reason: string | null
           record_type: string
           title: string
+          treatment: Json | null
           updated_at: string
+          vet_name: string | null
           veterinarian_name: string | null
+          visit_date: string | null
         }
         Insert: {
           clinic_name?: string | null
           created_at?: string
           date: string
           description?: string | null
+          diagnosis?: string | null
           document_url?: string | null
           id?: string
+          next_checkup_date?: string | null
           next_date?: string | null
           notes?: string | null
+          owner_id: string
           pet_id: string
+          reason?: string | null
           record_type: string
           title: string
+          treatment?: Json | null
           updated_at?: string
+          vet_name?: string | null
           veterinarian_name?: string | null
+          visit_date?: string | null
         }
         Update: {
           clinic_name?: string | null
           created_at?: string
           date?: string
           description?: string | null
+          diagnosis?: string | null
           document_url?: string | null
           id?: string
+          next_checkup_date?: string | null
           next_date?: string | null
           notes?: string | null
+          owner_id?: string
           pet_id?: string
+          reason?: string | null
           record_type?: string
           title?: string
+          treatment?: Json | null
           updated_at?: string
+          vet_name?: string | null
           veterinarian_name?: string | null
+          visit_date?: string | null
         }
         Relationships: [
           {
+            foreignKeyName: "medical_records_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "medical_records_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      medical_share_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          is_revoked: boolean | null
+          last_accessed_at: string | null
+          owner_id: string
+          pet_id: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          is_revoked?: boolean | null
+          last_accessed_at?: string | null
+          owner_id: string
+          pet_id: string
+          token: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_revoked?: boolean | null
+          last_accessed_at?: string | null
+          owner_id?: string
+          pet_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "medical_share_tokens_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "medical_share_tokens_pet_id_fkey"
             columns: ["pet_id"]
             isOneToOne: false
             referencedRelation: "pets"
@@ -1036,6 +1239,87 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      missions: {
+        Row: {
+          action_type: string
+          code: string
+          created_at: string
+          description: string
+          end_date: string | null
+          id: string
+          is_active: boolean
+          mission_type: string
+          name: string
+          points_reward: number
+          start_date: string | null
+          target_count: number
+        }
+        Insert: {
+          action_type: string
+          code: string
+          created_at?: string
+          description: string
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          mission_type: string
+          name: string
+          points_reward?: number
+          start_date?: string | null
+          target_count?: number
+        }
+        Update: {
+          action_type?: string
+          code?: string
+          created_at?: string
+          description?: string
+          end_date?: string | null
+          id?: string
+          is_active?: boolean
+          mission_type?: string
+          name?: string
+          points_reward?: number
+          start_date?: string | null
+          target_count?: number
+        }
+        Relationships: []
+      }
+      notification_preferences: {
+        Row: {
+          created_at: string | null
+          email_enabled: boolean | null
+          id: string
+          marketing_notifications: boolean | null
+          push_enabled: boolean | null
+          reminder_notifications: boolean | null
+          social_notifications: boolean | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email_enabled?: boolean | null
+          id?: string
+          marketing_notifications?: boolean | null
+          push_enabled?: boolean | null
+          reminder_notifications?: boolean | null
+          social_notifications?: boolean | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          email_enabled?: boolean | null
+          id?: string
+          marketing_notifications?: boolean | null
+          push_enabled?: boolean | null
+          reminder_notifications?: boolean | null
+          social_notifications?: boolean | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       order_items: {
         Row: {
@@ -1156,6 +1440,60 @@ export type Database = {
           webpay_order_id?: string | null
           webpay_response?: Json | null
           webpay_token?: string | null
+        }
+        Relationships: []
+      }
+      partners: {
+        Row: {
+          ad_image_url: string | null
+          ad_link: string
+          ad_text: string
+          brand_name: string
+          category: string
+          clicks: number | null
+          created_at: string | null
+          end_date: string | null
+          id: string
+          impressions: number | null
+          is_active: boolean | null
+          placement: string
+          priority: number | null
+          start_date: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          ad_image_url?: string | null
+          ad_link: string
+          ad_text: string
+          brand_name: string
+          category: string
+          clicks?: number | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          impressions?: number | null
+          is_active?: boolean | null
+          placement: string
+          priority?: number | null
+          start_date?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          ad_image_url?: string | null
+          ad_link?: string
+          ad_text?: string
+          brand_name?: string
+          category?: string
+          clicks?: number | null
+          created_at?: string | null
+          end_date?: string | null
+          id?: string
+          impressions?: number | null
+          is_active?: boolean | null
+          placement?: string
+          priority?: number | null
+          start_date?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -1439,75 +1777,219 @@ export type Database = {
           },
         ]
       }
+      pet_reminders: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          description: string | null
+          due_date: string
+          id: string
+          is_completed: boolean | null
+          is_recurring: boolean | null
+          owner_id: string
+          pet_id: string
+          recurrence_interval: string | null
+          title: string
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          due_date: string
+          id?: string
+          is_completed?: boolean | null
+          is_recurring?: boolean | null
+          owner_id: string
+          pet_id: string
+          recurrence_interval?: string | null
+          title: string
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          description?: string | null
+          due_date?: string
+          id?: string
+          is_completed?: boolean | null
+          is_recurring?: boolean | null
+          owner_id?: string
+          pet_id?: string
+          recurrence_interval?: string | null
+          title?: string
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pet_reminders_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pet_reminders_pet_id_fkey"
+            columns: ["pet_id"]
+            isOneToOne: false
+            referencedRelation: "pets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pets: {
         Row: {
+          activity_level: string | null
+          adoption_date: string | null
+          allergies: string[] | null
+          allergies_environmental: string[] | null
+          allergies_food: string[] | null
+          allergies_medication: string[] | null
+          behavior_notes: string | null
           bio: string | null
           birth_date: string | null
+          blood_type: string | null
           breed: string | null
+          chip_registry: string | null
+          chronic_conditions: string[] | null
+          chronic_conditions_detail: Json | null
+          cohabitation_children: boolean | null
+          cohabitation_pets: number | null
           color: string | null
           created_at: string
+          current_medications: Json | null
+          diet_brand: string | null
+          diet_frequency: string | null
+          diet_type: string | null
+          emergency_vet_name: string | null
+          emergency_vet_phone: string | null
           gender: string | null
           id: string
+          insurance_policy: string | null
+          insurance_provider: string | null
+          is_adopted: boolean | null
           is_public: boolean | null
+          last_vet_visit: string | null
+          living_environment: string | null
           medical_notes: string | null
           microchip_number: string | null
           name: string
           neutered: boolean | null
+          neutered_date: string | null
           owner_id: string
           personality: string[] | null
           photo_url: string | null
+          preferred_clinic: string | null
           size: string | null
           special_needs: string | null
           species: string
           updated_at: string
           vaccination_status: string | null
           weight: number | null
+          weight_history: Json | null
         }
         Insert: {
+          activity_level?: string | null
+          adoption_date?: string | null
+          allergies?: string[] | null
+          allergies_environmental?: string[] | null
+          allergies_food?: string[] | null
+          allergies_medication?: string[] | null
+          behavior_notes?: string | null
           bio?: string | null
           birth_date?: string | null
+          blood_type?: string | null
           breed?: string | null
+          chip_registry?: string | null
+          chronic_conditions?: string[] | null
+          chronic_conditions_detail?: Json | null
+          cohabitation_children?: boolean | null
+          cohabitation_pets?: number | null
           color?: string | null
           created_at?: string
+          current_medications?: Json | null
+          diet_brand?: string | null
+          diet_frequency?: string | null
+          diet_type?: string | null
+          emergency_vet_name?: string | null
+          emergency_vet_phone?: string | null
           gender?: string | null
           id?: string
+          insurance_policy?: string | null
+          insurance_provider?: string | null
+          is_adopted?: boolean | null
           is_public?: boolean | null
+          last_vet_visit?: string | null
+          living_environment?: string | null
           medical_notes?: string | null
           microchip_number?: string | null
           name: string
           neutered?: boolean | null
+          neutered_date?: string | null
           owner_id: string
           personality?: string[] | null
           photo_url?: string | null
+          preferred_clinic?: string | null
           size?: string | null
           special_needs?: string | null
           species: string
           updated_at?: string
           vaccination_status?: string | null
           weight?: number | null
+          weight_history?: Json | null
         }
         Update: {
+          activity_level?: string | null
+          adoption_date?: string | null
+          allergies?: string[] | null
+          allergies_environmental?: string[] | null
+          allergies_food?: string[] | null
+          allergies_medication?: string[] | null
+          behavior_notes?: string | null
           bio?: string | null
           birth_date?: string | null
+          blood_type?: string | null
           breed?: string | null
+          chip_registry?: string | null
+          chronic_conditions?: string[] | null
+          chronic_conditions_detail?: Json | null
+          cohabitation_children?: boolean | null
+          cohabitation_pets?: number | null
           color?: string | null
           created_at?: string
+          current_medications?: Json | null
+          diet_brand?: string | null
+          diet_frequency?: string | null
+          diet_type?: string | null
+          emergency_vet_name?: string | null
+          emergency_vet_phone?: string | null
           gender?: string | null
           id?: string
+          insurance_policy?: string | null
+          insurance_provider?: string | null
+          is_adopted?: boolean | null
           is_public?: boolean | null
+          last_vet_visit?: string | null
+          living_environment?: string | null
           medical_notes?: string | null
           microchip_number?: string | null
           name?: string
           neutered?: boolean | null
+          neutered_date?: string | null
           owner_id?: string
           personality?: string[] | null
           photo_url?: string | null
+          preferred_clinic?: string | null
           size?: string | null
           special_needs?: string | null
           species?: string
           updated_at?: string
           vaccination_status?: string | null
           weight?: number | null
+          weight_history?: Json | null
         }
         Relationships: [
           {
@@ -1603,6 +2085,36 @@ export type Database = {
           description?: string | null
           id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      points_history: {
+        Row: {
+          action_id: string | null
+          action_type: string
+          created_at: string
+          description: string | null
+          id: string
+          points: number
+          user_id: string
+        }
+        Insert: {
+          action_id?: string | null
+          action_type: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          points: number
+          user_id: string
+        }
+        Update: {
+          action_id?: string | null
+          action_type?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          points?: number
+          user_id?: string
         }
         Relationships: []
       }
@@ -1721,7 +2233,20 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          is_admin: boolean
+          is_premium: boolean | null
+          level: number
           location: string | null
+          points: number
+          premium_end_date: string | null
+          premium_expires_at: string | null
+          premium_plan: string | null
+          premium_start_date: string | null
+          total_adoptions: number
+          total_bookings: number
+          total_lost_pet_help: number
+          total_posts: number
+          total_reviews: number
           updated_at: string
         }
         Insert: {
@@ -1730,7 +2255,20 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id: string
+          is_admin?: boolean
+          is_premium?: boolean | null
+          level?: number
           location?: string | null
+          points?: number
+          premium_end_date?: string | null
+          premium_expires_at?: string | null
+          premium_plan?: string | null
+          premium_start_date?: string | null
+          total_adoptions?: number
+          total_bookings?: number
+          total_lost_pet_help?: number
+          total_posts?: number
+          total_reviews?: number
           updated_at?: string
         }
         Update: {
@@ -1739,7 +2277,20 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          is_admin?: boolean
+          is_premium?: boolean | null
+          level?: number
           location?: string | null
+          points?: number
+          premium_end_date?: string | null
+          premium_expires_at?: string | null
+          premium_plan?: string | null
+          premium_start_date?: string | null
+          total_adoptions?: number
+          total_bookings?: number
+          total_lost_pet_help?: number
+          total_posts?: number
+          total_reviews?: number
           updated_at?: string
         }
         Relationships: []
@@ -2178,6 +2729,62 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriptions: {
+        Row: {
+          auto_renew: boolean | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          created_at: string | null
+          end_date: string
+          id: string
+          payment_amount_clp: number | null
+          payment_provider_id: string | null
+          plan_type: string
+          start_date: string
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          auto_renew?: boolean | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          created_at?: string | null
+          end_date: string
+          id?: string
+          payment_amount_clp?: number | null
+          payment_provider_id?: string | null
+          plan_type: string
+          start_date: string
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          auto_renew?: boolean | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          created_at?: string | null
+          end_date?: string
+          id?: string
+          payment_amount_clp?: number | null
+          payment_provider_id?: string | null
+          plan_type?: string
+          start_date?: string
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trainer_profiles: {
         Row: {
           available_hours: Json
@@ -2256,6 +2863,8 @@ export type Database = {
           owner_id: string
           payment_status: string
           pet_id: string
+          platform_fee_amount: number | null
+          provider_payout_amount: number | null
           scheduled_date: string
           special_notes: string | null
           status: string
@@ -2279,6 +2888,8 @@ export type Database = {
           owner_id: string
           payment_status?: string
           pet_id: string
+          platform_fee_amount?: number | null
+          provider_payout_amount?: number | null
           scheduled_date: string
           special_notes?: string | null
           status?: string
@@ -2302,6 +2913,8 @@ export type Database = {
           owner_id?: string
           payment_status?: string
           pet_id?: string
+          platform_fee_amount?: number | null
+          provider_payout_amount?: number | null
           scheduled_date?: string
           special_notes?: string | null
           status?: string
@@ -2499,6 +3112,30 @@ export type Database = {
           },
         ]
       }
+      user_blocks: {
+        Row: {
+          blocked_id: string
+          blocker_id: string
+          created_at: string
+          id: string
+          reason: string | null
+        }
+        Insert: {
+          blocked_id: string
+          blocker_id: string
+          created_at?: string
+          id?: string
+          reason?: string | null
+        }
+        Update: {
+          blocked_id?: string
+          blocker_id?: string
+          created_at?: string
+          id?: string
+          reason?: string | null
+        }
+        Relationships: []
+      }
       user_challenges: {
         Row: {
           challenge_id: string
@@ -2536,19 +3173,19 @@ export type Database = {
       }
       user_follows: {
         Row: {
-          created_at: string | null
+          created_at: string
           follower_id: string
           following_id: string
           id: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           follower_id: string
           following_id: string
           id?: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           follower_id?: string
           following_id?: string
           id?: string
@@ -2635,6 +3272,47 @@ export type Database = {
           },
         ]
       }
+      user_missions: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          expires_at: string | null
+          id: string
+          mission_id: string
+          progress: number
+          started_at: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          expires_at?: string | null
+          id?: string
+          mission_id: string
+          progress?: number
+          started_at?: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          expires_at?: string | null
+          id?: string
+          mission_id?: string
+          progress?: number
+          started_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_missions_mission_id_fkey"
+            columns: ["mission_id"]
+            isOneToOne: false
+            referencedRelation: "missions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_paw_badges: {
         Row: {
           badge_id: string
@@ -2663,6 +3341,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_reports: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          report_type: string
+          reported_id: string
+          reporter_id: string
+          resolution_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          report_type: string
+          reported_id: string
+          reporter_id: string
+          resolution_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          report_type?: string
+          reported_id?: string
+          reporter_id?: string
+          resolution_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+        }
+        Relationships: []
       }
       user_rewards: {
         Row: {
@@ -2905,6 +3622,8 @@ export type Database = {
           owner_id: string
           payment_status: string
           pet_id: string
+          platform_fee_amount: number | null
+          provider_payout_amount: number | null
           scheduled_date: string
           service_type: string
           status: string
@@ -2927,6 +3646,8 @@ export type Database = {
           owner_id: string
           payment_status?: string
           pet_id: string
+          platform_fee_amount?: number | null
+          provider_payout_amount?: number | null
           scheduled_date: string
           service_type: string
           status?: string
@@ -2949,6 +3670,8 @@ export type Database = {
           owner_id?: string
           payment_status?: string
           pet_id?: string
+          platform_fee_amount?: number | null
+          provider_payout_amount?: number | null
           scheduled_date?: string
           service_type?: string
           status?: string
@@ -3235,6 +3958,8 @@ export type Database = {
           pickup_address: string
           pickup_latitude: number | null
           pickup_longitude: number | null
+          platform_fee_amount: number | null
+          provider_payout_amount: number | null
           scheduled_date: string
           service_type: string
           special_instructions: string | null
@@ -3257,6 +3982,8 @@ export type Database = {
           pickup_address: string
           pickup_latitude?: number | null
           pickup_longitude?: number | null
+          platform_fee_amount?: number | null
+          provider_payout_amount?: number | null
           scheduled_date: string
           service_type: string
           special_instructions?: string | null
@@ -3279,6 +4006,8 @@ export type Database = {
           pickup_address?: string
           pickup_latitude?: number | null
           pickup_longitude?: number | null
+          platform_fee_amount?: number | null
+          provider_payout_amount?: number | null
           scheduled_date?: string
           service_type?: string
           special_instructions?: string | null
@@ -3529,12 +4258,28 @@ export type Database = {
         }
         Returns: undefined
       }
+      award_points: {
+        Args: {
+          p_action_id?: string
+          p_action_type: string
+          p_description?: string
+          p_points: number
+          p_user_id: string
+        }
+        Returns: undefined
+      }
       calculate_distance: {
         Args: { lat1: number; lat2: number; lon1: number; lon2: number }
         Returns: number
       }
+      calculate_level: { Args: { points: number }; Returns: number }
       calculate_platform_fee: { Args: { amount_clp: number }; Returns: number }
+      generate_medical_share_token: { Args: never; Returns: string }
       generate_order_number: { Args: never; Returns: string }
+      get_follow_count: {
+        Args: { count_type: string; user_id: string }
+        Returns: number
+      }
       get_or_create_service_provider: {
         Args: { p_bio?: string; p_display_name?: string; p_user_id: string }
         Returns: string
@@ -3546,7 +4291,34 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_partner_clicks: {
+        Args: { partner_id: string }
+        Returns: undefined
+      }
+      increment_partner_impressions: {
+        Args: { partner_id: string }
+        Returns: undefined
+      }
+      is_mutual_follow: {
+        Args: { user1_id: string; user2_id: string }
+        Returns: boolean
+      }
       is_pet_owner: { Args: { pet_uuid: string }; Returns: boolean }
+      is_user_blocked: {
+        Args: { blocked_id: string; blocker_id: string }
+        Returns: boolean
+      }
+      is_valid_share_token: {
+        Args: { p_token: string }
+        Returns: {
+          owner_id: string
+          pet_id: string
+        }[]
+      }
+      points_for_next_level: {
+        Args: { current_level: number }
+        Returns: number
+      }
     }
     Enums: {
       app_role:

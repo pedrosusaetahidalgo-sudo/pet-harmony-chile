@@ -28,7 +28,8 @@ const ChatConversation = () => {
   useEffect(() => {
     if (conversationId && user) {
       loadConversation();
-      setupRealtimeSubscription();
+      const cleanup = setupRealtimeSubscription();
+      return cleanup;
     }
   }, [conversationId, user]);
 

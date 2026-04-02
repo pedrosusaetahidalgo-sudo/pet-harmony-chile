@@ -2,7 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Origin": "https://pawfriend.cl",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
@@ -56,8 +56,25 @@ serve(async (req) => {
       return_url: string;
     };
 
-    if (!items || items.length === 0) {
+    if (!items || !Array.isArray(items) || items.length === 0) {
       throw new Error("No items in cart");
+    }
+
+    if (!return_url || typeof return_url !== "string") {
+      throw new Error("return_url is required and must be a string");
+    }
+
+    // Validate each cart item has required fields
+    for (const item of items) {
+      if (!item.service_type || typeof item.service_type !== "string") {
+        throw new Error("Each item must have a valid service_type");
+      }
+      if (!item.provider_id || typeof item.provider_id !== "string") {
+        throw new Error("Each item must have a valid provider_id");
+      }
+      if (typeof item.unit_price_clp !== "number" || item.unit_price_clp <= 0) {
+        throw new Error("Each item must have a valid unit_price_clp");
+      }
     }
 
     logStep("Cart items received", { count: items.length });
@@ -229,7 +246,7 @@ serve(async (req) => {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logStep("ERROR", { message: errorMessage });
     return new Response(
-      JSON.stringify({ error: errorMessage }),
+      JSON.stringify({ error: "An internal error occurred while processing the payment." }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
     );
   }

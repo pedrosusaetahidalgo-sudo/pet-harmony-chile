@@ -102,6 +102,25 @@ const AddPet = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate weight if provided
+    if (formData.weight && parseFloat(formData.weight) <= 0) {
+      toast({ title: "Error", description: "El peso debe ser mayor a 0", variant: "destructive" });
+      return;
+    }
+
+    // Validate birth_date if provided
+    if (formData.birth_date && new Date(formData.birth_date) > new Date()) {
+      toast({ title: "Error", description: "La fecha de nacimiento no puede ser en el futuro", variant: "destructive" });
+      return;
+    }
+
+    // Validate adoption_date if provided
+    if (formData.adoption_date && new Date(formData.adoption_date) > new Date()) {
+      toast({ title: "Error", description: "La fecha de adopción no puede ser en el futuro", variant: "destructive" });
+      return;
+    }
+
     setLoading(true);
 
     try {

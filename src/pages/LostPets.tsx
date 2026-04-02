@@ -16,7 +16,7 @@ const LostPets = () => {
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<"lost" | "found">("lost");
 
-  const { data: lostPets, refetch } = useQuery({
+  const { data: lostPets, refetch, isError } = useQuery({
     queryKey: ["lostPets"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -37,6 +37,15 @@ const LostPets = () => {
 
   const lostPetsList = lostPets?.filter(p => p.report_type === "lost");
   const foundPetsList = lostPets?.filter(p => p.report_type === "found");
+
+  if (isError) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 text-center">
+        <p className="text-muted-foreground">No pudimos cargar las publicaciones. Intenta de nuevo.</p>
+        <Button variant="outline" onClick={() => refetch()} className="mt-4">Reintentar</Button>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto p-4 space-y-6">

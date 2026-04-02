@@ -5,33 +5,30 @@ import { useAuth } from "@/hooks/useAuth";
 export interface UserGamification {
   points: number;
   level: number;
-  total_bookings: number;
-  total_reviews: number;
-  total_posts: number;
-  total_adoptions: number;
-  total_lost_pet_help: number;
+  followers_count: number;
+  following_count: number;
+  posts_count: number;
+  pets_count: number;
 }
 
 export interface Achievement {
   id: string;
-  code: string;
-  name: string;
-  description: string;
-  icon: string;
-  points_reward: number;
-  category: string;
-  unlocked_at?: string;
+  achievement_name: string;
+  achievement_type: string;
+  achievement_description: string | null;
+  points_earned: number | null;
+  earned_at: string;
 }
 
 export interface Mission {
   id: string;
-  code: string;
-  name: string;
+  title: string;
   description: string;
-  mission_type: "daily" | "weekly" | "special";
-  action_type: string;
+  mission_type: string;
+  target_action: string;
   target_count: number;
   points_reward: number;
+  category: string;
   progress?: number;
   completed?: boolean;
   expires_at?: string;
@@ -42,73 +39,61 @@ export const useGamification = (userId?: string) => {
   const targetUserId = userId || user?.id;
   const queryClient = useQueryClient();
 
-  // Get user gamification stats
+  // Get user gamification stats from user_stats table
   const { data: stats, isLoading } = useQuery({
     queryKey: ["gamification", targetUserId],
     queryFn: async (): Promise<UserGamification | null> => {
       if (!targetUserId) return null;
-      
+
       const { data, error } = await supabase
-        .from("profiles")
-        .select("points, level, total_bookings, total_reviews, total_posts, total_adoptions, total_lost_pet_help")
-        .eq("id", targetUserId)
+        .from("user_stats")
+        .select("level, total_points, followers_count, following_count, posts_count, pets_count")
+        .eq("user_id", targetUserId)
         .maybeSingle();
 
       if (error) throw error;
-      return data;
+      if (!data) return null;
+
+      return {
+        points: data.total_points ?? 0,
+        level: data.level ?? 1,
+        followers_count: data.followers_count ?? 0,
+        following_count: data.following_count ?? 0,
+        posts_count: data.posts_count ?? 0,
+        pets_count: data.pets_count ?? 0,
+      };
     },
     enabled: !!targetUserId,
   });
 
-  // Get user achievements
+  // Get user achievements directly (no FK join)
   const { data: achievements } = useQuery({
     queryKey: ["achievements", targetUserId],
     queryFn: async (): Promise<Achievement[]> => {
       if (!targetUserId) return [];
-      
+
       const { data, error } = await supabase
         .from("user_achievements")
-        .select(`
-          id,
-          unlocked_at,
-          achievements:achievement_id (
-            id,
-            code,
-            name,
-            description,
-            icon,
-            points_reward,
-            category
-          )
-        `)
+        .select("id, achievement_name, achievement_type, achievement_description, points_earned, earned_at")
         .eq("user_id", targetUserId)
-        .order("unlocked_at", { ascending: false });
+        .order("earned_at", { ascending: false });
 
       if (error) throw error;
-      
-      return (data || []).map((item: any) => ({
-        id: item.id,
-        code: item.achievements.code,
-        name: item.achievements.name,
-        description: item.achievements.description,
-        icon: item.achievements.icon,
-        points_reward: item.achievements.points_reward,
-        category: item.achievements.category,
-        unlocked_at: item.unlocked_at,
-      }));
+
+      return (data || []) as Achievement[];
     },
     enabled: !!targetUserId,
   });
 
-  // Get active missions
+  // Get active missions from paw_missions + user_mission_progress
   const { data: missions } = useQuery({
     queryKey: ["missions", targetUserId],
     queryFn: async (): Promise<Mission[]> => {
       if (!targetUserId) return [];
-      
-      // Get active missions
+
+      // Get active missions from paw_missions
       const { data: activeMissions, error: missionsError } = await supabase
-        .from("missions")
+        .from("paw_missions")
         .select("*")
         .eq("is_active", true)
         .order("mission_type", { ascending: true });
@@ -116,8 +101,8 @@ export const useGamification = (userId?: string) => {
       if (missionsError) throw missionsError;
 
       // Get user mission progress
-      const { data: userMissions, error: progressError } = await supabase
-        .from("user_missions")
+      const { data: userProgress, error: progressError } = await supabase
+        .from("user_mission_progress")
         .select("*")
         .eq("user_id", targetUserId);
 
@@ -125,19 +110,19 @@ export const useGamification = (userId?: string) => {
 
       // Combine missions with progress
       return (activeMissions || []).map((mission) => {
-        const userMission = (userMissions || []).find((um) => um.mission_id === mission.id);
+        const progress = (userProgress || []).find((up) => up.mission_id === mission.id);
         return {
           id: mission.id,
-          code: mission.code,
-          name: mission.name,
+          title: mission.title,
           description: mission.description,
           mission_type: mission.mission_type,
-          action_type: mission.action_type,
+          target_action: mission.target_action,
           target_count: mission.target_count,
           points_reward: mission.points_reward,
-          progress: userMission?.progress || 0,
-          completed: userMission?.completed || false,
-          expires_at: userMission?.expires_at || mission.end_date,
+          category: mission.category,
+          progress: progress?.current_progress || 0,
+          completed: progress?.is_completed || false,
+          expires_at: progress?.expires_at || undefined,
         };
       });
     },
@@ -187,4 +172,3 @@ export const useGamification = (userId?: string) => {
     isAwarding: awardPointsMutation.isPending,
   };
 };
-

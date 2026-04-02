@@ -27,7 +27,8 @@ const Chat = () => {
     if (user) {
       loadConversations();
       loadFollowedUsers();
-      setupRealtimeSubscription();
+      const cleanup = setupRealtimeSubscription();
+      return cleanup;
     }
   }, [user]);
 
