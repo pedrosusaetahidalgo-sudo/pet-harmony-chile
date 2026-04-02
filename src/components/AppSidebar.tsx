@@ -6,6 +6,7 @@ import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 import {
   Sidebar,
@@ -18,6 +19,7 @@ import {
   SidebarMenuItem,
   SidebarHeader,
   SidebarFooter,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 const mainItems = [
@@ -28,7 +30,7 @@ const mainItems = [
   { title: "Mensajes", url: "/chat", icon: MessageSquare },
   { title: "Explorar", url: "/places", icon: MapPin },
   { title: "Adopción", url: "/adoption", icon: Compass },
-  { title: "Perdidos y Encontrados", url: "/lost-pets", icon: AlertCircle },
+  { title: "Perdidos", url: "/lost-pets", icon: AlertCircle },
 ];
 
 const petItems = [
@@ -42,7 +44,7 @@ const serviceItems = [
   { title: "Veterinarios", url: "/home-vets", icon: Stethoscope },
   { title: "Cuidadores", url: "/dog-sitters", icon: Home },
   { title: "Entrenadores", url: "/dog-trainers", icon: GraduationCap },
-  { title: "Paseos Compartidos", url: "/shared-walks", icon: Users },
+  { title: "Paseos Grupales", url: "/shared-walks", icon: Users },
 ];
 
 export function AppSidebar() {
@@ -50,6 +52,8 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { isAdmin } = useIsAdmin();
+  const isMobile = useIsMobile();
+  const { setOpenMobile } = useSidebar();
   const currentPath = location.pathname;
 
   const handleSignOut = async () => {
@@ -57,177 +61,116 @@ export function AppSidebar() {
     navigate("/auth");
   };
 
+  const handleNavigate = (url: string) => {
+    navigate(url);
+    if (isMobile) setOpenMobile(false);
+  };
+
   const isActive = (path: string) => currentPath === path;
 
+  const renderMenuItems = (items: typeof mainItems, hoverClass: string, activeClass: string) => (
+    <SidebarMenu className="space-y-0.5">
+      {items.map((item) => (
+        <SidebarMenuItem key={item.title}>
+          <SidebarMenuButton
+            isActive={isActive(item.url)}
+            onClick={() => handleNavigate(item.url)}
+            tooltip={item.title}
+            className={`${hoverClass} transition-all duration-200 rounded-lg`}
+          >
+            <item.icon className="h-5 w-5 flex-shrink-0" />
+            <span>{item.title}</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      ))}
+    </SidebarMenu>
+  );
+
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible={isMobile ? "offcanvas" : "icon"} className="border-r border-border/40">
       <SidebarHeader className="border-b border-border/50 bg-gradient-to-r from-primary/5 to-secondary/5">
-        <div className="flex items-center gap-3 px-4 py-4 overflow-hidden">
-          <div className="relative">
-            <Heart className="h-8 w-8 text-primary fill-primary flex-shrink-0 animate-pulse" />
-            <PawPrint className="h-4 w-4 text-secondary absolute -bottom-1 -right-1" />
+        <div className="flex items-center gap-3 px-4 py-3">
+          <div className="relative flex-shrink-0">
+            <Heart className="h-7 w-7 text-primary fill-primary" />
+            <PawPrint className="h-3 w-3 text-secondary absolute -bottom-0.5 -right-0.5" />
           </div>
           <div className="overflow-hidden group-data-[collapsible=icon]:hidden">
-            <span className="font-bold text-xl bg-warm-gradient bg-clip-text text-transparent block whitespace-nowrap">
+            <span className="font-bold text-lg bg-warm-gradient bg-clip-text text-transparent block whitespace-nowrap">
               Paw Friend
             </span>
-            <span className="text-xs text-muted-foreground">Chile</span>
           </div>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2 overflow-y-auto overflow-x-hidden">
+      <SidebarContent className="px-2">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">
-            Principal
-          </SidebarGroupLabel>
+          <SidebarGroupLabel>Principal</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
-              {mainItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                    <NavLink
-                      to={item.url}
-                      end
-                      className="hover:bg-gradient-to-r hover:from-primary/10 hover:to-secondary/10 transition-all duration-200 rounded-lg group"
-                      activeClassName="bg-gradient-to-r from-primary/15 to-secondary/15 text-primary font-semibold shadow-sm"
-                    >
-                      <item.icon className="h-5 w-5 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                      <span className="ml-3 truncate">{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            {renderMenuItems(mainItems, "hover:bg-primary/10", "bg-primary/15 text-primary font-semibold")}
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <Separator className="my-4" />
-
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">
-            Mis Mascotas
-          </SidebarGroupLabel>
+          <SidebarGroupLabel>Mis Mascotas</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
-              {petItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                    <NavLink
-                      to={item.url}
-                      className="hover:bg-gradient-to-r hover:from-secondary/10 hover:to-primary/10 transition-all duration-200 rounded-lg group"
-                      activeClassName="bg-gradient-to-r from-secondary/15 to-primary/15 text-secondary font-semibold shadow-sm"
-                    >
-                      <item.icon className="h-5 w-5 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                      <span className="ml-3 truncate">{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            {renderMenuItems(petItems, "hover:bg-secondary/10", "bg-secondary/15 text-secondary font-semibold")}
           </SidebarGroupContent>
         </SidebarGroup>
 
-        <Separator className="my-4" />
-
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">
-            Servicios
-          </SidebarGroupLabel>
+          <SidebarGroupLabel>Servicios</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu className="space-y-1">
-              {serviceItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={isActive(item.url)}>
-                    <NavLink
-                      to={item.url}
-                      className="hover:bg-gradient-to-r hover:from-blue-500/10 hover:to-cyan-500/10 transition-all duration-200 rounded-lg group"
-                      activeClassName="bg-gradient-to-r from-blue-500/15 to-cyan-500/15 text-blue-600 font-semibold shadow-sm"
-                    >
-                      <item.icon className="h-5 w-5 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                      <span className="ml-3 truncate">{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
+            {renderMenuItems(serviceItems, "hover:bg-blue-500/10", "bg-blue-500/15 text-blue-600 font-semibold")}
           </SidebarGroupContent>
         </SidebarGroup>
 
         {isAdmin && (
-          <>
-            <Separator className="my-4" />
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-3 mb-2">
-                Administración
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu className="space-y-1">
-                  <SidebarMenuItem>
-                    <SidebarMenuButton asChild isActive={isActive("/admin")}>
-                      <NavLink
-                        to="/admin"
-                        className="hover:bg-gradient-to-r hover:from-amber-500/10 hover:to-orange-500/10 transition-all duration-200 rounded-lg group"
-                        activeClassName="bg-gradient-to-r from-amber-500/15 to-orange-500/15 text-amber-600 font-semibold shadow-sm"
-                      >
-                        <Shield className="h-5 w-5 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                        <span className="ml-3 truncate">Panel Admin</span>
-                      </NavLink>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </>
+          <SidebarGroup>
+            <SidebarGroupLabel>Admin</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={isActive("/admin")}
+                    onClick={() => handleNavigate("/admin")}
+                    tooltip="Panel Admin"
+                  >
+                    <Shield className="h-5 w-5 flex-shrink-0" />
+                    <span>Panel Admin</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
         )}
       </SidebarContent>
 
       {user && (
-        <SidebarFooter className="border-t border-border/50 bg-gradient-to-r from-muted/30 to-muted/10">
-          <div className="p-3 space-y-3 overflow-hidden">
-            <div className="flex items-center gap-3 p-2 rounded-lg bg-gradient-to-r from-primary/5 to-secondary/5 hover:from-primary/10 hover:to-secondary/10 transition-all cursor-pointer group-data-[collapsible=icon]:p-1 group-data-[collapsible=icon]:justify-center" onClick={() => navigate('/profile')}>
-              <Avatar className="h-9 w-9 ring-2 ring-primary/20 flex-shrink-0">
-                <AvatarFallback className="bg-warm-gradient text-white font-semibold">
-                  {user.email?.[0].toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
-                <p className="text-sm font-semibold truncate">
-                  {user.email?.split("@")[0]}
-                </p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {user.email}
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-2 group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:items-center">
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex-1 min-h-[44px] hover:bg-primary/10 hover:text-primary hover:border-primary/50 transition-all group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:w-9 group-data-[collapsible=icon]:h-9 group-data-[collapsible=icon]:p-0"
-                onClick={() => navigate('/profile')}
-              >
-                <User className="h-4 w-4 flex-shrink-0" />
-                <span className="ml-2 group-data-[collapsible=icon]:hidden">Perfil</span>
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="min-h-[44px] min-w-[44px] hover:bg-muted transition-all group-data-[collapsible=icon]:w-9 group-data-[collapsible=icon]:h-9 group-data-[collapsible=icon]:p-0"
-                onClick={() => navigate('/settings')}
-              >
-                <Settings className="h-4 w-4 flex-shrink-0" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="min-h-[44px] min-w-[44px] hover:bg-destructive/10 hover:text-destructive hover:border-destructive/50 transition-all group-data-[collapsible=icon]:w-9 group-data-[collapsible=icon]:h-9 group-data-[collapsible=icon]:p-0"
-                onClick={handleSignOut}
-              >
-                <LogOut className="h-4 w-4 flex-shrink-0" />
-              </Button>
-            </div>
-          </div>
+        <SidebarFooter className="border-t border-border/50 p-2">
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={() => handleNavigate('/profile')} tooltip="Mi Perfil">
+                <Avatar className="h-6 w-6 flex-shrink-0">
+                  <AvatarFallback className="bg-warm-gradient text-white text-xs font-semibold">
+                    {user.email?.[0].toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="truncate">{user.email?.split("@")[0]}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={() => handleNavigate('/settings')} tooltip="Configuración">
+                <Settings className="h-5 w-5 flex-shrink-0" />
+                <span>Configuración</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+            <SidebarMenuItem>
+              <SidebarMenuButton onClick={handleSignOut} tooltip="Cerrar Sesión" className="hover:bg-destructive/10 hover:text-destructive">
+                <LogOut className="h-5 w-5 flex-shrink-0" />
+                <span>Cerrar Sesión</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
         </SidebarFooter>
       )}
     </Sidebar>

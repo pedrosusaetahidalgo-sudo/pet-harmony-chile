@@ -140,17 +140,27 @@ const PawGame = () => {
         .eq('user_id', user?.id)
         .maybeSingle();
 
-      // If no progress exists, create it
-      if (!progressData) {
+      // If no progress exists, try to create it
+      let activeProgress = progressData;
+      if (!activeProgress) {
         const { data: newProgress } = await supabase
           .from('user_guardian_progress')
           .insert({ user_id: user?.id })
           .select()
           .maybeSingle();
-        setUserProgress(newProgress);
-      } else {
-        setUserProgress(progressData);
+        activeProgress = newProgress;
       }
+
+      // Set a default progress if DB operations failed
+      setUserProgress(activeProgress || {
+        id: '',
+        user_id: user?.id || '',
+        total_paw_points: 0,
+        current_level: 1,
+        current_level_points: 0,
+        streak_days: 0,
+        last_activity_date: null,
+      } as UserProgress);
 
       // Load guardian levels
       const { data: levelsData } = await supabase
@@ -158,9 +168,10 @@ const PawGame = () => {
         .select('*')
         .order('level_number', { ascending: true });
 
-      if (levelsData && progressData) {
-        const current = levelsData.find(l => l.level_number === (progressData?.current_level || 1));
-        const next = levelsData.find(l => l.level_number === (progressData?.current_level || 1) + 1);
+      const level = activeProgress?.current_level || 1;
+      if (levelsData) {
+        const current = levelsData.find(l => l.level_number === level);
+        const next = levelsData.find(l => l.level_number === level + 1);
         setCurrentLevel(current || null);
         setNextLevel(next || null);
       }
