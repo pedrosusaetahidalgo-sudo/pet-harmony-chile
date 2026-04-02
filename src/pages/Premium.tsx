@@ -10,14 +10,69 @@ import { toast } from "@/hooks/use-toast";
 import {
   Crown,
   Check,
+  X as XIcon,
   Sparkles,
   TrendingUp,
   Star,
   Loader2,
   AlertCircle,
+  Brain,
+  FileText,
+  ShoppingBag,
+  Gamepad2,
+  Users,
+  Shield,
 } from "lucide-react";
 import { PremiumBadge } from "@/components/PremiumBadge";
 import { track, EVENTS } from "@/lib/analytics";
+
+const featureComparison = [
+  {
+    category: "Inteligencia Artificial",
+    icon: Brain,
+    features: [
+      { name: "Asistente de Mascota (IA)", free: "3 consultas/dia", premium: "Ilimitado" },
+      { name: "Tips de Raza personalizados", free: false, premium: true },
+      { name: "Analisis de Comportamiento", free: false, premium: true },
+    ],
+  },
+  {
+    category: "Registros Clinicos",
+    icon: FileText,
+    features: [
+      { name: "Historial medico basico", free: true, premium: true },
+      { name: "Exportar PDF de registros", free: false, premium: true },
+      { name: "Compartir con veterinario", free: false, premium: true },
+    ],
+  },
+  {
+    category: "Marketplace de Servicios",
+    icon: ShoppingBag,
+    features: [
+      { name: "Reservar servicios", free: true, premium: true },
+      { name: "5% descuento en comisiones", free: false, premium: true },
+      { name: "Reserva prioritaria", free: false, premium: true },
+    ],
+  },
+  {
+    category: "Gamificacion",
+    icon: Gamepad2,
+    features: [
+      { name: "Paw Game (puntos basicos)", free: true, premium: true },
+      { name: "2x puntos en todo", free: false, premium: true },
+      { name: "Badges exclusivos", free: false, premium: true },
+    ],
+  },
+  {
+    category: "Social",
+    icon: Users,
+    features: [
+      { name: "Perfil y feed social", free: true, premium: true },
+      { name: "Badge verificado Premium", free: false, premium: true },
+      { name: "Perfil destacado", free: false, premium: true },
+    ],
+  },
+];
 
 const Premium = () => {
   const { user } = useAuth();
@@ -28,7 +83,6 @@ const Premium = () => {
     track({ event: EVENTS.PREMIUM_VIEWED });
   }, []);
 
-  // Get user's premium status
   const { data: profile, isError, refetch } = useQuery({
     queryKey: ["user-profile", user?.id],
     queryFn: async () => {
@@ -44,14 +98,12 @@ const Premium = () => {
     enabled: !!user,
   });
 
-  // Create subscription mutation — routes through webpay-init for payment validation
   const createSubscriptionMutation = useMutation({
     mutationFn: async (planType: "monthly" | "yearly") => {
       if (!user) throw new Error("User not authenticated");
 
       const price = planType === "monthly" ? 3990 : 39900;
 
-      // Step 1: Invoke webpay-init Edge Function to process payment
       const { data, error } = await supabase.functions.invoke('webpay-init', {
         body: {
           items: [{
@@ -67,7 +119,6 @@ const Premium = () => {
         throw new Error("No se pudo procesar el pago");
       }
 
-      // Step 2: Only after payment succeeds, create subscription
       const startDate = new Date();
       const endDate = new Date();
       if (planType === "monthly") {
@@ -92,7 +143,6 @@ const Premium = () => {
 
       if (subError) throw subError;
 
-      // Update profile premium status
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
@@ -109,17 +159,18 @@ const Premium = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user-profile", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["user-premium-status", user?.id] });
       track({ event: EVENTS.PREMIUM_CONVERTED, properties: { plan: selectedPlan } });
       toast({
-        title: "¡Bienvenido a Premium!",
-        description: "Tu suscripción Premium ha sido activada",
+        title: "Bienvenido a Premium!",
+        description: "Tu suscripcion Premium ha sido activada",
       });
       setSelectedPlan(null);
     },
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message || "No se pudo procesar la suscripción",
+        description: error.message || "No se pudo procesar la suscripcion",
         variant: "destructive",
       });
     },
@@ -127,31 +178,33 @@ const Premium = () => {
 
   const plans = [
     {
-      id: "monthly",
+      id: "monthly" as const,
       name: "Mensual",
       price: 3990,
-      priceLabel: "$3.990 CLP/mes",
-      savings: null,
+      monthlyPrice: 3990,
+      badge: null,
       features: [
+        "Asistente IA ilimitado",
         "5% descuento en comisiones",
         "2x puntos en el Paw Game",
         "Badge Premium exclusivo",
+        "Exportar registros en PDF",
         "Soporte prioritario",
       ],
     },
     {
-      id: "yearly",
+      id: "yearly" as const,
       name: "Anual",
       price: 39900,
-      priceLabel: "$39.900 CLP/año",
-      savings: "Ahorra 2 meses",
+      monthlyPrice: 3325,
+      badge: "Mas popular",
       features: [
-        "5% descuento en comisiones",
-        "2x puntos en el Paw Game",
-        "Badge Premium exclusivo",
-        "Soporte prioritario",
-        "Destacado en búsquedas (proveedores)",
-        "Acceso a analytics avanzados (proveedores)",
+        "Todo lo del plan Mensual",
+        "Ahorra 2 meses completos",
+        "Perfil destacado en busquedas",
+        "Analytics avanzados (proveedores)",
+        "Pin destacado en mapas",
+        "Acceso anticipado a nuevas funciones",
       ],
     },
   ];
@@ -168,7 +221,8 @@ const Premium = () => {
     return (
       <AppLayout>
         <div className="flex flex-col items-center justify-center p-8 text-center">
-          <p className="text-muted-foreground">No pudimos cargar la información de Premium. Intenta de nuevo.</p>
+          <AlertCircle className="h-10 w-10 text-muted-foreground mb-4" />
+          <p className="text-muted-foreground">No pudimos cargar la informacion de Premium. Intenta de nuevo.</p>
           <Button variant="outline" onClick={() => refetch()} className="mt-4">Reintentar</Button>
         </div>
       </AppLayout>
@@ -176,6 +230,7 @@ const Premium = () => {
   }
 
   const isPremium = profile?.is_premium;
+  const premiumPlan = profile?.premium_plan;
   const premiumEndDate = profile?.premium_end_date
     ? new Date(profile.premium_end_date)
     : null;
@@ -183,34 +238,41 @@ const Premium = () => {
   return (
     <AppLayout>
       <div className="container max-w-6xl mx-auto px-4 py-8">
+        {/* Hero Section */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-r from-yellow-500 to-orange-500 mb-4">
-            <Crown className="h-10 w-10 text-white" />
+          <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-yellow-400 via-amber-500 to-orange-500 mb-6 shadow-lg shadow-amber-500/25">
+            <Crown className="h-12 w-12 text-white" />
           </div>
-          <h1 className="text-4xl font-bold mb-4">PawFriend Premium</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Desbloquea beneficios exclusivos y apoya el crecimiento de la plataforma
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
+            Paw Premium
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Desbloquea el maximo potencial de Paw Friend para ti y tus mascotas.
+            IA avanzada, registros completos y beneficios exclusivos.
           </p>
         </div>
 
+        {/* Current Plan Status (if premium) */}
         {isPremium && premiumEndDate && (
-          <Card className="mb-8 border-yellow-500">
+          <Card className="mb-10 border-amber-300 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/20 dark:to-yellow-950/20">
             <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <PremiumBadge size="lg" />
-                    <span className="font-semibold">Tu suscripción Premium está activa</span>
+                    <span className="font-semibold text-lg">Tu suscripcion Premium esta activa</span>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Renueva el {premiumEndDate.toLocaleDateString("es-CL", {
+                    Plan <strong className="capitalize">{premiumPlan || "Premium"}</strong> &middot; Renueva el{" "}
+                    {premiumEndDate.toLocaleDateString("es-CL", {
                       day: "numeric",
                       month: "long",
                       year: "numeric",
                     })}
                   </p>
                 </div>
-                <Badge variant="outline" className="text-green-600 border-green-600">
+                <Badge className="bg-green-500 hover:bg-green-600 text-white px-3 py-1">
+                  <Shield className="h-3 w-3 mr-1" />
                   Activo
                 </Badge>
               </div>
@@ -218,43 +280,143 @@ const Premium = () => {
           </Card>
         )}
 
-        {/* Benefits Overview */}
+        {/* Pricing Plans - Side by Side */}
+        {!isPremium && (
+          <div className="grid md:grid-cols-2 gap-6 mb-16 max-w-4xl mx-auto">
+            {plans.map((plan) => {
+              const isYearly = plan.id === "yearly";
+              return (
+                <Card
+                  key={plan.id}
+                  className={`relative overflow-hidden transition-all ${
+                    isYearly
+                      ? "border-amber-400 ring-2 ring-amber-400 shadow-lg shadow-amber-100 dark:shadow-amber-900/20"
+                      : "border-border"
+                  } ${
+                    selectedPlan === plan.id
+                      ? "border-primary ring-2 ring-primary"
+                      : ""
+                  }`}
+                >
+                  {plan.badge && (
+                    <div className="absolute top-0 right-0">
+                      <div className="bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">
+                        <Sparkles className="h-3 w-3 inline mr-1" />
+                        {plan.badge}
+                      </div>
+                    </div>
+                  )}
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-xl">{plan.name}</CardTitle>
+                    <CardDescription>
+                      <div className="mt-3">
+                        <span className="text-4xl font-bold text-foreground">
+                          {formatCLP(plan.price)}
+                        </span>
+                        <span className="text-muted-foreground ml-1">
+                          /{plan.id === "monthly" ? "mes" : "ano"}
+                        </span>
+                      </div>
+                      {isYearly && (
+                        <p className="text-sm text-amber-600 dark:text-amber-400 font-medium mt-1">
+                          Equivale a {formatCLP(plan.monthlyPrice)}/mes &middot; Ahorra 2 meses
+                        </p>
+                      )}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <ul className="space-y-2.5">
+                      {plan.features.map((feature, idx) => (
+                        <li key={idx} className="flex items-start gap-2">
+                          <Check className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
+                          <span className="text-sm">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    <Button
+                      className={`w-full ${
+                        isYearly
+                          ? "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white"
+                          : ""
+                      }`}
+                      variant={isYearly ? "default" : "outline"}
+                      size="lg"
+                      onClick={() => {
+                        setSelectedPlan(plan.id);
+                        createSubscriptionMutation.mutate(plan.id);
+                      }}
+                      disabled={createSubscriptionMutation.isPending}
+                    >
+                      {createSubscriptionMutation.isPending &&
+                      selectedPlan === plan.id ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Procesando...
+                        </>
+                      ) : (
+                        <>
+                          <Star className="h-4 w-4 mr-2" />
+                          {isYearly ? "Suscribirse al Anual" : "Suscribirse al Mensual"}
+                        </>
+                      )}
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Feature Comparison Table */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-center mb-8">
+            Comparacion de funciones
+          </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full max-w-4xl mx-auto">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left py-3 px-4 font-semibold text-sm w-1/2">Funcion</th>
+                  <th className="text-center py-3 px-4 font-semibold text-sm w-1/4">Gratis</th>
+                  <th className="text-center py-3 px-4 font-semibold text-sm w-1/4">
+                    <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400">
+                      <Crown className="h-4 w-4" />
+                      Premium
+                    </span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {featureComparison.map((group) => (
+                  <FeatureGroup key={group.category} group={group} />
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Benefits Cards */}
         <div className="grid md:grid-cols-2 gap-6 mb-12">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-primary" />
-                Para Dueños de Mascotas
+                Para Duenos de Mascotas
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="flex items-start gap-3">
-                <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-medium">5% descuento en comisiones</p>
-                  <p className="text-sm text-muted-foreground">
-                    Ahorra en cada reserva de servicio
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-medium">2x puntos en el Paw Game</p>
-                  <p className="text-sm text-muted-foreground">
-                    Sube de nivel más rápido
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-medium">Badge Premium exclusivo</p>
-                  <p className="text-sm text-muted-foreground">
-                    Destácate en la comunidad
-                  </p>
-                </div>
-              </div>
+              <BenefitItem
+                title="Asistente IA sin limites"
+                description="Consulta todo sobre tu mascota con IA avanzada"
+              />
+              <BenefitItem
+                title="Registros clinicos completos"
+                description="Exporta PDF y comparte con tu veterinario"
+              />
+              <BenefitItem
+                title="Ahorra en servicios"
+                description="5% descuento en comisiones + reserva prioritaria"
+              />
             </CardContent>
           </Card>
 
@@ -266,105 +428,21 @@ const Premium = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <div className="flex items-start gap-3">
-                <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-medium">Destacado en búsquedas</p>
-                  <p className="text-sm text-muted-foreground">
-                    Aparece primero en resultados
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-medium">Analytics avanzados</p>
-                  <p className="text-sm text-muted-foreground">
-                    Clientes recurrentes, tendencias de ingresos
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3">
-                <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-medium">Pin destacado en mapas</p>
-                  <p className="text-sm text-muted-foreground">
-                    Mayor visibilidad en el mapa
-                  </p>
-                </div>
-              </div>
+              <BenefitItem
+                title="Destacado en busquedas"
+                description="Aparece primero en resultados y mapas"
+              />
+              <BenefitItem
+                title="Analytics avanzados"
+                description="Clientes recurrentes, tendencias de ingresos"
+              />
+              <BenefitItem
+                title="Badge verificado"
+                description="Mayor confianza de los clientes"
+              />
             </CardContent>
           </Card>
         </div>
-
-        {/* Pricing Plans */}
-        {!isPremium && (
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            {plans.map((plan) => (
-              <Card
-                key={plan.id}
-                className={`relative ${
-                  selectedPlan === plan.id
-                    ? "border-primary ring-2 ring-primary"
-                    : ""
-                }`}
-              >
-                {plan.savings && (
-                  <div className="absolute -top-3 right-4">
-                    <Badge className="bg-green-500">{plan.savings}</Badge>
-                  </div>
-                )}
-                <CardHeader>
-                  <CardTitle>{plan.name}</CardTitle>
-                  <CardDescription>
-                    <div className="mt-2">
-                      <span className="text-3xl font-bold">
-                        {formatCLP(plan.price)}
-                      </span>
-                      <span className="text-muted-foreground ml-2">
-                        {plan.id === "monthly" ? "/mes" : "/año"}
-                      </span>
-                    </div>
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <ul className="space-y-2">
-                    {plan.features.map((feature, idx) => (
-                      <li key={idx} className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" />
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Button
-                    className="w-full"
-                    variant={selectedPlan === plan.id ? "default" : "outline"}
-                    onClick={() => {
-                      setSelectedPlan(plan.id as "monthly" | "yearly");
-                      createSubscriptionMutation.mutate(
-                        plan.id as "monthly" | "yearly"
-                      );
-                    }}
-                    disabled={createSubscriptionMutation.isPending}
-                  >
-                    {createSubscriptionMutation.isPending &&
-                    selectedPlan === plan.id ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Procesando...
-                      </>
-                    ) : (
-                      <>
-                        <Star className="h-4 w-4 mr-2" />
-                        Suscribirse
-                      </>
-                    )}
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
 
         {/* FAQ */}
         <Card>
@@ -373,24 +451,31 @@ const Premium = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <p className="font-medium mb-1">¿Puedo cancelar en cualquier momento?</p>
+              <p className="font-medium mb-1">Puedo cancelar en cualquier momento?</p>
               <p className="text-sm text-muted-foreground">
-                Sí, puedes cancelar tu suscripción en cualquier momento. Tu acceso Premium
-                continuará hasta el final del período pagado.
+                Si, puedes cancelar tu suscripcion en cualquier momento. Tu acceso Premium
+                continuara hasta el final del periodo pagado.
               </p>
             </div>
             <div>
-              <p className="font-medium mb-1">¿Cómo se aplica el descuento del 5%?</p>
+              <p className="font-medium mb-1">Como se aplica el descuento del 5%?</p>
               <p className="text-sm text-muted-foreground">
-                El descuento se aplica automáticamente a la comisión de la plataforma en cada
-                reserva. Verás el ahorro reflejado en el checkout.
+                El descuento se aplica automaticamente a la comision de la plataforma en cada
+                reserva. Veras el ahorro reflejado en el checkout.
               </p>
             </div>
             <div>
-              <p className="font-medium mb-1">¿Los puntos se multiplican automáticamente?</p>
+              <p className="font-medium mb-1">Los puntos se multiplican automaticamente?</p>
               <p className="text-sm text-muted-foreground">
-                Sí, una vez que eres Premium, todos los puntos que ganes se multiplican por 2
-                automáticamente.
+                Si, una vez que eres Premium, todos los puntos que ganes se multiplican por 2
+                automaticamente.
+              </p>
+            </div>
+            <div>
+              <p className="font-medium mb-1">Que incluye el Asistente IA?</p>
+              <p className="text-sm text-muted-foreground">
+                El asistente IA Premium ofrece consultas ilimitadas sobre comportamiento, salud,
+                nutricion y entrenamiento personalizado para tu mascota.
               </p>
             </div>
           </CardContent>
@@ -400,5 +485,57 @@ const Premium = () => {
   );
 };
 
-export default Premium;
+function FeatureGroup({ group }: { group: typeof featureComparison[number] }) {
+  const Icon = group.icon;
+  return (
+    <>
+      <tr className="bg-muted/50">
+        <td colSpan={3} className="py-2.5 px-4 font-semibold text-sm">
+          <span className="flex items-center gap-2">
+            <Icon className="h-4 w-4 text-primary" />
+            {group.category}
+          </span>
+        </td>
+      </tr>
+      {group.features.map((feature) => (
+        <tr key={feature.name} className="border-b border-border/50">
+          <td className="py-2.5 px-4 text-sm">{feature.name}</td>
+          <td className="py-2.5 px-4 text-center">
+            <FeatureCell value={feature.free} />
+          </td>
+          <td className="py-2.5 px-4 text-center">
+            <FeatureCell value={feature.premium} isPremium />
+          </td>
+        </tr>
+      ))}
+    </>
+  );
+}
 
+function FeatureCell({ value, isPremium = false }: { value: boolean | string; isPremium?: boolean }) {
+  if (typeof value === "string") {
+    return (
+      <span className={`text-xs font-medium ${isPremium ? "text-amber-600 dark:text-amber-400" : "text-muted-foreground"}`}>
+        {value}
+      </span>
+    );
+  }
+  if (value) {
+    return <Check className={`h-4 w-4 mx-auto ${isPremium ? "text-amber-500" : "text-green-500"}`} />;
+  }
+  return <XIcon className="h-4 w-4 mx-auto text-muted-foreground/40" />;
+}
+
+function BenefitItem({ title, description }: { title: string; description: string }) {
+  return (
+    <div className="flex items-start gap-3">
+      <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+      <div>
+        <p className="font-medium">{title}</p>
+        <p className="text-sm text-muted-foreground">{description}</p>
+      </div>
+    </div>
+  );
+}
+
+export default Premium;

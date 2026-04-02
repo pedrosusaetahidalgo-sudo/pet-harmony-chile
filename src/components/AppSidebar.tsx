@@ -1,4 +1,4 @@
-import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck } from "lucide-react";
+import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck, Crown } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
@@ -55,6 +55,22 @@ export function AppSidebar() {
   const { setOpenMobile } = useSidebar();
   const currentPath = location.pathname;
 
+  const { data: premiumStatus } = useQuery({
+    queryKey: ["user-premium-status", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data } = await supabase
+        .from("profiles")
+        .select("is_premium")
+        .eq("id", user.id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user?.id,
+    staleTime: 5 * 60 * 1000,
+  });
+  const isPremium = !!premiumStatus?.is_premium;
+
   const { data: userPets } = useQuery({
     queryKey: ["user-pets-count", user?.id],
     queryFn: async () => {
@@ -107,6 +123,23 @@ export function AppSidebar() {
           <SidebarGroupLabel className="text-[10px] px-3 mb-0.5">Principal</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0">
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  isActive={isActive("/premium")}
+                  onClick={() => handleNavigate("/premium")}
+                  className="h-8 text-xs rounded-md bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/30 dark:hover:bg-amber-950/50 border border-amber-200 dark:border-amber-800"
+                >
+                  <Crown className="h-3.5 w-3.5 flex-shrink-0 text-amber-500" />
+                  <span className="text-amber-700 dark:text-amber-400 font-semibold">
+                    {isPremium ? "Tu Plan" : "Premium"}
+                  </span>
+                  {!isPremium && (
+                    <span className="ml-auto text-[8px] font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full leading-none">
+                      PRO
+                    </span>
+                  )}
+                </SidebarMenuButton>
+              </SidebarMenuItem>
               {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
