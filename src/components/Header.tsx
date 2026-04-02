@@ -85,39 +85,39 @@ export const Header = () => {
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-      <div className="flex h-16 items-center px-4 gap-4">
-        <SidebarTrigger className="hover:bg-accent rounded-lg p-2 transition-colors" />
-        <div 
-          className="flex items-center gap-2 flex-1 cursor-pointer hover:opacity-80 transition-opacity"
+      <div className="flex h-14 sm:h-16 items-center px-2 sm:px-4 gap-1 sm:gap-4">
+        <SidebarTrigger className="hover:bg-accent rounded-lg p-2 min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors" />
+        <div
+          className="flex items-center gap-2 flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
           onClick={() => navigate('/feed')}
         >
-          <div className="relative">
+          <div className="relative flex-shrink-0">
             <Heart className="h-6 w-6 text-primary fill-primary" />
             <PawPrint className="h-3 w-3 text-secondary absolute -bottom-0.5 -right-0.5" />
           </div>
-          <span className="font-bold text-lg bg-warm-gradient bg-clip-text text-transparent hidden sm:inline">
+          <span className="font-bold text-lg bg-warm-gradient bg-clip-text text-transparent hidden sm:inline truncate">
             Paw Friend
           </span>
         </div>
 
         {/* User Section */}
         {user && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
             <CartButton />
-            
-            <Button 
-              variant="ghost" 
+
+            <Button
+              variant="ghost"
               size="icon"
-              className="relative hover:bg-accent"
+              className="relative hover:bg-accent min-h-[44px] min-w-[44px]"
             >
               <Bell className="h-5 w-5" />
-              <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full"></span>
+              <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full"></span>
             </Button>
 
-            <Button 
-              variant="ghost" 
+            <Button
+              variant="ghost"
               size="icon"
-              className="relative hover:bg-accent"
+              className="relative hover:bg-accent min-h-[44px] min-w-[44px]"
               onClick={() => navigate('/chat')}
             >
               <MessageSquare className="h-5 w-5" />
@@ -128,11 +128,11 @@ export const Header = () => {
               )}
             </Button>
 
-            <div 
-              className="flex items-center gap-2 hover:bg-accent px-2 py-1 rounded-lg transition-colors cursor-pointer"
+            <div
+              className="flex items-center gap-2 hover:bg-accent px-1.5 sm:px-2 py-1 rounded-lg transition-colors cursor-pointer min-h-[44px]"
               onClick={() => navigate('/profile')}
             >
-              <div className="relative">
+              <div className="relative flex-shrink-0">
                 <Avatar className="h-8 w-8 ring-2 ring-primary/20">
                   <AvatarImage src={profile?.avatar_url} />
                   <AvatarFallback className="bg-warm-gradient text-white text-sm font-semibold">
@@ -147,7 +147,7 @@ export const Header = () => {
               </div>
               <div className="hidden md:block">
                 <div className="flex items-center gap-1">
-                  <span className="font-semibold text-sm">
+                  <span className="font-semibold text-sm truncate max-w-[120px]">
                     {profile?.display_name || user?.email?.split("@")[0]}
                   </span>
                   {userStats && (

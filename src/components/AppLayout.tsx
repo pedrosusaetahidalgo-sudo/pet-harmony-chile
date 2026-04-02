@@ -11,11 +11,11 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   return (
     <SidebarProvider defaultOpen={false}>
-      <div className="min-h-screen flex w-full bg-gradient-to-br from-background via-muted/20 to-background">
+      <div className="min-h-screen flex w-full bg-gradient-to-br from-background via-muted/20 to-background overflow-hidden">
         <AppSidebar />
-        <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 flex flex-col min-w-0 max-w-full">
           <Header />
-          <main className="flex-1 overflow-auto animate-fade-in">
+          <main className="flex-1 overflow-x-hidden overflow-y-auto animate-fade-in">
             {children}
           </main>
         </div>
