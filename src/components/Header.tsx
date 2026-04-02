@@ -54,14 +54,8 @@ export const Header = () => {
         .maybeSingle();
 
       setProfile(data);
-
-      const { data: stats } = await supabase
-        .from('user_stats')
-        .select('*')
-        .eq('user_id', user?.id)
-        .maybeSingle();
-
-      setUserStats(stats);
+      // Use profile data for level/points (single source of truth)
+      setUserStats(data ? { level: (data as any).level || 1, points: (data as any).points || 0 } : null);
     } catch (error) {
       console.error("Error loading profile:", error);
     }
