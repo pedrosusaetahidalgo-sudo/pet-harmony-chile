@@ -32,7 +32,7 @@ const Premium = () => {
         .from("profiles")
         .select("is_premium, premium_plan, premium_end_date")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -70,7 +70,7 @@ const Premium = () => {
           auto_renew: true,
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (subError) throw subError;
 

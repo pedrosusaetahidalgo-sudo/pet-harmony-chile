@@ -66,7 +66,7 @@ export const useStartConversation = () => {
         .select('id')
         .eq('participant1_id', participant1)
         .eq('participant2_id', participant2)
-        .single();
+        .maybeSingle();
 
       if (existingConv) {
         navigate(`/chat/${existingConv.id}`);
@@ -81,7 +81,7 @@ export const useStartConversation = () => {
           participant2_id: participant2
         })
         .select()
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 

@@ -50,7 +50,7 @@ const Gamification = () => {
         .from('user_stats')
         .select('*')
         .eq('user_id', user?.id)
-        .single();
+        .maybeSingle();
       
       setUserStats(stats);
 

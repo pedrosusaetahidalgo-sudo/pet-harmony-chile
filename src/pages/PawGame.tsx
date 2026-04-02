@@ -138,7 +138,7 @@ const PawGame = () => {
         .from('user_guardian_progress')
         .select('*')
         .eq('user_id', user?.id)
-        .single();
+        .maybeSingle();
 
       // If no progress exists, create it
       if (!progressData) {
@@ -146,7 +146,7 @@ const PawGame = () => {
           .from('user_guardian_progress')
           .insert({ user_id: user?.id })
           .select()
-          .single();
+          .maybeSingle();
         setUserProgress(newProgress);
       } else {
         setUserProgress(progressData);

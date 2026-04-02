@@ -72,7 +72,7 @@ const ChatConversation = () => {
         .from('conversations')
         .select('*')
         .eq('id', conversationId)
-        .single();
+        .maybeSingle();
 
       if (convError) throw convError;
 
@@ -88,7 +88,7 @@ const ChatConversation = () => {
         .from('profiles')
         .select('*')
         .eq('id', otherUserId)
-        .single();
+        .maybeSingle();
 
       setOtherUser(profileData);
 

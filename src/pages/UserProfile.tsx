@@ -58,7 +58,7 @@ const UserProfile = () => {
         .select('id')
         .eq('follower_id', user.id)
         .eq('following_id', userId)
-        .single();
+        .maybeSingle();
       
       setIsFollowing(!!data);
     } catch (error) {
@@ -125,7 +125,7 @@ const UserProfile = () => {
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
       
       setProfile(profileData);
 
@@ -133,7 +133,7 @@ const UserProfile = () => {
         .from('user_stats')
         .select('*')
         .eq('user_id', userId)
-        .single();
+        .maybeSingle();
       
       setUserStats(statsData);
 

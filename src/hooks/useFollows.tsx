@@ -28,7 +28,7 @@ export const useFollows = (targetUserId?: string) => {
         .select("id")
         .eq("follower_id", user.id)
         .eq("following_id", targetUserId)
-        .single();
+        .maybeSingle();
 
       // Check if target follows current user
       const { data: followedBy } = await supabase
@@ -36,7 +36,7 @@ export const useFollows = (targetUserId?: string) => {
         .select("id")
         .eq("follower_id", targetUserId)
         .eq("following_id", user.id)
-        .single();
+        .maybeSingle();
 
       // Get follower/following counts
       const { count: followerCount } = await supabase
