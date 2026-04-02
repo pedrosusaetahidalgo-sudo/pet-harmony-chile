@@ -315,37 +315,45 @@ const PawGame = () => {
       const newStreak = isConsecutive ? (userProgress?.streak_days || 0) + 1 : 1;
       const bonusPoints = Math.min(newStreak * 5, 50); // 5 pts per streak day, max 50
 
-      // Update guardian progress
+      // Update streak tracking (not points) on guardian progress
       await supabase
         .from('user_guardian_progress')
         .update({
           streak_days: newStreak,
           last_activity_date: new Date().toISOString(),
-          total_paw_points: (userProgress?.total_paw_points || 0) + bonusPoints,
         } as any)
         .eq('user_id', user.id);
 
-      // Also update profiles.points so it syncs with gamification bar
-      const { data: currentProfile } = await supabase
-        .from('profiles')
-        .select('points')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      await supabase
-        .from('profiles')
-        .update({ points: (currentProfile?.points || 0) + bonusPoints } as any)
-        .eq('id', user.id);
+      // Record daily check-in points via transaction (trigger syncs to user_stats)
+      await supabase.from('paw_point_transactions').insert({
+        user_id: user.id,
+        points_amount: bonusPoints,
+        transaction_type: 'earned',
+        source_type: 'daily_checkin',
+        description: `Check-in diario - racha ${newStreak} días`,
+      });
 
       track({ event: EVENTS.STREAK_CLAIMED, properties: { streak: newStreak, points: bonusPoints } });
 
-      // Milestone celebrations
+      // Milestone celebrations — award bonus via separate transaction
       if (newStreak === 7) {
+        await supabase.from('paw_point_transactions').insert({
+          user_id: user.id,
+          points_amount: 25,
+          transaction_type: 'earned',
+          source_type: 'streak_milestone',
+          description: 'Bonus racha 7 días',
+        });
         toast.success("🏆 ¡Racha de 7 días! Eres un Guardián dedicado. +25 puntos bonus");
-        await supabase.from('profiles').update({ points: (currentProfile?.points || 0) + bonusPoints + 25 } as any).eq('id', user.id);
       } else if (newStreak === 30) {
+        await supabase.from('paw_point_transactions').insert({
+          user_id: user.id,
+          points_amount: 100,
+          transaction_type: 'earned',
+          source_type: 'streak_milestone',
+          description: 'Bonus racha 30 días',
+        });
         toast.success("🎖️ ¡30 días seguidos! Eres una Leyenda Peluda. +100 puntos bonus");
-        await supabase.from('profiles').update({ points: (currentProfile?.points || 0) + bonusPoints + 100 } as any).eq('id', user.id);
       } else {
         toast.success(`¡Check-in diario! +${bonusPoints} PawPoints 🔥 Racha: ${newStreak} días`);
       }

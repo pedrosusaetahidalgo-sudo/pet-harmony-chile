@@ -1,18 +1,22 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, MapPin, Phone, Mail, Award } from "lucide-react";
+import { AlertCircle, MapPin, Phone, Mail, Award, CheckCircle } from "lucide-react";
 import LostPetsMap from "@/components/LostPetsMap";
 import ReportLostPetForm from "@/components/ReportLostPetForm";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
 const LostPets = () => {
+  const { user } = useAuth();
+  const { toast } = useToast();
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
   const [selectedType, setSelectedType] = useState<"lost" | "found">("lost");
 
@@ -33,6 +37,23 @@ const LostPets = () => {
   const handleReportCreated = () => {
     setIsReportDialogOpen(false);
     refetch();
+  };
+
+  const markAsFound = async (petId: string) => {
+    if (!user) return;
+    const { error } = await supabase
+      .from('lost_pets')
+      .update({
+        is_active: false,
+        status: 'found',
+      })
+      .eq('id', petId)
+      .eq('reporter_id', user.id);
+
+    if (!error) {
+      toast({ title: "¡Genial!", description: "Nos alegra que haya aparecido" });
+      refetch();
+    }
   };
 
   const lostPetsList = lostPets?.filter(p => p.report_type === "lost");
@@ -152,6 +173,17 @@ const LostPets = () => {
                               </div>
                             )}
                           </div>
+                          {user && pet.reporter_id === user.id && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="mt-2 text-green-600 border-green-300 hover:bg-green-50"
+                              onClick={() => markAsFound(pet.id)}
+                            >
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              ¡Lo encontré!
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </CardContent>

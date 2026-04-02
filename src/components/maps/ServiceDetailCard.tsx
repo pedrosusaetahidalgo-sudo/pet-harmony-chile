@@ -36,7 +36,7 @@ const ServiceDetailCard = ({ provider, compact = false }: ServiceDetailCardProps
         veterinarian: "/home-vets",
         trainer: "/dog-trainers",
       };
-      navigate(routes[firstService.service_type] || "/places");
+      navigate(routes[firstService.service_type] || "/home");
     }
   };
 

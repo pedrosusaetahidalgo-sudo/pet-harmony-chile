@@ -76,6 +76,22 @@ const Settings = () => {
     };
 
     loadProfile();
+
+    const loadNotificationPrefs = async () => {
+      const { data: prefs } = await supabase
+        .from('notification_preferences')
+        .select('*')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (prefs) {
+        setHealthReminders(prefs.reminder_notifications);
+        setMessages(prefs.push_enabled);
+        setSocialActivity(prefs.social_notifications);
+      }
+    };
+
+    loadNotificationPrefs();
   }, [user]);
 
   const handleSaveProfile = async () => {
@@ -107,6 +123,15 @@ const Settings = () => {
         description: "Tus cambios se han guardado correctamente.",
       });
     }
+  };
+
+  const saveNotificationPreferences = async (field: string, value: boolean) => {
+    if (!user) return;
+    await supabase.from('notification_preferences').upsert({
+      user_id: user.id,
+      [field]: value,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'user_id' });
   };
 
   const handleSignOut = async () => {
@@ -276,7 +301,7 @@ const Settings = () => {
                 <p className="font-medium">Recordatorios de salud</p>
                 <p className="text-sm text-muted-foreground">Vacunas, controles y citas</p>
               </div>
-              <Switch checked={healthReminders} onCheckedChange={setHealthReminders} />
+              <Switch checked={healthReminders} onCheckedChange={(v) => { setHealthReminders(v); saveNotificationPreferences('reminder_notifications', v); }} />
             </div>
             <Separator />
             <div className="flex items-center justify-between">
@@ -284,7 +309,7 @@ const Settings = () => {
                 <p className="font-medium">Mensajes</p>
                 <p className="text-sm text-muted-foreground">Nuevos mensajes directos</p>
               </div>
-              <Switch checked={messages} onCheckedChange={setMessages} />
+              <Switch checked={messages} onCheckedChange={(v) => { setMessages(v); saveNotificationPreferences('push_enabled', v); }} />
             </div>
             <Separator />
             <div className="flex items-center justify-between">
@@ -292,7 +317,7 @@ const Settings = () => {
                 <p className="font-medium">Actividad social</p>
                 <p className="text-sm text-muted-foreground">Likes, comentarios y seguidores</p>
               </div>
-              <Switch checked={socialActivity} onCheckedChange={setSocialActivity} />
+              <Switch checked={socialActivity} onCheckedChange={(v) => { setSocialActivity(v); saveNotificationPreferences('social_notifications', v); }} />
             </div>
           </CardContent>
         </Card>

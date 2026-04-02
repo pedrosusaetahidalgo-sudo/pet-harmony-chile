@@ -63,7 +63,7 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
         veterinarian: "/home-vets",
         trainer: "/dog-trainers",
       };
-      navigate(routes[firstService.service_type] || "/places");
+      navigate(routes[firstService.service_type] || "/home");
       onClose?.();
     }
   };

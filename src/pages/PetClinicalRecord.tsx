@@ -1135,6 +1135,22 @@ const PetClinicalRecord = () => {
   const [showReminderForm, setShowReminderForm] = useState(false);
   const [reminderData, setReminderData] = useState({ type: "vaccine", title: "", due_date: "" });
 
+  // Fetch premium status for PremiumGate
+  const { data: userProfile } = useQuery({
+    queryKey: ["user-profile-premium", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("is_premium")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user?.id,
+  });
+
   const { data: pet, isLoading: petLoading, error } = useQuery({
     queryKey: ["pet-clinical", petId],
     queryFn: async () => {
@@ -1405,7 +1421,7 @@ const PetClinicalRecord = () => {
         </TabsContent>
 
         <TabsContent value="compartir" className="mt-4">
-          <PremiumGate feature="Compartir ficha clínica" description="Comparte la ficha clínica de tu mascota con veterinarios mediante un enlace seguro.">
+          <PremiumGate feature="Compartir ficha clínica" description="Comparte la ficha clínica de tu mascota con veterinarios mediante un enlace seguro." isPremium={!!userProfile?.is_premium}>
             <TabCompartir petId={pet.id} />
           </PremiumGate>
         </TabsContent>

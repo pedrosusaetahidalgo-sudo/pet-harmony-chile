@@ -177,6 +177,11 @@ const AdoptionSheltersList = () => {
 
   return (
     <div className="space-y-4">
+      {/* AI disclaimer */}
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 text-sm text-amber-800">
+        <span className="font-medium">Nota:</span> Estos refugios fueron generados con inteligencia artificial como referencia. Verifica la información antes de contactar.
+      </div>
+
       {/* Header with AI badge */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">

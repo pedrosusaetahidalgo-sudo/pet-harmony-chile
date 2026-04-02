@@ -73,7 +73,7 @@ const getActionPath = (action: string) => {
     'post': '/feed',
     'review': '/dog-walkers',
     'chat': '/chat',
-    'search': '/places',
+    'search': '/maps',
     'appointment': '/medical-records',
     'vet': '/home-vets',
     'pet': '/my-pets',

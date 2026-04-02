@@ -68,43 +68,15 @@ const BlockUserButton = ({
   };
 
   return (
-    <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button
-          variant={variant}
-          className={sizeClasses[size]}
-        >
-          <Ban className="h-4 w-4 mr-2" />
-          Bloquear
-        </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>¿Bloquear usuario?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Al bloquear a este usuario, no podrás ver sus publicaciones ni recibir mensajes de él.
-            Esta acción se puede revertir más tarde.
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={handleBlock}
-            disabled={isBlocking}
-            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-          >
-            {isBlocking ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Bloqueando...
-              </>
-            ) : (
-              "Bloquear"
-            )}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <Button
+      variant={variant}
+      className={sizeClasses[size]}
+      disabled
+      title="Próximamente"
+    >
+      <Ban className="h-4 w-4 mr-2" />
+      Bloquear
+    </Button>
   );
 };
 

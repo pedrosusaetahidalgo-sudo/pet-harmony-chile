@@ -46,7 +46,7 @@ const Hero = () => {
                 size="lg"
                 variant="outline"
                 className="text-base hover:bg-primary/5"
-                onClick={() => navigate("/places")}
+                onClick={() => navigate("/maps")}
               >
                 Explorar
               </Button>

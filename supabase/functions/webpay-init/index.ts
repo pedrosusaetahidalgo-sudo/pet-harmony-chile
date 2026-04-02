@@ -51,13 +51,37 @@ serve(async (req) => {
     logStep("User authenticated", { userId: user.id });
 
     // Parse request body
-    const { items, return_url } = await req.json() as { 
-      items: CartItem[];
-      return_url: string;
+    const body = await req.json();
+    const { items, return_url, user_id } = body as {
+      items: (CartItem | { service_type: string; plan?: string; unit_price_clp: number })[];
+      return_url?: string;
+      user_id?: string;
     };
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       throw new Error("No items in cart");
+    }
+
+    // Check if this is a premium subscription request
+    const isPremiumSubscription = items.length === 1 && items[0].service_type === 'premium_subscription';
+
+    if (isPremiumSubscription) {
+      const item = items[0];
+      if (typeof item.unit_price_clp !== "number" || item.unit_price_clp <= 0) {
+        throw new Error("Premium subscription must have a valid unit_price_clp");
+      }
+      logStep("Premium subscription payment", { plan: (item as any).plan, price: item.unit_price_clp });
+
+      // For demo: simulate successful payment for premium subscription
+      // In production, integrate with Transbank Webpay Plus SDK here
+      return new Response(
+        JSON.stringify({
+          success: true,
+          payment_type: 'premium_subscription',
+          // In production, return Webpay redirect URL
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
     }
 
     if (!return_url || typeof return_url !== "string") {
@@ -69,7 +93,7 @@ serve(async (req) => {
       if (!item.service_type || typeof item.service_type !== "string") {
         throw new Error("Each item must have a valid service_type");
       }
-      if (!item.provider_id || typeof item.provider_id !== "string") {
+      if (!('provider_id' in item) || !item.provider_id || typeof item.provider_id !== "string") {
         throw new Error("Each item must have a valid provider_id");
       }
       if (typeof item.unit_price_clp !== "number" || item.unit_price_clp <= 0) {

@@ -127,22 +127,6 @@ export const PawShopRewards = ({ userPoints, userId, onPurchase }: PawShopReward
 
       if (pointsError) throw pointsError;
 
-      // Update user progress - use RPC or direct update
-      const { data: currentProgress } = await supabase
-        .from('user_guardian_progress')
-        .select('total_paw_points')
-        .eq('user_id', userId)
-        .maybeSingle();
-
-      if (currentProgress) {
-        await supabase
-          .from('user_guardian_progress')
-          .update({
-            total_paw_points: currentProgress.total_paw_points - reward.points_cost
-          })
-          .eq('user_id', userId);
-      }
-
       toast.success("¡Premio canjeado! 🎉", {
         description: reward.category === 'donation' 
           ? "Tu donación ayudará a refugios aliados"

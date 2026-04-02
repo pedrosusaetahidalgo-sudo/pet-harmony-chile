@@ -17,7 +17,7 @@ const tutorialSteps: TutorialStep[] = [
   {
     id: "welcome",
     title: "¡Bienvenido a Paw Friend!",
-    description: "La plataforma donde cuidas, conectas y gestionas la vida de tu mascota. Empieza en 3 pasos simples.",
+    description: "Paw Friend te ayuda a llevar el control de salud de tu mascota, conectar con servicios y ganar recompensas.",
     icon: <PawPrint className="h-12 w-12" />,
     color: "from-primary to-secondary",
   },
@@ -132,6 +132,11 @@ export const OnboardingTutorial = ({ onComplete }: OnboardingTutorialProps) => {
             {currentStep === 2 && (
               <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => { onComplete(); navigate('/dog-walkers'); }}>
                 Explorar servicios
+              </Button>
+            )}
+            {currentStep === 3 && (
+              <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => { onComplete(); navigate('/paw-game'); }}>
+                Ir al Paw Game
               </Button>
             )}
 

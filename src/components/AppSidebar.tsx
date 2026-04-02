@@ -1,4 +1,4 @@
-import { Compass, Heart, Plus, Calendar, MapPin, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck } from "lucide-react";
+import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useIsAdmin } from "@/hooks/useIsAdmin";
@@ -25,7 +25,6 @@ const mainItems = [
   { title: "Pet Social", url: "/feed", icon: Heart },
   { title: "Mapa", url: "/maps", icon: Map },
   { title: "Mensajes", url: "/chat", icon: MessageSquare },
-  { title: "Explorar", url: "/places", icon: MapPin },
   { title: "Adopción", url: "/adoption", icon: Compass },
   { title: "Perdidos", url: "/lost-pets", icon: AlertCircle },
 ];

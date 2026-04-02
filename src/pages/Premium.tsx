@@ -44,12 +44,30 @@ const Premium = () => {
     enabled: !!user,
   });
 
-  // Create subscription mutation
+  // Create subscription mutation — routes through webpay-init for payment validation
   const createSubscriptionMutation = useMutation({
     mutationFn: async (planType: "monthly" | "yearly") => {
       if (!user) throw new Error("User not authenticated");
 
-      // Calculate dates
+      const price = planType === "monthly" ? 3990 : 39900;
+
+      // Step 1: Invoke webpay-init Edge Function to process payment
+      const { data, error } = await supabase.functions.invoke('webpay-init', {
+        body: {
+          items: [{
+            service_type: 'premium_subscription',
+            plan: planType,
+            unit_price_clp: price,
+          }],
+          user_id: user.id,
+        }
+      });
+
+      if (error || !data?.success) {
+        throw new Error("No se pudo procesar el pago");
+      }
+
+      // Step 2: Only after payment succeeds, create subscription
       const startDate = new Date();
       const endDate = new Date();
       if (planType === "monthly") {
@@ -58,11 +76,6 @@ const Premium = () => {
         endDate.setFullYear(endDate.getFullYear() + 1);
       }
 
-      // Calculate price (in CLP)
-      const price = planType === "monthly" ? 3990 : 39900; // ~$4.99/month, ~$49.99/year
-
-      // In production, this would integrate with payment provider
-      // For now, we'll create the subscription directly
       const { data: subscription, error: subError } = await supabase
         .from("subscriptions")
         .insert({
@@ -79,7 +92,7 @@ const Premium = () => {
 
       if (subError) throw subError;
 
-      // Update profile premium status (trigger should handle this, but ensure it)
+      // Update profile premium status
       const { error: profileError } = await supabase
         .from("profiles")
         .update({
