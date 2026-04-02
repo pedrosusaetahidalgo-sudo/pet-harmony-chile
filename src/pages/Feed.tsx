@@ -37,6 +37,7 @@ const Feed = () => {
   const [loading, setLoading] = useState(true);
   const [loadingPets, setLoadingPets] = useState(true);
   const [loadingFollowing, setLoadingFollowing] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -209,8 +210,10 @@ const Feed = () => {
         {/* Search */}
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Buscar..." 
+          <Input
+            placeholder="Buscar mascotas..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-9 h-10 rounded-xl border-2 focus:border-primary transition-all text-sm"
           />
         </div>
@@ -261,7 +264,17 @@ const Feed = () => {
                   </p>
                 </div>
               ) : (
-                posts.map((post) => (
+                posts
+                  .filter((post) => {
+                    if (!searchQuery.trim()) return true;
+                    const q = searchQuery.toLowerCase();
+                    return (
+                      post.content?.toLowerCase().includes(q) ||
+                      post.pets?.name?.toLowerCase().includes(q) ||
+                      post.profiles?.display_name?.toLowerCase().includes(q)
+                    );
+                  })
+                  .map((post) => (
                   <PetCard
                     key={post.id}
                     postId={post.id}
@@ -295,7 +308,18 @@ const Feed = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {pets.map((pet) => (
+                  {pets
+                    .filter((pet) => {
+                      if (!searchQuery.trim()) return true;
+                      const q = searchQuery.toLowerCase();
+                      return (
+                        pet.name?.toLowerCase().includes(q) ||
+                        pet.breed?.toLowerCase().includes(q) ||
+                        pet.species?.toLowerCase().includes(q) ||
+                        pet.profiles?.display_name?.toLowerCase().includes(q)
+                      );
+                    })
+                    .map((pet) => (
                     <PetProfileCard
                       key={pet.id}
                       id={pet.id}
