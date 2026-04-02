@@ -104,6 +104,85 @@ interface Pet {
   photo_url: string | null;
 }
 
+// --- Streak Section ---
+
+function StreakSection({ streakDays, lastActivity, onCheckIn }: {
+  streakDays: number;
+  lastActivity: string | null | undefined;
+  onCheckIn: () => void;
+}) {
+  const today = new Date().toISOString().split('T')[0];
+  const lastDate = lastActivity?.split('T')[0];
+  const alreadyCheckedIn = lastDate === today;
+
+  const weekDays = ['L', 'M', 'X', 'J', 'V', 'S', 'D'];
+  const todayIndex = (new Date().getDay() + 6) % 7; // Monday = 0
+
+  return (
+    <Card className="border-0 shadow-lg overflow-hidden">
+      <div className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 p-4 md:p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="text-center">
+              <Flame className="h-8 w-8 text-white mx-auto mb-1" />
+              <div className="text-3xl font-bold text-white">{streakDays}</div>
+              <div className="text-xs text-white/80">días</div>
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-white">Racha Diaria</h3>
+              <p className="text-sm text-white/80">
+                {streakDays === 0
+                  ? "¡Empieza tu racha hoy!"
+                  : streakDays < 7
+                  ? `¡${7 - streakDays} días para tu primera semana!`
+                  : `¡Increíble! ${streakDays} días seguidos`}
+              </p>
+            </div>
+          </div>
+          <Button
+            onClick={onCheckIn}
+            disabled={alreadyCheckedIn}
+            className={`${
+              alreadyCheckedIn
+                ? "bg-white/20 text-white cursor-default"
+                : "bg-white text-orange-600 hover:bg-white/90 shadow-lg"
+            } font-semibold`}
+          >
+            {alreadyCheckedIn ? "✓ Hecho" : "Check-in"}
+          </Button>
+        </div>
+
+        {/* Week progress */}
+        <div className="flex gap-2 mt-4">
+          {weekDays.map((day, i) => {
+            const isPast = i < todayIndex;
+            const isToday = i === todayIndex;
+            const isChecked = isPast || (isToday && alreadyCheckedIn);
+
+            return (
+              <div key={day} className="flex-1 text-center">
+                <div
+                  className={`w-8 h-8 mx-auto rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                    isChecked
+                      ? "bg-white text-orange-600"
+                      : isToday
+                      ? "bg-white/30 text-white ring-2 ring-white"
+                      : "bg-white/10 text-white/50"
+                  }`}
+                >
+                  {isChecked ? "✓" : day}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </Card>
+  );
+}
+
+// --- Main Component ---
+
 const PawGame = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -217,6 +296,40 @@ const PawGame = () => {
     }
   };
 
+  const handleDailyCheckIn = async () => {
+    if (!user) return;
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const lastDate = userProgress?.last_activity_date?.split('T')[0];
+
+      if (lastDate === today) {
+        toast.info("Ya hiciste check-in hoy. ¡Vuelve mañana!");
+        return;
+      }
+
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+      const isConsecutive = lastDate === yesterdayStr;
+      const newStreak = isConsecutive ? (userProgress?.streak_days || 0) + 1 : 1;
+      const bonusPoints = Math.min(newStreak * 5, 50); // 5 pts per streak day, max 50
+
+      await supabase
+        .from('user_guardian_progress')
+        .update({
+          streak_days: newStreak,
+          last_activity_date: new Date().toISOString(),
+          total_paw_points: (userProgress?.total_paw_points || 0) + bonusPoints,
+        } as any)
+        .eq('user_id', user.id);
+
+      toast.success(`¡Check-in diario! +${bonusPoints} PawPoints 🔥 Racha: ${newStreak} días`);
+      loadGameData();
+    } catch (error) {
+      console.error('Check-in error:', error);
+    }
+  };
+
   const quickActions = [
     { title: "Pasear", icon: Dog, href: "/dog-walkers", color: "from-blue-500 to-cyan-500", points: "+15 pts" },
     { title: "Vacunar", icon: Syringe, href: "/medical-records", color: "from-emerald-500 to-teal-500", points: "+50 pts" },
@@ -277,6 +390,13 @@ const PawGame = () => {
           />
         </div>
       </div>
+
+      {/* Daily Streak & Check-in */}
+      <StreakSection
+        streakDays={userProgress?.streak_days || 0}
+        lastActivity={userProgress?.last_activity_date}
+        onCheckIn={handleDailyCheckIn}
+      />
 
       {/* Quick Actions - Ways to Earn Points */}
       <Card className="border-0 shadow-lg bg-gradient-to-br from-background to-muted/30">
