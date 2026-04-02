@@ -21,6 +21,8 @@ import {
   Sparkles,
   Users,
   AlertCircle,
+  Bell,
+  CheckCircle2,
   Compass,
   Map,
   Gamepad2,
@@ -31,6 +33,7 @@ import {
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useGamification } from "@/hooks/useGamification";
+import { useReminders } from "@/hooks/useReminders";
 import PointsWidget from "@/components/PointsWidget";
 import MissionCard from "@/components/MissionCard";
 import { PartnerAd } from "@/components/PartnerAd";
@@ -77,6 +80,7 @@ export default function Home() {
   const [showTutorial, setShowTutorial] = useState(false);
   const [loading, setLoading] = useState(true);
   const { stats, missions, achievements } = useGamification();
+  const { upcomingReminders, overdueReminders, completeReminder } = useReminders();
 
   useEffect(() => {
     if (user) {
@@ -423,6 +427,52 @@ export default function Home() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Health Alerts & Reminders */}
+      {(overdueReminders.length > 0 || upcomingReminders.length > 0) && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Bell className="h-5 w-5 text-primary" />
+              Próximos Cuidados
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {overdueReminders.slice(0, 3).map(r => (
+              <div key={r.id} className="flex items-center justify-between p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                <div className="flex items-center gap-3">
+                  <AlertCircle className="h-4 w-4 text-destructive flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium">{r.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {r.pets?.name} · Vencido {new Date(r.due_date).toLocaleDateString("es-CL")}
+                    </p>
+                  </div>
+                </div>
+                <Button size="sm" variant="ghost" onClick={() => completeReminder.mutate(r.id)}>
+                  <CheckCircle2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+            {upcomingReminders.slice(0, 3).map(r => (
+              <div key={r.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                <div className="flex items-center gap-3">
+                  <Bell className="h-4 w-4 text-primary flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-medium">{r.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {r.pets?.name} · {new Date(r.due_date).toLocaleDateString("es-CL")}
+                    </p>
+                  </div>
+                </div>
+                <Button size="sm" variant="ghost" onClick={() => completeReminder.mutate(r.id)}>
+                  <CheckCircle2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Recommendations Section */}
       <Card className="border-0 shadow-md bg-gradient-to-br from-primary/5 to-secondary/5">

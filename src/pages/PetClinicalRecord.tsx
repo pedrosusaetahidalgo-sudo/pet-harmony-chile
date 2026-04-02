@@ -970,15 +970,17 @@ function generatePDF(pet: PetData, records: any[]) {
   <meta charset="UTF-8">
   <title>Ficha Cl\u00ednica - ${pet.name}</title>
   <style>
-    @page { size: A4; margin: 15mm; }
+    @page { size: A4; margin: 20mm; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1a1a2e; font-size: 11px; line-height: 1.5; }
+    html { background: #f0f0f0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1a1a2e; font-size: 11px; line-height: 1.5; max-width: 210mm; margin: 0 auto; background: white; padding: 24mm; min-height: 297mm; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
 
-    .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 3px solid #7c3aed; margin-bottom: 16px; }
+    .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 3px solid #7c3aed; margin-bottom: 20px; }
     .header h1 { font-size: 20px; color: #7c3aed; font-weight: 700; }
     .header .subtitle { font-size: 10px; color: #666; }
     .header .date { font-size: 10px; color: #999; text-align: right; }
-    .header .logo { font-size: 14px; color: #7c3aed; font-weight: 700; }
+    .header .logo { font-size: 16px; color: #7c3aed; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+    .header .logo-icon { width: 28px; height: 28px; background: #7c3aed; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px; }
 
     .section { margin-bottom: 14px; }
     .section-title { font-size: 12px; font-weight: 700; color: #7c3aed; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 4px; border-bottom: 1px solid #e5e7eb; margin-bottom: 8px; }
@@ -1008,7 +1010,8 @@ function generatePDF(pet: PetData, records: any[]) {
     .no-data { color: #999; font-style: italic; }
 
     @media print {
-      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      html { background: white; }
+      body { -webkit-print-color-adjust: exact; print-color-adjust: exact; box-shadow: none; padding: 0; margin: 0; max-width: none; }
       .no-print { display: none; }
     }
   </style>
@@ -1025,7 +1028,7 @@ function generatePDF(pet: PetData, records: any[]) {
       <div class="subtitle">Documento generado digitalmente \u2014 pawfriend.cl</div>
     </div>
     <div class="date">
-      <div class="logo">Paw Friend</div>
+      <div class="logo"><div class="logo-icon">🐾</div> Paw Friend</div>
       <div>Emitido: ${now}</div>
     </div>
   </div>
