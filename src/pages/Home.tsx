@@ -24,6 +24,7 @@ import { getGreeting } from "@/lib/format";
 import { useGamification } from "@/hooks/useGamification";
 import { useReminders } from "@/hooks/useReminders";
 import { StatusCard } from "@/components/home/StatusCard";
+import ActivityFeed from "@/components/social/ActivityFeed";
 import { LINKS } from "@/lib/links";
 import { logger } from "@/lib/logger";
 import { formatDistanceToNowStrict, parseISO } from "date-fns";
@@ -428,12 +429,7 @@ export default function Home() {
           <CardTitle className="text-base">Actividad de la comunidad</CardTitle>
         </CardHeader>
         <CardContent>
-          {/* TODO Fase 3: <ActivityFeed limit={3} /> */}
-          <div className="space-y-2">
-            <div className="h-12 rounded-lg bg-muted/40 animate-pulse" />
-            <div className="h-12 rounded-lg bg-muted/40 animate-pulse" />
-            <div className="h-12 rounded-lg bg-muted/40 animate-pulse" />
-          </div>
+          <ActivityFeed limit={3} />
         </CardContent>
       </Card>
 
