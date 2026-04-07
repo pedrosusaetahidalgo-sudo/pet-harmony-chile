@@ -157,7 +157,7 @@ const MyPets = () => {
 
         {pets.length === 0 ? (
           <Card className="animate-scale-in">
-            <CardContent className="flex flex-col items-center justify-center py-16 text-center">
+            <CardContent className="flex flex-col items-center justify-center py-10 md:py-16 text-center">
               <Heart className="h-16 w-16 text-emerald-500/40 mb-4" />
               <h3 className="text-xl font-semibold mb-2">
                 Agrega tu primera mascota

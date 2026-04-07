@@ -22,13 +22,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from '@/components/ui/dialog';
+import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
 import {
@@ -295,16 +289,12 @@ export function ProviderDirectoryCard() {
       </Card>
 
       {/* Modal invitar a reseña */}
-      <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Invitar paciente a dejar reseña</DialogTitle>
-            <DialogDescription>
-              Genera un link único para enviarle a un paciente que ya atendiste fuera de la
-              plataforma. La reseña aparecerá marcada como "no verificada por reserva".
-            </DialogDescription>
-          </DialogHeader>
-
+      <ResponsiveModal
+        open={inviteOpen}
+        onOpenChange={setInviteOpen}
+        title="Invitar paciente a dejar reseña"
+        description='Genera un link único para enviarle a un paciente que ya atendiste fuera de la plataforma. La reseña aparecerá marcada como "no verificada por reserva".'
+      >
           {!generatedLink ? (
             <div className="space-y-4">
               <div>
@@ -359,19 +349,15 @@ export function ProviderDirectoryCard() {
               </Button>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+      </ResponsiveModal>
 
       {/* Modal compartir */}
-      <Dialog open={shareOpen} onOpenChange={setShareOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Comparte tu perfil</DialogTitle>
-            <DialogDescription>
-              Envía tu link a tus pacientes para que reserven y dejen reseñas.
-            </DialogDescription>
-          </DialogHeader>
-
+      <ResponsiveModal
+        open={shareOpen}
+        onOpenChange={setShareOpen}
+        title="Comparte tu perfil"
+        description="Envía tu link a tus pacientes para que reserven y dejen reseñas."
+      >
           <div className="space-y-4">
             <div className="bg-purple-50 p-3 rounded-lg">
               <p className="text-xs text-muted-foreground mb-1">Tu link público:</p>
@@ -402,8 +388,7 @@ export function ProviderDirectoryCard() {
               </Button>
             </div>
           </div>
-        </DialogContent>
-      </Dialog>
+      </ResponsiveModal>
     </>
   );
 }

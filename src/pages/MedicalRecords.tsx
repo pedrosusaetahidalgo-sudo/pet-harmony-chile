@@ -122,7 +122,7 @@ const MedicalRecords = () => {
 
         {!pets || pets.length === 0 ? (
           <Card className="border-dashed">
-            <CardContent className="flex flex-col items-center justify-center py-12">
+            <CardContent className="flex flex-col items-center justify-center py-8 md:py-12">
               <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="text-lg font-semibold mb-2">No tienes mascotas registradas</h3>
               <p className="text-muted-foreground text-center mb-4">
@@ -187,7 +187,7 @@ const MedicalRecords = () => {
                 <TabsContent value="timeline" className="space-y-6">
                   {!medicalRecords || medicalRecords.length === 0 ? (
                     <Card className="border-dashed">
-                      <CardContent className="flex flex-col items-center justify-center py-12">
+                      <CardContent className="flex flex-col items-center justify-center py-8 md:py-12">
                         <FileText className="h-12 w-12 text-muted-foreground mb-4" />
                         <h3 className="text-lg font-semibold mb-2">No hay registros médicos</h3>
                         <p className="text-muted-foreground text-center mb-4">
@@ -295,7 +295,7 @@ const MedicalRecords = () => {
                 <TabsContent value="upcoming" className="space-y-4">
                   {medicalRecords?.filter(r => r.next_date && new Date(r.next_date) >= new Date()).length === 0 ? (
                     <Card className="border-dashed">
-                      <CardContent className="flex flex-col items-center justify-center py-12">
+                      <CardContent className="flex flex-col items-center justify-center py-8 md:py-12">
                         <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
                         <h3 className="text-lg font-semibold mb-2">No hay citas próximas</h3>
                         <p className="text-muted-foreground text-center">
@@ -349,7 +349,7 @@ const MedicalRecords = () => {
               </Tabs>
             ) : (
               <Card className="border-dashed">
-                <CardContent className="flex flex-col items-center justify-center py-12">
+                <CardContent className="flex flex-col items-center justify-center py-8 md:py-12">
                   <FileText className="h-12 w-12 text-muted-foreground mb-4" />
                   <h3 className="text-lg font-semibold mb-2">Selecciona una mascota</h3>
                   <p className="text-muted-foreground text-center">

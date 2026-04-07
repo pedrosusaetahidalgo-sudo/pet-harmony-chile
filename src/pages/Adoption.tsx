@@ -149,7 +149,7 @@ const Adoption = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 bg-muted/20 rounded-xl">
+            <div className="text-center py-8 md:py-12 bg-muted/20 rounded-xl">
               <Heart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-base sm:text-lg font-semibold mb-2">
                 No hay mascotas disponibles
@@ -180,7 +180,7 @@ const Adoption = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 bg-muted/20 rounded-xl">
+            <div className="text-center py-8 md:py-12 bg-muted/20 rounded-xl">
               <Heart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-base sm:text-lg font-semibold mb-2">
                 No tienes publicaciones
@@ -211,7 +211,7 @@ const Adoption = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-12 bg-muted/20 rounded-xl">
+            <div className="text-center py-8 md:py-12 bg-muted/20 rounded-xl">
               <MessageCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="text-base sm:text-lg font-semibold mb-2">
                 No has mostrado interés en ninguna mascota

@@ -296,7 +296,7 @@ const Feed = () => {
 
             <TabsContent value="pets" className="mt-6">
               {loadingPets ? (
-                <div className="text-center py-12">
+                <div className="text-center py-8 md:py-12">
                   <p className="text-muted-foreground">Cargando mascotas...</p>
                 </div>
               ) : filterBlocked(pets, "owner_id").length === 0 ? (
@@ -339,11 +339,11 @@ const Feed = () => {
 
             <TabsContent value="following" className="space-y-6 mt-6">
               {!user ? (
-                <div className="text-center py-12 text-muted-foreground">
+                <div className="text-center py-8 md:py-12 text-muted-foreground">
                   <p>Inicia sesión para ver las publicaciones de usuarios que sigues</p>
                 </div>
               ) : loadingFollowing ? (
-                <div className="text-center py-12">
+                <div className="text-center py-8 md:py-12">
                   <p className="text-muted-foreground">Cargando publicaciones...</p>
                 </div>
               ) : followingPosts.length === 0 ? (

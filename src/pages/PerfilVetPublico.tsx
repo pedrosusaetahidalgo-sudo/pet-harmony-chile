@@ -9,13 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
+import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import {
@@ -372,16 +366,14 @@ export default function PerfilVetPublico() {
 
       <PublicFooter />
 
-      {/* Dialog: solicitar consulta */}
-      <Dialog open={reservaOpen} onOpenChange={setReservaOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Solicitar consulta a {v.display_name}</DialogTitle>
-            <DialogDescription>
-              Cuéntale brevemente qué necesita tu mascota. Le enviaremos tu solicitud y te contactará para coordinar.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-3">
+      {/* Modal responsive: bottom sheet en mobile, dialog en desktop */}
+      <ResponsiveModal
+        open={reservaOpen}
+        onOpenChange={setReservaOpen}
+        title={`Solicitar consulta a ${v.display_name}`}
+        description="Cuéntale brevemente qué necesita tu mascota. Le enviaremos tu solicitud y te contactará para coordinar."
+      >
+        <div className="space-y-3">
             <div>
               <Label htmlFor="reserva-date">Fecha y hora tentativa</Label>
               <input
@@ -424,8 +416,7 @@ export default function PerfilVetPublico() {
               )}
             </Button>
           </div>
-        </DialogContent>
-      </Dialog>
+      </ResponsiveModal>
     </div>
   );
 }
