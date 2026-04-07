@@ -95,8 +95,8 @@ export default function PerfilVetPublico() {
         scheduled_date: new Date(reservaDate).toISOString(),
         service_type: 'consultation',
         symptoms: reservaMessage.trim(),
-        status: 'pending',
-        payment_status: 'pending',
+        status: 'pendiente',
+        payment_status: 'pendiente',
         visit_address: 'A coordinar con el veterinario',
         total_price: 0,
       };
