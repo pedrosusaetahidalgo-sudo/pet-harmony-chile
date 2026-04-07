@@ -59,7 +59,9 @@ const Auth = () => {
     let isProvider = false;
     try {
       const result = await withTimeout(
-        supabase.from("service_providers").select("id").eq("user_id", userId).maybeSingle()
+        Promise.resolve(
+          supabase.from("service_providers").select("id").eq("user_id", userId).maybeSingle()
+        )
       );
       isProvider = !!result?.data;
     } catch (err) {
@@ -77,7 +79,9 @@ const Auth = () => {
     let hasPets = false;
     try {
       const result = await withTimeout(
-        supabase.from("pets").select("id").eq("owner_id", userId).limit(1)
+        Promise.resolve(
+          supabase.from("pets").select("id").eq("owner_id", userId).limit(1)
+        )
       );
       hasPets = !!(result?.data && result.data.length > 0);
     } catch (err) {
