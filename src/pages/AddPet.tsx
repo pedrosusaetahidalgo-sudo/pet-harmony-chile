@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { track, EVENTS } from "@/lib/analytics";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,10 +22,14 @@ const personalityOptions = [
 ];
 
 const AddPet = () => {
+  const { petId } = useParams<{ petId: string }>();
+  const isEdit = !!petId;
   const [loading, setLoading] = useState(false);
+  const [loadingPet, setLoadingPet] = useState(isEdit);
   const [uploading, setUploading] = useState(false);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string>("");
+  const [existingPhotoUrl, setExistingPhotoUrl] = useState<string | null>(null);
   const [selectedPersonality, setSelectedPersonality] = useState<string[]>([]);
   const [showMedical, setShowMedical] = useState(false);
 
@@ -57,6 +61,61 @@ const AddPet = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Modo edición: cargar datos existentes
+  useEffect(() => {
+    if (!isEdit || !user || !petId) return;
+    let cancelled = false;
+    (async () => {
+      setLoadingPet(true);
+      const { data, error } = await supabase
+        .from("pets")
+        .select("*")
+        .eq("id", petId)
+        .eq("owner_id", user.id)
+        .maybeSingle();
+      if (cancelled) return;
+      if (error || !data) {
+        toast({
+          title: "Mascota no encontrada",
+          description: "No tienes acceso a esta mascota o no existe.",
+          variant: "destructive",
+        });
+        navigate(LINKS.myPets());
+        return;
+      }
+      setFormData({
+        name: data.name ?? "",
+        species: data.species ?? "",
+        breed: data.breed ?? "",
+        birth_date: data.birth_date ?? "",
+        gender: data.gender ?? "",
+        size: data.size ?? "",
+        color: data.color ?? "",
+        weight: data.weight != null ? String(data.weight) : "",
+        bio: data.bio ?? "",
+        microchip_number: data.microchip_number ?? "",
+        neutered: !!data.neutered,
+        is_adopted: !!data.is_adopted,
+        adoption_date: data.adoption_date ?? "",
+        preferred_clinic: data.preferred_clinic ?? "",
+        emergency_vet_name: data.emergency_vet_name ?? "",
+        emergency_vet_phone: data.emergency_vet_phone ?? "",
+        diet_type: data.diet_type ?? "",
+        diet_brand: data.diet_brand ?? "",
+        activity_level: data.activity_level ?? "",
+        behavior_notes: data.behavior_notes ?? "",
+        insurance_provider: data.insurance_provider ?? "",
+      });
+      setSelectedPersonality(Array.isArray(data.personality) ? data.personality : []);
+      setExistingPhotoUrl(data.photo_url ?? null);
+      if (data.photo_url) setPhotoPreview(data.photo_url);
+      setLoadingPet(false);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [isEdit, petId, user, navigate, toast]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -125,12 +184,12 @@ const AddPet = () => {
     setLoading(true);
 
     try {
-      let photoUrl = null;
+      let photoUrl: string | null = existingPhotoUrl;
       if (photoFile) {
         photoUrl = await uploadPhoto();
       }
 
-      const { error } = await supabase.from("pets").insert({
+      const payload = {
         owner_id: user?.id,
         name: formData.name,
         species: formData.species,
@@ -144,7 +203,6 @@ const AddPet = () => {
         personality: selectedPersonality.length > 0 ? selectedPersonality : null,
         photo_url: photoUrl,
         is_public: true,
-        // Clinical fields
         microchip_number: formData.microchip_number || null,
         neutered: formData.neutered,
         is_adopted: formData.is_adopted,
@@ -157,7 +215,27 @@ const AddPet = () => {
         activity_level: formData.activity_level || null,
         behavior_notes: formData.behavior_notes || null,
         insurance_provider: formData.insurance_provider || null,
-      });
+      };
+
+      if (isEdit && petId) {
+        // === EDIT MODE ===
+        const { error } = await supabase
+          .from("pets")
+          .update(payload)
+          .eq("id", petId)
+          .eq("owner_id", user?.id ?? "");
+        if (error) throw error;
+
+        toast({
+          title: "Cambios guardados",
+          description: `Los datos de ${formData.name} se actualizaron correctamente.`,
+        });
+        navigate(LINKS.myPets());
+        return;
+      }
+
+      // === CREATE MODE ===
+      const { error } = await supabase.from("pets").insert(payload);
 
       if (error) throw error;
 
@@ -223,12 +301,24 @@ const AddPet = () => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  if (loadingPet) {
+    return (
+      <div className="container px-4 py-8 max-w-2xl mx-auto text-center text-muted-foreground">
+        Cargando datos de la mascota…
+      </div>
+    );
+  }
+
   return (
     <div className="container px-4 py-8 max-w-2xl mx-auto animate-fade-in">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">Agregar Nueva Mascota</h1>
+        <h1 className="text-3xl font-bold mb-2">
+          {isEdit ? `Editar ${formData.name || "mascota"}` : "Agregar Nueva Mascota"}
+        </h1>
         <p className="text-muted-foreground">
-          Completa la información de tu compañero peludo
+          {isEdit
+            ? "Actualiza los datos de tu compañero peludo."
+            : "Completa la información de tu compañero peludo"}
         </p>
       </div>
 
@@ -602,7 +692,7 @@ const AddPet = () => {
             disabled={loading || uploading}
             className="w-full sm:flex-1 h-12"
           >
-            {loading ? "Guardando..." : "Agregar Mascota"}
+            {loading ? "Guardando..." : isEdit ? "Guardar cambios" : "Agregar Mascota"}
           </Button>
         </div>
       </form>

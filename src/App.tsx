@@ -30,7 +30,7 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const UserProfile = lazy(() => import("./pages/UserProfile"));
-const Checkout = lazy(() => import("./pages/Checkout"));
+// Checkout eliminado en pivot médico
 const PaymentResult = lazy(() => import("./pages/PaymentResult"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Settings = lazy(() => import("./pages/Settings"));
@@ -40,7 +40,7 @@ const ProviderDashboard = lazy(() => import("./components/provider/ProviderDashb
 const PetClinicalRecord = lazy(() => import("./pages/PetClinicalRecord"));
 const ServiceCalendar = lazy(() => import("./pages/ServiceCalendar"));
 const Servicios = lazy(() => import("./pages/Servicios"));
-const Peluqueria = lazy(() => import("./pages/Peluqueria"));
+// Peluqueria.tsx eliminada — groomers ahora son tab nativo en /services/groomers
 const GroomerProfileEdit = lazy(() => import("./pages/GroomerProfileEdit"));
 const DirectorioVets = lazy(() => import("./pages/DirectorioVets"));
 const PerfilVetPublico = lazy(() => import("./pages/PerfilVetPublico"));
@@ -81,12 +81,14 @@ const App = () => (
               <Route path="/places" element={<Navigate to="/home" replace />} />
               <Route path="/my-pets" element={<ProtectedRoute><AppLayout><MyPets /></AppLayout></ProtectedRoute>} />
               <Route path="/add-pet" element={<ProtectedRoute><AppLayout><AddPet /></AppLayout></ProtectedRoute>} />
+              <Route path="/edit-pet/:petId" element={<ProtectedRoute><AppLayout><AddPet /></AppLayout></ProtectedRoute>} />
               <Route path="/medical-records" element={<ProtectedRoute><AppLayout><MedicalRecords /></AppLayout></ProtectedRoute>} />
               <Route path="/adoption" element={<ProtectedRoute><AppLayout><Adoption /></AppLayout></ProtectedRoute>} />
 
               <Route path="/paw-game" element={<ProtectedRoute><AppLayout><PawGame /></AppLayout></ProtectedRoute>} />
               <Route path="/servicios" element={<ProtectedRoute><AppLayout><Servicios /></AppLayout></ProtectedRoute>} />
-              <Route path="/servicios/peluqueria" element={<ProtectedRoute><AppLayout><Peluqueria /></AppLayout></ProtectedRoute>} />
+              {/* /servicios/peluqueria → redirect a tab nativo */}
+              <Route path="/servicios/peluqueria" element={<Navigate to="/services/groomers" replace />} />
               <Route path="/peluquero/perfil" element={<ProtectedRoute><AppLayout><GroomerProfileEdit /></AppLayout></ProtectedRoute>} />
               <Route path="/services/:type" element={<ProtectedRoute><AppLayout><ServiceDirectory /></AppLayout></ProtectedRoute>} />
               {/* Legacy redirects to new unified service routes */}
@@ -100,7 +102,7 @@ const App = () => (
               <Route path="/chat/:conversationId" element={<ProtectedRoute><ChatConversation /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><AppLayout><Profile /></AppLayout></ProtectedRoute>} />
               <Route path="/user/:userId" element={<ProtectedRoute><AppLayout><UserProfile /></AppLayout></ProtectedRoute>} />
-              <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+              {/* /checkout eliminado en pivot médico */}
               {/* Pagos: una sola ruta unificada con query param ?status=success|failed */}
               <Route path="/payment-result" element={<ProtectedRoute><PaymentResult /></ProtectedRoute>} />
               <Route path="/payment-success" element={<Navigate to="/payment-result?status=success" replace />} />

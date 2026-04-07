@@ -67,7 +67,7 @@ const categories = [
   { key: 'discount', label: 'Descuentos', icon: Percent },
   { key: 'donation', label: 'Donaciones', icon: Heart },
   { key: 'cosmetic', label: 'Cosméticos', icon: Sparkles },
-  { key: 'premium', label: 'Premium', icon: Crown },
+  { key: 'premium', label: 'Exclusivo', icon: Crown },
 ];
 
 export const PawShopRewards = ({ userPoints, userId, onPurchase }: PawShopRewardsProps) => {

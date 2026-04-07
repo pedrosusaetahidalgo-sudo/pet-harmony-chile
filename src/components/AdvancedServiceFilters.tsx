@@ -85,8 +85,10 @@ export const AdvancedServiceFilters = ({
       <div className="flex gap-2">
         <div className="relative flex-1">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-          <Input 
-            placeholder="Buscar por nombre o ubicación..." 
+          <Input
+            type="search"
+            aria-label="Buscar por nombre o ubicación"
+            placeholder="Buscar por nombre o ubicación..."
             className="pl-12 h-12 rounded-xl border-2 focus:border-primary transition-all"
             value={filters.searchTerm}
             onChange={(e) => updateFilter("searchTerm", e.target.value)}

@@ -9,6 +9,7 @@ import {
   Stethoscope,
   ShieldCheck,
   GraduationCap,
+  Scissors,
   Star,
   Calendar,
   Route,
@@ -22,6 +23,7 @@ import {
   Shield,
   AlertCircle,
   Home,
+  MapPin,
   type LucideIcon
 } from "@/lib/icons";
 import { useState, useEffect } from "react";
@@ -39,8 +41,8 @@ import { ProviderProfileCard } from "@/components/ProviderProfileCard";
 import { format } from "date-fns";
 import { logger } from "@/lib/logger";
 
-type ServiceType = 'walkers' | 'vets' | 'sitters' | 'trainers';
-type ProfileTable = "dog_walker_profiles" | "vet_profiles" | "dogsitter_profiles" | "trainer_profiles";
+type ServiceType = 'walkers' | 'vets' | 'sitters' | 'trainers' | 'groomers';
+type ProfileTable = "dog_walker_profiles" | "vet_profiles" | "dogsitter_profiles" | "trainer_profiles" | "groomer_profiles";
 
 interface FilterState {
   searchTerm: string;
@@ -157,6 +159,27 @@ const SERVICE_CONFIG: Record<ServiceType, ServiceConfig> = {
     bookingToastLabel: "Sesión seleccionada",
     bookButtonLabel: "Reservar Sesión",
     defaultDisplayName: "Entrenador",
+  },
+  groomers: {
+    title: "Peluqueros para Mascotas",
+    subtitle: "Baño, corte y arreglo profesional para perros y gatos",
+    icon: Scissors,
+    profileTable: "groomer_profiles",
+    providerType: "groomer",
+    serviceName: "Peluquero",
+    maxPrice: 100000,
+    priceField: "base_price_clp",
+    gradient: "from-pink-600 via-rose-500 to-red-500",
+    gradientFrom: "from-pink-600 to-rose-500",
+    loadingAnimation: "animate-pulse",
+    loadingText: "Cargando peluqueros...",
+    listTabLabel: "Peluqueros",
+    bookingsTabLabel: "Mis Reservas",
+    emptyText: "No se encontraron peluqueros",
+    resultLabel: "peluqueros encontrados",
+    bookingToastLabel: "Cita seleccionada",
+    bookButtonLabel: "Solicitar Cita",
+    defaultDisplayName: "Peluquero",
   },
 };
 
@@ -391,11 +414,71 @@ function TrainerProfileDetails({ provider }: { provider: any }) {
   );
 }
 
+function GroomerProfileDetails({ provider }: { provider: any }) {
+  return (
+    <div className="space-y-4 mt-4">
+      <div>
+        <h4 className="font-semibold mb-2">Información</h4>
+        <div className="grid grid-cols-2 gap-3">
+          {provider.experience_years != null && (
+            <div className="flex items-center gap-2 text-sm p-3 bg-muted/50 rounded-lg">
+              <Award className="h-4 w-4 text-pink-600" />
+              <span>{provider.experience_years} años de experiencia</span>
+            </div>
+          )}
+          {provider.commune && (
+            <div className="flex items-center gap-2 text-sm p-3 bg-muted/50 rounded-lg">
+              <MapPin className="h-4 w-4 text-pink-600" />
+              <span>{provider.commune}</span>
+            </div>
+          )}
+          {provider.mobile_service && (
+            <div className="flex items-center gap-2 text-sm p-3 bg-pink-50 text-pink-700 rounded-lg col-span-2 justify-center">
+              <Home className="h-4 w-4" />
+              <span>Atención a domicilio disponible</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div>
+        <h4 className="font-semibold mb-2">¿Qué mascotas atiende?</h4>
+        <div className="flex flex-wrap gap-2">
+          {provider.accepts_dogs && <Badge variant="secondary">Perros</Badge>}
+          {provider.accepts_cats && <Badge variant="secondary">Gatos</Badge>}
+          {provider.accepts_long_hair && <Badge variant="secondary">Pelo largo</Badge>}
+        </div>
+      </div>
+
+      {provider.services_offered && provider.services_offered.length > 0 && (
+        <div>
+          <h4 className="font-semibold mb-2">Servicios ofrecidos</h4>
+          <div className="flex flex-wrap gap-2">
+            {(provider.services_offered as string[]).map((s) => (
+              <Badge key={s} variant="secondary">{s}</Badge>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {provider.base_price_clp && (
+        <div>
+          <h4 className="font-semibold mb-2">Precio</h4>
+          <div className="p-3 bg-muted/30 rounded-lg text-sm">
+            Desde <span className="font-semibold text-pink-700">${provider.base_price_clp.toLocaleString()}</span>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 const PROFILE_DETAILS: Record<ServiceType, React.ComponentType<{ provider: any }>> = {
   walkers: WalkerProfileDetails,
   vets: VetProfileDetails,
   sitters: SitterProfileDetails,
   trainers: TrainerProfileDetails,
+  groomers: GroomerProfileDetails,
 };
 
 // Helper to get price from provider based on service type
@@ -405,12 +488,14 @@ function getProviderPrice(provider: any, serviceType: ServiceType): number {
     case 'vets': return provider.consultation_fee || 0;
     case 'sitters': return provider.price_per_day || 0;
     case 'trainers': return provider.price_per_session || 0;
+    case 'groomers': return provider.base_price_clp || 0;
   }
 }
 
 // Helper to get services/specialties for booking dialog
 function getProviderServices(provider: any, serviceType: ServiceType) {
   if (serviceType === 'trainers') return provider.specialties;
+  if (serviceType === 'groomers') return provider.services_offered;
   return provider.services;
 }
 
@@ -487,11 +572,19 @@ const ServiceDirectory = () => {
     try {
       setLoading(true);
 
-      const { data: providersData, error } = await supabase
-        .from(config.profileTable)
-        .select('*')
-        .eq('is_active', true)
-        .order('rating', { ascending: false });
+      // groomer_profiles usa `status='approved'` en vez de `is_active`
+      // y ordena por avg_rating
+      const isGroomer = serviceType === 'groomers';
+      // config.profileTable es una unión de 5 nombres de tablas válidas, pero
+      // el postgrest builder de Supabase requiere literal type. Cast necesario.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let query = (supabase.from(config.profileTable as any) as any).select('*');
+      if (isGroomer) {
+        query = query.eq('status', 'approved').order('avg_rating', { ascending: false, nullsFirst: false });
+      } else {
+        query = query.eq('is_active', true).order('rating', { ascending: false });
+      }
+      const { data: providersData, error } = await query;
 
       if (error) throw error;
 

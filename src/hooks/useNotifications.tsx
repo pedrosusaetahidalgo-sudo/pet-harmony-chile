@@ -7,7 +7,7 @@ interface Notification {
   id: string;
   type: string;
   title: string;
-  body: string;
+  body: string | null;
   action_url: string | null;
   is_read: boolean;
   created_at: string;

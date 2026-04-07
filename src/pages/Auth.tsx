@@ -28,7 +28,11 @@ const Auth = () => {
   const { signInWithFacebook, loading: facebookLoading } = useFacebookAuth();
   const hasRedirected = useRef(false);
 
-  // Redirect: returnTo > new users a /add-pet > returning a /home
+  // Redirect post-login:
+  //   1. Si vino con ?returnTo=... → ahí
+  //   2. Si es provider (vet/groomer) → /provider/dashboard
+  //   3. Si tiene mascotas → /home
+  //   4. Si no tiene mascotas → /add-pet (onboarding)
   const redirectUser = async (userId: string) => {
     if (hasRedirected.current) return;
     if (returnTo) {
@@ -36,6 +40,21 @@ const Auth = () => {
       navigate(returnTo);
       return;
     }
+
+    // Provider check (vet del directorio)
+    const { data: provider } = await supabase
+      .from("service_providers")
+      .select("id")
+      .eq("user_id", userId)
+      .maybeSingle();
+    if (hasRedirected.current) return;
+    if (provider) {
+      hasRedirected.current = true;
+      navigate("/provider/dashboard");
+      return;
+    }
+
+    // Owner: con o sin mascotas
     const { data: pets } = await supabase
       .from("pets")
       .select("id")

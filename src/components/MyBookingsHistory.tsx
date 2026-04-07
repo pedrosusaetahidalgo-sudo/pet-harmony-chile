@@ -23,11 +23,11 @@ interface Booking {
   id: string;
   status: string;
   scheduled_date: string;
-  total_price: number;
+  total_price: number | null;
   provider_name?: string;
   provider_avatar?: string;
   service_type?: string;
-  address?: string;
+  address?: string | null;
 }
 
 interface MyBookingsHistoryProps {
@@ -306,7 +306,9 @@ export const MyBookingsHistory = ({
 
                   <div className="text-right">
                     <p className="font-bold text-primary">
-                      ${booking.total_price?.toLocaleString('es-CL')}
+                      {booking.total_price != null
+                        ? `$${booking.total_price.toLocaleString('es-CL')}`
+                        : 'A coordinar'}
                     </p>
                   </div>
                 </div>

@@ -78,7 +78,7 @@ export default function ServiceCalendar() {
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold flex items-center gap-2">
             <Calendar className="h-5 w-5 text-primary" />
-            Calendario de Servicios
+            Mis reservas
           </h1>
         </div>
 

@@ -160,7 +160,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="pet_name">Nombre de la Mascota</Label>
-          <Input {...register("pet_name")} placeholder="Nombre" />
+          <Input id="pet_name" {...register("pet_name")} placeholder="Nombre" />
           {errors.pet_name && <p className="text-xs text-destructive">{errors.pet_name.message}</p>}
         </div>
 
@@ -182,7 +182,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
 
       <div className="space-y-2">
         <Label htmlFor="breed">Raza (opcional)</Label>
-        <Input {...register("breed")} placeholder="Ej: Labrador, Mestizo..." />
+        <Input id="breed" {...register("breed")} placeholder="Ej: Labrador, Mestizo..." />
       </div>
 
       <div className="space-y-2">
@@ -194,7 +194,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
       <div className="space-y-2">
         <Label>Última Ubicación Vista</Label>
         <GoogleMapsLoader fallback={
-          <Input {...register("last_seen_location")} placeholder="Dirección o lugar específico" />
+          <Input id="last_seen_location" {...register("last_seen_location")} placeholder="Dirección o lugar específico" aria-label="Última ubicación vista" />
         }>
           <PlacesAutocomplete
             value={locationAddress}
@@ -223,19 +223,19 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="contact_phone">Teléfono de Contacto</Label>
-          <Input {...register("contact_phone")} placeholder="+56 9 XXXX XXXX" />
+          <Input id="contact_phone" {...register("contact_phone")} placeholder="+56 9 XXXX XXXX" />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="contact_email">Email de Contacto</Label>
-          <Input {...register("contact_email")} type="email" placeholder="correo@ejemplo.com" />
+          <Input id="contact_email" {...register("contact_email")} type="email" placeholder="correo@ejemplo.com" />
           {errors.contact_email && <p className="text-xs text-destructive">{errors.contact_email.message}</p>}
         </div>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="photo_url">URL de Foto (opcional)</Label>
-        <Input {...register("photo_url")} placeholder="https://..." />
+        <Input id="photo_url" {...register("photo_url")} placeholder="https://..." />
       </div>
 
       {reportType === "lost" && (

@@ -4,8 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { Dog, ShieldCheck, GraduationCap, Scissors, ArrowRight } from "@/lib/icons";
 import { LINKS } from "@/lib/links";
 
+type ServiceKey = "walkers" | "sitters" | "trainers" | "groomers";
+
 interface ServiceItem {
-  key: "walkers" | "sitters" | "trainers" | "groomers";
+  key: ServiceKey;
   title: string;
   description: string;
   icon: typeof Dog;
@@ -70,11 +72,7 @@ export default function Servicios() {
           const Icon = service.icon;
           const handleClick = () => {
             if (!service.available) return;
-            if (service.key === "groomers") {
-              navigate("/servicios/peluqueria");
-            } else {
-              navigate(LINKS.services(service.key as "walkers" | "sitters" | "trainers"));
-            }
+            navigate(LINKS.services(service.key));
           };
 
           return (

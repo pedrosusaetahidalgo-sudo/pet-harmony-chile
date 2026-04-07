@@ -80,12 +80,12 @@ export const LINKS = {
   settings: () => '/settings',
   profile: () => '/profile',
   userProfile: (userId: string) => `/user/${userId}`,
-  /** Servicio unificado: /services/walkers, /services/vets, /services/sitters, /services/trainers */
-  services: (type: 'walkers' | 'vets' | 'sitters' | 'trainers') => `/services/${type}`,
+  /** Servicio unificado: /services/walkers, /services/vets, /services/sitters, /services/trainers, /services/groomers */
+  services: (type: 'walkers' | 'vets' | 'sitters' | 'trainers' | 'groomers') => `/services/${type}`,
   /** Hub de servicios (paseo, cuidado, entrenamiento, peluquería) */
   servicios: () => '/servicios',
-  /** Directorio público de peluqueros */
-  peluqueria: () => '/servicios/peluqueria',
+  /** Directorio público de peluqueros (tab nativo del directorio de servicios) */
+  peluqueria: () => '/services/groomers',
   /** Editor de perfil de peluquero */
   groomerProfileEdit: () => '/peluquero/perfil',
 } as const;

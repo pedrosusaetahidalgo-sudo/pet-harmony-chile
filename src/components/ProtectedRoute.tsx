@@ -1,4 +1,4 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
 interface ProtectedRouteProps {
@@ -7,6 +7,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -17,7 +18,10 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   if (!user) {
-    return <Navigate to="/auth" replace />;
+    // Preservar la URL original como returnTo para que post-login el usuario
+    // vuelva a donde quería ir (deep link friendly).
+    const returnTo = encodeURIComponent(location.pathname + location.search);
+    return <Navigate to={`/auth?returnTo=${returnTo}`} replace />;
   }
 
   return <>{children}</>;

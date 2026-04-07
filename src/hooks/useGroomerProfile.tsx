@@ -2,10 +2,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 
-// Tipo no regenerado todavía. Eliminar el cast cuando se corra
-// `npx supabase gen types typescript`.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const sb = supabase as any;
 
 export interface GroomerProfileRow {
   id: string;

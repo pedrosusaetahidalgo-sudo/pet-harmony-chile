@@ -36,6 +36,7 @@ export default function PerfilVetPublico() {
 
   const [reservaOpen, setReservaOpen] = useState(false);
   const [reservaMessage, setReservaMessage] = useState('');
+  const [reservaDate, setReservaDate] = useState('');
   const [reservaLoading, setReservaLoading] = useState(false);
 
   const handleReservar = () => {
@@ -47,29 +48,50 @@ export default function PerfilVetPublico() {
   };
 
   const handleSubmitReserva = async () => {
-    if (!user || !v?.user_id) return;
+    if (!user || !v?.id) return;
     if (reservaMessage.trim().length < 10) {
       toast.error('Cuéntale al veterinario brevemente qué necesitas');
       return;
     }
+    if (!reservaDate) {
+      toast.error('Selecciona una fecha tentativa');
+      return;
+    }
     setReservaLoading(true);
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const sb = supabase as any;
-      const { error } = await sb.from('notifications').insert({
-        user_id: v.user_id,
-        type: 'booking_received',
-        title: 'Nueva solicitud de consulta',
-        body: `${user.email} solicitó una consulta: "${reservaMessage.trim()}"`,
-        action_url: '/provider/dashboard',
-        reference_id: user.id,
+      // Buscar la primera mascota del usuario (vet_bookings requiere pet_id)
+      const { data: pets } = await supabase
+        .from('pets')
+        .select('id')
+        .eq('owner_id', user.id)
+        .limit(1);
+
+      if (!pets || pets.length === 0) {
+        toast.error('Debes registrar al menos una mascota antes de reservar');
+        navigate('/add-pet');
+        return;
+      }
+
+      // Crear booking real vinculado al directorio.
+      // El trigger SQL notify_on_directory_booking notifica automáticamente al vet.
+      const { error } = await supabase.from('vet_bookings').insert({
+        owner_id: user.id,
+        pet_id: pets[0].id,
+        service_provider_id: v.id,
+        scheduled_date: new Date(reservaDate).toISOString(),
+        service_type: 'consultation',
+        symptoms: reservaMessage.trim(),
+        status: 'pending',
+        payment_status: 'pending',
       });
       if (error) throw error;
-      toast.success('Solicitud enviada. El veterinario te contactará pronto.');
+
+      toast.success('Reserva enviada. El veterinario te contactará para confirmar.');
       setReservaOpen(false);
       setReservaMessage('');
+      setReservaDate('');
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'No se pudo enviar la solicitud');
+      toast.error(err instanceof Error ? err.message : 'No se pudo enviar la reserva');
     } finally {
       setReservaLoading(false);
     }
@@ -360,16 +382,34 @@ export default function PerfilVetPublico() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
-            <Label htmlFor="reserva-msg">Mensaje</Label>
-            <Textarea
-              id="reserva-msg"
-              value={reservaMessage}
-              onChange={(e) => setReservaMessage(e.target.value)}
-              placeholder="Ej: Mi perro Luna necesita su vacuna anual y un control general. Tiene 4 años, raza beagle. ¿Tienes disponibilidad esta semana?"
-              rows={5}
-              maxLength={500}
-            />
-            <p className="text-xs text-muted-foreground">{reservaMessage.length}/500</p>
+            <div>
+              <Label htmlFor="reserva-date">Fecha y hora tentativa</Label>
+              <input
+                id="reserva-date"
+                type="datetime-local"
+                value={reservaDate}
+                onChange={(e) => setReservaDate(e.target.value)}
+                min={new Date().toISOString().slice(0, 16)}
+                className="w-full mt-1 px-3 py-2 border border-input rounded-md text-sm bg-background"
+              />
+              <p className="text-xs text-muted-foreground mt-1">
+                El veterinario confirmará el horario por chat.
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="reserva-msg">Mensaje</Label>
+              <Textarea
+                id="reserva-msg"
+                value={reservaMessage}
+                onChange={(e) => setReservaMessage(e.target.value)}
+                placeholder="Ej: Mi perro Luna necesita su vacuna anual y un control general. Tiene 4 años, raza beagle."
+                rows={4}
+                maxLength={500}
+              />
+              <p className="text-xs text-muted-foreground mt-1">{reservaMessage.length}/500</p>
+            </div>
+
             <Button
               onClick={handleSubmitReserva}
               disabled={reservaLoading}
