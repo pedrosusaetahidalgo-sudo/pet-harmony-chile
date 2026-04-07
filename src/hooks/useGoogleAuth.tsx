@@ -3,10 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Capacitor } from "@capacitor/core";
 import { logger } from "@/lib/logger";
+type GoogleAuthModule = typeof import("@codetrix-studio/capacitor-google-auth");
 
 // Dynamic import for Capacitor Google Auth (only available on native)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any -- dynamic plugin with no shared type
-let GoogleAuth: Record<string, (...args: unknown[]) => Promise<unknown>> | null = null;
+let GoogleAuth: GoogleAuthModule["GoogleAuth"] | null = null;
 
 // Check if we're on a native platform and load the plugin
 const initGoogleAuth = async () => {
