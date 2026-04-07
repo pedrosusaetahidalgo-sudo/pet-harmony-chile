@@ -37,7 +37,7 @@ const FollowButton = ({
   };
 
   const sizeClasses = {
-    sm: "h-8 text-xs px-3",
+    sm: "h-10 text-xs px-3",
     md: "h-9 text-sm px-4",
     lg: "h-10 text-base px-6",
   };

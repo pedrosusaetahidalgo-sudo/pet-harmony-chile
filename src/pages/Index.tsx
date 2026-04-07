@@ -44,8 +44,8 @@ const Index = () => {
       <Hero />
 
       {/* Features Section — PIVOT MÉDICO */}
-      <section className="container px-4 py-20">
-        <div className="text-center mb-12 space-y-4 animate-fade-in-up">
+      <section className="container px-4 py-12 md:py-20">
+        <div className="text-center mb-8 md:mb-12 space-y-3 md:space-y-4 animate-fade-in-up">
           <Badge className="bg-emerald-500/10 text-emerald-700 border-emerald-500/20 text-sm px-4 py-1">
             🩺 Salud y veterinarios
           </Badge>
@@ -110,8 +110,8 @@ const Index = () => {
       </section>
 
       {/* Professional Services */}
-      <section className="container px-4 py-20 bg-gradient-to-b from-muted/30 to-background">
-        <div className="text-center mb-12 space-y-4">
+      <section className="container px-4 py-12 md:py-20 bg-gradient-to-b from-muted/30 to-background">
+        <div className="text-center mb-8 md:mb-12 space-y-3 md:space-y-4">
           <Badge className="bg-secondary/10 text-secondary border-secondary/20 text-sm px-4 py-1">
             🐾 Servicios Profesionales
           </Badge>
@@ -182,8 +182,8 @@ const Index = () => {
       </section>
 
       {/* AI Features */}
-      <section className="container px-4 py-20">
-        <div className="text-center mb-12 space-y-4">
+      <section className="container px-4 py-12 md:py-20">
+        <div className="text-center mb-8 md:mb-12 space-y-3 md:space-y-4">
           <Badge className="bg-purple-500/10 text-purple-600 border-purple-500/20 text-sm px-4 py-1">
             🤖 Inteligencia Artificial
           </Badge>
@@ -236,8 +236,8 @@ const Index = () => {
       </section>
 
       {/* Sample Feed Section */}
-      <section className="container px-4 py-20 bg-gradient-to-b from-background to-muted/30">
-        <div className="text-center mb-12 space-y-4">
+      <section className="container px-4 py-12 md:py-20 bg-gradient-to-b from-background to-muted/30">
+        <div className="text-center mb-8 md:mb-12 space-y-3 md:space-y-4">
           <Badge className="bg-primary/10 text-primary border-primary/20 text-sm px-4 py-1">
             🐕 Explora Nuestra App
           </Badge>
@@ -298,8 +298,8 @@ const Index = () => {
       </section>
 
       {/* Health & Organization */}
-      <section className="container px-4 py-20">
-        <div className="text-center mb-12 space-y-4">
+      <section className="container px-4 py-12 md:py-20">
+        <div className="text-center mb-8 md:mb-12 space-y-3 md:space-y-4">
           <Badge className="bg-green-500/10 text-green-600 border-green-500/20 text-sm px-4 py-1">
             🏥 Salud y Organización
           </Badge>
@@ -364,8 +364,8 @@ const Index = () => {
       </section>
 
       {/* Community Features */}
-      <section className="container px-4 py-20 bg-gradient-to-b from-muted/20 to-background">
-        <div className="text-center mb-12 space-y-4">
+      <section className="container px-4 py-12 md:py-20 bg-gradient-to-b from-muted/20 to-background">
+        <div className="text-center mb-8 md:mb-12 space-y-3 md:space-y-4">
           <Badge className="bg-orange-500/10 text-orange-600 border-orange-500/20 text-sm px-4 py-1">
             🤝 Comunidad
           </Badge>
@@ -413,7 +413,7 @@ const Index = () => {
       </section>
 
       {/* Additional Features Grid */}
-      <section className="container px-4 py-20">
+      <section className="container px-4 py-12 md:py-20">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="flex gap-4 p-6 rounded-xl hover:bg-muted/50 transition-colors group">
             <div className="flex-shrink-0">
@@ -502,7 +502,7 @@ const Index = () => {
       </section>
 
       {/* Vets CTA Section */}
-      <section className="container px-4 py-16">
+      <section className="container px-4 py-10 md:py-16">
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-400 via-orange-400 to-pink-500 p-10 md:p-16 shadow-2xl">
           <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center max-w-5xl mx-auto">
             <div className="text-white space-y-5">
@@ -550,7 +550,7 @@ const Index = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="container px-4 py-20">
+      <section className="container px-4 py-12 md:py-20">
         <div className="relative overflow-hidden rounded-3xl bg-warm-gradient p-12 md:p-20 text-center shadow-2xl">
           <div className="relative z-10 max-w-3xl mx-auto space-y-8">
             <div className="inline-flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full backdrop-blur-sm">

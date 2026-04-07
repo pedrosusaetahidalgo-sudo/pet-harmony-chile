@@ -83,7 +83,7 @@ const LostPetDetailCard = ({ pet, compact = false }: LostPetDetailCardProps) => 
           </span>
         </div>
         <div className="flex gap-2 pt-2">
-          <Button size="sm" className="flex-1 h-8 text-xs" onClick={handleContact} disabled={loading}>
+          <Button size="sm" className="flex-1 h-10 text-xs" onClick={handleContact} disabled={loading}>
             <MessageCircle className="h-3 w-3 mr-1" />
             Contactar
           </Button>

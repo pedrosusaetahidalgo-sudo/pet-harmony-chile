@@ -96,11 +96,11 @@ const AdoptionDetailCard = ({ post, compact = false }: AdoptionDetailCardProps) 
         </div>
         
         <div className="flex gap-2 pt-2">
-          <Button size="sm" className="flex-1 h-8 text-xs bg-orange-500 hover:bg-orange-600" onClick={handleContact} disabled={loading}>
+          <Button size="sm" className="flex-1 h-10 text-xs bg-orange-500 hover:bg-orange-600" onClick={handleContact} disabled={loading}>
             <MessageCircle className="h-3 w-3 mr-1" />
             Contactar
           </Button>
-          <Button size="sm" variant="outline" className="h-8" onClick={handleShare}>
+          <Button size="sm" variant="outline" className="h-10" onClick={handleShare}>
             <Share2 className="h-3 w-3" />
           </Button>
         </div>

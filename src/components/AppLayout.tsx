@@ -22,7 +22,10 @@ function LayoutInner({ children }: AppLayoutProps) {
         style={{ marginLeft: isMobile ? 0 : undefined }}
       >
         <Header />
-        <main className="flex-1 overflow-y-auto animate-fade-in">
+        <main
+          className="flex-1 overflow-y-auto animate-fade-in"
+          style={{ paddingBottom: "var(--safe-area-bottom)" }}
+        >
           {children}
         </main>
       </div>

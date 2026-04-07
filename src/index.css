@@ -13,6 +13,31 @@
 :root {
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+}
+
+/* Capacitor: feel nativo */
+html, body {
+  overscroll-behavior-y: contain;
+  -webkit-touch-callout: none;
+}
+
+/* No seleccionar texto en UI nativa, sí en inputs/contenido editable */
+body {
+  -webkit-user-select: none;
+  user-select: none;
+}
+input, textarea, [contenteditable="true"], [data-selectable], p, h1, h2, h3, h4, h5, h6, li, span {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* iOS: prevenir zoom automático en focus de inputs (font-size mínimo 16px) */
+@media (max-width: 768px) {
+  input, textarea, select {
+    font-size: 16px !important;
+  }
 }
 
 @layer base {

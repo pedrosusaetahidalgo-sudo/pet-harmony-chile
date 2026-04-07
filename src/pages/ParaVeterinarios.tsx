@@ -99,7 +99,7 @@ export default function ParaVeterinarios() {
       <PublicHeader />
 
       {/* HERO */}
-      <section className="container mx-auto px-4 py-12 md:py-20 max-w-5xl">
+      <section className="container mx-auto px-4 py-8 md:py-12 max-w-5xl">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="space-y-5">
             <Badge className="bg-amber-100 text-amber-800 border-amber-300">
@@ -155,7 +155,7 @@ export default function ParaVeterinarios() {
       </section>
 
       {/* BENEFICIOS */}
-      <section className="container mx-auto px-4 py-12 max-w-5xl">
+      <section className="container mx-auto px-4 py-8 md:py-12 max-w-5xl">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold text-amber-900 mb-3">
             Todo lo que necesitas para crecer
@@ -184,7 +184,7 @@ export default function ParaVeterinarios() {
       </section>
 
       {/* COMPARACIÓN PLANES */}
-      <section className="container mx-auto px-4 py-12 max-w-5xl">
+      <section className="container mx-auto px-4 py-8 md:py-12 max-w-5xl">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold text-amber-900 mb-3">
             Planes pensados para ti
@@ -248,7 +248,7 @@ export default function ParaVeterinarios() {
       </section>
 
       {/* FAQ */}
-      <section className="container mx-auto px-4 py-12 max-w-3xl">
+      <section className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold text-amber-900 mb-3">
             Preguntas frecuentes

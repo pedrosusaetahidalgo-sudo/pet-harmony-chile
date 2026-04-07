@@ -73,7 +73,7 @@ export default function DejarResena() {
     return (
       <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
         <PublicHeader />
-        <main className="container mx-auto px-4 py-12 max-w-md text-center">
+        <main className="container mx-auto px-4 py-8 md:py-12 max-w-md text-center">
           <div className="inline-flex p-4 rounded-full bg-green-100 mb-4">
             <CheckCircle2 className="h-12 w-12 text-green-600" />
           </div>
@@ -259,7 +259,7 @@ function ErrorState({ title, message }: { title: string; message: string }) {
   return (
     <div className="min-h-screen bg-purple-50">
       <PublicHeader />
-      <main className="container mx-auto px-4 py-16 max-w-md text-center">
+      <main className="container mx-auto px-4 py-10 md:py-16 max-w-md text-center">
         <AlertCircle className="h-12 w-12 mx-auto text-amber-500 mb-3" />
         <h1 className="text-2xl font-bold mb-2">{title}</h1>
         <p className="text-muted-foreground mb-6">{message}</p>
