@@ -44,6 +44,7 @@ const Servicios = lazy(() => import("./pages/Servicios"));
 const GroomerProfileEdit = lazy(() => import("./pages/GroomerProfileEdit"));
 const DirectorioVets = lazy(() => import("./pages/DirectorioVets"));
 const PerfilVetPublico = lazy(() => import("./pages/PerfilVetPublico"));
+const Demo = lazy(() => import("./pages/Demo"));
 const ProviderProfileEdit = lazy(() => import("./pages/ProviderProfileEdit"));
 const RegistroVeterinario = lazy(() => import("./pages/RegistroVeterinario"));
 const ParaVeterinarios = lazy(() => import("./pages/ParaVeterinarios"));
@@ -118,6 +119,8 @@ const App = () => (
               <Route path="/veterinarios/comuna/:comuna" element={<DirectorioVets />} />
               <Route path="/veterinarios/especialidad/:especialidad" element={<DirectorioVets />} />
               <Route path="/veterinarios/:slug" element={<PerfilVetPublico />} />
+              {/* Demo en vivo (uso interno para reuniones de venta) */}
+              <Route path="/demo" element={<Demo />} />
               <Route path="/registro-veterinario" element={<RegistroVeterinario />} />
               <Route path="/para-veterinarios" element={<ParaVeterinarios />} />
               <Route path="/resena/:token" element={<DejarResena />} />

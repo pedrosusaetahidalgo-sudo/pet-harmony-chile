@@ -19,6 +19,7 @@ import {
 } from '@/hooks/useDirectoryVets';
 import { setSeoTags, injectJsonLd, formatCLP } from '@/lib/vetDirectory';
 import { PublicHeader, PublicFooter } from './DirectorioVets';
+import { useDemoMode } from '@/hooks/useDemoMode';
 
 export default function PerfilVetPublico() {
   const { slug } = useParams<{ slug: string }>();
@@ -27,6 +28,7 @@ export default function PerfilVetPublico() {
   const { data: vet, isLoading } = useDirectoryVetBySlug(slug);
   const v = vet;
   const { data: reviews } = useVetReviews(v?.id);
+  const isDemo = useDemoMode();
 
   const [reservaOpen, setReservaOpen] = useState(false);
   const [reservaMessage, setReservaMessage] = useState('');
@@ -199,6 +201,13 @@ export default function PerfilVetPublico() {
       <PublicHeader />
 
       <main className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
+        {isDemo && (
+          <div className="rounded-lg bg-amber-100 border border-amber-300 px-4 py-2 text-xs text-amber-900 flex items-center gap-2">
+            <Badge className="bg-amber-500 text-white">DEMO</Badge>
+            <span>Esta es una vista de ejemplo. Los datos son ficticios para demostración.</span>
+          </div>
+        )}
+
         {/* Hero */}
         <Card className="p-6 md:p-8">
           <div className="flex flex-col md:flex-row gap-6">
