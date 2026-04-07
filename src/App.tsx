@@ -23,8 +23,7 @@ const Adoption = lazy(() => import("./pages/Adoption"));
 
 const PawGame = lazy(() => import("./pages/PawGame"));
 const ServiceDirectory = lazy(() => import("./pages/ServiceDirectory"));
-const SharedWalks = lazy(() => import("./pages/SharedWalks"));
-const LostPets = lazy(() => import("./pages/LostPets"));
+// SharedWalks y LostPets eliminados en pivot médico
 const Chat = lazy(() => import("./pages/Chat"));
 const ChatConversation = lazy(() => import("./pages/ChatConversation"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -32,13 +31,11 @@ const TermsOfService = lazy(() => import("./pages/TermsOfService"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const UserProfile = lazy(() => import("./pages/UserProfile"));
 const Checkout = lazy(() => import("./pages/Checkout"));
-const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
 const PaymentResult = lazy(() => import("./pages/PaymentResult"));
-const PaymentFailed = lazy(() => import("./pages/PaymentFailed"));
 const Admin = lazy(() => import("./pages/Admin"));
 const Settings = lazy(() => import("./pages/Settings"));
 const Maps = lazy(() => import("./pages/Maps"));
-const Premium = lazy(() => import("./pages/Premium"));
+// Premium eliminado en pivot médico
 const ProviderDashboard = lazy(() => import("./components/provider/ProviderDashboard"));
 const PetClinicalRecord = lazy(() => import("./pages/PetClinicalRecord"));
 const ServiceCalendar = lazy(() => import("./pages/ServiceCalendar"));
@@ -91,22 +88,19 @@ const App = () => (
               <Route path="/home-vets" element={<Navigate to="/services/vets" replace />} />
               <Route path="/dog-sitters" element={<Navigate to="/services/sitters" replace />} />
               <Route path="/dog-trainers" element={<Navigate to="/services/trainers" replace />} />
-              <Route path="/shared-walks" element={<ProtectedRoute><AppLayout><SharedWalks /></AppLayout></ProtectedRoute>} />
-              <Route path="/lost-pets" element={<ProtectedRoute><AppLayout><LostPets /></AppLayout></ProtectedRoute>} />
+              {/* /shared-walks y /lost-pets eliminados en pivot médico */}
               <Route path="/maps" element={<ProtectedRoute><AppLayout><Maps /></AppLayout></ProtectedRoute>} />
               <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
               <Route path="/chat/:conversationId" element={<ProtectedRoute><ChatConversation /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><AppLayout><Profile /></AppLayout></ProtectedRoute>} />
               <Route path="/user/:userId" element={<ProtectedRoute><AppLayout><UserProfile /></AppLayout></ProtectedRoute>} />
               <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-              <Route path="/payment-success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
+              {/* Pagos: una sola ruta unificada con query param ?status=success|failed */}
               <Route path="/payment-result" element={<ProtectedRoute><PaymentResult /></ProtectedRoute>} />
-              <Route path="/payment-failed" element={<ProtectedRoute><PaymentFailed /></ProtectedRoute>} />
+              <Route path="/payment-success" element={<Navigate to="/payment-result?status=success" replace />} />
+              <Route path="/payment-failed" element={<Navigate to="/payment-result?status=failed" replace />} />
               <Route path="/admin" element={<AdminRoute><AppLayout><Admin /></AppLayout></AdminRoute>} />
               <Route path="/settings" element={<ProtectedRoute><AppLayout><Settings /></AppLayout></ProtectedRoute>} />
-              {/* DISABLED: USER_PREMIUM flag — pivot médico
-              <Route path="/premium" element={<ProtectedRoute><Premium /></ProtectedRoute>} />
-              */}
               <Route path="/provider/dashboard" element={<ProtectedRoute><AppLayout><ProviderDashboard /></AppLayout></ProtectedRoute>} />
               <Route path="/provider/profile-edit" element={<ProtectedRoute><AppLayout><ProviderProfileEdit /></AppLayout></ProtectedRoute>} />
               <Route path="/pet/:petId/clinical" element={<ProtectedRoute><AppLayout><PetClinicalRecord /></AppLayout></ProtectedRoute>} />

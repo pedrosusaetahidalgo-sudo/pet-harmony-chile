@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Image, X, Loader2 } from "@/lib/icons";
+import { LINKS } from "@/lib/links";
 import { useAuth } from "@/hooks/useAuth";
 import { useGamification } from "@/hooks/useGamification";
 import { DEFAULT_POINTS_CONFIG } from "@/lib/gamification";
@@ -177,7 +178,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
         <p className="text-muted-foreground mb-4">
           Inicia sesión para crear publicaciones
         </p>
-        <Button onClick={() => navigate("/auth")}>Iniciar Sesión</Button>
+        <Button onClick={() => navigate(LINKS.auth())}>Iniciar Sesión</Button>
       </div>
     );
   }

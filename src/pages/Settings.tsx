@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
+import { LINKS } from "@/lib/links";
 import {
   User,
   Mail,
@@ -142,7 +143,7 @@ const Settings = () => {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/auth");
+    navigate(LINKS.auth());
   };
 
   return (
@@ -340,7 +341,7 @@ const Settings = () => {
             <Button
               variant="ghost"
               className="w-full justify-start h-auto py-3"
-              onClick={() => navigate("/terms")}
+              onClick={() => navigate(LINKS.terms())}
             >
               <Shield className="h-5 w-5 mr-3 text-muted-foreground" />
               <div className="text-left">
@@ -352,7 +353,7 @@ const Settings = () => {
             <Button
               variant="ghost"
               className="w-full justify-start h-auto py-3"
-              onClick={() => navigate("/privacy")}
+              onClick={() => navigate(LINKS.privacy())}
             >
               <Shield className="h-5 w-5 mr-3 text-muted-foreground" />
               <div className="text-left">

@@ -65,12 +65,12 @@ export default function DirectorioVets() {
   }, [comuna, specialty, comunaParam, espParam]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
       <PublicHeader />
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-5xl font-bold text-purple-900 mb-3">
+          <h1 className="text-3xl md:text-5xl font-bold text-amber-900 mb-3">
             Encuentra el veterinario ideal
           </h1>
           <p className="text-lg text-muted-foreground">
@@ -142,7 +142,7 @@ export default function DirectorioVets() {
           </div>
         ) : vets.length === 0 ? (
           <Card className="p-12 text-center">
-            <Stethoscope className="h-12 w-12 mx-auto text-purple-300 mb-3" />
+            <Stethoscope className="h-12 w-12 mx-auto text-amber-300 mb-3" />
             <h3 className="font-semibold text-lg mb-1">Sin resultados</h3>
             <p className="text-muted-foreground text-sm">
               Prueba ajustar los filtros o busca en otra comuna.
@@ -189,18 +189,18 @@ function VetCard({ vet }: { vet: Vet }) {
               <img
                 src={vet.avatar_url}
                 alt={vet.display_name ?? 'Veterinario'}
-                className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-2 border-purple-100"
+                className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-2 border-amber-200"
               />
             ) : (
-              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-purple-100 flex items-center justify-center">
-                <Stethoscope className="h-8 w-8 text-purple-500" />
+              <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-amber-100 flex items-center justify-center">
+                <Stethoscope className="h-8 w-8 text-amber-600" />
               </div>
             )}
           </div>
 
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2 mb-1">
-              <h3 className="font-semibold text-lg text-purple-900 truncate">
+              <h3 className="font-semibold text-lg text-amber-900 truncate">
                 {vet.display_name}
                 {vet.is_verified && <span className="ml-1 text-blue-500">✓</span>}
               </h3>
@@ -233,7 +233,7 @@ function VetCard({ vet }: { vet: Vet }) {
               </div>
               {vet.price_from && (
                 <span className="text-muted-foreground">
-                  Desde <strong className="text-purple-700">{formatCLP(vet.price_from)}</strong>
+                  Desde <strong className="text-amber-700">{formatCLP(vet.price_from)}</strong>
                 </span>
               )}
             </div>
@@ -248,7 +248,7 @@ function PublicHeader() {
   return (
     <header className="bg-white border-b sticky top-0 z-10">
       <div className="container mx-auto px-4 h-14 flex items-center justify-between max-w-6xl">
-        <Link to="/" className="font-bold text-purple-700 text-lg">
+        <Link to="/" className="font-bold text-amber-700 text-lg">
           🐾 Paw Friend
         </Link>
         <div className="flex items-center gap-2">
@@ -270,8 +270,8 @@ function PublicFooter() {
       <div className="container mx-auto px-4">
         <p>© {new Date().getFullYear()} Paw Friend Chile · pawfriend.cl</p>
         <div className="flex justify-center gap-4 mt-2">
-          <Link to="/terms" className="hover:text-purple-700">Términos</Link>
-          <Link to="/privacy" className="hover:text-purple-700">Privacidad</Link>
+          <Link to="/terms" className="hover:text-amber-700">Términos</Link>
+          <Link to="/privacy" className="hover:text-amber-700">Privacidad</Link>
         </div>
       </div>
     </footer>

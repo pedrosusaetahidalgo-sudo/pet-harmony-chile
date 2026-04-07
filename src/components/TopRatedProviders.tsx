@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Star, Trophy, Dog, Home, Stethoscope, GraduationCap, Crown, Medal, Award } from "@/lib/icons";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { LINKS } from "@/lib/links";
 
 interface RankedProvider {
   id: string;
@@ -253,7 +254,7 @@ const TopRatedProviders = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-3"
-                onClick={() => navigate("/services/walkers")}
+                onClick={() => navigate(LINKS.services('walkers'))}
               >
                 Ver todos los paseadores
               </Button>
@@ -269,7 +270,7 @@ const TopRatedProviders = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-3"
-                onClick={() => navigate("/services/sitters")}
+                onClick={() => navigate(LINKS.services('sitters'))}
               >
                 Ver todos los cuidadores
               </Button>
@@ -285,7 +286,7 @@ const TopRatedProviders = () => {
               <Button 
                 variant="outline" 
                 className="w-full mt-3"
-                onClick={() => navigate("/services/vets")}
+                onClick={() => navigate(LINKS.vets())}
               >
                 Ver todos los veterinarios
               </Button>

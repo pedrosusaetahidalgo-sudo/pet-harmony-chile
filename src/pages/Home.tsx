@@ -84,9 +84,6 @@ export default function Home() {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [showTutorial, setShowTutorial] = useState(false);
-  const [showPremiumBanner, setShowPremiumBanner] = useState(() => {
-    return !sessionStorage.getItem("premium_banner_dismissed");
-  });
   const [loading, setLoading] = useState(true);
   const [assistantPet, setAssistantPet] = useState<Pet | null>(null);
   const { stats, missions, achievements } = useGamification();
@@ -419,7 +416,7 @@ export default function Home() {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => navigate("/paw-game")}
+                onClick={() => navigate(LINKS.pawGame())}
               >
                 Ver todas
                 <ArrowRight className="h-4 w-4 ml-1" />
@@ -437,7 +434,7 @@ export default function Home() {
               <Sparkles className="h-6 w-6 text-yellow-500 mx-auto mb-2" />
               <p className="font-medium text-sm">Gana puntos cuidando a tus mascotas</p>
               <p className="text-xs text-muted-foreground mb-3">Agrega tu mascota, completa su ficha y gana recompensas</p>
-              <Button size="sm" variant="outline" onClick={() => navigate("/paw-game")}>
+              <Button size="sm" variant="outline" onClick={() => navigate(LINKS.pawGame())}>
                 Ver Paw Game
               </Button>
             </CardContent>
@@ -581,83 +578,9 @@ export default function Home() {
         </Card>
       </div>
 
-      {/* Recommendations Section */}
-      <Card className="border-0 shadow-md bg-gradient-to-br from-primary/5 to-secondary/5">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
-            Más servicios para ti
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            <div 
-              className="p-3 rounded-xl bg-background/80 backdrop-blur cursor-pointer hover:shadow-md transition-all group text-center"
-              onClick={() => navigate("/services/vets")}
-            >
-              <div className="w-10 h-10 mx-auto rounded-lg bg-emerald-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <Stethoscope className="h-5 w-5 text-emerald-500" />
-              </div>
-              <span className="text-sm font-medium group-hover:text-primary transition-colors">Veterinarios</span>
-            </div>
-            
-            <div 
-              className="p-3 rounded-xl bg-background/80 backdrop-blur cursor-pointer hover:shadow-md transition-all group text-center"
-              onClick={() => navigate("/services/sitters")}
-            >
-              <div className="w-10 h-10 mx-auto rounded-lg bg-purple-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <Heart className="h-5 w-5 text-purple-500" />
-              </div>
-              <span className="text-sm font-medium group-hover:text-primary transition-colors">Cuidadores</span>
-            </div>
-            
-            <div 
-              className="p-3 rounded-xl bg-background/80 backdrop-blur cursor-pointer hover:shadow-md transition-all group text-center"
-              onClick={() => navigate("/shared-walks")}
-            >
-              <div className="w-10 h-10 mx-auto rounded-lg bg-teal-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <Users className="h-5 w-5 text-teal-500" />
-              </div>
-              <span className="text-sm font-medium group-hover:text-primary transition-colors">Paseos grupales</span>
-            </div>
-            
-            <div 
-              className="p-3 rounded-xl bg-background/80 backdrop-blur cursor-pointer hover:shadow-md transition-all group text-center"
-              onClick={() => navigate("/feed")}
-            >
-              <div className="w-10 h-10 mx-auto rounded-lg bg-pink-500/10 flex items-center justify-center mb-2 group-hover:scale-110 transition-transform">
-                <Heart className="h-5 w-5 text-pink-500" />
-              </div>
-              <span className="text-sm font-medium group-hover:text-primary transition-colors">Pet Social</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Recommendations Section eliminada en pivot médico — feature ahora redundante con quick actions */}
     </div>
 
-    {/* Floating Premium Banner — DESHABILITADO en pivot médico */}
-    {isFeatureEnabled("USER_PREMIUM") && showPremiumBanner && pets.length > 0 && !profile?.is_premium && (
-      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-lg animate-fade-in-up">
-        <div className="bg-card border border-primary/20 rounded-xl shadow-lg p-3 flex items-center gap-3">
-          <Crown className="h-6 w-6 text-primary flex-shrink-0" />
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-sm">Paw Friend Premium</p>
-            <p className="text-xs text-muted-foreground truncate">2x puntos · Ficha completa · Sin comisiones</p>
-          </div>
-          <Button size="sm" onClick={() => navigate('/premium')} className="flex-shrink-0">
-            Ver planes
-          </Button>
-          <button
-            onClick={() => {
-              setShowPremiumBanner(false);
-              sessionStorage.setItem("premium_banner_dismissed", "true");
-            }}
-            className="p-1 rounded-full hover:bg-muted transition-colors flex-shrink-0"
-          >
-            <X className="h-4 w-4 text-muted-foreground" />
-          </button>
-        </div>
-      </div>
-    )}
+    {/* Premium Banner eliminado en pivot médico */}
   </>);
 }

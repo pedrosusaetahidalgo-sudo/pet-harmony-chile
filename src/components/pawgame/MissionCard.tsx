@@ -67,7 +67,7 @@ const getActionPath = (action: string) => {
   const paths: Record<string, string> = {
     'walk': '/services/walkers',
     'vaccine': '/medical-records',
-    'social': '/shared-walks',
+    'social': '/feed',
     'adopt': '/adoption',
     'explore': '/maps',
     'post': '/feed',

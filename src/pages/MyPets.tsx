@@ -148,7 +148,7 @@ const MyPets = () => {
           </div>
           <Button
             onClick={() => navigate(LINKS.addPet())}
-            className="bg-warm-gradient hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:scale-105"
+            className="bg-emerald-600 hover:bg-emerald-700 transition-all shadow-lg hover:shadow-xl hover:scale-105"
           >
             <Plus className="mr-2 h-5 w-5" />
             Agregar Mascota
@@ -158,18 +158,16 @@ const MyPets = () => {
         {pets.length === 0 ? (
           <Card className="animate-scale-in">
             <CardContent className="flex flex-col items-center justify-center py-16 text-center">
-              <Heart className="h-16 w-16 text-primary/40 mb-4" />
+              <Heart className="h-16 w-16 text-emerald-500/40 mb-4" />
               <h3 className="text-xl font-semibold mb-2">
                 Agrega tu primera mascota
               </h3>
-              <p className="text-muted-foreground mb-2 max-w-md">
-                Crea el perfil de tu compañero peludo, gestiona su salud y conecta con otros dueños.
-              </p>
-              <p className="text-sm text-primary font-medium mb-6">
-                🎮 Gana recordatorios automáticos de salud al registrar tu mascota
+              <p className="text-muted-foreground mb-6 max-w-md">
+                Crea el perfil de tu mascota para llevar su ficha clínica, recibir recordatorios automáticos y reservar con veterinarios.
               </p>
               <Button
                 onClick={() => navigate(LINKS.addPet())}
+                className="bg-emerald-600 hover:bg-emerald-700"
               >
                 <Plus className="mr-2 h-5 w-5" />
                 Agregar Mi Primera Mascota

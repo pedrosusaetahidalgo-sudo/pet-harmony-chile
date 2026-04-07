@@ -363,7 +363,7 @@ const PawGame = () => {
   const quickActions = [
     { title: "Pasear", icon: Dog, href: "/services/walkers", color: "from-blue-500 to-cyan-500", points: "+15 pts" },
     { title: "Vacunar", icon: Syringe, href: "/medical-records", color: "from-emerald-500 to-teal-500", points: "+50 pts" },
-    { title: "Socializar", icon: Users, href: "/shared-walks", color: "from-purple-500 to-pink-500", points: "+20 pts" },
+    { title: "Socializar", icon: Users, href: "/feed", color: "from-purple-500 to-pink-500", points: "+20 pts" },
     { title: "Adoptar", icon: Heart, href: "/adoption", color: "from-rose-500 to-red-500", points: "+100 pts" },
     { title: "Explorar", icon: MapPin, href: "/maps", color: "from-orange-500 to-amber-500", points: "+10 pts" },
     { title: "Publicar", icon: Camera, href: "/feed", color: "from-indigo-500 to-violet-500", points: "+5 pts" },

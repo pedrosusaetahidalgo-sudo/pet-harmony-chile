@@ -7,6 +7,7 @@ import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";
 import { useStartConversation } from "@/hooks/useStartConversation";
+import { LINKS } from "@/lib/links";
 
 interface AdoptionDetailCardProps {
   post: any;
@@ -24,7 +25,7 @@ const AdoptionDetailCard = ({ post, compact = false }: AdoptionDetailCardProps) 
   };
 
   const handleViewDetails = () => {
-    navigate("/adoption");
+    navigate(LINKS.adoption());
   };
 
   const handleShare = () => {

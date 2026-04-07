@@ -8,6 +8,7 @@ import {
 } from "@/lib/icons";
 import { useNavigate } from "react-router-dom";
 import { useStartConversation } from "@/hooks/useStartConversation";
+import { LINKS } from "@/lib/links";
 import { SERVICE_TYPE_LABELS, SERVICE_TYPE_ICONS, type ServiceProvider } from "@/hooks/useServiceProviders";
 import { calculateDistance } from "@/lib/distance";
 
@@ -43,13 +44,13 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
 
   const handleViewDetails = () => {
     if (type === "service") {
-      navigate(`/user/${data.user_id}`);
+      navigate(LINKS.userProfile(data.user_id));
     } else if (type === "lost") {
-      navigate("/lost-pets");
+      navigate(LINKS.maps());
     } else if (type === "adoption") {
-      navigate("/adoption");
+      navigate(LINKS.adoption());
     } else if (type === "shelter") {
-      navigate("/adoption");
+      navigate(LINKS.adoption());
     }
     onClose?.();
   };

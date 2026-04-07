@@ -2,13 +2,14 @@ import { Button } from "@/components/ui/button";
 import { Heart, Stethoscope } from "@/lib/icons";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { LINKS } from "@/lib/links";
 
 const Hero = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const handlePrimary = () => navigate(user ? "/home" : "/auth");
-  const handleSecondary = () => navigate("/auth");
+  const handlePrimary = () => navigate(user ? LINKS.home() : LINKS.auth());
+  const handleSecondary = () => navigate(LINKS.auth());
 
   return (
     <section className="min-h-[calc(100dvh-4rem)] flex flex-col items-center justify-center px-4 py-6 bg-hero-gradient">
@@ -54,7 +55,7 @@ const Hero = () => {
             </div>
             <Button
               className="h-12 text-base font-bold w-full bg-gradient-to-r from-amber-400 via-orange-400 to-pink-500 hover:opacity-90 text-white shadow-xl border-2 border-amber-300 transition-all"
-              onClick={() => navigate("/registro-veterinario")}
+              onClick={() => navigate(LINKS.registroVeterinario())}
             >
               <Stethoscope className="h-5 w-5 mr-2" />
               Soy veterinario · Crear perfil

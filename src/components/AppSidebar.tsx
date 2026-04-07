@@ -1,5 +1,6 @@
 import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck, Crown, UserCog, LayoutDashboard, Home as HomeIcon, FileText, Search } from "@/lib/icons";
 import { isFeatureEnabled } from "@/lib/featureFlags";
+import { LINKS } from "@/lib/links";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
@@ -102,7 +103,7 @@ export function AppSidebar() {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate("/auth");
+    navigate(LINKS.auth());
   };
 
   const handleNavigate = (url: string) => {

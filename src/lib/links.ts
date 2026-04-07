@@ -73,6 +73,15 @@ export const LINKS = {
   maps: () => '/maps',
   paraVeterinarios: () => '/para-veterinarios',
   registroVeterinario: () => '/registro-veterinario',
+  auth: () => '/auth',
+  terms: () => '/terms',
+  privacy: () => '/privacy',
+  pawGame: () => '/paw-game',
+  settings: () => '/settings',
+  profile: () => '/profile',
+  userProfile: (userId: string) => `/user/${userId}`,
+  /** Servicio unificado: /services/walkers, /services/vets, /services/sitters, /services/trainers */
+  services: (type: 'walkers' | 'vets' | 'sitters' | 'trainers') => `/services/${type}`,
 } as const;
 
 function slugify(value: string): string {
