@@ -145,7 +145,7 @@ export default function DirectorioVets() {
             <Stethoscope className="h-12 w-12 mx-auto text-purple-300 mb-3" />
             <h3 className="font-semibold text-lg mb-1">Sin resultados</h3>
             <p className="text-muted-foreground text-sm">
-              Probá ajustar los filtros o buscar en otra comuna.
+              Prueba ajustar los filtros o busca en otra comuna.
             </p>
           </Card>
         ) : (

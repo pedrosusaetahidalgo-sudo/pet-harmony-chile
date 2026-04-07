@@ -1,4 +1,4 @@
-import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck, Crown } from "lucide-react";
+import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck, Crown, UserCog, LayoutDashboard } from "lucide-react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
@@ -85,6 +85,23 @@ export function AppSidebar() {
     enabled: !!user?.id,
   });
   const hasPets = (userPets?.length ?? 0) > 0;
+
+  // ¿El usuario es proveedor de servicios? (vet, paseador, etc.)
+  const { data: providerRow } = useQuery({
+    queryKey: ["user-is-provider", user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data } = await supabase
+        .from("service_providers")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user?.id,
+    staleTime: 5 * 60 * 1000,
+  });
+  const isProvider = !!providerRow;
 
   const handleSignOut = async () => {
     await signOut();
@@ -207,6 +224,39 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {isProvider && (
+          <>
+            <Separator className="mx-2 my-1" />
+            <SidebarGroup className="py-1">
+              <SidebarGroupLabel className="text-[10px] px-3 mb-0.5">Profesional</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu className="space-y-0">
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      isActive={isActive("/provider/dashboard")}
+                      onClick={() => handleNavigate("/provider/dashboard")}
+                      className="h-8 text-xs rounded-md"
+                    >
+                      <LayoutDashboard className="h-3.5 w-3.5 flex-shrink-0" />
+                      <span>Mi panel</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      isActive={isActive("/provider/profile-edit")}
+                      onClick={() => handleNavigate("/provider/profile-edit")}
+                      className="h-8 text-xs rounded-md"
+                    >
+                      <UserCog className="h-3.5 w-3.5 flex-shrink-0" />
+                      <span>Mi perfil pro</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </>
+        )}
 
         {isAdmin && (
           <>

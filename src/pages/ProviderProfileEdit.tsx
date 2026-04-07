@@ -149,7 +149,7 @@ export default function ProviderProfileEdit() {
           </Button>
           <h1 className="text-2xl font-bold">Mi perfil profesional</h1>
           <p className="text-muted-foreground text-sm">
-            Completá tu información para aparecer en el directorio público.
+            Completa tu información para aparecer en el directorio público.
           </p>
         </div>
         {provider?.slug && (
@@ -180,9 +180,9 @@ export default function ProviderProfileEdit() {
           )}
           {!canBeVisible && (
             <Alert className="mt-3">
-              <AlertTitle className="text-sm">Necesitás {REQUIRED_FOR_DIRECTORY_SCORE}% para aparecer en el directorio</AlertTitle>
+              <AlertTitle className="text-sm">Necesitas {REQUIRED_FOR_DIRECTORY_SCORE}% para aparecer en el directorio</AlertTitle>
               <AlertDescription className="text-xs">
-                Completá los campos faltantes y luego activá "Aparecer en el directorio público".
+                Completa los campos faltantes y luego activa "Aparecer en el directorio público".
               </AlertDescription>
             </Alert>
           )}
@@ -241,7 +241,7 @@ export default function ProviderProfileEdit() {
               id="bio"
               value={form.bio}
               onChange={(e) => update('bio', e.target.value)}
-              placeholder="Contá tu experiencia, enfoque y qué te diferencia…"
+              placeholder="Cuéntanos tu experiencia, enfoque y qué te diferencia…"
               rows={4}
               maxLength={500}
             />
@@ -276,7 +276,7 @@ export default function ProviderProfileEdit() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">2. Especialidades</CardTitle>
-          <CardDescription>Elegí al menos 1.</CardDescription>
+          <CardDescription>Selecciona al menos 1.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2">
@@ -305,13 +305,13 @@ export default function ProviderProfileEdit() {
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">3. Zonas de atención</CardTitle>
-          <CardDescription>Comunas donde atendés (al menos 1).</CardDescription>
+          <CardDescription>Comunas donde atiendes (al menos 1).</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
             <Label htmlFor="commune">Comuna base</Label>
             <Select value={form.commune ?? ''} onValueChange={(v) => update('commune', v || null)}>
-              <SelectTrigger><SelectValue placeholder="Elegí tu comuna principal" /></SelectTrigger>
+              <SelectTrigger><SelectValue placeholder="Elige tu comuna principal" /></SelectTrigger>
               <SelectContent>
                 {SANTIAGO_COMUNAS.map((c) => (
                   <SelectItem key={c} value={c}>{c}</SelectItem>
@@ -321,7 +321,7 @@ export default function ProviderProfileEdit() {
           </div>
 
           <div>
-            <Label className="mb-2 block">Comunas que atendés</Label>
+            <Label className="mb-2 block">Comunas que atiendes</Label>
             <div className="flex flex-wrap gap-2">
               {SANTIAGO_COMUNAS.map((c) => {
                 const active = form.service_areas.includes(c);
@@ -401,7 +401,7 @@ export default function ProviderProfileEdit() {
         <Card className="shadow-lg border-purple-200">
           <CardContent className="py-3 flex items-center justify-between gap-3">
             <p className="text-sm text-muted-foreground hidden md:block">
-              {upsert.isPending ? 'Guardando…' : 'Recordá guardar tus cambios'}
+              {upsert.isPending ? 'Guardando…' : 'Recuerda guardar tus cambios'}
             </p>
             <Button onClick={handleSave} disabled={upsert.isPending} className="ml-auto">
               {upsert.isPending ? <Loader2 className="h-4 w-4 mr-1 animate-spin" /> : <Save className="h-4 w-4 mr-1" />}

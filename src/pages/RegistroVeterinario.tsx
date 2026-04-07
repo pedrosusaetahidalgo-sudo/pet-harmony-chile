@@ -214,7 +214,7 @@ export default function RegistroVeterinario() {
 
         {step === 0 && (
           <p className="text-center text-sm text-muted-foreground mt-4">
-            ¿Ya tenés cuenta?{' '}
+            ¿Ya tienes cuenta?{' '}
             <Link to="/auth" className="text-purple-700 font-medium hover:underline">
               Iniciar sesión
             </Link>
@@ -243,27 +243,27 @@ function StepType({
       value: 'individual',
       icon: Stethoscope,
       title: 'Veterinario individual',
-      desc: 'Atendés en consulta propia o trabajás solo.',
+      desc: 'Atiendes en consulta propia o trabajas de manera independiente.',
     },
     {
       value: 'home_visit',
       icon: HomeIcon,
       title: 'Atención a domicilio',
-      desc: 'Visitás a las mascotas en sus casas.',
+      desc: 'Visitas a las mascotas en sus hogares.',
     },
     {
       value: 'clinic',
       icon: Building2,
       title: 'Clínica veterinaria',
-      desc: 'Tenés un local con varios profesionales.',
+      desc: 'Tienes un local con varios profesionales.',
     },
   ];
 
   return (
     <div className="space-y-4">
       <div className="text-center mb-2">
-        <h1 className="text-2xl font-bold mb-1">¿Qué tipo de profesional sos?</h1>
-        <p className="text-sm text-muted-foreground">Elegí el que mejor te describe.</p>
+        <h1 className="text-2xl font-bold mb-1">¿Qué tipo de profesional eres?</h1>
+        <p className="text-sm text-muted-foreground">Elige el que mejor te describe.</p>
       </div>
 
       {options.map((opt) => {
@@ -387,7 +387,7 @@ function StepProfile({
       <div className="text-center mb-2">
         <h1 className="text-2xl font-bold mb-1">Construí tu perfil</h1>
         <p className="text-sm text-muted-foreground">
-          Esto es lo que verán tus futuros clientes.
+          Esto es lo que verán tus futuros pacientes.
         </p>
       </div>
 
@@ -397,7 +397,7 @@ function StepProfile({
           id="bio"
           value={form.bio}
           onChange={(e) => update('bio', e.target.value)}
-          placeholder="Contá tu experiencia, enfoque y qué te diferencia…"
+          placeholder="Cuéntanos tu experiencia, enfoque y qué te diferencia…"
           rows={4}
           maxLength={500}
         />
@@ -433,7 +433,7 @@ function StepProfile({
         <Label htmlFor="commune">Comuna base *</Label>
         <Select value={form.commune} onValueChange={(v) => update('commune', v)}>
           <SelectTrigger>
-            <SelectValue placeholder="Elegí tu comuna principal" />
+            <SelectValue placeholder="Elige tu comuna principal" />
           </SelectTrigger>
           <SelectContent>
             {SANTIAGO_COMUNAS.map((c) => (
@@ -506,7 +506,7 @@ function StepDone({ slug }: { slug?: string }) {
       </div>
       <h1 className="text-2xl font-bold">¡Bienvenido a Paw Friend!</h1>
       <p className="text-muted-foreground">
-        Tu cuenta fue creada. Completá tu perfil al 80% para aparecer en el directorio público.
+        Tu cuenta fue creada con éxito. Completa tu perfil al 80% para aparecer en el directorio público.
       </p>
 
       {profileUrl && (

@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { UserCog } from "lucide-react";
+import { ProviderDirectoryCard } from "./ProviderDirectoryCard";
 import { 
   TrendingUp, 
   DollarSign, 
@@ -173,6 +174,9 @@ const ProviderDashboard = () => {
           </Button>
         </Link>
       </div>
+
+      {/* Tarjeta del directorio público */}
+      <ProviderDirectoryCard />
 
       {/* Balance Cards */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

@@ -512,7 +512,7 @@ const Index = () => {
                 ¿Eres veterinario o veterinaria?
               </h2>
               <p className="text-lg text-white/95 leading-relaxed">
-                Construí tu reputación online, recibí reservas y hacé crecer tu consulta con Paw Friend.
+                Construye tu reputación online, recibe reservas y haz crecer tu consulta con Paw Friend.
               </p>
               <ul className="space-y-2 text-white/95">
                 <li className="flex items-center gap-2">✓ Perfil público profesional con tu propia URL</li>
