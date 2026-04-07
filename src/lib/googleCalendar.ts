@@ -3,7 +3,11 @@
  * Syncs provider availability with Google Calendar
  */
 
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+// NOTE: Google Calendar OAuth no implementado completamente. La integración
+// requiere su propia API key de Calendar API (NO la de Maps que se eliminó
+// en la migración a Leaflet). Mientras no esté implementado, las funciones
+// devuelven false / null y todas las features de Calendar quedan inertes.
+const GOOGLE_CALENDAR_API_KEY: string | undefined = undefined;
 
 export interface CalendarEvent {
   id?: string;
@@ -43,7 +47,7 @@ export class GoogleCalendarSync {
    * Check if Google Calendar is available
    */
   isAvailable(): boolean {
-    return !!this.accessToken && !!GOOGLE_MAPS_API_KEY;
+    return !!this.accessToken && !!GOOGLE_CALENDAR_API_KEY;
   }
 
   /**
@@ -60,7 +64,7 @@ export class GoogleCalendarSync {
 
     try {
       const response = await fetch(
-        `https://www.googleapis.com/calendar/v3/freeBusy?key=${GOOGLE_MAPS_API_KEY}`,
+        `https://www.googleapis.com/calendar/v3/freeBusy?key=${GOOGLE_CALENDAR_API_KEY}`,
         {
           method: 'POST',
           headers: {
@@ -98,7 +102,7 @@ export class GoogleCalendarSync {
 
     try {
       const response = await fetch(
-        `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?key=${GOOGLE_MAPS_API_KEY}`,
+        `https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events?key=${GOOGLE_CALENDAR_API_KEY}`,
         {
           method: 'POST',
           headers: {

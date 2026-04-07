@@ -13,24 +13,11 @@ import {
   Loader2, RefreshCw, Map as MapIcon, List, Navigation,
   ExternalLink, MessageCircle
 } from "@/lib/icons";
-import GoogleMapsLoader from "@/components/GoogleMapsLoader";
-import { GoogleMap, Marker, InfoWindow, MarkerClusterer } from "@react-google-maps/api";
+import { MapContainer, TileLayer, Marker, Popup, CircleMarker } from "react-leaflet";
+import { shelterIcon, OSM_TILE_URL, OSM_ATTRIBUTION } from "@/lib/leafletConfig";
 import ShelterDetailCard from "@/components/maps/ShelterDetailCard";
 
-const mapContainerStyle = {
-  width: "100%",
-  height: "400px",
-};
-
-const defaultCenter = { lat: -33.4489, lng: -70.6693 };
-
-const mapOptions = {
-  disableDefaultUI: false,
-  zoomControl: true,
-  mapTypeControl: false,
-  streetViewControl: false,
-  fullscreenControl: true,
-};
+const defaultCenter: [number, number] = [-33.4489, -70.6693];
 
 const typeLabels: Record<string, string> = {
   ong: "ONG",
@@ -98,37 +85,27 @@ const AdoptionSheltersList = () => {
     return filtered;
   }, [shelters, selectedType, selectedAnimal, selectedCommune, searchQuery, userLocation, filterShelters]);
 
-  // Map markers
+  // Map markers (Leaflet)
   const markers = useMemo(() => {
     return filteredShelters
       .filter((s) => s.latitude && s.longitude)
       .map((shelter) => ({
         id: shelter.id,
-        position: { lat: shelter.latitude!, lng: shelter.longitude! },
+        position: [shelter.latitude as number, shelter.longitude as number] as [number, number],
         data: shelter,
       }));
   }, [filteredShelters]);
 
   // Map center
-  const mapCenter = useMemo(() => {
-    if (userLocation) return userLocation;
+  const mapCenter: [number, number] = useMemo(() => {
+    if (userLocation) return [userLocation.lat, userLocation.lng];
     if (markers.length > 0) {
-      const avgLat = markers.reduce((sum, m) => sum + m.position.lat, 0) / markers.length;
-      const avgLng = markers.reduce((sum, m) => sum + m.position.lng, 0) / markers.length;
-      return { lat: avgLat, lng: avgLng };
+      const avgLat = markers.reduce((sum, m) => sum + m.position[0], 0) / markers.length;
+      const avgLng = markers.reduce((sum, m) => sum + m.position[1], 0) / markers.length;
+      return [avgLat, avgLng];
     }
     return defaultCenter;
   }, [userLocation, markers]);
-
-  const getMarkerIcon = (type: string) => ({
-    path: "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z",
-    fillColor: typeColors[type] || "#8b5cf6",
-    fillOpacity: 1,
-    strokeWeight: 2,
-    strokeColor: "#ffffff",
-    scale: 1.5,
-    anchor: new google.maps.Point(12, 22),
-  });
 
   const handleGenerateShelters = async () => {
     await generateShelters.mutateAsync(15);
@@ -277,61 +254,37 @@ const AdoptionSheltersList = () => {
       {/* Map View */}
       {viewMode === "map" && (
         <div className="relative">
-          <GoogleMapsLoader>
-            <GoogleMap
-              mapContainerStyle={mapContainerStyle}
+          <div style={{ width: "100%", height: "400px" }} className="rounded-lg overflow-hidden">
+            <MapContainer
               center={mapCenter}
               zoom={11}
-              options={mapOptions}
+              scrollWheelZoom={true}
+              style={{ width: "100%", height: "100%" }}
             >
-              <MarkerClusterer
-                options={{
-                  imagePath: "https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m",
-                  gridSize: 60,
-                  minimumClusterSize: 2,
-                }}
-              >
-                {(clusterer) => (
-                  <>
-                    {markers.map((marker) => (
-                      <Marker
-                        key={marker.id}
-                        position={marker.position}
-                        icon={getMarkerIcon(marker.data.type)}
-                        onClick={() => handleShelterClick(marker.data)}
-                        clusterer={clusterer}
-                      />
-                    ))}
-                  </>
-                )}
-              </MarkerClusterer>
-
-              {userLocation && (
+              <TileLayer attribution={OSM_ATTRIBUTION} url={OSM_TILE_URL} />
+              {markers.map((marker) => (
                 <Marker
-                  position={userLocation}
-                  icon={{
-                    path: google.maps.SymbolPath.CIRCLE,
-                    fillColor: "#4F46E5",
-                    fillOpacity: 1,
-                    strokeWeight: 3,
-                    strokeColor: "#ffffff",
-                    scale: 8,
-                  }}
+                  key={marker.id}
+                  position={marker.position}
+                  icon={shelterIcon}
+                  eventHandlers={{ click: () => handleShelterClick(marker.data) }}
+                >
+                  <Popup>
+                    <div className="max-w-[280px]">
+                      <ShelterDetailCard shelter={marker.data} compact />
+                    </div>
+                  </Popup>
+                </Marker>
+              ))}
+              {userLocation && (
+                <CircleMarker
+                  center={[userLocation.lat, userLocation.lng]}
+                  radius={8}
+                  pathOptions={{ color: "#fff", fillColor: "#4F46E5", fillOpacity: 1, weight: 3 }}
                 />
               )}
-
-              {selectedShelter && !showDetailDialog && selectedShelter.latitude && selectedShelter.longitude && (
-                <InfoWindow
-                  position={{ lat: selectedShelter.latitude, lng: selectedShelter.longitude }}
-                  onCloseClick={() => setSelectedShelter(null)}
-                >
-                  <div className="max-w-[280px] p-1">
-                    <ShelterDetailCard shelter={selectedShelter} compact />
-                  </div>
-                </InfoWindow>
-              )}
-            </GoogleMap>
-          </GoogleMapsLoader>
+            </MapContainer>
+          </div>
 
           {/* Legend */}
           <Card className="absolute bottom-4 left-4 shadow-lg">

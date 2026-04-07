@@ -12,9 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "@/lib/icons";
-import PlacesAutocomplete from "./PlacesAutocomplete";
 import DateTimePicker from "./DateTimePicker";
-import GoogleMapsLoader from "./GoogleMapsLoader";
+import { COMUNAS_SANTIAGO, getComunaCoords } from "@/lib/locations";
 import { format } from "date-fns";
 
 const formSchema = z.object({
@@ -58,11 +57,14 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
 
   const reportType = watch("report_type");
 
-  const handlePlaceSelect = (place: { address: string; lat: number; lng: number }) => {
-    setLocationAddress(place.address);
-    setValue("last_seen_location", place.address);
-    setValue("latitude", place.lat);
-    setValue("longitude", place.lng);
+  const handleComunaSelect = (comuna: string) => {
+    setLocationAddress(comuna);
+    setValue("last_seen_location", comuna);
+    const coords = getComunaCoords(comuna);
+    if (coords) {
+      setValue("latitude", coords[0]);
+      setValue("longitude", coords[1]);
+    }
   };
 
   const handleDateChange = (date: Date | undefined) => {
@@ -192,20 +194,20 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
       </div>
 
       <div className="space-y-2">
-        <Label>Última Ubicación Vista</Label>
-        <GoogleMapsLoader fallback={
-          <Input id="last_seen_location" {...register("last_seen_location")} placeholder="Dirección o lugar específico" aria-label="Última ubicación vista" />
-        }>
-          <PlacesAutocomplete
-            value={locationAddress}
-            onChange={(value) => {
-              setLocationAddress(value);
-              setValue("last_seen_location", value);
-            }}
-            onPlaceSelect={handlePlaceSelect}
-            placeholder="Buscar dirección..."
-          />
-        </GoogleMapsLoader>
+        <Label htmlFor="last_seen_comuna">Última Ubicación Vista (Comuna)</Label>
+        <Select value={locationAddress} onValueChange={handleComunaSelect}>
+          <SelectTrigger id="last_seen_comuna">
+            <SelectValue placeholder="Selecciona una comuna" />
+          </SelectTrigger>
+          <SelectContent>
+            {COMUNAS_SANTIAGO.map((c) => (
+              <SelectItem key={c} value={c}>{c}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <p className="text-xs text-muted-foreground">
+          Si querés agregar más detalle de la dirección, ponelo en la descripción.
+        </p>
         {errors.last_seen_location && <p className="text-xs text-destructive">{errors.last_seen_location.message}</p>}
       </div>
 

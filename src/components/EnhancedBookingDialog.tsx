@@ -10,7 +10,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
-import { PlacesAutocomplete } from "@/components/PlacesAutocomplete";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { COMUNAS_SANTIAGO, getComunaCoords } from "@/lib/locations";
 import { supabase } from "@/integrations/supabase/client";
 import { 
   CalendarCheck, 
@@ -533,19 +534,24 @@ export const EnhancedBookingDialog = ({
                     </div>
                   </Card>
                 ) : (
-                  // For walkers, vets, trainers: user provides their address (pickup/visit at user's location)
-                  <PlacesAutocomplete
+                  // For walkers, vets, trainers: el usuario elige su comuna
+                  <Select
                     value={address}
-                    onChange={setAddress}
-                    onPlaceSelect={(place) => {
-                      setAddress(place.address);
-                      setCoordinates({
-                        lat: place.lat,
-                        lng: place.lng
-                      });
+                    onValueChange={(comuna) => {
+                      setAddress(comuna);
+                      const coords = getComunaCoords(comuna);
+                      if (coords) setCoordinates({ lat: coords[0], lng: coords[1] });
                     }}
-                    placeholder={locationLogic.placeholder}
-                  />
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona tu comuna" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {COMUNAS_SANTIAGO.map((c) => (
+                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 )}
               </div>
 
