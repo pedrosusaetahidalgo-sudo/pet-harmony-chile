@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Heart } from "lucide-react";
+import { Heart, Stethoscope } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -44,6 +44,22 @@ const Hero = () => {
           >
             {user ? "Explorar" : "Ya tengo cuenta"}
           </Button>
+
+          {/* CTA destacado para veterinarios */}
+          <div className="relative w-full max-w-sm mt-2">
+            <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-10">
+              <span className="inline-block bg-amber-400 text-purple-900 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-md">
+                ¿Eres vet?
+              </span>
+            </div>
+            <Button
+              className="h-12 text-base font-bold w-full bg-gradient-to-r from-amber-400 via-orange-400 to-pink-500 hover:opacity-90 text-white shadow-xl border-2 border-amber-300 transition-all"
+              onClick={() => navigate("/veterinarios")}
+            >
+              <Stethoscope className="h-5 w-5 mr-2" />
+              Soy veterinario · Crear perfil
+            </Button>
+          </div>
         </div>
       </div>
 

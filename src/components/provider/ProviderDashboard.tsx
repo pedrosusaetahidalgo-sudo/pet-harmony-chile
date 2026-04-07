@@ -1,8 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { UserCog } from "lucide-react";
 import { 
   TrendingUp, 
   DollarSign, 
@@ -157,11 +160,18 @@ const ProviderDashboard = () => {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold">Dashboard de Proveedor</h2>
-        <p className="text-muted-foreground">
-          Resumen de tus ingresos y reservas
-        </p>
+      <div className="flex items-start justify-between gap-3 flex-wrap">
+        <div>
+          <h2 className="text-2xl font-bold">Dashboard de Proveedor</h2>
+          <p className="text-muted-foreground">
+            Resumen de tus ingresos y reservas
+          </p>
+        </div>
+        <Link to="/provider/profile-edit">
+          <Button variant="outline">
+            <UserCog className="h-4 w-4 mr-1" /> Editar mi perfil público
+          </Button>
+        </Link>
       </div>
 
       {/* Balance Cards */}

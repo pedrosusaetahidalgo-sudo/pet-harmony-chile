@@ -1,0 +1,293 @@
+import { useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { MapPin, Star, Stethoscope, Share2, MessageSquare, Calendar } from 'lucide-react';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
+import {
+  useDirectoryVetBySlug,
+  useVetReviews,
+  trackProviderView,
+} from '@/hooks/useDirectoryVets';
+import { setSeoTags, injectJsonLd, formatCLP } from '@/lib/vetDirectory';
+import { PublicHeader, PublicFooter } from './DirectorioVets';
+
+export default function PerfilVetPublico() {
+  const { slug } = useParams<{ slug: string }>();
+  const { data: vet, isLoading } = useDirectoryVetBySlug(slug);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const v = vet as any;
+  const { data: reviews } = useVetReviews(v?.id);
+
+  useEffect(() => {
+    if (slug) trackProviderView(slug);
+  }, [slug]);
+
+  useEffect(() => {
+    if (!v) return;
+    const rating = Number(v.avg_rating ?? 0).toFixed(1);
+    const areas: string[] = v.service_areas ?? [];
+    const description = `★ ${rating} (${v.total_reviews ?? 0} reseñas) · ${
+      v.price_from ? `Consultas desde ${formatCLP(v.price_from)} · ` : ''
+    }${areas.length > 0 ? `Atiende ${areas.slice(0, 3).join(', ')}` : ''}`;
+
+    setSeoTags({
+      title: `${v.display_name} | Veterinario en Paw Friend`,
+      description,
+      canonical: `https://pawfriend.cl/veterinarios/${v.slug}`,
+      ogImage: v.avatar_url ?? undefined,
+    });
+
+    injectJsonLd('vet-jsonld', {
+      '@context': 'https://schema.org',
+      '@type': 'Veterinarian',
+      name: v.display_name,
+      image: v.avatar_url ?? undefined,
+      description: v.bio ?? undefined,
+      telephone: v.public_phone ?? undefined,
+      email: v.public_email ?? undefined,
+      address: v.commune
+        ? { '@type': 'PostalAddress', addressLocality: v.commune, addressCountry: 'CL' }
+        : undefined,
+      aggregateRating:
+        Number(v.total_reviews ?? 0) > 0
+          ? {
+              '@type': 'AggregateRating',
+              ratingValue: rating,
+              reviewCount: String(v.total_reviews ?? 0),
+            }
+          : undefined,
+    });
+  }, [v]);
+
+  const handleShare = async () => {
+    const url = `https://pawfriend.cl/veterinarios/${v?.slug}`;
+    const text = `Mira el perfil de ${v?.display_name} en Paw Friend 🐾`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: v?.display_name, text, url });
+        return;
+      } catch {
+        /* user cancelled */
+      }
+    }
+    await navigator.clipboard.writeText(url);
+    toast.success('Link copiado al portapapeles');
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-purple-50">
+        <PublicHeader />
+        <main className="container mx-auto px-4 py-8 max-w-4xl space-y-4">
+          <Skeleton className="h-48 w-full" />
+          <Skeleton className="h-32 w-full" />
+        </main>
+      </div>
+    );
+  }
+
+  if (!v) {
+    return (
+      <div className="min-h-screen bg-purple-50">
+        <PublicHeader />
+        <main className="container mx-auto px-4 py-16 max-w-md text-center">
+          <h1 className="text-2xl font-bold mb-2">Veterinario no encontrado</h1>
+          <p className="text-muted-foreground mb-4">
+            Este perfil no existe o no está disponible públicamente.
+          </p>
+          <Link to="/veterinarios">
+            <Button>Ver directorio</Button>
+          </Link>
+        </main>
+      </div>
+    );
+  }
+
+  const rating = Number(v.avg_rating ?? 0);
+  const reviewCount = Number(v.total_reviews ?? 0);
+  const specialties: string[] = v.specialties ?? [];
+  const areas: string[] = v.service_areas ?? [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const visibleReviews: any[] = reviews ?? [];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+      <PublicHeader />
+
+      <main className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
+        {/* Hero */}
+        <Card className="p-6 md:p-8">
+          <div className="flex flex-col md:flex-row gap-6">
+            {v.avatar_url ? (
+              <img
+                src={v.avatar_url}
+                alt={v.display_name}
+                className="w-32 h-32 rounded-full object-cover border-4 border-purple-100 mx-auto md:mx-0"
+              />
+            ) : (
+              <div className="w-32 h-32 rounded-full bg-purple-100 flex items-center justify-center mx-auto md:mx-0">
+                <Stethoscope className="h-12 w-12 text-purple-500" />
+              </div>
+            )}
+
+            <div className="flex-1 text-center md:text-left">
+              <h1 className="text-2xl md:text-3xl font-bold text-purple-900">
+                {v.display_name}
+                {v.is_verified && (
+                  <span className="ml-2 text-blue-500 text-base align-middle">
+                    ✓ Verificado
+                  </span>
+                )}
+              </h1>
+              <p className="text-muted-foreground mb-2">
+                {v.provider_type === 'home_visit'
+                  ? 'Veterinario a domicilio'
+                  : v.provider_type === 'clinic'
+                  ? 'Clínica veterinaria'
+                  : 'Médico Veterinario'}
+                {v.license_number && ` · Reg. Colmevet ${v.license_number}`}
+              </p>
+
+              {reviewCount > 0 && (
+                <div className="flex items-center justify-center md:justify-start gap-1 mb-3">
+                  <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                  <strong className="text-lg">{rating.toFixed(1)}</strong>
+                  <span className="text-muted-foreground">({reviewCount} reseñas)</span>
+                </div>
+              )}
+
+              {areas.length > 0 && (
+                <div className="flex items-start justify-center md:justify-start gap-1 text-sm mb-2">
+                  <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0 text-purple-600" />
+                  <span>
+                    <strong>Atiende en:</strong> {areas.join(', ')}
+                  </span>
+                </div>
+              )}
+
+              {v.price_from && (
+                <p className="text-sm mb-4">
+                  💰 Consultas desde{' '}
+                  <strong className="text-purple-700">{formatCLP(v.price_from)}</strong>
+                </p>
+              )}
+
+              <div className="flex flex-wrap gap-2 justify-center md:justify-start">
+                <Link to="/auth">
+                  <Button>
+                    <Calendar className="h-4 w-4 mr-1" /> Reservar consulta
+                  </Button>
+                </Link>
+                <Link to="/auth">
+                  <Button variant="outline">
+                    <MessageSquare className="h-4 w-4 mr-1" /> Mensaje
+                  </Button>
+                </Link>
+                <Button variant="outline" onClick={handleShare}>
+                  <Share2 className="h-4 w-4 mr-1" /> Compartir
+                </Button>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Bio */}
+        {v.bio && (
+          <Card className="p-6">
+            <h2 className="font-semibold text-lg mb-2">Sobre mí</h2>
+            <p className="text-muted-foreground whitespace-pre-line">{v.bio}</p>
+            {v.experience_years && (
+              <p className="text-sm mt-3 text-purple-700">
+                <strong>{v.experience_years}</strong> años de experiencia
+              </p>
+            )}
+          </Card>
+        )}
+
+        {/* Specialties */}
+        {specialties.length > 0 && (
+          <Card className="p-6">
+            <h2 className="font-semibold text-lg mb-3">Especialidades</h2>
+            <div className="flex flex-wrap gap-2">
+              {specialties.map((s) => (
+                <Badge key={s} variant="secondary" className="text-sm">
+                  {s}
+                </Badge>
+              ))}
+            </div>
+          </Card>
+        )}
+
+        {/* Reviews */}
+        <Card className="p-6">
+          <h2 className="font-semibold text-lg mb-3">Reseñas de clientes</h2>
+
+          {reviewCount === 0 ? (
+            <p className="text-muted-foreground text-sm">
+              Este veterinario aún no tiene reseñas. ¡Sé el primero en dejar una!
+            </p>
+          ) : (
+            <>
+              <div className="flex items-center gap-2 mb-4">
+                <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
+                <strong className="text-2xl">{rating.toFixed(1)}</strong>
+                <span className="text-muted-foreground">
+                  promedio · {reviewCount} reseñas
+                </span>
+              </div>
+
+              <div className="space-y-4">
+                {visibleReviews.map((r) => (
+                  <div key={r.id} className="border-t pt-4 first:border-t-0 first:pt-0">
+                    <div className="flex items-center gap-1 mb-1">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 ${
+                            i < r.rating
+                              ? 'fill-yellow-400 text-yellow-400'
+                              : 'text-gray-300'
+                          }`}
+                        />
+                      ))}
+                      {r.verification_type === 'invitation' && (
+                        <Badge variant="outline" className="ml-2 text-[10px]">
+                          No verificada por reserva
+                        </Badge>
+                      )}
+                    </div>
+                    {r.title && <p className="font-medium">{r.title}</p>}
+                    {r.comment && (
+                      <p className="text-sm text-muted-foreground">{r.comment}</p>
+                    )}
+                    {r.provider_response && (
+                      <div className="mt-2 ml-4 pl-3 border-l-2 border-purple-200 text-sm">
+                        <strong className="text-purple-700">Respuesta del vet:</strong>{' '}
+                        {r.provider_response}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </Card>
+
+        {/* CTA registro */}
+        <Card className="p-6 bg-purple-50 border-purple-200 text-center">
+          <p className="text-sm mb-3">
+            ¿Eres dueño de mascota? Crea tu cuenta gratis para reservar y dejar reseñas.
+          </p>
+          <Link to="/auth">
+            <Button>Crear cuenta</Button>
+          </Link>
+        </Card>
+      </main>
+
+      <PublicFooter />
+    </div>
+  );
+}

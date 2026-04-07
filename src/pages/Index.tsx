@@ -500,6 +500,54 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Vets CTA Section */}
+      <section className="container px-4 py-16">
+        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-400 via-orange-400 to-pink-500 p-10 md:p-16 shadow-2xl">
+          <div className="relative z-10 grid md:grid-cols-2 gap-8 items-center max-w-5xl mx-auto">
+            <div className="text-white space-y-5">
+              <Badge className="bg-white/25 text-white border-white/40 backdrop-blur-sm">
+                🩺 Para profesionales
+              </Badge>
+              <h2 className="text-3xl md:text-4xl font-bold leading-tight">
+                ¿Eres veterinario o veterinaria?
+              </h2>
+              <p className="text-lg text-white/95 leading-relaxed">
+                Construí tu reputación online, recibí reservas y hacé crecer tu consulta con Paw Friend.
+              </p>
+              <ul className="space-y-2 text-white/95">
+                <li className="flex items-center gap-2">✓ Perfil público profesional con tu propia URL</li>
+                <li className="flex items-center gap-2">✓ Sistema de reseñas verificadas</li>
+                <li className="flex items-center gap-2">✓ Reservas online integradas</li>
+                <li className="flex items-center gap-2">✓ Sin costo de adquisición de clientes</li>
+              </ul>
+              <p className="text-white/90 text-sm pt-2">
+                Desde $9.900/mes · 7 días gratis
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 items-center">
+              <Button
+                size="lg"
+                className="bg-white text-orange-600 hover:bg-white/90 shadow-2xl text-lg px-10 h-14 font-bold w-full md:w-auto"
+                onClick={() => navigate(user ? "/provider/profile-edit" : "/auth")}
+              >
+                <Stethoscope className="h-5 w-5 mr-2" />
+                Crear mi perfil profesional
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-transparent text-white border-white hover:bg-white/10 text-lg px-10 h-14 font-semibold w-full md:w-auto"
+                onClick={() => navigate("/veterinarios")}
+              >
+                Ver veterinarios en Paw Friend
+              </Button>
+            </div>
+          </div>
+          <div className="absolute top-0 right-0 -mt-20 -mr-20 h-80 w-80 rounded-full bg-white/15 blur-3xl" />
+          <div className="absolute bottom-0 left-0 -mb-20 -ml-20 h-80 w-80 rounded-full bg-white/10 blur-3xl" />
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="container px-4 py-20">
         <div className="relative overflow-hidden rounded-3xl bg-warm-gradient p-12 md:p-20 text-center shadow-2xl">
@@ -515,12 +563,20 @@ const Index = () => {
               Todo lo que necesitas para cuidar, conectar y disfrutar con tu mascota en una sola app
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
-              <Button 
-                size="lg" 
+              <Button
+                size="lg"
                 className="bg-white text-primary hover:bg-white/90 shadow-xl text-lg px-10 h-14 font-semibold"
                 onClick={() => navigate(user ? "/feed" : "/auth")}
               >
                 {user ? "Ir a Pet Social" : "Comenzar Gratis"}
+              </Button>
+              <Button
+                size="lg"
+                className="bg-amber-400 text-purple-900 hover:bg-amber-300 shadow-xl text-lg px-10 h-14 font-semibold border-2 border-amber-200 animate-pulse hover:animate-none"
+                onClick={() => navigate("/veterinarios")}
+              >
+                <Stethoscope className="h-5 w-5 mr-2" />
+                Soy veterinario
               </Button>
             </div>
             <p className="text-white/80 text-sm">

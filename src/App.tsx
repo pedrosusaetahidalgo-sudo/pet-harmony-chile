@@ -42,6 +42,9 @@ const Premium = lazy(() => import("./pages/Premium"));
 const ProviderDashboard = lazy(() => import("./components/provider/ProviderDashboard"));
 const PetClinicalRecord = lazy(() => import("./pages/PetClinicalRecord"));
 const ServiceCalendar = lazy(() => import("./pages/ServiceCalendar"));
+const DirectorioVets = lazy(() => import("./pages/DirectorioVets"));
+const PerfilVetPublico = lazy(() => import("./pages/PerfilVetPublico"));
+const ProviderProfileEdit = lazy(() => import("./pages/ProviderProfileEdit"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -100,8 +103,14 @@ const App = () => (
               <Route path="/settings" element={<ProtectedRoute><AppLayout><Settings /></AppLayout></ProtectedRoute>} />
               <Route path="/premium" element={<ProtectedRoute><Premium /></ProtectedRoute>} />
               <Route path="/provider/dashboard" element={<ProtectedRoute><AppLayout><ProviderDashboard /></AppLayout></ProtectedRoute>} />
+              <Route path="/provider/profile-edit" element={<ProtectedRoute><AppLayout><ProviderProfileEdit /></AppLayout></ProtectedRoute>} />
               <Route path="/pet/:petId/clinical" element={<ProtectedRoute><AppLayout><PetClinicalRecord /></AppLayout></ProtectedRoute>} />
               <Route path="/calendar" element={<ProtectedRoute><ServiceCalendar /></ProtectedRoute>} />
+              {/* Directorio público de veterinarios (sin login) */}
+              <Route path="/veterinarios" element={<DirectorioVets />} />
+              <Route path="/veterinarios/comuna/:comuna" element={<DirectorioVets />} />
+              <Route path="/veterinarios/especialidad/:especialidad" element={<DirectorioVets />} />
+              <Route path="/veterinarios/:slug" element={<PerfilVetPublico />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
