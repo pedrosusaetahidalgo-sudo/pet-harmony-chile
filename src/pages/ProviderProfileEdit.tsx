@@ -12,7 +12,6 @@ import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
-import { logger } from "@/lib/logger";
   Select,
   SelectContent,
   SelectItem,
@@ -30,6 +29,7 @@ import {
 } from '@/hooks/useProviderProfile';
 import { useAuth } from '@/hooks/useAuth';
 import { SANTIAGO_COMUNAS, VET_SPECIALTIES } from '@/lib/vetDirectory';
+import { logger } from "@/lib/logger";
 
 const EMPTY: ProviderProfileForm = {
   display_name: '',

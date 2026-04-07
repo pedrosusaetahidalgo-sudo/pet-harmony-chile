@@ -5,7 +5,6 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
-import { logger } from "@/lib/logger";
   Heart, 
   Activity, 
   Shield, 
@@ -20,6 +19,7 @@ import { logger } from "@/lib/logger";
 } from "@/lib/icons";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { logger } from "@/lib/logger";
 
 interface Pet {
   id: string;

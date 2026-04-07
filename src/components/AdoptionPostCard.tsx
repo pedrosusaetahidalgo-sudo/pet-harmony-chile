@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
-import { logger } from "@/lib/logger";
   Dialog,
   DialogContent,
   DialogHeader,
@@ -20,6 +19,7 @@ import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useStartConversation } from "@/hooks/useStartConversation";
 import { useNavigate } from "react-router-dom";
+import { logger } from "@/lib/logger";
 
 interface AdoptionPostCardProps {
   post: any;

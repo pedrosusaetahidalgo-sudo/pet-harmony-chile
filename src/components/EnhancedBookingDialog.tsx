@@ -14,7 +14,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { COMUNAS_SANTIAGO, getComunaCoords } from "@/lib/locations";
 import { supabase } from "@/integrations/supabase/client";
 import { 
-import { logger } from "@/lib/logger";
   CalendarCheck, 
   Clock, 
   MapPin, 
@@ -33,6 +32,7 @@ import { es } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { logger } from "@/lib/logger";
 
 interface Pet {
   id: string;

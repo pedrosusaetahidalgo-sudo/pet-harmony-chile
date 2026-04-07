@@ -10,7 +10,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import { LINKS } from "@/lib/links";
 import {
-import { logger } from "@/lib/logger";
   User,
   Mail,
   Bell,
@@ -24,6 +23,7 @@ import { logger } from "@/lib/logger";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 const Settings = () => {
   const navigate = useNavigate();

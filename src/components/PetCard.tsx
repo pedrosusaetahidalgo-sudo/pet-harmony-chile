@@ -11,7 +11,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useFollows } from "@/hooks/useFollows";
 import { UserPlus, UserCheck, Loader2 } from "@/lib/icons";
 import {
-import { logger } from "@/lib/logger";
   Dialog,
   DialogContent,
   DialogDescription,
@@ -19,6 +18,7 @@ import { logger } from "@/lib/logger";
   DialogTitle,
 } from "@/components/ui/dialog";
 import { PostComments } from "@/components/PostComments";
+import { logger } from "@/lib/logger";
 
 interface PetCardProps {
   postId: string;

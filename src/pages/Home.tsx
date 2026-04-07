@@ -9,7 +9,6 @@ import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { OnboardingTutorial } from "@/components/OnboardingTutorial";
 import { 
-import { logger } from "@/lib/logger";
   PawPrint, 
   Plus, 
   Calendar, 
@@ -43,6 +42,7 @@ import { PartnerAd } from "@/components/PartnerAd";
 import { PetAssistant } from "@/components/ai/PetAssistant";
 import { isFeatureEnabled } from "@/lib/featureFlags";
 import { LINKS } from "@/lib/links";
+import { logger } from "@/lib/logger";
 
 interface Pet {
   id: string;

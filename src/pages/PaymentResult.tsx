@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-import { logger } from "@/lib/logger";
   Loader2,
   CheckCircle,
   XCircle,
@@ -15,6 +14,7 @@ import { logger } from "@/lib/logger";
 } from "@/lib/icons";
 import { AppLayout } from "@/components/AppLayout";
 import { LINKS } from "@/lib/links";
+import { logger } from "@/lib/logger";
 
 /**
  * Página unificada de resultado de pago.

@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import {
-import { logger } from "@/lib/logger";
   Dialog,
   DialogContent,
   DialogHeader,
@@ -24,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Upload, Loader2 } from "@/lib/icons";
+import { logger } from "@/lib/logger";
 
 interface CreateAdoptionPostProps {
   open: boolean;

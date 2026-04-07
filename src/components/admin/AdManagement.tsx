@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-import { describeSupabaseError } from "@/lib/supabaseErrors";
   Select,
   SelectContent,
   SelectItem,
@@ -35,6 +34,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { describeSupabaseError } from "@/lib/supabaseErrors";
 
 const AdManagement = () => {
   const queryClient = useQueryClient();

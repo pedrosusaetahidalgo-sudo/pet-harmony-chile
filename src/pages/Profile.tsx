@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
-import { logger } from "@/lib/logger";
   Settings, 
   Share2, 
   Grid, 
@@ -32,6 +31,7 @@ import PointsWidget from "@/components/PointsWidget";
 import AchievementBadge from "@/components/AchievementBadge";
 import MissionCard from "@/components/MissionCard";
 import { useGamification } from "@/hooks/useGamification";
+import { logger } from "@/lib/logger";
 const dogProfileUrl = "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop&crop=faces";
 const catProfileUrl = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=400&fit=crop&crop=faces";
 

@@ -9,7 +9,6 @@ import { Plus, Edit, Trash2, Heart, FileText } from "@/lib/icons";
 import { LINKS } from "@/lib/links";
 import { useToast } from "@/hooks/use-toast";
 import {
-import { describeSupabaseError } from "@/lib/supabaseErrors";
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -20,6 +19,7 @@ import { describeSupabaseError } from "@/lib/supabaseErrors";
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { BreedTips } from "@/components/BreedTips";
+import { describeSupabaseError } from "@/lib/supabaseErrors";
 
 interface Pet {
   id: string;

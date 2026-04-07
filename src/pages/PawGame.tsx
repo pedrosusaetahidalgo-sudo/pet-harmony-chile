@@ -8,7 +8,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
-import { logger } from "@/lib/logger";
   Trophy, 
   Star, 
   Target, 
@@ -51,6 +50,7 @@ import { PetPawProgress } from "@/components/pawgame/PetPawProgress";
 import { PawShopRewards } from "@/components/pawgame/PawShopRewards";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { logger } from "@/lib/logger";
 
 interface GuardianLevel {
   id: string;

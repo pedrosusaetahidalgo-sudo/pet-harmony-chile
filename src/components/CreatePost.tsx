@@ -10,14 +10,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { useGamification } from "@/hooks/useGamification";
 import { DEFAULT_POINTS_CONFIG } from "@/lib/gamification";
 import {
-import { logger } from "@/lib/logger";
-import { describeSupabaseError } from "@/lib/supabaseErrors";
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { logger } from "@/lib/logger";
+import { describeSupabaseError } from "@/lib/supabaseErrors";
 
 interface CreatePostProps {
   onSuccess?: () => void;
