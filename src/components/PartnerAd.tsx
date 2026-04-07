@@ -52,24 +52,32 @@ export const PartnerAd = ({ placement, category, className }: PartnerAdProps) =>
   useEffect(() => {
     if (partner && !adShown) {
       setAdShown(true);
-      // Increment impression count
-      supabase.rpc("increment_partner_impressions", {
-        partner_id: partner.id,
-      }).catch((error) => {
-        logger.error("Error tracking impression:", error);
-      });
+      // Increment impression count (fire-and-forget, silent failure)
+      (async () => {
+        try {
+          await supabase.rpc("increment_partner_impressions", {
+            partner_id: partner.id,
+          });
+        } catch (error) {
+          logger.error("Error tracking impression:", error);
+        }
+      })();
     }
   }, [partner, adShown]);
 
   const handleClick = () => {
     if (!partner) return;
 
-    // Track click
-    supabase.rpc("increment_partner_clicks", {
-      partner_id: partner.id,
-    }).catch((error) => {
-      logger.error("Error tracking click:", error);
-    });
+    // Track click (fire-and-forget, silent failure)
+    (async () => {
+      try {
+        await supabase.rpc("increment_partner_clicks", {
+          partner_id: partner.id,
+        });
+      } catch (error) {
+        logger.error("Error tracking click:", error);
+      }
+    })();
 
     // Open link
     if (partner.ad_link) {
