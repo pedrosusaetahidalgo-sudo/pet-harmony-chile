@@ -40,6 +40,7 @@ import PointsWidget from "@/components/PointsWidget";
 import MissionCard from "@/components/MissionCard";
 import { PartnerAd } from "@/components/PartnerAd";
 import { PetAssistant } from "@/components/ai/PetAssistant";
+import { isFeatureEnabled } from "@/lib/featureFlags";
 
 interface Pet {
   id: string;
@@ -149,33 +150,33 @@ export default function Home() {
   };
 
   const quickActions = [
-    { 
-      title: "Mapa", 
-      icon: Map, 
+    {
+      title: "Buscar veterinario",
+      icon: Stethoscope,
+      href: "/veterinarios",
+      color: "from-emerald-500 to-teal-600",
+      description: "Directorio con reseñas"
+    },
+    {
+      title: "Historial médico",
+      icon: Calendar,
+      href: "/medical-records",
+      color: "from-blue-500 to-cyan-500",
+      description: "Vacunas y controles"
+    },
+    {
+      title: "Mapa",
+      icon: Map,
       href: "/maps",
       color: "from-indigo-500 to-purple-500",
-      description: "Servicios, adopción, perdidos"
+      description: "Vets cercanos"
     },
-    { 
-      title: "Paseadores", 
-      icon: Dog, 
-      href: "/services/walkers",
-      color: "from-blue-500 to-cyan-500",
-      description: "Reservar paseo"
-    },
-    { 
-      title: "Adopción", 
-      icon: Heart, 
+    {
+      title: "Adopción",
+      icon: Heart,
       href: "/adoption",
       color: "from-orange-500 to-red-500",
       description: "Encuentra tu compañero"
-    },
-    { 
-      title: "Perdidos", 
-      icon: AlertCircle, 
-      href: "/lost-pets",
-      color: "from-red-500 to-rose-500",
-      description: "Reportar o buscar"
     },
   ];
 
@@ -264,6 +265,66 @@ export default function Home() {
         </div>
       </div>
 
+      {/* HEALTH ALERTS — siempre primero, prominente */}
+      {(overdueReminders.length > 0 || upcomingReminders.length > 0) && (
+        <Card className={`border-l-4 ${overdueReminders.length > 0 ? 'border-l-red-500 bg-red-50/50' : 'border-l-amber-400 bg-amber-50/50'}`}>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-lg flex items-center gap-2">
+              {overdueReminders.length > 0 ? (
+                <>
+                  <AlertCircle className="h-6 w-6 text-red-600" />
+                  <span className="text-red-900">Salud de tus mascotas — requiere atención</span>
+                </>
+              ) : (
+                <>
+                  <Bell className="h-6 w-6 text-amber-600" />
+                  <span className="text-amber-900">Próximos cuidados</span>
+                </>
+              )}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            {overdueReminders.slice(0, 3).map(r => (
+              <div key={r.id} className="flex items-center justify-between p-3 rounded-lg bg-white border border-red-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-red-500" />
+                  <div>
+                    <p className="text-sm font-semibold">{r.title}</p>
+                    <p className="text-xs text-red-700">
+                      {r.pets?.name} · Vencido el {new Date(r.due_date).toLocaleDateString("es-CL")}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-1">
+                  <Button size="sm" variant="outline" onClick={() => navigate("/veterinarios")}>
+                    Reservar vet
+                  </Button>
+                  <Button size="sm" variant="ghost" onClick={() => completeReminder.mutate(r.id)} title="Marcar como hecho">
+                    <CheckCircle2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            ))}
+            {upcomingReminders.slice(0, 2).map(r => (
+              <div key={r.id} className="flex items-center justify-between p-3 rounded-lg bg-white border border-amber-200">
+                <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-amber-400" />
+                  <div>
+                    <p className="text-sm font-medium">{r.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {r.pets?.name} · {new Date(r.due_date).toLocaleDateString("es-CL")}
+                    </p>
+                  </div>
+                </div>
+                <Button size="sm" variant="ghost" onClick={() => completeReminder.mutate(r.id)}>
+                  <CheckCircle2 className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
+
       {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         {quickActions.map((action) => (
@@ -283,8 +344,8 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Paw Game Widget - New Gamification System */}
-      {/* Gamification - visible to ALL users */}
+      {/* Paw Game Widget - DESHABILITADO en pivot médico (flag PAWGAME_SIDEBAR) */}
+      {isFeatureEnabled("PAWGAME_SIDEBAR") && (
       <div className="space-y-4">
         <PointsWidget
           points={stats?.points || 0}
@@ -328,6 +389,7 @@ export default function Home() {
           </Card>
         )}
       </div>
+      )}
 
       {/* Premium Upsell - floating banner */}
 
@@ -465,52 +527,6 @@ export default function Home() {
         </Card>
       </div>
 
-      {/* Health Alerts & Reminders */}
-      {(overdueReminders.length > 0 || upcomingReminders.length > 0) && (
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Bell className="h-5 w-5 text-primary" />
-              Próximos Cuidados
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {overdueReminders.slice(0, 3).map(r => (
-              <div key={r.id} className="flex items-center justify-between p-3 rounded-lg bg-destructive/10 border border-destructive/20">
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="h-4 w-4 text-destructive flex-shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium">{r.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {r.pets?.name} · Vencido {new Date(r.due_date).toLocaleDateString("es-CL")}
-                    </p>
-                  </div>
-                </div>
-                <Button size="sm" variant="ghost" onClick={() => completeReminder.mutate(r.id)}>
-                  <CheckCircle2 className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-            {upcomingReminders.slice(0, 3).map(r => (
-              <div key={r.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                <div className="flex items-center gap-3">
-                  <Bell className="h-4 w-4 text-primary flex-shrink-0" />
-                  <div>
-                    <p className="text-sm font-medium">{r.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {r.pets?.name} · {new Date(r.due_date).toLocaleDateString("es-CL")}
-                    </p>
-                  </div>
-                </div>
-                <Button size="sm" variant="ghost" onClick={() => completeReminder.mutate(r.id)}>
-                  <CheckCircle2 className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      )}
-
       {/* Recommendations Section */}
       <Card className="border-0 shadow-md bg-gradient-to-br from-primary/5 to-secondary/5">
         <CardHeader>
@@ -565,8 +581,8 @@ export default function Home() {
       </Card>
     </div>
 
-    {/* Floating Premium Banner */}
-    {showPremiumBanner && pets.length > 0 && !profile?.is_premium && (
+    {/* Floating Premium Banner — DESHABILITADO en pivot médico */}
+    {isFeatureEnabled("USER_PREMIUM") && showPremiumBanner && pets.length > 0 && !profile?.is_premium && (
       <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-lg animate-fade-in-up">
         <div className="bg-card border border-primary/20 rounded-xl shadow-lg p-3 flex items-center gap-3">
           <Crown className="h-6 w-6 text-primary flex-shrink-0" />

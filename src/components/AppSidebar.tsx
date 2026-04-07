@@ -1,4 +1,5 @@
-import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck, Crown, UserCog, LayoutDashboard } from "lucide-react";
+import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck, Crown, UserCog, LayoutDashboard, Home as HomeIcon, FileText, Search } from "lucide-react";
+import { isFeatureEnabled } from "@/lib/featureFlags";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
@@ -22,28 +23,24 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const mainItems = [
-  { title: "Paw Game", url: "/paw-game", icon: Gamepad2 },
-  { title: "Pet Social", url: "/feed", icon: Heart },
-  { title: "Mapa", url: "/maps", icon: Map },
-  { title: "Mensajes", url: "/chat", icon: MessageSquare },
-  { title: "Adopción", url: "/adoption", icon: Compass },
-  { title: "Perdidos", url: "/lost-pets", icon: AlertCircle },
-];
-
-const petItems = [
+// PIVOT MÉDICO 2026-04: jerarquía Salud > Veterinarios > Comunidad
+const saludItems = [
+  { title: "Inicio", url: "/home", icon: HomeIcon },
   { title: "Mis Mascotas", url: "/my-pets", icon: PawPrint },
   { title: "Agregar", url: "/add-pet", icon: Plus },
-  { title: "Historial", url: "/medical-records", icon: Calendar },
+  { title: "Historial médico", url: "/medical-records", icon: FileText },
 ];
 
-const serviceItems = [
-  { title: "Calendario", url: "/calendar", icon: Calendar },
-  { title: "Paseadores", url: "/services/walkers", icon: Dog },
-  { title: "Veterinarios", url: "/services/vets", icon: Stethoscope },
-  { title: "Cuidadores", url: "/services/sitters", icon: ShieldCheck },
-  { title: "Entrenadores", url: "/services/trainers", icon: GraduationCap },
-  { title: "Paseos", url: "/shared-walks", icon: Users },
+const vetItems = [
+  { title: "Buscar veterinario", url: "/veterinarios", icon: Search },
+  { title: "Mis reservas", url: "/calendar", icon: Calendar },
+  { title: "Mapa", url: "/maps", icon: Map },
+];
+
+const comunidadItems = [
+  { title: "Feed", url: "/feed", icon: Heart },
+  { title: "Mensajes", url: "/chat", icon: MessageSquare },
+  { title: "Adopción", url: "/adoption", icon: Compass },
 ];
 
 export function AppSidebar() {
@@ -136,50 +133,12 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="px-2 overflow-y-auto overflow-x-hidden">
+        {/* SALUD */}
         <SidebarGroup className="py-1">
-          <SidebarGroupLabel className="text-[10px] px-3 mb-0.5">Principal</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[10px] px-3 mb-0.5">Salud</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0">
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  isActive={isActive("/premium")}
-                  onClick={() => handleNavigate("/premium")}
-                  className="h-8 text-xs rounded-md bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/30 dark:hover:bg-amber-950/50 border border-amber-200 dark:border-amber-800"
-                >
-                  <Crown className="h-3.5 w-3.5 flex-shrink-0 text-amber-500" />
-                  <span className="text-amber-700 dark:text-amber-400 font-semibold">
-                    {isPremium ? "Tu Plan" : "Premium"}
-                  </span>
-                  {!isPremium && (
-                    <span className="ml-auto text-[8px] font-bold bg-amber-500 text-white px-1.5 py-0.5 rounded-full leading-none">
-                      PRO
-                    </span>
-                  )}
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              {mainItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    isActive={isActive(item.url)}
-                    onClick={() => handleNavigate(item.url)}
-                    className="h-8 text-xs rounded-md"
-                  >
-                    <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <Separator className="mx-2 my-1" />
-
-        <SidebarGroup className="py-1">
-          <SidebarGroupLabel className="text-[10px] px-3 mb-0.5">Mascotas</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="space-y-0">
-              {petItems.map((item) => {
+              {saludItems.map((item) => {
                 const showGlow = !hasPets && item.url === "/add-pet";
                 return (
                   <SidebarMenuItem key={item.title}>
@@ -192,7 +151,7 @@ export function AppSidebar() {
                       <span>{item.title}</span>
                       {showGlow && (
                         <span className="ml-auto text-[9px] font-medium text-primary whitespace-nowrap">
-                          ¡Primera mascota!
+                          ¡Primera!
                         </span>
                       )}
                     </SidebarMenuButton>
@@ -205,11 +164,12 @@ export function AppSidebar() {
 
         <Separator className="mx-2 my-1" />
 
+        {/* VETERINARIOS */}
         <SidebarGroup className="py-1">
-          <SidebarGroupLabel className="text-[10px] px-3 mb-0.5">Servicios</SidebarGroupLabel>
+          <SidebarGroupLabel className="text-[10px] px-3 mb-0.5">Veterinarios</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0">
-              {serviceItems.map((item) => (
+              {vetItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     isActive={isActive(item.url)}
@@ -221,6 +181,42 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <Separator className="mx-2 my-1" />
+
+        {/* COMUNIDAD */}
+        <SidebarGroup className="py-1">
+          <SidebarGroupLabel className="text-[10px] px-3 mb-0.5">Comunidad</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu className="space-y-0">
+              {comunidadItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    isActive={isActive(item.url)}
+                    onClick={() => handleNavigate(item.url)}
+                    className="h-8 text-xs rounded-md"
+                  >
+                    <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+              {/* PawGame solo si flag activo */}
+              {isFeatureEnabled("PAWGAME_SIDEBAR") && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    isActive={isActive("/paw-game")}
+                    onClick={() => handleNavigate("/paw-game")}
+                    className="h-8 text-xs rounded-md"
+                  >
+                    <Gamepad2 className="h-3.5 w-3.5 flex-shrink-0" />
+                    <span>Paw Game</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

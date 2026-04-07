@@ -70,8 +70,7 @@ export function ProviderDirectoryCard() {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const p = provider as any;
+  const p = provider;
   const completeness = calculateProfileCompleteness({
     display_name: p.display_name,
     bio: p.bio,
@@ -135,8 +134,7 @@ export function ProviderDirectoryCard() {
       setGeneratedLink(link);
       toast.success('Invitación creada');
     } catch (err) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      toast.error((err as any)?.message ?? 'Error al crear la invitación');
+      toast.error(err instanceof Error ? err.message : 'Error al crear la invitación');
     }
   };
 

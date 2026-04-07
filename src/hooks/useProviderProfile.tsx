@@ -1,6 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import type { ServiceProviderRow } from '@/types/vetDirectory';
+
+// Cliente con tipado relajado para los campos del pivot médico que aún no
+// están en los tipos generados de Supabase. Ver src/types/vetDirectory.ts.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const sb = supabase as any;
 
 export interface ProviderProfileForm {
   display_name: string;
@@ -18,23 +24,19 @@ export interface ProviderProfileForm {
   is_directory_visible: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Provider = any;
-
 export function useMyProvider() {
   const { user } = useAuth();
-  return useQuery({
+  return useQuery<ServiceProviderRow | null>({
     queryKey: ['my-provider', user?.id],
     enabled: !!user,
-    queryFn: async (): Promise<Provider> => {
-      const { data, error } = await supabase
+    queryFn: async () => {
+      const { data, error } = await sb
         .from('service_providers')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .select('*' as any)
+        .select('*')
         .eq('user_id', user!.id)
         .maybeSingle();
       if (error) throw error;
-      return data;
+      return (data ?? null) as ServiceProviderRow | null;
     },
   });
 }
@@ -42,11 +44,10 @@ export function useMyProvider() {
 export function useUpsertProviderProfile() {
   const { user } = useAuth();
   const qc = useQueryClient();
-  return useMutation({
-    mutationFn: async (form: ProviderProfileForm) => {
+  return useMutation<ServiceProviderRow, Error, ProviderProfileForm>({
+    mutationFn: async (form) => {
       if (!user) throw new Error('No autenticado');
 
-      // Trim & sanitize
       const payload = {
         user_id: user.id,
         display_name: form.display_name.trim(),
@@ -64,14 +65,13 @@ export function useUpsertProviderProfile() {
         is_directory_visible: form.is_directory_visible,
       };
 
-      const { data, error } = await supabase
+      const { data, error } = await sb
         .from('service_providers')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .upsert(payload as any, { onConflict: 'user_id' })
+        .upsert(payload, { onConflict: 'user_id' })
         .select()
         .single();
       if (error) throw error;
-      return data;
+      return data as ServiceProviderRow;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['my-provider', user?.id] });

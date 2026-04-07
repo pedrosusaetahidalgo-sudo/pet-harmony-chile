@@ -151,8 +151,7 @@ export default function DejarResena() {
       });
       setDone(true);
     } catch (err) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      toast.error((err as any)?.message ?? 'Error al enviar la reseña');
+      toast.error(err instanceof Error ? err.message : 'Error al enviar la reseña');
     }
   };
 

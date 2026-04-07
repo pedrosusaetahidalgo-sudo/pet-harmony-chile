@@ -1,27 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import type {
+  ReviewInvitationRow,
+  ReviewInvitationWithProvider,
+} from '@/types/vetDirectory';
 
-export interface ReviewInvitation {
-  id: string;
-  provider_id: string;
-  invitation_token: string;
-  client_email: string | null;
-  client_name: string | null;
-  is_used: boolean;
-  expires_at: string;
-  created_at: string;
-}
+// Cliente con tipado relajado, ver src/types/vetDirectory.ts
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const sb = supabase as any;
+
+export type ReviewInvitation = ReviewInvitationRow;
 
 /** Lista las invitaciones del provider del usuario logueado. */
 export function useMyInvitations() {
   const { user } = useAuth();
-  return useQuery({
+  return useQuery<ReviewInvitationRow[]>({
     queryKey: ['my-review-invitations', user?.id],
     enabled: !!user,
-    queryFn: async (): Promise<ReviewInvitation[]> => {
-      // Buscar provider_id del usuario
-      const { data: prov, error: provErr } = await supabase
+    queryFn: async () => {
+      const { data: prov, error: provErr } = await sb
         .from('service_providers')
         .select('id')
         .eq('user_id', user!.id)
@@ -29,14 +27,13 @@ export function useMyInvitations() {
       if (provErr) throw provErr;
       if (!prov) return [];
 
-      const { data, error } = await supabase
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .from('review_invitations' as any)
+      const { data, error } = await sb
+        .from('review_invitations')
         .select('*')
         .eq('provider_id', prov.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return (data as unknown as ReviewInvitation[]) ?? [];
+      return (data ?? []) as ReviewInvitationRow[];
     },
   });
 }
@@ -55,11 +52,11 @@ export function useCreateInvitation() {
   const { user } = useAuth();
   const qc = useQueryClient();
 
-  return useMutation({
-    mutationFn: async (input: { client_name?: string; client_email?: string }) => {
+  return useMutation<ReviewInvitationRow, Error, { client_name?: string; client_email?: string }>({
+    mutationFn: async (input) => {
       if (!user) throw new Error('No autenticado');
 
-      const { data: prov, error: provErr } = await supabase
+      const { data: prov, error: provErr } = await sb
         .from('service_providers')
         .select('id')
         .eq('user_id', user.id)
@@ -69,9 +66,8 @@ export function useCreateInvitation() {
 
       const token = crypto.randomUUID().replace(/-/g, '');
 
-      const { data, error } = await supabase
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .from('review_invitations' as any)
+      const { data, error } = await sb
+        .from('review_invitations')
         .insert({
           provider_id: prov.id,
           invitation_token: token,
@@ -81,7 +77,7 @@ export function useCreateInvitation() {
         .select()
         .single();
       if (error) throw error;
-      return data as unknown as ReviewInvitation;
+      return data as ReviewInvitationRow;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['my-review-invitations', user?.id] });
@@ -91,23 +87,17 @@ export function useCreateInvitation() {
 
 /** Para la página pública /resena/:token */
 export function useInvitationByToken(token: string | undefined) {
-  return useQuery({
+  return useQuery<ReviewInvitationWithProvider | null>({
     queryKey: ['invitation-by-token', token],
     enabled: !!token,
     queryFn: async () => {
-      const { data, error } = await supabase
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .from('review_invitations' as any)
+      const { data, error } = await sb
+        .from('review_invitations')
         .select('*, service_providers(id, slug, display_name, avatar_url)')
         .eq('invitation_token', token!)
         .maybeSingle();
       if (error) throw error;
-      return data as unknown as
-        | (ReviewInvitation & {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            service_providers: any;
-          })
-        | null;
+      return (data ?? null) as ReviewInvitationWithProvider | null;
     },
   });
 }
@@ -122,31 +112,25 @@ export interface SubmitReviewInput {
 
 export function useSubmitInvitedReview() {
   const { user } = useAuth();
-  return useMutation({
-    mutationFn: async (input: SubmitReviewInput) => {
+  return useMutation<void, Error, SubmitReviewInput>({
+    mutationFn: async (input) => {
       if (!user) throw new Error('Debes iniciar sesión para dejar una reseña');
 
-      // Insertar reseña con verification_type='invitation'
-      const { error: revErr } = await supabase
-        .from('service_reviews')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .insert({
-          provider_id: input.provider_id,
-          reviewer_id: user.id,
-          rating: input.rating,
-          title: input.title || null,
-          comment: input.comment || null,
-          service_type: 'veterinarian',
-          is_visible: true,
-          verification_type: 'invitation',
-          invitation_id: input.invitation_id,
-        } as any);
+      const { error: revErr } = await sb.from('service_reviews').insert({
+        provider_id: input.provider_id,
+        reviewer_id: user.id,
+        rating: input.rating,
+        title: input.title || null,
+        comment: input.comment || null,
+        service_type: 'veterinarian',
+        is_visible: true,
+        verification_type: 'invitation',
+        invitation_id: input.invitation_id,
+      });
       if (revErr) throw revErr;
 
-      // Marcar invitación como usada
-      await supabase
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .from('review_invitations' as any)
+      await sb
+        .from('review_invitations')
         .update({ is_used: true })
         .eq('id', input.invitation_id);
     },

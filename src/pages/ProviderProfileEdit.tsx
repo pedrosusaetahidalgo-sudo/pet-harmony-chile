@@ -124,8 +124,7 @@ export default function ProviderProfileEdit() {
       await upsert.mutateAsync(form);
       toast.success('Perfil guardado');
     } catch (err) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      toast.error((err as any)?.message ?? 'Error al guardar');
+      toast.error(err instanceof Error ? err.message : 'Error al guardar');
     }
   };
 

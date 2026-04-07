@@ -9,9 +9,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import type { ServiceProviderRow } from '@/types/vetDirectory';
 
+// Tipado relajado para campos del pivot médico, ver src/types/vetDirectory.ts
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Vet = any;
+const sb = supabase as any;
+
+type Vet = ServiceProviderRow;
 
 /**
  * Panel admin: lista veterinarios pendientes de verificar Colmevet,
@@ -27,15 +31,14 @@ export default function AdminVetVerifications() {
   const { data: pending, isLoading } = useQuery({
     queryKey: ['admin-vet-verifications-pending'],
     queryFn: async (): Promise<Vet[]> => {
-      const { data, error } = await supabase
+      const { data, error } = await sb
         .from('service_providers')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .select('*' as any)
+        .select('*')
         .eq('is_verified', false)
         .not('license_number', 'is', null)
         .order('created_at', { ascending: false });
       if (error) throw error;
-      return data ?? [];
+      return (data ?? []) as Vet[];
     },
   });
 
@@ -43,29 +46,27 @@ export default function AdminVetVerifications() {
   const { data: verified } = useQuery({
     queryKey: ['admin-vet-verifications-done'],
     queryFn: async (): Promise<Vet[]> => {
-      const { data, error } = await supabase
+      const { data, error } = await sb
         .from('service_providers')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .select('*' as any)
+        .select('*')
         .eq('is_verified', true)
         .not('license_number', 'is', null)
         .order('verified_at', { ascending: false })
         .limit(20);
       if (error) throw error;
-      return data ?? [];
+      return (data ?? []) as Vet[];
     },
   });
 
   const approve = useMutation({
     mutationFn: async (vetId: string) => {
-      const { error } = await supabase
+      const { error } = await sb
         .from('service_providers')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .update({
           is_verified: true,
           verified_at: new Date().toISOString(),
           verified_by: user?.id ?? null,
-        } as any)
+        })
         .eq('id', vetId);
       if (error) throw error;
     },
@@ -80,13 +81,12 @@ export default function AdminVetVerifications() {
   const reject = useMutation({
     mutationFn: async ({ vetId, reason }: { vetId: string; reason: string }) => {
       // Limpia el license_number y guarda el motivo en rejection_reason
-      const { error } = await supabase
+      const { error } = await sb
         .from('service_providers')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .update({
           is_verified: false,
           rejection_reason: reason,
-        } as any)
+        })
         .eq('id', vetId);
       if (error) throw error;
     },

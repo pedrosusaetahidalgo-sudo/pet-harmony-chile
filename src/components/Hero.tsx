@@ -20,14 +20,14 @@ const Hero = () => {
         </span>
 
         <h1 className="text-3xl md:text-5xl font-bold leading-tight">
-          Cuida a tu mascota como se{" "}
+          Cuida la salud de tu mascota con{" "}
           <span className="bg-warm-gradient bg-clip-text text-transparent">
-            merece
+            veterinarios verificados
           </span>
         </h1>
 
         <p className="text-sm text-muted-foreground leading-snug max-w-xs">
-          Gestiona su salud, conecta con otros dueños y descubre lugares pet-friendly.
+          Encuentra, reserva y lleva el control médico de tu mascota en un solo lugar. 100% gratis para dueños.
         </p>
 
         <div className="flex flex-col gap-3 w-full pt-2">

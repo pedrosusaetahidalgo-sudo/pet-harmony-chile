@@ -42,66 +42,66 @@ const Index = () => {
       <PublicHeader />
       <Hero />
 
-      {/* Features Section */}
+      {/* Features Section — PIVOT MÉDICO */}
       <section className="container px-4 py-20">
         <div className="text-center mb-12 space-y-4 animate-fade-in-up">
-          <Badge className="bg-primary/10 text-primary border-primary/20 text-sm px-4 py-1">
-            ✨ Características Principales
+          <Badge className="bg-emerald-500/10 text-emerald-700 border-emerald-500/20 text-sm px-4 py-1">
+            🩺 Salud y veterinarios
           </Badge>
           <h2 className="text-3xl md:text-5xl font-bold">
-            Todo lo que tu Mascota{" "}
-            <span className="bg-warm-gradient bg-clip-text text-transparent">Necesita</span>
+            Todo el cuidado de tu mascota{" "}
+            <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">en un solo lugar</span>
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Una plataforma completa diseñada para el bienestar y la felicidad de tus compañeros peludos
+            Encuentra veterinarios, lleva la ficha clínica de tu mascota y recibe recordatorios automáticos. 100% gratis para dueños.
           </p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 hover:border-primary/50">
+          <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 hover:border-emerald-500/50">
             <CardContent className="p-6 text-center space-y-4">
-              <div className="rounded-full bg-gradient-to-br from-pink-500/20 to-rose-500/20 p-4 inline-flex group-hover:scale-110 transition-transform">
-                <Heart className="h-8 w-8 text-pink-500" />
+              <div className="rounded-full bg-gradient-to-br from-emerald-500/20 to-teal-500/20 p-4 inline-flex group-hover:scale-110 transition-transform">
+                <Stethoscope className="h-8 w-8 text-emerald-600" />
               </div>
-              <h3 className="font-bold text-lg">Pet Social</h3>
+              <h3 className="font-bold text-lg">Encuentra veterinarios</h3>
               <p className="text-sm text-muted-foreground">
-                Comparte momentos, conecta con otros dueños y crea una comunidad
+                Directorio con reseñas verificadas. A domicilio o en clínica, en toda Santiago.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 hover:border-primary/50">
+          <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 hover:border-blue-500/50">
             <CardContent className="p-6 text-center space-y-4">
               <div className="rounded-full bg-gradient-to-br from-blue-500/20 to-cyan-500/20 p-4 inline-flex group-hover:scale-110 transition-transform">
-                <MapPin className="h-8 w-8 text-blue-500" />
+                <FileText className="h-8 w-8 text-blue-500" />
               </div>
-              <h3 className="font-bold text-lg">Lugares Pet-Friendly</h3>
+              <h3 className="font-bold text-lg">Ficha clínica digital</h3>
               <p className="text-sm text-muted-foreground">
-                Descubre parques, cafés y servicios cerca de ti con IA
+                Vacunas, medicamentos, consultas y documentos médicos siempre a mano.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 hover:border-primary/50">
+          <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 hover:border-amber-500/50">
             <CardContent className="p-6 text-center space-y-4">
-              <div className="rounded-full bg-gradient-to-br from-green-500/20 to-emerald-500/20 p-4 inline-flex group-hover:scale-110 transition-transform">
-                <Home className="h-8 w-8 text-green-500" />
+              <div className="rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 p-4 inline-flex group-hover:scale-110 transition-transform">
+                <Bell className="h-8 w-8 text-amber-600" />
               </div>
-              <h3 className="font-bold text-lg">Adopción</h3>
+              <h3 className="font-bold text-lg">Recordatorios automáticos</h3>
               <p className="text-sm text-muted-foreground">
-                Encuentra tu compañero perfecto o ayuda a otros a encontrar hogar
+                Nunca más olvides una vacuna, un control o una desparasitación.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 hover:border-primary/50">
+          <Card className="group hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 hover:border-purple-500/50">
             <CardContent className="p-6 text-center space-y-4">
-              <div className="rounded-full bg-gradient-to-br from-yellow-500/20 to-orange-500/20 p-4 inline-flex group-hover:scale-110 transition-transform">
-                <Trophy className="h-8 w-8 text-yellow-500" />
+              <div className="rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 p-4 inline-flex group-hover:scale-110 transition-transform">
+                <Calendar className="h-8 w-8 text-purple-500" />
               </div>
-              <h3 className="font-bold text-lg">Gamificación</h3>
+              <h3 className="font-bold text-lg">Reservas online</h3>
               <p className="text-sm text-muted-foreground">
-                Gana puntos, logros y recompensas por cuidar de tus mascotas
+                Agenda con tu veterinario directo desde la app. Sin llamadas ni esperas.
               </p>
             </CardContent>
           </Card>

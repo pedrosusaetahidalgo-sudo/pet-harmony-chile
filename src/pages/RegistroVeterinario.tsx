@@ -20,6 +20,11 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { errorMessage } from '@/types/vetDirectory';
+
+// Tipado relajado para campos del pivot médico, ver src/types/vetDirectory.ts
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const sb = supabase as any;
 import { SANTIAGO_COMUNAS, VET_SPECIALTIES } from '@/lib/vetDirectory';
 import { PublicHeader, PublicFooter } from './DirectorioVets';
 
@@ -130,10 +135,9 @@ export default function RegistroVeterinario() {
         status: 'pending',
       };
 
-      const { data: provider, error: provErr } = await supabase
+      const { data: provider, error: provErr } = await sb
         .from('service_providers')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .insert(payload as any)
+        .insert(payload)
         .select('slug')
         .single();
       if (provErr) throw provErr;
@@ -141,9 +145,7 @@ export default function RegistroVeterinario() {
       update('createdSlug', (provider as { slug: string }).slug);
       setStep(3);
     } catch (err) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const msg = (err as any)?.message ?? 'Error al crear tu cuenta';
-      toast.error(msg);
+      toast.error(errorMessage(err, 'Error al crear tu cuenta'));
     } finally {
       setSubmitting(false);
     }

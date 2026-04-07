@@ -69,10 +69,29 @@
     --shadow-lg: 0 20px 25px -5px hsl(270 70% 60% / 0.1), 0 8px 10px -6px hsl(270 15% 10% / 0.07);
     --shadow-xl: 0 25px 50px -12px hsl(270 70% 60% / 0.18);
 
-    /* ── Semantic Colors ── */
-    --medical: 260 65% 60%;
+    /* ── Pivot médico 2026-04: paleta semántica por sección ──
+       VERDE = salud (Home, ficha clínica, recordatorios)
+       ÁMBAR = veterinarios (directorio, perfiles, reseñas)
+       MORADO = comunidad (feed, chat, adopción) — sigue siendo --primary
+    */
+    --medical: 160 84% 39%;          /* verde esmeralda — salud */
     --medical-foreground: 0 0% 100%;
-    --medical-light: 260 50% 94%;
+    --medical-light: 160 60% 95%;
+    --medical-dark: 160 84% 29%;
+
+    --vet: 38 92% 50%;               /* ámbar profesional — vets */
+    --vet-foreground: 0 0% 100%;
+    --vet-light: 38 90% 95%;
+    --vet-dark: 38 92% 40%;
+
+    --community: 270 70% 60%;        /* morado — feed/social (= primary actual) */
+    --community-foreground: 0 0% 100%;
+
+    /* Alertas semánticas */
+    --alert-critical: 0 84% 60%;
+    --alert-warning: 38 92% 50%;
+    --alert-info: 210 84% 60%;
+    --alert-success: 160 84% 39%;
 
     --appointment: 280 60% 60%;
     --appointment-foreground: 0 0% 100%;

@@ -1,5 +1,15 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import type { ServiceProviderRow, ServiceReviewRow } from '@/types/vetDirectory';
+
+/**
+ * Cliente Supabase con tipado relajado para los campos del pivot médico que
+ * todavía no están en los tipos generados (slug, specialties, service_areas,
+ * is_directory_visible, etc.). Cuando se regeneren los tipos con
+ * `supabase gen types`, este alias se puede eliminar.
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const sb = supabase as any;
 
 export interface DirectoryVetFilters {
   search?: string;
@@ -12,14 +22,13 @@ export interface DirectoryVetFilters {
 const PAGE_SIZE = 12;
 
 export function useDirectoryVets(filters: DirectoryVetFilters) {
-  return useInfiniteQuery({
+  return useInfiniteQuery<ServiceProviderRow[]>({
     queryKey: ['directory-vets', filters],
     initialPageParam: 0,
     queryFn: async ({ pageParam }) => {
-      let query = supabase
+      let query = sb
         .from('service_providers')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .select('*' as any)
+        .select('*')
         .eq('is_directory_visible', true);
 
       if (filters.search && filters.search.trim()) {
@@ -47,7 +56,7 @@ export function useDirectoryVets(filters: DirectoryVetFilters) {
         .range(from, to);
 
       if (error) throw error;
-      return data ?? [];
+      return (data ?? []) as ServiceProviderRow[];
     },
     getNextPageParam: (lastPage, allPages) =>
       lastPage.length === PAGE_SIZE ? allPages.length : undefined,
@@ -55,29 +64,28 @@ export function useDirectoryVets(filters: DirectoryVetFilters) {
 }
 
 export function useDirectoryVetBySlug(slug: string | undefined) {
-  return useQuery({
+  return useQuery<ServiceProviderRow | null>({
     queryKey: ['directory-vet', slug],
     enabled: !!slug,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await sb
         .from('service_providers')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .select('*' as any)
+        .select('*')
         .eq('slug', slug!)
         .eq('is_directory_visible', true)
         .maybeSingle();
       if (error) throw error;
-      return data;
+      return (data ?? null) as ServiceProviderRow | null;
     },
   });
 }
 
 export function useVetReviews(providerId: string | undefined, limit = 20) {
-  return useQuery({
+  return useQuery<ServiceReviewRow[]>({
     queryKey: ['vet-reviews', providerId, limit],
     enabled: !!providerId,
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await sb
         .from('service_reviews')
         .select('*')
         .eq('provider_id', providerId!)
@@ -85,7 +93,7 @@ export function useVetReviews(providerId: string | undefined, limit = 20) {
         .order('created_at', { ascending: false })
         .limit(limit);
       if (error) throw error;
-      return data ?? [];
+      return (data ?? []) as ServiceReviewRow[];
     },
   });
 }
@@ -95,6 +103,5 @@ export async function trackProviderView(slug: string) {
   if (typeof window === 'undefined') return;
   if (sessionStorage.getItem(key)) return;
   sessionStorage.setItem(key, '1');
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await (supabase as any).rpc('increment_provider_views', { provider_slug: slug });
+  await sb.rpc('increment_provider_views', { provider_slug: slug });
 }

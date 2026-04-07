@@ -17,8 +17,7 @@ import { PublicHeader, PublicFooter } from './DirectorioVets';
 export default function PerfilVetPublico() {
   const { slug } = useParams<{ slug: string }>();
   const { data: vet, isLoading } = useDirectoryVetBySlug(slug);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const v = vet as any;
+  const v = vet;
   const { data: reviews } = useVetReviews(v?.id);
 
   useEffect(() => {
@@ -110,8 +109,7 @@ export default function PerfilVetPublico() {
   const reviewCount = Number(v.total_reviews ?? 0);
   const specialties: string[] = v.specialties ?? [];
   const areas: string[] = v.service_areas ?? [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const visibleReviews: any[] = reviews ?? [];
+  const visibleReviews = reviews ?? [];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
