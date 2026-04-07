@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,13 +22,20 @@ const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [confirmationSent, setConfirmationSent] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const returnTo = searchParams.get("returnTo");
   const { toast } = useToast();
   const { signInWithFacebook, loading: facebookLoading } = useFacebookAuth();
   const hasRedirected = useRef(false);
 
-  // Redirect new users to /add-pet, returning users to /home
+  // Redirect: returnTo > new users a /add-pet > returning a /home
   const redirectUser = async (userId: string) => {
     if (hasRedirected.current) return;
+    if (returnTo) {
+      hasRedirected.current = true;
+      navigate(returnTo);
+      return;
+    }
     const { data: pets } = await supabase
       .from("pets")
       .select("id")

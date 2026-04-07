@@ -9,7 +9,15 @@ import {
   AlertCircle,
   Copy,
   Check,
+  Mail,
 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  useCreateInvitation,
+  useMonthInvitationCount,
+} from '@/hooks/useReviewInvitations';
+import { PROVIDER_PLANS, type ProviderPlanId } from '@/lib/plans';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -32,7 +40,14 @@ import {
 export function ProviderDirectoryCard() {
   const { data: provider, isLoading } = useMyProvider();
   const [shareOpen, setShareOpen] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [clientName, setClientName] = useState('');
+  const [clientEmail, setClientEmail] = useState('');
+  const [generatedLink, setGeneratedLink] = useState<string | null>(null);
+
+  const createInvitation = useCreateInvitation();
+  const monthCount = useMonthInvitationCount();
 
   if (isLoading) {
     return <Skeleton className="h-40 w-full" />;
@@ -74,6 +89,13 @@ export function ProviderDirectoryCard() {
   const isVisible = !!p.is_directory_visible;
   const slug: string | null = p.slug ?? null;
   const profileUrl = slug ? `https://pawfriend.cl/veterinarios/${slug}` : null;
+
+  // Límite de invitaciones según el plan
+  const planId: ProviderPlanId = (p.provider_plan as ProviderPlanId) ?? 'provider_free';
+  const planConfig = PROVIDER_PLANS[planId] ?? PROVIDER_PLANS.provider_free;
+  const inviteLimit = planConfig.features.max_review_invitations_per_month;
+  const canInvite = inviteLimit === -1 || monthCount < inviteLimit;
+  const inviteRemaining = inviteLimit === -1 ? '∞' : Math.max(0, inviteLimit - monthCount);
   const views = Number(p.directory_views ?? 0);
   const rating = Number(p.avg_rating ?? 0);
   const reviews = Number(p.total_reviews ?? 0);
@@ -97,6 +119,43 @@ export function ProviderDirectoryCard() {
   const shareWhatsApp = () => {
     const url = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`;
     window.open(url, '_blank');
+  };
+
+  const handleCreateInvitation = async () => {
+    if (!canInvite) {
+      toast.error(`Llegaste al límite de ${inviteLimit} invitaciones este mes. Mejora tu plan.`);
+      return;
+    }
+    try {
+      const inv = await createInvitation.mutateAsync({
+        client_name: clientName,
+        client_email: clientEmail,
+      });
+      const link = `${window.location.origin}/resena/${inv.invitation_token}`;
+      setGeneratedLink(link);
+      toast.success('Invitación creada');
+    } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      toast.error((err as any)?.message ?? 'Error al crear la invitación');
+    }
+  };
+
+  const resetInviteForm = () => {
+    setClientName('');
+    setClientEmail('');
+    setGeneratedLink(null);
+  };
+
+  const copyInviteLink = async () => {
+    if (!generatedLink) return;
+    await navigator.clipboard.writeText(generatedLink);
+    toast.success('Link copiado');
+  };
+
+  const shareInviteWhatsApp = () => {
+    if (!generatedLink) return;
+    const msg = `Hola${clientName ? ' ' + clientName : ''}, te invito a dejar tu reseña sobre mi atención en Paw Friend 🐾\n${generatedLink}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
   };
 
   const shareNative = async () => {
@@ -215,8 +274,95 @@ export function ProviderDirectoryCard() {
               <Share2 className="h-4 w-4 mr-1" /> Compartir
             </Button>
           </div>
+
+          {/* Invitar a reseña */}
+          <div className="border-t pt-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                resetInviteForm();
+                setInviteOpen(true);
+              }}
+              className="w-full text-purple-700 hover:bg-purple-50"
+              disabled={!isVisible}
+            >
+              <Mail className="h-4 w-4 mr-1" /> Invitar paciente a dejar reseña
+              <span className="ml-auto text-xs text-muted-foreground">
+                {inviteRemaining} restantes
+              </span>
+            </Button>
+          </div>
         </CardContent>
       </Card>
+
+      {/* Modal invitar a reseña */}
+      <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Invitar paciente a dejar reseña</DialogTitle>
+            <DialogDescription>
+              Genera un link único para enviarle a un paciente que ya atendiste fuera de la
+              plataforma. La reseña aparecerá marcada como "no verificada por reserva".
+            </DialogDescription>
+          </DialogHeader>
+
+          {!generatedLink ? (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="cname">Nombre del paciente (opcional)</Label>
+                <Input
+                  id="cname"
+                  value={clientName}
+                  onChange={(e) => setClientName(e.target.value)}
+                  placeholder="María Pérez"
+                />
+              </div>
+              <div>
+                <Label htmlFor="cemail">Email del paciente (opcional)</Label>
+                <Input
+                  id="cemail"
+                  type="email"
+                  value={clientEmail}
+                  onChange={(e) => setClientEmail(e.target.value)}
+                  placeholder="maria@email.cl"
+                />
+              </div>
+              <div className="text-xs text-muted-foreground bg-purple-50 p-3 rounded">
+                Plan {planConfig.name}: {inviteRemaining} invitaciones restantes este mes.
+              </div>
+              <Button
+                onClick={handleCreateInvitation}
+                disabled={createInvitation.isPending || !canInvite}
+                className="w-full"
+              >
+                {createInvitation.isPending ? 'Generando…' : 'Generar link de invitación'}
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div className="bg-green-50 p-3 rounded-lg">
+                <p className="text-xs text-muted-foreground mb-1">Link de invitación:</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs font-mono text-green-700 flex-1 truncate">{generatedLink}</p>
+                  <Button size="sm" variant="ghost" onClick={copyInviteLink}>
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-2">
+                  Válido por 30 días. Solo puede usarse una vez.
+                </p>
+              </div>
+              <Button onClick={shareInviteWhatsApp} className="w-full bg-green-600 hover:bg-green-700">
+                Enviar por WhatsApp
+              </Button>
+              <Button variant="outline" onClick={resetInviteForm} className="w-full">
+                Crear otra invitación
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Modal compartir */}
       <Dialog open={shareOpen} onOpenChange={setShareOpen}>
