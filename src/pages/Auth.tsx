@@ -110,7 +110,9 @@ const Auth = () => {
           window.history.replaceState({}, document.title, window.location.pathname);
 
           if (session) {
-            redirectUser(session.user.id);
+            // Hard reload — evita race condition con useAuth/ProtectedRoute
+            window.location.href = returnTo || "/home";
+            return;
           }
         } catch (err) {
           console.error('Error processing OAuth callback:', err);
@@ -171,10 +173,10 @@ const Auth = () => {
           title: "¡Cuenta creada!",
           description: "Bienvenido a Paw Friend",
         });
-        // Navegación directa post-signup
-        if (data.session.user?.id) {
-          await redirectUser(data.session.user.id);
-        }
+        // Hard reload para evitar race condition con useAuth + ProtectedRoute.
+        // Usuario nuevo siempre va a /add-pet (onboarding).
+        window.location.href = returnTo || "/add-pet";
+        return;
       }
     } catch (error: any) {
       let message = error.message;
@@ -211,16 +213,30 @@ const Auth = () => {
         description: "Has iniciado sesión exitosamente",
       });
 
-      // Navegación directa: NO esperamos al listener onAuthStateChange porque
-      // puede colgarse o tardarse. Si tenemos session, redirigimos ya.
+      // CRÍTICO: usar window.location.href en vez de navigate() para forzar
+      // un page reload completo. Esto evita la race condition entre el listener
+      // de useAuth (que actualiza el user state) y ProtectedRoute (que chequea
+      // ese user state). Con reload, useAuth lee la sesión fresca de
+      // localStorage al montar, y ProtectedRoute la encuentra.
       if (data.session?.user?.id) {
-        await redirectUser(data.session.user.id);
-        // Fallback hard: si redirectUser no logró navegar (caso límite),
-        // forzamos /home. Es seguro porque ProtectedRoute verifica sesión.
-        if (!hasRedirected.current) {
-          hasRedirected.current = true;
-          navigate(returnTo || "/home");
+        // Decidir destino: returnTo > provider dashboard > home
+        let dest = returnTo || "/home";
+        try {
+          // Quick check provider (con timeout corto para no demorar)
+          const result = await Promise.race<{ data: { id: string } | null } | null>([
+            supabase
+              .from("service_providers")
+              .select("id")
+              .eq("user_id", data.session.user.id)
+              .maybeSingle(),
+            new Promise<null>((resolve) => setTimeout(() => resolve(null), 1500)),
+          ]);
+          if (!returnTo && result?.data) dest = "/provider/dashboard";
+        } catch {
+          /* ignore */
         }
+        window.location.href = dest;
+        return;
       }
     } catch (error: any) {
       let message = error.message;
