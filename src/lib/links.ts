@@ -51,7 +51,7 @@ export const LINKS = {
 
   // === Reservas ===
   /** Calendario / mis reservas */
-  bookings: () => '/calendar',
+  bookings: () => '/mis-reservas',
 
   // === Provider ===
   /** Dashboard del provider (vet logueado) */

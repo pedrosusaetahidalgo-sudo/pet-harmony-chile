@@ -35,6 +35,23 @@ serve(async (req) => {
       throw new Error("pet_id is required and must be a string");
     }
 
+    // Ownership check
+    const { data: petOwnership, error: ownershipError } = await supabase
+      .from("pets")
+      .select("owner_id")
+      .eq("id", pet_id)
+      .single();
+
+    if (ownershipError || !petOwnership) {
+      throw new Error("Pet not found");
+    }
+    if (petOwnership.owner_id !== userData.user.id) {
+      return new Response(
+        JSON.stringify({ success: false, error: "Forbidden" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 403 }
+      );
+    }
+
     // Get all documents for the pet
     const { data: documents, error: docsError } = await supabase
       .from("medical_documents")

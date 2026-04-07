@@ -75,6 +75,15 @@ serve(async (req) => {
       throw new Error("Order not found");
     }
 
+    // Ownership check: prevent users from confirming other users' orders
+    if (order.user_id !== userData.user.id) {
+      logStep("Forbidden: order belongs to another user", { orderUserId: order.user_id, callerId: userData.user.id });
+      return new Response(
+        JSON.stringify({ success: false, error: "Forbidden" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 403 }
+      );
+    }
+
     logStep("Order found", { orderId: order.id, status: order.payment_status });
 
     // If already completed, return success

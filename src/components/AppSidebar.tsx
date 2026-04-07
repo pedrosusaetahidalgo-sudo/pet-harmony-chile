@@ -35,7 +35,7 @@ const saludItems = [
 
 const serviciosItems = [
   { title: "Buscar servicios", url: "/servicios", icon: ShieldCheck },
-  { title: "Mis reservas", url: "/calendar", icon: Calendar },
+  { title: "Mis reservas", url: "/mis-reservas", icon: Calendar },
   { title: "Mapa", url: "/maps", icon: Map },
 ];
 
