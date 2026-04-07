@@ -54,7 +54,7 @@ export function ReviewForm({ bookingId, providerId, providerName, serviceType, p
     await supabase.from("paw_point_transactions").insert({
       user_id: user.id,
       points_amount: 10,
-      transaction_type: "earned",
+      transaction_type: "earn",
       source_type: "leave_review",
     });
 

@@ -101,7 +101,7 @@ export async function awardPoints(
   const { error } = await supabase.from("paw_point_transactions").insert({
     user_id: userId,
     points_amount: points,
-    transaction_type: "earned",
+    transaction_type: "earn",
     source_type: action,
   });
 

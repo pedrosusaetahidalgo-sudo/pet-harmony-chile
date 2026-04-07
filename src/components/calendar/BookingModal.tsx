@@ -68,7 +68,7 @@ export function BookingModal({ slot, open, onClose }: Props) {
       await supabase.from("paw_point_transactions").insert({
         user_id: user.id,
         points_amount: 10,
-        transaction_type: "earned",
+        transaction_type: "earn",
         source_type: "book_service",
       });
 
