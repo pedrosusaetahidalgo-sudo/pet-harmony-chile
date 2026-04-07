@@ -71,8 +71,8 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
 
   const handleShare = () => {
     const shareData = {
-      title: type === "lost" 
-        ? `${data.report_type === "lost" ? "Mascota Perdida" : "Mascota Encontrada"}: ${data.pet_name}`
+      title: type === "lost"
+        ? `${data.report_type === "perdida" ? "Mascota Perdida" : "Mascota Encontrada"}: ${data.pet_name}`
         : type === "adoption"
         ? `Adopta a ${data.pet_name}`
         : `Servicio: ${data.display_name}`,
@@ -183,7 +183,7 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
 
   // Lost Pet Popup
   if (type === "lost") {
-    const isLost = data.report_type === "lost";
+    const isLost = data.report_type === "perdida";
 
     return (
       <Card className="w-[320px] overflow-hidden shadow-lg">

@@ -17,7 +17,7 @@ const LostPetDetailCard = ({ pet, compact = false }: LostPetDetailCardProps) => 
   const navigate = useNavigate();
   const { startConversation, loading } = useStartConversation();
   
-  const isLost = pet.report_type === "lost";
+  const isLost = pet.report_type === "perdida";
 
   const handleContact = async () => {
     if (pet.reporter_id) {

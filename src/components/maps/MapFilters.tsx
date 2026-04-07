@@ -140,8 +140,8 @@ const MapFilters = ({ activeView, filters, setFilters, onClose }: MapFiltersProp
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos</SelectItem>
-              <SelectItem value="lost">🔴 Perdidas</SelectItem>
-              <SelectItem value="found">🟢 Encontradas</SelectItem>
+              <SelectItem value="perdida">🔴 Perdidas</SelectItem>
+              <SelectItem value="encontrada">🟢 Encontradas</SelectItem>
             </SelectContent>
           </Select>
         </div>

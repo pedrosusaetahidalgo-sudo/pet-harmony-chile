@@ -49,17 +49,17 @@ const LostPetsMap = ({ pets }: LostPetsMapProps) => {
           <Marker
             key={marker.id}
             position={marker.position}
-            icon={(marker.pet.report_type === "lost" ? lostPetIcon : pawFriendIcon) as L.Icon}
+            icon={(marker.pet.report_type === "perdida" ? lostPetIcon : pawFriendIcon) as L.Icon}
           >
             <Popup>
               <div className="max-w-[250px]">
                 <h3
                   className="font-bold mb-2"
                   style={{
-                    color: marker.pet.report_type === "lost" ? "#ef4444" : "#10b981",
+                    color: marker.pet.report_type === "perdida" ? "#ef4444" : "#10b981",
                   }}
                 >
-                  {marker.pet.report_type === "lost" ? "🔍 Perdida" : "✅ Encontrada"}
+                  {marker.pet.report_type === "perdida" ? "🔍 Perdida" : "✅ Encontrada"}
                 </h3>
                 {marker.pet.photo_url && (
                   <img

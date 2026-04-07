@@ -19,7 +19,7 @@ import { logger } from "@/lib/logger";
 import { useGamification } from "@/hooks/useGamification";
 
 const formSchema = z.object({
-  report_type: z.enum(["lost", "found"]),
+  report_type: z.enum(["perdida", "encontrada"]),
   pet_name: z.string().min(1, "El nombre es requerido"),
   species: z.string().min(1, "La especie es requerida"),
   breed: z.string().optional(),
@@ -53,7 +53,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
   const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      report_type: "lost",
+      report_type: "perdida",
       reward_offered: false,
     },
   });
@@ -104,7 +104,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
         reward_amount: data.reward_amount || null,
         photo_url: data.photo_url || null,
         reporter_id: user.id,
-        status: "active",
+        status: data.report_type,
         latitude: data.latitude || null,
         longitude: data.longitude || null,
       }).select().maybeSingle();
@@ -117,7 +117,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
           points: 75,
           actionType: "lost_pet",
           actionId: lostPet?.id,
-          description: `Ayuda con mascota ${data.report_type === "lost" ? "perdida" : "encontrada"}`,
+          description: `Ayuda con mascota ${data.report_type === "perdida" ? "perdida" : "encontrada"}`,
         });
       } catch (pointsError) {
         logger.error("Error awarding points:", pointsError);
@@ -126,7 +126,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
 
       toast({
         title: "Reporte creado",
-        description: `Tu reporte de mascota ${data.report_type === "lost" ? "perdida" : "encontrada"} ha sido publicado`,
+        description: `Tu reporte de mascota ${data.report_type === "perdida" ? "perdida" : "encontrada"} ha sido publicado`,
       });
 
       onSuccess();
@@ -146,13 +146,13 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="report_type">Tipo de Reporte</Label>
-        <Select onValueChange={(value) => setValue("report_type", value as "lost" | "found")} defaultValue="lost">
+        <Select onValueChange={(value) => setValue("report_type", value as "perdida" | "encontrada")} defaultValue="perdida">
           <SelectTrigger>
             <SelectValue placeholder="Selecciona el tipo" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="lost">Mascota Perdida</SelectItem>
-            <SelectItem value="found">Mascota Encontrada</SelectItem>
+            <SelectItem value="perdida">Mascota Perdida</SelectItem>
+            <SelectItem value="encontrada">Mascota Encontrada</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -238,7 +238,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
         <Input id="photo_url" {...register("photo_url")} placeholder="https://..." />
       </div>
 
-      {reportType === "lost" && (
+      {reportType === "perdida" && (
         <div className="space-y-4 p-4 border rounded-lg">
           <div className="flex items-center space-x-2">
             <Checkbox
@@ -269,7 +269,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
 
       <Button type="submit" className="w-full bg-warm-gradient" disabled={loading}>
         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {reportType === "lost" ? "Reportar Mascota Perdida" : "Reportar Mascota Encontrada"}
+        {reportType === "perdida" ? "Reportar Mascota Perdida" : "Reportar Mascota Encontrada"}
       </Button>
     </form>
   );

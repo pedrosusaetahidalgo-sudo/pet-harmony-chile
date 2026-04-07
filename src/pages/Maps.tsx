@@ -179,8 +179,8 @@ const Maps = () => {
           if (filters.status !== "all" && pet.report_type !== filters.status) return false;
           if (filters.petType !== "all" && pet.species !== filters.petType) return false;
           // Chip filter
-          if (activeChip === "Perdidas" && pet.report_type !== "lost") return false;
-          if (activeChip === "Encontradas" && pet.report_type !== "found") return false;
+          if (activeChip === "Perdidas" && pet.report_type !== "perdida") return false;
+          if (activeChip === "Encontradas" && pet.report_type !== "encontrada") return false;
           if (userLocation && filters.searchRadius < 100) {
             const distance = calculateDistance(
               userLocation.lat, userLocation.lng,
