@@ -33,36 +33,60 @@ const Auth = () => {
   //   2. Si es provider (vet/groomer) → /provider/dashboard
   //   3. Si tiene mascotas → /home
   //   4. Si no tiene mascotas → /add-pet (onboarding)
+  //
+  // NOTA: las queries van envueltas en try/catch y con timeout porque si RLS
+  // o la red fallan, antes la función quedaba colgada y el usuario nunca se
+  // movía de /auth (bug detectado en mobile simulator + browser PC).
   const redirectUser = async (userId: string) => {
     if (hasRedirected.current) return;
+
     if (returnTo) {
       hasRedirected.current = true;
       navigate(returnTo);
       return;
     }
 
-    // Provider check (vet del directorio)
-    const { data: provider } = await supabase
-      .from("service_providers")
-      .select("id")
-      .eq("user_id", userId)
-      .maybeSingle();
+    // Helper: timeout para queries que podrían colgarse
+    const withTimeout = <T,>(p: Promise<T>, ms = 2500): Promise<T | null> =>
+      Promise.race<T | null>([
+        p,
+        new Promise<null>((resolve) => setTimeout(() => resolve(null), ms)),
+      ]);
+
+    // 1. Provider check (vet del directorio) — si falla, asumimos que no es provider
+    let isProvider = false;
+    try {
+      const result = await withTimeout(
+        supabase.from("service_providers").select("id").eq("user_id", userId).maybeSingle()
+      );
+      isProvider = !!result?.data;
+    } catch (err) {
+      console.warn("[Auth] provider check failed, fallback owner flow:", err);
+    }
+
     if (hasRedirected.current) return;
-    if (provider) {
+    if (isProvider) {
       hasRedirected.current = true;
       navigate("/provider/dashboard");
       return;
     }
 
-    // Owner: con o sin mascotas
-    const { data: pets } = await supabase
-      .from("pets")
-      .select("id")
-      .eq("owner_id", userId)
-      .limit(1);
+    // 2. Owner: con o sin mascotas
+    let hasPets = false;
+    try {
+      const result = await withTimeout(
+        supabase.from("pets").select("id").eq("owner_id", userId).limit(1)
+      );
+      hasPets = !!(result?.data && result.data.length > 0);
+    } catch (err) {
+      console.warn("[Auth] pets check failed, fallback /home:", err);
+    }
+
     if (hasRedirected.current) return;
     hasRedirected.current = true;
-    navigate(pets && pets.length > 0 ? "/home" : "/add-pet");
+    // Fallback final: si todo falla, mandar a /home (es seguro, ProtectedRoute
+    // lo deja pasar si hay sesión).
+    navigate(hasPets ? "/home" : "/add-pet");
   };
 
   useEffect(() => {

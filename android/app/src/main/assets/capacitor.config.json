@@ -1,7 +1,7 @@
 {
 	"appId": "cl.pawfriend.app",
 	"appName": "Paw Friend",
-	"webDir": "dist",
+	"webDir": "docs",
 	"android": {},
 	"plugins": {
 		"SplashScreen": {

@@ -3,7 +3,9 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'cl.pawfriend.app',
   appName: 'Paw Friend',
-  webDir: 'dist',
+  // OJO: Vite buildea a `docs/` (config para GitHub Pages en vite.config.ts).
+  // Capacitor debe leer desde el mismo directorio que el web build.
+  webDir: 'docs',
   // For development with live reload, uncomment the server section:
   // server: {
   //   url: 'https://9c3ef547-1a05-4427-a6e6-d3f86a6365e3.lovableproject.com?forceHideBadge=true',
