@@ -49,6 +49,7 @@ const ProviderProfileEdit = lazy(() => import("./pages/ProviderProfileEdit"));
 const RegistroVeterinario = lazy(() => import("./pages/RegistroVeterinario"));
 const ParaVeterinarios = lazy(() => import("./pages/ParaVeterinarios"));
 const DejarResena = lazy(() => import("./pages/DejarResena"));
+const Actividad = lazy(() => import("./pages/Actividad"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -79,6 +80,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/home" element={<ProtectedRoute><AppLayout><Home /></AppLayout></ProtectedRoute>} />
               <Route path="/feed" element={<ProtectedRoute><AppLayout><Feed /></AppLayout></ProtectedRoute>} />
+              <Route path="/actividad" element={<ProtectedRoute><AppLayout><Actividad /></AppLayout></ProtectedRoute>} />
               <Route path="/places" element={<Navigate to="/home" replace />} />
               <Route path="/my-pets" element={<ProtectedRoute><AppLayout><MyPets /></AppLayout></ProtectedRoute>} />
               <Route path="/add-pet" element={<ProtectedRoute><AppLayout><AddPet /></AppLayout></ProtectedRoute>} />

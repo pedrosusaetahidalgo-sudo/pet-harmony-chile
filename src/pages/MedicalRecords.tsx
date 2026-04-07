@@ -150,10 +150,11 @@ const MedicalRecords = () => {
               </div>
               
               {selectedPetId && selectedPet && (
-                <AddMedicalRecord 
-                  petId={selectedPetId} 
-                  petBreed={selectedPet.breed || ""} 
+                <AddMedicalRecord
+                  petId={selectedPetId}
+                  petBreed={selectedPet.breed || ""}
                   petSpecies={selectedPet.species}
+                  petName={selectedPet.name}
                 />
               )}
             </div>

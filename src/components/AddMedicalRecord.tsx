@@ -17,11 +17,13 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import { logger } from "@/lib/logger";
 import { describeSupabaseError } from "@/lib/supabaseErrors";
+import { useOrganicRewards } from "@/hooks/useOrganicRewards";
 
 interface AddMedicalRecordProps {
   petId: string;
   petBreed: string;
   petSpecies: string;
+  petName?: string;
 }
 
 interface MedicalSuggestion {
@@ -30,7 +32,7 @@ interface MedicalSuggestion {
   description?: string;
 }
 
-export function AddMedicalRecord({ petId, petBreed, petSpecies }: AddMedicalRecordProps) {
+export function AddMedicalRecord({ petId, petBreed, petSpecies, petName = "Tu mascota" }: AddMedicalRecordProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
@@ -48,6 +50,7 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies }: AddMedicalReco
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const { reward } = useOrganicRewards();
 
   // Fetch veterinarias for selection
   const { data: veterinarias } = useQuery({
@@ -186,6 +189,12 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies }: AddMedicalReco
         title: "Registro creado",
         description: "El registro médico se ha guardado correctamente",
       });
+
+      // Fire-and-forget organic rewards + social activity
+      reward({ kind: "medical_record_added", petId, petName });
+      if (recordType === "vacuna") {
+        reward({ kind: "vaccine_logged", petId, petName, vaccineName: title });
+      }
 
       queryClient.invalidateQueries({ queryKey: ["medical-records"] });
       setOpen(false);
