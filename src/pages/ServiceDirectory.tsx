@@ -624,7 +624,8 @@ const ServiceDirectory = () => {
         setAvailabilityDates(availMap);
 
         const profilesMap = new Map(profilesData?.map(p => [p.id, p]) || []);
-        setProviders((providersData as Record<string, unknown>[]).map((provider: Record<string, unknown>) => ({
+        type ProviderRow = Record<string, unknown> & { user_id: string };
+        setProviders((providersData as ProviderRow[]).map((provider) => ({
           ...provider,
           profiles: profilesMap.get(provider.user_id)
         })));
