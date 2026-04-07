@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkAiQuota, rateLimitResponse } from "../_shared/rate-limit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "https://pawfriend.cl",
@@ -38,6 +39,11 @@ serve(async (req) => {
     }
 
     const userId = userData.user.id;
+
+    const quota = await checkAiQuota(userId, { limit: 60 });
+    if (!quota.allowed) {
+      return rateLimitResponse(quota, corsHeaders);
+    }
 
     // Parse input
     const body = await req.json();

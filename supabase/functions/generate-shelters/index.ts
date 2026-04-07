@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkAiQuota, rateLimitResponse } from "../_shared/rate-limit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "https://pawfriend.cl",
@@ -82,6 +83,11 @@ serve(async (req) => {
         JSON.stringify({ error: "User not authenticated" }),
         { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    const quota = await checkAiQuota(userData.user.id, { limit: 10 });
+    if (!quota.allowed) {
+      return rateLimitResponse(quota, corsHeaders);
     }
 
     const { action, count = 15 } = await req.json();
