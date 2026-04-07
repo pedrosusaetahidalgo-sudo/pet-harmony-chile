@@ -8,23 +8,48 @@ export const useAuth = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Set up auth state listener FIRST
+    let mounted = true;
+
+    // Subscribe primero (best practice supabase)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+      (_event, newSession) => {
+        if (!mounted) return;
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
         setLoading(false);
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+    // Get session existente
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      if (!mounted) return;
+      setSession(currentSession);
+      setUser(currentSession?.user ?? null);
       setLoading(false);
+    }).catch((err) => {
+      console.warn("[useAuth] getSession failed:", err);
+      if (mounted) setLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    // CRÍTICO: timeout de seguridad. Si getSession se cuelga (red lenta,
+    // mobile WebView, etc.), forzar loading=false a los 3s para que
+    // ProtectedRoute deje de mostrar spinner. Si no hay sesión, va a /auth.
+    const timeoutId = setTimeout(() => {
+      if (mounted) {
+        setLoading((current) => {
+          if (current) {
+            console.warn("[useAuth] timeout — forcing loading=false");
+          }
+          return false;
+        });
+      }
+    }, 3000);
+
+    return () => {
+      mounted = false;
+      clearTimeout(timeoutId);
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signOut = async () => {

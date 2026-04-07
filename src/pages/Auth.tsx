@@ -90,53 +90,56 @@ const Auth = () => {
   };
 
   useEffect(() => {
-    const handleOAuthCallback = async () => {
-      const hashParams = new URLSearchParams(window.location.hash.substring(1));
-      const queryParams = new URLSearchParams(window.location.search);
+    const hasOAuthHash =
+      window.location.hash.includes("access_token") ||
+      window.location.search.includes("code=");
 
-      if (hashParams.has('access_token') || queryParams.has('code')) {
-        try {
-          const { data: { session }, error } = await supabase.auth.getSession();
+    // Listener: cuando supabase procesa el hash y emite SIGNED_IN, redirigimos
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, newSession) => {
+        if (event === "SIGNED_IN" && newSession && !hasRedirected.current) {
+          hasRedirected.current = true;
+          window.history.replaceState({}, document.title, window.location.pathname);
+          // Hard reload para evitar race con ProtectedRoute
+          window.location.href = returnTo || "/home";
+        }
+      }
+    );
 
-          if (error) {
-            console.error('OAuth callback error:', error);
+    // Si ya hay sesión activa al montar (sin hash), redirigir directo
+    if (!hasOAuthHash) {
+      supabase.auth.getSession().then(({ data: { session: existingSession } }) => {
+        if (existingSession && !hasRedirected.current) {
+          hasRedirected.current = true;
+          window.location.href = returnTo || "/home";
+        }
+      }).catch(() => { /* silent */ });
+    }
+
+    // Si hay hash OAuth pero supabase tarda mucho en procesarlo, fallback a 5s
+    const oauthTimeout = hasOAuthHash
+      ? setTimeout(async () => {
+          if (hasRedirected.current) return;
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session && !hasRedirected.current) {
+            hasRedirected.current = true;
+            window.history.replaceState({}, document.title, window.location.pathname);
+            window.location.href = returnTo || "/home";
+          } else if (!session) {
             toast({
-              title: "Error de autenticación",
-              description: error.message,
+              title: "Error en autenticación con Google",
+              description: "No pudimos completar el login. Intenta nuevamente.",
               variant: "destructive",
             });
           }
+        }, 5000)
+      : null;
 
-          window.history.replaceState({}, document.title, window.location.pathname);
-
-          if (session) {
-            // Hard reload — evita race condition con useAuth/ProtectedRoute
-            window.location.href = returnTo || "/home";
-            return;
-          }
-        } catch (err) {
-          console.error('Error processing OAuth callback:', err);
-        }
-      }
+    return () => {
+      subscription.unsubscribe();
+      if (oauthTimeout) clearTimeout(oauthTimeout);
     };
-
-    handleOAuthCallback();
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        redirectUser(session.user.id);
-      }
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_IN" && session) {
-        window.history.replaceState({}, document.title, window.location.pathname);
-        redirectUser(session.user.id);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [navigate, toast]);
+  }, [navigate, toast, returnTo]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
