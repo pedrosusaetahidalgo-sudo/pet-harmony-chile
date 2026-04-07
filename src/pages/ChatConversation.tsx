@@ -11,6 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
+import { logger } from "@/lib/logger";
 
 const ChatConversation = () => {
   const { conversationId } = useParams();
@@ -105,7 +106,7 @@ const ChatConversation = () => {
       setMessages(messagesData || []);
       markAsRead();
     } catch (error) {
-      console.error('Error loading conversation:', error);
+      logger.error('Error loading conversation:', error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -145,7 +146,7 @@ const ChatConversation = () => {
       setNewMessage("");
       inputRef.current?.focus();
     } catch (error) {
-      console.error('Error sending message:', error);
+      logger.error('Error sending message:', error);
       toast({
         variant: "destructive",
         title: "Error",

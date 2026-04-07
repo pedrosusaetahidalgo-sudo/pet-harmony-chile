@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { Send, Trash2 } from "@/lib/icons";
+import { logger } from "@/lib/logger";
 
 interface Comment {
   id: string;
@@ -76,7 +77,7 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
       if (error) throw error;
       setComments((data as Comment[]) || []);
     } catch (error) {
-      console.error('Error loading comments:', error);
+      logger.error('Error loading comments:', error);
     } finally {
       setLoading(false);
     }
@@ -105,7 +106,7 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
         description: "Tu comentario se ha agregado correctamente"
       });
     } catch (error) {
-      console.error('Error posting comment:', error);
+      logger.error('Error posting comment:', error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -130,7 +131,7 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
         description: "El comentario se ha eliminado correctamente"
       });
     } catch (error) {
-      console.error('Error deleting comment:', error);
+      logger.error('Error deleting comment:', error);
       toast({
         variant: "destructive",
         title: "Error",

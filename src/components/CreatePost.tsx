@@ -10,6 +10,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useGamification } from "@/hooks/useGamification";
 import { DEFAULT_POINTS_CONFIG } from "@/lib/gamification";
 import {
+import { logger } from "@/lib/logger";
+import { describeSupabaseError } from "@/lib/supabaseErrors";
   Select,
   SelectContent,
   SelectItem,
@@ -148,7 +150,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
           description: "Post creado",
         });
       } catch (pointsError) {
-        console.error("Error awarding points:", pointsError);
+        logger.error("Error awarding points:", pointsError);
         // Don't fail the post creation if points fail
       }
 
@@ -164,7 +166,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "No se pudo crear la publicación",
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo crear la publicación",
         variant: "destructive",
       });
     } finally {

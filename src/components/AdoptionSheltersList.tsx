@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { 
+import { logger } from "@/lib/logger";
   Sparkles, MapPin, Search, Filter, Building2, Dog, Cat, 
   Loader2, RefreshCw, Map as MapIcon, List, Navigation,
   ExternalLink, MessageCircle
@@ -56,7 +57,7 @@ const AdoptionSheltersList = () => {
             lng: position.coords.longitude,
           });
         },
-        (error) => console.error("Error getting location:", error)
+        (error) => logger.error("Error getting location:", error)
       );
     }
   }, []);

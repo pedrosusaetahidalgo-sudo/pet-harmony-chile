@@ -9,6 +9,7 @@ import { CalendarIcon, Clock, AlertCircle } from "@/lib/icons";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 interface TimeSlot {
   start: string;
@@ -83,7 +84,7 @@ export const ServiceAvailabilityCalendar = ({
       
       setProviderAvailability(data || []);
     } catch (error) {
-      console.error('Error loading availability:', error);
+      logger.error('Error loading availability:', error);
     } finally {
       setLoading(false);
     }

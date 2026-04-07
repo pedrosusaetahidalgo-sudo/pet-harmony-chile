@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { COMUNAS_SANTIAGO, getComunaCoords } from "@/lib/locations";
 import { supabase } from "@/integrations/supabase/client";
 import { 
+import { logger } from "@/lib/logger";
   CalendarCheck, 
   Clock, 
   MapPin, 
@@ -203,7 +204,7 @@ export const EnhancedBookingDialog = ({
       onOpenChange(false);
       resetForm();
     } catch (error) {
-      console.error('Error creating booking:', error);
+      logger.error('Error creating booking:', error);
       toast({
         variant: "destructive",
         title: "Error",

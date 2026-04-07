@@ -15,6 +15,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { toast } from "sonner";
+import { logger } from "@/lib/logger";
 
 export type ServiceType = 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'grooming';
 export type ProviderStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
@@ -242,7 +243,7 @@ export const useMyProviderProfile = () => {
     },
     onError: (error) => {
       toast.error('Error al actualizar perfil');
-      console.error(error);
+      logger.error(error);
     },
   });
 
@@ -306,7 +307,7 @@ export const useMyProviderProfile = () => {
     },
     onError: (error) => {
       toast.error('Error al agregar servicio');
-      console.error(error);
+      logger.error(error);
     },
   });
 
@@ -330,7 +331,7 @@ export const useMyProviderProfile = () => {
     },
     onError: (error) => {
       toast.error('Error al actualizar servicio');
-      console.error(error);
+      logger.error(error);
     },
   });
 
@@ -403,7 +404,7 @@ export const useAdminServiceProviders = () => {
     },
     onError: (error) => {
       toast.error('Error al actualizar estado');
-      console.error(error);
+      logger.error(error);
     },
   });
 
@@ -430,7 +431,7 @@ export const useAdminServiceProviders = () => {
     },
     onError: (error) => {
       toast.error('Error al actualizar verificación');
-      console.error(error);
+      logger.error(error);
     },
   });
 

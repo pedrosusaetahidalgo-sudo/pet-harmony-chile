@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { logger } from "@/lib/logger";
 
 export interface FollowStatus {
   isFollowing: boolean;
@@ -122,7 +123,7 @@ export const useIsBlocked = (targetUserId?: string) => {
         });
 
       if (error) {
-        console.error("Error checking block status:", error);
+        logger.error("Error checking block status:", error);
         return false;
       }
 

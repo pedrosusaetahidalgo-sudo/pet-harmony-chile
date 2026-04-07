@@ -6,6 +6,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { logger } from "@/lib/logger";
+import { describeSupabaseError } from "@/lib/supabaseErrors";
 
 interface BlockUserButtonProps {
   targetUserId: string;
@@ -51,11 +53,11 @@ const BlockUserButton = ({
       queryClient.invalidateQueries({ queryKey: ["blocked", user.id, targetUserId] });
       queryClient.invalidateQueries({ queryKey: ["follows", user.id, targetUserId] });
     } catch (error: any) {
-      console.error("Error blocking user:", error);
+      logger.error("Error blocking user:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "No se pudo bloquear al usuario",
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo bloquear al usuario",
       });
     } finally {
       setIsBlocking(false);

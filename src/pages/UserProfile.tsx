@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
+import { logger } from "@/lib/logger";
   Grid, 
   Heart, 
   MessageSquare,
@@ -62,7 +63,7 @@ const UserProfile = () => {
       
       setIsFollowing(!!data);
     } catch (error) {
-      console.error('Error checking follow status:', error);
+      logger.error('Error checking follow status:', error);
     }
   };
 
@@ -101,7 +102,7 @@ const UserProfile = () => {
       
       loadProfileData();
     } catch (error) {
-      console.error('Error toggling follow:', error);
+      logger.error('Error toggling follow:', error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -156,7 +157,7 @@ const UserProfile = () => {
       setPosts(postsData || []);
 
     } catch (error) {
-      console.error('Error loading profile:', error);
+      logger.error('Error loading profile:', error);
       toast({
         variant: "destructive",
         title: "Error",

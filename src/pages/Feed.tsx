@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Search, Plus, TrendingUp, Users, MapPin, Video, PawPrint, Trophy } from "@/lib/icons";
 import { EmptyState } from "@/components/EmptyState";
+import { logger } from "@/lib/logger";
 // DogBehaviorAnalyzer temporarily removed - will be implemented in different tab later
 import { OnboardingTutorial } from "@/components/OnboardingTutorial";
 import { CreatePost } from "@/components/CreatePost";
@@ -145,7 +146,7 @@ const Feed = () => {
         setFollowingPosts(data);
       }
     } catch (error) {
-      console.error("Error loading following posts:", error);
+      logger.error("Error loading following posts:", error);
     } finally {
       setLoadingFollowing(false);
     }

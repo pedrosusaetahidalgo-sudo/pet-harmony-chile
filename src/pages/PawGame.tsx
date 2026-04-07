@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { 
+import { logger } from "@/lib/logger";
   Trophy, 
   Star, 
   Target, 
@@ -292,7 +293,7 @@ const PawGame = () => {
       setPets(petsData || []);
 
     } catch (error: any) {
-      console.error('Error loading game data:', error);
+      logger.error('Error loading game data:', error);
       // Don't crash - just show the page with empty data
     } finally {
       setLoading(false);
@@ -356,7 +357,7 @@ const PawGame = () => {
 
       loadGameData();
     } catch (error) {
-      console.error('Check-in error:', error);
+      logger.error('Check-in error:', error);
     }
   };
 

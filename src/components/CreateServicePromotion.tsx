@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 } from "@/lib/icons";
+import { logger } from "@/lib/logger";
 
 interface PromotionFormData {
   service_type: string;
@@ -48,7 +49,7 @@ export const CreateServicePromotion = ({ onSuccess }: { onSuccess?: () => void }
       });
 
       if (moderationError) {
-        console.error('Error en moderación AI:', moderationError);
+        logger.error('Error en moderación AI:', moderationError);
         toast.info('Publicación creada. Será revisada manualmente.');
       } else {
         toast.success('¡Publicación enviada para revisión!');
@@ -56,7 +57,7 @@ export const CreateServicePromotion = ({ onSuccess }: { onSuccess?: () => void }
 
       onSuccess?.();
     } catch (error) {
-      console.error('Error:', error);
+      logger.error('Error:', error);
       toast.error('Error al crear la publicación');
     } finally {
       setLoading(false);

@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
+import { logger } from "@/lib/logger";
   Settings, 
   Share2, 
   Grid, 
@@ -93,7 +94,7 @@ const Profile = () => {
       setPosts(postsData || []);
 
     } catch (error) {
-      console.error('Error loading profile:', error);
+      logger.error('Error loading profile:', error);
       toast({
         variant: "destructive",
         title: "Error",

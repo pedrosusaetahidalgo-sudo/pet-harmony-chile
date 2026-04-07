@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import {
+import { logger } from "@/lib/logger";
   Dialog,
   DialogContent,
   DialogHeader,
@@ -65,7 +66,7 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
       setPhotoUrls((prev) => [...prev, ...urls]);
       toast.success("Fotos subidas exitosamente");
     } catch (error) {
-      console.error("Error uploading photos:", error);
+      logger.error("Error uploading photos:", error);
       toast.error("Error al subir las fotos");
     }
   };
@@ -107,7 +108,7 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
           p_description: "Publicación de adopción creada",
         });
       } catch (pointsError) {
-        console.error("Error awarding points:", pointsError);
+        logger.error("Error awarding points:", pointsError);
         // Don't fail the adoption post creation if points fail
       }
 
@@ -116,7 +117,7 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
       setPhotoUrls([]);
       onSuccess();
     } catch (error) {
-      console.error("Error creating post:", error);
+      logger.error("Error creating post:", error);
       toast.error("Error al crear la publicación");
     } finally {
       setIsSubmitting(false);

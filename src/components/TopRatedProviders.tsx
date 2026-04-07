@@ -8,6 +8,7 @@ import { Star, Trophy, Dog, Home, Stethoscope, GraduationCap, Crown, Medal, Awar
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { LINKS } from "@/lib/links";
+import { logger } from "@/lib/logger";
 
 interface RankedProvider {
   id: string;
@@ -119,7 +120,7 @@ const TopRatedProviders = () => {
       setVets(sortAndLimit(vetsList));
       setTrainers(sortAndLimit(trainersList));
     } catch (error) {
-      console.error("Error loading rankings:", error);
+      logger.error("Error loading rankings:", error);
     } finally {
       setLoading(false);
     }

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
+import { describeSupabaseError } from "@/lib/supabaseErrors";
   Select,
   SelectContent,
   SelectItem,
@@ -78,7 +79,7 @@ const AdManagement = () => {
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message,
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
         variant: "destructive",
       });
     },
@@ -101,7 +102,7 @@ const AdManagement = () => {
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message,
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
         variant: "destructive",
       });
     },
@@ -119,7 +120,7 @@ const AdManagement = () => {
     onError: (error: any) => {
       toast({
         title: "Error",
-        description: error.message,
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
         variant: "destructive",
       });
     },

@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { 
+import { logger } from "@/lib/logger";
   Heart, 
   Activity, 
   Shield, 
@@ -98,7 +99,7 @@ export const PetPawProgress = ({ pets, userId }: PetPawProgressProps) => {
         setPetProgress(progressMap);
       }
     } catch (error) {
-      console.error('Error loading pet progress:', error);
+      logger.error('Error loading pet progress:', error);
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,7 @@
 import { Component, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "@/lib/icons";
+import { logger } from "@/lib/logger";
 
 interface Props {
   children: ReactNode;
@@ -22,7 +23,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error("ErrorBoundary caught:", error, errorInfo.componentStack);
+    logger.error("ErrorBoundary caught:", error, errorInfo.componentStack);
   }
 
   render() {

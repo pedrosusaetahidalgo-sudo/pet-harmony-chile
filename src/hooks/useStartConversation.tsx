@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { logger } from "@/lib/logger";
 
 export const useStartConversation = () => {
   const { user } = useAuth();
@@ -23,7 +24,7 @@ export const useStartConversation = () => {
         });
 
       if (followError) {
-        console.error("Error checking mutual follow:", followError);
+        logger.error("Error checking mutual follow:", followError);
       }
 
       if (!mutualFollow) {
@@ -44,7 +45,7 @@ export const useStartConversation = () => {
         });
 
       if (blockError) {
-        console.error("Error checking block status:", blockError);
+        logger.error("Error checking block status:", blockError);
       }
 
       if (isBlocked) {
@@ -88,7 +89,7 @@ export const useStartConversation = () => {
 
       navigate(`/chat/${newConv.id}`);
     } catch (error) {
-      console.error('Error starting conversation:', error);
+      logger.error('Error starting conversation:', error);
       toast({
         variant: "destructive",
         title: "Error",

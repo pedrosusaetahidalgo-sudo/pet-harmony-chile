@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
+import { describeSupabaseError } from "@/lib/supabaseErrors";
   Upload, 
   FileText, 
   Download, 
@@ -95,7 +96,7 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "No se pudo descargar el documento",
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo descargar el documento",
       });
     }
   };
@@ -112,7 +113,7 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "No se pudo abrir el documento",
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo abrir el documento",
       });
     }
   };

@@ -15,6 +15,7 @@ import { Loader2 } from "@/lib/icons";
 import DateTimePicker from "./DateTimePicker";
 import { COMUNAS_SANTIAGO, getComunaCoords } from "@/lib/locations";
 import { format } from "date-fns";
+import { logger } from "@/lib/logger";
 
 const formSchema = z.object({
   report_type: z.enum(["lost", "found"]),
@@ -122,7 +123,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
           p_description: `Ayuda con mascota ${data.report_type === "lost" ? "perdida" : "encontrada"}`,
         });
       } catch (pointsError) {
-        console.error("Error awarding points:", pointsError);
+        logger.error("Error awarding points:", pointsError);
         // Don't fail the report creation if points fail
       }
 
@@ -133,7 +134,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
 
       onSuccess();
     } catch (error) {
-      console.error("Error creating report:", error);
+      logger.error("Error creating report:", error);
       toast({
         title: "Error",
         description: "No se pudo crear el reporte. Intenta nuevamente.",

@@ -14,6 +14,8 @@ import { LegalFooter } from "@/components/LegalFooter";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { useFacebookAuth } from "@/hooks/useFacebookAuth";
 import { track, EVENTS } from "@/lib/analytics";
+import { logger } from "@/lib/logger";
+import { describeSupabaseError } from "@/lib/supabaseErrors";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -61,7 +63,7 @@ const Auth = () => {
       );
       isProvider = !!result?.data;
     } catch (err) {
-      console.warn("[Auth] provider check failed, fallback owner flow:", err);
+      logger.warn("[Auth] provider check failed, fallback owner flow:", err);
     }
 
     if (hasRedirected.current) return;
@@ -79,7 +81,7 @@ const Auth = () => {
       );
       hasPets = !!(result?.data && result.data.length > 0);
     } catch (err) {
-      console.warn("[Auth] pets check failed, fallback /home:", err);
+      logger.warn("[Auth] pets check failed, fallback /home:", err);
     }
 
     if (hasRedirected.current) return;
@@ -280,7 +282,7 @@ const Auth = () => {
     } catch (error: any) {
       toast({
         title: "Error",
-        description: error.message || "No se pudo enviar el correo de recuperación.",
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo enviar el correo de recuperación.",
         variant: "destructive",
       });
     } finally {
@@ -291,7 +293,7 @@ const Auth = () => {
   const handleFacebookLogin = async () => {
     const result = await signInWithFacebook();
     if (!result.success && result.error) {
-      console.error('Facebook login error:', result.error);
+      logger.error('Facebook login error:', result.error);
     }
   };
 

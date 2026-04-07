@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -27,7 +28,7 @@ export const useAuth = () => {
       setUser(currentSession?.user ?? null);
       setLoading(false);
     }).catch((err) => {
-      console.warn("[useAuth] getSession failed:", err);
+      logger.warn("[useAuth] getSession failed:", err);
       if (mounted) setLoading(false);
     });
 
@@ -38,7 +39,7 @@ export const useAuth = () => {
       if (mounted) {
         setLoading((current) => {
           if (current) {
-            console.warn("[useAuth] timeout — forcing loading=false");
+            logger.warn("[useAuth] timeout — forcing loading=false");
           }
           return false;
         });
@@ -56,7 +57,7 @@ export const useAuth = () => {
     try {
       await supabase.auth.signOut();
     } catch (error) {
-      console.error("Error signing out:", error);
+      logger.error("Error signing out:", error);
     }
   };
 

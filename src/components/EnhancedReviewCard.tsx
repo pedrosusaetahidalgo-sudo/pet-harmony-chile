@@ -10,6 +10,7 @@ import { es } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { logger } from "@/lib/logger";
 
 interface EnhancedReviewCardProps {
   reviewType: "walk" | "dogsitter" | "vet";
@@ -73,7 +74,7 @@ const EnhancedReviewCard = ({ reviewType, review, providerId, isProvider }: Enha
         setHelpfulCount(prev => prev + 1);
       }
     } catch (error) {
-      console.error("Error voting:", error);
+      logger.error("Error voting:", error);
       toast.error("Error al votar");
     }
   };
@@ -101,7 +102,7 @@ const EnhancedReviewCard = ({ reviewType, review, providerId, isProvider }: Enha
       setIsResponding(false);
       setResponse("");
     } catch (error) {
-      console.error("Error submitting response:", error);
+      logger.error("Error submitting response:", error);
       toast.error("Error al publicar respuesta");
     }
   };

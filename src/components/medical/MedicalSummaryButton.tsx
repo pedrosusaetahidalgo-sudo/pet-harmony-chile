@@ -7,6 +7,8 @@ import { Button } from "@/components/ui/button";
 import { FileDown, Loader2 } from "@/lib/icons";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { logger } from "@/lib/logger";
+import { describeSupabaseError } from "@/lib/supabaseErrors";
 
 interface MedicalSummaryButtonProps {
   petId: string;
@@ -38,11 +40,11 @@ export const MedicalSummaryButton = ({ petId, petName }: MedicalSummaryButtonPro
         throw new Error('No se recibió URL de descarga');
       }
     } catch (error: any) {
-      console.error('Error generating medical summary:', error);
+      logger.error('Error generating medical summary:', error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "No se pudo generar el resumen médico",
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo generar el resumen médico",
       });
     } finally {
       setIsGenerating(false);

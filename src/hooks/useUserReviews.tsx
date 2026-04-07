@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { logger } from "@/lib/logger";
 
 export interface UserReview {
   id: string;
@@ -174,7 +175,7 @@ export const useUserReviews = () => {
 
       setReviews(allReviews);
     } catch (error) {
-      console.error("Error loading user reviews:", error);
+      logger.error("Error loading user reviews:", error);
     } finally {
       setLoading(false);
     }

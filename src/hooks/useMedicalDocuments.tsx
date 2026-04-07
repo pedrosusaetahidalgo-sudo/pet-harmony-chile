@@ -8,6 +8,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { toast } from "sonner";
+import { logger } from "@/lib/logger";
 
 export type MedicalDocumentType = 'vaccine_card' | 'id_card' | 'lab_result' | 'xray' | 'prescription' | 'other';
 
@@ -146,7 +147,7 @@ export const useMedicalDocuments = (petId?: string) => {
     },
     onError: (error: any) => {
       toast.error(error.message || 'Error al subir documento');
-      console.error('Upload error:', error);
+      logger.error('Upload error:', error);
     },
   });
 
@@ -172,7 +173,7 @@ export const useMedicalDocuments = (petId?: string) => {
           .remove([document.file_url]);
 
         if (storageError) {
-          console.error('Storage delete error:', storageError);
+          logger.error('Storage delete error:', storageError);
           // Continue with database delete even if storage delete fails
         }
       }
@@ -192,7 +193,7 @@ export const useMedicalDocuments = (petId?: string) => {
     },
     onError: (error: any) => {
       toast.error(error.message || 'Error al eliminar documento');
-      console.error('Delete error:', error);
+      logger.error('Delete error:', error);
     },
   });
 

@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { OnboardingTutorial } from "@/components/OnboardingTutorial";
 import { 
+import { logger } from "@/lib/logger";
   PawPrint, 
   Plus, 
   Calendar, 
@@ -137,7 +138,7 @@ export default function Home() {
 
       // Paw Game progress is now loaded via useGamification hook
     } catch (error) {
-      console.error("Error loading home data:", error);
+      logger.error("Error loading home data:", error);
     } finally {
       setLoading(false);
     }

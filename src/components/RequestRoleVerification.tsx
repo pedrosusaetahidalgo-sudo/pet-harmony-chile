@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { Loader2, Upload, FileCheck, Briefcase, Home, Stethoscope, GraduationCap } from "@/lib/icons";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
+import { logger } from "@/lib/logger";
 
 interface RoleRequestFormData {
   requested_role: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer';
@@ -72,7 +73,7 @@ export const RequestRoleVerification = () => {
       setDocumentUrls([...documentUrls, ...uploadedUrls]);
       toast.success('Documento(s) subido(s) correctamente');
     } catch (error) {
-      console.error('Error uploading document:', error);
+      logger.error('Error uploading document:', error);
       toast.error('Error al subir el documento');
     } finally {
       setUploadingDocument(false);
@@ -107,7 +108,7 @@ export const RequestRoleVerification = () => {
       toast.success('Solicitud enviada. Será revisada por nuestro equipo.');
       setDocumentUrls([]);
     } catch (error) {
-      console.error('Error:', error);
+      logger.error('Error:', error);
       toast.error('Error al enviar la solicitud');
     } finally {
       setLoading(false);

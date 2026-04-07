@@ -6,6 +6,7 @@ import { Star, MessageSquare, Filter } from "@/lib/icons";
 import { supabase } from "@/integrations/supabase/client";
 import EnhancedReviewCard from "./EnhancedReviewCard";
 import ProviderRatingSummary from "./ProviderRatingSummary";
+import { logger } from "@/lib/logger";
 
 interface ServiceReviewsSectionProps {
   providerId: string;
@@ -124,7 +125,7 @@ const ServiceReviewsSection = ({
         setRatingDistribution(dist);
       }
     } catch (error) {
-      console.error("Error loading reviews:", error);
+      logger.error("Error loading reviews:", error);
     } finally {
       setLoading(false);
     }

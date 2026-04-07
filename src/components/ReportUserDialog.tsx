@@ -8,6 +8,8 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { logger } from "@/lib/logger";
+import { describeSupabaseError } from "@/lib/supabaseErrors";
 
 interface ReportUserDialogProps {
   targetUserId: string;
@@ -60,11 +62,11 @@ const ReportUserDialog = ({ targetUserId, trigger }: ReportUserDialogProps) => {
       setDescription("");
       setReportType("spam");
     } catch (error: any) {
-      console.error("Error reporting user:", error);
+      logger.error("Error reporting user:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: error.message || "No se pudo enviar el reporte",
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo enviar el reporte",
       });
     } finally {
       setIsSubmitting(false);

@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { logger } from "@/lib/logger";
 
 const notificationIconMap: Record<string, { icon: React.ElementType; color: string }> = {
   reminder_due: { icon: Clock, color: "text-amber-500" },
@@ -91,7 +92,7 @@ export const Header = () => {
       // Use profile data for level/points (single source of truth)
       setUserStats(data ? { level: data.level || 1, points: data.points || 0 } : null);
     } catch (error) {
-      console.error("Error loading profile:", error);
+      logger.error("Error loading profile:", error);
     }
   };
 

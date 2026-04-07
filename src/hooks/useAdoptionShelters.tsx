@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { calculateDistance } from "@/lib/distance";
+import { logger } from "@/lib/logger";
 
 export interface AdoptionShelter {
   id: string;
@@ -64,7 +65,7 @@ export const useAdoptionShelters = () => {
       toast.success("Refugios generados exitosamente");
     },
     onError: (error: Error) => {
-      console.error("Error generating shelters:", error);
+      logger.error("Error generating shelters:", error);
       toast.error("Error al generar refugios");
     },
   });

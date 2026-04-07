@@ -627,7 +627,7 @@ const ServiceDirectory = () => {
         setProviders([]);
       }
     } catch (error) {
-      console.error('Error loading data:', error);
+      logger.error('Error loading data:', error);
       toast({
         variant: "destructive",
         title: "Error",

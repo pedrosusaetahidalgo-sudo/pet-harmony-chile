@@ -1,3 +1,4 @@
+import { logger } from "@/lib/logger";
 /**
  * Google Calendar API integration
  * Syncs provider availability with Google Calendar
@@ -87,7 +88,7 @@ export class GoogleCalendarSync {
 
       return [];
     } catch (error) {
-      console.error('Error fetching busy times:', error);
+      logger.error('Error fetching busy times:', error);
       return [];
     }
   }
@@ -121,7 +122,7 @@ export class GoogleCalendarSync {
 
       return null;
     } catch (error) {
-      console.error('Error creating calendar event:', error);
+      logger.error('Error creating calendar event:', error);
       return null;
     }
   }
@@ -168,7 +169,7 @@ export class GoogleCalendarSync {
 
       return unavailableSlots;
     } catch (error) {
-      console.error('Error syncing with Google Calendar:', error);
+      logger.error('Error syncing with Google Calendar:', error);
       return [];
     }
   }

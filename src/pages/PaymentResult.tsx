@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
+import { logger } from "@/lib/logger";
   Loader2,
   CheckCircle,
   XCircle,
@@ -65,7 +66,7 @@ const PaymentResult = () => {
           setStatus("failed");
         }
       } catch (err) {
-        console.error("Payment confirmation error:", err);
+        logger.error("Payment confirmation error:", err);
         setStatus("failed");
       }
     };

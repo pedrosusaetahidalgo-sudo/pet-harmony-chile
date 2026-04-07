@@ -14,6 +14,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { GoogleCalendarSync, requestCalendarPermission } from "@/lib/googleCalendar";
 import { Calendar as CalendarIcon, RefreshCw } from "@/lib/icons";
+import { logger } from "@/lib/logger";
 
 interface ProviderAvailabilityManagerProps {
   providerType: "dog_walker" | "dogsitter" | "veterinarian" | "trainer";
@@ -78,7 +79,7 @@ export const ProviderAvailabilityManager = ({
       if (error) throw error;
       setExistingAvailability(data || []);
     } catch (error) {
-      console.error('Error loading availability:', error);
+      logger.error('Error loading availability:', error);
     } finally {
       setLoading(false);
     }
@@ -157,7 +158,7 @@ export const ProviderAvailabilityManager = ({
 
       loadAvailability();
     } catch (error) {
-      console.error('Error syncing calendar:', error);
+      logger.error('Error syncing calendar:', error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -214,7 +215,7 @@ export const ProviderAvailabilityManager = ({
 
       loadAvailability();
     } catch (error) {
-      console.error('Error saving availability:', error);
+      logger.error('Error saving availability:', error);
       toast({
         variant: "destructive",
         title: "Error",
@@ -252,7 +253,7 @@ export const ProviderAvailabilityManager = ({
       setNotes("");
       loadAvailability();
     } catch (error) {
-      console.error('Error deleting availability:', error);
+      logger.error('Error deleting availability:', error);
       toast({
         variant: "destructive",
         title: "Error",

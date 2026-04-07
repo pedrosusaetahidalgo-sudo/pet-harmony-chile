@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Capacitor } from "@capacitor/core";
+import { logger } from "@/lib/logger";
 
 interface FacebookAuthResult {
   success: boolean;
@@ -29,7 +30,7 @@ export const useFacebookAuth = () => {
         return await handleWebFacebookAuth();
       }
     } catch (error: any) {
-      console.error('Facebook Sign-In error:', error);
+      logger.error('Facebook Sign-In error:', error);
       
       const errorMessage = getErrorMessage(error);
       toast({

@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useFollows } from "@/hooks/useFollows";
 import { UserPlus, UserCheck, Loader2 } from "@/lib/icons";
 import {
+import { logger } from "@/lib/logger";
   Dialog,
   DialogContent,
   DialogDescription,
@@ -113,7 +114,7 @@ const PetCard = ({
         setLikesCount(prev => prev + 1);
       }
     } catch (error) {
-      console.error('Error toggling like:', error);
+      logger.error('Error toggling like:', error);
       toast({
         variant: "destructive",
         title: "Error",

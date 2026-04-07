@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
+import { logger } from "@/lib/logger";
   Gift, 
   ShoppingBag, 
   Percent, 
@@ -89,7 +90,7 @@ export const PawShopRewards = ({ userPoints, userId, onPurchase }: PawShopReward
 
       setRewards(data || []);
     } catch (error) {
-      console.error('Error loading rewards:', error);
+      logger.error('Error loading rewards:', error);
     } finally {
       setLoading(false);
     }
@@ -137,7 +138,7 @@ export const PawShopRewards = ({ userPoints, userId, onPurchase }: PawShopReward
       loadRewards();
 
     } catch (error) {
-      console.error('Error purchasing reward:', error);
+      logger.error('Error purchasing reward:', error);
       toast.error("Error al canjear", {
         description: "Intenta de nuevo más tarde"
       });

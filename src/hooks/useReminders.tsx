@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
+import { describeSupabaseError } from "@/lib/supabaseErrors";
 
 export interface Reminder {
   id: string;
@@ -60,7 +61,7 @@ export const useReminders = () => {
       toast({ title: "Recordatorio creado" });
     },
     onError: (error: Error) => {
-      toast({ title: "Error", description: error.message, variant: "destructive" });
+      toast({ title: "Error", description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]), variant: "destructive" });
     },
   });
 

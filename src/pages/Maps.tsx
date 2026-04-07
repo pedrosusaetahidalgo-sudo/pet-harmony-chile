@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
+import { logger } from "@/lib/logger";
   Search, Heart, Briefcase, Plus, Filter,
   MapPin, Loader2, LocateFixed
 } from "@/lib/icons";
@@ -134,7 +135,7 @@ const Maps = () => {
             lng: position.coords.longitude,
           });
         },
-        (error) => console.error("Error getting location:", error)
+        (error) => logger.error("Error getting location:", error)
       );
     }
   }, []);

@@ -12,6 +12,7 @@ import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
+import { logger } from "@/lib/logger";
   Select,
   SelectContent,
   SelectItem,
@@ -104,7 +105,7 @@ export default function ProviderProfileEdit() {
       update('avatar_url', url);
       toast.success('Foto subida');
     } catch (err) {
-      console.error(err);
+      logger.error(err);
       toast.error('No se pudo subir la foto. Verificá que el bucket "avatars" exista en Supabase Storage.');
     } finally {
       setUploading(false);

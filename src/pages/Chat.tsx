@@ -13,6 +13,7 @@ import { es } from "date-fns/locale";
 import { useStartConversation } from "@/hooks/useStartConversation";
 import { Button } from "@/components/ui/button";
 import { Plus } from "@/lib/icons";
+import { logger } from "@/lib/logger";
 
 const Chat = () => {
   const { user } = useAuth();
@@ -113,7 +114,7 @@ const Chat = () => {
 
       setConversations(processedConversations);
     } catch (error) {
-      console.error('Error loading conversations:', error);
+      logger.error('Error loading conversations:', error);
     } finally {
       setLoading(false);
     }
@@ -153,7 +154,7 @@ const Chat = () => {
       
       setFollowedUsers(profilesData || []);
     } catch (error) {
-      console.error('Error loading followed users:', error);
+      logger.error('Error loading followed users:', error);
     }
   };
 

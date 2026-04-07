@@ -9,6 +9,7 @@ import { es } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import {
+import { logger } from "@/lib/logger";
   Dialog,
   DialogContent,
   DialogHeader,
@@ -200,7 +201,7 @@ const PendingReviewsList = () => {
 
       setPendingBookings(pending);
     } catch (error) {
-      console.error("Error loading pending reviews:", error);
+      logger.error("Error loading pending reviews:", error);
     } finally {
       setLoading(false);
     }

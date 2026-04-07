@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 import { useGamification } from "@/hooks/useGamification";
 import { DEFAULT_POINTS_CONFIG } from "@/lib/gamification";
+import { logger } from "@/lib/logger";
 
 interface CreateReviewFormProps {
   reviewType: "walk" | "dogsitter" | "vet";
@@ -126,14 +127,14 @@ const CreateReviewForm = ({ reviewType, bookingId, providerId, onSuccess, onCanc
           description: "Reseña escrita",
         });
       } catch (pointsError) {
-        console.error("Error awarding points:", pointsError);
+        logger.error("Error awarding points:", pointsError);
         // Don't fail the review creation if points fail
       }
 
       toast.success("¡Reseña publicada exitosamente!");
       onSuccess();
     } catch (error) {
-      console.error("Error creating review:", error);
+      logger.error("Error creating review:", error);
       toast.error("Error al publicar la reseña");
     } finally {
       setUploading(false);

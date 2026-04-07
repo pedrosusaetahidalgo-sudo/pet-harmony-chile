@@ -5,6 +5,7 @@ import { Sparkles, Loader2, Heart, Activity, Utensils, Brain, Thermometer, Users
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";
+import { describeSupabaseError } from "@/lib/supabaseErrors";
 
 interface BreedTipsProps {
   breed: string;
@@ -46,7 +47,7 @@ export function BreedTips({ breed, species }: BreedTipsProps) {
     } catch (error: any) {
       toast({
         title: "Error al obtener consejos",
-        description: error.message || "Ocurrió un error inesperado",
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "Ocurrió un error inesperado",
         variant: "destructive",
       });
     } finally {

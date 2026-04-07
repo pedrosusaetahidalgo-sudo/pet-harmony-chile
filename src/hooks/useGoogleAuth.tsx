@@ -60,7 +60,7 @@ export const useGoogleAuth = () => {
         return await handleWebGoogleAuth();
       }
     } catch (error: unknown) {
-      console.error('Google Sign-In error:', error);
+      logger.error('Google Sign-In error:', error);
 
       const errorMessage = getErrorMessage(error);
       toast({

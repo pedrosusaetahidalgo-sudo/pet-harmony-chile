@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { 
+import { logger } from "@/lib/logger";
   Calendar, 
   Clock, 
   MapPin, 
@@ -193,7 +194,7 @@ export const MyBookingsHistory = ({
 
       setBookings(allBookings);
     } catch (error) {
-      console.error('Error loading bookings:', error);
+      logger.error('Error loading bookings:', error);
     } finally {
       setLoading(false);
     }

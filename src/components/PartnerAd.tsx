@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink } from "@/lib/icons";
 import { useQuery } from "@tanstack/react-query";
+import { logger } from "@/lib/logger";
 
 interface PartnerAdProps {
   placement: "home" | "services" | "map" | "content" | "feed";
@@ -39,7 +40,7 @@ export const PartnerAd = ({ placement, category, className }: PartnerAdProps) =>
       const { data, error } = await query.maybeSingle();
 
       if (error && error.code !== "PGRST116") {
-        console.error("Error fetching partner ad:", error);
+        logger.error("Error fetching partner ad:", error);
         return null;
       }
 
@@ -55,7 +56,7 @@ export const PartnerAd = ({ placement, category, className }: PartnerAdProps) =>
       supabase.rpc("increment_partner_impressions", {
         partner_id: partner.id,
       }).catch((error) => {
-        console.error("Error tracking impression:", error);
+        logger.error("Error tracking impression:", error);
       });
     }
   }, [partner, adShown]);
@@ -67,7 +68,7 @@ export const PartnerAd = ({ placement, category, className }: PartnerAdProps) =>
     supabase.rpc("increment_partner_clicks", {
       partner_id: partner.id,
     }).catch((error) => {
-      console.error("Error tracking click:", error);
+      logger.error("Error tracking click:", error);
     });
 
     // Open link

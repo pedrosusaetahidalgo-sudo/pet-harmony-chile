@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
+import { logger } from "@/lib/logger";
   Dialog,
   DialogContent,
   DialogHeader,
@@ -65,7 +66,7 @@ export function AdoptionPostCard({ post, onUpdate, isOwner }: AdoptionPostCardPr
         onUpdate();
       }
     } catch (error) {
-      console.error("Error showing interest:", error);
+      logger.error("Error showing interest:", error);
       toast.error("Error al registrar interés");
     } finally {
       setIsSubmitting(false);
@@ -89,7 +90,7 @@ export function AdoptionPostCard({ post, onUpdate, isOwner }: AdoptionPostCardPr
       if (error) throw error;
       setInterests(data || []);
     } catch (error) {
-      console.error("Error loading interests:", error);
+      logger.error("Error loading interests:", error);
       toast.error("Error al cargar intereses");
     }
   };

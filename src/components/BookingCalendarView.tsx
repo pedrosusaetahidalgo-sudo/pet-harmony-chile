@@ -8,6 +8,7 @@ import { CalendarCheck, Clock, User, CheckCircle } from "@/lib/icons";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
+import { logger } from "@/lib/logger";
 
 interface BookingCalendarViewProps {
   providerId: string;
@@ -64,7 +65,7 @@ export const BookingCalendarView = ({
       if (error) throw error;
       setAvailability(data || []);
     } catch (error) {
-      console.error('Error loading provider availability:', error);
+      logger.error('Error loading provider availability:', error);
     } finally {
       setLoading(false);
     }

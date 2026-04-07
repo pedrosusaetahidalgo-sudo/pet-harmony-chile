@@ -14,6 +14,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
+import { logger } from "@/lib/logger";
+import { describeSupabaseError } from "@/lib/supabaseErrors";
 
 interface AddMedicalRecordProps {
   petId: string;
@@ -80,7 +82,7 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies }: AddMedicalReco
       if (error) throw error;
       setSuggestions(data.suggestions || []);
     } catch (error) {
-      console.error("Error fetching suggestions:", error);
+      logger.error("Error fetching suggestions:", error);
       toast({
         title: "Error al obtener sugerencias",
         description: "No se pudieron cargar las recomendaciones de IA",
@@ -163,7 +165,7 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies }: AddMedicalReco
           });
         }
       } catch (pointsError) {
-        console.error("Error awarding points:", pointsError);
+        logger.error("Error awarding points:", pointsError);
         // Don't fail the medical record creation if points fail
       }
 
@@ -178,7 +180,7 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies }: AddMedicalReco
     } catch (error: any) {
       toast({
         title: "Error al guardar",
-        description: error.message || "Ocurrió un error inesperado",
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "Ocurrió un error inesperado",
         variant: "destructive",
       });
     } finally {

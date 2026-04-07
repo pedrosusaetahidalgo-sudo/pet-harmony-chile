@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { logger } from "@/lib/logger";
 
 
 export interface GroomerProfileRow {
@@ -57,7 +58,7 @@ export function useApprovedGroomers(commune?: string) {
         .order('avg_rating', { ascending: false, nullsFirst: false })
         .limit(50);
       if (error) {
-        console.warn('groomer_profiles query failed:', error.message);
+        logger.warn('groomer_profiles query failed:', error.message);
         return [];
       }
       return (data ?? []) as GroomerProfileRow[];

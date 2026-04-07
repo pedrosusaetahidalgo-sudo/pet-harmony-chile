@@ -15,6 +15,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Upload, X, ChevronDown, Stethoscope, Heart } from "@/lib/icons";
 import { LINKS } from "@/lib/links";
 import { Badge } from "@/components/ui/badge";
+import { describeSupabaseError } from "@/lib/supabaseErrors";
+import { logger } from "@/lib/logger";
 
 const personalityOptions = [
   "Juguetón", "Tranquilo", "Energético", "Cariñoso", "Tímido",
@@ -151,7 +153,7 @@ const AddPet = () => {
     } catch (error: any) {
       toast({
         title: "Error al subir foto",
-        description: error.message,
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
         variant: "destructive",
       });
       return null;
@@ -162,6 +164,16 @@ const AddPet = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!user) {
+      toast({
+        title: "Sesión expirada",
+        description: "Tenés que iniciar sesión de nuevo para guardar tu mascota.",
+        variant: "destructive",
+      });
+      navigate("/auth");
+      return;
+    }
 
     // Validate weight if provided
     if (formData.weight && parseFloat(formData.weight) <= 0) {
@@ -190,7 +202,7 @@ const AddPet = () => {
       }
 
       const payload = {
-        owner_id: user?.id,
+        owner_id: user.id,
         name: formData.name,
         species: formData.species,
         breed: formData.breed || null,
@@ -223,7 +235,7 @@ const AddPet = () => {
           .from("pets")
           .update(payload)
           .eq("id", petId)
-          .eq("owner_id", user?.id ?? "");
+          .eq("owner_id", user.id);
         if (error) throw error;
 
         toast({
@@ -235,38 +247,32 @@ const AddPet = () => {
       }
 
       // === CREATE MODE ===
-      const { error } = await supabase.from("pets").insert(payload);
+      // Insert + devolver id en una sola llamada (evita race condition con SELECT por nombre)
+      const { data: createdPet, error: insertError } = await supabase
+        .from("pets")
+        .insert(payload)
+        .select("id")
+        .single();
 
-      if (error) throw error;
+      if (insertError) throw insertError;
+      if (!createdPet) throw new Error("No se pudo crear la mascota.");
 
-      // Auto-create default reminders for the new pet
-      try {
-        const { data: newPet } = await supabase
-          .from("pets")
-          .select("id")
-          .eq("owner_id", user?.id)
-          .eq("name", formData.name)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
+      // Auto-create default reminders for the new pet (no bloqueante)
+      const today = new Date();
+      const in30days = new Date(today); in30days.setDate(today.getDate() + 30);
+      const in90days = new Date(today); in90days.setDate(today.getDate() + 90);
 
-        if (newPet) {
-          const today = new Date();
-          const in30days = new Date(today); in30days.setDate(today.getDate() + 30);
-          const in90days = new Date(today); in90days.setDate(today.getDate() + 90);
-          const in365days = new Date(today); in365days.setDate(today.getDate() + 365);
+      const { error: remindersError } = await supabase.from("pet_reminders").insert([
+        { pet_id: createdPet.id, owner_id: user.id, type: "checkup", title: `Control veterinario de ${formData.name}`, due_date: in90days.toISOString().split("T")[0] },
+        { pet_id: createdPet.id, owner_id: user.id, type: "vaccine", title: `Revisar vacunas de ${formData.name}`, due_date: in30days.toISOString().split("T")[0] },
+        { pet_id: createdPet.id, owner_id: user.id, type: "grooming", title: `Baño y peluquería de ${formData.name}`, due_date: in30days.toISOString().split("T")[0], is_recurring: true, recurrence_interval: "monthly" },
+      ]);
 
-          await supabase.from("pet_reminders").insert([
-            { pet_id: newPet.id, owner_id: user?.id, type: "checkup", title: `Control veterinario de ${formData.name}`, due_date: in90days.toISOString().split("T")[0] },
-            { pet_id: newPet.id, owner_id: user?.id, type: "vaccine", title: `Revisar vacunas de ${formData.name}`, due_date: in30days.toISOString().split("T")[0] },
-            { pet_id: newPet.id, owner_id: user?.id, type: "grooming", title: `Baño y peluquería de ${formData.name}`, due_date: in30days.toISOString().split("T")[0], is_recurring: true, recurrence_interval: "monthly" },
-          ]);
-        }
-      } catch (reminderError) {
-        console.error("Error creating default reminders:", reminderError);
+      if (remindersError) {
+        logger.error("[AddPet] reminders insert failed", remindersError);
         toast({
           title: "Mascota creada",
-          description: "Los recordatorios automáticos no se pudieron crear. Puedes agregarlos manualmente.",
+          description: `Pero los recordatorios automáticos no se pudieron crear (${describeSupabaseError(remindersError)}). Los podés agregar manualmente.`,
         });
       }
 
@@ -278,10 +284,10 @@ const AddPet = () => {
       });
 
       navigate(LINKS.myPets());
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
-        title: "Error al agregar mascota",
-        description: error.message,
+        title: isEdit ? "Error al guardar cambios" : "Error al agregar mascota",
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
         variant: "destructive",
       });
     } finally {

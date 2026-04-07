@@ -9,6 +9,7 @@ import { Plus, Edit, Trash2, Heart, FileText } from "@/lib/icons";
 import { LINKS } from "@/lib/links";
 import { useToast } from "@/hooks/use-toast";
 import {
+import { describeSupabaseError } from "@/lib/supabaseErrors";
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -62,7 +63,7 @@ const MyPets = () => {
     } catch (error: any) {
       toast({
         title: "Error al cargar mascotas",
-        description: error.message,
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
         variant: "destructive",
       });
     } finally {
@@ -87,7 +88,7 @@ const MyPets = () => {
     } catch (error: any) {
       toast({
         title: "Error al eliminar",
-        description: error.message,
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
         variant: "destructive",
       });
     } finally {

@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
 import { LINKS } from "@/lib/links";
 import {
+import { logger } from "@/lib/logger";
   User,
   Mail,
   Bell,
@@ -72,7 +73,7 @@ const Settings = () => {
         setAvatarUrl(data.avatar_url || "");
       }
       if (error) {
-        console.error("Error loading profile:", error);
+        logger.error("Error loading profile:", error);
         toast({ title: "Error", description: "No se pudo cargar el perfil", variant: "destructive" });
       }
     };
@@ -87,7 +88,7 @@ const Settings = () => {
         .maybeSingle();
 
       if (prefsError) {
-        console.error("Error loading notification preferences:", prefsError);
+        logger.error("Error loading notification preferences:", prefsError);
         toast({ title: "Error", description: "No se pudieron cargar las preferencias de notificación", variant: "destructive" });
       }
 
