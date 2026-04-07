@@ -43,6 +43,11 @@ import { logger } from "@/lib/logger";
 
 type ServiceType = 'walkers' | 'vets' | 'sitters' | 'trainers' | 'groomers';
 type ProfileTable = "dog_walker_profiles" | "vet_profiles" | "dogsitter_profiles" | "trainer_profiles" | "groomer_profiles";
+// Union literal aceptada por los componentes hijos (OfferServiceButton,
+// ProviderProfileCard, MyBookingsHistory, etc). Nota: "groomer" aún no está
+// soportado por esos componentes; se castea aquí para mantener type-safety.
+type ProviderType = "dog_walker" | "dogsitter" | "veterinarian" | "trainer";
+type BookingsServiceType = ProviderType | "all";
 
 interface FilterState {
   searchTerm: string;
@@ -717,7 +722,7 @@ const ServiceDirectory = () => {
             </p>
           </div>
           <OfferServiceButton
-            serviceType={config.providerType}
+            serviceType={config.providerType as ProviderType}
             serviceName={config.serviceName}
             className="w-full sm:w-auto"
           />
@@ -774,7 +779,7 @@ const ServiceDirectory = () => {
               <ProviderProfileCard
                 key={provider.id}
                 provider={provider}
-                providerType={config.providerType}
+                providerType={config.providerType as ProviderType}
                 onViewProfile={() => handleOpenProfile(provider)}
                 onBook={() => handleOpenBooking(provider)}
               />
@@ -797,7 +802,7 @@ const ServiceDirectory = () => {
         {/* Bookings Tab */}
         <TabsContent value="bookings" className="space-y-4 mt-6">
           <MyBookingsHistory
-            serviceType={config.providerType}
+            serviceType={config.providerType as BookingsServiceType}
             onBookingClick={(booking) => {
               toast({
                 title: config.bookingToastLabel,
@@ -810,7 +815,7 @@ const ServiceDirectory = () => {
         {/* Provider Management Tab */}
         {isProvider && (
           <TabsContent value="manage" className="space-y-4 mt-6">
-            <ProviderAvailabilityManager providerType={config.providerType} />
+            <ProviderAvailabilityManager providerType={config.providerType as ProviderType} />
           </TabsContent>
         )}
       </Tabs>
@@ -873,7 +878,7 @@ const ServiceDirectory = () => {
           price: getProviderPrice(selectedProvider, serviceType),
           services: getProviderServices(selectedProvider, serviceType)
         } : null}
-        providerType={config.providerType}
+        providerType={config.providerType as ProviderType}
         onBookingComplete={loadData}
       />
     </div>
