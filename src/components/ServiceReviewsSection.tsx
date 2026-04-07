@@ -25,7 +25,25 @@ const ServiceReviewsSection = ({
   isVerified = false,
   isProvider = false
 }: ServiceReviewsSectionProps) => {
-  const [reviews, setReviews] = useState<Record<string, unknown>[]>([]);
+  type ReviewRow = {
+    id: string;
+    rating: number;
+    comment: string;
+    created_at: string;
+    updated_at?: string;
+    photos?: string[];
+    is_verified?: boolean;
+    helpful_count?: number;
+    provider_response?: string;
+    provider_response_date?: string;
+    owner?: {
+      id: string;
+      display_name: string | null;
+      avatar_url: string | null;
+    } | null;
+  };
+
+  const [reviews, setReviews] = useState<ReviewRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<"recent" | "highest" | "lowest" | "helpful">("recent");
   const [filterRating, setFilterRating] = useState<string>("all");
@@ -71,8 +89,17 @@ const ServiceReviewsSection = ({
       const tableName = getTableName();
       const providerColumn = getProviderColumn();
 
-      let query = supabase
-        .from(tableName)
+      // Note: tableName es unión de 4 tablas con shapes similares. El select
+      // con embed sobre la unión hace explotar la inferencia (TS2589). Tipamos
+      // el builder como `unknown` luego del select inicial y volvemos a un
+      // builder loose para encadenar filtros sin acumular profundidad.
+      type LooseBuilder = {
+        eq: (col: string, val: unknown) => LooseBuilder;
+        order: (col: string, opts: { ascending: boolean }) => LooseBuilder;
+        limit: (n: number) => Promise<{ data: unknown; error: unknown }>;
+      };
+      const initial = supabase
+        .from(tableName as "walk_reviews")
         .select(`
           *,
           owner:owner_id (
@@ -80,8 +107,8 @@ const ServiceReviewsSection = ({
             display_name,
             avatar_url
           )
-        `)
-        .eq(providerColumn, providerId);
+        `);
+      let query = (initial as unknown as LooseBuilder).eq(providerColumn, providerId);
 
       // Apply rating filter
       if (filterRating !== "all") {
@@ -107,13 +134,16 @@ const ServiceReviewsSection = ({
       const { data, error } = await query.limit(20);
 
       if (error) throw error;
-      setReviews(data || []);
+      setReviews(((data ?? []) as unknown) as ReviewRow[]);
 
-      // Calculate distribution
-      const allReviews = await supabase
-        .from(tableName)
-        .select("rating")
-        .eq(providerColumn, providerId);
+      // Calculate distribution (mismo motivo de cast que arriba)
+      const allReviews = await (
+        supabase
+          .from(tableName as "walk_reviews")
+          .select("rating") as unknown as {
+          eq: (col: string, val: string) => Promise<{ data: { rating: number }[] | null }>;
+        }
+      ).eq(providerColumn, providerId);
 
       if (allReviews.data) {
         const dist = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
