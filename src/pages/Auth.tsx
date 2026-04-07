@@ -171,6 +171,10 @@ const Auth = () => {
           title: "¡Cuenta creada!",
           description: "Bienvenido a Paw Friend",
         });
+        // Navegación directa post-signup
+        if (data.session.user?.id) {
+          await redirectUser(data.session.user.id);
+        }
       }
     } catch (error: any) {
       let message = error.message;
@@ -194,7 +198,7 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -206,6 +210,18 @@ const Auth = () => {
         title: "¡Bienvenido de vuelta!",
         description: "Has iniciado sesión exitosamente",
       });
+
+      // Navegación directa: NO esperamos al listener onAuthStateChange porque
+      // puede colgarse o tardarse. Si tenemos session, redirigimos ya.
+      if (data.session?.user?.id) {
+        await redirectUser(data.session.user.id);
+        // Fallback hard: si redirectUser no logró navegar (caso límite),
+        // forzamos /home. Es seguro porque ProtectedRoute verifica sesión.
+        if (!hasRedirected.current) {
+          hasRedirected.current = true;
+          navigate(returnTo || "/home");
+        }
+      }
     } catch (error: any) {
       let message = error.message;
       if (message.includes("Invalid login credentials")) {
