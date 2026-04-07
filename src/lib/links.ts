@@ -82,6 +82,8 @@ export const LINKS = {
   userProfile: (userId: string) => `/user/${userId}`,
   /** Servicio unificado: /services/walkers, /services/vets, /services/sitters, /services/trainers */
   services: (type: 'walkers' | 'vets' | 'sitters' | 'trainers') => `/services/${type}`,
+  /** Hub de servicios (paseo, cuidado, entrenamiento, peluquería) */
+  servicios: () => '/servicios',
 } as const;
 
 function slugify(value: string): string {

@@ -34,6 +34,7 @@ const saludItems = [
 
 const vetItems = [
   { title: "Buscar veterinario", url: "/veterinarios", icon: Search },
+  { title: "Servicios", url: "/servicios", icon: ShieldCheck },
   { title: "Mis reservas", url: "/calendar", icon: Calendar },
   { title: "Mapa", url: "/maps", icon: Map },
 ];

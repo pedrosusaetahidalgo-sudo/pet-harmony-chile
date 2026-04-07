@@ -6,10 +6,6 @@ import type {
   ReviewInvitationWithProvider,
 } from '@/types/vetDirectory';
 
-// Cliente con tipado relajado, ver src/types/vetDirectory.ts
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const sb = supabase as any;
-
 export type ReviewInvitation = ReviewInvitationRow;
 
 /** Lista las invitaciones del provider del usuario logueado. */
@@ -116,7 +112,7 @@ export function useSubmitInvitedReview() {
     mutationFn: async (input) => {
       if (!user) throw new Error('Debes iniciar sesión para dejar una reseña');
 
-      const { error: revErr } = await sb.from('service_reviews').insert({
+      const { error: revErr } = await supabase.from('service_reviews').insert({
         provider_id: input.provider_id,
         reviewer_id: user.id,
         rating: input.rating,

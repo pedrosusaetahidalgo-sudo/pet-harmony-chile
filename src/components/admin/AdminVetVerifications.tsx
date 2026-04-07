@@ -11,10 +11,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import type { ServiceProviderRow } from '@/types/vetDirectory';
 
-// Tipado relajado para campos del pivot médico, ver src/types/vetDirectory.ts
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const sb = supabase as any;
-
 type Vet = ServiceProviderRow;
 
 /**

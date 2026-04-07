@@ -2,15 +2,6 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { ServiceProviderRow, ServiceReviewRow } from '@/types/vetDirectory';
 
-/**
- * Cliente Supabase con tipado relajado para los campos del pivot médico que
- * todavía no están en los tipos generados (slug, specialties, service_areas,
- * is_directory_visible, etc.). Cuando se regeneren los tipos con
- * `supabase gen types`, este alias se puede eliminar.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const sb = supabase as any;
-
 export interface DirectoryVetFilters {
   search?: string;
   type?: 'individual' | 'home_visit' | 'clinic';
@@ -103,5 +94,5 @@ export async function trackProviderView(slug: string) {
   if (typeof window === 'undefined') return;
   if (sessionStorage.getItem(key)) return;
   sessionStorage.setItem(key, '1');
-  await sb.rpc('increment_provider_views', { provider_slug: slug });
+  await supabase.rpc('increment_provider_views', { provider_slug: slug });
 }

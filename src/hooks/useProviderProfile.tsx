@@ -3,11 +3,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import type { ServiceProviderRow } from '@/types/vetDirectory';
 
-// Cliente con tipado relajado para los campos del pivot médico que aún no
-// están en los tipos generados de Supabase. Ver src/types/vetDirectory.ts.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const sb = supabase as any;
-
 export interface ProviderProfileForm {
   display_name: string;
   bio: string;

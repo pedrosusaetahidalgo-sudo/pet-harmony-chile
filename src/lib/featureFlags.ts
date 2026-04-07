@@ -17,10 +17,10 @@ export const FEATURE_FLAGS = {
 
   /**
    * PawGame visible en sidebar principal y Home.
-   * DESHABILITADO — la gamificación no es central al pivot médico.
-   * El feature sigue existiendo y es accesible desde el perfil del usuario.
+   * REACTIVADO 2026-04 a pedido del usuario.
+   * Sigue siendo secundario al pivot médico, pero accesible desde sidebar.
    */
-  PAWGAME_SIDEBAR: false,
+  PAWGAME_SIDEBAR: true,
 
   /**
    * Marketplace de productos (carrito, checkout, órdenes).

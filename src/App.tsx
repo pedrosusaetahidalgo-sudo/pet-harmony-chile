@@ -39,6 +39,8 @@ const Maps = lazy(() => import("./pages/Maps"));
 const ProviderDashboard = lazy(() => import("./components/provider/ProviderDashboard"));
 const PetClinicalRecord = lazy(() => import("./pages/PetClinicalRecord"));
 const ServiceCalendar = lazy(() => import("./pages/ServiceCalendar"));
+const Servicios = lazy(() => import("./pages/Servicios"));
+const Peluqueria = lazy(() => import("./pages/Peluqueria"));
 const DirectorioVets = lazy(() => import("./pages/DirectorioVets"));
 const PerfilVetPublico = lazy(() => import("./pages/PerfilVetPublico"));
 const ProviderProfileEdit = lazy(() => import("./pages/ProviderProfileEdit"));
@@ -82,6 +84,8 @@ const App = () => (
               <Route path="/adoption" element={<ProtectedRoute><AppLayout><Adoption /></AppLayout></ProtectedRoute>} />
 
               <Route path="/paw-game" element={<ProtectedRoute><AppLayout><PawGame /></AppLayout></ProtectedRoute>} />
+              <Route path="/servicios" element={<ProtectedRoute><AppLayout><Servicios /></AppLayout></ProtectedRoute>} />
+              <Route path="/servicios/peluqueria" element={<ProtectedRoute><AppLayout><Peluqueria /></AppLayout></ProtectedRoute>} />
               <Route path="/services/:type" element={<ProtectedRoute><AppLayout><ServiceDirectory /></AppLayout></ProtectedRoute>} />
               {/* Legacy redirects to new unified service routes */}
               <Route path="/dog-walkers" element={<Navigate to="/services/walkers" replace />} />
