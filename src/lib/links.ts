@@ -84,6 +84,10 @@ export const LINKS = {
   services: (type: 'walkers' | 'vets' | 'sitters' | 'trainers') => `/services/${type}`,
   /** Hub de servicios (paseo, cuidado, entrenamiento, peluquería) */
   servicios: () => '/servicios',
+  /** Directorio público de peluqueros */
+  peluqueria: () => '/servicios/peluqueria',
+  /** Editor de perfil de peluquero */
+  groomerProfileEdit: () => '/peluquero/perfil',
 } as const;
 
 function slugify(value: string): string {

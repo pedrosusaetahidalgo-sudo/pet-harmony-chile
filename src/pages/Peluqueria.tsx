@@ -93,6 +93,20 @@ export default function Peluqueria() {
         </div>
       </div>
 
+      {/* Banner: ¿eres peluquero? */}
+      <div className="mb-6 p-3 bg-pink-50 border border-pink-200 rounded-lg flex items-center justify-between gap-3">
+        <p className="text-sm text-pink-900">
+          ¿Eres peluquero canino? Crea tu perfil y aparece en este directorio.
+        </p>
+        <Button
+          size="sm"
+          onClick={() => navigate(LINKS.groomerProfileEdit())}
+          className="bg-pink-600 hover:bg-pink-700 flex-shrink-0"
+        >
+          Crear perfil
+        </Button>
+      </div>
+
       {/* Lista o estado vacío */}
       {isLoading ? (
         <div className="space-y-3">

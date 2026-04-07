@@ -1,13 +1,23 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { MapPin, Star, Stethoscope, Share2, MessageSquare, Calendar } from '@/lib/icons';
+import { MapPin, Star, Stethoscope, Share2, MessageSquare, Calendar, Loader2 } from '@/lib/icons';
 import { useAuth } from '@/hooks/useAuth';
 import { LINKS } from '@/lib/links';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 import {
   useDirectoryVetBySlug,
   useVetReviews,
@@ -24,13 +34,45 @@ export default function PerfilVetPublico() {
   const v = vet;
   const { data: reviews } = useVetReviews(v?.id);
 
+  const [reservaOpen, setReservaOpen] = useState(false);
+  const [reservaMessage, setReservaMessage] = useState('');
+  const [reservaLoading, setReservaLoading] = useState(false);
+
   const handleReservar = () => {
     if (!user) {
       navigate(LINKS.authReturn(`/veterinarios/${slug}`));
       return;
     }
-    // Vet logueado: lleva al directorio de servicios vets con la búsqueda pre-llenada
-    navigate(`${LINKS.services('vets')}?search=${encodeURIComponent(v?.display_name ?? '')}`);
+    setReservaOpen(true);
+  };
+
+  const handleSubmitReserva = async () => {
+    if (!user || !v?.user_id) return;
+    if (reservaMessage.trim().length < 10) {
+      toast.error('Cuéntale al veterinario brevemente qué necesitas');
+      return;
+    }
+    setReservaLoading(true);
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const sb = supabase as any;
+      const { error } = await sb.from('notifications').insert({
+        user_id: v.user_id,
+        type: 'booking_received',
+        title: 'Nueva solicitud de consulta',
+        body: `${user.email} solicitó una consulta: "${reservaMessage.trim()}"`,
+        action_url: '/provider/dashboard',
+        reference_id: user.id,
+      });
+      if (error) throw error;
+      toast.success('Solicitud enviada. El veterinario te contactará pronto.');
+      setReservaOpen(false);
+      setReservaMessage('');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'No se pudo enviar la solicitud');
+    } finally {
+      setReservaLoading(false);
+    }
   };
 
   const handleMensaje = () => {
@@ -307,6 +349,43 @@ export default function PerfilVetPublico() {
       </main>
 
       <PublicFooter />
+
+      {/* Dialog: solicitar consulta */}
+      <Dialog open={reservaOpen} onOpenChange={setReservaOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Solicitar consulta a {v.display_name}</DialogTitle>
+            <DialogDescription>
+              Cuéntale brevemente qué necesita tu mascota. Le enviaremos tu solicitud y te contactará para coordinar.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <Label htmlFor="reserva-msg">Mensaje</Label>
+            <Textarea
+              id="reserva-msg"
+              value={reservaMessage}
+              onChange={(e) => setReservaMessage(e.target.value)}
+              placeholder="Ej: Mi perro Luna necesita su vacuna anual y un control general. Tiene 4 años, raza beagle. ¿Tienes disponibilidad esta semana?"
+              rows={5}
+              maxLength={500}
+            />
+            <p className="text-xs text-muted-foreground">{reservaMessage.length}/500</p>
+            <Button
+              onClick={handleSubmitReserva}
+              disabled={reservaLoading}
+              className="w-full bg-amber-600 hover:bg-amber-700"
+            >
+              {reservaLoading ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-1 animate-spin" /> Enviando…
+                </>
+              ) : (
+                'Enviar solicitud'
+              )}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
