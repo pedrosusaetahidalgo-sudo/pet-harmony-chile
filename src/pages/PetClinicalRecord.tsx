@@ -236,9 +236,9 @@ function PetHeader({ pet }: { pet: PetData }) {
     <Card>
       <CardContent className="p-6">
         <div className="flex flex-col sm:flex-row gap-6">
-          <Avatar className="h-24 w-24 ring-4 ring-primary/10 flex-shrink-0 self-center sm:self-start">
+          <Avatar className="h-24 w-24 ring-4 ring-emerald-500/20 flex-shrink-0 self-center sm:self-start">
             <AvatarImage src={pet.photo_url || undefined} alt={pet.name} />
-            <AvatarFallback className="bg-primary/10 text-primary text-2xl font-bold">
+            <AvatarFallback className="bg-emerald-100 text-emerald-700 text-2xl font-bold">
               {pet.name.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
@@ -1272,7 +1272,7 @@ const PetClinicalRecord = () => {
       {/* Page title + PDF button */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Ficha Clínica</h1>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Ficha Clínica</h1>
           <p className="text-sm text-muted-foreground">
             Registro veterinario completo de {pet.name}
           </p>

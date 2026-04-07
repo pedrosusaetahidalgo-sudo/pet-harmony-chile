@@ -111,7 +111,7 @@ const MedicalRecords = () => {
     <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold bg-medical-gradient bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
               Historial Médico
             </h1>
             <p className="text-muted-foreground mt-1">

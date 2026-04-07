@@ -97,6 +97,44 @@ PAWGAME_SIDEBAR: true, // → vuelve sidebar item + bloque Home
 
 ---
 
+## Métricas finales (auditoría 2026-04-07)
+
+| Métrica | Valor | Antes |
+|---|---|---|
+| Páginas en `src/pages/` | **32** | 35 |
+| Componentes en `src/components/` | **149** | 151 |
+| Líneas totales `.ts` + `.tsx` en `src/` | **44.131** | 44.645 |
+| `as any` en `src/` | **0** ✅ | 21 |
+| `console.log` | **1** ✅ | 1 |
+| Importan `lucide-react` directo | **0** ✅ | 132 |
+| Refs a `/premium` | **0** ✅ | 4 |
+| `navigate("/...")` hardcodeados (pages+components) | **0** ✅ | ~25 |
+| TODO/FIXME en código | 7 | (no medido antes) |
+| Build TypeScript | **verde** ✅ | verde |
+| Items en sidebar principal | **11** (Salud 4 + Vets 4 + Comunidad 3+1 PawGame) | 15+ |
+
+### Auditoría de coherencia ejecutada
+
+**Coherencia técnica (automatizada):**
+- ✅ Cero `as any` — tipos Supabase regenerados con `npx supabase gen types`
+- ✅ Cero imports directos de `lucide-react` — todo va por `@/lib/icons`
+- ✅ Cero `navigate("/...")` hardcodeados en pages/components — todo va por `@/lib/links`
+- ✅ Cero refs a `/premium` (deshabilitado completamente)
+- ✅ TypeScript compila sin errores (`npx tsc --noEmit`)
+- ✅ Build de producción exitoso
+
+**Coherencia visual aplicada:**
+- ✅ Verde médico: Home (Welcome + Mis Mascotas + Próximas Citas), MyPets, MedicalRecords header, PetClinicalRecord header
+- ✅ Ámbar veterinario: DirectorioVets, PerfilVetPublico, ParaVeterinarios, sección vet en landing, botones del Hero
+- ✅ Morado primario: Feed, Adopción, Comunidad, sección "Comunidad" del sidebar
+
+**Páginas eliminadas en el refactor (5):**
+- `Premium.tsx`, `PremiumBanner.tsx`, `PremiumGate.tsx`
+- `SharedWalks.tsx`, `LostPets.tsx`
+- `PaymentSuccess.tsx`, `PaymentFailed.tsx` (consolidadas en `PaymentResult.tsx`)
+
+---
+
 ## Métricas (medidas 2026-04-06 fase 2)
 
 | Métrica | Valor actual |
