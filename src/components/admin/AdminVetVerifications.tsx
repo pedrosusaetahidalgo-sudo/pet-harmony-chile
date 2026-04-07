@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { supabase } from '@/integrations/supabase/client';
+const sb = supabase;
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import type { ServiceProviderRow } from '@/types/vetDirectory';

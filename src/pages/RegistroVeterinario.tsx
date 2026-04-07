@@ -20,6 +20,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+const sb = supabase;
 import { errorMessage } from '@/types/vetDirectory';
 import { SANTIAGO_COMUNAS, VET_SPECIALTIES } from '@/lib/vetDirectory';
 import { PublicHeader, PublicFooter } from './DirectorioVets';

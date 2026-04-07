@@ -10,11 +10,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Calendar } from "@/components/ui/calendar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { COMUNAS_SANTIAGO, getComunaCoords } from "@/lib/locations";
-import { supabase } from "@/integrations/supabase/client";
-import { 
-  CalendarCheck, 
+import {
+  CalendarCheck,
   Clock, 
   MapPin, 
   Star, 

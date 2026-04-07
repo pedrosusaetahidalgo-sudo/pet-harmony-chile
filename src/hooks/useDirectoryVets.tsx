@@ -1,5 +1,6 @@
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+const sb = supabase;
 import type { ServiceProviderRow, ServiceReviewRow } from '@/types/vetDirectory';
 
 export interface DirectoryVetFilters {

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+const sb = supabase;
 import { useAuth } from '@/hooks/useAuth';
 import type {
   ReviewInvitationRow,
