@@ -16,6 +16,7 @@ import DateTimePicker from "./DateTimePicker";
 import { COMUNAS_SANTIAGO, getComunaCoords } from "@/lib/locations";
 import { format } from "date-fns";
 import { logger } from "@/lib/logger";
+import { useGamification } from "@/hooks/useGamification";
 
 const formSchema = z.object({
   report_type: z.enum(["lost", "found"]),
@@ -42,6 +43,7 @@ interface ReportLostPetFormProps {
 
 const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
   const { user } = useAuth();
+  const { awardPoints } = useGamification();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [rewardOffered, setRewardOffered] = useState(false);
@@ -109,18 +111,13 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
 
       if (error) throw error;
 
-      // Award points for helping with lost pet
+      // Award points for helping with lost pet (fire-and-forget via hook)
       try {
-        const { awardPoints } = await import("@/hooks/useGamification");
-        const { DEFAULT_POINTS_CONFIG } = await import("@/lib/gamification");
-        // Note: This will need to be called from a component that has the hook
-        // For now, we'll use the RPC directly
-        await supabase.rpc("award_points", {
-          p_user_id: user.id,
-          p_points: 75, // DEFAULT_POINTS_CONFIG.lostPet
-          p_action_type: "lost_pet",
-          p_action_id: lostPet.id,
-          p_description: `Ayuda con mascota ${data.report_type === "lost" ? "perdida" : "encontrada"}`,
+        awardPoints({
+          points: 75,
+          actionType: "lost_pet",
+          actionId: lostPet?.id,
+          description: `Ayuda con mascota ${data.report_type === "lost" ? "perdida" : "encontrada"}`,
         });
       } catch (pointsError) {
         logger.error("Error awarding points:", pointsError);
