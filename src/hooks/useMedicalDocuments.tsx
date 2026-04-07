@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { toast } from "sonner";
 import { logger } from "@/lib/logger";
+import { describeSupabaseError } from "@/lib/supabaseErrors";
 
 export type MedicalDocumentType = 'vaccine_card' | 'id_card' | 'lab_result' | 'xray' | 'prescription' | 'other';
 
@@ -145,8 +146,8 @@ export const useMedicalDocuments = (petId?: string) => {
       queryClient.invalidateQueries({ queryKey: ['medical-documents', petId] });
       toast.success('Documento médico subido correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Error al subir documento');
+    onError: (error: unknown) => {
+      toast.error('Error al subir documento', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
       logger.error('Upload error:', error);
     },
   });
@@ -191,8 +192,8 @@ export const useMedicalDocuments = (petId?: string) => {
       queryClient.invalidateQueries({ queryKey: ['medical-documents', petId] });
       toast.success('Documento eliminado correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Error al eliminar documento');
+    onError: (error: unknown) => {
+      toast.error('Error al eliminar documento', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
       logger.error('Delete error:', error);
     },
   });
@@ -219,8 +220,8 @@ export const useMedicalDocuments = (petId?: string) => {
       if (error) throw error;
       return data;
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Error al generar ZIP');
+    onError: (error: unknown) => {
+      toast.error('Error al generar ZIP', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
     },
   });
 

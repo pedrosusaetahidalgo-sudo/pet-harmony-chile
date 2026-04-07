@@ -6,6 +6,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { toast } from "sonner";
+import { describeSupabaseError } from "@/lib/supabaseErrors";
 
 export interface MedicalRecord {
   id: string;
@@ -70,6 +71,7 @@ export const useMedicalRecords = (petId?: string) => {
         .from('medical_records')
         .insert({
           pet_id: params.petId,
+          owner_id: user.id,
           record_type: params.recordType,
           title: params.title,
           description: params.description || null,
@@ -89,8 +91,8 @@ export const useMedicalRecords = (petId?: string) => {
       queryClient.invalidateQueries({ queryKey: ['medical-records', petId] });
       toast.success('Registro médico creado correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Error al crear registro');
+    onError: (error: unknown) => {
+      toast.error('Error al crear registro', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
     },
   });
 
@@ -113,8 +115,8 @@ export const useMedicalRecords = (petId?: string) => {
       queryClient.invalidateQueries({ queryKey: ['medical-records', petId] });
       toast.success('Registro médico actualizado correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Error al actualizar registro');
+    onError: (error: unknown) => {
+      toast.error('Error al actualizar registro', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
     },
   });
 
@@ -134,8 +136,8 @@ export const useMedicalRecords = (petId?: string) => {
       queryClient.invalidateQueries({ queryKey: ['medical-records', petId] });
       toast.success('Registro médico eliminado correctamente');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Error al eliminar registro');
+    onError: (error: unknown) => {
+      toast.error('Error al eliminar registro', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
     },
   });
 

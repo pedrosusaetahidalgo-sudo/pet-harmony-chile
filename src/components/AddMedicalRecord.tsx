@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -46,6 +47,7 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies }: AddMedicalReco
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   // Fetch veterinarias for selection
   const { data: veterinarias } = useQuery({
@@ -126,12 +128,22 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies }: AddMedicalReco
       return;
     }
 
+    if (!user) {
+      toast({
+        title: "Sesión expirada",
+        description: "Tenés que iniciar sesión de nuevo para guardar el registro.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
     try {
       const { data: medicalRecord, error } = await supabase
         .from("medical_records")
         .insert({
           pet_id: petId,
+          owner_id: user.id,
           record_type: recordType,
           title,
           description,
@@ -141,10 +153,11 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies }: AddMedicalReco
           veterinarian_name: veterinarianName,
           notes,
         })
-        .select()
-        .maybeSingle();
+        .select("id")
+        .single();
 
       if (error) throw error;
+      if (!medicalRecord) throw new Error("No se pudo crear el registro.");
 
       // Award points for vet visit
       try {

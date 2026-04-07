@@ -6,6 +6,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "./useAuth";
 import { toast } from "sonner";
+import { describeSupabaseError } from "@/lib/supabaseErrors";
 
 export interface ShareToken {
   id: string;
@@ -79,8 +80,8 @@ export const useMedicalSharing = (petId?: string) => {
       toast.success('Enlace de compartir creado');
       return data;
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Error al crear enlace de compartir');
+    onError: (error: unknown) => {
+      toast.error('Error al crear enlace de compartir', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
     },
   });
 
@@ -101,8 +102,8 @@ export const useMedicalSharing = (petId?: string) => {
       queryClient.invalidateQueries({ queryKey: ['medical-share-tokens', petId] });
       toast.success('Enlace revocado');
     },
-    onError: (error: any) => {
-      toast.error(error.message || 'Error al revocar enlace');
+    onError: (error: unknown) => {
+      toast.error('Error al revocar enlace', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
     },
   });
 
