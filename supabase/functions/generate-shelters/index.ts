@@ -190,7 +190,7 @@ serve(async (req) => {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                model: "claude-sonnet-4-5-20241022",
+                model: "claude-sonnet-4-5",
                 max_tokens: 200,
                 system: "Genera exactamente 2 oraciones emotivas y motivadoras para organizaciones de rescate animal en Chile. Solo responde con las 2 oraciones, sin formato adicional.",
                 messages: [

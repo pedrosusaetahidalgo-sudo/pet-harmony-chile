@@ -111,7 +111,7 @@ export async function callClaude(options: {
   content.push({ type: "text", text: options.userMessage });
 
   const body = {
-    model: "claude-sonnet-4-5-20241022",
+    model: "claude-sonnet-4-5",
     max_tokens: options.maxTokens ?? 1000,
     temperature: options.temperature ?? 0.3,
     system: options.systemPrompt,

@@ -89,7 +89,7 @@ Evalúa profesionalismo, spam, contacto externo, lenguaje y relevancia.`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5-20241022',
+        model: 'claude-sonnet-4-5',
         max_tokens: 1000,
         system: systemPrompt,
         messages: [

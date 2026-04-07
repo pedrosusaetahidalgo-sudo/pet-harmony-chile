@@ -103,7 +103,7 @@ REQUISITOS:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "claude-sonnet-4-5-20241022",
+        model: "claude-sonnet-4-5",
         max_tokens: 2000,
         system: systemPrompt,
         messages: [
