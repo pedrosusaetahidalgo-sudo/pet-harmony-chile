@@ -46,6 +46,7 @@ const DirectorioVets = lazy(() => import("./pages/DirectorioVets"));
 const PerfilVetPublico = lazy(() => import("./pages/PerfilVetPublico"));
 const ProviderProfileEdit = lazy(() => import("./pages/ProviderProfileEdit"));
 const RegistroVeterinario = lazy(() => import("./pages/RegistroVeterinario"));
+const ParaVeterinarios = lazy(() => import("./pages/ParaVeterinarios"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -113,6 +114,7 @@ const App = () => (
               <Route path="/veterinarios/especialidad/:especialidad" element={<DirectorioVets />} />
               <Route path="/veterinarios/:slug" element={<PerfilVetPublico />} />
               <Route path="/registro-veterinario" element={<RegistroVeterinario />} />
+              <Route path="/para-veterinarios" element={<ParaVeterinarios />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

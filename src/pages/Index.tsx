@@ -537,9 +537,9 @@ const Index = () => {
                 size="lg"
                 variant="outline"
                 className="bg-transparent text-white border-white hover:bg-white/10 text-lg px-10 h-14 font-semibold w-full md:w-auto"
-                onClick={() => navigate("/veterinarios")}
+                onClick={() => navigate("/para-veterinarios")}
               >
-                Ver veterinarios en Paw Friend
+                Conocer más detalles
               </Button>
             </div>
           </div>
