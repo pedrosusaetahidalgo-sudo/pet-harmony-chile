@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { useGamification } from "@/hooks/useGamification";
 import { DEFAULT_POINTS_CONFIG } from "@/lib/gamification";
 import { logger } from "@/lib/logger";
+import { useOrganicRewards } from "@/hooks/useOrganicRewards";
 
 interface CreateReviewFormProps {
   reviewType: "walk" | "dogsitter" | "vet";
@@ -28,6 +29,7 @@ interface ReviewFormData {
 const CreateReviewForm = ({ reviewType, bookingId, providerId, onSuccess, onCancel }: CreateReviewFormProps) => {
   const { user } = useAuth();
   const { awardPoints } = useGamification();
+  const { reward } = useOrganicRewards();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [photos, setPhotos] = useState<File[]>([]);
@@ -132,6 +134,12 @@ const CreateReviewForm = ({ reviewType, bookingId, providerId, onSuccess, onCanc
       }
 
       toast.success("¡Reseña publicada exitosamente!");
+
+      // Fire-and-forget organic reward when review is for a vet
+      if (reviewType === "vet") {
+        reward({ kind: "vet_review_left", vetName: "veterinario" });
+      }
+
       onSuccess();
     } catch (error) {
       logger.error("Error creating review:", error);

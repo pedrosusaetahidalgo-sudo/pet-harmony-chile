@@ -17,6 +17,7 @@ import { LINKS } from "@/lib/links";
 import { Badge } from "@/components/ui/badge";
 import { describeSupabaseError } from "@/lib/supabaseErrors";
 import { logger } from "@/lib/logger";
+import { useOrganicRewards } from "@/hooks/useOrganicRewards";
 
 const personalityOptions = [
   "Juguetón", "Tranquilo", "Energético", "Cariñoso", "Tímido",
@@ -63,6 +64,7 @@ const AddPet = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { reward } = useOrganicRewards();
 
   // Modo edición: cargar datos existentes
   useEffect(() => {
@@ -277,6 +279,14 @@ const AddPet = () => {
       }
 
       track({ event: EVENTS.PET_CREATED, properties: { species: formData.species, breed: formData.breed } });
+
+      // Fire-and-forget organic reward
+      reward({
+        kind: "pet_profile_completed",
+        petId: createdPet.id,
+        petName: formData.name,
+        pct: 60,
+      });
 
       toast({
         title: "¡Mascota agregada! 🎉",
