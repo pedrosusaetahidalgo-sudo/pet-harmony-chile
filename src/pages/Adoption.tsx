@@ -1,13 +1,18 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Heart, MessageCircle, Building2, Sparkles } from "@/lib/icons";
-import { CreateAdoptionPost } from "@/components/CreateAdoptionPost";
 import { AdoptionPostCard } from "@/components/AdoptionPostCard";
-import AdoptionSheltersList from "@/components/AdoptionSheltersList";
 import { useAuth } from "@/hooks/useAuth";
+
+// Lazy: estos componentes pesan (forms con react-hook-form, listas con queries
+// propias). Cargarlos bajo demanda reduce el bundle inicial de Adoption.tsx.
+const CreateAdoptionPost = lazy(() =>
+  import("@/components/CreateAdoptionPost").then((m) => ({ default: m.CreateAdoptionPost }))
+);
+const AdoptionSheltersList = lazy(() => import("@/components/AdoptionSheltersList"));
 
 const Adoption = () => {
   const { user } = useAuth();
@@ -119,7 +124,9 @@ const Adoption = () => {
 
         {/* Shelters Tab - AI Powered */}
         <TabsContent value="shelters" className="mt-4 sm:mt-6">
-          <AdoptionSheltersList />
+          <Suspense fallback={<div className="text-center py-8 text-muted-foreground">Cargando refugios…</div>}>
+            <AdoptionSheltersList />
+          </Suspense>
         </TabsContent>
 
         {/* Regular Tabs */}
@@ -217,11 +224,15 @@ const Adoption = () => {
         </TabsContent>
       </Tabs>
 
-      <CreateAdoptionPost 
-        open={showCreateDialog}
-        onOpenChange={setShowCreateDialog}
-        onSuccess={handlePostCreated}
-      />
+      {showCreateDialog && (
+        <Suspense fallback={null}>
+          <CreateAdoptionPost
+            open={showCreateDialog}
+            onOpenChange={setShowCreateDialog}
+            onSuccess={handlePostCreated}
+          />
+        </Suspense>
+      )}
     </div>
   );
 };
