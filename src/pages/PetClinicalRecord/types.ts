@@ -22,7 +22,7 @@ export interface PetData {
   neutered: boolean | null;
   vaccination_status: string | null;
   special_needs: string | null;
-  personality: string | null;
+  personality: string[] | null;
   medical_notes: string | null;
   is_public: boolean | null;
   blood_type: string | null;

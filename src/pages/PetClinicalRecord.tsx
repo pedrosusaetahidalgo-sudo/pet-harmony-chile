@@ -1100,7 +1100,10 @@ const PetClinicalRecord = () => {
         .eq("id", petId)
         .maybeSingle();
       if (error) throw error;
-      return data as PetData | null;
+      // weight_history viene como Json en types.ts pero el shape real (validado
+      // por la migración 20251223000000_comprehensive_medical_records) es
+      // Array<{date,weight}>. Casteamos a través de unknown una sola vez.
+      return (data as unknown) as PetData | null;
     },
     enabled: !!petId && !authLoading,
   });
