@@ -58,15 +58,19 @@ const PetCard = ({
   const [showComments, setShowComments] = useState(false);
   const { followStatus, follow, unfollow, isFollowing: isFollowLoading } = useFollows(ownerId);
 
+  // Demo cards usan ids ficticios ("example-1") que no son UUIDs reales.
+  // Saltar todas las queries a Supabase si el postId no es un UUID válido.
+  const isRealPost = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(postId);
+
   useEffect(() => {
-    if (user) {
+    if (user && isRealPost) {
       checkIfLiked();
     }
-  }, [user, postId]);
+  }, [user, postId, isRealPost]);
 
   const checkIfLiked = async () => {
-    if (!user) return;
-    
+    if (!user || !isRealPost) return;
+
     try {
       const { data } = await supabase
         .from('post_likes')
@@ -74,7 +78,7 @@ const PetCard = ({
         .eq('post_id', postId)
         .eq('user_id', user.id)
         .maybeSingle();
-      
+
       setLiked(!!data);
     } catch (error) {
       // No like found
@@ -83,6 +87,12 @@ const PetCard = ({
 
   const handleLike = async (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (!isRealPost) {
+      // Demo card: solo toggle visual local, sin tocar Supabase
+      setLiked((v) => !v);
+      setLikesCount((n) => (liked ? Math.max(0, n - 1) : n + 1));
+      return;
+    }
     if (!user) {
       toast({
         variant: "destructive",
