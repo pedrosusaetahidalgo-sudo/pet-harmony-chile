@@ -112,7 +112,7 @@ export async function callClaude(options: {
 
   const body = {
     model: "claude-sonnet-4-5",
-    max_tokens: options.maxTokens ?? 1000,
+    max_tokens: options.maxTokens ?? 600,
     temperature: options.temperature ?? 0.3,
     system: options.systemPrompt,
     messages: [{ role: "user", content }],
