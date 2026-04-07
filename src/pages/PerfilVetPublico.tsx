@@ -70,7 +70,25 @@ export default function PerfilVetPublico() {
 
       // Crear booking real vinculado al directorio.
       // El trigger SQL notify_on_directory_booking notifica automáticamente al vet.
-      const { error } = await supabase.from('vet_bookings').insert({
+      // Nota: la migración 20260408100000 hizo `vet_id`, `visit_address` y
+      // `total_price` nullable y agregó `service_provider_id`, pero types.ts
+      // todavía no fue regenerado (regla del proyecto). Usamos un tipo
+      // intermedio explícito para reflejar el shape real de la tabla.
+      type DirectoryBookingInsert = {
+        owner_id: string;
+        pet_id: string;
+        service_provider_id: string;
+        scheduled_date: string;
+        service_type: string;
+        symptoms: string;
+        status: string;
+        payment_status: string;
+        // TODO: form fields para visit_address y total_price (Opción B —
+        // se confirman cuando el vet acepta la reserva por chat).
+        visit_address: string;
+        total_price: number;
+      };
+      const payload: DirectoryBookingInsert = {
         owner_id: user.id,
         pet_id: pets[0].id,
         service_provider_id: v.id,
@@ -79,7 +97,16 @@ export default function PerfilVetPublico() {
         symptoms: reservaMessage.trim(),
         status: 'pending',
         payment_status: 'pending',
-      });
+        visit_address: 'A coordinar con el veterinario',
+        total_price: 0,
+      };
+      // Cast a través de unknown porque types.ts aún no refleja
+      // service_provider_id ni los nullables introducidos por la migración
+      // 20260408100000. La regla del proyecto prohíbe regenerar types.ts.
+      const tbl = supabase.from('vet_bookings') as unknown as {
+        insert: (values: DirectoryBookingInsert) => Promise<{ error: { message: string } | null }>;
+      };
+      const { error } = await tbl.insert(payload);
       if (error) throw error;
 
       toast.success('Reserva enviada. El veterinario te contactará para confirmar.');
