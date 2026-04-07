@@ -305,7 +305,7 @@ export const EnhancedBookingDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+      <DialogContent className="max-w-2xl max-h-[95vh] sm:max-h-[90vh] h-full sm:h-auto overflow-y-auto p-0 sm:rounded-lg rounded-none w-screen sm:w-auto">
         {/* Header with Provider Info */}
         <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-6 border-b">
           <div className="flex items-center gap-4">

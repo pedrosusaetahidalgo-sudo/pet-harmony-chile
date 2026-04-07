@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ResponsiveModal } from "@/components/ui/responsive-modal";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -83,10 +83,13 @@ export function BookingModal({ slot, open, onClose }: Props) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+    <ResponsiveModal
+      open={open}
+      onOpenChange={(o) => { if (!o) onClose(); }}
+      title={step === "success" ? undefined : "Confirmar reserva"}
+    >
         {step === "success" ? (
-          <div className="text-center py-8">
+          <div className="text-center py-6">
             <CheckCircle2 className="h-16 w-16 text-primary mx-auto mb-4 animate-scale-in" />
             <h3 className="text-lg font-bold">Reserva confirmada!</h3>
             <p className="text-sm text-muted-foreground mt-2">
@@ -99,9 +102,6 @@ export function BookingModal({ slot, open, onClose }: Props) {
           </div>
         ) : (
           <>
-            <DialogHeader>
-              <DialogTitle>Confirmar reserva</DialogTitle>
-            </DialogHeader>
             <div className="space-y-4">
               <div className="bg-muted/50 p-3 rounded-lg text-sm space-y-1">
                 <p className="font-medium">{slot.title}</p>
@@ -167,7 +167,6 @@ export function BookingModal({ slot, open, onClose }: Props) {
             </div>
           </>
         )}
-      </DialogContent>
-    </Dialog>
+    </ResponsiveModal>
   );
 }

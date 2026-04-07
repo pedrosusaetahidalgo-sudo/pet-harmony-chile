@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { Header } from "@/components/Header";
+import { BottomTabBar } from "@/components/BottomTabBar";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AppLayoutProps {
@@ -13,7 +14,8 @@ function LayoutInner({ children }: AppLayoutProps) {
 
   return (
     <div className="min-h-screen flex w-full bg-background overflow-x-hidden">
-      {/* Sidebar - fixed on desktop, offcanvas on mobile */}
+      {/* Sidebar - fixed on desktop, offcanvas (oculto) on mobile.
+          En mobile, la navegación principal es BottomTabBar. */}
       <AppSidebar />
 
       {/* Main content fills remaining space */}
@@ -24,11 +26,19 @@ function LayoutInner({ children }: AppLayoutProps) {
         <Header />
         <main
           className="flex-1 overflow-y-auto animate-fade-in"
-          style={{ paddingBottom: "var(--safe-area-bottom)" }}
+          style={{
+            // Bottom padding: safe area + altura de la BottomTabBar (56px) en mobile
+            paddingBottom: isMobile
+              ? "calc(var(--safe-area-bottom) + 3.5rem)"
+              : "var(--safe-area-bottom)",
+          }}
         >
           {children}
         </main>
       </div>
+
+      {/* Bottom tab bar — solo mobile */}
+      <BottomTabBar />
     </div>
   );
 }

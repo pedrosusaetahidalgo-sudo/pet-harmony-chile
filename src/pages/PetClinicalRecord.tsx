@@ -7,9 +7,13 @@ import { useMedicalRecords } from "@/hooks/useMedicalRecords";
 import { useMedicalDocuments, MedicalDocument } from "@/hooks/useMedicalDocuments";
 import { useMedicalSharing } from "@/hooks/useMedicalSharing";
 import { useReminders } from "@/hooks/useReminders";
-import { format, differenceInYears, differenceInMonths } from "date-fns";
+import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { toast } from "sonner";
+
+// Tipos y helpers extraídos del god component (split parcial M-1)
+import type { PetData } from "./PetClinicalRecord/types";
+import { calculateAge, formatDate, formatShortDate } from "./PetClinicalRecord/helpers";
 
 import {
   Heart, Shield, Pill, Syringe, Stethoscope, FileText, Share2,
@@ -32,27 +36,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-// --- Helpers ---
-
-function calculateAge(birthDate: string): string {
-  const birth = new Date(birthDate);
-  const now = new Date();
-  const years = differenceInYears(now, birth);
-  const months = differenceInMonths(now, birth) % 12;
-
-  if (years === 0 && months === 0) return "Menos de 1 mes";
-  if (years === 0) return `${months} ${months === 1 ? "mes" : "meses"}`;
-  if (months === 0) return `${years} ${years === 1 ? "año" : "años"}`;
-  return `${years} ${years === 1 ? "año" : "años"}, ${months} ${months === 1 ? "mes" : "meses"}`;
-}
-
-function formatDate(dateString: string): string {
-  return format(new Date(dateString), "d 'de' MMMM, yyyy", { locale: es });
-}
-
-function formatShortDate(dateString: string): string {
-  return format(new Date(dateString), "dd/MM/yyyy");
-}
+// Helpers extraídos a ./PetClinicalRecord/helpers.ts
 
 function getSpeciesIcon(species?: string) {
   if (!species) return <Dog className="h-5 w-5" />;
@@ -117,54 +101,7 @@ function getLivingEnvironmentLabel(env?: string): string {
   return labels[env] || env;
 }
 
-// --- Types ---
-
-interface PetData {
-  id: string;
-  owner_id: string;
-  name: string;
-  species: string;
-  breed: string | null;
-  gender: string | null;
-  birth_date: string | null;
-  weight: number | null;
-  size: string | null;
-  color: string | null;
-  photo_url: string | null;
-  bio: string | null;
-  microchip_number: string | null;
-  neutered: boolean | null;
-  vaccination_status: string | null;
-  special_needs: string | null;
-  personality: string | null;
-  medical_notes: string | null;
-  is_public: boolean | null;
-  blood_type: string | null;
-  neutered_date: string | null;
-  chip_registry: string | null;
-  weight_history: Array<{ date: string; weight: number }> | null;
-  allergies_food: string[] | null;
-  allergies_medication: string[] | null;
-  allergies_environmental: string[] | null;
-  chronic_conditions_detail: Record<string, any> | null;
-  current_medications: Array<{ name: string; dose?: string; frequency?: string; since?: string }> | null;
-  diet_type: string | null;
-  diet_brand: string | null;
-  diet_frequency: string | null;
-  activity_level: string | null;
-  living_environment: string | null;
-  cohabitation_pets: number | null;
-  cohabitation_children: boolean | null;
-  emergency_vet_name: string | null;
-  emergency_vet_phone: string | null;
-  insurance_provider: string | null;
-  insurance_policy: string | null;
-  preferred_clinic: string | null;
-  behavior_notes: string | null;
-  last_vet_visit: string | null;
-  adoption_date: string | null;
-  is_adopted: boolean | null;
-}
+// PetData interface extraída a ./PetClinicalRecord/types.ts
 
 // --- Loading Skeleton ---
 
