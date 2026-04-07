@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { MapPin, Star, Stethoscope, Share2, MessageSquare, Calendar } from 'lucide-react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { MapPin, Star, Stethoscope, Share2, MessageSquare, Calendar } from '@/lib/icons';
+import { useAuth } from '@/hooks/useAuth';
+import { LINKS } from '@/lib/links';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -16,9 +18,32 @@ import { PublicHeader, PublicFooter } from './DirectorioVets';
 
 export default function PerfilVetPublico() {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { data: vet, isLoading } = useDirectoryVetBySlug(slug);
   const v = vet;
   const { data: reviews } = useVetReviews(v?.id);
+
+  const handleReservar = () => {
+    if (!user) {
+      navigate(LINKS.authReturn(`/veterinarios/${slug}`));
+      return;
+    }
+    // Vet logueado: lleva al directorio de servicios vets con la búsqueda pre-llenada
+    navigate(`${LINKS.services('vets')}?search=${encodeURIComponent(v?.display_name ?? '')}`);
+  };
+
+  const handleMensaje = () => {
+    if (!user) {
+      navigate(LINKS.authReturn(`/veterinarios/${slug}`));
+      return;
+    }
+    if (v?.user_id) {
+      navigate(`/chat?user=${v.user_id}`);
+    } else {
+      navigate(LINKS.chat());
+    }
+  };
 
   useEffect(() => {
     if (slug) trackProviderView(slug);
@@ -174,16 +199,12 @@ export default function PerfilVetPublico() {
               )}
 
               <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                <Link to="/auth">
-                  <Button>
-                    <Calendar className="h-4 w-4 mr-1" /> Reservar consulta
-                  </Button>
-                </Link>
-                <Link to="/auth">
-                  <Button variant="outline">
-                    <MessageSquare className="h-4 w-4 mr-1" /> Mensaje
-                  </Button>
-                </Link>
+                <Button onClick={handleReservar} className="bg-amber-600 hover:bg-amber-700">
+                  <Calendar className="h-4 w-4 mr-1" /> Reservar consulta
+                </Button>
+                <Button variant="outline" onClick={handleMensaje}>
+                  <MessageSquare className="h-4 w-4 mr-1" /> Mensaje
+                </Button>
                 <Button variant="outline" onClick={handleShare}>
                   <Share2 className="h-4 w-4 mr-1" /> Compartir
                 </Button>

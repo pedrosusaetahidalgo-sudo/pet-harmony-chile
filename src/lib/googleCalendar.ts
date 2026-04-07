@@ -175,9 +175,8 @@ export class GoogleCalendarSync {
  * This should be called when provider wants to enable calendar sync
  */
 export async function requestCalendarPermission(): Promise<string | null> {
-  // This would typically use Google OAuth 2.0 flow
-  // For now, return null - implementation depends on OAuth setup
-  // TODO: Google Calendar OAuth not yet implemented
+  // NOTE: integración Google Calendar OAuth pendiente. Cuando se implemente,
+  // requiere flow OAuth 2.0 separado del de login (scope calendar.events).
   return null;
 }
 

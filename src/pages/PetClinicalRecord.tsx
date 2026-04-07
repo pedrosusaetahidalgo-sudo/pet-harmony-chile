@@ -215,7 +215,7 @@ function InfoRow({ icon: Icon, label, value, className }: {
 }) {
   return (
     <div className={`flex items-start gap-3 ${className || ""}`}>
-      <Icon className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+      <Icon className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />
       <div className="min-w-0">
         <p className="text-xs text-muted-foreground">{label}</p>
         <p className="text-sm font-medium">{value || "No especificado"}</p>
@@ -401,7 +401,7 @@ function TabResumen({ pet }: { pet: PetData }) {
             <div className="space-y-3">
               {pet.current_medications!.map((med, i) => (
                 <div key={i} className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
-                  <Pill className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                  <Pill className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />
                   <div className="min-w-0">
                     <p className="text-sm font-medium">{med.name}</p>
                     <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-muted-foreground mt-0.5">
@@ -464,7 +464,7 @@ function TabResumen({ pet }: { pet: PetData }) {
                 <InfoRow icon={Building} label="Nombre" value={pet.emergency_vet_name} />
                 {pet.emergency_vet_phone && (
                   <InfoRow icon={Phone} label="Telefono" value={
-                    <a href={`tel:${pet.emergency_vet_phone}`} className="text-primary hover:underline">
+                    <a href={`tel:${pet.emergency_vet_phone}`} className="text-emerald-600 hover:underline">
                       {pet.emergency_vet_phone}
                     </a>
                   } />
@@ -506,7 +506,7 @@ function TabResumen({ pet }: { pet: PetData }) {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Clipboard className="h-4 w-4 text-primary" />
+              <Clipboard className="h-4 w-4 text-emerald-600" />
               Notas medicas
             </CardTitle>
           </CardHeader>
@@ -569,7 +569,7 @@ function TabHistorial({ petId }: { petId: string }) {
     <div className="space-y-8">
       {sortedYears.map((year) => (
         <div key={year} className="space-y-4">
-          <h3 className="text-lg font-bold text-primary sticky top-0 bg-background py-1 z-10">
+          <h3 className="text-lg font-bold text-emerald-600 sticky top-0 bg-background py-1 z-10">
             {year}
           </h3>
           <div className="relative space-y-4 pl-8 before:absolute before:left-3 before:top-0 before:bottom-0 before:w-0.5 before:bg-border">
@@ -614,9 +614,9 @@ function TabHistorial({ petId }: { petId: string }) {
                     </div>
 
                     {record.next_date && (
-                      <div className="flex items-center gap-1.5 text-xs mt-2 p-2 bg-primary/5 rounded border border-primary/10">
-                        <Calendar className="h-3 w-3 text-primary" />
-                        <span className="font-medium text-primary">Proxima cita:</span>
+                      <div className="flex items-center gap-1.5 text-xs mt-2 p-2 bg-emerald-50 rounded border border-primary/10">
+                        <Calendar className="h-3 w-3 text-emerald-600" />
+                        <span className="font-medium text-emerald-600">Proxima cita:</span>
                         <span>{formatDate(record.next_date)}</span>
                       </div>
                     )}
@@ -644,7 +644,7 @@ function TabAlimentacion({ pet }: { pet: PetData }) {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <Heart className="h-4 w-4 text-primary" />
+            <Heart className="h-4 w-4 text-emerald-600" />
             Alimentacion
           </CardTitle>
         </CardHeader>
@@ -704,7 +704,7 @@ function TabAlimentacion({ pet }: { pet: PetData }) {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Clipboard className="h-4 w-4 text-primary" />
+              <Clipboard className="h-4 w-4 text-emerald-600" />
               Notas de comportamiento
             </CardTitle>
           </CardHeader>
@@ -719,7 +719,7 @@ function TabAlimentacion({ pet }: { pet: PetData }) {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Scale className="h-4 w-4 text-primary" />
+              <Scale className="h-4 w-4 text-emerald-600" />
               Historial de peso
             </CardTitle>
           </CardHeader>
@@ -781,8 +781,8 @@ function TabDocumentos({ petId }: { petId: string }) {
         <Card key={doc.id} className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0 flex-1">
-              <div className="p-2 bg-primary/10 rounded-lg flex-shrink-0">
-                <FileText className="h-4 w-4 text-primary" />
+              <div className="p-2 bg-emerald-100 rounded-lg flex-shrink-0">
+                <FileText className="h-4 w-4 text-emerald-600" />
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-medium truncate">{doc.title}</p>
@@ -847,7 +847,7 @@ function TabCompartir({ petId }: { petId: string }) {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <Share2 className="h-4 w-4 text-primary" />
+            <Share2 className="h-4 w-4 text-emerald-600" />
             Compartir ficha clinica
           </CardTitle>
         </CardHeader>

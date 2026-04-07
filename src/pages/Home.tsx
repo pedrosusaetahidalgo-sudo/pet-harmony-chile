@@ -377,6 +377,33 @@ export default function Home() {
         </Card>
       )}
 
+      {/* PRÓXIMA CITA VETERINARIA */}
+      {appointments.length > 0 && (
+        <Card className="border-l-4 border-l-amber-500 bg-gradient-to-r from-amber-50 to-white">
+          <CardContent className="p-4 md:p-5 flex items-center gap-4">
+            <div className="rounded-full bg-amber-100 p-3 flex-shrink-0">
+              <Stethoscope className="h-6 w-6 text-amber-700" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs uppercase tracking-wider text-amber-700 font-semibold mb-0.5">
+                Próxima cita veterinaria
+              </p>
+              <p className="font-semibold truncate">{appointments[0].title}</p>
+              <p className="text-sm text-muted-foreground">
+                {format(new Date(appointments[0].scheduled_date), "EEEE d 'de' MMMM, HH:mm", { locale: es })}
+              </p>
+            </div>
+            <Button
+              size="sm"
+              onClick={() => navigate(LINKS.medicalRecords())}
+              className="bg-amber-600 hover:bg-amber-700 hidden sm:inline-flex"
+            >
+              Ver detalle
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Quick Actions */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         {quickActions.map((action) => (

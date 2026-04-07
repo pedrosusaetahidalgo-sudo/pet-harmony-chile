@@ -46,8 +46,8 @@ export const useGoogleAuth = () => {
     setLoading(true);
 
     try {
-      // TEMPORARY: Force web OAuth flow for testing (no SHA-1 required)
-      // TODO: Re-enable native flow after adding SHA-1 to Google Cloud Console
+      // NOTE: Forzamos web OAuth flow porque no hay SHA-1 en Google Cloud Console.
+      // Para usar native flow: configurar SHA-1 y poner FORCE_WEB_OAUTH = false.
       const FORCE_WEB_OAUTH = true; // Set to false to use native flow when SHA-1 is configured
       
       const isNative = Capacitor.isNativePlatform();

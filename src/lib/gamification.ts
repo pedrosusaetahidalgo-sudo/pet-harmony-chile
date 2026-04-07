@@ -76,9 +76,8 @@ export async function awardPoints(
   actionId?: string,
   description?: string
 ): Promise<void> {
-  // This will be implemented as a Supabase function call
-  // For now, it's a placeholder
-  // TODO: implement as Supabase function call
+  // NOTE: placeholder. La asignación de puntos hoy se hace directamente desde
+  // useGamification.tsx. Si se mueve la lógica al backend, hacerlo acá.
 }
 
 /**

@@ -97,7 +97,7 @@ export function track({ event, properties, userId }: TrackEvent): void {
     logger.debug("[Analytics]", payload.event, payload.properties);
   }
 
-  // TODO: Replace with actual analytics provider
+  // NOTE: integración con provider externo (mixpanel/posthog/amplitude) pendiente
   // Examples:
   // mixpanel.track(event, payload.properties);
   // posthog.capture(event, payload.properties);
@@ -112,7 +112,7 @@ export function identify(userId: string, traits?: Record<string, unknown>): void
     logger.debug("[Analytics] Identify:", userId, traits);
   }
 
-  // TODO: Replace with actual analytics provider
+  // NOTE: integración con provider externo (mixpanel/posthog/amplitude) pendiente
   // mixpanel.identify(userId);
   // mixpanel.people.set(traits);
 }
