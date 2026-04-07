@@ -24,7 +24,7 @@ import {
   Share2,
   Loader2
 } from "@/lib/icons";
-import { useMedicalDocuments, MedicalDocumentType } from "@/hooks/useMedicalDocuments";
+import { useMedicalDocuments, MedicalDocumentType, MedicalDocument } from "@/hooks/useMedicalDocuments";
 import { useMedicalSharing } from "@/hooks/useMedicalSharing";
 import { UploadMedicalDocumentDialog } from "./UploadMedicalDocumentDialog";
 import { MedicalSummaryButton } from "./MedicalSummaryButton";
@@ -253,7 +253,7 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
             ))}
           </TabsList>
 
-          {Object.entries(documentsByType).map(([type, docs]) => (
+          {(Object.entries(documentsByType) as [MedicalDocumentType, MedicalDocument[]][]).map(([type, docs]) => (
             <TabsContent key={type} value={type} className="space-y-3">
               {docs.map((doc) => {
                 const Icon = DOCUMENT_TYPE_ICONS[doc.type];
