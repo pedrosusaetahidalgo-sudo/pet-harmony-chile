@@ -3,7 +3,7 @@ import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Check, X, Sparkles, Shield, Zap } from "lucide-react";
+import { Crown, Check, X, Sparkles, Shield, Zap } from "@/lib/icons";
 import { usePlan } from "@/hooks/usePlan";
 import { useAuth } from "@/hooks/useAuth";
 import { PLANS, FEATURE_LABELS, formatCLP, PlanId } from "@/lib/plans";

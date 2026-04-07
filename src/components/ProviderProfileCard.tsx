@@ -15,7 +15,7 @@ import {
   ChevronRight,
   Shield,
   MapPin
-} from "lucide-react";
+} from "@/lib/icons";
 
 interface ProviderProfileCardProps {
   provider: {

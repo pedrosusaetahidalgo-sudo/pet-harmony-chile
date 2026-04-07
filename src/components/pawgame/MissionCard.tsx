@@ -19,7 +19,7 @@ import {
   Stethoscope,
   PawPrint,
   BookOpen
-} from "lucide-react";
+} from "@/lib/icons";
 
 interface Mission {
   id: string;

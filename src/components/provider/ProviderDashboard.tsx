@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { UserCog } from "lucide-react";
+import { UserCog } from "@/lib/icons";
 import { ProviderDirectoryCard } from "./ProviderDirectoryCard";
 import { 
   TrendingUp, 
@@ -14,7 +14,7 @@ import {
   Calendar,
   Loader2,
   AlertCircle
-} from "lucide-react";
+} from "@/lib/icons";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 

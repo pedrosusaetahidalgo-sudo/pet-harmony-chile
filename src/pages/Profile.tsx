@@ -17,7 +17,7 @@ import {
   UserPlus,
   Users,
   Briefcase
-} from "lucide-react";
+} from "@/lib/icons";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";

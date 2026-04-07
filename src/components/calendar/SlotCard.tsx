@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { StarRating } from "@/components/reviews/StarRating";
-import { Clock, Users } from "lucide-react";
+import { Clock, Users } from "@/lib/icons";
 
 const typeLabels: Record<string, string> = {
   vet: "Veterinaria",

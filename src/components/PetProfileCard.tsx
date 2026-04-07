@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { MapPin, User } from "lucide-react";
+import { MapPin, User } from "@/lib/icons";
 import { useNavigate } from "react-router-dom";
 
 interface PetProfileCardProps {

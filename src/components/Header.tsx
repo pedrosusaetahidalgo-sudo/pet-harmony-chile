@@ -1,5 +1,5 @@
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { Heart, PawPrint, Bell, Crown, MessageSquare, Clock, AlertCircle, UserPlus, MessageCircle, Calendar, CheckCircle, Star, Trophy, Flame } from "lucide-react";
+import { Heart, PawPrint, Bell, Crown, MessageSquare, Clock, AlertCircle, UserPlus, MessageCircle, Calendar, CheckCircle, Star, Trophy, Flame } from "@/lib/icons";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

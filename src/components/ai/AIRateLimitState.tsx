@@ -1,4 +1,4 @@
-import { Clock } from "lucide-react";
+import { Clock } from "@/lib/icons";
 
 interface Props {
   skillLabel: string;

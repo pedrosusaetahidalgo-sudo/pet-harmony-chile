@@ -23,7 +23,7 @@ import {
   AlertCircle,
   Home,
   type LucideIcon
-} from "lucide-react";
+} from "@/lib/icons";
 import { useState, useEffect } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";

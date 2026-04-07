@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Users, Dog, FileCheck, Megaphone, Settings, Briefcase, Megaphone as AdIcon, Stethoscope } from "lucide-react";
+import { Shield, Users, Dog, FileCheck, Megaphone, Settings, Briefcase, Megaphone as AdIcon, Stethoscope } from "@/lib/icons";
 import AdminProviders from "@/components/admin/AdminProviders";
 import AdminServiceProviders from "@/components/admin/AdminServiceProviders";
 import AdminVerificationRequests from "@/components/admin/AdminVerificationRequests";

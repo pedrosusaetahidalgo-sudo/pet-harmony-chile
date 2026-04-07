@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, FileText, Syringe, Pill, Stethoscope, Activity, MapPin, User, Heart, Clock } from "lucide-react";
+import { Calendar, FileText, Syringe, Pill, Stethoscope, Activity, MapPin, User, Heart, Clock } from "@/lib/icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AddMedicalRecord } from "@/components/AddMedicalRecord";

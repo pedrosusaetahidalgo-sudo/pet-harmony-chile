@@ -12,7 +12,7 @@ import {
   Sparkles, MapPin, Search, Filter, Building2, Dog, Cat, 
   Loader2, RefreshCw, Map as MapIcon, List, Navigation,
   ExternalLink, MessageCircle
-} from "lucide-react";
+} from "@/lib/icons";
 import GoogleMapsLoader from "@/components/GoogleMapsLoader";
 import { GoogleMap, Marker, InfoWindow, MarkerClusterer } from "@react-google-maps/api";
 import ShelterDetailCard from "@/components/maps/ShelterDetailCard";

@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle, Calendar, ArrowRight } from "lucide-react";
+import { CheckCircle, Calendar, ArrowRight } from "@/lib/icons";
 import { AppLayout } from "@/components/AppLayout";
 
 const PaymentSuccess = () => {

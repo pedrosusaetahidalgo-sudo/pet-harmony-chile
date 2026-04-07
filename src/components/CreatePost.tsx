@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Image, X, Loader2 } from "lucide-react";
+import { Image, X, Loader2 } from "@/lib/icons";
 import { useAuth } from "@/hooks/useAuth";
 import { useGamification } from "@/hooks/useGamification";
 import { DEFAULT_POINTS_CONFIG } from "@/lib/gamification";

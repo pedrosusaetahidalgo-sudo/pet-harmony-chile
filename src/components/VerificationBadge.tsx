@@ -5,7 +5,7 @@ import {
   Award, 
   ShieldCheck,
   BadgeCheck
-} from "lucide-react";
+} from "@/lib/icons";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface VerificationBadgeProps {

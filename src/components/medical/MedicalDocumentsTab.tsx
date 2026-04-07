@@ -23,7 +23,7 @@ import {
   FileDown,
   Share2,
   Loader2
-} from "lucide-react";
+} from "@/lib/icons";
 import { useMedicalDocuments, MedicalDocumentType } from "@/hooks/useMedicalDocuments";
 import { useMedicalSharing } from "@/hooks/useMedicalSharing";
 import { UploadMedicalDocumentDialog } from "./UploadMedicalDocumentDialog";

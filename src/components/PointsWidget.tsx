@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Star, TrendingUp } from "lucide-react";
+import { Trophy, Star, TrendingUp } from "@/lib/icons";
 import { calculateLevel, pointsForNextLevel, progressToNextLevel, formatPoints, getLevelInfo } from "@/lib/gamification";
 
 interface PointsWidgetProps {

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
+import { LINKS } from "@/lib/links";
 import { PublicHeader } from "@/components/PublicHeader";
 import { LegalFooter } from "@/components/LegalFooter";
 import Hero from "@/components/Hero";
@@ -29,7 +30,7 @@ import {
   Gift,
   Brain,
   Search
-} from "lucide-react";
+} from "@/lib/icons";
 const dogProfileUrl = "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop&crop=faces";
 const catProfileUrl = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=400&fit=crop&crop=faces";
 
@@ -537,7 +538,7 @@ const Index = () => {
                 size="lg"
                 variant="outline"
                 className="bg-transparent text-white border-white hover:bg-white/10 text-lg px-10 h-14 font-semibold w-full md:w-auto"
-                onClick={() => navigate("/para-veterinarios")}
+                onClick={() => navigate(LINKS.paraVeterinarios())}
               >
                 Conocer más detalles
               </Button>
@@ -573,7 +574,7 @@ const Index = () => {
               <Button
                 size="lg"
                 className="bg-amber-400 text-purple-900 hover:bg-amber-300 shadow-xl text-lg px-10 h-14 font-semibold border-2 border-amber-200 animate-pulse hover:animate-none"
-                onClick={() => navigate("/veterinarios")}
+                onClick={() => navigate(LINKS.vets())}
               >
                 <Stethoscope className="h-5 w-5 mr-2" />
                 Soy veterinario

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { X, ArrowRight, ArrowLeft, Home, PawPrint, Calendar, MapPin, Heart, Trophy } from "lucide-react";
+import { X, ArrowRight, ArrowLeft, Home, PawPrint, Calendar, MapPin, Heart, Trophy } from "@/lib/icons";
 import { cn } from "@/lib/utils";
 
 interface TutorialStep {

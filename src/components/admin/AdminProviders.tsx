@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { CheckCircle, XCircle, Eye, Dog, Home, Stethoscope, GraduationCap } from "lucide-react";
+import { CheckCircle, XCircle, Eye, Dog, Home, Stethoscope, GraduationCap } from "@/lib/icons";
 import {
   Table,
   TableBody,

@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageCircle, Share2, MapPin } from "lucide-react";
+import { Heart, MessageCircle, Share2, MapPin } from "@/lib/icons";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -9,7 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useFollows } from "@/hooks/useFollows";
-import { UserPlus, UserCheck, Loader2 } from "lucide-react";
+import { UserPlus, UserCheck, Loader2 } from "@/lib/icons";
 import {
   Dialog,
   DialogContent,

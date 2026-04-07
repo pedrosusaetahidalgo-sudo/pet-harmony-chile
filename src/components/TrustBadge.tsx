@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { ShieldCheck, Star, Clock } from "lucide-react";
+import { ShieldCheck, Star, Clock } from "@/lib/icons";
 
 interface TrustBadgeProps {
   type: "verified" | "top_rated" | "responsive";

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { RequestRoleVerification } from "./RequestRoleVerification";
-import { UserPlus, CheckCircle } from "lucide-react";
+import { UserPlus, CheckCircle } from "@/lib/icons";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";

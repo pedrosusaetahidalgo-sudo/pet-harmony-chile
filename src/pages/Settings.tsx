@@ -18,7 +18,7 @@ import {
   ArrowLeft,
   Save,
   Loader2,
-} from "lucide-react";
+} from "@/lib/icons";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";

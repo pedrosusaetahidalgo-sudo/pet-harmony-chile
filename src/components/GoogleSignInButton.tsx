@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useGoogleAuth } from "@/hooks/useGoogleAuth";
-import { Loader2 } from "lucide-react";
+import { Loader2 } from "@/lib/icons";
 import { FcGoogle } from "react-icons/fc";
 
 interface GoogleSignInButtonProps {

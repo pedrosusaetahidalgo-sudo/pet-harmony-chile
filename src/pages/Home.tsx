@@ -30,7 +30,7 @@ import {
   Zap,
   Crown,
   X
-} from "lucide-react";
+} from "@/lib/icons";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { getGreeting } from "@/lib/format";
@@ -41,6 +41,7 @@ import MissionCard from "@/components/MissionCard";
 import { PartnerAd } from "@/components/PartnerAd";
 import { PetAssistant } from "@/components/ai/PetAssistant";
 import { isFeatureEnabled } from "@/lib/featureFlags";
+import { LINKS } from "@/lib/links";
 
 interface Pet {
   id: string;
@@ -207,8 +208,8 @@ export default function Home() {
     <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6 animate-fade-in">
       {showTutorial && <OnboardingTutorial onComplete={handleTutorialComplete} />}
       
-      {/* Welcome Header */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/20 via-secondary/20 to-accent/20 p-6 md:p-8 animate-fade-in">
+      {/* Welcome Header — paleta verde médica (pivot) */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-emerald-100 via-teal-50 to-emerald-50 p-6 md:p-8 animate-fade-in">
         
         <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="flex items-center gap-4">
@@ -254,9 +255,9 @@ export default function Home() {
             </div>
           </div>
           
-          <Button 
-            onClick={() => navigate("/add-pet")}
-            className="bg-warm-gradient hover:opacity-90 shadow-lg"
+          <Button
+            onClick={() => navigate(LINKS.addPet())}
+            className="bg-emerald-600 hover:bg-emerald-700 shadow-lg"
             size="lg"
           >
             <Plus className="h-5 w-5 mr-2" />
@@ -264,6 +265,60 @@ export default function Home() {
           </Button>
         </div>
       </div>
+
+      {/* === Estado vacío segmentado === */}
+      {pets.length === 0 && (
+        <Card className="border-l-4 border-l-emerald-500 bg-emerald-50/50">
+          <CardContent className="p-6 text-center space-y-3">
+            <div className="inline-flex p-3 rounded-full bg-emerald-100">
+              <PawPrint className="h-8 w-8 text-emerald-700" />
+            </div>
+            <h2 className="text-xl font-bold text-emerald-900">
+              Bienvenido a Paw Friend
+            </h2>
+            <p className="text-sm text-emerald-800/80 max-w-md mx-auto">
+              Para empezar a cuidar la salud de tu mascota, agrega su perfil. Así podrás llevar su ficha clínica, recibir recordatorios y reservar con veterinarios.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
+              <Button onClick={() => navigate(LINKS.addPet())} className="bg-emerald-600 hover:bg-emerald-700">
+                <Plus className="h-4 w-4 mr-1" />
+                Agregar mi primera mascota
+              </Button>
+              <Button variant="outline" onClick={() => navigate(LINKS.vets())}>
+                <Stethoscope className="h-4 w-4 mr-1" />
+                Explorar veterinarios
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* === Estado tranquilo: tiene mascotas pero todo al día === */}
+      {pets.length > 0 &&
+        overdueReminders.length === 0 &&
+        upcomingReminders.length === 0 && (
+          <Card className="border-l-4 border-l-emerald-500 bg-emerald-50/30">
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="rounded-full bg-emerald-100 p-2">
+                <CheckCircle2 className="h-5 w-5 text-emerald-700" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-emerald-900">Tus mascotas están al día ✓</p>
+                <p className="text-xs text-emerald-800/70">
+                  No tienes recordatorios pendientes. Te avisaremos cuando se acerque algún control.
+                </p>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => navigate(LINKS.vets())}
+                className="border-emerald-300 text-emerald-700 hover:bg-emerald-100"
+              >
+                <Stethoscope className="h-4 w-4 mr-1" /> Buscar vet
+              </Button>
+            </CardContent>
+          </Card>
+        )}
 
       {/* HEALTH ALERTS — siempre primero, prominente */}
       {(overdueReminders.length > 0 || upcomingReminders.length > 0) && (
@@ -296,7 +351,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="flex gap-1">
-                  <Button size="sm" variant="outline" onClick={() => navigate("/veterinarios")}>
+                  <Button size="sm" variant="outline" onClick={() => navigate(LINKS.vets())}>
                     Reservar vet
                   </Button>
                   <Button size="sm" variant="ghost" onClick={() => completeReminder.mutate(r.id)} title="Marcar como hecho">
@@ -399,13 +454,13 @@ export default function Home() {
       {/* Main Content Grid */}
       <div className="grid md:grid-cols-2 gap-6">
         {/* My Pets Section */}
-        <Card className="border-0 shadow-md">
+        <Card className="border-l-4 border-l-emerald-500 shadow-md">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-lg flex items-center gap-2">
-              <PawPrint className="h-5 w-5 text-primary" />
+              <PawPrint className="h-5 w-5 text-emerald-600" />
               Mis Mascotas
             </CardTitle>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/my-pets")}>
+            <Button variant="ghost" size="sm" onClick={() => navigate(LINKS.myPets())}>
               Ver todas
               <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
@@ -413,13 +468,12 @@ export default function Home() {
           <CardContent>
             {pets.length === 0 ? (
               <div className="text-center py-6">
-                <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-primary/10 flex items-center justify-center">
-                  <PawPrint className="h-7 w-7 text-primary" />
+                <div className="w-14 h-14 mx-auto mb-3 rounded-full bg-emerald-100 flex items-center justify-center">
+                  <PawPrint className="h-7 w-7 text-emerald-600" />
                 </div>
                 <p className="font-medium mb-1">Agrega tu primera mascota</p>
-                <p className="text-xs text-muted-foreground mb-1">Ficha clínica + recordatorios automáticos</p>
-                <p className="text-xs text-primary font-medium mb-4">🎮 Gana recordatorios de salud al registrar</p>
-                <Button onClick={() => navigate("/add-pet")} size="sm">
+                <p className="text-xs text-muted-foreground mb-3">Ficha clínica + recordatorios automáticos</p>
+                <Button onClick={() => navigate(LINKS.addPet())} size="sm" className="bg-emerald-600 hover:bg-emerald-700">
                   <Plus className="h-4 w-4 mr-2" />
                   Agregar mascota
                 </Button>
@@ -431,7 +485,7 @@ export default function Home() {
                     <div
                       key={pet.id}
                       className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted cursor-pointer transition-colors"
-                      onClick={() => navigate("/my-pets")}
+                      onClick={() => navigate(LINKS.myPets())}
                     >
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={pet.photo_url || undefined} />
@@ -475,13 +529,13 @@ export default function Home() {
         </Card>
 
         {/* Upcoming Appointments */}
-        <Card className="border-0 shadow-md">
+        <Card className="border-l-4 border-l-emerald-500 shadow-md">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-lg flex items-center gap-2">
-              <Calendar className="h-5 w-5 text-primary" />
+              <Calendar className="h-5 w-5 text-emerald-600" />
               Próximas Citas
             </CardTitle>
-            <Button variant="ghost" size="sm" onClick={() => navigate("/medical-records")}>
+            <Button variant="ghost" size="sm" onClick={() => navigate(LINKS.medicalRecords())}>
               Ver historial
               <ArrowRight className="h-4 w-4 ml-1" />
             </Button>
@@ -489,15 +543,15 @@ export default function Home() {
           <CardContent>
             {appointments.length === 0 ? (
               <div className="text-center py-8">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Calendar className="h-8 w-8 text-primary" />
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-100 flex items-center justify-center">
+                  <Calendar className="h-8 w-8 text-emerald-600" />
                 </div>
                 <p className="text-muted-foreground mb-4">
                   No tienes citas próximas
                 </p>
-                <Button onClick={() => navigate("/services/vets")} variant="outline">
+                <Button onClick={() => navigate(LINKS.vets())} variant="outline" className="border-emerald-300 text-emerald-700 hover:bg-emerald-50">
                   <Stethoscope className="h-4 w-4 mr-2" />
-                  Agendar consulta
+                  Buscar veterinario
                 </Button>
               </div>
             ) : (

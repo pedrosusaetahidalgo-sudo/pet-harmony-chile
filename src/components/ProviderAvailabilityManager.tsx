@@ -6,14 +6,14 @@ import { Calendar } from "@/components/ui/calendar";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { CalendarDays, Clock, Save, Trash2 } from "lucide-react";
+import { CalendarDays, Clock, Save, Trash2 } from "@/lib/icons";
 import { format, addDays } from "date-fns";
 import { es } from "date-fns/locale";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { GoogleCalendarSync, requestCalendarPermission } from "@/lib/googleCalendar";
-import { Calendar as CalendarIcon, RefreshCw } from "lucide-react";
+import { Calendar as CalendarIcon, RefreshCw } from "@/lib/icons";
 
 interface ProviderAvailabilityManagerProps {
   providerType: "dog_walker" | "dogsitter" | "veterinarian" | "trainer";

@@ -1,6 +1,6 @@
 import { useEffect, useState, ReactNode } from "react";
 import { useGoogleMapsKey } from "@/hooks/useGoogleMapsKey";
-import { Loader2 } from "lucide-react";
+import { Loader2 } from "@/lib/icons";
 
 interface GoogleMapsLoaderProps {
   children: ReactNode;

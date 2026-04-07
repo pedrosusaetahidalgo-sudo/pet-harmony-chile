@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { LucideIcon } from "lucide-react";
+import { LucideIcon } from "@/lib/icons";
 
 interface FeatureCardProps {
   icon: LucideIcon;

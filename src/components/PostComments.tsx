@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
-import { Send, Trash2 } from "lucide-react";
+import { Send, Trash2 } from "@/lib/icons";
 
 interface Comment {
   id: string;

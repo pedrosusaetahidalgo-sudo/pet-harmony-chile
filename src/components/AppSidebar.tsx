@@ -1,4 +1,4 @@
-import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck, Crown, UserCog, LayoutDashboard, Home as HomeIcon, FileText, Search } from "lucide-react";
+import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck, Crown, UserCog, LayoutDashboard, Home as HomeIcon, FileText, Search } from "@/lib/icons";
 import { isFeatureEnabled } from "@/lib/featureFlags";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";

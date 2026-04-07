@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, MapPin, Phone, Mail, Award, CheckCircle, Search } from "lucide-react";
+import { AlertCircle, MapPin, Phone, Mail, Award, CheckCircle, Search } from "@/lib/icons";
 import { EmptyState } from "@/components/EmptyState";
 import LostPetsMap from "@/components/LostPetsMap";
 import ReportLostPetForm from "@/components/ReportLostPetForm";

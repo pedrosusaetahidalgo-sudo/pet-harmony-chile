@@ -1,6 +1,6 @@
 import { SlotCard } from "./SlotCard";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CalendarX } from "lucide-react";
+import { CalendarX } from "@/lib/icons";
 
 interface Props {
   slots: any[];

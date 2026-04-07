@@ -17,7 +17,7 @@ import {
   Home,
   Search,
   MessageCircle
-} from "lucide-react";
+} from "@/lib/icons";
 
 interface PawBadge {
   id: string;

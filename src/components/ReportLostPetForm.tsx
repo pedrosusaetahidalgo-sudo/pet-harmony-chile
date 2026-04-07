@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2 } from "@/lib/icons";
 import PlacesAutocomplete from "./PlacesAutocomplete";
 import DateTimePicker from "./DateTimePicker";
 import GoogleMapsLoader from "./GoogleMapsLoader";

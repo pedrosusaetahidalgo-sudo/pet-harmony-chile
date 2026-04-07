@@ -14,7 +14,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { Heart, MapPin, Calendar, MessageCircle, Eye, Check, X } from "lucide-react";
+import { Heart, MapPin, Calendar, MessageCircle, Eye, Check, X } from "@/lib/icons";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { useStartConversation } from "@/hooks/useStartConversation";

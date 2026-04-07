@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Crown } from "lucide-react";
+import { Crown } from "@/lib/icons";
 
 interface PremiumBadgeProps {
   className?: string;

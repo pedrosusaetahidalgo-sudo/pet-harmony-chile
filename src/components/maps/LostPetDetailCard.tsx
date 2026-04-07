@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Phone, Mail, Calendar, Award, MessageCircle, Share2 } from "lucide-react";
+import { MapPin, Phone, Mail, Calendar, Award, MessageCircle, Share2 } from "@/lib/icons";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 import { useNavigate } from "react-router-dom";

@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
-import { Crown, Lock } from "lucide-react";
+import { Crown, Lock } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 import { usePlan } from "@/hooks/usePlan";
 

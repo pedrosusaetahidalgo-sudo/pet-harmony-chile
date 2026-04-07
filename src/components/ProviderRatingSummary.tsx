@@ -1,4 +1,4 @@
-import { Star, CheckCircle, MessageSquare, TrendingUp } from "lucide-react";
+import { Star, CheckCircle, MessageSquare, TrendingUp } from "@/lib/icons";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 

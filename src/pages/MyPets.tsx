@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Plus, Edit, Trash2, Heart, FileText } from "lucide-react";
+import { Plus, Edit, Trash2, Heart, FileText } from "@/lib/icons";
+import { LINKS } from "@/lib/links";
 import { useToast } from "@/hooks/use-toast";
 import {
   AlertDialog,
@@ -146,7 +147,7 @@ const MyPets = () => {
             </p>
           </div>
           <Button
-            onClick={() => navigate("/add-pet")}
+            onClick={() => navigate(LINKS.addPet())}
             className="bg-warm-gradient hover:opacity-90 transition-all shadow-lg hover:shadow-xl hover:scale-105"
           >
             <Plus className="mr-2 h-5 w-5" />
@@ -168,7 +169,7 @@ const MyPets = () => {
                 🎮 Gana recordatorios automáticos de salud al registrar tu mascota
               </p>
               <Button
-                onClick={() => navigate("/add-pet")}
+                onClick={() => navigate(LINKS.addPet())}
               >
                 <Plus className="mr-2 h-5 w-5" />
                 Agregar Mi Primera Mascota

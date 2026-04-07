@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, Loader2, Heart, Activity, Utensils, Brain, Thermometer, Users } from "lucide-react";
+import { Sparkles, Loader2, Heart, Activity, Utensils, Brain, Thermometer, Users } from "@/lib/icons";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Separator } from "@/components/ui/separator";

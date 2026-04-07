@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Star, MapPin, Briefcase, Calendar, ShieldCheck, MessageCircle, Eye } from "lucide-react";
+import { Star, MapPin, Briefcase, Calendar, ShieldCheck, MessageCircle, Eye } from "@/lib/icons";
 import { useNavigate } from "react-router-dom";
 import { useStartConversation } from "@/hooks/useStartConversation";
 import { SERVICE_TYPE_LABELS, SERVICE_TYPE_ICONS, type ServiceProvider } from "@/hooks/useServiceProviders";

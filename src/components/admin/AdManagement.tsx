@@ -25,7 +25,7 @@ import {
   MousePointerClick,
   TrendingUp,
   Loader2,
-} from "lucide-react";
+} from "@/lib/icons";
 import {
   Dialog,
   DialogContent,

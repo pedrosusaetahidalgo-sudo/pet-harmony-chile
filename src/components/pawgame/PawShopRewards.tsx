@@ -16,7 +16,7 @@ import {
   Star,
   Check,
   AlertCircle
-} from "lucide-react";
+} from "@/lib/icons";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 

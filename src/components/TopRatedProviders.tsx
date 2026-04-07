@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Star, Trophy, Dog, Home, Stethoscope, GraduationCap, Crown, Medal, Award } from "lucide-react";
+import { Star, Trophy, Dog, Home, Stethoscope, GraduationCap, Crown, Medal, Award } from "@/lib/icons";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 

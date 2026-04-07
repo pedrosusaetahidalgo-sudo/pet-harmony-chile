@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Heart, MessageCircle, Building2, Sparkles } from "lucide-react";
+import { Plus, Heart, MessageCircle, Building2, Sparkles } from "@/lib/icons";
 import { CreateAdoptionPost } from "@/components/CreateAdoptionPost";
 import { AdoptionPostCard } from "@/components/AdoptionPostCard";
 import AdoptionSheltersList from "@/components/AdoptionSheltersList";

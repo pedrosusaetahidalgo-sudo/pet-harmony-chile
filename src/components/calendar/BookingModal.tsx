@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { usePlan } from "@/hooks/usePlan";
 import { calculateBookingCommission } from "@/lib/commissions";
 import { formatCLP } from "@/lib/plans";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { CheckCircle2, Loader2 } from "@/lib/icons";
 
 interface Props {
   slot: any;

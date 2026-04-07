@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import {
   Search, Heart, Briefcase, Plus, Filter,
   MapPin, Loader2, LocateFixed
-} from "lucide-react";
+} from "@/lib/icons";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";

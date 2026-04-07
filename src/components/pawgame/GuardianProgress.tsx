@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Crown, Star, Zap, Flame, Trophy } from "lucide-react";
+import { Crown, Star, Zap, Flame, Trophy } from "@/lib/icons";
 
 interface GuardianLevel {
   id: string;

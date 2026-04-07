@@ -20,7 +20,7 @@ import {
   CheckCircle2,
   Heart,
   MessageCircle
-} from "lucide-react";
+} from "@/lib/icons";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";

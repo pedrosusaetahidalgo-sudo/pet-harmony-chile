@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Star, MessageSquare, Filter } from "lucide-react";
+import { Star, MessageSquare, Filter } from "@/lib/icons";
 import { supabase } from "@/integrations/supabase/client";
 import EnhancedReviewCard from "./EnhancedReviewCard";
 import ProviderRatingSummary from "./ProviderRatingSummary";

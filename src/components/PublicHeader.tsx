@@ -1,4 +1,4 @@
-import { Heart, PawPrint, Stethoscope } from "lucide-react";
+import { Heart, PawPrint, Stethoscope } from "@/lib/icons";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 

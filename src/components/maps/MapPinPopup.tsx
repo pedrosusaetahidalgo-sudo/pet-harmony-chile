@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
   MapPin, Calendar, MessageCircle, Eye, Star, 
   Navigation, Award, Heart, Briefcase, Share2 
-} from "lucide-react";
+} from "@/lib/icons";
 import { useNavigate } from "react-router-dom";
 import { useStartConversation } from "@/hooks/useStartConversation";
 import { SERVICE_TYPE_LABELS, SERVICE_TYPE_ICONS, type ServiceProvider } from "@/hooks/useServiceProviders";

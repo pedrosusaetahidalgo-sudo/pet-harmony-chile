@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Upload, Loader2 } from "lucide-react";
+import { Upload, Loader2 } from "@/lib/icons";
 
 interface CreateAdoptionPostProps {
   open: boolean;

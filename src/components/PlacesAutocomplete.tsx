@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { MapPin } from "lucide-react";
+import { MapPin } from "@/lib/icons";
 import { GOOGLE_MAPS_API_KEY } from "./GoogleMapsProvider";
 
 interface PlacesAutocompleteProps {

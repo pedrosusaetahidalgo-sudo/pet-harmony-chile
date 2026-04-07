@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, Upload, FileCheck, Briefcase, Home, Stethoscope, GraduationCap } from "lucide-react";
+import { Loader2, Upload, FileCheck, Briefcase, Home, Stethoscope, GraduationCap } from "@/lib/icons";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 

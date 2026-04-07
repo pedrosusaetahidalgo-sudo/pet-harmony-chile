@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { LucideIcon } from "lucide-react";
+import { LucideIcon } from "@/lib/icons";
 
 interface Props {
   icon: LucideIcon;

@@ -12,6 +12,7 @@ import {
   useInvitationByToken,
   useSubmitInvitedReview,
 } from '@/hooks/useReviewInvitations';
+import { LINKS } from '@/lib/links';
 import { useAuth } from '@/hooks/useAuth';
 import { PublicHeader, PublicFooter } from './DirectorioVets';
 
@@ -121,7 +122,7 @@ export default function DejarResena() {
             <CardContent className="space-y-3">
               <Button
                 className="w-full"
-                onClick={() => navigate(`/auth?returnTo=/resena/${token}`)}
+                onClick={() => navigate(LINKS.authReturn(`/resena/${token}`))}
               >
                 Iniciar sesión / Registrarme
               </Button>

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
-import { Eye, Search, Shield, ShieldOff, UserCog } from "lucide-react";
+import { Eye, Search, Shield, ShieldOff, UserCog } from "@/lib/icons";
 import {
   Table,
   TableBody,

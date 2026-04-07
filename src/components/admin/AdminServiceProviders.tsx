@@ -61,7 +61,7 @@ import {
   Star,
   MapPin,
   Briefcase,
-} from "lucide-react";
+} from "@/lib/icons";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 

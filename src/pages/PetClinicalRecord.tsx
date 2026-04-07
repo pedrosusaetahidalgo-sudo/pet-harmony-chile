@@ -16,7 +16,7 @@ import {
   AlertTriangle, Dog, Cat, Calendar, MapPin, Phone, Building,
   Activity, Home as HomeIcon, Baby, Scale, Clipboard, Clock,
   ArrowLeft, Copy, ExternalLink, Download, Trash2, Link2, Plus,
-} from "lucide-react";
+} from "@/lib/icons";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

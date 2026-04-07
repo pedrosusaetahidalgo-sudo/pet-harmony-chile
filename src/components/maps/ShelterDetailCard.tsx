@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { 
   Home, MapPin, Globe, Phone, Mail, Instagram, Facebook, 
   Dog, Cat, Sparkles, ExternalLink, MessageCircle, Building2 
-} from "lucide-react";
+} from "@/lib/icons";
 
 interface ShelterDetailCardProps {
   shelter: {

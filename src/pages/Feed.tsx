@@ -3,7 +3,7 @@ import PetCard from "@/components/PetCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Plus, TrendingUp, Users, MapPin, Video, PawPrint, Trophy } from "lucide-react";
+import { Search, Plus, TrendingUp, Users, MapPin, Video, PawPrint, Trophy } from "@/lib/icons";
 import { EmptyState } from "@/components/EmptyState";
 // DogBehaviorAnalyzer temporarily removed - will be implemented in different tab later
 import { OnboardingTutorial } from "@/components/OnboardingTutorial";

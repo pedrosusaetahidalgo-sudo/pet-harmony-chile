@@ -4,7 +4,7 @@ import { CalendarGrid } from "@/components/calendar/CalendarGrid";
 import { DaySlotsList } from "@/components/calendar/DaySlotsList";
 import { BookingModal } from "@/components/calendar/BookingModal";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Filter } from "lucide-react";
+import { Calendar, Filter } from "@/lib/icons";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";

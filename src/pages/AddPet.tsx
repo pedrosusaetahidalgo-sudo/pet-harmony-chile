@@ -12,7 +12,8 @@ import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, X, ChevronDown, Stethoscope, Heart } from "lucide-react";
+import { Upload, X, ChevronDown, Stethoscope, Heart } from "@/lib/icons";
+import { LINKS } from "@/lib/links";
 import { Badge } from "@/components/ui/badge";
 
 const personalityOptions = [
@@ -198,7 +199,7 @@ const AddPet = () => {
         description: `${formData.name} tiene ficha clínica y recordatorios de salud. ¡Explora su perfil!`,
       });
 
-      navigate("/my-pets");
+      navigate(LINKS.myPets());
     } catch (error: any) {
       toast({
         title: "Error al agregar mascota",
@@ -591,7 +592,7 @@ const AddPet = () => {
           <Button
             type="button"
             variant="outline"
-            onClick={() => navigate("/my-pets")}
+            onClick={() => navigate(LINKS.myPets())}
             className="w-full sm:flex-1 h-12"
           >
             Cancelar

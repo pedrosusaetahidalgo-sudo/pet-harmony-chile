@@ -2,7 +2,7 @@ import { StarRating } from "./StarRating";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle } from "@/lib/icons";
 
 interface Props {
   review: {

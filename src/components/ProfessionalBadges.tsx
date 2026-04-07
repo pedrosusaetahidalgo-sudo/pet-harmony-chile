@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Stethoscope, Home, GraduationCap, Dog, Heart } from "lucide-react";
+import { Briefcase, Stethoscope, Home, GraduationCap, Dog, Heart } from "@/lib/icons";
 
 interface ProfessionalBadgesProps {
   userId: string;

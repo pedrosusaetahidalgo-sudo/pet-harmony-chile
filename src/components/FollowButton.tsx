@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { UserPlus, UserCheck, Loader2 } from "lucide-react";
+import { UserPlus, UserCheck, Loader2 } from "@/lib/icons";
 import { useFollows } from "@/hooks/useFollows";
 import { useAuth } from "@/hooks/useAuth";
 

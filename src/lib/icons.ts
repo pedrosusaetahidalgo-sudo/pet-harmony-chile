@@ -1,46 +1,42 @@
 /**
  * Punto único de iconos del proyecto.
  *
- * Toda la app debe importar iconos desde acá para garantizar consistencia
- * (ej: el icono de "vacuna" es el mismo en todas las pantallas).
+ * Re-exporta TODO lucide-react desde un solo módulo. Esto permite:
+ *  1. Cambiar el set de iconos en el futuro sin tocar 100+ archivos.
+ *  2. Auditar fácilmente qué iconos se usan.
+ *  3. Migrar a otro icon set (ej: tabler-icons) cambiando solo este archivo.
  *
- * Se importan en grupos semánticos para que sea fácil encontrar el correcto.
+ * Uso directo (preferido para mantener compatibilidad con código existente):
+ *   import { Stethoscope, Heart } from "@/lib/icons";
  *
- * Uso:
+ * Uso semántico (preferido para código nuevo):
  *   import { ICONS } from "@/lib/icons";
- *   <ICONS.health.vet className="h-4 w-4" />
- *
- * O importar directo si se prefiere:
- *   import { Stethoscope } from "@/lib/icons";
+ *   <ICONS.health.vaccine className="h-4 w-4" />
  */
 
+// Re-export wildcard: cualquier icono que exista en lucide-react se puede
+// importar desde "@/lib/icons" sin tener que listarlo explícitamente.
+export * from "lucide-react";
+
+// === Mapa semántico (preferido para código nuevo) ===
 import {
-  // SALUD
   Heart,
   Stethoscope,
   Syringe,
   Pill,
   Activity,
   FileText,
-  ClipboardList,
-  HeartPulse,
-
-  // VETS
+  Bell,
   User,
   Users,
+  Building2,
+  Home as HomeIcon,
   Star,
   MapPin,
   Calendar,
   BadgeCheck,
-  Building2,
-  Home as HomeIcon,
-
-  // COMUNIDAD
-  MessageCircle,
   MessageSquare,
-  Users2,
-
-  // ACCIONES
+  MessageCircle,
   Plus,
   Search,
   Filter,
@@ -50,28 +46,19 @@ import {
   Trash2,
   Save,
   Share2,
-  Download,
   Upload,
   Eye,
-
-  // NAVEGACIÓN
   ArrowLeft,
   ArrowRight,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
   ExternalLink,
-
-  // ALERTAS
   AlertCircle,
   AlertTriangle,
   CheckCircle,
   CheckCircle2,
-  Info,
   XCircle,
-  Bell,
-
-  // OTROS
   Camera,
   Image,
   Loader2,
@@ -84,17 +71,6 @@ import {
   PawPrint,
 } from "lucide-react";
 
-export {
-  Heart, Stethoscope, Syringe, Pill, Activity, FileText, ClipboardList, HeartPulse,
-  User, Users, Star, MapPin, Calendar, BadgeCheck, Building2, HomeIcon,
-  MessageCircle, MessageSquare, Users2,
-  Plus, Search, Filter, Settings, LogOut, Edit, Trash2, Save, Share2, Download, Upload, Eye,
-  ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, ChevronDown, ExternalLink,
-  AlertCircle, AlertTriangle, CheckCircle, CheckCircle2, Info, XCircle, Bell,
-  Camera, Image, Loader2, X, Crown, Sparkles, Mail, Phone, Lock, PawPrint,
-};
-
-/** Mapa semántico de iconos por contexto. */
 export const ICONS = {
   health: {
     general: Heart,
@@ -103,8 +79,6 @@ export const ICONS = {
     medication: Pill,
     activity: Activity,
     record: FileText,
-    clinical: ClipboardList,
-    pulse: HeartPulse,
     reminder: Bell,
   },
   vet: {
@@ -119,7 +93,7 @@ export const ICONS = {
   community: {
     chat: MessageSquare,
     message: MessageCircle,
-    social: Users2,
+    social: Users,
     adoption: Heart,
   },
   actions: {
@@ -132,7 +106,6 @@ export const ICONS = {
     delete: Trash2,
     save: Save,
     share: Share2,
-    download: Download,
     upload: Upload,
     view: Eye,
   },
@@ -149,7 +122,6 @@ export const ICONS = {
     warning: AlertTriangle,
     success: CheckCircle,
     successFilled: CheckCircle2,
-    info: Info,
     error: XCircle,
     notification: Bell,
   },

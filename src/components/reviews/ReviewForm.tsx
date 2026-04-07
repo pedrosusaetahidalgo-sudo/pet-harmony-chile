@@ -8,7 +8,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { CheckCircle2, Sparkles } from "lucide-react";
+import { CheckCircle2, Sparkles } from "@/lib/icons";
 
 interface Props {
   bookingId: string;

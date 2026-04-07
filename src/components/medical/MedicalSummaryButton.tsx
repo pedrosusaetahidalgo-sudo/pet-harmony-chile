@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { FileDown, Loader2 } from "lucide-react";
+import { FileDown, Loader2 } from "@/lib/icons";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
