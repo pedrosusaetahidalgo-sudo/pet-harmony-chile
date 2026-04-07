@@ -16,9 +16,9 @@ interface Comment {
   created_at: string;
   user_id: string;
   profiles: {
-    display_name: string;
-    avatar_url: string;
-  };
+    display_name: string | null;
+    avatar_url: string | null;
+  } | null;
 }
 
 interface PostCommentsProps {
@@ -66,7 +66,7 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
           content,
           created_at,
           user_id,
-          profiles!post_comments_user_id_fkey (
+          profiles!post_comments_user_id_profiles_fkey (
             display_name,
             avatar_url
           )
@@ -75,7 +75,7 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      setComments((data as Comment[]) || []);
+      setComments((data ?? []) as unknown as Comment[]);
     } catch (error) {
       logger.error('Error loading comments:', error);
     } finally {

@@ -14,13 +14,28 @@ export function ReviewsList({ providerId }: Props) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("service_reviews")
-        .select("*, reviewer:reviewer_id(display_name, avatar_url)")
+        .select(
+          "*, reviewer:profiles!service_reviews_reviewer_id_profiles_fkey(display_name, avatar_url)"
+        )
         .eq("provider_id", providerId)
         .eq("is_visible", true)
         .order("created_at", { ascending: false })
         .limit(20);
       if (error) throw error;
-      return data;
+      // types.ts aún no refleja la FK service_reviews_reviewer_id_profiles_fkey
+      // (regla del proyecto: no regenerar). El embed funciona en runtime una
+      // vez aplicada la migración 20260409000000.
+      type ReviewWithReviewer = {
+        id: string;
+        rating: number;
+        title?: string;
+        comment?: string;
+        created_at: string;
+        provider_response?: string;
+        provider_responded_at?: string;
+        reviewer?: { display_name?: string; avatar_url?: string };
+      };
+      return ((data ?? []) as unknown) as ReviewWithReviewer[];
     },
   });
 
