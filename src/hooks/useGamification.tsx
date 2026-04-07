@@ -19,13 +19,18 @@ export interface Achievement {
   achievement_description: string | null;
   points_earned: number | null;
   earned_at: string;
+  // Aliases consumed by AchievementBadge / Profile UI
+  code: string;
+  name: string;
+  description: string;
+  unlocked_at: string;
 }
 
 export interface Mission {
   id: string;
   title: string;
   description: string;
-  mission_type: string;
+  mission_type: "daily" | "weekly" | "special";
   target_action: string;
   target_count: number;
   points_reward: number;
@@ -33,6 +38,8 @@ export interface Mission {
   progress?: number;
   completed?: boolean;
   expires_at?: string;
+  // Alias consumed by MissionCard
+  name: string;
 }
 
 export const useGamification = (userId?: string) => {
@@ -81,7 +88,19 @@ export const useGamification = (userId?: string) => {
 
       if (error) throw error;
 
-      return (data || []) as Achievement[];
+      return (data || []).map((row): Achievement => ({
+        id: row.id,
+        achievement_name: row.achievement_name,
+        achievement_type: row.achievement_type,
+        achievement_description: row.achievement_description,
+        points_earned: row.points_earned,
+        earned_at: row.earned_at,
+        // Aliases consumed by AchievementBadge / Profile UI
+        code: row.achievement_type,
+        name: row.achievement_name,
+        description: row.achievement_description ?? "",
+        unlocked_at: row.earned_at,
+      }));
     },
     enabled: !!targetUserId,
   });
@@ -110,13 +129,16 @@ export const useGamification = (userId?: string) => {
       if (progressError) throw progressError;
 
       // Combine missions with progress
-      return (activeMissions || []).map((mission) => {
+      return (activeMissions || []).map((mission): Mission => {
         const progress = (userProgress || []).find((up) => up.mission_id === mission.id);
+        const missionType = (["daily", "weekly", "special"].includes(mission.mission_type)
+          ? mission.mission_type
+          : "special") as Mission["mission_type"];
         return {
           id: mission.id,
           title: mission.title,
           description: mission.description,
-          mission_type: mission.mission_type,
+          mission_type: missionType,
           target_action: mission.target_action,
           target_count: mission.target_count,
           points_reward: mission.points_reward,
@@ -124,6 +146,8 @@ export const useGamification = (userId?: string) => {
           progress: progress?.current_progress || 0,
           completed: progress?.is_completed || false,
           expires_at: progress?.expires_at || undefined,
+          // Alias consumed by MissionCard
+          name: mission.title,
         };
       });
     },
