@@ -38,8 +38,8 @@ const Hero = () => {
             {user ? "Ir al Inicio" : "Crear cuenta gratis"}
           </Button>
           <Button
-            variant="ghost"
-            className="h-12 text-base font-semibold w-full max-w-sm hover:bg-primary/5 transition-all"
+            variant="outline"
+            className="h-12 text-base font-semibold w-full max-w-sm border-2 border-primary/30 text-primary hover:bg-primary/5 hover:border-primary/50 transition-all"
             onClick={handleSecondary}
           >
             {user ? "Explorar" : "Ya tengo cuenta"}
@@ -54,7 +54,7 @@ const Hero = () => {
             </div>
             <Button
               className="h-12 text-base font-bold w-full bg-gradient-to-r from-amber-400 via-orange-400 to-pink-500 hover:opacity-90 text-white shadow-xl border-2 border-amber-300 transition-all"
-              onClick={() => navigate("/veterinarios")}
+              onClick={() => navigate("/registro-veterinario")}
             >
               <Stethoscope className="h-5 w-5 mr-2" />
               Soy veterinario · Crear perfil

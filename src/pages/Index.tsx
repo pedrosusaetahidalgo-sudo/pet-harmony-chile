@@ -528,7 +528,7 @@ const Index = () => {
               <Button
                 size="lg"
                 className="bg-white text-orange-600 hover:bg-white/90 shadow-2xl text-lg px-10 h-14 font-bold w-full md:w-auto"
-                onClick={() => navigate(user ? "/provider/profile-edit" : "/auth")}
+                onClick={() => navigate(user ? "/provider/profile-edit" : "/registro-veterinario")}
               >
                 <Stethoscope className="h-5 w-5 mr-2" />
                 Crear mi perfil profesional

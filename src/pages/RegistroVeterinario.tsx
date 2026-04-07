@@ -1,0 +1,541 @@
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  ArrowLeft,
+  ArrowRight,
+  CheckCircle2,
+  Loader2,
+  Stethoscope,
+  Building2,
+  Home as HomeIcon,
+  PartyPopper,
+} from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { SANTIAGO_COMUNAS, VET_SPECIALTIES } from '@/lib/vetDirectory';
+import { PublicHeader, PublicFooter } from './DirectorioVets';
+
+type ProviderType = 'individual' | 'home_visit' | 'clinic';
+
+interface FormState {
+  // Paso 1
+  type: ProviderType | null;
+  // Paso 2
+  display_name: string;
+  email: string;
+  password: string;
+  phone: string;
+  license: string;
+  // Paso 3
+  bio: string;
+  specialties: string[];
+  commune: string;
+  service_areas: string[];
+  experience_years: string;
+  price_from: string;
+  // Resultado
+  createdSlug?: string;
+}
+
+const STEPS = ['Tipo', 'Cuenta', 'Perfil', 'Listo'] as const;
+
+export default function RegistroVeterinario() {
+  const navigate = useNavigate();
+  const [step, setStep] = useState(0);
+  const [submitting, setSubmitting] = useState(false);
+  const [form, setForm] = useState<FormState>({
+    type: null,
+    display_name: '',
+    email: '',
+    password: '',
+    phone: '',
+    license: '',
+    bio: '',
+    specialties: [],
+    commune: '',
+    service_areas: [],
+    experience_years: '',
+    price_from: '',
+  });
+
+  const update = <K extends keyof FormState>(k: K, v: FormState[K]) =>
+    setForm((f) => ({ ...f, [k]: v }));
+
+  const toggleArr = (k: 'specialties' | 'service_areas', value: string) => {
+    setForm((f) => {
+      const cur = f[k];
+      return { ...f, [k]: cur.includes(value) ? cur.filter((x) => x !== value) : [...cur, value] };
+    });
+  };
+
+  const canNext = (): boolean => {
+    if (step === 0) return !!form.type;
+    if (step === 1) {
+      return (
+        form.display_name.trim().length > 2 &&
+        /\S+@\S+\.\S+/.test(form.email) &&
+        form.password.length >= 6
+      );
+    }
+    if (step === 2) {
+      return (
+        form.bio.trim().length >= 50 &&
+        form.specialties.length > 0 &&
+        !!form.commune &&
+        form.service_areas.length > 0
+      );
+    }
+    return false;
+  };
+
+  const handleSignupAndCreateProvider = async () => {
+    setSubmitting(true);
+    try {
+      // 1. Auth signup
+      const { data: auth, error: authErr } = await supabase.auth.signUp({
+        email: form.email.trim(),
+        password: form.password,
+        options: {
+          data: { display_name: form.display_name.trim() },
+          emailRedirectTo: `${window.location.origin}/provider/dashboard`,
+        },
+      });
+      if (authErr) throw authErr;
+      if (!auth.user) throw new Error('No se pudo crear la cuenta');
+
+      // 2. Crear service_provider (RLS permite si user_id = auth.uid())
+      const payload = {
+        user_id: auth.user.id,
+        display_name: form.display_name.trim(),
+        bio: form.bio.trim(),
+        provider_type: form.type!,
+        specialties: form.specialties,
+        service_areas: form.service_areas,
+        commune: form.commune,
+        license_number: form.license.trim() || null,
+        experience_years: form.experience_years ? Number(form.experience_years) : null,
+        price_from: form.price_from ? Number(form.price_from) : null,
+        public_phone: form.phone.trim() || null,
+        public_email: form.email.trim(),
+        provider_plan: 'provider_free',
+        is_directory_visible: false, // se activa cuando complete perfil al 80%
+        status: 'pending',
+      };
+
+      const { data: provider, error: provErr } = await supabase
+        .from('service_providers')
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .insert(payload as any)
+        .select('slug')
+        .single();
+      if (provErr) throw provErr;
+
+      update('createdSlug', (provider as { slug: string }).slug);
+      setStep(3);
+    } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const msg = (err as any)?.message ?? 'Error al crear tu cuenta';
+      toast.error(msg);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const next = () => {
+    if (step === 2) {
+      void handleSignupAndCreateProvider();
+      return;
+    }
+    setStep((s) => Math.min(s + 1, STEPS.length - 1));
+  };
+
+  const back = () => setStep((s) => Math.max(s - 1, 0));
+
+  const progress = ((step + 1) / STEPS.length) * 100;
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+      <PublicHeader />
+
+      <main className="container mx-auto px-4 py-8 max-w-2xl">
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2 text-sm">
+            <span className="text-muted-foreground">
+              Paso {step + 1} de {STEPS.length}
+            </span>
+            <span className="font-medium text-purple-700">{STEPS[step]}</span>
+          </div>
+          <Progress value={progress} />
+        </div>
+
+        <Card className="shadow-lg">
+          <CardContent className="p-6 md:p-8">
+            {step === 0 && <StepType form={form} update={update} />}
+            {step === 1 && <StepAccount form={form} update={update} />}
+            {step === 2 && <StepProfile form={form} update={update} toggleArr={toggleArr} />}
+            {step === 3 && <StepDone slug={form.createdSlug} />}
+
+            {step < 3 && (
+              <div className="flex justify-between mt-8 gap-3">
+                {step > 0 ? (
+                  <Button variant="outline" onClick={back} disabled={submitting}>
+                    <ArrowLeft className="h-4 w-4 mr-1" /> Atrás
+                  </Button>
+                ) : (
+                  <Link to="/">
+                    <Button variant="ghost">Cancelar</Button>
+                  </Link>
+                )}
+                <Button onClick={next} disabled={!canNext() || submitting}>
+                  {submitting ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-1 animate-spin" /> Creando…
+                    </>
+                  ) : step === 2 ? (
+                    'Crear mi cuenta'
+                  ) : (
+                    <>
+                      Continuar <ArrowRight className="h-4 w-4 ml-1" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {step === 0 && (
+          <p className="text-center text-sm text-muted-foreground mt-4">
+            ¿Ya tenés cuenta?{' '}
+            <Link to="/auth" className="text-purple-700 font-medium hover:underline">
+              Iniciar sesión
+            </Link>
+          </p>
+        )}
+      </main>
+
+      <PublicFooter />
+    </div>
+  );
+}
+
+// ============================================================
+// Steps
+// ============================================================
+
+function StepType({
+  form,
+  update,
+}: {
+  form: FormState;
+  update: <K extends keyof FormState>(k: K, v: FormState[K]) => void;
+}) {
+  const options: { value: ProviderType; icon: typeof Stethoscope; title: string; desc: string }[] = [
+    {
+      value: 'individual',
+      icon: Stethoscope,
+      title: 'Veterinario individual',
+      desc: 'Atendés en consulta propia o trabajás solo.',
+    },
+    {
+      value: 'home_visit',
+      icon: HomeIcon,
+      title: 'Atención a domicilio',
+      desc: 'Visitás a las mascotas en sus casas.',
+    },
+    {
+      value: 'clinic',
+      icon: Building2,
+      title: 'Clínica veterinaria',
+      desc: 'Tenés un local con varios profesionales.',
+    },
+  ];
+
+  return (
+    <div className="space-y-4">
+      <div className="text-center mb-2">
+        <h1 className="text-2xl font-bold mb-1">¿Qué tipo de profesional sos?</h1>
+        <p className="text-sm text-muted-foreground">Elegí el que mejor te describe.</p>
+      </div>
+
+      {options.map((opt) => {
+        const Icon = opt.icon;
+        const active = form.type === opt.value;
+        return (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => update('type', opt.value)}
+            className={`w-full text-left p-4 rounded-lg border-2 transition-all flex items-start gap-4 ${
+              active
+                ? 'border-purple-500 bg-purple-50'
+                : 'border-gray-200 hover:border-purple-300'
+            }`}
+          >
+            <div
+              className={`rounded-full p-3 ${
+                active ? 'bg-purple-500 text-white' : 'bg-purple-100 text-purple-600'
+              }`}
+            >
+              <Icon className="h-6 w-6" />
+            </div>
+            <div className="flex-1">
+              <h3 className="font-semibold">{opt.title}</h3>
+              <p className="text-sm text-muted-foreground">{opt.desc}</p>
+            </div>
+            {active && <CheckCircle2 className="h-5 w-5 text-purple-600 flex-shrink-0" />}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+function StepAccount({
+  form,
+  update,
+}: {
+  form: FormState;
+  update: <K extends keyof FormState>(k: K, v: FormState[K]) => void;
+}) {
+  return (
+    <div className="space-y-4">
+      <div className="text-center mb-2">
+        <h1 className="text-2xl font-bold mb-1">Datos de tu cuenta</h1>
+        <p className="text-sm text-muted-foreground">
+          Vamos a crear tu cuenta en Paw Friend.
+        </p>
+      </div>
+
+      <div>
+        <Label htmlFor="name">Nombre completo / del negocio *</Label>
+        <Input
+          id="name"
+          value={form.display_name}
+          onChange={(e) => update('display_name', e.target.value)}
+          placeholder="Dr. Juan Pérez"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="email">Email *</Label>
+        <Input
+          id="email"
+          type="email"
+          value={form.email}
+          onChange={(e) => update('email', e.target.value)}
+          placeholder="tu@email.cl"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="password">Contraseña *</Label>
+        <Input
+          id="password"
+          type="password"
+          value={form.password}
+          onChange={(e) => update('password', e.target.value)}
+          placeholder="Mínimo 6 caracteres"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="phone">Teléfono de contacto</Label>
+        <Input
+          id="phone"
+          value={form.phone}
+          onChange={(e) => update('phone', e.target.value)}
+          placeholder="+56 9 1234 5678"
+        />
+      </div>
+
+      <div>
+        <Label htmlFor="license">N° Colmevet (opcional)</Label>
+        <Input
+          id="license"
+          value={form.license}
+          onChange={(e) => update('license', e.target.value)}
+          placeholder="12345"
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          Lo verificaremos manualmente para darte el badge ✓ Verificado.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function StepProfile({
+  form,
+  update,
+  toggleArr,
+}: {
+  form: FormState;
+  update: <K extends keyof FormState>(k: K, v: FormState[K]) => void;
+  toggleArr: (k: 'specialties' | 'service_areas', value: string) => void;
+}) {
+  return (
+    <div className="space-y-5">
+      <div className="text-center mb-2">
+        <h1 className="text-2xl font-bold mb-1">Construí tu perfil</h1>
+        <p className="text-sm text-muted-foreground">
+          Esto es lo que verán tus futuros clientes.
+        </p>
+      </div>
+
+      <div>
+        <Label htmlFor="bio">Bio profesional *</Label>
+        <Textarea
+          id="bio"
+          value={form.bio}
+          onChange={(e) => update('bio', e.target.value)}
+          placeholder="Contá tu experiencia, enfoque y qué te diferencia…"
+          rows={4}
+          maxLength={500}
+        />
+        <p className="text-xs text-muted-foreground mt-1">
+          {form.bio.length}/500 · mínimo 50 caracteres
+        </p>
+      </div>
+
+      <div>
+        <Label className="mb-2 block">Especialidades * (al menos 1)</Label>
+        <div className="flex flex-wrap gap-2">
+          {VET_SPECIALTIES.map((s) => {
+            const active = form.specialties.includes(s);
+            return (
+              <button
+                key={s}
+                type="button"
+                onClick={() => toggleArr('specialties', s)}
+                className={`px-3 py-1.5 rounded-full text-sm border transition ${
+                  active
+                    ? 'bg-purple-600 text-white border-purple-600'
+                    : 'bg-white text-foreground border-gray-300 hover:border-purple-400'
+                }`}
+              >
+                {s}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div>
+        <Label htmlFor="commune">Comuna base *</Label>
+        <Select value={form.commune} onValueChange={(v) => update('commune', v)}>
+          <SelectTrigger>
+            <SelectValue placeholder="Elegí tu comuna principal" />
+          </SelectTrigger>
+          <SelectContent>
+            {SANTIAGO_COMUNAS.map((c) => (
+              <SelectItem key={c} value={c}>
+                {c}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div>
+        <Label className="mb-2 block">Comunas que atendés * (al menos 1)</Label>
+        <div className="flex flex-wrap gap-2">
+          {SANTIAGO_COMUNAS.map((c) => {
+            const active = form.service_areas.includes(c);
+            return (
+              <button
+                key={c}
+                type="button"
+                onClick={() => toggleArr('service_areas', c)}
+                className={`px-3 py-1.5 rounded-full text-sm border transition ${
+                  active
+                    ? 'bg-purple-600 text-white border-purple-600'
+                    : 'bg-white text-foreground border-gray-300 hover:border-purple-400'
+                }`}
+              >
+                {c}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <Label htmlFor="years">Años de experiencia</Label>
+          <Input
+            id="years"
+            type="number"
+            min={0}
+            value={form.experience_years}
+            onChange={(e) => update('experience_years', e.target.value)}
+          />
+        </div>
+        <div>
+          <Label htmlFor="price">Precio desde (CLP)</Label>
+          <Input
+            id="price"
+            type="number"
+            min={0}
+            value={form.price_from}
+            onChange={(e) => update('price_from', e.target.value)}
+            placeholder="25000"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StepDone({ slug }: { slug?: string }) {
+  const navigate = useNavigate();
+  const profileUrl = slug ? `https://pawfriend.cl/veterinarios/${slug}` : null;
+
+  return (
+    <div className="text-center space-y-4 py-4">
+      <div className="inline-flex p-4 rounded-full bg-green-100 mb-2">
+        <PartyPopper className="h-12 w-12 text-green-600" />
+      </div>
+      <h1 className="text-2xl font-bold">¡Bienvenido a Paw Friend!</h1>
+      <p className="text-muted-foreground">
+        Tu cuenta fue creada. Completá tu perfil al 80% para aparecer en el directorio público.
+      </p>
+
+      {profileUrl && (
+        <div className="bg-purple-50 rounded-lg p-4 my-4">
+          <p className="text-xs text-muted-foreground mb-1">Tu URL pública será:</p>
+          <p className="text-sm font-mono text-purple-700 break-all">{profileUrl}</p>
+        </div>
+      )}
+
+      <Badge variant="secondary" className="text-xs">
+        Plan Gratis · 3 meses para empezar
+      </Badge>
+
+      <div className="flex flex-col gap-2 pt-4">
+        <Button
+          size="lg"
+          onClick={() => navigate('/provider/profile-edit')}
+          className="w-full"
+        >
+          Completar mi perfil ahora
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => navigate('/provider/dashboard')}
+          className="w-full"
+        >
+          Ir al dashboard
+        </Button>
+      </div>
+    </div>
+  );
+}
