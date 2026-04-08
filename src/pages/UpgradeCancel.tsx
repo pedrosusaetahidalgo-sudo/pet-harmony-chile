@@ -11,7 +11,7 @@ export default function UpgradeCancel() {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Pago cancelado</CardTitle>
           <CardDescription className="mt-2">
-            No se realizó ningún cargo. Cuando quieras, podés volver a probar.
+            No se realizó ningún cargo. Cuando quieras, puedes volver a intentarlo.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">

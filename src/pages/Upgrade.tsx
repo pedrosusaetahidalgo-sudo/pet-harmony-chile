@@ -79,7 +79,7 @@ export default function Upgrade() {
             <span className="bg-premium-gradient bg-clip-text text-transparent">Premium</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Cuidá a todas tus mascotas con la ficha médica completa, recordatorios ilimitados y todo el directorio de vets.
+            Cuida a todas tus mascotas con la ficha médica completa, recordatorios ilimitados y todo el directorio de vets.
           </p>
         </div>
 
@@ -89,7 +89,7 @@ export default function Upgrade() {
           <Card className="border-2 hover:border-premium/30 transition-colors">
             <CardHeader>
               <CardTitle className="text-xl">Mensual</CardTitle>
-              <CardDescription>Pago mes a mes, cancelás cuando quieras</CardDescription>
+              <CardDescription>Pago mes a mes, cancelas cuando quieras</CardDescription>
               <div className="pt-4">
                 <span className="text-4xl font-bold tracking-tight">$2.990</span>
                 <span className="text-muted-foreground text-base"> / mes</span>
@@ -172,7 +172,7 @@ export default function Upgrade() {
 
         <div className="text-center mt-8 space-y-2">
           <p className="text-xs text-muted-foreground">
-            Pago seguro procesado por Flow. Podés cancelar tu suscripción cuando quieras.
+            Pago seguro procesado por Flow. Puedes cancelar tu suscripción cuando quieras.
           </p>
           <Button variant="ghost" size="sm" onClick={() => navigate(LINKS.myPets())}>
             Volver a mis mascotas

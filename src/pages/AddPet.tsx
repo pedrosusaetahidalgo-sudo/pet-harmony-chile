@@ -173,7 +173,7 @@ const AddPet = () => {
     if (!user) {
       toast({
         title: "Sesión expirada",
-        description: "Tenés que iniciar sesión de nuevo para guardar tu mascota.",
+        description: "Tienes que iniciar sesión de nuevo para guardar tu mascota.",
         variant: "destructive",
       });
       navigate("/auth");
@@ -277,7 +277,7 @@ const AddPet = () => {
         logger.error("[AddPet] reminders insert failed", remindersError);
         toast({
           title: "Mascota creada",
-          description: `Pero los recordatorios automáticos no se pudieron crear (${describeSupabaseError(remindersError)}). Los podés agregar manualmente.`,
+          description: `Pero los recordatorios automáticos no se pudieron crear (${describeSupabaseError(remindersError)}). Los puedes agregar manualmente.`,
         });
       }
 
@@ -352,11 +352,11 @@ const AddPet = () => {
                 </div>
               </div>
               <CardTitle className="text-2xl">
-                Sumá más mascotas con{" "}
+                Suma más mascotas con{" "}
                 <span className="bg-premium-gradient bg-clip-text text-transparent">Premium</span>
               </CardTitle>
               <CardDescription className="text-base mt-2 leading-relaxed">
-                Tu plan gratis incluye 1 mascota. Con Premium agregás todas las que quieras y desbloqueás el historial médico completo, recordatorios ilimitados y exportación de fichas.
+                Tu plan gratis incluye 1 mascota. Con Premium agregas todas las que quieras y desbloqueas el historial médico completo, recordatorios ilimitados y exportación de fichas.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">

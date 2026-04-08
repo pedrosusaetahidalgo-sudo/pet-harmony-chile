@@ -40,7 +40,7 @@ export default function UpgradeSuccess() {
               <span className="bg-premium-gradient bg-clip-text text-transparent">Premium</span>!
             </CardTitle>
             <CardDescription className="mt-3 text-base leading-relaxed">
-              Tu cuenta está activa. Ya podés agregar todas tus mascotas y desbloqueás el historial médico completo.
+              Tu cuenta está activa. Ya puedes agregar todas tus mascotas y desbloqueas el historial médico completo.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 pb-8">
@@ -63,7 +63,7 @@ export default function UpgradeSuccess() {
           </CardContent>
         </Card>
         <p className="text-xs text-center text-muted-foreground mt-4">
-          Si el plan no se activa en unos segundos, refrescá la página. El procesamiento de Flow puede tardar unos instantes.
+          Si el plan no se activa en unos segundos, refresca la página. El procesamiento de Flow puede tardar unos instantes.
         </p>
       </div>
     </div>
