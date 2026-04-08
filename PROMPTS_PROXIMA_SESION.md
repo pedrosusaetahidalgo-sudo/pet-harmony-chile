@@ -381,6 +381,266 @@ REPORTE FINAL: líneas antes/después de cada archivo, screenshots textuales de 
 
 ---
 
+## PROMPT 7 — Data sync end-to-end para MVP demo
+
+```
+MISIÓN: Asegurar que TODA la información médica, de mascotas y de usuarios esté
+perfectamente sincronizada y consistente entre tablas, RLS, edge functions y UI.
+Objetivo: que el MVP se pueda demostrar sin sorpresas (filas huérfanas, datos
+que aparecen en una pantalla pero no en otra, joins rotos, etc.).
+
+ALCANCE — entidades clave:
+- profiles (auth.users ↔ public.profiles)
+- pets (owner_id → profiles.id)
+- pet_medical_records / medical_documents / vaccinations / medical_visits
+- vet_bookings, service_reviews, training_reviews
+- subscriptions ↔ profiles.is_premium / premium_end_date
+- pet_activities, pet_activity_cheers
+- provider_directory ↔ profiles (perfil vet)
+
+CHECKLIST:
+
+1. Auditar FKs e integridad referencial
+   ```sql
+   -- Filas huérfanas en cada tabla crítica
+   select 'pets sin owner' as check, count(*) from public.pets p
+     left join public.profiles pr on pr.id = p.owner_id where pr.id is null
+   union all
+   select 'medical_documents sin pet', count(*) from public.medical_documents md
+     left join public.pets p on p.id = md.pet_id where p.id is null
+   union all
+   select 'vaccinations sin pet', count(*) from public.vaccinations v
+     left join public.pets p on p.id = v.pet_id where p.id is null
+   union all
+   select 'subscriptions sin profile', count(*) from public.subscriptions s
+     left join public.profiles pr on pr.id = s.user_id where pr.id is null
+   union all
+   select 'profiles is_premium=true sin sub activa', count(*) from public.profiles
+     where is_premium = true and is_grandfathered = false and id not in (
+       select user_id from public.subscriptions where status = 'active'
+     );
+   ```
+   Para cada inconsistencia: proponer migración de cleanup + FK ON DELETE CASCADE
+   donde corresponda.
+
+2. Validar coherencia profiles ↔ subscriptions
+   - Si profiles.is_premium = true → debe existir subscription con status='active'
+     y end_date > now() (excepto grandfathered).
+   - Si profiles.premium_end_date < now() → is_premium debe ser false.
+   - Crear RPC sync_premium_status() que reconcilie y correrla una vez.
+
+3. Validar que los joins de la UI no se rompan
+   Por cada page que hace join multi-tabla, verificar que el embed de Supabase
+   match con FKs reales:
+   - PetClinicalRecord (pets + medical_records + vaccinations + documents)
+   - DirectorioVets (provider_directory + profiles + service_reviews)
+   - MyBookings (vet_bookings + provider_directory + pets)
+   - Profile (profiles + subscriptions + pets)
+   Listar las queries y verificar que la respuesta tenga todos los campos esperados.
+
+4. RLS coverage check
+   ```sql
+   select schemaname, tablename, rowsecurity
+     from pg_tables where schemaname = 'public' and rowsecurity = false;
+   ```
+   Cualquier tabla con datos de usuarios SIN RLS = fix urgente.
+
+5. Datos seed para demo
+   - Verificar que pawfriend.cl/demo tenga al menos:
+     · 2 mascotas con ficha completa (vacunas + visitas + 1 documento)
+     · 1 vet en el directorio público con 2+ reseñas
+     · 1 user con Premium activo (para mostrar el badge dorado)
+   - Si falta algo, crear migración seed `99999999000000_demo_data.sql`
+     idempotente que se pueda re-correr.
+
+6. Verificar tipos generados vs schema real
+   ```bash
+   npx supabase gen types typescript --project-id gwailbjlvevkhwcrovfd > /tmp/types.ts
+   diff /tmp/types.ts src/integrations/supabase/types.ts
+   ```
+   Si hay drift, regenerar y corregir errores TS resultantes.
+
+7. Smoke test end-to-end (manual checklist en el reporte)
+   - Crear user nuevo → ver Home vacío → Add Pet → ver pet en MyPets →
+     abrir PetClinicalRecord → agregar vacuna → descargar PDF → ver datos
+     traducidos al español → todo consistente.
+   - User Premium → puede agregar 2da mascota → badge dorado en Profile.
+   - Vet en directorio → reseñas visibles → click en vet abre PerfilVetPublico.
+
+REGLAS:
+- NO inventar datos: si una tabla no existe o un campo no está, reportarlo.
+- NO romper RLS para "facilitar" la demo. La demo debe correr con las mismas
+  policies que producción.
+- Migraciones de cleanup van con prefijo `20260415000000_data_sync_*`.
+- Cualquier query SQL que requiera correr en remoto: pegarla al usuario para
+  que él la ejecute en el Dashboard SQL Editor.
+
+ENTREGABLE:
+- Reporte tipo audit con: tablas auditadas, inconsistencias encontradas,
+  fixes aplicados (commit hash), fixes que requieren acción manual del dueño,
+  smoke test pasado/fallido por flujo.
+- Confianza nivel "puedo abrir mi laptop en una reunión y demostrar el MVP
+  sin que me pase nada raro".
+```
+
+---
+
+## PROMPT 8 — Seed de 100 usuarios demo (poblar la app para mostrar MVP)
+
+```
+MISIÓN: Crear un dataset realista de ~100 usuarios demo con mascotas, fichas
+médicas, vacunas, documentos, reseñas y proveedores de servicios. El objetivo
+es que cuando alguien abra la app o pawfriend.cl/demo vea la plataforma "viva",
+con feed, directorio y mascotas pobladas — no pantallas vacías.
+
+REGLAS GLOBALES:
+- TODOS los usuarios demo terminan su nombre con " Demo" (ej: "Camila Soto Demo",
+  "Dr. Felipe Aravena Demo"). Esto permite filtrarlos/borrarlos fácil después.
+- Emails con dominio @demo.pawfriend.cl (ej: camila.soto@demo.pawfriend.cl).
+- Marca cada profile con un campo `is_demo boolean` (crear si no existe) para
+  poder excluirlos de métricas reales y borrarlos en bloque.
+- Migración idempotente con prefijo `99999999000000_demo_seed.sql` para que se
+  pueda re-correr sin duplicar (usar `on conflict do nothing` por email).
+- Datos en español chileno (tuteo). Nombres y apellidos chilenos reales.
+- NO inventar URLs externas; usar fotos de placeholder de
+  https://images.unsplash.com o el bucket pet-photos del proyecto si ya tiene
+  assets.
+
+DATASET OBJETIVO:
+
+1. 100 perfiles de usuarios dueños de mascotas
+   - Distribución regional: 60 RM, 15 Valparaíso, 10 Biobío, 10 Araucanía,
+     5 otras regiones.
+   - 50% con 1 mascota, 35% con 2, 15% con 3+ (estos últimos sirven para
+     mostrar el grandfathering / Premium).
+   - 20% con `is_premium = true` (para que aparezca el badge dorado en
+     varios perfiles).
+   - 5 con `is_grandfathered = true` (early adopters).
+
+2. ~180 mascotas
+   - Mix realista: 65% perros, 25% gatos, 5% conejos, 3% aves, 2% reptiles.
+   - Razas chilenas comunes (mestizo, labrador, golden, quiltro, persa, etc.).
+   - Cada mascota con: nombre, especie, raza, fecha nacimiento, peso, color,
+     género, foto, microchip (formato 15 dígitos), vaccination_status,
+     activity_level, living_environment.
+   - 30% con alergias (food/medication/environmental).
+   - 20% con condiciones crónicas detalladas.
+   - 15% con medicamentos actuales.
+
+3. Fichas médicas pobladas
+   - medical_records: 3-8 registros por mascota (consultas, vacunas, exámenes).
+     Distribución: 40% vacuna, 30% consulta, 15% examen, 10% tratamiento,
+     5% cirugía/emergencia.
+   - medical_documents: 1-3 docs por mascota (carnet vacunas, lab, receta).
+     Como no podemos subir archivos reales, usar `file_url` con ruta dummy
+     y `mime_type='application/pdf'`. Documentar que son placeholders.
+   - vaccinations: 4-6 vacunas estándar por especie (séxtuple, antirrábica,
+     leptospirosis, etc.) con fechas distribuidas en los últimos 24 meses.
+   - reminders: 1-2 recordatorios futuros por mascota.
+
+4. ~15 proveedores de servicios (vets, peluqueros, paseadores, adiestradores)
+   - Distribución: 8 veterinarias, 3 peluqueros caninos, 2 paseadores,
+     2 adiestradores.
+   - Cada uno con perfil en `provider_directory` (o tabla equivalente):
+     nombre, especialidad, ciudad, dirección, teléfono, foto, descripción,
+     `is_verified=true`, lat/lng aproximadas.
+   - 5 vets con plan pago (`Individual`, `Clínica Básica`, `Clínica Pro`)
+     para mostrar el modelo B2B en acción.
+   - Cada proveedor con `is_demo=true`.
+
+5. Reseñas y reputación
+   - 3-10 service_reviews por proveedor (rating 3-5 estrellas, mayoría 4-5).
+   - Comentarios cortos en español chileno realistas
+     ("Súper amable, mi perro quedó regio 🐶", "Excelente atención, recomendado").
+   - 2 training_reviews para los adiestradores.
+
+6. Actividad social (pet_activities + cheers)
+   - 50 pet_activities recientes (paseos, baños, vacunas) distribuidas en
+     los últimos 14 días para que el feed se vea vivo.
+   - 1-5 cheers por activity de otros users demo.
+
+7. Reservas (vet_bookings)
+   - 20 reservas: 10 pasadas (status='completed'), 5 hoy (status='confirmed'),
+     5 futuras (status='pending'). Asociadas a mascotas y vets demo.
+
+CHECKLIST DE TABLAS A POBLAR (verificar TODAS):
+- [ ] auth.users (vía supabase admin createUser, NO insertar directo)
+- [ ] profiles
+- [ ] pets
+- [ ] medical_records
+- [ ] medical_documents
+- [ ] vaccinations (si la tabla existe)
+- [ ] reminders
+- [ ] subscriptions (para los premium)
+- [ ] provider_directory
+- [ ] service_reviews
+- [ ] training_reviews
+- [ ] vet_bookings
+- [ ] pet_activities
+- [ ] pet_activity_cheers
+- [ ] cualquier tabla que aparezca al inspeccionar el schema y que tenga
+      datos visibles en la UI
+
+DOBLE PROPÓSITO:
+Mientras pueblas los datos vas a descubrir si FALTA alguna tabla, columna,
+RLS policy, o si algún join de la UI no funciona con datos reales. Reportar
+TODO eso. Cualquier inconsistencia detectada es input directo para el
+Prompt 7 (data sync).
+
+EJECUCIÓN:
+
+1. Inspeccionar schema actual:
+   ```sql
+   select table_name from information_schema.tables
+    where table_schema='public' order by table_name;
+   ```
+   Listar al usuario todas las tablas y confirmar que las del checklist existen.
+
+2. Crear migración `supabase/migrations/99999999000000_demo_seed.sql`
+   con `is_demo` en profiles + provider_directory si no existe.
+
+3. Generar el seed en un script Node/Deno (no en SQL puro — más fácil para
+   randomización):
+   `scripts/seed-demo.ts` que:
+   - Use `@supabase/supabase-js` con SERVICE_ROLE_KEY
+   - Cree los 100 users vía `supabase.auth.admin.createUser`
+   - Inserte profiles, pets, medical_records, etc. con datos generados
+   - Sea idempotente: chequee `is_demo=true` y borre antes de re-poblar
+     (modo `--reset` opcional)
+   - El script lo corre el dueño localmente con:
+     `npx tsx scripts/seed-demo.ts`
+   - Pedir al dueño la SERVICE_ROLE_KEY, NUNCA pegarla en el repo, leerla
+     de un .env local (.env.demo.local en .gitignore).
+
+4. Verificación post-seed:
+   - Login con un user demo (ej: camila.soto@demo.pawfriend.cl / Demo1234!)
+     desde la app y navegar Home → MyPets → PetClinicalRecord → DirectorioVets.
+   - Confirmar que TODO se ve sin pantallas vacías y sin errores en consola.
+   - Verificar que el feed (pet_activities) muestra actividad reciente.
+   - Verificar que el directorio de vets tiene marcadores en el mapa.
+
+5. Documentar:
+   - `DEMO_GUIDE.md` (raíz, ya existe): agregar sección "Cuentas demo" con 5
+     credenciales tipo (free / premium / grandfathered / vet con clientes /
+     vet recién registrado).
+   - Cómo borrar todos los demos: query SQL
+     `delete from auth.users where email like '%@demo.pawfriend.cl';`
+     (cascada borra todo lo demás vía FKs).
+
+REGLAS DE ORO heredadas. Commit único:
+chore(seed): 100 users demo + mascotas + fichas + servicios.
+
+ENTREGABLE:
+- Migración con `is_demo`
+- Script `scripts/seed-demo.ts`
+- Sección nueva en DEMO_GUIDE.md con credenciales
+- Reporte de tablas detectadas vs pobladas
+- Lista de inconsistencias / FKs faltantes / RLS gaps encontrados durante el
+  seed (input directo para Prompt 7)
+```
+
+---
+
 ## Notas operativas
 
 - **Memoria persistente** en `~/.claude/projects/.../memory/`. Decisiones clave persisten entre sesiones (Flow, secrets, español chileno).
