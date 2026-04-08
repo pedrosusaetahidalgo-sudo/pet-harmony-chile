@@ -18,6 +18,11 @@ dist-ssr
 .env.production
 .env.backup
 .env.bak
+.env.demo.local
+
+# Mi documento personal de API keys (NUNCA commitear)
+MIS_API_KEYS.md
+MIS_API_KEYS.local.md
 
 # Backup files
 *.bak
