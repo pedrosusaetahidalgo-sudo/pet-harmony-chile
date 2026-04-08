@@ -213,6 +213,16 @@ const AddPet = () => {
       return;
     }
 
+    // Validate microchip: estándar ISO 11784/11785 son 15 dígitos numéricos.
+    if (formData.microchip_number && !/^\d{15}$/.test(formData.microchip_number.trim())) {
+      toast({
+        title: "Microchip inválido",
+        description: "El número de microchip debe tener exactamente 15 dígitos (estándar ISO).",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -677,9 +687,13 @@ const AddPet = () => {
                     <Input
                       id="microchip"
                       value={formData.microchip_number}
-                      onChange={(e) => updateField("microchip_number", e.target.value)}
+                      onChange={(e) => updateField("microchip_number", e.target.value.replace(/\D/g, "").slice(0, 15))}
                       placeholder="123456789012345"
+                      inputMode="numeric"
+                      pattern="\d{15}"
+                      maxLength={15}
                     />
+                    <p className="text-xs text-muted-foreground">15 dígitos (estándar ISO 11784/11785)</p>
                   </div>
 
                   <div className="space-y-2">

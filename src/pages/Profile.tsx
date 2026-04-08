@@ -110,10 +110,25 @@ const Profile = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-96">
-        <div className="text-center">
-          <Users className="h-12 w-12 animate-pulse mx-auto mb-4 text-primary" />
-          <p className="text-muted-foreground">Cargando perfil...</p>
+      <div className="container max-w-4xl mx-auto p-4 md:p-6 space-y-4 animate-pulse">
+        {/* Header skeleton */}
+        <div className="flex items-center gap-4">
+          <div className="h-20 w-20 rounded-full bg-muted" />
+          <div className="flex-1 space-y-2">
+            <div className="h-5 w-40 bg-muted rounded" />
+            <div className="h-4 w-56 bg-muted/70 rounded" />
+          </div>
+        </div>
+        {/* Stats skeleton */}
+        <div className="grid grid-cols-3 gap-3">
+          <div className="h-20 bg-muted rounded-lg" />
+          <div className="h-20 bg-muted rounded-lg" />
+          <div className="h-20 bg-muted rounded-lg" />
+        </div>
+        {/* Content skeleton */}
+        <div className="space-y-3">
+          <div className="h-32 bg-muted rounded-lg" />
+          <div className="h-32 bg-muted rounded-lg" />
         </div>
       </div>
     );

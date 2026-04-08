@@ -61,7 +61,7 @@ export const OfferServiceButton = ({ serviceType, serviceName, className = "" }:
           className={`gap-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground ${className}`}
         >
           <UserPlus className="h-4 w-4" />
-          Quiero ofrecer {serviceName}
+          Ofrecer mis servicios como {serviceName}
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">

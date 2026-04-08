@@ -132,7 +132,7 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       isActive={isActive(item.url)}
                       onClick={() => handleNavigate(item.url)}
-                      className={`h-8 text-xs rounded-md ${showGlow ? "animate-pulse-glow" : ""}`}
+                      className={`h-7 text-xs rounded-md ${showGlow ? "animate-pulse-glow" : ""}`}
                     >
                       <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
                       <span>{item.title}</span>
@@ -161,7 +161,7 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     isActive={isActive(item.url)}
                     onClick={() => handleNavigate(item.url)}
-                    className="h-8 text-xs rounded-md"
+                    className="h-7 text-xs rounded-md"
                   >
                     <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
                     <span>{item.title}</span>
@@ -184,7 +184,7 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     isActive={isActive(item.url)}
                     onClick={() => handleNavigate(item.url)}
-                    className="h-8 text-xs rounded-md"
+                    className="h-7 text-xs rounded-md"
                   >
                     <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
                     <span>{item.title}</span>
@@ -197,7 +197,7 @@ export function AppSidebar() {
                   <SidebarMenuButton
                     isActive={isActive("/paw-game")}
                     onClick={() => handleNavigate("/paw-game")}
-                    className="h-8 text-xs rounded-md"
+                    className="h-7 text-xs rounded-md"
                   >
                     <Gamepad2 className="h-3.5 w-3.5 flex-shrink-0" />
                     <span>Paw Game</span>
@@ -219,7 +219,7 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       isActive={isActive("/provider/dashboard")}
                       onClick={() => handleNavigate("/provider/dashboard")}
-                      className="h-8 text-xs rounded-md"
+                      className="h-7 text-xs rounded-md"
                     >
                       <LayoutDashboard className="h-3.5 w-3.5 flex-shrink-0" />
                       <span>Mi panel</span>
@@ -229,7 +229,7 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       isActive={isActive("/provider/profile-edit")}
                       onClick={() => handleNavigate("/provider/profile-edit")}
-                      className="h-8 text-xs rounded-md"
+                      className="h-7 text-xs rounded-md"
                     >
                       <UserCog className="h-3.5 w-3.5 flex-shrink-0" />
                       <span>Mi perfil pro</span>
@@ -252,7 +252,7 @@ export function AppSidebar() {
                     <SidebarMenuButton
                       isActive={isActive("/admin")}
                       onClick={() => handleNavigate("/admin")}
-                      className="h-8 text-xs rounded-md"
+                      className="h-7 text-xs rounded-md"
                     >
                       <Shield className="h-3.5 w-3.5 flex-shrink-0" />
                       <span>Panel Admin</span>
@@ -271,7 +271,7 @@ export function AppSidebar() {
             <SidebarMenuItem>
               <SidebarMenuButton
                 onClick={() => handleNavigate('/profile')}
-                className="h-8 text-xs rounded-md"
+                className="h-7 text-xs rounded-md"
               >
                 <Avatar className="h-5 w-5 flex-shrink-0">
                   <AvatarFallback className="bg-primary text-primary-foreground text-[9px] font-semibold">
@@ -284,7 +284,7 @@ export function AppSidebar() {
             <SidebarMenuItem>
               <SidebarMenuButton
                 onClick={() => handleNavigate('/settings')}
-                className="h-8 text-xs rounded-md"
+                className="h-7 text-xs rounded-md"
               >
                 <Settings className="h-3.5 w-3.5 flex-shrink-0" />
                 <span>Configuración</span>
