@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { LINKS } from "@/lib/links";
 
 type CanAddPetResult = {
   can: boolean;
@@ -34,5 +36,29 @@ export function useCanAddPet() {
     petCount: data?.pet_count ?? 0,
     isLoading,
     error,
+  };
+}
+
+/**
+ * Devuelve un handler que decide a donde mandar al user cuando clickea
+ * cualquier boton de "Agregar mascota" en la app:
+ *   - puede agregar -> /add-pet
+ *   - bloqueado por premium -> /upgrade
+ * Asi el paywall se muestra ANTES de cargar el formulario.
+ */
+export function useGoToAddPet() {
+  const navigate = useNavigate();
+  const { can, reason, isLoading } = useCanAddPet();
+
+  return () => {
+    if (isLoading) {
+      navigate(LINKS.addPet());
+      return;
+    }
+    if (!can && reason === "premium_required") {
+      navigate("/upgrade");
+      return;
+    }
+    navigate(LINKS.addPet());
   };
 }

@@ -26,6 +26,7 @@ import { useReminders } from "@/hooks/useReminders";
 import { StatusCard } from "@/components/home/StatusCard";
 import ActivityFeed from "@/components/social/ActivityFeed";
 import { LINKS } from "@/lib/links";
+import { useGoToAddPet } from "@/hooks/useCanAddPet";
 import { logger } from "@/lib/logger";
 import { formatDistanceToNowStrict, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
@@ -75,6 +76,7 @@ const PET_PROFILE_FIELDS = [
 export default function Home() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const goToAddPet = useGoToAddPet();
   const [pets, setPets] = useState<Pet[]>([]);
   const [activePetId, setActivePetId] = useState<string | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -275,7 +277,7 @@ export default function Home() {
               Para empezar, agregá tu primera mascota.
             </p>
             <Button
-              onClick={() => navigate(LINKS.addPet())}
+              onClick={goToAddPet}
               className="bg-emerald-600 hover:bg-emerald-700"
               size="lg"
             >
@@ -466,7 +468,7 @@ export default function Home() {
           <Button
             variant="outline"
             className="flex-shrink-0 lg:w-full justify-start h-auto py-2.5"
-            onClick={() => navigate(LINKS.addPet())}
+            onClick={goToAddPet}
           >
             <Plus className="h-4 w-4 mr-2 text-emerald-600" />
             <span className="text-xs">Agregar mascota</span>

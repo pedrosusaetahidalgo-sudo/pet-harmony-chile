@@ -19,6 +19,7 @@ import {
 } from "@/lib/icons";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useGoToAddPet } from "@/hooks/useCanAddPet";
 import { logger } from "@/lib/logger";
 
 interface Pet {
@@ -72,6 +73,7 @@ const ScoreBar = ({
 
 export const PetPawProgress = ({ pets, userId }: PetPawProgressProps) => {
   const navigate = useNavigate();
+  const goToAddPet = useGoToAddPet();
   const [petProgress, setPetProgress] = useState<Record<string, PetProgress>>({});
   const [loading, setLoading] = useState(true);
 
@@ -115,7 +117,7 @@ export const PetPawProgress = ({ pets, userId }: PetPawProgressProps) => {
         <p className="text-sm text-muted-foreground mb-4">
           Agrega tu primera mascota para comenzar a trackear su bienestar
         </p>
-        <Button onClick={() => navigate('/add-pet')}>
+        <Button onClick={goToAddPet}>
           <PawPrint className="h-4 w-4 mr-2" />
           Agregar Mascota
         </Button>

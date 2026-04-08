@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { BreedTips } from "@/components/BreedTips";
 import { describeSupabaseError } from "@/lib/supabaseErrors";
+import { useGoToAddPet } from "@/hooks/useCanAddPet";
 
 interface Pet {
   id: string;
@@ -43,6 +44,7 @@ const MyPets = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const goToAddPet = useGoToAddPet();
 
   useEffect(() => {
     if (user) {
@@ -148,7 +150,7 @@ const MyPets = () => {
             </p>
           </div>
           <Button
-            onClick={() => navigate(LINKS.addPet())}
+            onClick={goToAddPet}
             className="bg-emerald-600 hover:bg-emerald-700 transition-all shadow-lg hover:shadow-xl hover:scale-105"
           >
             <Plus className="mr-2 h-5 w-5" />
@@ -167,7 +169,7 @@ const MyPets = () => {
                 Crea el perfil de tu mascota para llevar su ficha clínica, recibir recordatorios automáticos y reservar con veterinarios.
               </p>
               <Button
-                onClick={() => navigate(LINKS.addPet())}
+                onClick={goToAddPet}
                 className="bg-emerald-600 hover:bg-emerald-700"
               >
                 <Plus className="mr-2 h-5 w-5" />

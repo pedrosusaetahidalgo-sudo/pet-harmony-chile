@@ -23,6 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { useGoToAddPet } from "@/hooks/useCanAddPet";
 import { ProfessionalBadges } from "@/components/ProfessionalBadges";
 import { CreateServicePromotion } from "@/components/CreateServicePromotion";
 import UserReviewHistory from "@/components/UserReviewHistory";
@@ -39,6 +40,7 @@ const Profile = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const goToAddPet = useGoToAddPet();
   const [profile, setProfile] = useState<any>(null);
   const [userStats, setUserStats] = useState<any>(null);
   const [pets, setPets] = useState<any[]>([]);
@@ -314,7 +316,7 @@ const Profile = () => {
                 <PawPrint className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
                 <p className="text-muted-foreground mb-4">No has registrado mascotas aún</p>
                 <Button 
-                  onClick={() => navigate('/add-pet')}
+                  onClick={goToAddPet}
                   className="bg-warm-gradient hover:opacity-90"
                 >
                   <UserPlus className="h-4 w-4 mr-2" />
@@ -364,7 +366,7 @@ const Profile = () => {
                 {/* Add Pet Card */}
                 <Card 
                   className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group border-dashed"
-                  onClick={() => navigate('/add-pet')}
+                  onClick={goToAddPet}
                 >
                   <CardContent className="p-0 h-full flex items-center justify-center aspect-square">
                     <div className="text-center p-4 sm:p-6">
