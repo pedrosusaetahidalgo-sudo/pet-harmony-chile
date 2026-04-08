@@ -553,8 +553,11 @@ async function createSocialContent(owners, ownerPets) {
       appointment_type: rand(["veterinario", "peluquería", "vacuna"]),
       title: `Cita de ${pet.name}`,
       description: "Control de rutina",
-      date: future.toISOString(),
+      scheduled_date: future.toISOString(),
+      provider_name: `Veterinaria ${rand(["Patitas", "VetCare", "Animal"])}`,
+      status: "programada",
     });
+    if (error) console.warn(`[seed-demo] WARN appointment:`, error.message);
     if (!error) appointments++;
   }
 
