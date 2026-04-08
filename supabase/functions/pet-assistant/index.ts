@@ -40,7 +40,7 @@ serve(async (req) => {
 
     const userId = userData.user.id;
 
-    const quota = await checkAiQuota(userId, { limit: 60 });
+    const quota = await checkAiQuota(userId, { limit: 5 });
     if (!quota.allowed) {
       return rateLimitResponse(quota, corsHeaders);
     }
@@ -63,7 +63,7 @@ serve(async (req) => {
       });
     }
 
-    // Rate limiting: 20 questions per day
+    // Rate limiting: 5 questions per day
     const today = new Date().toISOString().split("T")[0];
     const { data: usage } = await supabase
       .from("ai_usage")
@@ -77,9 +77,9 @@ serve(async (req) => {
       callsToday = usage.last_reset_date === today ? usage.calls_today : 0;
     }
 
-    if (callsToday >= 20) {
+    if (callsToday >= 5) {
       return new Response(JSON.stringify({
-        error: "Límite diario alcanzado (20 consultas). Renueva mañana.",
+        error: "Límite diario alcanzado (5 consultas). Renueva mañana.",
         rate_limited: true,
       }), {
         status: 429,

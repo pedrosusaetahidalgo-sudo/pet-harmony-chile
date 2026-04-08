@@ -1,5 +1,8 @@
 project_id = "oexonzohpigriynmrbdr"
 
+[functions.pet-assistant]
+verify_jwt = false
+
 [functions.breed-tips]
 verify_jwt = false
 
