@@ -112,6 +112,17 @@ input, textarea, [contenteditable="true"], [data-selectable], p, h1, h2, h3, h4,
     --community: 270 70% 60%;        /* morado — feed/social (= primary actual) */
     --community-foreground: 0 0% 100%;
 
+    /* ── Premium B2C (sesión 2026-04-08): paleta dorada exclusiva ── */
+    --premium: 42 88% 52%;             /* dorado vibrante */
+    --premium-foreground: 30 30% 12%;  /* casi negro cálido para contraste sobre dorado */
+    --premium-light: 45 100% 95%;      /* champagne sutil */
+    --premium-dark: 38 92% 38%;        /* dorado oscuro hover */
+    --premium-glow: 45 95% 65%;        /* highlight para gradients */
+    --premium-gradient: linear-gradient(135deg, hsl(45 95% 65%), hsl(38 92% 48%) 50%, hsl(35 88% 42%));
+    --premium-gradient-soft: linear-gradient(135deg, hsl(45 100% 96%), hsl(42 90% 92%));
+    --premium-shadow: 0 20px 50px -12px hsl(42 88% 52% / 0.35), 0 8px 16px -8px hsl(38 92% 38% / 0.25);
+    --premium-shadow-sm: 0 4px 12px -2px hsl(42 88% 52% / 0.25);
+
     /* Alertas semánticas */
     --alert-critical: 0 84% 60%;
     --alert-warning: 38 92% 50%;

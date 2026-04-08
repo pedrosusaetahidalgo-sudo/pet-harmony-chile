@@ -16,7 +16,8 @@ import {
   Edit,
   UserPlus,
   Users,
-  Briefcase
+  Briefcase,
+  Crown
 } from "@/lib/icons";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -137,8 +138,14 @@ const Profile = () => {
                 <div className="flex-1 w-full">
                   <div className="flex flex-col gap-3 sm:gap-4 mb-3 sm:mb-4">
                     <div className="text-center sm:text-left">
-                      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">
+                      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold flex items-center gap-2 justify-center sm:justify-start flex-wrap">
                         {profile?.display_name || user?.email?.split("@")[0]}
+                        {profile?.is_premium && (
+                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-premium-gradient text-premium-foreground shadow-premium-sm">
+                            <Crown className="h-3 w-3" strokeWidth={2.5} />
+                            PREMIUM
+                          </span>
+                        )}
                       </h1>
                       {profile?.bio && (
                         <p className="text-xs sm:text-sm text-muted-foreground mt-1">

@@ -19,7 +19,7 @@ import { describeSupabaseError } from "@/lib/supabaseErrors";
 import { logger } from "@/lib/logger";
 import { useOrganicRewards } from "@/hooks/useOrganicRewards";
 import { useCanAddPet } from "@/hooks/useCanAddPet";
-import { Sparkles } from "@/lib/icons";
+import { Sparkles, Crown } from "@/lib/icons";
 
 const personalityOptions = [
   "Juguetón", "Tranquilo", "Energético", "Cariñoso", "Tímido",
@@ -329,49 +329,74 @@ const AddPet = () => {
   }
 
   // Paywall: solo aplica en modo create. Edit nunca se bloquea.
+  // Esta card es red de seguridad: el flujo normal intercepta antes y manda directo a /upgrade.
   if (!isEdit && !checkingLimit && !canAddPet && blockReason === "premium_required") {
     return (
-      <div className="container px-4 py-8 max-w-2xl mx-auto animate-fade-in">
-        <Card>
-          <CardHeader className="text-center">
-            <div className="mx-auto h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
-              <Sparkles className="h-6 w-6 text-primary" />
-            </div>
-            <CardTitle className="text-2xl">Sumá una mascota más con Premium</CardTitle>
-            <CardDescription className="text-base mt-2">
-              Tu plan gratis incluye 1 mascota. Con Premium agregás todas las que quieras y desbloqueás el historial médico completo, recordatorios ilimitados y exportación de fichas.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="rounded-lg border bg-muted/30 p-4 space-y-2 text-sm">
-              <div className="flex items-center justify-between">
-                <span>Plan mensual</span>
-                <span className="font-semibold">$2.990 / mes</span>
+      <div className="relative min-h-[calc(100vh-4rem)]">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background:
+              "radial-gradient(ellipse 80% 50% at 50% 0%, hsl(45 100% 92% / 0.6), transparent 60%)",
+          }}
+        />
+        <div className="container px-4 py-12 max-w-xl mx-auto animate-fade-in">
+          <Card className="border-2 border-premium/30 bg-premium-gradient-soft shadow-premium">
+            <div aria-hidden className="absolute inset-x-0 top-0 h-1 bg-premium-gradient rounded-t-lg" />
+            <CardHeader className="text-center pt-8">
+              <div className="mx-auto mb-4 relative">
+                <div className="absolute inset-0 rounded-full bg-premium-gradient blur-xl opacity-50" />
+                <div className="relative h-14 w-14 mx-auto rounded-full bg-premium-gradient flex items-center justify-center shadow-premium">
+                  <Crown className="h-7 w-7 text-premium-foreground" strokeWidth={2.5} />
+                </div>
               </div>
-              <div className="flex items-center justify-between">
-                <span>Plan anual</span>
-                <span className="font-semibold">$24.990 / año</span>
+              <CardTitle className="text-2xl">
+                Sumá más mascotas con{" "}
+                <span className="bg-premium-gradient bg-clip-text text-transparent">Premium</span>
+              </CardTitle>
+              <CardDescription className="text-base mt-2 leading-relaxed">
+                Tu plan gratis incluye 1 mascota. Con Premium agregás todas las que quieras y desbloqueás el historial médico completo, recordatorios ilimitados y exportación de fichas.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-5">
+              <div className="rounded-xl border border-premium/30 bg-card/70 backdrop-blur-sm p-4 space-y-3 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-muted-foreground">Plan mensual</span>
+                  <span className="font-bold">$2.990 / mes</span>
+                </div>
+                <div className="h-px bg-premium/20" />
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    Plan anual
+                    <Sparkles className="h-3 w-3 text-premium" />
+                  </span>
+                  <span className="font-bold bg-premium-gradient bg-clip-text text-transparent">
+                    $24.990 / año
+                  </span>
+                </div>
               </div>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => navigate(LINKS.myPets())}
-                className="w-full sm:flex-1 h-12"
-              >
-                Volver
-              </Button>
-              <Button
-                type="button"
-                onClick={() => navigate("/upgrade")}
-                className="w-full sm:flex-1 h-12"
-              >
-                Ver planes Premium
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate(LINKS.myPets())}
+                  className="w-full sm:flex-1 h-12"
+                >
+                  Volver
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => navigate("/upgrade")}
+                  className="w-full sm:flex-1 h-12 bg-premium-gradient hover:opacity-90 text-premium-foreground border-0 shadow-premium font-semibold"
+                >
+                  <Crown className="h-4 w-4 mr-2" />
+                  Ver planes Premium
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }

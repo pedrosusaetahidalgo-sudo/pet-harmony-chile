@@ -67,6 +67,13 @@ export default {
           foreground: "hsl(var(--appointment-foreground))",
           light: "hsl(var(--appointment-light))",
         },
+        premium: {
+          DEFAULT: "hsl(var(--premium))",
+          foreground: "hsl(var(--premium-foreground))",
+          light: "hsl(var(--premium-light))",
+          dark: "hsl(var(--premium-dark))",
+          glow: "hsl(var(--premium-glow))",
+        },
       },
       backgroundImage: {
         'warm-gradient': 'var(--warm-gradient)',
@@ -74,10 +81,14 @@ export default {
         'hero-gradient': 'var(--hero-gradient)',
         'medical-gradient': 'var(--medical-gradient)',
         'appointment-gradient': 'var(--appointment-gradient)',
+        'premium-gradient': 'var(--premium-gradient)',
+        'premium-gradient-soft': 'var(--premium-gradient-soft)',
       },
       boxShadow: {
         'soft': 'var(--shadow-soft)',
         'medium': 'var(--shadow-medium)',
+        'premium': 'var(--premium-shadow)',
+        'premium-sm': 'var(--premium-shadow-sm)',
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -101,10 +112,15 @@ export default {
             height: "0",
           },
         },
+        "premium-shimmer": {
+          "0%, 100%": { boxShadow: "0 0 20px -4px hsl(42 88% 52% / 0.4), 0 0 40px -8px hsl(45 95% 65% / 0.2)" },
+          "50%": { boxShadow: "0 0 30px -2px hsl(42 88% 52% / 0.6), 0 0 60px -6px hsl(45 95% 65% / 0.35)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "premium-shimmer": "premium-shimmer 3s ease-in-out infinite",
       },
     },
   },
