@@ -69,6 +69,25 @@ serve(async (req) => {
     const userEmail = userData.user.email;
     if (!userEmail) throw new Error("User has no email");
 
+    // Rate limit: 10 req/h por user (suficiente para retries legítimos)
+    const { data: quotaData, error: quotaError } = await supabase.rpc(
+      "check_and_increment_payment_quota",
+      { p_user_id: userId, p_limit: 10, p_window_seconds: 3600 }
+    );
+    if (quotaError) {
+      console.error("[flow-create-subscription] quota check failed", quotaError);
+      throw new Error("No se pudo verificar el cupo de pagos");
+    }
+    const quotaRow = Array.isArray(quotaData) ? quotaData[0] : quotaData;
+    if (quotaRow && quotaRow.allowed === false) {
+      return new Response(
+        JSON.stringify({
+          error: "Demasiados intentos de pago. Espera unos minutos e intenta de nuevo.",
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 429 }
+      );
+    }
+
     // Body
     const body = await req.json();
     const plan = body?.plan as string | undefined;
@@ -135,7 +154,7 @@ serve(async (req) => {
     const msg = error instanceof Error ? error.message : String(error);
     console.error("[flow-create-subscription] error", msg);
     return new Response(
-      JSON.stringify({ error: "No se pudo iniciar el pago. Intentá de nuevo en unos minutos." }),
+      JSON.stringify({ error: "No se pudo iniciar el pago. Intenta de nuevo en unos minutos." }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
     );
   }
