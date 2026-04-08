@@ -5,8 +5,19 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
+import { useAuth } from "./hooks/useAuth";
+import { ReactNode } from "react";
 
 import ProtectedRoute from "./components/ProtectedRoute";
+
+/** Envuelve la página con AppLayout solo si el user está logueado.
+ *  Para rutas públicas (directorio vets, perfiles públicos) que deben verse
+ *  como app cuando el user está dentro, y como landing cuando no. */
+function PublicWithLayoutIfAuth({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth();
+  if (loading) return null;
+  return user ? <AppLayout>{children}</AppLayout> : <>{children}</>;
+}
 import AdminRoute from "./components/AdminRoute";
 import ErrorBoundary from "./components/ErrorBoundary";
 
@@ -123,11 +134,13 @@ const App = () => (
               <Route path="/upgrade/success" element={<ProtectedRoute><UpgradeSuccess /></ProtectedRoute>} />
               <Route path="/upgrade/cancel" element={<ProtectedRoute><UpgradeCancel /></ProtectedRoute>} />
               <Route path="/calendar" element={<Navigate to="/mis-reservas" replace />} />
-              {/* Directorio público de veterinarios (sin login) */}
-              <Route path="/veterinarios" element={<DirectorioVets />} />
-              <Route path="/veterinarios/comuna/:comuna" element={<DirectorioVets />} />
-              <Route path="/veterinarios/especialidad/:especialidad" element={<DirectorioVets />} />
-              <Route path="/veterinarios/:slug" element={<PerfilVetPublico />} />
+              {/* Directorio público de veterinarios (sin login).
+                  Si el user está logueado, lo envolvemos con AppLayout para
+                  mantener header/sidebar consistente con el resto de la app. */}
+              <Route path="/veterinarios" element={<PublicWithLayoutIfAuth><DirectorioVets /></PublicWithLayoutIfAuth>} />
+              <Route path="/veterinarios/comuna/:comuna" element={<PublicWithLayoutIfAuth><DirectorioVets /></PublicWithLayoutIfAuth>} />
+              <Route path="/veterinarios/especialidad/:especialidad" element={<PublicWithLayoutIfAuth><DirectorioVets /></PublicWithLayoutIfAuth>} />
+              <Route path="/veterinarios/:slug" element={<PublicWithLayoutIfAuth><PerfilVetPublico /></PublicWithLayoutIfAuth>} />
               {/* Demo en vivo (uso interno para reuniones de venta) */}
               <Route path="/demo" element={<Demo />} />
               <Route path="/registro-veterinario" element={<RegistroVeterinario />} />

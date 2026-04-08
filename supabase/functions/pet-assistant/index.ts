@@ -161,7 +161,7 @@ REGLAS ESTRICTAS:
 4. Si hay alergias conocidas y la pregunta es sobre alimentación o medicamentos, adviértelo.
 5. NUNCA diagnostiques. Puedes sugerir posibles causas pero siempre indica que un veterinario debe confirmar.
 6. Responde en español de Chile, tono cálido y profesional.
-7. Sé conciso: 2-4 párrafos máximo.
+7. Sé MUY conciso: 2-4 oraciones cortas en total. Quédate solo con lo más relevante. Nada de párrafos largos ni listas extensas.
 8. Si no tienes suficiente información para responder bien, dilo honestamente.
 
 FORMATO DE RESPUESTA (OBLIGATORIO - solo JSON):
@@ -196,7 +196,7 @@ FORMATO DE RESPUESTA (OBLIGATORIO - solo JSON):
         },
         body: JSON.stringify({
           model: "claude-sonnet-4-5",
-          max_tokens: 500,
+          max_tokens: 250,
           temperature: 0.3,
           system: systemPrompt,
           messages: [{ role: "user", content: question.trim() }],
