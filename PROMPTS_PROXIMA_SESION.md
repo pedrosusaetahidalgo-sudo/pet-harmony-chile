@@ -641,6 +641,79 @@ ENTREGABLE:
 
 ---
 
+## PROMPT 9 — Rediseño del 404 ("estamos trabajando en esto")
+
+```
+MISIÓN: Reemplazar la página 404 actual por una versión amigable, on-brand,
+con tono "estamos trabajando para resolver esto" en vez de un error frío.
+Aplica tanto a la SPA como al fallback de GitHub Pages.
+
+CONTEXTO:
+- La app es SPA en GitHub Pages servida desde docs/. GitHub Pages usa
+  docs/404.html como fallback para rutas que no existen — además es lo que
+  permite que el routing client-side funcione (típico hack SPA + GH Pages).
+- Hoy hay un docs/404.html generado por Vite (que es el index.html básico)
+  y un componente NotFound en src/pages/NotFound.tsx para rutas internas.
+- Branding actual: tokens en src/index.css, paleta emerald/teal, look médico.
+  Para Premium: dorado (--premium, --premium-gradient).
+- Joya de la corona intocable: ficha médica + directorio público.
+
+OBJETIVO DE COPY (español chileno, tuteo):
+- Título grande: "🐾 Estamos trabajando en esto"
+- Subtítulo: "La página que buscas no existe o aún está en construcción.
+  Volvemos a ponerla en línea apenas podamos."
+- 3 acciones claras: "Volver al inicio", "Ir a mis mascotas", "Reportar el
+  problema" (link mailto o WhatsApp).
+- Tono cálido, no técnico. Cero "404 Not Found" / "Page not found".
+
+ALCANCE:
+
+1. src/pages/NotFound.tsx (SPA route)
+   - Rediseñar con Card centrada, ilustración de pata o emoji 🐾, botones
+     usando los componentes ya existentes (Button de shadcn).
+   - Detectar pathname con useLocation y mostrarlo discreto:
+     "Buscaste: /ruta-que-no-existe"
+   - CTA principal: navigate("/") con look emerald.
+   - CTAs secundarios: link a /home, /my-pets, mailto a hola@pawfriend.cl
+     (o el contacto real si existe en el repo, buscar antes con grep).
+   - Mobile-first, mismo container max-w-md o max-w-lg.
+
+2. public/404.html (fallback GitHub Pages)
+   - HTML estático standalone (NO React) porque GH Pages lo sirve antes
+     de cargar el bundle. Incluir <meta http-equiv="refresh"> a "/" después
+     de 5 segundos como red de seguridad — pero ANTES mostrar la misma copy
+     con CSS inline (no Tailwind, no fuentes externas para que cargue
+     instantáneo).
+   - Mantener el script de redirect SPA si existe (típico hack
+     `sessionStorage.redirect = location.href`) — verificar primero si está
+     y NO romperlo.
+   - Vite copia public/* tal cual a docs/, así que con tocar public/404.html
+     basta. Después de `npm run build` debe quedar en docs/404.html.
+
+3. Verificación:
+   - npx tsc -b limpio
+   - npm run build genera docs/404.html con el contenido nuevo
+   - Visual check local: vite dev → ir a /no-existe → ver el rediseño SPA
+   - Visual check GH Pages: después de pushear, ir a
+     pawfriend.cl/url-inventada → ver el 404 estático
+
+4. NO TOCAR:
+   - Routing principal (App.tsx)
+   - El componente NotFound de cualquier subapp si existe
+   - El hack SPA→GH Pages de redirect si lo hay (verificar con grep
+     "sessionStorage" en public/404.html actual)
+
+REGLAS DE ORO heredadas. Commit único:
+fix(404): pagina amigable "estamos trabajando en esto"
+
+ENTREGABLE:
+- src/pages/NotFound.tsx rediseñado
+- public/404.html estático on-brand
+- Captura textual de la copy final para revisión
+```
+
+---
+
 ## Notas operativas
 
 - **Memoria persistente** en `~/.claude/projects/.../memory/`. Decisiones clave persisten entre sesiones (Flow, secrets, español chileno).
