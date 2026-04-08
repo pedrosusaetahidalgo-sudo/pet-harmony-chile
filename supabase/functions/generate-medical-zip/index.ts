@@ -4,6 +4,44 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import JSZip from "https://esm.sh/jszip@3.10.1";
+
+// Mapeo mime_type -> extension. Solo los que más vemos en medical documents.
+const MIME_TO_EXT: Record<string, string> = {
+  "application/pdf": "pdf",
+  "image/jpeg": "jpg",
+  "image/jpg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+  "image/heic": "heic",
+  "application/msword": "doc",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+  "text/plain": "txt",
+};
+
+const extFromMime = (mime: string | null | undefined): string => {
+  if (!mime) return "bin";
+  return MIME_TO_EXT[mime.toLowerCase()] ?? "bin";
+};
+
+// Sanitiza el nombre del archivo para que sea valido en cualquier OS
+const safeName = (raw: string): string =>
+  raw.replace(/[\\/:*?"<>|]/g, "_").slice(0, 100);
+
+// Procesa documentos en chunks para no agotar memoria con muchos archivos
+async function inChunks<T, R>(
+  items: T[],
+  chunkSize: number,
+  fn: (item: T) => Promise<R>
+): Promise<R[]> {
+  const results: R[] = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    const slice = items.slice(i, i + chunkSize);
+    const out = await Promise.all(slice.map(fn));
+    results.push(...out);
+  }
+  return results;
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "https://pawfriend.cl",
@@ -64,41 +102,69 @@ serve(async (req) => {
       throw new Error("No documents found for this pet");
     }
 
-    // For now, return a list of signed URLs
-    // In production, you would use a ZIP library like JSZip to create a ZIP file
-    // This is a simplified version that returns signed URLs for all documents
+    // Construir el ZIP en memoria. Procesamos en chunks de 5 para no saturar
+    // si la mascota tiene muchos documentos.
+    const zip = new JSZip();
+    const usedNames = new Set<string>();
 
-    const signedUrls = await Promise.all(
-      documents.map(async (doc) => {
-        const { data: urlData, error: urlError } = await supabase.storage
-          .from("medical-documents")
-          .createSignedUrl(doc.file_url, 3600); // 1 hour expiry
+    await inChunks(documents, 5, async (doc) => {
+      const { data: blob, error: dlError } = await supabase.storage
+        .from("medical-documents")
+        .download(doc.file_url);
 
-        if (urlError) throw urlError;
+      if (dlError || !blob) {
+        console.warn("[medical-zip] no se pudo descargar", doc.id, dlError?.message);
+        return;
+      }
 
-        return {
-          id: doc.id,
-          title: doc.title,
-          type: doc.type,
-          url: urlData.signedUrl,
-        };
-      })
-    );
+      const ext = extFromMime(doc.mime_type);
+      let baseName = safeName(doc.title || doc.id);
+      let fileName = `${baseName}.${ext}`;
+      // Evitar duplicados de nombre dentro del ZIP
+      let n = 2;
+      while (usedNames.has(fileName)) {
+        fileName = `${baseName}-${n}.${ext}`;
+        n++;
+      }
+      usedNames.add(fileName);
 
-    // Note: In a production environment, you would:
-    // 1. Download all files
-    // 2. Create a ZIP using JSZip or similar
-    // 3. Upload the ZIP to storage
-    // 4. Return a signed URL to the ZIP
-    // For now, we return the list of signed URLs that can be downloaded individually
+      const arrayBuffer = await blob.arrayBuffer();
+      zip.file(fileName, new Uint8Array(arrayBuffer));
+    });
+
+    if (Object.keys(zip.files).length === 0) {
+      throw new Error("No se pudo descargar ningún documento de la mascota");
+    }
+
+    const zipBytes = await zip.generateAsync({
+      type: "uint8array",
+      compression: "DEFLATE",
+      compressionOptions: { level: 6 },
+    });
+
+    // Subir el ZIP a Storage
+    const zipPath = `zips/${pet_id}-${Date.now()}.zip`;
+    const { error: uploadError } = await supabase.storage
+      .from("medical-documents")
+      .upload(zipPath, zipBytes, {
+        contentType: "application/zip",
+        upsert: false,
+      });
+
+    if (uploadError) throw uploadError;
+
+    const { data: urlData, error: urlError } = await supabase.storage
+      .from("medical-documents")
+      .createSignedUrl(zipPath, 3600);
+
+    if (urlError) throw urlError;
 
     return new Response(
       JSON.stringify({
         success: true,
-        documents: signedUrls,
-        message:
-          "ZIP generation not yet implemented. Returning individual document URLs.",
-        // TODO: Implement actual ZIP generation
+        download_url: urlData.signedUrl,
+        file_path: zipPath,
+        document_count: Object.keys(zip.files).length,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -110,7 +176,7 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: false,
-        error: "Failed to generate medical ZIP. Please try again later.",
+        error: "No se pudo generar el ZIP. Inténtalo de nuevo en unos minutos.",
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

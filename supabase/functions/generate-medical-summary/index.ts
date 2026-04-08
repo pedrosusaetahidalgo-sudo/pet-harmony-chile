@@ -68,230 +68,110 @@ serve(async (req) => {
     const vaccinations = summaryData.vaccinations || [];
     const recentVisits = summaryData.recent_visits || [];
 
-    // Create PDF
+    // Crear PDF
     const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([612, 792]); // US Letter size
-    const { width, height } = page.getSize();
+    let page = pdfDoc.addPage([612, 792]); // US Letter
+    const { height } = page.getSize();
 
-    // Fonts
+    // Fuentes
     const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
     let yPosition = height - 50;
+    const PAGE_BOTTOM_MARGIN = 60;
 
-    // Header
-    page.drawText("Pet Medical Summary", {
-      x: 50,
-      y: yPosition,
-      size: 24,
-      font: helveticaBold,
-      color: rgb(0, 0, 0),
-    });
+    // Helper: dibuja una linea de texto. Si excede el bottom, crea nueva pagina y reasigna `page`.
+    const drawLine = (
+      text: string,
+      opts: { size: number; bold?: boolean; spacing?: number }
+    ) => {
+      const spacing = opts.spacing ?? 15;
+      if (yPosition < PAGE_BOTTOM_MARGIN) {
+        page = pdfDoc.addPage([612, 792]);
+        yPosition = page.getSize().height - 50;
+      }
+      page.drawText(text, {
+        x: 50,
+        y: yPosition,
+        size: opts.size,
+        font: opts.bold ? helveticaBold : helvetica,
+        color: rgb(0, 0, 0),
+      });
+      yPosition -= spacing;
+    };
 
-    yPosition -= 40;
+    // Encabezado
+    drawLine("Resumen médico de la mascota", { size: 24, bold: true, spacing: 40 });
 
-    // Pet Information
-    page.drawText("Pet Information", {
-      x: 50,
-      y: yPosition,
-      size: 16,
-      font: helveticaBold,
-      color: rgb(0, 0, 0),
-    });
-
-    yPosition -= 25;
+    // Información de la mascota
+    drawLine("Información de la mascota", { size: 16, bold: true, spacing: 25 });
 
     const petInfo = [
-      `Name: ${pet.name || "N/A"}`,
-      `Species: ${pet.species || "N/A"}`,
-      `Breed: ${pet.breed || "N/A"}`,
-      `Gender: ${pet.gender || "N/A"}`,
-      `Birth Date: ${pet.birth_date || "N/A"}`,
-      `Weight: ${pet.weight ? `${pet.weight} kg` : "N/A"}`,
+      `Nombre: ${pet.name || "N/A"}`,
+      `Especie: ${pet.species || "N/A"}`,
+      `Raza: ${pet.breed || "N/A"}`,
+      `Sexo: ${pet.gender || "N/A"}`,
+      `Fecha de nacimiento: ${pet.birth_date || "N/A"}`,
+      `Peso: ${pet.weight ? `${pet.weight} kg` : "N/A"}`,
       `Microchip: ${pet.microchip_number || "N/A"}`,
-      `Neutered: ${pet.neutered ? "Yes" : "No"}`,
+      `Esterilizado: ${pet.neutered ? "Sí" : "No"}`,
     ];
+    petInfo.forEach((line) => drawLine(line, { size: 10 }));
 
-    petInfo.forEach((line) => {
-      page.drawText(line, {
-        x: 50,
-        y: yPosition,
-        size: 10,
-        font: helvetica,
-        color: rgb(0, 0, 0),
-      });
-      yPosition -= 15;
-    });
-
-    // Allergies & Chronic Conditions
+    // Alergias
     if (pet.allergies && pet.allergies.length > 0) {
       yPosition -= 10;
-      page.drawText("Allergies:", {
-        x: 50,
-        y: yPosition,
-        size: 12,
-        font: helveticaBold,
-        color: rgb(0, 0, 0),
-      });
-      yPosition -= 15;
-      page.drawText(pet.allergies.join(", "), {
-        x: 50,
-        y: yPosition,
-        size: 10,
-        font: helvetica,
-        color: rgb(0, 0, 0),
-      });
-      yPosition -= 20;
+      drawLine("Alergias:", { size: 12, bold: true });
+      drawLine(pet.allergies.join(", "), { size: 10, spacing: 20 });
     }
 
+    // Condiciones crónicas
     if (pet.chronic_conditions && pet.chronic_conditions.length > 0) {
-      page.drawText("Chronic Conditions:", {
-        x: 50,
-        y: yPosition,
-        size: 12,
-        font: helveticaBold,
-        color: rgb(0, 0, 0),
-      });
-      yPosition -= 15;
-      page.drawText(pet.chronic_conditions.join(", "), {
-        x: 50,
-        y: yPosition,
-        size: 10,
-        font: helvetica,
-        color: rgb(0, 0, 0),
-      });
-      yPosition -= 20;
+      drawLine("Condiciones crónicas:", { size: 12, bold: true });
+      drawLine(pet.chronic_conditions.join(", "), { size: 10, spacing: 20 });
     }
 
-    // Owner Information
+    // Información del dueño
     yPosition -= 10;
-    page.drawText("Owner Information", {
-      x: 50,
-      y: yPosition,
-      size: 16,
-      font: helveticaBold,
-      color: rgb(0, 0, 0),
-    });
-
-    yPosition -= 25;
+    drawLine("Información del dueño", { size: 16, bold: true, spacing: 25 });
 
     const ownerInfo = [
-      `Name: ${owner.display_name || "N/A"}`,
+      `Nombre: ${owner.display_name || "N/A"}`,
       `Email: ${owner.email || "N/A"}`,
     ];
+    ownerInfo.forEach((line) => drawLine(line, { size: 10 }));
 
-    ownerInfo.forEach((line) => {
-      page.drawText(line, {
-        x: 50,
-        y: yPosition,
-        size: 10,
-        font: helvetica,
-        color: rgb(0, 0, 0),
-      });
-      yPosition -= 15;
-    });
-
-    // Vaccinations
+    // Vacunas
     if (vaccinations.length > 0) {
       yPosition -= 20;
-      page.drawText("Vaccination Overview", {
-        x: 50,
-        y: yPosition,
-        size: 16,
-        font: helveticaBold,
-        color: rgb(0, 0, 0),
-      });
-
-      yPosition -= 25;
+      drawLine("Vacunas", { size: 16, bold: true, spacing: 25 });
 
       vaccinations.slice(0, 10).forEach((vacc: any) => {
-        const line = `${vacc.title || "Vaccine"} - ${vacc.date || "N/A"}${
-          vacc.next_date ? ` (Next: ${vacc.next_date})` : ""
+        const line = `${vacc.title || "Vacuna"} - ${vacc.date || "N/A"}${
+          vacc.next_date ? ` (Próxima: ${vacc.next_date})` : ""
         }`;
-        page.drawText(line, {
-          x: 50,
-          y: yPosition,
-          size: 10,
-          font: helvetica,
-          color: rgb(0, 0, 0),
-        });
-        yPosition -= 15;
-        if (yPosition < 50) {
-          // New page if needed
-          const newPage = pdfDoc.addPage([612, 792]);
-          yPosition = newPage.getSize().height - 50;
-        }
+        drawLine(line, { size: 10 });
       });
     }
 
-    // Recent Visits
+    // Visitas recientes
     if (recentVisits.length > 0) {
       yPosition -= 20;
-      page.drawText("Recent Visits", {
-        x: 50,
-        y: yPosition,
-        size: 16,
-        font: helveticaBold,
-        color: rgb(0, 0, 0),
-      });
-
-      yPosition -= 25;
+      drawLine("Visitas recientes", { size: 16, bold: true, spacing: 25 });
 
       recentVisits.forEach((visit: any) => {
-        page.drawText(`Date: ${visit.visit_date || "N/A"}`, {
-          x: 50,
-          y: yPosition,
-          size: 11,
-          font: helveticaBold,
-          color: rgb(0, 0, 0),
-        });
-        yPosition -= 15;
-
-        if (visit.clinic_name) {
-          page.drawText(`Clinic: ${visit.clinic_name}`, {
-            x: 50,
-            y: yPosition,
-            size: 10,
-            font: helvetica,
-            color: rgb(0, 0, 0),
-          });
-          yPosition -= 15;
-        }
-
-        if (visit.reason) {
-          page.drawText(`Reason: ${visit.reason}`, {
-            x: 50,
-            y: yPosition,
-            size: 10,
-            font: helvetica,
-            color: rgb(0, 0, 0),
-          });
-          yPosition -= 15;
-        }
-
-        if (visit.diagnosis) {
-          page.drawText(`Diagnosis: ${visit.diagnosis}`, {
-            x: 50,
-            y: yPosition,
-            size: 10,
-            font: helvetica,
-            color: rgb(0, 0, 0),
-          });
-          yPosition -= 15;
-        }
-
+        drawLine(`Fecha: ${visit.visit_date || "N/A"}`, { size: 11, bold: true });
+        if (visit.clinic_name) drawLine(`Clínica: ${visit.clinic_name}`, { size: 10 });
+        if (visit.reason) drawLine(`Motivo: ${visit.reason}`, { size: 10 });
+        if (visit.diagnosis) drawLine(`Diagnóstico: ${visit.diagnosis}`, { size: 10 });
         yPosition -= 10;
-        if (yPosition < 100) {
-          const newPage = pdfDoc.addPage([612, 792]);
-          yPosition = newPage.getSize().height - 50;
-        }
       });
     }
 
-    // Footer
+    // Footer en la última página
     const lastPage = pdfDoc.getPages()[pdfDoc.getPageCount() - 1];
     lastPage.drawText(
-      `Generated on ${new Date().toLocaleDateString()}`,
+      `Generado el ${new Date().toLocaleDateString("es-CL")}`,
       {
         x: 50,
         y: 30,
