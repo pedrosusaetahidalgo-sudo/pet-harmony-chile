@@ -714,6 +714,76 @@ ENTREGABLE:
 
 ---
 
+## PROMPT 10 — Migrar de legacy API keys de Supabase al nuevo sistema
+
+```
+CONTEXTO:
+Supabase está deprecando las "legacy API keys" (JWTs viejos tipo eyJ... con role
+anon / service_role) en favor del nuevo sistema:
+  - sb_publishable_* (reemplaza anon, va en el frontend)
+  - sb_secret_* (reemplaza service_role, va en secrets de edge functions)
+
+Hoy la app sigue usando legacy keys. Cuando Supabase las deshabilita, login
+falla con "Legacy API keys are disabled". El dueño tuvo que re-habilitarlas
+manualmente como workaround.
+
+MISIÓN: Migrar todo el proyecto al sistema nuevo y dejar las legacy desactivadas
+permanentemente.
+
+CHECKLIST:
+
+1. Identificar dónde se usa la anon key vieja
+   ```bash
+   grep -rn "eyJ" src/integrations/supabase/
+   ```
+   Debería estar hardcoded en src/integrations/supabase/client.ts.
+
+2. Pedir al dueño que genere las keys nuevas en el Dashboard:
+   - Settings → API → "Project API keys"
+   - Habilitar el sistema nuevo si no está
+   - Copiar la sb_publishable_* (es pública, OK que vaya al repo)
+   - Generar sb_secret_* (NUNCA pegarla en chat)
+
+3. Reemplazar la anon hardcoded por la sb_publishable_*
+   - Editar src/integrations/supabase/client.ts
+   - Verificar que el cliente acepta el formato nuevo
+     (puede requerir bumpear @supabase/supabase-js a la última versión)
+
+4. Actualizar secrets de las edge functions
+   - Pedirle al dueño que corra:
+     npx supabase secrets set SUPABASE_SERVICE_ROLE_KEY=<sb_secret_*> \
+       --project-ref gwailbjlvevkhwcrovfd
+   - Verificar que TODAS las functions que usan service_role siguen
+     funcionando: probar 1 médica, 1 de IA, 1 de Flow.
+
+5. Smoke test end-to-end
+   - Login con cuenta nueva
+   - Crear mascota
+   - Generar PDF ficha clínica
+   - Iniciar pago Premium (sandbox de Flow)
+   - Verificar logs sin errores
+
+6. Deshabilitar legacy keys en el Dashboard
+   - Settings → API → toggle "Enable legacy API keys" → OFF
+   - Esperar 5 min y re-probar login
+
+7. Documentar
+   - Actualizar ROTAR_API_KEYS.md con el nuevo procedimiento
+   - Agregar memoria persistente si corresponde
+   - Bumpear versión en README si hay
+
+REGLAS DE ORO. Commit:
+chore(auth): migrar de legacy supabase keys al nuevo sistema sb_*
+
+ENTREGABLE:
+- src/integrations/supabase/client.ts con sb_publishable_*
+- Confirmación de que las edge functions siguen verdes
+- Legacy keys deshabilitadas en producción
+- ROTAR_API_KEYS.md actualizado
+```
+
+---
+
 ## Notas operativas
 
 - **Memoria persistente** en `~/.claude/projects/.../memory/`. Decisiones clave persisten entre sesiones (Flow, secrets, español chileno).
