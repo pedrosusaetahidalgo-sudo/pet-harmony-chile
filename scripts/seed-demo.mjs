@@ -398,7 +398,89 @@ async function createProvider(serviceType, label, i) {
     is_active: true,
   }], "provider_service_offerings");
 
-  return { providerId: providerRow.id, user };
+  return { providerId: providerRow.id, user, serviceType };
+}
+
+// ============================================================================
+// Crear bookings + reviews aleatorios entre dueños y vets
+// ============================================================================
+
+async function createBookingsAndReviews(owners, providers, ownerPets) {
+  // Solo veterinarios reciben bookings (vet_bookings es específico de vets)
+  const vets = providers.filter((p) => p.serviceType === "veterinarian");
+  if (vets.length === 0 || owners.length === 0) return { bookings: 0, reviews: 0 };
+
+  let bookingsCreated = 0;
+  let reviewsCreated = 0;
+
+  // Cada vet recibe 4-12 bookings de dueños random
+  for (const vet of vets) {
+    const bookingCount = randInt(4, 12);
+    for (let i = 0; i < bookingCount; i++) {
+      const owner = rand(owners);
+      const pets = ownerPets[owner.id] || [];
+      if (pets.length === 0) continue;
+      const pet = rand(pets);
+
+      // 60% completados (en el pasado), 25% confirmados (futuro), 15% pendientes
+      const r = Math.random();
+      let status, scheduledOffset;
+      if (r < 0.6) {
+        status = "completado";
+        scheduledOffset = -randInt(5, 90); // pasado
+      } else if (r < 0.85) {
+        status = "confirmado";
+        scheduledOffset = randInt(1, 14); // futuro
+      } else {
+        status = "pendiente";
+        scheduledOffset = randInt(2, 21);
+      }
+
+      const scheduledDate = new Date();
+      scheduledDate.setDate(scheduledDate.getDate() + scheduledOffset);
+
+      const booking = {
+        owner_id: owner.id,
+        vet_id: vet.user.id,
+        pet_id: pet.id,
+        scheduled_date: scheduledDate.toISOString(),
+        service_type: rand(["consulta", "vacunación", "control", "emergencia", "examen"]),
+        visit_address: `${vet.user.region.ciudad}, dirección demo ${randInt(100, 9999)}`,
+        visit_latitude: vet.user.region.lat + (Math.random() - 0.5) * 0.05,
+        visit_longitude: vet.user.region.lng + (Math.random() - 0.5) * 0.05,
+        status,
+        is_emergency: chance(10),
+        symptoms: chance(50) ? `${pet.name} ha estado decaído últimamente.` : null,
+        total_price: randInt(15000, 60000),
+        payment_status: status === "completado" ? "pagado" : "pendiente",
+      };
+
+      const { data: bookingRow, error: bookErr } = await supabase
+        .from("vet_bookings")
+        .insert(booking)
+        .select("id")
+        .single();
+      if (bookErr) {
+        console.warn(`[seed-demo] WARN booking:`, bookErr.message);
+        continue;
+      }
+      bookingsCreated++;
+
+      // Si está completado, 70% de chance de tener review
+      if (status === "completado" && chance(70)) {
+        const { error: revErr } = await supabase.from("vet_reviews").insert({
+          booking_id: bookingRow.id,
+          owner_id: owner.id,
+          vet_id: vet.user.id,
+          rating: chance(70) ? 5 : chance(70) ? 4 : 3,
+          comment: rand(RESEÑAS),
+        });
+        if (!revErr) reviewsCreated++;
+      }
+    }
+  }
+
+  return { bookings: bookingsCreated, reviews: reviewsCreated };
 }
 
 // ============================================================================
@@ -425,10 +507,12 @@ async function main() {
   // 2. Crear mascotas (50% 1, 35% 2, 15% 3+)
   console.log("[seed-demo] creando mascotas + fichas médicas...");
   let totalPets = 0;
+  const ownerPets = {}; // owner.id -> pets[]
   for (const owner of owners) {
     const r = Math.random();
     const petCount = r < 0.5 ? 1 : r < 0.85 ? 2 : 3;
     const pets = await createPetsForUser(owner, petCount);
+    ownerPets[owner.id] = pets;
     totalPets += pets.length;
   }
   console.log(`[seed-demo] mascotas creadas: ${totalPets}`);
@@ -445,12 +529,20 @@ async function main() {
   }
   console.log(`[seed-demo] proveedores creados: ${providers.length}`);
 
-  // 4. Resumen
+  // 4. Crear bookings + reviews aleatorios entre dueños y vets
+  console.log("[seed-demo] creando vet_bookings + vet_reviews aleatorios...");
+  const { bookings, reviews } = await createBookingsAndReviews(owners, providers, ownerPets);
+  console.log(`[seed-demo] bookings: ${bookings} | reviews: ${reviews}`);
+
+  // 5. Resumen
   console.log("\n[seed-demo] ✅ listo");
   console.log(`  users dueños:     ${owners.length}`);
   console.log(`  mascotas:         ${totalPets}`);
   console.log(`  proveedores:      ${providers.length}`);
+  console.log(`  vet bookings:     ${bookings}`);
+  console.log(`  vet reviews:      ${reviews}`);
   console.log(`\n  Para borrar TODO: delete from auth.users where email like '%${DEMO_DOMAIN}';`);
+  console.log(`                    delete from public.service_providers where is_demo = true;`);
   console.log(`  Password de cualquier user demo: ${DEMO_PASSWORD}`);
 }
 
