@@ -20,6 +20,7 @@ import { logger } from "@/lib/logger";
 import { useOrganicRewards } from "@/hooks/useOrganicRewards";
 import { useCanAddPet } from "@/hooks/useCanAddPet";
 import { Sparkles, Crown } from "@/lib/icons";
+import { PageHeader } from "@/components/PageHeader";
 
 const personalityOptions = [
   "Juguetón", "Tranquilo", "Energético", "Cariñoso", "Tímido",
@@ -427,17 +428,17 @@ const AddPet = () => {
   }
 
   return (
-    <div className="container px-4 py-8 max-w-2xl mx-auto animate-fade-in">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">
-          {isEdit ? `Editar ${formData.name || "mascota"}` : "Agregar Nueva Mascota"}
-        </h1>
-        <p className="text-muted-foreground">
-          {isEdit
+    <div className="min-h-screen bg-background">
+      <PageHeader
+        title={isEdit ? `Editar ${formData.name || "mascota"}` : "Agregar mascota"}
+        subtitle={
+          isEdit
             ? "Actualiza los datos de tu compañero peludo."
-            : "Completa la información de tu compañero peludo"}
-        </p>
-      </div>
+            : "Completa la información de tu compañero peludo."
+        }
+        onBack={() => navigate(LINKS.myPets())}
+      />
+      <div className="container px-4 py-6 max-w-2xl mx-auto animate-fade-in">
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Basic Info Card */}
@@ -827,6 +828,7 @@ const AddPet = () => {
           </Button>
         </div>
       </form>
+      </div>
     </div>
   );
 };

@@ -8,6 +8,9 @@ import { Calendar, FileText, Syringe, Pill, Stethoscope, Activity, MapPin, User,
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AddMedicalRecord } from "@/components/AddMedicalRecord";
+import { PageHeader } from "@/components/PageHeader";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { LINKS } from "@/lib/links";
 import { MedicalDocumentsTab } from "@/components/medical/MedicalDocumentsTab";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
@@ -108,17 +111,19 @@ const MedicalRecords = () => {
   };
 
   return (
-    <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-              Historial Médico
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Gestiona y revisa el historial médico completo de tus mascotas
-            </p>
-          </div>
-        </div>
+    <div className="min-h-screen bg-background">
+      <PageHeader
+        title="Historial médico"
+        subtitle="Gestiona y revisa el historial médico de tus mascotas."
+      >
+        <Breadcrumbs
+          items={[
+            { label: "Mascotas", to: LINKS.myPets() },
+            { label: "Historial médico" },
+          ]}
+        />
+      </PageHeader>
+      <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-6">
 
         {!pets || pets.length === 0 ? (
           <Card className="border-dashed">
@@ -362,6 +367,7 @@ const MedicalRecords = () => {
           </>
         )}
       </div>
+    </div>
   );
 };
 

@@ -8,7 +8,7 @@ import { useReminders } from "@/hooks/useReminders";
 import {
   Heart, Shield, Stethoscope, FileText, Share2,
   AlertTriangle, Dog, Calendar, Activity, Clipboard, Clock,
-  ArrowLeft, Download, Plus,
+  Download, Plus,
 } from "@/lib/icons";
 
 import { Card, CardContent } from "@/components/ui/card";
@@ -28,6 +28,9 @@ import { TabAlimentacion } from "./tabs/TabAlimentacion";
 import { TabDocumentos } from "./tabs/TabDocumentos";
 import { TabCompartir } from "./tabs/TabCompartir";
 import { generatePDF } from "./pdf";
+import { PageHeader } from "@/components/PageHeader";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { LINKS } from "@/lib/links";
 
 const PetClinicalRecord = () => {
   const { petId } = useParams<{ petId: string }>();
@@ -122,17 +125,31 @@ const PetClinicalRecord = () => {
   }
 
   return (
-    <div className="container max-w-4xl mx-auto p-4 md:p-6 space-y-6">
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => navigate(-1)}
-        className="text-muted-foreground hover:text-foreground -ml-2"
+    <div className="min-h-screen bg-background">
+      <PageHeader
+        title={`Ficha clínica de ${pet.name}`}
+        subtitle="Registro veterinario completo"
+        actions={
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => generatePDF(pet, medicalRecords)}
+            className="flex items-center gap-2"
+          >
+            <Download className="h-4 w-4" />
+            <span className="hidden sm:inline">PDF</span>
+          </Button>
+        }
       >
-        <ArrowLeft className="h-4 w-4 mr-1" />
-        Volver
-      </Button>
-
+        <Breadcrumbs
+          items={[
+            { label: "Mascotas", to: LINKS.myPets() },
+            { label: pet.name },
+            { label: "Ficha clínica" },
+          ]}
+        />
+      </PageHeader>
+      <div className="container max-w-4xl mx-auto p-4 md:p-6 space-y-6">
       {userPets && userPets.length > 1 && (
         <div className="flex items-center gap-3">
           <Label className="text-sm text-muted-foreground whitespace-nowrap">Mascota:</Label>
@@ -150,24 +167,6 @@ const PetClinicalRecord = () => {
           </Select>
         </div>
       )}
-
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Ficha Clínica</h1>
-          <p className="text-sm text-muted-foreground">
-            Registro veterinario completo de {pet.name}
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => generatePDF(pet, medicalRecords)}
-          className="flex items-center gap-2"
-        >
-          <Download className="h-4 w-4" />
-          <span className="hidden sm:inline">Descargar PDF</span>
-        </Button>
-      </div>
 
       <PetHeader pet={pet} />
 
@@ -314,6 +313,7 @@ const PetClinicalRecord = () => {
           <TabCompartir petId={pet.id} />
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 };
