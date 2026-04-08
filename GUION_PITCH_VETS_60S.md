@@ -25,7 +25,7 @@ Segundo, agenda online integrada y ficha clínica digital de cada paciente,
 sin instalar nada, sin contratos largos.
 
 Y tercero, planes desde nueve mil novecientos pesos al mes,
-sin comisiones por reserva ni costos ocultos.
+con comisiones bajas y transparentes por reserva.
 
 Tus pacientes ya están en Paw Friend.
 La pregunta es si tu clínica también.
@@ -54,7 +54,7 @@ Más visibilidad en tu comuna sin invertir en publicidad.
 Ficha clínica digital de cada paciente, sin papel, sin Excel.
 Y planes desde nueve mil novecientos pesos al mes, con todo incluido.
 
-Sin comisiones por reserva. Sin contratos largos. Sin instalaciones complicadas.
+Comisiones bajas. Sin contratos largos. Sin instalaciones complicadas.
 
 Crea tu perfil hoy en pawfriend punto cl barra para vets.
 Tus próximos pacientes te están buscando ahí.
@@ -62,7 +62,7 @@ Tus próximos pacientes te están buscando ahí.
 
 **Notas para grabar:**
 - "Atiende excelente" → enfatizar el orgullo profesional
-- "Sin comisiones por reserva. Sin contratos largos." → ritmo cortante, cada frase como un punch
+- "Comisiones bajas. Sin contratos largos." → ritmo cortante, cada frase como un punch
 - "Pawfriend punto cl barra para vets" → claro, deletreado mentalmente, NO leerlo como URL pegada
 - Final → confiado, no agresivo
 
