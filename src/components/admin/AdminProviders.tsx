@@ -29,40 +29,50 @@ const AdminProviders = () => {
   const [selectedProvider, setSelectedProvider] = useState<any>(null);
   const [providerType, setProviderType] = useState<ProviderType>("walker");
 
+  /**
+   * Fetch helper que evita el join PostgREST `profiles:user_id(...)`.
+   * La FK explícita no existe en migraciones, así que el join devuelve 400.
+   * Patrón: traer la tabla principal, después traer profiles por user_ids
+   * y mergear en cliente. Mismo enfoque que `adoption_posts` post-fix.
+   */
+  const fetchWithProfiles = async (
+    table: "dog_walker_profiles" | "dogsitter_profiles" | "trainer_profiles"
+  ) => {
+    const { data: rows, error } = await supabase
+      .from(table)
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    if (!rows || rows.length === 0) return [];
+
+    const userIds = Array.from(new Set(rows.map((r: any) => r.user_id).filter(Boolean)));
+    if (userIds.length === 0) return rows.map((r: any) => ({ ...r, profiles: null }));
+
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select("id, display_name, avatar_url")
+      .in("id", userIds);
+
+    const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]));
+    return rows.map((r: any) => ({
+      ...r,
+      profiles: profileMap.get(r.user_id) || null,
+    }));
+  };
+
   const { data: walkers, isLoading: loadingWalkers } = useQuery({
     queryKey: ["admin-walkers"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("dog_walker_profiles")
-        .select("*, profiles:user_id(display_name, avatar_url)")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => fetchWithProfiles("dog_walker_profiles"),
   });
 
   const { data: sitters, isLoading: loadingSitters } = useQuery({
     queryKey: ["admin-sitters"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("dogsitter_profiles")
-        .select("*, profiles:user_id(display_name, avatar_url)")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => fetchWithProfiles("dogsitter_profiles"),
   });
 
   const { data: trainers, isLoading: loadingTrainers } = useQuery({
     queryKey: ["admin-trainers"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("trainer_profiles")
-        .select("*, profiles:user_id(display_name, avatar_url)")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => fetchWithProfiles("trainer_profiles"),
   });
 
   const verifyMutation = useMutation({

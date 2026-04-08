@@ -31,9 +31,13 @@ export default function MyBookings() {
   const { data: slots, isLoading } = useQuery({
     queryKey: ["service-slots", dateStr, filterType],
     queryFn: async () => {
+      // Refactor del join PostgREST anidado: el path
+      // service_slots → service_providers → profiles no tiene FK explícita
+      // a `profiles` y devuelve 400 Bad Request. Hacemos 3 fetches y mergeamos
+      // en cliente (mismo patrón que adoption_posts y AdminProviders).
       let query = supabase
         .from("service_slots")
-        .select("*, provider:provider_id(id, user_id, avg_rating, total_reviews, profiles:user_id(display_name, avatar_url))")
+        .select("*")
         .eq("slot_date", dateStr)
         .eq("is_active", true)
         .order("start_time");
@@ -42,9 +46,44 @@ export default function MyBookings() {
         query = query.eq("service_type", filterType);
       }
 
-      const { data, error } = await query;
+      const { data: rawSlots, error } = await query;
       if (error) throw error;
-      return data;
+      if (!rawSlots || rawSlots.length === 0) return [];
+
+      const providerIds = Array.from(
+        new Set(rawSlots.map((s: any) => s.provider_id).filter(Boolean))
+      );
+      if (providerIds.length === 0) {
+        return rawSlots.map((s: any) => ({ ...s, provider: null }));
+      }
+
+      const { data: providers } = await supabase
+        .from("service_providers")
+        .select("id, user_id, avg_rating, total_reviews")
+        .in("id", providerIds);
+
+      const userIds = Array.from(
+        new Set((providers || []).map((p: any) => p.user_id).filter(Boolean))
+      );
+      const { data: profiles } = userIds.length
+        ? await supabase
+            .from("profiles")
+            .select("id, display_name, avatar_url")
+            .in("id", userIds)
+        : { data: [] as any[] };
+
+      const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]));
+      const providerMap = new Map(
+        (providers || []).map((p: any) => [
+          p.id,
+          { ...p, profiles: profileMap.get(p.user_id) || null },
+        ])
+      );
+
+      return rawSlots.map((s: any) => ({
+        ...s,
+        provider: providerMap.get(s.provider_id) || null,
+      }));
     },
   });
 
