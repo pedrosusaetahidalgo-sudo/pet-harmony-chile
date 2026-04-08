@@ -42,3 +42,7 @@ tsconfig.node.tsbuildinfo
 
 # Claude Code worktrees
 .claude/
+
+# Scripts personales locales del dueño (no compartir en el repo)
+_clean.ps1
+_diag.ps1
