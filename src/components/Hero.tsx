@@ -64,14 +64,28 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Pet image below buttons */}
-      <div className="w-full max-w-md mt-6 rounded-2xl overflow-hidden shadow-md">
-        <img
-          src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=500&fit=crop"
-          alt="Perro feliz"
-          className="w-full h-auto object-cover"
-          loading="lazy"
-        />
+      {/* Hero media: video con fallback a imagen.
+          Cambiar HERO_VIDEO_URL por la URL del video de Kling cuando este listo.
+          Formato sugerido: MP4 H.264, 800x500, <2MB, 5-8 seg, loop friendly. */}
+      <div className="w-full max-w-md mt-6 rounded-2xl overflow-hidden shadow-md aspect-[8/5] bg-muted">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=500&fit=crop"
+          className="w-full h-full object-cover"
+        >
+          <source src="/videos/hero-pet.mp4" type="video/mp4" />
+          {/* Fallback si el navegador no soporta video o falla la carga */}
+          <img
+            src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=500&fit=crop"
+            alt="Dueño jugando con su mascota"
+            className="w-full h-full object-cover"
+            loading="lazy"
+          />
+        </video>
       </div>
     </section>
   );
