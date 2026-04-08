@@ -153,16 +153,32 @@ const Maps = () => {
     },
   });
 
-  // Fetch adoption posts
+  // Fetch adoption posts — el join PostgREST `profiles:user_id(...)` daba
+  // 400 Bad Request porque la FK no está auto-detectada en la tabla, así
+  // que hacemos dos queries y el join en cliente.
   const { data: adoptionPosts } = useQuery({
     queryKey: ["map-adoption-posts"],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: posts, error } = await supabase
         .from("adoption_posts")
-        .select(`*, profiles:user_id (display_name, avatar_url)`)
+        .select("*")
         .eq("status", "disponible");
       if (error) throw error;
-      return data || [];
+      if (!posts || posts.length === 0) return [];
+
+      const userIds = [...new Set(posts.map((p) => p.user_id).filter(Boolean))];
+      if (userIds.length === 0) return posts.map((p) => ({ ...p, profiles: null }));
+
+      const { data: profiles } = await supabase
+        .from("profiles")
+        .select("id, display_name, avatar_url")
+        .in("id", userIds);
+
+      const profileMap = new Map((profiles || []).map((pr) => [pr.id, pr]));
+      return posts.map((p) => ({
+        ...p,
+        profiles: profileMap.get(p.user_id) || null,
+      }));
     },
   });
 
