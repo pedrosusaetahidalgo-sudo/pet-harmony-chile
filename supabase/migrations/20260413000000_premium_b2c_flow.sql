@@ -2,8 +2,9 @@
 -- Decisiones tomadas:
 --   Precio: $2.990/mes y $24.990/año
 --   Modelo: 1 plan multi-mascota (no per-pet)
---   Grandfathering: users con >= 2 pets quedan libres + primeros 50 users
+--   Grandfathering: SOLO users con >= 2 pets al lanzar premium (early adopters)
 --   Sin trial
+-- Nota: la regla "primeros 50 users" fue eliminada el 2026-04-08 — todos por igual.
 --
 -- Schema preexistente:
 --   profiles tiene is_premium, premium_plan, premium_end_date, premium_start_date
@@ -20,19 +21,9 @@ comment on column public.profiles.is_grandfathered is
   'Usuario libre del paywall premium (pioneros + early adopters con >= 2 pets al lanzar premium)';
 
 -- ============================================================================
--- 2. Marcar grandfathered: primeros 50 users + cualquiera con >= 2 pets
+-- 2. Marcar grandfathered: solo users con >= 2 pets (early adopters)
 -- ============================================================================
 
--- (a) Primeros 50 users por created_at
-update public.profiles
-   set is_grandfathered = true
- where id in (
-   select id from public.profiles
-    order by created_at asc
-    limit 50
- );
-
--- (b) Cualquier user con 2+ mascotas (early adopters)
 update public.profiles p
    set is_grandfathered = true
  where exists (
