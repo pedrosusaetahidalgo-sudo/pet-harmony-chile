@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Loader2,
   CheckCircle,
   XCircle,
   Calendar,
@@ -14,81 +12,33 @@ import {
 } from "@/lib/icons";
 import { AppLayout } from "@/components/AppLayout";
 import { LINKS } from "@/lib/links";
-import { logger } from "@/lib/logger";
 
 /**
- * Página unificada de resultado de pago.
- * Reemplaza a PaymentSuccess + PaymentResult + PaymentFailed.
+ * Pagina unificada de resultado de pago.
  *
  * Estados (query param `status`):
- *  - "success" → muestra confirmación verde con número de orden
- *  - "failed"  → muestra error rojo con botón de reintentar
- *  - sin status → procesa el callback de Webpay (token_ws), llama webpay-confirm
- *                 y redirige a sí misma con `?status=success` o `?status=failed`
+ *  - "success" → muestra confirmacion verde con numero de orden
+ *  - "failed"  → muestra error rojo con boton de reintentar
+ *  - sin status → fallback a "failed" (los pagos vivos hoy son via Flow,
+ *                 que redirige siempre con status explicito)
  *
- * Las rutas legacy /payment-success y /payment-failed siguen apuntando acá.
+ * Webpay esta deprecado (Premium B2C y B2B usan Flow). El edge function
+ * webpay-confirm fue eliminado en commit chore.
  */
-type PaymentStatus = "processing" | "success" | "failed";
+type PaymentStatus = "success" | "failed";
 
 const PaymentResult = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const initialStatus = (searchParams.get("status") as PaymentStatus | null) ?? "processing";
-  const [status, setStatus] = useState<PaymentStatus>(initialStatus);
+  const initialStatus = (searchParams.get("status") as PaymentStatus | null) ?? "failed";
+  const [status] = useState<PaymentStatus>(initialStatus);
   const orderNumber = searchParams.get("order");
 
   useEffect(() => {
-    // Si ya viene con status explícito, no procesar.
-    if (initialStatus !== "processing") return;
-
-    const confirmPayment = async () => {
-      const token = searchParams.get("token_ws");
-      const orderId = searchParams.get("order_id");
-
-      if (!token && !orderId) {
-        // Usuario canceló el pago en Webpay → directo a fallido
-        setStatus("failed");
-        return;
-      }
-
-      try {
-        const { data, error } = await supabase.functions.invoke("webpay-confirm", {
-          body: { token, order_id: orderId },
-        });
-        if (error) throw error;
-
-        if (data?.success) {
-          // Redirigir a sí misma con status=success y el número de orden
-          navigate(`/payment-result?status=success&order=${data.order_number ?? ""}`, {
-            replace: true,
-          });
-        } else {
-          setStatus("failed");
-        }
-      } catch (err) {
-        logger.error("Payment confirmation error:", err);
-        setStatus("failed");
-      }
-    };
-
-    void confirmPayment();
-  }, [searchParams, navigate, initialStatus]);
+    // Sin lifecycle de procesamiento: Flow siempre vuelve con ?status=...
+  }, []);
 
   // === Render por estado ===
-  if (status === "processing") {
-    return (
-      <AppLayout>
-        <div className="container max-w-lg mx-auto px-4 py-16 text-center">
-          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-primary" />
-          <h2 className="text-xl font-semibold mb-2">Procesando tu pago…</h2>
-          <p className="text-muted-foreground">
-            Por favor espera mientras confirmamos tu transacción.
-          </p>
-        </div>
-      </AppLayout>
-    );
-  }
-
   if (status === "success") {
     return (
       <AppLayout>
