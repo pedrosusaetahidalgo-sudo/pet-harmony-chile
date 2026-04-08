@@ -126,7 +126,7 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[95vh] sm:max-h-[90vh] h-full sm:h-auto overflow-y-auto sm:rounded-lg rounded-none w-screen sm:w-auto">
+      <DialogContent className="max-w-2xl max-h-[95vh] sm:max-h-[90vh] h-full sm:h-auto overflow-y-auto sm:rounded-lg rounded-none w-full sm:w-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl bg-warm-gradient bg-clip-text text-transparent">
             Publicar Mascota en Adopción

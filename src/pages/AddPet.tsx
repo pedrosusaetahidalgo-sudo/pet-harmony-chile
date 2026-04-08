@@ -593,7 +593,9 @@ const AddPet = () => {
                 <Input
                   id="weight"
                   type="number"
+                  inputMode="decimal"
                   step="0.1"
+                  min="0"
                   value={formData.weight}
                   onChange={(e) => updateField("weight", e.target.value)}
                   placeholder="5.5"
@@ -731,6 +733,8 @@ const AddPet = () => {
                     <Input
                       id="vet_phone"
                       type="tel"
+                      inputMode="tel"
+                      autoComplete="tel"
                       value={formData.emergency_vet_phone}
                       onChange={(e) => updateField("emergency_vet_phone", e.target.value)}
                       placeholder="+56 9 1234 5678"
