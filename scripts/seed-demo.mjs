@@ -247,18 +247,18 @@ async function createDemoUser(i, opts = {}) {
     console.warn(`[seed-demo] profile ${email}:`, profileErr.message);
   }
 
-  // Subscription si premium (best effort, columnas opcionales)
+  // Subscription si premium - usamos el RPC apply_premium para esquivar
+  // el trigger plan_id roto que tiene la tabla subscriptions en remoto.
   if (isPremium) {
-    await safeInsert("subscriptions", [{
-      user_id: userId,
-      plan_type: profile.premium_plan,
-      status: "active",
-      start_date: profile.premium_start_date,
-      end_date: profile.premium_end_date,
-      payment_amount_clp: profile.premium_plan === "yearly" ? 24990 : 2990,
-      payment_provider_id: `demo-flow-${userId.slice(0, 8)}`,
-      auto_renew: true,
-    }], "subscriptions (premium)");
+    const { error: rpcErr } = await supabase.rpc("apply_premium", {
+      p_user_id: userId,
+      p_plan: profile.premium_plan,
+      p_amount_clp: profile.premium_plan === "yearly" ? 24990 : 2990,
+      p_provider_id: `demo-flow-${userId.slice(0, 8)}`,
+    });
+    if (rpcErr) {
+      console.warn(`[seed-demo] WARN apply_premium ${email}:`, rpcErr.message);
+    }
   }
 
   return { id: userId, name, email, region, isPremium };
@@ -315,7 +315,7 @@ async function createPetsForUser(user, petCount) {
     }
     pets.push({ id: insertedPet.id, name, species });
 
-    // Medical records (3-7)
+    // Medical records (3-7) — owner_id es NOT NULL, hay que pasarlo
     const recordCount = randInt(3, 7);
     const records = [];
     const types = ["vacuna", "consulta", "tratamiento", "otro"];
@@ -324,6 +324,7 @@ async function createPetsForUser(user, petCount) {
       const vaccines = species === "gato" ? VACUNAS_GATOS : VACUNAS_PERROS;
       records.push({
         pet_id: insertedPet.id,
+        owner_id: user.id,
         record_type: recordType,
         title: recordType === "vacuna" ? rand(vaccines) : `${recordType} general`,
         description: `Atención de rutina para ${name}.`,
