@@ -5,21 +5,36 @@ import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { UserCog } from "@/lib/icons";
+import { UserCog, Eye, Stethoscope } from "@/lib/icons";
 import { ProviderDirectoryCard } from "./ProviderDirectoryCard";
-import { 
-  TrendingUp, 
-  DollarSign, 
-  CreditCard, 
+import {
+  TrendingUp,
+  DollarSign,
+  CreditCard,
   Calendar,
   Loader2,
-  AlertCircle
+  AlertCircle,
 } from "@/lib/icons";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 
 const ProviderDashboard = () => {
   const { user } = useAuth();
+
+  // Slug del provider para "Ver como me ven los duenos" (preview publico)
+  const { data: providerInfo } = useQuery({
+    queryKey: ["provider-self", user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      const { data } = await supabase
+        .from("service_providers")
+        .select("id, slug, is_directory_visible")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user,
+  });
 
   const { data: dashboardData, isLoading, error } = useQuery({
     queryKey: ["provider-dashboard", user?.id],
@@ -168,12 +183,73 @@ const ProviderDashboard = () => {
             Resumen de tus ingresos y reservas
           </p>
         </div>
-        <Link to="/provider/profile-edit">
-          <Button variant="outline">
-            <UserCog className="h-4 w-4 mr-1" /> Editar mi perfil público
-          </Button>
-        </Link>
+        <div className="flex gap-2 flex-wrap">
+          {providerInfo?.slug && (
+            <Link to={`/veterinarios/${providerInfo.slug}`}>
+              <Button variant="outline">
+                <Eye className="h-4 w-4 mr-1" /> Ver cómo me ven los dueños
+              </Button>
+            </Link>
+          )}
+          <Link to="/provider/profile-edit">
+            <Button variant="outline">
+              <UserCog className="h-4 w-4 mr-1" /> Editar mi perfil público
+            </Button>
+          </Link>
+        </div>
       </div>
+
+      {/* Onboarding state: vet recien creado, sin reservas y sin perfil completo */}
+      {stats.totalBookings === 0 && (
+        <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-amber-50">
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Stethoscope className="h-5 w-5 text-emerald-600" />
+              Aún no recibes reservas. Vamos a cambiarlo.
+            </CardTitle>
+            <CardDescription>
+              3 pasos para que los dueños te encuentren en tu comuna.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <Link to="/provider/profile-edit" className="block">
+              <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-emerald-200 hover:shadow-sm transition">
+                <div>
+                  <p className="text-sm font-semibold">1. Completa tu perfil público</p>
+                  <p className="text-xs text-muted-foreground">
+                    Foto, bio, especialidades, comuna y precio.
+                  </p>
+                </div>
+                <Button size="sm" variant="ghost">→</Button>
+              </div>
+            </Link>
+            {providerInfo?.slug && (
+              <Link to={`/veterinarios/${providerInfo.slug}`} className="block">
+                <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-emerald-200 hover:shadow-sm transition">
+                  <div>
+                    <p className="text-sm font-semibold">2. Revisa cómo te ven los dueños</p>
+                    <p className="text-xs text-muted-foreground">
+                      Abre tu perfil público en una pestaña nueva.
+                    </p>
+                  </div>
+                  <Button size="sm" variant="ghost">→</Button>
+                </div>
+              </Link>
+            )}
+            <Link to="/veterinarios" className="block">
+              <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-emerald-200 hover:shadow-sm transition">
+                <div>
+                  <p className="text-sm font-semibold">3. Comparte tu URL en Instagram y WhatsApp</p>
+                  <p className="text-xs text-muted-foreground">
+                    Las primeras reservas casi siempre vienen de tu propia red.
+                  </p>
+                </div>
+                <Button size="sm" variant="ghost">→</Button>
+              </div>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Tarjeta del directorio público */}
       <ProviderDirectoryCard />

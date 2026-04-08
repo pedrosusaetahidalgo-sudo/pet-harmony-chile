@@ -10,6 +10,7 @@ import {
   Check,
   X,
   ChevronRight,
+  FileText,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -33,6 +34,11 @@ const benefits = [
     icon: Calendar,
     title: 'Reservas online integradas',
     desc: 'Tus pacientes reservan directo desde tu perfil. Tú gestionas todo desde un solo panel.',
+  },
+  {
+    icon: FileText,
+    title: 'Ficha clínica digital de cada paciente',
+    desc: 'Vacunas, alergias, peso e historial accesibles desde el dashboard. Sin papel, sin Excel, sin instalar nada.',
   },
   {
     icon: TrendingUp,
