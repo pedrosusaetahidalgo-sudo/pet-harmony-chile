@@ -96,7 +96,27 @@ export default function DirectorioVets() {
             />
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+          {/* Comuna destacada arriba: en Chile el dueno busca SIEMPRE en su
+              comuna, no en todo Santiago. Antes estaba escondida en una grid
+              de 4 columnas con los demas filtros. */}
+          <div className="mb-3">
+            <label className="text-xs font-semibold text-emerald-700 mb-1 flex items-center gap-1">
+              📍 Tu comuna
+            </label>
+            <Select value={comuna} onValueChange={setComuna}>
+              <SelectTrigger className="h-11 border-emerald-200 focus:ring-emerald-500">
+                <SelectValue placeholder="Selecciona tu comuna" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas las comunas</SelectItem>
+                {SANTIAGO_COMUNAS.map((c) => (
+                  <SelectItem key={c} value={c}>{c}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             <Select value={type} onValueChange={setType}>
               <SelectTrigger><SelectValue placeholder="Tipo" /></SelectTrigger>
               <SelectContent>
@@ -104,16 +124,6 @@ export default function DirectorioVets() {
                 <SelectItem value="individual">Individual</SelectItem>
                 <SelectItem value="home_visit">A domicilio</SelectItem>
                 <SelectItem value="clinic">Clínica</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Select value={comuna} onValueChange={setComuna}>
-              <SelectTrigger><SelectValue placeholder="Comuna" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todas las comunas</SelectItem>
-                {SANTIAGO_COMUNAS.map((c) => (
-                  <SelectItem key={c} value={c}>{c}</SelectItem>
-                ))}
               </SelectContent>
             </Select>
 

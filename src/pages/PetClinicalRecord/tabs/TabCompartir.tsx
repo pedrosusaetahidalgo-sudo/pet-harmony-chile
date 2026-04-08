@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { toast } from "sonner";
-import { Share2, Link2, Copy, Trash2 } from "@/lib/icons";
+import { Share2, Link2, Copy, Trash2, MessageCircle } from "@/lib/icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,14 @@ export function TabCompartir({ petId }: { petId: string }) {
     } catch {
       toast.error("No se pudo copiar el enlace");
     }
+  }, [getShareUrl]);
+
+  const handleWhatsApp = useCallback((token: string) => {
+    const url = getShareUrl(token);
+    const text = `Te comparto la ficha médica de mi mascota en Paw Friend: ${url}`;
+    // wa.me es link directo (no requiere API Meta), abre WhatsApp con el
+    // mensaje pre-armado y deja que el usuario elija a quien enviarlo.
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
   }, [getShareUrl]);
 
   const handleCreate = useCallback(async () => {
@@ -100,11 +108,25 @@ export function TabCompartir({ petId }: { petId: string }) {
                     </div>
                   </div>
                   <div className="flex items-center gap-1 flex-shrink-0">
+                    {!isExpired && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleWhatsApp(token.token)}
+                        title="Enviar por WhatsApp"
+                        className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 h-11 w-11"
+                        aria-label="Enviar por WhatsApp"
+                      >
+                        <MessageCircle className="h-4 w-4" />
+                      </Button>
+                    )}
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => handleCopy(token.token)}
                       title="Copiar enlace"
+                      className="h-11 w-11"
+                      aria-label="Copiar enlace"
                     >
                       <Copy className="h-4 w-4" />
                     </Button>
@@ -114,7 +136,8 @@ export function TabCompartir({ petId }: { petId: string }) {
                       onClick={() => handleRevoke(token.id)}
                       disabled={isRevoking}
                       title="Revocar enlace"
-                      className="text-destructive hover:text-destructive"
+                      className="text-destructive hover:text-destructive h-11 w-11"
+                      aria-label="Revocar enlace"
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>

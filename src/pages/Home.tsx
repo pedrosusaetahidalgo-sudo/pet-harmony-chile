@@ -448,6 +448,16 @@ export default function Home() {
                 </Button>
               </div>
             ))}
+            {(overdueReminders.length + upcomingReminders.length > 4) && (
+              <Button
+                variant="link"
+                size="sm"
+                onClick={() => navigate("/reminders")}
+                className="w-full text-xs h-8 mt-1"
+              >
+                Ver todos los recordatorios →
+              </Button>
+            )}
           </CardContent>
         </Card>
       )}
