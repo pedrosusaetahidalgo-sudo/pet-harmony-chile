@@ -274,7 +274,7 @@ export default function Home() {
             </div>
             <h2 className="text-xl font-bold text-emerald-900">Bienvenido a Paw Friend</h2>
             <p className="text-sm text-emerald-800/80 max-w-md mx-auto">
-              Para empezar, agregá tu primera mascota.
+              Para empezar, agrega tu primera mascota.
             </p>
             <Button
               onClick={goToAddPet}

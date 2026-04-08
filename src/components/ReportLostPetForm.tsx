@@ -204,7 +204,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
           </SelectContent>
         </Select>
         <p className="text-xs text-muted-foreground">
-          Si querés agregar más detalle de la dirección, ponelo en la descripción.
+          Si quieres agregar más detalle de la dirección, ponlo en la descripción.
         </p>
         {errors.last_seen_location && <p className="text-xs text-destructive">{errors.last_seen_location.message}</p>}
       </div>

@@ -12,11 +12,11 @@ const POSTGRES_MESSAGES: Record<string, string> = {
   "23503": "No se puede guardar: falta un dato relacionado o referencia inválida.",
   "23502": "Falta completar un campo obligatorio.",
   "23514": "Alguno de los datos ingresados no cumple las reglas de validación.",
-  "42501": "No tenés permisos para realizar esta acción.",
-  "42P01": "La tabla solicitada no existe. Avisá al equipo técnico.",
-  "42703": "Una columna usada por la app no existe en la base. Avisá al equipo técnico.",
+  "42501": "No tienes permisos para realizar esta acción.",
+  "42P01": "La tabla solicitada no existe. Avisa al equipo técnico.",
+  "42703": "Una columna usada por la app no existe en la base. Avisa al equipo técnico.",
   "PGRST116": "No se encontró el registro buscado.",
-  "PGRST301": "Tu sesión expiró. Iniciá sesión de nuevo.",
+  "PGRST301": "Tu sesión expiró. Inicia sesión de nuevo.",
 };
 
 /**
@@ -26,7 +26,7 @@ const POSTGRES_MESSAGES: Record<string, string> = {
  */
 export function describeSupabaseError(
   err: SupabaseLikeError,
-  fallback = "Ocurrió un error inesperado. Intentá de nuevo en unos segundos."
+  fallback = "Ocurrió un error inesperado. Inténtalo de nuevo en unos segundos."
 ): string {
   if (!err) return fallback;
   logger.error("[supabase]", {
@@ -36,8 +36,8 @@ export function describeSupabaseError(
     hint: err.hint,
   });
   if (err.code && POSTGRES_MESSAGES[err.code]) return POSTGRES_MESSAGES[err.code];
-  if (err.message?.includes("JWT")) return "Tu sesión expiró. Iniciá sesión de nuevo.";
+  if (err.message?.includes("JWT")) return "Tu sesión expiró. Inicia sesión de nuevo.";
   if (err.message?.includes("violates row-level security"))
-    return "No tenés permisos para realizar esta acción.";
+    return "No tienes permisos para realizar esta acción.";
   return fallback;
 }
