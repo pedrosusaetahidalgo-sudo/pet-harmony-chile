@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Calendar, MessageCircle, Loader2, CheckCircle2, AlertCircle } from "@/lib/icons";
+import { Calendar, MessageCircle, Loader2, CheckCircle2, AlertCircle, Trash2 } from "@/lib/icons";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -28,8 +28,10 @@ export function IntegrationsCard() {
 
   // Google Calendar state
   const [calendarConnected, setCalendarConnected] = useState(false);
+  const [googleEmail, setGoogleEmail] = useState<string | null>(null);
   const [connecting, setConnecting] = useState(false);
   const [syncing, setSyncing] = useState(false);
+  const [disconnecting, setDisconnecting] = useState(false);
 
   // Mostrar toast si volvemos del callback de Google
   useEffect(() => {
@@ -57,13 +59,17 @@ export function IntegrationsCard() {
         setWhatsappOptedIn(!!(profile as any).whatsapp_opted_in);
       }
 
-      const { data: tokenRow } = await supabase
-        .from("google_calendar_tokens" as never)
+      const { data: statusRow } = await supabase
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .select("user_id" as any)
+        .from("google_calendar_status" as any)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .select("user_id, google_email" as any)
         .eq("user_id", user.id)
         .maybeSingle();
-      setCalendarConnected(!!tokenRow);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const row = statusRow as any;
+      setCalendarConnected(!!row);
+      setGoogleEmail(row?.google_email ?? null);
     })();
   }, [user]);
 
@@ -124,6 +130,23 @@ export function IntegrationsCard() {
       toast.error("Error al sincronizar");
     } finally {
       setSyncing(false);
+    }
+  };
+
+  const handleDisconnectCalendar = async () => {
+    if (!confirm("¿Seguro que querés desconectar Google Calendar? Tu calendario \"Paw Friend\" quedará en tu Google, podés borrarlo manualmente si querés.")) return;
+    setDisconnecting(true);
+    try {
+      const { error } = await supabase.functions.invoke("google-calendar-disconnect");
+      if (error) throw error;
+      setCalendarConnected(false);
+      setGoogleEmail(null);
+      toast.success("Google Calendar desconectado");
+    } catch (err) {
+      console.error(err);
+      toast.error("No se pudo desconectar");
+    } finally {
+      setDisconnecting(false);
     }
   };
 
@@ -206,6 +229,11 @@ export function IntegrationsCard() {
                 <p className="text-xs text-muted-foreground">
                   Sincroniza recordatorios y citas con tu calendario de Google.
                 </p>
+                {calendarConnected && googleEmail && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Cuenta: <span className="font-medium text-foreground">{googleEmail}</span>
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -231,7 +259,16 @@ export function IntegrationsCard() {
                   Sincronizar ahora
                 </Button>
                 <Button onClick={handleConnectCalendar} variant="outline" size="sm">
-                  Reconectar
+                  Cambiar cuenta
+                </Button>
+                <Button
+                  onClick={handleDisconnectCalendar}
+                  variant="outline"
+                  size="sm"
+                  disabled={disconnecting}
+                  className="text-destructive hover:text-destructive"
+                >
+                  {disconnecting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                 </Button>
               </>
             )}

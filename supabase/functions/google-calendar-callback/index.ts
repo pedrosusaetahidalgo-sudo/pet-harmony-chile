@@ -46,7 +46,21 @@ async function exchangeCodeForTokens(code: string, clientId: string, clientSecre
   };
 }
 
-async function createPawFriendCalendar(accessToken: string) {
+async function findOrCreatePawFriendCalendar(accessToken: string) {
+  // 1. Buscar si ya existe un calendario "Paw Friend"
+  const listResp = await fetch("https://www.googleapis.com/calendar/v3/users/me/calendarList", {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (listResp.ok) {
+    const list = await listResp.json();
+    const existing = (list.items ?? []).find(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (cal: any) => cal.summary === "Paw Friend" && cal.accessRole === "owner"
+    );
+    if (existing) return existing.id as string;
+  }
+
+  // 2. No existe, crear uno nuevo
   const resp = await fetch("https://www.googleapis.com/calendar/v3/calendars", {
     method: "POST",
     headers: {
@@ -62,6 +76,19 @@ async function createPawFriendCalendar(accessToken: string) {
   const json = await resp.json();
   if (!resp.ok) throw new Error(`Create calendar failed: ${JSON.stringify(json)}`);
   return json.id as string;
+}
+
+async function fetchGoogleEmail(accessToken: string): Promise<string | null> {
+  try {
+    const resp = await fetch("https://www.googleapis.com/oauth2/v2/userinfo", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    if (!resp.ok) return null;
+    const json = await resp.json();
+    return json.email || null;
+  } catch {
+    return null;
+  }
 }
 
 serve(async (req) => {
@@ -97,14 +124,17 @@ serve(async (req) => {
     const tokens = await exchangeCodeForTokens(code, clientId, clientSecret, redirectUri);
     const expiresAt = new Date(Date.now() + tokens.expires_in * 1000).toISOString();
 
-    // Crear el calendario "Paw Friend" dentro del Google del user
+    // Buscar o crear el calendario "Paw Friend" dentro del Google del user
+    // (reusa el existente para no crear duplicados al reconectar)
     let calendarId: string | null = null;
     try {
-      calendarId = await createPawFriendCalendar(tokens.access_token);
+      calendarId = await findOrCreatePawFriendCalendar(tokens.access_token);
     } catch (err) {
-      console.warn("[google-calendar-callback] create calendar failed:", err);
-      // No es fatal: el sync usará "primary" si esto falla
+      console.warn("[google-calendar-callback] find/create calendar failed:", err);
     }
+
+    // Email del user de Google (para mostrar en Settings)
+    const googleEmail = await fetchGoogleEmail(tokens.access_token);
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
@@ -119,6 +149,7 @@ serve(async (req) => {
       expires_at: expiresAt,
       calendar_id: calendarId,
       scope: tokens.scope,
+      google_email: googleEmail,
       updated_at: new Date().toISOString(),
     }, { onConflict: "user_id" });
 

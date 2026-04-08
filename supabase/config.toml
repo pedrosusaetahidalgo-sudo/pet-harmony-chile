@@ -65,3 +65,6 @@ verify_jwt = false  # callback de Google, sin user context
 
 [functions.google-calendar-sync]
 verify_jwt = false  # auth manual via getUser(token)
+
+[functions.google-calendar-disconnect]
+verify_jwt = false  # auth manual via getUser(token)
