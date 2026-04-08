@@ -21,7 +21,6 @@ export function useCanAddPet() {
     queryKey: ["can-add-pet", user?.id],
     enabled: !!user?.id,
     queryFn: async (): Promise<CanAddPetResult> => {
-      // @ts-expect-error RPC types se regeneran tras aplicar migracion 20260413000000
       const { data, error } = await supabase.rpc("can_add_pet", { p_user_id: user!.id });
       if (error) throw error;
       return data as unknown as CanAddPetResult;
