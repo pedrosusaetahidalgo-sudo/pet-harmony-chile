@@ -1,0 +1,101 @@
+/**
+ * Reglas centralizadas de routing y redirecciones de Paw Friend.
+ *
+ * Este archivo es documental + helper. Las rutas reales viven en `App.tsx`,
+ * pero las reglas de a quien dejar entrar y a donde mandarlo cuando algo
+ * sale "raro" se concentran aca para evitar inconsistencias.
+ *
+ * Si modificas estas reglas, actualiza tambien:
+ *  - `App.tsx` (donde se aplica `<ProtectedRoute>` / `<PublicWithLayoutIfAuth>`)
+ *  - `ProtectedRoute.tsx` (redirige no-auth a `/auth?returnTo=...`)
+ *  - `Auth.tsx` (consume `returnTo` post-login)
+ *  - `Index.tsx` (redirige usuarios logueados a `/home`)
+ */
+
+/**
+ * Rutas publicas: cualquiera (con o sin sesion) puede entrar.
+ * El layout de app (sidebar + bottom nav) NO se aplica si el user no tiene
+ * sesion; si la tiene, algunas rutas igual envuelven con `AppLayout` para
+ * sentirse parte de la app.
+ */
+export const PUBLIC_ROUTES = [
+  "/",                                  // Landing (redirige a /home si user logueado)
+  "/auth",                              // Login / signup
+  "/terms",
+  "/privacy",
+  "/para-veterinarios",                 // Pitch B2B
+  "/registro-veterinario",              // Onboarding vet
+  "/veterinarios",                      // Directorio publico (SEO)
+  "/veterinarios/comuna/:comuna",
+  "/veterinarios/especialidad/:especialidad",
+  "/veterinarios/:slug",                // Perfil publico vet
+  "/resena/:token",                     // Dejar resena via link temporal
+  "/demo",                              // Demo interna
+] as const;
+
+/**
+ * Rutas protegidas: requieren sesion. Si el user no esta logueado,
+ * `<ProtectedRoute>` lo redirige a `/auth?returnTo=<ruta-original>`.
+ */
+export const PROTECTED_ROUTES = [
+  "/home",
+  "/feed",
+  "/actividad",
+  "/my-pets",
+  "/add-pet",
+  "/edit-pet/:petId",
+  "/pet/:petId/clinical",
+  "/medical-records",
+  "/adoption",
+  "/paw-game",
+  "/servicios",
+  "/services/:type",
+  "/maps",
+  "/chat",
+  "/chat/:conversationId",
+  "/profile",
+  "/user/:userId",
+  "/settings",
+  "/upgrade",
+  "/upgrade/success",
+  "/upgrade/cancel",
+  "/payment-result",
+  "/mis-reservas",
+  "/peluquero/perfil",
+  "/provider/dashboard",
+  "/provider/profile-edit",
+] as const;
+
+/**
+ * Rutas que requieren rol admin (`<AdminRoute>`).
+ */
+export const ADMIN_ROUTES = ["/admin"] as const;
+
+/**
+ * Reglas de redireccion: cuando un user en cierto estado entra a cierta ruta,
+ * a donde lo mandamos. Estas reglas se aplican en los componentes destino
+ * (no en un middleware central) porque dependen de hooks de React.
+ *
+ * | Estado          | Ruta entrada       | Destino                       |
+ * |-----------------|--------------------|-------------------------------|
+ * | NO logueado     | `/`                | (mostrar landing publica)     |
+ * | SI logueado     | `/`                | `/home` (Index.tsx redirect)  |
+ * | NO logueado     | cualquier protegida| `/auth?returnTo=<original>`   |
+ * | NO logueado     | `/auth`            | (mostrar form)                |
+ * | SI logueado     | `/auth`            | TODO: decidir (hoy: form)     |
+ * | post-login      | -                  | `returnTo` || rol-default     |
+ * | post-logout     | -                  | `/auth`                       |
+ * | 404 real        | cualquier sin match| `<NotFound>` con CTAs         |
+ */
+export const AUTH_REDIRECTS = {
+  /** Usuario logueado entra a la landing */
+  loggedInOnLanding: "/home",
+  /** Default post-login para owners con mascotas */
+  ownerWithPets: "/home",
+  /** Default post-login para owners sin mascotas */
+  ownerWithoutPets: "/add-pet",
+  /** Default post-login para vets/providers */
+  provider: "/provider/dashboard",
+  /** Post-logout */
+  afterLogout: "/auth",
+} as const;

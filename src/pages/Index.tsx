@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 import { LINKS } from "@/lib/links";
 import { PublicHeader } from "@/components/PublicHeader";
 import { LegalFooter } from "@/components/LegalFooter";
@@ -97,6 +99,15 @@ const FAQ = [
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
+
+  // Si el usuario ya esta logueado, la landing publica no tiene sentido:
+  // lo mandamos directo al feed/home post-login. Evita doble click obligado.
+  useEffect(() => {
+    if (!authLoading && user) {
+      navigate(LINKS.home(), { replace: true });
+    }
+  }, [user, authLoading, navigate]);
 
   return (
     <div className="min-h-screen bg-background">
