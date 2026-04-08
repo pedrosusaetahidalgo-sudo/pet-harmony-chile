@@ -1,7 +1,8 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home as HomeIcon, PawPrint, Stethoscope, MessageSquare, User } from "@/lib/icons";
+import { Home as HomeIcon, PawPrint, Stethoscope, Bell, User } from "@/lib/icons";
 import { LINKS } from "@/lib/links";
 import { cn } from "@/lib/utils";
+import { useReminders } from "@/hooks/useReminders";
 
 /**
  * Bottom tab bar nativa para mobile (pivot médico).
@@ -11,8 +12,12 @@ import { cn } from "@/lib/utils";
  *  - Inicio (Home)
  *  - Mascotas (Mis Mascotas)
  *  - Buscar vet (directorio público)
- *  - Mensajes
+ *  - Recordatorios (con badge de vencidos / próximos 24h)
  *  - Perfil
+ *
+ * Nota: Mensajes (chat) salio del bottom nav. Se accede desde el Header
+ * superior y desde el drawer/sidebar. Recordatorios entra porque es la
+ * accion fundamental que el usuario olvida (y la promesa core del producto).
  *
  * Respeta safe-area-bottom para iPhones con notch / Android gesture bar.
  */
@@ -23,46 +28,56 @@ interface Tab {
   href: string;
   /** Rutas que mantienen la tab activa (ej: /pet/:id activa "Mascotas") */
   matchPaths: (path: string) => boolean;
+  /** Si la tab tiene badge, retorna el numero (0 = oculto) */
+  badge?: number;
 }
-
-const TABS: Tab[] = [
-  {
-    label: "Inicio",
-    icon: HomeIcon,
-    href: LINKS.home(),
-    matchPaths: (p) => p === "/home",
-  },
-  {
-    label: "Mascotas",
-    icon: PawPrint,
-    href: LINKS.myPets(),
-    matchPaths: (p) =>
-      p === "/my-pets" || p === "/add-pet" || p.startsWith("/pet/") || p.startsWith("/edit-pet/"),
-  },
-  {
-    label: "Buscar vet",
-    icon: Stethoscope,
-    href: LINKS.vets(),
-    matchPaths: (p) => p.startsWith("/veterinarios"),
-  },
-  {
-    label: "Mensajes",
-    icon: MessageSquare,
-    href: LINKS.chat(),
-    matchPaths: (p) => p.startsWith("/chat"),
-  },
-  {
-    label: "Perfil",
-    icon: User,
-    href: LINKS.profile(),
-    matchPaths: (p) => p === "/profile" || p === "/settings",
-  },
-];
 
 export function BottomTabBar() {
   const navigate = useNavigate();
   const location = useLocation();
   const currentPath = location.pathname;
+  const { overdueReminders, upcomingReminders } = useReminders();
+
+  // Badge: vencidos + proximos 24h (today/tomorrow)
+  const now = new Date();
+  const in24h = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+  const dueSoon = upcomingReminders.filter((r) => new Date(r.due_date) <= in24h).length;
+  const reminderBadge = overdueReminders.length + dueSoon;
+
+  const TABS: Tab[] = [
+    {
+      label: "Inicio",
+      icon: HomeIcon,
+      href: LINKS.home(),
+      matchPaths: (p) => p === "/home",
+    },
+    {
+      label: "Mascotas",
+      icon: PawPrint,
+      href: LINKS.myPets(),
+      matchPaths: (p) =>
+        p === "/my-pets" || p === "/add-pet" || p.startsWith("/pet/") || p.startsWith("/edit-pet/"),
+    },
+    {
+      label: "Vets",
+      icon: Stethoscope,
+      href: LINKS.vets(),
+      matchPaths: (p) => p.startsWith("/veterinarios"),
+    },
+    {
+      label: "Recordatorios",
+      icon: Bell,
+      href: "/reminders",
+      matchPaths: (p) => p === "/reminders",
+      badge: reminderBadge,
+    },
+    {
+      label: "Perfil",
+      icon: User,
+      href: LINKS.profile(),
+      matchPaths: (p) => p === "/profile" || p === "/settings",
+    },
+  ];
 
   return (
     <nav
@@ -87,10 +102,20 @@ export function BottomTabBar() {
               aria-label={tab.label}
               aria-current={active ? "page" : undefined}
             >
-              <Icon
-                className={cn("h-5 w-5", active && "fill-emerald-600/10")}
-                strokeWidth={active ? 2.5 : 2}
-              />
+              <div className="relative">
+                <Icon
+                  className={cn("h-5 w-5", active && "fill-emerald-600/10")}
+                  strokeWidth={active ? 2.5 : 2}
+                />
+                {tab.badge && tab.badge > 0 ? (
+                  <span
+                    className="absolute -top-1.5 -right-2 min-w-[16px] h-[16px] px-1 rounded-full bg-rose-600 text-white text-[9px] font-bold flex items-center justify-center leading-none"
+                    aria-label={`${tab.badge} pendientes`}
+                  >
+                    {tab.badge > 9 ? "9+" : tab.badge}
+                  </span>
+                ) : null}
+              </div>
               <span className={cn("text-[10px]", active && "font-semibold")}>
                 {tab.label}
               </span>

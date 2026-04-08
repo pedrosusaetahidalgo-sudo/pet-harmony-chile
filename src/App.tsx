@@ -64,6 +64,7 @@ const RegistroVeterinario = lazy(() => import("./pages/RegistroVeterinario"));
 const ParaVeterinarios = lazy(() => import("./pages/ParaVeterinarios"));
 const DejarResena = lazy(() => import("./pages/DejarResena"));
 const Actividad = lazy(() => import("./pages/Actividad"));
+const Reminders = lazy(() => import("./pages/Reminders"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -100,6 +101,7 @@ const App = () => (
               <Route path="/add-pet" element={<ProtectedRoute><AppLayout><AddPet /></AppLayout></ProtectedRoute>} />
               <Route path="/edit-pet/:petId" element={<ProtectedRoute><AppLayout><AddPet /></AppLayout></ProtectedRoute>} />
               <Route path="/medical-records" element={<ProtectedRoute><AppLayout><MedicalRecords /></AppLayout></ProtectedRoute>} />
+              <Route path="/reminders" element={<ProtectedRoute><AppLayout><Reminders /></AppLayout></ProtectedRoute>} />
               <Route path="/adoption" element={<ProtectedRoute><AppLayout><Adoption /></AppLayout></ProtectedRoute>} />
 
               <Route path="/paw-game" element={<ProtectedRoute><AppLayout><PawGame /></AppLayout></ProtectedRoute>} />
