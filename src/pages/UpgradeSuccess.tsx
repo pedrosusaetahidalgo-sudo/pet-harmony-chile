@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Crown, CheckCircle } from "@/lib/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { LINKS } from "@/lib/links";
+import { PageHeader } from "@/components/PageHeader";
 
 export default function UpgradeSuccess() {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ export default function UpgradeSuccess() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
+      <PageHeader title="Pago" onBack={() => navigate(LINKS.profile())} />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"

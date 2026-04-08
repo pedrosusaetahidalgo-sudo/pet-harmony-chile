@@ -1,12 +1,16 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/PageHeader";
+import { LINKS } from "@/lib/links";
 
 export default function UpgradeCancel() {
   const navigate = useNavigate();
 
   return (
-    <div className="container px-4 py-12 max-w-md mx-auto animate-fade-in">
+    <div className="min-h-screen bg-background">
+      <PageHeader title="Pago" onBack={() => navigate(LINKS.profile())} />
+      <div className="container px-4 py-12 max-w-md mx-auto animate-fade-in">
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Pago cancelado</CardTitle>
@@ -23,6 +27,7 @@ export default function UpgradeCancel() {
           </Button>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }

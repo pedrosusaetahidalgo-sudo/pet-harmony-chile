@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { LINKS } from "@/lib/links";
+import { PageHeader } from "@/components/PageHeader";
 
 type Plan = "monthly" | "yearly";
 
@@ -52,6 +53,7 @@ export default function Upgrade() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
+      <PageHeader title="Plan Premium" onBack={() => navigate(LINKS.profile())} />
       {/* Fondo dorado sutil */}
       <div
         aria-hidden

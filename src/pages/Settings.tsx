@@ -16,7 +16,6 @@ import {
   Shield,
   Info,
   LogOut,
-  ArrowLeft,
   Save,
   Loader2,
 } from "@/lib/icons";
@@ -25,6 +24,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/lib/logger";
 import { IntegrationsCard } from "@/components/settings/IntegrationsCard";
+import { PageHeader } from "@/components/PageHeader";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -165,15 +165,9 @@ const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background p-4 md:p-8">
-      <div className="max-w-2xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <h1 className="text-2xl font-bold">Configuración</h1>
-        </div>
+    <div className="min-h-screen bg-background">
+      <PageHeader title="Configuración" />
+      <div className="max-w-2xl mx-auto p-4 md:p-8 space-y-6">
 
         {/* Section 1: Mi Perfil */}
         <Card>
