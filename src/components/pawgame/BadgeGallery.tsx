@@ -162,7 +162,7 @@ export const BadgeGallery = ({ badges, userBadges }: BadgeGalleryProps) => {
             <div className="text-right">
               <div className="flex items-center gap-1">
                 <Sparkles className="h-5 w-5 text-yellow-500" />
-                <span className="text-lg font-bold">{Math.round((earnedCount / totalCount) * 100)}%</span>
+                <span className="text-lg font-bold">{totalCount > 0 ? Math.round((earnedCount / totalCount) * 100) : 0}%</span>
               </div>
               <p className="text-xs text-muted-foreground">Completado</p>
             </div>

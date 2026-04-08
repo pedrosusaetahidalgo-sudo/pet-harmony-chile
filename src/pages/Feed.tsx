@@ -161,7 +161,7 @@ const Feed = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold mb-1 bg-warm-gradient bg-clip-text text-transparent">
-                Pet Social
+                Red Social
               </h1>
               <p className="text-xs sm:text-sm text-muted-foreground">
                 Descubre las aventuras de otras mascotas

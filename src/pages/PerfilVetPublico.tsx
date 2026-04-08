@@ -191,7 +191,7 @@ export default function PerfilVetPublico() {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-amber-50">
-        <PublicHeader />
+        {!user && <PublicHeader />}
         <main className="container mx-auto px-4 py-8 max-w-4xl space-y-4">
           <Skeleton className="h-48 w-full" />
           <Skeleton className="h-32 w-full" />
@@ -203,7 +203,7 @@ export default function PerfilVetPublico() {
   if (!v) {
     return (
       <div className="min-h-screen bg-amber-50">
-        <PublicHeader />
+        {!user && <PublicHeader />}
         <main className="container mx-auto px-4 py-16 max-w-md text-center">
           <h1 className="text-2xl font-bold mb-2">Veterinario no encontrado</h1>
           <p className="text-muted-foreground mb-4">
@@ -225,7 +225,7 @@ export default function PerfilVetPublico() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
-      <PublicHeader />
+      {!user && <PublicHeader />}
 
       <main className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
         {isDemo && (

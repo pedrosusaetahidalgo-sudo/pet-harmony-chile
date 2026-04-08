@@ -129,7 +129,20 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
     try {
       let imageUrl = null;
       if (imageFile) {
-        imageUrl = await uploadImage();
+        try {
+          imageUrl = await uploadImage();
+        } catch (uploadErr) {
+          logger.error("[CreatePost] image upload failed", uploadErr);
+          toast({
+            title: "No pudimos subir la foto",
+            description:
+              describeSupabaseError(uploadErr as Parameters<typeof describeSupabaseError>[0]) ||
+              "Revisa tu conexión y vuelve a intentar. Tu texto no se perdió.",
+            variant: "destructive",
+          });
+          setIsSubmitting(false);
+          return;
+        }
       }
 
       const { data: post, error } = await supabase.from("posts").insert({
@@ -139,7 +152,10 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
         pet_id: petId || null,
       }).select().maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        logger.error("[CreatePost] posts insert failed", error);
+        throw error;
+      }
 
       // Award points for creating post
       try {
@@ -164,9 +180,12 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
       removeImage();
       onSuccess?.();
     } catch (error: any) {
+      logger.error("[CreatePost] handleSubmit failed", error);
       toast({
-        title: "Error",
-        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo crear la publicación",
+        title: "No pudimos guardar tu publicación",
+        description:
+          describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
+          "Inténtalo de nuevo en unos segundos. Tu texto y foto siguen aquí.",
         variant: "destructive",
       });
     } finally {

@@ -9,8 +9,17 @@ import { es } from "date-fns/locale";
 
 export function calculateAge(birthDate: string): string {
   const birth = new Date(birthDate);
+  if (isNaN(birth.getTime())) return "Edad no disponible";
+
   const now = new Date();
+  if (birth > now) return "Edad no disponible";
+
   const years = differenceInYears(now, birth);
+
+  // Defensive clamp: ninguna mascota doméstica supera ~30 años. Si la fecha
+  // ingresada da un valor absurdo, lo más probable es un typo del usuario.
+  if (years > 30) return "Revisa la fecha de nacimiento";
+
   const months = differenceInMonths(now, birth) % 12;
 
   if (years === 0 && months === 0) return "Menos de 1 mes";

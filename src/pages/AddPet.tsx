@@ -187,9 +187,24 @@ const AddPet = () => {
     }
 
     // Validate birth_date if provided
-    if (formData.birth_date && new Date(formData.birth_date) > new Date()) {
-      toast({ title: "Error", description: "La fecha de nacimiento no puede ser en el futuro", variant: "destructive" });
-      return;
+    if (formData.birth_date) {
+      const birth = new Date(formData.birth_date);
+      const now = new Date();
+      if (birth > now) {
+        toast({ title: "Error", description: "La fecha de nacimiento no puede ser en el futuro", variant: "destructive" });
+        return;
+      }
+      const maxYears = formData.species === "gato" ? 30 : 25;
+      const minBirth = new Date();
+      minBirth.setFullYear(now.getFullYear() - maxYears);
+      if (birth < minBirth) {
+        toast({
+          title: "Fecha de nacimiento no válida",
+          description: `Revisa la fecha: la edad máxima esperada para ${formData.species === "gato" ? "un gato" : "un perro u otra mascota"} es de ${maxYears} años.`,
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     // Validate adoption_date if provided
@@ -509,6 +524,12 @@ const AddPet = () => {
                   id="birth_date"
                   type="date"
                   value={formData.birth_date}
+                  max={new Date().toISOString().split("T")[0]}
+                  min={(() => {
+                    const d = new Date();
+                    d.setFullYear(d.getFullYear() - 30);
+                    return d.toISOString().split("T")[0];
+                  })()}
                   onChange={(e) => updateField("birth_date", e.target.value)}
                 />
               </div>

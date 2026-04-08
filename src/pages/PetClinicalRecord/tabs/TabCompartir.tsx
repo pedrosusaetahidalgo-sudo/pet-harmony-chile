@@ -44,13 +44,13 @@ export function TabCompartir({ petId }: { petId: string }) {
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
             <Share2 className="h-4 w-4 text-emerald-600" />
-            Compartir ficha clinica
+            Compartir ficha clínica
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-sm text-muted-foreground">
-            Genera un enlace seguro para compartir la ficha clinica de tu mascota con un veterinario.
-            Los enlaces expiran automaticamente despues de 30 dias.
+            Genera un enlace seguro para compartir la ficha clínica de tu mascota con un veterinario.
+            Los enlaces expiran automáticamente después de 30 días.
           </p>
           <Button
             onClick={handleCreate}
@@ -126,7 +126,7 @@ export function TabCompartir({ petId }: { petId: string }) {
         <EmptyState
           icon={Link2}
           title="Sin enlaces activos"
-          description="Genera un enlace para compartir la ficha clinica con tu veterinario."
+          description="Genera un enlace para compartir la ficha clínica con tu veterinario."
         />
       )}
     </div>

@@ -77,7 +77,7 @@ export function PetAssistant({ petId, petName, onClose }: Props) {
             <div className="text-center py-4">
               <Sparkles className="h-8 w-8 text-primary/30 mx-auto mb-2" />
               <p className="text-xs text-muted-foreground">
-                Preguntame sobre {petName}. Conozco su ficha clinica completa.
+                Pregúntame sobre {petName}. Conozco su ficha clínica completa.
               </p>
               <div className="flex flex-wrap gap-1.5 justify-center mt-3">
                 {[

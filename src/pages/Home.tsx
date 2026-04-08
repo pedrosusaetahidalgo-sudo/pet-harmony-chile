@@ -380,7 +380,7 @@ export default function Home() {
             <StatusCard
               icon={TrendingUp}
               title="Racha paseos"
-              value={streakDays > 0 ? `${streakDays} días` : "Empezá hoy"}
+              value={streakDays > 0 ? `${streakDays} ${streakDays === 1 ? "día" : "días"}` : "Empieza hoy"}
               accent={streakDays > 0 ? "success" : "default"}
               onClick={() => navigate(LINKS.pawGame())}
             />

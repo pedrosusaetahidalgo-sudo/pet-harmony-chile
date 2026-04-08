@@ -134,7 +134,7 @@ export function IntegrationsCard() {
   };
 
   const handleDisconnectCalendar = async () => {
-    if (!confirm("¿Seguro que querés desconectar Google Calendar? Tu calendario \"Paw Friend\" quedará en tu Google, podés borrarlo manualmente si querés.")) return;
+    if (!confirm("¿Seguro que quieres desconectar Google Calendar? Tu calendario \"Paw Friend\" quedará en tu Google, puedes borrarlo manualmente si quieres.")) return;
     setDisconnecting(true);
     try {
       const { error } = await supabase.functions.invoke("google-calendar-disconnect");

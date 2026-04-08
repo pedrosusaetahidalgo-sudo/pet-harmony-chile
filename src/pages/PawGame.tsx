@@ -130,7 +130,7 @@ function StreakSection({ streakDays, lastActivity, onCheckIn }: {
             <div className="text-center">
               <Flame className="h-8 w-8 text-white mx-auto mb-1" />
               <div className="text-3xl font-bold text-white">{streakDays}</div>
-              <div className="text-xs text-white/80">días</div>
+              <div className="text-xs text-white/80">{streakDays === 1 ? "día" : "días"}</div>
             </div>
             <div>
               <h3 className="text-lg font-bold text-white">Racha Diaria</h3>
@@ -138,8 +138,8 @@ function StreakSection({ streakDays, lastActivity, onCheckIn }: {
                 {streakDays === 0
                   ? "¡Empieza tu racha hoy!"
                   : streakDays < 7
-                  ? `¡${7 - streakDays} días para tu primera semana!`
-                  : `¡Increíble! ${streakDays} días seguidos`}
+                  ? `¡${7 - streakDays} ${7 - streakDays === 1 ? "día" : "días"} para tu primera semana!`
+                  : `¡Increíble! ${streakDays} ${streakDays === 1 ? "día" : "días"} seguidos`}
               </p>
             </div>
           </div>
@@ -350,7 +350,7 @@ const PawGame = () => {
       }
 
       if (result.awarded) {
-        toast.success(`¡Check-in diario! +${result.points} PawPoints 🔥 Racha: ${newStreak} días`);
+        toast.success(`¡Check-in diario! +${result.points} PawPoints 🔥 Racha: ${newStreak} ${newStreak === 1 ? "día" : "días"}`);
       } else if (result.error === 'Daily limit reached') {
         toast.info("Ya hiciste check-in hoy. ¡Vuelve mañana!");
       }
@@ -540,7 +540,7 @@ const PawGame = () => {
                       </li>
                       <li className="flex items-start gap-2">
                         <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span><strong>Publicaciones:</strong> Comparte momentos en Pet Social - +5 pts</span>
+                        <span><strong>Publicaciones:</strong> Comparte momentos en Red Social - +5 pts</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />

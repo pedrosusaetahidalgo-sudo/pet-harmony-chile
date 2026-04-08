@@ -14,6 +14,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDirectoryVets, type DirectoryVetFilters } from '@/hooks/useDirectoryVets';
+import { useAuth } from '@/hooks/useAuth';
 import {
   SANTIAGO_COMUNAS,
   VET_SPECIALTIES,
@@ -64,9 +65,14 @@ export default function DirectorioVets() {
     });
   }, [comuna, specialty, comunaParam, espParam]);
 
+  // Cuando el user está logueado, la página se monta dentro de AppLayout
+  // (que ya trae header + sidebar), por lo que NO debemos renderizar el
+  // PublicHeader: si lo hacemos quedan dos headers superpuestos.
+  const { user } = useAuth();
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
-      <PublicHeader />
+      {!user && <PublicHeader />}
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="text-center mb-8">

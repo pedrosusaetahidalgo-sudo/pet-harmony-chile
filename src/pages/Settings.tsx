@@ -36,6 +36,7 @@ const Settings = () => {
   const [location, setLocation] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [saving, setSaving] = useState(false);
+  const [profileLoaded, setProfileLoaded] = useState(false);
 
   const avatarSeeds = ["Luna", "Rocky", "Simba", "Nala", "Max", "Miso", "Buddy", "Pelusa", "Canela", "Toby"];
   const avatarColors = [
@@ -67,16 +68,20 @@ const Settings = () => {
         .eq("id", user.id)
         .maybeSingle();
 
+      if (error) {
+        logger.error("Error loading profile:", error);
+        toast({ title: "Error", description: "No se pudo cargar el perfil", variant: "destructive" });
+        // No marcamos profileLoaded=true para evitar que un save posterior
+        // sobreescriba la fila con strings vacíos si el load falló.
+        return;
+      }
       if (data) {
         setDisplayName(data.display_name || "");
         setBio(data.bio || "");
         setLocation(data.location || "");
         setAvatarUrl(data.avatar_url || "");
       }
-      if (error) {
-        logger.error("Error loading profile:", error);
-        toast({ title: "Error", description: "No se pudo cargar el perfil", variant: "destructive" });
-      }
+      setProfileLoaded(true);
     };
 
     loadProfile();
@@ -105,6 +110,17 @@ const Settings = () => {
 
   const handleSaveProfile = async () => {
     if (!user) return;
+    // Guardia anti data-loss: no permitimos guardar si el profile aún no se
+    // cargó. Sin esto, un click prematuro (o un re-render durante otro flow
+    // como desconectar Google Calendar) sobreescribiría display_name/bio/
+    // location con strings vacíos y dejaría el perfil "reseteado".
+    if (!profileLoaded) {
+      toast({
+        title: "Espera un momento",
+        description: "Estamos cargando tu perfil. Intenta guardar en unos segundos.",
+      });
+      return;
+    }
 
     setSaving(true);
     const { error } = await supabase
@@ -156,7 +172,7 @@ const Settings = () => {
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-5 w-5" />
           </Button>
-          <h1 className="text-2xl font-bold">Configuracion</h1>
+          <h1 className="text-2xl font-bold">Configuración</h1>
         </div>
 
         {/* Section 1: Mi Perfil */}
@@ -247,7 +263,7 @@ const Settings = () => {
               <Label htmlFor="bio">Bio</Label>
               <Textarea
                 id="bio"
-                placeholder="Cuentanos sobre ti y tus mascotas..."
+                placeholder="Cuéntanos sobre ti y tus mascotas..."
                 value={bio}
                 onChange={(e) => setBio(e.target.value)}
                 rows={3}
@@ -255,7 +271,7 @@ const Settings = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="location">Ubicacion</Label>
+              <Label htmlFor="location">Ubicación</Label>
               <Input
                 id="location"
                 placeholder="Ej: Santiago, Chile"
@@ -264,7 +280,7 @@ const Settings = () => {
               />
             </div>
 
-            <Button onClick={handleSaveProfile} disabled={saving} className="w-full">
+            <Button onClick={handleSaveProfile} disabled={saving || !profileLoaded} className="w-full">
               {saving ? (
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               ) : (
@@ -285,13 +301,13 @@ const Settings = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label className="text-muted-foreground">Correo electronico</Label>
+              <Label className="text-muted-foreground">Correo electrónico</Label>
               <p className="font-medium mt-1">{user?.email}</p>
             </div>
             <Separator />
             <Button variant="destructive" onClick={handleSignOut} className="w-full">
               <LogOut className="h-4 w-4 mr-2" />
-              Cerrar sesion
+              Cerrar sesión
             </Button>
           </CardContent>
         </Card>
@@ -350,8 +366,8 @@ const Settings = () => {
             >
               <Shield className="h-5 w-5 mr-3 text-muted-foreground" />
               <div className="text-left">
-                <p className="font-medium">Terminos y Condiciones</p>
-                <p className="text-sm text-muted-foreground">Lee nuestros terminos de uso</p>
+                <p className="font-medium">Términos y Condiciones</p>
+                <p className="text-sm text-muted-foreground">Lee nuestros términos de uso</p>
               </div>
             </Button>
             <Separator />
@@ -362,8 +378,8 @@ const Settings = () => {
             >
               <Shield className="h-5 w-5 mr-3 text-muted-foreground" />
               <div className="text-left">
-                <p className="font-medium">Politica de Privacidad</p>
-                <p className="text-sm text-muted-foreground">Como protegemos tus datos</p>
+                <p className="font-medium">Política de Privacidad</p>
+                <p className="text-sm text-muted-foreground">Cómo protegemos tus datos</p>
               </div>
             </Button>
           </CardContent>
@@ -379,7 +395,7 @@ const Settings = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Version</span>
+              <span className="text-muted-foreground">Versión</span>
               <span className="font-medium">1.0.0</span>
             </div>
             <Separator />

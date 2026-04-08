@@ -201,7 +201,7 @@ export function PetHeader({ pet }: { pet: PetData }) {
               {pet.vaccination_status && (
                 <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                   <Syringe className="h-3 w-3 mr-1" />
-                  {pet.vaccination_status === "up_to_date" ? "Vacunas al dia" : pet.vaccination_status}
+                  {pet.vaccination_status === "up_to_date" ? "Vacunas al día" : pet.vaccination_status}
                 </Badge>
               )}
               {pet.neutered !== null && (

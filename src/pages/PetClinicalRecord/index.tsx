@@ -91,7 +91,7 @@ const PetClinicalRecord = () => {
         <EmptyState
           icon={AlertTriangle}
           title="Error al cargar"
-          description="No se pudo cargar la ficha clinica. Intenta nuevamente."
+          description="No se pudo cargar la ficha clínica. Intenta nuevamente."
         />
       </div>
     );
@@ -192,11 +192,11 @@ const PetClinicalRecord = () => {
           </TabsTrigger>
           <TabsTrigger value="alimentacion" className="text-xs sm:text-sm">
             <Activity className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
-            Habitos
+            Hábitos
           </TabsTrigger>
           <TabsTrigger value="documentos" className="text-xs sm:text-sm">
             <FileText className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
-            Docs
+            Documentos
           </TabsTrigger>
           <TabsTrigger value="compartir" className="text-xs sm:text-sm">
             <Share2 className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />

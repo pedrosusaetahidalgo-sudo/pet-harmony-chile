@@ -119,10 +119,18 @@ serve(async (req) => {
       .order("due_date", { ascending: true })
       .limit(5);
 
-    // Build context
-    const petAge = pet.birth_date
-      ? `${Math.floor((Date.now() - new Date(pet.birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000))} años`
-      : "edad desconocida";
+    // Build context — clamp defensivo: si la edad sale absurda (>30 años) la
+    // marcamos como desconocida para no envenenar el prompt del LLM con datos
+    // corruptos que llevarían a recomendaciones peligrosas.
+    let petAge = "edad desconocida";
+    if (pet.birth_date) {
+      const ageYears = Math.floor(
+        (Date.now() - new Date(pet.birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000)
+      );
+      if (ageYears >= 0 && ageYears <= 30) {
+        petAge = `${ageYears} años`;
+      }
+    }
 
     const petContext = `
 DATOS DE LA MASCOTA:
@@ -196,7 +204,7 @@ FORMATO DE RESPUESTA (OBLIGATORIO - solo JSON):
         },
         body: JSON.stringify({
           model: "claude-sonnet-4-5",
-          max_tokens: 250,
+          max_tokens: 600,
           temperature: 0.3,
           system: systemPrompt,
           messages: [{ role: "user", content: question.trim() }],
@@ -223,26 +231,53 @@ FORMATO DE RESPUESTA (OBLIGATORIO - solo JSON):
     }
 
     const claudeData = await claudeResponse.json();
-    const responseText = claudeData.content?.[0]?.text ?? "";
+    const responseText: string = claudeData.content?.[0]?.text ?? "";
 
-    // Parse response
-    let parsed;
+    // Parse response — Claude a veces envuelve el JSON en ```json ... ```
+    // markdown fences, así que los limpiamos antes de parsear.
+    const stripFences = (s: string) =>
+      s.replace(/```(?:json)?\s*/gi, "").replace(/```/g, "").trim();
+
+    let parsed: {
+      respuesta: string;
+      nivel_urgencia: "bajo" | "medio" | "alto";
+      requiere_veterinario: boolean;
+      recordatorios_relevantes: string[];
+      sugerencias_accion: string[];
+    } | null = null;
+
     try {
-      const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-      parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+      const cleaned = stripFences(responseText);
+      const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        parsed = JSON.parse(jsonMatch[0]);
+      }
     } catch {
       parsed = null;
     }
 
-    if (!parsed || !parsed.respuesta) {
+    if (!parsed || typeof parsed.respuesta !== "string") {
+      // Fallback: si el JSON vino mal o truncado, mostramos el texto pero sin
+      // los artefactos de markdown/JSON para no exponer ```json al usuario.
+      let cleanText = stripFences(responseText);
+      // Si quedó algo tipo `{ "respuesta": "..."` truncado, intentamos extraer
+      // solo el valor de respuesta con un regex tolerante.
+      const respuestaMatch = cleanText.match(/"respuesta"\s*:\s*"([^"]*)/);
+      if (respuestaMatch) {
+        cleanText = respuestaMatch[1];
+      }
       parsed = {
-        respuesta: responseText || "No pude procesar tu consulta. Intenta reformular la pregunta.",
+        respuesta: cleanText || "No pude procesar tu consulta. Intenta reformular la pregunta.",
         nivel_urgencia: "bajo",
         requiere_veterinario: false,
         recordatorios_relevantes: [],
         sugerencias_accion: [],
       };
     }
+
+    // Asegurar arrays presentes
+    parsed.recordatorios_relevantes = Array.isArray(parsed.recordatorios_relevantes) ? parsed.recordatorios_relevantes : [];
+    parsed.sugerencias_accion = Array.isArray(parsed.sugerencias_accion) ? parsed.sugerencias_accion : [];
 
     // Update rate limit
     if (usage) {

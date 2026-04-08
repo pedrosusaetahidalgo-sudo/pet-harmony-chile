@@ -118,7 +118,7 @@ export default function Upgrade() {
               className="absolute -top-0 right-4 translate-y-3 bg-premium-gradient text-premium-foreground border-0 shadow-premium-sm font-semibold tracking-wide"
             >
               <Sparkles className="h-3 w-3 mr-1" />
-              AHORRÁ 30%
+              AHORRA 30%
             </Badge>
             <CardHeader>
               <CardTitle className="text-xl flex items-center gap-2">

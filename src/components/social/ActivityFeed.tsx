@@ -94,7 +94,21 @@ export function ActivityFeed({ limit = 20, petId }: ActivityFeedProps) {
         return;
       }
       if (data) {
-        setItems(data as unknown as PetActivityRow[]);
+        // Dedupe defensivo: el seed inserta a veces actividades repetidas con
+        // el mismo (pet_id + activity_type + title) en ventanas cortas. Las
+        // colapsamos para no mostrar 3 cards idénticas seguidas.
+        const rows = data as unknown as PetActivityRow[];
+        const seen = new Set<string>();
+        const deduped: PetActivityRow[] = [];
+        for (const r of rows) {
+          const bucket = new Date(r.created_at);
+          bucket.setMinutes(0, 0, 0);
+          const key = `${r.pet_id}|${r.activity_type}|${r.title}|${bucket.toISOString()}`;
+          if (seen.has(key)) continue;
+          seen.add(key);
+          deduped.push(r);
+        }
+        setItems(deduped);
       }
 
       // Load current user's cheers for these activities

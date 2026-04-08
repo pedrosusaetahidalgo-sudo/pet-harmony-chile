@@ -109,12 +109,12 @@ export function TabResumen({ pet }: { pet: PetData }) {
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
             <Stethoscope className="h-4 w-4 text-blue-500" />
-            Condiciones cronicas
+            Condiciones crónicas
           </CardTitle>
         </CardHeader>
         <CardContent>
           {!hasChronicConditions ? (
-            <p className="text-sm text-muted-foreground">Sin condiciones cronicas registradas</p>
+            <p className="text-sm text-muted-foreground">Sin condiciones crónicas registradas</p>
           ) : (
             <div className="space-y-2">
               {Object.entries(pet.chronic_conditions_detail!).map(([condition, detail], i) => (
@@ -150,7 +150,7 @@ export function TabResumen({ pet }: { pet: PetData }) {
               <>
                 <InfoRow icon={Building} label="Nombre" value={pet.emergency_vet_name} />
                 {pet.emergency_vet_phone && (
-                  <InfoRow icon={Phone} label="Telefono" value={
+                  <InfoRow icon={Phone} label="Teléfono" value={
                     <a href={`tel:${pet.emergency_vet_phone}`} className="text-emerald-600 hover:underline">
                       {pet.emergency_vet_phone}
                     </a>
@@ -168,7 +168,7 @@ export function TabResumen({ pet }: { pet: PetData }) {
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Shield className="h-4 w-4 text-green-500" />
-              Seguro y clinica
+              Seguro y clínica
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
@@ -176,10 +176,10 @@ export function TabResumen({ pet }: { pet: PetData }) {
               <InfoRow icon={Shield} label="Seguro" value={`${pet.insurance_provider}${pet.insurance_policy ? ` (${pet.insurance_policy})` : ""}`} />
             )}
             {pet.preferred_clinic && (
-              <InfoRow icon={Building} label="Clinica preferida" value={pet.preferred_clinic} />
+              <InfoRow icon={Building} label="Clínica preferida" value={pet.preferred_clinic} />
             )}
             {pet.last_vet_visit && (
-              <InfoRow icon={Calendar} label="Ultima visita" value={formatDate(pet.last_vet_visit)} />
+              <InfoRow icon={Calendar} label="Última visita" value={formatDate(pet.last_vet_visit)} />
             )}
             {!pet.insurance_provider && !pet.preferred_clinic && !pet.last_vet_visit && (
               <p className="text-sm text-muted-foreground">No registrado</p>
@@ -194,7 +194,7 @@ export function TabResumen({ pet }: { pet: PetData }) {
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
               <Clipboard className="h-4 w-4 text-emerald-600" />
-              Notas medicas
+              Notas médicas
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
