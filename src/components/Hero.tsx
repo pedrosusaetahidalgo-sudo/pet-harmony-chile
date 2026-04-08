@@ -90,21 +90,29 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Hero media: video con fallback a imagen. Wrapper relativo para
-          superponerse a los blobs decorativos.
-          Formato del video: MP4 H.264, 800x500, <2MB, loop friendly. */}
+      {/* Hero media: en mobile mostramos sólo la imagen (el video pesa 4.4 MB
+          y consume datos del usuario). En md+ cargamos el video con
+          preload="none" para que no descargue hasta que sea visible. */}
       <div className="relative w-full max-w-md mt-8 rounded-3xl overflow-hidden shadow-2xl ring-4 ring-white/40 aspect-[8/5] bg-muted">
+        {/* Mobile: sólo imagen ligera */}
+        <img
+          src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=500&fit=crop"
+          alt="Dueño jugando con su mascota"
+          className="md:hidden w-full h-full object-cover"
+          loading="eager"
+          fetchPriority="high"
+        />
+        {/* Desktop: video con poster, sin auto-descarga */}
         <video
           autoPlay
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="none"
           poster="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=500&fit=crop"
-          className="w-full h-full object-cover"
+          className="hidden md:block w-full h-full object-cover"
         >
           <source src="/videos/hero-pet.mp4" type="video/mp4" />
-          {/* Fallback si el navegador no soporta video o falla la carga */}
           <img
             src="https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=800&h=500&fit=crop"
             alt="Dueño jugando con su mascota"

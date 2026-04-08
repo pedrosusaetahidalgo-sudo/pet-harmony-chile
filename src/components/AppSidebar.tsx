@@ -104,7 +104,7 @@ export function AppSidebar() {
       collapsible={isMobile ? "offcanvas" : "none"}
       className="border-r border-border/40 w-[200px] h-screen sticky top-0"
     >
-      <SidebarHeader className="p-3 pb-2">
+      <SidebarHeader className="p-2 pb-1">
         <button
           onClick={() => handleNavigate("/home")}
           className="flex items-center gap-2.5 px-2 py-1.5 w-full hover:opacity-80 transition-opacity cursor-pointer rounded-lg"
@@ -121,8 +121,8 @@ export function AppSidebar() {
 
       <SidebarContent className="px-2 overflow-y-auto overflow-x-hidden">
         {/* SALUD */}
-        <SidebarGroup className="py-1">
-          <SidebarGroupLabel className="text-[10px] px-3 mb-0.5">Salud</SidebarGroupLabel>
+        <SidebarGroup className="py-0.5">
+          <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5">Salud</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0">
               {saludItems.map((item) => {
@@ -152,8 +152,8 @@ export function AppSidebar() {
         <Separator className="mx-2 my-1" />
 
         {/* SERVICIOS */}
-        <SidebarGroup className="py-1">
-          <SidebarGroupLabel className="text-[10px] px-3 mb-0.5">Servicios</SidebarGroupLabel>
+        <SidebarGroup className="py-0.5">
+          <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5">Servicios</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0">
               {serviciosItems.map((item) => (
@@ -175,8 +175,8 @@ export function AppSidebar() {
         <Separator className="mx-2 my-1" />
 
         {/* COMUNIDAD */}
-        <SidebarGroup className="py-1">
-          <SidebarGroupLabel className="text-[10px] px-3 mb-0.5">Comunidad</SidebarGroupLabel>
+        <SidebarGroup className="py-0.5">
+          <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5">Comunidad</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0">
               {comunidadItems.map((item) => (
@@ -210,9 +210,9 @@ export function AppSidebar() {
 
         {isProvider && (
           <>
-            <Separator className="mx-2 my-1" />
-            <SidebarGroup className="py-1">
-              <SidebarGroupLabel className="text-[10px] px-3 mb-0.5">Profesional</SidebarGroupLabel>
+            <Separator className="mx-2 my-0.5" />
+            <SidebarGroup className="py-0.5">
+              <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5">Profesional</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu className="space-y-0">
                   <SidebarMenuItem>
@@ -243,9 +243,9 @@ export function AppSidebar() {
 
         {isAdmin && (
           <>
-            <Separator className="mx-2 my-1" />
-            <SidebarGroup className="py-1">
-              <SidebarGroupLabel className="text-[10px] px-3 mb-0.5">Admin</SidebarGroupLabel>
+            <Separator className="mx-2 my-0.5" />
+            <SidebarGroup className="py-0.5">
+              <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5">Admin</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>

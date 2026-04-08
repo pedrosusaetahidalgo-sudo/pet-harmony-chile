@@ -42,10 +42,26 @@ export function generatePDF(pet: PetData, records: any[]) {
   <meta charset="UTF-8">
   <title>Ficha Cl\u00ednica - ${pet.name}</title>
   <style>
-    @page { size: A4; margin: 20mm; }
+    @page { size: A4; margin: 12mm; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { background: #f0f0f0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1a1a2e; font-size: 11px; line-height: 1.5; max-width: 210mm; margin: 0 auto; background: white; padding: 24mm; min-height: 297mm; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color: #1a1a2e; font-size: 12px; line-height: 1.5; max-width: 210mm; margin: 0 auto; background: white; padding: 18mm; min-height: 297mm; box-shadow: 0 2px 20px rgba(0,0,0,0.1); }
+    /* Print: dejamos que @page maneje el margen y eliminamos el doble
+       padding del body, el max-width y el box-shadow. Sin esto el PDF
+       salía con texto diminuto y márgenes laterales gigantes. */
+    @media print {
+      html { background: white; }
+      body {
+        padding: 0;
+        max-width: none;
+        margin: 0;
+        box-shadow: none;
+        min-height: auto;
+        font-size: 11pt;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
 
     .header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 12px; border-bottom: 3px solid #7c3aed; margin-bottom: 20px; }
     .header h1 { font-size: 20px; color: #7c3aed; font-weight: 700; }

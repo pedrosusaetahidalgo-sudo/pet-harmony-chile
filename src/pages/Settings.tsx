@@ -220,23 +220,28 @@ const Settings = () => {
 
             <Separator />
 
-            <div className="space-y-3">
-              <Label>Elige tu Avatar</Label>
-              <div className="flex gap-2 mb-2">
-                {avatarColors.map((color, i) => (
-                  <button
-                    key={color.label}
-                    type="button"
-                    onClick={() => setSelectedColor(i)}
-                    className={`w-8 h-8 rounded-full transition-all hover:scale-110 ${
-                      selectedColor === i ? "ring-2 ring-offset-2 ring-foreground scale-110" : ""
-                    }`}
-                    style={{ backgroundColor: `#${color.bg}`, border: `2px solid #${color.shape}` }}
-                    title={color.label}
-                  />
-                ))}
+            <div className="space-y-4">
+              <div>
+                <Label className="text-xs uppercase tracking-wide text-muted-foreground">1. Elige un color de fondo</Label>
+                <div className="flex gap-2 mt-2">
+                  {avatarColors.map((color, i) => (
+                    <button
+                      key={color.label}
+                      type="button"
+                      onClick={() => setSelectedColor(i)}
+                      className={`w-8 h-8 rounded-full transition-all hover:scale-110 ${
+                        selectedColor === i ? "ring-2 ring-offset-2 ring-foreground scale-110" : ""
+                      }`}
+                      style={{ backgroundColor: `#${color.bg}`, border: `2px solid #${color.shape}` }}
+                      title={color.label}
+                      aria-label={`Color ${color.label}`}
+                    />
+                  ))}
+                </div>
               </div>
-              <div className="grid grid-cols-5 gap-3">
+              <div>
+                <Label className="text-xs uppercase tracking-wide text-muted-foreground">2. Elige un estilo</Label>
+                <div className="grid grid-cols-5 gap-3 mt-2">
                 {avatarOptions.map((url, i) => (
                   <button
                     key={i}
@@ -249,6 +254,7 @@ const Settings = () => {
                     <img src={url} alt={`Avatar ${i + 1}`} loading="lazy" className="w-full h-full" />
                   </button>
                 ))}
+                </div>
               </div>
             </div>
 

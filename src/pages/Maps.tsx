@@ -300,13 +300,21 @@ const Maps = () => {
     return [];
   }, [activeView, lostPets, adoptionPosts, adoptionShelters, serviceProviders, filters, userLocation, activeChip]);
 
-  // Map center
+  // Map center — guard contra NaN: si la ubicación del user es válida la
+  // usamos; si no, promediamos solo marcadores con coordenadas finitas; si
+  // no hay nada usable, fallback a Santiago. Cualquier NaN aquí rompe
+  // Leaflet con un error opaco al inicializar el mapa.
   const mapCenter: [number, number] = useMemo(() => {
-    if (userLocation) return [userLocation.lat, userLocation.lng];
-    if (filteredMarkers.length > 0) {
-      const avgLat = filteredMarkers.reduce((sum: number, m: any) => sum + m.position[0], 0) / filteredMarkers.length;
-      const avgLng = filteredMarkers.reduce((sum: number, m: any) => sum + m.position[1], 0) / filteredMarkers.length;
-      return [avgLat, avgLng];
+    if (userLocation && Number.isFinite(userLocation.lat) && Number.isFinite(userLocation.lng)) {
+      return [userLocation.lat, userLocation.lng];
+    }
+    const valid = filteredMarkers.filter((m: { position: [number, number] }) =>
+      Number.isFinite(m.position?.[0]) && Number.isFinite(m.position?.[1])
+    );
+    if (valid.length > 0) {
+      const avgLat = valid.reduce((sum: number, m: { position: [number, number] }) => sum + m.position[0], 0) / valid.length;
+      const avgLng = valid.reduce((sum: number, m: { position: [number, number] }) => sum + m.position[1], 0) / valid.length;
+      if (Number.isFinite(avgLat) && Number.isFinite(avgLng)) return [avgLat, avgLng];
     }
     return SANTIAGO_CENTER;
   }, [userLocation, filteredMarkers]);
@@ -375,8 +383,13 @@ const Maps = () => {
         {/* Fly to user location when requested */}
         {flyTarget && <FlyToLocation position={flyTarget} />}
 
-        {/* Data markers */}
-        {filteredMarkers.map((marker) => (
+        {/* Data markers — filtramos cualquier marker con coords inválidas
+            que pudo haber escapado del filteredMarkers (NaN, null, etc.) */}
+        {filteredMarkers
+          .filter((marker) =>
+            Number.isFinite(marker.position?.[0]) && Number.isFinite(marker.position?.[1])
+          )
+          .map((marker) => (
           <Marker
             key={marker.id}
             position={marker.position}
