@@ -48,3 +48,20 @@ verify_jwt = false
 
 [functions.generate-sitemap]
 verify_jwt = false
+
+# WhatsApp + Google Calendar (sesion 2026-04-09)
+
+[functions.send-whatsapp-reminder]
+verify_jwt = false  # llamada interna desde reminder-cron via service_role
+
+[functions.reminder-cron]
+verify_jwt = false  # cron job, no user context
+
+[functions.google-calendar-oauth-init]
+verify_jwt = false  # auth manual via getUser(token)
+
+[functions.google-calendar-callback]
+verify_jwt = false  # callback de Google, sin user context
+
+[functions.google-calendar-sync]
+verify_jwt = false  # auth manual via getUser(token)

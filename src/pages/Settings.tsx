@@ -24,6 +24,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { logger } from "@/lib/logger";
+import { IntegrationsCard } from "@/components/settings/IntegrationsCard";
 
 const Settings = () => {
   const navigate = useNavigate();
@@ -295,7 +296,10 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        {/* Section 3: Notificaciones */}
+        {/* Section 3: Integraciones (WhatsApp + Google Calendar) */}
+        <IntegrationsCard />
+
+        {/* Section 4: Notificaciones */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">
