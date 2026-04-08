@@ -484,6 +484,129 @@ async function createBookingsAndReviews(owners, providers, ownerPets) {
 }
 
 // ============================================================================
+// Crear contenido social: posts, reminders, appointments, lost_pets, adoptions
+// ============================================================================
+
+const POST_CONTENTS = [
+  "Hoy estuvimos en el parque, se portó increíble 🐾",
+  "Por fin terminó el tratamiento y está como nuevo ❤️",
+  "Mirá esta carita de pillo después de bañarse",
+  "Pregunta para los dueños: ¿qué croqueta recomiendan para perro adulto?",
+  "Llevamos la libreta de vacunas al día gracias a Paw Friend 🙌",
+  "Nuevo amiguito en el barrio, ¿alguien lo conoce?",
+  "Agradecida con el vet, súper paciente y profesional",
+  "Hoy estrenamos arnés nuevo 😍",
+];
+
+async function createSocialContent(owners, ownerPets) {
+  let posts = 0, reminders = 0, appointments = 0, lostPets = 0, adoptions = 0;
+
+  // 50 posts en el feed (de owners random con sus pets)
+  for (let i = 0; i < 50; i++) {
+    const owner = rand(owners);
+    const pets = ownerPets[owner.id] || [];
+    if (pets.length === 0) continue;
+    const pet = rand(pets);
+    const { error } = await supabase.from("posts").insert({
+      user_id: owner.id,
+      pet_id: pet.id,
+      content: rand(POST_CONTENTS),
+      likes_count: randInt(0, 25),
+    });
+    if (!error) posts++;
+  }
+
+  // pet_reminders: 1-2 por mascota (futuros)
+  for (const owner of owners) {
+    for (const pet of ownerPets[owner.id] || []) {
+      const count = randInt(1, 2);
+      for (let i = 0; i < count; i++) {
+        const dueDate = new Date();
+        dueDate.setDate(dueDate.getDate() + randInt(3, 60));
+        const { error } = await supabase.from("pet_reminders").insert({
+          pet_id: pet.id,
+          owner_id: owner.id,
+          type: rand(["vaccine", "checkup", "medication", "grooming"]),
+          title: rand([
+            `Vacuna anual de ${pet.name}`,
+            `Control veterinario ${pet.name}`,
+            `Desparasitación ${pet.name}`,
+            `Baño y peluquería ${pet.name}`,
+          ]),
+          due_date: dueDate.toISOString().slice(0, 10),
+        });
+        if (!error) reminders++;
+      }
+    }
+  }
+
+  // appointments: 1 por cada 3 owners (próxima cita)
+  for (let i = 0; i < owners.length; i += 3) {
+    const owner = owners[i];
+    const pets = ownerPets[owner.id] || [];
+    if (pets.length === 0) continue;
+    const pet = rand(pets);
+    const future = new Date();
+    future.setDate(future.getDate() + randInt(2, 30));
+    const { error } = await supabase.from("appointments").insert({
+      pet_id: pet.id,
+      appointment_type: rand(["veterinario", "peluquería", "vacuna"]),
+      title: `Cita de ${pet.name}`,
+      description: "Control de rutina",
+      date: future.toISOString(),
+    });
+    if (!error) appointments++;
+  }
+
+  // lost_pets: 8 mascotas perdidas/encontradas para Maps
+  for (let i = 0; i < 8; i++) {
+    const owner = rand(owners);
+    const pets = ownerPets[owner.id] || [];
+    if (pets.length === 0) continue;
+    const pet = rand(pets);
+    const region = owner.region;
+    const lastSeen = new Date();
+    lastSeen.setDate(lastSeen.getDate() - randInt(1, 14));
+    const { error } = await supabase.from("lost_pets").insert({
+      pet_id: pet.id,
+      reporter_id: owner.id,
+      status: chance(20) ? "encontrada" : "perdida",
+      report_type: chance(80) ? "perdida" : "encontrada",
+      pet_name: pet.name,
+      species: pet.species,
+      description: `${pet.name} se perdió cerca del parque, lleva collar.`,
+      last_seen_location: `${region.ciudad}, sector centro`,
+      last_seen_date: lastSeen.toISOString().slice(0, 10),
+      latitude: region.lat + (Math.random() - 0.5) * 0.05,
+      longitude: region.lng + (Math.random() - 0.5) * 0.05,
+      is_active: true,
+    });
+    if (!error) lostPets++;
+  }
+
+  // adoption_posts: 6 mascotas en adopción
+  for (let i = 0; i < 6; i++) {
+    const owner = rand(owners);
+    const region = owner.region;
+    const isDog = chance(60);
+    const { error } = await supabase.from("adoption_posts").insert({
+      user_id: owner.id,
+      pet_name: isDog ? rand(NOMBRES_PERROS) : rand(NOMBRES_GATOS),
+      species: isDog ? "perro" : "gato",
+      breed: isDog ? rand(RAZAS_PERROS) : rand(RAZAS_GATOS),
+      age_years: randInt(0, 8),
+      gender: chance(50) ? "macho" : "hembra",
+      size: rand(["pequeño", "mediano", "grande"]),
+      description: "Busca un hogar amoroso. Castrado y vacunado al día.",
+      location: region.ciudad,
+    });
+    if (!error) adoptions++;
+  }
+
+  return { posts, reminders, appointments, lostPets, adoptions };
+}
+
+// ============================================================================
 // MAIN
 // ============================================================================
 
@@ -534,13 +657,23 @@ async function main() {
   const { bookings, reviews } = await createBookingsAndReviews(owners, providers, ownerPets);
   console.log(`[seed-demo] bookings: ${bookings} | reviews: ${reviews}`);
 
-  // 5. Resumen
+  // 5. Contenido social (posts, reminders, citas, lost_pets, adopciones)
+  console.log("[seed-demo] creando contenido social...");
+  const social = await createSocialContent(owners, ownerPets);
+  console.log(`[seed-demo] posts:${social.posts} reminders:${social.reminders} citas:${social.appointments} lost:${social.lostPets} adopciones:${social.adoptions}`);
+
+  // 6. Resumen
   console.log("\n[seed-demo] ✅ listo");
   console.log(`  users dueños:     ${owners.length}`);
   console.log(`  mascotas:         ${totalPets}`);
   console.log(`  proveedores:      ${providers.length}`);
   console.log(`  vet bookings:     ${bookings}`);
   console.log(`  vet reviews:      ${reviews}`);
+  console.log(`  posts feed:       ${social.posts}`);
+  console.log(`  pet_reminders:    ${social.reminders}`);
+  console.log(`  appointments:     ${social.appointments}`);
+  console.log(`  lost_pets:        ${social.lostPets}`);
+  console.log(`  adopciones:       ${social.adoptions}`);
   console.log(`\n  Para borrar TODO: delete from auth.users where email like '%${DEMO_DOMAIN}';`);
   console.log(`                    delete from public.service_providers where is_demo = true;`);
   console.log(`  Password de cualquier user demo: ${DEMO_PASSWORD}`);
