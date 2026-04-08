@@ -29,3 +29,22 @@ verify_jwt = false
 
 [functions.generate-shelters]
 verify_jwt = false
+
+# Edge functions de Premium B2C (Flow.cl) y médicas — agregadas 2026-04-09
+# Todas con verify_jwt=false porque manejan auth manualmente con
+# supabase.auth.getUser(token) o son callbacks externos.
+
+[functions.flow-create-subscription]
+verify_jwt = false
+
+[functions.flow-webhook]
+verify_jwt = false
+
+[functions.generate-medical-summary]
+verify_jwt = false
+
+[functions.generate-medical-zip]
+verify_jwt = false
+
+[functions.generate-sitemap]
+verify_jwt = false
