@@ -59,15 +59,15 @@ export function IntegrationsCard() {
         setWhatsappOptedIn(!!(profile as any).whatsapp_opted_in);
       }
 
-      const { data: statusRow } = await supabase
+      const { data: tokenRow } = await supabase
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .from("google_calendar_status" as any)
+        .from("google_calendar_tokens" as any)
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .select("user_id, google_email" as any)
         .eq("user_id", user.id)
         .maybeSingle();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const row = statusRow as any;
+      const row = tokenRow as any;
       setCalendarConnected(!!row);
       setGoogleEmail(row?.google_email ?? null);
     })();
