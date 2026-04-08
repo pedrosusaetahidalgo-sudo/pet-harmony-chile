@@ -59,6 +59,11 @@ export const useReminders = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["pet-reminders"] });
       toast({ title: "Recordatorio creado" });
+      // Auto-sync con Google Calendar en background si esta conectado.
+      // No bloquea la UI ni muestra errores - es best effort.
+      supabase.functions.invoke("google-calendar-sync").catch(() => {
+        /* silent fail: el user puede sincronizar manual desde Settings */
+      });
     },
     onError: (error: Error) => {
       toast({ title: "Error", description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]), variant: "destructive" });
