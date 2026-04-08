@@ -1,5 +1,60 @@
 # Guía de demo en vivo Paw Friend
 
+## Cuentas demo generadas por seed (100 users + 15 proveedores)
+
+A partir de la sesión 2026-04-08 hay un script que puebla la BD con ~100
+usuarios demo, sus mascotas, fichas médicas y proveedores de servicios.
+Ver `scripts/seed-demo.mjs`.
+
+### Cómo correr el seed
+1. Aplicar la migración del flag `is_demo` en el Dashboard SQL Editor:
+   pegar contenido de `supabase/migrations/99999999000000_demo_seed_flag.sql`
+   y darle Run. Después marcar:
+   ```sql
+   insert into supabase_migrations.schema_migrations (version, name)
+   values ('99999999000000','demo_seed_flag');
+   ```
+2. Crear `.env.demo.local` en la raíz (NO commitear, ya está en .gitignore):
+   ```
+   SUPABASE_URL=https://gwailbjlvevkhwcrovfd.supabase.co
+   SUPABASE_SERVICE_ROLE_KEY=<service_role_key_del_dashboard>
+   ```
+3. Correr:
+   ```bash
+   node --env-file=.env.demo.local scripts/seed-demo.mjs
+   # o para resetear primero:
+   node --env-file=.env.demo.local scripts/seed-demo.mjs --reset
+   ```
+
+### Credenciales tipo (todos los users demo tienen el mismo password)
+**Password universal**: `Demo1234!`
+**Dominio**: `@demo.pawfriend.cl`
+**Sufijo del nombre**: ` Demo` (ej: "Camila Soto Aravena Demo")
+
+| Perfil que querés mostrar | Cómo encontrarlo |
+|---|---|
+| Free, 1 mascota | Cualquier user con `is_premium=false` y 1 pet |
+| Premium activo (badge dorado) | Los primeros ~20 users tienen `is_premium=true` |
+| Grandfathered (early adopter) | Los primeros 5 users tienen `is_grandfathered=true` |
+| Vet con clientes y reseñas | Los providers con `service_type='veterinarian'` |
+| Vet recién registrado | Cualquier provider con pocas reviews |
+
+Para listar emails reales después del seed:
+```sql
+select email, raw_user_meta_data->>'full_name' as nombre
+  from auth.users
+ where email like '%@demo.pawfriend.cl'
+ order by created_at desc limit 20;
+```
+
+### Cómo borrar todos los demos
+```sql
+delete from auth.users where email like '%@demo.pawfriend.cl';
+-- la cascada borra profiles, pets, medical_records, etc.
+```
+
+---
+
 ## Setup inicial (una sola vez)
 
 ### 1. Aplicar el seed SQL
