@@ -288,34 +288,61 @@ export default function Home() {
         </Card>
       ) : (
         <>
-          {/* === Pet switcher === */}
-          {pets.length > 1 ? (
-            <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-              {pets.map((pet) => (
+          {/* === Pet switcher (avatares circulares estilo stories) === */}
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
+            {pets.map((pet) => {
+              const isActive = activePetId === pet.id;
+              return (
                 <button
                   key={pet.id}
                   onClick={() => setActivePetId(pet.id)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors flex-shrink-0 ${
-                    activePetId === pet.id
-                      ? "bg-emerald-600 text-white"
-                      : "bg-muted text-foreground hover:bg-muted/70"
-                  }`}
+                  className="flex flex-col items-center gap-1 flex-shrink-0 group"
+                  aria-label={`Seleccionar ${pet.name}`}
                 >
-                  <Avatar className="h-5 w-5">
-                    <AvatarImage src={pet.photo_url || undefined} />
-                    <AvatarFallback className="text-[10px]">
-                      {pet.name[0]?.toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  {pet.name}
+                  <div
+                    className={`relative rounded-full p-[3px] transition-all ${
+                      isActive
+                        ? "bg-gradient-to-tr from-emerald-500 via-teal-400 to-emerald-600 shadow-lg shadow-emerald-500/30 scale-105"
+                        : "bg-muted group-hover:bg-muted/70"
+                    }`}
+                  >
+                    <Avatar className="h-16 w-16 ring-2 ring-background">
+                      <AvatarImage src={pet.photo_url || undefined} alt={pet.name} />
+                      <AvatarFallback className="bg-emerald-100 text-emerald-700 text-xl font-bold">
+                        {pet.name[0]?.toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    {isActive && (
+                      <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full bg-emerald-500 border-2 border-background" />
+                    )}
+                  </div>
+                  <span
+                    className={`text-xs font-medium max-w-[72px] truncate ${
+                      isActive ? "text-emerald-700 font-bold" : "text-muted-foreground"
+                    }`}
+                  >
+                    {pet.name}
+                  </span>
                 </button>
-              ))}
-            </div>
-          ) : (
-            <p className="text-xs text-muted-foreground">
-              Mascota activa: <span className="font-semibold text-foreground">{pets[0].name}</span>
-            </p>
-          )}
+              );
+            })}
+
+            {/* Botón "+" agregar mascota */}
+            <button
+              onClick={goToAddPet}
+              className="flex flex-col items-center gap-1 flex-shrink-0 group"
+              aria-label="Agregar mascota"
+            >
+              <div className="rounded-full p-[3px] bg-muted group-hover:bg-emerald-100 transition-colors">
+                <div className="h-16 w-16 rounded-full border-2 border-dashed border-emerald-400 group-hover:border-emerald-600 bg-background flex items-center justify-center transition-colors">
+                  <Plus className="h-7 w-7 text-emerald-500 group-hover:text-emerald-700 transition-colors" />
+                </div>
+              </div>
+              <span className="text-xs font-medium text-muted-foreground group-hover:text-emerald-700">
+                Agregar
+              </span>
+            </button>
+          </div>
 
           {/* === Status cards 2x2 mobile, 4x1 desktop === */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
