@@ -18,6 +18,8 @@ import { Badge } from "@/components/ui/badge";
 import { describeSupabaseError } from "@/lib/supabaseErrors";
 import { logger } from "@/lib/logger";
 import { useOrganicRewards } from "@/hooks/useOrganicRewards";
+import { useCanAddPet } from "@/hooks/useCanAddPet";
+import { Sparkles } from "@/lib/icons";
 
 const personalityOptions = [
   "Juguetón", "Tranquilo", "Energético", "Cariñoso", "Tímido",
@@ -65,6 +67,7 @@ const AddPet = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { reward } = useOrganicRewards();
+  const { can: canAddPet, reason: blockReason, isLoading: checkingLimit } = useCanAddPet();
 
   // Modo edición: cargar datos existentes
   useEffect(() => {
@@ -321,6 +324,54 @@ const AddPet = () => {
     return (
       <div className="container px-4 py-8 max-w-2xl mx-auto text-center text-muted-foreground">
         Cargando datos de la mascota…
+      </div>
+    );
+  }
+
+  // Paywall: solo aplica en modo create. Edit nunca se bloquea.
+  if (!isEdit && !checkingLimit && !canAddPet && blockReason === "premium_required") {
+    return (
+      <div className="container px-4 py-8 max-w-2xl mx-auto animate-fade-in">
+        <Card>
+          <CardHeader className="text-center">
+            <div className="mx-auto h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-2">
+              <Sparkles className="h-6 w-6 text-primary" />
+            </div>
+            <CardTitle className="text-2xl">Sumá una mascota más con Premium</CardTitle>
+            <CardDescription className="text-base mt-2">
+              Tu plan gratis incluye 1 mascota. Con Premium agregás todas las que quieras y desbloqueás el historial médico completo, recordatorios ilimitados y exportación de fichas.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="rounded-lg border bg-muted/30 p-4 space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <span>Plan mensual</span>
+                <span className="font-semibold">$2.990 / mes</span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span>Plan anual</span>
+                <span className="font-semibold">$24.990 / año</span>
+              </div>
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate(LINKS.myPets())}
+                className="w-full sm:flex-1 h-12"
+              >
+                Volver
+              </Button>
+              <Button
+                type="button"
+                onClick={() => navigate("/upgrade")}
+                className="w-full sm:flex-1 h-12"
+              >
+                Ver planes Premium
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }

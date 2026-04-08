@@ -39,6 +39,9 @@ const Maps = lazy(() => import("./pages/Maps"));
 const ProviderDashboard = lazy(() => import("./components/provider/ProviderDashboard"));
 const PetClinicalRecord = lazy(() => import("./pages/PetClinicalRecord"));
 const MyBookings = lazy(() => import("./pages/MyBookings"));
+const Upgrade = lazy(() => import("./pages/Upgrade"));
+const UpgradeSuccess = lazy(() => import("./pages/UpgradeSuccess"));
+const UpgradeCancel = lazy(() => import("./pages/UpgradeCancel"));
 const Servicios = lazy(() => import("./pages/Servicios"));
 // Peluqueria.tsx eliminada — groomers ahora son tab nativo en /services/groomers
 const GroomerProfileEdit = lazy(() => import("./pages/GroomerProfileEdit"));
@@ -116,6 +119,9 @@ const App = () => (
               <Route path="/provider/profile-edit" element={<ProtectedRoute><AppLayout><ProviderProfileEdit /></AppLayout></ProtectedRoute>} />
               <Route path="/pet/:petId/clinical" element={<ProtectedRoute><AppLayout><PetClinicalRecord /></AppLayout></ProtectedRoute>} />
               <Route path="/mis-reservas" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
+              <Route path="/upgrade" element={<ProtectedRoute><Upgrade /></ProtectedRoute>} />
+              <Route path="/upgrade/success" element={<ProtectedRoute><UpgradeSuccess /></ProtectedRoute>} />
+              <Route path="/upgrade/cancel" element={<ProtectedRoute><UpgradeCancel /></ProtectedRoute>} />
               <Route path="/calendar" element={<Navigate to="/mis-reservas" replace />} />
               {/* Directorio público de veterinarios (sin login) */}
               <Route path="/veterinarios" element={<DirectorioVets />} />
