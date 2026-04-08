@@ -202,8 +202,11 @@ const Settings = () => {
             })()}
             <div className="flex items-center gap-4">
               <Avatar className="h-16 w-16">
+                {/* key={avatarUrl} fuerza el remount al cambiar la URL para
+                    que Radix re-evalúe el load state inmediatamente y no se
+                    quede mostrando el fallback "U" hasta el próximo render. */}
                 {avatarUrl ? (
-                  <AvatarImage src={avatarUrl} alt="Avatar" />
+                  <AvatarImage key={avatarUrl} src={avatarUrl} alt="Avatar" />
                 ) : null}
                 <AvatarFallback className="text-xl bg-primary text-primary-foreground">
                   {userInitial}

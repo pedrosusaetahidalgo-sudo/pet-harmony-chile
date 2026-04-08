@@ -107,6 +107,27 @@ export async function awardPoints(
 
   if (error) return { awarded: false, points: 0, error: error.message };
 
+  // Actualizar el contador agregado en user_guardian_progress.
+  // Sin esto, la UI muestra "0 PawPoints" aunque las transacciones se
+  // estén creando bien (era el bug del check-in que no refrescaba).
+  // No es atómico, pero es suficientemente bueno: si falla, la transacción
+  // ya quedó registrada y el próximo cron / lectura puede reconciliar.
+  try {
+    const { data: progress } = await supabase
+      .from("user_guardian_progress")
+      .select("total_paw_points")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    const currentTotal = progress?.total_paw_points ?? 0;
+    await supabase
+      .from("user_guardian_progress")
+      .update({ total_paw_points: currentTotal + points })
+      .eq("user_id", userId);
+  } catch {
+    // Silent fail: la transacción ya se grabó, el agregado se reconciliará.
+  }
+
   return { awarded: true, points };
 }
 

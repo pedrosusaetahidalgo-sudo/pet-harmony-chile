@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Sparkles, Loader2, Heart, Activity, Utensils, Brain, Thermometer, Users } from "@/lib/icons";
@@ -12,10 +12,35 @@ interface BreedTipsProps {
   species: string;
 }
 
+// Cache de consejos por raza en sessionStorage. La llamada a Claude para
+// generar consejos por raza tarda ~20s, así que cachear la misma raza dentro
+// de la sesión evita re-fetches innecesarios cada vez que el usuario navega
+// al detalle de la mascota.
+const cacheKey = (breed: string, species: string) =>
+  `paw-friend:breed-tips:${species}:${breed}`.toLowerCase();
+
 export function BreedTips({ breed, species }: BreedTipsProps) {
-  const [tips, setTips] = useState<string | null>(null);
+  const [tips, setTips] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    try {
+      return sessionStorage.getItem(cacheKey(breed, species));
+    } catch {
+      return null;
+    }
+  });
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+
+  // Si cambia la raza/especie (al navegar entre mascotas) reseteamos al
+  // valor cacheado correspondiente.
+  useEffect(() => {
+    try {
+      const cached = sessionStorage.getItem(cacheKey(breed, species));
+      setTips(cached);
+    } catch {
+      setTips(null);
+    }
+  }, [breed, species]);
 
   const fetchTips = async () => {
     setLoading(true);
@@ -44,6 +69,11 @@ export function BreedTips({ breed, species }: BreedTipsProps) {
       }
 
       setTips(data.tips);
+      try {
+        sessionStorage.setItem(cacheKey(breed, species), data.tips);
+      } catch {
+        // sessionStorage lleno o deshabilitado: no es bloqueante.
+      }
     } catch (error: any) {
       toast({
         title: "Error al obtener consejos",
