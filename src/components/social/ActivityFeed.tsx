@@ -265,8 +265,8 @@ export function ActivityFeed({ limit = 20, petId }: ActivityFeedProps) {
               <Icon className="h-3.5 w-3.5 text-emerald-600" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{item.title}</p>
-              <p className="text-xs text-muted-foreground truncate">
+              <p className="text-sm font-medium line-clamp-2">{item.title}</p>
+              <p className="text-xs text-muted-foreground line-clamp-1">
                 {item.pets?.name ?? "Mascota"} · {rel}
               </p>
             </div>

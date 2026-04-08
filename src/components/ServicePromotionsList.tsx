@@ -81,12 +81,11 @@ export const ServicePromotionsList = ({ serviceType }: ServicePromotionsListProp
     return <div className="text-center py-8">Cargando...</div>;
   }
 
+  // Sin promociones: ocultamos la sección entera. Mostrar "No hay promociones
+  // disponibles" como si fuera un error confunde al usuario y duplica el
+  // empty state principal de la página (entrenadores/paseadores encontrados).
   if (!promotions || promotions.length === 0) {
-    return (
-      <div className="text-center py-8 text-muted-foreground">
-        No hay promociones disponibles
-      </div>
-    );
+    return null;
   }
 
   return (

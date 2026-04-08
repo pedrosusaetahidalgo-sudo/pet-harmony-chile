@@ -251,7 +251,11 @@ const Chat = () => {
         )}
 
         {filteredConversations.length === 0 ? (
-          <EmptyState icon={MessageCircle} title="Sin conversaciones" description="Reserva un servicio o sigue a alguien para empezar a chatear" actionLabel="Ver servicios" actionUrl="/services/walkers" />
+          // Si "Nuevo mensaje" está abierto, la card de arriba ya guía al
+          // usuario; no duplicamos con el empty state principal.
+          showNewMessage ? null : (
+            <EmptyState icon={MessageCircle} title="Sin conversaciones" description="Reserva un servicio o sigue a alguien para empezar a chatear" actionLabel="Ver servicios" actionUrl="/services/walkers" />
+          )
         ) : (
           <div className="space-y-1">
             {filteredConversations.map((conv) => {

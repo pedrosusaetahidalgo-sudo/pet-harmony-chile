@@ -16,7 +16,9 @@ export function TabCompartir({ petId }: { petId: string }) {
     const url = getShareUrl(token);
     try {
       await navigator.clipboard.writeText(url);
-      toast.success("Enlace copiado al portapapeles");
+      // El sistema (Android/iOS) muestra su propio toast de "copiado", así
+      // que el nuestro aporta valor en lugar de duplicar el mensaje.
+      toast.success("Listo. Compártelo con tu veterinario");
     } catch {
       toast.error("No se pudo copiar el enlace");
     }

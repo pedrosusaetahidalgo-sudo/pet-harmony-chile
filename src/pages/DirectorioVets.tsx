@@ -96,7 +96,7 @@ export default function DirectorioVets() {
             />
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
             <Select value={type} onValueChange={setType}>
               <SelectTrigger><SelectValue placeholder="Tipo" /></SelectTrigger>
               <SelectContent>

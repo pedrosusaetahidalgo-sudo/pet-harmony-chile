@@ -769,11 +769,13 @@ const ServiceDirectory = () => {
         <TabsContent value="list" className="space-y-6 mt-6">
           <ServicePromotionsList serviceType={config.providerType} />
 
-          <div className="flex items-center justify-between">
-            <p className="text-sm text-muted-foreground">
-              {filteredProviders.length} {config.resultLabel}
-            </p>
-          </div>
+          {filteredProviders.length > 0 && (
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-muted-foreground">
+                {filteredProviders.length} {config.resultLabel}
+              </p>
+            </div>
+          )}
 
           <div className="grid md:grid-cols-2 gap-6">
             {filteredProviders.map((provider) => (

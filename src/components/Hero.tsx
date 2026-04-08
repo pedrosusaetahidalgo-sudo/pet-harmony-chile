@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Heart, Stethoscope } from "@/lib/icons";
+import { Heart, Stethoscope, Star, Shield, Sparkles } from "@/lib/icons";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { LINKS } from "@/lib/links";
@@ -12,24 +12,50 @@ const Hero = () => {
   const handleSecondary = () => navigate(LINKS.auth());
 
   return (
-    <section className="min-h-[calc(100dvh-4rem)] flex flex-col items-center justify-center px-4 py-6 bg-hero-gradient">
+    <section className="relative min-h-[calc(100dvh-4rem)] flex flex-col items-center justify-center px-4 py-10 bg-hero-gradient overflow-hidden">
+      {/* Decorative blobs */}
+      <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-amber-300/30 blur-3xl pointer-events-none" />
+
       {/* Top content: badge + title + subtitle + buttons */}
-      <div className="flex flex-col items-center text-center gap-4 w-full max-w-sm">
-        <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary border border-primary/20">
-          <Heart className="mr-1.5 h-3.5 w-3.5 fill-primary" />
-          Red Social para Mascotas en Chile
+      <div className="relative flex flex-col items-center text-center gap-4 w-full max-w-md">
+        <span className="inline-flex items-center rounded-full bg-white/80 backdrop-blur px-3 py-1.5 text-xs font-semibold text-primary border border-primary/20 shadow-sm">
+          <Sparkles className="mr-1.5 h-3.5 w-3.5 text-amber-500" />
+          Hecha en Chile · Para mascotas chilenas
         </span>
 
-        <h1 className="text-3xl md:text-5xl font-bold leading-tight">
+        <h1 className="text-4xl md:text-6xl font-bold leading-[1.05] tracking-tight">
           Cuida la salud de tu mascota con{" "}
           <span className="bg-warm-gradient bg-clip-text text-transparent">
             veterinarios verificados
           </span>
         </h1>
 
-        <p className="text-sm text-muted-foreground leading-snug max-w-xs">
-          Encuentra, reserva y lleva el control médico de tu mascota en un solo lugar. 100% gratis para dueños.
+        <p className="text-base md:text-lg text-muted-foreground leading-snug max-w-md">
+          Encuentra, reserva y lleva la ficha médica de tu mascota en un solo lugar. <strong className="text-foreground">Gratis</strong> para tu primera mascota.
         </p>
+
+        {/* Trust row */}
+        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground pt-1">
+          <span className="inline-flex items-center gap-1">
+            <div className="flex">
+              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+            </div>
+            Reseñas verificadas
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <Shield className="h-3.5 w-3.5 text-emerald-600" />
+            Datos seguros
+          </span>
+          <span className="inline-flex items-center gap-1">
+            <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500" />
+            Sin tarjeta
+          </span>
+        </div>
 
         <div className="flex flex-col gap-3 w-full pt-2">
           <Button
@@ -64,10 +90,10 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Hero media: video con fallback a imagen.
-          Cambiar HERO_VIDEO_URL por la URL del video de Kling cuando este listo.
-          Formato sugerido: MP4 H.264, 800x500, <2MB, 5-8 seg, loop friendly. */}
-      <div className="w-full max-w-md mt-6 rounded-2xl overflow-hidden shadow-md aspect-[8/5] bg-muted">
+      {/* Hero media: video con fallback a imagen. Wrapper relativo para
+          superponerse a los blobs decorativos.
+          Formato del video: MP4 H.264, 800x500, <2MB, loop friendly. */}
+      <div className="relative w-full max-w-md mt-8 rounded-3xl overflow-hidden shadow-2xl ring-4 ring-white/40 aspect-[8/5] bg-muted">
         <video
           autoPlay
           muted

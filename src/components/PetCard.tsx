@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Heart, MessageCircle, Share2, MapPin } from "@/lib/icons";
+import { Heart, MessageCircle, Share2, MapPin, PawPrint } from "@/lib/icons";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -217,13 +217,21 @@ const PetCard = ({
         </div>
 
         {/* Image */}
-        <div className="relative aspect-square overflow-hidden bg-muted">
-          <img
-            src={petImage}
-            alt={petName}
-            loading="lazy"
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-          />
+        <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-amber-50 to-orange-100">
+          {petImage ? (
+            <img
+              src={petImage}
+              alt={petName}
+              loading="lazy"
+              className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+            />
+          ) : (
+            // Sin foto: huella estilizada en vez del placeholder de silueta
+            // humana del browser, que se veía gigante y fuera de contexto.
+            <div className="w-full h-full flex items-center justify-center">
+              <PawPrint className="h-16 w-16 text-amber-300" />
+            </div>
+          )}
         </div>
 
         {/* Actions */}

@@ -148,8 +148,8 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
       await navigator.clipboard.writeText(shareUrl);
       
       toast({
-        title: "Enlace copiado",
-        description: "El enlace de compartir ha sido copiado al portapapeles",
+        title: "Listo",
+        description: "Compártelo con tu veterinario. Vence en 30 días.",
       });
     } catch (error) {
       // Error handled in hook

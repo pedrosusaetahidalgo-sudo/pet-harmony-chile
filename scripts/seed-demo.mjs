@@ -142,11 +142,14 @@ function pickRegion() {
 }
 
 function fullName(i) {
-  return `${rand(NOMBRES)} ${rand(APELLIDOS)} ${rand(APELLIDOS)} Demo`;
+  // El sufijo "Demo" en el display_name se filtraba al usuario final en la
+  // UI ("Lucas Cáceres Pérez Demo"). Lo eliminamos: el flag is_demo en la
+  // tabla profiles ya distingue las cuentas demo sin contaminar el nombre.
+  return `${rand(NOMBRES)} ${rand(APELLIDOS)} ${rand(APELLIDOS)}`;
 }
 
 function emailFor(name, i) {
-  return `${slugify(name.replace(/ Demo$/, ""))}.${i}${DEMO_DOMAIN}`;
+  return `${slugify(name)}.${i}${DEMO_DOMAIN}`;
 }
 
 function dateMonthsAgo(months) {
@@ -277,15 +280,23 @@ async function createPetsForUser(user, petCount) {
     const name = isDog ? rand(NOMBRES_PERROS) : isCat ? rand(NOMBRES_GATOS) : "Pelusa";
     const breed = isDog ? rand(RAZAS_PERROS) : isCat ? rand(RAZAS_GATOS) : "Mestizo";
 
+    const gender = chance(50) ? "macho" : "hembra";
+    const isFemale = gender === "hembra";
+    // Concordancia de género: el bug original generaba "Princesa es tranquilo
+    // y cariñoso" sin mirar el campo gender. Ahora respetamos macho/hembra.
+    const bio = chance(50)
+      ? `${name} es muy ${isFemale ? "juguetona" : "juguetón"}.`
+      : `${name} es ${isFemale ? "tranquila y cariñosa" : "tranquilo y cariñoso"}.`;
+
     const pet = {
       owner_id: user.id,
       name,
       species,
       breed,
       birth_date: dateMonthsAgo(randInt(6, 144)),
-      gender: chance(50) ? "macho" : "hembra",
+      gender,
       weight: isDog ? +(randInt(50, 350) / 10).toFixed(1) : +(randInt(25, 80) / 10).toFixed(1),
-      bio: `${name} es ${chance(50) ? "muy juguetón" : "tranquilo y cariñoso"}.`,
+      bio,
       microchip_number: String(900000000000000 + randInt(1, 999999999999)),
       is_public: true,
     };
