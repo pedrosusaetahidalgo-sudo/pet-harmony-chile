@@ -106,7 +106,7 @@ export default function Upgrade() {
           <Card className="border-2 hover:border-premium/30 transition-colors">
             <CardHeader>
               <CardTitle className="text-xl">Mensual</CardTitle>
-              <CardDescription>Pago mes a mes, cancelas cuando quieras</CardDescription>
+              <CardDescription>Sin permanencia. Cancela cuando quieras.</CardDescription>
               <div className="pt-4">
                 <span className="text-4xl font-bold tracking-tight">$3.990</span>
                 <span className="text-muted-foreground text-base"> / mes</span>
@@ -119,7 +119,7 @@ export default function Upgrade() {
                 onClick={() => handleSubscribe("monthly")}
                 disabled={loading !== null}
               >
-                {loading === "monthly" ? "Redirigiendo a Flow…" : "Suscribirme mensual"}
+                {loading === "monthly" ? "Redirigiendo a Flow…" : "Activar Premium mensual"}
               </Button>
             </CardContent>
           </Card>
@@ -159,7 +159,7 @@ export default function Upgrade() {
                 onClick={() => handleSubscribe("yearly")}
                 disabled={loading !== null}
               >
-                {loading === "yearly" ? "Redirigiendo a Flow…" : "Suscribirme anual"}
+                {loading === "yearly" ? "Redirigiendo a Flow…" : "Activar Premium anual"}
               </Button>
             </CardContent>
           </Card>
@@ -189,7 +189,7 @@ export default function Upgrade() {
 
         <div className="text-center mt-8 space-y-2">
           <p className="text-xs text-muted-foreground">
-            Pago seguro procesado por Flow. Puedes cancelar tu suscripción cuando quieras.
+            Pago seguro procesado por Flow. Cancela cuando quieras, sin permanencia.
           </p>
           <Button variant="ghost" size="sm" onClick={() => navigate(LINKS.myPets())}>
             Volver a mis mascotas
