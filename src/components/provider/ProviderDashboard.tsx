@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { UserCog, Eye, Stethoscope } from "@/lib/icons";
+import { UserCog, Eye, Stethoscope, Star, Users, FileText, BarChart3 } from "@/lib/icons";
 import { ProviderDirectoryCard } from "./ProviderDirectoryCard";
 import { SharedFichasCard } from "./SharedFichasCard";
 import {
@@ -29,7 +29,7 @@ const ProviderDashboard = () => {
       if (!user) return null;
       const { data } = await supabase
         .from("service_providers")
-        .select("id, slug, is_directory_visible")
+        .select("id, slug, is_directory_visible, directory_views, avg_rating, total_reviews")
         .eq("user_id", user.id)
         .maybeSingle();
       return data;
@@ -324,6 +324,86 @@ const ProviderDashboard = () => {
             </div>
             <p className="text-xs text-muted-foreground">
               Retiros realizados
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Business Stats */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Visitas al perfil
+            </CardTitle>
+            <Eye className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {providerInfo?.directory_views ?? 0}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Total desde tu registro
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Calificacion
+            </CardTitle>
+            <Star className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {providerInfo?.avg_rating
+                ? Number(providerInfo.avg_rating).toFixed(1)
+                : "—"}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {providerInfo?.total_reviews ?? 0} resenas verificadas
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Clientes unicos
+            </CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {(() => {
+                const uniqueClients = new Set(
+                  recentBookings.map((b) => b.orderNumber?.split("-")[0])
+                );
+                return uniqueClients.size;
+              })()}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              En tus ultimas reservas
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Fichas compartidas
+            </CardTitle>
+            <FileText className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {stats.totalBookings > 0
+                ? `${((stats.netPayouts / stats.grossRevenue) * 100).toFixed(0)}%`
+                : "—"}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Margen neto despues de comisiones
             </p>
           </CardContent>
         </Card>
