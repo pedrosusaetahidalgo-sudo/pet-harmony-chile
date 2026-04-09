@@ -17,6 +17,12 @@ export interface ShareToken {
   is_revoked: boolean;
   created_at: string;
   last_accessed_at: string | null;
+  target_provider_id: string | null;
+}
+
+interface CreateTokenArgs {
+  expiryDays?: number;
+  targetProviderId?: string | null;
 }
 
 const DEFAULT_EXPIRY_DAYS = 30;
@@ -49,8 +55,12 @@ export const useMedicalSharing = (petId?: string) => {
 
   // Create share token
   const createShareToken = useMutation({
-    mutationFn: async (expiryDays: number = DEFAULT_EXPIRY_DAYS) => {
+    mutationFn: async (args: CreateTokenArgs | number = {}) => {
       if (!user || !petId) throw new Error('Usuario o mascota no especificada');
+
+      // Back-compat: algunos callers pasaban `expiryDays` directo como numero.
+      const { expiryDays = DEFAULT_EXPIRY_DAYS, targetProviderId = null } =
+        typeof args === 'number' ? { expiryDays: args } : args;
 
       // Generate token (simple random string)
       const tokenData = Array.from(crypto.getRandomValues(new Uint8Array(16)))
@@ -63,12 +73,15 @@ export const useMedicalSharing = (petId?: string) => {
 
       const { data, error } = await supabase
         .from('medical_share_tokens')
+        // Cast a any hasta que se regenere types.ts post-migracion
+        // 20260408120000_share_target_provider.sql (target_provider_id).
         .insert({
           pet_id: petId,
           owner_id: user.id,
           token: tokenData,
           expires_at: expiresAt.toISOString(),
-        })
+          target_provider_id: targetProviderId,
+        } as any)
         .select()
         .maybeSingle();
 

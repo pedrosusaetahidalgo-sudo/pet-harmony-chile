@@ -1,16 +1,72 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Share2, Link2, Copy, Trash2, MessageCircle } from "@/lib/icons";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useMedicalSharing } from "@/hooks/useMedicalSharing";
+import { supabase } from "@/integrations/supabase/client";
 import { formatShortDate } from "../helpers";
 import { EmptyState } from "../shared";
 
+interface DirectoryVet {
+  id: string;
+  slug: string | null;
+  display_name: string;
+}
+
 export function TabCompartir({ petId }: { petId: string }) {
   const { tokens, isLoading, createShareToken, isCreating, revokeToken, isRevoking, getShareUrl } = useMedicalSharing(petId);
+  const [targetVetId, setTargetVetId] = useState<string>("none");
+  const [vets, setVets] = useState<DirectoryVet[]>([]);
+
+  // Carga de vets visibles en el directorio. Hacemos 2 fetches en vez del
+  // join PostgREST profiles:user_id(...) porque ese path no esta auto
+  // detectado y devuelve 400 (mismo patron que adoption_posts).
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data: providers } = await supabase
+        .from("service_providers")
+        .select("id, slug, user_id, is_directory_visible")
+        .eq("is_directory_visible", true)
+        .limit(50);
+      if (!providers || providers.length === 0) {
+        if (!cancelled) setVets([]);
+        return;
+      }
+      const userIds = Array.from(
+        new Set(providers.map((p: { user_id: string | null }) => p.user_id).filter(Boolean))
+      );
+      const { data: profiles } = userIds.length
+        ? await supabase
+            .from("profiles")
+            .select("id, display_name")
+            .in("id", userIds as string[])
+        : { data: [] as { id: string; display_name: string | null }[] };
+      const map = new Map(
+        (profiles || []).map((p) => [p.id, p.display_name || "Veterinario/a"])
+      );
+      const merged: DirectoryVet[] = providers.map((p: { id: string; slug: string | null; user_id: string | null }) => ({
+        id: p.id,
+        slug: p.slug,
+        display_name: (p.user_id && map.get(p.user_id)) || "Veterinario/a",
+      }));
+      if (!cancelled) setVets(merged);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleCopy = useCallback(async (token: string) => {
     const url = getShareUrl(token);
@@ -34,11 +90,22 @@ export function TabCompartir({ petId }: { petId: string }) {
 
   const handleCreate = useCallback(async () => {
     try {
-      await createShareToken(30);
+      await createShareToken({
+        expiryDays: 30,
+        targetProviderId: targetVetId === "none" ? null : targetVetId,
+      });
     } catch {
       // Error handled by the hook
     }
-  }, [createShareToken]);
+  }, [createShareToken, targetVetId]);
+
+  const vetNameById = useCallback(
+    (id: string | null) => {
+      if (!id) return null;
+      return vets.find((v) => v.id === id)?.display_name || null;
+    },
+    [vets]
+  );
 
   const handleRevoke = useCallback(async (tokenId: string) => {
     try {
@@ -62,6 +129,25 @@ export function TabCompartir({ petId }: { petId: string }) {
             Genera un enlace seguro para compartir la ficha clínica de tu mascota con un veterinario.
             Los enlaces expiran automáticamente después de 30 días.
           </p>
+          <div className="space-y-2">
+            <Label className="text-xs">¿Para algún vet en particular? (opcional)</Label>
+            <Select value={targetVetId} onValueChange={setTargetVetId}>
+              <SelectTrigger className="w-full sm:w-[320px]">
+                <SelectValue placeholder="Cualquier veterinario" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Cualquier veterinario</SelectItem>
+                {vets.map((v) => (
+                  <SelectItem key={v.id} value={v.id}>
+                    {v.display_name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Si eliges un vet, le llegará una notificación en su panel.
+            </p>
+          </div>
           <Button
             onClick={handleCreate}
             disabled={isCreating}
@@ -92,10 +178,15 @@ export function TabCompartir({ petId }: { petId: string }) {
                     <p className="text-xs font-mono text-muted-foreground truncate">
                       {getShareUrl(token.token)}
                     </p>
-                    <div className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
                       <span className="text-xs text-muted-foreground">
                         Creado: {formatShortDate(token.created_at)}
                       </span>
+                      {vetNameById(token.target_provider_id) && (
+                        <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200">
+                          Para {vetNameById(token.target_provider_id)}
+                        </Badge>
+                      )}
                       {isExpired ? (
                         <Badge variant="outline" className="text-xs bg-red-50 text-red-600 border-red-200">
                           Expirado
