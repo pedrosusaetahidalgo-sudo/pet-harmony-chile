@@ -72,6 +72,10 @@ const Hero = () => {
             {user ? "Explorar" : "Ya tengo cuenta"}
           </Button>
 
+          <p className="text-xs text-muted-foreground">
+            Desde $3.990/mes · Cancela cuando quieras · Sin tarjeta para empezar
+          </p>
+
           {/* CTA destacado para veterinarios */}
           <div className="relative w-full max-w-sm mt-2">
             <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-10">
