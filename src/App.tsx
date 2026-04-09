@@ -147,8 +147,8 @@ const App = () => (
               <Route path="/demo" element={<Demo />} />
               <Route path="/registro-veterinario" element={<RegistroVeterinario />} />
               <Route path="/para-veterinarios" element={<ParaVeterinarios />} />
-              <Route path="/precios-veterinarios" element={<PreciosVeterinarios />} />
-              <Route path="/precios-veterinarios/comuna/:comuna" element={<PreciosVeterinarios />} />
+              <Route path="/precios-veterinarios" element={<PublicWithLayoutIfAuth><PreciosVeterinarios /></PublicWithLayoutIfAuth>} />
+              <Route path="/precios-veterinarios/comuna/:comuna" element={<PublicWithLayoutIfAuth><PreciosVeterinarios /></PublicWithLayoutIfAuth>} />
               <Route path="/resena/:token" element={<DejarResena />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />

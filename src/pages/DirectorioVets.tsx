@@ -153,6 +153,16 @@ export default function DirectorioVets() {
         {/* Estimador de precios — solo cuando hay comuna especifica */}
         {comuna !== 'all' && <PriceEstimatorWidget comuna={comuna} compact />}
 
+        {/* Link al comparador completo */}
+        <div className="text-center">
+          <Link
+            to={comuna !== 'all' ? `/precios-veterinarios` : '/precios-veterinarios'}
+            className="text-sm text-emerald-600 hover:text-emerald-700 font-medium hover:underline"
+          >
+            Ver comparador de precios por comuna →
+          </Link>
+        </div>
+
         {/* Results */}
         {isLoading ? (
           <div className="grid gap-4">

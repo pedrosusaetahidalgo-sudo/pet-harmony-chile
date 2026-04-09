@@ -481,6 +481,14 @@ export default function Home() {
           <Button
             variant="outline"
             className="flex-shrink-0 lg:w-full justify-start h-auto py-2.5"
+            onClick={() => navigate("/precios-veterinarios")}
+          >
+            <TrendingUp className="h-4 w-4 mr-2 text-amber-600" />
+            <span className="text-xs">Precios vets</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="flex-shrink-0 lg:w-full justify-start h-auto py-2.5"
             onClick={() => navigate(LINKS.maps())}
           >
             <Map className="h-4 w-4 mr-2 text-indigo-600" />
