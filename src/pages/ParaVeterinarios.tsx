@@ -102,17 +102,17 @@ export default function ParaVeterinarios() {
   const planPro = PROVIDER_PLANS.provider_clinic_pro;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-purple-50/40 to-white">
       <PublicHeader />
 
       {/* HERO */}
       <section className="container mx-auto px-4 py-8 md:py-12 max-w-5xl">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           <div className="space-y-5">
-            <Badge className="bg-amber-100 text-amber-800 border-amber-300">
+            <Badge className="bg-purple-100 text-purple-800 border-purple-300">
               🩺 Para profesionales
             </Badge>
-            <h1 className="text-3xl md:text-5xl font-bold text-amber-900 leading-tight">
+            <h1 className="text-3xl md:text-5xl font-bold text-purple-900 leading-tight">
               ¿Cansado de depender solo del boca a boca?
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
@@ -122,7 +122,7 @@ export default function ParaVeterinarios() {
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Button
                 size="lg"
-                className="bg-gradient-to-r from-amber-400 to-pink-500 text-white hover:opacity-90 h-14 text-base font-bold shadow-xl"
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 h-14 text-base font-bold shadow-xl"
                 onClick={() => navigate('/registro-veterinario')}
               >
                 <Stethoscope className="h-5 w-5 mr-2" />
@@ -164,7 +164,7 @@ export default function ParaVeterinarios() {
       {/* BENEFICIOS */}
       <section className="container mx-auto px-4 py-8 md:py-12 max-w-5xl">
         <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-amber-900 mb-3">
+          <h2 className="text-3xl md:text-4xl font-bold text-purple-900 mb-3">
             Todo lo que necesitas para crecer
           </h2>
           <p className="text-muted-foreground">
@@ -176,10 +176,10 @@ export default function ParaVeterinarios() {
           {benefits.map((b) => {
             const Icon = b.icon;
             return (
-              <Card key={b.title} className="border-amber-200 hover:shadow-lg transition">
+              <Card key={b.title} className="border-purple-200 hover:shadow-lg transition">
                 <CardContent className="pt-6 space-y-3">
-                  <div className="rounded-full bg-amber-100 w-12 h-12 flex items-center justify-center">
-                    <Icon className="h-6 w-6 text-amber-600" />
+                  <div className="rounded-full bg-purple-100 w-12 h-12 flex items-center justify-center">
+                    <Icon className="h-6 w-6 text-purple-600" />
                   </div>
                   <h3 className="font-semibold text-lg">{b.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed">{b.desc}</p>
@@ -193,7 +193,7 @@ export default function ParaVeterinarios() {
       {/* COMPARACIÓN PLANES */}
       <section className="container mx-auto px-4 py-8 md:py-12 max-w-5xl">
         <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-amber-900 mb-3">
+          <h2 className="text-3xl md:text-4xl font-bold text-purple-900 mb-3">
             Planes pensados para ti
           </h2>
           <p className="text-muted-foreground">
@@ -268,7 +268,7 @@ export default function ParaVeterinarios() {
       {/* FAQ */}
       <section className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
         <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-amber-900 mb-3">
+          <h2 className="text-3xl md:text-4xl font-bold text-purple-900 mb-3">
             Preguntas frecuentes
           </h2>
         </div>
@@ -278,7 +278,7 @@ export default function ParaVeterinarios() {
             <Card key={item.q}>
               <CardContent className="pt-5">
                 <h3 className="font-semibold mb-2 flex items-start gap-2">
-                  <ChevronRight className="h-5 w-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <ChevronRight className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
                   <span>{item.q}</span>
                 </h3>
                 <p className="text-sm text-muted-foreground leading-relaxed pl-7">{item.a}</p>
@@ -290,7 +290,7 @@ export default function ParaVeterinarios() {
 
       {/* CTA FINAL */}
       <section className="container mx-auto px-4 py-16 max-w-4xl">
-        <div className="rounded-3xl bg-gradient-to-br from-amber-400 via-orange-400 to-pink-500 p-10 md:p-16 text-center text-white shadow-2xl">
+        <div className="rounded-3xl bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 p-10 md:p-16 text-center text-white shadow-2xl">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             Crea tu perfil profesional hoy
           </h2>
@@ -300,7 +300,7 @@ export default function ParaVeterinarios() {
           </p>
           <Button
             size="lg"
-            className="bg-white text-orange-600 hover:bg-white/90 h-14 text-lg font-bold shadow-xl"
+            className="bg-white text-purple-600 hover:bg-white/90 h-14 text-lg font-bold shadow-xl"
             onClick={() => navigate('/registro-veterinario')}
           >
             <Stethoscope className="h-5 w-5 mr-2" />
@@ -345,12 +345,12 @@ function PlanCard({
   return (
     <Card
       className={`relative ${
-        highlight ? 'border-amber-500 border-2 shadow-xl scale-105' : 'border-amber-200'
+        highlight ? 'border-purple-500 border-2 shadow-xl scale-105' : 'border-purple-200'
       }`}
     >
       {highlight && (
         <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <Badge className="bg-amber-500 text-white">Más popular</Badge>
+          <Badge className="bg-purple-500 text-white">Más popular</Badge>
         </div>
       )}
       <CardContent className="pt-6 space-y-4">
@@ -361,7 +361,7 @@ function PlanCard({
           </p>
         </div>
         <div>
-          <span className="text-3xl font-bold text-amber-700">
+          <span className="text-3xl font-bold text-purple-700">
             ${plan.monthlyPrice.toLocaleString('es-CL')}
           </span>
           <span className="text-sm text-muted-foreground">/mes</span>

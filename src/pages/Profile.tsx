@@ -257,35 +257,35 @@ const Profile = () => {
               className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg text-xs py-2.5"
             >
               <Grid className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="hidden xs:inline">Posts</span>
+              <span className="text-[9px] sm:text-xs">Posts</span>
             </TabsTrigger>
             <TabsTrigger 
               value="pets"
               className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg text-xs py-2.5"
             >
               <PawPrint className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="hidden xs:inline">Mascotas</span>
+              <span className="text-[9px] sm:text-xs">Mascotas</span>
             </TabsTrigger>
             <TabsTrigger 
               value="reviews"
               className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg text-xs py-2.5"
             >
               <Star className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="hidden xs:inline">Reseñas</span>
+              <span className="text-[9px] sm:text-xs">Reseñas</span>
             </TabsTrigger>
             <TabsTrigger 
               value="achievements"
               className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg text-xs py-2.5"
             >
               <Trophy className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="hidden xs:inline">Logros</span>
+              <span className="text-[9px] sm:text-xs">Logros</span>
             </TabsTrigger>
             <TabsTrigger 
               value="services"
               className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg text-xs py-2.5"
             >
               <Briefcase className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="hidden xs:inline">Servicios</span>
+              <span className="text-[9px] sm:text-xs">Servicios</span>
             </TabsTrigger>
           </TabsList>
 

@@ -191,7 +191,7 @@ export default function PerfilVetPublico() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-amber-50">
+      <div className="min-h-screen bg-purple-50">
         {!user && <PublicHeader />}
         <main className="container mx-auto px-4 py-8 max-w-4xl space-y-4">
           <Skeleton className="h-48 w-full" />
@@ -203,7 +203,7 @@ export default function PerfilVetPublico() {
 
   if (!v) {
     return (
-      <div className="min-h-screen bg-amber-50">
+      <div className="min-h-screen bg-purple-50">
         {!user && <PublicHeader />}
         <main className="container mx-auto px-4 py-16 max-w-md text-center">
           <h1 className="text-2xl font-bold mb-2">Veterinario no encontrado</h1>
@@ -225,7 +225,7 @@ export default function PerfilVetPublico() {
   const visibleReviews = reviews ?? [];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-purple-50/40 to-white">
       {!user && <PublicHeader />}
 
       <main className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
@@ -239,8 +239,8 @@ export default function PerfilVetPublico() {
           ]}
         />
         {isDemo && (
-          <div className="rounded-lg bg-amber-100 border border-amber-300 px-4 py-2 text-xs text-amber-900 flex items-center gap-2">
-            <Badge className="bg-amber-500 text-white">DEMO</Badge>
+          <div className="rounded-lg bg-purple-100 border border-purple-300 px-4 py-2 text-xs text-purple-900 flex items-center gap-2">
+            <Badge className="bg-purple-500 text-white">DEMO</Badge>
             <span>Esta es una vista de ejemplo. Los datos son ficticios para demostración.</span>
           </div>
         )}
@@ -252,16 +252,16 @@ export default function PerfilVetPublico() {
               <img
                 src={v.avatar_url}
                 alt={v.display_name}
-                className="w-32 h-32 rounded-full object-cover border-4 border-amber-200 mx-auto md:mx-0"
+                className="w-32 h-32 rounded-full object-cover border-4 border-purple-200 mx-auto md:mx-0"
               />
             ) : (
-              <div className="w-32 h-32 rounded-full bg-amber-100 flex items-center justify-center mx-auto md:mx-0">
-                <Stethoscope className="h-12 w-12 text-amber-600" />
+              <div className="w-32 h-32 rounded-full bg-purple-100 flex items-center justify-center mx-auto md:mx-0">
+                <Stethoscope className="h-12 w-12 text-purple-600" />
               </div>
             )}
 
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-2xl md:text-3xl font-bold text-amber-900">
+              <h1 className="text-2xl md:text-3xl font-bold text-purple-900">
                 {v.display_name}
                 {v.is_verified && (
                   <span className="ml-2 text-blue-500 text-base align-middle">
@@ -288,7 +288,7 @@ export default function PerfilVetPublico() {
 
               {areas.length > 0 && (
                 <div className="flex items-start justify-center md:justify-start gap-1 text-sm mb-2">
-                  <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0 text-amber-600" />
+                  <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0 text-purple-600" />
                   <span>
                     <strong>Atiende en:</strong> {areas.join(', ')}
                   </span>
@@ -298,12 +298,12 @@ export default function PerfilVetPublico() {
               {v.price_from && (
                 <p className="text-sm mb-4">
                   💰 Consultas desde{' '}
-                  <strong className="text-amber-700">{formatCLP(v.price_from)}</strong>
+                  <strong className="text-purple-700">{formatCLP(v.price_from)}</strong>
                 </p>
               )}
 
               <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                <Button onClick={handleReservar} className="bg-amber-600 hover:bg-amber-700">
+                <Button onClick={handleReservar} className="bg-purple-600 hover:bg-purple-700">
                   <Calendar className="h-4 w-4 mr-1" /> Reservar consulta
                 </Button>
                 <Button variant="outline" onClick={handleMensaje}>
@@ -323,7 +323,7 @@ export default function PerfilVetPublico() {
             <h2 className="font-semibold text-lg mb-2">Sobre mí</h2>
             <p className="text-muted-foreground whitespace-pre-line">{v.bio}</p>
             {v.experience_years && (
-              <p className="text-sm mt-3 text-amber-700">
+              <p className="text-sm mt-3 text-purple-700">
                 <strong>{v.experience_years}</strong> años de experiencia
               </p>
             )}
@@ -387,8 +387,8 @@ export default function PerfilVetPublico() {
                       <p className="text-sm text-muted-foreground">{r.comment}</p>
                     )}
                     {r.provider_response && (
-                      <div className="mt-2 ml-4 pl-3 border-l-2 border-amber-300 text-sm">
-                        <strong className="text-amber-700">Respuesta del vet:</strong>{' '}
+                      <div className="mt-2 ml-4 pl-3 border-l-2 border-purple-300 text-sm">
+                        <strong className="text-purple-700">Respuesta del vet:</strong>{' '}
                         {r.provider_response}
                       </div>
                     )}
@@ -400,7 +400,7 @@ export default function PerfilVetPublico() {
         </Card>
 
         {/* CTA registro */}
-        <Card className="p-6 bg-amber-50 border-amber-300 text-center">
+        <Card className="p-6 bg-purple-50 border-purple-300 text-center">
           <p className="text-sm mb-3">
             ¿Eres dueño de mascota? Crea tu cuenta gratis para reservar y dejar reseñas.
           </p>
@@ -451,7 +451,7 @@ export default function PerfilVetPublico() {
             <Button
               onClick={handleSubmitReserva}
               disabled={reservaLoading}
-              className="w-full bg-amber-600 hover:bg-amber-700"
+              className="w-full bg-purple-600 hover:bg-purple-700"
             >
               {reservaLoading ? (
                 <>

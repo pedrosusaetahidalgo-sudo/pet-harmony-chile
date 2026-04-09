@@ -20,6 +20,8 @@ import {
   Syringe,
   FileText,
   TrendingUp,
+  Smartphone,
+  Link2,
 } from "@/lib/icons";
 import { getGreeting } from "@/lib/format";
 import { useGamification } from "@/hooks/useGamification";
@@ -229,7 +231,7 @@ export default function Home() {
   }
 
   return (
-    <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-4 md:space-y-6 animate-fade-in">
+    <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-4 md:space-y-6 animate-fade-in bg-slate-50/60 min-h-screen">
       {showTutorial && <OnboardingTutorial onComplete={handleTutorialComplete} />}
 
       {/* === Header mínimo === */}
@@ -459,6 +461,30 @@ export default function Home() {
           </CardContent>
         </Card>
       )}
+
+      {/* === Integrations prompt === */}
+      <Card className="border-purple-200 bg-purple-50/50">
+        <CardContent className="flex items-center gap-4 py-4">
+          <div className="rounded-full bg-purple-100 p-2.5 flex-shrink-0">
+            <Link2 className="h-5 w-5 text-purple-600" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold">Conecta tus apps</p>
+            <p className="text-xs text-muted-foreground">
+              Recibe recordatorios por WhatsApp y sincroniza con Google Calendar
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-shrink-0 border-purple-300 text-purple-700 hover:bg-purple-100"
+            onClick={() => navigate("/settings")}
+          >
+            <Smartphone className="h-3.5 w-3.5 mr-1" />
+            Configurar
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* === Activity feed slot === */}
       <Card>

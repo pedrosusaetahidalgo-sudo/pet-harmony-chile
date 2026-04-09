@@ -69,6 +69,7 @@ const Reminders = lazy(() => import("./pages/Reminders"));
 const OnboardingVetMinimal = lazy(() => import("./pages/OnboardingVetMinimal"));
 const OnboardingDuenoMinimal = lazy(() => import("./pages/OnboardingDuenoMinimal"));
 const Reportes = lazy(() => import("./pages/Reportes"));
+const EnMemoria = lazy(() => import("./pages/EnMemoria"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -131,6 +132,7 @@ const App = () => (
               <Route path="/payment-failed" element={<Navigate to="/payment-result?status=failed" replace />} />
               <Route path="/admin" element={<AdminRoute><AppLayout><Admin /></AppLayout></AdminRoute>} />
               <Route path="/settings" element={<ProtectedRoute><AppLayout><Settings /></AppLayout></ProtectedRoute>} />
+              <Route path="/en-memoria" element={<ProtectedRoute><AppLayout><EnMemoria /></AppLayout></ProtectedRoute>} />
               <Route path="/provider/dashboard" element={<ProtectedRoute><AppLayout><ProviderDashboard /></AppLayout></ProtectedRoute>} />
               <Route path="/provider/profile-edit" element={<ProtectedRoute><AppLayout><ProviderProfileEdit /></AppLayout></ProtectedRoute>} />
               <Route path="/pet/:petId/clinical" element={<ProtectedRoute><AppLayout><PetClinicalRecord /></AppLayout></ProtectedRoute>} />

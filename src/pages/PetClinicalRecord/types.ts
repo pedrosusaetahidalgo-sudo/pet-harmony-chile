@@ -56,4 +56,14 @@ export interface PetData {
   last_vet_visit: string | null;
   adoption_date: string | null;
   is_adopted: boolean | null;
+  // Memorial fields
+  lifecycle_status?: string;
+  passed_away_at?: string | null;
+  passed_away_registered_at?: string | null;
+  passed_away_cause?: string | null;
+  memorial_visibility?: string | null;
+  memorial_remembrance_enabled?: boolean;
+  memorial_message?: string | null;
+  memorial_photo_url?: string | null;
+  memorial_undo_until?: string | null;
 }

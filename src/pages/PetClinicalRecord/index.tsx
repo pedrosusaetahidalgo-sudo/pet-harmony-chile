@@ -15,6 +15,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PetAssistant } from "@/components/ai/PetAssistant";
+import { MemorialFlow } from "@/components/memorial/MemorialFlow";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -39,6 +40,7 @@ const PetClinicalRecord = () => {
   const { addReminder } = useReminders();
   const [showReminderForm, setShowReminderForm] = useState(false);
   const [showAssistant, setShowAssistant] = useState(false);
+  const [showMemorialFlow, setShowMemorialFlow] = useState(false);
   const [reminderData, setReminderData] = useState({ type: "vaccine", title: "", due_date: "" });
 
   const { data: pet, isLoading: petLoading, error } = useQuery({
@@ -313,6 +315,55 @@ const PetClinicalRecord = () => {
           <TabCompartir petId={pet.id} />
         </TabsContent>
       </Tabs>
+
+      {/* Memorial entry point - subtle, at the bottom */}
+      {pet.lifecycle_status !== "memorial" && (
+        <div className="text-center pt-4">
+          <button
+            onClick={() => setShowMemorialFlow(true)}
+            className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
+          >
+            Si {pet.name} ya no está con nosotros...
+          </button>
+        </div>
+      )}
+
+      {/* Memorial flow dialog */}
+      {showMemorialFlow && (
+        <Dialog open={showMemorialFlow} onOpenChange={setShowMemorialFlow}>
+          <DialogContent className="max-w-lg">
+            <MemorialFlow
+              petId={pet.id}
+              petName={pet.name}
+              onComplete={() => {
+                setShowMemorialFlow(false);
+                navigate("/en-memoria");
+              }}
+              onCancel={() => setShowMemorialFlow(false)}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Memorial badge for memorial pets */}
+      {pet.lifecycle_status === "memorial" && (
+        <Card className="border-purple-100 bg-purple-50/30">
+          <CardContent className="p-4 text-center space-y-2">
+            <div className="flex items-center justify-center gap-2 text-purple-400">
+              <Heart className="h-4 w-4" />
+              <span className="text-sm font-medium">En nuestro corazón</span>
+            </div>
+            {pet.memorial_message && (
+              <p className="text-sm text-muted-foreground italic">
+                "{pet.memorial_message}"
+              </p>
+            )}
+            <p className="text-xs text-muted-foreground">
+              El historial médico de {pet.name} se preserva con cuidado.
+            </p>
+          </CardContent>
+        </Card>
+      )}
       </div>
     </div>
   );

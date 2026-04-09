@@ -1,4 +1,4 @@
-import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck, Crown, UserCog, LayoutDashboard, Home as HomeIcon, FileText, Search } from "@/lib/icons";
+import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck, Crown, UserCog, LayoutDashboard, Home as HomeIcon, FileText, Search, Briefcase } from "@/lib/icons";
 import { isFeatureEnabled } from "@/lib/featureFlags";
 import { LINKS } from "@/lib/links";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -32,6 +32,8 @@ const mainItems = [
   { title: "Buscar vet", url: "/veterinarios", icon: Search },
   { title: "Recordatorios", url: "/reminders", icon: Calendar },
   { title: "Mensajes", url: "/chat", icon: MessageSquare },
+  { title: "Ofrecer servicios", url: "/servicios", icon: Briefcase },
+  { title: "En memoria", url: "/en-memoria", icon: Heart },
 ];
 
 export function AppSidebar() {

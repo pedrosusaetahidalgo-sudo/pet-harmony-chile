@@ -21,7 +21,6 @@ const corsHeaders = {
 };
 
 const SCOPES = [
-  "https://www.googleapis.com/auth/calendar",
   "https://www.googleapis.com/auth/calendar.events",
   "https://www.googleapis.com/auth/userinfo.email", // para mostrar qué cuenta está conectada
 ];

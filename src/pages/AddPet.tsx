@@ -188,7 +188,7 @@ const AddPet = () => {
       return;
     }
 
-    // Validate birth_date if provided
+    // Validate birth_date if provided (species-specific realistic limits)
     if (formData.birth_date) {
       const birth = new Date(formData.birth_date);
       const now = new Date();
@@ -196,13 +196,23 @@ const AddPet = () => {
         toast({ title: "Algo salió mal", description: "La fecha de nacimiento no puede ser en el futuro", variant: "destructive" });
         return;
       }
-      const maxYears = formData.species === "gato" ? 30 : 25;
+      const speciesMaxYears: Record<string, number> = {
+        perro: 25,
+        gato: 25,
+        conejo: 15,
+        hamster: 5,
+        tortuga: 50,
+        ave: 30,
+        pez: 20,
+        otro: 25,
+      };
+      const maxYears = speciesMaxYears[formData.species] ?? 25;
       const minBirth = new Date();
       minBirth.setFullYear(now.getFullYear() - maxYears);
       if (birth < minBirth) {
         toast({
           title: "Fecha de nacimiento no válida",
-          description: `Revisa la fecha: la edad máxima esperada para ${formData.species === "gato" ? "un gato" : "un perro u otra mascota"} es de ${maxYears} años.`,
+          description: `Para un ${formData.species}, la fecha de nacimiento no puede ser anterior a hace ${maxYears} años.`,
           variant: "destructive",
         });
         return;
@@ -548,8 +558,9 @@ const AddPet = () => {
                   value={formData.birth_date}
                   max={new Date().toISOString().split("T")[0]}
                   min={(() => {
+                    const speciesMaxYears: Record<string, number> = { perro: 25, gato: 25, conejo: 15, hamster: 5, tortuga: 50, ave: 30, pez: 20, otro: 25 };
                     const d = new Date();
-                    d.setFullYear(d.getFullYear() - 30);
+                    d.setFullYear(d.getFullYear() - (speciesMaxYears[formData.species] ?? 25));
                     return d.toISOString().split("T")[0];
                   })()}
                   onChange={(e) => updateField("birth_date", e.target.value)}
