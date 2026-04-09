@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Camera, ExternalLink, Loader2, Save, Stethoscope } from 'lucide-react';
+import { Camera, ExternalLink, Loader2, Save, Stethoscope } from 'lucide-react';
+import { PageHeader } from '@/components/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -140,26 +141,23 @@ export default function ProviderProfileEdit() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-3xl space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <Button variant="ghost" size="sm" onClick={() => navigate('/provider/dashboard')} className="mb-2 -ml-2">
-            <ArrowLeft className="h-4 w-4 mr-1" /> Volver
-          </Button>
-          <h1 className="text-2xl font-bold">Mi perfil profesional</h1>
-          <p className="text-muted-foreground text-sm">
-            Completa tu información para aparecer en el directorio público.
-          </p>
-        </div>
-        {provider?.slug && (
-          <Link to={`/veterinarios/${provider.slug}`} target="_blank">
-            <Button variant="outline" size="sm">
-              <ExternalLink className="h-4 w-4 mr-1" /> Ver perfil público
-            </Button>
-          </Link>
-        )}
-      </div>
+    <div className="min-h-screen bg-background">
+      <PageHeader
+        title="Mi perfil profesional"
+        subtitle="Completa tu información para aparecer en el directorio público."
+        onBack={() => navigate('/provider/dashboard')}
+        actions={
+          provider?.slug ? (
+            <Link to={`/veterinarios/${provider.slug}`} target="_blank">
+              <Button variant="outline" size="sm">
+                <ExternalLink className="h-4 w-4 mr-1" />
+                <span className="hidden sm:inline">Ver público</span>
+              </Button>
+            </Link>
+          ) : null
+        }
+      />
+      <div className="container mx-auto px-4 py-6 max-w-3xl space-y-6">
 
       {/* Completeness */}
       <Card>
@@ -409,6 +407,7 @@ export default function ProviderProfileEdit() {
             </Button>
           </CardContent>
         </Card>
+      </div>
       </div>
     </div>
   );

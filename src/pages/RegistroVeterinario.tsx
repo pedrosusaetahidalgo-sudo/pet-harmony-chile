@@ -24,6 +24,7 @@ const sb = supabase;
 import { errorMessage } from '@/types/vetDirectory';
 import { SANTIAGO_COMUNAS, VET_SPECIALTIES } from '@/lib/vetDirectory';
 import { PublicHeader, PublicFooter } from './DirectorioVets';
+import { PageHeader } from '@/components/PageHeader';
 
 type ProviderType = 'individual' | 'home_visit' | 'clinic';
 
@@ -163,6 +164,7 @@ export default function RegistroVeterinario() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
       <PublicHeader />
+      <PageHeader title="Registro veterinario" onBack={() => navigate('/para-veterinarios')} />
 
       <main className="container mx-auto px-4 py-8 max-w-2xl">
         <div className="mb-6">

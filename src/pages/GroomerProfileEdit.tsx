@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Loader2, Save, Scissors } from '@/lib/icons';
+import { Loader2, Save, Scissors } from '@/lib/icons';
+import { PageHeader } from '@/components/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -123,27 +124,14 @@ export default function GroomerProfileEdit() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-2xl space-y-6">
+    <div className="min-h-screen bg-background">
+      <PageHeader
+        title="Mi perfil de peluquero"
+        subtitle="Completa tu información para aparecer en el directorio."
+        onBack={() => navigate('/provider/dashboard')}
+      />
+      <div className="container mx-auto px-4 py-6 max-w-2xl space-y-6">
       <div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate(LINKS.servicios())}
-          className="mb-2 -ml-2"
-        >
-          <ArrowLeft className="h-4 w-4 mr-1" /> Volver
-        </Button>
-        <div className="flex items-center gap-3">
-          <div className="rounded-full bg-pink-100 p-2">
-            <Scissors className="h-6 w-6 text-pink-600" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold">Mi perfil de peluquero</h1>
-            <p className="text-sm text-muted-foreground">
-              Completa tu información para aparecer en el directorio.
-            </p>
-          </div>
-        </div>
         {profile?.status === 'pending' && (
           <div className="mt-3 p-3 bg-amber-50 border border-amber-200 rounded text-xs text-amber-800">
             Tu perfil está pendiente de aprobación por el equipo de Paw Friend.
@@ -357,6 +345,7 @@ export default function GroomerProfileEdit() {
             </Button>
           </CardContent>
         </Card>
+      </div>
       </div>
     </div>
   );
