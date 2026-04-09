@@ -40,8 +40,9 @@ MIS_API_KEYS.local.md
 tsconfig.app.tsbuildinfo
 tsconfig.node.tsbuildinfo
 
-# Claude Code worktrees
+# Claude Code (ignorar todo excepto agentes compartidos)
 .claude/
+!.claude/agents/
 
 # Scripts personales locales del dueño (no compartir en el repo)
 _clean.ps1
