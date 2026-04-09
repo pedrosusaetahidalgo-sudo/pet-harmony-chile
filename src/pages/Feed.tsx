@@ -88,6 +88,7 @@ const Feed = () => {
         )
       `)
       .eq("is_public", true)
+      .eq("lifecycle_status", "active")
       .order("created_at", { ascending: false });
 
     if (!error && data) {

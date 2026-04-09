@@ -87,7 +87,7 @@ export function PriceEstimatorCard({ petName }: PriceEstimatorCardProps) {
 
   if (isLoading) {
     return (
-      <Card className="border-l-4 border-l-amber-400">
+      <Card className="border-l-4 border-l-purple-400">
         <CardContent className="p-4 space-y-3">
           <Skeleton className="h-5 w-3/4" />
           <Skeleton className="h-4 w-full" />
@@ -100,23 +100,23 @@ export function PriceEstimatorCard({ petName }: PriceEstimatorCardProps) {
   // No commune set -- prompt user
   if (!profileComuna) {
     return (
-      <Card className="border-l-4 border-l-amber-400 bg-amber-50/50">
+      <Card className="border-l-4 border-l-purple-400 bg-purple-50/50">
         <CardContent className="p-4">
           <div className="flex items-start gap-3">
-            <div className="rounded-full bg-amber-100 p-2 flex-shrink-0">
-              <MapPin className="h-5 w-5 text-amber-700" />
+            <div className="rounded-full bg-purple-100 p-2 flex-shrink-0">
+              <MapPin className="h-5 w-5 text-purple-700" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-amber-900 mb-1">
+              <p className="text-sm font-semibold text-purple-900 mb-1">
                 Agrega tu comuna para estimaciones precisas
               </p>
-              <p className="text-xs text-amber-800 mb-2">
+              <p className="text-xs text-purple-800 mb-2">
                 Podremos mostrarte cuánto cuesta una consulta veterinaria cerca de ti.
               </p>
               <Button
                 size="sm"
                 variant="outline"
-                className="h-8 text-xs border-amber-300 text-amber-800 hover:bg-amber-100"
+                className="h-8 text-xs border-purple-300 text-purple-800 hover:bg-purple-100"
                 onClick={() => navigate("/settings")}
               >
                 Ir a configuración

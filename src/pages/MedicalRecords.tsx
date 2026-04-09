@@ -26,8 +26,9 @@ const MedicalRecords = () => {
       const { data, error } = await supabase
         .from("pets")
         .select("*")
-        .eq("owner_id", user.id);
-      
+        .eq("owner_id", user.id)
+        .eq("lifecycle_status", "active");
+
       if (error) throw error;
       return data || [];
     },

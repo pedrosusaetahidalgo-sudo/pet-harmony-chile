@@ -261,7 +261,7 @@ export function ProviderDirectoryCard() {
               size="sm"
               onClick={() => setShareOpen(true)}
               disabled={!profileUrl || !isVisible}
-              className="flex-1 bg-gradient-to-r from-amber-400 to-pink-500 text-white"
+              className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white"
             >
               <Share2 className="h-4 w-4 mr-1" /> Compartir
             </Button>

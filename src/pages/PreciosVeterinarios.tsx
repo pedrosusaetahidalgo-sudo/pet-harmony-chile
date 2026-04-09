@@ -71,7 +71,7 @@ export default function PreciosVeterinarios() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
+    <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
       <PublicHeader />
 
       <main className="container mx-auto px-4 py-8 max-w-5xl">
@@ -80,7 +80,7 @@ export default function PreciosVeterinarios() {
             <TrendingUp className="h-3.5 w-3.5" />
             Transparencia de precios
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold text-amber-900 mb-3">
+          <h1 className="text-3xl md:text-5xl font-bold text-purple-900 mb-3">
             ¿Cuánto cuesta el vet en tu comuna?
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -108,7 +108,7 @@ export default function PreciosVeterinarios() {
         </Card>
 
         <div className="mb-10">
-          <h2 className="text-xl font-bold text-amber-900 mb-3">
+          <h2 className="text-xl font-bold text-purple-900 mb-3">
             {comuna !== 'all' ? `Precios en ${comuna}` : 'Precios a nivel nacional'}
           </h2>
           <PriceEstimatorWidget comuna={comuna !== 'all' ? comuna : undefined} />
@@ -116,11 +116,11 @@ export default function PreciosVeterinarios() {
 
         {/* CTA al directorio */}
         {comuna !== 'all' && (
-          <Card className="p-6 mb-10 bg-gradient-to-br from-amber-100 to-orange-100 border-amber-200">
-            <h3 className="font-bold text-amber-900 mb-2">
+          <Card className="p-6 mb-10 bg-gradient-to-br from-purple-100 to-purple-50 border-purple-200">
+            <h3 className="font-bold text-purple-900 mb-2">
               ¿Listo para elegir veterinario en {comuna}?
             </h3>
-            <p className="text-sm text-amber-800 mb-4">
+            <p className="text-sm text-purple-800 mb-4">
               Mira las reseñas verificadas y agenda con el que mejor se acomode a ti.
             </p>
             <Link to={`/veterinarios/comuna/${slugifyForUrl(comuna)}`}>
@@ -134,11 +134,11 @@ export default function PreciosVeterinarios() {
 
         {/* FAQ */}
         <section className="mb-10">
-          <h2 className="text-2xl font-bold text-amber-900 mb-4">Preguntas frecuentes</h2>
+          <h2 className="text-2xl font-bold text-purple-900 mb-4">Preguntas frecuentes</h2>
           <div className="grid gap-3">
             {faqs.map((f) => (
               <Card key={f.q} className="p-4">
-                <h3 className="font-semibold text-amber-900 mb-1">{f.q}</h3>
+                <h3 className="font-semibold text-purple-900 mb-1">{f.q}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{f.a}</p>
               </Card>
             ))}

@@ -23,7 +23,7 @@ export const PublicHeader = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="text-amber-600 hover:text-amber-700 hover:bg-amber-50 font-semibold"
+              className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 font-semibold"
             >
               <Stethoscope className="h-4 w-4 mr-1" />
               Veterinarios

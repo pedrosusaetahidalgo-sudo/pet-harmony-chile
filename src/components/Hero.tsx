@@ -15,12 +15,12 @@ const Hero = () => {
     <section className="relative min-h-[calc(100dvh-4rem)] flex flex-col items-center justify-center px-4 py-10 bg-hero-gradient overflow-hidden">
       {/* Decorative blobs */}
       <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-primary/20 blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-amber-300/30 blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-purple-300/30 blur-3xl pointer-events-none" />
 
       {/* Top content: badge + title + subtitle + buttons */}
       <div className="relative flex flex-col items-center text-center gap-4 w-full max-w-md">
         <span className="inline-flex items-center rounded-full bg-white/80 backdrop-blur px-3 py-1.5 text-xs font-semibold text-primary border border-primary/20 shadow-sm">
-          <Sparkles className="mr-1.5 h-3.5 w-3.5 text-amber-500" />
+          <Sparkles className="mr-1.5 h-3.5 w-3.5 text-purple-500" />
           Hecha en Chile · Para mascotas chilenas
         </span>
 
@@ -79,12 +79,12 @@ const Hero = () => {
           {/* CTA destacado para veterinarios */}
           <div className="relative w-full max-w-sm mt-2">
             <div className="absolute -top-2 left-1/2 -translate-x-1/2 z-10">
-              <span className="inline-block bg-amber-400 text-purple-900 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-md">
+              <span className="inline-block bg-purple-400 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full shadow-md">
                 ¿Eres vet?
               </span>
             </div>
             <Button
-              className="h-12 text-base font-bold w-full bg-gradient-to-r from-amber-400 via-orange-400 to-pink-500 hover:opacity-90 text-white shadow-xl border-2 border-amber-300 transition-all"
+              className="h-12 text-base font-bold w-full bg-gradient-to-r from-purple-500 via-purple-600 to-pink-500 hover:opacity-90 text-white shadow-xl border-2 border-purple-300 transition-all"
               onClick={() => navigate(LINKS.registroVeterinario())}
             >
               <Stethoscope className="h-5 w-5 mr-2" />

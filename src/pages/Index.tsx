@@ -150,7 +150,7 @@ const Index = () => {
       {/* 1.5. Cómo funciona en 3 pasos */}
       <section className="container px-4 pb-16 md:pb-24">
         <div className="text-center mb-10 md:mb-14 max-w-2xl mx-auto">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-700 mb-4">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-500/10 px-3 py-1 text-xs font-semibold text-purple-700 mb-4">
             <PawPrint className="h-3.5 w-3.5" />
             Así de fácil
           </span>
@@ -172,7 +172,7 @@ const Index = () => {
                 <div className="h-24 w-24 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-xl ring-8 ring-background">
                   <Icon className="h-10 w-10 text-white" />
                 </div>
-                <span className="absolute -top-1 -right-1 h-8 w-8 rounded-full bg-amber-400 text-purple-900 font-black text-sm flex items-center justify-center shadow-md ring-4 ring-background">
+                <span className="absolute -top-1 -right-1 h-8 w-8 rounded-full bg-purple-400 text-white font-black text-sm flex items-center justify-center shadow-md ring-4 ring-background">
                   {n}
                 </span>
               </div>
@@ -184,7 +184,7 @@ const Index = () => {
       </section>
 
       {/* 1.7. Stats del mercado chileno */}
-      <section className="px-4 py-16 md:py-24 bg-gradient-to-br from-primary/5 via-amber-50 to-rose-50">
+      <section className="px-4 py-16 md:py-24 bg-gradient-to-br from-primary/5 via-purple-50 to-rose-50">
         <div className="container max-w-5xl mx-auto">
           <div className="text-center mb-10 md:mb-14 max-w-2xl mx-auto">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/10 px-3 py-1 text-xs font-semibold text-rose-700 mb-4">

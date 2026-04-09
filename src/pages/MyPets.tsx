@@ -58,6 +58,7 @@ const MyPets = () => {
         .from("pets")
         .select("*")
         .eq("owner_id", user?.id)
+        .eq("lifecycle_status", "active")
         .order("created_at", { ascending: false });
 
       if (error) throw error;

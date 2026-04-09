@@ -36,9 +36,8 @@ export function MemorialFlow({ petId, petName, onComplete, onCancel }: MemorialF
       const now = new Date();
       const undoUntil = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
-      // Memorial columns added via migration 20260420000000 — cast needed until types regenerated
-      const { error } = await (supabase
-        .from("pets") as any)
+      const { error } = await supabase
+        .from("pets")
         .update({
           lifecycle_status: "memorial",
           passed_away_at: new Date(formData.passed_away_at).toISOString(),

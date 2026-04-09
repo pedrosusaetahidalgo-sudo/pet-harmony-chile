@@ -121,7 +121,8 @@ export default function Home() {
       const { data: petsData } = await supabase
         .from("pets")
         .select("*")
-        .eq("owner_id", user.id);
+        .eq("owner_id", user.id)
+        .eq("lifecycle_status", "active");
 
       const petsList: Pet[] = (petsData || []).map((p) => ({
         id: p.id,

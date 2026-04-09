@@ -89,11 +89,11 @@ export default function Upgrade() {
 
         {/* Grandfathering banner — solo visible para usuarios no premium */}
         {!isPremium && (
-          <div className="mb-8 rounded-xl border-2 border-amber-300 bg-amber-50 p-4 sm:p-5 text-center">
-            <Badge className="bg-amber-500 text-white border-0 mb-2">
+          <div className="mb-8 rounded-xl border-2 border-purple-300 bg-purple-50 p-4 sm:p-5 text-center">
+            <Badge className="bg-purple-500 text-white border-0 mb-2">
               Oferta de lanzamiento
             </Badge>
-            <p className="text-sm sm:text-base text-amber-900 font-medium leading-relaxed">
+            <p className="text-sm sm:text-base text-purple-900 font-medium leading-relaxed">
               Los primeros 500 usuarios que activen Premium mantienen <strong>$3.990/mes para siempre</strong>.
               Sin importar futuros aumentos.
             </p>

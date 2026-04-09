@@ -44,9 +44,9 @@ export default function PriceEstimatorWidget({ comuna, compact = false }: Props)
       return null;
     }
     return (
-      <Card className="p-8 text-center bg-amber-50 border-amber-200">
-        <Info className="h-10 w-10 mx-auto text-amber-500 mb-3" />
-        <h3 className="font-semibold text-lg text-amber-900 mb-2">
+      <Card className="p-8 text-center bg-purple-50 border-purple-200">
+        <Info className="h-10 w-10 mx-auto text-purple-500 mb-3" />
+        <h3 className="font-semibold text-lg text-purple-900 mb-2">
           {comuna
             ? `Aún no tenemos suficientes precios para ${comuna}`
             : 'Aún no tenemos suficientes precios publicados'}
@@ -133,7 +133,7 @@ function ServiceRow({ service, stats }: { service: VetServiceType; stats?: VetPr
   return (
     <div className="py-3 border-b last:border-0">
       <div className="flex items-center justify-between gap-3 mb-2 min-h-[44px]">
-        <span className="font-semibold text-amber-900">{label}</span>
+        <span className="font-semibold text-purple-900">{label}</span>
         <span className="text-sm font-bold text-purple-700">
           {formatCLP(stats.median_price)}
         </span>
