@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -52,6 +53,7 @@ export const MyBookingsHistory = ({
   className = ""
 }: MyBookingsHistoryProps) => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "upcoming" | "past">("upcoming");
@@ -257,9 +259,23 @@ export const MyBookingsHistory = ({
       </CardHeader>
       <CardContent>
         {filteredBookings.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
-            <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
-            <p>No tienes reservas {filter === "upcoming" ? "próximas" : filter === "past" ? "pasadas" : ""}</p>
+          <div className="text-center py-10 px-4">
+            <div className="inline-flex h-14 w-14 rounded-full bg-emerald-100 items-center justify-center mb-3">
+              <Calendar className="h-7 w-7 text-emerald-700" />
+            </div>
+            <p className="font-semibold mb-1">
+              No tienes reservas {filter === "upcoming" ? "próximas" : filter === "past" ? "pasadas" : ""}
+            </p>
+            <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-4">
+              Agenda tu primera reserva con un servicio verificado.
+            </p>
+            <Button
+              size="sm"
+              className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+              onClick={() => navigate("/servicios")}
+            >
+              Agendar tu primera reserva
+            </Button>
           </div>
         ) : (
           <div className="space-y-3 max-h-96 overflow-y-auto">

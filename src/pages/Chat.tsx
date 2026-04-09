@@ -255,7 +255,7 @@ const Chat = () => {
           // Si "Nuevo mensaje" está abierto, la card de arriba ya guía al
           // usuario; no duplicamos con el empty state principal.
           showNewMessage ? null : (
-            <EmptyState icon={MessageCircle} title="Sin conversaciones" description="Reserva un servicio o sigue a alguien para empezar a chatear" actionLabel="Ver servicios" actionUrl="/services/walkers" />
+            <EmptyState icon={MessageCircle} title="Sin conversaciones" description="Empieza una conversación con tu vet o con alguien que sigas." actionLabel="Buscar veterinarios" actionUrl="/veterinarios" />
           )
         ) : (
           <div className="space-y-1">

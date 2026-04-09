@@ -151,14 +151,22 @@ const Adoption = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 md:py-12 bg-muted/20 rounded-xl">
-              <Heart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-base sm:text-lg font-semibold mb-2">
+            <div className="text-center py-10 px-4 bg-muted/20 rounded-xl">
+              <div className="inline-flex h-14 w-14 rounded-full bg-emerald-100 items-center justify-center mb-3">
+                <Heart className="h-7 w-7 text-emerald-700" />
+              </div>
+              <h3 className="text-base sm:text-lg font-semibold mb-1">
                 No hay mascotas disponibles
               </h3>
-              <p className="text-sm text-muted-foreground">
-                Sé el primero en publicar una mascota para adopción
+              <p className="text-sm text-muted-foreground mb-4">
+                Sé el primero en publicar una mascota en adopción.
               </p>
+              <Button
+                onClick={() => setShowCreateDialog(true)}
+                className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+              >
+                Publicar mascota
+              </Button>
             </div>
           )}
         </TabsContent>
@@ -182,14 +190,22 @@ const Adoption = () => {
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 md:py-12 bg-muted/20 rounded-xl">
-              <Heart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-base sm:text-lg font-semibold mb-2">
+            <div className="text-center py-10 px-4 bg-muted/20 rounded-xl">
+              <div className="inline-flex h-14 w-14 rounded-full bg-emerald-100 items-center justify-center mb-3">
+                <Heart className="h-7 w-7 text-emerald-700" />
+              </div>
+              <h3 className="text-base sm:text-lg font-semibold mb-1">
                 No tienes publicaciones
               </h3>
-              <p className="text-sm text-muted-foreground">
-                Publica una mascota para dar en adopción
+              <p className="text-sm text-muted-foreground mb-4">
+                Publica una mascota que esté buscando nuevo hogar.
               </p>
+              <Button
+                onClick={() => setShowCreateDialog(true)}
+                className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+              >
+                Crear publicación
+              </Button>
             </div>
           )}
         </TabsContent>
