@@ -44,7 +44,7 @@ export function TabHistorial({ petId }: { petId: string }) {
     <div className="space-y-8">
       {sortedYears.map((year) => (
         <div key={year} className="space-y-4">
-          <h3 className="text-lg font-bold text-emerald-600 sticky top-0 bg-background py-1 z-10">
+          <h3 className="text-lg font-bold text-purple-600 sticky top-0 bg-background py-1 z-10">
             {year}
           </h3>
           <div className="relative space-y-4 pl-8 before:absolute before:left-3 before:top-0 before:bottom-0 before:w-0.5 before:bg-border">
@@ -89,9 +89,9 @@ export function TabHistorial({ petId }: { petId: string }) {
                     </div>
 
                     {record.next_date && (
-                      <div className="flex items-center gap-1.5 text-xs mt-2 p-2 bg-emerald-50 rounded border border-primary/10">
-                        <Calendar className="h-3 w-3 text-emerald-600" />
-                        <span className="font-medium text-emerald-600">Proxima cita:</span>
+                      <div className="flex items-center gap-1.5 text-xs mt-2 p-2 bg-purple-50 rounded border border-primary/10">
+                        <Calendar className="h-3 w-3 text-purple-600" />
+                        <span className="font-medium text-purple-600">Proxima cita:</span>
                         <span>{formatDate(record.next_date)}</span>
                       </div>
                     )}
@@ -138,6 +138,18 @@ export function TabHistorial({ petId }: { petId: string }) {
                   <p className="text-sm text-muted-foreground mt-1">
                     {note.description}
                   </p>
+                )}
+                {note.alternative_offered && (
+                  <div className="mt-2 p-2 bg-green-50 rounded border border-green-200">
+                    <p className="text-xs font-medium text-green-700 mb-0.5">
+                      Alternativas discutidas
+                    </p>
+                    {note.alternatives_discussed && (
+                      <p className="text-xs text-green-600">
+                        {note.alternatives_discussed}
+                      </p>
+                    )}
+                  </div>
                 )}
                 <p className="text-xs text-muted-foreground flex items-center gap-1 mt-2">
                   <Clock className="h-3 w-3" />

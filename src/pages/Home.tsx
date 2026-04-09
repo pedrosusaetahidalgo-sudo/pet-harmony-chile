@@ -29,6 +29,8 @@ import ActivityFeed from "@/components/social/ActivityFeed";
 import { LINKS } from "@/lib/links";
 import { useGoToAddPet } from "@/hooks/useCanAddPet";
 import { logger } from "@/lib/logger";
+import { PriceEstimatorCard } from "@/components/home/PriceEstimatorCard";
+import { WeeklyReportCard } from "@/components/home/WeeklyReportCard";
 import { formatDistanceToNowStrict, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -259,8 +261,10 @@ export default function Home() {
             <p className="text-sm font-semibold truncate">
               {getGreeting()}, {profile?.display_name?.split(/\s+/)[0] || user?.email?.split("@")[0] || "Amigo"}
             </p>
-            {stats && (
-              <p className="text-xs text-muted-foreground">Nivel {stats.level}</p>
+            {pets.length > 0 && (
+              <p className="text-xs text-muted-foreground">
+                {pets.length} {pets.length === 1 ? "mascota" : "mascotas"} registradas
+              </p>
             )}
           </div>
         </div>
@@ -286,23 +290,23 @@ export default function Home() {
                   <div
                     className={`relative rounded-full p-[3px] transition-all ${
                       isActive
-                        ? "bg-gradient-to-tr from-emerald-500 via-teal-400 to-emerald-600 shadow-lg shadow-emerald-500/30 scale-105"
+                        ? "bg-gradient-to-tr from-purple-600 via-teal-400 to-purple-600 shadow-lg shadow-purple-600/30 scale-105"
                         : "bg-muted group-hover:bg-muted/70"
                     }`}
                   >
                     <Avatar className="h-16 w-16 ring-2 ring-background">
                       <AvatarImage src={pet.photo_url || undefined} alt={pet.name} />
-                      <AvatarFallback className="bg-emerald-100 text-emerald-700 text-xl font-bold">
+                      <AvatarFallback className="bg-purple-100 text-purple-700 text-xl font-bold">
                         {pet.name[0]?.toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     {isActive && (
-                      <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full bg-emerald-500 border-2 border-background" />
+                      <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full bg-purple-600 border-2 border-background" />
                     )}
                   </div>
                   <span
                     className={`text-xs font-medium max-w-[72px] truncate ${
-                      isActive ? "text-emerald-700 font-bold" : "text-muted-foreground"
+                      isActive ? "text-purple-700 font-bold" : "text-muted-foreground"
                     }`}
                   >
                     {pet.name}
@@ -317,12 +321,12 @@ export default function Home() {
               className="flex flex-col items-center gap-1 flex-shrink-0 group"
               aria-label="Agregar mascota"
             >
-              <div className="rounded-full p-[3px] bg-muted group-hover:bg-emerald-100 transition-colors">
-                <div className="h-16 w-16 rounded-full border-2 border-dashed border-emerald-400 group-hover:border-emerald-600 bg-background flex items-center justify-center transition-colors">
-                  <Plus className="h-7 w-7 text-emerald-500 group-hover:text-emerald-700 transition-colors" />
+              <div className="rounded-full p-[3px] bg-muted group-hover:bg-purple-100 transition-colors">
+                <div className="h-16 w-16 rounded-full border-2 border-dashed border-purple-400 group-hover:border-purple-600 bg-background flex items-center justify-center transition-colors">
+                  <Plus className="h-7 w-7 text-purple-600 group-hover:text-purple-700 transition-colors" />
                 </div>
               </div>
-              <span className="text-xs font-medium text-muted-foreground group-hover:text-emerald-700">
+              <span className="text-xs font-medium text-muted-foreground group-hover:text-purple-700">
                 Agregar
               </span>
             </button>
@@ -334,8 +338,9 @@ export default function Home() {
               icon={Calendar}
               title="Próxima cita"
               value={nextAppointmentLabel}
+              cta={nextAppointmentForActive ? "Ver cita" : "Agendar ahora"}
               accent={nextAppointmentForActive ? "default" : "warning"}
-              onClick={() => navigate(LINKS.bookings())}
+              onClick={() => navigate(nextAppointmentForActive ? LINKS.bookings() : LINKS.vets())}
             />
             <StatusCard
               icon={Syringe}
@@ -347,6 +352,7 @@ export default function Home() {
                     ? `Pendiente: ${activeVaccine.pendingName}`
                     : "Sin datos"
               }
+              cta={activeVaccine?.upToDate ? "Ver historial" : "Ver próxima"}
               accent={activeVaccine?.upToDate ? "success" : "warning"}
               onClick={() =>
                 navigate(activePet ? `/medical-records?pet=${activePet.id}` : LINKS.medicalRecords())
@@ -356,19 +362,27 @@ export default function Home() {
               icon={FileText}
               title="Ficha médica"
               value={`${activeCompleteness}% completa`}
+              cta={activeCompleteness >= 80 ? "Compartir con vet" : "Completar ficha"}
               accent={activeCompleteness >= 80 ? "success" : "default"}
               onClick={() =>
-                navigate(activePet ? `/medical-records?pet=${activePet.id}` : LINKS.medicalRecords())
+                navigate(activePet ? `/pet/${activePet.id}/clinical` : LINKS.medicalRecords())
               }
             />
             <StatusCard
               icon={TrendingUp}
               title="Racha paseos"
               value={streakDays > 0 ? `${streakDays} ${streakDays === 1 ? "día" : "días"}` : "Empieza hoy"}
+              cta="Registrar paseo"
               accent={streakDays > 0 ? "success" : "default"}
               onClick={() => navigate(LINKS.pawGame())}
             />
           </div>
+
+          {/* === Price estimator card === */}
+          <PriceEstimatorCard petName={activePet?.name} />
+
+          {/* === Weekly report card (si hay reporte no leído) === */}
+          <WeeklyReportCard />
         </>
       )}
 
@@ -465,7 +479,7 @@ export default function Home() {
             className="flex-shrink-0 lg:w-full justify-start h-auto py-2.5"
             onClick={() => navigate(LINKS.vets())}
           >
-            <Stethoscope className="h-4 w-4 mr-2 text-emerald-600" />
+            <Stethoscope className="h-4 w-4 mr-2 text-purple-600" />
             <span className="text-xs">Reservar vet</span>
           </Button>
           <Button
@@ -499,7 +513,7 @@ export default function Home() {
             className="flex-shrink-0 lg:w-full justify-start h-auto py-2.5"
             onClick={goToAddPet}
           >
-            <Plus className="h-4 w-4 mr-2 text-emerald-600" />
+            <Plus className="h-4 w-4 mr-2 text-purple-600" />
             <span className="text-xs">Agregar mascota</span>
           </Button>
         </div>

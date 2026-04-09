@@ -60,7 +60,7 @@ export default function Reminders() {
           <Button
             size="sm"
             onClick={() => navigate(LINKS.myPets())}
-            className="bg-emerald-600 hover:bg-emerald-700"
+            className="bg-purple-600 hover:bg-purple-700"
           >
             <Plus className="h-4 w-4 mr-1" />
             Agregar
@@ -89,7 +89,7 @@ export default function Reminders() {
                   Crea tu primer recordatorio desde la ficha de tu mascota.
                 </p>
               </div>
-              <Button onClick={() => navigate(LINKS.myPets())} className="bg-emerald-600 hover:bg-emerald-700">
+              <Button onClick={() => navigate(LINKS.myPets())} className="bg-purple-600 hover:bg-purple-700">
                 Ir a mis mascotas
               </Button>
             </CardContent>
@@ -139,8 +139,8 @@ export default function Reminders() {
         {grouped.later.length > 0 && (
           <Section
             title="Próximos"
-            icon={<CalendarIcon className="h-4 w-4 text-emerald-600" />}
-            tone="emerald"
+            icon={<CalendarIcon className="h-4 w-4 text-purple-600" />}
+            tone="purple"
             count={grouped.later.length}
           >
             {grouped.later.map((r) => (
@@ -150,7 +150,7 @@ export default function Reminders() {
                 onComplete={() => completeReminder.mutate(r.id)}
                 onOpen={() => navigate(`/pet/${r.pet_id}/clinical`)}
                 dueLabel={formatDue(r.due_date)}
-                tone="emerald"
+                tone="purple"
               />
             ))}
           </Section>
@@ -170,7 +170,7 @@ function Section({
   title: string;
   icon: React.ReactNode;
   count: number;
-  tone: "rose" | "amber" | "emerald";
+  tone: "rose" | "amber" | "purple";
   children: React.ReactNode;
 }) {
   return (
@@ -184,7 +184,7 @@ function Section({
             "ml-auto text-xs",
             tone === "rose" && "bg-rose-100 text-rose-700",
             tone === "amber" && "bg-amber-100 text-amber-700",
-            tone === "emerald" && "bg-emerald-100 text-emerald-700"
+            tone === "purple" && "bg-purple-100 text-purple-700"
           )}
         >
           {count}
@@ -206,7 +206,7 @@ function ReminderCard({
   onComplete: () => void;
   onOpen: () => void;
   dueLabel: string;
-  tone: "rose" | "amber" | "emerald";
+  tone: "rose" | "amber" | "purple";
 }) {
   return (
     <Card
@@ -214,7 +214,7 @@ function ReminderCard({
         "border-l-4 transition hover:shadow-sm",
         tone === "rose" && "border-l-rose-500",
         tone === "amber" && "border-l-amber-500",
-        tone === "emerald" && "border-l-emerald-500"
+        tone === "purple" && "border-l-purple-600"
       )}
     >
       <CardContent className="py-3 px-3 flex items-center gap-3">
@@ -234,7 +234,7 @@ function ReminderCard({
           size="icon"
           onClick={onComplete}
           aria-label="Marcar como hecho"
-          className="h-11 w-11 flex-shrink-0 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700"
+          className="h-11 w-11 flex-shrink-0 text-purple-600 hover:bg-purple-50 hover:text-purple-700"
         >
           <CheckCircle2 className="h-5 w-5" />
         </Button>

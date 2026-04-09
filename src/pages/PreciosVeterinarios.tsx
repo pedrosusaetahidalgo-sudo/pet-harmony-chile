@@ -76,7 +76,7 @@ export default function PreciosVeterinarios() {
 
       <main className="container mx-auto px-4 py-8 max-w-5xl">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-semibold mb-4">
+          <div className="inline-flex items-center gap-2 bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-xs font-semibold mb-4">
             <TrendingUp className="h-3.5 w-3.5" />
             Transparencia de precios
           </div>
@@ -90,12 +90,12 @@ export default function PreciosVeterinarios() {
         </div>
 
         <Card className="p-4 md:p-6 mb-6 shadow-md">
-          <label className="text-sm font-semibold text-emerald-700 mb-2 flex items-center gap-1">
+          <label className="text-sm font-semibold text-purple-700 mb-2 flex items-center gap-1">
             <MapPin className="h-4 w-4" />
             Tu comuna
           </label>
           <Select value={comuna} onValueChange={handleComunaChange}>
-            <SelectTrigger className="h-12 border-emerald-200 focus:ring-emerald-500">
+            <SelectTrigger className="h-12 border-purple-200 focus:ring-purple-600">
               <SelectValue placeholder="Selecciona tu comuna" />
             </SelectTrigger>
             <SelectContent>
@@ -146,18 +146,18 @@ export default function PreciosVeterinarios() {
         </section>
 
         {/* CTA final B2B */}
-        <Card className="p-8 text-center bg-gradient-to-br from-emerald-500 to-emerald-700 text-white shadow-xl">
+        <Card className="p-8 text-center bg-gradient-to-br from-purple-600 to-purple-700 text-white shadow-xl">
           <h2 className="text-2xl md:text-3xl font-bold mb-3">
             ¿Eres veterinario?
           </h2>
-          <p className="text-emerald-50 mb-5 max-w-xl mx-auto">
+          <p className="text-purple-50 mb-5 max-w-xl mx-auto">
             Publica tus precios y aparece en el comparador público de Paw Friend gratis. Capta
             clientes que valoran la transparencia.
           </p>
           <Link to="/registro-veterinario">
             <Button
               size="lg"
-              className="bg-white text-emerald-700 hover:bg-emerald-50 min-h-[44px] font-bold"
+              className="bg-white text-purple-700 hover:bg-purple-50 min-h-[44px] font-bold"
             >
               Crear mi perfil profesional
             </Button>

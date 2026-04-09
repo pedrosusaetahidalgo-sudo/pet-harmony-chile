@@ -372,7 +372,7 @@ export default function PerfilVetPublico() {
                           className={`h-4 w-4 ${
                             i < r.rating
                               ? 'fill-yellow-400 text-yellow-400'
-                              : 'text-gray-300'
+                              : 'text-slate-300'
                           }`}
                         />
                       ))}

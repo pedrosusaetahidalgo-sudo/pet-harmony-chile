@@ -25,9 +25,9 @@ const hints: Hint[] = [
     title: "1. Agrega tu primera mascota",
     description: "Crea su perfil con foto, raza y datos médicos. Es el corazón de Paw Friend.",
     cta: "Agregar mascota",
-    colorBg: "bg-emerald-50",
-    colorIcon: "text-emerald-700 bg-emerald-100",
-    colorBorder: "border-l-emerald-500",
+    colorBg: "bg-purple-50",
+    colorIcon: "text-purple-700 bg-purple-100",
+    colorBorder: "border-l-purple-600",
   },
   {
     id: "reminder",
@@ -125,7 +125,7 @@ export function HomeOnboardingHints({ hasPets }: Props) {
                 <Button
                   size="sm"
                   onClick={() => handleAction(h.id)}
-                  className="w-full min-h-[44px] bg-emerald-600 hover:bg-emerald-700 text-white"
+                  className="w-full min-h-[44px] bg-purple-600 hover:bg-purple-700 text-white"
                 >
                   {h.cta}
                   <ArrowRight className="h-4 w-4 ml-2" />

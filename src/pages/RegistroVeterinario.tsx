@@ -19,10 +19,11 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
 const sb = supabase;
 import { errorMessage } from '@/types/vetDirectory';
-import { SANTIAGO_COMUNAS, VET_SPECIALTIES } from '@/lib/vetDirectory';
+import { SANTIAGO_COMUNAS, VET_SPECIALTIES, COMUNAS_POR_ZONA } from '@/lib/vetDirectory';
 import { PublicHeader, PublicFooter } from './DirectorioVets';
 import { PageHeader } from '@/components/PageHeader';
 
@@ -46,6 +47,8 @@ interface FormState {
   price_from: string;
   // Resultado
   createdSlug?: string;
+  // Error state
+  alreadyRegistered?: boolean;
 }
 
 const STEPS = ['Tipo', 'Cuenta', 'Perfil', 'Listo'] as const;
@@ -142,8 +145,17 @@ export default function RegistroVeterinario() {
 
       update('createdSlug', (provider as { slug: string }).slug);
       setStep(3);
-    } catch (err) {
-      toast.error(errorMessage(err, 'Error al crear tu cuenta'));
+    } catch (err: unknown) {
+      const msg = errorMessage(err, 'Error al crear tu cuenta');
+      const isAlreadyRegistered =
+        msg.toLowerCase().includes('already registered') ||
+        msg.toLowerCase().includes('user_already_exists') ||
+        msg.toLowerCase().includes('ya existe');
+      if (isAlreadyRegistered) {
+        update('alreadyRegistered', true);
+      } else {
+        toast.error(msg);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -181,7 +193,7 @@ export default function RegistroVeterinario() {
           <CardContent className="p-6 md:p-8">
             {step === 0 && <StepType form={form} update={update} />}
             {step === 1 && <StepAccount form={form} update={update} />}
-            {step === 2 && <StepProfile form={form} update={update} toggleArr={toggleArr} />}
+            {step === 2 && <StepProfile form={form} update={update} toggleArr={toggleArr} setForm={setForm} />}
             {step === 3 && <StepDone slug={form.createdSlug} />}
 
             {step < 3 && (
@@ -278,7 +290,7 @@ function StepType({
             className={`w-full text-left p-4 rounded-lg border-2 transition-all flex items-start gap-4 ${
               active
                 ? 'border-purple-500 bg-purple-50'
-                : 'border-gray-200 hover:border-purple-300'
+                : 'border-slate-200 hover:border-purple-300'
             }`}
           >
             <div
@@ -307,6 +319,7 @@ function StepAccount({
   form: FormState;
   update: <K extends keyof FormState>(k: K, v: FormState[K]) => void;
 }) {
+  const navigate = useNavigate();
   return (
     <div className="space-y-4">
       <div className="text-center mb-2">
@@ -315,6 +328,22 @@ function StepAccount({
           Vamos a crear tu cuenta en Paw Friend.
         </p>
       </div>
+
+      {form.alreadyRegistered && (
+        <Alert variant="destructive" className="border-orange-300 bg-orange-50">
+          <AlertDescription className="flex flex-col gap-2">
+            <span>Ya existe una cuenta con el email <strong>{form.email}</strong>.</span>
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-fit"
+              onClick={() => navigate(`/auth?mode=login&email=${encodeURIComponent(form.email)}`)}
+            >
+              Iniciar sesión con {form.email}
+            </Button>
+          </AlertDescription>
+        </Alert>
+      )}
 
       <div>
         <Label htmlFor="name">Nombre completo / del negocio *</Label>
@@ -378,15 +407,17 @@ function StepProfile({
   form,
   update,
   toggleArr,
+  setForm,
 }: {
   form: FormState;
   update: <K extends keyof FormState>(k: K, v: FormState[K]) => void;
   toggleArr: (k: 'specialties' | 'service_areas', value: string) => void;
+  setForm: React.Dispatch<React.SetStateAction<FormState>>;
 }) {
   return (
     <div className="space-y-5">
       <div className="text-center mb-2">
-        <h1 className="text-2xl font-bold mb-1">Construí tu perfil</h1>
+        <h1 className="text-2xl font-bold mb-1">Construye tu perfil</h1>
         <p className="text-sm text-muted-foreground">
           Esto es lo que verán tus futuros pacientes.
         </p>
@@ -420,7 +451,7 @@ function StepProfile({
                 className={`px-3 py-1.5 rounded-full text-sm border transition ${
                   active
                     ? 'bg-purple-600 text-white border-purple-600'
-                    : 'bg-white text-foreground border-gray-300 hover:border-purple-400'
+                    : 'bg-white text-foreground border-slate-300 hover:border-purple-400'
                 }`}
               >
                 {s}
@@ -447,26 +478,71 @@ function StepProfile({
       </div>
 
       <div>
-        <Label className="mb-2 block">Comunas que atendés * (al menos 1)</Label>
-        <div className="flex flex-wrap gap-2">
-          {SANTIAGO_COMUNAS.map((c) => {
-            const active = form.service_areas.includes(c);
-            return (
-              <button
-                key={c}
-                type="button"
-                onClick={() => toggleArr('service_areas', c)}
-                className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                  active
-                    ? 'bg-purple-600 text-white border-purple-600'
-                    : 'bg-white text-foreground border-gray-300 hover:border-purple-400'
-                }`}
-              >
-                {c}
-              </button>
-            );
-          })}
+        <Label className="mb-2 block">Comunas que atiendes * (al menos 1)</Label>
+        {/* Shortcut: toda la RM */}
+        <div className="mb-2">
+          <button
+            type="button"
+            onClick={() => {
+              const allComunas = SANTIAGO_COMUNAS.slice();
+              const allSelected = allComunas.every((c) => form.service_areas.includes(c));
+              if (allSelected) {
+                // Deselect all
+                setForm((f) => ({ ...f, service_areas: [] }));
+              } else {
+                setForm((f) => ({ ...f, service_areas: [...allComunas] }));
+              }
+            }}
+            className={`px-3 py-1.5 rounded-full text-sm border transition font-medium ${
+              SANTIAGO_COMUNAS.every((c) => form.service_areas.includes(c))
+                ? 'bg-purple-700 text-white border-purple-700'
+                : 'bg-purple-50 text-purple-700 border-purple-300 hover:border-purple-500'
+            }`}
+          >
+            Toda la RM
+          </button>
         </div>
+        {/* Agrupadas por zona */}
+        {Object.entries(COMUNAS_POR_ZONA).map(([zona, comunas]) => (
+          <div key={zona} className="mb-3">
+            <div className="flex items-center gap-2 mb-1">
+              <span className="text-xs font-semibold text-muted-foreground uppercase">{zona}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  const allInZone = comunas.every((c) => form.service_areas.includes(c));
+                  if (allInZone) {
+                    setForm((f) => ({ ...f, service_areas: f.service_areas.filter((a) => !comunas.includes(a)) }));
+                  } else {
+                    setForm((f) => ({ ...f, service_areas: [...new Set([...f.service_areas, ...comunas])] }));
+                  }
+                }}
+                className="text-[10px] text-purple-600 hover:underline"
+              >
+                {comunas.every((c) => form.service_areas.includes(c)) ? 'Quitar zona' : 'Seleccionar zona'}
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {comunas.map((c) => {
+                const active = form.service_areas.includes(c);
+                return (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => toggleArr('service_areas', c)}
+                    className={`px-3 py-1.5 rounded-full text-sm border transition ${
+                      active
+                        ? 'bg-purple-600 text-white border-purple-600'
+                        : 'bg-white text-foreground border-slate-300 hover:border-purple-400'
+                    }`}
+                  >
+                    {c}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </div>
 
       <div className="grid grid-cols-2 gap-3">

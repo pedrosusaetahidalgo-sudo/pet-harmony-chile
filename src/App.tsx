@@ -66,6 +66,9 @@ const PreciosVeterinarios = lazy(() => import("./pages/PreciosVeterinarios"));
 const DejarResena = lazy(() => import("./pages/DejarResena"));
 const Actividad = lazy(() => import("./pages/Actividad"));
 const Reminders = lazy(() => import("./pages/Reminders"));
+const OnboardingVetMinimal = lazy(() => import("./pages/OnboardingVetMinimal"));
+const OnboardingDuenoMinimal = lazy(() => import("./pages/OnboardingDuenoMinimal"));
+const Reportes = lazy(() => import("./pages/Reportes"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -145,6 +148,9 @@ const App = () => (
               <Route path="/veterinarios/:slug" element={<PublicWithLayoutIfAuth><PerfilVetPublico /></PublicWithLayoutIfAuth>} />
               {/* Demo en vivo (uso interno para reuniones de venta) */}
               <Route path="/demo" element={<Demo />} />
+              <Route path="/onboarding-mascota" element={<ProtectedRoute><OnboardingDuenoMinimal /></ProtectedRoute>} />
+              <Route path="/onboarding-vet" element={<ProtectedRoute><OnboardingVetMinimal /></ProtectedRoute>} />
+              <Route path="/reportes" element={<ProtectedRoute><AppLayout><Reportes /></AppLayout></ProtectedRoute>} />
               <Route path="/registro-veterinario" element={<RegistroVeterinario />} />
               <Route path="/para-veterinarios" element={<ParaVeterinarios />} />
               <Route path="/precios-veterinarios" element={<PublicWithLayoutIfAuth><PreciosVeterinarios /></PublicWithLayoutIfAuth>} />

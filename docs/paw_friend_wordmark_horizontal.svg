@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 220" width="680" height="220">
+  <title>Paw Friend Wordmark Horizontal</title>
+  <defs>
+    <mask id="heart-cutout-w">
+      <rect width="680" height="220" fill="white"/>
+      <path d="M 60 88 C 56 84, 49 80, 45 76 C 41 72, 43 65, 50 64 C 55 63, 58 65, 60 68 C 62 65, 65 63, 70 64 C 77 65, 79 72, 75 76 C 71 80, 64 84, 60 88 Z" fill="black"/>
+    </mask>
+  </defs>
+  <g transform="translate(120, 50)">
+    <path d="M 60 8 C 92 8, 112 28, 112 60 C 112 92, 92 112, 60 112 C 28 112, 8 92, 8 60 C 8 28, 28 8, 60 8 Z" fill="#9333EA"/>
+    <ellipse cx="60" cy="78" rx="28" ry="24" fill="#FFFFFF" mask="url(#heart-cutout-w)"/>
+    <ellipse cx="35" cy="49" rx="10" ry="12" transform="rotate(-22 35 49)" fill="#FFFFFF"/>
+    <ellipse cx="51" cy="33" rx="9" ry="11" transform="rotate(-10 51 33)" fill="#FFFFFF"/>
+    <ellipse cx="69" cy="33" rx="9" ry="11" transform="rotate(10 69 33)" fill="#FFFFFF"/>
+    <ellipse cx="85" cy="49" rx="10" ry="12" transform="rotate(22 85 49)" fill="#FFFFFF"/>
+  </g>
+  <g transform="translate(265, 130)">
+    <text x="0" y="0" font-family="Fredoka, sans-serif" font-size="68" font-weight="600" fill="#6B21A8" letter-spacing="-1.5">paw</text>
+    <text x="148" y="0" font-family="Fredoka, sans-serif" font-size="68" font-weight="500" fill="#9333EA" letter-spacing="-1.5">friend</text>
+  </g>
+</svg>

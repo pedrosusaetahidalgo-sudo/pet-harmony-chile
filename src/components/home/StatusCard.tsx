@@ -8,6 +8,7 @@ interface StatusCardProps {
   icon: LucideIcon;
   title: string;
   value: string;
+  cta?: string;
   accent?: StatusCardAccent;
   onClick?: () => void;
 }
@@ -19,9 +20,9 @@ const ACCENT_STYLES: Record<StatusCardAccent, { iconBg: string; iconText: string
     valueText: "text-foreground",
   },
   success: {
-    iconBg: "bg-emerald-100",
-    iconText: "text-emerald-700",
-    valueText: "text-emerald-800",
+    iconBg: "bg-purple-100",
+    iconText: "text-purple-700",
+    valueText: "text-purple-800",
   },
   warning: {
     iconBg: "bg-amber-100",
@@ -39,7 +40,7 @@ const ACCENT_STYLES: Record<StatusCardAccent, { iconBg: string; iconText: string
  * Compact status card used in the Home dashboard.
  * Mobile-first: 2x2 grid; expands to 4x1 on desktop via parent grid classes.
  */
-export function StatusCard({ icon: Icon, title, value, accent = "default", onClick }: StatusCardProps) {
+export function StatusCard({ icon: Icon, title, value, cta, accent = "default", onClick }: StatusCardProps) {
   const styles = ACCENT_STYLES[accent];
   return (
     <Card
@@ -65,6 +66,9 @@ export function StatusCard({ icon: Icon, title, value, accent = "default", onCli
           <p className="text-xs text-muted-foreground font-medium truncate">{title}</p>
         </div>
         <p className={cn("text-sm font-semibold leading-tight truncate", styles.valueText)}>{value}</p>
+        {cta && (
+          <p className="text-[10px] font-medium text-primary mt-0.5">{cta} →</p>
+        )}
       </CardContent>
     </Card>
   );

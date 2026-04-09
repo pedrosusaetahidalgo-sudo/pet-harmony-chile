@@ -353,7 +353,54 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        {/* Section 4: Legal */}
+        {/* Section: Reportes periódicos */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Info className="h-5 w-5 text-primary" />
+              Reportes periódicos
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium">Resumen semanal</p>
+                <p className="text-sm text-muted-foreground">Cada domingo con el estado de tu mascota</p>
+              </div>
+              <Switch defaultChecked={true} onCheckedChange={(v) => {
+                (supabase as any).from("profiles").update({
+                  report_preferences: { weekly_enabled: v, monthly_enabled: true, email_enabled: true, push_enabled: true }
+                }).eq("id", user?.id).then(() => {});
+              }} />
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium">Reporte mensual</p>
+                <p className="text-sm text-muted-foreground">El 1ro de cada mes con resumen del período</p>
+              </div>
+              <Switch defaultChecked={true} onCheckedChange={(v) => {
+                (supabase as any).from("profiles").update({
+                  report_preferences: { weekly_enabled: true, monthly_enabled: v, email_enabled: true, push_enabled: true }
+                }).eq("id", user?.id).then(() => {});
+              }} />
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium">Enviar por email</p>
+                <p className="text-sm text-muted-foreground">Además de verlo en la app</p>
+              </div>
+              <Switch defaultChecked={true} onCheckedChange={(v) => {
+                (supabase as any).from("profiles").update({
+                  report_preferences: { weekly_enabled: true, monthly_enabled: true, email_enabled: v, push_enabled: true }
+                }).eq("id", user?.id).then(() => {});
+              }} />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Section: Legal */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">

@@ -152,8 +152,8 @@ const Adoption = () => {
             </div>
           ) : (
             <div className="text-center py-10 px-4 bg-muted/20 rounded-xl">
-              <div className="inline-flex h-14 w-14 rounded-full bg-emerald-100 items-center justify-center mb-3">
-                <Heart className="h-7 w-7 text-emerald-700" />
+              <div className="inline-flex h-14 w-14 rounded-full bg-purple-100 items-center justify-center mb-3">
+                <Heart className="h-7 w-7 text-purple-700" />
               </div>
               <h3 className="text-base sm:text-lg font-semibold mb-1">
                 No hay mascotas disponibles
@@ -163,7 +163,7 @@ const Adoption = () => {
               </p>
               <Button
                 onClick={() => setShowCreateDialog(true)}
-                className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                className="bg-purple-600 hover:bg-purple-700 min-h-[44px]"
               >
                 Publicar mascota
               </Button>
@@ -191,8 +191,8 @@ const Adoption = () => {
             </div>
           ) : (
             <div className="text-center py-10 px-4 bg-muted/20 rounded-xl">
-              <div className="inline-flex h-14 w-14 rounded-full bg-emerald-100 items-center justify-center mb-3">
-                <Heart className="h-7 w-7 text-emerald-700" />
+              <div className="inline-flex h-14 w-14 rounded-full bg-purple-100 items-center justify-center mb-3">
+                <Heart className="h-7 w-7 text-purple-700" />
               </div>
               <h3 className="text-base sm:text-lg font-semibold mb-1">
                 No tienes publicaciones
@@ -202,7 +202,7 @@ const Adoption = () => {
               </p>
               <Button
                 onClick={() => setShowCreateDialog(true)}
-                className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+                className="bg-purple-600 hover:bg-purple-700 min-h-[44px]"
               >
                 Crear publicación
               </Button>

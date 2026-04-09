@@ -26,7 +26,7 @@ const tutorialSteps: TutorialStep[] = [
     title: "Paso 1: Agrega tu Mascota",
     description: "Crea el perfil de tu compañero peludo con foto, datos médicos y ficha clínica. Ganarás 50 PawPoints al hacerlo.",
     icon: <PawPrint className="h-12 w-12" />,
-    color: "from-emerald-500 to-teal-500",
+    color: "from-purple-600 to-teal-500",
   },
   {
     id: "services",

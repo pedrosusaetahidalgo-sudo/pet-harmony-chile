@@ -505,7 +505,7 @@ const Maps = () => {
       <button
         onClick={handleLocateMe}
         disabled={locating}
-        className="absolute bottom-24 right-4 z-[1000] bg-white rounded-full w-11 h-11 flex items-center justify-center shadow-lg hover:bg-gray-50 transition-colors disabled:opacity-60"
+        className="absolute bottom-24 right-4 z-[1000] bg-white rounded-full w-11 h-11 flex items-center justify-center shadow-lg hover:bg-slate-50 transition-colors disabled:opacity-60"
         title="Mi ubicacion"
       >
         {locating ? (

@@ -97,14 +97,14 @@ export function BottomTabBar() {
               className={cn(
                 "flex flex-col items-center justify-center gap-0.5 flex-1 h-full",
                 "touch-manipulation transition-colors active:bg-muted/50",
-                active ? "text-emerald-600" : "text-muted-foreground"
+                active ? "text-purple-600" : "text-muted-foreground"
               )}
               aria-label={tab.label}
               aria-current={active ? "page" : undefined}
             >
               <div className="relative">
                 <Icon
-                  className={cn("h-5 w-5", active && "fill-emerald-600/10")}
+                  className={cn("h-5 w-5", active && "fill-purple-600/10")}
                   strokeWidth={active ? 2.5 : 2}
                 />
                 {tab.badge && tab.badge > 0 ? (

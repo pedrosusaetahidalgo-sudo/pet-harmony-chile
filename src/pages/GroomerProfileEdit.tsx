@@ -226,7 +226,7 @@ export default function GroomerProfileEdit() {
                   className={`px-3 py-1.5 rounded-full text-sm border transition ${
                     active
                       ? 'bg-pink-600 text-white border-pink-600'
-                      : 'bg-white text-foreground border-gray-300 hover:border-pink-400'
+                      : 'bg-white text-foreground border-slate-300 hover:border-pink-400'
                   }`}
                 >
                   {s}
@@ -314,7 +314,7 @@ export default function GroomerProfileEdit() {
                       className={`px-3 py-1.5 rounded-full text-sm border transition ${
                         active
                           ? 'bg-pink-600 text-white border-pink-600'
-                          : 'bg-white text-foreground border-gray-300 hover:border-pink-400'
+                          : 'bg-white text-foreground border-slate-300 hover:border-pink-400'
                       }`}
                     >
                       {c}

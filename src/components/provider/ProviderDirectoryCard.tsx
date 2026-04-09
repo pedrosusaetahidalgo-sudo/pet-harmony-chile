@@ -380,7 +380,7 @@ export function ProviderDirectoryCard() {
 
             <div>
               <p className="text-xs font-medium mb-1">Mensaje sugerido:</p>
-              <div className="bg-gray-50 p-3 rounded text-sm whitespace-pre-line">
+              <div className="bg-slate-50 p-3 rounded text-sm whitespace-pre-line">
                 {shareMessage}
               </div>
               <Button variant="ghost" size="sm" onClick={copyMessage} className="mt-2 w-full">

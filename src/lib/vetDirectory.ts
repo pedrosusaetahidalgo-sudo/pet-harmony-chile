@@ -37,6 +37,14 @@ export const SANTIAGO_COMUNAS = [
   'Estación Central',
 ] as const;
 
+// Comunas agrupadas por zona RM para selector UX-friendly
+export const COMUNAS_POR_ZONA: Record<string, readonly string[]> = {
+  'Oriente': ['Las Condes', 'Vitacura', 'Lo Barnechea', 'La Reina', 'Peñalolén'],
+  'Centro': ['Santiago', 'Providencia', 'Ñuñoa', 'Independencia', 'Recoleta', 'Estación Central'],
+  'Sur': ['San Miguel', 'La Florida', 'Puente Alto', 'Macul'],
+  'Poniente-Norte': ['Maipú', 'Quilicura', 'Huechuraba'],
+} as const;
+
 export function slugifyForUrl(value: string): string {
   return value
     .toLowerCase()

@@ -9,7 +9,7 @@ interface LevelInfo {
 }
 
 const LEVELS = [
-  { level: 1, name: "Cachorro", icon: "🐾", color: "text-gray-500", minPoints: 0 },
+  { level: 1, name: "Cachorro", icon: "🐾", color: "text-slate-500", minPoints: 0 },
   { level: 2, name: "Explorador", icon: "🔍", color: "text-blue-500", minPoints: 150 },
   { level: 3, name: "Compañero", icon: "🤝", color: "text-green-500", minPoints: 400 },
   { level: 4, name: "Protector", icon: "🛡️", color: "text-teal-500", minPoints: 800 },

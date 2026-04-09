@@ -218,7 +218,7 @@ export const PetPawProgress = ({ pets, userId }: PetPawProgressProps) => {
                     label="Salud" 
                     value={progress?.health_score || 50} 
                     icon={Shield} 
-                    color="text-emerald-500" 
+                    color="text-purple-600" 
                   />
                   <ScoreBar 
                     label="Actividad" 
@@ -250,7 +250,7 @@ export const PetPawProgress = ({ pets, userId }: PetPawProgressProps) => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
-                    <Stethoscope className="h-4 w-4 text-emerald-500" />
+                    <Stethoscope className="h-4 w-4 text-purple-600" />
                     <div>
                       <p className="text-sm font-semibold">{progress?.total_vet_visits || 0}</p>
                       <p className="text-[10px] text-muted-foreground">Visitas vet</p>

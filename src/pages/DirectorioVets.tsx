@@ -148,11 +148,11 @@ export default function DirectorioVets() {
               comuna, no en todo Santiago. Antes estaba escondida en una grid
               de 4 columnas con los demas filtros. */}
           <div className="mb-3">
-            <label className="text-xs font-semibold text-emerald-700 mb-1 flex items-center gap-1">
+            <label className="text-xs font-semibold text-purple-700 mb-1 flex items-center gap-1">
               📍 Tu comuna
             </label>
             <Select value={comuna} onValueChange={setComuna}>
-              <SelectTrigger className="h-11 border-emerald-200 focus:ring-emerald-500">
+              <SelectTrigger className="h-11 border-purple-200 focus:ring-purple-600">
                 <SelectValue placeholder="Selecciona tu comuna" />
               </SelectTrigger>
               <SelectContent>
@@ -204,7 +204,7 @@ export default function DirectorioVets() {
         <div className="text-center">
           <Link
             to={comuna !== 'all' ? `/precios-veterinarios` : '/precios-veterinarios'}
-            className="text-sm text-emerald-600 hover:text-emerald-700 font-medium hover:underline"
+            className="text-sm text-purple-600 hover:text-purple-700 font-medium hover:underline"
           >
             Ver comparador de precios por comuna →
           </Link>

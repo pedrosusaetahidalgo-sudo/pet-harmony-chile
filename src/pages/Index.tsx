@@ -20,8 +20,8 @@ const BENEFITS = [
     icon: Stethoscope,
     title: "Veterinarios cerca",
     description: "Directorio con reseñas reales en toda Santiago.",
-    gradient: "from-emerald-500/15 to-emerald-500/0",
-    iconBg: "bg-emerald-500/10 text-emerald-600",
+    gradient: "from-purple-600/15 to-purple-600/0",
+    iconBg: "bg-purple-600/10 text-purple-600",
   },
   {
     icon: FileText,

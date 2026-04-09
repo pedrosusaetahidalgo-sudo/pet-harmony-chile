@@ -36,7 +36,7 @@ const DEMO_OPTIONS: DemoOption[] = [
     description: "Sector oriente · 1 año de experiencia · 8 reseñas",
     pitch: "Mostrar a vets que recién empiezan. En 3 meses pueden verse así.",
     icon: HomeIcon,
-    color: "from-emerald-500 to-teal-500",
+    color: "from-purple-600 to-teal-500",
   },
   {
     slug: DEMO_VET_SLUGS.matiasFernandez,

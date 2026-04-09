@@ -82,7 +82,7 @@ const MedicalRecords = () => {
         return "bg-secondary/10 text-secondary border-secondary/20";
       case "medicamento":
       case "tratamiento":
-        return "bg-emerald-100 text-emerald-600 border-emerald-200";
+        return "bg-purple-100 text-purple-600 border-purple-200";
       case "cirugia":
         return "bg-destructive/10 text-destructive border-destructive/20";
       case "examen":
@@ -176,7 +176,7 @@ const MedicalRecords = () => {
                   </TabsTrigger>
                   <TabsTrigger 
                     value="documents"
-                    className="data-[state=active]:bg-emerald-600 data-[state=active]:text-white"
+                    className="data-[state=active]:bg-purple-600 data-[state=active]:text-white"
                   >
                     <FileText className="h-4 w-4 mr-2" />
                     Documentos
@@ -207,7 +207,7 @@ const MedicalRecords = () => {
                         .sort(([yearA], [yearB]) => parseInt(yearB) - parseInt(yearA))
                         .map(([year, records]) => (
                           <div key={year} className="space-y-4">
-                            <h2 className="text-2xl font-bold text-emerald-600 sticky top-0 bg-background py-2 z-10">
+                            <h2 className="text-2xl font-bold text-purple-600 sticky top-0 bg-background py-2 z-10">
                               {year}
                             </h2>
                             <div className="relative space-y-6 pl-8 before:absolute before:left-3 before:top-0 before:bottom-0 before:w-0.5 before:bg-border">
@@ -250,24 +250,24 @@ const MedicalRecords = () => {
                                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
                                         {record.clinic_name && (
                                           <div className="flex items-center gap-2">
-                                            <MapPin className="h-4 w-4 text-emerald-600 flex-shrink-0" />
+                                            <MapPin className="h-4 w-4 text-purple-600 flex-shrink-0" />
                                             <span className="text-muted-foreground">{record.clinic_name}</span>
                                           </div>
                                         )}
                                         
                                         {record.veterinarian_name && (
                                           <div className="flex items-center gap-2">
-                                            <User className="h-4 w-4 text-emerald-600 flex-shrink-0" />
+                                            <User className="h-4 w-4 text-purple-600 flex-shrink-0" />
                                             <span className="text-muted-foreground">Dr. {record.veterinarian_name}</span>
                                           </div>
                                         )}
                                       </div>
 
                                       {record.next_date && (
-                                        <div className="flex items-center gap-2 text-sm bg-emerald-50 p-3 rounded-md border border-emerald-200">
-                                          <Calendar className="h-4 w-4 text-emerald-600 flex-shrink-0" />
+                                        <div className="flex items-center gap-2 text-sm bg-purple-50 p-3 rounded-md border border-purple-200">
+                                          <Calendar className="h-4 w-4 text-purple-600 flex-shrink-0" />
                                           <div>
-                                            <span className="font-medium text-emerald-600">
+                                            <span className="font-medium text-purple-600">
                                               Próxima cita:
                                             </span>
                                             <span className="ml-2 text-muted-foreground">

@@ -151,7 +151,7 @@ const MyPets = () => {
           </div>
           <Button
             onClick={goToAddPet}
-            className="bg-emerald-600 hover:bg-emerald-700 transition-all shadow-lg hover:shadow-xl hover:scale-105"
+            className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-xl hover:scale-105"
           >
             <Plus className="mr-2 h-5 w-5" />
             Agregar Mascota
@@ -161,7 +161,7 @@ const MyPets = () => {
         {pets.length === 0 ? (
           <Card className="animate-scale-in">
             <CardContent className="flex flex-col items-center justify-center py-10 md:py-16 text-center">
-              <Heart className="h-16 w-16 text-emerald-500/40 mb-4" />
+              <Heart className="h-16 w-16 text-purple-600/40 mb-4" />
               <h3 className="text-xl font-semibold mb-2">
                 Agrega tu primera mascota
               </h3>
@@ -170,7 +170,7 @@ const MyPets = () => {
               </p>
               <Button
                 onClick={goToAddPet}
-                className="bg-emerald-600 hover:bg-emerald-700"
+                className="bg-purple-600 hover:bg-purple-700"
               >
                 <Plus className="mr-2 h-5 w-5" />
                 Agregar Mi Primera Mascota

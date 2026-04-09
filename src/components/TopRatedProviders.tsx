@@ -131,7 +131,7 @@ const TopRatedProviders = () => {
       case 0:
         return <Crown className="h-5 w-5 text-yellow-500" />;
       case 1:
-        return <Medal className="h-5 w-5 text-gray-400" />;
+        return <Medal className="h-5 w-5 text-slate-400" />;
       case 2:
         return <Award className="h-5 w-5 text-amber-600" />;
       default:
@@ -178,7 +178,7 @@ const TopRatedProviders = () => {
             key={provider.id}
             className={`cursor-pointer hover:shadow-md transition-shadow ${
               index === 0 ? "border-yellow-500/50 bg-yellow-500/5" :
-              index === 1 ? "border-gray-400/50 bg-gray-100/5" :
+              index === 1 ? "border-slate-400/50 bg-slate-100/5" :
               index === 2 ? "border-amber-600/50 bg-amber-600/5" : ""
             }`}
             onClick={() => navigate(`/user/${provider.user_id}`)}

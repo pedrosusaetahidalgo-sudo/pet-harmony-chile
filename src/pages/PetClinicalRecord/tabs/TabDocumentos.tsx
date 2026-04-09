@@ -47,8 +47,8 @@ export function TabDocumentos({ petId }: { petId: string }) {
         <Card key={doc.id} className="hover:shadow-md transition-shadow">
           <CardContent className="p-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0 flex-1">
-              <div className="p-2 bg-emerald-100 rounded-lg flex-shrink-0">
-                <FileText className="h-4 w-4 text-emerald-600" />
+              <div className="p-2 bg-purple-100 rounded-lg flex-shrink-0">
+                <FileText className="h-4 w-4 text-purple-600" />
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-medium truncate">{doc.title}</p>

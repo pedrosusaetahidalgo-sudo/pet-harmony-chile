@@ -27,7 +27,7 @@ const notificationIconMap: Record<string, { icon: React.ElementType; color: stri
 };
 
 function getNotificationIcon(type: string) {
-  return notificationIconMap[type] || { icon: Bell, color: "text-gray-400" };
+  return notificationIconMap[type] || { icon: Bell, color: "text-slate-400" };
 }
 
 function timeAgo(dateStr: string): string {
@@ -130,8 +130,9 @@ export const Header = () => {
             <Heart className="h-6 w-6 text-primary fill-primary" />
             <PawPrint className="h-3 w-3 text-secondary absolute -bottom-0.5 -right-0.5" />
           </div>
-          <span className="font-bold text-lg bg-warm-gradient bg-clip-text text-transparent hidden sm:inline truncate">
-            Paw Friend
+          <span className="font-bold text-lg hidden sm:inline truncate">
+            <span className="text-purple-800">paw</span>
+            <span className="text-purple-600 ml-1">friend</span>
           </span>
         </div>
 

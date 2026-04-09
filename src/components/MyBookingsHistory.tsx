@@ -260,8 +260,8 @@ export const MyBookingsHistory = ({
       <CardContent>
         {filteredBookings.length === 0 ? (
           <div className="text-center py-10 px-4">
-            <div className="inline-flex h-14 w-14 rounded-full bg-emerald-100 items-center justify-center mb-3">
-              <Calendar className="h-7 w-7 text-emerald-700" />
+            <div className="inline-flex h-14 w-14 rounded-full bg-purple-100 items-center justify-center mb-3">
+              <Calendar className="h-7 w-7 text-purple-700" />
             </div>
             <p className="font-semibold mb-1">
               No tienes reservas {filter === "upcoming" ? "próximas" : filter === "past" ? "pasadas" : ""}
@@ -271,7 +271,7 @@ export const MyBookingsHistory = ({
             </p>
             <Button
               size="sm"
-              className="bg-emerald-600 hover:bg-emerald-700 min-h-[44px]"
+              className="bg-purple-600 hover:bg-purple-700 min-h-[44px]"
               onClick={() => navigate("/servicios")}
             >
               Agendar tu primera reserva

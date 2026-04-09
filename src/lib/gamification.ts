@@ -121,6 +121,6 @@ export function getLevelInfo(level: number): { name: string; color: string } {
   if (level >= 20) return { name: 'Leyenda', color: 'text-purple-600' };
   if (level >= 10) return { name: 'Experto', color: 'text-blue-600' };
   if (level >= 5) return { name: 'Avanzado', color: 'text-green-600' };
-  return { name: 'Principiante', color: 'text-gray-600' };
+  return { name: 'Principiante', color: 'text-slate-600' };
 }
 

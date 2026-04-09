@@ -88,7 +88,7 @@ export function TabResumen({ pet }: { pet: PetData }) {
             <div className="space-y-3">
               {pet.current_medications!.map((med, i) => (
                 <div key={i} className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg">
-                  <Pill className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+                  <Pill className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
                   <div className="min-w-0">
                     <p className="text-sm font-medium">{med.name}</p>
                     <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-xs text-muted-foreground mt-0.5">
@@ -151,7 +151,7 @@ export function TabResumen({ pet }: { pet: PetData }) {
                 <InfoRow icon={Building} label="Nombre" value={pet.emergency_vet_name} />
                 {pet.emergency_vet_phone && (
                   <InfoRow icon={Phone} label="Teléfono" value={
-                    <a href={`tel:${pet.emergency_vet_phone}`} className="text-emerald-600 hover:underline">
+                    <a href={`tel:${pet.emergency_vet_phone}`} className="text-purple-600 hover:underline">
                       {pet.emergency_vet_phone}
                     </a>
                   } />
@@ -193,7 +193,7 @@ export function TabResumen({ pet }: { pet: PetData }) {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Clipboard className="h-4 w-4 text-emerald-600" />
+              <Clipboard className="h-4 w-4 text-purple-600" />
               Notas médicas
             </CardTitle>
           </CardHeader>

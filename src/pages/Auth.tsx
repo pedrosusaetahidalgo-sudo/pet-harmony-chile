@@ -23,6 +23,8 @@ const Auth = () => {
   const [displayName, setDisplayName] = useState("");
   const [loading, setLoading] = useState(false);
   const [confirmationSent, setConfirmationSent] = useState(false);
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const [showEmailPassword, setShowEmailPassword] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const returnTo = searchParams.get("returnTo");
@@ -294,12 +296,74 @@ const Auth = () => {
     }
   };
 
+  const handleMagicLink = async () => {
+    if (!email) {
+      toast({
+        title: "Ingresa tu email",
+        description: "Escribe tu email para recibir un enlace de acceso directo.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: `${window.location.origin}/auth` },
+      });
+      if (error) throw error;
+      setMagicLinkSent(true);
+      toast({
+        title: "¡Revisa tu correo!",
+        description: "Te enviamos un enlace para entrar sin contraseña.",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: describeSupabaseError(error) || "No se pudo enviar el enlace.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleFacebookLogin = async () => {
     const result = await signInWithFacebook();
     if (!result.success && result.error) {
       logger.error('Facebook login error:', result.error);
     }
   };
+
+  // Show magic link sent screen
+  if (magicLinkSent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1 flex flex-col items-center">
+            <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mb-4">
+              <Mail className="w-8 h-8 text-white" />
+            </div>
+            <CardTitle className="text-2xl font-bold text-center">¡Revisa tu correo!</CardTitle>
+            <CardDescription className="text-center text-base">
+              Enviamos un enlace de acceso a <strong>{email}</strong>.
+              <br /><br />
+              Haz clic en el enlace del correo para entrar directamente, sin contraseña.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => setMagicLinkSent(false)}
+            >
+              Volver
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   // Show confirmation screen after signup
   if (confirmationSent) {
@@ -351,7 +415,7 @@ const Auth = () => {
             </TabsList>
 
             <TabsContent value="signin">
-              <form onSubmit={handleSignIn} className="space-y-4">
+              <div className="space-y-4">
                 {/* Social Login Buttons */}
                 <div className="space-y-3">
                   <GoogleSignInButton mode="signin" />
@@ -373,11 +437,12 @@ const Auth = () => {
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
                     <span className="bg-card px-2 text-muted-foreground">
-                      O continúa con email
+                      O entra con tu email
                     </span>
                   </div>
                 </div>
 
+                {/* Magic Link - método prioritario */}
                 <div className="space-y-2">
                   <Label htmlFor="signin-email">Email</Label>
                   <Input
@@ -393,30 +458,54 @@ const Auth = () => {
                     required
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signin-password">Contraseña</Label>
-                  <Input
-                    id="signin-password"
-                    type="password"
-                    autoComplete="current-password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
-                </Button>
-                <button
+
+                <Button
                   type="button"
-                  className="w-full text-sm text-muted-foreground hover:text-primary transition-colors pt-2"
-                  onClick={handleForgotPassword}
-                  disabled={loading}
+                  className="w-full"
+                  variant="default"
+                  onClick={handleMagicLink}
+                  disabled={loading || !email}
                 >
-                  ¿Olvidaste tu contraseña?
-                </button>
-              </form>
+                  <Mail className="mr-2 h-4 w-4" />
+                  {loading ? "Enviando..." : "Enviar enlace al email"}
+                </Button>
+
+                {!showEmailPassword ? (
+                  <button
+                    type="button"
+                    className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
+                    onClick={() => setShowEmailPassword(true)}
+                  >
+                    Entrar con contraseña
+                  </button>
+                ) : (
+                  <form onSubmit={handleSignIn} className="space-y-3 border-t pt-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="signin-password">Contraseña</Label>
+                      <Input
+                        id="signin-password"
+                        type="password"
+                        autoComplete="current-password"
+                        placeholder="••••••••"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <Button type="submit" className="w-full" variant="secondary" disabled={loading}>
+                      {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
+                    </Button>
+                    <button
+                      type="button"
+                      className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
+                      onClick={handleForgotPassword}
+                      disabled={loading}
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </button>
+                  </form>
+                )}
+              </div>
             </TabsContent>
 
             <TabsContent value="signup">

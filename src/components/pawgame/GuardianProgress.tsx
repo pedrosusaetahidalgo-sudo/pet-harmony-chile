@@ -33,9 +33,9 @@ interface GuardianProgressProps {
 
 // 10 Tiers with unique colors and icons
 const TIERS = [
-  { min: 1, max: 1, name: "Cachorro Curioso", icon: Zap, gradient: "from-gray-400 to-gray-500", color: "text-gray-400" },
-  { min: 2, max: 2, name: "Explorador Novato", icon: Zap, gradient: "from-green-400 to-emerald-500", color: "text-green-400" },
-  { min: 3, max: 4, name: "Guardián Aprendiz", icon: Star, gradient: "from-emerald-500 to-teal-500", color: "text-emerald-400" },
+  { min: 1, max: 1, name: "Cachorro Curioso", icon: Zap, gradient: "from-slate-400 to-slate-500", color: "text-slate-400" },
+  { min: 2, max: 2, name: "Explorador Novato", icon: Zap, gradient: "from-green-400 to-purple-600", color: "text-green-400" },
+  { min: 3, max: 4, name: "Guardián Aprendiz", icon: Star, gradient: "from-purple-600 to-teal-500", color: "text-purple-400" },
   { min: 5, max: 7, name: "Protector de Patitas", icon: Star, gradient: "from-cyan-500 to-blue-500", color: "text-cyan-400" },
   { min: 8, max: 10, name: "Héroe Animal", icon: Star, gradient: "from-blue-500 to-indigo-500", color: "text-blue-400" },
   { min: 11, max: 15, name: "Campeón de Huellas", icon: Trophy, gradient: "from-indigo-500 to-purple-500", color: "text-indigo-400" },

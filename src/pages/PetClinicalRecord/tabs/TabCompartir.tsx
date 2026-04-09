@@ -140,7 +140,7 @@ export function TabCompartir({ petId }: { petId: string }) {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <Share2 className="h-4 w-4 text-emerald-600" />
+            <Share2 className="h-4 w-4 text-purple-600" />
             Compartir ficha clínica
           </CardTitle>
         </CardHeader>
@@ -203,7 +203,7 @@ export function TabCompartir({ petId }: { petId: string }) {
                         Creado: {formatShortDate(token.created_at)}
                       </span>
                       {vetNameById(token.target_provider_id) && (
-                        <Badge variant="outline" className="text-xs bg-emerald-50 text-emerald-700 border-emerald-200">
+                        <Badge variant="outline" className="text-xs bg-purple-50 text-purple-700 border-purple-200">
                           Para {vetNameById(token.target_provider_id)}
                         </Badge>
                       )}
@@ -225,7 +225,7 @@ export function TabCompartir({ petId }: { petId: string }) {
                         size="sm"
                         onClick={() => handleWhatsApp(token.token)}
                         title="Enviar por WhatsApp"
-                        className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 h-11 w-11"
+                        className="text-purple-600 hover:text-purple-700 hover:bg-purple-50 h-11 w-11"
                         aria-label="Enviar por WhatsApp"
                       >
                         <MessageCircle className="h-4 w-4" />

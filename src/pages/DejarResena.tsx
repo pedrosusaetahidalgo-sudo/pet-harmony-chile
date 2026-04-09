@@ -198,7 +198,7 @@ export default function DejarResena() {
                       className={`h-9 w-9 transition ${
                         n <= (hover || rating)
                           ? 'fill-yellow-400 text-yellow-400'
-                          : 'text-gray-300'
+                          : 'text-slate-300'
                       }`}
                     />
                   </button>

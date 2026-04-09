@@ -13,6 +13,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        sans: ["'Fredoka'", "system-ui", "sans-serif"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -74,6 +77,47 @@ export default {
           dark: "hsl(var(--premium-dark))",
           glow: "hsl(var(--premium-glow))",
         },
+        /* ── Brand Purple Scale ── */
+        brand: {
+          50: "#faf5ff",
+          100: "#f3e8ff",
+          200: "#e9d5ff",
+          300: "#d8b4fe",
+          400: "#c084fc",
+          500: "#a855f7",
+          600: "#9333ea",
+          700: "#7e22ce",
+          800: "#6b21a8",
+          900: "#581c87",
+        },
+        /* ── Semantic Colors ── */
+        success: {
+          DEFAULT: "#16a34a",
+          light: "#f0fdf4",
+        },
+        warning: {
+          DEFAULT: "#d97706",
+          light: "#fffbeb",
+        },
+        danger: {
+          DEFAULT: "#dc2626",
+          light: "#fef2f2",
+        },
+        info: {
+          DEFAULT: "#2563eb",
+          light: "#eff6ff",
+        },
+        /* ── Health State Tokens ── */
+        health: {
+          good: "#16a34a",
+          "good-bg": "#f0fdf4",
+          attention: "#d97706",
+          "attention-bg": "#fffbeb",
+          urgent: "#dc2626",
+          "urgent-bg": "#fef2f2",
+          unknown: "#64748b",
+          "unknown-bg": "#f8fafc",
+        },
       },
       backgroundImage: {
         'warm-gradient': 'var(--warm-gradient)',
@@ -85,15 +129,21 @@ export default {
         'premium-gradient-soft': 'var(--premium-gradient-soft)',
       },
       boxShadow: {
-        'soft': 'var(--shadow-soft)',
+        'soft': '0 2px 8px -2px rgba(0,0,0,0.08)',
+        'card': '0 4px 12px -2px rgba(0,0,0,0.06)',
+        'elevated': '0 8px 24px -4px rgba(0,0,0,0.1)',
+        'brand': '0 8px 24px -4px rgba(147,51,234,0.2)',
         'medium': 'var(--shadow-medium)',
         'premium': 'var(--premium-shadow)',
         'premium-sm': 'var(--premium-shadow-sm)',
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        lg: "14px",
+        md: "10px",
+        sm: "6px",
+        xl: "20px",
+        "2xl": "28px",
+        "3xl": "36px",
       },
       keyframes: {
         "accordion-down": {

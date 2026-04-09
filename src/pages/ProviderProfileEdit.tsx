@@ -289,7 +289,7 @@ export default function ProviderProfileEdit() {
                   className={`px-3 py-1.5 rounded-full text-sm border transition ${
                     active
                       ? 'bg-purple-600 text-white border-purple-600'
-                      : 'bg-white text-foreground border-gray-300 hover:border-purple-400'
+                      : 'bg-white text-foreground border-slate-300 hover:border-purple-400'
                   }`}
                 >
                   {s}
@@ -332,7 +332,7 @@ export default function ProviderProfileEdit() {
                     className={`px-3 py-1.5 rounded-full text-sm border transition ${
                       active
                         ? 'bg-purple-600 text-white border-purple-600'
-                        : 'bg-white text-foreground border-gray-300 hover:border-purple-400'
+                        : 'bg-white text-foreground border-slate-300 hover:border-purple-400'
                     }`}
                   >
                     {c}

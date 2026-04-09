@@ -9,10 +9,18 @@ initSentry();
 
 // Auto-reload si un chunk dinámico ya no existe (deploy nuevo + HTML stale en cache).
 // Solo recarga una vez por sesión para evitar loops.
-window.addEventListener("vite:preloadError", () => {
-  if (sessionStorage.getItem("chunk-reload") === "1") return;
-  sessionStorage.setItem("chunk-reload", "1");
+const CHUNK_KEY = "chunk-reload";
+function handleChunkError() {
+  if (sessionStorage.getItem(CHUNK_KEY) === "1") return;
+  sessionStorage.setItem(CHUNK_KEY, "1");
   window.location.reload();
+}
+window.addEventListener("vite:preloadError", handleChunkError);
+window.addEventListener("error", (e) => {
+  if (e.message?.includes("Failed to fetch dynamically imported module") ||
+      e.message?.includes("Importing a module script failed")) {
+    handleChunkError();
+  }
 });
 
 createRoot(document.getElementById("root")!).render(<App />);

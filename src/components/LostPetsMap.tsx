@@ -70,15 +70,15 @@ const LostPetsMap = ({ pets }: LostPetsMapProps) => {
                   />
                 )}
                 <p className="font-semibold">{marker.pet.pet_name || "Sin nombre"}</p>
-                <p className="text-xs text-gray-600 mb-1">
+                <p className="text-xs text-slate-600 mb-1">
                   {marker.pet.species} — {marker.pet.breed || "Sin raza"}
                 </p>
                 <p className="text-xs mb-2 line-clamp-2">{marker.pet.description}</p>
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-slate-500">
                   📍 {marker.pet.last_seen_location}
                 </p>
                 {marker.pet.contact_phone && (
-                  <p className="text-xs text-gray-500">📞 {marker.pet.contact_phone}</p>
+                  <p className="text-xs text-slate-500">📞 {marker.pet.contact_phone}</p>
                 )}
                 {marker.pet.reward_offered && (
                   <p className="text-xs text-green-600 font-semibold mt-1">

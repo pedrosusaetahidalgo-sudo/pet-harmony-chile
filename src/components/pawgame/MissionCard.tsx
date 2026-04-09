@@ -83,14 +83,14 @@ const getActionPath = (action: string) => {
 
 const getCategoryColor = (category: string) => {
   const colors: Record<string, string> = {
-    'health': 'from-emerald-500 to-teal-500',
+    'health': 'from-purple-600 to-teal-500',
     'activity': 'from-blue-500 to-cyan-500',
     'community': 'from-purple-500 to-pink-500',
     'adoption': 'from-rose-500 to-red-500',
     'exploration': 'from-orange-500 to-amber-500',
     'social': 'from-indigo-500 to-violet-500',
   };
-  return colors[category] || 'from-gray-500 to-slate-500';
+  return colors[category] || 'from-slate-500 to-slate-500';
 };
 
 export const MissionCard = ({ 

@@ -137,7 +137,7 @@ const EnhancedReviewCard = ({ reviewType, review, providerId, isProvider }: Enha
               className={`h-4 w-4 ${
                 i < review.rating
                   ? "fill-yellow-400 text-yellow-400"
-                  : "text-gray-300"
+                  : "text-slate-300"
               }`}
             />
           ))}

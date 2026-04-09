@@ -67,25 +67,25 @@ export default function PriceEstimatorWidget({ comuna, compact = false }: Props)
     const consulta = byService.get('consulta_general');
     if (!consulta) return null;
     return (
-      <Card className="p-4 bg-emerald-50 border-emerald-200 mb-4">
+      <Card className="p-4 bg-purple-50 border-purple-200 mb-4">
         <div className="flex items-start gap-3">
-          <div className="rounded-full bg-emerald-100 p-2 flex-shrink-0">
-            <TrendingUp className="h-5 w-5 text-emerald-700" />
+          <div className="rounded-full bg-purple-100 p-2 flex-shrink-0">
+            <TrendingUp className="h-5 w-5 text-purple-700" />
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-emerald-900">
+            <p className="text-sm font-semibold text-purple-900">
               Consulta general en {comuna}
             </p>
-            <p className="text-sm text-emerald-800">
+            <p className="text-sm text-purple-800">
               {formatCLP(consulta.min_price)} – {formatCLP(consulta.max_price)}
-              <span className="text-xs text-emerald-700 ml-2">
+              <span className="text-xs text-purple-700 ml-2">
                 (mediana {formatCLP(consulta.median_price)} · {consulta.sample_size}{' '}
                 {consulta.sample_size === 1 ? 'vet' : 'vets'})
               </span>
             </p>
             <Link
               to={`/precios-veterinarios/comuna/${slugifyForUrl(comuna ?? '')}`}
-              className="text-xs text-emerald-700 underline hover:text-emerald-900 inline-block mt-1 min-h-[44px] py-2"
+              className="text-xs text-purple-700 underline hover:text-purple-900 inline-block mt-1 min-h-[44px] py-2"
             >
               Ver todos los servicios →
             </Link>
@@ -134,17 +134,17 @@ function ServiceRow({ service, stats }: { service: VetServiceType; stats?: VetPr
     <div className="py-3 border-b last:border-0">
       <div className="flex items-center justify-between gap-3 mb-2 min-h-[44px]">
         <span className="font-semibold text-amber-900">{label}</span>
-        <span className="text-sm font-bold text-emerald-700">
+        <span className="text-sm font-bold text-purple-700">
           {formatCLP(stats.median_price)}
         </span>
       </div>
-      <div className="relative h-2 bg-gray-100 rounded-full overflow-hidden mb-1">
+      <div className="relative h-2 bg-slate-100 rounded-full overflow-hidden mb-1">
         <div
-          className="absolute h-full bg-emerald-200"
+          className="absolute h-full bg-purple-200"
           style={{ left: `${p25Pct}%`, width: `${Math.max(p75Pct - p25Pct, 2)}%` }}
         />
         <div
-          className="absolute h-full w-1 bg-emerald-700"
+          className="absolute h-full w-1 bg-purple-700"
           style={{ left: `calc(${medianPct}% - 2px)` }}
         />
       </div>

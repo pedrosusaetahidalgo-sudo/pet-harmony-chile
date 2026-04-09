@@ -12,11 +12,11 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-amber-50 via-background to-emerald-50 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-amber-50 via-background to-purple-50 px-4">
       <div className="text-center max-w-md">
         {/* Logo + marca */}
         <Link to="/" className="inline-flex items-center gap-2 mb-8 group">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-purple-600 to-purple-700 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
             <PawPrint className="h-5 w-5 text-white" />
           </div>
           <span className="text-xl font-bold text-foreground">Paw Friend</span>
@@ -33,7 +33,7 @@ const NotFound = () => {
           Tal vez fue tras un gato. Volvamos a terreno conocido.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Button asChild size="lg" className="bg-emerald-600 hover:bg-emerald-700">
+          <Button asChild size="lg" className="bg-purple-600 hover:bg-purple-700">
             <Link to="/">
               <HomeIcon className="mr-2 h-4 w-4" />
               Volver al inicio

@@ -74,7 +74,7 @@ const providerTypeConfig = {
     title: "Veterinario",
     priceLabel: "consulta",
     totalLabel: "visitas",
-    gradient: "from-teal-600 to-emerald-500",
+    gradient: "from-teal-600 to-purple-600",
     ringColor: "ring-teal-500/20",
     badgeColor: "bg-teal-500/10 text-teal-700"
   },

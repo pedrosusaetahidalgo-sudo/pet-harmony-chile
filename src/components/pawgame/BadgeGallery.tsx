@@ -69,8 +69,8 @@ const getBadgeIcon = (icon: string | null, category: string) => {
 
 const getRarityColor = (rarity: string) => {
   const colors: Record<string, string> = {
-    'common': 'from-gray-400 to-slate-500',
-    'uncommon': 'from-green-400 to-emerald-500',
+    'common': 'from-slate-400 to-slate-500',
+    'uncommon': 'from-green-400 to-purple-600',
     'rare': 'from-blue-400 to-cyan-500',
     'epic': 'from-purple-400 to-pink-500',
     'legendary': 'from-yellow-400 to-orange-500',
@@ -80,7 +80,7 @@ const getRarityColor = (rarity: string) => {
 
 const getRarityBorder = (rarity: string) => {
   const borders: Record<string, string> = {
-    'common': 'border-gray-300',
+    'common': 'border-slate-300',
     'uncommon': 'border-green-400',
     'rare': 'border-blue-400',
     'epic': 'border-purple-400',

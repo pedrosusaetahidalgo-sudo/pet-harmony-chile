@@ -205,10 +205,10 @@ const ProviderDashboard = () => {
 
       {/* Onboarding state: vet recien creado, sin reservas y sin perfil completo */}
       {stats.totalBookings === 0 && (
-        <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-amber-50">
+        <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-amber-50">
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Stethoscope className="h-5 w-5 text-emerald-600" />
+              <Stethoscope className="h-5 w-5 text-purple-600" />
               Aún no recibes reservas. Vamos a cambiarlo.
             </CardTitle>
             <CardDescription>
@@ -217,7 +217,7 @@ const ProviderDashboard = () => {
           </CardHeader>
           <CardContent className="space-y-2">
             <Link to="/provider/profile-edit" className="block">
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-emerald-200 hover:shadow-sm transition">
+              <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-purple-200 hover:shadow-sm transition">
                 <div>
                   <p className="text-sm font-semibold">1. Completa tu perfil público</p>
                   <p className="text-xs text-muted-foreground">
@@ -229,7 +229,7 @@ const ProviderDashboard = () => {
             </Link>
             {providerInfo?.slug && (
               <Link to={`/veterinarios/${providerInfo.slug}`} className="block">
-                <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-emerald-200 hover:shadow-sm transition">
+                <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-purple-200 hover:shadow-sm transition">
                   <div>
                     <p className="text-sm font-semibold">2. Revisa cómo te ven los dueños</p>
                     <p className="text-xs text-muted-foreground">
@@ -241,7 +241,7 @@ const ProviderDashboard = () => {
               </Link>
             )}
             <Link to="/veterinarios" className="block">
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-emerald-200 hover:shadow-sm transition">
+              <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-purple-200 hover:shadow-sm transition">
                 <div>
                   <p className="text-sm font-semibold">3. Comparte tu URL en Instagram y WhatsApp</p>
                   <p className="text-xs text-muted-foreground">

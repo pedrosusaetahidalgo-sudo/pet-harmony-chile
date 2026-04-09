@@ -24,25 +24,14 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-// PIVOT MÉDICO 2026-04: jerarquía Salud > Servicios > Comunidad
-const saludItems = [
+// PIVOT 2026-04-09: sidebar simplificado a 6 items máximo
+// Items secundarios (Feed, Adopción, PawGame, Mapa) accesibles desde /profile
+const mainItems = [
   { title: "Inicio", url: "/home", icon: HomeIcon },
-  { title: "Buscar veterinario", url: "/veterinarios", icon: Search },
-  { title: "Mis Mascotas", url: "/my-pets", icon: PawPrint },
-  { title: "Agregar", url: "/add-pet", icon: Plus },
-  { title: "Historial médico", url: "/medical-records", icon: FileText },
-];
-
-const serviciosItems = [
-  { title: "Buscar servicios", url: "/servicios", icon: ShieldCheck },
-  { title: "Mis reservas", url: "/mis-reservas", icon: Calendar },
-  { title: "Mapa", url: "/maps", icon: Map },
-];
-
-const comunidadItems = [
-  { title: "Feed", url: "/feed", icon: Heart },
+  { title: "Mi mascota", url: "/my-pets", icon: PawPrint },
+  { title: "Buscar vet", url: "/veterinarios", icon: Search },
+  { title: "Recordatorios", url: "/reminders", icon: Calendar },
   { title: "Mensajes", url: "/chat", icon: MessageSquare },
-  { title: "Adopción", url: "/adoption", icon: Compass },
 ];
 
 export function AppSidebar() {
@@ -112,50 +101,19 @@ export function AppSidebar() {
             <Heart className="h-5 w-5 text-primary fill-primary" />
             <PawPrint className="h-2.5 w-2.5 text-secondary absolute -bottom-0.5 -right-0.5" />
           </div>
-          <span className="font-bold text-sm gradient-text whitespace-nowrap">
-            Paw Friend
+          <span className="font-bold text-sm whitespace-nowrap">
+            <span className="text-purple-800">paw</span>
+            <span className="text-purple-600 ml-1">friend</span>
           </span>
         </button>
       </SidebarHeader>
 
       <SidebarContent className="px-2 overflow-y-auto overflow-x-hidden">
-        {/* SALUD */}
+        {/* NAVEGACIÓN PRINCIPAL */}
         <SidebarGroup className="py-0.5">
-          <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5">Salud</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0">
-              {saludItems.map((item) => {
-                const showGlow = !hasPets && item.url === "/add-pet";
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      isActive={isActive(item.url)}
-                      onClick={() => handleNavigate(item.url)}
-                      className={`h-7 text-xs rounded-md ${showGlow ? "animate-pulse-glow" : ""}`}
-                    >
-                      <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
-                      <span>{item.title}</span>
-                      {showGlow && (
-                        <span className="ml-auto text-[9px] font-medium text-primary whitespace-nowrap">
-                          ¡Primera!
-                        </span>
-                      )}
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <Separator className="mx-2 my-1" />
-
-        {/* SERVICIOS */}
-        <SidebarGroup className="py-0.5">
-          <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5">Servicios</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="space-y-0">
-              {serviciosItems.map((item) => (
+              {mainItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     isActive={isActive(item.url)}
@@ -167,42 +125,6 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <Separator className="mx-2 my-1" />
-
-        {/* COMUNIDAD */}
-        <SidebarGroup className="py-0.5">
-          <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5">Comunidad</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu className="space-y-0">
-              {comunidadItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    isActive={isActive(item.url)}
-                    onClick={() => handleNavigate(item.url)}
-                    className="h-7 text-xs rounded-md"
-                  >
-                    <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-              {/* PawGame solo si flag activo */}
-              {isFeatureEnabled("PAWGAME_SIDEBAR") && (
-                <SidebarMenuItem>
-                  <SidebarMenuButton
-                    isActive={isActive("/paw-game")}
-                    onClick={() => handleNavigate("/paw-game")}
-                    className="h-7 text-xs rounded-md"
-                  >
-                    <Gamepad2 className="h-3.5 w-3.5 flex-shrink-0" />
-                    <span>Paw Game</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

@@ -19,6 +19,8 @@ export interface VetClinicalNote {
   note_type: VetNoteType;
   title: string;
   description: string | null;
+  alternatives_discussed: string | null;
+  alternative_offered: boolean;
   created_at: string;
   provider_name?: string;
 }
@@ -30,6 +32,8 @@ interface CreateNoteArgs {
   noteType: VetNoteType;
   title: string;
   description?: string;
+  alternativeOffered?: boolean;
+  alternativesDiscussed?: string;
 }
 
 // La tabla vet_clinical_notes no existe aun en los tipos generados de Supabase.
@@ -104,6 +108,8 @@ export function useCreateVetClinicalNote() {
           note_type: args.noteType,
           title: args.title,
           description: args.description || null,
+          alternative_offered: args.alternativeOffered ?? false,
+          alternatives_discussed: args.alternativesDiscussed || null,
         })
         .select()
         .single();

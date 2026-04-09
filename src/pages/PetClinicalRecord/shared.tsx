@@ -46,7 +46,7 @@ export function getRecordTypeBadgeClass(type: string): string {
     case "cirugia": return "bg-red-100 text-red-800 border-red-200";
     case "emergencia": return "bg-red-100 text-red-800 border-red-200";
     case "examen": return "bg-amber-100 text-amber-800 border-amber-200";
-    default: return "bg-gray-100 text-gray-800 border-gray-200";
+    default: return "bg-slate-100 text-slate-800 border-slate-200";
   }
 }
 
@@ -129,7 +129,7 @@ export function InfoRow({ icon: Icon, label, value, className }: {
 }) {
   return (
     <div className={`flex items-start gap-3 ${className || ""}`}>
-      <Icon className="h-4 w-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+      <Icon className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
       <div className="min-w-0">
         <p className="text-xs text-muted-foreground">{label}</p>
         <p className="text-sm font-medium">{value || "No especificado"}</p>
@@ -150,9 +150,9 @@ export function PetHeader({ pet }: { pet: PetData }) {
     <Card>
       <CardContent className="p-6">
         <div className="flex flex-col sm:flex-row gap-6">
-          <Avatar className="h-24 w-24 ring-4 ring-emerald-500/20 flex-shrink-0 self-center sm:self-start">
+          <Avatar className="h-24 w-24 ring-4 ring-purple-600/20 flex-shrink-0 self-center sm:self-start">
             <AvatarImage src={pet.photo_url || undefined} alt={pet.name} />
-            <AvatarFallback className="bg-emerald-100 text-emerald-700 text-2xl font-bold">
+            <AvatarFallback className="bg-purple-100 text-purple-700 text-2xl font-bold">
               {pet.name.charAt(0).toUpperCase()}
             </AvatarFallback>
           </Avatar>
@@ -207,7 +207,7 @@ export function PetHeader({ pet }: { pet: PetData }) {
               {pet.neutered !== null && (
                 <Badge variant="outline" className={pet.neutered
                   ? "bg-blue-50 text-blue-700 border-blue-200"
-                  : "bg-gray-50 text-gray-600 border-gray-200"
+                  : "bg-slate-50 text-slate-600 border-slate-200"
                 }>
                   {pet.neutered ? "Esterilizado/a" : "No esterilizado/a"}
                 </Badge>

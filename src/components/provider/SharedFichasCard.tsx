@@ -64,14 +64,14 @@ export function SharedFichasCard({ providerId }: SharedFichasCardProps) {
   const isTokenExpired = (expiresAt: string) => new Date(expiresAt) < new Date();
 
   return (
-    <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-white">
+    <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-white">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between gap-2">
           <CardTitle className="text-base flex items-center gap-2">
-            <FileText className="h-5 w-5 text-emerald-600" />
+            <FileText className="h-5 w-5 text-purple-600" />
             Fichas compartidas contigo
           </CardTitle>
-          <Badge variant="outline" className="bg-white border-emerald-200 text-emerald-700">
+          <Badge variant="outline" className="bg-white border-purple-200 text-purple-700">
             {rows.length} esta semana
           </Badge>
         </div>
@@ -86,10 +86,10 @@ export function SharedFichasCard({ providerId }: SharedFichasCardProps) {
           const expired = isTokenExpired(row.expires_at);
           return (
             <div key={row.id} className="space-y-2">
-              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-emerald-100">
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-purple-100">
                 <Avatar className="h-11 w-11">
                   {pet?.photo_url ? <AvatarImage src={pet.photo_url} alt={pet?.name || "Mascota"} /> : null}
-                  <AvatarFallback className="bg-emerald-100 text-emerald-700">
+                  <AvatarFallback className="bg-purple-100 text-purple-700">
                     {(pet?.name || "M")[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>

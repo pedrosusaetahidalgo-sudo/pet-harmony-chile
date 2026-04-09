@@ -62,7 +62,7 @@ export const useAdoptionShelters = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adoption-shelters"] });
-      toast.success("Refugios generados exitosamente");
+      logger.debug("Refugios generados exitosamente");
     },
     onError: (error: Error) => {
       logger.error("Error generating shelters:", error);

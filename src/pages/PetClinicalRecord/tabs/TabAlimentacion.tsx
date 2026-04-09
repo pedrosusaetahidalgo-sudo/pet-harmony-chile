@@ -17,7 +17,7 @@ export function TabAlimentacion({ pet }: { pet: PetData }) {
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <Heart className="h-4 w-4 text-emerald-600" />
+            <Heart className="h-4 w-4 text-purple-600" />
             Alimentación
           </CardTitle>
         </CardHeader>
@@ -77,7 +77,7 @@ export function TabAlimentacion({ pet }: { pet: PetData }) {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Clipboard className="h-4 w-4 text-emerald-600" />
+              <Clipboard className="h-4 w-4 text-purple-600" />
               Notas de comportamiento
             </CardTitle>
           </CardHeader>
@@ -92,7 +92,7 @@ export function TabAlimentacion({ pet }: { pet: PetData }) {
         <Card>
           <CardHeader className="pb-3">
             <CardTitle className="text-base flex items-center gap-2">
-              <Scale className="h-4 w-4 text-emerald-600" />
+              <Scale className="h-4 w-4 text-purple-600" />
               Historial de peso
             </CardTitle>
           </CardHeader>

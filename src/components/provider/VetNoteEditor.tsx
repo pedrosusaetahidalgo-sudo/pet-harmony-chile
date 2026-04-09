@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -45,6 +46,8 @@ export function VetNoteEditor({
   const [noteType, setNoteType] = useState<VetNoteType>("consulta");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [alternativeOffered, setAlternativeOffered] = useState(false);
+  const [alternativesDiscussed, setAlternativesDiscussed] = useState("");
 
   const createNote = useCreateVetClinicalNote();
 
@@ -61,12 +64,16 @@ export function VetNoteEditor({
       noteType,
       title: title.trim(),
       description: description.trim() || undefined,
+      alternativeOffered,
+      alternativesDiscussed: alternativeOffered ? alternativesDiscussed.trim() || undefined : undefined,
     });
 
     toast.success(`Nota guardada en la ficha de ${petName}`);
     setTitle("");
     setDescription("");
     setNoteType("consulta");
+    setAlternativeOffered(false);
+    setAlternativesDiscussed("");
     onSaved?.();
   };
 
@@ -116,6 +123,27 @@ export function VetNoteEditor({
             placeholder="Detalles de la consulta, indicaciones, observaciones..."
             rows={3}
           />
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="alternative-offered"
+              checked={alternativeOffered}
+              onCheckedChange={(v) => setAlternativeOffered(v === true)}
+            />
+            <Label htmlFor="alternative-offered" className="text-xs cursor-pointer">
+              ¿Ofreciste alternativa más económica?
+            </Label>
+          </div>
+          {alternativeOffered && (
+            <Textarea
+              value={alternativesDiscussed}
+              onChange={(e) => setAlternativesDiscussed(e.target.value)}
+              placeholder="Describe la alternativa que le ofreciste al tutor..."
+              rows={2}
+            />
+          )}
         </div>
 
         <Button

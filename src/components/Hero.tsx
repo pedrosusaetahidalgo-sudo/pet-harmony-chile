@@ -48,7 +48,7 @@ const Hero = () => {
             Reseñas verificadas
           </span>
           <span className="inline-flex items-center gap-1">
-            <Shield className="h-3.5 w-3.5 text-emerald-600" />
+            <Shield className="h-3.5 w-3.5 text-purple-600" />
             Datos seguros
           </span>
           <span className="inline-flex items-center gap-1">
