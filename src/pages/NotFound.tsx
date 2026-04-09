@@ -14,6 +14,14 @@ const NotFound = () => {
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-amber-50 via-background to-emerald-50 px-4">
       <div className="text-center max-w-md">
+        {/* Logo + marca */}
+        <Link to="/" className="inline-flex items-center gap-2 mb-8 group">
+          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center shadow-md group-hover:shadow-lg transition-shadow">
+            <PawPrint className="h-5 w-5 text-white" />
+          </div>
+          <span className="text-xl font-bold text-foreground">Paw Friend</span>
+        </Link>
+
         <div className="mx-auto mb-6 h-20 w-20 rounded-full bg-amber-100 flex items-center justify-center">
           <PawPrint className="h-10 w-10 text-amber-600" />
         </div>
