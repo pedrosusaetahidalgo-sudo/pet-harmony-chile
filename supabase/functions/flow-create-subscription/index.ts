@@ -1,6 +1,6 @@
 /**
  * Edge Function: flow-create-subscription
- * Crea un pago en Flow.cl para Premium B2C ($2.990 mensual o $24.990 anual).
+ * Crea un pago en Flow.cl para Premium B2C ($3.990 mensual o $39.900 anual).
  * Devuelve la URL de pago a la que redirigir al usuario.
  *
  * Body: { plan: 'monthly' | 'yearly' }
@@ -20,8 +20,8 @@ const SITE_URL = "https://pawfriend.cl";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 
 const PRICES: Record<string, number> = {
-  monthly: 2990,
-  yearly: 24990,
+  monthly: 3990,
+  yearly: 39900,
 };
 
 /** Firma HMAC-SHA256 sobre params alfabéticamente concatenados (key1value1key2value2…) */

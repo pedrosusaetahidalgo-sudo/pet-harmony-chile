@@ -1,6 +1,6 @@
 -- Premium B2C con Flow (sesión 2026-04-07)
 -- Decisiones tomadas:
---   Precio: $2.990/mes y $24.990/año
+--   Precio: $3.990/mes y $39.900/año
 --   Modelo: 1 plan multi-mascota (no per-pet)
 --   Grandfathering: SOLO users con >= 2 pets al lanzar premium (early adopters)
 --   Sin trial

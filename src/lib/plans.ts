@@ -1,11 +1,10 @@
-export type PlanId = 'free' | 'premium' | 'premium_plus';
+export type PlanId = 'free' | 'premium';
 
 export interface PlanFeature {
   id: string;
   name: string;
   free: string | number | boolean;
   premium: string | number | boolean;
-  premium_plus: string | number | boolean;
 }
 
 export interface PlanConfig {
@@ -47,27 +46,6 @@ export const PLANS: Record<PlanId, PlanConfig> = {
     monthlyPrice: 3990,
     yearlyPrice: 39900,
     yearlyMonthly: 3325,
-    features: {
-      max_pets: 5,
-      max_reminders: 20,
-      ai_behavior_analysis: 5,
-      ai_vet_assistant: 5,
-      export_pdf: true,
-      share_clinical: true,
-      medical_history: 'all',
-      weekly_summary: true,
-      booking_user_fee: 0,
-      priority_support: false,
-      ad_free: true,
-    }
-  },
-  premium_plus: {
-    id: 'premium_plus',
-    name: 'Premium+',
-    badge: '💎',
-    monthlyPrice: 6990,
-    yearlyPrice: 69900,
-    yearlyMonthly: 5825,
     features: {
       max_pets: -1,
       max_reminders: -1,
@@ -119,7 +97,7 @@ export function canAccess(
       return {
         allowed: false,
         reason: `Llegaste al límite de ${value} este mes. Mejora tu plan para más.`,
-        upgradeRequired: planId === 'free' ? 'premium' : 'premium_plus',
+        upgradeRequired: 'premium',
       };
     }
     return { allowed: true };
@@ -183,7 +161,7 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
     monthlyPrice: 0,
     yearlyPrice: 0,
     yearlyMonthly: 0,
-    commissionRate: 15,
+    commissionRate: 10,
     features: {
       max_clients: 20,
       max_bookings_per_month: 10,
@@ -258,7 +236,7 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
     monthlyPrice: 59900,
     yearlyPrice: 599000,
     yearlyMonthly: 49900,
-    commissionRate: 8,
+    commissionRate: 0,
     features: {
       max_clients: -1,
       max_bookings_per_month: -1,

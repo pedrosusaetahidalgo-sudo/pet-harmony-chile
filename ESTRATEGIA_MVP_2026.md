@@ -299,7 +299,7 @@ Por qué funciona:
 - **Mitigación**: B2C requiere menos go-to-market que B2B → Paw Friend puede correr en orgánico mientras vos te enfocás en SYNAP.
 - **No hacer**: outbound a clínicas hasta validar B2C.
 
-### Riesgo 3: Monetización B2C en Chile es dura ($2.990/mes puede ser alto para muchos)
+### Riesgo 3: Monetización B2C en Chile es dura ($3.990/mes puede ser alto para muchos)
 - **Mitigación**: Premium con valor claro (multi-mascota + features pagas), grandfathering para early adopters, trial gratis si hace falta.
 - **Plan B**: pivotar a B2B antes de 6 meses si la conversión Premium es <2%.
 

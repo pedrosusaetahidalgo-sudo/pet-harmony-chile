@@ -390,7 +390,7 @@ const AddPet = () => {
               <div className="rounded-xl border border-premium/30 bg-card/70 backdrop-blur-sm p-4 space-y-3 text-sm">
                 <div className="flex items-center justify-between">
                   <span className="text-muted-foreground">Plan mensual</span>
-                  <span className="font-bold">$2.990 / mes</span>
+                  <span className="font-bold">$3.990 / mes</span>
                 </div>
                 <div className="h-px bg-premium/20" />
                 <div className="flex items-center justify-between">
@@ -399,7 +399,7 @@ const AddPet = () => {
                     <Sparkles className="h-3 w-3 text-premium" />
                   </span>
                   <span className="font-bold bg-premium-gradient bg-clip-text text-transparent">
-                    $24.990 / año
+                    $39.900 / año
                   </span>
                 </div>
               </div>

@@ -93,7 +93,7 @@ export default function Upgrade() {
               <CardTitle className="text-xl">Mensual</CardTitle>
               <CardDescription>Pago mes a mes, cancelas cuando quieras</CardDescription>
               <div className="pt-4">
-                <span className="text-4xl font-bold tracking-tight">$2.990</span>
+                <span className="text-4xl font-bold tracking-tight">$3.990</span>
                 <span className="text-muted-foreground text-base"> / mes</span>
               </div>
             </CardHeader>
@@ -120,7 +120,7 @@ export default function Upgrade() {
               className="absolute -top-0 right-4 translate-y-3 bg-premium-gradient text-premium-foreground border-0 shadow-premium-sm font-semibold tracking-wide"
             >
               <Sparkles className="h-3 w-3 mr-1" />
-              AHORRA 30%
+              2 MESES GRATIS
             </Badge>
             <CardHeader>
               <CardTitle className="text-xl flex items-center gap-2">
@@ -130,12 +130,12 @@ export default function Upgrade() {
               <CardDescription>2 meses gratis vs el plan mensual</CardDescription>
               <div className="pt-4 flex items-baseline gap-2">
                 <span className="text-4xl font-bold tracking-tight bg-premium-gradient bg-clip-text text-transparent">
-                  $24.990
+                  $39.900
                 </span>
                 <span className="text-muted-foreground text-base">/ año</span>
               </div>
               <p className="text-xs text-premium-dark/80 font-medium">
-                Equivale a $2.082 por mes
+                Equivale a $3.325 por mes
               </p>
             </CardHeader>
             <CardContent>

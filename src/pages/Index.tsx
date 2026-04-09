@@ -81,7 +81,7 @@ const STATS = [
 const FAQ = [
   {
     q: "¿Cuánto cuesta usar Paw Friend?",
-    a: "Es gratis para dueños con 1 mascota. Si tienes más mascotas, puedes activar Premium desde $2.990/mes para registrar todas las que quieras y desbloquear funciones extra.",
+    a: "Es gratis para dueños con 1 mascota. Si tienes más mascotas, puedes activar Premium desde $3.990/mes para registrar todas las que quieras y desbloquear funciones extra.",
   },
   {
     q: "¿Cómo encuentro un veterinario?",
