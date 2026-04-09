@@ -2,6 +2,7 @@ import { Component, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { AlertCircle } from "@/lib/icons";
 import { logger } from "@/lib/logger";
+import { Sentry } from "@/lib/sentry";
 
 interface Props {
   children: ReactNode;
@@ -24,6 +25,7 @@ class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     logger.error("ErrorBoundary caught:", error, errorInfo.componentStack);
+    Sentry.captureException(error, { extra: { componentStack: errorInfo.componentStack } });
   }
 
   render() {
