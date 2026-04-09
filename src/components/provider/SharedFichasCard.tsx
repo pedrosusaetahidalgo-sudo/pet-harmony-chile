@@ -38,8 +38,7 @@ export function SharedFichasCard({ providerId }: SharedFichasCardProps) {
       const { data, error } = await supabase
         .from("medical_share_tokens")
         .select("id, token, created_at, pets(name, species, photo_url)")
-        // Cast por la columna nueva hasta que se regenere types.ts
-        .eq("target_provider_id" as never, providerId as never)
+        .eq("target_provider_id", providerId)
         .eq("is_revoked", false)
         .gte("created_at", sevenDaysAgo.toISOString())
         .order("created_at", { ascending: false })

@@ -56,10 +56,7 @@ export function useVetPriceEstimator(comuna?: string) {
     queryKey: ['vet-price-estimator', comuna ?? 'all'],
     staleTime: 10 * 60 * 1000,
     queryFn: async (): Promise<VetPriceStats[]> => {
-      // La vista vet_prices_by_comuna no esta en types.ts hasta que el
-      // dueño regenere los tipos post-migracion. Cast intencional.
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let q = (supabase as any).from('vet_prices_by_comuna').select('*');
+      let q = supabase.from('vet_prices_by_comuna').select('*');
       if (comuna) q = q.eq('comuna', comuna);
       const { data, error } = await q;
       if (error) {

@@ -26,8 +26,6 @@ interface PriceRow {
 /**
  * Editor de precios publicos del veterinario.
  * Lee/escribe en vet_service_prices con upsert por (provider_id, service_type).
- *
- * Cast a `any` mientras types.ts no incluya la tabla nueva.
  */
 export default function MisPreciosEditor({ providerId }: Props) {
   const [rows, setRows] = useState<PriceRow[]>(
@@ -41,21 +39,18 @@ export default function MisPreciosEditor({ providerId }: Props) {
     let cancel = false;
     (async () => {
       setLoading(true);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('vet_service_prices')
         .select('service_type, price_clp, notes')
         .eq('provider_id', providerId);
       if (cancel) return;
       if (error) {
-        // Tabla aun no existe (migracion pendiente) — no rompemos
         setLoading(false);
         return;
       }
       setRows((prev) =>
         prev.map((r) => {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const found = (data ?? []).find((d: any) => d.service_type === r.service_type);
+          const found = (data ?? []).find((d) => d.service_type === r.service_type);
           if (!found) return r;
           return {
             service_type: r.service_type,
@@ -94,18 +89,15 @@ export default function MisPreciosEditor({ providerId }: Props) {
         .filter((r) => !r.price_clp || Number(r.price_clp) <= 0)
         .map((r) => r.service_type);
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const sb = supabase as any;
-
       if (toUpsert.length > 0) {
-        const { error } = await sb
+        const { error } = await supabase
           .from('vet_service_prices')
           .upsert(toUpsert, { onConflict: 'provider_id,service_type' });
         if (error) throw error;
       }
 
       if (toDelete.length > 0) {
-        const { error } = await sb
+        const { error } = await supabase
           .from('vet_service_prices')
           .delete()
           .eq('provider_id', providerId)
