@@ -72,7 +72,7 @@ const faq = [
   },
   {
     q: '¿Cómo funciona la comisión?',
-    a: 'Solo cobramos comisión sobre las reservas que recibes a través de la plataforma. El Plan Gratis tiene 15% de comisión, el Individual 12%, las clínicas 10% u 8%. Si un paciente te paga directo (efectivo, transferencia), no hay comisión.',
+    a: 'Solo cobramos comisión sobre las reservas que recibes a través de la plataforma. El Plan Gratis tiene 10% de comisión, el Individual 12%, la Clínica Básica 10% y el plan Clínica Pro tiene 0% comisión sobre las reservas. Si un paciente te paga directo (efectivo, transferencia), no hay comisión.',
   },
   {
     q: '¿Puedo aparecer si no estoy en Santiago?',
@@ -99,6 +99,7 @@ export default function ParaVeterinarios() {
   const planFree = PROVIDER_PLANS.provider_free;
   const planIndividual = PROVIDER_PLANS.provider_individual;
   const planClinic = PROVIDER_PLANS.provider_clinic_basic;
+  const planPro = PROVIDER_PLANS.provider_clinic_pro;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 to-white">
@@ -200,7 +201,7 @@ export default function ParaVeterinarios() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-5">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
           <PlanCard
             plan={planFree}
             highlight={false}
@@ -225,7 +226,7 @@ export default function ParaVeterinarios() {
               'Hasta 50 reservas/mes',
               '5 invitaciones a reseña/mes',
               'Estadísticas básicas',
-              'Comisión 12% (vs 15%)',
+              'Comisión 12% (vs 10% del Gratis)',
             ]}
             missing={['Multi-vet', 'Multi-sucursal']}
           />
@@ -245,12 +246,23 @@ export default function ParaVeterinarios() {
             ]}
             missing={[]}
           />
+          <PlanCard
+            plan={planPro}
+            highlight={false}
+            ctaLabel="Clínica Pro"
+            onCta={() => navigate('/registro-veterinario')}
+            features={[
+              '0% comisión sobre reservas',
+              'Pacientes y reservas ilimitadas',
+              'Multi-veterinario y multi-sucursal',
+              'Invitaciones a reseña ilimitadas',
+              'Analíticas avanzadas',
+              'Soporte prioritario',
+              'Acceso API',
+            ]}
+            missing={[]}
+          />
         </div>
-
-        <p className="text-center text-xs text-muted-foreground mt-6">
-          ¿Tienes una clínica grande? También ofrecemos Plan Pro con multi-sucursal y soporte
-          prioritario.
-        </p>
       </section>
 
       {/* FAQ */}
