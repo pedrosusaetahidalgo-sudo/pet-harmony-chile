@@ -31,6 +31,7 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { SANTIAGO_COMUNAS, VET_SPECIALTIES } from '@/lib/vetDirectory';
 import { logger } from "@/lib/logger";
+import MisPreciosEditor from '@/components/provider/MisPreciosEditor';
 
 const EMPTY: ProviderProfileForm = {
   display_name: '',
@@ -393,6 +394,9 @@ export default function ProviderProfileEdit() {
           </div>
         </CardContent>
       </Card>
+
+      {/* 6. Mis precios publicos */}
+      <MisPreciosEditor providerId={provider?.id} />
 
       {/* Save bar */}
       <div className="sticky bottom-4 z-10">
