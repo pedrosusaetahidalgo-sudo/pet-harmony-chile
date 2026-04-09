@@ -238,7 +238,15 @@ export function IntegrationsCard() {
             </div>
           </div>
 
-          <div className="pl-12 flex flex-wrap gap-2">
+          <div className="pl-12 space-y-2">
+            {!calendarConnected && (
+              <div className="rounded-md bg-blue-50 border border-blue-200 px-3 py-2 text-xs text-blue-800">
+                <strong>Nota:</strong> Google mostrará una pantalla de permisos de Paw Friend.
+                Solo accederemos a tus eventos de calendario para sincronizar citas y recordatorios.
+                No leemos ni modificamos ningún otro dato de tu cuenta.
+              </div>
+            )}
+            <div className="flex flex-wrap gap-2">
             {!calendarConnected ? (
               <Button onClick={handleConnectCalendar} disabled={connecting} size="sm">
                 {connecting ? (
@@ -272,6 +280,7 @@ export function IntegrationsCard() {
                 </Button>
               </>
             )}
+            </div>
           </div>
 
           {!calendarConnected && (
@@ -279,7 +288,7 @@ export function IntegrationsCard() {
               <AlertCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />
               <span>
                 Al conectar, creamos un calendario llamado &ldquo;Paw Friend&rdquo; en tu Google con todos tus
-                eventos. Podés desconectar cuando quieras.
+                eventos. Puedes desconectar cuando quieras.
               </span>
             </div>
           )}
