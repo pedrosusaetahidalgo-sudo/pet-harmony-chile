@@ -233,16 +233,16 @@ export const PawShopRewards = ({ userPoints, userId, onPurchase }: PawShopReward
 
   return (
     <div className="space-y-6">
-      {/* Coming Soon Banner */}
-      <Card className="bg-gradient-to-br from-purple-500/20 via-pink-500/20 to-rose-500/20 border-2 border-purple-500/30">
-        <CardContent className="p-6 text-center">
-          <Sparkles className="h-12 w-12 mx-auto mb-4 text-purple-500 animate-pulse" />
-          <h3 className="text-2xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            ¡Nuevas Funciones y Recompensas Próximamente!
+      {/* Partner rewards info */}
+      <Card className="bg-gradient-to-br from-purple-500/10 via-pink-500/10 to-rose-500/10 border border-purple-200">
+        <CardContent className="p-4 text-center">
+          <Gift className="h-8 w-8 mx-auto mb-2 text-purple-500" />
+          <h3 className="text-base font-bold mb-1 text-purple-800">
+            Canjea tus PawPoints por premios reales
           </h3>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Estamos trabajando en emocionantes nuevas características y recompensas para la tienda. 
-            Pronto podrás canjear tus PawPoints por descuentos exclusivos, premios especiales y mucho más.
+          <p className="text-xs text-muted-foreground max-w-md mx-auto">
+            Descuentos en veterinarias, productos para mascotas, donaciones a refugios
+            y más. Gana puntos cuidando a tus peludos.
           </p>
         </CardContent>
       </Card>

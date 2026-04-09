@@ -22,6 +22,9 @@ import {
   TrendingUp,
   Smartphone,
   Link2,
+  Gamepad2,
+  Flame,
+  Trophy,
 } from "@/lib/icons";
 import { getGreeting } from "@/lib/format";
 import { useGamification } from "@/hooks/useGamification";
@@ -272,6 +275,39 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* === PawGame widget === */}
+      {stats && (
+        <Card
+          className="border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => navigate("/paw-game")}
+        >
+          <CardContent className="flex items-center gap-4 py-3">
+            <div className="rounded-full bg-purple-100 p-2.5 flex-shrink-0">
+              <Gamepad2 className="h-5 w-5 text-purple-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-purple-800">
+                  {stats.points?.toLocaleString("es-CL") || 0} PawPoints
+                </span>
+                {stats.level > 1 && (
+                  <span className="text-xs bg-purple-200 text-purple-700 px-1.5 py-0.5 rounded-full font-medium">
+                    Nivel {stats.level}
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Gana puntos cuidando a tus mascotas y canjea premios
+              </p>
+            </div>
+            <div className="flex items-center gap-1 text-xs text-purple-500 font-medium flex-shrink-0">
+              <Trophy className="h-3.5 w-3.5" />
+              <span>Jugar</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* === Onboarding hints dirigidos para usuarios sin mascotas === */}
       <HomeOnboardingHints hasPets={pets.length > 0} />
@@ -534,6 +570,14 @@ export default function Home() {
           >
             <Map className="h-4 w-4 mr-2 text-indigo-600" />
             <span className="text-xs">Mapa</span>
+          </Button>
+          <Button
+            variant="outline"
+            className="flex-shrink-0 lg:w-full justify-start h-auto py-2.5"
+            onClick={() => navigate("/paw-game")}
+          >
+            <Gamepad2 className="h-4 w-4 mr-2 text-purple-600" />
+            <span className="text-xs">Paw Game</span>
           </Button>
           <Button
             variant="outline"

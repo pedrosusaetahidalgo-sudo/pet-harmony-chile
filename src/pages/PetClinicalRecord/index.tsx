@@ -206,6 +206,17 @@ const PetClinicalRecord = () => {
         </TabsList>
 
         <TabsContent value="resumen" className="mt-4 space-y-4">
+          {/* PawPoints nudge */}
+          <div
+            className="flex items-center gap-3 p-3 rounded-lg bg-purple-50 border border-purple-100 cursor-pointer hover:bg-purple-100/50 transition-colors"
+            onClick={() => navigate("/paw-game")}
+          >
+            <span className="text-lg">🐾</span>
+            <p className="text-xs text-purple-700 flex-1">
+              Completa la ficha de {pet.name} y gana <strong>30 PawPoints</strong>. Canjea por descuentos y premios.
+            </p>
+            <span className="text-xs text-purple-500 font-medium flex-shrink-0">Ver premios →</span>
+          </div>
           <TabResumen pet={pet} />
           <Card>
             <CardContent className="p-4 text-center">
