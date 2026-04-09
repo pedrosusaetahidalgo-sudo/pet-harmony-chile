@@ -52,14 +52,37 @@ export default function DirectorioVets() {
 
   const vets: Vet[] = useMemo(() => data?.pages.flat() ?? [], [data]);
 
+  // Stats derivados de los vets cargados para enriquecer la landing de comuna
+  const comunaStats = useMemo(() => {
+    if (!comunaParam || vets.length === 0) return null;
+    const prices = vets
+      .map((v: Vet) => v.price_from as number | null)
+      .filter((p): p is number => p != null && p > 0);
+    const allSpecs = vets.flatMap((v: Vet) => (v.specialties as string[]) ?? []);
+    const uniqueSpecs = [...new Set(allSpecs)];
+    return {
+      count: vets.length,
+      minPrice: prices.length > 0 ? Math.min(...prices) : null,
+      specialtyCount: uniqueSpecs.length,
+    };
+  }, [comunaParam, vets]);
+
   useEffect(() => {
+    const comunaDisplay = comuna !== 'all' ? comuna : null;
     const titleParts = ['Veterinarios'];
-    if (comuna !== 'all') titleParts.push(`en ${comuna}`);
+    if (comunaDisplay) titleParts.push(`en ${comunaDisplay}`);
     if (specialty !== 'all') titleParts.push(`· ${specialty}`);
+
+    const seoTitle = comunaDisplay
+      ? `Veterinarios en ${comunaDisplay} — Directorio Paw Friend`
+      : `${titleParts.join(' ')} | Paw Friend`;
+    const seoDesc = comunaDisplay
+      ? `Encuentra los mejores veterinarios en ${comunaDisplay}. Compara precios, lee resenas verificadas y agenda tu consulta online.`
+      : 'Encuentra el mejor veterinario para tu mascota en Chile. Resenas verificadas, atencion a domicilio y en clinica.';
+
     setSeoTags({
-      title: `${titleParts.join(' ')} | Paw Friend`,
-      description:
-        'Encuentra el mejor veterinario para tu mascota en Chile. Reseñas verificadas, atención a domicilio y en clínica.',
+      title: seoTitle,
+      description: seoDesc,
       canonical: `https://pawfriend.cl/veterinarios${
         comunaParam ? `/comuna/${comunaParam}` : ''
       }${espParam ? `/especialidad/${espParam}` : ''}`,
@@ -76,14 +99,38 @@ export default function DirectorioVets() {
       {!user && <PublicHeader />}
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl md:text-5xl font-bold text-amber-900 mb-3">
-            Encuentra el veterinario ideal
-          </h1>
-          <p className="text-lg text-muted-foreground">
-            para tu mascota en Chile · reseñas verificadas
-          </p>
-        </div>
+        {comunaParam && comuna !== 'all' ? (
+          <div className="mb-8">
+            <h1 className="text-3xl md:text-5xl font-bold text-amber-900 mb-3">
+              Veterinarios en {comuna}
+            </h1>
+            <p className="text-lg text-muted-foreground mb-4">
+              Encuentra los mejores veterinarios en {comuna}. Compara precios, lee resenas verificadas y agenda tu consulta online.
+            </p>
+            {comunaStats && !isLoading && (
+              <Card className="p-4 bg-amber-50/50 border-amber-200">
+                <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-amber-900">
+                  <span>{comunaStats.count} veterinario{comunaStats.count !== 1 ? 's' : ''} verificado{comunaStats.count !== 1 ? 's' : ''}</span>
+                  {comunaStats.minPrice && (
+                    <span>Consulta general desde {formatCLP(comunaStats.minPrice)}</span>
+                  )}
+                  {comunaStats.specialtyCount > 0 && (
+                    <span>{comunaStats.specialtyCount} especialidad{comunaStats.specialtyCount !== 1 ? 'es' : ''}</span>
+                  )}
+                </div>
+              </Card>
+            )}
+          </div>
+        ) : (
+          <div className="text-center mb-8">
+            <h1 className="text-3xl md:text-5xl font-bold text-amber-900 mb-3">
+              Encuentra el veterinario ideal
+            </h1>
+            <p className="text-lg text-muted-foreground">
+              para tu mascota en Chile · resenas verificadas
+            </p>
+          </div>
+        )}
 
         {/* Search + filters */}
         <Card className="p-4 md:p-6 mb-6 shadow-md">
