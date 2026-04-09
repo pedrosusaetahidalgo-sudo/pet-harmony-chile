@@ -1,4 +1,4 @@
-import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck, Crown, UserCog, LayoutDashboard, Home as HomeIcon, FileText, Search, Activity } from "@/lib/icons";
+import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck, Crown, UserCog, LayoutDashboard, Home as HomeIcon, FileText, Search } from "@/lib/icons";
 import { isFeatureEnabled } from "@/lib/featureFlags";
 import { LINKS } from "@/lib/links";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -40,7 +40,6 @@ const serviciosItems = [
 ];
 
 const comunidadItems = [
-  { title: "Actividad", url: "/actividad", icon: Activity },
   { title: "Feed", url: "/feed", icon: Heart },
   { title: "Mensajes", url: "/chat", icon: MessageSquare },
   { title: "Adopción", url: "/adoption", icon: Compass },

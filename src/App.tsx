@@ -96,7 +96,7 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/home" element={<ProtectedRoute><AppLayout><Home /></AppLayout></ProtectedRoute>} />
               <Route path="/feed" element={<ProtectedRoute><AppLayout><Feed /></AppLayout></ProtectedRoute>} />
-              <Route path="/actividad" element={<ProtectedRoute><AppLayout><Actividad /></AppLayout></ProtectedRoute>} />
+              <Route path="/actividad" element={<Navigate to="/feed" replace />} />
               <Route path="/my-pets" element={<ProtectedRoute><AppLayout><MyPets /></AppLayout></ProtectedRoute>} />
               <Route path="/add-pet" element={<ProtectedRoute><AppLayout><AddPet /></AppLayout></ProtectedRoute>} />
               <Route path="/edit-pet/:petId" element={<ProtectedRoute><AppLayout><AddPet /></AppLayout></ProtectedRoute>} />
