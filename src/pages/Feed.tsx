@@ -1,4 +1,5 @@
-import { AppLayout } from "@/components/AppLayout";
+import { PageHeader } from "@/components/PageHeader";
+import { LINKS } from "@/lib/links";
 import PetCard from "@/components/PetCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -155,37 +156,23 @@ const Feed = () => {
   return (
     <>
       <OnboardingTutorial onComplete={() => setShowTutorial(false)} />
+      <PageHeader
+        title="Comunidad"
+        subtitle="Fotos y publicaciones de la comunidad"
+        onBack={() => navigate(LINKS.home())}
+        actions={
+          profile ? (
+            <Avatar className="h-10 w-10 border-2 border-primary shadow-sm">
+              <AvatarImage src={profile.avatar_url || undefined} />
+              <AvatarFallback className="bg-warm-gradient text-white font-semibold text-sm">
+                {profile.display_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || "U"}
+              </AvatarFallback>
+            </Avatar>
+          ) : null
+        }
+      />
     <div className="w-full px-3 sm:px-4 py-4 sm:py-6 max-w-4xl mx-auto animate-fade-in">
-        {/* Header */}
         <div className="flex flex-col gap-3 mb-4 sm:mb-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold mb-1 bg-warm-gradient bg-clip-text text-transparent">
-                Feed social
-              </h1>
-              <p className="text-xs sm:text-sm text-muted-foreground">
-                Fotos y publicaciones de la comunidad
-              </p>
-            </div>
-            {/* User Avatar */}
-            {profile && (
-              <Avatar className="h-10 w-10 border-2 border-primary shadow-sm">
-                <AvatarImage src={profile.avatar_url || undefined} />
-                <AvatarFallback className="bg-warm-gradient text-white font-semibold text-sm">
-                  {(() => {
-                    if (profile.display_name) {
-                      const nameParts = profile.display_name.trim().split(/\s+/);
-                      if (nameParts.length >= 2) {
-                        return `${nameParts[0][0].toUpperCase()}.${nameParts[nameParts.length - 1][0].toUpperCase()}.`;
-                      }
-                      return profile.display_name[0].toUpperCase();
-                    }
-                    return user?.email?.[0]?.toUpperCase() || "U";
-                  })()}
-                </AvatarFallback>
-              </Avatar>
-            )}
-          </div>
           <div className="grid grid-cols-2 gap-2">
             <Dialog open={showCreatePost} onOpenChange={setShowCreatePost}>
               <DialogTrigger asChild>

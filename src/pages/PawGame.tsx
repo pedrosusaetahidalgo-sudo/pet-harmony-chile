@@ -51,6 +51,8 @@ import { PawShopRewards } from "@/components/pawgame/PawShopRewards";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { logger } from "@/lib/logger";
+import { PageHeader } from "@/components/PageHeader";
+import { LINKS } from "@/lib/links";
 
 interface GuardianLevel {
   id: string;
@@ -388,7 +390,9 @@ const PawGame = () => {
   const progressPercent = levelInfo.progressPercent;
 
   return (
-    <div className="container px-4 py-6 max-w-7xl mx-auto animate-fade-in space-y-6">
+    <div className="min-h-screen bg-background">
+      <PageHeader title="Logros y misiones" onBack={() => navigate(LINKS.profile())} />
+      <div className="container px-4 py-6 max-w-7xl mx-auto animate-fade-in space-y-6">
       {/* Hero Header */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/30 via-secondary/30 to-accent/30 p-6 md:p-8">
         <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
@@ -728,6 +732,7 @@ const PawGame = () => {
           />
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 };

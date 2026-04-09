@@ -1,4 +1,5 @@
 import { AppLayout } from "@/components/AppLayout";
+import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { MessageSquare, MessageCircle, Search } from "@/lib/icons";
@@ -184,11 +185,9 @@ const Chat = () => {
 
   return (
     <AppLayout>
-      <div className="container max-w-2xl mx-auto p-4 sm:p-6">
-        <div className="mb-6 flex items-center justify-between gap-4">
-          <h1 className="text-2xl sm:text-3xl font-bold bg-warm-gradient bg-clip-text text-transparent">
-            Mensajes
-          </h1>
+      <PageHeader
+        title="Mensajes"
+        actions={
           <Button
             onClick={() => setShowNewMessage(!showNewMessage)}
             size="sm"
@@ -197,7 +196,9 @@ const Chat = () => {
             <Plus className="h-4 w-4 mr-2" />
             Nuevo
           </Button>
-        </div>
+        }
+      />
+      <div className="container max-w-2xl mx-auto p-4 sm:p-6">
         
         {/* Search Bar - Instagram-like */}
         <div className="relative mb-4">

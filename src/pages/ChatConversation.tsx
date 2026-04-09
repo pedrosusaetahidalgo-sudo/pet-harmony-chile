@@ -1,9 +1,10 @@
 import { AppLayout } from "@/components/AppLayout";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { PageHeader } from "@/components/PageHeader";
+import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Send } from "@/lib/icons";
+import { Send } from "@/lib/icons";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -177,39 +178,21 @@ const ChatConversation = () => {
 
   return (
     <AppLayout>
-      <div className="container max-w-2xl mx-auto p-0 h-[calc(100vh-4rem)]">
+      <PageHeader
+        title={otherUser?.display_name || "Conversación"}
+        subtitle={otherUser?.location || undefined}
+        onBack={() => navigate('/chat')}
+        actions={
+          <Avatar className="h-9 w-9 ring-2 ring-primary/20">
+            <AvatarImage src={otherUser?.avatar_url} />
+            <AvatarFallback className="bg-warm-gradient text-white">
+              {otherUser?.display_name?.[0] || '?'}
+            </AvatarFallback>
+          </Avatar>
+        }
+      />
+      <div className="container max-w-2xl mx-auto p-0 h-[calc(100vh-8rem)]">
         <Card className="h-full flex flex-col rounded-none sm:rounded-lg border-0 sm:border">
-          {/* Header */}
-          <CardHeader className="border-b p-4">
-            <div className="flex items-center gap-3">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate('/chat')}
-              >
-                <ArrowLeft className="h-5 w-5" />
-              </Button>
-              
-              <Avatar className="h-10 w-10 ring-2 ring-primary/20">
-                <AvatarImage src={otherUser?.avatar_url} />
-                <AvatarFallback className="bg-warm-gradient text-white">
-                  {otherUser?.display_name?.[0] || '?'}
-                </AvatarFallback>
-              </Avatar>
-              
-              <div className="flex-1">
-                <h2 className="font-semibold">
-                  {otherUser?.display_name || 'Usuario'}
-                </h2>
-                {otherUser?.location && (
-                  <p className="text-xs text-muted-foreground">
-                    {otherUser.location}
-                  </p>
-                )}
-              </div>
-            </div>
-          </CardHeader>
-
           {/* Messages */}
           <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message, index) => {

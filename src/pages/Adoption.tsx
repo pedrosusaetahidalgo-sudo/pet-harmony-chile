@@ -6,6 +6,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, Heart, MessageCircle, Building2, Sparkles } from "@/lib/icons";
 import { AdoptionPostCard } from "@/components/AdoptionPostCard";
 import { useAuth } from "@/hooks/useAuth";
+import { PageHeader } from "@/components/PageHeader";
+import { LINKS } from "@/lib/links";
+import { useNavigate } from "react-router-dom";
 
 // Lazy: estos componentes pesan (forms con react-hook-form, listas con queries
 // propias). Cargarlos bajo demanda reduce el bundle inicial de Adoption.tsx.
@@ -15,6 +18,7 @@ const CreateAdoptionPost = lazy(() =>
 const AdoptionSheltersList = lazy(() => import("@/components/AdoptionSheltersList"));
 
 const Adoption = () => {
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [selectedTab, setSelectedTab] = useState("available");
@@ -65,16 +69,14 @@ const Adoption = () => {
   };
 
   return (
-    <div className="container max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
+    <div className="min-h-screen bg-background">
+      <PageHeader
+        title="Adopciones"
+        subtitle="Dale un hogar a una mascota que lo necesita"
+        onBack={() => navigate(LINKS.home())}
+      />
+      <div className="container max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
       <div className="flex flex-col gap-3 sm:gap-4">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold bg-warm-gradient bg-clip-text text-transparent">
-            Adopción de Mascotas
-          </h1>
-          <p className="text-sm sm:text-base text-muted-foreground mt-1 sm:mt-2">
-            Dale un hogar a una mascota que lo necesita
-          </p>
-        </div>
         {selectedTab !== "shelters" && (
           <Button 
             onClick={() => setShowCreateDialog(true)}
@@ -233,6 +235,7 @@ const Adoption = () => {
           />
         </Suspense>
       )}
+      </div>
     </div>
   );
 };
