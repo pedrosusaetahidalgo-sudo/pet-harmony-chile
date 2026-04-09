@@ -205,11 +205,11 @@ export default function ParaVeterinarios() {
           <PlanCard
             plan={planFree}
             highlight={false}
-            ctaLabel="Empezar gratis"
+            ctaLabel="Empezar sin costo"
             onCta={() => navigate('/registro-veterinario')}
             features={[
-              'Perfil público en el directorio',
-              'Hasta 20 pacientes',
+              'WhatsApp con memoria: tu perfil publico + ficha clinica',
+              'Tus primeros 20 pacientes sin costo',
               'Hasta 10 reservas/mes',
               'Reseñas verificadas',
             ]}
