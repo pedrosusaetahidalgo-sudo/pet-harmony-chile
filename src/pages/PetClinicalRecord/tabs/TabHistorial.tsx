@@ -1,13 +1,15 @@
-import { Clipboard, Clock, MapPin, Stethoscope, Calendar } from "@/lib/icons";
-import { Card, CardContent } from "@/components/ui/card";
+import { Clipboard, Clock, MapPin, Stethoscope, Calendar, UserCheck } from "@/lib/icons";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMedicalRecords } from "@/hooks/useMedicalRecords";
+import { useVetClinicalNotesByPet } from "@/hooks/useVetClinicalNotes";
 import { formatDate } from "../helpers";
 import { EmptyState, getRecordTypeBadgeClass, getRecordTypeIcon } from "../shared";
 
 export function TabHistorial({ petId }: { petId: string }) {
   const { records, isLoading } = useMedicalRecords(petId);
+  const { data: vetNotes } = useVetClinicalNotesByPet(petId);
 
   if (isLoading) {
     return (
@@ -100,6 +102,52 @@ export function TabHistorial({ petId }: { petId: string }) {
           </div>
         </div>
       ))}
+
+      {/* Notas de veterinarios — solo lectura para el dueno */}
+      {vetNotes && vetNotes.length > 0 && (
+        <Card className="border-blue-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <UserCheck className="h-4 w-4 text-blue-600" />
+              Notas de veterinarios
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {vetNotes.map((note) => (
+              <div
+                key={note.id}
+                className="p-3 bg-blue-50/50 rounded-lg border border-blue-100"
+              >
+                <div className="flex items-center gap-2 flex-wrap mb-1">
+                  <p className="text-sm font-medium">{note.title}</p>
+                  <Badge
+                    variant="outline"
+                    className="text-xs capitalize bg-blue-50 text-blue-700 border-blue-200"
+                  >
+                    {note.note_type}
+                  </Badge>
+                  <Badge
+                    variant="outline"
+                    className="text-xs bg-white text-blue-600 border-blue-200"
+                  >
+                    <UserCheck className="h-3 w-3 mr-1" />
+                    {note.provider_name}
+                  </Badge>
+                </div>
+                {note.description && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {note.description}
+                  </p>
+                )}
+                <p className="text-xs text-muted-foreground flex items-center gap-1 mt-2">
+                  <Clock className="h-3 w-3" />
+                  {formatDate(note.created_at)}
+                </p>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

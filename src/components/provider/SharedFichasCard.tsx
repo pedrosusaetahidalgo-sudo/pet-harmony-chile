@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { formatDistanceToNowStrict } from "date-fns";
 import { es } from "date-fns/locale";
@@ -5,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { FileText, ExternalLink } from "@/lib/icons";
+import { FileText, ExternalLink, Plus } from "@/lib/icons";
 import { supabase } from "@/integrations/supabase/client";
+import { VetNoteEditor } from "./VetNoteEditor";
 
 interface SharedFichasCardProps {
   providerId: string | null | undefined;
@@ -15,7 +17,9 @@ interface SharedFichasCardProps {
 interface SharedFichaRow {
   id: string;
   token: string;
+  pet_id: string;
   created_at: string;
+  expires_at: string;
   pets: {
     name: string | null;
     species: string | null;
@@ -37,7 +41,7 @@ export function SharedFichasCard({ providerId }: SharedFichasCardProps) {
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       const { data, error } = await supabase
         .from("medical_share_tokens")
-        .select("id, token, created_at, pets(name, species, photo_url)")
+        .select("id, token, pet_id, created_at, expires_at, pets(name, species, photo_url)")
         .eq("target_provider_id", providerId)
         .eq("is_revoked", false)
         .gte("created_at", sevenDaysAgo.toISOString())
@@ -49,11 +53,15 @@ export function SharedFichasCard({ providerId }: SharedFichasCardProps) {
     enabled: !!providerId,
   });
 
+  const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null);
+
   if (!rows || rows.length === 0) return null;
 
   const openShare = (token: string) => {
     window.open(`${window.location.origin}/medical-share/${token}`, "_blank", "noopener");
   };
+
+  const isTokenExpired = (expiresAt: string) => new Date(expiresAt) < new Date();
 
   return (
     <Card className="border-emerald-200 bg-gradient-to-br from-emerald-50 to-white">
@@ -75,35 +83,59 @@ export function SharedFichasCard({ providerId }: SharedFichasCardProps) {
             locale: es,
             addSuffix: false,
           });
+          const expired = isTokenExpired(row.expires_at);
           return (
-            <div
-              key={row.id}
-              className="flex items-center gap-3 p-3 bg-white rounded-lg border border-emerald-100"
-            >
-              <Avatar className="h-11 w-11">
-                {pet?.photo_url ? <AvatarImage src={pet.photo_url} alt={pet?.name || "Mascota"} /> : null}
-                <AvatarFallback className="bg-emerald-100 text-emerald-700">
-                  {(pet?.name || "M")[0].toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate">
-                  {pet?.name || "Mascota"}
-                </p>
-                <p className="text-xs text-muted-foreground truncate">
-                  {pet?.species ? `${pet.species} · ` : ""}
-                  compartido hace {when}
-                </p>
+            <div key={row.id} className="space-y-2">
+              <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-emerald-100">
+                <Avatar className="h-11 w-11">
+                  {pet?.photo_url ? <AvatarImage src={pet.photo_url} alt={pet?.name || "Mascota"} /> : null}
+                  <AvatarFallback className="bg-emerald-100 text-emerald-700">
+                    {(pet?.name || "M")[0].toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold truncate">
+                    {pet?.name || "Mascota"}
+                  </p>
+                  <p className="text-xs text-muted-foreground truncate">
+                    {pet?.species ? `${pet.species} · ` : ""}
+                    compartido hace {when}
+                  </p>
+                </div>
+                <div className="flex gap-1.5">
+                  {!expired && providerId && (
+                    <Button
+                      size="sm"
+                      variant={expandedNoteId === row.id ? "secondary" : "outline"}
+                      onClick={() =>
+                        setExpandedNoteId(expandedNoteId === row.id ? null : row.id)
+                      }
+                      className="h-11"
+                    >
+                      <Plus className="h-4 w-4 mr-1" />
+                      Nota
+                    </Button>
+                  )}
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => openShare(row.token)}
+                    className="h-11"
+                  >
+                    <ExternalLink className="h-4 w-4 mr-1" />
+                    Ver ficha
+                  </Button>
+                </div>
               </div>
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => openShare(row.token)}
-                className="h-11"
-              >
-                <ExternalLink className="h-4 w-4 mr-1" />
-                Ver ficha
-              </Button>
+              {expandedNoteId === row.id && providerId && (
+                <VetNoteEditor
+                  shareTokenId={row.id}
+                  providerId={providerId}
+                  petId={row.pet_id}
+                  petName={pet?.name || "Mascota"}
+                  onSaved={() => setExpandedNoteId(null)}
+                />
+              )}
             </div>
           );
         })}
