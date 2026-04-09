@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Share2, Link2, Copy, Trash2, MessageCircle } from "@/lib/icons";
+import { Share2, Link2, Copy, Trash2, MessageCircle, Download } from "@/lib/icons";
+import { QRCodeSVG } from "qrcode.react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -114,6 +115,25 @@ export function TabCompartir({ petId }: { petId: string }) {
       // Error handled by the hook
     }
   }, [revokeToken]);
+
+  const downloadQR = useCallback((tokenStr: string) => {
+    const svg = document.querySelector(`#qr-${tokenStr}`) as SVGSVGElement;
+    if (!svg) return;
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    canvas.width = 300;
+    canvas.height = 300;
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+    img.onload = () => {
+      ctx?.drawImage(img, 0, 0, 300, 300);
+      const a = document.createElement("a");
+      a.href = canvas.toDataURL("image/png");
+      a.download = "paw-friend-ficha-qr.png";
+      a.click();
+    };
+    img.src = `data:image/svg+xml;base64,${btoa(svgData)}`;
+  }, []);
 
   return (
     <div className="space-y-4">
@@ -233,6 +253,27 @@ export function TabCompartir({ petId }: { petId: string }) {
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
+                  {!isExpired && (
+                    <div className="w-full mt-2 flex items-end gap-3">
+                      <div className="p-2 bg-white rounded-lg inline-block">
+                        <QRCodeSVG
+                          id={`qr-${token.token}`}
+                          value={getShareUrl(token.token)}
+                          size={120}
+                          level="M"
+                        />
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => downloadQR(token.token)}
+                        className="h-11 text-xs gap-1.5"
+                      >
+                        <Download className="h-4 w-4" />
+                        Descargar QR
+                      </Button>
+                    </div>
+                  )}
                 </div>
               );
             })}
