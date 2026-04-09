@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { AppLayout } from "@/components/AppLayout";
+import { PageHeader } from "@/components/PageHeader";
 import { CalendarGrid } from "@/components/calendar/CalendarGrid";
 import { DaySlotsList } from "@/components/calendar/DaySlotsList";
 import { BookingModal } from "@/components/calendar/BookingModal";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, Filter } from "@/lib/icons";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
@@ -113,13 +112,8 @@ export default function MyBookings() {
 
   return (
     <AppLayout>
+      <PageHeader title="Mis reservas" />
       <div className="container max-w-4xl mx-auto p-4 space-y-4">
-        <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold flex items-center gap-2">
-            <Calendar className="h-5 w-5 text-primary" />
-            Mis reservas
-          </h1>
-        </div>
 
         {/* Filter chips */}
         <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">

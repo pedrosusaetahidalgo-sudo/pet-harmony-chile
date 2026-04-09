@@ -21,6 +21,7 @@ import { useAdoptionShelters } from "@/hooks/useAdoptionShelters";
 import { calculateDistance } from "@/lib/distance";
 import { cn } from "@/lib/utils";
 import { logger } from "@/lib/logger";
+import { PageHeader } from "@/components/PageHeader";
 
 // Fix Leaflet default marker icon issue with bundlers (Vite/Webpack)
 // Leaflet bundler workaround: remove broken default icon URL resolver
@@ -382,7 +383,9 @@ const Maps = () => {
   ];
 
   return (
-    <div className="relative w-full h-[calc(100vh-4rem)] md:h-[calc(100vh-2rem)] md:m-4 md:rounded-xl overflow-hidden">
+    <>
+    <PageHeader title="Mapa" />
+    <div className="relative w-full h-[calc(100vh-8rem)] md:h-[calc(100vh-6rem)] md:m-4 md:rounded-xl overflow-hidden">
       {/* Leaflet Map */}
       <MapContainer
         center={mapCenter}
@@ -615,6 +618,7 @@ const Maps = () => {
         onSuccess={() => setShowCreateAdoption(false)}
       />
     </div>
+    </>
   );
 };
 

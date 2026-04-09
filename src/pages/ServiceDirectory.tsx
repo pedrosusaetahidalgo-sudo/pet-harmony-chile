@@ -27,7 +27,7 @@ import {
   type LucideIcon
 } from "@/lib/icons";
 import { useState, useEffect } from "react";
-import { useParams, Navigate } from "react-router-dom";
+import { useParams, Navigate, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -40,6 +40,8 @@ import { EnhancedBookingDialog } from "@/components/EnhancedBookingDialog";
 import { ProviderProfileCard } from "@/components/ProviderProfileCard";
 import { format } from "date-fns";
 import { logger } from "@/lib/logger";
+import { PageHeader } from "@/components/PageHeader";
+import { LINKS } from "@/lib/links";
 
 type ServiceType = 'walkers' | 'vets' | 'sitters' | 'trainers' | 'groomers';
 type ProfileTable = "dog_walker_profiles" | "vet_profiles" | "dogsitter_profiles" | "trainer_profiles" | "groomer_profiles";
@@ -524,6 +526,7 @@ const ServiceDirectory = () => {
   const ProfileDetails = PROFILE_DETAILS[serviceType];
   const IconComponent = config.icon;
 
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
   const [providers, setProviders] = useState<any[]>([]);
@@ -708,26 +711,19 @@ const ServiceDirectory = () => {
   }
 
   return (
-    <div className="container px-4 py-8 max-w-7xl mx-auto animate-fade-in">
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">
-              <span className={`bg-gradient-to-r ${config.gradient} bg-clip-text text-transparent`}>
-                {config.title}
-              </span>
-            </h1>
-            <p className="text-sm md:text-base text-muted-foreground">
-              {config.subtitle}
-            </p>
-          </div>
-          <OfferServiceButton
-            serviceType={config.providerType as ProviderType}
-            serviceName={config.serviceName}
-            className="w-full sm:w-auto"
-          />
-        </div>
+    <div className="min-h-screen bg-background">
+      <PageHeader
+        title={config.title}
+        subtitle={config.subtitle}
+        onBack={() => navigate(LINKS.servicios())}
+      />
+      <div className="container px-4 py-6 max-w-7xl mx-auto animate-fade-in">
+      <div className="mb-6 flex justify-end">
+        <OfferServiceButton
+          serviceType={config.providerType as ProviderType}
+          serviceName={config.serviceName}
+          className="w-full sm:w-auto"
+        />
       </div>
 
       {/* Advanced Filters */}
@@ -884,6 +880,7 @@ const ServiceDirectory = () => {
         providerType={config.providerType as ProviderType}
         onBookingComplete={loadData}
       />
+      </div>
     </div>
   );
 };

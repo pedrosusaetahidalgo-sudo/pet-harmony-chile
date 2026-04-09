@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dog, ShieldCheck, GraduationCap, Scissors, ArrowRight } from "@/lib/icons";
 import { LINKS } from "@/lib/links";
+import { PageHeader } from "@/components/PageHeader";
 
 type ServiceKey = "walkers" | "sitters" | "trainers" | "groomers";
 
@@ -59,13 +60,13 @@ export default function Servicios() {
   const navigate = useNavigate();
 
   return (
-    <div className="container max-w-5xl mx-auto px-4 py-6 md:py-8">
-      <div className="mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold mb-2">Servicios para tu mascota</h1>
-        <p className="text-muted-foreground">
-          Encuentra paseadores, cuidadores, entrenadores y más profesionales verificados.
-        </p>
-      </div>
+    <div className="min-h-screen bg-background">
+      <PageHeader
+        title="Servicios"
+        subtitle="Paseadores, cuidadores, entrenadores y más profesionales verificados."
+        onBack={() => navigate(LINKS.home())}
+      />
+      <div className="container max-w-5xl mx-auto px-4 py-6 md:py-8">
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
         {SERVICES.map((service) => {
@@ -124,6 +125,7 @@ export default function Servicios() {
           directorio completo de veterinarios
         </button>{" "}
         con reseñas verificadas.
+      </div>
       </div>
     </div>
   );
