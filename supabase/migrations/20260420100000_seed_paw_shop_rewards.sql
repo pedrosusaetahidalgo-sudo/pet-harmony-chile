@@ -15,9 +15,9 @@ VALUES
   ('Apadrinar vacuna de rescatado', 'Cubres la vacuna de un animal en proceso de adopción', 'donation', 600, NULL, NULL, 'Refugios aliados', 'syringe', NULL, true),
 
   -- Cosméticos (badges especiales en el perfil)
-  ('Badge "Corazón de Oro"', 'Badge exclusivo que aparece en tu perfil público', 'cosmetic', 1000, NULL, NULL, NULL, 'award', NULL, true),
-  ('Badge "Paw Master"', 'El badge más exclusivo de Paw Friend para tu perfil', 'cosmetic', 5000, NULL, NULL, NULL, 'crown', NULL, true),
-  ('Marco especial para foto de mascota', 'Un marco dorado para destacar la foto de tu peludo', 'cosmetic', 750, NULL, NULL, NULL, 'image', 100, true),
+  ('Badge "Corazón de Oro"', 'Badge exclusivo que aparece en tu perfil público', 'visual', 1000, NULL, NULL, NULL, 'award', NULL, true),
+  ('Badge "Paw Master"', 'El badge más exclusivo de Paw Friend para tu perfil', 'visual', 5000, NULL, NULL, NULL, 'crown', NULL, true),
+  ('Marco especial para foto de mascota', 'Un marco dorado para destacar la foto de tu peludo', 'visual', 750, NULL, NULL, NULL, 'image', 100, true),
 
   -- Premium
   ('1 mes Premium gratis', 'Disfruta todas las funciones Premium por 30 días', 'premium', 3000, NULL, NULL, 'Paw Friend', 'zap', 20, true),

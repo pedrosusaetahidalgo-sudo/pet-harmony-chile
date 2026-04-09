@@ -45,7 +45,7 @@ const getCategoryIcon = (category: string) => {
   const icons: Record<string, any> = {
     'discount': Percent,
     'donation': Heart,
-    'cosmetic': Sparkles,
+    'visual': Sparkles,
     'premium': Crown,
     'service': Dog,
   };
@@ -67,7 +67,7 @@ const categories = [
   { key: 'all', label: 'Todos', icon: ShoppingBag },
   { key: 'discount', label: 'Descuentos', icon: Percent },
   { key: 'donation', label: 'Donaciones', icon: Heart },
-  { key: 'cosmetic', label: 'Cosméticos', icon: Sparkles },
+  { key: 'visual', label: 'Cosméticos', icon: Sparkles },
   { key: 'premium', label: 'Exclusivo', icon: Crown },
 ];
 
@@ -177,7 +177,7 @@ export const PawShopRewards = ({ userPoints, userId, onPurchase }: PawShopReward
             <div className={`w-16 h-16 rounded-2xl bg-gradient-to-br ${
               reward.category === 'donation' ? 'from-pink-500 to-rose-500' :
               reward.category === 'premium' ? 'from-yellow-500 to-amber-500' :
-              reward.category === 'cosmetic' ? 'from-purple-500 to-pink-500' :
+              reward.category === 'visual' ? 'from-purple-500 to-pink-500' :
               'from-blue-500 to-cyan-500'
             } flex items-center justify-center mb-3 shadow-lg`}>
               <Icon className="h-8 w-8 text-white" />
