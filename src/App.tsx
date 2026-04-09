@@ -62,6 +62,7 @@ const Demo = lazy(() => import("./pages/Demo"));
 const ProviderProfileEdit = lazy(() => import("./pages/ProviderProfileEdit"));
 const RegistroVeterinario = lazy(() => import("./pages/RegistroVeterinario"));
 const ParaVeterinarios = lazy(() => import("./pages/ParaVeterinarios"));
+const PreciosVeterinarios = lazy(() => import("./pages/PreciosVeterinarios"));
 const DejarResena = lazy(() => import("./pages/DejarResena"));
 const Actividad = lazy(() => import("./pages/Actividad"));
 const Reminders = lazy(() => import("./pages/Reminders"));
@@ -147,6 +148,8 @@ const App = () => (
               <Route path="/demo" element={<Demo />} />
               <Route path="/registro-veterinario" element={<RegistroVeterinario />} />
               <Route path="/para-veterinarios" element={<ParaVeterinarios />} />
+              <Route path="/precios-veterinarios" element={<PreciosVeterinarios />} />
+              <Route path="/precios-veterinarios/comuna/:comuna" element={<PreciosVeterinarios />} />
               <Route path="/resena/:token" element={<DejarResena />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />

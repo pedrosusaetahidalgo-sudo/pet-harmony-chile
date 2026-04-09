@@ -294,6 +294,13 @@ export default function ParaVeterinarios() {
             <Stethoscope className="h-5 w-5 mr-2" />
             Crear mi perfil ahora
           </Button>
+          <p className="text-sm text-white/95 mt-4">
+            Tus precios aparecen en el{' '}
+            <Link to="/precios-veterinarios" className="underline font-semibold">
+              comparador público de Paw Friend
+            </Link>
+            , ayudándote a captar clientes que buscan transparencia.
+          </p>
           <p className="text-xs text-white/80 mt-4">
             ¿Ya tienes cuenta?{' '}
             <Link to="/auth" className="underline">

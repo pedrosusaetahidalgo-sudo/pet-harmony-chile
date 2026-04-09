@@ -15,6 +15,7 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDirectoryVets, type DirectoryVetFilters } from '@/hooks/useDirectoryVets';
 import { useAuth } from '@/hooks/useAuth';
+import PriceEstimatorWidget from '@/components/PriceEstimatorWidget';
 import {
   SANTIAGO_COMUNAS,
   VET_SPECIALTIES,
@@ -148,6 +149,9 @@ export default function DirectorioVets() {
             </Select>
           </div>
         </Card>
+
+        {/* Estimador de precios — solo cuando hay comuna especifica */}
+        {comuna !== 'all' && <PriceEstimatorWidget comuna={comuna} compact />}
 
         {/* Results */}
         {isLoading ? (

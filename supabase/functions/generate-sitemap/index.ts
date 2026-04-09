@@ -41,6 +41,13 @@ serve(async () => {
     urls.push(url(SITE + "/veterinarios", "daily", "0.9"));
     urls.push(url(SITE + "/para-veterinarios", "weekly", "0.9"));
     urls.push(url(SITE + "/registro-veterinario", "monthly", "0.7"));
+    urls.push(url(SITE + "/precios-veterinarios", "weekly", "0.9"));
+
+    // Precios por comuna (top 5 por poblacion)
+    const PRECIOS_TOP = ["santiago", "las-condes", "providencia", "nunoa", "maipu"];
+    for (const c of PRECIOS_TOP) {
+      urls.push(url(`${SITE}/precios-veterinarios/comuna/${c}`, "weekly", "0.7"));
+    }
 
     // Comunas
     for (const c of COMUNAS) {
