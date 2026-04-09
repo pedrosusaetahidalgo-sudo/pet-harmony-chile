@@ -288,6 +288,7 @@ function PublicFooter() {
   return (
     <footer className="border-t bg-white mt-12 py-6 text-center text-sm text-muted-foreground">
       <div className="container mx-auto px-4">
+        <p className="text-xs">Hecho en Chile, para Chile · Pagos seguros con Flow</p>
         <p>© {new Date().getFullYear()} Paw Friend Chile · pawfriend.cl</p>
         <div className="flex justify-center gap-4 mt-2">
           <Link to="/terms" className="hover:text-amber-700">Términos</Link>

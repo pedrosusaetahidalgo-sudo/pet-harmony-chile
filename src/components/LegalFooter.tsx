@@ -4,6 +4,9 @@ export const LegalFooter = () => {
   return (
     <footer className="w-full py-6 px-4 border-t border-border bg-card/50 backdrop-blur-sm">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+        <p className="text-xs text-muted-foreground text-center md:text-left">
+          Hecho en Chile, para Chile · Pagos seguros con Flow
+        </p>
         <div className="text-sm text-muted-foreground text-center md:text-left">
           © {new Date().getFullYear()} Paw Friend. Todos los derechos reservados.
         </div>
