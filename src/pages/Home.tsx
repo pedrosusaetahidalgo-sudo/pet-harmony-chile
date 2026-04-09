@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { OnboardingTutorial } from "@/components/OnboardingTutorial";
+import { HomeOnboardingHints } from "@/components/HomeOnboardingHints";
 import {
   PawPrint,
   Plus,
@@ -265,28 +266,11 @@ export default function Home() {
         </div>
       </div>
 
-      {/* === Empty state si no tiene mascotas === */}
-      {pets.length === 0 ? (
-        <Card className="border-l-4 border-l-emerald-500 bg-emerald-50/50">
-          <CardContent className="p-6 text-center space-y-3">
-            <div className="inline-flex p-3 rounded-full bg-emerald-100">
-              <PawPrint className="h-8 w-8 text-emerald-700" />
-            </div>
-            <h2 className="text-xl font-bold text-emerald-900">Bienvenido a Paw Friend</h2>
-            <p className="text-sm text-emerald-800/80 max-w-md mx-auto">
-              Para empezar, agrega tu primera mascota.
-            </p>
-            <Button
-              onClick={goToAddPet}
-              className="bg-emerald-600 hover:bg-emerald-700"
-              size="lg"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Agregar tu primera mascota
-            </Button>
-          </CardContent>
-        </Card>
-      ) : (
+      {/* === Onboarding hints dirigidos para usuarios sin mascotas === */}
+      <HomeOnboardingHints hasPets={pets.length > 0} />
+
+      {/* === Contenido principal cuando ya hay mascotas === */}
+      {pets.length === 0 ? null : (
         <>
           {/* === Pet switcher (avatares circulares estilo stories) === */}
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
