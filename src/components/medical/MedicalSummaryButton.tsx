@@ -43,7 +43,7 @@ export const MedicalSummaryButton = ({ petId, petName }: MedicalSummaryButtonPro
       logger.error('Error generating medical summary:', error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo generar el resumen médico",
       });
     } finally {

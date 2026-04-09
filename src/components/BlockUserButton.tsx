@@ -56,7 +56,7 @@ const BlockUserButton = ({
       logger.error("Error blocking user:", error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo bloquear al usuario",
       });
     } finally {

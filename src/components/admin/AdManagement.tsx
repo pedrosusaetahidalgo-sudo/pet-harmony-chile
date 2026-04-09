@@ -78,7 +78,7 @@ const AdManagement = () => {
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
+        title: "Algo salió mal",
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
         variant: "destructive",
       });
@@ -101,7 +101,7 @@ const AdManagement = () => {
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
+        title: "Algo salió mal",
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
         variant: "destructive",
       });
@@ -119,7 +119,7 @@ const AdManagement = () => {
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
+        title: "Algo salió mal",
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
         variant: "destructive",
       });

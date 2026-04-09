@@ -161,7 +161,7 @@ export const ProviderAvailabilityManager = ({
       logger.error('Error syncing calendar:', error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: "No se pudo sincronizar con Google Calendar"
       });
     } finally {
@@ -218,7 +218,7 @@ export const ProviderAvailabilityManager = ({
       logger.error('Error saving availability:', error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: "No se pudo guardar la disponibilidad"
       });
     } finally {
@@ -256,7 +256,7 @@ export const ProviderAvailabilityManager = ({
       logger.error('Error deleting availability:', error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: "No se pudo eliminar la disponibilidad"
       });
     } finally {

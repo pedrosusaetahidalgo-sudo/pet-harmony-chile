@@ -66,7 +66,7 @@ export const useReminders = () => {
       });
     },
     onError: (error: Error) => {
-      toast({ title: "Error", description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]), variant: "destructive" });
+      toast({ title: "Algo salió mal", description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]), variant: "destructive" });
     },
   });
 

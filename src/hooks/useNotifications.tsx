@@ -69,7 +69,7 @@ export function useNotifications() {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
     onError: () => {
-      toast({ title: "Error", description: "No se pudieron marcar las notificaciones", variant: "destructive" });
+      toast({ title: "Algo salió mal", description: "No se pudieron marcar las notificaciones", variant: "destructive" });
     },
   });
 

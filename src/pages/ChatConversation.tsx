@@ -110,7 +110,7 @@ const ChatConversation = () => {
       logger.error('Error loading conversation:', error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: "No se pudo cargar la conversación"
       });
       navigate('/chat');
@@ -150,7 +150,7 @@ const ChatConversation = () => {
       logger.error('Error sending message:', error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: "No se pudo enviar el mensaje"
       });
     }

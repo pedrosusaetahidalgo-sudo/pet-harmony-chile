@@ -92,7 +92,7 @@ export const useStartConversation = () => {
       logger.error('Error starting conversation:', error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: "No se pudo iniciar la conversación"
       });
     } finally {

@@ -640,7 +640,7 @@ const ServiceDirectory = () => {
       logger.error('Error loading data:', error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: `No se pudo cargar la información de ${config.listTabLabel.toLowerCase()}`
       });
     } finally {

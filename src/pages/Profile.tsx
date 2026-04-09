@@ -100,7 +100,7 @@ const Profile = () => {
       logger.error('Error loading profile:', error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: "No se pudo cargar la información del perfil"
       });
     } finally {

@@ -285,7 +285,7 @@ const Auth = () => {
       });
     } catch (error: any) {
       toast({
-        title: "Error",
+        title: "Algo salió mal",
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo enviar el correo de recuperación.",
         variant: "destructive",
       });

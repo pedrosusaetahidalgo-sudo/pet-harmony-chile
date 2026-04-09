@@ -45,7 +45,7 @@ export function ReviewForm({ bookingId, providerId, providerName, serviceType, p
     });
 
     if (error) {
-      toast({ title: "Error", description: "No se pudo publicar la reseña", variant: "destructive" });
+      toast({ title: "Algo salió mal", description: "No se pudo publicar la reseña", variant: "destructive" });
       setIsSubmitting(false);
       return;
     }

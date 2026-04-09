@@ -205,7 +205,7 @@ export const EnhancedBookingDialog = ({
       logger.error('Error creating booking:', error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: "No se pudo crear la reserva. Intenta nuevamente."
       });
     } finally {

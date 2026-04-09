@@ -184,7 +184,7 @@ const AddPet = () => {
 
     // Validate weight if provided
     if (formData.weight && parseFloat(formData.weight) <= 0) {
-      toast({ title: "Error", description: "El peso debe ser mayor a 0", variant: "destructive" });
+      toast({ title: "Algo salió mal", description: "El peso debe ser mayor a 0", variant: "destructive" });
       return;
     }
 
@@ -193,7 +193,7 @@ const AddPet = () => {
       const birth = new Date(formData.birth_date);
       const now = new Date();
       if (birth > now) {
-        toast({ title: "Error", description: "La fecha de nacimiento no puede ser en el futuro", variant: "destructive" });
+        toast({ title: "Algo salió mal", description: "La fecha de nacimiento no puede ser en el futuro", variant: "destructive" });
         return;
       }
       const maxYears = formData.species === "gato" ? 30 : 25;
@@ -211,7 +211,7 @@ const AddPet = () => {
 
     // Validate adoption_date if provided
     if (formData.adoption_date && new Date(formData.adoption_date) > new Date()) {
-      toast({ title: "Error", description: "La fecha de adopción no puede ser en el futuro", variant: "destructive" });
+      toast({ title: "Algo salió mal", description: "La fecha de adopción no puede ser en el futuro", variant: "destructive" });
       return;
     }
 

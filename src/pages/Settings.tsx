@@ -70,7 +70,7 @@ const Settings = () => {
 
       if (error) {
         logger.error("Error loading profile:", error);
-        toast({ title: "Error", description: "No se pudo cargar el perfil", variant: "destructive" });
+        toast({ title: "Algo salió mal", description: "No se pudo cargar el perfil", variant: "destructive" });
         // No marcamos profileLoaded=true para evitar que un save posterior
         // sobreescriba la fila con strings vacíos si el load falló.
         return;
@@ -95,7 +95,7 @@ const Settings = () => {
 
       if (prefsError) {
         logger.error("Error loading notification preferences:", prefsError);
-        toast({ title: "Error", description: "No se pudieron cargar las preferencias de notificación", variant: "destructive" });
+        toast({ title: "Algo salió mal", description: "No se pudieron cargar las preferencias de notificación", variant: "destructive" });
       }
 
       if (prefs) {
@@ -138,7 +138,7 @@ const Settings = () => {
 
     if (error) {
       toast({
-        title: "Error",
+        title: "Algo salió mal",
         description: "No se pudo guardar el perfil. Intenta de nuevo.",
         variant: "destructive",
       });

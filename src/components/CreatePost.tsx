@@ -60,13 +60,13 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
 
     const maxSize = 10 * 1024 * 1024; // 10MB
     if (file.size > maxSize) {
-      toast({ title: "Error", description: "La imagen no puede superar los 10MB", variant: "destructive" });
+      toast({ title: "Algo salió mal", description: "La imagen no puede superar los 10MB", variant: "destructive" });
       return;
     }
 
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
     if (!allowedTypes.includes(file.type)) {
-      toast({ title: "Error", description: "Solo se permiten imágenes JPEG, PNG, WebP o GIF", variant: "destructive" });
+      toast({ title: "Algo salió mal", description: "Solo se permiten imágenes JPEG, PNG, WebP o GIF", variant: "destructive" });
       return;
     }
 
@@ -108,7 +108,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
 
     if (!user) {
       toast({
-        title: "Error",
+        title: "Algo salió mal",
         description: "Debes iniciar sesión para publicar",
         variant: "destructive",
       });
@@ -117,7 +117,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
 
     if (!content.trim()) {
       toast({
-        title: "Error",
+        title: "Algo salió mal",
         description: "Escribe algo para publicar",
         variant: "destructive",
       });

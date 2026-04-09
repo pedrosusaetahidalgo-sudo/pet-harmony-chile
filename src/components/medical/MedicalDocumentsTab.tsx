@@ -95,7 +95,7 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo descargar el documento",
       });
     }
@@ -112,7 +112,7 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo abrir el documento",
       });
     }

@@ -105,7 +105,7 @@ const UserProfile = () => {
       logger.error('Error toggling follow:', error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: "No se pudo actualizar el seguimiento"
       });
     } finally {
@@ -160,7 +160,7 @@ const UserProfile = () => {
       logger.error('Error loading profile:', error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: "No se pudo cargar la información del perfil"
       });
     } finally {

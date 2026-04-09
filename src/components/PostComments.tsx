@@ -109,7 +109,7 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
       logger.error('Error posting comment:', error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: "No se pudo publicar el comentario"
       });
     } finally {
@@ -134,7 +134,7 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
       logger.error('Error deleting comment:', error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: "No se pudo eliminar el comentario"
       });
     }

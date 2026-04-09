@@ -127,7 +127,7 @@ const PetCard = ({
       logger.error('Error toggling like:', error);
       toast({
         variant: "destructive",
-        title: "Error",
+        title: "Algo salió mal",
         description: "No se pudo procesar tu like"
       });
     }
