@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Sparkles, CheckCircle, Crown } from "@/lib/icons";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { usePlan } from "@/hooks/usePlan";
 import { useToast } from "@/hooks/use-toast";
 import { LINKS } from "@/lib/links";
 import { PageHeader } from "@/components/PageHeader";
@@ -22,6 +23,7 @@ const FEATURES = [
 
 export default function Upgrade() {
   const { user } = useAuth();
+  const { isPremium } = usePlan();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [loading, setLoading] = useState<Plan | null>(null);
@@ -84,6 +86,19 @@ export default function Upgrade() {
             Cuida a todas tus mascotas con la ficha médica completa, recordatorios ilimitados y todo el directorio de vets.
           </p>
         </div>
+
+        {/* Grandfathering banner — solo visible para usuarios no premium */}
+        {!isPremium && (
+          <div className="mb-8 rounded-xl border-2 border-amber-300 bg-amber-50 p-4 sm:p-5 text-center">
+            <Badge className="bg-amber-500 text-white border-0 mb-2">
+              Oferta de lanzamiento
+            </Badge>
+            <p className="text-sm sm:text-base text-amber-900 font-medium leading-relaxed">
+              Los primeros 500 usuarios que activen Premium mantienen <strong>$3.990/mes para siempre</strong>.
+              Sin importar futuros aumentos.
+            </p>
+          </div>
+        )}
 
         {/* Plans grid */}
         <div className="grid md:grid-cols-2 gap-5 mb-8">
