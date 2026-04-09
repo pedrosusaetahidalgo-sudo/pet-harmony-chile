@@ -41,6 +41,7 @@ import { ProviderProfileCard } from "@/components/ProviderProfileCard";
 import { format } from "date-fns";
 import { logger } from "@/lib/logger";
 import { PageHeader } from "@/components/PageHeader";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { LINKS } from "@/lib/links";
 
 type ServiceType = 'walkers' | 'vets' | 'sitters' | 'trainers' | 'groomers';
@@ -736,7 +737,14 @@ const ServiceDirectory = () => {
         title={config.title}
         subtitle={config.subtitle}
         onBack={() => navigate(LINKS.servicios())}
-      />
+      >
+        <Breadcrumbs
+          items={[
+            { label: "Servicios", to: LINKS.servicios() },
+            { label: config.title },
+          ]}
+        />
+      </PageHeader>
       <div className="container px-4 py-6 max-w-7xl mx-auto animate-fade-in">
       <div className="mb-6 flex justify-end">
         <OfferServiceButton

@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { MapPin, Star, Stethoscope, Share2, MessageSquare, Calendar, Loader2 } from '@/lib/icons';
 import { useAuth } from '@/hooks/useAuth';
 import { LINKS } from '@/lib/links';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -228,6 +229,15 @@ export default function PerfilVetPublico() {
       {!user && <PublicHeader />}
 
       <main className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
+        <Breadcrumbs
+          items={[
+            { label: "Veterinarios", to: LINKS.vets() },
+            ...(areas[0]
+              ? [{ label: areas[0], to: LINKS.vetsByComuna(areas[0]) }]
+              : []),
+            { label: v.display_name || "Perfil" },
+          ]}
+        />
         {isDemo && (
           <div className="rounded-lg bg-amber-100 border border-amber-300 px-4 py-2 text-xs text-amber-900 flex items-center gap-2">
             <Badge className="bg-amber-500 text-white">DEMO</Badge>

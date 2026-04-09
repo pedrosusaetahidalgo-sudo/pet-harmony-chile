@@ -21,6 +21,7 @@ import { useOrganicRewards } from "@/hooks/useOrganicRewards";
 import { useCanAddPet } from "@/hooks/useCanAddPet";
 import { Sparkles, Crown } from "@/lib/icons";
 import { PageHeader } from "@/components/PageHeader";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 const personalityOptions = [
   "Juguetón", "Tranquilo", "Energético", "Cariñoso", "Tímido",
@@ -437,7 +438,17 @@ const AddPet = () => {
             : "Completa la información de tu compañero peludo."
         }
         onBack={() => navigate(LINKS.myPets())}
-      />
+      >
+        {isEdit && petId && (
+          <Breadcrumbs
+            items={[
+              { label: "Mascotas", to: LINKS.myPets() },
+              { label: formData.name || "Mascota", to: `/pet/${petId}/clinical` },
+              { label: "Editar" },
+            ]}
+          />
+        )}
+      </PageHeader>
       <div className="container px-4 py-6 max-w-2xl mx-auto animate-fade-in">
 
       <form onSubmit={handleSubmit} className="space-y-6">
