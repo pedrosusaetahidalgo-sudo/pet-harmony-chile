@@ -11,12 +11,10 @@ export const PublicHeader = () => {
     <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="flex h-16 items-center px-4 gap-2">
         <Link to="/" className="flex items-center gap-2 flex-1 min-w-0">
-          <div className="relative flex-shrink-0">
-            <Heart className="h-6 w-6 text-primary fill-primary" />
-            <PawPrint className="h-3 w-3 text-secondary absolute -bottom-0.5 -right-0.5" />
-          </div>
-          <span className="font-bold text-lg bg-warm-gradient bg-clip-text text-transparent truncate">
-            Paw Friend
+          <img src="/paw_friend_icon_principal.svg" alt="Paw Friend" className="h-9 w-9 flex-shrink-0" />
+          <span className="font-bold text-lg truncate">
+            <span className="text-purple-800">Paw</span>
+            <span className="text-purple-500 ml-0.5">Friend</span>
           </span>
         </Link>
 

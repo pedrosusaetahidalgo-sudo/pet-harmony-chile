@@ -97,13 +97,10 @@ export function AppSidebar() {
           onClick={() => handleNavigate("/home")}
           className="flex items-center gap-2.5 px-2 py-1.5 w-full hover:opacity-80 transition-opacity cursor-pointer rounded-lg"
         >
-          <div className="relative flex-shrink-0">
-            <Heart className="h-5 w-5 text-primary fill-primary" />
-            <PawPrint className="h-2.5 w-2.5 text-secondary absolute -bottom-0.5 -right-0.5" />
-          </div>
+          <img src="/paw_friend_icon_principal.svg" alt="Paw Friend" className="h-8 w-8 flex-shrink-0" />
           <span className="font-bold text-sm whitespace-nowrap">
             <span className="text-purple-800">paw</span>
-            <span className="text-purple-600 ml-1">friend</span>
+            <span className="text-purple-500 ml-0.5">friend</span>
           </span>
         </button>
       </SidebarHeader>

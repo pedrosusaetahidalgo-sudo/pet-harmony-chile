@@ -399,9 +399,7 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4 relative overflow-hidden">
       <Card className="w-full max-w-md animate-fade-in relative z-10 shadow-lg border-border/50">
         <CardHeader className="space-y-1 flex flex-col items-center">
-          <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center mb-4 shadow-lg">
-            <Dog className="w-8 h-8 text-white" />
-          </div>
+          <img src="/paw_friend_icon_principal.svg" alt="Paw Friend" className="w-16 h-16 mb-4" />
           <CardTitle className="text-2xl font-bold text-center">Paw Friend</CardTitle>
           <CardDescription className="text-center">
             Red social para amantes de las mascotas

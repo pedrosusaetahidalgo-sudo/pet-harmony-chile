@@ -126,13 +126,10 @@ export const Header = () => {
           className="flex items-center gap-2 flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
           onClick={() => navigate('/feed')}
         >
-          <div className="relative flex-shrink-0">
-            <Heart className="h-6 w-6 text-primary fill-primary" />
-            <PawPrint className="h-3 w-3 text-secondary absolute -bottom-0.5 -right-0.5" />
-          </div>
+          <img src="/paw_friend_icon_principal.svg" alt="Paw Friend" className="h-9 w-9 flex-shrink-0" />
           <span className="font-bold text-lg hidden sm:inline truncate">
             <span className="text-purple-800">paw</span>
-            <span className="text-purple-600 ml-1">friend</span>
+            <span className="text-purple-500 ml-0.5">friend</span>
           </span>
         </div>
 
