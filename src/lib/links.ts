@@ -82,6 +82,8 @@ export const LINKS = {
   userProfile: (userId: string) => `/user/${userId}`,
   /** Servicio unificado: /services/walkers, /services/vets, /services/sitters, /services/trainers, /services/groomers */
   services: (type: 'walkers' | 'vets' | 'sitters' | 'trainers' | 'groomers') => `/services/${type}`,
+  /** Panel Pro de Analytics */
+  proDashboard: () => '/panel-pro',
   /** Hub de servicios (paseo, cuidado, entrenamiento, peluquería) */
   servicios: () => '/servicios',
   /** Directorio público de peluqueros (tab nativo del directorio de servicios) */

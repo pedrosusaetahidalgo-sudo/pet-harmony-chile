@@ -68,6 +68,15 @@ export const EVENTS = {
   PREMIUM_STARTED: "premium_started",
   PREMIUM_CONVERTED: "premium_converted",
 
+  // Pro Analytics
+  ANALYTICS_PREVIEW_VIEWED: "analytics_preview_viewed",
+  ANALYTICS_PREVIEW_CTA_CLICKED: "analytics_preview_cta_clicked",
+  PRO_PANEL_VIEWED: "pro_panel_viewed",
+  PRO_PANEL_FILTER_CHANGED: "pro_panel_filter_changed",
+  PRO_PANEL_EXPORT_CLICKED: "pro_panel_export_clicked",
+  PRO_PANEL_UPGRADE_CTA_CLICKED: "pro_panel_upgrade_cta_clicked",
+  VET_REPORT_VIEWED: "vet_report_viewed",
+
   // Engagement
   APP_OPENED: "app_opened",
   PAGE_VIEWED: "page_viewed",

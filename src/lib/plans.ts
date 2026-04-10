@@ -37,6 +37,8 @@ export const PLANS: Record<PlanId, PlanConfig> = {
       booking_user_fee: 5,
       priority_support: false,
       ad_free: false,
+      pro_analytics: false,
+      analytics_export: false,
     }
   },
   premium: {
@@ -58,6 +60,8 @@ export const PLANS: Record<PlanId, PlanConfig> = {
       booking_user_fee: 0,
       priority_support: true,
       ad_free: true,
+      pro_analytics: true,
+      analytics_export: true,
     }
   }
 };
@@ -315,4 +319,6 @@ export const FEATURE_LABELS: Record<string, string> = {
   booking_user_fee: 'Tarifa de servicio',
   priority_support: 'Soporte prioritario',
   ad_free: 'Sin publicidad',
+  pro_analytics: 'Panel Pro de Analytics',
+  analytics_export: 'Exportar reportes (PDF/CSV)',
 };

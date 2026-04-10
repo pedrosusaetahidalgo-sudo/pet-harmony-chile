@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,7 +8,7 @@
    PAW FRIEND DESIGN SYSTEM v1.0
    ============================================
    Direction: Lavender Warm purple, trustworthy, pet-friendly
-   Palette: #9333EA brand primary, Fredoka font, slate neutrals
+   Palette: #9333EA brand primary, Plus Jakarta Sans font, slate neutrals
    Tone: Caring, confident, approachable, premium
    ============================================ */
 
@@ -42,14 +42,14 @@
   --health-unknown-bg: #f8fafc;
 
   /* ── Typography ── */
-  --font-family: 'Fredoka', system-ui, sans-serif;
+  --font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 /* Capacitor: feel nativo */
 html, body {
   overscroll-behavior-y: contain;
   -webkit-touch-callout: none;
-  font-family: 'Fredoka', system-ui, sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
 /* No seleccionar texto en UI nativa, sí en inputs/contenido editable */
@@ -242,7 +242,7 @@ input, textarea, [contenteditable="true"], [data-selectable], p, h1, h2, h3, h4,
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-feature-settings: "cv11", "ss01";
+    font-feature-settings: "cv11" 1;
   }
 
   /* ── Typography Scale ── */

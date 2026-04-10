@@ -71,6 +71,7 @@ const Reminders = lazy(() => import("./pages/Reminders"));
 const OnboardingVetMinimal = lazy(() => import("./pages/OnboardingVetMinimal"));
 const OnboardingDuenoMinimal = lazy(() => import("./pages/OnboardingDuenoMinimal"));
 const Reportes = lazy(() => import("./pages/Reportes"));
+const ProDashboard = lazy(() => import("./pages/ProDashboard"));
 const EnMemoria = lazy(() => import("./pages/EnMemoria"));
 
 /** Inicialización nativa: StatusBar, SplashScreen, back button, push notifications */
@@ -224,6 +225,7 @@ const App = () => (
               <Route path="/onboarding-mascota" element={<ProtectedRoute><OnboardingDuenoMinimal /></ProtectedRoute>} />
               <Route path="/onboarding-vet" element={<ProtectedRoute><OnboardingVetMinimal /></ProtectedRoute>} />
               <Route path="/reportes" element={<ProtectedRoute><AppLayout><Reportes /></AppLayout></ProtectedRoute>} />
+              <Route path="/panel-pro" element={<ProtectedRoute><AppLayout><ProDashboard /></AppLayout></ProtectedRoute>} />
               <Route path="/registro-veterinario" element={<RegistroVeterinario />} />
               <Route path="/para-veterinarios" element={<ParaVeterinarios />} />
               <Route path="/precios-veterinarios" element={<PublicWithLayoutIfAuth><PreciosVeterinarios /></PublicWithLayoutIfAuth>} />

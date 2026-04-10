@@ -37,6 +37,9 @@ import { useGoToAddPet } from "@/hooks/useCanAddPet";
 import { logger } from "@/lib/logger";
 import { PriceEstimatorCard } from "@/components/home/PriceEstimatorCard";
 import { WeeklyReportCard } from "@/components/home/WeeklyReportCard";
+import { AnalyticsPreviewCard } from "@/components/analytics/AnalyticsPreviewCard";
+import { PetWellnessPreview } from "@/components/analytics/PetWellnessPreview";
+import { isFeatureEnabled } from "@/lib/featureFlags";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePendingReviewCount } from "@/hooks/usePendingReviews";
 import { formatDistanceToNowStrict, parseISO } from "date-fns";
@@ -478,6 +481,16 @@ export default function Home() {
 
           {/* === Weekly report card (si hay reporte no leído) === */}
           <WeeklyReportCard />
+
+          {/* === Analytics preview cards === */}
+          {isFeatureEnabled("PRO_ANALYTICS") && (
+            <>
+              <AnalyticsPreviewCard />
+              {activePet && (
+                <PetWellnessPreview petId={activePet.id} petName={activePet.name} />
+              )}
+            </>
+          )}
         </>
       )}
 

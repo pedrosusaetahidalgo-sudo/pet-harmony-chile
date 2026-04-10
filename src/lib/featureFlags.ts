@@ -40,6 +40,12 @@ export const FEATURE_FLAGS = {
    * DESHABILITADO — se integra como filtro en mapa/feed.
    */
   LOST_PETS_SECTION: false,
+
+  /**
+   * Panel Pro de Analytics — previews en Home + página /panel-pro.
+   * Kill switch: si se desactiva, las cards de analytics y la ruta no se muestran.
+   */
+  PRO_ANALYTICS: true,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;
