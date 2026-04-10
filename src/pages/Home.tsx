@@ -519,10 +519,10 @@ export default function Home() {
       {/* === Acciones rápidas horizontales === */}
       <div>
         <h3 className="text-sm font-semibold mb-2">Acciones rápidas</h3>
-        <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 lg:grid lg:grid-cols-4 lg:overflow-visible">
+        <div className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide lg:grid lg:grid-cols-4 lg:overflow-visible">
           <Button
             variant="outline"
-            className="flex-shrink-0 lg:w-full justify-start h-auto py-2.5"
+            className="flex-shrink-0 snap-start lg:w-full justify-start h-auto py-2.5"
             onClick={() => navigate(LINKS.vets())}
           >
             <Stethoscope className="h-4 w-4 mr-2 text-purple-600" />
@@ -530,7 +530,7 @@ export default function Home() {
           </Button>
           <Button
             variant="outline"
-            className="flex-shrink-0 lg:w-full justify-start h-auto py-2.5"
+            className="flex-shrink-0 snap-start lg:w-full justify-start h-auto py-2.5"
             onClick={() =>
               navigate(activePet ? `/medical-records?pet=${activePet.id}` : LINKS.medicalRecords())
             }
@@ -540,7 +540,7 @@ export default function Home() {
           </Button>
           <Button
             variant="outline"
-            className="flex-shrink-0 lg:w-full justify-start h-auto py-2.5"
+            className="flex-shrink-0 snap-start lg:w-full justify-start h-auto py-2.5"
             onClick={() => navigate("/precios-veterinarios")}
           >
             <TrendingUp className="h-4 w-4 mr-2 text-amber-600" />
@@ -548,7 +548,7 @@ export default function Home() {
           </Button>
           <Button
             variant="outline"
-            className="flex-shrink-0 lg:w-full justify-start h-auto py-2.5"
+            className="flex-shrink-0 snap-start lg:w-full justify-start h-auto py-2.5"
             onClick={() => navigate(LINKS.maps())}
           >
             <Map className="h-4 w-4 mr-2 text-indigo-600" />

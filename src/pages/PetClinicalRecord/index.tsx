@@ -183,24 +183,24 @@ const PetClinicalRecord = () => {
       )}
 
       <Tabs defaultValue="resumen" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="resumen" className="text-xs sm:text-sm">
+        <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide sm:grid sm:grid-cols-5">
+          <TabsTrigger value="resumen" className="shrink-0 snap-start text-xs sm:text-sm">
             <Heart className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
             Resumen
           </TabsTrigger>
-          <TabsTrigger value="historial" className="text-xs sm:text-sm">
+          <TabsTrigger value="historial" className="shrink-0 snap-start text-xs sm:text-sm">
             <Clock className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
             Historial
           </TabsTrigger>
-          <TabsTrigger value="alimentacion" className="text-xs sm:text-sm">
+          <TabsTrigger value="alimentacion" className="shrink-0 snap-start text-xs sm:text-sm">
             <Activity className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
             Hábitos
           </TabsTrigger>
-          <TabsTrigger value="documentos" className="text-xs sm:text-sm">
+          <TabsTrigger value="documentos" className="shrink-0 snap-start text-xs sm:text-sm">
             <FileText className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
             Documentos
           </TabsTrigger>
-          <TabsTrigger value="compartir" className="text-xs sm:text-sm">
+          <TabsTrigger value="compartir" className="shrink-0 snap-start text-xs sm:text-sm">
             <Share2 className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
             Compartir
           </TabsTrigger>

@@ -97,9 +97,16 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('No autenticado');
 
-      // For veterinarian, require at least one document
-      if (data.requested_role === 'veterinarian' && documentUrls.length === 0) {
-        toast.error('Los veterinarios deben subir su título profesional');
+      // Require at least one document for roles that need verification
+      const docRequiredRoles: Record<string, string> = {
+        veterinarian: 'Los veterinarios deben subir su título profesional',
+        trainer: 'Los entrenadores deben subir su certificación',
+        groomer: 'Los peluqueros deben subir su certificación o acreditación',
+        dog_walker: 'Los paseadores deben verificar su identidad (cédula o documento)',
+        dogsitter: 'Los cuidadores deben verificar su identidad (cédula o documento)',
+      };
+      if (documentUrls.length === 0 && docRequiredRoles[data.requested_role]) {
+        toast.error(docRequiredRoles[data.requested_role]);
         setLoading(false);
         return;
       }

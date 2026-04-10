@@ -27,6 +27,7 @@ interface Pet {
   name: string;
   species: string;
   photo_url: string | null;
+  vaccination_status?: string | null;
 }
 
 interface PetProgress {
@@ -258,16 +259,21 @@ export const PetPawProgress = ({ pets, userId }: PetPawProgressProps) => {
                   </div>
                 </div>
 
-                {/* Vaccines Status */}
-                <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
-                  <div className="flex items-center gap-2">
-                    <Syringe className={`h-4 w-4 ${progress?.vaccines_up_to_date ? 'text-green-500' : 'text-orange-500'}`} />
-                    <span className="text-sm">Vacunas</span>
-                  </div>
-                  <Badge variant={progress?.vaccines_up_to_date ? 'default' : 'destructive'} className="text-xs">
-                    {progress?.vaccines_up_to_date ? 'Al día' : 'Pendientes'}
-                  </Badge>
-                </div>
+                {/* Vaccines Status — fuente de verdad: pets.vaccination_status */}
+                {(() => {
+                  const isUpToDate = pet.vaccination_status === 'up_to_date' || progress?.vaccines_up_to_date;
+                  return (
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                      <div className="flex items-center gap-2">
+                        <Syringe className={`h-4 w-4 ${isUpToDate ? 'text-green-500' : 'text-orange-500'}`} />
+                        <span className="text-sm">Vacunas</span>
+                      </div>
+                      <Badge variant={isUpToDate ? 'default' : 'destructive'} className="text-xs">
+                        {isUpToDate ? 'Al día' : 'Pendientes'}
+                      </Badge>
+                    </div>
+                  );
+                })()}
               </CardContent>
             </Card>
           );

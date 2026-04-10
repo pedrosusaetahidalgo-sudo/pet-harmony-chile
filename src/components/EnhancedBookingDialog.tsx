@@ -62,7 +62,7 @@ interface EnhancedBookingDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   provider: ProviderData | null;
-  providerType: "dog_walker" | "dogsitter" | "veterinarian" | "trainer";
+  providerType: "dog_walker" | "dogsitter" | "veterinarian" | "trainer" | "groomer";
   onBookingComplete: () => void;
 }
 

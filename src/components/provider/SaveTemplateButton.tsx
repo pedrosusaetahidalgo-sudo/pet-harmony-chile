@@ -24,11 +24,11 @@ import {
 } from "@/hooks/useConsultationTemplates";
 
 const CATEGORY_OPTIONS: { value: TemplateCategory; label: string }[] = [
-  { value: "vacunacion", label: "Vacunacion" },
+  { value: "vacunacion", label: "Vacunación" },
   { value: "control_sano", label: "Control sano" },
-  { value: "post_esterilizacion", label: "Post-esterilizacion" },
-  { value: "dermatologia", label: "Dermatologia" },
-  { value: "geriatrico", label: "Geriatrico" },
+  { value: "post_esterilizacion", label: "Post-esterilización" },
+  { value: "dermatologia", label: "Dermatología" },
+  { value: "geriatrico", label: "Geriátrico" },
   { value: "urgencia", label: "Urgencia" },
   { value: "otro", label: "Otro" },
 ];

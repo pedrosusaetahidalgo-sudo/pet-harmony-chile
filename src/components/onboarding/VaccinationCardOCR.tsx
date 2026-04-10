@@ -233,9 +233,15 @@ export function VaccinationCardOCR({ petId, onSaved }: Props) {
                   <p className="text-xs text-slate-500 italic">Notas: {result.notes}</p>
                 )}
 
-                <Button onClick={handleSaveAll} disabled={saving} className="w-full">
+                <Button
+                  onClick={handleSaveAll}
+                  disabled={saving || (result.vaccines.length === 0 && result.deworming.length === 0)}
+                  className="w-full"
+                >
                   {saving ? (
                     <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Guardando...</>
+                  ) : result.vaccines.length === 0 && result.deworming.length === 0 ? (
+                    "No se detectaron datos válidos — sube otra imagen"
                   ) : (
                     <><Check className="h-4 w-4 mr-2" /> Guardar todo en la ficha</>
                   )}

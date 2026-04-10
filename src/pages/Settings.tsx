@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useNavigate } from "react-router-dom";
+import { toTitleCase } from "@/lib/format";
 import { LINKS } from "@/lib/links";
 import {
   User,
@@ -128,7 +129,7 @@ const Settings = () => {
       .from("profiles")
       .upsert({
         id: user.id,
-        display_name: displayName,
+        display_name: toTitleCase(displayName),
         bio,
         location,
         avatar_url: avatarUrl,

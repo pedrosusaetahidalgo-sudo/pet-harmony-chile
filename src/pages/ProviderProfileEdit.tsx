@@ -259,7 +259,7 @@ export default function ProviderProfileEdit() {
             </div>
             <div>
               <Label htmlFor="license">N° Colmevet</Label>
-              <Input id="license" value={form.license_number} onChange={(e) => update('license_number', e.target.value)} placeholder="12345" />
+              <Input id="license" value={form.license_number} onChange={(e) => update('license_number', e.target.value)} placeholder="Ej: 98765" />
             </div>
           </div>
 

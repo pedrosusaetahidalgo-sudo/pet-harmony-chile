@@ -297,7 +297,7 @@ const PawGame = () => {
       // Load user's pets
       const { data: petsData } = await supabase
         .from('pets')
-        .select('id, name, species, photo_url')
+        .select('id, name, species, photo_url, vaccination_status')
         .eq('owner_id', user?.id);
 
       setPets(petsData || []);

@@ -156,7 +156,7 @@ export const PawShopRewards = ({ userPoints, userId, onPurchase }: PawShopReward
     return (
       <Card 
         key={reward.id} 
-        className={`relative overflow-hidden transition-all hover:shadow-lg ${!canAfford || isOutOfStock ? 'opacity-70' : ''}`}
+        className={`relative overflow-hidden transition-all hover:shadow-lg ${isOutOfStock ? 'opacity-60' : ''}`}
       >
         {reward.discount_percentage && (
           <div className="absolute top-2 right-2">

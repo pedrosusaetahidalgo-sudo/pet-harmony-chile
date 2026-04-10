@@ -184,7 +184,21 @@ export function TabResumen({ pet, onRefresh }: { pet: PetData; onRefresh?: () =>
               <Input placeholder="Nombre del medicamento" value={medName} onChange={(e) => setMedName(e.target.value)} className="h-9 text-sm" />
               <div className="grid grid-cols-2 gap-2">
                 <Input placeholder="Dosis (ej: 10mg)" value={medDose} onChange={(e) => setMedDose(e.target.value)} className="h-9 text-sm" />
-                <Input placeholder="Frecuencia (ej: 2x dia)" value={medFreq} onChange={(e) => setMedFreq(e.target.value)} className="h-9 text-sm" />
+                <Select value={medFreq} onValueChange={setMedFreq}>
+                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Frecuencia" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1 vez/día">1 vez/día</SelectItem>
+                    <SelectItem value="2 veces/día">2 veces/día</SelectItem>
+                    <SelectItem value="3 veces/día">3 veces/día</SelectItem>
+                    <SelectItem value="Semanal">Semanal</SelectItem>
+                    <SelectItem value="Quincenal">Quincenal</SelectItem>
+                    <SelectItem value="Mensual">Mensual</SelectItem>
+                    <SelectItem value="Cada 3 meses">Cada 3 meses</SelectItem>
+                    <SelectItem value="Cada 6 meses">Cada 6 meses</SelectItem>
+                    <SelectItem value="Anual">Anual</SelectItem>
+                    <SelectItem value="Según necesidad">Según necesidad</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <Button size="sm" className="h-9 w-full" onClick={saveMedication} disabled={saving || !medName.trim()}>
                 {saving ? "Guardando..." : "Agregar medicamento"}
@@ -222,7 +236,7 @@ export function TabResumen({ pet, onRefresh }: { pet: PetData; onRefresh?: () =>
           <div className="flex items-center justify-between">
             <CardTitle className="text-base flex items-center gap-2">
               <Stethoscope className="h-4 w-4 text-blue-500" />
-              Condiciones cronicas
+              Condiciones crónicas
             </CardTitle>
             <Button variant="ghost" size="sm" className="h-8 text-xs gap-1 text-purple-600" onClick={() => setShowConditionForm(!showConditionForm)}>
               <Plus className="h-3.5 w-3.5" />
@@ -233,16 +247,23 @@ export function TabResumen({ pet, onRefresh }: { pet: PetData; onRefresh?: () =>
         <CardContent>
           {showConditionForm && (
             <div className="mb-3 p-3 bg-muted/30 rounded-lg space-y-2">
-              <Input placeholder="Condicion (ej: Diabetes, Epilepsia)" value={conditionName} onChange={(e) => setConditionName(e.target.value)} className="h-9 text-sm" />
+              <Select value={conditionName} onValueChange={setConditionName}>
+                <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Seleccionar condición" /></SelectTrigger>
+                <SelectContent>
+                  {["Displasia", "Diabetes", "Insuficiencia renal", "Artritis", "Alergia atópica", "Obesidad", "Epilepsia", "Hipotiroidismo", "Enfermedad cardíaca", "Enfermedad periodontal", "Insuficiencia hepática", "Cáncer", "Asma felina", "FLUTD", "Cushing", "Addison", "Pancreatitis", "IBD", "Cataratas", "Sordera", "Otra"].map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <Input placeholder="Detalle (opcional)" value={conditionDetail} onChange={(e) => setConditionDetail(e.target.value)} className="h-9 text-sm" />
               <Button size="sm" className="h-9 w-full" onClick={saveCondition} disabled={saving || !conditionName.trim()}>
-                {saving ? "Guardando..." : "Agregar condicion"}
+                {saving ? "Guardando..." : "Agregar condición"}
               </Button>
             </div>
           )}
           {!hasChronicConditions && !showConditionForm ? (
             <button onClick={() => setShowConditionForm(true)} className="w-full text-left p-3 rounded-lg border-2 border-dashed border-muted-foreground/20 hover:border-purple-300 hover:bg-purple-50/50 transition-colors group">
-              <p className="text-sm text-muted-foreground group-hover:text-purple-600">Sin condiciones cronicas registradas</p>
+              <p className="text-sm text-muted-foreground group-hover:text-purple-600">Sin condiciones crónicas registradas</p>
               <p className="text-xs text-muted-foreground/60 group-hover:text-purple-500 mt-0.5">Toca para agregar</p>
             </button>
           ) : (

@@ -46,10 +46,8 @@ import { LINKS } from "@/lib/links";
 
 type ServiceType = 'walkers' | 'vets' | 'sitters' | 'trainers' | 'groomers';
 type ProfileTable = "dog_walker_profiles" | "vet_profiles" | "dogsitter_profiles" | "trainer_profiles" | "groomer_profiles";
-// Union literal aceptada por los componentes hijos (OfferServiceButton,
-// ProviderProfileCard, MyBookingsHistory, etc). Nota: "groomer" aún no está
-// soportado por esos componentes; se castea aquí para mantener type-safety.
-type ProviderType = "dog_walker" | "dogsitter" | "veterinarian" | "trainer";
+// Union literal aceptada por los componentes hijos
+type ProviderType = "dog_walker" | "dogsitter" | "veterinarian" | "trainer" | "groomer";
 type BookingsServiceType = ProviderType | "all";
 
 interface FilterState {

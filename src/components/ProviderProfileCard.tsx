@@ -36,6 +36,7 @@ interface ProviderProfileCardProps {
     price_per_night?: number;
     price_per_session?: number;
     consultation_fee?: number;
+    base_price_clp?: number;
     max_dogs?: number;
     total_walks?: number;
     total_bookings?: number;
@@ -46,7 +47,7 @@ interface ProviderProfileCardProps {
     coverage_zones?: string[];
     emergency_available?: boolean;
   };
-  providerType: "dog_walker" | "dogsitter" | "veterinarian" | "trainer";
+  providerType: "dog_walker" | "dogsitter" | "veterinarian" | "trainer" | "groomer";
   onViewProfile: () => void;
   onBook: () => void;
   onMessage?: () => void;
@@ -85,6 +86,14 @@ const providerTypeConfig = {
     gradient: "from-orange-600 to-amber-500",
     ringColor: "ring-orange-500/20",
     badgeColor: "bg-orange-500/10 text-orange-700"
+  },
+  groomer: {
+    title: "Peluquero",
+    priceLabel: "servicio",
+    totalLabel: "citas",
+    gradient: "from-pink-600 to-rose-500",
+    ringColor: "ring-pink-500/20",
+    badgeColor: "bg-pink-500/10 text-pink-700"
   }
 };
 
@@ -103,6 +112,7 @@ export const ProviderProfileCard = ({
     if (providerType === 'dogsitter') return provider.price_per_day;
     if (providerType === 'veterinarian') return provider.consultation_fee;
     if (providerType === 'trainer') return provider.price_per_session;
+    if (providerType === 'groomer') return provider.base_price_clp;
     return 0;
   };
 
@@ -111,6 +121,7 @@ export const ProviderProfileCard = ({
     if (providerType === 'dogsitter') return provider.total_bookings || 0;
     if (providerType === 'veterinarian') return provider.total_visits || 0;
     if (providerType === 'trainer') return provider.total_sessions || 0;
+    if (providerType === 'groomer') return provider.total_bookings || 0;
     return 0;
   };
 

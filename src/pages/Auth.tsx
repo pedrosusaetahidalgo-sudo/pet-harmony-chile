@@ -416,7 +416,7 @@ const Auth = () => {
             <img src="/paw_friend_icon_principal.svg" alt="Paw Friend" className="w-16 h-16 mb-4" />
             <CardTitle className="text-2xl font-bold text-center">Paw Friend</CardTitle>
             <CardDescription className="text-center">
-              Red social para amantes de las mascotas
+              Cuida la salud de tu mascota con veterinarios verificados
             </CardDescription>
           </CardHeader>
           <CardContent>

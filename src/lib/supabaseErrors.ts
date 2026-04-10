@@ -14,7 +14,7 @@ const POSTGRES_MESSAGES: Record<string, string> = {
   "23514": "Alguno de los datos ingresados no cumple las reglas de validación.",
   "42501": "No tienes permisos para realizar esta acción.",
   "42P01": "La tabla solicitada no existe. Avisa al equipo técnico.",
-  "42703": "Una columna usada por la app no existe en la base. Avisa al equipo técnico.",
+  "42703": "Una columna usada por la app no existe en la base. Reporta este error a soporte@pawfriend.cl para que lo solucionemos rápido.",
   "PGRST116": "No se encontró el registro buscado.",
   "PGRST301": "Tu sesión expiró. Inicia sesión de nuevo.",
 };

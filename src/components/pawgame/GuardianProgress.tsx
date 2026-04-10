@@ -99,11 +99,15 @@ export const GuardianProgress = ({
             {/* Progress to next level */}
             <div className="mb-3">
               <div className="flex justify-between text-sm mb-1">
-                <span className="text-muted-foreground">Progreso al nivel {level + 1}</span>
+                <span className="text-muted-foreground">
+                  {nextLevel?.min_points
+                    ? `Próximo nivel: ${nextLevel.level_name || `Nivel ${level + 1}`}`
+                    : '¡Nivel máximo alcanzado!'}
+                </span>
                 <span className="font-semibold text-primary">
                   {nextLevel?.min_points
                     ? `${points.toLocaleString()} / ${nextLevel.min_points.toLocaleString()} pts`
-                    : `${points.toLocaleString()} pts · Nivel máximo`}
+                    : `${points.toLocaleString()} pts`}
                 </span>
               </div>
               <Progress 

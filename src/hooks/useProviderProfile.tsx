@@ -4,6 +4,11 @@ const sb = supabase;
 import { useAuth } from '@/hooks/useAuth';
 import type { ServiceProviderRow } from '@/types/vetDirectory';
 
+/** Datos conocidos de perfiles demo — bloquear si un vet real intenta guardar sin editar. */
+const DEMO_EMAILS = ['javiera.munoz@demo.pawfriend.cl', 'matias.fernandez@demo.pawfriend.cl', 'cristian.rojas@demo.pawfriend.cl', 'contacto@patitas.demo.pawfriend.cl', 'contacto@altamira.demo.pawfriend.cl'];
+const DEMO_PHONES = ['+56 9 8765 1001', '+56 9 8765 1002', '+56 9 8765 1003', '+56 9 8765 1004', '+56 9 8765 1005'];
+const DEMO_COLMEVET = ['12345', '67890', '11111', '22222', '33333'];
+
 export interface ProviderProfileForm {
   display_name: string;
   bio: string;
@@ -43,6 +48,14 @@ export function useUpsertProviderProfile() {
   return useMutation<ServiceProviderRow, Error, ProviderProfileForm>({
     mutationFn: async (form) => {
       if (!user) throw new Error('No autenticado');
+
+      // Guard: bloquear si email, teléfono o Colmevet coinciden con un perfil demo
+      const email = form.public_email?.trim().toLowerCase() ?? '';
+      const phone = form.public_phone?.trim() ?? '';
+      const colmevet = form.license_number?.trim() ?? '';
+      if (DEMO_EMAILS.includes(email) || DEMO_PHONES.includes(phone) || DEMO_COLMEVET.includes(colmevet)) {
+        throw new Error('Estos datos coinciden con un perfil de demostración. Edítalos antes de publicar tu perfil.');
+      }
 
       const payload = {
         user_id: user.id,

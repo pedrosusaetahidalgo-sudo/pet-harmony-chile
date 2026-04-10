@@ -13,12 +13,8 @@ dist-ssr
 *.local
 
 # Environment variables (NEVER commit secrets)
-.env
-.env.local
-.env.production
-.env.backup
-.env.bak
-.env.demo.local
+.env*
+!.env.example
 
 # Mi documento personal de API keys (NUNCA commitear)
 MIS_API_KEYS.md

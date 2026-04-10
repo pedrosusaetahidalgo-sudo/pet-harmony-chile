@@ -461,7 +461,7 @@ const Maps = () => {
       </div>
 
       {/* Floating filter chips */}
-      <div className="absolute top-[4.5rem] left-4 right-4 z-[1000] flex gap-2 overflow-x-auto pb-2">
+      <div className="absolute top-[4.5rem] left-4 right-4 z-[1000] flex gap-2 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
         {FILTER_CHIPS[activeView].map((chip) => (
           <button
             key={chip}

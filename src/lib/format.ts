@@ -34,3 +34,21 @@ export function getGreeting(): string {
   if (hour < 19) return 'Buenas tardes';
   return 'Buenas noches';
 }
+
+/**
+ * Capitaliza la primera letra de cada palabra (excepto preposiciones comunes).
+ * Útil para normalizar nombres de perfil.
+ * "pedro susaeta" → "Pedro Susaeta"
+ * "maria del carmen" → "Maria del Carmen"
+ */
+export function toTitleCase(text: string): string {
+  const lower = new Set(['de', 'del', 'la', 'las', 'los', 'el', 'en', 'y', 'e', 'o', 'u']);
+  return text
+    .trim()
+    .split(/\s+/)
+    .map((word, i) => {
+      if (i > 0 && lower.has(word.toLowerCase())) return word.toLowerCase();
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join(' ');
+}

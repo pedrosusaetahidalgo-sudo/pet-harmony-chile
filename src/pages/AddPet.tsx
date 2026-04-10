@@ -43,6 +43,7 @@ const AddPet = () => {
   const [existingPhotoUrl, setExistingPhotoUrl] = useState<string | null>(null);
   const [selectedPersonality, setSelectedPersonality] = useState<string[]>([]);
   const [showMedical, setShowMedical] = useState(false);
+  const [breedConfirmed, setBreedConfirmed] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -254,6 +255,23 @@ const AddPet = () => {
       return;
     }
 
+    // Validar raza contra especie seleccionada
+    if (formData.breed && formData.species && !breedConfirmed) {
+      const knownBreeds = BREEDS_BY_SPECIES[formData.species] || [];
+      const breedLower = formData.breed.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      const isKnown = knownBreeds.some((b) =>
+        b.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === breedLower
+      );
+      if (!isKnown) {
+        toast({
+          title: "Raza no reconocida para esta especie",
+          description: `"${formData.breed}" no está en nuestra lista de razas de ${formData.species}. Presiona "Guardar" de nuevo si es correcta.`,
+        });
+        setBreedConfirmed(true);
+        return;
+      }
+    }
+
     setLoading(true);
 
     try {
@@ -373,6 +391,7 @@ const AddPet = () => {
   };
 
   const updateField = (field: string, value: any) => {
+    if (field === "species" || field === "breed") setBreedConfirmed(false);
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 

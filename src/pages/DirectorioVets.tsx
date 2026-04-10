@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Search, MapPin, Star, Stethoscope } from 'lucide-react';
+import { Search, MapPin, Star, Stethoscope, Clock, Phone } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useDirectoryVets, type DirectoryVetFilters } from '@/hooks/useDirectoryVets';
 import { useAuth } from '@/hooks/useAuth';
 import PriceEstimatorWidget from '@/components/PriceEstimatorWidget';
+import { isOpenNow, getTodayHours } from '@/lib/openingHours';
 import {
   SANTIAGO_COMUNAS,
   VET_SPECIALTIES,
@@ -36,6 +37,8 @@ export default function DirectorioVets() {
   const [comuna, setComuna] = useState<string>(comunaParam ? unslugify(comunaParam) : 'all');
   const [specialty, setSpecialty] = useState<string>(espParam ? unslugify(espParam) : 'all');
   const [minRating, setMinRating] = useState<string>('0');
+  const [onlyOpen, setOnlyOpen] = useState(false);
+  const [onlyEmergency, setOnlyEmergency] = useState(false);
 
   const filters: DirectoryVetFilters = useMemo(
     () => ({
@@ -51,7 +54,13 @@ export default function DirectorioVets() {
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useDirectoryVets(filters);
 
-  const vets: Vet[] = useMemo(() => data?.pages.flat() ?? [], [data]);
+  const allVets: Vet[] = useMemo(() => data?.pages.flat() ?? [], [data]);
+  const vets = useMemo(() => {
+    let result = allVets;
+    if (onlyOpen) result = result.filter((v: Vet) => isOpenNow(v.opening_hours));
+    if (onlyEmergency) result = result.filter((v: Vet) => v.emergency_available);
+    return result;
+  }, [allVets, onlyOpen, onlyEmergency]);
 
   // Stats derivados de los vets cargados para enriquecer la landing de comuna
   const comunaStats = useMemo(() => {
@@ -206,6 +215,28 @@ export default function DirectorioVets() {
           </div>
         </Card>
 
+        {/* Filtros rápidos: Abierto ahora + Urgencias */}
+        <div className="flex gap-2">
+          <Button
+            variant={onlyOpen ? "default" : "outline"}
+            size="sm"
+            onClick={() => setOnlyOpen((v) => !v)}
+            className={onlyOpen ? "bg-green-600 hover:bg-green-700" : ""}
+          >
+            <Clock className="h-4 w-4 mr-1" />
+            Abiertos ahora
+          </Button>
+          <Button
+            variant={onlyEmergency ? "default" : "outline"}
+            size="sm"
+            onClick={() => setOnlyEmergency((v) => !v)}
+            className={onlyEmergency ? "bg-red-600 hover:bg-red-700" : ""}
+          >
+            <Phone className="h-4 w-4 mr-1" />
+            Atiende urgencias
+          </Button>
+        </div>
+
         {/* Estimador de precios — solo cuando hay comuna especifica */}
         {comuna !== 'all' && <PriceEstimatorWidget comuna={comuna} compact />}
 
@@ -270,6 +301,8 @@ function VetCard({ vet }: { vet: Vet }) {
   const specialties: string[] = vet.specialties ?? [];
   const rating = Number(vet.avg_rating ?? 0);
   const reviewCount = Number(vet.total_reviews ?? 0);
+  const openNow = isOpenNow(vet.opening_hours);
+  const todayHrs = getTodayHours(vet.opening_hours);
 
   return (
     <Link to={`/veterinarios/${vet.slug}`} className="block">
@@ -295,12 +328,26 @@ function VetCard({ vet }: { vet: Vet }) {
                 {vet.display_name}
                 {vet.is_verified && <span className="ml-1 text-blue-500">✓</span>}
               </h3>
-              {vet.provider_type === 'home_visit' && (
-                <Badge variant="secondary">A domicilio</Badge>
-              )}
-              {vet.provider_type === 'clinic' && (
-                <Badge variant="secondary">Clínica</Badge>
-              )}
+              <div className="flex gap-1 shrink-0">
+                {vet.opening_hours && (
+                  <Badge variant="outline" className={openNow ? "bg-green-50 text-green-700 border-green-200" : "bg-gray-50 text-gray-500 border-gray-200"}>
+                    <Clock className="h-3 w-3 mr-1" />
+                    {openNow ? "Abierto" : "Cerrado"}
+                  </Badge>
+                )}
+                {vet.emergency_available && (
+                  <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                    <Phone className="h-3 w-3 mr-1" />
+                    Urgencias
+                  </Badge>
+                )}
+                {vet.provider_type === 'home_visit' && (
+                  <Badge variant="secondary">A domicilio</Badge>
+                )}
+                {vet.provider_type === 'clinic' && (
+                  <Badge variant="secondary">Clínica</Badge>
+                )}
+              </div>
             </div>
 
             {specialties.length > 0 && (
@@ -329,6 +376,11 @@ function VetCard({ vet }: { vet: Vet }) {
               {vet.price_from && (
                 <span className="text-muted-foreground">
                   Desde <strong className="text-purple-700">{formatCLP(vet.price_from)}</strong>
+                </span>
+              )}
+              {vet.opening_hours && (
+                <span className="text-xs text-muted-foreground">
+                  Hoy: {todayHrs}
                 </span>
               )}
             </div>

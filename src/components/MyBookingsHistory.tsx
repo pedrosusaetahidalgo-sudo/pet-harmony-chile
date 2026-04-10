@@ -33,7 +33,7 @@ interface Booking {
 }
 
 interface MyBookingsHistoryProps {
-  serviceType: "dog_walker" | "dogsitter" | "veterinarian" | "trainer" | "all";
+  serviceType: "dog_walker" | "dogsitter" | "veterinarian" | "trainer" | "groomer" | "all";
   onBookingClick?: (booking: Booking) => void;
   className?: string;
 }
@@ -226,35 +226,33 @@ export const MyBookingsHistory = ({
 
   return (
     <Card className={className}>
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg flex items-center gap-2">
-            <History className="h-5 w-5 text-primary" />
-            Mis Reservas
-          </CardTitle>
-          <div className="flex gap-1">
-            <Button
-              variant={filter === "upcoming" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setFilter("upcoming")}
-            >
-              Próximas
-            </Button>
-            <Button
-              variant={filter === "past" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setFilter("past")}
-            >
-              Pasadas
-            </Button>
-            <Button
-              variant={filter === "all" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setFilter("all")}
-            >
-              Todas
-            </Button>
-          </div>
+      <CardHeader className="pb-3 space-y-2">
+        <CardTitle className="text-lg flex items-center gap-2">
+          <History className="h-5 w-5 text-primary" />
+          Mis Reservas
+        </CardTitle>
+        <div className="flex gap-1">
+          <Button
+            variant={filter === "upcoming" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => setFilter("upcoming")}
+          >
+            Próximas
+          </Button>
+          <Button
+            variant={filter === "past" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => setFilter("past")}
+          >
+            Pasadas
+          </Button>
+          <Button
+            variant={filter === "all" ? "default" : "ghost"}
+            size="sm"
+            onClick={() => setFilter("all")}
+          >
+            Todas
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
