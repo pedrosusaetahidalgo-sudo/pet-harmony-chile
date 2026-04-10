@@ -18,6 +18,7 @@ import { useMedicalSharing } from "@/hooks/useMedicalSharing";
 import { supabase } from "@/integrations/supabase/client";
 import { formatShortDate } from "../helpers";
 import { EmptyState } from "../shared";
+import { PetQRDisplay } from "@/components/medical/PetQRDisplay";
 
 interface DirectoryVet {
   id: string;
@@ -25,7 +26,7 @@ interface DirectoryVet {
   display_name: string;
 }
 
-export function TabCompartir({ petId }: { petId: string }) {
+export function TabCompartir({ petId, petName }: { petId: string; petName: string }) {
   const { tokens, isLoading, createShareToken, isCreating, revokeToken, isRevoking, getShareUrl } = useMedicalSharing(petId);
   const [targetVetId, setTargetVetId] = useState<string>("none");
   const [vets, setVets] = useState<DirectoryVet[]>([]);
@@ -137,6 +138,9 @@ export function TabCompartir({ petId }: { petId: string }) {
 
   return (
     <div className="space-y-4">
+      {/* QR de la ficha clinica */}
+      <PetQRDisplay petId={petId} petName={petName} />
+
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">

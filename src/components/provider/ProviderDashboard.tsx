@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { UserCog, Eye, Stethoscope, Star, Users, FileText, BarChart3 } from "@/lib/icons";
 import { ProviderDirectoryCard } from "./ProviderDirectoryCard";
 import { SharedFichasCard } from "./SharedFichasCard";
+import { VetPatientsList } from "./VetPatientsList";
 import {
   TrendingUp,
   DollarSign,
@@ -518,6 +519,9 @@ const ProviderDashboard = () => {
           )}
         </CardContent>
       </Card>
+
+      {/* Lista de pacientes del vet */}
+      <VetPatientsList />
     </div>
   );
 };

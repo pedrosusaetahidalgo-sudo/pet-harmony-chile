@@ -202,6 +202,14 @@ const PawGame = () => {
   const [pets, setPets] = useState<Pet[]>([]);
   const [activeTab, setActiveTab] = useState("missions");
   const [showTutorial, setShowTutorial] = useState(false);
+  const [rankingData, setRankingData] = useState<Array<{
+    user_id: string;
+    total_paw_points: number;
+    display_name: string | null;
+    avatar_url: string | null;
+  }>>([]);
+  const [userRank, setUserRank] = useState<{ rank: number; points: number } | null>(null);
+  const [rankingLoading, setRankingLoading] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -301,6 +309,74 @@ const PawGame = () => {
       setLoading(false);
     }
   };
+
+  const loadRanking = async () => {
+    if (!user) return;
+    try {
+      setRankingLoading(true);
+
+      // Get top 20 users by points
+      const { data: top20 } = await (supabase as any)
+        .from('user_guardian_progress')
+        .select('user_id, total_paw_points')
+        .order('total_paw_points', { ascending: false })
+        .limit(20);
+
+      if (!top20 || top20.length === 0) {
+        setRankingData([]);
+        setRankingLoading(false);
+        return;
+      }
+
+      // Get profile info for those users
+      const userIds = top20.map((r: any) => r.user_id);
+      const { data: profiles } = await (supabase as any)
+        .from('profiles')
+        .select('id, display_name, avatar_url')
+        .in('id', userIds);
+
+      const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]));
+
+      const merged = top20.map((r: any) => {
+        const profile = profileMap.get(r.user_id) || {};
+        return {
+          user_id: r.user_id,
+          total_paw_points: r.total_paw_points || 0,
+          display_name: (profile as any).display_name || null,
+          avatar_url: (profile as any).avatar_url || null,
+        };
+      });
+
+      setRankingData(merged);
+
+      // Check if current user is in top 20
+      const userInTop = merged.findIndex((r: any) => r.user_id === user.id);
+      if (userInTop === -1) {
+        // Get user's rank
+        const { count } = await (supabase as any)
+          .from('user_guardian_progress')
+          .select('*', { count: 'exact', head: true })
+          .gt('total_paw_points', userProgress?.total_paw_points || 0);
+
+        setUserRank({
+          rank: (count || 0) + 1,
+          points: userProgress?.total_paw_points || 0,
+        });
+      } else {
+        setUserRank(null);
+      }
+    } catch (error) {
+      logger.error('Error loading ranking:', error);
+    } finally {
+      setRankingLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'ranking' && rankingData.length === 0) {
+      loadRanking();
+    }
+  }, [activeTab]);
 
   const handleDailyCheckIn = async () => {
     if (!user) return;
@@ -464,29 +540,36 @@ const PawGame = () => {
 
       {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="w-full h-auto grid grid-cols-4 gap-2 bg-muted/50 p-2 rounded-xl border border-border/50">
-          <TabsTrigger 
+        <TabsList className="w-full h-auto grid grid-cols-5 gap-2 bg-muted/50 p-2 rounded-xl border border-border/50">
+          <TabsTrigger
             value="missions"
             className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-blue-500 data-[state=active]:to-cyan-500 data-[state=active]:text-white text-xs md:text-sm"
           >
             <Target className="h-4 w-4 mr-1 md:mr-2" />
             <span className="hidden sm:inline">Misiones</span>
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="badges"
             className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-yellow-500 data-[state=active]:to-orange-500 data-[state=active]:text-white text-xs md:text-sm"
           >
             <Award className="h-4 w-4 mr-1 md:mr-2" />
             <span className="hidden sm:inline">Logros</span>
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
+            value="ranking"
+            className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-amber-500 data-[state=active]:to-yellow-500 data-[state=active]:text-white text-xs md:text-sm"
+          >
+            <Trophy className="h-4 w-4 mr-1 md:mr-2" />
+            <span className="hidden sm:inline">Ranking</span>
+          </TabsTrigger>
+          <TabsTrigger
             value="pets"
             className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-pink-500 data-[state=active]:to-rose-500 data-[state=active]:text-white text-xs md:text-sm"
           >
             <Heart className="h-4 w-4 mr-1 md:mr-2" />
             <span className="hidden sm:inline">Peludos</span>
           </TabsTrigger>
-          <TabsTrigger 
+          <TabsTrigger
             value="shop"
             className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-500 data-[state=active]:text-white text-xs md:text-sm"
           >
@@ -712,10 +795,137 @@ const PawGame = () => {
 
         {/* Badges Tab */}
         <TabsContent value="badges" className="mt-6">
-          <BadgeGallery 
-            badges={badges} 
-            userBadges={userBadges} 
+          <BadgeGallery
+            badges={badges}
+            userBadges={userBadges}
           />
+        </TabsContent>
+
+        {/* Ranking Tab */}
+        <TabsContent value="ranking" className="mt-6">
+          <Card className="border-0 shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Trophy className="h-5 w-5 text-yellow-500" />
+                Ranking de Guardianes
+              </CardTitle>
+              <CardDescription>
+                Los mejores guardianes de mascotas en Paw Friend
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {rankingLoading ? (
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center space-y-3">
+                    <PawPrint className="h-10 w-10 text-primary mx-auto animate-bounce" />
+                    <p className="text-sm text-muted-foreground">Cargando ranking...</p>
+                  </div>
+                </div>
+              ) : rankingData.length === 0 ? (
+                <div className="text-center py-12 space-y-3">
+                  <Trophy className="h-12 w-12 text-muted-foreground/30 mx-auto" />
+                  <p className="text-muted-foreground">Aún no hay guardianes en el ranking.</p>
+                  <p className="text-sm text-muted-foreground">¡Sé el primero en ganar puntos!</p>
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {rankingData.map((entry, index) => {
+                    const rank = index + 1;
+                    const isCurrentUser = entry.user_id === user?.id;
+                    const entryLevel = getLevelFromPoints(entry.total_paw_points);
+                    const medalEmoji = rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : null;
+
+                    return (
+                      <div
+                        key={entry.user_id}
+                        className={`flex items-center gap-3 p-3 rounded-xl transition-colors ${
+                          isCurrentUser
+                            ? "bg-primary/10 ring-2 ring-primary/30"
+                            : rank <= 3
+                            ? "bg-yellow-50 dark:bg-yellow-500/5"
+                            : "hover:bg-muted/50"
+                        }`}
+                      >
+                        {/* Rank */}
+                        <div className="w-10 text-center flex-shrink-0">
+                          {medalEmoji ? (
+                            <span className="text-xl">{medalEmoji}</span>
+                          ) : (
+                            <span className="text-sm font-bold text-muted-foreground">#{rank}</span>
+                          )}
+                        </div>
+
+                        {/* Avatar */}
+                        <Avatar className="h-10 w-10 flex-shrink-0">
+                          <AvatarImage src={entry.avatar_url || undefined} />
+                          <AvatarFallback className={`${rank <= 3 ? "bg-gradient-to-br from-yellow-400 to-orange-500 text-white" : "bg-muted"}`}>
+                            {entry.display_name?.charAt(0)?.toUpperCase() || "?"}
+                          </AvatarFallback>
+                        </Avatar>
+
+                        {/* Name & Level */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className={`font-semibold text-sm truncate ${isCurrentUser ? "text-primary" : ""}`}>
+                              {isCurrentUser ? "Tú" : entry.display_name || "Guardián Anónimo"}
+                            </span>
+                            {isCurrentUser && (
+                              <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                                Tú
+                              </Badge>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                            <span>{entryLevel.icon}</span>
+                            <span className={entryLevel.color}>{entryLevel.name}</span>
+                            <span>· Nivel {entryLevel.level}</span>
+                          </div>
+                        </div>
+
+                        {/* Points */}
+                        <div className="text-right flex-shrink-0">
+                          <div className="font-bold text-sm">{entry.total_paw_points.toLocaleString()}</div>
+                          <div className="text-[10px] text-muted-foreground">PawPoints</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {/* Current user position if not in top 20 */}
+                  {userRank && (
+                    <>
+                      <div className="flex items-center gap-2 py-2">
+                        <div className="flex-1 border-t border-dashed border-muted-foreground/30" />
+                        <span className="text-xs text-muted-foreground">···</span>
+                        <div className="flex-1 border-t border-dashed border-muted-foreground/30" />
+                      </div>
+                      <div className="flex items-center gap-3 p-3 rounded-xl bg-primary/10 ring-2 ring-primary/30">
+                        <div className="w-10 text-center flex-shrink-0">
+                          <span className="text-sm font-bold text-primary">#{userRank.rank}</span>
+                        </div>
+                        <Avatar className="h-10 w-10 flex-shrink-0">
+                          <AvatarImage src={user?.user_metadata?.avatar_url || undefined} />
+                          <AvatarFallback className="bg-primary/20">
+                            {user?.user_metadata?.display_name?.charAt(0)?.toUpperCase() || "?"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <span className="font-semibold text-sm text-primary">Tu posición</span>
+                          <div className="text-xs text-muted-foreground">
+                            {levelInfo.icon} {levelInfo.name} · Nivel {levelInfo.level}
+                          </div>
+                        </div>
+                        <div className="text-right flex-shrink-0">
+                          <div className="font-bold text-sm">{userRank.points.toLocaleString()}</div>
+                          <div className="text-[10px] text-muted-foreground">PawPoints</div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Pets Progress Tab */}

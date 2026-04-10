@@ -25,6 +25,7 @@ import {
   Gamepad2,
   Flame,
   Trophy,
+  Star,
 } from "@/lib/icons";
 import { getGreeting } from "@/lib/format";
 import { useGamification } from "@/hooks/useGamification";
@@ -36,6 +37,7 @@ import { useGoToAddPet } from "@/hooks/useCanAddPet";
 import { logger } from "@/lib/logger";
 import { PriceEstimatorCard } from "@/components/home/PriceEstimatorCard";
 import { WeeklyReportCard } from "@/components/home/WeeklyReportCard";
+import { usePendingReviewCount } from "@/hooks/usePendingReviews";
 import { formatDistanceToNowStrict, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -95,6 +97,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const { stats } = useGamification();
   const { upcomingReminders, overdueReminders, completeReminder } = useReminders();
+  const pendingReviewCount = usePendingReviewCount();
 
   useEffect(() => {
     if (user) {
@@ -304,6 +307,28 @@ export default function Home() {
             <div className="flex items-center gap-1 text-xs text-purple-500 font-medium flex-shrink-0">
               <Trophy className="h-3.5 w-3.5" />
               <span>Jugar</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* === Reseñas pendientes === */}
+      {pendingReviewCount > 0 && (
+        <Card
+          className="border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => navigate("/mis-reservas")}
+        >
+          <CardContent className="flex items-center gap-4 py-3">
+            <div className="rounded-full bg-amber-100 p-2.5 flex-shrink-0">
+              <Star className="h-5 w-5 text-amber-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-amber-800">
+                {pendingReviewCount} {pendingReviewCount === 1 ? 'reseña pendiente' : 'reseñas pendientes'}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Tu opinión ayuda a otros dueños a elegir mejor
+              </p>
             </div>
           </CardContent>
         </Card>

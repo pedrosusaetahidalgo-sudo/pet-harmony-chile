@@ -33,7 +33,7 @@ const mainItems = [
   { title: "Recordatorios", url: "/reminders", icon: Calendar },
   { title: "Mensajes", url: "/chat", icon: MessageSquare },
   { title: "Paw Game", url: "/paw-game", icon: Gamepad2 },
-  { title: "Ofrecer servicios", url: "/servicios", icon: Briefcase },
+  { title: "Servicios", url: "/servicios", icon: Briefcase },
 ];
 
 export function AppSidebar() {

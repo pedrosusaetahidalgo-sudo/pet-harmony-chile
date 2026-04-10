@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Dog, Mail } from "@/lib/icons";
+import { Dog, Mail, Shield, Stethoscope, Heart } from "@/lib/icons";
 import { FaFacebook } from "react-icons/fa";
 import { LegalFooter } from "@/components/LegalFooter";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
@@ -396,192 +396,234 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4 relative overflow-hidden">
-      <Card className="w-full max-w-md animate-fade-in relative z-10 shadow-lg border-border/50">
-        <CardHeader className="space-y-1 flex flex-col items-center">
-          <img src="/paw_friend_icon_principal.svg" alt="Paw Friend" className="w-16 h-16 mb-4" />
-          <CardTitle className="text-2xl font-bold text-center">Paw Friend</CardTitle>
-          <CardDescription className="text-center">
-            Red social para amantes de las mascotas
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="signin" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Iniciar Sesión</TabsTrigger>
-              <TabsTrigger value="signup">Registrarse</TabsTrigger>
-            </TabsList>
+    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-primary/5 via-background to-secondary/5 relative overflow-hidden">
+      {/* Left side: Auth form */}
+      <div className="flex-1 flex flex-col items-center justify-center p-4">
+        <Card className="w-full max-w-md animate-fade-in relative z-10 shadow-lg border-border/50">
+          <CardHeader className="space-y-1 flex flex-col items-center">
+            <img src="/paw_friend_icon_principal.svg" alt="Paw Friend" className="w-16 h-16 mb-4" />
+            <CardTitle className="text-2xl font-bold text-center">Paw Friend</CardTitle>
+            <CardDescription className="text-center">
+              Red social para amantes de las mascotas
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Tabs defaultValue="signin" className="w-full">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="signin">Iniciar Sesión</TabsTrigger>
+                <TabsTrigger value="signup">Registrarse</TabsTrigger>
+              </TabsList>
 
-            <TabsContent value="signin">
-              <div className="space-y-4">
-                {/* Social Login Buttons */}
-                <div className="space-y-3">
-                  <GoogleSignInButton mode="signin" />
+              <TabsContent value="signin">
+                <div className="space-y-4">
+                  {/* Magic Link - método prioritario */}
+                  <div className="space-y-2">
+                    <Label htmlFor="signin-email">Email</Label>
+                    <Input
+                      id="signin-email"
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      autoCapitalize="none"
+                      spellCheck={false}
+                      placeholder="tu@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+
                   <Button
                     type="button"
-                    variant="outline"
                     className="w-full"
-                    onClick={handleFacebookLogin}
-                    disabled={facebookLoading}
+                    variant="default"
+                    onClick={handleMagicLink}
+                    disabled={loading || !email}
                   >
-                    <FaFacebook className="mr-2 h-4 w-4 text-blue-600" />
-                    {facebookLoading ? "Conectando..." : "Continuar con Facebook"}
+                    <Mail className="mr-2 h-4 w-4" />
+                    {loading ? "Enviando..." : "Enviar enlace al email"}
                   </Button>
-                </div>
 
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <Separator className="w-full" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">
-                      O entra con tu email
-                    </span>
-                  </div>
-                </div>
-
-                {/* Magic Link - método prioritario */}
-                <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
-                  <Input
-                    id="signin-email"
-                    type="email"
-                    inputMode="email"
-                    autoComplete="email"
-                    autoCapitalize="none"
-                    spellCheck={false}
-                    placeholder="tu@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-
-                <Button
-                  type="button"
-                  className="w-full"
-                  variant="default"
-                  onClick={handleMagicLink}
-                  disabled={loading || !email}
-                >
-                  <Mail className="mr-2 h-4 w-4" />
-                  {loading ? "Enviando..." : "Enviar enlace al email"}
-                </Button>
-
-                {!showEmailPassword ? (
-                  <button
-                    type="button"
-                    className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
-                    onClick={() => setShowEmailPassword(true)}
-                  >
-                    Entrar con contraseña
-                  </button>
-                ) : (
-                  <form onSubmit={handleSignIn} className="space-y-3 border-t pt-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="signin-password">Contraseña</Label>
-                      <Input
-                        id="signin-password"
-                        type="password"
-                        autoComplete="current-password"
-                        placeholder="••••••••"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                      />
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <Separator className="w-full" />
                     </div>
-                    <Button type="submit" className="w-full" variant="secondary" disabled={loading}>
-                      {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-card px-2 text-muted-foreground">
+                        O continúa con
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Social Login Buttons */}
+                  <div className="space-y-3">
+                    <GoogleSignInButton mode="signin" />
+                    <p className="text-xs text-muted-foreground text-center px-2">
+                      Si aparece una advertencia de Google, es porque estamos en proceso de verificación oficial. Continúa con tranquilidad — tu cuenta es segura.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full"
+                      onClick={handleFacebookLogin}
+                      disabled={facebookLoading}
+                    >
+                      <FaFacebook className="mr-2 h-4 w-4 text-blue-600" />
+                      {facebookLoading ? "Conectando..." : "Continuar con Facebook"}
                     </Button>
+                  </div>
+
+                  {!showEmailPassword ? (
                     <button
                       type="button"
                       className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
-                      onClick={handleForgotPassword}
-                      disabled={loading}
+                      onClick={() => setShowEmailPassword(true)}
                     >
-                      ¿Olvidaste tu contraseña?
+                      Entrar con contraseña
                     </button>
-                  </form>
-                )}
-              </div>
-            </TabsContent>
+                  ) : (
+                    <form onSubmit={handleSignIn} className="space-y-3 border-t pt-3">
+                      <div className="space-y-2">
+                        <Label htmlFor="signin-password">Contraseña</Label>
+                        <Input
+                          id="signin-password"
+                          type="password"
+                          autoComplete="current-password"
+                          placeholder="••••••••"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <Button type="submit" className="w-full" variant="secondary" disabled={loading}>
+                        {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
+                      </Button>
+                      <button
+                        type="button"
+                        className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
+                        onClick={handleForgotPassword}
+                        disabled={loading}
+                      >
+                        ¿Olvidaste tu contraseña?
+                      </button>
+                    </form>
+                  )}
+                </div>
+              </TabsContent>
 
-            <TabsContent value="signup">
-              <form onSubmit={handleSignUp} className="space-y-4">
-                {/* Social Login Buttons */}
-                <div className="space-y-3">
-                  <GoogleSignInButton mode="signup" />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    onClick={handleFacebookLogin}
-                  >
-                    <FaFacebook className="mr-2 h-4 w-4 text-blue-600" />
-                    Registrarse con Facebook
+              <TabsContent value="signup">
+                <form onSubmit={handleSignUp} className="space-y-4">
+                  {/* Social Login Buttons */}
+                  <div className="space-y-3">
+                    <GoogleSignInButton mode="signup" />
+                    <p className="text-xs text-muted-foreground text-center px-2">
+                      Si aparece una advertencia de Google, es porque estamos en proceso de verificación oficial. Continúa con tranquilidad — tu cuenta es segura.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full"
+                      onClick={handleFacebookLogin}
+                    >
+                      <FaFacebook className="mr-2 h-4 w-4 text-blue-600" />
+                      Registrarse con Facebook
+                    </Button>
+                  </div>
+
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <Separator className="w-full" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-card px-2 text-muted-foreground">
+                        O regístrate con email
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-name">Nombre de usuario</Label>
+                    <Input
+                      id="signup-name"
+                      type="text"
+                      autoComplete="name"
+                      placeholder="Tu nombre"
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-email">Email</Label>
+                    <Input
+                      id="signup-email"
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      autoCapitalize="none"
+                      spellCheck={false}
+                      placeholder="tu@email.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="signup-password">Contraseña</Label>
+                    <Input
+                      id="signup-password"
+                      type="password"
+                      autoComplete="new-password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      minLength={6}
+                    />
+                  </div>
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Creando cuenta..." : "Crear Cuenta"}
                   </Button>
-                </div>
+                </form>
+              </TabsContent>
+            </Tabs>
+          </CardContent>
+        </Card>
+        <div className="mt-8">
+          <LegalFooter />
+        </div>
+      </div>
 
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <Separator className="w-full" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">
-                      O regístrate con email
-                    </span>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="signup-name">Nombre de usuario</Label>
-                  <Input
-                    id="signup-name"
-                    type="text"
-                    autoComplete="name"
-                    placeholder="Tu nombre"
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
-                  <Input
-                    id="signup-email"
-                    type="email"
-                    inputMode="email"
-                    autoComplete="email"
-                    autoCapitalize="none"
-                    spellCheck={false}
-                    placeholder="tu@email.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="signup-password">Contraseña</Label>
-                  <Input
-                    id="signup-password"
-                    type="password"
-                    autoComplete="new-password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                    minLength={6}
-                  />
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Creando cuenta..." : "Crear Cuenta"}
-                </Button>
-              </form>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
-      <div className="mt-8">
-        <LegalFooter />
+      {/* Right side: Hero visual (hidden on mobile) */}
+      <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-purple-600 to-purple-800 flex-col items-center justify-center p-12 text-white">
+        <div className="max-w-md text-center space-y-6">
+          <img src="/paw_friend_icon_principal.svg" alt="Paw Friend" className="w-20 h-20 mx-auto mb-2 brightness-0 invert" />
+          <h2 className="text-3xl font-bold leading-tight">
+            Cuida la salud de tu mascota como nunca antes
+          </h2>
+          <p className="text-lg text-purple-100">
+            Únete a dueños chilenos que ya confían su mascota a veterinarios verificados en Paw Friend.
+          </p>
+          <div className="flex justify-center gap-6 pt-8">
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center">
+                <Shield className="w-6 h-6" />
+              </div>
+              <span className="text-sm font-medium">Datos protegidos</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center">
+                <Stethoscope className="w-6 h-6" />
+              </div>
+              <span className="text-sm font-medium">Vets verificados</span>
+            </div>
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center">
+                <Heart className="w-6 h-6" />
+              </div>
+              <span className="text-sm font-medium">Hecho en Chile 🇨🇱</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

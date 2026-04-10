@@ -321,7 +321,7 @@ const PetClinicalRecord = () => {
         </TabsContent>
 
         <TabsContent value="compartir" className="mt-4">
-          <TabCompartir petId={pet.id} />
+          <TabCompartir petId={pet.id} petName={pet.name} />
         </TabsContent>
       </Tabs>
 
