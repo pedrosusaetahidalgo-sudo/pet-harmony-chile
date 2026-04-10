@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Heart, Send, AlertTriangle, Phone, X } from "@/lib/icons";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/useAuth";
 
 interface BereavementChatProps {
   petId?: string;
@@ -18,15 +19,36 @@ interface Message {
 }
 
 export function BereavementChat({ petId, petName, onClose }: BereavementChatProps) {
+  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [hasConsented, setHasConsented] = useState(false);
+  const [saveHistory, setSaveHistory] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
+
+  // Cargar historial si el usuario ya consintió antes
+  useEffect(() => {
+    if (!user || !hasConsented) return;
+    const loadHistory = async () => {
+      const { data } = await supabase
+        .from("bereavement_chat_messages" as any)
+        .select("role, content, safety_flag")
+        .eq("user_id", user.id)
+        .eq("pet_id", petId || "")
+        .order("created_at", { ascending: true })
+        .limit(50);
+      if (data && data.length > 0) {
+        setSaveHistory(true); // ya tenía historial = ya consintió
+        setMessages(data.map((m: any) => ({ role: m.role, content: m.content, safetyFlag: m.safety_flag })));
+      }
+    };
+    loadHistory();
+  }, [user, hasConsented, petId]);
 
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
@@ -35,6 +57,13 @@ export function BereavementChat({ petId, petName, onClose }: BereavementChatProp
     setMessages((prev) => [...prev, { role: "user", content: userMsg }]);
     setLoading(true);
 
+    // Guardar mensaje del usuario si consintió historial
+    if (saveHistory && user) {
+      supabase.from("bereavement_chat_messages" as any).insert({
+        user_id: user.id, pet_id: petId || null, role: "user", content: userMsg,
+      }).then(() => {});
+    }
+
     try {
       const { data, error } = await supabase.functions.invoke("bereavement-assistant", {
         body: { message: userMsg, pet_id: petId },
@@ -42,14 +71,20 @@ export function BereavementChat({ petId, petName, onClose }: BereavementChatProp
 
       if (error) throw error;
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content: data.reply || "Estoy aquí contigo.",
-          safetyFlag: data.safety_flag,
-        },
-      ]);
+      const assistantMsg = {
+        role: "assistant" as const,
+        content: data.reply || "Estoy aquí contigo.",
+        safetyFlag: data.safety_flag,
+      };
+      setMessages((prev) => [...prev, assistantMsg]);
+
+      // Guardar respuesta del asistente
+      if (saveHistory && user) {
+        supabase.from("bereavement_chat_messages" as any).insert({
+          user_id: user.id, pet_id: petId || null, role: "assistant",
+          content: assistantMsg.content, safety_flag: assistantMsg.safetyFlag || false,
+        }).then(() => {});
+      }
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -94,6 +129,15 @@ export function BereavementChat({ petId, petName, onClose }: BereavementChatProp
             Aquí puedes escribirme lo que quieras. No hay respuestas correctas.
           </li>
         </ul>
+        <label className="flex items-start gap-2 text-sm text-slate-600 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={saveHistory}
+            onChange={(e) => setSaveHistory(e.target.checked)}
+            className="mt-0.5 rounded"
+          />
+          <span>Guardar esta conversación para poder retomarla después</span>
+        </label>
         <Button
           onClick={() => setHasConsented(true)}
           className="w-full bg-purple-600 hover:bg-purple-700"

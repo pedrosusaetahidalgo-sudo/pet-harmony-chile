@@ -392,11 +392,15 @@ function StepAccount({
         <Input
           id="license"
           value={form.license}
-          onChange={(e) => update('license', e.target.value)}
-          placeholder="12345"
+          onChange={(e) => {
+            const val = e.target.value.replace(/[^0-9.]/g, '');
+            update('license', val);
+          }}
+          placeholder="12.345"
+          pattern="[0-9]{2}\.[0-9]{3}|[0-9]{1,5}"
         />
         <p className="text-xs text-muted-foreground mt-1">
-          Lo verificaremos manualmente para darte el badge ✓ Verificado.
+          Formato: XX.XXX (ej: 12.345). Lo verificaremos para darte el badge ✓ Verificado.
         </p>
       </div>
     </div>

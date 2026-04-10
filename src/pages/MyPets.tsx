@@ -5,7 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Plus, Edit, Trash2, Heart, FileText } from "@/lib/icons";
+import { Plus, Edit, Trash2, Heart, FileText, PawPrint } from "@/lib/icons";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { LINKS } from "@/lib/links";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -160,24 +161,17 @@ const MyPets = () => {
         </div>
 
         {pets.length === 0 ? (
-          <Card className="animate-scale-in">
-            <CardContent className="flex flex-col items-center justify-center py-10 md:py-16 text-center">
-              <Heart className="h-16 w-16 text-purple-600/40 mb-4" />
-              <h3 className="text-xl font-semibold mb-2">
-                Agrega tu primera mascota
-              </h3>
-              <p className="text-muted-foreground mb-6 max-w-md">
-                Crea el perfil de tu mascota para llevar su ficha clínica, recibir recordatorios automáticos y reservar con veterinarios.
-              </p>
-              <Button
-                onClick={goToAddPet}
-                className="bg-purple-600 hover:bg-purple-700"
-              >
+          <EmptyState
+            icon={PawPrint}
+            title="Agrega tu primera mascota"
+            description="Crea el perfil de tu mascota para llevar su ficha clínica, recibir recordatorios automáticos y reservar con veterinarios."
+            action={
+              <Button onClick={goToAddPet} className="bg-purple-600 hover:bg-purple-700">
                 <Plus className="mr-2 h-5 w-5" />
                 Agregar Mi Primera Mascota
               </Button>
-            </CardContent>
-          </Card>
+            }
+          />
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {pets.map((pet, index) => (
