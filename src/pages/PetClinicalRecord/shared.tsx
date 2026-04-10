@@ -6,7 +6,8 @@
 import React from "react";
 import {
   Heart, Shield, Syringe, Stethoscope, AlertTriangle, Dog, Cat,
-  Calendar, Phone, Building, Scale, Clipboard,
+  Calendar, Phone, Building, Scale, Clipboard, Activity, Pill, FileText,
+  Scissors, Scan, TestTube, Weight, Cpu,
 } from "@/lib/icons";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -27,25 +28,65 @@ export function getSpeciesIcon(species?: string) {
 export function getRecordTypeIcon(type: string) {
   switch (type.toLowerCase()) {
     case "vacuna": return <Syringe className="h-4 w-4" />;
-    case "consulta": return <Stethoscope className="h-4 w-4" />;
-    case "medicamento":
-    case "tratamiento": return <Stethoscope className="h-4 w-4" />;
-    case "cirugia":
+    case "consulta":
+    case "consulta_general":
+    case "control_sano":
+    case "seguimiento":
+    case "segunda_opinion": return <Stethoscope className="h-4 w-4" />;
+    case "urgencia":
     case "emergencia": return <Heart className="h-4 w-4" />;
-    case "examen": return <Clipboard className="h-4 w-4" />;
+    case "desparasitacion":
+    case "antipulgas": return <Shield className="h-4 w-4" />;
+    case "cirugia":
+    case "cirugía":
+    case "esterilizacion": return <Activity className="h-4 w-4" />;
+    case "limpieza_dental": return <Scissors className="h-4 w-4" />;
+    case "ecografia":
+    case "rayos_x": return <Scan className="h-4 w-4" />;
+    case "examen_sangre":
+    case "examen_orina":
+    case "examen": return <TestTube className="h-4 w-4" />;
+    case "medicamento":
+    case "tratamiento":
+    case "quimioterapia": return <Pill className="h-4 w-4" />;
+    case "rehabilitacion": return <Heart className="h-4 w-4" />;
+    case "hospitalizacion": return <Building className="h-4 w-4" />;
+    case "alergia": return <AlertTriangle className="h-4 w-4" />;
+    case "peso": return <Scale className="h-4 w-4" />;
+    case "microchip": return <Cpu className="h-4 w-4" />;
     default: return <Clipboard className="h-4 w-4" />;
   }
 }
 
 export function getRecordTypeBadgeClass(type: string): string {
   switch (type.toLowerCase()) {
-    case "vacuna": return "bg-green-100 text-green-800 border-green-200";
-    case "consulta": return "bg-blue-100 text-blue-800 border-blue-200";
+    case "vacuna":
+    case "desparasitacion":
+    case "antipulgas": return "bg-green-100 text-green-800 border-green-200";
+    case "consulta":
+    case "consulta_general":
+    case "control_sano":
+    case "seguimiento":
+    case "segunda_opinion": return "bg-blue-100 text-blue-800 border-blue-200";
     case "medicamento":
-    case "tratamiento": return "bg-purple-100 text-purple-800 border-purple-200";
-    case "cirugia": return "bg-red-100 text-red-800 border-red-200";
-    case "emergencia": return "bg-red-100 text-red-800 border-red-200";
+    case "tratamiento":
+    case "quimioterapia": return "bg-purple-100 text-purple-800 border-purple-200";
+    case "cirugia":
+    case "cirugía":
+    case "esterilizacion": return "bg-red-100 text-red-800 border-red-200";
+    case "urgencia":
+    case "emergencia":
+    case "hospitalizacion": return "bg-red-100 text-red-800 border-red-200";
+    case "ecografia":
+    case "rayos_x":
+    case "examen_sangre":
+    case "examen_orina":
     case "examen": return "bg-amber-100 text-amber-800 border-amber-200";
+    case "rehabilitacion":
+    case "limpieza_dental": return "bg-teal-100 text-teal-800 border-teal-200";
+    case "alergia": return "bg-orange-100 text-orange-800 border-orange-200";
+    case "peso":
+    case "microchip": return "bg-indigo-100 text-indigo-800 border-indigo-200";
     default: return "bg-slate-100 text-slate-800 border-slate-200";
   }
 }

@@ -147,7 +147,7 @@ const MyPets = () => {
           <div>
             <h1 className="text-3xl font-bold mb-2">Mis Mascotas</h1>
             <p className="text-muted-foreground">
-              Gestiona los perfiles de tus compañeros peludos
+              Gestiona los perfiles de tus mascotas
             </p>
           </div>
           <Button

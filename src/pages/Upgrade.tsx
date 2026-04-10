@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Sparkles, CheckCircle, Crown } from "@/lib/icons";
+import { Sparkles, CheckCircle, Crown, X, HelpCircle } from "@/lib/icons";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { usePlan } from "@/hooks/usePlan";
@@ -18,7 +19,41 @@ const FEATURES = [
   "Historial médico completo y descargable",
   "Recordatorios de vacunas y controles ilimitados",
   "Exportación de ficha clínica en PDF",
+  "Compartir ficha con veterinario",
+  "Resumen semanal con IA",
+  "Sin publicidad",
   "Soporte prioritario",
+];
+
+const COMPARISON_TABLE = [
+  { feature: "Mascotas registradas", free: "2", premium: "Ilimitadas" },
+  { feature: "Recordatorios activos", free: "5", premium: "Ilimitados" },
+  { feature: "Ficha clínica PDF", free: false, premium: true },
+  { feature: "Compartir ficha con vet", free: false, premium: true },
+  { feature: "Historial médico", free: "1 año", premium: "Completo" },
+  { feature: "Resumen semanal IA", free: false, premium: true },
+  { feature: "Asistente veterinario IA", free: false, premium: true },
+  { feature: "Sin publicidad", free: false, premium: true },
+  { feature: "Soporte prioritario", free: false, premium: true },
+];
+
+const FAQ_ITEMS = [
+  {
+    q: "¿Puedo cancelar en cualquier momento?",
+    a: "Sí. Sin permanencia ni penalizaciones. Tu plan seguirá activo hasta el final del periodo pagado.",
+  },
+  {
+    q: "¿Qué métodos de pago aceptan?",
+    a: "Aceptamos tarjetas de crédito y débito a través de Flow, la pasarela de pago líder en Chile.",
+  },
+  {
+    q: "¿Pierdo mis datos si vuelvo al plan Gratis?",
+    a: "No. Tus mascotas y registros se mantienen. Solo se limita el acceso a funciones Premium como PDF y compartir ficha.",
+  },
+  {
+    q: "¿Qué pasa con la oferta de lanzamiento?",
+    a: "Los primeros 500 usuarios que activen Premium mantienen el precio de $3.990/mes para siempre, sin importar futuros aumentos.",
+  },
 ];
 
 export default function Upgrade() {
@@ -186,6 +221,69 @@ export default function Upgrade() {
             </ul>
           </CardContent>
         </Card>
+
+        {/* Comparison table */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle className="text-base">Gratis vs Premium</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left p-3 font-medium">Función</th>
+                    <th className="text-center p-3 font-medium w-28">Gratis</th>
+                    <th className="text-center p-3 font-medium w-28 text-premium-dark">Premium</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARISON_TABLE.map((row) => (
+                    <tr key={row.feature} className="border-b last:border-0">
+                      <td className="p-3">{row.feature}</td>
+                      <td className="p-3 text-center">
+                        {typeof row.free === "boolean" ? (
+                          row.free ? <CheckCircle className="h-4 w-4 text-green-600 mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" />
+                        ) : (
+                          <span className="text-muted-foreground">{row.free}</span>
+                        )}
+                      </td>
+                      <td className="p-3 text-center">
+                        {typeof row.premium === "boolean" ? (
+                          row.premium ? <CheckCircle className="h-4 w-4 text-premium-dark mx-auto" /> : <X className="h-4 w-4 text-muted-foreground mx-auto" />
+                        ) : (
+                          <span className="font-medium">{row.premium}</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* FAQ */}
+        <div className="mt-8 space-y-3">
+          <h2 className="text-lg font-semibold flex items-center gap-2">
+            <HelpCircle className="h-5 w-5 text-muted-foreground" />
+            Preguntas frecuentes
+          </h2>
+          {FAQ_ITEMS.map((item) => (
+            <Collapsible key={item.q}>
+              <Card>
+                <CollapsibleTrigger className="w-full text-left p-4 font-medium text-sm hover:bg-muted/50 transition-colors rounded-lg">
+                  {item.q}
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                  <div className="px-4 pb-4 text-sm text-muted-foreground">
+                    {item.a}
+                  </div>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
+          ))}
+        </div>
 
         <div className="text-center mt-8 space-y-2">
           <p className="text-xs text-muted-foreground">

@@ -18,6 +18,8 @@ import { cn } from "@/lib/utils";
 import { logger } from "@/lib/logger";
 import { describeSupabaseError } from "@/lib/supabaseErrors";
 import { useOrganicRewards } from "@/hooks/useOrganicRewards";
+import { MEDICAL_RECORD_TYPES } from "@/lib/medicalRecordTypes";
+import { getVaccinesForSpecies } from "@/lib/vaccines";
 
 interface AddMedicalRecordProps {
   petId: string;
@@ -67,14 +69,8 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies, petName = "Tu ma
   });
 
   // Valores alineados con el CHECK constraint de medical_records.record_type
-  const recordTypes = [
-    { value: "vacuna", label: "Vacuna" },
-    { value: "consulta", label: "Consulta Veterinaria" },
-    { value: "tratamiento", label: "Medicamento/Tratamiento" },
-    { value: "alergia", label: "Alergia" },
-    { value: "cirugía", label: "Cirugía" },
-    { value: "otro", label: "Otro" },
-  ];
+  // (migración 20260421000000_expand_medical_record_types.sql)
+  const recordTypes = MEDICAL_RECORD_TYPES;
 
   const fetchSuggestions = async (type: string) => {
     if (!petBreed || !petSpecies) return;
@@ -297,11 +293,19 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies, petName = "Tu ma
             <Label htmlFor="title">Título *</Label>
             <Input
               id="title"
+              list={recordType === "vacuna" ? "vaccine-suggestions" : undefined}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ej: Vacuna Antirrábica, Control de Rutina..."
               required
             />
+            {recordType === "vacuna" && (
+              <datalist id="vaccine-suggestions">
+                {getVaccinesForSpecies(petSpecies).map((v) => (
+                  <option key={v.name} value={v.name} label={v.description} />
+                ))}
+              </datalist>
+            )}
           </div>
 
           {/* Fecha */}

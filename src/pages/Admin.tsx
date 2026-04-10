@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Users, Dog, FileCheck, Megaphone, Settings, Briefcase, Megaphone as AdIcon, Stethoscope } from "@/lib/icons";
+import { Shield, Users, Dog, FileCheck, Megaphone, Settings, Briefcase, Megaphone as AdIcon, Stethoscope, BarChart3 } from "@/lib/icons";
 import AdminProviders from "@/components/admin/AdminProviders";
 import AdminServiceProviders from "@/components/admin/AdminServiceProviders";
 import AdminVerificationRequests from "@/components/admin/AdminVerificationRequests";
@@ -9,9 +9,10 @@ import AdminServicePromotions from "@/components/admin/AdminServicePromotions";
 import AdminUsers from "@/components/admin/AdminUsers";
 import AdminSettings from "@/components/admin/AdminSettings";
 import AdManagement from "@/components/admin/AdManagement";
+import AdminMetrics from "@/components/admin/AdminMetrics";
 
 const Admin = () => {
-  const [activeTab, setActiveTab] = useState("service-providers");
+  const [activeTab, setActiveTab] = useState("metrics");
 
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">
@@ -26,7 +27,11 @@ const Admin = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-2 h-auto p-2">
+        <TabsList className="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-2 h-auto p-2">
+          <TabsTrigger value="metrics" className="flex items-center gap-2 py-2">
+            <BarChart3 className="h-4 w-4" />
+            <span className="hidden sm:inline">Métricas</span>
+          </TabsTrigger>
           <TabsTrigger value="service-providers" className="flex items-center gap-2 py-2">
             <Briefcase className="h-4 w-4" />
             <span className="hidden sm:inline">Central</span>
@@ -60,6 +65,10 @@ const Admin = () => {
             <span className="hidden sm:inline">Vets Colmevet</span>
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="metrics">
+          <AdminMetrics />
+        </TabsContent>
 
         <TabsContent value="vet-verifications">
           <AdminVetVerifications />

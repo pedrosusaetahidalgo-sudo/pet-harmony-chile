@@ -10,6 +10,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { useReminders } from "@/hooks/useReminders";
 import { LINKS } from "@/lib/links";
 import { cn } from "@/lib/utils";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 /**
  * Pagina agregadora de recordatorios.
@@ -78,22 +79,16 @@ export default function Reminders() {
         )}
 
         {!isLoading && reminders.length === 0 && (
-          <Card className="border-dashed">
-            <CardContent className="py-10 text-center space-y-3">
-              <div className="mx-auto h-14 w-14 rounded-full bg-amber-100 flex items-center justify-center">
-                <Bell className="h-7 w-7 text-amber-600" />
-              </div>
-              <div>
-                <p className="font-semibold">Aún no tienes recordatorios</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Crea tu primer recordatorio desde la ficha de tu mascota.
-                </p>
-              </div>
+          <EmptyState
+            icon={Bell}
+            title="Aún no tienes recordatorios"
+            description="Crea tu primer recordatorio desde la ficha de tu mascota."
+            action={
               <Button onClick={() => navigate(LINKS.myPets())} className="bg-purple-600 hover:bg-purple-700">
                 Ir a mis mascotas
               </Button>
-            </CardContent>
-          </Card>
+            }
+          />
         )}
 
         {overdueReminders.length > 0 && (

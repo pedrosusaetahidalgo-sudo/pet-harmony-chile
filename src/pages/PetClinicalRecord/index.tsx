@@ -32,6 +32,7 @@ import { generatePDF } from "./pdf";
 import { PageHeader } from "@/components/PageHeader";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { LINKS } from "@/lib/links";
+import { REMINDER_TYPES } from "@/lib/reminderTypes";
 
 const PetClinicalRecord = () => {
   const { petId } = useParams<{ petId: string }>();
@@ -251,12 +252,9 @@ const PetClinicalRecord = () => {
                       <Select value={reminderData.type} onValueChange={(v) => setReminderData(d => ({...d, type: v}))}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="vaccine">Vacuna</SelectItem>
-                          <SelectItem value="checkup">Control veterinario</SelectItem>
-                          <SelectItem value="medication">Medicamento</SelectItem>
-                          <SelectItem value="grooming">Peluquería</SelectItem>
-                          <SelectItem value="weight">Control de peso</SelectItem>
-                          <SelectItem value="custom">Otro</SelectItem>
+                          {REMINDER_TYPES.map((rt) => (
+                            <SelectItem key={rt.value} value={rt.value}>{rt.label}</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>

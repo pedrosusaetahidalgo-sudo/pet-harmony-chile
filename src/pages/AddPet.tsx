@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { describeSupabaseError } from "@/lib/supabaseErrors";
 import { logger } from "@/lib/logger";
 import { useOrganicRewards } from "@/hooks/useOrganicRewards";
+import { filterBreeds, BREEDS_BY_SPECIES } from "@/lib/breeds";
 import { useCanAddPet } from "@/hooks/useCanAddPet";
 import { Sparkles, Crown } from "@/lib/icons";
 import { PageHeader } from "@/components/PageHeader";
@@ -183,9 +184,24 @@ const AddPet = () => {
     }
 
     // Validate weight if provided
-    if (formData.weight && parseFloat(formData.weight) <= 0) {
-      toast({ title: "Algo salió mal", description: "El peso debe ser mayor a 0", variant: "destructive" });
-      return;
+    if (formData.weight) {
+      const w = parseFloat(formData.weight);
+      if (w <= 0) {
+        toast({ title: "Algo salió mal", description: "El peso debe ser mayor a 0", variant: "destructive" });
+        return;
+      }
+      // Warning (no bloqueante) para pesos fuera de rango esperado por especie
+      const weightRanges: Record<string, [number, number]> = {
+        perro: [0.5, 90], gato: [1, 15], conejo: [0.5, 8], hamster: [0.02, 0.2],
+        ave: [0.01, 5], tortuga: [0.05, 100], pez: [0.001, 50],
+      };
+      const range = weightRanges[formData.species];
+      if (range && (w < range[0] || w > range[1])) {
+        toast({
+          title: "Peso inusual",
+          description: `El peso ${w} kg parece fuera de rango para un ${formData.species} (${range[0]}–${range[1]} kg). Puedes continuar si es correcto.`,
+        });
+      }
     }
 
     // Validate birth_date if provided (species-specific realistic limits)
@@ -533,9 +549,14 @@ const AddPet = () => {
                     <SelectValue placeholder="Selecciona especie" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="perro">Perro</SelectItem>
-                    <SelectItem value="gato">Gato</SelectItem>
-                    <SelectItem value="otro">Otro</SelectItem>
+                    <SelectItem value="perro">🐶 Perro</SelectItem>
+                    <SelectItem value="gato">🐱 Gato</SelectItem>
+                    <SelectItem value="conejo">🐰 Conejo</SelectItem>
+                    <SelectItem value="hamster">🐹 Hámster</SelectItem>
+                    <SelectItem value="ave">🐦 Ave</SelectItem>
+                    <SelectItem value="tortuga">🐢 Tortuga</SelectItem>
+                    <SelectItem value="pez">🐟 Pez</SelectItem>
+                    <SelectItem value="otro">🐾 Otro</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -544,10 +565,16 @@ const AddPet = () => {
                 <Label htmlFor="breed">Raza</Label>
                 <Input
                   id="breed"
+                  list="breed-suggestions"
                   value={formData.breed}
                   onChange={(e) => updateField("breed", e.target.value)}
                   placeholder="Golden Retriever, Persa..."
                 />
+                <datalist id="breed-suggestions">
+                  {(BREEDS_BY_SPECIES[formData.species] || []).map((b) => (
+                    <option key={b} value={b} />
+                  ))}
+                </datalist>
               </div>
 
               <div className="space-y-2">
@@ -758,6 +785,7 @@ const AddPet = () => {
                       type="tel"
                       inputMode="tel"
                       autoComplete="tel"
+                      pattern="(\+?56)?9[0-9]{8}"
                       value={formData.emergency_vet_phone}
                       onChange={(e) => updateField("emergency_vet_phone", e.target.value)}
                       placeholder="+56 9 1234 5678"

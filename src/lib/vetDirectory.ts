@@ -1,19 +1,45 @@
 export const VET_SPECIALTIES = [
+  // Generales
   'Medicina general',
-  'Cirugía',
+  'Medicina interna',
+  'Medicina felina',
+  'Medicina de animales exóticos',
+
+  // Quirúrgicas
+  'Cirugía general',
+  'Cirugía ortopédica',
+  'Cirugía de tejidos blandos',
+
+  // Especialidades clínicas
   'Dermatología',
   'Oftalmología',
   'Cardiología',
   'Oncología',
-  'Geriatría',
-  'Comportamiento animal',
-  'Animales exóticos',
-  'Reproducción',
-  'Odontología',
   'Neurología',
-  'Ortopedia',
-  'Vacunación',
-  'Esterilización',
+  'Endocrinología',
+  'Odontología',
+  'Gastroenterología',
+  'Nefrología y urología',
+
+  // Diagnóstico
+  'Imagenología (ecografía/rayos X)',
+  'Patología clínica (laboratorio)',
+
+  // Etapas de vida
+  'Geriatría',
+  'Neonatología y pediatría',
+
+  // Comportamiento y rehabilitación
+  'Comportamiento animal (etología)',
+  'Rehabilitación y fisioterapia',
+
+  // Otras
+  'Reproducción y obstetricia',
+  'Nutrición animal',
+  'Anestesiología',
+  'Urgencias y cuidados críticos',
+  'Medicina preventiva',
+  'Animales silvestres',
 ] as const;
 
 export const SANTIAGO_COMUNAS = [

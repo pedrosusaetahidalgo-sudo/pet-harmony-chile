@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AddMedicalRecord } from "@/components/AddMedicalRecord";
 import { PageHeader } from "@/components/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { LINKS } from "@/lib/links";
 import { MedicalDocumentsTab } from "@/components/medical/MedicalDocumentsTab";
@@ -60,16 +61,40 @@ const MedicalRecords = () => {
       case "vacuna":
         return <Syringe className="h-5 w-5" />;
       case "consulta":
+      case "consulta_general":
+      case "control_sano":
+      case "seguimiento":
+      case "segunda_opinion":
         return <Stethoscope className="h-5 w-5" />;
-      case "medicamento":
-      case "tratamiento":
-        return <Pill className="h-5 w-5" />;
-      case "cirugia":
-        return <Activity className="h-5 w-5" />;
-      case "examen":
-        return <FileText className="h-5 w-5" />;
+      case "urgencia":
       case "emergencia":
         return <Activity className="h-5 w-5" />;
+      case "desparasitacion":
+      case "antipulgas":
+        return <Heart className="h-5 w-5" />;
+      case "cirugia":
+      case "cirugía":
+      case "esterilizacion":
+        return <Activity className="h-5 w-5" />;
+      case "ecografia":
+      case "rayos_x":
+      case "examen_sangre":
+      case "examen_orina":
+      case "examen":
+        return <FileText className="h-5 w-5" />;
+      case "medicamento":
+      case "tratamiento":
+      case "quimioterapia":
+        return <Pill className="h-5 w-5" />;
+      case "rehabilitacion":
+      case "limpieza_dental":
+      case "hospitalizacion":
+        return <Activity className="h-5 w-5" />;
+      case "alergia":
+        return <Heart className="h-5 w-5" />;
+      case "peso":
+      case "microchip":
+        return <FileText className="h-5 w-5" />;
       default:
         return <FileText className="h-5 w-5" />;
     }
@@ -78,18 +103,41 @@ const MedicalRecords = () => {
   const getRecordColor = (type: string) => {
     switch (type.toLowerCase()) {
       case "vacuna":
+      case "desparasitacion":
+      case "antipulgas":
         return "bg-medical/10 text-medical border-medical/20";
       case "consulta":
+      case "consulta_general":
+      case "control_sano":
+      case "seguimiento":
+      case "segunda_opinion":
         return "bg-secondary/10 text-secondary border-secondary/20";
       case "medicamento":
       case "tratamiento":
+      case "quimioterapia":
         return "bg-purple-100 text-purple-600 border-purple-200";
       case "cirugia":
+      case "cirugía":
+      case "esterilizacion":
         return "bg-destructive/10 text-destructive border-destructive/20";
+      case "urgencia":
+      case "emergencia":
+      case "hospitalizacion":
+        return "bg-destructive/10 text-destructive border-destructive/20";
+      case "ecografia":
+      case "rayos_x":
+      case "examen_sangre":
+      case "examen_orina":
       case "examen":
         return "bg-appointment/10 text-appointment border-appointment/20";
-      case "emergencia":
-        return "bg-destructive/10 text-destructive border-destructive/20";
+      case "rehabilitacion":
+      case "limpieza_dental":
+        return "bg-teal-100 text-teal-600 border-teal-200";
+      case "alergia":
+        return "bg-orange-100 text-orange-600 border-orange-200";
+      case "peso":
+      case "microchip":
+        return "bg-indigo-100 text-indigo-600 border-indigo-200";
       default:
         return "bg-muted/10 text-muted-foreground border-muted/20";
     }
@@ -193,15 +241,11 @@ const MedicalRecords = () => {
 
                 <TabsContent value="timeline" className="space-y-6">
                   {!medicalRecords || medicalRecords.length === 0 ? (
-                    <Card className="border-dashed">
-                      <CardContent className="flex flex-col items-center justify-center py-8 md:py-12">
-                        <FileText className="h-12 w-12 text-muted-foreground mb-4" />
-                        <h3 className="text-lg font-semibold mb-2">No hay registros médicos</h3>
-                        <p className="text-muted-foreground text-center mb-4">
-                          Comienza a agregar el historial médico de {selectedPet?.name}
-                        </p>
-                      </CardContent>
-                    </Card>
+                    <EmptyState
+                      icon={FileText}
+                      title="No hay registros médicos"
+                      description={`Comienza a agregar el historial médico de ${selectedPet?.name}`}
+                    />
                   ) : (
                     <div className="space-y-8">
                       {Object.entries(groupRecordsByYear(medicalRecords))
@@ -301,15 +345,11 @@ const MedicalRecords = () => {
 
                 <TabsContent value="upcoming" className="space-y-4">
                   {medicalRecords?.filter(r => r.next_date && new Date(r.next_date) >= new Date()).length === 0 ? (
-                    <Card className="border-dashed">
-                      <CardContent className="flex flex-col items-center justify-center py-8 md:py-12">
-                        <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
-                        <h3 className="text-lg font-semibold mb-2">No hay citas próximas</h3>
-                        <p className="text-muted-foreground text-center">
-                          Las citas programadas aparecerán aquí
-                        </p>
-                      </CardContent>
-                    </Card>
+                    <EmptyState
+                      icon={Calendar}
+                      title="No hay citas próximas"
+                      description="Las citas programadas aparecerán aquí"
+                    />
                   ) : (
                     <div className="grid gap-4">
                       {medicalRecords

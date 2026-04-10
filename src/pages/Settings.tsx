@@ -18,6 +18,7 @@ import {
   LogOut,
   Save,
   Loader2,
+  Heart,
 } from "@/lib/icons";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
@@ -435,7 +436,32 @@ const Settings = () => {
           </CardContent>
         </Card>
 
-        {/* Section 5: App Info */}
+        {/* Section 5: Avanzado */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Heart className="h-5 w-5 text-primary" />
+              Avanzado
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Button
+              variant="ghost"
+              className="w-full justify-start gap-3 h-auto py-3"
+              onClick={() => navigate("/en-memoria")}
+            >
+              <Heart className="h-5 w-5 text-purple-500" />
+              <div className="text-left">
+                <p className="font-medium">Registro de despedida</p>
+                <p className="text-sm text-muted-foreground">
+                  Espacio para honrar a mascotas que ya no nos acompañan
+                </p>
+              </div>
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Section 6: App Info */}
         <Card>
           <CardHeader>
             <CardTitle className="text-lg flex items-center gap-2">

@@ -22,6 +22,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useParams, useNavigate } from "react-router-dom";
 import { ProfessionalBadges } from "@/components/ProfessionalBadges";
 import { useStartConversation } from "@/hooks/useStartConversation";
+import { EmptyState } from "@/components/ui/EmptyState";
 import { logger } from "@/lib/logger";
 const dogProfileUrl = "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop&crop=faces";
 const catProfileUrl = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=400&fit=crop&crop=faces";
@@ -335,10 +336,10 @@ const UserProfile = () => {
 
         <TabsContent value="posts" className="mt-6">
           {posts.length === 0 ? (
-            <div className="text-center py-12">
-              <Grid className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-              <p className="text-muted-foreground">No hay publicaciones aún</p>
-            </div>
+            <EmptyState
+              icon={Grid}
+              title="No hay publicaciones aún"
+            />
           ) : (
             <div className="grid grid-cols-3 gap-1 sm:gap-2">
               {posts.map((post) => (

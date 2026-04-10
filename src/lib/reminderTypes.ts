@@ -1,0 +1,20 @@
+/**
+ * Tipos predefinidos de recordatorios con recurrencia sugerida.
+ */
+
+export const REMINDER_TYPES = [
+  { value: "vaccine", label: "Vacuna", defaultRecurrence: "yearly" },
+  { value: "checkup", label: "Control veterinario", defaultRecurrence: "6months" },
+  { value: "deworming", label: "Desparasitación", defaultRecurrence: "3months" },
+  { value: "flea", label: "Antipulgas / garrapatas", defaultRecurrence: "monthly" },
+  { value: "medication", label: "Medicamento", defaultRecurrence: null },
+  { value: "grooming", label: "Baño / peluquería", defaultRecurrence: "monthly" },
+  { value: "weight", label: "Control de peso", defaultRecurrence: "monthly" },
+  { value: "dental", label: "Limpieza dental", defaultRecurrence: "yearly" },
+  { value: "food", label: "Comprar alimento", defaultRecurrence: "monthly" },
+  { value: "insurance", label: "Renovar seguro", defaultRecurrence: "yearly" },
+  { value: "license", label: "Renovar registro municipal", defaultRecurrence: "yearly" },
+  { value: "custom", label: "Personalizado", defaultRecurrence: null },
+] as const;
+
+export type ReminderType = (typeof REMINDER_TYPES)[number]["value"];

@@ -410,7 +410,7 @@ const PawGame = () => {
                 </span>
               </h1>
               <p className="text-muted-foreground text-sm">
-                Cuida a tus peludos, gana puntos, sube de nivel
+                Cuida a tus mascotas, gana puntos, sube de nivel
               </p>
             </div>
           </div>

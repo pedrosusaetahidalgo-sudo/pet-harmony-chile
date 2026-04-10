@@ -4,12 +4,14 @@ import PetCard from "@/components/PetCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Plus, TrendingUp, Users, MapPin, Video, PawPrint, Trophy } from "@/lib/icons";
+import { Search, Plus, TrendingUp, Users, MapPin, Video, PawPrint, Trophy, Filter } from "@/lib/icons";
 import { EmptyState } from "@/components/EmptyState";
 import { logger } from "@/lib/logger";
 // DogBehaviorAnalyzer temporarily removed - will be implemented in different tab later
 import { OnboardingTutorial } from "@/components/OnboardingTutorial";
 import { CreatePost } from "@/components/CreatePost";
+import { POST_TYPES } from "@/lib/postTypes";
+import { Badge } from "@/components/ui/badge";
 import { PetProfileCard } from "@/components/PetProfileCard";
 import TopRatedProviders from "@/components/TopRatedProviders";
 import { useState, useEffect } from "react";
@@ -43,7 +45,11 @@ const Feed = () => {
   const [loadingPets, setLoadingPets] = useState(true);
   const [loadingFollowing, setLoadingFollowing] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [filterType, setFilterType] = useState<string | null>(null);
+  const [hasMorePosts, setHasMorePosts] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const navigate = useNavigate();
+  const POSTS_PAGE_SIZE = 20;
 
   useEffect(() => {
     loadPosts();
@@ -53,9 +59,11 @@ const Feed = () => {
     }
   }, [user]);
 
-  const loadPosts = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
+  const loadPosts = async (append = false) => {
+    if (append) setLoadingMore(true);
+    else setLoading(true);
+
+    const query = supabase
       .from("posts")
       .select(`
         *,
@@ -68,12 +76,26 @@ const Feed = () => {
           photo_url
         )
       `)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false })
+      .limit(POSTS_PAGE_SIZE);
+
+    if (append && posts.length > 0) {
+      const lastDate = posts[posts.length - 1].created_at;
+      query.lt("created_at", lastDate);
+    }
+
+    const { data, error } = await query;
 
     if (!error && data) {
-      setPosts(data);
+      if (append) {
+        setPosts((prev) => [...prev, ...data]);
+      } else {
+        setPosts(data);
+      }
+      setHasMorePosts(data.length === POSTS_PAGE_SIZE);
     }
     setLoading(false);
+    setLoadingMore(false);
   };
 
   const loadPets = async () => {
@@ -210,6 +232,27 @@ const Feed = () => {
           />
         </div>
 
+        {/* Post type filter */}
+        <div className="flex gap-2 mb-4 overflow-x-auto pb-1 scrollbar-hide">
+          <Badge
+            variant={filterType === null ? "default" : "outline"}
+            className="cursor-pointer whitespace-nowrap shrink-0"
+            onClick={() => setFilterType(null)}
+          >
+            Todos
+          </Badge>
+          {POST_TYPES.map((pt) => (
+            <Badge
+              key={pt.value}
+              variant={filterType === pt.value ? "default" : "outline"}
+              className="cursor-pointer whitespace-nowrap shrink-0"
+              onClick={() => setFilterType(filterType === pt.value ? null : pt.value)}
+            >
+              {pt.emoji} {pt.label}
+            </Badge>
+          ))}
+        </div>
+
         {/* Tabs */}
         <Tabs defaultValue="pets" className="w-full" onValueChange={(value) => {
           if (value === "following" && user) {
@@ -254,6 +297,7 @@ const Feed = () => {
               ) : (
                 filterBlocked(posts, "user_id")
                   .filter((post) => {
+                    if (filterType && post.post_type !== filterType) return false;
                     if (!searchQuery.trim()) return true;
                     const q = searchQuery.toLowerCase();
                     return (
@@ -280,6 +324,18 @@ const Feed = () => {
                     })}
                   />
                 ))
+              )}
+              {!loading && hasMorePosts && posts.length > 0 && (
+                <div className="text-center pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => loadPosts(true)}
+                    disabled={loadingMore}
+                  >
+                    {loadingMore ? "Cargando..." : "Ver más publicaciones"}
+                  </Button>
+                </div>
               )}
             </div>
 

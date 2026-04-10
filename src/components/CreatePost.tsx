@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/select";
 import { logger } from "@/lib/logger";
 import { describeSupabaseError } from "@/lib/supabaseErrors";
+import { POST_TYPES } from "@/lib/postTypes";
 
 interface CreatePostProps {
   onSuccess?: () => void;
@@ -29,6 +30,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
   const { awardPoints } = useGamification();
   const navigate = useNavigate();
   const [content, setContent] = useState("");
+  const [postType, setPostType] = useState<string>("foto");
   const [petId, setPetId] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
@@ -150,6 +152,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
         content: content.trim(),
         image_url: imageUrl,
         pet_id: petId || null,
+        post_type: postType || null,
       }).select().maybeSingle();
 
       if (error) {
@@ -176,6 +179,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
       });
 
       setContent("");
+      setPostType("foto");
       setPetId("");
       removeImage();
       onSuccess?.();
@@ -206,8 +210,26 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <Select value={postType} onValueChange={setPostType}>
+        <SelectTrigger>
+          <SelectValue placeholder="Tipo de publicación" />
+        </SelectTrigger>
+        <SelectContent>
+          {POST_TYPES.map((pt) => (
+            <SelectItem key={pt.value} value={pt.value}>
+              {pt.emoji} {pt.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+
       <Textarea
-        placeholder="¿Qué quieres compartir?"
+        placeholder={
+          postType === "pregunta" ? "¿Qué quieres preguntar a la comunidad?" :
+          postType === "consejo" ? "Comparte tu consejo o tip..." :
+          postType === "perdido" ? "Describe a la mascota perdida o encontrada..." :
+          "¿Qué quieres compartir?"
+        }
         value={content}
         onChange={(e) => setContent(e.target.value)}
         className="min-h-[120px] resize-none"

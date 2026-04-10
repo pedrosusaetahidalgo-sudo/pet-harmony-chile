@@ -89,11 +89,16 @@ export default function EnMemoria() {
 
   if (memorialPets.length === 0) {
     return (
-      <div className="container max-w-4xl mx-auto p-6 text-center py-20">
-        <Heart className="h-16 w-16 mx-auto mb-4 text-purple-200" />
-        <h1 className="text-xl font-semibold text-slate-800 mb-2">En memoria</h1>
-        <p className="text-muted-foreground">
-          Aquí guardaremos los recuerdos de quienes nos acompañaron.
+      <div className="container max-w-4xl mx-auto p-6 text-center py-20 space-y-4">
+        <Heart className="h-16 w-16 mx-auto mb-4 text-purple-300" />
+        <h1 className="text-xl font-semibold mb-2">En memoria</h1>
+        <p className="text-muted-foreground max-w-md mx-auto">
+          Este es un espacio para honrar a las mascotas que ya no nos acompañan.
+          Puedes registrar su despedida desde la ficha clínica de tu mascota.
+        </p>
+        <p className="text-sm text-muted-foreground max-w-md mx-auto">
+          Su historial médico se conservará para siempre y los recordatorios pendientes
+          se cancelarán automáticamente.
         </p>
       </div>
     );

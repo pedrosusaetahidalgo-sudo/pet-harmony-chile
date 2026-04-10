@@ -113,7 +113,7 @@ export const PetPawProgress = ({ pets, userId }: PetPawProgressProps) => {
         <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
           <PawPrint className="h-10 w-10 text-primary" />
         </div>
-        <h3 className="text-lg font-semibold mb-2">No tienes peludos registrados</h3>
+        <h3 className="text-lg font-semibold mb-2">No tienes mascotas registradas</h3>
         <p className="text-sm text-muted-foreground mb-4">
           Agrega tu primera mascota para comenzar a trackear su bienestar
         </p>

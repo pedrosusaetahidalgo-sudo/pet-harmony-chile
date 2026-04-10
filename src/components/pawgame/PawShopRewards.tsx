@@ -242,7 +242,7 @@ export const PawShopRewards = ({ userPoints, userId, onPurchase }: PawShopReward
           </h3>
           <p className="text-xs text-muted-foreground max-w-md mx-auto">
             Descuentos en veterinarias, productos para mascotas, donaciones a refugios
-            y más. Gana puntos cuidando a tus peludos.
+            y más. Gana puntos cuidando a tus mascotas.
           </p>
         </CardContent>
       </Card>
