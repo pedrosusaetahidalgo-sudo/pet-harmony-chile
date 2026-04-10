@@ -17,24 +17,29 @@ BEGIN
   RAISE NOTICE '=== INICIO LIMPIEZA DEMO ===';
 
   -- Recoger TODOS los demo users (no solo los 8 originales)
-  SELECT array_agg(id) INTO demo_uuids
+  SELECT COALESCE(array_agg(id), ARRAY[]::uuid[]) INTO demo_uuids
   FROM profiles WHERE is_demo = true;
 
-  -- También incluir los 8 UUIDs hardcodeados originales por si acaso
-  demo_uuids := demo_uuids || ARRAY[
-    'a1b2c3d4-1111-4000-a000-000000000001',
-    'a1b2c3d4-2222-4000-a000-000000000002',
-    'a1b2c3d4-3333-4000-a000-000000000003',
-    'a1b2c3d4-4444-4000-a000-000000000004',
-    'a1b2c3d4-5555-4000-a000-000000000005',
-    'a1b2c3d4-6666-4000-a000-000000000006',
-    'a1b2c3d4-7777-4000-a000-000000000007',
-    'a1b2c3d4-8888-4000-a000-000000000008'
-  ];
-
-  -- Incluir emails @demo.pawfriend.cl
+  -- También incluir los 8 UUIDs hardcodeados originales (solo si no son usuarios reales)
   demo_uuids := demo_uuids || ARRAY(
-    SELECT id FROM auth.users WHERE email LIKE '%@demo.pawfriend.cl'
+    SELECT u.id FROM (VALUES
+      ('a1b2c3d4-1111-4000-a000-000000000001'::uuid),
+      ('a1b2c3d4-2222-4000-a000-000000000002'::uuid),
+      ('a1b2c3d4-3333-4000-a000-000000000003'::uuid),
+      ('a1b2c3d4-4444-4000-a000-000000000004'::uuid),
+      ('a1b2c3d4-5555-4000-a000-000000000005'::uuid),
+      ('a1b2c3d4-6666-4000-a000-000000000006'::uuid),
+      ('a1b2c3d4-7777-4000-a000-000000000007'::uuid),
+      ('a1b2c3d4-8888-4000-a000-000000000008'::uuid)
+    ) AS u(id)
+    WHERE NOT EXISTS (SELECT 1 FROM profiles p WHERE p.id = u.id AND p.is_demo = false)
+  );
+
+  -- Incluir emails @demo.pawfriend.cl (solo si son demo o no tienen perfil)
+  demo_uuids := demo_uuids || ARRAY(
+    SELECT au.id FROM auth.users au
+    WHERE au.email LIKE '%@demo.pawfriend.cl'
+      AND NOT EXISTS (SELECT 1 FROM profiles p WHERE p.id = au.id AND p.is_demo = false)
   );
 
   -- Dedup
@@ -223,8 +228,9 @@ ALTER TABLE vet_service_prices ADD CONSTRAINT vet_service_prices_service_type_ch
     'urgencia','teleconsulta','control_sano','esterilizacion','limpieza_dental'
   ));
 
--- B. Desactivar temporalmente el guard trigger (lo re-activamos al final)
-ALTER TABLE pets DISABLE TRIGGER trg_guard_seed_pets;
+-- B. Desactivar TODOS los triggers de usuario en tablas que causan problemas durante el seed
+ALTER TABLE pets DISABLE TRIGGER USER;
+ALTER TABLE vet_clinical_notes DISABLE TRIGGER USER;
 
 -- ============================================================
 -- C. CREAR 100 DEMO USERS + PROFILES + PETS + PROVIDERS + TODO
@@ -356,14 +362,7 @@ DECLARE
     ARRAY['Baño completo','Corte de pelo','Baño y corte','Cepillado profesional','Spa day'],
     ARRAY['Control de peso mensual','Pesaje de rutina','Registro de peso','Control nutricional','Medición mensual']
   ];
-  v_specialties text[][] := ARRAY[
-    ARRAY['Medicina general','Vacunación','Control preventivo'],
-    ARRAY['Cirugía menor','Esterilización','Traumatología'],
-    ARRAY['Dermatología','Alergias','Cuidado de piel'],
-    ARRAY['Cardiología','Ecografía','Medicina interna'],
-    ARRAY['Odontología','Limpieza dental','Extracciones'],
-    ARRAY['Medicina felina','Etología','Comportamiento']
-  ];
+  -- v_specialties inlined como CASE en el INSERT de service_providers
 
   -- Variables de trabajo
   v_user_id uuid;
@@ -586,7 +585,14 @@ BEGIN
         5 + (i % 20),
         'dr-' || lower(replace(replace(replace(v_fname,'á','a'),'é','e'),'í','i')) ||
           '-' || lower(replace(replace(replace(v_lname,'á','a'),'é','e'),'í','i')) || '-' || i::text,
-        v_specialties[1 + (i % array_length(v_specialties, 1))],
+        CASE (i % 6)
+          WHEN 0 THEN ARRAY['Medicina general','Vacunación','Control preventivo']
+          WHEN 1 THEN ARRAY['Cirugía menor','Esterilización','Traumatología']
+          WHEN 2 THEN ARRAY['Dermatología','Alergias','Cuidado de piel']
+          WHEN 3 THEN ARRAY['Cardiología','Ecografía','Medicina interna']
+          WHEN 4 THEN ARRAY['Odontología','Limpieza dental','Extracciones']
+          ELSE ARRAY['Medicina felina','Etología','Comportamiento']
+        END,
         'VET-' || lpad(i::text, 5, '0'),
         15000 + (i % 20) * 1000,
         CASE WHEN i % 3 = 0 THEN 'clinic' ELSE 'individual' END,
@@ -811,8 +817,7 @@ BEGIN
         -- No auto-review
         IF v_all_users[v_idx] != v_all_providers[i] THEN
           INSERT INTO service_reviews (
-            provider_id, reviewer_id, rating, title, comment,
-            is_verified, is_visible, created_at
+            provider_id, reviewer_id, rating, title, comment, service_type, created_at
           ) VALUES (
             v_all_provider_ids[i],
             v_all_users[v_idx],
@@ -831,7 +836,7 @@ BEGIN
               WHEN 3 THEN 'Buena experiencia en general. El lugar es limpio y organizado.'
               ELSE 'Mi mascota estaba nerviosa pero la trataron con mucho cariño. Gracias!'
             END,
-            true, true,
+            'booking',
             now() - ((i*5 + j*3) || ' days')::interval
           ) ON CONFLICT (id) DO NOTHING;
         END IF;
@@ -1108,14 +1113,16 @@ BEGIN
           BEGIN
             INSERT INTO service_slots (
               id, provider_id, slot_date, start_time, end_time,
-              service_type, price_clp, is_active
+              service_type, title, description, price, is_active
             ) VALUES (
               v_slot_id,
               v_all_provider_ids[i],
               v_slot_date,
               ('09:00'::time + (j * interval '2 hours')),
               ('10:00'::time + (j * interval '2 hours')),
-              'consulta_general',
+              'vet',
+              'Consulta general - Horario ' || j::text,
+              'Consulta veterinaria general de 1 hora',
               25000 + (i * 1000),
               true
             ) ON CONFLICT (id) DO NOTHING;
@@ -1124,15 +1131,16 @@ BEGIN
               v_idx := 1 + ((i * 11 + j * 7) % array_length(v_all_users, 1));
               INSERT INTO bookings (
                 slot_id, user_id, provider_id, pet_id,
-                status, notes, created_at
+                service_type, status, total_price, notes
               ) VALUES (
                 v_slot_id,
                 v_all_users[v_idx],
                 v_all_providers[i],
                 (SELECT id FROM pets WHERE owner_id = v_all_users[v_idx] LIMIT 1),
-                CASE j % 3 WHEN 0 THEN 'confirmado' WHEN 1 THEN 'pendiente' ELSE 'completado' END,
-                'Reserva demo',
-                now() - ((j) || ' days')::interval
+                'vet',
+                CASE j % 3 WHEN 0 THEN 'confirmed' WHEN 1 THEN 'pending' ELSE 'completed' END,
+                25000 + (i * 1000),
+                'Reserva demo'
               ) ON CONFLICT (id) DO NOTHING;
             END IF;
           END;
@@ -1160,7 +1168,7 @@ BEGIN
         v_all_users[v_idx],
         'Paseador profesional con experiencia en razas grandes y pequeñas. Paseos seguros y divertidos.',
         2 + i,
-        '[{"name":"' || v_communes[1 + (i % array_length(v_communes, 1))] || '","radius":5}]'::jsonb,
+        jsonb_build_array(jsonb_build_object('name', v_communes[1 + (i % array_length(v_communes, 1))], 'radius', 5)),
         '{"lunes":[{"start":"08:00","end":"12:00"},{"start":"15:00","end":"19:00"}],"martes":[{"start":"08:00","end":"18:00"}],"miercoles":[{"start":"08:00","end":"18:00"}]}'::jsonb,
         8000 + i * 1000,
         6000 + i * 500,
@@ -1169,7 +1177,7 @@ BEGIN
         true, true,
         4.0 + (random() * 1.0)::numeric(3,2),
         20 + i * 15
-      ) ON CONFLICT (user_id) DO NOTHING;
+      );
     END IF;
   END LOOP;
 
@@ -1191,12 +1199,12 @@ BEGIN
         ARRAY['refuerzo positivo','clicker training','desensibilización'],
         20000 + i * 2000,
         60,
-        '[{"name":"' || v_communes[1 + (i*3 % array_length(v_communes, 1))] || '","radius":8}]'::jsonb,
+        jsonb_build_array(jsonb_build_object('name', v_communes[1 + (i*3 % array_length(v_communes, 1))], 'radius', 8)),
         '{"lunes":[{"start":"09:00","end":"18:00"}],"miercoles":[{"start":"09:00","end":"18:00"}],"viernes":[{"start":"09:00","end":"14:00"}]}'::jsonb,
         true, true,
         4.2 + (random() * 0.8)::numeric(3,2),
         30 + i * 20
-      ) ON CONFLICT (user_id) DO NOTHING;
+      );
     END IF;
   END LOOP;
 
@@ -1222,7 +1230,7 @@ BEGIN
         'approved',
         4.0 + (random() * 1.0)::numeric(3,2),
         15 + i * 10
-      ) ON CONFLICT (user_id) DO NOTHING;
+      );
     END IF;
   END LOOP;
 
@@ -1248,11 +1256,11 @@ BEGIN
         18000 + i * 2000,
         12000 + i * 1500,
         '{"lunes":[{"start":"07:00","end":"22:00"}],"martes":[{"start":"07:00","end":"22:00"}],"sabado":[{"start":"08:00","end":"20:00"}]}'::jsonb,
-        '[{"name":"' || v_communes[1 + (i*5 % array_length(v_communes, 1))] || '","radius":5}]'::jsonb,
+        jsonb_build_array(jsonb_build_object('name', v_communes[1 + (i*5 % array_length(v_communes, 1))], 'radius', 5)),
         true, true,
         3.8 + (random() * 1.2)::numeric(3,2),
         10 + i * 8
-      ) ON CONFLICT (user_id) DO NOTHING;
+      );
     END IF;
   END LOOP;
 
@@ -1648,7 +1656,8 @@ END $$;
 -- ============================================================
 -- F. Re-activar guard trigger
 -- ============================================================
-ALTER TABLE pets ENABLE TRIGGER trg_guard_seed_pets;
+ALTER TABLE pets ENABLE TRIGGER USER;
+ALTER TABLE vet_clinical_notes ENABLE TRIGGER USER;
 
 -- ============================================================
 -- G. Comentario final
