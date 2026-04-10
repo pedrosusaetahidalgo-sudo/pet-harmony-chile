@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -90,6 +91,13 @@ export default function Upgrade() {
 
   return (
     <div className="relative min-h-screen overflow-hidden">
+      <Helmet>
+        <title>Paw Friend Premium — Cuida mejor a tu mascota</title>
+        <meta
+          name="description"
+          content="Activa Premium desde $3.990/mes. Mascotas ilimitadas, ficha clinica PDF, recordatorios y mas para cuidar a tu mascota."
+        />
+      </Helmet>
       <PageHeader title="Plan Premium" onBack={() => navigate(LINKS.profile())} />
       {/* Fondo dorado sutil */}
       <div

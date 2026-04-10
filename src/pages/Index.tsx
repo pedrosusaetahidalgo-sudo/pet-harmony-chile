@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { useAuth } from "@/hooks/useAuth";
 import { LINKS } from "@/lib/links";
 import { PublicHeader } from "@/components/PublicHeader";
@@ -111,6 +112,14 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Paw Friend — La salud de tu mascota en un lugar</title>
+        <meta
+          name="description"
+          content="Ficha clinica digital, directorio de veterinarios verificados y recordatorios automaticos para tu mascota. Gratis en Chile."
+        />
+        <link rel="canonical" href="https://pawfriend.cl/" />
+      </Helmet>
       <PublicHeader />
       <Hero />
 

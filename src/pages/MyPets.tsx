@@ -349,10 +349,12 @@ const MyPets = () => {
         <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>¿Estás seguro?</AlertDialogTitle>
+              <AlertDialogTitle>
+                ¿Eliminar a {pets.find(p => p.id === deleteId)?.name ?? "esta mascota"}?
+              </AlertDialogTitle>
               <AlertDialogDescription>
-                Esta acción no se puede deshacer. Se eliminará permanentemente el
-                perfil de esta mascota y todos sus registros asociados.
+                Esta acción no se puede deshacer. Se eliminarán todos los registros
+                médicos, recordatorios y datos asociados.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -361,7 +363,7 @@ const MyPets = () => {
                 onClick={handleDelete}
                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               >
-                Eliminar
+                Sí, eliminar
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

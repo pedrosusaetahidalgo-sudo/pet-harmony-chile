@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Search, MapPin, Star, Stethoscope } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -96,6 +97,14 @@ export default function DirectorioVets() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50/40 to-white">
+      <Helmet>
+        <title>Veterinarios verificados en Chile | Paw Friend</title>
+        <meta
+          name="description"
+          content="Encuentra veterinarios verificados cerca de tu comuna. Compara precios, lee resenas de otros duenos y agenda tu consulta en Paw Friend."
+        />
+        <link rel="canonical" href="https://pawfriend.cl/veterinarios" />
+      </Helmet>
       {!user && <PublicHeader />}
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">

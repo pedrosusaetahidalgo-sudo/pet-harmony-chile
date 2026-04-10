@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { PetProfileCard } from "@/components/PetProfileCard";
 import TopRatedProviders from "@/components/TopRatedProviders";
 import { useState, useEffect } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -287,9 +288,23 @@ const Feed = () => {
             {/* Feed Posts - shown above tabs */}
             <div className="space-y-4 mb-6">
               {loading ? (
-                <div className="text-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground">Cargando publicaciones...</p>
+                <div className="space-y-4">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="rounded-xl border bg-card p-4 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                        <div className="space-y-1.5">
+                          <Skeleton className="h-4 w-28" />
+                          <Skeleton className="h-3 w-20" />
+                        </div>
+                      </div>
+                      <Skeleton className="h-48 w-full rounded-lg" />
+                      <div className="flex gap-4">
+                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-4 w-16" />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               ) : filterBlocked(posts, "user_id").length === 0 ? (
                 <EmptyState icon={PawPrint} title="No hay publicaciones todavía" description="¡Sé el primero en compartir una foto de tu mascota!" actionLabel="Publicar" onAction={() => setShowCreatePost(true)} />

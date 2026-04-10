@@ -1,27 +1,38 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { supabase } from "@/integrations/supabase/client";
+import type { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2, Upload, FileCheck, Briefcase, Home, Stethoscope, GraduationCap } from "@/lib/icons";
+import { Loader2, Upload, FileCheck, Briefcase, Home, Stethoscope, GraduationCap, Scissors } from "@/lib/icons";
 import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { logger } from "@/lib/logger";
 
+type ServiceRole = 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'groomer';
+
 interface RoleRequestFormData {
-  requested_role: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer';
+  requested_role: ServiceRole;
   notes: string;
 }
 
-export const RequestRoleVerification = () => {
+interface RequestRoleVerificationProps {
+  defaultRole?: ServiceRole;
+}
+
+export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerificationProps) => {
   const [loading, setLoading] = useState(false);
   const [uploadingDocument, setUploadingDocument] = useState(false);
   const [documentUrls, setDocumentUrls] = useState<string[]>([]);
-  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<RoleRequestFormData>();
+  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<RoleRequestFormData>({
+    defaultValues: {
+      requested_role: defaultRole,
+    },
+  });
 
   const requestedRole = watch('requested_role');
 
@@ -97,7 +108,7 @@ export const RequestRoleVerification = () => {
         .from('verification_requests')
         .insert({
           user_id: user.id,
-          requested_role: data.requested_role,
+          requested_role: data.requested_role as Database["public"]["Enums"]["app_role"],
           notes: data.notes,
           document_urls: documentUrls,
           status: 'pendiente'
@@ -125,6 +136,8 @@ export const RequestRoleVerification = () => {
         return <Stethoscope className="h-5 w-5" />;
       case 'trainer':
         return <GraduationCap className="h-5 w-5" />;
+      case 'groomer':
+        return <Scissors className="h-5 w-5" />;
       default:
         return null;
     }
@@ -140,6 +153,8 @@ export const RequestRoleVerification = () => {
         return 'Veterinario a Domicilio';
       case 'trainer':
         return 'Entrenador Canino';
+      case 'groomer':
+        return 'Peluquero de Mascotas';
       default:
         return role;
     }
@@ -205,7 +220,10 @@ export const RequestRoleVerification = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="requested_role">Tipo de Servicio</Label>
-            <Select onValueChange={(value) => setValue('requested_role', value as RoleRequestFormData['requested_role'])}>
+            <Select
+              defaultValue={defaultRole}
+              onValueChange={(value) => setValue('requested_role', value as RoleRequestFormData['requested_role'])}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Selecciona el tipo de servicio" />
               </SelectTrigger>
@@ -232,6 +250,12 @@ export const RequestRoleVerification = () => {
                   <div className="flex items-center gap-2">
                     <GraduationCap className="h-4 w-4" />
                     Entrenador Canino
+                  </div>
+                </SelectItem>
+                <SelectItem value="groomer">
+                  <div className="flex items-center gap-2">
+                    <Scissors className="h-4 w-4" />
+                    Peluquero de Mascotas
                   </div>
                 </SelectItem>
               </SelectContent>

@@ -11,7 +11,7 @@ import type { Database } from "@/integrations/supabase/types";
 type AppRole = Database['public']['Enums']['app_role'];
 
 interface OfferServiceButtonProps {
-  serviceType: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer';
+  serviceType: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'groomer';
   serviceName: string;
   className?: string;
 }
@@ -68,7 +68,7 @@ export const OfferServiceButton = ({ serviceType, serviceName, className = "" }:
         <DialogHeader>
           <DialogTitle>Ofrecer Servicios como {serviceName}</DialogTitle>
         </DialogHeader>
-        <RequestRoleVerification />
+        <RequestRoleVerification defaultRole={serviceType} />
       </DialogContent>
     </Dialog>
   );

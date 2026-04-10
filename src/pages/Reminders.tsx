@@ -11,6 +11,7 @@ import { useReminders } from "@/hooks/useReminders";
 import { LINKS } from "@/lib/links";
 import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { Skeleton } from "@/components/ui/skeleton";
 
 /**
  * Pagina agregadora de recordatorios.
@@ -71,9 +72,15 @@ export default function Reminders() {
 
       <main className="container max-w-5xl mx-auto px-3 py-4 space-y-6">
         {isLoading && (
-          <div className="space-y-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-20 bg-muted/60 rounded-lg animate-pulse" />
+              <div key={i} className="rounded-xl border border-l-4 border-l-purple-600 bg-card p-3 flex items-center gap-3">
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-3 w-24" />
+                </div>
+                <Skeleton className="h-10 w-10 rounded-md" />
+              </div>
             ))}
           </div>
         )}

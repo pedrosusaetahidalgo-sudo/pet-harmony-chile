@@ -18,6 +18,8 @@ import {
   useCreateVetClinicalNote,
   type VetNoteType,
 } from "@/hooks/useVetClinicalNotes";
+import ConsultationTemplateSelector from "./ConsultationTemplateSelector";
+import SaveTemplateButton from "./SaveTemplateButton";
 
 interface VetNoteEditorProps {
   shareTokenId: string;
@@ -87,6 +89,21 @@ export function VetNoteEditor({
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="space-y-1.5">
+          <Label className="text-xs">Usar plantilla</Label>
+          <ConsultationTemplateSelector
+            providerId={providerId}
+            onSelect={(body) => {
+              if (body.title && typeof body.title === "string") setTitle(body.title);
+              if (body.description && typeof body.description === "string") setDescription(body.description);
+              if (body.noteType && typeof body.noteType === "string") {
+                const valid = NOTE_TYPES.find((t) => t.value === body.noteType);
+                if (valid) setNoteType(valid.value);
+              }
+            }}
+          />
+        </div>
+
+        <div className="space-y-1.5">
           <Label className="text-xs">Tipo de nota</Label>
           <Select
             value={noteType}
@@ -144,6 +161,17 @@ export function VetNoteEditor({
               rows={2}
             />
           )}
+        </div>
+
+        <div className="flex items-center justify-between gap-2">
+          <SaveTemplateButton
+            providerId={providerId}
+            getCurrentBody={() => ({
+              title,
+              description,
+              noteType,
+            })}
+          />
         </div>
 
         <Button

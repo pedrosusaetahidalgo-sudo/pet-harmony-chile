@@ -37,6 +37,7 @@ import { useGoToAddPet } from "@/hooks/useCanAddPet";
 import { logger } from "@/lib/logger";
 import { PriceEstimatorCard } from "@/components/home/PriceEstimatorCard";
 import { WeeklyReportCard } from "@/components/home/WeeklyReportCard";
+import { Skeleton } from "@/components/ui/skeleton";
 import { usePendingReviewCount } from "@/hooks/usePendingReviews";
 import { formatDistanceToNowStrict, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
@@ -218,20 +219,33 @@ export default function Home() {
   if (loading) {
     return (
       <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-4 animate-fade-in">
-        <div className="rounded-2xl bg-muted/40 p-4 space-y-3">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full skeleton" />
-            <div className="space-y-2">
-              <div className="h-4 w-40 skeleton" />
-              <div className="h-3 w-24 skeleton" />
-            </div>
+        {/* Header skeleton: avatar + greeting */}
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-10 w-10 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-40" />
+            <Skeleton className="h-3 w-24" />
           </div>
         </div>
+
+        {/* PawGame widget skeleton */}
+        <Skeleton className="h-16 w-full rounded-xl" />
+
+        {/* Pet switcher skeleton */}
+        <div className="flex gap-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="flex flex-col items-center gap-1">
+              <Skeleton className="h-16 w-16 rounded-full" />
+              <Skeleton className="h-3 w-12" />
+            </div>
+          ))}
+        </div>
+
+        {/* Status cards skeleton */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <div className="h-20 rounded-xl skeleton" />
-          <div className="h-20 rounded-xl skeleton" />
-          <div className="h-20 rounded-xl skeleton" />
-          <div className="h-20 rounded-xl skeleton" />
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-20 rounded-xl" />
+          ))}
         </div>
       </div>
     );
