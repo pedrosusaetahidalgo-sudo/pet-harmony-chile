@@ -41,6 +41,17 @@ export function getGreeting(): string {
  * "pedro susaeta" → "Pedro Susaeta"
  * "maria del carmen" → "Maria del Carmen"
  */
+/**
+ * Auto-capitaliza texto: mayúscula al inicio y después de cada punto.
+ * Uso: onBlur en campos de texto libre (bio, notas, comportamiento).
+ * NO usar en: email, contraseña, Colmevet, microchip, URLs.
+ */
+export function smartCapitalize(text: string): string {
+  if (!text.trim()) return text;
+  return text
+    .replace(/(^\s*\w|[.!?]\s+\w)/g, (match) => match.toUpperCase());
+}
+
 export function toTitleCase(text: string): string {
   const lower = new Set(['de', 'del', 'la', 'las', 'los', 'el', 'en', 'y', 'e', 'o', 'u']);
   return text

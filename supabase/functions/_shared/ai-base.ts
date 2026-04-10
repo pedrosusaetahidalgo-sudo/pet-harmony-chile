@@ -92,6 +92,22 @@ export async function checkRateLimit(
   return { allowed: true, remaining: maxPerDay - callsToday - 1 };
 }
 
+/**
+ * Sanitiza input del usuario para prevenir prompt injection.
+ * Elimina patrones comunes de inyección sin alterar preguntas legítimas.
+ */
+export function sanitizeForPrompt(input: string): string {
+  let s = input.trim();
+  // Truncar a 500 chars (suficiente para una pregunta)
+  s = s.slice(0, 500);
+  // Eliminar patrones de prompt injection comunes
+  s = s.replace(/(?:ignore|olvida|ignora|forget)\s+(?:previous|anterior|all|todo|las)\s+(?:instructions?|instrucciones?)/gi, "[filtrado]");
+  s = s.replace(/(?:system|sistema)\s*(?:prompt|mensaje)/gi, "[filtrado]");
+  s = s.replace(/(?:you are now|ahora eres|actúa como|act as|pretend)/gi, "[filtrado]");
+  s = s.replace(/```[\s\S]*?```/g, "[código removido]");
+  return s;
+}
+
 export async function callClaude(options: {
   systemPrompt: string;
   userMessage: string;

@@ -230,6 +230,7 @@ const App = () => (
               <Route path="/panel-pro" element={<ProtectedRoute><AppLayout><ProDashboard /></AppLayout></ProtectedRoute>} />
               <Route path="/analytics-demo" element={<ProtectedRoute><AppLayout><AnalyticsDashboard /></AppLayout></ProtectedRoute>} />
               <Route path="/registro-veterinario" element={<RegistroVeterinario />} />
+              <Route path="/registro-proveedor" element={<RegistroVeterinario />} />
               <Route path="/para-veterinarios" element={<ParaVeterinarios />} />
               <Route path="/precios-veterinarios" element={<PublicWithLayoutIfAuth><PreciosVeterinarios /></PublicWithLayoutIfAuth>} />
               <Route path="/precios-veterinarios/comuna/:comuna" element={<PublicWithLayoutIfAuth><PreciosVeterinarios /></PublicWithLayoutIfAuth>} />

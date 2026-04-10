@@ -1,1 +1,0 @@
-function r(){const e=new Date().getHours();return e<12?"Buenos días":e<19?"Buenas tardes":"Buenas noches"}function o(e){const s=new Set(["de","del","la","las","los","el","en","y","e","o","u"]);return e.trim().split(/\s+/).map((t,n)=>n>0&&s.has(t.toLowerCase())?t.toLowerCase():t.charAt(0).toUpperCase()+t.slice(1).toLowerCase()).join(" ")}export{r as g,o as t};

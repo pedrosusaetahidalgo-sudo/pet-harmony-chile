@@ -49,6 +49,15 @@ serve(async (req) => {
     const body = await req.json();
     const { question, pet_id } = body;
 
+    // Sanitizar input del usuario contra prompt injection
+    const sanitize = (s: string) => {
+      let t = s.trim().slice(0, 500);
+      t = t.replace(/(?:ignore|olvida|ignora|forget)\s+(?:previous|anterior|all|todo|las)\s+(?:instructions?|instrucciones?)/gi, "[filtrado]");
+      t = t.replace(/(?:system|sistema)\s*(?:prompt|mensaje)/gi, "[filtrado]");
+      t = t.replace(/(?:you are now|ahora eres|actúa como|act as|pretend)/gi, "[filtrado]");
+      return t;
+    };
+
     if (!question || typeof question !== "string" || question.trim().length < 3) {
       return new Response(JSON.stringify({ error: "Question is required (min 3 characters)" }), {
         status: 400,
@@ -207,7 +216,7 @@ FORMATO DE RESPUESTA (OBLIGATORIO - solo JSON):
           max_tokens: 600,
           temperature: 0.3,
           system: systemPrompt,
-          messages: [{ role: "user", content: question.trim() }],
+          messages: [{ role: "user", content: sanitize(question) }],
         }),
         signal: controller.signal,
       });

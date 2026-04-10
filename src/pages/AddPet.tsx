@@ -19,6 +19,7 @@ import { describeSupabaseError } from "@/lib/supabaseErrors";
 import { logger } from "@/lib/logger";
 import { useOrganicRewards } from "@/hooks/useOrganicRewards";
 import { filterBreeds, BREEDS_BY_SPECIES } from "@/lib/breeds";
+import { smartCapitalize, toTitleCase } from "@/lib/format";
 import { useCanAddPet } from "@/hooks/useCanAddPet";
 import { Sparkles, Crown } from "@/lib/icons";
 import { PageHeader } from "@/components/PageHeader";
@@ -556,6 +557,7 @@ const AddPet = () => {
                   required
                   value={formData.name}
                   onChange={(e) => updateField("name", e.target.value)}
+                  onBlur={(e) => updateField("name", toTitleCase(e.target.value))}
                   placeholder="Max, Luna, Rocky..."
                 />
               </div>
@@ -729,6 +731,7 @@ const AddPet = () => {
                 id="bio"
                 value={formData.bio}
                 onChange={(e) => updateField("bio", e.target.value)}
+                onBlur={(e) => updateField("bio", smartCapitalize(e.target.value))}
                 placeholder="Cuéntanos sobre tu mascota..."
                 rows={3}
               />
@@ -877,6 +880,7 @@ const AddPet = () => {
                     id="behavior"
                     value={formData.behavior_notes}
                     onChange={(e) => updateField("behavior_notes", e.target.value)}
+                    onBlur={(e) => updateField("behavior_notes", smartCapitalize(e.target.value))}
                     placeholder="Miedos, fobias, comportamientos especiales..."
                     rows={2}
                   />
