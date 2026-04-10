@@ -10,6 +10,7 @@ import { ReactNode } from "react";
 import { isNative } from "@/lib/platform";
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import { ActiveRoleProvider } from "./hooks/useActiveRole";
 
 /** Envuelve la página con AppLayout solo si el user está logueado.
  *  Para rutas públicas (directorio vets, perfiles públicos) que deben verse
@@ -26,6 +27,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 const Index = lazy(() => import("./pages/Index"));
 const Home = lazy(() => import("./pages/Home"));
 const Feed = lazy(() => import("./pages/Feed"));
+const Community = lazy(() => import("./pages/Community"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Auth = lazy(() => import("./pages/Auth"));
 const MyPets = lazy(() => import("./pages/MyPets"));
@@ -177,6 +179,7 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
+          <ActiveRoleProvider>
           <ErrorBoundary>
           <Suspense fallback={<PageLoader />}>
             <Routes>
@@ -184,6 +187,8 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/home" element={<ProtectedRoute><AppLayout><Home /></AppLayout></ProtectedRoute>} />
               <Route path="/feed" element={<ProtectedRoute><AppLayout><Feed /></AppLayout></ProtectedRoute>} />
+              <Route path="/comunidad" element={<ProtectedRoute><AppLayout><Community /></AppLayout></ProtectedRoute>} />
+              <Route path="/comunidad/:slug" element={<ProtectedRoute><AppLayout><Community /></AppLayout></ProtectedRoute>} />
               <Route path="/my-pets" element={<ProtectedRoute><AppLayout><MyPets /></AppLayout></ProtectedRoute>} />
               <Route path="/add-pet" element={<ProtectedRoute><AppLayout><AddPet /></AppLayout></ProtectedRoute>} />
               <Route path="/edit-pet/:petId" element={<ProtectedRoute><AppLayout><AddPet /></AppLayout></ProtectedRoute>} />
@@ -244,6 +249,7 @@ const App = () => (
             </Routes>
           </Suspense>
           </ErrorBoundary>
+          </ActiveRoleProvider>
         </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>

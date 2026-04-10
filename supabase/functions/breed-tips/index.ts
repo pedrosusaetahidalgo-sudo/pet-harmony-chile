@@ -94,7 +94,7 @@ REGLAS:
         },
         body: JSON.stringify({
           model: "claude-sonnet-4-5",
-          max_tokens: 400,
+          max_tokens: 300,
           temperature: 0.3,
           system: systemPrompt,
           messages: [

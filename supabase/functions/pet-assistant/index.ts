@@ -141,54 +141,28 @@ serve(async (req) => {
       }
     }
 
-    const petContext = `
-DATOS DE LA MASCOTA:
-- Nombre: ${pet.name}
-- Especie: ${pet.species}
-- Raza: ${pet.breed || "no especificada"}
-- Edad: ${petAge}
-- Peso: ${pet.weight ? pet.weight + " kg" : "no registrado"}
-- Género: ${pet.gender || "no especificado"}
-- Esterilizado: ${pet.neutered ? "Sí" : "No"}
-- Alergias alimentarias: ${pet.allergies_food || "ninguna conocida"}
-- Alergias a medicamentos: ${pet.allergies_medication || "ninguna conocida"}
-- Alergias ambientales: ${pet.allergies_environmental || "ninguna conocida"}
-- Condiciones crónicas: ${pet.chronic_conditions_detail || "ninguna"}
-- Medicamentos actuales: ${pet.current_medications || "ninguno"}
-- Tipo de dieta: ${pet.diet_type || "no especificada"}
-- Nivel de actividad: ${pet.activity_level || "no especificado"}
-- Notas de comportamiento: ${pet.behavior_notes || "ninguna"}
-- Microchip: ${pet.microchip_number || "no registrado"}
+    // Contexto compacto — solo campos con valor (reduce tokens ~40%)
+    const ctx: string[] = [`${pet.name}, ${pet.species}${pet.breed ? ` ${pet.breed}` : ""}, ${petAge}`];
+    if (pet.weight) ctx.push(`${pet.weight}kg`);
+    if (pet.gender) ctx.push(pet.gender);
+    if (pet.neutered) ctx.push("esterilizado");
+    const allergies = [pet.allergies_food, pet.allergies_medication, pet.allergies_environmental].filter(Boolean);
+    if (allergies.length) ctx.push(`Alergias: ${allergies.join(", ")}`);
+    if (pet.chronic_conditions_detail) ctx.push(`Crónicas: ${JSON.stringify(pet.chronic_conditions_detail)}`);
+    if (pet.current_medications) ctx.push(`Meds: ${JSON.stringify(pet.current_medications)}`);
 
-HISTORIAL MÉDICO RECIENTE (últimos 10 registros):
-${records?.length ? records.map(r => `- [${r.date}] ${r.record_type}: ${r.title}${r.description ? ` - ${r.description}` : ""}${r.veterinarian_name ? ` (Dr. ${r.veterinarian_name})` : ""}`).join("\n") : "Sin registros médicos."}
+    const historial = records?.length
+      ? records.map(r => `[${r.date}] ${r.record_type}: ${r.title}`).join("; ")
+      : "sin historial";
+    const recordatorios = reminders?.length
+      ? reminders.map(r => `${r.type}: ${r.title} (${r.due_date})`).join("; ")
+      : "";
 
-RECORDATORIOS PENDIENTES:
-${reminders?.length ? reminders.map(r => `- ${r.type}: ${r.title} (vence ${r.due_date})`).join("\n") : "Sin recordatorios pendientes."}
-`.trim();
+    const systemPrompt = `Asistente veterinario Paw Friend (Chile). Mascota: ${ctx.join(" | ")}
+Historial: ${historial}${recordatorios ? `\nRecordatorios: ${recordatorios}` : ""}
 
-    const systemPrompt = `Eres un asistente veterinario de Paw Friend, una app chilena de cuidado de mascotas. Tienes acceso a la ficha clínica completa de la mascota del usuario.
-
-${petContext}
-
-REGLAS ESTRICTAS:
-1. Responde SIEMPRE basándote en los datos reales de la mascota. Usa su nombre.
-2. Si la pregunta es sobre síntomas graves (vómitos con sangre, dificultad respiratoria, convulsiones, intoxicación), responde con URGENCIA y recomienda ir al veterinario inmediatamente.
-3. Si hay recordatorios vencidos relevantes a la pregunta, menciónalos.
-4. Si hay alergias conocidas y la pregunta es sobre alimentación o medicamentos, adviértelo.
-5. NUNCA diagnostiques. Puedes sugerir posibles causas pero siempre indica que un veterinario debe confirmar.
-6. Responde en español de Chile, tono cálido y profesional.
-7. Sé MUY conciso: 2-4 oraciones cortas en total. Quédate solo con lo más relevante. Nada de párrafos largos ni listas extensas.
-8. Si no tienes suficiente información para responder bien, dilo honestamente.
-
-FORMATO DE RESPUESTA (OBLIGATORIO - solo JSON):
-{
-  "respuesta": "tu respuesta completa aquí",
-  "nivel_urgencia": "bajo" | "medio" | "alto",
-  "requiere_veterinario": true | false,
-  "recordatorios_relevantes": ["recordatorio 1", "recordatorio 2"] o [],
-  "sugerencias_accion": ["acción 1", "acción 2", "acción 3"]
-}`;
+REGLAS: Usa nombre real. Síntomas graves → urgencia + vet ya. Alergias → advertir. NUNCA diagnostiques. 2-4 oraciones concisas. Español chileno.
+Responde SOLO JSON: {"respuesta":"...","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":bool,"recordatorios_relevantes":[],"sugerencias_accion":[]}`;
 
     // Call Claude
     const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
@@ -213,7 +187,7 @@ FORMATO DE RESPUESTA (OBLIGATORIO - solo JSON):
         },
         body: JSON.stringify({
           model: "claude-sonnet-4-5",
-          max_tokens: 600,
+          max_tokens: 400,
           temperature: 0.3,
           system: systemPrompt,
           messages: [{ role: "user", content: sanitize(question) }],

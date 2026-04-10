@@ -1,6 +1,7 @@
 /**
  * Edge Function: Generate Medical Summary PDF
- * Creates a comprehensive PDF summary of a pet's medical records
+ * Creates a comprehensive, professionally formatted PDF of a pet's medical records.
+ * Order: Header → Pet info → Owner → Estado actual → Vacunas → Consultas → Desparasitaciones → Footer
  */
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
@@ -12,18 +13,25 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+const PURPLE = rgb(0.416, 0.227, 0.718); // #6A3AB7
+const GRAY = rgb(0.4, 0.4, 0.4);
+const LIGHT_GRAY = rgb(0.85, 0.85, 0.85);
+const BLACK = rgb(0, 0, 0);
+const PAGE_W = 612;
+const PAGE_H = 792;
+const MARGIN_X = 50;
+const MARGIN_BOTTOM = 60;
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    // Initialize Supabase client
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Authenticate user
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("No authorization header");
 
@@ -32,21 +40,16 @@ serve(async (req) => {
     if (userError || !userData.user) throw new Error("User not authenticated");
 
     const { pet_id } = await req.json();
+    if (!pet_id || typeof pet_id !== "string") throw new Error("pet_id is required");
 
-    if (!pet_id || typeof pet_id !== "string") {
-      throw new Error("pet_id is required and must be a string");
-    }
-
-    // Ownership check: verify the authenticated user owns this pet
+    // Ownership check
     const { data: petOwnership, error: ownershipError } = await supabase
       .from("pets")
       .select("owner_id")
       .eq("id", pet_id)
       .single();
 
-    if (ownershipError || !petOwnership) {
-      throw new Error("Pet not found");
-    }
+    if (ownershipError || !petOwnership) throw new Error("Pet not found");
     if (petOwnership.owner_id !== userData.user.id) {
       return new Response(
         JSON.stringify({ success: false, error: "Forbidden" }),
@@ -54,179 +57,251 @@ serve(async (req) => {
       );
     }
 
-    // Get medical summary data
+    // Get all data
     const { data: summaryData, error: summaryError } = await supabase.rpc(
       "get_medical_summary_data",
       { p_pet_id: pet_id }
     );
-
     if (summaryError) throw summaryError;
-    if (!summaryData) throw new Error("No data found for pet");
+    if (!summaryData) throw new Error("No data found");
 
     const pet = summaryData.pet;
     const owner = summaryData.owner;
-    const vaccinations = summaryData.vaccinations || [];
-    const recentVisits = summaryData.recent_visits || [];
-
-    // Crear PDF
-    const pdfDoc = await PDFDocument.create();
-    let page = pdfDoc.addPage([612, 792]); // US Letter
-    const { height } = page.getSize();
-
-    // Fuentes
-    const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-
-    let yPosition = height - 50;
-    const PAGE_BOTTOM_MARGIN = 60;
-
-    // Helper: dibuja una linea de texto. Si excede el bottom, crea nueva pagina y reasigna `page`.
-    const drawLine = (
-      text: string,
-      opts: { size: number; bold?: boolean; spacing?: number }
-    ) => {
-      const spacing = opts.spacing ?? 15;
-      if (yPosition < PAGE_BOTTOM_MARGIN) {
-        page = pdfDoc.addPage([612, 792]);
-        yPosition = page.getSize().height - 50;
-      }
-      page.drawText(text, {
-        x: 50,
-        y: yPosition,
-        size: opts.size,
-        font: opts.bold ? helveticaBold : helvetica,
-        color: rgb(0, 0, 0),
-      });
-      yPosition -= spacing;
-    };
-
-    // Encabezado
-    drawLine("Resumen médico de la mascota", { size: 24, bold: true, spacing: 40 });
-
-    // Información de la mascota
-    drawLine("Información de la mascota", { size: 16, bold: true, spacing: 25 });
-
-    const petInfo = [
-      `Nombre: ${pet.name || "N/A"}`,
-      `Especie: ${pet.species || "N/A"}`,
-      `Raza: ${pet.breed || "N/A"}`,
-      `Sexo: ${pet.gender || "N/A"}`,
-      `Fecha de nacimiento: ${pet.birth_date || "N/A"}`,
-      `Peso: ${pet.weight ? `${pet.weight} kg` : "N/A"}`,
-      `Microchip: ${pet.microchip_number || "N/A"}`,
-      `Esterilizado: ${pet.neutered ? "Sí" : "No"}`,
-    ];
-    petInfo.forEach((line) => drawLine(line, { size: 10 }));
-
-    // Alergias
-    if (pet.allergies && pet.allergies.length > 0) {
-      yPosition -= 10;
-      drawLine("Alergias:", { size: 12, bold: true });
-      drawLine(pet.allergies.join(", "), { size: 10, spacing: 20 });
-    }
-
-    // Condiciones crónicas
-    if (pet.chronic_conditions && pet.chronic_conditions.length > 0) {
-      drawLine("Condiciones crónicas:", { size: 12, bold: true });
-      drawLine(pet.chronic_conditions.join(", "), { size: 10, spacing: 20 });
-    }
-
-    // Información del dueño
-    yPosition -= 10;
-    drawLine("Información del dueño", { size: 16, bold: true, spacing: 25 });
-
-    const ownerInfo = [
-      `Nombre: ${owner.display_name || "N/A"}`,
-      `Email: ${owner.email || "N/A"}`,
-    ];
-    ownerInfo.forEach((line) => drawLine(line, { size: 10 }));
-
-    // Vacunas
-    if (vaccinations.length > 0) {
-      yPosition -= 20;
-      drawLine("Vacunas", { size: 16, bold: true, spacing: 25 });
-
-      vaccinations.slice(0, 10).forEach((vacc: any) => {
-        const line = `${vacc.title || "Vacuna"} - ${vacc.date || "N/A"}${
-          vacc.next_date ? ` (Próxima: ${vacc.next_date})` : ""
-        }`;
-        drawLine(line, { size: 10 });
-      });
-    }
-
-    // Visitas recientes
-    if (recentVisits.length > 0) {
-      yPosition -= 20;
-      drawLine("Visitas recientes", { size: 16, bold: true, spacing: 25 });
-
-      recentVisits.forEach((visit: any) => {
-        drawLine(`Fecha: ${visit.visit_date || "N/A"}`, { size: 11, bold: true });
-        if (visit.clinic_name) drawLine(`Clínica: ${visit.clinic_name}`, { size: 10 });
-        if (visit.reason) drawLine(`Motivo: ${visit.reason}`, { size: 10 });
-        if (visit.diagnosis) drawLine(`Diagnóstico: ${visit.diagnosis}`, { size: 10 });
-        yPosition -= 10;
-      });
-    }
-
-    // Footer en la última página
-    const lastPage = pdfDoc.getPages()[pdfDoc.getPageCount() - 1];
-    lastPage.drawText(
-      `Generado el ${new Date().toLocaleDateString("es-CL")}`,
-      {
-        x: 50,
-        y: 30,
-        size: 8,
-        font: helvetica,
-        color: rgb(0.5, 0.5, 0.5),
-      }
+    const vaccinations = (summaryData.vaccinations || []).sort((a: any, b: any) =>
+      (b.date || "").localeCompare(a.date || "")
+    );
+    const recentVisits = (summaryData.recent_visits || []).sort((a: any, b: any) =>
+      (b.visit_date || "").localeCompare(a.visit_date || "")
     );
 
-    // Generate PDF bytes
-    const pdfBytes = await pdfDoc.save();
+    // Fetch dewormings separately
+    const { data: dewormings } = await supabase
+      .from("medical_records")
+      .select("title, date, description")
+      .eq("pet_id", pet_id)
+      .in("record_type", ["desparasitacion", "antipulgas"])
+      .order("date", { ascending: false })
+      .limit(20);
 
-    // Upload to storage
-    const fileName = `medical-summary-${pet_id}-${Date.now()}.pdf`;
+    // === Build PDF ===
+    const pdfDoc = await PDFDocument.create();
+    const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+    let page = pdfDoc.addPage([PAGE_W, PAGE_H]);
+    let y = PAGE_H - 40;
+
+    const ensureSpace = (needed: number) => {
+      if (y < MARGIN_BOTTOM + needed) {
+        page = pdfDoc.addPage([PAGE_W, PAGE_H]);
+        y = PAGE_H - 40;
+      }
+    };
+
+    const text = (t: string, opts: { x?: number; size?: number; font?: any; color?: any; maxWidth?: number }) => {
+      ensureSpace(20);
+      const font = opts.font || helvetica;
+      const size = opts.size || 10;
+      // Truncate to fit
+      let display = t;
+      const maxW = opts.maxWidth || (PAGE_W - MARGIN_X * 2);
+      while (font.widthOfTextAtSize(display, size) > maxW && display.length > 3) {
+        display = display.slice(0, -4) + "...";
+      }
+      page.drawText(display, {
+        x: opts.x || MARGIN_X,
+        y,
+        size,
+        font,
+        color: opts.color || BLACK,
+      });
+    };
+
+    const line = () => {
+      ensureSpace(10);
+      page.drawLine({
+        start: { x: MARGIN_X, y },
+        end: { x: PAGE_W - MARGIN_X, y },
+        thickness: 0.5,
+        color: LIGHT_GRAY,
+      });
+      y -= 12;
+    };
+
+    const section = (title: string) => {
+      ensureSpace(40);
+      y -= 8;
+      page.drawRectangle({
+        x: MARGIN_X,
+        y: y - 2,
+        width: PAGE_W - MARGIN_X * 2,
+        height: 20,
+        color: rgb(0.95, 0.93, 1), // light purple bg
+      });
+      text(title, { size: 12, font: bold, color: PURPLE });
+      y -= 18;
+    };
+
+    const field = (label: string, value: string) => {
+      ensureSpace(16);
+      text(label, { size: 9, font: bold, color: GRAY });
+      text(value, { x: MARGIN_X + 140, size: 9 });
+      y -= 14;
+    };
+
+    const formatDate = (d: string | null) => {
+      if (!d) return "N/A";
+      try {
+        return new Date(d).toLocaleDateString("es-CL", { day: "2-digit", month: "short", year: "numeric" });
+      } catch {
+        return d;
+      }
+    };
+
+    // ── HEADER ──
+    text("🐾 Paw Friend", { size: 22, font: bold, color: PURPLE });
+    y -= 8;
+    text("Ficha clínica veterinaria", { size: 11, color: GRAY });
+    y -= 6;
+    text(`Generado el ${new Date().toLocaleDateString("es-CL", { day: "2-digit", month: "long", year: "numeric" })}`, { size: 8, color: GRAY });
+    y -= 10;
+    line();
+
+    // ── DATOS DE LA MASCOTA ──
+    section("Datos de la mascota");
+
+    const calcAge = (bd: string | null): string => {
+      if (!bd) return "N/A";
+      const years = Math.floor((Date.now() - new Date(bd).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+      if (years < 1) {
+        const months = Math.floor((Date.now() - new Date(bd).getTime()) / (30.44 * 24 * 60 * 60 * 1000));
+        return `${months} mes${months !== 1 ? "es" : ""}`;
+      }
+      return `${years} año${years !== 1 ? "s" : ""}`;
+    };
+
+    field("Nombre", pet.name || "N/A");
+    field("Especie / Raza", `${pet.species || "N/A"}${pet.breed ? ` — ${pet.breed}` : ""}`);
+    field("Edad", `${calcAge(pet.birth_date)}${pet.birth_date ? ` (nac. ${formatDate(pet.birth_date)})` : ""}`);
+    field("Sexo", pet.gender || "N/A");
+    field("Peso", pet.weight ? `${pet.weight} kg` : "N/A");
+    field("Esterilizado/a", pet.neutered ? "Sí" : "No");
+    field("Microchip", pet.microchip_number || "No registrado");
+
+    // ── DUEÑO ──
+    section("Dueño/a");
+    field("Nombre", owner.display_name || "N/A");
+    field("Email", owner.email || "N/A");
+
+    // ── ESTADO ACTUAL ──
+    const hasAlerts = pet.chronic_conditions?.length || pet.allergies?.length || pet.current_medications;
+    if (hasAlerts) {
+      section("Estado actual");
+      if (pet.chronic_conditions?.length) {
+        field("Condiciones crónicas", pet.chronic_conditions.join(", "));
+      }
+      if (pet.allergies?.length) {
+        field("Alergias", pet.allergies.join(", "));
+      }
+      if (pet.current_medications) {
+        const meds = Array.isArray(pet.current_medications)
+          ? pet.current_medications.map((m: any) => `${m.name}${m.dose ? ` (${m.dose})` : ""}`).join(", ")
+          : JSON.stringify(pet.current_medications);
+        field("Medicamentos actuales", meds);
+      }
+    }
+
+    // ── VACUNAS (cronológico desc) ──
+    section(`Vacunas (${vaccinations.length})`);
+    if (vaccinations.length === 0) {
+      text("Sin vacunas registradas", { size: 9, color: GRAY });
+      y -= 14;
+    } else {
+      vaccinations.slice(0, 15).forEach((v: any) => {
+        ensureSpace(16);
+        text(`${formatDate(v.date)}`, { size: 8, font: bold, color: GRAY });
+        text(v.title || "Vacuna", { x: MARGIN_X + 90, size: 9 });
+        if (v.next_date) {
+          text(`Próxima: ${formatDate(v.next_date)}`, { x: MARGIN_X + 350, size: 8, color: GRAY });
+        }
+        y -= 14;
+      });
+    }
+
+    // ── CONSULTAS VETERINARIAS (cronológico desc) ──
+    section(`Consultas veterinarias (${recentVisits.length})`);
+    if (recentVisits.length === 0) {
+      text("Sin consultas registradas", { size: 9, color: GRAY });
+      y -= 14;
+    } else {
+      recentVisits.slice(0, 15).forEach((v: any) => {
+        ensureSpace(40);
+        text(formatDate(v.visit_date || v.date), { size: 8, font: bold, color: GRAY });
+        text(v.reason || v.title || "Consulta", { x: MARGIN_X + 90, size: 9, font: bold });
+        y -= 13;
+        if (v.clinic_name) {
+          text(`Clínica: ${v.clinic_name}`, { x: MARGIN_X + 20, size: 8, color: GRAY });
+          y -= 12;
+        }
+        if (v.diagnosis) {
+          text(`Diagnóstico: ${v.diagnosis}`, { x: MARGIN_X + 20, size: 8 });
+          y -= 12;
+        }
+        y -= 4;
+      });
+    }
+
+    // ── DESPARASITACIONES ──
+    if (dewormings && dewormings.length > 0) {
+      section(`Desparasitaciones (${dewormings.length})`);
+      dewormings.slice(0, 10).forEach((d: any) => {
+        ensureSpace(16);
+        text(formatDate(d.date), { size: 8, font: bold, color: GRAY });
+        text(d.title || "Desparasitación", { x: MARGIN_X + 90, size: 9 });
+        y -= 14;
+      });
+    }
+
+    // ── FOOTER en todas las páginas ──
+    const totalPages = pdfDoc.getPageCount();
+    const allPages = pdfDoc.getPages();
+    for (let i = 0; i < totalPages; i++) {
+      const p = allPages[i];
+      const footerY = 25;
+      p.drawText(
+        `Generado por Paw Friend · pawfriend.cl · ${new Date().toLocaleDateString("es-CL")}`,
+        { x: MARGIN_X, y: footerY, size: 7, font: helvetica, color: GRAY }
+      );
+      p.drawText(
+        `Página ${i + 1} de ${totalPages}`,
+        { x: PAGE_W - MARGIN_X - 60, y: footerY, size: 7, font: helvetica, color: GRAY }
+      );
+    }
+
+    // Generate and upload
+    const pdfBytes = await pdfDoc.save();
+    const fileName = `ficha-${pet.name?.replace(/\s+/g, "-").toLowerCase() || pet_id}-${Date.now()}.pdf`;
     const filePath = `summaries/${fileName}`;
 
-    const { data: uploadData, error: uploadError } = await supabase.storage
+    const { error: uploadError } = await supabase.storage
       .from("medical-documents")
-      .upload(filePath, pdfBytes, {
-        contentType: "application/pdf",
-        upsert: false,
-      });
-
+      .upload(filePath, pdfBytes, { contentType: "application/pdf", upsert: false });
     if (uploadError) throw uploadError;
 
-    // Create signed URL (1 hour expiry)
     const { data: urlData, error: urlError } = await supabase.storage
       .from("medical-documents")
       .createSignedUrl(filePath, 3600);
-
     if (urlError) throw urlError;
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        download_url: urlData.signedUrl,
-        file_path: filePath,
-      }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 200,
-      }
+      JSON.stringify({ success: true, download_url: urlData.signedUrl, file_path: filePath }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
     );
   } catch (error: any) {
     console.error("Error generating medical summary:", error);
     return new Response(
-      JSON.stringify({
-        success: false,
-        error: "Failed to generate medical summary. Please try again later.",
-      }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 500,
-      }
+      JSON.stringify({ success: false, error: "Error al generar la ficha. Intenta de nuevo." }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 500 }
     );
   }
 });
-

@@ -1,4 +1,4 @@
-import { Calendar, MessageSquare, PawPrint, LogOut, Shield, Settings, Map, Gamepad2, UserCog, LayoutDashboard, Home as HomeIcon, Search, Briefcase, Activity } from "@/lib/icons";
+import { Calendar, MessageSquare, PawPrint, LogOut, Shield, Settings, Map, Gamepad2, UserCog, LayoutDashboard, Home as HomeIcon, Search, Briefcase, Activity, Users } from "@/lib/icons";
 import { isFeatureEnabled } from "@/lib/featureFlags";
 import { LINKS } from "@/lib/links";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -39,6 +39,7 @@ const discoverItems = [
 
 const communityItems = [
   { title: "Feed", url: "/feed", icon: Activity },
+  { title: "Comunidad", url: "/comunidad", icon: Users },
   { title: "Mensajes", url: "/chat", icon: MessageSquare },
   { title: "Paw Game", url: "/paw-game", icon: Gamepad2 },
 ];

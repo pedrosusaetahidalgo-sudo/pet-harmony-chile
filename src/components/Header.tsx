@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/hooks/useAuth";
+import { useActiveRole } from "@/hooks/useActiveRole";
 import { useNotifications } from "@/hooks/useNotifications";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -46,6 +47,7 @@ function timeAgo(dateStr: string): string {
 
 export const Header = () => {
   const { user } = useAuth();
+  const { role, isProvider, toggle } = useActiveRole();
   const navigate = useNavigate();
   const [profile, setProfile] = useState<any>(null);
   const [userStats, setUserStats] = useState<any>(null);
@@ -138,6 +140,27 @@ export const Header = () => {
         {/* User Section */}
         {user && (
           <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+            {/* Role toggle — solo visible para usuarios que son dueños Y proveedores */}
+            {isProvider && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={toggle}
+                className="h-8 px-2 text-xs gap-1.5 hidden sm:flex"
+              >
+                {role === "owner" ? (
+                  <>
+                    <PawPrint className="h-3.5 w-3.5 text-purple-600" />
+                    <span className="text-muted-foreground">Dueño</span>
+                  </>
+                ) : (
+                  <>
+                    <Heart className="h-3.5 w-3.5 text-teal-600" />
+                    <span className="text-muted-foreground">Profesional</span>
+                  </>
+                )}
+              </Button>
+            )}
             {/* Notifications Popover */}
             <Popover>
               <PopoverTrigger asChild>

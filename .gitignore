@@ -43,3 +43,9 @@ tsconfig.node.tsbuildinfo
 # Scripts personales locales del dueño (no compartir en el repo)
 _clean.ps1
 _diag.ps1
+
+# Playwright
+playwright-report/
+test-results/
+blob-report/
+e2e/.auth/

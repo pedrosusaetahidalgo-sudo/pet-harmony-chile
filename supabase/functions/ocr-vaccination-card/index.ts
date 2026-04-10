@@ -127,34 +127,8 @@ serve(async (req) => {
       mediaType = "image/webp";
     }
 
-    const systemPrompt = `Eres un asistente de OCR especializado en documentos veterinarios chilenos. Tu tarea es extraer información estructurada de una foto de carnet de vacunación de mascota.
-
-INSTRUCCIONES:
-1. Analiza la imagen del carnet de vacunación cuidadosamente.
-2. Extrae TODAS las vacunas, desparasitaciones y notas visibles.
-3. Para las fechas, usa formato ISO (YYYY-MM-DD). Si el año no es legible, pon null.
-4. Si un campo no es legible o no está presente, usa null en vez de inventar datos.
-5. Sé conservador: es mejor dejar null que adivinar mal.
-6. Si la imagen NO es un carnet de vacunación, devuelve un JSON con arrays vacíos y una nota explicativa.
-
-FORMATO DE RESPUESTA (OBLIGATORIO - solo JSON, sin markdown):
-{
-  "vaccines": [
-    {
-      "name": "nombre de la vacuna",
-      "date": "YYYY-MM-DD o null",
-      "batch": "número de lote o null",
-      "vet_name": "nombre del veterinario o null"
-    }
-  ],
-  "deworming": [
-    {
-      "product": "nombre del producto antiparasitario",
-      "date": "YYYY-MM-DD o null"
-    }
-  ],
-  "notes": "cualquier observación adicional visible en el carnet, o cadena vacía"
-}`;
+    const systemPrompt = `OCR de carnet veterinario chileno. Extrae vacunas y desparasitaciones. Fechas ISO (YYYY-MM-DD). Ilegible → null. NO inventes datos. Si no es carnet → arrays vacíos.
+Responde SOLO JSON: {"vaccines":[{"name":"...","date":"YYYY-MM-DD|null","batch":"...|null","vet_name":"...|null"}],"deworming":[{"product":"...","date":"YYYY-MM-DD|null"}],"notes":"..."}`;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 30000); // 30s for vision
@@ -170,7 +144,7 @@ FORMATO DE RESPUESTA (OBLIGATORIO - solo JSON, sin markdown):
         },
         body: JSON.stringify({
           model: "claude-sonnet-4-5",
-          max_tokens: 2048,
+          max_tokens: 1024,
           temperature: 0,
           system: systemPrompt,
           messages: [

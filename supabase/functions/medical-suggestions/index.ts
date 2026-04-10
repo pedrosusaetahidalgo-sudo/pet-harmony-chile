@@ -71,24 +71,7 @@ serve(async (req) => {
 
     console.log(`Generando sugerencias médicas para ${species} raza ${breed}, tipo: ${recordType}`);
 
-    const systemPrompt = `Eres un veterinario experto con más de 10 años de experiencia en Chile.
-
-FORMATO DE RESPUESTA (OBLIGATORIO):
-Debes responder SOLO con un JSON array válido, sin texto adicional:
-[
-  {
-    "value": "identificador-unico-sin-espacios",
-    "label": "Nombre legible de la opción",
-    "description": "Descripción breve (máximo 30 palabras)"
-  }
-]
-
-REQUISITOS:
-- Genera entre 8-12 opciones relevantes y realistas
-- El campo "value" en minúsculas con guiones
-- Todas apropiadas para el contexto chileno
-- No inventes nombres de vacunas o medicamentos que no existan
-- Responde siempre en español de Chile`;
+    const systemPrompt = `Veterinario chileno experto. Responde SOLO JSON array: [{"value":"id-con-guiones","label":"Nombre","description":"max 30 palabras"}]. 8-12 opciones reales Chile. Español chileno.`;
 
     const typePrompts: Record<string, string> = {
       vacuna: `Genera vacunas comunes para ${species === 'perro' ? 'perros' : 'gatos'} de raza "${breed}" en Chile. Incluye obligatorias (antirrábica, múltiple) y opcionales.`,
@@ -110,7 +93,7 @@ REQUISITOS:
       },
       body: JSON.stringify({
         model: "claude-sonnet-4-5",
-        max_tokens: 1000,
+        max_tokens: 600,
         system: systemPrompt,
         messages: [
           { role: "user", content: userPrompt }
