@@ -44,7 +44,7 @@ const PetClinicalRecord = () => {
   const [showMemorialFlow, setShowMemorialFlow] = useState(false);
   const [reminderData, setReminderData] = useState({ type: "vaccine", title: "", due_date: "" });
 
-  const { data: pet, isLoading: petLoading, error } = useQuery({
+  const { data: pet, isLoading: petLoading, error, refetch: refetchPet } = useQuery({
     queryKey: ["pet-clinical", petId],
     queryFn: async () => {
       if (!petId) return null;
@@ -218,7 +218,7 @@ const PetClinicalRecord = () => {
             </p>
             <span className="text-xs text-purple-500 font-medium flex-shrink-0">Ver premios →</span>
           </div>
-          <TabResumen pet={pet} />
+          <TabResumen pet={pet} onRefresh={() => refetchPet()} />
           <Card>
             <CardContent className="p-4 text-center">
               <p className="text-sm text-muted-foreground mb-3">
@@ -302,7 +302,7 @@ const PetClinicalRecord = () => {
         </TabsContent>
 
         <TabsContent value="alimentacion" className="mt-4 space-y-4">
-          <TabAlimentacion pet={pet} />
+          <TabAlimentacion pet={pet} onRefresh={() => refetchPet()} />
           <Card>
             <CardContent className="p-4 text-center">
               <p className="text-sm text-muted-foreground mb-3">

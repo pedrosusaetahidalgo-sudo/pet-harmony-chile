@@ -58,34 +58,27 @@ serve(async (req) => {
 
     console.log(`Generando consejos para ${species} raza ${breed}...`);
 
-    const systemPrompt = `Eres un experto veterinario y especialista en comportamiento animal con más de 10 años de experiencia trabajando en Chile.
-Tu especialidad es proporcionar consejos prácticos, cálidos, útiles y basados en evidencia sobre razas de mascotas, adaptados al contexto chileno.
+    const systemPrompt = `Eres un veterinario chileno experto en razas. Da consejos BREVES, precisos y utiles.
 
-CONTEXTO:
-- Estás proporcionando consejos para dueños de mascotas en Chile
-- Debes considerar el clima, disponibilidad de productos, y prácticas veterinarias locales
-- Los consejos deben ser accionables y realistas
+FORMATO OBLIGATORIO — exactamente 4 secciones, maximo 2 puntos por seccion, cada punto en 1 oracion corta:
 
-FORMATO DE RESPUESTA (OBLIGATORIO):
-Estructura tu respuesta en secciones claramente separadas con doble salto de línea (\\n\\n) entre cada sección.
-Cada sección debe seguir este formato exacto:
-- Primera línea: Título con emoji (ejemplo: "🏥 Cuidados Específicos")
-- Líneas siguientes: Contenido con bullet points usando "- " o "• "
+🏥 Salud clave
+- (lo mas importante que el dueno debe saber de esta raza)
 
-SECCIONES REQUERIDAS (en este orden):
-1. 🏥 Cuidados Específicos
-2. 🏃 Ejercicio y Actividad
-3. 🍖 Alimentación Recomendada
-4. 🐕 Temperamento y Comportamiento
-5. ❤️ Salud y Prevención
-6. 🐾 Socialización
-7. 🌡️ Adaptación al Clima de Chile
+🍖 Alimentacion
+- (tipo de dieta y frecuencia ideal)
 
-DIRECTRICES:
-- Tono: Amigable, profesional, y empático
-- Longitud: 3-4 puntos por sección, cada punto en 1-2 oraciones
-- Precisión: Solo incluye información correcta para la raza
-- Responde siempre en español de Chile`;
+🏃 Ejercicio
+- (cuanto y que tipo de actividad)
+
+⚠️ Ojo con...
+- (problemas tipicos de la raza que vigilar)
+
+REGLAS:
+- Maximo 150 palabras total
+- Español chileno (tu, tienes)
+- Solo datos correctos de la raza. Si no la conoces, di "No tengo info de esta raza" y da tips generales
+- NO repitas info, NO uses frases de relleno`;
 
     const abortCtl = new AbortController();
     const fetchTimeout = setTimeout(() => abortCtl.abort(), 15000);
@@ -101,21 +94,13 @@ DIRECTRICES:
         },
         body: JSON.stringify({
           model: "claude-sonnet-4-5",
-          max_tokens: 800,
-          temperature: 0.5,
+          max_tokens: 400,
+          temperature: 0.3,
           system: systemPrompt,
           messages: [
             {
               role: "user",
-              content: `Proporciona consejos útiles y prácticos sobre la raza "${breed.slice(0, 100)}" de ${species === 'perro' ? 'perro' : species === 'gato' ? 'gato' : 'mascota'}.
-
-IMPORTANTE:
-- Si la raza "${breed}" no existe o no la conoces, indica claramente "No tengo información específica sobre esta raza" y proporciona consejos generales para ${species === 'perro' ? 'perros' : 'gatos'}
-- Incluye todas las secciones requeridas en el formato especificado
-- Adapta los consejos al contexto de Chile
-- Sé específico sobre la raza cuando sea posible
-
-Responde en español de Chile siguiendo exactamente el formato de secciones especificado.`
+              content: `Consejos breves para ${species === 'perro' ? 'perro' : species === 'gato' ? 'gato' : 'mascota'} raza "${breed.slice(0, 100)}". 4 secciones, maximo 2 puntos cada una, 150 palabras total.`
           }
         ],
       }),
@@ -143,34 +128,21 @@ Responde en español de Chile siguiendo exactamente el formato de secciones espe
     let tips = data.content?.[0]?.text;
 
     if (!tips || tips.trim().length === 0) {
-      tips = `🏥 Cuidados Específicos
-- Proporciona atención básica diaria según las necesidades de tu ${species}
-- Mantén un ambiente limpio y seguro
-- Establece una rutina de cuidado consistente
+      tips = `🏥 Salud clave
+- Mantén vacunas y desparasitaciones al día según calendario
+- Chequeo veterinario al menos 1 vez al año
 
-🏃 Ejercicio y Actividad
-- Asegura actividad física adecuada según la edad y tamaño
-- Proporciona estimulación mental con juguetes y actividades
+🍖 Alimentacion
+- Alimento de calidad apropiado para la edad y tamaño
+- Agua fresca siempre disponible
 
-🍖 Alimentación Recomendada
-- Consulta con un veterinario sobre la dieta apropiada
-- Proporciona alimento de calidad apropiado para la edad
+🏃 Ejercicio
+- Actividad física diaria adaptada a su energía
+- Estimulación mental con juguetes interactivos
 
-🐕 Temperamento y Comportamiento
-- Cada ${species} tiene su personalidad única
-- Proporciona entrenamiento positivo y consistente
-
-❤️ Salud y Prevención
-- Mantén un calendario de vacunación actualizado
-- Realiza chequeos veterinarios regulares
-
-🐾 Socialización
-- Socializa gradualmente desde temprana edad
-- Supervisa las interacciones con otros animales
-
-🌡️ Adaptación al Clima de Chile
-- Considera las variaciones estacionales del clima
-- Proporciona protección adecuada en verano e invierno`;
+⚠️ Ojo con...
+- Cambios en apetito, energía o comportamiento pueden indicar problemas
+- Protege del calor extremo en verano chileno`;
       console.log("Usando consejos de fallback");
     } else {
       console.log("Consejos generados exitosamente con Claude");

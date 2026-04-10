@@ -1,4 +1,3 @@
-import { AppLayout } from "@/components/AppLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -172,7 +171,7 @@ const Chat = () => {
 
   if (loading) {
     return (
-      <AppLayout>
+      <>
         <PageHeader title="Mensajes" />
         <div className="container max-w-2xl mx-auto p-4 sm:p-6 space-y-3 animate-fade-in">
           <div className="h-11 rounded-xl skeleton" />
@@ -189,12 +188,12 @@ const Chat = () => {
             </div>
           ))}
         </div>
-      </AppLayout>
+      </>
     );
   }
 
   return (
-    <AppLayout>
+    <>
       <PageHeader
         title="Mensajes"
         actions={
@@ -331,7 +330,7 @@ const Chat = () => {
           </div>
         )}
       </div>
-    </AppLayout>
+    </>
   );
 };
 

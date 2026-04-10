@@ -1,4 +1,3 @@
-import { AppLayout } from "@/components/AppLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -165,19 +164,19 @@ const ChatConversation = () => {
 
   if (loading) {
     return (
-      <AppLayout>
+      <>
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
             <Send className="h-12 w-12 animate-pulse mx-auto mb-4 text-primary" />
             <p className="text-muted-foreground">Cargando conversación...</p>
           </div>
         </div>
-      </AppLayout>
+      </>
     );
   }
 
   return (
-    <AppLayout>
+    <>
       <PageHeader
         title={otherUser?.display_name || "Conversación"}
         subtitle={otherUser?.location || undefined}
@@ -277,7 +276,7 @@ const ChatConversation = () => {
           </div>
         </Card>
       </div>
-    </AppLayout>
+    </>
   );
 };
 

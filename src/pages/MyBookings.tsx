@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { AppLayout } from "@/components/AppLayout";
 import { PageHeader } from "@/components/PageHeader";
 import { CalendarGrid } from "@/components/calendar/CalendarGrid";
 import { DaySlotsList } from "@/components/calendar/DaySlotsList";
@@ -111,7 +110,7 @@ export default function MyBookings() {
   });
 
   return (
-    <AppLayout>
+    <>
       <PageHeader title="Mis reservas" />
       <div className="container max-w-4xl mx-auto p-4 space-y-4">
 
@@ -166,6 +165,6 @@ export default function MyBookings() {
           />
         )}
       </div>
-    </AppLayout>
+    </>
   );
 }
