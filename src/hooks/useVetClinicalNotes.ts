@@ -34,6 +34,9 @@ interface CreateNoteArgs {
   description?: string;
   alternativeOffered?: boolean;
   alternativesDiscussed?: string;
+  followupRequired?: boolean;
+  followupDate?: string;
+  followupReason?: string;
 }
 
 // La tabla vet_clinical_notes no existe aun en los tipos generados de Supabase.
@@ -110,6 +113,10 @@ export function useCreateVetClinicalNote() {
           description: args.description || null,
           alternative_offered: args.alternativeOffered ?? false,
           alternatives_discussed: args.alternativesDiscussed || null,
+          followup_required: args.followupRequired ?? false,
+          followup_date: args.followupDate || null,
+          followup_reason: args.followupReason || null,
+          consultation_date: new Date().toISOString().split("T")[0],
         })
         .select()
         .single();

@@ -293,61 +293,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* === PawGame widget === */}
-      {stats && (
-        <Card
-          className="border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => navigate("/paw-game")}
-        >
-          <CardContent className="flex items-center gap-4 py-3">
-            <div className="rounded-full bg-purple-100 p-2.5 flex-shrink-0">
-              <Gamepad2 className="h-5 w-5 text-purple-600" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-purple-800">
-                  {stats.points?.toLocaleString("es-CL") || 0} PawPoints
-                </span>
-                {stats.level > 1 && (
-                  <span className="text-xs bg-purple-200 text-purple-700 px-1.5 py-0.5 rounded-full font-medium">
-                    Nivel {stats.level}
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Gana puntos cuidando a tus mascotas y canjea premios
-              </p>
-            </div>
-            <div className="flex items-center gap-1 text-xs text-purple-500 font-medium flex-shrink-0">
-              <Trophy className="h-3.5 w-3.5" />
-              <span>Jugar</span>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* === Reseñas pendientes === */}
-      {pendingReviewCount > 0 && (
-        <Card
-          className="border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => navigate("/mis-reservas")}
-        >
-          <CardContent className="flex items-center gap-4 py-3">
-            <div className="rounded-full bg-amber-100 p-2.5 flex-shrink-0">
-              <Star className="h-5 w-5 text-amber-600" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-amber-800">
-                {pendingReviewCount} {pendingReviewCount === 1 ? 'reseña pendiente' : 'reseñas pendientes'}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Tu opinión ayuda a otros dueños a elegir mejor
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* === Onboarding hints dirigidos para usuarios sin mascotas === */}
       <HomeOnboardingHints hasPets={pets.length > 0} />
 
@@ -456,6 +401,78 @@ export default function Home() {
             />
           </div>
 
+          {/* === HEALTH ALERTS (prioridad máxima, visible inmediatamente) === */}
+          {(overdueReminders.length > 0 || upcomingReminders.length > 0) && (
+            <Card
+              className={`border-l-4 ${overdueReminders.length > 0 ? "border-l-red-500 bg-red-50/50" : "border-l-amber-400 bg-amber-50/50"}`}
+            >
+              <CardHeader className="pb-2">
+                <CardTitle className="text-base flex items-center gap-2">
+                  {overdueReminders.length > 0 ? (
+                    <>
+                      <AlertCircle className="h-5 w-5 text-red-600" />
+                      <span className="text-red-900">Requiere atención</span>
+                    </>
+                  ) : (
+                    <>
+                      <Bell className="h-5 w-5 text-amber-600" />
+                      <span className="text-amber-900">Próximos cuidados</span>
+                    </>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                {overdueReminders.slice(0, 2).map((r) => (
+                  <div
+                    key={r.id}
+                    className="flex items-center justify-between p-2 rounded-lg bg-white border border-red-200"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold truncate">{r.title}</p>
+                      <p className="text-xs text-red-700 truncate">
+                        {r.pets?.name} · vencido
+                      </p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => completeReminder.mutate(r.id)}
+                      title="Marcar como hecho"
+                    >
+                      <CheckCircle2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                {upcomingReminders.slice(0, 2).map((r) => (
+                  <div
+                    key={r.id}
+                    className="flex items-center justify-between p-2 rounded-lg bg-white border border-amber-200"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium truncate">{r.title}</p>
+                      <p className="text-xs text-muted-foreground truncate">{r.pets?.name}</p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => completeReminder.mutate(r.id)}
+                    >
+                      <CheckCircle2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  variant="link"
+                  size="sm"
+                  onClick={() => navigate("/reminders")}
+                  className="w-full text-xs h-8 mt-1"
+                >
+                  Ver todos los recordatorios →
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
           {/* === Price estimator card === */}
           <PriceEstimatorCard petName={activePet?.name} />
 
@@ -464,113 +481,27 @@ export default function Home() {
         </>
       )}
 
-      {/* === HEALTH ALERTS === */}
-      {(overdueReminders.length > 0 || upcomingReminders.length > 0) && (
+      {/* === Reseñas pendientes === */}
+      {pendingReviewCount > 0 && (
         <Card
-          className={`border-l-4 ${overdueReminders.length > 0 ? "border-l-red-500 bg-red-50/50" : "border-l-amber-400 bg-amber-50/50"}`}
+          className="border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => navigate("/mis-reservas")}
         >
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              {overdueReminders.length > 0 ? (
-                <>
-                  <AlertCircle className="h-5 w-5 text-red-600" />
-                  <span className="text-red-900">Requiere atención</span>
-                </>
-              ) : (
-                <>
-                  <Bell className="h-5 w-5 text-amber-600" />
-                  <span className="text-amber-900">Próximos cuidados</span>
-                </>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {overdueReminders.slice(0, 2).map((r) => (
-              <div
-                key={r.id}
-                className="flex items-center justify-between p-2 rounded-lg bg-white border border-red-200"
-              >
-                <div className="min-w-0">
-                  <p className="text-sm font-semibold truncate">{r.title}</p>
-                  <p className="text-xs text-red-700 truncate">
-                    {r.pets?.name} · vencido
-                  </p>
-                </div>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => completeReminder.mutate(r.id)}
-                  title="Marcar como hecho"
-                >
-                  <CheckCircle2 className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-            {upcomingReminders.slice(0, 2).map((r) => (
-              <div
-                key={r.id}
-                className="flex items-center justify-between p-2 rounded-lg bg-white border border-amber-200"
-              >
-                <div className="min-w-0">
-                  <p className="text-sm font-medium truncate">{r.title}</p>
-                  <p className="text-xs text-muted-foreground truncate">{r.pets?.name}</p>
-                </div>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => completeReminder.mutate(r.id)}
-                >
-                  <CheckCircle2 className="h-4 w-4" />
-                </Button>
-              </div>
-            ))}
-            {(overdueReminders.length + upcomingReminders.length > 4) && (
-              <Button
-                variant="link"
-                size="sm"
-                onClick={() => navigate("/reminders")}
-                className="w-full text-xs h-8 mt-1"
-              >
-                Ver todos los recordatorios →
-              </Button>
-            )}
+          <CardContent className="flex items-center gap-4 py-3">
+            <div className="rounded-full bg-amber-100 p-2.5 flex-shrink-0">
+              <Star className="h-5 w-5 text-amber-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-amber-800">
+                {pendingReviewCount} {pendingReviewCount === 1 ? 'reseña pendiente' : 'reseñas pendientes'}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Tu opinión ayuda a otros dueños a elegir mejor
+              </p>
+            </div>
           </CardContent>
         </Card>
       )}
-
-      {/* === Integrations prompt === */}
-      <Card className="border-purple-200 bg-purple-50/50">
-        <CardContent className="flex items-center gap-4 py-4">
-          <div className="rounded-full bg-purple-100 p-2.5 flex-shrink-0">
-            <Link2 className="h-5 w-5 text-purple-600" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold">Conecta tus apps</p>
-            <p className="text-xs text-muted-foreground">
-              Recibe recordatorios por WhatsApp y sincroniza con Google Calendar
-            </p>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex-shrink-0 border-purple-300 text-purple-700 hover:bg-purple-100"
-            onClick={() => navigate("/settings")}
-          >
-            <Smartphone className="h-3.5 w-3.5 mr-1" />
-            Configurar
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* === Activity feed slot === */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">Actividad de la comunidad</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ActivityFeed limit={3} />
-        </CardContent>
-      </Card>
 
       {/* === Acciones rápidas horizontales === */}
       <div>
@@ -610,24 +541,75 @@ export default function Home() {
             <Map className="h-4 w-4 mr-2 text-indigo-600" />
             <span className="text-xs">Mapa</span>
           </Button>
-          <Button
-            variant="outline"
-            className="flex-shrink-0 lg:w-full justify-start h-auto py-2.5"
-            onClick={() => navigate("/paw-game")}
-          >
-            <Gamepad2 className="h-4 w-4 mr-2 text-purple-600" />
-            <span className="text-xs">Paw Game</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="flex-shrink-0 lg:w-full justify-start h-auto py-2.5"
-            onClick={goToAddPet}
-          >
-            <Plus className="h-4 w-4 mr-2 text-purple-600" />
-            <span className="text-xs">Agregar mascota</span>
-          </Button>
         </div>
       </div>
+
+      {/* === PawGame widget (secundario, abajo) === */}
+      {stats && (
+        <Card
+          className="border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 cursor-pointer hover:shadow-md transition-shadow"
+          onClick={() => navigate("/paw-game")}
+        >
+          <CardContent className="flex items-center gap-4 py-3">
+            <div className="rounded-full bg-purple-100 p-2.5 flex-shrink-0">
+              <Gamepad2 className="h-5 w-5 text-purple-600" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-purple-800">
+                  {stats.points?.toLocaleString("es-CL") || 0} PawPoints
+                </span>
+                {stats.level > 1 && (
+                  <span className="text-xs bg-purple-200 text-purple-700 px-1.5 py-0.5 rounded-full font-medium">
+                    Nivel {stats.level}
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Gana puntos cuidando a tus mascotas y canjea premios
+              </p>
+            </div>
+            <div className="flex items-center gap-1 text-xs text-purple-500 font-medium flex-shrink-0">
+              <Trophy className="h-3.5 w-3.5" />
+              <span>Jugar</span>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* === Integrations prompt === */}
+      <Card className="border-purple-200 bg-purple-50/50">
+        <CardContent className="flex items-center gap-4 py-4">
+          <div className="rounded-full bg-purple-100 p-2.5 flex-shrink-0">
+            <Link2 className="h-5 w-5 text-purple-600" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold">Conecta tus apps</p>
+            <p className="text-xs text-muted-foreground">
+              Recibe recordatorios por WhatsApp y sincroniza con Google Calendar
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-shrink-0 border-purple-300 text-purple-700 hover:bg-purple-100"
+            onClick={() => navigate("/settings")}
+          >
+            <Smartphone className="h-3.5 w-3.5 mr-1" />
+            Configurar
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* === Activity feed slot === */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">Actividad de la comunidad</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ActivityFeed limit={3} />
+        </CardContent>
+      </Card>
     </div>
   );
 }

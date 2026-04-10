@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { UserCog, Eye, Stethoscope, Star, Users, FileText, BarChart3 } from "@/lib/icons";
 import { ProviderDirectoryCard } from "./ProviderDirectoryCard";
 import { SharedFichasCard } from "./SharedFichasCard";
+import { VetFollowupsCard } from "./VetFollowupsCard";
 import { VetPatientsList } from "./VetPatientsList";
 import {
   TrendingUp,
@@ -200,6 +201,9 @@ const ProviderDashboard = () => {
           </Link>
         </div>
       </div>
+
+      {/* Seguimientos de esta semana */}
+      <VetFollowupsCard />
 
       {/* Fichas compartidas con este vet en los ultimos 7 dias */}
       <SharedFichasCard providerId={providerInfo?.id} />

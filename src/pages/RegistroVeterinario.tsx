@@ -26,6 +26,7 @@ import { errorMessage } from '@/types/vetDirectory';
 import { SANTIAGO_COMUNAS, VET_SPECIALTIES, COMUNAS_POR_ZONA } from '@/lib/vetDirectory';
 import { PublicHeader, PublicFooter } from './DirectorioVets';
 import { PageHeader } from '@/components/PageHeader';
+import { useScrollOnFocus } from '@/hooks/useScrollOnFocus';
 
 type ProviderType = 'individual' | 'home_visit' | 'clinic';
 
@@ -54,6 +55,7 @@ interface FormState {
 const STEPS = ['Tipo', 'Cuenta', 'Perfil', 'Listo'] as const;
 
 export default function RegistroVeterinario() {
+  useScrollOnFocus();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);

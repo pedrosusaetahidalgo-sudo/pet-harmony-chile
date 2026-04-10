@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home as HomeIcon, PawPrint, Stethoscope, Bell, User, Gamepad2 } from "@/lib/icons";
+import { Home as HomeIcon, PawPrint, Stethoscope, Bell, User } from "@/lib/icons";
 import { LINKS } from "@/lib/links";
 import { cn } from "@/lib/utils";
 import { useReminders } from "@/hooks/useReminders";
@@ -65,10 +65,11 @@ export function BottomTabBar() {
       matchPaths: (p) => p.startsWith("/veterinarios"),
     },
     {
-      label: "Paw Game",
-      icon: Gamepad2,
-      href: "/paw-game",
-      matchPaths: (p) => p === "/paw-game",
+      label: "Recordatorios",
+      icon: Bell,
+      href: "/reminders",
+      matchPaths: (p) => p === "/reminders",
+      badge: reminderBadge,
     },
     {
       label: "Perfil",

@@ -96,6 +96,29 @@ serve(async (req) => {
     }
     const amount = PRICES[plan];
 
+    // Idempotencia: si ya existe una subscription pendiente reciente (<5 min), reutilizar
+    const { data: existingPending } = await supabase
+      .from("subscriptions")
+      .select("payment_provider_id")
+      .eq("user_id", userId)
+      .eq("plan_type", plan)
+      .eq("status", "pending")
+      .gt("start_date", new Date(Date.now() - 5 * 60 * 1000).toISOString())
+      .order("start_date", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    if (existingPending?.payment_provider_id) {
+      console.log("[flow-create-subscription] reusing pending subscription", existingPending.payment_provider_id);
+      return new Response(
+        JSON.stringify({
+          url: `https://www.flow.cl/app/web/pay.php?token=${existingPending.payment_provider_id}`,
+          token: existingPending.payment_provider_id,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
+      );
+    }
+
     const commerceOrder = `PF-${userId.slice(0, 8)}-${Date.now()}`;
 
     // Optional contexto que se nos devuelve en el callback
@@ -117,13 +140,21 @@ serve(async (req) => {
     const signature = await signFlowParams(params, FLOW_SECRET_KEY);
     params.s = signature;
 
-    // POST x-www-form-urlencoded
+    // POST x-www-form-urlencoded (con timeout de 15s)
     const formBody = new URLSearchParams(params).toString();
-    const resp = await fetch(`${FLOW_BASE_URL}/payment/create`, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: formBody,
-    });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    let resp: Response;
+    try {
+      resp = await fetch(`${FLOW_BASE_URL}/payment/create`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: formBody,
+        signal: controller.signal,
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
 
     const flowJson = await resp.json();
     if (!resp.ok || !flowJson?.url || !flowJson?.token) {

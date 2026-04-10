@@ -1,4 +1,4 @@
-import { Compass, Heart, Plus, Calendar, MessageSquare, PawPrint, LogOut, Dog, Stethoscope, Users, AlertCircle, GraduationCap, Shield, Settings, Map, Gamepad2, ShieldCheck, Crown, UserCog, LayoutDashboard, Home as HomeIcon, FileText, Search, Briefcase } from "@/lib/icons";
+import { Calendar, MessageSquare, PawPrint, LogOut, Shield, Settings, Map, Gamepad2, UserCog, LayoutDashboard, Home as HomeIcon, Search, Briefcase } from "@/lib/icons";
 import { isFeatureEnabled } from "@/lib/featureFlags";
 import { LINKS } from "@/lib/links";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -24,16 +24,22 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-// PIVOT 2026-04-09: sidebar simplificado a 6 items máximo
-// Items secundarios (Feed, Adopción, PawGame, Mapa) accesibles desde /profile
-const mainItems = [
+// Sidebar organizado en grupos semánticos para mejor navegación
+const healthItems = [
   { title: "Inicio", url: "/home", icon: HomeIcon },
-  { title: "Mi mascota", url: "/my-pets", icon: PawPrint },
-  { title: "Buscar vet", url: "/veterinarios", icon: Search },
+  { title: "Mis mascotas", url: "/my-pets", icon: PawPrint },
   { title: "Recordatorios", url: "/reminders", icon: Calendar },
+];
+
+const discoverItems = [
+  { title: "Buscar vet", url: "/veterinarios", icon: Search },
+  { title: "Servicios", url: "/servicios", icon: Briefcase },
+  { title: "Mapa", url: "/maps", icon: Map },
+];
+
+const communityItems = [
   { title: "Mensajes", url: "/chat", icon: MessageSquare },
   { title: "Paw Game", url: "/paw-game", icon: Gamepad2 },
-  { title: "Servicios", url: "/servicios", icon: Briefcase },
 ];
 
 export function AppSidebar() {
@@ -108,11 +114,58 @@ export function AppSidebar() {
       </SidebarHeader>
 
       <SidebarContent className="px-2 overflow-y-auto overflow-x-hidden">
-        {/* NAVEGACIÓN PRINCIPAL */}
+        {/* SALUD */}
         <SidebarGroup className="py-0.5">
+          <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5">Salud</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-0">
-              {mainItems.map((item) => (
+              {healthItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    isActive={isActive(item.url)}
+                    onClick={() => handleNavigate(item.url)}
+                    className="h-7 text-xs rounded-md"
+                  >
+                    <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <Separator className="mx-2 my-0.5" />
+
+        {/* DESCUBRIR */}
+        <SidebarGroup className="py-0.5">
+          <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5">Descubrir</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu className="space-y-0">
+              {discoverItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    isActive={isActive(item.url)}
+                    onClick={() => handleNavigate(item.url)}
+                    className="h-7 text-xs rounded-md"
+                  >
+                    <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <Separator className="mx-2 my-0.5" />
+
+        {/* COMUNIDAD */}
+        <SidebarGroup className="py-0.5">
+          <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5">Comunidad</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu className="space-y-0">
+              {communityItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     isActive={isActive(item.url)}

@@ -9,7 +9,9 @@ export type VetServiceType =
   | 'peluqueria'
   | 'urgencia'
   | 'teleconsulta'
-  | 'control_sano';
+  | 'control_sano'
+  | 'esterilizacion'
+  | 'limpieza_dental';
 
 export interface VetPriceStats {
   comuna: string;
@@ -31,6 +33,8 @@ export const VET_SERVICE_LABELS: Record<VetServiceType, string> = {
   urgencia: 'Urgencia',
   teleconsulta: 'Teleconsulta',
   control_sano: 'Control sano',
+  esterilizacion: 'Esterilización',
+  limpieza_dental: 'Limpieza dental',
 };
 
 export const VET_SERVICE_ORDER: VetServiceType[] = [
@@ -42,6 +46,8 @@ export const VET_SERVICE_ORDER: VetServiceType[] = [
   'peluqueria',
   'cirugia_menor',
   'urgencia',
+  'esterilizacion',
+  'limpieza_dental',
 ];
 
 /**

@@ -77,7 +77,11 @@ supabase/
   config.toml
 
 docs/                  # Output de `npm run build` (GitHub Pages). NO editar manualmente.
-audits/                # Analisis competitivos y recomendaciones
+audits/                # Auditorias, competencia, walkthroughs, recomendaciones
+diagrams/              # Diagramas Mermaid de flujo (MANTENER ACTUALIZADOS)
+INDEX.md               # Indice maestro de documentacion viva
+MAPA_FUNCIONAL_COMPLETO.md  # Mapa de cada modulo, archivos, flujo
+AGENTS.md              # Config para agentes IA (Cursor, Copilot, etc.)
 ```
 
 ---
@@ -185,17 +189,25 @@ send-whatsapp-reminder/          # WhatsApp (pendiente verificacion Meta)
 
 ---
 
-## 8. Documentos de referencia (existentes)
+## 8. Documentos de referencia
+
+Ver `INDEX.md` para el indice completo con reglas de actualizacion.
 
 | Archivo | Contenido |
 |---|---|
-| `CONTEXTO_2026_04_11.md` | Estado tecnico actual (gates, bundle, features vivas) |
-| `ESTRATEGIA_MVP_2026.md` | Pain points, mercado, checklist de cobertura |
-| `GUION_PITCH_VETS_60S.md` | Guion para venta a veterinarios |
+| `INDEX.md` | Indice maestro de documentacion y reglas de actualizacion |
+| `MAPA_FUNCIONAL_COMPLETO.md` | Mapa de cada modulo, archivos, flujo y oportunidades |
+| `AGENTS.md` | Config para agentes IA (Cursor, Copilot, etc.) |
+| `diagrams/FLUJO_COMPLETO.mmd` | Diagrama Mermaid end-to-end |
+| `diagrams/FLUJOS_MERMAID.md` | Diagramas individuales por modulo |
+| `audits/AUDITORIA_TOTAL_APP.md` | Auditoria multi-dominio completa |
 | `audits/COMPETENCIA_2026_04_08.md` | Analisis competitivo Chile |
 | `audits/RECOMENDACIONES_2026_04_08.md` | Recomendaciones estrategicas priorizadas |
 | `audits/AUDIT_2026_04_08.md` | Auditoria tecnica del codigo |
 | `audits/WALKTHROUGH_2026_04_08.md` | Walkthrough funcional de la app |
+| `_archive/CONTEXTO_2026_04_11.md` | Estado tecnico al cierre 2026-04-11 |
+| `_archive/ESTRATEGIA_MVP_2026.md` | Pain points, mercado, checklist de cobertura |
+| `_archive/GUION_PITCH_VETS_60S.md` | Guion para venta a veterinarios |
 
 ---
 
@@ -226,6 +238,17 @@ Tuteo chileno: **tu, tienes, puedes**. NO voseo argentino (vos, tenes, podes). N
 
 ### 9.6. Joya de la corona
 La ficha medica PDF + directorio publico de vets son las features mas valiosas. Solo fixes puntuales, nada de refactor grande sin autorizacion explicita del dueno.
+
+### 9.7. Documentacion viva
+El proyecto tiene documentos que deben mantenerse actualizados. Ver `INDEX.md` para el indice completo.
+
+**Documentos vivos** (SIEMPRE mantener actualizados):
+- `diagrams/FLUJO_COMPLETO.mmd` — diagrama Mermaid end-to-end
+- `diagrams/FLUJOS_MERMAID.md` — diagramas individuales por modulo
+- `MAPA_FUNCIONAL_COMPLETO.md` — mapa de modulos, archivos y flujos
+- `AGENTS.md` — config para agentes IA externos (Cursor, Copilot, etc.)
+
+**Regla**: si modificas rutas, navegacion, flujos de usuario, paginas, planes, o features criticas → actualizar el documento correspondiente **en el mismo commit**. Si se cambia BottomTabBar, Sidebar, Auth, pricing, o cualquier flujo critico, los diagramas y el mapa funcional deben reflejar el cambio.
 
 ---
 

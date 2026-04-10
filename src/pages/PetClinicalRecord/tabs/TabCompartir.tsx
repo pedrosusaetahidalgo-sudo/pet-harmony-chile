@@ -259,24 +259,27 @@ export function TabCompartir({ petId, petName }: { petId: string; petName: strin
                     </Button>
                   </div>
                   {!isExpired && (
-                    <div className="w-full mt-2 flex items-end gap-3">
-                      <div className="p-2 bg-white rounded-lg inline-block">
+                    <div className="w-full mt-3 pt-3 border-t border-border/50 flex items-center gap-3">
+                      <div className="p-1.5 bg-white rounded-lg border border-purple-100 flex-shrink-0">
                         <QRCodeSVG
                           id={`qr-${token.token}`}
                           value={getShareUrl(token.token)}
-                          size={120}
+                          size={80}
                           level="M"
                         />
                       </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => downloadQR(token.token)}
-                        className="h-11 text-xs gap-1.5"
-                      >
-                        <Download className="h-4 w-4" />
-                        Descargar QR
-                      </Button>
+                      <div className="flex flex-col gap-1.5">
+                        <p className="text-xs text-muted-foreground">QR para compartir este enlace</p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => downloadQR(token.token)}
+                          className="h-8 text-xs gap-1.5 w-fit"
+                        >
+                          <Download className="h-3.5 w-3.5" />
+                          Descargar QR
+                        </Button>
+                      </div>
                     </div>
                   )}
                 </div>

@@ -66,7 +66,7 @@ const ParaVeterinarios = lazy(() => import("./pages/ParaVeterinarios"));
 const PreciosVeterinarios = lazy(() => import("./pages/PreciosVeterinarios"));
 const DejarResena = lazy(() => import("./pages/DejarResena"));
 const QRLanding = lazy(() => import("./pages/QRLanding"));
-const Actividad = lazy(() => import("./pages/Actividad"));
+// Actividad eliminada — ruta consolidada a /feed
 const Reminders = lazy(() => import("./pages/Reminders"));
 const OnboardingVetMinimal = lazy(() => import("./pages/OnboardingVetMinimal"));
 const OnboardingDuenoMinimal = lazy(() => import("./pages/OnboardingDuenoMinimal"));
@@ -120,7 +120,7 @@ async function initNative() {
       await PushNotifications.register();
 
       PushNotifications.addListener('registration', (token) => {
-        console.log('Push registration token:', token.value);
+        // Token disponible para enviar a backend si se necesita
       });
 
       PushNotifications.addListener('pushNotificationReceived', (notification) => {
@@ -181,7 +181,6 @@ const App = () => (
               <Route path="/auth" element={<Auth />} />
               <Route path="/home" element={<ProtectedRoute><AppLayout><Home /></AppLayout></ProtectedRoute>} />
               <Route path="/feed" element={<ProtectedRoute><AppLayout><Feed /></AppLayout></ProtectedRoute>} />
-              <Route path="/actividad" element={<Navigate to="/feed" replace />} />
               <Route path="/my-pets" element={<ProtectedRoute><AppLayout><MyPets /></AppLayout></ProtectedRoute>} />
               <Route path="/add-pet" element={<ProtectedRoute><AppLayout><AddPet /></AppLayout></ProtectedRoute>} />
               <Route path="/edit-pet/:petId" element={<ProtectedRoute><AppLayout><AddPet /></AppLayout></ProtectedRoute>} />
@@ -191,34 +190,25 @@ const App = () => (
 
               <Route path="/paw-game" element={<ProtectedRoute><AppLayout><PawGame /></AppLayout></ProtectedRoute>} />
               <Route path="/servicios" element={<ProtectedRoute><AppLayout><Servicios /></AppLayout></ProtectedRoute>} />
-              {/* /servicios/peluqueria → redirect a tab nativo */}
-              <Route path="/servicios/peluqueria" element={<Navigate to="/services/groomers" replace />} />
               <Route path="/peluquero/perfil" element={<ProtectedRoute><AppLayout><GroomerProfileEdit /></AppLayout></ProtectedRoute>} />
               <Route path="/services/:type" element={<ProtectedRoute><AppLayout><ServiceDirectory /></AppLayout></ProtectedRoute>} />
-              {/* Legacy redirects to new unified service routes */}
-              <Route path="/dog-walkers" element={<Navigate to="/services/walkers" replace />} />
-              <Route path="/home-vets" element={<Navigate to="/services/vets" replace />} />
-              <Route path="/dog-sitters" element={<Navigate to="/services/sitters" replace />} />
-              <Route path="/dog-trainers" element={<Navigate to="/services/trainers" replace />} />
               {/* /shared-walks y /lost-pets eliminados en pivot médico */}
               <Route path="/maps" element={<ProtectedRoute><AppLayout><Maps /></AppLayout></ProtectedRoute>} />
-              <Route path="/chat" element={<ProtectedRoute><Chat /></ProtectedRoute>} />
-              <Route path="/chat/:conversationId" element={<ProtectedRoute><ChatConversation /></ProtectedRoute>} />
+              <Route path="/chat" element={<ProtectedRoute><AppLayout><Chat /></AppLayout></ProtectedRoute>} />
+              <Route path="/chat/:conversationId" element={<ProtectedRoute><AppLayout><ChatConversation /></AppLayout></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><AppLayout><Profile /></AppLayout></ProtectedRoute>} />
               <Route path="/user/:userId" element={<ProtectedRoute><AppLayout><UserProfile /></AppLayout></ProtectedRoute>} />
               {/* /checkout eliminado en pivot médico */}
               {/* Pagos: una sola ruta unificada con query param ?status=success|failed */}
               <Route path="/payment-result" element={<ProtectedRoute><PaymentResult /></ProtectedRoute>} />
-              <Route path="/payment-success" element={<Navigate to="/payment-result?status=success" replace />} />
-              <Route path="/payment-failed" element={<Navigate to="/payment-result?status=failed" replace />} />
               <Route path="/admin" element={<AdminRoute><AppLayout><Admin /></AppLayout></AdminRoute>} />
               <Route path="/settings" element={<ProtectedRoute><AppLayout><Settings /></AppLayout></ProtectedRoute>} />
               <Route path="/en-memoria" element={<ProtectedRoute><AppLayout><EnMemoria /></AppLayout></ProtectedRoute>} />
               <Route path="/provider/dashboard" element={<ProtectedRoute><AppLayout><ProviderDashboard /></AppLayout></ProtectedRoute>} />
               <Route path="/provider/profile-edit" element={<ProtectedRoute><AppLayout><ProviderProfileEdit /></AppLayout></ProtectedRoute>} />
               <Route path="/pet/:petId/clinical" element={<ProtectedRoute><AppLayout><PetClinicalRecord /></AppLayout></ProtectedRoute>} />
-              <Route path="/mis-reservas" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
-              <Route path="/upgrade" element={<ProtectedRoute><Upgrade /></ProtectedRoute>} />
+              <Route path="/mis-reservas" element={<ProtectedRoute><AppLayout><MyBookings /></AppLayout></ProtectedRoute>} />
+              <Route path="/upgrade" element={<ProtectedRoute><AppLayout><Upgrade /></AppLayout></ProtectedRoute>} />
               <Route path="/upgrade/success" element={<ProtectedRoute><UpgradeSuccess /></ProtectedRoute>} />
               <Route path="/upgrade/cancel" element={<ProtectedRoute><UpgradeCancel /></ProtectedRoute>} />
               <Route path="/calendar" element={<Navigate to="/mis-reservas" replace />} />

@@ -232,6 +232,29 @@ const ChatConversation = () => {
             <div ref={messagesEndRef} />
           </CardContent>
 
+          {/* Quick replies */}
+          {messages.length <= 2 && (
+            <div className="border-t px-4 pt-3 pb-1">
+              <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1">
+                {[
+                  "En horario laboral te respondo. Si es urgencia, llámame",
+                  "Para esa duda, te recomiendo agendar consulta",
+                  "¿Puedes mandarme una foto?",
+                  "Llega 10 minutos antes de tu hora",
+                  "Recuerda traer carnet de vacunas",
+                ].map((reply) => (
+                  <button
+                    key={reply}
+                    onClick={() => setNewMessage(reply)}
+                    className="flex-shrink-0 text-[11px] px-2.5 py-1.5 rounded-full bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors border border-purple-200"
+                  >
+                    {reply}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Input */}
           <div className="border-t p-4">
             <div className="flex gap-2">
@@ -243,7 +266,7 @@ const ChatConversation = () => {
                 onKeyPress={handleKeyPress}
                 className="flex-1"
               />
-              <Button 
+              <Button
                 onClick={sendMessage}
                 disabled={!newMessage.trim()}
                 className="bg-warm-gradient"

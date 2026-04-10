@@ -41,7 +41,7 @@ export async function checkAiQuota(
 export function rateLimitResponse(quota: QuotaResult, corsHeaders: Record<string, string>) {
   return new Response(
     JSON.stringify({
-      error: "Has alcanzado el límite de solicitudes a la IA. Intentá de nuevo más tarde.",
+      error: "Has alcanzado el límite de solicitudes a la IA. Intenta de nuevo más tarde.",
       reset_in_seconds: quota.resetInSeconds,
     }),
     {

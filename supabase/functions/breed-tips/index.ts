@@ -87,21 +87,27 @@ DIRECTRICES:
 - Precisión: Solo incluye información correcta para la raza
 - Responde siempre en español de Chile`;
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "x-api-key": ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-5",
-        max_tokens: 800,
-        system: systemPrompt,
-        messages: [
-          {
-            role: "user",
-            content: `Proporciona consejos útiles y prácticos sobre la raza "${breed}" de ${species === 'perro' ? 'perro' : species === 'gato' ? 'gato' : 'mascota'}.
+    const abortCtl = new AbortController();
+    const fetchTimeout = setTimeout(() => abortCtl.abort(), 15000);
+    let response: Response;
+    try {
+      response = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        signal: abortCtl.signal,
+        headers: {
+          "x-api-key": ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "claude-sonnet-4-5",
+          max_tokens: 800,
+          temperature: 0.5,
+          system: systemPrompt,
+          messages: [
+            {
+              role: "user",
+              content: `Proporciona consejos útiles y prácticos sobre la raza "${breed.slice(0, 100)}" de ${species === 'perro' ? 'perro' : species === 'gato' ? 'gato' : 'mascota'}.
 
 IMPORTANTE:
 - Si la raza "${breed}" no existe o no la conoces, indica claramente "No tengo información específica sobre esta raza" y proporciona consejos generales para ${species === 'perro' ? 'perros' : 'gatos'}
@@ -114,6 +120,9 @@ Responde en español de Chile siguiendo exactamente el formato de secciones espe
         ],
       }),
     });
+    } finally {
+      clearTimeout(fetchTimeout);
+    }
 
     if (!response.ok) {
       if (response.status === 429) {

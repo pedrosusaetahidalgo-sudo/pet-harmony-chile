@@ -16,6 +16,7 @@ import { useFacebookAuth } from "@/hooks/useFacebookAuth";
 import { track, EVENTS } from "@/lib/analytics";
 import { logger } from "@/lib/logger";
 import { describeSupabaseError } from "@/lib/supabaseErrors";
+import { useScrollOnFocus } from "@/hooks/useScrollOnFocus";
 
 const Auth = () => {
   const [email, setEmail] = useState("");
@@ -31,6 +32,17 @@ const Auth = () => {
   const { toast } = useToast();
   const { signInWithFacebook, loading: facebookLoading } = useFacebookAuth();
   const hasRedirected = useRef(false);
+  useScrollOnFocus();
+
+  // Si el usuario ya está logueado, no tiene sentido mostrar el form de auth
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session && !hasRedirected.current) {
+        hasRedirected.current = true;
+        navigate(returnTo || "/home", { replace: true });
+      }
+    });
+  }, [navigate, returnTo]);
 
   // Redirect post-login:
   //   1. Si vino con ?returnTo=... → ahí

@@ -152,10 +152,15 @@ export default function ProviderProfileEdit() {
             <Link to={`/veterinarios/${provider.slug}`} target="_blank">
               <Button variant="outline" size="sm">
                 <ExternalLink className="h-4 w-4 mr-1" />
-                <span className="hidden sm:inline">Ver público</span>
+                Ver cómo me ven los dueños
               </Button>
             </Link>
-          ) : null
+          ) : (
+            <Button variant="outline" size="sm" disabled title="Guarda tu perfil primero para generar tu URL pública">
+              <ExternalLink className="h-4 w-4 mr-1" />
+              <span className="hidden sm:inline">Vista previa</span>
+            </Button>
+          )
         }
       />
       <div className="container mx-auto px-4 py-6 max-w-3xl space-y-6">

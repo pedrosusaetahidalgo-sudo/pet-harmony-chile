@@ -24,6 +24,7 @@ import { Sparkles, Crown } from "@/lib/icons";
 import { PageHeader } from "@/components/PageHeader";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { VaccinationCardOCR } from "@/components/onboarding/VaccinationCardOCR";
+import { useScrollOnFocus } from "@/hooks/useScrollOnFocus";
 
 const personalityOptions = [
   "Juguetón", "Tranquilo", "Energético", "Cariñoso", "Tímido",
@@ -31,6 +32,7 @@ const personalityOptions = [
 ];
 
 const AddPet = () => {
+  useScrollOnFocus();
   const { petId } = useParams<{ petId: string }>();
   const isEdit = !!petId;
   const [loading, setLoading] = useState(false);

@@ -219,6 +219,11 @@ export default function DirectorioVets() {
           </Link>
         </div>
 
+        {/* Sección "Nuevos en Paw Friend" — solo visible sin filtros activos */}
+        {!isLoading && !filters.search && !filters.type && !filters.specialty && !filters.minRating && (
+          <NewVetsSection vets={vets} />
+        )}
+
         {/* Results */}
         {isLoading ? (
           <div className="grid gap-4">
@@ -366,6 +371,59 @@ function PublicFooter() {
         </div>
       </div>
     </footer>
+  );
+}
+
+function NewVetsSection({ vets }: { vets: Vet[] }) {
+  const ninetyDaysAgo = new Date();
+  ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+
+  const newVets = vets.filter(
+    (v) => v.created_at && new Date(v.created_at) > ninetyDaysAgo
+  );
+
+  if (newVets.length === 0) return null;
+
+  return (
+    <div className="mb-6">
+      <h2 className="text-lg font-semibold text-purple-900 mb-3">
+        Nuevos en Paw Friend
+      </h2>
+      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+        {newVets.slice(0, 10).map((vet) => (
+          <Link
+            key={vet.id}
+            to={`/veterinarios/${vet.slug}`}
+            className="flex-shrink-0 w-40"
+          >
+            <Card className="p-3 hover:shadow-md transition-shadow text-center h-full">
+              {vet.avatar_url ? (
+                <img
+                  src={vet.avatar_url}
+                  alt={vet.display_name ?? 'Veterinario'}
+                  className="w-16 h-16 rounded-full object-cover mx-auto border-2 border-purple-200 mb-2"
+                />
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center mx-auto mb-2">
+                  <Stethoscope className="h-6 w-6 text-purple-600" />
+                </div>
+              )}
+              <Badge className="bg-purple-100 text-purple-700 text-[10px] mb-1">
+                Nuevo
+              </Badge>
+              <p className="text-sm font-medium text-purple-900 truncate">
+                {vet.display_name}
+              </p>
+              {(vet.specialties as string[] | null)?.length ? (
+                <p className="text-[10px] text-muted-foreground truncate">
+                  {(vet.specialties as string[]).slice(0, 2).join(' · ')}
+                </p>
+              ) : null}
+            </Card>
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 }
 

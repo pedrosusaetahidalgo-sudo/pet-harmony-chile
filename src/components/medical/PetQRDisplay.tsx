@@ -57,27 +57,29 @@ export function PetQRDisplay({ petId, petName }: PetQRDisplayProps) {
           Código QR de {petName}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-col items-center gap-4">
-        <p className="text-sm text-muted-foreground text-center">
-          Escanea este código para acceder directamente a la ficha clínica.
-        </p>
-        <div ref={qrRef} className="p-4 bg-white rounded-xl border border-purple-100 inline-block">
+      <CardContent className="flex items-center gap-4">
+        <div ref={qrRef} className="p-2 bg-white rounded-lg border border-purple-100 flex-shrink-0">
           <QRCodeCanvas
             value={clinicalUrl}
-            size={200}
+            size={100}
             level="M"
             includeMargin={false}
           />
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={handleDownload} className="gap-1.5">
-            <Download className="h-4 w-4" />
-            Descargar
-          </Button>
-          <Button variant="outline" size="sm" onClick={handleShare} className="gap-1.5">
-            <Share2 className="h-4 w-4" />
-            Compartir
-          </Button>
+        <div className="flex flex-col gap-2 min-w-0">
+          <p className="text-sm text-muted-foreground">
+            Escanea o comparte este QR para acceder a la ficha de {petName}.
+          </p>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={handleDownload} className="gap-1.5 h-8 text-xs">
+              <Download className="h-3.5 w-3.5" />
+              Descargar
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleShare} className="gap-1.5 h-8 text-xs">
+              <Share2 className="h-3.5 w-3.5" />
+              Compartir
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

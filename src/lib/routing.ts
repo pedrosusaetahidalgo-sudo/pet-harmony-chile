@@ -40,7 +40,6 @@ export const PUBLIC_ROUTES = [
 export const PROTECTED_ROUTES = [
   "/home",
   "/feed",
-  "/actividad",
   "/my-pets",
   "/add-pet",
   "/edit-pet/:petId",

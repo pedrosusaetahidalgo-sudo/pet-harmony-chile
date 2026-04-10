@@ -62,7 +62,14 @@ serve(async (req) => {
     const statusSig = await signFlowParams(statusParams, FLOW_SECRET_KEY);
     const url = `${FLOW_BASE_URL}/payment/getStatus?apiKey=${encodeURIComponent(FLOW_API_KEY)}&token=${encodeURIComponent(token)}&s=${statusSig}`;
 
-    const statusResp = await fetch(url, { method: "GET" });
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+    let statusResp: Response;
+    try {
+      statusResp = await fetch(url, { method: "GET", signal: controller.signal });
+    } finally {
+      clearTimeout(timeout);
+    }
     const statusJson = await statusResp.json();
 
     if (!statusResp.ok) {

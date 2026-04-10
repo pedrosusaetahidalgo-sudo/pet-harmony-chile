@@ -1,0 +1,286 @@
+flowchart TD
+    %% ============================================================
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-25
+    %% Refleja navegacion real post-optimizacion:
+    %%   BottomTabBar: Inicio | Mascotas | Vets | Recordatorios | Perfil
+    %%   Sidebar: Salud | Descubrir | Comunidad
+    %% ============================================================
+
+    %% ============ ENTRY POINTS ============
+    subgraph ENTRY["ENTRADA"]
+        direction TB
+        LAND["pawfriend.cl Landing"]
+        DEEP["Deep link / QR / WhatsApp"]
+    end
+
+    LAND --> AUTH_CHECK{"Logueado?"}
+    DEEP --> AUTH_CHECK
+
+    AUTH_CHECK -->|Si| HOME
+    AUTH_CHECK -->|"No + ruta protegida"| AUTH_PAGE
+    AUTH_CHECK -->|"No + ruta publica"| PUB_DIR
+
+    %% ============ PAGINAS PUBLICAS ============
+    subgraph PUBLIC["PUBLICAS sin login"]
+        direction TB
+        PUB_DIR["Directorio vets /veterinarios"]
+        PUB_PROF["Perfil vet /veterinarios/:slug"]
+        PUB_PRICE["Estimador precios /precios-veterinarios"]
+        PUB_B2B["Landing B2B /para-veterinarios"]
+        PUB_REG["Registro vet /registro-veterinario"]
+        PUB_RESENA["Dejar resena /resena/:token"]
+        PUB_QR["QR Landing /qr/:token"]
+    end
+
+    PUB_DIR --> PUB_PROF
+    PUB_B2B --> PUB_REG
+
+    %% ============ AUTH + POST-LOGIN ============
+    subgraph AUTH_PAGE["AUTH /auth"]
+        direction TB
+        AUTH_M["Email | Google | Facebook"]
+        AUTH_M --> AUTH_SUPA["Supabase Auth"]
+    end
+
+    AUTH_SUPA --> FIRST{"Primera vez?"}
+    FIRST -->|"Dueno nuevo"| ONB_D["Onboarding mascota"]
+    FIRST -->|"Vet nuevo"| ONB_V["Onboarding vet"]
+    FIRST -->|"Ya tiene cuenta"| REDIR{"Redirect"}
+    REDIR -->|"returnTo"| REDIR_DEST["Pagina solicitada"]
+    REDIR -->|Proveedor| VET_DASH
+    REDIR -->|Con mascotas| HOME
+    REDIR -->|Sin mascotas| ONB_D
+    ONB_D --> HOME
+    ONB_V --> VET_DASH
+    PUB_REG --> VET_DASH
+
+    %% ============ HOME DASHBOARD ============
+    HOME["HOME /home"]
+    HOME --> H_ONBOARD{"Primera visita?"}
+    H_ONBOARD -->|Si| H_TUTORIAL["Tutorial carousel 4 slides"]
+    H_ONBOARD -->|No| H_CONTENT
+
+    H_TUTORIAL --> H_CONTENT["Contenido Home"]
+    H_CONTENT --> H_HINTS{"Sin mascotas?"}
+    H_HINTS -->|Si| H_CARDS["3 tarjetas guia: mascota, recordatorio, vet"]
+    H_HINTS -->|No| H_MAIN["Home completo"]
+
+    H_MAIN --> H_PETS["Pet switcher avatares"]
+    H_MAIN --> H_STATUS["Status cards: cita, vacunas, ficha, racha"]
+    H_MAIN --> H_ALERTS["Alertas salud: vencidos + proximos"]
+    H_MAIN --> H_PRICE["Estimador precios"]
+    H_MAIN --> H_WEEKLY["Reporte semanal"]
+    H_MAIN --> H_REVIEWS["Resenas pendientes"]
+    H_MAIN --> H_QUICK["Acciones rapidas: vet, ficha, precios, mapa"]
+    H_MAIN --> H_GAME["PawGame widget"]
+    H_MAIN --> H_INTEGRATIONS["Card integraciones: WhatsApp + GCal"]
+    H_MAIN --> H_FEED["Feed comunidad"]
+
+    %% ============ TAB MASCOTAS ============
+    subgraph MASCOTAS["MASCOTAS /my-pets"]
+        direction TB
+        PET_LIST["Lista mascotas"]
+        PET_ADD["Agregar /add-pet"]
+        PET_EDIT["Editar /edit-pet/:id"]
+        PET_LIST --> PET_ADD
+        PET_LIST --> PET_EDIT
+    end
+
+    PET_ADD --> PLAN_CHK{"Limite plan?"}
+    PLAN_CHK -->|"Gratis max 2"| UPGRADE
+    PLAN_CHK -->|OK| PET_FORM["Formulario mascota"]
+    PET_FORM --> OCR_CHK{"Sube carnet?"}
+    OCR_CHK -->|Si| OCR_FN["OCR Edge Function"]
+    OCR_CHK -->|No| PET_SAVE
+    OCR_FN --> PET_SAVE["Guarda mascota"]
+    PET_SAVE --> PET_TRIGGERS["Trigger: recordatorios + PawPoints"]
+    PET_LIST --> CLINICAL
+
+    %% ============ FICHA CLINICA ============
+    subgraph CLINICAL["FICHA CLINICA /pet/:id/clinical"]
+        direction TB
+        FC_RES["Tab Resumen"]
+        FC_HIST["Tab Historial 25 tipos"]
+        FC_ALIM["Tab Alimentacion"]
+        FC_DOCS["Tab Documentos"]
+        FC_SHARE["Tab Compartir"]
+        FC_PDF["Generar PDF"]
+        FC_AI["Asistente IA"]
+    end
+
+    FC_HIST --> FC_ADD_REC["Agregar registro medico"]
+    FC_DOCS --> FC_UPLOAD["Upload a Storage"]
+    FC_SHARE --> FC_QR["QR mascota + descargar"]
+    FC_SHARE --> FC_LINK["Link temporal 30 dias"]
+    FC_SHARE --> FC_WA["Boton WhatsApp"]
+
+    %% ============ ASISTENTE IA ============
+    FC_AI --> AI_DISC["Disclaimer medico"]
+    AI_DISC --> AI_Q["Pregunta del dueno"]
+    AI_Q --> AI_RATE{"Rate limit 5/dia?"}
+    AI_RATE -->|OK| AI_PROCESS["Claude Sonnet + datos ficha"]
+    AI_RATE -->|Excedido| AI_BLOCK["Limite alcanzado"]
+    AI_PROCESS --> AI_URG{"Urgencia?"}
+    AI_URG -->|Alta| AI_VET_BANNER["Banner: consultar vet YA"]
+    AI_URG -->|"Media/Baja"| AI_SUGG["Sugerencias"]
+    AI_VET_BANNER --> TAB_VETS_DIR
+
+    %% ============ TAB BUSCAR VET ============
+    subgraph TAB_VETS_DIR["DIRECTORIO VETS /veterinarios"]
+        direction TB
+        VET_DIR["Filtros: comuna, especialidad, rating"]
+        VET_NEW["Carousel nuevos vets"]
+        VET_DIR --> VET_PERF["Perfil vet"]
+        VET_NEW --> VET_PERF
+    end
+
+    VET_PERF --> VET_AGENDAR["Agendar consulta"]
+    VET_PERF --> VET_MENSAJE["Enviar mensaje"]
+    VET_PERF --> VET_RESENAS["Ver resenas"]
+    VET_PERF --> VET_PRECIOS["Ver precios"]
+
+    %% ============ RESERVAS ============
+    VET_AGENDAR --> BK_CAL["Calendario disponibilidad"]
+    BK_CAL --> BK_SLOT["Selecciona horario"]
+    BK_SLOT --> BK_CONFIRM["Confirma reserva"]
+    BK_CONFIRM --> BK_LIST["Mis reservas /mis-reservas"]
+
+    %% ============ TAB RECORDATORIOS ============
+    subgraph RECORDATORIOS["RECORDATORIOS /reminders"]
+        direction TB
+        REM_OVER["Vencidos - badge rojo"]
+        REM_TODAY["Hoy/Manana - amarillo"]
+        REM_NEXT["Proximos - purple"]
+        REM_DONE["Marcar completado"]
+    end
+
+    PET_TRIGGERS --> RECORDATORIOS
+    RECORDATORIOS --> GCAL_SYNC["Sync Google Calendar"]
+
+    %% ============ TAB PERFIL ============
+    PROFILE["/profile"] --> SETTINGS["/settings"]
+    SETTINGS --> GCAL_CONNECT["Conectar Google Calendar"]
+    GCAL_CONNECT --> GCAL_OAUTH["OAuth Google"]
+    GCAL_OAUTH --> GCAL_TOKEN["refresh_token"]
+    GCAL_TOKEN --> GCAL_SYNC
+
+    %% ============ SIDEBAR: DESCUBRIR ============
+    subgraph DESCUBRIR["DESCUBRIR"]
+        direction TB
+        SVC["Servicios /servicios"]
+        SVC --> SVC_TYPES["Paseadores | Cuidadores | Entrenadores | Peluqueros"]
+        MAPA["Mapa multi-capa /maps"]
+    end
+
+    SVC --> TAB_VETS_DIR
+
+    %% ============ SIDEBAR: COMUNIDAD ============
+    subgraph COMUNIDAD["COMUNIDAD"]
+        direction TB
+        CHAT_PAGE["Chat /chat"]
+        CHAT_PAGE --> CHAT_CONV["Conversaciones realtime"]
+        PAWGAME["Paw Game /paw-game"]
+        PAWGAME --> PG_MISSIONS["Misiones activas"]
+        PAWGAME --> PG_BADGES["Badges"]
+        PAWGAME --> PG_RANK["Rankings mensuales"]
+    end
+
+    VET_MENSAJE --> CHAT_PAGE
+
+    %% ============ SOCIAL FEED ============
+    subgraph FEED["FEED SOCIAL /feed"]
+        direction TB
+        FEED_LIST["Posts recientes"]
+        FEED_CREATE["Crear post"]
+        FEED_INTERACT["Like / Comentar"]
+        FEED_USER["Perfil usuario"]
+        FEED_USER --> FEED_FOLLOW["Follow / Block / Report"]
+    end
+
+    %% ============ PAGOS ============
+    subgraph PAGOS["PAGOS PREMIUM"]
+        direction TB
+        UPGRADE["Upgrade /upgrade"]
+        UPGRADE --> PAY_SELECT["Mensual $3.990 | Anual $39.900"]
+        PAY_SELECT --> PAY_FLOW["flow-create-subscription"]
+        PAY_FLOW --> PAY_REDIRECT["Redirige a Flow.cl"]
+        PAY_REDIRECT --> PAY_RESULT{"Resultado"}
+        PAY_RESULT -->|Exitoso| PAY_WH["Webhook: is_premium=true"]
+        PAY_RESULT -->|Cancela| UPGRADE
+        PAY_WH --> PAY_UNLOCK["Desbloquea: ilimitadas + PDF + compartir"]
+    end
+
+    %% ============ AREA VETERINARIO ============
+    subgraph VET_AREA["AREA VETERINARIO"]
+        direction TB
+        VET_DASH["Dashboard /provider/dashboard"]
+        VET_DASH --> VET_FOLLOW["Seguimientos 7d"]
+        VET_DASH --> VET_SHARED["Fichas compartidas"]
+        VET_DASH --> VET_STATS["Stats: visitas, rating, clientes"]
+        VET_DASH --> VET_BAL["Balance: disponible, pendiente, total"]
+        VET_DASH --> VET_PAT["Lista pacientes"]
+        VET_DASH --> VET_PROFILE_EDIT["Editar perfil"]
+        VET_PROFILE_EDIT --> VET_PREVIEW["Ver como me ven los duenos"]
+    end
+
+    VET_PAT --> VET_NEW_PAT["Nuevo paciente + invitar dueno"]
+    VET_PAT --> VET_NOTE["Crear nota clinica"]
+    VET_NOTE --> VET_TEMPLATE["Plantilla consulta"]
+    VET_TEMPLATE --> VET_SAVE_NOTE["Guarda nota"]
+    VET_SAVE_NOTE --> VET_TRIG_REV["Trigger: invitacion resena"]
+    VET_SAVE_NOTE --> VET_TRIG_REM["Trigger: crea recordatorio"]
+
+    VET_TRIG_REV --> REV_LINK["Link resena con token"]
+    REV_LINK --> REV_FORM["Formulario: estrellas + comentario"]
+    REV_FORM --> REV_SAVE["Guarda + actualiza avg_rating"]
+
+    %% ============ QR FLOW ============
+    FC_QR --> QR_SCAN{"Alguien escanea"}
+    QR_SCAN -->|"Vet verificado"| QR_VET["Ficha completa + registra relacion"]
+    QR_SCAN -->|Dueno| QR_OWN["Su ficha"]
+    QR_SCAN -->|Otro| QR_PUB["Info basica"]
+
+    %% ============ OTROS ============
+    subgraph OTROS["OTROS FLUJOS"]
+        direction TB
+        ADOPTION["Adopcion /adoption"]
+        MEMORIAL["En Memoria /en-memoria"]
+        REPORTES["Reportes /reportes"]
+    end
+
+    %% ============ BACKEND ============
+    subgraph BACKEND["BACKEND AUTOMATICO"]
+        direction TB
+        CRON["Cron diario 9AM"]
+        CRON --> CRON_REMIND["Notifica recordatorios"]
+        CRON_REMIND --> CRON_EMAIL["Email"]
+        CRON_REMIND --> CRON_WA["WhatsApp - pendiente Meta"]
+        CRON --> CRON_WEEKLY["Reporte semanal"]
+    end
+
+    %% ============ ADMIN ============
+    subgraph ADMIN["ADMIN /admin"]
+        direction TB
+        ADM["Panel 13 tabs"]
+        ADM --> ADM_U["Usuarios"]
+        ADM --> ADM_P["Proveedores"]
+        ADM --> ADM_V["Verificacion Colmevet"]
+        ADM --> ADM_M["Moderacion"]
+        ADM --> ADM_MET["Metricas"]
+        ADM --> ADM_MIS["Editor misiones"]
+    end
+
+    %% ============ SEO ============
+    LAND --> SEO_SITEMAP["Sitemap edge function"]
+    PUB_DIR --> SEO_HELMET["Helmet meta tags"]
+    PUB_PROF --> SEO_HELMET
+    PUB_PRICE --> SEO_HELMET
+
+    %% ============ CONEXIONES PRINCIPALES ============
+    H_ALERTS --> RECORDATORIOS
+    H_QUICK --> TAB_VETS_DIR
+    H_QUICK --> CLINICAL
+    H_QUICK --> PUB_PRICE
+    H_QUICK --> MAPA
+    H_GAME --> PAWGAME
+    H_FEED --> FEED

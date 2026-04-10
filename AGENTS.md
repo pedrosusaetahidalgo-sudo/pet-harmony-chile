@@ -47,7 +47,11 @@ supabase/
   migrations/      # ~56 migraciones SQL
 
 docs/              # Build output (GitHub Pages) -- NO editar
-audits/            # Documentos de analisis
+audits/            # Auditorias, competencia, walkthroughs
+diagrams/          # Diagramas Mermaid de flujo (MANTENER ACTUALIZADOS)
+INDEX.md           # Indice maestro de documentacion
+MAPA_FUNCIONAL_COMPLETO.md  # Mapa funcional completo
+AGENTS.md          # (este archivo)
 ```
 
 ---
