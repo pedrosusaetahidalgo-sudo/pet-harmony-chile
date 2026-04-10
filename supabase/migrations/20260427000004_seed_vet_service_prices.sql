@@ -1,77 +1,82 @@
--- Seed: 50+ precios referenciales de servicios veterinarios por comuna RM
--- Fuente: referencias públicas Chile 2024-2026
--- Nota: estos son precios referenciales, no precios reales de vets específicos
+-- Tabla de precios referenciales por comuna (independiente de proveedores)
+CREATE TABLE IF NOT EXISTS vet_reference_prices (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  service_type text NOT NULL,
+  service_name text NOT NULL,
+  price_min int NOT NULL,
+  price_max int NOT NULL,
+  comuna text NOT NULL,
+  source text DEFAULT 'referencia_publica',
+  created_at timestamptz DEFAULT now(),
+  UNIQUE(service_type, service_name, comuna)
+);
 
-INSERT INTO vet_service_prices (service_type, service_name, price_min, price_max, comuna, currency, source, is_reference)
+-- RLS: lectura pública (sin login requerido para el estimador)
+ALTER TABLE vet_reference_prices ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Precios referenciales visibles para todos" ON vet_reference_prices
+  FOR SELECT USING (true);
+
+-- Seed: 55 precios referenciales de servicios veterinarios para 5 comunas RM
+INSERT INTO vet_reference_prices (service_type, service_name, price_min, price_max, comuna)
 VALUES
-  -- CONSULTA GENERAL
-  ('consulta', 'Consulta general', 15000, 30000, 'Providencia', 'CLP', 'referencia_publica', true),
-  ('consulta', 'Consulta general', 15000, 28000, 'Las Condes', 'CLP', 'referencia_publica', true),
-  ('consulta', 'Consulta general', 12000, 22000, 'Ñuñoa', 'CLP', 'referencia_publica', true),
-  ('consulta', 'Consulta general', 10000, 18000, 'Maipú', 'CLP', 'referencia_publica', true),
-  ('consulta', 'Consulta general', 10000, 20000, 'La Florida', 'CLP', 'referencia_publica', true),
-  -- VACUNACIÓN
-  ('vacuna', 'Vacuna séxtuple/óctuple', 15000, 30000, 'Providencia', 'CLP', 'referencia_publica', true),
-  ('vacuna', 'Vacuna séxtuple/óctuple', 15000, 28000, 'Las Condes', 'CLP', 'referencia_publica', true),
-  ('vacuna', 'Vacuna séxtuple/óctuple', 12000, 25000, 'Ñuñoa', 'CLP', 'referencia_publica', true),
-  ('vacuna', 'Vacuna séxtuple/óctuple', 10000, 20000, 'Maipú', 'CLP', 'referencia_publica', true),
-  ('vacuna', 'Vacuna séxtuple/óctuple', 10000, 22000, 'La Florida', 'CLP', 'referencia_publica', true),
-  ('vacuna', 'Vacuna antirrábica', 8000, 15000, 'Providencia', 'CLP', 'referencia_publica', true),
-  ('vacuna', 'Vacuna antirrábica', 8000, 15000, 'Las Condes', 'CLP', 'referencia_publica', true),
-  ('vacuna', 'Vacuna antirrábica', 6000, 12000, 'Ñuñoa', 'CLP', 'referencia_publica', true),
-  ('vacuna', 'Vacuna antirrábica', 5000, 10000, 'Maipú', 'CLP', 'referencia_publica', true),
-  ('vacuna', 'Vacuna antirrábica', 5000, 10000, 'La Florida', 'CLP', 'referencia_publica', true),
-  -- ESTERILIZACIÓN
-  ('cirugia', 'Esterilización hembra (perro)', 80000, 150000, 'Providencia', 'CLP', 'referencia_publica', true),
-  ('cirugia', 'Esterilización hembra (perro)', 80000, 140000, 'Las Condes', 'CLP', 'referencia_publica', true),
-  ('cirugia', 'Esterilización hembra (perro)', 60000, 120000, 'Ñuñoa', 'CLP', 'referencia_publica', true),
-  ('cirugia', 'Esterilización hembra (perro)', 50000, 100000, 'Maipú', 'CLP', 'referencia_publica', true),
-  ('cirugia', 'Esterilización hembra (perro)', 50000, 100000, 'La Florida', 'CLP', 'referencia_publica', true),
-  ('cirugia', 'Castración macho (perro)', 50000, 100000, 'Providencia', 'CLP', 'referencia_publica', true),
-  ('cirugia', 'Castración macho (perro)', 50000, 90000, 'Las Condes', 'CLP', 'referencia_publica', true),
-  ('cirugia', 'Castración macho (perro)', 40000, 80000, 'Ñuñoa', 'CLP', 'referencia_publica', true),
-  ('cirugia', 'Castración macho (perro)', 30000, 65000, 'Maipú', 'CLP', 'referencia_publica', true),
-  ('cirugia', 'Castración macho (perro)', 30000, 65000, 'La Florida', 'CLP', 'referencia_publica', true),
-  -- LIMPIEZA DENTAL
-  ('cirugia', 'Limpieza dental', 80000, 180000, 'Providencia', 'CLP', 'referencia_publica', true),
-  ('cirugia', 'Limpieza dental', 80000, 170000, 'Las Condes', 'CLP', 'referencia_publica', true),
-  ('cirugia', 'Limpieza dental', 60000, 140000, 'Ñuñoa', 'CLP', 'referencia_publica', true),
-  ('cirugia', 'Limpieza dental', 50000, 120000, 'Maipú', 'CLP', 'referencia_publica', true),
-  ('cirugia', 'Limpieza dental', 50000, 120000, 'La Florida', 'CLP', 'referencia_publica', true),
-  -- DESPARASITACIÓN
-  ('desparasitacion', 'Desparasitación interna', 5000, 15000, 'Providencia', 'CLP', 'referencia_publica', true),
-  ('desparasitacion', 'Desparasitación interna', 5000, 12000, 'Las Condes', 'CLP', 'referencia_publica', true),
-  ('desparasitacion', 'Desparasitación interna', 4000, 10000, 'Ñuñoa', 'CLP', 'referencia_publica', true),
-  ('desparasitacion', 'Desparasitación interna', 3000, 8000, 'Maipú', 'CLP', 'referencia_publica', true),
-  ('desparasitacion', 'Desparasitación interna', 3000, 8000, 'La Florida', 'CLP', 'referencia_publica', true),
-  -- EXÁMENES DE SANGRE
-  ('examen', 'Hemograma completo', 15000, 30000, 'Providencia', 'CLP', 'referencia_publica', true),
-  ('examen', 'Hemograma completo', 15000, 28000, 'Las Condes', 'CLP', 'referencia_publica', true),
-  ('examen', 'Hemograma completo', 12000, 25000, 'Ñuñoa', 'CLP', 'referencia_publica', true),
-  ('examen', 'Hemograma completo', 10000, 20000, 'Maipú', 'CLP', 'referencia_publica', true),
-  ('examen', 'Hemograma completo', 10000, 20000, 'La Florida', 'CLP', 'referencia_publica', true),
-  -- ECOGRAFÍA
-  ('examen', 'Ecografía abdominal', 30000, 60000, 'Providencia', 'CLP', 'referencia_publica', true),
-  ('examen', 'Ecografía abdominal', 30000, 55000, 'Las Condes', 'CLP', 'referencia_publica', true),
-  ('examen', 'Ecografía abdominal', 25000, 50000, 'Ñuñoa', 'CLP', 'referencia_publica', true),
-  ('examen', 'Ecografía abdominal', 20000, 40000, 'Maipú', 'CLP', 'referencia_publica', true),
-  ('examen', 'Ecografía abdominal', 20000, 40000, 'La Florida', 'CLP', 'referencia_publica', true),
-  -- RADIOGRAFÍA
-  ('examen', 'Radiografía', 20000, 45000, 'Providencia', 'CLP', 'referencia_publica', true),
-  ('examen', 'Radiografía', 20000, 40000, 'Las Condes', 'CLP', 'referencia_publica', true),
-  ('examen', 'Radiografía', 15000, 35000, 'Ñuñoa', 'CLP', 'referencia_publica', true),
-  ('examen', 'Radiografía', 12000, 30000, 'Maipú', 'CLP', 'referencia_publica', true),
-  ('examen', 'Radiografía', 12000, 30000, 'La Florida', 'CLP', 'referencia_publica', true),
-  -- URGENCIA
-  ('urgencia', 'Atención de urgencia', 30000, 80000, 'Providencia', 'CLP', 'referencia_publica', true),
-  ('urgencia', 'Atención de urgencia', 30000, 75000, 'Las Condes', 'CLP', 'referencia_publica', true),
-  ('urgencia', 'Atención de urgencia', 25000, 60000, 'Ñuñoa', 'CLP', 'referencia_publica', true),
-  ('urgencia', 'Atención de urgencia', 20000, 50000, 'Maipú', 'CLP', 'referencia_publica', true),
-  ('urgencia', 'Atención de urgencia', 20000, 50000, 'La Florida', 'CLP', 'referencia_publica', true),
-  -- PELUQUERÍA CANINA
-  ('grooming', 'Baño y corte perro mediano', 15000, 30000, 'Providencia', 'CLP', 'referencia_publica', true),
-  ('grooming', 'Baño y corte perro mediano', 15000, 28000, 'Las Condes', 'CLP', 'referencia_publica', true),
-  ('grooming', 'Baño y corte perro mediano', 12000, 25000, 'Ñuñoa', 'CLP', 'referencia_publica', true),
-  ('grooming', 'Baño y corte perro mediano', 10000, 20000, 'Maipú', 'CLP', 'referencia_publica', true),
-  ('grooming', 'Baño y corte perro mediano', 10000, 20000, 'La Florida', 'CLP', 'referencia_publica', true)
-ON CONFLICT DO NOTHING;
+  ('consulta', 'Consulta general', 15000, 30000, 'Providencia'),
+  ('consulta', 'Consulta general', 15000, 28000, 'Las Condes'),
+  ('consulta', 'Consulta general', 12000, 22000, 'Ñuñoa'),
+  ('consulta', 'Consulta general', 10000, 18000, 'Maipú'),
+  ('consulta', 'Consulta general', 10000, 20000, 'La Florida'),
+  ('vacuna', 'Vacuna séxtuple/óctuple', 15000, 30000, 'Providencia'),
+  ('vacuna', 'Vacuna séxtuple/óctuple', 15000, 28000, 'Las Condes'),
+  ('vacuna', 'Vacuna séxtuple/óctuple', 12000, 25000, 'Ñuñoa'),
+  ('vacuna', 'Vacuna séxtuple/óctuple', 10000, 20000, 'Maipú'),
+  ('vacuna', 'Vacuna séxtuple/óctuple', 10000, 22000, 'La Florida'),
+  ('vacuna', 'Vacuna antirrábica', 8000, 15000, 'Providencia'),
+  ('vacuna', 'Vacuna antirrábica', 8000, 15000, 'Las Condes'),
+  ('vacuna', 'Vacuna antirrábica', 6000, 12000, 'Ñuñoa'),
+  ('vacuna', 'Vacuna antirrábica', 5000, 10000, 'Maipú'),
+  ('vacuna', 'Vacuna antirrábica', 5000, 10000, 'La Florida'),
+  ('cirugia', 'Esterilización hembra (perro)', 80000, 150000, 'Providencia'),
+  ('cirugia', 'Esterilización hembra (perro)', 80000, 140000, 'Las Condes'),
+  ('cirugia', 'Esterilización hembra (perro)', 60000, 120000, 'Ñuñoa'),
+  ('cirugia', 'Esterilización hembra (perro)', 50000, 100000, 'Maipú'),
+  ('cirugia', 'Esterilización hembra (perro)', 50000, 100000, 'La Florida'),
+  ('cirugia', 'Castración macho (perro)', 50000, 100000, 'Providencia'),
+  ('cirugia', 'Castración macho (perro)', 50000, 90000, 'Las Condes'),
+  ('cirugia', 'Castración macho (perro)', 40000, 80000, 'Ñuñoa'),
+  ('cirugia', 'Castración macho (perro)', 30000, 65000, 'Maipú'),
+  ('cirugia', 'Castración macho (perro)', 30000, 65000, 'La Florida'),
+  ('cirugia', 'Limpieza dental', 80000, 180000, 'Providencia'),
+  ('cirugia', 'Limpieza dental', 80000, 170000, 'Las Condes'),
+  ('cirugia', 'Limpieza dental', 60000, 140000, 'Ñuñoa'),
+  ('cirugia', 'Limpieza dental', 50000, 120000, 'Maipú'),
+  ('cirugia', 'Limpieza dental', 50000, 120000, 'La Florida'),
+  ('desparasitacion', 'Desparasitación interna', 5000, 15000, 'Providencia'),
+  ('desparasitacion', 'Desparasitación interna', 5000, 12000, 'Las Condes'),
+  ('desparasitacion', 'Desparasitación interna', 4000, 10000, 'Ñuñoa'),
+  ('desparasitacion', 'Desparasitación interna', 3000, 8000, 'Maipú'),
+  ('desparasitacion', 'Desparasitación interna', 3000, 8000, 'La Florida'),
+  ('examen', 'Hemograma completo', 15000, 30000, 'Providencia'),
+  ('examen', 'Hemograma completo', 15000, 28000, 'Las Condes'),
+  ('examen', 'Hemograma completo', 12000, 25000, 'Ñuñoa'),
+  ('examen', 'Hemograma completo', 10000, 20000, 'Maipú'),
+  ('examen', 'Hemograma completo', 10000, 20000, 'La Florida'),
+  ('examen', 'Ecografía abdominal', 30000, 60000, 'Providencia'),
+  ('examen', 'Ecografía abdominal', 30000, 55000, 'Las Condes'),
+  ('examen', 'Ecografía abdominal', 25000, 50000, 'Ñuñoa'),
+  ('examen', 'Ecografía abdominal', 20000, 40000, 'Maipú'),
+  ('examen', 'Ecografía abdominal', 20000, 40000, 'La Florida'),
+  ('examen', 'Radiografía', 20000, 45000, 'Providencia'),
+  ('examen', 'Radiografía', 20000, 40000, 'Las Condes'),
+  ('examen', 'Radiografía', 15000, 35000, 'Ñuñoa'),
+  ('examen', 'Radiografía', 12000, 30000, 'Maipú'),
+  ('examen', 'Radiografía', 12000, 30000, 'La Florida'),
+  ('urgencia', 'Atención de urgencia', 30000, 80000, 'Providencia'),
+  ('urgencia', 'Atención de urgencia', 30000, 75000, 'Las Condes'),
+  ('urgencia', 'Atención de urgencia', 25000, 60000, 'Ñuñoa'),
+  ('urgencia', 'Atención de urgencia', 20000, 50000, 'Maipú'),
+  ('urgencia', 'Atención de urgencia', 20000, 50000, 'La Florida'),
+  ('grooming', 'Baño y corte perro mediano', 15000, 30000, 'Providencia'),
+  ('grooming', 'Baño y corte perro mediano', 15000, 28000, 'Las Condes'),
+  ('grooming', 'Baño y corte perro mediano', 12000, 25000, 'Ñuñoa'),
+  ('grooming', 'Baño y corte perro mediano', 10000, 20000, 'Maipú'),
+  ('grooming', 'Baño y corte perro mediano', 10000, 20000, 'La Florida')
+ON CONFLICT (service_type, service_name, comuna) DO NOTHING;
