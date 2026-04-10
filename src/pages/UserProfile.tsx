@@ -123,38 +123,42 @@ const UserProfile = () => {
     try {
       setLoading(true);
       
+      // Campos públicos del perfil (nunca exponer whatsapp, plan, admin, etc.)
+      const publicProfileFields = 'id, display_name, avatar_url, bio, location, level, points, total_posts, total_reviews, total_adoptions, total_bookings, created_at';
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('*')
+        .select(isOwnProfile ? '*' : publicProfileFields)
         .eq('id', userId)
         .maybeSingle();
-      
+
       setProfile(profileData);
 
       const { data: statsData } = await supabase
         .from('user_stats')
-        .select('*')
+        .select('total_points, level, total_posts, total_reviews')
         .eq('user_id', userId)
         .maybeSingle();
-      
+
       setUserStats(statsData);
 
+      // Mascotas: solo datos públicos (nunca datos médicos, microchip, emergencia)
+      const publicPetFields = 'id, name, species, breed, photo_url, gender, birth_date, bio, personality';
       const { data: petsData } = await supabase
         .from('pets')
-        .select('*')
+        .select(isOwnProfile ? '*' : publicPetFields)
         .eq('owner_id', userId)
-        .eq('is_public', true)
+        .eq('lifecycle_status', 'active')
         .order('created_at', { ascending: false });
-      
+
       setPets(petsData || []);
 
       const { data: postsData } = await supabase
         .from('posts')
-        .select('*')
+        .select('id, content, image_url, created_at, likes_count, comments_count, post_type')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(12);
-      
+
       setPosts(postsData || []);
 
     } catch (error) {
