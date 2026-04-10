@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink } from "@/lib/icons";
+import { openExternalUrl } from "@/lib/nativeNavigation";
 import { useQuery } from "@tanstack/react-query";
 import { logger } from "@/lib/logger";
 
@@ -81,7 +82,7 @@ export const PartnerAd = ({ placement, category, className }: PartnerAdProps) =>
 
     // Open link
     if (partner.ad_link) {
-      window.open(partner.ad_link, "_blank", "noopener,noreferrer");
+      openExternalUrl(partner.ad_link);
     }
   };
 

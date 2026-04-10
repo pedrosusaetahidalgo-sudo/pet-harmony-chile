@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
 import { useAuth } from "./hooks/useAuth";
 import { ReactNode } from "react";
+import { isNative } from "@/lib/platform";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -72,6 +73,76 @@ const OnboardingDuenoMinimal = lazy(() => import("./pages/OnboardingDuenoMinimal
 const Reportes = lazy(() => import("./pages/Reportes"));
 const EnMemoria = lazy(() => import("./pages/EnMemoria"));
 
+/** Inicialización nativa: StatusBar, SplashScreen, back button, push notifications */
+async function initNative() {
+  if (!isNative()) return;
+
+  const [
+    { StatusBar, Style },
+    { SplashScreen },
+    { App: CapApp },
+    { PushNotifications },
+  ] = await Promise.all([
+    import('@capacitor/status-bar'),
+    import('@capacitor/splash-screen'),
+    import('@capacitor/app'),
+    import('@capacitor/push-notifications'),
+  ]);
+
+  // StatusBar
+  StatusBar.setBackgroundColor({ color: '#8B5CF6' });
+  StatusBar.setStyle({ style: Style.Dark });
+
+  // SplashScreen
+  SplashScreen.hide();
+
+  // Back button (Android)
+  CapApp.addListener('backButton', ({ canGoBack }) => {
+    if (canGoBack) {
+      window.history.back();
+    } else {
+      CapApp.exitApp();
+    }
+  });
+
+  // Deep links (OAuth callbacks)
+  CapApp.addListener('appUrlOpen', ({ url }) => {
+    const slug = url.split('cl.pawfriend.app://').pop();
+    if (slug) {
+      window.location.href = '/' + slug;
+    }
+  });
+
+  // Push Notifications
+  try {
+    const permResult = await PushNotifications.requestPermissions();
+    if (permResult.receive === 'granted') {
+      await PushNotifications.register();
+
+      PushNotifications.addListener('registration', (token) => {
+        console.log('Push registration token:', token.value);
+      });
+
+      PushNotifications.addListener('pushNotificationReceived', (notification) => {
+        // Toast se maneja via sonner — import dinámico para no añadir al bundle sync
+        import('sonner').then(({ toast }) => {
+          toast.info(notification.title || 'Nueva notificación');
+        });
+      });
+
+      PushNotifications.addListener('pushNotificationActionPerformed', (action) => {
+        const route = action.notification.data?.route;
+        if (route) window.location.href = route;
+      });
+    }
+  } catch {
+    // Push not available (e.g. simulator)
+  }
+}
+
+// Fire-and-forget native init
+initNative();
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -81,6 +152,15 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+// Preload rutas críticas en idle time (mejora UX mobile)
+if (typeof requestIdleCallback !== 'undefined') {
+  requestIdleCallback(() => {
+    import('./pages/Home');
+    import('./pages/MyPets');
+    import('./pages/MedicalRecords');
+  });
+}
 
 const PageLoader = () => (
   <div className="flex items-center justify-center min-h-screen">

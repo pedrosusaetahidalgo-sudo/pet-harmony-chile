@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { logger } from "@/lib/logger";
 import { describeSupabaseError } from "@/lib/supabaseErrors";
+import { downloadFile } from "@/lib/nativeDownload";
 
 interface MedicalSummaryButtonProps {
   petId: string;
@@ -30,8 +31,7 @@ export const MedicalSummaryButton = ({ petId, petName }: MedicalSummaryButtonPro
       if (error) throw error;
 
       if (data?.download_url) {
-        // Open download URL in new tab
-        window.open(data.download_url, '_blank');
+        await downloadFile(data.download_url, `resumen_medico_${petName || 'mascota'}.pdf`);
         toast({
           title: "Resumen médico generado",
           description: `El resumen médico de ${petName || 'tu mascota'} está listo para descargar`,

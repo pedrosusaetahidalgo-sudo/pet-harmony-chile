@@ -39,6 +39,7 @@ import { es } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { describeSupabaseError } from "@/lib/supabaseErrors";
+import { downloadFile } from "@/lib/nativeDownload";
 
 interface MedicalDocumentsTabProps {
   petId: string;
@@ -91,7 +92,7 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
   const handleDownload = async (document: any) => {
     try {
       const url = await getDownloadUrl(document);
-      window.open(url, '_blank');
+      await downloadFile(url, document.title || 'documento');
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -132,7 +133,7 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
     try {
       const result = await downloadAllAsZip();
       if (result?.download_url) {
-        window.open(result.download_url, '_blank');
+        await downloadFile(result.download_url, 'documentos_medicos.zip');
       }
     } catch (error) {
       // Error handled in hook

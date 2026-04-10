@@ -15,6 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useMedicalSharing } from "@/hooks/useMedicalSharing";
+import { openExternalUrl } from "@/lib/nativeNavigation";
 import { supabase } from "@/integrations/supabase/client";
 import { formatShortDate } from "../helpers";
 import { EmptyState } from "../shared";
@@ -87,7 +88,7 @@ export function TabCompartir({ petId, petName }: { petId: string; petName: strin
     const text = `Te comparto la ficha médica de mi mascota en Paw Friend: ${url}`;
     // wa.me es link directo (no requiere API Meta), abre WhatsApp con el
     // mensaje pre-armado y deja que el usuario elija a quien enviarlo.
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank", "noopener");
+    openExternalUrl(`https://wa.me/?text=${encodeURIComponent(text)}`);
   }, [getShareUrl]);
 
   const handleCreate = useCallback(async () => {

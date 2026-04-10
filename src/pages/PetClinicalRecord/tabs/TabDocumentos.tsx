@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMedicalDocuments, MedicalDocument } from "@/hooks/useMedicalDocuments";
+import { downloadFile } from "@/lib/nativeDownload";
 import { formatShortDate } from "../helpers";
 import { EmptyState, getDocTypeLabel } from "../shared";
 
@@ -15,7 +16,7 @@ export function TabDocumentos({ petId }: { petId: string }) {
   const handleDownload = useCallback(async (doc: MedicalDocument) => {
     try {
       const url = await getDownloadUrl(doc);
-      window.open(url, "_blank");
+      await downloadFile(url, doc.title || 'documento');
     } catch {
       toast.error("Error al obtener el enlace de descarga");
     }

@@ -1,10 +1,11 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Home, MapPin, Globe, Phone, Mail, Instagram, Facebook, 
-  Dog, Cat, Sparkles, ExternalLink, MessageCircle, Building2 
+import {
+  Home, MapPin, Globe, Phone, Mail, Instagram, Facebook,
+  Dog, Cat, Sparkles, ExternalLink, MessageCircle, Building2
 } from "@/lib/icons";
+import { openExternalUrl } from "@/lib/nativeNavigation";
 
 interface ShelterDetailCardProps {
   shelter: {
@@ -48,13 +49,13 @@ const ShelterDetailCard = ({ shelter, compact = false }: ShelterDetailCardProps)
     if (shelter.contact_email) {
       window.location.href = `mailto:${shelter.contact_email}`;
     } else if (shelter.website) {
-      window.open(shelter.website, "_blank");
+      openExternalUrl(shelter.website);
     }
   };
 
   const handleWebsite = () => {
     if (shelter.website) {
-      window.open(shelter.website, "_blank");
+      openExternalUrl(shelter.website);
     }
   };
 

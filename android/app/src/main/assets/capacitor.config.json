@@ -3,6 +3,10 @@
 	"appName": "Paw Friend",
 	"webDir": "docs",
 	"android": {},
+	"ios": {
+		"contentInset": "automatic",
+		"backgroundColor": "#8B5CF6"
+	},
 	"plugins": {
 		"SplashScreen": {
 			"launchShowDuration": 2000,
@@ -27,6 +31,13 @@
 			],
 			"serverClientId": "707954104528-87df2bmt6jeaqe9s6h3tjpdrqth3v03r.apps.googleusercontent.com",
 			"forceCodeForRefreshToken": true
+		},
+		"PushNotifications": {
+			"presentationOptions": [
+				"badge",
+				"sound",
+				"alert"
+			]
 		}
 	}
 }

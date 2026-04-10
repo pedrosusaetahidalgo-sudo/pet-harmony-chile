@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { FileText, ExternalLink, Plus } from "@/lib/icons";
+import { openExternalUrl } from "@/lib/nativeNavigation";
 import { supabase } from "@/integrations/supabase/client";
 import { VetNoteEditor } from "./VetNoteEditor";
 
@@ -58,7 +59,7 @@ export function SharedFichasCard({ providerId }: SharedFichasCardProps) {
   if (!rows || rows.length === 0) return null;
 
   const openShare = (token: string) => {
-    window.open(`${window.location.origin}/medical-share/${token}`, "_blank", "noopener");
+    openExternalUrl(`${window.location.origin}/medical-share/${token}`);
   };
 
   const isTokenExpired = (expiresAt: string) => new Date(expiresAt) < new Date();

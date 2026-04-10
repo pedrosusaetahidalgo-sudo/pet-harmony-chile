@@ -25,6 +25,7 @@ import { Progress } from '@/components/ui/progress';
 import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
+import { openExternalUrl } from '@/lib/nativeNavigation';
 import {
   useMyProvider,
   calculateProfileCompleteness,
@@ -111,7 +112,7 @@ export function ProviderDirectoryCard() {
 
   const shareWhatsApp = () => {
     const url = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`;
-    window.open(url, '_blank');
+    openExternalUrl(url);
   };
 
   const handleCreateInvitation = async () => {
@@ -147,7 +148,7 @@ export function ProviderDirectoryCard() {
   const shareInviteWhatsApp = () => {
     if (!generatedLink) return;
     const msg = `Hola${clientName ? ' ' + clientName : ''}, te invito a dejar tu reseña sobre mi atención en Paw Friend 🐾\n${generatedLink}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+    openExternalUrl(`https://wa.me/?text=${encodeURIComponent(msg)}`);
   };
 
   const shareNative = async () => {

@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Capacitor } from "@capacitor/core";
+import { isNative } from "@/lib/platform";
 import { logger } from "@/lib/logger";
 type GoogleAuthModule = typeof import("@codetrix-studio/capacitor-google-auth");
 
@@ -48,7 +49,7 @@ export const useGoogleAuth = () => {
     try {
       // NOTE: Forzamos web OAuth flow porque no hay SHA-1 en Google Cloud Console.
       // Para usar native flow: configurar SHA-1 y poner FORCE_WEB_OAUTH = false.
-      const FORCE_WEB_OAUTH = true; // Set to false to use native flow when SHA-1 is configured
+      const FORCE_WEB_OAUTH = false; // Native flow enabled — requires SHA-1 in Google Cloud Console
       
       const isNative = Capacitor.isNativePlatform();
 
@@ -121,10 +122,14 @@ export const useGoogleAuth = () => {
    * Handle Google Auth on web platform
    */
   const handleWebGoogleAuth = async (): Promise<GoogleAuthResult> => {
+    const redirectTo = isNative()
+      ? 'cl.pawfriend.app://auth/callback'
+      : `${window.location.origin}/auth`;
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth`,
+        redirectTo,
         queryParams: {
           access_type: 'offline',
           prompt: 'consent',

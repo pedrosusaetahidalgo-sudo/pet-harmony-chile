@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Capacitor } from "@capacitor/core";
+import { isNative } from "@/lib/platform";
 import { logger } from "@/lib/logger";
 
 interface FacebookAuthResult {
@@ -49,10 +50,14 @@ export const useFacebookAuth = () => {
    * Handle Facebook Auth on web platform
    */
   const handleWebFacebookAuth = async (): Promise<FacebookAuthResult> => {
+    const redirectTo = isNative()
+      ? 'cl.pawfriend.app://auth/callback'
+      : `${window.location.origin}/auth`;
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'facebook',
       options: {
-        redirectTo: `${window.location.origin}/auth`,
+        redirectTo,
         scopes: 'email',
       },
     });

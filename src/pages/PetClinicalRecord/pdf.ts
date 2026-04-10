@@ -4,11 +4,14 @@
  */
 
 import { toast } from "sonner";
+import { Filesystem, Directory } from '@capacitor/filesystem';
+import { Share } from '@capacitor/share';
+import { isNative } from '@/lib/platform';
 import type { PetData } from "./types";
 import { calculateAge } from "./helpers";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function generatePDF(pet: PetData, records: any[]) {
+export async function generatePDF(pet: PetData, records: any[]) {
   const age = pet.birth_date ? calculateAge(pet.birth_date) : "No especificada";
   const now = new Date().toLocaleDateString("es-CL", { day: "2-digit", month: "long", year: "numeric" });
 
@@ -200,11 +203,28 @@ export function generatePDF(pet: PetData, records: any[]) {
 </body>
 </html>`;
 
-  const printWindow = window.open("", "_blank");
-  if (printWindow) {
-    printWindow.document.write(html);
-    printWindow.document.close();
+  if (isNative()) {
+    try {
+      const fileName = `ficha_${pet.name}_${Date.now()}.html`;
+      const saved = await Filesystem.writeFile({
+        path: fileName,
+        data: btoa(unescape(encodeURIComponent(html))),
+        directory: Directory.Cache,
+      });
+      await Share.share({
+        title: `Ficha clínica de ${pet.name}`,
+        url: saved.uri,
+      });
+      toast.success("Ficha clínica lista para compartir");
+    } catch {
+      toast.error("No se pudo generar la ficha");
+    }
+  } else {
+    const printWindow = window.open("", "_blank");
+    if (printWindow) {
+      printWindow.document.write(html);
+      printWindow.document.close();
+    }
+    toast.success("Ficha clínica generada — usa Ctrl+P para guardar como PDF");
   }
-
-  toast.success("Ficha cl\u00ednica generada \u2014 usa Ctrl+P para guardar como PDF");
 }
