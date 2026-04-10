@@ -23,6 +23,7 @@ import { useCanAddPet } from "@/hooks/useCanAddPet";
 import { Sparkles, Crown } from "@/lib/icons";
 import { PageHeader } from "@/components/PageHeader";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { VaccinationCardOCR } from "@/components/onboarding/VaccinationCardOCR";
 
 const personalityOptions = [
   "Juguetón", "Tranquilo", "Energético", "Cariñoso", "Tímido",
@@ -733,6 +734,11 @@ const AddPet = () => {
             </CollapsibleTrigger>
             <CollapsibleContent>
               <CardContent className="space-y-4 pt-0">
+                {/* OCR Vaccination Card — solo en modo edición (requiere petId) */}
+                {isEdit && petId && (
+                  <VaccinationCardOCR petId={petId} />
+                )}
+
                 <div className="grid md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="microchip">Número de Microchip</Label>

@@ -64,6 +64,7 @@ const RegistroVeterinario = lazy(() => import("./pages/RegistroVeterinario"));
 const ParaVeterinarios = lazy(() => import("./pages/ParaVeterinarios"));
 const PreciosVeterinarios = lazy(() => import("./pages/PreciosVeterinarios"));
 const DejarResena = lazy(() => import("./pages/DejarResena"));
+const QRLanding = lazy(() => import("./pages/QRLanding"));
 const Actividad = lazy(() => import("./pages/Actividad"));
 const Reminders = lazy(() => import("./pages/Reminders"));
 const OnboardingVetMinimal = lazy(() => import("./pages/OnboardingVetMinimal"));
@@ -158,6 +159,7 @@ const App = () => (
               <Route path="/precios-veterinarios" element={<PublicWithLayoutIfAuth><PreciosVeterinarios /></PublicWithLayoutIfAuth>} />
               <Route path="/precios-veterinarios/comuna/:comuna" element={<PublicWithLayoutIfAuth><PreciosVeterinarios /></PublicWithLayoutIfAuth>} />
               <Route path="/resena/:token" element={<DejarResena />} />
+              <Route path="/qr/:token" element={<QRLanding />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

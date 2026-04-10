@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, FileText, Syringe, Pill, Stethoscope, Activity, MapPin, User, Heart, Clock } from "@/lib/icons";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AddMedicalRecord } from "@/components/AddMedicalRecord";
+import { VaccinationCardOCR } from "@/components/onboarding/VaccinationCardOCR";
 import { PageHeader } from "@/components/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
@@ -18,6 +19,7 @@ import { es } from "date-fns/locale";
 
 const MedicalRecords = () => {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [selectedPetId, setSelectedPetId] = useState<string>("");
 
   const { data: pets } = useQuery({
@@ -212,6 +214,14 @@ const MedicalRecords = () => {
                 />
               )}
             </div>
+
+            {/* OCR de carnet de vacunación */}
+            {selectedPetId && (
+              <VaccinationCardOCR
+                petId={selectedPetId}
+                onSaved={() => queryClient.invalidateQueries({ queryKey: ["medical-records", selectedPetId] })}
+              />
+            )}
 
             {selectedPetId ? (
               <Tabs defaultValue="timeline" className="w-full">

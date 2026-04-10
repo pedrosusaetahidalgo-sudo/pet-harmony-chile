@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import type { PetData } from "../types";
 import { formatDate } from "../helpers";
 import { InfoRow } from "../shared";
+import { GrimaceChecklist } from "@/components/medical/GrimaceChecklist";
 
 export function TabResumen({ pet }: { pet: PetData }) {
   const hasAllergies =
@@ -210,6 +211,28 @@ export function TabResumen({ pet }: { pet: PetData }) {
                 <p className="text-sm">{pet.medical_notes}</p>
               </div>
             )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Pain Assessment — Grimace Scale (cats & dogs only) */}
+      {(pet.species?.toLowerCase() === "gato" || pet.species?.toLowerCase() === "perro") && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <Stethoscope className="h-4 w-4 text-rose-500" />
+              Evaluación de dolor
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-3">
+              Usa la escala de Grimace para evaluar si {pet.name} presenta signos de dolor.
+            </p>
+            <GrimaceChecklist
+              petId={pet.id}
+              petName={pet.name}
+              species={pet.species}
+            />
           </CardContent>
         </Card>
       )}

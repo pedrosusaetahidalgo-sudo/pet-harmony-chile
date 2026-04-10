@@ -69,7 +69,7 @@ export default function Reminders() {
         }
       />
 
-      <main className="container max-w-3xl mx-auto px-3 py-4 space-y-6">
+      <main className="container max-w-5xl mx-auto px-3 py-4 space-y-6">
         {isLoading && (
           <div className="space-y-2">
             {[1, 2, 3].map((i) => (
@@ -185,7 +185,7 @@ function Section({
           {count}
         </Badge>
       </div>
-      <div className="space-y-2">{children}</div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">{children}</div>
     </section>
   );
 }
