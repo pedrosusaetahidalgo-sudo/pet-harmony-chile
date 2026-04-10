@@ -5,7 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Plus, Edit, Trash2, Heart, FileText, PawPrint } from "@/lib/icons";
+import { Plus, Edit, Trash2, Heart, FileText, PawPrint, ChevronDown, MessageCircle } from "@/lib/icons";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { LINKS } from "@/lib/links";
 import { useToast } from "@/hooks/use-toast";
@@ -40,8 +42,10 @@ interface Pet {
 
 const MyPets = () => {
   const [pets, setPets] = useState<Pet[]>([]);
+  const [memorialPets, setMemorialPets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [memorialOpen, setMemorialOpen] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -50,6 +54,7 @@ const MyPets = () => {
   useEffect(() => {
     if (user) {
       fetchPets();
+      fetchMemorialPets();
     }
   }, [user]);
 
@@ -73,6 +78,16 @@ const MyPets = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchMemorialPets = async () => {
+    const { data } = await supabase
+      .from("pets")
+      .select("id, name, species, photo_url, passed_away_at")
+      .eq("owner_id", user?.id)
+      .eq("lifecycle_status", "memorial")
+      .order("passed_away_at", { ascending: false });
+    setMemorialPets(data || []);
   };
 
   const handleDelete = async () => {
@@ -281,6 +296,54 @@ const MyPets = () => {
               </Card>
             ))}
           </div>
+        )}
+
+        {/* Sección memorial — colapsable, privada */}
+        {memorialPets.length > 0 && (
+          <Collapsible open={memorialOpen} onOpenChange={setMemorialOpen} className="mt-8">
+            <CollapsibleTrigger className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors w-full py-2">
+              <Heart className="h-4 w-4" />
+              <span>En memoria ({memorialPets.length})</span>
+              <ChevronDown className={`h-4 w-4 ml-auto transition-transform ${memorialOpen ? "rotate-180" : ""}`} />
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-3">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {memorialPets.map((pet) => (
+                  <Card key={pet.id} className="opacity-75 hover:opacity-100 transition-opacity">
+                    <CardContent className="p-4 flex items-center gap-3">
+                      <Avatar className="h-12 w-12 ring-2 ring-purple-200">
+                        <AvatarImage src={pet.photo_url || undefined} alt={pet.name} />
+                        <AvatarFallback className="bg-purple-50 text-purple-400">
+                          {pet.name.charAt(0)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-sm">{pet.name}</p>
+                        <p className="text-xs text-muted-foreground">En nuestro corazón</p>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => navigate(`/pet/${pet.id}/clinical`)}
+                        className="text-xs"
+                      >
+                        Ver ficha
+                      </Button>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="mt-3 text-xs text-muted-foreground"
+                onClick={() => navigate("/en-memoria")}
+              >
+                <MessageCircle className="h-3.5 w-3.5 mr-1" />
+                Ir al espacio memorial completo
+              </Button>
+            </CollapsibleContent>
+          </Collapsible>
         )}
 
         <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>

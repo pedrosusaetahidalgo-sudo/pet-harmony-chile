@@ -182,7 +182,6 @@ const Feed = () => {
       <PageHeader
         title="Comunidad"
         subtitle="Fotos y publicaciones de la comunidad"
-        onBack={() => navigate(LINKS.home())}
         actions={
           profile ? (
             <Avatar className="h-10 w-10 border-2 border-primary shadow-sm">

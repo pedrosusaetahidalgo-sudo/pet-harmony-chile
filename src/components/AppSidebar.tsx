@@ -34,7 +34,6 @@ const mainItems = [
   { title: "Mensajes", url: "/chat", icon: MessageSquare },
   { title: "Paw Game", url: "/paw-game", icon: Gamepad2 },
   { title: "Ofrecer servicios", url: "/servicios", icon: Briefcase },
-  { title: "En memoria", url: "/en-memoria", icon: Heart },
 ];
 
 export function AppSidebar() {

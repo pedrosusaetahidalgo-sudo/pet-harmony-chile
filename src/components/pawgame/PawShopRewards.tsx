@@ -241,8 +241,11 @@ export const PawShopRewards = ({ userPoints, userId, onPurchase }: PawShopReward
             Canjea tus PawPoints por premios reales
           </h3>
           <p className="text-xs text-muted-foreground max-w-md mx-auto">
-            Descuentos en veterinarias, productos para mascotas, donaciones a refugios
-            y más. Gana puntos cuidando a tus mascotas.
+            Cuida a tus mascotas, completa misiones y canjea por descuentos en vets,
+            donaciones a refugios, badges exclusivos y más.
+          </p>
+          <p className="text-[10px] text-purple-600 mt-2 font-medium">
+            Tip: completa misiones diarias para acumular puntos rápido
           </p>
         </CardContent>
       </Card>
