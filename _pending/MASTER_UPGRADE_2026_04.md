@@ -1181,24 +1181,28 @@ FROM service_providers;
 
 ---
 
-## FASE 8 — DOCUMENTACION VIVA (con cada commit)
+## FASE 8 — DOCUMENTACION VIVA (con cada commit) ✅ CERRADA 2026-04-12
 
 > Mantener sincronizados segun regla de INDEX.md
 
-### Documentos a actualizar si se tocan rutas/navegacion/flujos:
+### Documentos a actualizar si se tocan rutas/navegacion/flujos (regla CONTINUA, no cerrable):
 
-- `diagrams/FLUJO_COMPLETO.mmd`
-- `diagrams/FLUJOS_MERMAID.md`
-- `MAPA_FUNCIONAL_COMPLETO.md`
-- `AGENTS.md`
+- `diagrams/FLUJO_COMPLETO.mmd` ✅ sincronizado en commit `7040db5` (2026-04-11)
+- `diagrams/FLUJOS_MERMAID.md` ✅ sincronizado en commit `7040db5`
+- `MAPA_FUNCIONAL_COMPLETO.md` ✅ sincronizado en commit `7040db5`
+- `AGENTS.md` ✅ sincronizado en commit `7040db5`
 
-### Features subcomunicadas que hay que documentar como EXISTENTES:
+**Esta regla permanece ongoing**: cualquier cambio futuro en rutas de `src/App.tsx`, navegacion (`BottomTabBar`, `Sidebar`), flujos criticos, pricing de planes, edge functions o features debe actualizar los 4 documentos de arriba **en el mismo commit** que introduce el cambio. Ver CLAUDE.md §9.7 para la regla completa.
+
+### Features subcomunicadas documentadas como EXISTENTES:
 
 **Fuente**: QA_UX_UI_COMPLETO.md hallazgos positivos
 
-1. **OCR de carnet de vacunacion con IA** — esta conectado y funcionando (docs dicen "deployada, no conectada")
-2. **Feline Grimace Scale** — esta en produccion (docs dicen "pendiente en roadmap")
-3. **Boton "Ver como me ven los duenos"** en perfil vet — feature unica, documentar como diferenciador
+1. ✅ **OCR de carnet de vacunacion con IA** — documentado en `CLAUDE.md:311` y `AGENTS.md:135` (commit `7040db5`).
+2. ✅ **Feline Grimace Scale** — documentado en `CLAUDE.md:312` y `AGENTS.md:136` (commit `7040db5`).
+3. ✅ **Boton "Ver como me ven los duenos"** — documentado en `CLAUDE.md:315` y `AGENTS.md:139` (commit 2026-04-12). Implementado en `ProviderProfileEdit.tsx:166` y `ProviderDashboard.tsx:193`. Marcado como diferenciador unico vs la competencia (preview publico del perfil vet en 1 click, sin salir de la app).
+
+**Hecho cuando**: ✅ los 4 documentos vivos estan sincronizados con el estado actual del repo y las 3 features subcomunicadas aparecen en `CLAUDE.md` y `AGENTS.md` como features en produccion.
 
 ---
 

@@ -312,6 +312,7 @@ Estas features estan planificadas en el mega prompt futuro pero **NO existen en 
 - Feline Grimace Scale → implementado en ficha clinica
 - Plantillas post-consulta para vets → tabla `consultation_templates` + UI (`ClinicalNoteEditor`)
 - Dual-role mode switching → `ActiveRoleProvider` + `useActiveRole` en `src/hooks/`
+- Boton "Ver como me ven los duenos" en perfil vet → preview publico del perfil en 1 click desde `ProviderProfileEdit.tsx:166` y `ProviderDashboard.tsx:193` (diferenciador unico vs la competencia: el vet valida su propio perfil publico sin salir de la app)
 
 ---
 

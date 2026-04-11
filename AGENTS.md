@@ -136,6 +136,7 @@ NO existen: `npm run test`, `npm run typecheck`.
 - Checklist Grimace Scale → integrado en ficha clinica
 - Plantillas post-consulta → tabla `consultation_templates` + UI
 - Dual-role mode switching → `ActiveRoleProvider` en `src/hooks/useActiveRole.tsx`
+- Boton "Ver como me ven los duenos" en perfil vet → preview publico en 1 click (`ProviderProfileEdit.tsx:166`, `ProviderDashboard.tsx:193`). Diferenciador unico vs competencia.
 
 ---
 
