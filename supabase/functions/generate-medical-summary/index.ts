@@ -57,6 +57,38 @@ async function getLogoBytes(): Promise<Uint8Array | null> {
   }
 }
 
+/**
+ * Genera un codigo de verificacion corto determinístico `PF-XXXX-XXXX` a
+ * partir del pet_id y el timestamp de generacion del PDF. Usa SHA-256 via
+ * SubtleCrypto (disponible en Deno nativo). No es un secreto — es un
+ * identificador visible en el footer de cada pagina para trazabilidad.
+ *
+ * Determinismo: dos PDFs generados con el mismo pet_id y el mismo timestamp
+ * dan el mismo codigo. En la practica, el timestamp siempre cambia entre
+ * invocaciones (Date.now() en ms), asi que cada PDF tiene codigo unico.
+ *
+ * Ver FEATURE_MEDICAL_PDF_UPGRADE.md §5.5.
+ */
+async function generateVerificationCode(petId: string, timestamp: number): Promise<string> {
+  const data = `${petId}-${timestamp}`;
+  const encoded = new TextEncoder().encode(data);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+    .toUpperCase();
+  return `PF-${hashHex.slice(0, 4)}-${hashHex.slice(4, 8)}`;
+}
+
+// Texto fijo de confidencialidad que aparece al final del documento.
+// Ver FEATURE_MEDICAL_PDF_UPGRADE.md §5.6.
+const CONFIDENTIALITY_NOTICE =
+  'Este documento contiene información clínica sensible de la mascota identificada arriba. ' +
+  'Fue generado automáticamente por Paw Friend a partir de los datos ingresados por la persona ' +
+  'responsable y/o su veterinario. No reemplaza un informe clínico profesional ni tiene valor ' +
+  'legal por sí solo. Para consultas o verificación, contactar a pawfriend.cl.';
+
 // =====================================================================
 // Helpers de normalizacion tipografica para la ficha clinica PDF.
 //
@@ -275,6 +307,11 @@ serve(async (req) => {
         logoImage = null;
       }
     }
+
+    // Fase 4: generar codigo de verificacion del documento. Aparece en el
+    // footer de cada pagina para trazabilidad. No es secreto, es publico.
+    const generatedAt = Date.now();
+    const verificationCode = await generateVerificationCode(pet_id, generatedAt);
 
     let page = pdfDoc.addPage([PAGE_W, PAGE_H]);
     let y = PAGE_H - 40;
@@ -601,20 +638,38 @@ serve(async (req) => {
       });
     }
 
+    // ── AVISO DE CONFIDENCIALIDAD ──
+    // Texto fijo al final del contenido, antes del footer. Aclara que el
+    // PDF es informativo y no reemplaza un informe clinico profesional.
+    // Ver FEATURE_MEDICAL_PDF_UPGRADE.md §5.6.
+    y -= 16;
+    ensureSpace(50);
+    line();
+    y -= 6;
+    drawWrappedText(CONFIDENTIALITY_NOTICE, {
+      size: 7,
+      color: GRAY,
+      lineHeight: 9,
+    });
+
     // ── FOOTER en todas las páginas ──
+    // Fase 4: footer centrado en una sola linea con codigo de verificacion,
+    // aviso de confidencialidad y paginacion. El codigo PF-XXXX-XXXX permite
+    // trazabilidad del documento. Ver FEATURE_MEDICAL_PDF_UPGRADE.md §5.5.
     const totalPages = pdfDoc.getPageCount();
     const allPages = pdfDoc.getPages();
+    const footerSize = 7;
+    const footerY = 25;
     for (let i = 0; i < totalPages; i++) {
       const p = allPages[i];
-      const footerY = 25;
-      p.drawText(
-        `Generado por Paw Friend · pawfriend.cl · ${new Date().toLocaleDateString('es-CL')}`,
-        { x: MARGIN_X, y: footerY, size: 7, font: helvetica, color: GRAY }
+      const footerText = sanitizeForWinAnsi(
+        `${verificationCode} · Documento confidencial · pawfriend.cl · pág. ${i + 1} de ${totalPages}`
       );
-      p.drawText(`Página ${i + 1} de ${totalPages}`, {
-        x: PAGE_W - MARGIN_X - 60,
+      const footerWidth = helvetica.widthOfTextAtSize(footerText, footerSize);
+      p.drawText(footerText, {
+        x: (PAGE_W - footerWidth) / 2,
         y: footerY,
-        size: 7,
+        size: footerSize,
         font: helvetica,
         color: GRAY,
       });
