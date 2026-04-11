@@ -1130,21 +1130,54 @@ Dos feeds en paralelo no se justifican. Merge a uno solo (`/feed`) con filtro "S
 
 **Esfuerzo**: 4-6h (research + migracion)
 
-### 7.2. Queries de metricas basicas
+### 7.2. Queries de metricas basicas ✅ CERRADO 2026-04-12
 
 **Fuente**: RECOMENDACIONES §7
 
-Crear SQL snippets guardados en Supabase Studio:
+**Estado 2026-04-12**: 4 queries guardadas en Supabase Studio del proyecto `gwailbjlvevkhwcrovfd` como "Saved Queries". Baseline de metricas capturada (numeros crudos no guardados en repo por ser potencialmente sensibles — si el repo llegara a abrirse al publico). Las 4 queries fueron extendidas respecto al esbozo original del master upgrade para dar breakdowns utiles (real vs demo, activas vs memorial, tokens activos vs expirados, visibles vs ocultos).
+
+**Queries guardadas**:
+
 ```sql
--- Users reales
-SELECT count(*) FROM auth.users WHERE email NOT LIKE '%@demo.pawfriend.cl';
--- Mascotas activas
-SELECT count(*) FROM pets p JOIN profiles pr ON p.owner_id = pr.id WHERE pr.is_demo = false;
--- Fichas compartidas
-SELECT count(*) FROM medical_share_tokens;
--- Vets reales
-SELECT count(*) FROM service_providers WHERE is_demo = false;
+-- 1. Metrics: users reales (no demo)
+-- Breakdown demo vs real + total. Uso: salud del funnel de registro.
+SELECT
+  count(*) FILTER (WHERE email NOT LIKE '%@demo.pawfriend.cl') AS users_reales,
+  count(*) FILTER (WHERE email LIKE '%@demo.pawfriend.cl')     AS users_demo,
+  count(*)                                                      AS total
+FROM auth.users;
+
+-- 2. Metrics: mascotas reales activas
+-- Separa mascotas activas de las en memorial (lifecycle_status). Uso: parque activo real.
+SELECT
+  count(*) FILTER (WHERE p.lifecycle_status = 'active')   AS mascotas_activas,
+  count(*) FILTER (WHERE p.lifecycle_status = 'deceased') AS mascotas_memorial,
+  count(*)                                                 AS total_reales
+FROM pets p
+JOIN profiles pr ON p.owner_id = pr.id
+WHERE pr.is_demo = false;
+
+-- 3. Metrics: fichas medicas compartidas
+-- Breakdown tokens activos vs expirados. Uso: adopcion real de la joya de la corona.
+SELECT
+  count(*)                                                 AS total_tokens_creados,
+  count(*) FILTER (WHERE expires_at > now())               AS tokens_activos,
+  count(*) FILTER (WHERE expires_at <= now())              AS tokens_expirados
+FROM medical_share_tokens;
+
+-- 4. Metrics: vets reales en directorio
+-- Breakdown reales visibles/ocultos + demos + total. Uso: salud B2B + directorio publico.
+SELECT
+  count(*) FILTER (WHERE is_demo = false AND is_directory_visible = true)  AS vets_reales_visibles,
+  count(*) FILTER (WHERE is_demo = false AND is_directory_visible = false) AS vets_reales_ocultos,
+  count(*) FILTER (WHERE is_demo = true)                                    AS vets_demo,
+  count(*)                                                                  AS total
+FROM service_providers;
 ```
+
+**Hecho cuando**: ✅ las 4 queries aparecen en "Saved Queries" del SQL Editor de Supabase Studio y corren sin errores.
+
+**Nota para sprint futuro**: cuando se necesiten metricas mas profundas (cohorts, retention, funnel completo), considerar una migracion a Metabase/Redash embebido o a Pro Analytics propio (ver `_pending/tooling/` y las propuestas de embedded analytics en `junk/embedded-analytics-options.md`).
 
 ---
 
