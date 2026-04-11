@@ -342,6 +342,61 @@ serve(async (req) => {
       y -= 14;
     };
 
+    /**
+     * Dibuja texto con word-wrap real: divide en palabras, calcula ancho con
+     * la fuente dada, y agrega tantas lineas como haga falta, bajando `y`
+     * automaticamente despues de cada linea. A diferencia de `text()` (que
+     * trunca con "..."), preserva todo el contenido del usuario. Ver
+     * FEATURE_MEDICAL_PDF_UPGRADE.md §5.4.
+     *
+     * NOTA: esta funcion SI baja `y` despues de dibujar (a diferencia de
+     * `text()` que deja al caller bajarlo). No volver a bajar `y` despues
+     * de llamar a drawWrappedText.
+     */
+    const drawWrappedText = (
+      content: string,
+      opts: {
+        x?: number;
+        maxWidth?: number;
+        size?: number;
+        font?: any;
+        color?: any;
+        lineHeight?: number;
+      }
+    ) => {
+      const font = opts.font || helvetica;
+      const size = opts.size || 9;
+      const x = opts.x ?? MARGIN_X;
+      const maxW = opts.maxWidth || PAGE_W - MARGIN_X - x;
+      const lh = opts.lineHeight || size * 1.35;
+      const color = opts.color || BLACK;
+
+      const safe = sanitizeForWinAnsi(content);
+      const words = safe.split(/\s+/).filter(Boolean);
+      if (words.length === 0) return;
+
+      const lines: string[] = [];
+      let current = '';
+      for (const w of words) {
+        const test = current ? `${current} ${w}` : w;
+        if (font.widthOfTextAtSize(test, size) <= maxW) {
+          current = test;
+        } else {
+          if (current) lines.push(current);
+          // Edge case: palabra unica mas larga que maxW - la dibujamos tal
+          // cual (desborda ligeramente) en vez de trabarnos en un loop.
+          current = w;
+        }
+      }
+      if (current) lines.push(current);
+
+      for (const ln of lines) {
+        ensureSpace(lh);
+        page.drawText(ln, { x, y, size, font, color });
+        y -= lh;
+      }
+    };
+
     const formatDate = (d: string | null) => {
       if (!d) return 'N/A';
       try {
@@ -386,8 +441,8 @@ serve(async (req) => {
     y -= logoImage ? 18 : 10;
     line();
 
-    // ── DATOS DE LA MASCOTA ──
-    section('Datos de la mascota');
+    // ── 1. IDENTIFICACION DE LA MASCOTA ──
+    section('1. Identificación de la mascota');
 
     const calcAge = (bd: string | null): string => {
       if (!bd) return 'N/A';
@@ -424,30 +479,41 @@ serve(async (req) => {
     field('Esterilizado/a', pet.neutered ? 'Sí' : 'No');
     field('Microchip', pet.microchip_number || 'No registrado');
 
-    // ── DUEÑO ──
+    // ── 2. RESPONSABLE ──
     // owner.display_name -> titleCase (nombre propio multi-palabra)
     // owner.email        -> sin transformar (email es case-insensitive semanticamente)
-    section('Dueño/a');
+    section('2. Responsable');
     field('Nombre', titleCase(owner.display_name) || 'N/A');
     field('Email', owner.email || 'N/A');
 
-    // ── ESTADO ACTUAL ──
+    // ── 3. ESTADO CLINICO ACTUAL ──
     // chronic_conditions[] -> smartSentenceCase cada item (texto libre)
     // allergies[]          -> smartSentenceCase cada item (texto libre)
     // medications[].name   -> titleCase (nombres propios de farmacos)
     // medications[].dose   -> sin transformar (dosis con digitos y unidades)
+    // Todos estos campos usan drawWrappedText porque el usuario puede
+    // tener listas largas que antes se truncaban con "...".
     const hasAlerts =
       pet.chronic_conditions?.length || pet.allergies?.length || pet.current_medications;
     if (hasAlerts) {
-      section('Estado actual');
+      section('3. Estado clínico actual');
       if (pet.chronic_conditions?.length) {
-        field(
-          'Condiciones crónicas',
-          pet.chronic_conditions.map((c: string) => smartSentenceCase(c)).join(', ')
+        text('Condiciones crónicas', { size: 9, font: bold, color: GRAY });
+        y -= 12;
+        drawWrappedText(
+          pet.chronic_conditions.map((c: string) => smartSentenceCase(c)).join(', '),
+          { x: MARGIN_X + 10, size: 9 }
         );
+        y -= 4;
       }
       if (pet.allergies?.length) {
-        field('Alergias', pet.allergies.map((a: string) => smartSentenceCase(a)).join(', '));
+        text('Alergias', { size: 9, font: bold, color: GRAY });
+        y -= 12;
+        drawWrappedText(pet.allergies.map((a: string) => smartSentenceCase(a)).join(', '), {
+          x: MARGIN_X + 10,
+          size: 9,
+        });
+        y -= 4;
       }
       if (pet.current_medications) {
         const meds = Array.isArray(pet.current_medications)
@@ -455,13 +521,16 @@ serve(async (req) => {
               .map((m: any) => `${titleCase(m.name)}${m.dose ? ` (${m.dose})` : ''}`)
               .join(', ')
           : JSON.stringify(pet.current_medications);
-        field('Medicamentos actuales', meds);
+        text('Medicamentos actuales', { size: 9, font: bold, color: GRAY });
+        y -= 12;
+        drawWrappedText(meds, { x: MARGIN_X + 10, size: 9 });
+        y -= 4;
       }
     }
 
-    // ── VACUNAS (cronológico desc) ──
+    // ── 4. VACUNAS (cronológico desc) ──
     // v.title -> smartSentenceCase (texto libre)
-    section(`Vacunas (${vaccinations.length})`);
+    section(`4. Vacunas (${vaccinations.length})`);
     if (vaccinations.length === 0) {
       text('Sin vacunas registradas', { size: 9, color: GRAY });
       y -= 14;
@@ -481,7 +550,7 @@ serve(async (req) => {
     // v.reason / v.title -> smartSentenceCase (texto libre)
     // v.clinic_name      -> titleCase (nombre propio)
     // v.diagnosis        -> smartSentenceCase (texto libre, frase completa)
-    section(`Consultas veterinarias (${recentVisits.length})`);
+    section(`5. Consultas veterinarias (${recentVisits.length})`);
     if (recentVisits.length === 0) {
       text('Sin consultas registradas', { size: 9, color: GRAY });
       y -= 14;
@@ -500,22 +569,35 @@ serve(async (req) => {
           y -= 12;
         }
         if (v.diagnosis) {
-          text(`Diagnóstico: ${smartSentenceCase(v.diagnosis)}`, { x: MARGIN_X + 20, size: 8 });
-          y -= 12;
+          // Diagnostico con word-wrap real: el texto completo se preserva
+          // en multiples lineas en vez de truncarse con "..." (problema #3).
+          drawWrappedText(`Diagnóstico: ${smartSentenceCase(v.diagnosis)}`, {
+            x: MARGIN_X + 20,
+            size: 8,
+          });
         }
         y -= 4;
       });
     }
 
-    // ── DESPARASITACIONES ──
-    // d.title -> smartSentenceCase (texto libre)
+    // ── 6. DESPARASITACIONES ──
+    // d.title       -> smartSentenceCase (texto libre)
+    // d.description -> smartSentenceCase + drawWrappedText (texto libre largo)
     if (dewormings && dewormings.length > 0) {
-      section(`Desparasitaciones (${dewormings.length})`);
+      section(`6. Desparasitaciones (${dewormings.length})`);
       dewormings.slice(0, 10).forEach((d: any) => {
         ensureSpace(16);
         text(formatDate(d.date), { size: 8, font: bold, color: GRAY });
         text(smartSentenceCase(d.title) || 'Desparasitación', { x: MARGIN_X + 90, size: 9 });
         y -= 14;
+        if (d.description) {
+          drawWrappedText(smartSentenceCase(d.description), {
+            x: MARGIN_X + 20,
+            size: 8,
+            color: GRAY,
+          });
+          y -= 2;
+        }
       });
     }
 
