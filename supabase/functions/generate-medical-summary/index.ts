@@ -31,6 +31,31 @@ const PAGE_W = 612;
 const PAGE_H = 792;
 const MARGIN_X = 50;
 const MARGIN_BOTTOM = 60;
+const LOGO_URL = 'https://pawfriend.cl/pwa-icon-512.png';
+const LOGO_SIZE = 40; // tamaño renderizado del logo en el header (pt)
+
+// Cache top-level de los bytes del logo — se mantiene entre invocaciones
+// mientras la edge function siga caliente. Si el fetch falla, se intenta
+// de nuevo en la siguiente invocacion (no cacheamos el fallo).
+let cachedLogoBytes: Uint8Array | null = null;
+
+/**
+ * Descarga el logo Paw Friend desde pawfriend.cl y lo cachea en memoria
+ * del modulo para invocaciones siguientes. Devuelve null si el fetch falla,
+ * en cuyo caso el PDF debe caer a fallback de texto (nunca emoji).
+ * Ver FEATURE_MEDICAL_PDF_UPGRADE.md §4.1-4.2.
+ */
+async function getLogoBytes(): Promise<Uint8Array | null> {
+  if (cachedLogoBytes) return cachedLogoBytes;
+  try {
+    const res = await fetch(LOGO_URL);
+    if (!res.ok) return null;
+    cachedLogoBytes = new Uint8Array(await res.arrayBuffer());
+    return cachedLogoBytes;
+  } catch {
+    return null;
+  }
+}
 
 // =====================================================================
 // Helpers de normalizacion tipografica para la ficha clinica PDF.
@@ -239,6 +264,18 @@ serve(async (req) => {
     const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
+    // Fase 2: embeber logo Paw Friend para el header. Fallback silencioso
+    // a null si el fetch o embed falla — el header usara solo texto.
+    const logoBytes = await getLogoBytes();
+    let logoImage: any = null;
+    if (logoBytes) {
+      try {
+        logoImage = await pdfDoc.embedPng(logoBytes);
+      } catch {
+        logoImage = null;
+      }
+    }
+
     let page = pdfDoc.addPage([PAGE_W, PAGE_H]);
     let y = PAGE_H - 40;
 
@@ -319,15 +356,34 @@ serve(async (req) => {
     };
 
     // ── HEADER ──
-    text('🐾 Paw Friend', { size: 22, font: bold, color: PURPLE });
+    // Fase 2: logo real PNG en la esquina superior izquierda + texto al costado.
+    // Si el logo no pudo cargarse, fallback a solo texto sin emoji (nunca emoji).
+    // Ver FEATURE_MEDICAL_PDF_UPGRADE.md §4-5.1.
+    ensureSpace(LOGO_SIZE + 15);
+    const headerTextX = logoImage ? MARGIN_X + LOGO_SIZE + 10 : MARGIN_X;
+    if (logoImage) {
+      // Alinear verticalmente con cap height del texto de 22pt:
+      // logo bottom = y - 10 hace que el midpoint del logo quede cerca
+      // del midpoint del bloque de 3 lineas del header.
+      page.drawImage(logoImage, {
+        x: MARGIN_X,
+        y: y - 10,
+        width: LOGO_SIZE,
+        height: LOGO_SIZE,
+      });
+    }
+    text('Paw Friend', { x: headerTextX, size: 22, font: bold, color: PURPLE });
     y -= 8;
-    text('Ficha clínica veterinaria', { size: 11, color: GRAY });
+    text('Ficha clínica veterinaria', { x: headerTextX, size: 11, color: GRAY });
     y -= 6;
     text(
       `Generado el ${new Date().toLocaleDateString('es-CL', { day: '2-digit', month: 'long', year: 'numeric' })}`,
-      { size: 8, color: GRAY }
+      { x: headerTextX, size: 8, color: GRAY }
     );
-    y -= 10;
+    // Si hay logo, bajar extra para que el line() quede debajo del logo
+    // (el logo ocupa ~LOGO_SIZE - 10 pt hacia arriba del y inicial, y las
+    // 3 lineas de texto bajaron ~24 pt, faltan ~16 pt para despejar el logo).
+    y -= logoImage ? 18 : 10;
     line();
 
     // ── DATOS DE LA MASCOTA ──
