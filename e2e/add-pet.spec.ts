@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { injectFakeAuth } from './fixtures/auth';
 
 /**
  * Test E2E: Flujo de creación de mascota (/add-pet)
@@ -24,21 +25,23 @@ test.describe('Crear mascota — sin sesión', () => {
 });
 
 test.describe('Crear mascota — validaciones de formulario', () => {
-  // Estos tests verifican las validaciones client-side del formulario.
-  // Usamos un truco: navegamos directo y mockeamos el auth state para
-  // que la página no redirija. Si la ProtectedRoute redirecciona,
-  // saltamos el test con un aviso claro.
+  // Inyectamos una sesión fake en localStorage para que ProtectedRoute deje
+  // pasar al formulario. Estos tests son puramente client-side: no envían
+  // datos al backend, así que no necesitan un JWT real.
 
   test.beforeEach(async ({ page }) => {
-    await page.goto('/add-pet');
+    await injectFakeAuth(page);
+    await page.goto('/add-pet', { waitUntil: 'networkidle' });
 
-    // Si ProtectedRoute redirige a /auth, marcamos skip
-    const url = page.url();
-    if (url.includes('/auth')) {
-      test.skip(
-        true,
-        'Se necesita sesión autenticada para probar validaciones del form. Usa el tag @auth.'
-      );
+    // Esperar a que el form aparezca (input id="name"). Si no aparece,
+    // skip con mensaje claro (probablemente la inyección falló).
+    const ok = await page
+      .waitForFunction(() => !!document.getElementById('name'), { timeout: 10_000 })
+      .then(() => true)
+      .catch(() => false);
+
+    if (!ok) {
+      test.skip(true, 'El formulario no cargó (¿inyección de sesión fake falló?).');
     }
   });
 
@@ -61,6 +64,11 @@ test.describe('Crear mascota — validaciones de formulario', () => {
   });
 
   test('muestra toast si peso es <= 0', async ({ page }) => {
+    // El form tiene validación HTML5 (min="0", pattern, etc.) que blockea
+    // submit antes de que corra el handler JS. Para alcanzar la validación
+    // JS (que es lo que este test verifica) deshabilitamos novalidate:
+    await page.evaluate(() => document.querySelector('form')?.setAttribute('novalidate', ''));
+
     // Llenar nombre
     await page.getByLabel(/nombre/i).fill('TestPet');
 
@@ -75,13 +83,21 @@ test.describe('Crear mascota — validaciones de formulario', () => {
     await page.getByRole('button', { name: /agregar mascota/i }).click();
 
     // Esperar toast de error
-    const toast = page.locator("[data-sonner-toast], [role='status']");
+    // Radix Toast root es <li role="status">. Excluimos el announcer
+    // <span role="status"> de Radix que duplica el texto para screen readers.
+    const toast = page.locator("[data-sonner-toast], li[role='status']");
     await expect(toast.filter({ hasText: /peso debe ser mayor a 0/i })).toBeVisible({
       timeout: 5_000,
     });
   });
 
   test('muestra toast si fecha de nacimiento es futura', async ({ page }) => {
+    // Bypass HTML5 max=hoy para alcanzar la validación JS
+    await page.evaluate(() => {
+      document.querySelector('form')?.setAttribute('novalidate', '');
+      document.getElementById('birth_date')?.removeAttribute('max');
+    });
+
     await page.getByLabel(/nombre/i).fill('TestPet');
 
     await page.getByRole('combobox').first().click();
@@ -95,13 +111,23 @@ test.describe('Crear mascota — validaciones de formulario', () => {
 
     await page.getByRole('button', { name: /agregar mascota/i }).click();
 
-    const toast = page.locator("[data-sonner-toast], [role='status']");
+    // Radix Toast root es <li role="status">. Excluimos el announcer
+    // <span role="status"> de Radix que duplica el texto para screen readers.
+    const toast = page.locator("[data-sonner-toast], li[role='status']");
     await expect(toast.filter({ hasText: /no puede ser en el futuro/i })).toBeVisible({
       timeout: 5_000,
     });
   });
 
   test('muestra toast si microchip no tiene 15 dígitos', async ({ page }) => {
+    // Bypass HTML5 pattern y maxLength para alcanzar la validación JS
+    await page.evaluate(() => {
+      document.querySelector('form')?.setAttribute('novalidate', '');
+      const mc = document.getElementById('microchip') as HTMLInputElement | null;
+      mc?.removeAttribute('pattern');
+      mc?.removeAttribute('maxLength');
+    });
+
     await page.getByLabel(/nombre/i).fill('TestPet');
 
     await page.getByRole('combobox').first().click();
@@ -112,21 +138,29 @@ test.describe('Crear mascota — validaciones de formulario', () => {
     await medicalTrigger.click();
 
     // Microchip inválido (solo 10 dígitos)
+    // Nota: el onChange del componente filtra a maxLength=15 pero el regex
+    // /^\d{15}$/ del handler exige exactamente 15.
     await page.getByLabel(/microchip/i).fill('1234567890');
 
     await page.getByRole('button', { name: /agregar mascota/i }).click();
 
-    const toast = page.locator("[data-sonner-toast], [role='status']");
+    // Radix Toast root es <li role="status">. Excluimos el announcer
+    // <span role="status"> de Radix que duplica el texto para screen readers.
+    const toast = page.locator("[data-sonner-toast], li[role='status']");
     await expect(toast.filter({ hasText: /microchip/i })).toBeVisible({ timeout: 5_000 });
   });
 });
 
 test.describe('Crear mascota — UI del formulario', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/add-pet');
-    const url = page.url();
-    if (url.includes('/auth')) {
-      test.skip(true, 'Requiere sesión autenticada.');
+    await injectFakeAuth(page);
+    await page.goto('/add-pet', { waitUntil: 'networkidle' });
+    const ok = await page
+      .waitForFunction(() => !!document.getElementById('name'), { timeout: 10_000 })
+      .then(() => true)
+      .catch(() => false);
+    if (!ok) {
+      test.skip(true, 'El formulario no cargó (¿inyección de sesión fake falló?).');
     }
   });
 

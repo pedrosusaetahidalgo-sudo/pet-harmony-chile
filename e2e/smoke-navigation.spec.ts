@@ -9,8 +9,10 @@ test.describe('Landing page', () => {
   test('muestra el logo y CTA de registro', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
     await expect(page.getByText(/paw.*friend/i).first()).toBeVisible();
-    // Debe haber al menos un botón de acción
-    const cta = page.getByRole('link', { name: /empezar|registrar|ingresar|entrar/i }).first();
+    // CTAs reales del Hero (botones, no links): "Crear cuenta gratis" o "Ya tengo cuenta"
+    const cta = page
+      .getByRole('button', { name: /crear cuenta|ya tengo cuenta|ir al inicio/i })
+      .first();
     await expect(cta).toBeVisible({ timeout: 10_000 });
   });
 
