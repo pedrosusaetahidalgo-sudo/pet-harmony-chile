@@ -1258,3 +1258,166 @@ Consolida: QA_UX_UI_COMPLETO.md, UX_DUENO_MASCOTA.md, UX_VETERINARIO.md, ADDENDU
 FEATURE_AI_WEB_SEARCH_UPGRADE.md, FEEDBACK_USUARIO_REAL_2026_04_10.md, RECOMENDACIONES_2026_04_08.md,
 AUDITORIA_TOTAL_APP.md, SEED_CONTAMINATION_REPORT_2026_04_09.md, 20260426000000_cleanup_and_reseed_all_demo.sql,
 pro-analytics-monetization-plan.md, dashboard-preview-and-upsell-plan.md, embedded-analytics-options.md.*
+
+---
+
+## ANEXO — Sesión 2026-04-11 (post cierre FASE 0-8)
+
+> Esta sección consolida los hallazgos de la sesión del 2026-04-11 posterior al cierre del master upgrade, para mantener el documento como fuente única de verdad. El plan principal (FASE 0-8) sigue marcado como **100% CERRADO 2026-04-12**. Lo que sigue son items nuevos o rescatados que se descubrieron al auditar `junk/` y al barrer código heredado de Lovable.
+
+### A.1. Auditoría de código heredado de Lovable
+
+**Fuente**: [audits/AUDIT_LOVABLE_LEGACY.md](../audits/AUDIT_LOVABLE_LEGACY.md)
+**Fecha**: 2026-04-11
+**Alcance**: 176 archivos fuente del commit inicial `0f458c2` (2025-12-17), generados por Lovable con una IA más débil.
+**Método**: delegación a agente Explore con verificación de imports y lectura de archivos.
+
+**Roadmap en 5 fases** (orden por riesgo creciente):
+
+| Fase | Acción | Esfuerzo | Riesgo | Archivos afectados |
+|---|---|---|---|---|
+| **Fase 1** | Reemplazar 10× `.single()` con `.maybeSingle()` + null check | 10 min | **Cero** | `AddPet.tsx:335`, `MedicalShare.tsx:115,149`, `useConsultationTemplates.ts:94`, `useVetClinicalNotes.ts:122`, `useGroomerProfile.tsx:114`, `useProviderProfile.tsx:81`, `useReviewInvitations.tsx:75`, `AddMedicalRecord.tsx:157`, `RegistroVeterinario.tsx:145` |
+| **Fase 2** | Eliminar `src/components/MissionCard.tsx` (duplicado muerto — solo vive `components/pawgame/MissionCard.tsx`) | 15 min | **Bajo** | 1 archivo, ~100 líneas |
+| **Fase 3** | Regenerar tipos Supabase y matar 4× `const sb = supabase as any` | 2-3 h | **Bajo** | `useConsultationTemplates.ts`, `useVetClinicalNotes.ts`, `usePendingReviews.ts`, `VetFollowupsCard.tsx` |
+| **Fase 4** | Refactor `Home.tsx` de `useEffect` + setState en cascada (6 queries) a `useQuery` × 3-4 | 4-6 h | **Medio** | `pages/Home.tsx`, posiblemente `useGamification.tsx`, `useReminders` |
+| **Fase 5** | Split de componentes gigantes (PawGame 950L, AddPet 917L, ServiceDirectory 914L, EnhancedBookingDialog 662L, ProviderDashboard 534L) | 8-10 h | **Mayor — REQUIERE AUTORIZACIÓN** | 5 archivos, split en ~15 subcomponentes |
+
+**Hallazgos complementarios**:
+- **168 instancias de `any`** en archivos Lovable, concentradas en `ServiceDirectory.tsx` (11), `PawGame.tsx` (10), `Auth.tsx` (4), hooks de datos. Atacables en Fase 3 con tipos generados.
+- **Copy chileno OK** — `grep -r "vos tenés|vos podés|vosotros|cogéis" src/` devuelve 0 coincidencias en los archivos Lovable. No hay voseo argentino en esa capa. (Caso aparte: `ProviderProfileEdit.tsx` sí tiene voseo — ver A.2.)
+- **Performance low-hanging**: `loading="lazy"` ausente en listas de vet, markers de Leaflet sin memoizar en `Maps.tsx`, callbacks inline en `AddPet.tsx:459,719`.
+- **Joyas de la corona protegidas**: `MedicalRecords.tsx`, directorio vets, pagos Flow, auth — sólo micro-mejoras (ver §9.6 de CLAUDE.md). Únicas acciones seguras documentadas: `.maybeSingle()` en `MedicalShare.tsx` y tipado de `current_medications: any`.
+
+**Prioridad recomendada**: Fase 1 → 2 → 3 → 4. Fase 5 solo con autorización explícita del dueño.
+
+---
+
+### A.2. Rescate desde `junk/task_docs/` — REDISENO_DASHBOARD_PROVIDER
+
+**Fuente**: [_pending/bugs/REDISENO_DASHBOARD_PROVIDER.md](bugs/REDISENO_DASHBOARD_PROVIDER.md) (rescatado desde `junk/task_docs/` el 2026-04-11)
+**Severidad**: 🔴 **ALTA — bug vigente en producción**
+**Verificado contra código actual**: sí
+
+**Diagnóstico confirmado**:
+- [`src/components/provider/ProviderDashboard.tsx:49`](../src/components/provider/ProviderDashboard.tsx#L49) sigue consultando `provider_balances` (tabla existe pero **nunca se pobla** — no hay trigger ni edge function que la llene).
+- [`src/components/provider/ProviderDashboard.tsx:60`](../src/components/provider/ProviderDashboard.tsx#L60) sigue consultando `order_items` + `orders!inner` (pipeline viejo de marketplace genérico diseñado para Webpay).
+- **No hay ninguna referencia a `vet_bookings`** (que es el flujo real de reservas de vets).
+- **Resultado en prod**: todos los vets ven **$0 en las 8 tarjetas financieras** del dashboard: balance disponible, pendiente, ganado, retirado, reservas completadas, ingresos brutos, comisiones, clientes únicos.
+- [`src/pages/ProviderProfileEdit.tsx:114,128,471`](../src/pages/ProviderProfileEdit.tsx#L114) además mantiene voseo argentino ("Verificá", "Necesitás") — no es chileno.
+
+**Acción propuesta** (resumida — detalle completo en el MD rescatado):
+1. Re-apuntar las queries del dashboard de `order_items`/`orders`/`provider_balances` a `vet_bookings` + `service_reviews`.
+2. Corregir `"Clientes únicos"` para contar mascotas únicas de `vet_clinical_notes` + `medical_share_tokens`.
+3. Corregir `"Fichas compartidas"` (actualmente calcula `netPayouts/grossRevenue * 100` y lo etiqueta mal).
+4. Reemplazar voseo por tuteo chileno en `ProviderProfileEdit.tsx` (2 strings).
+5. (Redesign opcional) agregar campos faltantes del perfil vet: horario de atención, dirección específica, redes sociales, sección de credenciales/verificación.
+
+**Esfuerzo estimado**: 4-6h para el fix crítico de queries + voseo, 8-12h adicionales para el redesign completo de 8 tarjetas.
+
+**Hecho cuando**: un vet con `vet_bookings` reales ve sus métricas correctas en dashboard, y `ProviderProfileEdit.tsx` no tiene voseo.
+
+---
+
+### A.3. Triage de `junk/` — items borderline no movidos
+
+La sesión 2026-04-11 triageó ~30 MDs en `junk/` y `junk/task_docs/`. Además del rescate documentado en A.2, se identificaron **3 items borderline** que NO se movieron porque solapan con trabajo ya ejecutado o requieren decisión del dueño:
+
+| Archivo | Estado | Razón para no mover |
+|---|---|---|
+| `junk/PROMPTS_PROXIMA_SESION.md` (2026-04-08) | Parcialmente ejecutado | Prompt 1 (PDF médico español) ya parcialmente ejecutado (ver commit reciente `bc48d13` de normalización tipográfica). Prompt 2 (material reuniones vets) obsoleto — las reuniones del deadline 2026-04-13 ya son pasado. Prompt 6 (god component `PetClinicalRecord.tsx` 1444L) choca con CLAUDE.md §9.6 (joya de la corona, no refactor grande sin luz verde). Prompts 3-5 potencialmente vigentes pero requieren triage fase-por-fase. |
+| `junk/MEJORAS_CALIDAD_V2.md` (2026-04-09) | Parcialmente ejecutado | Verificado: las especialidades vet ya están corregidas (`src/lib/vetDirectory.ts` no contiene "Vacunacion"/"Esterilizacion"). Resto del doc tiene barridos por módulo que no se verificaron contra código actual. |
+| `junk/PAW_FRIEND_V1_1_END_TO_END.md` (2026-04-10) | Mayoritariamente cubierto por este mismo master upgrade | Plan para deadline 2026-04-13 (15 vets reales). Solapa con FASE 0-8 del master upgrade que está 100% cerrado. Mejor candidato a `_archive/` (referencia estratégica: personas Maria Constanza y Dr. Matías, dolores documentados) que a `_pending/`. |
+
+**Decisión pendiente del dueño**: si vale la pena editar `PROMPTS_PROXIMA_SESION.md` para dejar solo los prompts vigentes y moverlo a `_pending/`, o si se descarta completo.
+
+### A.4. Estado de junk/ analytics docs vs bug de export
+
+Los 3 docs de analytics en `junk/` (`pro-analytics-monetization-plan.md`, `embedded-analytics-options.md`, `dashboard-preview-and-upsell-plan.md`) se relacionan con el bug **"Export PDF/CSV del Panel Pro roto en prod"** (`handleExport` es placeholder, registrado en memoria persistente). Los docs son estratégicos, no accionables directos, y el bug ya está registrado fuera del master upgrade. Se quedan en `junk/` sin mover.
+
+---
+
+### A.5. Landing redesign ejecutado (blueprint landing-redesign-blueprint) ✅ CERRADO 2026-04-11
+
+**Fuente**: [_pending/landing-redesign-blueprint.md](landing-redesign-blueprint.md) (778 líneas, autor: Claude Code, 2026-04-11)
+**Objetivo**: pasar la landing de "explicar" a "demostrar", aplicando estándar Principal Landing Page Designer + Art Director + UX Strategist.
+**Severidad**: MEDIA — impacto directo en conversión fría en `/` (primera impresión).
+
+**Ejecutado en esta sesión**:
+
+| Cambio | Archivo | Blueprint § |
+|---|---|---|
+| HeroV2 Concepto A "Ficha viva" — split 55/45 desktop, stack mobile con visual entre subhead y CTAs, device frame CSS puro con mockup de Firulais + 2 tarjetas flotantes (próxima vacuna, vet verificado), headline ≤7 palabras, sólo 2 CTAs, bloque confianza compacto con avatares + rating | [src/components/HeroV2.tsx](../src/components/HeroV2.tsx) (nuevo) | §3 (§3.3 concepto A), §3.4 copy, §3.5-3.6 layout, §7.1 mobile |
+| MedicalPDFShowcase — nueva sección dedicada a la joya con mockup rotado del PDF (Firulais · vacunas · alergias) + badge flotante "PDF listo" + 3 bullets con check | [src/components/MedicalPDFShowcase.tsx](../src/components/MedicalPDFShowcase.tsx) (nuevo) | §4 sección 4 |
+| Demo 3 pasos rehecha como zig-zag con cards mockup + números `01/02/03` grandes | [src/pages/Index.tsx](../src/pages/Index.tsx) | §4 sección 3 |
+| Directorio vets showcase — mockup mapa estilizado con 4 pines + card vet flotante | [src/pages/Index.tsx](../src/pages/Index.tsx) | §4 sección 5 |
+| Stats chilenos compactados: de grid 3 cards a 1 banda con gradiente cálido + blobs | [src/pages/Index.tsx](../src/pages/Index.tsx) | §4 sección 6 |
+| Banda B2B dedicada — fondo `neutral-950`, blobs cálidos, mini dashboard mockup con reservas + stats | [src/pages/Index.tsx](../src/pages/Index.tsx) | §4 sección 8 (regla "vet CTA fuera del hero") |
+| FAQ pulida — `rounded-2xl` sin bordes duros, `bg-neutral-50`, gap-3, primero abierto por defecto | [src/pages/Index.tsx](../src/pages/Index.tsx) | §8.8 |
+| CTA final — banda gradiente warm full-width con botón blanco grande | [src/pages/Index.tsx](../src/pages/Index.tsx) | §4 sección 10 |
+| Eliminado del hero: 3er CTA de vets, fine print de precios, trust row textual, foto stock de Unsplash | [src/components/Hero.tsx](../src/components/Hero.tsx) (legacy, reemplazado por HeroV2) | §3.8 §9.1 §11 antipatrones |
+
+**Aplicado del blueprint**: 100% de críticos (§9.1) + 100% de importantes (§9.2) que no requieren assets reales + pulido premium (§9.3) en shadows cálidas, tipografía display con tracking-tight, copy chileno tuteado.
+
+**NO aplicado (requiere assets reales, el propio blueprint advierte "logos inventados = error")**:
+- §4 sección 2: banda de logos de clínicas (necesita 4-6 logos reales en grayscale)
+- §4 sección 7: testimonios con caras reales (necesita 2-3 fotos de dueños chilenos)
+
+Ambas quedan pendientes para PR separada cuando se consigan los assets.
+
+**Verificación**:
+- `npx tsc -b` → exit 0
+- `npm run build` → ✓ 36.57s, `Index-*.js` 30.67 kB / 7.14 kB gzip (pequeño crecimiento por mockups CSS inline, aceptable)
+- `FLUJO_COMPLETO.mmd` NO requiere update: las rutas públicas no cambiaron, sólo la estructura visual del nodo `LAND["pawfriend.cl Landing"]`.
+
+**Hecho cuando**: ✅ landing `/` renderiza con HeroV2 + 8 secciones rediseñadas, typecheck/build pasa, blueprint mantiene pendientes sólo los 2 items que necesitan assets reales.
+
+---
+
+### A.6. Bug crítico: CTA descarga ficha PDF invisible en la UI ✅ CERRADO 2026-04-11
+
+**Fuente**: feedback directo del dueño en sesión 2026-04-11 ("donde aparece que se descarga la ficha medica, se pierde de vista pasa desapercibido").
+**Severidad**: 🔴 **CRÍTICA** — la joya de la corona (CLAUDE.md §9.6) estaba **literalmente inaccesible desde la UI**.
+
+**Root cause encontrado**:
+- El componente [`src/components/medical/MedicalSummaryButton.tsx`](../src/components/medical/MedicalSummaryButton.tsx) existía y llamaba correctamente a la edge function `generate-medical-summary`.
+- [`src/components/medical/MedicalDocumentsTab.tsx:30`](../src/components/medical/MedicalDocumentsTab.tsx#L30) **lo importaba pero nunca lo renderizaba en el JSX** (grep `<MedicalSummaryButton` devolvía 0 matches en todo `src/`).
+- `generate-medical-summary` sólo se llamaba desde ese componente huérfano → la edge function estaba viva en Supabase pero nadie podía dispararla desde la app.
+- Impacto: ningún usuario en producción podía descargar el PDF completo de su ficha clínica. El único camino era el share-link externo (`/medical-share/:token`), que no todos los usuarios usan.
+
+**Fix aplicado**:
+
+1. **Rediseño visual del botón** — [`src/components/medical/MedicalSummaryButton.tsx`](../src/components/medical/MedicalSummaryButton.tsx):
+   - Variante `hero` (default): solid gradient primary → purple → rose, altura 14, icono `FileDown` grande, shadow cálida `0 20px 40px -18px rgba(168,85,247,0.55)`. Ya no es `variant="outline"` tímido.
+   - Variante `inline` conservada para usos secundarios.
+   - Copy actualizado: "Descargar ficha clínica (PDF)" (antes: "Descargar Resumen Médico").
+
+2. **Card destacado al tope del tab de documentos** — [`src/components/medical/MedicalDocumentsTab.tsx:175`](../src/components/medical/MedicalDocumentsTab.tsx#L175):
+   - Container con `bg-gradient-to-br from-primary/5 via-amber-50/60 to-rose-50/60`, blobs blur decorativos, ring primary/20.
+   - Badge "Ficha clínica PDF" uppercase + título "Descarga toda la ficha clínica en un solo PDF" + descripción + botón solid.
+   - Separado visualmente del resto de botones outline (Descargar Todo ZIP, Compartir) para que no compita con ellos.
+
+**Verificación**:
+- `npx tsc -b` → exit 0
+- `npm run build` → ✓ 36.57s
+- QA manual pendiente (dev server): abrir `/medical-records` > pet seleccionado > tab "Documentos" > confirmar que el card gradient es lo primero que se ve arriba del tab.
+
+**Relación con §5.9**: este fix es complementario al §5.9 "Rediseño completo de la ficha clínica PDF" (que sigue pendiente y se refiere al **contenido** del PDF generado por la edge function: orden de secciones, tipografía, paginación, etc.). §A.6 resuelve el problema de **visibilidad del CTA de descarga**; §5.9 seguirá abierto hasta que se rediseñe la estructura del PDF en sí.
+
+**Hecho cuando**: ✅ el CTA de descarga de la ficha clínica PDF es imposible de perder de vista al tope del tab "Documentos" en `/medical-records`.
+
+---
+
+### Resumen de acciones aplicadas en la sesión 2026-04-11
+
+| # | Acción | Destino | Estado |
+|---|---|---|---|
+| 1 | Auditoría código Lovable legacy generada | `audits/AUDIT_LOVABLE_LEGACY.md` | ✅ Creada |
+| 2 | Rescate `REDISENO_DASHBOARD_PROVIDER.md` desde `junk/task_docs/` | `_pending/bugs/REDISENO_DASHBOARD_PROVIDER.md` | ✅ Movido |
+| 3 | Índice de `_pending/README.md` actualizado con item #11 🔴 Alta prioridad | `_pending/README.md` | ✅ Actualizado |
+| 4 | Consolidación en master upgrade (este anexo) | `_pending/MASTER_UPGRADE_2026_04.md` | ✅ Este commit |
+| 5 | **Landing redesign aplicado (A.5)** — HeroV2 + MedicalPDFShowcase + 8 secciones rediseñadas | `src/components/HeroV2.tsx`, `src/components/MedicalPDFShowcase.tsx`, `src/pages/Index.tsx` | ✅ Ejecutado (100% de críticos + importantes sin assets) |
+| 6 | **Bug crítico CTA descarga PDF invisible (A.6)** — joya de la corona ahora accesible | `src/components/medical/MedicalSummaryButton.tsx`, `src/components/medical/MedicalDocumentsTab.tsx` | ✅ Fixed |
+| 7 | Fase 1 auditoría Lovable (10× `.single()`) | — | ⏳ Pendiente (10 min, riesgo cero) |
+| 8 | Bug REDISENO_DASHBOARD_PROVIDER fix de queries + voseo | `ProviderDashboard.tsx`, `ProviderProfileEdit.tsx` | ⏳ Pendiente (4-6h) |
+
+**Nota sobre el cierre del master upgrade**: el plan FASE 0-8 sigue marcado como **100% CERRADO 2026-04-12** y es candidato a archivo en `junk/` en sesión próxima. Este anexo documenta los hallazgos de la auditoría post-cierre del 2026-04-11 para no perder visibilidad antes de archivar.

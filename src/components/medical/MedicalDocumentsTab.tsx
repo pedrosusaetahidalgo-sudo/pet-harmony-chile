@@ -3,43 +3,48 @@
  * Displays and manages medical documents for a pet
  */
 
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Upload, 
-  FileText, 
-  Download, 
-  Eye, 
-  Trash2, 
-  FileCheck, 
-  FileImage, 
-  FileX, 
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Upload,
+  FileText,
+  Download,
+  Eye,
+  Trash2,
+  FileCheck,
+  FileImage,
+  FileX,
   Pill,
   Calendar,
   MoreVertical,
   FileDown,
   Share2,
-  Loader2
-} from "@/lib/icons";
-import { useMedicalDocuments, MedicalDocumentType, MedicalDocument } from "@/hooks/useMedicalDocuments";
-import { useMedicalSharing } from "@/hooks/useMedicalSharing";
-import { UploadMedicalDocumentDialog } from "./UploadMedicalDocumentDialog";
-import { MedicalSummaryButton } from "./MedicalSummaryButton";
+  Loader2,
+} from '@/lib/icons';
+import type { LucideIcon } from 'lucide-react';
+import {
+  useMedicalDocuments,
+  MedicalDocumentType,
+  MedicalDocument,
+} from '@/hooks/useMedicalDocuments';
+import { useMedicalSharing } from '@/hooks/useMedicalSharing';
+import { UploadMedicalDocumentDialog } from './UploadMedicalDocumentDialog';
+import { MedicalSummaryButton } from './MedicalSummaryButton';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { useToast } from "@/hooks/use-toast";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { describeSupabaseError } from "@/lib/supabaseErrors";
-import { downloadFile } from "@/lib/nativeDownload";
+} from '@/components/ui/dropdown-menu';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { useToast } from '@/hooks/use-toast';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { describeSupabaseError } from '@/lib/supabaseErrors';
+import { downloadFile } from '@/lib/nativeDownload';
 
 interface MedicalDocumentsTabProps {
   petId: string;
@@ -54,7 +59,7 @@ const DOCUMENT_TYPE_LABELS: Record<MedicalDocumentType, string> = {
   other: 'Otro',
 };
 
-const DOCUMENT_TYPE_ICONS: Record<MedicalDocumentType, any> = {
+const DOCUMENT_TYPE_ICONS: Record<MedicalDocumentType, LucideIcon> = {
   vaccine_card: FileCheck,
   id_card: FileText,
   lab_result: FileText,
@@ -66,8 +71,12 @@ const DOCUMENT_TYPE_ICONS: Record<MedicalDocumentType, any> = {
 export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
   const { toast } = useToast();
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
-  const [viewingDocument, setViewingDocument] = useState<{ url: string; title: string; mimeType: string } | null>(null);
-  
+  const [viewingDocument, setViewingDocument] = useState<{
+    url: string;
+    title: string;
+    mimeType: string;
+  } | null>(null);
+
   const {
     documents,
     documentsByType,
@@ -89,20 +98,22 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
     revokeToken,
   } = useMedicalSharing(petId);
 
-  const handleDownload = async (document: any) => {
+  const handleDownload = async (document: MedicalDocument) => {
     try {
       const url = await getDownloadUrl(document);
       await downloadFile(url, document.title || 'documento');
-    } catch (error: any) {
+    } catch (error) {
       toast({
-        variant: "destructive",
-        title: "Algo salió mal",
-        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo descargar el documento",
+        variant: 'destructive',
+        title: 'Algo salió mal',
+        description:
+          describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
+          'No se pudo descargar el documento',
       });
     }
   };
 
-  const handleView = async (document: any) => {
+  const handleView = async (document: MedicalDocument) => {
     try {
       const url = await getDownloadUrl(document);
       setViewingDocument({
@@ -110,18 +121,20 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
         title: document.title,
         mimeType: document.mime_type,
       });
-    } catch (error: any) {
+    } catch (error) {
       toast({
-        variant: "destructive",
-        title: "Algo salió mal",
-        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo abrir el documento",
+        variant: 'destructive',
+        title: 'Algo salió mal',
+        description:
+          describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
+          'No se pudo abrir el documento',
       });
     }
   };
 
   const handleDelete = async (documentId: string) => {
     if (!confirm('¿Estás seguro de que deseas eliminar este documento?')) return;
-    
+
     try {
       await deleteDocument(documentId);
     } catch (error) {
@@ -144,13 +157,13 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
     try {
       const token = await createShareToken(30);
       const shareUrl = getShareUrl(token.token);
-      
+
       // Copy to clipboard
       await navigator.clipboard.writeText(shareUrl);
-      
+
       toast({
-        title: "Listo",
-        description: "Compártelo con tu veterinario. Vence en 30 días.",
+        title: 'Listo',
+        description: 'Compártelo con tu veterinario. Vence en 30 días.',
       });
     } catch (error) {
       // Error handled in hook
@@ -174,22 +187,49 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
 
   return (
     <div className="space-y-6">
+      {/*
+       * Ficha clínica PDF — joya de la corona (CLAUDE.md §9.6).
+       * Antes de 2026-04-11 este CTA estaba importado pero sin renderizar:
+       * los usuarios no podían descargar el PDF completo de su ficha.
+       * Ahora vive en un card destacado al tope del tab, con gradiente
+       * cálido y separado del resto de botones outline para que no se
+       * pierda de vista.
+       */}
+      <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 via-amber-50/60 to-rose-50/60 p-5 shadow-sm md:p-6">
+        <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary/15 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-amber-300/20 blur-3xl" />
+
+        <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="max-w-xl">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary ring-1 ring-primary/20 backdrop-blur">
+              <FileDown className="h-3.5 w-3.5" />
+              Ficha clínica PDF
+            </span>
+            <h3 className="mt-2 text-lg font-bold tracking-tight md:text-xl">
+              Descarga toda la ficha clínica en un solo PDF
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Incluye vacunas, alergias e historial completo. Perfecto para llevar al veterinario o
+              compartir en un viaje.
+            </p>
+          </div>
+          <MedicalSummaryButton petId={petId} />
+        </div>
+      </div>
+
       {/* Header Actions */}
       <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
         <div>
           <h3 className="text-lg font-semibold">Documentos Médicos</h3>
           <p className="text-sm text-muted-foreground">
-            {documents?.length || 0} documento{documents?.length !== 1 ? 's' : ''} guardado{documents?.length !== 1 ? 's' : ''}
+            {documents?.length || 0} documento{documents?.length !== 1 ? 's' : ''} guardado
+            {documents?.length !== 1 ? 's' : ''}
           </p>
         </div>
         <div className="flex gap-2">
           {documents && documents.length > 0 && (
             <>
-              <Button
-                variant="outline"
-                onClick={handleDownloadAll}
-                disabled={isGeneratingZip}
-              >
+              <Button variant="outline" onClick={handleDownloadAll} disabled={isGeneratingZip}>
                 {isGeneratingZip ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -202,11 +242,7 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
                   </>
                 )}
               </Button>
-              <Button
-                variant="outline"
-                onClick={handleCreateShareLink}
-                disabled={isCreatingShare}
-              >
+              <Button variant="outline" onClick={handleCreateShareLink} disabled={isCreatingShare}>
                 {isCreatingShare ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -235,7 +271,8 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
             <FileText className="h-16 w-16 text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">No hay documentos</h3>
             <p className="text-sm text-muted-foreground text-center mb-4">
-              Sube documentos médicos como tarjetas de vacunación, resultados de laboratorio, radiografías, etc.
+              Sube documentos médicos como tarjetas de vacunación, resultados de laboratorio,
+              radiografías, etc.
             </p>
             <Button onClick={() => setUploadDialogOpen(true)}>
               <Upload className="h-4 w-4 mr-2" />
@@ -254,74 +291,78 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
             ))}
           </TabsList>
 
-          {(Object.entries(documentsByType) as [MedicalDocumentType, MedicalDocument[]][]).map(([type, docs]) => (
-            <TabsContent key={type} value={type} className="space-y-3">
-              {docs.map((doc) => {
-                const Icon = DOCUMENT_TYPE_ICONS[doc.type];
-                return (
-                  <Card key={doc.id} className="hover:shadow-md transition-shadow">
-                    <CardContent className="p-4">
-                      <div className="flex items-start gap-4">
-                        <div className="p-3 bg-primary/10 rounded-lg">
-                          <Icon className="h-6 w-6 text-primary" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-semibold truncate">{doc.title}</h4>
-                              <div className="flex items-center gap-2 mt-1 flex-wrap">
-                                <Badge variant="outline" className="text-xs">
-                                  {DOCUMENT_TYPE_LABELS[doc.type]}
-                                </Badge>
-                                {doc.issued_at && (
-                                  <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                                    <Calendar className="h-3 w-3" />
-                                    {format(new Date(doc.issued_at), "d MMM yyyy", { locale: es })}
-                                  </div>
+          {(Object.entries(documentsByType) as [MedicalDocumentType, MedicalDocument[]][]).map(
+            ([type, docs]) => (
+              <TabsContent key={type} value={type} className="space-y-3">
+                {docs.map((doc) => {
+                  const Icon = DOCUMENT_TYPE_ICONS[doc.type];
+                  return (
+                    <Card key={doc.id} className="hover:shadow-md transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="flex items-start gap-4">
+                          <div className="p-3 bg-primary/10 rounded-lg">
+                            <Icon className="h-6 w-6 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex-1 min-w-0">
+                                <h4 className="font-semibold truncate">{doc.title}</h4>
+                                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                                  <Badge variant="outline" className="text-xs">
+                                    {DOCUMENT_TYPE_LABELS[doc.type]}
+                                  </Badge>
+                                  {doc.issued_at && (
+                                    <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                                      <Calendar className="h-3 w-3" />
+                                      {format(new Date(doc.issued_at), 'd MMM yyyy', {
+                                        locale: es,
+                                      })}
+                                    </div>
+                                  )}
+                                  <span className="text-xs text-muted-foreground">
+                                    {formatFileSize(doc.file_size)}
+                                  </span>
+                                </div>
+                                {doc.notes && (
+                                  <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
+                                    {doc.notes}
+                                  </p>
                                 )}
-                                <span className="text-xs text-muted-foreground">
-                                  {formatFileSize(doc.file_size)}
-                                </span>
                               </div>
-                              {doc.notes && (
-                                <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
-                                  {doc.notes}
-                                </p>
-                              )}
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon">
+                                    <MoreVertical className="h-4 w-4" />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem onClick={() => handleView(doc)}>
+                                    <Eye className="h-4 w-4 mr-2" />
+                                    Ver
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem onClick={() => handleDownload(doc)}>
+                                    <Download className="h-4 w-4 mr-2" />
+                                    Descargar
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    onClick={() => handleDelete(doc.id)}
+                                    className="text-destructive"
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    Eliminar
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
                             </div>
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon">
-                                  <MoreVertical className="h-4 w-4" />
-                                </Button>
-                              </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => handleView(doc)}>
-                                  <Eye className="h-4 w-4 mr-2" />
-                                  Ver
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleDownload(doc)}>
-                                  <Download className="h-4 w-4 mr-2" />
-                                  Descargar
-                                </DropdownMenuItem>
-                                <DropdownMenuItem
-                                  onClick={() => handleDelete(doc.id)}
-                                  className="text-destructive"
-                                >
-                                  <Trash2 className="h-4 w-4 mr-2" />
-                                  Eliminar
-                                </DropdownMenuItem>
-                              </DropdownMenuContent>
-                            </DropdownMenu>
                           </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </TabsContent>
-          ))}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </TabsContent>
+            )
+          )}
 
           <TabsContent value="all" className="space-y-3">
             {documents.map((doc) => {
@@ -344,7 +385,7 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
                               {doc.issued_at && (
                                 <div className="flex items-center gap-1 text-xs text-muted-foreground">
                                   <Calendar className="h-3 w-3" />
-                                  {format(new Date(doc.issued_at), "d MMM yyyy", { locale: es })}
+                                  {format(new Date(doc.issued_at), 'd MMM yyyy', { locale: es })}
                                 </div>
                               )}
                               <span className="text-xs text-muted-foreground">
@@ -427,4 +468,3 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
     </div>
   );
 };
-
