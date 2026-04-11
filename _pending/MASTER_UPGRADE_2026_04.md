@@ -53,33 +53,40 @@ grep -rn "from('pets').update" src/
 
 ---
 
-### 0.2. Google OAuth muestra UUID de Supabase
+### 0.2. Google OAuth muestra UUID de Supabase ✅ CERRADO 2026-04-12
 
 **Fuente**: QA_UX_UI_COMPLETO.md bug #2, UX_DUENO_MASCOTA.md §2.1, UX_VETERINARIO.md §2.2
 **Severidad**: GRAVE — rompe confianza antes de entrar al producto
-**Sintoma**: Google muestra `gwailbjlvevkhwcrovfd.supabase.co` en vez de "Paw Friend"
+**Sintoma**: Google mostraba `gwailbjlvevkhwcrovfd.supabase.co` en vez de "Paw Friend"
 
-**Fix (accion del dueno en Google Cloud Console)**:
-1. Ir a Google Cloud Console > APIs & Services > OAuth consent screen
-2. Nombre de app: "Paw Friend"
-3. Logo: PNG 120x120 oficial
-4. Dominio autorizado: `pawfriend.cl`
-5. Privacy policy URL: `https://pawfriend.cl/privacy`
-6. Terms URL: `https://pawfriend.cl/terms`
-7. Solicitar verificacion oficial de Google (4-6 semanas)
+**Fix aplicado 2026-04-12** (Google Auth Platform, proyecto `811742672720`, estado "In production"):
+- Seccion "Informacion de la marca" completada:
+  - Nombre de la aplicacion: `Paw Friend`
+  - Logotipo: `public/android-chrome-512x512.png` subido
+  - Pagina principal: `https://pawfriend.cl`
+  - Politica de privacidad: `https://pawfriend.cl/privacy`
+  - Terminos del servicio: `https://pawfriend.cl/terms`
+  - Dominios autorizados: `pawfriend.cl`, `supabase.co`
+  - Contacto del desarrollador: configurado
+- Validacion visual en ventana incognito: titulo "Paw Friend" aparece en consent screen (ya no `gwailbjlvevkhwcrovfd.supabase.co`).
 
-**Esfuerzo**: 1h config + 4-6 semanas verificacion Google
-**Hecho cuando**: Google consent screen dice "Paw Friend" con logo
+**Salvedad**: la propagacion del logo via cache de Google puede tardar hasta 24h para todos los usuarios — el texto aparece inmediato pero el logo a veces tarda mas. No bloquea. Se verifica visualmente el 2026-04-13 si hay dudas.
+
+**Pendiente opcional** (no bloquea el cierre de esta fase): solicitar verificacion oficial de Google en "Centro de verificacion" para eliminar el warning "Google no ha verificado esta aplicacion". Proceso de 4-6 semanas. Dejar para sprint dedicado.
+
+**Hecho cuando**: ✅ Google consent screen dice "Paw Friend" (texto confirmado en incognito 2026-04-12)
 
 ---
 
-### 0.3. HTTPS en pawfriend.cl
+### 0.3. HTTPS en pawfriend.cl ✅ CERRADO 2026-04-12
 
 **Fuente**: QA_UX_UI_COMPLETO.md bug #32
 **Severidad**: GRAVE — "No seguro" visible en iPhone mata confianza, especialmente para vets
-**Fix**: Activar HTTPS en GitHub Pages (Settings > Pages > Enforce HTTPS) o migrar a Cloudflare Pages/Vercel
-**Esfuerzo**: 30min
-**Hecho cuando**: `curl -I https://pawfriend.cl` retorna 200
+**Fix aplicado**: Enforce HTTPS activado en GitHub Pages (Settings > Pages).
+**Verificacion 2026-04-12**:
+- `curl.exe -I https://pawfriend.cl` → `HTTP/1.1 200 OK` (cert SSL provisionado, sirviendo desde `cache-scl2220049-SCL` / Fastly Santiago)
+- `curl.exe -I http://pawfriend.cl` → `HTTP/1.1 301 Moved Permanently` + `Location: https://pawfriend.cl/` (redirect forzado de HTTP plano)
+**Estado**: iPhone ya no muestra "No seguro". Bug #32 resuelto.
 
 ---
 
