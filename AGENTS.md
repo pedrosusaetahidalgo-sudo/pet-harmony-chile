@@ -43,8 +43,8 @@ src/
   assets/          # Imagenes
 
 supabase/
-  functions/       # 17 Edge Functions Deno
-  migrations/      # ~56 migraciones SQL
+  functions/       # 21 Edge Functions Deno + _shared/ helpers
+  migrations/      # 88 migraciones SQL (hasta 20260428000000)
 
 docs/              # Build output (GitHub Pages) -- NO editar
 audits/            # Auditorias, competencia, walkthroughs
@@ -128,17 +128,20 @@ NO existen: `npm run test`, `npm run typecheck`.
 
 - Paw Rewards QR completo (ledger, partner_locations, canje presencial)
 - Asistente medico IA triage avanzado
-- Dual-role mode switching
 - Bot FAQ clinicas
-- OCR carnet vacunacion
-- Checklist Grimace Scale
-- Plantillas post-consulta
+
+## Features que SI estan en produccion (dejar de listarlas como futuras)
+
+- OCR carnet vacunacion → edge function `ocr-vaccination-card/`
+- Checklist Grimace Scale → integrado en ficha clinica
+- Plantillas post-consulta → tabla `consultation_templates` + UI
+- Dual-role mode switching → `ActiveRoleProvider` en `src/hooks/useActiveRole.tsx`
 
 ---
 
 ## Subagentes (.claude/agents/)
 
-12 agentes especializados disponibles:
+13 agentes especializados disponibles:
 
 | Agente | Archivo |
 |---|---|
@@ -148,6 +151,7 @@ NO existen: `npm run test`, `npm run typecheck`.
 | Medical AI Guardian | medical-ai-guardian.md (futuro) |
 | Rewards QR Validator | rewards-qr-validator.md (futuro) |
 | Capacitor Mobile | capacitor-mobile-specialist.md |
+| Cross-Platform Validator | cross-platform-validator.md |
 | TypeScript Refactorer | typescript-refactorer.md |
 | Bug Debugger | bug-debugger.md |
 | QA Verifier | qa-verifier.md |

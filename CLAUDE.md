@@ -72,8 +72,8 @@ src/
   assets/              # Imagenes estaticas
 
 supabase/
-  functions/           # 17 Edge Functions Deno
-  migrations/          # ~56 migraciones SQL (hasta 20260418000000)
+  functions/           # 21 Edge Functions Deno + _shared/ helpers
+  migrations/          # 88 migraciones SQL (hasta 20260428000000 + flag 99999999000000)
   config.toml
 
 docs/                  # Output de `npm run build` (GitHub Pages). NO editar manualmente.
@@ -122,10 +122,11 @@ AGENTS.md              # Config para agentes IA (Cursor, Copilot, etc.)
 
 ---
 
-## 6. Edge Functions activas (17)
+## 6. Edge Functions activas (21 + _shared)
 
 ```
-_shared/                         # Helpers compartidos
+_shared/                         # Helpers compartidos (rate limit, AI base, payment)
+bereavement-assistant/           # Asistente IA empatico (memorial)
 breed-tips/                      # Tips por raza (IA)
 flow-create-subscription/        # Crear suscripcion Flow.cl
 flow-webhook/                    # Webhook de Flow.cl
@@ -133,14 +134,18 @@ generate-medical-summary/        # PDF ficha medica
 generate-medical-zip/            # ZIP documentos medicos
 generate-shelters/               # Generar data de refugios
 generate-sitemap/                # Sitemap SEO
+generate-weekly-owner-reports/   # Reporte semanal dueno (salud mascotas)
+generate-weekly-vet-reports/     # Reporte semanal vet (stats consulta/rating)
 google-calendar-callback/        # OAuth callback Google Calendar
 google-calendar-disconnect/      # Desconectar Google Calendar
 google-calendar-oauth-init/      # Iniciar OAuth Google Calendar
 google-calendar-sync/            # Sync eventos Google Calendar
 medical-suggestions/             # Sugerencias medicas IA basicas
 moderate-service-promotion/      # Moderacion de promociones
+ocr-vaccination-card/            # OCR de carnet de vacunacion (IA)
 pet-assistant/                   # Asistente IA basico de mascotas
 reminder-cron/                   # Cron de recordatorios
+send-pet-invitation/             # Invitar dueno a gestionar mascota (vet)
 send-whatsapp-reminder/          # WhatsApp (pendiente verificacion Meta)
 ```
 
@@ -163,15 +168,22 @@ send-whatsapp-reminder/          # WhatsApp (pendiente verificacion Meta)
 - `/resena/:token` -- Dejar resena publica
 - `/terms`, `/privacy` -- Legales
 
+### Publicas (ampliacion)
+- `/registro-proveedor` -- Alias de `/registro-veterinario`
+- `/qr/:token` -- Landing publica de QR de mascota
+- `/medical-share/:token` -- Landing publica de ficha compartida (30 dias)
+
 ### Protegidas (requieren auth)
 - `/home` -- Dashboard principal
 - `/feed` -- Feed social
+- `/comunidad`, `/comunidad/:slug` -- Grupos de comunidad (por raza/condicion)
 - `/my-pets` -- Mis mascotas
 - `/add-pet`, `/edit-pet/:petId` -- CRUD mascotas
 - `/medical-records` -- Registros medicos
 - `/reminders` -- Recordatorios
 - `/pet/:petId/clinical` -- Ficha clinica completa
 - `/adoption` -- Adopcion
+- `/en-memoria` -- Memorial de mascotas fallecidas
 - `/servicios` -- Directorio servicios
 - `/services/:type` -- Servicios por tipo (walkers, vets, sitters, trainers, groomers)
 - `/maps` -- Mapa de servicios
@@ -179,11 +191,18 @@ send-whatsapp-reminder/          # WhatsApp (pendiente verificacion Meta)
 - `/profile` -- Mi perfil
 - `/user/:userId` -- Perfil de otro usuario
 - `/settings` -- Configuracion
-- `/upgrade` -- Upgrade a Premium
+- `/upgrade`, `/upgrade/success`, `/upgrade/cancel` -- Upgrade a Premium
+- `/payment-result` -- Resultado unificado Flow (?status=success|failed)
 - `/mis-reservas` -- Mis reservas
+- `/calendar` -- Redirect legacy a `/mis-reservas`
 - `/provider/dashboard` -- Dashboard proveedor
 - `/provider/profile-edit` -- Editar perfil proveedor
 - `/peluquero/perfil` -- Editar perfil groomer
+- `/onboarding-mascota` -- Onboarding minimal dueno
+- `/onboarding-vet` -- Onboarding minimal veterinario
+- `/reportes` -- Reportes semanales
+- `/panel-pro` -- Pro Analytics dashboard
+- `/analytics-demo` -- Analytics dashboard (standalone demo)
 - `/admin` -- Panel admin (requiere rol admin)
 - `/paw-game` -- Mini-juego gamificacion
 
@@ -243,12 +262,25 @@ La ficha medica PDF + directorio publico de vets son las features mas valiosas. 
 El proyecto tiene documentos que deben mantenerse actualizados. Ver `INDEX.md` para el indice completo.
 
 **Documentos vivos** (SIEMPRE mantener actualizados):
-- `diagrams/FLUJO_COMPLETO.mmd` — diagrama Mermaid end-to-end
-- `diagrams/FLUJOS_MERMAID.md` — diagramas individuales por modulo
+- `diagrams/FLUJO_COMPLETO.mmd` — **FUENTE DE VERDAD** del flujo end-to-end (ver 9.7.1)
+- `diagrams/FLUJOS_MERMAID.md` — diagramas individuales por modulo (complementario, NO reemplaza al `.mmd`)
 - `MAPA_FUNCIONAL_COMPLETO.md` — mapa de modulos, archivos y flujos
 - `AGENTS.md` — config para agentes IA externos (Cursor, Copilot, etc.)
 
 **Regla**: si modificas rutas, navegacion, flujos de usuario, paginas, planes, o features criticas → actualizar el documento correspondiente **en el mismo commit**. Si se cambia BottomTabBar, Sidebar, Auth, pricing, o cualquier flujo critico, los diagramas y el mapa funcional deben reflejar el cambio.
+
+#### 9.7.1. Regla del diagrama Mermaid completo
+
+`diagrams/FLUJO_COMPLETO.mmd` es la **fuente de verdad unica** del flujo de la app y tiene reglas estrictas:
+
+1. **Formato completo, un solo bloque pegable**. El archivo debe ser un unico `flowchart TD` continuo que el dueno pueda **seleccionar todo + copiar + pegar directo en [mermaid.live](https://mermaid.live)** sin tener que concatenar bloques ni editar nada. NO se permite:
+   - Partirlo en multiples bloques ```mermaid ... ```
+   - Envolverlo en markdown, headers, ni prosa fuera de comentarios `%%`
+   - Dejar placeholders tipo `...` o `TODO`
+2. **Siempre actualizado en el mismo commit**. Cualquier cambio en rutas (`src/App.tsx`), navegacion (BottomTabBar, Sidebar), onboarding, auth, pricing/planes, edge functions, ficha clinica, pagos, o cualquier flujo de usuario critico → **obliga** a actualizar `FLUJO_COMPLETO.mmd` en el mismo PR/commit. No se mergea el cambio si el diagrama queda desactualizado.
+3. **Validar antes de commitear**. Despues de editarlo, verificar mentalmente (o pegando en mermaid.live si hay duda) que el diagrama renderiza sin errores de sintaxis. Nodos con caracteres especiales (`:`, `/`, `?`, `|`, `()`) deben ir entre comillas `["texto"]`.
+4. **Cabecera con fecha**. Mantener al tope un comentario `%% FLUJO COMPLETO PAW FRIEND — Actualizado YYYY-MM-DD` con la fecha del ultimo cambio real.
+5. **`FLUJOS_MERMAID.md` es secundario**. Sirve para ver modulos aislados, pero NO es la fuente de verdad. Si hay contradiccion entre ambos, gana `FLUJO_COMPLETO.mmd`.
 
 ---
 
@@ -273,11 +305,13 @@ Estas features estan planificadas en el mega prompt futuro pero **NO existen en 
 
 - Paw Rewards QR completo (ledger, partner_locations, canje presencial)
 - Asistente medico IA con triage avanzado (mas alla del pet-assistant basico actual)
-- Dual-role mode switching (cambiar entre modo dueno y modo vet en la misma sesion)
 - Bot FAQ para clinicas
-- OCR de carnet de vacunacion
-- Checklist Grimace Scale (dolor felino)
-- Plantillas post-consulta para vets
+
+**Features que SI existen (y hay que dejar de listarlas como futuras)**:
+- OCR de carnet de vacunacion → edge function `ocr-vaccination-card/` activa
+- Feline Grimace Scale → implementado en ficha clinica
+- Plantillas post-consulta para vets → tabla `consultation_templates` + UI (`ClinicalNoteEditor`)
+- Dual-role mode switching → `ActiveRoleProvider` + `useActiveRole` en `src/hooks/`
 
 ---
 
@@ -289,8 +323,8 @@ Estas features estan planificadas en el mega prompt futuro pero **NO existen en 
 | `npm run build` | Pasa (~25s) |
 | Bundle principal | ~291 kB / 89 kB gzip |
 | Vendor splitting | Configurado (react, query, ui, icons, date, supabase) |
-| Migraciones | ~56, hasta `20260418000000` |
-| Edge functions | 17 activas |
+| Migraciones | 88, hasta `20260428000000` + flag `99999999000000_demo_seed_flag` |
+| Edge functions | 21 activas + `_shared/` helpers |
 | Premium B2C Flow | Vivo con idempotencia + rate limit |
 | Google Calendar | Vivo end-to-end |
 | WhatsApp Cloud API | Codigo listo, pendiente verificacion Meta Business |
@@ -309,7 +343,7 @@ Cuando uses la herramienta TodoWrite, sigue estas convenciones:
 
 ## 14. Subagentes disponibles (.claude/agents/)
 
-Para tareas especializadas, invocar el subagente correspondiente:
+Para tareas especializadas, invocar el subagente correspondiente. **13 agentes activos**:
 
 | Agente | Archivo | Uso |
 |---|---|---|
@@ -319,6 +353,7 @@ Para tareas especializadas, invocar el subagente correspondiente:
 | Medical AI Guardian | `medical-ai-guardian.md` | Guardrails del asistente medico IA (FUTURO) |
 | Rewards QR Validator | `rewards-qr-validator.md` | Validar sistema Paw Rewards QR (FUTURO) |
 | Capacitor Mobile | `capacitor-mobile-specialist.md` | Problemas mobile/Capacitor |
+| Cross-Platform Validator | `cross-platform-validator.md` | Valida compatibilidad Chrome/Edge/Firefox/Safari iOS/WebView Capacitor |
 | TypeScript Refactorer | `typescript-refactorer.md` | Refactors seguros con tipos |
 | Bug Debugger | `bug-debugger.md` | Diagnostico y fix de bugs |
 | QA Verifier | `qa-verifier.md` | Verificacion de flujos criticos |

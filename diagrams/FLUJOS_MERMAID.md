@@ -1,7 +1,11 @@
 # Paw Friend — Diagramas de Flujo (Mermaid)
 
-> Pega cada bloque en [mermaid.live](https://mermaid.live) para visualizar.
-> IMPORTANTE: Copia SOLO el contenido entre las marcas de codigo, SIN incluir la linea ```mermaid ni el ``` final.
+> **FUENTE DE VERDAD**: para el flujo end-to-end pegable en un solo paso, usar [FLUJO_COMPLETO.mmd](./FLUJO_COMPLETO.mmd).
+> Ese archivo es UN SOLO bloque completo, listo para seleccionar todo + copiar + pegar directo en [mermaid.live](https://mermaid.live) sin editar nada.
+>
+> Este archivo (`FLUJOS_MERMAID.md`) es **complementario**: contiene los mismos flujos partidos por modulo para cuando se quiere revisar una seccion aislada. Si hay contradiccion, gana `FLUJO_COMPLETO.mmd`.
+>
+> Para pegar un bloque individual de esta pagina: copia SOLO el contenido entre las marcas de codigo, SIN incluir la linea ```mermaid ni el ``` final.
 
 ---
 

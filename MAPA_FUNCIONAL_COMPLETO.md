@@ -2,6 +2,7 @@
 
 > Documento de referencia: cada modulo, sus archivos, flujo end-to-end y oportunidades de mejora.
 > Generado: 2026-04-10. Verificado contra el codigo real.
+> Ultima sync de metricas: 2026-04-11 (88 migraciones, 21 edge functions + `_shared/`).
 
 ---
 
@@ -1034,8 +1035,8 @@ Infraestructura
 | Componentes custom | 60+ |
 | Componentes UI (shadcn) | 50+ |
 | Hooks custom | 30+ |
-| Edge Functions | 22 |
-| Migraciones SQL | 67+ |
+| Edge Functions | 21 (+ `_shared/` helpers) |
+| Migraciones SQL | 88 (hasta `20260428000000` + flag `99999999000000`) |
 | Rutas totales | 47 |
 | Modulos funcionales | 25 |
 | Tipos registro medico | 25 |
