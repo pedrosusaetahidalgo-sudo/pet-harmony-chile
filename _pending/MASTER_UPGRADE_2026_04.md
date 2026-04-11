@@ -90,45 +90,43 @@ grep -rn "from('pets').update" src/
 
 ---
 
-### 0.4. CRITICO — Seed data con email/telefono/Colmevet de otro vet (riesgo privacy)
+### 0.4. Seed data con email/telefono/Colmevet de otro vet (riesgo privacy) ✅ CERRADO 2026-04-12
 
 **Fuente**: ADDENDUM f44+f45, QA bug #3 ESCALADO a CRITICO
-**Severidad**: CRITICA — riesgo de filtracion de datos personales (Ley 19.628 Chile)
-**Sintoma**: el formulario de edicion del perfil vet se pre-carga con datos COMPLETOS de otro vet seed:
-- Foto de otra persona (Dra. Javiera Munoz / Francisca Lagos)
-- Bio en femenino de otra persona
-- Email publico: `javiera.munoz@demo.pawfriend.cl`
-- Telefono publico: `+56 9 8765 1001`
-- N Colmevet: `12345`
-- Anos de experiencia de otro perfil
+**Severidad historica**: CRITICA — riesgo de filtracion de datos personales (Ley 19.628 Chile)
+**Sintoma original**: el formulario de edicion del perfil vet se pre-cargaba con datos COMPLETOS de otro vet seed (foto, bio, email, telefono, Colmevet, anos de experiencia).
 
-**Riesgo real**: si un vet nuevo guarda sin editar todos los campos, publica un perfil profesional con la identidad de otra persona. Los duenos contactan al numero equivocado. Potencial infraccion Ley 19.628.
+**Estado 2026-04-12**: **bug cerrado en codigo** — probablemente fixeado en commits `44c0fb3` o `490b29b` (mismo patron que los 3 falsos abiertos auditados ayer). Verificacion punto por punto contra los 6 requisitos del fix original:
 
-**El dashboard del vet (f43) TAMBIEN esta contaminado**: muestra card "Tu perfil publico" con badge verde "Visible" y nombre "Dra. Javiera Munoz" aunque el usuario logueado es Pedro.
+| # | Requisito | Estado | Ubicacion |
+|---|---|---|---|
+| 1 | Componente editor de perfil vet identificado | ✅ | `src/pages/ProviderProfileEdit.tsx`, `src/components/provider/VetOnboardingWizard.tsx`, `src/components/provider/ProviderDirectoryCard.tsx` |
+| 2 | Campos VACIOS para usuarios nuevos | ✅ | Constante `EMPTY` en `ProviderProfileEdit.tsx:37-51` y `VetOnboardingWizard.tsx:42-56` |
+| 3 | Filtrar por `WHERE user_id = auth.uid()` | ✅ | Hook `useMyProvider()` en `useProviderProfile.tsx:34-38` (`.eq('user_id', user!.id).maybeSingle()`) |
+| 4 | Placeholders neutros tipo "Ej: Medico/a veterinario/a..." | ✅ | `VetOnboardingWizard.tsx:201` |
+| 5 | Guard al guardar contra demos | ✅ | `useUpsertProviderProfile` en `useProviderProfile.tsx:52-58` bloquea con mensaje "Estos datos coinciden con un perfil de demostracion. Editalos antes de publicar tu perfil." |
+| 6 | Card "Tu perfil publico" carga datos propios | ✅ | `ProviderDirectoryCard.tsx:36` usa `useMyProvider()` (mismo filtro). `ProviderDashboard.tsx:28-40` tambien filtra por `user_id`. |
 
-**Fix obligatorio**:
-1. Buscar el componente editor de perfil vet (probablemente en `src/components/provider/` o `src/pages/`)
-2. Para usuarios nuevos (sin provider existente): los campos DEBEN inicializar VACIOS
-3. Para usuarios con provider existente: cargar SOLO sus propios datos con `WHERE user_id = auth.uid()`
-4. Usar placeholders neutros: "Ej: Medico/a veterinario/a con experiencia en..."
-5. Agregar guard al guardar: si email, telefono o Colmevet coinciden con otro `service_provider` que tenga `is_demo=true`, bloquear con mensaje "Estos datos coinciden con un perfil demo. Editalos antes de publicar."
-6. Dashboard del vet: verificar que la card "Tu perfil publico" cargue datos del usuario actual, no de un seed
-
-**Auditoria retroactiva** (ejecutar en Supabase SQL Editor):
+**Auditoria retroactiva 2026-04-12** (corrida en Supabase SQL Editor por el dueno):
 ```sql
--- Verificar que ningun vet real tenga datos duplicados de seeds
-SELECT sp.id, sp.display_name, sp.slug
+-- Extendida con public_email, public_phone, license_number
+SELECT sp.id, sp.display_name, sp.slug, sp.user_id, sp.created_at
 FROM service_providers sp
 WHERE sp.is_demo = false
   AND (
     sp.display_name IN (SELECT display_name FROM service_providers WHERE is_demo = true)
     OR sp.slug IN (SELECT slug FROM service_providers WHERE is_demo = true)
+    OR sp.public_email IN (SELECT public_email FROM service_providers WHERE is_demo = true AND public_email IS NOT NULL)
+    OR sp.public_phone IN (SELECT public_phone FROM service_providers WHERE is_demo = true AND public_phone IS NOT NULL)
+    OR sp.license_number IN (SELECT license_number FROM service_providers WHERE is_demo = true AND license_number IS NOT NULL)
   );
 ```
-Si hay resultados, contactar a esos vets inmediatamente.
+**Resultado**: 0 filas. Ningun vet real tiene datos duplicados de seeds. No hay limpieza retroactiva pendiente.
 
-**Esfuerzo**: 3-4h
-**Hecho cuando**: un usuario nuevo ve campos vacios en el editor de perfil vet, y el dashboard muestra solo sus propios datos
+**Deuda tecnica menor detectada** (no bloqueante, queda para sprint futuro):
+- `useProviderProfile.tsx:8-10` usa listas hardcodeadas (`DEMO_EMAILS`, `DEMO_PHONES`, `DEMO_COLMEVET`) en vez de consultar `WHERE is_demo = true` en DB. Si se agregan seeds nuevos hay que actualizar estas listas manualmente. Approach robusto: mover el guard a un trigger de Postgres o hacer lookup dinamico a DB al guardar.
+
+**Hecho cuando**: ✅ editor de perfil vet muestra campos vacios para usuarios nuevos, dashboard muestra solo datos propios, ningun vet real tiene datos clonados de seeds (auditoria SQL retroactiva: 0 filas).
 
 ---
 
