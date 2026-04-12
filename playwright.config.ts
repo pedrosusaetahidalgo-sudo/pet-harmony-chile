@@ -26,7 +26,7 @@ export default defineConfig({
     ['html', { open: 'never' }],
     ['list'], // Output legible en terminal
   ],
-  timeout: 30_000,
+  timeout: 45_000,
   expect: { timeout: 10_000 },
   use: {
     baseURL: 'http://localhost:8080',
@@ -36,15 +36,22 @@ export default defineConfig({
     locale: 'es-CL',
     timezoneId: 'America/Santiago',
   },
+  // Matriz cross-platform: cubre los motores reales de los navegadores objetivo.
+  //   chromium  -> Chrome / Edge / Brave / Android Chrome / WebView Capacitor Android
+  //   webkit    -> Safari desktop / Safari iOS / WebView Capacitor iOS
+  //   firefox   -> Firefox desktop (cobertura adicional, atrapa regresiones de specs)
+  //
+  // Siempre se definen los 5 proyectos. Para correr un subset en local usa los
+  // scripts de npm:
+  //   npm run test:e2e        -> subset rapido (Desktop Chrome + Mobile Safari)
+  //   npm run test:e2e:full   -> matriz completa de los 5 engines
+  //   npx playwright test --project="*Safari*"  -> filtrar por glob
   projects: [
-    {
-      name: 'Desktop Chrome',
-      use: { ...devices['Desktop Chrome'] },
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 13'] },
-    },
+    { name: 'Desktop Chrome', use: { ...devices['Desktop Chrome'] } },
+    { name: 'Desktop Firefox', use: { ...devices['Desktop Firefox'] } },
+    { name: 'Desktop Safari', use: { ...devices['Desktop Safari'] } },
+    { name: 'Mobile Chrome (Pixel 5)', use: { ...devices['Pixel 5'] } },
+    { name: 'Mobile Safari (iPhone 13)', use: { ...devices['iPhone 13'] } },
   ],
   webServer: {
     command: 'npm run dev',

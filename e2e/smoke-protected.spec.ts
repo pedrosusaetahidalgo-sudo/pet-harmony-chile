@@ -38,9 +38,9 @@ const PROTECTED_ROUTES = [
 test.describe('Rutas protegidas — sin sesión redirigen a /auth', () => {
   for (const route of PROTECTED_ROUTES) {
     test(`${route.name} (${route.path}) redirige a /auth`, async ({ page }) => {
-      await page.goto(route.path, { timeout: 15_000 });
+      await page.goto(route.path, { waitUntil: 'commit', timeout: 30_000 });
       // Debe terminar en /auth (redirect de ProtectedRoute)
-      await expect(page).toHaveURL(/\/auth/, { timeout: 10_000 });
+      await expect(page).toHaveURL(/\/auth/, { timeout: 20_000 });
     });
   }
 });

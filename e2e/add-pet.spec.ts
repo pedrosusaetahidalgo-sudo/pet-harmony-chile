@@ -31,7 +31,7 @@ test.describe('Crear mascota — validaciones de formulario', () => {
 
   test.beforeEach(async ({ page }) => {
     await injectFakeAuth(page);
-    await page.goto('/add-pet', { waitUntil: 'networkidle' });
+    await page.goto('/add-pet', { waitUntil: 'domcontentloaded' });
 
     // Esperar a que el form aparezca (input id="name"). Si no aparece,
     // skip con mensaje claro (probablemente la inyección falló).
@@ -154,7 +154,7 @@ test.describe('Crear mascota — validaciones de formulario', () => {
 test.describe('Crear mascota — UI del formulario', () => {
   test.beforeEach(async ({ page }) => {
     await injectFakeAuth(page);
-    await page.goto('/add-pet', { waitUntil: 'networkidle' });
+    await page.goto('/add-pet', { waitUntil: 'domcontentloaded' });
     const ok = await page
       .waitForFunction(() => !!document.getElementById('name'), { timeout: 10_000 })
       .then(() => true)

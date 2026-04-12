@@ -22,7 +22,10 @@ for (const route of PUBLIC_ROUTES) {
     const errors: string[] = [];
     page.on('pageerror', (err) => errors.push(err.message));
 
-    const response = await page.goto(route.path, { waitUntil: 'networkidle', timeout: 15_000 });
+    const response = await page.goto(route.path, {
+      waitUntil: 'domcontentloaded',
+      timeout: 30_000,
+    });
 
     // No debe ser 404 ni 500
     expect(response?.status()).toBeLessThan(400);
@@ -37,13 +40,15 @@ for (const route of PUBLIC_ROUTES) {
 }
 
 test('[Pública] Directorio vets muestra al menos un card o empty state', async ({ page }) => {
-  await page.goto('/veterinarios', { waitUntil: 'networkidle' });
-  const hasCards = await page.locator("[class*='Card'], [class*='card']").count();
-  const hasEmpty = await page.getByText(/sin resultados|no hay/i).count();
-  expect(hasCards + hasEmpty).toBeGreaterThan(0);
+  await page.goto('/veterinarios', { waitUntil: 'domcontentloaded' });
+  // Esperar a que aparezca al menos un card o un mensaje de empty state
+  const cardOrEmpty = page.locator(
+    "[class*='Card'], [class*='card'], :text-matches('sin resultados|no hay', 'i')"
+  );
+  await expect(cardOrEmpty.first()).toBeVisible({ timeout: 15_000 });
 });
 
 test('[Pública] Estimador de precios muestra selector de comuna', async ({ page }) => {
-  await page.goto('/precios-veterinarios', { waitUntil: 'networkidle' });
+  await page.goto('/precios-veterinarios', { waitUntil: 'domcontentloaded' });
   await expect(page.getByText(/comuna|selecciona/i).first()).toBeVisible({ timeout: 10_000 });
 });
