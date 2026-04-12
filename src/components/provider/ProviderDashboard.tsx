@@ -23,6 +23,7 @@ import { ProviderDirectoryCard } from './ProviderDirectoryCard';
 import { SharedFichasCard } from './SharedFichasCard';
 import { VetFollowupsCard } from './VetFollowupsCard';
 import { VetPatientsList } from './VetPatientsList';
+import { CreateServicePromotion } from '@/components/CreateServicePromotion';
 
 const formatCLP = (amount: number) =>
   new Intl.NumberFormat('es-CL', {
@@ -268,6 +269,9 @@ const ProviderDashboard = () => {
           <VetPatientsList />
         </CardContent>
       </Card>
+
+      {/* Promocionar servicios */}
+      <CreateServicePromotion />
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Camera, ExternalLink, Loader2, Save, Stethoscope } from 'lucide-react';
+import { Camera, ExternalLink, Loader2, Save, Stethoscope } from '@/lib/icons';
 import { PageHeader } from '@/components/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -139,7 +139,7 @@ export default function ProviderProfileEdit() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-6 max-w-3xl space-y-4">
+      <div className="container mx-auto px-4 py-6 max-w-4xl space-y-4">
         <Skeleton className="h-10 w-48" />
         <Skeleton className="h-32 w-full" />
         <Skeleton className="h-64 w-full" />
@@ -170,8 +170,9 @@ export default function ProviderProfileEdit() {
             <Button
               variant="outline"
               size="sm"
-              disabled
-              title="Guarda tu perfil primero para generar tu URL pública"
+              onClick={() =>
+                toast.info('Guarda tu perfil primero para generar tu URL pública')
+              }
             >
               <ExternalLink className="h-4 w-4 mr-1" />
               <span className="hidden sm:inline">Vista previa</span>
@@ -179,7 +180,7 @@ export default function ProviderProfileEdit() {
           )
         }
       />
-      <div className="container mx-auto px-4 py-6 max-w-3xl space-y-6">
+      <div className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
         {/* Completeness */}
         <Card>
           <CardHeader className="pb-3">

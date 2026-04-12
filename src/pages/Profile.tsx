@@ -4,11 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  Settings, 
-  Share2, 
-  Grid, 
-  Heart, 
+import {
+  Settings,
+  Share2,
+  Grid,
+  Heart,
   MessageSquare,
   Trophy,
   Star,
@@ -16,8 +16,9 @@ import {
   Edit,
   UserPlus,
   Users,
-  Briefcase,
-  Crown
+  Crown,
+  Stethoscope,
+  ChevronRight
 } from "@/lib/icons";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,13 +27,13 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { useGoToAddPet } from "@/hooks/useCanAddPet";
 import { ProfessionalBadges } from "@/components/ProfessionalBadges";
-import { CreateServicePromotion } from "@/components/CreateServicePromotion";
 import UserReviewHistory from "@/components/UserReviewHistory";
 import PendingReviewsList from "@/components/PendingReviewsList";
 import PointsWidget from "@/components/PointsWidget";
 import AchievementBadge from "@/components/AchievementBadge";
 import MissionCard from "@/components/MissionCard";
 import { useGamification } from "@/hooks/useGamification";
+import { useActiveRole } from "@/hooks/useActiveRole";
 import { logger } from "@/lib/logger";
 const dogProfileUrl = "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop&crop=faces";
 const catProfileUrl = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=400&fit=crop&crop=faces";
@@ -48,6 +49,7 @@ const Profile = () => {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { stats, achievements, missions } = useGamification();
+  const { isProvider } = useActiveRole();
 
   useEffect(() => {
     if (user) {
@@ -252,41 +254,34 @@ const Profile = () => {
 
         {/* Tabs */}
         <Tabs defaultValue="posts" className="w-full">
-          <TabsList className="w-full grid grid-cols-5 h-auto p-1 bg-muted/50 rounded-xl border border-border/50">
+          <TabsList className="w-full grid grid-cols-4 h-auto p-1 bg-muted/50 rounded-xl border border-border/50">
             <TabsTrigger 
               value="posts"
               className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg text-xs py-2.5"
             >
               <Grid className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="text-[9px] sm:text-xs">Posts</span>
+              <span className="text-xs sm:text-xs">Posts</span>
             </TabsTrigger>
             <TabsTrigger 
               value="pets"
               className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg text-xs py-2.5"
             >
               <PawPrint className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="text-[9px] sm:text-xs">Mascotas</span>
+              <span className="text-xs sm:text-xs">Mascotas</span>
             </TabsTrigger>
             <TabsTrigger 
               value="reviews"
               className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg text-xs py-2.5"
             >
               <Star className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="text-[9px] sm:text-xs">Reseñas</span>
+              <span className="text-xs sm:text-xs">Reseñas</span>
             </TabsTrigger>
             <TabsTrigger 
               value="achievements"
               className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg text-xs py-2.5"
             >
               <Trophy className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="text-[9px] sm:text-xs">Logros</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="services"
-              className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg text-xs py-2.5"
-            >
-              <Briefcase className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="text-[9px] sm:text-xs">Servicios</span>
+              <span className="text-xs sm:text-xs">Logros</span>
             </TabsTrigger>
           </TabsList>
 
@@ -468,18 +463,30 @@ const Profile = () => {
             </div>
           </TabsContent>
 
-          {/* Services Tab */}
-          <TabsContent value="services" className="mt-6">
-            <CreateServicePromotion 
-              onSuccess={() => {
-                toast({
-                  title: "¡Éxito!",
-                  description: "Tu publicación ha sido enviada para revisión"
-                });
-              }}
-            />
-          </TabsContent>
         </Tabs>
+
+        {/* Modo veterinario — solo visible para usuarios con perfil de proveedor */}
+        {isProvider && (
+          <Card className="mt-6 border-purple-200 bg-purple-50/50">
+            <CardContent className="p-4">
+              <button
+                onClick={() => navigate('/provider/dashboard')}
+                className="flex items-center justify-between w-full group"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-full bg-purple-100 group-hover:bg-purple-200 transition-colors">
+                    <Stethoscope className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <div className="text-left">
+                    <p className="text-sm font-semibold text-foreground">Modo veterinario</p>
+                    <p className="text-xs text-muted-foreground">Ir a mi dashboard profesional</p>
+                  </div>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-purple-600 transition-colors" />
+              </button>
+            </CardContent>
+          </Card>
+        )}
       </div>
   );
 };

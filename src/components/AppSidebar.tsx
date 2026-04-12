@@ -1,10 +1,9 @@
-import { Calendar, MessageSquare, PawPrint, LogOut, Shield, Settings, Map, Gamepad2, UserCog, LayoutDashboard, Home as HomeIcon, Search, Briefcase, Activity, Users } from "@/lib/icons";
+import { Calendar, MessageSquare, PawPrint, LogOut, Settings, Map, Gamepad2, UserCog, LayoutDashboard, Home as HomeIcon, Search, Briefcase, Activity, Users } from "@/lib/icons";
 import { isFeatureEnabled } from "@/lib/featureFlags";
 import { LINKS } from "@/lib/links";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import { useIsAdmin } from "@/hooks/useIsAdmin";
 import { supabase } from "@/integrations/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -48,7 +47,6 @@ export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
-  const { isAdmin } = useIsAdmin();
   const isMobile = useIsMobile();
   const { setOpenMobile } = useSidebar();
   const currentPath = location.pathname;
@@ -216,28 +214,6 @@ export function AppSidebar() {
           </>
         )}
 
-        {isAdmin && (
-          <>
-            <Separator className="mx-2 my-0.5" />
-            <SidebarGroup className="py-0.5">
-              <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5">Admin</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      isActive={isActive("/admin")}
-                      onClick={() => handleNavigate("/admin")}
-                      className="h-7 text-xs rounded-md"
-                    >
-                      <Shield className="h-3.5 w-3.5 flex-shrink-0" />
-                      <span>Panel Admin</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </>
-        )}
       </SidebarContent>
 
       {user && (
