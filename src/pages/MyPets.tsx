@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Plus, Heart, PawPrint, ChevronDown, MessageCircle } from '@/lib/icons';
+import { Plus, Heart, PawPrint, ChevronDown, MessageCircle, Star } from '@/lib/icons';
+import { getRarity, type Rarity } from '@/components/PetCardCompact';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -279,6 +280,43 @@ const MyPets = () => {
           Agregar Mascota
         </Button>
       </div>
+
+      {/* ── Total Paw Points summary ── */}
+      {pets.length > 0 && Object.keys(petScores).length > 0 && (
+        <div className="mb-6 flex items-center gap-3 rounded-xl bg-gradient-to-r from-purple-50 to-purple-100/50 dark:from-purple-950/30 dark:to-purple-900/20 border border-purple-200/40 px-5 py-3">
+          <div className="flex items-center justify-center h-10 w-10 rounded-full bg-gradient-to-br from-purple-500 to-purple-700 shadow-lg shadow-purple-500/25">
+            <PawPrint className="h-5 w-5 text-white" />
+          </div>
+          <div className="flex-1">
+            <p className="text-xs text-muted-foreground font-medium">Paw Points totales</p>
+            <p className="text-2xl font-bold text-purple-700 dark:text-purple-300 leading-tight">
+              {Object.values(petScores).reduce((sum, s) => sum + s, 0)}
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-muted-foreground">
+              {pets.length} {pets.length === 1 ? 'mascota' : 'mascotas'}
+            </p>
+            <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">
+              Colección{' '}
+              {(() => {
+                const totalScore = Object.values(petScores).reduce((sum, s) => sum + s, 0);
+                const avgScore = Math.round(totalScore / Math.max(pets.length, 1));
+                const rarity = getRarity(avgScore);
+                const labels: Record<Rarity, string> = {
+                  common: 'Común',
+                  uncommon: 'Poco Común',
+                  rare: 'Rara',
+                  epic: 'Épica',
+                  legendary: 'Legendaria',
+                  mythic: 'Mítica',
+                };
+                return labels[rarity];
+              })()}
+            </p>
+          </div>
+        </div>
+      )}
 
       {pets.length === 0 ? (
         <EmptyState

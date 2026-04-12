@@ -5,7 +5,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { OnboardingTutorial } from '@/components/OnboardingTutorial';
 import { HomeOnboardingHints } from '@/components/HomeOnboardingHints';
 import {
   PawPrint,
@@ -98,7 +97,6 @@ export default function Home() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [vaccineStatus, setVaccineStatus] = useState<VaccineStatusByPet>({});
   const [completeness, setCompleteness] = useState<CompletenessByPet>({});
-  const [showTutorial, setShowTutorial] = useState(false);
   const [loading, setLoading] = useState(true);
   const { stats } = useGamification();
   const { upcomingReminders, overdueReminders, completeReminder } = useReminders();
@@ -107,16 +105,8 @@ export default function Home() {
   useEffect(() => {
     if (user) {
       void loadData();
-      checkOnboarding();
     }
   }, [user]);
-
-  const checkOnboarding = () => {
-    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
-    if (!hasSeenTutorial) {
-      setShowTutorial(true);
-    }
-  };
 
   const loadData = async () => {
     if (!user) return;
@@ -193,10 +183,6 @@ export default function Home() {
     }
   };
 
-  const handleTutorialComplete = () => {
-    setShowTutorial(false);
-  };
-
   const activePet = useMemo(
     () => pets.find((p) => p.id === activePetId) || null,
     [pets, activePetId]
@@ -258,8 +244,6 @@ export default function Home() {
 
   return (
     <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-4 md:space-y-6 animate-fade-in bg-slate-50/60 min-h-screen">
-      {showTutorial && <OnboardingTutorial onComplete={handleTutorialComplete} />}
-
       {/* === Header mínimo === */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">

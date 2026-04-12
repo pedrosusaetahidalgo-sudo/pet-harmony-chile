@@ -19,6 +19,30 @@ import { useToast } from '@/hooks/use-toast';
 import { logger } from '@/lib/logger';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { downloadFile } from '@/lib/nativeDownload';
+import { isNative } from '@/lib/platform';
+
+/** Download a Blob directly — no external URL needed */
+async function downloadBlob(blob: Blob, fileName: string) {
+  if (isNative()) {
+    // On native Capacitor: delegate to downloadFile with an object URL
+    const url = URL.createObjectURL(blob);
+    try {
+      await downloadFile(url, fileName);
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+    return;
+  }
+  // Web: create a temporary <a> to trigger download
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
 
 interface MedicalSummaryButtonProps {
   petId: string;
@@ -37,21 +61,32 @@ export const MedicalSummaryButton = ({
   const handleGenerateSummary = async () => {
     try {
       setIsGenerating(true);
+      const fileName = `ficha_clinica_${(petName || 'mascota').replace(/\s+/g, '_')}.pdf`;
 
       const { data, error } = await supabase.functions.invoke('generate-medical-summary', {
         body: { pet_id: petId },
+        // Tell supabase-js not to parse JSON — we expect raw PDF bytes
+        headers: { Accept: 'application/pdf' },
       });
 
       if (error) throw error;
 
-      if (data?.download_url) {
-        await downloadFile(data.download_url, `resumen_medico_${petName || 'mascota'}.pdf`);
+      // The edge function returns raw PDF bytes (Blob)
+      if (data instanceof Blob) {
+        await downloadBlob(data, fileName);
         toast({
-          title: 'Resumen médico generado',
-          description: `El resumen médico de ${petName || 'tu mascota'} está listo para descargar`,
+          title: 'Ficha clínica lista',
+          description: `La ficha de ${petName || 'tu mascota'} se descargó correctamente`,
+        });
+      } else if (data?.download_url) {
+        // Fallback: legacy signed-URL response (store=true)
+        await downloadFile(data.download_url, fileName);
+        toast({
+          title: 'Ficha clínica lista',
+          description: `La ficha de ${petName || 'tu mascota'} se descargó correctamente`,
         });
       } else {
-        throw new Error('No se recibió URL de descarga');
+        throw new Error('No se recibió la ficha');
       }
     } catch (error) {
       logger.error('Error generating medical summary:', error);
@@ -60,7 +95,7 @@ export const MedicalSummaryButton = ({
         title: 'Algo salió mal',
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
-          'No se pudo generar el resumen médico',
+          'No se pudo generar la ficha clínica',
       });
     } finally {
       setIsGenerating(false);

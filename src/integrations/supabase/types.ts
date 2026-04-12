@@ -3191,6 +3191,7 @@ export type Database = {
           premium_plan: string | null;
           premium_start_date: string | null;
           report_preferences: Json | null;
+          sidebar_tutorial_progress: Json | null;
           total_adoptions: number;
           total_bookings: number;
           total_lost_pet_help: number;
@@ -3222,6 +3223,7 @@ export type Database = {
           premium_plan?: string | null;
           premium_start_date?: string | null;
           report_preferences?: Json | null;
+          sidebar_tutorial_progress?: Json | null;
           total_adoptions?: number;
           total_bookings?: number;
           total_lost_pet_help?: number;
@@ -3253,6 +3255,7 @@ export type Database = {
           premium_plan?: string | null;
           premium_start_date?: string | null;
           report_preferences?: Json | null;
+          sidebar_tutorial_progress?: Json | null;
           total_adoptions?: number;
           total_bookings?: number;
           total_lost_pet_help?: number;

@@ -88,6 +88,7 @@ Mascotas
 │   └── src/pages/MyPets.tsx                        # Lista de mascotas del usuario
 ├── Componentes
 │   ├── src/components/PetCard.tsx                   # Card de mascota en lista
+│   ├── src/components/PetCardCompact.tsx            # Card TCG coleccionable con sistema de rareza (6 tiers)
 │   ├── src/components/PetProfileCard.tsx            # Perfil detallado
 │   └── src/components/onboarding/VaccinationCardOCR.tsx  # OCR carnet vacunas
 ├── Hooks
@@ -688,12 +689,15 @@ Mapas
 ├── Componentes
 │   ├── src/components/LostPetsMap.tsx                  # Capa mascotas perdidas
 │   └── src/components/maps/
-│       ├── MapFilters.tsx                              # Filtros
+│       ├── MapFilters.tsx                              # Filtros (4 vistas: lost, adoption, services, partners)
 │       ├── MapPinPopup.tsx                             # Popup base
 │       ├── LostPetDetailCard.tsx                       # Popup mascota perdida
 │       ├── AdoptionDetailCard.tsx                      # Popup adopcion
 │       ├── ServiceDetailCard.tsx                       # Popup servicio
-│       └── ShelterDetailCard.tsx                       # Popup refugio
+│       ├── ShelterDetailCard.tsx                       # Popup refugio
+│       └── PartnerDetailCard.tsx                       # Popup partner/tienda (nuevo)
+├── Hooks
+│   └── src/hooks/usePartners.ts                       # Hook partners con categorías y geodata
 ├── Librerias
 │   ├── src/lib/leafletConfig.ts                       # Config Leaflet
 │   ├── src/lib/distance.ts                            # Calculo distancia
@@ -702,11 +706,17 @@ Mapas
     └── react-leaflet 4.2.1 + leaflet
 ```
 
+### Vistas del mapa (4 tabs)
+- **Perdidas** — mascotas perdidas reportadas
+- **Adopcion** — mascotas en adopcion + refugios reales
+- **Servicios** — proveedores por tipo (vets, walkers, sitters, trainers, groomers)
+- **Tiendas** — partners comerciales (tiendas, seguros, alimento, servicios)
+
 ### Oportunidades de mejora
-- **Geolocalizacion** del usuario (mostrar "cerca de mi")
-- **Direcciones** con routing (como llegar)
 - **Clustering** de pins cuando hay muchos
-- **Integrar directorio vets** en mapa (actualmente separados)
+- **Bottom sheet arrastable** estilo SoSafe (ver `_pending/map-redesign-blueprint.md`)
+- **Direcciones** con routing (como llegar)
+- **Realtime** para mascotas perdidas
 
 ---
 
@@ -994,7 +1004,7 @@ SEO
 Infraestructura
 ├── Layout
 │   ├── src/components/AppLayout.tsx                    # Wrapper principal (sidebar + header + content)
-│   ├── src/components/AppSidebar.tsx                   # Sidebar (7 items + provider + admin)
+│   ├── src/components/AppSidebar.tsx                   # Sidebar (10 items + provider/groomer + admin)
 │   ├── src/components/BottomTabBar.tsx                 # Tab bar mobile
 │   ├── src/components/Header.tsx                       # Header app
 │   ├── src/components/PageHeader.tsx                   # Header por pagina

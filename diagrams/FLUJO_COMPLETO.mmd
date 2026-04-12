@@ -1,6 +1,6 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-13
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-12
     %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (21 activas).
     %% Refleja navegacion real post-optimizacion:
     %%   BottomTabBar: Inicio | Mascotas | Vets | Recordatorios | Perfil
@@ -199,6 +199,7 @@ flowchart TD
         SVC["Servicios /servicios"]
         SVC --> SVC_TYPES["Paseadores | Cuidadores | Entrenadores | Peluqueros"]
         MAPA["Mapa multi-capa /maps"]
+        MAPA --> MAPA_TABS["Perdidas | Adopcion | Servicios | Tiendas/Partners"]
     end
 
     SB_BUSCAR_VET --> VET_DIR

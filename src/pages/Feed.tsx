@@ -27,7 +27,6 @@ import {
 } from '@/components/ui/dialog';
 import { Sparkles, Users, TrendingUp, Compass, Plus, Search, ArrowUp } from '@/lib/icons';
 import { Skeleton } from '@/components/ui/skeleton';
-import { OnboardingTutorial } from '@/components/OnboardingTutorial';
 import { supabase } from '@/integrations/supabase/client';
 import { useEffect } from 'react';
 
@@ -97,8 +96,6 @@ const Feed = () => {
 
   return (
     <>
-      <OnboardingTutorial onComplete={() => {}} />
-
       <PageHeader
         title="Comunidad"
         subtitle="Fotos y publicaciones de la comunidad"

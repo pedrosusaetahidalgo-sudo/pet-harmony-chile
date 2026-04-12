@@ -1,50 +1,68 @@
-/* eslint-disable @typescript-eslint/no-explicit-any --
- * Esta edge function (Deno) trabaja con JSON dinamico retornado por el RPC
- * `get_medical_summary_data` de Supabase, donde los tipos son intrinsecamente
- * genericos (vaccinations[], visits[], medications, etc. son JSON nested).
- * Tipar correctamente requiere definir interfaces explicitas que reflejen
- * exactamente la forma del RPC, lo cual es un refactor dedicado fuera del
- * scope de FEATURE_MEDICAL_PDF_UPGRADE.md. Cuando se quiera tipar, remover
- * este disable y crear un commit separado "tipar generate-medical-summary
- * con interfaces reales del RPC".
- */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
- * Edge Function: Generate Medical Summary PDF
- * Creates a comprehensive, professionally formatted PDF of a pet's medical records.
- * Order: Header → Pet info → Owner → Estado actual → Vacunas → Consultas → Desparasitaciones → Footer
+ * Edge Function: Generate Medical Summary PDF v2
+ *
+ * Genera un PDF profesional de la ficha clinica completa de una mascota.
+ * Diseño: header con marca Paw Friend, secciones con borde lateral de color,
+ * alertas clinicas destacadas, historial cronologico agrupado por categoria,
+ * dieta/estilo de vida, y footer con codigo de verificacion.
+ *
+ * Bugs corregidos respecto a v1:
+ * - sanitizeForWinAnsi ahora elimina TODOS los caracteres fuera de WinAnsi
+ *   (emojis, CJK, simbolos Unicode exoticos) en vez de solo 4 reemplazos.
+ * - CORS dinamico: acepta pawfriend.cl y localhost:8080 para dev.
+ * - RPC actualizado (v2) incluye campos clinicos de migracion 20260402.
+ * - Incluye TODOS los tipos de registro medico, no solo 3.
  */
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { PDFDocument, rgb, StandardFonts } from 'https://esm.sh/pdf-lib@1.17.1';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+// ── CORS dinamico ──
+const ALLOWED_ORIGINS = ['https://pawfriend.cl', 'http://localhost:8080', 'http://localhost:5173'];
 
-const PURPLE = rgb(0.416, 0.227, 0.718); // #6A3AB7
-const GRAY = rgb(0.4, 0.4, 0.4);
-const LIGHT_GRAY = rgb(0.85, 0.85, 0.85);
-const BLACK = rgb(0, 0, 0);
+function getCorsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get('Origin') || '';
+  const allowed = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': allowed,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  };
+}
+
+// ── Paleta de colores (brand Paw Friend) ──
+const BRAND_PURPLE = rgb(0.576, 0.2, 0.918); // #9333EA
+const DARK_PURPLE = rgb(0.416, 0.227, 0.718); // #6A3AB7
+const LIGHT_PURPLE = rgb(0.96, 0.94, 1.0); // #F5F0FF
+const MED_GREEN = rgb(0.059, 0.6, 0.376); // #0F9960
+const LIGHT_GREEN = rgb(0.94, 0.98, 0.96); // #F0FAF5
+const ALERT_RED = rgb(0.839, 0.188, 0.192); // #D63031
+const LIGHT_RED = rgb(1.0, 0.95, 0.95); // #FFF2F2
+const AMBER = rgb(0.85, 0.55, 0.08); // #D98C14
+const LIGHT_AMBER = rgb(1.0, 0.97, 0.92); // #FFF8EB
+const TEXT_DARK = rgb(0.1, 0.1, 0.15); // #1A1A26
+const TEXT_GRAY = rgb(0.35, 0.35, 0.4); // #595966
+const TEXT_LIGHT = rgb(0.55, 0.55, 0.6); // #8C8C99
+const BORDER_LIGHT = rgb(0.88, 0.88, 0.9); // #E0E0E6
+const WHITE = rgb(1, 1, 1);
+const ROW_ALT = rgb(0.975, 0.975, 0.98); // #F9F9FA
+
+// ── Layout ──
 const PAGE_W = 612;
 const PAGE_H = 792;
-const MARGIN_X = 50;
-const MARGIN_BOTTOM = 60;
+const MARGIN_L = 50;
+const MARGIN_R = 50;
+const CONTENT_W = PAGE_W - MARGIN_L - MARGIN_R; // 512
+const MARGIN_BOTTOM = 55;
+const HEADER_H = 55;
 const LOGO_URL = 'https://pawfriend.cl/pwa-icon-512.png';
-const LOGO_SIZE = 40; // tamaño renderizado del logo en el header (pt)
+const LOGO_SIZE = 32;
+const SECTION_BORDER_W = 3;
 
-// Cache top-level de los bytes del logo — se mantiene entre invocaciones
-// mientras la edge function siga caliente. Si el fetch falla, se intenta
-// de nuevo en la siguiente invocacion (no cacheamos el fallo).
+// ── Cache logo ──
 let cachedLogoBytes: Uint8Array | null = null;
 
-/**
- * Descarga el logo Paw Friend desde pawfriend.cl y lo cachea en memoria
- * del modulo para invocaciones siguientes. Devuelve null si el fetch falla,
- * en cuyo caso el PDF debe caer a fallback de texto (nunca emoji).
- * Ver FEATURE_MEDICAL_PDF_UPGRADE.md §4.1-4.2.
- */
 async function getLogoBytes(): Promise<Uint8Array | null> {
   if (cachedLogoBytes) return cachedLogoBytes;
   try {
@@ -57,57 +75,19 @@ async function getLogoBytes(): Promise<Uint8Array | null> {
   }
 }
 
-/**
- * Genera un codigo de verificacion corto determinístico `PF-XXXX-XXXX` a
- * partir del pet_id y el timestamp de generacion del PDF. Usa SHA-256 via
- * SubtleCrypto (disponible en Deno nativo). No es un secreto — es un
- * identificador visible en el footer de cada pagina para trazabilidad.
- *
- * Determinismo: dos PDFs generados con el mismo pet_id y el mismo timestamp
- * dan el mismo codigo. En la practica, el timestamp siempre cambia entre
- * invocaciones (Date.now() en ms), asi que cada PDF tiene codigo unico.
- *
- * Ver FEATURE_MEDICAL_PDF_UPGRADE.md §5.5.
- */
+// ── Verification code ──
 async function generateVerificationCode(petId: string, timestamp: number): Promise<string> {
-  const data = `${petId}-${timestamp}`;
-  const encoded = new TextEncoder().encode(data);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray
+  const encoded = new TextEncoder().encode(`${petId}-${timestamp}`);
+  const hash = await crypto.subtle.digest('SHA-256', encoded);
+  const hex = Array.from(new Uint8Array(hash))
     .map((b) => b.toString(16).padStart(2, '0'))
     .join('')
     .toUpperCase();
-  return `PF-${hashHex.slice(0, 4)}-${hashHex.slice(4, 8)}`;
+  return `PF-${hex.slice(0, 4)}-${hex.slice(4, 8)}`;
 }
 
-// Texto fijo de confidencialidad que aparece al final del documento.
-// Ver FEATURE_MEDICAL_PDF_UPGRADE.md §5.6.
-const CONFIDENTIALITY_NOTICE =
-  'Este documento contiene información clínica sensible de la mascota identificada arriba. ' +
-  'Fue generado automáticamente por Paw Friend a partir de los datos ingresados por la persona ' +
-  'responsable y/o su veterinario. No reemplaza un informe clínico profesional ni tiene valor ' +
-  'legal por sí solo. Para consultas o verificación, contactar a pawfriend.cl.';
-
 // =====================================================================
-// Helpers de normalizacion tipografica para la ficha clinica PDF.
-//
-// Objetivo: renderizar texto libre del usuario con capitalizacion
-// consistente, preservando tildes, nombres propios y siglas medicas.
-// Ver _pending/features/FEATURE_MEDICAL_PDF_UPGRADE.md §3.
-//
-// Smoke tests (mentales, para referencia):
-//   smartSentenceCase("PERRO CON DIARREA. NECESITA ANTIBIOTICO.")
-//     -> "Perro con diarrea. Necesita antibiotico."
-//   smartSentenceCase("se administro 5mg de metronidazol IV. paciente responde bien")
-//     -> "Se administro 5mg de metronidazol iv. Paciente responde bien"
-//     (IV se preserva mayuscula por ACRONYMS)
-//   titleCase("maria jose de la fuente")
-//     -> "Maria Jose de la Fuente"
-//   properNoun("FIRULAIS")
-//     -> "Firulais"
-//   sanitizeForWinAnsi("Texto con — em-dash y "comillas"")
-//     -> 'Texto con – em-dash y "comillas"'
+// Helpers de normalizacion tipografica
 // =====================================================================
 
 const ACRONYMS = new Set([
@@ -130,9 +110,9 @@ const ACRONYMS = new Set([
   'KG',
   'CM',
   'MM',
+  'DEA',
 ]);
 
-// Preposiciones/articulos que en titleCase van en minuscula salvo al inicio.
 const TITLE_CASE_LOWERCASES = new Set([
   'de',
   'del',
@@ -149,50 +129,47 @@ const TITLE_CASE_LOWERCASES = new Set([
 ]);
 
 /**
- * Normaliza texto libre del usuario para renderizado formal en PDF.
- *
- * Reglas:
- *  1. Trim y colapso de espacios multiples -> un unico espacio.
- *  2. Todo a minuscula (toLocaleLowerCase es-CL, preserva tildes y ñ).
- *  3. Primera letra de la cadena -> mayuscula.
- *  4. Primera letra despues de ". ", "! ", "? " o newline -> mayuscula.
- *  5. Respeta siglas medicas conocidas (ACRONYMS): IV, SC, IM, BID, etc.
- *  6. Preserva tildes y ñ siempre.
- *  7. Si recibe null/undefined/"" -> devuelve "".
+ * Sanitiza texto para WinAnsi (encoding de Helvetica en pdf-lib).
+ * CRITICO: Elimina CUALQUIER caracter fuera del rango WinAnsi (0x20-0xFF)
+ * incluyendo emojis, CJK, simbolos Unicode extendidos. Esto evita que
+ * page.drawText() lance excepcion y crashee toda la edge function.
  */
+function sanitizeForWinAnsi(s: string | null | undefined): string {
+  if (s === null || s === undefined) return '';
+  return (
+    String(s)
+      .replace(/\u2014/g, '-') // em-dash
+      .replace(/\u2013/g, '-') // en-dash
+      .replace(/[\u201C\u201D]/g, '"') // curly double quotes
+      .replace(/[\u2018\u2019]/g, "'") // curly single quotes
+      .replace(/\u2026/g, '...') // ellipsis
+      .replace(/\u00A0/g, ' ') // nbsp
+      // eslint-disable-next-line no-control-regex
+      .replace(/[\x01-\x1F\x7F]/g, '') // control chars
+      .replace(/[^\x20-\x7E\xA0-\xFF]/g, '')
+  ); // strip anything outside WinAnsi
+}
+
 function smartSentenceCase(raw: string | null | undefined): string {
   if (raw === null || raw === undefined) return '';
   let s = String(raw).replace(/\s+/g, ' ').trim();
   if (!s) return '';
-
-  // 1. lowercase preservando tildes y ñ
   s = s.toLocaleLowerCase('es-CL');
-
-  // 2. capitalizar inicio de cadena y despues de . ! ? \n
   s = s.replace(
     /(^|[.!?]\s+|\n\s*)([\p{L}])/gu,
     (_m, sep, ch) => sep + ch.toLocaleUpperCase('es-CL')
   );
-
-  // 3. restaurar acronimos medicos conocidos (tokens completos)
   s = s.replace(/\b([\p{L}]+)\b/gu, (match) => {
     const upper = match.toLocaleUpperCase('es-CL');
     return ACRONYMS.has(upper) ? upper : match;
   });
-
   return s;
 }
 
-/**
- * "juan PEREZ de la fuente" -> "Juan Perez de la Fuente".
- * Usa para nombres propios multi-palabra (display_name, clinic_name).
- * Las preposiciones/articulos van en minuscula salvo si son la primera palabra.
- */
 function titleCase(raw: string | null | undefined): string {
   if (raw === null || raw === undefined) return '';
   const s = String(raw).replace(/\s+/g, ' ').trim();
   if (!s) return '';
-
   return s
     .toLocaleLowerCase('es-CL')
     .split(' ')
@@ -204,9 +181,6 @@ function titleCase(raw: string | null | undefined): string {
     .join(' ');
 }
 
-/**
- * "FIRULAIS" -> "Firulais". Usa para nombres propios single-word (pet.name).
- */
 function properNoun(raw: string | null | undefined): string {
   if (raw === null || raw === undefined) return '';
   const s = String(raw).trim();
@@ -214,23 +188,607 @@ function properNoun(raw: string | null | undefined): string {
   return s.charAt(0).toLocaleUpperCase('es-CL') + s.slice(1).toLocaleLowerCase('es-CL');
 }
 
-/**
- * Reemplaza caracteres Unicode que WinAnsi (encoding de Helvetica estandar
- * de pdf-lib) no cubre, antes de pasar a page.drawText. Evita excepciones
- * del tipo "WinAnsi cannot encode" por em-dashes, comillas curly, ellipsis
- * y non-breaking spaces que el usuario puede haber pegado.
- */
-function sanitizeForWinAnsi(s: string | null | undefined): string {
-  if (s === null || s === undefined) return '';
-  return String(s)
-    .replace(/\u2014/g, '\u2013') // em-dash -> en-dash (WinAnsi tiene en-dash)
-    .replace(/[\u201C\u201D]/g, '"') // curly double quotes -> straight
-    .replace(/[\u2018\u2019]/g, "'") // curly single quotes -> straight
-    .replace(/\u2026/g, '...') // ellipsis -> tres puntos
-    .replace(/\u00A0/g, ' '); // nbsp -> espacio normal
+// ── Format helpers ──
+function formatDate(d: string | null): string {
+  if (!d) return 'N/A';
+  try {
+    return new Date(d).toLocaleDateString('es-CL', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+  } catch {
+    return d;
+  }
 }
 
+function calcAge(bd: string | null): string {
+  if (!bd) return 'N/A';
+  const ms = Date.now() - new Date(bd).getTime();
+  const years = Math.floor(ms / (365.25 * 24 * 60 * 60 * 1000));
+  if (years < 1) {
+    const months = Math.floor(ms / (30.44 * 24 * 60 * 60 * 1000));
+    return `${months} mes${months !== 1 ? 'es' : ''}`;
+  }
+  return `${years} año${years !== 1 ? 's' : ''}`;
+}
+
+function genderLabel(g: string | null): string {
+  if (!g) return 'N/A';
+  const map: Record<string, string> = {
+    macho: 'Macho',
+    hembra: 'Hembra',
+    desconocido: 'Desconocido',
+  };
+  return map[g.toLowerCase()] || smartSentenceCase(g);
+}
+
+function speciesLabel(s: string | null): string {
+  if (!s) return 'N/A';
+  const map: Record<string, string> = {
+    perro: 'Perro',
+    gato: 'Gato',
+    otro: 'Otro',
+  };
+  return map[s.toLowerCase()] || smartSentenceCase(s);
+}
+
+/**
+ * Detecta si `notes` es JSON (o contiene JSON) y lo convierte a texto legible.
+ * Caso tipico: la escala de grimace felina guarda un objeto JSON con scores.
+ * Si no es JSON, devuelve el texto tal cual.
+ */
+function humanizeNotes(raw: string): string {
+  const trimmed = raw.trim();
+
+  // Try to parse as JSON
+  let parsed: any = null;
+  try {
+    parsed = JSON.parse(trimmed);
+  } catch {
+    // Maybe JSON is embedded after some text — try extracting {...} or [...]
+    const jsonMatch = trimmed.match(/(\{[\s\S]*\}|\[[\s\S]*\])\s*$/);
+    if (jsonMatch) {
+      try {
+        parsed = JSON.parse(jsonMatch[1]);
+        // Return the text before JSON without the raw JSON
+        const prefix = trimmed.slice(0, jsonMatch.index!).trim();
+        if (prefix && parsed) {
+          return prefix; // Drop the JSON, keep the human text
+        }
+      } catch {
+        // Not valid JSON, return as-is
+      }
+    }
+  }
+
+  if (!parsed) return trimmed;
+
+  // Handle pain grimace scale format
+  if (parsed.assessment_type === 'pain_grimace_scale' || parsed.total_score !== undefined) {
+    const parts: string[] = [];
+    if (parsed.total_score !== undefined) parts.push(`Puntaje total: ${parsed.total_score}/10`);
+    if (parsed.severity) parts.push(`Severidad: ${parsed.severity}`);
+    if (parsed.species) parts.push(`Especie: ${parsed.species}`);
+    if (parsed.details && Array.isArray(parsed.details)) {
+      const detailParts = parsed.details
+        .map((d: any) => `${d.label || d.id}: ${d.score} - ${d.description}`)
+        .join('; ');
+      if (detailParts) parts.push(detailParts);
+    }
+    return parts.join('. ');
+  }
+
+  // Generic object — skip raw JSON, return empty to suppress
+  if (typeof parsed === 'object') return '';
+
+  return trimmed;
+}
+
+/** Categoriza record_type en grupos para el PDF */
+function categorizeRecord(type: string): string {
+  const VACCINES = ['vacuna'];
+  const CONSULTS = [
+    'consulta',
+    'consulta_general',
+    'control_sano',
+    'urgencia',
+    'seguimiento',
+    'segunda_opinion',
+  ];
+  const PROCEDURES = [
+    'cirugia',
+    'cirugía',
+    'esterilizacion',
+    'limpieza_dental',
+    'ecografia',
+    'rayos_x',
+    'examen_sangre',
+    'examen_orina',
+  ];
+  const TREATMENTS = ['tratamiento', 'quimioterapia', 'rehabilitacion', 'hospitalizacion'];
+  const PREVENTIVE = ['desparasitacion', 'antipulgas'];
+
+  if (VACCINES.includes(type)) return 'vaccines';
+  if (CONSULTS.includes(type)) return 'consults';
+  if (PROCEDURES.includes(type)) return 'procedures';
+  if (TREATMENTS.includes(type)) return 'treatments';
+  if (PREVENTIVE.includes(type)) return 'preventive';
+  return 'other';
+}
+
+const CATEGORY_CONFIG: Record<string, { title: string; color: any; bg: any }> = {
+  vaccines: { title: 'Vacunas', color: MED_GREEN, bg: LIGHT_GREEN },
+  consults: { title: 'Consultas veterinarias', color: DARK_PURPLE, bg: LIGHT_PURPLE },
+  procedures: { title: 'Procedimientos y examenes', color: AMBER, bg: LIGHT_AMBER },
+  treatments: { title: 'Tratamientos', color: DARK_PURPLE, bg: LIGHT_PURPLE },
+  preventive: { title: 'Cuidado preventivo', color: MED_GREEN, bg: LIGHT_GREEN },
+  other: { title: 'Otros registros', color: TEXT_GRAY, bg: ROW_ALT },
+};
+
+// Orden de categorias en el PDF
+const CATEGORY_ORDER = ['vaccines', 'consults', 'procedures', 'treatments', 'preventive', 'other'];
+
+const CONFIDENTIALITY_NOTICE =
+  'Este documento contiene informacion clinica sensible de la mascota identificada. Fue generado ' +
+  'automaticamente por Paw Friend a partir de datos ingresados por el responsable y/o su veterinario. ' +
+  'No reemplaza un informe clinico profesional ni tiene valor legal por si solo. ' +
+  'Para consultas o verificacion: pawfriend.cl';
+
+/** Max characters for a single record field to prevent PDF overflow */
+const MAX_FIELD_CHARS = 300;
+
+// =====================================================================
+// PDF Builder — clase que encapsula la logica de cursor, paginacion,
+// y helpers de dibujo para mantener el serve() limpio.
+// =====================================================================
+
+class PdfBuilder {
+  doc: any;
+  page: any;
+  y: number;
+  helvetica: any;
+  bold: any;
+  logoImage: any;
+  pageCount = 0;
+
+  constructor(doc: any, helvetica: any, bold: any, logoImage: any) {
+    this.doc = doc;
+    this.helvetica = helvetica;
+    this.bold = bold;
+    this.logoImage = logoImage;
+    this.y = 0;
+    this.page = null;
+  }
+
+  newPage() {
+    this.page = this.doc.addPage([PAGE_W, PAGE_H]);
+    this.pageCount++;
+    this.y = PAGE_H - 30;
+    return this.page;
+  }
+
+  ensureSpace(needed: number) {
+    if (!this.page || this.y < MARGIN_BOTTOM + needed) {
+      this.newPage();
+    }
+  }
+
+  // ── Drawing primitives ──
+
+  drawText(
+    t: string,
+    opts: { x?: number; size?: number; font?: any; color?: any; maxWidth?: number }
+  ) {
+    const font = opts.font || this.helvetica;
+    const size = opts.size || 9;
+    const x = opts.x ?? MARGIN_L;
+    const maxW = opts.maxWidth || PAGE_W - MARGIN_R - x;
+    let display = sanitizeForWinAnsi(t);
+
+    // Truncate if needed (single-line display)
+    while (display.length > 3 && font.widthOfTextAtSize(display, size) > maxW) {
+      display = display.slice(0, -4) + '...';
+    }
+
+    this.page.drawText(display, {
+      x,
+      y: this.y,
+      size,
+      font,
+      color: opts.color || TEXT_DARK,
+    });
+  }
+
+  drawWrapped(
+    content: string,
+    opts: {
+      x?: number;
+      maxWidth?: number;
+      size?: number;
+      font?: any;
+      color?: any;
+      lineHeight?: number;
+    }
+  ) {
+    const font = opts.font || this.helvetica;
+    const size = opts.size || 9;
+    const x = opts.x ?? MARGIN_L;
+    const maxW = opts.maxWidth || PAGE_W - MARGIN_R - x;
+    const lh = opts.lineHeight || size * 1.4;
+    const color = opts.color || TEXT_DARK;
+
+    const safe = sanitizeForWinAnsi(content);
+    const words = safe.split(/\s+/).filter(Boolean);
+    if (words.length === 0) return;
+
+    const lines: string[] = [];
+    let current = '';
+    for (const w of words) {
+      const test = current ? `${current} ${w}` : w;
+      if (font.widthOfTextAtSize(test, size) <= maxW) {
+        current = test;
+      } else {
+        if (current) lines.push(current);
+        current = w;
+      }
+    }
+    if (current) lines.push(current);
+
+    for (const ln of lines) {
+      this.ensureSpace(lh);
+      this.page.drawText(ln, { x, y: this.y, size, font, color });
+      this.y -= lh;
+    }
+  }
+
+  drawLine(color = BORDER_LIGHT) {
+    this.ensureSpace(10);
+    this.page.drawLine({
+      start: { x: MARGIN_L, y: this.y },
+      end: { x: PAGE_W - MARGIN_R, y: this.y },
+      thickness: 0.5,
+      color,
+    });
+    this.y -= 8;
+  }
+
+  // ── Composed elements ──
+
+  /** Header bar: purple rectangle + logo + title + date */
+  drawHeader() {
+    this.ensureSpace(HEADER_H + 20);
+
+    // Purple header bar
+    this.page.drawRectangle({
+      x: 0,
+      y: PAGE_H - HEADER_H,
+      width: PAGE_W,
+      height: HEADER_H,
+      color: DARK_PURPLE,
+    });
+
+    // Thin accent line below header
+    this.page.drawRectangle({
+      x: 0,
+      y: PAGE_H - HEADER_H - 2,
+      width: PAGE_W,
+      height: 2,
+      color: BRAND_PURPLE,
+    });
+
+    const headerY = PAGE_H - HEADER_H + 15;
+
+    // Logo
+    let textX = MARGIN_L;
+    if (this.logoImage) {
+      try {
+        this.page.drawImage(this.logoImage, {
+          x: MARGIN_L,
+          y: headerY - 2,
+          width: LOGO_SIZE,
+          height: LOGO_SIZE,
+        });
+        textX = MARGIN_L + LOGO_SIZE + 10;
+      } catch {
+        // fallback: no logo
+      }
+    }
+
+    // Title
+    this.page.drawText(sanitizeForWinAnsi('Paw Friend'), {
+      x: textX,
+      y: headerY + 15,
+      size: 18,
+      font: this.bold,
+      color: WHITE,
+    });
+    this.page.drawText(sanitizeForWinAnsi('Ficha Clinica Veterinaria'), {
+      x: textX,
+      y: headerY,
+      size: 10,
+      font: this.helvetica,
+      color: rgb(0.85, 0.82, 0.95),
+    });
+
+    // Date right-aligned
+    const dateStr = new Date().toLocaleDateString('es-CL', {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+    const dateText = sanitizeForWinAnsi(`Generado: ${dateStr}`);
+    const dateW = this.helvetica.widthOfTextAtSize(dateText, 8);
+    this.page.drawText(dateText, {
+      x: PAGE_W - MARGIN_R - dateW,
+      y: headerY + 5,
+      size: 8,
+      font: this.helvetica,
+      color: rgb(0.78, 0.75, 0.9),
+    });
+
+    this.y = PAGE_H - HEADER_H - 18;
+  }
+
+  /** Section header with colored left border and background */
+  drawSectionHeader(title: string, color: any, bgColor: any, count?: number) {
+    this.ensureSpace(35);
+    this.y -= 10;
+
+    const label = count !== undefined ? `${title} (${count})` : title;
+
+    // Background rectangle
+    this.page.drawRectangle({
+      x: MARGIN_L,
+      y: this.y - 4,
+      width: CONTENT_W,
+      height: 22,
+      color: bgColor,
+    });
+
+    // Left border accent
+    this.page.drawRectangle({
+      x: MARGIN_L,
+      y: this.y - 4,
+      width: SECTION_BORDER_W,
+      height: 22,
+      color: color,
+    });
+
+    // Title text
+    this.drawText(label, {
+      x: MARGIN_L + 12,
+      size: 11,
+      font: this.bold,
+      color: color,
+    });
+
+    this.y -= 22;
+  }
+
+  /** Two-column field row: label left, value right */
+  drawField(label: string, value: string, opts?: { labelWidth?: number }) {
+    this.ensureSpace(14);
+    const lw = opts?.labelWidth || 130;
+    this.drawText(label, { size: 8.5, font: this.bold, color: TEXT_GRAY });
+    this.drawText(value, { x: MARGIN_L + lw, size: 9 });
+    this.y -= 14;
+  }
+
+  /** Two fields side by side in a row */
+  drawFieldPair(l1: string, v1: string, l2: string, v2: string) {
+    this.ensureSpace(14);
+    const col2X = MARGIN_L + CONTENT_W / 2;
+    const lw = 110;
+
+    // Column 1
+    this.drawText(l1, { size: 8.5, font: this.bold, color: TEXT_GRAY });
+    this.drawText(v1, { x: MARGIN_L + lw, size: 9, maxWidth: CONTENT_W / 2 - lw - 10 });
+
+    // Column 2
+    this.drawText(l2, { x: col2X, size: 8.5, font: this.bold, color: TEXT_GRAY });
+    this.drawText(v2, { x: col2X + lw, size: 9, maxWidth: CONTENT_W / 2 - lw });
+
+    this.y -= 14;
+  }
+
+  /** Small bullet item: "  - text" */
+  drawBullet(text: string, opts?: { color?: any; indent?: number }) {
+    this.ensureSpace(12);
+    const x = opts?.indent ?? MARGIN_L + 14;
+    this.drawText(`- ${text}`, { x, size: 8.5, color: opts?.color || TEXT_DARK });
+    this.y -= 12;
+  }
+
+  /** Wrap a bullet with potentially long text */
+  drawBulletWrapped(text: string, opts?: { color?: any; indent?: number }) {
+    const x = opts?.indent ?? MARGIN_L + 14;
+    this.drawWrapped(`- ${text}`, { x, size: 8.5, color: opts?.color || TEXT_DARK });
+  }
+
+  /** Draw a record entry (vaccine, consult, procedure, etc.) */
+  drawRecordEntry(record: any, index: number) {
+    this.ensureSpace(45);
+
+    // Alternating row background — full width with padding
+    if (index % 2 === 0) {
+      this.page.drawRectangle({
+        x: MARGIN_L + SECTION_BORDER_W,
+        y: this.y + 4,
+        width: CONTENT_W - SECTION_BORDER_W,
+        height: 18,
+        color: ROW_ALT,
+      });
+    }
+
+    // Date column (left) — compact pill style
+    const dateStr = formatDate(record.date);
+    this.drawText(dateStr, {
+      x: MARGIN_L + 10,
+      size: 8,
+      font: this.bold,
+      color: TEXT_GRAY,
+    });
+
+    // Title / Reason
+    const title =
+      smartSentenceCase(record.reason || record.title) || smartSentenceCase(record.record_type);
+    this.drawText(title, {
+      x: MARGIN_L + 95,
+      size: 9,
+      font: this.bold,
+    });
+    this.y -= 15;
+
+    // Vet + Clinic (if available)
+    const vetClinicParts: string[] = [];
+    if (record.veterinarian_name) vetClinicParts.push(titleCase(record.veterinarian_name));
+    if (record.clinic_name) vetClinicParts.push(titleCase(record.clinic_name));
+    if (vetClinicParts.length > 0) {
+      this.drawText(vetClinicParts.join(' · '), {
+        x: MARGIN_L + 95,
+        size: 7.5,
+        color: TEXT_LIGHT,
+      });
+      this.y -= 11;
+    }
+
+    // Diagnosis — with label in bold
+    if (record.diagnosis) {
+      this.ensureSpace(14);
+      this.drawText('Diagnostico:', {
+        x: MARGIN_L + 95,
+        size: 8,
+        font: this.bold,
+        color: TEXT_GRAY,
+      });
+      this.y -= 10;
+      const diagText = String(record.diagnosis).slice(0, MAX_FIELD_CHARS);
+      this.drawWrapped(smartSentenceCase(diagText), {
+        x: MARGIN_L + 108,
+        size: 8,
+        color: TEXT_DARK,
+        maxWidth: CONTENT_W - 108,
+      });
+    }
+
+    // Treatment — humanize if JSON
+    if (record.treatment) {
+      const treatmentStr =
+        typeof record.treatment === 'string'
+          ? record.treatment
+          : typeof record.treatment === 'object'
+            ? ''
+            : JSON.stringify(record.treatment);
+      if (treatmentStr) {
+        this.ensureSpace(14);
+        this.drawText('Tratamiento:', {
+          x: MARGIN_L + 95,
+          size: 8,
+          font: this.bold,
+          color: TEXT_GRAY,
+        });
+        this.y -= 10;
+        this.drawWrapped(smartSentenceCase(treatmentStr.slice(0, MAX_FIELD_CHARS)), {
+          x: MARGIN_L + 108,
+          size: 8,
+          color: TEXT_DARK,
+          maxWidth: CONTENT_W - 108,
+        });
+      }
+    }
+
+    // Description (for vaccines and preventive — only if no diagnosis/treatment)
+    if (record.description && !record.diagnosis && !record.treatment) {
+      const descStr = typeof record.description === 'string' ? record.description : '';
+      if (descStr) {
+        this.drawWrapped(smartSentenceCase(descStr.slice(0, MAX_FIELD_CHARS)), {
+          x: MARGIN_L + 95,
+          size: 8,
+          color: TEXT_GRAY,
+          maxWidth: CONTENT_W - 95,
+        });
+      }
+    }
+
+    // Next date (for vaccines and preventive)
+    if (record.next_date) {
+      this.drawText(`Proxima fecha: ${formatDate(record.next_date)}`, {
+        x: MARGIN_L + 95,
+        size: 7.5,
+        color: MED_GREEN,
+        font: this.bold,
+      });
+      this.y -= 10;
+    }
+
+    // Notes — detect and humanize JSON (e.g. pain grimace scale)
+    if (record.notes) {
+      const notesStr =
+        typeof record.notes === 'string' ? record.notes : JSON.stringify(record.notes);
+      const humanized = humanizeNotes(notesStr);
+      if (humanized) {
+        this.ensureSpace(14);
+        this.drawText('Nota:', {
+          x: MARGIN_L + 95,
+          size: 7.5,
+          font: this.bold,
+          color: TEXT_LIGHT,
+        });
+        this.y -= 9;
+        this.drawWrapped(smartSentenceCase(humanized), {
+          x: MARGIN_L + 108,
+          size: 7.5,
+          color: TEXT_LIGHT,
+          maxWidth: CONTENT_W - 108,
+        });
+      }
+    }
+
+    this.y -= 6; // spacing between entries
+  }
+
+  /** Footer on all pages: verification code + pagination */
+  drawFooters(verificationCode: string) {
+    const total = this.doc.getPageCount();
+    const allPages = this.doc.getPages();
+    const footerSize = 7;
+    const footerY = 20;
+
+    for (let i = 0; i < total; i++) {
+      const p = allPages[i];
+
+      // Thin line above footer
+      p.drawLine({
+        start: { x: MARGIN_L, y: footerY + 12 },
+        end: { x: PAGE_W - MARGIN_R, y: footerY + 12 },
+        thickness: 0.5,
+        color: BORDER_LIGHT,
+      });
+
+      // Footer text
+      const footerText = sanitizeForWinAnsi(
+        `${verificationCode}  |  Documento confidencial  |  pawfriend.cl  |  pag. ${i + 1} de ${total}`
+      );
+      const footerWidth = this.helvetica.widthOfTextAtSize(footerText, footerSize);
+      p.drawText(footerText, {
+        x: (PAGE_W - footerWidth) / 2,
+        y: footerY,
+        size: footerSize,
+        font: this.helvetica,
+        color: TEXT_LIGHT,
+      });
+    }
+  }
+}
+
+// =====================================================================
+// Main serve
+// =====================================================================
+
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
+
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -240,6 +798,7 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    // ── Auth ──
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) throw new Error('No authorization header');
 
@@ -247,10 +806,12 @@ serve(async (req) => {
     const { data: userData, error: userError } = await supabase.auth.getUser(token);
     if (userError || !userData.user) throw new Error('User not authenticated');
 
-    const { pet_id } = await req.json();
+    const body = await req.json();
+    const pet_id = body.pet_id;
+    const storeInStorage = body.store === true; // Only upload to storage when explicitly asked (for sharing)
     if (!pet_id || typeof pet_id !== 'string') throw new Error('pet_id is required');
 
-    // Ownership check
+    // ── Ownership check ──
     const { data: petOwnership, error: ownershipError } = await supabase
       .from('pets')
       .select('owner_id')
@@ -265,7 +826,7 @@ serve(async (req) => {
       });
     }
 
-    // Get all data
+    // ── Fetch data via updated RPC ──
     const { data: summaryData, error: summaryError } = await supabase.rpc(
       'get_medical_summary_data',
       { p_pet_id: pet_id }
@@ -275,429 +836,326 @@ serve(async (req) => {
 
     const pet = summaryData.pet;
     const owner = summaryData.owner;
-    const vaccinations = (summaryData.vaccinations || []).sort((a: any, b: any) =>
-      (b.date || '').localeCompare(a.date || '')
-    );
-    const recentVisits = (summaryData.recent_visits || []).sort((a: any, b: any) =>
-      (b.visit_date || '').localeCompare(a.visit_date || '')
-    );
+    const allRecords: any[] = summaryData.all_records || [];
 
-    // Fetch dewormings separately
-    const { data: dewormings } = await supabase
-      .from('medical_records')
-      .select('title, date, description')
-      .eq('pet_id', pet_id)
-      .in('record_type', ['desparasitacion', 'antipulgas'])
-      .order('date', { ascending: false })
-      .limit(20);
+    // Group records by category
+    const grouped: Record<string, any[]> = {};
+    for (const r of allRecords) {
+      const cat = categorizeRecord(r.record_type);
+      if (!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push(r);
+    }
 
-    // === Build PDF ===
+    // ══════════════════════════════════════════════════════════
+    // BUILD PDF
+    // ══════════════════════════════════════════════════════════
+
     const pdfDoc = await PDFDocument.create();
     const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
     const bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-    // Fase 2: embeber logo Paw Friend para el header. Fallback silencioso
-    // a null si el fetch o embed falla — el header usara solo texto.
+    // Logo
     const logoBytes = await getLogoBytes();
     let logoImage: any = null;
     if (logoBytes) {
       try {
         logoImage = await pdfDoc.embedPng(logoBytes);
       } catch {
-        logoImage = null;
+        /* fallback */
       }
     }
 
-    // Fase 4: generar codigo de verificacion del documento. Aparece en el
-    // footer de cada pagina para trazabilidad. No es secreto, es publico.
-    const generatedAt = Date.now();
-    const verificationCode = await generateVerificationCode(pet_id, generatedAt);
+    const verificationCode = await generateVerificationCode(pet_id, Date.now());
 
-    let page = pdfDoc.addPage([PAGE_W, PAGE_H]);
-    let y = PAGE_H - 40;
+    const pdf = new PdfBuilder(pdfDoc, helvetica, bold, logoImage);
 
-    const ensureSpace = (needed: number) => {
-      if (y < MARGIN_BOTTOM + needed) {
-        page = pdfDoc.addPage([PAGE_W, PAGE_H]);
-        y = PAGE_H - 40;
-      }
-    };
+    // ── PAGE 1: Header ──
+    pdf.newPage();
+    pdf.drawHeader();
 
-    const text = (
-      t: string,
-      opts: { x?: number; size?: number; font?: any; color?: any; maxWidth?: number }
-    ) => {
-      ensureSpace(20);
-      const font = opts.font || helvetica;
-      const size = opts.size || 10;
-      // Ultima defensa contra caracteres Unicode que WinAnsi no cubre
-      // (em-dash, curly quotes, ellipsis, nbsp). Se aplica aqui para que
-      // TODO drawText quede protegido sin pensarlo en cada call-site.
-      let display = sanitizeForWinAnsi(t);
-      const maxW = opts.maxWidth || PAGE_W - MARGIN_X * 2;
-      while (font.widthOfTextAtSize(display, size) > maxW && display.length > 3) {
-        display = display.slice(0, -4) + '...';
-      }
-      page.drawText(display, {
-        x: opts.x || MARGIN_X,
-        y,
-        size,
-        font,
-        color: opts.color || BLACK,
-      });
-    };
+    // ── SECTION: Identificacion de la mascota ──
+    pdf.drawSectionHeader('Identificacion de la mascota', DARK_PURPLE, LIGHT_PURPLE);
+    pdf.y -= 4;
 
-    const line = () => {
-      ensureSpace(10);
-      page.drawLine({
-        start: { x: MARGIN_X, y },
-        end: { x: PAGE_W - MARGIN_X, y },
-        thickness: 0.5,
-        color: LIGHT_GRAY,
-      });
-      y -= 12;
-    };
+    const petName = properNoun(pet.name) || 'N/A';
+    const petSpecies = speciesLabel(pet.species);
+    const petBreed = pet.breed ? smartSentenceCase(pet.breed) : '';
+    const speciesBreed = petBreed ? `${petSpecies} - ${petBreed}` : petSpecies;
+    const petAge = calcAge(pet.birth_date);
+    const ageDetail = pet.birth_date ? `${petAge} (nac. ${formatDate(pet.birth_date)})` : petAge;
 
-    const section = (title: string) => {
-      ensureSpace(40);
-      y -= 8;
-      page.drawRectangle({
-        x: MARGIN_X,
-        y: y - 2,
-        width: PAGE_W - MARGIN_X * 2,
-        height: 20,
-        color: rgb(0.95, 0.93, 1), // light purple bg
-      });
-      text(title, { size: 12, font: bold, color: PURPLE });
-      y -= 18;
-    };
-
-    const field = (label: string, value: string) => {
-      ensureSpace(16);
-      text(label, { size: 9, font: bold, color: GRAY });
-      text(value, { x: MARGIN_X + 140, size: 9 });
-      y -= 14;
-    };
-
-    /**
-     * Dibuja texto con word-wrap real: divide en palabras, calcula ancho con
-     * la fuente dada, y agrega tantas lineas como haga falta, bajando `y`
-     * automaticamente despues de cada linea. A diferencia de `text()` (que
-     * trunca con "..."), preserva todo el contenido del usuario. Ver
-     * FEATURE_MEDICAL_PDF_UPGRADE.md §5.4.
-     *
-     * NOTA: esta funcion SI baja `y` despues de dibujar (a diferencia de
-     * `text()` que deja al caller bajarlo). No volver a bajar `y` despues
-     * de llamar a drawWrappedText.
-     */
-    const drawWrappedText = (
-      content: string,
-      opts: {
-        x?: number;
-        maxWidth?: number;
-        size?: number;
-        font?: any;
-        color?: any;
-        lineHeight?: number;
-      }
-    ) => {
-      const font = opts.font || helvetica;
-      const size = opts.size || 9;
-      const x = opts.x ?? MARGIN_X;
-      const maxW = opts.maxWidth || PAGE_W - MARGIN_X - x;
-      const lh = opts.lineHeight || size * 1.35;
-      const color = opts.color || BLACK;
-
-      const safe = sanitizeForWinAnsi(content);
-      const words = safe.split(/\s+/).filter(Boolean);
-      if (words.length === 0) return;
-
-      const lines: string[] = [];
-      let current = '';
-      for (const w of words) {
-        const test = current ? `${current} ${w}` : w;
-        if (font.widthOfTextAtSize(test, size) <= maxW) {
-          current = test;
-        } else {
-          if (current) lines.push(current);
-          // Edge case: palabra unica mas larga que maxW - la dibujamos tal
-          // cual (desborda ligeramente) en vez de trabarnos en un loop.
-          current = w;
-        }
-      }
-      if (current) lines.push(current);
-
-      for (const ln of lines) {
-        ensureSpace(lh);
-        page.drawText(ln, { x, y, size, font, color });
-        y -= lh;
-      }
-    };
-
-    const formatDate = (d: string | null) => {
-      if (!d) return 'N/A';
-      try {
-        return new Date(d).toLocaleDateString('es-CL', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric',
-        });
-      } catch {
-        return d;
-      }
-    };
-
-    // ── HEADER ──
-    // Fase 2: logo real PNG en la esquina superior izquierda + texto al costado.
-    // Si el logo no pudo cargarse, fallback a solo texto sin emoji (nunca emoji).
-    // Ver FEATURE_MEDICAL_PDF_UPGRADE.md §4-5.1.
-    ensureSpace(LOGO_SIZE + 15);
-    const headerTextX = logoImage ? MARGIN_X + LOGO_SIZE + 10 : MARGIN_X;
-    if (logoImage) {
-      // Alinear verticalmente con cap height del texto de 22pt:
-      // logo bottom = y - 10 hace que el midpoint del logo quede cerca
-      // del midpoint del bloque de 3 lineas del header.
-      page.drawImage(logoImage, {
-        x: MARGIN_X,
-        y: y - 10,
-        width: LOGO_SIZE,
-        height: LOGO_SIZE,
-      });
-    }
-    text('Paw Friend', { x: headerTextX, size: 22, font: bold, color: PURPLE });
-    y -= 8;
-    text('Ficha clínica veterinaria', { x: headerTextX, size: 11, color: GRAY });
-    y -= 6;
-    text(
-      `Generado el ${new Date().toLocaleDateString('es-CL', { day: '2-digit', month: 'long', year: 'numeric' })}`,
-      { x: headerTextX, size: 8, color: GRAY }
+    pdf.drawFieldPair('Nombre:', petName, 'Especie / Raza:', speciesBreed);
+    pdf.drawFieldPair('Edad:', ageDetail, 'Peso:', pet.weight ? `${pet.weight} kg` : 'N/A');
+    pdf.drawFieldPair(
+      'Sexo:',
+      genderLabel(pet.gender),
+      'Esterilizado/a:',
+      pet.neutered ? (pet.neutered_date ? `Si (${formatDate(pet.neutered_date)})` : 'Si') : 'No'
     );
-    // Si hay logo, bajar extra para que el line() quede debajo del logo
-    // (el logo ocupa ~LOGO_SIZE - 10 pt hacia arriba del y inicial, y las
-    // 3 lineas de texto bajaron ~24 pt, faltan ~16 pt para despejar el logo).
-    y -= logoImage ? 18 : 10;
-    line();
+    pdf.drawFieldPair(
+      'Microchip:',
+      pet.microchip_number || 'No registrado',
+      'Grupo sanguineo:',
+      pet.blood_type || 'No registrado'
+    );
 
-    // ── 1. IDENTIFICACION DE LA MASCOTA ──
-    section('1. Identificación de la mascota');
+    // ── SECTION: Responsable ──
+    pdf.drawSectionHeader('Responsable', DARK_PURPLE, LIGHT_PURPLE);
+    pdf.y -= 4;
 
-    const calcAge = (bd: string | null): string => {
-      if (!bd) return 'N/A';
-      const years = Math.floor(
-        (Date.now() - new Date(bd).getTime()) / (365.25 * 24 * 60 * 60 * 1000)
+    pdf.drawFieldPair(
+      'Nombre:',
+      titleCase(owner.display_name) || 'N/A',
+      'Email:',
+      owner.email || 'N/A'
+    );
+    if (pet.emergency_vet_name || pet.emergency_vet_phone) {
+      pdf.drawFieldPair(
+        'Vet emergencia:',
+        titleCase(pet.emergency_vet_name) || 'N/A',
+        'Tel. emergencia:',
+        pet.emergency_vet_phone || 'N/A'
       );
-      if (years < 1) {
-        const months = Math.floor(
-          (Date.now() - new Date(bd).getTime()) / (30.44 * 24 * 60 * 60 * 1000)
-        );
-        return `${months} mes${months !== 1 ? 'es' : ''}`;
-      }
-      return `${years} año${years !== 1 ? 's' : ''}`;
-    };
-
-    // Normalizacion por campo (ver FEATURE_MEDICAL_PDF_UPGRADE.md §3.2).
-    // pet.name        -> properNoun (nombre propio single-word)
-    // pet.species     -> smartSentenceCase (texto libre del usuario)
-    // pet.breed       -> smartSentenceCase
-    // pet.gender      -> smartSentenceCase
-    // pet.weight      -> sin transformar (numero + kg)
-    // pet.neutered    -> sin transformar (boolean -> "Si"/"No")
-    // pet.microchip_number -> sin transformar (identificador tecnico)
-    const speciesLabel = smartSentenceCase(pet.species) || 'N/A';
-    const breedLabel = pet.breed ? smartSentenceCase(pet.breed) : '';
-    field('Nombre', properNoun(pet.name) || 'N/A');
-    field('Especie / Raza', breedLabel ? `${speciesLabel} — ${breedLabel}` : speciesLabel);
-    field(
-      'Edad',
-      `${calcAge(pet.birth_date)}${pet.birth_date ? ` (nac. ${formatDate(pet.birth_date)})` : ''}`
-    );
-    field('Sexo', smartSentenceCase(pet.gender) || 'N/A');
-    field('Peso', pet.weight ? `${pet.weight} kg` : 'N/A');
-    field('Esterilizado/a', pet.neutered ? 'Sí' : 'No');
-    field('Microchip', pet.microchip_number || 'No registrado');
-
-    // ── 2. RESPONSABLE ──
-    // owner.display_name -> titleCase (nombre propio multi-palabra)
-    // owner.email        -> sin transformar (email es case-insensitive semanticamente)
-    section('2. Responsable');
-    field('Nombre', titleCase(owner.display_name) || 'N/A');
-    field('Email', owner.email || 'N/A');
-
-    // ── 3. ESTADO CLINICO ACTUAL ──
-    // chronic_conditions[] -> smartSentenceCase cada item (texto libre)
-    // allergies[]          -> smartSentenceCase cada item (texto libre)
-    // medications[].name   -> titleCase (nombres propios de farmacos)
-    // medications[].dose   -> sin transformar (dosis con digitos y unidades)
-    // Todos estos campos usan drawWrappedText porque el usuario puede
-    // tener listas largas que antes se truncaban con "...".
-    const hasAlerts =
-      pet.chronic_conditions?.length || pet.allergies?.length || pet.current_medications;
-    if (hasAlerts) {
-      section('3. Estado clínico actual');
-      if (pet.chronic_conditions?.length) {
-        text('Condiciones crónicas', { size: 9, font: bold, color: GRAY });
-        y -= 12;
-        drawWrappedText(
-          pet.chronic_conditions.map((c: string) => smartSentenceCase(c)).join(', '),
-          { x: MARGIN_X + 10, size: 9 }
-        );
-        y -= 4;
-      }
-      if (pet.allergies?.length) {
-        text('Alergias', { size: 9, font: bold, color: GRAY });
-        y -= 12;
-        drawWrappedText(pet.allergies.map((a: string) => smartSentenceCase(a)).join(', '), {
-          x: MARGIN_X + 10,
-          size: 9,
-        });
-        y -= 4;
-      }
-      if (pet.current_medications) {
-        const meds = Array.isArray(pet.current_medications)
-          ? pet.current_medications
-              .map((m: any) => `${titleCase(m.name)}${m.dose ? ` (${m.dose})` : ''}`)
-              .join(', ')
-          : JSON.stringify(pet.current_medications);
-        text('Medicamentos actuales', { size: 9, font: bold, color: GRAY });
-        y -= 12;
-        drawWrappedText(meds, { x: MARGIN_X + 10, size: 9 });
-        y -= 4;
-      }
+    }
+    if (pet.preferred_clinic) {
+      pdf.drawField('Clinica preferida:', titleCase(pet.preferred_clinic));
+    }
+    if (pet.insurance_provider) {
+      const insurance = pet.insurance_policy
+        ? `${titleCase(pet.insurance_provider)} (poliza ${pet.insurance_policy})`
+        : titleCase(pet.insurance_provider);
+      pdf.drawField('Seguro:', insurance);
     }
 
-    // ── 4. VACUNAS (cronológico desc) ──
-    // v.title -> smartSentenceCase (texto libre)
-    section(`4. Vacunas (${vaccinations.length})`);
-    if (vaccinations.length === 0) {
-      text('Sin vacunas registradas', { size: 9, color: GRAY });
-      y -= 14;
-    } else {
-      vaccinations.slice(0, 15).forEach((v: any) => {
-        ensureSpace(16);
-        text(`${formatDate(v.date)}`, { size: 8, font: bold, color: GRAY });
-        text(smartSentenceCase(v.title) || 'Vacuna', { x: MARGIN_X + 90, size: 9 });
-        if (v.next_date) {
-          text(`Próxima: ${formatDate(v.next_date)}`, { x: MARGIN_X + 350, size: 8, color: GRAY });
+    // ── SECTION: Alertas clinicas (solo si hay datos) ──
+    const hasAllergiesFood = pet.allergies_food?.length > 0;
+    const hasAllergiesMed = pet.allergies_medication?.length > 0;
+    const hasAllergiesEnv = pet.allergies_environmental?.length > 0;
+    const hasAllergiesLegacy = pet.allergies?.length > 0;
+    const hasAnyAllergy =
+      hasAllergiesFood || hasAllergiesMed || hasAllergiesEnv || hasAllergiesLegacy;
+
+    const hasConditionsDetail = pet.chronic_conditions_detail?.length > 0;
+    const hasConditionsLegacy = pet.chronic_conditions?.length > 0;
+    const hasAnyCondition = hasConditionsDetail || hasConditionsLegacy;
+
+    const hasMedications =
+      Array.isArray(pet.current_medications) && pet.current_medications.length > 0;
+
+    if (hasAnyAllergy || hasAnyCondition || hasMedications) {
+      pdf.drawSectionHeader('Alertas clinicas', ALERT_RED, LIGHT_RED);
+      pdf.y -= 4;
+
+      // Allergies
+      if (hasAnyAllergy) {
+        pdf.drawText('ALERGIAS', { size: 8.5, font: bold, color: ALERT_RED, x: MARGIN_L + 10 });
+        pdf.y -= 12;
+
+        if (hasAllergiesFood) {
+          pdf.drawBullet(
+            `Alimento: ${pet.allergies_food.map((a: string) => smartSentenceCase(a)).join(', ')}`,
+            { color: TEXT_DARK }
+          );
         }
-        y -= 14;
-      });
-    }
+        if (hasAllergiesMed) {
+          pdf.drawBullet(
+            `Medicamento: ${pet.allergies_medication.map((a: string) => smartSentenceCase(a)).join(', ')}`,
+            { color: TEXT_DARK }
+          );
+        }
+        if (hasAllergiesEnv) {
+          pdf.drawBullet(
+            `Ambiental: ${pet.allergies_environmental.map((a: string) => smartSentenceCase(a)).join(', ')}`,
+            { color: TEXT_DARK }
+          );
+        }
+        if (hasAllergiesLegacy && !hasAllergiesFood && !hasAllergiesMed && !hasAllergiesEnv) {
+          // Fallback to legacy allergies field if no specific types
+          pdf.drawBullet(pet.allergies.map((a: string) => smartSentenceCase(a)).join(', '), {
+            color: TEXT_DARK,
+          });
+        }
+        pdf.y -= 4;
+      }
 
-    // ── CONSULTAS VETERINARIAS (cronológico desc) ──
-    // v.reason / v.title -> smartSentenceCase (texto libre)
-    // v.clinic_name      -> titleCase (nombre propio)
-    // v.diagnosis        -> smartSentenceCase (texto libre, frase completa)
-    section(`5. Consultas veterinarias (${recentVisits.length})`);
-    if (recentVisits.length === 0) {
-      text('Sin consultas registradas', { size: 9, color: GRAY });
-      y -= 14;
-    } else {
-      recentVisits.slice(0, 15).forEach((v: any) => {
-        ensureSpace(40);
-        text(formatDate(v.visit_date || v.date), { size: 8, font: bold, color: GRAY });
-        text(smartSentenceCase(v.reason || v.title) || 'Consulta', {
-          x: MARGIN_X + 90,
-          size: 9,
+      // Chronic conditions
+      if (hasAnyCondition) {
+        pdf.drawText('CONDICIONES CRONICAS', {
+          size: 8.5,
           font: bold,
+          color: ALERT_RED,
+          x: MARGIN_L + 10,
         });
-        y -= 13;
-        if (v.clinic_name) {
-          text(`Clínica: ${titleCase(v.clinic_name)}`, { x: MARGIN_X + 20, size: 8, color: GRAY });
-          y -= 12;
+        pdf.y -= 12;
+
+        if (hasConditionsDetail) {
+          for (const c of pet.chronic_conditions_detail) {
+            const parts = [smartSentenceCase(c.condition || c.name || JSON.stringify(c))];
+            if (c.diagnosed_date) parts.push(`desde ${formatDate(c.diagnosed_date)}`);
+            if (c.severity) parts.push(smartSentenceCase(c.severity));
+            pdf.drawBullet(parts.join(', '), { color: TEXT_DARK });
+          }
+        } else if (hasConditionsLegacy) {
+          for (const c of pet.chronic_conditions) {
+            pdf.drawBullet(smartSentenceCase(c), { color: TEXT_DARK });
+          }
         }
-        if (v.diagnosis) {
-          // Diagnostico con word-wrap real: el texto completo se preserva
-          // en multiples lineas en vez de truncarse con "..." (problema #3).
-          drawWrappedText(`Diagnóstico: ${smartSentenceCase(v.diagnosis)}`, {
-            x: MARGIN_X + 20,
-            size: 8,
-          });
+        pdf.y -= 4;
+      }
+
+      // Current medications
+      if (hasMedications) {
+        pdf.drawText('MEDICAMENTOS ACTUALES', {
+          size: 8.5,
+          font: bold,
+          color: AMBER,
+          x: MARGIN_L + 10,
+        });
+        pdf.y -= 12;
+
+        for (const m of pet.current_medications) {
+          const parts = [titleCase(m.name || 'Sin nombre')];
+          if (m.dose) parts.push(m.dose);
+          if (m.frequency) parts.push(smartSentenceCase(m.frequency));
+          pdf.drawBullet(parts.join(' - '), { color: TEXT_DARK });
         }
-        y -= 4;
-      });
+        pdf.y -= 4;
+      }
     }
 
-    // ── 6. DESPARASITACIONES ──
-    // d.title       -> smartSentenceCase (texto libre)
-    // d.description -> smartSentenceCase + drawWrappedText (texto libre largo)
-    if (dewormings && dewormings.length > 0) {
-      section(`6. Desparasitaciones (${dewormings.length})`);
-      dewormings.slice(0, 10).forEach((d: any) => {
-        ensureSpace(16);
-        text(formatDate(d.date), { size: 8, font: bold, color: GRAY });
-        text(smartSentenceCase(d.title) || 'Desparasitación', { x: MARGIN_X + 90, size: 9 });
-        y -= 14;
-        if (d.description) {
-          drawWrappedText(smartSentenceCase(d.description), {
-            x: MARGIN_X + 20,
-            size: 8,
-            color: GRAY,
-          });
-          y -= 2;
-        }
-      });
+    // ── HISTORIAL CLINICO ──
+    // Separador visual
+    pdf.y -= 6;
+    pdf.ensureSpace(30);
+    pdf.page.drawRectangle({
+      x: MARGIN_L,
+      y: pdf.y - 1,
+      width: CONTENT_W,
+      height: 18,
+      color: DARK_PURPLE,
+    });
+    pdf.drawText('HISTORIAL CLINICO', {
+      x: MARGIN_L + 10,
+      size: 10,
+      font: bold,
+      color: WHITE,
+    });
+    pdf.y -= 18;
+
+    // Render each category that has records
+    let totalRecords = 0;
+    for (const cat of CATEGORY_ORDER) {
+      const records = grouped[cat];
+      if (!records || records.length === 0) continue;
+
+      const config = CATEGORY_CONFIG[cat];
+      pdf.drawSectionHeader(config.title, config.color, config.bg, records.length);
+
+      for (let i = 0; i < records.length; i++) {
+        pdf.drawRecordEntry(records[i], i);
+        totalRecords++;
+      }
     }
 
-    // ── AVISO DE CONFIDENCIALIDAD ──
-    // Texto fijo al final del contenido, antes del footer. Aclara que el
-    // PDF es informativo y no reemplaza un informe clinico profesional.
-    // Ver FEATURE_MEDICAL_PDF_UPGRADE.md §5.6.
-    y -= 16;
-    ensureSpace(50);
-    line();
-    y -= 6;
-    drawWrappedText(CONFIDENTIALITY_NOTICE, {
+    if (totalRecords === 0) {
+      pdf.ensureSpace(20);
+      pdf.drawText('Sin registros medicos aun.', { size: 9, color: TEXT_LIGHT });
+      pdf.y -= 14;
+    }
+
+    // ── SECTION: Alimentacion y estilo de vida (solo si hay datos) ──
+    const hasDiet = pet.diet_type || pet.diet_brand || pet.diet_frequency;
+    const hasLifestyle = pet.activity_level || pet.living_environment || pet.behavior_notes;
+
+    if (hasDiet || hasLifestyle) {
+      pdf.drawSectionHeader('Alimentacion y estilo de vida', TEXT_GRAY, ROW_ALT);
+      pdf.y -= 4;
+
+      if (hasDiet) {
+        const dietParts: string[] = [];
+        if (pet.diet_type) dietParts.push(`Tipo: ${smartSentenceCase(pet.diet_type)}`);
+        if (pet.diet_brand) dietParts.push(`Marca: ${titleCase(pet.diet_brand)}`);
+        if (pet.diet_frequency)
+          dietParts.push(`Frecuencia: ${smartSentenceCase(pet.diet_frequency)}`);
+        pdf.drawWrapped(dietParts.join('  |  '), { x: MARGIN_L + 10, size: 8.5 });
+        pdf.y -= 2;
+      }
+
+      if (pet.activity_level) {
+        pdf.drawField('Nivel actividad:', smartSentenceCase(pet.activity_level), {
+          labelWidth: 110,
+        });
+      }
+      if (pet.living_environment) {
+        pdf.drawField('Ambiente:', smartSentenceCase(pet.living_environment), { labelWidth: 110 });
+      }
+      if (pet.behavior_notes) {
+        pdf.drawText('Notas de comportamiento:', { size: 8.5, font: bold, color: TEXT_GRAY });
+        pdf.y -= 12;
+        pdf.drawWrapped(smartSentenceCase(pet.behavior_notes), {
+          x: MARGIN_L + 10,
+          size: 8.5,
+          color: TEXT_GRAY,
+        });
+      }
+    }
+
+    // ── Confidentiality notice ──
+    pdf.y -= 12;
+    pdf.drawLine();
+    pdf.drawWrapped(CONFIDENTIALITY_NOTICE, {
       size: 7,
-      color: GRAY,
+      color: TEXT_LIGHT,
       lineHeight: 9,
     });
 
-    // ── FOOTER en todas las páginas ──
-    // Fase 4: footer centrado en una sola linea con codigo de verificacion,
-    // aviso de confidencialidad y paginacion. El codigo PF-XXXX-XXXX permite
-    // trazabilidad del documento. Ver FEATURE_MEDICAL_PDF_UPGRADE.md §5.5.
-    const totalPages = pdfDoc.getPageCount();
-    const allPages = pdfDoc.getPages();
-    const footerSize = 7;
-    const footerY = 25;
-    for (let i = 0; i < totalPages; i++) {
-      const p = allPages[i];
-      const footerText = sanitizeForWinAnsi(
-        `${verificationCode} · Documento confidencial · pawfriend.cl · pág. ${i + 1} de ${totalPages}`
+    // ── Footer on all pages ──
+    pdf.drawFooters(verificationCode);
+
+    // ── Generate PDF bytes ──
+    const pdfBytes = await pdfDoc.save();
+    const safeName = (pet.name || 'mascota')
+      .replace(/\s+/g, '-')
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, '');
+    const fileName = `ficha-${safeName}-${Date.now()}.pdf`;
+
+    // If store=true (for sharing), upload to storage and return signed URL
+    if (storeInStorage) {
+      const filePath = `summaries/${fileName}`;
+      const { error: uploadError } = await supabase.storage
+        .from('medical-documents')
+        .upload(filePath, pdfBytes, { contentType: 'application/pdf', upsert: false });
+      if (uploadError) throw uploadError;
+
+      const { data: urlData, error: urlError } = await supabase.storage
+        .from('medical-documents')
+        .createSignedUrl(filePath, 3600);
+      if (urlError) throw urlError;
+
+      return new Response(
+        JSON.stringify({ success: true, download_url: urlData.signedUrl, file_path: filePath }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
       );
-      const footerWidth = helvetica.widthOfTextAtSize(footerText, footerSize);
-      p.drawText(footerText, {
-        x: (PAGE_W - footerWidth) / 2,
-        y: footerY,
-        size: footerSize,
-        font: helvetica,
-        color: GRAY,
-      });
     }
 
-    // Generate and upload
-    const pdfBytes = await pdfDoc.save();
-    const fileName = `ficha-${pet.name?.replace(/\s+/g, '-').toLowerCase() || pet_id}-${Date.now()}.pdf`;
-    const filePath = `summaries/${fileName}`;
-
-    const { error: uploadError } = await supabase.storage
-      .from('medical-documents')
-      .upload(filePath, pdfBytes, { contentType: 'application/pdf', upsert: false });
-    if (uploadError) throw uploadError;
-
-    const { data: urlData, error: urlError } = await supabase.storage
-      .from('medical-documents')
-      .createSignedUrl(filePath, 3600);
-    if (urlError) throw urlError;
-
-    return new Response(
-      JSON.stringify({ success: true, download_url: urlData.signedUrl, file_path: filePath }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
-    );
+    // Default: return PDF bytes directly (faster, no ugly URL)
+    return new Response(pdfBytes, {
+      headers: {
+        ...corsHeaders,
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${fileName}"`,
+      },
+      status: 200,
+    });
   } catch (error: any) {
     console.error('Error generating medical summary:', error);
     return new Response(
-      JSON.stringify({ success: false, error: 'Error al generar la ficha. Intenta de nuevo.' }),
+      JSON.stringify({
+        success: false,
+        error: 'Error al generar la ficha. Intenta de nuevo.',
+        detail: error?.message || String(error),
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }
