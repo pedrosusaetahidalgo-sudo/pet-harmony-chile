@@ -1,25 +1,38 @@
-import { useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Plus, Loader2, Sparkles } from "@/lib/icons";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { cn } from "@/lib/utils";
-import { logger } from "@/lib/logger";
-import { describeSupabaseError } from "@/lib/supabaseErrors";
-import { useOrganicRewards } from "@/hooks/useOrganicRewards";
-import { MEDICAL_RECORD_TYPES } from "@/lib/medicalRecordTypes";
-import { getVaccinesForSpecies } from "@/lib/vaccines";
+import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { CalendarIcon, Plus, Loader2, Sparkles } from '@/lib/icons';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
+import { cn } from '@/lib/utils';
+import { logger } from '@/lib/logger';
+import { describeSupabaseError } from '@/lib/supabaseErrors';
+import { useOrganicRewards } from '@/hooks/useOrganicRewards';
+import { MEDICAL_RECORD_TYPES } from '@/lib/medicalRecordTypes';
+import { getVaccinesForSpecies } from '@/lib/vaccines';
 
 interface AddMedicalRecordProps {
   petId: string;
@@ -34,21 +47,26 @@ interface MedicalSuggestion {
   description?: string;
 }
 
-export function AddMedicalRecord({ petId, petBreed, petSpecies, petName = "Tu mascota" }: AddMedicalRecordProps) {
+export function AddMedicalRecord({
+  petId,
+  petBreed,
+  petSpecies,
+  petName = 'Tu mascota',
+}: AddMedicalRecordProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
-  const [recordType, setRecordType] = useState("");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [recordType, setRecordType] = useState('');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [date, setDate] = useState<Date>();
   const [nextDate, setNextDate] = useState<Date>();
-  const [clinicName, setClinicName] = useState("");
-  const [veterinarianName, setVeterinarianName] = useState("");
-  const [notes, setNotes] = useState("");
-  const [placeId, setPlaceId] = useState("");
+  const [clinicName, setClinicName] = useState('');
+  const [veterinarianName, setVeterinarianName] = useState('');
+  const [notes, setNotes] = useState('');
+  const [placeId, setPlaceId] = useState('');
   const [suggestions, setSuggestions] = useState<MedicalSuggestion[]>([]);
-  
+
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -56,13 +74,13 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies, petName = "Tu ma
 
   // Fetch veterinarias for selection
   const { data: veterinarias } = useQuery({
-    queryKey: ["places-veterinarias"],
+    queryKey: ['places-veterinarias'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("places")
-        .select("*")
-        .eq("place_type", "veterinaria");
-      
+        .from('places')
+        .select('*')
+        .eq('place_type', 'veterinaria');
+
       if (error) throw error;
       return data || [];
     },
@@ -74,21 +92,21 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies, petName = "Tu ma
 
   const fetchSuggestions = async (type: string) => {
     if (!petBreed || !petSpecies) return;
-    
+
     setLoadingSuggestions(true);
     try {
-      const { data, error } = await supabase.functions.invoke("medical-suggestions", {
+      const { data, error } = await supabase.functions.invoke('medical-suggestions', {
         body: { breed: petBreed, species: petSpecies, recordType: type },
       });
 
       if (error) throw error;
       setSuggestions(data.suggestions || []);
     } catch (error) {
-      logger.error("Error fetching suggestions:", error);
+      logger.error('Error fetching suggestions:', error);
       toast({
-        title: "Error al obtener sugerencias",
-        description: "No se pudieron cargar las recomendaciones de IA",
-        variant: "destructive",
+        title: 'Error al obtener sugerencias',
+        description: 'No se pudieron cargar las recomendaciones de IA',
+        variant: 'destructive',
       });
     } finally {
       setLoadingSuggestions(false);
@@ -97,7 +115,7 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies, petName = "Tu ma
 
   const handleTypeChange = (type: string) => {
     setRecordType(type);
-    setTitle("");
+    setTitle('');
     fetchSuggestions(type);
   };
 
@@ -110,7 +128,7 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies, petName = "Tu ma
 
   const handlePlaceSelect = (placeId: string) => {
     setPlaceId(placeId);
-    const place = veterinarias?.find(v => v.id === placeId);
+    const place = veterinarias?.find((v) => v.id === placeId);
     if (place) {
       setClinicName(place.name);
     }
@@ -118,21 +136,21 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies, petName = "Tu ma
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!date || !recordType || !title) {
       toast({
-        title: "Campos requeridos",
-        description: "Por favor completa los campos obligatorios",
-        variant: "destructive",
+        title: 'Campos requeridos',
+        description: 'Por favor completa los campos obligatorios',
+        variant: 'destructive',
       });
       return;
     }
 
     if (!user) {
       toast({
-        title: "Sesión expirada",
-        description: "Tenés que iniciar sesión de nuevo para guardar el registro.",
-        variant: "destructive",
+        title: 'Sesión expirada',
+        description: 'Tienes que iniciar sesion de nuevo para guardar el registro.',
+        variant: 'destructive',
       });
       return;
     }
@@ -140,67 +158,69 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies, petName = "Tu ma
     setLoading(true);
     try {
       const { data: medicalRecord, error } = await supabase
-        .from("medical_records")
+        .from('medical_records')
         .insert({
           pet_id: petId,
           owner_id: user.id,
           record_type: recordType,
           title,
           description,
-          date: format(date, "yyyy-MM-dd"),
-          next_date: nextDate ? format(nextDate, "yyyy-MM-dd") : null,
+          date: format(date, 'yyyy-MM-dd'),
+          next_date: nextDate ? format(nextDate, 'yyyy-MM-dd') : null,
           clinic_name: clinicName,
           veterinarian_name: veterinarianName,
           notes,
         })
-        .select("id")
+        .select('id')
         .single();
 
       if (error) throw error;
-      if (!medicalRecord) throw new Error("No se pudo crear el registro.");
+      if (!medicalRecord) throw new Error('No se pudo crear el registro.');
 
       // Award points for vet visit
       try {
         // Get pet owner
         const { data: pet } = await supabase
-          .from("pets")
-          .select("owner_id")
-          .eq("id", petId)
+          .from('pets')
+          .select('owner_id')
+          .eq('id', petId)
           .maybeSingle();
 
         if (pet?.owner_id) {
-          await supabase.rpc("award_points", {
+          await supabase.rpc('award_points', {
             p_user_id: pet.owner_id,
             p_points: 30, // DEFAULT_POINTS_CONFIG.vetVisit
-            p_action_type: "vet_visit",
+            p_action_type: 'vet_visit',
             p_action_id: medicalRecord.id,
-            p_description: "Visita veterinaria registrada",
+            p_description: 'Visita veterinaria registrada',
           });
         }
       } catch (pointsError) {
-        logger.error("Error awarding points:", pointsError);
+        logger.error('Error awarding points:', pointsError);
         // Don't fail the medical record creation if points fail
       }
 
       toast({
-        title: "Registro creado",
-        description: "El registro médico se ha guardado correctamente",
+        title: 'Registro creado',
+        description: 'El registro médico se ha guardado correctamente',
       });
 
       // Fire-and-forget organic rewards + social activity
-      reward({ kind: "medical_record_added", petId, petName });
-      if (recordType === "vacuna") {
-        reward({ kind: "vaccine_logged", petId, petName, vaccineName: title });
+      reward({ kind: 'medical_record_added', petId, petName });
+      if (recordType === 'vacuna') {
+        reward({ kind: 'vaccine_logged', petId, petName, vaccineName: title });
       }
 
-      queryClient.invalidateQueries({ queryKey: ["medical-records"] });
+      queryClient.invalidateQueries({ queryKey: ['medical-records'] });
       setOpen(false);
       resetForm();
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
-        title: "Error al guardar",
-        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "Ocurrió un error inesperado",
-        variant: "destructive",
+        title: 'Error al guardar',
+        description:
+          describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
+          'Ocurrio un error inesperado',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -208,15 +228,15 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies, petName = "Tu ma
   };
 
   const resetForm = () => {
-    setRecordType("");
-    setTitle("");
-    setDescription("");
+    setRecordType('');
+    setTitle('');
+    setDescription('');
     setDate(undefined);
     setNextDate(undefined);
-    setClinicName("");
-    setVeterinarianName("");
-    setNotes("");
-    setPlaceId("");
+    setClinicName('');
+    setVeterinarianName('');
+    setNotes('');
+    setPlaceId('');
     setSuggestions([]);
   };
 
@@ -293,13 +313,13 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies, petName = "Tu ma
             <Label htmlFor="title">Título *</Label>
             <Input
               id="title"
-              list={recordType === "vacuna" ? "vaccine-suggestions" : undefined}
+              list={recordType === 'vacuna' ? 'vaccine-suggestions' : undefined}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Ej: Vacuna Antirrábica, Control de Rutina..."
               required
             />
-            {recordType === "vacuna" && (
+            {recordType === 'vacuna' && (
               <datalist id="vaccine-suggestions">
                 {getVaccinesForSpecies(petSpecies).map((v) => (
                   <option key={v.name} value={v.name} label={v.description} />
@@ -317,12 +337,12 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies, petName = "Tu ma
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !date && "text-muted-foreground"
+                      'w-full justify-start text-left font-normal',
+                      !date && 'text-muted-foreground'
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, "PPP", { locale: es }) : "Selecciona fecha"}
+                    {date ? format(date, 'PPP', { locale: es }) : 'Selecciona fecha'}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0 bg-background z-50" align="start">
@@ -345,12 +365,12 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies, petName = "Tu ma
                   <Button
                     variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !nextDate && "text-muted-foreground"
+                      'w-full justify-start text-left font-normal',
+                      !nextDate && 'text-muted-foreground'
                     )}
                   >
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {nextDate ? format(nextDate, "PPP", { locale: es }) : "Selecciona fecha"}
+                    {nextDate ? format(nextDate, 'PPP', { locale: es }) : 'Selecciona fecha'}
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0 bg-background z-50" align="start">
@@ -430,7 +450,7 @@ export function AddMedicalRecord({ petId, petBreed, petSpecies, petName = "Tu ma
                   Guardando...
                 </>
               ) : (
-                "Guardar Registro"
+                'Guardar Registro'
               )}
             </Button>
           </div>

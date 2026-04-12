@@ -111,7 +111,7 @@ export default function ProviderProfileEdit() {
     } catch (err) {
       logger.error(err);
       toast.error(
-        'No se pudo subir la foto. Verificá que el bucket "avatars" exista en Supabase Storage.'
+        'No se pudo subir la foto. Verifica que el bucket "avatars" exista en Supabase Storage.'
       );
     } finally {
       setUploading(false);
@@ -125,7 +125,7 @@ export default function ProviderProfileEdit() {
     }
     if (form.is_directory_visible && !canBeVisible) {
       toast.error(
-        `Necesitás al menos ${REQUIRED_FOR_DIRECTORY_SCORE}% de perfil completo para aparecer en el directorio`
+        `Necesitas al menos ${REQUIRED_FOR_DIRECTORY_SCORE}% de perfil completo para aparecer en el directorio`
       );
       return;
     }
@@ -468,7 +468,7 @@ export default function ProviderProfileEdit() {
                 <p className="text-xs text-muted-foreground mt-1">
                   Tu perfil será visible en pawfriend.cl/veterinarios para cualquier persona, sin
                   login.
-                  {!canBeVisible && ' Necesitás completar más campos primero.'}
+                  {!canBeVisible && ' Necesitas completar mas campos primero.'}
                 </p>
                 {form.is_directory_visible && canBeVisible && (
                   <Badge variant="secondary" className="mt-2">
