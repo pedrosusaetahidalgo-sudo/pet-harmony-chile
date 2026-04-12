@@ -6,7 +6,9 @@ import { LINKS } from '@/lib/links';
 import { PublicHeader } from '@/components/PublicHeader';
 import { LegalFooter } from '@/components/LegalFooter';
 import HeroV2 from '@/components/HeroV2';
+import LogosBand from '@/components/LogosBand';
 import MedicalPDFShowcase from '@/components/MedicalPDFShowcase';
+import Testimonials from '@/components/Testimonials';
 import { Button } from '@/components/ui/button';
 import {
   Accordion,
@@ -110,6 +112,9 @@ const Index = () => {
       {/* 1 · Hero "Ficha viva" */}
       <HeroV2 />
 
+      {/* 2 · Banda de logos clínicas */}
+      <LogosBand />
+
       {/* 3 · Demo en 3 pasos — tarjetas mockup zig-zag */}
       <section
         id="como-funciona"
@@ -145,7 +150,7 @@ const Index = () => {
                 >
                   {/* Visual mockup */}
                   <div className="relative flex-1">
-                    <div className="relative mx-auto max-w-sm rounded-3xl border border-neutral-200/70 bg-gradient-to-br from-white to-neutral-50 p-6 shadow-[0_30px_60px_-25px_rgba(168,85,247,0.3)] md:p-8">
+                    <div className="relative mx-auto max-w-sm rounded-3xl border border-neutral-200/70 bg-gradient-to-br from-white to-neutral-50 p-6 shadow-[0_30px_60px_-25px_rgba(251,146,60,0.2)] transition-transform duration-300 hover:scale-[1.02] md:p-8">
                       <div
                         className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br ${accent} text-white shadow-lg`}
                       >
@@ -221,7 +226,7 @@ const Index = () => {
 
             {/* Mockup mapa estilizado + tarjetas */}
             <div className="relative">
-              <div className="relative mx-auto aspect-square max-w-md overflow-hidden rounded-3xl bg-gradient-to-br from-purple-100 via-purple-50 to-amber-50 p-6 shadow-[0_30px_60px_-25px_rgba(168,85,247,0.35)] ring-1 ring-black/5">
+              <div className="relative mx-auto aspect-square max-w-md overflow-hidden rounded-3xl bg-gradient-to-br from-purple-100 via-purple-50 to-amber-50 p-6 shadow-[0_30px_60px_-25px_rgba(251,146,60,0.25)] ring-1 ring-black/5">
                 {/* Grid simulando calles */}
                 <div className="absolute inset-0 opacity-30">
                   <div className="grid h-full grid-cols-6 grid-rows-6">
@@ -316,6 +321,9 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      {/* 7 · Testimonios */}
+      <Testimonials />
 
       {/* 8 · Para veterinarios — banda B2B dedicada */}
       <section className="relative overflow-hidden px-4 py-20 md:py-28">
