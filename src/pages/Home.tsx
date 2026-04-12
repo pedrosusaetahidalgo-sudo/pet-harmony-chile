@@ -1,12 +1,12 @@
-import { useState, useEffect, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { OnboardingTutorial } from "@/components/OnboardingTutorial";
-import { HomeOnboardingHints } from "@/components/HomeOnboardingHints";
+import { useState, useEffect, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { OnboardingTutorial } from '@/components/OnboardingTutorial';
+import { HomeOnboardingHints } from '@/components/HomeOnboardingHints';
 import {
   PawPrint,
   Plus,
@@ -26,24 +26,25 @@ import {
   Flame,
   Trophy,
   Star,
-} from "@/lib/icons";
-import { getGreeting } from "@/lib/format";
-import { useGamification } from "@/hooks/useGamification";
-import { useReminders } from "@/hooks/useReminders";
-import { StatusCard } from "@/components/home/StatusCard";
-import ActivityFeed from "@/components/social/ActivityFeed";
-import { LINKS } from "@/lib/links";
-import { useGoToAddPet } from "@/hooks/useCanAddPet";
-import { logger } from "@/lib/logger";
-import { PriceEstimatorCard } from "@/components/home/PriceEstimatorCard";
-import { WeeklyReportCard } from "@/components/home/WeeklyReportCard";
-import { AnalyticsPreviewCard } from "@/components/analytics/AnalyticsPreviewCard";
-import { PetWellnessPreview } from "@/components/analytics/PetWellnessPreview";
-import { isFeatureEnabled } from "@/lib/featureFlags";
-import { Skeleton } from "@/components/ui/skeleton";
-import { usePendingReviewCount } from "@/hooks/usePendingReviews";
-import { formatDistanceToNowStrict, parseISO } from "date-fns";
-import { es } from "date-fns/locale";
+} from '@/lib/icons';
+import { getGreeting } from '@/lib/format';
+import { useGamification } from '@/hooks/useGamification';
+import { useReminders } from '@/hooks/useReminders';
+import { StatusCard } from '@/components/home/StatusCard';
+import ActivityFeed from '@/components/social/ActivityFeed';
+import { LINKS } from '@/lib/links';
+import { useGoToAddPet } from '@/hooks/useCanAddPet';
+import { logger } from '@/lib/logger';
+import { PriceEstimatorCard } from '@/components/home/PriceEstimatorCard';
+import { WeeklyReportCard } from '@/components/home/WeeklyReportCard';
+import { SeasonalTipsCard } from '@/components/home/SeasonalTipsCard';
+import { AnalyticsPreviewCard } from '@/components/analytics/AnalyticsPreviewCard';
+import { PetWellnessPreview } from '@/components/analytics/PetWellnessPreview';
+import { isFeatureEnabled } from '@/lib/featureFlags';
+import { Skeleton } from '@/components/ui/skeleton';
+import { usePendingReviewCount } from '@/hooks/usePendingReviews';
+import { formatDistanceToNowStrict, parseISO } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 interface Pet {
   id: string;
@@ -75,16 +76,16 @@ interface CompletenessByPet {
 }
 
 const PET_PROFILE_FIELDS = [
-  "name",
-  "species",
-  "breed",
-  "birth_date",
-  "gender",
-  "size",
-  "color",
-  "weight",
-  "photo_url",
-  "microchip_number",
+  'name',
+  'species',
+  'breed',
+  'birth_date',
+  'gender',
+  'size',
+  'color',
+  'weight',
+  'photo_url',
+  'microchip_number',
 ] as const;
 
 export default function Home() {
@@ -111,7 +112,7 @@ export default function Home() {
   }, [user]);
 
   const checkOnboarding = () => {
-    const hasSeenTutorial = localStorage.getItem("hasSeenTutorial");
+    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
     if (!hasSeenTutorial) {
       setShowTutorial(true);
     }
@@ -122,17 +123,17 @@ export default function Home() {
 
     try {
       const { data: profileData } = await supabase
-        .from("profiles")
-        .select("display_name, avatar_url, is_premium")
-        .eq("id", user.id)
+        .from('profiles')
+        .select('display_name, avatar_url, is_premium')
+        .eq('id', user.id)
         .maybeSingle();
       if (profileData) setProfile(profileData);
 
       const { data: petsData } = await supabase
-        .from("pets")
-        .select("*")
-        .eq("owner_id", user.id)
-        .eq("lifecycle_status", "active");
+        .from('pets')
+        .select('*')
+        .eq('owner_id', user.id)
+        .eq('lifecycle_status', 'active');
 
       const petsList: Pet[] = (petsData || []).map((p) => ({
         id: p.id,
@@ -152,17 +153,17 @@ export default function Home() {
         const total = PET_PROFILE_FIELDS.length;
         const filled = PET_PROFILE_FIELDS.reduce((acc, key) => {
           const v = (p as Record<string, unknown>)[key];
-          return acc + (v !== null && v !== undefined && v !== "" ? 1 : 0);
+          return acc + (v !== null && v !== undefined && v !== '' ? 1 : 0);
         }, 0);
         compMap[p.id] = Math.round((filled / total) * 100);
       });
       setCompleteness(compMap);
 
       const { data: appointmentsData } = await supabase
-        .from("appointments")
-        .select("id, title, scheduled_date, pet_id")
-        .gte("scheduled_date", new Date().toISOString())
-        .order("scheduled_date", { ascending: true })
+        .from('appointments')
+        .select('id, title, scheduled_date, pet_id')
+        .gte('scheduled_date', new Date().toISOString())
+        .order('scheduled_date', { ascending: true })
         .limit(5);
       if (appointmentsData) setAppointments(appointmentsData);
 
@@ -170,10 +171,10 @@ export default function Home() {
       if (petsList.length > 0) {
         const petIds = petsList.map((p) => p.id);
         const { data: vaccineReminders } = await supabase
-          .from("pet_reminders")
-          .select("pet_id, title, due_date, is_completed")
-          .in("pet_id", petIds)
-          .eq("type", "vaccine");
+          .from('pet_reminders')
+          .select('pet_id, title, due_date, is_completed')
+          .in('pet_id', petIds)
+          .eq('type', 'vaccine');
         const status: VaccineStatusByPet = {};
         petsList.forEach((p) => {
           const pending = (vaccineReminders || []).find(
@@ -186,7 +187,7 @@ export default function Home() {
         setVaccineStatus(status);
       }
     } catch (error) {
-      logger.error("Error loading home data:", error);
+      logger.error('Error loading home data:', error);
     } finally {
       setLoading(false);
     }
@@ -207,17 +208,18 @@ export default function Home() {
   }, [appointments, activePet]);
 
   const nextAppointmentLabel = (() => {
-    if (!nextAppointmentForActive) return "Sin agendar";
+    if (!nextAppointmentForActive) return 'Sin agendar';
     try {
       return `en ${formatDistanceToNowStrict(parseISO(nextAppointmentForActive.scheduled_date), { locale: es })}`;
     } catch {
-      return "Próxima";
+      return 'Próxima';
     }
   })();
 
   const activeVaccine = activePet ? vaccineStatus[activePet.id] : undefined;
-  const activeCompleteness = activePet ? completeness[activePet.id] ?? 0 : 0;
-  const streakDays = (stats as unknown as { streak_days?: number } | null | undefined)?.streak_days ?? 0;
+  const activeCompleteness = activePet ? (completeness[activePet.id] ?? 0) : 0;
+  const streakDays =
+    (stats as unknown as { streak_days?: number } | null | undefined)?.streak_days ?? 0;
 
   if (loading) {
     return (
@@ -273,7 +275,7 @@ export default function Home() {
                     }
                     return profile.display_name[0].toUpperCase();
                   }
-                  return user?.email?.[0]?.toUpperCase() || "U";
+                  return user?.email?.[0]?.toUpperCase() || 'U';
                 })()}
               </AvatarFallback>
             </Avatar>
@@ -285,11 +287,12 @@ export default function Home() {
           </div>
           <div className="min-w-0">
             <p className="text-sm font-semibold truncate">
-              {getGreeting()}, {profile?.display_name?.split(/\s+/)[0] || user?.email?.split("@")[0] || "Amigo"}
+              {getGreeting()},{' '}
+              {profile?.display_name?.split(/\s+/)[0] || user?.email?.split('@')[0] || 'Amigo'}
             </p>
             {pets.length > 0 && (
               <p className="text-xs text-muted-foreground">
-                {pets.length} {pets.length === 1 ? "mascota" : "mascotas"} registradas
+                {pets.length} {pets.length === 1 ? 'mascota' : 'mascotas'} registradas
               </p>
             )}
           </div>
@@ -316,8 +319,8 @@ export default function Home() {
                   <div
                     className={`relative rounded-full p-[3px] transition-all ${
                       isActive
-                        ? "bg-gradient-to-tr from-purple-600 via-teal-400 to-purple-600 shadow-lg shadow-purple-600/30 scale-105"
-                        : "bg-muted group-hover:bg-muted/70"
+                        ? 'bg-gradient-to-tr from-purple-600 via-teal-400 to-purple-600 shadow-lg shadow-purple-600/30 scale-105'
+                        : 'bg-muted group-hover:bg-muted/70'
                     }`}
                   >
                     <Avatar className="h-16 w-16 ring-2 ring-background">
@@ -332,7 +335,7 @@ export default function Home() {
                   </div>
                   <span
                     className={`text-xs font-medium max-w-[72px] truncate ${
-                      isActive ? "text-purple-700 font-bold" : "text-muted-foreground"
+                      isActive ? 'text-purple-700 font-bold' : 'text-muted-foreground'
                     }`}
                   >
                     {pet.name}
@@ -364,8 +367,8 @@ export default function Home() {
               icon={Calendar}
               title="Próxima cita"
               value={nextAppointmentLabel}
-              cta={nextAppointmentForActive ? "Ver cita" : "Agendar ahora"}
-              accent={nextAppointmentForActive ? "default" : "warning"}
+              cta={nextAppointmentForActive ? 'Ver cita' : 'Agendar ahora'}
+              accent={nextAppointmentForActive ? 'default' : 'warning'}
               onClick={() => navigate(nextAppointmentForActive ? LINKS.bookings() : LINKS.vets())}
             />
             <StatusCard
@@ -373,33 +376,39 @@ export default function Home() {
               title="Vacunas"
               value={
                 activeVaccine?.upToDate
-                  ? "Al día"
+                  ? 'Al día'
                   : activeVaccine?.pendingName
                     ? `Pendiente: ${activeVaccine.pendingName}`
-                    : "Sin datos"
+                    : 'Sin datos'
               }
-              cta={activeVaccine?.upToDate ? "Ver historial" : "Ver próxima"}
-              accent={activeVaccine?.upToDate ? "success" : "warning"}
+              cta={activeVaccine?.upToDate ? 'Ver historial' : 'Ver próxima'}
+              accent={activeVaccine?.upToDate ? 'success' : 'warning'}
               onClick={() =>
-                navigate(activePet ? `/medical-records?pet=${activePet.id}` : LINKS.medicalRecords())
+                navigate(
+                  activePet ? `/medical-records?pet=${activePet.id}` : LINKS.medicalRecords()
+                )
               }
             />
             <StatusCard
               icon={FileText}
               title="Ficha médica"
               value={`${activeCompleteness}% completa`}
-              cta={activeCompleteness >= 80 ? "Compartir con vet" : "Completar ficha"}
-              accent={activeCompleteness >= 80 ? "success" : "default"}
+              cta={activeCompleteness >= 80 ? 'Compartir con vet' : 'Completar ficha'}
+              accent={activeCompleteness >= 80 ? 'success' : 'default'}
               onClick={() =>
-                navigate(activePet ? `/pet/${activePet.id}/clinical` : LINKS.medicalRecords())
+                navigate(activePet ? LINKS.petClinical(activePet.id) : LINKS.medicalRecords())
               }
             />
             <StatusCard
               icon={TrendingUp}
               title="Racha paseos"
-              value={streakDays > 0 ? `${streakDays} ${streakDays === 1 ? "día" : "días"}` : "Empieza hoy"}
+              value={
+                streakDays > 0
+                  ? `${streakDays} ${streakDays === 1 ? 'día' : 'días'}`
+                  : 'Empieza hoy'
+              }
               cta="Registrar paseo"
-              accent={streakDays > 0 ? "success" : "default"}
+              accent={streakDays > 0 ? 'success' : 'default'}
               onClick={() => navigate(LINKS.pawGame())}
             />
           </div>
@@ -407,7 +416,7 @@ export default function Home() {
           {/* === HEALTH ALERTS (prioridad máxima, visible inmediatamente) === */}
           {(overdueReminders.length > 0 || upcomingReminders.length > 0) && (
             <Card
-              className={`border-l-4 ${overdueReminders.length > 0 ? "border-l-red-500 bg-red-50/50" : "border-l-amber-400 bg-amber-50/50"}`}
+              className={`border-l-4 ${overdueReminders.length > 0 ? 'border-l-red-500 bg-red-50/50' : 'border-l-amber-400 bg-amber-50/50'}`}
             >
               <CardHeader className="pb-2">
                 <CardTitle className="text-base flex items-center gap-2">
@@ -432,9 +441,7 @@ export default function Home() {
                   >
                     <div className="min-w-0">
                       <p className="text-sm font-semibold truncate">{r.title}</p>
-                      <p className="text-xs text-red-700 truncate">
-                        {r.pets?.name} · vencido
-                      </p>
+                      <p className="text-xs text-red-700 truncate">{r.pets?.name} · vencido</p>
                     </div>
                     <Button
                       size="sm"
@@ -455,11 +462,7 @@ export default function Home() {
                       <p className="text-sm font-medium truncate">{r.title}</p>
                       <p className="text-xs text-muted-foreground truncate">{r.pets?.name}</p>
                     </div>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => completeReminder.mutate(r.id)}
-                    >
+                    <Button size="sm" variant="ghost" onClick={() => completeReminder.mutate(r.id)}>
                       <CheckCircle2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -467,7 +470,7 @@ export default function Home() {
                 <Button
                   variant="link"
                   size="sm"
-                  onClick={() => navigate("/reminders")}
+                  onClick={() => navigate('/reminders')}
                   className="w-full text-xs h-8 mt-1"
                 >
                   Ver todos los recordatorios →
@@ -482,13 +485,14 @@ export default function Home() {
           {/* === Weekly report card (si hay reporte no leído) === */}
           <WeeklyReportCard />
 
+          {/* === Tips estacionales por especie === */}
+          {activePet?.species && <SeasonalTipsCard species={activePet.species} />}
+
           {/* === Analytics preview cards === */}
-          {isFeatureEnabled("PRO_ANALYTICS") && (
+          {isFeatureEnabled('PRO_ANALYTICS') && (
             <>
               <AnalyticsPreviewCard />
-              {activePet && (
-                <PetWellnessPreview petId={activePet.id} petName={activePet.name} />
-              )}
+              {activePet && <PetWellnessPreview petId={activePet.id} petName={activePet.name} />}
             </>
           )}
         </>
@@ -498,7 +502,7 @@ export default function Home() {
       {pendingReviewCount > 0 && (
         <Card
           className="border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => navigate("/mis-reservas")}
+          onClick={() => navigate('/mis-reservas')}
         >
           <CardContent className="flex items-center gap-4 py-3">
             <div className="rounded-full bg-amber-100 p-2.5 flex-shrink-0">
@@ -506,7 +510,8 @@ export default function Home() {
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-bold text-amber-800">
-                {pendingReviewCount} {pendingReviewCount === 1 ? 'reseña pendiente' : 'reseñas pendientes'}
+                {pendingReviewCount}{' '}
+                {pendingReviewCount === 1 ? 'reseña pendiente' : 'reseñas pendientes'}
               </p>
               <p className="text-xs text-muted-foreground">
                 Tu opinión ayuda a otros dueños a elegir mejor
@@ -541,7 +546,7 @@ export default function Home() {
           <Button
             variant="outline"
             className="flex-shrink-0 snap-start lg:w-full justify-start h-auto py-2.5"
-            onClick={() => navigate("/precios-veterinarios")}
+            onClick={() => navigate('/precios-veterinarios')}
           >
             <TrendingUp className="h-4 w-4 mr-2 text-amber-600" />
             <span className="text-xs">Precios vets</span>
@@ -561,7 +566,7 @@ export default function Home() {
       {stats && (
         <Card
           className="border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => navigate("/paw-game")}
+          onClick={() => navigate('/paw-game')}
         >
           <CardContent className="flex items-center gap-4 py-3">
             <div className="rounded-full bg-purple-100 p-2.5 flex-shrink-0">
@@ -570,7 +575,7 @@ export default function Home() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-bold text-purple-800">
-                  {stats.points?.toLocaleString("es-CL") || 0} PawPoints
+                  {stats.points?.toLocaleString('es-CL') || 0} PawPoints
                 </span>
                 {stats.level > 1 && (
                   <span className="text-xs bg-purple-200 text-purple-700 px-1.5 py-0.5 rounded-full font-medium">
@@ -606,7 +611,7 @@ export default function Home() {
             variant="outline"
             size="sm"
             className="flex-shrink-0 border-purple-300 text-purple-700 hover:bg-purple-100"
-            onClick={() => navigate("/settings")}
+            onClick={() => navigate('/settings')}
           >
             <Smartphone className="h-3.5 w-3.5 mr-1" />
             Configurar

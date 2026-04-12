@@ -19,18 +19,18 @@
  * sentirse parte de la app.
  */
 export const PUBLIC_ROUTES = [
-  "/",                                  // Landing (redirige a /home si user logueado)
-  "/auth",                              // Login / signup
-  "/terms",
-  "/privacy",
-  "/para-veterinarios",                 // Pitch B2B
-  "/registro-veterinario",              // Onboarding vet
-  "/veterinarios",                      // Directorio publico (SEO)
-  "/veterinarios/comuna/:comuna",
-  "/veterinarios/especialidad/:especialidad",
-  "/veterinarios/:slug",                // Perfil publico vet
-  "/resena/:token",                     // Dejar resena via link temporal
-  "/demo",                              // Demo interna
+  '/', // Landing (redirige a /home si user logueado)
+  '/auth', // Login / signup
+  '/terms',
+  '/privacy',
+  '/para-veterinarios', // Pitch B2B
+  '/registro-veterinario', // Onboarding vet
+  '/veterinarios', // Directorio publico (SEO)
+  '/veterinarios/comuna/:comuna',
+  '/veterinarios/especialidad/:especialidad',
+  '/veterinarios/:slug', // Perfil publico vet
+  '/resena/:token', // Dejar resena via link temporal
+  '/demo', // Demo interna
 ] as const;
 
 /**
@@ -38,37 +38,37 @@ export const PUBLIC_ROUTES = [
  * `<ProtectedRoute>` lo redirige a `/auth?returnTo=<ruta-original>`.
  */
 export const PROTECTED_ROUTES = [
-  "/home",
-  "/feed",
-  "/my-pets",
-  "/add-pet",
-  "/edit-pet/:petId",
-  "/pet/:petId/clinical",
-  "/medical-records",
-  "/adoption",
-  "/paw-game",
-  "/servicios",
-  "/services/:type",
-  "/maps",
-  "/chat",
-  "/chat/:conversationId",
-  "/profile",
-  "/user/:userId",
-  "/settings",
-  "/upgrade",
-  "/upgrade/success",
-  "/upgrade/cancel",
-  "/payment-result",
-  "/mis-reservas",
-  "/peluquero/perfil",
-  "/provider/dashboard",
-  "/provider/profile-edit",
+  '/home',
+  '/feed',
+  '/my-pets',
+  '/add-pet',
+  '/edit-pet/:petId',
+  '/mascota/:petId/ficha-clinica',
+  '/medical-records',
+  '/adoption',
+  '/paw-game',
+  '/servicios',
+  '/services/:type',
+  '/maps',
+  '/chat',
+  '/chat/:conversationId',
+  '/profile',
+  '/user/:userId',
+  '/settings',
+  '/upgrade',
+  '/upgrade/success',
+  '/upgrade/cancel',
+  '/payment-result',
+  '/mis-reservas',
+  '/peluquero/perfil',
+  '/provider/dashboard',
+  '/provider/profile-edit',
 ] as const;
 
 /**
  * Rutas que requieren rol admin (`<AdminRoute>`).
  */
-export const ADMIN_ROUTES = ["/admin"] as const;
+export const ADMIN_ROUTES = ['/admin'] as const;
 
 /**
  * Reglas de redireccion: cuando un user en cierto estado entra a cierta ruta,
@@ -88,13 +88,13 @@ export const ADMIN_ROUTES = ["/admin"] as const;
  */
 export const AUTH_REDIRECTS = {
   /** Usuario logueado entra a la landing */
-  loggedInOnLanding: "/home",
+  loggedInOnLanding: '/home',
   /** Default post-login para owners con mascotas */
-  ownerWithPets: "/home",
+  ownerWithPets: '/home',
   /** Default post-login para owners sin mascotas */
-  ownerWithoutPets: "/add-pet",
+  ownerWithoutPets: '/add-pet',
   /** Default post-login para vets/providers */
-  provider: "/provider/dashboard",
+  provider: '/provider/dashboard',
   /** Post-logout */
-  afterLogout: "/auth",
+  afterLogout: '/auth',
 } as const;

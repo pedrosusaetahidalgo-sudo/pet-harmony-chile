@@ -12,12 +12,10 @@ export const LINKS = {
   vets: () => '/veterinarios',
 
   /** Directorio filtrado por comuna */
-  vetsByComuna: (comuna: string) =>
-    `/veterinarios/comuna/${slugify(comuna)}`,
+  vetsByComuna: (comuna: string) => `/veterinarios/comuna/${slugify(comuna)}`,
 
   /** Directorio filtrado por especialidad */
-  vetsBySpecialty: (specialty: string) =>
-    `/veterinarios/especialidad/${slugify(specialty)}`,
+  vetsBySpecialty: (specialty: string) => `/veterinarios/especialidad/${slugify(specialty)}`,
 
   /** Perfil público de un vet */
   vetProfile: (slug: string) => `/veterinarios/${slug}`,
@@ -38,13 +36,13 @@ export const LINKS = {
   addPet: () => '/add-pet',
 
   /** Ficha clínica de una mascota */
-  petClinical: (petId: string) => `/pet/${petId}/clinical`,
+  petClinical: (petId: string) => `/mascota/${petId}/ficha-clinica`,
 
   /** Ficha clínica abierta directamente en la pestaña de compartir */
-  petClinicalShare: (petId: string) => `/pet/${petId}/clinical?action=share`,
+  petClinicalShare: (petId: string) => `/mascota/${petId}/ficha-clinica?action=share`,
 
   /** Ficha clínica abierta con CTA de reservar vet */
-  petClinicalBook: (petId: string) => `/pet/${petId}/clinical?action=book`,
+  petClinicalBook: (petId: string) => `/mascota/${petId}/ficha-clinica?action=book`,
 
   /** Historial médico global */
   medicalRecords: () => '/medical-records',
@@ -62,8 +60,7 @@ export const LINKS = {
 
   // === Auth con returnTo ===
   /** Login con redirect post-login */
-  authReturn: (returnTo: string) =>
-    `/auth?returnTo=${encodeURIComponent(returnTo)}`,
+  authReturn: (returnTo: string) => `/auth?returnTo=${encodeURIComponent(returnTo)}`,
 
   // === Otras ===
   home: () => '/home',

@@ -1,15 +1,16 @@
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/hooks/useAuth";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Heart, Undo2, MessageCircle } from "@/lib/icons";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { MemorialCard } from "@/components/memorial/MemorialCard";
-import { BereavementChat } from "@/components/memorial/BereavementChat";
-import { toast } from "sonner";
-import { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import { LINKS } from '@/lib/links';
+import { useAuth } from '@/hooks/useAuth';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Heart, Undo2, MessageCircle } from '@/lib/icons';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { MemorialCard } from '@/components/memorial/MemorialCard';
+import { BereavementChat } from '@/components/memorial/BereavementChat';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 export default function EnMemoria() {
   const { user } = useAuth();
@@ -19,15 +20,17 @@ export default function EnMemoria() {
   const [chatPet, setChatPet] = useState<{ id: string; name: string } | null>(null);
 
   const { data: memorialPets = [], isLoading } = useQuery({
-    queryKey: ["memorial-pets", user?.id],
+    queryKey: ['memorial-pets', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
       const { data, error } = await supabase
-        .from("pets")
-        .select("id, name, species, photo_url, memorial_photo_url, birth_date, passed_away_at, memorial_message, memorial_undo_until")
-        .eq("owner_id", user.id)
-        .eq("lifecycle_status", "memorial")
-        .order("passed_away_at", { ascending: false });
+        .from('pets')
+        .select(
+          'id, name, species, photo_url, memorial_photo_url, birth_date, passed_away_at, memorial_message, memorial_undo_until'
+        )
+        .eq('owner_id', user.id)
+        .eq('lifecycle_status', 'memorial')
+        .order('passed_away_at', { ascending: false });
       if (error) throw error;
       return data || [];
     },
@@ -37,9 +40,9 @@ export default function EnMemoria() {
   const undoMutation = useMutation({
     mutationFn: async (petId: string) => {
       const { error } = await supabase
-        .from("pets")
+        .from('pets')
         .update({
-          lifecycle_status: "active",
+          lifecycle_status: 'active',
           passed_away_at: null,
           passed_away_registered_at: null,
           passed_away_cause: null,
@@ -48,23 +51,23 @@ export default function EnMemoria() {
           memorial_visibility: null,
           memorial_remembrance_enabled: false,
         })
-        .eq("id", petId);
+        .eq('id', petId);
       if (error) throw error;
 
       // Restore reminders (undo can't fully restore, but un-complete them)
       await supabase
-        .from("pet_reminders")
+        .from('pet_reminders')
         .update({ is_completed: false, completed_at: null })
-        .eq("pet_id", petId)
-        .eq("is_completed", true);
+        .eq('pet_id', petId)
+        .eq('is_completed', true);
     },
     onSuccess: () => {
-      toast.success("Se restauró correctamente. Tu mascota está de vuelta en tu lista.");
-      qc.invalidateQueries({ queryKey: ["memorial-pets"] });
-      qc.invalidateQueries({ queryKey: ["user-pets"] });
+      toast.success('Se restauró correctamente. Tu mascota está de vuelta en tu lista.');
+      qc.invalidateQueries({ queryKey: ['memorial-pets'] });
+      qc.invalidateQueries({ queryKey: ['user-pets'] });
     },
     onError: () => {
-      toast.error("No pudimos restaurar. Intenta de nuevo.");
+      toast.error('No pudimos restaurar. Intenta de nuevo.');
     },
   });
 
@@ -93,12 +96,12 @@ export default function EnMemoria() {
         <Heart className="h-16 w-16 mx-auto mb-4 text-purple-300" />
         <h1 className="text-xl font-semibold mb-2">En memoria</h1>
         <p className="text-muted-foreground max-w-md mx-auto">
-          Este es un espacio para honrar a las mascotas que ya no nos acompañan.
-          Puedes registrar su despedida desde la ficha clínica de tu mascota.
+          Este es un espacio para honrar a las mascotas que ya no nos acompañan. Puedes registrar su
+          despedida desde la ficha clínica de tu mascota.
         </p>
         <p className="text-sm text-muted-foreground max-w-md mx-auto">
-          Su historial médico se conservará para siempre y los recordatorios pendientes
-          se cancelarán automáticamente.
+          Su historial médico se conservará para siempre y los recordatorios pendientes se
+          cancelarán automáticamente.
         </p>
       </div>
     );
@@ -114,10 +117,7 @@ export default function EnMemoria() {
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {memorialPets.map((pet) => (
           <div key={pet.id} className="space-y-1">
-            <MemorialCard
-              pet={pet}
-              onClick={() => navigate(`/pet/${pet.id}/clinical`)}
-            />
+            <MemorialCard pet={pet} onClick={() => navigate(LINKS.petClinical(pet.id))} />
             <div className="flex gap-1">
               <Button
                 variant="ghost"
@@ -152,7 +152,8 @@ export default function EnMemoria() {
       <Card className="border-purple-100 bg-purple-50/30">
         <CardContent className="p-4 text-center space-y-2">
           <p className="text-sm text-muted-foreground">
-            Si necesitas hablar con alguien ahora, llama a Salud Responde: <strong>600 360 7777</strong> (24h, gratis)
+            Si necesitas hablar con alguien ahora, llama a Salud Responde:{' '}
+            <strong>600 360 7777</strong> (24h, gratis)
           </p>
         </CardContent>
       </Card>

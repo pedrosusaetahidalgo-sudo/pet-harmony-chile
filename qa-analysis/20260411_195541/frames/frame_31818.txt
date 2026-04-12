@@ -1,0 +1,36 @@
+a Andlisis de agentes IA sin códir X — * Clinica Veterinaria Altamira |Ve X * ) New Tab x|+ - X
+€ C — % pawriendd oar " » o 4 @:
+BE EE Redirecting Documentos Felipe... Templates Power Bl...) The 16 Best GPTs fo... Marketing - EB Actividades Mis acti... EB Corporativo - Experi... lJ powerYOU —7 Experis Latam - Gen.. »
+TE Y R [6 Elements _Console Sources > uavnu YO : x
+EN o RE —
+M 5;¡¿%¡4"? - — CCE Default levels ¥ | 69 Issues: 114 855
+Gwen. thane oe m u muse
+Lea Raia, i "laren a
+O ANE MRT Si describedby=(und S - -
+EN ee. Fed » POST supabase-vendor-B4DEupPa.js:26 ()
+e ACO N D https: //gwai lbjlvevkhwcrovéd.supabase.co/rest/vi/pet reminders 400 (Bad
+eae S » [supabase] index-C7rMReNu.is:3
+N » (code: *23514', ‘new row for retation “pet_reminders” viola
+Mila Roque tes check constraint “pet_reminders_type_check"', + null,
+7
+' » Warning: Missing “Description” or “aria- — ui-vendor-DVtSlUcm.js:45
+, . - describedby-(undefined)" for (DialogContent)
+- » GET supabase-vendor-B40EupPq.js:26 @
+httes://ewailbjlvevkhwcrovfd, supabase. co/rest/vi/user roles?select=rol.
+400 (Bad Request)
+» eET supabase-vendor-BADEUPPQ.5:26 @
+3 .2 https: //gwailbjlvevkhwcrovfd. supabase. co/rest/v1/posts?select=*%2Cprof..
+= 400 (Gad Request)
+» GET supabase-vendor-B4DEUNPQ.i5:25 @
+u httos://euailbi]vevihwcrovfd. supabase. co/rest/vi/posts?select="%2Corof-
+ol iene 400 (Bad Request)
+e . » GET supabase-vendor-B4DEupPq.4s:26 @
+- - - https: //gwailbj1vevkhucrovéd. supabase. o/rest/v1/posts?select="42Cprof
+d n 4 400 (Bad Request)
+- 5 » GET supabase-vendor-BADEUNPQ.15:26 69
+- 4 = Py httos://gwailbjlvevkhwcrovéd. supabase. co/rest/v1/posts?select="%2Cprof..
+LY - .=7 400 (Bad Request)
+- » Post supabase-vendor-BaDEupPa. 45:26 @
+% — httes://gwailbjlvevkhucrovéd. supabase. co/rest/v1/rpc/award points 408
+y . (Bad Request)
+' :

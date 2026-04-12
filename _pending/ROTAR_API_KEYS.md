@@ -2,7 +2,7 @@
 
 > Documento de procedimiento. Aplicar cuando: (a) hubo un leak (key pegada en chat, screenshot, repo público, log), (b) sale alguien del equipo con acceso, (c) auditoría preventiva trimestral.
 >
-> **Regla de oro**: si tenés DUDA de si una key se vio, rotala. Es 5 minutos y vale la pena.
+> **Regla de oro**: si tienes DUDA de si una key se vio, rótala. Es 5 minutos y vale la pena.
 
 ---
 
@@ -22,12 +22,12 @@
 ## Antes de empezar (10 min)
 
 1. **Anotar en un papel** (o gestor de contraseñas como Bitwarden / 1Password) qué keys vas a rotar y en qué orden.
-2. **Verificar que tenés acceso de admin** a:
+2. **Verificar que tienes acceso de admin** a:
    - Dashboard Supabase: https://supabase.com/dashboard/project/gwailbjlvevkhwcrovfd
    - Anthropic Console: https://console.anthropic.com/settings/keys
    - Flow.cl: https://www.flow.cl/app
 3. **Tener listo el repo local** con `git status` limpio (por si hay que pushear cambios).
-4. **Aviso**: durante la rotación de Supabase service_role, las edge functions pueden fallar por unos segundos hasta que actualices el secret. Si está en producción, hacelo en horario de poco tráfico.
+4. **Aviso**: durante la rotación de Supabase service_role, las edge functions pueden fallar por unos segundos hasta que actualices el secret. Si está en producción, hazlo en horario de poco tráfico.
 
 ---
 
@@ -45,7 +45,7 @@
    npx supabase secrets set SUPABASE_SERVICE_ROLE_KEY=<nueva> --project-ref gwailbjlvevkhwcrovfd
    ```
    ⚠️ NO pegar la key en el chat con asistentes, NO commitearla, NO subirla a Slack.
-6. **Actualizar `.env.demo.local` local** si lo usás para el script de seed:
+6. **Actualizar `.env.demo.local` local** si lo usas para el script de seed:
    ```powershell
    Set-Content -Path .env.demo.local -Value "SUPABASE_URL=https://gwailbjlvevkhwcrovfd.supabase.co`nSUPABASE_SERVICE_ROLE_KEY=<nueva>"
    ```
@@ -58,7 +58,7 @@
 
 ## 2. Rotar Supabase `publishable` (anon) key
 
-**Cuándo**: rara vez. Solo si sospechás que la usaron para algo malicioso (spam de signups, enumeración de tablas con RLS débil). Es pública por diseño, no es urgente.
+**Cuándo**: rara vez. Solo si sospechas que la usaron para algo malicioso (spam de signups, enumeración de tablas con RLS débil). Es pública por diseño, no es urgente.
 
 ### Pasos
 1. Dashboard → Settings → API → fila `publishable` (o `anon`) → Reset.
@@ -80,7 +80,7 @@ A partir de mediados de 2026 Supabase deshabilita las **legacy API keys** (las J
 
 ## 3. Rotar Supabase JWT secret
 
-**Cuándo**: si sospechás que alguien lo tiene (extremadamente raro, normalmente solo lo ve admin del dashboard).
+**Cuándo**: si sospechas que alguien lo tiene (extremadamente raro, normalmente solo lo ve admin del dashboard).
 
 ### Pasos
 1. Dashboard → Settings → API → sección "JWT Settings" → **Generate new secret**.
@@ -127,7 +127,7 @@ A partir de mediados de 2026 Supabase deshabilita las **legacy API keys** (las J
    - Verificar que el webhook llegó y aplicó premium
 5. Si todo OK, borrar las keys viejas en Flow.
 
-⚠️ Flow normalmente NO permite tener 2 keys activas simultáneas. La rotación es atómica: la vieja muere en el momento de generar la nueva. Hacelo en horario de poco tráfico.
+⚠️ Flow normalmente NO permite tener 2 keys activas simultáneas. La rotación es atómica: la vieja muere en el momento de generar la nueva. Hazlo en horario de poco tráfico.
 
 ---
 
@@ -160,8 +160,8 @@ A partir de mediados de 2026 Supabase deshabilita las **legacy API keys** (las J
 1. **NUNCA pegar secrets en el chat con asistentes de IA.** Aunque sean privados, los logs pueden persistir.
 2. **NUNCA commitear archivos `.env*`.** El `.gitignore` ya cubre `*.local`, `.env`, `.env.local`, etc.
 3. **NUNCA pegar el output de `supabase secrets list`** — incluye los valores.
-4. **Cuando un asistente te pida una key**, pegásela en el archivo `.env` correspondiente, NO en el chat. Después referenciala con `--env-file`.
-5. **Si dudás si una key se vio**, rotá. Tarda 5 minutos y duerme tranquilo.
+4. **Cuando un asistente te pida una key**, pégala en el archivo `.env` correspondiente, NO en el chat. Después referenciala con `--env-file`.
+5. **Si dudas si una key se vio**, rota. Tarda 5 minutos y duerme tranquilo.
 6. **Documentar el incidente**: qué key, cuándo, en qué canal, cuándo se rotó. Tener esto te salva si después aparece uso indebido.
 
 ---

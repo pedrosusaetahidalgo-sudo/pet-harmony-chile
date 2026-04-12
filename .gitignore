@@ -49,3 +49,6 @@ playwright-report/
 test-results/
 blob-report/
 e2e/.auth/
+
+# Bundle visualizer
+stats.html

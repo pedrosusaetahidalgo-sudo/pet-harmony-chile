@@ -1,6 +1,6 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-11
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-13
     %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (21 activas).
     %% Refleja navegacion real post-optimizacion:
     %%   BottomTabBar: Inicio | Mascotas | Vets | Recordatorios | Perfil
@@ -88,10 +88,8 @@ flowchart TD
         PET_LIST["Lista mascotas"]
         PET_ADD["Agregar /add-pet"]
         PET_EDIT["Editar /edit-pet/:id"]
-        PET_MED_IDX["Indice registros /medical-records"]
         PET_LIST --> PET_ADD
         PET_LIST --> PET_EDIT
-        PET_LIST --> PET_MED_IDX
     end
 
     PET_ADD --> PLAN_CHK{"Limite plan?"}
@@ -105,7 +103,7 @@ flowchart TD
     PET_LIST --> FC_RES
 
     %% ============ FICHA CLINICA ============
-    subgraph CLINICAL["FICHA CLINICA /pet/:id/clinical"]
+    subgraph CLINICAL["FICHA CLINICA /mascota/:id/ficha-clinica"]
         direction TB
         FC_RES["Tab Resumen"]
         FC_HIST["Tab Historial 25 tipos"]

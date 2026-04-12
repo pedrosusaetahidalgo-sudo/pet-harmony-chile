@@ -2,7 +2,22 @@
 
 > Blueprint maestro para rediseñar la pestaña **Perfil** de Paw Friend con estándar de Principal Product Designer + Senior UX/UI + Mobile App UX Architect + Design Systems Expert.
 > Autor: Claude Code · Fecha: 2026-04-11
-> **Estado:** pendiente — no implementado. Ningún componente creado, `Profile.tsx` y `Settings.tsx` intactos.
+> **Estado:** PARCIALMENTE IMPLEMENTADO (2026-04-29) — sub-componentes ya existen, falta reorganizar layout.
+> **Ultima revision**: 2026-04-29
+>
+> ### Que ya existe (no recrear)
+> - `Profile.tsx` ya usa sub-componentes: `ProfileIdentityCard`, `PetIdentityCard`, `AddPetCard`, `ProfileCompletionCard`, `ProfileSettingsList`, `EditProfileDrawer`
+> - Gamificacion integrada: `PointsWidget`, `AchievementBadge`, `MissionCard`
+> - `IntegrationsCard` para Google Calendar
+> - Data fetching inline via `useEffect`/supabase (no hay hook `useProfile` dedicado)
+>
+> ### Que queda pendiente de este blueprint
+> - Reorganizar layout a 6 bloques verticales (actualmente tiene tabs tipo Instagram)
+> - Merge de Settings.tsx en Block F de Profile
+> - Pets carousel horizontal (Block B) en vez de tab separado
+> - Completeness rings por mascota
+> - Minimo 12px texto (actualmente hay textos de 9px)
+> - Alinear UserProfile.tsx (perfil publico) con nuevo diseno
 > Archivos auditados:
 > - [src/pages/Profile.tsx](src/pages/Profile.tsx) — pantalla actual
 > - [src/pages/UserProfile.tsx](src/pages/UserProfile.tsx) — perfil público de otros usuarios

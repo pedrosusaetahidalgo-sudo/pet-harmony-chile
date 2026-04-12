@@ -1,0 +1,36 @@
+v Análisis de agentes WA sin códic — {Clinica Veterinaria Altamira |Ve »| € New Tab x + - 9 x
+€ C -% pawfriendd/services/tra E * ._» o + @:
+BE EE Redirecting / Documentos Felipe... — / Templates Power Bl.. — M The 16 Best GPTsfo... — Marketing - EB Actividades Mis acti... EB Corporativo - Experi... lf powerYOU — / Experis Latam - Gen.. »
+i R 0B Elements Console Sources» 28 419 114 @ ix
+) Inicio < EntrenadoresCaninos — e
+Encuentra entrenadores profesionales pat as DO » |O| Y Filter Default levels ¥ | 64 Issues: 14 250
+de Mismascotas =
+S Servicios > Entrenadores Caninos N s
+) Recordatorios » Post Supabase-vendor-B4DEupPa.js:26 @ A
+https: //ewai lb jlvevkhucrovéd. supabase. co/ functions /vi/bereavenent-as si
+401 (Unauthorized)
+vescua mof » “DialogContent" requires a “Dialogritle — ui-vendor-DVESIUem.is:45
+a for the component to be accessible for screen reader users.
+Buscarvet
+If you want to hide the “DialogTitle™, you can wrap it with our
+Servicio’ = Visuallyttidden component.
+a Q Buscar bre o ubic E Fecha 35 Filtros EE "
+Mapa For more information, see
+) https://radix-Ui. con/primitives/docs/comonents/dialog
+» iaming: Missing “Description” or“aria- — ui-vendor-DVÉSMcn.is:45
+» GET supabase-vendor-BADEUDPa.5:26 @
+v ka httos://euailbi]vevihwcrovfd. supabase.co/rest/vi/pet reminders?select=.
+EÉ 400 (Bad Request)
+6 E » Ger ‘supabase-vendor-B4DEupPa.is:25 @
+https: //ewai lbjlvevkhucrovéa. supabase. co/rest/vI/pet reminders?select=.
+D Mensaje: 400 (Bad Request)
+» arning: Missing “Description” or ‘aria-  yi-vendor-DvtsiUcm.4s:45
+CEE describedby={undefined}’ for (DialogContent).
+» POST supabase-vendor-B4DEupPa.is:26 @
+_ httos://euailbj]vevihwcroved. supabase.co/rest/vi/pet reminders 400 (Bad
+psusaetaht3 a
+* Contguracién » [supabase] index-C7rMReWy. 35:3
+Configura » {coder *23514', + ‘new row for relation “pet_reminders” viola
+tes check constraint “pet reminders_type check"", details: null,
+© CerrarSesión 7
+» Wamning: Missing “Description” or“aria- — ui-vendor-DVESIUem.js:45

@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci --legacy-peer-deps
+
+      - name: Lint
+        run: npm run lint || true
+
+      - name: Type check
+        run: npx tsc -b
+
+      - name: Build
+        run: npm run build
+
+      - name: Unit tests
+        run: npm run test:ci
+
+      - name: npm audit
+        run: npm audit --audit-level=high || true
+
+      - name: Check bundle size
+        run: |
+          MAIN_SIZE=$(find docs/assets -name 'index-*.js' -exec wc -c {} + | tail -1 | awk '{print $1}')
+          MAX_SIZE=350000
+          echo "Main bundle: $MAIN_SIZE bytes (max: $MAX_SIZE)"
+          if [ "$MAIN_SIZE" -gt "$MAX_SIZE" ]; then
+            echo "::error::Bundle size $MAIN_SIZE exceeds limit of $MAX_SIZE bytes"
+            exit 1
+          fi

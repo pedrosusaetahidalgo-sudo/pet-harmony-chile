@@ -1,0 +1,28 @@
+v Análisis de agentes IA sin códic - — 8 Predos de velernarios enChile X) $) New Tab X + — @ x
+< C -% pawfriend.d [ 7 5 + @:
+BE EE Redirecting / Documentos Felipe... Templates Power Bl.. — M The 16 Best GPTsfo... — Marketing - EB Actividades Mis acti... EB Corporativo - Experi... lf powerYOU — / Experis Latam - Gen.. »
+R £0 Elements Console Sources >> ann YS : x
++ ete DO wor |O| Yy filter Defauit levels ¥ | 56 Issues: 913 843
+https: //ewai lbjlvevkhwcrovfd. supabase.co/functions/vi/bereavement-assi. — a
+401 (Unauthorized)
+» POST supabase-vendor-BADEUPPa.is:26 @
+httos://euailbi]vevihwcroved. supabase . co/functions /vi/bereavenent-assi-
+401 (Unauthorized)
+- » “DialogContent” requires a “DialogTitle” — ui-vendor-DVtSlUcm.is:45
+ui a a Sa u for the component to be accessible for screen reader users.
+Tf you want to hide the “Dialogritle”, you can wrap it with our
+Visuallystidden component.
+https://radix-ui.con/primitives/docs/components/dialog
+» warning: Missing “Description” or“aria- — ui-vendor-DVESIUCm.is:45
+» GET supabase-vendor-B4DEupPa.is:26 @
+httos://euailbi]vevihwcroved. supabase. co/rest/vI/pet reminders?select=.
+400 (Bad Request)
+» GET supabase-vendor-BADEUNPQ.i5:26 ®
+httos://euailbi]vevihwcrovEd. supabase.co/rest/vi/pet reminders?select=.
+400 (Bad Request)
+Encuentra, reserva y lleva la ficha médica de tu » Warning: Missing “Description” or “aria- — ui-vendor-DVESIUEn.is:45
+mascota en un solo lugar. Gratis para tu primera » POST supabase-vendor-B4DEupPq.is:26 @
+mascota Request)
+» [supabase] index-C7rMReNu-3s:3
+weir teh Reseñasverificadas © Datosseguros - Y Sintarjeta » {coder “235147, + ‘new row for relation “pet_reminders” viola
+tes check constraint “pet reminders_type check”*, details? null,

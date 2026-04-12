@@ -1,0 +1,35 @@
+v Análsis de agentes l sin códic X — 8 Paw Friend Premium —Cuida rX () New Tab X + - O x
+€ C -% pawfriend.d/pet/t: I5 nical E * ox Ea i @:
+BEB Redirecting» Documentos Felipe. Templates Power Bl... — Á The 16 Best GPTsfo.. Marketing IE Actividades Mis acti... JE Corporativo - Experi... - / powerYOU — / Experis Latam - Gen... »
+[L] EE E R £0 Elements _Console Sources >> eaua3n YS : x
+claudio cafati metlife Ta - m
+_ ñ O »7 |O| Y Filter Defaultlevels ¥ | 51 Issues: 913 241
++56982092588 cafati s
+NELDS://r30DX-U1. COm/pr-m iveS/d0c5/comonents/a1a108 a
+» Warning: Missing ‘Description’ or “aria- ui-vendor-DVtSlUcm.is:45
+describedby={undefined}” for {DialogContent}.
+» Post supabase-vendor-BADEupPa.is:26 @
+y httos://euailbj]vevihwcroved. supabase . co/functions /vi /bereavenent-as=i.
+S Evaluación de dolor Peat CURSES)
+, , 5 » Post sunabase-vendor-B4DEUNPa.35:26 @
+iit : bec d ae o httos://ewailbjlvevkhwcrovfd. supabase. co/functions/v1/bereavement-assi..
+461 (Unauthorized)
+& Evaluardolor » POST Supabase-vendor-B4DEupPq.js:26 @
+httos://euailbi]vevihwcrovfd. supabase.co/ functions /vi/bereavenent-assi_
+401 (Unauthorized)
+» “OialogContent” requires a “DialogTitle” — ui-vendor-pvtSivcm.is:45
+for the component to be accessible for screen reader users.
+Necesitas actualizar la informacion clinica de Kai? If you want to hide the “DialogTitle”, you can wrap it with our
+Visuallyitidden component.
+©) Edhardatos cliicos For more information, see
+https://radix-ui.com/primitives/docs/components/dialog
+A »Harning: Missing “Description” or aria- — ui-vendor-DVESMUem.is:45
+describedby=(undefined)" for {DialogContent}.
+Programarecordatorios de vacunas, controles y medicamentos » GET Supabase-vendor-B4DEupPa.js:26 @
+https: //ewailbjlvevkhwcrovfd. supabase.co/rest/v1/pet reminders?select=.
+400 (Bad Request)
++ AgregarRegordatorio veer sunabase-vendor-eapEunea.is:26 @
+hit tps: / /ewai Ibilvevkhucrovéd. supebase. co/rest/Vi/pet reminders?select=.
+400 (Bad Request)
+> Warning: Missing “Description” or “aria- ui-vendor-DV*SIUem. 2:45
+describedby={undefined}” for (DialogContent).

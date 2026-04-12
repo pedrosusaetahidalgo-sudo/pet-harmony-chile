@@ -14,8 +14,10 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useQuery } from '@tanstack/react-query';
 import { useDirectoryVets, type DirectoryVetFilters } from '@/hooks/useDirectoryVets';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import PriceEstimatorWidget from '@/components/PriceEstimatorWidget';
 import { isOpenNow, getTodayHours } from '@/lib/openingHours';
 import {
@@ -53,6 +55,20 @@ export default function DirectorioVets() {
 
   const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } =
     useDirectoryVets(filters);
+
+  // P5: IDs de proveedores que atienden hoy
+  const { data: todayAvailableIds = new Set<string>() } = useQuery({
+    queryKey: ['today-available-vets'],
+    queryFn: async () => {
+      const today = new Date().toISOString().split('T')[0];
+      const { data: rows } = await supabase
+        .from('provider_availability')
+        .select('user_id')
+        .eq('date', today);
+      return new Set((rows || []).map((r: { user_id: string }) => r.user_id));
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
   const allVets: Vet[] = useMemo(() => data?.pages.flat() ?? [], [data]);
   const vets = useMemo(() => {
@@ -123,17 +139,24 @@ export default function DirectorioVets() {
               Veterinarios en {comuna}
             </h1>
             <p className="text-lg text-muted-foreground mb-4">
-              Encuentra los mejores veterinarios en {comuna}. Compara precios, lee resenas verificadas y agenda tu consulta online.
+              Encuentra los mejores veterinarios en {comuna}. Compara precios, lee resenas
+              verificadas y agenda tu consulta online.
             </p>
             {comunaStats && !isLoading && (
               <Card className="p-4 bg-purple-50/50 border-purple-200">
                 <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm font-medium text-purple-900">
-                  <span>{comunaStats.count} veterinario{comunaStats.count !== 1 ? 's' : ''} verificado{comunaStats.count !== 1 ? 's' : ''}</span>
+                  <span>
+                    {comunaStats.count} veterinario{comunaStats.count !== 1 ? 's' : ''} verificado
+                    {comunaStats.count !== 1 ? 's' : ''}
+                  </span>
                   {comunaStats.minPrice && (
                     <span>Consulta general desde {formatCLP(comunaStats.minPrice)}</span>
                   )}
                   {comunaStats.specialtyCount > 0 && (
-                    <span>{comunaStats.specialtyCount} especialidad{comunaStats.specialtyCount !== 1 ? 'es' : ''}</span>
+                    <span>
+                      {comunaStats.specialtyCount} especialidad
+                      {comunaStats.specialtyCount !== 1 ? 'es' : ''}
+                    </span>
                   )}
                 </div>
               </Card>
@@ -176,7 +199,9 @@ export default function DirectorioVets() {
               <SelectContent>
                 <SelectItem value="all">Todas las comunas</SelectItem>
                 {SANTIAGO_COMUNAS.map((c) => (
-                  <SelectItem key={c} value={c}>{c}</SelectItem>
+                  <SelectItem key={c} value={c}>
+                    {c}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -184,7 +209,9 @@ export default function DirectorioVets() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
             <Select value={type} onValueChange={setType}>
-              <SelectTrigger><SelectValue placeholder="Tipo" /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue placeholder="Tipo" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos los tipos</SelectItem>
                 <SelectItem value="individual">Individual</SelectItem>
@@ -194,17 +221,23 @@ export default function DirectorioVets() {
             </Select>
 
             <Select value={specialty} onValueChange={setSpecialty}>
-              <SelectTrigger><SelectValue placeholder="Especialidad" /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue placeholder="Especialidad" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas las especialidades</SelectItem>
                 {VET_SPECIALTIES.map((s) => (
-                  <SelectItem key={s} value={s}>{s}</SelectItem>
+                  <SelectItem key={s} value={s}>
+                    {s}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
 
             <Select value={minRating} onValueChange={setMinRating}>
-              <SelectTrigger><SelectValue placeholder="Rating mínimo" /></SelectTrigger>
+              <SelectTrigger>
+                <SelectValue placeholder="Rating mínimo" />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="0">Cualquier rating</SelectItem>
                 <SelectItem value="3">★★★ y más</SelectItem>
@@ -218,19 +251,19 @@ export default function DirectorioVets() {
         {/* Filtros rápidos: Abierto ahora + Urgencias */}
         <div className="flex gap-2">
           <Button
-            variant={onlyOpen ? "default" : "outline"}
+            variant={onlyOpen ? 'default' : 'outline'}
             size="sm"
             onClick={() => setOnlyOpen((v) => !v)}
-            className={onlyOpen ? "bg-green-600 hover:bg-green-700" : ""}
+            className={onlyOpen ? 'bg-green-600 hover:bg-green-700' : ''}
           >
             <Clock className="h-4 w-4 mr-1" />
             Abiertos ahora
           </Button>
           <Button
-            variant={onlyEmergency ? "default" : "outline"}
+            variant={onlyEmergency ? 'default' : 'outline'}
             size="sm"
             onClick={() => setOnlyEmergency((v) => !v)}
-            className={onlyEmergency ? "bg-red-600 hover:bg-red-700" : ""}
+            className={onlyEmergency ? 'bg-red-600 hover:bg-red-700' : ''}
           >
             <Phone className="h-4 w-4 mr-1" />
             Atiende urgencias
@@ -251,9 +284,11 @@ export default function DirectorioVets() {
         </div>
 
         {/* Sección "Nuevos en Paw Friend" — solo visible sin filtros activos */}
-        {!isLoading && !filters.search && !filters.type && !filters.specialty && !filters.minRating && (
-          <NewVetsSection vets={vets} />
-        )}
+        {!isLoading &&
+          !filters.search &&
+          !filters.type &&
+          !filters.specialty &&
+          !filters.minRating && <NewVetsSection vets={vets} />}
 
         {/* Results */}
         {isLoading ? (
@@ -273,18 +308,14 @@ export default function DirectorioVets() {
         ) : (
           <div className="grid gap-4">
             {vets.map((vet) => (
-              <VetCard key={vet.id} vet={vet} />
+              <VetCard key={vet.id} vet={vet} attendsToday={todayAvailableIds.has(vet.user_id)} />
             ))}
           </div>
         )}
 
         {hasNextPage && (
           <div className="text-center mt-6">
-            <Button
-              variant="outline"
-              onClick={() => fetchNextPage()}
-              disabled={isFetchingNextPage}
-            >
+            <Button variant="outline" onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
               {isFetchingNextPage ? 'Cargando…' : 'Ver más veterinarios'}
             </Button>
           </div>
@@ -296,7 +327,7 @@ export default function DirectorioVets() {
   );
 }
 
-function VetCard({ vet }: { vet: Vet }) {
+function VetCard({ vet, attendsToday }: { vet: Vet; attendsToday?: boolean }) {
   const areas: string[] = vet.service_areas ?? [];
   const specialties: string[] = vet.specialties ?? [];
   const rating = Number(vet.avg_rating ?? 0);
@@ -330,9 +361,16 @@ function VetCard({ vet }: { vet: Vet }) {
               </h3>
               <div className="flex gap-1 shrink-0">
                 {vet.opening_hours && (
-                  <Badge variant="outline" className={openNow ? "bg-green-50 text-green-700 border-green-200" : "bg-gray-50 text-gray-500 border-gray-200"}>
+                  <Badge
+                    variant="outline"
+                    className={
+                      openNow
+                        ? 'bg-green-50 text-green-700 border-green-200'
+                        : 'bg-gray-50 text-gray-500 border-gray-200'
+                    }
+                  >
                     <Clock className="h-3 w-3 mr-1" />
-                    {openNow ? "Abierto" : "Cerrado"}
+                    {openNow ? 'Abierto' : 'Cerrado'}
                   </Badge>
                 )}
                 {vet.emergency_available && (
@@ -344,8 +382,11 @@ function VetCard({ vet }: { vet: Vet }) {
                 {vet.provider_type === 'home_visit' && (
                   <Badge variant="secondary">A domicilio</Badge>
                 )}
-                {vet.provider_type === 'clinic' && (
-                  <Badge variant="secondary">Clínica</Badge>
+                {vet.provider_type === 'clinic' && <Badge variant="secondary">Clínica</Badge>}
+                {attendsToday && (
+                  <Badge variant="outline" className="bg-green-100 text-green-700 border-green-200">
+                    Atiende hoy
+                  </Badge>
                 )}
               </div>
             </div>
@@ -368,7 +409,9 @@ function VetCard({ vet }: { vet: Vet }) {
                 <div className="flex items-center gap-1">
                   <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   <strong>{rating.toFixed(1)}</strong>
-                  <span className="text-muted-foreground">({reviewCount} {reviewCount === 1 ? 'reseña' : 'reseñas'})</span>
+                  <span className="text-muted-foreground">
+                    ({reviewCount} {reviewCount === 1 ? 'reseña' : 'reseñas'})
+                  </span>
                 </div>
               ) : (
                 <span className="text-sm text-muted-foreground">Sin reseñas aún</span>
@@ -379,9 +422,7 @@ function VetCard({ vet }: { vet: Vet }) {
                 </span>
               )}
               {vet.opening_hours && (
-                <span className="text-xs text-muted-foreground">
-                  Hoy: {todayHrs}
-                </span>
+                <span className="text-xs text-muted-foreground">Hoy: {todayHrs}</span>
               )}
             </div>
           </div>
@@ -400,7 +441,9 @@ function PublicHeader() {
         </Link>
         <div className="flex items-center gap-2">
           <Link to="/auth">
-            <Button variant="ghost" size="sm">Iniciar sesión</Button>
+            <Button variant="ghost" size="sm">
+              Iniciar sesión
+            </Button>
           </Link>
           <Link to="/auth">
             <Button size="sm">Registrarse</Button>
@@ -418,8 +461,12 @@ function PublicFooter() {
         <p className="text-xs">Hecho en Chile, para Chile · Pagos seguros con Flow</p>
         <p>© {new Date().getFullYear()} Paw Friend Chile · pawfriend.cl</p>
         <div className="flex justify-center gap-4 mt-2">
-          <Link to="/terms" className="hover:text-purple-700">Términos</Link>
-          <Link to="/privacy" className="hover:text-purple-700">Privacidad</Link>
+          <Link to="/terms" className="hover:text-purple-700">
+            Términos
+          </Link>
+          <Link to="/privacy" className="hover:text-purple-700">
+            Privacidad
+          </Link>
         </div>
       </div>
     </footer>
@@ -430,24 +477,16 @@ function NewVetsSection({ vets }: { vets: Vet[] }) {
   const ninetyDaysAgo = new Date();
   ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
 
-  const newVets = vets.filter(
-    (v) => v.created_at && new Date(v.created_at) > ninetyDaysAgo
-  );
+  const newVets = vets.filter((v) => v.created_at && new Date(v.created_at) > ninetyDaysAgo);
 
   if (newVets.length === 0) return null;
 
   return (
     <div className="mb-6">
-      <h2 className="text-lg font-semibold text-purple-900 mb-3">
-        Nuevos en Paw Friend
-      </h2>
+      <h2 className="text-lg font-semibold text-purple-900 mb-3">Nuevos en Paw Friend</h2>
       <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
         {newVets.slice(0, 10).map((vet) => (
-          <Link
-            key={vet.id}
-            to={`/veterinarios/${vet.slug}`}
-            className="flex-shrink-0 w-40"
-          >
+          <Link key={vet.id} to={`/veterinarios/${vet.slug}`} className="flex-shrink-0 w-40">
             <Card className="p-3 hover:shadow-md transition-shadow text-center h-full">
               {vet.avatar_url ? (
                 <img
@@ -460,12 +499,8 @@ function NewVetsSection({ vets }: { vets: Vet[] }) {
                   <Stethoscope className="h-6 w-6 text-purple-600" />
                 </div>
               )}
-              <Badge className="bg-purple-100 text-purple-700 text-[10px] mb-1">
-                Nuevo
-              </Badge>
-              <p className="text-sm font-medium text-purple-900 truncate">
-                {vet.display_name}
-              </p>
+              <Badge className="bg-purple-100 text-purple-700 text-[10px] mb-1">Nuevo</Badge>
+              <p className="text-sm font-medium text-purple-900 truncate">{vet.display_name}</p>
               {(vet.specialties as string[] | null)?.length ? (
                 <p className="text-[10px] text-muted-foreground truncate">
                   {(vet.specialties as string[]).slice(0, 2).join(' · ')}

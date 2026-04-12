@@ -1,0 +1,93 @@
+name: E2E Cross-Platform
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Matriz cross-browser. Cada shard corre en paralelo y bloquea el merge si falla.
+  # Engines cubiertos:
+  #   chromium -> Chrome / Edge / Brave / Android Chrome / WebView Capacitor Android
+  #   webkit   -> Safari desktop / Safari iOS / WebView Capacitor iOS
+  #   firefox  -> Firefox (cobertura adicional para cazar regresiones de specs)
+  e2e:
+    name: E2E (${{ matrix.browser }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - browser: chromium
+            project_glob: "*Chrome*"
+          - browser: firefox
+            project_glob: "*Firefox*"
+          - browser: webkit
+            project_glob: "*Safari*"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci --legacy-peer-deps
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Build
+        run: npm run build
+
+      - name: Run E2E tests (${{ matrix.browser }})
+        run: npx playwright test --project="${{ matrix.project_glob }}"
+        env:
+          CI: true
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.browser }}
+          path: playwright-report/
+          retention-days: 14
+
+      - name: Upload traces on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-traces-${{ matrix.browser }}
+          path: test-results/
+          retention-days: 7
+
+  # Verifica que la app sigue siendo empaquetable como WebView nativo (Android).
+  # iOS requiere runner macOS y se valida manualmente con `npx cap run ios`.
+  capacitor-android-sync:
+    name: Capacitor Android sync
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci --legacy-peer-deps
+
+      - name: Build web bundle
+        run: npm run build
+
+      - name: Capacitor sync (android)
+        run: npx cap sync android

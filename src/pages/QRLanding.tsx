@@ -38,19 +38,27 @@ export default function QRLanding() {
       return;
     }
 
-    (supabase as any)
+    supabase
       .from('pets')
       .select('id, owner_id, name')
       .eq('qr_token', token)
       .maybeSingle()
-      .then(({ data, error }: { data: any; error: any }) => {
-        if (error || !data) {
-          setPetError(true);
-        } else {
-          setPet(data);
+      .then(
+        ({
+          data,
+          error,
+        }: {
+          data: { id: string; owner_id: string; name: string } | null;
+          error: unknown;
+        }) => {
+          if (error || !data) {
+            setPetError(true);
+          } else {
+            setPet(data);
+          }
+          setPetLoading(false);
         }
-        setPetLoading(false);
-      });
+      );
   }, [token]);
 
   // Loading state
@@ -84,8 +92,8 @@ export default function QRLanding() {
           </div>
           <h1 className="text-2xl font-bold mb-2">QR inválido</h1>
           <p className="text-muted-foreground mb-6">
-            Este código QR no corresponde a ninguna mascota registrada en Paw Friend.
-            Verifica que el código no esté dañado o expirado.
+            Este código QR no corresponde a ninguna mascota registrada en Paw Friend. Verifica que
+            el código no esté dañado o expirado.
           </p>
           <Link to="/">
             <Button>Ir al inicio</Button>
@@ -111,15 +119,12 @@ export default function QRLanding() {
               </div>
               <CardTitle>Ficha clínica de {pet.name}</CardTitle>
               <CardDescription>
-                Para acceder a la ficha clínica de esta mascota necesitas iniciar sesión
-                como veterinario verificado en Paw Friend.
+                Para acceder a la ficha clínica de esta mascota necesitas iniciar sesión como
+                veterinario verificado en Paw Friend.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              <Button
-                className="w-full"
-                onClick={() => navigate(LINKS.authReturn(`/qr/${token}`))}
-              >
+              <Button className="w-full" onClick={() => navigate(LINKS.authReturn(`/qr/${token}`))}>
                 Iniciar sesión / Registrarme
               </Button>
               <p className="text-xs text-center text-muted-foreground">
@@ -155,20 +160,20 @@ function AuthenticatedQRHandler({
   useEffect(() => {
     // El dueño siempre puede ver la ficha de su propia mascota
     if (pet.owner_id === userId) {
-      navigate(`/pet/${pet.id}/clinical`, { replace: true });
+      navigate(LINKS.petClinical(pet.id), { replace: true });
       return;
     }
 
     // Verificar si es service_provider (vet)
-    (supabase as any)
+    supabase
       .from('service_providers')
       .select('id')
       .eq('user_id', userId)
       .maybeSingle()
-      .then(({ data }: { data: any }) => {
+      .then(({ data }: { data: { id: string } | null }) => {
         if (data) {
           setIsAuthorized(true);
-          navigate(`/pet/${pet.id}/clinical`, { replace: true });
+          navigate(LINKS.petClinical(pet.id), { replace: true });
         } else {
           setChecking(false);
         }
@@ -201,8 +206,8 @@ function AuthenticatedQRHandler({
         </div>
         <h1 className="text-2xl font-bold mb-2">Acceso restringido</h1>
         <p className="text-muted-foreground mb-6">
-          Solo veterinarios verificados o el dueño de la mascota pueden acceder
-          a la ficha clínica mediante código QR.
+          Solo veterinarios verificados o el dueño de la mascota pueden acceder a la ficha clínica
+          mediante código QR.
         </p>
         <p className="text-sm text-muted-foreground mb-6">
           Si eres veterinario,{' '}

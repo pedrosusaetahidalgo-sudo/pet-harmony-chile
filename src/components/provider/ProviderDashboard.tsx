@@ -21,6 +21,7 @@ import {
 } from '@/lib/icons';
 import { ProviderDirectoryCard } from './ProviderDirectoryCard';
 import { SharedFichasCard } from './SharedFichasCard';
+import { TodayAgendaCard } from './TodayAgendaCard';
 import { VetFollowupsCard } from './VetFollowupsCard';
 import { VetPatientsList } from './VetPatientsList';
 import { CreateServicePromotion } from '@/components/CreateServicePromotion';
@@ -109,6 +110,9 @@ const ProviderDashboard = () => {
           </Link>
         </div>
       </div>
+
+      {/* Agenda de hoy */}
+      <TodayAgendaCard />
 
       {/* Seguimientos de esta semana */}
       <VetFollowupsCard />

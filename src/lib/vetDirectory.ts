@@ -40,6 +40,7 @@ export const VET_SPECIALTIES = [
   'Urgencias y cuidados críticos',
   'Medicina preventiva',
   'Animales silvestres',
+  'Otra especialidad',
 ] as const;
 
 export const SANTIAGO_COMUNAS = [
@@ -61,14 +62,16 @@ export const SANTIAGO_COMUNAS = [
   'Quilicura',
   'Huechuraba',
   'Estación Central',
+  'Otra comuna',
 ] as const;
 
 // Comunas agrupadas por zona RM para selector UX-friendly
 export const COMUNAS_POR_ZONA: Record<string, readonly string[]> = {
-  'Oriente': ['Las Condes', 'Vitacura', 'Lo Barnechea', 'La Reina', 'Peñalolén'],
-  'Centro': ['Santiago', 'Providencia', 'Ñuñoa', 'Independencia', 'Recoleta', 'Estación Central'],
-  'Sur': ['San Miguel', 'La Florida', 'Puente Alto', 'Macul'],
+  Oriente: ['Las Condes', 'Vitacura', 'Lo Barnechea', 'La Reina', 'Peñalolén'],
+  Centro: ['Santiago', 'Providencia', 'Ñuñoa', 'Independencia', 'Recoleta', 'Estación Central'],
+  Sur: ['San Miguel', 'La Florida', 'Puente Alto', 'Macul'],
   'Poniente-Norte': ['Maipú', 'Quilicura', 'Huechuraba'],
+  Otras: ['Otra comuna'],
 } as const;
 
 export function slugifyForUrl(value: string): string {

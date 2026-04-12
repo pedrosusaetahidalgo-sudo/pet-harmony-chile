@@ -19,11 +19,9 @@
 
 | Documento | Que contiene | Cuando actualizar |
 |---|---|---|
-| [audits/AUDITORIA_TOTAL_APP.md](audits/AUDITORIA_TOTAL_APP.md) | Auditoria multi-dominio (arq, DB, seguridad, UX, perf) | Despues de cada sesion de auditoria |
-| [audits/AUDIT_2026_04_08.md](audits/AUDIT_2026_04_08.md) | Audit pre-hardening: rutas, nav, mobile, auth | Snapshot — crear nuevo si se re-audita |
-| [audits/WALKTHROUGH_2026_04_08.md](audits/WALKTHROUGH_2026_04_08.md) | Walkthrough funcional: 2 personas (dueno + vet) | Snapshot — crear nuevo si se re-audita |
-| [audits/RECOMENDACIONES_2026_04_08.md](audits/RECOMENDACIONES_2026_04_08.md) | Recomendaciones estrategicas 30/60/90 dias | Revisar cuando se complete un milestone |
+| [audits/REPORTE_CONSOLIDADO_2026_04_11.md](audits/REPORTE_CONSOLIDADO_2026_04_11.md) | Fuente de verdad del estado tecnico al 2026-04-11 | Despues de cada sesion de auditoria mayor |
 | [audits/COMPETENCIA_2026_04_08.md](audits/COMPETENCIA_2026_04_08.md) | Analisis competitivo Chile | Cada 3-6 meses o cuando aparezca competidor nuevo |
+| [audits/CROSS_PLATFORM_COMPATIBILITY.md](audits/CROSS_PLATFORM_COMPATIBILITY.md) | Compatibilidad multiplataforma (iOS, Android, Web, Chrome) | Cada cambio de CSS/JS moderno o API de browser |
 
 ## Archivos clave en codigo
 

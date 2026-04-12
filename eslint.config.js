@@ -2,10 +2,11 @@ import js from "@eslint/js";
 import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
+import jsxA11y from "eslint-plugin-jsx-a11y";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist"] },
+  { ignores: ["dist", "docs"] },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],
@@ -16,9 +17,14 @@ export default tseslint.config(
     plugins: {
       "react-hooks": reactHooks,
       "react-refresh": reactRefresh,
+      "jsx-a11y": jsxA11y,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      // a11y rules as warnings (not blocking) — fix incrementally
+      ...Object.fromEntries(
+        Object.entries(jsxA11y.configs.recommended.rules).map(([k, v]) => [k, "warn"])
+      ),
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
     },

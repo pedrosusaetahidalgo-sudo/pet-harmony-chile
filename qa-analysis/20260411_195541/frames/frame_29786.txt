@@ -1,0 +1,33 @@
+a Andlisis de agentes IA sin códic X | 8 Clinica Veterinaria Altamira |Ve X — ) New Tab X + - o x
+€ © &% pawriend.d/service Ge .D 5 4+ @:
+BE EE Redirecting / Documentos Felipe... Templates Power Bl.. — M The 16 Best GPTsfo... — Marketing - EB Actividades Mis acti... EB Corporativo - Experi... lf powerYOU — 17 Experis Latam - Gen.. »
+R [6 Elements Console Sources» an YS : x
+DO » |O| Y Fitter Default levels v | 63 Issues: 114 849
+Daniela Mpralés Eduardo fitarña s
+( » Post supabose-vendor-BADEUPPO.Ís:26 )— a
+w 4.2 (Oreseña *4.1 (Ore https://euailbj]vevihwcrovEd. supabase. co/functions/v]/bereavenent-955i..
+401 (Unauthorized)
+» “DialogContent” requires a “DialogTitle’ — ui-vendor-DVESIUem.is:45
+for the component to be accessible for screen reader users.
+mpllay pal > smpliay patio. Tu pelud . If you want to hide the “DialogTitle”, you can wrap it with our
+Visuallyttidden component.
+3a er. & Max 9a 42r pee For more information, see _ !
+hit tps: //radix-ui .com/primitives/docs/conponents/dialog
+pWarning: Missing Description’ or aria-  ui-vendor-DvtSiUcm. js:45
+| rvar > >
+y » GET supabase-vendor-BaDEupPa.43:26 @
+httos://euailbi]vevihwcrovfd. supabase . co/rest/vi/pet reminders?select=.
+400 (Gad Request)
+» GET ‘supabase-vendor-B4DEupPa.is:25 @
+N https: //ewai lbjlvevkhucrovéd. supabase. co/rest/v1/pet reminders?select=.
+400 (Gad Request)
+Nicolas Sahsióvar » Warning: Missing “Description” or ‘ari wi-vendor-DVtS1Ucm. 45:45
+m % 3.8 (Oreseñas) * » Post supabase-vendor-BADEupPa.s:26 @
+https: //ewailbjlvevkhucrovéd. supabase.co/rest/vi/pet reminders 400 (Bad
+Request)
+» [supabase] index-CrMReNy 353
+Cuidadora d 'oncasa » fcode: '23514", + ‘new row for relation “pet_reminders” viola
+ampliay patio. Tu peludo se sentirá tes check constraint “pet_reminders_type_check™", + null,
+» Wamning: Missing “Description” or“aria- — ui-vendor-DVESIUem.js:45
+5a 26r.. — S Max. describedoy=(undefined)" for {Dialogcontent)
+r " e

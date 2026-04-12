@@ -1,26 +1,28 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Plus, Loader2 } from "@/lib/icons";
+} from '@/components/ui/select';
+import { Plus, Loader2 } from '@/lib/icons';
+import { PET_COLORS } from '@/lib/petOptions';
+import { SelectWithOther } from '@/components/ui/select-with-other';
 
 interface NewPatientFormData {
   name: string;
@@ -34,15 +36,15 @@ interface NewPatientFormData {
 }
 
 const SPECIES_OPTIONS = [
-  { value: "perro", label: "Perro" },
-  { value: "gato", label: "Gato" },
-  { value: "conejo", label: "Conejo" },
-  { value: "hamster", label: "Hámster" },
-  { value: "ave", label: "Ave" },
-  { value: "pez", label: "Pez" },
-  { value: "reptil", label: "Reptil" },
-  { value: "tortuga", label: "Tortuga" },
-  { value: "otro", label: "Otro" },
+  { value: 'perro', label: 'Perro' },
+  { value: 'gato', label: 'Gato' },
+  { value: 'conejo', label: 'Conejo' },
+  { value: 'hamster', label: 'Hámster' },
+  { value: 'ave', label: 'Ave' },
+  { value: 'pez', label: 'Pez' },
+  { value: 'reptil', label: 'Reptil' },
+  { value: 'tortuga', label: 'Tortuga' },
+  { value: 'otro', label: 'Otro' },
 ];
 
 interface NewPatientFormProps {
@@ -53,21 +55,29 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const { register, handleSubmit, reset, setValue, watch, formState: { errors } } = useForm<NewPatientFormData>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<NewPatientFormData>({
     defaultValues: {
-      name: "",
-      species: "",
-      breed: "",
-      birth_date: "",
-      sex: "",
-      weight: "",
-      color: "",
-      owner_email: "",
+      name: '',
+      species: '',
+      breed: '',
+      birth_date: '',
+      sex: '',
+      weight: '',
+      color: '',
+      owner_email: '',
     },
   });
 
-  const speciesValue = watch("species");
-  const sexValue = watch("sex");
+  const speciesValue = watch('species');
+  const sexValue = watch('sex');
+  const colorValue = watch('color');
 
   const onSubmit = async (data: NewPatientFormData) => {
     if (!user) return;
@@ -86,15 +96,16 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
       if (data.weight) insertPayload.weight_kg = parseFloat(data.weight);
       if (data.color.trim()) insertPayload.color = data.color.trim();
 
-      const { error } = await (supabase.from("pets") as any).insert(insertPayload);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (supabase.from('pets') as any).insert(insertPayload);
       if (error) throw error;
 
       toast.success(`Paciente ${data.name} creado correctamente`);
       reset();
       setOpen(false);
       onCreated?.();
-    } catch (err: any) {
-      toast.error(err?.message || "Error al crear el paciente");
+    } catch (err: unknown) {
+      toast.error((err instanceof Error ? err.message : null) || 'Error al crear el paciente');
     } finally {
       setSubmitting(false);
     }
@@ -119,11 +130,9 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
             <Input
               id="np-name"
               placeholder="Ej: Luna"
-              {...register("name", { required: "El nombre es obligatorio" })}
+              {...register('name', { required: 'El nombre es obligatorio' })}
             />
-            {errors.name && (
-              <p className="text-xs text-destructive">{errors.name.message}</p>
-            )}
+            {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
           </div>
 
           {/* Especie */}
@@ -131,7 +140,7 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
             <Label>Especie *</Label>
             <Select
               value={speciesValue}
-              onValueChange={(v) => setValue("species", v, { shouldValidate: true })}
+              onValueChange={(v) => setValue('species', v, { shouldValidate: true })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecciona especie" />
@@ -147,34 +156,32 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
             {!speciesValue && errors.species && (
               <p className="text-xs text-destructive">Selecciona una especie</p>
             )}
-            <input type="hidden" {...register("species", { required: true })} />
+            <input type="hidden" {...register('species', { required: true })} />
           </div>
 
           {/* Raza */}
           <div className="space-y-1.5">
             <Label htmlFor="np-breed">Raza</Label>
-            <Input id="np-breed" placeholder="Ej: Labrador" {...register("breed")} />
+            <Input id="np-breed" placeholder="Ej: Labrador" {...register('breed')} />
           </div>
 
           {/* Fecha nacimiento */}
           <div className="space-y-1.5">
             <Label htmlFor="np-birth">Fecha de nacimiento</Label>
-            <Input id="np-birth" type="date" {...register("birth_date")} />
+            <Input id="np-birth" type="date" {...register('birth_date')} />
           </div>
 
           {/* Sexo */}
           <div className="space-y-1.5">
             <Label>Sexo</Label>
-            <Select
-              value={sexValue}
-              onValueChange={(v) => setValue("sex", v)}
-            >
+            <Select value={sexValue} onValueChange={(v) => setValue('sex', v)}>
               <SelectTrigger>
                 <SelectValue placeholder="Selecciona sexo" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="macho">Macho</SelectItem>
                 <SelectItem value="hembra">Hembra</SelectItem>
+                <SelectItem value="desconocido">Desconocido</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -188,14 +195,20 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
               step="0.1"
               min="0"
               placeholder="Ej: 8.5"
-              {...register("weight")}
+              {...register('weight')}
             />
           </div>
 
           {/* Color */}
           <div className="space-y-1.5">
-            <Label htmlFor="np-color">Color</Label>
-            <Input id="np-color" placeholder="Ej: Negro con blanco" {...register("color")} />
+            <Label>Color</Label>
+            <SelectWithOther
+              options={[...PET_COLORS]}
+              value={colorValue}
+              onValueChange={(v) => setValue('color', v)}
+              placeholder="Selecciona color"
+              otherPlaceholder="Describe el color..."
+            />
           </div>
 
           {/* Email del dueno */}
@@ -205,11 +218,11 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
               id="np-email"
               type="email"
               placeholder="dueno@ejemplo.cl"
-              {...register("owner_email", {
-                required: "El email del dueño es obligatorio",
+              {...register('owner_email', {
+                required: 'El email del dueño es obligatorio',
                 pattern: {
                   value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: "Ingresa un email válido",
+                  message: 'Ingresa un email válido',
                 },
               })}
             />
@@ -228,7 +241,7 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
                 Creando...
               </>
             ) : (
-              "Crear paciente"
+              'Crear paciente'
             )}
           </Button>
         </form>

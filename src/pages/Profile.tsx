@@ -1,493 +1,358 @@
-import { AppLayout } from "@/components/AppLayout";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Settings,
-  Share2,
-  Grid,
-  Heart,
-  MessageSquare,
-  Trophy,
-  Star,
-  PawPrint,
-  Edit,
-  UserPlus,
-  Users,
-  Crown,
-  Stethoscope,
-  ChevronRight
-} from "@/lib/icons";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
-import { useGoToAddPet } from "@/hooks/useCanAddPet";
-import { ProfessionalBadges } from "@/components/ProfessionalBadges";
-import UserReviewHistory from "@/components/UserReviewHistory";
-import PendingReviewsList from "@/components/PendingReviewsList";
-import PointsWidget from "@/components/PointsWidget";
-import AchievementBadge from "@/components/AchievementBadge";
-import MissionCard from "@/components/MissionCard";
-import { useGamification } from "@/hooks/useGamification";
-import { useActiveRole } from "@/hooks/useActiveRole";
-import { logger } from "@/lib/logger";
-const dogProfileUrl = "https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop&crop=faces";
-const catProfileUrl = "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=400&fit=crop&crop=faces";
+import { useState, useEffect } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Switch } from '@/components/ui/switch';
+import { Separator } from '@/components/ui/separator';
+import { PawPrint, Trophy, ChevronRight } from '@/lib/icons';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
+import { useGoToAddPet } from '@/hooks/useCanAddPet';
+import { useGamification } from '@/hooks/useGamification';
+import { usePlan } from '@/hooks/usePlan';
+import { logger } from '@/lib/logger';
+import PointsWidget from '@/components/PointsWidget';
+import AchievementBadge from '@/components/AchievementBadge';
+import MissionCard from '@/components/MissionCard';
+import { IntegrationsCard } from '@/components/settings/IntegrationsCard';
+import { ProfileIdentityCard } from '@/components/profile/ProfileIdentityCard';
+import { PetIdentityCard, AddPetCard } from '@/components/profile/PetIdentityCard';
+import { ProfileCompletionCard } from '@/components/profile/ProfileCompletionCard';
+import { ProfileSettingsList } from '@/components/profile/ProfileSettingsList';
+import { EditProfileDrawer } from '@/components/profile/EditProfileDrawer';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+
+interface ProfileData {
+  avatar_url?: string;
+  display_name?: string;
+  is_premium?: boolean;
+  bio?: string;
+  location?: string;
+}
+
+interface PetData {
+  id: string;
+  name: string;
+  species: string;
+  breed?: string;
+  photo_url?: string;
+  birth_date?: string;
+}
 
 const Profile = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const goToAddPet = useGoToAddPet();
-  const [profile, setProfile] = useState<any>(null);
-  const [userStats, setUserStats] = useState<any>(null);
-  const [pets, setPets] = useState<any[]>([]);
-  const [posts, setPosts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const { stats, achievements, missions } = useGamification();
-  const { isProvider } = useActiveRole();
+  const { isPremium } = usePlan();
+
+  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [pets, setPets] = useState<PetData[]>([]);
+  const [socialStats, setSocialStats] = useState({ posts: 0, followers: 0, following: 0 });
+  const [loading, setLoading] = useState(true);
+
+  // Drawer states
+  const [editDrawerOpen, setEditDrawerOpen] = useState(false);
+  const [achievementsDrawerOpen, setAchievementsDrawerOpen] = useState(false);
+  const [integrationsDrawerOpen, setIntegrationsDrawerOpen] = useState(false);
+  const [notificationsDrawerOpen, setNotificationsDrawerOpen] = useState(false);
+
+  // Notification prefs
+  const [healthReminders, setHealthReminders] = useState(true);
+  const [messages, setMessages] = useState(true);
+  const [socialActivity, setSocialActivity] = useState(false);
 
   useEffect(() => {
-    if (user) {
-      loadProfileData();
-    }
+    if (user) loadProfileData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const loadProfileData = async () => {
     try {
       setLoading(true);
-      
-      // Load profile
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user?.id)
-        .maybeSingle();
-      
-      setProfile(profileData);
 
-      // Load stats
-      const { data: statsData } = await supabase
-        .from('user_stats')
-        .select('*')
-        .eq('user_id', user?.id)
-        .maybeSingle();
-      
-      setUserStats(statsData);
+      const [profileRes, petsRes, statsRes, postsRes, notifRes] = await Promise.all([
+        supabase.from('profiles').select('*').eq('id', user!.id).maybeSingle(),
+        supabase
+          .from('pets')
+          .select('id, name, species, breed, photo_url, birth_date')
+          .eq('owner_id', user!.id)
+          .eq('lifecycle_status', 'active')
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('user_stats')
+          .select('followers_count, following_count')
+          .eq('user_id', user!.id)
+          .maybeSingle(),
+        supabase.from('posts').select('id', { count: 'exact', head: true }).eq('user_id', user!.id),
+        supabase.from('notification_preferences').select('*').eq('user_id', user!.id).maybeSingle(),
+      ]);
 
-      // Load pets
-      const { data: petsData } = await supabase
-        .from('pets')
-        .select('*')
-        .eq('owner_id', user?.id)
-        .eq('lifecycle_status', 'active')
-        .order('created_at', { ascending: false });
-      
-      setPets(petsData || []);
+      setProfile(profileRes.data as ProfileData | null);
+      setPets(petsRes.data || []);
+      setSocialStats({
+        posts: postsRes.count || 0,
+        followers: statsRes.data?.followers_count || 0,
+        following: statsRes.data?.following_count || 0,
+      });
 
-      // Load posts
-      const { data: postsData } = await supabase
-        .from('posts')
-        .select('*')
-        .eq('user_id', user?.id)
-        .order('created_at', { ascending: false })
-        .limit(12);
-      
-      setPosts(postsData || []);
-
+      if (notifRes.data) {
+        setHealthReminders(notifRes.data.reminder_notifications);
+        setMessages(notifRes.data.push_enabled);
+        setSocialActivity(notifRes.data.social_notifications);
+      }
     } catch (error) {
       logger.error('Error loading profile:', error);
       toast({
-        variant: "destructive",
-        title: "Algo salió mal",
-        description: "No se pudo cargar la información del perfil"
+        variant: 'destructive',
+        title: 'Algo salió mal',
+        description: 'No se pudo cargar la información del perfil',
       });
     } finally {
       setLoading(false);
     }
   };
 
+  const saveNotificationPref = async (field: string, value: boolean) => {
+    if (!user) return;
+    await supabase
+      .from('notification_preferences')
+      .upsert(
+        { user_id: user.id, [field]: value, updated_at: new Date().toISOString() },
+        { onConflict: 'user_id' }
+      );
+  };
+
   if (loading) {
     return (
-      <div className="container max-w-5xl mx-auto p-4 md:p-6 space-y-4 animate-pulse">
-        {/* Header skeleton */}
+      <div className="px-4 py-4 max-w-4xl mx-auto space-y-4 animate-pulse">
         <div className="flex items-center gap-4">
-          <div className="h-20 w-20 rounded-full bg-muted" />
+          <div className="h-16 w-16 rounded-full bg-muted" />
           <div className="flex-1 space-y-2">
             <div className="h-5 w-40 bg-muted rounded" />
             <div className="h-4 w-56 bg-muted/70 rounded" />
           </div>
         </div>
-        {/* Stats skeleton */}
-        <div className="grid grid-cols-3 gap-3">
-          <div className="h-20 bg-muted rounded-lg" />
-          <div className="h-20 bg-muted rounded-lg" />
-          <div className="h-20 bg-muted rounded-lg" />
+        <div className="flex gap-3 overflow-hidden">
+          <div className="w-36 h-52 bg-muted rounded-2xl flex-shrink-0" />
+          <div className="w-36 h-52 bg-muted rounded-2xl flex-shrink-0" />
         </div>
-        {/* Content skeleton */}
-        <div className="space-y-3">
-          <div className="h-32 bg-muted rounded-lg" />
-          <div className="h-32 bg-muted rounded-lg" />
-        </div>
+        <div className="h-16 bg-muted rounded-2xl" />
       </div>
     );
   }
 
   return (
-    <div className="container px-3 py-4 sm:px-4 sm:py-6 md:py-8 max-w-5xl mx-auto animate-fade-in">
-        {/* Profile Header */}
-        <div className="mb-6 sm:mb-8">
+    <div className="px-4 py-4 max-w-4xl mx-auto space-y-4 animate-fade-in pb-24">
+      {/* ── Bloque A: Identity Card ── */}
+      <ProfileIdentityCard profile={profile} onEditProfile={() => setEditDrawerOpen(true)} />
+
+      {/* ── Bloque B: Pets Carousel ── */}
+      <section>
+        <h2 className="text-base font-semibold mb-3">Mis mascotas</h2>
+        {pets.length === 0 ? (
           <Card>
-            <CardContent className="p-4 sm:p-6 md:p-8">
-              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-8 items-start sm:items-center">
-                {/* Avatar */}
-                <Avatar className="h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-32 ring-4 ring-primary/20 mx-auto sm:mx-0">
-                  <AvatarImage src={profile?.avatar_url} />
-                  <AvatarFallback className="bg-warm-gradient text-white text-2xl sm:text-3xl font-bold">
-                    {profile?.display_name?.[0] || user?.email?.[0].toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-
-                {/* Profile Info */}
-                <div className="flex-1 w-full">
-                  <div className="flex flex-col gap-3 sm:gap-4 mb-3 sm:mb-4">
-                    <div className="text-center sm:text-left">
-                      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold flex items-center gap-2 justify-center sm:justify-start flex-wrap">
-                        {profile?.display_name || user?.email?.split("@")[0]}
-                        {profile?.is_premium && (
-                          <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full bg-premium-gradient text-premium-foreground shadow-premium-sm">
-                            <Crown className="h-3 w-3" strokeWidth={2.5} />
-                            PREMIUM
-                          </span>
-                        )}
-                      </h1>
-                      {profile?.bio && (
-                        <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                          {profile.bio}
-                        </p>
-                      )}
-                      {profile?.location && (
-                        <p className="text-xs sm:text-sm text-muted-foreground flex items-center justify-center sm:justify-start gap-1 mt-1">
-                          <PawPrint className="h-3 w-3" />
-                          {profile.location}
-                        </p>
-                      )}
-                      
-                      {/* Professional Badges */}
-                      <div className="mt-3">
-                        <ProfessionalBadges userId={user?.id || ''} />
-                      </div>
-                    </div>
-                    
-                    <div className="flex gap-2 w-full">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        className="flex-1"
-                        onClick={() => navigate('/settings')}
-                      >
-                        <Edit className="h-4 w-4" />
-                        <span className="hidden xs:inline ml-2">Editar</span>
-                      </Button>
-                      <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 sm:flex-none"
-                        onClick={() => {
-                          const shareUrl = `https://pawfriend.cl/user/${user?.id}`;
-                          if (navigator.share) {
-                            navigator.share({ title: 'Paw Friend', text: `Mira mi perfil en Paw Friend`, url: shareUrl });
-                          } else {
-                            navigator.clipboard.writeText(shareUrl);
-                            toast({ title: "Link copiado", description: "Comparte tu perfil con amigos" });
-                          }
-                        }}
-                      >
-                        <Share2 className="h-4 w-4 mr-2" />
-                        Compartir
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Stats */}
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 md:gap-8 mb-3 sm:mb-0">
-                    <div className="text-center">
-                      <p className="text-lg sm:text-xl md:text-2xl font-bold">{posts.length}</p>
-                      <p className="text-xs text-muted-foreground">Posts</p>
-                    </div>
-                    <div className="text-center cursor-pointer hover:opacity-80 transition-opacity">
-                      <p className="text-lg sm:text-xl md:text-2xl font-bold">{userStats?.followers_count || 0}</p>
-                      <p className="text-xs text-muted-foreground">Seguidores</p>
-                    </div>
-                    <div className="text-center cursor-pointer hover:opacity-80 transition-opacity">
-                      <p className="text-lg sm:text-xl md:text-2xl font-bold">{userStats?.following_count || 0}</p>
-                      <p className="text-xs text-muted-foreground">Siguiendo</p>
-                    </div>
-                    <div className="text-center">
-                      <p className="text-lg sm:text-xl md:text-2xl font-bold">{pets.length}</p>
-                      <p className="text-xs text-muted-foreground">Mascotas</p>
-                    </div>
-                  </div>
-
-                  {/* Game Stats - New Gamification System */}
-                  {stats && (
-                    <div className="mt-3 sm:mt-4">
-                      <PointsWidget 
-                        points={stats.points} 
-                        level={stats.level}
-                        compact={true}
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Tabs */}
-        <Tabs defaultValue="posts" className="w-full">
-          <TabsList className="w-full grid grid-cols-4 h-auto p-1 bg-muted/50 rounded-xl border border-border/50">
-            <TabsTrigger 
-              value="posts"
-              className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg text-xs py-2.5"
-            >
-              <Grid className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="text-xs sm:text-xs">Posts</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="pets"
-              className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg text-xs py-2.5"
-            >
-              <PawPrint className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="text-xs sm:text-xs">Mascotas</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="reviews"
-              className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg text-xs py-2.5"
-            >
-              <Star className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="text-xs sm:text-xs">Reseñas</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="achievements"
-              className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg text-xs py-2.5"
-            >
-              <Trophy className="h-3 w-3 sm:h-4 sm:w-4 sm:mr-2" />
-              <span className="text-xs sm:text-xs">Logros</span>
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Posts Grid */}
-          <TabsContent value="posts" className="mt-6">
-            {posts.length === 0 ? (
-              <div className="text-center py-12">
-                <Grid className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-                <p className="text-muted-foreground mb-4">No hay publicaciones aún</p>
-                <Button 
-                  onClick={() => navigate('/feed')}
-                  className="bg-warm-gradient hover:opacity-90"
-                >
-                  Crear Primera Publicación
-                </Button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-3 gap-1 sm:gap-2">
-                {posts.map((post) => (
-                  <div 
-                    key={post.id}
-                    className="relative aspect-square group cursor-pointer overflow-hidden rounded-md sm:rounded-lg"
-                  >
-                    <img
-                      src={post.image_url || dogProfileUrl}
-                      alt="Post"
-                      loading="lazy"
-                      className="w-full h-full object-cover transition-transform group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 sm:gap-4 text-white">
-                      <div className="flex items-center gap-1">
-                        <Heart className="h-4 w-4 sm:h-5 sm:w-5 fill-white" />
-                        <span className="text-xs sm:text-sm font-semibold">{post.likes_count || 0}</span>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 fill-white" />
-                        <span className="text-xs sm:text-sm font-semibold">{post.comments_count || 0}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </TabsContent>
-
-          {/* Pets Grid */}
-          <TabsContent value="pets" className="mt-6">
-            {pets.length === 0 ? (
-              <div className="text-center py-12">
-                <PawPrint className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-50" />
-                <p className="text-muted-foreground mb-4">No has registrado mascotas aún</p>
-                <Button 
-                  onClick={goToAddPet}
-                  className="bg-warm-gradient hover:opacity-90"
-                >
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Agregar Mascota
-                </Button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-                {pets.map((pet) => (
-                  <Card 
-                    key={pet.id}
-                    className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group"
-                  >
-                    <CardContent className="p-0">
-                      <div className="relative aspect-square overflow-hidden">
-                        <img
-                          src={pet.photo_url || (pet.species === 'perro' ? dogProfileUrl : catProfileUrl)}
-                          alt={pet.name}
-                          loading="lazy"
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform"
-                        />
-                      </div>
-                      <div className="p-3 sm:p-4">
-                        <h3 className="font-semibold text-sm sm:text-base mb-1 truncate">{pet.name}</h3>
-                        <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground flex-wrap">
-                          <Badge variant="secondary" className="text-xs capitalize">
-                            {pet.species}
-                          </Badge>
-                          {pet.breed && (
-                            <span className="text-xs truncate">{pet.breed}</span>
-                          )}
-                        </div>
-                        {pet.personality && pet.personality.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {pet.personality.slice(0, 2).map((trait: string, idx: number) => (
-                              <Badge key={idx} variant="outline" className="text-xs">
-                                {trait}
-                              </Badge>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-                
-                {/* Add Pet Card */}
-                <Card 
-                  className="overflow-hidden hover:shadow-lg transition-all cursor-pointer group border-dashed"
-                  onClick={goToAddPet}
-                >
-                  <CardContent className="p-0 h-full flex items-center justify-center aspect-square">
-                    <div className="text-center p-4 sm:p-6">
-                      <div className="p-3 sm:p-4 rounded-full bg-primary/10 inline-flex mb-2 sm:mb-3 group-hover:scale-110 transition-transform">
-                        <UserPlus className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-                      </div>
-                      <p className="font-semibold text-xs sm:text-sm">Agregar Mascota</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
-          </TabsContent>
-
-          {/* Reviews Tab */}
-          <TabsContent value="reviews" className="mt-6 space-y-6">
-            <PendingReviewsList />
-            <UserReviewHistory />
-          </TabsContent>
-
-          {/* Achievements - New Gamification System */}
-          <TabsContent value="achievements" className="mt-6">
-            <div className="space-y-6">
-              {/* Points Widget */}
-              {stats && (
-                <PointsWidget 
-                  points={stats.points} 
-                  level={stats.level}
-                  showProgress={true}
-                />
-              )}
-
-              {/* Achievements Grid */}
-              <Card>
-                <CardContent className="p-4 sm:p-6">
-                  <h3 className="font-semibold text-base sm:text-lg mb-4">Logros Desbloqueados</h3>
-                  {achievements && achievements.length > 0 ? (
-                    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
-                      {achievements.map((achievement) => (
-                        <AchievementBadge
-                          key={achievement.id}
-                          code={achievement.code}
-                          name={achievement.name}
-                          description={achievement.description}
-                          unlockedAt={achievement.unlocked_at}
-                          size="md"
-                          showTooltip={true}
-                        />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8">
-                      <Trophy className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-                      <p className="text-muted-foreground">Aún no has desbloqueado logros</p>
-                      <p className="text-sm text-muted-foreground mt-2">
-                        Completa acciones para ganar puntos y desbloquear logros
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Active Missions */}
-              {missions && missions.length > 0 && (
-                <Card>
-                  <CardContent className="p-4 sm:p-6">
-                    <h3 className="font-semibold text-base sm:text-lg mb-4">Misiones Activas</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                      {missions.map((mission) => (
-                        <MissionCard key={mission.id} mission={mission} />
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
-          </TabsContent>
-
-        </Tabs>
-
-        {/* Modo veterinario — solo visible para usuarios con perfil de proveedor */}
-        {isProvider && (
-          <Card className="mt-6 border-purple-200 bg-purple-50/50">
-            <CardContent className="p-4">
+            <CardContent className="py-10 flex flex-col items-center text-center">
+              <PawPrint className="h-12 w-12 text-muted-foreground/40 mb-3" />
+              <p className="text-muted-foreground mb-4">Aún no has registrado mascotas</p>
               <button
-                onClick={() => navigate('/provider/dashboard')}
-                className="flex items-center justify-between w-full group"
+                onClick={goToAddPet}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
               >
-                <div className="flex items-center gap-3">
-                  <div className="p-2 rounded-full bg-purple-100 group-hover:bg-purple-200 transition-colors">
-                    <Stethoscope className="h-5 w-5 text-purple-600" />
-                  </div>
-                  <div className="text-left">
-                    <p className="text-sm font-semibold text-foreground">Modo veterinario</p>
-                    <p className="text-xs text-muted-foreground">Ir a mi dashboard profesional</p>
-                  </div>
-                </div>
-                <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-purple-600 transition-colors" />
+                Registrar mi primera mascota
               </button>
             </CardContent>
           </Card>
+        ) : (
+          <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 scrollbar-hide">
+            {pets.map((pet) => (
+              <PetIdentityCard key={pet.id} pet={pet} />
+            ))}
+            <AddPetCard onClick={goToAddPet} />
+          </div>
         )}
-      </div>
+      </section>
+
+      {/* ── Bloque C: Profile Completion + Health Signals ── */}
+      <ProfileCompletionCard profile={profile} petCount={pets.length} />
+
+      {/* ── Bloque D: Social Mini-bar ── */}
+      <Card>
+        <CardContent className="p-3">
+          <div className="flex items-center justify-around text-center">
+            <button
+              onClick={() => navigate('/feed')}
+              className="flex-1 hover:bg-muted/50 rounded-lg py-1 transition-colors"
+            >
+              <p className="text-lg font-bold">{socialStats.posts}</p>
+              <p className="text-xs text-muted-foreground">Posts</p>
+            </button>
+            <Separator orientation="vertical" className="h-8" />
+            <div className="flex-1 py-1">
+              <p className="text-lg font-bold">{socialStats.followers}</p>
+              <p className="text-xs text-muted-foreground">Seguidores</p>
+            </div>
+            <Separator orientation="vertical" className="h-8" />
+            <div className="flex-1 py-1">
+              <p className="text-lg font-bold">{socialStats.following}</p>
+              <p className="text-xs text-muted-foreground">Siguiendo</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ── Bloque E: Gamificación compacta ── */}
+      {stats && (
+        <Card>
+          <CardContent className="p-3">
+            <button
+              onClick={() => setAchievementsDrawerOpen(true)}
+              className="flex items-center justify-between w-full group"
+            >
+              <div className="flex items-center gap-2">
+                <Trophy className="h-4 w-4 text-amber-500" />
+                <span className="text-sm">
+                  Nivel {stats.level} · {stats.points} puntos
+                </span>
+              </div>
+              <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            </button>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* ── Bloque F: Ajustes y cuenta ── */}
+      <ProfileSettingsList
+        onEditProfile={() => setEditDrawerOpen(true)}
+        onOpenIntegrations={() => setIntegrationsDrawerOpen(true)}
+        onOpenNotifications={() => setNotificationsDrawerOpen(true)}
+        isPremium={isPremium}
+      />
+
+      {/* ═══════════════ Drawers ═══════════════ */}
+
+      {/* Edit Profile Drawer */}
+      <EditProfileDrawer
+        open={editDrawerOpen}
+        onOpenChange={setEditDrawerOpen}
+        profile={profile}
+        onSaved={loadProfileData}
+      />
+
+      {/* Achievements Drawer */}
+      <Sheet open={achievementsDrawerOpen} onOpenChange={setAchievementsDrawerOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Mis logros</SheetTitle>
+          </SheetHeader>
+          <div className="mt-6 space-y-6">
+            {stats && <PointsWidget points={stats.points} level={stats.level} showProgress />}
+
+            {achievements.length > 0 ? (
+              <div>
+                <h3 className="font-semibold text-sm mb-3">Logros desbloqueados</h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {achievements.map((a) => (
+                    <AchievementBadge
+                      key={a.id}
+                      code={a.code}
+                      name={a.name}
+                      description={a.description}
+                      unlockedAt={a.unlocked_at}
+                      size="md"
+                      showTooltip
+                    />
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Trophy className="h-10 w-10 mx-auto mb-3 text-muted-foreground/40" />
+                <p className="text-sm text-muted-foreground">
+                  Completa acciones para desbloquear tus primeros logros
+                </p>
+              </div>
+            )}
+
+            {missions.length > 0 && (
+              <div>
+                <h3 className="font-semibold text-sm mb-3">Misiones activas</h3>
+                <div className="space-y-2">
+                  {missions.map((m) => (
+                    <MissionCard key={m.id} mission={m} />
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Integrations Drawer */}
+      <Sheet open={integrationsDrawerOpen} onOpenChange={setIntegrationsDrawerOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Integraciones</SheetTitle>
+          </SheetHeader>
+          <div className="mt-6">
+            <IntegrationsCard />
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* Notifications Drawer */}
+      <Sheet open={notificationsDrawerOpen} onOpenChange={setNotificationsDrawerOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-md overflow-y-auto">
+          <SheetHeader>
+            <SheetTitle>Notificaciones</SheetTitle>
+          </SheetHeader>
+          <div className="mt-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium text-sm">Recordatorios de salud</p>
+                <p className="text-xs text-muted-foreground">Vacunas, controles y citas</p>
+              </div>
+              <Switch
+                checked={healthReminders}
+                onCheckedChange={(v) => {
+                  setHealthReminders(v);
+                  saveNotificationPref('reminder_notifications', v);
+                }}
+              />
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium text-sm">Mensajes</p>
+                <p className="text-xs text-muted-foreground">Nuevos mensajes directos</p>
+              </div>
+              <Switch
+                checked={messages}
+                onCheckedChange={(v) => {
+                  setMessages(v);
+                  saveNotificationPref('push_enabled', v);
+                }}
+              />
+            </div>
+            <Separator />
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium text-sm">Actividad social</p>
+                <p className="text-xs text-muted-foreground">Likes, comentarios y seguidores</p>
+              </div>
+              <Switch
+                checked={socialActivity}
+                onCheckedChange={(v) => {
+                  setSocialActivity(v);
+                  saveNotificationPref('social_notifications', v);
+                }}
+              />
+            </div>
+          </div>
+        </SheetContent>
+      </Sheet>
+    </div>
   );
 };
 

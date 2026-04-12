@@ -1,8 +1,28 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import { describeSupabaseError } from "@/lib/supabaseErrors";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { addDays, addWeeks, addMonths, addYears, format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { describeSupabaseError } from '@/lib/supabaseErrors';
+
+function nextDueDate(current: string, interval: string): string {
+  const d = new Date(current);
+  switch (interval) {
+    case 'weekly':
+      return addWeeks(d, 1).toISOString();
+    case 'monthly':
+      return addMonths(d, 1).toISOString();
+    case 'quarterly':
+      return addMonths(d, 3).toISOString();
+    case 'biannual':
+      return addMonths(d, 6).toISOString();
+    case 'yearly':
+      return addYears(d, 1).toISOString();
+    default:
+      return addMonths(d, 1).toISOString();
+  }
+}
 
 export interface Reminder {
   id: string;
@@ -26,73 +46,143 @@ export const useReminders = () => {
   const queryClient = useQueryClient();
 
   const { data: reminders = [], isLoading } = useQuery({
-    queryKey: ["pet-reminders", user?.id],
+    queryKey: ['pet-reminders', user?.id],
     queryFn: async () => {
       if (!user) return [];
       const { data, error } = await supabase
-        .from("pet_reminders")
-        .select("*, pets(name, species)")
-        .eq("owner_id", user.id)
-        .order("due_date", { ascending: true });
+        .from('pet_reminders')
+        .select('*, pets(name, species)')
+        .eq('owner_id', user.id)
+        .order('due_date', { ascending: true });
       if (error) throw error;
       return (data || []) as Reminder[];
     },
     enabled: !!user,
   });
 
-  const upcomingReminders = reminders.filter(r =>
-    !r.is_completed && new Date(r.due_date) >= new Date(new Date().toDateString())
+  const upcomingReminders = reminders.filter(
+    (r) => !r.is_completed && new Date(r.due_date) >= new Date(new Date().toDateString())
   );
 
-  const overdueReminders = reminders.filter(r =>
-    !r.is_completed && new Date(r.due_date) < new Date(new Date().toDateString())
+  const overdueReminders = reminders.filter(
+    (r) => !r.is_completed && new Date(r.due_date) < new Date(new Date().toDateString())
   );
 
   const addReminder = useMutation({
-    mutationFn: async (reminder: { pet_id: string; type: string; title: string; description?: string; due_date: string; is_recurring?: boolean; recurrence_interval?: string }) => {
-      const { error } = await supabase.from("pet_reminders").insert({
+    mutationFn: async (reminder: {
+      pet_id: string;
+      type: string;
+      title: string;
+      description?: string;
+      due_date: string;
+      is_recurring?: boolean;
+      recurrence_interval?: string;
+    }) => {
+      const { error } = await supabase.from('pet_reminders').insert({
         ...reminder,
         owner_id: user?.id,
       });
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pet-reminders"] });
-      toast({ title: "Recordatorio creado" });
+      queryClient.invalidateQueries({ queryKey: ['pet-reminders'] });
+      toast({ title: 'Recordatorio creado' });
       // Auto-sync con Google Calendar en background si esta conectado.
       // No bloquea la UI ni muestra errores - es best effort.
-      supabase.functions.invoke("google-calendar-sync").catch(() => {
+      supabase.functions.invoke('google-calendar-sync').catch(() => {
         /* silent fail: el user puede sincronizar manual desde Settings */
       });
     },
     onError: (error: Error) => {
-      toast({ title: "Algo salió mal", description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]), variant: "destructive" });
+      toast({
+        title: 'Algo salió mal',
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const snoozeReminder = useMutation({
+    mutationFn: async ({ id, days }: { id: string; days: number }) => {
+      const reminder = reminders.find((r) => r.id === id);
+      if (!reminder) throw new Error('Recordatorio no encontrado');
+      const newDate = addDays(new Date(reminder.due_date), days);
+      const { error } = await supabase
+        .from('pet_reminders')
+        .update({ due_date: newDate.toISOString() })
+        .eq('id', id);
+      if (error) throw error;
+      return newDate;
+    },
+    onSuccess: (newDate) => {
+      queryClient.invalidateQueries({ queryKey: ['pet-reminders'] });
+      toast({ title: `Pospuesto hasta ${format(newDate, "d 'de' MMMM", { locale: es })}` });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: 'No se pudo posponer',
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
+        variant: 'destructive',
+      });
     },
   });
 
   const completeReminder = useMutation({
     mutationFn: async (id: string) => {
+      const reminder = reminders.find((r) => r.id === id);
       const { error } = await supabase
-        .from("pet_reminders")
+        .from('pet_reminders')
         .update({ is_completed: true, completed_at: new Date().toISOString() })
-        .eq("id", id);
+        .eq('id', id);
       if (error) throw error;
+
+      // P6: si es recurrente, crear el proximo automaticamente
+      if (reminder?.is_recurring && reminder.recurrence_interval) {
+        const newDue = nextDueDate(reminder.due_date, reminder.recurrence_interval);
+        await supabase.from('pet_reminders').insert({
+          pet_id: reminder.pet_id,
+          owner_id: reminder.owner_id,
+          type: reminder.type,
+          title: reminder.title,
+          description: reminder.description,
+          due_date: newDue,
+          is_recurring: true,
+          recurrence_interval: reminder.recurrence_interval,
+        });
+        return { wasRecurring: true, nextDate: new Date(newDue) };
+      }
+      return { wasRecurring: false, nextDate: null };
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pet-reminders"] });
-      toast({ title: "Recordatorio completado" });
+    onSuccess: (result) => {
+      queryClient.invalidateQueries({ queryKey: ['pet-reminders'] });
+      if (result?.wasRecurring && result.nextDate) {
+        toast({
+          title: `Completado — proximo recordatorio creado para ${format(result.nextDate, "d 'de' MMMM", { locale: es })}`,
+        });
+      } else {
+        toast({ title: 'Recordatorio completado' });
+      }
     },
   });
 
   const deleteReminder = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("pet_reminders").delete().eq("id", id);
+      const { error } = await supabase.from('pet_reminders').delete().eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pet-reminders"] });
+      queryClient.invalidateQueries({ queryKey: ['pet-reminders'] });
     },
   });
 
-  return { reminders, upcomingReminders, overdueReminders, isLoading, addReminder, completeReminder, deleteReminder };
+  return {
+    reminders,
+    upcomingReminders,
+    overdueReminders,
+    isLoading,
+    addReminder,
+    completeReminder,
+    snoozeReminder,
+    deleteReminder,
+  };
 };

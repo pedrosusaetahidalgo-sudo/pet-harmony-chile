@@ -1421,3 +1421,858 @@ Ambas quedan pendientes para PR separada cuando se consigan los assets.
 | 8 | Bug REDISENO_DASHBOARD_PROVIDER fix de queries + voseo | `ProviderDashboard.tsx`, `ProviderProfileEdit.tsx` | ⏳ Pendiente (4-6h) |
 
 **Nota sobre el cierre del master upgrade**: el plan FASE 0-8 sigue marcado como **100% CERRADO 2026-04-12** y es candidato a archivo en `junk/` en sesión próxima. Este anexo documenta los hallazgos de la auditoría post-cierre del 2026-04-11 para no perder visibilidad antes de archivar.
+
+---
+
+## ANEXO B — Auditoría Consolidada 2026-04-11
+
+> **Fuente única de verdad de la auditoría total**: [audits/REPORTE_CONSOLIDADO_2026_04_11.md](../audits/REPORTE_CONSOLIDADO_2026_04_11.md).
+> Este anexo extrae SOLO los fixes accionables en formato paso a paso, agrupados en 3 olas. Cada item lleva: qué hacer, dónde, por qué, esfuerzo, criterio de "hecho".
+>
+> **Estado de los checks al momento de la auditoría** (branch `main`, HEAD `fc48e94`):
+> - `npx tsc -b` ✅ 0 errores
+> - `npm run build` ✅ pasa
+> - `vitest` ✅ 81/81
+> - Playwright Desktop Chrome ✅ 50/50
+> - `npm run lint` ❌ **539 problemas** (353 errores + 186 warnings)
+> - `npm audit --omit=dev` ❌ **9 high severity**
+>
+> Metodología: 4 subagentes en paralelo (project/schema/RLS, code-review/TS/perf, UX-copy/QA/bugs, cross-platform), más checks técnicos en background.
+
+### B.0. Checklist maestro (marca a medida que avanzas)
+
+**OLA 1 — esta sesión / mañana** (7 items, 1-2 días totales)
+- [ ] B.1.1 · `npm audit fix` — 9 vulnerabilidades high en prod
+- [ ] B.1.2 · String maestro "Historial médico" → "Ficha clínica" (joya)
+- [ ] B.1.3 · Voseo argentino en ProviderProfileEdit (3 toasts)
+- [ ] B.1.4 · Pasar `petName` al `<MedicalSummaryButton>`
+- [ ] B.1.5 · Fix `react-hooks/rules-of-hooks` en ServiceDirectory.tsx
+- [ ] B.1.6 · Verificar RLS `ai_request_quota` y policies sospechosas
+- [ ] B.1.7 · Bug groomers crash (`providerTypeConfig` sin key `groomer`)
+
+**OLA 2 — próxima semana** (8 items)
+- [ ] B.2.1 · Descarga QR rota en WebView/Safari iOS
+- [ ] B.2.2 · Flow `urlReturn` único ignora rechazos
+- [ ] B.2.3 · `generate-medical-summary`: logo base64 inline
+- [ ] B.2.4 · `vite.config.ts`: separar recharts/leaflet/pdf/qr en vendors
+- [ ] B.2.5 · Regenerar `supabase/types.ts` y eliminar zombies
+- [ ] B.2.6 · Top 50 `any` de ESLint en páginas públicas
+- [ ] B.2.7 · WhatsApp `window.open` → `openExternalUrl`
+- [ ] B.2.8 · Rotación de claves Supabase + Google
+
+**OLA 3 — backlog** (10 items)
+- [ ] B.3.1 · Rediseño dashboard proveedor (6 fases — ver A.2)
+- [ ] B.3.2 · Implementar `handleExport` PDF/CSV de Panel Pro
+- [ ] B.3.3 · QueryClient con `staleTime` default
+- [ ] B.3.4 · Memoización de Feed.tsx y MyPets.tsx
+- [ ] B.3.5 · Limpieza de `junk/` (archivar 14 obsoletos)
+- [ ] B.3.6 · Eliminar `src/pages/Actividad.tsx` huérfano
+- [ ] B.3.7 · `tailwind.config.ts`: `require()` → `import`
+- [ ] B.3.8 · Refactor `PetClinicalRecord/shared.tsx` (HMR fino)
+- [ ] B.3.9 · Correr matriz Playwright completa (5 engines) en CI
+- [ ] B.3.10 · Actualizar `CLAUDE.md §12` con métricas reales de bundle
+
+---
+
+## OLA 1 — AHORA (esta sesión / mañana)
+
+### B.1.1. Resolver 9 vulnerabilidades high en dependencias de producción
+
+**Fuente**: `npm audit --omit=dev` ejecutado 2026-04-11
+**Severidad**: 🔴 Alta — 4 paquetes con exploits públicos
+**Paquetes afectados**:
+- `@xmldom/xmldom` — XML injection (GHSA-wh4c-j3r5-mjhp)
+- `lodash` ≤ 4.17.23 — prototype pollution + code injection (3 CVEs)
+- `minimatch` 10.0.0-10.2.2 — ReDoS (3 CVEs, vía `rimraf/node_modules/minimatch`)
+- `tar` ≤ 7.5.10 — hardlink path traversal + symlink poisoning (6 CVEs, vía `@capacitor/cli`)
+
+**Fix**:
+```bash
+# 1. Rama aparte por si hay breaking changes
+git checkout -b fix/npm-audit-2026-04-11
+
+# 2. Aplicar fix
+npm audit fix
+
+# 3. Si deja vulns pendientes (capacitor-cli puede necesitar major bump):
+npm audit
+
+# 4. Si todo limpio, validar build + tests
+npx tsc -b
+npm run build
+npx vitest run
+npx playwright test --project="Desktop Chrome"
+
+# 5. npx cap sync android  # si @capacitor/cli bumpeó
+```
+
+**Por qué**: Capacitor CLI empaqueta assets en build móvil — un exploit de `tar` puede escribir archivos fuera del sandbox al descomprimir plugins. `lodash` prototype pollution es explotable desde cualquier entrada de usuario parseada con `_.template`.
+**Esfuerzo**: 30 min (1 h si `@capacitor/cli` requiere major bump y rebuild android)
+**Hecho cuando**: `npm audit --omit=dev` devuelve `found 0 vulnerabilities` **Y** `npm run build` pasa **Y** `vitest` sigue en 81/81.
+
+---
+
+### B.1.2. Renombrar "Historial médico" → "Ficha clínica" (string maestro + cascada)
+
+**Fuente**: Reporte consolidado §5.8 (UX Copy Chileno top 15)
+**Severidad**: 🔴 Alta — afecta directo a la joya de la corona; viola [CLAUDE.md §9.5](../CLAUDE.md) que define "ficha clínica" como término estandarizado
+**Archivos** (12 strings visibles + 1 string central):
+
+```
+1. src/lib/plans.ts:317          — 'Historial médico' (string central, propaga)
+2. src/pages/MedicalRecords.tsx:167,168,173,185,257,413
+3. src/pages/Upgrade.tsx:20,34
+4. src/pages/UpgradeSuccess.tsx:45
+5. src/pages/AddPet.tsx:435
+6. src/components/AddMedicalRecord.tsx:235
+```
+
+**Fix paso a paso**:
+1. Arrancar por el string central en [plans.ts:317](../src/lib/plans.ts#L317):
+   ```ts
+   // ANTES
+   medical_history: 'Historial médico',
+   // DESPUÉS
+   medical_history: 'Ficha clínica',
+   ```
+2. `grep -rn "Historial médico\|historial médico" src/` — confirmar los 6 hits en [MedicalRecords.tsx](../src/pages/MedicalRecords.tsx) y el resto.
+3. Reemplazar uno por uno con `Edit` tool, manteniendo concordancia de género ("el historial médico" → "la ficha clínica").
+4. Verificar que el breadcrumb en [MedicalRecords.tsx:173](../src/pages/MedicalRecords.tsx#L173) también dice "Ficha clínica".
+5. Revisar el tooltip interno inconsistente de [MedicalSummaryButton.tsx:74 vs 98](../src/components/medical/MedicalSummaryButton.tsx#L74) — ambos deben decir "Generando tu ficha..." (o ambos "Generando...").
+6. `npx tsc -b && npm run build`.
+
+**Por qué**: el usuario ve dos nombres distintos para lo mismo dependiendo de qué parte del flujo toque. Es el estándar de CLAUDE.md §9.5 y el nombre que el producto usa en pitch/marketing.
+**Esfuerzo**: 20 min
+**Hecho cuando**: `grep -rn "Historial médico\|historial médico" src/` devuelve **0 hits** en archivos visibles al usuario (comentarios de código pueden quedar).
+
+---
+
+### B.1.3. Eliminar voseo argentino en `ProviderProfileEdit.tsx`
+
+**Fuente**: Reporte consolidado §5.8 y auditoría agente UX
+**Severidad**: 🔴 Alta — viola [CLAUDE.md §9.5](../CLAUDE.md) (tuteo chileno, NO voseo rioplatense)
+**Strings**:
+
+| Línea | Antes | Después |
+|---|---|---|
+| [114](../src/pages/ProviderProfileEdit.tsx#L114) | "Verificá que el bucket..." | "Verifica que el bucket..." |
+| [128](../src/pages/ProviderProfileEdit.tsx#L128) | "Necesitás al menos ${REQUIRED...}% de perfil completo" | "Necesitas al menos..." |
+| [471](../src/pages/ProviderProfileEdit.tsx#L471) | "Necesitás completar más campos primero." | "Necesitas completar más campos primero." |
+
+**Fix**: tres `Edit` en el mismo archivo.
+**Por qué**: Pedro ya tiene una memoria `feedback_chilean_spanish.md` que dice "toda copy/UI/toasts/errores con tuteo chileno, NO voseo rioplatense". Estos 3 toasts son el único foco de voseo detectado en toda la auditoría.
+**Esfuerzo**: 5 min
+**Hecho cuando**: `grep -rn "ificá\|sitás\|tenés\|podés\|querés" src/` devuelve 0 hits.
+
+---
+
+### B.1.4. Pasar `petName` al `<MedicalSummaryButton>` (nombre del PDF)
+
+**Fuente**: Reporte consolidado §5.10 bug potencial #1
+**Severidad**: 🟡 Media — PDF se descarga como `resumen_medico_mascota.pdf` literal en la joya de la corona
+**Archivo**: [src/components/medical/MedicalDocumentsTab.tsx:216](../src/components/medical/MedicalDocumentsTab.tsx#L216)
+
+**Diagnóstico**:
+- `MedicalDocumentsTab` ya tiene el `petId` en props; necesita también recibir `petName` desde [MedicalRecords.tsx](../src/pages/MedicalRecords.tsx) donde se monta.
+- `MedicalSummaryButton` acepta `petName` opcional pero si no se pasa, cae a un nombre genérico en `downloadFile`.
+
+**Fix paso a paso**:
+1. Abrir [MedicalRecords.tsx:353](../src/pages/MedicalRecords.tsx#L353) y buscar el `<MedicalDocumentsTab petId={selectedPetId} />`.
+2. Pasar también `petName={selectedPet?.name}`.
+3. Editar props de `MedicalDocumentsTab` para aceptar `petName?: string`.
+4. En línea 216, cambiar `<MedicalSummaryButton petId={petId} />` → `<MedicalSummaryButton petId={petId} petName={petName} />`.
+5. Verificar que el PDF descargado se llame `ficha_clinica_${slugify(petName)}.pdf` o similar.
+
+**Por qué**: el usuario descarga el PDF de Kai y ve un archivo `resumen_medico_mascota.pdf` en Descargas. Fricción gratis de arreglar.
+**Esfuerzo**: 15 min
+**Hecho cuando**: descargar la ficha de una mascota llamada "Kai" produce un archivo con "Kai" en el nombre.
+
+---
+
+### B.1.5. Fix `react-hooks/rules-of-hooks` en `ServiceDirectory.tsx`
+
+**Fuente**: `npm run lint` → 14 errores de `react-hooks/rules-of-hooks` en mismo archivo
+**Severidad**: 🔴 Alta — **bug real de React**, no cosmético. Los hooks llamados después de un early return causan UI impredecible al cambiar de rama.
+**Archivo**: [src/pages/ServiceDirectory.tsx:528-566](../src/pages/ServiceDirectory.tsx#L528)
+
+**Diagnóstico**: en líneas 528-547 se llaman `useNavigate`, `useAuth`, `useToast`, `useState` × 7, `useEffect` × 2 **después** de un early return condicional. React requiere que los hooks se llamen siempre en el mismo orden.
+
+**Fix paso a paso**:
+1. Leer líneas 490-570 del archivo para entender la estructura.
+2. Mover todos los hooks al tope del componente, antes de cualquier `return` condicional.
+3. Si el early return existe por `if (!providerType)`, reemplazar por `const providerType = useServiceType(); if (!providerType) return <NotFound/>;` **después** de declarar todos los hooks.
+4. Confirmar con `npm run lint` que los 14 errores desaparecen.
+
+**Por qué**: en CI estricto, estos errores bloquean merge. Y en runtime, si el early return se dispara a veces sí y a veces no (ej. mientras `useAuth` está cargando), React lanza "Rendered more hooks than during the previous render" y la página crashea.
+**Esfuerzo**: 30-60 min (requiere leer el componente completo, es grande: 914 líneas)
+**Hecho cuando**: `npm run lint 2>&1 | grep "rules-of-hooks" | wc -l` devuelve `0`.
+
+---
+
+### B.1.6. Auditar RLS sospechoso en `ai_request_quota` y `medical_records`
+
+**Fuente**: Reporte consolidado §5.3 (RLS Guardian)
+**Severidad**: 🔴 Alta — potencial fuga de datos médicos o abuso de quota IA
+**Riesgos**:
+
+1. **`ai_request_quota`** ([supabase/migrations/20260410000000_ai_request_quota.sql:17](../supabase/migrations/20260410000000_ai_request_quota.sql#L17))
+   - Policy actual: `using (true) with check (true)`
+   - **Si la tabla guarda quotas por `user_id`**: cualquiera puede resetear la quota ajena o ver consumo de otros.
+   - **Si la tabla es sólo service_role (escrita desde edge functions)**: la policy está ok pero debe estar documentada.
+
+2. **`medical_records`** (migración `20251127152253_*.sql`)
+   - Cerca de la habilitación de RLS hay un `USING(true)` suelto.
+   - Riesgo si aplica a `medical_records` y no a `profiles` como debiera: **ficha clínica de todos los usuarios expuesta**.
+
+**Fix paso a paso**:
+1. Abrir [supabase/migrations/20260410000000_ai_request_quota.sql](../supabase/migrations/20260410000000_ai_request_quota.sql) completa. Confirmar a qué tabla aplica el `USING(true)`.
+2. Si la tabla se lee desde cliente autenticado (ej. para mostrar "te quedan 3 consultas"), crear nueva migración `20260429000000_fix_ai_quota_rls.sql`:
+   ```sql
+   DROP POLICY IF EXISTS "..." ON public.ai_request_quota;
+   CREATE POLICY "Users can read their own quota"
+     ON public.ai_request_quota FOR SELECT
+     USING (auth.uid() = user_id);
+   -- Writes solo desde service_role (ya lo son implícitamente)
+   ```
+3. Abrir `supabase/migrations/20251127152253_*.sql` (líneas 13-50). Leer qué tabla lleva el `USING(true)` — típicamente es `profiles` (público por diseño).
+4. Si resulta que `medical_records` no tiene policy restrictiva, migración urgente:
+   ```sql
+   CREATE POLICY "Users see only their pet's records"
+     ON public.medical_records FOR SELECT
+     USING (
+       pet_id IN (SELECT id FROM public.pets WHERE user_id = auth.uid())
+     );
+   ```
+5. **NO aplicar la migración**. Dejar el SQL listo en `supabase/migrations/` y avisar a Pedro para que la corra desde Supabase Dashboard > SQL Editor (regla §9.2 CLAUDE.md).
+
+**Por qué**: la joya de la corona (ficha médica) se hace inútil comercialmente si cualquiera puede leer fichas ajenas. Hay que confirmar que no es el caso.
+**Esfuerzo**: 45 min (lectura + diagnóstico + redacción de migración)
+**Hecho cuando**: documentado en este anexo cuál era el estado real de cada policy, y — si había bug — migración lista en `supabase/migrations/` pendiente de aplicar.
+
+---
+
+### B.1.7. Bug crash en `/services/groomers` (gradient undefined)
+
+**Fuente**: [junk/BUG_GROOMERS_GRADIENT_CRASH.md](../junk/BUG_GROOMERS_GRADIENT_CRASH.md) (bug diagnosticado, no corregido)
+**Severidad**: 🟡 Media — crashea una sección completa del directorio
+**Síntoma**: "Cannot read properties of undefined (reading 'gradient')" al navegar a `/services/groomers`.
+
+**Diagnóstico**:
+- [ProviderProfileCard.tsx:56-89](../src/components/provider/ProviderProfileCard.tsx#L56) define `providerTypeConfig` con keys `vet`, `walker`, `sitter`, `trainer` — **falta** `groomer`.
+- [ServiceDirectory.tsx:806-809](../src/pages/ServiceDirectory.tsx#L806) pasa `providerType="groomer"` al componente.
+- Acceso `providerTypeConfig[providerType].gradient` → `undefined.gradient` → crash.
+
+**Fix**:
+1. Abrir [ProviderProfileCard.tsx:56](../src/components/provider/ProviderProfileCard.tsx#L56).
+2. Añadir entrada `groomer` al objeto:
+   ```ts
+   groomer: {
+     label: 'Peluquero',
+     icon: Scissors,  // lucide
+     gradient: 'from-pink-500 to-rose-600',
+     bgSoft: 'bg-pink-50',
+     ringColor: 'ring-pink-200',
+   },
+   ```
+3. Navegar manualmente a `/services/groomers` en dev server para confirmar que no crashea y que el styling se ve razonable.
+4. Revisar que las mismas keys existan también en otros lookups (`providerType === 'groomer'` en el archivo).
+
+**Por qué**: sección completa caída en prod.
+**Esfuerzo**: 15 min
+**Hecho cuando**: `/services/groomers` renderiza sin error de consola.
+
+---
+
+## OLA 2 — PRÓXIMA SEMANA
+
+### B.2.1. Arreglar descarga QR rota en WebView iOS y Safari iOS
+
+**Fuente**: Reporte consolidado §5.7 (Cross-Platform Validator) — **Alta** cross-platform
+**Severidad**: 🔴 Alta en iOS — los usuarios iPhone no pueden descargar el QR de su mascota
+**Archivos**:
+- [src/components/medical/PetQRDisplay.tsx:25-28](../src/components/medical/PetQRDisplay.tsx#L25) — `a.download` + `a.click()` sobre data URL
+- [src/pages/PetClinicalRecord/tabs/TabCompartir.tsx:132-135](../src/pages/PetClinicalRecord/tabs/TabCompartir.tsx#L132) — mismo patrón
+- [src/components/medical/MedicalDocumentsTab.tsx:162](../src/components/medical/MedicalDocumentsTab.tsx#L162), [ProviderDirectoryCard.tsx:102/109/144](../src/components/provider/ProviderDirectoryCard.tsx#L102) — `navigator.share` sin try/catch
+
+**Diagnóstico**: en WKWebView iOS y Safari iOS el click programático sobre `<a download>` con data URL **no descarga nada** — abre el data URL inline o falla en silencio. En Capacitor hay que usar `Filesystem.writeFile` + `Share.share`.
+
+**Fix paso a paso**:
+1. Revisar [src/lib/nativeDownload.ts](../src/lib/nativeDownload.ts) — ya existe `nativeDownload(dataUrl, filename)` que bifurca web vs nativo (es el mismo patrón que usa `MedicalSummaryButton.tsx:48`).
+2. En `PetQRDisplay.tsx:25-28`:
+   ```tsx
+   // ANTES
+   const a = document.createElement('a');
+   a.download = `qr_${petName}.png`;
+   a.href = canvas.toDataURL();
+   a.click();
+   // DESPUÉS
+   import { nativeDownload } from '@/lib/nativeDownload';
+   await nativeDownload(canvas.toDataURL(), `qr_${petName}.png`);
+   ```
+3. Hacer lo mismo en [TabCompartir.tsx:132](../src/pages/PetClinicalRecord/tabs/TabCompartir.tsx#L132).
+4. Envolver los `navigator.share` y `navigator.clipboard.writeText` en try/catch con toast de error — ver [PetQRDisplay.tsx:33-44](../src/components/medical/PetQRDisplay.tsx#L33) como referencia.
+5. **Test obligatorio**: `npx cap sync ios && npx cap run ios` o test en simulador. Descargar QR y confirmar que aparece en Files/Fotos.
+
+**Por qué**: es iOS-bloqueante y afecta la joya de la corona (sharing de ficha + QR de mascota). Los usuarios Android están OK, pero ~40% del mercado chileno es iPhone.
+**Esfuerzo**: 1-2 h (más test en simulador)
+**Hecho cuando**: descargar QR en simulator iOS guarda archivo en Fotos/Files sin error.
+
+---
+
+### B.2.2. Flow `urlReturn` no diferencia éxito/rechazo
+
+**Fuente**: Reporte consolidado §5.9 (QA Verifier — Pagos Flow)
+**Severidad**: 🔴 Alta — usuario puede ver "¡Gracias por tu Premium!" aunque el webhook haya marcado el pago como `failed`
+**Archivo**: [supabase/functions/flow-create-subscription/index.ts:136](../supabase/functions/flow-create-subscription/index.ts#L136)
+
+**Diagnóstico**: `urlReturn: \`${SITE_URL}/upgrade/success\`` se usa para todos los casos. Flow redirige a la misma URL tanto en pago exitoso como rechazado (`status=3`) o anulado (`status=4`). La ruta `/payment-result?status=...` ya existe en [App.tsx](../src/App.tsx) y maneja ambos estados.
+
+**Fix paso a paso**:
+1. Abrir [flow-create-subscription/index.ts:136](../supabase/functions/flow-create-subscription/index.ts#L136).
+2. Cambiar:
+   ```ts
+   // ANTES
+   urlReturn: `${SITE_URL}/upgrade/success`,
+   // DESPUÉS
+   urlReturn: `${SITE_URL}/payment-result`,
+   ```
+3. Asegurar que [src/pages/PaymentResult.tsx](../src/pages/PaymentResult.tsx) (o donde viva `/payment-result`) lee el `?status=` del query param de Flow y:
+   - `status=2` → mostrar éxito + redirigir a `/home` en 3s
+   - `status=3|4` → mostrar rechazo + botón "Reintentar" → `/upgrade`
+4. **NO borrar `/upgrade/success`** — queda como landing estática por si Flow envía query raro, pero no será la ruta primaria.
+5. Deploy edge function: `npx supabase functions deploy flow-create-subscription`.
+6. Test end-to-end en sandbox de Flow si existe, o con tarjeta de test real.
+
+**Por qué**: confianza del usuario en el flujo de pago. Si paga y le dicen "gracias" pero al día siguiente no tiene Premium, pierde la fe en el producto.
+**Esfuerzo**: 1-2 h (más deploy + test)
+**Hecho cuando**: pago rechazado muestra UI de rechazo (no UI de éxito falsa).
+
+---
+
+### B.2.3. `generate-medical-summary`: logo base64 inline
+
+**Fuente**: Reporte consolidado §5.4 Code Review — Alta
+**Severidad**: 🟡 Media — dependencia externa viva en cada cold start
+**Archivo**: [supabase/functions/generate-medical-summary/index.ts](../supabase/functions/generate-medical-summary/index.ts)
+
+**Diagnóstico**: la edge function fetchea `https://pawfriend.cl/pwa-icon-512.png` en cada cold start para ponerlo en el header del PDF. Si GH Pages está caído (update de DNS, deploy en progreso, etc.), el PDF se genera SIN logo usando un fallback silencioso. Ningún error al usuario.
+
+**Fix paso a paso**:
+1. Convertir `public/pwa-icon-512.png` a base64:
+   ```bash
+   base64 -w0 public/pwa-icon-512.png > /tmp/logo.b64
+   ```
+2. Crear `supabase/functions/generate-medical-summary/logo.ts`:
+   ```ts
+   // Logo Paw Friend como data URL — regenerar si cambia public/pwa-icon-512.png
+   export const LOGO_BASE64 = 'data:image/png;base64,iVBORw0KGgo...';
+   ```
+3. En `index.ts`, reemplazar el `fetch('https://pawfriend.cl/pwa-icon-512.png')` por `import { LOGO_BASE64 } from './logo.ts'`.
+4. Verificar que `pdf-lib` acepta el data URL directamente (o convertir a bytes con `Uint8Array.from(atob(...))`).
+5. `npx supabase functions deploy generate-medical-summary`.
+6. Probar generación del PDF en `/medical-records` → tab Documentos → botón hero.
+
+**Por qué**: el PDF es la joya de la corona y no debe depender de GH Pages estando vivo. Cold start rápido + robusto.
+**Esfuerzo**: 1 h
+**Hecho cuando**: `grep -r 'pawfriend.cl/pwa' supabase/functions/generate-medical-summary/` devuelve 0 hits **Y** el PDF sigue mostrando el logo.
+
+---
+
+### B.2.4. `vite.config.ts`: separar chunks pesados en vendors dedicados
+
+**Fuente**: Reporte consolidado §4 (bundle) + §5.6 (performance)
+**Severidad**: 🟡 Media — bundle crítico path ~295 kB gzip vs 89 kB que declara CLAUDE.md §12
+**Archivo**: [vite.config.ts:26-48](../vite.config.ts#L26)
+
+**Diagnóstico**: `manualChunks` ya separa `react-vendor`, `query-vendor`, `ui-vendor`, `icons-vendor`, `date-vendor`, `supabase-vendor`. Pero **no aísla** `recharts` (383 kB!), `leaflet`, `pdf-lib`, `qrcode.react`. Estas libs caen en el chunk de la página que las importa primero.
+
+**Fix paso a paso**:
+1. Abrir [vite.config.ts:26](../vite.config.ts#L26). Añadir al objeto `manualChunks`:
+   ```ts
+   'charts-vendor': ['recharts'],
+   'maps-vendor': ['leaflet', 'react-leaflet'],
+   'pdf-vendor': ['pdf-lib'],
+   'qr-vendor': ['qrcode.react'],
+   ```
+2. Revisar si [src/components/ui/chart.tsx:2](../src/components/ui/chart.tsx#L2) (`import * as RechartsPrimitive from "recharts"`) sigue usándose — los dashboards ya importan recharts directo. Si nada más usa `ui/chart`, **eliminarlo** con `rm src/components/ui/chart.tsx`.
+3. Revisar [AdoptionSheltersList.tsx:16](../src/components/AdoptionSheltersList.tsx#L16) — si importa leaflet eager, convertir el componente a lazy import dentro de `/adoption`.
+4. `npm run build` y comparar `docs/assets/` — debería aparecer `charts-vendor-*.js`, `maps-vendor-*.js`, etc.
+5. Medir el chunk principal (`index-*.js`). Target: < 200 kB raw, < 70 kB gzip.
+
+**Por qué**: tiempo a primer render mejora notablemente en 3G. Páginas que no usan charts/maps/pdf/qr dejan de descargarlos.
+**Esfuerzo**: 1-2 h
+**Hecho cuando**: `npm run build` muestra chunks separados Y el `index-*.js` principal baja bajo 70 kB gzip.
+
+---
+
+### B.2.5. Regenerar `supabase/types.ts` y eliminar tipos zombies
+
+**Fuente**: Reporte consolidado §5.2 (Schema Auditor) + §5.5 (18 `as unknown as` por tablas ausentes)
+**Severidad**: 🟡 Media — 14 tipos `walk_*`, `lost_pets`, `shared_walks`, `dog_walker_profiles` que probablemente ya fueron dropeados
+**Archivo**: [src/integrations/supabase/types.ts](../src/integrations/supabase/types.ts) (6093 líneas)
+
+**Fix paso a paso**:
+1. **Verificar primero** qué tablas siguen vivas en la DB:
+   ```sql
+   SELECT table_name FROM information_schema.tables
+   WHERE table_schema = 'public'
+     AND table_name LIKE '%walk%' OR table_name LIKE '%lost_pet%';
+   ```
+   (correr desde Supabase Dashboard SQL Editor)
+2. Si las tablas NO existen, regenerar types:
+   ```bash
+   npx supabase gen types typescript --project-id gwailbjlvevkhwcrovfd > src/integrations/supabase/types.ts
+   ```
+3. `npx tsc -b` — TypeScript marcará automáticamente los imports rotos.
+4. Buscar los 18 `as unknown as` y ver cuáles ahora se pueden simplificar porque el tipo existe:
+   ```bash
+   grep -rn "as unknown as" src/
+   ```
+5. Candidatos a eliminar casts: `useConsultationTemplates.ts`, `useVetClinicalNotes.ts`, `usePendingReviews.ts`, `VetFollowupsCard.tsx`, `useOrganicRewards.ts`, `Home.tsx:220`, `PerfilVetPublico.tsx:107` (tabla `vet_bookings`).
+6. Si las tablas zombies SÍ siguen en DB, crear migración para dropearlas:
+   ```sql
+   DROP TABLE IF EXISTS public.walk_bookings CASCADE;
+   DROP TABLE IF EXISTS public.shared_walks CASCADE;
+   DROP TABLE IF EXISTS public.dog_walker_profiles CASCADE;
+   DROP TABLE IF EXISTS public.walk_reports CASCADE;
+   DROP TABLE IF EXISTS public.lost_pets CASCADE;
+   ```
+   (guardar en `supabase/migrations/20260429000001_drop_walk_legacy.sql`, **no aplicar**, avisar a Pedro).
+
+**Por qué**: cada `as unknown as` es un bypass de tipos que oculta bugs. Es la forma más común en este repo de "tapar" tablas faltantes en el type generator. Arreglando la raíz se pagan ~10 items de deuda de tipos de una vez.
+**Esfuerzo**: 2-3 h
+**Hecho cuando**: `grep -rn "as unknown as" src/ | wc -l` baja de 18 a <8, y `npx tsc -b` sigue en 0 errores.
+
+---
+
+### B.2.6. Top 50 `any` de ESLint en páginas públicas
+
+**Fuente**: Reporte consolidado §3 (ESLint) + §5.5 (top 10 deuda)
+**Severidad**: 🟡 Media — ~90 `any` totales, concentrados en 6 archivos
+**Foco**:
+
+| Archivo | Hits | Prioridad |
+|---|---|---|
+| [ServiceDirectory.tsx](../src/pages/ServiceDirectory.tsx) | 13 | 🔴 (página pública + rules-of-hooks en B.1.5) |
+| [admin/AdManagement.tsx](../src/components/admin/AdManagement.tsx) | 6 | 🟡 (panel admin) |
+| [MedicalRecords.tsx](../src/pages/MedicalRecords.tsx) | 4 | 🔴 (joya) |
+| [useProAnalytics.ts](../src/hooks/useProAnalytics.ts) + [useVetAnalytics.ts](../src/hooks/useVetAnalytics.ts) | 12 | 🟡 (analytics premium) |
+| [MyBookings.tsx](../src/pages/MyBookings.tsx) | 6 | 🟡 |
+| [Auth.tsx](../src/pages/Auth.tsx) | 4 (catch error: any) | 🟢 |
+| [QRLanding.tsx](../src/pages/QRLanding.tsx) | 5 | 🟡 (landing pública QR) |
+| [Reportes.tsx](../src/pages/Reportes.tsx) | 2 | 🟢 |
+| [Settings.tsx](../src/pages/Settings.tsx) | 3 | 🟢 |
+| [UserProfile.tsx](../src/pages/UserProfile.tsx) | 4 | 🟢 |
+
+**Fix paso a paso**:
+1. Empezar por [MedicalRecords.tsx:152,270,277,368](../src/pages/MedicalRecords.tsx#L152) — tipar `groupRecordsByYear(records: MedicalRecord[])`.
+2. Para `catch (error: any)` en [Auth.tsx:204,264,300,332](../src/pages/Auth.tsx#L204) → `catch (error: unknown)` + helper `describeError(error: unknown): string`.
+3. ServiceDirectory se ataca junto con B.1.5 (ya hay que tocarlo para los hooks).
+4. Analytics hooks: crear interfaces `VetRevenueRow`, `ProAnalyticsMetric` en `src/types/analytics.ts`.
+5. Correr `npm run lint` después de cada archivo para verificar progreso.
+
+**Por qué**: cada `any` es un bug futuro esperando. Esta ola apunta a ~50 de los 353 errores; el resto (ola 3+) pueden ir con el refactor de Lovable legacy (ver A.1).
+**Esfuerzo**: 4-6 h
+**Hecho cuando**: `npm run lint 2>&1 | grep "no-explicit-any" | wc -l` baja de ~90 a <40.
+
+---
+
+### B.2.7. WhatsApp `window.open` → `openExternalUrl` en Capacitor
+
+**Fuente**: Reporte consolidado §5.7 (Cross-Platform) — Media
+**Severidad**: 🟡 Media — `wa.me` abre en el mismo WebView en mobile, no sale a WhatsApp nativo
+**Archivo**: [src/pages/MedicalShare.tsx:164](../src/pages/MedicalShare.tsx#L164)
+
+**Fix**:
+```tsx
+// ANTES
+window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+
+// DESPUÉS
+import { openExternalUrl } from '@/lib/nativeNavigation';
+await openExternalUrl(`https://wa.me/?text=${encodeURIComponent(text)}`);
+```
+
+**Por qué**: `src/lib/nativeNavigation.ts` ya usa `@capacitor/browser` en web, y `App.openUrl` en nativo para lanzar WhatsApp como app externa. Con `window.open` el link se queda atrapado en el WebView de la app.
+**Esfuerzo**: 10 min
+**Hecho cuando**: compartir ficha por WhatsApp en APK Android abre la app de WhatsApp nativa, no un WebView interno.
+
+---
+
+### B.2.8. Rotación de claves Supabase + Google
+
+**Fuente**: Memoria `project_rotate_keys_2026_04_11.md` — pendiente desde 2026-04-11
+**Severidad**: 🟡 Media — una clave fue bloqueada por GitHub Push Protection en commit pasado
+**Acción**: rotar en consola de Supabase y de Google Cloud, actualizar secrets de Supabase Edge Functions, actualizar `.env.local` de Pedro, verificar que nada se rompió.
+
+**Pasos**:
+1. Supabase: Dashboard → Project Settings → API → Regenerate `anon` y `service_role` keys.
+2. Google Cloud: Console → APIs & Services → Credentials → OAuth Client → Reset secret.
+3. Actualizar secrets de Supabase Edge Functions (`flow-create-subscription`, `google-calendar-*`, `pet-assistant`, etc).
+4. Actualizar `.env.local` local de Pedro.
+5. Redeploy edge functions.
+6. Test flujo de pago + login con Google + generación de ficha PDF.
+7. Marcar memoria `project_rotate_keys_2026_04_11.md` como resuelta.
+
+**Por qué**: una key pegada en commit fue bloqueada antes, pero puede haber cachés de bots scrapeando PR. Higiene de seguridad.
+**Esfuerzo**: 1 h
+**Hecho cuando**: claves nuevas en prod, login + pago + IA funcionan, memoria actualizada.
+
+---
+
+## OLA 3 — BACKLOG
+
+### B.3.1. Rediseño dashboard proveedor (6 fases)
+Ya documentado en [A.2](#a2-rescate-desde-junktask_docs--rediseno_dashboard_provider) y [_pending/bugs/REDISENO_DASHBOARD_PROVIDER.md](bugs/REDISENO_DASHBOARD_PROVIDER.md). Esfuerzo: 8-12 h.
+
+### B.3.2. Implementar `handleExport` PDF/CSV de Panel Pro
+**Archivo**: memoria `project_analytics_export_broken.md` — botones visibles pero `handleExport` es placeholder.
+**Fix**: integrar `jspdf` + `papaparse` (o csv-stringify) para generar archivos reales. Reusar `nativeDownload.ts`.
+**Esfuerzo**: 3-4 h.
+
+### B.3.3. QueryClient con `staleTime` default 60s
+**Archivo**: `src/main.tsx` donde se instancia `QueryClient`.
+```ts
+new QueryClient({
+  defaultOptions: { queries: { staleTime: 60_000, refetchOnWindowFocus: false } }
+})
+```
+**Por qué**: ~25 hooks usan default 0 y refetchean en cada mount. Big win barato.
+**Esfuerzo**: 15 min + QA de regresión (¿algún hook depende de refetch inmediato?).
+
+### B.3.4. Memoización de `Feed.tsx` y `MyPets.tsx`
+**Archivos**: [Feed.tsx](../src/pages/Feed.tsx), [MyPets.tsx](../src/pages/MyPets.tsx).
+**Fix**: envolver `filterBlocked(posts)` y callbacks inline en `useMemo`/`useCallback`. Extraer `PostCard` como `React.memo`.
+**Esfuerzo**: 1-2 h.
+
+### B.3.5. Limpieza de `junk/` — archivar 14 obsoletos
+Ver §9 del reporte consolidado para la lista exacta. Mover a `_archive/` o borrar. Esfuerzo: 30 min.
+
+### B.3.6. Eliminar `src/pages/Actividad.tsx`
+Página huérfana, App.tsx:72 ya la tiene comentada. `grep -rn "Actividad" src/` para confirmar que no hay referencias reales (solo strings en breadcrumbs) y borrar. Esfuerzo: 15 min.
+
+### B.3.7. `tailwind.config.ts:177` — `require()` → `import`
+Un error ESLint `@typescript-eslint/no-require-imports` trivial de arreglar. Esfuerzo: 5 min.
+
+### B.3.8. Refactor `PetClinicalRecord/shared.tsx`
+6 warnings `react-refresh/only-export-components` — archivo mezcla componentes con constantes. Split en `shared.tsx` (componentes) + `shared-constants.ts`. Esfuerzo: 30 min.
+
+### B.3.9. Correr matriz Playwright completa (5 engines) en CI
+Actualmente sólo corre Desktop Chrome subset. Hay que investigar por qué la matriz completa se estanca (probablemente instalación de browsers en background sin progreso). Validar con `npx playwright install` previo. Esfuerzo: 1-2 h.
+
+### B.3.10. Actualizar `CLAUDE.md §12` con métricas reales
+El manual afirma "~291 kB / 89 kB gzip" pero la realidad es ~458 kB / 151 kB gzip para el chunk principal. Y §7 referencia `VetProfilePublic.tsx` cuando el archivo real se llama `PerfilVetPublico.tsx`. Fix de docs. Esfuerzo: 15 min.
+
+---
+
+### Resumen de acciones consolidadas desde auditoría 2026-04-11
+
+| # | Origen | Destino | Estado |
+|---|---|---|---|
+| 1 | Reporte maestro auditoría total | [audits/REPORTE_CONSOLIDADO_2026_04_11.md](../audits/REPORTE_CONSOLIDADO_2026_04_11.md) | ✅ Creado |
+| 2 | 25 fixes accionables extraídos en 3 olas | Este anexo B | ✅ Creado |
+| 3 | OLA 1 — 7 items esta sesión | — | ⏳ Pendiente ejecución |
+| 4 | OLA 2 — 8 items próxima semana | — | ⏳ Pendiente ejecución |
+| 5 | OLA 3 — 10 items backlog | — | ⏳ Pendiente ejecución |
+
+**Cómo ejecutar este anexo**: marca cada checkbox de §B.0 a medida que terminas cada fix. Cada item es autocontenido (qué / dónde / por qué / esfuerzo / hecho cuando). Empezar por B.1.1 (audit fix) porque desbloquea CI, seguir por orden dentro de cada ola.
+
+---
+
+## ANEXO C — Análisis Forense de Video QA (2026-04-11)
+
+> **Fuente**: video "Paw Friend video 25 min.mp4" (~24 min de uso real con DevTools abiertos, grabado 2026-04-09).
+> **Método**: extracción de 229 frames por scene-change detection (ffmpeg, threshold 0.08) + OCR spa+eng (Tesseract 5.4) sobre cada frame.
+> **Artefactos**: `qa-analysis/20260411_195541/` contiene `ocr.md` (356 KB, 7757 líneas), `manifest.json` (229 entries), `frames/` (229 PNGs + 229 TXTs).
+>
+> Este anexo consolida TODOS los hallazgos accionables del video. 9 frames con errores de consola detectados por OCR, más bugs de UX y flujos rotos identificados a lo largo de la sesión.
+
+### C.0. Checklist maestro video QA
+
+**P0 — BLOQUEANTES (6 items)**
+- [ ] C.1.1 · `pet_reminders` GET query devuelve 400 en CADA página — schema mismatch
+- [ ] C.1.2 · `pet_reminders` POST viola constraint `pet_reminders_type_check` — no se pueden crear recordatorios
+- [ ] C.1.3 · `/upgrade` devuelve 404 en producción — funnel Premium roto
+- [ ] C.1.4 · `bereavement-assistant` edge function devuelve 401 — chat memorial roto
+- [ ] C.1.5 · `posts`, `user_roles`, `user_stats`, `award_points` queries devuelven 400 — feed y gamificación rotos
+- [ ] C.1.6 · Retry loop de `bereavement-assistant` se dispara en CADA navegación posterior a `/en-memoria`
+
+**P1 — DEBEN ARREGLARSE (3 items)**
+- [ ] C.2.1 · DialogContent sin DialogTitle en TODOS los modales — violación a11y
+- [ ] C.2.2 · RadioGroup controlled/uncontrolled warning en Grimace Scale
+- [ ] C.2.3 · Date picker muestra `mm/dd/yyyy` en vez de `dd/mm/yyyy` (formato chileno)
+
+**P2 — NICE TO HAVE (1 item)**
+- [ ] C.3.1 · "BLANCo" mixed-case en color de mascota
+
+---
+
+### C.1. ERRORES DE CONSOLA (P0 — BLOQUEANTES)
+
+#### C.1.1. `pet_reminders` GET query devuelve 400 (Bad Request) — PERSISTENTE
+
+**Timestamps**: desde 00:41 (frame 11206) hasta el final del video. 83+ issues acumuladas en DevTools.
+**Endpoint**: `GET .../rest/v1/pet_reminders?select=id...`
+**Severidad**: 🔴 MÁXIMA — se dispara en CADA carga de página autenticada durante toda la sesión.
+
+**Diagnóstico probable**: query malformada — nombre de columna que no existe en la tabla, filtro inválido, o drift de schema entre types.ts y la DB real. Dado que se ejecuta en cada página, probablemente viene de un hook global (sidebar, widget de recordatorios, o provider de layout).
+
+**Fix**:
+1. `grep -rn "pet_reminders" src/` — identificar el hook/query que hace el SELECT
+2. Comparar las columnas del SELECT contra `information_schema.columns WHERE table_name = 'pet_reminders'`
+3. Si hay columna faltante: crear migración para agregarla, o corregir el query
+4. Regenerar types: `npx supabase gen types typescript --project-id gwailbjlvevkhwcrovfd > src/integrations/supabase/types.ts`
+
+**Esfuerzo**: 1-2h
+**Hecho cuando**: navegar por 5+ páginas autenticadas no produce ningún 400 de `pet_reminders` en DevTools
+
+---
+
+#### C.1.2. `pet_reminders` POST viola constraint `pet_reminders_type_check`
+
+**Timestamps**: 14:04 (frame 26809) al intentar crear recordatorio desde la ficha clínica.
+**Endpoint**: `POST .../rest/v1/pet_reminders`
+**Error**: `new row for relation "pet_reminders" violates check constraint "pet_reminders_type_check"` (código PostgreSQL 23514)
+**Severidad**: 🔴 MÁXIMA — los usuarios NO PUEDEN crear recordatorios. Feature core completamente rota.
+
+**Diagnóstico**: el valor de `type` enviado por el formulario no coincide con los valores permitidos por el constraint `CHECK (type IN (...))` en la tabla.
+
+**Fix**:
+1. En Supabase SQL Editor:
+   ```sql
+   SELECT conname, pg_get_constraintdef(oid) FROM pg_constraint
+   WHERE conrelid = 'public.pet_reminders'::regclass AND contype = 'c';
+   ```
+2. Comparar los valores permitidos contra el dropdown del formulario de recordatorios en el frontend
+3. Alinear: o bien actualizar el constraint en DB, o corregir el valor enviado por el form
+
+**Esfuerzo**: 30min-1h
+**Hecho cuando**: un usuario puede crear un recordatorio desde la ficha clínica sin error
+
+---
+
+#### C.1.3. `/upgrade` devuelve 404 en producción (GitHub Pages)
+
+**Timestamps**: 13:53 (frame 2617)
+**Endpoint**: `GET https://pawfriend.cl/upgrade`
+**Severidad**: 🔴 ALTA — el funnel de conversión a Premium está COMPLETAMENTE ROTO en producción.
+
+**Diagnóstico**: GitHub Pages no maneja rutas SPA — al navegar directamente a `/upgrade` (o al refrescar), el servidor devuelve 404 porque no existe `docs/upgrade/index.html`. Esto afecta a TODAS las rutas deep-linked de la SPA, no solo `/upgrade`.
+
+**Fix**:
+1. Crear `docs/404.html` como copia de `docs/index.html` — GitHub Pages redirige automáticamente 404s al SPA router
+2. Agregar al script de build en `package.json`:
+   ```json
+   "build": "vite build && cp docs/index.html docs/404.html"
+   ```
+3. O alternativamente, ya verificar si `vite.config.ts` puede generar el 404.html automáticamente
+
+**Esfuerzo**: 15min
+**Hecho cuando**: navegar directamente a `pawfriend.cl/upgrade` carga la página de upgrade correctamente
+
+---
+
+#### C.1.4. `bereavement-assistant` edge function devuelve 401 (Unauthorized)
+
+**Timestamps**: 06:55 (frame 19884), repetido en cada navegación posterior
+**Endpoint**: `POST .../functions/v1/bereavement-assistant`
+**UI visible**: "No pude procesar tu mensaje" aparece DOS VECES duplicado en el chat de duelo
+**Severidad**: 🔴 ALTA — el flujo memorial es emocionalmente sensible; mostrar errores repetidos a usuarios en duelo es la peor UX posible.
+
+**Diagnóstico**: token JWT inválido o expirado enviado a la edge function, o la función tiene verificación de JWT mal configurada.
+
+**Fix**:
+1. Verificar en `supabase/functions/bereavement-assistant/index.ts` cómo se valida el JWT
+2. Confirmar que el cliente envía `Authorization: Bearer ${session.access_token}` en el header
+3. Verificar que la función no requiere `service_role` cuando debería aceptar `anon` autenticado
+4. En el frontend: agregar deduplicación de mensajes de error (no mostrar 2 toasts/bubbles idénticas)
+5. Agregar retry con backoff exponencial en vez de retry inmediato
+
+**Esfuerzo**: 2-3h
+**Hecho cuando**: el chat de duelo responde correctamente Y no muestra errores duplicados
+
+---
+
+#### C.1.5. `posts`, `user_roles`, `user_stats`, `award_points` — queries 400
+
+**Timestamps**: desde 17:42 (frame 31988, en `/feed`) y 20:21 (frame 37153, en `/paw-game`)
+**Endpoints afectados**:
+- `GET .../rest/v1/user_roles?select=rol...` → 400
+- `GET .../rest/v1/posts?select=*%2Cprof...` → 400
+- `GET .../rest/v1/user_stats?select=tot...` → 400
+- `POST .../rest/v1/rpc/award_points` → 400
+**Severidad**: 🔴 ALTA — feed social y gamificación completamente rotos.
+
+**Diagnóstico**: misma raíz que C.1.1 — schema drift entre types.ts y las tablas reales. Es probable que las tablas `user_roles`, `posts`, `user_stats` hayan sido modificadas por migraciones recientes sin regenerar los tipos.
+
+**Fix**:
+1. Verificar existencia de las tablas:
+   ```sql
+   SELECT table_name FROM information_schema.tables
+   WHERE table_schema = 'public'
+     AND table_name IN ('user_roles', 'posts', 'user_stats');
+   ```
+2. Si existen: comparar columnas vs queries del frontend
+3. Si NO existen: las tablas nunca se crearon y el código hace queries a tablas fantasma
+4. Regenerar types después de confirmar schema
+
+**Esfuerzo**: 2-4h (depende de si las tablas existen o hay que crearlas)
+**Hecho cuando**: `/feed` muestra posts y `/paw-game` muestra stats reales sin 400s en DevTools
+
+---
+
+#### C.1.6. Retry loop de `bereavement-assistant` persiste después de salir de `/en-memoria`
+
+**Timestamps**: desde 06:55 hasta el final del video (24 min)
+**Severidad**: 🟡 MEDIA-ALTA — el POST a `bereavement-assistant` sigue disparándose en CADA navegación posterior, incluso en páginas que no tienen nada que ver con el memorial. Contamina la consola y desperdicia requests.
+
+**Diagnóstico**: probablemente un `useEffect` o `useQuery` que se monta a nivel de layout/provider y nunca se desmonta, o un interval/polling que no se limpia.
+
+**Fix**:
+1. `grep -rn "bereavement-assistant" src/` — identificar dónde se monta el hook
+2. Asegurar que el efecto se ejecute SOLO dentro de la ruta `/en-memoria`
+3. Si usa `useQuery` con `refetchInterval`, asegurar que se desactiva al salir del componente
+4. Si usa `setInterval`, limpiar con `clearInterval` en el cleanup del `useEffect`
+
+**Esfuerzo**: 1h
+**Hecho cuando**: navegar fuera de `/en-memoria` detiene completamente los requests a `bereavement-assistant`
+
+---
+
+### C.2. BUGS DE UX (P1 — DEBEN ARREGLARSE)
+
+#### C.2.1. DialogContent sin DialogTitle — violación a11y en todos los modales
+
+**Timestamps**: desde 05:13 (frame 16765), repetido en CADA modal de la app
+**Warning**: `"DialogContent" requires a "DialogTitle" for the component to be accessible for screen reader users`
+**Segundo warning**: `Missing "Description" or "aria-describedby={undefined}" for {DialogContent}`
+**Donde**: todos los `<Dialog>` de shadcn/Radix en la app
+
+**Fix**: agregar `<DialogTitle>` y `<DialogDescription>` (o `aria-describedby={undefined}`) a cada `<DialogContent>`. Si el título no debe ser visible, usar `<VisuallyHidden>`.
+
+**Esfuerzo**: 2-3h (buscar todos los DialogContent sin DialogTitle)
+**Hecho cuando**: `npm run dev` + navegar por modales no produce warnings de Radix en DevTools
+
+---
+
+#### C.2.2. RadioGroup controlled/uncontrolled en Grimace Scale
+
+**Timestamps**: 01:22 (frame 12253) en el modal de evaluación de dolor (Feline Grimace Scale)
+**Warning**: `RadioGroup is changing from uncontrolled to controlled`
+**Donde**: componente de pain assessment en la ficha clínica
+
+**Fix**: inicializar el estado del RadioGroup con un valor por defecto (`""` o `"0"`) en vez de `undefined`.
+
+**Esfuerzo**: 15min
+**Hecho cuando**: abrir el Grimace Scale no produce warning de controlled/uncontrolled
+
+---
+
+#### C.2.3. Date picker muestra `mm/dd/yyyy` en vez de `dd/mm/yyyy`
+
+**Timestamps**: 10:25 (frame 20743, formulario memorial), 13:26 (frame 25344, formulario recordatorio)
+**Severidad**: 🟡 MEDIA — los usuarios chilenos esperan `dd/mm/yyyy`. Usar formato USA causa errores de entrada de fecha.
+
+**Fix**: configurar el locale del date picker a `es-CL` o `es`. Si usa `input type="date"`, el formato depende del navegador — considerar usar un date picker de shadcn con formato explícito.
+
+**Esfuerzo**: 1h
+**Hecho cuando**: los date pickers de memorial y recordatorios muestran `dd/mm/aaaa`
+
+---
+
+### C.3. NICE TO HAVE (P2)
+
+#### C.3.1. Color "BLANCo" con capitalización inconsistente
+
+**Timestamps**: frames 22015, 22230, 25085
+**Donde**: perfil de mascota, display del campo `color`
+**Fix**: aplicar `toTitleCase()` o `.toLowerCase()` + capitalizar primera letra al renderizar. Relacionado con §5.7 del master upgrade (normalización de `display_name`).
+
+**Esfuerzo**: 10min
+
+---
+
+### C.4. OBSERVACIONES POSITIVAS
+
+| # | Hallazgo | Timestamp |
+|---|----------|-----------|
+| 1 | Landing pública carga limpia, sin errores de consola | 00:00-00:22 |
+| 2 | Google OAuth funciona correctamente | 00:27 |
+| 3 | Ficha clínica renderiza completa: emergencia vet, seguro, Grimace Scale, crónicos, medicamentos | 00:41+ |
+| 4 | **PDF médico se genera correctamente** — layout con datos del paciente, alergias, medicamentos, dieta. Diálogo de impresión funciona. La joya de la corona **funciona** | 11:02-11:36 |
+| 5 | Directorio de vets carga bien — Clínica Veterinaria Altamira con Colmevet, comunas, precios | 14:06+ |
+| 6 | Directorio de walkers/sitters carga con ratings, precios y descripciones | 15:07-16:32 |
+| 7 | Flow.cl payment gateway integra correctamente — plan Premium $3,990 CLP, user ID correcto | 12:35 |
+| 8 | Memorial UX es empática — copy explica qué pasará, preserva historial, ofrece ventana de deshacer | 05:13-10:25 |
+| 9 | Disclaimer responsable en asistente IA: "Soy un asistente de inteligencia artificial, no una persona" | 06:55 |
+| 10 | Pet edit guarda correctamente con toast: "Cambios guardados - Los datos de Kai se actualizaron correctamente" | 23:54 |
+
+---
+
+### C.5. RUTAS VISITADAS (cronológico)
+
+| Tiempo | Ruta | Notas |
+|--------|------|-------|
+| 00:00-00:22 | `/` (Landing) | Limpia, sin errores |
+| 00:23-00:27 | `/auth` | Login, luego Google OAuth |
+| 00:27 | Google OAuth redirect | Exitoso |
+| 00:41-01:27 | `/pet/:petId/clinical` | Ficha clínica de Kai. Comienzan los 400 de `pet_reminders` |
+| 01:39-01:59 | `/auth` (redirect loop?) | Flash breve de auth |
+| 01:42-01:43 | `/edit-pet/:petId` | Editar Kai |
+| 04:41 | `/?/home` (URL rara) | Home dashboard |
+| 05:13 | `/pet/:petId/clinical` + modal share | Diálogo de compartir ficha |
+| 05:13-06:13 | Flujo memorial (diálogo despedida) | Kai → "En Memoria" |
+| 06:13-06:55 | `/en-memoria` | Formulario memorial + chat bereavement |
+| 06:55-09:18 | `/en-memoria` | Chat de duelo (errores 401) |
+| 09:27-09:33 | `/my-pets` → `/pet/:petId/clinical` | Vuelve a ficha clínica |
+| 09:55-10:25 | Flujo memorial (segundo intento) | Segundo intento de despedida |
+| 10:25 | Formulario memorial | Fecha, causa, mensaje |
+| 11:02-11:59 | PDF médico (about:blank) | PDF renderiza, diálogo de impresión |
+| 12:06 | New Tab (Google) | Breve cambio de tab |
+| 12:13 | `/pet/:petId/clinical` | Vuelve a ficha clínica |
+| 12:13-12:34 | `/paw-game` | PawGame, misiones, ranking |
+| 12:35 | Flow.cl payment page | Redirect upgrade Premium |
+| 12:36-13:15 | `/my-pets` | Lista de mascotas |
+| 13:19-13:31 | `/pet/:petId/clinical` | Clínica + recordatorios |
+| 13:22-13:31 | Formulario crear recordatorio | Tipo, título, fecha (falla silenciosamente) |
+| 13:53 | `/upgrade` | **404 error** |
+| 14:04 | `/precios-veterinarios` | Estimador de precios |
+| 14:06-14:56 | `/veterinarios/:slug` | Perfil vet (Altamira) + booking |
+| 15:07-16:17 | `/services/walkers` | Directorio paseadores |
+| 16:17-16:32 | `/services/sitters` | Directorio cuidadores |
+| 17:42-17:46 | `/feed` | Feed social (**roto**, queries 400) |
+| 20:21-20:41 | `/paw-game` (revisita) | Stats **rotas** |
+| 20:37 | `/medical-records` | Registros médicos |
+| 23:54 | `/my-pets` | Edit pet exitoso |
+
+---
+
+### C.6. Cruce con items existentes del master upgrade
+
+| Bug video | Item existente | Nota |
+|-----------|---------------|------|
+| C.1.3 (`/upgrade` 404) | Nuevo — no estaba documentado | SPA routing en GH Pages nunca se configuró |
+| C.1.1-C.1.2 (pet_reminders) | Nuevo — no estaba documentado | Schema drift post-migraciones |
+| C.1.4 (bereavement 401) | Nuevo | Edge function auth issue |
+| C.1.5 (posts/user_roles 400) | Nuevo | Feed social nunca testeado end-to-end |
+| C.2.1 (DialogTitle a11y) | §1.1 auditar modales Dialog (parcial) | §1.1 se enfoca en overflow, no en a11y |
+| C.2.3 (date format) | Nuevo | Locale no configurado para Chile |
+| C.3.1 (capitalización color) | §5.7 normalizar capitalización | Ya documentado, scope ampliado |
+
+**6 bugs nuevos** no documentados previamente en ninguna fase del master upgrade. Los más graves: la ruta `/upgrade` devolviendo 404 mata el funnel de monetización, y `pet_reminders` roto en cada página degrada toda la experiencia autenticada.
+
+---
+
+### C.7. Resumen ejecutivo video QA
+
+| Categoría | Conteo | Impacto |
+|-----------|--------|---------|
+| Errores de consola P0 | 6 | Recordatorios, feed, gamificación, memorial IA, upgrade Premium — todos rotos |
+| Bugs UX P1 | 3 | a11y en modales, locale fechas, state warning |
+| Nice-to-have P2 | 1 | Capitalización cosmética |
+| **Positivos confirmados** | **10** | Landing, OAuth, PDF médico, directorio vets, Flow.cl, memorial UX |
+| Rutas visitadas | 25+ | Cobertura amplia del flujo dueño de mascota |
+
+**Camino crítico de este anexo**: C.1.3 (15 min, desbloquea monetización) → C.1.1 + C.1.2 (2h, desbloquea recordatorios) → C.1.5 (2-4h, desbloquea feed y game) → C.1.4 + C.1.6 (3h, desbloquea memorial IA).
+
+*Análisis generado 2026-04-11. Fuente: video "Paw Friend video 25 min.mp4" + OCR automatizado (229 frames, Tesseract spa+eng).*

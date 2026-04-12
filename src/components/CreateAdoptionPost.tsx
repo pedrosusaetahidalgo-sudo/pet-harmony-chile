@@ -1,29 +1,36 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Upload, Loader2 } from "@/lib/icons";
-import { logger } from "@/lib/logger";
+} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { Upload, Loader2 } from '@/lib/icons';
+import { logger } from '@/lib/logger';
+import {
+  HEALTH_STATUS_OPTIONS,
+  ADOPTION_REASON_OPTIONS,
+  PERSONALITY_OPTIONS,
+} from '@/lib/petOptions';
+import { SelectWithOther } from '@/components/ui/select-with-other';
 
 interface CreateAdoptionPostProps {
   open: boolean;
@@ -35,9 +42,12 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photoUrls, setPhotoUrls] = useState<string[]>([]);
+  const [selectedTemperament, setSelectedTemperament] = useState<string[]>([]);
   const { register, handleSubmit, watch, setValue, reset } = useForm();
 
-  const species = watch("species");
+  const species = watch('species');
+  const healthStatusValue = watch('health_status') ?? '';
+  const reasonValue = watch('reason_for_adoption') ?? '';
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -45,80 +55,86 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
 
     try {
       const uploadPromises = Array.from(files).map(async (file) => {
-        const fileExt = file.name.split(".").pop();
+        const fileExt = file.name.split('.').pop();
         const fileName = `${Math.random()}.${fileExt}`;
         const filePath = `${user?.id}/${fileName}`;
 
         const { error: uploadError, data } = await supabase.storage
-          .from("pet-photos")
+          .from('pet-photos')
           .upload(filePath, file);
 
         if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = supabase.storage
-          .from("pet-photos")
-          .getPublicUrl(filePath);
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from('pet-photos').getPublicUrl(filePath);
 
         return publicUrl;
       });
 
       const urls = await Promise.all(uploadPromises);
       setPhotoUrls((prev) => [...prev, ...urls]);
-      toast.success("Fotos subidas exitosamente");
+      toast.success('Fotos subidas exitosamente');
     } catch (error) {
-      logger.error("Error uploading photos:", error);
-      toast.error("Error al subir las fotos");
+      logger.error('Error uploading photos:', error);
+      toast.error('Error al subir las fotos');
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const onSubmit = async (data: any) => {
     if (!user) return;
-    
+
     setIsSubmitting(true);
     try {
-      const { data: adoptionPost, error } = await supabase.from("adoption_posts").insert({
-        user_id: user.id,
-        pet_name: data.pet_name,
-        species: data.species,
-        breed: data.breed,
-        age_years: parseInt(data.age_years) || 0,
-        age_months: parseInt(data.age_months) || 0,
-        gender: data.gender,
-        size: data.size,
-        description: data.description,
-        reason_for_adoption: data.reason_for_adoption,
-        health_status: data.health_status,
-        temperament: data.temperament?.split(",").map((t: string) => t.trim()) || [],
-        good_with_kids: data.good_with_kids || false,
-        good_with_dogs: data.good_with_dogs || false,
-        good_with_cats: data.good_with_cats || false,
-        photos: photoUrls,
-        location: data.location,
-      }).select().maybeSingle();
+      const { data: adoptionPost, error } = await supabase
+        .from('adoption_posts')
+        .insert({
+          user_id: user.id,
+          pet_name: data.pet_name,
+          species: data.species,
+          breed: data.breed,
+          age_years: parseInt(data.age_years) || 0,
+          age_months: parseInt(data.age_months) || 0,
+          gender: data.gender,
+          size: data.size,
+          description: data.description,
+          reason_for_adoption: data.reason_for_adoption,
+          health_status: data.health_status,
+          temperament: selectedTemperament,
+          good_with_kids: data.good_with_kids || false,
+          good_with_dogs: data.good_with_dogs || false,
+          good_with_cats: data.good_with_cats || false,
+          photos: photoUrls,
+          location: data.location,
+        })
+        .select()
+        .maybeSingle();
 
       if (error) throw error;
 
       // Award points for adoption action
       try {
-        await supabase.rpc("award_points", {
+        await supabase.rpc('award_points', {
           p_user_id: user.id,
           p_points: 100, // DEFAULT_POINTS_CONFIG.adoption
-          p_action_type: "adoption",
+          p_action_type: 'adoption',
           p_action_id: adoptionPost.id,
-          p_description: "Publicación de adopción creada",
+          p_description: 'Publicación de adopción creada',
         });
       } catch (pointsError) {
-        logger.error("Error awarding points:", pointsError);
+        logger.error('Error awarding points:', pointsError);
         // Don't fail the adoption post creation if points fail
       }
 
-      toast.success("Publicación creada exitosamente");
+      toast.success('Publicación creada exitosamente');
       reset();
       setPhotoUrls([]);
+      setSelectedTemperament([]);
       onSuccess();
     } catch (error) {
-      logger.error("Error creating post:", error);
-      toast.error("Error al crear la publicación");
+      logger.error('Error creating post:', error);
+      toast.error('Error al crear la publicación');
     } finally {
       setIsSubmitting(false);
     }
@@ -140,12 +156,12 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="pet_name">Nombre de la Mascota *</Label>
-              <Input id="pet_name" {...register("pet_name", { required: true })} />
+              <Input id="pet_name" {...register('pet_name', { required: true })} />
             </div>
 
             <div>
               <Label htmlFor="species">Especie *</Label>
-              <Select onValueChange={(value) => setValue("species", value)}>
+              <Select onValueChange={(value) => setValue('species', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecciona..." />
                 </SelectTrigger>
@@ -161,12 +177,12 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="breed">Raza</Label>
-              <Input id="breed" {...register("breed")} />
+              <Input id="breed" {...register('breed')} />
             </div>
 
             <div>
               <Label htmlFor="gender">Género</Label>
-              <Select onValueChange={(value) => setValue("gender", value)}>
+              <Select onValueChange={(value) => setValue('gender', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecciona..." />
                 </SelectTrigger>
@@ -182,24 +198,26 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
           <div className="grid grid-cols-3 gap-4">
             <div>
               <Label htmlFor="age_years">Años</Label>
-              <Input type="number" id="age_years" {...register("age_years")} min="0" />
+              <Input type="number" id="age_years" {...register('age_years')} min="0" />
             </div>
 
             <div>
               <Label htmlFor="age_months">Meses</Label>
-              <Input type="number" id="age_months" {...register("age_months")} min="0" max="11" />
+              <Input type="number" id="age_months" {...register('age_months')} min="0" max="11" />
             </div>
 
             <div>
               <Label htmlFor="size">Tamaño</Label>
-              <Select onValueChange={(value) => setValue("size", value)}>
+              <Select onValueChange={(value) => setValue('size', value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Selecciona..." />
                 </SelectTrigger>
                 <SelectContent className="bg-background z-50">
+                  <SelectItem value="miniatura">Miniatura (&lt; 1 kg)</SelectItem>
                   <SelectItem value="pequeño">Pequeño</SelectItem>
                   <SelectItem value="mediano">Mediano</SelectItem>
                   <SelectItem value="grande">Grande</SelectItem>
+                  <SelectItem value="gigante">Gigante</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -207,61 +225,69 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
 
           <div>
             <Label htmlFor="description">Descripción *</Label>
-            <Textarea 
-              id="description" 
-              {...register("description", { required: true })}
+            <Textarea
+              id="description"
+              {...register('description', { required: true })}
               placeholder="Describe a la mascota, su personalidad, hábitos..."
               rows={3}
             />
           </div>
 
           <div>
-            <Label htmlFor="reason_for_adoption">Motivo de Adopción</Label>
-            <Textarea 
-              id="reason_for_adoption" 
-              {...register("reason_for_adoption")}
-              placeholder="¿Por qué estás dando en adopción?"
-              rows={2}
+            <Label>Motivo de adopción</Label>
+            <SelectWithOther
+              options={[...ADOPTION_REASON_OPTIONS]}
+              value={reasonValue}
+              onValueChange={(v) => setValue('reason_for_adoption', v)}
+              placeholder="Selecciona motivo"
+              otherPlaceholder="Describe el motivo..."
             />
           </div>
 
           <div>
-            <Label htmlFor="health_status">Estado de Salud</Label>
-            <Input 
-              id="health_status" 
-              {...register("health_status")}
-              placeholder="Vacunas, esterilización, condiciones médicas..."
+            <Label>Estado de salud</Label>
+            <SelectWithOther
+              options={[...HEALTH_STATUS_OPTIONS]}
+              value={healthStatusValue}
+              onValueChange={(v) => setValue('health_status', v)}
+              placeholder="Selecciona estado de salud"
+              otherPlaceholder="Describe el estado..."
             />
           </div>
 
-          <div>
-            <Label htmlFor="temperament">Temperamento</Label>
-            <Input 
-              id="temperament" 
-              {...register("temperament")}
-              placeholder="Amigable, juguetón, tranquilo... (separados por comas)"
-            />
+          <div className="space-y-2">
+            <Label>Temperamento</Label>
+            <div className="flex flex-wrap gap-2">
+              {PERSONALITY_OPTIONS.map((trait) => (
+                <Badge
+                  key={trait}
+                  variant={selectedTemperament.includes(trait) ? 'default' : 'outline'}
+                  className="cursor-pointer hover:bg-primary/80 transition-colors py-1.5 text-xs"
+                  onClick={() =>
+                    setSelectedTemperament((prev) =>
+                      prev.includes(trait) ? prev.filter((t) => t !== trait) : [...prev, trait]
+                    )
+                  }
+                >
+                  {trait}
+                </Badge>
+              ))}
+            </div>
           </div>
 
           <div className="space-y-3">
             <Label>Convivencia</Label>
             <div className="flex flex-wrap gap-4">
               <label className="flex items-center gap-2 cursor-pointer">
-                <Checkbox 
-                  onCheckedChange={(checked) => setValue("good_with_kids", checked)}
-                />
+                <Checkbox onCheckedChange={(checked) => setValue('good_with_kids', checked)} />
                 <span className="text-sm">Bueno con niños</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <Checkbox 
-                  onCheckedChange={(checked) => setValue("good_with_dogs", checked)}
-                />
+                <Checkbox onCheckedChange={(checked) => setValue('good_with_dogs', checked)} />
                 <span className="text-sm">Bueno con perros</span>
               </label>
               <label className="flex items-center gap-2 cursor-pointer">
-                <Checkbox 
-                  onCheckedChange={(checked) => setValue("good_with_cats", checked)}
-                />
+                <Checkbox onCheckedChange={(checked) => setValue('good_with_cats', checked)} />
                 <span className="text-sm">Bueno con gatos</span>
               </label>
             </div>
@@ -269,9 +295,9 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
 
           <div>
             <Label htmlFor="location">Ubicación *</Label>
-            <Input 
-              id="location" 
-              {...register("location", { required: true })}
+            <Input
+              id="location"
+              {...register('location', { required: true })}
               placeholder="Ciudad, región..."
             />
           </div>
@@ -317,7 +343,7 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
                   Publicando...
                 </>
               ) : (
-                "Publicar"
+                'Publicar'
               )}
             </Button>
           </div>

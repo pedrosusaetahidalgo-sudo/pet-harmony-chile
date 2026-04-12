@@ -1,17 +1,30 @@
-import { useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { format, isToday, isTomorrow, isPast } from "date-fns";
-import { es } from "date-fns/locale";
-import { Bell, CheckCircle2, Plus, AlertTriangle, Calendar as CalendarIcon } from "@/lib/icons";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { PageHeader } from "@/components/PageHeader";
-import { useReminders } from "@/hooks/useReminders";
-import { LINKS } from "@/lib/links";
-import { cn } from "@/lib/utils";
-import { EmptyState } from "@/components/ui/EmptyState";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { format, isToday, isTomorrow, isPast } from 'date-fns';
+import { es } from 'date-fns/locale';
+import {
+  Bell,
+  CheckCircle2,
+  Plus,
+  AlertTriangle,
+  Calendar as CalendarIcon,
+  Clock,
+} from '@/lib/icons';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { PageHeader } from '@/components/PageHeader';
+import { useReminders } from '@/hooks/useReminders';
+import { LINKS } from '@/lib/links';
+import { cn } from '@/lib/utils';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { Skeleton } from '@/components/ui/skeleton';
 
 /**
  * Pagina agregadora de recordatorios.
@@ -26,8 +39,14 @@ import { Skeleton } from "@/components/ui/skeleton";
  */
 export default function Reminders() {
   const navigate = useNavigate();
-  const { reminders, overdueReminders, upcomingReminders, isLoading, completeReminder } =
-    useReminders();
+  const {
+    reminders,
+    overdueReminders,
+    upcomingReminders,
+    isLoading,
+    completeReminder,
+    snoozeReminder,
+  } = useReminders();
 
   const grouped = useMemo(() => {
     const today: typeof reminders = [];
@@ -42,10 +61,10 @@ export default function Reminders() {
 
   const formatDue = (iso: string) => {
     const d = new Date(iso);
-    if (isToday(d)) return "Hoy";
-    if (isTomorrow(d)) return "Mañana";
-    if (isPast(d)) return `Vencido · ${format(d, "d MMM", { locale: es })}`;
-    return format(d, "EEEE d MMM", { locale: es });
+    if (isToday(d)) return 'Hoy';
+    if (isTomorrow(d)) return 'Mañana';
+    if (isPast(d)) return `Vencido · ${format(d, 'd MMM', { locale: es })}`;
+    return format(d, 'EEEE d MMM', { locale: es });
   };
 
   return (
@@ -55,7 +74,7 @@ export default function Reminders() {
         subtitle={
           reminders.length === 0
             ? undefined
-            : `${overdueReminders.length} vencido${overdueReminders.length === 1 ? "" : "s"} · ${upcomingReminders.length} próximo${upcomingReminders.length === 1 ? "" : "s"}`
+            : `${overdueReminders.length} vencido${overdueReminders.length === 1 ? '' : 's'} · ${upcomingReminders.length} próximo${upcomingReminders.length === 1 ? '' : 's'}`
         }
         back
         actions={
@@ -74,7 +93,10 @@ export default function Reminders() {
         {isLoading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="rounded-xl border border-l-4 border-l-purple-600 bg-card p-3 flex items-center gap-3">
+              <div
+                key={i}
+                className="rounded-xl border border-l-4 border-l-purple-600 bg-card p-3 flex items-center gap-3"
+              >
                 <div className="flex-1 space-y-2">
                   <Skeleton className="h-4 w-32" />
                   <Skeleton className="h-3 w-24" />
@@ -91,7 +113,10 @@ export default function Reminders() {
             title="Aún no tienes recordatorios"
             description="Crea tu primer recordatorio desde la ficha de tu mascota."
             action={
-              <Button onClick={() => navigate(LINKS.myPets())} className="bg-purple-600 hover:bg-purple-700">
+              <Button
+                onClick={() => navigate(LINKS.myPets())}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
                 Ir a mis mascotas
               </Button>
             }
@@ -110,7 +135,8 @@ export default function Reminders() {
                 key={r.id}
                 reminder={r}
                 onComplete={() => completeReminder.mutate(r.id)}
-                onOpen={() => navigate(`/pet/${r.pet_id}/clinical`)}
+                onOpen={() => navigate(LINKS.petClinical(r.pet_id))}
+                onSnooze={(days) => snoozeReminder.mutate({ id: r.id, days })}
                 dueLabel={formatDue(r.due_date)}
                 tone="rose"
               />
@@ -130,7 +156,7 @@ export default function Reminders() {
                 key={r.id}
                 reminder={r}
                 onComplete={() => completeReminder.mutate(r.id)}
-                onOpen={() => navigate(`/pet/${r.pet_id}/clinical`)}
+                onOpen={() => navigate(LINKS.petClinical(r.pet_id))}
                 dueLabel={formatDue(r.due_date)}
                 tone="amber"
               />
@@ -150,7 +176,7 @@ export default function Reminders() {
                 key={r.id}
                 reminder={r}
                 onComplete={() => completeReminder.mutate(r.id)}
-                onOpen={() => navigate(`/pet/${r.pet_id}/clinical`)}
+                onOpen={() => navigate(LINKS.petClinical(r.pet_id))}
                 dueLabel={formatDue(r.due_date)}
                 tone="purple"
               />
@@ -172,7 +198,7 @@ function Section({
   title: string;
   icon: React.ReactNode;
   count: number;
-  tone: "rose" | "amber" | "purple";
+  tone: 'rose' | 'amber' | 'purple';
   children: React.ReactNode;
 }) {
   return (
@@ -183,10 +209,10 @@ function Section({
         <Badge
           variant="secondary"
           className={cn(
-            "ml-auto text-xs",
-            tone === "rose" && "bg-rose-100 text-rose-700",
-            tone === "amber" && "bg-amber-100 text-amber-700",
-            tone === "purple" && "bg-purple-100 text-purple-700"
+            'ml-auto text-xs',
+            tone === 'rose' && 'bg-rose-100 text-rose-700',
+            tone === 'amber' && 'bg-amber-100 text-amber-700',
+            tone === 'purple' && 'bg-purple-100 text-purple-700'
           )}
         >
           {count}
@@ -201,36 +227,61 @@ function ReminderCard({
   reminder,
   onComplete,
   onOpen,
+  onSnooze,
   dueLabel,
   tone,
 }: {
-  reminder: { id: string; title: string; type: string; pets?: { name: string; species: string } | null };
+  reminder: {
+    id: string;
+    title: string;
+    type: string;
+    pets?: { name: string; species: string } | null;
+  };
   onComplete: () => void;
   onOpen: () => void;
+  onSnooze?: (days: number) => void;
   dueLabel: string;
-  tone: "rose" | "amber" | "purple";
+  tone: 'rose' | 'amber' | 'purple';
 }) {
   return (
     <Card
       className={cn(
-        "border-l-4 transition hover:shadow-sm",
-        tone === "rose" && "border-l-rose-500",
-        tone === "amber" && "border-l-amber-500",
-        tone === "purple" && "border-l-purple-600"
+        'border-l-4 transition hover:shadow-sm',
+        tone === 'rose' && 'border-l-rose-500',
+        tone === 'amber' && 'border-l-amber-500',
+        tone === 'purple' && 'border-l-purple-600'
       )}
     >
       <CardContent className="py-3 px-3 flex items-center gap-3">
         <button
           onClick={onOpen}
           className="flex-1 text-left min-w-0"
-          aria-label={`Abrir ficha de ${reminder.pets?.name || "mascota"}`}
+          aria-label={`Abrir ficha de ${reminder.pets?.name || 'mascota'}`}
         >
           <p className="font-medium text-sm truncate">{reminder.title}</p>
           <p className="text-xs text-muted-foreground truncate">
-            {reminder.pets?.name ? `${reminder.pets.name} · ` : ""}
+            {reminder.pets?.name ? `${reminder.pets.name} · ` : ''}
             {dueLabel}
           </p>
         </button>
+        {onSnooze && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Posponer recordatorio"
+                className="h-11 w-11 flex-shrink-0 text-rose-500 hover:bg-rose-50 hover:text-rose-600"
+              >
+                <Clock className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => onSnooze(1)}>Posponer 1 dia</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onSnooze(7)}>Posponer 1 semana</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
         <Button
           variant="ghost"
           size="icon"

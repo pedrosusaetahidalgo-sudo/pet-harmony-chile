@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+# 1. Lint + format en archivos staged (rapido).
+npx lint-staged || exit 1
+
+# 2. Type-check global. Si rompe el tipado, no dejar commitear.
+#    tsc -b es incremental, asi que en commits seguidos es muy rapido.
+echo "→ TypeScript type-check (npx tsc -b)..."
+npx tsc -b || {
+  echo ""
+  echo "X Type-check fallo. Arregla los errores antes de commitear."
+  echo "  Para correr la matriz cross-browser completa antes del PR:"
+  echo "    npm run test:e2e:full"
+  exit 1
+}

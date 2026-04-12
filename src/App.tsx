@@ -1,16 +1,16 @@
-import { lazy, Suspense, useEffect } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AppLayout } from "./components/AppLayout";
-import { useAuth } from "./hooks/useAuth";
-import { ReactNode } from "react";
-import { isNative } from "@/lib/platform";
+import { lazy, Suspense, useEffect } from 'react';
+import { Toaster } from '@/components/ui/toaster';
+import { Toaster as Sonner } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter, Routes, Route, Navigate, useParams, useLocation } from 'react-router-dom';
+import { AppLayout } from './components/AppLayout';
+import { useAuth } from './hooks/useAuth';
+import { ReactNode } from 'react';
+import { isNative } from '@/lib/platform';
 
-import ProtectedRoute from "./components/ProtectedRoute";
-import { ActiveRoleProvider } from "./hooks/useActiveRole";
+import ProtectedRoute from './components/ProtectedRoute';
+import { ActiveRoleProvider } from './hooks/useActiveRole';
 
 /** Envuelve la página con AppLayout solo si el user está logueado.
  *  Para rutas públicas (directorio vets, perfiles públicos) que deben verse
@@ -20,79 +20,75 @@ function PublicWithLayoutIfAuth({ children }: { children: ReactNode }) {
   if (loading) return null;
   return user ? <AppLayout>{children}</AppLayout> : <>{children}</>;
 }
-import AdminRoute from "./components/AdminRoute";
-import ErrorBoundary from "./components/ErrorBoundary";
+import AdminRoute from './components/AdminRoute';
+import ErrorBoundary from './components/ErrorBoundary';
 
 // Lazy-loaded pages for code splitting
-const Index = lazy(() => import("./pages/Index"));
-const Home = lazy(() => import("./pages/Home"));
-const Feed = lazy(() => import("./pages/Feed"));
-const Community = lazy(() => import("./pages/Community"));
-const Profile = lazy(() => import("./pages/Profile"));
-const Auth = lazy(() => import("./pages/Auth"));
-const MyPets = lazy(() => import("./pages/MyPets"));
-const AddPet = lazy(() => import("./pages/AddPet"));
-const MedicalRecords = lazy(() => import("./pages/MedicalRecords"));
-const Adoption = lazy(() => import("./pages/Adoption"));
+const Index = lazy(() => import('./pages/Index'));
+const Home = lazy(() => import('./pages/Home'));
+const Feed = lazy(() => import('./pages/Feed'));
+const Community = lazy(() => import('./pages/Community'));
+const Profile = lazy(() => import('./pages/Profile'));
+const Auth = lazy(() => import('./pages/Auth'));
+const MyPets = lazy(() => import('./pages/MyPets'));
+const AddPet = lazy(() => import('./pages/AddPet'));
+const MedicalRecords = lazy(() => import('./pages/MedicalRecords'));
+const Adoption = lazy(() => import('./pages/Adoption'));
 
-const PawGame = lazy(() => import("./pages/PawGame"));
-const ServiceDirectory = lazy(() => import("./pages/ServiceDirectory"));
+const PawGame = lazy(() => import('./pages/PawGame'));
+const ServiceDirectory = lazy(() => import('./pages/ServiceDirectory'));
 // SharedWalks y LostPets eliminados en pivot médico
-const Chat = lazy(() => import("./pages/Chat"));
-const ChatConversation = lazy(() => import("./pages/ChatConversation"));
-const NotFound = lazy(() => import("./pages/NotFound"));
-const TermsOfService = lazy(() => import("./pages/TermsOfService"));
-const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
-const UserProfile = lazy(() => import("./pages/UserProfile"));
+const Chat = lazy(() => import('./pages/Chat'));
+const ChatConversation = lazy(() => import('./pages/ChatConversation'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const UserProfile = lazy(() => import('./pages/UserProfile'));
 // Checkout eliminado en pivot médico
-const PaymentResult = lazy(() => import("./pages/PaymentResult"));
-const Admin = lazy(() => import("./pages/Admin"));
-const Settings = lazy(() => import("./pages/Settings"));
-const Maps = lazy(() => import("./pages/Maps"));
+const PaymentResult = lazy(() => import('./pages/PaymentResult'));
+const Admin = lazy(() => import('./pages/Admin'));
+// Settings absorbed into Profile — /settings now redirects to /profile
+const Maps = lazy(() => import('./pages/Maps'));
 // Premium eliminado en pivot médico
-const ProviderDashboard = lazy(() => import("./components/provider/ProviderDashboard"));
-const PetClinicalRecord = lazy(() => import("./pages/PetClinicalRecord"));
-const MyBookings = lazy(() => import("./pages/MyBookings"));
-const Upgrade = lazy(() => import("./pages/Upgrade"));
-const UpgradeSuccess = lazy(() => import("./pages/UpgradeSuccess"));
-const UpgradeCancel = lazy(() => import("./pages/UpgradeCancel"));
-const Servicios = lazy(() => import("./pages/Servicios"));
+const ProviderDashboard = lazy(() => import('./components/provider/ProviderDashboard'));
+const PetClinicalRecord = lazy(() => import('./pages/PetClinicalRecord'));
+const MyBookings = lazy(() => import('./pages/MyBookings'));
+const Upgrade = lazy(() => import('./pages/Upgrade'));
+const UpgradeSuccess = lazy(() => import('./pages/UpgradeSuccess'));
+const UpgradeCancel = lazy(() => import('./pages/UpgradeCancel'));
+const Servicios = lazy(() => import('./pages/Servicios'));
 // Peluqueria.tsx eliminada — groomers ahora son tab nativo en /services/groomers
-const GroomerProfileEdit = lazy(() => import("./pages/GroomerProfileEdit"));
-const DirectorioVets = lazy(() => import("./pages/DirectorioVets"));
-const PerfilVetPublico = lazy(() => import("./pages/PerfilVetPublico"));
-const Demo = lazy(() => import("./pages/Demo"));
-const ProviderProfileEdit = lazy(() => import("./pages/ProviderProfileEdit"));
-const RegistroVeterinario = lazy(() => import("./pages/RegistroVeterinario"));
-const ParaVeterinarios = lazy(() => import("./pages/ParaVeterinarios"));
-const PreciosVeterinarios = lazy(() => import("./pages/PreciosVeterinarios"));
-const DejarResena = lazy(() => import("./pages/DejarResena"));
-const QRLanding = lazy(() => import("./pages/QRLanding"));
-const MedicalShare = lazy(() => import("./pages/MedicalShare"));
+const GroomerProfileEdit = lazy(() => import('./pages/GroomerProfileEdit'));
+const DirectorioVets = lazy(() => import('./pages/DirectorioVets'));
+const PerfilVetPublico = lazy(() => import('./pages/PerfilVetPublico'));
+const Demo = lazy(() => import('./pages/Demo'));
+const ProviderProfileEdit = lazy(() => import('./pages/ProviderProfileEdit'));
+const RegistroVeterinario = lazy(() => import('./pages/RegistroVeterinario'));
+const ParaVeterinarios = lazy(() => import('./pages/ParaVeterinarios'));
+const PreciosVeterinarios = lazy(() => import('./pages/PreciosVeterinarios'));
+const DejarResena = lazy(() => import('./pages/DejarResena'));
+const QRLanding = lazy(() => import('./pages/QRLanding'));
+const MedicalShare = lazy(() => import('./pages/MedicalShare'));
 // Actividad eliminada — ruta consolidada a /feed
-const Reminders = lazy(() => import("./pages/Reminders"));
-const OnboardingVetMinimal = lazy(() => import("./pages/OnboardingVetMinimal"));
-const OnboardingDuenoMinimal = lazy(() => import("./pages/OnboardingDuenoMinimal"));
-const Reportes = lazy(() => import("./pages/Reportes"));
-const ProDashboard = lazy(() => import("./pages/ProDashboard"));
-const AnalyticsDashboard = lazy(() => import("./pages/standalone/AnalyticsDashboard"));
-const EnMemoria = lazy(() => import("./pages/EnMemoria"));
+const Reminders = lazy(() => import('./pages/Reminders'));
+const OnboardingVetMinimal = lazy(() => import('./pages/OnboardingVetMinimal'));
+const OnboardingDuenoMinimal = lazy(() => import('./pages/OnboardingDuenoMinimal'));
+const Reportes = lazy(() => import('./pages/Reportes'));
+const ProDashboard = lazy(() => import('./pages/ProDashboard'));
+const AnalyticsDashboard = lazy(() => import('./pages/standalone/AnalyticsDashboard'));
+const EnMemoria = lazy(() => import('./pages/EnMemoria'));
 
 /** Inicialización nativa: StatusBar, SplashScreen, back button, push notifications */
 async function initNative() {
   if (!isNative()) return;
 
-  const [
-    { StatusBar, Style },
-    { SplashScreen },
-    { App: CapApp },
-    { PushNotifications },
-  ] = await Promise.all([
-    import('@capacitor/status-bar'),
-    import('@capacitor/splash-screen'),
-    import('@capacitor/app'),
-    import('@capacitor/push-notifications'),
-  ]);
+  const [{ StatusBar, Style }, { SplashScreen }, { App: CapApp }, { PushNotifications }] =
+    await Promise.all([
+      import('@capacitor/status-bar'),
+      import('@capacitor/splash-screen'),
+      import('@capacitor/app'),
+      import('@capacitor/push-notifications'),
+    ]);
 
   // StatusBar
   StatusBar.setBackgroundColor({ color: '#8B5CF6' });
@@ -173,84 +169,431 @@ const PageLoader = () => (
   </div>
 );
 
+/** Redirect legacy /pet/:petId/clinical → /mascota/:petId/ficha-clinica */
+const LegacyClinicalRedirect = () => {
+  const { petId } = useParams<{ petId: string }>();
+  const { search } = useLocation();
+  return <Navigate to={`/mascota/${petId}/ficha-clinica${search}`} replace />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <ActiveRoleProvider>
+      <Toaster />
+      <Sonner />
+      <BrowserRouter>
+        <ActiveRoleProvider>
           <ErrorBoundary>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/home" element={<ProtectedRoute><AppLayout><Home /></AppLayout></ProtectedRoute>} />
-              <Route path="/feed" element={<ProtectedRoute><AppLayout><Feed /></AppLayout></ProtectedRoute>} />
-              <Route path="/comunidad" element={<ProtectedRoute><AppLayout><Community /></AppLayout></ProtectedRoute>} />
-              <Route path="/comunidad/:slug" element={<ProtectedRoute><AppLayout><Community /></AppLayout></ProtectedRoute>} />
-              <Route path="/my-pets" element={<ProtectedRoute><AppLayout><MyPets /></AppLayout></ProtectedRoute>} />
-              <Route path="/add-pet" element={<ProtectedRoute><AppLayout><AddPet /></AppLayout></ProtectedRoute>} />
-              <Route path="/edit-pet/:petId" element={<ProtectedRoute><AppLayout><AddPet /></AppLayout></ProtectedRoute>} />
-              <Route path="/medical-records" element={<ProtectedRoute><AppLayout><MedicalRecords /></AppLayout></ProtectedRoute>} />
-              <Route path="/reminders" element={<ProtectedRoute><AppLayout><Reminders /></AppLayout></ProtectedRoute>} />
-              <Route path="/adoption" element={<ProtectedRoute><AppLayout><Adoption /></AppLayout></ProtectedRoute>} />
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route
+                  path="/home"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Home />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/feed"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Feed />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/comunidad"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Community />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/comunidad/:slug"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Community />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/my-pets"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <MyPets />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/add-pet"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <AddPet />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/edit-pet/:petId"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <AddPet />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/medical-records"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <MedicalRecords />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/reminders"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Reminders />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/adoption"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Adoption />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route path="/paw-game" element={<ProtectedRoute><AppLayout><PawGame /></AppLayout></ProtectedRoute>} />
-              <Route path="/servicios" element={<ProtectedRoute><AppLayout><Servicios /></AppLayout></ProtectedRoute>} />
-              <Route path="/peluquero/perfil" element={<ProtectedRoute><AppLayout><GroomerProfileEdit /></AppLayout></ProtectedRoute>} />
-              <Route path="/services/:type" element={<ProtectedRoute><AppLayout><ServiceDirectory /></AppLayout></ProtectedRoute>} />
-              {/* /shared-walks y /lost-pets eliminados en pivot médico */}
-              <Route path="/maps" element={<ProtectedRoute><AppLayout><Maps /></AppLayout></ProtectedRoute>} />
-              <Route path="/chat" element={<ProtectedRoute><AppLayout><Chat /></AppLayout></ProtectedRoute>} />
-              <Route path="/chat/:conversationId" element={<ProtectedRoute><AppLayout><ChatConversation /></AppLayout></ProtectedRoute>} />
-              <Route path="/profile" element={<ProtectedRoute><AppLayout><Profile /></AppLayout></ProtectedRoute>} />
-              <Route path="/user/:userId" element={<ProtectedRoute><AppLayout><UserProfile /></AppLayout></ProtectedRoute>} />
-              {/* /checkout eliminado en pivot médico */}
-              {/* Pagos: una sola ruta unificada con query param ?status=success|failed */}
-              <Route path="/payment-result" element={<ProtectedRoute><PaymentResult /></ProtectedRoute>} />
-              <Route path="/admin" element={<AdminRoute><AppLayout><Admin /></AppLayout></AdminRoute>} />
-              <Route path="/settings" element={<ProtectedRoute><AppLayout><Settings /></AppLayout></ProtectedRoute>} />
-              <Route path="/en-memoria" element={<ProtectedRoute><AppLayout><EnMemoria /></AppLayout></ProtectedRoute>} />
-              <Route path="/provider/dashboard" element={<ProtectedRoute><AppLayout><ProviderDashboard /></AppLayout></ProtectedRoute>} />
-              <Route path="/provider/profile-edit" element={<ProtectedRoute><AppLayout><ProviderProfileEdit /></AppLayout></ProtectedRoute>} />
-              <Route path="/pet/:petId/clinical" element={<ProtectedRoute><AppLayout><PetClinicalRecord /></AppLayout></ProtectedRoute>} />
-              <Route path="/mis-reservas" element={<ProtectedRoute><AppLayout><MyBookings /></AppLayout></ProtectedRoute>} />
-              <Route path="/upgrade" element={<ProtectedRoute><AppLayout><Upgrade /></AppLayout></ProtectedRoute>} />
-              <Route path="/upgrade/success" element={<ProtectedRoute><UpgradeSuccess /></ProtectedRoute>} />
-              <Route path="/upgrade/cancel" element={<ProtectedRoute><UpgradeCancel /></ProtectedRoute>} />
-              <Route path="/calendar" element={<Navigate to="/mis-reservas" replace />} />
-              {/* Directorio público de veterinarios (sin login).
+                <Route
+                  path="/paw-game"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <PawGame />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/servicios"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Servicios />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/peluquero/perfil"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <GroomerProfileEdit />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/services/:type"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <ServiceDirectory />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                {/* /shared-walks y /lost-pets eliminados en pivot médico */}
+                <Route
+                  path="/maps"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Maps />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/chat"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Chat />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/chat/:conversationId"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <ChatConversation />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/profile"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Profile />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/user/:userId"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <UserProfile />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                {/* /checkout eliminado en pivot médico */}
+                {/* Pagos: una sola ruta unificada con query param ?status=success|failed */}
+                <Route
+                  path="/payment-result"
+                  element={
+                    <ProtectedRoute>
+                      <PaymentResult />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/admin"
+                  element={
+                    <AdminRoute>
+                      <AppLayout>
+                        <Admin />
+                      </AppLayout>
+                    </AdminRoute>
+                  }
+                />
+                <Route path="/settings" element={<Navigate to="/profile" replace />} />
+                <Route
+                  path="/en-memoria"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <EnMemoria />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/provider/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <ProviderDashboard />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/provider/profile-edit"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <ProviderProfileEdit />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/mascota/:petId/ficha-clinica"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <PetClinicalRecord />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                {/* Redirect legacy para links ya compartidos */}
+                <Route path="/pet/:petId/clinical" element={<LegacyClinicalRedirect />} />
+                <Route
+                  path="/mis-reservas"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <MyBookings />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/upgrade"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Upgrade />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/upgrade/success"
+                  element={
+                    <ProtectedRoute>
+                      <UpgradeSuccess />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/upgrade/cancel"
+                  element={
+                    <ProtectedRoute>
+                      <UpgradeCancel />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/calendar" element={<Navigate to="/mis-reservas" replace />} />
+                {/* Directorio público de veterinarios (sin login).
                   Si el user está logueado, lo envolvemos con AppLayout para
                   mantener header/sidebar consistente con el resto de la app. */}
-              <Route path="/veterinarios" element={<PublicWithLayoutIfAuth><DirectorioVets /></PublicWithLayoutIfAuth>} />
-              <Route path="/veterinarios/comuna/:comuna" element={<PublicWithLayoutIfAuth><DirectorioVets /></PublicWithLayoutIfAuth>} />
-              <Route path="/veterinarios/especialidad/:especialidad" element={<PublicWithLayoutIfAuth><DirectorioVets /></PublicWithLayoutIfAuth>} />
-              <Route path="/veterinarios/:slug" element={<PublicWithLayoutIfAuth><PerfilVetPublico /></PublicWithLayoutIfAuth>} />
-              {/* Demo en vivo (uso interno para reuniones de venta) */}
-              <Route path="/demo" element={<Demo />} />
-              <Route path="/onboarding-mascota" element={<ProtectedRoute><OnboardingDuenoMinimal /></ProtectedRoute>} />
-              <Route path="/onboarding-vet" element={<ProtectedRoute><OnboardingVetMinimal /></ProtectedRoute>} />
-              <Route path="/reportes" element={<ProtectedRoute><AppLayout><Reportes /></AppLayout></ProtectedRoute>} />
-              <Route path="/panel-pro" element={<ProtectedRoute><AppLayout><ProDashboard /></AppLayout></ProtectedRoute>} />
-              <Route path="/analytics-demo" element={<ProtectedRoute><AppLayout><AnalyticsDashboard /></AppLayout></ProtectedRoute>} />
-              <Route path="/registro-veterinario" element={<RegistroVeterinario />} />
-              <Route path="/registro-proveedor" element={<RegistroVeterinario />} />
-              <Route path="/para-veterinarios" element={<ParaVeterinarios />} />
-              <Route path="/precios-veterinarios" element={<PublicWithLayoutIfAuth><PreciosVeterinarios /></PublicWithLayoutIfAuth>} />
-              <Route path="/precios-veterinarios/comuna/:comuna" element={<PublicWithLayoutIfAuth><PreciosVeterinarios /></PublicWithLayoutIfAuth>} />
-              <Route path="/resena/:token" element={<DejarResena />} />
-              <Route path="/qr/:token" element={<QRLanding />} />
-              <Route path="/medical-share/:token" element={<MedicalShare />} />
-              <Route path="/terms" element={<TermsOfService />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
+                <Route
+                  path="/veterinarios"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <DirectorioVets />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
+                <Route
+                  path="/veterinarios/comuna/:comuna"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <DirectorioVets />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
+                <Route
+                  path="/veterinarios/especialidad/:especialidad"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <DirectorioVets />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
+                <Route
+                  path="/veterinarios/:slug"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <PerfilVetPublico />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
+                {/* Demo en vivo (uso interno para reuniones de venta) */}
+                <Route path="/demo" element={<Demo />} />
+                <Route
+                  path="/onboarding-mascota"
+                  element={
+                    <ProtectedRoute>
+                      <OnboardingDuenoMinimal />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/onboarding-vet"
+                  element={
+                    <ProtectedRoute>
+                      <OnboardingVetMinimal />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/reportes"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Reportes />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/panel-pro"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <ProDashboard />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/analytics-demo"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <AnalyticsDashboard />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/registro-veterinario" element={<RegistroVeterinario />} />
+                <Route path="/registro-proveedor" element={<RegistroVeterinario />} />
+                <Route path="/para-veterinarios" element={<ParaVeterinarios />} />
+                <Route
+                  path="/precios-veterinarios"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <PreciosVeterinarios />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
+                <Route
+                  path="/precios-veterinarios/comuna/:comuna"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <PreciosVeterinarios />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
+                <Route path="/resena/:token" element={<DejarResena />} />
+                <Route path="/qr/:token" element={<QRLanding />} />
+                <Route path="/medical-share/:token" element={<MedicalShare />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
           </ErrorBoundary>
-          </ActiveRoleProvider>
-        </BrowserRouter>
+        </ActiveRoleProvider>
+      </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
 );

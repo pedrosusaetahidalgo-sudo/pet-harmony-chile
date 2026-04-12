@@ -37,24 +37,30 @@ ALTER TABLE community_groups ENABLE ROW LEVEL SECURITY;
 ALTER TABLE community_group_members ENABLE ROW LEVEL SECURITY;
 ALTER TABLE community_group_messages ENABLE ROW LEVEL SECURITY;
 
--- Políticas: grupos públicos visibles para todos los autenticados
+-- Políticas: drop si existen + recrear (idempotente)
+DROP POLICY IF EXISTS "Grupos públicos visibles" ON community_groups;
 CREATE POLICY "Grupos públicos visibles" ON community_groups
   FOR SELECT USING (is_public = true);
 
+DROP POLICY IF EXISTS "Miembros pueden ver su membresía" ON community_group_members;
 CREATE POLICY "Miembros pueden ver su membresía" ON community_group_members
   FOR SELECT USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Miembros pueden unirse" ON community_group_members;
 CREATE POLICY "Miembros pueden unirse" ON community_group_members
   FOR INSERT WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Miembros pueden salir" ON community_group_members;
 CREATE POLICY "Miembros pueden salir" ON community_group_members
   FOR DELETE USING (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "Miembros pueden leer mensajes de sus grupos" ON community_group_messages;
 CREATE POLICY "Miembros pueden leer mensajes de sus grupos" ON community_group_messages
   FOR SELECT USING (
     group_id IN (SELECT group_id FROM community_group_members WHERE user_id = auth.uid())
   );
 
+DROP POLICY IF EXISTS "Miembros pueden enviar mensajes" ON community_group_messages;
 CREATE POLICY "Miembros pueden enviar mensajes" ON community_group_messages
   FOR INSERT WITH CHECK (
     user_id = auth.uid()

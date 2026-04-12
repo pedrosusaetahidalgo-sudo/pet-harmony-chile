@@ -179,9 +179,9 @@ send-whatsapp-reminder/          # WhatsApp (pendiente verificacion Meta)
 - `/comunidad`, `/comunidad/:slug` -- Grupos de comunidad (por raza/condicion)
 - `/my-pets` -- Mis mascotas
 - `/add-pet`, `/edit-pet/:petId` -- CRUD mascotas
-- `/medical-records` -- Registros medicos
+- `/medical-records` -- Redirect legacy → ficha clinica de primera mascota
 - `/reminders` -- Recordatorios
-- `/pet/:petId/clinical` -- Ficha clinica completa
+- `/mascota/:petId/ficha-clinica` -- Ficha clinica completa (legacy `/pet/:petId/clinical` redirige aqui)
 - `/adoption` -- Adopcion
 - `/en-memoria` -- Memorial de mascotas fallecidas
 - `/servicios` -- Directorio servicios

@@ -1,0 +1,35 @@
+a Andlisis de agentes IA sin códic X — | 8 Clinica Veterinaria Altamira |Ve X — ) New Tab x|+ - —
+€ C % pawfriend.d/service E * ox Ea i @:
+BE EE Redirecting Documentos Felipe... Templates Power Bl.. — M The 16 Best GPTsfo... — Marketing - EB Actividades Mis acti... EB Corporativo - Experi... / powerYOU — / Experis Latam - Gen.. »
+l R [£ú Elements Console Sources» 28 419 114 S ix
+@ Inicio < CuidadoresdeMascotas — d
+. a 5 DO wor |O| Y filter Defauit levels ¥ | 63 Issues: 914 849
+ge Mismascotas - s
+Servicios > Cuidadores de Mascotas s
+6 Recordatorios » POST supabase-vendor-B4DEupPa.jsi26 @ — 4
+N httos://euailbj]vevihwcrovEd. supabase. co/functions/v] /bereavenent-255i..
+* 401 (Unauthorized)
+- » “DialogContent" requires a “Dialogritle — ui-vendor-DVESIUem.is:45
+a for the component to be accessible for screen reader users.
+Buscarvet
+If you want to hide the “DialogTitle™, you can wrap it with our
+d servi Q Buscar bre oubica E Fecha 35 Filtros TE =:
+Mara For more information, see
+O https://radix-ui. con/primitives/docs/components/dialog
+, » iaming: Missing “Description” or“aria- — ui-vendor-DVÉSMEn.is:45
+sl » GET supabase-vendor-BADEUDPa.5:26 )
+Ay Feed https: //gwailbjlvevkhucrovéd. supabase. co/rest/v1/pet reminders?select=.
+400 (Gad Request)
+» GET ‘supabase-vendor-B4DEupPa.is:25 @
+https: //ewai lbjlvevkhucroved. supabase.co/rest/v1/pet_reminders?select=.
+P Mensajes 400 (Bad Request)
+_ > Warning: Missing “Description” or “aria- — ui-vendor-DVESIUEm.js:45
+(E describedby={undefined}’ for (DialogContent).
+» Post ‘Supabase-vendor-B4DEupPa.is:26 @
+C httos://auailbi]vevihwcroved. supabase. co/rest/vi/pet reminders 400 (Bad
+psusaetaht3 —
+*E Contiuración » [supabase] Andexc-C7rMReN.j5:3
+Config » (code: *23514', + ‘new row for relation “pet_reminders” viola
+E tes check constraint “pet reminders_type check"", details: null,
+[> Cerrar Sesión 7
+pWarning: Missing “Description” or“aria- — ui-vendor-DVESIUem.js:45

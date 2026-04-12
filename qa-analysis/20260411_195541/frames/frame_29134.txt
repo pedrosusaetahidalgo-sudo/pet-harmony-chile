@@ -1,0 +1,38 @@
+© Análiss de agentes A sin códic — — 8 Clinica Veterinaria Alamia [Vell 3) @ New Tab xl + - 9x
+€ > € % pawriendd/services/walker aw ox o + @:
+BE - EE Redirecting Documentos Felipe... - 47 Templates Power Bl... - Á The 16 Best GPTsfo... — 4/ Marketing - EB Actividades Mis act... - EE Corporativo - Experi... sl powerYOU —7 Experis Latam - Gen.. »
+CnC ra p Paseador profesional con IR [6 Elements _Console Sources >> a7 YO : x
+Cn ON DO » |O Y Filter Defaultlevels ¥ | 62 Issues: 14 248
+2 hiddes
+— o Max. Q -
+Valentina Roj » post sunabase-vendor-BadEunPa.is:26 @ —
+httns://ewai.lbj1vevkhwcrovéd, sunabase, co/functions /v1/bereavenent 255i
+” 401 (Unauthorized)
+» “Dialogcontent” requires a “Dialogritle" — ui-vendor-DVESIVEm.is:45
+- for the component to be accessible for screen reader users.
+>
+If you want to hide the “DialogTitle’, you can wrap it with our
+Visuallyttidden component.
+For more information, see
+httos://radix-ui.,com/primitives/docs/components/dialog
+» arning: Missing “Description” or “aria-  ui-vendor-DVtSiUcm.is:45
+ayy describedoy-(undefined)” for (DialogContent).
+-atina Béja30( ” F
+eleceiona fect Y . » Ger . supabase-vendor-BaDEunPa.is:26 @
+v — 4.1 (Oreseñas?”*** nttps://ewai bi1vevknwcrovéd. supabase, co/rest/vi/vet reminders?select=-
+400 (Gad Request)
+rificad »GET supabase-vendor-B4DEupPq.js:25 @
+tha cc nttps://ewailbj1vevknwcrovéd.sunabase.co/rest/vi/oet_reminders?select=—
+hal con 400 (Gad Request)
+o »Marning: Missing “Description’ or“aria- — ui-vendor-DVESIUcm.s:45
+as grandes y describedby-(undefined)” for (DialogContent).
+» Post supabase-vendor-B4pEupPa.is:26 @
+0... N2 Max. nttps://ewailbj1vevknwcrovéd.sunabase.co/rest/vi/oet reminders 400 (Bad
+Request)
+» [supabase} Andex-C7rHReN. 35:3
+» (code: '23514', messoge: ‘new row for relation “pet_reminders” viola
+tes check constraint “pet_reminders.type_check"*, details: null, ir
+2 null}
+> E) > Warning: Missing “Description” or “aria- — ui-vendor-DVtSlUcm.js:45
+describedby=(undefined}” for {DialogContent).
+5

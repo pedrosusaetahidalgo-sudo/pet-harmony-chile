@@ -1,28 +1,22 @@
-import { PageHeader } from "@/components/PageHeader";
-import { LINKS } from "@/lib/links";
-import PetCard from "@/components/PetCard";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Search, Plus, TrendingUp, Users, MapPin, Video, PawPrint, Trophy, Filter } from "@/lib/icons";
-import { EmptyState } from "@/components/EmptyState";
-import { logger } from "@/lib/logger";
-// DogBehaviorAnalyzer temporarily removed - will be implemented in different tab later
-import { OnboardingTutorial } from "@/components/OnboardingTutorial";
-import { CreatePost } from "@/components/CreatePost";
-import { POST_TYPES } from "@/lib/postTypes";
-import { Badge } from "@/components/ui/badge";
-import { PetProfileCard } from "@/components/PetProfileCard";
-import TopRatedProviders from "@/components/TopRatedProviders";
-import { useState, useEffect } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { useBlockedUsers } from "@/hooks/useBlockedUsers";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
+import { useState, useCallback, lazy, Suspense } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { PageHeader } from '@/components/PageHeader';
+import { useAuth } from '@/hooks/useAuth';
+import { useFeedPosts, type FeedPost } from '@/hooks/useFeedPosts';
+import { useFeedRealtime } from '@/hooks/useFeedRealtime';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { useBlockedUsers } from '@/hooks/useBlockedUsers';
+import { FeedPostCard } from '@/components/feed/FeedPost';
+import { FeedStories } from '@/components/feed/FeedStories';
+import { FeedCreatePost } from '@/components/feed/FeedCreatePost';
+import { FeedSkeletonList } from '@/components/feed/FeedSkeleton';
+import { FeedEmptyState } from '@/components/feed/FeedEmptyState';
+import { POST_TYPES } from '@/lib/postTypes';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   Dialog,
   DialogContent,
@@ -30,156 +24,81 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
+import { Sparkles, Users, TrendingUp, Compass, Plus, Search, ArrowUp } from '@/lib/icons';
+import { Skeleton } from '@/components/ui/skeleton';
+import { OnboardingTutorial } from '@/components/OnboardingTutorial';
+import { supabase } from '@/integrations/supabase/client';
+import { useEffect } from 'react';
+
+const FeedExplore = lazy(() =>
+  import('@/components/feed/FeedExplore').then((m) => ({
+    default: m.FeedExplore,
+  }))
+);
+
+type FeedTab = 'all' | 'following' | 'popular' | 'explore';
 
 const Feed = () => {
   const { user } = useAuth();
   const { filterBlocked } = useBlockedUsers();
-  const [showAnalyzer, setShowAnalyzer] = useState(false);
-  const [showTutorial, setShowTutorial] = useState(false);
-  const [showCreatePost, setShowCreatePost] = useState(false);
-  const [posts, setPosts] = useState<any[]>([]);
-  const [followingPosts, setFollowingPosts] = useState<any[]>([]);
-  const [pets, setPets] = useState<any[]>([]);
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [loadingPets, setLoadingPets] = useState(true);
-  const [loadingFollowing, setLoadingFollowing] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterType, setFilterType] = useState<string | null>(null);
-  const [hasMorePosts, setHasMorePosts] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
   const navigate = useNavigate();
-  const POSTS_PAGE_SIZE = 20;
 
+  const [activeTab, setActiveTab] = useState<FeedTab>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterType, setFilterType] = useState<string | null>(null);
+  const [showCreatePost, setShowCreatePost] = useState(false);
+  const [profile, setProfile] = useState<{
+    display_name: string | null;
+    avatar_url: string | null;
+  } | null>(null);
+
+  // Load profile
   useEffect(() => {
-    loadPosts();
-    loadPets();
-    if (user) {
-      loadProfile();
-    }
+    if (!user) return;
+    supabase
+      .from('profiles')
+      .select('display_name, avatar_url')
+      .eq('id', user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) setProfile(data);
+      });
   }, [user]);
 
-  const loadPosts = async (append = false) => {
-    if (append) setLoadingMore(true);
-    else setLoading(true);
+  // Feed queries
+  const feedType = activeTab === 'explore' ? 'popular' : activeTab;
 
-    const query = supabase
-      .from("posts")
-      .select(`
-        *,
-        profiles:user_id (
-          display_name,
-          avatar_url
-        ),
-        pets:pet_id (
-          name,
-          photo_url
-        )
-      `)
-      .order("created_at", { ascending: false })
-      .limit(POSTS_PAGE_SIZE);
+  const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useFeedPosts({
+    feedType: feedType as 'all' | 'following' | 'popular',
+    filterType,
+    search: searchQuery || undefined,
+    enabled: activeTab !== 'explore',
+  });
 
-    if (append && posts.length > 0) {
-      const lastDate = posts[posts.length - 1].created_at;
-      query.lt("created_at", lastDate);
-    }
+  // Realtime new posts banner
+  const { newPostsCount, loadNewPosts } = useFeedRealtime();
 
-    const { data, error } = await query;
+  // Infinite scroll
+  const sentinelRef = useInfiniteScroll({
+    hasNextPage: hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+  });
 
-    if (!error && data) {
-      if (append) {
-        setPosts((prev) => [...prev, ...data]);
-      } else {
-        setPosts(data);
-      }
-      setHasMorePosts(data.length === POSTS_PAGE_SIZE);
-    }
-    setLoading(false);
-    setLoadingMore(false);
-  };
+  // Filter blocked users
+  const allPosts = data?.pages.flatMap((p) => p.posts) || [];
+  const filteredPosts = filterBlocked(allPosts, 'user_id');
 
-  const loadPets = async () => {
-    setLoadingPets(true);
-    const { data, error } = await supabase
-      .from("pets")
-      .select(`
-        *,
-        profiles:owner_id (
-          display_name,
-          avatar_url
-        )
-      `)
-      .eq("is_public", true)
-      .eq("lifecycle_status", "active")
-      .order("created_at", { ascending: false });
-
-    if (!error && data) {
-      setPets(data);
-    }
-    setLoadingPets(false);
-  };
-
-  const loadProfile = async () => {
-    if (!user) return;
-    const { data } = await supabase
-      .from("profiles")
-      .select("display_name, avatar_url")
-      .eq("id", user.id)
-      .maybeSingle();
-    
-    if (data) setProfile(data);
-  };
-
-  const loadFollowingPosts = async () => {
-    if (!user) return;
-    setLoadingFollowing(true);
-    
-    try {
-      // Get list of users the current user is following
-      const { data: followingData } = await supabase
-        .from("user_follows")
-        .select("following_id")
-        .eq("follower_id", user.id);
-      
-      if (!followingData || followingData.length === 0) {
-        setFollowingPosts([]);
-        setLoadingFollowing(false);
-        return;
-      }
-      
-      const followingIds = followingData.map(f => f.following_id);
-      
-      // Get posts from followed users
-      const { data, error } = await supabase
-        .from("posts")
-        .select(`
-          *,
-          profiles:user_id (
-            display_name,
-            avatar_url
-          ),
-          pets:pet_id (
-            name,
-            photo_url
-          )
-        `)
-        .in("user_id", followingIds)
-        .order("created_at", { ascending: false });
-      
-      if (!error && data) {
-        setFollowingPosts(data);
-      }
-    } catch (error) {
-      logger.error("Error loading following posts:", error);
-    } finally {
-      setLoadingFollowing(false);
-    }
-  };
+  const handleHashtagClick = useCallback((tag: string) => {
+    setSearchQuery(`#${tag}`);
+    setActiveTab('all');
+  }, []);
 
   return (
     <>
-      <OnboardingTutorial onComplete={() => setShowTutorial(false)} />
+      <OnboardingTutorial onComplete={() => {}} />
+
       <PageHeader
         title="Comunidad"
         subtitle="Fotos y publicaciones de la comunidad"
@@ -188,54 +107,66 @@ const Feed = () => {
             <Avatar className="h-10 w-10 border-2 border-primary shadow-sm">
               <AvatarImage src={profile.avatar_url || undefined} />
               <AvatarFallback className="bg-warm-gradient text-white font-semibold text-sm">
-                {profile.display_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || "U"}
+                {profile.display_name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'}
               </AvatarFallback>
             </Avatar>
           ) : null
         }
       />
-    <div className="w-full px-3 sm:px-4 py-4 sm:py-6 max-w-4xl mx-auto animate-fade-in">
-        <div className="flex flex-col gap-3 mb-4 sm:mb-6">
-          <div className="grid grid-cols-2 gap-2">
-            <Dialog open={showCreatePost} onOpenChange={setShowCreatePost}>
-              <DialogTrigger asChild>
-                <Button className="w-full bg-warm-gradient hover:opacity-90 h-10 text-xs sm:text-sm">
-                  <Plus className="mr-1 h-4 w-4" />
-                  Publicar
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Crear Publicación</DialogTitle>
-                  <DialogDescription>
-                    Comparte momentos especiales con la comunidad
-                  </DialogDescription>
-                </DialogHeader>
-                <CreatePost onSuccess={() => {
-                  setShowCreatePost(false);
-                  loadPosts();
-                }} />
-              </DialogContent>
-            </Dialog>
-            {/* Body language analyzer temporarily removed - will be implemented in different tab later */}
+
+      <div className="w-full max-w-2xl mx-auto animate-fade-in">
+        {/* Stories bar */}
+        <div className="border-b">
+          <FeedStories />
+        </div>
+
+        {/* New posts banner */}
+        {newPostsCount > 0 && activeTab !== 'explore' && (
+          <button
+            onClick={loadNewPosts}
+            className="w-full flex items-center justify-center gap-2 py-2.5 bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
+          >
+            <ArrowUp className="h-4 w-4" />
+            {newPostsCount} {newPostsCount === 1 ? 'publicacion nueva' : 'publicaciones nuevas'}
+          </button>
+        )}
+
+        {/* Publish button */}
+        <div className="px-4 pt-4 pb-2">
+          <Dialog open={showCreatePost} onOpenChange={setShowCreatePost}>
+            <DialogTrigger asChild>
+              <Button className="w-full bg-warm-gradient hover:opacity-90 h-11 rounded-xl text-sm font-medium">
+                <Plus className="mr-2 h-4 w-4" />
+                Publicar
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Nueva publicacion</DialogTitle>
+                <DialogDescription>Comparte momentos especiales con la comunidad</DialogDescription>
+              </DialogHeader>
+              <FeedCreatePost onSuccess={() => setShowCreatePost(false)} />
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Search bar */}
+        <div className="px-4 pb-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar mascotas, hashtags..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-9 h-10 rounded-xl border-2 focus:border-primary transition-all text-sm"
+            />
           </div>
         </div>
 
-        {/* Search */}
-        <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar mascotas..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-9 h-10 rounded-xl border-2 focus:border-primary transition-all text-sm"
-          />
-        </div>
-
-        {/* Post type filter */}
-        <div className="flex gap-2 mb-4 overflow-x-auto pb-1 scrollbar-hide">
+        {/* Post type filter chips */}
+        <div className="flex gap-2 px-4 pb-3 overflow-x-auto scrollbar-hide">
           <Badge
-            variant={filterType === null ? "default" : "outline"}
+            variant={filterType === null ? 'default' : 'outline'}
             className="cursor-pointer whitespace-nowrap shrink-0"
             onClick={() => setFilterType(null)}
           >
@@ -244,7 +175,7 @@ const Feed = () => {
           {POST_TYPES.map((pt) => (
             <Badge
               key={pt.value}
-              variant={filterType === pt.value ? "default" : "outline"}
+              variant={filterType === pt.value ? 'default' : 'outline'}
               className="cursor-pointer whitespace-nowrap shrink-0"
               onClick={() => setFilterType(filterType === pt.value ? null : pt.value)}
             >
@@ -254,210 +185,166 @@ const Feed = () => {
         </div>
 
         {/* Tabs */}
-        <Tabs defaultValue="pets" className="w-full" onValueChange={(value) => {
-          if (value === "following" && user) {
-            loadFollowingPosts();
-          }
-        }}>
-          <div className="overflow-x-auto -mx-3 px-3 pb-2 scrollbar-hide">
-            <TabsList className="inline-flex w-auto min-w-full bg-muted/50 p-1 rounded-xl">
-              <TabsTrigger 
-                value="pets"
-                className="rounded-lg text-xs whitespace-nowrap px-2.5 data-[state=active]:bg-warm-gradient data-[state=active]:text-white"
+        <Tabs
+          value={activeTab}
+          onValueChange={(v) => setActiveTab(v as FeedTab)}
+          className="w-full"
+        >
+          <div className="px-4 pb-2">
+            <TabsList className="w-full bg-muted/50 p-1 rounded-xl">
+              <TabsTrigger
+                value="all"
+                className="flex-1 rounded-lg text-xs data-[state=active]:bg-warm-gradient data-[state=active]:text-white"
               >
-                <PawPrint className="h-3.5 w-3.5 mr-1" />
-                Mascotas
-              </TabsTrigger>
-              <TabsTrigger 
-                value="ranking"
-                className="rounded-lg text-xs whitespace-nowrap px-2.5 data-[state=active]:bg-warm-gradient data-[state=active]:text-white"
-              >
-                <Trophy className="h-3.5 w-3.5 mr-1" />
-                Ranking
+                <Sparkles className="h-3.5 w-3.5 mr-1" />
+                Para ti
               </TabsTrigger>
               <TabsTrigger
                 value="following"
-                className="rounded-lg text-xs whitespace-nowrap px-2.5 data-[state=active]:bg-warm-gradient data-[state=active]:text-white"
+                className="flex-1 rounded-lg text-xs data-[state=active]:bg-warm-gradient data-[state=active]:text-white"
               >
                 <Users className="h-3.5 w-3.5 mr-1" />
                 Siguiendo
               </TabsTrigger>
+              <TabsTrigger
+                value="popular"
+                className="flex-1 rounded-lg text-xs data-[state=active]:bg-warm-gradient data-[state=active]:text-white"
+              >
+                <TrendingUp className="h-3.5 w-3.5 mr-1" />
+                Popular
+              </TabsTrigger>
+              <TabsTrigger
+                value="explore"
+                className="flex-1 rounded-lg text-xs data-[state=active]:bg-warm-gradient data-[state=active]:text-white"
+              >
+                <Compass className="h-3.5 w-3.5 mr-1" />
+                Explorar
+              </TabsTrigger>
             </TabsList>
           </div>
 
-            {/* Feed Posts - shown above tabs */}
-            <div className="space-y-4 mb-6">
-              {loading ? (
-                <div className="space-y-4">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="rounded-xl border bg-card p-4 space-y-3">
-                      <div className="flex items-center gap-3">
-                        <Skeleton className="h-10 w-10 rounded-full" />
-                        <div className="space-y-1.5">
-                          <Skeleton className="h-4 w-28" />
-                          <Skeleton className="h-3 w-20" />
-                        </div>
-                      </div>
-                      <Skeleton className="h-48 w-full rounded-lg" />
-                      <div className="flex gap-4">
-                        <Skeleton className="h-4 w-16" />
-                        <Skeleton className="h-4 w-16" />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : filterBlocked(posts, "user_id").length === 0 ? (
-                <EmptyState icon={PawPrint} title="No hay publicaciones todavía" description="¡Sé el primero en compartir una foto de tu mascota!" actionLabel="Publicar" onAction={() => setShowCreatePost(true)} />
-              ) : (
-                filterBlocked(posts, "user_id")
-                  .filter((post) => {
-                    if (filterType && post.post_type !== filterType) return false;
-                    if (!searchQuery.trim()) return true;
-                    const q = searchQuery.toLowerCase();
-                    return (
-                      post.content?.toLowerCase().includes(q) ||
-                      post.pets?.name?.toLowerCase().includes(q) ||
-                      post.profiles?.display_name?.toLowerCase().includes(q)
-                    );
-                  })
-                  .map((post) => (
-                  <PetCard
-                    key={post.id}
-                    postId={post.id}
-                    petName={post.pets?.name || ""}
-                    petImage={post.image_url || post.pets?.photo_url || ""}
-                    ownerName={post.profiles?.display_name || "Usuario"}
-                    ownerAvatar={post.profiles?.avatar_url}
-                    ownerId={post.user_id}
-                    description={post.content}
-                    likes={post.likes_count || 0}
-                    comments={post.comments_count || 0}
-                    timeAgo={formatDistanceToNow(new Date(post.created_at), {
-                      addSuffix: true,
-                      locale: es,
-                    })}
-                  />
-                ))
-              )}
-              {!loading && hasMorePosts && posts.length > 0 && (
-                <div className="text-center pt-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => loadPosts(true)}
-                    disabled={loadingMore}
-                  >
-                    {loadingMore ? "Cargando..." : "Ver más publicaciones"}
-                  </Button>
-                </div>
-              )}
-            </div>
+          {/* Feed content — Para ti, Siguiendo, Popular */}
+          <TabsContent value="all" className="mt-0">
+            <FeedList
+              posts={filteredPosts}
+              isLoading={isLoading}
+              emptyType="all"
+              sentinelRef={sentinelRef}
+              isFetchingNextPage={isFetchingNextPage}
+              hasNextPage={hasNextPage}
+              onCreatePost={() => setShowCreatePost(true)}
+              onHashtagClick={handleHashtagClick}
+            />
+          </TabsContent>
 
-            <TabsContent value="pets" className="mt-6">
-              {loadingPets ? (
-                <div className="text-center py-8 md:py-12">
-                  <p className="text-muted-foreground">Cargando mascotas...</p>
-                </div>
-              ) : filterBlocked(pets, "owner_id").length === 0 ? (
-                <EmptyState icon={Search} title="No hay mascotas registradas" description="Explora el feed para descubrir mascotas" />
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {filterBlocked(pets, "owner_id")
-                    .filter((pet) => {
-                      if (!searchQuery.trim()) return true;
-                      const q = searchQuery.toLowerCase();
-                      return (
-                        pet.name?.toLowerCase().includes(q) ||
-                        pet.breed?.toLowerCase().includes(q) ||
-                        pet.species?.toLowerCase().includes(q) ||
-                        pet.profiles?.display_name?.toLowerCase().includes(q)
-                      );
-                    })
-                    .map((pet) => (
-                    <PetProfileCard
-                      key={pet.id}
-                      id={pet.id}
-                      name={pet.name}
-                      species={pet.species}
-                      breed={pet.breed}
-                      photoUrl={pet.photo_url}
-                      ownerName={pet.profiles?.display_name || "Usuario"}
-                      ownerAvatar={pet.profiles?.avatar_url}
-                      ownerId={pet.owner_id}
-                      personality={pet.personality || []}
-                      bio={pet.bio}
-                    />
-                  ))}
+          <TabsContent value="following" className="mt-0">
+            {!user ? (
+              <div className="text-center py-12 text-muted-foreground">
+                <p>Inicia sesion para ver publicaciones de quienes sigues</p>
               </div>
+            ) : (
+              <FeedList
+                posts={filteredPosts}
+                isLoading={isLoading}
+                emptyType="following"
+                sentinelRef={sentinelRef}
+                isFetchingNextPage={isFetchingNextPage}
+                hasNextPage={hasNextPage}
+                onCreatePost={() => setShowCreatePost(true)}
+                onHashtagClick={handleHashtagClick}
+              />
             )}
           </TabsContent>
 
-          <TabsContent value="ranking" className="mt-6">
-            <TopRatedProviders />
+          <TabsContent value="popular" className="mt-0">
+            <FeedList
+              posts={filteredPosts}
+              isLoading={isLoading}
+              emptyType="popular"
+              sentinelRef={sentinelRef}
+              isFetchingNextPage={isFetchingNextPage}
+              hasNextPage={hasNextPage}
+              onCreatePost={() => setShowCreatePost(true)}
+              onHashtagClick={handleHashtagClick}
+            />
           </TabsContent>
 
-            <TabsContent value="following" className="space-y-6 mt-6">
-              {!user ? (
-                <div className="text-center py-8 md:py-12 text-muted-foreground">
-                  <p>Inicia sesión para ver las publicaciones de usuarios que sigues</p>
+          {/* Explore grid */}
+          <TabsContent value="explore" className="mt-0">
+            <Suspense
+              fallback={
+                <div className="grid grid-cols-3 gap-0.5 px-0.5">
+                  {Array.from({ length: 9 }).map((_, i) => (
+                    <Skeleton key={i} className="aspect-square" />
+                  ))}
                 </div>
-              ) : loadingFollowing ? (
-                <div className="text-center py-8 md:py-12">
-                  <p className="text-muted-foreground">Cargando publicaciones...</p>
-                </div>
-              ) : followingPosts.length === 0 ? (
-                <EmptyState icon={Users} title="No sigues a nadie todavía" description="Sigue a otros dueños para ver sus publicaciones" actionLabel="Explorar" actionUrl="/feed" />
-              ) : (
-                filterBlocked(followingPosts, "user_id").map((post) => (
-                  <PetCard
-                    key={post.id}
-                    postId={post.id}
-                    petName={post.pets?.name || ""}
-                    petImage={post.image_url || post.pets?.photo_url || ""}
-                    ownerName={post.profiles?.display_name || "Usuario"}
-                    ownerAvatar={post.profiles?.avatar_url}
-                    ownerId={post.user_id}
-                    description={post.content}
-                    likes={post.likes_count || 0}
-                    comments={post.comments_count || 0}
-                    timeAgo={formatDistanceToNow(new Date(post.created_at), {
-                      addSuffix: true,
-                      locale: es,
-                    })}
-                  />
-                ))
-              )}
-            </TabsContent>
-
-            <TabsContent value="popular" className="space-y-6 mt-6">
-              {filterBlocked(posts, "user_id")
-                .filter((p) => (p.likes_count || 0) > 0)
-                .sort((a, b) => (b.likes_count || 0) - (a.likes_count || 0))
-                .slice(0, 10)
-                .map((post) => (
-                  <PetCard
-                    key={post.id}
-                    postId={post.id}
-                    petName={post.pets?.name || ""}
-                    petImage={post.image_url || post.pets?.photo_url || ""}
-                    ownerName={post.profiles?.display_name || "Usuario"}
-                    ownerAvatar={post.profiles?.avatar_url}
-                    ownerId={post.user_id}
-                    description={post.content}
-                    likes={post.likes_count || 0}
-                    comments={post.comments_count || 0}
-                    timeAgo={formatDistanceToNow(new Date(post.created_at), {
-                      addSuffix: true,
-                      locale: es,
-                    })}
-                  />
-                ))}
-            </TabsContent>
-
+              }
+            >
+              <FeedExplore />
+            </Suspense>
+          </TabsContent>
         </Tabs>
       </div>
     </>
   );
 };
+
+// ── Extracted feed list component ──────────────────────────────────────────
+
+interface FeedListProps {
+  posts: FeedPost[];
+  isLoading: boolean;
+  emptyType: 'all' | 'following' | 'popular';
+  sentinelRef: React.RefObject<HTMLDivElement | null>;
+  isFetchingNextPage: boolean;
+  hasNextPage: boolean | undefined;
+  onCreatePost: () => void;
+  onHashtagClick: (tag: string) => void;
+}
+
+function FeedList({
+  posts,
+  isLoading,
+  emptyType,
+  sentinelRef,
+  isFetchingNextPage,
+  hasNextPage,
+  onCreatePost,
+  onHashtagClick,
+}: FeedListProps) {
+  if (isLoading) {
+    return <FeedSkeletonList count={3} />;
+  }
+
+  if (posts.length === 0) {
+    return (
+      <FeedEmptyState
+        type={emptyType}
+        onAction={emptyType === 'all' || emptyType === 'following' ? onCreatePost : undefined}
+      />
+    );
+  }
+
+  return (
+    <div>
+      {posts.map((post) => (
+        <FeedPostCard key={post.id} post={post} onHashtagClick={onHashtagClick} />
+      ))}
+
+      {/* Infinite scroll sentinel */}
+      <div ref={sentinelRef} className="h-4" />
+
+      {/* Loading more indicator */}
+      {isFetchingNextPage && <FeedSkeletonList count={2} />}
+
+      {/* End of feed */}
+      {!hasNextPage && posts.length > 0 && (
+        <div className="text-center py-8 text-muted-foreground text-sm">
+          Estas al dia — ya viste todas las publicaciones recientes 🐾
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default Feed;
