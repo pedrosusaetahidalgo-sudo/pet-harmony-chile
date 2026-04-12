@@ -93,19 +93,19 @@ const ProviderDashboard = () => {
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
           <h2 className="text-2xl font-bold">Mi consultorio</h2>
-          <p className="text-muted-foreground">Resumen de tu actividad y reputacion</p>
+          <p className="text-muted-foreground">Resumen de tu actividad y reputación</p>
         </div>
         <div className="flex gap-2 flex-wrap">
           {stats.slug && (
             <Link to={`/veterinarios/${stats.slug}`}>
               <Button variant="outline">
-                <Eye className="h-4 w-4 mr-1" /> Ver como me ven los duenos
+                <Eye className="h-4 w-4 mr-1" /> Ver cómo me ven los dueños
               </Button>
             </Link>
           )}
           <Link to="/provider/profile-edit">
             <Button variant="outline">
-              <UserCog className="h-4 w-4 mr-1" /> Editar mi perfil publico
+              <UserCog className="h-4 w-4 mr-1" /> Editar mi perfil público
             </Button>
           </Link>
         </div>

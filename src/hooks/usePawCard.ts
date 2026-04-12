@@ -134,5 +134,13 @@ export async function collectPawCard(petId: string): Promise<{ success: boolean;
     return { success: false, error: error.message };
   }
 
+  // Award paw points for collecting a card
+  try {
+    const { awardPoints } = await import('@/lib/points');
+    await awardPoints(user.id, 'collect_paw_card');
+  } catch {
+    // Non-blocking: collection succeeded even if points fail
+  }
+
   return { success: true };
 }

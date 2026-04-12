@@ -66,7 +66,7 @@ export function FeedPostCard({ post, onHashtagClick }: FeedPostCardProps) {
   const handleShare = () => {
     const url = window.location.origin + '/feed';
     if (navigator.share) {
-      navigator.share({ title: 'Mira esta publicacion en Paw Friend', url });
+      navigator.share({ title: 'Mira esta publicación en Paw Friend', url });
     } else {
       navigator.clipboard.writeText(url);
       toast({ title: 'Enlace copiado' });
@@ -79,7 +79,7 @@ export function FeedPostCard({ post, onHashtagClick }: FeedPostCardProps) {
   };
 
   const handleDelete = () => {
-    if (window.confirm('¿Seguro que quieres eliminar esta publicacion?')) {
+    if (window.confirm('¿Seguro que quieres eliminar esta publicación?')) {
       deletePost.mutate(post.id);
     }
   };
@@ -139,7 +139,7 @@ export function FeedPostCard({ post, onHashtagClick }: FeedPostCardProps) {
           <DialogHeader>
             <DialogTitle>Comentarios</DialogTitle>
             <DialogDescription>
-              Publicacion de {post.pet_name || post.owner_name || 'Usuario'}
+              Publicación de {post.pet_name || post.owner_name || 'Usuario'}
             </DialogDescription>
           </DialogHeader>
           <div className="flex-1 overflow-y-auto">
@@ -152,7 +152,7 @@ export function FeedPostCard({ post, onHashtagClick }: FeedPostCardProps) {
       <Dialog open={showReport} onOpenChange={setShowReport}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
-            <DialogTitle>Reportar publicacion</DialogTitle>
+            <DialogTitle>Reportar publicación</DialogTitle>
           </DialogHeader>
           <div className="space-y-2">
             {REPORT_REASONS.map((r) => (

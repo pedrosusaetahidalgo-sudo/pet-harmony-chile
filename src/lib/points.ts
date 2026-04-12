@@ -1,23 +1,24 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from '@/integrations/supabase/client';
 
 type PointAction =
-  | "daily_checkin"
-  | "complete_mission"
-  | "post_feed"
-  | "first_pet"
-  | "pet_profile_complete"
-  | "user_profile_complete"
-  | "first_medical_doc"
-  | "first_pdf"
-  | "complete_reminder_ontime"
-  | "complete_reminder_late"
-  | "leave_review"
-  | "follow_user"
-  | "receive_like"
-  | "book_service"
-  | "streak_7"
-  | "streak_30"
-  | "streak_90";
+  | 'daily_checkin'
+  | 'complete_mission'
+  | 'post_feed'
+  | 'first_pet'
+  | 'pet_profile_complete'
+  | 'user_profile_complete'
+  | 'first_medical_doc'
+  | 'first_pdf'
+  | 'complete_reminder_ontime'
+  | 'complete_reminder_late'
+  | 'leave_review'
+  | 'follow_user'
+  | 'receive_like'
+  | 'book_service'
+  | 'collect_paw_card'
+  | 'streak_7'
+  | 'streak_30'
+  | 'streak_90';
 
 const POINT_VALUES: Record<PointAction, number> = {
   daily_checkin: 5,
@@ -34,6 +35,7 @@ const POINT_VALUES: Record<PointAction, number> = {
   follow_user: 2,
   receive_like: 1,
   book_service: 10,
+  collect_paw_card: 10,
   streak_7: 25,
   streak_30: 100,
   streak_90: 300,
@@ -44,17 +46,18 @@ const DAILY_LIMITS: Partial<Record<PointAction, number>> = {
   daily_checkin: 1,
   post_feed: 1,
   complete_mission: 3,
+  collect_paw_card: 5,
 };
 
 // One-time actions (check if already earned)
 const ONE_TIME_ACTIONS: PointAction[] = [
-  "first_pet",
-  "user_profile_complete",
-  "first_medical_doc",
-  "first_pdf",
-  "streak_7",
-  "streak_30",
-  "streak_90",
+  'first_pet',
+  'user_profile_complete',
+  'first_medical_doc',
+  'first_pdf',
+  'streak_7',
+  'streak_30',
+  'streak_90',
 ];
 
 export async function awardPoints(
@@ -63,19 +66,19 @@ export async function awardPoints(
   metadata?: Record<string, unknown>
 ): Promise<{ awarded: boolean; points: number; error?: string }> {
   const points = POINT_VALUES[action];
-  if (!points) return { awarded: false, points: 0, error: "Invalid action" };
+  if (!points) return { awarded: false, points: 0, error: 'Invalid action' };
 
   // Check one-time actions
   if (ONE_TIME_ACTIONS.includes(action)) {
     const { data: existing } = await supabase
-      .from("paw_point_transactions")
-      .select("id")
-      .eq("user_id", userId)
-      .eq("source_type", action)
+      .from('paw_point_transactions')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('source_type', action)
       .limit(1);
 
     if (existing && existing.length > 0) {
-      return { awarded: false, points: 0, error: "Already earned" };
+      return { awarded: false, points: 0, error: 'Already earned' };
     }
   }
 
@@ -86,22 +89,22 @@ export async function awardPoints(
     today.setHours(0, 0, 0, 0);
 
     const { data: todayCount } = await supabase
-      .from("paw_point_transactions")
-      .select("id")
-      .eq("user_id", userId)
-      .eq("source_type", action)
-      .gte("created_at", today.toISOString());
+      .from('paw_point_transactions')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('source_type', action)
+      .gte('created_at', today.toISOString());
 
     if (todayCount && todayCount.length >= dailyLimit) {
-      return { awarded: false, points: 0, error: "Daily limit reached" };
+      return { awarded: false, points: 0, error: 'Daily limit reached' };
     }
   }
 
   // Insert transaction
-  const { error } = await supabase.from("paw_point_transactions").insert({
+  const { error } = await supabase.from('paw_point_transactions').insert({
     user_id: userId,
     points_amount: points,
-    transaction_type: "earn",
+    transaction_type: 'earn',
     source_type: action,
   });
 
@@ -114,16 +117,16 @@ export async function awardPoints(
   // ya quedó registrada y el próximo cron / lectura puede reconciliar.
   try {
     const { data: progress } = await supabase
-      .from("user_guardian_progress")
-      .select("total_paw_points")
-      .eq("user_id", userId)
+      .from('user_guardian_progress')
+      .select('total_paw_points')
+      .eq('user_id', userId)
       .maybeSingle();
 
     const currentTotal = progress?.total_paw_points ?? 0;
     await supabase
-      .from("user_guardian_progress")
+      .from('user_guardian_progress')
       .update({ total_paw_points: currentTotal + points })
-      .eq("user_id", userId);
+      .eq('user_id', userId);
   } catch {
     // Silent fail: la transacción ya se grabó, el agregado se reconciliará.
   }

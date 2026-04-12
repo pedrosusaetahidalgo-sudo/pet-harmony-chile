@@ -40,6 +40,8 @@ import { SeasonalTipsCard } from '@/components/home/SeasonalTipsCard';
 import { AnalyticsPreviewCard } from '@/components/analytics/AnalyticsPreviewCard';
 import { PetWellnessPreview } from '@/components/analytics/PetWellnessPreview';
 import { isFeatureEnabled } from '@/lib/featureFlags';
+import { getRarity } from '@/components/PetCardCompact';
+import { RARITY_BORDER_STYLES } from '@/lib/paw-cards';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePendingReviewCount } from '@/hooks/usePendingReviews';
 import { formatDistanceToNowStrict, parseISO } from 'date-fns';
@@ -51,6 +53,8 @@ interface Pet {
   species: string;
   breed: string | null;
   photo_url: string | null;
+  holo_pattern?: string | null;
+  paw_score?: number;
 }
 
 interface Appointment {
@@ -125,12 +129,34 @@ export default function Home() {
         .eq('owner_id', user.id)
         .eq('lifecycle_status', 'active');
 
+      // Fetch paw scores for rarity display
+      const petIds = (petsData || []).map((p: { id: string }) => p.id);
+      const scoreMap: Record<string, number> = {};
+      if (petIds.length > 0) {
+        const { data: progressData } = await supabase
+          .from('pet_paw_progress')
+          .select('pet_id, health_score, activity_score, happiness_score, social_score')
+          .in('pet_id', petIds);
+        (progressData || []).forEach((row) => {
+          const avg = Math.round(
+            ((row.health_score || 0) +
+              (row.activity_score || 0) +
+              (row.happiness_score || 0) +
+              (row.social_score || 0)) /
+              4
+          );
+          scoreMap[row.pet_id] = avg;
+        });
+      }
+
       const petsList: Pet[] = (petsData || []).map((p) => ({
         id: p.id,
         name: p.name,
         species: p.species,
         breed: p.breed,
         photo_url: p.photo_url,
+        holo_pattern: (p as Record<string, unknown>).holo_pattern as string | null,
+        paw_score: scoreMap[p.id] ?? 0,
       }));
       setPets(petsList);
       if (petsList.length > 0 && !activePetId) {
@@ -289,10 +315,12 @@ export default function Home() {
       {/* === Contenido principal cuando ya hay mascotas === */}
       {pets.length === 0 ? null : (
         <>
-          {/* === Pet switcher (avatares circulares estilo stories) === */}
+          {/* === Pet switcher (avatares circulares estilo TCG) === */}
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
             {pets.map((pet) => {
               const isActive = activePetId === pet.id;
+              const rarity = getRarity(pet.paw_score ?? 0);
+              const borderStyle = RARITY_BORDER_STYLES[rarity];
               return (
                 <button
                   key={pet.id}
@@ -301,18 +329,36 @@ export default function Home() {
                   aria-label={`Seleccionar ${pet.name}`}
                 >
                   <div
-                    className={`relative rounded-full p-[3px] transition-all ${
-                      isActive
-                        ? 'bg-gradient-to-tr from-purple-600 via-teal-400 to-purple-600 shadow-lg shadow-purple-600/30 scale-105'
-                        : 'bg-muted group-hover:bg-muted/70'
-                    }`}
+                    className={`relative rounded-full transition-all ${isActive ? 'scale-105' : 'group-hover:scale-102'}`}
+                    style={{
+                      padding: '3px',
+                      background: isActive ? borderStyle.gradient : undefined,
+                      backgroundSize: '300% 300%',
+                      animation: isActive
+                        ? `holo-shift ${borderStyle.speed} ease-in-out infinite`
+                        : undefined,
+                      boxShadow: isActive ? borderStyle.shadow : undefined,
+                    }}
                   >
-                    <Avatar className="h-16 w-16 ring-2 ring-background">
-                      <AvatarImage src={pet.photo_url || undefined} alt={pet.name} />
-                      <AvatarFallback className="bg-purple-100 text-purple-700 text-xl font-bold">
-                        {pet.name[0]?.toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
+                    <div
+                      className={`rounded-full p-[2px] ${!isActive ? 'bg-muted group-hover:bg-muted/70' : ''}`}
+                      style={
+                        !isActive
+                          ? {
+                              background: borderStyle.gradient,
+                              backgroundSize: '300% 300%',
+                              opacity: 0.5,
+                            }
+                          : undefined
+                      }
+                    >
+                      <Avatar className="h-16 w-16 ring-2 ring-background">
+                        <AvatarImage src={pet.photo_url || undefined} alt={pet.name} />
+                        <AvatarFallback className="bg-purple-100 text-purple-700 text-xl font-bold">
+                          {pet.name[0]?.toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
                     {isActive && (
                       <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full bg-purple-600 border-2 border-background" />
                     )}

@@ -622,10 +622,10 @@ const Maps = () => {
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl px-6 py-5 shadow-lg text-center pointer-events-auto max-w-xs">
               <MapPin className="h-10 w-10 text-muted-foreground/50 mx-auto mb-3" />
               <p className="text-sm font-medium text-foreground">
-                No hay servicios en esta zona todavia
+                No hay servicios en esta zona todavía
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Intenta cambiar los filtros o ampliar el radio de busqueda
+                Intenta cambiar los filtros o ampliar el radio de búsqueda
               </p>
             </div>
           </div>

@@ -58,6 +58,7 @@ export const useReminders = () => {
       return (data || []) as Reminder[];
     },
     enabled: !!user,
+    staleTime: 2 * 60 * 1000,
   });
 
   const upcomingReminders = reminders.filter(

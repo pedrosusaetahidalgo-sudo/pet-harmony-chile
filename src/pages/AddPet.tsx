@@ -16,6 +16,7 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Upload, X, ChevronDown, Stethoscope, Heart } from '@/lib/icons';
@@ -35,6 +36,7 @@ import { PageHeader } from '@/components/PageHeader';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { VaccinationCardOCR } from '@/components/onboarding/VaccinationCardOCR';
 import { useScrollOnFocus } from '@/hooks/useScrollOnFocus';
+import { generatePawCardData } from '@/hooks/useHoloPattern';
 
 const personalityOptions: string[] = [...PERSONALITY_OPTIONS];
 
@@ -307,7 +309,9 @@ const AddPet = () => {
         photoUrl = await uploadPhoto();
       }
 
-      const payload = {
+      // Core columns (exist since initial migration)
+      type PetInsert = Database['public']['Tables']['pets']['Insert'];
+      const payload: PetInsert = {
         owner_id: user.id,
         name: formData.name,
         species: formData.species,
@@ -323,17 +327,26 @@ const AddPet = () => {
         is_public: true,
         microchip_number: formData.microchip_number || null,
         neutered: formData.neutered,
-        is_adopted: formData.is_adopted,
-        adoption_date: formData.adoption_date || null,
-        preferred_clinic: formData.preferred_clinic || null,
-        emergency_vet_name: formData.emergency_vet_name || null,
-        emergency_vet_phone: formData.emergency_vet_phone || null,
-        diet_type: formData.diet_type || null,
-        diet_brand: formData.diet_brand || null,
-        activity_level: formData.activity_level || null,
-        behavior_notes: formData.behavior_notes || null,
-        insurance_provider: formData.insurance_provider || null,
       };
+
+      // Clinical columns (from migration 20260402) — only include when filled
+      if (formData.is_adopted) payload.is_adopted = true;
+      if (formData.adoption_date) payload.adoption_date = formData.adoption_date;
+      if (formData.preferred_clinic) payload.preferred_clinic = formData.preferred_clinic;
+      if (formData.emergency_vet_name) payload.emergency_vet_name = formData.emergency_vet_name;
+      if (formData.emergency_vet_phone) payload.emergency_vet_phone = formData.emergency_vet_phone;
+      if (formData.diet_type) payload.diet_type = formData.diet_type;
+      if (formData.diet_brand) payload.diet_brand = formData.diet_brand;
+      if (formData.activity_level) payload.activity_level = formData.activity_level;
+      if (formData.behavior_notes) payload.behavior_notes = formData.behavior_notes;
+      if (formData.insurance_provider) payload.insurance_provider = formData.insurance_provider;
+
+      // Generate TCG holo data for new pets
+      if (!isEdit) {
+        const pawCardData = generatePawCardData();
+        payload.holo_pattern = pawCardData.holoPattern;
+        payload.paw_card_id = pawCardData.pawCardId;
+      }
 
       if (isEdit && petId) {
         // === EDIT MODE ===

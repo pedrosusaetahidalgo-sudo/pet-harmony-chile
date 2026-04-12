@@ -88,7 +88,7 @@ export function TabHistorial({ petId }: { petId: string }) {
       <EmptyState
         icon={Clipboard}
         title="Sin historial medico"
-        description="Los registros de consultas, vacunas, examenes y tratamientos apareceran aqui."
+        description="Los registros de consultas, vacunas, exámenes y tratamientos aparecerán aquí."
       />
     );
   }

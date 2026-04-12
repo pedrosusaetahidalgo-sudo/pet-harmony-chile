@@ -4,7 +4,7 @@ import { LINKS } from '@/lib/links';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Heart, FileText, Pencil, Trash2, PawPrint, Sparkles, RotateCcw } from '@/lib/icons';
+import { Heart, FileText, Pencil, Trash2, PawPrint, Sparkles } from '@/lib/icons';
 import { getRarity, RARITY_LABELS, RARITY_RING } from '@/components/PetCardCompact';
 import { PawCardHoloPattern } from './PawCardHoloPattern';
 import { PawCardBack } from './PawCardBack';
@@ -99,10 +99,10 @@ export function PawCardFlippable({
     card.style.setProperty('--tcg-glow-y', '50%');
   }, []);
 
-  const handleFlip = useCallback((e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleFlip = useCallback(() => {
+    if (!pawCardId) return;
     setIsFlipped((prev) => !prev);
-  }, []);
+  }, [pawCardId]);
 
   /* ── Touch swipe for flip ── */
   const touchStartX = useRef(0);
@@ -121,8 +121,18 @@ export function PawCardFlippable({
       {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
         ref={cardRef}
-        className={`pet-card-tcg h-full paw-card-flipper ${isFlipped ? 'flipped' : ''}`}
+        className={`pet-card-tcg h-full paw-card-flipper ${isFlipped ? 'flipped' : ''} ${pawCardId ? 'cursor-pointer' : ''}`}
         data-rarity={rarity}
+        role={pawCardId ? 'button' : undefined}
+        tabIndex={pawCardId ? 0 : undefined}
+        aria-label={pawCardId ? (isFlipped ? 'Volver al frente' : 'Voltear carta') : undefined}
+        onClick={handleFlip}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleFlip();
+          }
+        }}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
@@ -154,18 +164,23 @@ export function PawCardFlippable({
               </div>
             </div>
 
-            {/* Avatar with rarity-colored ring */}
-            <Avatar
-              className={`h-24 w-24 ring-[3px] ${RARITY_RING[rarity]} rounded-full shadow-lg`}
-            >
-              <AvatarImage src={pet.photo_url || undefined} alt={pet.name} />
-              <AvatarFallback className="bg-gradient-to-br from-purple-50 to-purple-100 text-purple-300">
-                <Heart className="h-10 w-10" />
-              </AvatarFallback>
-            </Avatar>
+            {/* Avatar frame — TCG style */}
+            <div className="tcg-avatar-frame" data-rarity={rarity}>
+              <Avatar
+                className={`h-24 w-24 ring-[3px] ${RARITY_RING[rarity]} rounded-full shadow-lg`}
+              >
+                <AvatarImage src={pet.photo_url || undefined} alt={pet.name} />
+                <AvatarFallback className="bg-gradient-to-br from-purple-50 to-purple-100 text-purple-300">
+                  <Heart className="h-10 w-10" />
+                </AvatarFallback>
+              </Avatar>
+            </div>
+
+            {/* Energy divider */}
+            <div className="tcg-energy-divider" data-rarity={rarity} />
 
             {/* Info */}
-            <div className="mt-3 space-y-0.5">
+            <div className="space-y-0.5">
               <div className="flex items-center justify-center gap-2">
                 <h3 className="pet-card-name font-bold text-lg leading-tight">{pet.name}</h3>
                 <Badge
@@ -183,18 +198,28 @@ export function PawCardFlippable({
 
             {/* Sparkles icon for legendary+ */}
             {(rarity === 'legendary' || rarity === 'mythic') && (
-              <Sparkles className="absolute top-3 right-3 h-5 w-5 text-yellow-400/60" />
+              <>
+                <Sparkles className="absolute top-3 right-3 h-5 w-5 text-yellow-400/60 animate-pulse" />
+                <Sparkles
+                  className="absolute top-12 left-3 h-3.5 w-3.5 text-yellow-300/40 animate-pulse"
+                  style={{ animationDelay: '0.5s' }}
+                />
+              </>
             )}
 
-            {/* Watermark */}
-            <PawPrint className="absolute bottom-14 right-4 h-8 w-8 text-purple-200/20" />
+            {/* Corner accents */}
+            <div className="tcg-corner-accent tcg-corner-tl" data-rarity={rarity} />
+            <div className="tcg-corner-accent tcg-corner-br" data-rarity={rarity} />
 
             {/* Actions */}
             <div className="flex flex-col gap-2 pt-4 w-full">
               <Button
                 size="sm"
                 className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-sm shadow-purple-500/20"
-                onClick={() => navigate(LINKS.petClinical(pet.id))}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(LINKS.petClinical(pet.id));
+                }}
               >
                 <FileText className="mr-2 h-4 w-4" />
                 Ficha Clinica
@@ -204,7 +229,10 @@ export function PawCardFlippable({
                   variant="outline"
                   size="sm"
                   className="flex-1 border-purple-200/60 hover:bg-purple-50/50"
-                  onClick={() => navigate(`/edit-pet/${pet.id}`)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/edit-pet/${pet.id}`);
+                  }}
                 >
                   <Pencil className="mr-1.5 h-3.5 w-3.5" />
                   Editar
@@ -213,7 +241,10 @@ export function PawCardFlippable({
                   variant="outline"
                   size="sm"
                   className="flex-1 text-destructive hover:text-destructive border-purple-200/60 hover:bg-red-50/50"
-                  onClick={() => onDelete(pet.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(pet.id);
+                  }}
                 >
                   <Trash2 className="mr-1.5 h-3.5 w-3.5" />
                   Eliminar
@@ -221,18 +252,6 @@ export function PawCardFlippable({
               </div>
             </div>
           </div>
-
-          {/* Flip button */}
-          {pawCardId && (
-            <button
-              className="paw-card-flip-btn"
-              onClick={handleFlip}
-              title="Ver Paw Card QR"
-              aria-label="Voltear carta"
-            >
-              <RotateCcw className="h-4 w-4" />
-            </button>
-          )}
         </div>
 
         {/* ── FACE B: Back ── */}
@@ -245,15 +264,6 @@ export function PawCardFlippable({
               holoPattern={holoPattern}
               rarity={rarity}
             />
-            {/* Flip back button */}
-            <button
-              className="paw-card-flip-btn"
-              onClick={handleFlip}
-              title="Volver al frente"
-              aria-label="Voltear carta"
-            >
-              <RotateCcw className="h-4 w-4" />
-            </button>
           </div>
         )}
       </div>

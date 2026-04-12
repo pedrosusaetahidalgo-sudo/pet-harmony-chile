@@ -178,9 +178,9 @@ export function VetPatientsList() {
         {!patients || patients.length === 0 ? (
           <div className="text-center py-8">
             <PawPrint className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground">Aun no tienes pacientes registrados.</p>
+            <p className="text-sm text-muted-foreground">Aún no tienes pacientes registrados.</p>
             <p className="text-xs text-muted-foreground mt-1">
-              Los pacientes apareceran cuando un dueno comparta su ficha contigo o crees uno nuevo.
+              Los pacientes aparecerán cuando un dueño comparta su ficha contigo o crees uno nuevo.
             </p>
           </div>
         ) : (

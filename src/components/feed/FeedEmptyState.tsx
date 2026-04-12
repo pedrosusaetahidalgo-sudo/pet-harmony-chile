@@ -9,26 +9,26 @@ interface FeedEmptyStateProps {
 const STATES = {
   all: {
     icon: PawPrint,
-    title: 'No hay publicaciones todavia',
-    description: '¡Se el primero en compartir una foto de tu mascota!',
+    title: 'No hay publicaciones todavía',
+    description: '¡Sé el primero en compartir una foto de tu mascota!',
     actionLabel: 'Publicar',
   },
   following: {
     icon: Users,
-    title: 'Aun no sigues a nadie',
-    description: 'Explora para encontrar mascotas increibles y sigue a sus duenos.',
+    title: 'Aún no sigues a nadie',
+    description: 'Explora para encontrar mascotas increíbles y sigue a sus dueños.',
     actionLabel: 'Explorar',
   },
   popular: {
     icon: TrendingUp,
     title: 'Sin publicaciones populares',
-    description: 'Las publicaciones con mas likes apareceran aqui.',
+    description: 'Las publicaciones con más likes aparecerán aquí.',
     actionLabel: null,
   },
   explore: {
     icon: Compass,
-    title: 'Nada que explorar todavia',
-    description: 'Cuando haya mas publicaciones, apareceran aqui.',
+    title: 'Nada que explorar todavía',
+    description: 'Cuando haya más publicaciones, aparecerán aquí.',
     actionLabel: null,
   },
 };

@@ -18,10 +18,7 @@ export function useDirectoryVets(filters: DirectoryVetFilters) {
     queryKey: ['directory-vets', filters],
     initialPageParam: 0,
     queryFn: async ({ pageParam }) => {
-      let query = sb
-        .from('service_providers')
-        .select('*')
-        .eq('is_directory_visible', true);
+      let query = sb.from('service_providers').select('*').eq('is_directory_visible', true);
 
       if (filters.search && filters.search.trim()) {
         query = query.ilike('display_name', `%${filters.search.trim()}%`);
@@ -55,17 +52,19 @@ export function useDirectoryVets(filters: DirectoryVetFilters) {
   });
 }
 
-export function useDirectoryVetBySlug(slug: string | undefined) {
+export function useDirectoryVetBySlug(
+  slug: string | undefined,
+  opts?: { skipVisibilityFilter?: boolean }
+) {
   return useQuery<ServiceProviderRow | null>({
-    queryKey: ['directory-vet', slug],
+    queryKey: ['directory-vet', slug, opts?.skipVisibilityFilter],
     enabled: !!slug,
     queryFn: async () => {
-      const { data, error } = await sb
-        .from('service_providers')
-        .select('*')
-        .eq('slug', slug!)
-        .eq('is_directory_visible', true)
-        .maybeSingle();
+      let query = sb.from('service_providers').select('*').eq('slug', slug!);
+      if (!opts?.skipVisibilityFilter) {
+        query = query.eq('is_directory_visible', true);
+      }
+      const { data, error } = await query.maybeSingle();
       if (error) throw error;
       return (data ?? null) as ServiceProviderRow | null;
     },

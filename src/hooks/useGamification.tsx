@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { getLevelFromPoints, type LevelInfo } from "@/lib/levels";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { getLevelFromPoints, type LevelInfo } from '@/lib/levels';
 
 export interface UserGamification {
   points: number;
@@ -30,7 +30,7 @@ export interface Mission {
   id: string;
   title: string;
   description: string;
-  mission_type: "daily" | "weekly" | "special";
+  mission_type: 'daily' | 'weekly' | 'special';
   target_action: string;
   target_count: number;
   points_reward: number;
@@ -49,14 +49,14 @@ export const useGamification = (userId?: string) => {
 
   // Get user gamification stats from user_stats table
   const { data: stats, isLoading } = useQuery({
-    queryKey: ["gamification", targetUserId],
+    queryKey: ['gamification', targetUserId],
     queryFn: async (): Promise<UserGamification | null> => {
       if (!targetUserId) return null;
 
       const { data, error } = await supabase
-        .from("user_stats")
-        .select("level, total_points, followers_count, following_count, posts_count, pets_count")
-        .eq("user_id", targetUserId)
+        .from('user_stats')
+        .select('level, total_points, followers_count, following_count, posts_count, pets_count')
+        .eq('user_id', targetUserId)
         .maybeSingle();
 
       if (error) throw error;
@@ -72,68 +72,76 @@ export const useGamification = (userId?: string) => {
       };
     },
     enabled: !!targetUserId,
+    staleTime: 2 * 60 * 1000,
   });
 
   // Get user achievements directly (no FK join)
   const { data: achievements } = useQuery({
-    queryKey: ["achievements", targetUserId],
+    queryKey: ['achievements', targetUserId],
     queryFn: async (): Promise<Achievement[]> => {
       if (!targetUserId) return [];
 
       const { data, error } = await supabase
-        .from("user_achievements")
-        .select("id, achievement_name, achievement_type, achievement_description, points_earned, earned_at")
-        .eq("user_id", targetUserId)
-        .order("earned_at", { ascending: false });
+        .from('user_achievements')
+        .select(
+          'id, achievement_name, achievement_type, achievement_description, points_earned, earned_at'
+        )
+        .eq('user_id', targetUserId)
+        .order('earned_at', { ascending: false });
 
       if (error) throw error;
 
-      return (data || []).map((row): Achievement => ({
-        id: row.id,
-        achievement_name: row.achievement_name,
-        achievement_type: row.achievement_type,
-        achievement_description: row.achievement_description,
-        points_earned: row.points_earned,
-        earned_at: row.earned_at,
-        // Aliases consumed by AchievementBadge / Profile UI
-        code: row.achievement_type,
-        name: row.achievement_name,
-        description: row.achievement_description ?? "",
-        unlocked_at: row.earned_at,
-      }));
+      return (data || []).map(
+        (row): Achievement => ({
+          id: row.id,
+          achievement_name: row.achievement_name,
+          achievement_type: row.achievement_type,
+          achievement_description: row.achievement_description,
+          points_earned: row.points_earned,
+          earned_at: row.earned_at,
+          // Aliases consumed by AchievementBadge / Profile UI
+          code: row.achievement_type,
+          name: row.achievement_name,
+          description: row.achievement_description ?? '',
+          unlocked_at: row.earned_at,
+        })
+      );
     },
     enabled: !!targetUserId,
+    staleTime: 2 * 60 * 1000,
   });
 
   // Get active missions from paw_missions + user_mission_progress
   const { data: missions } = useQuery({
-    queryKey: ["missions", targetUserId],
+    queryKey: ['missions', targetUserId],
     queryFn: async (): Promise<Mission[]> => {
       if (!targetUserId) return [];
 
       // Get active missions from paw_missions
       const { data: activeMissions, error: missionsError } = await supabase
-        .from("paw_missions")
-        .select("*")
-        .eq("is_active", true)
-        .order("mission_type", { ascending: true });
+        .from('paw_missions')
+        .select('*')
+        .eq('is_active', true)
+        .order('mission_type', { ascending: true });
 
       if (missionsError) throw missionsError;
 
       // Get user mission progress
       const { data: userProgress, error: progressError } = await supabase
-        .from("user_mission_progress")
-        .select("*")
-        .eq("user_id", targetUserId);
+        .from('user_mission_progress')
+        .select('*')
+        .eq('user_id', targetUserId);
 
       if (progressError) throw progressError;
 
       // Combine missions with progress
       return (activeMissions || []).map((mission): Mission => {
         const progress = (userProgress || []).find((up) => up.mission_id === mission.id);
-        const missionType = (["daily", "weekly", "special"].includes(mission.mission_type)
-          ? mission.mission_type
-          : "special") as Mission["mission_type"];
+        const missionType = (
+          ['daily', 'weekly', 'special'].includes(mission.mission_type)
+            ? mission.mission_type
+            : 'special'
+        ) as Mission['mission_type'];
         return {
           id: mission.id,
           title: mission.title,
@@ -152,6 +160,7 @@ export const useGamification = (userId?: string) => {
       });
     },
     enabled: !!targetUserId,
+    staleTime: 2 * 60 * 1000,
   });
 
   // Award points mutation
@@ -167,10 +176,10 @@ export const useGamification = (userId?: string) => {
       actionId?: string;
       description?: string;
     }) => {
-      if (!user?.id) throw new Error("User not authenticated");
+      if (!user?.id) throw new Error('User not authenticated');
 
       // Call Supabase function to award points
-      const { data, error } = await supabase.rpc("award_points", {
+      const { data, error } = await supabase.rpc('award_points', {
         p_user_id: user.id,
         p_points: points,
         p_action_type: actionType,
@@ -182,9 +191,9 @@ export const useGamification = (userId?: string) => {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["gamification", targetUserId] });
-      queryClient.invalidateQueries({ queryKey: ["achievements", targetUserId] });
-      queryClient.invalidateQueries({ queryKey: ["missions", targetUserId] });
+      queryClient.invalidateQueries({ queryKey: ['gamification', targetUserId] });
+      queryClient.invalidateQueries({ queryKey: ['achievements', targetUserId] });
+      queryClient.invalidateQueries({ queryKey: ['missions', targetUserId] });
     },
   });
 

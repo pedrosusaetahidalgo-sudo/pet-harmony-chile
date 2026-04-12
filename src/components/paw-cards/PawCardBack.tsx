@@ -81,7 +81,10 @@ export function PawCardBack({
 
         {/* Card ID */}
         <button
-          onClick={handleCopyId}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleCopyId();
+          }}
           className="flex items-center gap-1 text-[10px] font-mono text-purple-300/80 hover:text-purple-200 transition-colors"
           title="Copiar ID"
         >
@@ -107,7 +110,10 @@ export function PawCardBack({
             size="sm"
             variant="outline"
             className="h-7 text-xs border-purple-500/30 text-purple-200 bg-purple-500/10 hover:bg-purple-500/20"
-            onClick={handleShare}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleShare();
+            }}
           >
             <Share2 className="mr-1 h-3 w-3" />
             Compartir
@@ -116,7 +122,10 @@ export function PawCardBack({
             size="sm"
             variant="outline"
             className="h-7 text-xs border-purple-500/30 text-purple-200 bg-purple-500/10 hover:bg-purple-500/20"
-            onClick={handleCopyId}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCopyId();
+            }}
           >
             <Download className="mr-1 h-3 w-3" />
             ID

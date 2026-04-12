@@ -140,7 +140,7 @@ export function FeedCreatePost({ onSuccess }: FeedCreatePostProps) {
 
       toast({
         title: '¡Publicado!',
-        description: 'Tu publicacion se ha compartido con la comunidad',
+        description: 'Tu publicación se ha compartido con la comunidad',
       });
 
       // Reset form
@@ -158,10 +158,10 @@ export function FeedCreatePost({ onSuccess }: FeedCreatePostProps) {
       logger.error('[FeedCreatePost] submit failed', err);
       toast({
         variant: 'destructive',
-        title: 'No pudimos guardar tu publicacion',
+        title: 'No pudimos guardar tu publicación',
         description:
           describeSupabaseError(err as Parameters<typeof describeSupabaseError>[0]) ||
-          'Intentalo de nuevo.',
+          'Inténtalo de nuevo.',
       });
     } finally {
       setIsSubmitting(false);

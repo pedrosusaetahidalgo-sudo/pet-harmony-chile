@@ -2753,6 +2753,7 @@ export type Database = {
           emergency_vet_name: string | null;
           emergency_vet_phone: string | null;
           gender: string | null;
+          holo_pattern: string | null;
           id: string;
           insurance_policy: string | null;
           insurance_provider: string | null;
@@ -2775,6 +2776,7 @@ export type Database = {
           owner_invitation_accepted_at: string | null;
           owner_invitation_sent_at: string | null;
           owner_invitation_token: string | null;
+          paw_card_id: string | null;
           passed_away_at: string | null;
           passed_away_cause: string | null;
           passed_away_registered_at: string | null;
@@ -2818,6 +2820,7 @@ export type Database = {
           emergency_vet_name?: string | null;
           emergency_vet_phone?: string | null;
           gender?: string | null;
+          holo_pattern?: string | null;
           id?: string;
           insurance_policy?: string | null;
           insurance_provider?: string | null;
@@ -2840,6 +2843,7 @@ export type Database = {
           owner_invitation_accepted_at?: string | null;
           owner_invitation_sent_at?: string | null;
           owner_invitation_token?: string | null;
+          paw_card_id?: string | null;
           passed_away_at?: string | null;
           passed_away_cause?: string | null;
           passed_away_registered_at?: string | null;
@@ -2883,6 +2887,7 @@ export type Database = {
           emergency_vet_name?: string | null;
           emergency_vet_phone?: string | null;
           gender?: string | null;
+          holo_pattern?: string | null;
           id?: string;
           insurance_policy?: string | null;
           insurance_provider?: string | null;
@@ -2905,6 +2910,7 @@ export type Database = {
           owner_invitation_accepted_at?: string | null;
           owner_invitation_sent_at?: string | null;
           owner_invitation_token?: string | null;
+          paw_card_id?: string | null;
           passed_away_at?: string | null;
           passed_away_cause?: string | null;
           passed_away_registered_at?: string | null;

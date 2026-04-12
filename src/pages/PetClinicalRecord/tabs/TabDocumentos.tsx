@@ -1,26 +1,29 @@
-import { useCallback } from "react";
-import { toast } from "sonner";
-import { FileText, Download } from "@/lib/icons";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useMedicalDocuments, MedicalDocument } from "@/hooks/useMedicalDocuments";
-import { downloadFile } from "@/lib/nativeDownload";
-import { formatShortDate } from "../helpers";
-import { EmptyState, getDocTypeLabel } from "../shared";
+import { useCallback } from 'react';
+import { toast } from 'sonner';
+import { FileText, Download } from '@/lib/icons';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useMedicalDocuments, MedicalDocument } from '@/hooks/useMedicalDocuments';
+import { downloadFile } from '@/lib/nativeDownload';
+import { formatShortDate } from '../helpers';
+import { EmptyState, getDocTypeLabel } from '../shared';
 
 export function TabDocumentos({ petId }: { petId: string }) {
   const { documents, isLoading, getDownloadUrl } = useMedicalDocuments(petId);
 
-  const handleDownload = useCallback(async (doc: MedicalDocument) => {
-    try {
-      const url = await getDownloadUrl(doc);
-      await downloadFile(url, doc.title || 'documento');
-    } catch {
-      toast.error("Error al obtener el enlace de descarga");
-    }
-  }, [getDownloadUrl]);
+  const handleDownload = useCallback(
+    async (doc: MedicalDocument) => {
+      try {
+        const url = await getDownloadUrl(doc);
+        await downloadFile(url, doc.title || 'documento');
+      } catch {
+        toast.error('Error al obtener el enlace de descarga');
+      }
+    },
+    [getDownloadUrl]
+  );
 
   if (isLoading) {
     return (
@@ -37,7 +40,7 @@ export function TabDocumentos({ petId }: { petId: string }) {
       <EmptyState
         icon={FileText}
         title="Sin documentos"
-        description="Los documentos medicos como recetas, resultados de laboratorio y carnets de vacunacion apareceran aqui."
+        description="Los documentos médicos como recetas, resultados de laboratorio y carnets de vacunación aparecerán aquí."
       />
     );
   }
@@ -57,9 +60,7 @@ export function TabDocumentos({ petId }: { petId: string }) {
                   <Badge variant="outline" className="text-xs">
                     {getDocTypeLabel(doc.type)}
                   </Badge>
-                  {doc.issued_at && (
-                    <span>{formatShortDate(doc.issued_at)}</span>
-                  )}
+                  {doc.issued_at && <span>{formatShortDate(doc.issued_at)}</span>}
                 </div>
               </div>
             </div>

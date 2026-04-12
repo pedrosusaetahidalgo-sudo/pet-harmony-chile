@@ -1,16 +1,17 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
-import { Camera } from "@/lib/icons";
-import { describeSupabaseError } from "@/lib/supabaseErrors";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
+import { Camera } from '@/lib/icons';
+import { describeSupabaseError } from '@/lib/supabaseErrors';
+import { generatePawCardData } from '@/hooks/useHoloPattern';
 
-type Species = "perro" | "gato" | "otro";
-type AgeRange = "cachorro" | "joven" | "adulto" | "senior";
+type Species = 'perro' | 'gato' | 'otro';
+type AgeRange = 'cachorro' | 'joven' | 'adulto' | 'senior';
 
 const AGE_YEARS: Record<AgeRange, number> = {
   cachorro: 0.5,
@@ -23,14 +24,14 @@ function approximateBirthDate(age: AgeRange): string {
   const d = new Date();
   d.setFullYear(d.getFullYear() - Math.floor(AGE_YEARS[age]));
   d.setMonth(d.getMonth() - Math.round((AGE_YEARS[age] % 1) * 12));
-  return d.toISOString().split("T")[0];
+  return d.toISOString().split('T')[0];
 }
 
 const OnboardingDuenoMinimal = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const [species, setSpecies] = useState<Species | null>(null);
   const [ageRange, setAgeRange] = useState<AgeRange | null>(null);
   const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -48,25 +49,27 @@ const OnboardingDuenoMinimal = () => {
 
   const uploadPhoto = async (): Promise<string | null> => {
     if (!photoFile || !user) return null;
-    const ext = photoFile.name.split(".").pop();
+    const ext = photoFile.name.split('.').pop();
     const path = `${user.id}/${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("pet-photos").upload(path, photoFile);
+    const { error } = await supabase.storage.from('pet-photos').upload(path, photoFile);
     if (error) {
-      toast.error("No se pudo subir la foto, pero tu mascota se creará igual.");
+      toast.error('No se pudo subir la foto, pero tu mascota se creará igual.');
       return null;
     }
-    const { data: { publicUrl } } = supabase.storage.from("pet-photos").getPublicUrl(path);
+    const {
+      data: { publicUrl },
+    } = supabase.storage.from('pet-photos').getPublicUrl(path);
     return publicUrl;
   };
 
   const handleSubmit = async () => {
     if (!name.trim()) {
-      toast.error("El nombre de tu mascota es obligatorio.");
+      toast.error('El nombre de tu mascota es obligatorio.');
       return;
     }
     if (!user) {
-      toast.error("Tu sesión expiró. Inicia sesión de nuevo.");
-      navigate("/auth");
+      toast.error('Tu sesión expiró. Inicia sesión de nuevo.');
+      navigate('/auth');
       return;
     }
 
@@ -74,40 +77,41 @@ const OnboardingDuenoMinimal = () => {
     try {
       const photoUrl = await uploadPhoto();
 
-      const { error } = await supabase.from("pets").insert({
+      const pawCard = generatePawCardData();
+      const { error } = await supabase.from('pets').insert({
         owner_id: user.id,
         name: name.trim(),
-        species: species ?? "perro",
+        species: species ?? 'perro',
         birth_date: ageRange ? approximateBirthDate(ageRange) : null,
         photo_url: photoUrl,
         is_public: true,
+        holo_pattern: pawCard.holoPattern,
+        paw_card_id: pawCard.pawCardId,
       });
       if (error) throw error;
 
-      toast.info("Tu ficha está al 30%. Completar con foto del carnet", {
+      toast.info('Tu ficha está al 30%. Completar con foto del carnet', {
         duration: 6000,
       });
-      navigate("/home");
+      navigate('/home');
     } catch (err) {
-      toast.error(
-        describeSupabaseError(err as Parameters<typeof describeSupabaseError>[0])
-      );
+      toast.error(describeSupabaseError(err as Parameters<typeof describeSupabaseError>[0]));
     } finally {
       setLoading(false);
     }
   };
 
   const speciesOptions: { value: Species; label: string }[] = [
-    { value: "perro", label: "Perro" },
-    { value: "gato", label: "Gato" },
-    { value: "otro", label: "Otro" },
+    { value: 'perro', label: 'Perro' },
+    { value: 'gato', label: 'Gato' },
+    { value: 'otro', label: 'Otro' },
   ];
 
   const ageOptions: { value: AgeRange; label: string; hint: string }[] = [
-    { value: "cachorro", label: "Cachorro", hint: "0-1 año" },
-    { value: "joven", label: "Joven", hint: "1-3 años" },
-    { value: "adulto", label: "Adulto", hint: "3-8 años" },
-    { value: "senior", label: "Senior", hint: "8+ años" },
+    { value: 'cachorro', label: 'Cachorro', hint: '0-1 año' },
+    { value: 'joven', label: 'Joven', hint: '1-3 años' },
+    { value: 'adulto', label: 'Adulto', hint: '3-8 años' },
+    { value: 'senior', label: 'Senior', hint: '8+ años' },
   ];
 
   return (
@@ -123,12 +127,7 @@ const OnboardingDuenoMinimal = () => {
           {/* Photo */}
           <div className="flex justify-center">
             <label className="cursor-pointer">
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handlePhoto}
-              />
+              <input type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
               {photoPreview ? (
                 <img
                   src={photoPreview}
@@ -168,8 +167,8 @@ const OnboardingDuenoMinimal = () => {
                   onClick={() => setSpecies(species === opt.value ? null : opt.value)}
                   className={`flex-1 py-2 px-3 rounded-full text-sm font-medium border transition-colors ${
                     species === opt.value
-                      ? "bg-purple-600 text-white border-purple-600"
-                      : "bg-white text-slate-700 border-slate-300 hover:border-purple-400"
+                      ? 'bg-purple-600 text-white border-purple-600'
+                      : 'bg-white text-slate-700 border-slate-300 hover:border-purple-400'
                   }`}
                 >
                   {opt.label}
@@ -189,12 +188,14 @@ const OnboardingDuenoMinimal = () => {
                   onClick={() => setAgeRange(ageRange === opt.value ? null : opt.value)}
                   className={`py-2 px-3 rounded-full text-sm font-medium border transition-colors ${
                     ageRange === opt.value
-                      ? "bg-purple-600 text-white border-purple-600"
-                      : "bg-white text-slate-700 border-slate-300 hover:border-purple-400"
+                      ? 'bg-purple-600 text-white border-purple-600'
+                      : 'bg-white text-slate-700 border-slate-300 hover:border-purple-400'
                   }`}
                 >
                   {opt.label}
-                  <span className={`block text-xs ${ageRange === opt.value ? "text-purple-200" : "text-slate-400"}`}>
+                  <span
+                    className={`block text-xs ${ageRange === opt.value ? 'text-purple-200' : 'text-slate-400'}`}
+                  >
                     {opt.hint}
                   </span>
                 </button>
@@ -209,7 +210,7 @@ const OnboardingDuenoMinimal = () => {
             className="w-full"
             size="lg"
           >
-            {loading ? "Guardando..." : "Crear mascota"}
+            {loading ? 'Guardando...' : 'Crear mascota'}
           </Button>
 
           <p className="text-xs text-center text-slate-400">

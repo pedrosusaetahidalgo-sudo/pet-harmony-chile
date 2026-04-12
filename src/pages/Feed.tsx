@@ -124,7 +124,7 @@ const Feed = () => {
             className="w-full flex items-center justify-center gap-2 py-2.5 bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
           >
             <ArrowUp className="h-4 w-4" />
-            {newPostsCount} {newPostsCount === 1 ? 'publicacion nueva' : 'publicaciones nuevas'}
+            {newPostsCount} {newPostsCount === 1 ? 'publicación nueva' : 'publicaciones nuevas'}
           </button>
         )}
 
@@ -139,7 +139,7 @@ const Feed = () => {
             </DialogTrigger>
             <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>Nueva publicacion</DialogTitle>
+                <DialogTitle>Nueva publicación</DialogTitle>
                 <DialogDescription>Comparte momentos especiales con la comunidad</DialogDescription>
               </DialogHeader>
               <FeedCreatePost onSuccess={() => setShowCreatePost(false)} />
@@ -237,7 +237,7 @@ const Feed = () => {
           <TabsContent value="following" className="mt-0">
             {!user ? (
               <div className="text-center py-12 text-muted-foreground">
-                <p>Inicia sesion para ver publicaciones de quienes sigues</p>
+                <p>Inicia sesión para ver publicaciones de quienes sigues</p>
               </div>
             ) : (
               <FeedList
@@ -337,7 +337,7 @@ function FeedList({
       {/* End of feed */}
       {!hasNextPage && posts.length > 0 && (
         <div className="text-center py-8 text-muted-foreground text-sm">
-          Estas al dia — ya viste todas las publicaciones recientes 🐾
+          Estás al día — ya viste todas las publicaciones recientes 🐾
         </div>
       )}
     </div>

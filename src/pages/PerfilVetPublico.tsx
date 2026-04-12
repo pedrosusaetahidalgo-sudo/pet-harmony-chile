@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { MapPin, Star, Stethoscope, Share2, MessageSquare, Calendar, Loader2 } from '@/lib/icons';
 import { useAuth } from '@/hooks/useAuth';
+import { useQuery } from '@tanstack/react-query';
 import { LINKS } from '@/lib/links';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { Card } from '@/components/ui/card';
@@ -13,20 +14,38 @@ import { Label } from '@/components/ui/label';
 import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import {
-  useDirectoryVetBySlug,
-  useVetReviews,
-  trackProviderView,
-} from '@/hooks/useDirectoryVets';
+import { useDirectoryVetBySlug, useVetReviews, trackProviderView } from '@/hooks/useDirectoryVets';
 import { setSeoTags, injectJsonLd, formatCLP } from '@/lib/vetDirectory';
 import { PublicHeader, PublicFooter } from './DirectorioVets';
 import { useDemoMode } from '@/hooks/useDemoMode';
+
+function useIsOwnProviderSlug(slug: string | undefined, userId: string | undefined): boolean {
+  const { data } = useQuery({
+    queryKey: ['own-provider-slug', userId],
+    enabled: !!userId && !!slug,
+    staleTime: 5 * 60 * 1000,
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('service_providers')
+        .select('slug')
+        .eq('user_id', userId!)
+        .maybeSingle();
+      return data?.slug ?? null;
+    },
+  });
+  return !!slug && !!data && data === slug;
+}
 
 export default function PerfilVetPublico() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { data: vet, isLoading } = useDirectoryVetBySlug(slug);
+  // First try with visibility filter off (for own profile preview)
+  // Then fall back to public-only
+  const isOwnProfile = useIsOwnProviderSlug(slug, user?.id);
+  const { data: vet, isLoading } = useDirectoryVetBySlug(slug, {
+    skipVisibilityFilter: isOwnProfile,
+  });
   const v = vet;
   const { data: reviews } = useVetReviews(v?.id);
   const isDemo = useDemoMode();
@@ -231,11 +250,9 @@ export default function PerfilVetPublico() {
       <main className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
         <Breadcrumbs
           items={[
-            { label: "Veterinarios", to: LINKS.vets() },
-            ...(areas[0]
-              ? [{ label: areas[0], to: LINKS.vetsByComuna(areas[0]) }]
-              : []),
-            { label: v.display_name || "Perfil" },
+            { label: 'Veterinarios', to: LINKS.vets() },
+            ...(areas[0] ? [{ label: areas[0], to: LINKS.vetsByComuna(areas[0]) }] : []),
+            { label: v.display_name || 'Perfil' },
           ]}
         />
         {isDemo && (
@@ -264,17 +281,15 @@ export default function PerfilVetPublico() {
               <h1 className="text-2xl md:text-3xl font-bold text-purple-900">
                 {v.display_name}
                 {v.is_verified && (
-                  <span className="ml-2 text-blue-500 text-base align-middle">
-                    ✓ Verificado
-                  </span>
+                  <span className="ml-2 text-blue-500 text-base align-middle">✓ Verificado</span>
                 )}
               </h1>
               <p className="text-muted-foreground mb-2">
                 {v.provider_type === 'home_visit'
                   ? 'Veterinario a domicilio'
                   : v.provider_type === 'clinic'
-                  ? 'Clínica veterinaria'
-                  : 'Médico Veterinario'}
+                    ? 'Clínica veterinaria'
+                    : 'Médico Veterinario'}
                 {v.license_number && ` · Reg. Colmevet ${v.license_number}`}
               </p>
 
@@ -357,9 +372,7 @@ export default function PerfilVetPublico() {
               <div className="flex items-center gap-2 mb-4">
                 <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
                 <strong className="text-2xl">{rating.toFixed(1)}</strong>
-                <span className="text-muted-foreground">
-                  promedio · {reviewCount} reseñas
-                </span>
+                <span className="text-muted-foreground">promedio · {reviewCount} reseñas</span>
               </div>
 
               <div className="space-y-4">
@@ -370,9 +383,7 @@ export default function PerfilVetPublico() {
                         <Star
                           key={i}
                           className={`h-4 w-4 ${
-                            i < r.rating
-                              ? 'fill-yellow-400 text-yellow-400'
-                              : 'text-slate-300'
+                            i < r.rating ? 'fill-yellow-400 text-yellow-400' : 'text-slate-300'
                           }`}
                         />
                       ))}
@@ -383,9 +394,7 @@ export default function PerfilVetPublico() {
                       )}
                     </div>
                     {r.title && <p className="font-medium">{r.title}</p>}
-                    {r.comment && (
-                      <p className="text-sm text-muted-foreground">{r.comment}</p>
-                    )}
+                    {r.comment && <p className="text-sm text-muted-foreground">{r.comment}</p>}
                     {r.provider_response && (
                       <div className="mt-2 ml-4 pl-3 border-l-2 border-purple-300 text-sm">
                         <strong className="text-purple-700">Respuesta del vet:</strong>{' '}
@@ -420,48 +429,48 @@ export default function PerfilVetPublico() {
         description="Cuéntale brevemente qué necesita tu mascota. Le enviaremos tu solicitud y te contactará para coordinar."
       >
         <div className="space-y-3">
-            <div>
-              <Label htmlFor="reserva-date">Fecha y hora tentativa</Label>
-              <input
-                id="reserva-date"
-                type="datetime-local"
-                value={reservaDate}
-                onChange={(e) => setReservaDate(e.target.value)}
-                min={new Date().toISOString().slice(0, 16)}
-                className="w-full mt-1 px-3 py-2 border border-input rounded-md text-sm bg-background"
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                El veterinario confirmará el horario por chat.
-              </p>
-            </div>
-
-            <div>
-              <Label htmlFor="reserva-msg">Mensaje</Label>
-              <Textarea
-                id="reserva-msg"
-                value={reservaMessage}
-                onChange={(e) => setReservaMessage(e.target.value)}
-                placeholder="Ej: Mi perro Luna necesita su vacuna anual y un control general. Tiene 4 años, raza beagle."
-                rows={4}
-                maxLength={500}
-              />
-              <p className="text-xs text-muted-foreground mt-1">{reservaMessage.length}/500</p>
-            </div>
-
-            <Button
-              onClick={handleSubmitReserva}
-              disabled={reservaLoading}
-              className="w-full bg-purple-600 hover:bg-purple-700"
-            >
-              {reservaLoading ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-1 animate-spin" /> Enviando…
-                </>
-              ) : (
-                'Enviar solicitud'
-              )}
-            </Button>
+          <div>
+            <Label htmlFor="reserva-date">Fecha y hora tentativa</Label>
+            <input
+              id="reserva-date"
+              type="datetime-local"
+              value={reservaDate}
+              onChange={(e) => setReservaDate(e.target.value)}
+              min={new Date().toISOString().slice(0, 16)}
+              className="w-full mt-1 px-3 py-2 border border-input rounded-md text-sm bg-background"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              El veterinario confirmará el horario por chat.
+            </p>
           </div>
+
+          <div>
+            <Label htmlFor="reserva-msg">Mensaje</Label>
+            <Textarea
+              id="reserva-msg"
+              value={reservaMessage}
+              onChange={(e) => setReservaMessage(e.target.value)}
+              placeholder="Ej: Mi perro Luna necesita su vacuna anual y un control general. Tiene 4 años, raza beagle."
+              rows={4}
+              maxLength={500}
+            />
+            <p className="text-xs text-muted-foreground mt-1">{reservaMessage.length}/500</p>
+          </div>
+
+          <Button
+            onClick={handleSubmitReserva}
+            disabled={reservaLoading}
+            className="w-full bg-purple-600 hover:bg-purple-700"
+          >
+            {reservaLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-1 animate-spin" /> Enviando…
+              </>
+            ) : (
+              'Enviar solicitud'
+            )}
+          </Button>
+        </div>
       </ResponsiveModal>
     </div>
   );

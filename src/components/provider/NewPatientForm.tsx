@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { generatePawCardData } from '@/hooks/useHoloPattern';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -92,9 +93,14 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
       };
       if (data.breed.trim()) insertPayload.breed = data.breed.trim();
       if (data.birth_date) insertPayload.birth_date = data.birth_date;
-      if (data.sex) insertPayload.sex = data.sex;
-      if (data.weight) insertPayload.weight_kg = parseFloat(data.weight);
+      if (data.sex) insertPayload.gender = data.sex;
+      if (data.weight) insertPayload.weight = parseFloat(data.weight);
       if (data.color.trim()) insertPayload.color = data.color.trim();
+
+      // Paw Card data for new pet
+      const pawCard = generatePawCardData();
+      insertPayload.holo_pattern = pawCard.holoPattern;
+      insertPayload.paw_card_id = pawCard.pawCardId;
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { error } = await (supabase.from('pets') as any).insert(insertPayload);

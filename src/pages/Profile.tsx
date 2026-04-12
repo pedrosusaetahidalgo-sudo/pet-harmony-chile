@@ -37,6 +37,7 @@ interface PetData {
   breed?: string;
   photo_url?: string;
   birth_date?: string;
+  paw_score?: number;
 }
 
 const Profile = () => {
@@ -90,7 +91,29 @@ const Profile = () => {
       ]);
 
       setProfile(profileRes.data as ProfileData | null);
-      setPets(petsRes.data || []);
+
+      // Fetch paw scores for rarity display on pet identity cards
+      const rawPets = petsRes.data || [];
+      if (rawPets.length > 0) {
+        const petIds = rawPets.map((p: { id: string }) => p.id);
+        const { data: progressData } = await supabase
+          .from('pet_paw_progress')
+          .select('pet_id, health_score, activity_score, happiness_score, social_score')
+          .in('pet_id', petIds);
+        const scoreMap: Record<string, number> = {};
+        (progressData || []).forEach((row) => {
+          scoreMap[row.pet_id] = Math.round(
+            ((row.health_score || 0) +
+              (row.activity_score || 0) +
+              (row.happiness_score || 0) +
+              (row.social_score || 0)) /
+              4
+          );
+        });
+        setPets(rawPets.map((p) => ({ ...p, paw_score: scoreMap[p.id] ?? 0 })));
+      } else {
+        setPets(rawPets);
+      }
       setSocialStats({
         posts: postsRes.count || 0,
         followers: statsRes.data?.followers_count || 0,

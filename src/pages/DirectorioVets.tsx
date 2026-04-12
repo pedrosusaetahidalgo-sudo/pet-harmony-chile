@@ -103,8 +103,8 @@ export default function DirectorioVets() {
       ? `Veterinarios en ${comunaDisplay} — Directorio Paw Friend`
       : `${titleParts.join(' ')} | Paw Friend`;
     const seoDesc = comunaDisplay
-      ? `Encuentra los mejores veterinarios en ${comunaDisplay}. Compara precios, lee resenas verificadas y agenda tu consulta online.`
-      : 'Encuentra el mejor veterinario para tu mascota en Chile. Resenas verificadas, atencion a domicilio y en clinica.';
+      ? `Encuentra los mejores veterinarios en ${comunaDisplay}. Compara precios, lee reseñas verificadas y agenda tu consulta online.`
+      : 'Encuentra el mejor veterinario para tu mascota en Chile. Reseñas verificadas, atención a domicilio y en clínica.';
 
     setSeoTags({
       title: seoTitle,

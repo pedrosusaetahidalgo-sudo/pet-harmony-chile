@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Heart, Send, AlertTriangle, Phone, X } from "@/lib/icons";
-import { supabase } from "@/integrations/supabase/client";
-import { cn } from "@/lib/utils";
-import { useAuth } from "@/hooks/useAuth";
+import { useState, useRef, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Heart, Send, AlertTriangle, Phone, X } from '@/lib/icons';
+import { supabase } from '@/integrations/supabase/client';
+import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/useAuth';
 
 interface BereavementChatProps {
   petId?: string;
@@ -13,7 +13,7 @@ interface BereavementChatProps {
 }
 
 interface Message {
-  role: "user" | "assistant";
+  role: 'user' | 'assistant';
   content: string;
   safetyFlag?: boolean;
 }
@@ -21,14 +21,14 @@ interface Message {
 export function BereavementChat({ petId, petName, onClose }: BereavementChatProps) {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [hasConsented, setHasConsented] = useState(false);
   const [saveHistory, setSaveHistory] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages]);
 
   // Cargar historial si el usuario ya consintió antes
@@ -36,15 +36,19 @@ export function BereavementChat({ petId, petName, onClose }: BereavementChatProp
     if (!user || !hasConsented) return;
     const loadHistory = async () => {
       const { data } = await supabase
-        .from("bereavement_chat_messages" as any)
-        .select("role, content, safety_flag")
-        .eq("user_id", user.id)
-        .eq("pet_id", petId || "")
-        .order("created_at", { ascending: true })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .from('bereavement_chat_messages' as any)
+        .select('role, content, safety_flag')
+        .eq('user_id', user.id)
+        .eq('pet_id', petId || '')
+        .order('created_at', { ascending: true })
         .limit(50);
       if (data && data.length > 0) {
         setSaveHistory(true); // ya tenía historial = ya consintió
-        setMessages(data.map((m: any) => ({ role: m.role, content: m.content, safetyFlag: m.safety_flag })));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setMessages(
+          data.map((m: any) => ({ role: m.role, content: m.content, safetyFlag: m.safety_flag }))
+        );
       }
     };
     loadHistory();
@@ -53,44 +57,60 @@ export function BereavementChat({ petId, petName, onClose }: BereavementChatProp
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
     const userMsg = input.trim();
-    setInput("");
-    setMessages((prev) => [...prev, { role: "user", content: userMsg }]);
+    setInput('');
+    setMessages((prev) => [...prev, { role: 'user', content: userMsg }]);
     setLoading(true);
 
     // Guardar mensaje del usuario si consintió historial
     if (saveHistory && user) {
-      supabase.from("bereavement_chat_messages" as any).insert({
-        user_id: user.id, pet_id: petId || null, role: "user", content: userMsg,
-      }).then(() => {});
+      supabase // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .from('bereavement_chat_messages' as any)
+        .insert({
+          user_id: user.id,
+          pet_id: petId || null,
+          role: 'user',
+          content: userMsg,
+        })
+        .then(() => {});
     }
 
     try {
-      const { data, error } = await supabase.functions.invoke("bereavement-assistant", {
+      const { data, error } = await supabase.functions.invoke('bereavement-assistant', {
         body: { message: userMsg, pet_id: petId },
       });
 
       if (error) throw error;
 
       const assistantMsg = {
-        role: "assistant" as const,
-        content: data.reply || "Estoy aquí contigo.",
+        role: 'assistant' as const,
+        content: data.reply || 'Estoy aquí contigo.',
         safetyFlag: data.safety_flag,
       };
       setMessages((prev) => [...prev, assistantMsg]);
 
       // Guardar respuesta del asistente
       if (saveHistory && user) {
-        supabase.from("bereavement_chat_messages" as any).insert({
-          user_id: user.id, pet_id: petId || null, role: "assistant",
-          content: assistantMsg.content, safety_flag: assistantMsg.safetyFlag || false,
-        }).then(() => {});
+        supabase // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .from('bereavement_chat_messages' as any)
+          .insert({
+            user_id: user.id,
+            pet_id: petId || null,
+            role: 'assistant',
+            content: assistantMsg.content,
+            safety_flag: assistantMsg.safetyFlag || false,
+          })
+          .then(() => {});
       }
-    } catch {
+    } catch (err) {
+      const isAuthError = err instanceof Error && err.message?.includes('authorization');
       setMessages((prev) => [
         ...prev,
         {
-          role: "assistant",
-          content: "No pude procesar tu mensaje. Si necesitas ayuda ahora, llama a Salud Responde: 600 360 7777.",
+          role: 'assistant',
+          content: isAuthError
+            ? 'Tu sesión expiró. Por favor, recarga la página e intenta de nuevo. Si necesitas ayuda ahora, llama a Salud Responde: 600 360 7777.'
+            : 'El servicio de acompañamiento no está disponible en este momento. Estamos trabajando para habilitarlo pronto.\n\nMientras tanto, si necesitas hablar con alguien:\n• Salud Responde: 600 360 7777 (24h, gratis)\n• SAMU: 131 (emergencias)',
+          safetyFlag: true,
         },
       ]);
     } finally {
@@ -108,8 +128,8 @@ export function BereavementChat({ petId, petName, onClose }: BereavementChatProp
           </Button>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Soy un asistente de Paw Friend para acompañarte en este momento.
-          Quiero ser honesto contigo sobre algunas cosas importantes:
+          Soy un asistente de Paw Friend para acompañarte en este momento. Quiero ser honesto
+          contigo sobre algunas cosas importantes:
         </p>
         <ul className="space-y-2 text-sm text-slate-700">
           <li className="flex items-start gap-2">
@@ -158,9 +178,7 @@ export function BereavementChat({ petId, petName, onClose }: BereavementChatProp
           </div>
           <div>
             <p className="text-sm font-medium">Acompañamiento</p>
-            {petName && (
-              <p className="text-xs text-muted-foreground">Sobre {petName}</p>
-            )}
+            {petName && <p className="text-xs text-muted-foreground">Sobre {petName}</p>}
           </div>
         </div>
         <Button variant="ghost" size="sm" onClick={onClose}>
@@ -179,10 +197,10 @@ export function BereavementChat({ petId, petName, onClose }: BereavementChatProp
           <div key={i}>
             <div
               className={cn(
-                "max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
-                msg.role === "user"
-                  ? "ml-auto bg-purple-600 text-white"
-                  : "bg-slate-100 text-slate-800"
+                'max-w-[85%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed',
+                msg.role === 'user'
+                  ? 'ml-auto bg-purple-600 text-white'
+                  : 'bg-slate-100 text-slate-800'
               )}
             >
               {msg.content}
