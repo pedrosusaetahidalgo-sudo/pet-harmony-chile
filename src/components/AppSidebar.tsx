@@ -17,6 +17,7 @@ import {
   Scissors,
   Lock,
   Sparkles,
+  Trophy,
 } from '@/lib/icons';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { LINKS } from '@/lib/links';
@@ -64,6 +65,7 @@ const communityItems = [
   { title: 'Feed', url: '/feed', icon: Activity },
   { title: 'Comunidad', url: '/comunidad', icon: Users },
   { title: 'Mensajes', url: '/chat', icon: MessageSquare },
+  { title: 'Paw Cards', url: '/paw-collection', icon: Trophy },
   { title: 'Paw Game', url: '/paw-game', icon: Gamepad2 },
 ];
 

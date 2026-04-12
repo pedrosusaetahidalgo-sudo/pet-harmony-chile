@@ -524,7 +524,7 @@ span {
   --tcg-glow-y: 50%;
   position: relative;
   border-radius: 1rem;
-  padding: 3px;
+  padding: 5px;
   transform: rotateX(var(--tcg-rotate-x)) rotateY(var(--tcg-rotate-y));
   transform-style: preserve-3d;
   transition:
@@ -533,87 +533,99 @@ span {
   will-change: transform;
 }
 
-/* Rarity: Común (0-19 pts) — silver/gray */
+/* Legendary+ get thicker borders */
+.pet-card-tcg[data-rarity='legendary'],
+.pet-card-tcg[data-rarity='mythic'] {
+  padding: 6px;
+}
+
+/* Rarity: Comun (0-19 pts) — bronze metallic */
 .pet-card-tcg[data-rarity='common'] {
-  background: linear-gradient(135deg, #a8b0b8, #cdd3d9, #a8b0b8);
-  background-size: 200% 200%;
-  animation: holo-shift 8s ease-in-out infinite;
-  box-shadow: 0 2px 8px -2px hsl(210 10% 60% / 0.3);
-}
-
-/* Rarity: Poco Común (20-39 pts) — green */
-.pet-card-tcg[data-rarity='uncommon'] {
-  background: linear-gradient(135deg, #22c55e, #4ade80, #16a34a, #22c55e);
+  background: linear-gradient(135deg, #cd7f32, #e8c07a, #b87333, #e8c07a, #cd7f32);
   background-size: 300% 300%;
-  animation: holo-shift 6s ease-in-out infinite;
-  box-shadow: 0 2px 12px -2px hsl(142 71% 45% / 0.3);
+  animation: holo-shift 10s ease-in-out infinite;
+  box-shadow: 0 2px 10px -2px rgba(205, 127, 50, 0.3);
 }
 
-/* Rarity: Raro (40-59 pts) — blue */
+/* Rarity: Poco Comun (20-39 pts) — silver metallic */
+.pet-card-tcg[data-rarity='uncommon'] {
+  background: linear-gradient(135deg, #c0c0c0, #e8e8e8, #a8a8a8, #d4d4d4, #c0c0c0);
+  background-size: 300% 300%;
+  animation: holo-shift 7s ease-in-out infinite;
+  box-shadow: 0 2px 12px -2px rgba(192, 192, 192, 0.35);
+}
+
+/* Rarity: Raro (40-59 pts) — gold */
 .pet-card-tcg[data-rarity='rare'] {
-  background: linear-gradient(135deg, #3b82f6, #60a5fa, #2563eb, #818cf8, #3b82f6);
+  background: linear-gradient(135deg, #ffd700, #ffa500, #ffd700, #ffec8b, #ffd700);
   background-size: 300% 300%;
   animation: holo-shift 5s ease-in-out infinite;
-  box-shadow: 0 2px 16px -2px hsl(217 91% 60% / 0.35);
+  box-shadow: 0 2px 16px -2px rgba(255, 215, 0, 0.35);
 }
 
-/* Rarity: Épico (60-79 pts) — purple */
+/* Rarity: Epico (60-79 pts) — holographic prismatic */
 .pet-card-tcg[data-rarity='epic'] {
-  background: linear-gradient(135deg, #a855f7, #c084fc, #7c3aed, #e879f9, #a855f7);
+  background: linear-gradient(135deg, #00ced1, #7b68ee, #da70d6, #00ced1, #7b68ee);
   background-size: 300% 300%;
   animation: holo-shift 4s ease-in-out infinite;
   box-shadow:
-    0 4px 20px -2px hsl(271 81% 56% / 0.35),
-    0 0 30px -8px hsl(290 65% 60% / 0.2);
+    0 4px 20px -2px rgba(123, 104, 238, 0.35),
+    0 0 30px -8px rgba(0, 206, 209, 0.2);
 }
 
-/* Rarity: Legendario (80-94 pts) — gold */
+/* Rarity: Legendario (80-94 pts) — fire gradient */
 .pet-card-tcg[data-rarity='legendary'] {
-  background: linear-gradient(135deg, #f59e0b, #fbbf24, #d97706, #f59e0b, #fcd34d, #f59e0b);
+  background: linear-gradient(135deg, #ff4500, #ff6347, #ffd700, #ff4500, #ff8c00, #ffd700);
   background-size: 400% 400%;
   animation: holo-shift 3s ease-in-out infinite;
   box-shadow:
-    0 4px 24px -2px hsl(38 92% 50% / 0.4),
-    0 0 40px -8px hsl(45 93% 47% / 0.25);
+    0 4px 24px -2px rgba(255, 69, 0, 0.4),
+    0 0 40px -8px rgba(255, 165, 0, 0.25);
 }
 
-/* Rarity: Mítico (95-100 pts) — full rainbow */
+/* Rarity: Mitico (95-100 pts) — aurora borealis rainbow */
 .pet-card-tcg[data-rarity='mythic'] {
   background: linear-gradient(
     135deg,
-    #ef4444,
-    #f97316,
-    #eab308,
-    #22c55e,
-    #3b82f6,
+    #ff0080,
+    #ff4500,
+    #ffd700,
+    #00ff88,
+    #00bfff,
     #8b5cf6,
-    #ec4899,
-    #ef4444
+    #ff0080
   );
   background-size: 600% 600%;
-  animation: holo-shift 2.5s ease-in-out infinite;
+  animation: holo-shift 2s ease-in-out infinite;
   box-shadow:
-    0 4px 30px -2px hsl(280 80% 55% / 0.4),
-    0 0 50px -8px hsl(200 80% 55% / 0.3);
+    0 4px 30px -2px rgba(139, 92, 246, 0.4),
+    0 0 50px -8px rgba(0, 191, 255, 0.3);
 }
 
 /* Hover lift — all rarities */
-.pet-card-tcg:hover {
-  box-shadow:
-    0 12px 40px -4px hsl(271 81% 56% / 0.35),
-    0 0 30px -4px hsl(290 65% 60% / 0.25);
+.pet-card-tcg[data-rarity='common']:hover {
+  box-shadow: 0 8px 30px -4px rgba(205, 127, 50, 0.45);
 }
-
+.pet-card-tcg[data-rarity='uncommon']:hover {
+  box-shadow: 0 8px 32px -4px rgba(192, 192, 192, 0.5);
+}
+.pet-card-tcg[data-rarity='rare']:hover {
+  box-shadow: 0 10px 36px -4px rgba(255, 215, 0, 0.5);
+}
+.pet-card-tcg[data-rarity='epic']:hover {
+  box-shadow:
+    0 10px 40px -4px rgba(123, 104, 238, 0.5),
+    0 0 40px -4px rgba(0, 206, 209, 0.3);
+}
 .pet-card-tcg[data-rarity='legendary']:hover {
   box-shadow:
-    0 12px 40px -4px hsl(38 92% 50% / 0.5),
-    0 0 40px -4px hsl(45 93% 47% / 0.3);
+    0 12px 50px -4px rgba(255, 69, 0, 0.55),
+    0 0 50px -4px rgba(255, 165, 0, 0.35);
 }
-
 .pet-card-tcg[data-rarity='mythic']:hover {
   box-shadow:
-    0 12px 50px -4px hsl(280 80% 55% / 0.5),
-    0 0 60px -8px hsl(200 80% 55% / 0.35);
+    0 12px 60px -4px rgba(139, 92, 246, 0.55),
+    0 0 70px -8px rgba(0, 191, 255, 0.4);
 }
 
 /* ── Inner card surface ── */
@@ -735,34 +747,34 @@ span {
 }
 
 .tcg-rarity-badge[data-rarity='common'] {
-  background: hsl(210 10% 92%);
-  color: hsl(210 10% 40%);
-  border-color: hsl(210 10% 80%);
+  background: linear-gradient(135deg, #f5e6d0, #eedcc5);
+  color: #8b5e3c;
+  border-color: #cd7f32;
 }
 .tcg-rarity-badge[data-rarity='uncommon'] {
-  background: hsl(142 60% 92%);
-  color: hsl(142 71% 30%);
-  border-color: hsl(142 50% 70%);
+  background: linear-gradient(135deg, #f0f0f0, #e8e8e8);
+  color: #666;
+  border-color: #c0c0c0;
 }
 .tcg-rarity-badge[data-rarity='rare'] {
-  background: hsl(217 80% 92%);
-  color: hsl(217 91% 35%);
-  border-color: hsl(217 70% 70%);
+  background: linear-gradient(135deg, #fff8dc, #fffacd);
+  color: #b8860b;
+  border-color: #ffd700;
 }
 .tcg-rarity-badge[data-rarity='epic'] {
-  background: hsl(271 60% 93%);
-  color: hsl(271 81% 40%);
-  border-color: hsl(271 50% 72%);
+  background: linear-gradient(135deg, #e0f7fa, #e8eaf6, #fce4ec);
+  color: #5b2c8e;
+  border-color: #7b68ee;
 }
 .tcg-rarity-badge[data-rarity='legendary'] {
-  background: linear-gradient(135deg, hsl(38 90% 90%), hsl(45 100% 85%));
-  color: hsl(38 80% 30%);
-  border-color: hsl(38 70% 60%);
+  background: linear-gradient(135deg, #fff0e0, #ffe4cc);
+  color: #cc3300;
+  border-color: #ff4500;
 }
 .tcg-rarity-badge[data-rarity='mythic'] {
-  background: linear-gradient(135deg, hsl(280 60% 92%), hsl(200 60% 90%), hsl(340 60% 92%));
-  color: hsl(280 70% 35%);
-  border-color: hsl(280 50% 70%);
+  background: linear-gradient(135deg, #ffe0f0, #e0f0ff, #e0ffe0);
+  color: #8b5cf6;
+  border-color: #ff0080;
   animation: tcg-rainbow-border 4s linear infinite;
 }
 
@@ -789,15 +801,15 @@ span {
   background-clip: text;
 }
 
-/* Legendary/mythic name gets gold/rainbow gradient */
+/* Legendary/mythic name gets fire/rainbow gradient */
 .pet-card-tcg[data-rarity='legendary'] .pet-card-name {
-  background: linear-gradient(135deg, hsl(38 80% 35%), hsl(45 90% 45%), hsl(38 80% 35%));
+  background: linear-gradient(135deg, #ff4500, #ffd700, #ff6347);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 .pet-card-tcg[data-rarity='mythic'] .pet-card-name {
-  background: linear-gradient(135deg, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #8b5cf6);
+  background: linear-gradient(135deg, #ff0080, #ff4500, #ffd700, #00ff88, #00bfff, #8b5cf6);
   background-size: 200% 100%;
   animation: holo-shift 3s ease-in-out infinite;
   -webkit-background-clip: text;
@@ -846,6 +858,451 @@ span {
   background: linear-gradient(90deg, hsl(271 81% 56%), hsl(290 65% 60%), hsl(250 72% 62%));
   background-size: 200% 100%;
   animation: holo-shift 4s ease-in-out infinite;
+}
+
+/* ============================================
+   PAW CARDS — FLIP 3D
+   ============================================ */
+
+.paw-card-flip-container {
+  perspective: 800px;
+  transform-style: preserve-3d;
+}
+
+.paw-card-flipper {
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.paw-card-flipper.flipped {
+  transform: rotateY(180deg);
+}
+
+.paw-card-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.paw-card-face-back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transform: rotateY(180deg);
+}
+
+/* ============================================
+   PAW CARDS — HOLOGRAPHIC PATTERNS
+   ============================================ */
+
+/* Base watermark layer (all patterns get this) */
+.paw-holo-base {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  mix-blend-mode: overlay;
+}
+
+.pet-card-tcg:hover .paw-holo-base,
+.pet-card-tcg[data-rarity='legendary'] .paw-holo-base,
+.pet-card-tcg[data-rarity='mythic'] .paw-holo-base {
+  opacity: 1;
+}
+
+/* Pattern: Clasica — just watermark */
+.paw-holo-none {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 680 680' width='40' height='40' opacity='0.035'%3E%3Cellipse cx='340' cy='430' rx='155' ry='135' fill='%239333EA'/%3E%3Cellipse cx='200' cy='270' rx='55' ry='68' transform='rotate(-22 200 270)' fill='%239333EA'/%3E%3Cellipse cx='288' cy='180' rx='50' ry='62' transform='rotate(-10 288 180)' fill='%239333EA'/%3E%3Cellipse cx='392' cy='180' rx='50' ry='62' transform='rotate(10 392 180)' fill='%239333EA'/%3E%3Cellipse cx='480' cy='270' rx='55' ry='68' transform='rotate(22 480 270)' fill='%239333EA'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 40px 40px;
+  opacity: 0.5;
+}
+
+/* Pattern: Huellas Holo */
+.paw-holo-paws {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 680 680' width='32' height='32'%3E%3Cellipse cx='340' cy='430' rx='155' ry='135' fill='%239333EA' opacity='0.08'/%3E%3Cellipse cx='200' cy='270' rx='55' ry='68' transform='rotate(-22 200 270)' fill='%239333EA' opacity='0.08'/%3E%3Cellipse cx='288' cy='180' rx='50' ry='62' transform='rotate(-10 288 180)' fill='%239333EA' opacity='0.08'/%3E%3Cellipse cx='392' cy='180' rx='50' ry='62' transform='rotate(10 392 180)' fill='%239333EA' opacity='0.08'/%3E%3Cellipse cx='480' cy='270' rx='55' ry='68' transform='rotate(22 480 270)' fill='%239333EA' opacity='0.08'/%3E%3C/svg%3E");
+  background-size: 32px 32px;
+  animation: holo-paws-drift 12s linear infinite;
+  filter: hue-rotate(0deg);
+}
+
+.pet-card-tcg:hover .paw-holo-paws {
+  animation:
+    holo-paws-drift 12s linear infinite,
+    tcg-rainbow-border 6s linear infinite;
+}
+
+/* Pattern: Starlight */
+.paw-holo-stars {
+  background-image:
+    radial-gradient(circle at 10% 15%, rgba(255, 215, 0, 0.2) 1px, transparent 1px),
+    radial-gradient(circle at 30% 45%, rgba(0, 191, 255, 0.2) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 55% 10%, rgba(255, 105, 180, 0.18) 1px, transparent 1px),
+    radial-gradient(circle at 75% 65%, rgba(147, 51, 234, 0.2) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 90% 25%, rgba(0, 255, 136, 0.15) 1px, transparent 1px),
+    radial-gradient(circle at 20% 80%, rgba(255, 69, 0, 0.15) 1px, transparent 1px),
+    radial-gradient(circle at 65% 85%, rgba(0, 206, 209, 0.18) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 45% 55%, rgba(255, 215, 0, 0.15) 1px, transparent 1px);
+  background-size: 100% 100%;
+  animation: holo-breathe 3s ease-in-out infinite;
+}
+
+/* Pattern: Heart Burst */
+.paw-holo-hearts {
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(255, 105, 180, 0.2) 2px, transparent 2px),
+    radial-gradient(circle at 50% 40%, rgba(219, 112, 147, 0.15) 2.5px, transparent 2.5px),
+    radial-gradient(circle at 80% 15%, rgba(255, 182, 193, 0.18) 1.5px, transparent 1.5px),
+    radial-gradient(circle at 35% 75%, rgba(238, 130, 238, 0.15) 2px, transparent 2px),
+    radial-gradient(circle at 70% 60%, rgba(255, 20, 147, 0.12) 2px, transparent 2px),
+    radial-gradient(circle at 25% 50%, rgba(199, 21, 133, 0.1) 1.5px, transparent 1.5px);
+  background-size: 100% 100%;
+  animation: holo-breathe 4s ease-in-out infinite;
+  filter: hue-rotate(0deg);
+}
+
+.pet-card-tcg:hover .paw-holo-hearts {
+  animation:
+    holo-breathe 4s ease-in-out infinite,
+    tcg-rainbow-border 8s linear infinite;
+}
+
+/* Pattern: Diamond Dust */
+.paw-holo-diamonds {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 8px,
+      rgba(255, 255, 255, 0.06) 8px,
+      rgba(255, 255, 255, 0.06) 9px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 8px,
+      rgba(200, 200, 255, 0.05) 8px,
+      rgba(200, 200, 255, 0.05) 9px
+    );
+  background-size: 16px 16px;
+  animation: holo-shift 4s ease-in-out infinite;
+}
+
+.pet-card-tcg:hover .paw-holo-diamonds {
+  filter: brightness(1.3) contrast(1.1);
+}
+
+/* Pattern: Ocean Wave */
+.paw-holo-waves {
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 6px,
+    rgba(0, 206, 209, 0.06) 6px,
+    rgba(0, 191, 255, 0.04) 8px,
+    transparent 8px,
+    transparent 14px
+  );
+  background-size: 100% 14px;
+  animation: holo-paws-drift 8s linear infinite;
+  filter: hue-rotate(0deg);
+}
+
+.pet-card-tcg:hover .paw-holo-waves {
+  animation:
+    holo-paws-drift 8s linear infinite,
+    tcg-rainbow-border 10s linear infinite;
+}
+
+/* Pattern: Phoenix Flame */
+.paw-holo-fire {
+  background:
+    radial-gradient(ellipse at 30% 90%, rgba(255, 69, 0, 0.15), transparent 50%),
+    radial-gradient(ellipse at 70% 85%, rgba(255, 165, 0, 0.12), transparent 45%),
+    radial-gradient(ellipse at 50% 95%, rgba(255, 215, 0, 0.1), transparent 55%);
+  background-size: 100% 100%;
+  animation: holo-fire-flicker 2s ease-in-out infinite;
+}
+
+/* Pattern: Galaxy Swirl */
+.paw-holo-galaxy {
+  background:
+    conic-gradient(
+      from 0deg at 50% 50%,
+      rgba(139, 92, 246, 0.12),
+      rgba(0, 191, 255, 0.08),
+      rgba(236, 72, 153, 0.1),
+      rgba(34, 197, 94, 0.06),
+      rgba(255, 215, 0, 0.08),
+      rgba(139, 92, 246, 0.12)
+    ),
+    radial-gradient(circle at 30% 30%, rgba(147, 51, 234, 0.1) 0%, transparent 40%),
+    radial-gradient(circle at 70% 70%, rgba(0, 191, 255, 0.08) 0%, transparent 35%);
+  background-size: 100% 100%;
+  animation: holo-galaxy-rotate 20s linear infinite;
+}
+
+/* Pattern: Full Rainbow (la mas rara) */
+.paw-holo-rainbow {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 0, 0, 0.1),
+    rgba(255, 127, 0, 0.1),
+    rgba(255, 255, 0, 0.1),
+    rgba(0, 255, 0, 0.1),
+    rgba(0, 0, 255, 0.1),
+    rgba(139, 0, 255, 0.1),
+    rgba(255, 0, 0, 0.1)
+  );
+  background-size: 400% 400%;
+  animation: holo-shift 3s ease-in-out infinite;
+  filter: brightness(1.2) saturate(1.5);
+}
+
+.pet-card-tcg:hover .paw-holo-rainbow {
+  filter: brightness(1.5) saturate(2);
+}
+
+/* ── Holo pattern animations ── */
+
+@keyframes holo-paws-drift {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+@keyframes holo-fire-flicker {
+  0%,
+  100% {
+    filter: hue-rotate(0deg) brightness(1);
+  }
+  33% {
+    filter: hue-rotate(15deg) brightness(1.15);
+  }
+  66% {
+    filter: hue-rotate(-10deg) brightness(0.95);
+  }
+}
+
+@keyframes holo-galaxy-rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ============================================
+   PAW CARDS — BACK SIDE STYLES
+   ============================================ */
+
+.paw-card-back {
+  background: linear-gradient(145deg, #1a0533, #2d1b4e, #1a0533);
+  border-radius: calc(1rem - 5px);
+  overflow: hidden;
+  position: relative;
+}
+
+.paw-card-back-watermark {
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 680 680' width='50' height='50'%3E%3Cellipse cx='340' cy='430' rx='155' ry='135' fill='%23FFFFFF'/%3E%3Cellipse cx='200' cy='270' rx='55' ry='68' transform='rotate(-22 200 270)' fill='%23FFFFFF'/%3E%3Cellipse cx='288' cy='180' rx='50' ry='62' transform='rotate(-10 288 180)' fill='%23FFFFFF'/%3E%3Cellipse cx='392' cy='180' rx='50' ry='62' transform='rotate(10 392 180)' fill='%23FFFFFF'/%3E%3Cellipse cx='480' cy='270' rx='55' ry='68' transform='rotate(22 480 270)' fill='%23FFFFFF'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 50px 50px;
+  pointer-events: none;
+}
+
+.paw-card-back-shine {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at var(--tcg-glow-x, 50%) var(--tcg-glow-y, 50%),
+    rgba(147, 51, 234, 0.15),
+    rgba(0, 191, 255, 0.08),
+    transparent 60%
+  );
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+/* Shimmer text animation */
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.6) 0%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(255, 255, 255, 0.6) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer-text 3s ease-in-out infinite;
+}
+
+@keyframes shimmer-text {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* QR frame decoration */
+.paw-qr-frame {
+  border: 2px solid rgba(147, 51, 234, 0.3);
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 0 20px rgba(147, 51, 234, 0.15),
+    inset 0 0 10px rgba(147, 51, 234, 0.05);
+}
+
+/* ============================================
+   PAW CARDS — HOLO REVEAL (ENVELOPE)
+   ============================================ */
+
+@keyframes envelope-open {
+  0% {
+    transform: perspective(600px) rotateX(0deg);
+    transform-origin: top center;
+  }
+  100% {
+    transform: perspective(600px) rotateX(-180deg);
+    transform-origin: top center;
+  }
+}
+
+@keyframes card-emerge {
+  0% {
+    transform: translateY(0) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-40px) scale(1.05);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20px) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes holo-reveal-flash {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.holo-reveal-envelope {
+  background: linear-gradient(135deg, #7c3aed, #9333ea, #a855f7);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(147, 51, 234, 0.4);
+}
+
+.holo-reveal-flap {
+  background: linear-gradient(180deg, #6d28d9, #7c3aed);
+  transform-origin: top center;
+}
+
+.holo-reveal-flap.opening {
+  animation: envelope-open 0.8s ease-in-out forwards;
+}
+
+.holo-reveal-card {
+  animation: card-emerge 0.8s ease-out 0.6s both;
+}
+
+.holo-reveal-flash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  animation: holo-reveal-flash 0.4s ease-out 0.5s both;
+}
+
+.holo-reveal-flash[data-tier='standard'] {
+  background: radial-gradient(circle, rgba(147, 51, 234, 0.3), transparent 70%);
+}
+.holo-reveal-flash[data-tier='rare'] {
+  background: radial-gradient(circle, rgba(0, 191, 255, 0.4), transparent 70%);
+}
+.holo-reveal-flash[data-tier='ultra-rare'] {
+  background: radial-gradient(
+    circle,
+    rgba(255, 215, 0, 0.5),
+    rgba(255, 0, 128, 0.3),
+    transparent 70%
+  );
+}
+
+/* Flip button */
+.paw-card-flip-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  z-index: 20;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(147, 51, 234, 0.15);
+  border: 1px solid rgba(147, 51, 234, 0.3);
+  color: rgba(147, 51, 234, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.paw-card-flip-btn:hover {
+  background: rgba(147, 51, 234, 0.25);
+  border-color: rgba(147, 51, 234, 0.5);
+  transform: scale(1.1);
+}
+
+/* Holo tier badge for back */
+.paw-holo-tier-badge {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 9999px;
+}
+
+.paw-holo-tier-badge[data-tier='standard'] {
+  background: rgba(147, 51, 234, 0.2);
+  color: rgba(200, 180, 255, 0.9);
+  border: 1px solid rgba(147, 51, 234, 0.3);
+}
+.paw-holo-tier-badge[data-tier='rare'] {
+  background: rgba(0, 191, 255, 0.2);
+  color: rgba(150, 220, 255, 0.9);
+  border: 1px solid rgba(0, 191, 255, 0.3);
+}
+.paw-holo-tier-badge[data-tier='ultra-rare'] {
+  background: linear-gradient(135deg, rgba(255, 0, 128, 0.2), rgba(255, 215, 0, 0.2));
+  color: rgba(255, 215, 0, 0.95);
+  border: 1px solid rgba(255, 215, 0, 0.4);
 }
 
 /* ── Button Press ── */

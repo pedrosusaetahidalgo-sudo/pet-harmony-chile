@@ -58,6 +58,7 @@ src/
     home/              # Home dashboard
     maps/              # Mapa Leaflet
     medical/           # Ficha clinica, PDF, compartir
+    paw-cards/         # Paw Cards coleccionables (TCG flip, QR, holograficos)
     pawgame/           # Mini-juego gamificacion
     provider/          # Dashboard y perfil de proveedores/vets
     reviews/           # Resenas
@@ -171,6 +172,7 @@ send-whatsapp-reminder/          # WhatsApp (pendiente verificacion Meta)
 ### Publicas (ampliacion)
 - `/registro-proveedor` -- Alias de `/registro-veterinario`
 - `/qr/:token` -- Landing publica de QR de mascota
+- `/paw-card/:pawCardId` -- Landing publica de Paw Card coleccionable
 - `/medical-share/:token` -- Landing publica de ficha compartida (30 dias)
 
 ### Protegidas (requieren auth)
@@ -204,6 +206,7 @@ send-whatsapp-reminder/          # WhatsApp (pendiente verificacion Meta)
 - `/panel-pro` -- Pro Analytics dashboard
 - `/analytics-demo` -- Analytics dashboard (standalone demo)
 - `/admin` -- Panel admin (requiere rol admin)
+- `/paw-collection` -- Coleccion de Paw Cards
 - `/paw-game` -- Mini-juego gamificacion
 
 ---

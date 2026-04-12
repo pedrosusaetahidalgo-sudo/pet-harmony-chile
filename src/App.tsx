@@ -68,6 +68,8 @@ const ParaVeterinarios = lazy(() => import('./pages/ParaVeterinarios'));
 const PreciosVeterinarios = lazy(() => import('./pages/PreciosVeterinarios'));
 const DejarResena = lazy(() => import('./pages/DejarResena'));
 const QRLanding = lazy(() => import('./pages/QRLanding'));
+const PawCardLanding = lazy(() => import('./pages/PawCardLanding'));
+const PawCollection = lazy(() => import('./pages/PawCollection'));
 const MedicalShare = lazy(() => import('./pages/MedicalShare'));
 // Actividad eliminada — ruta consolidada a /feed
 const Reminders = lazy(() => import('./pages/Reminders'));
@@ -234,6 +236,16 @@ const App = () => (
                     <ProtectedRoute>
                       <AppLayout>
                         <MyPets />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/paw-collection"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <PawCollection />
                       </AppLayout>
                     </ProtectedRoute>
                   }
@@ -584,6 +596,7 @@ const App = () => (
                 />
                 <Route path="/resena/:token" element={<DejarResena />} />
                 <Route path="/qr/:token" element={<QRLanding />} />
+                <Route path="/paw-card/:pawCardId" element={<PawCardLanding />} />
                 <Route path="/medical-share/:token" element={<MedicalShare />} />
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />

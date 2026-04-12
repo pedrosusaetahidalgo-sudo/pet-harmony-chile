@@ -51,7 +51,7 @@ export function getRarity(score: number): Rarity {
   return 'common';
 }
 
-const RARITY_LABELS: Record<Rarity, string> = {
+export const RARITY_LABELS: Record<Rarity, string> = {
   common: 'Común',
   uncommon: 'Poco Común',
   rare: 'Raro',
@@ -60,12 +60,12 @@ const RARITY_LABELS: Record<Rarity, string> = {
   mythic: 'Mítico',
 };
 
-const RARITY_RING: Record<Rarity, string> = {
-  common: 'ring-gray-300',
-  uncommon: 'ring-green-400',
-  rare: 'ring-blue-400',
-  epic: 'ring-purple-400',
-  legendary: 'ring-yellow-400',
+export const RARITY_RING: Record<Rarity, string> = {
+  common: 'ring-amber-600',
+  uncommon: 'ring-gray-400',
+  rare: 'ring-yellow-400',
+  epic: 'ring-indigo-400',
+  legendary: 'ring-orange-500',
   mythic: 'ring-pink-400',
 };
 

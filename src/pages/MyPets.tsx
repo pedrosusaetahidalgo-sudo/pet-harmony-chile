@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Plus, Heart, PawPrint, ChevronDown, MessageCircle, Star } from '@/lib/icons';
+import { Plus, Heart, PawPrint, ChevronDown, MessageCircle, Star, Trophy } from '@/lib/icons';
 import { getRarity, type Rarity } from '@/components/PetCardCompact';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -23,7 +23,8 @@ import {
 } from '@/components/ui/alert-dialog';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { useGoToAddPet } from '@/hooks/useCanAddPet';
-import { PetCardCompact } from '@/components/PetCardCompact';
+import { PawCardFlippable } from '@/components/paw-cards/PawCardFlippable';
+import type { HoloPattern } from '@/lib/paw-cards';
 
 interface Pet {
   id: string;
@@ -38,6 +39,8 @@ interface Pet {
   gender: string | null;
   weight: number | null;
   bio: string | null;
+  holo_pattern?: string | null;
+  paw_card_id?: string | null;
 }
 
 /* ── Pagination dots (mobile only) ── */
@@ -272,13 +275,23 @@ const MyPets = () => {
           <h1 className="text-3xl font-bold mb-2">Mis Mascotas</h1>
           <p className="text-muted-foreground">Gestiona los perfiles de tus mascotas</p>
         </div>
-        <Button
-          onClick={goToAddPet}
-          className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-xl hover:scale-105"
-        >
-          <Plus className="mr-2 h-5 w-5" />
-          Agregar Mascota
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => navigate('/paw-collection')}
+            className="border-purple-200/60 hover:bg-purple-50/50"
+          >
+            <Trophy className="mr-2 h-4 w-4 text-purple-500" />
+            <span className="hidden sm:inline">Coleccion</span>
+          </Button>
+          <Button
+            onClick={goToAddPet}
+            className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-xl hover:scale-105"
+          >
+            <Plus className="mr-2 h-5 w-5" />
+            Agregar Mascota
+          </Button>
+        </div>
       </div>
 
       {/* ── Total Paw Points summary ── */}
@@ -343,7 +356,13 @@ const MyPets = () => {
                 key={pet.id}
                 className={`snap-center shrink-0 w-[75vw] max-w-[280px] animate-fade-in-up stagger-${Math.min(index + 1, 6)}`}
               >
-                <PetCardCompact pet={pet} score={petScores[pet.id]} onDelete={setDeleteId} />
+                <PawCardFlippable
+                  pet={pet}
+                  score={petScores[pet.id]}
+                  holoPattern={(pet.holo_pattern as HoloPattern) || 'holo-none'}
+                  pawCardId={pet.paw_card_id || ''}
+                  onDelete={setDeleteId}
+                />
               </div>
             ))}
             {/* Ghost card */}
@@ -358,7 +377,13 @@ const MyPets = () => {
           <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {pets.map((pet, index) => (
               <div key={pet.id} className={`animate-fade-in-up stagger-${Math.min(index + 1, 6)}`}>
-                <PetCardCompact pet={pet} score={petScores[pet.id]} onDelete={setDeleteId} />
+                <PawCardFlippable
+                  pet={pet}
+                  score={petScores[pet.id]}
+                  holoPattern={(pet.holo_pattern as HoloPattern) || 'holo-none'}
+                  pawCardId={pet.paw_card_id || ''}
+                  onDelete={setDeleteId}
+                />
               </div>
             ))}
             <AddPetGhostCard onClick={goToAddPet} />

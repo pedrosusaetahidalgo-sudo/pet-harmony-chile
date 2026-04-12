@@ -1,6 +1,6 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-12
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-12 (Paw Cards Collectible)
     %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (21 activas).
     %% Refleja navegacion real post-optimizacion:
     %%   BottomTabBar: Inicio | Mascotas | Vets | Recordatorios | Perfil
@@ -36,7 +36,11 @@ flowchart TD
         PUB_REG["Registro vet /registro-veterinario"]
         PUB_RESENA["Dejar resena /resena/:token"]
         PUB_QR["QR Landing /qr/:token"]
+        PUB_PAWCARD["Paw Card Landing /paw-card/:id"]
     end
+
+    PUB_PAWCARD -->|Logueado| PAWCARD_COLLECT["Coleccionar carta"]
+    PUB_PAWCARD -->|No logueado| AUTH_PAGE
 
     PUB_DIR --> PUB_PROF
     PUB_B2B --> PUB_REG
@@ -85,12 +89,18 @@ flowchart TD
     %% ============ TAB MASCOTAS ============
     subgraph MASCOTAS["MASCOTAS /my-pets"]
         direction TB
-        PET_LIST["Lista mascotas"]
+        PET_LIST["Lista mascotas (Paw Cards TCG)"]
         PET_ADD["Agregar /add-pet"]
         PET_EDIT["Editar /edit-pet/:id"]
+        PET_FLIP["Flip carta → QR reverso"]
+        PET_COLLECTION["Paw Collection /paw-collection"]
         PET_LIST --> PET_ADD
         PET_LIST --> PET_EDIT
+        PET_LIST --> PET_FLIP
+        PET_LIST --> PET_COLLECTION
     end
+
+    PET_FLIP --> PUB_PAWCARD
 
     PET_ADD --> PLAN_CHK{"Limite plan?"}
     PLAN_CHK -->|"Gratis max 2"| UPGRADE
@@ -99,7 +109,8 @@ flowchart TD
     OCR_CHK -->|Si| OCR_FN["edge fn ocr-vaccination-card (IA)"]
     OCR_CHK -->|No| PET_SAVE
     OCR_FN --> PET_SAVE["Guarda mascota"]
-    PET_SAVE --> PET_TRIGGERS["Trigger: recordatorios + PawPoints"]
+    PET_SAVE --> HOLO_REVEAL["Holo Reveal: asigna patron holografico + Paw Card ID"]
+    HOLO_REVEAL --> PET_TRIGGERS["Trigger: recordatorios + PawPoints"]
     PET_LIST --> FC_RES
 
     %% ============ FICHA CLINICA ============
@@ -215,6 +226,10 @@ flowchart TD
         COMMUNITY_SLUG["Comunidad /comunidad/:slug"]
         CHAT_PAGE["Chat /chat (Header + Sidebar)"]
         CHAT_PAGE --> CHAT_CONV["/chat/:conversationId realtime"]
+        PAWCARDS["Paw Cards /paw-collection"]
+        PAWCARDS --> PC_GRID["Grid coleccion"]
+        PAWCARDS --> PC_FILTERS["Filtros especie/rareza"]
+        PAWCARDS --> PC_STATS["Estadisticas"]
         PAWGAME["Paw Game /paw-game"]
         PAWGAME --> PG_MISSIONS["Misiones activas"]
         PAWGAME --> PG_BADGES["Badges"]
