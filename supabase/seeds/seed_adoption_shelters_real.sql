@@ -1,0 +1,137 @@
+-- =============================================================================
+-- SEED: Refugios y Fundaciones reales verificadas — 2026-04-12
+-- =============================================================================
+-- Reemplaza datos sinteticos de generate-shelters con fundaciones reales.
+-- Solo inserta si no existe ya un registro con el mismo nombre.
+-- =============================================================================
+
+INSERT INTO public.adoption_shelters (name, type, description, address, commune, city, contact_phone, contact_email, website, social_media, animal_types, specialties, formality_level, is_verified, is_active, source)
+VALUES
+  ('Fundacion Alma Chile',
+   'fundacion',
+   'Rescate, rehabilitacion y adopcion de perros. Seguimiento post-adopcion. Contribucion voluntaria por transporte.',
+   'Paine', 'Paine', 'Santiago',
+   '+56 9 8484 9152', 'contacto@fundacionalmachile.com', 'https://www.fundacionalmachile.com/',
+   '{"instagram": "@fundacionalmachile", "facebook": "Fundacion alma chile"}'::jsonb,
+   ARRAY['perro'], ARRAY['rescate', 'rehabilitacion', 'adopcion responsable'],
+   'establecido', true, true, 'manual_verified'),
+
+  ('Fundacion ARCA',
+   'fundacion',
+   'ONG multidisciplinaria: medicos veterinarios, abogados. Educacion en tenencia responsable, rescate, asesoria legal animal. PETS BNB (hotel y paseo).',
+   NULL, NULL, NULL,
+   NULL, 'contacto@fundacionarca.cl', 'https://fundacionarca.cl/',
+   '{"instagram": "@fundacion_arca", "facebook": "fundacionarca", "twitter": "@arca_chile"}'::jsonb,
+   ARRAY['perro', 'gato'], ARRAY['rescate', 'asesoria legal', 'educacion', 'hotel canino'],
+   'establecido', true, true, 'manual_verified'),
+
+  ('Chile Mestizo',
+   'fundacion',
+   'Fundacion dedicada al rescate, rehabilitacion y adopcion de perros mestizos. Servicios de discapacidad y rehabilitacion.',
+   NULL, NULL, NULL,
+   NULL, 'chilemestizo@gmail.com', 'https://chilemestizo.cl/',
+   '{"instagram": "@fundacionchilemestizo", "facebook": "@fundacionchilemestizo"}'::jsonb,
+   ARRAY['perro'], ARRAY['rescate', 'rehabilitacion', 'discapacidad'],
+   'establecido', true, true, 'manual_verified'),
+
+  ('Fundacion Huella Animal',
+   'fundacion',
+   'Desde 2015. Rehabilitacion fisica y conductual de animales vulnerados, especialmente con condiciones de salud, senior o dificultades emocionales. Programa Golden Years.',
+   NULL, NULL, NULL,
+   NULL, NULL, 'https://www.fundacionhuellaanimal.cl/',
+   '{"instagram": "@fundacionhuellaanimalchile"}'::jsonb,
+   ARRAY['perro', 'gato'], ARRAY['rehabilitacion', 'senior', 'condiciones cronicas', 'conducta'],
+   'establecido', true, true, 'manual_verified'),
+
+  ('Fundacion Ayuda Callejeros',
+   'ong',
+   'Organizacion dedicada al rescate animal en la Region Metropolitana. Adopcion, hogar temporal, apadrinamiento.',
+   NULL, NULL, 'Santiago',
+   NULL, 'ayuda.callejerosong@gmail.com', 'https://www.fundacionayudacallejeros.cl/',
+   '{}'::jsonb,
+   ARRAY['perro'], ARRAY['rescate', 'hogar temporal', 'adopcion'],
+   'establecido', true, true, 'manual_verified'),
+
+  ('Fundacion VYRA',
+   'fundacion',
+   'Adopcion responsable de animales rescatados y rehabilitados. 35+ animales rescatados.',
+   NULL, NULL, 'Santiago',
+   NULL, NULL, NULL,
+   '{}'::jsonb,
+   ARRAY['perro', 'gato'], ARRAY['rescate', 'rehabilitacion', 'adopcion'],
+   'establecido', false, true, 'petfi'),
+
+  ('Accion Animalista Frutillar',
+   'ong',
+   'Recuperacion fisica y emocional de animales rescatados en la Region de Los Lagos.',
+   NULL, 'Frutillar', 'Frutillar',
+   NULL, NULL, NULL,
+   '{}'::jsonb,
+   ARRAY['perro', 'gato'], ARRAY['rescate', 'rehabilitacion'],
+   'semi_formal', false, true, 'petfi'),
+
+  ('Santuario Emilia',
+   'fundacion',
+   'Especialidad: gatos ancianos, condiciones cronicas, ciegos, neurologicos.',
+   NULL, NULL, 'Valparaiso',
+   NULL, NULL, NULL,
+   '{}'::jsonb,
+   ARRAY['gato'], ARRAY['senior', 'condiciones cronicas', 'ciegos', 'neurologicos'],
+   'establecido', false, true, 'petfi'),
+
+  ('Fundacion Alma Animal Peumayen',
+   'fundacion',
+   'Esterilizacion, adopciones, tenencia responsable y rutas de alimento. Region de Valparaiso.',
+   NULL, NULL, 'Valparaiso',
+   NULL, NULL, NULL,
+   '{}'::jsonb,
+   ARRAY['perro', 'gato'], ARRAY['esterilizacion', 'adopcion', 'alimentacion'],
+   'establecido', false, true, 'petfi'),
+
+  ('Fundacion ARACOL',
+   'fundacion',
+   'Rescate y adopcion de perros y gatos abandonados en la Region del Maule.',
+   NULL, NULL, 'Talca',
+   NULL, NULL, NULL,
+   '{}'::jsonb,
+   ARRAY['perro', 'gato'], ARRAY['rescate', 'adopcion'],
+   'semi_formal', false, true, 'petfi'),
+
+  ('Santuario Esperanza de Vida',
+   'fundacion',
+   '170+ perros y 135+ gatos con condiciones cronicas de salud. Rehabilitacion fisica y emocional.',
+   NULL, NULL, 'Valparaiso',
+   NULL, NULL, NULL,
+   '{}'::jsonb,
+   ARRAY['perro', 'gato'], ARRAY['condiciones cronicas', 'rehabilitacion', 'santuario'],
+   'establecido', false, true, 'petfi'),
+
+  ('Kuppa',
+   'ong',
+   'Tenencia responsable y control etico de poblacion animal. Region de Los Lagos.',
+   NULL, NULL, 'Puerto Montt',
+   NULL, NULL, NULL,
+   '{}'::jsonb,
+   ARRAY['perro', 'gato'], ARRAY['tenencia responsable', 'control poblacion'],
+   'semi_formal', false, true, 'petfi'),
+
+  ('Fundacion Esperanza Animal',
+   'fundacion',
+   'ONG dedicada a mejorar la calidad de vida de mascotas abandonadas o nacidas en la calle. Educacion en tenencia responsable.',
+   NULL, NULL, NULL,
+   NULL, 'contacto@esperanzaanimal.cl', 'https://www.esperanzaanimal.cl/',
+   '{"instagram": "@fundacionesperanzaanimalchile", "facebook": "fundacionesperanzaanimalchile", "tiktok": "@fundacionesperanzanimal"}'::jsonb,
+   ARRAY['perro', 'gato'], ARRAY['rescate', 'educacion', 'tenencia responsable'],
+   'establecido', true, true, 'manual_verified'),
+
+  -- Caniles municipales conocidos
+  ('CRC Nunoa — Centro de Rescate y Cuidado',
+   'refugio',
+   'Canil municipal de Nunoa. Adopcion de perros y gatos rescatados.',
+   NULL, 'Nunoa', 'Santiago',
+   NULL, NULL, 'https://adopcionescrcnunoa.cl/',
+   '{}'::jsonb,
+   ARRAY['perro', 'gato'], ARRAY['rescate municipal', 'adopcion'],
+   'establecido', true, true, 'manual_verified')
+
+ON CONFLICT DO NOTHING;

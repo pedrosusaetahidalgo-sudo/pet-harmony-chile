@@ -1,41 +1,41 @@
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Slider } from "@/components/ui/slider";
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Slider } from '@/components/ui/slider';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
 
 interface MapFiltersProps {
-  activeView: "lost" | "adoption" | "services";
+  activeView: 'lost' | 'adoption' | 'services' | 'partners';
   filters: {
     searchRadius: number;
     petType: string;
     petSize: string;
     status: string;
     serviceType: string;
-    adoptionView?: string;
+    adoptionView: string;
   };
-  setFilters: (filters: any) => void;
+  setFilters: (filters: MapFiltersProps['filters']) => void;
   onClose: () => void;
 }
 
 const MapFilters = ({ activeView, filters, setFilters, onClose }: MapFiltersProps) => {
-  const updateFilter = (key: string, value: any) => {
+  const updateFilter = (key: string, value: string | number) => {
     setFilters({ ...filters, [key]: value });
   };
 
   const resetFilters = () => {
     setFilters({
       searchRadius: 50,
-      petType: "all",
-      petSize: "all",
-      status: "all",
-      serviceType: "all",
-      adoptionView: "all",
+      petType: 'all',
+      petSize: 'all',
+      status: 'all',
+      serviceType: 'all',
+      adoptionView: 'all',
     });
   };
 
@@ -46,12 +46,12 @@ const MapFilters = ({ activeView, filters, setFilters, onClose }: MapFiltersProp
         <div className="flex items-center justify-between">
           <Label>Radio de búsqueda</Label>
           <span className="text-sm text-muted-foreground">
-            {filters.searchRadius >= 100 ? "Toda la región" : `${filters.searchRadius} km`}
+            {filters.searchRadius >= 100 ? 'Toda la región' : `${filters.searchRadius} km`}
           </span>
         </div>
         <Slider
           value={[filters.searchRadius]}
-          onValueChange={(value) => updateFilter("searchRadius", value[0])}
+          onValueChange={(value) => updateFilter('searchRadius', value[0])}
           min={5}
           max={100}
           step={5}
@@ -65,13 +65,10 @@ const MapFilters = ({ activeView, filters, setFilters, onClose }: MapFiltersProp
       </div>
 
       {/* Pet Type - for lost and adoption views */}
-      {(activeView === "lost" || activeView === "adoption") && (
+      {(activeView === 'lost' || activeView === 'adoption') && (
         <div className="space-y-2">
           <Label>Tipo de mascota</Label>
-          <Select
-            value={filters.petType}
-            onValueChange={(value) => updateFilter("petType", value)}
-          >
+          <Select value={filters.petType} onValueChange={(value) => updateFilter('petType', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Seleccionar tipo" />
             </SelectTrigger>
@@ -86,12 +83,12 @@ const MapFilters = ({ activeView, filters, setFilters, onClose }: MapFiltersProp
       )}
 
       {/* Adoption View Filter - animals, shelters, or both */}
-      {activeView === "adoption" && (
+      {activeView === 'adoption' && (
         <div className="space-y-2">
           <Label>Mostrar en mapa</Label>
           <Select
-            value={filters.adoptionView || "all"}
-            onValueChange={(value) => updateFilter("adoptionView", value)}
+            value={filters.adoptionView || 'all'}
+            onValueChange={(value) => updateFilter('adoptionView', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Seleccionar vista" />
@@ -106,13 +103,10 @@ const MapFilters = ({ activeView, filters, setFilters, onClose }: MapFiltersProp
       )}
 
       {/* Pet Size - for adoption view */}
-      {activeView === "adoption" && (
+      {activeView === 'adoption' && (
         <div className="space-y-2">
           <Label>Tamaño</Label>
-          <Select
-            value={filters.petSize}
-            onValueChange={(value) => updateFilter("petSize", value)}
-          >
+          <Select value={filters.petSize} onValueChange={(value) => updateFilter('petSize', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Seleccionar tamaño" />
             </SelectTrigger>
@@ -128,13 +122,10 @@ const MapFilters = ({ activeView, filters, setFilters, onClose }: MapFiltersProp
       )}
 
       {/* Status - for lost pets */}
-      {activeView === "lost" && (
+      {activeView === 'lost' && (
         <div className="space-y-2">
           <Label>Estado del reporte</Label>
-          <Select
-            value={filters.status}
-            onValueChange={(value) => updateFilter("status", value)}
-          >
+          <Select value={filters.status} onValueChange={(value) => updateFilter('status', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Seleccionar estado" />
             </SelectTrigger>
@@ -148,12 +139,12 @@ const MapFilters = ({ activeView, filters, setFilters, onClose }: MapFiltersProp
       )}
 
       {/* Service Type - for services view */}
-      {activeView === "services" && (
+      {activeView === 'services' && (
         <div className="space-y-2">
           <Label>Tipo de servicio</Label>
           <Select
             value={filters.serviceType}
-            onValueChange={(value) => updateFilter("serviceType", value)}
+            onValueChange={(value) => updateFilter('serviceType', value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="Seleccionar servicio" />

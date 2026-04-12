@@ -1,0 +1,90 @@
+categoria,nombre,telefono,email,website,direccion,comuna,ciudad,latitud,longitud,instagram,facebook,notas
+seguro,Cacttus,,soporte@cacttus.cl,https://www.cacttus.cl,,,Santiago,-33.4489,-70.6693,@cacttus.cl,CacttusCL,"Desde $11.600/mes. Mini 60% / Care 70% / Care+ 90%. App iOS/Android. TikTok: @cacttus.cl"
+seguro,WOOF! Seguros,+56 2 2712 0483,contacto@woofinsurtech.com,https://www.woof.cl,"Cerro El Plomo 5555, Of. 402",Las Condes,Santiago,-33.4103,-70.5770,@woofseguros,woofseguros,"Desde $18.950/mes. Reembolso 90%. Asistencia 24/7"
+seguro,Pawer,+56 9 9879 2181,,https://www.somospawer.com,,,Santiago,-33.4489,-70.6693,@somospawer,,"Desde $14.900/mes. Opera en CL/PE/ES/MX. WhatsApp"
+seguro,BCI Seguros — Pata Segura,,,https://www.bciseguros.cl,,,Santiago,-33.4489,-70.6693,,,"Desde $3.890/mes"
+seguro,MACH Mascotas,,,https://www.mach.cl,,,Santiago,-33.4489,-70.6693,,,"Desde $3.317/mes — mas economico"
+seguro,Amerins,,,https://www.amerins.cl,,,Santiago,-33.4489,-70.6693,,,"Desde $28.212/mes. Sitio con acceso restringido"
+seguro,Zenit Seguros,+56 9 4288 8826,,https://www.zenitseguros.cl/,"Av. Manquehue Norte 290, Of. 01 (Sub 1)",Las Condes,Santiago,-33.3980,-70.5770,@ZenitSeguros,@ZenitSeguros,"Seguro RC Mascota: perros, gatos y exoticos. 100% online. Lun-Vie 9-14h. Tel fijo: 600 299 3648"
+seguro,Scotiabank Pet (BNP Paribas Cardif),,,,,,,,,,,,"$19.896/mes. URL no encontrada"
+seguro,CuidaPet 360,,,,,,,,,,,,,"$124.990/ano (~$10.416/mes). Sitio caido"
+seguro,Southbridge,,,https://www.southbridgeseguros.cl/,,,,,,,,"Producto de mascotas no encontrado en sitio"
+seguro,Seguros Falabella,,,https://www.segurosfalabella.com/,,,,,,,,"Sitio bloquea scraping (403)"
+seguro,Corredora Security,,,https://www.security.cl/,,,,,,,,"Sitio bloquea scraping (403)"
+seguro,Coopeuch,,,https://www.coopeuch.cl/,,,,,,,,"Sitio bloquea scraping (403)"
+tienda,SuperZoo Ahumada,+56 9 7109 5758,ventas@superzoo.cl,https://www.superzoo.cl,Ahumada 327,Santiago,Santiago,-33.4400,-70.6536,@superzoo.cl,,
+tienda,SuperZoo Nunoa,+56 9 9542 0629,ventas@superzoo.cl,https://www.superzoo.cl,"Av. Salvador 1822, Local 6",Nunoa,Santiago,-33.4530,-70.5980,@superzoo.cl,,
+tienda,SuperZoo Portal El Llano,+56 9 9542 0392,ventas@superzoo.cl,https://www.superzoo.cl,"Av. El Llano Subercaseaux 3519 A, local 2002",San Miguel,Santiago,-33.4980,-70.6510,@superzoo.cl,,
+tienda,SuperZoo Alferez Real,+56 9 9991 3361,ventas@superzoo.cl,https://www.superzoo.cl,Av. Manuel Montt 1141,Providencia,Santiago,-33.4350,-70.6130,@superzoo.cl,,
+tienda,SuperZoo Providencia,+56 9 3863 9973,ventas@superzoo.cl,https://www.superzoo.cl,Av. Providencia 1275,Providencia,Santiago,-33.4310,-70.6190,@superzoo.cl,,
+tienda,SuperZoo San Miguel,+56 9 9542 0186,ventas@superzoo.cl,https://www.superzoo.cl,"Av. Salvador Allende 1334, Local 2",San Miguel,Santiago,-33.4975,-70.6515,@superzoo.cl,,
+tienda,SuperZoo Portal Nunoa,+56 9 9448 9701,ventas@superzoo.cl,https://www.superzoo.cl,"Av. Jose Pedro Alessandri 1166, local 2008",Nunoa,Santiago,-33.4560,-70.5990,@superzoo.cl,,
+tienda,SuperZoo Costanera Center,+56 9 9426 6986,ventas@superzoo.cl,https://www.superzoo.cl,"Av. Andres Bello 2447, local 280",Providencia,Santiago,-33.4175,-70.6070,@superzoo.cl,,
+tienda,SuperZoo Colon,+56 9 9391 4767,ventas@superzoo.cl,https://www.superzoo.cl,"Av. Cristobal Colon 4455, Local A",Las Condes,Santiago,-33.4150,-70.5880,@superzoo.cl,,
+tienda,SuperZoo Plaza Egana,+56 9 3446 4401,ventas@superzoo.cl,https://www.superzoo.cl,Av. Larrain 5862,La Reina,Santiago,-33.4480,-70.5510,@superzoo.cl,,
+tienda,SuperZoo Florida Center,+56 9 9423 0828,ventas@superzoo.cl,https://www.superzoo.cl,"Av. Vicuna Mackenna 6100, local 119",La Florida,Santiago,-33.5170,-70.5980,@superzoo.cl,,
+tienda,SuperZoo Lo Castillo,+56 9 9093 6605,ventas@superzoo.cl,https://www.superzoo.cl,Vitacura 3790,Vitacura,Santiago,-33.3940,-70.5890,@superzoo.cl,,
+tienda,SuperZoo La Reina,+56 9 9543 9595,ventas@superzoo.cl,https://www.superzoo.cl,Monsenor Edwards 872,La Reina,Santiago,-33.4450,-70.5480,@superzoo.cl,,
+tienda,SuperZoo Parque Arauco,+56 9 9141 8757,ventas@superzoo.cl,https://www.superzoo.cl,"Av. Kennedy 5413, local 69, nivel -2",Las Condes,Santiago,-33.4010,-70.5770,@superzoo.cl,,
+tienda,SuperZoo Plaza Vespucio,+56 9 6541 2569,ventas@superzoo.cl,https://www.superzoo.cl,"Av. Vicuna Mackenna 7110, Local A-110",La Florida,Santiago,-33.5260,-70.5970,@superzoo.cl,,
+tienda,SuperZoo San Pio,+56 9 9620 9728,ventas@superzoo.cl,https://www.superzoo.cl,"Pio XI 1715, locales 3 y 4",Vitacura,Santiago,-33.3960,-70.5920,@superzoo.cl,,
+tienda,SuperZoo Mall Plaza Oeste,+56 9 3371 3855,ventas@superzoo.cl,https://www.superzoo.cl,Av. Americo Vespucio 1501,Cerrillos,Santiago,-33.4940,-70.7110,@superzoo.cl,,
+tienda,SuperZoo Arauco Maipu,+56 9 6680 4134,ventas@superzoo.cl,https://www.superzoo.cl,"Av. Americo Vespucio 399, local 06",Maipu,Santiago,-33.5100,-70.7570,@superzoo.cl,,
+tienda,SuperZoo Penalolen,+56 9 9542 0282,ventas@superzoo.cl,https://www.superzoo.cl,Av. Los Presidentes 7728,Penalolen,Santiago,-33.4900,-70.5530,@superzoo.cl,,
+tienda,SuperZoo Rotonda Atenas,+56 9 3218 3610,ventas@superzoo.cl,https://www.superzoo.cl,Av. Pdte. Sebastian Pinera E. 996,Las Condes,Santiago,-33.4080,-70.5690,@superzoo.cl,,
+tienda,SuperZoo Ossandon,+56 9 3862 2459,ventas@superzoo.cl,https://www.superzoo.cl,"Carlos Ossandon 1300, Local 2",La Reina,Santiago,-33.4470,-70.5500,@superzoo.cl,,
+tienda,SuperZoo Cobres de Vitacura,+56 9 4469 9095,ventas@superzoo.cl,https://www.superzoo.cl,Av. Vitacura 6640,Vitacura,Santiago,-33.3930,-70.5760,@superzoo.cl,,
+tienda,SuperZoo Pedro Fontova,+56 9 9093 6560,ventas@superzoo.cl,https://www.superzoo.cl,"Av. Pedro Fontova 7571, locales 2 y 3",Huechuraba,Santiago,-33.3650,-70.6340,@superzoo.cl,,
+tienda,SuperZoo Pajaritos,+56 9 4465 7263,ventas@superzoo.cl,https://www.superzoo.cl,Av. Los Pajaritos 2310,Maipu,Santiago,-33.5090,-70.7560,@superzoo.cl,,
+tienda,SuperZoo Arauco Quilicura,+56 9 3234 5514,ventas@superzoo.cl,https://www.superzoo.cl,Av. Bernardo OHiggins 581,Quilicura,Santiago,-33.3560,-70.7330,@superzoo.cl,,
+tienda,SuperZoo Chesterton,+56 9 9991 3367,ventas@superzoo.cl,https://www.superzoo.cl,Av. Padre Hurtado Central 415,Las Condes,Santiago,-33.4130,-70.5750,@superzoo.cl,,
+tienda,SuperZoo Alto Las Condes,+56 9 9449 5607,ventas@superzoo.cl,https://www.superzoo.cl,"Av. Kennedy 9001, local 2102",Las Condes,Santiago,-33.3990,-70.5670,@superzoo.cl,,
+tienda,SuperZoo Los Quillayes,+56 9 3922 2304,ventas@superzoo.cl,https://www.superzoo.cl,Av. Vicuna Mackenna 10811,La Florida,Santiago,-33.5340,-70.5960,@superzoo.cl,,
+tienda,Petco Chile,+56 2 3321 6799,,https://www.petco.cl,,Las Condes,Santiago,-33.4080,-70.5770,,,"2 tiendas fisicas: Mall Los Dominicos + Patio Andino"
+tienda,Petlandia Vina del Mar,+56 9 2245 6669,ecommercemarben@gmail.com,https://petlandiachile.cl/,Av. Libertad 1002,Vina del Mar,Valparaiso,-33.0153,-71.5500,@petlandia_chile,,"TikTok: @petlandia_chile. Lun-Vie 9:30-19:30, Sab hasta 17h"
+tienda,Petlandia Villa Alemana,+56 9 2245 6669,ecommercemarben@gmail.com,https://petlandiachile.cl/,Almirante La Torre 84,Villa Alemana,Valparaiso,-33.0420,-71.3730,@petlandia_chile,,
+tienda,Petlandia Quillota,+56 9 2245 6669,ecommercemarben@gmail.com,https://petlandiachile.cl/,Av. Carlos Condell 1687,Quillota,Valparaiso,-32.8800,-71.2480,@petlandia_chile,,
+tienda,Petlandia La Calera,+56 9 2245 6669,ecommercemarben@gmail.com,https://petlandiachile.cl/,"J. J. Perez 12010, Mall Open Plaza",La Calera,Valparaiso,-32.7870,-71.2060,@petlandia_chile,,
+tienda,Distribuidora Lira,+56 2 3275 7600,ayuda@distribuidoralira.cl,https://www.distribuidoralira.cl/,Av. Trinidad Oriente 893,La Florida,Santiago,-33.5230,-70.5880,@distribuidoralira,@distribuidoralira,"Mayorista premium. Lun-Dom 9-17h. TikTok: @distribuidoralira"
+tienda,PetHappy,,,https://pethappy.cl/,,,Santiago,,,,,Sitio caido (ECONNREFUSED). Sucursales en Las Condes/Maipu/La Florida/Nunoa/Puente Alto
+tienda,RedPet,,,https://redpet.cl/nuestras-tiendas/,,,Santiago,,,,,"Contenido cargado via JS, no scrapable"
+tienda,PetStore Chile,,,https://petstorechile.cl/,,,,,,,,Solo online
+tienda,Best for Pets,,,https://bestforpets.cl/,,,,,,,,Solo online. Royal Canin especializado. Redirect a /tienda/
+tienda,Braloy,,,https://braloy.cl/,,,,,,,,Solo online. Sitio caido
+tienda,Miscota Chile,,,https://cl.miscota.com/,,,,,,,,Plataforma internacional
+refugio,Fundacion Alma Chile,+56 9 8484 9152,contacto@fundacionalmachile.com,https://www.fundacionalmachile.com/,Paine,Paine,Santiago,-33.8130,-70.7350,@fundacionalmachile,Fundacion alma chile,"Rescate, rehabilitacion y adopcion de perros"
+refugio,Fundacion ARCA,,contacto@fundacionarca.cl,https://fundacionarca.cl/,,,,,,@fundacion_arca,fundacionarca,"ONG multidisciplinaria: vets + abogados. Educacion tenencia responsable. Twitter: @arca_chile"
+refugio,Chile Mestizo,,chilemestizo@gmail.com,https://chilemestizo.cl/,,,,,,@fundacionchilemestizo,@fundacionchilemestizo,"Rescate y adopcion perros mestizos + discapacidad"
+refugio,Fundacion Huella Animal,,,https://www.fundacionhuellaanimal.cl/,,,,,,@fundacionhuellaanimalchile,,"Desde 2015. Senior, condiciones cronicas, conducta"
+refugio,Fundacion Ayuda Callejeros,,ayuda.callejerosong@gmail.com,https://www.fundacionayudacallejeros.cl/,,,Santiago,,,,"Rescate animal R.M. Lun-Sab 8-20h. Alt email: soniaurrutia@ayudacallejeros.cl"
+refugio,Fundacion Esperanza Animal,,contacto@esperanzaanimal.cl,https://www.esperanzaanimal.cl/,,,,,,@fundacionesperanzaanimalchile,fundacionesperanzaanimalchile,"ONG. Tenencia responsable, reduccion sobrepoblacion. TikTok: @fundacionesperanzanimal"
+refugio,Patas Arriba (portal pet),+56 9 3910 6012,,https://patasarriba.cl/,,,,,,@patasarribachile,patasarribachile,"Portal de Anasac Pets. Marcas: Traper, Goofy, Fellini"
+refugio,Fundacion VYRA,,,,,,Santiago,,,,,"PetFi: 35 animales rescatados. Sin contacto publico"
+refugio,Accion Animalista Frutillar,,,,,Frutillar,Los Lagos,,,,,"PetFi: 21 animales rescatados"
+refugio,Santuario Emilia,,,,,Valparaiso,Valparaiso,,,,,"PetFi: gatos ancianos/cronicos/ciegos"
+refugio,Fundacion Alma Animal Peumayen,,,,,Valparaiso,Valparaiso,,,,,"PetFi: esterilizacion + adopcion"
+refugio,Fundacion ARACOL,,,,,,Maule,,,,,"PetFi: rescate y adopcion"
+refugio,Santuario Esperanza de Vida,,,,,Valparaiso,Valparaiso,,,,,"PetFi: 170+ perros, 135+ gatos con condiciones cronicas"
+refugio,Kuppa,,,,,Puerto Montt,Los Lagos,,,,,"PetFi: tenencia responsable"
+refugio,CRC Nunoa,,,https://adopcionescrcnunoa.cl/,,Nunoa,Santiago,-33.4560,-70.5990,,,"Canil municipal. Adopcion perros y gatos"
+crematorio,Crematorio Las Nubes,+56 9 3923 4982,contacto@crematoriolasnubes.cl,https://crematoriolasnubes.cl/,Santa Ines 3683,Isla de Maipo,Santiago,-33.7490,-70.8910,@crematoriolasnubes,/crematoriolasnubes,"Desde $59.500. Lun-Vie 8-22h, Sab-Dom 10-19h. 1000+ reviews Google 5/5"
+crematorio,Eternapet,+56 9 6161 0035,contacto@eternapet.cl,https://eternapet.cl/,,La Pintana,Santiago,-33.5830,-70.6340,,,R.M. + V Region
+crematorio,INERS Crematorio,+56 9 8435 4474,iners@terra.cl,https://iners.cl/,,,Santiago,-33.4489,-70.6693,@crematorio_iners,/crematorioiners,"3 hornos ecologicos. Retiro gratis. SEREMI autorizado. Alt: +56 9 8341 9634 / +56 2 2738 7020"
+crematorio,Memory Pet,+56 9 9445 4696,info@memorypet.cl,https://www.memorypet.cl/,"Camino El Noviciado Norte, Parcela Los Aromos, Lote E-2",Lampa,Santiago,-33.2830,-70.8760,,,
+crematorio,Almascotas,+56 9 8240 9076,almascotascremacion@gmail.com,https://almascotas.cl/,Av. Apoquindo 6410,Las Condes,Santiago,-33.4100,-70.5700,@almascotas,/cremaciondemascotasAlmascotas,"Emergencias 24/7: +56 9 9517 7776. Lun-Vie 9-17h"
+crematorio,Cementerio y Crematorio del Pilar,+56 9 8690 6291,,https://www.cementeriodelpilar.cl/,"Rungue, Km 55 Ruta 5 Norte",Til-Til,Santiago,-33.1060,-70.9210,@cementerioycrematoriodelpilar,@cementerioycrematoriodelpilar,"24h 7 dias. ISO 9001/14001. Alt: +56 9 4242 7681"
+crematorio,Crematorio El Canelo,+56 9 9228 0977,info@crematorioelcanelo.cl,,,,Santiago,-33.4489,-70.6693,,,
+transporte,Pets Travel,+56 9 4982 2410,petstravelspa@gmail.com,https://petstravel.cl/,,,Nacional,-33.4489,-70.6693,@petstravel.cl,,"Arica — Patagonia. Kennel gratis, clima controlado, tracking WhatsApp"
+transporte,Interfamily,+56 9 6448 5947,live@interfamily.cl,https://www.interfamily.cl/,,,Internacional,-33.4489,-70.6693,@liveinterfamily,liveinterfamily,"Transporte internacional. Alt: +56 9 4814 8732 (jaulas), +56 9 3441 7261 (ingles), +56 2 2948 1362"
+transporte,Woof Airlines,,,https://www.woofairlines.com/,,,Internacional,,,@woofairlines,woofairlines,"Europa/Asia/America/Africa. Booking: en.wizard.woofairlines.com"
+transporte,Pet Travel Chile,,,https://www.pettravelchile.com/,,,Nacional,,,,,"Sitio Wix, datos no extraibles"
+transporte,Travel Mascotas,,,https://www.travelmascotas.cl/,,,Nacional,,,,,"Sitio caido (ECONNREFUSED)"
+transporte,Trans Animal Cargo,,,https://transanimalcargo.com/,,,Internacional,,,,,"Opera desde Colombia. Datos no extraibles"
+entrenador,Adiestramiento.cl,+56 9 9821 3014,,https://www.adiestramiento.cl/,,,Santiago,-33.4489,-70.6693,@adiestramiento.cl,Adiestramiento.cl,"Lun-Sab 9-20h. Jose Manuel Leal / Marcela Diaz / Natalia Leal. Santiago + Valparaiso"
+entrenador,Educandogs,,contacto@educandogs.cl,https://www.educandogs.cl/,,,Nacional,-33.4489,-70.6693,@jib_educandogs,,"Alt email: educandogschile@gmail.com. Santiago/Concepcion/Punta Arenas/Valparaiso"
+entrenador,GAG K9,+56 9 8384 8230,adiestramiento.canino@gagk9.cl,https://www.gagk9.cl/,"El Quillay Parcela LP 1, Sector Lo Aguila Sur",Curacavi,Santiago,-33.4050,-71.1340,@gagadiestramiento,gagreydelosperros,"Certificado K9 USA. Cursos SENCE. Deteccion, obediencia, apoyo emocional. Lun-Vie 14-18h, Sab 10:30-14h"
+entrenador,AdiestramientoCaninoChile,+56 9 5394 9722,,https://adiestramientocaninochile.cl/,,,Santiago,-33.4489,-70.6693,,,"Metodos positivos. Certificacion apoyo emocional"
+entrenador,Kiltritos,,,https://www.kiltritos.cl/,,,Santiago,,,,,"Sitio bloquea scraping (403)"
+alimento,Patas Arriba (Anasac Pets),+56 9 3910 6012,,https://patasarriba.cl/,,,,,,@patasarribachile,patasarribachile,"Marcas: Traper, Goofy, Fellini. Empresa matriz: Anasac"
+comparador,SeguerosMascotas.cl,,hola@segurosmascotas.cl,https://www.segurosmascotas.cl/,,,,,,,,15 aseguradoras comparadas
+comparador,QuePlan.cl,,,https://queplan.cl/Comparar/Seguros-Mascotas,,,,,,,,Cotizacion directa
