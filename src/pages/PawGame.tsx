@@ -222,6 +222,10 @@ const PawGame = () => {
   useEffect(() => {
     if (user) {
       loadGameData();
+    } else {
+      // Si no hay user después del montaje, no dejar el loading infinito
+      const timeout = setTimeout(() => setLoading(false), 3000);
+      return () => clearTimeout(timeout);
     }
   }, [user]);
 

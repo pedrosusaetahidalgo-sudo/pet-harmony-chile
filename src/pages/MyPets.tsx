@@ -25,6 +25,7 @@ import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { useGoToAddPet } from '@/hooks/useCanAddPet';
 import { PawCardFlippable } from '@/components/paw-cards/PawCardFlippable';
 import type { HoloPattern } from '@/lib/paw-cards';
+import { generatePawCardId, rollHoloPattern } from '@/lib/paw-cards';
 
 interface Pet {
   id: string;
@@ -152,6 +153,34 @@ const MyPets = () => {
       fetchMemorialPets();
     }
   }, [user, fetchPets, fetchMemorialPets]);
+
+  /* Backfill paw_card_id for pets created before Paw Cards system */
+  useEffect(() => {
+    if (pets.length === 0) return;
+    const missing = pets.filter((p) => !p.paw_card_id);
+    if (missing.length === 0) return;
+
+    const backfill = async () => {
+      const updated: Pet[] = [...pets];
+      for (const pet of missing) {
+        const pawCardId = generatePawCardId();
+        const holoPattern = rollHoloPattern();
+        const { error } = await supabase
+          .from('pets')
+          .update({ paw_card_id: pawCardId, holo_pattern: holoPattern })
+          .eq('id', pet.id);
+        if (!error) {
+          const idx = updated.findIndex((p) => p.id === pet.id);
+          if (idx !== -1) {
+            updated[idx] = { ...updated[idx], paw_card_id: pawCardId, holo_pattern: holoPattern };
+          }
+        }
+      }
+      setPets(updated);
+    };
+    backfill();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pets.length]);
 
   /* Fetch pet_paw_progress scores once we have pets */
   useEffect(() => {

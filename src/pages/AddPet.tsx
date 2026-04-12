@@ -37,6 +37,8 @@ import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { VaccinationCardOCR } from '@/components/onboarding/VaccinationCardOCR';
 import { useScrollOnFocus } from '@/hooks/useScrollOnFocus';
 import { generatePawCardData } from '@/hooks/useHoloPattern';
+import { PawCardRevealCeremony } from '@/components/paw-cards/PawCardRevealCeremony';
+import type { HoloPattern } from '@/lib/paw-cards';
 
 const personalityOptions: string[] = [...PERSONALITY_OPTIONS];
 
@@ -54,6 +56,15 @@ const AddPet = () => {
   const [customPersonality, setCustomPersonality] = useState('');
   const [showMedical, setShowMedical] = useState(false);
   const [breedConfirmed, setBreedConfirmed] = useState(false);
+  const [revealData, setRevealData] = useState<{
+    name: string;
+    species: string;
+    breed: string | null;
+    photo_url: string | null;
+    pawCardId: string;
+    holoPattern: HoloPattern;
+    score: number;
+  } | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -435,7 +446,16 @@ const AddPet = () => {
         description: `${formData.name} tiene ficha clínica y recordatorios de salud. ¡Explora su perfil!`,
       });
 
-      navigate(LINKS.myPets());
+      // Show the TCG reveal ceremony
+      setRevealData({
+        name: formData.name,
+        species: formData.species,
+        breed: formData.breed || null,
+        photo_url: photoUrl,
+        pawCardId: payload.paw_card_id as string,
+        holoPattern: payload.holo_pattern as HoloPattern,
+        score: 0, // New pet starts at 0 paw points
+      });
     } catch (error: unknown) {
       toast({
         title: isEdit ? 'Error al guardar cambios' : 'Error al agregar mascota',
@@ -542,6 +562,11 @@ const AddPet = () => {
         </div>
       </div>
     );
+  }
+
+  // Show reveal ceremony after creating a new pet
+  if (revealData) {
+    return <PawCardRevealCeremony pet={revealData} onComplete={() => navigate(LINKS.myPets())} />;
   }
 
   return (

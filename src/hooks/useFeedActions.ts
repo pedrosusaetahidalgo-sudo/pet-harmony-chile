@@ -120,22 +120,15 @@ export function useFeedActions() {
       if (!user) throw new Error('Not authenticated');
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const reportsTable = (supabase as any).from('post_reports');
-      try {
-        const { error } = await reportsTable.insert({
-          post_id: postId,
-          reporter_id: user.id,
-          reason,
-          details: details || null,
-        });
-        if (error) throw error;
-      } catch (err: unknown) {
-        if (err && typeof err === 'object' && 'code' in err && err.code === '42P01') return;
-        throw err;
-      }
+      const { error } = await (supabase as any).from('content_reports').insert({
+        post_id: postId,
+        reporter_id: user.id,
+        reason,
+      });
+      if (error) throw error;
     },
     onSuccess: () => {
-      toast({ title: 'Reporte enviado', description: 'Revisaremos esta publicacion' });
+      toast({ title: 'Reporte enviado', description: 'Revisaremos esta publicación' });
     },
     onError: () => {
       toast({
@@ -157,12 +150,12 @@ export function useFeedActions() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
-      toast({ title: 'Publicacion eliminada' });
+      toast({ title: 'Publicación eliminada' });
     },
     onError: () => {
       toast({
         variant: 'destructive',
-        title: 'No se pudo eliminar la publicacion',
+        title: 'No se pudo eliminar la publicación',
       });
     },
   });

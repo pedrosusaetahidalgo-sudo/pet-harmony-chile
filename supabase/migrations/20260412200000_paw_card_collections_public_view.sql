@@ -3,6 +3,8 @@
 -- NO aplicar automaticamente. El dueno aplica manualmente desde Supabase Dashboard > SQL Editor.
 
 -- Política SELECT pública para colecciones (solo lectura entre usuarios autenticados)
+-- Usar DROP IF EXISTS + CREATE para ser idempotente
+DROP POLICY IF EXISTS "Authenticated users can view any collection" ON paw_card_collections;
 CREATE POLICY "Authenticated users can view any collection"
   ON paw_card_collections FOR SELECT
   USING (auth.role() = 'authenticated');
