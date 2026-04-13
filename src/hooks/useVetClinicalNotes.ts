@@ -15,6 +15,12 @@ export interface VetClinicalNote {
   description: string | null;
   alternatives_discussed: string | null;
   alternative_offered: boolean;
+  consultation_date: string | null;
+  source: 'manual' | 'audio_transcription' | null;
+  raw_transcript: string | null;
+  followup_required: boolean | null;
+  followup_date: string | null;
+  followup_reason: string | null;
   created_at: string;
   provider_name?: string;
 }

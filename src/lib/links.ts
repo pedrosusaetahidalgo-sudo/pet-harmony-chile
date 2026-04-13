@@ -58,6 +58,9 @@ export const LINKS = {
   /** Editor del perfil profesional */
   providerProfileEdit: () => '/provider/profile-edit',
 
+  /** Lista de pacientes del vet */
+  providerPatients: () => '/provider/pacientes',
+
   // === Auth con returnTo ===
   /** Login con redirect post-login */
   authReturn: (returnTo: string) => `/auth?returnTo=${encodeURIComponent(returnTo)}`,

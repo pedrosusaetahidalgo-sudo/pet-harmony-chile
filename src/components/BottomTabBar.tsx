@@ -9,6 +9,8 @@ import {
   Calendar,
   Star,
   UserCog,
+  Users,
+  MessageSquare,
 } from '@/lib/icons';
 import { LINKS } from '@/lib/links';
 import { cn } from '@/lib/utils';
@@ -103,15 +105,10 @@ export function BottomTabBar() {
       matchPaths: (p) => p === '/provider/dashboard',
     },
     {
-      label: 'My Paws',
-      icon: PawPrint,
-      href: LINKS.myPets(),
-      matchPaths: (p) =>
-        p === '/my-pets' ||
-        p === '/add-pet' ||
-        p.startsWith('/pet/') ||
-        p.startsWith('/edit-pet/') ||
-        p.startsWith('/ficha/'),
+      label: 'Pacientes',
+      icon: Users,
+      href: LINKS.providerPatients(),
+      matchPaths: (p) => p === '/provider/pacientes' || p.startsWith('/ficha/'),
     },
     {
       label: 'Reservas',
@@ -120,10 +117,10 @@ export function BottomTabBar() {
       matchPaths: (p) => p === '/mis-reservas',
     },
     {
-      label: 'Perfil Pro',
-      icon: UserCog,
-      href: LINKS.providerProfileEdit(),
-      matchPaths: (p) => p === '/provider/profile-edit',
+      label: 'Mensajes',
+      icon: MessageSquare,
+      href: LINKS.chat(),
+      matchPaths: (p) => p.startsWith('/chat'),
     },
     {
       label: 'Perfil',

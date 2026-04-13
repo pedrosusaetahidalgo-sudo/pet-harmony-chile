@@ -24,6 +24,9 @@ import {
   Star,
   Eye,
   Stethoscope,
+  Bell,
+  BarChart3,
+  Shield,
 } from '@/lib/icons';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { LINKS } from '@/lib/links';
@@ -31,6 +34,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 import { useActiveRole } from '@/hooks/useActiveRole';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { supabase } from '@/integrations/supabase/client';
 
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -99,12 +103,20 @@ const SECTION_LABELS: Record<SectionKey, string> = {
 // Secciones profesionales (modo provider)
 const providerConsultItems = [
   { title: 'Dashboard', url: '/provider/dashboard', icon: LayoutDashboard },
+  { title: 'Pacientes', url: '/provider/pacientes', icon: Users },
   { title: 'Mis reservas', url: '/mis-reservas', icon: Calendar },
+  { title: 'Calendario', url: '/calendario', icon: CalendarDays },
+];
+
+const providerCommsItems = [
+  { title: 'Mensajes', url: '/chat', icon: MessageSquare },
+  { title: 'Seguimientos', url: '/provider/dashboard', icon: Bell },
 ];
 
 const providerBusinessItems = [
   { title: 'Perfil público', url: '/provider/profile-edit', icon: UserCog },
   { title: 'Panel Pro', url: '/panel-pro', icon: Star },
+  { title: 'Reportes', url: '/reportes', icon: BarChart3 },
 ];
 
 export function AppSidebar() {
@@ -115,6 +127,7 @@ export function AppSidebar() {
   const { setOpenMobile } = useSidebar();
   const currentPath = location.pathname;
   const { role, isProvider } = useActiveRole();
+  const { isAdmin } = useIsAdmin();
   const { isPremium } = usePlan();
   const showPremiumBadges = isFeatureEnabled('USER_PREMIUM') && !isPremium;
 
@@ -293,10 +306,39 @@ export function AppSidebar() {
                   </SidebarGroup>
                 </>
               )}
+
+              {/* ADMIN (solo si tiene rol admin) */}
+              {isAdmin && (
+                <>
+                  <Separator className="mx-2 my-0.5" />
+                  <SidebarGroup className="py-0.5">
+                    <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5">
+                      <span className="text-purple-600">Admin</span>
+                      <Shield className="h-2.5 w-2.5 text-purple-500" />
+                    </SidebarGroupLabel>
+                    <SidebarGroupContent>
+                      <SidebarMenu className="space-y-0">
+                        <SidebarMenuItem>
+                          <SidebarMenuButton
+                            isActive={isActive('/admin')}
+                            onClick={() => handleNavigate('/admin')}
+                            className="h-7 text-xs rounded-md"
+                          >
+                            <Shield className="h-3.5 w-3.5 flex-shrink-0" />
+                            <span>Panel admin</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                </>
+              )}
             </>
           ) : (
             <>
-              {/* ── Modo provider: secciones profesionales como primarias ── */}
+              {/* ── Modo provider: secciones profesionales ── */}
+
+              {/* CONSULTORIO */}
               <SidebarGroup className="py-0.5">
                 <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5">
                   <span className="text-teal-600">Consultorio</span>
@@ -322,6 +364,32 @@ export function AppSidebar() {
 
               <Separator className="mx-2 my-0.5" />
 
+              {/* COMUNICACION */}
+              <SidebarGroup className="py-0.5">
+                <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5">
+                  <span className="text-teal-600">Comunicacion</span>
+                </SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu className="space-y-0">
+                    {providerCommsItems.map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                          isActive={isActive(item.url)}
+                          onClick={() => handleNavigate(item.url)}
+                          className="h-7 text-xs rounded-md"
+                        >
+                          <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                          <span>{item.title}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+
+              <Separator className="mx-2 my-0.5" />
+
+              {/* NEGOCIO */}
               <SidebarGroup className="py-0.5">
                 <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5">
                   <span className="text-teal-600">Negocio</span>
@@ -358,6 +426,33 @@ export function AppSidebar() {
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>
+
+              {/* ADMIN (solo si tiene rol admin) */}
+              {isAdmin && (
+                <>
+                  <Separator className="mx-2 my-0.5" />
+                  <SidebarGroup className="py-0.5">
+                    <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5">
+                      <span className="text-teal-600">Admin</span>
+                      <Shield className="h-2.5 w-2.5 text-teal-500" />
+                    </SidebarGroupLabel>
+                    <SidebarGroupContent>
+                      <SidebarMenu className="space-y-0">
+                        <SidebarMenuItem>
+                          <SidebarMenuButton
+                            isActive={isActive('/admin')}
+                            onClick={() => handleNavigate('/admin')}
+                            className="h-7 text-xs rounded-md"
+                          >
+                            <Shield className="h-3.5 w-3.5 flex-shrink-0" />
+                            <span>Panel admin</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                </>
+              )}
 
               {/* Link compacto a mascotas para providers que también son dueños */}
               <Separator className="mx-2 my-0.5" />

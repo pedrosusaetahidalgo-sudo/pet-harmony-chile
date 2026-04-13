@@ -64,6 +64,7 @@ const DirectorioVets = lazy(() => import('./pages/DirectorioVets'));
 const PerfilVetPublico = lazy(() => import('./pages/PerfilVetPublico'));
 const Demo = lazy(() => import('./pages/Demo'));
 const ProviderProfileEdit = lazy(() => import('./pages/ProviderProfileEdit'));
+const ProviderPatients = lazy(() => import('./pages/ProviderPatients'));
 const RegistroVeterinario = lazy(() => import('./pages/RegistroVeterinario'));
 const ParaVeterinarios = lazy(() => import('./pages/ParaVeterinarios'));
 const PreciosVeterinarios = lazy(() => import('./pages/PreciosVeterinarios'));
@@ -486,6 +487,18 @@ const App = () => (
                       <RoleGuard requiredRole="provider">
                         <AppLayout>
                           <ProviderDashboard />
+                        </AppLayout>
+                      </RoleGuard>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/provider/pacientes"
+                  element={
+                    <ProtectedRoute>
+                      <RoleGuard requiredRole="provider">
+                        <AppLayout>
+                          <ProviderPatients />
                         </AppLayout>
                       </RoleGuard>
                     </ProtectedRoute>

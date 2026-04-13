@@ -3,10 +3,13 @@ flowchart TD
     %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-13
     %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (21 activas).
     %% Refleja navegacion real post-optimizacion:
-    %%   BottomTabBar: Inicio | Mascotas | Vets | Recordatorios | Perfil
-    %%   Sidebar: Salud (+ Rutinas + Calendario) | Descubrir | Comunidad (+ Profesional si aplica)
-    %%   Chat salio de BottomTabBar: se accede desde Header y Sidebar
+    %%   BottomTabBar Owner: Inicio | Mascotas | Vets | Recordatorios | Perfil
+    %%   BottomTabBar Provider: Dashboard | Pacientes | Reservas | Mensajes | Perfil
+    %%   Sidebar Owner: Salud | Descubrir | Comunidad (+ Admin si aplica)
+    %%   Sidebar Provider: Consultorio | Comunicacion | Negocio (+ Admin si aplica)
     %%   ActiveRoleProvider permite dual-role switching (dueno <-> vet)
+    %%   Ficha clinica: timeline unificada dueno + vet con transcripciones
+    %%   Trigger: vet agrega nota → notificacion al dueno
     %% Regla: este archivo es UN SOLO bloque pegable en mermaid.live
     %% y se actualiza en el MISMO commit que cualquier cambio de flujo.
     %% Ver CLAUDE.md §9.7.1
@@ -118,12 +121,16 @@ flowchart TD
     subgraph CLINICAL["FICHA CLINICA /ficha/:petId"]
         direction TB
         FC_RES["Tab Resumen"]
-        FC_HIST["Tab Historial 25 tipos"]
+        FC_HIST["Tab Historial unificado dueno+vet"]
+        FC_HIST_FILTER["Filtros: tipo, fuente, veterinario"]
+        FC_HIST_TRANSCRIPT["Transcripciones expandibles"]
         FC_ALIM["Tab Alimentacion"]
         FC_DOCS["Tab Documentos"]
         FC_SHARE["Tab Compartir"]
         FC_PDF["Generar PDF"]
         FC_AI["Asistente IA"]
+        FC_HIST --> FC_HIST_FILTER
+        FC_HIST --> FC_HIST_TRANSCRIPT
     end
 
     FC_HIST --> FC_ADD_REC["Agregar registro medico"]
@@ -300,34 +307,63 @@ flowchart TD
         UPG_CANCEL --> UPGRADE
     end
 
-    %% ============ AREA VETERINARIO ============
-    subgraph VET_AREA["AREA VETERINARIO (Sidebar Profesional)"]
+    %% ============ SIDEBAR PROVIDER ============
+    subgraph VET_SIDEBAR["SIDEBAR PROVIDER"]
         direction TB
-        VET_DASH["Dashboard /provider/dashboard"]
-        PRO_DASH["Panel Pro /panel-pro"]
-        VET_DASH --> VET_FOLLOW["Seguimientos 7d"]
-        VET_DASH --> VET_SHARED["Fichas compartidas"]
-        VET_DASH --> VET_STATS["Stats: visitas, rating, clientes"]
-        VET_DASH --> VET_BAL["Balance: disponible, pendiente, total"]
-        VET_DASH --> VET_PAT["Lista pacientes"]
-        VET_DASH --> VET_PROFILE_EDIT["Editar perfil /provider/profile-edit"]
-        VET_DASH --> PRO_DASH
-        VET_PROFILE_EDIT --> VET_PREVIEW["Ver como me ven los duenos"]
+        subgraph VET_SB_CONSULT["Consultorio"]
+            VET_DASH["Dashboard /provider/dashboard"]
+            VET_PAT_PAGE["Pacientes /provider/pacientes"]
+            VET_RESERVAS_SB["Mis reservas /mis-reservas"]
+            VET_CAL_SB["Calendario /calendario"]
+        end
+        subgraph VET_SB_COMMS["Comunicacion"]
+            VET_CHAT_SB["Mensajes /chat"]
+            VET_FOLLOW_SB["Seguimientos"]
+        end
+        subgraph VET_SB_BIZ["Negocio"]
+            VET_PROFILE_EDIT["Perfil publico /provider/profile-edit"]
+            PRO_DASH["Panel Pro /panel-pro"]
+            VET_REPORTES_SB["Reportes /reportes"]
+        end
     end
 
-    VET_PAT --> VET_NEW_PAT["Nuevo paciente + invitar dueno"]
+    %% ============ AREA VETERINARIO ============
+    VET_DASH --> VET_FOLLOW["Seguimientos 7d"]
+    VET_DASH --> VET_SHARED["Fichas compartidas"]
+    VET_DASH --> VET_STATS["Stats: visitas, rating, clientes"]
+    VET_DASH --> VET_BAL["Balance: disponible, pendiente, total"]
+    VET_PROFILE_EDIT --> VET_PREVIEW["Ver como me ven los duenos"]
+
+    %% Pagina Pacientes (nueva)
+    VET_PAT_PAGE --> VET_PAT_LIST["Lista con filtros y busqueda"]
+    VET_PAT_LIST --> VET_PAT_SESSIONS["Accordion sesiones por paciente"]
+    VET_PAT_SESSIONS --> VET_PAT_TRANSCRIPT["Transcripcion expandible"]
+    VET_PAT_LIST --> VET_NEW_PAT["Nuevo paciente + invitar dueno"]
+    VET_PAT_LIST --> VET_PAT_FICHA["Ver ficha unificada"]
+    VET_PAT_FICHA --> FC_HIST
+
     VET_NEW_PAT --> VET_INVITE_FN["edge fn send-pet-invitation"]
     VET_INVITE_FN --> VET_INVITE_EMAIL["Email al dueno con link"]
-    VET_PAT --> VET_NOTE["Crear nota clinica"]
-    VET_NOTE --> VET_TEMPLATE["Plantilla consulta (consultation_templates)"]
-    VET_TEMPLATE --> VET_SAVE_NOTE["Guarda nota"]
+
+    %% Notas clinicas (desde pacientes o fichas compartidas)
+    VET_PAT_LIST --> VET_NOTE["Crear nota clinica"]
+    VET_SHARED --> VET_NOTE
+    VET_NOTE --> VET_RECORD["Grabar consulta (voz IA)"]
+    VET_NOTE --> VET_MANUAL["Escribir nota manual"]
+    VET_NOTE --> VET_TEMPLATE["Plantilla consulta"]
+    VET_RECORD --> VET_AI_TRANSCRIBE["IA transcribe + resume"]
+    VET_AI_TRANSCRIBE --> VET_SAVE_NOTE["Guarda nota"]
+    VET_MANUAL --> VET_SAVE_NOTE
+    VET_TEMPLATE --> VET_SAVE_NOTE
     VET_SAVE_NOTE --> VET_TRIG_REV["Trigger: invitacion resena"]
     VET_SAVE_NOTE --> VET_TRIG_REM["Trigger: crea recordatorio"]
+    VET_SAVE_NOTE --> VET_TRIG_NOTIFY["Trigger: notifica al dueno"]
     VET_NOTE --> VET_GRIMACE["Grimace Scale (dolor felino)"]
 
     VET_TRIG_REV --> REV_LINK["Link resena con token"]
     REV_LINK --> REV_FORM["Formulario: estrellas + comentario"]
     REV_FORM --> REV_SAVE["Guarda + actualiza avg_rating"]
+    VET_TRIG_NOTIFY --> FC_RES
 
     %% ============ QR FLOW ============
     %% El QR impreso apunta a la landing publica /qr/:token (PUB_QR)

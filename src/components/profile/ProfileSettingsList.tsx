@@ -77,7 +77,7 @@ export function ProfileSettingsList({
     },
     {
       icon: Stethoscope,
-      label: 'Modo veterinario',
+      label: 'Modo Profesional',
       onClick: () => navigate(LINKS.providerDashboard()),
       show: isProvider,
       iconColor: 'text-purple-600',

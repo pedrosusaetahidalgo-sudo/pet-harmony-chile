@@ -188,36 +188,55 @@ export const Header = () => {
         {/* User Section */}
         {user && (
           <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-            {/* Role toggle — visible en mobile y desktop para usuarios que son dueños Y proveedores */}
+            {/* Role toggle — segmented control, ambas opciones visibles */}
             {isProvider && (
-              <button
-                onClick={() => {
-                  const nextRole = role === 'owner' ? 'provider' : 'owner';
-                  toggle();
-                  navigate(nextRole === 'provider' ? '/provider/dashboard' : '/home');
-                  toast(
-                    nextRole === 'provider'
-                      ? 'Cambiaste a modo profesional'
-                      : 'Cambiaste a modo dueño'
-                  );
-                }}
-                className={cn(
-                  'flex items-center gap-1.5 h-8 px-3 rounded-full text-xs font-medium transition-all duration-200',
-                  role === 'owner' ? 'bg-purple-100 text-purple-700' : 'bg-teal-100 text-teal-700'
-                )}
-              >
-                {role === 'owner' ? (
-                  <>
-                    <PawPrint className="h-3.5 w-3.5" />
-                    <span className="hidden sm:inline">Dueño</span>
-                  </>
-                ) : (
-                  <>
-                    <Stethoscope className="h-3.5 w-3.5" />
-                    <span className="hidden sm:inline">Profesional</span>
-                  </>
-                )}
-              </button>
+              <div className="flex items-center bg-gray-100 rounded-full p-0.5 relative">
+                {/* Sliding background indicator */}
+                <div
+                  className={cn(
+                    'absolute top-0.5 bottom-0.5 rounded-full transition-all duration-200 ease-out',
+                    role === 'owner'
+                      ? 'left-0.5 bg-purple-100 w-[calc(50%-2px)]'
+                      : 'left-[50%] bg-teal-100 w-[calc(50%-2px)]'
+                  )}
+                />
+                <button
+                  onClick={() => {
+                    if (role !== 'owner') {
+                      toggle();
+                      navigate('/home');
+                      toast('Cambiaste a modo dueño');
+                    }
+                  }}
+                  className={cn(
+                    'relative z-10 flex items-center gap-1.5 h-7 px-2.5 sm:px-3 rounded-full text-xs font-medium transition-colors duration-200',
+                    role === 'owner'
+                      ? 'text-purple-700 font-semibold'
+                      : 'text-gray-400 hover:text-gray-600'
+                  )}
+                >
+                  <PawPrint className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Dueño</span>
+                </button>
+                <button
+                  onClick={() => {
+                    if (role !== 'provider') {
+                      toggle();
+                      navigate('/provider/dashboard');
+                      toast('Cambiaste a modo profesional');
+                    }
+                  }}
+                  className={cn(
+                    'relative z-10 flex items-center gap-1.5 h-7 px-2.5 sm:px-3 rounded-full text-xs font-medium transition-colors duration-200',
+                    role === 'provider'
+                      ? 'text-teal-700 font-semibold'
+                      : 'text-gray-400 hover:text-gray-600'
+                  )}
+                >
+                  <Stethoscope className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Profesional</span>
+                </button>
+              </div>
             )}
             {/* Paw Collection — shiny button (solo modo dueño) */}
             {role === 'owner' && (
