@@ -71,7 +71,9 @@ function MiniPawCard({ card, isOwn }: { card: CollectedCard; isOwn?: boolean }) 
             )}
 
             {/* Avatar */}
-            <Avatar className={`h-16 w-16 ring-2 ${RARITY_RING[rarity]} rounded-full shadow-md`}>
+            <Avatar
+              className={`h-16 w-16 ring-2 ${RARITY_RING[rarity]} rounded-full shadow-md paw-crystal-shine`}
+            >
               <AvatarImage src={card.pet.photoUrl || undefined} alt={card.pet.name} />
               <AvatarFallback className="bg-gradient-to-br from-purple-50 to-purple-100 text-purple-300">
                 <Heart className="h-6 w-6" />

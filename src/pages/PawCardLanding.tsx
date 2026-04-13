@@ -1,4 +1,4 @@
-import { useRef, useCallback, useState } from 'react';
+import { useRef, useCallback, useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { toast } from 'sonner';
@@ -14,12 +14,203 @@ import { HOLO_PATTERN_MAP } from '@/lib/paw-cards';
 import type { HoloPattern } from '@/lib/paw-cards';
 import pawIcon from '@/assets/paw_friend_icon.svg';
 
+// ─── Transfer Animation (Pokemon-style) ─────────────────────────────────
+
+function TransferAnimation({
+  petName,
+  photoUrl,
+  onComplete,
+}: {
+  petName: string;
+  photoUrl: string | null;
+  onComplete: () => void;
+}) {
+  const [phase, setPhase] = useState<'charge' | 'beam' | 'arrive' | 'done'>('charge');
+
+  useEffect(() => {
+    const timers = [
+      setTimeout(() => setPhase('beam'), 1200),
+      setTimeout(() => setPhase('arrive'), 2800),
+      setTimeout(() => {
+        setPhase('done');
+        onComplete();
+      }, 4200),
+    ];
+    return () => timers.forEach(clearTimeout);
+  }, [onComplete]);
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center overflow-hidden">
+      {/* Particle field */}
+      <div className="absolute inset-0 pointer-events-none">
+        {Array.from({ length: 30 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full animate-ping"
+            style={{
+              width: `${2 + Math.random() * 4}px`,
+              height: `${2 + Math.random() * 4}px`,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              background: `hsl(${270 + Math.random() * 60}, 80%, ${60 + Math.random() * 30}%)`,
+              animationDuration: `${1 + Math.random() * 2}s`,
+              animationDelay: `${Math.random() * 2}s`,
+              opacity: phase === 'beam' ? 0.8 : 0.3,
+            }}
+          />
+        ))}
+      </div>
+
+      {/* Central beam line */}
+      <div
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-all duration-1000"
+        style={{
+          width: phase === 'beam' ? '200vw' : '0px',
+          height: '3px',
+          background: 'linear-gradient(90deg, transparent, #a855f7, #ec4899, #a855f7, transparent)',
+          opacity: phase === 'beam' ? 1 : 0,
+          boxShadow: '0 0 30px 10px rgba(168, 85, 247, 0.4)',
+          transform: `translateX(-50%) translateY(-50%) rotate(${phase === 'beam' ? '0deg' : '90deg'})`,
+        }}
+      />
+
+      {/* Source orb (left side — the owner's card) */}
+      <div
+        className="absolute transition-all ease-in-out"
+        style={{
+          left: phase === 'charge' ? '50%' : phase === 'beam' ? '15%' : '15%',
+          top: '50%',
+          transform: 'translate(-50%, -50%)',
+          transitionDuration: phase === 'beam' ? '800ms' : '400ms',
+        }}
+      >
+        <div
+          className="relative transition-all duration-700"
+          style={{
+            transform:
+              phase === 'charge' ? 'scale(1)' : phase === 'beam' ? 'scale(0.6)' : 'scale(0.5)',
+            opacity: phase === 'arrive' || phase === 'done' ? 0.3 : 1,
+          }}
+        >
+          <div
+            className="w-20 h-20 rounded-full overflow-hidden ring-2 ring-purple-400/60"
+            style={{
+              boxShadow:
+                phase === 'charge'
+                  ? '0 0 40px 15px rgba(168, 85, 247, 0.5), 0 0 80px 30px rgba(168, 85, 247, 0.2)'
+                  : '0 0 20px 5px rgba(168, 85, 247, 0.3)',
+            }}
+          >
+            {photoUrl ? (
+              <img src={photoUrl} alt="" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full bg-purple-200 flex items-center justify-center">
+                <PawPrint className="h-8 w-8 text-purple-400" />
+              </div>
+            )}
+          </div>
+          {/* Charging ring */}
+          {phase === 'charge' && (
+            <div className="absolute inset-[-8px] rounded-full border-2 border-purple-400 animate-ping" />
+          )}
+        </div>
+      </div>
+
+      {/* Traveling energy orb */}
+      <div
+        className="absolute w-8 h-8 rounded-full transition-all ease-in-out"
+        style={{
+          background: 'radial-gradient(circle, #e879f9, #a855f7, transparent)',
+          boxShadow:
+            '0 0 30px 10px rgba(168, 85, 247, 0.6), 0 0 60px 20px rgba(232, 121, 249, 0.3)',
+          left: phase === 'charge' ? '50%' : phase === 'beam' ? '85%' : '85%',
+          top: '50%',
+          transform: 'translate(-50%, -50%)',
+          transitionDuration: '1500ms',
+          opacity: phase === 'beam' ? 1 : 0,
+          scale: phase === 'beam' ? '1' : '0',
+        }}
+      />
+
+      {/* Destination orb (right side — your collection) */}
+      <div
+        className="absolute transition-all ease-in-out"
+        style={{
+          left: '85%',
+          top: '50%',
+          transform: 'translate(-50%, -50%)',
+          transitionDuration: '600ms',
+        }}
+      >
+        <div
+          className="relative transition-all duration-500"
+          style={{
+            transform: phase === 'arrive' || phase === 'done' ? 'scale(1.2)' : 'scale(0.8)',
+            opacity: phase === 'charge' ? 0.4 : phase === 'arrive' || phase === 'done' ? 1 : 0.6,
+          }}
+        >
+          <div
+            className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center"
+            style={{
+              boxShadow:
+                phase === 'arrive'
+                  ? '0 0 60px 25px rgba(168, 85, 247, 0.6), 0 0 120px 50px rgba(232, 121, 249, 0.3)'
+                  : '0 0 20px 5px rgba(168, 85, 247, 0.2)',
+            }}
+          >
+            <PawPrint className="h-7 w-7 text-white" />
+          </div>
+          {/* Arrival burst */}
+          {phase === 'arrive' && (
+            <>
+              <div className="absolute inset-[-12px] rounded-full border-2 border-pink-400 animate-ping" />
+              <div
+                className="absolute inset-[-24px] rounded-full border border-purple-300 animate-ping"
+                style={{ animationDelay: '200ms' }}
+              />
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Status text */}
+      <div className="absolute bottom-16 left-0 right-0 text-center">
+        <p
+          className="text-white font-bold text-lg transition-opacity duration-500"
+          style={{ opacity: phase === 'done' ? 0 : 1 }}
+        >
+          {phase === 'charge' && 'Preparando transferencia...'}
+          {phase === 'beam' && `Transfiriendo a ${petName}...`}
+          {phase === 'arrive' && 'Paw Card recibida!'}
+        </p>
+        <div className="flex justify-center gap-1 mt-3">
+          {['charge', 'beam', 'arrive'].map((p, i) => (
+            <div
+              key={p}
+              className="h-1.5 rounded-full transition-all duration-300"
+              style={{
+                width:
+                  phase === p || ['charge', 'beam', 'arrive'].indexOf(phase) > i ? '24px' : '8px',
+                background:
+                  ['charge', 'beam', 'arrive'].indexOf(phase) >= i
+                    ? 'linear-gradient(90deg, #a855f7, #ec4899)'
+                    : 'rgba(255,255,255,0.2)',
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const PawCardLanding = () => {
   const { pawCardId } = useParams<{ pawCardId: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const cardRef = useRef<HTMLDivElement>(null);
   const [collecting, setCollecting] = useState(false);
+  const [showTransfer, setShowTransfer] = useState(false);
 
   const { data: card, isLoading } = usePawCard(pawCardId);
   const { data: hasCollected, refetch: refetchCollected } = useHasCollected(card?.petId);
@@ -56,13 +247,19 @@ const PawCardLanding = () => {
     setCollecting(true);
     const result = await collectPawCard(card.petId);
     if (result.success) {
-      toast.success('Paw Card coleccionada!');
-      refetchCollected();
+      setShowTransfer(true);
     } else {
       toast.error(result.error);
+      setCollecting(false);
     }
-    setCollecting(false);
   };
+
+  const handleTransferComplete = useCallback(() => {
+    setShowTransfer(false);
+    setCollecting(false);
+    toast.success('Paw Card coleccionada!');
+    refetchCollected();
+  }, [refetchCollected]);
 
   if (isLoading) {
     return (
@@ -132,7 +329,7 @@ const PawCardLanding = () => {
 
                 {/* Avatar */}
                 <Avatar
-                  className={`h-28 w-28 ring-[3px] ${RARITY_RING[rarity]} rounded-full shadow-lg`}
+                  className={`h-28 w-28 ring-[3px] ${RARITY_RING[rarity]} rounded-full shadow-lg paw-crystal-shine`}
                 >
                   <AvatarImage src={card.photoUrl || undefined} alt={card.petName} />
                   <AvatarFallback className="bg-gradient-to-br from-purple-50 to-purple-100 text-purple-300">
@@ -214,6 +411,15 @@ const PawCardLanding = () => {
           </p>
         </div>
       </div>
+
+      {/* Transfer animation */}
+      {showTransfer && card && (
+        <TransferAnimation
+          petName={card.petName}
+          photoUrl={card.photoUrl}
+          onComplete={handleTransferComplete}
+        />
+      )}
     </>
   );
 };
