@@ -408,6 +408,9 @@ const AddPet = () => {
       const in90days = new Date(today);
       in90days.setDate(today.getDate() + 90);
 
+      // Nota: los reminders de vacuna los crea el trigger DB
+      // (trigger_create_default_reminders) basado en vaccination_protocols + edad.
+      // Aqui solo creamos checkup y grooming para evitar duplicados.
       const { error: remindersError } = await supabase.from('pet_reminders').insert([
         {
           pet_id: createdPet.id,
@@ -415,13 +418,6 @@ const AddPet = () => {
           type: 'checkup',
           title: `Control veterinario de ${formData.name}`,
           due_date: in90days.toISOString().split('T')[0],
-        },
-        {
-          pet_id: createdPet.id,
-          owner_id: user.id,
-          type: 'vaccine',
-          title: `Revisar vacunas de ${formData.name}`,
-          due_date: in30days.toISOString().split('T')[0],
         },
         {
           pet_id: createdPet.id,

@@ -2941,7 +2941,7 @@ export type Database = {
           name: string;
           neutered: boolean | null;
           neutered_date: string | null;
-          owner_id: string;
+          owner_id: string | null;
           owner_invitation_accepted_at: string | null;
           owner_invitation_sent_at: string | null;
           owner_invitation_token: string | null;
@@ -3008,7 +3008,7 @@ export type Database = {
           name: string;
           neutered?: boolean | null;
           neutered_date?: string | null;
-          owner_id: string;
+          owner_id?: string | null;
           owner_invitation_accepted_at?: string | null;
           owner_invitation_sent_at?: string | null;
           owner_invitation_token?: string | null;

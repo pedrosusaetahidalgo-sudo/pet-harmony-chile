@@ -88,26 +88,24 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
     if (!user) return;
     setSubmitting(true);
     try {
-      const insertPayload: Record<string, unknown> = {
+      const pawCard = generatePawCardData();
+      const insertPayload = {
         name: data.name.trim(),
         species: data.species,
         created_by_vet_id: user.id,
         pending_owner_email: data.owner_email.trim().toLowerCase(),
         pending_owner_name: data.owner_name.trim() || null,
+        breed: data.breed.trim() || null,
+        birth_date: data.birth_date || null,
+        gender: data.sex || null,
+        weight: data.weight ? parseFloat(data.weight) : null,
+        color: data.color.trim() || null,
+        holo_pattern: pawCard.holoPattern,
+        paw_card_id: pawCard.pawCardId,
       };
-      if (data.breed.trim()) insertPayload.breed = data.breed.trim();
-      if (data.birth_date) insertPayload.birth_date = data.birth_date;
-      if (data.sex) insertPayload.gender = data.sex;
-      if (data.weight) insertPayload.weight = parseFloat(data.weight);
-      if (data.color.trim()) insertPayload.color = data.color.trim();
 
-      // Paw Card data for new pet
-      const pawCard = generatePawCardData();
-      insertPayload.holo_pattern = pawCard.holoPattern;
-      insertPayload.paw_card_id = pawCard.pawCardId;
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: petRow, error } = await (supabase.from('pets') as any)
+      const { data: petRow, error } = await supabase
+        .from('pets')
         .insert(insertPayload)
         .select('id')
         .single();
@@ -115,23 +113,25 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
 
       toast.success(`Paciente ${data.name} creado correctamente`);
 
-      // Enviar invitación al dueño por email
+      // Enviar invitación al dueño por email (solo si no está registrado)
       if (petRow?.id) {
         try {
-          const { data: sessionData } = await supabase.auth.getSession();
-          const token = sessionData?.session?.access_token;
-          if (token) {
-            const resp = await supabase.functions.invoke('send-pet-invitation', {
-              body: { pet_id: petRow.id },
-            });
-            if (resp.error) {
-              console.error('Error sending invitation:', resp.error);
-              toast.info(
-                'Paciente creado. No se pudo enviar la invitación por email, pero puedes reenviarla desde tu panel.'
-              );
-            } else {
-              toast.success(`Invitación enviada a ${data.owner_email}`);
-            }
+          const resp = await supabase.functions.invoke('send-pet-invitation', {
+            body: { pet_id: petRow.id },
+          });
+          if (resp.error) {
+            console.error('Error sending invitation:', resp.error);
+            toast.info(
+              'Paciente creado. No se pudo enviar la invitación por email, pero puedes reenviarla desde tu panel.'
+            );
+          } else if (resp.data?.owner_already_registered) {
+            toast.success(
+              `${data.name} se vinculó automáticamente con ${data.owner_name}. Ya tiene acceso a la ficha.`
+            );
+          } else {
+            toast.success(
+              `Invitación enviada a ${data.owner_email}. Cuando se registre, ${data.name} se vinculará automáticamente.`
+            );
           }
         } catch (invErr) {
           console.error('Invitation edge function error:', invErr);

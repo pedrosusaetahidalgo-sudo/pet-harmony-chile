@@ -139,7 +139,32 @@ Sofia quiere agregar multiples pacientes (mascotas de sus clientes) pero el plan
 
 ---
 
-## 8. Archivos multimedia pendientes de analizar
+## 8. Bug confirmado: vet no puede crear pacientes
+
+### Causa raiz
+`pets.owner_id` es `NOT NULL` en la DB, pero cuando un vet crea un paciente pending (sin dueno registrado), no hay `owner_id` que asignar.
+
+**Error exacto**: `null value in column "owner_id" violates not-null constraint`
+
+### Fix aplicado (migracion `20260413200000_fix_vet_pet_creation.sql`)
+1. `owner_id` ahora es nullable (`DROP NOT NULL`)
+2. Constraint `chk_pet_has_responsible`: toda mascota debe tener `owner_id` OR `created_by_vet_id`
+3. RLS: vets pueden ver y editar sus mascotas pending
+4. RLS: cualquier usuario autenticado puede reclamar una mascota via invitation token
+5. Tipos TypeScript actualizados (`owner_id: string | null` en Row, `owner_id?: string | null` en Insert)
+6. `NewPatientForm.tsx` limpiado: removido `as any`, payload tipado correctamente
+
+### Flujos soportados post-fix
+| Flujo | Estado |
+|---|---|
+| Dueno crea mascota directamente (AddPet) | OK (sin cambios) |
+| Vet crea paciente pending (NewPatientForm) | **FIXED** |
+| Dueno acepta invitacion (useClaimPetInvitation) | OK (RLS nueva lo permite) |
+| Vet edita paciente pending antes de que dueno acepte | OK (RLS nueva) |
+
+---
+
+## 9. Archivos multimedia pendientes de analizar
 
 Los siguientes archivos fueron mencionados pero no encontrados en el repositorio:
 
