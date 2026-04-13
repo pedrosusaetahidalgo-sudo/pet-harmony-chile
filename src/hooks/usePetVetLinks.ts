@@ -137,6 +137,37 @@ export function useCreatePetVetLink() {
       message?: string;
     }) => {
       if (!user) throw new Error('No autenticado');
+
+      // Si ya existe un link rechazado/revocado para este vet, lo reciclamos
+      // en vez de fallar por UNIQUE constraint (pet_id, provider_id).
+      const { data: existing } = await sb
+        .from('pet_vet_links')
+        .select('id, status')
+        .eq('pet_id', petId)
+        .eq('provider_id', providerId)
+        .maybeSingle();
+
+      if (existing) {
+        if (existing.status === 'pending' || existing.status === 'active') {
+          throw new Error('Ya tienes una solicitud activa con este veterinario');
+        }
+        // Reciclar link rechazado/revocado → volver a pending
+        const { data, error } = await sb
+          .from('pet_vet_links')
+          .update({
+            status: 'pending',
+            message: message || null,
+            responded_at: null,
+            revoked_at: null,
+            created_at: new Date().toISOString(),
+          })
+          .eq('id', existing.id)
+          .select()
+          .single();
+        if (error) throw error;
+        return data as PetVetLink;
+      }
+
       const { data, error } = await sb
         .from('pet_vet_links')
         .insert({
@@ -147,11 +178,7 @@ export function useCreatePetVetLink() {
         })
         .select()
         .single();
-      if (error) {
-        if (error.code === '23505')
-          throw new Error('Ya existe una solicitud para este veterinario');
-        throw error;
-      }
+      if (error) throw error;
       return data as PetVetLink;
     },
     onSuccess: (_data, vars) => {
@@ -199,6 +226,82 @@ export function useRejectPetVetLink() {
       toast.success('Solicitud rechazada');
     },
     onError: () => toast.error('Error al rechazar solicitud'),
+  });
+}
+
+/** Vet requests access to a pet (vet-initiated, owner must accept) */
+export function useRequestVetAccess() {
+  const { user } = useAuth();
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ petId }: { petId: string }) => {
+      if (!user) throw new Error('No autenticado');
+
+      // Get vet's provider ID
+      const { data: providerRow } = await supabase
+        .from('service_providers')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (!providerRow?.id) throw new Error('No tienes un perfil de proveedor registrado');
+
+      // Get pet owner
+      const { data: pet } = await sb.from('pets').select('owner_id').eq('id', petId).single();
+      if (!pet?.owner_id) throw new Error('No se encontró la mascota o no tiene dueño asignado');
+
+      // Check if link already exists
+      const { data: existing } = await sb
+        .from('pet_vet_links')
+        .select('id, status')
+        .eq('pet_id', petId)
+        .eq('provider_id', providerRow.id)
+        .maybeSingle();
+
+      if (existing) {
+        if (existing.status === 'active') {
+          throw new Error('Ya tienes acceso a esta mascota');
+        }
+        if (existing.status === 'pending') {
+          throw new Error('Ya hay una solicitud pendiente para esta mascota');
+        }
+        // Reciclar link rechazado/revocado
+        const { data, error } = await sb
+          .from('pet_vet_links')
+          .update({
+            status: 'pending',
+            message: 'Solicitud de acceso via QR',
+            responded_at: null,
+            revoked_at: null,
+            created_at: new Date().toISOString(),
+          })
+          .eq('id', existing.id)
+          .select()
+          .single();
+        if (error) throw error;
+        return data as PetVetLink;
+      }
+
+      const { data, error } = await sb
+        .from('pet_vet_links')
+        .insert({
+          pet_id: petId,
+          owner_id: pet.owner_id,
+          provider_id: providerRow.id,
+          message: 'Solicitud de acceso via QR',
+        })
+        .select()
+        .single();
+      if (error) throw error;
+      return data as PetVetLink;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['pet-vet-links'] });
+      toast.success('Solicitud enviada al dueño');
+    },
+    onError: (err: Error) => {
+      toast.error(err.message || 'Error al solicitar acceso');
+    },
   });
 }
 

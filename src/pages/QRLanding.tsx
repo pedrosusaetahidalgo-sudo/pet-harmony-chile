@@ -3,22 +3,41 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle, Loader2, PawPrint, QrCode, ShieldAlert, Stethoscope } from '@/lib/icons';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  AlertCircle,
+  Check,
+  Loader2,
+  PawPrint,
+  QrCode,
+  ShieldAlert,
+  Stethoscope,
+} from '@/lib/icons';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useRequestVetAccess } from '@/hooks/usePetVetLinks';
 import { LINKS } from '@/lib/links';
 import { PublicHeader, PublicFooter } from './DirectorioVets';
+
+interface QRPet {
+  id: string;
+  owner_id: string;
+  name: string;
+  species: string | null;
+  breed: string | null;
+  photo_url: string | null;
+}
 
 /**
  * QR Landing — /qr/:token
  *
- * Cuando un veterinario escanea el QR de una mascota:
+ * Cuando alguien escanea el QR de una mascota:
  * 1. Busca la mascota por qr_token
  * 2. Si no existe → "QR inválido"
  * 3. Si el usuario no está logueado → CTA de login con returnTo
  * 4. Si está logueado:
- *    a. Es vet (service_provider) → redirige a ficha clínica
- *    b. Es el dueño de la mascota → redirige a ficha clínica
+ *    a. Es el dueño → redirige a ficha clínica
+ *    b. Es vet → muestra info de mascota + CTA "Solicitar acceso"
  *    c. Otro → mensaje "solo veterinarios verificados"
  */
 export default function QRLanding() {
@@ -26,7 +45,7 @@ export default function QRLanding() {
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
 
-  const [pet, setPet] = useState<{ id: string; owner_id: string; name: string } | null>(null);
+  const [pet, setPet] = useState<QRPet | null>(null);
   const [petLoading, setPetLoading] = useState(true);
   const [petError, setPetError] = useState(false);
 
@@ -40,25 +59,17 @@ export default function QRLanding() {
 
     supabase
       .from('pets')
-      .select('id, owner_id, name')
+      .select('id, owner_id, name, species, breed, photo_url')
       .eq('qr_token', token)
       .maybeSingle()
-      .then(
-        ({
-          data,
-          error,
-        }: {
-          data: { id: string; owner_id: string; name: string } | null;
-          error: unknown;
-        }) => {
-          if (error || !data) {
-            setPetError(true);
-          } else {
-            setPet(data);
-          }
-          setPetLoading(false);
+      .then(({ data, error }: { data: QRPet | null; error: unknown }) => {
+        if (error || !data) {
+          setPetError(true);
+        } else {
+          setPet(data);
         }
-      );
+        setPetLoading(false);
+      });
   }, [token]);
 
   // Loading state
@@ -139,23 +150,27 @@ export default function QRLanding() {
   }
 
   // 4. Logueado → verificar rol
-  return <AuthenticatedQRHandler pet={pet} userId={user.id} />;
+  return <AuthenticatedQRHandler pet={pet} userId={user.id} token={token!} />;
 }
 
 /**
  * Componente interno: verifica si el usuario logueado es vet o dueño
- * y redirige o muestra mensaje de acceso denegado.
+ * y muestra la UI correspondiente.
  */
 function AuthenticatedQRHandler({
   pet,
   userId,
+  token,
 }: {
-  pet: { id: string; owner_id: string; name: string };
+  pet: QRPet;
   userId: string;
+  token: string;
 }) {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [vetProviderId, setVetProviderId] = useState<string | null>(null);
+  const [existingLinkStatus, setExistingLinkStatus] = useState<string | null>(null);
+  const requestAccess = useRequestVetAccess();
 
   useEffect(() => {
     // El dueño siempre puede ver la ficha de su propia mascota
@@ -165,22 +180,44 @@ function AuthenticatedQRHandler({
     }
 
     // Verificar si es service_provider (vet)
-    supabase
-      .from('service_providers')
-      .select('id')
-      .eq('user_id', userId)
-      .maybeSingle()
-      .then(({ data }: { data: { id: string } | null }) => {
-        if (data) {
-          setIsAuthorized(true);
-          navigate(LINKS.petClinical(pet.id), { replace: true });
-        } else {
-          setChecking(false);
-        }
-      });
+    (async () => {
+      const { data: provider } = await supabase
+        .from('service_providers')
+        .select('id')
+        .eq('user_id', userId)
+        .maybeSingle();
+
+      if (!provider) {
+        setChecking(false);
+        return;
+      }
+
+      setVetProviderId(provider.id);
+
+      // Verificar si ya existe un link
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: link } = await (supabase as any)
+        .from('pet_vet_links')
+        .select('status')
+        .eq('pet_id', pet.id)
+        .eq('provider_id', provider.id)
+        .maybeSingle();
+
+      if (link?.status === 'active') {
+        // Ya tiene acceso → ir directo a ficha
+        navigate(LINKS.petClinical(pet.id), { replace: true });
+        return;
+      }
+
+      if (link?.status) {
+        setExistingLinkStatus(link.status);
+      }
+
+      setChecking(false);
+    })();
   }, [pet, userId, navigate]);
 
-  if (checking && !isAuthorized) {
+  if (checking) {
     return (
       <div className="min-h-screen bg-purple-50">
         <PublicHeader />
@@ -192,6 +229,79 @@ function AuthenticatedQRHandler({
             </CardContent>
           </Card>
         </main>
+      </div>
+    );
+  }
+
+  // Es vet → mostrar info de mascota + CTA solicitar acceso
+  if (vetProviderId) {
+    const isPending = existingLinkStatus === 'pending';
+    const isRequestSent = requestAccess.isSuccess;
+
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+        <PublicHeader />
+        <main className="container mx-auto px-4 py-8 max-w-md">
+          <Card>
+            <CardHeader className="text-center">
+              <Avatar className="h-20 w-20 mx-auto mb-3 ring-4 ring-purple-100">
+                {pet.photo_url ? <AvatarImage src={pet.photo_url} alt={pet.name} /> : null}
+                <AvatarFallback className="bg-purple-100 text-purple-700 text-2xl">
+                  {pet.name[0]?.toUpperCase() || 'M'}
+                </AvatarFallback>
+              </Avatar>
+              <CardTitle className="text-xl">{pet.name}</CardTitle>
+              <CardDescription>
+                {[pet.species, pet.breed].filter(Boolean).join(' · ') || 'Mascota'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {isPending || isRequestSent ? (
+                <div className="text-center py-4">
+                  <div className="inline-flex p-3 rounded-full bg-green-100 mb-3">
+                    <Check className="h-6 w-6 text-green-600" />
+                  </div>
+                  <p className="text-sm font-medium text-green-700">Solicitud enviada</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    El dueño de {pet.name} recibirá una notificación. Cuando acepte, podrás acceder
+                    a la ficha clínica desde tu panel de pacientes.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <div className="bg-purple-50 rounded-lg p-4 text-center">
+                    <Stethoscope className="h-5 w-5 text-purple-600 mx-auto mb-2" />
+                    <p className="text-sm text-purple-900">
+                      Para acceder a la ficha clínica de {pet.name}, necesitas que el dueño acepte
+                      tu solicitud de vinculación.
+                    </p>
+                  </div>
+                  <Button
+                    className="w-full"
+                    disabled={requestAccess.isPending}
+                    onClick={() => requestAccess.mutate({ petId: pet.id })}
+                  >
+                    {requestAccess.isPending ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <PawPrint className="h-4 w-4 mr-2" />
+                    )}
+                    Solicitar acceso a esta ficha
+                  </Button>
+                </>
+              )}
+
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => navigate('/provider/dashboard')}
+              >
+                Ir a mi panel
+              </Button>
+            </CardContent>
+          </Card>
+        </main>
+        <PublicFooter />
       </div>
     );
   }

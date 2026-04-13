@@ -105,10 +105,38 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
       insertPayload.paw_card_id = pawCard.pawCardId;
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error } = await (supabase.from('pets') as any).insert(insertPayload);
+      const { data: petRow, error } = await (supabase.from('pets') as any)
+        .insert(insertPayload)
+        .select('id')
+        .single();
       if (error) throw error;
 
       toast.success(`Paciente ${data.name} creado correctamente`);
+
+      // Enviar invitación al dueño por email
+      if (petRow?.id) {
+        try {
+          const { data: sessionData } = await supabase.auth.getSession();
+          const token = sessionData?.session?.access_token;
+          if (token) {
+            const resp = await supabase.functions.invoke('send-pet-invitation', {
+              body: { pet_id: petRow.id },
+            });
+            if (resp.error) {
+              console.error('Error sending invitation:', resp.error);
+              toast.info(
+                'Paciente creado. No se pudo enviar la invitación por email, pero puedes reenviarla desde tu panel.'
+              );
+            } else {
+              toast.success(`Invitación enviada a ${data.owner_email}`);
+            }
+          }
+        } catch (invErr) {
+          console.error('Invitation edge function error:', invErr);
+          // No bloquear — el paciente ya fue creado
+        }
+      }
+
       reset();
       setOpen(false);
       onCreated?.();

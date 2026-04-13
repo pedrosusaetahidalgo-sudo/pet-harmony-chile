@@ -10,7 +10,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Stethoscope, ExternalLink, PawPrint, FileText } from '@/lib/icons';
+import { Stethoscope, ExternalLink, PawPrint, FileText, Mail, Loader2, Clock } from '@/lib/icons';
+import { toast } from 'sonner';
 import { NewPatientForm } from './NewPatientForm';
 import { PatientQuickView } from './PatientQuickView';
 
@@ -24,6 +25,17 @@ interface PatientRow {
   source: 'linked' | 'note' | 'shared';
 }
 
+interface PendingPetRow {
+  id: string;
+  name: string;
+  species: string | null;
+  pending_owner_email: string | null;
+  pending_owner_name: string | null;
+  owner_invitation_sent_at: string | null;
+  owner_invitation_accepted_at: string | null;
+  created_at: string;
+}
+
 /**
  * Lista de pacientes (mascotas) que un vet ha atendido.
  * Combina dos fuentes: notas clinicas escritas por el vet y fichas compartidas.
@@ -31,6 +43,45 @@ interface PatientRow {
 export function VetPatientsList() {
   const { user } = useAuth();
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null);
+  const [resendingId, setResendingId] = useState<string | null>(null);
+
+  // Mascotas creadas por el vet pendientes de reclamar por dueño
+  const { data: pendingPets, refetch: refetchPending } = useQuery({
+    queryKey: ['vet-pending-pets', user?.id],
+    queryFn: async () => {
+      if (!user) return [] as PendingPetRow[];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data, error } = await (supabase as any)
+        .from('pets')
+        .select(
+          'id, name, species, pending_owner_email, pending_owner_name, owner_invitation_sent_at, owner_invitation_accepted_at, created_at'
+        )
+        .eq('created_by_vet_id', user.id)
+        .is('owner_invitation_accepted_at', null)
+        .order('created_at', { ascending: false })
+        .limit(20);
+      if (error) return [] as PendingPetRow[];
+      return (data || []) as PendingPetRow[];
+    },
+    enabled: !!user,
+  });
+
+  const handleResendInvitation = async (petId: string) => {
+    setResendingId(petId);
+    try {
+      const resp = await supabase.functions.invoke('send-pet-invitation', {
+        body: { pet_id: petId },
+      });
+      if (resp.error) throw resp.error;
+      toast.success('Invitación reenviada correctamente');
+      refetchPending();
+    } catch (err) {
+      toast.error('Error al reenviar la invitación');
+      console.error(err);
+    } finally {
+      setResendingId(null);
+    }
+  };
 
   const {
     data: patients,
@@ -208,10 +259,64 @@ export function VetPatientsList() {
               </Badge>
             )}
           </CardTitle>
-          <NewPatientForm onCreated={() => refetch()} />
+          <NewPatientForm
+            onCreated={() => {
+              refetch();
+              refetchPending();
+            }}
+          />
         </div>
       </CardHeader>
       <CardContent>
+        {/* Mascotas pendientes de reclamar */}
+        {pendingPets && pendingPets.length > 0 && (
+          <div className="mb-4 space-y-2">
+            <p className="text-xs font-medium text-amber-700 flex items-center gap-1.5 mb-2">
+              <Clock className="h-3.5 w-3.5" />
+              Esperando que el dueño reclame ({pendingPets.length})
+            </p>
+            {pendingPets.map((pet) => {
+              const wasSent = !!pet.owner_invitation_sent_at;
+              return (
+                <div
+                  key={pet.id}
+                  className="flex items-center gap-3 p-3 bg-amber-50/50 rounded-lg border border-amber-100"
+                >
+                  <Avatar className="h-10 w-10">
+                    <AvatarFallback className="bg-amber-100 text-amber-700">
+                      {(pet.name || 'M')[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{pet.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {pet.pending_owner_name || pet.pending_owner_email || 'Sin dueño asignado'}
+                      {pet.species && ` · ${pet.species}`}
+                    </p>
+                    <p className="text-xs text-amber-600">
+                      {wasSent ? 'Invitación enviada' : 'Invitación no enviada'}
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1 text-xs h-8 border-amber-200 text-amber-700 hover:bg-amber-50"
+                    disabled={resendingId === pet.id}
+                    onClick={() => handleResendInvitation(pet.id)}
+                  >
+                    {resendingId === pet.id ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Mail className="h-3.5 w-3.5" />
+                    )}
+                    {wasSent ? 'Reenviar' : 'Enviar'}
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
         {!patients || patients.length === 0 ? (
           <div className="text-center py-8">
             <PawPrint className="h-10 w-10 text-muted-foreground/40 mx-auto mb-3" />

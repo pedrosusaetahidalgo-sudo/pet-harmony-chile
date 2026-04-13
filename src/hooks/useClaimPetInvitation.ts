@@ -1,0 +1,100 @@
+import { useEffect, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
+
+/**
+ * Hook que procesa el query param ?invitation=TOKEN
+ * al montar MyPets o /home.
+ *
+ * Busca la mascota con ese owner_invitation_token,
+ * la asigna al usuario actual (owner_id) y crea el pet_vet_link.
+ */
+export function useClaimPetInvitation() {
+  const { user } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const processed = useRef(false);
+
+  useEffect(() => {
+    const invitationToken = searchParams.get('invitation');
+    if (!invitationToken || !user || processed.current) return;
+    processed.current = true;
+
+    (async () => {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const sb = supabase as any;
+
+        // 1. Buscar mascota por invitation token
+        const { data: pet, error: petErr } = await sb
+          .from('pets')
+          .select('id, name, owner_id, created_by_vet_id, owner_invitation_accepted_at')
+          .eq('owner_invitation_token', invitationToken)
+          .maybeSingle();
+
+        if (petErr || !pet) {
+          toast.error('El enlace de invitación no es válido o ya expiró');
+          return;
+        }
+
+        // 2. Si ya fue reclamada, solo notificar
+        if (pet.owner_invitation_accepted_at) {
+          if (pet.owner_id === user.id) {
+            toast.info(`${pet.name} ya está en tu lista de mascotas`);
+          } else {
+            toast.error('Esta mascota ya fue reclamada por otro usuario');
+          }
+          return;
+        }
+
+        // 3. Asignar owner_id al usuario actual
+        const { error: updateErr } = await sb
+          .from('pets')
+          .update({
+            owner_id: user.id,
+            owner_invitation_accepted_at: new Date().toISOString(),
+          })
+          .eq('id', pet.id);
+
+        if (updateErr) {
+          toast.error('Error al reclamar la mascota. Intenta de nuevo.');
+          console.error('Claim pet error:', updateErr);
+          return;
+        }
+
+        // 4. Si hay un vet que creó el registro, crear/activar el pet_vet_link
+        if (pet.created_by_vet_id) {
+          const { data: vetProvider } = await supabase
+            .from('service_providers')
+            .select('id')
+            .eq('user_id', pet.created_by_vet_id)
+            .maybeSingle();
+
+          if (vetProvider?.id) {
+            await sb.from('pet_vet_links').upsert(
+              {
+                pet_id: pet.id,
+                owner_id: user.id,
+                provider_id: vetProvider.id,
+                status: 'active',
+                responded_at: new Date().toISOString(),
+              },
+              { onConflict: 'pet_id,provider_id' }
+            );
+          }
+        }
+
+        toast.success(`¡${pet.name} ahora es tuya! Tu veterinario ya tiene acceso a la ficha.`);
+      } catch (err) {
+        console.error('useClaimPetInvitation error:', err);
+        toast.error('Error al procesar la invitación');
+      } finally {
+        // Limpiar el param de la URL
+        const newParams = new URLSearchParams(searchParams);
+        newParams.delete('invitation');
+        setSearchParams(newParams, { replace: true });
+      }
+    })();
+  }, [user, searchParams, setSearchParams]);
+}

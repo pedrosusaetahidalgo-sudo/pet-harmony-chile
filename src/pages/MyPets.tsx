@@ -23,6 +23,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { useGoToAddPet } from '@/hooks/useCanAddPet';
+import { useClaimPetInvitation } from '@/hooks/useClaimPetInvitation';
 import { PawCardFlippable } from '@/components/paw-cards/PawCardFlippable';
 import { ShareWithVetModal } from '@/components/medical/ShareWithVetModal';
 import type { HoloPattern } from '@/lib/paw-cards';
@@ -115,6 +116,9 @@ const MyPets = () => {
   const { toast } = useToast();
   const goToAddPet = useGoToAddPet();
   const carouselRef = useRef<HTMLDivElement>(null);
+
+  // Procesar invitación si viene con ?invitation=TOKEN
+  useClaimPetInvitation();
 
   const fetchPets = useCallback(async () => {
     try {

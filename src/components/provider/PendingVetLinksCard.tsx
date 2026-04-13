@@ -1,9 +1,20 @@
+import { useState } from 'react';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { UserPlus, Check, X, Loader2 } from '@/lib/icons';
 import {
   usePendingVetLinks,
@@ -28,6 +39,7 @@ export function PendingVetLinksCard() {
   const { data: pending, isLoading } = usePendingVetLinks();
   const acceptMut = useAcceptPetVetLink();
   const rejectMut = useRejectPetVetLink();
+  const [rejectId, setRejectId] = useState<string | null>(null);
 
   if (isLoading || !pending || pending.length === 0) return null;
 
@@ -112,22 +124,40 @@ export function PendingVetLinksCard() {
                   variant="outline"
                   className="flex-1 text-destructive border-destructive/30 hover:bg-destructive/5"
                   disabled={busy}
-                  onClick={() => rejectMut.mutate(link.id)}
+                  onClick={() => setRejectId(link.id)}
                 >
-                  {rejectMut.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <>
-                      <X className="h-4 w-4 mr-1" />
-                      Rechazar
-                    </>
-                  )}
+                  <X className="h-4 w-4 mr-1" />
+                  Rechazar
                 </Button>
               </div>
             </div>
           );
         })}
       </CardContent>
+
+      <AlertDialog open={!!rejectId} onOpenChange={() => setRejectId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Rechazar esta solicitud?</AlertDialogTitle>
+            <AlertDialogDescription>
+              El dueño será notificado de que no aceptaste la vinculación. Podrá enviarte una nueva
+              solicitud más adelante si lo desea.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (rejectId) rejectMut.mutate(rejectId);
+                setRejectId(null);
+              }}
+            >
+              Sí, rechazar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }
