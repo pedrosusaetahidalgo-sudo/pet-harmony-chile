@@ -71,6 +71,7 @@ const DejarResena = lazy(() => import('./pages/DejarResena'));
 const QRLanding = lazy(() => import('./pages/QRLanding'));
 const PawCardLanding = lazy(() => import('./pages/PawCardLanding'));
 const PawCollection = lazy(() => import('./pages/PawCollection'));
+const Missions = lazy(() => import('./pages/Missions'));
 const MedicalShare = lazy(() => import('./pages/MedicalShare'));
 // Actividad eliminada — ruta consolidada a /feed
 const Reminders = lazy(() => import('./pages/Reminders'));
@@ -81,6 +82,8 @@ const ProDashboard = lazy(() => import('./pages/ProDashboard'));
 const AnalyticsDashboard = lazy(() => import('./pages/standalone/AnalyticsDashboard'));
 const EnMemoria = lazy(() => import('./pages/EnMemoria'));
 const BloodDonors = lazy(() => import('./pages/BloodDonors'));
+const PetRoutines = lazy(() => import('./pages/PetRoutines'));
+const UnifiedCalendar = lazy(() => import('./pages/UnifiedCalendar'));
 const RegistroPartner = lazy(() => import('./pages/RegistroPartner'));
 
 /** Inicialización nativa: StatusBar, SplashScreen, back button, push notifications */
@@ -254,6 +257,16 @@ const App = () => (
                   }
                 />
                 <Route
+                  path="/misiones"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Missions />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
                   path="/add-pet"
                   element={
                     <ProtectedRoute>
@@ -289,6 +302,36 @@ const App = () => (
                     <ProtectedRoute>
                       <AppLayout>
                         <Reminders />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/rutinas"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <PetRoutines />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/mascota/:petId/rutinas"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <PetRoutines />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/calendario"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <UnifiedCalendar />
                       </AppLayout>
                     </ProtectedRoute>
                   }

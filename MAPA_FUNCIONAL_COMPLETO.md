@@ -12,6 +12,7 @@
 2. [Mascotas](#2-mascotas)
 3. [Ficha Clinica y Registros Medicos](#3-ficha-clinica)
 4. [Recordatorios](#4-recordatorios)
+4b. [Rutinas Semanales + Calendario Unificado](#4b-rutinas-calendario)
 5. [Directorio de Veterinarios](#5-directorio-vets)
 6. [Dashboard y Panel Vet](#6-dashboard-vet)
 7. [Chat y Mensajeria](#7-chat)
@@ -234,11 +235,62 @@ Cron:
 ```
 
 ### Oportunidades de mejora
-- **Snooze** (posponer 1 dia, 1 semana)
-- **Recordatorios recurrentes** automaticos (cada 3 meses antiparasitario)
 - **Push notifications** nativas via Capacitor (infraestructura lista, falta FCM/APNs)
-- **Calendario visual** de recordatorios (vista mensual)
 - Integrar con **Google Calendar** automaticamente (no solo manual)
+
+---
+
+## 4b. RUTINAS SEMANALES + CALENDARIO UNIFICADO <a id="4b-rutinas-calendario"></a>
+
+```
+Rutinas y Calendario
+├── Paginas
+│   ├── src/pages/PetRoutines.tsx                      # Gestion de rutinas /rutinas
+│   └── src/pages/UnifiedCalendar.tsx                  # Calendario unificado /calendario
+├── Hooks
+│   ├── src/hooks/useRoutines.ts                       # CRUD rutinas + completions
+│   └── src/hooks/useUnifiedCalendar.ts                # Merge rutinas + reminders + bookings
+├── Componentes
+│   ├── src/components/routines/DaySelector.tsx         # Selector dias L-D
+│   ├── src/components/routines/RoutineForm.tsx         # Dialog crear/editar rutina
+│   ├── src/components/routines/RoutineCard.tsx         # Card con estado y acciones
+│   ├── src/components/routines/RoutineWeekView.tsx     # Vista semanal grilla
+│   ├── src/components/calendar/CalendarEventCard.tsx   # Card generica evento unificado
+│   ├── src/components/calendar/UnifiedDayView.tsx      # Vista dia con todos los eventos
+│   ├── src/components/calendar/CalendarFilters.tsx     # Filtros por mascota y tipo
+│   └── src/components/calendar/CalendarGrid.tsx        # Extendido: dots multi-color
+├── Widget Home
+│   └── src/components/home/TodayRoutinesCard.tsx       # Rutinas de hoy en /home
+├── Migracion
+│   └── supabase/migrations/20260504000000_pet_routines.sql  # pet_routines + routine_completions
+└── Sidebar
+    └── src/components/AppSidebar.tsx                   # Entradas: Rutinas + Calendario
+```
+
+### Flujo end-to-end
+```
+Crear rutina:
+  → /rutinas → boton + Nueva → RoutineForm dialog
+  → Selecciona mascota, categoria, dias, hora
+  → INSERT pet_routines (RLS: solo owner)
+  → Plan gratis: max 3 rutinas por mascota
+
+Completar rutina del dia:
+  → /rutinas o /home widget → boton "Hecho"
+  → UPSERT routine_completions (unique: routine_id + completed_date)
+  → Barra progreso semanal se actualiza
+
+Calendario unificado:
+  → /calendario → CalendarGrid con dots azules (rutinas), amarillos (recordatorios), morados (citas)
+  → Click dia → UnifiedDayView con timeline de eventos
+  → Tap evento → marcar completado o navegar a detalle
+```
+
+### Restricciones por plan
+| Feature | Gratis | Premium |
+|---|---|---|
+| Rutinas por mascota | 3 | Ilimitadas |
+| Calendario unificado | Solo hoy | Mes completo |
 
 ---
 

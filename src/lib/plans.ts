@@ -28,6 +28,7 @@ export const PLANS: Record<PlanId, PlanConfig> = {
     features: {
       max_pets: 2,
       max_reminders: 3,
+      max_routines_per_pet: 3,
       ai_behavior_analysis: 1,
       ai_vet_assistant: 1,
       export_pdf: false,
@@ -52,6 +53,7 @@ export const PLANS: Record<PlanId, PlanConfig> = {
     features: {
       max_pets: -1,
       max_reminders: -1,
+      max_routines_per_pet: -1,
       ai_behavior_analysis: -1,
       ai_vet_assistant: -1,
       export_pdf: true,
@@ -324,6 +326,7 @@ export function canProviderAccess(
 export const FEATURE_LABELS: Record<string, string> = {
   max_pets: 'Mascotas registradas',
   max_reminders: 'Recordatorios activos',
+  max_routines_per_pet: 'Rutinas por mascota',
   ai_behavior_analysis: 'Análisis IA de comportamiento',
   ai_vet_assistant: 'Asistente veterinario IA',
   export_pdf: 'Exportar ficha clínica PDF',

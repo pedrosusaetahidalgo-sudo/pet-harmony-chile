@@ -1,10 +1,10 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-12
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-13
     %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (21 activas).
     %% Refleja navegacion real post-optimizacion:
     %%   BottomTabBar: Inicio | Mascotas | Vets | Recordatorios | Perfil
-    %%   Sidebar: Salud | Descubrir | Comunidad (+ Profesional si aplica)
+    %%   Sidebar: Salud (+ Rutinas + Calendario) | Descubrir | Comunidad (+ Profesional si aplica)
     %%   Chat salio de BottomTabBar: se accede desde Header y Sidebar
     %%   ActiveRoleProvider permite dual-role switching (dueno <-> vet)
     %% Regla: este archivo es UN SOLO bloque pegable en mermaid.live
@@ -78,6 +78,7 @@ flowchart TD
     H_MAIN --> H_PETS["Pet switcher avatares"]
     H_MAIN --> H_STATUS["Status cards: cita, vacunas, ficha, racha"]
     H_MAIN --> H_ALERTS["Alertas salud: vencidos + proximos"]
+    H_MAIN --> H_ROUTINES["Widget rutinas de hoy"]
     H_MAIN --> H_PRICE["Estimador precios"]
     H_MAIN --> H_WEEKLY["Reporte semanal"]
     H_MAIN --> H_REVIEWS["Resenas pendientes"]
@@ -182,6 +183,35 @@ flowchart TD
     PET_TRIGGERS --> REM_OVER
     REM_DONE --> GCAL_SYNC["Sync Google Calendar"]
 
+    %% ============ RUTINAS SEMANALES ============
+    subgraph RUTINAS["RUTINAS /rutinas"]
+        direction TB
+        RUT_LIST["Lista rutinas activas"]
+        RUT_WEEK["Vista semanal L-D"]
+        RUT_ADD["Crear rutina"]
+        RUT_COMPLETE["Marcar completada"]
+        RUT_SKIP["Marcar saltada"]
+        RUT_LIST --> RUT_ADD
+        RUT_LIST --> RUT_WEEK
+        RUT_LIST --> RUT_COMPLETE
+        RUT_LIST --> RUT_SKIP
+    end
+
+    RUT_COMPLETE --> GCAL_SYNC
+
+    %% ============ CALENDARIO UNIFICADO ============
+    subgraph CALENDARIO["CALENDARIO /calendario"]
+        direction TB
+        CAL_GRID["Grid mensual multi-color"]
+        CAL_FILTER["Filtros mascota + tipo"]
+        CAL_DAY["Vista dia unificada"]
+        CAL_GRID --> CAL_DAY
+        CAL_FILTER --> CAL_GRID
+    end
+
+    CAL_DAY --> RUT_COMPLETE
+    CAL_DAY --> REM_DONE
+
     %% ============ TAB PERFIL ============
     PROFILE["/profile"] --> SETTINGS["/settings"]
     PROFILE --> USER_PUB["/user/:userId (perfil publico)"]
@@ -197,11 +227,15 @@ flowchart TD
         SB_INICIO["Inicio /home"]
         SB_MASCOTAS["Mis mascotas /my-pets"]
         SB_RECORDATORIOS["Recordatorios /reminders"]
+        SB_RUTINAS["Rutinas /rutinas"]
+        SB_CALENDARIO["Calendario /calendario"]
     end
 
     SB_INICIO --> HOME
     SB_MASCOTAS --> PET_LIST
     SB_RECORDATORIOS --> REM_OVER
+    SB_RUTINAS --> RUT_LIST
+    SB_CALENDARIO --> CAL_GRID
 
     %% ============ SIDEBAR: DESCUBRIR ============
     subgraph DESCUBRIR["SIDEBAR: DESCUBRIR"]
@@ -361,4 +395,5 @@ flowchart TD
     H_QUICK --> PUB_PRICE
     H_QUICK --> MAPA
     H_GAME --> PAWGAME
+    H_ROUTINES --> RUT_LIST
     H_FEED --> FEED_LIST

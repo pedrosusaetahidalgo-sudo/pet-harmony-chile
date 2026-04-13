@@ -2788,6 +2788,112 @@ export type Database = {
           },
         ];
       };
+      pet_routines: {
+        Row: {
+          id: string;
+          pet_id: string;
+          owner_id: string;
+          category: string;
+          title: string;
+          description: string | null;
+          icon: string | null;
+          days_of_week: number[];
+          time_of_day: string;
+          duration_minutes: number | null;
+          notify_before_minutes: number;
+          notify_channels: string[];
+          is_active: boolean;
+          starts_on: string;
+          ends_on: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          pet_id: string;
+          owner_id: string;
+          category: string;
+          title: string;
+          description?: string | null;
+          icon?: string | null;
+          days_of_week: number[];
+          time_of_day: string;
+          duration_minutes?: number | null;
+          notify_before_minutes?: number;
+          notify_channels?: string[];
+          is_active?: boolean;
+          starts_on?: string;
+          ends_on?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          pet_id?: string;
+          owner_id?: string;
+          category?: string;
+          title?: string;
+          description?: string | null;
+          icon?: string | null;
+          days_of_week?: number[];
+          time_of_day?: string;
+          duration_minutes?: number | null;
+          notify_before_minutes?: number;
+          notify_channels?: string[];
+          is_active?: boolean;
+          starts_on?: string;
+          ends_on?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'pet_routines_pet_id_fkey';
+            columns: ['pet_id'];
+            isOneToOne: false;
+            referencedRelation: 'pets';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      routine_completions: {
+        Row: {
+          id: string;
+          routine_id: string;
+          completed_date: string;
+          completed_at: string;
+          notes: string | null;
+          skipped: boolean;
+          skip_reason: string | null;
+        };
+        Insert: {
+          id?: string;
+          routine_id: string;
+          completed_date: string;
+          completed_at?: string;
+          notes?: string | null;
+          skipped?: boolean;
+          skip_reason?: string | null;
+        };
+        Update: {
+          id?: string;
+          routine_id?: string;
+          completed_date?: string;
+          completed_at?: string;
+          notes?: string | null;
+          skipped?: boolean;
+          skip_reason?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'routine_completions_routine_id_fkey';
+            columns: ['routine_id'];
+            isOneToOne: false;
+            referencedRelation: 'pet_routines';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       pets: {
         Row: {
           activity_level: string | null;

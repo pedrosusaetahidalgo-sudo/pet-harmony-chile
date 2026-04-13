@@ -183,6 +183,9 @@ send-whatsapp-reminder/          # WhatsApp (pendiente verificacion Meta)
 - `/add-pet`, `/edit-pet/:petId` -- CRUD mascotas
 - `/medical-records` -- Redirect legacy → ficha clinica de primera mascota
 - `/reminders` -- Recordatorios
+- `/rutinas` -- Rutinas semanales por mascota
+- `/mascota/:petId/rutinas` -- Rutinas de una mascota especifica
+- `/calendario` -- Calendario unificado (rutinas + recordatorios + citas)
 - `/ficha/:petId` -- Ficha clinica completa (legacy `/mascota/:petId/ficha-clinica` y `/pet/:petId/clinical` redirigen aqui)
 - `/adoption` -- Adopcion
 - `/en-memoria` -- Memorial de mascotas fallecidas
@@ -327,7 +330,7 @@ Estas features estan planificadas en el mega prompt futuro pero **NO existen en 
 | `npm run build` | Pasa (~25s) |
 | Bundle principal | ~291 kB / 89 kB gzip |
 | Vendor splitting | Configurado (react, query, ui, icons, date, supabase) |
-| Migraciones | 88, hasta `20260428000000` + flag `99999999000000_demo_seed_flag` |
+| Migraciones | 113, hasta `20260504000000` + flag `99999999000000_demo_seed_flag` |
 | Edge functions | 21 activas + `_shared/` helpers |
 | Premium B2C Flow | Vivo con idempotencia + rate limit |
 | Google Calendar | Vivo end-to-end |

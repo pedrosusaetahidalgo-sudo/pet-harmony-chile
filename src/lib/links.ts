@@ -89,6 +89,12 @@ export const LINKS = {
   groomerProfileEdit: () => '/peluquero/perfil',
   /** Banco de sangre / donantes */
   bloodDonors: () => '/donantes-sangre',
+  /** Rutinas semanales */
+  routines: () => '/rutinas',
+  /** Rutinas de una mascota especifica */
+  petRoutines: (petId: string) => `/mascota/${petId}/rutinas`,
+  /** Calendario unificado */
+  calendar: () => '/calendario',
 } as const;
 
 function slugify(value: string): string {
