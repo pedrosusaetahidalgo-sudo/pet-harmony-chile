@@ -38,6 +38,7 @@ import { logger } from '@/lib/logger';
 import { PriceEstimatorCard } from '@/components/home/PriceEstimatorCard';
 import { WeeklyReportCard } from '@/components/home/WeeklyReportCard';
 import { SeasonalTipsCard } from '@/components/home/SeasonalTipsCard';
+import { TodayRoutinesCard } from '@/components/home/TodayRoutinesCard';
 import { AnalyticsPreviewCard } from '@/components/analytics/AnalyticsPreviewCard';
 import { PetWellnessPreview } from '@/components/analytics/PetWellnessPreview';
 import { isFeatureEnabled } from '@/lib/featureFlags';
@@ -47,6 +48,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { usePendingReviewCount } from '@/hooks/usePendingReviews';
 import { formatDistanceToNowStrict, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { useActiveRole } from '@/hooks/useActiveRole';
+import ProviderDashboard from '@/components/provider/ProviderDashboard';
 
 interface Pet {
   id: string;
@@ -96,6 +99,7 @@ export default function Home() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const goToAddPet = useGoToAddPet();
+  const { role } = useActiveRole();
   const [pets, setPets] = useState<Pet[]>([]);
   const [activePetId, setActivePetId] = useState<string | null>(null);
   const [appointments, setAppointments] = useState<Appointment[]>([]);
@@ -108,10 +112,10 @@ export default function Home() {
   const pendingReviewCount = usePendingReviewCount();
 
   useEffect(() => {
-    if (user) {
+    if (user && role === 'owner') {
       void loadData();
     }
-  }, [user]);
+  }, [user, role]);
 
   const loadData = async () => {
     if (!user) return;
@@ -235,6 +239,15 @@ export default function Home() {
   const activeCompleteness = activePet ? (completeness[activePet.id] ?? 0) : 0;
   const streakDays =
     (stats as unknown as { streak_days?: number } | null | undefined)?.streak_days ?? 0;
+
+  // Providers ven su dashboard profesional directamente en /home
+  if (role === 'provider') {
+    return (
+      <div className="container max-w-6xl mx-auto p-4 md:p-6">
+        <ProviderDashboard />
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -540,6 +553,9 @@ export default function Home() {
               </CardContent>
             </Card>
           )}
+
+          {/* === Rutinas de hoy === */}
+          <TodayRoutinesCard />
 
           {/* === Price estimator card === */}
           <PriceEstimatorCard petName={activePet?.name} />

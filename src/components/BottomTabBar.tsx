@@ -64,7 +64,7 @@ export function BottomTabBar() {
       matchPaths: (p) => p === '/home',
     },
     {
-      label: 'Mascotas',
+      label: 'My Paws',
       icon: PawPrint,
       href: LINKS.myPets(),
       matchPaths: (p) =>
@@ -103,7 +103,7 @@ export function BottomTabBar() {
       matchPaths: (p) => p === '/provider/dashboard',
     },
     {
-      label: 'Mascotas',
+      label: 'My Paws',
       icon: PawPrint,
       href: LINKS.myPets(),
       matchPaths: (p) =>

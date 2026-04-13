@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import {
   Calendar,
+  CalendarDays,
   MessageSquare,
   PawPrint,
+  RefreshCw,
   LogOut,
   Settings,
   Map,
@@ -30,7 +32,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 import { useActiveRole } from '@/hooks/useActiveRole';
 import { supabase } from '@/integrations/supabase/client';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
@@ -58,8 +60,10 @@ import {
 // Sidebar organizado en grupos semánticos para mejor navegación
 const healthItems = [
   { title: 'Inicio', url: '/home', icon: HomeIcon },
-  { title: 'Mis mascotas', url: '/my-pets', icon: PawPrint },
+  { title: 'My Paws', url: '/my-pets', icon: PawPrint },
   { title: 'Recordatorios', url: '/reminders', icon: Calendar },
+  { title: 'Rutinas', url: '/rutinas', icon: RefreshCw },
+  { title: 'Calendario', url: '/calendario', icon: CalendarDays },
 ];
 
 const discoverItems = [
@@ -73,7 +77,8 @@ const communityItems = [
   { title: 'Feed', url: '/feed', icon: Activity },
   { title: 'Comunidad', url: '/comunidad', icon: Users },
   { title: 'Mensajes', url: '/chat', icon: MessageSquare },
-  { title: 'Paw Cards', url: '/paw-collection', icon: Trophy },
+  { title: 'Coleccion', url: '/paw-collection', icon: Trophy },
+  { title: 'Misiones', url: '/misiones', icon: Star },
   { title: 'Paw Game', url: '/paw-game', icon: Gamepad2 },
 ];
 
@@ -366,7 +371,7 @@ export function AppSidebar() {
                         className="h-7 text-xs rounded-md text-purple-700"
                       >
                         <PawPrint className="h-3.5 w-3.5 flex-shrink-0 text-purple-500" />
-                        <span>Mis mascotas</span>
+                        <span>My Paws</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   </SidebarMenu>
@@ -381,24 +386,11 @@ export function AppSidebar() {
             <SidebarMenu className="space-y-0">
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  onClick={() => handleNavigate('/profile')}
-                  className="h-7 text-xs rounded-md"
-                >
-                  <Avatar className="h-5 w-5 flex-shrink-0">
-                    <AvatarFallback className="bg-primary text-primary-foreground text-[9px] font-semibold">
-                      {user.email?.[0].toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="truncate">{user.email?.split('@')[0]}</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
                   onClick={() => handleNavigate('/settings')}
                   className="h-7 text-xs rounded-md"
                 >
                   <Settings className="h-3.5 w-3.5 flex-shrink-0" />
-                  <span>Configuración</span>
+                  <span>Configuracion</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>

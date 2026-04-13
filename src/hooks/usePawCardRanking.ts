@@ -29,12 +29,14 @@ export function usePawCardRanking(limit = 10) {
         error: any;
       };
 
-      // Fallback: if RPC doesn't exist, query manually
+      // Fallback: if RPC doesn't exist, query with limit to avoid loading entire table
       if (error || !counts) {
-        // Manual aggregation: get all collections grouped by pet_id
-        const { data: collections } = (await (supabase
-          .from('paw_card_collections' as any)
-          .select('pet_id') as any)) as { data: any[] | null };
+        // Fetch only recent collections (last 500 max) to avoid full table scan
+        const { data: collections } = (await (
+          supabase.from('paw_card_collections' as any).select('pet_id') as any
+        )
+          .order('collected_at', { ascending: false })
+          .limit(500)) as { data: any[] | null };
 
         if (!collections || collections.length === 0) return [];
 

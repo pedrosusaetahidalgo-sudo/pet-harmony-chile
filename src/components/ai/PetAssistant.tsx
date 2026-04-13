@@ -11,6 +11,7 @@ import { AIErrorState } from './AIErrorState';
 import { AIRateLimitState } from './AIRateLimitState';
 import { AIDisclaimer } from './AIDisclaimer';
 import { PremiumNudge } from '@/components/PremiumNudge';
+import { isFeatureEnabled } from '@/lib/featureFlags';
 
 interface PetAssistantResponse {
   respuesta: string;
@@ -165,13 +166,29 @@ export function PetAssistant({ petId, petName, onClose }: Props) {
         )}
 
         {isLimitedByPlan && (
-          <PremiumNudge
-            feature="ai_vet_assistant"
-            title="Consultas IA agotadas"
-            description={`Usaste tu consulta gratuita este mes. Con Premium tienes consultas ilimitadas sobre ${petName}.`}
-            usage={{ current: history.length, max: 1 }}
-            variant="card"
-          />
+          <>
+            {/* Preview blurred de lo que verían con Premium */}
+            {isFeatureEnabled('USER_PREMIUM') && (
+              <div className="relative rounded-xl overflow-hidden">
+                <div className="pointer-events-none select-none" style={{ filter: 'blur(5px)' }}>
+                  <div className="bg-muted/50 text-xs px-3 py-2 rounded-xl max-w-[85%]">
+                    <p className="whitespace-pre-line">
+                      Basándome en la ficha clínica de {petName}, te recomiendo revisar las vacunas
+                      pendientes y agendar un control preventivo. El peso está dentro del rango
+                      saludable para su raza y edad...
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            <PremiumNudge
+              feature="ai_vet_assistant"
+              title="Consultas IA agotadas"
+              description={`Usaste tu consulta gratuita este mes. Con Premium tienes consultas ilimitadas sobre ${petName}.`}
+              usage={{ current: history.length, max: 1 }}
+              variant="card"
+            />
+          </>
         )}
 
         {/* Input */}

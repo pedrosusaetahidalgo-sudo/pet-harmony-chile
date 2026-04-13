@@ -20,6 +20,7 @@ import { logger } from '@/lib/logger';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { downloadFile } from '@/lib/nativeDownload';
 import { isNative } from '@/lib/platform';
+import { PremiumGate } from '@/components/PremiumGate';
 
 /** Download a Blob directly — no external URL needed */
 async function downloadBlob(blob: Blob, fileName: string) {
@@ -121,23 +122,29 @@ export const MedicalSummaryButton = ({
   }
 
   return (
-    <Button
-      size="lg"
-      onClick={handleGenerateSummary}
-      disabled={isGenerating}
-      className="h-14 w-full rounded-2xl bg-gradient-to-br from-primary via-purple-600 to-rose-500 px-6 text-base font-semibold text-white shadow-[0_20px_40px_-18px_rgba(168,85,247,0.55)] transition-all hover:scale-[1.01] hover:opacity-95 active:scale-[0.99] sm:w-auto"
+    <PremiumGate
+      feature="export_pdf"
+      title="Ficha clínica en PDF"
+      description="Genera un PDF profesional con toda la ficha clínica de tu mascota"
     >
-      {isGenerating ? (
-        <>
-          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-          Generando tu ficha...
-        </>
-      ) : (
-        <>
-          <FileDown className="mr-2 h-5 w-5" />
-          Descargar ficha clínica (PDF)
-        </>
-      )}
-    </Button>
+      <Button
+        size="lg"
+        onClick={handleGenerateSummary}
+        disabled={isGenerating}
+        className="h-14 w-full rounded-2xl bg-gradient-to-br from-primary via-purple-600 to-rose-500 px-6 text-base font-semibold text-white shadow-[0_20px_40px_-18px_rgba(168,85,247,0.55)] transition-all hover:scale-[1.01] hover:opacity-95 active:scale-[0.99] sm:w-auto"
+      >
+        {isGenerating ? (
+          <>
+            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+            Generando tu ficha...
+          </>
+        ) : (
+          <>
+            <FileDown className="mr-2 h-5 w-5" />
+            Descargar ficha clínica (PDF)
+          </>
+        )}
+      </Button>
+    </PremiumGate>
   );
 };

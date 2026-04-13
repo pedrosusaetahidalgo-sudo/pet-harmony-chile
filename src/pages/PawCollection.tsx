@@ -74,7 +74,11 @@ function MiniPawCard({ card, isOwn }: { card: CollectedCard; isOwn?: boolean }) 
             <Avatar
               className={`h-16 w-16 ring-2 ${RARITY_RING[rarity]} rounded-full shadow-md paw-crystal-shine`}
             >
-              <AvatarImage src={card.pet.photoUrl || undefined} alt={card.pet.name} />
+              <AvatarImage
+                src={card.pet.photoUrl || undefined}
+                alt={card.pet.name}
+                loading="lazy"
+              />
               <AvatarFallback className="bg-gradient-to-br from-purple-50 to-purple-100 text-purple-300">
                 <Heart className="h-6 w-6" />
               </AvatarFallback>
@@ -250,7 +254,7 @@ const PawCollection = () => {
   return (
     <>
       <Helmet>
-        <title>Mi Paw Collection — Paw Friend</title>
+        <title>Mi Coleccion — Paw Friend</title>
       </Helmet>
 
       <div className="container px-4 py-8 max-w-6xl mx-auto animate-fade-in paw-collection-bg">
@@ -262,11 +266,9 @@ const PawCollection = () => {
           <div className="flex-1">
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <Trophy className="h-6 w-6 text-purple-500" />
-              Mi Paw Collection
+              Mi Coleccion
             </h1>
-            <p className="text-sm text-muted-foreground">
-              Tu coleccion de Paw Cards — tus mascotas y las que has escaneado
-            </p>
+            <p className="text-sm text-muted-foreground">Tus Paw Cards y las que has escaneado</p>
           </div>
           <Button
             onClick={() => setShowScanner(true)}
@@ -308,25 +310,29 @@ const PawCollection = () => {
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
                 <Crown className="h-4 w-4 text-amber-500" />
-                Paw Cards más coleccionadas
+                Mas coleccionadas
               </CardTitle>
             </CardHeader>
             <CardContent className="pb-3">
               <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
-                {ranking.map((card, i) => (
+                {ranking.slice(0, 5).map((card, i) => (
                   <button
                     key={card.petId}
                     onClick={() => navigate(`/paw-card/${card.pawCardId}`)}
-                    className="flex-shrink-0 flex items-center gap-2 p-2 rounded-lg bg-white border border-amber-100 hover:shadow-sm transition-shadow min-w-[160px]"
+                    className="flex-shrink-0 flex items-center gap-2 p-2 rounded-lg bg-white border border-amber-100 hover:shadow-sm transition-shadow min-w-[140px]"
                   >
                     <div className="relative">
-                      <Avatar className="h-10 w-10 ring-2 ring-amber-200">
-                        <AvatarImage src={card.photoUrl || undefined} alt={card.petName} />
+                      <Avatar className="h-9 w-9 ring-2 ring-amber-200">
+                        <AvatarImage
+                          src={card.photoUrl || undefined}
+                          alt={card.petName}
+                          loading="lazy"
+                        />
                         <AvatarFallback className="bg-amber-50 text-amber-400">
                           <PawPrint className="h-4 w-4" />
                         </AvatarFallback>
                       </Avatar>
-                      <span className="absolute -top-1 -left-1 h-5 w-5 rounded-full bg-amber-400 text-white text-[10px] font-bold flex items-center justify-center">
+                      <span className="absolute -top-1 -left-1 h-4 w-4 rounded-full bg-amber-400 text-white text-[8px] font-bold flex items-center justify-center">
                         {i + 1}
                       </span>
                     </div>
@@ -402,8 +408,8 @@ const PawCollection = () => {
             {filtered.map((card, i) => (
               <div
                 key={card.id}
-                className="animate-fade-in-up"
-                style={{ animationDelay: `${Math.min(i, 10) * 50}ms` }}
+                className={i < 8 ? 'animate-fade-in-up' : ''}
+                style={i < 8 ? { animationDelay: `${i * 40}ms` } : undefined}
               >
                 <MiniPawCard card={card} isOwn={card.isOwn} />
               </div>

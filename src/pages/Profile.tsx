@@ -177,7 +177,7 @@ const Profile = () => {
 
       {/* ── Bloque B: Pets Carousel ── */}
       <section>
-        <h2 className="text-base font-semibold mb-3">Mis mascotas</h2>
+        <h2 className="text-base font-semibold mb-3">My Paws</h2>
         {pets.length === 0 ? (
           <Card>
             <CardContent className="py-10 flex flex-col items-center text-center">

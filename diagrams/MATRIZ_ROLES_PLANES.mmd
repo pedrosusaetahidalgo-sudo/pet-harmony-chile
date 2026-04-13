@@ -1,0 +1,381 @@
+flowchart TD
+
+  %% MATRIZ COMPLETA ROLES + PLANES - Paw Friend
+  %% Actualizado 2026-04-13
+  %%
+  %% LEYENDA DE COLORES POR NODO:
+  %%   Verde    #d1fae5 = Sin restriccion, disponible para todos
+  %%   Amarillo #fef9c3 = Limite en free, ilimitado en premium
+  %%   Rojo     #fee2e2 = Bloqueado en free, requiere premium
+  %%   Azul     #dbeafe = Solo providers, requiere perfil proveedor
+  %%   Gris     #f0f0f0 = Publico sin login
+  %%   Naranja  #ffedd5 = Feature flag controla visibilidad
+  %%   Rosa     #fce7f3 = Solo admin
+  %%
+  %% USER_PREMIUM = false hoy - todo B2C gratis en la practica
+
+  %% ============================================
+  %% LEYENDA VISUAL
+  %% ============================================
+  subgraph LEYENDA["LEYENDA"]
+    direction LR
+    LEG_VERDE["VERDE: Sin restriccion"]
+    LEG_AMARILLO["AMARILLO: Limite free"]
+    LEG_ROJO["ROJO: Requiere premium"]
+    LEG_AZUL["AZUL: Solo providers"]
+    LEG_GRIS["GRIS: Publico"]
+    LEG_NARANJA["NARANJA: Feature flag"]
+    LEG_ROSA["ROSA: Solo admin"]
+  end
+
+  %% ============================================
+  %% ACCESO PUBLICO
+  %% ============================================
+  subgraph PUB["PUBLICO - Sin login"]
+    direction TB
+    PUB_LANDING["Landing /"]
+    PUB_AUTH["Login-Registro /auth"]
+    PUB_VETS["Directorio vets /veterinarios"]
+    PUB_VET_SLUG["Perfil vet /veterinarios/:slug"]
+    PUB_VET_COMUNA["Filtro comuna /veterinarios/comuna/:c"]
+    PUB_VET_ESP["Filtro especialidad /veterinarios/especialidad/:e"]
+    PUB_PRECIOS["Estimador precios /precios-veterinarios"]
+    PUB_B2B["Landing B2B /para-veterinarios"]
+    PUB_REG_VET["Registro vet /registro-veterinario"]
+    PUB_DEMO["Demo ventas /demo"]
+    PUB_RESENA["Dejar resena /resena/:token"]
+    PUB_QR["QR mascota /qr/:token"]
+    PUB_PAWCARD["Paw Card publica /paw-card/:id"]
+    PUB_MEDSHR["Ficha compartida 30d /medical-share/:token"]
+    PUB_LEGAL["Legales /terms + /privacy"]
+  end
+
+  %% ============================================
+  %% MODO DUENO
+  %% ============================================
+  subgraph OWNER["MODO DUENO - Sidebar: Salud + Descubrir + Comunidad"]
+    direction TB
+
+    subgraph SALUD["Seccion Salud"]
+      direction TB
+      O_HOME["HOME /home<br/>Pet switcher, status cards,<br/>recordatorios, Paw Game widget<br/>Sin restriccion"]
+      O_PETS["MIS MASCOTAS /my-pets<br/>FREE: max 2 mascotas<br/>PREMIUM: ilimitadas<br/>Enforcement: RPC can_add_pet"]
+      O_ADDPET["AGREGAR MASCOTA /add-pet<br/>FREE: 2do pet bloqueado<br/>PREMIUM: sin limite<br/>Enforcement: RPC server-side"]
+      O_EDITPET["EDITAR MASCOTA /edit-pet/:id<br/>Sin restriccion"]
+      O_REMIND["RECORDATORIOS /reminders<br/>FREE: 3 activos max<br/>PREMIUM: ilimitados<br/>Enforcement: hook useReminders"]
+    end
+
+    subgraph FICHA["Ficha Clinica - Joya de la Corona"]
+      direction TB
+      O_FICHA["FICHA COMPLETA /ficha/:petId<br/>Acceso siempre<br/>FREE: historial 6 meses<br/>PREMIUM: historial completo"]
+      O_PDF["EXPORTAR PDF<br/>FREE: BLOQUEADO<br/>PREMIUM: habilitado<br/>PremiumGate + server 402"]
+      O_SHARE_MED["COMPARTIR FICHA<br/>FREE: 1 token activo<br/>PREMIUM: ilimitado<br/>Enforcement: useMedicalSharing"]
+      O_OCR["OCR CARNET VACUNAS<br/>FREE: 1 escaneo<br/>PREMIUM: ilimitado<br/>Enforcement: client-side"]
+    end
+
+    subgraph DESCUBRIR["Seccion Descubrir"]
+      direction TB
+      O_BUSCAR_VET["BUSCAR VET /veterinarios<br/>Sin restriccion"]
+      O_SERVICIOS["SERVICIOS /servicios<br/>Sin restriccion"]
+      O_MAPS["MAPA /maps<br/>Sin restriccion"]
+      O_BLOOD["BANCO SANGRE /donantes-sangre<br/>Sin restriccion"]
+    end
+
+    subgraph COMUNIDAD_SEC["Seccion Comunidad"]
+      direction TB
+      O_FEED["FEED /feed<br/>Sin restriccion"]
+      O_COMMUNITY["COMUNIDAD /comunidad<br/>Sin restriccion"]
+      O_CHAT["MENSAJES /chat<br/>Sin restriccion"]
+      O_PAWCARDS["PAW CARDS /paw-collection<br/>Sin restriccion"]
+      O_PAWGAME["PAW GAME /paw-game<br/>Flag: PAWGAME_SIDEBAR=true<br/>Sin gate de plan"]
+    end
+
+    subgraph OWNER_EXTRAS["Extras Dueno"]
+      direction TB
+      O_ADOPT["ADOPCION /adoption<br/>Sin restriccion"]
+      O_MEMORIAL["EN MEMORIA /en-memoria<br/>Sin restriccion"]
+      O_REPORTS["REPORTES SEMANALES /reportes<br/>FREE: bloqueado<br/>PREMIUM: habilitado<br/>Enforcement: PremiumGate"]
+      O_UPGRADE["PAGINA PREMIUM /upgrade<br/>Siempre visible"]
+      O_PROFILE["MI PERFIL /profile<br/>Sin restriccion"]
+      O_SETTINGS["CONFIGURACION /settings<br/>Sin restriccion"]
+      O_ONBOARD["ONBOARDING /onboarding-mascota<br/>Sin restriccion"]
+      O_PAYMENT["RESULTADO PAGO /payment-result<br/>Sin restriccion"]
+    end
+  end
+
+  %% ============================================
+  %% MODO PROVEEDOR
+  %% ============================================
+  subgraph PROVIDER["MODO PROVEEDOR - Sidebar: Consultorio + Negocio"]
+    direction TB
+
+    subgraph CONSULTORIO["Seccion Consultorio"]
+      direction TB
+      P_DASH["DASHBOARD /provider/dashboard<br/>Agenda, seguimientos, pacientes,<br/>fichas compartidas, metricas<br/>Solo providers - RoleGuard"]
+      P_BOOKINGS["MIS RESERVAS /mis-reservas<br/>Solo providers"]
+    end
+
+    subgraph NEGOCIO["Seccion Negocio"]
+      direction TB
+      P_PROFILE["PERFIL PUBLICO /provider/profile-edit<br/>Solo providers"]
+      P_PRO["PANEL PRO /panel-pro<br/>Solo providers<br/>Flag: PRO_ANALYTICS=true<br/>FREE VET: bloqueado<br/>PREMIUM VET: habilitado<br/>LockedOverlay + checkAccess"]
+      P_GROOMER["PERFIL PELUQUERO /peluquero/perfil<br/>Solo groomers"]
+    end
+
+    subgraph PROV_EXTRAS["Extras Proveedor"]
+      direction TB
+      P_ONBOARD["ONBOARDING VET /onboarding-vet<br/>Solo providers"]
+    end
+  end
+
+  %% ============================================
+  %% PLANES VETERINARIOS B2B
+  %% ============================================
+  subgraph VET_PLANS["PLANES VETERINARIOS B2B"]
+    direction LR
+    VP_FREE["VET GRATIS<br/>15 clientes<br/>10 reservas/mes<br/>2 invitaciones resena<br/>Comision 10%<br/>Sin destacado"]
+    VP_IND["INDIVIDUAL $9.900/mes<br/>100 clientes<br/>50 reservas/mes<br/>5 invitaciones<br/>Audio transcripcion<br/>Comision 10%"]
+    VP_BASIC["CLINICA BASICA $29.900/mes<br/>500 clientes<br/>Reservas ilimitadas<br/>20 invitaciones - Multi-vet<br/>Destacado directorio<br/>Comision 10%"]
+    VP_PRO["CLINICA PRO $59.900/mes<br/>Clientes ilimitados<br/>Todo ilimitado<br/>Comision 0%<br/>Analytics avanzados<br/>API access - Soporte prioritario"]
+  end
+
+  %% ============================================
+  %% PLANES B2C
+  %% ============================================
+  subgraph B2C_PLANS["PLANES B2C - Duenos de mascotas"]
+    direction LR
+    PLAN_FREE["GRATIS $0<br/>..............................<br/>2 mascotas<br/>3 recordatorios<br/>Historial 6 meses<br/>1 ficha compartida<br/>1 consulta IA/mes<br/>1 OCR scan<br/>NO PDF ficha clinica<br/>NO Resumen semanal IA<br/>NO Analytics<br/>CON publicidad<br/>Tarifa reserva: $5"]
+    PLAN_PREMIUM["PREMIUM $3.990/mes<br/>..............................<br/>Mascotas ilimitadas<br/>Recordatorios ilimitados<br/>Historial completo<br/>Fichas compartidas ilimitadas<br/>Consultas IA ilimitadas<br/>OCR scans ilimitados<br/>PDF ficha clinica<br/>Resumen semanal IA<br/>Analytics completos<br/>Sin publicidad<br/>Tarifa reserva: $0<br/>..............................<br/>Anual: $39.900<br/>Primeros 500: precio fijo"]
+  end
+
+  %% ============================================
+  %% FUNCIONES IA
+  %% ============================================
+  subgraph IA["FUNCIONES IA - Edge Functions"]
+    direction TB
+    AI_PET["pet-assistant<br/>Asistente veterinario<br/>FREE: 1 consulta/mes<br/>PREMIUM: ilimitado<br/>Role: Ambos"]
+    AI_BREED["breed-tips<br/>Tips por raza<br/>FREE: 1 uso/sesion<br/>PREMIUM: ilimitado<br/>Role: Ambos"]
+    AI_BEREAVE["bereavement-assistant<br/>Asistente empatico memorial<br/>Sin restriccion<br/>Role: Ambos"]
+    AI_MED_SUG["medical-suggestions<br/>Sugerencias medicas<br/>Sin restriccion<br/>Role: Ambos"]
+    AI_OCR_FN["ocr-vaccination-card<br/>OCR carnet vacunas<br/>FREE: 1 scan<br/>PREMIUM: ilimitado<br/>Role: Ambos"]
+  end
+
+  %% ============================================
+  %% EDGE FUNCTIONS CORE
+  %% ============================================
+  subgraph EDGE["EDGE FUNCTIONS - Servicios Backend"]
+    direction TB
+    EF_PDF["generate-medical-summary<br/>Genera PDF ficha<br/>Server-side: plan_id check<br/>402 si free"]
+    EF_ZIP["generate-medical-zip<br/>ZIP documentos medicos<br/>Sin restriccion"]
+    EF_FLOW["flow-create-subscription<br/>Crear suscripcion Flow.cl<br/>Requiere auth"]
+    EF_WEBHOOK["flow-webhook<br/>Webhook pagos Flow<br/>Server-to-server"]
+    EF_SITEMAP["generate-sitemap<br/>SEO sitemap - Automatico"]
+    EF_SHELTERS["generate-shelters<br/>Data refugios"]
+    EF_OWNER_RPT["generate-weekly-owner-reports<br/>Reporte semanal dueno - Cron"]
+    EF_VET_RPT["generate-weekly-vet-reports<br/>Reporte semanal vet - Cron"]
+    EF_REMIND["reminder-cron<br/>Cron recordatorios"]
+    EF_INVITE["send-pet-invitation<br/>Invitar dueno a mascota<br/>Solo providers"]
+    EF_MODERATE["moderate-service-promotion<br/>Moderacion promociones"]
+    EF_WA["send-whatsapp-reminder<br/>WhatsApp pendiente Meta"]
+  end
+
+  %% ============================================
+  %% GOOGLE CALENDAR
+  %% ============================================
+  subgraph GCAL["GOOGLE CALENDAR - Integracion"]
+    direction TB
+    GC_INIT["google-calendar-oauth-init<br/>Ambos roles"]
+    GC_CALLBACK["google-calendar-callback<br/>Server"]
+    GC_SYNC["google-calendar-sync<br/>Ambos roles"]
+    GC_DISCONNECT["google-calendar-disconnect<br/>Ambos roles"]
+  end
+
+  %% ============================================
+  %% ADMIN
+  %% ============================================
+  subgraph ADMIN_SEC["ADMIN - Panel administrador"]
+    direction TB
+    ADM["ADMIN /admin<br/>Gestion usuarios, aprobar providers,<br/>partner submissions, metricas<br/>AdminRoute: is_admin=true<br/>Sin gate de plan"]
+  end
+
+  %% ============================================
+  %% CONEXIONES
+  %% ============================================
+
+  PUB_AUTH -->|"Login"| OWNER
+  PUB_AUTH -->|"Login + perfil proveedor"| PROVIDER
+
+  O_HOME -.->|"Toggle a Profesional"| P_DASH
+  P_DASH -.->|"Toggle a Dueno"| O_HOME
+
+  O_FICHA --> O_PDF
+  O_FICHA --> O_SHARE_MED
+  O_FICHA --> O_OCR
+  O_PDF --> EF_PDF
+
+  O_UPGRADE --> EF_FLOW
+  EF_FLOW --> EF_WEBHOOK
+
+  O_REMIND --> EF_REMIND
+
+  AI_PET --> O_FICHA
+  AI_OCR_FN --> O_OCR
+
+  PLAN_FREE -.->|"Upgrade via Flow.cl"| PLAN_PREMIUM
+  PLAN_PREMIUM -.->|"Pago"| EF_FLOW
+
+  VP_FREE -.->|"Upgrade"| VP_IND
+  VP_IND -.->|"Upgrade"| VP_BASIC
+  VP_BASIC -.->|"Upgrade"| VP_PRO
+
+  %% ============================================
+  %% ESTILOS - LEYENDA
+  %% ============================================
+  style LEG_VERDE fill:#d1fae5,stroke:#059669,color:#064e3b
+  style LEG_AMARILLO fill:#fef9c3,stroke:#ca8a04,color:#713f12
+  style LEG_ROJO fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+  style LEG_AZUL fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
+  style LEG_GRIS fill:#f0f0f0,stroke:#999,color:#333
+  style LEG_NARANJA fill:#ffedd5,stroke:#ea580c,color:#7c2d12
+  style LEG_ROSA fill:#fce7f3,stroke:#db2777,color:#831843
+
+  %% ============================================
+  %% ESTILOS - SUBGRAPHS
+  %% ============================================
+  style LEYENDA fill:#fff,stroke:#ccc,color:#333
+  style PUB fill:#f5f5f5,stroke:#aaa,color:#333
+  style OWNER fill:#f3e8ff,stroke:#9333ea,color:#1a1a2e
+  style PROVIDER fill:#e0f7fa,stroke:#0891b2,color:#1a1a2e
+  style IA fill:#fffbeb,stroke:#d97706,color:#1a1a2e
+  style EDGE fill:#f0fdf4,stroke:#16a34a,color:#1a1a2e
+  style GCAL fill:#eff6ff,stroke:#2196f3,color:#1a1a2e
+  style ADMIN_SEC fill:#fdf2f8,stroke:#db2777,color:#1a1a2e
+  style B2C_PLANS fill:#fffbeb,stroke:#f59e0b,color:#1a1a2e
+  style VET_PLANS fill:#f0fdfa,stroke:#2dd4bf,color:#1a1a2e
+  style SALUD fill:#faf5ff,stroke:#a855f7,color:#1a1a2e
+  style FICHA fill:#fdf2f8,stroke:#ec4899,color:#1a1a2e
+  style DESCUBRIR fill:#f0fdf4,stroke:#22c55e,color:#1a1a2e
+  style COMUNIDAD_SEC fill:#eff6ff,stroke:#3b82f6,color:#1a1a2e
+  style OWNER_EXTRAS fill:#faf5ff,stroke:#c084fc,color:#1a1a2e
+  style CONSULTORIO fill:#e0f2fe,stroke:#0ea5e9,color:#1a1a2e
+  style NEGOCIO fill:#ccfbf1,stroke:#14b8a6,color:#1a1a2e
+  style PROV_EXTRAS fill:#e0f2fe,stroke:#0ea5e9,color:#1a1a2e
+
+  %% ============================================
+  %% ESTILOS - NODOS PUBLICOS (gris)
+  %% ============================================
+  style PUB_LANDING fill:#f0f0f0,stroke:#999,color:#333
+  style PUB_AUTH fill:#f0f0f0,stroke:#999,color:#333
+  style PUB_VETS fill:#f0f0f0,stroke:#999,color:#333
+  style PUB_VET_SLUG fill:#f0f0f0,stroke:#999,color:#333
+  style PUB_VET_COMUNA fill:#f0f0f0,stroke:#999,color:#333
+  style PUB_VET_ESP fill:#f0f0f0,stroke:#999,color:#333
+  style PUB_PRECIOS fill:#f0f0f0,stroke:#999,color:#333
+  style PUB_B2B fill:#f0f0f0,stroke:#999,color:#333
+  style PUB_REG_VET fill:#f0f0f0,stroke:#999,color:#333
+  style PUB_DEMO fill:#f0f0f0,stroke:#999,color:#333
+  style PUB_RESENA fill:#f0f0f0,stroke:#999,color:#333
+  style PUB_QR fill:#f0f0f0,stroke:#999,color:#333
+  style PUB_PAWCARD fill:#f0f0f0,stroke:#999,color:#333
+  style PUB_MEDSHR fill:#f0f0f0,stroke:#999,color:#333
+  style PUB_LEGAL fill:#f0f0f0,stroke:#999,color:#333
+
+  %% ============================================
+  %% ESTILOS - NODOS VERDES (sin restriccion)
+  %% ============================================
+  style O_HOME fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_EDITPET fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_BUSCAR_VET fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_SERVICIOS fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_MAPS fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_BLOOD fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_FEED fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_COMMUNITY fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_CHAT fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_PAWCARDS fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_ADOPT fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_MEMORIAL fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_UPGRADE fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_PROFILE fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_SETTINGS fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_ONBOARD fill:#d1fae5,stroke:#059669,color:#064e3b
+  style O_PAYMENT fill:#d1fae5,stroke:#059669,color:#064e3b
+
+  %% ============================================
+  %% ESTILOS - NODOS AMARILLOS (limite free)
+  %% ============================================
+  style O_PETS fill:#fef9c3,stroke:#ca8a04,color:#713f12
+  style O_ADDPET fill:#fef9c3,stroke:#ca8a04,color:#713f12
+  style O_REMIND fill:#fef9c3,stroke:#ca8a04,color:#713f12
+  style O_FICHA fill:#fef9c3,stroke:#ca8a04,color:#713f12
+  style O_SHARE_MED fill:#fef9c3,stroke:#ca8a04,color:#713f12
+  style O_OCR fill:#fef9c3,stroke:#ca8a04,color:#713f12
+  style AI_PET fill:#fef9c3,stroke:#ca8a04,color:#713f12
+  style AI_BREED fill:#fef9c3,stroke:#ca8a04,color:#713f12
+  style AI_OCR_FN fill:#fef9c3,stroke:#ca8a04,color:#713f12
+
+  %% ============================================
+  %% ESTILOS - NODOS ROJOS (requiere premium)
+  %% ============================================
+  style O_PDF fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+  style O_REPORTS fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+  style P_PRO fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+  style EF_PDF fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+
+  %% ============================================
+  %% ESTILOS - NODOS AZULES (solo providers)
+  %% ============================================
+  style P_DASH fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
+  style P_BOOKINGS fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
+  style P_PROFILE fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
+  style P_GROOMER fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
+  style P_ONBOARD fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
+  style EF_INVITE fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
+  style EF_VET_RPT fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
+
+  %% ============================================
+  %% ESTILOS - NODOS NARANJAS (feature flag)
+  %% ============================================
+  style O_PAWGAME fill:#ffedd5,stroke:#ea580c,color:#7c2d12
+  style EF_WA fill:#ffedd5,stroke:#ea580c,color:#7c2d12
+
+  %% ============================================
+  %% ESTILOS - NODOS ROSA (solo admin)
+  %% ============================================
+  style ADM fill:#fce7f3,stroke:#db2777,color:#831843
+
+  %% ============================================
+  %% ESTILOS - EDGE FUNCTIONS VERDES (sin gate)
+  %% ============================================
+  style EF_ZIP fill:#d1fae5,stroke:#059669,color:#064e3b
+  style EF_FLOW fill:#d1fae5,stroke:#059669,color:#064e3b
+  style EF_WEBHOOK fill:#d1fae5,stroke:#059669,color:#064e3b
+  style EF_SITEMAP fill:#d1fae5,stroke:#059669,color:#064e3b
+  style EF_SHELTERS fill:#d1fae5,stroke:#059669,color:#064e3b
+  style EF_OWNER_RPT fill:#d1fae5,stroke:#059669,color:#064e3b
+  style EF_REMIND fill:#d1fae5,stroke:#059669,color:#064e3b
+  style EF_MODERATE fill:#d1fae5,stroke:#059669,color:#064e3b
+
+  %% ============================================
+  %% ESTILOS - IA VERDES (sin gate)
+  %% ============================================
+  style AI_BEREAVE fill:#d1fae5,stroke:#059669,color:#064e3b
+  style AI_MED_SUG fill:#d1fae5,stroke:#059669,color:#064e3b
+
+  %% ============================================
+  %% ESTILOS - GOOGLE CALENDAR (sin gate)
+  %% ============================================
+  style GC_INIT fill:#d1fae5,stroke:#059669,color:#064e3b
+  style GC_CALLBACK fill:#d1fae5,stroke:#059669,color:#064e3b
+  style GC_SYNC fill:#d1fae5,stroke:#059669,color:#064e3b
+  style GC_DISCONNECT fill:#d1fae5,stroke:#059669,color:#064e3b
+
+  %% ============================================
+  %% ESTILOS - PLANES
+  %% ============================================
+  style PLAN_FREE fill:#f0f0f0,stroke:#999,color:#333
+  style PLAN_PREMIUM fill:#fef3c7,stroke:#d97706,color:#713f12
+  style VP_FREE fill:#f0f0f0,stroke:#999,color:#333
+  style VP_IND fill:#e0f2fe,stroke:#0ea5e9,color:#1e3a5f
+  style VP_BASIC fill:#dbeafe,stroke:#2563eb,color:#1e3a5f
+  style VP_PRO fill:#c7d2fe,stroke:#4f46e5,color:#312e81

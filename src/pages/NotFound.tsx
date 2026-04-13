@@ -1,14 +1,14 @@
-import { useLocation, Link } from "react-router-dom";
-import { useEffect } from "react";
-import { logger } from "@/lib/logger";
-import { Button } from "@/components/ui/button";
-import { PawPrint, Home as HomeIcon } from "@/lib/icons";
+import { useLocation, Link } from 'react-router-dom';
+import { useEffect } from 'react';
+import { logger } from '@/lib/logger';
+import { Button } from '@/components/ui/button';
+import { PawPrint, Home as HomeIcon } from '@/lib/icons';
 
 const NotFound = () => {
   const location = useLocation();
 
   useEffect(() => {
-    logger.error("404 Error: User attempted to access non-existent route:", location.pathname);
+    logger.error('404 Error: User attempted to access non-existent route:', location.pathname);
   }, [location.pathname]);
 
   return (
@@ -26,9 +26,7 @@ const NotFound = () => {
           <PawPrint className="h-10 w-10 text-amber-600" />
         </div>
         <h1 className="mb-3 text-5xl font-bold text-foreground">404</h1>
-        <p className="mb-2 text-xl font-semibold text-foreground">
-          Esta página se nos perdió
-        </p>
+        <p className="mb-2 text-xl font-semibold text-foreground">Esta página se nos perdió</p>
         <p className="mb-8 text-muted-foreground">
           Tal vez fue tras un gato. Volvamos a terreno conocido.
         </p>
@@ -42,7 +40,7 @@ const NotFound = () => {
           <Button asChild size="lg" variant="outline">
             <Link to="/my-pets">
               <PawPrint className="mr-2 h-4 w-4" />
-              Mis mascotas
+              My Paws
             </Link>
           </Button>
         </div>

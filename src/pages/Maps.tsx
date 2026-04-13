@@ -6,18 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import {
-  Search,
-  Heart,
-  Briefcase,
-  Plus,
-  Filter,
-  MapPin,
-  Loader2,
-  LocateFixed,
-  Building2,
-  Coffee,
-} from '@/lib/icons';
+import { Search, Heart, Briefcase, Plus, Filter, MapPin, Building2, Coffee } from '@/lib/icons';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -33,6 +22,7 @@ import { calculateDistance } from '@/lib/distance';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
 import { PageHeader } from '@/components/PageHeader';
+import { MapSearchBar, type MapSearchResult } from '@/components/maps/MapSearchBar';
 
 // Fix Leaflet default marker icon issue with bundlers (Vite/Webpack)
 // Leaflet bundler workaround: remove broken default icon URL resolver
@@ -536,6 +526,63 @@ const Maps = () => {
     activeChip,
   ]);
 
+  // Searchable items for the search bar
+  const searchableItems: MapSearchResult[] = useMemo(() => {
+    const items: MapSearchResult[] = [];
+    // Service providers (vets, walkers, etc.)
+    (serviceProviders || []).forEach((p) => {
+      if (!p.latitude || !p.longitude) return;
+      items.push({
+        id: p.id,
+        name: p.display_name || 'Proveedor',
+        type: p.services?.[0]?.service_type || 'service',
+        lat: p.latitude,
+        lng: p.longitude,
+        subtitle: p.commune || p.address || undefined,
+      });
+    });
+    // Shelters
+    (adoptionShelters || []).forEach((s) => {
+      if (!s.latitude || !s.longitude) return;
+      items.push({
+        id: `shelter-${s.id}`,
+        name: s.name,
+        type: 'shelter',
+        lat: s.latitude,
+        lng: s.longitude,
+        subtitle: s.address || undefined,
+      });
+    });
+    // Partners
+    (partners || []).forEach((p) => {
+      if (!p.latitude || !p.longitude) return;
+      items.push({
+        id: `partner-${p.id}`,
+        name: p.brand_name,
+        type: p.category === 'store' ? 'store' : 'general_partner',
+        lat: p.latitude,
+        lng: p.longitude,
+        subtitle: p.commune || undefined,
+      });
+    });
+    // Pet friendly places
+    petFriendlyPlaces.forEach((pl) => {
+      items.push({
+        id: `pf-${pl.id}`,
+        name: pl.name,
+        type: 'petFriendly',
+        lat: pl.lat,
+        lng: pl.lng,
+        subtitle: pl.address,
+      });
+    });
+    return items;
+  }, [serviceProviders, adoptionShelters, partners, petFriendlyPlaces]);
+
+  const handleSearchSelect = useCallback((result: MapSearchResult) => {
+    setFlyTarget([result.lat, result.lng]);
+  }, []);
+
   // Map center — guard contra NaN: si la ubicación del user es válida la
   // usamos; si no, promediamos solo marcadores con coordenadas finitas; si
   // no hay nada usable, fallback a Santiago. Cualquier NaN aquí rompe
@@ -706,13 +753,22 @@ const Maps = () => {
           )}
         </MapContainer>
 
-        {/* View tabs overlay - top center */}
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] flex gap-1 bg-white/90 backdrop-blur-sm rounded-xl p-1 shadow-lg">
+        {/* Search bar - flotante arriba */}
+        <MapSearchBar
+          searchableItems={searchableItems}
+          onSelectResult={handleSearchSelect}
+          onLocateMe={handleLocateMe}
+          locating={locating}
+          className="absolute top-3 left-3 right-3 z-[1000]"
+        />
+
+        {/* View tabs overlay */}
+        <div className="absolute top-[3.5rem] left-1/2 -translate-x-1/2 z-[1000] flex gap-1 bg-white/90 backdrop-blur-sm rounded-xl p-1 shadow-lg">
           {tabs.map((tab) => (
             <button
               key={tab.value}
               className={cn(
-                'flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all',
+                'flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all',
                 activeView === tab.value ? tab.activeClass : 'text-foreground/70 hover:bg-white'
               )}
               onClick={() => setActiveView(tab.value)}
@@ -722,7 +778,7 @@ const Maps = () => {
             </button>
           ))}
           <button
-            className="flex items-center px-2 py-2 rounded-lg text-foreground/70 hover:bg-white transition-all"
+            className="flex items-center px-2 py-1.5 rounded-lg text-foreground/70 hover:bg-white transition-all"
             onClick={() => setShowFilters(true)}
             title="Filtros"
           >
@@ -731,7 +787,7 @@ const Maps = () => {
         </div>
 
         {/* Floating filter chips */}
-        <div className="absolute top-[4.5rem] left-4 right-4 z-[1000] flex gap-2 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
+        <div className="absolute top-[6.5rem] left-4 right-4 z-[1000] flex gap-2 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory">
           {FILTER_CHIPS[activeView].map((chip) => (
             <button
               key={chip}
@@ -749,7 +805,7 @@ const Maps = () => {
         </div>
 
         {/* Results count badge */}
-        <div className="absolute top-[7rem] left-4 z-[1000]">
+        <div className="absolute top-[9.5rem] left-4 z-[1000]">
           <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-sm text-xs text-muted-foreground">
             <MapPin className="h-3.5 w-3.5" />
             <span>{filteredMarkers.length} resultados</span>
@@ -770,20 +826,6 @@ const Maps = () => {
             </div>
           </div>
         )}
-
-        {/* "Mi ubicacion" button - bottom right */}
-        <button
-          onClick={handleLocateMe}
-          disabled={locating}
-          className="absolute bottom-24 right-4 z-[1000] bg-white rounded-full w-11 h-11 flex items-center justify-center shadow-lg hover:bg-slate-50 transition-colors disabled:opacity-60"
-          title="Mi ubicacion"
-        >
-          {locating ? (
-            <Loader2 className="h-5 w-5 text-primary animate-spin" />
-          ) : (
-            <LocateFixed className="h-5 w-5 text-primary" />
-          )}
-        </button>
 
         {/* FAB - Floating Action Button */}
         {activeView !== 'services' && activeView !== 'partners' && (

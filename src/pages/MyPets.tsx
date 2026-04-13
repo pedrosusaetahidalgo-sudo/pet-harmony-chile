@@ -323,8 +323,8 @@ const MyPets = () => {
     <div className="container px-4 py-8 max-w-6xl mx-auto animate-fade-in">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2">Mis Mascotas</h1>
-          <p className="text-muted-foreground">Gestiona los perfiles de tus mascotas</p>
+          <h1 className="text-3xl font-bold mb-2">My Paws</h1>
+          <p className="text-muted-foreground">Tus mascotas y sus Paw Cards</p>
         </div>
         <div className="flex gap-2">
           <Button

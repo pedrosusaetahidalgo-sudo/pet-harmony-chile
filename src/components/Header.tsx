@@ -125,15 +125,22 @@ export const Header = () => {
 
   const loadProfile = async () => {
     try {
-      const { data } = await supabase
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data } = await (supabase as any)
         .from('profiles')
-        .select('display_name, avatar_url, level, points')
+        .select('display_name, avatar_url, level, points, active_title')
         .eq('id', user?.id)
         .maybeSingle();
 
-      setProfile(data);
-      // Use profile data for level/points (single source of truth)
-      setUserStats(data ? { level: data.level || 1, points: data.points || 0 } : null);
+      const profile = data as {
+        display_name?: string;
+        avatar_url?: string;
+        level?: number;
+        points?: number;
+        active_title?: string;
+      } | null;
+      setProfile(profile);
+      setUserStats(profile ? { level: profile.level || 1, points: profile.points || 0 } : null);
     } catch (error) {
       logger.error('Error loading profile:', error);
     }
@@ -167,18 +174,14 @@ export const Header = () => {
         <SidebarTrigger className="md:hidden hover:bg-accent rounded-lg p-2 min-h-[44px] min-w-[44px] flex items-center justify-center transition-colors" />
         {/* Logo solo visible en mobile (en desktop lo muestra el sidebar) */}
         <div
-          className="flex items-center gap-2 flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity md:hidden"
+          className="flex items-center flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity md:hidden"
           onClick={() => navigate('/home')}
         >
           <img
             src="/paw_friend_icon_principal.svg"
             alt="Paw Friend"
-            className="h-8 w-8 flex-shrink-0"
+            className="h-7 w-7 flex-shrink-0"
           />
-          <span className="font-bold text-base truncate">
-            <span className="text-purple-800">paw</span>
-            <span className="text-purple-500 ml-0.5">friend</span>
-          </span>
         </div>
         <div className="flex-1 hidden md:block" />
 
@@ -216,18 +219,21 @@ export const Header = () => {
                 )}
               </button>
             )}
-            {/* Paw Collection — shiny button */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/paw-collection')}
-              className="relative h-9 px-2.5 gap-1.5 paw-collection-btn group"
-            >
-              <Sparkles className="h-4 w-4 text-purple-500 group-hover:text-yellow-400 transition-colors duration-300" />
-              <span className="hidden sm:inline text-xs font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-amber-500 bg-clip-text text-transparent">
-                Coleccion
-              </span>
-            </Button>
+            {/* Paw Collection — shiny button (solo modo dueño) */}
+            {role === 'owner' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/paw-collection')}
+                className="relative h-9 px-2.5 gap-1.5 paw-collection-btn group"
+              >
+                <Sparkles className="h-4 w-4 text-purple-500 group-hover:text-yellow-400 transition-colors duration-300" />
+                <span className="hidden sm:inline text-xs font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-amber-500 bg-clip-text text-transparent">
+                  Coleccion
+                </span>
+                <span className="sr-only">Mi coleccion de Paw Cards</span>
+              </Button>
+            )}
 
             {/* Notifications Popover */}
             <Popover>
@@ -397,6 +403,11 @@ export const Header = () => {
                     </Badge>
                   )}
                 </div>
+                {profile?.active_title && (
+                  <span className="text-[10px] font-medium text-amber-600 truncate max-w-[120px]">
+                    {profile.active_title}
+                  </span>
+                )}
               </div>
             </div>
           </div>

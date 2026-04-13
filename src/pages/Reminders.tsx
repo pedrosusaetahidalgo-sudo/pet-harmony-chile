@@ -23,6 +23,9 @@ import { PageHeader } from '@/components/PageHeader';
 import { useReminders } from '@/hooks/useReminders';
 import { LINKS } from '@/lib/links';
 import { cn } from '@/lib/utils';
+import { PremiumNudge } from '@/components/PremiumNudge';
+import { isFeatureEnabled } from '@/lib/featureFlags';
+import { usePlan } from '@/hooks/usePlan';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -47,6 +50,10 @@ export default function Reminders() {
     completeReminder,
     snoozeReminder,
   } = useReminders();
+  const { isPremium, checkAccess } = usePlan();
+  const activeCount = reminders.filter((r) => !r.is_completed).length;
+  const reminderAccess = checkAccess('max_reminders', activeCount);
+  const showUsageBar = isFeatureEnabled('USER_PREMIUM') && !isPremium;
 
   const grouped = useMemo(() => {
     const today: typeof reminders = [];
@@ -90,6 +97,19 @@ export default function Reminders() {
       />
 
       <main className="container max-w-5xl mx-auto px-3 py-4 space-y-6">
+        {showUsageBar && (
+          <PremiumNudge
+            feature="max_reminders"
+            title={reminderAccess.allowed ? 'Plan gratuito' : 'Límite alcanzado'}
+            description={
+              reminderAccess.allowed
+                ? 'Tienes un número limitado de recordatorios activos. Con Premium son ilimitados.'
+                : 'Llegaste al límite de recordatorios de tu plan. Mejora a Premium para agregar más.'
+            }
+            usage={{ current: activeCount, max: 3 }}
+            variant="inline"
+          />
+        )}
         {isLoading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {[1, 2, 3].map((i) => (
