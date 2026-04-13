@@ -15,7 +15,9 @@ import {
   Trophy,
   Flame,
   Sparkles,
+  Stethoscope,
 } from '@/lib/icons';
+import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -29,6 +31,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { logger } from '@/lib/logger';
+import { toast } from 'sonner';
 
 const notificationIconMap: Record<string, { icon: React.ElementType; color: string }> = {
   reminder_due: { icon: Clock, color: 'text-amber-500' },
@@ -182,26 +185,36 @@ export const Header = () => {
         {/* User Section */}
         {user && (
           <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-            {/* Role toggle — solo visible para usuarios que son dueños Y proveedores */}
+            {/* Role toggle — visible en mobile y desktop para usuarios que son dueños Y proveedores */}
             {isProvider && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={toggle}
-                className="h-8 px-2 text-xs gap-1.5 hidden sm:flex"
+              <button
+                onClick={() => {
+                  const nextRole = role === 'owner' ? 'provider' : 'owner';
+                  toggle();
+                  navigate(nextRole === 'provider' ? '/provider/dashboard' : '/home');
+                  toast(
+                    nextRole === 'provider'
+                      ? 'Cambiaste a modo profesional'
+                      : 'Cambiaste a modo dueño'
+                  );
+                }}
+                className={cn(
+                  'flex items-center gap-1.5 h-8 px-3 rounded-full text-xs font-medium transition-all duration-200',
+                  role === 'owner' ? 'bg-purple-100 text-purple-700' : 'bg-teal-100 text-teal-700'
+                )}
               >
                 {role === 'owner' ? (
                   <>
-                    <PawPrint className="h-3.5 w-3.5 text-purple-600" />
-                    <span className="text-muted-foreground">Dueño</span>
+                    <PawPrint className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Dueño</span>
                   </>
                 ) : (
                   <>
-                    <Heart className="h-3.5 w-3.5 text-teal-600" />
-                    <span className="text-muted-foreground">Profesional</span>
+                    <Stethoscope className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Profesional</span>
                   </>
                 )}
-              </Button>
+              </button>
             )}
             {/* Paw Collection — shiny button */}
             <Button

@@ -24,6 +24,8 @@ import {
 import { Plus, Loader2 } from '@/lib/icons';
 import { PET_COLORS } from '@/lib/petOptions';
 import { SelectWithOther } from '@/components/ui/select-with-other';
+import { ComboboxWithOther } from '@/components/ui/combobox-with-other';
+import { BREEDS_BY_SPECIES } from '@/lib/breeds';
 
 interface NewPatientFormData {
   name: string;
@@ -197,8 +199,16 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
 
           {/* Raza */}
           <div className="space-y-1.5">
-            <Label htmlFor="np-breed">Raza</Label>
-            <Input id="np-breed" placeholder="Ej: Labrador" {...register('breed')} />
+            <Label>Raza</Label>
+            <ComboboxWithOther
+              options={BREEDS_BY_SPECIES[watch('species')] || []}
+              value={watch('breed') || ''}
+              onValueChange={(v) => setValue('breed', v)}
+              placeholder="Selecciona raza"
+              searchPlaceholder="Buscar raza..."
+              emptyMessage="Raza no encontrada."
+              otherPlaceholder="Escribe la raza..."
+            />
           </div>
 
           {/* Fecha nacimiento */}

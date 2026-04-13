@@ -19,12 +19,16 @@ import {
   Sparkles,
   Trophy,
   Droplets,
+  Star,
+  Eye,
+  Stethoscope,
 } from '@/lib/icons';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { LINKS } from '@/lib/links';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
+import { useActiveRole } from '@/hooks/useActiveRole';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -85,6 +89,17 @@ const SECTION_LABELS: Record<SectionKey, string> = {
   comunidad: 'Comunidad',
 };
 
+// Secciones profesionales (modo provider)
+const providerConsultItems = [
+  { title: 'Dashboard', url: '/provider/dashboard', icon: LayoutDashboard },
+  { title: 'Mis reservas', url: '/mis-reservas', icon: Calendar },
+];
+
+const providerBusinessItems = [
+  { title: 'Perfil público', url: '/provider/profile-edit', icon: UserCog },
+  { title: 'Panel Pro', url: '/panel-pro', icon: Star },
+];
+
 export function AppSidebar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -92,6 +107,7 @@ export function AppSidebar() {
   const isMobile = useIsMobile();
   const { setOpenMobile } = useSidebar();
   const currentPath = location.pathname;
+  const { role, isProvider } = useActiveRole();
 
   const {
     loaded: tutorialLoaded,
@@ -114,23 +130,6 @@ export function AppSidebar() {
     enabled: !!user?.id,
   });
   const hasPets = (userPets?.length ?? 0) > 0;
-
-  // ¿El usuario es proveedor de servicios? (vet, paseador, etc.)
-  const { data: providerRow } = useQuery({
-    queryKey: ['user-is-provider', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-      const { data } = await supabase
-        .from('service_providers')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      return data;
-    },
-    enabled: !!user?.id,
-    staleTime: 5 * 60 * 1000,
-  });
-  const isProvider = !!providerRow;
 
   // ¿El usuario es peluquero? (groomer_profiles es tabla aparte)
   const { data: groomerRow } = useQuery({
@@ -219,7 +218,7 @@ export function AppSidebar() {
             </div>
           )}
 
-          {/* Secciones principales con lógica de bloqueo */}
+          {/* ── Secciones de dueño (SIEMPRE visibles) ── */}
           {SECTION_ORDER.map((sectionKey, idx) => {
             const unlocked = isAllComplete || isSectionUnlocked(sectionKey);
             const items = SECTION_ITEMS[sectionKey];
@@ -259,37 +258,41 @@ export function AppSidebar() {
             );
           })}
 
+          {/* ── Secciones profesionales (solo si isProvider o isGroomer) ── */}
           {(isProvider || isGroomer) && (
             <>
               <Separator className="mx-2 my-0.5" />
               <SidebarGroup className="py-0.5">
-                <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5">
-                  Profesional
+                <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5">
+                  <span className="text-teal-600">Mi consultorio</span>
+                  <Stethoscope className="h-2.5 w-2.5 text-teal-500" />
                 </SidebarGroupLabel>
                 <SidebarGroupContent>
                   <SidebarMenu className="space-y-0">
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        isActive={isActive('/provider/dashboard')}
-                        onClick={() => handleNavigate('/provider/dashboard')}
-                        className="h-7 text-xs rounded-md"
-                      >
-                        <LayoutDashboard className="h-3.5 w-3.5 flex-shrink-0" />
-                        <span>Mi panel</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    {isProvider && (
-                      <SidebarMenuItem>
+                    {providerConsultItems.map((item) => (
+                      <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
-                          isActive={isActive('/provider/profile-edit')}
-                          onClick={() => handleNavigate('/provider/profile-edit')}
+                          isActive={isActive(item.url)}
+                          onClick={() => handleNavigate(item.url)}
                           className="h-7 text-xs rounded-md"
                         >
-                          <UserCog className="h-3.5 w-3.5 flex-shrink-0" />
-                          <span>Mi perfil pro</span>
+                          <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                          <span>{item.title}</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
-                    )}
+                    ))}
+                    {providerBusinessItems.map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                          isActive={isActive(item.url)}
+                          onClick={() => handleNavigate(item.url)}
+                          className="h-7 text-xs rounded-md"
+                        >
+                          <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                          <span>{item.title}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
                     {isGroomer && (
                       <SidebarMenuItem>
                         <SidebarMenuButton
@@ -298,7 +301,7 @@ export function AppSidebar() {
                           className="h-7 text-xs rounded-md"
                         >
                           <Scissors className="h-3.5 w-3.5 flex-shrink-0" />
-                          <span>Mi perfil peluquero</span>
+                          <span>Perfil peluquero</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     )}
@@ -340,7 +343,7 @@ export function AppSidebar() {
                   className="h-8 text-xs rounded-md hover:bg-destructive/10 hover:text-destructive"
                 >
                   <LogOut className="h-3.5 w-3.5 flex-shrink-0" />
-                  <span>Cerrar Sesión</span>
+                  <span>Cerrar sesión</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

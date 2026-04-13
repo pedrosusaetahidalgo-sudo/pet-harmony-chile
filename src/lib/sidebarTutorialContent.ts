@@ -32,9 +32,9 @@ export const SIDEBAR_TUTORIALS: SectionTutorial[] = [
         tip: 'Revisa tu dashboard cada mañana para no perderte nada.',
       },
       {
-        title: 'Mis mascotas',
+        title: 'Mis mascotas y Paw Cards',
         description:
-          'Aquí vive el perfil de cada una de tus mascotas: foto, raza, edad, peso y su ficha clínica completa. Puedes agregar hasta 2 mascotas gratis o ilimitadas con Premium.',
+          'Cada mascota tiene su perfil completo con ficha clínica y una Paw Card coleccionable única estilo TCG. Voltea tu carta para ver el QR: otros usuarios pueden escanearla y coleccionarla.',
         tip: 'La ficha clínica es la joya de la corona: puedes descargarla como PDF y compartirla con tu vet.',
       },
       {
@@ -68,6 +68,11 @@ export const SIDEBAR_TUTORIALS: SectionTutorial[] = [
           'Visualiza en un mapa interactivo todos los servicios y veterinarios cercanos. Ideal para encontrar opciones rápido cuando estás fuera de casa.',
         tip: 'El mapa usa tu ubicación para mostrarte lo más cercano primero.',
       },
+      {
+        title: 'Banco de sangre',
+        description:
+          'Registra a tu mascota como donante de sangre y ayuda a salvar vidas. Encuentra donantes compatibles cuando tu mascota lo necesite.',
+      },
     ],
   },
   {
@@ -91,6 +96,12 @@ export const SIDEBAR_TUTORIALS: SectionTutorial[] = [
         title: 'Mensajes',
         description:
           'Chatea directamente con otros dueños, veterinarios o proveedores de servicios. Coordina paseos, consultas o simplemente conversa.',
+      },
+      {
+        title: 'Paw Cards y colección',
+        description:
+          'Tus mascotas son tus primeras Paw Cards. Escanea las cards de otros usuarios para expandir tu colección. Cada card es única y tiene un ranking basado en cuántas veces ha sido coleccionada.',
+        tip: 'Comparte tu QR para que más personas coleccionen tu Paw Card.',
       },
       {
         title: 'Paw Game',

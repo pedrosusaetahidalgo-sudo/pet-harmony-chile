@@ -23,7 +23,7 @@ import {
 } from '@/hooks/usePetVetLinks';
 
 function calculateAge(birthDate: string): string {
-  const birth = new Date(birthDate);
+  const birth = new Date(birthDate + 'T00:00:00');
   const now = new Date();
   let years = now.getFullYear() - birth.getFullYear();
   let months = now.getMonth() - birth.getMonth();

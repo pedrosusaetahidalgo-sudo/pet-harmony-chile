@@ -447,6 +447,29 @@ const Index = () => {
         </div>
       </section>
 
+      {/* 8b · CTA Partners — tiendas, peluquerías, paseadores, etc. */}
+      <section className="px-4 py-12 md:py-16 bg-gradient-to-b from-brand-50/60 to-white">
+        <div className="container mx-auto max-w-3xl text-center">
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-100 px-3 py-1 text-xs font-semibold text-brand-700 mb-4">
+            <Sparkles className="h-3.5 w-3.5" />
+            Programa de Partners
+          </span>
+          <h2 className="text-2xl font-bold md:text-3xl mb-2">¿Tienes un negocio de mascotas?</h2>
+          <p className="text-muted-foreground max-w-xl mx-auto mb-6">
+            Tiendas, peluquerías, paseadores, cuidadores, seguros, crematorios y más. Registra tu
+            negocio gratis y llega a miles de dueños.
+          </p>
+          <Button
+            size="lg"
+            onClick={() => navigate('/registro-partner')}
+            className="h-12 rounded-xl bg-brand-600 hover:bg-brand-700 px-8 text-base font-semibold"
+          >
+            Registrar mi negocio gratis
+            <ArrowRight className="ml-1.5 h-5 w-5" />
+          </Button>
+        </div>
+      </section>
+
       {/* 9 · FAQ */}
       <section className="px-4 py-20 md:py-24">
         <div className="container mx-auto max-w-2xl">

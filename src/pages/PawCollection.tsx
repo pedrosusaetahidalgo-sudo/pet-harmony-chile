@@ -4,8 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Heart, PawPrint, Trophy, Filter, ArrowLeft, Sparkles, Users } from '@/lib/icons';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Heart, PawPrint, Trophy, Filter, ArrowLeft, Sparkles, Users, Crown } from '@/lib/icons';
 import { usePawCollection, usePawCollectionStats } from '@/hooks/usePawCollection';
+import { usePawCardRanking } from '@/hooks/usePawCardRanking';
 import { PawCardHoloPattern } from '@/components/paw-cards/PawCardHoloPattern';
 import { getRarity, RARITY_LABELS, RARITY_RING } from '@/components/PetCardCompact';
 import { HOLO_PATTERN_MAP, getSpeciesPalette } from '@/lib/paw-cards';
@@ -95,6 +97,7 @@ const PawCollection = () => {
   const navigate = useNavigate();
   const { data: collection = [], isLoading } = usePawCollection();
   const { data: stats } = usePawCollectionStats();
+  const { data: ranking = [] } = usePawCardRanking(10);
   const [filter, setFilter] = useState<FilterType>('all');
 
   const filtered =
@@ -157,6 +160,47 @@ const PawCollection = () => {
               <p className="text-xs text-muted-foreground">Mis Paw Cards</p>
             </div>
           </div>
+        )}
+
+        {/* Ranking - Top Paw Cards más coleccionadas */}
+        {ranking.length > 0 && (
+          <Card className="mb-6 border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <Crown className="h-4 w-4 text-amber-500" />
+                Paw Cards más coleccionadas
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pb-3">
+              <div className="flex gap-3 overflow-x-auto pb-1 scrollbar-hide">
+                {ranking.map((card, i) => (
+                  <button
+                    key={card.petId}
+                    onClick={() => navigate(`/paw-card/${card.pawCardId}`)}
+                    className="flex-shrink-0 flex items-center gap-2 p-2 rounded-lg bg-white border border-amber-100 hover:shadow-sm transition-shadow min-w-[160px]"
+                  >
+                    <div className="relative">
+                      <Avatar className="h-10 w-10 ring-2 ring-amber-200">
+                        <AvatarImage src={card.photoUrl || undefined} alt={card.petName} />
+                        <AvatarFallback className="bg-amber-50 text-amber-400">
+                          <PawPrint className="h-4 w-4" />
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="absolute -top-1 -left-1 h-5 w-5 rounded-full bg-amber-400 text-white text-[10px] font-bold flex items-center justify-center">
+                        {i + 1}
+                      </span>
+                    </div>
+                    <div className="min-w-0 text-left">
+                      <p className="text-xs font-semibold truncate">{card.petName}</p>
+                      <p className="text-[10px] text-muted-foreground">
+                        {card.collectorCount} {card.collectorCount === 1 ? 'scan' : 'scans'}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         {/* Filters */}

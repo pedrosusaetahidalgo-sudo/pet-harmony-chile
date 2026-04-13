@@ -31,6 +31,8 @@ import {
   PERSONALITY_OPTIONS,
 } from '@/lib/petOptions';
 import { SelectWithOther } from '@/components/ui/select-with-other';
+import { ComboboxWithOther } from '@/components/ui/combobox-with-other';
+import { BREEDS_BY_SPECIES } from '@/lib/breeds';
 
 interface CreateAdoptionPostProps {
   open: boolean;
@@ -168,6 +170,11 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
                 <SelectContent className="bg-background z-50">
                   <SelectItem value="perro">Perro</SelectItem>
                   <SelectItem value="gato">Gato</SelectItem>
+                  <SelectItem value="conejo">Conejo</SelectItem>
+                  <SelectItem value="hamster">Hámster</SelectItem>
+                  <SelectItem value="ave">Ave</SelectItem>
+                  <SelectItem value="tortuga">Tortuga</SelectItem>
+                  <SelectItem value="pez">Pez</SelectItem>
                   <SelectItem value="otro">Otro</SelectItem>
                 </SelectContent>
               </Select>
@@ -176,8 +183,16 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
 
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="breed">Raza</Label>
-              <Input id="breed" {...register('breed')} />
+              <Label>Raza</Label>
+              <ComboboxWithOther
+                options={BREEDS_BY_SPECIES[watch('species')] || []}
+                value={watch('breed') || ''}
+                onValueChange={(v) => setValue('breed', v)}
+                placeholder="Selecciona raza"
+                searchPlaceholder="Buscar raza..."
+                emptyMessage="Raza no encontrada."
+                otherPlaceholder="Escribe la raza..."
+              />
             </div>
 
             <div>

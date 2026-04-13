@@ -217,6 +217,23 @@ export default function Servicios() {
           </button>{' '}
           con reseñas verificadas.
         </div>
+
+        {/* CTA para partners */}
+        <div className="mt-4 p-5 bg-gradient-to-r from-brand-50 to-purple-50 rounded-xl border border-brand-200 text-center">
+          <p className="text-sm font-semibold text-brand-800 mb-1">
+            ¿Tienes un negocio relacionado con mascotas?
+          </p>
+          <p className="text-xs text-brand-600 mb-3">
+            Veterinarias, tiendas, peluquerías, paseadores y más — registra tu negocio gratis.
+          </p>
+          <button
+            onClick={() => navigate('/registro-partner')}
+            className="inline-flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium px-5 py-2 rounded-lg transition-colors"
+          >
+            Registrar mi negocio
+            <ArrowRight className="h-4 w-4" />
+          </button>
+        </div>
       </div>
     </div>
   );

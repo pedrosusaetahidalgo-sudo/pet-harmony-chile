@@ -2067,6 +2067,69 @@ export type Database = {
         };
         Relationships: [];
       };
+      partner_submissions: {
+        Row: {
+          id: string;
+          categoria: string;
+          nombre_negocio: string;
+          nombre_contacto: string;
+          email: string;
+          telefono: string | null;
+          website: string | null;
+          instagram: string | null;
+          direccion: string | null;
+          comuna: string | null;
+          ciudad: string | null;
+          descripcion: string | null;
+          servicios_ofrecidos: string[] | null;
+          horario: string | null;
+          status: string | null;
+          notas_admin: string | null;
+          created_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          categoria: string;
+          nombre_negocio: string;
+          nombre_contacto: string;
+          email: string;
+          telefono?: string | null;
+          website?: string | null;
+          instagram?: string | null;
+          direccion?: string | null;
+          comuna?: string | null;
+          ciudad?: string | null;
+          descripcion?: string | null;
+          servicios_ofrecidos?: string[] | null;
+          horario?: string | null;
+          status?: string | null;
+          notas_admin?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          categoria?: string;
+          nombre_negocio?: string;
+          nombre_contacto?: string;
+          email?: string;
+          telefono?: string | null;
+          website?: string | null;
+          instagram?: string | null;
+          direccion?: string | null;
+          comuna?: string | null;
+          ciudad?: string | null;
+          descripcion?: string | null;
+          servicios_ofrecidos?: string[] | null;
+          horario?: string | null;
+          status?: string | null;
+          notas_admin?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [];
+      };
       partners: {
         Row: {
           ad_image_url: string | null;

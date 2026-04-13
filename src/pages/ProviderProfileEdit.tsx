@@ -33,6 +33,7 @@ import { SANTIAGO_COMUNAS, VET_SPECIALTIES } from '@/lib/vetDirectory';
 import { logger } from '@/lib/logger';
 import MisPreciosEditor from '@/components/provider/MisPreciosEditor';
 import { VetOnboardingWizard } from '@/components/provider/VetOnboardingWizard';
+import { ProfilePreviewCard } from '@/components/provider/ProfilePreviewCard';
 
 const EMPTY: ProviderProfileForm = {
   display_name: '',
@@ -155,8 +156,8 @@ export default function ProviderProfileEdit() {
   return (
     <div className="min-h-screen bg-background">
       <PageHeader
-        title="Mi perfil profesional"
-        subtitle="Completa tu información para aparecer en el directorio público."
+        title="Tu perfil en el directorio"
+        subtitle="Así te ven los dueños de mascotas en pawfriend.cl/veterinarios"
         onBack={() => navigate('/provider/dashboard')}
         actions={
           provider?.slug ? (
@@ -170,9 +171,7 @@ export default function ProviderProfileEdit() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() =>
-                toast.info('Guarda tu perfil primero para generar tu URL pública')
-              }
+              onClick={() => toast.info('Guarda tu perfil primero para generar tu URL pública')}
             >
               <ExternalLink className="h-4 w-4 mr-1" />
               <span className="hidden sm:inline">Vista previa</span>
@@ -181,6 +180,9 @@ export default function ProviderProfileEdit() {
         }
       />
       <div className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
+        {/* Preview en vivo */}
+        <ProfilePreviewCard form={form} slug={provider?.slug} />
+
         {/* Completeness */}
         <Card>
           <CardHeader className="pb-3">
@@ -432,11 +434,16 @@ export default function ProviderProfileEdit() {
           </CardContent>
         </Card>
 
-        {/* 4. Precios */}
+        {/* 4. Mis precios públicos */}
+        <MisPreciosEditor providerId={provider?.id} />
+
+        {/* 5. Precio mínimo (Desde $X en directorio) */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">4. Precios</CardTitle>
-            <CardDescription>Aparecerá como "Desde $X" en tu perfil.</CardDescription>
+            <CardTitle className="text-lg">5. Precio base</CardTitle>
+            <CardDescription>
+              Aparecerá como "Desde $X" en tu perfil del directorio.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div>
@@ -455,10 +462,10 @@ export default function ProviderProfileEdit() {
           </CardContent>
         </Card>
 
-        {/* 5. Visibilidad */}
+        {/* 6. Visibilidad */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">5. Visibilidad pública</CardTitle>
+            <CardTitle className="text-lg">6. Visibilidad pública</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="flex items-start justify-between gap-4">
@@ -486,9 +493,6 @@ export default function ProviderProfileEdit() {
             </div>
           </CardContent>
         </Card>
-
-        {/* 6. Mis precios publicos */}
-        <MisPreciosEditor providerId={provider?.id} />
 
         {/* Save bar */}
         <div className="sticky bottom-4 z-10">

@@ -1,5 +1,5 @@
-import { Card } from "@/components/ui/card";
-import { Heart } from "@/lib/icons";
+import { Card } from '@/components/ui/card';
+import { Heart } from '@/lib/icons';
 
 interface MemorialCardProps {
   pet: {
@@ -16,7 +16,7 @@ interface MemorialCardProps {
 }
 
 export function MemorialCard({ pet, onClick }: MemorialCardProps) {
-  const birthYear = pet.birth_date ? new Date(pet.birth_date).getFullYear() : null;
+  const birthYear = pet.birth_date ? new Date(pet.birth_date + 'T00:00:00').getFullYear() : null;
   const passedYear = pet.passed_away_at ? new Date(pet.passed_away_at).getFullYear() : null;
   const photoUrl = pet.memorial_photo_url || pet.photo_url;
 
@@ -27,11 +27,7 @@ export function MemorialCard({ pet, onClick }: MemorialCardProps) {
     >
       <div className="relative">
         {photoUrl ? (
-          <img
-            src={photoUrl}
-            alt={pet.name}
-            className="w-full h-40 object-cover"
-          />
+          <img src={photoUrl} alt={pet.name} className="w-full h-40 object-cover" />
         ) : (
           <div className="w-full h-40 bg-purple-50 flex items-center justify-center">
             <Heart className="h-10 w-10 text-purple-200" />

@@ -410,16 +410,26 @@ const PetClinicalRecord = () => {
           </TabsContent>
         </Tabs>
 
-        {/* Memorial entry point - subtle, at the bottom */}
+        {/* Memorial entry point */}
         {pet.lifecycle_status !== 'memorial' && (
-          <div className="text-center pt-4">
-            <button
-              onClick={() => setShowMemorialFlow(true)}
-              className="text-xs text-slate-400 hover:text-slate-600 transition-colors"
-            >
-              Si {pet.name} ya no está con nosotros...
-            </button>
-          </div>
+          <Card className="border-dashed border-purple-200/60 bg-purple-50/20 mt-4">
+            <CardContent className="py-3 px-4 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Heart className="h-4 w-4 text-purple-300" />
+                <span className="text-sm text-muted-foreground">
+                  Si {pet.name} ya no está contigo...
+                </span>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowMemorialFlow(true)}
+                className="text-xs text-purple-400 hover:text-purple-600"
+              >
+                Crear memorial
+              </Button>
+            </CardContent>
+          </Card>
         )}
 
         {/* Memorial flow dialog */}

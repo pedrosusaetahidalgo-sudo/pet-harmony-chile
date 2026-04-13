@@ -453,7 +453,7 @@ export function PawCardRevealCeremony({ pet, onComplete }: PawCardRevealCeremony
               data-rarity={rarity}
             >
               <Star className="h-4 w-4" />
-              Ver mi coleccion
+              Ir a mis mascotas
             </button>
           </div>
         )}

@@ -77,6 +77,25 @@ export const ADOPTION_REASON_OPTIONS = [
   { value: 'incompatibilidad', label: 'Incompatibilidad con otras mascotas' },
 ] as const;
 
+// ── Tipo de sangre por especie ──
+
+export const BLOOD_TYPES_BY_SPECIES: Record<string, { value: string; label: string }[]> = {
+  perro: [
+    { value: 'DEA_1.1_pos', label: 'DEA 1.1 positivo' },
+    { value: 'DEA_1.1_neg', label: 'DEA 1.1 negativo' },
+    { value: 'DEA_1.2', label: 'DEA 1.2' },
+    { value: 'DEA_3', label: 'DEA 3' },
+    { value: 'DEA_4', label: 'DEA 4' },
+    { value: 'DEA_5', label: 'DEA 5' },
+    { value: 'DEA_7', label: 'DEA 7' },
+  ],
+  gato: [
+    { value: 'tipo_A', label: 'Tipo A' },
+    { value: 'tipo_B', label: 'Tipo B' },
+    { value: 'tipo_AB', label: 'Tipo AB' },
+  ],
+};
+
 // ── Personalidad (reutilizable en AddPet y adopción) ──
 
 export const PERSONALITY_OPTIONS = [

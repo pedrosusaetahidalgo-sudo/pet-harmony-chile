@@ -18,6 +18,7 @@ import {
   ClipboardList,
   Mail,
   TrendingUp,
+  Mic,
 } from '@/lib/icons';
 import { ProviderDirectoryCard } from './ProviderDirectoryCard';
 import { SharedFichasCard } from './SharedFichasCard';
@@ -112,6 +113,22 @@ const ProviderDashboard = () => {
           </Link>
         </div>
       </div>
+
+      {/* Tip: grabación de consultas */}
+      <Card className="border-red-100 bg-gradient-to-r from-red-50 to-orange-50">
+        <CardContent className="py-3 px-4 flex items-center gap-3">
+          <div className="p-2 bg-red-100 rounded-lg flex-shrink-0">
+            <Mic className="h-5 w-5 text-red-500" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium">Graba tus consultas con IA</p>
+            <p className="text-xs text-muted-foreground">
+              Cuando un dueño te comparta su ficha, usa el botón "Grabar" para dictar y generar
+              notas clínicas automáticamente.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Agenda de hoy */}
       <TodayAgendaCard />

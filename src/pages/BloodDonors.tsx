@@ -48,7 +48,7 @@ interface DonorPet {
 
 function getAge(birthDate: string | null): number | null {
   if (!birthDate) return null;
-  const diff = Date.now() - new Date(birthDate).getTime();
+  const diff = Date.now() - new Date(birthDate + 'T00:00:00').getTime();
   return Math.floor(diff / (365.25 * 24 * 60 * 60 * 1000));
 }
 

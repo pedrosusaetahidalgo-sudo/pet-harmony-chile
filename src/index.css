@@ -482,10 +482,10 @@ span {
 @keyframes tcg-float {
   0%,
   100% {
-    transform: translateY(0);
+    translate: 0 0;
   }
   50% {
-    transform: translateY(-4px);
+    translate: 0 -4px;
   }
 }
 
@@ -1267,6 +1267,8 @@ span {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
   transform: rotateY(0deg);
+  /* Isolate blend modes so they don't flatten the parent preserve-3d context in Safari */
+  isolation: isolate;
 }
 
 .paw-card-face-back {
@@ -1278,6 +1280,8 @@ span {
   border-radius: calc(1rem - 3px);
   overflow: hidden;
   z-index: 1;
+  /* Isolate blend modes so they don't flatten the parent preserve-3d context in Safari */
+  isolation: isolate;
 }
 
 /* Epic gets slightly thicker border padding */
@@ -1980,11 +1984,11 @@ span {
 }
 
 .paw-card-flipper.cursor-pointer:active {
-  transform: rotateX(var(--tcg-rotate-x)) rotateY(var(--tcg-rotate-y)) scale(0.98);
+  scale: 0.98;
 }
 
 .paw-card-flipper.cursor-pointer.flipped:active {
-  transform: rotateY(180deg) scale(0.98);
+  scale: 0.98;
 }
 
 /* Holo tier badge for back */

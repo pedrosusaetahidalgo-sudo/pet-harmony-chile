@@ -2,7 +2,7 @@
 
 > **Propósito:** staging de MDs accionables que aún **no** se han ejecutado (total o parcialmente).
 > **Qué NO vive aquí:** docs vivas ([CLAUDE.md](../CLAUDE.md), [INDEX.md](../INDEX.md), [MAPA_FUNCIONAL_COMPLETO.md](../MAPA_FUNCIONAL_COMPLETO.md), [AGENTS.md](../AGENTS.md), [diagrams/](../diagrams/)), auditorías ([audits/](../audits/)), archivados ([_archive/](../_archive/)).
-> **Última actualización:** 2026-04-12
+> **Última actualización:** 2026-04-13
 
 ---
 
@@ -20,21 +20,18 @@
 | # | Documento | Tipo | Prioridad | Estado |
 |---|---|---|---|---|
 | 1 | [ROTAR_API_KEYS.md](ROTAR_API_KEYS.md) | Runbook seguridad | 🔴 Alta | Requiere dashboards externos — Pedro debe ejecutar manualmente |
-| 2 | [dual-role-toggle-blueprint.md](dual-role-toggle-blueprint.md) | Blueprint | 🟠 Media | Parcial — infraestructura `useActiveRole` existe, falta navegación adaptativa |
-| 3 | [profile-redesign-blueprint.md](profile-redesign-blueprint.md) | Blueprint | 🟠 Media | Parcial — sub-componentes existen, falta reorganizar a layout 6 bloques + merge Settings |
-| 4 | [REVISION_PROVIDER_PROFILE_EDIT.md](REVISION_PROVIDER_PROFILE_EDIT.md) | Audit + fix | 🟠 Media | Parcial — UX/nomenclatura pendiente, lógica backend OK |
-| 5 | [AUDIT_DATOS_PARAMETRIZADOS.md](AUDIT_DATOS_PARAMETRIZADOS.md) | Audit | 🟠 Media | Parcial — especies/especialidades hechas, revisar dropdowns restantes |
-| 6 | [REDISENO_MY_PETS_CARDS.md](REDISENO_MY_PETS_CARDS.md) | Blueprint | 🟠 Media | Parcial — PetCardCompact con TCG/rarity implementado, carrusel horizontal pendiente |
-| 7 | [map-redesign-blueprint.md](map-redesign-blueprint.md) | Blueprint | 🟠 Media | Parcial — tab Partners + deep linking implementados, bottom sheet/clustering/FAB radial pendientes |
-| 8 | [BASE_DATOS_PARTNERS_CHILE.md](BASE_DATOS_PARTNERS_CHILE.md) | Data | 🟠 Media | Parcial — migración schema + seed refugios OK, falta poblar partners con data real |
-| 9 | [features/FEATURE_AI_WEB_SEARCH_UPGRADE.md](features/FEATURE_AI_WEB_SEARCH_UPGRADE.md) | Feature | 🟠 Media | Pendiente — requiere decisión del dueño (scope ~14h + tokens) |
-| 10 | [PROPUESTAS_FUNCIONALIDADES.md](PROPUESTAS_FUNCIONALIDADES.md) | Menú features | 🟡 Media-baja | Documento vivo — menú de propuestas validadas para elegir |
-| 11 | [INTEGRACIONES_SETUP.md](INTEGRACIONES_SETUP.md) | Runbook | 🟡 Media-baja | Pendiente — setup WhatsApp + Google Calendar (código en repo, faltan cuentas/secrets) |
-| 12 | [CONSOLIDACION_MOBILE.md](CONSOLIDACION_MOBILE.md) | Plan mobile | 🟡 Media-baja | Pendiente — Capacitor iOS/Android consolidation |
-| 13 | [testing-virtual-user-blueprint.md](testing-virtual-user-blueprint.md) | Blueprint QA | 🟡 Media-baja | Pendiente — Playwright virtual user agent |
-| 14 | [migrations/PLAN_GOOGLE_PLACES_MIGRATION.md](migrations/PLAN_GOOGLE_PLACES_MIGRATION.md) | Migración | 🟡 Media-baja | Cost-gated — requiere decisión sobre costos Google Places |
-| 15 | [feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md](feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md) | Feedback | 🟡 Media-baja | Parcial — 5/8 done, 3 features nuevas opcionales |
-| 16 | [tooling/](tooling/) | Plan producción | 🟡 Baja | Plan 8 semanas — entra cuando producto esté estable |
+| 2 | [map-redesign-blueprint.md](map-redesign-blueprint.md) | Blueprint | 🟠 Media | Parcial — tab Partners + deep linking implementados, bottom sheet/clustering/FAB radial pendientes |
+| 3 | [BASE_DATOS_PARTNERS_CHILE.md](BASE_DATOS_PARTNERS_CHILE.md) | Data | 🟠 Media | Parcial — migración schema + seed refugios OK, falta poblar partners con data real |
+| 4 | [features/FEATURE_AI_WEB_SEARCH_UPGRADE.md](features/FEATURE_AI_WEB_SEARCH_UPGRADE.md) | Feature | 🟠 Media | Pendiente — requiere decisión del dueño (scope ~14h + tokens) |
+| 5 | [PROPUESTAS_FUNCIONALIDADES.md](PROPUESTAS_FUNCIONALIDADES.md) | Menú features | 🟡 Media-baja | Documento vivo — menú de propuestas validadas para elegir |
+| 6 | [INTEGRACIONES_SETUP.md](INTEGRACIONES_SETUP.md) | Runbook | 🟡 Media-baja | Pendiente — setup WhatsApp + Google Calendar (código en repo, faltan cuentas/secrets) |
+| 7 | [CONSOLIDACION_MOBILE.md](CONSOLIDACION_MOBILE.md) | Plan mobile | 🟡 Media-baja | Pendiente — Capacitor iOS/Android consolidation |
+| 8 | [testing-virtual-user-blueprint.md](testing-virtual-user-blueprint.md) | Blueprint QA | 🟡 Media-baja | Pendiente — Playwright virtual user agent |
+| 9 | [migrations/PLAN_GOOGLE_PLACES_MIGRATION.md](migrations/PLAN_GOOGLE_PLACES_MIGRATION.md) | Migración | 🟡 Media-baja | Cost-gated — requiere decisión sobre costos Google Places |
+| 10 | [feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md](feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md) | Feedback | 🟡 Media-baja | 8/9 done — solo pendiente: localizador tiendas (P4 futuro) + grupos comunidad MVP (P1 scope grande) |
+| 11 | [tooling/](tooling/) | Plan producción | 🟡 Baja | Plan 8 semanas — entra cuando producto esté estable |
+| 12 | [PARTNERS_ONBOARDING.md](PARTNERS_ONBOARDING.md) | Plan partners | 🟠 Media | En ejecución — landing `/registro-partner` + emails + migración creados |
+| 13 | [EMAILS_PARTNERS.md](EMAILS_PARTNERS.md) | Emails comerciales | 🟠 Media | Listo — 11 templates por categoría + plantilla WhatsApp |
 
 ---
 
@@ -50,6 +47,11 @@
 
 | Documento | Razón | Fecha |
 |---|---|---|
+| `dual-role-toggle-blueprint.md` → `_archive/` | 100% ejecutado: toggle header/mobile, BottomTabBar/Sidebar condicionales, RoleGuard, BecomeProviderCTA | 2026-04-13 |
+| `profile-redesign-blueprint.md` → `_archive/` | 90%+ ejecutado: 6 bloques verticales, pets carousel, settings integrado, BecomeProviderCTA | 2026-04-13 |
+| `REVISION_PROVIDER_PROFILE_EDIT.md` → `_archive/` | Ejecutado: renombrado a "Tu perfil en el directorio", preview card en vivo, MisPreciosEditor reordenado | 2026-04-13 |
+| `AUDIT_DATOS_PARAMETRIZADOS.md` → `_archive/` | 100% ejecutado: SelectWithOther, ComboboxWithOther, breeds, colores, blood type, especies unificadas | 2026-04-13 |
+| `REDISENO_MY_PETS_CARDS.md` → `_archive/` | Parcial archivado — PawCardFlippable TCG implementado, carrusel OK en Profile, user decidió no cambiar layout de MyPets | 2026-04-13 |
 | `AUDIT_SIDEBAR_PANELS.md` → `_archive/` | Sidebar reorganizado, links redundantes removidos | 2026-04-12 |
 | `feed-redesign-blueprint.md` → `_archive/` | 14 componentes + 6 hooks + migración SQL implementados | 2026-04-12 |
 | `bugs/REDISENO_DASHBOARD_PROVIDER.md` → `_archive/` | Dashboard reescrito con métricas reales (commit 939576e) | 2026-04-12 |

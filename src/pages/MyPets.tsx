@@ -5,7 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Plus, Heart, PawPrint, ChevronDown, MessageCircle, Star, Trophy } from '@/lib/icons';
+import {
+  Plus,
+  Heart,
+  PawPrint,
+  ChevronDown,
+  MessageCircle,
+  Star,
+  Trophy,
+  FileText,
+} from '@/lib/icons';
 import { getRarity, type Rarity } from '@/components/PetCardCompact';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -25,6 +34,7 @@ import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { useGoToAddPet } from '@/hooks/useCanAddPet';
 import { useClaimPetInvitation } from '@/hooks/useClaimPetInvitation';
 import { PawCardFlippable } from '@/components/paw-cards/PawCardFlippable';
+import { PawCardMemorial } from '@/components/paw-cards/PawCardMemorial';
 import { ShareWithVetModal } from '@/components/medical/ShareWithVetModal';
 import type { HoloPattern } from '@/lib/paw-cards';
 import { generatePawCardId, getBreedHoloPattern } from '@/lib/paw-cards';
@@ -101,8 +111,12 @@ const MyPets = () => {
       id: string;
       name: string;
       species: string;
+      breed: string | null;
       photo_url: string | null;
       passed_away_at: string | null;
+      memorial_message: string | null;
+      holo_pattern: string | null;
+      paw_card_id: string | null;
     }[]
   >([]);
   const [petScores, setPetScores] = useState<Record<string, number>>({});
@@ -146,7 +160,9 @@ const MyPets = () => {
   const fetchMemorialPets = useCallback(async () => {
     const { data } = await supabase
       .from('pets')
-      .select('id, name, species, photo_url, passed_away_at')
+      .select(
+        'id, name, species, breed, photo_url, passed_away_at, memorial_message, holo_pattern, paw_card_id'
+      )
       .eq('owner_id', user?.id)
       .eq('lifecycle_status', 'memorial')
       .order('passed_away_at', { ascending: false });
@@ -432,37 +448,18 @@ const MyPets = () => {
       {memorialPets.length > 0 && (
         <Collapsible open={memorialOpen} onOpenChange={setMemorialOpen} className="mt-8">
           <CollapsibleTrigger className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors w-full py-2">
-            <Heart className="h-4 w-4" />
+            <Heart className="h-4 w-4 text-purple-400" />
             <span>En memoria ({memorialPets.length})</span>
             <ChevronDown
               className={`h-4 w-4 ml-auto transition-transform ${memorialOpen ? 'rotate-180' : ''}`}
             />
           </CollapsibleTrigger>
           <CollapsibleContent className="mt-3">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-3 -mx-4 px-4 scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible">
               {memorialPets.map((pet) => (
-                <Card key={pet.id} className="opacity-75 hover:opacity-100 transition-opacity">
-                  <CardContent className="p-4 flex items-center gap-3">
-                    <Avatar className="h-12 w-12 ring-2 ring-purple-200">
-                      <AvatarImage src={pet.photo_url || undefined} alt={pet.name} />
-                      <AvatarFallback className="bg-purple-50 text-purple-400">
-                        {pet.name.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm">{pet.name}</p>
-                      <p className="text-xs text-muted-foreground">En nuestro corazón</p>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => navigate(LINKS.petClinical(pet.id))}
-                      className="text-xs"
-                    >
-                      Ver ficha
-                    </Button>
-                  </CardContent>
-                </Card>
+                <div key={pet.id} className="snap-center shrink-0 w-[220px] md:w-auto">
+                  <PawCardMemorial pet={pet} score={petScores[pet.id]} />
+                </div>
               ))}
             </div>
             <Button

@@ -20,6 +20,7 @@ import { PetIdentityCard, AddPetCard } from '@/components/profile/PetIdentityCar
 import { ProfileCompletionCard } from '@/components/profile/ProfileCompletionCard';
 import { ProfileSettingsList } from '@/components/profile/ProfileSettingsList';
 import { EditProfileDrawer } from '@/components/profile/EditProfileDrawer';
+import { BecomeProviderCTA } from '@/components/BecomeProviderCTA';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 
 interface ProfileData {
@@ -247,6 +248,9 @@ const Profile = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* ── CTA para convertirse en profesional ── */}
+      <BecomeProviderCTA />
 
       {/* ── Bloque F: Ajustes y cuenta ── */}
       <ProfileSettingsList

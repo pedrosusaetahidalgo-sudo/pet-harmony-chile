@@ -17,7 +17,13 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { supabase } from '@/integrations/supabase/client';
@@ -178,7 +184,7 @@ export default function RegistroVeterinario() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
       <PublicHeader />
-      <PageHeader title="Registro veterinario" onBack={() => navigate('/para-veterinarios')} />
+      <PageHeader title="Registro profesional" onBack={() => navigate('/para-veterinarios')} />
 
       <main className="container mx-auto px-4 py-8 max-w-2xl">
         <div className="mb-6">
@@ -195,7 +201,9 @@ export default function RegistroVeterinario() {
           <CardContent className="p-6 md:p-8">
             {step === 0 && <StepType form={form} update={update} />}
             {step === 1 && <StepAccount form={form} update={update} />}
-            {step === 2 && <StepProfile form={form} update={update} toggleArr={toggleArr} setForm={setForm} />}
+            {step === 2 && (
+              <StepProfile form={form} update={update} toggleArr={toggleArr} setForm={setForm} />
+            )}
             {step === 3 && <StepDone slug={form.createdSlug} />}
 
             {step < 3 && (
@@ -253,26 +261,27 @@ function StepType({
   form: FormState;
   update: <K extends keyof FormState>(k: K, v: FormState[K]) => void;
 }) {
-  const options: { value: ProviderType; icon: typeof Stethoscope; title: string; desc: string }[] = [
-    {
-      value: 'individual',
-      icon: Stethoscope,
-      title: 'Veterinario individual',
-      desc: 'Atiendes en consulta propia o trabajas de manera independiente.',
-    },
-    {
-      value: 'home_visit',
-      icon: HomeIcon,
-      title: 'Atención a domicilio',
-      desc: 'Visitas a las mascotas en sus hogares.',
-    },
-    {
-      value: 'clinic',
-      icon: Building2,
-      title: 'Clínica veterinaria',
-      desc: 'Tienes un local con varios profesionales.',
-    },
-  ];
+  const options: { value: ProviderType; icon: typeof Stethoscope; title: string; desc: string }[] =
+    [
+      {
+        value: 'individual',
+        icon: Stethoscope,
+        title: 'Veterinario individual',
+        desc: 'Atiendes en consulta propia o trabajas de manera independiente.',
+      },
+      {
+        value: 'home_visit',
+        icon: HomeIcon,
+        title: 'Atención a domicilio',
+        desc: 'Visitas a las mascotas en sus hogares.',
+      },
+      {
+        value: 'clinic',
+        icon: Building2,
+        title: 'Clínica veterinaria',
+        desc: 'Tienes un local con varios profesionales.',
+      },
+    ];
 
   return (
     <div className="space-y-4">
@@ -290,9 +299,7 @@ function StepType({
             type="button"
             onClick={() => update('type', opt.value)}
             className={`w-full text-left p-4 rounded-lg border-2 transition-all flex items-start gap-4 ${
-              active
-                ? 'border-purple-500 bg-purple-50'
-                : 'border-slate-200 hover:border-purple-300'
+              active ? 'border-purple-500 bg-purple-50' : 'border-slate-200 hover:border-purple-300'
             }`}
           >
             <div
@@ -326,15 +333,15 @@ function StepAccount({
     <div className="space-y-4">
       <div className="text-center mb-2">
         <h1 className="text-2xl font-bold mb-1">Datos de tu cuenta</h1>
-        <p className="text-sm text-muted-foreground">
-          Vamos a crear tu cuenta en Paw Friend.
-        </p>
+        <p className="text-sm text-muted-foreground">Vamos a crear tu cuenta en Paw Friend.</p>
       </div>
 
       {form.alreadyRegistered && (
         <Alert variant="destructive" className="border-orange-300 bg-orange-50">
           <AlertDescription className="flex flex-col gap-2">
-            <span>Ya existe una cuenta con el email <strong>{form.email}</strong>.</span>
+            <span>
+              Ya existe una cuenta con el email <strong>{form.email}</strong>.
+            </span>
             <Button
               variant="outline"
               size="sm"
@@ -424,9 +431,7 @@ function StepProfile({
     <div className="space-y-5">
       <div className="text-center mb-2">
         <h1 className="text-2xl font-bold mb-1">Construye tu perfil</h1>
-        <p className="text-sm text-muted-foreground">
-          Esto es lo que verán tus futuros pacientes.
-        </p>
+        <p className="text-sm text-muted-foreground">Esto es lo que verán tus futuros pacientes.</p>
       </div>
 
       <div>
@@ -518,14 +523,22 @@ function StepProfile({
                 onClick={() => {
                   const allInZone = comunas.every((c) => form.service_areas.includes(c));
                   if (allInZone) {
-                    setForm((f) => ({ ...f, service_areas: f.service_areas.filter((a) => !comunas.includes(a)) }));
+                    setForm((f) => ({
+                      ...f,
+                      service_areas: f.service_areas.filter((a) => !comunas.includes(a)),
+                    }));
                   } else {
-                    setForm((f) => ({ ...f, service_areas: [...new Set([...f.service_areas, ...comunas])] }));
+                    setForm((f) => ({
+                      ...f,
+                      service_areas: [...new Set([...f.service_areas, ...comunas])],
+                    }));
                   }
                 }}
                 className="text-[10px] text-purple-600 hover:underline"
               >
-                {comunas.every((c) => form.service_areas.includes(c)) ? 'Quitar zona' : 'Seleccionar zona'}
+                {comunas.every((c) => form.service_areas.includes(c))
+                  ? 'Quitar zona'
+                  : 'Seleccionar zona'}
               </button>
             </div>
             <div className="flex flex-wrap gap-1.5">
@@ -589,7 +602,8 @@ function StepDone({ slug }: { slug?: string }) {
       </div>
       <h1 className="text-2xl font-bold">¡Bienvenido a Paw Friend!</h1>
       <p className="text-muted-foreground">
-        Tu cuenta fue creada con éxito. Completa tu perfil al 80% para aparecer en el directorio público.
+        Tu cuenta fue creada con éxito. Completa tu perfil al 80% para aparecer en el directorio
+        público.
       </p>
 
       {profileUrl && (
@@ -604,11 +618,7 @@ function StepDone({ slug }: { slug?: string }) {
       </Badge>
 
       <div className="flex flex-col gap-2 pt-4">
-        <Button
-          size="lg"
-          onClick={() => navigate('/provider/profile-edit')}
-          className="w-full"
-        >
+        <Button size="lg" onClick={() => navigate('/provider/profile-edit')} className="w-full">
           Completar mi perfil ahora
         </Button>
         <Button

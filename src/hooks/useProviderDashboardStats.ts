@@ -88,11 +88,11 @@ export function useProviderDashboardStats() {
             .eq('is_revoked', false)
             .gte('created_at', sevenDaysAgo.toISOString()),
 
-          // Bookings this month (vet_bookings uses vet_id = auth user id)
+          // Bookings this month (legacy vet_id OR directory service_provider_id)
           sb
             .from('vet_bookings')
             .select('id, total_price, status')
-            .eq('vet_id', user.id)
+            .or(`vet_id.eq.${user.id},service_provider_id.eq.${provider.id}`)
             .gte('scheduled_date', startOfMonth),
 
           // Reviews this month

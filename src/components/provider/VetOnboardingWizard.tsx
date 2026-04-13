@@ -26,6 +26,8 @@ import { toast } from 'sonner';
 import {
   useUpsertProviderProfile,
   uploadProviderAvatar,
+  calculateProfileCompleteness,
+  REQUIRED_FOR_DIRECTORY_SCORE,
   type ProviderProfileForm,
 } from '@/hooks/useProviderProfile';
 import { useAuth } from '@/hooks/useAuth';
@@ -105,8 +107,15 @@ export function VetOnboardingWizard() {
   };
 
   const handleFinish = async () => {
+    const { score } = calculateProfileCompleteness(form);
+    const canPublish = score >= REQUIRED_FOR_DIRECTORY_SCORE;
     try {
-      await upsert.mutateAsync({ ...form, is_directory_visible: true });
+      await upsert.mutateAsync({ ...form, is_directory_visible: canPublish });
+      if (!canPublish) {
+        toast.info(
+          `Tu perfil tiene ${score}% de completitud. Necesitas ${REQUIRED_FOR_DIRECTORY_SCORE}% para aparecer en el directorio.`
+        );
+      }
       setDone(true);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Error al guardar');

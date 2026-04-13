@@ -52,13 +52,23 @@ describe('canAccess', () => {
     expect(result.allowed).toBe(true);
   });
 
-  it('blocks free user from share_clinical', () => {
+  it('allows free user share_clinical within quota (1 free use)', () => {
     const result = canAccess('free', 'share_clinical');
+    expect(result.allowed).toBe(true);
+  });
+
+  it('blocks free user share_clinical when quota exhausted', () => {
+    const result = canAccess('free', 'share_clinical', 1);
     expect(result.allowed).toBe(false);
   });
 
-  it('handles zero-value numeric features', () => {
+  it('allows free user ai_vet_assistant within quota (1 free use)', () => {
     const result = canAccess('free', 'ai_vet_assistant');
+    expect(result.allowed).toBe(true);
+  });
+
+  it('blocks free user ai_vet_assistant when quota exhausted', () => {
+    const result = canAccess('free', 'ai_vet_assistant', 1);
     expect(result.allowed).toBe(false);
   });
 

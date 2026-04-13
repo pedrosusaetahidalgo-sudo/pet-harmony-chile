@@ -27,7 +27,12 @@ import { logger } from '@/lib/logger';
 import { useOrganicRewards } from '@/hooks/useOrganicRewards';
 import { BREEDS_BY_SPECIES, getBreedLabel } from '@/lib/breeds';
 import { smartCapitalize, toTitleCase } from '@/lib/format';
-import { PET_COLORS, FOOD_BRANDS, PERSONALITY_OPTIONS } from '@/lib/petOptions';
+import {
+  PET_COLORS,
+  FOOD_BRANDS,
+  PERSONALITY_OPTIONS,
+  BLOOD_TYPES_BY_SPECIES,
+} from '@/lib/petOptions';
 import { SelectWithOther } from '@/components/ui/select-with-other';
 import { ComboboxWithOther } from '@/components/ui/combobox-with-other';
 import { useCanAddPet } from '@/hooks/useCanAddPet';
@@ -242,7 +247,7 @@ const AddPet = () => {
 
     // Validate birth_date if provided (species-specific realistic limits)
     if (formData.birth_date) {
-      const birth = new Date(formData.birth_date);
+      const birth = new Date(formData.birth_date + 'T00:00:00');
       const now = new Date();
       if (birth > now) {
         toast({
@@ -343,17 +348,17 @@ const AddPet = () => {
         neutered: formData.neutered,
       };
 
-      // Clinical columns (from migration 20260402) — only include when filled
-      if (formData.is_adopted) payload.is_adopted = true;
-      if (formData.adoption_date) payload.adoption_date = formData.adoption_date;
-      if (formData.preferred_clinic) payload.preferred_clinic = formData.preferred_clinic;
-      if (formData.emergency_vet_name) payload.emergency_vet_name = formData.emergency_vet_name;
-      if (formData.emergency_vet_phone) payload.emergency_vet_phone = formData.emergency_vet_phone;
-      if (formData.diet_type) payload.diet_type = formData.diet_type;
-      if (formData.diet_brand) payload.diet_brand = formData.diet_brand;
-      if (formData.activity_level) payload.activity_level = formData.activity_level;
-      if (formData.behavior_notes) payload.behavior_notes = formData.behavior_notes;
-      if (formData.insurance_provider) payload.insurance_provider = formData.insurance_provider;
+      // Clinical columns (from migration 20260402)
+      payload.is_adopted = formData.is_adopted || false;
+      payload.adoption_date = formData.adoption_date || null;
+      payload.preferred_clinic = formData.preferred_clinic || null;
+      payload.emergency_vet_name = formData.emergency_vet_name || null;
+      payload.emergency_vet_phone = formData.emergency_vet_phone || null;
+      payload.diet_type = formData.diet_type || null;
+      payload.diet_brand = formData.diet_brand || null;
+      payload.activity_level = formData.activity_level || null;
+      payload.behavior_notes = formData.behavior_notes || null;
+      payload.insurance_provider = formData.insurance_provider || null;
 
       // Generate TCG holo data for new pets
       if (!isEdit) {
@@ -939,16 +944,23 @@ const AddPet = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="blood_type">Tipo de Sangre</Label>
-                      <Input
-                        id="blood_type"
-                        value={formData.blood_type}
-                        onChange={(e) => updateField('blood_type', e.target.value)}
-                        placeholder={
-                          formData.species === 'gato' ? 'A, B o AB' : 'DEA 1.1+, DEA 1.1-'
-                        }
-                        maxLength={30}
-                      />
+                      <Label>Tipo de Sangre</Label>
+                      {BLOOD_TYPES_BY_SPECIES[formData.species] ? (
+                        <SelectWithOther
+                          options={[...BLOOD_TYPES_BY_SPECIES[formData.species]]}
+                          value={formData.blood_type}
+                          onValueChange={(v) => updateField('blood_type', v)}
+                          placeholder="Selecciona tipo"
+                          otherPlaceholder="Otro tipo de sangre..."
+                        />
+                      ) : (
+                        <Input
+                          value={formData.blood_type}
+                          onChange={(e) => updateField('blood_type', e.target.value)}
+                          placeholder="Tipo de sangre"
+                          maxLength={30}
+                        />
+                      )}
                       <p className="text-xs text-muted-foreground">
                         Tu vet puede determinarlo con un examen rápido
                       </p>

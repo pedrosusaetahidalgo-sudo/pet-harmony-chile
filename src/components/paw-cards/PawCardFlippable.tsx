@@ -23,7 +23,9 @@ interface Pet {
 }
 
 function calculateAge(birthDate: string): string {
-  const birth = new Date(birthDate);
+  // Append T00:00:00 to force local-time parsing ��� Safari interprets
+  // bare YYYY-MM-DD as UTC, which can shift the date by -1 day in UTC- zones.
+  const birth = new Date(birthDate + 'T00:00:00');
   const now = new Date();
   let years = now.getFullYear() - birth.getFullYear();
   let months = now.getMonth() - birth.getMonth();

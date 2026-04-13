@@ -1,8 +1,19 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home as HomeIcon, PawPrint, Stethoscope, Bell, User } from '@/lib/icons';
+import {
+  Home as HomeIcon,
+  PawPrint,
+  Stethoscope,
+  Bell,
+  User,
+  LayoutDashboard,
+  Calendar,
+  Star,
+  UserCog,
+} from '@/lib/icons';
 import { LINKS } from '@/lib/links';
 import { cn } from '@/lib/utils';
 import { useReminders } from '@/hooks/useReminders';
+import { useActiveRole } from '@/hooks/useActiveRole';
 
 /**
  * Bottom tab bar nativa para mobile (pivot médico).
@@ -37,6 +48,7 @@ export function BottomTabBar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const { overdueReminders, upcomingReminders } = useReminders();
+  const { role, isProvider } = useActiveRole();
 
   // Badge: vencidos + proximos 24h (today/tomorrow)
   const now = new Date();
@@ -44,7 +56,7 @@ export function BottomTabBar() {
   const dueSoon = upcomingReminders.filter((r) => new Date(r.due_date) <= in24h).length;
   const reminderBadge = overdueReminders.length + dueSoon;
 
-  const TABS: Tab[] = [
+  const OWNER_TABS: Tab[] = [
     {
       label: 'Inicio',
       icon: HomeIcon,
@@ -82,6 +94,46 @@ export function BottomTabBar() {
       matchPaths: (p) => p === '/profile' || p === '/settings',
     },
   ];
+
+  const PROVIDER_TABS: Tab[] = [
+    {
+      label: 'Dashboard',
+      icon: LayoutDashboard,
+      href: LINKS.providerDashboard(),
+      matchPaths: (p) => p === '/provider/dashboard',
+    },
+    {
+      label: 'Mascotas',
+      icon: PawPrint,
+      href: LINKS.myPets(),
+      matchPaths: (p) =>
+        p === '/my-pets' ||
+        p === '/add-pet' ||
+        p.startsWith('/pet/') ||
+        p.startsWith('/edit-pet/') ||
+        p.startsWith('/ficha/'),
+    },
+    {
+      label: 'Reservas',
+      icon: Calendar,
+      href: LINKS.bookings(),
+      matchPaths: (p) => p === '/mis-reservas',
+    },
+    {
+      label: 'Perfil Pro',
+      icon: UserCog,
+      href: LINKS.providerProfileEdit(),
+      matchPaths: (p) => p === '/provider/profile-edit',
+    },
+    {
+      label: 'Perfil',
+      icon: User,
+      href: LINKS.profile(),
+      matchPaths: (p) => p === '/profile' || p === '/settings',
+    },
+  ];
+
+  const TABS = role === 'provider' && isProvider ? PROVIDER_TABS : OWNER_TABS;
 
   return (
     <nav

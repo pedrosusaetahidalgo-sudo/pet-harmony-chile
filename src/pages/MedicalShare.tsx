@@ -1,20 +1,31 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 import {
-  AlertCircle, Calendar, Download, FileText, Heart, Loader2, PawPrint,
-  Phone, Scale, Shield, Stethoscope, Syringe, Share2,
-} from "@/lib/icons";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
-import { supabase } from "@/integrations/supabase/client";
-import { PublicHeader, PublicFooter } from "./DirectorioVets";
-import { logger } from "@/lib/logger";
+  AlertCircle,
+  Calendar,
+  Download,
+  FileText,
+  Heart,
+  Loader2,
+  PawPrint,
+  Phone,
+  Scale,
+  Shield,
+  Stethoscope,
+  Syringe,
+  Share2,
+} from '@/lib/icons';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Separator } from '@/components/ui/separator';
+import { supabase } from '@/integrations/supabase/client';
+import { PublicHeader, PublicFooter } from './DirectorioVets';
+import { logger } from '@/lib/logger';
 
 interface SharedPet {
   id: string;
@@ -28,7 +39,7 @@ interface SharedPet {
   vaccination_status: string | null;
   chronic_conditions: string[] | null;
   allergies: string[] | null;
-  current_medications: any;
+  current_medications: Record<string, unknown> | null;
   neutered: boolean | null;
   microchip_number: string | null;
 }
@@ -44,14 +55,14 @@ interface MedicalRecord {
 }
 
 function calculateAge(birthDate: string | null): string {
-  if (!birthDate) return "Edad desconocida";
-  const birth = new Date(birthDate);
+  if (!birthDate) return 'Edad desconocida';
+  const birth = new Date(birthDate + 'T00:00:00');
   const now = new Date();
   const years = now.getFullYear() - birth.getFullYear();
   const months = now.getMonth() - birth.getMonth();
-  if (years > 0) return `${years} año${years > 1 ? "s" : ""}`;
-  if (months > 0) return `${months} mes${months > 1 ? "es" : ""}`;
-  return "Menos de 1 mes";
+  if (years > 0) return `${years} año${years > 1 ? 's' : ''}`;
+  if (months > 0) return `${months} mes${months > 1 ? 'es' : ''}`;
+  return 'Menos de 1 mes';
 }
 
 export default function MedicalShare() {
@@ -64,7 +75,7 @@ export default function MedicalShare() {
 
   useEffect(() => {
     if (!token) {
-      setError("Link inválido");
+      setError('Link inválido');
       setLoading(false);
       return;
     }
@@ -76,46 +87,46 @@ export default function MedicalShare() {
     try {
       // 1. Validar token
       const { data: tokenData, error: tokenErr } = await supabase
-        .from("medical_share_tokens")
-        .select("*")
-        .eq("token", shareToken)
+        .from('medical_share_tokens')
+        .select('*')
+        .eq('token', shareToken)
         .maybeSingle();
 
       if (tokenErr || !tokenData) {
-        setError("Este link no es válido o ha sido eliminado.");
+        setError('Este link no es válido o ha sido eliminado.');
         setLoading(false);
         return;
       }
 
       if (tokenData.is_revoked) {
-        setError("Este link fue revocado por el dueño de la mascota.");
+        setError('Este link fue revocado por el dueño de la mascota.');
         setLoading(false);
         return;
       }
 
       if (new Date(tokenData.expires_at) < new Date()) {
-        setError("Este link ha expirado. Pide al dueño que genere uno nuevo.");
+        setError('Este link ha expirado. Pide al dueño que genere uno nuevo.');
         setLoading(false);
         return;
       }
 
       // 2. Actualizar last_accessed_at
       await supabase
-        .from("medical_share_tokens")
+        .from('medical_share_tokens')
         .update({ last_accessed_at: new Date().toISOString() })
-        .eq("id", tokenData.id);
+        .eq('id', tokenData.id);
 
       // 3. Cargar pet
       const { data: petData, error: petErr } = await supabase
-        .from("pets")
+        .from('pets')
         .select(
-          "id, name, species, breed, birth_date, weight, gender, photo_url, vaccination_status, chronic_conditions, allergies, current_medications, neutered, microchip_number"
+          'id, name, species, breed, birth_date, weight, gender, photo_url, vaccination_status, chronic_conditions, allergies, current_medications, neutered, microchip_number'
         )
-        .eq("id", tokenData.pet_id)
+        .eq('id', tokenData.pet_id)
         .single();
 
       if (petErr || !petData) {
-        setError("No se encontró la mascota asociada a este link.");
+        setError('No se encontró la mascota asociada a este link.');
         setLoading(false);
         return;
       }
@@ -124,34 +135,37 @@ export default function MedicalShare() {
 
       // 4. Cargar historial médico
       const { data: recordsData } = await supabase
-        .from("medical_records")
-        .select("id, record_type, title, description, date, vet_name, clinic_name")
-        .eq("pet_id", tokenData.pet_id)
-        .order("date", { ascending: false });
+        .from('medical_records')
+        .select('id, record_type, title, description, date, vet_name, clinic_name')
+        .eq('pet_id', tokenData.pet_id)
+        .order('date', { ascending: false });
 
       if (recordsData) {
-        setRecords(recordsData.map((r: any) => ({
-          id: r.id,
-          record_type: r.record_type,
-          title: r.title,
-          description: r.description,
-          date: r.date,
-          vet_name: r.vet_name,
-          clinic_name: r.clinic_name,
-        })));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setRecords(
+          recordsData.map((r: any) => ({
+            id: r.id,
+            record_type: r.record_type,
+            title: r.title,
+            description: r.description,
+            date: r.date,
+            vet_name: r.vet_name,
+            clinic_name: r.clinic_name,
+          }))
+        );
       }
 
       // 5. Cargar nombre del dueño
       const { data: ownerData } = await supabase
-        .from("profiles")
-        .select("display_name")
-        .eq("id", tokenData.owner_id)
+        .from('profiles')
+        .select('display_name')
+        .eq('id', tokenData.owner_id)
         .single();
 
       setOwnerName(ownerData?.display_name || null);
     } catch (err) {
-      logger.error("[MedicalShare] error loading", err);
-      setError("Ocurrió un error al cargar la ficha. Intenta de nuevo.");
+      logger.error('[MedicalShare] error loading', err);
+      setError('Ocurrió un error al cargar la ficha. Intenta de nuevo.');
     } finally {
       setLoading(false);
     }
@@ -161,7 +175,7 @@ export default function MedicalShare() {
     if (!pet) return;
     const url = window.location.href;
     const text = `Ficha clínica de ${pet.name}: ${url}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, "_blank");
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };
 
   if (loading) {
@@ -198,12 +212,19 @@ export default function MedicalShare() {
 
   if (!pet) return null;
 
-  const vaccines = records.filter((r) => r.record_type === "vacuna");
+  const vaccines = records.filter((r) => r.record_type === 'vacuna');
   const consultations = records.filter((r) =>
-    ["consulta", "consulta_general", "control_sano", "seguimiento", "urgencia", "emergencia"].includes(r.record_type)
+    [
+      'consulta',
+      'consulta_general',
+      'control_sano',
+      'seguimiento',
+      'urgencia',
+      'emergencia',
+    ].includes(r.record_type)
   );
   const dewormings = records.filter((r) =>
-    ["desparasitacion", "antipulgas"].includes(r.record_type)
+    ['desparasitacion', 'antipulgas'].includes(r.record_type)
   );
 
   return (
@@ -215,9 +236,7 @@ export default function MedicalShare() {
           <div className="bg-gradient-to-r from-purple-600 to-pink-500 p-4 text-white">
             <div className="flex items-center gap-4">
               <Avatar className="h-20 w-20 border-2 border-white/30">
-                {pet.photo_url ? (
-                  <AvatarImage src={pet.photo_url} alt={pet.name} />
-                ) : null}
+                {pet.photo_url ? <AvatarImage src={pet.photo_url} alt={pet.name} /> : null}
                 <AvatarFallback className="text-2xl bg-white/20">
                   <PawPrint className="h-8 w-8" />
                 </AvatarFallback>
@@ -225,11 +244,9 @@ export default function MedicalShare() {
               <div>
                 <h1 className="text-2xl font-bold">{pet.name}</h1>
                 <p className="text-white/80">
-                  {pet.species} {pet.breed ? `· ${pet.breed}` : ""} · {calculateAge(pet.birth_date)}
+                  {pet.species} {pet.breed ? `· ${pet.breed}` : ''} · {calculateAge(pet.birth_date)}
                 </p>
-                {ownerName && (
-                  <p className="text-white/60 text-sm mt-1">Dueño/a: {ownerName}</p>
-                )}
+                {ownerName && <p className="text-white/60 text-sm mt-1">Dueño/a: {ownerName}</p>}
               </div>
             </div>
           </div>
@@ -244,13 +261,13 @@ export default function MedicalShare() {
               {pet.gender && (
                 <div className="flex items-center gap-2">
                   <Heart className="h-4 w-4 text-muted-foreground" />
-                  <span>{pet.gender === "macho" ? "Macho" : "Hembra"}</span>
+                  <span>{pet.gender === 'macho' ? 'Macho' : 'Hembra'}</span>
                 </div>
               )}
               {pet.neutered !== null && (
                 <div className="flex items-center gap-2">
                   <Shield className="h-4 w-4 text-muted-foreground" />
-                  <span>{pet.neutered ? "Esterilizado/a" : "No esterilizado/a"}</span>
+                  <span>{pet.neutered ? 'Esterilizado/a' : 'No esterilizado/a'}</span>
                 </div>
               )}
               {pet.microchip_number && (
@@ -266,10 +283,16 @@ export default function MedicalShare() {
               <div className="mt-4 space-y-2">
                 {pet.chronic_conditions && pet.chronic_conditions.length > 0 && (
                   <div>
-                    <p className="text-xs font-semibold text-muted-foreground mb-1">Condiciones crónicas</p>
+                    <p className="text-xs font-semibold text-muted-foreground mb-1">
+                      Condiciones crónicas
+                    </p>
                     <div className="flex flex-wrap gap-1">
                       {pet.chronic_conditions.map((c) => (
-                        <Badge key={c} variant="outline" className="text-xs bg-red-50 text-red-700 border-red-200">
+                        <Badge
+                          key={c}
+                          variant="outline"
+                          className="text-xs bg-red-50 text-red-700 border-red-200"
+                        >
                           {c}
                         </Badge>
                       ))}
@@ -281,7 +304,11 @@ export default function MedicalShare() {
                     <p className="text-xs font-semibold text-muted-foreground mb-1">Alergias</p>
                     <div className="flex flex-wrap gap-1">
                       {pet.allergies.map((a) => (
-                        <Badge key={a} variant="outline" className="text-xs bg-amber-50 text-amber-700 border-amber-200">
+                        <Badge
+                          key={a}
+                          variant="outline"
+                          className="text-xs bg-amber-50 text-amber-700 border-amber-200"
+                        >
                           {a}
                         </Badge>
                       ))}
@@ -297,13 +324,15 @@ export default function MedicalShare() {
                 <Badge
                   variant="outline"
                   className={
-                    pet.vaccination_status === "up_to_date"
-                      ? "bg-green-50 text-green-700 border-green-200"
-                      : "bg-amber-50 text-amber-700 border-amber-200"
+                    pet.vaccination_status === 'up_to_date'
+                      ? 'bg-green-50 text-green-700 border-green-200'
+                      : 'bg-amber-50 text-amber-700 border-amber-200'
                   }
                 >
                   <Syringe className="h-3 w-3 mr-1" />
-                  {pet.vaccination_status === "up_to_date" ? "Vacunas al día" : "Vacunas pendientes"}
+                  {pet.vaccination_status === 'up_to_date'
+                    ? 'Vacunas al día'
+                    : 'Vacunas pendientes'}
                 </Badge>
               </div>
             )}
@@ -404,7 +433,7 @@ function RecordSection({
             <div className="flex items-center gap-1 text-muted-foreground shrink-0 w-20">
               <Calendar className="h-3 w-3" />
               <span className="text-xs">
-                {format(new Date(r.date), "dd MMM yyyy", { locale: es })}
+                {format(new Date(r.date), 'dd MMM yyyy', { locale: es })}
               </span>
             </div>
             <div className="min-w-0">
@@ -414,7 +443,7 @@ function RecordSection({
               )}
               {(r.vet_name || r.clinic_name) && (
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {[r.vet_name, r.clinic_name].filter(Boolean).join(" · ")}
+                  {[r.vet_name, r.clinic_name].filter(Boolean).join(' · ')}
                 </p>
               )}
             </div>

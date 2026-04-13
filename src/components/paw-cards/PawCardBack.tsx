@@ -15,6 +15,7 @@ interface PawCardBackProps {
   pawCardId: string;
   holoPattern: HoloPattern;
   rarity: Rarity;
+  collectorCount?: number;
 }
 
 export function PawCardBack({
@@ -23,6 +24,7 @@ export function PawCardBack({
   pawCardId,
   holoPattern,
   rarity,
+  collectorCount = 0,
 }: PawCardBackProps) {
   const holoConfig = HOLO_PATTERN_MAP[holoPattern];
   const hasPawCard = !!pawCardId;
@@ -43,8 +45,12 @@ export function PawCardBack({
           /* user cancelled */
         }
       } else {
-        await navigator.clipboard.writeText(pawCardUrl);
-        toast.success('Link copiado');
+        try {
+          await navigator.clipboard.writeText(pawCardUrl);
+          toast.success('Link copiado');
+        } catch {
+          toast.error('No se pudo copiar el link');
+        }
       }
     },
     [petName, pawCardUrl, hasPawCard]
@@ -54,8 +60,12 @@ export function PawCardBack({
     async (e: React.MouseEvent) => {
       e.stopPropagation();
       if (!hasPawCard) return;
-      await navigator.clipboard.writeText(pawCardId);
-      toast.success('ID copiado');
+      try {
+        await navigator.clipboard.writeText(pawCardId);
+        toast.success('ID copiado');
+      } catch {
+        toast.error('No se pudo copiar el ID');
+      }
     },
     [pawCardId, hasPawCard]
   );
@@ -178,7 +188,15 @@ export function PawCardBack({
             </Button>
           </div>
 
-          {/* Card ID */}
+          {/* Collector count + Card ID */}
+          {collectorCount > 0 && (
+            <div className="flex items-center gap-1 bg-white/5 backdrop-blur-sm px-2 py-0.5 rounded-full border border-white/10">
+              <PawPrint className="h-2.5 w-2.5 text-purple-300" />
+              <span className="text-[9px] font-bold text-white/80">
+                {collectorCount} {collectorCount === 1 ? 'coleccionista' : 'coleccionistas'}
+              </span>
+            </div>
+          )}
           <span className="text-[8px] font-mono text-purple-400/40 tracking-widest">
             {hasPawCard ? pawCardId : 'Generando...'}
           </span>

@@ -11,6 +11,7 @@ import { isNative } from '@/lib/platform';
 
 import ProtectedRoute from './components/ProtectedRoute';
 import { ActiveRoleProvider } from './hooks/useActiveRole';
+import { RoleGuard } from './components/RoleGuard';
 
 /** Envuelve la página con AppLayout solo si el user está logueado.
  *  Para rutas públicas (directorio vets, perfiles públicos) que deben verse
@@ -80,6 +81,7 @@ const ProDashboard = lazy(() => import('./pages/ProDashboard'));
 const AnalyticsDashboard = lazy(() => import('./pages/standalone/AnalyticsDashboard'));
 const EnMemoria = lazy(() => import('./pages/EnMemoria'));
 const BloodDonors = lazy(() => import('./pages/BloodDonors'));
+const RegistroPartner = lazy(() => import('./pages/RegistroPartner'));
 
 /** Inicialización nativa: StatusBar, SplashScreen, back button, push notifications */
 async function initNative() {
@@ -438,9 +440,11 @@ const App = () => (
                   path="/provider/dashboard"
                   element={
                     <ProtectedRoute>
-                      <AppLayout>
-                        <ProviderDashboard />
-                      </AppLayout>
+                      <RoleGuard requiredRole="provider">
+                        <AppLayout>
+                          <ProviderDashboard />
+                        </AppLayout>
+                      </RoleGuard>
                     </ProtectedRoute>
                   }
                 />
@@ -448,9 +452,11 @@ const App = () => (
                   path="/provider/profile-edit"
                   element={
                     <ProtectedRoute>
-                      <AppLayout>
-                        <ProviderProfileEdit />
-                      </AppLayout>
+                      <RoleGuard requiredRole="provider">
+                        <AppLayout>
+                          <ProviderProfileEdit />
+                        </AppLayout>
+                      </RoleGuard>
                     </ProtectedRoute>
                   }
                 />
@@ -571,9 +577,11 @@ const App = () => (
                   path="/panel-pro"
                   element={
                     <ProtectedRoute>
-                      <AppLayout>
-                        <ProDashboard />
-                      </AppLayout>
+                      <RoleGuard requiredRole="provider">
+                        <AppLayout>
+                          <ProDashboard />
+                        </AppLayout>
+                      </RoleGuard>
                     </ProtectedRoute>
                   }
                 />
@@ -589,6 +597,7 @@ const App = () => (
                 />
                 <Route path="/registro-veterinario" element={<RegistroVeterinario />} />
                 <Route path="/registro-proveedor" element={<RegistroVeterinario />} />
+                <Route path="/registro-partner" element={<RegistroPartner />} />
                 <Route path="/para-veterinarios" element={<ParaVeterinarios />} />
                 <Route
                   path="/precios-veterinarios"
