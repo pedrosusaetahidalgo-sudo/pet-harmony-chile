@@ -8,6 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 export interface CollectedCard {
   id: string;
   collectedAt: string;
+  isOwn: boolean;
   pet: {
     id: string;
     name: string;
@@ -39,14 +40,40 @@ export function usePawCollection() {
     queryFn: async (): Promise<CollectedCard[]> => {
       if (!user) return [];
 
-      // Fetch collection with pet join (new table, cast needed)
+      // 1. Fetch own pets first — always shown in collection
+      const { data: ownPets } = await supabase
+        .from('pets')
+        .select(
+          'id, name, species, breed, photo_url, holo_pattern, paw_card_id, owner_id, created_at'
+        )
+        .eq('owner_id', user.id)
+        .eq('lifecycle_status', 'active')
+        .order('created_at', { ascending: false });
+
+      const ownCards: CollectedCard[] = (ownPets ?? []).map((pet) => ({
+        id: `own-${pet.id}`,
+        collectedAt: pet.created_at || new Date().toISOString(),
+        isOwn: true,
+        pet: {
+          id: pet.id,
+          name: pet.name,
+          species: pet.species || '',
+          breed: pet.breed,
+          photoUrl: pet.photo_url,
+          holoPattern: pet.holo_pattern || 'holo-none',
+          pawCardId: pet.paw_card_id || '',
+        },
+        ownerName: null,
+      }));
+
+      // 2. Fetch collected cards from others (new table, cast needed)
       const { data, error } = (await (
         supabase.from('paw_card_collections' as any).select('id, collected_at, pet_id') as any
       )
         .eq('collector_id', user.id)
         .order('collected_at', { ascending: false })) as { data: any[] | null; error: any };
 
-      if (error || !data || data.length === 0) return [];
+      if (error || !data || data.length === 0) return ownCards;
 
       // Fetch pet details for each collected card
       const petIds = data.map((d: any) => d.pet_id);
@@ -56,7 +83,7 @@ export function usePawCollection() {
           .select('id, name, species, breed, photo_url, holo_pattern, paw_card_id, owner_id') as any
       ).in('id', petIds)) as { data: any[] | null };
 
-      if (!pets) return [];
+      if (!pets) return ownCards;
 
       const petMap = new Map(pets.map((p: any) => [p.id, p]));
 
@@ -69,13 +96,14 @@ export function usePawCollection() {
 
       const profileMap = new Map(profiles?.map((p) => [p.id, p.display_name]) ?? []);
 
-      return data
+      const collectedCards: CollectedCard[] = data
         .map((item: any) => {
           const pet = petMap.get(item.pet_id);
           if (!pet) return null;
           return {
             id: item.id,
             collectedAt: item.collected_at,
+            isOwn: false,
             pet: {
               id: pet.id,
               name: pet.name,
@@ -89,6 +117,9 @@ export function usePawCollection() {
           };
         })
         .filter(Boolean) as CollectedCard[];
+
+      // Own cards first, then collected
+      return [...ownCards, ...collectedCards];
     },
     enabled: !!user,
     staleTime: 30_000,

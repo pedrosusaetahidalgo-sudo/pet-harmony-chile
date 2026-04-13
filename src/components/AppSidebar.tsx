@@ -38,6 +38,8 @@ import { useSidebarTutorial } from '@/hooks/useSidebarTutorial';
 import { SidebarTutorialDialog } from '@/components/SidebarTutorialDialog';
 import { getTutorialBySection, SECTION_ORDER, type SectionKey } from '@/lib/sidebarTutorialContent';
 import { Badge } from '@/components/ui/badge';
+import { PremiumBadge } from '@/components/PremiumBadge';
+import { usePlan } from '@/hooks/usePlan';
 
 import {
   Sidebar,
@@ -108,6 +110,8 @@ export function AppSidebar() {
   const { setOpenMobile } = useSidebar();
   const currentPath = location.pathname;
   const { role, isProvider } = useActiveRole();
+  const { isPremium } = usePlan();
+  const showPremiumBadges = isFeatureEnabled('USER_PREMIUM') && !isPremium;
 
   const {
     loaded: tutorialLoaded,
@@ -198,73 +202,99 @@ export function AppSidebar() {
         </SidebarHeader>
 
         <SidebarContent className="px-2 overflow-y-auto overflow-x-hidden">
-          {/* Banner de bienvenida cuando hay tutorial pendiente */}
-          {tutorialLoaded && !isAllComplete && (
-            <div className="mx-1 mb-1 p-2.5 bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 rounded-lg">
-              <div className="flex items-start gap-2">
-                <Sparkles className="h-3.5 w-3.5 text-purple-600 flex-shrink-0 mt-0.5" />
-                <div className="min-w-0">
-                  <p className="text-[10px] font-semibold text-purple-800 leading-tight">
-                    Recorre cada sección para desbloquearla
-                  </p>
-                  <button
-                    onClick={dismissAll}
-                    className="text-[9px] text-purple-500 hover:text-purple-700 underline mt-0.5"
-                  >
-                    Saltar tutorial
-                  </button>
+          {role === 'owner' ? (
+            <>
+              {/* Banner de bienvenida cuando hay tutorial pendiente */}
+              {tutorialLoaded && !isAllComplete && (
+                <div className="mx-1 mb-1 p-2.5 bg-gradient-to-br from-purple-50 to-violet-50 border border-purple-200 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <Sparkles className="h-3.5 w-3.5 text-purple-600 flex-shrink-0 mt-0.5" />
+                    <div className="min-w-0">
+                      <p className="text-[10px] font-semibold text-purple-800 leading-tight">
+                        Recorre cada sección para desbloquearla
+                      </p>
+                      <button
+                        onClick={dismissAll}
+                        className="text-[9px] text-purple-500 hover:text-purple-700 underline mt-0.5"
+                      >
+                        Saltar tutorial
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          )}
+              )}
 
-          {/* ── Secciones de dueño (SIEMPRE visibles) ── */}
-          {SECTION_ORDER.map((sectionKey, idx) => {
-            const unlocked = isAllComplete || isSectionUnlocked(sectionKey);
-            const items = SECTION_ITEMS[sectionKey];
-            const label = SECTION_LABELS[sectionKey];
+              {/* ── Secciones de dueño ── */}
+              {SECTION_ORDER.map((sectionKey, idx) => {
+                const unlocked = isAllComplete || isSectionUnlocked(sectionKey);
+                const items = SECTION_ITEMS[sectionKey];
+                const label = SECTION_LABELS[sectionKey];
 
-            return (
-              <div key={sectionKey}>
-                {idx > 0 && <Separator className="mx-2 my-0.5" />}
-                <SidebarGroup className="py-0.5">
-                  <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5">
-                    <span className={cn(!unlocked && 'text-muted-foreground/50')}>{label}</span>
-                    {!unlocked && <Lock className="h-2.5 w-2.5 text-muted-foreground/40" />}
-                  </SidebarGroupLabel>
-                  <SidebarGroupContent>
-                    <SidebarMenu className="space-y-0">
-                      {items.map((item) => (
-                        <SidebarMenuItem key={item.title}>
+                return (
+                  <div key={sectionKey}>
+                    {idx > 0 && <Separator className="mx-2 my-0.5" />}
+                    <SidebarGroup className="py-0.5">
+                      <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5">
+                        <span className={cn(!unlocked && 'text-muted-foreground/50')}>{label}</span>
+                        {!unlocked && <Lock className="h-2.5 w-2.5 text-muted-foreground/40" />}
+                      </SidebarGroupLabel>
+                      <SidebarGroupContent>
+                        <SidebarMenu className="space-y-0">
+                          {items.map((item) => (
+                            <SidebarMenuItem key={item.title}>
+                              <SidebarMenuButton
+                                isActive={unlocked && isActive(item.url)}
+                                onClick={() =>
+                                  unlocked
+                                    ? handleNavigate(item.url)
+                                    : handleLockedClick(sectionKey)
+                                }
+                                className={cn(
+                                  'h-7 text-xs rounded-md transition-all',
+                                  !unlocked && 'opacity-40 grayscale hover:opacity-60'
+                                )}
+                              >
+                                <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                                <span>{item.title}</span>
+                              </SidebarMenuButton>
+                            </SidebarMenuItem>
+                          ))}
+                        </SidebarMenu>
+                      </SidebarGroupContent>
+                    </SidebarGroup>
+                  </div>
+                );
+              })}
+
+              {/* Link compacto a consultorio para dual-role */}
+              {isProvider && (
+                <>
+                  <Separator className="mx-2 my-0.5" />
+                  <SidebarGroup className="py-0.5">
+                    <SidebarGroupContent>
+                      <SidebarMenu className="space-y-0">
+                        <SidebarMenuItem>
                           <SidebarMenuButton
-                            isActive={unlocked && isActive(item.url)}
-                            onClick={() =>
-                              unlocked ? handleNavigate(item.url) : handleLockedClick(sectionKey)
-                            }
-                            className={cn(
-                              'h-7 text-xs rounded-md transition-all',
-                              !unlocked && 'opacity-40 grayscale hover:opacity-60'
-                            )}
+                            isActive={isActive('/provider/dashboard')}
+                            onClick={() => handleNavigate('/provider/dashboard')}
+                            className="h-7 text-xs rounded-md text-teal-700"
                           >
-                            <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
-                            <span>{item.title}</span>
+                            <Stethoscope className="h-3.5 w-3.5 flex-shrink-0 text-teal-500" />
+                            <span>Mi consultorio</span>
                           </SidebarMenuButton>
                         </SidebarMenuItem>
-                      ))}
-                    </SidebarMenu>
-                  </SidebarGroupContent>
-                </SidebarGroup>
-              </div>
-            );
-          })}
-
-          {/* ── Secciones profesionales (solo si isProvider o isGroomer) ── */}
-          {(isProvider || isGroomer) && (
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                </>
+              )}
+            </>
+          ) : (
             <>
-              <Separator className="mx-2 my-0.5" />
+              {/* ── Modo provider: secciones profesionales como primarias ── */}
               <SidebarGroup className="py-0.5">
                 <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5">
-                  <span className="text-teal-600">Mi consultorio</span>
+                  <span className="text-teal-600">Consultorio</span>
                   <Stethoscope className="h-2.5 w-2.5 text-teal-500" />
                 </SidebarGroupLabel>
                 <SidebarGroupContent>
@@ -281,6 +311,18 @@ export function AppSidebar() {
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+
+              <Separator className="mx-2 my-0.5" />
+
+              <SidebarGroup className="py-0.5">
+                <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5">
+                  <span className="text-teal-600">Negocio</span>
+                </SidebarGroupLabel>
+                <SidebarGroupContent>
+                  <SidebarMenu className="space-y-0">
                     {providerBusinessItems.map((item) => (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
@@ -290,6 +332,9 @@ export function AppSidebar() {
                         >
                           <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
                           <span>{item.title}</span>
+                          {showPremiumBadges && item.url === '/panel-pro' && (
+                            <PremiumBadge size="xs" className="ml-auto" />
+                          )}
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}
@@ -305,6 +350,25 @@ export function AppSidebar() {
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     )}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
+
+              {/* Link compacto a mascotas para providers que también son dueños */}
+              <Separator className="mx-2 my-0.5" />
+              <SidebarGroup className="py-0.5">
+                <SidebarGroupContent>
+                  <SidebarMenu className="space-y-0">
+                    <SidebarMenuItem>
+                      <SidebarMenuButton
+                        isActive={isActive('/my-pets')}
+                        onClick={() => handleNavigate('/my-pets')}
+                        className="h-7 text-xs rounded-md text-purple-700"
+                      >
+                        <PawPrint className="h-3.5 w-3.5 flex-shrink-0 text-purple-500" />
+                        <span>Mis mascotas</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>

@@ -1,11 +1,22 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Heart, PawPrint, Trophy, Filter, ArrowLeft, Sparkles, Users, Crown } from '@/lib/icons';
+import {
+  Heart,
+  PawPrint,
+  Trophy,
+  Filter,
+  ArrowLeft,
+  Sparkles,
+  Users,
+  Crown,
+  ScanLine,
+  X,
+} from '@/lib/icons';
 import { usePawCollection, usePawCollectionStats } from '@/hooks/usePawCollection';
 import { usePawCardRanking } from '@/hooks/usePawCardRanking';
 import { PawCardHoloPattern } from '@/components/paw-cards/PawCardHoloPattern';
@@ -91,6 +102,124 @@ function MiniPawCard({ card, isOwn }: { card: CollectedCard; isOwn?: boolean }) 
   );
 }
 
+// ─── QR Scanner ─────────────────────────────────────────────────────────
+
+function QRScanner({ onClose }: { onClose: () => void }) {
+  const navigate = useNavigate();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const scanningRef = useRef(false);
+
+  const stopCamera = useCallback(() => {
+    streamRef.current?.getTracks().forEach((t) => t.stop());
+    streamRef.current = null;
+  }, []);
+
+  const handleDetected = useCallback(
+    (url: string) => {
+      // Match pawfriend.cl/paw-card/<id> or localhost/paw-card/<id>
+      const match = url.match(/\/paw-card\/([A-Za-z0-9-]+)/);
+      if (match) {
+        stopCamera();
+        onClose();
+        navigate(`/paw-card/${match[1]}`);
+      }
+    },
+    [navigate, onClose, stopCamera]
+  );
+
+  useEffect(() => {
+    let animFrame: number;
+
+    const startCamera = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'environment' },
+        });
+        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          await videoRef.current.play();
+        }
+
+        // Use BarcodeDetector if available (Chrome/Android)
+        if ('BarcodeDetector' in window) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const detector = new (window as Record<string, any>).BarcodeDetector({
+            formats: ['qr_code'],
+          });
+          const scan = async () => {
+            if (!videoRef.current || scanningRef.current) return;
+            scanningRef.current = true;
+            try {
+              const barcodes = await detector.detect(videoRef.current);
+              if (barcodes.length > 0) {
+                handleDetected(barcodes[0].rawValue);
+                return;
+              }
+            } catch {
+              // ignore detection errors
+            }
+            scanningRef.current = false;
+            animFrame = requestAnimationFrame(scan);
+          };
+          // Wait a bit for camera to stabilize
+          setTimeout(() => {
+            animFrame = requestAnimationFrame(scan);
+          }, 500);
+        }
+      } catch {
+        // Camera not available
+      }
+    };
+
+    startCamera();
+
+    return () => {
+      cancelAnimationFrame(animFrame);
+      stopCamera();
+    };
+  }, [handleDetected, stopCamera]);
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center">
+      <div className="relative w-full max-w-sm mx-auto">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => {
+            stopCamera();
+            onClose();
+          }}
+          className="absolute top-2 right-2 z-10 text-white bg-black/50 rounded-full h-10 w-10"
+        >
+          <X className="h-5 w-5" />
+        </Button>
+
+        <div className="relative rounded-2xl overflow-hidden border-2 border-purple-500 mx-4">
+          <video ref={videoRef} className="w-full aspect-square object-cover" playsInline muted />
+          {/* Scan overlay */}
+          <div className="absolute inset-0 pointer-events-none">
+            <div className="absolute inset-[15%] border-2 border-purple-400 rounded-xl" />
+            <div className="absolute inset-[15%] border-t-2 border-purple-300 animate-pulse rounded-xl" />
+          </div>
+        </div>
+
+        <p className="text-center text-white/80 text-sm mt-4 px-4">
+          Apunta la camara al QR de una Paw Card para agregarla a tu coleccion
+        </p>
+
+        {!('BarcodeDetector' in window) && (
+          <p className="text-center text-amber-300 text-xs mt-2 px-4">
+            Tu navegador no soporta escaneo automatico. Usa la camara de tu celular para escanear el
+            QR directamente.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 type FilterType = 'all' | 'perro' | 'gato' | 'otro';
 
 const PawCollection = () => {
@@ -99,6 +228,7 @@ const PawCollection = () => {
   const { data: stats } = usePawCollectionStats();
   const { data: ranking = [] } = usePawCardRanking(10);
   const [filter, setFilter] = useState<FilterType>('all');
+  const [showScanner, setShowScanner] = useState(false);
 
   const filtered =
     filter === 'all'
@@ -136,6 +266,14 @@ const PawCollection = () => {
               Tu coleccion de Paw Cards — tus mascotas y las que has escaneado
             </p>
           </div>
+          <Button
+            onClick={() => setShowScanner(true)}
+            className="bg-purple-600 hover:bg-purple-700 shrink-0"
+            size="sm"
+          >
+            <ScanLine className="h-4 w-4 mr-1" />
+            Escanear
+          </Button>
         </div>
 
         {/* Stats bar */}
@@ -265,12 +403,15 @@ const PawCollection = () => {
                 className="animate-fade-in-up"
                 style={{ animationDelay: `${Math.min(i, 10) * 50}ms` }}
               >
-                <MiniPawCard card={card} />
+                <MiniPawCard card={card} isOwn={card.isOwn} />
               </div>
             ))}
           </div>
         )}
       </div>
+
+      {/* QR Scanner overlay */}
+      {showScanner && <QRScanner onClose={() => setShowScanner(false)} />}
     </>
   );
 };

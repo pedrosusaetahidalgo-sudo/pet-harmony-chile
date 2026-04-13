@@ -1,1 +1,0 @@
-const E={USER_PREMIUM:!1,PAWGAME_SIDEBAR:!0,MARKETPLACE:!1,SHARED_WALKS:!1,LOST_PETS_SECTION:!1,PRO_ANALYTICS:!0};function A(e){return E[e]===!0}export{A as i};
