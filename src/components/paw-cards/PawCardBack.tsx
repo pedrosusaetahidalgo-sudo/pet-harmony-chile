@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Share2, Copy, PawPrint, Sparkles } from '@/lib/icons';
+import { Share2, Copy, PawPrint, Sparkles, Loader2 } from '@/lib/icons';
 import { PawCardQR } from './PawCardQR';
 import { PawCardHoloPattern } from './PawCardHoloPattern';
 import { HOLO_PATTERN_MAP } from '@/lib/paw-cards';
@@ -25,11 +25,13 @@ export function PawCardBack({
   rarity,
 }: PawCardBackProps) {
   const holoConfig = HOLO_PATTERN_MAP[holoPattern];
-  const pawCardUrl = `https://pawfriend.cl/paw-card/${pawCardId}`;
+  const hasPawCard = !!pawCardId;
+  const pawCardUrl = hasPawCard ? `https://pawfriend.cl/paw-card/${pawCardId}` : '';
 
   const handleShare = useCallback(
     async (e: React.MouseEvent) => {
       e.stopPropagation();
+      if (!hasPawCard) return;
       if (navigator.share) {
         try {
           await navigator.share({
@@ -45,16 +47,17 @@ export function PawCardBack({
         toast.success('Link copiado');
       }
     },
-    [petName, pawCardUrl]
+    [petName, pawCardUrl, hasPawCard]
   );
 
   const handleCopyId = useCallback(
     async (e: React.MouseEvent) => {
       e.stopPropagation();
+      if (!hasPawCard) return;
       await navigator.clipboard.writeText(pawCardId);
       toast.success('ID copiado');
     },
-    [pawCardId]
+    [pawCardId, hasPawCard]
   );
 
   return (
@@ -90,28 +93,44 @@ export function PawCardBack({
           </span>
         </div>
 
-        {/* Center: ornate QR section */}
+        {/* Center: QR or generating state */}
         <div className="flex flex-col items-center gap-1.5">
-          {/* Decorative line above QR */}
           <div className="paw-card-back-ornament" />
 
-          {/* QR frame with animated glow */}
-          <div className="relative group">
-            {/* Animated glow ring */}
-            <div
-              className="absolute -inset-3 rounded-2xl paw-card-back-qr-glow"
-              data-rarity={rarity}
-            />
-            {/* Inner frame */}
-            <div className="relative bg-white/95 rounded-xl p-2 shadow-xl shadow-purple-900/30 ring-1 ring-white/20">
-              <PawCardQR pawCardId={pawCardId} size={100} />
-            </div>
-          </div>
-
-          {/* Scan text with shimmer */}
-          <p className="shimmer-text text-[10px] font-bold tracking-[0.2em] uppercase mt-1">
-            Escanea y colecciona
-          </p>
+          {hasPawCard ? (
+            <>
+              {/* QR frame with animated glow */}
+              <div className="relative group">
+                <div
+                  className="absolute -inset-3 rounded-2xl paw-card-back-qr-glow"
+                  data-rarity={rarity}
+                />
+                <div className="relative bg-white/95 rounded-xl p-2 shadow-xl shadow-purple-900/30 ring-1 ring-white/20">
+                  <PawCardQR pawCardId={pawCardId} size={100} />
+                </div>
+              </div>
+              <p className="shimmer-text text-[10px] font-bold tracking-[0.2em] uppercase mt-1">
+                Escanea y colecciona
+              </p>
+            </>
+          ) : (
+            <>
+              {/* Generating state — stylish placeholder */}
+              <div className="relative group">
+                <div
+                  className="absolute -inset-3 rounded-2xl paw-card-back-qr-glow opacity-50"
+                  data-rarity={rarity}
+                />
+                <div className="relative bg-white/10 backdrop-blur-sm rounded-xl w-[116px] h-[116px] shadow-xl shadow-purple-900/30 ring-1 ring-white/10 flex flex-col items-center justify-center gap-2">
+                  <Loader2 className="h-8 w-8 text-purple-300 animate-spin" />
+                  <span className="text-[9px] text-purple-300/80 font-medium">Generando QR...</span>
+                </div>
+              </div>
+              <p className="text-[10px] text-purple-300/60 font-medium mt-1">
+                Tu Paw Card se esta creando
+              </p>
+            </>
+          )}
 
           {/* Pet name + species pill */}
           <div className="flex items-center gap-1.5 bg-white/5 backdrop-blur-sm px-3 py-1 rounded-full border border-white/10">
@@ -121,13 +140,11 @@ export function PawCardBack({
             <span className="text-[11px] text-purple-300/80">{species}</span>
           </div>
 
-          {/* Decorative line below */}
           <div className="paw-card-back-ornament" />
         </div>
 
         {/* Bottom: holo badge + actions + ID */}
         <div className="flex flex-col items-center gap-1.5 w-full">
-          {/* Holo tier badge */}
           {holoConfig && (
             <span className="paw-holo-tier-badge" data-tier={holoConfig.tier}>
               {holoConfig.tier === 'ultra-rare' && (
@@ -142,8 +159,9 @@ export function PawCardBack({
             <Button
               size="sm"
               variant="outline"
-              className="flex-1 h-7 text-[10px] border-purple-400/20 text-purple-200 bg-purple-500/10 hover:bg-purple-500/25 backdrop-blur-sm rounded-lg"
+              className="flex-1 h-7 text-[10px] border-purple-400/20 text-purple-200 bg-purple-500/10 hover:bg-purple-500/25 backdrop-blur-sm rounded-lg disabled:opacity-40"
               onClick={handleShare}
+              disabled={!hasPawCard}
             >
               <Share2 className="mr-1 h-3 w-3" />
               Compartir
@@ -151,8 +169,9 @@ export function PawCardBack({
             <Button
               size="sm"
               variant="outline"
-              className="flex-1 h-7 text-[10px] border-purple-400/20 text-purple-200 bg-purple-500/10 hover:bg-purple-500/25 backdrop-blur-sm rounded-lg"
+              className="flex-1 h-7 text-[10px] border-purple-400/20 text-purple-200 bg-purple-500/10 hover:bg-purple-500/25 backdrop-blur-sm rounded-lg disabled:opacity-40"
               onClick={handleCopyId}
+              disabled={!hasPawCard}
             >
               <Copy className="mr-1 h-3 w-3" />
               Copiar ID
@@ -161,7 +180,7 @@ export function PawCardBack({
 
           {/* Card ID */}
           <span className="text-[8px] font-mono text-purple-400/40 tracking-widest">
-            {pawCardId}
+            {hasPawCard ? pawCardId : 'Generando...'}
           </span>
         </div>
       </div>

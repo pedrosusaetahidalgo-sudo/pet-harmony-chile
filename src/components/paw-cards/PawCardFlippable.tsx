@@ -92,9 +92,8 @@ export function PawCardFlippable({
   }, []);
 
   const handleFlip = useCallback(() => {
-    if (!pawCardId) return;
     setIsFlipped((prev) => !prev);
-  }, [pawCardId]);
+  }, []);
 
   /* ── Touch swipe for flip ── */
   const touchStartX = useRef(0);
@@ -110,14 +109,14 @@ export function PawCardFlippable({
 
   return (
     <div className="paw-card-flip-container h-full">
-      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
+      {}
       <div
         ref={cardRef}
-        className={`pet-card-tcg h-full paw-card-flipper ${isFlipped ? 'flipped' : ''} ${pawCardId ? 'cursor-pointer' : ''}`}
+        className={`pet-card-tcg h-full paw-card-flipper ${isFlipped ? 'flipped' : ''} cursor-pointer`}
         data-rarity={rarity}
-        role={pawCardId ? 'button' : undefined}
-        tabIndex={pawCardId ? 0 : undefined}
-        aria-label={pawCardId ? (isFlipped ? 'Volver al frente' : 'Voltear carta') : undefined}
+        role="button"
+        tabIndex={0}
+        aria-label={isFlipped ? 'Volver al frente' : 'Voltear carta'}
         onClick={handleFlip}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
@@ -247,17 +246,15 @@ export function PawCardFlippable({
         </div>
 
         {/* ── FACE B: Back ── */}
-        {pawCardId && (
-          <div className="paw-card-face-back">
-            <PawCardBack
-              petName={pet.name}
-              species={pet.species}
-              pawCardId={pawCardId}
-              holoPattern={holoPattern}
-              rarity={rarity}
-            />
-          </div>
-        )}
+        <div className="paw-card-face-back">
+          <PawCardBack
+            petName={pet.name}
+            species={pet.species}
+            pawCardId={pawCardId}
+            holoPattern={holoPattern}
+            rarity={rarity}
+          />
+        </div>
       </div>
     </div>
   );
