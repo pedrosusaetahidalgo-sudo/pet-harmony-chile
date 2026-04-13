@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Heart, FileText, Pencil, Trash2, PawPrint, Sparkles } from '@/lib/icons';
+import { getSpeciesPalette, getBreedTint } from '@/lib/paw-cards';
 
 interface Pet {
   id: string;
@@ -84,6 +85,8 @@ export function PetCardCompact({ pet, score, onDelete }: PetCardCompactProps) {
   const subtitle = [age, gender].filter(Boolean).join(' · ');
   const pawPoints = score ?? 0;
   const rarity = getRarity(pawPoints);
+  const palette = getSpeciesPalette(pet.species);
+  const breedTint = getBreedTint(pet.breed);
 
   /* ── 3D tilt on mouse move (desktop only) ── */
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
@@ -127,7 +130,18 @@ export function PetCardCompact({ pet, score, onDelete }: PetCardCompactProps) {
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
-        <div className="pet-card-tcg-inner h-full">
+        <div
+          className="pet-card-tcg-inner h-full"
+          style={{ background: palette.lightBg }}
+          data-species-bg={palette.darkBg}
+        >
+          {/* Breed tint overlay */}
+          {breedTint && (
+            <div
+              className="absolute inset-0 rounded-[inherit] pointer-events-none z-0"
+              style={{ background: breedTint }}
+            />
+          )}
           {/* Holographic rainbow overlay */}
           <div className="pet-card-tcg-rainbow" />
           {/* Sparkle texture */}
@@ -137,22 +151,27 @@ export function PetCardCompact({ pet, score, onDelete }: PetCardCompactProps) {
 
           {/* Content */}
           <div className="relative z-10 pt-4 pb-5 px-5 text-center flex flex-col items-center gap-1">
-            {/* Top bar: rarity badge + paw points */}
+            {/* Top bar: rarity badge + species icon + paw points */}
             <div className="flex items-center justify-between w-full mb-2">
               <span className="tcg-rarity-badge" data-rarity={rarity}>
                 {RARITY_LABELS[rarity]}
               </span>
-              <div className="tcg-paw-points">
-                <PawPrint className="h-3.5 w-3.5 text-purple-500" />
-                <span className="text-xs font-bold text-purple-700 dark:text-purple-300">
-                  {pawPoints}
+              <div className="flex items-center gap-2">
+                <span className="text-lg leading-none" title={pet.species}>
+                  {palette.icon}
                 </span>
+                <div className="tcg-paw-points">
+                  <PawPrint className="h-3.5 w-3.5 text-purple-500" />
+                  <span className="text-xs font-bold text-purple-700 dark:text-purple-300">
+                    {pawPoints}
+                  </span>
+                </div>
               </div>
             </div>
 
             {/* Avatar with rarity-colored ring */}
             <Avatar
-              className={`h-24 w-24 ring-[3px] ${RARITY_RING[rarity]} rounded-full shadow-lg`}
+              className={`h-[88px] w-[88px] ring-[3px] ${RARITY_RING[rarity]} rounded-full shadow-lg`}
             >
               <AvatarImage src={pet.photo_url || undefined} alt={pet.name} />
               <AvatarFallback className="bg-gradient-to-br from-purple-50 to-purple-100 text-purple-300">
@@ -160,21 +179,24 @@ export function PetCardCompact({ pet, score, onDelete }: PetCardCompactProps) {
               </AvatarFallback>
             </Avatar>
 
+            {/* Energy divider */}
+            <div className="tcg-energy-divider" data-rarity={rarity} />
+
             {/* Info */}
-            <div className="mt-3 space-y-0.5">
-              <div className="flex items-center justify-center gap-2">
-                <h3 className="pet-card-name font-bold text-lg leading-tight">{pet.name}</h3>
-                <Badge
-                  variant="secondary"
-                  className="text-[10px] uppercase tracking-wider font-semibold bg-purple-100/80 text-purple-700 border border-purple-200/50"
-                >
-                  {pet.species}
-                </Badge>
-              </div>
+            <div className="space-y-0.5">
+              <h3 className="pet-card-name font-bold text-xl leading-tight" data-rarity={rarity}>
+                {pet.name}
+              </h3>
               {pet.breed && (
-                <p className="text-sm text-muted-foreground font-medium">{pet.breed}</p>
+                <p className="text-sm font-medium" style={{ color: palette.accent }}>
+                  {pet.breed}
+                </p>
               )}
-              {subtitle && <p className="text-xs text-muted-foreground/80">{subtitle}</p>}
+              {subtitle && (
+                <div className="flex items-center justify-center gap-1.5 text-xs text-muted-foreground/80">
+                  <span>{subtitle}</span>
+                </div>
+              )}
             </div>
 
             {/* Decorative element: sparkles icon for legendary+ */}

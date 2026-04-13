@@ -27,7 +27,7 @@ import { useClaimPetInvitation } from '@/hooks/useClaimPetInvitation';
 import { PawCardFlippable } from '@/components/paw-cards/PawCardFlippable';
 import { ShareWithVetModal } from '@/components/medical/ShareWithVetModal';
 import type { HoloPattern } from '@/lib/paw-cards';
-import { generatePawCardId, rollHoloPattern } from '@/lib/paw-cards';
+import { generatePawCardId, getBreedHoloPattern } from '@/lib/paw-cards';
 
 interface Pet {
   id: string;
@@ -170,7 +170,7 @@ const MyPets = () => {
       const updated: Pet[] = [...pets];
       for (const pet of missing) {
         const pawCardId = generatePawCardId();
-        const holoPattern = rollHoloPattern();
+        const holoPattern = getBreedHoloPattern(pet.species, pet.breed);
         const { error } = await supabase
           .from('pets')
           .update({ paw_card_id: pawCardId, holo_pattern: holoPattern })

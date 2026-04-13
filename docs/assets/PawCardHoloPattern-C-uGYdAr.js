@@ -1,1 +1,0 @@
-import{j as a}from"./query-vendor-A-DufOXF.js";import{H as o}from"./paw-cards-8_ES7IpM.js";function e({pattern:s}){const r=o[s];return r?a.jsx("div",{className:`paw-holo-base ${r.cssClass}`,"aria-hidden":"true"}):null}export{e as P};

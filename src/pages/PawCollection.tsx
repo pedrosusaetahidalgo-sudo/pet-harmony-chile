@@ -8,22 +8,24 @@ import { Heart, PawPrint, Trophy, Filter, ArrowLeft, Sparkles, Users } from '@/l
 import { usePawCollection, usePawCollectionStats } from '@/hooks/usePawCollection';
 import { PawCardHoloPattern } from '@/components/paw-cards/PawCardHoloPattern';
 import { getRarity, RARITY_LABELS, RARITY_RING } from '@/components/PetCardCompact';
-import { HOLO_PATTERN_MAP } from '@/lib/paw-cards';
+import { HOLO_PATTERN_MAP, getSpeciesPalette } from '@/lib/paw-cards';
 import type { HoloPattern } from '@/lib/paw-cards';
 import type { CollectedCard } from '@/hooks/usePawCollection';
 
-function MiniPawCard({ card }: { card: CollectedCard }) {
+function MiniPawCard({ card, isOwn }: { card: CollectedCard; isOwn?: boolean }) {
   const navigate = useNavigate();
+  // TODO: fetch real paw_points per collected pet when available
   const rarity = getRarity(0);
   const holoConfig = HOLO_PATTERN_MAP[card.pet.holoPattern as HoloPattern];
+  const palette = getSpeciesPalette(card.pet.species);
 
   return (
     <button
-      className="tcg-perspective w-full text-left"
+      className="tcg-perspective w-full text-left group"
       onClick={() => navigate(`/paw-card/${card.pet.pawCardId}`)}
     >
-      <div className="pet-card-tcg" data-rarity={rarity}>
-        <div className="pet-card-tcg-inner">
+      <div className="pet-card-tcg transition-transform hover:scale-[1.03]" data-rarity={rarity}>
+        <div className="pet-card-tcg-inner" style={{ background: palette.lightBg }}>
           <div className="pet-card-tcg-rainbow" />
           <PawCardHoloPattern pattern={card.pet.holoPattern as HoloPattern} />
           <div className="pet-card-tcg-texture" />
@@ -34,16 +36,26 @@ function MiniPawCard({ card }: { card: CollectedCard }) {
               <span className="tcg-rarity-badge" data-rarity={rarity} style={{ fontSize: '7px' }}>
                 {RARITY_LABELS[rarity]}
               </span>
-              {holoConfig && holoConfig.tier !== 'standard' && (
-                <span
-                  className="paw-holo-tier-badge"
-                  data-tier={holoConfig.tier}
-                  style={{ fontSize: '7px' }}
-                >
-                  {holoConfig.name}
-                </span>
-              )}
+              <div className="flex items-center gap-1">
+                <span className="text-sm leading-none">{palette.icon}</span>
+                {holoConfig && holoConfig.tier !== 'standard' && (
+                  <span
+                    className="paw-holo-tier-badge"
+                    data-tier={holoConfig.tier}
+                    style={{ fontSize: '7px' }}
+                  >
+                    {holoConfig.name}
+                  </span>
+                )}
+              </div>
             </div>
+
+            {/* Own badge */}
+            {isOwn && (
+              <span className="absolute top-2 right-2 text-[7px] font-bold uppercase tracking-wider bg-purple-600 text-white px-1.5 py-0.5 rounded-full">
+                Tuya
+              </span>
+            )}
 
             {/* Avatar */}
             <Avatar className={`h-16 w-16 ring-2 ${RARITY_RING[rarity]} rounded-full shadow-md`}>
@@ -55,13 +67,12 @@ function MiniPawCard({ card }: { card: CollectedCard }) {
 
             {/* Info */}
             <div>
-              <h3 className="pet-card-name font-bold text-sm leading-tight">{card.pet.name}</h3>
-              <Badge
-                variant="secondary"
-                className="text-[8px] uppercase tracking-wider font-semibold bg-purple-100/80 text-purple-700 mt-0.5"
-              >
+              <h3 className="pet-card-name font-bold text-sm leading-tight" data-rarity={rarity}>
+                {card.pet.name}
+              </h3>
+              <p className="text-[9px] font-medium mt-0.5" style={{ color: palette.accent }}>
                 {card.pet.species}
-              </Badge>
+              </p>
             </div>
 
             {card.ownerName && (
@@ -107,7 +118,7 @@ const PawCollection = () => {
         <title>Mi Paw Collection — Paw Friend</title>
       </Helmet>
 
-      <div className="container px-4 py-8 max-w-6xl mx-auto animate-fade-in">
+      <div className="container px-4 py-8 max-w-6xl mx-auto animate-fade-in paw-collection-bg">
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="shrink-0">
@@ -119,7 +130,7 @@ const PawCollection = () => {
               Mi Paw Collection
             </h1>
             <p className="text-sm text-muted-foreground">
-              Las Paw Cards que has coleccionado escaneando QR de otras mascotas
+              Tu coleccion de Paw Cards — tus mascotas y las que has escaneado
             </p>
           </div>
         </div>
@@ -204,8 +215,14 @@ const PawCollection = () => {
         {/* Grid */}
         {!isLoading && filtered.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-            {filtered.map((card) => (
-              <MiniPawCard key={card.id} card={card} />
+            {filtered.map((card, i) => (
+              <div
+                key={card.id}
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${Math.min(i, 10) * 50}ms` }}
+              >
+                <MiniPawCard card={card} />
+              </div>
             ))}
           </div>
         )}

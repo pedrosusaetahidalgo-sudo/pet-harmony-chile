@@ -9,6 +9,7 @@ import { getRarity, RARITY_LABELS, RARITY_RING } from '@/components/PetCardCompa
 import { PawCardHoloPattern } from './PawCardHoloPattern';
 import { PawCardBack } from './PawCardBack';
 import { useGyroscope } from '@/hooks/useGyroscope';
+import { getSpeciesPalette, getBreedTint, HOLO_PATTERN_MAP } from '@/lib/paw-cards';
 import type { HoloPattern } from '@/lib/paw-cards';
 
 interface Pet {
@@ -68,6 +69,9 @@ export function PawCardFlippable({
   const subtitle = [age, gender].filter(Boolean).join(' · ');
   const pawPoints = score ?? 0;
   const rarity = getRarity(pawPoints);
+  const palette = getSpeciesPalette(pet.species);
+  const breedTint = getBreedTint(pet.breed);
+  const holoConfig = HOLO_PATTERN_MAP[holoPattern];
 
   // Mobile gyroscope support
   useGyroscope(cardRef);
@@ -132,7 +136,18 @@ export function PawCardFlippable({
         onTouchEnd={handleTouchEnd}
       >
         {/* ── FACE A: Front ── */}
-        <div className="pet-card-tcg-inner h-full paw-card-face">
+        <div
+          className="pet-card-tcg-inner h-full paw-card-face"
+          style={{ background: palette.lightBg }}
+          data-species-bg={palette.darkBg}
+        >
+          {/* Breed tint overlay */}
+          {breedTint && (
+            <div
+              className="absolute inset-0 rounded-[inherit] pointer-events-none z-0"
+              style={{ background: breedTint }}
+            />
+          )}
           {/* Holographic rainbow overlay */}
           <div className="pet-card-tcg-rainbow" />
           {/* Holo pattern */}
@@ -144,23 +159,28 @@ export function PawCardFlippable({
 
           {/* Content */}
           <div className="relative z-10 pt-4 pb-5 px-5 text-center flex flex-col items-center gap-1">
-            {/* Top bar: rarity badge + paw points */}
+            {/* Top bar: rarity badge + species icon + paw points */}
             <div className="flex items-center justify-between w-full mb-2">
               <span className="tcg-rarity-badge" data-rarity={rarity}>
                 {RARITY_LABELS[rarity]}
               </span>
-              <div className="tcg-paw-points">
-                <PawPrint className="h-3.5 w-3.5 text-purple-500" />
-                <span className="text-xs font-bold text-purple-700 dark:text-purple-300">
-                  {pawPoints}
+              <div className="flex items-center gap-2">
+                <span className="text-lg leading-none" title={pet.species}>
+                  {palette.icon}
                 </span>
+                <div className="tcg-paw-points">
+                  <PawPrint className="h-3.5 w-3.5 text-purple-500" />
+                  <span className="text-xs font-bold text-purple-700 dark:text-purple-300">
+                    {pawPoints}
+                  </span>
+                </div>
               </div>
             </div>
 
             {/* Avatar frame — TCG style */}
             <div className="tcg-avatar-frame" data-rarity={rarity}>
               <Avatar
-                className={`h-24 w-24 ring-[3px] ${RARITY_RING[rarity]} rounded-full shadow-lg`}
+                className={`h-[88px] w-[88px] ring-[3px] ${RARITY_RING[rarity]} rounded-full shadow-lg`}
               >
                 <AvatarImage src={pet.photo_url || undefined} alt={pet.name} />
                 <AvatarFallback className="bg-gradient-to-br from-purple-50 to-purple-100 text-purple-300">
@@ -174,20 +194,27 @@ export function PawCardFlippable({
 
             {/* Info */}
             <div className="space-y-0.5">
-              <div className="flex items-center justify-center gap-2">
-                <h3 className="pet-card-name font-bold text-lg leading-tight">{pet.name}</h3>
-                <Badge
-                  variant="secondary"
-                  className="text-[10px] uppercase tracking-wider font-semibold bg-purple-100/80 text-purple-700 border border-purple-200/50"
-                >
-                  {pet.species}
-                </Badge>
-              </div>
+              <h3 className="pet-card-name font-bold text-xl leading-tight" data-rarity={rarity}>
+                {pet.name}
+              </h3>
               {pet.breed && (
-                <p className="text-sm text-muted-foreground font-medium">{pet.breed}</p>
+                <p className="text-sm font-medium" style={{ color: palette.accent }}>
+                  {pet.breed}
+                </p>
               )}
               {subtitle && <p className="text-xs text-muted-foreground/80">{subtitle}</p>}
             </div>
+
+            {/* Holo badge always visible */}
+            {holoConfig && holoConfig.tier !== 'standard' && (
+              <span
+                className="paw-holo-tier-badge mt-0.5"
+                data-tier={holoConfig.tier}
+                style={{ fontSize: '8px' }}
+              >
+                {holoConfig.name}
+              </span>
+            )}
 
             {/* Sparkles icon for legendary+ */}
             {(rarity === 'legendary' || rarity === 'mythic') && (
@@ -205,7 +232,7 @@ export function PawCardFlippable({
             <div className="tcg-corner-accent tcg-corner-br" data-rarity={rarity} />
 
             {/* Actions */}
-            <div className="flex flex-col gap-2 pt-4 w-full">
+            <div className="flex flex-col gap-2 pt-3 w-full">
               <Button
                 size="sm"
                 className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-sm shadow-purple-500/20"

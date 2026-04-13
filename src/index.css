@@ -510,6 +510,17 @@ span {
   }
 }
 
+/* Subtle pulsing for uncommon cards */
+@keyframes tcg-pulse-subtle {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
 /* ── 3D Perspective wrapper ── */
 .tcg-perspective {
   perspective: 800px;
@@ -548,11 +559,13 @@ span {
   box-shadow: 0 2px 10px -2px rgba(205, 127, 50, 0.3);
 }
 
-/* Rarity: Poco Comun (20-39 pts) — silver metallic */
+/* Rarity: Poco Comun (20-39 pts) — silver metallic with pulse */
 .pet-card-tcg[data-rarity='uncommon'] {
   background: linear-gradient(135deg, #c0c0c0, #e8e8e8, #a8a8a8, #d4d4d4, #c0c0c0);
   background-size: 300% 300%;
-  animation: holo-shift 7s ease-in-out infinite;
+  animation:
+    holo-shift 7s ease-in-out infinite,
+    tcg-pulse-subtle 3s ease-in-out infinite;
   box-shadow: 0 2px 12px -2px rgba(192, 192, 192, 0.35);
 }
 
@@ -684,6 +697,7 @@ span {
 }
 
 /* ── Inner card surface ── */
+/* Background is now set inline via species palette JS. This is the fallback. */
 .pet-card-tcg-inner {
   position: relative;
   overflow: hidden;
@@ -692,7 +706,6 @@ span {
     radial-gradient(ellipse at 15% 0%, hsl(271 60% 85% / 0.6) 0%, transparent 50%),
     radial-gradient(ellipse at 85% 10%, hsl(250 55% 88% / 0.5) 0%, transparent 40%),
     radial-gradient(ellipse at 50% 100%, hsl(290 50% 87% / 0.5) 0%, transparent 45%),
-    radial-gradient(ellipse at 0% 60%, hsl(220 45% 90% / 0.4) 0%, transparent 35%),
     linear-gradient(
       180deg,
       hsl(270 40% 93%) 0%,
@@ -702,12 +715,13 @@ span {
     );
 }
 
+/* Dark mode: inner card uses species dark bg via data-species-bg attr + JS.
+   This is the fallback for cards without inline species palette. */
 .dark .pet-card-tcg-inner {
   background:
     radial-gradient(ellipse at 15% 0%, hsl(271 40% 18% / 0.8) 0%, transparent 50%),
     radial-gradient(ellipse at 85% 10%, hsl(250 35% 16% / 0.6) 0%, transparent 40%),
     radial-gradient(ellipse at 50% 100%, hsl(290 30% 15% / 0.7) 0%, transparent 45%),
-    radial-gradient(ellipse at 0% 60%, hsl(220 25% 14% / 0.5) 0%, transparent 35%),
     linear-gradient(
       180deg,
       hsl(270 20% 12%) 0%,
@@ -717,44 +731,76 @@ span {
     );
 }
 
-/* Rarity-specific inner backgrounds — more vibrant */
-.pet-card-tcg[data-rarity='rare'] .pet-card-tcg-inner {
-  background:
-    radial-gradient(ellipse at 15% 0%, hsl(45 70% 82% / 0.5) 0%, transparent 45%),
-    radial-gradient(ellipse at 85% 100%, hsl(40 60% 85% / 0.4) 0%, transparent 40%),
-    radial-gradient(ellipse at 50% 50%, hsl(270 40% 88% / 0.3) 0%, transparent 50%),
-    linear-gradient(180deg, hsl(45 45% 90%) 0%, hsl(50 30% 93%) 40%, hsl(42 35% 91%) 100%);
+/* Rarity-specific inner glow overlays (additive, on top of species palette) */
+.pet-card-tcg[data-rarity='uncommon'] .pet-card-tcg-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    125deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 70%
+  );
+  background-size: 200% 100%;
+  animation: holo-shift 15s ease-in-out infinite;
 }
 
-.pet-card-tcg[data-rarity='epic'] .pet-card-tcg-inner {
+.pet-card-tcg[data-rarity='rare'] .pet-card-tcg-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
   background:
-    radial-gradient(ellipse at 10% 0%, hsl(185 60% 85% / 0.5) 0%, transparent 45%),
-    radial-gradient(ellipse at 90% 100%, hsl(270 55% 86% / 0.4) 0%, transparent 40%),
-    radial-gradient(ellipse at 50% 50%, hsl(300 40% 88% / 0.3) 0%, transparent 50%),
-    linear-gradient(180deg, hsl(185 40% 90%) 0%, hsl(240 20% 93%) 40%, hsl(270 30% 91%) 100%);
+    radial-gradient(ellipse at 20% 20%, rgba(255, 215, 0, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(255, 165, 0, 0.06) 0%, transparent 50%),
+    linear-gradient(125deg, transparent 30%, rgba(255, 215, 0, 0.08) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: holo-shift 12s ease-in-out infinite;
 }
 
-.pet-card-tcg[data-rarity='legendary'] .pet-card-tcg-inner {
+.pet-card-tcg[data-rarity='epic'] .pet-card-tcg-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
   background:
-    radial-gradient(ellipse at 10% 0%, hsl(25 70% 85% / 0.6) 0%, transparent 45%),
-    radial-gradient(ellipse at 90% 100%, hsl(40 65% 83% / 0.5) 0%, transparent 40%),
-    radial-gradient(ellipse at 50% 50%, hsl(15 50% 88% / 0.3) 0%, transparent 50%),
-    linear-gradient(180deg, hsl(30 50% 88%) 0%, hsl(35 35% 91%) 35%, hsl(40 40% 89%) 100%);
+    radial-gradient(ellipse at 10% 0%, rgba(0, 206, 209, 0.1) 0%, transparent 45%),
+    radial-gradient(ellipse at 90% 100%, rgba(123, 104, 238, 0.08) 0%, transparent 40%),
+    linear-gradient(125deg, transparent 25%, rgba(123, 104, 238, 0.06) 50%, transparent 75%);
+  background-size: 200% 100%;
+  animation: holo-shift 8s ease-in-out infinite;
 }
 
-.pet-card-tcg[data-rarity='mythic'] .pet-card-tcg-inner {
+.pet-card-tcg[data-rarity='legendary'] .pet-card-tcg-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
   background:
-    radial-gradient(ellipse at 10% 0%, hsl(330 60% 85% / 0.5) 0%, transparent 40%),
-    radial-gradient(ellipse at 90% 10%, hsl(200 60% 85% / 0.4) 0%, transparent 35%),
-    radial-gradient(ellipse at 50% 100%, hsl(270 55% 86% / 0.5) 0%, transparent 40%),
-    radial-gradient(ellipse at 0% 60%, hsl(160 50% 88% / 0.3) 0%, transparent 30%),
-    linear-gradient(
-      180deg,
-      hsl(330 40% 90%) 0%,
-      hsl(270 25% 92%) 30%,
-      hsl(200 30% 91%) 60%,
-      hsl(270 35% 89%) 100%
-    );
+    radial-gradient(ellipse at 10% 0%, rgba(255, 69, 0, 0.1) 0%, transparent 45%),
+    radial-gradient(ellipse at 90% 100%, rgba(255, 215, 0, 0.08) 0%, transparent 40%);
+  animation: holo-shift 6s ease-in-out infinite;
+  background-size: 200% 100%;
+}
+
+.pet-card-tcg[data-rarity='mythic'] .pet-card-tcg-inner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(255, 0, 128, 0.08) 0%, transparent 40%),
+    radial-gradient(ellipse at 90% 10%, rgba(0, 191, 255, 0.06) 0%, transparent 35%),
+    radial-gradient(ellipse at 50% 100%, rgba(0, 255, 136, 0.06) 0%, transparent 40%);
+  animation: holo-shift 4s ease-in-out infinite;
+  background-size: 300% 100%;
 }
 
 /* ── Holographic rainbow overlay (follows cursor via CSS vars) ── */
@@ -902,7 +948,7 @@ span {
   font-variant-numeric: tabular-nums;
 }
 
-/* ── Name text with subtle gradient ── */
+/* ── Name text with rarity-driven gradient ── */
 .pet-card-name {
   background: linear-gradient(135deg, hsl(271 50% 25%), hsl(290 40% 30%));
   -webkit-background-clip: text;
@@ -917,20 +963,71 @@ span {
   background-clip: text;
 }
 
-/* Legendary/mythic name gets fire/rainbow gradient */
-.pet-card-tcg[data-rarity='legendary'] .pet-card-name {
-  background: linear-gradient(135deg, #ff4500, #ffd700, #ff6347);
+/* Uncommon: subtle text-shadow */
+.pet-card-name[data-rarity='uncommon'] {
+  background: linear-gradient(135deg, hsl(0 0% 20%), hsl(0 0% 35%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.08));
+}
+.dark .pet-card-name[data-rarity='uncommon'] {
+  background: linear-gradient(135deg, hsl(0 0% 85%), hsl(0 0% 75%));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-.pet-card-tcg[data-rarity='mythic'] .pet-card-name {
+
+/* Rare: gold gradient */
+.pet-card-name[data-rarity='rare'] {
+  background: linear-gradient(135deg, #b8860b, #daa520, #cd853f);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 1px 3px rgba(218, 165, 32, 0.2));
+}
+.dark .pet-card-name[data-rarity='rare'] {
+  background: linear-gradient(135deg, #ffd700, #ffb347, #ffd700);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Epic: prismatic gradient */
+.pet-card-name[data-rarity='epic'] {
+  background: linear-gradient(135deg, #00838f, #5e35b1, #ad1457);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 1px 4px rgba(94, 53, 177, 0.15));
+}
+.dark .pet-card-name[data-rarity='epic'] {
+  background: linear-gradient(135deg, #4dd0e1, #b39ddb, #f48fb1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Legendary: fire gradient + glow */
+.pet-card-tcg[data-rarity='legendary'] .pet-card-name,
+.pet-card-name[data-rarity='legendary'] {
+  background: linear-gradient(135deg, #ff4500, #ffd700, #ff6347);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 1px 6px rgba(255, 69, 0, 0.25));
+}
+
+/* Mythic: animated rainbow + shimmer */
+.pet-card-tcg[data-rarity='mythic'] .pet-card-name,
+.pet-card-name[data-rarity='mythic'] {
   background: linear-gradient(135deg, #ff0080, #ff4500, #ffd700, #00ff88, #00bfff, #8b5cf6);
   background-size: 200% 100%;
   animation: holo-shift 3s ease-in-out infinite;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  filter: drop-shadow(0 1px 8px rgba(139, 92, 246, 0.3));
 }
 
 /* ── TCG Avatar Frame ── */
@@ -1210,12 +1307,18 @@ span {
   mix-blend-mode: overlay;
 }
 
-/* Holo patterns: subtle base always + full on hover */
+/* Holo patterns: always visible at low opacity, intensify on hover */
 .paw-holo-base {
-  opacity: 0.4;
+  opacity: 0.25;
 }
 .pet-card-tcg:hover .paw-holo-base {
-  opacity: 1;
+  opacity: 0.7;
+}
+.pet-card-tcg[data-rarity='rare'] .paw-holo-base {
+  opacity: 0.35;
+}
+.pet-card-tcg[data-rarity='epic'] .paw-holo-base {
+  opacity: 0.4;
 }
 .pet-card-tcg[data-rarity='legendary'] .paw-holo-base,
 .pet-card-tcg[data-rarity='mythic'] .paw-holo-base {
@@ -1894,6 +1997,7 @@ span {
   border-radius: 9999px;
 }
 
+/* Default (on dark card backs) */
 .paw-holo-tier-badge[data-tier='standard'] {
   background: rgba(147, 51, 234, 0.2);
   color: rgba(200, 180, 255, 0.9);
@@ -1908,6 +2012,31 @@ span {
   background: linear-gradient(135deg, rgba(255, 0, 128, 0.2), rgba(255, 215, 0, 0.2));
   color: rgba(255, 215, 0, 0.95);
   border: 1px solid rgba(255, 215, 0, 0.4);
+}
+
+/* On light card fronts */
+.paw-card-face .paw-holo-tier-badge[data-tier='standard'],
+.pet-card-tcg-inner .paw-holo-tier-badge[data-tier='standard'] {
+  background: rgba(147, 51, 234, 0.12);
+  color: rgba(107, 33, 168, 0.9);
+  border: 1px solid rgba(147, 51, 234, 0.25);
+}
+.paw-card-face .paw-holo-tier-badge[data-tier='rare'],
+.pet-card-tcg-inner .paw-holo-tier-badge[data-tier='rare'] {
+  background: rgba(0, 150, 200, 0.12);
+  color: rgba(0, 120, 180, 0.9);
+  border: 1px solid rgba(0, 150, 200, 0.3);
+}
+.paw-card-face .paw-holo-tier-badge[data-tier='ultra-rare'],
+.pet-card-tcg-inner .paw-holo-tier-badge[data-tier='ultra-rare'] {
+  background: linear-gradient(135deg, rgba(200, 0, 100, 0.12), rgba(200, 150, 0, 0.12));
+  color: rgba(180, 100, 0, 0.95);
+  border: 1px solid rgba(200, 150, 0, 0.35);
+}
+
+/* ── Collection page subtle background ── */
+.paw-collection-bg {
+  position: relative;
 }
 
 /* ── Paw Collection header button — shimmer glow ── */
