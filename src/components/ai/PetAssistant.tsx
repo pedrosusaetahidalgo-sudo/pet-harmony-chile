@@ -1,18 +1,18 @@
-import { useState } from "react";
-import { Send, Sparkles, AlertTriangle, Stethoscope, X } from "@/lib/icons";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useAISkill } from "@/hooks/useAISkill";
-import { AILoadingState } from "./AILoadingState";
-import { AIErrorState } from "./AIErrorState";
-import { AIRateLimitState } from "./AIRateLimitState";
-import { AIDisclaimer } from "./AIDisclaimer";
+import { useState } from 'react';
+import { Send, Sparkles, AlertTriangle, Stethoscope, X } from '@/lib/icons';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { useAISkill } from '@/hooks/useAISkill';
+import { AILoadingState } from './AILoadingState';
+import { AIErrorState } from './AIErrorState';
+import { AIRateLimitState } from './AIRateLimitState';
+import { AIDisclaimer } from './AIDisclaimer';
 
 interface PetAssistantResponse {
   respuesta: string;
-  nivel_urgencia: "bajo" | "medio" | "alto";
+  nivel_urgencia: 'bajo' | 'medio' | 'alto';
   requiere_veterinario: boolean;
   recordatorios_relevantes: string[];
   sugerencias_accion: string[];
@@ -27,18 +27,18 @@ interface Props {
 }
 
 export function PetAssistant({ petId, petName, onClose }: Props) {
-  const [question, setQuestion] = useState("");
+  const [question, setQuestion] = useState('');
   const [history, setHistory] = useState<Array<{ q: string; a: PetAssistantResponse }>>([]);
 
   const { isLoading, error, isRateLimited, invoke, reset } = useAISkill<
     { question: string; pet_id: string },
     PetAssistantResponse
   >({
-    functionName: "pet-assistant",
-    skillLabel: "Asistente Veterinario",
+    functionName: 'pet-assistant',
+    skillLabel: 'Asistente Veterinario',
     onSuccess: (data) => {
       setHistory((prev) => [...prev, { q: question, a: data }]);
-      setQuestion("");
+      setQuestion('');
     },
   });
 
@@ -49,9 +49,9 @@ export function PetAssistant({ petId, petName, onClose }: Props) {
   };
 
   const urgencyColors = {
-    bajo: "bg-green-100 text-green-800",
-    medio: "bg-amber-100 text-amber-800",
-    alto: "bg-red-100 text-red-800",
+    bajo: 'bg-green-100 text-green-800',
+    medio: 'bg-amber-100 text-amber-800',
+    alto: 'bg-red-100 text-red-800',
   };
 
   return (
@@ -61,7 +61,9 @@ export function PetAssistant({ petId, petName, onClose }: Props) {
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Stethoscope className="h-4 w-4 text-primary" />
             Asistente de {petName}
-            <Badge variant="secondary" className="text-[10px] px-1.5 py-0">IA</Badge>
+            <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+              IA
+            </Badge>
           </CardTitle>
           {onClose && (
             <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onClose}>
@@ -81,13 +83,15 @@ export function PetAssistant({ petId, petName, onClose }: Props) {
               </p>
               <div className="flex flex-wrap gap-1.5 justify-center mt-3">
                 {[
-                  `Cuando toca la proxima vacuna de ${petName}?`,
+                  `¿Cuándo toca la próxima vacuna de ${petName}?`,
                   `${petName} no quiere comer`,
                   `Es normal que duerma tanto?`,
                 ].map((suggestion) => (
                   <button
                     key={suggestion}
-                    onClick={() => { setQuestion(suggestion); }}
+                    onClick={() => {
+                      setQuestion(suggestion);
+                    }}
                     className="text-[10px] px-2 py-1 rounded-full bg-primary/5 text-primary hover:bg-primary/10 transition-colors"
                   >
                     {suggestion}
@@ -119,15 +123,21 @@ export function PetAssistant({ petId, petName, onClose }: Props) {
                     <div className="mt-2 space-y-1">
                       <p className="font-medium text-[10px] text-muted-foreground">Sugerencias:</p>
                       {item.a.sugerencias_accion.map((s, j) => (
-                        <p key={j} className="text-[10px] text-muted-foreground">* {s}</p>
+                        <p key={j} className="text-[10px] text-muted-foreground">
+                          * {s}
+                        </p>
                       ))}
                     </div>
                   )}
                   {item.a.recordatorios_relevantes.length > 0 && (
                     <div className="mt-2 space-y-1">
-                      <p className="font-medium text-[10px] text-amber-700">Recordatorios relacionados:</p>
+                      <p className="font-medium text-[10px] text-amber-700">
+                        Recordatorios relacionados:
+                      </p>
                       {item.a.recordatorios_relevantes.map((r, j) => (
-                        <p key={j} className="text-[10px] text-amber-600">! {r}</p>
+                        <p key={j} className="text-[10px] text-amber-600">
+                          ! {r}
+                        </p>
                       ))}
                     </div>
                   )}
@@ -143,7 +153,9 @@ export function PetAssistant({ petId, petName, onClose }: Props) {
         </div>
 
         {isRateLimited && <AIRateLimitState skillLabel="Asistente Veterinario" />}
-        {error && <AIErrorState message={error} onRetry={() => invoke({ question, pet_id: petId })} />}
+        {error && (
+          <AIErrorState message={error} onRetry={() => invoke({ question, pet_id: petId })} />
+        )}
 
         {/* Input */}
         <form onSubmit={handleSubmit} className="flex gap-2">

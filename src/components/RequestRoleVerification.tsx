@@ -1,17 +1,32 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { supabase } from "@/integrations/supabase/client";
-import type { Database } from "@/integrations/supabase/types";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "sonner";
-import { Loader2, Upload, FileCheck, Briefcase, Home, Stethoscope, GraduationCap, Scissors } from "@/lib/icons";
-import { useQuery } from "@tanstack/react-query";
-import { Badge } from "@/components/ui/badge";
-import { logger } from "@/lib/logger";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { supabase } from '@/integrations/supabase/client';
+import type { Database } from '@/integrations/supabase/types';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { toast } from 'sonner';
+import {
+  Loader2,
+  Upload,
+  FileCheck,
+  Briefcase,
+  Home,
+  Stethoscope,
+  GraduationCap,
+  Scissors,
+} from '@/lib/icons';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Badge } from '@/components/ui/badge';
+import { logger } from '@/lib/logger';
 
 type ServiceRole = 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'groomer';
 
@@ -25,10 +40,17 @@ interface RequestRoleVerificationProps {
 }
 
 export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerificationProps) => {
+  const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
   const [uploadingDocument, setUploadingDocument] = useState(false);
   const [documentUrls, setDocumentUrls] = useState<string[]>([]);
-  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<RoleRequestFormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm<RoleRequestFormData>({
     defaultValues: {
       requested_role: defaultRole,
     },
@@ -40,7 +62,9 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
   const { data: existingRequest } = useQuery({
     queryKey: ['role-verification-request'],
     queryFn: async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return null;
 
       const { data } = await supabase
@@ -52,7 +76,7 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
         .maybeSingle();
 
       return data;
-    }
+    },
   });
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,9 +98,9 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
 
         if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = supabase.storage
-          .from('verification-docs')
-          .getPublicUrl(filePath);
+        const {
+          data: { publicUrl },
+        } = supabase.storage.from('verification-docs').getPublicUrl(filePath);
 
         uploadedUrls.push(publicUrl);
       }
@@ -94,7 +118,9 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
   const onSubmit = async (data: RoleRequestFormData) => {
     setLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error('No autenticado');
 
       // Require at least one document for roles that need verification
@@ -111,20 +137,44 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
         return;
       }
 
-      const { error } = await supabase
+      const { data: insertedRequest, error } = await supabase
         .from('verification_requests')
         .insert({
           user_id: user.id,
-          requested_role: data.requested_role as Database["public"]["Enums"]["app_role"],
+          requested_role: data.requested_role as Database['public']['Enums']['app_role'],
           notes: data.notes,
           document_urls: documentUrls,
-          status: 'pendiente'
-        });
+          status: 'pendiente',
+        })
+        .select('id')
+        .single();
 
       if (error) throw error;
 
-      toast.success('Solicitud enviada. Será revisada por nuestro equipo.');
+      toast.success('Solicitud enviada. Verificando automáticamente...');
       setDocumentUrls([]);
+
+      // Trigger AI auto-verification in background
+      if (insertedRequest?.id) {
+        supabase.functions
+          .invoke('verify-service-provider', {
+            body: { verification_request_id: insertedRequest.id },
+          })
+          .then(({ data: verifyResult }) => {
+            if (verifyResult?.status === 'aprobado') {
+              toast.success('¡Verificación aprobada! Ya puedes ofrecer tus servicios.');
+            } else if (verifyResult?.status === 'rechazado') {
+              const reason = verifyResult?.verification?.reason || 'Revisa tu perfil y documentos.';
+              toast.info(`Tu solicitud necesita ajustes: ${reason}`);
+            }
+            // Refresh the existing request query
+            queryClient.invalidateQueries({ queryKey: ['role-verification-request'] });
+          })
+          .catch(() => {
+            // AI verification failed silently — request stays as 'pendiente' for manual review
+            toast.info('La verificación automática no está disponible. Será revisada manualmente.');
+          });
+      }
     } catch (error) {
       logger.error('Error:', error);
       toast.error('Error al enviar la solicitud');
@@ -170,11 +220,23 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'pendiente':
-        return <Badge variant="outline" className="bg-yellow-100 text-yellow-800">Pendiente</Badge>;
+        return (
+          <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
+            Pendiente
+          </Badge>
+        );
       case 'aprobado':
-        return <Badge variant="outline" className="bg-green-100 text-green-800">Aprobado</Badge>;
+        return (
+          <Badge variant="outline" className="bg-green-100 text-green-800">
+            Aprobado
+          </Badge>
+        );
       case 'rechazado':
-        return <Badge variant="outline" className="bg-red-100 text-red-800">Rechazado</Badge>;
+        return (
+          <Badge variant="outline" className="bg-red-100 text-red-800">
+            Rechazado
+          </Badge>
+        );
       default:
         return null;
     }
@@ -185,9 +247,7 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
       <Card>
         <CardHeader>
           <CardTitle>Solicitud en Revisión</CardTitle>
-          <CardDescription>
-            Tu solicitud está siendo revisada por nuestro equipo
-          </CardDescription>
+          <CardDescription>Tu solicitud está siendo revisada por nuestro equipo</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -219,9 +279,7 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
     <Card>
       <CardHeader>
         <CardTitle>Solicitar Verificación Profesional</CardTitle>
-        <CardDescription>
-          Conviértete en proveedor de servicios verificado
-        </CardDescription>
+        <CardDescription>Conviértete en proveedor de servicios verificado</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -229,7 +287,9 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
             <Label htmlFor="requested_role">Tipo de Servicio</Label>
             <Select
               defaultValue={defaultRole}
-              onValueChange={(value) => setValue('requested_role', value as RoleRequestFormData['requested_role'])}
+              onValueChange={(value) =>
+                setValue('requested_role', value as RoleRequestFormData['requested_role'])
+              }
             >
               <SelectTrigger>
                 <SelectValue placeholder="Selecciona el tipo de servicio" />
@@ -272,9 +332,13 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
             )}
           </div>
 
-          {requestedRole === 'veterinarian' && (
+          {requestedRole && (
             <div className="space-y-2">
-              <Label>Título Profesional (Requerido)</Label>
+              <Label>
+                {requestedRole === 'veterinarian'
+                  ? 'Título Profesional (Requerido)'
+                  : 'Documento de Identidad (Requerido)'}
+              </Label>
               <div className="border-2 border-dashed rounded-lg p-6 text-center">
                 <input
                   type="file"
@@ -291,11 +355,18 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
                     <Upload className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
                   )}
                   <p className="text-sm font-medium mb-1">
-                    {uploadingDocument ? 'Subiendo...' : 'Sube tu título de veterinario'}
+                    {uploadingDocument
+                      ? 'Subiendo...'
+                      : requestedRole === 'veterinarian'
+                        ? 'Sube tu título de veterinario'
+                        : 'Sube tu cédula de identidad'}
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    PDF, JPG o PNG (máx. 20MB)
+                    {requestedRole === 'veterinarian'
+                      ? 'Foto o PDF de tu título universitario (para verificación automática usa JPG/PNG)'
+                      : 'Foto de tu cédula (puedes tapar datos sensibles)'}
                   </p>
+                  <p className="text-xs text-muted-foreground mt-1">PDF, JPG o PNG (máx. 20MB)</p>
                 </label>
               </div>
               {documentUrls.length > 0 && (
