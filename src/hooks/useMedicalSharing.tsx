@@ -2,11 +2,12 @@
  * Hook for managing medical record sharing with vets
  */
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "./useAuth";
-import { toast } from "sonner";
-import { describeSupabaseError } from "@/lib/supabaseErrors";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from './useAuth';
+import { usePlan } from './usePlan';
+import { toast } from 'sonner';
+import { describeSupabaseError } from '@/lib/supabaseErrors';
 
 export interface ShareToken {
   id: string;
@@ -32,6 +33,7 @@ const DEFAULT_EXPIRY_DAYS = 30;
  */
 export const useMedicalSharing = (petId?: string) => {
   const { user } = useAuth();
+  const { checkAccess } = usePlan();
   const queryClient = useQueryClient();
 
   // List share tokens for a pet
@@ -58,13 +60,20 @@ export const useMedicalSharing = (petId?: string) => {
     mutationFn: async (args: CreateTokenArgs | number = {}) => {
       if (!user || !petId) throw new Error('Usuario o mascota no especificada');
 
+      // Enforce share_clinical plan limit
+      const activeTokens = (tokens || []).length;
+      const access = checkAccess('share_clinical', activeTokens);
+      if (!access.allowed) {
+        throw new Error(access.reason || 'Llegaste al límite de fichas compartidas de tu plan');
+      }
+
       // Back-compat: algunos callers pasaban `expiryDays` directo como numero.
       const { expiryDays = DEFAULT_EXPIRY_DAYS, targetProviderId = null } =
         typeof args === 'number' ? { expiryDays: args } : args;
 
       // Generate token (simple random string)
       const tokenData = Array.from(crypto.getRandomValues(new Uint8Array(16)))
-        .map(b => b.toString(16).padStart(2, '0'))
+        .map((b) => b.toString(16).padStart(2, '0'))
         .join('')
         .substring(0, 32);
 
@@ -92,7 +101,9 @@ export const useMedicalSharing = (petId?: string) => {
       return data;
     },
     onError: (error: unknown) => {
-      toast.error('Error al crear enlace de compartir', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
+      toast.error('Error al crear enlace de compartir', {
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
+      });
     },
   });
 
@@ -114,7 +125,9 @@ export const useMedicalSharing = (petId?: string) => {
       toast.success('Enlace revocado');
     },
     onError: (error: unknown) => {
-      toast.error('Error al revocar enlace', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
+      toast.error('Error al revocar enlace', {
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
+      });
     },
   });
 
@@ -122,6 +135,9 @@ export const useMedicalSharing = (petId?: string) => {
   const getShareUrl = (token: string): string => {
     return `${window.location.origin}/medical-share/${token}`;
   };
+
+  const activeTokens = (tokens || []).length;
+  const shareAccess = checkAccess('share_clinical', activeTokens);
 
   return {
     tokens,
@@ -131,6 +147,7 @@ export const useMedicalSharing = (petId?: string) => {
     revokeToken: revokeToken.mutateAsync,
     isRevoking: revokeToken.isPending,
     getShareUrl,
+    shareLimitReached: !shareAccess.allowed,
+    shareLimitReason: shareAccess.reason,
   };
 };
-

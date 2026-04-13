@@ -165,9 +165,82 @@ export default function ProDashboard() {
       return;
     }
 
-    if (exportFormat === 'pdf') {
-      // PDF export pendiente
-      alert('Proximamente — estamos trabajando en la exportacion PDF.');
+    if (exportFormat === 'pdf' && analytics) {
+      const periodLabel = PERIOD_LABELS[period] || period;
+      const selectedPetName =
+        selectedPetId === 'all'
+          ? 'Todas las mascotas'
+          : pets?.find((p) => p.id === selectedPetId)?.name || '';
+
+      let vetSection = '';
+      if (vetData) {
+        vetSection = `
+          <h2 style="margin-top:24px;color:#7c3aed;">Métricas Veterinarias</h2>
+          <table><tbody>
+            <tr><td>Reservas totales</td><td><strong>${vetData.summary.totalBookings}</strong></td></tr>
+            <tr><td>Clientes únicos</td><td><strong>${vetData.summary.uniqueClients}</strong></td></tr>
+            <tr><td>Ingresos</td><td><strong>$${vetData.summary.revenue.toLocaleString('es-CL')}</strong></td></tr>
+            <tr><td>Reseñas</td><td><strong>${vetData.summary.reviewCount}</strong></td></tr>
+          </tbody></table>`;
+      }
+
+      let timelineSection = '';
+      if (analytics.activityTimeline.length > 0) {
+        const timelineRows = analytics.activityTimeline
+          .map(
+            (p) =>
+              `<tr><td>${p.date}</td><td>${p.reminders}</td><td>${p.visits}</td><td>${p.vaccines}</td></tr>`
+          )
+          .join('');
+        timelineSection = `
+          <h2 style="margin-top:24px;color:#7c3aed;">Línea de Tiempo</h2>
+          <table>
+            <thead><tr><th>Fecha</th><th>Recordatorios</th><th>Visitas</th><th>Vacunas</th></tr></thead>
+            <tbody>${timelineRows}</tbody>
+          </table>`;
+      }
+
+      const html = `<!DOCTYPE html><html><head><meta charset="utf-8">
+        <title>Paw Friend — Reporte ${periodLabel}</title>
+        <style>
+          body{font-family:system-ui,sans-serif;padding:40px;color:#1e1b4b;max-width:700px;margin:0 auto}
+          h1{color:#7c3aed;font-size:22px;margin-bottom:4px}
+          .subtitle{color:#6b7280;font-size:13px;margin-bottom:24px}
+          table{width:100%;border-collapse:collapse;margin-top:8px}
+          th,td{text-align:left;padding:8px 12px;border-bottom:1px solid #e5e7eb;font-size:13px}
+          th{background:#f3f0ff;color:#7c3aed;font-weight:600}
+          .footer{margin-top:32px;font-size:11px;color:#9ca3af;text-align:center}
+        </style></head><body>
+        <h1>🐾 Paw Friend — Panel Pro</h1>
+        <p class="subtitle">Período: ${periodLabel} · ${selectedPetName} · Generado: ${new Date().toLocaleDateString('es-CL')}</p>
+        <h2 style="color:#7c3aed;">Resumen de Salud</h2>
+        <table><tbody>
+          <tr><td>Recordatorios completados</td><td><strong>${analytics.summary.remindersCompleted}</strong></td></tr>
+          <tr><td>Visitas veterinarias</td><td><strong>${analytics.summary.vetVisits}</strong></td></tr>
+          <tr><td>Vacunas aplicadas</td><td><strong>${analytics.summary.vaccinesGiven}</strong></td></tr>
+          <tr><td>Score de bienestar</td><td><strong>${analytics.summary.wellnessScore}/100</strong></td></tr>
+        </tbody></table>
+        ${vetSection}
+        ${timelineSection}
+        <div class="footer">Generado por Paw Friend · pawfriend.cl</div>
+      </body></html>`;
+
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const printWin = window.open(url, '_blank');
+      if (printWin) {
+        printWin.addEventListener('load', () => {
+          printWin.print();
+          URL.revokeObjectURL(url);
+        });
+      } else {
+        // Fallback: download as HTML if popup blocked
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `paw-friend-reporte-${period}.html`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
     }
   };
 

@@ -18,6 +18,7 @@ import {
   Lock,
   Sparkles,
   Trophy,
+  Droplets,
 } from '@/lib/icons';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { LINKS } from '@/lib/links';
@@ -59,6 +60,7 @@ const discoverItems = [
   { title: 'Buscar vet', url: '/veterinarios', icon: Search },
   { title: 'Servicios', url: '/servicios', icon: Briefcase },
   { title: 'Mapa', url: '/maps', icon: Map },
+  { title: 'Banco de sangre', url: '/donantes-sangre', icon: Droplets },
 ];
 
 const communityItems = [

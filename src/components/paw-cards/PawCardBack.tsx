@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Share2, Copy, PawPrint } from '@/lib/icons';
+import { Share2, Copy, PawPrint, Sparkles } from '@/lib/icons';
 import { PawCardQR } from './PawCardQR';
 import { PawCardHoloPattern } from './PawCardHoloPattern';
 import { HOLO_PATTERN_MAP } from '@/lib/paw-cards';
@@ -63,64 +63,86 @@ export function PawCardBack({
       <div className="paw-card-back-watermark" />
 
       {/* Holo pattern overlay */}
-      <div className="absolute inset-0 opacity-25 pointer-events-none rounded-[inherit]">
+      <div className="absolute inset-0 opacity-20 pointer-events-none rounded-[inherit]">
         <PawCardHoloPattern pattern={holoPattern} />
       </div>
+
+      {/* Decorative corner filigree */}
+      <div className="paw-card-back-filigree paw-card-back-filigree-tl" />
+      <div className="paw-card-back-filigree paw-card-back-filigree-tr" />
+      <div className="paw-card-back-filigree paw-card-back-filigree-bl" />
+      <div className="paw-card-back-filigree paw-card-back-filigree-br" />
 
       {/* Shine effect */}
       <div className="paw-card-back-shine" />
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-between h-full py-4 px-4 text-center">
+      <div className="relative z-10 flex flex-col items-center justify-between h-full py-3 px-3 text-center">
         {/* Top: Logo + brand */}
         <div className="flex items-center gap-2">
           <img
             src={pawIcon}
             alt="Paw Friend"
-            className="w-8 h-8 rounded-lg shadow-lg shadow-purple-500/30"
+            className="w-7 h-7 rounded-lg shadow-lg shadow-purple-500/30"
           />
-          <span className="text-sm font-bold text-white/90 tracking-wide">Paw Friend</span>
+          <span className="text-xs font-bold text-white/90 tracking-widest uppercase">
+            Paw Friend
+          </span>
         </div>
 
-        {/* Center: QR + scan prompt */}
-        <div className="flex flex-col items-center gap-2 -mt-1">
-          {/* QR frame with glow */}
-          <div className="relative">
-            <div className="absolute -inset-2 rounded-xl bg-gradient-to-br from-purple-500/20 via-blue-500/10 to-purple-500/20 blur-sm" />
-            <div className="relative bg-white/95 rounded-lg p-2 shadow-lg shadow-purple-500/20">
-              <PawCardQR pawCardId={pawCardId} size={110} />
+        {/* Center: ornate QR section */}
+        <div className="flex flex-col items-center gap-1.5">
+          {/* Decorative line above QR */}
+          <div className="paw-card-back-ornament" />
+
+          {/* QR frame with animated glow */}
+          <div className="relative group">
+            {/* Animated glow ring */}
+            <div
+              className="absolute -inset-3 rounded-2xl paw-card-back-qr-glow"
+              data-rarity={rarity}
+            />
+            {/* Inner frame */}
+            <div className="relative bg-white/95 rounded-xl p-2 shadow-xl shadow-purple-900/30 ring-1 ring-white/20">
+              <PawCardQR pawCardId={pawCardId} size={100} />
             </div>
           </div>
 
-          {/* Scan text */}
-          <p className="shimmer-text text-[11px] font-bold tracking-[0.15em] uppercase">
-            Escanea para coleccionar
+          {/* Scan text with shimmer */}
+          <p className="shimmer-text text-[10px] font-bold tracking-[0.2em] uppercase mt-1">
+            Escanea y colecciona
           </p>
 
-          {/* Pet name + species */}
-          <div className="flex items-center gap-1.5 text-purple-200/90">
-            <PawPrint className="h-3 w-3" />
-            <span className="text-xs font-semibold">{petName}</span>
-            <span className="text-purple-400/50">·</span>
-            <span className="text-xs text-purple-300/70">{species}</span>
+          {/* Pet name + species pill */}
+          <div className="flex items-center gap-1.5 bg-white/5 backdrop-blur-sm px-3 py-1 rounded-full border border-white/10">
+            <PawPrint className="h-3 w-3 text-purple-300" />
+            <span className="text-[11px] font-semibold text-white/90">{petName}</span>
+            <span className="text-purple-400/40">|</span>
+            <span className="text-[11px] text-purple-300/80">{species}</span>
           </div>
+
+          {/* Decorative line below */}
+          <div className="paw-card-back-ornament" />
         </div>
 
-        {/* Bottom: ID + holo badge + actions */}
-        <div className="flex flex-col items-center gap-2 w-full">
+        {/* Bottom: holo badge + actions + ID */}
+        <div className="flex flex-col items-center gap-1.5 w-full">
           {/* Holo tier badge */}
           {holoConfig && (
             <span className="paw-holo-tier-badge" data-tier={holoConfig.tier}>
+              {holoConfig.tier === 'ultra-rare' && (
+                <Sparkles className="inline h-2.5 w-2.5 mr-0.5" />
+              )}
               {holoConfig.name}
             </span>
           )}
 
           {/* Actions row */}
-          <div className="flex gap-2 w-full">
+          <div className="flex gap-1.5 w-full">
             <Button
               size="sm"
               variant="outline"
-              className="flex-1 h-7 text-[11px] border-purple-400/25 text-purple-200 bg-purple-500/10 hover:bg-purple-500/25 backdrop-blur-sm"
+              className="flex-1 h-7 text-[10px] border-purple-400/20 text-purple-200 bg-purple-500/10 hover:bg-purple-500/25 backdrop-blur-sm rounded-lg"
               onClick={handleShare}
             >
               <Share2 className="mr-1 h-3 w-3" />
@@ -129,17 +151,17 @@ export function PawCardBack({
             <Button
               size="sm"
               variant="outline"
-              className="flex-1 h-7 text-[11px] border-purple-400/25 text-purple-200 bg-purple-500/10 hover:bg-purple-500/25 backdrop-blur-sm"
+              className="flex-1 h-7 text-[10px] border-purple-400/20 text-purple-200 bg-purple-500/10 hover:bg-purple-500/25 backdrop-blur-sm rounded-lg"
               onClick={handleCopyId}
             >
               <Copy className="mr-1 h-3 w-3" />
-              ID
+              Copiar ID
             </Button>
           </div>
 
-          {/* Card ID small */}
-          <span className="text-[9px] font-mono text-purple-400/50 tracking-wider">
-            #{pawCardId.slice(0, 13)}
+          {/* Card ID */}
+          <span className="text-[8px] font-mono text-purple-400/40 tracking-widest">
+            {pawCardId}
           </span>
         </div>
       </div>

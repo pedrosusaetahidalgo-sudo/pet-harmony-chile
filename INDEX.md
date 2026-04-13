@@ -23,6 +23,16 @@
 | [audits/COMPETENCIA_2026_04_08.md](audits/COMPETENCIA_2026_04_08.md) | Analisis competitivo Chile | Cada 3-6 meses o cuando aparezca competidor nuevo |
 | [audits/CROSS_PLATFORM_COMPATIBILITY.md](audits/CROSS_PLATFORM_COMPATIBILITY.md) | Compatibilidad multiplataforma (iOS, Android, Web, Chrome) | Cada cambio de CSS/JS moderno o API de browser |
 
+## Specs de features (propuestas, pendientes de implementar)
+
+| Documento | Que contiene | Prioridad |
+|---|---|---|
+| [PLAN_DUAL_PROFILE.md](PLAN_DUAL_PROFILE.md) | Sistema de perfil dual dueno/veterinario — toggle, guards, onboarding | **Alta** — Aprobado, listo para implementar |
+| [docs-specs/COMPARTIR_FICHA_V2.md](docs-specs/COMPARTIR_FICHA_V2.md) | Vinculacion directa vet-mascota con aceptar/rechazar. Reemplaza tokens temporales | **Alta** — Toca la joya de la corona (ficha clinica) |
+| [docs-specs/ANALISIS_PREMIUM_VS_FREE.md](docs-specs/ANALISIS_PREMIUM_VS_FREE.md) | Analisis de que features deben ser free vs premium + plan de ejecucion | **Alta** — Define monetizacion |
+| [docs-specs/AUDIO_CONSULTA_VET.md](docs-specs/AUDIO_CONSULTA_VET.md) | Transcripcion IA en vivo de consultas veterinarias | **Media** — Diferenciador B2B, requiere infra IA |
+| [docs-specs/RUTINAS_Y_CALENDARIO_MASCOTA.md](docs-specs/RUTINAS_Y_CALENDARIO_MASCOTA.md) | Rutinas semanales recurrentes + calendario unificado por mascota | **Media** — Mejora retention, no bloquea nada |
+
 ## Archivos clave en codigo
 
 | Archivo | Que contiene |

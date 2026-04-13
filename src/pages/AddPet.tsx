@@ -78,6 +78,7 @@ const AddPet = () => {
     bio: '',
     // Clinical fields
     microchip_number: '',
+    blood_type: '',
     neutered: false,
     is_adopted: false,
     adoption_date: '',
@@ -130,6 +131,7 @@ const AddPet = () => {
         weight: data.weight != null ? String(data.weight) : '',
         bio: data.bio ?? '',
         microchip_number: data.microchip_number ?? '',
+        blood_type: data.blood_type ?? '',
         neutered: !!data.neutered,
         is_adopted: !!data.is_adopted,
         adoption_date: data.adoption_date ?? '',
@@ -337,6 +339,7 @@ const AddPet = () => {
         photo_url: photoUrl,
         is_public: true,
         microchip_number: formData.microchip_number || null,
+        blood_type: formData.blood_type || null,
         neutered: formData.neutered,
       };
 
@@ -932,6 +935,22 @@ const AddPet = () => {
                       />
                       <p className="text-xs text-muted-foreground">
                         15 dígitos (estándar ISO 11784/11785)
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="blood_type">Tipo de Sangre</Label>
+                      <Input
+                        id="blood_type"
+                        value={formData.blood_type}
+                        onChange={(e) => updateField('blood_type', e.target.value)}
+                        placeholder={
+                          formData.species === 'gato' ? 'A, B o AB' : 'DEA 1.1+, DEA 1.1-'
+                        }
+                        maxLength={30}
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        Tu vet puede determinarlo con un examen rápido
                       </p>
                     </div>
 

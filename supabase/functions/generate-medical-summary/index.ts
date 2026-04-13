@@ -826,6 +826,21 @@ serve(async (req) => {
       });
     }
 
+    // ── Premium plan check: export_pdf requires premium ──
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('plan_id')
+      .eq('id', userData.user.id)
+      .single();
+
+    const userPlan = profileData?.plan_id || 'free';
+    if (userPlan === 'free') {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Exportar PDF requiere plan Premium' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 402 }
+      );
+    }
+
     // ── Fetch data via updated RPC ──
     const { data: summaryData, error: summaryError } = await supabase.rpc(
       'get_medical_summary_data',

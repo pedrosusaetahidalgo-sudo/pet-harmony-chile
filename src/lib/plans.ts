@@ -27,19 +27,20 @@ export const PLANS: Record<PlanId, PlanConfig> = {
     yearlyMonthly: 0,
     features: {
       max_pets: 2,
-      max_reminders: 5,
+      max_reminders: 3,
       ai_behavior_analysis: 1,
-      ai_vet_assistant: 0,
+      ai_vet_assistant: 1,
       export_pdf: false,
-      share_clinical: false,
-      medical_history: '1_year',
+      share_clinical: 1,
+      medical_history: '6_months',
       weekly_summary: false,
       booking_user_fee: 5,
       priority_support: false,
       ad_free: false,
       pro_analytics: false,
       analytics_export: false,
-    }
+      ocr_scans: 1,
+    },
   },
   premium: {
     id: 'premium',
@@ -54,7 +55,7 @@ export const PLANS: Record<PlanId, PlanConfig> = {
       ai_behavior_analysis: -1,
       ai_vet_assistant: -1,
       export_pdf: true,
-      share_clinical: true,
+      share_clinical: -1,
       medical_history: 'all',
       weekly_summary: true,
       booking_user_fee: 0,
@@ -62,23 +63,26 @@ export const PLANS: Record<PlanId, PlanConfig> = {
       ad_free: true,
       pro_analytics: true,
       analytics_export: true,
-    }
-  }
+      ocr_scans: -1,
+    },
+  },
 };
 
 export function canAccess(
   planId: PlanId,
   feature: string,
-  currentUsage?: number
+  currentUsage?: number,
+  isAdmin?: boolean
 ): { allowed: boolean; reason?: string; upgradeRequired?: PlanId } {
+  // Admin override: todo desbloqueado siempre
+  if (isAdmin) return { allowed: true };
+
   const plan = PLANS[planId];
   const value = plan.features[feature];
 
   if (typeof value === 'boolean') {
     if (!value) {
-      const minPlan = Object.entries(PLANS).find(
-        ([, p]) => p.features[feature] === true
-      );
+      const minPlan = Object.entries(PLANS).find(([, p]) => p.features[feature] === true);
       return {
         allowed: false,
         reason: `Disponible desde el plan ${minPlan?.[1].name || 'Premium'}`,
@@ -142,6 +146,7 @@ export interface ProviderPlanFeatures {
   analytics_level: 'none' | 'basic' | 'advanced';
   priority_support: boolean;
   api_access: boolean;
+  audio_transcription: boolean;
 }
 
 export interface ProviderPlanConfig {
@@ -167,9 +172,9 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
     yearlyMonthly: 0,
     commissionRate: 10,
     features: {
-      max_clients: 20,
+      max_clients: 15,
       max_bookings_per_month: 10,
-      max_review_invitations_per_month: 0,
+      max_review_invitations_per_month: 2,
       public_profile: true,
       public_reviews: true,
       directory_listing: true,
@@ -180,6 +185,7 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
       analytics_level: 'none',
       priority_support: false,
       api_access: false,
+      audio_transcription: false,
     },
   },
   provider_individual: {
@@ -190,7 +196,7 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
     monthlyPrice: 9900,
     yearlyPrice: 99000,
     yearlyMonthly: 8250,
-    commissionRate: 12,
+    commissionRate: 10,
     features: {
       max_clients: 100,
       max_bookings_per_month: 50,
@@ -205,6 +211,7 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
       analytics_level: 'basic',
       priority_support: false,
       api_access: false,
+      audio_transcription: true,
     },
   },
   provider_clinic_basic: {
@@ -227,9 +234,10 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
       multiple_vets: true,
       multiple_branches: false,
       branding_level: 'full',
-      analytics_level: 'basic',
+      analytics_level: 'advanced',
       priority_support: false,
       api_access: false,
+      audio_transcription: true,
     },
   },
   provider_clinic_pro: {
@@ -255,6 +263,7 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
       analytics_level: 'advanced',
       priority_support: true,
       api_access: true,
+      audio_transcription: true,
     },
   },
 };
@@ -262,15 +271,20 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
 export function canProviderAccess(
   planId: ProviderPlanId,
   feature: keyof ProviderPlanFeatures,
-  currentUsage?: number
+  currentUsage?: number,
+  isAdmin?: boolean
 ): { allowed: boolean; reason?: string; upgradeRequired?: ProviderPlanId } {
+  // Admin override: todo desbloqueado siempre
+  if (isAdmin) return { allowed: true };
+
   const plan = PROVIDER_PLANS[planId];
   const value = plan.features[feature];
 
   if (typeof value === 'boolean') {
     if (!value) {
-      const minPlan = (Object.entries(PROVIDER_PLANS) as [ProviderPlanId, ProviderPlanConfig][])
-        .find(([, p]) => p.features[feature] === true);
+      const minPlan = (
+        Object.entries(PROVIDER_PLANS) as [ProviderPlanId, ProviderPlanConfig][]
+      ).find(([, p]) => p.features[feature] === true);
       return {
         allowed: false,
         reason: `Disponible desde el plan ${minPlan?.[1].name ?? 'Individual'}`,
@@ -297,8 +311,8 @@ export function canProviderAccess(
           planId === 'provider_free'
             ? 'provider_individual'
             : planId === 'provider_individual'
-            ? 'provider_clinic_basic'
-            : 'provider_clinic_pro',
+              ? 'provider_clinic_basic'
+              : 'provider_clinic_pro',
       };
     }
     return { allowed: true };
@@ -321,4 +335,5 @@ export const FEATURE_LABELS: Record<string, string> = {
   ad_free: 'Sin publicidad',
   pro_analytics: 'Panel Pro de Analytics',
   analytics_export: 'Exportar reportes (PDF/CSV)',
+  ocr_scans: 'Escaneo de carnet con IA',
 };

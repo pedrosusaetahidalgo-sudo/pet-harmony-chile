@@ -87,6 +87,8 @@ export const LINKS = {
   peluqueria: () => '/services/groomers',
   /** Editor de perfil de peluquero */
   groomerProfileEdit: () => '/peluquero/perfil',
+  /** Banco de sangre / donantes */
+  bloodDonors: () => '/donantes-sangre',
 } as const;
 
 function slugify(value: string): string {

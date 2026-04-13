@@ -79,6 +79,7 @@ const Reportes = lazy(() => import('./pages/Reportes'));
 const ProDashboard = lazy(() => import('./pages/ProDashboard'));
 const AnalyticsDashboard = lazy(() => import('./pages/standalone/AnalyticsDashboard'));
 const EnMemoria = lazy(() => import('./pages/EnMemoria'));
+const BloodDonors = lazy(() => import('./pages/BloodDonors'));
 
 /** Inicialización nativa: StatusBar, SplashScreen, back button, push notifications */
 async function initNative() {
@@ -419,6 +420,16 @@ const App = () => (
                     <ProtectedRoute>
                       <AppLayout>
                         <EnMemoria />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/donantes-sangre"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <BloodDonors />
                       </AppLayout>
                     </ProtectedRoute>
                   }

@@ -1,15 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "./useAuth";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from './useAuth';
+import { toast } from 'sonner';
 
-export type VetNoteType =
-  | "consulta"
-  | "vacuna"
-  | "control"
-  | "cirugia"
-  | "urgencia"
-  | "otro";
+export type VetNoteType = 'consulta' | 'vacuna' | 'control' | 'cirugia' | 'urgencia' | 'otro';
 
 export interface VetClinicalNote {
   id: string;
@@ -37,6 +31,8 @@ interface CreateNoteArgs {
   followupRequired?: boolean;
   followupDate?: string;
   followupReason?: string;
+  source?: 'manual' | 'audio_transcription';
+  rawTranscript?: string;
 }
 
 // La tabla vet_clinical_notes no existe aun en los tipos generados de Supabase.
@@ -49,21 +45,21 @@ const sb = supabase as any;
  */
 export function useVetClinicalNotesByPet(petId: string | undefined) {
   return useQuery<VetClinicalNote[]>({
-    queryKey: ["vet-clinical-notes-pet", petId],
+    queryKey: ['vet-clinical-notes-pet', petId],
     queryFn: async () => {
       if (!petId) return [];
       const { data, error } = await sb
-        .from("vet_clinical_notes")
-        .select("*, service_providers(display_name)")
-        .eq("pet_id", petId)
-        .order("created_at", { ascending: false });
+        .from('vet_clinical_notes')
+        .select('*, service_providers(display_name)')
+        .eq('pet_id', petId)
+        .order('created_at', { ascending: false });
       if (error) throw error;
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return ((data ?? []) as any[]).map((row) => {
         const sp = row.service_providers as { display_name: string } | null;
         return {
           ...row,
-          provider_name: sp?.display_name ?? "Veterinario",
+          provider_name: sp?.display_name ?? 'Veterinario',
         } as VetClinicalNote;
       });
     },
@@ -76,14 +72,14 @@ export function useVetClinicalNotesByPet(petId: string | undefined) {
  */
 export function useVetClinicalNotesByProvider(providerId: string | undefined) {
   return useQuery<VetClinicalNote[]>({
-    queryKey: ["vet-clinical-notes-provider", providerId],
+    queryKey: ['vet-clinical-notes-provider', providerId],
     queryFn: async () => {
       if (!providerId) return [];
       const { data, error } = await sb
-        .from("vet_clinical_notes")
-        .select("*")
-        .eq("provider_id", providerId)
-        .order("created_at", { ascending: false })
+        .from('vet_clinical_notes')
+        .select('*')
+        .eq('provider_id', providerId)
+        .order('created_at', { ascending: false })
         .limit(50);
       if (error) throw error;
       return (data ?? []) as VetClinicalNote[];
@@ -101,9 +97,9 @@ export function useCreateVetClinicalNote() {
 
   return useMutation({
     mutationFn: async (args: CreateNoteArgs) => {
-      if (!user) throw new Error("No autenticado");
+      if (!user) throw new Error('No autenticado');
       const { data, error } = await sb
-        .from("vet_clinical_notes")
+        .from('vet_clinical_notes')
         .insert({
           share_token_id: args.shareTokenId,
           provider_id: args.providerId,
@@ -116,7 +112,9 @@ export function useCreateVetClinicalNote() {
           followup_required: args.followupRequired ?? false,
           followup_date: args.followupDate || null,
           followup_reason: args.followupReason || null,
-          consultation_date: new Date().toISOString().split("T")[0],
+          source: args.source || 'manual',
+          raw_transcript: args.rawTranscript || null,
+          consultation_date: new Date().toISOString().split('T')[0],
         })
         .select()
         .single();
@@ -125,14 +123,14 @@ export function useCreateVetClinicalNote() {
     },
     onSuccess: (_data: unknown, args: CreateNoteArgs) => {
       queryClient.invalidateQueries({
-        queryKey: ["vet-clinical-notes-pet", args.petId],
+        queryKey: ['vet-clinical-notes-pet', args.petId],
       });
       queryClient.invalidateQueries({
-        queryKey: ["vet-clinical-notes-provider", args.providerId],
+        queryKey: ['vet-clinical-notes-provider', args.providerId],
       });
     },
     onError: () => {
-      toast.error("Error al guardar la nota clinica");
+      toast.error('Error al guardar la nota clinica');
     },
   });
 }

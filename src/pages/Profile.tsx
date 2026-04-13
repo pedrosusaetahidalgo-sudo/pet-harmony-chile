@@ -6,7 +6,7 @@ import { PawPrint, Trophy, ChevronRight } from '@/lib/icons';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGoToAddPet } from '@/hooks/useCanAddPet';
 import { useGamification } from '@/hooks/useGamification';
 import { usePlan } from '@/hooks/usePlan';
@@ -56,7 +56,10 @@ const Profile = () => {
   // Drawer states
   const [editDrawerOpen, setEditDrawerOpen] = useState(false);
   const [achievementsDrawerOpen, setAchievementsDrawerOpen] = useState(false);
-  const [integrationsDrawerOpen, setIntegrationsDrawerOpen] = useState(false);
+  const [searchParams] = useSearchParams();
+  const [integrationsDrawerOpen, setIntegrationsDrawerOpen] = useState(
+    searchParams.get('tab') === 'integrations'
+  );
   const [notificationsDrawerOpen, setNotificationsDrawerOpen] = useState(false);
 
   // Notification prefs

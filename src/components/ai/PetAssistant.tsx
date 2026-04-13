@@ -5,10 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useAISkill } from '@/hooks/useAISkill';
+import { usePlan } from '@/hooks/usePlan';
 import { AILoadingState } from './AILoadingState';
 import { AIErrorState } from './AIErrorState';
 import { AIRateLimitState } from './AIRateLimitState';
 import { AIDisclaimer } from './AIDisclaimer';
+import { PremiumNudge } from '@/components/PremiumNudge';
 
 interface PetAssistantResponse {
   respuesta: string;
@@ -29,6 +31,11 @@ interface Props {
 export function PetAssistant({ petId, petName, onClose }: Props) {
   const [question, setQuestion] = useState('');
   const [history, setHistory] = useState<Array<{ q: string; a: PetAssistantResponse }>>([]);
+  const { checkAccess, isPremium } = usePlan();
+
+  // Plan gate: free users get 1 query/month, premium unlimited
+  const aiAccess = checkAccess('ai_vet_assistant', history.length);
+  const isLimitedByPlan = !isPremium && !aiAccess.allowed && history.length > 0;
 
   const { isLoading, error, isRateLimited, invoke, reset } = useAISkill<
     { question: string; pet_id: string },
@@ -157,6 +164,16 @@ export function PetAssistant({ petId, petName, onClose }: Props) {
           <AIErrorState message={error} onRetry={() => invoke({ question, pet_id: petId })} />
         )}
 
+        {isLimitedByPlan && (
+          <PremiumNudge
+            feature="ai_vet_assistant"
+            title="Consultas IA agotadas"
+            description={`Usaste tu consulta gratuita este mes. Con Premium tienes consultas ilimitadas sobre ${petName}.`}
+            usage={{ current: history.length, max: 1 }}
+            variant="card"
+          />
+        )}
+
         {/* Input */}
         <form onSubmit={handleSubmit} className="flex gap-2">
           <Input
@@ -164,13 +181,13 @@ export function PetAssistant({ petId, petName, onClose }: Props) {
             onChange={(e) => setQuestion(e.target.value)}
             placeholder={`Pregunta sobre ${petName}...`}
             className="text-xs h-9"
-            disabled={isLoading || isRateLimited}
+            disabled={isLoading || isRateLimited || isLimitedByPlan}
           />
           <Button
             type="submit"
             size="icon"
             className="h-9 w-9 flex-shrink-0"
-            disabled={isLoading || isRateLimited || !question.trim()}
+            disabled={isLoading || isRateLimited || isLimitedByPlan || !question.trim()}
           >
             <Send className="h-3.5 w-3.5" />
           </Button>

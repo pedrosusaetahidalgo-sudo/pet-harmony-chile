@@ -1,11 +1,13 @@
 import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { supabase } from '@/integrations/supabase/client';
 import { PLANS, canAccess, PlanId } from '@/lib/plans';
 
 export function usePlan() {
   const { user } = useAuth();
+  const { isAdmin } = useIsAdmin();
 
   const { data: profile } = useQuery({
     queryKey: ['user-plan', user?.id],
@@ -26,14 +28,15 @@ export function usePlan() {
   const plan = PLANS[planId];
 
   const checkAccess = useCallback(
-    (feature: string, currentUsage?: number) => canAccess(planId, feature, currentUsage),
-    [planId]
+    (feature: string, currentUsage?: number) => canAccess(planId, feature, currentUsage, isAdmin),
+    [planId, isAdmin]
   );
 
   return {
     planId,
     plan,
-    isPremium: planId !== 'free',
+    isPremium: planId !== 'free' || isAdmin,
+    isAdmin,
     badge: profile?.plan_badge || '',
     expiresAt: profile?.plan_expires_at,
     checkAccess,

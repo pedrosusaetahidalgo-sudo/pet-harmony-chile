@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
+import { usePlan } from '@/hooks/usePlan';
 
 function nextDueDate(current: string, interval: string): string {
   const d = new Date(current);
@@ -44,6 +45,7 @@ export const useReminders = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { checkAccess } = usePlan();
 
   const { data: reminders = [], isLoading } = useQuery({
     queryKey: ['pet-reminders', user?.id],
@@ -79,6 +81,13 @@ export const useReminders = () => {
       is_recurring?: boolean;
       recurrence_interval?: string;
     }) => {
+      // Enforcement: check plan limit for active reminders
+      const activeCount = reminders.filter((r) => !r.is_completed).length;
+      const access = checkAccess('max_reminders', activeCount);
+      if (!access.allowed) {
+        throw new Error(access.reason || 'Llegaste al límite de recordatorios de tu plan');
+      }
+
       const { error } = await supabase.from('pet_reminders').insert({
         ...reminder,
         owner_id: user?.id,
@@ -176,6 +185,9 @@ export const useReminders = () => {
     },
   });
 
+  const activeCount = reminders.filter((r) => !r.is_completed).length;
+  const reminderAccess = checkAccess('max_reminders', activeCount);
+
   return {
     reminders,
     upcomingReminders,
@@ -185,5 +197,7 @@ export const useReminders = () => {
     completeReminder,
     snoozeReminder,
     deleteReminder,
+    reminderLimitReached: !reminderAccess.allowed,
+    reminderLimitReason: reminderAccess.reason,
   };
 };

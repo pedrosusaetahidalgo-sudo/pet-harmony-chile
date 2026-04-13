@@ -2,11 +2,12 @@
  * Hook for managing structured medical records (visits, treatments, etc.)
  */
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "./useAuth";
-import { toast } from "sonner";
-import { describeSupabaseError } from "@/lib/supabaseErrors";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from './useAuth';
+import { usePlan } from './usePlan';
+import { toast } from 'sonner';
+import { describeSupabaseError } from '@/lib/supabaseErrors';
 
 export interface MedicalRecord {
   id: string;
@@ -41,26 +42,37 @@ export interface CreateMedicalRecordParams {
  */
 export const useMedicalRecords = (petId?: string) => {
   const { user } = useAuth();
+  const { planId } = usePlan();
   const queryClient = useQueryClient();
 
-  // List records for a pet
+  // List records for a pet (filtered by plan's medical_history window)
   const { data: records, isLoading } = useQuery({
-    queryKey: ['medical-records', petId],
+    queryKey: ['medical-records', petId, planId],
     queryFn: async () => {
       if (!petId) return [];
 
-      const { data, error } = await supabase
+      let query = supabase
         .from('medical_records')
         .select('*')
         .eq('pet_id', petId)
         .order('date', { ascending: false })
         .order('created_at', { ascending: false });
 
+      // Enforce medical_history plan limit
+      if (planId === 'free') {
+        const cutoff = new Date();
+        cutoff.setMonth(cutoff.getMonth() - 6);
+        query = query.gte('date', cutoff.toISOString().split('T')[0]);
+      }
+
+      const { data, error } = await query;
       if (error) throw error;
       return data as MedicalRecord[];
     },
     enabled: !!petId,
   });
+
+  const isHistoryLimited = planId === 'free';
 
   // Create record
   const createRecord = useMutation({
@@ -92,7 +104,9 @@ export const useMedicalRecords = (petId?: string) => {
       toast.success('Registro médico creado correctamente');
     },
     onError: (error: unknown) => {
-      toast.error('Error al crear registro', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
+      toast.error('Error al crear registro', {
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
+      });
     },
   });
 
@@ -116,7 +130,9 @@ export const useMedicalRecords = (petId?: string) => {
       toast.success('Registro médico actualizado correctamente');
     },
     onError: (error: unknown) => {
-      toast.error('Error al actualizar registro', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
+      toast.error('Error al actualizar registro', {
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
+      });
     },
   });
 
@@ -125,10 +141,7 @@ export const useMedicalRecords = (petId?: string) => {
     mutationFn: async (recordId: string) => {
       if (!user) throw new Error('Usuario no autenticado');
 
-      const { error } = await supabase
-        .from('medical_records')
-        .delete()
-        .eq('id', recordId);
+      const { error } = await supabase.from('medical_records').delete().eq('id', recordId);
 
       if (error) throw error;
     },
@@ -137,13 +150,16 @@ export const useMedicalRecords = (petId?: string) => {
       toast.success('Registro médico eliminado correctamente');
     },
     onError: (error: unknown) => {
-      toast.error('Error al eliminar registro', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
+      toast.error('Error al eliminar registro', {
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
+      });
     },
   });
 
   return {
     records,
     isLoading,
+    isHistoryLimited,
     createRecord: createRecord.mutateAsync,
     isCreating: createRecord.isPending,
     updateRecord: updateRecord.mutateAsync,

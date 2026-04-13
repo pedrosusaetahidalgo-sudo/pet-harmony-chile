@@ -1,15 +1,16 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { formatDistanceToNowStrict } from "date-fns";
-import { es } from "date-fns/locale";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { FileText, ExternalLink, Plus } from "@/lib/icons";
-import { openExternalUrl } from "@/lib/nativeNavigation";
-import { supabase } from "@/integrations/supabase/client";
-import { VetNoteEditor } from "./VetNoteEditor";
+import { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { formatDistanceToNowStrict } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { FileText, ExternalLink, Plus, Mic } from '@/lib/icons';
+import { openExternalUrl } from '@/lib/nativeNavigation';
+import { supabase } from '@/integrations/supabase/client';
+import { VetNoteEditor } from './VetNoteEditor';
+import { ConsultationRecorderModal } from './ConsultationRecorderModal';
 
 interface SharedFichasCardProps {
   providerId: string | null | undefined;
@@ -35,18 +36,18 @@ interface SharedFichaRow {
  */
 export function SharedFichasCard({ providerId }: SharedFichasCardProps) {
   const { data: rows } = useQuery({
-    queryKey: ["shared-fichas", providerId],
+    queryKey: ['shared-fichas', providerId],
     queryFn: async () => {
       if (!providerId) return [] as SharedFichaRow[];
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
       const { data, error } = await supabase
-        .from("medical_share_tokens")
-        .select("id, token, pet_id, created_at, expires_at, pets(name, species, photo_url)")
-        .eq("target_provider_id", providerId)
-        .eq("is_revoked", false)
-        .gte("created_at", sevenDaysAgo.toISOString())
-        .order("created_at", { ascending: false })
+        .from('medical_share_tokens')
+        .select('id, token, pet_id, created_at, expires_at, pets(name, species, photo_url)')
+        .eq('target_provider_id', providerId)
+        .eq('is_revoked', false)
+        .gte('created_at', sevenDaysAgo.toISOString())
+        .order('created_at', { ascending: false })
         .limit(10);
       if (error) return [] as SharedFichaRow[];
       return (data || []) as unknown as SharedFichaRow[];
@@ -55,6 +56,7 @@ export function SharedFichasCard({ providerId }: SharedFichasCardProps) {
   });
 
   const [expandedNoteId, setExpandedNoteId] = useState<string | null>(null);
+  const [recorderFichaId, setRecorderFichaId] = useState<string | null>(null);
 
   if (!rows || rows.length === 0) return null;
 
@@ -89,33 +91,42 @@ export function SharedFichasCard({ providerId }: SharedFichasCardProps) {
             <div key={row.id} className="space-y-2">
               <div className="flex items-center gap-3 p-3 bg-white rounded-lg border border-purple-100">
                 <Avatar className="h-11 w-11">
-                  {pet?.photo_url ? <AvatarImage src={pet.photo_url} alt={pet?.name || "Mascota"} /> : null}
+                  {pet?.photo_url ? (
+                    <AvatarImage src={pet.photo_url} alt={pet?.name || 'Mascota'} />
+                  ) : null}
                   <AvatarFallback className="bg-purple-100 text-purple-700">
-                    {(pet?.name || "M")[0].toUpperCase()}
+                    {(pet?.name || 'M')[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold truncate">
-                    {pet?.name || "Mascota"}
-                  </p>
+                  <p className="text-sm font-semibold truncate">{pet?.name || 'Mascota'}</p>
                   <p className="text-xs text-muted-foreground truncate">
-                    {pet?.species ? `${pet.species} · ` : ""}
+                    {pet?.species ? `${pet.species} · ` : ''}
                     compartido hace {when}
                   </p>
                 </div>
                 <div className="flex gap-1.5">
                   {!expired && providerId && (
-                    <Button
-                      size="sm"
-                      variant={expandedNoteId === row.id ? "secondary" : "outline"}
-                      onClick={() =>
-                        setExpandedNoteId(expandedNoteId === row.id ? null : row.id)
-                      }
-                      className="h-11"
-                    >
-                      <Plus className="h-4 w-4 mr-1" />
-                      Nota
-                    </Button>
+                    <>
+                      <Button
+                        size="sm"
+                        variant={expandedNoteId === row.id ? 'secondary' : 'outline'}
+                        onClick={() => setExpandedNoteId(expandedNoteId === row.id ? null : row.id)}
+                        className="h-11"
+                      >
+                        <Plus className="h-4 w-4 mr-1" />
+                        Nota
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setRecorderFichaId(row.id)}
+                        className="h-11 text-red-600 border-red-200 hover:bg-red-50"
+                      >
+                        <Mic className="h-4 w-4 mr-1" />
+                        Grabar
+                      </Button>
+                    </>
                   )}
                   <Button
                     size="sm"
@@ -133,8 +144,22 @@ export function SharedFichasCard({ providerId }: SharedFichasCardProps) {
                   shareTokenId={row.id}
                   providerId={providerId}
                   petId={row.pet_id}
-                  petName={pet?.name || "Mascota"}
+                  petName={pet?.name || 'Mascota'}
                   onSaved={() => setExpandedNoteId(null)}
+                />
+              )}
+              {recorderFichaId === row.id && providerId && (
+                <ConsultationRecorderModal
+                  open
+                  onOpenChange={(v) => {
+                    if (!v) setRecorderFichaId(null);
+                  }}
+                  shareTokenId={row.id}
+                  providerId={providerId}
+                  petId={row.pet_id}
+                  petName={pet?.name || 'Mascota'}
+                  petSpecies={pet?.species || undefined}
+                  onSaved={() => setRecorderFichaId(null)}
                 />
               )}
             </div>

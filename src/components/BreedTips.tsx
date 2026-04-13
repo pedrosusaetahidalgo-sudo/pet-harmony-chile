@@ -1,11 +1,22 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Sparkles, Loader2, Heart, Activity, Utensils, Brain, Thermometer, Users } from "@/lib/icons";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { Separator } from "@/components/ui/separator";
-import { describeSupabaseError } from "@/lib/supabaseErrors";
+import { useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Sparkles,
+  Loader2,
+  Heart,
+  Activity,
+  Utensils,
+  Brain,
+  Thermometer,
+  Users,
+} from '@/lib/icons';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { usePlan } from '@/hooks/usePlan';
+import { Separator } from '@/components/ui/separator';
+import { describeSupabaseError } from '@/lib/supabaseErrors';
+import { PremiumNudge } from '@/components/PremiumNudge';
 
 interface BreedTipsProps {
   breed: string;
@@ -20,8 +31,10 @@ const cacheKey = (breed: string, species: string) =>
   `paw-friend:breed-tips:${species}:${breed}`.toLowerCase();
 
 export function BreedTips({ breed, species }: BreedTipsProps) {
+  const { checkAccess, isPremium } = usePlan();
+  const [usedThisSession, setUsedThisSession] = useState(false);
   const [tips, setTips] = useState<string | null>(() => {
-    if (typeof window === "undefined") return null;
+    if (typeof window === 'undefined') return null;
     try {
       return sessionStorage.getItem(cacheKey(breed, species));
     } catch {
@@ -43,24 +56,35 @@ export function BreedTips({ breed, species }: BreedTipsProps) {
   }, [breed, species]);
 
   const fetchTips = async () => {
+    // Plan gate: free users get 1 analysis/month
+    const access = checkAccess('ai_behavior_analysis', usedThisSession ? 1 : 0);
+    if (!access.allowed) {
+      toast({
+        title: 'Límite alcanzado',
+        description: access.reason || 'Mejora a Premium para análisis ilimitados.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("breed-tips", {
+      const { data, error } = await supabase.functions.invoke('breed-tips', {
         body: { breed, species },
       });
 
       if (error) {
-        if (error.message.includes("429")) {
+        if (error.message.includes('429')) {
           toast({
-            title: "Límite alcanzado",
-            description: "Demasiadas solicitudes. Intenta más tarde.",
-            variant: "destructive",
+            title: 'Límite alcanzado',
+            description: 'Demasiadas solicitudes. Intenta más tarde.',
+            variant: 'destructive',
           });
-        } else if (error.message.includes("402")) {
+        } else if (error.message.includes('402')) {
           toast({
-            title: "Servicio no disponible",
-            description: "El servicio de IA requiere créditos adicionales.",
-            variant: "destructive",
+            title: 'Servicio no disponible',
+            description: 'El servicio de IA requiere créditos adicionales.',
+            variant: 'destructive',
           });
         } else {
           throw error;
@@ -69,16 +93,19 @@ export function BreedTips({ breed, species }: BreedTipsProps) {
       }
 
       setTips(data.tips);
+      setUsedThisSession(true);
       try {
         sessionStorage.setItem(cacheKey(breed, species), data.tips);
       } catch {
         // sessionStorage lleno o deshabilitado: no es bloqueante.
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
-        title: "Error al obtener consejos",
-        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "Ocurrió un error inesperado",
-        variant: "destructive",
+        title: 'Error al obtener consejos',
+        description:
+          describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
+          'Ocurrió un error inesperado',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -109,19 +136,25 @@ export function BreedTips({ breed, species }: BreedTipsProps) {
   }
 
   const formatTips = (text: string) => {
-    const sections = text.split('\n\n').filter(section => section.trim());
-    
+    const sections = text.split('\n\n').filter((section) => section.trim());
+
     return sections.map((section, index) => {
-      const lines = section.split('\n').filter(line => line.trim());
+      const lines = section.split('\n').filter((line) => line.trim());
       const title = lines[0];
       const content = lines.slice(1);
-      
+
       let icon = <Heart className="h-4 w-4" />;
       if (title.toLowerCase().includes('ejercicio') || title.toLowerCase().includes('actividad')) {
         icon = <Activity className="h-4 w-4" />;
-      } else if (title.toLowerCase().includes('alimentación') || title.toLowerCase().includes('comida')) {
+      } else if (
+        title.toLowerCase().includes('alimentación') ||
+        title.toLowerCase().includes('comida')
+      ) {
         icon = <Utensils className="h-4 w-4" />;
-      } else if (title.toLowerCase().includes('temperamento') || title.toLowerCase().includes('comportamiento')) {
+      } else if (
+        title.toLowerCase().includes('temperamento') ||
+        title.toLowerCase().includes('comportamiento')
+      ) {
         icon = <Brain className="h-4 w-4" />;
       } else if (title.toLowerCase().includes('salud')) {
         icon = <Thermometer className="h-4 w-4" />;

@@ -1,11 +1,13 @@
-import { useState, useRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Camera, Loader2, Check, X, FileText } from "@/lib/icons";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
+import { useState, useRef } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Camera, Loader2, Check, X, FileText } from '@/lib/icons';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { usePlan } from '@/hooks/usePlan';
+import { toast } from 'sonner';
+import { PremiumNudge } from '@/components/PremiumNudge';
 
 interface VaccineEntry {
   name: string;
@@ -32,18 +34,20 @@ interface Props {
 
 export function VaccinationCardOCR({ petId, onSaved }: Props) {
   const { user } = useAuth();
+  const { checkAccess, isPremium } = usePlan();
   const fileRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [processing, setProcessing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [result, setResult] = useState<OCRResult | null>(null);
+  const [scansUsed, setScansUsed] = useState(0);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     if (file.size > 10 * 1024 * 1024) {
-      toast.error("La imagen es muy pesada. Máximo 10 MB.");
+      toast.error('La imagen es muy pesada. Máximo 10 MB.');
       return;
     }
 
@@ -55,25 +59,35 @@ export function VaccinationCardOCR({ petId, onSaved }: Props) {
     reader.readAsDataURL(file);
   };
 
+  const ocrAccess = checkAccess('ocr_scans', scansUsed);
+
   const handleProcess = async () => {
     if (!preview || !user) return;
+
+    // Plan gate: check OCR scan limit
+    if (!ocrAccess.allowed) {
+      toast.error(ocrAccess.reason || 'Llegaste al límite de escaneos de tu plan');
+      return;
+    }
+
     setProcessing(true);
 
     try {
       // Extract base64 without the data:image/... prefix
-      const base64 = preview.split(",")[1];
+      const base64 = preview.split(',')[1];
 
-      const { data, error } = await supabase.functions.invoke("ocr-vaccination-card", {
+      const { data, error } = await supabase.functions.invoke('ocr-vaccination-card', {
         body: { image_base64: base64, pet_id: petId },
       });
 
       if (error) throw error;
       setResult(data as OCRResult);
-      toast.success("Carnet procesado. Revisa los datos antes de guardar.");
-    } catch (err: any) {
-      const msg = err?.message || "Error al procesar la imagen";
-      if (msg.includes("rate") || msg.includes("429")) {
-        toast.error("Llegaste al límite de 3 escaneos por día. Intenta mañana.");
+      setScansUsed((prev) => prev + 1);
+      toast.success('Carnet procesado. Revisa los datos antes de guardar.');
+    } catch (err: unknown) {
+      const msg = (err instanceof Error ? err.message : null) || 'Error al procesar la imagen';
+      if (msg.includes('rate') || msg.includes('429')) {
+        toast.error('Llegaste al límite de 3 escaneos por día. Intenta mañana.');
       } else {
         toast.error(msg);
       }
@@ -101,7 +115,7 @@ export function VaccinationCardOCR({ petId, onSaved }: Props) {
       const vaccineRecords = result.vaccines.map((v) => ({
         pet_id: petId,
         owner_id: user.id,
-        record_type: "vacuna",
+        record_type: 'vacuna',
         title: `Vacuna: ${v.name}`,
         description: v.batch ? `Lote: ${v.batch}` : null,
         veterinarian_name: v.vet_name || null,
@@ -112,7 +126,7 @@ export function VaccinationCardOCR({ petId, onSaved }: Props) {
       const dewormingRecords = result.deworming.map((d) => ({
         pet_id: petId,
         owner_id: user.id,
-        record_type: "tratamiento",
+        record_type: 'tratamiento',
         title: `Desparasitación: ${d.product}`,
         date: d.date,
       }));
@@ -120,7 +134,7 @@ export function VaccinationCardOCR({ petId, onSaved }: Props) {
       const allRecords = [...vaccineRecords, ...dewormingRecords];
 
       if (allRecords.length > 0) {
-        const { error } = await supabase.from("medical_records").insert(allRecords);
+        const { error } = await supabase.from('medical_records').insert(allRecords);
         if (error) throw error;
       }
 
@@ -128,8 +142,8 @@ export function VaccinationCardOCR({ petId, onSaved }: Props) {
       setResult(null);
       setPreview(null);
       onSaved?.();
-    } catch (err: any) {
-      toast.error(err?.message || "Error al guardar los registros");
+    } catch (err: unknown) {
+      toast.error((err instanceof Error ? err.message : null) || 'Error al guardar los registros');
     } finally {
       setSaving(false);
     }
@@ -175,19 +189,35 @@ export function VaccinationCardOCR({ petId, onSaved }: Props) {
                 size="sm"
                 variant="ghost"
                 className="absolute top-2 right-2 bg-white/80 hover:bg-white"
-                onClick={() => { setPreview(null); setResult(null); }}
+                onClick={() => {
+                  setPreview(null);
+                  setResult(null);
+                }}
               >
                 <X className="h-4 w-4" />
               </Button>
             </div>
 
             {/* Process button */}
-            {!result && (
+            {!result && !ocrAccess.allowed && (
+              <PremiumNudge
+                feature="ocr_scans"
+                title="Escaneos de carnet agotados"
+                description="Usaste tu escaneo gratuito este mes. Con Premium tienes escaneos ilimitados."
+                usage={{ current: scansUsed, max: 1 }}
+                variant="card"
+              />
+            )}
+            {!result && ocrAccess.allowed && (
               <Button onClick={handleProcess} disabled={processing} className="w-full">
                 {processing ? (
-                  <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Procesando con IA...</>
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Procesando con IA...
+                  </>
                 ) : (
-                  <><FileText className="h-4 w-4 mr-2" /> Procesar con IA</>
+                  <>
+                    <FileText className="h-4 w-4 mr-2" /> Procesar con IA
+                  </>
                 )}
               </Button>
             )}
@@ -199,10 +229,16 @@ export function VaccinationCardOCR({ petId, onSaved }: Props) {
                   <div>
                     <p className="text-sm font-semibold mb-1">Vacunas detectadas</p>
                     {result.vaccines.map((v, i) => (
-                      <div key={i} className="flex items-center justify-between p-2 bg-purple-50 rounded-lg mb-1">
+                      <div
+                        key={i}
+                        className="flex items-center justify-between p-2 bg-purple-50 rounded-lg mb-1"
+                      >
                         <div className="min-w-0">
                           <p className="text-sm font-medium truncate">{v.name}</p>
-                          <p className="text-xs text-slate-500">{v.date}{v.batch ? ` · Lote: ${v.batch}` : ""}</p>
+                          <p className="text-xs text-slate-500">
+                            {v.date}
+                            {v.batch ? ` · Lote: ${v.batch}` : ''}
+                          </p>
                         </div>
                         <Button size="sm" variant="ghost" onClick={() => removeVaccine(i)}>
                           <X className="h-3 w-3" />
@@ -216,7 +252,10 @@ export function VaccinationCardOCR({ petId, onSaved }: Props) {
                   <div>
                     <p className="text-sm font-semibold mb-1">Desparasitaciones detectadas</p>
                     {result.deworming.map((d, i) => (
-                      <div key={i} className="flex items-center justify-between p-2 bg-amber-50 rounded-lg mb-1">
+                      <div
+                        key={i}
+                        className="flex items-center justify-between p-2 bg-amber-50 rounded-lg mb-1"
+                      >
                         <div className="min-w-0">
                           <p className="text-sm font-medium truncate">{d.product}</p>
                           <p className="text-xs text-slate-500">{d.date}</p>
@@ -235,15 +274,21 @@ export function VaccinationCardOCR({ petId, onSaved }: Props) {
 
                 <Button
                   onClick={handleSaveAll}
-                  disabled={saving || (result.vaccines.length === 0 && result.deworming.length === 0)}
+                  disabled={
+                    saving || (result.vaccines.length === 0 && result.deworming.length === 0)
+                  }
                   className="w-full"
                 >
                   {saving ? (
-                    <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Guardando...</>
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Guardando...
+                    </>
                   ) : result.vaccines.length === 0 && result.deworming.length === 0 ? (
-                    "No se detectaron datos válidos — sube otra imagen"
+                    'No se detectaron datos válidos — sube otra imagen'
                   ) : (
-                    <><Check className="h-4 w-4 mr-2" /> Guardar todo en la ficha</>
+                    <>
+                      <Check className="h-4 w-4 mr-2" /> Guardar todo en la ficha
+                    </>
                   )}
                 </Button>
               </div>

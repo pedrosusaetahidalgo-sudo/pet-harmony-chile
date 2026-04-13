@@ -16,6 +16,7 @@ import {
   Loader2,
   LocateFixed,
   Building2,
+  Coffee,
 } from '@/lib/icons';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
@@ -44,7 +45,7 @@ L.Icon.Default.mergeOptions({
 
 const SANTIAGO_CENTER: [number, number] = [-33.4489, -70.6693];
 
-type MapView = 'lost' | 'adoption' | 'services' | 'partners';
+type MapView = 'lost' | 'adoption' | 'services' | 'partners' | 'petFriendly';
 
 interface UserLocation {
   lat: number;
@@ -86,6 +87,8 @@ const markerIcons: Record<string, L.DivIcon> = {
   insurance: createColoredIcon('#3b82f6'),
   food: createColoredIcon('#f59e0b'),
   general_partner: createColoredIcon('#6366f1'),
+  // Pet Friendly
+  petFriendly: createColoredIcon('#f59e0b'),
 };
 
 const userLocationIcon = L.divIcon({
@@ -113,6 +116,7 @@ const FILTER_CHIPS: Record<MapView, string[]> = {
   lost: ['Todos', 'Perdidas', 'Encontradas'],
   adoption: ['Todos', 'Mascotas', 'Refugios'],
   services: ['Todos', 'Veterinarias', 'Paseos', 'Cuidadores', 'Entrenadores', 'Grooming'],
+  petFriendly: ['Todos', 'Restaurantes', 'Cafes', 'Parques', 'Playas'],
   partners: ['Todos', 'Tiendas', 'Seguros', 'Crematorios', 'Transporte', 'Entrenadores'],
 };
 
@@ -144,7 +148,7 @@ const Maps = () => {
     if (initializedFromParams.current) return;
     const tab = searchParams.get('tab');
     const chip = searchParams.get('chip');
-    if (tab && ['lost', 'adoption', 'services', 'partners'].includes(tab)) {
+    if (tab && ['lost', 'adoption', 'services', 'partners', 'petFriendly'].includes(tab)) {
       setActiveView(tab as MapView);
       if (chip) setActiveChip(chip);
       initializedFromParams.current = true;
@@ -218,6 +222,103 @@ const Maps = () => {
   const { providers: serviceProviders } = useServiceProviders();
   const { shelters: adoptionShelters } = useAdoptionShelters();
   const { partners } = usePartners();
+
+  // Pet Friendly starter places (will be replaced by DB table in future)
+  const petFriendlyPlaces = useMemo(
+    () => [
+      {
+        id: '1',
+        name: 'Parque Bicentenario',
+        type: 'Parques',
+        lat: -33.4039,
+        lng: -70.5917,
+        desc: 'Amplio parque con zona de perros',
+        address: 'Av. Bicentenario, Vitacura',
+      },
+      {
+        id: '2',
+        name: 'Parque Araucano',
+        type: 'Parques',
+        lat: -33.4087,
+        lng: -70.575,
+        desc: 'Zona pet friendly con bebederos',
+        address: 'Av. Presidente Riesco, Las Condes',
+      },
+      {
+        id: '3',
+        name: 'Starbucks Providencia',
+        type: 'Cafes',
+        lat: -33.4256,
+        lng: -70.6107,
+        desc: 'Terraza pet friendly, agua para mascotas',
+        address: 'Av. Providencia 2124',
+      },
+      {
+        id: '4',
+        name: 'Parque Bustamante',
+        type: 'Parques',
+        lat: -33.4406,
+        lng: -70.6379,
+        desc: 'Parque urbano pet friendly',
+        address: 'Av. Bustamante, Providencia',
+      },
+      {
+        id: '5',
+        name: 'Juan Valdez Costanera',
+        type: 'Cafes',
+        lat: -33.417,
+        lng: -70.606,
+        desc: 'Terraza amplia apta mascotas',
+        address: 'Costanera Center, Providencia',
+      },
+      {
+        id: '6',
+        name: 'Cervecería Kross',
+        type: 'Restaurantes',
+        lat: -33.4343,
+        lng: -70.615,
+        desc: 'Restaurante con terraza pet friendly',
+        address: 'Av. Italia 1421, Providencia',
+      },
+      {
+        id: '7',
+        name: 'Parque Metropolitano (Cerro San Cristóbal)',
+        type: 'Parques',
+        lat: -33.425,
+        lng: -70.633,
+        desc: 'Senderos pet friendly, llevar agua',
+        address: 'Pío Nono 450, Recoleta',
+      },
+      {
+        id: '8',
+        name: 'Café de la Candelaria',
+        type: 'Cafes',
+        lat: -33.443,
+        lng: -70.634,
+        desc: 'Café artesanal, mascotas bienvenidas',
+        address: 'Purísima 165, Bellavista',
+      },
+      {
+        id: '9',
+        name: 'Playa de los Perros Algarrobo',
+        type: 'Playas',
+        lat: -33.364,
+        lng: -71.653,
+        desc: 'Playa habilitada para perros',
+        address: 'Algarrobo, V Región',
+      },
+      {
+        id: '10',
+        name: "Parque O'Higgins",
+        type: 'Parques',
+        lat: -33.4645,
+        lng: -70.6582,
+        desc: 'Gran parque urbano, zona canina',
+        address: 'Av. Beauchef, Santiago Centro',
+      },
+    ],
+    []
+  );
 
   // Build filtered markers
   const filteredMarkers = useMemo(() => {
@@ -406,6 +507,21 @@ const Maps = () => {
         }));
     }
 
+    if (activeView === 'petFriendly') {
+      return (petFriendlyPlaces || [])
+        .filter((place) => {
+          if (!place.lat || !place.lng) return false;
+          if (activeChip !== 'Todos' && place.type !== activeChip) return false;
+          return true;
+        })
+        .map((place) => ({
+          id: `pf-${place.id}`,
+          position: [place.lat, place.lng] as [number, number],
+          type: 'petFriendly',
+          data: place,
+        }));
+    }
+
     return [];
   }, [
     activeView,
@@ -414,6 +530,7 @@ const Maps = () => {
     adoptionShelters,
     serviceProviders,
     partners,
+    petFriendlyPlaces,
     filters,
     userLocation,
     activeChip,
@@ -478,10 +595,11 @@ const Maps = () => {
   // Popup type resolver
   const getPopupType = (marker: {
     type: string;
-  }): 'lost' | 'adoption' | 'shelter' | 'service' | 'partner' => {
+  }): 'lost' | 'adoption' | 'shelter' | 'service' | 'partner' | 'petFriendly' => {
     if (activeView === 'lost') return 'lost';
     if (activeView === 'adoption') return marker.type === 'shelter' ? 'shelter' : 'adoption';
     if (activeView === 'partners') return 'partner';
+    if (activeView === 'petFriendly') return 'petFriendly';
     return 'service';
   };
 
@@ -510,6 +628,12 @@ const Maps = () => {
       label: 'Tiendas',
       icon: <Building2 className="h-4 w-4" />,
       activeClass: 'bg-emerald-500 text-white',
+    },
+    {
+      value: 'petFriendly',
+      label: 'Pet Friendly',
+      icon: <Coffee className="h-4 w-4" />,
+      activeClass: 'bg-amber-500 text-white',
     },
   ];
 
@@ -543,7 +667,23 @@ const Maps = () => {
             .map((marker) => (
               <Marker key={marker.id} position={marker.position} icon={getIcon(marker.type)}>
                 <Popup maxWidth={340} minWidth={280} className="leaflet-popup-custom">
-                  {getPopupType(marker) === 'partner' ? (
+                  {getPopupType(marker) === 'petFriendly' ? (
+                    <div className="p-2 space-y-1">
+                      <p className="font-semibold text-sm">
+                        {(marker.data as { name: string }).name}
+                      </p>
+                      <p className="text-xs text-amber-600 font-medium">
+                        {(marker.data as { type: string }).type}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        {(marker.data as { desc: string }).desc}
+                      </p>
+                      <p className="text-xs text-muted-foreground flex items-center gap-1">
+                        <MapPin className="h-3 w-3" />
+                        {(marker.data as { address: string }).address}
+                      </p>
+                    </div>
+                  ) : getPopupType(marker) === 'partner' ? (
                     <PartnerDetailCard
                       partner={marker.data as import('@/hooks/usePartners').Partner}
                       userLocation={userLocation || undefined}

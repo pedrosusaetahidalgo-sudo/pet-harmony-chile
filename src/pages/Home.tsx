@@ -641,7 +641,7 @@ export default function Home() {
             variant="outline"
             size="sm"
             className="flex-shrink-0 border-purple-300 text-purple-700 hover:bg-purple-100"
-            onClick={() => navigate('/settings')}
+            onClick={() => navigate('/profile?tab=integrations')}
           >
             <Smartphone className="h-3.5 w-3.5 mr-1" />
             Configurar

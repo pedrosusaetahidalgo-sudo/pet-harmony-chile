@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/select';
 
 interface MapFiltersProps {
-  activeView: 'lost' | 'adoption' | 'services' | 'partners';
+  activeView: 'lost' | 'adoption' | 'services' | 'partners' | 'petFriendly';
   filters: {
     searchRadius: number;
     petType: string;

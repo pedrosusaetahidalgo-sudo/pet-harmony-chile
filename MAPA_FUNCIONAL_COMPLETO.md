@@ -689,7 +689,7 @@ Mapas
 ├── Componentes
 │   ├── src/components/LostPetsMap.tsx                  # Capa mascotas perdidas
 │   └── src/components/maps/
-│       ├── MapFilters.tsx                              # Filtros (4 vistas: lost, adoption, services, partners)
+│       ├── MapFilters.tsx                              # Filtros (5 vistas: lost, adoption, services, partners, petFriendly)
 │       ├── MapPinPopup.tsx                             # Popup base
 │       ├── LostPetDetailCard.tsx                       # Popup mascota perdida
 │       ├── AdoptionDetailCard.tsx                      # Popup adopcion
@@ -706,11 +706,12 @@ Mapas
     └── react-leaflet 4.2.1 + leaflet
 ```
 
-### Vistas del mapa (4 tabs)
+### Vistas del mapa (5 tabs)
 - **Perdidas** — mascotas perdidas reportadas
 - **Adopcion** — mascotas en adopcion + refugios reales
 - **Servicios** — proveedores por tipo (vets, walkers, sitters, trainers, groomers)
 - **Tiendas** — partners comerciales (tiendas, seguros, alimento, servicios)
+- **Pet Friendly** — restaurantes, cafes, parques y playas pet friendly (datos starter, crowdsourcing futuro)
 
 ### Oportunidades de mejora
 - **Clustering** de pins cuando hay muchos
@@ -872,8 +873,8 @@ Escaneo:
 ```
 Onboarding
 ├── Paginas
-│   ├── src/pages/OnboardingDuenoMinimal.tsx           # Onboarding dueno (1 paso)
-│   └── src/pages/OnboardingVetMinimal.tsx             # Onboarding vet (1 paso)
+│   ├── src/pages/OnboardingDuenoMinimal.tsx           # Onboarding dueno (3 pasos: mascota + salud + ubicacion)
+│   └── src/pages/OnboardingVetMinimal.tsx             # Onboarding vet (3 pasos: perfil + clinica + como funciona)
 ├── Componentes
 │   ├── src/components/OnboardingTutorial.tsx           # Tutorial tooltips (skipeable)
 │   ├── src/components/HomeOnboardingHints.tsx           # Hints en home
@@ -881,7 +882,7 @@ Onboarding
 ```
 
 ### Oportunidades de mejora
-- **Multi-step wizard** (actualmente es form unico minimal)
+- ~~Multi-step wizard~~ ✅ Implementado (3 pasos con barra de progreso)
 - **Tour guiado** del dashboard con tooltips interactivos
 - **Video introductorio** de 30 segundos
 - **Checklist de completitud** del perfil
