@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Share2, Download, Copy } from '@/lib/icons';
+import { Share2, Copy, PawPrint } from '@/lib/icons';
 import { PawCardQR } from './PawCardQR';
 import { PawCardHoloPattern } from './PawCardHoloPattern';
 import { HOLO_PATTERN_MAP } from '@/lib/paw-cards';
@@ -27,35 +27,43 @@ export function PawCardBack({
   const holoConfig = HOLO_PATTERN_MAP[holoPattern];
   const pawCardUrl = `https://pawfriend.cl/paw-card/${pawCardId}`;
 
-  const handleShare = useCallback(async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Paw Card de ${petName} — Paw Friend`,
-          text: `Escanea y colecciona la Paw Card de ${petName}`,
-          url: pawCardUrl,
-        });
-      } catch {
-        /* user cancelled */
+  const handleShare = useCallback(
+    async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: `Paw Card de ${petName} — Paw Friend`,
+            text: `Escanea y colecciona la Paw Card de ${petName}`,
+            url: pawCardUrl,
+          });
+        } catch {
+          /* user cancelled */
+        }
+      } else {
+        await navigator.clipboard.writeText(pawCardUrl);
+        toast.success('Link copiado');
       }
-    } else {
-      await navigator.clipboard.writeText(pawCardUrl);
-      toast.success('Link copiado');
-    }
-  }, [petName, pawCardUrl]);
+    },
+    [petName, pawCardUrl]
+  );
 
-  const handleCopyId = useCallback(async () => {
-    await navigator.clipboard.writeText(pawCardId);
-    toast.success('ID copiado');
-  }, [pawCardId]);
+  const handleCopyId = useCallback(
+    async (e: React.MouseEvent) => {
+      e.stopPropagation();
+      await navigator.clipboard.writeText(pawCardId);
+      toast.success('ID copiado');
+    },
+    [pawCardId]
+  );
 
   return (
     <div className="paw-card-back h-full" data-rarity={rarity}>
       {/* Watermark background */}
       <div className="paw-card-back-watermark" />
 
-      {/* Holo pattern overlay (muted) */}
-      <div className="absolute inset-0 opacity-20 pointer-events-none rounded-[inherit]">
+      {/* Holo pattern overlay */}
+      <div className="absolute inset-0 opacity-25 pointer-events-none rounded-[inherit]">
         <PawCardHoloPattern pattern={holoPattern} />
       </div>
 
@@ -63,73 +71,76 @@ export function PawCardBack({
       <div className="paw-card-back-shine" />
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col items-center justify-center h-full py-5 px-4 text-center gap-3">
-        {/* Logo */}
-        <img
-          src={pawIcon}
-          alt="Paw Friend"
-          className="w-12 h-12 rounded-xl shadow-lg shadow-purple-500/20"
-        />
+      <div className="relative z-10 flex flex-col items-center justify-between h-full py-4 px-4 text-center">
+        {/* Top: Logo + brand */}
+        <div className="flex items-center gap-2">
+          <img
+            src={pawIcon}
+            alt="Paw Friend"
+            className="w-8 h-8 rounded-lg shadow-lg shadow-purple-500/30"
+          />
+          <span className="text-sm font-bold text-white/90 tracking-wide">Paw Friend</span>
+        </div>
 
-        {/* QR Code */}
-        <PawCardQR pawCardId={pawCardId} size={120} />
+        {/* Center: QR + scan prompt */}
+        <div className="flex flex-col items-center gap-2 -mt-1">
+          {/* QR frame with glow */}
+          <div className="relative">
+            <div className="absolute -inset-2 rounded-xl bg-gradient-to-br from-purple-500/20 via-blue-500/10 to-purple-500/20 blur-sm" />
+            <div className="relative bg-white/95 rounded-lg p-2 shadow-lg shadow-purple-500/20">
+              <PawCardQR pawCardId={pawCardId} size={110} />
+            </div>
+          </div>
 
-        {/* Scan text */}
-        <p className="shimmer-text text-xs font-semibold tracking-wider uppercase">
-          Escanea para coleccionar
-        </p>
+          {/* Scan text */}
+          <p className="shimmer-text text-[11px] font-bold tracking-[0.15em] uppercase">
+            Escanea para coleccionar
+          </p>
 
-        {/* Card ID */}
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            handleCopyId();
-          }}
-          className="flex items-center gap-1 text-[10px] font-mono text-purple-300/80 hover:text-purple-200 transition-colors"
-          title="Copiar ID"
-        >
-          <span>Paw Card #{pawCardId}</span>
-          <Copy className="h-2.5 w-2.5" />
-        </button>
+          {/* Pet name + species */}
+          <div className="flex items-center gap-1.5 text-purple-200/90">
+            <PawPrint className="h-3 w-3" />
+            <span className="text-xs font-semibold">{petName}</span>
+            <span className="text-purple-400/50">·</span>
+            <span className="text-xs text-purple-300/70">{species}</span>
+          </div>
+        </div>
 
-        {/* Pet info */}
-        <p className="text-xs text-purple-200/70">
-          {petName} · {species}
-        </p>
+        {/* Bottom: ID + holo badge + actions */}
+        <div className="flex flex-col items-center gap-2 w-full">
+          {/* Holo tier badge */}
+          {holoConfig && (
+            <span className="paw-holo-tier-badge" data-tier={holoConfig.tier}>
+              {holoConfig.name}
+            </span>
+          )}
 
-        {/* Holo tier badge */}
-        {holoConfig && (
-          <span className="paw-holo-tier-badge" data-tier={holoConfig.tier}>
-            {holoConfig.name}
+          {/* Actions row */}
+          <div className="flex gap-2 w-full">
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-1 h-7 text-[11px] border-purple-400/25 text-purple-200 bg-purple-500/10 hover:bg-purple-500/25 backdrop-blur-sm"
+              onClick={handleShare}
+            >
+              <Share2 className="mr-1 h-3 w-3" />
+              Compartir
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="flex-1 h-7 text-[11px] border-purple-400/25 text-purple-200 bg-purple-500/10 hover:bg-purple-500/25 backdrop-blur-sm"
+              onClick={handleCopyId}
+            >
+              <Copy className="mr-1 h-3 w-3" />
+              ID
+            </Button>
+          </div>
+
+          {/* Card ID small */}
+          <span className="text-[9px] font-mono text-purple-400/50 tracking-wider">
+            #{pawCardId.slice(0, 13)}
           </span>
-        )}
-
-        {/* Actions */}
-        <div className="flex gap-2 mt-1">
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-7 text-xs border-purple-500/30 text-purple-200 bg-purple-500/10 hover:bg-purple-500/20"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleShare();
-            }}
-          >
-            <Share2 className="mr-1 h-3 w-3" />
-            Compartir
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-7 text-xs border-purple-500/30 text-purple-200 bg-purple-500/10 hover:bg-purple-500/20"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleCopyId();
-            }}
-          >
-            <Download className="mr-1 h-3 w-3" />
-            ID
-          </Button>
         </div>
       </div>
     </div>
