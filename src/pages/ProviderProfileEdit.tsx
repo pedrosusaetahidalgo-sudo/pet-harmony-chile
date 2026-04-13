@@ -124,6 +124,10 @@ export default function ProviderProfileEdit() {
       toast.error('El nombre es obligatorio');
       return;
     }
+    if (!form.avatar_url) {
+      toast.error('La foto de perfil es obligatoria');
+      return;
+    }
     if (form.is_directory_visible && !canBeVisible) {
       toast.error(
         `Necesitas al menos ${REQUIRED_FOR_DIRECTORY_SCORE}% de perfil completo para aparecer en el directorio`

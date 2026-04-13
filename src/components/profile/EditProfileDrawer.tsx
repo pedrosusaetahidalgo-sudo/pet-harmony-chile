@@ -78,6 +78,10 @@ export function EditProfileDrawer({
 
   const handleSave = async () => {
     if (!user) return;
+    if (!avatarUrl) {
+      toast({ title: 'Selecciona un avatar antes de guardar', variant: 'destructive' });
+      return;
+    }
     setSaving(true);
 
     const { error } = await supabase.from('profiles').upsert({

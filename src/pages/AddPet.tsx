@@ -319,6 +319,12 @@ const AddPet = () => {
       }
     }
 
+    // Foto obligatoria
+    if (!photoFile && !existingPhotoUrl) {
+      toast({ title: 'La foto de tu mascota es obligatoria', variant: 'destructive' });
+      return;
+    }
+
     setLoading(true);
 
     try {
