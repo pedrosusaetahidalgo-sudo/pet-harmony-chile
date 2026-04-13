@@ -1,7 +1,7 @@
 # Partners Onboarding — Plan de ejecución
 
 > Fecha: 2026-04-13
-> Estado: EN EJECUCIÓN
+> Estado: EJECUTADO — landing, emails, migración, admin panel, FAQ
 
 ---
 
@@ -158,3 +158,5 @@ La tabla `partner_submissions` es la **bandeja de entrada**. El flujo es:
 | `src/App.tsx` | Agregar ruta `/registro-partner` |
 | `_pending/EMAILS_PARTNERS.md` | Crear |
 | `_pending/PARTNERS_ONBOARDING.md` | Este archivo |
+| `src/components/admin/AdminPartnerSubmissions.tsx` | Panel admin con tabla, filtros, detalle y cambio de status |
+| `src/pages/Admin.tsx` | Tab "Partners" agregada |

@@ -559,6 +559,42 @@ export default function RegistroPartner() {
             </CardContent>
           </Card>
         )}
+        {/* FAQ — siempre visible */}
+        <div className="mt-8 space-y-3">
+          <h3 className="text-lg font-semibold text-center">Preguntas frecuentes</h3>
+          {[
+            {
+              q: '¿Tiene algún costo registrarse?',
+              a: 'No. Registrar tu negocio en el directorio de Paw Friend es completamente gratis. No hay comisiones ocultas ni cobros por aparecer.',
+            },
+            {
+              q: '¿Cuánto tarda la aprobación?',
+              a: 'Revisamos las solicitudes en menos de 48 horas hábiles. Te contactaremos por email o WhatsApp para coordinar tu ingreso.',
+            },
+            {
+              q: '¿Qué pasa después de enviar el formulario?',
+              a: 'Nuestro equipo revisa tu solicitud, verifica los datos y te contacta para confirmar. Una vez aprobado, tu negocio aparece en el directorio de Paw Friend.',
+            },
+            {
+              q: '¿Puedo editar mis datos después?',
+              a: 'Sí. Una vez aprobado, podrás actualizar tu perfil, horarios, fotos y servicios desde tu panel de proveedor.',
+            },
+            {
+              q: '¿En qué ciudades opera Paw Friend?',
+              a: 'Actualmente tenemos mayor cobertura en la Región Metropolitana, pero aceptamos partners de todo Chile. Estamos creciendo cada semana.',
+            },
+          ].map((faq, i) => (
+            <details key={i} className="group rounded-lg border bg-white p-4">
+              <summary className="cursor-pointer font-medium text-sm list-none flex items-center justify-between">
+                {faq.q}
+                <span className="text-muted-foreground group-open:rotate-180 transition-transform">
+                  ▾
+                </span>
+              </summary>
+              <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
+            </details>
+          ))}
+        </div>
       </main>
 
       <PublicFooter />

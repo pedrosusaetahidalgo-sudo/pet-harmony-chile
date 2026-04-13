@@ -1,22 +1,39 @@
-import { useState } from "react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Shield, Users, Dog, FileCheck, Megaphone, Settings, Briefcase, Megaphone as AdIcon, Stethoscope, BarChart3, Gift, Target, Flag, ShieldAlert } from "@/lib/icons";
-import AdminProviders from "@/components/admin/AdminProviders";
-import AdminServiceProviders from "@/components/admin/AdminServiceProviders";
-import AdminVerificationRequests from "@/components/admin/AdminVerificationRequests";
-import AdminVetVerifications from "@/components/admin/AdminVetVerifications";
-import AdminServicePromotions from "@/components/admin/AdminServicePromotions";
-import AdminUsers from "@/components/admin/AdminUsers";
-import AdminSettings from "@/components/admin/AdminSettings";
-import AdManagement from "@/components/admin/AdManagement";
-import AdminMetrics from "@/components/admin/AdminMetrics";
-import AdminRewards from "@/components/admin/AdminRewards";
-import AdminMissions from "@/components/admin/AdminMissions";
-import AdminModeration from "@/components/admin/AdminModeration";
-import AdminSafetyLogs from "@/components/admin/AdminSafetyLogs";
+import { useState } from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Shield,
+  Users,
+  Dog,
+  FileCheck,
+  Megaphone,
+  Settings,
+  Briefcase,
+  Megaphone as AdIcon,
+  Stethoscope,
+  BarChart3,
+  Gift,
+  Target,
+  Flag,
+  ShieldAlert,
+  Inbox,
+} from '@/lib/icons';
+import AdminProviders from '@/components/admin/AdminProviders';
+import AdminServiceProviders from '@/components/admin/AdminServiceProviders';
+import AdminVerificationRequests from '@/components/admin/AdminVerificationRequests';
+import AdminVetVerifications from '@/components/admin/AdminVetVerifications';
+import AdminServicePromotions from '@/components/admin/AdminServicePromotions';
+import AdminUsers from '@/components/admin/AdminUsers';
+import AdminSettings from '@/components/admin/AdminSettings';
+import AdManagement from '@/components/admin/AdManagement';
+import AdminMetrics from '@/components/admin/AdminMetrics';
+import AdminRewards from '@/components/admin/AdminRewards';
+import AdminMissions from '@/components/admin/AdminMissions';
+import AdminModeration from '@/components/admin/AdminModeration';
+import AdminSafetyLogs from '@/components/admin/AdminSafetyLogs';
+import AdminPartnerSubmissions from '@/components/admin/AdminPartnerSubmissions';
 
 const Admin = () => {
-  const [activeTab, setActiveTab] = useState("metrics");
+  const [activeTab, setActiveTab] = useState('metrics');
 
   return (
     <div className="container mx-auto p-4 md:p-6 space-y-6">
@@ -80,6 +97,10 @@ const Admin = () => {
             <Flag className="h-4 w-4" />
             <span className="hidden sm:inline">Moderación</span>
           </TabsTrigger>
+          <TabsTrigger value="partner-submissions" className="flex items-center gap-2 py-2">
+            <Inbox className="h-4 w-4" />
+            <span className="hidden sm:inline">Partners</span>
+          </TabsTrigger>
           <TabsTrigger value="safety-logs" className="flex items-center gap-2 py-2">
             <ShieldAlert className="h-4 w-4" />
             <span className="hidden sm:inline">Seguridad</span>
@@ -132,6 +153,10 @@ const Admin = () => {
 
         <TabsContent value="moderation">
           <AdminModeration />
+        </TabsContent>
+
+        <TabsContent value="partner-submissions">
+          <AdminPartnerSubmissions />
         </TabsContent>
 
         <TabsContent value="safety-logs">
