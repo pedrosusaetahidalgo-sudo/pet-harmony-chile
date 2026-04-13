@@ -64,28 +64,49 @@ serve(async (req) => {
       throw new Error('ANTHROPIC_API_KEY no está configurada');
     }
 
-    const systemPrompt = `Eres un moderador de contenido para una plataforma de servicios para mascotas en Chile.
-Evalúa publicaciones de promoción de servicios profesionales.
+    // Pre-filtro regex: rechazar automáticamente si contiene contacto externo
+    const contentToCheck = `${promotion.title || ''} ${promotion.description || ''}`;
+    const hasExternalContact =
+      /(\+56[\d\s]{8,}|@[\w.-]+\.\w{2,}|\b\d{8,9}\b|https?:\/\/|www\.|\.com\b|\.cl\b)/i.test(
+        contentToCheck
+      );
 
-CRITERIOS:
-- APROBADO si: contenido profesional, relevante, lenguaje apropiado, sin contacto externo
-- RECHAZADO si: spam, engañoso, ofensivo, contacto externo, no relacionado con mascotas
+    if (hasExternalContact) {
+      const autoResult = {
+        approved: false,
+        score: 20,
+        reason:
+          'La promoción contiene información de contacto externo (teléfono, email o URL), lo cual no está permitido.',
+        flags: ['contacto_externo_detectado'],
+      };
 
-FORMATO DE RESPUESTA (OBLIGATORIO - solo JSON):
-{
-  "approved": true o false,
-  "score": 0-100,
-  "reason": "explicación en español (2-3 oraciones)",
-  "flags": ["problemas encontrados"] o []
-}`;
+      console.log('Rechazado por pre-filtro regex (contacto externo)');
 
-    const userPrompt = `Analiza esta promoción de servicio para mascotas:
+      const { error: updateError } = await supabaseClient
+        .from('service_promotions')
+        .update({
+          status: 'pending',
+          ai_moderation_score: autoResult,
+        })
+        .eq('id', promotionId);
 
-TÍTULO: "${promotion.title || 'Sin título'}"
+      if (updateError) throw updateError;
+
+      return new Response(
+        JSON.stringify({ success: true, status: 'pending', moderation: autoResult }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const systemPrompt = `Moderador contenido mascotas Chile.
+APROBADO: profesional, relevante, sin contacto externo.
+RECHAZADO: spam, engañoso, ofensivo, contacto externo, off-topic.
+
+JSON: {"approved":true/false,"score":0-100,"reason":"2 oraciones","flags":[]}`;
+
+    const userPrompt = `TÍTULO: "${promotion.title || 'Sin título'}"
 DESCRIPCIÓN: "${promotion.description || 'Sin descripción'}"
-TIPO DE SERVICIO: "${promotion.service_type || 'No especificado'}"
-
-Evalúa profesionalismo, spam, contacto externo, lenguaje y relevancia.`;
+SERVICIO: "${promotion.service_type || 'No especificado'}"`;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -96,7 +117,8 @@ Evalúa profesionalismo, spam, contacto externo, lenguaje y relevancia.`;
       },
       body: JSON.stringify({
         model: 'claude-haiku-3-5',
-        max_tokens: 400,
+        max_tokens: 200,
+        temperature: 0.1,
         system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
         messages: [{ role: 'user', content: userPrompt }],
       }),

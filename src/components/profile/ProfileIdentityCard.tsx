@@ -20,6 +20,7 @@ interface ProfileIdentityCardProps {
     is_premium?: boolean;
     bio?: string;
     location?: string;
+    active_title?: string | null;
   } | null;
   onEditProfile: () => void;
 }
@@ -65,6 +66,13 @@ export function ProfileIdentityCard({ profile, onEditProfile }: ProfileIdentityC
                 </button>
               )}
             </div>
+
+            {profile?.active_title && (
+              <p className="text-xs font-semibold text-amber-600 mt-0.5 flex items-center gap-1">
+                <Crown className="h-3 w-3 text-amber-500" />
+                {profile.active_title}
+              </p>
+            )}
 
             {profile?.location && (
               <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">

@@ -255,24 +255,11 @@ async function verifyVeterinarian(
   }
 
   // OCR + Name match via Claude Vision
-  const systemPrompt = `Eres un verificador de títulos profesionales veterinarios de Chile.
-Tu tarea es analizar la imagen del documento y verificar si es un título de Médico Veterinario válido.
+  const systemPrompt = `Verificador título vet Chile. Analiza imagen documento.
 
-Debes verificar:
-1. ¿El documento parece ser un título universitario o certificado profesional de veterinaria?
-2. ¿Se puede leer un nombre en el documento?
-3. ¿El nombre en el documento coincide o es similar al nombre del solicitante?
+Verificar: 1) Es título universitario/certificado veterinaria? 2) Nombre legible? 3) Coincide con "${displayName}"?
 
-El nombre del solicitante es: "${displayName}"
-
-Responde SOLO en JSON:
-{
-  "is_vet_title": true/false,
-  "document_name": "nombre que aparece en el documento o null",
-  "name_match": true/false,
-  "confidence": 0-100,
-  "reason": "explicación breve en español"
-}`;
+JSON: {"is_vet_title":true/false,"document_name":"o null","name_match":true/false,"confidence":0-100,"reason":"breve"}`;
 
   const aiResponse = await callClaude({
     systemPrompt,
@@ -408,28 +395,13 @@ async function verifyServiceProvider(
     };
   }
 
-  // AI evaluation of notes + profile quality
-  const systemPrompt = `Eres un moderador de Paw Friend, una app de mascotas en Chile.
-Evalúa si esta solicitud para ser "${roleLabel}" es legítima.
+  // AI evaluation of notes + profile quality (uses Haiku — text classification, no vision needed)
+  const systemPrompt = `Moderador Paw Friend Chile. Evaluar solicitud "${roleLabel}".
 
-Criterios para APROBAR:
-- El usuario describe experiencia relevante con mascotas
-- Las notas son coherentes y profesionales (no spam ni contenido inapropiado)
-- El nombre parece real (no "test", "asdf", etc.)
-- Se subió al menos un documento de verificación
+APROBAR: experiencia relevante mascotas, notas coherentes, nombre real, docs subidos.
+RECHAZAR: spam, nombre falso, contenido inapropiado, sin docs.
 
-Criterios para RECHAZAR:
-- Notas vacías, incoherentes o con spam
-- Nombre claramente falso o de prueba
-- Contenido inapropiado o sospechoso
-
-Responde SOLO en JSON:
-{
-  "approved": true/false,
-  "confidence": 0-100,
-  "reason": "explicación breve en español",
-  "suggestions": ["sugerencia 1", "sugerencia 2"]
-}`;
+JSON: {"approved":true/false,"confidence":0-100,"reason":"breve","suggestions":[]}`;
 
   const userMessage = `Solicitud de verificación como ${roleLabel}:
 - Nombre: ${displayName}
@@ -442,8 +414,9 @@ Responde SOLO en JSON:
     const aiResponse = await callClaude({
       systemPrompt,
       userMessage,
-      maxTokens: 300,
+      maxTokens: 200,
       temperature: 0.2,
+      model: 'claude-haiku-3-5',
     });
 
     const parsed = parseJSON<{

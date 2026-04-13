@@ -149,11 +149,11 @@ serve(async (req) => {
                 body: JSON.stringify({
                   model: 'claude-haiku-3-5',
                   max_tokens: 200,
-                  temperature: 0.5,
+                  temperature: 0.3,
                   system: [
                     {
                       type: 'text',
-                      text: 'Eres un analista de negocio veterinario de Paw Friend, app chilena de mascotas. Responde en español de Chile con tuteo (tu, tienes, puedes). Sé profesional, conciso y orientado a acción.',
+                      text: 'Analista negocio vet, Paw Friend Chile. Chileno (tu/tienes). Profesional, conciso, accionable.',
                       cache_control: { type: 'ephemeral' },
                     },
                   ],
@@ -242,12 +242,9 @@ function buildVetInsightPrompt(report: {
       : 'No recibió reseñas nuevas esta semana.';
 
   return (
-    `Genera exactamente 2 oraciones como "insight de la semana" para ${report.business_name}. ` +
-    `Esta semana: ${bookings.new} reserva(s) nueva(s), ${bookings.completed} completada(s), ` +
-    `${bookings.cancelled} cancelada(s), ${bookings.no_show} no-show(s). ` +
-    `Revenue: $${revenueFormatted} CLP. ` +
-    `${ratingInfo} ` +
-    `Responde SOLO las 2 oraciones, sin encabezados ni formato especial. ` +
-    `Incluye una sugerencia práctica si es relevante.`
+    `2 oraciones insight semanal para ${report.business_name}. ` +
+    `Semana: ${bookings.new} nuevas, ${bookings.completed} completadas, ` +
+    `${bookings.cancelled} canceladas, ${bookings.no_show} no-show. ` +
+    `Revenue: $${revenueFormatted}. ${ratingInfo} Solo 2 oraciones con sugerencia práctica.`
   );
 }

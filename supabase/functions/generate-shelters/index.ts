@@ -113,11 +113,19 @@ serve(async (req) => {
     }
 
     if (action === 'generate') {
-      const { data: existing } = await supabase.from('adoption_shelters').select('id').limit(1);
+      // Verificar si ya existen refugios para esta ciudad
+      const { data: existing } = await supabase
+        .from('adoption_shelters')
+        .select('id')
+        .eq('city', city)
+        .limit(1);
 
       if (existing && existing.length > 0) {
         return new Response(
-          JSON.stringify({ message: 'Shelters already exist', count: existing.length }),
+          JSON.stringify({
+            message: 'Shelters already exist for this city',
+            count: existing.length,
+          }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
@@ -131,12 +139,12 @@ serve(async (req) => {
 
       console.log(`Searching real shelters in ${city}, Chile via web_search...`);
 
-      const systemPrompt = `Busca refugios/fundaciones de rescate animal REALES en ${city}, Chile.
+      const systemPrompt = `Refugios/fundaciones rescate animal REALES en ${city}, Chile.
 
 JSON array:
-[{"name":"...","type":"refugio|fundacion|ong","address":"...","commune":"...","phone":"...","email":"...","url":"...","animal_types":["perro","gato"],"description":"2 oraciones"}]
+[{"name":"","type":"refugio|fundacion|ong","address":"","commune":"","phone":"","email":"","url":"","animal_types":["perro","gato"],"description":"1 oracion"}]
 
-Solo refugios con evidencia real. No inventar.`;
+Solo reales, no inventar.`;
 
       const controller = new AbortController();
       const searchTimeout = setTimeout(() => controller.abort(), 30000);
@@ -153,7 +161,7 @@ Solo refugios con evidencia real. No inventar.`;
           },
           body: JSON.stringify({
             model: 'claude-haiku-3-5',
-            max_tokens: 200,
+            max_tokens: 800,
             temperature: 0.2,
             system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
             messages: [

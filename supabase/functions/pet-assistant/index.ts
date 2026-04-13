@@ -171,12 +171,11 @@ serve(async (req) => {
       ? reminders.map((r) => `${r.type}: ${r.title} (${r.due_date})`).join('; ')
       : '';
 
-    const systemPrompt = `Asistente veterinario Paw Friend (Chile). Mascota: ${ctx.join(' | ')}
-Historial: ${historial}${recordatorios ? `\nRecordatorios: ${recordatorios}` : ''}
+    const systemPrompt = `Vet Paw Friend Chile. Mascota: ${ctx.join(' | ')}${historial !== 'sin historial' ? `\nHist: ${historial}` : ''}${recordatorios ? `\nRec: ${recordatorios}` : ''}
 
-REGLAS: Usa nombre real. Síntomas graves → urgencia + vet ya. Alergias → advertir. NUNCA diagnostiques. 2-4 oraciones concisas. Español chileno.
-Si preguntan donde comprar algo, precios, normativa, o info que cambia → usa web_search con "Chile" o la comuna en la query. Cita la fuente.
-Responde SOLO JSON: {"respuesta":"...","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":bool,"recordatorios_relevantes":[],"sugerencias_accion":[],"fuentes":[]}`;
+Nombre real. Grave→urgencia+vet. Alergias→advertir. NO diagnosticar. 2-3 oraciones. Chileno.
+Compras/precios/normativa→web_search "Chile"+comuna. Cita fuente.
+JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":false,"sugerencias_accion":[],"fuentes":[]}`;
 
     // Call Claude
     const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
@@ -201,7 +200,7 @@ Responde SOLO JSON: {"respuesta":"...","nivel_urgencia":"bajo|medio|alto","requi
         },
         body: JSON.stringify({
           model: 'claude-haiku-3-5',
-          max_tokens: 800,
+          max_tokens: 500,
           temperature: 0.3,
           system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
           messages: [{ role: 'user', content: sanitize(question) }],
@@ -249,7 +248,6 @@ Responde SOLO JSON: {"respuesta":"...","nivel_urgencia":"bajo|medio|alto","requi
       respuesta: string;
       nivel_urgencia: 'bajo' | 'medio' | 'alto';
       requiere_veterinario: boolean;
-      recordatorios_relevantes: string[];
       sugerencias_accion: string[];
       fuentes: string[];
     } | null = null;
@@ -278,16 +276,12 @@ Responde SOLO JSON: {"respuesta":"...","nivel_urgencia":"bajo|medio|alto","requi
         respuesta: cleanText || 'No pude procesar tu consulta. Intenta reformular la pregunta.',
         nivel_urgencia: 'bajo',
         requiere_veterinario: false,
-        recordatorios_relevantes: [],
         sugerencias_accion: [],
         fuentes: [],
       };
     }
 
     // Asegurar arrays presentes
-    parsed.recordatorios_relevantes = Array.isArray(parsed.recordatorios_relevantes)
-      ? parsed.recordatorios_relevantes
-      : [];
     parsed.sugerencias_accion = Array.isArray(parsed.sugerencias_accion)
       ? parsed.sugerencias_accion
       : [];
@@ -316,11 +310,12 @@ Responde SOLO JSON: {"respuesta":"...","nivel_urgencia":"bajo|medio|alto","requi
       });
     }
 
-    const remaining = 20 - callsToday - 1;
+    const remaining = 5 - callsToday - 1;
 
     return new Response(
       JSON.stringify({
         ...parsed,
+        recordatorios_relevantes: [],
         pet_name: pet.name,
         remaining,
       }),

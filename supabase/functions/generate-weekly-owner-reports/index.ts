@@ -177,11 +177,11 @@ serve(async (req) => {
                 body: JSON.stringify({
                   model: 'claude-haiku-3-5',
                   max_tokens: 200,
-                  temperature: 0.5,
+                  temperature: 0.3,
                   system: [
                     {
                       type: 'text',
-                      text: 'Eres un asistente veterinario de Paw Friend, app chilena de mascotas. Responde en español de Chile con tuteo (tu, tienes, puedes). Sé cálido y conciso.',
+                      text: 'Vet Paw Friend Chile. Español chileno (tu/tienes). Cálido, conciso.',
                       cache_control: { type: 'ephemeral' },
                     },
                   ],
@@ -262,12 +262,8 @@ function buildInsightPrompt(report: {
       : 'No agregó registros médicos esta semana.';
 
   return (
-    `Genera exactamente 2 oraciones como "insight de la semana" para ${report.user_name}, ` +
-    `dueño/a de: ${petNames}. ` +
-    `Esta semana: ${completionInfo}. ` +
-    `Tiene ${upcomingCount} recordatorio(s) próximo(s). ` +
-    `${medicalInfo} ` +
-    `Responde SOLO las 2 oraciones, sin encabezados ni formato especial. ` +
-    `Sé motivador y menciona a las mascotas por nombre si es posible.`
+    `2 oraciones insight semanal para ${report.user_name}, dueño de: ${petNames}. ` +
+    `Semana: ${completionInfo}. ${upcomingCount} recordatorio(s). ` +
+    `${medicalInfo} Solo 2 oraciones motivadoras, nombres de mascotas incluidos.`
   );
 }

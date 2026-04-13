@@ -50,8 +50,12 @@ interface PawCardFlippableProps {
   score?: number;
   holoPattern?: HoloPattern;
   pawCardId?: string;
-  onDelete: (id: string) => void;
+  onDelete?: (id: string) => void;
   onShare?: (id: string) => void;
+  /** Subtitle override (e.g. owner name for collected cards) */
+  subtitle?: string;
+  /** Hide action buttons (ficha, edit, delete, share) */
+  viewOnly?: boolean;
 }
 
 export function PawCardFlippable({
@@ -61,6 +65,8 @@ export function PawCardFlippable({
   pawCardId = '',
   onDelete,
   onShare,
+  subtitle: subtitleOverride,
+  viewOnly = false,
 }: PawCardFlippableProps) {
   const navigate = useNavigate();
   const cardRef = useRef<HTMLDivElement>(null);
@@ -68,7 +74,7 @@ export function PawCardFlippable({
 
   const age = pet.birth_date ? calculateAge(pet.birth_date) : null;
   const gender = pet.gender ? formatGender(pet.gender) : null;
-  const subtitle = [age, gender].filter(Boolean).join(' · ');
+  const subtitle = subtitleOverride ?? [age, gender].filter(Boolean).join(' · ');
   const pawPoints = score ?? 0;
   const rarity = getRarity(pawPoints);
   const palette = getSpeciesPalette(pet.species);
@@ -233,60 +239,64 @@ export function PawCardFlippable({
             <div className="tcg-corner-accent tcg-corner-tl" data-rarity={rarity} />
             <div className="tcg-corner-accent tcg-corner-br" data-rarity={rarity} />
 
-            {/* Actions */}
-            <div className="flex flex-col gap-2 pt-3 w-full">
-              <Button
-                size="sm"
-                className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-sm shadow-purple-500/20"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(LINKS.petClinical(pet.id));
-                }}
-              >
-                <FileText className="mr-2 h-4 w-4" />
-                Ficha Clinica
-              </Button>
-              {onShare && (
+            {/* Actions (hidden in viewOnly mode) */}
+            {!viewOnly && (
+              <div className="flex flex-col gap-2 pt-3 w-full">
                 <Button
                   size="sm"
-                  variant="outline"
-                  className="w-full border-purple-200/60 hover:bg-purple-50/50"
+                  className="w-full bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-sm shadow-purple-500/20"
                   onClick={(e) => {
                     e.stopPropagation();
-                    onShare(pet.id);
+                    navigate(LINKS.petClinical(pet.id));
                   }}
                 >
-                  <Share2 className="mr-2 h-4 w-4 text-purple-500" />
-                  Compartir con tu vet
+                  <FileText className="mr-2 h-4 w-4" />
+                  Ficha Clinica
                 </Button>
-              )}
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1 border-purple-200/60 hover:bg-purple-50/50"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/edit-pet/${pet.id}`);
-                  }}
-                >
-                  <Pencil className="mr-1.5 h-3.5 w-3.5" />
-                  Editar
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex-1 text-destructive hover:text-destructive border-purple-200/60 hover:bg-red-50/50"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(pet.id);
-                  }}
-                >
-                  <Trash2 className="mr-1.5 h-3.5 w-3.5" />
-                  Eliminar
-                </Button>
+                {onShare && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full border-purple-200/60 hover:bg-purple-50/50"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onShare(pet.id);
+                    }}
+                  >
+                    <Share2 className="mr-2 h-4 w-4 text-purple-500" />
+                    Compartir con tu vet
+                  </Button>
+                )}
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1 border-purple-200/60 hover:bg-purple-50/50"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/edit-pet/${pet.id}`);
+                    }}
+                  >
+                    <Pencil className="mr-1.5 h-3.5 w-3.5" />
+                    Editar
+                  </Button>
+                  {onDelete && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 text-destructive hover:text-destructive border-purple-200/60 hover:bg-red-50/50"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete(pet.id);
+                      }}
+                    >
+                      <Trash2 className="mr-1.5 h-3.5 w-3.5" />
+                      Eliminar
+                    </Button>
+                  )}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
 

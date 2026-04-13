@@ -20,23 +20,28 @@ import {
 import { usePawCollection, usePawCollectionStats } from '@/hooks/usePawCollection';
 import { usePawCardRanking } from '@/hooks/usePawCardRanking';
 import { PawCardHoloPattern } from '@/components/paw-cards/PawCardHoloPattern';
+import { PawCardFlippable } from '@/components/paw-cards/PawCardFlippable';
 import { getRarity, RARITY_LABELS, RARITY_RING } from '@/components/PetCardCompact';
 import { HOLO_PATTERN_MAP, getSpeciesPalette } from '@/lib/paw-cards';
 import type { HoloPattern } from '@/lib/paw-cards';
 import type { CollectedCard } from '@/hooks/usePawCollection';
 
-function MiniPawCard({ card, isOwn }: { card: CollectedCard; isOwn?: boolean }) {
-  const navigate = useNavigate();
+function MiniPawCard({
+  card,
+  isOwn,
+  onSelect,
+}: {
+  card: CollectedCard;
+  isOwn?: boolean;
+  onSelect: () => void;
+}) {
   // TODO: fetch real paw_points per collected pet when available
   const rarity = getRarity(0);
   const holoConfig = HOLO_PATTERN_MAP[card.pet.holoPattern as HoloPattern];
   const palette = getSpeciesPalette(card.pet.species);
 
   return (
-    <button
-      className="tcg-perspective w-full text-left group"
-      onClick={() => navigate(`/paw-card/${card.pet.pawCardId}`)}
-    >
+    <button className="tcg-perspective w-full text-left group" onClick={onSelect}>
       <div className="pet-card-tcg transition-transform hover:scale-[1.03]" data-rarity={rarity}>
         <div className="pet-card-tcg-inner" style={{ background: palette.lightBg }}>
           <div className="pet-card-tcg-rainbow" />
@@ -226,6 +231,77 @@ function QRScanner({ onClose }: { onClose: () => void }) {
   );
 }
 
+// ─── Card Zoom Overlay (TCG style) ──────────────────────────────────
+function CardZoomOverlay({ card, onClose }: { card: CollectedCard; onClose: () => void }) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    requestAnimationFrame(() => setIsVisible(true));
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') handleClose();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
+
+  const handleClose = useCallback(() => {
+    setIsVisible(false);
+    setTimeout(onClose, 200);
+  }, [onClose]);
+
+  // Map CollectedCard to PawCardFlippable's Pet interface
+  const pet = {
+    id: card.pet.id,
+    name: card.pet.name,
+    species: card.pet.species,
+    breed: card.pet.breed,
+    birth_date: null,
+    photo_url: card.pet.photoUrl,
+    gender: null,
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      style={{
+        backgroundColor: isVisible ? 'rgba(0,0,0,0.8)' : 'rgba(0,0,0,0)',
+        backdropFilter: isVisible ? 'blur(8px)' : 'blur(0px)',
+        transition: 'background-color 0.2s ease, backdrop-filter 0.2s ease',
+      }}
+      onClick={handleClose}
+    >
+      {/* Close button */}
+      <button
+        className="absolute top-4 right-4 text-white/60 hover:text-white transition-colors z-10"
+        onClick={handleClose}
+      >
+        <X className="h-6 w-6" />
+      </button>
+
+      {/* Card — same PawCardFlippable used in MyPets */}
+      <div
+        className="tcg-perspective"
+        style={{
+          width: '280px',
+          transform: isVisible ? 'scale(1)' : 'scale(0.7)',
+          opacity: isVisible ? 1 : 0,
+          transition: 'transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.2s ease',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <PawCardFlippable
+          pet={pet}
+          score={0}
+          holoPattern={card.pet.holoPattern as HoloPattern}
+          pawCardId={card.pet.pawCardId}
+          viewOnly
+          subtitle={card.ownerName ? `Mascota de ${card.ownerName}` : undefined}
+        />
+      </div>
+    </div>
+  );
+}
+
 type FilterType = 'all' | 'perro' | 'gato' | 'otro';
 
 const PawCollection = () => {
@@ -235,6 +311,7 @@ const PawCollection = () => {
   const { data: ranking = [] } = usePawCardRanking(10);
   const [filter, setFilter] = useState<FilterType>('all');
   const [showScanner, setShowScanner] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<CollectedCard | null>(null);
 
   const filtered =
     filter === 'all'
@@ -411,7 +488,11 @@ const PawCollection = () => {
                 className={i < 8 ? 'animate-fade-in-up' : ''}
                 style={i < 8 ? { animationDelay: `${i * 40}ms` } : undefined}
               >
-                <MiniPawCard card={card} isOwn={card.isOwn} />
+                <MiniPawCard
+                  card={card}
+                  isOwn={card.isOwn}
+                  onSelect={() => setSelectedCard(card)}
+                />
               </div>
             ))}
           </div>
@@ -420,6 +501,11 @@ const PawCollection = () => {
 
       {/* QR Scanner overlay */}
       {showScanner && <QRScanner onClose={() => setShowScanner(false)} />}
+
+      {/* Card zoom overlay */}
+      {selectedCard && (
+        <CardZoomOverlay card={selectedCard} onClose={() => setSelectedCard(null)} />
+      )}
     </>
   );
 };

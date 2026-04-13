@@ -156,6 +156,19 @@ export async function callClaude(options: {
     if (!response.ok) throw new Error(`CLAUDE_ERROR_${response.status}`);
 
     const data = await response.json();
+
+    // Token usage logging for cost monitoring
+    if (data.usage) {
+      console.log(JSON.stringify({
+        event: 'ai_token_usage',
+        model: body.model,
+        input_tokens: data.usage.input_tokens ?? 0,
+        output_tokens: data.usage.output_tokens ?? 0,
+        cache_read: data.usage.cache_read_input_tokens ?? 0,
+        cache_creation: data.usage.cache_creation_input_tokens ?? 0,
+      }));
+    }
+
     return data.content?.[0]?.text ?? "";
   } finally {
     clearTimeout(timeout);

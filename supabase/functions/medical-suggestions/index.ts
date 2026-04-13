@@ -64,22 +64,41 @@ serve(async (req) => {
       );
     }
 
+    // ── Cache: buscar resultado previo ──
+    const cacheKey = `medical-suggestions:${recordType.toLowerCase()}:${species.toLowerCase()}:${breed.toLowerCase().slice(0, 100)}`;
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    const { data: cached } = await supabaseAdmin
+      .from('ai_cache')
+      .select('result, expires_at')
+      .eq('cache_key', cacheKey)
+      .maybeSingle();
+
+    if (cached && new Date(cached.expires_at) > new Date()) {
+      console.log(`Cache hit: ${cacheKey}`);
+      return new Response(JSON.stringify({ suggestions: cached.result }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
     if (!ANTHROPIC_API_KEY) {
       throw new Error('ANTHROPIC_API_KEY no está configurada');
     }
 
-    console.log(`Generando sugerencias médicas para ${species} raza ${breed}, tipo: ${recordType}`);
+    console.log(
+      `Generando sugerencias médicas para ${species} raza ${breed}, tipo: ${recordType} (cache miss)`
+    );
 
-    const systemPrompt = `Veterinario chileno. Genera sugerencias para registro médico.
+    const systemPrompt = `Vet chileno. Sugerencias registro médico, Chile.
 
-JSON array, 6-10 items, sin texto extra:
-[{"value":"id-con-guiones","label":"Nombre","description":"Max 15 palabras"}]
+JSON array 6-10 items, sin texto:
+[{"value":"id-guiones","label":"Nombre","description":"<15 palabras"}]
 
-Reglas:
-- Solo vacunas/medicamentos/procedimientos reales disponibles en Chile.
-- Si hay web_search disponible, verifica protocolo ISP/SAG vigente.
-- Español chileno.`;
+Solo tratamientos/vacunas reales en Chile. web_search solo si duda protocolo ISP/SAG. Chileno.`;
 
     const speciesLabel = species === 'perro' ? 'perro' : species === 'gato' ? 'gato' : species;
     const userPrompt = `${recordType} para ${speciesLabel} ${breed}, Chile. 6-10 opciones.`;
@@ -93,7 +112,7 @@ Reglas:
       },
       body: JSON.stringify({
         model: 'claude-haiku-3-5',
-        max_tokens: 600,
+        max_tokens: 350,
         temperature: 0.2,
         system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
         messages: [{ role: 'user', content: userPrompt }],
@@ -259,6 +278,22 @@ Reglas:
 
       suggestions = fallbackSuggestions[recordType] || fallbackSuggestions.consulta;
     }
+
+    // ── Guardar en cache (TTL 30 días) ──
+    const expiresAt = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    await supabaseAdmin
+      .from('ai_cache')
+      .upsert(
+        {
+          cache_key: cacheKey,
+          function_name: 'medical-suggestions',
+          result: suggestions,
+          expires_at: expiresAt,
+          hit_count: 0,
+        },
+        { onConflict: 'cache_key' }
+      )
+      .catch((err: unknown) => console.warn('Cache write failed:', err));
 
     return new Response(JSON.stringify({ suggestions }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

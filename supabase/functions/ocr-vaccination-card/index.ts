@@ -118,15 +118,12 @@ serve(async (req) => {
       mediaType = 'image/webp';
     }
 
-    const systemPrompt = `OCR de carnet de vacunación veterinario chileno. Extrae datos de la imagen.
+    const systemPrompt = `OCR carnet vacunación veterinario Chile.
 
 JSON sin markdown:
-{"vaccines":[{"name":"...","date":"YYYY-MM-DD|null","batch":"...|null","vet_name":"...|null"}],"deworming":[{"product":"...","date":"YYYY-MM-DD|null"}],"notes":"","alertas":[]}
+{"vaccines":[{"name":"","date":"YYYY-MM-DD|null","batch":"null","vet_name":"null"}],"deworming":[{"product":"","date":"YYYY-MM-DD|null"}],"notes":""}
 
-Reglas:
-- Fechas ISO. Campo ilegible → null. No inventar.
-- Si no es carnet de vacunación → arrays vacíos + nota.
-- Si hay web_search, valida contra calendario vacunal chileno y agrega alertas de vacunas faltantes en campo "alertas".`;
+Fechas ISO. Ilegible→null. No inventar. No es carnet→arrays vacíos+nota.`;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 30000); // 30s for vision
@@ -142,7 +139,7 @@ Reglas:
         },
         body: JSON.stringify({
           model: 'claude-sonnet-4-5',
-          max_tokens: 1024,
+          max_tokens: 600,
           temperature: 0,
           system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
           messages: [
@@ -164,7 +161,7 @@ Reglas:
               ],
             },
           ],
-          tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 1 }],
+          // web_search eliminado: calendario vacunal se valida client-side
         }),
         signal: controller.signal,
       });
@@ -206,7 +203,7 @@ Reglas:
         date: string | null;
       }>;
       notes: string;
-      alertas: string[];
+      alertas?: string[];
     };
 
     let parsed: OcrResult | null = null;
@@ -229,7 +226,7 @@ Reglas:
       );
     }
 
-    // Sanitize: ensure notes is a string and alertas is an array
+    // Sanitize: ensure notes is a string
     parsed.notes = typeof parsed.notes === 'string' ? parsed.notes : '';
     parsed.alertas = Array.isArray(parsed.alertas) ? parsed.alertas : [];
 

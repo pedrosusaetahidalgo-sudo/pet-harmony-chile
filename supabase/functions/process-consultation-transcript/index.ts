@@ -90,30 +90,14 @@ serve(async (req) => {
       ? `Paciente: ${String(petName).slice(0, 50)}${petSpecies ? ` (${String(petSpecies).slice(0, 30)})` : ''}.`
       : '';
 
-    const systemPrompt = `Eres un escribano veterinario chileno. Tu trabajo es tomar la transcripcion de una consulta veterinaria y generar un resumen clinico estructurado.
+    const systemPrompt = `Escribano vet chileno. Transcripción→resumen clínico JSON.
 
 ${petContext}
 
-Responde SOLO con un objeto JSON valido (sin markdown, sin texto adicional) con estos campos:
+JSON válido sin markdown:
+{"noteType":"consulta|vacuna|control|cirugia|urgencia|otro","title":"<80 chars","description":"bullets con guiones: motivo, hallazgos, diagnóstico, tratamiento, meds (nombre+dosis+frecuencia), instrucciones","alternativeOffered":false,"alternativesDiscussed":"o null","followupRequired":false,"followupDate":"YYYY-MM-DD|null","followupReason":"o null"}
 
-{
-  "noteType": "consulta" | "vacuna" | "control" | "cirugia" | "urgencia" | "otro",
-  "title": "Titulo breve de la consulta (max 80 chars)",
-  "description": "Resumen detallado con bullet points usando guiones. Incluye: motivo de consulta, hallazgos clinicos, diagnostico, tratamiento indicado, medicamentos (nombre, dosis, frecuencia), instrucciones al dueno.",
-  "alternativeOffered": true/false (si el vet menciono opciones mas economicas),
-  "alternativesDiscussed": "Descripcion de la alternativa (solo si alternativeOffered es true, sino null)",
-  "followupRequired": true/false (si se menciono proxima cita o control),
-  "followupDate": "YYYY-MM-DD o null (fecha aproximada del proximo control si se menciono)",
-  "followupReason": "Razon del seguimiento (solo si followupRequired es true, sino null)"
-}
-
-REGLAS:
-- Español chileno (tu, tienes)
-- Captura TODOS los datos clinicos mencionados: medicamentos, dosis, examenes
-- Si se mencionan correos, telefonos o nombres, incluyelos en la descripcion
-- Si no queda claro el tipo de consulta, usa "consulta"
-- El titulo debe ser conciso y descriptivo (ej: "Control anual + hemograma")
-- La descripcion debe ser completa pero sin inventar datos que no esten en la transcripcion`;
+Chileno. Capturar TODO dato clínico. No inventar. Default: "consulta".`;
 
     console.log(`Procesando transcripción de consulta (${cleanTranscript.length} chars)...`);
 
@@ -131,7 +115,7 @@ REGLAS:
         },
         body: JSON.stringify({
           model: 'claude-haiku-3-5',
-          max_tokens: 1000,
+          max_tokens: 700,
           temperature: 0.2,
           system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
           messages: [

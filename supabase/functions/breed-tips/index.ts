@@ -51,23 +51,50 @@ serve(async (req) => {
       );
     }
 
+    // ── Cache: buscar resultado previo ──
+    const cacheKey = `breed-tips:${species.toLowerCase()}:${breed.toLowerCase().slice(0, 100)}`;
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    const { data: cached } = await supabaseAdmin
+      .from('ai_cache')
+      .select('result, expires_at')
+      .eq('cache_key', cacheKey)
+      .maybeSingle();
+
+    if (cached && new Date(cached.expires_at) > new Date()) {
+      // Cache hit — incrementar contador y devolver
+      await supabaseAdmin.rpc('increment_cache_hit', { p_cache_key: cacheKey }).catch(() => {
+        // Si la RPC no existe aún, actualizar directamente
+        supabaseAdmin
+          .from('ai_cache')
+          .update({ hit_count: ((cached as Record<string, number>).hit_count || 0) + 1 })
+          .eq('cache_key', cacheKey);
+      });
+      console.log(`Cache hit: ${cacheKey}`);
+      return new Response(JSON.stringify({ tips: cached.result }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
     if (!ANTHROPIC_API_KEY) {
       throw new Error('ANTHROPIC_API_KEY no está configurada');
     }
 
-    console.log(`Generando consejos para ${species} raza ${breed}...`);
+    console.log(`Generando consejos para ${species} raza ${breed} (cache miss)...`);
 
-    const systemPrompt = `Veterinario chileno. Tips de raza, BREVES.
+    const systemPrompt = `Vet chileno. Tips raza BREVES, <120 palabras.
 
-4 secciones, max 2 puntos c/u, 1 oración c/u, total <120 palabras:
-
+4 secciones, max 2 puntos c/u, 1 oración c/u:
 🏥 Salud
 🍖 Alimentación
 🏃 Ejercicio
 ⚠️ Ojo con...
 
-Español chileno (tu/tienes). Solo datos correctos. Si hay web_search, busca alertas recientes de la raza.`;
+Chileno (tu/tienes). Datos correctos. web_search solo si raza poco común.`;
 
     const abortCtl = new AbortController();
     const fetchTimeout = setTimeout(() => abortCtl.abort(), 15000);
@@ -83,7 +110,7 @@ Español chileno (tu/tienes). Solo datos correctos. Si hay web_search, busca ale
         },
         body: JSON.stringify({
           model: 'claude-haiku-3-5',
-          max_tokens: 300,
+          max_tokens: 200,
           temperature: 0.3,
           system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
           messages: [
@@ -142,6 +169,22 @@ Español chileno (tu/tienes). Solo datos correctos. Si hay web_search, busca ale
     } else {
       console.log('Consejos generados exitosamente con Claude');
     }
+
+    // ── Guardar en cache (TTL 90 días) ──
+    const expiresAt = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString();
+    await supabaseAdmin
+      .from('ai_cache')
+      .upsert(
+        {
+          cache_key: cacheKey,
+          function_name: 'breed-tips',
+          result: tips,
+          expires_at: expiresAt,
+          hit_count: 0,
+        },
+        { onConflict: 'cache_key' }
+      )
+      .catch((err: unknown) => console.warn('Cache write failed:', err));
 
     return new Response(JSON.stringify({ tips }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
