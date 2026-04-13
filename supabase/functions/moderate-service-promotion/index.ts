@@ -1,6 +1,6 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { checkAiQuota, rateLimitResponse } from "../_shared/rate-limit.ts";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': 'https://pawfriend.cl',
@@ -19,21 +19,21 @@ serve(async (req) => {
     );
 
     // Authenticate user
-    const authHeader = req.headers.get("Authorization");
+    const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: "Authorization required" }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ error: 'Authorization required' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    const authToken = authHeader.replace("Bearer ", "");
+    const authToken = authHeader.replace('Bearer ', '');
     const { data: userData, error: userError } = await supabaseClient.auth.getUser(authToken);
     if (userError || !userData.user) {
-      return new Response(
-        JSON.stringify({ error: "User not authenticated" }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+      return new Response(JSON.stringify({ error: 'User not authenticated' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const quota = await checkAiQuota(userData.user.id);
@@ -95,13 +95,11 @@ Evalúa profesionalismo, spam, contacto externo, lenguaje y relevancia.`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-5',
+        model: 'claude-haiku-3-5',
         max_tokens: 400,
-        system: systemPrompt,
-        messages: [
-          { role: 'user', content: userPrompt }
-        ],
-      })
+        system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
+        messages: [{ role: 'user', content: userPrompt }],
+      }),
     });
 
     if (!response.ok) {
@@ -127,7 +125,11 @@ Evalúa profesionalismo, spam, contacto externo, lenguaje y relevancia.`;
         throw new Error('approved field missing or invalid');
       }
 
-      if (typeof moderationResult.score !== 'number' || moderationResult.score < 0 || moderationResult.score > 100) {
+      if (
+        typeof moderationResult.score !== 'number' ||
+        moderationResult.score < 0 ||
+        moderationResult.score > 100
+      ) {
         moderationResult.score = moderationResult.approved ? 75 : 40;
       }
 
@@ -140,7 +142,6 @@ Evalúa profesionalismo, spam, contacto externo, lenguaje y relevancia.`;
       if (!Array.isArray(moderationResult.flags)) {
         moderationResult.flags = [];
       }
-
     } catch (parseError) {
       console.error('Failed to parse AI response:', parseError);
 
@@ -154,22 +155,21 @@ Evalúa profesionalismo, spam, contacto externo, lenguaje y relevancia.`;
         approved: hasTitle && hasDescription && !hasContactInfo,
         score: hasTitle && hasDescription && !hasContactInfo ? 60 : 40,
         reason: 'Requiere revisión manual - no se pudo procesar la respuesta automática de IA',
-        flags: hasContactInfo ? ['contacto_externo_posible'] : ['parse_error']
+        flags: hasContactInfo ? ['contacto_externo_posible'] : ['parse_error'],
       };
     }
 
     console.log('Resultado de moderación:', moderationResult);
 
-    const newStatus = moderationResult.approved && moderationResult.score >= 70
-      ? 'approved'
-      : 'pending';
+    const newStatus =
+      moderationResult.approved && moderationResult.score >= 70 ? 'approved' : 'pending';
 
     const { error: updateError } = await supabaseClient
       .from('service_promotions')
       .update({
         status: newStatus,
         ai_moderation_score: moderationResult,
-        reviewed_at: newStatus === 'approved' ? new Date().toISOString() : null
+        reviewed_at: newStatus === 'approved' ? new Date().toISOString() : null,
       })
       .eq('id', promotionId);
 
@@ -181,18 +181,19 @@ Evalúa profesionalismo, spam, contacto externo, lenguaje y relevancia.`;
       JSON.stringify({
         success: true,
         status: newStatus,
-        moderation: moderationResult
+        moderation: moderationResult,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
-
   } catch (error) {
     console.error('Error in moderate-service-promotion:', error);
     return new Response(
-      JSON.stringify({ error: "Error al moderar la promoción. Por favor, intenta de nuevo más tarde." }),
+      JSON.stringify({
+        error: 'Error al moderar la promoción. Por favor, intenta de nuevo más tarde.',
+      }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
   }

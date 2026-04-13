@@ -130,10 +130,10 @@ REGLAS:
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-5',
+          model: 'claude-haiku-3-5',
           max_tokens: 1000,
           temperature: 0.2,
-          system: systemPrompt,
+          system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
           messages: [
             {
               role: 'user',

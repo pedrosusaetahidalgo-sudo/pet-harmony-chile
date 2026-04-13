@@ -1,66 +1,57 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://pawfriend.cl",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 /** Helper: JSON error response */
-function errorResponse(
-  message: string,
-  status: number,
-  extra?: Record<string, unknown>
-) {
-  return new Response(
-    JSON.stringify({ error: message, ...extra }),
-    {
-      status,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    }
-  );
+function errorResponse(message: string, status: number, extra?: Record<string, unknown>) {
+  return new Response(JSON.stringify({ error: message, ...extra }), {
+    status,
+    headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  });
 }
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
     // ── Auth ─────────────────────────────────────────────────────────────
-    const authHeader = req.headers.get("Authorization");
+    const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return errorResponse("Authorization required", 401);
+      return errorResponse('Authorization required', 401);
     }
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } =
-      await supabase.auth.getUser(token);
+    const token = authHeader.replace('Bearer ', '');
+    const { data: userData, error: userError } = await supabase.auth.getUser(token);
 
     if (userError || !userData.user) {
-      return errorResponse("User not authenticated", 401);
+      return errorResponse('User not authenticated', 401);
     }
 
     const userId = userData.user.id;
 
     // ── Rate limit: 3 calls per day per user ─────────────────────────────
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toISOString().split('T')[0];
     const DAILY_LIMIT = 3;
-    const SKILL_NAME = "ocr-vaccination-card";
+    const SKILL_NAME = 'ocr-vaccination-card';
 
     const { data: usage } = await supabase
-      .from("ai_usage")
-      .select("calls_today, calls_total, last_reset_date")
-      .eq("user_id", userId)
-      .eq("skill_name", SKILL_NAME)
+      .from('ai_usage')
+      .select('calls_today, calls_total, last_reset_date')
+      .eq('user_id', userId)
+      .eq('skill_name', SKILL_NAME)
       .maybeSingle();
 
     let callsToday = 0;
@@ -80,92 +71,100 @@ serve(async (req) => {
     const body = await req.json();
     const { image_base64, pet_id } = body;
 
-    if (!image_base64 || typeof image_base64 !== "string") {
-      return errorResponse("image_base64 is required", 400);
+    if (!image_base64 || typeof image_base64 !== 'string') {
+      return errorResponse('image_base64 is required', 400);
     }
 
-    if (!pet_id || typeof pet_id !== "string") {
-      return errorResponse("pet_id is required", 400);
+    if (!pet_id || typeof pet_id !== 'string') {
+      return errorResponse('pet_id is required', 400);
     }
 
     // Sanity check: base64 should look reasonable (at least 1 KB, max ~10 MB)
     const estimatedBytes = (image_base64.length * 3) / 4;
     if (estimatedBytes < 1024) {
-      return errorResponse("Image too small — provide a clear photo of the vaccination card", 400);
+      return errorResponse('Image too small — provide a clear photo of the vaccination card', 400);
     }
     if (estimatedBytes > 10 * 1024 * 1024) {
-      return errorResponse("Image too large (max 10 MB)", 400);
+      return errorResponse('Image too large (max 10 MB)', 400);
     }
 
     // ── Verify pet ownership ─────────────────────────────────────────────
     const { data: pet, error: petError } = await supabase
-      .from("pets")
-      .select("id, name")
-      .eq("id", pet_id)
-      .eq("owner_id", userId)
+      .from('pets')
+      .select('id, name')
+      .eq('id', pet_id)
+      .eq('owner_id', userId)
       .maybeSingle();
 
     if (petError || !pet) {
-      return errorResponse("Pet not found or access denied", 404);
+      return errorResponse('Pet not found or access denied', 404);
     }
 
     // ── Call Claude Vision API ───────────────────────────────────────────
-    const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
+    const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
     if (!apiKey) {
-      return errorResponse("AI service not configured", 503);
+      return errorResponse('AI service not configured', 503);
     }
 
     // Detect media type from base64 header or default to jpeg
-    let mediaType = "image/jpeg";
-    if (image_base64.startsWith("/9j/")) {
-      mediaType = "image/jpeg";
-    } else if (image_base64.startsWith("iVBOR")) {
-      mediaType = "image/png";
-    } else if (image_base64.startsWith("R0lGO")) {
-      mediaType = "image/gif";
-    } else if (image_base64.startsWith("UklGR")) {
-      mediaType = "image/webp";
+    let mediaType = 'image/jpeg';
+    if (image_base64.startsWith('/9j/')) {
+      mediaType = 'image/jpeg';
+    } else if (image_base64.startsWith('iVBOR')) {
+      mediaType = 'image/png';
+    } else if (image_base64.startsWith('R0lGO')) {
+      mediaType = 'image/gif';
+    } else if (image_base64.startsWith('UklGR')) {
+      mediaType = 'image/webp';
     }
 
-    const systemPrompt = `OCR de carnet veterinario chileno. Extrae vacunas y desparasitaciones. Fechas ISO (YYYY-MM-DD). Ilegible → null. NO inventes datos. Si no es carnet → arrays vacíos.
-Responde SOLO JSON: {"vaccines":[{"name":"...","date":"YYYY-MM-DD|null","batch":"...|null","vet_name":"...|null"}],"deworming":[{"product":"...","date":"YYYY-MM-DD|null"}],"notes":"..."}`;
+    const systemPrompt = `OCR de carnet de vacunación veterinario chileno. Extrae datos de la imagen.
+
+JSON sin markdown:
+{"vaccines":[{"name":"...","date":"YYYY-MM-DD|null","batch":"...|null","vet_name":"...|null"}],"deworming":[{"product":"...","date":"YYYY-MM-DD|null"}],"notes":"","alertas":[]}
+
+Reglas:
+- Fechas ISO. Campo ilegible → null. No inventar.
+- Si no es carnet de vacunación → arrays vacíos + nota.
+- Si hay web_search, valida contra calendario vacunal chileno y agrega alertas de vacunas faltantes en campo "alertas".`;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 30000); // 30s for vision
 
     let claudeResponse;
     try {
-      claudeResponse = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
+      claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "x-api-key": apiKey,
-          "anthropic-version": "2023-06-01",
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-5",
+          model: 'claude-sonnet-4-5',
           max_tokens: 1024,
           temperature: 0,
-          system: systemPrompt,
+          system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
           messages: [
             {
-              role: "user",
+              role: 'user',
               content: [
                 {
-                  type: "image",
+                  type: 'image',
                   source: {
-                    type: "base64",
+                    type: 'base64',
                     media_type: mediaType,
                     data: image_base64,
                   },
                 },
                 {
-                  type: "text",
+                  type: 'text',
                   text: `Extrae la información del carnet de vacunación de mi mascota "${pet.name}". Devuelve solo el JSON estructurado.`,
                 },
               ],
             },
           ],
+          tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 1 }],
         }),
         signal: controller.signal,
       });
@@ -174,20 +173,26 @@ Responde SOLO JSON: {"vaccines":[{"name":"...","date":"YYYY-MM-DD|null","batch":
     }
 
     if (claudeResponse.status === 429) {
-      return errorResponse("AI service rate limited. Try again in a moment.", 429);
+      return errorResponse('AI service rate limited. Try again in a moment.', 429);
     }
 
     if (!claudeResponse.ok) {
-      console.error("Claude API error:", claudeResponse.status);
-      return errorResponse("AI service temporarily unavailable", 502);
+      console.error('Claude API error:', claudeResponse.status);
+      return errorResponse('AI service temporarily unavailable', 502);
     }
 
     const claudeData = await claudeResponse.json();
-    const responseText: string = claudeData.content?.[0]?.text ?? "";
+    // web_search produces multiple content blocks; grab the last text block
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const textBlocks = (claudeData.content ?? []).filter((b: any) => b.type === 'text');
+    const responseText: string = textBlocks[textBlocks.length - 1]?.text ?? '';
 
     // ── Parse Claude response ────────────────────────────────────────────
     const stripFences = (s: string) =>
-      s.replace(/```(?:json)?\s*/gi, "").replace(/```/g, "").trim();
+      s
+        .replace(/```(?:json)?\s*/gi, '')
+        .replace(/```/g, '')
+        .trim();
 
     type OcrResult = {
       vaccines: Array<{
@@ -201,6 +206,7 @@ Responde SOLO JSON: {"vaccines":[{"name":"...","date":"YYYY-MM-DD|null","batch":
         date: string | null;
       }>;
       notes: string;
+      alertas: string[];
     };
 
     let parsed: OcrResult | null = null;
@@ -216,34 +222,31 @@ Responde SOLO JSON: {"vaccines":[{"name":"...","date":"YYYY-MM-DD|null","batch":
     }
 
     // Validate structure
-    if (
-      !parsed ||
-      !Array.isArray(parsed.vaccines) ||
-      !Array.isArray(parsed.deworming)
-    ) {
+    if (!parsed || !Array.isArray(parsed.vaccines) || !Array.isArray(parsed.deworming)) {
       return errorResponse(
-        "No se pudo extraer información del carnet. Asegúrate de que la foto sea clara y muestre el carnet completo.",
+        'No se pudo extraer información del carnet. Asegúrate de que la foto sea clara y muestre el carnet completo.',
         422
       );
     }
 
-    // Sanitize: ensure notes is a string
-    parsed.notes = typeof parsed.notes === "string" ? parsed.notes : "";
+    // Sanitize: ensure notes is a string and alertas is an array
+    parsed.notes = typeof parsed.notes === 'string' ? parsed.notes : '';
+    parsed.alertas = Array.isArray(parsed.alertas) ? parsed.alertas : [];
 
     // ── Update rate limit counter ────────────────────────────────────────
     if (usage) {
       await supabase
-        .from("ai_usage")
+        .from('ai_usage')
         .update({
           calls_today: callsToday + 1,
           calls_total: (usage.calls_total || 0) + 1,
           last_reset_date: today,
           last_called_at: new Date().toISOString(),
         })
-        .eq("user_id", userId)
-        .eq("skill_name", SKILL_NAME);
+        .eq('user_id', userId)
+        .eq('skill_name', SKILL_NAME);
     } else {
-      await supabase.from("ai_usage").insert({
+      await supabase.from('ai_usage').insert({
         user_id: userId,
         skill_name: SKILL_NAME,
         calls_today: 1,
@@ -265,18 +268,18 @@ Responde SOLO JSON: {"vaccines":[{"name":"...","date":"YYYY-MM-DD|null","batch":
       }),
       {
         status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
   } catch (error: unknown) {
-    console.error("ocr-vaccination-card error:", error);
+    console.error('ocr-vaccination-card error:', error);
     return new Response(
       JSON.stringify({
-        error: "An internal error occurred. Please try again later.",
+        error: 'An internal error occurred. Please try again later.',
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
   }

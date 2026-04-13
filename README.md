@@ -1,133 +1,103 @@
-# Paw Friend - Red Social para Mascotas 🐾
+# Paw Friend - Plataforma Veterinaria Digital
 
-Red social para mascotas de Chile. Conecta, cuida y comparte la vida de tu mascota.
+Plataforma veterinaria chilena B2C + B2B. Ficha medica digital, directorio publico de veterinarios, estimador de precios por comuna, reservas, chat, gamificacion.
 
-## 📱 Información de la App
+## Informacion de la App
 
 | Campo | Valor |
 |-------|-------|
 | **Nombre** | Paw Friend |
 | **Package ID** | `cl.pawfriend.app` |
-| **Versión** | 1.0.0 |
-| **País** | Chile 🇨🇱 |
+| **Version** | 1.0.0 |
+| **Dominio** | [pawfriend.cl](https://pawfriend.cl) |
+| **Pais** | Chile |
 
-## 🚀 Tecnologías
+## Stack tecnologico
 
-- **Frontend**: React + TypeScript + Vite
-- **Estilos**: Tailwind CSS + shadcn/ui
-- **Backend**: Lovable Cloud (Supabase)
-- **IA**: Lovable AI (Google Gemini 2.5 Flash)
-- **Pagos**: Webpay Plus (Transbank)
-- **Mapas**: Google Maps API
-- **Mobile**: Capacitor (iOS/Android)
+- **Frontend**: React 18 + TypeScript 5.8 + Vite 5
+- **Estilos**: Tailwind CSS 3 + shadcn/ui (Radix + CVA)
+- **Estado servidor**: @tanstack/react-query 5
+- **Forms**: react-hook-form 7 + zod 3
+- **Backend**: Supabase (Auth, Postgres, Edge Functions Deno, Storage)
+- **Pagos**: Flow.cl (suscripciones B2C y B2B)
+- **Mapas**: Leaflet + react-leaflet 4.2.1
+- **Mobile**: Capacitor 7 (Android + iOS)
+- **SEO**: react-helmet-async
 
-## 🛠️ Desarrollo Local
+## Desarrollo local
 
 ```bash
-# Clonar repositorio
-git clone <YOUR_GIT_URL>
-cd paw-friend
-
 # Instalar dependencias
 npm install
 
 # Iniciar servidor de desarrollo
 npm run dev
+
+# Build produccion (output en docs/)
+npm run build
+
+# Type-check
+npx tsc -b
 ```
 
-## 📱 Capacitor (Mobile)
-
-### Desarrollo con Hot Reload
+## Mobile (Capacitor)
 
 ```bash
-# Agregar plataformas
-npx cap add android
-npx cap add ios
-
-# Sincronizar después de cambios
+# Sincronizar despues de cambios
 npm run build
 npx cap sync
+
+# Compilar y correr en Android
+npx cap run android
 
 # Abrir en IDE nativo
 npx cap open android
 npx cap open ios
 ```
 
-### Build de Producción
-
-Ver [GOOGLE_PLAY_README.md](./GOOGLE_PLAY_README.md) para guía completa de publicación.
-
-```bash
-# 1. Copiar config de producción
-cp capacitor.config.production.ts capacitor.config.ts
-
-# 2. Build optimizado
-npm run build
-npx cap sync
-
-# 3. Generar AAB/IPA en IDE nativo
-npx cap open android
-```
-
-## 📁 Estructura del Proyecto
+## Estructura del proyecto
 
 ```
-├── src/
-│   ├── components/     # Componentes reutilizables
-│   ├── pages/          # Páginas de la app
-│   ├── hooks/          # Custom hooks
-│   ├── contexts/       # Context providers
-│   ├── integrations/   # Integraciones (Supabase)
-│   └── assets/         # Imágenes y recursos
-├── supabase/
-│   └── functions/      # Edge functions
-├── android/            # Proyecto Android (Capacitor)
-├── docs/               # Documentación
-│   ├── AI_PROMPTS_DOCUMENTATION.md
-│   └── CAPACITOR_MIGRATION_CHECKLIST.md
-└── public/             # Assets públicos
+src/
+  pages/           # Paginas (~35 archivos, PascalCase.tsx)
+  components/      # Componentes reutilizables (~60+ archivos)
+    ui/            # shadcn/ui primitivos
+    medical/       # Ficha clinica, PDF, compartir
+    paw-cards/     # Paw Cards coleccionables (TCG)
+    social/        # Feed, posts, follows
+    provider/      # Dashboard y perfil de vets
+  hooks/           # Custom hooks (~30 archivos, useXxx.tsx)
+  lib/             # Utilidades y configuracion
+  integrations/    # Supabase client + tipos generados
+
+supabase/
+  functions/       # 21 Edge Functions Deno + _shared/
+  migrations/      # 88 migraciones SQL
+
+docs/              # Output de npm run build (GitHub Pages)
 ```
 
-## 🤖 Edge Functions de IA
+## Edge Functions principales
 
-| Función | Propósito |
+| Funcion | Proposito |
 |---------|-----------|
-| `analyze-dog-behavior` | Análisis de lenguaje corporal canino |
-| `breed-tips` | Consejos específicos por raza |
-| `medical-suggestions` | Sugerencias médicas veterinarias |
-| `moderate-service-promotion` | Moderación de contenido |
-| `generate-shelters` | Generación de refugios con IA |
-| `generate-places` | Generación de lugares pet-friendly |
+| `generate-medical-summary` | PDF ficha medica (joya de la corona) |
+| `flow-create-subscription` | Crear suscripcion Flow.cl |
+| `flow-webhook` | Webhook de pagos Flow.cl |
+| `pet-assistant` | Asistente IA de mascotas |
+| `breed-tips` | Consejos por raza (IA) |
+| `ocr-vaccination-card` | OCR de carnet de vacunacion (IA) |
+| `reminder-cron` | Cron de recordatorios |
+| `generate-sitemap` | Sitemap SEO |
 
-Ver [docs/AI_PROMPTS_DOCUMENTATION.md](./docs/AI_PROMPTS_DOCUMENTATION.md) para detalles.
+## Documentacion
 
-## ✅ Características Principales
+- [CLAUDE.md](CLAUDE.md) -- Manual operativo completo (fuente de verdad)
+- [INDEX.md](INDEX.md) -- Indice maestro de documentacion viva
+- [MAPA_FUNCIONAL_COMPLETO.md](MAPA_FUNCIONAL_COMPLETO.md) -- Mapa de cada modulo
+- [AGENTS.md](AGENTS.md) -- Config para agentes IA externos
 
-- 🐕 **Perfiles de Mascotas**: Gestión completa de información de mascotas
-- 📸 **Pet Social**: Feed social para compartir momentos
-- 🏥 **Historial Médico**: Registro de vacunas, tratamientos y citas
-- 📍 **Mapas Interactivos**: Mascotas perdidas, adopción y servicios
-- 🚶 **Servicios Profesionales**: Paseadores, cuidadores, veterinarios, entrenadores
-- 🎮 **Gamificación**: Sistema de puntos y recompensas
-- 💬 **Mensajería**: Chat directo entre usuarios
-- 💳 **Pagos Seguros**: Integración con Webpay
-
-## 📖 Documentación Adicional
-
-- [Guía de Google Play Store](./GOOGLE_PLAY_README.md)
-- [Documentación de Prompts IA](./docs/AI_PROMPTS_DOCUMENTATION.md)
-- [Checklist de Migración Capacitor](./docs/CAPACITOR_MIGRATION_CHECKLIST.md)
-
-## 🔗 Links
-
-- **Lovable Project**: https://lovable.dev/projects/9c3ef547-1a05-4427-a6e6-d3f86a6365e3
-- **Preview**: https://9c3ef547-1a05-4427-a6e6-d3f86a6365e3.lovableproject.com
-
-## 📞 Contacto
+## Contacto
 
 - **Email**: soporte@pawfriend.cl
-- **País**: Chile 🇨🇱
-
----
-
-Desarrollado con ❤️ por Paw Friend Chile
+- **Pais**: Chile

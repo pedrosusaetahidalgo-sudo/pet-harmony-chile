@@ -59,6 +59,7 @@
 | `bugs/SEED_CONTAMINATION_QUERIES.sql` → `_archive/` | Investigación cerrada como FP | 2026-04-11 |
 | `landing-redesign-blueprint.md` → `_archive/` | Ejecutado en commit fc48e94 | 2026-04-13 |
 | `bugs/BUG_GROOMERS_GRADIENT_CRASH.md` → `_archive/` | Fix confirmado — gradient definido | 2026-04-13 |
+| `ANALISIS_LIMPIEZA_DEMO_USERS.md` → `_archive/` | Ejecutado — limpieza de ~100 users demo completada | 2026-04-12 |
 
 ---
 

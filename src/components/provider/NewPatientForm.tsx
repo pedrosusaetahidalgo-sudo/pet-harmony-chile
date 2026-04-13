@@ -33,6 +33,7 @@ interface NewPatientFormData {
   sex: string;
   weight: string;
   color: string;
+  owner_name: string;
   owner_email: string;
 }
 
@@ -72,6 +73,7 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
       sex: '',
       weight: '',
       color: '',
+      owner_name: '',
       owner_email: '',
     },
   });
@@ -87,9 +89,9 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
       const insertPayload: Record<string, unknown> = {
         name: data.name.trim(),
         species: data.species,
-        owner_id: user.id,
         created_by_vet_id: user.id,
         pending_owner_email: data.owner_email.trim().toLowerCase(),
+        pending_owner_name: data.owner_name.trim() || null,
       };
       if (data.breed.trim()) insertPayload.breed = data.breed.trim();
       if (data.birth_date) insertPayload.birth_date = data.birth_date;
@@ -215,6 +217,19 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
               placeholder="Selecciona color"
               otherPlaceholder="Describe el color..."
             />
+          </div>
+
+          {/* Nombre del dueno */}
+          <div className="space-y-1.5">
+            <Label htmlFor="np-owner-name">Nombre del dueño *</Label>
+            <Input
+              id="np-owner-name"
+              placeholder="Ej: Pedro Susaeta"
+              {...register('owner_name', { required: 'El nombre del dueño es obligatorio' })}
+            />
+            {errors.owner_name && (
+              <p className="text-xs text-destructive">{errors.owner_name.message}</p>
+            )}
           </div>
 
           {/* Email del dueno */}

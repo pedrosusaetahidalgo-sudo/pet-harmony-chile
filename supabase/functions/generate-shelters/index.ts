@@ -1,10 +1,10 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { checkAiQuota, rateLimitResponse } from "../_shared/rate-limit.ts";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://pawfriend.cl",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
 interface ShelterData {
@@ -30,59 +30,58 @@ interface ShelterData {
   ai_processed_at?: string | null;
 }
 
-const chileanCommunes = [
-  { name: "Providencia", lat: -33.4289, lng: -70.6108 },
-  { name: "Las Condes", lat: -33.4103, lng: -70.5675 },
-  { name: "Ñuñoa", lat: -33.4541, lng: -70.5977 },
-  { name: "Vitacura", lat: -33.3869, lng: -70.5728 },
-  { name: "La Reina", lat: -33.4486, lng: -70.5389 },
-  { name: "Peñalolén", lat: -33.4873, lng: -70.5097 },
-  { name: "Macul", lat: -33.4891, lng: -70.5996 },
-  { name: "San Miguel", lat: -33.4981, lng: -70.6516 },
-  { name: "La Florida", lat: -33.5167, lng: -70.5881 },
-  { name: "Puente Alto", lat: -33.6122, lng: -70.5758 },
-  { name: "Maipú", lat: -33.5092, lng: -70.7628 },
-  { name: "Santiago Centro", lat: -33.4489, lng: -70.6693 },
-  { name: "Recoleta", lat: -33.4061, lng: -70.6416 },
-  { name: "Independencia", lat: -33.4197, lng: -70.6653 },
-  { name: "Quilicura", lat: -33.3654, lng: -70.7334 },
-];
-
-const shelterTemplates = [
-  { prefix: "Refugio", suffix: ["Patitas Felices", "Huellas de Amor", "Vida Animal", "Segunda Oportunidad", "Amigos Peludos"] },
-  { prefix: "Fundación", suffix: ["Rescate Animal", "Adopta Chile", "Protección Animal", "Cuatro Patas", "Amor Animal"] },
-  { prefix: "Casa de Acogida", suffix: ["El Refugio", "Los Gatitos", "Perritos Sin Hogar", "Hogar Temporal", "Amor Peludo"] },
-  { prefix: "ONG", suffix: ["Salvando Vidas", "Animales Sin Fronteras", "Rescate Urbano", "Protectores", "Guardianes"] },
-];
+// Fallback coordinates for Santiago communes (used when AI returns a commune name)
+const communeCoords: Record<string, { lat: number; lng: number }> = {
+  Providencia: { lat: -33.4289, lng: -70.6108 },
+  'Las Condes': { lat: -33.4103, lng: -70.5675 },
+  Ñuñoa: { lat: -33.4541, lng: -70.5977 },
+  Vitacura: { lat: -33.3869, lng: -70.5728 },
+  'La Reina': { lat: -33.4486, lng: -70.5389 },
+  Peñalolén: { lat: -33.4873, lng: -70.5097 },
+  Macul: { lat: -33.4891, lng: -70.5996 },
+  'San Miguel': { lat: -33.4981, lng: -70.6516 },
+  'La Florida': { lat: -33.5167, lng: -70.5881 },
+  'Puente Alto': { lat: -33.6122, lng: -70.5758 },
+  Maipú: { lat: -33.5092, lng: -70.7628 },
+  'Santiago Centro': { lat: -33.4489, lng: -70.6693 },
+  Santiago: { lat: -33.4489, lng: -70.6693 },
+  Recoleta: { lat: -33.4061, lng: -70.6416 },
+  Independencia: { lat: -33.4197, lng: -70.6653 },
+  Quilicura: { lat: -33.3654, lng: -70.7334 },
+  Concepción: { lat: -36.827, lng: -73.0503 },
+  Valparaíso: { lat: -33.0472, lng: -71.6127 },
+  'Viña del Mar': { lat: -33.0153, lng: -71.5503 },
+  Temuco: { lat: -38.7359, lng: -72.5904 },
+};
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
+  if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const anthropicApiKey = Deno.env.get("ANTHROPIC_API_KEY");
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const anthropicApiKey = Deno.env.get('ANTHROPIC_API_KEY');
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     // Authenticate user
-    const authHeader = req.headers.get("Authorization");
+    const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return new Response(
-        JSON.stringify({ error: "Authorization required" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: 'Authorization required' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    const authToken = authHeader.replace("Bearer ", "");
+    const authToken = authHeader.replace('Bearer ', '');
     const { data: userData, error: userError } = await supabase.auth.getUser(authToken);
     if (userError || !userData.user) {
-      return new Response(
-        JSON.stringify({ error: "User not authenticated" }),
-        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: 'User not authenticated' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const quota = await checkAiQuota(userData.user.id, { limit: 10 });
@@ -90,194 +89,191 @@ serve(async (req) => {
       return rateLimitResponse(quota, corsHeaders);
     }
 
-    const { action, count = 15 } = await req.json();
+    const reqBody = await req.json();
+    const { action, count = 15, city = 'Santiago' } = reqBody;
 
     // Input validation
-    if (!action || typeof action !== "string") {
-      return new Response(
-        JSON.stringify({ error: "action is required and must be a string" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    if (!action || typeof action !== 'string') {
+      return new Response(JSON.stringify({ error: 'action is required and must be a string' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
-    if (!["generate", "list"].includes(action)) {
-      return new Response(
-        JSON.stringify({ error: "Invalid action" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    if (!['generate', 'list'].includes(action)) {
+      return new Response(JSON.stringify({ error: 'Invalid action' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
-    if (typeof count !== "number" || count < 1 || count > 100) {
-      return new Response(
-        JSON.stringify({ error: "count must be a number between 1 and 100" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+    if (typeof count !== 'number' || count < 1 || count > 100) {
+      return new Response(JSON.stringify({ error: 'count must be a number between 1 and 100' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    if (action === "generate") {
-      const { data: existing } = await supabase
-        .from("adoption_shelters")
-        .select("id")
-        .limit(1);
+    if (action === 'generate') {
+      const { data: existing } = await supabase.from('adoption_shelters').select('id').limit(1);
 
       if (existing && existing.length > 0) {
         return new Response(
-          JSON.stringify({ message: "Shelters already exist", count: existing.length }),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          JSON.stringify({ message: 'Shelters already exist', count: existing.length }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
 
-      const shelters: ShelterData[] = [];
-      for (let i = 0; i < count; i++) {
-        const commune = chileanCommunes[i % chileanCommunes.length];
-        const template = shelterTemplates[Math.floor(Math.random() * shelterTemplates.length)];
-        const suffix = template.suffix[Math.floor(Math.random() * template.suffix.length)];
+      if (!anthropicApiKey) {
+        return new Response(
+          JSON.stringify({ error: 'AI service not configured — cannot search real shelters' }),
+          { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
 
-        const name = `${template.prefix} ${suffix}`;
-        const type = template.prefix === "Fundación" ? "fundacion"
-          : template.prefix === "ONG" ? "ong"
-          : template.prefix === "Casa de Acogida" ? "independiente"
-          : "refugio";
+      console.log(`Searching real shelters in ${city}, Chile via web_search...`);
 
-        const animalTypes = Math.random() > 0.3
-          ? ["perro", "gato"]
-          : Math.random() > 0.5 ? ["perro"] : ["gato"];
+      const systemPrompt = `Busca refugios/fundaciones de rescate animal REALES en ${city}, Chile.
 
-        const petSizes = Math.random() > 0.2
-          ? ["pequeño", "mediano", "grande"]
-          : Math.random() > 0.5 ? ["pequeño", "mediano"] : ["mediano", "grande"];
+JSON array:
+[{"name":"...","type":"refugio|fundacion|ong","address":"...","commune":"...","phone":"...","email":"...","url":"...","animal_types":["perro","gato"],"description":"2 oraciones"}]
 
-        const specialtiesOptions = [
-          "rescate de calle", "gatos senior", "perros medianos",
-          "cachorros abandonados", "mascotas con discapacidad",
-          "rehabilitación conductual", "gatos ferales", "perros grandes",
-        ];
+Solo refugios con evidencia real. No inventar.`;
 
-        const specialties = [
-          specialtiesOptions[Math.floor(Math.random() * specialtiesOptions.length)],
-        ];
+      const controller = new AbortController();
+      const searchTimeout = setTimeout(() => controller.abort(), 30000);
 
-        shelters.push({
-          name, type,
-          commune: commune.name, city: "Santiago",
-          latitude: commune.lat + (Math.random() - 0.5) * 0.02,
-          longitude: commune.lng + (Math.random() - 0.5) * 0.02,
-          address: `Calle ${Math.floor(Math.random() * 1000) + 1}, ${commune.name}`,
-          animal_types: animalTypes, pet_sizes: petSizes, specialties,
-          formality_level: type === "ong" || type === "fundacion" ? "establecido" : "semi_formal",
-          contact_email: `contacto@${name.toLowerCase().replace(/\s+/g, "").substring(0, 20)}.cl`,
-          website: Math.random() > 0.3 ? `https://www.${name.toLowerCase().replace(/\s+/g, "").substring(0, 15)}.cl` : null,
-          social_media: {
-            instagram: Math.random() > 0.3 ? `@${name.toLowerCase().replace(/\s+/g, "_").substring(0, 20)}` : null,
-            facebook: Math.random() > 0.4 ? name.replace(/\s+/g, "") : null,
+      let aiResponse;
+      try {
+        aiResponse = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          signal: controller.signal,
+          headers: {
+            'x-api-key': anthropicApiKey,
+            'anthropic-version': '2023-06-01',
+            'Content-Type': 'application/json',
           },
-          is_active: true,
-          is_verified: Math.random() > 0.5,
-          source: "ai_generated",
+          body: JSON.stringify({
+            model: 'claude-haiku-3-5',
+            max_tokens: 200,
+            temperature: 0.2,
+            system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
+            messages: [
+              {
+                role: 'user',
+                content: `Refugios animales en ${city}, Chile. Max ${Math.min(count, 20)}.`,
+              },
+            ],
+            tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }],
+          }),
+        });
+      } finally {
+        clearTimeout(searchTimeout);
+      }
+
+      if (!aiResponse.ok) {
+        console.error('Claude API error:', aiResponse.status);
+        return new Response(JSON.stringify({ error: 'AI search failed' }), {
+          status: 502,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
 
-      if (anthropicApiKey) {
-        console.log("Using Claude API to generate descriptions...");
+      const aiData = await aiResponse.json();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const textBlocks = (aiData.content ?? []).filter((b: any) => b.type === 'text');
+      const content = textBlocks[textBlocks.length - 1]?.text ?? '';
 
-        for (const shelter of shelters) {
-          try {
-            const organizationType = shelter.type === 'ong'
-              ? 'ONG de rescate animal'
-              : shelter.type === 'fundacion'
-              ? 'fundación de protección animal'
-              : shelter.type === 'independiente'
-              ? 'casa de acogida independiente'
-              : 'refugio de animales';
-
-            const response = await fetch("https://api.anthropic.com/v1/messages", {
-              method: "POST",
-              headers: {
-                "x-api-key": anthropicApiKey,
-                "anthropic-version": "2023-06-01",
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                model: "claude-sonnet-4-5",
-                max_tokens: 200,
-                system: "Genera exactamente 2 oraciones emotivas y motivadoras para organizaciones de rescate animal en Chile. Solo responde con las 2 oraciones, sin formato adicional.",
-                messages: [
-                  {
-                    role: "user",
-                    content: `Genera descripción para ${organizationType} "${shelter.name}" en ${shelter.commune}, Santiago. Se especializan en ${shelter.specialties.join(', ')} y trabajan con ${shelter.animal_types.join(' y ')}.`
-                  }
-                ],
-              }),
-            });
-
-            if (response.ok) {
-              const data = await response.json();
-              let aiContent = data.content?.[0]?.text?.trim() || null;
-
-              if (aiContent) {
-                aiContent = aiContent.replace(/^#{1,3}\s+/gm, '').replace(/\*\*/g, '').replace(/\*/g, '').trim();
-              }
-
-              shelter.ai_description = aiContent;
-              shelter.description = aiContent || undefined;
-              shelter.ai_processed_at = new Date().toISOString();
-            } else {
-              throw new Error(`Claude API error: ${response.status}`);
-            }
-          } catch (aiError) {
-            console.error("AI description error:", aiError);
-            const orgType = shelter.type === 'ong' ? 'ONG' : shelter.type === 'fundacion' ? 'fundación' : shelter.type === 'independiente' ? 'casa de acogida' : 'refugio';
-            shelter.description = `${shelter.name} es un ${orgType} dedicado al rescate y cuidado de ${shelter.animal_types.join(" y ")}. Ubicado en ${shelter.commune}, Santiago, buscan hogares amorosos para sus animales y se especializan en ${shelter.specialties[0]}.`;
-            shelter.ai_processed_at = new Date().toISOString();
-          }
-
-          await new Promise(resolve => setTimeout(resolve, 200));
+      // Parse the JSON array from Claude's response
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let aiShelters: any[] = [];
+      try {
+        const jsonMatch = content.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+          aiShelters = JSON.parse(jsonMatch[0]);
         }
-      } else {
-        for (const shelter of shelters) {
-          shelter.description = `${shelter.name} es un ${shelter.type === 'ong' ? 'organización sin fines de lucro' : shelter.type === 'fundacion' ? 'fundación' : shelter.type === 'independiente' ? 'hogar de acogida independiente' : 'refugio'} dedicado al rescate y adopción responsable de ${shelter.animal_types.join(" y ")}. Ubicado en ${shelter.commune}, Santiago, trabaja con animales ${shelter.specialties[0]}.`;
-        }
+      } catch (e) {
+        console.error('Failed to parse shelter results:', e);
       }
 
+      if (!Array.isArray(aiShelters) || aiShelters.length === 0) {
+        return new Response(
+          JSON.stringify({ error: 'No se encontraron refugios reales. Intenta con otra ciudad.' }),
+          { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Map AI results to DB schema
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const shelters: ShelterData[] = aiShelters.map((s: any) => {
+        const commune = typeof s.commune === 'string' ? s.commune : city;
+        const coords = communeCoords[commune] ||
+          communeCoords['Santiago'] || { lat: -33.4489, lng: -70.6693 };
+
+        return {
+          name: s.name || 'Refugio sin nombre',
+          type: s.type === 'fundacion' || s.type === 'ong' ? s.type : 'refugio',
+          description: s.description || null,
+          ai_description: s.description || null,
+          commune,
+          city: city,
+          latitude: coords.lat + (Math.random() - 0.5) * 0.01,
+          longitude: coords.lng + (Math.random() - 0.5) * 0.01,
+          address: s.address || `${commune}, ${city}`,
+          animal_types: Array.isArray(s.animal_types) ? s.animal_types : ['perro', 'gato'],
+          pet_sizes: ['pequeño', 'mediano', 'grande'],
+          specialties: ['rescate'],
+          formality_level:
+            s.type === 'ong' || s.type === 'fundacion' ? 'establecido' : 'semi_formal',
+          contact_email: s.email || '',
+          website: s.url || null,
+          social_media: { instagram: null, facebook: null },
+          is_active: true,
+          is_verified: false,
+          source: 'web_search',
+          ai_processed_at: new Date().toISOString(),
+        };
+      });
+
       const { data: inserted, error: insertError } = await supabase
-        .from("adoption_shelters")
+        .from('adoption_shelters')
         .insert(shelters)
         .select();
 
       if (insertError) {
-        console.error("Insert error:", insertError);
+        console.error('Insert error:', insertError);
         throw insertError;
       }
 
       return new Response(
         JSON.stringify({ success: true, shelters: inserted, count: inserted?.length }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    if (action === "list") {
+    if (action === 'list') {
       const { data: shelters, error } = await supabase
-        .from("adoption_shelters")
-        .select("*")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false });
+        .from('adoption_shelters')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
 
-      return new Response(
-        JSON.stringify({ shelters }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ shelters }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
-    return new Response(
-      JSON.stringify({ error: "Invalid action" }),
-      { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
-
+    return new Response(JSON.stringify({ error: 'Invalid action' }), {
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   } catch (error) {
-    console.error("Error:", error);
+    console.error('Error:', error);
     return new Response(
-      JSON.stringify({ error: "Error al procesar la solicitud. Por favor, intenta de nuevo más tarde." }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      JSON.stringify({
+        error: 'Error al procesar la solicitud. Por favor, intenta de nuevo más tarde.',
+      }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });

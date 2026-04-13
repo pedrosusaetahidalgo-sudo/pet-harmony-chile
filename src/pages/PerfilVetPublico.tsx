@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { MapPin, Star, Stethoscope, Share2, MessageSquare, Calendar, Loader2 } from '@/lib/icons';
+import {
+  MapPin,
+  Star,
+  Stethoscope,
+  Share2,
+  MessageSquare,
+  Calendar,
+  Loader2,
+  Clock,
+  Phone,
+} from '@/lib/icons';
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
 import { LINKS } from '@/lib/links';
@@ -18,6 +28,7 @@ import { useDirectoryVetBySlug, useVetReviews, trackProviderView } from '@/hooks
 import { setSeoTags, injectJsonLd, formatCLP } from '@/lib/vetDirectory';
 import { PublicHeader, PublicFooter } from './DirectorioVets';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { isOpenNow, getTodayHours } from '@/lib/openingHours';
 
 function useIsOwnProviderSlug(slug: string | undefined, userId: string | undefined): boolean {
   const { data } = useQuery({
@@ -311,11 +322,61 @@ export default function PerfilVetPublico() {
               )}
 
               {v.price_from && (
-                <p className="text-sm mb-4">
+                <p className="text-sm mb-2">
                   💰 Consultas desde{' '}
                   <strong className="text-purple-700">{formatCLP(v.price_from)}</strong>
                 </p>
               )}
+
+              {/* Horario de hoy */}
+              {v.opening_hours && (
+                <div className="flex items-center justify-center md:justify-start gap-1 text-sm mb-1">
+                  <Clock className="h-4 w-4 text-purple-600 flex-shrink-0" />
+                  <span>
+                    Hoy: <strong>{getTodayHours(v.opening_hours)}</strong>
+                  </span>
+                  {isOpenNow(v.opening_hours) ? (
+                    <Badge
+                      className="ml-1 bg-green-100 text-green-700 border-green-200"
+                      variant="outline"
+                    >
+                      Abierto ahora
+                    </Badge>
+                  ) : (
+                    <Badge
+                      className="ml-1 bg-slate-100 text-slate-600 border-slate-200"
+                      variant="outline"
+                    >
+                      Cerrado
+                    </Badge>
+                  )}
+                </div>
+              )}
+
+              {/* Emergencia */}
+              {v.emergency_available && (
+                <div className="flex items-center justify-center md:justify-start gap-2 text-sm mb-4">
+                  <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                    <Phone className="h-3 w-3 mr-1" />
+                    Atiende urgencias
+                  </Badge>
+                  {v.emergency_phone && (
+                    <a
+                      href={`tel:${v.emergency_phone}`}
+                      className="text-red-600 font-semibold hover:underline"
+                    >
+                      {v.emergency_phone}
+                    </a>
+                  )}
+                  {v.emergency_surcharge_pct != null && v.emergency_surcharge_pct > 0 && (
+                    <span className="text-xs text-muted-foreground">
+                      (+{v.emergency_surcharge_pct}% recargo)
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {!v.opening_hours && !v.emergency_available && <div className="mb-4" />}
 
               <div className="flex flex-wrap gap-2 justify-center md:justify-start">
                 <Button onClick={handleReservar} className="bg-purple-600 hover:bg-purple-700">

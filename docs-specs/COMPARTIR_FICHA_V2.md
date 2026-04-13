@@ -1,6 +1,6 @@
 # Compartir Ficha Clinica V2 — Vinculacion directa Vet-Mascota
 
-> **Estado**: Propuesta
+> **Estado**: Implementado (Fases 1-5, pendiente aplicar migracion SQL en Supabase Dashboard)
 > **Fecha**: 2026-04-12
 > **Problema**: El flujo actual de compartir fichas es engorroso, no genera notificaciones reales, y el vet no puede aceptar/rechazar la solicitud. El dueno tiene que generar un enlace, copiarlo, y mandarlo manualmente. No existe un boton rapido en la tarjeta de mascota. Ademas, el formulario "Nuevo paciente" del vet tiene un bug que impide crear pacientes.
 

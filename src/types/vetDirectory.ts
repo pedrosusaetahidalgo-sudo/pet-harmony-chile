@@ -54,6 +54,13 @@ export interface ServiceProviderRow {
   directory_views: number | null;
   public_email: string | null;
   public_phone: string | null;
+
+  // === Campos de emergencia y horarios (migración 20260408) ===
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  opening_hours: any;
+  emergency_available: boolean | null;
+  emergency_phone: string | null;
+  emergency_surcharge_pct: number | null;
 }
 
 export interface ServiceReviewRow {
@@ -87,10 +94,7 @@ export interface ReviewInvitationRow {
 }
 
 export interface ReviewInvitationWithProvider extends ReviewInvitationRow {
-  service_providers: Pick<
-    ServiceProviderRow,
-    'id' | 'slug' | 'display_name' | 'avatar_url'
-  > | null;
+  service_providers: Pick<ServiceProviderRow, 'id' | 'slug' | 'display_name' | 'avatar_url'> | null;
 }
 
 /** Helper para extraer mensaje de error de manera segura. */

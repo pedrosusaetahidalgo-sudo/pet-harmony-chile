@@ -21,7 +21,7 @@ interface PatientRow {
   photo_url: string | null;
   owner_name: string | null;
   last_visit: string;
-  source: 'note' | 'shared';
+  source: 'linked' | 'note' | 'shared';
 }
 
 /**
@@ -41,6 +41,49 @@ export function VetPatientsList() {
     queryFn: async () => {
       if (!user) return [] as PatientRow[];
       const patientsMap = new Map<string, PatientRow>();
+
+      // 0. Vinculaciones activas (pet_vet_links) — fuente primaria
+      const { data: providerRow } = await supabase
+        .from('service_providers')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (providerRow?.id) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: links } = await (supabase as any)
+          .from('pet_vet_links')
+          .select(
+            'pet_id, responded_at, pets(name, species, photo_url, owner_id), profiles!pet_vet_links_owner_id_fkey(display_name)'
+          )
+          .eq('provider_id', providerRow.id)
+          .eq('status', 'active')
+          .order('responded_at', { ascending: false })
+          .limit(100);
+
+        if (links && Array.isArray(links)) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          for (const row of links as any[]) {
+            const pid = row.pet_id as string;
+            if (patientsMap.has(pid)) continue;
+            const pet = row.pets as {
+              name: string | null;
+              species: string | null;
+              photo_url: string | null;
+            } | null;
+            const profile = row.profiles as { display_name: string | null } | null;
+            patientsMap.set(pid, {
+              pet_id: pid,
+              pet_name: pet?.name || 'Mascota',
+              species: pet?.species || null,
+              photo_url: pet?.photo_url || null,
+              owner_name: profile?.display_name || null,
+              last_visit: (row.responded_at as string) || new Date().toISOString(),
+              source: 'linked',
+            });
+          }
+        }
+      }
 
       // 1. Mascotas donde el vet escribio notas clinicas
       const { data: notes } = await (
@@ -76,12 +119,6 @@ export function VetPatientsList() {
       }
 
       // 2. Fichas compartidas con este vet (via service_providers)
-      const { data: providerRow } = await supabase
-        .from('service_providers')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
       if (providerRow?.id) {
         const { data: shared } = await supabase
           .from('medical_share_tokens')
@@ -216,12 +253,18 @@ export function VetPatientsList() {
                       <Badge
                         variant="outline"
                         className={`text-[10px] ${
-                          patient.source === 'note'
-                            ? 'bg-blue-50 text-blue-600 border-blue-200'
-                            : 'bg-green-50 text-green-600 border-green-200'
+                          patient.source === 'linked'
+                            ? 'bg-purple-50 text-purple-600 border-purple-200'
+                            : patient.source === 'note'
+                              ? 'bg-blue-50 text-blue-600 border-blue-200'
+                              : 'bg-green-50 text-green-600 border-green-200'
                         }`}
                       >
-                        {patient.source === 'note' ? 'Nota clínica' : 'Ficha compartida'}
+                        {patient.source === 'linked'
+                          ? 'Vinculado'
+                          : patient.source === 'note'
+                            ? 'Nota clínica'
+                            : 'Ficha compartida'}
                       </Badge>
                     </div>
                   </div>

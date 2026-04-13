@@ -1504,6 +1504,121 @@ span {
   mix-blend-mode: screen;
 }
 
+/* Rarity-specific shine colors on back */
+.paw-card-back[data-rarity='rare'] .paw-card-back-shine {
+  background: radial-gradient(
+    ellipse at var(--tcg-glow-x, 50%) var(--tcg-glow-y, 50%),
+    rgba(255, 215, 0, 0.3),
+    rgba(255, 165, 0, 0.15),
+    transparent 60%
+  );
+}
+.paw-card-back[data-rarity='epic'] .paw-card-back-shine {
+  background: radial-gradient(
+    ellipse at var(--tcg-glow-x, 50%) var(--tcg-glow-y, 50%),
+    rgba(0, 206, 209, 0.3),
+    rgba(123, 104, 238, 0.2),
+    transparent 60%
+  );
+}
+.paw-card-back[data-rarity='legendary'] .paw-card-back-shine {
+  background: radial-gradient(
+    ellipse at var(--tcg-glow-x, 50%) var(--tcg-glow-y, 50%),
+    rgba(255, 69, 0, 0.35),
+    rgba(255, 215, 0, 0.2),
+    transparent 60%
+  );
+}
+.paw-card-back[data-rarity='mythic'] .paw-card-back-shine {
+  background: radial-gradient(
+    ellipse at var(--tcg-glow-x, 50%) var(--tcg-glow-y, 50%),
+    rgba(255, 0, 128, 0.3),
+    rgba(0, 191, 255, 0.25),
+    rgba(139, 92, 246, 0.15),
+    transparent 55%
+  );
+}
+
+/* Rarity-specific filigree colors on back */
+.paw-card-back[data-rarity='rare'] .paw-card-back-filigree {
+  border-color: rgba(255, 215, 0, 0.5);
+}
+.paw-card-back[data-rarity='epic'] .paw-card-back-filigree {
+  border-color: rgba(0, 206, 209, 0.5);
+}
+.paw-card-back[data-rarity='legendary'] .paw-card-back-filigree {
+  border-color: rgba(255, 140, 0, 0.6);
+  opacity: 0.5;
+}
+.paw-card-back[data-rarity='mythic'] .paw-card-back-filigree {
+  border-color: rgba(255, 0, 128, 0.5);
+  opacity: 0.5;
+  animation: holo-shift 3s ease-in-out infinite;
+}
+
+/* Rarity-specific ornament line colors on back */
+.paw-card-back[data-rarity='rare'] .paw-card-back-ornament {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 215, 0, 0.4),
+    rgba(255, 165, 0, 0.3),
+    rgba(255, 215, 0, 0.4),
+    transparent
+  );
+}
+.paw-card-back[data-rarity='epic'] .paw-card-back-ornament {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 206, 209, 0.4),
+    rgba(123, 104, 238, 0.3),
+    rgba(0, 206, 209, 0.4),
+    transparent
+  );
+}
+.paw-card-back[data-rarity='legendary'] .paw-card-back-ornament {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 69, 0, 0.5),
+    rgba(255, 215, 0, 0.4),
+    rgba(255, 69, 0, 0.5),
+    transparent
+  );
+}
+.paw-card-back[data-rarity='mythic'] .paw-card-back-ornament {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 0, 128, 0.5),
+    rgba(0, 191, 255, 0.4),
+    rgba(139, 92, 246, 0.4),
+    rgba(255, 0, 128, 0.5),
+    transparent
+  );
+}
+
+/* Rarity-specific border glow on back */
+.paw-card-back[data-rarity='rare']::after {
+  border-color: rgba(255, 215, 0, 0.25);
+  box-shadow: inset 0 0 40px rgba(255, 215, 0, 0.1);
+}
+.paw-card-back[data-rarity='epic']::after {
+  border-color: rgba(0, 206, 209, 0.25);
+  box-shadow: inset 0 0 40px rgba(123, 104, 238, 0.1);
+}
+.paw-card-back[data-rarity='legendary']::after {
+  border-color: rgba(255, 69, 0, 0.3);
+  box-shadow: inset 0 0 50px rgba(255, 140, 0, 0.12);
+}
+.paw-card-back[data-rarity='mythic']::after {
+  border-color: rgba(255, 0, 128, 0.3);
+  box-shadow:
+    inset 0 0 50px rgba(139, 92, 246, 0.12),
+    inset 0 0 80px rgba(0, 191, 255, 0.06);
+}
+
 /* Animated border glow on back */
 .paw-card-back::after {
   content: '';

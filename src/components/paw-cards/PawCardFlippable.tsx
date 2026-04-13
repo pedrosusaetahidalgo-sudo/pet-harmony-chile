@@ -4,7 +4,7 @@ import { LINKS } from '@/lib/links';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Heart, FileText, Pencil, Trash2, PawPrint, Sparkles } from '@/lib/icons';
+import { Heart, FileText, Pencil, Trash2, PawPrint, Sparkles, Share2 } from '@/lib/icons';
 import { getRarity, RARITY_LABELS, RARITY_RING } from '@/components/PetCardCompact';
 import { PawCardHoloPattern } from './PawCardHoloPattern';
 import { PawCardBack } from './PawCardBack';
@@ -48,6 +48,7 @@ interface PawCardFlippableProps {
   holoPattern?: HoloPattern;
   pawCardId?: string;
   onDelete: (id: string) => void;
+  onShare?: (id: string) => void;
 }
 
 export function PawCardFlippable({
@@ -56,6 +57,7 @@ export function PawCardFlippable({
   holoPattern = 'holo-none',
   pawCardId = '',
   onDelete,
+  onShare,
 }: PawCardFlippableProps) {
   const navigate = useNavigate();
   const cardRef = useRef<HTMLDivElement>(null);
@@ -215,6 +217,20 @@ export function PawCardFlippable({
                 <FileText className="mr-2 h-4 w-4" />
                 Ficha Clinica
               </Button>
+              {onShare && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="w-full border-purple-200/60 hover:bg-purple-50/50"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onShare(pet.id);
+                  }}
+                >
+                  <Share2 className="mr-2 h-4 w-4 text-purple-500" />
+                  Compartir con tu vet
+                </Button>
+              )}
               <div className="flex gap-2">
                 <Button
                   variant="outline"

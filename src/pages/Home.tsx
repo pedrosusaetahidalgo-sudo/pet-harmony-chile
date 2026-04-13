@@ -25,6 +25,7 @@ import {
   Flame,
   Trophy,
   Star,
+  Phone,
 } from '@/lib/icons';
 import { getGreeting } from '@/lib/format';
 import { useGamification } from '@/hooks/useGamification';
@@ -116,18 +117,28 @@ export default function Home() {
     if (!user) return;
 
     try {
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('display_name, avatar_url, is_premium')
-        .eq('id', user.id)
-        .maybeSingle();
+      // Queries independientes en paralelo
+      const [profileResult, petsResult, appointmentsResult] = await Promise.all([
+        supabase
+          .from('profiles')
+          .select('display_name, avatar_url, is_premium')
+          .eq('id', user.id)
+          .maybeSingle(),
+        supabase.from('pets').select('*').eq('owner_id', user.id).eq('lifecycle_status', 'active'),
+        supabase
+          .from('appointments')
+          .select('id, title, scheduled_date, pet_id')
+          .gte('scheduled_date', new Date().toISOString())
+          .order('scheduled_date', { ascending: true })
+          .limit(5),
+      ]);
+
+      const profileData = profileResult.data;
       if (profileData) setProfile(profileData);
 
-      const { data: petsData } = await supabase
-        .from('pets')
-        .select('*')
-        .eq('owner_id', user.id)
-        .eq('lifecycle_status', 'active');
+      if (appointmentsResult.data) setAppointments(appointmentsResult.data);
+
+      const petsData = petsResult.data;
 
       // Fetch paw scores for rarity display
       const petIds = (petsData || []).map((p: { id: string }) => p.id);
@@ -174,14 +185,6 @@ export default function Home() {
         compMap[p.id] = Math.round((filled / total) * 100);
       });
       setCompleteness(compMap);
-
-      const { data: appointmentsData } = await supabase
-        .from('appointments')
-        .select('id, title, scheduled_date, pet_id')
-        .gte('scheduled_date', new Date().toISOString())
-        .order('scheduled_date', { ascending: true })
-        .limit(5);
-      if (appointmentsData) setAppointments(appointmentsData);
 
       // Vaccine status: use pet_reminders type=vaccine to find pending; if none pending => al día
       if (petsList.length > 0) {
@@ -442,6 +445,35 @@ export default function Home() {
               onClick={() => navigate(LINKS.pawGame())}
             />
           </div>
+
+          {/* === Botón Emergencia Vet === */}
+          <Card
+            className="border-red-200 bg-gradient-to-r from-red-50 to-orange-50 cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => navigate('/veterinarios?emergencia=true')}
+          >
+            <CardContent className="flex items-center gap-4 py-3">
+              <div className="rounded-full bg-red-100 p-2.5 flex-shrink-0">
+                <Phone className="h-5 w-5 text-red-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-bold text-red-800">Emergencia veterinaria</p>
+                <p className="text-xs text-muted-foreground">
+                  Encuentra veterinarios abiertos ahora que atienden urgencias
+                </p>
+              </div>
+              <Button
+                variant="destructive"
+                size="sm"
+                className="flex-shrink-0"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate('/veterinarios?emergencia=true');
+                }}
+              >
+                SOS Vet
+              </Button>
+            </CardContent>
+          </Card>
 
           {/* === HEALTH ALERTS (prioridad máxima, visible inmediatamente) === */}
           {(overdueReminders.length > 0 || upcomingReminders.length > 0) && (

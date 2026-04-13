@@ -1,7 +1,7 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "./useAuth";
-import { toast } from "sonner";
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from './useAuth';
+import { toast } from 'sonner';
 
 export interface CommunityGroup {
   id: string;
@@ -26,13 +26,13 @@ export interface GroupMessage {
 
 export function useCommunityGroups() {
   return useQuery<CommunityGroup[]>({
-    queryKey: ["community-groups"],
+    queryKey: ['community-groups'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("community_groups")
-        .select("*")
-        .eq("is_public", true)
-        .order("member_count", { ascending: false });
+        .from('community_groups')
+        .select('*')
+        .eq('is_public', true)
+        .order('member_count', { ascending: false });
       if (error) throw error;
       return (data || []) as CommunityGroup[];
     },
@@ -42,14 +42,15 @@ export function useCommunityGroups() {
 export function useMyGroupMemberships() {
   const { user } = useAuth();
   return useQuery<string[]>({
-    queryKey: ["my-group-memberships", user?.id],
+    queryKey: ['my-group-memberships', user?.id],
     enabled: !!user?.id,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("community_group_members")
-        .select("group_id")
-        .eq("user_id", user!.id);
+        .from('community_group_members')
+        .select('group_id')
+        .eq('user_id', user!.id);
       if (error) throw error;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (data || []).map((m: any) => m.group_id);
     },
   });
@@ -60,18 +61,18 @@ export function useJoinGroup() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (groupId: string) => {
-      if (!user) throw new Error("No autenticado");
+      if (!user) throw new Error('No autenticado');
       const { error } = await supabase
-        .from("community_group_members")
+        .from('community_group_members')
         .insert({ group_id: groupId, user_id: user.id });
       if (error) throw error;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["my-group-memberships"] });
-      qc.invalidateQueries({ queryKey: ["community-groups"] });
-      toast.success("Te uniste al grupo");
+      qc.invalidateQueries({ queryKey: ['my-group-memberships'] });
+      qc.invalidateQueries({ queryKey: ['community-groups'] });
+      toast.success('Te uniste al grupo');
     },
-    onError: () => toast.error("No se pudo unir al grupo"),
+    onError: () => toast.error('No se pudo unir al grupo'),
   });
 }
 
@@ -80,33 +81,33 @@ export function useLeaveGroup() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (groupId: string) => {
-      if (!user) throw new Error("No autenticado");
+      if (!user) throw new Error('No autenticado');
       const { error } = await supabase
-        .from("community_group_members")
+        .from('community_group_members')
         .delete()
-        .eq("group_id", groupId)
-        .eq("user_id", user.id);
+        .eq('group_id', groupId)
+        .eq('user_id', user.id);
       if (error) throw error;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["my-group-memberships"] });
-      qc.invalidateQueries({ queryKey: ["community-groups"] });
-      toast.success("Saliste del grupo");
+      qc.invalidateQueries({ queryKey: ['my-group-memberships'] });
+      qc.invalidateQueries({ queryKey: ['community-groups'] });
+      toast.success('Saliste del grupo');
     },
   });
 }
 
 export function useGroupMessages(groupId: string | undefined) {
   return useQuery<GroupMessage[]>({
-    queryKey: ["group-messages", groupId],
+    queryKey: ['group-messages', groupId],
     enabled: !!groupId,
-    refetchInterval: 10000, // Poll each 10s
+    refetchInterval: 60000, // Poll each 60s (was 10s — community messages don't need real-time updates)
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("community_group_messages")
-        .select("*, profiles:user_id(display_name, avatar_url)")
-        .eq("group_id", groupId!)
-        .order("created_at", { ascending: true })
+        .from('community_group_messages')
+        .select('*, profiles:user_id(display_name, avatar_url)')
+        .eq('group_id', groupId!)
+        .order('created_at', { ascending: true })
         .limit(100);
       if (error) throw error;
       return (data || []) as GroupMessage[];
@@ -119,15 +120,15 @@ export function useSendGroupMessage() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ groupId, content }: { groupId: string; content: string }) => {
-      if (!user) throw new Error("No autenticado");
+      if (!user) throw new Error('No autenticado');
       const { error } = await supabase
-        .from("community_group_messages")
+        .from('community_group_messages')
         .insert({ group_id: groupId, user_id: user.id, content: content.trim() });
       if (error) throw error;
     },
     onSuccess: (_, vars) => {
-      qc.invalidateQueries({ queryKey: ["group-messages", vars.groupId] });
+      qc.invalidateQueries({ queryKey: ['group-messages', vars.groupId] });
     },
-    onError: () => toast.error("No se pudo enviar el mensaje"),
+    onError: () => toast.error('No se pudo enviar el mensaje'),
   });
 }

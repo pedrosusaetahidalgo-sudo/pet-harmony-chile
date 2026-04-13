@@ -24,6 +24,7 @@ import {
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { useGoToAddPet } from '@/hooks/useCanAddPet';
 import { PawCardFlippable } from '@/components/paw-cards/PawCardFlippable';
+import { ShareWithVetModal } from '@/components/medical/ShareWithVetModal';
 import type { HoloPattern } from '@/lib/paw-cards';
 import { generatePawCardId, rollHoloPattern } from '@/lib/paw-cards';
 
@@ -106,6 +107,7 @@ const MyPets = () => {
   const [petScores, setPetScores] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [sharePetId, setSharePetId] = useState<string | null>(null);
   const [memorialOpen, setMemorialOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const { user } = useAuth();
@@ -391,6 +393,7 @@ const MyPets = () => {
                   holoPattern={(pet.holo_pattern as HoloPattern) || 'holo-none'}
                   pawCardId={pet.paw_card_id || ''}
                   onDelete={setDeleteId}
+                  onShare={setSharePetId}
                 />
               </div>
             ))}
@@ -412,6 +415,7 @@ const MyPets = () => {
                   holoPattern={(pet.holo_pattern as HoloPattern) || 'holo-none'}
                   pawCardId={pet.paw_card_id || ''}
                   onDelete={setDeleteId}
+                  onShare={setSharePetId}
                 />
               </div>
             ))}
@@ -493,6 +497,16 @@ const MyPets = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* ── Share with vet modal ── */}
+      <ShareWithVetModal
+        open={!!sharePetId}
+        onOpenChange={(open) => {
+          if (!open) setSharePetId(null);
+        }}
+        petId={sharePetId || ''}
+        petName={pets.find((p) => p.id === sharePetId)?.name || 'tu mascota'}
+      />
     </div>
   );
 };

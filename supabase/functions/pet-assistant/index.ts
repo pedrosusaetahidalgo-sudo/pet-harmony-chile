@@ -1,40 +1,40 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { checkAiQuota, rateLimitResponse } from "../_shared/rate-limit.ts";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://pawfriend.cl",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
     // Auth
-    const authHeader = req.headers.get("Authorization");
+    const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return new Response(JSON.stringify({ error: "Authorization required" }), {
+      return new Response(JSON.stringify({ error: 'Authorization required' }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
       { global: { headers: { Authorization: authHeader } } }
     );
 
-    const token = authHeader.replace("Bearer ", "");
+    const token = authHeader.replace('Bearer ', '');
     const { data: userData, error: userError } = await supabase.auth.getUser(token);
     if (userError || !userData.user) {
-      return new Response(JSON.stringify({ error: "User not authenticated" }), {
+      return new Response(JSON.stringify({ error: 'User not authenticated' }), {
         status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
@@ -52,33 +52,36 @@ serve(async (req) => {
     // Sanitizar input del usuario contra prompt injection
     const sanitize = (s: string) => {
       let t = s.trim().slice(0, 500);
-      t = t.replace(/(?:ignore|olvida|ignora|forget)\s+(?:previous|anterior|all|todo|las)\s+(?:instructions?|instrucciones?)/gi, "[filtrado]");
-      t = t.replace(/(?:system|sistema)\s*(?:prompt|mensaje)/gi, "[filtrado]");
-      t = t.replace(/(?:you are now|ahora eres|actúa como|act as|pretend)/gi, "[filtrado]");
+      t = t.replace(
+        /(?:ignore|olvida|ignora|forget)\s+(?:previous|anterior|all|todo|las)\s+(?:instructions?|instrucciones?)/gi,
+        '[filtrado]'
+      );
+      t = t.replace(/(?:system|sistema)\s*(?:prompt|mensaje)/gi, '[filtrado]');
+      t = t.replace(/(?:you are now|ahora eres|actúa como|act as|pretend)/gi, '[filtrado]');
       return t;
     };
 
-    if (!question || typeof question !== "string" || question.trim().length < 3) {
-      return new Response(JSON.stringify({ error: "Question is required (min 3 characters)" }), {
+    if (!question || typeof question !== 'string' || question.trim().length < 3) {
+      return new Response(JSON.stringify({ error: 'Question is required (min 3 characters)' }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    if (!pet_id || typeof pet_id !== "string") {
-      return new Response(JSON.stringify({ error: "pet_id is required" }), {
+    if (!pet_id || typeof pet_id !== 'string') {
+      return new Response(JSON.stringify({ error: 'pet_id is required' }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     // Rate limiting: 5 questions per day
-    const today = new Date().toISOString().split("T")[0];
+    const today = new Date().toISOString().split('T')[0];
     const { data: usage } = await supabase
-      .from("ai_usage")
-      .select("calls_today, last_reset_date")
-      .eq("user_id", userId)
-      .eq("skill_name", "pet-assistant")
+      .from('ai_usage')
+      .select('calls_today, last_reset_date')
+      .eq('user_id', userId)
+      .eq('skill_name', 'pet-assistant')
       .maybeSingle();
 
     let callsToday = 0;
@@ -87,51 +90,54 @@ serve(async (req) => {
     }
 
     if (callsToday >= 5) {
-      return new Response(JSON.stringify({
-        error: "Límite diario alcanzado (5 consultas). Renueva mañana.",
-        rate_limited: true,
-      }), {
-        status: 429,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({
+          error: 'Límite diario alcanzado (5 consultas). Renueva mañana.',
+          rate_limited: true,
+        }),
+        {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     // Fetch pet data
     const { data: pet, error: petError } = await supabase
-      .from("pets")
-      .select("*")
-      .eq("id", pet_id)
-      .eq("owner_id", userId)
+      .from('pets')
+      .select('*')
+      .eq('id', pet_id)
+      .eq('owner_id', userId)
       .maybeSingle();
 
     if (petError || !pet) {
-      return new Response(JSON.stringify({ error: "Pet not found or access denied" }), {
+      return new Response(JSON.stringify({ error: 'Pet not found or access denied' }), {
         status: 404,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     // Fetch medical records (last 10)
     const { data: records } = await supabase
-      .from("medical_records")
-      .select("record_type, title, description, date, veterinarian_name, clinic_name, notes")
-      .eq("pet_id", pet_id)
-      .order("date", { ascending: false })
+      .from('medical_records')
+      .select('record_type, title, description, date, veterinarian_name, clinic_name, notes')
+      .eq('pet_id', pet_id)
+      .order('date', { ascending: false })
       .limit(10);
 
     // Fetch reminders
     const { data: reminders } = await supabase
-      .from("pet_reminders")
-      .select("type, title, due_date, is_completed")
-      .eq("pet_id", pet_id)
-      .eq("is_completed", false)
-      .order("due_date", { ascending: true })
+      .from('pet_reminders')
+      .select('type, title, due_date, is_completed')
+      .eq('pet_id', pet_id)
+      .eq('is_completed', false)
+      .order('due_date', { ascending: true })
       .limit(5);
 
     // Build context — clamp defensivo: si la edad sale absurda (>30 años) la
     // marcamos como desconocida para no envenenar el prompt del LLM con datos
     // corruptos que llevarían a recomendaciones peligrosas.
-    let petAge = "edad desconocida";
+    let petAge = 'edad desconocida';
     if (pet.birth_date) {
       const ageYears = Math.floor(
         (Date.now() - new Date(pet.birth_date).getTime()) / (365.25 * 24 * 60 * 60 * 1000)
@@ -142,55 +148,64 @@ serve(async (req) => {
     }
 
     // Contexto compacto — solo campos con valor (reduce tokens ~40%)
-    const ctx: string[] = [`${pet.name}, ${pet.species}${pet.breed ? ` ${pet.breed}` : ""}, ${petAge}`];
+    const ctx: string[] = [
+      `${pet.name}, ${pet.species}${pet.breed ? ` ${pet.breed}` : ''}, ${petAge}`,
+    ];
     if (pet.weight) ctx.push(`${pet.weight}kg`);
     if (pet.gender) ctx.push(pet.gender);
-    if (pet.neutered) ctx.push("esterilizado");
-    const allergies = [pet.allergies_food, pet.allergies_medication, pet.allergies_environmental].filter(Boolean);
-    if (allergies.length) ctx.push(`Alergias: ${allergies.join(", ")}`);
-    if (pet.chronic_conditions_detail) ctx.push(`Crónicas: ${JSON.stringify(pet.chronic_conditions_detail)}`);
+    if (pet.neutered) ctx.push('esterilizado');
+    const allergies = [
+      pet.allergies_food,
+      pet.allergies_medication,
+      pet.allergies_environmental,
+    ].filter(Boolean);
+    if (allergies.length) ctx.push(`Alergias: ${allergies.join(', ')}`);
+    if (pet.chronic_conditions_detail)
+      ctx.push(`Crónicas: ${JSON.stringify(pet.chronic_conditions_detail)}`);
     if (pet.current_medications) ctx.push(`Meds: ${JSON.stringify(pet.current_medications)}`);
 
     const historial = records?.length
-      ? records.map(r => `[${r.date}] ${r.record_type}: ${r.title}`).join("; ")
-      : "sin historial";
+      ? records.map((r) => `[${r.date}] ${r.record_type}: ${r.title}`).join('; ')
+      : 'sin historial';
     const recordatorios = reminders?.length
-      ? reminders.map(r => `${r.type}: ${r.title} (${r.due_date})`).join("; ")
-      : "";
+      ? reminders.map((r) => `${r.type}: ${r.title} (${r.due_date})`).join('; ')
+      : '';
 
-    const systemPrompt = `Asistente veterinario Paw Friend (Chile). Mascota: ${ctx.join(" | ")}
-Historial: ${historial}${recordatorios ? `\nRecordatorios: ${recordatorios}` : ""}
+    const systemPrompt = `Asistente veterinario Paw Friend (Chile). Mascota: ${ctx.join(' | ')}
+Historial: ${historial}${recordatorios ? `\nRecordatorios: ${recordatorios}` : ''}
 
 REGLAS: Usa nombre real. Síntomas graves → urgencia + vet ya. Alergias → advertir. NUNCA diagnostiques. 2-4 oraciones concisas. Español chileno.
-Responde SOLO JSON: {"respuesta":"...","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":bool,"recordatorios_relevantes":[],"sugerencias_accion":[]}`;
+Si preguntan donde comprar algo, precios, normativa, o info que cambia → usa web_search con "Chile" o la comuna en la query. Cita la fuente.
+Responde SOLO JSON: {"respuesta":"...","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":bool,"recordatorios_relevantes":[],"sugerencias_accion":[],"fuentes":[]}`;
 
     // Call Claude
-    const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
+    const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
     if (!apiKey) {
-      return new Response(JSON.stringify({ error: "AI service not configured" }), {
+      return new Response(JSON.stringify({ error: 'AI service not configured' }), {
         status: 503,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
+    const timeout = setTimeout(() => controller.abort(), 25000);
 
     let claudeResponse;
     try {
-      claudeResponse = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
+      claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
-          "x-api-key": apiKey,
-          "anthropic-version": "2023-06-01",
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
         },
         body: JSON.stringify({
-          model: "claude-sonnet-4-5",
-          max_tokens: 400,
+          model: 'claude-haiku-3-5',
+          max_tokens: 800,
           temperature: 0.3,
-          system: systemPrompt,
-          messages: [{ role: "user", content: sanitize(question) }],
+          system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
+          messages: [{ role: 'user', content: sanitize(question) }],
+          tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }],
         }),
         signal: controller.signal,
       });
@@ -199,34 +214,44 @@ Responde SOLO JSON: {"respuesta":"...","nivel_urgencia":"bajo|medio|alto","requi
     }
 
     if (claudeResponse.status === 429) {
-      return new Response(JSON.stringify({ error: "AI service rate limited. Try again in a moment." }), {
-        status: 429,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ error: 'AI service rate limited. Try again in a moment.' }),
+        {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     if (!claudeResponse.ok) {
-      console.error("Claude API error:", claudeResponse.status);
-      return new Response(JSON.stringify({ error: "AI service temporarily unavailable" }), {
+      console.error('Claude API error:', claudeResponse.status);
+      return new Response(JSON.stringify({ error: 'AI service temporarily unavailable' }), {
         status: 502,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     const claudeData = await claudeResponse.json();
-    const responseText: string = claudeData.content?.[0]?.text ?? "";
+    // web_search produces multiple content blocks; grab the last text block
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const textBlocks = (claudeData.content ?? []).filter((b: any) => b.type === 'text');
+    const responseText: string = textBlocks[textBlocks.length - 1]?.text ?? '';
 
     // Parse response — Claude a veces envuelve el JSON en ```json ... ```
     // markdown fences, así que los limpiamos antes de parsear.
     const stripFences = (s: string) =>
-      s.replace(/```(?:json)?\s*/gi, "").replace(/```/g, "").trim();
+      s
+        .replace(/```(?:json)?\s*/gi, '')
+        .replace(/```/g, '')
+        .trim();
 
     let parsed: {
       respuesta: string;
-      nivel_urgencia: "bajo" | "medio" | "alto";
+      nivel_urgencia: 'bajo' | 'medio' | 'alto';
       requiere_veterinario: boolean;
       recordatorios_relevantes: string[];
       sugerencias_accion: string[];
+      fuentes: string[];
     } | null = null;
 
     try {
@@ -239,7 +264,7 @@ Responde SOLO JSON: {"respuesta":"...","nivel_urgencia":"bajo|medio|alto","requi
       parsed = null;
     }
 
-    if (!parsed || typeof parsed.respuesta !== "string") {
+    if (!parsed || typeof parsed.respuesta !== 'string') {
       // Fallback: si el JSON vino mal o truncado, mostramos el texto pero sin
       // los artefactos de markdown/JSON para no exponer ```json al usuario.
       let cleanText = stripFences(responseText);
@@ -250,34 +275,40 @@ Responde SOLO JSON: {"respuesta":"...","nivel_urgencia":"bajo|medio|alto","requi
         cleanText = respuestaMatch[1];
       }
       parsed = {
-        respuesta: cleanText || "No pude procesar tu consulta. Intenta reformular la pregunta.",
-        nivel_urgencia: "bajo",
+        respuesta: cleanText || 'No pude procesar tu consulta. Intenta reformular la pregunta.',
+        nivel_urgencia: 'bajo',
         requiere_veterinario: false,
         recordatorios_relevantes: [],
         sugerencias_accion: [],
+        fuentes: [],
       };
     }
 
     // Asegurar arrays presentes
-    parsed.recordatorios_relevantes = Array.isArray(parsed.recordatorios_relevantes) ? parsed.recordatorios_relevantes : [];
-    parsed.sugerencias_accion = Array.isArray(parsed.sugerencias_accion) ? parsed.sugerencias_accion : [];
+    parsed.recordatorios_relevantes = Array.isArray(parsed.recordatorios_relevantes)
+      ? parsed.recordatorios_relevantes
+      : [];
+    parsed.sugerencias_accion = Array.isArray(parsed.sugerencias_accion)
+      ? parsed.sugerencias_accion
+      : [];
+    parsed.fuentes = Array.isArray(parsed.fuentes) ? parsed.fuentes : [];
 
     // Update rate limit
     if (usage) {
       await supabase
-        .from("ai_usage")
+        .from('ai_usage')
         .update({
           calls_today: callsToday + 1,
           calls_total: (usage.calls_total || 0) + 1,
           last_reset_date: today,
           last_called_at: new Date().toISOString(),
         })
-        .eq("user_id", userId)
-        .eq("skill_name", "pet-assistant");
+        .eq('user_id', userId)
+        .eq('skill_name', 'pet-assistant');
     } else {
-      await supabase.from("ai_usage").insert({
+      await supabase.from('ai_usage').insert({
         user_id: userId,
-        skill_name: "pet-assistant",
+        skill_name: 'pet-assistant',
         calls_today: 1,
         calls_total: 1,
         last_reset_date: today,
@@ -287,22 +318,29 @@ Responde SOLO JSON: {"respuesta":"...","nivel_urgencia":"bajo|medio|alto","requi
 
     const remaining = 20 - callsToday - 1;
 
-    return new Response(JSON.stringify({
-      ...parsed,
-      pet_name: pet.name,
-      remaining,
-    }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        ...parsed,
+        pet_name: pet.name,
+        remaining,
+      }),
+      {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    console.error("pet-assistant error:", error);
-    return new Response(JSON.stringify({
-      error: "An internal error occurred. Please try again later.",
-    }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    console.error('pet-assistant error:', error);
+    return new Response(
+      JSON.stringify({
+        error: 'An internal error occurred. Please try again later.',
+      }),
+      {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      }
+    );
   }
 });

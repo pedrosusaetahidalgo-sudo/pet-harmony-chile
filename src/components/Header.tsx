@@ -80,33 +80,53 @@ export const Header = () => {
     if (user) {
       loadProfile();
       loadUnreadMsgs();
-      const cleanup = setupRealtimeSubscription();
-      return cleanup;
     }
   }, [user]);
 
-  const setupRealtimeSubscription = () => {
-    const channel = supabase
-      .channel('header-messages')
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-        },
-        () => loadUnreadMsgs()
-      )
-      .subscribe();
+  // Realtime subscription filtrada por conversaciones del usuario
+  useEffect(() => {
+    if (!user) return;
+
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    const setupSubscription = async () => {
+      const { data: conversations } = await supabase
+        .from('conversations')
+        .select('id')
+        .or(`participant1_id.eq.${user.id},participant2_id.eq.${user.id}`);
+
+      if (!conversations || conversations.length === 0) return;
+
+      const convIds = conversations.map((c) => c.id);
+      channel = supabase
+        .channel('header-messages')
+        .on(
+          'postgres_changes',
+          {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `conversation_id=in.(${convIds.join(',')})`,
+          },
+          () => loadUnreadMsgs()
+        )
+        .subscribe();
+    };
+
+    setupSubscription();
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
-  };
+  }, [user]);
 
   const loadProfile = async () => {
     try {
-      const { data } = await supabase.from('profiles').select('*').eq('id', user?.id).maybeSingle();
+      const { data } = await supabase
+        .from('profiles')
+        .select('display_name, avatar_url, level, points')
+        .eq('id', user?.id)
+        .maybeSingle();
 
       setProfile(data);
       // Use profile data for level/points (single source of truth)

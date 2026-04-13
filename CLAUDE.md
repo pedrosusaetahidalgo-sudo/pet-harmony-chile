@@ -222,14 +222,14 @@ Ver `INDEX.md` para el indice completo con reglas de actualizacion.
 | `AGENTS.md` | Config para agentes IA (Cursor, Copilot, etc.) |
 | `diagrams/FLUJO_COMPLETO.mmd` | Diagrama Mermaid end-to-end |
 | `diagrams/FLUJOS_MERMAID.md` | Diagramas individuales por modulo |
-| `audits/AUDITORIA_TOTAL_APP.md` | Auditoria multi-dominio completa |
+| `audits/REPORTE_CONSOLIDADO_2026_04_11.md` | Fuente de verdad del estado tecnico al 2026-04-11 |
+| `audits/OPTIMIZACION_COSTOS_2026_04_12.md` | Analisis de costos operativos y plan de eficiencia |
 | `audits/COMPETENCIA_2026_04_08.md` | Analisis competitivo Chile |
-| `audits/RECOMENDACIONES_2026_04_08.md` | Recomendaciones estrategicas priorizadas |
-| `audits/AUDIT_2026_04_08.md` | Auditoria tecnica del codigo |
-| `audits/WALKTHROUGH_2026_04_08.md` | Walkthrough funcional de la app |
-| `_archive/CONTEXTO_2026_04_11.md` | Estado tecnico al cierre 2026-04-11 |
-| `_archive/ESTRATEGIA_MVP_2026.md` | Pain points, mercado, checklist de cobertura |
-| `_archive/GUION_PITCH_VETS_60S.md` | Guion para venta a veterinarios |
+| `audits/CROSS_PLATFORM_COMPATIBILITY.md` | Compatibilidad multiplataforma (iOS, Android, Web) |
+| `docs-specs/` | Specs de features pendientes (ver INDEX.md para listado) |
+| `docs-design/PAW_CARDS_TCG_DESIGN.md` | Guia de diseno visual Paw Cards TCG |
+| `_pending/` | Plans y blueprints pendientes de ejecutar (ver _pending/README.md) |
+| `_archive/` | Documentos ya ejecutados o superados por versiones mas recientes |
 
 ---
 

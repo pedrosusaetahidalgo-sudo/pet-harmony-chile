@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Search, MapPin, Star, Stethoscope, Clock, Phone } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -33,14 +33,16 @@ type Vet = any;
 
 export default function DirectorioVets() {
   const { comuna: comunaParam, especialidad: espParam } = useParams();
+  const [searchParams] = useSearchParams();
+  const emergenciaParam = searchParams.get('emergencia') === 'true';
 
   const [search, setSearch] = useState('');
   const [type, setType] = useState<string>('all');
   const [comuna, setComuna] = useState<string>(comunaParam ? unslugify(comunaParam) : 'all');
   const [specialty, setSpecialty] = useState<string>(espParam ? unslugify(espParam) : 'all');
   const [minRating, setMinRating] = useState<string>('0');
-  const [onlyOpen, setOnlyOpen] = useState(false);
-  const [onlyEmergency, setOnlyEmergency] = useState(false);
+  const [onlyOpen, setOnlyOpen] = useState(emergenciaParam);
+  const [onlyEmergency, setOnlyEmergency] = useState(emergenciaParam);
 
   const filters: DirectoryVetFilters = useMemo(
     () => ({

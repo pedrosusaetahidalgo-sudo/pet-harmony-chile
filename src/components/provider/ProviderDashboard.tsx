@@ -21,6 +21,8 @@ import {
 } from '@/lib/icons';
 import { ProviderDirectoryCard } from './ProviderDirectoryCard';
 import { SharedFichasCard } from './SharedFichasCard';
+import { PendingVetLinksCard } from './PendingVetLinksCard';
+import { LinkedPatientsCard } from './LinkedPatientsCard';
 import { TodayAgendaCard } from './TodayAgendaCard';
 import { VetFollowupsCard } from './VetFollowupsCard';
 import { VetPatientsList } from './VetPatientsList';
@@ -117,7 +119,13 @@ const ProviderDashboard = () => {
       {/* Seguimientos de esta semana */}
       <VetFollowupsCard />
 
-      {/* Fichas compartidas con este vet en los ultimos 7 dias */}
+      {/* Solicitudes de vinculacion pendientes */}
+      <PendingVetLinksCard />
+
+      {/* Pacientes vinculados permanentemente */}
+      <LinkedPatientsCard />
+
+      {/* Fichas compartidas via enlace publico (legacy tokens) */}
       <SharedFichasCard providerId={stats.providerId} />
 
       {/* Onboarding: vet sin actividad */}

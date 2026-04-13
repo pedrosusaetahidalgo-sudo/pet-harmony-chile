@@ -41,6 +41,7 @@ export async function verifyAuth(req: Request) {
 }
 
 export async function checkRateLimit(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabase: any,
   userId: string,
   skillName: string,
@@ -113,11 +114,13 @@ export async function callClaude(options: {
   userMessage: string;
   maxTokens?: number;
   temperature?: number;
+  model?: string;
   images?: Array<{ type: "base64"; media_type: string; data: string }>;
 }): Promise<string> {
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
   if (!apiKey) throw new Error("AI_NOT_CONFIGURED");
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const content: any[] = [];
   if (options.images?.length) {
     for (const img of options.images) {
@@ -127,10 +130,10 @@ export async function callClaude(options: {
   content.push({ type: "text", text: options.userMessage });
 
   const body = {
-    model: "claude-sonnet-4-5",
+    model: options.model ?? "claude-sonnet-4-5",
     max_tokens: options.maxTokens ?? 600,
     temperature: options.temperature ?? 0.3,
-    system: options.systemPrompt,
+    system: [{ type: "text", text: options.systemPrompt, cache_control: { type: "ephemeral" } }],
     messages: [{ role: "user", content }],
   };
 

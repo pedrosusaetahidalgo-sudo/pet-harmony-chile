@@ -1,40 +1,45 @@
-import { PageHeader } from "@/components/PageHeader";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MessageSquare, MessageCircle, Search } from "@/lib/icons";
-import { EmptyState } from "@/components/EmptyState";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
-import { Input } from "@/components/ui/input";
-import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
-import { useStartConversation } from "@/hooks/useStartConversation";
-import { Button } from "@/components/ui/button";
-import { Plus } from "@/lib/icons";
-import { logger } from "@/lib/logger";
+import { PageHeader } from '@/components/PageHeader';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { MessageSquare, MessageCircle, Search } from '@/lib/icons';
+import { EmptyState } from '@/components/EmptyState';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { Input } from '@/components/ui/input';
+import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { useStartConversation } from '@/hooks/useStartConversation';
+import { Button } from '@/components/ui/button';
+import { Plus } from '@/lib/icons';
+import { logger } from '@/lib/logger';
 
 const Chat = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [conversations, setConversations] = useState<any[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [profiles, setProfiles] = useState<Map<string, any>>(new Map());
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [followedUsers, setFollowedUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState('');
   const [showNewMessage, setShowNewMessage] = useState(false);
 
   useEffect(() => {
     if (user) {
       loadConversations();
       loadFollowedUsers();
-      const cleanup = setupRealtimeSubscription();
-      return cleanup;
     }
   }, [user]);
 
-  const setupRealtimeSubscription = () => {
+  // Realtime filtrada por conversaciones del usuario
+  useEffect(() => {
+    if (!user || conversations.length === 0) return;
+
+    const convIds = conversations.map((c) => c.id);
     const channel = supabase
       .channel('messages-changes')
       .on(
@@ -42,7 +47,8 @@ const Chat = () => {
         {
           event: 'INSERT',
           schema: 'public',
-          table: 'messages'
+          table: 'messages',
+          filter: `conversation_id=in.(${convIds.join(',')})`,
         },
         () => loadConversations()
       )
@@ -51,15 +57,16 @@ const Chat = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  };
+  }, [user, conversations.length]);
 
   const loadConversations = async () => {
     try {
       setLoading(true);
-      
+
       const { data: convData, error } = await supabase
         .from('conversations')
-        .select(`
+        .select(
+          `
           *,
           messages!messages_conversation_id_fkey(
             content,
@@ -67,15 +74,17 @@ const Chat = () => {
             sender_id,
             read_at
           )
-        `)
+        `
+        )
         .or(`participant1_id.eq.${user?.id},participant2_id.eq.${user?.id}`)
-        .order('last_message_at', { ascending: false });
+        .order('last_message_at', { ascending: false })
+        .limit(1, { referencedTable: 'messages' });
 
       if (error) throw error;
 
       // Get unique participant IDs
       const participantIds = new Set<string>();
-      convData?.forEach(conv => {
+      convData?.forEach((conv) => {
         participantIds.add(conv.participant1_id);
         participantIds.add(conv.participant2_id);
       });
@@ -88,29 +97,28 @@ const Chat = () => {
           .in('id', Array.from(participantIds));
 
         const profilesMap = new Map();
-        profilesData?.forEach(profile => {
+        profilesData?.forEach((profile) => {
           profilesMap.set(profile.id, profile);
         });
         setProfiles(profilesMap);
       }
 
       // Process conversations to get last message
-      const processedConversations = convData?.map(conv => {
-        const messages = conv.messages || [];
-        const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
-        const otherUserId = conv.participant1_id === user?.id 
-          ? conv.participant2_id 
-          : conv.participant1_id;
-        
-        return {
-          ...conv,
-          lastMessage,
-          otherUserId,
-          unreadCount: messages.filter((m: any) => 
-            m.sender_id !== user?.id && !m.read_at
-          ).length
-        };
-      }) || [];
+      const processedConversations =
+        convData?.map((conv) => {
+          const messages = conv.messages || [];
+          const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
+          const otherUserId =
+            conv.participant1_id === user?.id ? conv.participant2_id : conv.participant1_id;
+
+          return {
+            ...conv,
+            lastMessage,
+            otherUserId,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            unreadCount: messages.filter((m: any) => m.sender_id !== user?.id && !m.read_at).length,
+          };
+        }) || [];
 
       setConversations(processedConversations);
     } catch (error) {
@@ -122,36 +130,36 @@ const Chat = () => {
 
   const loadFollowedUsers = async () => {
     if (!user) return;
-    
+
     try {
       // Get users the current user is following
       const { data: followingData } = await supabase
-        .from("user_follows")
-        .select("following_id")
-        .eq("follower_id", user.id);
-      
+        .from('user_follows')
+        .select('following_id')
+        .eq('follower_id', user.id);
+
       if (!followingData || followingData.length === 0) {
         setFollowedUsers([]);
         return;
       }
-      
-      const followingIds = followingData.map(f => f.following_id);
-      
+
+      const followingIds = followingData.map((f) => f.following_id);
+
       // Check which of these users also follow back (mutual follow)
       const { data: mutualFollows } = await supabase
-        .from("user_follows")
-        .select("follower_id")
-        .eq("following_id", user.id)
-        .in("follower_id", followingIds);
-      
-      const mutualFollowIds = new Set(mutualFollows?.map(m => m.follower_id) || []);
-      
+        .from('user_follows')
+        .select('follower_id')
+        .eq('following_id', user.id)
+        .in('follower_id', followingIds);
+
+      const mutualFollowIds = new Set(mutualFollows?.map((m) => m.follower_id) || []);
+
       // Get profiles of mutually followed users
       const { data: profilesData } = await supabase
-        .from("profiles")
-        .select("id, display_name, avatar_url")
-        .in("id", Array.from(mutualFollowIds));
-      
+        .from('profiles')
+        .select('id, display_name, avatar_url')
+        .in('id', Array.from(mutualFollowIds));
+
       setFollowedUsers(profilesData || []);
     } catch (error) {
       logger.error('Error loading followed users:', error);
@@ -159,13 +167,13 @@ const Chat = () => {
   };
 
   const { startConversation } = useStartConversation();
-  
-  const filteredConversations = conversations.filter(conv => {
+
+  const filteredConversations = conversations.filter((conv) => {
     const otherUser = profiles.get(conv.otherUserId);
     return otherUser?.display_name?.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
-  const filteredFollowedUsers = followedUsers.filter(user => {
+  const filteredFollowedUsers = followedUsers.filter((user) => {
     return user.display_name?.toLowerCase().includes(searchQuery.toLowerCase());
   });
 
@@ -176,10 +184,7 @@ const Chat = () => {
         <div className="container max-w-2xl mx-auto p-4 sm:p-6 space-y-3 animate-fade-in">
           <div className="h-11 rounded-xl skeleton" />
           {[1, 2, 3, 4].map((i) => (
-            <div
-              key={i}
-              className="flex items-center gap-3 p-3 rounded-lg"
-            >
+            <div key={i} className="flex items-center gap-3 p-3 rounded-lg">
               <div className="h-12 w-12 sm:h-14 sm:w-14 rounded-full skeleton flex-shrink-0" />
               <div className="flex-1 space-y-2">
                 <div className="h-4 w-32 skeleton" />
@@ -208,12 +213,13 @@ const Chat = () => {
         }
       />
       <div className="container max-w-2xl mx-auto p-4 sm:p-6">
-        
         {/* Search Bar - Instagram-like */}
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder={showNewMessage ? "Buscar entre usuarios que sigues..." : "Buscar conversaciones..."}
+            placeholder={
+              showNewMessage ? 'Buscar entre usuarios que sigues...' : 'Buscar conversaciones...'
+            }
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10 h-11 rounded-xl border-2 focus:border-primary transition-all"
@@ -227,7 +233,9 @@ const Chat = () => {
               <h3 className="font-semibold mb-3 text-sm">Nuevo mensaje</h3>
               {filteredFollowedUsers.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4">
-                  {searchQuery ? "No se encontraron usuarios" : "Sigue a usuarios para poder enviarles mensajes"}
+                  {searchQuery
+                    ? 'No se encontraron usuarios'
+                    : 'Sigue a usuarios para poder enviarles mensajes'}
                 </p>
               ) : (
                 <div className="space-y-2 max-h-64 overflow-y-auto">
@@ -238,7 +246,7 @@ const Chat = () => {
                       onClick={() => {
                         startConversation(followedUser.id);
                         setShowNewMessage(false);
-                        setSearchQuery("");
+                        setSearchQuery('');
                       }}
                     >
                       <Avatar className="h-10 w-10">
@@ -264,16 +272,22 @@ const Chat = () => {
           // Si "Nuevo mensaje" está abierto, la card de arriba ya guía al
           // usuario; no duplicamos con el empty state principal.
           showNewMessage ? null : (
-            <EmptyState icon={MessageCircle} title="Sin conversaciones" description="Empieza una conversación con tu vet o con alguien que sigas." actionLabel="Buscar veterinarios" actionUrl="/veterinarios" />
+            <EmptyState
+              icon={MessageCircle}
+              title="Sin conversaciones"
+              description="Empieza una conversación con tu vet o con alguien que sigas."
+              actionLabel="Buscar veterinarios"
+              actionUrl="/veterinarios"
+            />
           )
         ) : (
           <div className="space-y-1">
             {filteredConversations.map((conv) => {
               const otherUser = profiles.get(conv.otherUserId);
               const isUnread = conv.unreadCount > 0;
-              
+
               return (
-                <Card 
+                <Card
                   key={conv.id}
                   className="cursor-pointer hover:bg-muted/50 transition-all border-0 shadow-none rounded-lg"
                   onClick={() => navigate(`/chat/${conv.id}`)}
@@ -295,24 +309,28 @@ const Chat = () => {
                           })()}
                         </AvatarFallback>
                       </Avatar>
-                      
+
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between mb-1">
-                          <h3 className={`font-semibold truncate text-sm sm:text-base ${isUnread ? 'text-foreground' : 'text-foreground'}`}>
+                          <h3
+                            className={`font-semibold truncate text-sm sm:text-base ${isUnread ? 'text-foreground' : 'text-foreground'}`}
+                          >
                             {otherUser?.display_name || 'Usuario'}
                           </h3>
                           {conv.lastMessage && (
                             <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">
                               {formatDistanceToNow(new Date(conv.lastMessage.created_at), {
                                 addSuffix: true,
-                                locale: es
+                                locale: es,
                               })}
                             </span>
                           )}
                         </div>
-                        
+
                         <div className="flex items-center justify-between gap-2">
-                          <p className={`text-sm truncate flex-1 ${isUnread ? 'font-medium text-foreground' : 'text-muted-foreground'}`}>
+                          <p
+                            className={`text-sm truncate flex-1 ${isUnread ? 'font-medium text-foreground' : 'text-muted-foreground'}`}
+                          >
                             {conv.lastMessage?.content || 'Sin mensajes aún'}
                           </p>
                           {isUnread && (

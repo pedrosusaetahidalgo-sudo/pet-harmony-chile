@@ -16,38 +16,35 @@
  *   0 8 * * 1   ->  cada lunes a las 8:00 AM
  */
 
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
+import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.2';
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://pawfriend.cl",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-cron-secret",
-  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type, x-cron-secret',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
     // Verificar shared secret para cron
-    const cronSecret = Deno.env.get("CRON_SECRET");
-    const headerSecret = req.headers.get("x-cron-secret");
+    const cronSecret = Deno.env.get('CRON_SECRET');
+    const headerSecret = req.headers.get('x-cron-secret');
     if (cronSecret && headerSecret !== cronSecret) {
-      return new Response(
-        JSON.stringify({ error: "Unauthorized" }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
       { auth: { persistSession: false } }
     );
 
@@ -58,9 +55,9 @@ serve(async (req) => {
 
     // Obtener proveedores activos no-demo
     const { data: providers, error: provErr } = await supabase
-      .from("service_providers")
-      .select("id, user_id, business_name, is_demo")
-      .eq("status", "active");
+      .from('service_providers')
+      .select('id, user_id, business_name, is_demo')
+      .eq('status', 'active');
 
     if (provErr) throw provErr;
 
@@ -76,44 +73,36 @@ serve(async (req) => {
 
         // 1. Reservas de la semana (todas)
         const { data: bookings } = await supabase
-          .from("vet_bookings")
-          .select("id, status, total_price, created_at")
-          .eq("provider_id", providerId)
-          .gte("created_at", weekAgo.toISOString())
-          .lte("created_at", now.toISOString());
+          .from('vet_bookings')
+          .select('id, status, total_price, created_at')
+          .eq('provider_id', providerId)
+          .gte('created_at', weekAgo.toISOString())
+          .lte('created_at', now.toISOString());
 
         const allBookings = bookings ?? [];
         const newBookings = allBookings.length;
-        const completedBookings = allBookings.filter(
-          (b) => b.status === "completado"
-        ).length;
-        const cancelledBookings = allBookings.filter(
-          (b) => b.status === "cancelado"
-        ).length;
-        const noShowBookings = allBookings.filter(
-          (b) => b.status === "no_show"
-        ).length;
+        const completedBookings = allBookings.filter((b) => b.status === 'completado').length;
+        const cancelledBookings = allBookings.filter((b) => b.status === 'cancelado').length;
+        const noShowBookings = allBookings.filter((b) => b.status === 'no_show').length;
 
         // 2. Revenue de la semana (solo completados)
         const revenue = allBookings
-          .filter((b) => b.status === "completado")
+          .filter((b) => b.status === 'completado')
           .reduce((sum, b) => sum + (b.total_price || 0), 0);
 
         // 3. Reseñas de la semana
         const { data: reviews } = await supabase
-          .from("vet_reviews")
-          .select("id, rating, comment, created_at")
-          .eq("provider_id", providerId)
-          .gte("created_at", weekAgo.toISOString())
-          .lte("created_at", now.toISOString());
+          .from('vet_reviews')
+          .select('id, rating, comment, created_at')
+          .eq('provider_id', providerId)
+          .gte('created_at', weekAgo.toISOString())
+          .lte('created_at', now.toISOString());
 
         const newReviews = reviews?.length ?? 0;
         const avgRating =
           newReviews > 0
             ? Math.round(
-                ((reviews ?? []).reduce((sum, r) => sum + (r.rating || 0), 0) /
-                  newReviews) *
-                  10
+                ((reviews ?? []).reduce((sum, r) => sum + (r.rating || 0), 0) / newReviews) * 10
               ) / 10
             : null;
 
@@ -121,7 +110,7 @@ serve(async (req) => {
         const reportContent = {
           provider_id: providerId,
           user_id: userId,
-          business_name: provider.business_name || "Proveedor",
+          business_name: provider.business_name || 'Proveedor',
           period: { start: periodStart, end: periodEnd },
           bookings: {
             new: newBookings,
@@ -142,7 +131,7 @@ serve(async (req) => {
         };
 
         // 4. Generar insight con Claude
-        const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
+        const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
         if (apiKey) {
           try {
             const insightPrompt = buildVetInsightPrompt(reportContent);
@@ -150,32 +139,32 @@ serve(async (req) => {
             const timeout = setTimeout(() => controller.abort(), 12000);
 
             try {
-              const claudeResp = await fetch(
-                "https://api.anthropic.com/v1/messages",
-                {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": apiKey,
-                    "anthropic-version": "2023-06-01",
-                  },
-                  body: JSON.stringify({
-                    model: "claude-sonnet-4-5",
-                    max_tokens: 200,
-                    temperature: 0.5,
-                    system:
-                      "Eres un analista de negocio veterinario de Paw Friend, app chilena de mascotas. " +
-                      "Responde en español de Chile con tuteo (tu, tienes, puedes). " +
-                      "Sé profesional, conciso y orientado a acción.",
-                    messages: [{ role: "user", content: insightPrompt }],
-                  }),
-                  signal: controller.signal,
-                }
-              );
+              const claudeResp = await fetch('https://api.anthropic.com/v1/messages', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'x-api-key': apiKey,
+                  'anthropic-version': '2023-06-01',
+                },
+                body: JSON.stringify({
+                  model: 'claude-haiku-3-5',
+                  max_tokens: 200,
+                  temperature: 0.5,
+                  system: [
+                    {
+                      type: 'text',
+                      text: 'Eres un analista de negocio veterinario de Paw Friend, app chilena de mascotas. Responde en español de Chile con tuteo (tu, tienes, puedes). Sé profesional, conciso y orientado a acción.',
+                      cache_control: { type: 'ephemeral' },
+                    },
+                  ],
+                  messages: [{ role: 'user', content: insightPrompt }],
+                }),
+                signal: controller.signal,
+              });
 
               if (claudeResp.ok) {
                 const claudeData = await claudeResp.json();
-                const text = claudeData.content?.[0]?.text ?? "";
+                const text = claudeData.content?.[0]?.text ?? '';
                 reportContent.insight = text.trim() || null;
               }
             } finally {
@@ -190,15 +179,13 @@ serve(async (req) => {
         }
 
         // 5. Insertar en periodic_reports
-        const { error: insertErr } = await supabase
-          .from("periodic_reports")
-          .insert({
-            user_id: userId,
-            report_type: "vet_weekly",
-            period_start: periodStart,
-            period_end: periodEnd,
-            content_jsonb: reportContent,
-          });
+        const { error: insertErr } = await supabase.from('periodic_reports').insert({
+          user_id: userId,
+          report_type: 'vet_weekly',
+          period_start: periodStart,
+          period_end: periodEnd,
+          content_jsonb: reportContent,
+        });
 
         if (insertErr) {
           console.error(
@@ -210,10 +197,7 @@ serve(async (req) => {
           generated++;
         }
       } catch (providerErr) {
-        console.error(
-          `[weekly-vet-reports] error for provider ${provider.id}:`,
-          providerErr
-        );
+        console.error(`[weekly-vet-reports] error for provider ${provider.id}:`, providerErr);
         errors++;
       }
     }
@@ -226,15 +210,15 @@ serve(async (req) => {
       }),
       {
         status: 200,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    console.error("[weekly-vet-reports] fatal error:", msg);
+    console.error('[weekly-vet-reports] fatal error:', msg);
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });
@@ -251,11 +235,11 @@ function buildVetInsightPrompt(report: {
   revenue_clp: number;
 }): string {
   const { bookings, reviews, revenue_clp } = report;
-  const revenueFormatted = revenue_clp.toLocaleString("es-CL");
+  const revenueFormatted = revenue_clp.toLocaleString('es-CL');
   const ratingInfo =
     reviews.new_count > 0
       ? `Recibió ${reviews.new_count} reseña(s) nueva(s) con promedio de ${reviews.average_rating}/5.`
-      : "No recibió reseñas nuevas esta semana.";
+      : 'No recibió reseñas nuevas esta semana.';
 
   return (
     `Genera exactamente 2 oraciones como "insight de la semana" para ${report.business_name}. ` +

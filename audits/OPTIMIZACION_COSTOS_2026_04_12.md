@@ -1,7 +1,7 @@
 # Optimizacion de costos — Paw Friend
 
 > Analisis completo de costos operativos y plan de eficiencia maxima.
-> Fecha: 2026-04-12 | Autor: Claude Code (auditoria automatizada)
+> Fecha: 2026-04-12 | Actualizado: 2026-04-12 | Autor: Claude Code (auditoria automatizada)
 
 ---
 
@@ -9,9 +9,9 @@
 
 Paw Friend tiene **costos fijos bajos (~$34 USD/mes)** pero **costos variables mal controlados** que pueden escalar peligrosamente con usuarios. Los 3 mayores riesgos son:
 
-1. **Anthropic API**: 10 edge functions usan `claude-sonnet-4-5` cuando 8 de ellas funcionarian igual con Haiku (~85% mas barato). Cero caching implementado.
+1. **Anthropic API**: 11 edge functions usan `claude-sonnet-4-5` (incluye `verify-service-provider` y `process-consultation-transcript` agregados recientemente) cuando 9 de ellas funcionarian igual con Haiku (~85% mas barato). Cero caching implementado. 5 funciones usan `web_search` tool de Anthropic (costo adicional no contabilizado inicialmente).
 2. **WhatsApp Cloud API**: cron cada hora (24x/dia) cuando 1x/dia basta. Sin filtro de opt-in antes de despachar. Cada mensaje no-opt-in genera 2 invocaciones de edge function + queries DB para nada.
-3. **Realtime Supabase**: 3 de 5 subscripciones no tienen filtro por usuario — broadcast global de cada mensaje a todos los clientes conectados.
+3. **Realtime Supabase**: 3 de 4 subscripciones con tabla `messages`/`posts` no tienen filtro por usuario — broadcast global. (`PostComments.tsx` SI tiene filtro correcto por `post_id`).
 
 **Ahorro estimado implementando todas las optimizaciones: 70-85% en costos variables.**
 
@@ -63,22 +63,24 @@ Paw Friend tiene **costos fijos bajos (~$34 USD/mes)** pero **costos variables m
 
 ### 2.1. Estado actual: todas las funciones usan Sonnet
 
-Las 10 edge functions con IA usan `claude-sonnet-4-5` sin excepcion. **No hay caching de respuestas. No hay prompt caching de la API.**
+Las 11 edge functions con IA usan `claude-sonnet-4-5` sin excepcion. **No hay caching de respuestas. No hay prompt caching de la API.** El helper compartido `_shared/ai-base.ts:130` hardcodea `claude-sonnet-4-5` en `callClaude()`, usado por la mayoria de funciones. 5 funciones ademas usan el tool `web_search` de Anthropic (no contabilizado en estimaciones de tokens).
 
 #### Costo por funcion (estimado a 1,000 usuarios activos)
 
-| Funcion | Modelo actual | Tokens in/out aprox | Llamadas/mes | Costo/mes USD |
-|---|---|---|---|---|
-| `pet-assistant` | sonnet | ~280 / 400 | 30,000 | $20-30 |
-| `breed-tips` | sonnet | ~185 / 300 | 15,000 | $8-12 |
-| `medical-suggestions` | sonnet | ~80 / 600 | 20,000 | $12-18 |
-| `ocr-vaccination-card` | sonnet (vision) | ~2,000-14,000 / 1,024 | 3,000 | $10-20 |
-| `bereavement-assistant` | sonnet | ~600 / 400 | 2,000 | $3-5 |
-| `moderate-service-promotion` | sonnet | ~150 / 400 | 5,000 | $3-5 |
-| `generate-shelters` | sonnet | ~70 / 200 | ~1 (seed) | ~$0 |
-| `generate-weekly-owner-reports` | sonnet | ~130 / 200 | 4,000 | $4-6 |
-| `generate-weekly-vet-reports` | sonnet | ~115 / 200 | 400 | $0.5-1 |
-| **Total** | | | | **$60-97** |
+| Funcion | Modelo actual | Tokens in/out aprox | Llamadas/mes | Costo/mes USD | Notas |
+|---|---|---|---|---|---|
+| `pet-assistant` | sonnet | ~280 / 400 | 30,000 | $20-30 | usa web_search |
+| `breed-tips` | sonnet | ~185 / 300 | 15,000 | $8-12 | usa web_search |
+| `medical-suggestions` | sonnet | ~80 / 600 | 20,000 | $12-18 | usa web_search |
+| `ocr-vaccination-card` | sonnet (vision) | ~2,000-14,000 / 1,024 | 3,000 | $10-20 | usa web_search + vision |
+| `bereavement-assistant` | sonnet-20241022 | ~600 / 400 | 2,000 | $3-5 | modelo versionado fijo |
+| `moderate-service-promotion` | sonnet | ~150 / 400 | 5,000 | $3-5 | |
+| `generate-shelters` | sonnet | ~70 / 200 | ~1 (seed) | ~$0 | usa web_search |
+| `generate-weekly-owner-reports` | sonnet | ~130 / 200 | 4,000 | $4-6 | |
+| `generate-weekly-vet-reports` | sonnet | ~115 / 200 | 400 | $0.5-1 | |
+| `verify-service-provider` | sonnet (via callClaude) | ~300 / 500 | 1,000 | $3-5 | NUEVO — vision para OCR titulo vet |
+| `process-consultation-transcript` | sonnet | ~2,500 / 800 | 2,000 | $8-12 | NUEVO — transcripciones de consulta |
+| **Total** | | | | **$72-114** | |
 
 ### 2.2. Optimizacion A: Bajar modelo a Haiku donde corresponda
 
@@ -100,6 +102,7 @@ Precios comparativos (por millon de tokens):
 | `generate-weekly-owner-reports` | 2 oraciones de insight con stats simples. |
 | `generate-weekly-vet-reports` | 2 oraciones de insight con stats simples. |
 | `pet-assistant` | Q&A corto sobre datos estructurados de mascota. Respuesta JSON 400 tokens. |
+| `process-consultation-transcript` | Extraccion estructurada de datos de transcripcion. Tarea mecanica con formato JSON fijo. |
 
 **Funciones que DEBEN quedarse en Sonnet**:
 
@@ -107,8 +110,11 @@ Precios comparativos (por millon de tokens):
 |---|---|
 | `bereavement-assistant` | Manejo de crisis de salud mental. Protocolo de seguridad critico. No se puede arriesgar. |
 | `ocr-vaccination-card` | Vision/OCR requiere precision. Evaluar Haiku 3.5 (soporta vision) con A/B test antes de migrar. |
+| `verify-service-provider` | Vision/OCR para titulos veterinarios + matching de nombre. Precision critica para verificacion profesional. |
 
-**Ahorro estimado con Haiku**: ~65-70% en las 7 funciones migradas = **~$35-55 USD/mes menos a 1K usuarios**.
+**Nota sobre `callClaude()` en `ai-base.ts`**: El modelo esta hardcodeado en linea 130. Para migrar a Haiku las funciones que usan este helper, se debe agregar un parametro `model` opcional a `callClaude()` y pasar `claude-haiku-3-5` desde cada funcion que migre.
+
+**Ahorro estimado con Haiku**: ~65-70% en las 8 funciones migradas (7 originales + `process-consultation-transcript`) = **~$42-65 USD/mes menos a 1K usuarios**.
 
 ### 2.3. Optimizacion B: Cache de respuestas en Supabase
 
@@ -166,11 +172,11 @@ Implementacion: agregar `"cache_control": {"type": "ephemeral"}` al bloque syste
 
 | Optimizacion | Ahorro mensual (1K users) | Dificultad | Prioridad |
 |---|---|---|---|
-| Bajar 7 funciones a Haiku | $35-55 | Baja (cambiar string modelo) | **P0** |
+| Bajar 8 funciones a Haiku + parametrizar callClaude | $42-65 | Baja-Media (parametrizar helper + cambiar en 8 fns) | **P0** |
 | Cache breed-tips + medical-suggestions | $15-25 | Media (crear tabla + logica) | **P0** |
 | Reportes solo Premium | $3-5 | Baja (if en cron) | **P1** |
 | Prompt caching API | $5-10 | Baja (agregar campo JSON) | **P1** |
-| **Total** | **$58-95** (~75% reduccion) | | |
+| **Total** | **$65-105** (~75% reduccion) | | |
 
 ---
 
@@ -184,7 +190,7 @@ Implementacion: agregar `"cache_control": {"type": "ephemeral"}` al bloque syste
 |---|---|---|---|---|
 | `src/components/Header.tsx:90` | `header-messages` | `messages` | **Ninguno** | Se ejecuta en TODA pagina autenticada. Cada INSERT en messages de cualquier usuario dispara `loadUnreadMsgs()` |
 | `src/pages/Chat.tsx:39` | `messages-changes` | `messages` | **Ninguno** | Recarga lista completa de conversaciones en cada mensaje del sistema |
-| `src/components/PostComments.tsx:42` | `comments-{postId}` | `post_likes` / `post_comments` | **Ninguno** | Broadcast global de likes/comments |
+| `src/components/PostComments.tsx:42` | `comments-{postId}` | `post_likes` / `post_comments` | `post_id=eq.{postId}` | **OK — correctamente filtrado por post** |
 | `src/pages/ChatConversation.tsx:47` | `conversation-{id}` | `messages` | `conversation_id=eq.{id}` | OK — correctamente filtrado |
 | `src/hooks/useFeedRealtime.ts:11` | `feed-realtime` | `posts` | **Ninguno** | Broadcast de todos los posts nuevos |
 
@@ -217,7 +223,7 @@ Implementacion: agregar `"cache_control": {"type": "ephemeral"}` al bloque syste
 | Admin check sin cache | `useIsAdmin.tsx:21` | `useEffect` raw, sin `useQuery`, re-ejecuta en cada mount | Envolver en `useQuery` con `staleTime: 600000` |
 | Polling cada 10s | `useCommunityGroups.tsx:103` | `refetchInterval: 10000` en vez de realtime | Usar subscripcion realtime con filtro de grupo |
 | Chat sin limite | `Chat.tsx:62-70` | Embeds TODOS los mensajes de cada conversacion (sin `.limit()`) | `.limit(1).order('created_at', {ascending: false})` para solo ultimo mensaje |
-| Reminders sin limite | `useReminders.tsx:54` | `select('*, pets(name, species)')` trae TODOS los reminders incluyendo pasados completados | Agregar `.eq('is_completed', false)` o `.gte('due_date', today)` |
+| ~~Reminders sin limite~~ | `useReminders.tsx:54` | **CORREGIDO** — ya filtra completados correctamente (lineas 66-72) | N/A |
 | Shelters sin paginacion | `useAdoptionShelters.tsx:43` | `select('*')` sin limite, filtrado client-side | Agregar paginacion server-side |
 
 #### select('*') excesivo
@@ -234,13 +240,19 @@ Archivos que traen columnas innecesarias:
 
 ### 3.3. Edge Functions sin verify_jwt
 
-**Problema de seguridad Y costos**: Estas edge functions tienen `verify_jwt = false` en `config.toml`:
+**Problema de seguridad Y costos**: **TODAS** las edge functions tienen `verify_jwt = false` en `config.toml`. Las que usan IA y son mas criticas:
 
 - `pet-assistant`
 - `breed-tips`
 - `medical-suggestions`
 - `moderate-service-promotion`
 - `generate-shelters`
+- `verify-service-provider` (NUEVO)
+- `process-consultation-transcript` (NUEVO)
+- `ocr-vaccination-card`
+- `bereavement-assistant`
+- `generate-weekly-owner-reports`
+- `generate-weekly-vet-reports`
 
 Cualquier persona sin autenticar puede invocar estas funciones directamente y generar costos de API Anthropic. La autenticacion manual (`supabase.auth.getUser(token)`) existe dentro de las funciones, pero un atacante podria enviar requests sin token y la funcion igual se ejecuta (consume invocacion de edge function) antes de fallar en auth.
 
@@ -441,35 +453,43 @@ Push notifications Android via FCM no tienen costo. iOS requiere el Apple Develo
 
 ## 8. Plan de implementacion priorizado
 
-### Fase 1 — Quick wins (1-2 horas, ahorro inmediato ~50%)
+### Fase 1 — Quick wins — EJECUTADO 2026-04-12
 
-| # | Tarea | Archivo(s) | Ahorro |
+| # | Tarea | Estado | Notas |
 |---|---|---|---|
-| 1.1 | Cambiar modelo a `claude-haiku-3-5` en 7 funciones | `breed-tips`, `medical-suggestions`, `moderate-service-promotion`, `generate-shelters`, `weekly-owner-reports`, `weekly-vet-reports`, `pet-assistant` | ~65% costos IA |
-| 1.2 | Reducir cron WhatsApp a 1x/dia | `reminder-cron/index.ts` schedule | 96% menos invocaciones |
-| 1.3 | Activar `verify_jwt = true` en funciones IA | `supabase/config.toml` | Previene abuso sin auth |
-| 1.4 | Agregar `cache_control` a system prompts | Todas las funciones IA | ~10% ahorro tokens input |
+| 1.1 | Cambiar modelo a `claude-haiku-3-5` en 8 funciones + parametrizar `callClaude()` | HECHO | 8 fns migradas, `ai-base.ts` parametrizado, deployeado |
+| 1.2 | Reducir cron WhatsApp a 1x/dia | HECHO | `0 11 * * *` configurado en pg_cron (jobid 8) |
+| 1.3 | Activar `verify_jwt = true` en funciones IA | HECHO | 11 fns cambiadas, 3 muertas eliminadas, deployeado |
+| 1.4 | Agregar `cache_control` a system prompts | HECHO | 11 fns con prompt caching ephemeral, deployeado |
 
-### Fase 2 — Optimizaciones medias (3-5 horas)
+### Fase 2 — Optimizaciones medias — PARCIALMENTE EJECUTADO 2026-04-12
 
-| # | Tarea | Archivo(s) | Ahorro |
+| # | Tarea | Estado | Notas |
 |---|---|---|---|
-| 2.1 | Cache de `breed-tips` y `medical-suggestions` en tabla Supabase | Crear tabla + logica en edge fn | ~90% llamadas eliminadas post-warmup |
-| 2.2 | Pre-filtrar opt-in WhatsApp en query del cron | `reminder-cron/index.ts` | ~70% menos HTTP internos |
-| 2.3 | Batch idempotencia WhatsApp | `reminder-cron/index.ts` | N+1 → 1 query |
-| 2.4 | Reportes semanales solo para Premium | `weekly-owner-reports`, `weekly-vet-reports` | ~85% menos llamadas IA cron |
-| 2.5 | Filtros en realtime subscriptions | `Header.tsx`, `Chat.tsx`, `PostComments.tsx` | 95% menos mensajes realtime |
+| 2.1 | Cache de `breed-tips` y `medical-suggestions` en tabla Supabase | PENDIENTE | Crear tabla `ai_cache_breed_tips` + logica en edge fn |
+| 2.2 | Pre-filtrar opt-in WhatsApp en query del cron | HECHO | Implementado en reminder-cron rewrite |
+| 2.3 | Batch idempotencia WhatsApp | HECHO | 1 query batch en vez de N+1 |
+| 2.4 | Reportes semanales solo para Premium | PENDIENTE | Agregar `if (!is_premium) return template` en weekly-*-reports |
+| 2.5 | Filtros en realtime subscriptions | HECHO | Header.tsx y Chat.tsx filtrados por conversation_id. useFeedRealtime dejado global (social feed intencional) |
 
-### Fase 3 — Optimizaciones de fondo (5-10 horas)
+### Extras ejecutados (no en plan original)
+
+| # | Tarea | Estado | Notas |
+|---|---|---|---|
+| E.1 | `Home.tsx` loads en paralelo (Promise.all) | HECHO | 3 queries independientes en paralelo |
+| E.2 | `Chat.tsx` limitar mensajes embebidos | HECHO | `.limit(1, { referencedTable: 'messages' })` |
+| E.3 | `Header.tsx` select optimizado | HECHO | `select('display_name, avatar_url, level, points')` |
+| E.4 | `useIsAdmin` migrado a useQuery | HECHO | staleTime 10 min |
+| E.5 | `useCommunityGroups` polling 60s | HECHO | De 10s a 60s |
+
+### Fase 3 — Pendiente (5-10 horas)
 
 | # | Tarea | Archivo(s) | Ahorro |
 |---|---|---|---|
 | 3.1 | `useFollows` → 1 RPC en vez de 4 queries | `useFollows.tsx` | 75% menos round-trips en perfiles |
 | 3.2 | Google Calendar sync incremental | `google-calendar-sync`, `useReminders.tsx` | ~95% menos invocaciones sync |
 | 3.3 | Compresion de imagenes client-side | `AddPet.tsx`, `OnboardingDuenoMinimal.tsx`, etc. | 80-90% menos storage |
-| 3.4 | `Home.tsx` loads en paralelo | `Home.tsx:115` | Mejor UX, menos tiempo de conexion DB |
-| 3.5 | Chat.tsx limitar mensajes embebidos | `Chat.tsx:62-70` | Reduce payload enormemente |
-| 3.6 | Consolidar WhatsApp 1 msg/usuario | `reminder-cron`, `send-whatsapp-reminder` | ~50% menos mensajes Meta |
+| 3.4 | Consolidar WhatsApp 1 msg/usuario | `reminder-cron`, `send-whatsapp-reminder` | ~50% menos mensajes Meta |
 
 ---
 
