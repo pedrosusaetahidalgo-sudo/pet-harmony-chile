@@ -183,7 +183,7 @@ send-whatsapp-reminder/          # WhatsApp (pendiente verificacion Meta)
 - `/add-pet`, `/edit-pet/:petId` -- CRUD mascotas
 - `/medical-records` -- Redirect legacy → ficha clinica de primera mascota
 - `/reminders` -- Recordatorios
-- `/mascota/:petId/ficha-clinica` -- Ficha clinica completa (legacy `/pet/:petId/clinical` redirige aqui)
+- `/ficha/:petId` -- Ficha clinica completa (legacy `/mascota/:petId/ficha-clinica` y `/pet/:petId/clinical` redirigen aqui)
 - `/adoption` -- Adopcion
 - `/en-memoria` -- Memorial de mascotas fallecidas
 - `/servicios` -- Directorio servicios

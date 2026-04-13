@@ -1,6 +1,6 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-12 (Paw Cards Collectible)
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-12 (ruta ficha clinica simplificada)
     %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (21 activas).
     %% Refleja navegacion real post-optimizacion:
     %%   BottomTabBar: Inicio | Mascotas | Vets | Recordatorios | Perfil
@@ -114,7 +114,7 @@ flowchart TD
     PET_LIST --> FC_RES
 
     %% ============ FICHA CLINICA ============
-    subgraph CLINICAL["FICHA CLINICA /mascota/:id/ficha-clinica"]
+    subgraph CLINICAL["FICHA CLINICA /ficha/:petId"]
         direction TB
         FC_RES["Tab Resumen"]
         FC_HIST["Tab Historial 25 tipos"]

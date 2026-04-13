@@ -43,7 +43,7 @@ export const PROTECTED_ROUTES = [
   '/my-pets',
   '/add-pet',
   '/edit-pet/:petId',
-  '/mascota/:petId/ficha-clinica',
+  '/ficha/:petId',
   '/medical-records',
   '/adoption',
   '/paw-game',

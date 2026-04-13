@@ -171,11 +171,11 @@ const PageLoader = () => (
   </div>
 );
 
-/** Redirect legacy /pet/:petId/clinical → /mascota/:petId/ficha-clinica */
+/** Redirect legacy /pet/:petId/clinical y /mascota/:petId/ficha-clinica → /ficha/:petId */
 const LegacyClinicalRedirect = () => {
   const { petId } = useParams<{ petId: string }>();
   const { search } = useLocation();
-  return <Navigate to={`/mascota/${petId}/ficha-clinica${search}`} replace />;
+  return <Navigate to={`/ficha/${petId}${search}`} replace />;
 };
 
 const App = () => (
@@ -444,7 +444,7 @@ const App = () => (
                   }
                 />
                 <Route
-                  path="/mascota/:petId/ficha-clinica"
+                  path="/ficha/:petId"
                   element={
                     <ProtectedRoute>
                       <AppLayout>
@@ -453,7 +453,8 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
-                {/* Redirect legacy para links ya compartidos */}
+                {/* Redirects legacy para links ya compartidos / QR impresos */}
+                <Route path="/mascota/:petId/ficha-clinica" element={<LegacyClinicalRedirect />} />
                 <Route path="/pet/:petId/clinical" element={<LegacyClinicalRedirect />} />
                 <Route
                   path="/mis-reservas"

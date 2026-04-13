@@ -1,8 +1,8 @@
-import { useNavigate, useLocation } from "react-router-dom";
-import { Home as HomeIcon, PawPrint, Stethoscope, Bell, User } from "@/lib/icons";
-import { LINKS } from "@/lib/links";
-import { cn } from "@/lib/utils";
-import { useReminders } from "@/hooks/useReminders";
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Home as HomeIcon, PawPrint, Stethoscope, Bell, User } from '@/lib/icons';
+import { LINKS } from '@/lib/links';
+import { cn } from '@/lib/utils';
+import { useReminders } from '@/hooks/useReminders';
 
 /**
  * Bottom tab bar nativa para mobile (pivot médico).
@@ -46,43 +46,47 @@ export function BottomTabBar() {
 
   const TABS: Tab[] = [
     {
-      label: "Inicio",
+      label: 'Inicio',
       icon: HomeIcon,
       href: LINKS.home(),
-      matchPaths: (p) => p === "/home",
+      matchPaths: (p) => p === '/home',
     },
     {
-      label: "Mascotas",
+      label: 'Mascotas',
       icon: PawPrint,
       href: LINKS.myPets(),
       matchPaths: (p) =>
-        p === "/my-pets" || p === "/add-pet" || p.startsWith("/pet/") || p.startsWith("/edit-pet/"),
+        p === '/my-pets' ||
+        p === '/add-pet' ||
+        p.startsWith('/pet/') ||
+        p.startsWith('/edit-pet/') ||
+        p.startsWith('/ficha/'),
     },
     {
-      label: "Vets",
+      label: 'Vets',
       icon: Stethoscope,
       href: LINKS.vets(),
-      matchPaths: (p) => p.startsWith("/veterinarios"),
+      matchPaths: (p) => p.startsWith('/veterinarios'),
     },
     {
-      label: "Recordatorios",
+      label: 'Recordatorios',
       icon: Bell,
-      href: "/reminders",
-      matchPaths: (p) => p === "/reminders",
+      href: '/reminders',
+      matchPaths: (p) => p === '/reminders',
       badge: reminderBadge,
     },
     {
-      label: "Perfil",
+      label: 'Perfil',
       icon: User,
       href: LINKS.profile(),
-      matchPaths: (p) => p === "/profile" || p === "/settings",
+      matchPaths: (p) => p === '/profile' || p === '/settings',
     },
   ];
 
   return (
     <nav
       className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur border-t border-border"
-      style={{ paddingBottom: "var(--safe-area-bottom)" }}
+      style={{ paddingBottom: 'var(--safe-area-bottom)' }}
       role="navigation"
       aria-label="Navegación principal"
     >
@@ -95,16 +99,16 @@ export function BottomTabBar() {
               key={tab.label}
               onClick={() => navigate(tab.href)}
               className={cn(
-                "flex flex-col items-center justify-center gap-0.5 flex-1 h-full",
-                "touch-manipulation transition-colors active:bg-muted/50",
-                active ? "text-purple-600" : "text-muted-foreground"
+                'flex flex-col items-center justify-center gap-0.5 flex-1 h-full',
+                'touch-manipulation transition-colors active:bg-muted/50',
+                active ? 'text-purple-600' : 'text-muted-foreground'
               )}
               aria-label={tab.label}
-              aria-current={active ? "page" : undefined}
+              aria-current={active ? 'page' : undefined}
             >
               <div className="relative">
                 <Icon
-                  className={cn("h-5 w-5", active && "fill-purple-600/10")}
+                  className={cn('h-5 w-5', active && 'fill-purple-600/10')}
                   strokeWidth={active ? 2.5 : 2}
                 />
                 {tab.badge && tab.badge > 0 ? (
@@ -112,13 +116,11 @@ export function BottomTabBar() {
                     className="absolute -top-1.5 -right-2 min-w-[16px] h-[16px] px-1 rounded-full bg-rose-600 text-white text-[9px] font-bold flex items-center justify-center leading-none"
                     aria-label={`${tab.badge} pendientes`}
                   >
-                    {tab.badge > 9 ? "9+" : tab.badge}
+                    {tab.badge > 9 ? '9+' : tab.badge}
                   </span>
                 ) : null}
               </div>
-              <span className={cn("text-[10px]", active && "font-semibold")}>
-                {tab.label}
-              </span>
+              <span className={cn('text-[10px]', active && 'font-semibold')}>{tab.label}</span>
             </button>
           );
         })}

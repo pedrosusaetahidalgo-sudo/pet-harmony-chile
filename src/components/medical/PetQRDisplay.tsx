@@ -16,7 +16,7 @@ interface PetQRDisplayProps {
  */
 export function PetQRDisplay({ petId, petName }: PetQRDisplayProps) {
   const qrRef = useRef<HTMLDivElement>(null);
-  const clinicalUrl = `https://pawfriend.cl/mascota/${petId}/ficha-clinica`;
+  const clinicalUrl = `https://pawfriend.cl/ficha/${petId}`;
 
   const handleDownload = useCallback(() => {
     const canvas = qrRef.current?.querySelector('canvas');

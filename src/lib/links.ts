@@ -36,13 +36,13 @@ export const LINKS = {
   addPet: () => '/add-pet',
 
   /** Ficha clínica de una mascota */
-  petClinical: (petId: string) => `/mascota/${petId}/ficha-clinica`,
+  petClinical: (petId: string) => `/ficha/${petId}`,
 
   /** Ficha clínica abierta directamente en la pestaña de compartir */
-  petClinicalShare: (petId: string) => `/mascota/${petId}/ficha-clinica?action=share`,
+  petClinicalShare: (petId: string) => `/ficha/${petId}?action=share`,
 
   /** Ficha clínica abierta con CTA de reservar vet */
-  petClinicalBook: (petId: string) => `/mascota/${petId}/ficha-clinica?action=book`,
+  petClinicalBook: (petId: string) => `/ficha/${petId}?action=book`,
 
   /** Historial médico global */
   medicalRecords: () => '/medical-records',
