@@ -37,6 +37,9 @@ import {
   Clock,
   Inbox,
   ExternalLink,
+  Copy,
+  UserPlus,
+  MapPin,
 } from '@/lib/icons';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -94,6 +97,37 @@ const CATEGORIA_LABELS: Record<string, string> = {
   otro: 'Otro',
 };
 
+// Categorías que van directo a tabla `partners` (directorio/mapa, sin user_id)
+const DIRECTORY_CATEGORIES = new Set([
+  'tienda',
+  'seguro',
+  'crematorio',
+  'transporte',
+  'alimento',
+  'refugio',
+  'otro',
+]);
+
+// Categorías que requieren cuenta de usuario (service_providers, groomer, walker, etc.)
+const PROFILE_CATEGORIES = new Set([
+  'veterinaria',
+  'peluqueria',
+  'paseador',
+  'cuidador',
+  'entrenador',
+]);
+
+// Mapeo categoría → category para tabla partners
+const CAT_TO_PARTNER_CATEGORY: Record<string, string> = {
+  tienda: 'store',
+  seguro: 'insurance',
+  crematorio: 'general',
+  transporte: 'general',
+  alimento: 'food',
+  refugio: 'adoption',
+  otro: 'general',
+};
+
 export default function AdminPartnerSubmissions() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState('');
@@ -140,6 +174,56 @@ export default function AdminPartnerSubmissions() {
       toast.error(err instanceof Error ? err.message : 'Error al actualizar');
     },
   });
+
+  // Aprobar y crear en tabla `partners` (directorio/mapa)
+  const createInDirectoryMutation = useMutation({
+    mutationFn: async (sub: PartnerSubmission) => {
+      // 1. Crear en partners
+      const { error: partnerErr } = await supabase.from('partners').insert({
+        brand_name: sub.nombre_negocio,
+        ad_text: sub.descripcion || sub.nombre_negocio,
+        ad_link: sub.website || sub.instagram || '',
+        placement: 'map',
+        category: CAT_TO_PARTNER_CATEGORY[sub.categoria] || 'general',
+        is_active: true,
+        contact_phone: sub.telefono,
+        contact_email: sub.email,
+        website: sub.website,
+        address: sub.direccion,
+        commune: sub.comuna,
+        city: sub.ciudad,
+        social_media: sub.instagram ? { instagram: sub.instagram } : {},
+      });
+      if (partnerErr) throw partnerErr;
+
+      // 2. Marcar como aprobado
+      const { error: updateErr } = await supabase
+        .from('partner_submissions')
+        .update({
+          status: 'aprobado',
+          notas_admin: `Creado en directorio automáticamente el ${new Date().toLocaleDateString('es-CL')}`,
+        })
+        .eq('id', sub.id);
+      if (updateErr) throw updateErr;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin-partner-submissions'] });
+      toast.success('Partner aprobado y agregado al directorio');
+      setSelected(null);
+    },
+    onError: (err: unknown) => {
+      toast.error(err instanceof Error ? err.message : 'Error al crear en directorio');
+    },
+  });
+
+  const copyInviteLink = (sub: PartnerSubmission) => {
+    const base = window.location.origin;
+    const link = sub.categoria === 'veterinaria' ? `${base}/registro-veterinario` : `${base}/auth`;
+    navigator.clipboard.writeText(
+      `Hola ${sub.nombre_contacto}, tu solicitud en Paw Friend fue aprobada. Crea tu cuenta aquí para aparecer en el directorio: ${link}`
+    );
+    toast.success('Mensaje de invitación copiado al portapapeles');
+  };
 
   const filtered = submissions.filter((s) => {
     if (statusFilter !== 'all' && s.status !== statusFilter) return false;
@@ -433,6 +517,38 @@ export default function AdminPartnerSubmissions() {
                   </div>
                 </div>
               </div>
+
+              {/* Quick actions */}
+              {selected.status !== 'aprobado' && (
+                <div className="flex flex-col gap-2 pt-2 border-t">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase">
+                    Acciones rápidas
+                  </p>
+                  {DIRECTORY_CATEGORIES.has(selected.categoria) && (
+                    <Button
+                      variant="default"
+                      className="w-full bg-green-600 hover:bg-green-700"
+                      onClick={() => createInDirectoryMutation.mutate(selected)}
+                      disabled={createInDirectoryMutation.isPending}
+                    >
+                      <MapPin className="h-4 w-4 mr-1.5" />
+                      {createInDirectoryMutation.isPending
+                        ? 'Creando...'
+                        : 'Aprobar y crear en directorio'}
+                    </Button>
+                  )}
+                  {PROFILE_CATEGORIES.has(selected.categoria) && (
+                    <Button
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => copyInviteLink(selected)}
+                    >
+                      <Copy className="h-4 w-4 mr-1.5" />
+                      Copiar mensaje de invitación
+                    </Button>
+                  )}
+                </div>
+              )}
 
               <DialogFooter className="gap-2">
                 <Button variant="outline" onClick={() => setSelected(null)}>

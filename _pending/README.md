@@ -20,18 +20,18 @@
 | # | Documento | Tipo | Prioridad | Estado |
 |---|---|---|---|---|
 | 1 | [ROTAR_API_KEYS.md](ROTAR_API_KEYS.md) | Runbook seguridad | 🔴 Alta | Requiere dashboards externos — Pedro debe ejecutar manualmente |
-| 2 | [map-redesign-blueprint.md](map-redesign-blueprint.md) | Blueprint | 🟠 Media | Parcial — tab Partners + deep linking implementados, bottom sheet/clustering/FAB radial pendientes |
+| 2 | [PARTNERS_ONBOARDING.md](PARTNERS_ONBOARDING.md) | Plan partners | 🟠 Media | Landing + emails + migración + admin panel OK. Falta: aplicar migración en Supabase + flujo auto-aprobación + links visibles |
 | 3 | [BASE_DATOS_PARTNERS_CHILE.md](BASE_DATOS_PARTNERS_CHILE.md) | Data | 🟠 Media | Parcial — migración schema + seed refugios OK, falta poblar partners con data real |
-| 4 | [features/FEATURE_AI_WEB_SEARCH_UPGRADE.md](features/FEATURE_AI_WEB_SEARCH_UPGRADE.md) | Feature | 🟠 Media | Pendiente — requiere decisión del dueño (scope ~14h + tokens) |
-| 5 | [PROPUESTAS_FUNCIONALIDADES.md](PROPUESTAS_FUNCIONALIDADES.md) | Menú features | 🟡 Media-baja | Documento vivo — menú de propuestas validadas para elegir |
-| 6 | [INTEGRACIONES_SETUP.md](INTEGRACIONES_SETUP.md) | Runbook | 🟡 Media-baja | Pendiente — setup WhatsApp + Google Calendar (código en repo, faltan cuentas/secrets) |
-| 7 | [CONSOLIDACION_MOBILE.md](CONSOLIDACION_MOBILE.md) | Plan mobile | 🟡 Media-baja | Pendiente — Capacitor iOS/Android consolidation |
-| 8 | [testing-virtual-user-blueprint.md](testing-virtual-user-blueprint.md) | Blueprint QA | 🟡 Media-baja | Pendiente — Playwright virtual user agent |
-| 9 | [migrations/PLAN_GOOGLE_PLACES_MIGRATION.md](migrations/PLAN_GOOGLE_PLACES_MIGRATION.md) | Migración | 🟡 Media-baja | Cost-gated — requiere decisión sobre costos Google Places |
-| 10 | [feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md](feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md) | Feedback | 🟡 Media-baja | 8/9 done — solo pendiente: localizador tiendas (P4 futuro) + grupos comunidad MVP (P1 scope grande) |
-| 11 | [tooling/](tooling/) | Plan producción | 🟡 Baja | Plan 8 semanas — entra cuando producto esté estable |
-| 12 | [PARTNERS_ONBOARDING.md](PARTNERS_ONBOARDING.md) | Plan partners | 🟠 Media | En ejecución — landing `/registro-partner` + emails + migración creados |
-| 13 | [EMAILS_PARTNERS.md](EMAILS_PARTNERS.md) | Emails comerciales | 🟠 Media | Listo — 11 templates por categoría + plantilla WhatsApp |
+| 4 | [map-redesign-blueprint.md](map-redesign-blueprint.md) | Blueprint | 🟠 Media | Parcial — tab Partners + deep linking implementados, bottom sheet/clustering/FAB radial pendientes |
+| 5 | [features/FEATURE_AI_WEB_SEARCH_UPGRADE.md](features/FEATURE_AI_WEB_SEARCH_UPGRADE.md) | Feature | 🟠 Media | Pendiente — requiere decisión del dueño (scope ~14h + tokens) |
+| 6 | [PROPUESTAS_FUNCIONALIDADES.md](PROPUESTAS_FUNCIONALIDADES.md) | Menú features | 🟡 Media-baja | Documento vivo — menú de propuestas validadas para elegir |
+| 7 | [INTEGRACIONES_SETUP.md](INTEGRACIONES_SETUP.md) | Runbook | 🟡 Media-baja | Pendiente — setup WhatsApp + Google Calendar (código en repo, faltan cuentas/secrets) |
+| 8 | [CONSOLIDACION_MOBILE.md](CONSOLIDACION_MOBILE.md) | Plan mobile | 🟡 Media-baja | Pendiente — Capacitor iOS/Android consolidation |
+| 9 | [testing-virtual-user-blueprint.md](testing-virtual-user-blueprint.md) | Blueprint QA | 🟡 Media-baja | Pendiente — Playwright virtual user agent |
+| 10 | [migrations/PLAN_GOOGLE_PLACES_MIGRATION.md](migrations/PLAN_GOOGLE_PLACES_MIGRATION.md) | Migración | 🟡 Media-baja | Cost-gated — requiere decisión sobre costos Google Places |
+| 11 | [feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md](feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md) | Feedback | 🟡 Media-baja | 8/9 done — solo pendiente: localizador tiendas (P4 futuro) + grupos comunidad MVP (P1 scope grande) |
+| 12 | [tooling/](tooling/) | Plan producción | 🟡 Baja | Plan 8 semanas — entra cuando producto esté estable |
+| 13 | [EMAILS_PARTNERS.md](EMAILS_PARTNERS.md) | Emails comerciales | ✅ Listo | 11 templates por categoría + plantilla WhatsApp — listo para usar |
 
 ---
 
@@ -61,6 +61,12 @@
 | `bugs/SEED_CONTAMINATION_QUERIES.sql` → `_archive/` | Investigación cerrada como FP | 2026-04-11 |
 | `landing-redesign-blueprint.md` → `_archive/` | Ejecutado en commit fc48e94 | 2026-04-13 |
 | `bugs/BUG_GROOMERS_GRADIENT_CRASH.md` → `_archive/` | Fix confirmado — gradient definido | 2026-04-13 |
+| `docs-specs/PAW_CARDS_VISUAL_OVERHAUL.md` → `_archive/` | 100% ejecutado: paletas especie, holo por raza, bordes rareza | 2026-04-13 |
+| `docs-specs/PAW_MISSIONS_ACHIEVEMENTS.md` → `_archive/` | 100% ejecutado: paw_missions, user_achievements, página /misiones | 2026-04-13 |
+| `docs-specs/RUTINAS_Y_CALENDARIO_MASCOTA.md` → `_archive/` | 100% ejecutado: pet_routines, calendario unificado, RoutineCard | 2026-04-13 |
+| `docs-specs/VISTAS_ROLES_Y_PLANES.md` → `_archive/` | 100% ejecutado: RoleGuard, ActiveRoleProvider, sidebar condicional | 2026-04-13 |
+| `docs-specs/COMPARTIR_FICHA_V2.md` → `_archive/` | 100% ejecutado: pet_vet_links, ShareWithVetModal, bidireccional | 2026-04-13 |
+| `docs-specs/OPTIMIZACION_PROMPTS_AI.md` → `_archive/` | Parcial archivado: seguridad prompts OK, Haiku migration OK | 2026-04-13 |
 | `ANALISIS_LIMPIEZA_DEMO_USERS.md` → `_archive/` | Ejecutado — limpieza de ~100 users demo completada | 2026-04-12 |
 
 ---

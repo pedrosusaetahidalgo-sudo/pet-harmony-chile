@@ -291,9 +291,7 @@ export default function ParaVeterinarios() {
       {/* CTA FINAL */}
       <section className="container mx-auto px-4 py-16 max-w-4xl">
         <div className="rounded-3xl bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 p-10 md:p-16 text-center text-white shadow-2xl">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Crea tu perfil profesional hoy
-          </h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Crea tu perfil profesional hoy</h2>
           <p className="text-lg text-white/95 mb-6 max-w-xl mx-auto">
             Toma 5 minutos. Sin compromiso, sin tarjeta de crédito. Empieza con el Plan Gratis y
             mejora cuando estés listo.
@@ -319,6 +317,27 @@ export default function ParaVeterinarios() {
               Iniciar sesión
             </Link>
           </p>
+        </div>
+      </section>
+
+      {/* CTA para no-vets */}
+      <section className="py-8 bg-purple-50">
+        <div className="container mx-auto px-4 text-center max-w-2xl">
+          <h3 className="text-lg font-bold text-purple-900 mb-2">
+            ¿No eres veterinario? También puedes unirte
+          </h3>
+          <p className="text-sm text-muted-foreground mb-4">
+            Peluquerías, paseadores, tiendas, cuidadores, entrenadores y más — registra tu negocio
+            en el directorio de Paw Friend.
+          </p>
+          <Link to="/registro-partner">
+            <Button
+              variant="outline"
+              className="border-purple-300 text-purple-700 hover:bg-purple-100"
+            >
+              Registrar otro tipo de negocio
+            </Button>
+          </Link>
         </div>
       </section>
 

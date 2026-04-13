@@ -462,7 +462,13 @@ function PublicFooter() {
       <div className="container mx-auto px-4">
         <p className="text-xs">Hecho en Chile, para Chile · Pagos seguros con Flow</p>
         <p>© {new Date().getFullYear()} Paw Friend Chile · pawfriend.cl</p>
-        <div className="flex justify-center gap-4 mt-2">
+        <div className="flex flex-wrap justify-center gap-4 mt-2">
+          <Link to="/registro-partner" className="hover:text-purple-700 font-medium">
+            Registra tu negocio
+          </Link>
+          <Link to="/para-veterinarios" className="hover:text-purple-700">
+            Para veterinarios
+          </Link>
           <Link to="/terms" className="hover:text-purple-700">
             Términos
           </Link>
