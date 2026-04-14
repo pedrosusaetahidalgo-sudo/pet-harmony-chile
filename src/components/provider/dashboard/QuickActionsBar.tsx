@@ -7,7 +7,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { UserPlus, Mic, Calendar } from '@/lib/icons';
+import { UserPlus, Mic, Calendar, Stethoscope } from '@/lib/icons';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -29,18 +29,27 @@ export function QuickActionsBar({
   onRecordConsultation,
 }: QuickActionsBarProps) {
   const navigate = useNavigate();
-  const today = format(new Date(), "EEEE d 'de' MMMM", { locale: es });
-  const firstName = displayName?.split(/\s+/)[0] || 'Doc';
+  const today = format(new Date(), "EEEE d 'de' MMMM, yyyy", { locale: es });
+  const firstName = displayName?.split(/\s+/)[0] || 'Doctor';
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-      <div>
-        <h2 className="text-xl font-bold">Hola, {firstName}</h2>
-        <p className="text-sm text-muted-foreground capitalize">{today}</p>
+    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200">
+      <div className="flex items-center gap-3">
+        <div className="p-2 rounded-lg bg-teal-50 border border-teal-200">
+          <Stethoscope className="h-5 w-5 text-teal-700" />
+        </div>
+        <div>
+          <h2 className="text-lg font-semibold text-slate-900 tracking-tight">Dr. {firstName}</h2>
+          <p className="text-xs text-slate-500 capitalize">{today}</p>
+        </div>
       </div>
 
       <div className="flex items-center gap-2 flex-wrap">
-        <Button size="sm" variant="outline" onClick={onNewPatient} className="gap-1.5 text-xs">
+        <Button
+          size="sm"
+          onClick={onNewPatient}
+          className="gap-1.5 text-xs bg-teal-700 hover:bg-teal-600 text-white"
+        >
           <UserPlus className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Nuevo paciente</span>
         </Button>
@@ -48,7 +57,7 @@ export function QuickActionsBar({
           size="sm"
           variant="outline"
           onClick={onRecordConsultation}
-          className="gap-1.5 text-xs"
+          className="gap-1.5 text-xs border-slate-300"
         >
           <Mic className="h-3.5 w-3.5 text-red-500" />
           <span className="hidden sm:inline">Grabar consulta</span>
@@ -57,14 +66,14 @@ export function QuickActionsBar({
           size="sm"
           variant="outline"
           onClick={() => navigate('/calendario')}
-          className="gap-1.5 text-xs"
+          className="gap-1.5 text-xs border-slate-300"
         >
           <Calendar className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Calendario</span>
         </Button>
 
         <Select value={period} onValueChange={(v) => onPeriodChange(v as DashboardPeriod)}>
-          <SelectTrigger className="w-[130px] h-8 text-xs">
+          <SelectTrigger className="w-[130px] h-8 text-xs border-slate-300">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

@@ -138,8 +138,8 @@ const ProviderDashboard = () => {
           value={stats.patientsThisMonth}
           subtitle={`${stats.notesThisMonth} nota${stats.notesThisMonth !== 1 ? 's' : ''}`}
           icon={Users}
-          iconColor="text-purple-600"
-          accentColor="#9333ea"
+          iconColor="text-teal-600"
+          accentColor="#0d9488"
           onClick={() => setActiveTab('pacientes')}
           tooltip="Mascotas unicas atendidas este mes"
           tooltipWhere="Tab Pacientes"
@@ -149,8 +149,8 @@ const ProviderDashboard = () => {
           value={stats.bookingsThisMonth}
           subtitle="Este mes"
           icon={Calendar}
-          iconColor="text-indigo-500"
-          accentColor="#6366f1"
+          iconColor="text-slate-500"
+          accentColor="#64748b"
           onClick={() => setActiveTab('negocio')}
           tooltip="Reservas agendadas este mes desde el directorio"
           tooltipWhere="Mis reservas"
@@ -160,8 +160,8 @@ const ProviderDashboard = () => {
           value={stats.estimatedRevenue > 0 ? formatCLP(stats.estimatedRevenue) : '$0'}
           subtitle="Este mes"
           icon={TrendingUp}
-          iconColor="text-green-600"
-          accentColor="#16a34a"
+          iconColor="text-emerald-600"
+          accentColor="#059669"
           onClick={() => setActiveTab('negocio')}
           tooltip="Suma de reservas completadas este mes"
           tooltipWhere="Tab Negocio > Analytics completos"
@@ -171,8 +171,8 @@ const ProviderDashboard = () => {
           value={stats.avgRating ? stats.avgRating.toFixed(1) : '—'}
           subtitle={`${stats.totalReviews} resena${stats.totalReviews !== 1 ? 's' : ''}`}
           icon={Star}
-          iconColor="text-yellow-500"
-          accentColor="#eab308"
+          iconColor="text-amber-500"
+          accentColor="#d97706"
           onClick={() => setActiveTab('negocio')}
           tooltip="Promedio de resenas de tus pacientes"
           tooltipWhere="Perfil publico > Resenas"
@@ -240,43 +240,43 @@ const ProviderDashboard = () => {
 
       {/* Onboarding: vet sin actividad */}
       {!hasActivity && (
-        <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-amber-50">
+        <Card className="border-teal-200 bg-gradient-to-br from-teal-50 to-slate-50">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm flex items-center gap-2">
-              <Stethoscope className="h-4 w-4 text-purple-600" />
+              <Stethoscope className="h-4 w-4 text-teal-700" />
               Primeros pasos
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <Link to="/provider/profile-edit" className="block">
-              <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-purple-200 hover:shadow-sm transition">
+              <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-teal-200 hover:shadow-sm transition">
                 <div>
                   <p className="text-xs font-semibold">1. Completa tu perfil publico</p>
                   <p className="text-[11px] text-muted-foreground">
                     Foto, bio, especialidades, comuna.
                   </p>
                 </div>
-                <span className="text-purple-400">→</span>
+                <span className="text-teal-500">→</span>
               </div>
             </Link>
             {stats.slug && (
               <Link to={`/veterinarios/${stats.slug}`} className="block">
-                <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-purple-200 hover:shadow-sm transition">
+                <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-teal-200 hover:shadow-sm transition">
                   <div>
                     <p className="text-xs font-semibold">2. Revisa como te ven los duenos</p>
                     <p className="text-[11px] text-muted-foreground">Abre tu perfil publico.</p>
                   </div>
-                  <span className="text-purple-400">→</span>
+                  <span className="text-teal-500">→</span>
                 </div>
               </Link>
             )}
             <Link to="/veterinarios" className="block">
-              <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-purple-200 hover:shadow-sm transition">
+              <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-teal-200 hover:shadow-sm transition">
                 <div>
                   <p className="text-xs font-semibold">3. Comparte tu URL</p>
                   <p className="text-[11px] text-muted-foreground">Instagram, WhatsApp, tu red.</p>
                 </div>
-                <span className="text-purple-400">→</span>
+                <span className="text-teal-500">→</span>
               </div>
             </Link>
           </CardContent>

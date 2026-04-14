@@ -22,11 +22,11 @@ export function InteractiveMetricCard({
   value,
   subtitle,
   icon: Icon,
-  iconColor = 'text-muted-foreground',
+  iconColor = 'text-slate-400',
   trend,
   sparklineData,
   onClick,
-  accentColor = '#9333ea',
+  accentColor = '#0d9488',
   tooltip,
   tooltipWhere,
 }: InteractiveMetricCardProps) {
@@ -35,28 +35,28 @@ export function InteractiveMetricCard({
 
   return (
     <Card
-      className={`relative overflow-hidden transition-all ${onClick ? 'cursor-pointer hover:shadow-md hover:border-purple-200 active:scale-[0.98]' : ''}`}
+      className={`relative overflow-hidden border-slate-200 transition-all ${onClick ? 'cursor-pointer hover:shadow-sm hover:border-teal-300 active:scale-[0.98]' : ''}`}
       onClick={onClick}
     >
-      <CardContent className="p-3 space-y-1">
+      <CardContent className="p-3.5 space-y-1.5">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground flex items-center gap-1">
+          <span className="text-[10px] uppercase tracking-widest font-semibold text-slate-500 flex items-center gap-1">
             {label}
             {tooltip && <InfoTooltip text={tooltip} where={tooltipWhere} />}
           </span>
-          <Icon className={`h-3.5 w-3.5 ${iconColor}`} />
+          <Icon className={`h-4 w-4 ${iconColor}`} />
         </div>
 
         <div className="flex items-end justify-between gap-2">
           <div>
-            <p className="text-2xl font-bold leading-none">{value}</p>
-            <p className="text-[10px] text-muted-foreground mt-0.5">{subtitle}</p>
+            <p className="text-2xl font-bold font-mono leading-none text-slate-900">{value}</p>
+            <p className="text-[10px] text-slate-400 mt-1">{subtitle}</p>
           </div>
 
           {hasTrend && (
             <div
-              className={`flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-full ${
-                isPositive ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-600'
+              className={`flex items-center gap-0.5 text-[10px] font-semibold px-1.5 py-0.5 rounded ${
+                isPositive ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'
               }`}
             >
               {isPositive ? (
@@ -75,7 +75,7 @@ export function InteractiveMetricCard({
               <AreaChart data={sparklineData.map((v, i) => ({ v, i }))}>
                 <defs>
                   <linearGradient id={`spark-${label}`} x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor={accentColor} stopOpacity={0.3} />
+                    <stop offset="0%" stopColor={accentColor} stopOpacity={0.2} />
                     <stop offset="100%" stopColor={accentColor} stopOpacity={0} />
                   </linearGradient>
                 </defs>
