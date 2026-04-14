@@ -1,0 +1,98 @@
+import { useState, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+
+export interface DiagnosticoItem {
+  condicion: string;
+  apariciones: number;
+  estado: 'activo' | 'resuelto' | 'en_tratamiento';
+  ultima_fecha: string;
+}
+
+export interface TratamientoItem {
+  medicamento: string;
+  dosis: string;
+  frecuencia: string;
+  desde: string;
+}
+
+export interface VacunaItem {
+  nombre: string;
+  fecha: string;
+  estado: 'al_dia' | 'proxima' | 'vencida';
+  proxima: string | null;
+}
+
+export interface AlertaItem {
+  tipo: 'alergia' | 'interaccion' | 'tendencia' | 'cronico';
+  descripcion: string;
+  severidad: 'alta' | 'media' | 'baja';
+}
+
+export interface SeguimientoItem {
+  fecha: string;
+  razon: string;
+}
+
+export interface PatientConsolidatedSummary {
+  diagnosticos: DiagnosticoItem[];
+  tratamientos: TratamientoItem[];
+  vacunas: VacunaItem[];
+  alertas: AlertaItem[];
+  seguimientos: SeguimientoItem[];
+  resumen_general: string;
+  total_sesiones: number;
+  rango_fechas: string | null;
+}
+
+export function useVetPatientSummary() {
+  const [data, setData] = useState<PatientConsolidatedSummary | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isCached, setIsCached] = useState(false);
+
+  const generate = useCallback(async (petId: string) => {
+    setIsLoading(true);
+    setError(null);
+    setData(null);
+    setIsCached(false);
+
+    try {
+      const { data: responseData, error: fnError } = await supabase.functions.invoke(
+        'generate-vet-patient-summary',
+        { body: { petId } }
+      );
+
+      if (fnError) {
+        throw new Error(fnError.message || 'Error al generar el consolidado');
+      }
+
+      if (responseData?.error) {
+        throw new Error(responseData.error);
+      }
+
+      const summary = responseData?.summary as PatientConsolidatedSummary | undefined;
+      if (!summary) {
+        throw new Error('Respuesta vacía del servidor');
+      }
+
+      setData(summary);
+      setIsCached(!!responseData.cached);
+      return summary;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Error desconocido';
+      setError(message);
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const reset = useCallback(() => {
+    setData(null);
+    setError(null);
+    setIsLoading(false);
+    setIsCached(false);
+  }, []);
+
+  return { data, isLoading, error, isCached, generate, reset };
+}

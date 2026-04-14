@@ -111,7 +111,7 @@ Solo tratamientos/vacunas reales en Chile. web_search solo si duda protocolo ISP
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-3-5',
+        model: 'claude-3-5-haiku-20241022',
         max_tokens: 350,
         temperature: 0.2,
         system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],

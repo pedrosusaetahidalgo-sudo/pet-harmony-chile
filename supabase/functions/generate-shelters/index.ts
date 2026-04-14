@@ -160,7 +160,7 @@ Solo reales, no inventar.`;
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            model: 'claude-haiku-3-5',
+            model: 'claude-3-5-haiku-20241022',
             max_tokens: 800,
             temperature: 0.2,
             system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],

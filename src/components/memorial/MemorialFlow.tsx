@@ -1,11 +1,11 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Heart } from "@/lib/icons";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Heart } from '@/lib/icons';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface MemorialFlowProps {
   petId: string;
@@ -14,20 +14,20 @@ interface MemorialFlowProps {
   onCancel: () => void;
 }
 
-type Step = "welcome" | "confirm" | "form" | "done";
+type Step = 'welcome' | 'confirm' | 'form' | 'done';
 
 export function MemorialFlow({ petId, petName, onComplete, onCancel }: MemorialFlowProps) {
-  const [step, setStep] = useState<Step>("welcome");
+  const [step, setStep] = useState<Step>('welcome');
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
-    passed_away_at: "",
-    passed_away_cause: "",
-    memorial_message: "",
+    passed_away_at: '',
+    passed_away_cause: '',
+    memorial_message: '',
   });
 
   const handleSave = async () => {
     if (!formData.passed_away_at) {
-      toast.error("La fecha es necesaria para registrar este momento.");
+      toast.error('La fecha es necesaria para registrar este momento.');
       return;
     }
 
@@ -37,37 +37,37 @@ export function MemorialFlow({ petId, petName, onComplete, onCancel }: MemorialF
       const undoUntil = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
       const { error } = await supabase
-        .from("pets")
+        .from('pets')
         .update({
-          lifecycle_status: "memorial",
+          lifecycle_status: 'memorial',
           passed_away_at: new Date(formData.passed_away_at).toISOString(),
           passed_away_registered_at: now.toISOString(),
           passed_away_cause: formData.passed_away_cause || null,
           memorial_message: formData.memorial_message || null,
           memorial_undo_until: undoUntil.toISOString(),
-          memorial_visibility: "memorial_section_only",
+          memorial_visibility: 'memorial_section_only',
           memorial_remembrance_enabled: false,
         })
-        .eq("id", petId);
+        .eq('id', petId);
 
       if (error) throw error;
 
       // Mark pending reminders as completed for this pet
       await supabase
-        .from("pet_reminders")
+        .from('pet_reminders')
         .update({ is_completed: true, completed_at: new Date().toISOString() })
-        .eq("pet_id", petId)
-        .eq("is_completed", false);
+        .eq('pet_id', petId)
+        .eq('is_completed', false);
 
-      setStep("done");
+      setStep('done');
     } catch (err) {
-      toast.error("No pudimos guardar este momento. Intenta de nuevo.");
+      toast.error('No pudimos guardar este momento. Intenta de nuevo.');
     } finally {
       setLoading(false);
     }
   };
 
-  if (step === "welcome") {
+  if (step === 'welcome') {
     return (
       <div className="space-y-6 text-center max-w-md mx-auto py-8 px-4">
         <div className="mx-auto w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
@@ -77,15 +77,15 @@ export function MemorialFlow({ petId, petName, onComplete, onCancel }: MemorialF
           Lamentamos profundamente lo que estás viviendo.
         </h2>
         <p className="text-muted-foreground leading-relaxed">
-          Sabemos que perder a {petName} es una de las experiencias más difíciles
-          que puede atravesar una persona. Tomate todo el tiempo que necesites.
+          Sabemos que perder a {petName} es una de las experiencias más difíciles que puede
+          atravesar una persona. Tomate todo el tiempo que necesites.
         </p>
         <p className="text-muted-foreground leading-relaxed">
-          Si quieres, podemos ayudarte a registrar este momento en la app y
-          acompañarte en el camino. No hay apuro.
+          Si quieres, podemos ayudarte a registrar este momento en la app y acompañarte en el
+          camino. No hay apuro.
         </p>
         <div className="flex flex-col gap-3 pt-4">
-          <Button onClick={() => setStep("confirm")} className="bg-purple-600 hover:bg-purple-700">
+          <Button onClick={() => setStep('confirm')} className="bg-purple-600 hover:bg-purple-700">
             Continuar cuando esté listo
           </Button>
           <Button variant="ghost" onClick={onCancel} className="text-muted-foreground">
@@ -96,7 +96,7 @@ export function MemorialFlow({ petId, petName, onComplete, onCancel }: MemorialF
     );
   }
 
-  if (step === "confirm") {
+  if (step === 'confirm') {
     return (
       <div className="space-y-6 max-w-md mx-auto py-8 px-4">
         <h2 className="text-xl font-semibold text-slate-800">
@@ -114,7 +114,7 @@ export function MemorialFlow({ petId, petName, onComplete, onCancel }: MemorialF
           </li>
           <li className="flex items-start gap-2">
             <span className="text-purple-400 mt-0.5">•</span>
-            Su historial médico se preservará completo
+            Su ficha clínica se preservará completa
           </li>
           <li className="flex items-start gap-2">
             <span className="text-purple-400 mt-0.5">•</span>
@@ -125,10 +125,10 @@ export function MemorialFlow({ petId, petName, onComplete, onCancel }: MemorialF
           Puedes deshacer esto en cualquier momento durante las próximas 24 horas.
         </p>
         <div className="flex flex-col gap-3 pt-2">
-          <Button onClick={() => setStep("form")} className="bg-purple-600 hover:bg-purple-700">
+          <Button onClick={() => setStep('form')} className="bg-purple-600 hover:bg-purple-700">
             Sí, continuar
           </Button>
-          <Button variant="ghost" onClick={() => setStep("welcome")}>
+          <Button variant="ghost" onClick={() => setStep('welcome')}>
             Volver atrás
           </Button>
         </div>
@@ -136,12 +136,10 @@ export function MemorialFlow({ petId, petName, onComplete, onCancel }: MemorialF
     );
   }
 
-  if (step === "form") {
+  if (step === 'form') {
     return (
       <div className="space-y-6 max-w-md mx-auto py-8 px-4">
-        <h2 className="text-xl font-semibold text-slate-800">
-          Cuéntanos lo que quieras compartir
-        </h2>
+        <h2 className="text-xl font-semibold text-slate-800">Cuéntanos lo que quieras compartir</h2>
         <p className="text-xs text-muted-foreground">
           Todos los campos son opcionales, excepto la fecha.
         </p>
@@ -151,7 +149,7 @@ export function MemorialFlow({ petId, petName, onComplete, onCancel }: MemorialF
           <Input
             id="passed_date"
             type="date"
-            max={new Date().toISOString().split("T")[0]}
+            max={new Date().toISOString().split('T')[0]}
             value={formData.passed_away_at}
             onChange={(e) => setFormData((f) => ({ ...f, passed_away_at: e.target.value }))}
           />
@@ -184,7 +182,7 @@ export function MemorialFlow({ petId, petName, onComplete, onCancel }: MemorialF
           disabled={loading || !formData.passed_away_at}
           className="w-full bg-purple-600 hover:bg-purple-700"
         >
-          {loading ? "Guardando..." : "Guardar este momento"}
+          {loading ? 'Guardando...' : 'Guardar este momento'}
         </Button>
       </div>
     );
@@ -200,8 +198,8 @@ export function MemorialFlow({ petId, petName, onComplete, onCancel }: MemorialF
         {petName} ahora descansa en tu sección "En memoria"
       </h2>
       <p className="text-muted-foreground leading-relaxed">
-        Hemos guardado todos sus recuerdos con cuidado. Su historial médico está
-        intacto y siempre podrás visitarla.
+        Hemos guardado todos sus recuerdos con cuidado. Su ficha clínica está intacta y siempre
+        podrás visitarla.
       </p>
       <div className="flex flex-col gap-3 pt-4">
         <Button onClick={onComplete} className="bg-purple-600 hover:bg-purple-700">

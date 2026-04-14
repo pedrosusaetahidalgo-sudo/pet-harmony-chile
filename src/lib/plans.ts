@@ -331,7 +331,7 @@ export const FEATURE_LABELS: Record<string, string> = {
   ai_vet_assistant: 'Asistente veterinario IA',
   export_pdf: 'Exportar ficha clínica PDF',
   share_clinical: 'Compartir ficha con veterinario',
-  medical_history: 'Historial médico',
+  medical_history: 'Ficha clínica completa',
   weekly_summary: 'Resumen semanal IA',
   booking_user_fee: 'Tarifa de servicio',
   priority_support: 'Soporte prioritario',

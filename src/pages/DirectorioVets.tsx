@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import { Helmet } from 'react-helmet-async';
 import { Search, MapPin, Star, Stethoscope, Clock, Phone } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -518,6 +519,7 @@ function NewVetsSection({ vets }: { vets: Vet[] }) {
           </Link>
         ))}
       </div>
+      <ViewTutorial {...TUTORIALS.directorio} />
     </div>
   );
 }

@@ -278,7 +278,7 @@ ${ownerRecordsText || 'Sin registros del dueño.'}`;
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'claude-haiku-3-5',
+          model: 'claude-3-5-haiku-20241022',
           max_tokens: 1500,
           temperature: 0.15,
           system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],

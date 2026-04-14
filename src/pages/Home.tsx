@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { HomeOnboardingHints } from '@/components/HomeOnboardingHints';
+import { TrialWelcomeOverlay, TrialBanner } from '@/components/TrialWelcomeBanner';
+import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import {
   PawPrint,
   Plus,
@@ -324,6 +326,12 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* === Trial welcome overlay (shown once) === */}
+      <TrialWelcomeOverlay />
+
+      {/* === Trial banner (days remaining) === */}
+      <TrialBanner />
 
       {/* === Onboarding hints dirigidos para usuarios sin mascotas === */}
       <HomeOnboardingHints hasPets={pets.length > 0} />
@@ -706,6 +714,8 @@ export default function Home() {
           <ActivityFeed limit={3} />
         </CardContent>
       </Card>
+      {/* Tutorial floating button */}
+      <ViewTutorial {...TUTORIALS.home} />
     </div>
   );
 }

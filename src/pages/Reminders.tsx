@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import { format, isToday, isTomorrow, isPast } from 'date-fns';
 import { es } from 'date-fns/locale';
 import {
@@ -204,6 +205,7 @@ export default function Reminders() {
           </Section>
         )}
       </main>
+      <ViewTutorial {...TUTORIALS.reminders} />
     </div>
   );
 }

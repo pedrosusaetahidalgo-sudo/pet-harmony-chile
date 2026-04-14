@@ -24,21 +24,36 @@ export function usePlan() {
     staleTime: 5 * 60 * 1000,
   });
 
-  const planId: PlanId = (profile?.plan_id as PlanId) || 'free';
-  const plan = PLANS[planId];
+  // Trial detection: if premium with expiry in the past, treat as free
+  const expiresAt = profile?.plan_expires_at;
+  const isTrialExpired =
+    expiresAt && profile?.plan_id === 'premium' && new Date(expiresAt) < new Date();
+  const isTrialActive =
+    expiresAt && profile?.plan_id === 'premium' && new Date(expiresAt) >= new Date();
+
+  const effectivePlanId: PlanId = isTrialExpired ? 'free' : (profile?.plan_id as PlanId) || 'free';
+  const plan = PLANS[effectivePlanId];
+
+  // Days remaining in trial
+  const trialDaysLeft = isTrialActive
+    ? Math.max(0, Math.ceil((new Date(expiresAt!).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : 0;
 
   const checkAccess = useCallback(
-    (feature: string, currentUsage?: number) => canAccess(planId, feature, currentUsage, isAdmin),
-    [planId, isAdmin]
+    (feature: string, currentUsage?: number) =>
+      canAccess(effectivePlanId, feature, currentUsage, isAdmin),
+    [effectivePlanId, isAdmin]
   );
 
   return {
-    planId,
+    planId: effectivePlanId,
     plan,
-    isPremium: planId !== 'free' || isAdmin,
+    isPremium: effectivePlanId !== 'free' || isAdmin,
     isAdmin,
     badge: profile?.plan_badge || '',
-    expiresAt: profile?.plan_expires_at,
+    expiresAt,
+    isTrialActive: !!isTrialActive,
+    trialDaysLeft,
     checkAccess,
   };
 }

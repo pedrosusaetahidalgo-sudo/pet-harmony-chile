@@ -528,7 +528,7 @@ const AddPet = () => {
               </CardTitle>
               <CardDescription className="text-base mt-2 leading-relaxed">
                 Tu plan gratis incluye 1 mascota. Con Premium agregas todas las que quieras y
-                desbloqueas el historial médico completo, recordatorios ilimitados y exportación de
+                desbloqueas la ficha clínica completa, recordatorios ilimitados y exportación de
                 fichas.
               </CardDescription>
             </CardHeader>

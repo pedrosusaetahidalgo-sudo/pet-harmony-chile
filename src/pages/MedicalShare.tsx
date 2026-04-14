@@ -133,7 +133,7 @@ export default function MedicalShare() {
 
       setPet(petData as SharedPet);
 
-      // 4. Cargar historial médico
+      // 4. Cargar ficha clínica
       const { data: recordsData } = await supabase
         .from('medical_records')
         .select('id, record_type, title, description, date, vet_name, clinic_name')
@@ -141,8 +141,8 @@ export default function MedicalShare() {
         .order('date', { ascending: false });
 
       if (recordsData) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setRecords(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           recordsData.map((r: any) => ({
             id: r.id,
             record_type: r.record_type,

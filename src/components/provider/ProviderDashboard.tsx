@@ -35,6 +35,7 @@ import { PatientsTab } from './dashboard/PatientsTab';
 import { ActivityFeed } from './dashboard/ActivityFeed';
 import { PendingVetLinksCard } from './PendingVetLinksCard';
 import { NewPatientForm } from './NewPatientForm';
+import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 
 const formatCLP = (amount: number) =>
   new Intl.NumberFormat('es-CL', {
@@ -140,6 +141,8 @@ const ProviderDashboard = () => {
           iconColor="text-purple-600"
           accentColor="#9333ea"
           onClick={() => setActiveTab('pacientes')}
+          tooltip="Mascotas unicas atendidas este mes"
+          tooltipWhere="Tab Pacientes"
         />
         <InteractiveMetricCard
           label="Reservas"
@@ -149,6 +152,8 @@ const ProviderDashboard = () => {
           iconColor="text-indigo-500"
           accentColor="#6366f1"
           onClick={() => setActiveTab('negocio')}
+          tooltip="Reservas agendadas este mes desde el directorio"
+          tooltipWhere="Mis reservas"
         />
         <InteractiveMetricCard
           label="Ingresos"
@@ -158,6 +163,8 @@ const ProviderDashboard = () => {
           iconColor="text-green-600"
           accentColor="#16a34a"
           onClick={() => setActiveTab('negocio')}
+          tooltip="Suma de reservas completadas este mes"
+          tooltipWhere="Tab Negocio > Analytics completos"
         />
         <InteractiveMetricCard
           label="Calificacion"
@@ -167,6 +174,8 @@ const ProviderDashboard = () => {
           iconColor="text-yellow-500"
           accentColor="#eab308"
           onClick={() => setActiveTab('negocio')}
+          tooltip="Promedio de resenas de tus pacientes"
+          tooltipWhere="Perfil publico > Resenas"
         />
         <InteractiveMetricCard
           label="Seguimientos"
@@ -176,6 +185,8 @@ const ProviderDashboard = () => {
           iconColor="text-orange-500"
           accentColor="#f97316"
           onClick={() => setActiveTab('clinico')}
+          tooltip="Consultas con seguimiento programado para los proximos 7 dias"
+          tooltipWhere="Tab Clinico > Seguimientos"
         />
         <InteractiveMetricCard
           label="Fichas"
@@ -185,6 +196,8 @@ const ProviderDashboard = () => {
           iconColor="text-blue-500"
           accentColor="#3b82f6"
           onClick={() => setActiveTab('clinico')}
+          tooltip="Fichas medicas compartidas contigo por duenos de mascotas"
+          tooltipWhere="Tab Clinico > Fichas compartidas"
         />
       </div>
 
@@ -269,6 +282,9 @@ const ProviderDashboard = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Tutorial floating button */}
+      <ViewTutorial {...TUTORIALS.providerDashboard} />
 
       {/* New Patient Dialog */}
       <Dialog open={showNewPatient} onOpenChange={setShowNewPatient}>

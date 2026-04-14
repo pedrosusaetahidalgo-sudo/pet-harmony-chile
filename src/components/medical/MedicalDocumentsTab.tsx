@@ -48,6 +48,7 @@ import { downloadFile } from '@/lib/nativeDownload';
 
 interface MedicalDocumentsTabProps {
   petId: string;
+  petName?: string;
 }
 
 const DOCUMENT_TYPE_LABELS: Record<MedicalDocumentType, string> = {
@@ -68,7 +69,7 @@ const DOCUMENT_TYPE_ICONS: Record<MedicalDocumentType, LucideIcon> = {
   other: FileText,
 };
 
-export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
+export const MedicalDocumentsTab = ({ petId, petName }: MedicalDocumentsTabProps) => {
   const { toast } = useToast();
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [viewingDocument, setViewingDocument] = useState<{
@@ -213,7 +214,7 @@ export const MedicalDocumentsTab = ({ petId }: MedicalDocumentsTabProps) => {
               compartir en un viaje.
             </p>
           </div>
-          <MedicalSummaryButton petId={petId} />
+          <MedicalSummaryButton petId={petId} petName={petName} />
         </div>
       </div>
 

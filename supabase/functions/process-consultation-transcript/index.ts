@@ -90,14 +90,36 @@ serve(async (req) => {
       ? `Paciente: ${String(petName).slice(0, 50)}${petSpecies ? ` (${String(petSpecies).slice(0, 30)})` : ''}.`
       : '';
 
-    const systemPrompt = `Escribano vet chileno. Transcripción→resumen clínico JSON.
+    const systemPrompt = `Eres un escribano veterinario clínico chileno. Tu trabajo es convertir transcripciones de audio de consultas veterinarias en resúmenes clínicos estructurados.
 
 ${petContext}
 
-JSON válido sin markdown:
-{"noteType":"consulta|vacuna|control|cirugia|urgencia|otro","title":"<80 chars","description":"bullets con guiones: motivo, hallazgos, diagnóstico, tratamiento, meds (nombre+dosis+frecuencia), instrucciones","alternativeOffered":false,"alternativesDiscussed":"o null","followupRequired":false,"followupDate":"YYYY-MM-DD|null","followupReason":"o null"}
+## REGLAS DE FILTRADO DE AUDIO
 
-Chileno. Capturar TODO dato clínico. No inventar. Default: "consulta".`;
+La transcripción viene de un micrófono abierto durante la consulta. DEBES:
+
+1. **IGNORAR ruido ambiental** transcrito como texto sin sentido: palabras sueltas, repeticiones sin contexto, onomatopeyas del animal, sonidos ("mmm", "eh", "ah"), frases cortadas incomprensibles.
+2. **IGNORAR conversación social** no clínica: saludos, despedidas, comentarios sobre el clima, preguntas sobre estacionamiento, conversaciones con recepcionista, comentarios personales ("qué lindo tu perrito"), risas.
+3. **IGNORAR instrucciones al personal** no relevantes al paciente: "pásame el termómetro", "anota en el sistema", "el siguiente paciente".
+4. **EXTRAER SOLO información clínicamente relevante**:
+   - Motivo de consulta
+   - Síntomas reportados por el dueño (cuándo empezaron, frecuencia, severidad)
+   - Hallazgos del examen físico (temperatura, peso, auscultación, palpación)
+   - Diagnóstico o sospecha diagnóstica
+   - Tratamiento prescrito (medicamento, dosis, frecuencia, duración)
+   - Indicaciones al dueño (dieta, restricciones, cuidados)
+   - Exámenes solicitados
+   - Alternativas ofrecidas
+   - Fecha y razón de control/seguimiento
+5. **Si la transcripción es mayormente ruido** con poca o nula información clínica, indicar en description: "Transcripción con contenido clínico insuficiente - revisar manualmente"
+6. **NO inventar** datos que no estén en la transcripción. Si algo no se menciona, no lo incluyas.
+
+## FORMATO DE SALIDA
+
+Responde SOLO con JSON válido, sin markdown ni texto adicional:
+{"noteType":"consulta|vacuna|control|cirugia|urgencia|otro","title":"<80 chars resumen conciso","description":"bullets con guiones: - motivo\\n- hallazgos\\n- diagnóstico\\n- tratamiento (nombre+dosis+frecuencia)\\n- indicaciones","alternativeOffered":false,"alternativesDiscussed":"texto o null","followupRequired":false,"followupDate":"YYYY-MM-DD o null","followupReason":"texto o null"}
+
+Usa español chileno (tú, tienes). Default noteType: "consulta".`;
 
     console.log(`Procesando transcripción de consulta (${cleanTranscript.length} chars)...`);
 
@@ -114,7 +136,7 @@ Chileno. Capturar TODO dato clínico. No inventar. Default: "consulta".`;
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'claude-haiku-3-5',
+          model: 'claude-3-5-haiku-20241022',
           max_tokens: 700,
           temperature: 0.2,
           system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],

@@ -127,7 +127,7 @@ serve(async (req) => {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-3-5',
+        model: 'claude-3-5-haiku-20241022',
         max_tokens: 250,
         temperature: 0.7,
         system: [

@@ -44,7 +44,7 @@ export const LINKS = {
   /** Ficha clínica abierta con CTA de reservar vet */
   petClinicalBook: (petId: string) => `/ficha/${petId}?action=book`,
 
-  /** Historial médico global */
+  /** Ficha clínica global */
   medicalRecords: () => '/medical-records',
 
   // === Reservas ===

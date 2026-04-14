@@ -17,7 +17,7 @@ type Plan = 'monthly' | 'yearly';
 
 const FEATURES = [
   'Mascotas ilimitadas',
-  'Historial médico completo y descargable',
+  'Ficha clínica completa y descargable',
   'Recordatorios de vacunas y controles ilimitados',
   'Exportación de ficha clínica en PDF',
   'Compartir ficha con veterinario',
@@ -31,7 +31,7 @@ const COMPARISON_TABLE = [
   { feature: 'Recordatorios activos', free: '3', premium: 'Ilimitados', key: 'max_reminders' },
   { feature: 'Ficha clínica PDF', free: false, premium: true, key: 'export_pdf' },
   { feature: 'Compartir ficha con vet', free: false, premium: true, key: 'share_clinical' },
-  { feature: 'Historial médico', free: '6 meses', premium: 'Completo', key: 'medical_history' },
+  { feature: 'Ficha clínica', free: '6 meses', premium: 'Completa', key: 'medical_history' },
   { feature: 'Resumen semanal IA', free: false, premium: true, key: 'weekly_summary' },
   { feature: 'Asistente veterinario IA', free: false, premium: true, key: 'ai_vet_assistant' },
   { feature: 'Sin publicidad', free: false, premium: true, key: 'ad_free' },

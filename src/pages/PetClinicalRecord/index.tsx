@@ -52,6 +52,7 @@ import { TabAlimentacion } from './tabs/TabAlimentacion';
 import { TabDocumentos } from './tabs/TabDocumentos';
 import { TabCompartir } from './tabs/TabCompartir';
 import { TabVacunas } from './tabs/TabVacunas';
+import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import { generatePDF } from './pdf';
 import { PageHeader } from '@/components/PageHeader';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
@@ -419,6 +420,9 @@ const PetClinicalRecord = () => {
             <TabCompartir petId={pet.id} petName={pet.name} />
           </TabsContent>
         </Tabs>
+
+        {/* Tutorial floating button */}
+        <ViewTutorial {...TUTORIALS.fichaClinical} />
 
         {/* Memorial entry point */}
         {pet.lifecycle_status !== 'memorial' && (

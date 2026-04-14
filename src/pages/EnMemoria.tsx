@@ -100,8 +100,8 @@ export default function EnMemoria() {
           despedida desde la ficha clínica de tu mascota.
         </p>
         <p className="text-sm text-muted-foreground max-w-md mx-auto">
-          Su historial médico se conservará para siempre y los recordatorios pendientes se
-          cancelarán automáticamente.
+          Su ficha clínica se conservará para siempre y los recordatorios pendientes se cancelarán
+          automáticamente.
         </p>
       </div>
     );

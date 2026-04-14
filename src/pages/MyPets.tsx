@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import { LINKS } from '@/lib/links';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -508,6 +509,7 @@ const MyPets = () => {
         petId={sharePetId || ''}
         petName={pets.find((p) => p.id === sharePetId)?.name || 'tu mascota'}
       />
+      <ViewTutorial {...TUTORIALS.myPets} />
     </div>
   );
 };

@@ -1,6 +1,7 @@
 import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 import { Card, CardContent } from '@/components/ui/card';
 import { TrendingUp, TrendingDown } from '@/lib/icons';
+import { InfoTooltip } from '@/components/InfoTooltip';
 
 interface InteractiveMetricCardProps {
   label: string;
@@ -12,6 +13,8 @@ interface InteractiveMetricCardProps {
   sparklineData?: number[];
   onClick?: () => void;
   accentColor?: string;
+  tooltip?: string;
+  tooltipWhere?: string;
 }
 
 export function InteractiveMetricCard({
@@ -24,6 +27,8 @@ export function InteractiveMetricCard({
   sparklineData,
   onClick,
   accentColor = '#9333ea',
+  tooltip,
+  tooltipWhere,
 }: InteractiveMetricCardProps) {
   const hasTrend = trend !== undefined && trend !== 0;
   const isPositive = (trend ?? 0) >= 0;
@@ -35,8 +40,9 @@ export function InteractiveMetricCard({
     >
       <CardContent className="p-3 space-y-1">
         <div className="flex items-center justify-between">
-          <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground">
+          <span className="text-[10px] uppercase tracking-wider font-medium text-muted-foreground flex items-center gap-1">
             {label}
+            {tooltip && <InfoTooltip text={tooltip} where={tooltipWhere} />}
           </span>
           <Icon className={`h-3.5 w-3.5 ${iconColor}`} />
         </div>
