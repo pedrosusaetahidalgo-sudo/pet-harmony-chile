@@ -80,7 +80,11 @@ function GroupList() {
             <Card
               key={group.id}
               className="hover:shadow-md transition-shadow cursor-pointer"
-              onClick={() => isMember && navigate(`/comunidad/${group.slug}`)}
+              onClick={() => {
+                if (isMember) {
+                  navigate(`/comunidad/${group.slug}`);
+                }
+              }}
             >
               <CardContent className="py-4 flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center shrink-0">
@@ -105,7 +109,13 @@ function GroupList() {
                   variant={isMember ? "outline" : "default"}
                   onClick={(e) => {
                     e.stopPropagation();
-                    isMember ? leaveGroup.mutate(group.id) : joinGroup.mutate(group.id);
+                    if (isMember) {
+                      leaveGroup.mutate(group.id);
+                    } else {
+                      joinGroup.mutate(group.id, {
+                        onSuccess: () => navigate(`/comunidad/${group.slug}`),
+                      });
+                    }
                   }}
                   disabled={joinGroup.isPending || leaveGroup.isPending}
                   className="shrink-0"

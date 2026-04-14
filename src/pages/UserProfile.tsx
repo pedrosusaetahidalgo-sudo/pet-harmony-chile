@@ -135,7 +135,7 @@ const UserProfile = () => {
 
       const { data: statsData } = await supabase
         .from('user_stats')
-        .select('total_points, level, total_posts, total_reviews')
+        .select('total_points, level, total_posts, total_reviews, followers_count, following_count')
         .eq('user_id', userId)
         .maybeSingle();
 

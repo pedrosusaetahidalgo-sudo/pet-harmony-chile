@@ -55,6 +55,7 @@ export default function OnboardingVetMinimal() {
   const [commune, setCommune] = useState('');
   const [communeOpen, setCommuneOpen] = useState(false);
   const [specialties, setSpecialties] = useState<string[]>([]);
+  const [providerType, setProviderType] = useState<'individual' | 'clinic' | 'home_visit'>('individual');
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
@@ -108,7 +109,7 @@ export default function OnboardingVetMinimal() {
         commune: commune || null,
         specialties: specialties.length > 0 ? specialties : null,
         avatar_url: avatarUrl,
-        provider_type: 'individual' as const,
+        provider_type: providerType,
         provider_plan: 'provider_free',
         is_directory_visible: false,
         status: 'pending',
@@ -258,6 +259,31 @@ export default function OnboardingVetMinimal() {
                     </Command>
                   </PopoverContent>
                 </Popover>
+              </div>
+
+              {/* Provider type */}
+              <div>
+                <Label className="mb-2 block">Tipo de perfil</Label>
+                <div className="flex gap-2">
+                  {([
+                    { value: 'individual' as const, label: 'Veterinario independiente' },
+                    { value: 'clinic' as const, label: 'Clínica / Centro veterinario' },
+                    { value: 'home_visit' as const, label: 'Visitas a domicilio' },
+                  ]).map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setProviderType(opt.value)}
+                      className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium border transition-colors ${
+                        providerType === opt.value
+                          ? 'bg-purple-600 text-white border-purple-600'
+                          : 'bg-white text-slate-700 border-slate-300 hover:border-purple-400'
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Specialties multi-select */}

@@ -30,7 +30,7 @@ export default function Reportes() {
   }
 
   // periodic_reports es tabla nueva — no está en los types generados aún
-  const { data: reports, isLoading } = useQuery({
+  const { data: reports, isLoading, refetch } = useQuery({
     queryKey: ["all-reports", user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
@@ -50,6 +50,7 @@ export default function Reportes() {
       .from("periodic_reports")
       .update({ viewed_at: new Date().toISOString() })
       .eq("id", reportId);
+    refetch();
   };
 
   if (isLoading) {

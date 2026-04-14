@@ -26,7 +26,7 @@ export interface VetClinicalNote {
 }
 
 interface CreateNoteArgs {
-  shareTokenId: string;
+  shareTokenId?: string | null;
   providerId: string;
   petId: string;
   noteType: VetNoteType;
@@ -107,7 +107,7 @@ export function useCreateVetClinicalNote() {
       const { data, error } = await sb
         .from('vet_clinical_notes')
         .insert({
-          share_token_id: args.shareTokenId,
+          share_token_id: args.shareTokenId || null,
           provider_id: args.providerId,
           pet_id: args.petId,
           note_type: args.noteType,

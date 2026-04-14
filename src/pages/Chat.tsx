@@ -6,7 +6,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -18,6 +18,8 @@ import { logger } from '@/lib/logger';
 const Chat = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const { startConversation: startConvo } = useStartConversation();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [conversations, setConversations] = useState<any[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -34,6 +36,14 @@ const Chat = () => {
       loadFollowedUsers();
     }
   }, [user]);
+
+  // Handle ?user= query param to auto-open conversation
+  useEffect(() => {
+    const targetUserId = searchParams.get('user');
+    if (targetUserId && user && targetUserId !== user.id) {
+      startConvo(targetUserId);
+    }
+  }, [searchParams, user]);
 
   // Realtime filtrada por conversaciones del usuario
   useEffect(() => {

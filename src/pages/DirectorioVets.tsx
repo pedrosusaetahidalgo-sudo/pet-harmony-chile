@@ -279,7 +279,7 @@ export default function DirectorioVets() {
         {/* Link al comparador completo */}
         <div className="text-center">
           <Link
-            to={comuna !== 'all' ? `/precios-veterinarios` : '/precios-veterinarios'}
+            to={comuna !== 'all' ? `/precios-veterinarios/comuna/${comuna}` : '/precios-veterinarios'}
             className="text-sm text-purple-600 hover:text-purple-700 font-medium hover:underline"
           >
             Ver comparador de precios por comuna →

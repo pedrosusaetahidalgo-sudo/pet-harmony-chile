@@ -22,7 +22,7 @@ import ConsultationTemplateSelector from "./ConsultationTemplateSelector";
 import SaveTemplateButton from "./SaveTemplateButton";
 
 interface VetNoteEditorProps {
-  shareTokenId: string;
+  shareTokenId?: string | null;
   providerId: string;
   petId: string;
   petName: string;
@@ -50,6 +50,9 @@ export function VetNoteEditor({
   const [description, setDescription] = useState("");
   const [alternativeOffered, setAlternativeOffered] = useState(false);
   const [alternativesDiscussed, setAlternativesDiscussed] = useState("");
+  const [followupRequired, setFollowupRequired] = useState(false);
+  const [followupDate, setFollowupDate] = useState("");
+  const [followupReason, setFollowupReason] = useState("");
 
   const createNote = useCreateVetClinicalNote();
 
@@ -60,7 +63,7 @@ export function VetNoteEditor({
     }
 
     await createNote.mutateAsync({
-      shareTokenId,
+      shareTokenId: shareTokenId || null,
       providerId,
       petId,
       noteType,
@@ -68,6 +71,9 @@ export function VetNoteEditor({
       description: description.trim() || undefined,
       alternativeOffered,
       alternativesDiscussed: alternativeOffered ? alternativesDiscussed.trim() || undefined : undefined,
+      followupRequired,
+      followupDate: followupRequired ? followupDate || undefined : undefined,
+      followupReason: followupRequired ? followupReason.trim() || undefined : undefined,
     });
 
     toast.success(`Nota guardada en la ficha de ${petName}`);
@@ -76,6 +82,9 @@ export function VetNoteEditor({
     setNoteType("consulta");
     setAlternativeOffered(false);
     setAlternativesDiscussed("");
+    setFollowupRequired(false);
+    setFollowupDate("");
+    setFollowupReason("");
     onSaved?.();
   };
 
@@ -160,6 +169,43 @@ export function VetNoteEditor({
               placeholder="Describe la alternativa que le ofreciste al tutor..."
               rows={2}
             />
+          )}
+        </div>
+
+        {/* Followup */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="followup-required"
+              checked={followupRequired}
+              onCheckedChange={(v) => setFollowupRequired(v === true)}
+            />
+            <Label htmlFor="followup-required" className="text-xs cursor-pointer">
+              Requiere seguimiento
+            </Label>
+          </div>
+          {followupRequired && (
+            <div className="space-y-2 pl-6">
+              <div className="space-y-1">
+                <Label className="text-xs">Fecha de seguimiento</Label>
+                <Input
+                  type="date"
+                  value={followupDate}
+                  onChange={(e) => setFollowupDate(e.target.value)}
+                  min={new Date().toISOString().split('T')[0]}
+                  className="h-9"
+                />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs">Motivo del seguimiento</Label>
+                <Input
+                  value={followupReason}
+                  onChange={(e) => setFollowupReason(e.target.value)}
+                  placeholder="Ej: Control post-operatorio, revisar exámenes..."
+                  className="h-9"
+                />
+              </div>
+            </div>
           )}
         </div>
 

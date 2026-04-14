@@ -129,9 +129,9 @@ export const PawShopRewards = ({ userPoints, userId, onPurchase }: PawShopReward
       if (pointsError) throw pointsError;
 
       toast.success("¡Premio canjeado! 🎉", {
-        description: reward.category === 'donation' 
+        description: reward.category === 'donation'
           ? "Tu donación ayudará a refugios aliados"
-          : "Revisa tu email para más detalles"
+          : "Puedes ver tus canjes en tu perfil"
       });
 
       onPurchase();

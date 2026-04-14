@@ -333,7 +333,7 @@ export const Header = () => {
                     variant="ghost"
                     size="sm"
                     className="w-full text-xs"
-                    onClick={() => navigate('/settings')}
+                    onClick={() => navigate('/profile')}
                   >
                     Configurar notificaciones
                   </Button>

@@ -345,15 +345,41 @@ export default function MedicalShare() {
             <Share2 className="h-4 w-4 mr-2" />
             Compartir por WhatsApp
           </Button>
-          <Button variant="outline" className="flex-1" asChild>
-            <a
-              href={`${window.location.origin}/api/medical-pdf/${pet.id}?token=${token}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Descargar PDF
-            </a>
+          <Button
+            variant="outline"
+            className="flex-1"
+            onClick={async () => {
+              try {
+                const { data: fnData, error: fnErr } = await supabase.functions.invoke(
+                  'generate-medical-summary',
+                  { body: { pet_id: pet.id, token } }
+                );
+                if (fnErr) throw fnErr;
+                const pdfUrl = fnData?.pdf_url || fnData?.url;
+                if (pdfUrl) {
+                  window.open(pdfUrl, '_blank');
+                } else if (fnData?.pdf_base64) {
+                  const byteChars = atob(fnData.pdf_base64);
+                  const byteArray = new Uint8Array(byteChars.length);
+                  for (let i = 0; i < byteChars.length; i++) byteArray[i] = byteChars.charCodeAt(i);
+                  const blob = new Blob([byteArray], { type: 'application/pdf' });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `ficha-${pet.name || 'mascota'}.pdf`;
+                  a.click();
+                  URL.revokeObjectURL(url);
+                } else {
+                  throw new Error('No se pudo generar el PDF');
+                }
+              } catch {
+                // Fallback: open the shared page for printing
+                window.print();
+              }
+            }}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Descargar PDF
           </Button>
         </div>
 

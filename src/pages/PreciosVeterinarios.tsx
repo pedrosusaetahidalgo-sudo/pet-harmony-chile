@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/select';
 import PriceEstimatorWidget from '@/components/PriceEstimatorWidget';
 import { PublicHeader, PublicFooter } from '@/pages/DirectorioVets';
+import { useAuth } from '@/hooks/useAuth';
 import {
   SANTIAGO_COMUNAS,
   setSeoTags,
@@ -70,9 +71,11 @@ export default function PreciosVeterinarios() {
     },
   ];
 
+  const { user } = useAuth();
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
-      <PublicHeader />
+      {!user && <PublicHeader />}
 
       <main className="container mx-auto px-4 py-8 max-w-5xl">
         <div className="text-center mb-8">
@@ -165,7 +168,7 @@ export default function PreciosVeterinarios() {
         </Card>
       </main>
 
-      <PublicFooter />
+      {!user && <PublicFooter />}
     </div>
   );
 }

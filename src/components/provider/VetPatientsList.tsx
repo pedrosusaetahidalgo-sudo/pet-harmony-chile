@@ -143,7 +143,7 @@ export function VetPatientsList() {
           .from('vet_clinical_notes') as any
       )
         .select('pet_id, created_at, pets(name, species, photo_url, owner_id)')
-        .eq('provider_id', user.id)
+        .eq('provider_id', providerRow?.id || user.id)
         .order('created_at', { ascending: false })
         .limit(100);
 

@@ -22,10 +22,13 @@ interface RoleGuardProps {
 }
 
 export function RoleGuard({ requiredRole, children, fallback = '/home' }: RoleGuardProps) {
-  const { role, isProvider, setRole } = useActiveRole();
+  const { role, isProvider, isProviderLoading, setRole } = useActiveRole();
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Don't evaluate until the provider query has resolved
+    if (isProviderLoading) return;
+
     if (requiredRole === 'provider' && !isProvider) {
       toast.info('No tienes un perfil profesional');
       navigate(fallback, { replace: true });
@@ -40,7 +43,12 @@ export function RoleGuard({ requiredRole, children, fallback = '/home' }: RoleGu
     if (requiredRole === 'owner' && role !== 'owner') {
       setRole('owner');
     }
-  }, [requiredRole, isProvider, role, setRole, navigate, fallback]);
+  }, [requiredRole, isProvider, isProviderLoading, role, setRole, navigate, fallback]);
+
+  // While still loading, show nothing (prevents flash-redirect)
+  if (isProviderLoading) {
+    return null;
+  }
 
   // Block render if user isn't a provider but tries to access provider routes
   if (requiredRole === 'provider' && !isProvider) {

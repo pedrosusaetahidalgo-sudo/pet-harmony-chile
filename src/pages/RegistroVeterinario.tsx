@@ -614,7 +614,7 @@ function StepDone({ slug }: { slug?: string }) {
       )}
 
       <Badge variant="secondary" className="text-xs">
-        Plan Gratis · 3 meses para empezar
+        Plan Gratis
       </Badge>
 
       <div className="flex flex-col gap-2 pt-4">

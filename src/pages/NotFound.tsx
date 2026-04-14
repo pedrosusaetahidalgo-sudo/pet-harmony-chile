@@ -40,7 +40,7 @@ const NotFound = () => {
           <Button asChild size="lg" variant="outline">
             <Link to="/my-pets">
               <PawPrint className="mr-2 h-4 w-4" />
-              My Paws
+              Mis mascotas
             </Link>
           </Button>
         </div>

@@ -26,6 +26,9 @@ const Auth = () => {
   const [confirmationSent, setConfirmationSent] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [showEmailPassword, setShowEmailPassword] = useState(false);
+  const [isPasswordReset, setIsPasswordReset] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const returnTo = searchParams.get("returnTo");
@@ -33,6 +36,17 @@ const Auth = () => {
   const { signInWithFacebook, loading: facebookLoading } = useFacebookAuth();
   const hasRedirected = useRef(false);
   useScrollOnFocus();
+
+  // Detect PASSWORD_RECOVERY event from Supabase reset link
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setIsPasswordReset(true);
+        hasRedirected.current = true; // prevent auto-redirect
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Si el usuario ya está logueado, no tiene sentido mostrar el form de auth
   useEffect(() => {
@@ -44,70 +58,7 @@ const Auth = () => {
     });
   }, [navigate, returnTo]);
 
-  // Redirect post-login:
-  //   1. Si vino con ?returnTo=... → ahí
-  //   2. Si es provider (vet/groomer) → /provider/dashboard
-  //   3. Si tiene mascotas → /home
-  //   4. Si no tiene mascotas → /add-pet (onboarding)
-  //
-  // NOTA: las queries van envueltas en try/catch y con timeout porque si RLS
-  // o la red fallan, antes la función quedaba colgada y el usuario nunca se
-  // movía de /auth (bug detectado en mobile simulator + browser PC).
-  const redirectUser = async (userId: string) => {
-    if (hasRedirected.current) return;
-
-    if (returnTo) {
-      hasRedirected.current = true;
-      navigate(returnTo);
-      return;
-    }
-
-    // Helper: timeout para queries que podrían colgarse
-    const withTimeout = <T,>(p: Promise<T>, ms = 2500): Promise<T | null> =>
-      Promise.race<T | null>([
-        p,
-        new Promise<null>((resolve) => setTimeout(() => resolve(null), ms)),
-      ]);
-
-    // 1. Provider check (vet del directorio) — si falla, asumimos que no es provider
-    let isProvider = false;
-    try {
-      const result = await withTimeout(
-        Promise.resolve(
-          supabase.from("service_providers").select("id").eq("user_id", userId).maybeSingle()
-        )
-      );
-      isProvider = !!result?.data;
-    } catch (err) {
-      logger.warn("[Auth] provider check failed, fallback owner flow:", err);
-    }
-
-    if (hasRedirected.current) return;
-    if (isProvider) {
-      hasRedirected.current = true;
-      navigate("/provider/dashboard");
-      return;
-    }
-
-    // 2. Owner: con o sin mascotas
-    let hasPets = false;
-    try {
-      const result = await withTimeout(
-        Promise.resolve(
-          supabase.from("pets").select("id").eq("owner_id", userId).limit(1)
-        )
-      );
-      hasPets = !!(result?.data && result.data.length > 0);
-    } catch (err) {
-      logger.warn("[Auth] pets check failed, fallback /home:", err);
-    }
-
-    if (hasRedirected.current) return;
-    hasRedirected.current = true;
-    // Fallback final: si todo falla, mandar a /home (es seguro, ProtectedRoute
-    // lo deja pasar si hay sesión).
-    navigate(hasPets ? "/home" : "/add-pet");
-  };
+  // redirectUser was removed — all auth redirects now use onAuthStateChange with window.location.href
 
   useEffect(() => {
     const hasOAuthHash =
@@ -346,6 +297,84 @@ const Auth = () => {
       logger.error('Facebook login error:', result.error);
     }
   };
+
+  // Handle password update
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newPassword.length < 6) {
+      toast({ title: "Contraseña muy corta", description: "Mínimo 6 caracteres.", variant: "destructive" });
+      return;
+    }
+    if (newPassword !== newPasswordConfirm) {
+      toast({ title: "Las contraseñas no coinciden", description: "Verifica que ambas sean iguales.", variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) throw error;
+      toast({ title: "Contraseña actualizada", description: "Ya puedes usar tu nueva contraseña." });
+      setIsPasswordReset(false);
+      hasRedirected.current = false;
+      navigate("/home", { replace: true });
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message || "No se pudo actualizar la contraseña.", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Show password reset form (user arrived via Supabase reset email link)
+  if (isPasswordReset) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-primary/5 to-background p-4">
+        <Card className="w-full max-w-md">
+          <CardHeader className="space-y-1 flex flex-col items-center">
+            <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mb-4">
+              <Shield className="w-8 h-8 text-white" />
+            </div>
+            <CardTitle className="text-2xl font-bold text-center">Nueva contraseña</CardTitle>
+            <CardDescription className="text-center text-base">
+              Ingresa tu nueva contraseña para restablecer el acceso a tu cuenta.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleUpdatePassword} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="new-password">Nueva contraseña</Label>
+                <Input
+                  id="new-password"
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="••••••••"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  minLength={6}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="confirm-password">Confirmar contraseña</Label>
+                <Input
+                  id="confirm-password"
+                  type="password"
+                  autoComplete="new-password"
+                  placeholder="••••••••"
+                  value={newPasswordConfirm}
+                  onChange={(e) => setNewPasswordConfirm(e.target.value)}
+                  required
+                  minLength={6}
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? "Actualizando..." : "Actualizar contraseña"}
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   // Show magic link sent screen
   if (magicLinkSent) {

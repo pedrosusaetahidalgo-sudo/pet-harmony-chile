@@ -213,7 +213,7 @@ const Maps = () => {
   const { shelters: adoptionShelters } = useAdoptionShelters();
   const { partners } = usePartners();
 
-  // Pet Friendly starter places (will be replaced by DB table in future)
+  // Pet Friendly starter places — datos curados manualmente, no de DB aún
   const petFriendlyPlaces = useMemo(
     () => [
       {
@@ -353,12 +353,10 @@ const Maps = () => {
             if (filters.petSize !== 'all' && post.size !== filters.petSize) return false;
             return true;
           })
+          .filter((post) => post.latitude && post.longitude)
           .map((post) => ({
             id: post.id,
-            position: [
-              SANTIAGO_CENTER[0] + (Math.random() - 0.5) * 0.1,
-              SANTIAGO_CENTER[1] + (Math.random() - 0.5) * 0.1,
-            ] as [number, number],
+            position: [post.latitude, post.longitude] as [number, number],
             type: 'adoption',
             data: post,
           }));
@@ -809,6 +807,9 @@ const Maps = () => {
           <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-sm text-xs text-muted-foreground">
             <MapPin className="h-3.5 w-3.5" />
             <span>{filteredMarkers.length} resultados</span>
+            {activeView === 'petFriendly' && (
+              <span className="text-amber-600 ml-1">· Datos curados</span>
+            )}
           </div>
         </div>
 

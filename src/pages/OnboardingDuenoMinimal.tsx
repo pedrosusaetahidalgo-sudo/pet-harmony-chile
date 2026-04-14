@@ -129,9 +129,12 @@ const OnboardingDuenoMinimal = () => {
       });
       if (error) throw error;
 
-      // Update profile with location if provided
-      if (comuna) {
-        await supabase.from('profiles').update({ location: comuna }).eq('id', user.id);
+      // Update profile with location and interests if provided
+      const profileUpdate: Record<string, unknown> = {};
+      if (comuna) profileUpdate.location = comuna;
+      if (selectedInterests.length > 0) profileUpdate.interests = selectedInterests;
+      if (Object.keys(profileUpdate).length > 0) {
+        await supabase.from('profiles').update(profileUpdate).eq('id', user.id);
       }
 
       const completeness =

@@ -23,6 +23,8 @@ export interface ProviderProfileForm {
   public_email: string | null;
   public_phone: string | null;
   is_directory_visible: boolean;
+  clinic_name?: string | null;
+  address?: string | null;
 }
 
 export function useMyProvider() {
@@ -72,6 +74,8 @@ export function useUpsertProviderProfile() {
         public_email: form.public_email?.trim() || null,
         public_phone: form.public_phone?.trim() || null,
         is_directory_visible: form.is_directory_visible,
+        ...(form.clinic_name !== undefined && { clinic_name: form.clinic_name?.trim() || null }),
+        ...(form.address !== undefined && { address: form.address?.trim() || null }),
       };
 
       const { data, error } = await sb

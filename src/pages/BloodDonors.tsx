@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -70,6 +71,7 @@ function isDonorEligible(pet: DonorPet): { eligible: boolean; reason?: string } 
 
 export default function BloodDonors() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const { startConversation } = useStartConversation();
   const [speciesFilter, setSpeciesFilter] = useState<string>('all');
   const [bloodTypeFilter, setBloodTypeFilter] = useState<string>('all');
@@ -223,9 +225,12 @@ export default function BloodDonors() {
           <CardContent className="py-12 text-center">
             <Droplets className="h-12 w-12 text-red-200 mx-auto mb-3" />
             <p className="text-muted-foreground font-medium">No se encontraron donantes</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Registra el tipo de sangre de tu mascota en su ficha para aparecer aquí
+            <p className="text-xs text-muted-foreground mt-1 mb-3">
+              Registra el tipo de sangre de tu mascota en su ficha clínica para aparecer aquí.
             </p>
+            <Button variant="outline" size="sm" onClick={() => navigate('/my-pets')}>
+              Ir a mis mascotas
+            </Button>
           </CardContent>
         </Card>
       ) : (

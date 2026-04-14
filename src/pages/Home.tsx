@@ -24,7 +24,6 @@ import {
   Smartphone,
   Link2,
   Gamepad2,
-  Flame,
   Trophy,
   Star,
   Phone,

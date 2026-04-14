@@ -26,7 +26,7 @@ const PrivacyPolicy = () => {
         <Card>
           <CardHeader>
             <CardTitle className="text-3xl">Política de Privacidad</CardTitle>
-            <p className="text-muted-foreground">Última actualización: {new Date().toLocaleDateString('es-CL')}</p>
+            <p className="text-muted-foreground">Última actualización: 14 de abril de 2026</p>
           </CardHeader>
           <CardContent className="space-y-6">
             <section>

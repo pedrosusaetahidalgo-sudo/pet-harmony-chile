@@ -118,6 +118,32 @@ const PetClinicalRecord = () => {
     enabled: !!petId && !authLoading,
   });
 
+  // Check if user is a linked vet (must be called before any early returns — Rules of Hooks)
+  const isOwner = !!pet && pet.owner_id === user?.id;
+  const { data: vetAccess, isLoading: vetAccessLoading } = useQuery({
+    queryKey: ['vet-access-check', petId, user?.id],
+    queryFn: async () => {
+      if (!user?.id || !petId) return false;
+      const { data: provider } = await supabase
+        .from('service_providers')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (!provider?.id) return false;
+      const { data: link } = await supabase
+        .from('pet_vet_links')
+        .select('id')
+        .eq('pet_id', petId)
+        .eq('provider_id', provider.id)
+        .eq('status', 'active')
+        .maybeSingle();
+      return !!link;
+    },
+    enabled: !isOwner && !!user?.id && !!petId && !!pet,
+    staleTime: 5 * 60 * 1000,
+  });
+  const isLinkedVet = vetAccess === true;
+
   if (authLoading || petLoading) {
     return <ClinicalRecordSkeleton />;
   }
@@ -146,13 +172,17 @@ const PetClinicalRecord = () => {
     );
   }
 
-  if (pet.owner_id !== user?.id) {
+  if (vetAccessLoading && !isOwner) {
+    return <ClinicalRecordSkeleton />;
+  }
+
+  if (!isOwner && !isLinkedVet) {
     return (
       <div className="container max-w-4xl mx-auto p-4 md:p-6">
         <EmptyState
           icon={Shield}
           title="Acceso restringido"
-          description="Solo el dueño de la mascota puede ver su ficha clínica."
+          description="Solo el dueño o un veterinario vinculado puede ver esta ficha clínica."
         />
       </div>
     );

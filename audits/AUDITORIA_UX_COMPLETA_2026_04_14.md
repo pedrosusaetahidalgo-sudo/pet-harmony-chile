@@ -3,16 +3,17 @@
 > Fecha: 2026-04-14
 > Alcance: Todas las páginas, features, navegación, hooks e infraestructura core
 > Método: Revisión estática de código, análisis de handlers, flujos de navegación y estados UI
+> **Estado: EJECUTADA** — Todos los CRITICAL, HIGH y la mayoría de MEDIUM fueron corregidos el mismo día.
 
 ---
 
 ## Resumen ejecutivo
 
-| Severidad | Cantidad | Descripción |
-|---|---|---|
-| CRITICAL | 4 | Features rotas o completamente inoperantes |
-| HIGH | 14 | Bugs que afectan flujos importantes o datos incorrectos |
-| MEDIUM | 28 | Problemas UX notables, estados faltantes, inconsistencias |
+| Severidad | Encontrados | Corregidos | Descripción |
+|---|---|---|---|
+| CRITICAL | 4 | 4 | Features rotas o completamente inoperantes |
+| HIGH | 14 | 13 | Bugs que afectan flujos importantes o datos incorrectos |
+| MEDIUM | 28 | 18 | Problemas UX notables, estados faltantes, inconsistencias |
 | LOW | 35+ | Código muerto, imports sin usar, pulido menor |
 
 **Total de páginas auditadas: 45+**
@@ -348,3 +349,43 @@
 - **Joya de la corona protegida:** PetClinicalRecord (la ficha clínica) está sólida. Todos los tabs, botones y dialogs funcionan. Los únicos issues son la confusión de los dos botones PDF (M9) y el reminder sin feedback de error (M10).
 - **Páginas más sólidas:** MedicalRecords (redirect perfecto), Feed (completo), AddPet (validación excelente), Reminders (funcional), PawCollection (bien implementada).
 - **Páginas que necesitan más trabajo:** MyBookings (identidad confusa), Maps (datos falsos), Auth (flujos incompletos), OnboardingDuenoMinimal (datos perdidos).
+
+---
+
+## Auditoría flujo Provider (segunda pasada — 2026-04-14)
+
+### 3 CRITICAL adicionales encontrados y corregidos
+
+| # | Problema | Fix | Archivos |
+|---|---|---|---|
+| CP1 | **Vet no puede ver ficha de paciente** — `PetClinicalRecord` bloqueaba a cualquiera que no sea `owner_id`, incluyendo vets vinculados. Cada botón "Ver ficha" del CRM era dead-end. | Agregado check de `pet_vet_links.status = 'active'` como acceso alternativo | `PetClinicalRecord/index.tsx` |
+| CP2 | **provider_id inconsistente en vet_clinical_notes** — `SharedFichasCard` insertaba con `service_providers.id` pero `ProviderPatients` y `VetPatientsList` consultaban con `auth.users.id`. Notas desaparecían entre vistas. | Normalizado todas las queries a usar `service_providers.id` | `ProviderPatients.tsx`, `VetPatientsList.tsx` |
+| CP3 | **Notas requieren share_token obligatorio** — Un vet con `pet_vet_link` activo no podía crear notas si el dueño no compartió la ficha. | `share_token_id` ahora nullable. RLS actualizada para permitir notas con link activo. | `useVetClinicalNotes.ts`, `VetNoteEditor.tsx`, nueva migración |
+
+### 3 HIGH adicionales corregidos
+
+| # | Problema | Fix | Archivo |
+|---|---|---|---|
+| HP4 | **VetNoteEditor sin campos de seguimiento** — Solo la ruta de audio transcription podía crear followups. Notas manuales no tenían fecha/motivo de seguimiento. | Agregados checkbox + date + reason fields | `VetNoteEditor.tsx` |
+| HP6 | **OnboardingVetMinimal hardcodea `provider_type: 'individual'`** — Clínicas registradas por este path quedaban tipadas mal. | Selector de tipo (Individual/Clínica/Domicilio) en step 1 | `OnboardingVetMinimal.tsx` |
+| MP8 | **Avatar obligatorio bloquea save** — Un vet sin foto no podía guardar ningún cambio en su perfil. | Ahora solo bloquea si `is_directory_visible = true` | `ProviderProfileEdit.tsx` |
+
+### Migración SQL generada
+
+`supabase/migrations/20260414180000_vet_clinical_notes_share_token_nullable.sql`:
+- `ALTER COLUMN share_token_id DROP NOT NULL`
+- Nueva RLS: vets con `pet_vet_links.status = 'active'` pueden insertar notas sin share token
+- Nueva RLS: vets vinculados pueden ver notas de sus pacientes
+
+**Importante:** Esta migración debe aplicarse manualmente desde Supabase Dashboard > SQL Editor.
+
+### Flujo Provider corregido end-to-end
+
+1. **Registro** → `RegistroVeterinario` o `OnboardingVetMinimal` (ahora con selector de tipo) ✅
+2. **Perfil** → `ProviderProfileEdit` (ahora permite guardar sin foto) ✅
+3. **Dashboard** → 3 tabs funcionan correctamente ✅
+4. **Pacientes** → CRM con links, notas, shared fichas (provider_id normalizado) ✅
+5. **Ficha clínica** → Vets vinculados pueden ver la ficha del paciente ✅ (antes: bloqueado)
+6. **Crear notas** → Con share token O con pet_vet_link activo ✅ (antes: solo share token)
+7. **Followups** → Disponibles en notas manuales Y audio ✅ (antes: solo audio)
+8. **Sync** → Notas aparecen en `TabHistorial` del dueño vía `useVetClinicalNotesByPet` ✅

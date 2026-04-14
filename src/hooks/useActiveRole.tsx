@@ -11,6 +11,7 @@ type ActiveRole = "owner" | "provider";
 interface ActiveRoleCtx {
   role: ActiveRole;
   isProvider: boolean;
+  isProviderLoading: boolean;
   toggle: () => void;
   setRole: (r: ActiveRole) => void;
 }
@@ -18,6 +19,7 @@ interface ActiveRoleCtx {
 const Ctx = createContext<ActiveRoleCtx>({
   role: "owner",
   isProvider: false,
+  isProviderLoading: true,
   toggle: () => {},
   setRole: () => {},
 });
@@ -26,7 +28,7 @@ export function ActiveRoleProvider({ children }: { children: ReactNode }) {
   const { user } = useAuth();
 
   // Check if user is a provider
-  const { data: isProvider } = useQuery({
+  const { data: isProvider, isLoading: isProviderLoading } = useQuery({
     queryKey: ["is-provider-role", user?.id],
     queryFn: async () => {
       if (!user?.id) return false;
@@ -63,7 +65,7 @@ export function ActiveRoleProvider({ children }: { children: ReactNode }) {
   const toggle = () => setRole(role === "owner" ? "provider" : "owner");
 
   return (
-    <Ctx.Provider value={{ role, isProvider: !!isProvider, toggle, setRole }}>
+    <Ctx.Provider value={{ role, isProvider: !!isProvider, isProviderLoading: !!user?.id && isProviderLoading, toggle, setRole }}>
       {children}
     </Ctx.Provider>
   );

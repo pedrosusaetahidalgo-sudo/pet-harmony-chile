@@ -56,8 +56,8 @@ export function BookingModal({ slot, open, onClose }: Props) {
         pet_id: petId || null,
         provider_id: slot.provider_id,
         service_type: slot.service_type,
-        status: "confirmed",
-        payment_status: "paid",
+        status: "pendiente",
+        payment_status: "pendiente",
         total_price: slot.price,
         notes: notes.trim() || null,
       });

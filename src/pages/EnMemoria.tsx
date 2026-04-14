@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { LINKS } from '@/lib/links';
+import { PageHeader } from '@/components/PageHeader';
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -109,10 +110,7 @@ export default function EnMemoria() {
 
   return (
     <div className="container max-w-4xl mx-auto p-6 space-y-6">
-      <div>
-        <h1 className="text-xl font-semibold text-slate-800">Quienes nos acompañaron</h1>
-        <p className="text-sm text-muted-foreground">Aquí guardamos sus recuerdos</p>
-      </div>
+      <PageHeader title="En memoria" subtitle="Aquí guardamos sus recuerdos" />
 
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
         {memorialPets.map((pet) => (

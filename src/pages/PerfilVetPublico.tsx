@@ -65,11 +65,24 @@ export default function PerfilVetPublico() {
   const [reservaMessage, setReservaMessage] = useState('');
   const [reservaDate, setReservaDate] = useState('');
   const [reservaLoading, setReservaLoading] = useState(false);
+  const [selectedPetId, setSelectedPetId] = useState<string>('');
+  const [userPets, setUserPets] = useState<{ id: string; name: string }[]>([]);
 
-  const handleReservar = () => {
+  const handleReservar = async () => {
     if (!user) {
       navigate(LINKS.authReturn(`/veterinarios/${slug}`));
       return;
+    }
+    // Load user's pets for the selector
+    const { data: pets } = await supabase
+      .from('pets')
+      .select('id, name')
+      .eq('owner_id', user.id)
+      .order('name');
+    const petsList = (pets || []) as { id: string; name: string }[];
+    setUserPets(petsList);
+    if (petsList.length === 1) {
+      setSelectedPetId(petsList[0].id);
     }
     setReservaOpen(true);
   };
@@ -84,16 +97,13 @@ export default function PerfilVetPublico() {
       toast.error('Selecciona una fecha tentativa');
       return;
     }
+    if (!selectedPetId) {
+      toast.error('Selecciona la mascota para esta consulta');
+      return;
+    }
     setReservaLoading(true);
     try {
-      // Buscar la primera mascota del usuario (vet_bookings requiere pet_id)
-      const { data: pets } = await supabase
-        .from('pets')
-        .select('id')
-        .eq('owner_id', user.id)
-        .limit(1);
-
-      if (!pets || pets.length === 0) {
+      if (userPets.length === 0) {
         toast.error('Debes registrar al menos una mascota antes de reservar');
         navigate('/add-pet');
         return;
@@ -121,7 +131,7 @@ export default function PerfilVetPublico() {
       };
       const payload: DirectoryBookingInsert = {
         owner_id: user.id,
-        pet_id: pets[0].id,
+        pet_id: selectedPetId,
         service_provider_id: v.id,
         scheduled_date: new Date(reservaDate).toISOString(),
         service_type: 'consultation',
@@ -469,15 +479,17 @@ export default function PerfilVetPublico() {
           )}
         </Card>
 
-        {/* CTA registro */}
-        <Card className="p-6 bg-purple-50 border-purple-300 text-center">
-          <p className="text-sm mb-3">
-            ¿Eres dueño de mascota? Crea tu cuenta gratis para reservar y dejar reseñas.
-          </p>
-          <Link to="/auth">
-            <Button>Crear cuenta</Button>
-          </Link>
-        </Card>
+        {/* CTA registro — solo para visitantes no logueados */}
+        {!user && (
+          <Card className="p-6 bg-purple-50 border-purple-300 text-center">
+            <p className="text-sm mb-3">
+              ¿Eres dueño de mascota? Crea tu cuenta gratis para reservar y dejar reseñas.
+            </p>
+            <Link to="/auth">
+              <Button>Crear cuenta</Button>
+            </Link>
+          </Card>
+        )}
       </main>
 
       <PublicFooter />
@@ -490,6 +502,26 @@ export default function PerfilVetPublico() {
         description="Cuéntale brevemente qué necesita tu mascota. Le enviaremos tu solicitud y te contactará para coordinar."
       >
         <div className="space-y-3">
+          {/* Pet selector */}
+          {userPets.length > 1 && (
+            <div>
+              <Label htmlFor="reserva-pet">¿Para cuál mascota?</Label>
+              <select
+                id="reserva-pet"
+                value={selectedPetId}
+                onChange={(e) => setSelectedPetId(e.target.value)}
+                className="w-full mt-1 px-3 py-2 border border-input rounded-md text-sm bg-background"
+              >
+                <option value="">Selecciona tu mascota</option>
+                {userPets.map((pet) => (
+                  <option key={pet.id} value={pet.id}>
+                    {pet.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
           <div>
             <Label htmlFor="reserva-date">Fecha y hora tentativa</Label>
             <input

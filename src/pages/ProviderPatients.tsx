@@ -161,11 +161,12 @@ export default function ProviderPatients() {
         }
       }
 
-      // Notas clinicas
+      // Notas clinicas — usar providerId (service_providers.id), no user.id
+      const noteProviderId = providerId || user.id;
       const { data: notes } = await sb
         .from('vet_clinical_notes')
         .select('pet_id, created_at, pets(name, species, breed, photo_url)')
-        .eq('provider_id', user.id)
+        .eq('provider_id', noteProviderId)
         .order('created_at', { ascending: false })
         .limit(200);
 
@@ -440,7 +441,7 @@ export default function ProviderPatients() {
                 <PatientCardWithSessions
                   key={patient.pet_id}
                   patient={patient}
-                  vetUserId={user?.id ?? ''}
+                  vetUserId={providerId ?? user?.id ?? ''}
                   onConsolidado={(id, name) => setConsolidadoPet({ id, name })}
                 />
               ))}
