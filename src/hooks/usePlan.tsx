@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { supabase } from '@/integrations/supabase/client';
 import { PLANS, canAccess, PlanId } from '@/lib/plans';
+import { FEATURE_FLAGS } from '@/lib/featureFlags';
 
 export function usePlan() {
   const { user } = useAuth();
@@ -48,7 +49,7 @@ export function usePlan() {
   return {
     planId: effectivePlanId,
     plan,
-    isPremium: effectivePlanId !== 'free' || isAdmin,
+    isPremium: !FEATURE_FLAGS.USER_PREMIUM || effectivePlanId !== 'free' || isAdmin,
     isAdmin,
     badge: profile?.plan_badge || '',
     expiresAt,

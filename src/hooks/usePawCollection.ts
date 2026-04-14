@@ -19,6 +19,7 @@ export interface CollectedCard {
     pawCardId: string;
   };
   ownerName: string | null;
+  ownerPoints: number;
 }
 
 export interface CollectionStats {
@@ -50,6 +51,14 @@ export function usePawCollection() {
         .eq('lifecycle_status', 'active')
         .order('created_at', { ascending: false });
 
+      // Fetch current user's points for rarity on own cards
+      const { data: myStats } = await supabase
+        .from('user_stats')
+        .select('total_points')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      const myPoints = myStats?.total_points ?? 0;
+
       const ownCards: CollectedCard[] = (ownPets ?? []).map((pet) => ({
         id: `own-${pet.id}`,
         collectedAt: pet.created_at || new Date().toISOString(),
@@ -64,6 +73,7 @@ export function usePawCollection() {
           pawCardId: pet.paw_card_id || '',
         },
         ownerName: null,
+        ownerPoints: myPoints,
       }));
 
       // 2. Fetch collected cards from others (new table, cast needed)
@@ -96,6 +106,15 @@ export function usePawCollection() {
 
       const profileMap = new Map(profiles?.map((p) => [p.id, p.display_name]) ?? []);
 
+      // Fetch owner points for rarity
+      const { data: ownerStats } = await supabase
+        .from('user_stats')
+        .select('user_id, total_points')
+        .in('user_id', ownerIds as string[]);
+      const ownerPointsMap = new Map(
+        (ownerStats || []).map((s: any) => [s.user_id, s.total_points ?? 0])
+      );
+
       const collectedCards: CollectedCard[] = data
         .map((item: any) => {
           const pet = petMap.get(item.pet_id);
@@ -114,6 +133,7 @@ export function usePawCollection() {
               pawCardId: pet.paw_card_id || '',
             },
             ownerName: profileMap.get(pet.owner_id) || null,
+            ownerPoints: ownerPointsMap.get(pet.owner_id) ?? 0,
           };
         })
         .filter(Boolean) as CollectedCard[];

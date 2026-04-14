@@ -1,3 +1,5 @@
+import { FEATURE_FLAGS } from '@/lib/featureFlags';
+
 export type PlanId = 'free' | 'premium';
 
 export interface PlanFeature {
@@ -78,6 +80,10 @@ export function canAccess(
 ): { allowed: boolean; reason?: string; upgradeRequired?: PlanId } {
   // Admin override: todo desbloqueado siempre
   if (isAdmin) return { allowed: true };
+
+  // Pivot médico: USER_PREMIUM=false → todo desbloqueado para todos.
+  // Cuando se reactive premium, eliminar estas líneas.
+  if (!FEATURE_FLAGS.USER_PREMIUM) return { allowed: true };
 
   const plan = PLANS[planId];
   const value = plan.features[feature];

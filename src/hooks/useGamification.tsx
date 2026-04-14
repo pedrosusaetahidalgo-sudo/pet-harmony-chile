@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -75,7 +76,8 @@ export const useGamification = (userId?: string) => {
     staleTime: 2 * 60 * 1000,
   });
 
-  // Get user achievements directly (no FK join)
+  // Get user achievements — schema: id, user_id, mission_id, unlocked_at
+  // Join with paw_missions to get display info
   const { data: achievements } = useQuery({
     queryKey: ['achievements', targetUserId],
     queryFn: async (): Promise<Achievement[]> => {
@@ -83,78 +85,80 @@ export const useGamification = (userId?: string) => {
 
       const { data, error } = await supabase
         .from('user_achievements')
-        .select(
-          'id, achievement_name, achievement_type, achievement_description, points_earned, earned_at'
-        )
+        .select('id, mission_id, unlocked_at')
         .eq('user_id', targetUserId)
-        .order('earned_at', { ascending: false });
+        .order('unlocked_at', { ascending: false });
 
       if (error) throw error;
+      if (!data || data.length === 0) return [];
 
-      return (data || []).map(
-        (row): Achievement => ({
+      // Fetch mission details for display
+      const missionIds = data.map((d: any) => d.mission_id);
+      const { data: missions } = await supabase
+        .from('paw_missions')
+        .select('id, title, description, category, icon, achievement_title')
+        .in('id', missionIds);
+
+      const missionMap = new Map((missions || []).map((m: any) => [m.id, m]));
+
+      return data.map((row: any): Achievement => {
+        const mission = missionMap.get(row.mission_id);
+        return {
           id: row.id,
-          achievement_name: row.achievement_name,
-          achievement_type: row.achievement_type,
-          achievement_description: row.achievement_description,
-          points_earned: row.points_earned,
-          earned_at: row.earned_at,
-          // Aliases consumed by AchievementBadge / Profile UI
-          code: row.achievement_type,
-          name: row.achievement_name,
-          description: row.achievement_description ?? '',
-          unlocked_at: row.earned_at,
-        })
-      );
+          achievement_name: mission?.achievement_title || row.mission_id,
+          achievement_type: mission?.category || 'special',
+          achievement_description: mission?.description || null,
+          points_earned: null,
+          earned_at: row.unlocked_at,
+          code: mission?.category || 'special',
+          name: mission?.achievement_title || row.mission_id,
+          description: mission?.description ?? '',
+          unlocked_at: row.unlocked_at,
+        };
+      });
     },
     enabled: !!targetUserId,
     staleTime: 2 * 60 * 1000,
   });
 
-  // Get active missions from paw_missions + user_mission_progress
+  // Get active missions from paw_missions
+  // Schema: id(TEXT), title, description, category, icon, achievement_title,
+  //         requirement_type, requirement_value(JSONB), sort_order, is_active
   const { data: missions } = useQuery({
     queryKey: ['missions', targetUserId],
     queryFn: async (): Promise<Mission[]> => {
       if (!targetUserId) return [];
 
-      // Get active missions from paw_missions
       const { data: activeMissions, error: missionsError } = await supabase
         .from('paw_missions')
         .select('*')
         .eq('is_active', true)
-        .order('mission_type', { ascending: true });
+        .order('sort_order', { ascending: true });
 
       if (missionsError) throw missionsError;
 
-      // Get user mission progress
-      const { data: userProgress, error: progressError } = await supabase
-        .from('user_mission_progress')
-        .select('*')
+      // Check which missions the user has unlocked
+      const { data: userAchievements } = await supabase
+        .from('user_achievements')
+        .select('mission_id')
         .eq('user_id', targetUserId);
 
-      if (progressError) throw progressError;
+      const unlockedSet = new Set((userAchievements || []).map((a: any) => a.mission_id));
 
-      // Combine missions with progress
-      return (activeMissions || []).map((mission): Mission => {
-        const progress = (userProgress || []).find((up) => up.mission_id === mission.id);
-        const missionType = (
-          ['daily', 'weekly', 'special'].includes(mission.mission_type)
-            ? mission.mission_type
-            : 'special'
-        ) as Mission['mission_type'];
+      return (activeMissions || []).map((mission: any): Mission => {
+        const reqValue = mission.requirement_value || {};
+        const targetCount = reqValue.count || reqValue.distinct_species || reqValue.streak || 1;
         return {
           id: mission.id,
           title: mission.title,
           description: mission.description,
-          mission_type: missionType,
-          target_action: mission.target_action,
-          target_count: mission.target_count,
-          points_reward: mission.points_reward,
+          mission_type: 'special',
+          target_action: mission.requirement_type,
+          target_count: targetCount,
+          points_reward: 0,
           category: mission.category,
-          progress: progress?.current_progress || 0,
-          completed: progress?.is_completed || false,
-          expires_at: progress?.expires_at || undefined,
-          // Alias consumed by MissionCard
+          progress: 0,
+          completed: unlockedSet.has(mission.id),
           name: mission.title,
         };
       });

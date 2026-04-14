@@ -81,14 +81,8 @@ serve(async (req) => {
       });
     }
 
-    // Fetch user plan to differentiate limits
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('is_premium')
-      .eq('id', userId)
-      .maybeSingle();
-    const isPremium = profile?.is_premium === true;
-    const dailyLimit = isPremium ? 5 : 1;
+    // Pivot médico: todos usan límite premium. Reactivar check cuando USER_PREMIUM=true.
+    const dailyLimit = 5;
 
     // Rate limiting: free = 1/day, premium = 5/day
     const today = new Date().toISOString().split('T')[0];
@@ -242,10 +236,14 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
     if (!claudeResponse.ok) {
       const errorBody = await claudeResponse.text();
       console.error('[pet-assistant] Claude API error:', claudeResponse.status, errorBody);
-      const hint = claudeResponse.status === 401 ? ' (API key inválida)'
-        : claudeResponse.status === 400 ? ' (request inválido)'
-        : claudeResponse.status === 403 ? ' (sin acceso al modelo)'
-        : '';
+      const hint =
+        claudeResponse.status === 401
+          ? ' (API key inválida)'
+          : claudeResponse.status === 400
+            ? ' (request inválido)'
+            : claudeResponse.status === 403
+              ? ' (sin acceso al modelo)'
+              : '';
       return new Response(
         JSON.stringify({
           error: `Servicio de IA temporalmente no disponible${hint}. Intenta de nuevo.`,

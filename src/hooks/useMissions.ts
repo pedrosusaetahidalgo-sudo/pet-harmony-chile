@@ -57,6 +57,8 @@ export function useMissions() {
         .eq('owner_id', user.id)
         .eq('lifecycle_status', 'active');
 
+      const ownPetIds = (ownPets || []).map((p) => p.id);
+
       const { data: collected } = (await (
         supabase.from('paw_card_collections' as any).select('pet_id') as any
       ).eq('collector_id', user.id)) as { data: any[] | null };
@@ -64,20 +66,62 @@ export function useMissions() {
       const collectedPetIds = (collected || []).map((c: any) => c.pet_id);
       const totalCollected = collectedPetIds.length;
 
-      // Get species for collected pets
+      // Get species + owner_id for collected pets
       let collectedSpecies: string[] = [];
+      let collectedPets: { id: string; species: string; owner_id: string }[] = [];
       if (collectedPetIds.length > 0) {
-        const { data: collPets } = (await (supabase.from('pets').select('id, species') as any).in(
-          'id',
-          collectedPetIds
-        )) as { data: any[] | null };
-        collectedSpecies = (collPets || []).map((p: any) => (p.species || '').toLowerCase());
+        const { data: collPets } = (await (
+          supabase.from('pets').select('id, species, owner_id') as any
+        ).in('id', collectedPetIds)) as { data: any[] | null };
+        collectedPets = (collPets || []) as typeof collectedPets;
+        collectedSpecies = collectedPets.map((p) => (p.species || '').toLowerCase());
       }
 
       // All species (own + collected)
       const ownSpecies = (ownPets || []).map((p) => (p.species || '').toLowerCase());
       const allSpecies = [...ownSpecies, ...collectedSpecies];
       const distinctSpecies = new Set(allSpecies);
+
+      // Fetch owner points for rarity computation
+      const allOwnerIds = [...new Set(collectedPets.map((p) => p.owner_id))];
+      let ownerPointsMap = new Map<string, number>();
+      if (allOwnerIds.length > 0) {
+        const { data: ownerStats } = await supabase
+          .from('user_stats')
+          .select('user_id, total_points')
+          .in('user_id', allOwnerIds);
+        ownerPointsMap = new Map(
+          (ownerStats || []).map((s: any) => [s.user_id, s.total_points ?? 0])
+        );
+      }
+
+      // Compute rarities for collected pets
+      const rarityThresholds = (score: number): string => {
+        if (score >= 95) return 'mythic';
+        if (score >= 80) return 'legendary';
+        if (score >= 60) return 'epic';
+        if (score >= 40) return 'rare';
+        if (score >= 20) return 'uncommon';
+        return 'common';
+      };
+      const collectedRarities = collectedPets.map((p) =>
+        rarityThresholds(ownerPointsMap.get(p.owner_id) ?? 0)
+      );
+      const distinctRarities = new Set(collectedRarities);
+
+      // Count how many times user's pets were collected by others
+      let beCollectedCount = 0;
+      if (ownPetIds.length > 0) {
+        const { count } = (await (
+          supabase
+            .from('paw_card_collections' as any)
+            .select('id', { count: 'exact', head: true }) as any
+        ).in('pet_id', ownPetIds)) as { count: number | null };
+        beCollectedCount = count ?? 0;
+      }
+
+      // Count distinct owners from collected pets
+      const distinctOwners = new Set(collectedPets.map((p) => p.owner_id));
 
       // 4. Compute progress for each mission
       return missions.map((m: any): MissionProgress => {
@@ -107,27 +151,36 @@ export function useMissions() {
             current = distinctSpecies.size;
             break;
 
-          case 'collect_rarity':
-            // TODO: compute from paw_points / rarity data
+          case 'collect_rarity': {
             target = req.count || 1;
-            current = 0;
+            const targetRarity = (req.rarity || '').toLowerCase();
+            current = collectedRarities.filter((r) => r === targetRarity).length;
             break;
+          }
 
-          case 'collect_all_rarities':
-            target = (req.rarities || []).length;
-            current = 0; // TODO
+          case 'collect_all_rarities': {
+            const requiredRarities: string[] = req.rarities || [
+              'common',
+              'uncommon',
+              'rare',
+              'epic',
+              'legendary',
+              'mythic',
+            ];
+            target = requiredRarities.length;
+            current = requiredRarities.filter((r) => distinctRarities.has(r)).length;
             break;
+          }
 
           case 'be_collected': {
-            // TODO: count how many times user's pets were collected
             target = req.count || 1;
-            current = 0;
+            current = beCollectedCount;
             break;
           }
 
           case 'collect_owners':
             target = req.count || 1;
-            current = 0; // TODO: count distinct owners from collection
+            current = distinctOwners.size;
             break;
 
           default:

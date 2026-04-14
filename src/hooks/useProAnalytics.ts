@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import {
   startOfMonth,
   endOfMonth,
@@ -9,9 +10,9 @@ import {
   format,
   isWithinInterval,
   parseISO,
-} from "date-fns";
+} from 'date-fns';
 
-export type AnalyticsPeriod = "current_month" | "last_month" | "last_3_months";
+export type AnalyticsPeriod = 'current_month' | 'last_month' | 'last_3_months';
 
 export interface AnalyticsSummary {
   remindersCompleted: number;
@@ -35,13 +36,13 @@ export interface PeriodComparison {
 function getDateRange(period: AnalyticsPeriod) {
   const now = new Date();
   switch (period) {
-    case "current_month":
+    case 'current_month':
       return { start: startOfMonth(now), end: endOfMonth(now) };
-    case "last_month": {
+    case 'last_month': {
       const prev = subMonths(now, 1);
       return { start: startOfMonth(prev), end: endOfMonth(prev) };
     }
-    case "last_3_months":
+    case 'last_3_months':
       return { start: startOfMonth(subMonths(now, 2)), end: endOfMonth(now) };
   }
 }
@@ -49,15 +50,15 @@ function getDateRange(period: AnalyticsPeriod) {
 function getPreviousRange(period: AnalyticsPeriod) {
   const now = new Date();
   switch (period) {
-    case "current_month": {
+    case 'current_month': {
       const prev = subMonths(now, 1);
       return { start: startOfMonth(prev), end: endOfMonth(prev) };
     }
-    case "last_month": {
+    case 'last_month': {
       const prev = subMonths(now, 2);
       return { start: startOfMonth(prev), end: endOfMonth(prev) };
     }
-    case "last_3_months": {
+    case 'last_3_months': {
       return {
         start: startOfMonth(subMonths(now, 5)),
         end: endOfMonth(subMonths(now, 3)),
@@ -75,40 +76,44 @@ export function useProAnalytics({ petId, period }: UseProAnalyticsParams) {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["pro-analytics", user?.id, petId, period],
+    queryKey: ['pro-analytics', user?.id, petId, period],
     queryFn: async () => {
       if (!user?.id) return null;
 
       const range = getDateRange(period);
       const prevRange = getPreviousRange(period);
-      const rangeStart = format(range.start, "yyyy-MM-dd");
-      const rangeEnd = format(range.end, "yyyy-MM-dd");
-      const prevStart = format(prevRange.start, "yyyy-MM-dd");
-      const prevEnd = format(prevRange.end, "yyyy-MM-dd");
+      const rangeStart = format(range.start, 'yyyy-MM-dd');
+      const rangeEnd = format(range.end, 'yyyy-MM-dd');
+      const prevStart = format(prevRange.start, 'yyyy-MM-dd');
+      const prevEnd = format(prevRange.end, 'yyyy-MM-dd');
 
       // Fetch reminders (completed in period)
       let remindersQ = (supabase as any)
-        .from("pet_reminders")
-        .select("id, completed_at, due_date, type, is_completed")
-        .eq("user_id", user.id);
-      if (petId) remindersQ = remindersQ.eq("pet_id", petId);
+        .from('pet_reminders')
+        .select('id, completed_at, due_date, type, is_completed')
+        .eq('owner_id', user.id);
+      if (petId) remindersQ = remindersQ.eq('pet_id', petId);
       const remindersRes = await remindersQ;
 
       // Fetch medical records
       let medicalQ = (supabase as any)
-        .from("medical_records")
-        .select("id, visit_date, record_type")
-        .eq("owner_id", user.id);
-      if (petId) medicalQ = medicalQ.eq("pet_id", petId);
+        .from('medical_records')
+        .select('id, visit_date, record_type')
+        .eq('owner_id', user.id);
+      if (petId) medicalQ = medicalQ.eq('pet_id', petId);
       const medicalRes = await medicalQ;
 
       // Fetch wellness score
-      let wellness: { health_score: number | null; happiness_score: number | null; activity_score: number | null } | null = null;
+      let wellness: {
+        health_score: number | null;
+        happiness_score: number | null;
+        activity_score: number | null;
+      } | null = null;
       if (petId) {
         const { data } = await (supabase as any)
-          .from("pet_paw_progress")
-          .select("health_score, happiness_score, activity_score")
-          .eq("pet_id", petId)
+          .from('pet_paw_progress')
+          .select('health_score, happiness_score, activity_score')
+          .eq('pet_id', petId)
           .maybeSingle();
         wellness = data;
       }
@@ -131,11 +136,7 @@ export function useProAnalytics({ petId, period }: UseProAnalyticsParams) {
       }
 
       // Helper to count in a date range
-      const countInRange = (
-        items: Array<{ date: string }>,
-        start: Date,
-        end: Date,
-      ) =>
+      const countInRange = (items: Array<{ date: string }>, start: Date, end: Date) =>
         items.filter((item) => {
           try {
             const d = parseISO(item.date);
@@ -148,14 +149,14 @@ export function useProAnalytics({ petId, period }: UseProAnalyticsParams) {
       // Normalize reminders and medical records to { date }
       const completedReminders = reminders
         .filter((r: any) => r.is_completed && r.completed_at)
-        .map((r: any) => ({ date: r.completed_at.split("T")[0] }));
+        .map((r: any) => ({ date: r.completed_at.split('T')[0] }));
 
       const vetVisits = medical
-        .filter((m: any) => m.record_type !== "vacuna")
+        .filter((m: any) => m.record_type !== 'vacuna')
         .map((m: any) => ({ date: m.visit_date }));
 
       const vaccines = medical
-        .filter((m: any) => m.record_type === "vacuna")
+        .filter((m: any) => m.record_type === 'vacuna')
         .map((m: any) => ({ date: m.visit_date }));
 
       // Current period summary
@@ -175,9 +176,12 @@ export function useProAnalytics({ petId, period }: UseProAnalyticsParams) {
       };
 
       // Build daily activity timeline
-      const days = eachDayOfInterval({ start: range.start, end: new Date() < range.end ? new Date() : range.end });
+      const days = eachDayOfInterval({
+        start: range.start,
+        end: new Date() < range.end ? new Date() : range.end,
+      });
       const activityTimeline: DailyActivity[] = days.map((day) => {
-        const dayStr = format(day, "yyyy-MM-dd");
+        const dayStr = format(day, 'yyyy-MM-dd');
         return {
           date: dayStr,
           reminders: completedReminders.filter((r) => r.date === dayStr).length,

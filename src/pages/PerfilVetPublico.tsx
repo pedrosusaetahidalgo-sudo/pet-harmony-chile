@@ -124,10 +124,8 @@ export default function PerfilVetPublico() {
         symptoms: string;
         status: string;
         payment_status: string;
-        // TODO: form fields para visit_address y total_price (Opción B —
-        // se confirman cuando el vet acepta la reserva por chat).
-        visit_address: string;
-        total_price: number;
+        visit_address: string | null;
+        total_price: number | null;
       };
       const payload: DirectoryBookingInsert = {
         owner_id: user.id,
@@ -138,8 +136,8 @@ export default function PerfilVetPublico() {
         symptoms: reservaMessage.trim(),
         status: 'pendiente',
         payment_status: 'pendiente',
-        visit_address: 'A coordinar con el veterinario',
-        total_price: 0,
+        visit_address: null,
+        total_price: null,
       };
       // Cast a través de unknown porque types.ts aún no refleja
       // service_provider_id ni los nullables introducidos por la migración

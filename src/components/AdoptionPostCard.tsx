@@ -44,6 +44,7 @@ export function AdoptionPostCard({ post, onUpdate, isOwner }: AdoptionPostCardPr
   const [showMessagesDialog, setShowMessagesDialog] = useState(false);
   const [interestMessage, setInterestMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
   // Adoptant profile mini-questionnaire
   const [housingType, setHousingType] = useState('');
   const [hoursHome, setHoursHome] = useState('');
@@ -123,6 +124,25 @@ export function AdoptionPostCard({ post, onUpdate, isOwner }: AdoptionPostCardPr
     } catch (error) {
       logger.error('Error loading interests:', error);
       toast.error('Error al cargar intereses');
+    }
+  };
+
+  const handleUpdateStatus = async (newStatus: 'adoptado' | 'disponible') => {
+    setIsUpdatingStatus(true);
+    try {
+      const { error } = await supabase
+        .from('adoption_posts')
+        .update({ status: newStatus })
+        .eq('id', post.id);
+      if (error) throw error;
+      toast.success(
+        newStatus === 'adoptado' ? '¡Felicidades! Marcado como adoptado' : 'Publicación reactivada'
+      );
+      onUpdate();
+    } catch {
+      toast.error('No se pudo actualizar el estado');
+    } finally {
+      setIsUpdatingStatus(false);
     }
   };
 
@@ -235,14 +255,36 @@ export function AdoptionPostCard({ post, onUpdate, isOwner }: AdoptionPostCardPr
           </div>
 
           {isOwner ? (
-            <Button
-              variant="outline"
-              className="w-full h-10 sm:h-11 border-2 hover:bg-muted"
-              onClick={handleViewMessages}
-            >
-              <MessageCircle className="h-4 w-4 mr-2" />
-              Ver Interesados
-            </Button>
+            <div className="flex gap-2 w-full">
+              <Button
+                variant="outline"
+                className="flex-1 h-10 sm:h-11 border-2 hover:bg-muted"
+                onClick={handleViewMessages}
+              >
+                <MessageCircle className="h-4 w-4 mr-2" />
+                Interesados
+              </Button>
+              {post.status === 'disponible' ? (
+                <Button
+                  variant="default"
+                  className="flex-1 h-10 sm:h-11 bg-green-600 hover:bg-green-700 text-white"
+                  onClick={() => handleUpdateStatus('adoptado')}
+                  disabled={isUpdatingStatus}
+                >
+                  <Check className="h-4 w-4 mr-2" />
+                  Adoptado
+                </Button>
+              ) : (
+                <Button
+                  variant="outline"
+                  className="flex-1 h-10 sm:h-11"
+                  onClick={() => handleUpdateStatus('disponible')}
+                  disabled={isUpdatingStatus}
+                >
+                  Reactivar
+                </Button>
+              )}
+            </div>
           ) : (
             <Button
               className="w-full h-10 sm:h-11 bg-warm-gradient hover:opacity-90 text-white shadow-soft"

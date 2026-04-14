@@ -823,20 +823,16 @@ serve(async (req) => {
       });
     }
 
-    // ── Premium plan check: export_pdf requires premium ──
-    const { data: profileData } = await supabase
-      .from('profiles')
-      .select('is_premium')
-      .eq('id', userData.user.id)
-      .single();
-
-    const isPremium = profileData?.is_premium === true;
-    if (!isPremium) {
-      return new Response(
-        JSON.stringify({ success: false, error: 'Exportar PDF requiere plan Premium' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 402 }
-      );
-    }
+    // ── Premium plan check: DESACTIVADO durante pivot médico ──
+    // Reactivar cuando USER_PREMIUM=true en el frontend.
+    // const { data: profileData } = await supabase
+    //   .from('profiles').select('is_premium').eq('id', userData.user.id).single();
+    // if (profileData?.is_premium !== true) {
+    //   return new Response(
+    //     JSON.stringify({ success: false, error: 'Exportar PDF requiere plan Premium' }),
+    //     { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 402 }
+    //   );
+    // }
 
     // ── Fetch data via updated RPC ──
     const { data: summaryData, error: summaryError } = await supabase.rpc(

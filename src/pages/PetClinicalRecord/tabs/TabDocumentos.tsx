@@ -22,7 +22,15 @@ interface TabDocumentosProps {
 
 export function TabDocumentos({ petId, viewMode = 'owner', petOwnerId }: TabDocumentosProps) {
   const { user } = useAuth();
-  const { documents, isLoading, getDownloadUrl, deleteDocument, isDeleting } = useMedicalDocuments(petId);
+  const {
+    documents,
+    isLoading,
+    getDownloadUrl,
+    deleteDocument,
+    isDeleting,
+    downloadAllAsZip,
+    isGeneratingZip,
+  } = useMedicalDocuments(petId);
   const [uploadOpen, setUploadOpen] = useState(false);
 
   const handleDownload = useCallback(
@@ -101,6 +109,29 @@ export function TabDocumentos({ petId, viewMode = 'owner', petOwnerId }: TabDocu
         </CardContent>
       </Card>
 
+      {/* Descargar todos como ZIP */}
+      {documents && documents.length > 1 && (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={async () => {
+            try {
+              const result = await downloadAllAsZip();
+              if (result?.url) {
+                await downloadFile(result.url, 'documentos-medicos.zip');
+              }
+            } catch {
+              // Error handled in hook
+            }
+          }}
+          disabled={isGeneratingZip}
+          className="w-full"
+        >
+          <Download className="h-4 w-4 mr-2" />
+          {isGeneratingZip ? 'Generando ZIP...' : 'Descargar todos como ZIP'}
+        </Button>
+      )}
+
       {/* Lista de documentos o empty state */}
       {!documents || documents.length === 0 ? (
         <EmptyState
@@ -120,7 +151,10 @@ export function TabDocumentos({ petId, viewMode = 'owner', petOwnerId }: TabDocu
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-sm font-medium truncate">{doc.title}</p>
                     {doc.uploaded_by_role === 'vet' && (
-                      <Badge variant="outline" className="text-xs bg-teal-50 text-teal-700 border-teal-200">
+                      <Badge
+                        variant="outline"
+                        className="text-xs bg-teal-50 text-teal-700 border-teal-200"
+                      >
                         <UserCheck className="h-3 w-3 mr-1" />
                         Subido por vet
                       </Badge>
@@ -135,11 +169,7 @@ export function TabDocumentos({ petId, viewMode = 'owner', petOwnerId }: TabDocu
                 </div>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => handleDownload(doc)}
-                >
+                <Button variant="ghost" size="sm" onClick={() => handleDownload(doc)}>
                   <Download className="h-4 w-4" />
                 </Button>
                 {canDelete(doc) && (

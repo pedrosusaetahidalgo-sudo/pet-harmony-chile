@@ -6,13 +6,17 @@ import { DaySlotsList } from '@/components/calendar/DaySlotsList';
 import { BookingModal } from '@/components/calendar/BookingModal';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { format, isToday, startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Calendar, CalendarDays, Clock, CheckCircle2, Inbox } from '@/lib/icons';
+import { Calendar, CalendarDays, Clock, CheckCircle2, Inbox, Star } from '@/lib/icons';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from 'sonner';
 
 const SERVICE_TYPES = [
   { value: 'all', label: 'Todos' },
@@ -30,6 +34,38 @@ export default function MyBookings() {
   const [filterType, setFilterType] = useState('all');
   const [bookingSlot, setBookingSlot] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'my-bookings' | 'available'>('my-bookings');
+  const [reviewBooking, setReviewBooking] = useState<any>(null);
+  const [reviewRating, setReviewRating] = useState(0);
+  const [reviewHover, setReviewHover] = useState(0);
+  const [reviewComment, setReviewComment] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+
+  const handleSubmitReview = async () => {
+    if (!user || !reviewBooking || reviewRating === 0) return;
+    const providerId = reviewBooking.service_slots?.provider_id;
+    if (!providerId) return;
+    setSubmittingReview(true);
+    try {
+      const { error } = await supabase.from('service_reviews').insert({
+        provider_id: providerId,
+        reviewer_id: user.id,
+        rating: reviewRating,
+        comment: reviewComment.trim() || null,
+        service_type: reviewBooking.service_slots?.service_type || 'veterinarian',
+        is_visible: true,
+        verification_type: 'booking',
+      });
+      if (error) throw error;
+      toast.success('¡Reseña enviada! Gracias por tu opinión');
+      setReviewBooking(null);
+      setReviewRating(0);
+      setReviewComment('');
+    } catch {
+      toast.error('No se pudo enviar la reseña');
+    } finally {
+      setSubmittingReview(false);
+    }
+  };
 
   // ---- MY BOOKINGS (user's actual reservations) ----
   const { data: myBookings, isLoading: loadingMyBookings } = useQuery({
@@ -254,7 +290,8 @@ export default function MyBookings() {
                   <Inbox className="h-12 w-12 mx-auto text-muted-foreground/40 mb-4" />
                   <h3 className="font-semibold text-lg mb-1">Sin reservas aún</h3>
                   <p className="text-muted-foreground text-sm mb-4">
-                    Busca disponibilidad en la pestaña "Buscar disponibilidad" para agendar tu primera cita.
+                    Busca disponibilidad en la pestaña "Buscar disponibilidad" para agendar tu
+                    primera cita.
                   </p>
                 </CardContent>
               </Card>
@@ -301,7 +338,7 @@ export default function MyBookings() {
                               </p>
                             )}
                           </div>
-                          <div className="text-right">
+                          <div className="text-right flex flex-col items-end gap-1">
                             <Badge
                               variant={
                                 booking.payment_status === 'paid'
@@ -318,6 +355,17 @@ export default function MyBookings() {
                                   ? 'Pendiente'
                                   : booking.payment_status || 'Sin estado'}
                             </Badge>
+                            {isPast && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-xs text-purple-600 h-7 px-2"
+                                onClick={() => setReviewBooking(booking)}
+                              >
+                                <Star className="h-3 w-3 mr-1" />
+                                Reseña
+                              </Button>
+                            )}
                           </div>
                         </div>
                       </CardContent>
@@ -369,7 +417,11 @@ export default function MyBookings() {
                       <Clock className="h-4 w-4 text-purple-500" />
                       {format(selectedDate, 'EEEE d MMMM', { locale: es })}
                     </h2>
-                    <DaySlotsList slots={slots || []} isLoading={isLoading} onBook={setBookingSlot} />
+                    <DaySlotsList
+                      slots={slots || []}
+                      isLoading={isLoading}
+                      onBook={setBookingSlot}
+                    />
                   </CardContent>
                 </Card>
               </div>
@@ -385,6 +437,55 @@ export default function MyBookings() {
             onClose={() => setBookingSlot(null)}
           />
         )}
+
+        {/* Review dialog */}
+        <Dialog open={!!reviewBooking} onOpenChange={(open) => !open && setReviewBooking(null)}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle>Dejar reseña</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="flex justify-center gap-1">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => setReviewRating(star)}
+                    onMouseEnter={() => setReviewHover(star)}
+                    onMouseLeave={() => setReviewHover(0)}
+                    className="p-1"
+                  >
+                    <Star
+                      className={`h-8 w-8 transition-colors ${
+                        star <= (reviewHover || reviewRating)
+                          ? 'fill-yellow-400 text-yellow-400'
+                          : 'text-gray-300'
+                      }`}
+                    />
+                  </button>
+                ))}
+              </div>
+              <Textarea
+                value={reviewComment}
+                onChange={(e) => setReviewComment(e.target.value)}
+                placeholder="¿Cómo fue tu experiencia?"
+                rows={3}
+              />
+              <div className="flex gap-2">
+                <Button variant="outline" className="flex-1" onClick={() => setReviewBooking(null)}>
+                  Cancelar
+                </Button>
+                <Button
+                  className="flex-1 bg-purple-600 hover:bg-purple-700"
+                  onClick={handleSubmitReview}
+                  disabled={reviewRating === 0 || submittingReview}
+                >
+                  {submittingReview ? 'Enviando...' : 'Enviar reseña'}
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
     </>
   );
