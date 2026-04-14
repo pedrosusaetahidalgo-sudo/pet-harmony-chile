@@ -27,6 +27,7 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useMedicalRecords } from '@/hooks/useMedicalRecords';
 import { useVetClinicalNotesByPet, type VetClinicalNote } from '@/hooks/useVetClinicalNotes';
+import { PremiumNudge } from '@/components/PremiumNudge';
 import { formatDate } from '../helpers';
 import { EmptyState, getRecordTypeBadgeClass, getRecordTypeIcon } from '../shared';
 
@@ -81,7 +82,7 @@ interface UnifiedRecord {
 }
 
 export function TabHistorial({ petId }: { petId: string }) {
-  const { records, isLoading } = useMedicalRecords(petId);
+  const { records, isLoading, isHistoryLimited } = useMedicalRecords(petId);
   const { data: vetNotes, isLoading: vetLoading } = useVetClinicalNotesByPet(petId);
   const [search, setSearch] = useState('');
   const [filterType, setFilterType] = useState('all');
@@ -172,7 +173,7 @@ export function TabHistorial({ petId }: { petId: string }) {
     return (
       <EmptyState
         icon={Clipboard}
-        title="Sin historial medico"
+        title="Sin registros en la ficha"
         description="Los registros de consultas, vacunas, examenes y tratamientos apareceran aqui."
       />
     );
@@ -225,6 +226,15 @@ export function TabHistorial({ petId }: { petId: string }) {
           </SelectContent>
         </Select>
       </div>
+
+      {isHistoryLimited && (
+        <PremiumNudge
+          feature="medical_history"
+          title="Ficha clínica limitada a 6 meses"
+          description="Con Premium puedes ver todo el historial completo de tu mascota, sin límite de fecha."
+          variant="inline"
+        />
+      )}
 
       {filtered.length === 0 && (
         <p className="text-center text-muted-foreground py-8">

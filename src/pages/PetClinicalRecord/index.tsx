@@ -19,6 +19,7 @@ import {
   Clock,
   Download,
   Plus,
+  Syringe,
 } from '@/lib/icons';
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -50,6 +51,7 @@ import { TabHistorial } from './tabs/TabHistorial';
 import { TabAlimentacion } from './tabs/TabAlimentacion';
 import { TabDocumentos } from './tabs/TabDocumentos';
 import { TabCompartir } from './tabs/TabCompartir';
+import { TabVacunas } from './tabs/TabVacunas';
 import { generatePDF } from './pdf';
 import { PageHeader } from '@/components/PageHeader';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
@@ -254,10 +256,14 @@ const PetClinicalRecord = () => {
         )}
 
         <Tabs defaultValue="resumen" className="w-full">
-          <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide sm:grid sm:grid-cols-5">
+          <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide sm:grid sm:grid-cols-6">
             <TabsTrigger value="resumen" className="shrink-0 snap-start text-xs sm:text-sm">
               <Heart className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
               Resumen
+            </TabsTrigger>
+            <TabsTrigger value="vacunas" className="shrink-0 snap-start text-xs sm:text-sm">
+              <Syringe className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+              Vacunas
             </TabsTrigger>
             <TabsTrigger value="historial" className="shrink-0 snap-start text-xs sm:text-sm">
               <Clock className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
@@ -382,6 +388,10 @@ const PetClinicalRecord = () => {
             </Card>
           </TabsContent>
 
+          <TabsContent value="vacunas" className="mt-4">
+            <TabVacunas petId={pet.id} />
+          </TabsContent>
+
           <TabsContent value="historial" className="mt-4">
             <TabHistorial petId={pet.id} />
           </TabsContent>
@@ -461,7 +471,7 @@ const PetClinicalRecord = () => {
                 <p className="text-sm text-muted-foreground italic">"{pet.memorial_message}"</p>
               )}
               <p className="text-xs text-muted-foreground">
-                El historial médico de {pet.name} se preserva con cuidado.
+                La ficha clínica de {pet.name} se preserva con cuidado.
               </p>
             </CardContent>
           </Card>

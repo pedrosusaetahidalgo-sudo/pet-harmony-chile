@@ -65,6 +65,8 @@ export function AddMedicalRecord({
   const [veterinarianName, setVeterinarianName] = useState('');
   const [notes, setNotes] = useState('');
   const [placeId, setPlaceId] = useState('');
+  const [batchNumber, setBatchNumber] = useState('');
+  const [serialNumber, setSerialNumber] = useState('');
   const [suggestions, setSuggestions] = useState<MedicalSuggestion[]>([]);
 
   const { toast } = useToast();
@@ -157,6 +159,18 @@ export function AddMedicalRecord({
 
     setLoading(true);
     try {
+      // Append batch/serial info to notes until DB columns exist
+      let finalNotes = notes;
+      if (batchNumber || serialNumber) {
+        const extra = [
+          batchNumber ? `Lote: ${batchNumber}` : '',
+          serialNumber ? `Serie: ${serialNumber}` : '',
+        ]
+          .filter(Boolean)
+          .join(' | ');
+        finalNotes = finalNotes ? `${finalNotes}\n${extra}` : extra;
+      }
+
       const { data: medicalRecord, error } = await supabase
         .from('medical_records')
         .insert({
@@ -169,7 +183,7 @@ export function AddMedicalRecord({
           next_date: nextDate ? format(nextDate, 'yyyy-MM-dd') : null,
           clinic_name: clinicName,
           veterinarian_name: veterinarianName,
-          notes,
+          notes: finalNotes,
         })
         .select('id')
         .single();
@@ -211,6 +225,29 @@ export function AddMedicalRecord({
         reward({ kind: 'vaccine_logged', petId, petName, vaccineName: title });
       }
 
+      // Auto-create reminder for next dose (vaccines & deworming with next_date)
+      if (nextDate && (recordType === 'vacuna' || recordType === 'desparasitacion')) {
+        try {
+          const reminderType = recordType === 'vacuna' ? 'vaccine' : 'deworming';
+          const reminderTitle =
+            recordType === 'vacuna'
+              ? `Proxima dosis: ${title}`
+              : `Proxima desparasitacion: ${title}`;
+          await supabase.from('pet_reminders').insert({
+            pet_id: petId,
+            owner_id: user.id,
+            type: reminderType,
+            title: reminderTitle,
+            due_date: format(nextDate, 'yyyy-MM-dd'),
+            is_recurring: recordType === 'desparasitacion',
+            recurrence_interval: recordType === 'desparasitacion' ? 'quarterly' : null,
+          });
+          queryClient.invalidateQueries({ queryKey: ['reminders'] });
+        } catch (reminderError) {
+          logger.error('Error creating auto-reminder:', reminderError);
+        }
+      }
+
       queryClient.invalidateQueries({ queryKey: ['medical-records'] });
       setOpen(false);
       resetForm();
@@ -237,6 +274,8 @@ export function AddMedicalRecord({
     setVeterinarianName('');
     setNotes('');
     setPlaceId('');
+    setBatchNumber('');
+    setSerialNumber('');
     setSuggestions([]);
   };
 
@@ -252,7 +291,7 @@ export function AddMedicalRecord({
         <DialogHeader>
           <DialogTitle>Nuevo Registro Médico</DialogTitle>
           <DialogDescription>
-            Agrega un nuevo registro al historial médico de tu mascota
+            Agrega un nuevo registro a la ficha clínica de tu mascota
           </DialogDescription>
         </DialogHeader>
 
@@ -386,6 +425,30 @@ export function AddMedicalRecord({
               </Popover>
             </div>
           </div>
+
+          {/* Lote y Serie (solo vacunas y desparasitación) */}
+          {(recordType === 'vacuna' || recordType === 'desparasitacion') && (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="batch-number">N° de Lote</Label>
+                <Input
+                  id="batch-number"
+                  value={batchNumber}
+                  onChange={(e) => setBatchNumber(e.target.value)}
+                  placeholder="Ej: AB1234"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="serial-number">N° de Serie</Label>
+                <Input
+                  id="serial-number"
+                  value={serialNumber}
+                  onChange={(e) => setSerialNumber(e.target.value)}
+                  placeholder="Ej: S-56789"
+                />
+              </div>
+            </div>
+          )}
 
           {/* Veterinaria */}
           <div className="space-y-2">

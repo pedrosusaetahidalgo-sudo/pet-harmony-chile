@@ -8,14 +8,23 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useMedicalSharing } from '@/hooks/useMedicalSharing';
+import { PremiumNudge } from '@/components/PremiumNudge';
 import { openExternalUrl } from '@/lib/nativeNavigation';
 import { formatShortDate } from '../helpers';
 import { PetQRDisplay } from '@/components/medical/PetQRDisplay';
 import { PetVetLinksSection } from '@/components/medical/PetVetLinksSection';
 
 export function TabCompartir({ petId, petName }: { petId: string; petName: string }) {
-  const { tokens, isLoading, createShareToken, isCreating, revokeToken, isRevoking, getShareUrl } =
-    useMedicalSharing(petId);
+  const {
+    tokens,
+    isLoading,
+    createShareToken,
+    isCreating,
+    revokeToken,
+    isRevoking,
+    getShareUrl,
+    shareLimitReached,
+  } = useMedicalSharing(petId);
   const [legacyOpen, setLegacyOpen] = useState(false);
 
   const handleCopy = useCallback(
@@ -120,7 +129,20 @@ export function TabCompartir({ petId, petName }: { petId: string; petName: strin
 
           <CollapsibleContent>
             <CardContent className="space-y-4 pt-0">
-              <Button onClick={handleCreate} disabled={isCreating} size="sm" variant="outline">
+              {shareLimitReached && (
+                <PremiumNudge
+                  feature="share_clinical"
+                  title="Límite de enlaces alcanzado"
+                  description="Con Premium puedes compartir la ficha clínica de tu mascota con todos los veterinarios que necesites."
+                  variant="inline"
+                />
+              )}
+              <Button
+                onClick={handleCreate}
+                disabled={isCreating || shareLimitReached}
+                size="sm"
+                variant="outline"
+              >
                 <Link2 className="h-4 w-4 mr-2" />
                 {isCreating ? 'Generando...' : 'Generar enlace'}
               </Button>

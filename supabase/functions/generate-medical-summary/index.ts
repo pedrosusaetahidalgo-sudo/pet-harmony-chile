@@ -18,6 +18,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { PDFDocument, rgb, StandardFonts } from 'https://esm.sh/pdf-lib@1.17.1';
+import { LOGO_PNG_BASE64 } from './logo.ts';
 
 // ── CORS dinamico ──
 const ALLOWED_ORIGINS = ['https://pawfriend.cl', 'http://localhost:8080', 'http://localhost:5173'];
@@ -56,20 +57,16 @@ const MARGIN_R = 50;
 const CONTENT_W = PAGE_W - MARGIN_L - MARGIN_R; // 512
 const MARGIN_BOTTOM = 55;
 const HEADER_H = 55;
-const LOGO_URL = 'https://pawfriend.cl/pwa-icon-512.png';
 const LOGO_SIZE = 32;
 const SECTION_BORDER_W = 3;
 
-// ── Cache logo ──
-let cachedLogoBytes: Uint8Array | null = null;
-
-async function getLogoBytes(): Promise<Uint8Array | null> {
-  if (cachedLogoBytes) return cachedLogoBytes;
+// ── Logo embebido (base64 → Uint8Array, sin dependencia de red) ──
+function getLogoBytes(): Uint8Array | null {
   try {
-    const res = await fetch(LOGO_URL);
-    if (!res.ok) return null;
-    cachedLogoBytes = new Uint8Array(await res.arrayBuffer());
-    return cachedLogoBytes;
+    const raw = atob(LOGO_PNG_BASE64);
+    const bytes = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) bytes[i] = raw.charCodeAt(i);
+    return bytes;
   } catch {
     return null;
   }
@@ -870,7 +867,7 @@ serve(async (req) => {
     const bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
     // Logo
-    const logoBytes = await getLogoBytes();
+    const logoBytes = getLogoBytes();
     let logoImage: any = null;
     if (logoBytes) {
       try {

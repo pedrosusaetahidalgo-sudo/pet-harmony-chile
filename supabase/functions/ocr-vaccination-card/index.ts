@@ -42,9 +42,17 @@ serve(async (req) => {
 
     const userId = userData.user.id;
 
-    // ── Rate limit: 3 calls per day per user ─────────────────────────────
+    // ── Fetch user plan ────────────────────────────────────────────────────
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('plan_id')
+      .eq('id', userId)
+      .maybeSingle();
+    const planId = profile?.plan_id || 'free';
+
+    // ── Rate limit: free = 1/day, premium = 3/day ───────────────────────
     const today = new Date().toISOString().split('T')[0];
-    const DAILY_LIMIT = 3;
+    const DAILY_LIMIT = planId === 'free' ? 1 : 3;
     const SKILL_NAME = 'ocr-vaccination-card';
 
     const { data: usage } = await supabase
@@ -60,11 +68,11 @@ serve(async (req) => {
     }
 
     if (callsToday >= DAILY_LIMIT) {
-      return errorResponse(
-        `Límite diario alcanzado (${DAILY_LIMIT} escaneos). Intenta de nuevo mañana.`,
-        429,
-        { rate_limited: true }
-      );
+      const msg =
+        planId === 'free'
+          ? 'Llegaste al límite de 1 escaneo diario del plan gratuito. Mejora a Premium para escaneos ilimitados.'
+          : `Límite diario alcanzado (${DAILY_LIMIT} escaneos). Intenta de nuevo mañana.`;
+      return errorResponse(msg, 429, { rate_limited: true, plan_id: planId });
     }
 
     // ── Parse & validate input ───────────────────────────────────────────

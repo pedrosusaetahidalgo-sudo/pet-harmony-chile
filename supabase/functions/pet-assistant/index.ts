@@ -75,7 +75,16 @@ serve(async (req) => {
       });
     }
 
-    // Rate limiting: 5 questions per day
+    // Fetch user plan to differentiate limits
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('plan_id')
+      .eq('id', userId)
+      .maybeSingle();
+    const planId = profile?.plan_id || 'free';
+    const dailyLimit = planId === 'free' ? 1 : 5;
+
+    // Rate limiting: free = 1/day, premium = 5/day
     const today = new Date().toISOString().split('T')[0];
     const { data: usage } = await supabase
       .from('ai_usage')
@@ -89,11 +98,16 @@ serve(async (req) => {
       callsToday = usage.last_reset_date === today ? usage.calls_today : 0;
     }
 
-    if (callsToday >= 5) {
+    if (callsToday >= dailyLimit) {
+      const msg =
+        planId === 'free'
+          ? 'Llegaste al límite de 1 consulta diaria del plan gratuito. Mejora a Premium para consultas ilimitadas.'
+          : `Límite diario alcanzado (${dailyLimit} consultas). Renueva mañana.`;
       return new Response(
         JSON.stringify({
-          error: 'Límite diario alcanzado (5 consultas). Renueva mañana.',
+          error: msg,
           rate_limited: true,
+          plan_id: planId,
         }),
         {
           status: 429,
