@@ -11,6 +11,7 @@ import {
   Gamepad2,
   Megaphone,
   Settings,
+  Activity,
 } from '@/lib/icons';
 
 // Section components
@@ -33,6 +34,7 @@ import AdminAuditLog from '@/components/admin/AdminAuditLog';
 import AdminSystemHealth from '@/components/admin/AdminSystemHealth';
 import AdminTeam from '@/components/admin/AdminTeam';
 import AdminErrorLog from '@/components/admin/AdminErrorLog';
+import AdminAnalytics from '@/components/admin/AdminAnalytics';
 
 // ── Section definitions ──────────────────────────────────
 interface Section {
@@ -43,6 +45,7 @@ interface Section {
 
 const SECTIONS: Section[] = [
   { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
+  { id: 'analytics', label: 'Analytics', icon: Activity },
   { id: 'providers', label: 'Proveedores', icon: Briefcase },
   { id: 'users', label: 'Usuarios', icon: Users },
   { id: 'finance', label: 'Finanzas', icon: DollarSign },
@@ -201,6 +204,8 @@ const Admin = () => {
     switch (activeSection) {
       case 'dashboard':
         return <AdminDashboard />;
+      case 'analytics':
+        return <AdminAnalytics />;
       case 'providers':
         return <ProvidersSection />;
       case 'users':

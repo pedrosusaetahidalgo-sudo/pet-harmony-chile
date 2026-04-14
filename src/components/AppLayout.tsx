@@ -5,6 +5,7 @@ import { Header } from '@/components/Header';
 import { BottomTabBar } from '@/components/BottomTabBar';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useErrorReporter } from '@/hooks/useErrorReporter';
+import { useAnalyticsTracker } from '@/hooks/useAnalyticsTracker';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -13,6 +14,7 @@ interface AppLayoutProps {
 function LayoutInner({ children }: AppLayoutProps) {
   const isMobile = useIsMobile();
   useErrorReporter(); // Global error capture to error_logs
+  useAnalyticsTracker(); // Page views, dwell time, sessions
 
   return (
     <div className="min-h-screen flex w-full bg-background overflow-x-hidden">
