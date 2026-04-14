@@ -57,3 +57,9 @@ verify_jwt = false  # llamada interna desde reminder-cron via service_role
 
 [functions.generate-sitemap]
 verify_jwt = false  # público, SEO
+
+[functions.generate-weekly-owner-reports]
+verify_jwt = false  # cron job, no user context
+
+[functions.generate-weekly-vet-reports]
+verify_jwt = false  # cron job, no user context
