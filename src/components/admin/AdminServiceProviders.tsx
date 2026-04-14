@@ -16,6 +16,7 @@ import {
   type ServiceProvider,
   type ProviderStatus,
 } from '@/hooks/useServiceProviders';
+import { useAdminAudit } from '@/hooks/useAdminAudit';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -75,6 +76,7 @@ const STATUS_CONFIG: Record<
 const AdminServiceProviders = () => {
   const { allProviders, isLoading, stats, updateProviderStatus, verifyProvider } =
     useAdminServiceProviders();
+  const { logAction } = useAdminAudit();
 
   const [selectedProvider, setSelectedProvider] = useState<ServiceProvider | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -113,12 +115,20 @@ const AdminServiceProviders = () => {
       rejectionReason: newStatus === 'rejected' ? rejectionReason : undefined,
     });
 
+    logAction(
+      `provider.${newStatus === 'approved' ? 'approve' : newStatus === 'rejected' ? 'reject' : 'suspend'}`,
+      'provider',
+      providerId,
+      { new_status: newStatus }
+    );
+
     setRejectionReason('');
     setSelectedProvider(null);
   };
 
   const handleVerify = async (providerId: string, verified: boolean) => {
     await verifyProvider.mutateAsync({ providerId, verified });
+    logAction('provider.verify', 'provider', providerId, { verified });
   };
 
   if (isLoading) {

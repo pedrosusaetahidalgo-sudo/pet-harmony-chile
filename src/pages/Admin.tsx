@@ -29,6 +29,9 @@ import AdManagement from '@/components/admin/AdManagement';
 import AdminPartnerSubmissions from '@/components/admin/AdminPartnerSubmissions';
 import AdminSettings from '@/components/admin/AdminSettings';
 import AdminSafetyLogs from '@/components/admin/AdminSafetyLogs';
+import AdminAuditLog from '@/components/admin/AdminAuditLog';
+import AdminSystemHealth from '@/components/admin/AdminSystemHealth';
+import AdminTeam from '@/components/admin/AdminTeam';
 
 // ── Section definitions ──────────────────────────────────
 interface Section {
@@ -158,15 +161,27 @@ function SystemSection() {
   return (
     <div className="space-y-4">
       <Tabs value={sub} onValueChange={setSub}>
-        <TabsList>
+        <TabsList className="flex flex-wrap gap-1 h-auto">
           <TabsTrigger value="config">Configuración</TabsTrigger>
           <TabsTrigger value="safety">Seguridad</TabsTrigger>
+          <TabsTrigger value="health">Health</TabsTrigger>
+          <TabsTrigger value="audit">Audit Log</TabsTrigger>
+          <TabsTrigger value="team">Equipo</TabsTrigger>
         </TabsList>
         <TabsContent value="config">
           <AdminSettings />
         </TabsContent>
         <TabsContent value="safety">
           <AdminSafetyLogs />
+        </TabsContent>
+        <TabsContent value="health">
+          <AdminSystemHealth />
+        </TabsContent>
+        <TabsContent value="audit">
+          <AdminAuditLog />
+        </TabsContent>
+        <TabsContent value="team">
+          <AdminTeam />
         </TabsContent>
       </Tabs>
     </div>
