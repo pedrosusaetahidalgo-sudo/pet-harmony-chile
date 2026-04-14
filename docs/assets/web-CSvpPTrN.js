@@ -1,1 +1,0 @@
-import{a2 as o}from"./index-D5ZjJdx2.js";import"./query-vendor-DxhLMIRE.js";import"./react-vendor-Dv927OAv.js";import"./ui-vendor-ZJlGzWna.js";import"./icons-vendor-Bn0-708W.js";import"./supabase-vendor-D-s-rr1j.js";import"./date-vendor-CMRtq6qe.js";class d extends o{async show(e){}async hide(e){}}export{d as SplashScreenWeb};

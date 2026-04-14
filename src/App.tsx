@@ -28,7 +28,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 const Index = lazy(() => import('./pages/Index'));
 const Home = lazy(() => import('./pages/Home'));
 const Feed = lazy(() => import('./pages/Feed'));
-// Community removed — feature pruning 2026-04-14
+const Community = lazy(() => import('./pages/Community'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Auth = lazy(() => import('./pages/Auth'));
 const MyPets = lazy(() => import('./pages/MyPets'));
@@ -36,7 +36,7 @@ const AddPet = lazy(() => import('./pages/AddPet'));
 const MedicalRecords = lazy(() => import('./pages/MedicalRecords'));
 const Adoption = lazy(() => import('./pages/Adoption'));
 
-// PawGame removed — feature pruning 2026-04-14
+const PawGame = lazy(() => import('./pages/PawGame'));
 const ServiceDirectory = lazy(() => import('./pages/ServiceDirectory'));
 // SharedWalks y LostPets eliminados en pivot médico
 const Chat = lazy(() => import('./pages/Chat'));
@@ -62,7 +62,7 @@ const Servicios = lazy(() => import('./pages/Servicios'));
 const GroomerProfileEdit = lazy(() => import('./pages/GroomerProfileEdit'));
 const DirectorioVets = lazy(() => import('./pages/DirectorioVets'));
 const PerfilVetPublico = lazy(() => import('./pages/PerfilVetPublico'));
-// Demo removed — feature pruning 2026-04-14
+const Demo = lazy(() => import('./pages/Demo'));
 const ProviderProfileEdit = lazy(() => import('./pages/ProviderProfileEdit'));
 const ProviderPatients = lazy(() => import('./pages/ProviderPatients'));
 const RegistroVeterinario = lazy(() => import('./pages/RegistroVeterinario'));
@@ -70,13 +70,15 @@ const ParaVeterinarios = lazy(() => import('./pages/ParaVeterinarios'));
 const PreciosVeterinarios = lazy(() => import('./pages/PreciosVeterinarios'));
 const DejarResena = lazy(() => import('./pages/DejarResena'));
 const QRLanding = lazy(() => import('./pages/QRLanding'));
-// PawCardLanding, PawCollection, Missions removed — feature pruning 2026-04-14
+const PawCardLanding = lazy(() => import('./pages/PawCardLanding'));
+const PawCollection = lazy(() => import('./pages/PawCollection'));
+const Missions = lazy(() => import('./pages/Missions'));
 const MedicalShare = lazy(() => import('./pages/MedicalShare'));
 // Actividad eliminada — ruta consolidada a /feed
 const Reminders = lazy(() => import('./pages/Reminders'));
 const OnboardingVetMinimal = lazy(() => import('./pages/OnboardingVetMinimal'));
 const OnboardingDuenoMinimal = lazy(() => import('./pages/OnboardingDuenoMinimal'));
-// Reportes removed — feature pruning 2026-04-14
+const Reportes = lazy(() => import('./pages/Reportes'));
 const ProDashboard = lazy(() => import('./pages/ProDashboard'));
 const AnalyticsDashboard = lazy(() => import('./pages/standalone/AnalyticsDashboard'));
 const EnMemoria = lazy(() => import('./pages/EnMemoria'));
@@ -215,9 +217,26 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
-                {/* /comunidad redirects to /feed (feature pruning 2026-04-14) */}
-                <Route path="/comunidad" element={<Navigate to="/feed" replace />} />
-                <Route path="/comunidad/:slug" element={<Navigate to="/feed" replace />} />
+                <Route
+                  path="/comunidad"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Community />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/comunidad/:slug"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Community />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/my-pets"
                   element={
@@ -228,9 +247,26 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
-                {/* /paw-collection and /misiones redirect to /my-pets (feature pruning 2026-04-14) */}
-                <Route path="/paw-collection" element={<Navigate to="/my-pets" replace />} />
-                <Route path="/misiones" element={<Navigate to="/my-pets" replace />} />
+                <Route
+                  path="/paw-collection"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <PawCollection />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/misiones"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Missions />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/add-pet"
                   element={
@@ -312,8 +348,16 @@ const App = () => (
                   }
                 />
 
-                {/* /paw-game redirect to /home (feature pruning 2026-04-14) */}
-                <Route path="/paw-game" element={<Navigate to="/home" replace />} />
+                <Route
+                  path="/paw-game"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <PawGame />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/servicios"
                   element={
@@ -557,7 +601,16 @@ const App = () => (
                     </PublicWithLayoutIfAuth>
                   }
                 />
-                {/* Demo removed — feature pruning 2026-04-14 */}
+                <Route
+                  path="/demo"
+                  element={
+                    <ProtectedRoute>
+                      <AdminRoute>
+                        <Demo />
+                      </AdminRoute>
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/onboarding-mascota"
                   element={
@@ -574,8 +627,16 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
-                {/* /reportes removed — feature pruning 2026-04-14 */}
-                <Route path="/reportes" element={<Navigate to="/home" replace />} />
+                <Route
+                  path="/reportes"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Reportes />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/panel-pro"
                   element={
@@ -620,8 +681,7 @@ const App = () => (
                 />
                 <Route path="/resena/:token" element={<DejarResena />} />
                 <Route path="/qr/:token" element={<QRLanding />} />
-                {/* /paw-card removed — redirect to home (feature pruning 2026-04-14) */}
-                <Route path="/paw-card/:pawCardId" element={<Navigate to="/home" replace />} />
+                <Route path="/paw-card/:pawCardId" element={<PawCardLanding />} />
                 <Route path="/medical-share/:token" element={<MedicalShare />} />
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />

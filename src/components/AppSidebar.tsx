@@ -6,7 +6,9 @@ import {
   PawPrint,
   RefreshCw,
   LogOut,
+  Settings,
   Map,
+  Gamepad2,
   UserCog,
   LayoutDashboard,
   Home as HomeIcon,
@@ -17,7 +19,9 @@ import {
   Scissors,
   Lock,
   Sparkles,
+  Trophy,
   Droplets,
+  Star,
   Eye,
   Stethoscope,
   Bell,
@@ -61,9 +65,10 @@ import {
 const healthItems = [
   { title: 'Inicio', url: '/home', icon: HomeIcon },
   { title: 'My Paws', url: '/my-pets', icon: PawPrint },
-  { title: 'Recordatorios', url: '/reminders', icon: Calendar },
+  { title: 'Recordatorios', url: '/reminders', icon: Bell },
   { title: 'Rutinas', url: '/rutinas', icon: RefreshCw },
   { title: 'Calendario', url: '/calendario', icon: CalendarDays },
+  { title: 'Reportes', url: '/reportes', icon: BarChart3 },
 ];
 
 const discoverItems = [
@@ -75,7 +80,11 @@ const discoverItems = [
 
 const communityItems = [
   { title: 'Feed', url: '/feed', icon: Activity },
+  { title: 'Comunidad', url: '/comunidad', icon: Users },
   { title: 'Mensajes', url: '/chat', icon: MessageSquare },
+  { title: 'Coleccion', url: '/paw-collection', icon: Trophy },
+  { title: 'Misiones', url: '/misiones', icon: Star },
+  { title: 'Paw Game', url: '/paw-game', icon: Gamepad2 },
 ];
 
 /** Mapeo sección → items */
@@ -89,7 +98,7 @@ const SECTION_ITEMS: Record<SectionKey, typeof healthItems> = {
 const SECTION_LABELS: Record<SectionKey, string> = {
   salud: 'Salud',
   descubrir: 'Descubrir',
-  comunidad: 'Social',
+  comunidad: 'Comunidad',
 };
 
 // Secciones profesionales (modo provider)
@@ -104,6 +113,7 @@ const providerCommsItems = [{ title: 'Mensajes', url: '/chat', icon: MessageSqua
 
 const providerBusinessItems = [
   { title: 'Perfil público', url: '/provider/profile-edit', icon: UserCog },
+  { title: 'Reportes', url: '/reportes', icon: Activity },
   { title: 'Panel Pro', url: '/panel-pro', icon: BarChart3 },
 ];
 
@@ -501,10 +511,10 @@ export function AppSidebar() {
             <SidebarMenu className="space-y-0">
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  onClick={() => handleNavigate('/profile')}
+                  onClick={() => handleNavigate('/settings')}
                   className="h-7 text-xs rounded-md"
                 >
-                  <UserCog className="h-3.5 w-3.5 flex-shrink-0" />
+                  <Settings className="h-3.5 w-3.5 flex-shrink-0" />
                   <span>Configuracion</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
