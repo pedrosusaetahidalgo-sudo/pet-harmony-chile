@@ -104,8 +104,8 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
         paw_card_id: pawCard.pawCardId,
       };
 
-      const { data: petRow, error } = await supabase
-        .from('pets')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: petRow, error } = await (supabase.from('pets') as any)
         .insert(insertPayload)
         .select('id')
         .single();

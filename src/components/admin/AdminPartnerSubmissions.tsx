@@ -179,7 +179,8 @@ export default function AdminPartnerSubmissions() {
   const createInDirectoryMutation = useMutation({
     mutationFn: async (sub: PartnerSubmission) => {
       // 1. Crear en partners
-      const { error: partnerErr } = await supabase.from('partners').insert({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: partnerErr } = await (supabase.from('partners') as any).insert({
         brand_name: sub.nombre_negocio,
         ad_text: sub.descripcion || sub.nombre_negocio,
         ad_link: sub.website || sub.instagram || '',

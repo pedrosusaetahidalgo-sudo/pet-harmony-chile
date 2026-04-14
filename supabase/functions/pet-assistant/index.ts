@@ -39,14 +39,17 @@ serve(async (req) => {
     }
 
     const userId = userData.user.id;
+    console.log('[pet-assistant] auth OK, userId:', userId);
 
     const quota = await checkAiQuota(userId, { limit: 5 });
+    console.log('[pet-assistant] quota:', JSON.stringify(quota));
     if (!quota.allowed) {
       return rateLimitResponse(quota, corsHeaders);
     }
 
     // Parse input
     const body = await req.json();
+    console.log('[pet-assistant] body keys:', Object.keys(body));
     const { question, pet_id } = body;
 
     // Sanitizar input del usuario contra prompt injection
@@ -83,15 +86,22 @@ serve(async (req) => {
       .maybeSingle();
     const isPremium = profile?.is_premium === true;
     const dailyLimit = isPremium ? 5 : 1;
+    console.log('[pet-assistant] isPremium:', isPremium, 'dailyLimit:', dailyLimit);
 
     // Rate limiting: free = 1/day, premium = 5/day
     const today = new Date().toISOString().split('T')[0];
-    const { data: usage } = await supabase
+    const { data: usage, error: usageError } = await supabase
       .from('ai_usage')
       .select('calls_today, last_reset_date')
       .eq('user_id', userId)
       .eq('skill_name', 'pet-assistant')
       .maybeSingle();
+    console.log(
+      '[pet-assistant] ai_usage query:',
+      usage ? 'found' : 'null',
+      'error:',
+      usageError?.message ?? 'none'
+    );
 
     let callsToday = 0;
     if (usage) {
@@ -192,6 +202,7 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
 
     // Call Claude
     const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
+    console.log('[pet-assistant] ANTHROPIC_API_KEY set:', !!apiKey, 'length:', apiKey?.length ?? 0);
     if (!apiKey) {
       return new Response(JSON.stringify({ error: 'AI service not configured' }), {
         status: 503,
@@ -236,11 +247,18 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
     }
 
     if (!claudeResponse.ok) {
-      console.error('Claude API error:', claudeResponse.status);
-      return new Response(JSON.stringify({ error: 'AI service temporarily unavailable' }), {
-        status: 502,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      const errorBody = await claudeResponse.text();
+      console.error('[pet-assistant] Claude API error:', claudeResponse.status, errorBody);
+      return new Response(
+        JSON.stringify({
+          error: 'AI service temporarily unavailable',
+          debug_status: claudeResponse.status,
+        }),
+        {
+          status: 502,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     const claudeData = await claudeResponse.json();
