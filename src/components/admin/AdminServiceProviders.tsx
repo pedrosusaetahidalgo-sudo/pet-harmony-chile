@@ -1,56 +1,53 @@
 /**
  * Panel de administración para el sistema centralizado de proveedores
- * 
- * Este componente permite ver y gestionar todos los proveedores de servicios
- * desde una única interfaz, independientemente del tipo de servicio.
- * 
- * AUTO-APROBACIÓN ACTIVA: Actualmente todos los proveedores se aprueban automáticamente.
- * Para cambiar a aprobación manual:
- * 1. Modificar DEFAULT de columna status en service_providers a 'pending'
- * 2. Modificar función get_or_create_service_provider para usar 'pending'
- * 3. Los proveedores aparecerán aquí como "Pendiente" para revisión manual
+ *
+ * FLUJO DE APROBACIÓN:
+ * - No-vets (paseadores, cuidadores, entrenadores, groomers): auto-aprobados por trigger DB
+ *   si tienen datos completos (nombre, comuna, bio 20+ chars, 1 servicio activo)
+ * - Vets: requieren verificación Colmevet (manual o IA-assisted)
+ * - Providers incompletos: quedan como 'pending' hasta completar perfil
  */
 
-import { useState } from "react";
-import { 
-  useAdminServiceProviders, 
+import { useState } from 'react';
+import {
+  useAdminServiceProviders,
   SERVICE_TYPE_LABELS,
   SERVICE_TYPE_ICONS,
   type ServiceProvider,
-  type ProviderStatus 
-} from "@/hooks/useServiceProviders";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from "@/components/ui/table";
+  type ProviderStatus,
+} from '@/hooks/useServiceProviders';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { 
-  CheckCircle, 
-  XCircle, 
-  Eye, 
+} from '@/components/ui/select';
+import {
+  CheckCircle,
+  XCircle,
+  Eye,
   Search,
   Filter,
   Users,
@@ -61,11 +58,14 @@ import {
   Star,
   MapPin,
   Briefcase,
-} from "@/lib/icons";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
+} from '@/lib/icons';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
-const STATUS_CONFIG: Record<ProviderStatus, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+const STATUS_CONFIG: Record<
+  ProviderStatus,
+  { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline' }
+> = {
   approved: { label: 'Aprobado', variant: 'default' },
   pending: { label: 'Pendiente', variant: 'secondary' },
   rejected: { label: 'Rechazado', variant: 'destructive' },
@@ -73,50 +73,47 @@ const STATUS_CONFIG: Record<ProviderStatus, { label: string; variant: "default" 
 };
 
 const AdminServiceProviders = () => {
-  const { 
-    allProviders, 
-    isLoading, 
-    stats, 
-    updateProviderStatus, 
-    verifyProvider 
-  } = useAdminServiceProviders();
-  
+  const { allProviders, isLoading, stats, updateProviderStatus, verifyProvider } =
+    useAdminServiceProviders();
+
   const [selectedProvider, setSelectedProvider] = useState<ServiceProvider | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [serviceFilter, setServiceFilter] = useState<string>("all");
-  const [rejectionReason, setRejectionReason] = useState("");
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [serviceFilter, setServiceFilter] = useState<string>('all');
+  const [rejectionReason, setRejectionReason] = useState('');
 
   // Filtrar proveedores
-  const filteredProviders = allProviders?.filter(provider => {
-    // Filtro de búsqueda
-    const matchesSearch = !searchTerm || 
-      provider.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      provider.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      provider.commune?.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredProviders =
+    allProviders?.filter((provider) => {
+      // Filtro de búsqueda
+      const matchesSearch =
+        !searchTerm ||
+        provider.display_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        provider.city?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        provider.commune?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    // Filtro de estado
-    const matchesStatus = statusFilter === "all" || provider.status === statusFilter;
+      // Filtro de estado
+      const matchesStatus = statusFilter === 'all' || provider.status === statusFilter;
 
-    // Filtro de tipo de servicio
-    const matchesService = serviceFilter === "all" || 
-      provider.services?.some(s => s.service_type === serviceFilter);
+      // Filtro de tipo de servicio
+      const matchesService =
+        serviceFilter === 'all' || provider.services?.some((s) => s.service_type === serviceFilter);
 
-    return matchesSearch && matchesStatus && matchesService;
-  }) || [];
+      return matchesSearch && matchesStatus && matchesService;
+    }) || [];
 
   const handleStatusChange = async (providerId: string, newStatus: ProviderStatus) => {
     if (newStatus === 'rejected' && !rejectionReason) {
       return;
     }
-    
+
     await updateProviderStatus.mutateAsync({
       providerId,
       status: newStatus,
       rejectionReason: newStatus === 'rejected' ? rejectionReason : undefined,
     });
-    
-    setRejectionReason("");
+
+    setRejectionReason('');
     setSelectedProvider(null);
   };
 
@@ -185,16 +182,18 @@ const AdminServiceProviders = () => {
         </Card>
       </div>
 
-      {/* Nota sobre auto-aprobación */}
-      <Card className="border-yellow-200 bg-yellow-50 dark:border-yellow-900 dark:bg-yellow-950">
+      {/* Nota sobre flujo de aprobación */}
+      <Card className="border-blue-200 bg-blue-50 dark:border-blue-900 dark:bg-blue-950">
         <CardContent className="p-4 flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 text-yellow-600 mt-0.5" />
+          <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5" />
           <div>
-            <p className="font-medium text-yellow-800 dark:text-yellow-200">Auto-aprobación activa</p>
-            <p className="text-sm text-yellow-700 dark:text-yellow-300">
-              Actualmente todos los proveedores nuevos se aprueban automáticamente. 
-              Para cambiar a aprobación manual, modificar el DEFAULT de la columna 'status' 
-              en la tabla 'service_providers' de 'approved' a 'pending'.
+            <p className="font-medium text-blue-800 dark:text-blue-200">
+              Aprobación inteligente activa
+            </p>
+            <p className="text-sm text-blue-700 dark:text-blue-300">
+              Paseadores, cuidadores, entrenadores y groomers se auto-aprueban si tienen datos
+              completos. Veterinarios requieren verificación Colmevet. Proveedores incompletos
+              quedan como pendientes.
             </p>
           </div>
         </CardContent>
@@ -295,7 +294,11 @@ const AdminServiceProviders = () => {
                         <div className="flex flex-wrap gap-1">
                           {provider.services?.map((service) => (
                             <Badge key={service.id} variant="outline" className="text-xs">
-                              {SERVICE_TYPE_ICONS[service.service_type as keyof typeof SERVICE_TYPE_ICONS]} 
+                              {
+                                SERVICE_TYPE_ICONS[
+                                  service.service_type as keyof typeof SERVICE_TYPE_ICONS
+                                ]
+                              }
                               {service.is_active ? '' : ' (inactivo)'}
                             </Badge>
                           ))}
@@ -324,8 +327,13 @@ const AdminServiceProviders = () => {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant={STATUS_CONFIG[provider.status as ProviderStatus]?.variant || 'secondary'}>
-                          {STATUS_CONFIG[provider.status as ProviderStatus]?.label || provider.status}
+                        <Badge
+                          variant={
+                            STATUS_CONFIG[provider.status as ProviderStatus]?.variant || 'secondary'
+                          }
+                        >
+                          {STATUS_CONFIG[provider.status as ProviderStatus]?.label ||
+                            provider.status}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -373,7 +381,7 @@ const AdminServiceProviders = () => {
           <DialogHeader>
             <DialogTitle>Detalles del Proveedor</DialogTitle>
           </DialogHeader>
-          
+
           {selectedProvider && (
             <div className="space-y-6">
               {/* Información básica */}
@@ -385,17 +393,23 @@ const AdminServiceProviders = () => {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold">{selectedProvider.display_name || 'Sin nombre'}</h3>
-                  <p className="text-muted-foreground">{selectedProvider.bio || 'Sin descripción'}</p>
+                  <h3 className="text-lg font-semibold">
+                    {selectedProvider.display_name || 'Sin nombre'}
+                  </h3>
+                  <p className="text-muted-foreground">
+                    {selectedProvider.bio || 'Sin descripción'}
+                  </p>
                   <div className="flex items-center gap-4 mt-2 text-sm">
                     {selectedProvider.city && (
                       <span className="flex items-center gap-1">
-                        <MapPin className="h-4 w-4" /> {selectedProvider.commune || selectedProvider.city}
+                        <MapPin className="h-4 w-4" />{' '}
+                        {selectedProvider.commune || selectedProvider.city}
                       </span>
                     )}
                     <span className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-yellow-500" /> 
-                      {selectedProvider.rating?.toFixed(1)} ({selectedProvider.total_reviews} reseñas)
+                      <Star className="h-4 w-4 text-yellow-500" />
+                      {selectedProvider.rating?.toFixed(1)} ({selectedProvider.total_reviews}{' '}
+                      reseñas)
                     </span>
                   </div>
                 </div>
@@ -406,14 +420,25 @@ const AdminServiceProviders = () => {
                 <h4 className="font-medium mb-2">Servicios Ofrecidos</h4>
                 <div className="grid gap-2">
                   {selectedProvider.services?.map((service) => (
-                    <div key={service.id} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div
+                      key={service.id}
+                      className="flex items-center justify-between p-3 border rounded-lg"
+                    >
                       <div className="flex items-center gap-2">
                         <span className="text-xl">
-                          {SERVICE_TYPE_ICONS[service.service_type as keyof typeof SERVICE_TYPE_ICONS]}
+                          {
+                            SERVICE_TYPE_ICONS[
+                              service.service_type as keyof typeof SERVICE_TYPE_ICONS
+                            ]
+                          }
                         </span>
                         <div>
                           <p className="font-medium">
-                            {SERVICE_TYPE_LABELS[service.service_type as keyof typeof SERVICE_TYPE_LABELS]}
+                            {
+                              SERVICE_TYPE_LABELS[
+                                service.service_type as keyof typeof SERVICE_TYPE_LABELS
+                              ]
+                            }
                           </p>
                           <p className="text-sm text-muted-foreground">
                             ${service.price_base.toLocaleString('es-CL')} / {service.price_unit}
@@ -440,11 +465,15 @@ const AdminServiceProviders = () => {
                   <p className="text-xs text-muted-foreground">Años de experiencia</p>
                 </div>
                 <div className="text-center p-3 border rounded-lg">
-                  <p className="text-2xl font-bold">{selectedProvider.total_services_completed || 0}</p>
+                  <p className="text-2xl font-bold">
+                    {selectedProvider.total_services_completed || 0}
+                  </p>
                   <p className="text-xs text-muted-foreground">Servicios completados</p>
                 </div>
                 <div className="text-center p-3 border rounded-lg">
-                  <p className="text-2xl font-bold">{selectedProvider.coverage_radius_km || 10} km</p>
+                  <p className="text-2xl font-bold">
+                    {selectedProvider.coverage_radius_km || 10} km
+                  </p>
                   <p className="text-xs text-muted-foreground">Radio de cobertura</p>
                 </div>
               </div>
@@ -452,10 +481,12 @@ const AdminServiceProviders = () => {
               {/* Gestión de estado */}
               <div className="border-t pt-4 space-y-4">
                 <h4 className="font-medium">Gestionar Proveedor</h4>
-                
+
                 <div className="flex items-center gap-4">
                   <span className="text-sm">Estado actual:</span>
-                  <Badge variant={STATUS_CONFIG[selectedProvider.status as ProviderStatus]?.variant}>
+                  <Badge
+                    variant={STATUS_CONFIG[selectedProvider.status as ProviderStatus]?.variant}
+                  >
                     {STATUS_CONFIG[selectedProvider.status as ProviderStatus]?.label}
                   </Badge>
                 </div>
@@ -491,7 +522,7 @@ const AdminServiceProviders = () => {
                     Aprobar
                   </Button>
                 )}
-                
+
                 {selectedProvider.status !== 'rejected' && (
                   <Button
                     variant="destructive"
@@ -513,7 +544,7 @@ const AdminServiceProviders = () => {
                 )}
 
                 <Button
-                  variant={selectedProvider.is_verified ? "outline" : "default"}
+                  variant={selectedProvider.is_verified ? 'outline' : 'default'}
                   onClick={() => handleVerify(selectedProvider.id, !selectedProvider.is_verified)}
                 >
                   {selectedProvider.is_verified ? (

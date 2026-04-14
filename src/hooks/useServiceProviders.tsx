@@ -1,21 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Hook centralizado para gestión de proveedores de servicios
- * 
+ *
  * Este hook proporciona acceso a la tabla unificada `service_providers`
  * y `provider_service_offerings` que centraliza todos los tipos de proveedores.
- * 
+ *
  * AUTO-APROBACIÓN: Actualmente configurado para aprobar automáticamente nuevos proveedores.
  * Para cambiar a aprobación manual, modificar:
  * 1. En la base de datos: ALTER TABLE service_providers ALTER COLUMN status SET DEFAULT 'pending';
  * 2. En la función get_or_create_service_provider: cambiar 'approved' por 'pending'
  */
 
-import { useState, useCallback } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "./useAuth";
-import { toast } from "sonner";
-import { logger } from "@/lib/logger";
+import { useState, useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from './useAuth';
+import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
 
 export type ServiceType = 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'grooming';
 export type ProviderStatus = 'pending' | 'approved' | 'rejected' | 'suspended';
@@ -111,38 +112,53 @@ export const useServiceProviders = () => {
   const queryClient = useQueryClient();
 
   // Obtener todos los proveedores aprobados
-  const { data: providers, isLoading, error, refetch } = useQuery({
+  const {
+    data: providers,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ['service-providers'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('service_providers')
-        .select(`
+        .select(
+          `
           *,
           provider_service_offerings(*)
-        `)
+        `
+        )
         .eq('status', 'approved')
         .order('rating', { ascending: false });
 
       if (error) throw error;
-      
-      return data.map(provider => ({
+
+      return data.map((provider) => ({
         ...provider,
-        services: provider.provider_service_offerings || []
+        services: provider.provider_service_offerings || [],
       })) as ServiceProvider[];
     },
   });
 
   // Obtener proveedores por tipo de servicio
-  const getProvidersByServiceType = useCallback((serviceType: ServiceType) => {
-    return providers?.filter(p => 
-      p.services?.some((s: ServiceOffering) => s.service_type === serviceType && s.is_active)
-    ) || [];
-  }, [providers]);
+  const getProvidersByServiceType = useCallback(
+    (serviceType: ServiceType) => {
+      return (
+        providers?.filter((p) =>
+          p.services?.some((s: ServiceOffering) => s.service_type === serviceType && s.is_active)
+        ) || []
+      );
+    },
+    [providers]
+  );
 
   // Obtener un proveedor específico
-  const getProvider = useCallback((providerId: string) => {
-    return providers?.find(p => p.id === providerId);
-  }, [providers]);
+  const getProvider = useCallback(
+    (providerId: string) => {
+      return providers?.find((p) => p.id === providerId);
+    },
+    [providers]
+  );
 
   return {
     providers,
@@ -162,27 +178,34 @@ export const useMyProviderProfile = () => {
   const queryClient = useQueryClient();
 
   // Obtener perfil del proveedor actual
-  const { data: myProfile, isLoading, error, refetch } = useQuery({
+  const {
+    data: myProfile,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ['my-provider-profile', user?.id],
     queryFn: async () => {
       if (!user) return null;
 
       const { data, error } = await supabase
         .from('service_providers')
-        .select(`
+        .select(
+          `
           *,
           provider_service_offerings(*)
-        `)
+        `
+        )
         .eq('user_id', user.id)
         .maybeSingle();
 
       if (error) throw error;
-      
+
       if (!data) return null;
-      
+
       return {
         ...data,
-        services: data.provider_service_offerings || []
+        services: data.provider_service_offerings || [],
       } as ServiceProvider;
     },
     enabled: !!user,
@@ -226,7 +249,7 @@ export const useMyProviderProfile = () => {
             display_name: params.display_name || profile?.display_name,
             avatar_url: profile?.avatar_url,
             bio: params.bio || profile?.bio,
-            status: 'approved', // AUTO-APROBACIÓN: Cambiar a 'pending' para aprobación manual
+            status: 'pending', // Aprobación según trigger DB (auto para no-vets completos, manual para vets)
             ...params,
           })
           .select()
@@ -270,7 +293,7 @@ export const useMyProviderProfile = () => {
             display_name: profile?.display_name,
             avatar_url: profile?.avatar_url,
             bio: profile?.bio,
-            status: 'approved', // AUTO-APROBACIÓN
+            status: 'pending', // Aprobación según trigger DB
           })
           .select()
           .maybeSingle();
@@ -282,18 +305,21 @@ export const useMyProviderProfile = () => {
       // Insertar o actualizar el servicio
       const { data, error } = await supabase
         .from('provider_service_offerings')
-        .upsert({
-          provider_id: providerId,
-          service_type: params.service_type,
-          price_base: params.price_base,
-          price_unit: params.price_unit || 'hour',
-          description: params.description,
-          max_pets: params.max_pets || 3,
-          specialties: params.specialties || [],
-          is_active: true,
-        }, {
-          onConflict: 'provider_id,service_type',
-        })
+        .upsert(
+          {
+            provider_id: providerId,
+            service_type: params.service_type,
+            price_base: params.price_base,
+            price_unit: params.price_unit || 'hour',
+            description: params.description,
+            max_pets: params.max_pets || 3,
+            specialties: params.specialties || [],
+            is_active: true,
+          },
+          {
+            onConflict: 'provider_id,service_type',
+          }
+        )
         .select()
         .maybeSingle();
 
@@ -355,30 +381,41 @@ export const useAdminServiceProviders = () => {
   const queryClient = useQueryClient();
 
   // Obtener TODOS los proveedores (incluyendo pendientes y rechazados)
-  const { data: allProviders, isLoading, error, refetch } = useQuery({
+  const {
+    data: allProviders,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
     queryKey: ['admin-service-providers'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('service_providers')
-        .select(`
+        .select(
+          `
           *,
           provider_service_offerings(*)
-        `)
+        `
+        )
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      
-      return data.map(provider => ({
+
+      return data.map((provider) => ({
         ...provider,
-        services: provider.provider_service_offerings || []
+        services: provider.provider_service_offerings || [],
       })) as ServiceProvider[];
     },
   });
 
   // Cambiar estado de un proveedor
   const updateProviderStatus = useMutation({
-    mutationFn: async ({ providerId, status, rejectionReason }: { 
-      providerId: string; 
+    mutationFn: async ({
+      providerId,
+      status,
+      rejectionReason,
+    }: {
+      providerId: string;
       status: ProviderStatus;
       rejectionReason?: string;
     }) => {
@@ -413,7 +450,7 @@ export const useAdminServiceProviders = () => {
     mutationFn: async ({ providerId, verified }: { providerId: string; verified: boolean }) => {
       const { data, error } = await supabase
         .from('service_providers')
-        .update({ 
+        .update({
           is_verified: verified,
           verified_at: verified ? new Date().toISOString() : null,
         })
@@ -438,10 +475,10 @@ export const useAdminServiceProviders = () => {
   // Estadísticas
   const stats = {
     total: allProviders?.length || 0,
-    approved: allProviders?.filter(p => p.status === 'approved').length || 0,
-    pending: allProviders?.filter(p => p.status === 'pending').length || 0,
-    rejected: allProviders?.filter(p => p.status === 'rejected').length || 0,
-    verified: allProviders?.filter(p => p.is_verified).length || 0,
+    approved: allProviders?.filter((p) => p.status === 'approved').length || 0,
+    pending: allProviders?.filter((p) => p.status === 'pending').length || 0,
+    rejected: allProviders?.filter((p) => p.status === 'rejected').length || 0,
+    verified: allProviders?.filter((p) => p.is_verified).length || 0,
   };
 
   return {
