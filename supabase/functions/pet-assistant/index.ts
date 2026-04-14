@@ -2,15 +2,21 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-};
+const allowedOrigins = ['https://pawfriend.cl', 'http://localhost:8080', 'http://localhost:5173'];
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get('Origin') || '';
+  const allowed = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+  return {
+    'Access-Control-Allow-Origin': allowed,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  };
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders });
+    return new Response('ok', { headers: getCorsHeaders(req) });
   }
 
   try {
@@ -19,7 +25,7 @@ serve(async (req) => {
     if (!authHeader) {
       return new Response(JSON.stringify({ error: 'Authorization required' }), {
         status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -34,7 +40,7 @@ serve(async (req) => {
     if (userError || !userData.user) {
       return new Response(JSON.stringify({ error: 'User not authenticated' }), {
         status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -42,7 +48,7 @@ serve(async (req) => {
 
     const quota = await checkAiQuota(userId, { limit: 5 });
     if (!quota.allowed) {
-      return rateLimitResponse(quota, corsHeaders);
+      return rateLimitResponse(quota, getCorsHeaders(req));
     }
 
     // Parse input
@@ -64,14 +70,14 @@ serve(async (req) => {
     if (!question || typeof question !== 'string' || question.trim().length < 3) {
       return new Response(JSON.stringify({ error: 'Question is required (min 3 characters)' }), {
         status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
     if (!pet_id || typeof pet_id !== 'string') {
       return new Response(JSON.stringify({ error: 'pet_id is required' }), {
         status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -110,7 +116,7 @@ serve(async (req) => {
         }),
         {
           status: 429,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
@@ -126,7 +132,7 @@ serve(async (req) => {
     if (petError || !pet) {
       return new Response(JSON.stringify({ error: 'Pet not found or access denied' }), {
         status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -187,15 +193,14 @@ serve(async (req) => {
     const systemPrompt = `Vet Paw Friend Chile. Mascota: ${ctx.join(' | ')}${historial !== 'sin historial' ? `\nHist: ${historial}` : ''}${recordatorios ? `\nRec: ${recordatorios}` : ''}
 
 Nombre real. Grave→urgencia+vet. Alergias→advertir. NO diagnosticar. 2-3 oraciones. Chileno.
-Compras/precios/normativa→web_search "Chile"+comuna. Cita fuente.
-JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":false,"sugerencias_accion":[],"fuentes":[]}`;
+JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":false,"sugerencias_accion":[]}`;
 
     // Call Claude
     const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
     if (!apiKey) {
       return new Response(JSON.stringify({ error: 'AI service not configured' }), {
         status: 503,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
     }
 
@@ -217,7 +222,6 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
           temperature: 0.3,
           system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
           messages: [{ role: 'user', content: sanitize(question) }],
-          tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }],
         }),
         signal: controller.signal,
       });
@@ -230,7 +234,7 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
         JSON.stringify({ error: 'AI service rate limited. Try again in a moment.' }),
         {
           status: 429,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
@@ -238,13 +242,17 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
     if (!claudeResponse.ok) {
       const errorBody = await claudeResponse.text();
       console.error('[pet-assistant] Claude API error:', claudeResponse.status, errorBody);
+      const hint = claudeResponse.status === 401 ? ' (API key inválida)'
+        : claudeResponse.status === 400 ? ' (request inválido)'
+        : claudeResponse.status === 403 ? ' (sin acceso al modelo)'
+        : '';
       return new Response(
         JSON.stringify({
-          error: 'AI service temporarily unavailable',
+          error: `Servicio de IA temporalmente no disponible${hint}. Intenta de nuevo.`,
         }),
         {
           status: 502,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
         }
       );
     }
@@ -268,7 +276,6 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
       nivel_urgencia: 'bajo' | 'medio' | 'alto';
       requiere_veterinario: boolean;
       sugerencias_accion: string[];
-      fuentes: string[];
     } | null = null;
 
     try {
@@ -296,7 +303,6 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
         nivel_urgencia: 'bajo',
         requiere_veterinario: false,
         sugerencias_accion: [],
-        fuentes: [],
       };
     }
 
@@ -304,7 +310,6 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
     parsed.sugerencias_accion = Array.isArray(parsed.sugerencias_accion)
       ? parsed.sugerencias_accion
       : [];
-    parsed.fuentes = Array.isArray(parsed.fuentes) ? parsed.fuentes : [];
 
     // Update rate limit
     if (usage) {
@@ -340,7 +345,7 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
       }),
       {
         status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
 
@@ -353,7 +358,7 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
   }
