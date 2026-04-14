@@ -826,12 +826,12 @@ serve(async (req) => {
     // ── Premium plan check: export_pdf requires premium ──
     const { data: profileData } = await supabase
       .from('profiles')
-      .select('plan_id')
+      .select('is_premium')
       .eq('id', userData.user.id)
       .single();
 
-    const userPlan = profileData?.plan_id || 'free';
-    if (userPlan === 'free') {
+    const isPremium = profileData?.is_premium === true;
+    if (!isPremium) {
       return new Response(
         JSON.stringify({ success: false, error: 'Exportar PDF requiere plan Premium' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 402 }
