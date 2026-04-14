@@ -18,4 +18,13 @@ export const supabase = createClient<any>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY
     persistSession: true,
     autoRefreshToken: true,
   },
+  global: {
+    headers: { 'x-client-info': 'paw-friend-web' },
+    fetch: (url: RequestInfo | URL, options?: RequestInit) => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000);
+      const signal = options?.signal ? options.signal : controller.signal;
+      return fetch(url, { ...options, signal }).finally(() => clearTimeout(timeoutId));
+    },
+  },
 });

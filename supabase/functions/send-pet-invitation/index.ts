@@ -193,6 +193,24 @@ serve(async (req) => {
 
     const callerId = userData.user.id;
 
+    // --- Rate limit: max 5 invitations per user per day ---
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { count: recentInvites } = await supabaseAdmin
+      .from('pets')
+      .select('id', { count: 'exact', head: true })
+      .eq('created_by_vet_id', callerId)
+      .not('owner_invitation_sent_at', 'is', null)
+      .gte('owner_invitation_sent_at', oneDayAgo);
+
+    if ((recentInvites ?? 0) >= 5) {
+      return errorResponse('Límite de invitaciones alcanzado (5 por día). Intenta mañana.', 429);
+    }
+
     // --- Parse body ---
     const { pet_id } = await req.json();
     if (!pet_id || typeof pet_id !== 'string') {

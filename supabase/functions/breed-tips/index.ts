@@ -114,7 +114,11 @@ Chileno (tu/tienes). Datos correctos.`;
           messages: [
             {
               role: 'user',
-              content: `Tips: ${species === 'perro' ? 'perro' : species === 'gato' ? 'gato' : 'mascota'} ${breed.slice(0, 100)}`,
+              content: `Tips: ${species === 'perro' ? 'perro' : species === 'gato' ? 'gato' : 'mascota'} ${breed
+                .slice(0, 100)
+                .replace(/[\n\r`]/g, ' ')
+                .replace(/(?:ignore|olvida|ignora|forget)\s+/gi, '')
+                .trim()}`,
             },
           ],
         }),

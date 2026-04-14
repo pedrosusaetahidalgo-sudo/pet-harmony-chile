@@ -104,6 +104,10 @@ export function useFeedActions() {
         ...p,
         is_saved: isSaved,
       }));
+      toast({
+        variant: 'destructive',
+        title: 'No se pudo guardar la publicación',
+      });
     },
   });
 

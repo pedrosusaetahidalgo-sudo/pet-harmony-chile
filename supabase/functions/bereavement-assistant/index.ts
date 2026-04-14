@@ -118,24 +118,36 @@ serve(async (req) => {
       });
     }
 
-    // Call Claude
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': anthropicKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
-        max_tokens: 250,
-        temperature: 0.7,
-        system: [
-          { type: 'text', text: SYSTEM_PROMPT + petContext, cache_control: { type: 'ephemeral' } },
-        ],
-        messages: [{ role: 'user', content: message }],
-      }),
-    });
+    // Call Claude (with timeout to prevent worker hang)
+    const abortCtl = new AbortController();
+    const fetchTimeout = setTimeout(() => abortCtl.abort(), 15000);
+    let response: Response;
+    try {
+      response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        signal: abortCtl.signal,
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': anthropicKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 250,
+          temperature: 0.7,
+          system: [
+            {
+              type: 'text',
+              text: SYSTEM_PROMPT + petContext,
+              cache_control: { type: 'ephemeral' },
+            },
+          ],
+          messages: [{ role: 'user', content: message }],
+        }),
+      });
+    } finally {
+      clearTimeout(fetchTimeout);
+    }
 
     if (!response.ok) {
       const errText = await response.text();

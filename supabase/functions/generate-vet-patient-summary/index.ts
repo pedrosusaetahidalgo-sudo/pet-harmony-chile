@@ -78,6 +78,22 @@ serve(async (req) => {
 
     if (!providerRow) return errorResponse('No eres un proveedor registrado', 403);
 
+    // Verificar que el vet tiene un pet_vet_link activo con esta mascota
+    const { data: vetLink } = await supabaseAdmin
+      .from('pet_vet_links')
+      .select('id')
+      .eq('pet_id', petId)
+      .eq('provider_id', providerRow.id)
+      .eq('status', 'active')
+      .maybeSingle();
+
+    if (!vetLink) {
+      return errorResponse(
+        'No tienes un vínculo activo con esta mascota. Solicita acceso al dueño.',
+        403
+      );
+    }
+
     // Check cache (24h TTL)
     const cacheKey = `vet-summary:${providerRow.id}:${petId}`;
     const { data: cached } = await supabaseAdmin

@@ -100,36 +100,17 @@ export async function awardPoints(
     }
   }
 
-  // Insert transaction
-  const { error } = await supabase.from('paw_point_transactions').insert({
-    user_id: userId,
-    points_amount: points,
-    transaction_type: 'earn',
-    source_type: action,
+  // Usar RPC atómico para evitar race conditions (read-then-write)
+  // La función award_points_atomic inserta la transacción Y actualiza
+  // el contador en una sola operación DB.
+  const { error } = await supabase.rpc('award_points_atomic', {
+    p_user_id: userId,
+    p_points: points,
+    p_action: action,
+    p_transaction_type: 'earn',
   });
 
   if (error) return { awarded: false, points: 0, error: error.message };
-
-  // Actualizar el contador agregado en user_guardian_progress.
-  // Sin esto, la UI muestra "0 PawPoints" aunque las transacciones se
-  // estén creando bien (era el bug del check-in que no refrescaba).
-  // No es atómico, pero es suficientemente bueno: si falla, la transacción
-  // ya quedó registrada y el próximo cron / lectura puede reconciliar.
-  try {
-    const { data: progress } = await supabase
-      .from('user_guardian_progress')
-      .select('total_paw_points')
-      .eq('user_id', userId)
-      .maybeSingle();
-
-    const currentTotal = progress?.total_paw_points ?? 0;
-    await supabase
-      .from('user_guardian_progress')
-      .update({ total_paw_points: currentTotal + points })
-      .eq('user_id', userId);
-  } catch {
-    // Silent fail: la transacción ya se grabó, el agregado se reconciliará.
-  }
 
   return { awarded: true, points };
 }

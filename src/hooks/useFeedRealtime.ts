@@ -23,9 +23,10 @@ export function useFeedRealtime() {
       .subscribe();
 
     return () => {
+      channel.unsubscribe();
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [queryClient]);
 
   const loadNewPosts = useCallback(() => {
     setNewPostsCount(0);

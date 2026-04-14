@@ -147,6 +147,7 @@ export const useRoutines = (filterPetId?: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pet-routines'] });
+      queryClient.invalidateQueries({ queryKey: ['unified-calendar'] });
       toast({ title: 'Rutina creada' });
     },
     onError: (error: Error) => {
@@ -168,6 +169,7 @@ export const useRoutines = (filterPetId?: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pet-routines'] });
+      queryClient.invalidateQueries({ queryKey: ['unified-calendar'] });
       toast({ title: 'Rutina actualizada' });
     },
     onError: (error: Error) => {
@@ -186,6 +188,7 @@ export const useRoutines = (filterPetId?: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pet-routines'] });
+      queryClient.invalidateQueries({ queryKey: ['unified-calendar'] });
       toast({ title: 'Rutina eliminada' });
     },
   });
@@ -200,6 +203,7 @@ export const useRoutines = (filterPetId?: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pet-routines'] });
+      queryClient.invalidateQueries({ queryKey: ['unified-calendar'] });
     },
   });
 
@@ -219,6 +223,7 @@ export const useRoutines = (filterPetId?: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['routine-completions'] });
+      queryClient.invalidateQueries({ queryKey: ['unified-calendar'] });
       toast({ title: 'Rutina completada' });
     },
   });
@@ -239,6 +244,7 @@ export const useRoutines = (filterPetId?: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['routine-completions'] });
+      queryClient.invalidateQueries({ queryKey: ['unified-calendar'] });
     },
   });
 
