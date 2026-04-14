@@ -12,6 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
   SelectContent,
@@ -183,323 +184,392 @@ export default function ProviderProfileEdit() {
           )
         }
       />
-      <div className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
-        {/* Preview en vivo */}
-        <ProfilePreviewCard form={form} slug={provider?.slug} />
-
-        {/* Completeness */}
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base">Completitud del perfil</CardTitle>
-              <span className="text-2xl font-bold text-purple-700">{score}%</span>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Progress value={score} className="mb-3" />
-            {missing.length > 0 ? (
-              <p className="text-xs text-muted-foreground">
-                <strong>Te falta:</strong> {missing.join(' · ')}
-              </p>
-            ) : (
-              <p className="text-xs text-green-700">¡Perfil completo!</p>
-            )}
-            {!canBeVisible && (
-              <Alert className="mt-3">
-                <AlertTitle className="text-sm">
-                  Necesitas {REQUIRED_FOR_DIRECTORY_SCORE}% para aparecer en el directorio
-                </AlertTitle>
-                <AlertDescription className="text-xs">
-                  Completa los campos faltantes y luego activa "Aparecer en el directorio público".
-                </AlertDescription>
-              </Alert>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* 1. Información profesional */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">1. Información profesional</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Avatar */}
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                {form.avatar_url ? (
-                  <img
-                    src={form.avatar_url}
-                    alt="Avatar"
-                    className="w-24 h-24 rounded-full object-cover border-2 border-purple-100"
-                  />
-                ) : (
-                  <div className="w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center">
-                    <Stethoscope className="h-10 w-10 text-purple-400" />
-                  </div>
+      <div className="container mx-auto px-4 py-6 max-w-6xl">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Form area (3/5) */}
+          <div className="lg:col-span-3 space-y-4">
+            {/* Completeness bar */}
+            <Card className="border-purple-100">
+              <CardContent className="py-3 px-4">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium">Completitud del perfil</span>
+                  <span className="text-lg font-bold text-purple-700">{score}%</span>
+                </div>
+                <Progress value={score} className="h-2" />
+                {missing.length > 0 && (
+                  <p className="text-[11px] text-muted-foreground mt-1.5">
+                    <strong>Te falta:</strong> {missing.join(' · ')}
+                  </p>
                 )}
-              </div>
-              <div>
-                <Label htmlFor="avatar" className="cursor-pointer">
-                  <div className="inline-flex items-center gap-1 px-3 py-2 bg-purple-50 hover:bg-purple-100 rounded-md text-sm">
-                    {uploading ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
+              </CardContent>
+            </Card>
+
+            {/* Tabs */}
+            <Tabs defaultValue="info" className="space-y-4">
+              <TabsList className="grid grid-cols-5 w-full h-9">
+                <TabsTrigger value="info" className="text-xs">
+                  Info
+                </TabsTrigger>
+                <TabsTrigger value="specialties" className="text-xs">
+                  Especialidades
+                </TabsTrigger>
+                <TabsTrigger value="zones" className="text-xs">
+                  Zona
+                </TabsTrigger>
+                <TabsTrigger value="pricing" className="text-xs">
+                  Precios
+                </TabsTrigger>
+                <TabsTrigger value="visibility" className="text-xs">
+                  Visibilidad
+                </TabsTrigger>
+              </TabsList>
+
+              {/* Tab: Info */}
+              <TabsContent value="info">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Información profesional</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Avatar */}
+                    <div className="flex items-center gap-4">
+                      <div className="relative">
+                        {form.avatar_url ? (
+                          <img
+                            src={form.avatar_url}
+                            alt="Avatar"
+                            className="w-20 h-20 rounded-full object-cover border-2 border-purple-100"
+                          />
+                        ) : (
+                          <div className="w-20 h-20 rounded-full bg-purple-100 flex items-center justify-center">
+                            <Stethoscope className="h-8 w-8 text-purple-400" />
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <Label htmlFor="avatar" className="cursor-pointer">
+                          <div className="inline-flex items-center gap-1 px-3 py-2 bg-purple-50 hover:bg-purple-100 rounded-md text-sm">
+                            {uploading ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Camera className="h-4 w-4" />
+                            )}
+                            {form.avatar_url ? 'Cambiar foto' : 'Subir foto'}
+                          </div>
+                        </Label>
+                        <input
+                          id="avatar"
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleAvatarUpload}
+                          disabled={uploading}
+                          aria-label="Subir foto de perfil"
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">JPG o PNG · máx 5 MB</p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="name">Nombre completo / del negocio *</Label>
+                        <Input
+                          id="name"
+                          value={form.display_name}
+                          onChange={(e) => update('display_name', e.target.value)}
+                          placeholder="Dr. Juan Pérez"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="type">Tipo de atención *</Label>
+                        <Select
+                          value={form.provider_type}
+                          onValueChange={(v) =>
+                            update('provider_type', v as ProviderProfileForm['provider_type'])
+                          }
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="individual">Consulta individual</SelectItem>
+                            <SelectItem value="home_visit">Atención a domicilio</SelectItem>
+                            <SelectItem value="clinic">Clínica veterinaria</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="bio">Bio profesional *</Label>
+                      <Textarea
+                        id="bio"
+                        value={form.bio}
+                        onChange={(e) => update('bio', e.target.value)}
+                        placeholder="Cuéntanos tu experiencia, enfoque y qué te diferencia…"
+                        rows={3}
+                        maxLength={500}
+                      />
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {form.bio.length}/500 · mínimo 50 caracteres
+                      </p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="years">Años de experiencia</Label>
+                        <Input
+                          id="years"
+                          type="number"
+                          min={0}
+                          value={form.experience_years ?? ''}
+                          onChange={(e) =>
+                            update(
+                              'experience_years',
+                              e.target.value ? Number(e.target.value) : null
+                            )
+                          }
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="license">N° Colmevet</Label>
+                        <Input
+                          id="license"
+                          value={form.license_number}
+                          onChange={(e) => update('license_number', e.target.value)}
+                          placeholder="Ej: 98765"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <div>
+                        <Label htmlFor="email">Email público</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={form.public_email ?? ''}
+                          onChange={(e) => update('public_email', e.target.value || null)}
+                          placeholder="contacto@vet.cl"
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="phone">Teléfono público</Label>
+                        <Input
+                          id="phone"
+                          value={form.public_phone ?? ''}
+                          onChange={(e) => update('public_phone', e.target.value || null)}
+                          placeholder="+56 9 1234 5678"
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Tab: Especialidades */}
+              <TabsContent value="specialties">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Especialidades</CardTitle>
+                    <CardDescription>Selecciona al menos 1.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex flex-wrap gap-2">
+                      {VET_SPECIALTIES.map((s) => {
+                        const active = form.specialties.includes(s);
+                        return (
+                          <button
+                            key={s}
+                            type="button"
+                            onClick={() => toggleInArray('specialties', s)}
+                            className={`px-3 py-1.5 rounded-full text-sm border transition ${
+                              active
+                                ? 'bg-purple-600 text-white border-purple-600'
+                                : 'bg-white text-foreground border-slate-300 hover:border-purple-400'
+                            }`}
+                          >
+                            {s}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Tab: Zonas */}
+              <TabsContent value="zones">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Zonas de atención</CardTitle>
+                    <CardDescription>Comunas donde atiendes (al menos 1).</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label htmlFor="commune">Comuna base</Label>
+                      <Select
+                        value={form.commune ?? ''}
+                        onValueChange={(v) => update('commune', v || null)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Elige tu comuna principal" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {SANTIAGO_COMUNAS.map((c) => (
+                            <SelectItem key={c} value={c}>
+                              {c}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <Label className="mb-2 block">Comunas que atiendes</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {SANTIAGO_COMUNAS.map((c) => {
+                          const active = form.service_areas.includes(c);
+                          return (
+                            <button
+                              key={c}
+                              type="button"
+                              onClick={() => toggleInArray('service_areas', c)}
+                              className={`px-3 py-1.5 rounded-full text-sm border transition ${
+                                active
+                                  ? 'bg-purple-600 text-white border-purple-600'
+                                  : 'bg-white text-foreground border-slate-300 hover:border-purple-400'
+                              }`}
+                            >
+                              {c}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {form.service_areas.length > 0 && (
+                        <p className="text-xs text-muted-foreground mt-2">
+                          {form.service_areas.length} comuna(s) seleccionada(s)
+                        </p>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+
+              {/* Tab: Precios */}
+              <TabsContent value="pricing">
+                <div className="space-y-4">
+                  <MisPreciosEditor providerId={provider?.id} />
+                  <Card>
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-base">Precio base</CardTitle>
+                      <CardDescription>
+                        Aparecerá como "Desde $X" en tu perfil del directorio.
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div>
+                        <Label htmlFor="price">Precio mínimo (CLP)</Label>
+                        <Input
+                          id="price"
+                          type="number"
+                          min={0}
+                          value={form.price_from ?? ''}
+                          onChange={(e) =>
+                            update('price_from', e.target.value ? Number(e.target.value) : null)
+                          }
+                          placeholder="25000"
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </TabsContent>
+
+              {/* Tab: Visibilidad */}
+              <TabsContent value="visibility">
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Visibilidad pública</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1">
+                        <Label htmlFor="visible" className="text-base">
+                          Aparecer en el directorio público
+                        </Label>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Tu perfil será visible en pawfriend.cl/veterinarios para cualquier
+                          persona, sin login.
+                          {!canBeVisible && ' Necesitas completar mas campos primero.'}
+                        </p>
+                        {form.is_directory_visible && canBeVisible && (
+                          <Badge variant="secondary" className="mt-2">
+                            Visible públicamente
+                          </Badge>
+                        )}
+                        {!canBeVisible && (
+                          <Alert className="mt-3">
+                            <AlertTitle className="text-sm">
+                              Necesitas {REQUIRED_FOR_DIRECTORY_SCORE}% para aparecer en el
+                              directorio
+                            </AlertTitle>
+                            <AlertDescription className="text-xs">
+                              Completa los campos faltantes y luego activa esta opción.
+                            </AlertDescription>
+                          </Alert>
+                        )}
+                      </div>
+                      <Switch
+                        id="visible"
+                        checked={form.is_directory_visible}
+                        disabled={!canBeVisible}
+                        onCheckedChange={(v) => update('is_directory_visible', v)}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          {/* Sticky preview (2/5) */}
+          <div className="lg:col-span-2">
+            <div className="sticky top-20 space-y-4">
+              {/* Preview en vivo */}
+              <ProfilePreviewCard form={form} slug={provider?.slug} />
+
+              {/* Visibilidad */}
+              <Card className="border-purple-100">
+                <CardContent className="py-3 px-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-medium text-muted-foreground">Visibilidad</span>
+                    {form.is_directory_visible && canBeVisible ? (
+                      <Badge
+                        variant="secondary"
+                        className="text-[10px] bg-green-50 text-green-700 border-green-200"
+                      >
+                        Visible
+                      </Badge>
                     ) : (
-                      <Camera className="h-4 w-4" />
+                      <Badge variant="outline" className="text-[10px]">
+                        Oculto
+                      </Badge>
                     )}
-                    {form.avatar_url ? 'Cambiar foto' : 'Subir foto'}
                   </div>
-                </Label>
-                <input
-                  id="avatar"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleAvatarUpload}
-                  disabled={uploading}
-                />
-                <p className="text-xs text-muted-foreground mt-1">JPG o PNG · máx 5 MB</p>
-              </div>
+                  {provider?.slug && (
+                    <p className="text-[10px] text-muted-foreground mt-1 font-mono truncate">
+                      pawfriend.cl/veterinarios/{provider.slug}
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
             </div>
-
-            <div>
-              <Label htmlFor="name">Nombre completo / del negocio *</Label>
-              <Input
-                id="name"
-                value={form.display_name}
-                onChange={(e) => update('display_name', e.target.value)}
-                placeholder="Dr. Juan Pérez"
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="type">Tipo de atención *</Label>
-              <Select
-                value={form.provider_type}
-                onValueChange={(v) =>
-                  update('provider_type', v as ProviderProfileForm['provider_type'])
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="individual">Consulta individual</SelectItem>
-                  <SelectItem value="home_visit">Atención a domicilio</SelectItem>
-                  <SelectItem value="clinic">Clínica veterinaria</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label htmlFor="bio">Bio profesional *</Label>
-              <Textarea
-                id="bio"
-                value={form.bio}
-                onChange={(e) => update('bio', e.target.value)}
-                placeholder="Cuéntanos tu experiencia, enfoque y qué te diferencia…"
-                rows={4}
-                maxLength={500}
-              />
-              <p className="text-xs text-muted-foreground mt-1">
-                {form.bio.length}/500 · mínimo 50 caracteres
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label htmlFor="years">Años de experiencia</Label>
-                <Input
-                  id="years"
-                  type="number"
-                  min={0}
-                  value={form.experience_years ?? ''}
-                  onChange={(e) =>
-                    update('experience_years', e.target.value ? Number(e.target.value) : null)
-                  }
-                />
-              </div>
-              <div>
-                <Label htmlFor="license">N° Colmevet</Label>
-                <Input
-                  id="license"
-                  value={form.license_number}
-                  onChange={(e) => update('license_number', e.target.value)}
-                  placeholder="Ej: 98765"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <Label htmlFor="email">Email público</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={form.public_email ?? ''}
-                  onChange={(e) => update('public_email', e.target.value || null)}
-                  placeholder="contacto@vet.cl"
-                />
-              </div>
-              <div>
-                <Label htmlFor="phone">Teléfono público</Label>
-                <Input
-                  id="phone"
-                  value={form.public_phone ?? ''}
-                  onChange={(e) => update('public_phone', e.target.value || null)}
-                  placeholder="+56 9 1234 5678"
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 2. Especialidades */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">2. Especialidades</CardTitle>
-            <CardDescription>Selecciona al menos 1.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-2">
-              {VET_SPECIALTIES.map((s) => {
-                const active = form.specialties.includes(s);
-                return (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => toggleInArray('specialties', s)}
-                    className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                      active
-                        ? 'bg-purple-600 text-white border-purple-600'
-                        : 'bg-white text-foreground border-slate-300 hover:border-purple-400'
-                    }`}
-                  >
-                    {s}
-                  </button>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 3. Zonas de atención */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">3. Zonas de atención</CardTitle>
-            <CardDescription>Comunas donde atiendes (al menos 1).</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="commune">Comuna base</Label>
-              <Select
-                value={form.commune ?? ''}
-                onValueChange={(v) => update('commune', v || null)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Elige tu comuna principal" />
-                </SelectTrigger>
-                <SelectContent>
-                  {SANTIAGO_COMUNAS.map((c) => (
-                    <SelectItem key={c} value={c}>
-                      {c}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div>
-              <Label className="mb-2 block">Comunas que atiendes</Label>
-              <div className="flex flex-wrap gap-2">
-                {SANTIAGO_COMUNAS.map((c) => {
-                  const active = form.service_areas.includes(c);
-                  return (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => toggleInArray('service_areas', c)}
-                      className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                        active
-                          ? 'bg-purple-600 text-white border-purple-600'
-                          : 'bg-white text-foreground border-slate-300 hover:border-purple-400'
-                      }`}
-                    >
-                      {c}
-                    </button>
-                  );
-                })}
-              </div>
-              {form.service_areas.length > 0 && (
-                <p className="text-xs text-muted-foreground mt-2">
-                  {form.service_areas.length} comuna(s) seleccionada(s)
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 4. Mis precios públicos */}
-        <MisPreciosEditor providerId={provider?.id} />
-
-        {/* 5. Precio mínimo (Desde $X en directorio) */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">5. Precio base</CardTitle>
-            <CardDescription>
-              Aparecerá como "Desde $X" en tu perfil del directorio.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div>
-              <Label htmlFor="price">Precio mínimo (CLP)</Label>
-              <Input
-                id="price"
-                type="number"
-                min={0}
-                value={form.price_from ?? ''}
-                onChange={(e) =>
-                  update('price_from', e.target.value ? Number(e.target.value) : null)
-                }
-                placeholder="25000"
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* 6. Visibilidad */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg">6. Visibilidad pública</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex-1">
-                <Label htmlFor="visible" className="text-base">
-                  Aparecer en el directorio público
-                </Label>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Tu perfil será visible en pawfriend.cl/veterinarios para cualquier persona, sin
-                  login.
-                  {!canBeVisible && ' Necesitas completar mas campos primero.'}
-                </p>
-                {form.is_directory_visible && canBeVisible && (
-                  <Badge variant="secondary" className="mt-2">
-                    Visible públicamente
-                  </Badge>
-                )}
-              </div>
-              <Switch
-                id="visible"
-                checked={form.is_directory_visible}
-                disabled={!canBeVisible}
-                onCheckedChange={(v) => update('is_directory_visible', v)}
-              />
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Save bar */}
-        <div className="sticky bottom-4 z-10">
+        <div className="sticky bottom-4 z-10 mt-4">
           <Card className="shadow-lg border-purple-200">
             <CardContent className="py-3 flex items-center justify-between gap-3">
               <p className="text-sm text-muted-foreground hidden md:block">

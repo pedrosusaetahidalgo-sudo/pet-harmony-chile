@@ -108,15 +108,11 @@ const providerConsultItems = [
   { title: 'Calendario', url: '/calendario', icon: CalendarDays },
 ];
 
-const providerCommsItems = [
-  { title: 'Mensajes', url: '/chat', icon: MessageSquare },
-  { title: 'Seguimientos', url: '/provider/dashboard', icon: Bell },
-];
+const providerCommsItems = [{ title: 'Mensajes', url: '/chat', icon: MessageSquare }];
 
 const providerBusinessItems = [
   { title: 'Perfil público', url: '/provider/profile-edit', icon: UserCog },
-  { title: 'Panel Pro', url: '/panel-pro', icon: Star },
-  { title: 'Reportes', url: '/reportes', icon: BarChart3 },
+  { title: 'Panel Pro', url: '/panel-pro', icon: BarChart3 },
 ];
 
 export function AppSidebar() {

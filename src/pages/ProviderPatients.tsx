@@ -36,9 +36,11 @@ import {
   X,
   Stethoscope,
   Calendar,
+  Sparkles,
 } from '@/lib/icons';
 import { toast } from 'sonner';
 import { NewPatientForm } from '@/components/provider/NewPatientForm';
+import { PatientConsolidatedSummary } from '@/components/provider/PatientConsolidatedSummary';
 import type { VetClinicalNote } from '@/hooks/useVetClinicalNotes';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -79,6 +81,7 @@ export default function ProviderPatients() {
   const [search, setSearch] = useState('');
   const [filterSpecies, setFilterSpecies] = useState('all');
   const [resendingId, setResendingId] = useState<string | null>(null);
+  const [consolidadoPet, setConsolidadoPet] = useState<{ id: string; name: string } | null>(null);
 
   // Fetch provider ID
   const { data: providerId } = useQuery({
@@ -313,11 +316,11 @@ export default function ProviderPatients() {
   }
 
   return (
-    <div className="container max-w-4xl mx-auto p-4 md:p-6 space-y-6">
+    <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold">Mis pacientes</h1>
+          <h1 className="text-xl font-bold">Mis pacientes</h1>
           <p className="text-sm text-muted-foreground">
             {patients?.length ?? 0} pacientes · {pendingLinks?.length ?? 0} solicitudes pendientes
           </p>
@@ -338,12 +341,12 @@ export default function ProviderPatients() {
             placeholder="Buscar por nombre, dueno, raza..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9"
+            className="pl-9 h-9"
           />
         </div>
         {speciesOptions.length > 1 && (
           <Select value={filterSpecies} onValueChange={setFilterSpecies}>
-            <SelectTrigger className="w-full sm:w-[160px]">
+            <SelectTrigger className="w-full sm:w-[140px] h-9">
               <SelectValue placeholder="Especie" />
             </SelectTrigger>
             <SelectContent>
@@ -358,60 +361,60 @@ export default function ProviderPatients() {
         )}
       </div>
 
-      {/* Solicitudes pendientes de vinculacion */}
+      {/* Solicitudes pendientes — banner horizontal compacto */}
       {pendingLinks && pendingLinks.length > 0 && (
-        <div className="space-y-3">
-          <h2 className="text-sm font-semibold text-amber-700 flex items-center gap-2">
-            <UserPlus className="h-4 w-4" />
-            Solicitudes pendientes ({pendingLinks.length})
-          </h2>
-          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-          {pendingLinks.map((link: any) => (
-            <Card key={link.id} className="border-amber-200 bg-amber-50/30">
-              <CardContent className="p-4 flex items-center gap-3">
-                <Avatar className="h-11 w-11">
-                  {link.pets?.photo_url && <AvatarImage src={link.pets.photo_url} />}
-                  <AvatarFallback className="bg-amber-100 text-amber-700">
-                    {(link.pets?.name || 'M')[0].toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold">{link.pets?.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {link.pets?.species}
-                    {link.pets?.breed ? ` · ${link.pets.breed}` : ''}
-                    {link.profiles?.display_name ? ` · ${link.profiles.display_name}` : ''}
-                  </p>
-                  {link.message && (
-                    <p className="text-xs text-amber-600 mt-0.5 italic">"{link.message}"</p>
-                  )}
+        <Card className="border-amber-200 bg-amber-50/30">
+          <CardContent className="p-3">
+            <h2 className="text-xs font-semibold text-amber-700 flex items-center gap-1.5 mb-2">
+              <UserPlus className="h-3.5 w-3.5" />
+              {pendingLinks.length} solicitud(es) pendiente(s)
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+              {pendingLinks.map((link: any) => (
+                <div
+                  key={link.id}
+                  className="flex items-center gap-2 p-2 bg-white rounded-lg border border-amber-100"
+                >
+                  <Avatar className="h-8 w-8 flex-shrink-0">
+                    {link.pets?.photo_url && <AvatarImage src={link.pets.photo_url} />}
+                    <AvatarFallback className="bg-amber-100 text-amber-700 text-[10px]">
+                      {(link.pets?.name || 'M')[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold truncate">{link.pets?.name}</p>
+                    <p className="text-[10px] text-muted-foreground truncate">
+                      {link.pets?.species}
+                      {link.profiles?.display_name ? ` · ${link.profiles.display_name}` : ''}
+                    </p>
+                  </div>
+                  <div className="flex gap-1 flex-shrink-0">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 w-7 p-0 border-green-300 text-green-700 hover:bg-green-50"
+                      onClick={() => handleAcceptLink(link.id)}
+                    >
+                      <Check className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 w-7 p-0 border-red-300 text-red-600 hover:bg-red-50"
+                      onClick={() => handleRejectLink(link.id)}
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </Button>
+                  </div>
                 </div>
-                <div className="flex gap-2 flex-shrink-0">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-8 gap-1 border-green-300 text-green-700 hover:bg-green-50"
-                    onClick={() => handleAcceptLink(link.id)}
-                  >
-                    <Check className="h-3.5 w-3.5" />
-                    Aceptar
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-8 gap-1 border-red-300 text-red-600 hover:bg-red-50"
-                    onClick={() => handleRejectLink(link.id)}
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Lista de pacientes */}
+      {/* Tabla CRM de pacientes */}
       {filtered.length === 0 ? (
         <div className="text-center py-12">
           <PawPrint className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
@@ -422,58 +425,83 @@ export default function ProviderPatients() {
           </p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {filtered.map((patient) => (
-            <PatientCardWithSessions
-              key={patient.pet_id}
-              patient={patient}
-              vetUserId={user?.id ?? ''}
-            />
-          ))}
-        </div>
+        <Card>
+          <CardContent className="p-0">
+            {/* Header de tabla (solo desktop) */}
+            <div className="hidden md:grid grid-cols-12 gap-2 px-4 py-2 bg-muted/50 border-b text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
+              <div className="col-span-4">Paciente</div>
+              <div className="col-span-2">Especie</div>
+              <div className="col-span-2">Dueño</div>
+              <div className="col-span-2">Última visita</div>
+              <div className="col-span-2 text-right">Acciones</div>
+            </div>
+            <div className="divide-y divide-border/50">
+              {filtered.map((patient) => (
+                <PatientCardWithSessions
+                  key={patient.pet_id}
+                  patient={patient}
+                  vetUserId={user?.id ?? ''}
+                  onConsolidado={(id, name) => setConsolidadoPet({ id, name })}
+                />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* Mascotas pendientes de dueno */}
       {pendingPets && pendingPets.length > 0 && (
-        <div className="space-y-3 pt-4 border-t">
-          <h2 className="text-sm font-semibold text-muted-foreground flex items-center gap-2">
-            <Clock className="h-4 w-4" />
-            Esperando que el dueno reclame ({pendingPets.length})
-          </h2>
-          {pendingPets.map((pet) => (
-            <Card key={pet.id} className="border-muted bg-muted/10">
-              <CardContent className="p-4 flex items-center gap-3">
-                <Avatar className="h-10 w-10">
-                  <AvatarFallback className="bg-muted text-muted-foreground">
-                    {(pet.name || 'M')[0].toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium">{pet.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {pet.pending_owner_name || pet.pending_owner_email || 'Sin dueno'}
-                    {pet.species ? ` · ${pet.species}` : ''}
-                  </p>
+        <Card className="border-muted">
+          <CardContent className="p-3">
+            <h2 className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5 mb-2">
+              <Clock className="h-3.5 w-3.5" />
+              Esperando reclamo ({pendingPets.length})
+            </h2>
+            <div className="divide-y divide-border/50">
+              {pendingPets.map((pet) => (
+                <div key={pet.id} className="flex items-center gap-3 py-2">
+                  <Avatar className="h-8 w-8">
+                    <AvatarFallback className="bg-muted text-muted-foreground text-[10px]">
+                      {(pet.name || 'M')[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium truncate">{pet.name}</p>
+                    <p className="text-[10px] text-muted-foreground truncate">
+                      {pet.pending_owner_name || pet.pending_owner_email || 'Sin dueno'}
+                      {pet.species ? ` · ${pet.species}` : ''}
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 gap-1 text-[10px]"
+                    disabled={resendingId === pet.id}
+                    onClick={() => handleResendInvitation(pet.id)}
+                  >
+                    {resendingId === pet.id ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <Mail className="h-3 w-3" />
+                    )}
+                    {pet.owner_invitation_sent_at ? 'Reenviar' : 'Enviar'}
+                  </Button>
                 </div>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="h-8 gap-1 text-xs"
-                  disabled={resendingId === pet.id}
-                  onClick={() => handleResendInvitation(pet.id)}
-                >
-                  {resendingId === pet.id ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <Mail className="h-3.5 w-3.5" />
-                  )}
-                  {pet.owner_invitation_sent_at ? 'Reenviar' : 'Enviar'}
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       )}
+
+      {/* Modal consolidado IA */}
+      <PatientConsolidatedSummary
+        petId={consolidadoPet?.id ?? null}
+        petName={consolidadoPet?.name ?? ''}
+        open={!!consolidadoPet}
+        onOpenChange={(open) => {
+          if (!open) setConsolidadoPet(null);
+        }}
+      />
     </div>
   );
 }
@@ -482,9 +510,11 @@ export default function ProviderPatients() {
 function PatientCardWithSessions({
   patient,
   vetUserId,
+  onConsolidado,
 }: {
   patient: PatientRow;
   vetUserId: string;
+  onConsolidado: (petId: string, petName: string) => void;
 }) {
   const ago = formatDistanceToNowStrict(new Date(patient.last_visit), {
     locale: es,
@@ -517,67 +547,92 @@ function PatientCardWithSessions({
   const totalNotes = notes?.length ?? 0;
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <CardContent className="p-4">
-        {/* Info del paciente */}
-        <div className="flex items-center gap-3">
-          <Avatar className="h-12 w-12">
+    <div className="hover:bg-muted/30 transition-colors">
+      {/* Row principal */}
+      <div className="flex items-center gap-3 px-4 py-3 md:grid md:grid-cols-12 md:gap-2">
+        {/* Paciente (avatar + nombre) */}
+        <div className="md:col-span-4 flex items-center gap-2.5 min-w-0">
+          <Avatar className="h-9 w-9 flex-shrink-0">
             {patient.photo_url && <AvatarImage src={patient.photo_url} alt={patient.pet_name} />}
-            <AvatarFallback className="bg-teal-100 text-teal-700 font-bold">
+            <AvatarFallback className="bg-teal-100 text-teal-700 font-bold text-xs">
               {patient.pet_name[0]?.toUpperCase() || 'M'}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <p className="font-semibold">{patient.pet_name}</p>
-              <Badge variant="outline" className="text-[10px] bg-muted/50">
-                {patient.species || 'Mascota'}
-                {patient.breed ? ` · ${patient.breed}` : ''}
-              </Badge>
-            </div>
-            <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
-              {patient.owner_name && <span>{patient.owner_name}</span>}
-              <span>Ultima visita: hace {ago}</span>
-              {totalNotes > 0 && (
-                <span className="flex items-center gap-1">
-                  <Stethoscope className="h-3 w-3" />
-                  {totalNotes} {totalNotes === 1 ? 'sesion' : 'sesiones'}
-                  {audioCount > 0 && (
-                    <span className="flex items-center gap-0.5 text-red-500">
-                      <Mic className="h-3 w-3" /> {audioCount}
-                    </span>
-                  )}
-                </span>
-              )}
-            </div>
+          <div className="min-w-0">
+            <p className="text-sm font-semibold truncate">{patient.pet_name}</p>
+            {totalNotes > 0 && (
+              <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                <Stethoscope className="h-2.5 w-2.5" />
+                {totalNotes} sesion{totalNotes !== 1 ? 'es' : ''}
+                {audioCount > 0 && (
+                  <span className="flex items-center gap-0.5 text-red-500">
+                    <Mic className="h-2.5 w-2.5" /> {audioCount}
+                  </span>
+                )}
+              </div>
+            )}
           </div>
-          <Link to={LINKS.petClinical(patient.pet_id)} className="flex-shrink-0">
-            <Button size="sm" variant="default" className="gap-1.5">
-              <FileText className="h-3.5 w-3.5" />
-              Ver ficha
+        </div>
+
+        {/* Especie */}
+        <div className="hidden md:flex md:col-span-2 items-center">
+          <Badge variant="outline" className="text-[10px] bg-muted/50">
+            {patient.species || 'Mascota'}
+          </Badge>
+        </div>
+
+        {/* Dueño */}
+        <div className="hidden md:flex md:col-span-2 items-center">
+          <span className="text-xs text-muted-foreground truncate">
+            {patient.owner_name || '—'}
+          </span>
+        </div>
+
+        {/* Última visita */}
+        <div className="hidden md:flex md:col-span-2 items-center">
+          <span className="text-xs text-muted-foreground">hace {ago}</span>
+        </div>
+
+        {/* Acciones */}
+        <div className="md:col-span-2 flex gap-1.5 flex-shrink-0 ml-auto">
+          {totalNotes > 0 && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-7 w-7 p-0 text-teal-700 hover:bg-teal-50"
+              onClick={() => onConsolidado(patient.pet_id, patient.pet_name)}
+              title="Consolidado IA"
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+            </Button>
+          )}
+          <Link to={LINKS.petClinical(patient.pet_id)}>
+            <Button size="sm" variant="default" className="h-7 gap-1 text-xs px-2">
+              <FileText className="h-3 w-3" />
+              Ficha
             </Button>
           </Link>
         </div>
+      </div>
 
-        {/* Accordion de sesiones */}
-        {totalNotes > 0 && (
-          <Collapsible className="mt-3">
-            <CollapsibleTrigger className="flex items-center gap-2 text-xs text-teal-700 hover:text-teal-900 transition-colors group w-full">
-              <Calendar className="h-3.5 w-3.5" />
-              <span className="font-medium">Sesiones clinicas ({totalNotes})</span>
-              <ChevronDown className="h-3.5 w-3.5 ml-auto transition-transform group-data-[state=open]:rotate-180" />
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <div className="mt-2 space-y-2 pl-1">
-                {notes?.map((note) => (
-                  <SessionItem key={note.id} note={note} />
-                ))}
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
-        )}
-      </CardContent>
-    </Card>
+      {/* Accordion de sesiones (expandible) */}
+      {totalNotes > 0 && (
+        <Collapsible>
+          <CollapsibleTrigger className="flex items-center gap-2 text-[11px] text-teal-700 hover:text-teal-900 transition-colors group w-full px-4 pb-2">
+            <Calendar className="h-3 w-3" />
+            <span className="font-medium">Sesiones ({totalNotes})</span>
+            <ChevronDown className="h-3 w-3 ml-auto transition-transform group-data-[state=open]:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <div className="px-4 pb-3 space-y-1.5">
+              {notes?.map((note) => (
+                <SessionItem key={note.id} note={note} />
+              ))}
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
+      )}
+    </div>
   );
 }
 

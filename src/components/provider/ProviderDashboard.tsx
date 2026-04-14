@@ -91,213 +91,210 @@ const ProviderDashboard = () => {
   const hasActivity = stats.patientsThisMonth > 0 || stats.bookingsThisMonth > 0;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div className="flex items-start justify-between gap-3 flex-wrap">
         <div>
-          <h2 className="text-2xl font-bold">Mi consultorio</h2>
-          <p className="text-muted-foreground">Resumen de tu actividad y reputación</p>
+          <h2 className="text-xl font-bold">Mi consultorio</h2>
+          <p className="text-sm text-muted-foreground">Resumen de tu actividad y reputación</p>
         </div>
         <div className="flex gap-2 flex-wrap">
           {stats.slug && (
             <Link to={`/veterinarios/${stats.slug}`}>
-              <Button variant="outline">
-                <Eye className="h-4 w-4 mr-1" /> Ver cómo me ven los dueños
+              <Button variant="outline" size="sm">
+                <Eye className="h-3.5 w-3.5 mr-1" /> Ver perfil
               </Button>
             </Link>
           )}
           <Link to="/provider/profile-edit">
-            <Button variant="outline">
-              <UserCog className="h-4 w-4 mr-1" /> Editar mi perfil público
+            <Button variant="outline" size="sm">
+              <UserCog className="h-3.5 w-3.5 mr-1" /> Editar perfil
             </Button>
           </Link>
         </div>
       </div>
 
-      {/* Tip: grabación de consultas */}
-      <Card className="border-red-100 bg-gradient-to-r from-red-50 to-orange-50">
-        <CardContent className="py-3 px-4 flex items-center gap-3">
-          <div className="p-2 bg-red-100 rounded-lg flex-shrink-0">
-            <Mic className="h-5 w-5 text-red-500" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium">Graba tus consultas con IA</p>
-            <p className="text-xs text-muted-foreground">
-              Cuando un dueño te comparta su ficha, usa el botón "Grabar" para dictar y generar
-              notas clínicas automáticamente.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Agenda de hoy */}
-      <TodayAgendaCard />
-
-      {/* Seguimientos de esta semana */}
-      <VetFollowupsCard />
-
-      {/* Solicitudes de vinculacion pendientes */}
+      {/* Solicitudes pendientes — banner urgente arriba de todo */}
       <PendingVetLinksCard />
 
-      {/* Pacientes vinculados permanentemente */}
-      <LinkedPatientsCard />
-
-      {/* Fichas compartidas via enlace publico (legacy tokens) */}
-      <SharedFichasCard providerId={stats.providerId} />
-
-      {/* Onboarding: vet sin actividad */}
-      {!hasActivity && (
-        <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-amber-50">
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <Stethoscope className="h-5 w-5 text-purple-600" />
-              Aun no tienes actividad. Vamos a cambiarlo.
-            </CardTitle>
-            <CardDescription>
-              3 pasos para que los duenos te encuentren en tu comuna.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Link to="/provider/profile-edit" className="block">
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-purple-200 hover:shadow-sm transition">
-                <div>
-                  <p className="text-sm font-semibold">1. Completa tu perfil publico</p>
-                  <p className="text-xs text-muted-foreground">
-                    Foto, bio, especialidades, comuna y precio.
-                  </p>
-                </div>
-                <Button size="sm" variant="ghost">
-                  →
-                </Button>
-              </div>
-            </Link>
-            {stats.slug && (
-              <Link to={`/veterinarios/${stats.slug}`} className="block">
-                <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-purple-200 hover:shadow-sm transition">
-                  <div>
-                    <p className="text-sm font-semibold">2. Revisa como te ven los duenos</p>
-                    <p className="text-xs text-muted-foreground">
-                      Abre tu perfil publico en una pestana nueva.
-                    </p>
-                  </div>
-                  <Button size="sm" variant="ghost">
-                    →
-                  </Button>
-                </div>
-              </Link>
-            )}
-            <Link to="/veterinarios" className="block">
-              <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-purple-200 hover:shadow-sm transition">
-                <div>
-                  <p className="text-sm font-semibold">
-                    3. Comparte tu URL en Instagram y WhatsApp
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    Las primeras reservas casi siempre vienen de tu propia red.
-                  </p>
-                </div>
-                <Button size="sm" variant="ghost">
-                  →
-                </Button>
-              </div>
-            </Link>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Tarjeta del directorio publico */}
-      <ProviderDirectoryCard />
-
-      {/* Row 1: Metricas de impacto (4 cards) */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* Hero metrics row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <MetricCard
-          label="Pacientes este mes"
+          label="Pacientes"
           value={stats.patientsThisMonth}
-          subtitle={`${stats.notesThisMonth} nota${stats.notesThisMonth !== 1 ? 's' : ''} clinica${stats.notesThisMonth !== 1 ? 's' : ''}`}
+          subtitle={`${stats.notesThisMonth} nota${stats.notesThisMonth !== 1 ? 's' : ''}`}
           icon={Users}
           iconColor="text-purple-600"
         />
         <MetricCard
-          label="Calificacion"
+          label="Calificación"
           value={stats.avgRating ? stats.avgRating.toFixed(1) : '—'}
-          subtitle={`${stats.totalReviews} resena${stats.totalReviews !== 1 ? 's' : ''} verificada${stats.totalReviews !== 1 ? 's' : ''}`}
+          subtitle={`${stats.totalReviews} reseña${stats.totalReviews !== 1 ? 's' : ''}`}
           icon={Star}
           iconColor="text-yellow-500"
         />
         <MetricCard
-          label="Visitas al perfil"
+          label="Visitas perfil"
           value={stats.profileViews}
-          subtitle="Total desde tu registro"
+          subtitle="Total acumulado"
           icon={Eye}
           iconColor="text-blue-500"
         />
         <MetricCard
-          label="Seguimientos pendientes"
+          label="Seguimientos"
           value={stats.followupsPending}
-          subtitle="Proximos 7 dias"
+          subtitle="Próximos 7 días"
           icon={ClipboardList}
           iconColor="text-orange-500"
         />
       </div>
 
-      {/* Row 2: Actividad clinica + reservas (4 cards) */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <MetricCard
-          label="Fichas compartidas"
-          value={stats.sharedFichasThisWeek}
-          subtitle="Ultimos 7 dias"
-          icon={FileText}
-          iconColor="text-green-600"
-        />
-        <MetricCard
-          label="Reservas este mes"
-          value={stats.bookingsThisMonth}
-          subtitle={
-            stats.estimatedRevenue > 0
-              ? `${formatCLP(stats.estimatedRevenue)} completadas`
-              : 'Via Paw Friend'
-          }
-          icon={Calendar}
-          iconColor="text-indigo-500"
-        />
-        <MetricCard
-          label="Resenas este mes"
-          value={stats.reviewsThisMonth}
-          subtitle={
-            stats.invitationsSent > 0
-              ? `${stats.invitationsConverted}/${stats.invitationsSent} invitaciones usadas`
-              : 'Invita a tus clientes a opinar'
-          }
-          icon={Mail}
-          iconColor="text-pink-500"
-        />
-        {stats.estimatedRevenue > 0 ? (
-          <MetricCard
-            label="Ingresos estimados"
-            value={formatCLP(stats.estimatedRevenue)}
-            subtitle="Reservas completadas este mes"
-            icon={TrendingUp}
-            iconColor="text-green-600"
-          />
-        ) : (
-          <Card className="flex flex-col items-center justify-center p-4 text-center">
-            <TrendingUp className="h-5 w-5 text-muted-foreground mb-2" />
-            <p className="text-sm font-medium">Ingresos</p>
-            <p className="text-xs text-muted-foreground mt-1">Aparecen cuando completes reservas</p>
+      {/* Grid 2 zonas: clinico (izq) + admin (der) */}
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        {/* Zona izquierda: operacion clinica (3/5) */}
+        <div className="lg:col-span-3 space-y-4">
+          {/* Agenda de hoy */}
+          <TodayAgendaCard />
+
+          {/* Fichas compartidas */}
+          <SharedFichasCard providerId={stats.providerId} />
+
+          {/* Pacientes vinculados */}
+          <LinkedPatientsCard />
+
+          {/* Actividad reciente */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm">Actividad reciente</CardTitle>
+              <CardDescription className="text-xs">
+                Pacientes atendidos en Paw Friend
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <VetPatientsList />
+            </CardContent>
           </Card>
-        )}
+        </div>
+
+        {/* Zona derecha: admin + perfil (2/5) */}
+        <div className="lg:col-span-2 space-y-4">
+          {/* Mini perfil publico */}
+          <ProviderDirectoryCard />
+
+          {/* Seguimientos de esta semana */}
+          <VetFollowupsCard />
+
+          {/* Stats secundarias compactas */}
+          <div className="grid grid-cols-2 gap-3">
+            <MetricCard
+              label="Fichas"
+              value={stats.sharedFichasThisWeek}
+              subtitle="Últimos 7 días"
+              icon={FileText}
+              iconColor="text-green-600"
+            />
+            <MetricCard
+              label="Reservas"
+              value={stats.bookingsThisMonth}
+              subtitle="Este mes"
+              icon={Calendar}
+              iconColor="text-indigo-500"
+            />
+            <MetricCard
+              label="Reseñas"
+              value={stats.reviewsThisMonth}
+              subtitle={
+                stats.invitationsSent > 0
+                  ? `${stats.invitationsConverted}/${stats.invitationsSent} usadas`
+                  : 'Invita a opinar'
+              }
+              icon={Mail}
+              iconColor="text-pink-500"
+            />
+            {stats.estimatedRevenue > 0 ? (
+              <MetricCard
+                label="Ingresos"
+                value={formatCLP(stats.estimatedRevenue)}
+                subtitle="Este mes"
+                icon={TrendingUp}
+                iconColor="text-green-600"
+              />
+            ) : (
+              <Card>
+                <CardContent className="py-3 px-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <TrendingUp className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-wide font-medium">
+                      Ingresos
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">Al completar reservas</p>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* Tip: grabación de consultas */}
+          <Card className="border-red-100 bg-gradient-to-r from-red-50 to-orange-50">
+            <CardContent className="py-3 px-3 flex items-center gap-2">
+              <div className="p-1.5 bg-red-100 rounded-md flex-shrink-0">
+                <Mic className="h-4 w-4 text-red-500" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-medium">Graba consultas con IA</p>
+                <p className="text-[11px] text-muted-foreground leading-tight">
+                  Usa "Grabar" en fichas compartidas para generar notas automáticas.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
-      {/* Tabs: Pacientes */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Actividad reciente</CardTitle>
-          <CardDescription>Tus pacientes atendidos en Paw Friend</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <VetPatientsList />
-        </CardContent>
-      </Card>
+      {/* Onboarding: vet sin actividad — solo si no tiene actividad */}
+      {!hasActivity && (
+        <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-amber-50">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Stethoscope className="h-4 w-4 text-purple-600" />
+              Primeros pasos
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-2">
+            <Link to="/provider/profile-edit" className="block">
+              <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-purple-200 hover:shadow-sm transition">
+                <div>
+                  <p className="text-xs font-semibold">1. Completa tu perfil publico</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    Foto, bio, especialidades, comuna.
+                  </p>
+                </div>
+                <span className="text-purple-400">→</span>
+              </div>
+            </Link>
+            {stats.slug && (
+              <Link to={`/veterinarios/${stats.slug}`} className="block">
+                <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-purple-200 hover:shadow-sm transition">
+                  <div>
+                    <p className="text-xs font-semibold">2. Revisa como te ven los duenos</p>
+                    <p className="text-[11px] text-muted-foreground">Abre tu perfil publico.</p>
+                  </div>
+                  <span className="text-purple-400">→</span>
+                </div>
+              </Link>
+            )}
+            <Link to="/veterinarios" className="block">
+              <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-purple-200 hover:shadow-sm transition">
+                <div>
+                  <p className="text-xs font-semibold">3. Comparte tu URL</p>
+                  <p className="text-[11px] text-muted-foreground">Instagram, WhatsApp, tu red.</p>
+                </div>
+                <span className="text-purple-400">→</span>
+              </div>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Promocionar servicios */}
       <CreateServicePromotion />
