@@ -2,10 +2,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 interface ShelterData {
   name: string;
@@ -55,6 +52,7 @@ const communeCoords: Record<string, { lat: number; lng: number }> = {
 };
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -170,7 +168,6 @@ Solo reales, no inventar.`;
                 content: `Refugios animales en ${city}, Chile. Max ${Math.min(count, 20)}.`,
               },
             ],
-            tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 3 }],
           }),
         });
       } finally {

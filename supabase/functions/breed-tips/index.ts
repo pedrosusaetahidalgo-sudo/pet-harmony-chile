@@ -2,12 +2,10 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -94,7 +92,7 @@ serve(async (req) => {
 🏃 Ejercicio
 ⚠️ Ojo con...
 
-Chileno (tu/tienes). Datos correctos. web_search solo si raza poco común.`;
+Chileno (tu/tienes). Datos correctos.`;
 
     const abortCtl = new AbortController();
     const fetchTimeout = setTimeout(() => abortCtl.abort(), 15000);
@@ -119,7 +117,6 @@ Chileno (tu/tienes). Datos correctos. web_search solo si raza poco común.`;
               content: `Tips: ${species === 'perro' ? 'perro' : species === 'gato' ? 'gato' : 'mascota'} ${breed.slice(0, 100)}`,
             },
           ],
-          tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 1 }],
         }),
       });
     } finally {
@@ -144,7 +141,6 @@ Chileno (tu/tienes). Datos correctos. web_search solo si raza poco común.`;
     }
 
     const data = await response.json();
-    // web_search produces multiple content blocks; grab the last text block
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const textBlocks = (data.content ?? []).filter((b: any) => b.type === 'text');
     let tips = textBlocks[textBlocks.length - 1]?.text;

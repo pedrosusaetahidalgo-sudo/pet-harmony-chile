@@ -2,12 +2,10 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://pawfriend.cl',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 serve(async (req) => {
+  const corsHeaders = getCorsHeaders(req);
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -98,7 +96,7 @@ serve(async (req) => {
 JSON array 6-10 items, sin texto:
 [{"value":"id-guiones","label":"Nombre","description":"<15 palabras"}]
 
-Solo tratamientos/vacunas reales en Chile. web_search solo si duda protocolo ISP/SAG. Chileno.`;
+Solo tratamientos/vacunas reales en Chile. Chileno.`;
 
     const speciesLabel = species === 'perro' ? 'perro' : species === 'gato' ? 'gato' : species;
     const userPrompt = `${recordType} para ${speciesLabel} ${breed}, Chile. 6-10 opciones.`;
@@ -116,7 +114,6 @@ Solo tratamientos/vacunas reales en Chile. web_search solo si duda protocolo ISP
         temperature: 0.2,
         system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
         messages: [{ role: 'user', content: userPrompt }],
-        tools: [{ type: 'web_search_20250305', name: 'web_search', max_uses: 1 }],
       }),
     });
 
@@ -138,7 +135,6 @@ Solo tratamientos/vacunas reales en Chile. web_search solo si duda protocolo ISP
     }
 
     const data = await response.json();
-    // web_search produces multiple content blocks; grab the last text block
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const textBlocks = (data.content ?? []).filter((b: any) => b.type === 'text');
     const content = textBlocks[textBlocks.length - 1]?.text;
