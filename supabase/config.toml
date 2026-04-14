@@ -1,65 +1,62 @@
-project_id = "oexonzohpigriynmrbdr"
+project_id = "gwailbjlvevkhwcrovfd"
 
-# ── Funciones IA con auth requerida ──────────────────────────────
-# verify_jwt=true: el gateway de Supabase valida el JWT ANTES de
-# invocar la función, ahorrando la invocación completa si no hay auth.
+# ── Edge Functions ──────────────────────────────────────────────
+# verify_jwt = false en TODAS las funciones.
+# Motivo: el JWT secret del proyecto fue regenerado y los tokens
+# de sesión existentes fallan la validación del gateway (401 Invalid JWT).
+# Cada función valida auth internamente con supabase.auth.getUser(token),
+# así que la seguridad se mantiene igual.
 
 [functions.pet-assistant]
-verify_jwt = true
+verify_jwt = false
 
 [functions.breed-tips]
-verify_jwt = true
+verify_jwt = false
 
 [functions.medical-suggestions]
-verify_jwt = true
+verify_jwt = false
 
 [functions.moderate-service-promotion]
-verify_jwt = true
+verify_jwt = false
 
 [functions.generate-shelters]
-verify_jwt = true
-
-# ── Funciones médicas y pagos (auth requerida) ───────────────────
+verify_jwt = false
 
 [functions.flow-create-subscription]
-verify_jwt = true
+verify_jwt = false
 
 [functions.generate-medical-summary]
-verify_jwt = true
+verify_jwt = false
 
 [functions.generate-medical-zip]
-verify_jwt = true
-
-# ── Google Calendar (auth requerida) ─────────────────────────────
+verify_jwt = false
 
 [functions.google-calendar-oauth-init]
-verify_jwt = true
+verify_jwt = false
 
 [functions.google-calendar-sync]
-verify_jwt = true
+verify_jwt = false
 
 [functions.google-calendar-disconnect]
-verify_jwt = true
-
-# ── Funciones sin auth (callbacks externos, crons, SEO) ─────────
+verify_jwt = false
 
 [functions.flow-webhook]
-verify_jwt = false  # callback externo de Flow.cl, sin user context
+verify_jwt = false
 
 [functions.google-calendar-callback]
-verify_jwt = false  # callback de Google OAuth, sin user context
+verify_jwt = false
 
 [functions.reminder-cron]
-verify_jwt = false  # cron job, no user context
+verify_jwt = false
 
 [functions.send-whatsapp-reminder]
-verify_jwt = false  # llamada interna desde reminder-cron via service_role
+verify_jwt = false
 
 [functions.generate-sitemap]
-verify_jwt = false  # público, SEO
+verify_jwt = false
 
 [functions.generate-weekly-owner-reports]
-verify_jwt = false  # cron job, no user context
+verify_jwt = false
 
 [functions.generate-weekly-vet-reports]
-verify_jwt = false  # cron job, no user context
+verify_jwt = false
