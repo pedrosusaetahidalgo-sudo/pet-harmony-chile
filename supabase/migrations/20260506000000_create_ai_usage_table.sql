@@ -15,13 +15,24 @@ CREATE TABLE IF NOT EXISTS public.ai_usage (
 
 ALTER TABLE public.ai_usage ENABLE ROW LEVEL SECURITY;
 
--- Solo service_role puede leer/escribir (las edge functions usan service_role key)
+-- service_role: acceso total (para edge functions con service_role key puro)
 CREATE POLICY "ai_usage_service_role_only"
   ON public.ai_usage
   FOR ALL
   TO service_role
   USING (true)
   WITH CHECK (true);
+
+-- authenticated: usuario puede leer/escribir sus propias filas
+-- (necesario porque algunas edge functions crean el client con SERVICE_ROLE_KEY
+--  pero pasan el Authorization header del usuario, lo que hace que PostgREST
+--  aplique RLS como authenticated en vez de service_role)
+CREATE POLICY "ai_usage_authenticated_own_rows"
+  ON public.ai_usage
+  FOR ALL
+  TO authenticated
+  USING (user_id = auth.uid())
+  WITH CHECK (user_id = auth.uid());
 
 -- Indice para queries frecuentes
 CREATE INDEX IF NOT EXISTS idx_ai_usage_user_skill
