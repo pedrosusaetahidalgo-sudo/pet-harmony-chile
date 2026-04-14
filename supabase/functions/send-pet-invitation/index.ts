@@ -251,11 +251,18 @@ serve(async (req) => {
     }
 
     // --- Check if owner is already registered ---
-    const { data: userByEmail } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('email', email)
-      .maybeSingle();
+    // profiles table has no email column; lookup via auth.users with service_role
+    let userByEmail: { id: string } | null = null;
+    try {
+      const {
+        data: { users },
+      } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
+      const match = (users ?? []).find((u) => u.email === email);
+      if (match) userByEmail = { id: match.id };
+    } catch {
+      // If lookup fails, proceed as if user doesn't exist
+      userByEmail = null;
+    }
 
     const redirectTo = `https://pawfriend.cl/auth?returnTo=/my-pets&invitation=${invitationToken}`;
 

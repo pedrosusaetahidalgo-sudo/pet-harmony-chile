@@ -117,80 +117,63 @@ function MiniPawCard({
 
 function QRScanner({ onClose }: { onClose: () => void }) {
   const navigate = useNavigate();
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const scanningRef = useRef(false);
-
-  const stopCamera = useCallback(() => {
-    streamRef.current?.getTracks().forEach((t) => t.stop());
-    streamRef.current = null;
-  }, []);
+  const scannerRef = useRef<HTMLDivElement>(null);
+  const html5ScannerRef = useRef<import('html5-qrcode').Html5Qrcode | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleDetected = useCallback(
     (url: string) => {
       // Match pawfriend.cl/paw-card/<id> or localhost/paw-card/<id>
       const match = url.match(/\/paw-card\/([A-Za-z0-9-]+)/);
       if (match) {
-        stopCamera();
+        // Stop scanner before navigating
+        html5ScannerRef.current?.stop().catch(() => {});
         onClose();
         navigate(`/paw-card/${match[1]}`);
       }
     },
-    [navigate, onClose, stopCamera]
+    [navigate, onClose]
   );
 
   useEffect(() => {
-    let animFrame: number;
+    let mounted = true;
 
-    const startCamera = async () => {
+    const startScanner = async () => {
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'environment' },
-        });
-        streamRef.current = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          await videoRef.current.play();
-        }
+        const { Html5Qrcode } = await import('html5-qrcode');
+        if (!mounted) return;
 
-        // Use BarcodeDetector if available (Chrome/Android)
-        if ('BarcodeDetector' in window) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const detector = new (window as Record<string, any>).BarcodeDetector({
-            formats: ['qr_code'],
-          });
-          const scan = async () => {
-            if (!videoRef.current || scanningRef.current) return;
-            scanningRef.current = true;
-            try {
-              const barcodes = await detector.detect(videoRef.current);
-              if (barcodes.length > 0) {
-                handleDetected(barcodes[0].rawValue);
-                return;
-              }
-            } catch {
-              // ignore detection errors
-            }
-            scanningRef.current = false;
-            animFrame = requestAnimationFrame(scan);
-          };
-          // Wait a bit for camera to stabilize
-          setTimeout(() => {
-            animFrame = requestAnimationFrame(scan);
-          }, 500);
+        const scanner = new Html5Qrcode('qr-scanner-region');
+        html5ScannerRef.current = scanner;
+
+        await scanner.start(
+          { facingMode: 'environment' },
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1,
+          },
+          (decodedText) => {
+            handleDetected(decodedText);
+          },
+          () => {
+            // QR not detected in this frame — ignore
+          }
+        );
+      } catch (err) {
+        if (mounted) {
+          setError('No se pudo acceder a la camara. Verifica los permisos en tu navegador.');
         }
-      } catch {
-        // Camera not available
       }
     };
 
-    startCamera();
+    startScanner();
 
     return () => {
-      cancelAnimationFrame(animFrame);
-      stopCamera();
+      mounted = false;
+      html5ScannerRef.current?.stop().catch(() => {});
     };
-  }, [handleDetected, stopCamera]);
+  }, [handleDetected]);
 
   return (
     <div className="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center">
@@ -199,7 +182,7 @@ function QRScanner({ onClose }: { onClose: () => void }) {
           variant="ghost"
           size="icon"
           onClick={() => {
-            stopCamera();
+            html5ScannerRef.current?.stop().catch(() => {});
             onClose();
           }}
           className="absolute top-2 right-2 z-10 text-white bg-black/50 rounded-full h-10 w-10"
@@ -208,24 +191,14 @@ function QRScanner({ onClose }: { onClose: () => void }) {
         </Button>
 
         <div className="relative rounded-2xl overflow-hidden border-2 border-purple-500 mx-4">
-          <video ref={videoRef} className="w-full aspect-square object-cover" playsInline muted />
-          {/* Scan overlay */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute inset-[15%] border-2 border-purple-400 rounded-xl" />
-            <div className="absolute inset-[15%] border-t-2 border-purple-300 animate-pulse rounded-xl" />
-          </div>
+          <div id="qr-scanner-region" ref={scannerRef} className="w-full" />
         </div>
 
         <p className="text-center text-white/80 text-sm mt-4 px-4">
           Apunta la camara al QR de una Paw Card para agregarla a tu coleccion
         </p>
 
-        {!('BarcodeDetector' in window) && (
-          <p className="text-center text-amber-300 text-xs mt-2 px-4">
-            Tu navegador no soporta escaneo automatico. Usa la camara de tu celular para escanear el
-            QR directamente.
-          </p>
-        )}
+        {error && <p className="text-center text-amber-300 text-xs mt-2 px-4">{error}</p>}
       </div>
     </div>
   );

@@ -68,7 +68,7 @@ serve(async (req) => {
     // Filtrar usuarios demo
     const { data: profiles, error: profilesErr } = await supabase
       .from('profiles')
-      .select('id, full_name, is_demo')
+      .select('id, display_name, is_demo')
       .in('id', uniqueOwnerIds);
 
     if (profilesErr) throw profilesErr;
@@ -127,7 +127,7 @@ serve(async (req) => {
         // Armar contenido del reporte
         const reportContent = {
           user_id: userId,
-          user_name: owner.full_name || 'Usuario',
+          user_name: owner.display_name || 'Usuario',
           period: { start: periodStart, end: periodEnd },
           pets: pets.map((p) => ({
             id: p.id,

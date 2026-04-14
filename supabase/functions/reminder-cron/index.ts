@@ -57,7 +57,7 @@ serve(async (_req) => {
         .select('id')
         .in('id', reminderOwnerIds)
         .eq('whatsapp_opted_in', true)
-        .not('phone', 'is', null);
+        .not('whatsapp_number', 'is', null);
 
       optedInOwners = new Set((profiles ?? []).map((p) => p.id));
     }
@@ -147,7 +147,7 @@ serve(async (_req) => {
           .select('id')
           .in('id', newIds)
           .eq('whatsapp_opted_in', true)
-          .not('phone', 'is', null);
+          .not('whatsapp_number', 'is', null);
 
         for (const p of profiles ?? []) optedInApptOwners.add(p.id);
       }

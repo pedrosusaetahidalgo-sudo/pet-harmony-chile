@@ -433,7 +433,7 @@ export default function ProviderPatients() {
               <div className="col-span-2">Especie</div>
               <div className="col-span-2">Dueño</div>
               <div className="col-span-2">Última visita</div>
-              <div className="col-span-2 text-right">Acciones</div>
+              <div className="col-span-2 text-right">Grabar / Ficha</div>
             </div>
             <div className="divide-y divide-border/50">
               {filtered.map((patient) => (
@@ -595,6 +595,17 @@ function PatientCardWithSessions({
 
         {/* Acciones */}
         <div className="md:col-span-2 flex gap-1.5 flex-shrink-0 ml-auto">
+          <Link to={`${LINKS.petClinical(patient.pet_id)}?grabar=1`}>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 gap-1 text-xs px-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+              title="Grabar consulta con IA"
+            >
+              <Mic className="h-3 w-3" />
+              <span className="hidden sm:inline">Grabar</span>
+            </Button>
+          </Link>
           {totalNotes > 0 && (
             <Button
               size="sm"
