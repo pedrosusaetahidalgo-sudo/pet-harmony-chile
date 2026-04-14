@@ -118,18 +118,17 @@ const PetClinicalRecord = () => {
     enabled: !!petId && !authLoading,
   });
 
-  // Check if user is a linked vet (must be called before any early returns — Rules of Hooks)
-  const isOwner = !!pet && pet.owner_id === user?.id;
-  const { data: vetAccess, isLoading: vetAccessLoading } = useQuery({
+  // Vet access: check if user has an active pet_vet_link (for non-owners)
+  const { data: vetAccessData, isLoading: vetAccessLoading } = useQuery({
     queryKey: ['vet-access-check', petId, user?.id],
     queryFn: async () => {
-      if (!user?.id || !petId) return false;
+      if (!user?.id || !petId) return { isLinkedVet: false };
       const { data: provider } = await supabase
         .from('service_providers')
         .select('id')
         .eq('user_id', user.id)
         .maybeSingle();
-      if (!provider?.id) return false;
+      if (!provider?.id) return { isLinkedVet: false };
       const { data: link } = await supabase
         .from('pet_vet_links')
         .select('id')
@@ -137,12 +136,11 @@ const PetClinicalRecord = () => {
         .eq('provider_id', provider.id)
         .eq('status', 'active')
         .maybeSingle();
-      return !!link;
+      return { isLinkedVet: !!link };
     },
-    enabled: !isOwner && !!user?.id && !!petId && !!pet,
+    enabled: !!user?.id && !!petId,
     staleTime: 5 * 60 * 1000,
   });
-  const isLinkedVet = vetAccess === true;
 
   if (authLoading || petLoading) {
     return <ClinicalRecordSkeleton />;
@@ -172,7 +170,10 @@ const PetClinicalRecord = () => {
     );
   }
 
-  if (vetAccessLoading && !isOwner) {
+  const isOwner = pet.owner_id === user?.id;
+  const isLinkedVet = vetAccessData?.isLinkedVet === true;
+
+  if (!isOwner && vetAccessLoading) {
     return <ClinicalRecordSkeleton />;
   }
 
