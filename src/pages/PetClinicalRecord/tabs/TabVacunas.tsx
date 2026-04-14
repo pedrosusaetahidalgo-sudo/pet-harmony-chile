@@ -7,11 +7,18 @@ import { useMedicalRecords } from '@/hooks/useMedicalRecords';
 import { formatDate } from '../helpers';
 import { EmptyState } from '../shared';
 
-/** Extract batch/serial from notes field (stored as "Lote: X | Serie: Y") */
-function parseBatchSerial(notes: string | null): { batch: string | null; serial: string | null } {
-  if (!notes) return { batch: null, serial: null };
-  const batchMatch = notes.match(/Lote:\s*([^|\n]+)/i);
-  const serialMatch = notes.match(/Serie:\s*([^|\n]+)/i);
+/** Extract batch/serial: prefer DB columns, fallback to notes parsing (legacy) */
+function extractBatchSerial(r: {
+  batch_number?: string | null;
+  serial_number?: string | null;
+  notes?: string | null;
+}): { batch: string | null; serial: string | null } {
+  if (r.batch_number || r.serial_number) {
+    return { batch: r.batch_number ?? null, serial: r.serial_number ?? null };
+  }
+  if (!r.notes) return { batch: null, serial: null };
+  const batchMatch = r.notes.match(/Lote:\s*([^|\n]+)/i);
+  const serialMatch = r.notes.match(/Serie:\s*([^|\n]+)/i);
   return {
     batch: batchMatch ? batchMatch[1].trim() : null,
     serial: serialMatch ? serialMatch[1].trim() : null,
@@ -37,7 +44,7 @@ export function TabVacunas({ petId }: { petId: string }) {
       .filter((r) => r.record_type === 'vacuna')
       .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
       .map((r) => {
-        const { batch, serial } = parseBatchSerial(r.notes);
+        const { batch, serial } = extractBatchSerial(r);
         return {
           id: r.id,
           date: r.date,

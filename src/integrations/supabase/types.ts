@@ -1605,6 +1605,7 @@ export type Database = {
       };
       medical_records: {
         Row: {
+          batch_number: string | null;
           clinic_name: string | null;
           created_at: string;
           date: string;
@@ -1619,6 +1620,7 @@ export type Database = {
           pet_id: string;
           reason: string | null;
           record_type: string;
+          serial_number: string | null;
           title: string;
           treatment: Json | null;
           updated_at: string;
@@ -1627,6 +1629,7 @@ export type Database = {
           visit_date: string | null;
         };
         Insert: {
+          batch_number?: string | null;
           clinic_name?: string | null;
           created_at?: string;
           date: string;
@@ -1641,6 +1644,7 @@ export type Database = {
           pet_id: string;
           reason?: string | null;
           record_type: string;
+          serial_number?: string | null;
           title: string;
           treatment?: Json | null;
           updated_at?: string;
@@ -1649,6 +1653,7 @@ export type Database = {
           visit_date?: string | null;
         };
         Update: {
+          batch_number?: string | null;
           clinic_name?: string | null;
           created_at?: string;
           date?: string;
@@ -1663,6 +1668,7 @@ export type Database = {
           pet_id?: string;
           reason?: string | null;
           record_type?: string;
+          serial_number?: string | null;
           title?: string;
           treatment?: Json | null;
           updated_at?: string;

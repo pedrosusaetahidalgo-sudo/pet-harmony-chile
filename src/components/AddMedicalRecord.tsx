@@ -159,18 +159,6 @@ export function AddMedicalRecord({
 
     setLoading(true);
     try {
-      // Append batch/serial info to notes until DB columns exist
-      let finalNotes = notes;
-      if (batchNumber || serialNumber) {
-        const extra = [
-          batchNumber ? `Lote: ${batchNumber}` : '',
-          serialNumber ? `Serie: ${serialNumber}` : '',
-        ]
-          .filter(Boolean)
-          .join(' | ');
-        finalNotes = finalNotes ? `${finalNotes}\n${extra}` : extra;
-      }
-
       const { data: medicalRecord, error } = await supabase
         .from('medical_records')
         .insert({
@@ -183,7 +171,9 @@ export function AddMedicalRecord({
           next_date: nextDate ? format(nextDate, 'yyyy-MM-dd') : null,
           clinic_name: clinicName,
           veterinarian_name: veterinarianName,
-          notes: finalNotes,
+          notes,
+          batch_number: batchNumber || null,
+          serial_number: serialNumber || null,
         })
         .select('id')
         .single();
