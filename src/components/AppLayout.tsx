@@ -1,9 +1,10 @@
-import { ReactNode } from "react";
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
-import { Header } from "@/components/Header";
-import { BottomTabBar } from "@/components/BottomTabBar";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { ReactNode } from 'react';
+import { SidebarProvider } from '@/components/ui/sidebar';
+import { AppSidebar } from '@/components/AppSidebar';
+import { Header } from '@/components/Header';
+import { BottomTabBar } from '@/components/BottomTabBar';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useErrorReporter } from '@/hooks/useErrorReporter';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -11,6 +12,7 @@ interface AppLayoutProps {
 
 function LayoutInner({ children }: AppLayoutProps) {
   const isMobile = useIsMobile();
+  useErrorReporter(); // Global error capture to error_logs
 
   return (
     <div className="min-h-screen flex w-full bg-background overflow-x-hidden">
@@ -29,8 +31,8 @@ function LayoutInner({ children }: AppLayoutProps) {
           style={{
             // Bottom padding: safe area + altura de la BottomTabBar (56px) en mobile
             paddingBottom: isMobile
-              ? "calc(var(--safe-area-bottom) + 3.5rem)"
-              : "var(--safe-area-bottom)",
+              ? 'calc(var(--safe-area-bottom) + 3.5rem)'
+              : 'var(--safe-area-bottom)',
           }}
         >
           {children}
