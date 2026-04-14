@@ -335,6 +335,27 @@ export default function Home() {
       {/* === Onboarding hints dirigidos para usuarios sin mascotas === */}
       <HomeOnboardingHints hasPets={pets.length > 0} />
 
+      {/* === Empty state cuando no hay mascotas === */}
+      {pets.length === 0 && (
+        <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
+          <CardContent className="flex flex-col items-center text-center py-10 gap-4">
+            <div className="rounded-full bg-purple-100 p-4">
+              <PawPrint className="h-10 w-10 text-purple-500" />
+            </div>
+            <div>
+              <p className="font-semibold text-base text-purple-900">Tu dashboard aparecerá aquí</p>
+              <p className="text-sm text-muted-foreground mt-1 max-w-xs">
+                Agrega tu primera mascota para ver su ficha clínica, recordatorios y más.
+              </p>
+            </div>
+            <Button onClick={() => navigate('/add-pet')} className="bg-purple-600 hover:bg-purple-700 text-white">
+              <Plus className="h-4 w-4 mr-2" />
+              Agregar mascota
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* === Contenido principal cuando ya hay mascotas === */}
       {pets.length === 0 ? null : (
         <>

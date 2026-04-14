@@ -113,7 +113,7 @@ const OnboardingDuenoMinimal = () => {
             .filter(Boolean)
         : null;
 
-      const { error } = await supabase.from('pets').insert({
+      const { data: insertedPet, error } = await supabase.from('pets').insert({
         owner_id: user.id,
         name: name.trim(),
         species: species ?? 'perro',
@@ -126,7 +126,7 @@ const OnboardingDuenoMinimal = () => {
         blood_type: bloodType || null,
         vaccines_up_to_date: vaccinesUpToDate,
         allergies: allergiesArray,
-      });
+      }).select('id').single();
       if (error) throw error;
 
       // Update profile with location and interests if provided
@@ -153,7 +153,7 @@ const OnboardingDuenoMinimal = () => {
           duration: 5000,
         }
       );
-      navigate('/home');
+      navigate(insertedPet?.id ? `/ficha/${insertedPet.id}` : '/home');
     } catch (err) {
       toast.error(describeSupabaseError(err as Parameters<typeof describeSupabaseError>[0]));
     } finally {

@@ -29,7 +29,7 @@ const DIET_FREQUENCIES = [
   "1 vez al dia", "2 veces al dia", "3 veces al dia", "Libre acceso", "Otro",
 ];
 
-export function TabAlimentacion({ pet, onRefresh }: { pet: PetData; onRefresh?: () => void }) {
+export function TabAlimentacion({ pet, onRefresh, viewMode }: { pet: PetData; onRefresh?: () => void; viewMode?: 'owner' | 'vet' }) {
   const [editing, setEditing] = useState(false);
   const [dietType, setDietType] = useState(pet.diet_type || "");
   const [dietBrand, setDietBrand] = useState(pet.diet_brand || "");
@@ -64,9 +64,11 @@ export function TabAlimentacion({ pet, onRefresh }: { pet: PetData; onRefresh?: 
               <Heart className="h-4 w-4 text-purple-600" />
               Alimentacion
             </CardTitle>
-            <Button variant="ghost" size="sm" className="h-8 text-xs gap-1 text-purple-600" onClick={() => setEditing(!editing)}>
-              {editing ? "Cancelar" : hasDiet ? <><Pencil className="h-3.5 w-3.5" /> Editar</> : <><Plus className="h-3.5 w-3.5" /> Agregar</>}
-            </Button>
+            {viewMode !== 'vet' && (
+              <Button variant="ghost" size="sm" className="h-8 text-xs gap-1 text-purple-600" onClick={() => setEditing(!editing)}>
+                {editing ? "Cancelar" : hasDiet ? <><Pencil className="h-3.5 w-3.5" /> Editar</> : <><Plus className="h-3.5 w-3.5" /> Agregar</>}
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent>
@@ -104,10 +106,14 @@ export function TabAlimentacion({ pet, onRefresh }: { pet: PetData; onRefresh?: 
               </Button>
             </div>
           ) : !hasDiet ? (
+            viewMode === 'vet' ? (
+              <p className="text-sm text-muted-foreground p-3">Sin informacion de dieta registrada</p>
+            ) : (
             <button onClick={() => setEditing(true)} className="w-full text-left p-3 rounded-lg border-2 border-dashed border-muted-foreground/20 hover:border-purple-300 hover:bg-purple-50/50 transition-colors group">
               <p className="text-sm text-muted-foreground group-hover:text-purple-600">Sin informacion de dieta registrada</p>
               <p className="text-xs text-muted-foreground/60 group-hover:text-purple-500 mt-0.5">Toca para agregar</p>
             </button>
+            )
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {pet.diet_type && (

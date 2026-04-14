@@ -166,6 +166,22 @@ export function AppSidebar() {
   });
   const isGroomer = !!groomerRow;
 
+  // Fetch provider slug for "Mi consultorio" link
+  const { data: providerSlug } = useQuery({
+    queryKey: ['provider-slug', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return null;
+      const { data } = await supabase
+        .from('service_providers')
+        .select('slug')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      return data?.slug ?? null;
+    },
+    enabled: !!user?.id && isProvider,
+    staleTime: 5 * 60 * 1000,
+  });
+
   const handleSignOut = async () => {
     await signOut();
     navigate(LINKS.auth());
@@ -290,11 +306,19 @@ export function AppSidebar() {
                         <SidebarMenuItem>
                           <SidebarMenuButton
                             isActive={isActive('/provider/dashboard')}
-                            onClick={() => handleNavigate('/provider/dashboard')}
+                            onClick={() => handleNavigate(
+                              providerSlug
+                                ? `/veterinarios/${providerSlug}`
+                                : '/provider/profile-edit'
+                            )}
                             className="h-7 text-xs rounded-md text-teal-700"
+                            title={providerSlug ? 'Ver tu perfil publico' : 'Completa tu perfil para tener URL publica'}
                           >
                             <Stethoscope className="h-3.5 w-3.5 flex-shrink-0 text-teal-500" />
                             <span>Mi consultorio</span>
+                            {!providerSlug && (
+                              <span className="ml-auto text-[9px] text-amber-500 font-medium">Completar</span>
+                            )}
                           </SidebarMenuButton>
                         </SidebarMenuItem>
                       </SidebarMenu>

@@ -28,7 +28,7 @@ import { formatDate } from '../helpers';
 import { InfoRow } from '../shared';
 import { GrimaceChecklist } from '@/components/medical/GrimaceChecklist';
 
-export function TabResumen({ pet, onRefresh }: { pet: PetData; onRefresh?: () => void }) {
+export function TabResumen({ pet, onRefresh, viewMode }: { pet: PetData; onRefresh?: () => void; viewMode?: 'owner' | 'vet' }) {
   const [showAllergyForm, setShowAllergyForm] = useState(false);
   const [allergyType, setAllergyType] = useState<'food' | 'medication' | 'environmental'>('food');
   const [allergyValue, setAllergyValue] = useState('');
@@ -123,6 +123,12 @@ export function TabResumen({ pet, onRefresh }: { pet: PetData; onRefresh?: () =>
 
   return (
     <div className="space-y-4">
+      {viewMode === 'vet' && (
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-blue-50 border border-blue-200 text-blue-700">
+          <Stethoscope className="h-4 w-4 flex-shrink-0" />
+          <p className="text-sm">Vista veterinaria — datos gestionados por el dueno</p>
+        </div>
+      )}
       {/* Allergies */}
       <Card>
         <CardHeader className="pb-3">
@@ -131,19 +137,21 @@ export function TabResumen({ pet, onRefresh }: { pet: PetData; onRefresh?: () =>
               <AlertTriangle className="h-4 w-4 text-amber-500" />
               Alergias
             </CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 text-xs gap-1 text-purple-600"
-              onClick={() => setShowAllergyForm(!showAllergyForm)}
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Agregar
-            </Button>
+            {viewMode !== 'vet' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs gap-1 text-purple-600"
+                onClick={() => setShowAllergyForm(!showAllergyForm)}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Agregar
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent>
-          {showAllergyForm && (
+          {viewMode !== 'vet' && showAllergyForm && (
             <div className="mb-3 p-3 bg-muted/30 rounded-lg space-y-2">
               <Select
                 value={allergyType}
@@ -177,6 +185,9 @@ export function TabResumen({ pet, onRefresh }: { pet: PetData; onRefresh?: () =>
             </div>
           )}
           {!hasAllergies && !showAllergyForm ? (
+            viewMode === 'vet' ? (
+              <p className="text-sm text-muted-foreground p-3">Sin alergias registradas</p>
+            ) : (
             <button
               onClick={() => setShowAllergyForm(true)}
               className="w-full text-left p-3 rounded-lg border-2 border-dashed border-muted-foreground/20 hover:border-purple-300 hover:bg-purple-50/50 transition-colors group"
@@ -188,6 +199,7 @@ export function TabResumen({ pet, onRefresh }: { pet: PetData; onRefresh?: () =>
                 Toca para agregar
               </p>
             </button>
+            )
           ) : (
             <div className="space-y-3">
               {pet.allergies_food && pet.allergies_food.length > 0 && (
@@ -251,19 +263,21 @@ export function TabResumen({ pet, onRefresh }: { pet: PetData; onRefresh?: () =>
               <Pill className="h-4 w-4 text-purple-500" />
               Medicamentos actuales
             </CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 text-xs gap-1 text-purple-600"
-              onClick={() => setShowMedForm(!showMedForm)}
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Agregar
-            </Button>
+            {viewMode !== 'vet' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs gap-1 text-purple-600"
+                onClick={() => setShowMedForm(!showMedForm)}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Agregar
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent>
-          {showMedForm && (
+          {viewMode !== 'vet' && showMedForm && (
             <div className="mb-3 p-3 bg-muted/30 rounded-lg space-y-2">
               <Input
                 placeholder="Nombre del medicamento"
@@ -307,6 +321,9 @@ export function TabResumen({ pet, onRefresh }: { pet: PetData; onRefresh?: () =>
             </div>
           )}
           {!hasMedications && !showMedForm ? (
+            viewMode === 'vet' ? (
+              <p className="text-sm text-muted-foreground p-3">Sin medicamentos activos</p>
+            ) : (
             <button
               onClick={() => setShowMedForm(true)}
               className="w-full text-left p-3 rounded-lg border-2 border-dashed border-muted-foreground/20 hover:border-purple-300 hover:bg-purple-50/50 transition-colors group"
@@ -318,6 +335,7 @@ export function TabResumen({ pet, onRefresh }: { pet: PetData; onRefresh?: () =>
                 Toca para agregar
               </p>
             </button>
+            )
           ) : (
             <div className="space-y-3">
               {pet.current_medications?.map((med, i) => (
@@ -346,19 +364,21 @@ export function TabResumen({ pet, onRefresh }: { pet: PetData; onRefresh?: () =>
               <Stethoscope className="h-4 w-4 text-blue-500" />
               Condiciones crónicas
             </CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 text-xs gap-1 text-purple-600"
-              onClick={() => setShowConditionForm(!showConditionForm)}
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Agregar
-            </Button>
+            {viewMode !== 'vet' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 text-xs gap-1 text-purple-600"
+                onClick={() => setShowConditionForm(!showConditionForm)}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Agregar
+              </Button>
+            )}
           </div>
         </CardHeader>
         <CardContent>
-          {showConditionForm && (
+          {viewMode !== 'vet' && showConditionForm && (
             <div className="mb-3 p-3 bg-muted/30 rounded-lg space-y-2">
               <Select value={conditionName} onValueChange={setConditionName}>
                 <SelectTrigger className="h-9 text-sm">
@@ -411,6 +431,9 @@ export function TabResumen({ pet, onRefresh }: { pet: PetData; onRefresh?: () =>
             </div>
           )}
           {!hasChronicConditions && !showConditionForm ? (
+            viewMode === 'vet' ? (
+              <p className="text-sm text-muted-foreground p-3">Sin condiciones cronicas registradas</p>
+            ) : (
             <button
               onClick={() => setShowConditionForm(true)}
               className="w-full text-left p-3 rounded-lg border-2 border-dashed border-muted-foreground/20 hover:border-purple-300 hover:bg-purple-50/50 transition-colors group"
@@ -422,6 +445,7 @@ export function TabResumen({ pet, onRefresh }: { pet: PetData; onRefresh?: () =>
                 Toca para agregar
               </p>
             </button>
+            )
           ) : (
             <div className="space-y-2">
               {Object.entries(pet.chronic_conditions_detail!).map(([condition, detail], i) => (
@@ -558,33 +582,35 @@ export function TabResumen({ pet, onRefresh }: { pet: PetData; onRefresh?: () =>
         </Card>
       )}
 
-      {/* CTA: subir documentos + compartir — discoverability */}
-      <div className="grid grid-cols-2 gap-3">
-        <Card
-          className="border-purple-200/60 bg-purple-50/30 hover:bg-purple-50/60 transition-colors cursor-pointer"
-          onClick={() => {
-            const tabTrigger = document.querySelector('[value="documentos"]') as HTMLButtonElement;
-            tabTrigger?.click();
-          }}
-        >
-          <CardContent className="p-3 text-center">
-            <Clipboard className="h-5 w-5 text-purple-500 mx-auto mb-1" />
-            <p className="text-xs font-medium">Subir recetas o exámenes</p>
-          </CardContent>
-        </Card>
-        <Card
-          className="border-teal-200/60 bg-teal-50/30 hover:bg-teal-50/60 transition-colors cursor-pointer"
-          onClick={() => {
-            const tabTrigger = document.querySelector('[value="compartir"]') as HTMLButtonElement;
-            tabTrigger?.click();
-          }}
-        >
-          <CardContent className="p-3 text-center">
-            <Phone className="h-5 w-5 text-teal-500 mx-auto mb-1" />
-            <p className="text-xs font-medium">Compartir ficha con tu vet</p>
-          </CardContent>
-        </Card>
-      </div>
+      {/* CTA: subir documentos + compartir — discoverability (owner only) */}
+      {viewMode !== 'vet' && (
+        <div className="grid grid-cols-2 gap-3">
+          <Card
+            className="border-purple-200/60 bg-purple-50/30 hover:bg-purple-50/60 transition-colors cursor-pointer"
+            onClick={() => {
+              const tabTrigger = document.querySelector('[value="documentos"]') as HTMLButtonElement;
+              tabTrigger?.click();
+            }}
+          >
+            <CardContent className="p-3 text-center">
+              <Clipboard className="h-5 w-5 text-purple-500 mx-auto mb-1" />
+              <p className="text-xs font-medium">Subir recetas o examenes</p>
+            </CardContent>
+          </Card>
+          <Card
+            className="border-teal-200/60 bg-teal-50/30 hover:bg-teal-50/60 transition-colors cursor-pointer"
+            onClick={() => {
+              const tabTrigger = document.querySelector('[value="compartir"]') as HTMLButtonElement;
+              tabTrigger?.click();
+            }}
+          >
+            <CardContent className="p-3 text-center">
+              <Phone className="h-5 w-5 text-teal-500 mx-auto mb-1" />
+              <p className="text-xs font-medium">Compartir ficha con tu vet</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

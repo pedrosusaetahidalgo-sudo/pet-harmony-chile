@@ -8,10 +8,11 @@ import { Filesystem, Directory } from '@capacitor/filesystem';
 import { Share } from '@capacitor/share';
 import { isNative } from '@/lib/platform';
 import type { PetData } from "./types";
+import type { VetClinicalNote } from "@/hooks/useVetClinicalNotes";
 import { calculateAge } from "./helpers";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function generatePDF(pet: PetData, records: any[]) {
+export async function generatePDF(pet: PetData, records: any[], vetNotes?: VetClinicalNote[]) {
   const age = pet.birth_date ? calculateAge(pet.birth_date) : "No especificada";
   const now = new Date().toLocaleDateString("es-CL", { day: "2-digit", month: "long", year: "numeric" });
 
@@ -38,6 +39,55 @@ export async function generatePDF(pet: PetData, records: any[]) {
       <td>${r.veterinarian_name || "\u2014"}</td>
     </tr>`;
   }).join("");
+
+  // Build vet clinical notes section
+  const sortedVetNotes = [...(vetNotes || [])].sort((a, b) => {
+    const dateA = a.consultation_date || a.created_at;
+    const dateB = b.consultation_date || b.created_at;
+    return new Date(dateB).getTime() - new Date(dateA).getTime();
+  });
+
+  const vetNotesTypeLabels: Record<string, string> = {
+    consulta: 'Consulta',
+    vacuna: 'Vacuna',
+    control: 'Control',
+    cirugia: 'Cirugía',
+    urgencia: 'Urgencia',
+    otro: 'Otro',
+  };
+
+  const vetNotesHtml = sortedVetNotes.length > 0 ? `
+  <div class="section" style="page-break-inside: avoid;">
+    <div class="section-title">Notas Cl\u00ednicas Veterinarias (${sortedVetNotes.length})</div>
+    ${sortedVetNotes.map(note => {
+      const noteDate = note.consultation_date || note.created_at;
+      const formattedDate = noteDate ? new Date(noteDate).toLocaleDateString("es-CL") : "\u2014";
+      const typeLabel = vetNotesTypeLabels[note.note_type] || note.note_type;
+      const isAudioTranscription = note.source === 'audio_transcription';
+
+      let followupHtml = '';
+      if (note.followup_required && note.followup_date) {
+        const followupDate = new Date(note.followup_date).toLocaleDateString("es-CL");
+        followupHtml = `
+          <div style="margin-top: 4px; padding: 4px 8px; background: #fef3c7; border: 1px solid #f59e0b; border-radius: 4px; font-size: 10px;">
+            <strong style="color: #92400e;">Seguimiento:</strong> ${followupDate}${note.followup_reason ? ` \u2014 ${note.followup_reason}` : ''}
+          </div>`;
+      }
+
+      return `
+      <div style="border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;">
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <span style="font-size: 10px; color: #666;">${formattedDate}</span>
+          <span class="badge">${typeLabel.toUpperCase()}</span>
+          ${isAudioTranscription ? '<span class="badge" style="background: #fef2f2; color: #dc2626;">TRANSCRIPCI\u00d3N DE AUDIO</span>' : ''}
+        </div>
+        <p style="font-weight: 600; font-size: 12px; margin-top: 4px;">${note.title}</p>
+        ${note.description ? `<p style="font-size: 11px; color: #374151; margin-top: 2px;">${note.description}</p>` : ''}
+        <p style="font-size: 10px; color: #666; margin-top: 4px;">Veterinario: ${note.provider_name || 'No especificado'}</p>
+        ${followupHtml}
+      </div>`;
+    }).join("")}
+  </div>` : '';
 
   const html = `<!DOCTYPE html>
 <html lang="es">
@@ -188,6 +238,8 @@ export async function generatePDF(pet: PetData, records: any[]) {
       <tbody>${recordRows}</tbody>
     </table>` : '<p class="no-data">Sin registros m\u00e9dicos</p>'}
   </div>
+
+  ${vetNotesHtml}
 
   ${(pet.behavior_notes || pet.medical_notes || pet.special_needs) ? `
   <div class="section">

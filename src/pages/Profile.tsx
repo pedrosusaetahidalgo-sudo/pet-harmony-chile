@@ -22,6 +22,8 @@ import { ProfileSettingsList } from '@/components/profile/ProfileSettingsList';
 import { EditProfileDrawer } from '@/components/profile/EditProfileDrawer';
 import { BecomeProviderCTA } from '@/components/BecomeProviderCTA';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { useActiveRole } from '@/hooks/useActiveRole';
 
 interface ProfileData {
   avatar_url?: string;
@@ -48,6 +50,7 @@ const Profile = () => {
   const goToAddPet = useGoToAddPet();
   const { stats, achievements, missions } = useGamification();
   const { isPremium } = usePlan();
+  const { isProvider } = useActiveRole();
 
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [pets, setPets] = useState<PetData[]>([]);
@@ -246,6 +249,21 @@ const Profile = () => {
               <ChevronRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
             </button>
           </CardContent>
+        </Card>
+      )}
+
+      {/* ── Acceso rápido al perfil veterinario (solo usuarios con rol proveedor) ── */}
+      {isProvider && (
+        <Card className="p-4 bg-purple-50 border-purple-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium text-sm">Perfil veterinario</p>
+              <p className="text-xs text-muted-foreground">Edita tu perfil público del directorio</p>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => navigate('/provider/profile-edit')}>
+              Editar perfil
+            </Button>
+          </div>
         </Card>
       )}
 

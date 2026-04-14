@@ -24,6 +24,7 @@ export interface MedicalDocument {
   file_size: number | null;
   issued_at: string | null;
   notes: string | null;
+  uploaded_by_role: 'owner' | 'vet' | null;
   created_at: string;
   updated_at: string;
 }
@@ -35,6 +36,7 @@ export interface UploadDocumentParams {
   title: string;
   issuedAt?: string;
   notes?: string;
+  uploadedByRole?: 'owner' | 'vet';
 }
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -128,6 +130,7 @@ export const useMedicalDocuments = (petId?: string) => {
           file_size: params.file.size,
           issued_at: params.issuedAt || null,
           notes: params.notes || null,
+          uploaded_by_role: params.uploadedByRole || 'owner',
         })
         .select()
         .maybeSingle();
@@ -152,20 +155,27 @@ export const useMedicalDocuments = (petId?: string) => {
     },
   });
 
-  // Delete document
+  // Delete document — allowed for the uploader (owner_id) or the pet owner
   const deleteDocument = useMutation({
-    mutationFn: async (documentId: string) => {
+    mutationFn: async ({ documentId, petOwnerId }: { documentId: string; petOwnerId?: string }) => {
       if (!user) throw new Error('Usuario no autenticado');
 
-      // Get document to find file path
+      // Get document to find file path — fetch without owner_id filter so
+      // the pet owner can also delete vet-uploaded docs
       const { data: document, error: fetchError } = await supabase
         .from('medical_documents')
-        .select('file_url')
+        .select('file_url, owner_id')
         .eq('id', documentId)
-        .eq('owner_id', user.id)
         .maybeSingle();
 
       if (fetchError) throw fetchError;
+
+      // Verify permission: uploader OR pet owner
+      const isUploader = document?.owner_id === user.id;
+      const isPetOwner = petOwnerId === user.id;
+      if (!isUploader && !isPetOwner) {
+        throw new Error('No tienes permiso para eliminar este documento');
+      }
 
       // Delete from storage
       if (document?.file_url) {
@@ -183,8 +193,7 @@ export const useMedicalDocuments = (petId?: string) => {
       const { error } = await supabase
         .from('medical_documents')
         .delete()
-        .eq('id', documentId)
-        .eq('owner_id', user.id);
+        .eq('id', documentId);
 
       if (error) throw error;
     },
@@ -231,7 +240,8 @@ export const useMedicalDocuments = (petId?: string) => {
     isLoading,
     uploadDocument: uploadDocument.mutateAsync,
     isUploading: uploadDocument.isPending,
-    deleteDocument: deleteDocument.mutateAsync,
+    deleteDocument: (documentId: string, petOwnerId?: string) =>
+      deleteDocument.mutateAsync({ documentId, petOwnerId }),
     isDeleting: deleteDocument.isPending,
     getDownloadUrl,
     downloadAllAsZip: downloadAllAsZip.mutateAsync,

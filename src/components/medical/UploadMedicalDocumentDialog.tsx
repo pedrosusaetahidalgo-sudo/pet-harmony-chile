@@ -22,6 +22,8 @@ interface UploadMedicalDocumentDialogProps {
   onOpenChange: (open: boolean) => void;
   petId: string;
   onSuccess?: () => void;
+  /** Role of the uploader — defaults to 'owner' */
+  uploadedByRole?: 'owner' | 'vet';
 }
 
 const DOCUMENT_TYPES: { value: MedicalDocumentType; label: string }[] = [
@@ -38,6 +40,7 @@ export const UploadMedicalDocumentDialog = ({
   onOpenChange,
   petId,
   onSuccess,
+  uploadedByRole = 'owner',
 }: UploadMedicalDocumentDialogProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -91,6 +94,7 @@ export const UploadMedicalDocumentDialog = ({
         title: title.trim(),
         issuedAt: issuedAt ? format(issuedAt, 'yyyy-MM-dd') : undefined,
         notes: notes.trim() || undefined,
+        uploadedByRole,
       });
 
       // Reset form

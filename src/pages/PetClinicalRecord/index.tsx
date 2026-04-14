@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -54,6 +54,7 @@ import { TabCompartir } from './tabs/TabCompartir';
 import { TabVacunas } from './tabs/TabVacunas';
 import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import { generatePDF } from './pdf';
+import { useVetClinicalNotesByPet } from '@/hooks/useVetClinicalNotes';
 import { PageHeader } from '@/components/PageHeader';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { LINKS } from '@/lib/links';
@@ -62,9 +63,11 @@ import { MedicalSummaryButton } from '@/components/medical/MedicalSummaryButton'
 import { AddMedicalRecord } from '@/components/AddMedicalRecord';
 import { VaccinationCardOCR } from '@/components/onboarding/VaccinationCardOCR';
 import { FileDown } from '@/lib/icons';
+import { VetActionsBar } from './VetActionsBar';
 
 const PetClinicalRecord = () => {
   const { petId } = useParams<{ petId: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
   const queryClient = useQueryClient();
@@ -118,11 +121,17 @@ const PetClinicalRecord = () => {
     enabled: !!petId && !authLoading,
   });
 
+  // Vet clinical notes — used for PDF generation
+  const { data: vetNotesForPdf } = useVetClinicalNotesByPet(petId);
+
   // Vet access check: embedded in pet query to avoid adding a new hook
   // (adding useQuery here caused React #310 in prod due to hook count mismatch
   // with the existing cached component tree).
   const [isLinkedVet, setIsLinkedVet] = useState(false);
   const [vetCheckDone, setVetCheckDone] = useState(false);
+  const [vetProviderId, setVetProviderId] = useState<string | null>(null);
+  const [vetShareTokenId, setVetShareTokenId] = useState<string | null>(null);
+  const [showRecorder, setShowRecorder] = useState(false);
 
   useEffect(() => {
     if (!pet || !user?.id || pet.owner_id === user.id) {
@@ -146,6 +155,18 @@ const PetClinicalRecord = () => {
             .eq('status', 'active')
             .maybeSingle();
           setIsLinkedVet(!!link);
+          if (link) {
+            setVetProviderId(provider.id);
+            // Fetch active share token for this vet+pet
+            const { data: token } = await supabase
+              .from('medical_share_tokens')
+              .select('id')
+              .eq('pet_id', pet.id)
+              .eq('target_provider_id', provider.id)
+              .eq('is_active', true)
+              .maybeSingle();
+            if (token) setVetShareTokenId(token.id);
+          }
         }
       } catch {
         // fail closed
@@ -184,6 +205,14 @@ const PetClinicalRecord = () => {
   }
 
   const isOwner = pet.owner_id === user?.id;
+  const viewMode: 'owner' | 'vet' = isOwner ? 'owner' : 'vet';
+
+  // B7: auto-open recorder with ?grabar=1
+  useEffect(() => {
+    if (viewMode === 'vet' && searchParams.get('grabar') === '1') {
+      setShowRecorder(true);
+    }
+  }, [viewMode, searchParams]);
 
   if (!isOwner && !vetCheckDone) {
     return <ClinicalRecordSkeleton />;
@@ -210,7 +239,7 @@ const PetClinicalRecord = () => {
           <Button
             variant="outline"
             size="sm"
-            onClick={() => generatePDF(pet, medicalRecords)}
+            onClick={() => generatePDF(pet, medicalRecords, vetNotesForPdf)}
             className="flex items-center gap-2"
           >
             <Download className="h-4 w-4" />
@@ -269,21 +298,25 @@ const PetClinicalRecord = () => {
           </div>
         </div>
 
-        {/* Agregar registro médico + OCR carnet */}
-        <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-          <AddMedicalRecord
-            petId={pet.id}
-            petBreed={pet.breed || ''}
-            petSpecies={pet.species}
-            petName={pet.name}
-          />
-        </div>
-        <VaccinationCardOCR
-          petId={pet.id}
-          onSaved={() =>
-            queryClient.invalidateQueries({ queryKey: ['pet-medical-records-pdf', petId] })
-          }
-        />
+        {/* Agregar registro médico + OCR carnet (owner only) */}
+        {viewMode === 'owner' && (
+          <>
+            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+              <AddMedicalRecord
+                petId={pet.id}
+                petBreed={pet.breed || ''}
+                petSpecies={pet.species}
+                petName={pet.name}
+              />
+            </div>
+            <VaccinationCardOCR
+              petId={pet.id}
+              onSaved={() =>
+                queryClient.invalidateQueries({ queryKey: ['pet-medical-records-pdf', petId] })
+              }
+            />
+          </>
+        )}
 
         {showAssistant ? (
           <PetAssistant petId={pet.id} petName={pet.name} onClose={() => setShowAssistant(false)} />
@@ -300,7 +333,7 @@ const PetClinicalRecord = () => {
         )}
 
         <Tabs defaultValue="resumen" className="w-full">
-          <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide sm:grid sm:grid-cols-6">
+          <TabsList className={`flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide sm:grid ${viewMode === 'vet' ? 'sm:grid-cols-5' : 'sm:grid-cols-6'}`}>
             <TabsTrigger value="resumen" className="shrink-0 snap-start text-xs sm:text-sm">
               <Heart className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
               Resumen
@@ -321,10 +354,12 @@ const PetClinicalRecord = () => {
               <FileText className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
               Documentos
             </TabsTrigger>
-            <TabsTrigger value="compartir" className="shrink-0 snap-start text-xs sm:text-sm">
-              <Share2 className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
-              Compartir
-            </TabsTrigger>
+            {viewMode === 'owner' && (
+              <TabsTrigger value="compartir" className="shrink-0 snap-start text-xs sm:text-sm">
+                <Share2 className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+                Compartir
+              </TabsTrigger>
+            )}
           </TabsList>
 
           <TabsContent value="resumen" className="mt-4 space-y-4">
@@ -342,94 +377,98 @@ const PetClinicalRecord = () => {
                 Ver premios →
               </span>
             </div>
-            <TabResumen pet={pet} onRefresh={() => refetchPet()} />
-            <Card>
-              <CardContent className="p-4 text-center">
-                <p className="text-sm text-muted-foreground mb-3">
-                  ¿Necesitas actualizar la información clínica de {pet.name}?
-                </p>
-                <Button variant="outline" size="sm" onClick={() => navigate(`/edit-pet/${pet.id}`)}>
-                  <Clipboard className="h-4 w-4 mr-2" />
-                  Editar datos clínicos
-                </Button>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-4 text-center">
-                <p className="text-sm text-muted-foreground mb-3">
-                  Programa recordatorios de vacunas, controles y medicamentos
-                </p>
-                <Dialog open={showReminderForm} onOpenChange={setShowReminderForm}>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="sm">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Agregar Recordatorio
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Nuevo Recordatorio</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4 pt-2">
-                      <div className="space-y-2">
-                        <Label>Tipo</Label>
-                        <Select
-                          value={reminderData.type}
-                          onValueChange={(v) => setReminderData((d) => ({ ...d, type: v }))}
-                        >
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {REMINDER_TYPES.map((rt) => (
-                              <SelectItem key={rt.value} value={rt.value}>
-                                {rt.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Título</Label>
-                        <Input
-                          value={reminderData.title}
-                          onChange={(e) =>
-                            setReminderData((d) => ({ ...d, title: e.target.value }))
-                          }
-                          placeholder="Ej: Vacuna antirrábica"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Fecha</Label>
-                        <Input
-                          type="date"
-                          value={reminderData.due_date}
-                          onChange={(e) =>
-                            setReminderData((d) => ({ ...d, due_date: e.target.value }))
-                          }
-                        />
-                      </div>
-                      <Button
-                        className="w-full"
-                        disabled={!reminderData.title || !reminderData.due_date}
-                        onClick={() => {
-                          addReminder.mutate({
-                            pet_id: pet.id,
-                            type: reminderData.type,
-                            title: reminderData.title,
-                            due_date: reminderData.due_date,
-                          });
-                          setShowReminderForm(false);
-                          setReminderData({ type: 'vaccine', title: '', due_date: '' });
-                        }}
-                      >
-                        Crear Recordatorio
+            <TabResumen pet={pet} onRefresh={() => refetchPet()} viewMode={viewMode} />
+            {viewMode === 'owner' && (
+              <Card>
+                <CardContent className="p-4 text-center">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    ¿Necesitas actualizar la información clínica de {pet.name}?
+                  </p>
+                  <Button variant="outline" size="sm" onClick={() => navigate(`/edit-pet/${pet.id}`)}>
+                    <Clipboard className="h-4 w-4 mr-2" />
+                    Editar datos clínicos
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+            {viewMode === 'owner' && (
+              <Card>
+                <CardContent className="p-4 text-center">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Programa recordatorios de vacunas, controles y medicamentos
+                  </p>
+                  <Dialog open={showReminderForm} onOpenChange={setShowReminderForm}>
+                    <DialogTrigger asChild>
+                      <Button variant="outline" size="sm">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Agregar Recordatorio
                       </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </CardContent>
-            </Card>
+                    </DialogTrigger>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Nuevo Recordatorio</DialogTitle>
+                      </DialogHeader>
+                      <div className="space-y-4 pt-2">
+                        <div className="space-y-2">
+                          <Label>Tipo</Label>
+                          <Select
+                            value={reminderData.type}
+                            onValueChange={(v) => setReminderData((d) => ({ ...d, type: v }))}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {REMINDER_TYPES.map((rt) => (
+                                <SelectItem key={rt.value} value={rt.value}>
+                                  {rt.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Título</Label>
+                          <Input
+                            value={reminderData.title}
+                            onChange={(e) =>
+                              setReminderData((d) => ({ ...d, title: e.target.value }))
+                            }
+                            placeholder="Ej: Vacuna antirrábica"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Fecha</Label>
+                          <Input
+                            type="date"
+                            value={reminderData.due_date}
+                            onChange={(e) =>
+                              setReminderData((d) => ({ ...d, due_date: e.target.value }))
+                            }
+                          />
+                        </div>
+                        <Button
+                          className="w-full"
+                          disabled={!reminderData.title || !reminderData.due_date}
+                          onClick={() => {
+                            addReminder.mutate({
+                              pet_id: pet.id,
+                              type: reminderData.type,
+                              title: reminderData.title,
+                              due_date: reminderData.due_date,
+                            });
+                            setShowReminderForm(false);
+                            setReminderData({ type: 'vaccine', title: '', due_date: '' });
+                          }}
+                        >
+                          Crear Recordatorio
+                        </Button>
+                      </div>
+                    </DialogContent>
+                  </Dialog>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="vacunas" className="mt-4">
@@ -441,34 +480,38 @@ const PetClinicalRecord = () => {
           </TabsContent>
 
           <TabsContent value="alimentacion" className="mt-4 space-y-4">
-            <TabAlimentacion pet={pet} onRefresh={() => refetchPet()} />
-            <Card>
-              <CardContent className="p-4 text-center">
-                <p className="text-sm text-muted-foreground mb-3">
-                  ¿Necesitas actualizar la información clínica de {pet.name}?
-                </p>
-                <Button variant="outline" size="sm" onClick={() => navigate(`/edit-pet/${pet.id}`)}>
-                  <Clipboard className="h-4 w-4 mr-2" />
-                  Editar datos clínicos
-                </Button>
-              </CardContent>
-            </Card>
+            <TabAlimentacion pet={pet} onRefresh={() => refetchPet()} viewMode={viewMode} />
+            {viewMode === 'owner' && (
+              <Card>
+                <CardContent className="p-4 text-center">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    ¿Necesitas actualizar la información clínica de {pet.name}?
+                  </p>
+                  <Button variant="outline" size="sm" onClick={() => navigate(`/edit-pet/${pet.id}`)}>
+                    <Clipboard className="h-4 w-4 mr-2" />
+                    Editar datos clínicos
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
 
           <TabsContent value="documentos" className="mt-4">
-            <TabDocumentos petId={pet.id} />
+            <TabDocumentos petId={pet.id} viewMode={viewMode} petOwnerId={pet.owner_id} />
           </TabsContent>
 
-          <TabsContent value="compartir" className="mt-4">
-            <TabCompartir petId={pet.id} petName={pet.name} />
-          </TabsContent>
+          {viewMode === 'owner' && (
+            <TabsContent value="compartir" className="mt-4">
+              <TabCompartir petId={pet.id} petName={pet.name} />
+            </TabsContent>
+          )}
         </Tabs>
 
         {/* Tutorial floating button */}
         <ViewTutorial {...TUTORIALS.fichaClinical} />
 
-        {/* Memorial entry point */}
-        {pet.lifecycle_status !== 'memorial' && (
+        {/* Memorial entry point (owner only) */}
+        {viewMode === 'owner' && pet.lifecycle_status !== 'memorial' && (
           <Card className="border-dashed border-purple-200/60 bg-purple-50/20 mt-4">
             <CardContent className="py-3 px-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -489,8 +532,8 @@ const PetClinicalRecord = () => {
           </Card>
         )}
 
-        {/* Memorial flow dialog */}
-        {showMemorialFlow && (
+        {/* Memorial flow dialog (owner only) */}
+        {viewMode === 'owner' && showMemorialFlow && (
           <Dialog open={showMemorialFlow} onOpenChange={setShowMemorialFlow}>
             <DialogContent className="max-w-lg">
               <MemorialFlow
@@ -504,6 +547,19 @@ const PetClinicalRecord = () => {
               />
             </DialogContent>
           </Dialog>
+        )}
+
+        {/* Vet actions bar */}
+        {viewMode === 'vet' && vetProviderId && (
+          <VetActionsBar
+            petId={pet.id}
+            petName={pet.name}
+            petSpecies={pet.species}
+            providerId={vetProviderId}
+            shareTokenId={vetShareTokenId}
+            showRecorder={showRecorder}
+            onRecorderChange={setShowRecorder}
+          />
         )}
 
         {/* Memorial badge for memorial pets */}
