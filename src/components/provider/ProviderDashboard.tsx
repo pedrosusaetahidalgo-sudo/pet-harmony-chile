@@ -1,33 +1,40 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { useProviderDashboardStats } from '@/hooks/useProviderDashboardStats';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+import { useVetAnalytics } from '@/hooks/useVetAnalytics';
+import { usePendingVetLinks } from '@/hooks/usePetVetLinks';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
-  UserCog,
-  Eye,
-  Stethoscope,
-  Star,
   Users,
-  FileText,
   Calendar,
+  TrendingUp,
+  Star,
+  ClipboardList,
+  FileText,
+  Stethoscope,
+  BarChart3,
+  PawPrint,
   Loader2,
   AlertCircle,
-  ClipboardList,
-  Mail,
-  TrendingUp,
-  Mic,
+  UserCog,
+  Eye,
 } from '@/lib/icons';
-import { ProviderDirectoryCard } from './ProviderDirectoryCard';
-import { SharedFichasCard } from './SharedFichasCard';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+
+import { QuickActionsBar, type DashboardPeriod } from './dashboard/QuickActionsBar';
+import { AlertsBanner } from './dashboard/AlertsBanner';
+import { InteractiveMetricCard } from './dashboard/InteractiveMetricCard';
+import { ClinicalTab } from './dashboard/ClinicalTab';
+import { BusinessTab } from './dashboard/BusinessTab';
+import { PatientsTab } from './dashboard/PatientsTab';
+import { ActivityFeed } from './dashboard/ActivityFeed';
 import { PendingVetLinksCard } from './PendingVetLinksCard';
-import { LinkedPatientsCard } from './LinkedPatientsCard';
-import { TodayAgendaCard } from './TodayAgendaCard';
-import { VetFollowupsCard } from './VetFollowupsCard';
-import { VetPatientsList } from './VetPatientsList';
-import { CreateServicePromotion } from '@/components/CreateServicePromotion';
+import { NewPatientForm } from './NewPatientForm';
 
 const formatCLP = (amount: number) =>
   new Intl.NumberFormat('es-CL', {
@@ -36,38 +43,35 @@ const formatCLP = (amount: number) =>
     minimumFractionDigits: 0,
   }).format(amount);
 
-interface MetricCardProps {
-  label: string;
-  value: string | number;
-  subtitle: string;
-  icon: React.ElementType;
-  iconColor?: string;
-}
-
-function MetricCard({
-  label,
-  value,
-  subtitle,
-  icon: Icon,
-  iconColor = 'text-muted-foreground',
-}: MetricCardProps) {
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{label}</CardTitle>
-        <Icon className={`h-4 w-4 ${iconColor}`} />
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
-        <p className="text-xs text-muted-foreground">{subtitle}</p>
-      </CardContent>
-    </Card>
-  );
-}
-
 const ProviderDashboard = () => {
   const { user } = useAuth();
   const { data: stats, isLoading, error } = useProviderDashboardStats();
+  const [period, setPeriod] = useState<DashboardPeriod>('current_month');
+  const [activeTab, setActiveTab] = useState('clinico');
+  const [showNewPatient, setShowNewPatient] = useState(false);
+
+  // Fetch display name
+  const { data: profile } = useQuery({
+    queryKey: ['profile-display', user?.id],
+    queryFn: async () => {
+      if (!user) return null;
+      const { data } = await supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('id', user.id)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user,
+    staleTime: 10 * 60 * 1000,
+  });
+
+  // Vet analytics for business tab
+  const { data: vetAnalytics } = useVetAnalytics({ period });
+
+  // Pending links count for alerts
+  const { data: pendingLinks } = usePendingVetLinks();
+  const pendingLinksCount = pendingLinks?.length ?? 0;
 
   if (isLoading) {
     return (
@@ -77,7 +81,7 @@ const ProviderDashboard = () => {
     );
   }
 
-  if (error) {
+  if (error || !stats) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <AlertCircle className="h-8 w-8 text-destructive mb-2" />
@@ -86,172 +90,142 @@ const ProviderDashboard = () => {
     );
   }
 
-  if (!stats) return null;
-
   const hasActivity = stats.patientsThisMonth > 0 || stats.bookingsThisMonth > 0;
 
   return (
     <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-3 flex-wrap">
-        <div>
-          <h2 className="text-xl font-bold">Mi consultorio</h2>
-          <p className="text-sm text-muted-foreground">Resumen de tu actividad y reputación</p>
-        </div>
-        <div className="flex gap-2 flex-wrap">
-          {stats.slug && (
-            <Link to={`/veterinarios/${stats.slug}`}>
-              <Button variant="outline" size="sm">
-                <Eye className="h-3.5 w-3.5 mr-1" /> Ver perfil
-              </Button>
-            </Link>
-          )}
-          <Link to="/provider/profile-edit">
-            <Button variant="outline" size="sm">
-              <UserCog className="h-3.5 w-3.5 mr-1" /> Editar perfil
+      {/* ═══ Zona A: Quick Actions Bar ═══ */}
+      <QuickActionsBar
+        displayName={profile?.display_name || user?.email?.split('@')[0] || 'Doc'}
+        period={period}
+        onPeriodChange={setPeriod}
+        onNewPatient={() => setShowNewPatient(true)}
+        onRecordConsultation={() => setActiveTab('clinico')}
+      />
+
+      {/* Profile links */}
+      <div className="flex gap-2 flex-wrap">
+        {stats.slug && (
+          <Link to={`/veterinarios/${stats.slug}`}>
+            <Button variant="outline" size="sm" className="text-xs gap-1">
+              <Eye className="h-3.5 w-3.5" /> Ver perfil publico
             </Button>
           </Link>
-        </div>
+        )}
+        <Link to="/provider/profile-edit">
+          <Button variant="outline" size="sm" className="text-xs gap-1">
+            <UserCog className="h-3.5 w-3.5" /> Editar perfil
+          </Button>
+        </Link>
       </div>
 
-      {/* Solicitudes pendientes — banner urgente arriba de todo */}
+      {/* ═══ Zona B: Alerts ═══ */}
       <PendingVetLinksCard />
+      <AlertsBanner
+        followupsPending={stats.followupsPending}
+        sharedFichasThisWeek={stats.sharedFichasThisWeek}
+        pendingLinksCount={pendingLinksCount}
+        onClickFollowups={() => setActiveTab('clinico')}
+        onClickFichas={() => setActiveTab('clinico')}
+        onClickLinks={() => setActiveTab('clinico')}
+      />
 
-      {/* Hero metrics row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <MetricCard
+      {/* ═══ Zona C: Interactive Metric Cards ═══ */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+        <InteractiveMetricCard
           label="Pacientes"
           value={stats.patientsThisMonth}
           subtitle={`${stats.notesThisMonth} nota${stats.notesThisMonth !== 1 ? 's' : ''}`}
           icon={Users}
           iconColor="text-purple-600"
+          accentColor="#9333ea"
+          onClick={() => setActiveTab('pacientes')}
         />
-        <MetricCard
-          label="Calificación"
+        <InteractiveMetricCard
+          label="Reservas"
+          value={stats.bookingsThisMonth}
+          subtitle="Este mes"
+          icon={Calendar}
+          iconColor="text-indigo-500"
+          accentColor="#6366f1"
+          onClick={() => setActiveTab('negocio')}
+        />
+        <InteractiveMetricCard
+          label="Ingresos"
+          value={stats.estimatedRevenue > 0 ? formatCLP(stats.estimatedRevenue) : '$0'}
+          subtitle="Este mes"
+          icon={TrendingUp}
+          iconColor="text-green-600"
+          accentColor="#16a34a"
+          onClick={() => setActiveTab('negocio')}
+        />
+        <InteractiveMetricCard
+          label="Calificacion"
           value={stats.avgRating ? stats.avgRating.toFixed(1) : '—'}
-          subtitle={`${stats.totalReviews} reseña${stats.totalReviews !== 1 ? 's' : ''}`}
+          subtitle={`${stats.totalReviews} resena${stats.totalReviews !== 1 ? 's' : ''}`}
           icon={Star}
           iconColor="text-yellow-500"
+          accentColor="#eab308"
+          onClick={() => setActiveTab('negocio')}
         />
-        <MetricCard
-          label="Visitas perfil"
-          value={stats.profileViews}
-          subtitle="Total acumulado"
-          icon={Eye}
-          iconColor="text-blue-500"
-        />
-        <MetricCard
+        <InteractiveMetricCard
           label="Seguimientos"
           value={stats.followupsPending}
-          subtitle="Próximos 7 días"
+          subtitle="Proximos 7 dias"
           icon={ClipboardList}
           iconColor="text-orange-500"
+          accentColor="#f97316"
+          onClick={() => setActiveTab('clinico')}
+        />
+        <InteractiveMetricCard
+          label="Fichas"
+          value={stats.sharedFichasThisWeek}
+          subtitle="Ultimos 7 dias"
+          icon={FileText}
+          iconColor="text-blue-500"
+          accentColor="#3b82f6"
+          onClick={() => setActiveTab('clinico')}
         />
       </div>
 
-      {/* Grid 2 zonas: clinico (izq) + admin (der) */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        {/* Zona izquierda: operacion clinica (3/5) */}
-        <div className="lg:col-span-3 space-y-4">
-          {/* Agenda de hoy */}
-          <TodayAgendaCard />
+      {/* ═══ Zona D: Tabbed Content ═══ */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="clinico" className="text-xs sm:text-sm gap-1">
+            <Stethoscope className="h-3.5 w-3.5 hidden sm:inline-block" />
+            Clinico
+          </TabsTrigger>
+          <TabsTrigger value="negocio" className="text-xs sm:text-sm gap-1">
+            <BarChart3 className="h-3.5 w-3.5 hidden sm:inline-block" />
+            Negocio
+          </TabsTrigger>
+          <TabsTrigger value="pacientes" className="text-xs sm:text-sm gap-1">
+            <PawPrint className="h-3.5 w-3.5 hidden sm:inline-block" />
+            Pacientes
+          </TabsTrigger>
+        </TabsList>
 
-          {/* Fichas compartidas */}
-          <SharedFichasCard providerId={stats.providerId} />
+        <TabsContent value="clinico" className="mt-4">
+          <ClinicalTab providerId={stats.providerId} />
+        </TabsContent>
 
-          {/* Pacientes vinculados */}
-          <LinkedPatientsCard />
+        <TabsContent value="negocio" className="mt-4">
+          <BusinessTab
+            stats={stats}
+            vetSummary={vetAnalytics?.summary ?? null}
+            bookingsTimeline={vetAnalytics?.bookingsTimeline ?? []}
+          />
+        </TabsContent>
 
-          {/* Actividad reciente */}
-          <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm">Actividad reciente</CardTitle>
-              <CardDescription className="text-xs">
-                Pacientes atendidos en Paw Friend
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <VetPatientsList />
-            </CardContent>
-          </Card>
-        </div>
+        <TabsContent value="pacientes" className="mt-4">
+          <PatientsTab onNewPatient={() => setShowNewPatient(true)} />
+        </TabsContent>
+      </Tabs>
 
-        {/* Zona derecha: admin + perfil (2/5) */}
-        <div className="lg:col-span-2 space-y-4">
-          {/* Mini perfil publico */}
-          <ProviderDirectoryCard />
+      {/* ═══ Zona E: Activity Feed ═══ */}
+      <ActivityFeed />
 
-          {/* Seguimientos de esta semana */}
-          <VetFollowupsCard />
-
-          {/* Stats secundarias compactas */}
-          <div className="grid grid-cols-2 gap-3">
-            <MetricCard
-              label="Fichas"
-              value={stats.sharedFichasThisWeek}
-              subtitle="Últimos 7 días"
-              icon={FileText}
-              iconColor="text-green-600"
-            />
-            <MetricCard
-              label="Reservas"
-              value={stats.bookingsThisMonth}
-              subtitle="Este mes"
-              icon={Calendar}
-              iconColor="text-indigo-500"
-            />
-            <MetricCard
-              label="Reseñas"
-              value={stats.reviewsThisMonth}
-              subtitle={
-                stats.invitationsSent > 0
-                  ? `${stats.invitationsConverted}/${stats.invitationsSent} usadas`
-                  : 'Invita a opinar'
-              }
-              icon={Mail}
-              iconColor="text-pink-500"
-            />
-            {stats.estimatedRevenue > 0 ? (
-              <MetricCard
-                label="Ingresos"
-                value={formatCLP(stats.estimatedRevenue)}
-                subtitle="Este mes"
-                icon={TrendingUp}
-                iconColor="text-green-600"
-              />
-            ) : (
-              <Card>
-                <CardContent className="py-3 px-3">
-                  <div className="flex items-center gap-2 mb-1">
-                    <TrendingUp className="h-3.5 w-3.5 text-muted-foreground" />
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-wide font-medium">
-                      Ingresos
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Al completar reservas</p>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-
-          {/* Tip: grabación de consultas */}
-          <Card className="border-red-100 bg-gradient-to-r from-red-50 to-orange-50">
-            <CardContent className="py-3 px-3 flex items-center gap-2">
-              <div className="p-1.5 bg-red-100 rounded-md flex-shrink-0">
-                <Mic className="h-4 w-4 text-red-500" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-medium">Graba consultas con IA</p>
-                <p className="text-[11px] text-muted-foreground leading-tight">
-                  Usa "Grabar" en fichas compartidas para generar notas automáticas.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Onboarding: vet sin actividad — solo si no tiene actividad */}
+      {/* Onboarding: vet sin actividad */}
       {!hasActivity && (
         <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-amber-50">
           <CardHeader className="pb-2">
@@ -296,8 +270,15 @@ const ProviderDashboard = () => {
         </Card>
       )}
 
-      {/* Promocionar servicios */}
-      <CreateServicePromotion />
+      {/* New Patient Dialog */}
+      <Dialog open={showNewPatient} onOpenChange={setShowNewPatient}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Nuevo paciente</DialogTitle>
+          </DialogHeader>
+          <NewPatientForm onCreated={() => setShowNewPatient(false)} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

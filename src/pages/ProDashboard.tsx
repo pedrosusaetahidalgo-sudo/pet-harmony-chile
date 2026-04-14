@@ -282,6 +282,16 @@ export default function ProDashboard() {
 
   return (
     <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-4 animate-fade-in">
+      {/* Breadcrumb for providers */}
+      {isProvider && (
+        <button
+          onClick={() => navigate('/provider/dashboard')}
+          className="text-xs text-purple-600 hover:text-purple-800 flex items-center gap-1 -mb-2"
+        >
+          ← Mi consultorio
+        </button>
+      )}
+
       {/* Header + Filters */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
@@ -289,7 +299,9 @@ export default function ProDashboard() {
             <BarChart3 className="h-5 w-5 text-purple-600" />
             Panel Pro
           </h1>
-          <p className="text-sm text-muted-foreground">Analytics detallados de tus mascotas</p>
+          <p className="text-sm text-muted-foreground">
+            {isProvider ? 'Analytics de tu consultorio' : 'Analytics detallados de tus mascotas'}
+          </p>
         </div>
         <div className="flex gap-2">
           <Select value={selectedPetId} onValueChange={handlePetChange}>
