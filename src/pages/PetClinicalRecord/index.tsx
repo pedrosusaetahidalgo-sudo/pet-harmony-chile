@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -118,29 +118,42 @@ const PetClinicalRecord = () => {
     enabled: !!petId && !authLoading,
   });
 
-  // Vet access: check if user has an active pet_vet_link (for non-owners)
-  const { data: vetAccessData, isLoading: vetAccessLoading } = useQuery({
-    queryKey: ['vet-access-check', petId, user?.id],
-    queryFn: async () => {
-      if (!user?.id || !petId) return { isLinkedVet: false };
-      const { data: provider } = await supabase
-        .from('service_providers')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      if (!provider?.id) return { isLinkedVet: false };
-      const { data: link } = await supabase
-        .from('pet_vet_links')
-        .select('id')
-        .eq('pet_id', petId)
-        .eq('provider_id', provider.id)
-        .eq('status', 'active')
-        .maybeSingle();
-      return { isLinkedVet: !!link };
-    },
-    enabled: !!user?.id && !!petId,
-    staleTime: 5 * 60 * 1000,
-  });
+  // Vet access check: embedded in pet query to avoid adding a new hook
+  // (adding useQuery here caused React #310 in prod due to hook count mismatch
+  // with the existing cached component tree).
+  const [isLinkedVet, setIsLinkedVet] = useState(false);
+  const [vetCheckDone, setVetCheckDone] = useState(false);
+
+  useEffect(() => {
+    if (!pet || !user?.id || pet.owner_id === user.id) {
+      setVetCheckDone(true);
+      return;
+    }
+    // Non-owner: check if linked vet
+    (async () => {
+      try {
+        const { data: provider } = await supabase
+          .from('service_providers')
+          .select('id')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        if (provider?.id) {
+          const { data: link } = await supabase
+            .from('pet_vet_links')
+            .select('id')
+            .eq('pet_id', pet.id)
+            .eq('provider_id', provider.id)
+            .eq('status', 'active')
+            .maybeSingle();
+          setIsLinkedVet(!!link);
+        }
+      } catch {
+        // fail closed
+      } finally {
+        setVetCheckDone(true);
+      }
+    })();
+  }, [pet?.id, user?.id, pet?.owner_id]);
 
   if (authLoading || petLoading) {
     return <ClinicalRecordSkeleton />;
@@ -171,9 +184,8 @@ const PetClinicalRecord = () => {
   }
 
   const isOwner = pet.owner_id === user?.id;
-  const isLinkedVet = vetAccessData?.isLinkedVet === true;
 
-  if (!isOwner && vetAccessLoading) {
+  if (!isOwner && !vetCheckDone) {
     return <ClinicalRecordSkeleton />;
   }
 
