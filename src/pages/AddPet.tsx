@@ -42,8 +42,7 @@ import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { VaccinationCardOCR } from '@/components/onboarding/VaccinationCardOCR';
 import { useScrollOnFocus } from '@/hooks/useScrollOnFocus';
 import { generatePawCardData } from '@/hooks/useHoloPattern';
-import { PawCardRevealCeremony } from '@/components/paw-cards/PawCardRevealCeremony';
-import type { HoloPattern } from '@/lib/paw-cards';
+// PawCardRevealCeremony removed — feature pruning 2026-04-14
 
 const personalityOptions: string[] = [...PERSONALITY_OPTIONS];
 
@@ -61,15 +60,7 @@ const AddPet = () => {
   const [customPersonality, setCustomPersonality] = useState('');
   const [showMedical, setShowMedical] = useState(false);
   const [breedConfirmed, setBreedConfirmed] = useState(false);
-  const [revealData, setRevealData] = useState<{
-    name: string;
-    species: string;
-    breed: string | null;
-    photo_url: string | null;
-    pawCardId: string;
-    holoPattern: HoloPattern;
-    score: number;
-  } | null>(null);
+  const [duplicateBypass, setDuplicateBypass] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -391,6 +382,47 @@ const AddPet = () => {
       }
 
       // === CREATE MODE ===
+
+      // Duplicate detection: warn if owner already has a pet with same name+species
+      if (!duplicateBypass) {
+        const { data: existing } = await supabase
+          .from('pets')
+          .select('id, name')
+          .eq('owner_id', user.id)
+          .ilike('name', formData.name.trim())
+          .eq('species', formData.species);
+
+        if (existing && existing.length > 0) {
+          toast({
+            title: 'Posible duplicado',
+            description: `Ya tienes un ${formData.species} llamado "${existing[0].name}". Presiona "Guardar" de nuevo si quieres crear otro registro.`,
+          });
+          setDuplicateBypass(true);
+          setLoading(false);
+          return;
+        }
+
+        // Microchip uniqueness check
+        if (formData.microchip_number) {
+          const { data: chipMatch } = await supabase
+            .from('pets')
+            .select('id, name')
+            .eq('microchip_number', formData.microchip_number.trim())
+            .limit(1);
+
+          if (chipMatch && chipMatch.length > 0) {
+            toast({
+              title: 'Microchip ya registrado',
+              description: `Este microchip ya está asociado a "${chipMatch[0].name}". Verifica el número.`,
+              variant: 'destructive',
+            });
+            setLoading(false);
+            return;
+          }
+        }
+      }
+      setDuplicateBypass(false);
+
       // Insert + devolver id en una sola llamada (evita race condition con SELECT por nombre)
       const { data: createdPet, error: insertError } = await supabase
         .from('pets')
@@ -452,20 +484,11 @@ const AddPet = () => {
       });
 
       toast({
-        title: '¡Mascota agregada! 🎉',
+        title: '¡Mascota agregada!',
         description: `${formData.name} tiene ficha clínica y recordatorios de salud. ¡Explora su perfil!`,
       });
 
-      // Show the TCG reveal ceremony
-      setRevealData({
-        name: formData.name,
-        species: formData.species,
-        breed: formData.breed || null,
-        photo_url: photoUrl,
-        pawCardId: payload.paw_card_id as string,
-        holoPattern: payload.holo_pattern as HoloPattern,
-        score: 0, // New pet starts at 0 paw points
-      });
+      navigate(LINKS.myPets());
     } catch (error: unknown) {
       toast({
         title: isEdit ? 'Error al guardar cambios' : 'Error al agregar mascota',
@@ -572,11 +595,6 @@ const AddPet = () => {
         </div>
       </div>
     );
-  }
-
-  // Show reveal ceremony after creating a new pet
-  if (revealData) {
-    return <PawCardRevealCeremony pet={revealData} onComplete={() => navigate(LINKS.myPets())} />;
   }
 
   return (

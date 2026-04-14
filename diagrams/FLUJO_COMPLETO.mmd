@@ -1,15 +1,14 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-13
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-14
     %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (21 activas).
-    %% Refleja navegacion real post-optimizacion:
-    %%   BottomTabBar Owner: Inicio | Mascotas | Vets | Recordatorios | Perfil
-    %%   BottomTabBar Provider: Dashboard | Pacientes | Reservas | Mensajes | Perfil
-    %%   Sidebar Owner: Salud | Descubrir | Comunidad (+ Admin si aplica)
-    %%   Sidebar Provider: Consultorio | Comunicacion | Negocio (+ Admin si aplica)
-    %%   ActiveRoleProvider permite dual-role switching (dueno <-> vet)
-    %%   Ficha clinica: timeline unificada dueno + vet con transcripciones
-    %%   Trigger: vet agrega nota → notificacion al dueno
+    %% Cambios 2026-04-14:
+    %%   - Poda: Paw Game, Missions, PawCollection, Community, Demo, Reportes eliminados
+    %%   - Sidebar Owner: Salud | Descubrir | Social (solo Feed+Mensajes)
+    %%   - PDF cronologico ASC con notas vet intercaladas
+    %%   - Deduplicacion mascotas (microchip UNIQUE + deteccion nombre+especie)
+    %%   - Auto-reminders: vacuna next_date, bookings, claim pet
+    %%   - Weight history auto-append trigger
     %% Regla: este archivo es UN SOLO bloque pegable en mermaid.live
     %% y se actualiza en el MISMO commit que cualquier cambio de flujo.
     %% Ver CLAUDE.md §9.7.1
@@ -39,11 +38,7 @@ flowchart TD
         PUB_REG["Registro vet /registro-veterinario"]
         PUB_RESENA["Dejar resena /resena/:token"]
         PUB_QR["QR Landing /qr/:token"]
-        PUB_PAWCARD["Paw Card Landing /paw-card/:id"]
     end
-
-    PUB_PAWCARD -->|Logueado| PAWCARD_COLLECT["Coleccionar carta"]
-    PUB_PAWCARD -->|No logueado| AUTH_PAGE
 
     PUB_DIR --> PUB_PROF
     PUB_B2B --> PUB_REG
@@ -86,60 +81,65 @@ flowchart TD
     H_MAIN --> H_WEEKLY["Reporte semanal"]
     H_MAIN --> H_REVIEWS["Resenas pendientes"]
     H_MAIN --> H_QUICK["Acciones rapidas: vet, ficha, precios, mapa"]
-    H_MAIN --> H_GAME["PawGame widget"]
     H_MAIN --> H_INTEGRATIONS["Card integraciones: WhatsApp + GCal"]
     H_MAIN --> H_FEED["Feed comunidad"]
 
     %% ============ TAB MASCOTAS ============
     subgraph MASCOTAS["MASCOTAS /my-pets"]
         direction TB
-        PET_LIST["Lista mascotas (Paw Cards TCG)"]
+        PET_LIST["Lista mascotas"]
         PET_ADD["Agregar /add-pet"]
         PET_EDIT["Editar /edit-pet/:id"]
-        PET_FLIP["Flip carta → QR reverso"]
-        PET_COLLECTION["Paw Collection /paw-collection"]
         PET_LIST --> PET_ADD
         PET_LIST --> PET_EDIT
-        PET_LIST --> PET_FLIP
-        PET_LIST --> PET_COLLECTION
     end
-
-    PET_FLIP --> PUB_PAWCARD
 
     PET_ADD --> PLAN_CHK{"Limite plan?"}
     PLAN_CHK -->|"Gratis max 2"| UPGRADE
     PLAN_CHK -->|OK| PET_FORM["Formulario mascota"]
-    PET_FORM --> OCR_CHK{"Sube carnet?"}
+    PET_FORM --> DUP_CHECK{"Duplicado?"}
+    DUP_CHECK -->|"Nombre+especie existe"| DUP_WARN["Alerta: ya tienes esta mascota"]
+    DUP_CHECK -->|"Microchip existe"| DUP_BLOCK["Error: microchip ya registrado"]
+    DUP_CHECK -->|OK| OCR_CHK{"Sube carnet?"}
+    DUP_WARN -->|"Confirma crear"| OCR_CHK
     OCR_CHK -->|Si| OCR_FN["edge fn ocr-vaccination-card (IA)"]
     OCR_CHK -->|No| PET_SAVE
     OCR_FN --> PET_SAVE["Guarda mascota"]
-    PET_SAVE --> HOLO_REVEAL["Holo Reveal: asigna patron holografico + Paw Card ID"]
-    HOLO_REVEAL --> PET_TRIGGERS["Trigger: recordatorios + PawPoints"]
+    PET_SAVE --> PET_TRIGGERS["Trigger: recordatorios default"]
     PET_LIST --> FC_RES
 
     %% ============ FICHA CLINICA ============
     subgraph CLINICAL["FICHA CLINICA /ficha/:petId"]
         direction TB
         FC_RES["Tab Resumen"]
-        FC_HIST["Tab Historial unificado dueno+vet"]
+        FC_HIST["Tab Historial cronologico unificado"]
         FC_HIST_FILTER["Filtros: tipo, fuente, veterinario"]
         FC_HIST_TRANSCRIPT["Transcripciones expandibles"]
+        FC_VAC["Tab Vacunas con lote/serie"]
         FC_ALIM["Tab Alimentacion"]
         FC_DOCS["Tab Documentos"]
         FC_SHARE["Tab Compartir"]
-        FC_PDF["Generar PDF"]
+        FC_PDF["Generar PDF cronologico"]
         FC_AI["Asistente IA"]
         FC_HIST --> FC_HIST_FILTER
         FC_HIST --> FC_HIST_TRANSCRIPT
     end
 
     FC_HIST --> FC_ADD_REC["Agregar registro medico"]
+    FC_ADD_REC --> AUTO_REM_VAC{"Vacuna con next_date?"}
+    AUTO_REM_VAC -->|Si| AUTO_REM_CREATE["Trigger: auto-reminder refuerzo"]
     FC_DOCS --> FC_UPLOAD["Upload a Storage"]
     FC_SHARE --> FC_QR["QR mascota + descargar"]
     FC_SHARE --> FC_LINK["Link temporal 30 dias"]
     FC_SHARE --> FC_WA["Boton WhatsApp"]
 
-    %% ============ MEDICAL SHARE LANDING (joya de la corona) ============
+    %% ============ PDF CRONOLOGICO (joya de la corona) ============
+    FC_PDF --> PDF_RPC["RPC get_medical_summary_data v3"]
+    PDF_RPC --> PDF_BUILD["PdfBuilder: timeline ASC + notas vet"]
+    PDF_BUILD --> PDF_SECTIONS["Secciones: ID + Responsable + Alertas + Timeline + Vacunas + Peso + Dieta"]
+    PDF_SECTIONS --> PDF_DOWNLOAD["Descarga PDF"]
+
+    %% ============ MEDICAL SHARE LANDING ============
     FC_LINK --> MED_SHARE["/medical-share/:token"]
     FC_WA --> MED_SHARE
     MED_SHARE --> MED_SHARE_CHK{"Token valido?"}
@@ -176,6 +176,7 @@ flowchart TD
     VET_AGENDAR --> BK_CAL["Calendario disponibilidad"]
     BK_CAL --> BK_SLOT["Selecciona horario"]
     BK_SLOT --> BK_CONFIRM["Confirma reserva"]
+    BK_CONFIRM --> AUTO_REM_BK["Trigger: auto-reminder cita"]
     BK_CONFIRM --> BK_LIST["Mis reservas /mis-reservas"]
 
     %% ============ TAB RECORDATORIOS ============
@@ -188,6 +189,8 @@ flowchart TD
     end
 
     PET_TRIGGERS --> REM_OVER
+    AUTO_REM_CREATE --> REM_NEXT
+    AUTO_REM_BK --> REM_NEXT
     REM_DONE --> GCAL_SYNC["Sync Google Calendar"]
 
     %% ============ RUTINAS SEMANALES ============
@@ -220,10 +223,9 @@ flowchart TD
     CAL_DAY --> REM_DONE
 
     %% ============ TAB PERFIL ============
-    PROFILE["/profile"] --> SETTINGS["/settings"]
-    PROFILE --> USER_PUB["/user/:userId (perfil publico)"]
-    SETTINGS --> GROOMER_EDIT["/peluquero/perfil (solo groomers)"]
-    SETTINGS --> GCAL_CONNECT["Conectar Google Calendar"]
+    PROFILE["/profile"]
+    PROFILE --> GROOMER_EDIT["/peluquero/perfil (solo groomers)"]
+    PROFILE --> GCAL_CONNECT["Conectar Google Calendar"]
     GCAL_CONNECT --> GCAL_OAUTH["OAuth Google"]
     GCAL_OAUTH --> GCAL_TOKEN["refresh_token"]
     GCAL_TOKEN --> GCAL_SYNC
@@ -251,31 +253,18 @@ flowchart TD
         SVC["Servicios /servicios"]
         SVC --> SVC_TYPES["Paseadores | Cuidadores | Entrenadores | Peluqueros"]
         MAPA["Mapa multi-capa /maps"]
-        MAPA --> MAPA_TABS["Perdidas | Adopcion | Servicios | Tiendas | Pet Friendly"]
+        BLOOD_BANK["Banco de sangre /donantes-sangre"]
     end
 
     SB_BUSCAR_VET --> VET_DIR
     SVC --> VET_DIR
 
-    %% ============ SIDEBAR: COMUNIDAD ============
-    %% Nota: Chat salio de la BottomTabBar. Se accede desde Header
-    %% y desde este grupo del sidebar.
-    subgraph COMUNIDAD["SIDEBAR: COMUNIDAD"]
+    %% ============ SIDEBAR: SOCIAL ============
+    subgraph SOCIAL["SIDEBAR: SOCIAL"]
         direction TB
         FEED_SB["Feed /feed"]
-        COMMUNITY_PAGE["Comunidad /comunidad"]
-        COMMUNITY_SLUG["Comunidad /comunidad/:slug"]
-        CHAT_PAGE["Chat /chat (Header + Sidebar)"]
+        CHAT_PAGE["Mensajes /chat"]
         CHAT_PAGE --> CHAT_CONV["/chat/:conversationId realtime"]
-        PAWCARDS["Paw Cards /paw-collection"]
-        PAWCARDS --> PC_GRID["Grid coleccion"]
-        PAWCARDS --> PC_FILTERS["Filtros especie/rareza"]
-        PAWCARDS --> PC_STATS["Estadisticas"]
-        PAWGAME["Paw Game /paw-game"]
-        PAWGAME --> PG_MISSIONS["Misiones activas"]
-        PAWGAME --> PG_BADGES["Badges"]
-        PAWGAME --> PG_RANK["Rankings mensuales"]
-        COMMUNITY_PAGE --> COMMUNITY_SLUG
     end
 
     FEED_SB --> FEED_LIST
@@ -318,12 +307,10 @@ flowchart TD
         end
         subgraph VET_SB_COMMS["Comunicacion"]
             VET_CHAT_SB["Mensajes /chat"]
-            VET_FOLLOW_SB["Seguimientos"]
         end
         subgraph VET_SB_BIZ["Negocio"]
             VET_PROFILE_EDIT["Perfil publico /provider/profile-edit"]
             PRO_DASH["Panel Pro /panel-pro"]
-            VET_REPORTES_SB["Reportes /reportes"]
         end
     end
 
@@ -334,7 +321,7 @@ flowchart TD
     VET_DASH --> VET_BAL["Balance: disponible, pendiente, total"]
     VET_PROFILE_EDIT --> VET_PREVIEW["Ver como me ven los duenos"]
 
-    %% Pagina Pacientes (nueva)
+    %% Pagina Pacientes
     VET_PAT_PAGE --> VET_PAT_LIST["Lista con filtros y busqueda"]
     VET_PAT_LIST --> VET_PAT_SESSIONS["Accordion sesiones por paciente"]
     VET_PAT_SESSIONS --> VET_PAT_TRANSCRIPT["Transcripcion expandible"]
@@ -342,10 +329,14 @@ flowchart TD
     VET_PAT_LIST --> VET_PAT_FICHA["Ver ficha unificada"]
     VET_PAT_FICHA --> FC_HIST
 
-    VET_NEW_PAT --> VET_INVITE_FN["edge fn send-pet-invitation"]
+    VET_NEW_PAT --> VET_DUP_CHECK{"Duplicado?"}
+    VET_DUP_CHECK -->|"Ya existe"| VET_DUP_LINK["Solicitar acceso en vez de crear"]
+    VET_DUP_CHECK -->|OK| VET_INVITE_FN["edge fn send-pet-invitation"]
     VET_INVITE_FN --> VET_INVITE_EMAIL["Email al dueno con link"]
+    VET_INVITE_EMAIL --> VET_CLAIM["Dueno reclama mascota"]
+    VET_CLAIM --> VET_CLAIM_REM["Auto-crear reminders default"]
 
-    %% Notas clinicas (desde pacientes o fichas compartidas)
+    %% Notas clinicas
     VET_PAT_LIST --> VET_NOTE["Crear nota clinica"]
     VET_SHARED --> VET_NOTE
     VET_NOTE --> VET_RECORD["Grabar consulta (voz IA)"]
@@ -366,8 +357,6 @@ flowchart TD
     VET_TRIG_NOTIFY --> FC_RES
 
     %% ============ QR FLOW ============
-    %% El QR impreso apunta a la landing publica /qr/:token (PUB_QR)
-    %% y desde ahi se bifurca segun rol del visitante.
     FC_QR --> PUB_QR
     PUB_QR --> QR_SCAN{"Rol visitante?"}
     QR_SCAN -->|"Vet verificado"| QR_VET["Ficha completa + registra relacion"]
@@ -375,22 +364,17 @@ flowchart TD
     QR_SCAN -->|Otro| QR_PUB_INFO["Info basica publica"]
 
     %% ============ OTROS ============
-    subgraph OTROS["OTROS FLUJOS (accesibles desde Home/Sidebar)"]
+    subgraph OTROS["OTROS FLUJOS"]
         direction TB
-        ADOPTION["Adopcion /adoption (con perfil adoptante)"]
+        ADOPTION["Adopcion /adoption"]
         MEMORIAL["En Memoria /en-memoria"]
-        REPORTES["Reportes /reportes"]
-        ANALYTICS["Analytics Demo /analytics-demo"]
-        BLOOD_BANK["Banco de sangre /donantes-sangre"]
     end
 
-    H_QUICK --> ADOPTION
-    H_QUICK --> MEMORIAL
-    H_QUICK --> REPORTES
-    VET_DASH --> ANALYTICS
-
-    %% Memorial conecta al asistente IA empatico (edge fn)
     MEMORIAL --> BEREAVEMENT_FN["edge fn bereavement-assistant (IA empatica)"]
+
+    %% ============ SYNC: PESO HISTORICO ============
+    PET_EDIT --> WEIGHT_CHK{"Peso cambio?"}
+    WEIGHT_CHK -->|Si| WEIGHT_APPEND["Trigger: append weight_history"]
 
     %% ============ BACKEND ============
     subgraph BACKEND["BACKEND AUTOMATICO (21 edge functions + cron)"]
@@ -404,18 +388,16 @@ flowchart TD
     end
 
     CRON_WEEKLY_OWNER --> H_WEEKLY
-    CRON_WEEKLY_VET --> REPORTES
 
     %% ============ ADMIN ============
     subgraph ADMIN["ADMIN /admin"]
         direction TB
-        ADM["Panel 13 tabs"]
+        ADM["Panel admin"]
         ADM --> ADM_U["Usuarios"]
         ADM --> ADM_P["Proveedores"]
         ADM --> ADM_V["Verificacion Colmevet"]
         ADM --> ADM_M["Moderacion"]
         ADM --> ADM_MET["Metricas"]
-        ADM --> ADM_MIS["Editor misiones"]
     end
 
     %% ============ SEO ============
@@ -430,6 +412,5 @@ flowchart TD
     H_QUICK --> FC_RES
     H_QUICK --> PUB_PRICE
     H_QUICK --> MAPA
-    H_GAME --> PAWGAME
     H_ROUTINES --> RUT_LIST
     H_FEED --> FEED_LIST

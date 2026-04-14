@@ -38,6 +38,7 @@
 | [docs-specs/COMPARTIR_FICHA_V2.md](docs-specs/COMPARTIR_FICHA_V2.md) | Vinculacion directa vet-mascota con aceptar/rechazar. Reemplaza tokens temporales | **Alta** -- Toca la joya de la corona (ficha clinica) |
 | [docs-specs/ANALISIS_PREMIUM_VS_FREE.md](docs-specs/ANALISIS_PREMIUM_VS_FREE.md) | Analisis de que features deben ser free vs premium + plan de ejecucion | **Alta** -- Define monetizacion |
 | [docs-specs/IDEAS_Y_MEJORAS_PENDIENTES.md](docs-specs/IDEAS_Y_MEJORAS_PENDIENTES.md) | Roadmap de features nuevas: breeding, banco de sangre, mapa pet friendly, seguros, adopcion mejorada, revision monetizacion, onboarding mejorado | **Alta** -- Documento maestro de roadmap |
+| [docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md](docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md) | PDF profesional cronologico + deduplicacion mascotas + sync datos + poda features | **Alta** -- Toca joya de la corona + integridad de datos |
 | [docs-specs/AUDIO_CONSULTA_VET.md](docs-specs/AUDIO_CONSULTA_VET.md) | Transcripcion IA en vivo de consultas veterinarias | **Media** -- Diferenciador B2B, requiere infra IA |
 | [docs-specs/RUTINAS_Y_CALENDARIO_MASCOTA.md](docs-specs/RUTINAS_Y_CALENDARIO_MASCOTA.md) | Rutinas semanales recurrentes + calendario unificado por mascota | **Media** -- Mejora retention, no bloquea nada |
 

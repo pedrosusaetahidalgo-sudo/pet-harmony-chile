@@ -6,9 +6,7 @@ import {
   PawPrint,
   RefreshCw,
   LogOut,
-  Settings,
   Map,
-  Gamepad2,
   UserCog,
   LayoutDashboard,
   Home as HomeIcon,
@@ -19,9 +17,7 @@ import {
   Scissors,
   Lock,
   Sparkles,
-  Trophy,
   Droplets,
-  Star,
   Eye,
   Stethoscope,
   Bell,
@@ -79,11 +75,7 @@ const discoverItems = [
 
 const communityItems = [
   { title: 'Feed', url: '/feed', icon: Activity },
-  { title: 'Comunidad', url: '/comunidad', icon: Users },
   { title: 'Mensajes', url: '/chat', icon: MessageSquare },
-  { title: 'Coleccion', url: '/paw-collection', icon: Trophy },
-  { title: 'Misiones', url: '/misiones', icon: Star },
-  { title: 'Paw Game', url: '/paw-game', icon: Gamepad2 },
 ];
 
 /** Mapeo sección → items */
@@ -97,7 +89,7 @@ const SECTION_ITEMS: Record<SectionKey, typeof healthItems> = {
 const SECTION_LABELS: Record<SectionKey, string> = {
   salud: 'Salud',
   descubrir: 'Descubrir',
-  comunidad: 'Comunidad',
+  comunidad: 'Social',
 };
 
 // Secciones profesionales (modo provider)
@@ -306,18 +298,26 @@ export function AppSidebar() {
                         <SidebarMenuItem>
                           <SidebarMenuButton
                             isActive={isActive('/provider/dashboard')}
-                            onClick={() => handleNavigate(
-                              providerSlug
-                                ? `/veterinarios/${providerSlug}`
-                                : '/provider/profile-edit'
-                            )}
+                            onClick={() =>
+                              handleNavigate(
+                                providerSlug
+                                  ? `/veterinarios/${providerSlug}`
+                                  : '/provider/profile-edit'
+                              )
+                            }
                             className="h-7 text-xs rounded-md text-teal-700"
-                            title={providerSlug ? 'Ver tu perfil publico' : 'Completa tu perfil para tener URL publica'}
+                            title={
+                              providerSlug
+                                ? 'Ver tu perfil publico'
+                                : 'Completa tu perfil para tener URL publica'
+                            }
                           >
                             <Stethoscope className="h-3.5 w-3.5 flex-shrink-0 text-teal-500" />
                             <span>Mi consultorio</span>
                             {!providerSlug && (
-                              <span className="ml-auto text-[9px] text-amber-500 font-medium">Completar</span>
+                              <span className="ml-auto text-[9px] text-amber-500 font-medium">
+                                Completar
+                              </span>
                             )}
                           </SidebarMenuButton>
                         </SidebarMenuItem>
@@ -501,10 +501,10 @@ export function AppSidebar() {
             <SidebarMenu className="space-y-0">
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  onClick={() => handleNavigate('/settings')}
+                  onClick={() => handleNavigate('/profile')}
                   className="h-7 text-xs rounded-md"
                 >
-                  <Settings className="h-3.5 w-3.5 flex-shrink-0" />
+                  <UserCog className="h-3.5 w-3.5 flex-shrink-0" />
                   <span>Configuracion</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>

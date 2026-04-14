@@ -21,7 +21,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Plus, Loader2 } from '@/lib/icons';
+import { Plus, Loader2, ChevronDown } from '@/lib/icons';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { PET_COLORS } from '@/lib/petOptions';
 import { SelectWithOther } from '@/components/ui/select-with-other';
 import { ComboboxWithOther } from '@/components/ui/combobox-with-other';
@@ -37,6 +38,10 @@ interface NewPatientFormData {
   color: string;
   owner_name: string;
   owner_email: string;
+  microchip_number: string;
+  blood_type: string;
+  known_allergies: string;
+  chronic_conditions: string;
 }
 
 const SPECIES_OPTIONS = [
@@ -59,6 +64,8 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
   const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [duplicateBypass, setDuplicateBypass] = useState(false);
+  const [showClinical, setShowClinical] = useState(false);
   const {
     register,
     handleSubmit,
@@ -77,6 +84,10 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
       color: '',
       owner_name: '',
       owner_email: '',
+      microchip_number: '',
+      blood_type: '',
+      known_allergies: '',
+      chronic_conditions: '',
     },
   });
 
@@ -88,8 +99,57 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
     if (!user) return;
     setSubmitting(true);
     try {
+      // Duplicate detection: check if this pet already exists for this owner email
+      if (!duplicateBypass) {
+        const ownerEmail = data.owner_email.trim().toLowerCase();
+        // Check by name+species+email (pending or registered owner)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { data: existingPets } = await (supabase.from('pets') as any)
+          .select('id, name, owner_id, pending_owner_email')
+          .ilike('name', data.name.trim())
+          .eq('species', data.species)
+          .or(`pending_owner_email.eq.${ownerEmail},owner_id.not.is.null`);
+
+        const match = existingPets?.find(
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (p: any) => p.pending_owner_email === ownerEmail || p.owner_id
+        );
+        if (match) {
+          if (match.owner_id) {
+            toast.info(
+              `Ya existe "${match.name}" en el sistema con un dueño registrado. Puedes solicitar acceso desde tu lista de pacientes.`
+            );
+          } else {
+            toast.info(
+              `Otro profesional ya registró "${match.name}" para ${ownerEmail}. Presiona "Crear" de nuevo si quieres crear otro registro.`
+            );
+          }
+          setDuplicateBypass(true);
+          setSubmitting(false);
+          return;
+        }
+
+        // Microchip uniqueness check
+        if (data.microchip_number) {
+          const { data: chipMatch } = await supabase
+            .from('pets')
+            .select('id, name')
+            .eq('microchip_number', data.microchip_number.trim())
+            .limit(1);
+
+          if (chipMatch && chipMatch.length > 0) {
+            toast.error(
+              `Este microchip ya está asociado a "${chipMatch[0].name}". Verifica el número.`
+            );
+            setSubmitting(false);
+            return;
+          }
+        }
+      }
+      setDuplicateBypass(false);
+
       const pawCard = generatePawCardData();
-      const insertPayload = {
+      const insertPayload: Record<string, unknown> = {
         name: data.name.trim(),
         species: data.species,
         created_by_vet_id: user.id,
@@ -102,7 +162,23 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
         color: data.color.trim() || null,
         holo_pattern: pawCard.holoPattern,
         paw_card_id: pawCard.pawCardId,
+        microchip_number: data.microchip_number?.trim() || null,
+        blood_type: data.blood_type || null,
       };
+
+      // Clinical fields (optional, stored as comma-separated → arrays)
+      if (data.known_allergies?.trim()) {
+        insertPayload.allergies = data.known_allergies
+          .split(',')
+          .map((a: string) => a.trim())
+          .filter(Boolean);
+      }
+      if (data.chronic_conditions?.trim()) {
+        insertPayload.chronic_conditions = data.chronic_conditions
+          .split(',')
+          .map((c: string) => c.trim())
+          .filter(Boolean);
+      }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: petRow, error } = await (supabase.from('pets') as any)
@@ -292,6 +368,57 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
               El dueño recibirá una invitación para vincular a su mascota.
             </p>
           </div>
+
+          {/* Datos clínicos opcionales */}
+          <Collapsible open={showClinical} onOpenChange={setShowClinical}>
+            <CollapsibleTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full justify-between text-sm text-muted-foreground"
+              >
+                Datos clínicos (opcional)
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${showClinical ? 'rotate-180' : ''}`}
+                />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-3 pt-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="np-microchip">Microchip (15 dígitos ISO)</Label>
+                <Input
+                  id="np-microchip"
+                  placeholder="Ej: 982000123456789"
+                  {...register('microchip_number', {
+                    pattern: { value: /^\d{15}$/, message: 'Debe tener 15 dígitos' },
+                  })}
+                />
+                {errors.microchip_number && (
+                  <p className="text-xs text-destructive">{errors.microchip_number.message}</p>
+                )}
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="np-blood">Grupo sanguíneo</Label>
+                <Input id="np-blood" placeholder="Ej: DEA 1.1+" {...register('blood_type')} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="np-allergies">Alergias conocidas</Label>
+                <Input
+                  id="np-allergies"
+                  placeholder="Separar con comas: pollo, penicilina"
+                  {...register('known_allergies')}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="np-chronic">Condiciones crónicas</Label>
+                <Input
+                  id="np-chronic"
+                  placeholder="Separar con comas: diabetes, epilepsia"
+                  {...register('chronic_conditions')}
+                />
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
 
           <Button type="submit" className="w-full" disabled={submitting}>
             {submitting ? (

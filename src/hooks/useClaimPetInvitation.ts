@@ -65,24 +65,65 @@ export function useClaimPetInvitation() {
 
         // 4. Si hay un vet que creó el registro, crear/activar el pet_vet_link
         if (pet.created_by_vet_id) {
-          const { data: vetProvider } = await supabase
-            .from('service_providers')
-            .select('id')
-            .eq('user_id', pet.created_by_vet_id)
-            .maybeSingle();
+          try {
+            const { data: vetProvider } = await supabase
+              .from('service_providers')
+              .select('id')
+              .eq('user_id', pet.created_by_vet_id)
+              .maybeSingle();
 
-          if (vetProvider?.id) {
-            await sb.from('pet_vet_links').upsert(
-              {
-                pet_id: pet.id,
-                owner_id: user.id,
-                provider_id: vetProvider.id,
-                status: 'active',
-                responded_at: new Date().toISOString(),
-              },
-              { onConflict: 'pet_id,provider_id' }
+            if (vetProvider?.id) {
+              const { error: linkErr } = await sb.from('pet_vet_links').upsert(
+                {
+                  pet_id: pet.id,
+                  owner_id: user.id,
+                  provider_id: vetProvider.id,
+                  status: 'active',
+                  responded_at: new Date().toISOString(),
+                },
+                { onConflict: 'pet_id,provider_id' }
+              );
+              if (linkErr) console.error('pet_vet_link upsert failed:', linkErr);
+            }
+          } catch (linkErr) {
+            console.error('pet_vet_link creation failed:', linkErr);
+          }
+        }
+
+        // 5. Create default reminders for the claimed pet (same as AddPet flow)
+        try {
+          const today = new Date();
+          const in30days = new Date(today);
+          in30days.setDate(today.getDate() + 30);
+          const in90days = new Date(today);
+          in90days.setDate(today.getDate() + 90);
+
+          const { error: remErr } = await supabase.from('pet_reminders').insert([
+            {
+              pet_id: pet.id,
+              owner_id: user.id,
+              type: 'checkup',
+              title: `Control veterinario de ${pet.name}`,
+              due_date: in90days.toISOString().split('T')[0],
+            },
+            {
+              pet_id: pet.id,
+              owner_id: user.id,
+              type: 'grooming',
+              title: `Baño y peluquería de ${pet.name}`,
+              due_date: in30days.toISOString().split('T')[0],
+              is_recurring: true,
+              recurrence_interval: 'monthly',
+            },
+          ]);
+          if (remErr) {
+            console.error('Auto-reminders on claim failed:', remErr);
+            toast.warning(
+              'Mascota reclamada, pero los recordatorios no se pudieron crear. Puedes agregarlos manualmente.'
             );
           }
+        } catch (remErr) {
+          console.error('Auto-reminders on claim failed:', remErr);
         }
 
         toast.success(`¡${pet.name} ahora es tuya! Tu veterinario ya tiene acceso a la ficha.`);

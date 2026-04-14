@@ -848,18 +848,11 @@ serve(async (req) => {
 
     const pet = summaryData.pet;
     const owner = summaryData.owner;
-    const allRecords: any[] = summaryData.all_records || [];
-
-    // Group records by category
-    const grouped: Record<string, any[]> = {};
-    for (const r of allRecords) {
-      const cat = categorizeRecord(r.record_type);
-      if (!grouped[cat]) grouped[cat] = [];
-      grouped[cat].push(r);
-    }
+    const allRecords: any[] = summaryData.all_records || []; // Already ASC from v3 RPC
+    const vetNotes: any[] = summaryData.vet_notes || [];
 
     // ══════════════════════════════════════════════════════════
-    // BUILD PDF
+    // BUILD PDF v3 — Chronological Timeline
     // ══════════════════════════════════════════════════════════
 
     const pdfDoc = await PDFDocument.create();
@@ -910,6 +903,9 @@ serve(async (req) => {
       'Grupo sanguineo:',
       pet.blood_type || 'No registrado'
     );
+    if (pet.paw_card_id) {
+      pdf.drawField('Paw Card ID:', pet.paw_card_id);
+    }
 
     // ── SECTION: Responsable ──
     pdf.drawSectionHeader('Responsable', DARK_PURPLE, LIGHT_PURPLE);
@@ -958,7 +954,6 @@ serve(async (req) => {
       pdf.drawSectionHeader('Alertas clinicas', ALERT_RED, LIGHT_RED);
       pdf.y -= 4;
 
-      // Allergies
       if (hasAnyAllergy) {
         pdf.drawText('ALERGIAS', { size: 8.5, font: bold, color: ALERT_RED, x: MARGIN_L + 10 });
         pdf.y -= 12;
@@ -982,7 +977,6 @@ serve(async (req) => {
           );
         }
         if (hasAllergiesLegacy && !hasAllergiesFood && !hasAllergiesMed && !hasAllergiesEnv) {
-          // Fallback to legacy allergies field if no specific types
           pdf.drawBullet(pet.allergies.map((a: string) => smartSentenceCase(a)).join(', '), {
             color: TEXT_DARK,
           });
@@ -990,7 +984,6 @@ serve(async (req) => {
         pdf.y -= 4;
       }
 
-      // Chronic conditions
       if (hasAnyCondition) {
         pdf.drawText('CONDICIONES CRONICAS', {
           size: 8.5,
@@ -1015,7 +1008,6 @@ serve(async (req) => {
         pdf.y -= 4;
       }
 
-      // Current medications
       if (hasMedications) {
         pdf.drawText('MEDICAMENTOS ACTUALES', {
           size: 8.5,
@@ -1035,8 +1027,68 @@ serve(async (req) => {
       }
     }
 
-    // ── HISTORIAL CLINICO ──
-    // Separador visual
+    // ── HISTORIAL CLINICO CRONOLOGICO ──
+    // Merge medical_records + vet_clinical_notes into a single chronological timeline (ASC)
+    type TimelineEntry = {
+      date: string;
+      source: 'record' | 'vet_note';
+      record_type: string;
+      title: string;
+      data: any;
+    };
+
+    const timeline: TimelineEntry[] = [];
+
+    for (const r of allRecords) {
+      timeline.push({
+        date: r.date || '1900-01-01',
+        source: 'record',
+        record_type: r.record_type || 'otro',
+        title: r.reason || r.title || r.record_type || '',
+        data: r,
+      });
+    }
+
+    for (const n of vetNotes) {
+      timeline.push({
+        date: n.consultation_date || '1900-01-01',
+        source: 'vet_note',
+        record_type: n.note_type || 'nota_vet',
+        title: n.title || 'Nota clinica',
+        data: n,
+      });
+    }
+
+    // Sort ASC by date (oldest first)
+    timeline.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    // Type badge colors
+    const TYPE_BADGE: Record<string, { label: string; color: any }> = {
+      vacuna: { label: 'Vacuna', color: MED_GREEN },
+      consulta: { label: 'Consulta', color: DARK_PURPLE },
+      consulta_general: { label: 'Consulta', color: DARK_PURPLE },
+      control_sano: { label: 'Control sano', color: DARK_PURPLE },
+      urgencia: { label: 'Urgencia', color: ALERT_RED },
+      seguimiento: { label: 'Seguimiento', color: DARK_PURPLE },
+      segunda_opinion: { label: '2da opinion', color: DARK_PURPLE },
+      cirugia: { label: 'Cirugia', color: AMBER },
+      cirugía: { label: 'Cirugia', color: AMBER },
+      esterilizacion: { label: 'Esterilizacion', color: AMBER },
+      limpieza_dental: { label: 'Limpieza dental', color: AMBER },
+      ecografia: { label: 'Ecografia', color: AMBER },
+      rayos_x: { label: 'Rayos X', color: AMBER },
+      examen_sangre: { label: 'Examen sangre', color: AMBER },
+      examen_orina: { label: 'Examen orina', color: AMBER },
+      tratamiento: { label: 'Tratamiento', color: DARK_PURPLE },
+      quimioterapia: { label: 'Quimioterapia', color: AMBER },
+      rehabilitacion: { label: 'Rehabilitacion', color: AMBER },
+      hospitalizacion: { label: 'Hospitalizacion', color: ALERT_RED },
+      desparasitacion: { label: 'Desparasitacion', color: MED_GREEN },
+      antipulgas: { label: 'Antipulgas', color: MED_GREEN },
+      nota_vet: { label: 'Nota Vet', color: BRAND_PURPLE },
+    };
+
+    // Header bar
     pdf.y -= 6;
     pdf.ensureSpace(30);
     pdf.page.drawRectangle({
@@ -1046,7 +1098,7 @@ serve(async (req) => {
       height: 18,
       color: DARK_PURPLE,
     });
-    pdf.drawText('HISTORIAL CLINICO', {
+    pdf.drawText(`HISTORIAL CLINICO CRONOLOGICO (${timeline.length})`, {
       x: MARGIN_L + 10,
       size: 10,
       font: bold,
@@ -1054,25 +1106,331 @@ serve(async (req) => {
     });
     pdf.y -= 18;
 
-    // Render each category that has records
-    let totalRecords = 0;
-    for (const cat of CATEGORY_ORDER) {
-      const records = grouped[cat];
-      if (!records || records.length === 0) continue;
-
-      const config = CATEGORY_CONFIG[cat];
-      pdf.drawSectionHeader(config.title, config.color, config.bg, records.length);
-
-      for (let i = 0; i < records.length; i++) {
-        pdf.drawRecordEntry(records[i], i);
-        totalRecords++;
-      }
-    }
-
-    if (totalRecords === 0) {
+    if (timeline.length === 0) {
       pdf.ensureSpace(20);
       pdf.drawText('Sin registros medicos aun.', { size: 9, color: TEXT_LIGHT });
       pdf.y -= 14;
+    } else {
+      let lastYear = '';
+
+      for (let i = 0; i < timeline.length; i++) {
+        const entry = timeline[i];
+        const entryDate = entry.date;
+        const year = entryDate?.slice(0, 4) || '';
+
+        // Year separator
+        if (year && year !== lastYear) {
+          lastYear = year;
+          pdf.ensureSpace(22);
+          pdf.y -= 6;
+          // Draw year separator line
+          const yearLabel = sanitizeForWinAnsi(`── ${year} ──`);
+          const yearW = bold.widthOfTextAtSize(yearLabel, 9);
+          const lineY = pdf.y + 4;
+          pdf.page.drawLine({
+            start: { x: MARGIN_L, y: lineY },
+            end: { x: (PAGE_W - yearW) / 2 - 8, y: lineY },
+            thickness: 0.5,
+            color: BORDER_LIGHT,
+          });
+          pdf.page.drawText(yearLabel, {
+            x: (PAGE_W - yearW) / 2,
+            y: pdf.y,
+            size: 9,
+            font: bold,
+            color: TEXT_GRAY,
+          });
+          pdf.page.drawLine({
+            start: { x: (PAGE_W + yearW) / 2 + 8, y: lineY },
+            end: { x: PAGE_W - MARGIN_R, y: lineY },
+            thickness: 0.5,
+            color: BORDER_LIGHT,
+          });
+          pdf.y -= 14;
+        }
+
+        // Alternating row background
+        pdf.ensureSpace(45);
+        if (i % 2 === 0) {
+          pdf.page.drawRectangle({
+            x: MARGIN_L,
+            y: pdf.y + 4,
+            width: CONTENT_W,
+            height: 18,
+            color: ROW_ALT,
+          });
+        }
+
+        // Type badge (colored dot + label)
+        const badge = TYPE_BADGE[entry.record_type] || {
+          label: smartSentenceCase(entry.record_type),
+          color: TEXT_GRAY,
+        };
+
+        // Date column (left)
+        const dateStr = formatDate(entryDate);
+        pdf.drawText(dateStr, {
+          x: MARGIN_L + 6,
+          size: 8,
+          font: bold,
+          color: TEXT_GRAY,
+        });
+
+        // Badge
+        const badgeLabel = sanitizeForWinAnsi(badge.label);
+        pdf.page.drawRectangle({
+          x: MARGIN_L + 80,
+          y: pdf.y - 2,
+          width: bold.widthOfTextAtSize(badgeLabel, 7) + 8,
+          height: 12,
+          color: badge.color,
+          borderColor: badge.color,
+          borderWidth: 0,
+        });
+        pdf.page.drawText(badgeLabel, {
+          x: MARGIN_L + 84,
+          y: pdf.y,
+          size: 7,
+          font: bold,
+          color: WHITE,
+        });
+
+        // Title
+        const badgeEnd = MARGIN_L + 84 + bold.widthOfTextAtSize(badgeLabel, 7) + 14;
+        const titleText = smartSentenceCase(entry.title) || smartSentenceCase(entry.record_type);
+        pdf.drawText(titleText, {
+          x: badgeEnd,
+          size: 9,
+          font: bold,
+          maxWidth: PAGE_W - MARGIN_R - badgeEnd,
+        });
+        pdf.y -= 15;
+
+        if (entry.source === 'record') {
+          const r = entry.data;
+
+          // Vet + Clinic
+          const vetClinicParts: string[] = [];
+          if (r.veterinarian_name) vetClinicParts.push(titleCase(r.veterinarian_name));
+          if (r.clinic_name) vetClinicParts.push(titleCase(r.clinic_name));
+          if (vetClinicParts.length > 0) {
+            pdf.drawText(vetClinicParts.join(' · '), {
+              x: MARGIN_L + 95,
+              size: 7.5,
+              color: TEXT_LIGHT,
+            });
+            pdf.y -= 11;
+          }
+
+          // Diagnosis
+          if (r.diagnosis) {
+            pdf.ensureSpace(14);
+            pdf.drawText('Diagnostico:', {
+              x: MARGIN_L + 95,
+              size: 8,
+              font: bold,
+              color: TEXT_GRAY,
+            });
+            pdf.y -= 10;
+            pdf.drawWrapped(smartSentenceCase(String(r.diagnosis).slice(0, MAX_FIELD_CHARS)), {
+              x: MARGIN_L + 108,
+              size: 8,
+              color: TEXT_DARK,
+              maxWidth: CONTENT_W - 108,
+            });
+          }
+
+          // Treatment
+          if (r.treatment) {
+            const treatmentStr =
+              typeof r.treatment === 'string'
+                ? r.treatment
+                : typeof r.treatment === 'object'
+                  ? ''
+                  : JSON.stringify(r.treatment);
+            if (treatmentStr) {
+              pdf.ensureSpace(14);
+              pdf.drawText('Tratamiento:', {
+                x: MARGIN_L + 95,
+                size: 8,
+                font: bold,
+                color: TEXT_GRAY,
+              });
+              pdf.y -= 10;
+              pdf.drawWrapped(smartSentenceCase(treatmentStr.slice(0, MAX_FIELD_CHARS)), {
+                x: MARGIN_L + 108,
+                size: 8,
+                color: TEXT_DARK,
+                maxWidth: CONTENT_W - 108,
+              });
+            }
+          }
+
+          // Description (for vaccines/preventive — only if no diagnosis/treatment)
+          if (r.description && !r.diagnosis && !r.treatment) {
+            const descStr = typeof r.description === 'string' ? r.description : '';
+            if (descStr) {
+              pdf.drawWrapped(smartSentenceCase(descStr.slice(0, MAX_FIELD_CHARS)), {
+                x: MARGIN_L + 95,
+                size: 8,
+                color: TEXT_GRAY,
+                maxWidth: CONTENT_W - 95,
+              });
+            }
+          }
+
+          // Batch/serial for vaccines
+          if (r.batch_number || r.serial_number) {
+            const lotParts: string[] = [];
+            if (r.batch_number) lotParts.push(`Lote: ${r.batch_number}`);
+            if (r.serial_number) lotParts.push(`Serie: ${r.serial_number}`);
+            pdf.drawText(lotParts.join('  |  '), {
+              x: MARGIN_L + 95,
+              size: 7.5,
+              color: TEXT_LIGHT,
+            });
+            pdf.y -= 10;
+          }
+
+          // Next date
+          if (r.next_date) {
+            pdf.drawText(`Proxima fecha: ${formatDate(r.next_date)}`, {
+              x: MARGIN_L + 95,
+              size: 7.5,
+              color: MED_GREEN,
+              font: bold,
+            });
+            pdf.y -= 10;
+          }
+
+          // Notes
+          if (r.notes) {
+            const notesStr = typeof r.notes === 'string' ? r.notes : JSON.stringify(r.notes);
+            const humanized = humanizeNotes(notesStr);
+            if (humanized) {
+              pdf.ensureSpace(14);
+              pdf.drawText('Nota:', {
+                x: MARGIN_L + 95,
+                size: 7.5,
+                font: bold,
+                color: TEXT_LIGHT,
+              });
+              pdf.y -= 9;
+              pdf.drawWrapped(smartSentenceCase(humanized), {
+                x: MARGIN_L + 108,
+                size: 7.5,
+                color: TEXT_LIGHT,
+                maxWidth: CONTENT_W - 108,
+              });
+            }
+          }
+        } else {
+          // Vet clinical note
+          const n = entry.data;
+
+          if (n.provider_name) {
+            pdf.drawText(`Vet: ${titleCase(n.provider_name)}`, {
+              x: MARGIN_L + 95,
+              size: 7.5,
+              color: BRAND_PURPLE,
+            });
+            pdf.y -= 11;
+          }
+
+          if (n.description) {
+            pdf.drawWrapped(smartSentenceCase(String(n.description).slice(0, MAX_FIELD_CHARS)), {
+              x: MARGIN_L + 95,
+              size: 8,
+              color: TEXT_DARK,
+              maxWidth: CONTENT_W - 95,
+            });
+          }
+
+          if (n.followup_required && n.followup_date) {
+            pdf.drawText(
+              `Seguimiento: ${formatDate(n.followup_date)}${n.followup_reason ? ' - ' + smartSentenceCase(n.followup_reason) : ''}`,
+              {
+                x: MARGIN_L + 95,
+                size: 7.5,
+                color: MED_GREEN,
+                font: bold,
+              }
+            );
+            pdf.y -= 10;
+          }
+        }
+
+        pdf.y -= 6; // spacing between entries
+      }
+    }
+
+    // ── SECTION: Resumen de vacunacion ──
+    const vaccineRecords = allRecords.filter((r: any) => r.record_type === 'vacuna');
+    if (vaccineRecords.length > 0) {
+      pdf.drawSectionHeader('Resumen de vacunacion', MED_GREEN, LIGHT_GREEN, vaccineRecords.length);
+      pdf.y -= 4;
+
+      // Table header
+      pdf.ensureSpace(16);
+      const colVac = MARGIN_L + 10;
+      const colDate = MARGIN_L + 200;
+      const colLot = MARGIN_L + 290;
+      const colNext = MARGIN_L + 390;
+
+      pdf.drawText('Vacuna', { x: colVac, size: 8, font: bold, color: TEXT_GRAY });
+      pdf.drawText('Fecha', { x: colDate, size: 8, font: bold, color: TEXT_GRAY });
+      pdf.drawText('Lote/Serie', { x: colLot, size: 8, font: bold, color: TEXT_GRAY });
+      pdf.drawText('Proximo ref.', { x: colNext, size: 8, font: bold, color: TEXT_GRAY });
+      pdf.y -= 12;
+      pdf.drawLine(BORDER_LIGHT);
+
+      for (const v of vaccineRecords) {
+        pdf.ensureSpace(14);
+        pdf.drawText(smartSentenceCase(v.title || 'Vacuna'), { x: colVac, size: 8, maxWidth: 185 });
+        pdf.drawText(formatDate(v.date), { x: colDate, size: 8 });
+        const lot = [v.batch_number, v.serial_number].filter(Boolean).join('/');
+        pdf.drawText(lot || '-', { x: colLot, size: 8 });
+        pdf.drawText(v.next_date ? formatDate(v.next_date) : '-', {
+          x: colNext,
+          size: 8,
+          color: v.next_date ? MED_GREEN : TEXT_LIGHT,
+        });
+        pdf.y -= 13;
+      }
+    }
+
+    // ── SECTION: Peso historico ──
+    const weightHistory: any[] = Array.isArray(pet.weight_history) ? pet.weight_history : [];
+    if (weightHistory.length > 1) {
+      pdf.drawSectionHeader('Peso historico', TEXT_GRAY, ROW_ALT, weightHistory.length);
+      pdf.y -= 4;
+
+      // Determine trend
+      const first = parseFloat(weightHistory[0]?.weight) || 0;
+      const last = parseFloat(weightHistory[weightHistory.length - 1]?.weight) || 0;
+      const trend =
+        last > first + 0.5
+          ? 'Tendencia: subiendo'
+          : last < first - 0.5
+            ? 'Tendencia: bajando'
+            : 'Tendencia: estable';
+      pdf.drawText(trend, { x: MARGIN_L + 10, size: 8, color: TEXT_GRAY });
+      pdf.y -= 14;
+
+      // Table
+      const colWDate = MARGIN_L + 10;
+      const colWWeight = MARGIN_L + 150;
+      pdf.drawText('Fecha', { x: colWDate, size: 8, font: bold, color: TEXT_GRAY });
+      pdf.drawText('Peso (kg)', { x: colWWeight, size: 8, font: bold, color: TEXT_GRAY });
+      pdf.y -= 12;
+      pdf.drawLine(BORDER_LIGHT);
+
+      for (const w of weightHistory) {
+        pdf.ensureSpace(13);
+        pdf.drawText(formatDate(w.date), { x: colWDate, size: 8 });
+        pdf.drawText(String(w.weight), { x: colWWeight, size: 8 });
+        pdf.y -= 12;
+      }
     }
 
     // ── SECTION: Alimentacion y estilo de vida (solo si hay datos) ──
