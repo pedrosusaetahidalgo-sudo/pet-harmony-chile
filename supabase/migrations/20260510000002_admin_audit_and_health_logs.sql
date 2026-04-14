@@ -23,13 +23,14 @@ CREATE TABLE IF NOT EXISTS public.admin_audit_log (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_audit_created ON admin_audit_log(created_at DESC);
-CREATE INDEX idx_audit_admin ON admin_audit_log(admin_user_id);
-CREATE INDEX idx_audit_target ON admin_audit_log(target_type, target_id);
+CREATE INDEX IF NOT EXISTS idx_audit_created ON admin_audit_log(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_audit_admin ON admin_audit_log(admin_user_id);
+CREATE INDEX IF NOT EXISTS idx_audit_target ON admin_audit_log(target_type, target_id);
 
 ALTER TABLE admin_audit_log ENABLE ROW LEVEL SECURITY;
 
 -- Solo admins activos pueden leer audit log
+DROP POLICY IF EXISTS "Admin can read audit log" ON admin_audit_log;
 CREATE POLICY "Admin can read audit log"
   ON admin_audit_log FOR SELECT
   USING (
@@ -40,6 +41,7 @@ CREATE POLICY "Admin can read audit log"
   );
 
 -- Solo admins activos pueden insertar
+DROP POLICY IF EXISTS "Admin can insert audit log" ON admin_audit_log;
 CREATE POLICY "Admin can insert audit log"
   ON admin_audit_log FOR INSERT
   WITH CHECK (admin_user_id = auth.uid());
@@ -58,13 +60,14 @@ CREATE TABLE IF NOT EXISTS public.system_health_log (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_health_created ON system_health_log(created_at DESC);
-CREATE INDEX idx_health_function ON system_health_log(function_name, created_at DESC);
-CREATE INDEX idx_health_errors ON system_health_log(status) WHERE status = 'error';
+CREATE INDEX IF NOT EXISTS idx_health_created ON system_health_log(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_health_function ON system_health_log(function_name, created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_health_errors ON system_health_log(status) WHERE status = 'error';
 
 ALTER TABLE system_health_log ENABLE ROW LEVEL SECURITY;
 
 -- Solo admins pueden leer health logs
+DROP POLICY IF EXISTS "Admin can read health logs" ON system_health_log;
 CREATE POLICY "Admin can read health logs"
   ON system_health_log FOR SELECT
   USING (
@@ -97,10 +100,11 @@ CREATE TABLE IF NOT EXISTS public.vet_verification_results (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
-CREATE INDEX idx_vet_verif_provider ON vet_verification_results(provider_id);
+CREATE INDEX IF NOT EXISTS idx_vet_verif_provider ON vet_verification_results(provider_id);
 
 ALTER TABLE vet_verification_results ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Admin can manage vet verification results" ON vet_verification_results;
 CREATE POLICY "Admin can manage vet verification results"
   ON vet_verification_results FOR ALL
   USING (

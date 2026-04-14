@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS public.ai_usage (
 ALTER TABLE public.ai_usage ENABLE ROW LEVEL SECURITY;
 
 -- service_role: acceso total (para edge functions con service_role key puro)
+DROP POLICY IF EXISTS "ai_usage_service_role_only" ON public.ai_usage;
 CREATE POLICY "ai_usage_service_role_only"
   ON public.ai_usage
   FOR ALL
@@ -27,6 +28,7 @@ CREATE POLICY "ai_usage_service_role_only"
 -- (necesario porque algunas edge functions crean el client con SERVICE_ROLE_KEY
 --  pero pasan el Authorization header del usuario, lo que hace que PostgREST
 --  aplique RLS como authenticated en vez de service_role)
+DROP POLICY IF EXISTS "ai_usage_authenticated_own_rows" ON public.ai_usage;
 CREATE POLICY "ai_usage_authenticated_own_rows"
   ON public.ai_usage
   FOR ALL

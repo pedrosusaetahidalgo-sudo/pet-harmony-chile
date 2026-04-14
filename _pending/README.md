@@ -2,7 +2,7 @@
 
 > **Propósito:** staging de MDs accionables que aún **no** se han ejecutado (total o parcialmente).
 > **Qué NO vive aquí:** docs vivas ([CLAUDE.md](../CLAUDE.md), [INDEX.md](../INDEX.md), [MAPA_FUNCIONAL_COMPLETO.md](../MAPA_FUNCIONAL_COMPLETO.md), [AGENTS.md](../AGENTS.md), [diagrams/](../diagrams/)), auditorías ([audits/](../audits/)), archivados ([_archive/](../_archive/)).
-> **Última actualización:** 2026-04-13
+> **Última actualización:** 2026-04-14
 
 ---
 
@@ -31,7 +31,6 @@
 | 10 | [migrations/PLAN_GOOGLE_PLACES_MIGRATION.md](migrations/PLAN_GOOGLE_PLACES_MIGRATION.md) | Migración | 🟡 Media-baja | Cost-gated — requiere decisión sobre costos Google Places |
 | 11 | [feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md](feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md) | Feedback | 🟡 Media-baja | 8/9 done — solo pendiente: localizador tiendas (P4 futuro) + grupos comunidad MVP (P1 scope grande) |
 | 12 | [tooling/](tooling/) | Plan producción | 🟡 Baja | Plan 8 semanas — entra cuando producto esté estable |
-| 13 | [EMAILS_PARTNERS.md](EMAILS_PARTNERS.md) | Emails comerciales | ✅ Listo | 11 templates por categoría + plantilla WhatsApp — listo para usar |
 
 ---
 
@@ -61,6 +60,9 @@
 | `bugs/SEED_CONTAMINATION_QUERIES.sql` → `_archive/` | Investigación cerrada como FP | 2026-04-11 |
 | `landing-redesign-blueprint.md` → `_archive/` | Ejecutado en commit fc48e94 | 2026-04-13 |
 | `bugs/BUG_GROOMERS_GRADIENT_CRASH.md` → `_archive/` | Fix confirmado — gradient definido | 2026-04-13 |
+| `EMAILS_PARTNERS.md` → `_archive/` | 11 templates listos para usar — completo | 2026-04-14 |
+| `../PLAN_DUAL_PROFILE.md` → `_archive/` | 100% ejecutado: dual-role switching + ActiveRoleProvider + useActiveRole | 2026-04-14 |
+| `../PAW_CARDS_COLLECTIBLE.md` → `_archive/` | Implementado: TCG, raridades, holográfico, breeding | 2026-04-14 |
 | `docs-specs/PAW_CARDS_VISUAL_OVERHAUL.md` → `_archive/` | 100% ejecutado: paletas especie, holo por raza, bordes rareza | 2026-04-13 |
 | `docs-specs/PAW_MISSIONS_ACHIEVEMENTS.md` → `_archive/` | 100% ejecutado: paw_missions, user_achievements, página /misiones | 2026-04-13 |
 | `docs-specs/RUTINAS_Y_CALENDARIO_MASCOTA.md` → `_archive/` | 100% ejecutado: pet_routines, calendario unificado, RoutineCard | 2026-04-13 |

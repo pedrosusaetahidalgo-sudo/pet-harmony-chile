@@ -322,7 +322,7 @@ Estas features estan planificadas en el mega prompt futuro pero **NO existen en 
 
 ---
 
-## 12. Estado tecnico al cierre 2026-04-11
+## 12. Estado tecnico al cierre 2026-04-14
 
 | Metrica | Valor |
 |---|---|
@@ -330,7 +330,7 @@ Estas features estan planificadas en el mega prompt futuro pero **NO existen en 
 | `npm run build` | Pasa (~25s) |
 | Bundle principal | ~291 kB / 89 kB gzip |
 | Vendor splitting | Configurado (react, query, ui, icons, date, supabase) |
-| Migraciones | 113, hasta `20260504000000` + flag `99999999000000_demo_seed_flag` |
+| Migraciones | 128, hasta `20260512000001` + flag `99999999000000_demo_seed_flag` — **todas aplicadas en prod** |
 | Edge functions | 21 activas + `_shared/` helpers |
 | Premium B2C Flow | Vivo con idempotencia + rate limit |
 | Google Calendar | Vivo end-to-end |

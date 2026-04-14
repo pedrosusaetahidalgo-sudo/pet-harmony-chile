@@ -133,6 +133,16 @@ const PetClinicalRecord = () => {
   const [vetShareTokenId, setVetShareTokenId] = useState<string | null>(null);
   const [showRecorder, setShowRecorder] = useState(false);
 
+  // B7: auto-open recorder with ?grabar=1 (must be before early returns to respect Rules of Hooks)
+  const isOwner = pet?.owner_id === user?.id;
+  const viewMode: 'owner' | 'vet' = isOwner ? 'owner' : 'vet';
+
+  useEffect(() => {
+    if (viewMode === 'vet' && searchParams.get('grabar') === '1') {
+      setShowRecorder(true);
+    }
+  }, [viewMode, searchParams]);
+
   useEffect(() => {
     if (!pet || !user?.id || pet.owner_id === user.id) {
       setVetCheckDone(true);
@@ -203,16 +213,6 @@ const PetClinicalRecord = () => {
       </div>
     );
   }
-
-  const isOwner = pet.owner_id === user?.id;
-  const viewMode: 'owner' | 'vet' = isOwner ? 'owner' : 'vet';
-
-  // B7: auto-open recorder with ?grabar=1
-  useEffect(() => {
-    if (viewMode === 'vet' && searchParams.get('grabar') === '1') {
-      setShowRecorder(true);
-    }
-  }, [viewMode, searchParams]);
 
   if (!isOwner && !vetCheckDone) {
     return <ClinicalRecordSkeleton />;
@@ -333,7 +333,9 @@ const PetClinicalRecord = () => {
         )}
 
         <Tabs defaultValue="resumen" className="w-full">
-          <TabsList className={`flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide sm:grid ${viewMode === 'vet' ? 'sm:grid-cols-5' : 'sm:grid-cols-6'}`}>
+          <TabsList
+            className={`flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide sm:grid ${viewMode === 'vet' ? 'sm:grid-cols-5' : 'sm:grid-cols-6'}`}
+          >
             <TabsTrigger value="resumen" className="shrink-0 snap-start text-xs sm:text-sm">
               <Heart className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
               Resumen
@@ -384,7 +386,11 @@ const PetClinicalRecord = () => {
                   <p className="text-sm text-muted-foreground mb-3">
                     ¿Necesitas actualizar la información clínica de {pet.name}?
                   </p>
-                  <Button variant="outline" size="sm" onClick={() => navigate(`/edit-pet/${pet.id}`)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate(`/edit-pet/${pet.id}`)}
+                  >
                     <Clipboard className="h-4 w-4 mr-2" />
                     Editar datos clínicos
                   </Button>
@@ -487,7 +493,11 @@ const PetClinicalRecord = () => {
                   <p className="text-sm text-muted-foreground mb-3">
                     ¿Necesitas actualizar la información clínica de {pet.name}?
                   </p>
-                  <Button variant="outline" size="sm" onClick={() => navigate(`/edit-pet/${pet.id}`)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate(`/edit-pet/${pet.id}`)}
+                  >
                     <Clipboard className="h-4 w-4 mr-2" />
                     Editar datos clínicos
                   </Button>

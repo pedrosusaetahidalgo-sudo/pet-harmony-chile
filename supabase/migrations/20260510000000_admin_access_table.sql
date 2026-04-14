@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS public.admin_access (
 ALTER TABLE public.admin_access ENABLE ROW LEVEL SECURITY;
 
 -- Solo super_admin puede ver/modificar admin_access
+DROP POLICY IF EXISTS "Super admin full access on admin_access" ON public.admin_access;
 CREATE POLICY "Super admin full access on admin_access"
   ON public.admin_access FOR ALL
   USING (
@@ -35,6 +36,7 @@ CREATE POLICY "Super admin full access on admin_access"
   );
 
 -- Cualquier admin activo puede leer su propio registro (para verificar acceso)
+DROP POLICY IF EXISTS "Admin can read own access" ON public.admin_access;
 CREATE POLICY "Admin can read own access"
   ON public.admin_access FOR SELECT
   USING (user_id = auth.uid() AND is_active = true);

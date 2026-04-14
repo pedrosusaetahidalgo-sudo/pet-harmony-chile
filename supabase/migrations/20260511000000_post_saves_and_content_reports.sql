@@ -15,13 +15,14 @@ CREATE TABLE IF NOT EXISTS post_saves (
 
 ALTER TABLE post_saves ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "Users can manage own saves" ON post_saves;
 CREATE POLICY "Users can manage own saves"
   ON post_saves FOR ALL
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);
 
-CREATE INDEX idx_post_saves_user ON post_saves(user_id);
-CREATE INDEX idx_post_saves_post ON post_saves(post_id);
+CREATE INDEX IF NOT EXISTS idx_post_saves_user ON post_saves(user_id);
+CREATE INDEX IF NOT EXISTS idx_post_saves_post ON post_saves(post_id);
 
 -- ──────────────────────────────────────────────────
 -- content_reports — users report inappropriate posts
@@ -42,21 +43,24 @@ CREATE TABLE IF NOT EXISTS content_reports (
 ALTER TABLE content_reports ENABLE ROW LEVEL SECURITY;
 
 -- Users can create reports
+DROP POLICY IF EXISTS "Users can create reports" ON content_reports;
 CREATE POLICY "Users can create reports"
   ON content_reports FOR INSERT
   WITH CHECK (auth.uid() = reporter_id);
 
 -- Users can see own reports
+DROP POLICY IF EXISTS "Users can view own reports" ON content_reports;
 CREATE POLICY "Users can view own reports"
   ON content_reports FOR SELECT
   USING (auth.uid() = reporter_id);
 
 -- Admins can see all reports (via admin_access)
+DROP POLICY IF EXISTS "Admins can manage reports" ON content_reports;
 CREATE POLICY "Admins can manage reports"
   ON content_reports FOR ALL
   USING (
     EXISTS (SELECT 1 FROM admin_access WHERE user_id = auth.uid())
   );
 
-CREATE INDEX idx_content_reports_post ON content_reports(post_id);
-CREATE INDEX idx_content_reports_status ON content_reports(status) WHERE status = 'pending';
+CREATE INDEX IF NOT EXISTS idx_content_reports_post ON content_reports(post_id);
+CREATE INDEX IF NOT EXISTS idx_content_reports_status ON content_reports(status) WHERE status = 'pending';
