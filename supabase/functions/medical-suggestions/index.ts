@@ -109,7 +109,7 @@ Solo tratamientos/vacunas reales en Chile. Chileno.`;
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-3-5-haiku-20241022',
+        model: 'claude-3-haiku-20240307',
         max_tokens: 350,
         temperature: 0.2,
         system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
