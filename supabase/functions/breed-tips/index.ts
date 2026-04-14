@@ -107,7 +107,7 @@ Chileno (tu/tienes). Datos correctos.`;
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'claude-3-haiku-20240307',
+          model: 'claude-haiku-4-5-20251001',
           max_tokens: 200,
           temperature: 0.3,
           system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],

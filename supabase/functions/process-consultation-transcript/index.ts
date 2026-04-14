@@ -136,7 +136,7 @@ Usa español chileno (tú, tienes). Default noteType: "consulta".`;
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'claude-3-haiku-20240307',
+          model: 'claude-haiku-4-5-20251001',
           max_tokens: 700,
           temperature: 0.2,
           system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],

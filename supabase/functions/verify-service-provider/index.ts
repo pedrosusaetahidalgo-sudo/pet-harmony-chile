@@ -416,7 +416,7 @@ JSON: {"approved":true/false,"confidence":0-100,"reason":"breve","suggestions":[
       userMessage,
       maxTokens: 200,
       temperature: 0.2,
-      model: 'claude-3-haiku-20240307',
+      model: 'claude-haiku-4-5-20251001',
     });
 
     const parsed = parseJSON<{
