@@ -270,7 +270,7 @@ export default function Home() {
       overdueCount: petOverdue,
       upcomingCount: petUpcoming,
       vaccinesUpToDate: activeVaccine?.upToDate ?? false,
-      lastVetVisit: null, // TODO: wire when last_vet_visit is fetched
+      lastVetVisit: null,
       hasWeight: !!activePet.weight,
       hasPhoto: !!activePet.photo_url,
       hasMicrochip: !!activePet.microchip_number,

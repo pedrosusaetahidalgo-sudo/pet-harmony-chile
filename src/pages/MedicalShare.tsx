@@ -26,6 +26,8 @@ import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { PublicHeader, PublicFooter } from './DirectorioVets';
 import { logger } from '@/lib/logger';
+import { openExternalUrl } from '@/lib/nativeNavigation';
+import { downloadFile } from '@/lib/nativeDownload';
 
 interface SharedPet {
   id: string;
@@ -178,7 +180,7 @@ export default function MedicalShare() {
     if (!pet) return;
     const url = window.location.href;
     const text = `Ficha clínica de ${pet.name}: ${url}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    openExternalUrl(`https://wa.me/?text=${encodeURIComponent(text)}`);
   };
 
   if (loading) {
@@ -376,7 +378,7 @@ export default function MedicalShare() {
                 if (fnErr) throw fnErr;
                 const pdfUrl = fnData?.pdf_url || fnData?.url;
                 if (pdfUrl) {
-                  window.open(pdfUrl, '_blank');
+                  downloadFile(pdfUrl, `ficha_${pet.name}.pdf`);
                 } else if (fnData?.pdf_base64) {
                   const byteChars = atob(fnData.pdf_base64);
                   const byteArray = new Uint8Array(byteChars.length);

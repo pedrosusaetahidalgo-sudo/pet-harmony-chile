@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
 import { useAuth } from '@/hooks/useAuth';
 import { generatePawCardData } from '@/hooks/useHoloPattern';
 import { Button } from '@/components/ui/button';
@@ -183,7 +184,7 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
             body: { pet_id: petRow.id },
           });
           if (resp.error) {
-            console.error('Error sending invitation:', resp.error);
+            logger.error('Error sending invitation:', resp.error);
             toast.info(
               'Paciente creado. No se pudo enviar la invitación por email, pero puedes reenviarla desde tu panel.'
             );
@@ -197,7 +198,7 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
             );
           }
         } catch (invErr) {
-          console.error('Invitation edge function error:', invErr);
+          logger.error('Invitation edge function error:', invErr);
           // No bloquear — el paciente ya fue creado
         }
       }

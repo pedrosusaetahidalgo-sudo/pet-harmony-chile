@@ -967,7 +967,24 @@ function buildPDFHtml({
   </body></html>`;
 }
 
-function openPrintWindow(html: string, fallbackFilename: string) {
+async function openPrintWindow(html: string, fallbackFilename: string) {
+  const { isNative } = await import('@/lib/platform');
+  if (isNative()) {
+    const { Filesystem, Directory } = await import('@capacitor/filesystem');
+    const { Share } = await import('@capacitor/share');
+    try {
+      const saved = await Filesystem.writeFile({
+        path: fallbackFilename,
+        data: btoa(unescape(encodeURIComponent(html))),
+        directory: Directory.Cache,
+      });
+      await Share.share({ title: fallbackFilename, url: saved.uri });
+    } catch {
+      const { toast } = await import('sonner');
+      toast.error('No se pudo exportar el reporte');
+    }
+    return;
+  }
   const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const printWin = window.open(url, '_blank');

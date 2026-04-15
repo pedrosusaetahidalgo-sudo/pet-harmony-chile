@@ -4,10 +4,24 @@ const sb = supabase;
 import { useAuth } from '@/hooks/useAuth';
 import type { ServiceProviderRow } from '@/types/vetDirectory';
 
-/** Datos conocidos de perfiles demo — bloquear si un vet real intenta guardar sin editar. */
-const DEMO_EMAILS = ['javiera.munoz@demo.pawfriend.cl', 'matias.fernandez@demo.pawfriend.cl', 'cristian.rojas@demo.pawfriend.cl', 'contacto@patitas.demo.pawfriend.cl', 'contacto@altamira.demo.pawfriend.cl'];
-const DEMO_PHONES = ['+56 9 8765 1001', '+56 9 8765 1002', '+56 9 8765 1003', '+56 9 8765 1004', '+56 9 8765 1005'];
-const DEMO_COLMEVET = ['12345', '67890', '11111', '22222', '33333'];
+/** @internal Datos de perfiles demo — bloquear si un vet real intenta guardar sin editar. */
+const DEMO_GUARD = {
+  emails: new Set([
+    'javiera.munoz@demo.pawfriend.cl',
+    'matias.fernandez@demo.pawfriend.cl',
+    'cristian.rojas@demo.pawfriend.cl',
+    'contacto@patitas.demo.pawfriend.cl',
+    'contacto@altamira.demo.pawfriend.cl',
+  ]),
+  phones: new Set([
+    '+56 9 8765 1001',
+    '+56 9 8765 1002',
+    '+56 9 8765 1003',
+    '+56 9 8765 1004',
+    '+56 9 8765 1005',
+  ]),
+  colmevet: new Set(['12345', '67890', '11111', '22222', '33333']),
+} as const;
 
 export interface ProviderProfileForm {
   display_name: string;
@@ -55,8 +69,14 @@ export function useUpsertProviderProfile() {
       const email = form.public_email?.trim().toLowerCase() ?? '';
       const phone = form.public_phone?.trim() ?? '';
       const colmevet = form.license_number?.trim() ?? '';
-      if (DEMO_EMAILS.includes(email) || DEMO_PHONES.includes(phone) || DEMO_COLMEVET.includes(colmevet)) {
-        throw new Error('Estos datos coinciden con un perfil de demostración. Edítalos antes de publicar tu perfil.');
+      if (
+        DEMO_GUARD.emails.has(email) ||
+        DEMO_GUARD.phones.has(phone) ||
+        DEMO_GUARD.colmevet.has(colmevet)
+      ) {
+        throw new Error(
+          'Estos datos coinciden con un perfil de demostración. Edítalos antes de publicar tu perfil.'
+        );
       }
 
       const payload = {

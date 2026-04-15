@@ -210,7 +210,7 @@ export async function requestCalendarPermission(): Promise<string | null> {
     });
 
     if (error || !data?.url) {
-      console.error('Google Calendar OAuth init failed:', error);
+      logger.error('Google Calendar OAuth init failed:', error);
       return null;
     }
 
@@ -218,7 +218,7 @@ export async function requestCalendarPermission(): Promise<string | null> {
     window.location.href = data.url;
     return null; // Will return after redirect
   } catch (err) {
-    console.error('Google Calendar permission error:', err);
+    logger.error('Google Calendar permission error:', err);
     return null;
   }
 }

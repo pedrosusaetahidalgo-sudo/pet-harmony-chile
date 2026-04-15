@@ -8,7 +8,7 @@ export const logger = {
     if (isDev) console.warn(...args);
   },
   error: (...args: unknown[]) => {
-    console.error(...args); // errors always log
+    if (isDev) console.error(...args);
   },
   debug: (...args: unknown[]) => {
     if (isDev) console.debug(...args);

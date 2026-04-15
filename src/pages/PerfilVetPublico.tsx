@@ -27,7 +27,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useDirectoryVetBySlug, useVetReviews, trackProviderView } from '@/hooks/useDirectoryVets';
 import { setSeoTags, injectJsonLd, formatCLP } from '@/lib/vetDirectory';
 import { PublicHeader, PublicFooter } from './DirectorioVets';
-import { useDemoMode } from '@/hooks/useDemoMode';
+
 import { isOpenNow, getTodayHours } from '@/lib/openingHours';
 
 function useIsOwnProviderSlug(slug: string | undefined, userId: string | undefined): boolean {
@@ -59,7 +59,6 @@ export default function PerfilVetPublico() {
   });
   const v = vet;
   const { data: reviews } = useVetReviews(v?.id);
-  const isDemo = useDemoMode();
 
   const [reservaOpen, setReservaOpen] = useState(false);
   const [reservaMessage, setReservaMessage] = useState('');
@@ -274,12 +273,6 @@ export default function PerfilVetPublico() {
             { label: v.display_name || 'Perfil' },
           ]}
         />
-        {isDemo && (
-          <div className="rounded-lg bg-purple-100 border border-purple-300 px-4 py-2 text-xs text-purple-900 flex items-center gap-2">
-            <Badge className="bg-purple-500 text-white">DEMO</Badge>
-            <span>Esta es una vista de ejemplo. Los datos son ficticios para demostración.</span>
-          </div>
-        )}
 
         {/* Hero */}
         <Card className="p-6 md:p-8">

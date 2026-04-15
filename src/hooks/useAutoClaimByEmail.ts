@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
+import { logger } from '@/lib/logger';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
@@ -53,7 +54,7 @@ export function useAutoClaimByEmail() {
             .eq('id', pet.id);
 
           if (updateErr) {
-            console.error(`Auto-claim failed for pet ${pet.id}:`, updateErr);
+            logger.error(`Auto-claim failed for pet ${pet.id}:`, updateErr);
             continue;
           }
 
@@ -81,7 +82,7 @@ export function useAutoClaimByEmail() {
                 );
               }
             } catch (linkErr) {
-              console.error('pet_vet_link creation failed:', linkErr);
+              logger.error('pet_vet_link creation failed:', linkErr);
             }
           }
         }
@@ -99,7 +100,7 @@ export function useAutoClaimByEmail() {
           }
         }
       } catch (err) {
-        console.error('useAutoClaimByEmail error:', err);
+        logger.error('useAutoClaimByEmail error:', err);
       }
     })();
   }, [user, queryClient]);

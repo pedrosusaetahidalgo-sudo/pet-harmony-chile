@@ -81,7 +81,7 @@ export const ADMIN_ROUTES = ['/admin'] as const;
  * | SI logueado     | `/`                | `/home` (Index.tsx redirect)  |
  * | NO logueado     | cualquier protegida| `/auth?returnTo=<original>`   |
  * | NO logueado     | `/auth`            | (mostrar form)                |
- * | SI logueado     | `/auth`            | TODO: decidir (hoy: form)     |
+ * | SI logueado     | `/auth`            | Muestra form (permite re-auth) |
  * | post-login      | -                  | `returnTo` || rol-default     |
  * | post-logout     | -                  | `/auth`                       |
  * | 404 real        | cualquier sin match| `<NotFound>` con CTAs         |

@@ -12,6 +12,7 @@
  */
 
 import { useState } from 'react';
+import { toast } from 'sonner';
 import {
   Area,
   AreaChart,
@@ -307,7 +308,7 @@ export default function AnalyticsDashboard() {
   const [selectedPet, setSelectedPet] = useState('all');
   const [period, setPeriod] = useState('current_month');
 
-  const handleExport = (fmt: 'pdf' | 'csv') => {
+  const handleExport = async (fmt: 'pdf' | 'csv') => {
     const periodLabel =
       period === 'current_month'
         ? 'Este mes'
@@ -368,6 +369,23 @@ export default function AnalyticsDashboard() {
       <table><thead><tr><th>Mascota</th><th>Score</th></tr></thead><tbody>${wellnessRows}</tbody></table>
       <div class="footer">Datos de demostración · Paw Friend · pawfriend.cl</div>
     </body></html>`;
+    const filename = `paw-friend-analytics-demo-${period}.html`;
+    const { isNative } = await import('@/lib/platform');
+    if (isNative()) {
+      const { Filesystem, Directory } = await import('@capacitor/filesystem');
+      const { Share } = await import('@capacitor/share');
+      try {
+        const saved = await Filesystem.writeFile({
+          path: filename,
+          data: btoa(unescape(encodeURIComponent(html))),
+          directory: Directory.Cache,
+        });
+        await Share.share({ title: filename, url: saved.uri });
+      } catch {
+        toast.error('No se pudo exportar el reporte');
+      }
+      return;
+    }
     const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const printWin = window.open(url, '_blank');
@@ -379,7 +397,7 @@ export default function AnalyticsDashboard() {
     } else {
       const a = document.createElement('a');
       a.href = url;
-      a.download = `paw-friend-analytics-demo-${period}.html`;
+      a.download = filename;
       a.click();
       URL.revokeObjectURL(url);
     }

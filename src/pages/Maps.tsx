@@ -5,7 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { Search, Heart, Briefcase, Plus, Filter, MapPin, Building2, Coffee } from '@/lib/icons';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
@@ -919,35 +919,35 @@ const Maps = () => {
           </CardContent>
         </Card>
 
-        {/* Filters Dialog */}
-        <Dialog open={showFilters} onOpenChange={setShowFilters}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Filtros</DialogTitle>
-            </DialogHeader>
-            <MapFilters
-              activeView={activeView}
-              filters={filters}
-              setFilters={setFilters}
-              onClose={() => setShowFilters(false)}
-            />
-          </DialogContent>
-        </Dialog>
+        {/* Filters Modal */}
+        <ResponsiveModal
+          open={showFilters}
+          onOpenChange={setShowFilters}
+          title="Filtros"
+          maxWidth="max-w-md"
+        >
+          <MapFilters
+            activeView={activeView}
+            filters={filters}
+            setFilters={setFilters}
+            onClose={() => setShowFilters(false)}
+          />
+        </ResponsiveModal>
 
-        {/* Create Lost Pet Dialog */}
-        <Dialog open={showCreateLostPet} onOpenChange={setShowCreateLostPet}>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>Reportar Mascota</DialogTitle>
-            </DialogHeader>
-            <ReportLostPetForm
-              onSuccess={() => {
-                setShowCreateLostPet(false);
-                refetchLostPets();
-              }}
-            />
-          </DialogContent>
-        </Dialog>
+        {/* Create Lost Pet Modal */}
+        <ResponsiveModal
+          open={showCreateLostPet}
+          onOpenChange={setShowCreateLostPet}
+          title="Reportar Mascota"
+          maxWidth="max-w-2xl"
+        >
+          <ReportLostPetForm
+            onSuccess={() => {
+              setShowCreateLostPet(false);
+              refetchLostPets();
+            }}
+          />
+        </ResponsiveModal>
 
         {/* Create Adoption Post Dialog */}
         <CreateAdoptionPost

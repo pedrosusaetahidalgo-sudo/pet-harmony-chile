@@ -8,7 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -443,53 +443,53 @@ export default function MyBookings() {
         )}
 
         {/* Review dialog */}
-        <Dialog open={!!reviewBooking} onOpenChange={(open) => !open && setReviewBooking(null)}>
-          <DialogContent className="max-w-sm">
-            <DialogHeader>
-              <DialogTitle>Dejar reseña</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <div className="flex justify-center gap-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => setReviewRating(star)}
-                    onMouseEnter={() => setReviewHover(star)}
-                    onMouseLeave={() => setReviewHover(0)}
-                    className="p-1"
-                  >
-                    <Star
-                      className={`h-8 w-8 transition-colors ${
-                        star <= (reviewHover || reviewRating)
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'text-gray-300'
-                      }`}
-                    />
-                  </button>
-                ))}
-              </div>
-              <Textarea
-                value={reviewComment}
-                onChange={(e) => setReviewComment(e.target.value)}
-                placeholder="¿Cómo fue tu experiencia?"
-                rows={3}
-              />
-              <div className="flex gap-2">
-                <Button variant="outline" className="flex-1" onClick={() => setReviewBooking(null)}>
-                  Cancelar
-                </Button>
-                <Button
-                  className="flex-1 bg-purple-600 hover:bg-purple-700"
-                  onClick={handleSubmitReview}
-                  disabled={reviewRating === 0 || submittingReview}
+        <ResponsiveModal
+          open={!!reviewBooking}
+          onOpenChange={(open) => !open && setReviewBooking(null)}
+          title="Dejar reseña"
+          maxWidth="max-w-sm"
+        >
+          <div className="space-y-4">
+            <div className="flex justify-center gap-1">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  type="button"
+                  onClick={() => setReviewRating(star)}
+                  onMouseEnter={() => setReviewHover(star)}
+                  onMouseLeave={() => setReviewHover(0)}
+                  className="p-1"
                 >
-                  {submittingReview ? 'Enviando...' : 'Enviar reseña'}
-                </Button>
-              </div>
+                  <Star
+                    className={`h-8 w-8 transition-colors ${
+                      star <= (reviewHover || reviewRating)
+                        ? 'fill-yellow-400 text-yellow-400'
+                        : 'text-gray-300'
+                    }`}
+                  />
+                </button>
+              ))}
             </div>
-          </DialogContent>
-        </Dialog>
+            <Textarea
+              value={reviewComment}
+              onChange={(e) => setReviewComment(e.target.value)}
+              placeholder="¿Cómo fue tu experiencia?"
+              rows={3}
+            />
+            <div className="flex gap-2">
+              <Button variant="outline" className="flex-1" onClick={() => setReviewBooking(null)}>
+                Cancelar
+              </Button>
+              <Button
+                className="flex-1 bg-purple-600 hover:bg-purple-700"
+                onClick={handleSubmitReview}
+                disabled={reviewRating === 0 || submittingReview}
+              >
+                {submittingReview ? 'Enviando...' : 'Enviar reseña'}
+              </Button>
+            </div>
+          </div>
+        </ResponsiveModal>
       </div>
     </>
   );

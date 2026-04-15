@@ -1,1 +1,0 @@
-import{j as i}from"./react-vendor-DxXD0FRe.js";function e(){const[a]=i();return a.get("demo")==="true"}const t={javieraMunoz:"dra-javiera-munoz",matiasFernandez:"dr-matias-fernandez",clinicaPatitas:"clinica-veterinaria-patitas",clinicaAltamira:"clinica-veterinaria-altamira",cristianRojas:"dr-cristian-rojas"};export{t as D,e as u};

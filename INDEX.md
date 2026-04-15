@@ -101,6 +101,20 @@ Resumen de items activos:
 
 ---
 
+## Cross-platform y stores (creados 2026-04-15)
+
+| Documento | Que contiene |
+|---|---|
+| [docs/PLAN_EJECUCION_CROSSPLATFORM_2026_04_15.md](docs/PLAN_EJECUCION_CROSSPLATFORM_2026_04_15.md) | Plan maestro de ejecucion: 9 fases priorizadas con dependencias |
+| [docs/PLAN_CROSSPLATFORM_STORES_HARDENING_REPORT.md](docs/PLAN_CROSSPLATFORM_STORES_HARDENING_REPORT.md) | Reporte de auditoria con scorecard por area |
+| [docs/MOBILE_LAYOUT_ISSUES_MATRIX.md](docs/MOBILE_LAYOUT_ISSUES_MATRIX.md) | 15 issues de layout mobile con severidad y viewport |
+| [docs/CAPACITOR_COMPATIBILITY_AUDIT.md](docs/CAPACITOR_COMPATIBILITY_AUDIT.md) | Auditoria de plugins, permisos, config nativa |
+| [docs/APP_STORE_CHECKLIST.md](docs/APP_STORE_CHECKLIST.md) | 33 criterios verde/amarillo/rojo para iOS |
+| [docs/PLAY_STORE_CHECKLIST.md](docs/PLAY_STORE_CHECKLIST.md) | 44 criterios verde/amarillo/rojo para Android |
+| [docs/MOBILE_QA_TEST_MATRIX.md](docs/MOBILE_QA_TEST_MATRIX.md) | 54 tests funcionales con instrucciones por plataforma |
+
+---
+
 ## Planes ejecutados (2026-04-14)
 
 | Plan | Estado |
