@@ -14,12 +14,14 @@ import { useStartConversation } from '@/hooks/useStartConversation';
 import { Button } from '@/components/ui/button';
 import { Plus } from '@/lib/icons';
 import { logger } from '@/lib/logger';
+import { useBlockedUsers } from '@/hooks/useBlockedUsers';
 
 const Chat = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { startConversation: startConvo } = useStartConversation();
+  const { blockedIds } = useBlockedUsers();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [conversations, setConversations] = useState<any[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -130,7 +132,9 @@ const Chat = () => {
           };
         }) || [];
 
-      setConversations(processedConversations);
+      // Filter out conversations with blocked users
+      const filtered = processedConversations.filter((c) => !blockedIds.has(c.otherUserId));
+      setConversations(filtered);
     } catch (error) {
       logger.error('Error loading conversations:', error);
     } finally {

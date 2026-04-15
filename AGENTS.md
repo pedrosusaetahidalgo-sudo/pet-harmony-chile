@@ -33,18 +33,18 @@
 
 ```
 src/
-  pages/           # Paginas (PascalCase.tsx, ~35 archivos)
-  components/      # Componentes (PascalCase.tsx, subdirs: ui/, admin/, ai/, calendar/, home/, maps/, medical/, pawgame/, provider/, reviews/, settings/, social/)
-  hooks/           # Custom hooks (useXxx.tsx/.ts, ~30 archivos)
-  lib/             # Utilidades (camelCase.ts, ~20 archivos)
+  pages/           # Paginas (PascalCase.tsx, 64 archivos incl. PetClinicalRecord/)
+  components/      # Componentes (PascalCase.tsx, 261 archivos en 20 subdirs: ui/, admin/, ai/, analytics/, calendar/, feed/, home/, maps/, medical/, memorial/, onboarding/, paw-cards/, pawgame/, profile/, provider/, reviews/, routines/, settings/, social/)
+  hooks/           # Custom hooks (useXxx.tsx/.ts, 63 archivos)
+  lib/             # Utilidades (camelCase.ts, 35 archivos + 7 tests)
   integrations/
     supabase/      # Cliente + tipos generados
   types/           # Tipos adicionales
   assets/          # Imagenes
 
 supabase/
-  functions/       # 21 Edge Functions Deno + _shared/ helpers
-  migrations/      # 88 migraciones SQL (hasta 20260428000000)
+  functions/       # 26 Edge Functions Deno + _shared/ (6 helpers)
+  migrations/      # 139 migraciones SQL (hasta 20260512000001)
 
 docs/              # Build output (GitHub Pages) -- NO editar
 audits/            # Auditorias, competencia, walkthroughs

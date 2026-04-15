@@ -251,9 +251,11 @@ const App = () => (
                   path="/paw-collection"
                   element={
                     <ProtectedRoute>
-                      <AppLayout>
-                        <PawCollection />
-                      </AppLayout>
+                      <RoleGuard requiredRole="owner" fallback="/provider/dashboard">
+                        <AppLayout>
+                          <PawCollection />
+                        </AppLayout>
+                      </RoleGuard>
                     </ProtectedRoute>
                   }
                 />
@@ -261,9 +263,11 @@ const App = () => (
                   path="/misiones"
                   element={
                     <ProtectedRoute>
-                      <AppLayout>
-                        <Missions />
-                      </AppLayout>
+                      <RoleGuard requiredRole="owner" fallback="/provider/dashboard">
+                        <AppLayout>
+                          <Missions />
+                        </AppLayout>
+                      </RoleGuard>
                     </ProtectedRoute>
                   }
                 />
@@ -352,9 +356,11 @@ const App = () => (
                   path="/paw-game"
                   element={
                     <ProtectedRoute>
-                      <AppLayout>
-                        <PawGame />
-                      </AppLayout>
+                      <RoleGuard requiredRole="owner" fallback="/provider/dashboard">
+                        <AppLayout>
+                          <PawGame />
+                        </AppLayout>
+                      </RoleGuard>
                     </ProtectedRoute>
                   }
                 />
@@ -653,9 +659,11 @@ const App = () => (
                   path="/analytics-demo"
                   element={
                     <ProtectedRoute>
-                      <AppLayout>
-                        <AnalyticsDashboard />
-                      </AppLayout>
+                      <AdminRoute>
+                        <AppLayout>
+                          <AnalyticsDashboard />
+                        </AppLayout>
+                      </AdminRoute>
                     </ProtectedRoute>
                   }
                 />

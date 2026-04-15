@@ -14,7 +14,7 @@ type Phase = 'idle' | 'recording' | 'processing' | 'summary';
 interface ConsultationRecorderModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  shareTokenId: string;
+  shareTokenId?: string;
   providerId: string;
   petId: string;
   petName: string;

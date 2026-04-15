@@ -38,9 +38,12 @@ import {
   Calendar,
   Sparkles,
 } from '@/lib/icons';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { NewPatientForm } from '@/components/provider/NewPatientForm';
 import { PatientConsolidatedSummary } from '@/components/provider/PatientConsolidatedSummary';
+import { VetNoteEditor } from '@/components/provider/VetNoteEditor';
+import { ConsultationRecorderModal } from '@/components/provider/ConsultationRecorderModal';
 import type { VetClinicalNote } from '@/hooks/useVetClinicalNotes';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -442,6 +445,7 @@ export default function ProviderPatients() {
                   key={patient.pet_id}
                   patient={patient}
                   vetUserId={providerId ?? user?.id ?? ''}
+                  providerId={providerId}
                   onConsolidado={(id, name) => setConsolidadoPet({ id, name })}
                 />
               ))}
@@ -511,12 +515,16 @@ export default function ProviderPatients() {
 function PatientCardWithSessions({
   patient,
   vetUserId,
+  providerId,
   onConsolidado,
 }: {
   patient: PatientRow;
   vetUserId: string;
+  providerId: string | null;
   onConsolidado: (petId: string, petName: string) => void;
 }) {
+  const [showQuickNote, setShowQuickNote] = useState(false);
+  const [showRecorder, setShowRecorder] = useState(false);
   const ago = formatDistanceToNowStrict(new Date(patient.last_visit), {
     locale: es,
     addSuffix: false,
@@ -596,17 +604,26 @@ function PatientCardWithSessions({
 
         {/* Acciones */}
         <div className="md:col-span-2 flex gap-1.5 flex-shrink-0 ml-auto">
-          <Link to={`${LINKS.petClinical(patient.pet_id)}?grabar=1`}>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-7 gap-1 text-xs px-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
-              title="Grabar consulta con IA"
-            >
-              <Mic className="h-3 w-3" />
-              <span className="hidden sm:inline">Grabar</span>
-            </Button>
-          </Link>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 gap-1 text-xs px-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
+            title="Grabar consulta con IA"
+            onClick={() => setShowRecorder(true)}
+          >
+            <Mic className="h-3 w-3" />
+            <span className="hidden sm:inline">Grabar</span>
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 gap-1 text-xs px-2 border-purple-200 text-purple-600 hover:bg-purple-50"
+            title="Nota clínica rápida"
+            onClick={() => setShowQuickNote(true)}
+          >
+            <Pencil className="h-3 w-3" />
+            <span className="hidden sm:inline">Nota</span>
+          </Button>
           {totalNotes > 0 && (
             <Button
               size="sm"
@@ -643,6 +660,35 @@ function PatientCardWithSessions({
             </div>
           </CollapsibleContent>
         </Collapsible>
+      )}
+
+      {/* Quick note dialog */}
+      {providerId && (
+        <Dialog open={showQuickNote} onOpenChange={setShowQuickNote}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Nota clinica — {patient.pet_name}</DialogTitle>
+            </DialogHeader>
+            <VetNoteEditor
+              petId={patient.pet_id}
+              petName={patient.pet_name}
+              providerId={providerId}
+              onSaved={() => setShowQuickNote(false)}
+            />
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {/* Quick recorder dialog */}
+      {providerId && (
+        <ConsultationRecorderModal
+          open={showRecorder}
+          onOpenChange={setShowRecorder}
+          providerId={providerId}
+          petId={patient.pet_id}
+          petName={patient.pet_name}
+          petSpecies={patient.species ?? undefined}
+        />
       )}
     </div>
   );

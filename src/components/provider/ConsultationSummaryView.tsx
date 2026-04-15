@@ -29,7 +29,7 @@ const NOTE_TYPES: { value: VetNoteType; label: string }[] = [
 interface ConsultationSummaryViewProps {
   summary: ConsultationSummary;
   rawTranscript: string;
-  shareTokenId: string;
+  shareTokenId?: string;
   providerId: string;
   petId: string;
   petName: string;

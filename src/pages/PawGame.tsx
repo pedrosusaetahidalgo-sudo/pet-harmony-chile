@@ -42,6 +42,7 @@ import { track, EVENTS } from '@/lib/analytics';
 import { getLevelFromPoints } from '@/lib/levels';
 import { awardPoints } from '@/lib/points';
 import { GuardianProgress } from '@/components/pawgame/GuardianProgress';
+import { PawLabsBanner } from '@/components/PawLabsBanner';
 import { MissionCard } from '@/components/pawgame/MissionCard';
 import { BadgeGallery } from '@/components/pawgame/BadgeGallery';
 import { PetPawProgress } from '@/components/pawgame/PetPawProgress';
@@ -521,6 +522,7 @@ const PawGame = () => {
     <div className="min-h-screen bg-background">
       <PageHeader title="Logros y misiones" onBack={() => navigate(LINKS.profile())} />
       <div className="container px-4 py-6 max-w-7xl mx-auto animate-fade-in space-y-6">
+        <PawLabsBanner description="Gana puntos cuidando a tus mascotas. Sistema de logros en desarrollo activo." />
         {/* Hero Header */}
         <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/30 via-secondary/30 to-accent/30 p-6 md:p-8">
           <div className="absolute top-0 right-0 w-96 h-96 bg-yellow-500/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />

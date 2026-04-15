@@ -112,7 +112,22 @@ export function BreedTips({ breed, species }: BreedTipsProps) {
     }
   };
 
+  // Check if limit is reached before showing the button
+  const breedAccess = checkAccess('ai_behavior_analysis', usedThisSession ? 1 : 0);
+
   if (!tips) {
+    if (!isPremium && !breedAccess.allowed) {
+      return (
+        <PremiumNudge
+          feature="ai_behavior_analysis"
+          title="Análisis por raza agotado"
+          description="Usaste tu análisis gratuito este mes. Con Premium tienes análisis ilimitados para cada raza."
+          usage={{ current: 1, max: 1 }}
+          variant="card"
+        />
+      );
+    }
+
     return (
       <Button
         onClick={fetchTips}

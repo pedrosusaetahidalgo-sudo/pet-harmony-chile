@@ -35,6 +35,7 @@ import AdminSystemHealth from '@/components/admin/AdminSystemHealth';
 import AdminTeam from '@/components/admin/AdminTeam';
 import AdminErrorLog from '@/components/admin/AdminErrorLog';
 import AdminAnalytics from '@/components/admin/AdminAnalytics';
+import AdminPendingPets from '@/components/admin/AdminPendingPets';
 
 // ── Section definitions ──────────────────────────────────
 interface Section {
@@ -88,12 +89,16 @@ function UsersSection() {
         <TabsList>
           <TabsTrigger value="users">Gestión</TabsTrigger>
           <TabsTrigger value="verifications">Verificaciones</TabsTrigger>
+          <TabsTrigger value="pending-pets">Mascotas pendientes</TabsTrigger>
         </TabsList>
         <TabsContent value="users">
           <AdminUsers />
         </TabsContent>
         <TabsContent value="verifications">
           <AdminVerificationRequests />
+        </TabsContent>
+        <TabsContent value="pending-pets">
+          <AdminPendingPets />
         </TabsContent>
       </Tabs>
     </div>

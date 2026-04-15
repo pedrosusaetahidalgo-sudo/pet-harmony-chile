@@ -6,8 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { FileText, ExternalLink, Plus, Mic } from '@/lib/icons';
-import { openExternalUrl } from '@/lib/nativeNavigation';
+import { FileText, Eye, Plus, Mic } from '@/lib/icons';
+import { Link } from 'react-router-dom';
+import { LINKS } from '@/lib/links';
 import { supabase } from '@/integrations/supabase/client';
 import { VetNoteEditor } from './VetNoteEditor';
 import { ConsultationRecorderModal } from './ConsultationRecorderModal';
@@ -59,10 +60,6 @@ export function SharedFichasCard({ providerId }: SharedFichasCardProps) {
   const [recorderFichaId, setRecorderFichaId] = useState<string | null>(null);
 
   if (!rows || rows.length === 0) return null;
-
-  const openShare = (token: string) => {
-    openExternalUrl(`${window.location.origin}/medical-share/${token}`);
-  };
 
   const isTokenExpired = (expiresAt: string) => new Date(expiresAt) < new Date();
 
@@ -128,14 +125,11 @@ export function SharedFichasCard({ providerId }: SharedFichasCardProps) {
                       </Button>
                     </>
                   )}
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => openShare(row.token)}
-                    className="h-11"
-                  >
-                    <ExternalLink className="h-4 w-4 mr-1" />
-                    Ver ficha
+                  <Button size="sm" variant="outline" className="h-11" asChild>
+                    <Link to={LINKS.petClinical(row.pet_id)}>
+                      <Eye className="h-4 w-4 mr-1" />
+                      Ver ficha
+                    </Link>
                   </Button>
                 </div>
               </div>

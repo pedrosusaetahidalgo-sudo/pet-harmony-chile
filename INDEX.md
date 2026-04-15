@@ -2,7 +2,7 @@
 
 > Todos estos documentos deben mantenerse actualizados con cada cambio relevante.
 > Si modificas rutas, navegacion, flujos, planes o features: actualiza el documento correspondiente.
-> Ultima revision: 2026-04-12.
+> Ultima revision: 2026-04-14.
 
 ---
 
@@ -23,8 +23,11 @@
 
 | Documento | Que contiene | Cuando actualizar |
 |---|---|---|
-| [audits/REPORTE_CONSOLIDADO_2026_04_11.md](audits/REPORTE_CONSOLIDADO_2026_04_11.md) | Fuente de verdad del estado tecnico al 2026-04-11 | Despues de cada sesion de auditoria mayor |
-| [audits/OPTIMIZACION_COSTOS_2026_04_12.md](audits/OPTIMIZACION_COSTOS_2026_04_12.md) | Analisis de costos operativos + plan de eficiencia (Anthropic, WhatsApp, Realtime) | Cuando cambien edge functions o infra de costos |
+| [audits/CONTEXTO_REVISION_COMPLETA.txt](audits/CONTEXTO_REVISION_COMPLETA.txt) | Snapshot tecnico completo (432 archivos, 26 fns, 139 mig, 65 rutas) | Cada sesion de auditoria mayor |
+| [audits/AUDITORIA_UX_COMPLETA_2026_04_14.md](audits/AUDITORIA_UX_COMPLETA_2026_04_14.md) | Auditoria UX completa con severidad por item | Despues de cambios UX grandes |
+| [audits/FEATURES_INCOMPLETAS_2026_04_14.md](audits/FEATURES_INCOMPLETAS_2026_04_14.md) | 28 features con gaps detectados | Cuando se completen features |
+| [audits/OPTIMIZACION_COSTOS_2026_04_12.md](audits/OPTIMIZACION_COSTOS_2026_04_12.md) | Analisis de costos operativos + plan de eficiencia | Cuando cambien edge functions o infra de costos |
+| [audits/FEEDBACK_VET_SOFIA_2026_04_13.md](audits/FEEDBACK_VET_SOFIA_2026_04_13.md) | Feedback de vet beta tester (Sofia) | Despues de cada sesion con Sofia |
 | [audits/COMPETENCIA_2026_04_08.md](audits/COMPETENCIA_2026_04_08.md) | Analisis competitivo Chile | Cada 3-6 meses o cuando aparezca competidor nuevo |
 | [audits/CROSS_PLATFORM_COMPATIBILITY.md](audits/CROSS_PLATFORM_COMPATIBILITY.md) | Compatibilidad multiplataforma (iOS, Android, Web, Chrome) | Cada cambio de CSS/JS moderno o API de browser |
 
@@ -34,13 +37,21 @@
 
 | Documento | Que contiene | Prioridad |
 |---|---|---|
-| [PLAN_DUAL_PROFILE.md](PLAN_DUAL_PROFILE.md) | Sistema de perfil dual dueno/veterinario -- toggle, guards, onboarding | **Alta** -- Aprobado, listo para implementar |
-| [docs-specs/COMPARTIR_FICHA_V2.md](docs-specs/COMPARTIR_FICHA_V2.md) | Vinculacion directa vet-mascota con aceptar/rechazar. Reemplaza tokens temporales | **Alta** -- Toca la joya de la corona (ficha clinica) |
+| [docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md](docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md) | PDF profesional cronologico + deduplicacion mascotas + sync datos | **Alta** -- Toca joya de la corona + integridad de datos |
 | [docs-specs/ANALISIS_PREMIUM_VS_FREE.md](docs-specs/ANALISIS_PREMIUM_VS_FREE.md) | Analisis de que features deben ser free vs premium + plan de ejecucion | **Alta** -- Define monetizacion |
-| [docs-specs/IDEAS_Y_MEJORAS_PENDIENTES.md](docs-specs/IDEAS_Y_MEJORAS_PENDIENTES.md) | Roadmap de features nuevas: breeding, banco de sangre, mapa pet friendly, seguros, adopcion mejorada, revision monetizacion, onboarding mejorado | **Alta** -- Documento maestro de roadmap |
-| [docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md](docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md) | PDF profesional cronologico + deduplicacion mascotas + sync datos + poda features | **Alta** -- Toca joya de la corona + integridad de datos |
+| [docs-specs/IDEAS_Y_MEJORAS_PENDIENTES.md](docs-specs/IDEAS_Y_MEJORAS_PENDIENTES.md) | Roadmap de features nuevas: breeding, banco de sangre, mapa pet friendly, seguros | **Alta** -- Documento maestro de roadmap |
+| [docs-specs/FICHA_VET_VIEW_SPEC.md](docs-specs/FICHA_VET_VIEW_SPEC.md) | Vista ficha clinica desde perspectiva vet | **Alta** -- UX veterinario |
+| [docs-specs/ADMIN_CONTROL_CENTER_V2.md](docs-specs/ADMIN_CONTROL_CENTER_V2.md) | Centro de control admin v2 | **Media** -- Admin expandido |
 | [docs-specs/AUDIO_CONSULTA_VET.md](docs-specs/AUDIO_CONSULTA_VET.md) | Transcripcion IA en vivo de consultas veterinarias | **Media** -- Diferenciador B2B, requiere infra IA |
-| [docs-specs/RUTINAS_Y_CALENDARIO_MASCOTA.md](docs-specs/RUTINAS_Y_CALENDARIO_MASCOTA.md) | Rutinas semanales recurrentes + calendario unificado por mascota | **Media** -- Mejora retention, no bloquea nada |
+| [docs-specs/PROPUESTA_SIDEBAR_PROVIDER.md](docs-specs/PROPUESTA_SIDEBAR_PROVIDER.md) | Propuesta sidebar proveedor | **Media** -- UX provider |
+| [docs-specs/UPGRADE_TOGGLE_ROLE.md](docs-specs/UPGRADE_TOGGLE_ROLE.md) | Toggle de rol dueno/vet | **Media** -- UX dual-role |
+
+**Specs ya ejecutadas (movidas a _archive/):**
+- PLAN_DUAL_PROFILE — 100% ejecutado (ActiveRoleProvider + useActiveRole)
+- COMPARTIR_FICHA_V2 — 100% implementado (pet-vet links + share)
+- RUTINAS_Y_CALENDARIO_MASCOTA — 100% implementado (rutinas + calendario unificado)
+- PAW_CARDS_COLLECTIBLE — 100% implementado (6 rarezas, flip, QR, holograficos)
+- PAW_MISSIONS_ACHIEVEMENTS — 100% implementado (misiones + logros + paw points)
 
 ---
 
@@ -61,13 +72,50 @@ Resumen de items activos:
 | # | Documento | Tipo | Prioridad |
 |---|---|---|---|
 | 1 | [ROTAR_API_KEYS.md](_pending/ROTAR_API_KEYS.md) | Runbook seguridad | Alta |
-| 3 | [dual-role-toggle-blueprint.md](_pending/dual-role-toggle-blueprint.md) | Blueprint | Media |
-| 4 | [profile-redesign-blueprint.md](_pending/profile-redesign-blueprint.md) | Blueprint | Media |
-| 5 | [REVISION_PROVIDER_PROFILE_EDIT.md](_pending/REVISION_PROVIDER_PROFILE_EDIT.md) | Audit + fix | Media |
-| 6 | [REDISENO_MY_PETS_CARDS.md](_pending/REDISENO_MY_PETS_CARDS.md) | Blueprint | Media |
-| 7 | [map-redesign-blueprint.md](_pending/map-redesign-blueprint.md) | Blueprint | Media |
-| 8 | [BASE_DATOS_PARTNERS_CHILE.md](_pending/BASE_DATOS_PARTNERS_CHILE.md) | Data | Media |
-| 9 | [FEATURE_AI_WEB_SEARCH_UPGRADE.md](_pending/features/FEATURE_AI_WEB_SEARCH_UPGRADE.md) | Feature | Media |
+| 2 | [CONSOLIDACION_MOBILE.md](_pending/CONSOLIDACION_MOBILE.md) | Mobile Capacitor | Alta |
+| 3 | [INTEGRACIONES_SETUP.md](_pending/INTEGRACIONES_SETUP.md) | WhatsApp/Google setup | Alta |
+| 4 | [map-redesign-blueprint.md](_pending/map-redesign-blueprint.md) | Blueprint | Media |
+| 5 | [BASE_DATOS_PARTNERS_CHILE.md](_pending/BASE_DATOS_PARTNERS_CHILE.md) | Data | Media |
+| 6 | [PARTNERS_ONBOARDING.md](_pending/PARTNERS_ONBOARDING.md) | Onboarding partners | Media |
+| 7 | [testing-virtual-user-blueprint.md](_pending/testing-virtual-user-blueprint.md) | Testing Playwright | Media |
+| 8 | [FEATURE_AI_WEB_SEARCH_UPGRADE.md](_pending/features/FEATURE_AI_WEB_SEARCH_UPGRADE.md) | Feature | Media |
+
+---
+
+## Documentos operacionales (creados 2026-04-14)
+
+| Documento | Que contiene |
+|---|---|
+| [docs/ROADMAP_90_DIAS.md](docs/ROADMAP_90_DIAS.md) | 18 items priorizados en 4 fases con North Star metrics |
+| [docs/CHECKLIST_OPERACION_DIARIA.md](docs/CHECKLIST_OPERACION_DIARIA.md) | Checklist de 10-15 min para operacion diaria |
+| [docs/RITUAL_WEEKLY_OPS.md](docs/RITUAL_WEEKLY_OPS.md) | Revision semanal de KPIs, errores y feedback |
+| [docs/RELEASE_PROCESS.md](docs/RELEASE_PROCESS.md) | Flujo de release, checklist y versionado |
+| [docs/FEATURE_FLAGS.md](docs/FEATURE_FLAGS.md) | 9 feature flags documentados con reglas |
+| [docs/MOCKS_MAP.md](docs/MOCKS_MAP.md) | Auditoria de datos ficticios (95%+ limpio) |
+| [docs/PERFORMANCE_BUDGET.md](docs/PERFORMANCE_BUDGET.md) | Web Vitals targets y bundle limits |
+| [docs/JOURNEYS_UX.md](docs/JOURNEYS_UX.md) | Journeys dueno, vet y admin con pantallas clave |
+| [docs/EDGE_FUNCTIONS_MAP.md](docs/EDGE_FUNCTIONS_MAP.md) | Mapa de 26 edge functions + 6 helpers compartidos |
+| [docs/ARQUITECTURA_RESUMEN.md](docs/ARQUITECTURA_RESUMEN.md) | Capas, entry points, modelo de datos, roles |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Guia para colaboradores (setup, comandos, convenciones) |
+| [.github/PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md) | Checklist para PRs |
+
+---
+
+## Planes ejecutados (2026-04-14)
+
+| Plan | Estado |
+|---|---|
+| Perfeccionamiento clinico/premium | Aplicado |
+| Roles y experiencias dueno vs proveedor | Aplicado |
+| Mascota huerfana re-claim | Aplicado |
+| Limpieza de mocks y datos falsos | Aplicado |
+| Auditoria backend (Supabase + Edge Functions) | Aplicado |
+| Operacion y crecimiento 90 dias | Aplicado |
+| Optimizacion avanzada (performance, DX) | Aplicado |
+| Plan Social (reviews, likes, chat) | Aplicado |
+| Plan UX/UI Next Level | Aplicado |
+| Plan Edge Functions Pro | Aplicado |
+| Plan de Cierre y Hardening | Aplicado |
 
 ---
 
@@ -109,14 +157,21 @@ Documentos ya ejecutados o superados. Conservan valor historico pero no son acci
 | `AUDIT_LOVABLE_LEGACY.md` | Limpieza legacy completada |
 | `embedded-analytics-options.md` | Opciones evaluadas, decision tomada |
 | `pro-analytics-monetization-plan.md` | Plan integrado en pricing actual |
+| `PLAN_DUAL_PROFILE.md` | 100% ejecutado (ActiveRoleProvider + useActiveRole) |
+| `COMPARTIR_FICHA_V2.md` | 100% implementado (pet-vet links + share) |
+| `VISTAS_ROLES_Y_PLANES.md` | 100% implementado |
+| `RUTINAS_Y_CALENDARIO_MASCOTA.md` | 100% implementado |
+| `PAW_CARDS_COLLECTIBLE.md` | 100% implementado (6 rarezas, flip, QR) |
+| `PAW_MISSIONS_ACHIEVEMENTS.md` | 100% implementado |
+| `REDISENO_MY_PETS_CARDS.md` | Ejecutado |
+| `REVISION_PROVIDER_PROFILE_EDIT.md` | Ejecutado |
+| `REPORTE_CONSOLIDADO_2026_04_11.md` | Superado por auditorias 2026-04-14 |
 
 ---
 
-## Carpeta junk/ (legacy)
+## Carpeta junk/ (eliminada del repo)
 
-Contiene 57 archivos legacy de la era Lovable/pre-Claude. **No tienen valor accionable.** Se conservan temporalmente como referencia historica. Incluyen: contextos viejos, auditorias previas, credenciales template, planes de refactor ejecutados, prompts obsoletos.
-
-> Recomendacion: eliminar `junk/` completa cuando el proyecto pase a produccion estable.
+La carpeta `junk/` fue eliminada del tracking de git el 2026-04-14. Contenia 62 archivos legacy de la era Lovable/pre-Claude sin valor accionable. Esta en `.gitignore` para evitar re-commit accidental. Los archivos permanecen en el historial de git si se necesitan.
 
 ---
 

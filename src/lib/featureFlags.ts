@@ -46,6 +46,24 @@ export const FEATURE_FLAGS = {
    * Kill switch: si se desactiva, las cards de analytics y la ruta no se muestran.
    */
   PRO_ANALYTICS: true,
+
+  /**
+   * Adopcion como seccion activa.
+   * HABILITADO — funcional como Paw Labs (beta).
+   */
+  LABS_ADOPTION: true,
+
+  /**
+   * Red de donantes de sangre.
+   * HABILITADO — funcional como Paw Labs (beta).
+   */
+  LABS_BLOOD_DONORS: true,
+
+  /**
+   * Comunidad / grupos por raza.
+   * HABILITADO — UI lista pero sin grupos en DB aun.
+   */
+  LABS_COMMUNITY: true,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;

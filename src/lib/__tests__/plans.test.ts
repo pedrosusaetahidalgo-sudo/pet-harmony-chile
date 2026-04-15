@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { PLANS, canAccess, formatCLP, PROVIDER_PLANS, canProviderAccess } from '../plans';
+import { FEATURE_FLAGS } from '../featureFlags';
 
 describe('PLANS', () => {
   it('has free and premium plans', () => {
@@ -31,10 +32,15 @@ describe('canAccess', () => {
     expect(result.allowed).toBe(true);
   });
 
-  it('blocks free user at pet limit', () => {
+  it('blocks free user at pet limit (when premium enabled)', () => {
     const result = canAccess('free', 'max_pets', 2);
-    expect(result.allowed).toBe(false);
-    expect(result.upgradeRequired).toBe('premium');
+    if (FEATURE_FLAGS.USER_PREMIUM) {
+      expect(result.allowed).toBe(false);
+      expect(result.upgradeRequired).toBe('premium');
+    } else {
+      // USER_PREMIUM=false → everything unlocked
+      expect(result.allowed).toBe(true);
+    }
   });
 
   it('allows premium user unlimited pets', () => {
@@ -42,9 +48,13 @@ describe('canAccess', () => {
     expect(result.allowed).toBe(true);
   });
 
-  it('blocks free user from PDF export', () => {
+  it('blocks free user from PDF export (when premium enabled)', () => {
     const result = canAccess('free', 'export_pdf');
-    expect(result.allowed).toBe(false);
+    if (FEATURE_FLAGS.USER_PREMIUM) {
+      expect(result.allowed).toBe(false);
+    } else {
+      expect(result.allowed).toBe(true);
+    }
   });
 
   it('allows premium user PDF export', () => {
@@ -57,9 +67,13 @@ describe('canAccess', () => {
     expect(result.allowed).toBe(true);
   });
 
-  it('blocks free user share_clinical when quota exhausted', () => {
+  it('blocks free user share_clinical when quota exhausted (when premium enabled)', () => {
     const result = canAccess('free', 'share_clinical', 1);
-    expect(result.allowed).toBe(false);
+    if (FEATURE_FLAGS.USER_PREMIUM) {
+      expect(result.allowed).toBe(false);
+    } else {
+      expect(result.allowed).toBe(true);
+    }
   });
 
   it('allows free user ai_vet_assistant within quota (1 free use)', () => {
@@ -67,9 +81,13 @@ describe('canAccess', () => {
     expect(result.allowed).toBe(true);
   });
 
-  it('blocks free user ai_vet_assistant when quota exhausted', () => {
+  it('blocks free user ai_vet_assistant when quota exhausted (when premium enabled)', () => {
     const result = canAccess('free', 'ai_vet_assistant', 1);
-    expect(result.allowed).toBe(false);
+    if (FEATURE_FLAGS.USER_PREMIUM) {
+      expect(result.allowed).toBe(false);
+    } else {
+      expect(result.allowed).toBe(true);
+    }
   });
 
   it('returns allowed for string features', () => {

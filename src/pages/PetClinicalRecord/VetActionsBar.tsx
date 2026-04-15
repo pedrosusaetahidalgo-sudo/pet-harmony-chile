@@ -91,17 +91,15 @@ export function VetActionsBar({
       </Dialog>
 
       {/* ConsultationRecorderModal */}
-      {shareTokenId && (
-        <ConsultationRecorderModal
-          open={recorderOpen}
-          onOpenChange={setRecorderOpen}
-          shareTokenId={shareTokenId}
-          providerId={providerId}
-          petId={petId}
-          petName={petName}
-          petSpecies={petSpecies}
-        />
-      )}
+      <ConsultationRecorderModal
+        open={recorderOpen}
+        onOpenChange={setRecorderOpen}
+        shareTokenId={shareTokenId ?? undefined}
+        providerId={providerId}
+        petId={petId}
+        petName={petName}
+        petSpecies={petSpecies}
+      />
     </>
   );
 }

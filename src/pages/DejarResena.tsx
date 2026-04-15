@@ -8,10 +8,8 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
-import {
-  useInvitationByToken,
-  useSubmitInvitedReview,
-} from '@/hooks/useReviewInvitations';
+import { track, EVENTS } from '@/lib/analytics';
+import { useInvitationByToken, useSubmitInvitedReview } from '@/hooks/useReviewInvitations';
 import { LINKS } from '@/lib/links';
 import { useAuth } from '@/hooks/useAuth';
 import { PublicHeader, PublicFooter } from './DirectorioVets';
@@ -150,6 +148,7 @@ export default function DejarResena() {
         title,
         comment,
       });
+      track({ event: EVENTS.REVIEW_CREATED, properties: { provider_id: provider.id, rating } });
       setDone(true);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Error al enviar la reseña');
@@ -176,9 +175,7 @@ export default function DejarResena() {
               )}
             </div>
             <CardTitle>Dejar reseña a {provider?.display_name}</CardTitle>
-            <CardDescription>
-              Tu opinión ayuda a otros dueños de mascotas a elegir.
-            </CardDescription>
+            <CardDescription>Tu opinión ayuda a otros dueños de mascotas a elegir.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
             {/* Estrellas */}

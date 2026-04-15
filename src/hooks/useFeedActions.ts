@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { track, EVENTS } from '@/lib/analytics';
 import type { FeedPost } from './useFeedPosts';
 
 export function useFeedActions() {
@@ -57,6 +58,11 @@ export function useFeedActions() {
         is_liked: !isLiked,
         likes_count: isLiked ? Math.max(0, p.likes_count - 1) : p.likes_count + 1,
       }));
+    },
+    onSuccess: (_data, { postId, isLiked }) => {
+      if (!isLiked) {
+        track({ event: EVENTS.POST_LIKED, properties: { post_id: postId } });
+      }
     },
     onError: (_err, { postId, isLiked }) => {
       updatePostInCache(postId, (p) => ({

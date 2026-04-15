@@ -1,0 +1,1 @@
+import{r as c}from"./react-vendor-DxXD0FRe.js";function a(r){c.useEffect(()=>{const o=s=>{const t=s.target;if(!t)return;const e=t.tagName;e!=="INPUT"&&e!=="TEXTAREA"&&e!=="SELECT"||setTimeout(()=>{t.scrollIntoView({behavior:"smooth",block:"center"})},350)},n=document;return n.addEventListener("focusin",o),()=>n.removeEventListener("focusin",o)},[r])}export{a as u};

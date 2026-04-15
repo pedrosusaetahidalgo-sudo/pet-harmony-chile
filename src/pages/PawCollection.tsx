@@ -25,6 +25,7 @@ import { getRarity, RARITY_LABELS, RARITY_RING } from '@/components/PetCardCompa
 import { HOLO_PATTERN_MAP, getSpeciesPalette } from '@/lib/paw-cards';
 import type { HoloPattern } from '@/lib/paw-cards';
 import type { CollectedCard } from '@/hooks/usePawCollection';
+import { PawLabsBanner } from '@/components/PawLabsBanner';
 
 function MiniPawCard({
   card,
@@ -306,7 +307,8 @@ const PawCollection = () => {
         <title>Mi Coleccion — Paw Friend</title>
       </Helmet>
 
-      <div className="container px-4 py-8 max-w-6xl mx-auto animate-fade-in paw-collection-bg">
+      <div className="container px-4 py-8 max-w-6xl mx-auto animate-fade-in paw-collection-bg space-y-6">
+        <PawLabsBanner description="Colecciona Paw Cards escaneando QR de otras mascotas. Sistema de coleccion en desarrollo." />
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="shrink-0">

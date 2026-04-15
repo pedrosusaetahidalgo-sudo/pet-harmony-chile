@@ -60,3 +60,30 @@ verify_jwt = false
 
 [functions.generate-weekly-vet-reports]
 verify_jwt = false
+
+# ── Funciones que faltaban en config.toml (agregadas 2026-04-14) ──
+# Usadas activamente desde el frontend pero no declaradas previamente.
+
+[functions.send-pet-invitation]
+verify_jwt = false
+
+[functions.bereavement-assistant]
+verify_jwt = false
+
+[functions.ocr-vaccination-card]
+verify_jwt = false
+
+[functions.log-error]
+verify_jwt = false
+
+[functions.process-consultation-transcript]
+verify_jwt = false
+
+[functions.generate-vet-patient-summary]
+verify_jwt = false
+
+[functions.verify-service-provider]
+verify_jwt = false
+
+[functions.verify-vet-document]
+verify_jwt = false

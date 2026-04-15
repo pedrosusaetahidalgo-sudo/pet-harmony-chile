@@ -86,6 +86,33 @@ export const ADMIN_ROUTES = ['/admin'] as const;
  * | post-logout     | -                  | `/auth`                       |
  * | 404 real        | cualquier sin match| `<NotFound>` con CTAs         |
  */
+/**
+ * Rutas exclusivas para dueños (owner). Un provider que intente acceder
+ * via URL directa sera redirigido a `/provider/dashboard` por RoleGuard.
+ */
+export const OWNER_ONLY_ROUTES = ['/paw-collection', '/misiones', '/paw-game'] as const;
+
+/**
+ * Rutas exclusivas para proveedores. Un owner que intente acceder
+ * sera redirigido a `/home` por RoleGuard.
+ */
+export const PROVIDER_ONLY_ROUTES = [
+  '/provider/dashboard',
+  '/provider/pacientes',
+  '/provider/profile-edit',
+  '/panel-pro',
+] as const;
+
+/** Check if a path is an owner-only route */
+export function isOwnerRoute(path: string): boolean {
+  return OWNER_ONLY_ROUTES.some((r) => path.startsWith(r));
+}
+
+/** Check if a path is a provider-only route */
+export function isProviderRoute(path: string): boolean {
+  return PROVIDER_ONLY_ROUTES.some((r) => path.startsWith(r));
+}
+
 export const AUTH_REDIRECTS = {
   /** Usuario logueado entra a la landing */
   loggedInOnLanding: '/home',

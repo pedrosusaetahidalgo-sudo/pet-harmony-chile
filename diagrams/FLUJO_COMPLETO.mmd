@@ -1,14 +1,15 @@
 flowchart TD
     %% ============================================================
     %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-14
-    %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (21 activas).
-    %% Cambios 2026-04-14:
-    %%   - Poda: Paw Game, Missions, PawCollection, Community, Demo, Reportes eliminados
-    %%   - Sidebar Owner: Salud | Descubrir | Social (solo Feed+Mensajes)
-    %%   - PDF cronologico ASC con notas vet intercaladas
-    %%   - Deduplicacion mascotas (microchip UNIQUE + deteccion nombre+especie)
-    %%   - Auto-reminders: vacuna next_date, bookings, claim pet
-    %%   - Weight history auto-append trigger
+    %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (26 activas).
+    %% Cambios 2026-04-14 (sesion hardening):
+    %%   - Paw Game, Missions, PawCollection restaurados como Labs (RoleGuard owner-only)
+    %%   - Community restaurada como Labs
+    %%   - Re-claim: useAutoClaimByEmail + ClaimPetDialog en /my-pets
+    %%   - Admin: mascotas pendientes, KPIs ampliados
+    %%   - Sidebar Owner: Salud | Descubrir | Comunidad (Feed+Mensajes+Labs)
+    %%   - 26 edge functions en config.toml (8 nuevas agregadas)
+    %%   - Leaflet chunk split para performance
     %% Regla: este archivo es UN SOLO bloque pegable en mermaid.live
     %% y se actualiza en el MISMO commit que cualquier cambio de flujo.
     %% Ver CLAUDE.md §9.7.1
@@ -259,12 +260,16 @@ flowchart TD
     SB_BUSCAR_VET --> VET_DIR
     SVC --> VET_DIR
 
-    %% ============ SIDEBAR: SOCIAL ============
-    subgraph SOCIAL["SIDEBAR: SOCIAL"]
+    %% ============ SIDEBAR: COMUNIDAD ============
+    subgraph SOCIAL["SIDEBAR: COMUNIDAD"]
         direction TB
         FEED_SB["Feed /feed"]
         CHAT_PAGE["Mensajes /chat"]
         CHAT_PAGE --> CHAT_CONV["/chat/:conversationId realtime"]
+        COMMUNITY_SB["Comunidad /comunidad (Labs)"]
+        PAWGAME_SB["Paw Game /paw-game (Labs, owner-only)"]
+        MISSIONS_SB["Misiones /misiones (Labs, owner-only)"]
+        COLLECTION_SB["Coleccion /paw-collection (Labs, owner-only)"]
     end
 
     FEED_SB --> FEED_LIST
@@ -336,6 +341,13 @@ flowchart TD
     VET_INVITE_EMAIL --> VET_CLAIM["Dueno reclama mascota"]
     VET_CLAIM --> VET_CLAIM_REM["Auto-crear reminders default"]
 
+    %% Re-claim si pierde email
+    PET_LIST --> RECLAIM_BTN["Boton: Tengo codigo de mi vet"]
+    RECLAIM_BTN --> RECLAIM_TOKEN["ClaimPetDialog: pega token"]
+    RECLAIM_TOKEN --> VET_CLAIM
+    PET_LIST --> AUTO_CLAIM["useAutoClaimByEmail: match email"]
+    AUTO_CLAIM --> VET_CLAIM
+
     %% Notas clinicas
     VET_PAT_LIST --> VET_NOTE["Crear nota clinica"]
     VET_SHARED --> VET_NOTE
@@ -377,7 +389,7 @@ flowchart TD
     WEIGHT_CHK -->|Si| WEIGHT_APPEND["Trigger: append weight_history"]
 
     %% ============ BACKEND ============
-    subgraph BACKEND["BACKEND AUTOMATICO (21 edge functions + cron)"]
+    subgraph BACKEND["BACKEND AUTOMATICO (26 edge functions + cron)"]
         direction TB
         CRON["Cron diario 9AM Chile"]
         CRON --> CRON_REMIND["edge fn reminder-cron"]
@@ -398,6 +410,7 @@ flowchart TD
         ADM --> ADM_V["Verificacion Colmevet"]
         ADM --> ADM_M["Moderacion"]
         ADM --> ADM_MET["Metricas"]
+        ADM --> ADM_PEND["Mascotas pendientes"]
     end
 
     %% ============ SEO ============

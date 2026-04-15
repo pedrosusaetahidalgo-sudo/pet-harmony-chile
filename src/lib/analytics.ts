@@ -7,7 +7,7 @@
  * when ready for production analytics.
  */
 
-import { logger } from "@/lib/logger";
+import { logger } from '@/lib/logger';
 
 interface TrackEvent {
   event: string;
@@ -20,70 +20,78 @@ const IS_DEV = import.meta.env.DEV;
 // Key events to track
 export const EVENTS = {
   // Auth
-  SIGNUP_STARTED: "signup_started",
-  SIGNUP_COMPLETED: "signup_completed",
-  LOGIN_COMPLETED: "login_completed",
-  LOGOUT: "logout",
+  SIGNUP_STARTED: 'signup_started',
+  SIGNUP_COMPLETED: 'signup_completed',
+  LOGIN_COMPLETED: 'login_completed',
+  LOGOUT: 'logout',
 
   // Onboarding
-  ONBOARDING_STARTED: "onboarding_started",
-  ONBOARDING_STEP: "onboarding_step",
-  ONBOARDING_COMPLETED: "onboarding_completed",
-  ONBOARDING_SKIPPED: "onboarding_skipped",
+  ONBOARDING_STARTED: 'onboarding_started',
+  ONBOARDING_STEP: 'onboarding_step',
+  ONBOARDING_COMPLETED: 'onboarding_completed',
+  ONBOARDING_SKIPPED: 'onboarding_skipped',
 
   // Pets
-  PET_CREATED: "pet_created",
-  PET_PROFILE_VIEWED: "pet_profile_viewed",
-  CLINICAL_RECORD_VIEWED: "clinical_record_viewed",
-  CLINICAL_PDF_DOWNLOADED: "clinical_pdf_downloaded",
+  PET_CREATED: 'pet_created',
+  PET_PROFILE_VIEWED: 'pet_profile_viewed',
+  CLINICAL_RECORD_VIEWED: 'clinical_record_viewed',
+  CLINICAL_PDF_DOWNLOADED: 'clinical_pdf_downloaded',
 
   // Medical
-  MEDICAL_RECORD_ADDED: "medical_record_added",
-  REMINDER_CREATED: "reminder_created",
-  REMINDER_COMPLETED: "reminder_completed",
-  DOCUMENT_UPLOADED: "document_uploaded",
+  MEDICAL_RECORD_ADDED: 'medical_record_added',
+  REMINDER_CREATED: 'reminder_created',
+  REMINDER_COMPLETED: 'reminder_completed',
+  DOCUMENT_UPLOADED: 'document_uploaded',
 
   // Social
-  POST_CREATED: "post_created",
-  POST_LIKED: "post_liked",
-  COMMENT_ADDED: "comment_added",
-  USER_FOLLOWED: "user_followed",
+  POST_CREATED: 'post_created',
+  POST_LIKED: 'post_liked',
+  COMMENT_ADDED: 'comment_added',
+  USER_FOLLOWED: 'user_followed',
 
   // Services
-  PROVIDER_VIEWED: "provider_viewed",
-  BOOKING_STARTED: "booking_started",
-  BOOKING_COMPLETED: "booking_completed",
-  CHECKOUT_STARTED: "checkout_started",
-  PAYMENT_COMPLETED: "payment_completed",
+  PROVIDER_VIEWED: 'provider_viewed',
+  BOOKING_STARTED: 'booking_started',
+  BOOKING_COMPLETED: 'booking_completed',
+  CHECKOUT_STARTED: 'checkout_started',
+  PAYMENT_COMPLETED: 'payment_completed',
 
   // Gamification
-  STREAK_CLAIMED: "streak_claimed",
-  MISSION_COMPLETED: "mission_completed",
-  BADGE_EARNED: "badge_earned",
-  POINTS_EARNED: "points_earned",
-  LEVEL_UP: "level_up",
+  STREAK_CLAIMED: 'streak_claimed',
+  MISSION_COMPLETED: 'mission_completed',
+  BADGE_EARNED: 'badge_earned',
+  POINTS_EARNED: 'points_earned',
+  LEVEL_UP: 'level_up',
 
   // Premium
-  PREMIUM_VIEWED: "premium_viewed",
-  PREMIUM_STARTED: "premium_started",
-  PREMIUM_CONVERTED: "premium_converted",
+  PREMIUM_VIEWED: 'premium_viewed',
+  PREMIUM_STARTED: 'premium_started',
+  PREMIUM_CONVERTED: 'premium_converted',
 
   // Pro Analytics
-  ANALYTICS_PREVIEW_VIEWED: "analytics_preview_viewed",
-  ANALYTICS_PREVIEW_CTA_CLICKED: "analytics_preview_cta_clicked",
-  PRO_PANEL_VIEWED: "pro_panel_viewed",
-  PRO_PANEL_FILTER_CHANGED: "pro_panel_filter_changed",
-  PRO_PANEL_EXPORT_CLICKED: "pro_panel_export_clicked",
-  PRO_PANEL_UPGRADE_CTA_CLICKED: "pro_panel_upgrade_cta_clicked",
-  VET_REPORT_VIEWED: "vet_report_viewed",
+  ANALYTICS_PREVIEW_VIEWED: 'analytics_preview_viewed',
+  ANALYTICS_PREVIEW_CTA_CLICKED: 'analytics_preview_cta_clicked',
+  PRO_PANEL_VIEWED: 'pro_panel_viewed',
+  PRO_PANEL_FILTER_CHANGED: 'pro_panel_filter_changed',
+  PRO_PANEL_EXPORT_CLICKED: 'pro_panel_export_clicked',
+  PRO_PANEL_UPGRADE_CTA_CLICKED: 'pro_panel_upgrade_cta_clicked',
+  VET_REPORT_VIEWED: 'vet_report_viewed',
+
+  // Reviews
+  REVIEW_CREATED: 'review_created',
+  REVIEW_INVITATION_SENT: 'review_invitation_sent',
+
+  // Chat / messaging
+  CONVERSATION_STARTED: 'conversation_started',
+  MESSAGE_SENT: 'message_sent',
 
   // Engagement
-  APP_OPENED: "app_opened",
-  PAGE_VIEWED: "page_viewed",
-  SEARCH_USED: "search_used",
-  MAP_OPENED: "map_opened",
-  CHAT_STARTED: "chat_started",
-  SHARE_LINK_CREATED: "share_link_created",
+  APP_OPENED: 'app_opened',
+  PAGE_VIEWED: 'page_viewed',
+  SEARCH_USED: 'search_used',
+  MAP_OPENED: 'map_opened',
+  CHAT_STARTED: 'chat_started',
+  SHARE_LINK_CREATED: 'share_link_created',
 } as const;
 
 /**
@@ -103,7 +111,7 @@ export function track({ event, properties, userId }: TrackEvent): void {
   };
 
   if (IS_DEV) {
-    logger.debug("[Analytics]", payload.event, payload.properties);
+    logger.debug('[Analytics]', payload.event, payload.properties);
   }
 
   // NOTE: integración con provider externo (mixpanel/posthog/amplitude) pendiente
@@ -118,7 +126,7 @@ export function track({ event, properties, userId }: TrackEvent): void {
  */
 export function identify(userId: string, traits?: Record<string, unknown>): void {
   if (IS_DEV) {
-    logger.debug("[Analytics] Identify:", userId, traits);
+    logger.debug('[Analytics] Identify:', userId, traits);
   }
 
   // NOTE: integración con provider externo (mixpanel/posthog/amplitude) pendiente

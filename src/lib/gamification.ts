@@ -53,7 +53,7 @@ export function progressToNextLevel(currentPoints: number, currentLevel: number)
   const pointsForNext = pointsForNextLevel(currentLevel);
   const pointsInCurrentLevel = currentPoints - pointsForCurrent;
   const pointsNeeded = pointsForNext - pointsForCurrent;
-  
+
   if (pointsNeeded === 0) return 100;
   return Math.min(100, Math.max(0, (pointsInCurrentLevel / pointsNeeded) * 100));
 }
@@ -61,23 +61,11 @@ export function progressToNextLevel(currentPoints: number, currentLevel: number)
 /**
  * Get points for an action type
  */
-export function getPointsForAction(actionType: keyof PointsConfig, config: PointsConfig = DEFAULT_POINTS_CONFIG): number {
+export function getPointsForAction(
+  actionType: keyof PointsConfig,
+  config: PointsConfig = DEFAULT_POINTS_CONFIG
+): number {
   return config[actionType] || 0;
-}
-
-/**
- * Award points for an action
- * This should be called from the backend, but we provide the utility here
- */
-export async function awardPoints(
-  userId: string,
-  points: number,
-  actionType: string,
-  actionId?: string,
-  description?: string
-): Promise<void> {
-  // NOTE: placeholder. La asignación de puntos hoy se hace directamente desde
-  // useGamification.tsx. Si se mueve la lógica al backend, hacerlo acá.
 }
 
 /**
@@ -123,4 +111,3 @@ export function getLevelInfo(level: number): { name: string; color: string } {
   if (level >= 5) return { name: 'Avanzado', color: 'text-green-600' };
   return { name: 'Principiante', color: 'text-slate-600' };
 }
-

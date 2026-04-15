@@ -72,6 +72,7 @@ export default function MedicalShare() {
   const [pet, setPet] = useState<SharedPet | null>(null);
   const [records, setRecords] = useState<MedicalRecord[]>([]);
   const [ownerName, setOwnerName] = useState<string | null>(null);
+  const [expiresAt, setExpiresAt] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token) {
@@ -109,6 +110,8 @@ export default function MedicalShare() {
         setLoading(false);
         return;
       }
+
+      setExpiresAt(tokenData.expires_at);
 
       // 2. Actualizar last_accessed_at
       await supabase
@@ -201,9 +204,14 @@ export default function MedicalShare() {
           </div>
           <h1 className="text-2xl font-bold mb-2">No se puede acceder</h1>
           <p className="text-muted-foreground mb-6">{error}</p>
-          <Link to="/">
-            <Button>Ir al inicio</Button>
-          </Link>
+          <div className="flex gap-3 justify-center">
+            <Button variant="outline" onClick={() => window.location.reload()}>
+              Reintentar
+            </Button>
+            <Link to="/">
+              <Button>Ir al inicio</Button>
+            </Link>
+          </div>
         </main>
         <PublicFooter />
       </div>
@@ -339,6 +347,17 @@ export default function MedicalShare() {
           </CardContent>
         </Card>
 
+        {/* Banner de acceso temporal */}
+        {expiresAt && (
+          <div className="flex items-center gap-2 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-800">
+            <Shield className="h-4 w-4 flex-shrink-0" />
+            <span>
+              Acceso temporal a esta ficha — expira el{' '}
+              {format(new Date(expiresAt), "d 'de' MMMM yyyy", { locale: es })}
+            </span>
+          </div>
+        )}
+
         {/* Botones de acción */}
         <div className="flex gap-2">
           <Button onClick={handleWhatsAppShare} variant="outline" className="flex-1">
@@ -383,29 +402,44 @@ export default function MedicalShare() {
           </Button>
         </div>
 
-        {/* Vacunas */}
-        <RecordSection
-          title="Vacunas"
-          icon={<Syringe className="h-5 w-5 text-green-600" />}
-          records={vaccines}
-          emptyText="Sin vacunas registradas"
-        />
+        {records.length === 0 ? (
+          <Card>
+            <CardContent className="flex flex-col items-center justify-center py-12 text-center">
+              <Stethoscope className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Sin registros médicos</h3>
+              <p className="text-muted-foreground text-sm max-w-md">
+                Esta mascota aún no tiene registros clínicos. El dueño puede agregar vacunas,
+                consultas y desparasitaciones desde su ficha clínica.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <>
+            {/* Vacunas */}
+            <RecordSection
+              title="Vacunas"
+              icon={<Syringe className="h-5 w-5 text-green-600" />}
+              records={vaccines}
+              emptyText="Sin vacunas registradas"
+            />
 
-        {/* Consultas */}
-        <RecordSection
-          title="Consultas veterinarias"
-          icon={<Stethoscope className="h-5 w-5 text-purple-600" />}
-          records={consultations}
-          emptyText="Sin consultas registradas"
-        />
+            {/* Consultas */}
+            <RecordSection
+              title="Consultas veterinarias"
+              icon={<Stethoscope className="h-5 w-5 text-purple-600" />}
+              records={consultations}
+              emptyText="Sin consultas registradas"
+            />
 
-        {/* Desparasitaciones */}
-        <RecordSection
-          title="Desparasitaciones"
-          icon={<Shield className="h-5 w-5 text-blue-600" />}
-          records={dewormings}
-          emptyText="Sin desparasitaciones registradas"
-        />
+            {/* Desparasitaciones */}
+            <RecordSection
+              title="Desparasitaciones"
+              icon={<Shield className="h-5 w-5 text-blue-600" />}
+              records={dewormings}
+              emptyText="Sin desparasitaciones registradas"
+            />
+          </>
+        )}
 
         {/* Footer */}
         <p className="text-center text-xs text-muted-foreground py-4">

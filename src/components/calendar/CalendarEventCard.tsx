@@ -61,7 +61,11 @@ export function CalendarEventCard({ event, onTap }: CalendarEventCardProps) {
               ? event.category
               : event.type === 'reminder'
                 ? 'recordatorio'
-                : 'cita'}
+                : event.type === 'followup'
+                  ? 'seguimiento'
+                  : event.type === 'vet_booking'
+                    ? 'cita'
+                    : 'cita'}
           </span>
         </div>
       </div>

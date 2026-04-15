@@ -1,17 +1,19 @@
-import { PageHeader } from "@/components/PageHeader";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Send } from "@/lib/icons";
-import { useState, useEffect, useRef } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate, useParams } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
-import { logger } from "@/lib/logger";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { PageHeader } from '@/components/PageHeader';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Send } from '@/lib/icons';
+import { useState, useEffect, useRef } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
+import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { logger } from '@/lib/logger';
+import { VET_QUICK_REPLIES } from '@/lib/chatQuickReplies';
 
 const ChatConversation = () => {
   const { conversationId } = useParams();
@@ -21,7 +23,7 @@ const ChatConversation = () => {
   const [conversation, setConversation] = useState<any>(null);
   const [otherUser, setOtherUser] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
-  const [newMessage, setNewMessage] = useState("");
+  const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -39,7 +41,7 @@ const ChatConversation = () => {
   }, [messages]);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const setupRealtimeSubscription = () => {
@@ -51,11 +53,13 @@ const ChatConversation = () => {
           event: 'INSERT',
           schema: 'public',
           table: 'messages',
-          filter: `conversation_id=eq.${conversationId}`
+          filter: `conversation_id=eq.${conversationId}`,
         },
         (payload) => {
-          setMessages(prev => [...prev, payload.new]);
-          markAsRead().catch(() => { /* silent: mark-as-read failure is non-critical */ });
+          setMessages((prev) => [...prev, payload.new]);
+          markAsRead().catch(() => {
+            /* silent: mark-as-read failure is non-critical */
+          });
         }
       )
       .subscribe();
@@ -81,9 +85,8 @@ const ChatConversation = () => {
       setConversation(convData);
 
       // Get other user ID
-      const otherUserId = convData.participant1_id === user?.id 
-        ? convData.participant2_id 
-        : convData.participant1_id;
+      const otherUserId =
+        convData.participant1_id === user?.id ? convData.participant2_id : convData.participant1_id;
 
       // Load other user profile
       const { data: profileData } = await supabase
@@ -108,9 +111,9 @@ const ChatConversation = () => {
     } catch (error) {
       logger.error('Error loading conversation:', error);
       toast({
-        variant: "destructive",
-        title: "Algo salió mal",
-        description: "No se pudo cargar la conversación"
+        variant: 'destructive',
+        title: 'Algo salió mal',
+        description: 'No se pudo cargar la conversación',
       });
       navigate('/chat');
     } finally {
@@ -133,24 +136,22 @@ const ChatConversation = () => {
     if (!newMessage.trim() || !conversationId || !user) return;
 
     try {
-      const { error } = await supabase
-        .from('messages')
-        .insert({
-          conversation_id: conversationId,
-          sender_id: user.id,
-          content: newMessage.trim()
-        });
+      const { error } = await supabase.from('messages').insert({
+        conversation_id: conversationId,
+        sender_id: user.id,
+        content: newMessage.trim(),
+      });
 
       if (error) throw error;
 
-      setNewMessage("");
+      setNewMessage('');
       inputRef.current?.focus();
     } catch (error) {
       logger.error('Error sending message:', error);
       toast({
-        variant: "destructive",
-        title: "Algo salió mal",
-        description: "No se pudo enviar el mensaje"
+        variant: 'destructive',
+        title: 'Algo salió mal',
+        description: 'No se pudo enviar el mensaje',
       });
     }
   };
@@ -178,7 +179,7 @@ const ChatConversation = () => {
   return (
     <>
       <PageHeader
-        title={otherUser?.display_name || "Conversación"}
+        title={otherUser?.display_name || 'Conversación'}
         subtitle={otherUser?.location || undefined}
         onBack={() => navigate('/chat')}
         actions={
@@ -196,9 +197,10 @@ const ChatConversation = () => {
           <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message, index) => {
               const isOwn = message.sender_id === user?.id;
-              const showDate = index === 0 || 
-                new Date(messages[index - 1].created_at).toDateString() !== 
-                new Date(message.created_at).toDateString();
+              const showDate =
+                index === 0 ||
+                new Date(messages[index - 1].created_at).toDateString() !==
+                  new Date(message.created_at).toDateString();
 
               return (
                 <div key={message.id}>
@@ -208,19 +210,23 @@ const ChatConversation = () => {
                         {new Date(message.created_at).toLocaleDateString('es-CL', {
                           day: 'numeric',
                           month: 'long',
-                          year: 'numeric'
+                          year: 'numeric',
                         })}
                       </span>
                     </div>
                   )}
-                  
+
                   <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-[75%] ${isOwn ? 'bg-primary text-primary-foreground' : 'bg-muted'} rounded-2xl px-4 py-2`}>
+                    <div
+                      className={`max-w-[75%] ${isOwn ? 'bg-primary text-primary-foreground' : 'bg-muted'} rounded-2xl px-4 py-2`}
+                    >
                       <p className="text-sm break-words">{message.content}</p>
-                      <p className={`text-xs mt-1 ${isOwn ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
+                      <p
+                        className={`text-xs mt-1 ${isOwn ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}
+                      >
                         {formatDistanceToNow(new Date(message.created_at), {
                           addSuffix: true,
-                          locale: es
+                          locale: es,
                         })}
                       </p>
                     </div>
@@ -235,13 +241,7 @@ const ChatConversation = () => {
           {messages.length <= 2 && (
             <div className="border-t px-4 pt-3 pb-1">
               <div className="flex gap-1.5 overflow-x-auto scrollbar-hide pb-1">
-                {[
-                  "En horario laboral te respondo. Si es urgencia, llámame",
-                  "Para esa duda, te recomiendo agendar consulta",
-                  "¿Puedes mandarme una foto?",
-                  "Llega 10 minutos antes de tu hora",
-                  "Recuerda traer carnet de vacunas",
-                ].map((reply) => (
+                {VET_QUICK_REPLIES.map((reply) => (
                   <button
                     key={reply}
                     onClick={() => setNewMessage(reply)}

@@ -34,6 +34,8 @@ import {
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { useGoToAddPet } from '@/hooks/useCanAddPet';
 import { useClaimPetInvitation } from '@/hooks/useClaimPetInvitation';
+import { useAutoClaimByEmail } from '@/hooks/useAutoClaimByEmail';
+import { ClaimPetDialog } from '@/components/ClaimPetDialog';
 import { PawCardFlippable } from '@/components/paw-cards/PawCardFlippable';
 import { PawCardMemorial } from '@/components/paw-cards/PawCardMemorial';
 import { ShareWithVetModal } from '@/components/medical/ShareWithVetModal';
@@ -134,6 +136,8 @@ const MyPets = () => {
 
   // Procesar invitación si viene con ?invitation=TOKEN
   useClaimPetInvitation();
+  // Auto-claim mascotas pendientes que coincidan con el email del usuario
+  useAutoClaimByEmail();
 
   const fetchPets = useCallback(async () => {
     try {
@@ -327,7 +331,8 @@ const MyPets = () => {
           <h1 className="text-3xl font-bold mb-2">My Paws</h1>
           <p className="text-muted-foreground">Tus mascotas y sus Paw Cards</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap justify-end">
+          <ClaimPetDialog />
           <Button
             variant="outline"
             onClick={() => navigate('/paw-collection')}

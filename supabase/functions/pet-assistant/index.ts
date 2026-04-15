@@ -99,14 +99,10 @@ serve(async (req) => {
     }
 
     if (callsToday >= dailyLimit) {
-      const msg = !isPremium
-        ? 'Llegaste al límite de 1 consulta diaria del plan gratuito. Mejora a Premium para consultas ilimitadas.'
-        : `Límite diario alcanzado (${dailyLimit} consultas). Renueva mañana.`;
       return new Response(
         JSON.stringify({
-          error: msg,
+          error: `Límite diario alcanzado (${dailyLimit} consultas). Intenta de nuevo mañana.`,
           rate_limited: true,
-          is_premium: isPremium,
         }),
         {
           status: 429,

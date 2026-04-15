@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
-import { useToast } from "@/hooks/use-toast";
-import { logger } from "@/lib/logger";
+import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
+import { track, EVENTS } from '@/lib/analytics';
 
 export const useStartConversation = () => {
   const { user } = useAuth();
@@ -17,42 +18,41 @@ export const useStartConversation = () => {
     setLoading(true);
     try {
       // Check for mutual follow requirement
-      const { data: mutualFollow, error: followError } = await supabase
-        .rpc("is_mutual_follow", {
-          user1_id: user.id,
-          user2_id: otherUserId,
-        });
+      const { data: mutualFollow, error: followError } = await supabase.rpc('is_mutual_follow', {
+        user1_id: user.id,
+        user2_id: otherUserId,
+      });
 
       if (followError) {
-        logger.error("Error checking mutual follow:", followError);
+        logger.error('Error checking mutual follow:', followError);
       }
 
       if (!mutualFollow) {
         toast({
-          variant: "destructive",
-          title: "Seguimiento mutuo requerido",
-          description: "Debes seguir a este usuario y que él te siga para poder enviar mensajes. Sigue al usuario primero.",
+          variant: 'destructive',
+          title: 'Seguimiento mutuo requerido',
+          description:
+            'Debes seguir a este usuario y que él te siga para poder enviar mensajes. Sigue al usuario primero.',
         });
         setLoading(false);
         return;
       }
 
       // Check if user is blocked
-      const { data: isBlocked, error: blockError } = await supabase
-        .rpc("is_user_blocked", {
-          blocker_id: user.id,
-          blocked_id: otherUserId,
-        });
+      const { data: isBlocked, error: blockError } = await supabase.rpc('is_user_blocked', {
+        blocker_id: user.id,
+        blocked_id: otherUserId,
+      });
 
       if (blockError) {
-        logger.error("Error checking block status:", blockError);
+        logger.error('Error checking block status:', blockError);
       }
 
       if (isBlocked) {
         toast({
-          variant: "destructive",
-          title: "No se puede enviar mensaje",
-          description: "No puedes enviar mensajes a este usuario.",
+          variant: 'destructive',
+          title: 'No se puede enviar mensaje',
+          description: 'No puedes enviar mensajes a este usuario.',
         });
         setLoading(false);
         return;
@@ -79,21 +79,22 @@ export const useStartConversation = () => {
         .from('conversations')
         .insert({
           participant1_id: participant1,
-          participant2_id: participant2
+          participant2_id: participant2,
         })
         .select()
         .maybeSingle();
 
       if (error) throw error;
-      if (!newConv) throw new Error("No se pudo crear la conversación");
+      if (!newConv) throw new Error('No se pudo crear la conversación');
 
+      track({ event: EVENTS.CONVERSATION_STARTED, properties: { other_user_id: otherUserId } });
       navigate(`/chat/${newConv.id}`);
     } catch (error) {
       logger.error('Error starting conversation:', error);
       toast({
-        variant: "destructive",
-        title: "Algo salió mal",
-        description: "No se pudo iniciar la conversación"
+        variant: 'destructive',
+        title: 'Algo salió mal',
+        description: 'No se pudo iniciar la conversación',
       });
     } finally {
       setLoading(false);

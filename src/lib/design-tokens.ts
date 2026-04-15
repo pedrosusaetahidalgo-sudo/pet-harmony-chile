@@ -14,66 +14,94 @@
 export const SPACING = {
   /** Padding interno de cards */
   card: {
-    padding: "p-4",
-    paddingLg: "p-4 md:p-6",
-    gap: "gap-3",
+    padding: 'p-4',
+    paddingLg: 'p-4 md:p-6',
+    gap: 'gap-3',
   },
   /** Padding vertical de secciones grandes (mobile-first) */
   section: {
-    paddingY: "py-6 md:py-10",
-    paddingYLg: "py-8 md:py-12",
-    paddingYHero: "py-10 md:py-16",
-    gap: "gap-6",
+    paddingY: 'py-6 md:py-10',
+    paddingYLg: 'py-8 md:py-12',
+    paddingYHero: 'py-10 md:py-16',
+    gap: 'gap-6',
   },
   /** Padding horizontal de la página completa */
   page: {
-    paddingX: "px-4 md:px-6",
-    container: "container px-4 md:px-6",
+    paddingX: 'px-4 md:px-6',
+    container: 'container px-4 md:px-6',
   },
   /** Empty states centrados */
   empty: {
-    paddingY: "py-8 md:py-12",
+    paddingY: 'py-8 md:py-12',
   },
 } as const;
 
 export const TYPOGRAPHY = {
   /** Título de la página (uno por pantalla) */
-  pageTitle: "text-2xl md:text-3xl font-bold tracking-tight",
+  pageTitle: 'text-2xl md:text-3xl font-bold tracking-tight',
   /** Título de sección dentro de una página */
-  sectionTitle: "text-lg md:text-xl font-semibold",
+  sectionTitle: 'text-lg md:text-xl font-semibold',
   /** Título dentro de una card */
-  cardTitle: "text-base font-semibold",
+  cardTitle: 'text-base font-semibold',
   /** Contenido principal */
-  body: "text-base leading-relaxed",
+  body: 'text-base leading-relaxed',
   /** Label de un campo o metadato secundario */
-  label: "text-sm text-muted-foreground",
+  label: 'text-sm text-muted-foreground',
   /** Caption pequeño (timestamps, disclaimers, footers) */
-  caption: "text-xs text-muted-foreground",
+  caption: 'text-xs text-muted-foreground',
   /** Eyebrow (uppercase encima de un título) */
-  eyebrow: "text-xs uppercase tracking-wider font-semibold text-muted-foreground",
+  eyebrow: 'text-xs uppercase tracking-wider font-semibold text-muted-foreground',
 } as const;
 
 export const TOUCH = {
   /** Tamaño mínimo de touch target (44pt iOS / 48dp Android) */
-  minTarget: "min-h-11 min-w-11",
+  minTarget: 'min-h-11 min-w-11',
   /** Botón estándar */
-  button: "h-11 px-4",
+  button: 'h-11 px-4',
   /** Botón secundario */
-  buttonSm: "h-10 px-3 text-sm",
+  buttonSm: 'h-10 px-3 text-sm',
   /** Botón ícono cuadrado */
-  iconButton: "h-11 w-11",
+  iconButton: 'h-11 w-11',
   /** Touch optimization CSS */
-  optimized: "touch-manipulation active:scale-[0.98] transition-transform",
+  optimized: 'touch-manipulation active:scale-[0.98] transition-transform',
 } as const;
 
 export const RADIUS = {
-  card: "rounded-xl",
-  button: "rounded-lg",
-  pill: "rounded-full",
+  card: 'rounded-xl',
+  button: 'rounded-lg',
+  pill: 'rounded-full',
 } as const;
 
 export const SHADOWS = {
-  card: "shadow-sm",
-  cardHover: "hover:shadow-md transition-shadow",
-  elevated: "shadow-lg",
+  card: 'shadow-sm',
+  cardHover: 'hover:shadow-md transition-shadow',
+  elevated: 'shadow-lg',
+} as const;
+
+/** Colores semanticos por contexto */
+export const SEMANTIC_COLORS = {
+  /** Estados de salud de mascota */
+  health: {
+    good: 'bg-green-50 text-green-700 border-green-200',
+    warning: 'bg-amber-50 text-amber-700 border-amber-200',
+    danger: 'bg-red-50 text-red-700 border-red-200',
+  },
+  /** Badges de verificacion */
+  verified: 'bg-blue-50 text-blue-700 border-blue-200',
+  /** Premium / upgrade */
+  premium: 'bg-purple-50 text-purple-700 border-purple-200',
+  /** Labs / beta */
+  labs: 'bg-violet-50 text-violet-700 border-violet-200',
+  /** Tema proveedor/vet */
+  provider: {
+    accent: 'text-teal-700',
+    bg: 'bg-teal-50',
+    border: 'border-teal-200',
+  },
+  /** Tema dueno */
+  owner: {
+    accent: 'text-purple-700',
+    bg: 'bg-purple-50',
+    border: 'border-purple-200',
+  },
 } as const;

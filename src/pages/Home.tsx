@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -40,8 +40,16 @@ import { PriceEstimatorCard } from '@/components/home/PriceEstimatorCard';
 import { WeeklyReportCard } from '@/components/home/WeeklyReportCard';
 import { SeasonalTipsCard } from '@/components/home/SeasonalTipsCard';
 import { TodayRoutinesCard } from '@/components/home/TodayRoutinesCard';
-import { AnalyticsPreviewCard } from '@/components/analytics/AnalyticsPreviewCard';
-import { PetWellnessPreview } from '@/components/analytics/PetWellnessPreview';
+const AnalyticsPreviewCard = lazy(() =>
+  import('@/components/analytics/AnalyticsPreviewCard').then((m) => ({
+    default: m.AnalyticsPreviewCard,
+  }))
+);
+const PetWellnessPreview = lazy(() =>
+  import('@/components/analytics/PetWellnessPreview').then((m) => ({
+    default: m.PetWellnessPreview,
+  }))
+);
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { getRarity } from '@/components/PetCardCompact';
 import { RARITY_BORDER_STYLES } from '@/lib/paw-cards';
@@ -599,10 +607,10 @@ export default function Home() {
 
           {/* === Analytics preview cards === */}
           {isFeatureEnabled('PRO_ANALYTICS') && (
-            <>
+            <Suspense fallback={null}>
               <AnalyticsPreviewCard />
               {activePet && <PetWellnessPreview petId={activePet.id} petName={activePet.name} />}
-            </>
+            </Suspense>
           )}
         </>
       )}

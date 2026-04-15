@@ -1,7 +1,7 @@
 # Paw Friend -- Manual operativo para Claude Code
 
 > Este archivo es la fuente de verdad para cualquier agente o asistente IA que trabaje en este repositorio.
-> Actualizado: 2026-04-11.
+> Actualizado: 2026-04-14.
 
 ---
 
@@ -49,32 +49,37 @@ src/
   App.tsx              # Rutas principales (lazy-loaded)
   main.tsx             # Entry point
   index.css            # Tailwind + globals
-  pages/               # Una pagina por ruta (~35 archivos)
-  components/          # Componentes reutilizables (~60 top-level + subdirs)
-    ui/                # shadcn/ui primitivos (accordion, button, card, etc.)
-    admin/             # Panel admin
-    ai/                # Componentes de IA (breed tips, pet assistant)
-    calendar/          # Calendario y reservas
-    home/              # Home dashboard
-    maps/              # Mapa Leaflet
-    medical/           # Ficha clinica, PDF, compartir
-    paw-cards/         # Paw Cards coleccionables (TCG flip, QR, holograficos)
-    pawgame/           # Mini-juego gamificacion
-    provider/          # Dashboard y perfil de proveedores/vets
-    reviews/           # Resenas
-    settings/          # Configuracion usuario
-    social/            # Feed, posts, follows
-  hooks/               # Custom hooks (~30 archivos, useXxx.tsx/.ts)
-  lib/                 # Utilidades y configuracion (~20 archivos)
+  pages/               # Una pagina por ruta (64 archivos incl. PetClinicalRecord/)
+  components/          # Componentes reutilizables (261 archivos en 20 subdirs)
+    ui/                # shadcn/ui primitivos (51 archivos, kebab-case)
+    admin/             # Panel admin (21)
+    ai/                # Componentes de IA (6)
+    analytics/         # Analytics preview (4)
+    calendar/          # Calendario y reservas (7)
+    feed/              # Feed social (14)
+    home/              # Home dashboard (5)
+    maps/              # Mapa Leaflet (9)
+    medical/           # Ficha clinica, PDF, compartir (7)
+    memorial/          # Memorial mascotas (3)
+    onboarding/        # Onboarding OCR (1)
+    paw-cards/         # Paw Cards coleccionables (8)
+    pawgame/           # Mini-juego gamificacion (5)
+    profile/           # Perfil usuario (5)
+    provider/          # Dashboard y perfil de proveedores/vets (28)
+    reviews/           # Resenas (5)
+    routines/          # Rutinas mascotas (4)
+    settings/          # Configuracion usuario (1)
+    social/            # Feed, posts, follows (1)
+  hooks/               # Custom hooks (63 archivos, useXxx.tsx/.ts)
+  lib/                 # Utilidades y configuracion (35 archivos + 7 tests)
   integrations/
     supabase/          # Cliente Supabase, types generados
-  contexts/            # (vacio actualmente)
   types/               # Tipos adicionales (capacitor-google-auth.d.ts, vetDirectory.ts)
   assets/              # Imagenes estaticas
 
 supabase/
-  functions/           # 21 Edge Functions Deno + _shared/ helpers
-  migrations/          # 88 migraciones SQL (hasta 20260428000000 + flag 99999999000000)
+  functions/           # 26 Edge Functions Deno + _shared/ (6 helpers)
+  migrations/          # 139 migraciones SQL (hasta 20260512000001 + flag 99999999000000)
   config.toml
 
 docs/                  # Output de `npm run build` (GitHub Pages). NO editar manualmente.
@@ -123,10 +128,10 @@ AGENTS.md              # Config para agentes IA (Cursor, Copilot, etc.)
 
 ---
 
-## 6. Edge Functions activas (21 + _shared)
+## 6. Edge Functions activas (26 + _shared)
 
 ```
-_shared/                         # Helpers compartidos (rate limit, AI base, payment)
+_shared/                         # Helpers compartidos (ai-base, cors, flow-utils, prompt-utils, rate-limit, payment-gateway)
 bereavement-assistant/           # Asistente IA empatico (memorial)
 breed-tips/                      # Tips por raza (IA)
 flow-create-subscription/        # Crear suscripcion Flow.cl
@@ -135,26 +140,31 @@ generate-medical-summary/        # PDF ficha medica
 generate-medical-zip/            # ZIP documentos medicos
 generate-shelters/               # Generar data de refugios
 generate-sitemap/                # Sitemap SEO
+generate-vet-patient-summary/    # Resumen consolidado pacientes vet
 generate-weekly-owner-reports/   # Reporte semanal dueno (salud mascotas)
 generate-weekly-vet-reports/     # Reporte semanal vet (stats consulta/rating)
 google-calendar-callback/        # OAuth callback Google Calendar
 google-calendar-disconnect/      # Desconectar Google Calendar
 google-calendar-oauth-init/      # Iniciar OAuth Google Calendar
 google-calendar-sync/            # Sync eventos Google Calendar
+log-error/                       # Error logging centralizado (Sentry-like)
 medical-suggestions/             # Sugerencias medicas IA basicas
 moderate-service-promotion/      # Moderacion de promociones
 ocr-vaccination-card/            # OCR de carnet de vacunacion (IA)
 pet-assistant/                   # Asistente IA basico de mascotas
+process-consultation-transcript/ # Transcripcion audio consulta vet
 reminder-cron/                   # Cron de recordatorios
 send-pet-invitation/             # Invitar dueno a gestionar mascota (vet)
 send-whatsapp-reminder/          # WhatsApp (pendiente verificacion Meta)
+verify-service-provider/         # Verificacion IA de proveedor
+verify-vet-document/             # Verificacion vet IA-assisted
 ```
 
 ---
 
 ## 7. Rutas principales (de src/App.tsx)
 
-### Publicas (sin login)
+### Publicas (sin login) — 18 rutas
 - `/` -- Landing
 - `/auth` -- Login/registro
 - `/veterinarios` -- Directorio publico vets
@@ -165,21 +175,21 @@ send-whatsapp-reminder/          # WhatsApp (pendiente verificacion Meta)
 - `/precios-veterinarios/comuna/:comuna`
 - `/para-veterinarios` -- Landing B2B
 - `/registro-veterinario` -- Registro vet
-- `/demo` -- Demo en vivo (uso interno ventas)
-- `/resena/:token` -- Dejar resena publica
-- `/terms`, `/privacy` -- Legales
-
-### Publicas (ampliacion)
 - `/registro-proveedor` -- Alias de `/registro-veterinario`
+- `/registro-partner` -- Registro partner
+- `/resena/:token` -- Dejar resena publica
 - `/qr/:token` -- Landing publica de QR de mascota
 - `/paw-card/:pawCardId` -- Landing publica de Paw Card coleccionable
 - `/medical-share/:token` -- Landing publica de ficha compartida (30 dias)
+- `/terms`, `/privacy` -- Legales
 
-### Protegidas (requieren auth)
+### Protegidas (requieren auth) — 38+ rutas
 - `/home` -- Dashboard principal
 - `/feed` -- Feed social
 - `/comunidad`, `/comunidad/:slug` -- Grupos de comunidad (por raza/condicion)
 - `/my-pets` -- Mis mascotas
+- `/paw-collection` -- Coleccion de Paw Cards
+- `/misiones` -- Misiones gamificacion
 - `/add-pet`, `/edit-pet/:petId` -- CRUD mascotas
 - `/medical-records` -- Redirect legacy → ficha clinica de primera mascota
 - `/reminders` -- Recordatorios
@@ -188,29 +198,38 @@ send-whatsapp-reminder/          # WhatsApp (pendiente verificacion Meta)
 - `/calendario` -- Calendario unificado (rutinas + recordatorios + citas)
 - `/ficha/:petId` -- Ficha clinica completa (legacy `/mascota/:petId/ficha-clinica` y `/pet/:petId/clinical` redirigen aqui)
 - `/adoption` -- Adopcion
+- `/paw-game` -- Mini-juego gamificacion
 - `/en-memoria` -- Memorial de mascotas fallecidas
+- `/donantes-sangre` -- Red donantes sangre
 - `/servicios` -- Directorio servicios
 - `/services/:type` -- Servicios por tipo (walkers, vets, sitters, trainers, groomers)
+- `/peluquero/perfil` -- Editar perfil groomer
 - `/maps` -- Mapa de servicios
 - `/chat`, `/chat/:conversationId` -- Chat
 - `/profile` -- Mi perfil
 - `/user/:userId` -- Perfil de otro usuario
-- `/settings` -- Configuracion
 - `/upgrade`, `/upgrade/success`, `/upgrade/cancel` -- Upgrade a Premium
 - `/payment-result` -- Resultado unificado Flow (?status=success|failed)
 - `/mis-reservas` -- Mis reservas
-- `/calendar` -- Redirect legacy a `/mis-reservas`
-- `/provider/dashboard` -- Dashboard proveedor
-- `/provider/profile-edit` -- Editar perfil proveedor
-- `/peluquero/perfil` -- Editar perfil groomer
+- `/reportes` -- Reportes semanales
 - `/onboarding-mascota` -- Onboarding minimal dueno
 - `/onboarding-vet` -- Onboarding minimal veterinario
-- `/reportes` -- Reportes semanales
-- `/panel-pro` -- Pro Analytics dashboard
 - `/analytics-demo` -- Analytics dashboard (standalone demo)
+
+### Provider (RoleGuard + ProtectedRoute) — 3 rutas
+- `/provider/dashboard` -- Dashboard proveedor
+- `/provider/pacientes` -- Lista pacientes
+- `/provider/profile-edit` -- Editar perfil proveedor
+
+### Admin (AdminRoute + ProtectedRoute) — 2 rutas
 - `/admin` -- Panel admin (requiere rol admin)
-- `/paw-collection` -- Coleccion de Paw Cards
-- `/paw-game` -- Mini-juego gamificacion
+- `/demo` -- Demo (admin-only)
+
+### Redirects legacy — 4
+- `/settings` → `/profile` (301)
+- `/calendar` → `/mis-reservas` (301)
+- `/mascota/:petId/ficha-clinica` → `/ficha/:petId`
+- `/pet/:petId/clinical` → `/ficha/:petId`
 
 ---
 
@@ -225,12 +244,15 @@ Ver `INDEX.md` para el indice completo con reglas de actualizacion.
 | `AGENTS.md` | Config para agentes IA (Cursor, Copilot, etc.) |
 | `diagrams/FLUJO_COMPLETO.mmd` | Diagrama Mermaid end-to-end |
 | `diagrams/FLUJOS_MERMAID.md` | Diagramas individuales por modulo |
-| `audits/REPORTE_CONSOLIDADO_2026_04_11.md` | Fuente de verdad del estado tecnico al 2026-04-11 |
+| `audits/AUDITORIA_UX_COMPLETA_2026_04_14.md` | Auditoria UX completa (reemplaza reporte 04-11) |
+| `audits/FEATURES_INCOMPLETAS_2026_04_14.md` | 28 features con gaps detectados |
+| `audits/CONTEXTO_REVISION_COMPLETA.txt` | Snapshot tecnico completo regenerado 2026-04-14 |
 | `audits/OPTIMIZACION_COSTOS_2026_04_12.md` | Analisis de costos operativos y plan de eficiencia |
 | `audits/COMPETENCIA_2026_04_08.md` | Analisis competitivo Chile |
 | `audits/CROSS_PLATFORM_COMPATIBILITY.md` | Compatibilidad multiplataforma (iOS, Android, Web) |
+| `audits/FEEDBACK_VET_SOFIA_2026_04_13.md` | Feedback de vet beta tester Sofia |
 | `docs-specs/` | Specs de features pendientes (ver INDEX.md para listado) |
-| `docs-design/PAW_CARDS_TCG_DESIGN.md` | Guia de diseno visual Paw Cards TCG |
+| `docs-design/PROVIDER_LAYOUT_REDESIGN.md` | Guia de diseno layout proveedor |
 | `_pending/` | Plans y blueprints pendientes de ejecutar (ver _pending/README.md) |
 | `_archive/` | Documentos ya ejecutados o superados por versiones mas recientes |
 
@@ -247,6 +269,8 @@ git add docs/ && git add -u
 
 ### 9.2. Migraciones SQL
 Generar archivo en `supabase/migrations/` con timestamp `YYYYMMDDHHMMSS_descripcion.sql`. **NUNCA** aplicar automaticamente. El dueno las aplica manualmente desde Supabase Dashboard > SQL Editor.
+
+**Nota sobre timestamps duplicados**: existen 3 pares de migraciones con el mismo timestamp (20260412200000, 20260413000000, 20260413200000). No rompen nada porque son idempotentes y afectan tablas distintas. Supabase las ejecuta en orden alfabetico cuando el timestamp coincide. NO renombrar archivos ya aplicados en produccion.
 
 ### 9.3. Pagos con Flow.cl
 Pagos Premium B2C y B2B usan **Flow.cl**, NO Webpay. Edge function `flow-create-subscription`. Credenciales como secrets de Supabase (nunca en codigo).
@@ -297,11 +321,12 @@ npm run dev            # Dev server (localhost:8080)
 npm run build          # Build produccion -> docs/
 npm run preview        # Preview del build
 npx tsc -b             # Type-check (NO existe npm run typecheck)
-npm run lint           # ESLint (existe en scripts pero sin config robusta)
+npm run lint           # ESLint (flat config, a11y warnings)
+npm run test           # Vitest unit tests (watch mode)
+npm run test:ci        # Vitest sin watch (CI)
+npm run test:e2e       # Playwright E2E (chromium, firefox, webkit)
 npx cap run android    # Compilar y correr en Android
 ```
-
-**NO existen**: `npm run test`, `npm run typecheck`. No listarlos como si existieran.
 
 ---
 
@@ -322,18 +347,80 @@ Estas features estan planificadas en el mega prompt futuro pero **NO existen en 
 
 ---
 
+## 11.1. Categorizacion de modulos (Core / Labs / Pro)
+
+| Categoria | Modulos | Descripcion |
+|---|---|---|
+| **Core** | Ficha clinica, PDF/ZIP, directorio vets, upgrade Premium, calendario, reminders, onboarding | Flujo principal de valor. No tocar sin QA. |
+| **Pro** | Analytics dashboard, reportes semanales, weekly summary | Funcionalidades premium con datos reales. Gate via `PremiumGate`/`PremiumNudge`. |
+| **Paw Labs (Beta)** | PawGame, Missions, PawCollection, Comunidad, Adopcion, Donantes de sangre | Features experimentales con banner `PawLabsBanner`. Funcionales pero en mejora continua. |
+| **Internal** | Admin panel, Demo, AnalyticsDashboard (standalone) | Herramientas internas. No visibles para usuarios normales. |
+
+Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que estan en beta. No eliminar estas rutas; mejorarlas iterativamente.
+
+---
+
+## 11.2. Modelo de roles y experiencias
+
+### Roles disponibles
+
+| Rol | Determinacion | Experiencia UI |
+|---|---|---|
+| **owner** (dueno) | Cualquier usuario autenticado. Default. | Entretenida: gamificacion, Paw Cards, feed social, colores vivos. |
+| **provider** (vet/profesional) | Registro en tabla `service_providers`. | Profesional: dashboard clinico, pacientes, agenda. Sin gamificacion. |
+| **admin** | Registro en tabla `admin_access` con `is_active=true`. | Panel interno con metricas, moderacion, sistema. |
+
+### Principios de separacion
+
+1. **Provider = profesional sin gamificacion**. Las vistas `/provider/*` no importan ni muestran Paw Game, Paw Cards, misiones, badges ni efectos visuales ludicos.
+2. **Owner = entretenido y util**. Las vistas de dueno pueden usar gradientes, animaciones holo, gamificacion, siempre alineada con salud real de la mascota.
+3. **Sin leakage**: menus, sidebar y bottom tabs muestran solo rutas del rol activo. Rutas owner-only (`/paw-game`, `/paw-collection`, `/misiones`) usan `RoleGuard requiredRole="owner"`. Rutas provider-only (`/provider/*`) usan `RoleGuard requiredRole="provider"`.
+
+### Cambio de rol (usuarios dual-role)
+
+- Hook: `useActiveRole()` en `src/hooks/useActiveRole.tsx`
+- Persiste en `localStorage` key `pf_active_role`
+- Toggle visible en Header solo si `isProvider=true`
+- Al cambiar a owner → redirect a `/home`
+- Al cambiar a provider → redirect a `/provider/dashboard`
+- `RoleGuard` auto-switchea si usuario accede a ruta del otro rol
+
+### Flujo mascota huerfana (vet crea mascota sin cuenta de dueno)
+
+1. Vet crea mascota via `NewPatientForm` → pet con `pending_owner_email`, `owner_id=null`
+2. Edge function `send-pet-invitation` envia email con token
+3. Dueno click link → `useClaimPetInvitation` reclama la mascota
+4. **Re-claim si pierde email**: `useAutoClaimByEmail` auto-detecta mascotas por email verificado
+5. **Re-claim manual**: boton "Tengo un codigo de mi vet" en `/my-pets` (`ClaimPetDialog`)
+6. Admin puede monitorear mascotas pendientes en Admin > Usuarios > Mascotas pendientes
+
+### Archivos clave
+
+- `src/hooks/useActiveRole.tsx` — contexto + provider + persistencia
+- `src/hooks/useIsAdmin.tsx` — deteccion admin (tabla + fallback RPC)
+- `src/components/RoleGuard.tsx` — guard de rutas por rol
+- `src/components/AdminRoute.tsx` — guard admin
+- `src/lib/routing.ts` — helpers `isOwnerRoute()`, `isProviderRoute()`, constantes
+- `src/components/Header.tsx:192-240` — toggle dueno/profesional
+
+---
+
 ## 12. Estado tecnico al cierre 2026-04-14
 
 | Metrica | Valor |
 |---|---|
 | `npx tsc -b` | 0 errores |
-| `npm run build` | Pasa (~25s) |
-| Bundle principal | ~291 kB / 89 kB gzip |
-| Vendor splitting | Configurado (react, query, ui, icons, date, supabase) |
-| Migraciones | 128, hasta `20260512000001` + flag `99999999000000_demo_seed_flag` — **todas aplicadas en prod** |
-| Edge functions | 21 activas + `_shared/` helpers |
+| `npm run build` | Pasa (1m 24s) |
+| Bundle principal (index) | ~334 kB / 100 kB gzip |
+| Chunk mas grande (Recharts) | 458 kB / 151 kB gzip |
+| Vendor splitting | 6 chunks (react, query, ui, icons, date, supabase) |
+| Archivos fuente (src/) | 432 total (64 pages, 261 components, 63 hooks, 35 libs) |
+| Migraciones | 139, hasta `20260512000001` + flag `99999999000000_demo_seed_flag` — **todas aplicadas en prod** |
+| Edge functions | 26 activas + `_shared/` (6 helpers) |
+| Rutas en App.tsx | 65 paths (18 publicas, 38+ protegidas, 3 provider, 2 admin, 4 redirects) |
 | Premium B2C Flow | Vivo con idempotencia + rate limit |
 | Google Calendar | Vivo end-to-end |
+| Sentry | Integrado (@sentry/react 10.47.0) |
 | WhatsApp Cloud API | Codigo listo, pendiente verificacion Meta Business |
 
 ---
@@ -367,3 +454,30 @@ Para tareas especializadas, invocar el subagente correspondiente. **13 agentes a
 | Code Reviewer | `code-reviewer.md` | Review de PRs y cambios |
 | UX Copy Chilean | `ux-copy-chilean.md` | Revision de copy en espanol chileno |
 | Performance Profiler | `performance-profiler.md` | Analisis de performance y bundle |
+
+---
+
+## 15. Planes ejecutados (2026-04-14)
+
+| Plan | Estado | Cambios clave |
+|---|---|---|
+| Perfeccionamiento clinico/premium | Aplicado | 3 friction points vet, MedicalShare mejorado, PremiumNudge en BreedTips, PawLabsBanner en 6 paginas, Recharts lazy-load |
+| Roles y experiencias | Aplicado | RoleGuard owner-only en gamificacion, routing helpers, contrato documentado |
+| Mascota huerfana re-claim | Aplicado | useAutoClaimByEmail, ClaimPetDialog, AdminPendingPets |
+| Limpieza de mocks | Aplicado | isPremium bug fix, AnalyticsDashboard aislado admin, chat quick replies extraidos, MOCKS_MAP.md |
+| Auditoria backend | Aplicado | 8 edge functions en config.toml, timestamps duplicados documentados |
+| Operacion y crecimiento 90d | Aplicado | KPIs en AdminDashboard, feature flags Labs, docs operacionales |
+
+### Documentos operacionales creados
+
+- `docs/ROADMAP_90_DIAS.md` — 18 items priorizados en 4 fases
+- `docs/CHECKLIST_OPERACION_DIARIA.md` — checklist de 10-15 min
+- `docs/RITUAL_WEEKLY_OPS.md` — revision semanal de KPIs y feedback
+- `docs/RELEASE_PROCESS.md` — flujo de release y checklist
+- `docs/FEATURE_FLAGS.md` — listado y reglas de feature flags
+- `docs/MOCKS_MAP.md` — auditoria de datos ficticios
+- `docs/PERFORMANCE_BUDGET.md` — Web Vitals targets y bundle limits
+- `docs/JOURNEYS_UX.md` — journeys dueno, vet y admin
+- `docs/EDGE_FUNCTIONS_MAP.md` — mapa de 26 edge fns + helpers
+- `CONTRIBUTING.md` — guia para colaboradores
+- `.github/PULL_REQUEST_TEMPLATE.md` — checklist de PR

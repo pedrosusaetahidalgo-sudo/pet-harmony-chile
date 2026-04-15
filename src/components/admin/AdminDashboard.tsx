@@ -225,7 +225,18 @@ export default function AdminDashboard() {
     queryKey: ['admin-extra-metrics'],
     staleTime: 60_000,
     queryFn: async () => {
-      const [pets, bookings, providers, reviews, posts] = await Promise.all([
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const sb = supabase as any;
+      const [
+        pets,
+        bookings,
+        providers,
+        reviews,
+        posts,
+        fichasConRegistros,
+        premiumActivos,
+        mascotasPendientes,
+      ] = await Promise.all([
         supabase
           .from('pets')
           .select('*', { count: 'exact', head: true })
@@ -234,22 +245,45 @@ export default function AdminDashboard() {
           .from('bookings')
           .select('*', { count: 'exact', head: true })
           .gte('created_at', weekAgo.toISOString()),
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (supabase.from('service_providers') as any)
+        sb
           .select('*', { count: 'exact', head: true })
+          .from('service_providers')
           .eq('status', 'approved'),
         supabase.from('service_reviews').select('*', { count: 'exact', head: true }),
         supabase
           .from('posts')
           .select('*', { count: 'exact', head: true })
           .gte('created_at', weekAgo.toISOString()),
+        // Fichas con al menos 1 registro medico
+        supabase.from('medical_records').select('pet_id', { count: 'exact', head: false }),
+        // Suscripciones Premium activas
+        supabase
+          .from('subscriptions')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'active'),
+        // Mascotas pendientes (creadas por vet, sin dueño)
+        sb
+          .from('pets')
+          .select('*', { count: 'exact', head: true })
+          .is('owner_id', null)
+          .not('created_by_vet_id', 'is', null)
+          .is('owner_invitation_accepted_at', null),
       ]);
+
+      // Contar pets unicos con registros
+      const uniquePetsWithRecords = new Set(
+        (fichasConRegistros.data ?? []).map((r: { pet_id: string }) => r.pet_id)
+      ).size;
+
       return {
         activePets: (pets.count as number | null) ?? 0,
         weekBookings: bookings.count ?? 0,
         approvedProviders: (providers.count as number | null) ?? 0,
         totalReviews: reviews.count ?? 0,
         weekPosts: posts.count ?? 0,
+        fichasConRegistros: uniquePetsWithRecords,
+        premiumActivos: premiumActivos.count ?? 0,
+        mascotasPendientes: (mascotasPendientes.count as number | null) ?? 0,
       };
     },
   });
@@ -389,8 +423,29 @@ export default function AdminDashboard() {
       </div>
 
       {/* Métricas secundarias */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <KpiCard title="Mascotas activas" value={extraMetrics?.activePets ?? 0} icon={PawPrint} />
+        <KpiCard
+          title="Fichas con registros"
+          value={extraMetrics?.fichasConRegistros ?? 0}
+          icon={FileCheck}
+          description="Mascotas con al menos 1 registro clinico"
+        />
+        <KpiCard
+          title="Premium activos"
+          value={extraMetrics?.premiumActivos ?? 0}
+          icon={CreditCard}
+          description="Suscripciones activas"
+        />
+        <KpiCard
+          title="Mascotas pendientes"
+          value={extraMetrics?.mascotasPendientes ?? 0}
+          icon={PawPrint}
+          description="Creadas por vet, esperando dueño"
+          alert={(extraMetrics?.mascotasPendientes ?? 0) > 0}
+        />
+      </div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <KpiCard title="Reservas (7d)" value={extraMetrics?.weekBookings ?? 0} icon={Clock} />
         <KpiCard
           title="Proveedores aprobados"

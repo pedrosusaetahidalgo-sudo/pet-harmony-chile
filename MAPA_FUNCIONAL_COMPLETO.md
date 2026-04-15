@@ -2,7 +2,8 @@
 
 > Documento de referencia: cada modulo, sus archivos, flujo end-to-end y oportunidades de mejora.
 > Generado: 2026-04-10. Verificado contra el codigo real.
-> Ultima sync de metricas: 2026-04-11 (88 migraciones, 21 edge functions + `_shared/`).
+> Ultima sync de metricas: 2026-04-14 (139 migraciones, 26 edge functions + `_shared/`).
+> Anotaciones de rol: owner (O), provider (P), admin (A), compartido (O+P).
 
 ---
 
@@ -34,6 +35,22 @@
 23. [Reportes Semanales](#23-reportes)
 24. [SEO y Sitemap](#24-seo)
 25. [Infraestructura y Layout](#25-infraestructura)
+
+### Leyenda de roles por modulo
+
+| Modulo | Rol | Guard |
+|---|---|---|
+| Autenticacion | Todos | ProtectedRoute |
+| Mascotas, Ficha Clinica | O+P | ProtectedRoute (compartido, UX diferente por rol) |
+| Recordatorios, Rutinas, Calendario | O | ProtectedRoute |
+| Directorio Vets | Publico + O+P | Sin guard / PublicWithLayout |
+| Dashboard Vet, Pacientes | P | RoleGuard(provider) |
+| Chat, Perfil, Reservas | O+P | ProtectedRoute |
+| Feed, Comunidad | O | ProtectedRoute |
+| Paw Game, Misiones, Coleccion | O | RoleGuard(owner) |
+| Adopcion, Donantes Sangre, Memorial | O (Labs) | ProtectedRoute |
+| Admin Panel | A | AdminRoute |
+| Analytics Pro, Reportes | O (Premium) | ProtectedRoute + PremiumGate |
 
 ---
 

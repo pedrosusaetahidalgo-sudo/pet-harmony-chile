@@ -4,6 +4,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock } from '@/lib/icons';
+import { Link } from 'react-router-dom';
+import { LINKS } from '@/lib/links';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
@@ -13,6 +15,7 @@ interface TodayBooking {
   scheduled_date: string;
   service_type: string | null;
   status: string;
+  pet_id: string | null;
   pet_name: string | null;
   owner_name: string | null;
 }
@@ -84,6 +87,7 @@ export function TodayAgendaCard() {
         scheduled_date: b.scheduled_date!,
         service_type: b.service_type,
         status: b.status!,
+        pet_id: b.pet_id || null,
         pet_name: b.pet_id ? petMap.get(b.pet_id) || null : null,
         owner_name: b.owner_id ? ownerMap.get(b.owner_id) || null : null,
       }));
@@ -116,11 +120,8 @@ export function TodayAgendaCard() {
                     minute: '2-digit',
                   })
                 : null;
-              return (
-                <div
-                  key={b.id}
-                  className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors"
-                >
+              const content = (
+                <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted/50 transition-colors">
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">
                       {b.pet_name || 'Paciente'}
@@ -141,6 +142,14 @@ export function TodayAgendaCard() {
                     {b.status}
                   </Badge>
                 </div>
+              );
+
+              return b.pet_id ? (
+                <Link key={b.id} to={LINKS.petClinical(b.pet_id)} className="block">
+                  {content}
+                </Link>
+              ) : (
+                <div key={b.id}>{content}</div>
               );
             })}
           </div>

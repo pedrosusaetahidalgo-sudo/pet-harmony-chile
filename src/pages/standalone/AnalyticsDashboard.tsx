@@ -1,18 +1,14 @@
 /**
- * Dashboard de Analytics standalone — NO linkeado a rutas ni navegacion.
+ * DEMO INTERNA — Dashboard de Analytics con datos 100% ficticios.
  *
- * Para probar: importar manualmente en App.tsx con una ruta temporal.
- * Usa datos mock para mostrar la experiencia completa sin depender de Supabase.
+ * Este archivo usa mock data para mostrar la UX completa de analytics
+ * sin depender de Supabase. NO es una vista de produccion.
  *
- * Incluye:
- * - KPIs resumen con indicadores de cambio
- * - Grafico de actividad mensual (AreaChart)
- * - Grafico de distribucion por tipo de servicio (BarChart horizontal)
- * - Grafico de bienestar por mascota (RadialBarChart)
- * - Comparativo de periodos (BarChart agrupado)
- * - Timeline de salud (LineChart)
- * - Tabla de eventos recientes
- * - Seccion vet con revenue y bookings
+ * Acceso: solo admin via /analytics-demo (AdminRoute en App.tsx).
+ * NO mostrar a usuarios finales. Para analytics reales ver:
+ * - src/pages/Reportes.tsx (reportes con datos reales)
+ * - src/components/analytics/AnalyticsPreviewCard.tsx (preview real)
+ * - src/components/admin/AdminAnalytics.tsx (admin real)
  */
 
 import { useState } from 'react';

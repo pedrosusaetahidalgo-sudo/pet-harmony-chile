@@ -22,6 +22,7 @@ import {
 import { useMissions, type MissionProgress } from '@/hooks/useMissions';
 import { useAchievements } from '@/hooks/useAchievements';
 import { cn } from '@/lib/utils';
+import { PawLabsBanner } from '@/components/PawLabsBanner';
 
 type CategoryTab =
   | 'all'
@@ -186,7 +187,8 @@ const Missions = () => {
         <title>Misiones — Paw Friend</title>
       </Helmet>
 
-      <div className="container px-4 py-8 max-w-4xl mx-auto animate-fade-in">
+      <div className="container px-4 py-8 max-w-4xl mx-auto animate-fade-in space-y-6">
+        <PawLabsBanner description="Completa misiones de cuidado para desbloquear logros. Sistema en mejora continua." />
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="shrink-0">

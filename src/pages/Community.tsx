@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Users, MessageCircle, Search, Send, ArrowLeft, Heart } from '@/lib/icons';
+import { PawLabsBanner } from '@/components/PawLabsBanner';
 import {
   useCommunityGroups,
   useMyGroupMemberships,
@@ -67,11 +68,14 @@ function GroupList() {
         )}
 
         {!isLoading && filtered.length === 0 && (
-          <EmptyState
-            icon={Users}
-            title="Sin grupos todavía"
-            description="Los grupos de comunidad estarán disponibles pronto."
-          />
+          <div className="space-y-4">
+            <PawLabsBanner description="Grupos por raza, condicion e interes. Estamos preparando los primeros grupos para que conectes con otros dueños." />
+            <EmptyState
+              icon={Users}
+              title="Grupos en camino"
+              description="Pronto podras unirte a grupos de tu raza favorita, compartir experiencias y aprender de otros dueños. Te notificaremos cuando esten listos."
+            />
+          </div>
         )}
 
         {filtered.map((group) => {

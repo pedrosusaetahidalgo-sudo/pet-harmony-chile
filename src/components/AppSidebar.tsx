@@ -26,7 +26,6 @@ import {
   Stethoscope,
   Bell,
   BarChart3,
-  Shield,
 } from '@/lib/icons';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { LINKS } from '@/lib/links';
@@ -34,7 +33,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 import { useActiveRole } from '@/hooks/useActiveRole';
-import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { supabase } from '@/integrations/supabase/client';
 
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -125,7 +123,6 @@ export function AppSidebar() {
   const { setOpenMobile } = useSidebar();
   const currentPath = location.pathname;
   const { role, isProvider } = useActiveRole();
-  const { isAdmin } = useIsAdmin();
   const { isPremium } = usePlan();
   const showPremiumBadges = isFeatureEnabled('USER_PREMIUM') && !isPremium;
 
@@ -336,33 +333,6 @@ export function AppSidebar() {
                   </SidebarGroup>
                 </>
               )}
-
-              {/* ADMIN (solo si tiene rol admin) */}
-              {isAdmin && (
-                <>
-                  <Separator className="mx-2 my-0.5" />
-                  <SidebarGroup className="py-0.5">
-                    <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5">
-                      <span className="text-purple-600">Admin</span>
-                      <Shield className="h-2.5 w-2.5 text-purple-500" />
-                    </SidebarGroupLabel>
-                    <SidebarGroupContent>
-                      <SidebarMenu className="space-y-0">
-                        <SidebarMenuItem>
-                          <SidebarMenuButton
-                            isActive={isActive('/admin')}
-                            onClick={() => handleNavigate('/admin')}
-                            className="h-7 text-xs rounded-md"
-                          >
-                            <Shield className="h-3.5 w-3.5 flex-shrink-0" />
-                            <span>Panel admin</span>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      </SidebarMenu>
-                    </SidebarGroupContent>
-                  </SidebarGroup>
-                </>
-              )}
             </>
           ) : (
             <>
@@ -453,52 +423,6 @@ export function AppSidebar() {
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     )}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
-
-              {/* ADMIN (solo si tiene rol admin) */}
-              {isAdmin && (
-                <>
-                  <Separator className="mx-2 my-0.5" />
-                  <SidebarGroup className="py-0.5">
-                    <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5">
-                      <span className="text-teal-600">Admin</span>
-                      <Shield className="h-2.5 w-2.5 text-teal-500" />
-                    </SidebarGroupLabel>
-                    <SidebarGroupContent>
-                      <SidebarMenu className="space-y-0">
-                        <SidebarMenuItem>
-                          <SidebarMenuButton
-                            isActive={isActive('/admin')}
-                            onClick={() => handleNavigate('/admin')}
-                            className="h-7 text-xs rounded-md"
-                          >
-                            <Shield className="h-3.5 w-3.5 flex-shrink-0" />
-                            <span>Panel admin</span>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      </SidebarMenu>
-                    </SidebarGroupContent>
-                  </SidebarGroup>
-                </>
-              )}
-
-              {/* Link compacto a mascotas para providers que también son dueños */}
-              <Separator className="mx-2 my-0.5" />
-              <SidebarGroup className="py-0.5">
-                <SidebarGroupContent>
-                  <SidebarMenu className="space-y-0">
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        isActive={isActive('/my-pets')}
-                        onClick={() => handleNavigate('/my-pets')}
-                        className="h-7 text-xs rounded-md text-purple-700"
-                      >
-                        <PawPrint className="h-3.5 w-3.5 flex-shrink-0 text-purple-500" />
-                        <span>My Paws</span>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
                   </SidebarMenu>
                 </SidebarGroupContent>
               </SidebarGroup>

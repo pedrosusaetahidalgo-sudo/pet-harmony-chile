@@ -52,3 +52,9 @@ e2e/.auth/
 
 # Bundle visualizer
 stats.html
+
+# Performance reports (Lighthouse)
+perf-reports/
+
+# Legacy junk folder (archivos pre-Claude, sin valor accionable)
+junk/

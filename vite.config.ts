@@ -42,6 +42,8 @@ export default defineConfig(() => ({
           'date-vendor': ['date-fns'],
           // Supabase client + auth listener.
           'supabase-vendor': ['@supabase/supabase-js'],
+          // Leaflet solo se usa en /maps (lazy). Chunk separado para no inflar index.
+          'leaflet-vendor': ['leaflet', 'react-leaflet'],
         },
       },
     },
