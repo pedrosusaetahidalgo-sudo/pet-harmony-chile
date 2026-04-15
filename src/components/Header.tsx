@@ -242,9 +242,9 @@ export const Header = () => {
             {role === 'owner' && (
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon"
                 onClick={() => navigate('/paw-collection')}
-                className="relative h-9 px-2.5 gap-1.5 paw-collection-btn group"
+                className="relative h-9 w-9 sm:w-auto sm:px-2.5 sm:gap-1.5 paw-collection-btn group"
               >
                 <Sparkles className="h-4 w-4 text-purple-500 group-hover:text-yellow-400 transition-colors duration-300" />
                 <span className="hidden sm:inline text-xs font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-amber-500 bg-clip-text text-transparent">
@@ -270,7 +270,11 @@ export const Header = () => {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-80 p-0" align="end">
+              <PopoverContent
+                className="w-[min(20rem,calc(100vw-2rem))] p-0"
+                align="end"
+                collisionPadding={8}
+              >
                 <div className="p-3 border-b flex items-center justify-between">
                   <h4 className="font-semibold text-sm">Notificaciones</h4>
                   {notifUnreadCount > 0 && (
@@ -357,7 +361,11 @@ export const Header = () => {
                   )}
                 </Button>
               </PopoverTrigger>
-              <PopoverContent className="w-80 p-0" align="end">
+              <PopoverContent
+                className="w-[min(20rem,calc(100vw-2rem))] p-0"
+                align="end"
+                collisionPadding={8}
+              >
                 <div className="p-3 border-b flex items-center justify-between">
                   <h4 className="font-semibold text-sm">Mensajes</h4>
                   <Button

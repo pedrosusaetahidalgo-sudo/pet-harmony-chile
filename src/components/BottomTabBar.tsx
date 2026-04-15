@@ -83,7 +83,7 @@ export function BottomTabBar() {
       matchPaths: (p) => p.startsWith('/veterinarios'),
     },
     {
-      label: 'Recordatorios',
+      label: 'Recordar',
       icon: Bell,
       href: '/reminders',
       matchPaths: (p) => p === '/reminders',
@@ -169,7 +169,14 @@ export function BottomTabBar() {
                   </span>
                 ) : null}
               </div>
-              <span className={cn('text-[10px]', active && 'font-semibold')}>{tab.label}</span>
+              <span
+                className={cn(
+                  'text-[10px] leading-tight truncate max-w-[56px]',
+                  active && 'font-semibold'
+                )}
+              >
+                {tab.label}
+              </span>
             </button>
           );
         })}

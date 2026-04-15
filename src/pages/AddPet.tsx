@@ -1124,19 +1124,28 @@ const AddPet = () => {
             </Card>
           </Collapsible>
 
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate(LINKS.myPets())}
-              className="w-full sm:flex-1 h-12"
-            >
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={loading || uploading} className="w-full sm:flex-1 h-12">
-              {loading ? 'Guardando...' : isEdit ? 'Guardar cambios' : 'Agregar Mascota'}
-            </Button>
+          {/* Actions — sticky en mobile para que el CTA siempre sea visible */}
+          <div
+            className="sticky bottom-0 -mx-4 px-4 py-3 bg-background/95 backdrop-blur border-t border-border/50 sm:static sm:mx-0 sm:px-0 sm:py-0 sm:bg-transparent sm:backdrop-blur-none sm:border-0"
+            style={{ paddingBottom: 'calc(var(--safe-area-bottom) + 0.75rem)' }}
+          >
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate(LINKS.myPets())}
+                className="w-full sm:flex-1 h-12"
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading || uploading}
+                className="w-full sm:flex-1 h-12"
+              >
+                {loading ? 'Guardando...' : isEdit ? 'Guardar cambios' : 'Agregar Mascota'}
+              </Button>
+            </div>
           </div>
         </form>
       </div>

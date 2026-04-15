@@ -326,27 +326,29 @@ const MyPets = () => {
 
   return (
     <div className="container px-4 py-8 max-w-6xl mx-auto animate-fade-in">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-8">
         <div>
-          <h1 className="text-3xl font-bold mb-2">My Paws</h1>
-          <p className="text-muted-foreground">Tus mascotas y sus Paw Cards</p>
+          <h1 className="text-2xl sm:text-3xl font-bold mb-1">My Paws</h1>
+          <p className="text-muted-foreground text-sm">Tus mascotas y sus Paw Cards</p>
         </div>
-        <div className="flex gap-2 flex-wrap justify-end">
+        <div className="flex gap-2 items-center">
           <ClaimPetDialog />
           <Button
             variant="outline"
+            size="icon"
             onClick={() => navigate('/paw-collection')}
-            className="border-purple-200/60 hover:bg-purple-50/50"
+            className="border-purple-200/60 hover:bg-purple-50/50 sm:w-auto sm:px-3"
+            title="Colección"
           >
-            <Trophy className="mr-2 h-4 w-4 text-purple-500" />
-            <span className="hidden sm:inline">Coleccion</span>
+            <Trophy className="h-4 w-4 text-purple-500" />
+            <span className="hidden sm:inline ml-2">Coleccion</span>
           </Button>
           <Button
             onClick={goToAddPet}
             className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-xl hover:scale-105"
           >
-            <Plus className="mr-2 h-5 w-5" />
-            Agregar Mascota
+            <Plus className="h-5 w-5 sm:mr-2" />
+            <span className="hidden sm:inline">Agregar Mascota</span>
           </Button>
         </div>
       </div>
