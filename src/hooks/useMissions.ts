@@ -35,7 +35,13 @@ export function useMissions() {
       if (!user) return [];
 
       // 1. Fetch mission definitions
-      const { data: missions } = (await (supabase.from('paw_missions' as any).select('*') as any)
+      const { data: missions } = (await (
+        supabase
+          .from('paw_missions' as any)
+          .select(
+            'id, title, description, category, icon, achievement_title, requirement_type, requirement_value, sort_order, is_active'
+          ) as any
+      )
         .eq('is_active', true)
         .order('sort_order', { ascending: true })) as { data: any[] | null };
 
@@ -278,6 +284,6 @@ export function useMissions() {
       });
     },
     enabled: !!user,
-    staleTime: 60_000,
+    staleTime: 5 * 60 * 1000,
   });
 }

@@ -138,6 +138,7 @@ export const useServiceProviders = () => {
         services: provider.provider_service_offerings || [],
       })) as ServiceProvider[];
     },
+    staleTime: 30 * 60 * 1000,
   });
 
   // Obtener proveedores por tipo de servicio
@@ -209,6 +210,7 @@ export const useMyProviderProfile = () => {
       } as ServiceProvider;
     },
     enabled: !!user,
+    staleTime: 30 * 60 * 1000,
   });
 
   // Crear o actualizar perfil de proveedor
@@ -406,6 +408,7 @@ export const useAdminServiceProviders = () => {
         services: provider.provider_service_offerings || [],
       })) as ServiceProvider[];
     },
+    staleTime: 30 * 60 * 1000,
   });
 
   // Cambiar estado de un proveedor

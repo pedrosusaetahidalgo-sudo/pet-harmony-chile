@@ -165,6 +165,9 @@ const Feed = () => {
           <Badge
             variant={filterType === null ? 'default' : 'outline'}
             className="cursor-pointer whitespace-nowrap shrink-0"
+            role="button"
+            aria-label="Mostrar todas las publicaciones"
+            aria-pressed={filterType === null}
             onClick={() => setFilterType(null)}
           >
             Todos
@@ -174,6 +177,9 @@ const Feed = () => {
               key={pt.value}
               variant={filterType === pt.value ? 'default' : 'outline'}
               className="cursor-pointer whitespace-nowrap shrink-0"
+              role="button"
+              aria-label={`Filtrar por ${pt.label}`}
+              aria-pressed={filterType === pt.value}
               onClick={() => setFilterType(filterType === pt.value ? null : pt.value)}
             >
               {pt.emoji} {pt.label}

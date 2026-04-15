@@ -1,7 +1,7 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 interface Notification {
   id: string;
@@ -18,23 +18,27 @@ export function useNotifications() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const userId = user?.id ?? "";
+  const userId = user?.id ?? '';
 
-  const { data: notifications = [], isLoading } = useQuery({
-    queryKey: ["notifications", user?.id],
+  const {
+    data: notifications = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['notifications', user?.id],
     queryFn: async () => {
       if (!userId) return [];
       const { data, error } = await supabase
-        .from("notifications")
-        .select("*")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
+        .from('notifications')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
         .limit(20);
       if (error) throw error;
       return (data || []) as Notification[];
     },
     enabled: !!user?.id,
-    staleTime: 60 * 1000, // 1 min
+    staleTime: 2 * 60 * 1000, // 2 min
   });
 
   const unreadCount = notifications.filter((n) => !n.is_read).length;
@@ -43,13 +47,13 @@ export function useNotifications() {
     mutationFn: async (notificationId: string) => {
       if (!userId) return;
       await supabase
-        .from("notifications")
+        .from('notifications')
         .update({ is_read: true })
-        .eq("id", notificationId)
-        .eq("user_id", userId);
+        .eq('id', notificationId)
+        .eq('user_id', userId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },
     onError: () => {
       // Silent for individual mark-as-read (not critical)
@@ -60,16 +64,20 @@ export function useNotifications() {
     mutationFn: async () => {
       if (!userId) return;
       await supabase
-        .from("notifications")
+        .from('notifications')
         .update({ is_read: true })
-        .eq("user_id", userId)
-        .eq("is_read", false);
+        .eq('user_id', userId)
+        .eq('is_read', false);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
+      queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },
     onError: () => {
-      toast({ title: "Algo salió mal", description: "No se pudieron marcar las notificaciones", variant: "destructive" });
+      toast({
+        title: 'Algo salió mal',
+        description: 'No se pudieron marcar las notificaciones',
+        variant: 'destructive',
+      });
     },
   });
 
@@ -77,6 +85,7 @@ export function useNotifications() {
     notifications,
     unreadCount,
     isLoading,
+    error,
     markAsRead: markAsRead.mutate,
     markAllRead: markAllRead.mutate,
   };

@@ -74,7 +74,9 @@ export default function MyBookings() {
       if (!user?.id) return [];
       const { data, error } = await supabase
         .from('bookings')
-        .select('*, service_slots(*)')
+        .select(
+          'id, payment_status, created_at, service_slots(id, slot_date, start_time, end_time, service_type, provider_id)'
+        )
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
       if (error) throw error;
@@ -143,7 +145,9 @@ export default function MyBookings() {
     queryFn: async () => {
       let query = supabase
         .from('service_slots')
-        .select('*')
+        .select(
+          'id, slot_date, start_time, end_time, service_type, provider_id, price, max_capacity, current_bookings, title, is_active'
+        )
         .eq('slot_date', dateStr)
         .eq('is_active', true)
         .order('start_time');

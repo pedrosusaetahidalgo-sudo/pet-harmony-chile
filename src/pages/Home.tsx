@@ -482,6 +482,7 @@ export default function Home() {
               value={nextAppointmentLabel}
               cta={nextAppointmentForActive ? 'Ver cita' : 'Agendar ahora'}
               accent={nextAppointmentForActive ? 'default' : 'warning'}
+              aria-label={`Próxima cita: ${nextAppointmentLabel}. ${nextAppointmentForActive ? 'Ver cita' : 'Agendar ahora'}`}
               onClick={() => navigate(nextAppointmentForActive ? LINKS.bookings() : LINKS.vets())}
             />
             <StatusCard
@@ -496,6 +497,7 @@ export default function Home() {
               }
               cta={activeVaccine?.upToDate ? 'Ver historial' : 'Ver próxima'}
               accent={activeVaccine?.upToDate ? 'success' : 'warning'}
+              aria-label={`Vacunas: ${activeVaccine?.upToDate ? 'al día' : 'pendientes'}. ${activeVaccine?.upToDate ? 'Ver historial' : 'Ver próxima vacuna'}`}
               onClick={() =>
                 navigate(
                   activePet ? `/medical-records?pet=${activePet.id}` : LINKS.medicalRecords()
@@ -508,6 +510,7 @@ export default function Home() {
               value={`${activeCompleteness}% completa`}
               cta={activeCompleteness >= 80 ? 'Compartir con vet' : 'Completar ficha'}
               accent={activeCompleteness >= 80 ? 'success' : 'default'}
+              aria-label={`Ficha médica: ${activeCompleteness}% completa. ${activeCompleteness >= 80 ? 'Compartir con veterinario' : 'Completar ficha'}`}
               onClick={() =>
                 navigate(activePet ? LINKS.petClinical(activePet.id) : LINKS.medicalRecords())
               }
@@ -524,6 +527,7 @@ export default function Home() {
                     ? 'warning'
                     : 'default'
               }
+              aria-label={`Estado de salud: ${healthScore?.label ?? 'sin datos'}. ${healthScore?.issues.length ? 'Ver pendientes' : 'Ver ficha'}`}
               onClick={() => navigate(activePet ? LINKS.petClinical(activePet.id) : '/reminders')}
             />
           </div>

@@ -18,24 +18,21 @@
  *   4. Si existe -> PATCH (update); si no -> INSERT (create)
  */
 
-import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://pawfriend.cl",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.2';
+import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 async function refreshAccessToken(refreshToken: string, clientId: string, clientSecret: string) {
   const params = new URLSearchParams({
     refresh_token: refreshToken,
     client_id: clientId,
     client_secret: clientSecret,
-    grant_type: "refresh_token",
+    grant_type: 'refresh_token',
   });
-  const resp = await fetch("https://oauth2.googleapis.com/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  const resp = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: params.toString(),
   });
   const json = await resp.json();
@@ -58,13 +55,13 @@ async function upsertGoogleEvent(
 ): Promise<string> {
   const baseUrl = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events`;
   const url = existingEventId ? `${baseUrl}/${existingEventId}` : baseUrl;
-  const method = existingEventId ? "PATCH" : "POST";
+  const method = existingEventId ? 'PATCH' : 'POST';
 
   const resp = await fetch(url, {
     method,
     headers: {
       Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify(event),
   });
@@ -74,42 +71,50 @@ async function upsertGoogleEvent(
 }
 
 serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
+  const corsHeaders = getCorsHeaders(req);
+
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders });
   }
 
   try {
-    const clientId = Deno.env.get("GOOGLE_OAUTH_CLIENT_ID");
-    const clientSecret = Deno.env.get("GOOGLE_OAUTH_CLIENT_SECRET");
+    const clientId = Deno.env.get('GOOGLE_OAUTH_CLIENT_ID');
+    const clientSecret = Deno.env.get('GOOGLE_OAUTH_CLIENT_SECRET');
     if (!clientId || !clientSecret) {
-      throw new Error("Google OAuth not configured");
+      throw new Error('Google OAuth not configured');
     }
 
     const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
       { auth: { persistSession: false } }
     );
 
     // Auth
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("No authorization header");
-    const token = authHeader.replace("Bearer ", "");
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) throw new Error('No authorization header');
+    const token = authHeader.replace('Bearer ', '');
     const { data: userData, error: userErr } = await supabase.auth.getUser(token);
-    if (userErr || !userData.user) throw new Error("User not authenticated");
+    if (userErr || !userData.user) throw new Error('User not authenticated');
     const userId = userData.user.id;
+
+    // ── Rate limit (10 req/min) ──
+    const quota = await checkAiQuota(userId, { limit: 10, windowSeconds: 60 });
+    if (!quota.allowed) {
+      return rateLimitResponse(quota, corsHeaders);
+    }
 
     // Tokens del user
     const { data: tokenRow, error: tokErr } = await supabase
-      .from("google_calendar_tokens")
-      .select("*")
-      .eq("user_id", userId)
+      .from('google_calendar_tokens')
+      .select('*')
+      .eq('user_id', userId)
       .maybeSingle();
 
     if (tokErr || !tokenRow) {
-      return new Response(JSON.stringify({ error: "Google Calendar not connected" }), {
+      return new Response(JSON.stringify({ error: 'Google Calendar not connected' }), {
         status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
@@ -120,31 +125,37 @@ serve(async (req) => {
       accessToken = refreshed.access_token;
       const newExpiresAt = new Date(Date.now() + refreshed.expires_in * 1000).toISOString();
       await supabase
-        .from("google_calendar_tokens")
-        .update({ access_token: accessToken, expires_at: newExpiresAt, updated_at: new Date().toISOString() })
-        .eq("user_id", userId);
+        .from('google_calendar_tokens')
+        .update({
+          access_token: accessToken,
+          expires_at: newExpiresAt,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('user_id', userId);
     }
 
-    const calendarId = tokenRow.calendar_id || "primary";
+    const calendarId = tokenRow.calendar_id || 'primary';
 
     // Fetch reminders + appointments del user
     const { data: reminders } = await supabase
-      .from("pet_reminders")
-      .select("id, title, type, due_date, pet_id, pets(name)")
-      .eq("owner_id", userId)
-      .eq("is_completed", false);
+      .from('pet_reminders')
+      .select('id, title, type, due_date, pet_id, pets(name)')
+      .eq('owner_id', userId)
+      .eq('is_completed', false);
 
     const { data: appointments } = await supabase
-      .from("appointments")
-      .select("id, title, description, scheduled_date, duration_minutes, pet_id, pets!inner(name, owner_id)")
-      .eq("pets.owner_id", userId)
-      .neq("status", "cancelada");
+      .from('appointments')
+      .select(
+        'id, title, description, scheduled_date, duration_minutes, pet_id, pets!inner(name, owner_id)'
+      )
+      .eq('pets.owner_id', userId)
+      .neq('status', 'cancelada');
 
     // Mappings existentes
     const { data: existingMappings } = await supabase
-      .from("external_calendar_events")
-      .select("source_type, source_id, google_event_id")
-      .eq("user_id", userId);
+      .from('external_calendar_events')
+      .select('source_type, source_id, google_event_id')
+      .eq('user_id', userId);
 
     const mappingByKey = new Map<string, string>();
     for (const m of existingMappings ?? []) {
@@ -159,34 +170,34 @@ serve(async (req) => {
       try {
         const existingId = mappingByKey.get(`pet_reminder:${r.id}`) || null;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const petName = (r as any).pets?.name ?? "tu mascota";
+        const petName = (r as any).pets?.name ?? 'tu mascota';
         const event: CalendarEventInput = {
           summary: `🐾 ${r.title || r.type} — ${petName}`,
           description: `Recordatorio de Paw Friend\nTipo: ${r.type}\nMascota: ${petName}`,
-          start: { date: r.due_date, timeZone: "America/Santiago" },
-          end: { date: r.due_date, timeZone: "America/Santiago" },
+          start: { date: r.due_date, timeZone: 'America/Santiago' },
+          end: { date: r.due_date, timeZone: 'America/Santiago' },
         };
 
         const eventId = await upsertGoogleEvent(accessToken, calendarId, event, existingId);
 
         if (!existingId) {
-          await supabase.from("external_calendar_events").insert({
+          await supabase.from('external_calendar_events').insert({
             user_id: userId,
-            source_type: "pet_reminder",
+            source_type: 'pet_reminder',
             source_id: r.id,
             google_event_id: eventId,
             google_calendar_id: calendarId,
           });
         } else {
           await supabase
-            .from("external_calendar_events")
+            .from('external_calendar_events')
             .update({ last_synced_at: new Date().toISOString() })
-            .eq("source_type", "pet_reminder")
-            .eq("source_id", r.id);
+            .eq('source_type', 'pet_reminder')
+            .eq('source_id', r.id);
         }
         synced++;
       } catch (err) {
-        console.warn("[google-calendar-sync] reminder failed", r.id, err);
+        console.warn('[google-calendar-sync] reminder failed', r.id, err);
         failed++;
       }
     }
@@ -196,51 +207,51 @@ serve(async (req) => {
       try {
         const existingId = mappingByKey.get(`appointment:${a.id}`) || null;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const petName = (a as any).pets?.name ?? "tu mascota";
+        const petName = (a as any).pets?.name ?? 'tu mascota';
         const start = new Date(a.scheduled_date);
         const end = new Date(start.getTime() + (a.duration_minutes || 60) * 60_000);
 
         const event: CalendarEventInput = {
           summary: `🐾 ${a.title} — ${petName}`,
-          description: `${a.description || "Cita veterinaria"}\n\nGestionada desde Paw Friend`,
-          start: { dateTime: start.toISOString(), timeZone: "America/Santiago" },
-          end: { dateTime: end.toISOString(), timeZone: "America/Santiago" },
+          description: `${a.description || 'Cita veterinaria'}\n\nGestionada desde Paw Friend`,
+          start: { dateTime: start.toISOString(), timeZone: 'America/Santiago' },
+          end: { dateTime: end.toISOString(), timeZone: 'America/Santiago' },
         };
 
         const eventId = await upsertGoogleEvent(accessToken, calendarId, event, existingId);
 
         if (!existingId) {
-          await supabase.from("external_calendar_events").insert({
+          await supabase.from('external_calendar_events').insert({
             user_id: userId,
-            source_type: "appointment",
+            source_type: 'appointment',
             source_id: a.id,
             google_event_id: eventId,
             google_calendar_id: calendarId,
           });
         } else {
           await supabase
-            .from("external_calendar_events")
+            .from('external_calendar_events')
             .update({ last_synced_at: new Date().toISOString() })
-            .eq("source_type", "appointment")
-            .eq("source_id", a.id);
+            .eq('source_type', 'appointment')
+            .eq('source_id', a.id);
         }
         synced++;
       } catch (err) {
-        console.warn("[google-calendar-sync] appointment failed", a.id, err);
+        console.warn('[google-calendar-sync] appointment failed', a.id, err);
         failed++;
       }
     }
 
     return new Response(JSON.stringify({ synced, failed, calendar_id: calendarId }), {
       status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    console.error("[google-calendar-sync] error", msg);
+    console.error('[google-calendar-sync] error', msg);
     return new Response(JSON.stringify({ error: msg }), {
       status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
 });

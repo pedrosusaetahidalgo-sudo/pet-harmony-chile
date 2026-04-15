@@ -73,7 +73,7 @@ export const useGamification = (userId?: string) => {
       };
     },
     enabled: !!targetUserId,
-    staleTime: 2 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
   });
 
   // Get user achievements — schema: id, user_id, mission_id, unlocked_at
@@ -118,7 +118,7 @@ export const useGamification = (userId?: string) => {
       });
     },
     enabled: !!targetUserId,
-    staleTime: 2 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
   });
 
   // Get active missions from paw_missions
@@ -164,7 +164,7 @@ export const useGamification = (userId?: string) => {
       });
     },
     enabled: !!targetUserId,
-    staleTime: 2 * 60 * 1000,
+    staleTime: 5 * 60 * 1000,
   });
 
   // Award points mutation

@@ -112,7 +112,9 @@ const AddPet = () => {
       setLoadingPet(true);
       const { data, error } = await supabase
         .from('pets')
-        .select('*')
+        .select(
+          'name, species, breed, birth_date, gender, size, color, weight, bio, photo_url, personality, microchip_number, blood_type, neutered, is_adopted, adoption_date, preferred_clinic, emergency_vet_name, emergency_vet_phone, diet_type, diet_brand, activity_level, behavior_notes, insurance_provider'
+        )
         .eq('id', petId)
         .eq('owner_id', user.id)
         .maybeSingle();

@@ -176,7 +176,12 @@ export function FeedStories() {
 
             {storyPreview ? (
               <div className="relative aspect-[9/16] rounded-xl overflow-hidden max-h-64">
-                <img src={storyPreview} alt="Preview" className="w-full h-full object-cover" />
+                <img
+                  src={storyPreview}
+                  alt="Vista previa de historia"
+                  loading="lazy"
+                  className="w-full h-full object-cover"
+                />
                 <button
                   onClick={() => {
                     setStoryFile(null);

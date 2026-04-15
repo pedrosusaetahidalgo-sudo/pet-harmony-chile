@@ -173,7 +173,12 @@ const Maps = () => {
   const { data: lostPets, refetch: refetchLostPets } = useQuery({
     queryKey: ['map-lost-pets'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('lost_pets').select('*').eq('is_active', true);
+      const { data, error } = await supabase
+        .from('lost_pets')
+        .select(
+          'id, pet_name, species, breed, description, photo_url, report_type, latitude, longitude, last_seen_location, reward_offered, reward_amount, reporter_id, user_id, is_active'
+        )
+        .eq('is_active', true);
       if (error) throw error;
       return data || [];
     },

@@ -19,6 +19,7 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { PDFDocument, rgb, StandardFonts } from 'https://esm.sh/pdf-lib@1.17.1';
 import { LOGO_PNG_BASE64 } from './logo.ts';
+import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
 
 // ── CORS dinamico ──
 const ALLOWED_ORIGINS = ['https://pawfriend.cl', 'http://localhost:8080', 'http://localhost:5173'];
@@ -802,6 +803,12 @@ serve(async (req) => {
     const token = authHeader.replace('Bearer ', '');
     const { data: userData, error: userError } = await supabase.auth.getUser(token);
     if (userError || !userData.user) throw new Error('User not authenticated');
+
+    // ── Rate limit (5 req/min — PDF generation is heavy) ──
+    const quota = await checkAiQuota(userData.user.id, { limit: 5, windowSeconds: 60 });
+    if (!quota.allowed) {
+      return rateLimitResponse(quota, corsHeaders);
+    }
 
     const body = await req.json();
     const pet_id = body.pet_id;

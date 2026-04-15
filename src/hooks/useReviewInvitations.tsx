@@ -2,10 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 const sb = supabase;
 import { useAuth } from '@/hooks/useAuth';
-import type {
-  ReviewInvitationRow,
-  ReviewInvitationWithProvider,
-} from '@/types/vetDirectory';
+import type { ReviewInvitationRow, ReviewInvitationWithProvider } from '@/types/vetDirectory';
 
 export type ReviewInvitation = ReviewInvitationRow;
 
@@ -32,6 +29,7 @@ export function useMyInvitations() {
       if (error) throw error;
       return (data ?? []) as ReviewInvitationRow[];
     },
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -96,6 +94,7 @@ export function useInvitationByToken(token: string | undefined) {
       if (error) throw error;
       return (data ?? null) as ReviewInvitationWithProvider | null;
     },
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -126,10 +125,7 @@ export function useSubmitInvitedReview() {
       });
       if (revErr) throw revErr;
 
-      await sb
-        .from('review_invitations')
-        .update({ is_used: true })
-        .eq('id', input.invitation_id);
+      await sb.from('review_invitations').update({ is_used: true }).eq('id', input.invitation_id);
     },
   });
 }

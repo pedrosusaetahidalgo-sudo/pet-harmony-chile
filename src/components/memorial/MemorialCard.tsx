@@ -27,7 +27,7 @@ export function MemorialCard({ pet, onClick }: MemorialCardProps) {
     >
       <div className="relative">
         {photoUrl ? (
-          <img src={photoUrl} alt={pet.name} className="w-full h-40 object-cover" />
+          <img src={photoUrl} alt={pet.name} loading="lazy" className="w-full h-40 object-cover" />
         ) : (
           <div className="w-full h-40 bg-purple-50 flex items-center justify-center">
             <Heart className="h-10 w-10 text-purple-200" />

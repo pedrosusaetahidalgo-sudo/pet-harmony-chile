@@ -261,7 +261,7 @@ const PetClinicalRecord = () => {
           <div className="flex items-center gap-3">
             <Label className="text-sm text-muted-foreground whitespace-nowrap">Mascota:</Label>
             <Select value={petId} onValueChange={(id) => navigate(LINKS.petClinical(id))}>
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="w-full sm:w-[200px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

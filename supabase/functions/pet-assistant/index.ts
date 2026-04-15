@@ -1,18 +1,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
-
-const allowedOrigins = ['https://pawfriend.cl', 'http://localhost:8080', 'http://localhost:5173'];
-
-function getCorsHeaders(req: Request) {
-  const origin = req.headers.get('Origin') || '';
-  const allowed = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
-  return {
-    'Access-Control-Allow-Origin': allowed,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  };
-}
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {

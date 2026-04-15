@@ -57,6 +57,7 @@ export const usePartners = () => {
       if (error) throw error;
       return (data || []) as unknown as Partner[];
     },
+    staleTime: 30 * 60 * 1000,
   });
 
   const getPartnersByCategory = (category: string) =>

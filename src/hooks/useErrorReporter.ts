@@ -1,5 +1,6 @@
 import { useAuth } from './useAuth';
 import { useCallback, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 
 const SUPABASE_URL =
   import.meta.env.VITE_SUPABASE_URL || 'https://gwailbjlvevkhwcrovfd.supabase.co';
@@ -15,9 +16,15 @@ async function sendError(payload: {
   user_id?: string;
 }) {
   try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
     await fetch(`${SUPABASE_URL}/functions/v1/log-error`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session?.access_token ?? ''}`,
+      },
       body: JSON.stringify(payload),
     });
   } catch {

@@ -5,6 +5,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { Send } from '@/lib/icons';
 import { useToast } from '@/hooks/use-toast';
 
+const COMMENT_MAX_LENGTH = 500;
+
 interface FeedCommentInputProps {
   postId: string;
 }
@@ -19,7 +21,15 @@ export function FeedCommentInput({ postId }: FeedCommentInputProps) {
   if (!user) return null;
 
   const handleSubmit = async () => {
-    if (!text.trim() || submitting) return;
+    const trimmed = text.trim();
+    if (!trimmed || submitting) return;
+    if (trimmed.length > COMMENT_MAX_LENGTH) {
+      toast({
+        variant: 'destructive',
+        title: `El comentario no puede superar los ${COMMENT_MAX_LENGTH} caracteres`,
+      });
+      return;
+    }
     setSubmitting(true);
 
     try {
@@ -43,34 +53,48 @@ export function FeedCommentInput({ postId }: FeedCommentInputProps) {
     }
   };
 
+  const charCount = text.length;
+  const isNearLimit = charCount > COMMENT_MAX_LENGTH * 0.9;
+  const isOverLimit = charCount > COMMENT_MAX_LENGTH;
+
   return (
-    <div className="flex items-center gap-2 px-4 py-2 border-t">
-      <label htmlFor={`comment-${postId}`} className="sr-only">
-        Comentario
-      </label>
-      <input
-        id={`comment-${postId}`}
-        type="text"
-        placeholder="Agrega un comentario..."
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSubmit();
-          }
-        }}
-        className="flex-1 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
-        disabled={submitting}
-      />
-      {text.trim() && (
-        <button
-          onClick={handleSubmit}
+    <div className="px-4 py-2 border-t">
+      <div className="flex items-center gap-2">
+        <label htmlFor={`comment-${postId}`} className="sr-only">
+          Comentario
+        </label>
+        <input
+          id={`comment-${postId}`}
+          type="text"
+          placeholder="Agrega un comentario..."
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit();
+            }
+          }}
+          maxLength={COMMENT_MAX_LENGTH}
+          className="flex-1 text-sm bg-transparent outline-none placeholder:text-muted-foreground"
           disabled={submitting}
-          className="text-primary font-semibold text-sm hover:opacity-70 transition-opacity"
+        />
+        {text.trim() && (
+          <button
+            onClick={handleSubmit}
+            disabled={submitting || isOverLimit}
+            className="text-primary font-semibold text-sm hover:opacity-70 transition-opacity disabled:opacity-40"
+          >
+            <Send className="h-4 w-4" />
+          </button>
+        )}
+      </div>
+      {charCount > 0 && (
+        <p
+          className={`text-xs mt-1 text-right ${isOverLimit ? 'text-destructive' : isNearLimit ? 'text-amber-500' : 'text-muted-foreground'}`}
         >
-          <Send className="h-4 w-4" />
-        </button>
+          {charCount}/{COMMENT_MAX_LENGTH}
+        </p>
       )}
     </div>
   );

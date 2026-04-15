@@ -46,7 +46,7 @@ export function useAchievements() {
       }));
     },
     enabled: !!user,
-    staleTime: 60_000,
+    staleTime: 5 * 60 * 1000,
   });
 
   // Fetch active title from profile
@@ -63,7 +63,7 @@ export function useAchievements() {
       return (data as { active_title?: string } | null)?.active_title || null;
     },
     enabled: !!user,
-    staleTime: 60_000,
+    staleTime: 5 * 60 * 1000,
   });
 
   // Set active title

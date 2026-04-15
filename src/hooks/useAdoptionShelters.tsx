@@ -1,8 +1,8 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
-import { calculateDistance } from "@/lib/distance";
-import { logger } from "@/lib/logger";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { calculateDistance } from '@/lib/distance';
+import { logger } from '@/lib/logger';
 
 export interface AdoptionShelter {
   id: string;
@@ -35,38 +35,44 @@ export const useAdoptionShelters = () => {
   const queryClient = useQueryClient();
 
   // Fetch all active shelters
-  const { data: shelters, isLoading, error, refetch } = useQuery({
-    queryKey: ["adoption-shelters"],
+  const {
+    data: shelters,
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ['adoption-shelters'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("adoption_shelters")
-        .select("*")
-        .eq("is_active", true)
-        .order("is_verified", { ascending: false })
-        .order("created_at", { ascending: false });
+        .from('adoption_shelters')
+        .select('*')
+        .eq('is_active', true)
+        .order('is_verified', { ascending: false })
+        .order('created_at', { ascending: false });
 
       if (error) throw error;
       return (data || []) as AdoptionShelter[];
     },
+    staleTime: 30 * 60 * 1000,
   });
 
   // Generate shelters using edge function
   const generateShelters = useMutation({
     mutationFn: async (count: number = 15) => {
-      const { data, error } = await supabase.functions.invoke("generate-shelters", {
-        body: { action: "generate", count },
+      const { data, error } = await supabase.functions.invoke('generate-shelters', {
+        body: { action: 'generate', count },
       });
 
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["adoption-shelters"] });
-      logger.debug("Refugios generados exitosamente");
+      queryClient.invalidateQueries({ queryKey: ['adoption-shelters'] });
+      logger.debug('Refugios generados exitosamente');
     },
     onError: (error: Error) => {
-      logger.error("Error generating shelters:", error);
-      toast.error("Error al generar refugios");
+      logger.error('Error generating shelters:', error);
+      toast.error('Error al generar refugios');
     },
   });
 
@@ -86,19 +92,19 @@ export const useAdoptionShelters = () => {
 
     return shelterList.filter((shelter) => {
       // Filter by type
-      if (filters.type && filters.type !== "all" && shelter.type !== filters.type) {
+      if (filters.type && filters.type !== 'all' && shelter.type !== filters.type) {
         return false;
       }
 
       // Filter by animal type
-      if (filters.animalType && filters.animalType !== "all") {
+      if (filters.animalType && filters.animalType !== 'all') {
         if (!shelter.animal_types?.includes(filters.animalType)) {
           return false;
         }
       }
 
       // Filter by commune
-      if (filters.commune && filters.commune !== "all" && shelter.commune !== filters.commune) {
+      if (filters.commune && filters.commune !== 'all' && shelter.commune !== filters.commune) {
         return false;
       }
 

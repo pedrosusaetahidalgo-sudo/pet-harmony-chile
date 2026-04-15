@@ -152,7 +152,9 @@ const MyPets = () => {
     try {
       const { data, error } = await supabase
         .from('pets')
-        .select('*')
+        .select(
+          'id, name, species, breed, birth_date, photo_url, size, color, personality, gender, weight, bio, holo_pattern, paw_card_id'
+        )
         .eq('owner_id', user?.id)
         .eq('lifecycle_status', 'active')
         .order('created_at', { ascending: false });

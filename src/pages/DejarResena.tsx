@@ -13,6 +13,9 @@ import { useInvitationByToken, useSubmitInvitedReview } from '@/hooks/useReviewI
 import { LINKS } from '@/lib/links';
 import { useAuth } from '@/hooks/useAuth';
 import { PublicHeader, PublicFooter } from './DirectorioVets';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { reviewSchema, type ReviewFormData } from '@/lib/schemas';
 
 export default function DejarResena() {
   const { token } = useParams<{ token: string }>();
@@ -21,10 +24,20 @@ export default function DejarResena() {
   const { data: invitation, isLoading, error } = useInvitationByToken(token);
   const submit = useSubmitInvitedReview();
 
-  const [rating, setRating] = useState(0);
+  const {
+    register,
+    handleSubmit: rhfHandleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<ReviewFormData>({
+    resolver: zodResolver(reviewSchema),
+    defaultValues: { title: '', comment: '', rating: 0 },
+  });
+
+  const rating = watch('rating');
+  const comment = watch('comment');
   const [hover, setHover] = useState(0);
-  const [title, setTitle] = useState('');
-  const [comment, setComment] = useState('');
   const [done, setDone] = useState(false);
 
   if (isLoading) {
@@ -135,20 +148,19 @@ export default function DejarResena() {
     );
   }
 
-  const handleSubmit = async () => {
-    if (rating < 1) {
-      toast.error('Selecciona una calificación');
-      return;
-    }
+  const onSubmit = async (data: ReviewFormData) => {
     try {
       await submit.mutateAsync({
         invitation_id: invitation.id,
         provider_id: provider.id,
-        rating,
-        title,
-        comment,
+        rating: data.rating,
+        title: data.title || '',
+        comment: data.comment,
       });
-      track({ event: EVENTS.REVIEW_CREATED, properties: { provider_id: provider.id, rating } });
+      track({
+        event: EVENTS.REVIEW_CREATED,
+        properties: { provider_id: provider.id, rating: data.rating },
+      });
       setDone(true);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Error al enviar la reseña');
@@ -178,72 +190,87 @@ export default function DejarResena() {
             <CardDescription>Tu opinión ayuda a otros dueños de mascotas a elegir.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-5">
-            {/* Estrellas */}
-            <div>
-              <Label className="block mb-2 text-center">Tu calificación *</Label>
-              <div className="flex justify-center gap-1">
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <button
-                    key={n}
-                    type="button"
-                    onMouseEnter={() => setHover(n)}
-                    onMouseLeave={() => setHover(0)}
-                    onClick={() => setRating(n)}
-                    className="p-1"
-                  >
-                    <Star
-                      className={`h-9 w-9 transition ${
-                        n <= (hover || rating)
-                          ? 'fill-yellow-400 text-yellow-400'
-                          : 'text-slate-300'
-                      }`}
-                    />
-                  </button>
-                ))}
+            <form onSubmit={rhfHandleSubmit(onSubmit)} className="space-y-5">
+              {/* Estrellas */}
+              <div>
+                <Label className="block mb-2 text-center">Tu calificacion *</Label>
+                <div className="flex justify-center gap-1">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onMouseEnter={() => setHover(n)}
+                      onMouseLeave={() => setHover(0)}
+                      onClick={() => setValue('rating', n, { shouldValidate: true })}
+                      className="p-1"
+                    >
+                      <Star
+                        className={`h-9 w-9 transition ${
+                          n <= (hover || rating)
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-slate-300'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                </div>
+                {errors.rating && (
+                  <p className="text-xs text-destructive text-center mt-1">
+                    {errors.rating.message}
+                  </p>
+                )}
               </div>
-            </div>
 
-            <div>
-              <Label htmlFor="title">Título (opcional)</Label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Excelente atención"
-                maxLength={100}
-              />
-            </div>
+              <div>
+                <Label htmlFor="title">Titulo (opcional)</Label>
+                <Input
+                  id="title"
+                  {...register('title')}
+                  placeholder="Excelente atencion"
+                  maxLength={100}
+                />
+                {errors.title && (
+                  <p className="text-xs text-destructive mt-1">{errors.title.message}</p>
+                )}
+              </div>
 
-            <div>
-              <Label htmlFor="comment">Tu reseña</Label>
-              <Textarea
-                id="comment"
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Cuenta tu experiencia con este veterinario…"
-                rows={5}
-                maxLength={500}
-              />
-              <p className="text-xs text-muted-foreground mt-1">{comment.length}/500</p>
-            </div>
+              <div>
+                <Label htmlFor="comment">Tu resena *</Label>
+                <Textarea
+                  id="comment"
+                  {...register('comment')}
+                  placeholder="Cuenta tu experiencia con este veterinario..."
+                  rows={5}
+                  maxLength={500}
+                />
+                <div className="flex justify-between mt-1">
+                  {errors.comment ? (
+                    <p className="text-xs text-destructive">{errors.comment.message}</p>
+                  ) : (
+                    <span />
+                  )}
+                  <p className="text-xs text-muted-foreground">{comment?.length ?? 0}/500</p>
+                </div>
+              </div>
 
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex gap-2">
-              <AlertCircle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-amber-800">
-                Esta reseña aparecerá marcada como "no verificada por reserva" porque viene de una
-                invitación directa del veterinario, no de una reserva hecha en Paw Friend.
-              </p>
-            </div>
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex gap-2">
+                <AlertCircle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-amber-800">
+                  Esta resena aparecera marcada como "no verificada por reserva" porque viene de una
+                  invitacion directa del veterinario, no de una reserva hecha en Paw Friend.
+                </p>
+              </div>
 
-            <Button onClick={handleSubmit} disabled={submit.isPending} className="w-full" size="lg">
-              {submit.isPending ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-1 animate-spin" /> Enviando…
-                </>
-              ) : (
-                'Publicar reseña'
-              )}
-            </Button>
+              <Button type="submit" disabled={submit.isPending} className="w-full" size="lg">
+                {submit.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-1 animate-spin" /> Enviando...
+                  </>
+                ) : (
+                  'Publicar resena'
+                )}
+              </Button>
+            </form>
           </CardContent>
         </Card>
       </main>

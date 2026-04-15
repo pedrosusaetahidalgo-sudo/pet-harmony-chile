@@ -102,7 +102,7 @@ function TransferAnimation({
             }}
           >
             {photoUrl ? (
-              <img src={photoUrl} alt="" className="w-full h-full object-cover" />
+              <img src={photoUrl} alt="" className="w-20 h-20 object-cover" />
             ) : (
               <div className="w-full h-full bg-purple-200 flex items-center justify-center">
                 <PawPrint className="h-8 w-8 text-purple-400" />

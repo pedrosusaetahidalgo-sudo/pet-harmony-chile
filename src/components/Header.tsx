@@ -160,7 +160,7 @@ export const Header = () => {
 
     const { count } = await supabase
       .from('messages')
-      .select('*', { count: 'exact', head: true })
+      .select('id', { count: 'exact', head: true })
       .in('conversation_id', convIds)
       .neq('sender_id', user.id)
       .is('read_at', null);

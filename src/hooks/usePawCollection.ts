@@ -142,7 +142,7 @@ export function usePawCollection() {
       return [...ownCards, ...collectedCards];
     },
     enabled: !!user,
-    staleTime: 30_000,
+    staleTime: 5 * 60 * 1000,
   });
 }
 
@@ -177,6 +177,6 @@ export function usePawCollectionStats() {
       };
     },
     enabled: !!user,
-    staleTime: 60_000,
+    staleTime: 5 * 60 * 1000,
   });
 }
