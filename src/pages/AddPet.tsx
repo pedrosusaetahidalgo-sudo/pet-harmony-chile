@@ -336,10 +336,13 @@ const AddPet = () => {
 
       // Core columns (exist since initial migration)
       type PetInsert = Database['public']['Tables']['pets']['Insert'];
+      const pawCardData = !isEdit ? generatePawCardData() : null;
       const payload: PetInsert = {
         owner_id: user.id,
         name: formData.name,
         species: formData.species,
+        paw_card_id: pawCardData?.pawCardId ?? undefined,
+        holo_pattern: pawCardData?.holoPattern ?? undefined,
         breed: formData.breed || null,
         birth_date: formData.birth_date || null,
         gender: formData.gender || null,
@@ -366,13 +369,6 @@ const AddPet = () => {
       payload.activity_level = formData.activity_level || null;
       payload.behavior_notes = formData.behavior_notes || null;
       payload.insurance_provider = formData.insurance_provider || null;
-
-      // Generate TCG holo data for new pets
-      if (!isEdit) {
-        const pawCardData = generatePawCardData();
-        payload.holo_pattern = pawCardData.holoPattern;
-        payload.paw_card_id = pawCardData.pawCardId;
-      }
 
       if (isEdit && petId) {
         // === EDIT MODE ===

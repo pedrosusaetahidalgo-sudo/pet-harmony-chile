@@ -84,6 +84,7 @@ const AnalyticsDashboard = lazy(() => import('./pages/standalone/AnalyticsDashbo
 const EnMemoria = lazy(() => import('./pages/EnMemoria'));
 const BloodDonors = lazy(() => import('./pages/BloodDonors'));
 const PetRoutines = lazy(() => import('./pages/PetRoutines'));
+const PetTimeline = lazy(() => import('./pages/PetTimeline'));
 const UnifiedCalendar = lazy(() => import('./pages/UnifiedCalendar'));
 const RegistroPartner = lazy(() => import('./pages/RegistroPartner'));
 
@@ -327,6 +328,16 @@ const App = () => (
                     <ProtectedRoute>
                       <AppLayout>
                         <PetRoutines />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/mascota/:petId/timeline"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <PetTimeline />
                       </AppLayout>
                     </ProtectedRoute>
                   }
@@ -647,11 +658,9 @@ const App = () => (
                   path="/panel-pro"
                   element={
                     <ProtectedRoute>
-                      <RoleGuard requiredRole="provider">
-                        <AppLayout>
-                          <ProDashboard />
-                        </AppLayout>
-                      </RoleGuard>
+                      <AppLayout>
+                        <ProDashboard />
+                      </AppLayout>
                     </ProtectedRoute>
                   }
                 />

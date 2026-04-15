@@ -277,6 +277,17 @@ const PetClinicalRecord = () => {
 
         <PetHeader pet={pet} />
 
+        {/* Quick link to timeline */}
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2"
+          onClick={() => navigate(`/mascota/${pet.id}/timeline`)}
+        >
+          <Clock className="h-3.5 w-3.5" />
+          Ver historia completa
+        </Button>
+
         {/* CTA PDF prominente — joya de la corona (CLAUDE.md §9.6) */}
         <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 via-amber-50/60 to-rose-50/60 p-5 shadow-sm md:p-6">
           <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary/15 blur-3xl" />

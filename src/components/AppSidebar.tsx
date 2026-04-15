@@ -44,6 +44,7 @@ import { getTutorialBySection, SECTION_ORDER, type SectionKey } from '@/lib/side
 import { Badge } from '@/components/ui/badge';
 import { PremiumBadge } from '@/components/PremiumBadge';
 import { usePlan } from '@/hooks/usePlan';
+import { FeedbackButton } from '@/components/FeedbackButton';
 
 import {
   Sidebar,
@@ -62,7 +63,7 @@ import {
 // Sidebar organizado en grupos semánticos para mejor navegación
 const healthItems = [
   { title: 'Inicio', url: '/home', icon: HomeIcon },
-  { title: 'My Paws', url: '/my-pets', icon: PawPrint },
+  { title: 'Mis Mascotas', url: '/my-pets', icon: PawPrint },
   { title: 'Recordatorios', url: '/reminders', icon: Bell },
   { title: 'Rutinas', url: '/rutinas', icon: RefreshCw },
   { title: 'Calendario', url: '/calendario', icon: CalendarDays },
@@ -433,6 +434,11 @@ export function AppSidebar() {
         {user && (
           <SidebarFooter className="p-2 border-t border-border/40">
             <SidebarMenu className="space-y-0">
+              <SidebarMenuItem>
+                <div className="px-2 py-0.5">
+                  <FeedbackButton />
+                </div>
+              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={() => handleNavigate('/settings')}
