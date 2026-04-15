@@ -207,7 +207,14 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
       setOpen(false);
       onCreated?.();
     } catch (err: unknown) {
-      toast.error((err instanceof Error ? err.message : null) || 'Error al crear el paciente');
+      const msg =
+        err instanceof Error
+          ? err.message
+          : typeof err === 'object' && err !== null && 'message' in err
+            ? String((err as { message: unknown }).message)
+            : 'Error al crear el paciente';
+      logger.error('NewPatientForm insert error:', err);
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
