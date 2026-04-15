@@ -64,6 +64,7 @@ import { AddMedicalRecord } from '@/components/AddMedicalRecord';
 import { VaccinationCardOCR } from '@/components/onboarding/VaccinationCardOCR';
 import { FileDown } from '@/lib/icons';
 import { VetActionsBar } from './VetActionsBar';
+import { VetQuickNotes } from '@/components/provider/VetQuickNotes';
 
 const PetClinicalRecord = () => {
   const { petId } = useParams<{ petId: string }>();
@@ -579,6 +580,11 @@ const PetClinicalRecord = () => {
               />
             </DialogContent>
           </Dialog>
+        )}
+
+        {/* Vet quick notes */}
+        {viewMode === 'vet' && vetProviderId && (
+          <VetQuickNotes petId={pet.id} providerId={vetProviderId} petName={pet.name} />
         )}
 
         {/* Vet actions bar */}

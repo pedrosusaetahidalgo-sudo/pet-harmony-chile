@@ -51,6 +51,7 @@ const PetWellnessPreview = lazy(() =>
   }))
 );
 import { isFeatureEnabled } from '@/lib/featureFlags';
+import { computeHealthScore } from '@/lib/health-score';
 import { getRarity } from '@/components/PetCardCompact';
 import { RARITY_BORDER_STYLES } from '@/lib/paw-cards';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -68,6 +69,8 @@ interface Pet {
   photo_url: string | null;
   holo_pattern?: string | null;
   paw_score?: number;
+  weight?: number | null;
+  microchip_number?: string | null;
 }
 
 interface Appointment {
@@ -181,6 +184,8 @@ export default function Home() {
         photo_url: p.photo_url,
         holo_pattern: (p as Record<string, unknown>).holo_pattern as string | null,
         paw_score: scoreMap[p.id] ?? 0,
+        weight: p.weight ?? null,
+        microchip_number: p.microchip_number ?? null,
       }));
       setPets(petsList);
       if (petsList.length > 0 && !activePetId) {
@@ -248,6 +253,22 @@ export default function Home() {
   const activeCompleteness = activePet ? (completeness[activePet.id] ?? 0) : 0;
   const streakDays =
     (stats as unknown as { streak_days?: number } | null | undefined)?.streak_days ?? 0;
+
+  // Health score for active pet
+  const healthScore = useMemo(() => {
+    if (!activePet) return null;
+    const petOverdue = overdueReminders.filter((r) => r.pet_id === activePet.id).length;
+    const petUpcoming = upcomingReminders.filter((r) => r.pet_id === activePet.id).length;
+    return computeHealthScore({
+      overdueCount: petOverdue,
+      upcomingCount: petUpcoming,
+      vaccinesUpToDate: activeVaccine?.upToDate ?? false,
+      lastVetVisit: null, // TODO: wire when last_vet_visit is fetched
+      hasWeight: !!activePet.weight,
+      hasPhoto: !!activePet.photo_url,
+      hasMicrochip: !!activePet.microchip_number,
+    });
+  }, [activePet, overdueReminders, upcomingReminders, activeVaccine]);
 
   // Providers ven su dashboard profesional directamente en /home
   if (role === 'provider') {
@@ -486,15 +507,17 @@ export default function Home() {
             />
             <StatusCard
               icon={TrendingUp}
-              title="Racha paseos"
-              value={
-                streakDays > 0
-                  ? `${streakDays} ${streakDays === 1 ? 'día' : 'días'}`
-                  : 'Empieza hoy'
+              title="Estado de salud"
+              value={healthScore?.label ?? 'Sin datos'}
+              cta={healthScore?.issues.length ? 'Ver pendientes' : 'Ver ficha'}
+              accent={
+                healthScore?.status === 'good'
+                  ? 'success'
+                  : healthScore?.status === 'critical'
+                    ? 'warning'
+                    : 'default'
               }
-              cta="Registrar paseo"
-              accent={streakDays > 0 ? 'success' : 'default'}
-              onClick={() => navigate(LINKS.pawGame())}
+              onClick={() => navigate(activePet ? LINKS.petClinical(activePet.id) : '/reminders')}
             />
           </div>
 

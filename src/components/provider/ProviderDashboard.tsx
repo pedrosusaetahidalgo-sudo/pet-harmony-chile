@@ -36,6 +36,7 @@ import { ActivityFeed } from './dashboard/ActivityFeed';
 import { PendingVetLinksCard } from './PendingVetLinksCard';
 import { NewPatientForm } from './NewPatientForm';
 import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
+import { Next24hCard } from './Next24hCard';
 
 const formatCLP = (amount: number) =>
   new Intl.NumberFormat('es-CL', {
@@ -119,6 +120,9 @@ const ProviderDashboard = () => {
           </Button>
         </Link>
       </div>
+
+      {/* ═══ Próximas 24h summary ═══ */}
+      <Next24hCard />
 
       {/* ═══ Zona B: Alerts ═══ */}
       <PendingVetLinksCard />
