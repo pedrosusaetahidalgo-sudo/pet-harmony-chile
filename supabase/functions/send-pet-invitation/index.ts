@@ -51,81 +51,121 @@ function buildInvitationEmail(opts: {
 }) {
   const { petName, ownerName, vetName, clinicName, actionUrl } = opts;
   const firstName = ownerName.split(' ')[0] || ownerName;
+  const LOGO_URL = 'https://pawfriend.cl/lovable-uploads/f78e7803-40e0-4194-9e66-80e4fce27093.png';
 
   return `<!DOCTYPE html>
 <html lang="es">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${petName} te espera en Paw Friend</title></head>
-<body style="margin:0;padding:0;background:#f5f0eb;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#f5f0eb;padding:32px 16px;">
+<title>${petName} te escribio!</title></head>
+<body style="margin:0;padding:0;background:#fef9f3;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#fef9f3;padding:32px 16px;">
 <tr><td align="center">
-<table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08);">
+<table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(249,115,22,0.12);">
 
-  <!-- Header con gradiente -->
-  <tr><td style="background:linear-gradient(135deg,#f97316,#fb923c);padding:32px 24px;text-align:center;">
-    <div style="font-size:48px;line-height:1;">🐾</div>
-    <h1 style="color:#ffffff;font-size:22px;margin:12px 0 0;font-weight:700;">Paw Friend</h1>
-    <p style="color:rgba(255,255,255,0.9);font-size:13px;margin:4px 0 0;">La ficha clinica de tu mascota, siempre contigo</p>
+  <!-- Header: el perrito te escribe -->
+  <tr><td style="background:linear-gradient(135deg,#f97316 0%,#fb923c 50%,#fbbf24 100%);padding:36px 24px 28px;text-align:center;">
+    <img src="${LOGO_URL}" alt="Paw Friend" width="56" height="56" style="border-radius:14px;margin-bottom:8px;border:3px solid rgba(255,255,255,0.3);" />
+    <h1 style="color:#ffffff;font-size:20px;margin:8px 0 0;font-weight:700;">Paw Friend</h1>
   </td></tr>
 
-  <!-- Cuerpo -->
-  <tr><td style="padding:32px 28px;">
-    <h2 style="color:#1a1a1a;font-size:20px;margin:0 0 16px;font-weight:600;">
-      Oye ${firstName}, ${petName} ya tiene ficha en Paw Friend
-    </h2>
-    <p style="color:#444;font-size:15px;line-height:1.6;margin:0 0 16px;">
-      Tu veterinario/a <strong>${vetName}</strong>${clinicName ? ` de <strong>${clinicName}</strong>` : ''}
-      acaba de crear la ficha clinica de <strong>${petName}</strong> en Paw Friend.
-    </p>
-    <p style="color:#444;font-size:15px;line-height:1.6;margin:0 0 24px;">
-      Solo tienes que crear tu cuenta gratuita y enlazarte con ${petName} para tener acceso a:
-    </p>
-
-    <!-- Beneficios -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
-      <tr><td style="padding:8px 0;font-size:14px;color:#333;">
-        <span style="display:inline-block;width:28px;text-align:center;font-size:18px;">📋</span>
-        Ficha clinica completa y descargable en PDF
-      </td></tr>
-      <tr><td style="padding:8px 0;font-size:14px;color:#333;">
-        <span style="display:inline-block;width:28px;text-align:center;font-size:18px;">💉</span>
-        Registro de vacunas y antiparasitarios con recordatorios
-      </td></tr>
-      <tr><td style="padding:8px 0;font-size:14px;color:#333;">
-        <span style="display:inline-block;width:28px;text-align:center;font-size:18px;">🔔</span>
-        Alertas para controles veterinarios y desparasitaciones
-      </td></tr>
-      <tr><td style="padding:8px 0;font-size:14px;color:#333;">
-        <span style="display:inline-block;width:28px;text-align:center;font-size:18px;">🗂️</span>
-        Documentos medicos: examenes, recetas, imagenes
-      </td></tr>
-      <tr><td style="padding:8px 0;font-size:14px;color:#333;">
-        <span style="display:inline-block;width:28px;text-align:center;font-size:18px;">🃏</span>
-        Paw Card coleccionable unica para ${petName}
-      </td></tr>
-    </table>
-
-    <!-- CTA -->
+  <!-- Burbuja de chat del perrito -->
+  <tr><td style="padding:28px 28px 0;">
     <table width="100%" cellpadding="0" cellspacing="0">
-      <tr><td align="center">
-        <a href="${actionUrl}" target="_blank"
-           style="display:inline-block;background:linear-gradient(135deg,#f97316,#ea580c);color:#ffffff;font-size:16px;font-weight:700;text-decoration:none;padding:14px 40px;border-radius:12px;box-shadow:0 4px 12px rgba(249,115,22,0.35);">
-          Enlazarme con ${petName}
-        </a>
+      <tr>
+        <td width="44" valign="top" style="padding-right:12px;">
+          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#f97316,#fbbf24);text-align:center;line-height:44px;font-size:24px;">🐶</div>
+        </td>
+        <td>
+          <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;border-top-left-radius:4px;padding:16px 20px;">
+            <p style="margin:0 0 4px;font-weight:700;color:#c2410c;font-size:13px;">${petName}</p>
+            <p style="margin:0;color:#431407;font-size:15px;line-height:1.5;">
+              Hola ${firstName}! Soy ${petName} y tengo noticias increibles: mi vet me creo una ficha medica digital y necesito que tu la veas!
+            </p>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </td></tr>
+
+  <!-- Info del vet -->
+  <tr><td style="padding:20px 28px;">
+    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 18px;">
+      <p style="margin:0;color:#166534;font-size:13px;">
+        <span style="font-size:16px;vertical-align:middle;">🩺</span>
+        <strong>${vetName}</strong>${clinicName ? ` de ${clinicName}` : ''} acaba de crear la ficha clinica de ${petName} en Paw Friend.
+      </p>
+    </div>
+  </td></tr>
+
+  <!-- Que vas a encontrar -->
+  <tr><td style="padding:0 28px;">
+    <p style="color:#92400e;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 12px;">Que vas a encontrar:</p>
+
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr><td style="padding:7px 0;font-size:14px;color:#44403c;">
+        <span style="display:inline-block;width:32px;text-align:center;font-size:18px;">📋</span>
+        Ficha clinica completa, descargable en PDF
+      </td></tr>
+      <tr><td style="padding:7px 0;font-size:14px;color:#44403c;">
+        <span style="display:inline-block;width:32px;text-align:center;font-size:18px;">💉</span>
+        Vacunas y antiparasitarios con recordatorios automaticos
+      </td></tr>
+      <tr><td style="padding:7px 0;font-size:14px;color:#44403c;">
+        <span style="display:inline-block;width:32px;text-align:center;font-size:18px;">🔔</span>
+        Alertas de controles, desparasitaciones y citas
+      </td></tr>
+      <tr><td style="padding:7px 0;font-size:14px;color:#44403c;">
+        <span style="display:inline-block;width:32px;text-align:center;font-size:18px;">📎</span>
+        Examenes, recetas e imagenes en un solo lugar
+      </td></tr>
+      <tr><td style="padding:7px 0;font-size:14px;color:#44403c;">
+        <span style="display:inline-block;width:32px;text-align:center;font-size:18px;">🃏</span>
+        Una Paw Card coleccionable unica de ${petName}!
+      </td></tr>
+      <tr><td style="padding:7px 0;font-size:14px;color:#44403c;">
+        <span style="display:inline-block;width:32px;text-align:center;font-size:18px;">🔗</span>
+        Compartir la ficha con otro vet si viajas o hay urgencia
       </td></tr>
     </table>
+  </td></tr>
 
-    <p style="color:#888;font-size:12px;text-align:center;margin:20px 0 0;line-height:1.5;">
-      Es gratis y toma menos de 1 minuto.<br>
-      Si no reconoces a ${petName}, puedes ignorar este correo.
+  <!-- CTA grande -->
+  <tr><td style="padding:28px 28px 8px;" align="center">
+    <a href="${actionUrl}" target="_blank"
+       style="display:inline-block;background:linear-gradient(135deg,#f97316,#ea580c);color:#ffffff;font-size:17px;font-weight:700;text-decoration:none;padding:16px 44px;border-radius:14px;box-shadow:0 6px 20px rgba(249,115,22,0.3);letter-spacing:0.3px;">
+      🐾 Ver la ficha de ${petName}
+    </a>
+  </td></tr>
+  <tr><td style="padding:4px 28px 24px;" align="center">
+    <p style="color:#a8a29e;font-size:12px;margin:8px 0 0;">
+      Gratis y toma menos de 1 minuto
     </p>
+  </td></tr>
+
+  <!-- Segunda burbuja del perrito -->
+  <tr><td style="padding:0 28px 24px;">
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td width="44" valign="top" style="padding-right:12px;">
+          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#f97316,#fbbf24);text-align:center;line-height:44px;font-size:24px;">🐶</div>
+        </td>
+        <td>
+          <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;border-top-left-radius:4px;padding:14px 18px;">
+            <p style="margin:0;color:#431407;font-size:14px;line-height:1.5;">
+              Te espero adentro! No me dejes en visto 🥺👉👈
+            </p>
+          </div>
+        </td>
+      </tr>
+    </table>
   </td></tr>
 
   <!-- Footer -->
-  <tr><td style="background:#fafafa;padding:20px 28px;border-top:1px solid #eee;">
-    <p style="color:#999;font-size:11px;text-align:center;margin:0;line-height:1.5;">
-      Este correo fue enviado por Paw Friend porque tu veterinario/a creo una ficha para tu mascota.<br>
-      <a href="https://pawfriend.cl" style="color:#f97316;text-decoration:none;">pawfriend.cl</a>
+  <tr><td style="background:#fafaf9;padding:20px 28px;border-top:1px solid #f5f5f4;">
+    <p style="color:#a8a29e;font-size:11px;text-align:center;margin:0;line-height:1.6;">
+      ${petName} te envio este correo con la ayuda de su vet y de
+      <a href="https://pawfriend.cl" style="color:#f97316;text-decoration:none;font-weight:600;">Paw Friend</a><br>
+      Si no reconoces a ${petName}, puedes ignorar este correo sin problema.
     </p>
   </td></tr>
 

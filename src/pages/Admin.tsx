@@ -12,6 +12,7 @@ import {
   Megaphone,
   Settings,
   Activity,
+  Target,
 } from '@/lib/icons';
 
 // Section components
@@ -36,6 +37,7 @@ import AdminTeam from '@/components/admin/AdminTeam';
 import AdminErrorLog from '@/components/admin/AdminErrorLog';
 import AdminAnalytics from '@/components/admin/AdminAnalytics';
 import AdminPendingPets from '@/components/admin/AdminPendingPets';
+import AdminLeadsCRM from '@/components/admin/AdminLeadsCRM';
 
 // ── Section definitions ──────────────────────────────────
 interface Section {
@@ -53,6 +55,7 @@ const SECTIONS: Section[] = [
   { id: 'content', label: 'Contenido', icon: FileText },
   { id: 'gamification', label: 'Gamificación', icon: Gamepad2 },
   { id: 'commercial', label: 'Comercial', icon: Megaphone },
+  { id: 'leads-crm', label: 'Leads Vets', icon: Target },
   { id: 'system', label: 'Sistema', icon: Settings },
 ];
 
@@ -223,6 +226,8 @@ const Admin = () => {
         return <GamificationSection />;
       case 'commercial':
         return <CommercialSection />;
+      case 'leads-crm':
+        return <AdminLeadsCRM />;
       case 'system':
         return <SystemSection />;
       default:
@@ -232,47 +237,21 @@ const Admin = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="container mx-auto p-4 md:p-6">
-        {/* Header */}
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-3 rounded-xl bg-indigo-600/20 border border-indigo-500/30">
-            <Shield className="h-7 w-7 text-indigo-400" />
+      <div className="w-full px-4 md:px-6 py-4 md:py-6">
+        {/* Header compacto + tabs horizontales */}
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2.5 rounded-xl bg-indigo-600/20 border border-indigo-500/30">
+            <Shield className="h-6 w-6 text-indigo-400" />
           </div>
-          <div>
-            <h1 className="text-xl md:text-2xl font-semibold tracking-tight text-white">
+          <div className="mr-4">
+            <h1 className="text-lg font-semibold tracking-tight text-white leading-tight">
               Centro de Control
             </h1>
-            <p className="text-sm text-slate-400">Paw Friend Admin</p>
+            <p className="text-xs text-slate-400">Paw Friend Admin</p>
           </div>
-        </div>
-
-        <div className="flex gap-6">
-          {/* Sidebar — desktop */}
-          <nav className="hidden lg:flex flex-col gap-0.5 w-52 shrink-0">
-            {SECTIONS.map((section) => {
-              const Icon = section.icon;
-              const isActive = activeSection === section.id;
-              return (
-                <button
-                  key={section.id}
-                  onClick={() => setActiveSection(section.id)}
-                  className={cn(
-                    'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left',
-                    isActive
-                      ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30'
-                      : 'text-slate-400 hover:bg-slate-800/80 hover:text-slate-200 border border-transparent'
-                  )}
-                >
-                  <Icon className="h-4 w-4" />
-                  {section.label}
-                </button>
-              );
-            })}
-          </nav>
-
-          {/* Mobile tabs — horizontal scroll */}
-          <div className="lg:hidden w-full mb-4">
-            <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4">
+          {/* Tabs horizontales inline con el header */}
+          <div className="flex-1 overflow-x-auto">
+            <div className="flex gap-1">
               {SECTIONS.map((section) => {
                 const Icon = section.icon;
                 const isActive = activeSection === section.id;
@@ -281,10 +260,10 @@ const Admin = () => {
                     key={section.id}
                     onClick={() => setActiveSection(section.id)}
                     className={cn(
-                      'flex items-center gap-2 px-3 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-colors shrink-0',
+                      'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors shrink-0',
                       isActive
                         ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/30'
-                        : 'bg-slate-800 text-slate-400 border border-slate-700'
+                        : 'text-slate-400 hover:bg-slate-800/80 hover:text-slate-200 border border-transparent'
                     )}
                   >
                     <Icon className="h-3.5 w-3.5" />
@@ -294,10 +273,10 @@ const Admin = () => {
               })}
             </div>
           </div>
-
-          {/* Main content */}
-          <main className="flex-1 min-w-0">{renderSection()}</main>
         </div>
+
+        {/* Main content — full width */}
+        <main className="w-full">{renderSection()}</main>
       </div>
     </div>
   );
