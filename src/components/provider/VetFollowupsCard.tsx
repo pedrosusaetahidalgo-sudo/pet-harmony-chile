@@ -1,9 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, Bell } from '@/lib/icons';
+import { Calendar, CheckCircle2, Loader2 } from '@/lib/icons';
 import { formatDistanceToNowStrict, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Link } from 'react-router-dom';
@@ -20,18 +20,17 @@ interface FollowupNote {
   followup_date: string;
   followup_reason: string | null;
   pet_name?: string;
-  owner_name?: string;
 }
 
 export function VetFollowupsCard() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
   const { data: followups = [] } = useQuery<FollowupNote[]>({
     queryKey: ['vet-followups', user?.id],
     queryFn: async () => {
       if (!user) return [];
 
-      // Obtener provider_id del usuario
       const { data: provider } = await supabase
         .from('service_providers')
         .select('id')
@@ -56,12 +55,10 @@ export function VetFollowupsCard() {
 
       if (error) return [];
 
-      // Enriquecer con nombre de mascota
       const petIds = [...new Set((data as FollowupNote[]).map((d) => d.pet_id))];
       if (petIds.length === 0) return [];
 
       const { data: pets } = await supabase.from('pets').select('id, name').in('id', petIds);
-
       const petMap = new Map((pets ?? []).map((p) => [p.id, p.name]));
 
       return (data as FollowupNote[]).map((note) => ({
@@ -70,6 +67,23 @@ export function VetFollowupsCard() {
       }));
     },
     enabled: !!user,
+  });
+
+  const markDone = useMutation({
+    mutationFn: async (noteId: string) => {
+      const { error } = await sb
+        .from('vet_clinical_notes')
+        .update({ followup_required: false })
+        .eq('id', noteId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['vet-followups'] });
+      toast.success('Seguimiento marcado como completado');
+    },
+    onError: () => {
+      toast.error('Error al actualizar el seguimiento');
+    },
   });
 
   if (followups.length === 0) return null;
@@ -89,7 +103,7 @@ export function VetFollowupsCard() {
             className="flex items-center justify-between p-3 bg-white rounded-lg border border-amber-200"
           >
             <Link
-              to={LINKS.petClinical(f.pet_id)}
+              to={`${LINKS.petClinical(f.pet_id)}?grabar=0`}
               className="min-w-0 flex-1 hover:opacity-80 transition-opacity"
             >
               <p className="text-sm font-semibold truncate">
@@ -105,15 +119,16 @@ export function VetFollowupsCard() {
             <Button
               size="sm"
               variant="ghost"
-              className="text-amber-700 hover:text-amber-800 hover:bg-amber-100 flex-shrink-0"
-              title="Recordar al dueño"
-              onClick={() =>
-                toast.info('Recordatorio pendiente', {
-                  description: `Se enviará un recordatorio al dueño de ${f.pet_name} sobre el seguimiento.`,
-                })
-              }
+              className="text-green-700 hover:text-green-800 hover:bg-green-100 flex-shrink-0"
+              title="Marcar como completado"
+              disabled={markDone.isPending}
+              onClick={() => markDone.mutate(f.id)}
             >
-              <Bell className="h-4 w-4" />
+              {markDone.isPending && markDone.variables === f.id ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <CheckCircle2 className="h-4 w-4" />
+              )}
             </Button>
           </div>
         ))}

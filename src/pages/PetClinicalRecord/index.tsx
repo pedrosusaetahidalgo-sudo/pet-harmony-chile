@@ -249,15 +249,23 @@ const PetClinicalRecord = () => {
         }
       >
         <Breadcrumbs
-          items={[
-            { label: 'Mascotas', to: LINKS.myPets() },
-            { label: pet.name },
-            { label: 'Ficha clínica' },
-          ]}
+          items={
+            viewMode === 'vet'
+              ? [
+                  { label: 'Pacientes', to: LINKS.providerPatients() },
+                  { label: pet.name },
+                  { label: 'Ficha clínica' },
+                ]
+              : [
+                  { label: 'Mascotas', to: LINKS.myPets() },
+                  { label: pet.name },
+                  { label: 'Ficha clínica' },
+                ]
+          }
         />
       </PageHeader>
       <div className="container max-w-4xl mx-auto p-4 md:p-6 space-y-6">
-        {userPets && userPets.length > 1 && (
+        {viewMode === 'owner' && userPets && userPets.length > 1 && (
           <div className="flex items-center gap-3">
             <Label className="text-sm text-muted-foreground whitespace-nowrap">Mascota:</Label>
             <Select value={petId} onValueChange={(id) => navigate(LINKS.petClinical(id))}>
@@ -276,17 +284,6 @@ const PetClinicalRecord = () => {
         )}
 
         <PetHeader pet={pet} />
-
-        {/* Quick link to timeline */}
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-2"
-          onClick={() => navigate(`/mascota/${pet.id}/timeline`)}
-        >
-          <Clock className="h-3.5 w-3.5" />
-          Ver historia completa
-        </Button>
 
         {/* CTA PDF prominente — joya de la corona (CLAUDE.md §9.6) */}
         <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 via-amber-50/60 to-rose-50/60 p-5 shadow-sm md:p-6">
@@ -403,20 +400,22 @@ const PetClinicalRecord = () => {
           </div>
 
           <TabsContent value="resumen" className="mt-4 space-y-4">
-            {/* PawPoints nudge */}
-            <div
-              className="flex items-center gap-3 p-3 rounded-lg bg-purple-50 border border-purple-100 cursor-pointer hover:bg-purple-100/50 transition-colors"
-              onClick={() => navigate('/paw-game')}
-            >
-              <span className="text-lg">🐾</span>
-              <p className="text-xs text-purple-700 flex-1">
-                Completa la ficha de {pet.name} y gana <strong>30 PawPoints</strong>. Canjea por
-                descuentos y premios.
-              </p>
-              <span className="text-xs text-purple-500 font-medium flex-shrink-0">
-                Ver premios →
-              </span>
-            </div>
+            {/* PawPoints nudge — solo owner (gamificacion no aplica a vets) */}
+            {viewMode === 'owner' && (
+              <div
+                className="flex items-center gap-3 p-3 rounded-lg bg-purple-50 border border-purple-100 cursor-pointer hover:bg-purple-100/50 transition-colors"
+                onClick={() => navigate('/paw-game')}
+              >
+                <span className="text-lg">🐾</span>
+                <p className="text-xs text-purple-700 flex-1">
+                  Completa la ficha de {pet.name} y gana <strong>30 PawPoints</strong>. Canjea por
+                  descuentos y premios.
+                </p>
+                <span className="text-xs text-purple-500 font-medium flex-shrink-0">
+                  Ver premios →
+                </span>
+              </div>
+            )}
             <TabResumen pet={pet} onRefresh={() => refetchPet()} viewMode={viewMode} />
             {viewMode === 'owner' && (
               <Card>
