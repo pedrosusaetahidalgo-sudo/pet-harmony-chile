@@ -812,10 +812,11 @@ serve(async (req) => {
 
     const body = await req.json();
     const pet_id = body.pet_id;
+    const mode = body.mode === 'complete' ? 'complete' : 'medical';
     const storeInStorage = body.store === true; // Only upload to storage when explicitly asked (for sharing)
     if (!pet_id || typeof pet_id !== 'string') throw new Error('pet_id is required');
 
-    // ── Ownership check ──
+    // ── Ownership / linked-vet check ──
     const { data: petOwnership, error: ownershipError } = await supabase
       .from('pets')
       .select('owner_id')
@@ -823,7 +824,29 @@ serve(async (req) => {
       .single();
 
     if (ownershipError || !petOwnership) throw new Error('Pet not found');
-    if (petOwnership.owner_id !== userData.user.id) {
+    const isOwner = petOwnership.owner_id === userData.user.id;
+
+    // Allow linked vets to generate PDF too
+    let isLinkedVet = false;
+    if (!isOwner) {
+      const { data: providerRow } = await supabase
+        .from('service_providers')
+        .select('id')
+        .eq('user_id', userData.user.id)
+        .maybeSingle();
+      if (providerRow?.id) {
+        const { data: link } = await supabase
+          .from('pet_vet_links')
+          .select('id')
+          .eq('pet_id', pet_id)
+          .eq('provider_id', providerRow.id)
+          .eq('status', 'active')
+          .maybeSingle();
+        isLinkedVet = !!link;
+      }
+    }
+
+    if (!isOwner && !isLinkedVet) {
       return new Response(JSON.stringify({ success: false, error: 'Forbidden' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 403,
@@ -841,10 +864,10 @@ serve(async (req) => {
     //   );
     // }
 
-    // ── Fetch data via updated RPC ──
+    // ── Fetch data via updated RPC (v4 supports mode) ──
     const { data: summaryData, error: summaryError } = await supabase.rpc(
       'get_medical_summary_data',
-      { p_pet_id: pet_id }
+      { p_pet_id: pet_id, p_mode: mode }
     );
     if (summaryError) throw summaryError;
     if (!summaryData) throw new Error('No data found');
@@ -853,6 +876,7 @@ serve(async (req) => {
     const owner = summaryData.owner;
     const allRecords: any[] = summaryData.all_records || []; // Already ASC from v3 RPC
     const vetNotes: any[] = summaryData.vet_notes || [];
+    const routines: any[] = summaryData.routines || [];
 
     // ══════════════════════════════════════════════════════════
     // BUILD PDF v3 — Chronological Timeline
@@ -1470,6 +1494,34 @@ serve(async (req) => {
           size: 8.5,
           color: TEXT_GRAY,
         });
+      }
+    }
+
+    // ── Routines section (complete mode only) ──
+    if (mode === 'complete' && routines.length > 0) {
+      pdf.y -= 16;
+      pdf.drawSectionHeader('Rutinas activas', MED_GREEN);
+
+      const DAYS = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
+      for (const routine of routines) {
+        pdf.checkNewPage();
+        const daysStr = (routine.days_of_week || []).map((d: number) => DAYS[d] || '?').join(', ');
+        const time = routine.time_of_day ? routine.time_of_day.slice(0, 5) : '';
+        const duration = routine.duration_minutes ? `${routine.duration_minutes}min` : '';
+        const category = routine.category ? `[${routine.category}]` : '';
+
+        pdf.drawText(`${routine.title || 'Sin titulo'} ${category}`, {
+          size: 9,
+          font: bold,
+          color: TEXT_DARK,
+        });
+        pdf.y -= 12;
+        pdf.drawText(`${daysStr}  ${time}  ${duration}`.trim(), {
+          size: 8,
+          color: TEXT_GRAY,
+          x: MARGIN_L + 10,
+        });
+        pdf.y -= 14;
       }
     }
 
