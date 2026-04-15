@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { usePlan } from '@/hooks/usePlan';
+import { awardPoints } from '@/lib/points';
 
 function nextDueDate(current: string, interval: string): string {
   const d = new Date(current);
@@ -161,6 +162,15 @@ export const useReminders = () => {
         });
         return { wasRecurring: true, nextDate: new Date(newDue) };
       }
+      // Award gamification points (fire-and-forget)
+      if (user?.id && reminder) {
+        const isOverdue = new Date(reminder.due_date) < new Date();
+        awardPoints(user.id, isOverdue ? 'complete_reminder_late' : 'complete_reminder_ontime', {
+          reminder_type: reminder.type,
+          pet_id: reminder.pet_id,
+        }).catch(() => {});
+      }
+
       return { wasRecurring: false, nextDate: null };
     },
     onSuccess: (result) => {

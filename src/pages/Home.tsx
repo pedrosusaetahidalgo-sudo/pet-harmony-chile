@@ -40,6 +40,7 @@ import { PriceEstimatorCard } from '@/components/home/PriceEstimatorCard';
 import { WeeklyReportCard } from '@/components/home/WeeklyReportCard';
 import { SeasonalTipsCard } from '@/components/home/SeasonalTipsCard';
 import { TodayRoutinesCard } from '@/components/home/TodayRoutinesCard';
+import { AnnualCareChecklist } from '@/components/home/AnnualCareChecklist';
 const AnalyticsPreviewCard = lazy(() =>
   import('@/components/analytics/AnalyticsPreviewCard').then((m) => ({
     default: m.AnalyticsPreviewCard,
@@ -140,7 +141,13 @@ export default function Home() {
           .select('display_name, avatar_url, is_premium')
           .eq('id', user.id)
           .maybeSingle(),
-        supabase.from('pets').select('*').eq('owner_id', user.id).eq('lifecycle_status', 'active'),
+        supabase
+          .from('pets')
+          .select(
+            'id, name, species, breed, birth_date, gender, size, color, weight, photo_url, microchip_number, holo_pattern, paw_card_id'
+          )
+          .eq('owner_id', user.id)
+          .eq('lifecycle_status', 'active'),
         supabase
           .from('appointments')
           .select('id, title, scheduled_date, pet_id')
@@ -624,6 +631,9 @@ export default function Home() {
 
           {/* === Weekly report card (si hay reporte no leído) === */}
           <WeeklyReportCard />
+
+          {/* === Checklist anual de cuidado === */}
+          {activePet && <AnnualCareChecklist petId={activePet.id} petName={activePet.name} />}
 
           {/* === Tips estacionales por especie === */}
           {activePet?.species && <SeasonalTipsCard species={activePet.species} />}

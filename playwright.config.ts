@@ -50,8 +50,17 @@ export default defineConfig({
     { name: 'Desktop Chrome', use: { ...devices['Desktop Chrome'] } },
     { name: 'Desktop Firefox', use: { ...devices['Desktop Firefox'] } },
     { name: 'Desktop Safari', use: { ...devices['Desktop Safari'] } },
+    {
+      name: 'Desktop Chrome 1366',
+      use: { ...devices['Desktop Chrome'], viewport: { width: 1366, height: 768 } },
+    },
+    {
+      name: 'Desktop Chrome 1920',
+      use: { ...devices['Desktop Chrome'], viewport: { width: 1920, height: 1080 } },
+    },
     { name: 'Mobile Chrome (Pixel 5)', use: { ...devices['Pixel 5'] } },
     { name: 'Mobile Safari (iPhone 13)', use: { ...devices['iPhone 13'] } },
+    { name: 'Mobile Safari (iPhone SE)', use: { ...devices['iPhone SE'] } },
   ],
   webServer: {
     command: 'npm run dev',
