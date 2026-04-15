@@ -1,37 +1,38 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { useToast } from "@/hooks/use-toast";
-import { Dog, Mail, Shield, Stethoscope, Heart } from "@/lib/icons";
-import { FaFacebook } from "react-icons/fa";
-import { LegalFooter } from "@/components/LegalFooter";
-import { GoogleSignInButton } from "@/components/GoogleSignInButton";
-import { useFacebookAuth } from "@/hooks/useFacebookAuth";
-import { track, EVENTS } from "@/lib/analytics";
-import { logger } from "@/lib/logger";
-import { describeSupabaseError } from "@/lib/supabaseErrors";
-import { useScrollOnFocus } from "@/hooks/useScrollOnFocus";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
+import { useToast } from '@/hooks/use-toast';
+import { Dog, Mail, Shield, Stethoscope, Heart } from '@/lib/icons';
+import { FaFacebook } from 'react-icons/fa';
+import { LegalFooter } from '@/components/LegalFooter';
+import { GoogleSignInButton } from '@/components/GoogleSignInButton';
+import { useFacebookAuth } from '@/hooks/useFacebookAuth';
+import { track, EVENTS } from '@/lib/analytics';
+import { logger } from '@/lib/logger';
+import { describeSupabaseError } from '@/lib/supabaseErrors';
+import { useScrollOnFocus } from '@/hooks/useScrollOnFocus';
 
 const Auth = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [loading, setLoading] = useState(false);
   const [confirmationSent, setConfirmationSent] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
   const [showEmailPassword, setShowEmailPassword] = useState(false);
   const [isPasswordReset, setIsPasswordReset] = useState(false);
-  const [newPassword, setNewPassword] = useState("");
-  const [newPasswordConfirm, setNewPasswordConfirm] = useState("");
+  const [newPassword, setNewPassword] = useState('');
+  const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const returnTo = searchParams.get("returnTo");
+  const returnTo = searchParams.get('returnTo');
   const { toast } = useToast();
   const { signInWithFacebook, loading: facebookLoading } = useFacebookAuth();
   const hasRedirected = useRef(false);
@@ -39,8 +40,10 @@ const Auth = () => {
 
   // Detect PASSWORD_RECOVERY event from Supabase reset link
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'PASSWORD_RECOVERY') {
         setIsPasswordReset(true);
         hasRedirected.current = true; // prevent auto-redirect
       }
@@ -53,7 +56,7 @@ const Auth = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session && !hasRedirected.current) {
         hasRedirected.current = true;
-        navigate(returnTo || "/home", { replace: true });
+        navigate(returnTo || '/home', { replace: true });
       }
     });
   }, [navigate, returnTo]);
@@ -62,45 +65,51 @@ const Auth = () => {
 
   useEffect(() => {
     const hasOAuthHash =
-      window.location.hash.includes("access_token") ||
-      window.location.search.includes("code=");
+      window.location.hash.includes('access_token') || window.location.search.includes('code=');
 
     // Listener: cuando supabase procesa el hash y emite SIGNED_IN, redirigimos
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, newSession) => {
-        if (event === "SIGNED_IN" && newSession && !hasRedirected.current) {
-          hasRedirected.current = true;
-          window.history.replaceState({}, document.title, window.location.pathname);
-          // Hard reload para evitar race con ProtectedRoute
-          window.location.href = returnTo || "/home";
-        }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, newSession) => {
+      if (event === 'SIGNED_IN' && newSession && !hasRedirected.current) {
+        hasRedirected.current = true;
+        window.history.replaceState({}, document.title, window.location.pathname);
+        // Hard reload para evitar race con ProtectedRoute
+        window.location.href = returnTo || '/home';
       }
-    );
+    });
 
     // Si ya hay sesión activa al montar (sin hash), redirigir directo
     if (!hasOAuthHash) {
-      supabase.auth.getSession().then(({ data: { session: existingSession } }) => {
-        if (existingSession && !hasRedirected.current) {
-          hasRedirected.current = true;
-          window.location.href = returnTo || "/home";
-        }
-      }).catch(() => { /* silent */ });
+      supabase.auth
+        .getSession()
+        .then(({ data: { session: existingSession } }) => {
+          if (existingSession && !hasRedirected.current) {
+            hasRedirected.current = true;
+            window.location.href = returnTo || '/home';
+          }
+        })
+        .catch(() => {
+          /* silent */
+        });
     }
 
     // Si hay hash OAuth pero supabase tarda mucho en procesarlo, fallback a 5s
     const oauthTimeout = hasOAuthHash
       ? setTimeout(async () => {
           if (hasRedirected.current) return;
-          const { data: { session } } = await supabase.auth.getSession();
+          const {
+            data: { session },
+          } = await supabase.auth.getSession();
           if (session && !hasRedirected.current) {
             hasRedirected.current = true;
             window.history.replaceState({}, document.title, window.location.pathname);
-            window.location.href = returnTo || "/home";
+            window.location.href = returnTo || '/home';
           } else if (!session) {
             toast({
-              title: "Error en autenticación con Google",
-              description: "No pudimos completar el login. Intenta nuevamente.",
-              variant: "destructive",
+              title: 'Error en autenticación con Google',
+              description: 'No pudimos completar el login. Intenta nuevamente.',
+              variant: 'destructive',
             });
           }
         }, 5000)
@@ -125,9 +134,9 @@ const Auth = () => {
         options: {
           emailRedirectTo: redirectUrl,
           data: {
-            display_name: displayName || email.split("@")[0]
-          }
-        }
+            display_name: displayName || email.split('@')[0],
+          },
+        },
       });
 
       if (error) throw error;
@@ -137,32 +146,32 @@ const Auth = () => {
         // User created but no session = email confirmation required
         setConfirmationSent(true);
         toast({
-          title: "¡Revisa tu correo!",
-          description: "Te enviamos un enlace de confirmación a " + email,
+          title: '¡Revisa tu correo!',
+          description: 'Te enviamos un enlace de confirmación a ' + email,
         });
       } else if (data.session) {
         // Email confirmation disabled, user is logged in directly
         track({ event: EVENTS.SIGNUP_COMPLETED, userId: data.user?.id });
         toast({
-          title: "¡Cuenta creada!",
-          description: "Bienvenido a Paw Friend",
+          title: '¡Cuenta creada!',
+          description: 'Bienvenido a Paw Friend',
         });
         // Hard reload para evitar race condition con useAuth + ProtectedRoute.
         // Usuario nuevo siempre va a /add-pet (onboarding).
-        window.location.href = returnTo || "/add-pet";
+        window.location.href = returnTo || '/add-pet';
         return;
       }
     } catch (error: any) {
       let message = error.message;
-      if (message.includes("already registered")) {
-        message = "Este email ya está registrado. Intenta iniciar sesión.";
-      } else if (message.includes("password")) {
-        message = "La contraseña debe tener al menos 6 caracteres.";
+      if (message.includes('already registered')) {
+        message = 'Este email ya está registrado. Intenta iniciar sesión.';
+      } else if (message.includes('password')) {
+        message = 'La contraseña debe tener al menos 6 caracteres.';
       }
       toast({
-        title: "Error al crear cuenta",
+        title: 'Error al crear cuenta',
         description: message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -183,8 +192,8 @@ const Auth = () => {
 
       track({ event: EVENTS.LOGIN_COMPLETED });
       toast({
-        title: "¡Bienvenido de vuelta!",
-        description: "Has iniciado sesión exitosamente",
+        title: '¡Bienvenido de vuelta!',
+        description: 'Has iniciado sesión exitosamente',
       });
 
       // CRÍTICO: usar window.location.href en vez de navigate() para forzar
@@ -194,18 +203,18 @@ const Auth = () => {
       // localStorage al montar, y ProtectedRoute la encuentra.
       if (data.session?.user?.id) {
         // Decidir destino: returnTo > provider dashboard > home
-        let dest = returnTo || "/home";
+        let dest = returnTo || '/home';
         try {
-          // Quick check provider (con timeout corto para no demorar)
+          // Check provider status — timeout 3s para cubrir latencia real de Supabase
           const result = await Promise.race<{ data: { id: string } | null } | null>([
             supabase
-              .from("service_providers")
-              .select("id")
-              .eq("user_id", data.session.user.id)
+              .from('service_providers')
+              .select('id')
+              .eq('user_id', data.session.user.id)
               .maybeSingle(),
-            new Promise<null>((resolve) => setTimeout(() => resolve(null), 1500)),
+            new Promise<null>((resolve) => setTimeout(() => resolve(null), 3000)),
           ]);
-          if (!returnTo && result?.data) dest = "/provider/dashboard";
+          if (!returnTo && result?.data) dest = '/provider/dashboard';
         } catch {
           /* ignore */
         }
@@ -214,15 +223,15 @@ const Auth = () => {
       }
     } catch (error: any) {
       let message = error.message;
-      if (message.includes("Invalid login credentials")) {
-        message = "Email o contraseña incorrectos.";
-      } else if (message.includes("Email not confirmed")) {
-        message = "Debes confirmar tu email antes de iniciar sesión. Revisa tu bandeja de entrada.";
+      if (message.includes('Invalid login credentials')) {
+        message = 'Email o contraseña incorrectos.';
+      } else if (message.includes('Email not confirmed')) {
+        message = 'Debes confirmar tu email antes de iniciar sesión. Revisa tu bandeja de entrada.';
       }
       toast({
-        title: "Error al iniciar sesión",
+        title: 'Error al iniciar sesión',
         description: message,
-        variant: "destructive",
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -232,9 +241,9 @@ const Auth = () => {
   const handleForgotPassword = async () => {
     if (!email) {
       toast({
-        title: "Ingresa tu email",
+        title: 'Ingresa tu email',
         description: "Escribe tu email arriba y luego haz clic en '¿Olvidaste tu contraseña?'",
-        variant: "destructive",
+        variant: 'destructive',
       });
       return;
     }
@@ -245,14 +254,16 @@ const Auth = () => {
       });
       if (error) throw error;
       toast({
-        title: "Revisa tu correo",
-        description: "Te enviamos un enlace para restablecer tu contraseña.",
+        title: 'Revisa tu correo',
+        description: 'Te enviamos un enlace para restablecer tu contraseña.',
       });
     } catch (error: any) {
       toast({
-        title: "Algo salió mal",
-        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo enviar el correo de recuperación.",
-        variant: "destructive",
+        title: 'Algo salió mal',
+        description:
+          describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
+          'No se pudo enviar el correo de recuperación.',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -262,9 +273,9 @@ const Auth = () => {
   const handleMagicLink = async () => {
     if (!email) {
       toast({
-        title: "Ingresa tu email",
-        description: "Escribe tu email para recibir un enlace de acceso directo.",
-        variant: "destructive",
+        title: 'Ingresa tu email',
+        description: 'Escribe tu email para recibir un enlace de acceso directo.',
+        variant: 'destructive',
       });
       return;
     }
@@ -277,14 +288,14 @@ const Auth = () => {
       if (error) throw error;
       setMagicLinkSent(true);
       toast({
-        title: "¡Revisa tu correo!",
-        description: "Te enviamos un enlace para entrar sin contraseña.",
+        title: '¡Revisa tu correo!',
+        description: 'Te enviamos un enlace para entrar sin contraseña.',
       });
     } catch (error: any) {
       toast({
-        title: "Error",
-        description: describeSupabaseError(error) || "No se pudo enviar el enlace.",
-        variant: "destructive",
+        title: 'Error',
+        description: describeSupabaseError(error) || 'No se pudo enviar el enlace.',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -302,23 +313,38 @@ const Auth = () => {
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword.length < 6) {
-      toast({ title: "Contraseña muy corta", description: "Mínimo 6 caracteres.", variant: "destructive" });
+      toast({
+        title: 'Contraseña muy corta',
+        description: 'Mínimo 6 caracteres.',
+        variant: 'destructive',
+      });
       return;
     }
     if (newPassword !== newPasswordConfirm) {
-      toast({ title: "Las contraseñas no coinciden", description: "Verifica que ambas sean iguales.", variant: "destructive" });
+      toast({
+        title: 'Las contraseñas no coinciden',
+        description: 'Verifica que ambas sean iguales.',
+        variant: 'destructive',
+      });
       return;
     }
     setLoading(true);
     try {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
-      toast({ title: "Contraseña actualizada", description: "Ya puedes usar tu nueva contraseña." });
+      toast({
+        title: 'Contraseña actualizada',
+        description: 'Ya puedes usar tu nueva contraseña.',
+      });
       setIsPasswordReset(false);
       hasRedirected.current = false;
-      navigate("/home", { replace: true });
+      navigate('/home', { replace: true });
     } catch (error: any) {
-      toast({ title: "Error", description: error.message || "No se pudo actualizar la contraseña.", variant: "destructive" });
+      toast({
+        title: 'Error',
+        description: error.message || 'No se pudo actualizar la contraseña.',
+        variant: 'destructive',
+      });
     } finally {
       setLoading(false);
     }
@@ -367,7 +393,7 @@ const Auth = () => {
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Actualizando..." : "Actualizar contraseña"}
+                {loading ? 'Actualizando...' : 'Actualizar contraseña'}
               </Button>
             </form>
           </CardContent>
@@ -388,16 +414,13 @@ const Auth = () => {
             <CardTitle className="text-2xl font-bold text-center">¡Revisa tu correo!</CardTitle>
             <CardDescription className="text-center text-base">
               Enviamos un enlace de acceso a <strong>{email}</strong>.
-              <br /><br />
+              <br />
+              <br />
               Haz clic en el enlace del correo para entrar directamente, sin contraseña.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setMagicLinkSent(false)}
-            >
+            <Button variant="outline" className="w-full" onClick={() => setMagicLinkSent(false)}>
               Volver
             </Button>
           </CardContent>
@@ -418,16 +441,14 @@ const Auth = () => {
             <CardTitle className="text-2xl font-bold text-center">¡Revisa tu correo!</CardTitle>
             <CardDescription className="text-center text-base">
               Enviamos un enlace de confirmación a <strong>{email}</strong>.
-              <br /><br />
-              Haz clic en el enlace del correo para activar tu cuenta y luego vuelve aquí para iniciar sesión.
+              <br />
+              <br />
+              Haz clic en el enlace del correo para activar tu cuenta y luego vuelve aquí para
+              iniciar sesión.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={() => setConfirmationSent(false)}
-            >
+            <Button variant="outline" className="w-full" onClick={() => setConfirmationSent(false)}>
               Volver a Iniciar Sesión
             </Button>
           </CardContent>
@@ -482,7 +503,7 @@ const Auth = () => {
                     disabled={loading || !email}
                   >
                     <Mail className="mr-2 h-4 w-4" />
-                    {loading ? "Enviando..." : "Enviar enlace al email"}
+                    {loading ? 'Enviando...' : 'Enviar enlace al email'}
                   </Button>
 
                   <div className="relative">
@@ -490,9 +511,7 @@ const Auth = () => {
                       <Separator className="w-full" />
                     </div>
                     <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-card px-2 text-muted-foreground">
-                        O continúa con
-                      </span>
+                      <span className="bg-card px-2 text-muted-foreground">O continúa con</span>
                     </div>
                   </div>
 
@@ -500,7 +519,8 @@ const Auth = () => {
                   <div className="space-y-3">
                     <GoogleSignInButton mode="signin" />
                     <p className="text-xs text-muted-foreground text-center px-2">
-                      Si aparece una advertencia de Google, es porque estamos en proceso de verificación oficial. Continúa con tranquilidad — tu cuenta es segura.
+                      Si aparece una advertencia de Google, es porque estamos en proceso de
+                      verificación oficial. Continúa con tranquilidad — tu cuenta es segura.
                     </p>
                     <Button
                       type="button"
@@ -510,7 +530,7 @@ const Auth = () => {
                       disabled={facebookLoading}
                     >
                       <FaFacebook className="mr-2 h-4 w-4 text-blue-600" />
-                      {facebookLoading ? "Conectando..." : "Continuar con Facebook"}
+                      {facebookLoading ? 'Conectando...' : 'Continuar con Facebook'}
                     </Button>
                   </div>
 
@@ -536,8 +556,13 @@ const Auth = () => {
                           required
                         />
                       </div>
-                      <Button type="submit" className="w-full" variant="secondary" disabled={loading}>
-                        {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
+                      <Button
+                        type="submit"
+                        className="w-full"
+                        variant="secondary"
+                        disabled={loading}
+                      >
+                        {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
                       </Button>
                       <button
                         type="button"
@@ -558,7 +583,8 @@ const Auth = () => {
                   <div className="space-y-3">
                     <GoogleSignInButton mode="signup" />
                     <p className="text-xs text-muted-foreground text-center px-2">
-                      Si aparece una advertencia de Google, es porque estamos en proceso de verificación oficial. Continúa con tranquilidad — tu cuenta es segura.
+                      Si aparece una advertencia de Google, es porque estamos en proceso de
+                      verificación oficial. Continúa con tranquilidad — tu cuenta es segura.
                     </p>
                     <Button
                       type="button"
@@ -622,7 +648,7 @@ const Auth = () => {
                     />
                   </div>
                   <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "Creando cuenta..." : "Crear Cuenta"}
+                    {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
                   </Button>
                 </form>
               </TabsContent>
@@ -637,12 +663,17 @@ const Auth = () => {
       {/* Right side: Hero visual (hidden on mobile) */}
       <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-purple-600 to-purple-800 flex-col items-center justify-center p-12 text-white">
         <div className="max-w-md text-center space-y-6">
-          <img src="/paw_friend_icon_principal.svg" alt="Paw Friend" className="w-20 h-20 mx-auto mb-2 brightness-0 invert" />
+          <img
+            src="/paw_friend_icon_principal.svg"
+            alt="Paw Friend"
+            className="w-20 h-20 mx-auto mb-2 brightness-0 invert"
+          />
           <h2 className="text-3xl font-bold leading-tight">
             Cuida la salud de tu mascota como nunca antes
           </h2>
           <p className="text-lg text-purple-100">
-            Únete a dueños chilenos que ya confían su mascota a veterinarios verificados en Paw Friend.
+            Únete a dueños chilenos que ya confían su mascota a veterinarios verificados en Paw
+            Friend.
           </p>
           <div className="flex justify-center gap-6 pt-8">
             <div className="flex flex-col items-center gap-2">

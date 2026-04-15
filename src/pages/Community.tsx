@@ -117,7 +117,9 @@ function GroupList() {
                       leaveGroup.mutate(group.id);
                     } else {
                       joinGroup.mutate(group.id, {
-                        onSuccess: () => navigate(`/comunidad/${group.slug}`),
+                        onSettled: (_data, error) => {
+                          if (!error) navigate(`/comunidad/${group.slug}`);
+                        },
                       });
                     }
                   }}

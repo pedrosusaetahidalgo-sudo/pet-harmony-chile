@@ -88,11 +88,21 @@ const Profile = () => {
           .eq('owner_id', user!.id)
           .eq('lifecycle_status', 'active')
           .order('created_at', { ascending: false }),
-        supabase
-          .from('user_stats')
-          .select('followers_count, following_count')
-          .eq('user_id', user!.id)
-          .maybeSingle(),
+        Promise.all([
+          supabase
+            .from('user_follows')
+            .select('*', { count: 'exact', head: true })
+            .eq('following_id', user!.id),
+          supabase
+            .from('user_follows')
+            .select('*', { count: 'exact', head: true })
+            .eq('follower_id', user!.id),
+        ]).then(([followersRes, followingRes]) => ({
+          data: {
+            followers_count: followersRes.count || 0,
+            following_count: followingRes.count || 0,
+          },
+        })),
         supabase.from('posts').select('id', { count: 'exact', head: true }).eq('user_id', user!.id),
         supabase.from('notification_preferences').select('*').eq('user_id', user!.id).maybeSingle(),
       ]);
@@ -258,7 +268,9 @@ const Profile = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="font-medium text-sm">Perfil veterinario</p>
-              <p className="text-xs text-muted-foreground">Edita tu perfil público del directorio</p>
+              <p className="text-xs text-muted-foreground">
+                Edita tu perfil público del directorio
+              </p>
             </div>
             <Button variant="outline" size="sm" onClick={() => navigate('/provider/profile-edit')}>
               Editar perfil
