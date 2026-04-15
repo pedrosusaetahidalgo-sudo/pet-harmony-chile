@@ -13,10 +13,7 @@ import {
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import {
-  useCreateInvitation,
-  useMonthInvitationCount,
-} from '@/hooks/useReviewInvitations';
+import { useCreateInvitation, useMonthInvitationCount } from '@/hooks/useReviewInvitations';
 import { PROVIDER_PLANS, type ProviderPlanId } from '@/lib/plans';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -94,8 +91,7 @@ export function ProviderDirectoryCard() {
   const rating = Number(p.avg_rating ?? 0);
   const reviews = Number(p.total_reviews ?? 0);
 
-  const shareMessage =
-    `¡Hola! Ahora puedes reservar mis consultas y dejar reseñas en mi perfil de Paw Friend 🐾\n${profileUrl ?? ''}`;
+  const shareMessage = `¡Hola! Ahora puedes reservar mis consultas y dejar reseñas en mi perfil de Paw Friend 🐾\n${profileUrl ?? ''}`;
 
   const copyLink = async () => {
     if (!profileUrl) return;
@@ -188,6 +184,7 @@ export function ProviderDirectoryCard() {
               <img
                 src={p.avatar_url}
                 alt={p.display_name}
+                loading="lazy"
                 className="w-14 h-14 rounded-full object-cover border-2 border-purple-100"
               />
             ) : (
@@ -296,60 +293,63 @@ export function ProviderDirectoryCard() {
         title="Invitar paciente a dejar reseña"
         description='Genera un link único para enviarle a un paciente que ya atendiste fuera de la plataforma. La reseña aparecerá marcada como "no verificada por reserva".'
       >
-          {!generatedLink ? (
-            <div className="space-y-4">
-              <div>
-                <Label htmlFor="cname">Nombre del paciente (opcional)</Label>
-                <Input
-                  id="cname"
-                  value={clientName}
-                  onChange={(e) => setClientName(e.target.value)}
-                  placeholder="María Pérez"
-                />
-              </div>
-              <div>
-                <Label htmlFor="cemail">Email del paciente (opcional)</Label>
-                <Input
-                  id="cemail"
-                  type="email"
-                  value={clientEmail}
-                  onChange={(e) => setClientEmail(e.target.value)}
-                  placeholder="maria@email.cl"
-                />
-              </div>
-              <div className="text-xs text-muted-foreground bg-purple-50 p-3 rounded">
-                Plan {planConfig.name}: {inviteRemaining} invitaciones restantes este mes.
-              </div>
-              <Button
-                onClick={handleCreateInvitation}
-                disabled={createInvitation.isPending || !canInvite}
-                className="w-full"
-              >
-                {createInvitation.isPending ? 'Generando…' : 'Generar link de invitación'}
-              </Button>
+        {!generatedLink ? (
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="cname">Nombre del paciente (opcional)</Label>
+              <Input
+                id="cname"
+                value={clientName}
+                onChange={(e) => setClientName(e.target.value)}
+                placeholder="María Pérez"
+              />
             </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="bg-green-50 p-3 rounded-lg">
-                <p className="text-xs text-muted-foreground mb-1">Link de invitación:</p>
-                <div className="flex items-center gap-2">
-                  <p className="text-xs font-mono text-green-700 flex-1 truncate">{generatedLink}</p>
-                  <Button size="sm" variant="ghost" onClick={copyInviteLink}>
-                    <Copy className="h-4 w-4" />
-                  </Button>
-                </div>
-                <p className="text-[11px] text-muted-foreground mt-2">
-                  Válido por 30 días. Solo puede usarse una vez.
-                </p>
-              </div>
-              <Button onClick={shareInviteWhatsApp} className="w-full bg-green-600 hover:bg-green-700">
-                Enviar por WhatsApp
-              </Button>
-              <Button variant="outline" onClick={resetInviteForm} className="w-full">
-                Crear otra invitación
-              </Button>
+            <div>
+              <Label htmlFor="cemail">Email del paciente (opcional)</Label>
+              <Input
+                id="cemail"
+                type="email"
+                value={clientEmail}
+                onChange={(e) => setClientEmail(e.target.value)}
+                placeholder="maria@email.cl"
+              />
             </div>
-          )}
+            <div className="text-xs text-muted-foreground bg-purple-50 p-3 rounded">
+              Plan {planConfig.name}: {inviteRemaining} invitaciones restantes este mes.
+            </div>
+            <Button
+              onClick={handleCreateInvitation}
+              disabled={createInvitation.isPending || !canInvite}
+              className="w-full"
+            >
+              {createInvitation.isPending ? 'Generando…' : 'Generar link de invitación'}
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="bg-green-50 p-3 rounded-lg">
+              <p className="text-xs text-muted-foreground mb-1">Link de invitación:</p>
+              <div className="flex items-center gap-2">
+                <p className="text-xs font-mono text-green-700 flex-1 truncate">{generatedLink}</p>
+                <Button size="sm" variant="ghost" onClick={copyInviteLink}>
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-[11px] text-muted-foreground mt-2">
+                Válido por 30 días. Solo puede usarse una vez.
+              </p>
+            </div>
+            <Button
+              onClick={shareInviteWhatsApp}
+              className="w-full bg-green-600 hover:bg-green-700"
+            >
+              Enviar por WhatsApp
+            </Button>
+            <Button variant="outline" onClick={resetInviteForm} className="w-full">
+              Crear otra invitación
+            </Button>
+          </div>
+        )}
       </ResponsiveModal>
 
       {/* Modal compartir */}
@@ -359,36 +359,40 @@ export function ProviderDirectoryCard() {
         title="Comparte tu perfil"
         description="Envía tu link a tus pacientes para que reserven y dejen reseñas."
       >
-          <div className="space-y-4">
-            <div className="bg-purple-50 p-3 rounded-lg">
-              <p className="text-xs text-muted-foreground mb-1">Tu link público:</p>
-              <div className="flex items-center gap-2">
-                <p className="text-sm font-mono text-purple-700 flex-1 truncate">{profileUrl}</p>
-                <Button size="sm" variant="ghost" onClick={copyLink}>
-                  {copied ? <Check className="h-4 w-4 text-green-600" /> : <Copy className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <Button onClick={shareWhatsApp} className="bg-green-600 hover:bg-green-700 text-white">
-                WhatsApp
-              </Button>
-              <Button onClick={shareNative} variant="outline">
-                <Share2 className="h-4 w-4 mr-1" /> Más opciones
-              </Button>
-            </div>
-
-            <div>
-              <p className="text-xs font-medium mb-1">Mensaje sugerido:</p>
-              <div className="bg-slate-50 p-3 rounded text-sm whitespace-pre-line">
-                {shareMessage}
-              </div>
-              <Button variant="ghost" size="sm" onClick={copyMessage} className="mt-2 w-full">
-                <Copy className="h-3 w-3 mr-1" /> Copiar mensaje
+        <div className="space-y-4">
+          <div className="bg-purple-50 p-3 rounded-lg">
+            <p className="text-xs text-muted-foreground mb-1">Tu link público:</p>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-mono text-purple-700 flex-1 truncate">{profileUrl}</p>
+              <Button size="sm" variant="ghost" onClick={copyLink}>
+                {copied ? (
+                  <Check className="h-4 w-4 text-green-600" />
+                ) : (
+                  <Copy className="h-4 w-4" />
+                )}
               </Button>
             </div>
           </div>
+
+          <div className="grid grid-cols-2 gap-2">
+            <Button onClick={shareWhatsApp} className="bg-green-600 hover:bg-green-700 text-white">
+              WhatsApp
+            </Button>
+            <Button onClick={shareNative} variant="outline">
+              <Share2 className="h-4 w-4 mr-1" /> Más opciones
+            </Button>
+          </div>
+
+          <div>
+            <p className="text-xs font-medium mb-1">Mensaje sugerido:</p>
+            <div className="bg-slate-50 p-3 rounded text-sm whitespace-pre-line">
+              {shareMessage}
+            </div>
+            <Button variant="ghost" size="sm" onClick={copyMessage} className="mt-2 w-full">
+              <Copy className="h-3 w-3 mr-1" /> Copiar mensaje
+            </Button>
+          </div>
+        </div>
       </ResponsiveModal>
     </>
   );

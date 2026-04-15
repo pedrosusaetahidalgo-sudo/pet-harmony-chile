@@ -33,6 +33,7 @@ import { SANTIAGO_COMUNAS, VET_SPECIALTIES, COMUNAS_POR_ZONA } from '@/lib/vetDi
 import { PublicHeader, PublicFooter } from './DirectorioVets';
 import { PageHeader } from '@/components/PageHeader';
 import { useScrollOnFocus } from '@/hooks/useScrollOnFocus';
+import { vetAccountSchema, vetProfileSchema } from '@/lib/schemas';
 
 type ProviderType = 'individual' | 'home_visit' | 'clinic';
 
@@ -80,8 +81,12 @@ export default function RegistroVeterinario() {
     price_from: '',
   });
 
-  const update = <K extends keyof FormState>(k: K, v: FormState[K]) =>
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  const update = <K extends keyof FormState>(k: K, v: FormState[K]) => {
     setForm((f) => ({ ...f, [k]: v }));
+    setFieldErrors((prev) => ({ ...prev, [k]: '' }));
+  };
 
   const toggleArr = (k: 'specialties' | 'service_areas', value: string) => {
     setForm((f) => {
@@ -90,6 +95,52 @@ export default function RegistroVeterinario() {
     });
   };
 
+  const validateStep = (): boolean => {
+    setFieldErrors({});
+    if (step === 0) return !!form.type;
+    if (step === 1) {
+      const result = vetAccountSchema.safeParse({
+        display_name: form.display_name,
+        email: form.email,
+        password: form.password,
+        phone: form.phone,
+        license: form.license,
+      });
+      if (!result.success) {
+        const errs: Record<string, string> = {};
+        for (const issue of result.error.issues) {
+          const key = String(issue.path[0]);
+          if (!errs[key]) errs[key] = issue.message;
+        }
+        setFieldErrors(errs);
+        return false;
+      }
+      return true;
+    }
+    if (step === 2) {
+      const result = vetProfileSchema.safeParse({
+        bio: form.bio,
+        specialties: form.specialties,
+        commune: form.commune,
+        service_areas: form.service_areas,
+        experience_years: form.experience_years,
+        price_from: form.price_from,
+      });
+      if (!result.success) {
+        const errs: Record<string, string> = {};
+        for (const issue of result.error.issues) {
+          const key = String(issue.path[0]);
+          if (!errs[key]) errs[key] = issue.message;
+        }
+        setFieldErrors(errs);
+        return false;
+      }
+      return true;
+    }
+    return false;
+  };
+
+  /** Lightweight check for enabling the button (no error messages) */
   const canNext = (): boolean => {
     if (step === 0) return !!form.type;
     if (step === 1) {
@@ -170,6 +221,7 @@ export default function RegistroVeterinario() {
   };
 
   const next = () => {
+    if (!validateStep()) return;
     if (step === 2) {
       void handleSignupAndCreateProvider();
       return;
@@ -200,9 +252,15 @@ export default function RegistroVeterinario() {
         <Card className="shadow-lg">
           <CardContent className="p-6 md:p-8">
             {step === 0 && <StepType form={form} update={update} />}
-            {step === 1 && <StepAccount form={form} update={update} />}
+            {step === 1 && <StepAccount form={form} update={update} fieldErrors={fieldErrors} />}
             {step === 2 && (
-              <StepProfile form={form} update={update} toggleArr={toggleArr} setForm={setForm} />
+              <StepProfile
+                form={form}
+                update={update}
+                toggleArr={toggleArr}
+                setForm={setForm}
+                fieldErrors={fieldErrors}
+              />
             )}
             {step === 3 && <StepDone slug={form.createdSlug} />}
 
@@ -324,9 +382,11 @@ function StepType({
 function StepAccount({
   form,
   update,
+  fieldErrors,
 }: {
   form: FormState;
   update: <K extends keyof FormState>(k: K, v: FormState[K]) => void;
+  fieldErrors: Record<string, string>;
 }) {
   const navigate = useNavigate();
   return (
@@ -362,6 +422,9 @@ function StepAccount({
           onChange={(e) => update('display_name', e.target.value)}
           placeholder="Dr. Juan Pérez"
         />
+        {fieldErrors.display_name && (
+          <p className="text-sm text-destructive mt-1">{fieldErrors.display_name}</p>
+        )}
       </div>
 
       <div>
@@ -373,6 +436,7 @@ function StepAccount({
           onChange={(e) => update('email', e.target.value)}
           placeholder="tu@email.cl"
         />
+        {fieldErrors.email && <p className="text-sm text-destructive mt-1">{fieldErrors.email}</p>}
       </div>
 
       <div>
@@ -384,6 +448,9 @@ function StepAccount({
           onChange={(e) => update('password', e.target.value)}
           placeholder="Mínimo 6 caracteres"
         />
+        {fieldErrors.password && (
+          <p className="text-sm text-destructive mt-1">{fieldErrors.password}</p>
+        )}
       </div>
 
       <div>
@@ -394,6 +461,7 @@ function StepAccount({
           onChange={(e) => update('phone', e.target.value)}
           placeholder="+56 9 1234 5678"
         />
+        {fieldErrors.phone && <p className="text-sm text-destructive mt-1">{fieldErrors.phone}</p>}
       </div>
 
       <div>
@@ -421,11 +489,13 @@ function StepProfile({
   update,
   toggleArr,
   setForm,
+  fieldErrors,
 }: {
   form: FormState;
   update: <K extends keyof FormState>(k: K, v: FormState[K]) => void;
   toggleArr: (k: 'specialties' | 'service_areas', value: string) => void;
   setForm: React.Dispatch<React.SetStateAction<FormState>>;
+  fieldErrors: Record<string, string>;
 }) {
   return (
     <div className="space-y-5">
@@ -447,6 +517,7 @@ function StepProfile({
         <p className="text-xs text-muted-foreground mt-1">
           {form.bio.length}/500 · mínimo 50 caracteres
         </p>
+        {fieldErrors.bio && <p className="text-sm text-destructive">{fieldErrors.bio}</p>}
       </div>
 
       <div>
@@ -470,6 +541,9 @@ function StepProfile({
             );
           })}
         </div>
+        {fieldErrors.specialties && (
+          <p className="text-sm text-destructive mt-1">{fieldErrors.specialties}</p>
+        )}
       </div>
 
       <div>
@@ -486,6 +560,9 @@ function StepProfile({
             ))}
           </SelectContent>
         </Select>
+        {fieldErrors.commune && (
+          <p className="text-sm text-destructive mt-1">{fieldErrors.commune}</p>
+        )}
       </div>
 
       <div>
@@ -562,6 +639,9 @@ function StepProfile({
             </div>
           </div>
         ))}
+        {fieldErrors.service_areas && (
+          <p className="text-sm text-destructive mt-1">{fieldErrors.service_areas}</p>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-3">

@@ -18,6 +18,7 @@ import { track, EVENTS } from '@/lib/analytics';
 import { logger } from '@/lib/logger';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { useScrollOnFocus } from '@/hooks/useScrollOnFocus';
+import { loginSchema, registerSchema } from '@/lib/schemas';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -36,6 +37,7 @@ const Auth = () => {
   const { toast } = useToast();
   const { signInWithFacebook, loading: facebookLoading } = useFacebookAuth();
   const hasRedirected = useRef(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   useScrollOnFocus();
 
   // Detect PASSWORD_RECOVERY event from Supabase reset link
@@ -123,6 +125,19 @@ const Auth = () => {
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFieldErrors({});
+
+    const result = registerSchema.safeParse({ email, password, fullName: displayName });
+    if (!result.success) {
+      const errs: Record<string, string> = {};
+      for (const issue of result.error.issues) {
+        const key = String(issue.path[0]);
+        if (!errs[key]) errs[key] = issue.message;
+      }
+      setFieldErrors(errs);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -180,6 +195,19 @@ const Auth = () => {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    setFieldErrors({});
+
+    const result = loginSchema.safeParse({ email, password });
+    if (!result.success) {
+      const errs: Record<string, string> = {};
+      for (const issue of result.error.issues) {
+        const key = String(issue.path[0]);
+        if (!errs[key]) errs[key] = issue.message;
+      }
+      setFieldErrors(errs);
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -490,9 +518,15 @@ const Auth = () => {
                       spellCheck={false}
                       placeholder="tu@email.com"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setFieldErrors((prev) => ({ ...prev, email: '' }));
+                      }}
                       required
                     />
+                    {fieldErrors.email && (
+                      <p className="text-sm text-destructive">{fieldErrors.email}</p>
+                    )}
                   </div>
 
                   <Button
@@ -552,9 +586,15 @@ const Auth = () => {
                           autoComplete="current-password"
                           placeholder="••••••••"
                           value={password}
-                          onChange={(e) => setPassword(e.target.value)}
+                          onChange={(e) => {
+                            setPassword(e.target.value);
+                            setFieldErrors((prev) => ({ ...prev, password: '' }));
+                          }}
                           required
                         />
+                        {fieldErrors.password && (
+                          <p className="text-sm text-destructive">{fieldErrors.password}</p>
+                        )}
                       </div>
                       <Button
                         type="submit"
@@ -616,8 +656,14 @@ const Auth = () => {
                       autoComplete="name"
                       placeholder="Tu nombre"
                       value={displayName}
-                      onChange={(e) => setDisplayName(e.target.value)}
+                      onChange={(e) => {
+                        setDisplayName(e.target.value);
+                        setFieldErrors((prev) => ({ ...prev, fullName: '' }));
+                      }}
                     />
+                    {fieldErrors.fullName && (
+                      <p className="text-sm text-destructive">{fieldErrors.fullName}</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
@@ -630,9 +676,15 @@ const Auth = () => {
                       spellCheck={false}
                       placeholder="tu@email.com"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setFieldErrors((prev) => ({ ...prev, email: '' }));
+                      }}
                       required
                     />
+                    {fieldErrors.email && (
+                      <p className="text-sm text-destructive">{fieldErrors.email}</p>
+                    )}
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="signup-password">Contraseña</Label>
@@ -642,10 +694,16 @@ const Auth = () => {
                       autoComplete="new-password"
                       placeholder="••••••••"
                       value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      onChange={(e) => {
+                        setPassword(e.target.value);
+                        setFieldErrors((prev) => ({ ...prev, password: '' }));
+                      }}
                       required
                       minLength={6}
                     />
+                    {fieldErrors.password && (
+                      <p className="text-sm text-destructive">{fieldErrors.password}</p>
+                    )}
                   </div>
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? 'Creando cuenta...' : 'Crear Cuenta'}

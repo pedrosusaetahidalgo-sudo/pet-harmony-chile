@@ -58,7 +58,7 @@ export function FeedPostMedia({
         loading="lazy"
         onLoad={() => setImgLoaded(true)}
         className={cn(
-          'w-full object-cover transition-opacity duration-300',
+          'w-full object-cover transition-opacity duration-300 aspect-video',
           imgLoaded ? 'opacity-100' : 'opacity-0 absolute inset-0',
           // No forzar aspect-ratio cuadrado: mostrar la imagen en su ratio real
           // pero con un max-height para que no sea infinita

@@ -70,7 +70,12 @@ export function FeedImageUploader({
         <div className="grid grid-cols-3 gap-2">
           {previews.map((preview, i) => (
             <div key={i} className="relative aspect-square rounded-lg overflow-hidden group">
-              <img src={preview} alt={`Preview ${i + 1}`} className="w-full h-full object-cover" />
+              <img
+                src={preview}
+                alt={`Preview ${i + 1}`}
+                loading="lazy"
+                className="w-full h-full object-cover"
+              />
               <button
                 type="button"
                 onClick={() => onRemove(i)}

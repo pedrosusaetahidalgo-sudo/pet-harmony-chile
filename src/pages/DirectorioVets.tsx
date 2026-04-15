@@ -279,7 +279,9 @@ export default function DirectorioVets() {
         {/* Link al comparador completo */}
         <div className="text-center">
           <Link
-            to={comuna !== 'all' ? `/precios-veterinarios/comuna/${comuna}` : '/precios-veterinarios'}
+            to={
+              comuna !== 'all' ? `/precios-veterinarios/comuna/${comuna}` : '/precios-veterinarios'
+            }
             className="text-sm text-purple-600 hover:text-purple-700 font-medium hover:underline"
           >
             Ver comparador de precios por comuna →
@@ -347,6 +349,7 @@ function VetCard({ vet, attendsToday }: { vet: Vet; attendsToday?: boolean }) {
               <img
                 src={vet.avatar_url}
                 alt={vet.display_name ?? 'Veterinario'}
+                loading="lazy"
                 className="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover border-2 border-purple-200"
               />
             ) : (
@@ -501,6 +504,7 @@ function NewVetsSection({ vets }: { vets: Vet[] }) {
                 <img
                   src={vet.avatar_url}
                   alt={vet.display_name ?? 'Veterinario'}
+                  loading="lazy"
                   className="w-16 h-16 rounded-full object-cover mx-auto border-2 border-purple-200 mb-2"
                 />
               ) : (

@@ -146,6 +146,7 @@ export default function ParaVeterinarios() {
             <img
               src="https://images.unsplash.com/photo-1612531386530-97286d97c2d2?w=600&h=600&fit=crop"
               alt="Veterinario con mascota"
+              loading="lazy"
               className="rounded-2xl shadow-2xl w-full object-cover aspect-square"
             />
             <div className="absolute -bottom-4 -left-4 bg-white rounded-xl shadow-lg p-4 max-w-[200px]">

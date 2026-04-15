@@ -41,6 +41,7 @@ export function ProfilePreviewCard({ form, slug }: Props) {
               <img
                 src={form.avatar_url}
                 alt="Preview"
+                loading="lazy"
                 className="w-16 h-16 rounded-full object-cover border-2 border-purple-200 flex-shrink-0 shadow-sm"
               />
             ) : (

@@ -113,20 +113,24 @@ const OnboardingDuenoMinimal = () => {
             .filter(Boolean)
         : null;
 
-      const { data: insertedPet, error } = await supabase.from('pets').insert({
-        owner_id: user.id,
-        name: name.trim(),
-        species: species ?? 'perro',
-        birth_date: ageRange ? approximateBirthDate(ageRange) : null,
-        photo_url: photoUrl,
-        is_public: true,
-        holo_pattern: pawCard.holoPattern,
-        paw_card_id: pawCard.pawCardId,
-        neutered: neutered,
-        blood_type: bloodType || null,
-        vaccines_up_to_date: vaccinesUpToDate,
-        allergies: allergiesArray,
-      }).select('id').single();
+      const { data: insertedPet, error } = await supabase
+        .from('pets')
+        .insert({
+          owner_id: user.id,
+          name: name.trim(),
+          species: species ?? 'perro',
+          birth_date: ageRange ? approximateBirthDate(ageRange) : null,
+          photo_url: photoUrl,
+          is_public: true,
+          holo_pattern: pawCard.holoPattern,
+          paw_card_id: pawCard.pawCardId,
+          neutered: neutered,
+          blood_type: bloodType || null,
+          vaccines_up_to_date: vaccinesUpToDate,
+          allergies: allergiesArray,
+        })
+        .select('id')
+        .single();
       if (error) throw error;
 
       // Update profile with location and interests if provided
@@ -224,6 +228,7 @@ const OnboardingDuenoMinimal = () => {
                     <img
                       src={photoPreview}
                       alt="Foto de mascota"
+                      loading="lazy"
                       className="w-24 h-24 rounded-full object-cover border-2 border-purple-200"
                     />
                   ) : (

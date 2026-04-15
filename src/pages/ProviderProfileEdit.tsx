@@ -242,6 +242,7 @@ export default function ProviderProfileEdit() {
                           <img
                             src={form.avatar_url}
                             alt="Avatar"
+                            loading="lazy"
                             className="w-20 h-20 rounded-full object-cover border-2 border-purple-100"
                           />
                         ) : (

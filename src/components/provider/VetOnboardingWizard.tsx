@@ -224,6 +224,7 @@ export function VetOnboardingWizard() {
                       <img
                         src={form.avatar_url}
                         alt="Foto"
+                        loading="lazy"
                         className="w-24 h-24 rounded-full object-cover border-2 border-purple-100"
                       />
                     ) : (

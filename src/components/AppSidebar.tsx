@@ -138,49 +138,33 @@ export function AppSidebar() {
 
   const [activeTutorial, setActiveTutorial] = useState<SectionKey | null>(null);
 
-  const { data: userPets } = useQuery({
-    queryKey: ['user-pets-count', user?.id],
+  // Batch sidebar data into a single query to avoid N+1 (pets, groomer, provider slug)
+  const { data: sidebarData } = useQuery({
+    queryKey: ['sidebar-user-data', user?.id, isProvider],
     queryFn: async () => {
-      if (!user?.id) return [];
-      const { data } = await supabase.from('pets').select('id').eq('owner_id', user.id).limit(1);
-      return data || [];
-    },
-    enabled: !!user?.id,
-  });
-  const hasPets = (userPets?.length ?? 0) > 0;
+      if (!user?.id)
+        return { hasPets: false, isGroomer: false, providerSlug: null as string | null };
 
-  // ¿El usuario es peluquero? (groomer_profiles es tabla aparte)
-  const { data: groomerRow } = useQuery({
-    queryKey: ['user-is-groomer', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-      const { data } = await supabase
-        .from('groomer_profiles')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      return data;
+      const [petsResult, groomerResult, providerResult] = await Promise.all([
+        supabase.from('pets').select('id').eq('owner_id', user.id).limit(1),
+        supabase.from('groomer_profiles').select('id').eq('user_id', user.id).maybeSingle(),
+        isProvider
+          ? supabase.from('service_providers').select('slug').eq('user_id', user.id).maybeSingle()
+          : Promise.resolve({ data: null }),
+      ]);
+
+      return {
+        hasPets: (petsResult.data?.length ?? 0) > 0,
+        isGroomer: !!groomerResult.data,
+        providerSlug: providerResult.data?.slug ?? null,
+      };
     },
     enabled: !!user?.id,
     staleTime: 5 * 60 * 1000,
   });
-  const isGroomer = !!groomerRow;
-
-  // Fetch provider slug for "Mi consultorio" link
-  const { data: providerSlug } = useQuery({
-    queryKey: ['provider-slug', user?.id],
-    queryFn: async () => {
-      if (!user?.id) return null;
-      const { data } = await supabase
-        .from('service_providers')
-        .select('slug')
-        .eq('user_id', user.id)
-        .maybeSingle();
-      return data?.slug ?? null;
-    },
-    enabled: !!user?.id && isProvider,
-    staleTime: 5 * 60 * 1000,
-  });
+  const hasPets = sidebarData?.hasPets ?? false;
+  const isGroomer = sidebarData?.isGroomer ?? false;
+  const providerSlug = sidebarData?.providerSlug ?? null;
 
   const handleSignOut = async () => {
     await signOut();

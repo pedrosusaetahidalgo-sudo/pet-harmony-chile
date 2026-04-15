@@ -116,6 +116,7 @@ export default function DejarResena() {
                   <img
                     src={provider.avatar_url}
                     alt={provider.display_name}
+                    loading="lazy"
                     className="w-20 h-20 rounded-full object-cover border-2 border-purple-100"
                   />
                 ) : (

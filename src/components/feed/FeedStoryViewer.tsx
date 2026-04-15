@@ -122,7 +122,7 @@ export function FeedStoryViewer({
       <img
         src={story.media_url}
         alt={story.caption || group.petName}
-        className="max-h-full max-w-full object-contain"
+        className="max-h-full max-w-full object-contain w-full h-full"
       />
 
       {/* Caption */}

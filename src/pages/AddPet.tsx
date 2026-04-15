@@ -41,6 +41,7 @@ import { PageHeader } from '@/components/PageHeader';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { VaccinationCardOCR } from '@/components/onboarding/VaccinationCardOCR';
 import { useScrollOnFocus } from '@/hooks/useScrollOnFocus';
+import { addPetSchema } from '@/lib/schemas';
 import { generatePawCardData } from '@/hooks/useHoloPattern';
 import { PawCardRevealCeremony } from '@/components/paw-cards/PawCardRevealCeremony';
 import type { HoloPattern } from '@/lib/paw-cards';
@@ -71,6 +72,7 @@ const AddPet = () => {
     score: number;
   } | null>(null);
   const [duplicateBypass, setDuplicateBypass] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const [formData, setFormData] = useState({
     name: '',
@@ -215,6 +217,25 @@ const AddPet = () => {
         variant: 'destructive',
       });
       navigate('/auth');
+      return;
+    }
+
+    // Zod validation for core fields
+    setFieldErrors({});
+    const zodResult = addPetSchema.safeParse(formData);
+    if (!zodResult.success) {
+      const errs: Record<string, string> = {};
+      for (const issue of zodResult.error.issues) {
+        const key = String(issue.path[0]);
+        if (!errs[key]) errs[key] = issue.message;
+      }
+      setFieldErrors(errs);
+      // Scroll to first error
+      const firstKey = Object.keys(errs)[0];
+      if (firstKey) {
+        const el = document.getElementById(firstKey);
+        el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return;
     }
 
@@ -525,6 +546,7 @@ const AddPet = () => {
   const updateField = (field: string, value: string | number | boolean | null) => {
     if (field === 'species' || field === 'breed') setBreedConfirmed(false);
     setFormData((prev) => ({ ...prev, [field]: value }));
+    setFieldErrors((prev) => ({ ...prev, [field]: '' }));
   };
 
   if (loadingPet) {
@@ -658,6 +680,7 @@ const AddPet = () => {
                       <img
                         src={photoPreview}
                         alt="Preview"
+                        loading="lazy"
                         className="h-32 w-32 rounded-lg object-cover"
                       />
                       <Button
@@ -699,6 +722,9 @@ const AddPet = () => {
                     onBlur={(e) => updateField('name', toTitleCase(e.target.value))}
                     placeholder="Max, Luna, Rocky..."
                   />
+                  {fieldErrors.name && (
+                    <p className="text-sm text-destructive">{fieldErrors.name}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -722,6 +748,9 @@ const AddPet = () => {
                       <SelectItem value="otro">🐾 Otro</SelectItem>
                     </SelectContent>
                   </Select>
+                  {fieldErrors.species && (
+                    <p className="text-sm text-destructive">{fieldErrors.species}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -981,6 +1010,9 @@ const AddPet = () => {
                       <p className="text-xs text-muted-foreground">
                         15 dígitos (estándar ISO 11784/11785)
                       </p>
+                      {fieldErrors.microchip_number && (
+                        <p className="text-sm text-destructive">{fieldErrors.microchip_number}</p>
+                      )}
                     </div>
 
                     <div className="space-y-2">

@@ -180,7 +180,12 @@ export function EditProfileDrawer({
                       : 'border-transparent'
                   }`}
                 >
-                  <img src={url} alt={`Avatar ${i + 1}`} loading="lazy" className="w-full h-full" />
+                  <img
+                    src={url}
+                    alt={`Avatar ${i + 1}`}
+                    loading="lazy"
+                    className="w-full h-full object-cover"
+                  />
                 </button>
               ))}
             </div>
