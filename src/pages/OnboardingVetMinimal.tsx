@@ -1,4 +1,4 @@
-import { useState, useMemo, useRef } from 'react';
+import { useState, useMemo, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Camera,
@@ -32,6 +32,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { SANTIAGO_COMUNAS, VET_SPECIALTIES } from '@/lib/vetDirectory';
 import { errorMessage } from '@/types/vetDirectory';
+import { onboardingVetSchema } from '@/lib/schemas';
 
 function getInitials(name: string): string {
   return name
@@ -55,7 +56,9 @@ export default function OnboardingVetMinimal() {
   const [commune, setCommune] = useState('');
   const [communeOpen, setCommuneOpen] = useState(false);
   const [specialties, setSpecialties] = useState<string[]>([]);
-  const [providerType, setProviderType] = useState<'individual' | 'clinic' | 'home_visit'>('individual');
+  const [providerType, setProviderType] = useState<'individual' | 'clinic' | 'home_visit'>(
+    'individual'
+  );
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
 
@@ -67,6 +70,16 @@ export default function OnboardingVetMinimal() {
   const [bio, setBio] = useState('');
 
   const [submitting, setSubmitting] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  const clearFieldError = useCallback((field: string) => {
+    setFieldErrors((prev) => {
+      if (!prev[field]) return prev;
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  }, []);
 
   const canAdvanceStep1 = displayName.trim().length > 2;
 
@@ -86,6 +99,36 @@ export default function OnboardingVetMinimal() {
       toast.error('Debes iniciar sesión primero.');
       return;
     }
+
+    // Validate all fields with zod
+    const result = onboardingVetSchema.safeParse({
+      displayName,
+      commune,
+      specialties,
+      providerType,
+      clinicName,
+      address,
+      whatsapp,
+      schedule,
+      bio,
+    });
+
+    if (!result.success) {
+      const errs: Record<string, string> = {};
+      for (const issue of result.error.issues) {
+        const key = issue.path[0] as string;
+        if (!errs[key]) errs[key] = issue.message;
+      }
+      setFieldErrors(errs);
+      // If errors are on step 1 fields, go back to step 1
+      if (errs.displayName) {
+        setStep(1);
+      }
+      toast.error('Revisa los campos marcados antes de continuar.');
+      return;
+    }
+    setFieldErrors({});
+
     setSubmitting(true);
     try {
       let avatarUrl: string | null = null;
@@ -211,9 +254,15 @@ export default function OnboardingVetMinimal() {
                 <Input
                   id="vet-name"
                   value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
+                  onChange={(e) => {
+                    setDisplayName(e.target.value);
+                    clearFieldError('displayName');
+                  }}
                   placeholder="Dr. Juan Pérez"
                 />
+                {fieldErrors.displayName && (
+                  <p className="text-xs text-destructive mt-1">{fieldErrors.displayName}</p>
+                )}
               </div>
 
               {/* Commune autocomplete */}
@@ -265,11 +314,11 @@ export default function OnboardingVetMinimal() {
               <div>
                 <Label className="mb-2 block">Tipo de perfil</Label>
                 <div className="flex gap-2">
-                  {([
+                  {[
                     { value: 'individual' as const, label: 'Veterinario independiente' },
                     { value: 'clinic' as const, label: 'Clínica / Centro veterinario' },
                     { value: 'home_visit' as const, label: 'Visitas a domicilio' },
-                  ]).map((opt) => (
+                  ].map((opt) => (
                     <button
                       key={opt.value}
                       type="button"
@@ -340,10 +389,17 @@ export default function OnboardingVetMinimal() {
                 </Label>
                 <Input
                   value={clinicName}
-                  onChange={(e) => setClinicName(e.target.value)}
+                  onChange={(e) => {
+                    setClinicName(e.target.value);
+                    clearFieldError('clinicName');
+                  }}
                   placeholder="Ej: Clínica Veterinaria PatitasFelices"
                 />
-                <p className="text-xs text-slate-400 mt-1">Déjalo vacío si eres independiente.</p>
+                {fieldErrors.clinicName ? (
+                  <p className="text-xs text-destructive mt-1">{fieldErrors.clinicName}</p>
+                ) : (
+                  <p className="text-xs text-slate-400 mt-1">Déjalo vacío si eres independiente.</p>
+                )}
               </div>
 
               <div>
@@ -352,9 +408,15 @@ export default function OnboardingVetMinimal() {
                 </Label>
                 <Input
                   value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  onChange={(e) => {
+                    setAddress(e.target.value);
+                    clearFieldError('address');
+                  }}
                   placeholder="Ej: Av. Providencia 1234, Providencia"
                 />
+                {fieldErrors.address && (
+                  <p className="text-xs text-destructive mt-1">{fieldErrors.address}</p>
+                )}
               </div>
 
               <div>
@@ -363,9 +425,15 @@ export default function OnboardingVetMinimal() {
                 </Label>
                 <Input
                   value={whatsapp}
-                  onChange={(e) => setWhatsapp(e.target.value)}
+                  onChange={(e) => {
+                    setWhatsapp(e.target.value);
+                    clearFieldError('whatsapp');
+                  }}
                   placeholder="+56 9 1234 5678"
                 />
+                {fieldErrors.whatsapp && (
+                  <p className="text-xs text-destructive mt-1">{fieldErrors.whatsapp}</p>
+                )}
               </div>
 
               <div>
@@ -374,20 +442,32 @@ export default function OnboardingVetMinimal() {
                 </Label>
                 <Input
                   value={schedule}
-                  onChange={(e) => setSchedule(e.target.value)}
+                  onChange={(e) => {
+                    setSchedule(e.target.value);
+                    clearFieldError('schedule');
+                  }}
                   placeholder="Ej: Lun-Vie 9:00-18:00, Sáb 9:00-13:00"
                 />
+                {fieldErrors.schedule && (
+                  <p className="text-xs text-destructive mt-1">{fieldErrors.schedule}</p>
+                )}
               </div>
 
               <div>
                 <Label>Bio profesional</Label>
                 <Textarea
                   value={bio}
-                  onChange={(e) => setBio(e.target.value)}
+                  onChange={(e) => {
+                    setBio(e.target.value);
+                    clearFieldError('bio');
+                  }}
                   placeholder="Cuéntale a los dueños sobre tu experiencia y enfoque profesional..."
                   rows={3}
                   maxLength={500}
                 />
+                {fieldErrors.bio && (
+                  <p className="text-xs text-destructive mt-1">{fieldErrors.bio}</p>
+                )}
               </div>
 
               <div className="flex gap-3">

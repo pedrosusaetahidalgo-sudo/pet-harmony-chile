@@ -106,3 +106,80 @@ export const addPetSchema = z.object({
   insurance_provider: z.string().optional().or(z.literal('')),
 });
 export type AddPetFormData = z.infer<typeof addPetSchema>;
+
+// --- NewPatientForm schema (vet creates pet without owner account) ---
+
+export const newPatientSchema = z.object({
+  name: safeText(50),
+  species: z.string().min(1, 'Selecciona una especie'),
+  breed: optionalText(100),
+  birth_date: z.string().optional().or(z.literal('')),
+  sex: z.string().optional().or(z.literal('')),
+  weight: z.string().optional().or(z.literal('')),
+  color: optionalText(100),
+  owner_name: safeText(100).refine(
+    (v) => v.length >= 2,
+    'El nombre del dueno debe tener al menos 2 caracteres'
+  ),
+  owner_email: z
+    .string()
+    .trim()
+    .min(1, 'El email del dueno es obligatorio')
+    .email('Ingresa un email valido'),
+  microchip_number: z
+    .string()
+    .optional()
+    .or(z.literal(''))
+    .refine(
+      (v) => !v || /^\d{15}$/.test(v.trim()),
+      'El microchip debe tener exactamente 15 digitos'
+    ),
+  blood_type: optionalText(30),
+  known_allergies: optionalText(300),
+  chronic_conditions: optionalText(300),
+});
+export type NewPatientFormData = z.infer<typeof newPatientSchema>;
+
+// --- ReportLostPetForm schema ---
+
+export const reportLostPetSchema = z.object({
+  report_type: z.enum(['perdida', 'encontrada'], {
+    required_error: 'Selecciona el tipo de reporte',
+  }),
+  pet_name: safeText(100),
+  species: z.string().min(1, 'La especie es requerida'),
+  breed: optionalText(100),
+  description: z
+    .string()
+    .trim()
+    .min(10, 'Describe con mas detalle (minimo 10 caracteres)')
+    .max(1000, 'Maximo 1000 caracteres'),
+  last_seen_location: z.string().min(1, 'La ubicacion es requerida'),
+  last_seen_date: z.string().min(1, 'La fecha es requerida'),
+  contact_phone: optionalText(20),
+  contact_email: z.string().email('Email invalido').optional().or(z.literal('')),
+  reward_offered: z.boolean().default(false),
+  reward_amount: z.number().optional(),
+  photo_url: z.string().optional().or(z.literal('')),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
+});
+export type ReportLostPetFormData = z.infer<typeof reportLostPetSchema>;
+
+// --- OnboardingVetMinimal schema ---
+
+export const onboardingVetSchema = z.object({
+  displayName: safeText(100).refine(
+    (v) => v.length >= 3,
+    'Tu nombre debe tener al menos 3 caracteres'
+  ),
+  commune: optionalText(100),
+  specialties: z.array(z.string()).optional(),
+  providerType: z.enum(['individual', 'clinic', 'home_visit']),
+  clinicName: optionalText(200),
+  address: optionalText(300),
+  whatsapp: optionalText(20),
+  schedule: optionalText(200),
+  bio: z.string().trim().max(500, 'Maximo 500 caracteres').optional().or(z.literal('')),
+});
+export type OnboardingVetFormData = z.infer<typeof onboardingVetSchema>;

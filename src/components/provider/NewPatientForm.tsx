@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -27,22 +28,7 @@ import { PET_COLORS } from '@/lib/petOptions';
 import { SelectWithOther } from '@/components/ui/select-with-other';
 import { ComboboxWithOther } from '@/components/ui/combobox-with-other';
 import { BREEDS_BY_SPECIES } from '@/lib/breeds';
-
-interface NewPatientFormData {
-  name: string;
-  species: string;
-  breed: string;
-  birth_date: string;
-  sex: string;
-  weight: string;
-  color: string;
-  owner_name: string;
-  owner_email: string;
-  microchip_number: string;
-  blood_type: string;
-  known_allergies: string;
-  chronic_conditions: string;
-}
+import { newPatientSchema, type NewPatientFormData } from '@/lib/schemas';
 
 const SPECIES_OPTIONS = [
   { value: 'perro', label: 'Perro' },
@@ -74,6 +60,7 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
     watch,
     formState: { errors },
   } = useForm<NewPatientFormData>({
+    resolver: zodResolver(newPatientSchema),
     defaultValues: {
       name: '',
       species: '',
@@ -241,11 +228,7 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
           {/* Nombre */}
           <div className="space-y-1.5">
             <Label htmlFor="np-name">Nombre de la mascota *</Label>
-            <Input
-              id="np-name"
-              placeholder="Ej: Luna"
-              {...register('name', { required: 'El nombre es obligatorio' })}
-            />
+            <Input id="np-name" placeholder="Ej: Luna" {...register('name')} />
             {errors.name && <p className="text-xs text-destructive">{errors.name.message}</p>}
           </div>
 
@@ -267,10 +250,8 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
                 ))}
               </SelectContent>
             </Select>
-            {!speciesValue && errors.species && (
-              <p className="text-xs text-destructive">Selecciona una especie</p>
-            )}
-            <input type="hidden" {...register('species', { required: true })} />
+            {errors.species && <p className="text-xs text-destructive">{errors.species.message}</p>}
+            <input type="hidden" {...register('species')} />
           </div>
 
           {/* Raza */}
@@ -336,11 +317,7 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
           {/* Nombre del dueno */}
           <div className="space-y-1.5">
             <Label htmlFor="np-owner-name">Nombre del dueño *</Label>
-            <Input
-              id="np-owner-name"
-              placeholder="Ej: Pedro Susaeta"
-              {...register('owner_name', { required: 'El nombre del dueño es obligatorio' })}
-            />
+            <Input id="np-owner-name" placeholder="Ej: Pedro Susaeta" {...register('owner_name')} />
             {errors.owner_name && (
               <p className="text-xs text-destructive">{errors.owner_name.message}</p>
             )}
@@ -353,13 +330,7 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
               id="np-email"
               type="email"
               placeholder="dueno@ejemplo.cl"
-              {...register('owner_email', {
-                required: 'El email del dueño es obligatorio',
-                pattern: {
-                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: 'Ingresa un email válido',
-                },
-              })}
+              {...register('owner_email')}
             />
             {errors.owner_email && (
               <p className="text-xs text-destructive">{errors.owner_email.message}</p>
@@ -389,9 +360,7 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
                 <Input
                   id="np-microchip"
                   placeholder="Ej: 982000123456789"
-                  {...register('microchip_number', {
-                    pattern: { value: /^\d{15}$/, message: 'Debe tener 15 dígitos' },
-                  })}
+                  {...register('microchip_number')}
                 />
                 {errors.microchip_number && (
                   <p className="text-xs text-destructive">{errors.microchip_number.message}</p>

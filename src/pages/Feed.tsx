@@ -68,12 +68,13 @@ const Feed = () => {
   // Feed queries
   const feedType = activeTab === 'explore' ? 'popular' : activeTab;
 
-  const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useFeedPosts({
-    feedType: feedType as 'all' | 'following' | 'popular',
-    filterType,
-    search: searchQuery || undefined,
-    enabled: activeTab !== 'explore',
-  });
+  const { data, isLoading, error, refetch, hasNextPage, isFetchingNextPage, fetchNextPage } =
+    useFeedPosts({
+      feedType: feedType as 'all' | 'following' | 'popular',
+      filterType,
+      search: searchQuery || undefined,
+      enabled: activeTab !== 'explore',
+    });
 
   // Realtime new posts banner
   const { newPostsCount, loadNewPosts } = useFeedRealtime();
@@ -231,6 +232,8 @@ const Feed = () => {
             <FeedList
               posts={filteredPosts}
               isLoading={isLoading}
+              error={error}
+              onRetry={refetch}
               emptyType="all"
               sentinelRef={sentinelRef}
               isFetchingNextPage={isFetchingNextPage}
@@ -249,6 +252,8 @@ const Feed = () => {
               <FeedList
                 posts={filteredPosts}
                 isLoading={isLoading}
+                error={error}
+                onRetry={refetch}
                 emptyType="following"
                 sentinelRef={sentinelRef}
                 isFetchingNextPage={isFetchingNextPage}
@@ -263,6 +268,8 @@ const Feed = () => {
             <FeedList
               posts={filteredPosts}
               isLoading={isLoading}
+              error={error}
+              onRetry={refetch}
               emptyType="popular"
               sentinelRef={sentinelRef}
               isFetchingNextPage={isFetchingNextPage}
@@ -297,6 +304,8 @@ const Feed = () => {
 interface FeedListProps {
   posts: FeedPost[];
   isLoading: boolean;
+  error: Error | null;
+  onRetry: () => void;
   emptyType: 'all' | 'following' | 'popular';
   sentinelRef: React.RefObject<HTMLDivElement | null>;
   isFetchingNextPage: boolean;
@@ -308,6 +317,8 @@ interface FeedListProps {
 function FeedList({
   posts,
   isLoading,
+  error,
+  onRetry,
   emptyType,
   sentinelRef,
   isFetchingNextPage,
@@ -317,6 +328,17 @@ function FeedList({
 }: FeedListProps) {
   if (isLoading) {
     return <FeedSkeletonList count={3} />;
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">No se pudieron cargar las publicaciones</p>
+        <Button variant="outline" onClick={() => onRetry()} className="mt-2">
+          Reintentar
+        </Button>
+      </div>
+    );
   }
 
   if (posts.length === 0) {

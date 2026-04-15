@@ -1,41 +1,30 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "@/lib/icons";
-import DateTimePicker from "./DateTimePicker";
-import { COMUNAS_SANTIAGO, getComunaCoords } from "@/lib/locations";
-import { format } from "date-fns";
-import { logger } from "@/lib/logger";
-import { useGamification } from "@/hooks/useGamification";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useToast } from '@/hooks/use-toast';
+import { Loader2 } from '@/lib/icons';
+import DateTimePicker from './DateTimePicker';
+import { COMUNAS_SANTIAGO, getComunaCoords } from '@/lib/locations';
+import { format } from 'date-fns';
+import { logger } from '@/lib/logger';
+import { useGamification } from '@/hooks/useGamification';
+import { reportLostPetSchema, type ReportLostPetFormData } from '@/lib/schemas';
 
-const formSchema = z.object({
-  report_type: z.enum(["perdida", "encontrada"]),
-  pet_name: z.string().min(1, "El nombre es requerido"),
-  species: z.string().min(1, "La especie es requerida"),
-  breed: z.string().optional(),
-  description: z.string().min(10, "Describe con más detalle (mínimo 10 caracteres)"),
-  last_seen_location: z.string().min(5, "La ubicación es requerida"),
-  last_seen_date: z.string().min(1, "La fecha es requerida"),
-  contact_phone: z.string().optional(),
-  contact_email: z.string().email("Email inválido").optional().or(z.literal("")),
-  reward_offered: z.boolean().default(false),
-  reward_amount: z.number().optional(),
-  photo_url: z.string().optional(),
-  latitude: z.number().optional(),
-  longitude: z.number().optional(),
-});
-
-type FormData = z.infer<typeof formSchema>;
+type FormData = ReportLostPetFormData;
 
 interface ReportLostPetFormProps {
   onSuccess: () => void;
@@ -47,42 +36,48 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [rewardOffered, setRewardOffered] = useState(false);
-  const [locationAddress, setLocationAddress] = useState("");
+  const [locationAddress, setLocationAddress] = useState('');
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
 
-  const { register, handleSubmit, formState: { errors }, setValue, watch } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm<FormData>({
+    resolver: zodResolver(reportLostPetSchema),
     defaultValues: {
-      report_type: "perdida",
+      report_type: 'perdida',
       reward_offered: false,
     },
   });
 
-  const reportType = watch("report_type");
+  const reportType = watch('report_type');
 
   const handleComunaSelect = (comuna: string) => {
     setLocationAddress(comuna);
-    setValue("last_seen_location", comuna);
+    setValue('last_seen_location', comuna);
     const coords = getComunaCoords(comuna);
     if (coords) {
-      setValue("latitude", coords[0]);
-      setValue("longitude", coords[1]);
+      setValue('latitude', coords[0]);
+      setValue('longitude', coords[1]);
     }
   };
 
   const handleDateChange = (date: Date | undefined) => {
     setSelectedDate(date);
     if (date) {
-      setValue("last_seen_date", format(date, "yyyy-MM-dd"));
+      setValue('last_seen_date', format(date, 'yyyy-MM-dd'));
     }
   };
 
   const onSubmit = async (data: FormData) => {
     if (!user) {
       toast({
-        title: "Algo salió mal",
-        description: "Debes iniciar sesión para reportar una mascota",
-        variant: "destructive",
+        title: 'Algo salió mal',
+        description: 'Debes iniciar sesión para reportar una mascota',
+        variant: 'destructive',
       });
       return;
     }
@@ -90,24 +85,28 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
     setLoading(true);
 
     try {
-      const { data: lostPet, error } = await supabase.from("lost_pets").insert({
-        report_type: data.report_type,
-        pet_name: data.pet_name,
-        species: data.species,
-        breed: data.breed || null,
-        description: data.description,
-        last_seen_location: data.last_seen_location,
-        last_seen_date: data.last_seen_date,
-        contact_phone: data.contact_phone || null,
-        contact_email: data.contact_email || null,
-        reward_offered: data.reward_offered,
-        reward_amount: data.reward_amount || null,
-        photo_url: data.photo_url || null,
-        reporter_id: user.id,
-        status: data.report_type,
-        latitude: data.latitude || null,
-        longitude: data.longitude || null,
-      }).select().maybeSingle();
+      const { data: lostPet, error } = await supabase
+        .from('lost_pets')
+        .insert({
+          report_type: data.report_type,
+          pet_name: data.pet_name,
+          species: data.species,
+          breed: data.breed || null,
+          description: data.description,
+          last_seen_location: data.last_seen_location,
+          last_seen_date: data.last_seen_date,
+          contact_phone: data.contact_phone || null,
+          contact_email: data.contact_email || null,
+          reward_offered: data.reward_offered,
+          reward_amount: data.reward_amount || null,
+          photo_url: data.photo_url || null,
+          reporter_id: user.id,
+          status: data.report_type,
+          latitude: data.latitude || null,
+          longitude: data.longitude || null,
+        })
+        .select()
+        .maybeSingle();
 
       if (error) throw error;
 
@@ -115,27 +114,27 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
       try {
         awardPoints({
           points: 75,
-          actionType: "lost_pet",
+          actionType: 'lost_pet',
           actionId: lostPet?.id,
-          description: `Ayuda con mascota ${data.report_type === "perdida" ? "perdida" : "encontrada"}`,
+          description: `Ayuda con mascota ${data.report_type === 'perdida' ? 'perdida' : 'encontrada'}`,
         });
       } catch (pointsError) {
-        logger.error("Error awarding points:", pointsError);
+        logger.error('Error awarding points:', pointsError);
         // Don't fail the report creation if points fail
       }
 
       toast({
-        title: "Reporte creado",
-        description: `Tu reporte de mascota ${data.report_type === "perdida" ? "perdida" : "encontrada"} ha sido publicado`,
+        title: 'Reporte creado',
+        description: `Tu reporte de mascota ${data.report_type === 'perdida' ? 'perdida' : 'encontrada'} ha sido publicado`,
       });
 
       onSuccess();
     } catch (error) {
-      logger.error("Error creating report:", error);
+      logger.error('Error creating report:', error);
       toast({
-        title: "Algo salió mal",
-        description: "No se pudo crear el reporte. Intenta nuevamente.",
-        variant: "destructive",
+        title: 'Algo salió mal',
+        description: 'No se pudo crear el reporte. Intenta nuevamente.',
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -146,7 +145,10 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <div className="space-y-2">
         <Label htmlFor="report_type">Tipo de Reporte</Label>
-        <Select onValueChange={(value) => setValue("report_type", value as "perdida" | "encontrada")} defaultValue="perdida">
+        <Select
+          onValueChange={(value) => setValue('report_type', value as 'perdida' | 'encontrada')}
+          defaultValue="perdida"
+        >
           <SelectTrigger>
             <SelectValue placeholder="Selecciona el tipo" />
           </SelectTrigger>
@@ -160,13 +162,13 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="pet_name">Nombre de la Mascota</Label>
-          <Input id="pet_name" {...register("pet_name")} placeholder="Nombre" />
+          <Input id="pet_name" {...register('pet_name')} placeholder="Nombre" />
           {errors.pet_name && <p className="text-xs text-destructive">{errors.pet_name.message}</p>}
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="species">Especie</Label>
-          <Select onValueChange={(value) => setValue("species", value)}>
+          <Select onValueChange={(value) => setValue('species', value)}>
             <SelectTrigger>
               <SelectValue placeholder="Selecciona" />
             </SelectTrigger>
@@ -182,13 +184,19 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
 
       <div className="space-y-2">
         <Label htmlFor="breed">Raza (opcional)</Label>
-        <Input id="breed" {...register("breed")} placeholder="Ej: Labrador, Mestizo..." />
+        <Input id="breed" {...register('breed')} placeholder="Ej: Labrador, Mestizo..." />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="description">Descripción</Label>
-        <Textarea {...register("description")} placeholder="Describe características, comportamiento, etc." rows={4} />
-        {errors.description && <p className="text-xs text-destructive">{errors.description.message}</p>}
+        <Textarea
+          {...register('description')}
+          placeholder="Describe características, comportamiento, etc."
+          rows={4}
+        />
+        {errors.description && (
+          <p className="text-xs text-destructive">{errors.description.message}</p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -199,14 +207,18 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
           </SelectTrigger>
           <SelectContent>
             {COMUNAS_SANTIAGO.map((c) => (
-              <SelectItem key={c} value={c}>{c}</SelectItem>
+              <SelectItem key={c} value={c}>
+                {c}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
         <p className="text-xs text-muted-foreground">
           Si quieres agregar más detalle de la dirección, ponlo en la descripción.
         </p>
-        {errors.last_seen_location && <p className="text-xs text-destructive">{errors.last_seen_location.message}</p>}
+        {errors.last_seen_location && (
+          <p className="text-xs text-destructive">{errors.last_seen_location.message}</p>
+        )}
       </div>
 
       <div className="space-y-2">
@@ -217,28 +229,37 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
           placeholder="Seleccionar fecha"
           maxDate={new Date()}
         />
-        {errors.last_seen_date && <p className="text-xs text-destructive">{errors.last_seen_date.message}</p>}
+        {errors.last_seen_date && (
+          <p className="text-xs text-destructive">{errors.last_seen_date.message}</p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="contact_phone">Teléfono de Contacto</Label>
-          <Input id="contact_phone" {...register("contact_phone")} placeholder="+56 9 XXXX XXXX" />
+          <Input id="contact_phone" {...register('contact_phone')} placeholder="+56 9 XXXX XXXX" />
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="contact_email">Email de Contacto</Label>
-          <Input id="contact_email" {...register("contact_email")} type="email" placeholder="correo@ejemplo.com" />
-          {errors.contact_email && <p className="text-xs text-destructive">{errors.contact_email.message}</p>}
+          <Input
+            id="contact_email"
+            {...register('contact_email')}
+            type="email"
+            placeholder="correo@ejemplo.com"
+          />
+          {errors.contact_email && (
+            <p className="text-xs text-destructive">{errors.contact_email.message}</p>
+          )}
         </div>
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="photo_url">URL de Foto (opcional)</Label>
-        <Input id="photo_url" {...register("photo_url")} placeholder="https://..." />
+        <Input id="photo_url" {...register('photo_url')} placeholder="https://..." />
       </div>
 
-      {reportType === "perdida" && (
+      {reportType === 'perdida' && (
         <div className="space-y-4 p-4 border rounded-lg">
           <div className="flex items-center space-x-2">
             <Checkbox
@@ -246,7 +267,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
               checked={rewardOffered}
               onCheckedChange={(checked) => {
                 setRewardOffered(checked as boolean);
-                setValue("reward_offered", checked as boolean);
+                setValue('reward_offered', checked as boolean);
               }}
             />
             <Label htmlFor="reward_offered" className="cursor-pointer">
@@ -259,7 +280,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
               <Label htmlFor="reward_amount">Monto de la Recompensa (CLP)</Label>
               <Input
                 type="number"
-                {...register("reward_amount", { valueAsNumber: true })}
+                {...register('reward_amount', { valueAsNumber: true })}
                 placeholder="Ej: 50000"
               />
             </div>
@@ -269,7 +290,7 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
 
       <Button type="submit" className="w-full bg-warm-gradient" disabled={loading}>
         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {reportType === "perdida" ? "Reportar Mascota Perdida" : "Reportar Mascota Encontrada"}
+        {reportType === 'perdida' ? 'Reportar Mascota Perdida' : 'Reportar Mascota Encontrada'}
       </Button>
     </form>
   );

@@ -82,6 +82,7 @@ export const MedicalDocumentsTab = ({ petId, petName }: MedicalDocumentsTabProps
     documents,
     documentsByType,
     isLoading,
+    error: documentsError,
     uploadDocument,
     isUploading,
     deleteDocument,
@@ -182,6 +183,18 @@ export const MedicalDocumentsTab = ({ petId, petName }: MedicalDocumentsTabProps
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (documentsError) {
+    return (
+      <div className="text-center py-8">
+        <FileX className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
+        <p className="text-muted-foreground">No se pudieron cargar los documentos</p>
+        <Button variant="outline" onClick={() => window.location.reload()} className="mt-3">
+          Reintentar
+        </Button>
       </div>
     );
   }

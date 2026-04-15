@@ -1,0 +1,1 @@
+import{a3 as r}from"./index-8gs9Zb97.js";import"./query-vendor-B6-rmE_-.js";import"./react-vendor-DxXD0FRe.js";import"./ui-vendor-CRpB4fJU.js";import"./icons-vendor-3rXPEgeC.js";import"./supabase-vendor-DgpbDcfK.js";import"./date-vendor-CMRtq6qe.js";import"./leaflet-vendor-BMFLZ-PU.js";class u extends r{async show(o){}async hide(o){}}export{u as SplashScreenWeb};

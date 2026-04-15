@@ -3,15 +3,21 @@
  * Handles upload, list, delete, and download operations
  */
 
-import { useState, useCallback } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "./useAuth";
-import { toast } from "sonner";
-import { logger } from "@/lib/logger";
-import { describeSupabaseError } from "@/lib/supabaseErrors";
+import { useState, useCallback } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from './useAuth';
+import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
+import { describeSupabaseError } from '@/lib/supabaseErrors';
 
-export type MedicalDocumentType = 'vaccine_card' | 'id_card' | 'lab_result' | 'xray' | 'prescription' | 'other';
+export type MedicalDocumentType =
+  | 'vaccine_card'
+  | 'id_card'
+  | 'lab_result'
+  | 'xray'
+  | 'prescription'
+  | 'other';
 
 export interface MedicalDocument {
   id: string;
@@ -45,7 +51,7 @@ const ALLOWED_MIME_TYPES = [
   'image/jpg',
   'image/png',
   'image/heic',
-  'application/pdf'
+  'application/pdf',
 ];
 
 /**
@@ -56,7 +62,11 @@ export const useMedicalDocuments = (petId?: string) => {
   const queryClient = useQueryClient();
 
   // List documents for a pet
-  const { data: documents, isLoading } = useQuery({
+  const {
+    data: documents,
+    isLoading,
+    error: queryError,
+  } = useQuery({
     queryKey: ['medical-documents', petId],
     queryFn: async () => {
       if (!petId) return [];
@@ -75,13 +85,17 @@ export const useMedicalDocuments = (petId?: string) => {
   });
 
   // Group documents by type
-  const documentsByType = documents?.reduce((acc, doc) => {
-    if (!acc[doc.type]) {
-      acc[doc.type] = [];
-    }
-    acc[doc.type].push(doc);
-    return acc;
-  }, {} as Record<MedicalDocumentType, MedicalDocument[]>) || {};
+  const documentsByType =
+    documents?.reduce(
+      (acc, doc) => {
+        if (!acc[doc.type]) {
+          acc[doc.type] = [];
+        }
+        acc[doc.type].push(doc);
+        return acc;
+      },
+      {} as Record<MedicalDocumentType, MedicalDocument[]>
+    ) || {};
 
   // Upload document
   const uploadDocument = useMutation({
@@ -113,9 +127,7 @@ export const useMedicalDocuments = (petId?: string) => {
       if (uploadError) throw uploadError;
 
       // Get public URL (will be signed URL)
-      const { data: urlData } = supabase.storage
-        .from('medical-documents')
-        .getPublicUrl(filePath);
+      const { data: urlData } = supabase.storage.from('medical-documents').getPublicUrl(filePath);
 
       // Insert record in database
       const { data, error } = await supabase
@@ -137,9 +149,7 @@ export const useMedicalDocuments = (petId?: string) => {
 
       if (error) {
         // Clean up uploaded file if database insert fails
-        await supabase.storage
-          .from('medical-documents')
-          .remove([filePath]);
+        await supabase.storage.from('medical-documents').remove([filePath]);
         throw error;
       }
 
@@ -150,7 +160,9 @@ export const useMedicalDocuments = (petId?: string) => {
       toast.success('Documento médico subido correctamente');
     },
     onError: (error: unknown) => {
-      toast.error('Error al subir documento', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
+      toast.error('Error al subir documento', {
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
+      });
       logger.error('Upload error:', error);
     },
   });
@@ -190,10 +202,7 @@ export const useMedicalDocuments = (petId?: string) => {
       }
 
       // Delete from database
-      const { error } = await supabase
-        .from('medical_documents')
-        .delete()
-        .eq('id', documentId);
+      const { error } = await supabase.from('medical_documents').delete().eq('id', documentId);
 
       if (error) throw error;
     },
@@ -202,7 +211,9 @@ export const useMedicalDocuments = (petId?: string) => {
       toast.success('Documento eliminado correctamente');
     },
     onError: (error: unknown) => {
-      toast.error('Error al eliminar documento', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
+      toast.error('Error al eliminar documento', {
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
+      });
       logger.error('Delete error:', error);
     },
   });
@@ -230,7 +241,9 @@ export const useMedicalDocuments = (petId?: string) => {
       return data;
     },
     onError: (error: unknown) => {
-      toast.error('Error al generar ZIP', { description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) });
+      toast.error('Error al generar ZIP', {
+        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
+      });
     },
   });
 
@@ -238,6 +251,7 @@ export const useMedicalDocuments = (petId?: string) => {
     documents,
     documentsByType,
     isLoading,
+    error: queryError,
     uploadDocument: uploadDocument.mutateAsync,
     isUploading: uploadDocument.isPending,
     deleteDocument: (documentId: string, petOwnerId?: string) =>
@@ -248,4 +262,3 @@ export const useMedicalDocuments = (petId?: string) => {
     isGeneratingZip: downloadAllAsZip.isPending,
   };
 };
-
