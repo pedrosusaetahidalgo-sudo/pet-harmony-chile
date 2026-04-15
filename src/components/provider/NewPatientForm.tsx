@@ -5,7 +5,6 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { logger } from '@/lib/logger';
 import { useAuth } from '@/hooks/useAuth';
-import { generatePawCardData } from '@/hooks/useHoloPattern';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -87,120 +86,64 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
     if (!user) return;
     setSubmitting(true);
     try {
-      // Duplicate detection: check if this pet already exists for this owner email
-      if (!duplicateBypass) {
-        const ownerEmail = data.owner_email.trim().toLowerCase();
-        // Check by name+species+email (pending or registered owner)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { data: existingPets } = await (supabase.from('pets') as any)
-          .select('id, name, owner_id, pending_owner_email')
-          .ilike('name', data.name.trim())
-          .eq('species', data.species)
-          .or(`pending_owner_email.eq.${ownerEmail},owner_id.not.is.null`);
+      const resp = await supabase.functions.invoke('create-patient', {
+        body: {
+          name: data.name.trim(),
+          species: data.species,
+          breed: data.breed?.trim() || undefined,
+          birth_date: data.birth_date || undefined,
+          sex: data.sex || undefined,
+          weight: data.weight || undefined,
+          color: data.color?.trim() || undefined,
+          owner_name: data.owner_name.trim(),
+          owner_email: data.owner_email.trim(),
+          microchip_number: data.microchip_number?.trim() || undefined,
+          blood_type: data.blood_type || undefined,
+          known_allergies: data.known_allergies?.trim() || undefined,
+          chronic_conditions: data.chronic_conditions?.trim() || undefined,
+          force_create: duplicateBypass,
+        },
+      });
 
-        const match = existingPets?.find(
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (p: any) => p.pending_owner_email === ownerEmail || p.owner_id
-        );
-        if (match) {
-          if (match.owner_id) {
-            toast.info(
-              `Ya existe "${match.name}" en el sistema con un dueño registrado. Puedes solicitar acceso desde tu lista de pacientes.`
-            );
-          } else {
-            toast.info(
-              `Otro profesional ya registró "${match.name}" para ${ownerEmail}. Presiona "Crear" de nuevo si quieres crear otro registro.`
-            );
-          }
-          setDuplicateBypass(true);
-          setSubmitting(false);
-          return;
-        }
-
-        // Microchip uniqueness check
-        if (data.microchip_number) {
-          const { data: chipMatch } = await supabase
-            .from('pets')
-            .select('id, name')
-            .eq('microchip_number', data.microchip_number.trim())
-            .limit(1);
-
-          if (chipMatch && chipMatch.length > 0) {
-            toast.error(
-              `Este microchip ya está asociado a "${chipMatch[0].name}". Verifica el número.`
-            );
-            setSubmitting(false);
-            return;
-          }
-        }
+      if (resp.error) {
+        throw new Error(resp.error.message || 'Error al crear el paciente');
       }
+
+      const result = resp.data;
+
+      // Handle duplicate detection from server
+      if (result?.code === 'DUPLICATE_DETECTED') {
+        toast.info(result.error);
+        setDuplicateBypass(true);
+        setSubmitting(false);
+        return;
+      }
+      if (result?.code === 'DUPLICATE_MICROCHIP') {
+        toast.error(result.error);
+        setSubmitting(false);
+        return;
+      }
+
+      // Handle non-success responses (edge function returned error JSON with 4xx/5xx)
+      if (result?.error && !result?.success) {
+        toast.error(result.error);
+        setSubmitting(false);
+        return;
+      }
+
       setDuplicateBypass(false);
-
-      const pawCard = generatePawCardData();
-      const insertPayload: Record<string, unknown> = {
-        name: data.name.trim(),
-        species: data.species,
-        created_by_vet_id: user.id,
-        pending_owner_email: data.owner_email.trim().toLowerCase(),
-        pending_owner_name: data.owner_name.trim() || null,
-        breed: data.breed.trim() || null,
-        birth_date: data.birth_date || null,
-        gender: data.sex || null,
-        weight: data.weight ? parseFloat(data.weight) : null,
-        color: data.color.trim() || null,
-        holo_pattern: pawCard.holoPattern,
-        paw_card_id: pawCard.pawCardId,
-        microchip_number: data.microchip_number?.trim() || null,
-        blood_type: data.blood_type || null,
-      };
-
-      // Clinical fields (optional, stored as comma-separated → arrays)
-      if (data.known_allergies?.trim()) {
-        insertPayload.allergies = data.known_allergies
-          .split(',')
-          .map((a: string) => a.trim())
-          .filter(Boolean);
-      }
-      if (data.chronic_conditions?.trim()) {
-        insertPayload.chronic_conditions = data.chronic_conditions
-          .split(',')
-          .map((c: string) => c.trim())
-          .filter(Boolean);
-      }
-
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data: petRow, error } = await (supabase.from('pets') as any)
-        .insert(insertPayload)
-        .select('id')
-        .single();
-      if (error) throw error;
-
       toast.success(`Paciente ${data.name} creado correctamente`);
 
-      // Enviar invitación al dueño por email (solo si no está registrado)
-      if (petRow?.id) {
-        try {
-          const resp = await supabase.functions.invoke('send-pet-invitation', {
-            body: { pet_id: petRow.id },
-          });
-          if (resp.error) {
-            logger.error('Error sending invitation:', resp.error);
-            toast.info(
-              'Paciente creado. No se pudo enviar la invitación por email, pero puedes reenviarla desde tu panel.'
-            );
-          } else if (resp.data?.owner_already_registered) {
-            toast.success(
-              `${data.name} se vinculó automáticamente con ${data.owner_name}. Ya tiene acceso a la ficha.`
-            );
-          } else {
-            toast.success(
-              `Invitación enviada a ${data.owner_email}. Cuando se registre, ${data.name} se vinculará automáticamente.`
-            );
-          }
-        } catch (invErr) {
-          logger.error('Invitation edge function error:', invErr);
-          // No bloquear — el paciente ya fue creado
-        }
+      if (result?.owner_already_registered) {
+        toast.success(
+          `${data.name} se vinculó automáticamente con ${data.owner_name}. Ya tiene acceso a la ficha.`
+        );
+      } else if (result?.email_sent) {
+        toast.success(
+          `Invitación enviada a ${data.owner_email}. Cuando se registre, ${data.name} se vinculará automáticamente.`
+        );
+      } else if (result?.invitation_error) {
+        toast.info(result.invitation_error);
       }
 
       reset();
@@ -213,7 +156,7 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
           : typeof err === 'object' && err !== null && 'message' in err
             ? String((err as { message: unknown }).message)
             : 'Error al crear el paciente';
-      logger.error('NewPatientForm insert error:', err);
+      logger.error('NewPatientForm error:', err);
       toast.error(msg);
     } finally {
       setSubmitting(false);

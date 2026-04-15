@@ -64,6 +64,9 @@ verify_jwt = false
 # ── Funciones que faltaban en config.toml (agregadas 2026-04-14) ──
 # Usadas activamente desde el frontend pero no declaradas previamente.
 
+[functions.create-patient]
+verify_jwt = false
+
 [functions.send-pet-invitation]
 verify_jwt = false
 

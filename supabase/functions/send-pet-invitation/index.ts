@@ -309,14 +309,13 @@ serve(async (req) => {
     }
 
     // --- Check if owner is already registered ---
-    // profiles table has no email column; lookup via auth.users with service_role
+    // Uses DB function instead of listUsers (which doesn't scale past 1000 users)
     let userByEmail: { id: string } | null = null;
     try {
-      const {
-        data: { users },
-      } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
-      const match = (users ?? []).find((u) => u.email === email);
-      if (match) userByEmail = { id: match.id };
+      const { data: userId } = await supabase.rpc('get_user_id_by_email', {
+        p_email: email,
+      });
+      if (userId) userByEmail = { id: userId };
     } catch {
       // If lookup fails, proceed as if user doesn't exist
       userByEmail = null;
