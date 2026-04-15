@@ -32,6 +32,7 @@ import { logger } from '@/lib/logger';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { useOrganicRewards } from '@/hooks/useOrganicRewards';
 import { MEDICAL_RECORD_TYPES } from '@/lib/medicalRecordTypes';
+import { PostRecordRecommendation } from '@/components/medical/PostRecordRecommendation';
 import { getVaccinesForSpecies } from '@/lib/vaccines';
 
 interface AddMedicalRecordProps {
@@ -57,6 +58,8 @@ export function AddMedicalRecord({
   const [loading, setLoading] = useState(false);
   const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [recordType, setRecordType] = useState('');
+  const [showRecommendation, setShowRecommendation] = useState(false);
+  const [savedRecordType, setSavedRecordType] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState<Date>();
@@ -239,7 +242,9 @@ export function AddMedicalRecord({
       }
 
       queryClient.invalidateQueries({ queryKey: ['medical-records'] });
-      setOpen(false);
+      // Show IA recommendation before closing
+      setSavedRecordType(recordType);
+      setShowRecommendation(true);
       resetForm();
     } catch (error: unknown) {
       toast({
@@ -508,6 +513,32 @@ export function AddMedicalRecord({
             </Button>
           </div>
         </form>
+
+        {/* IA recommendation after saving */}
+        {showRecommendation && (
+          <div className="mt-4">
+            <PostRecordRecommendation
+              petBreed={petBreed}
+              petSpecies={petSpecies}
+              recordType={savedRecordType}
+              onDismiss={() => {
+                setShowRecommendation(false);
+                setOpen(false);
+              }}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full mt-2 text-xs"
+              onClick={() => {
+                setShowRecommendation(false);
+                setOpen(false);
+              }}
+            >
+              Cerrar
+            </Button>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

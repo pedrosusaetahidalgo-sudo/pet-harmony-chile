@@ -56,6 +56,8 @@ interface PawCardFlippableProps {
   subtitle?: string;
   /** Hide action buttons (ficha, edit, delete, share) */
   viewOnly?: boolean;
+  /** Clinical achievement badges to display on card */
+  badges?: Array<{ label: string; color: string }>;
 }
 
 export function PawCardFlippable({
@@ -67,6 +69,7 @@ export function PawCardFlippable({
   onShare,
   subtitle: subtitleOverride,
   viewOnly = false,
+  badges,
 }: PawCardFlippableProps) {
   const navigate = useNavigate();
   const cardRef = useRef<HTMLDivElement>(null);
@@ -222,6 +225,20 @@ export function PawCardFlippable({
               >
                 {holoConfig.name}
               </span>
+            )}
+
+            {/* Clinical achievement badges */}
+            {badges && badges.length > 0 && (
+              <div className="flex flex-wrap gap-1 mt-1">
+                {badges.map((b, i) => (
+                  <span
+                    key={i}
+                    className={`inline-flex items-center rounded-full px-1.5 py-0.5 text-[8px] font-semibold ${b.color}`}
+                  >
+                    {b.label}
+                  </span>
+                ))}
+              </div>
             )}
 
             {/* Sparkles icon for legendary+ */}

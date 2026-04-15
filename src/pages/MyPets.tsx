@@ -42,6 +42,15 @@ import { ShareWithVetModal } from '@/components/medical/ShareWithVetModal';
 import type { HoloPattern } from '@/lib/paw-cards';
 import { generatePawCardId, getBreedHoloPattern } from '@/lib/paw-cards';
 
+function getPetBadges(score: number | undefined): Array<{ label: string; color: string }> {
+  const badges: Array<{ label: string; color: string }> = [];
+  if (score && score >= 70)
+    badges.push({ label: '💚 Saludable', color: 'bg-green-100 text-green-800' });
+  if (score && score >= 90)
+    badges.push({ label: '⭐ Estrella', color: 'bg-amber-100 text-amber-800' });
+  return badges;
+}
+
 interface Pet {
   id: string;
   name: string;
@@ -328,7 +337,7 @@ const MyPets = () => {
     <div className="container px-4 py-8 max-w-6xl mx-auto animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-8">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold mb-1">My Paws</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold mb-1">Mis Mascotas</h1>
           <p className="text-muted-foreground text-sm">Tus mascotas y sus Paw Cards</p>
         </div>
         <div className="flex gap-2 items-center">
@@ -422,6 +431,7 @@ const MyPets = () => {
                   pawCardId={pet.paw_card_id || ''}
                   onDelete={setDeleteId}
                   onShare={setSharePetId}
+                  badges={getPetBadges(petScores[pet.id])}
                 />
               </div>
             ))}
@@ -444,6 +454,7 @@ const MyPets = () => {
                   pawCardId={pet.paw_card_id || ''}
                   onDelete={setDeleteId}
                   onShare={setSharePetId}
+                  badges={getPetBadges(petScores[pet.id])}
                 />
               </div>
             ))}
