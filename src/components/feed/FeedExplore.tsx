@@ -7,8 +7,10 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 export function FeedExplore() {
+  // Explorar muestra contenido reciente con imágenes (discovery),
+  // distinto de Popular que ordena por likes_count
   const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } = useFeedPosts({
-    feedType: 'popular',
+    feedType: 'all',
   });
 
   const sentinelRef = useInfiniteScroll({

@@ -2,7 +2,7 @@ import { PageHeader } from '@/components/PageHeader';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MessageSquare, MessageCircle, Search } from '@/lib/icons';
-import { EmptyState } from '@/components/EmptyState';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -40,12 +40,14 @@ const Chat = () => {
   }, [user]);
 
   // Handle ?user= query param to auto-open conversation
+  // Wait until conversations are loaded to avoid race condition
   useEffect(() => {
+    if (loading) return;
     const targetUserId = searchParams.get('user');
     if (targetUserId && user && targetUserId !== user.id) {
       startConvo(targetUserId);
     }
-  }, [searchParams, user]);
+  }, [searchParams, user, loading]);
 
   // Realtime filtrada por conversaciones del usuario
   useEffect(() => {
