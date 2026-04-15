@@ -44,6 +44,11 @@ export default defineConfig(() => ({
           'supabase-vendor': ['@supabase/supabase-js'],
           // Leaflet solo se usa en /maps (lazy). Chunk separado para no inflar index.
           'leaflet-vendor': ['leaflet', 'react-leaflet'],
+          // Recharts (~432 kB) solo se usa en dashboards/admin (lazy).
+          // Chunk separado para que no infle el bundle principal.
+          'recharts-vendor': ['recharts'],
+          // Sentry (~458 kB) se carga al inicio pero cachea independientemente.
+          'sentry-vendor': ['@sentry/react'],
         },
       },
     },

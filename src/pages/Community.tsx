@@ -8,7 +8,16 @@ import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Users, MessageCircle, Search, Send, ArrowLeft, Heart } from '@/lib/icons';
+import {
+  Users,
+  MessageCircle,
+  Search,
+  Send,
+  ArrowLeft,
+  Heart,
+  MapPin,
+  Sparkles,
+} from '@/lib/icons';
 import { PawLabsBanner } from '@/components/PawLabsBanner';
 import {
   useCommunityGroups,
@@ -37,13 +46,21 @@ function GroupList() {
   const joinGroup = useJoinGroup();
   const leaveGroup = useLeaveGroup();
   const [search, setSearch] = useState('');
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
 
-  const filtered = (groups || []).filter(
-    (g) =>
+  const categories = Array.from(
+    new Set((groups || []).map((g) => g.category).filter(Boolean))
+  ) as string[];
+
+  const filtered = (groups || []).filter((g) => {
+    const matchesSearch =
       !search ||
       g.name.toLowerCase().includes(search.toLowerCase()) ||
-      g.category?.toLowerCase().includes(search.toLowerCase())
-  );
+      g.category?.toLowerCase().includes(search.toLowerCase()) ||
+      g.description?.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = !activeCategory || g.category === activeCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -59,6 +76,30 @@ function GroupList() {
           />
         </div>
 
+        {categories.length > 1 && (
+          <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+            <Button
+              size="sm"
+              variant={activeCategory === null ? 'default' : 'outline'}
+              className="shrink-0 h-7 text-xs rounded-full"
+              onClick={() => setActiveCategory(null)}
+            >
+              Todos
+            </Button>
+            {categories.map((cat) => (
+              <Button
+                key={cat}
+                size="sm"
+                variant={activeCategory === cat ? 'default' : 'outline'}
+                className="shrink-0 h-7 text-xs rounded-full"
+                onClick={() => setActiveCategory(activeCategory === cat ? null : cat)}
+              >
+                {cat}
+              </Button>
+            ))}
+          </div>
+        )}
+
         {isLoading && (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
@@ -67,71 +108,94 @@ function GroupList() {
           </div>
         )}
 
+        <PawLabsBanner description="Comunidad esta en beta. Conecta con otros duenos por raza, condicion medica, region o interes." />
+
         {!isLoading && filtered.length === 0 && (
-          <div className="space-y-4">
-            <PawLabsBanner description="Grupos por raza, condicion e interes. Estamos preparando los primeros grupos para que conectes con otros dueños." />
-            <EmptyState
-              icon={Users}
-              title="Grupos en camino"
-              description="Pronto podras unirte a grupos de tu raza favorita, compartir experiencias y aprender de otros dueños. Te notificaremos cuando esten listos."
-            />
-          </div>
+          <EmptyState
+            icon={Users}
+            title={search || activeCategory ? 'Sin resultados' : 'Grupos en camino'}
+            description={
+              search || activeCategory
+                ? 'Intenta con otro termino de busqueda o cambia el filtro.'
+                : 'Pronto podras unirte a grupos de tu raza favorita, compartir experiencias y aprender de otros duenos.'
+            }
+          />
         )}
 
-        {filtered.map((group) => {
-          const isMember = myGroups?.includes(group.id);
-          return (
-            <Card
-              key={group.id}
-              className="hover:shadow-md transition-shadow cursor-pointer"
-              onClick={() => {
-                if (isMember) {
-                  navigate(`/comunidad/${group.slug}`);
-                }
-              }}
-            >
-              <CardContent className="py-4 flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center shrink-0">
-                  <GroupIcon type={group.group_type} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-sm truncate">{group.name}</h3>
-                  <p className="text-xs text-muted-foreground line-clamp-1">{group.description}</p>
-                  <div className="flex items-center gap-2 mt-1">
-                    {group.category && (
-                      <Badge variant="secondary" className="text-[10px]">
-                        {group.category}
-                      </Badge>
-                    )}
-                    <span className="text-[10px] text-muted-foreground">
-                      {group.member_count} miembro{group.member_count !== 1 ? 's' : ''}
-                    </span>
+        {!isLoading && filtered.length > 0 && (
+          <p className="text-xs text-muted-foreground">
+            {filtered.length} grupo{filtered.length !== 1 ? 's' : ''}
+            {activeCategory ? ` en ${activeCategory}` : ''}
+            {myGroups && myGroups.length > 0 ? ` · ${myGroups.length} unidos` : ''}
+          </p>
+        )}
+
+        {filtered
+          .slice()
+          .sort((a, b) => {
+            const aMember = myGroups?.includes(a.id) ? 1 : 0;
+            const bMember = myGroups?.includes(b.id) ? 1 : 0;
+            if (aMember !== bMember) return bMember - aMember;
+            return (b.member_count ?? 0) - (a.member_count ?? 0);
+          })
+          .map((group) => {
+            const isMember = myGroups?.includes(group.id);
+            return (
+              <Card
+                key={group.id}
+                className="hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => {
+                  if (isMember) {
+                    navigate(`/comunidad/${group.slug}`);
+                  }
+                }}
+              >
+                <CardContent className="py-4 flex items-center gap-4">
+                  <div
+                    className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${groupIconBg(group.group_type)}`}
+                  >
+                    <GroupIcon type={group.group_type} />
                   </div>
-                </div>
-                <Button
-                  size="sm"
-                  variant={isMember ? 'outline' : 'default'}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (isMember) {
-                      leaveGroup.mutate(group.id);
-                    } else {
-                      joinGroup.mutate(group.id, {
-                        onSettled: (_data, error) => {
-                          if (!error) navigate(`/comunidad/${group.slug}`);
-                        },
-                      });
-                    }
-                  }}
-                  disabled={joinGroup.isPending || leaveGroup.isPending}
-                  className="shrink-0"
-                >
-                  {isMember ? 'Salir' : 'Unirse'}
-                </Button>
-              </CardContent>
-            </Card>
-          );
-        })}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-sm truncate">{group.name}</h3>
+                    <p className="text-xs text-muted-foreground line-clamp-1">
+                      {group.description}
+                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      {group.category && (
+                        <Badge variant="secondary" className="text-[10px]">
+                          {group.category}
+                        </Badge>
+                      )}
+                      <span className="text-[10px] text-muted-foreground">
+                        {group.member_count} miembro{group.member_count !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+                  </div>
+                  <Button
+                    size="sm"
+                    variant={isMember ? 'outline' : 'default'}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (isMember) {
+                        leaveGroup.mutate(group.id);
+                      } else {
+                        joinGroup.mutate(group.id, {
+                          onSettled: (_data, error) => {
+                            if (!error) navigate(`/comunidad/${group.slug}`);
+                          },
+                        });
+                      }
+                    }}
+                    disabled={joinGroup.isPending || leaveGroup.isPending}
+                    className="shrink-0"
+                  >
+                    {isMember ? 'Salir' : 'Unirse'}
+                  </Button>
+                </CardContent>
+              </Card>
+            );
+          })}
       </main>
     </div>
   );
@@ -256,12 +320,31 @@ function GroupChat({ slug }: { slug: string }) {
   );
 }
 
+function groupIconBg(type: string | null) {
+  switch (type) {
+    case 'breed':
+      return 'bg-purple-100';
+    case 'condition':
+      return 'bg-red-50';
+    case 'location':
+      return 'bg-teal-50';
+    case 'general':
+      return 'bg-amber-50';
+    default:
+      return 'bg-purple-100';
+  }
+}
+
 function GroupIcon({ type }: { type: string | null }) {
   switch (type) {
     case 'breed':
       return <Heart className="h-6 w-6 text-purple-600" />;
     case 'condition':
       return <Heart className="h-6 w-6 text-red-500" />;
+    case 'location':
+      return <MapPin className="h-6 w-6 text-teal-600" />;
+    case 'general':
+      return <Sparkles className="h-6 w-6 text-amber-500" />;
     default:
       return <Users className="h-6 w-6 text-purple-600" />;
   }

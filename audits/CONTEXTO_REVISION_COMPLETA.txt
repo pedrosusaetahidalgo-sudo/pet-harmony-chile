@@ -1,53 +1,72 @@
 ================================================================================
 CONTEXTO REVISION COMPLETA — PAW FRIEND
 ================================================================================
-Fecha de generacion: 2026-04-14 (regenerado)
+Fecha de generacion: 2026-04-15 (regenerado)
 Repo: github.com/pedrosusaetahidalgo-sudo/pet-harmony-chile
-Branch: main (commit 6055d7dd)
+Branch: main (commit 9fbb23ac)
 Dominio: pawfriend.cl (GitHub Pages desde docs/)
 Supabase project: gwailbjlvevkhwcrovfd
 ================================================================================
 
 INDICE
 ------
-  1. RESUMEN EJECUTIVO
-  2. STACK TECNOLOGICO
-  3. METRICAS DE SALUD
-  4. INVENTARIO COMPLETO (src/)
-  5. EDGE FUNCTIONS (26 activas)
-  6. MIGRACIONES SQL (139 total)
-  7. RUTAS (65 paths en App.tsx)
-  8. MODELO DE NEGOCIO
-  9. HALLAZGOS CRITICOS
- 10. DOCUMENTACION Y CARPETAS
- 11. CONFIGURACION Y CI/CD
- 12. RECOMENDACIONES PRIORIZADAS
+  1.  RESUMEN EJECUTIVO
+  2.  STACK TECNOLOGICO
+  3.  METRICAS DE SALUD
+  4.  INVENTARIO COMPLETO (src/)
+  5.  EDGE FUNCTIONS (26 activas)
+  6.  MIGRACIONES SQL (145 total)
+  7.  RUTAS (65+ paths en App.tsx)
+  8.  MODELO DE NEGOCIO Y PRICING
+  9.  FEATURE FLAGS Y PIVOT MEDICO
+ 10.  SISTEMA DE ROLES Y EXPERIENCIAS
+ 11.  GAMIFICACION (PawGame, Missions, Paw Cards)
+ 12.  INTEGRACIONES EXTERNAS
+ 13.  SHARED HELPERS BACKEND (_shared/)
+ 14.  BASE DE DATOS (126 tablas, RLS)
+ 15.  DOCUMENTACION Y CARPETAS
+ 16.  CONFIGURACION Y CI/CD
+ 17.  HALLAZGOS Y ESTADO ACTUAL
+ 18.  RECOMENDACIONES PRIORIZADAS
 
 ================================================================================
 1. RESUMEN EJECUTIVO
 ================================================================================
 
-Paw Friend es una plataforma chilena de gestion de mascotas con directorio
-veterinario verificado. Stack: React 18 + TypeScript 5.8 + Vite 5 + Supabase +
-Capacitor 7 (Android/iOS). La "joya de la corona" es la ficha medica PDF
-descargable + directorio publico de veterinarios por comuna.
+Paw Friend es una plataforma chilena de gestion integral de mascotas con
+directorio veterinario verificado. Combina funcionalidades de salud animal
+(ficha clinica PDF, recordatorios, vacunas), social (feed, comunidad), y
+gamificacion (Paw Cards coleccionables estilo TCG, misiones, niveles).
 
-Estado al 2026-04-14:
+La "joya de la corona" es la ficha medica PDF descargable + directorio publico
+de veterinarios filtrable por comuna y especialidad.
+
+Stack: React 18 + TypeScript 5.8 + Vite 5 + Supabase (Postgres + Auth + Storage
++ Edge Functions Deno) + Capacitor 7 (Android/iOS). Pagos via Flow.cl (pasarela
+chilena). IA via Claude API (Anthropic).
+
+Actualmente en "pivot medico": la app es 100% gratis para duenos de mascotas
+(USER_PREMIUM=false). El modelo de monetizacion activo es B2B (planes para
+veterinarios y clinicas).
+
+Estado al 2026-04-15:
 - TypeScript: 0 errores (npx tsc -b)
-- Build: PASA (1m 24s)
+- Build: PASA
 - Bundle principal: ~334 kB / 100 kB gzip (index chunk)
 - Git: limpio, sincronizado con origin/main
-- Migraciones: 139 (todas aplicadas en prod)
-- Edge Functions: 26 activas + _shared/
-- Premium B2C con Flow.cl: VIVO
+- Migraciones: 145 (todas aplicadas en prod)
+- Edge Functions: 26 activas + _shared/ (6 helpers)
+- Base de datos: 126 tablas con RLS habilitado en 124
+- Premium B2C con Flow.cl: VIVO (pero deshabilitado por feature flag)
 - Google Calendar: VIVO end-to-end
 - Sentry: INTEGRADO
+- WhatsApp Cloud API: codigo listo, pendiente verificacion Meta Business
 
 ================================================================================
 2. STACK TECNOLOGICO (verificado en package.json)
 ================================================================================
 
-Dependencias principales (43 deps + 28 devDeps):
+Dependencias principales:
 
 | Capa              | Tecnologia                          | Version   |
 |-------------------|-------------------------------------|-----------|
@@ -55,25 +74,30 @@ Dependencias principales (43 deps + 28 devDeps):
 | TypeScript        | typescript                          | 5.8.3     |
 | Bundler           | Vite + plugin-react-swc             | 5.4.19    |
 | Estilos           | Tailwind CSS + tailwindcss-animate  | 3.4.17    |
-| Componentes UI    | shadcn/ui (51 Radix primitives)     | latest    |
+| Componentes UI    | shadcn/ui (54 Radix primitives)     | latest    |
 | Estado servidor   | @tanstack/react-query               | 5.83.0    |
-| Forms             | react-hook-form + @hookform/resolvers + zod | 7.61.1 / 3.25.76 |
+| Forms             | react-hook-form 7.61.1 + @hookform/resolvers 3.10.0 + zod 3.25.76 |
 | Backend           | @supabase/supabase-js               | 2.103.0   |
 | Rutas             | react-router-dom                    | 6.30.1    |
-| Fechas            | date-fns + react-day-picker         | 4.1.0     |
+| Fechas            | date-fns 4.1.0 + react-day-picker   |           |
 | Graficos          | Recharts                            | 2.15.4    |
 | Iconos            | lucide-react + react-icons          | 0.462.0   |
-| Mapas             | Leaflet + react-leaflet             | 1.9.4 / 4.2.1 |
-| QR                | qrcode.react + html5-qrcode        | 4.2.0     |
+| Mapas             | Leaflet 1.9.4 + react-leaflet       | 4.2.1     |
+| QR                | qrcode.react 4.2.0 + html5-qrcode 2.3.8 |       |
 | Carousel          | embla-carousel-react                | 8.6.0     |
+| Drawer            | vaul                                | 0.9.9     |
+| Command Palette   | cmdk                                | 1.1.1     |
 | Notificaciones    | sonner                              | 1.7.4     |
 | Error Tracking    | @sentry/react                       | 10.47.0   |
 | Mobile            | @capacitor/core + android + ios     | 7.4.4     |
+| Push Notifications| @capacitor/push-notifications       | 7.0.6     |
 | SEO               | react-helmet-async                  | 2.0.5     |
 | Temas             | next-themes                         | 0.3.0     |
 | OTP               | input-otp                           | 1.4.2     |
-| Command Palette   | cmdk                                | 1.1.1     |
 | Google Auth       | @codetrix-studio/capacitor-google-auth | 3.4.0-rc.4 |
+| CVA               | class-variance-authority            | 0.7.1     |
+| Merge classes     | tailwind-merge                      | 2.6.0     |
+| Radix Primitives  | 10+ paquetes @radix-ui/*            | 1.x-2.x   |
 
 DevDependencies destacadas:
 - @playwright/test 1.59.1 (E2E cross-browser)
@@ -81,8 +105,9 @@ DevDependencies destacadas:
 - husky 9.1.7 + lint-staged 16.4.0 (pre-commit hooks)
 - rollup-plugin-visualizer 7.0.1 (bundle analysis)
 - eslint 9.32.0 + prettier 3.8.2
+- @tailwindcss/typography 0.5.16
 
-NO HAY: Zustand, Redux, Next.js, Express, Prisma.
+NO HAY: Zustand, Redux, Next.js, Express, Prisma, Drizzle.
 
 ================================================================================
 3. METRICAS DE SALUD
@@ -91,34 +116,33 @@ NO HAY: Zustand, Redux, Next.js, Express, Prisma.
 | Metrica                     | Valor                               |
 |-----------------------------|-------------------------------------|
 | npx tsc -b                  | 0 errores                           |
-| npm run build               | PASA (1m 24s)                       |
+| npm run build               | PASA                                |
 | Bundle principal (index)    | ~334 kB / 100 kB gzip              |
 | Chunk mas grande (Recharts) | 458 kB / 151 kB gzip               |
-| Vendor splitting            | 6 chunks (react, query, ui, icons, date, supabase) |
+| Vendor splitting            | 7 chunks (react, query, ui, icons, date, supabase, leaflet) |
 | CI bundle limit             | 350 kB (index-*.js)                 |
-| Archivos fuente (src/)      | 432 total                           |
-| Paginas                     | 64 (51 top-level + 12 PetClinicalRecord + 1 standalone) |
-| Componentes                 | 261                                 |
-| Hooks                       | 63                                  |
-| Libs/utils                  | 35 (+7 tests)                       |
-| Tipos                       | 3 archivos dedicados                |
-| Migraciones SQL             | 139                                 |
+| Archivos fuente (src/)      | 455 total                           |
+| Paginas (.tsx)               | 62                                  |
+| Componentes (.tsx)           | 269 (78 root + 191 en 19 subdirs)   |
+| Hooks (.ts/.tsx)             | 66                                  |
+| Libs/utils (.ts)             | 38 (+7 tests)                       |
+| UI primitivos (shadcn)      | 54                                  |
+| Tipos dedicados             | 3 archivos                          |
+| Migraciones SQL             | 145                                 |
 | Edge Functions              | 26 + _shared/ (6 helpers)           |
-| Rutas en App.tsx            | 65 paths                            |
+| Tablas en BD                | 126 (124 con RLS)                   |
+| Rutas en App.tsx            | ~65 paths                           |
 | E2E specs (Playwright)      | 4 archivos                          |
-| Commits recientes (5)       | +6,571 / -546 lineas, 163 archivos  |
-
-ALERTA BUNDLE: index-Bs8re7xz.js (458 kB) supera el limit de 350 kB del CI.
-Este chunk contiene Recharts. Considerar lazy-load o chunk separado.
+| Unit tests                  | 7 archivos en lib/__tests__/        |
 
 ================================================================================
 4. INVENTARIO COMPLETO (src/)
 ================================================================================
 
-4.1 PAGINAS (64 archivos)
--------------------------
+4.1 PAGINAS (62 archivos .tsx)
+-------------------------------
 
-src/pages/ (51 top-level):
+src/pages/ (52 top-level):
   Admin.tsx, Adoption.tsx, AddPet.tsx, Auth.tsx, BloodDonors.tsx,
   Chat.tsx, ChatConversation.tsx, Community.tsx, DejarResena.tsx,
   Demo.tsx, DirectorioVets.tsx, EnMemoria.tsx, Feed.tsx,
@@ -127,64 +151,66 @@ src/pages/ (51 top-level):
   MyPets.tsx, NotFound.tsx, OnboardingDuenoMinimal.tsx,
   OnboardingVetMinimal.tsx, ParaVeterinarios.tsx, PaymentResult.tsx,
   PawCardLanding.tsx, PawCollection.tsx, PawGame.tsx,
-  PerfilVetPublico.tsx, PetRoutines.tsx, PreciosVeterinarios.tsx,
-  PrivacyPolicy.tsx, ProDashboard.tsx, Profile.tsx,
-  ProviderPatients.tsx, ProviderProfileEdit.tsx, QRLanding.tsx,
-  RegistroPartner.tsx, RegistroVeterinario.tsx, Reminders.tsx,
-  Reportes.tsx, ServiceDirectory.tsx, Servicios.tsx,
+  PerfilVetPublico.tsx, PetRoutines.tsx, PetTimeline.tsx,
+  PreciosVeterinarios.tsx, PrivacyPolicy.tsx, ProDashboard.tsx,
+  Profile.tsx, ProviderPatients.tsx, ProviderProfileEdit.tsx,
+  QRLanding.tsx, RegistroPartner.tsx, RegistroVeterinario.tsx,
+  Reminders.tsx, Reportes.tsx, ServiceDirectory.tsx, Servicios.tsx,
   TermsOfService.tsx, UnifiedCalendar.tsx, Upgrade.tsx,
   UpgradeCancel.tsx, UpgradeSuccess.tsx, UserProfile.tsx
 
-src/pages/PetClinicalRecord/ (12 archivos):
-  index.tsx, types.ts, helpers.ts, ClinicalHeader.tsx,
-  tabs/MedicalHistoryTab.tsx, tabs/VaccinesTab.tsx,
-  tabs/DocumentsTab.tsx, tabs/WeightTab.tsx, tabs/AITab.tsx,
-  shared/...
+src/pages/PetClinicalRecord/ (9 archivos):
+  index.tsx, types.ts, helpers.ts, ClinicalHeader.tsx
+  tabs/ — MedicalHistoryTab.tsx, VaccinesTab.tsx,
+          DocumentsTab.tsx, WeightTab.tsx, AITab.tsx
 
 src/pages/standalone/ (1):
-  AnalyticsDashboard.tsx (100% mock data — placeholder)
+  AnalyticsDashboard.tsx (admin-only, datos reales via Supabase)
 
-4.2 COMPONENTES (261 archivos en 20 subdirectorios)
-----------------------------------------------------
+4.2 COMPONENTES (269 archivos en 19 subdirectorios + root)
+------------------------------------------------------------
 
 | Directorio       | Archivos | Componentes clave                        |
 |------------------|----------|------------------------------------------|
-| (root)           | 75       | AppLayout, AppSidebar, BottomTabBar, Hero, HeroV2, LogosBand, MedicalPDFShowcase, ProtectedRoute, RoleGuard, AdminRoute... |
-| admin/           | 21       | AdminDashboard, AdminUsers, AdminProviders, AdminAnalytics, AdminErrorLog, AdminMissions, AdminRewards, AdminFinance... |
+| (root)           | 78       | AppLayout, AppSidebar, BottomTabBar, Hero, HeroV2, LogosBand, MedicalPDFShowcase, ProtectedRoute, RoleGuard, AdminRoute, PremiumGate, PremiumNudge, PawLabsBanner... |
+| admin/           | 22       | AdminDashboard, AdminUsers, AdminProviders, AdminAnalytics, AdminErrorLog, AdminMissions, AdminRewards, AdminFinance, AdminSystemHealth, AdminModeration, AdminTeam, AdminAuditLog, AdminPendingPets, AdminSafetyLogs... |
 | ai/              | 6        | PetAssistant, AIDisclaimer, AIErrorState, AILoadingState |
 | analytics/       | 4        | AnalyticsPreviewCard, LockedOverlay, ProUpgradeCTA |
 | calendar/        | 7        | BookingModal, CalendarGrid, UnifiedDayView |
-| feed/            | 14       | FeedPost, FeedCreatePost, FeedComments, FeedStories |
+| feed/            | 14       | FeedPost, FeedCreatePost, FeedComments, FeedStories, FeedExplore, FeedStoryViewer, FeedImageUploader, FeedPostMedia... |
 | home/            | 5        | StatusCard, PriceEstimatorCard, TodayRoutinesCard |
 | maps/            | 9        | MapFilters, MapPinPopup, ServiceDetailCard |
-| medical/         | 7        | GrimaceChecklist, MedicalSummaryButton, ShareWithVetModal |
+| medical/         | 8        | GrimaceChecklist, MedicalSummaryButton, ShareWithVetModal, PetQRDisplay, MedicalDocumentsTab, UploadMedicalDocumentDialog, PostRecordRecommendation, PetVetLinksSection |
 | memorial/        | 3        | BereavementChat, MemorialCard, MemorialFlow |
 | onboarding/      | 1        | VaccinationCardOCR |
-| paw-cards/       | 8        | PawCardFlippable, PawCardQR, HoloRevealAnimation |
-| pawgame/         | 5        | BadgeGallery, MissionCard, PawShopRewards |
+| paw-cards/       | 8        | PawCardFlippable (TCG con holografia), PawCardQR, HoloRevealAnimation, PawCardRevealCeremony, PawCardMemorial... |
+| pawgame/         | 5        | BadgeGallery, GuardianProgress, MissionCard, PawShopRewards, PetPawProgress |
 | profile/         | 5        | ProfileCompletionCard, PetIdentityCard |
-| provider/        | 28       | ProviderDashboard, VetOnboardingWizard, VetPatientsList, ConsultationRecorderModal, PatientConsolidatedSummary... |
+| provider/        | 28       | ProviderDashboard, VetOnboardingWizard, VetPatientsList, ConsultationRecorderModal, PatientConsolidatedSummary, NewPatientForm, VetQuickNotes, Next24hCard, TodayAgendaCard... |
+| provider/dashboard/ | 5     | AlertsBanner, ClinicalTab, BusinessTab, PatientsTab, QuickActionsBar, InteractiveMetricCard, ActivityFeed |
 | reviews/         | 5        | ReviewSummary, ReviewCard, StarRating |
 | routines/        | 4        | DaySelector, RoutineCard, RoutineForm |
 | settings/        | 1        | IntegrationsCard |
 | social/          | 1        | ActivityFeed |
-| ui/ (shadcn)     | 51       | accordion, alert, avatar, badge, button, calendar, card, carousel, chart, checkbox, command, dialog, dropdown-menu, form, input, label, popover, progress, scroll-area, select, separator, sheet, sidebar, skeleton, slider, switch, table, tabs, textarea, toast, toggle, tooltip... |
+| ui/ (shadcn)     | 54       | Todos los primitivos Radix + EmptyState, combobox-with-other, petcard, responsive-modal, select-with-other |
 
-4.3 HOOKS (63 archivos)
+4.3 HOOKS (66 archivos)
 ------------------------
 
 Autenticacion & Roles (6):
   useAuth, useActiveRole, useIsAdmin, useGoogleAuth, useFacebookAuth, useBlockedUsers
 
-Data Fetching (12):
+Data Fetching (13):
   useFeedPosts, usePartners, useServiceProviders, useVetAnalytics,
   useVetPriceEstimator, useNotifications, useReminders, useMedicalRecords,
-  usePetStories, useInfiniteScroll, useCommunityGroups, useDirectoryVets
+  usePetStories, useInfiniteScroll, useCommunityGroups, useDirectoryVets,
+  useAdoptionShelters
 
-Provider/Business (10):
+Provider/Business (11):
   useProviderProfile, useProviderDashboardStats, useProviderActivityFeed,
   useVetPatientSummary, useVetClinicalNotes, useConsultationTemplates,
-  useGroomerProfile, useAudioRecorder, useProcessTranscript, usePendingReviews
+  useGroomerProfile, useAudioRecorder, useProcessTranscript, usePendingReviews,
+  useVetQuickNotes
 
 Features & Gamificacion (11):
   usePlan, useGamification, usePawCard, usePawCardRanking, useMissions,
@@ -195,86 +221,118 @@ Social & Interacciones (7):
   useFollows, useUserReviews, useReviewInvitations, useFeedActions,
   useFeedRealtime, useDoubleTapLike, useStartConversation
 
-Medical & Documentos (4):
-  useMedicalSharing, usePetVetLinks, useClaimPetInvitation, useMedicalDocuments
+Medical & Documentos (5):
+  useMedicalSharing, usePetVetLinks, useClaimPetInvitation, useMedicalDocuments,
+  useAutoClaimByEmail
 
-UI & Device (8):
-  use-mobile (shadcn), use-toast (shadcn), useScrollOnFocus, useDoubleTapLike,
-  useGyroscope, useHoloPattern, useAudioRecorder, useSidebarTutorial
+UI & Device (7):
+  use-mobile (shadcn), use-toast (shadcn), useScrollOnFocus,
+  useGyroscope, useHoloPattern, useSidebarTutorial, useCanAddPet
 
-Admin & Utilidad (5):
-  useAdminAudit, useDemoMode, useErrorReporter, useAnalyticsTracker, useAISkill
+Admin & Utilidad (6):
+  useAdminAudit, useDemoMode, useErrorReporter, useAnalyticsTracker,
+  useAISkill, useFeedbackInApp, useRoutines
 
-4.4 LIBS/UTILS (35 archivos + 7 tests)
+4.4 LIBS/UTILS (38 archivos + 7 tests)
 ---------------------------------------
 
-Utilidades: utils, format, distance, logger, icons, links, routing
-Dominio: medicalRecordTypes, vaccines, breeds, seasonalTips, levels, points, plans, commissions, petOptions, postTypes, reminderTypes
-API/Services: googleCalendar, googleMapsConfig, leafletConfig, supabaseErrors, platform, sentry
-Features: featureFlags, gamification, openingHours, vetDirectory
-Nativo: nativeNavigation, nativeDownload, analytics
-Diseno: design-tokens, sidebarTutorialContent, paw-cards
+Utilidades generales:
+  utils.ts, format.ts, distance.ts, logger.ts, icons.ts, links.ts, routing.ts
 
-4.5 TIPOS (3 archivos)
------------------------
+Dominio / Negocio:
+  medicalRecordTypes.ts, vaccines.ts, breeds.ts, seasonalTips.ts, levels.ts,
+  points.ts, plans.ts, commissions.ts, petOptions.ts, postTypes.ts,
+  reminderTypes.ts, locations.ts, health-score.ts, schemas.ts
+
+API / Servicios:
+  googleCalendar.ts, googleMapsConfig.ts, leafletConfig.ts, supabaseErrors.ts,
+  platform.ts, sentry.ts, analytics.ts
+
+Features:
+  featureFlags.ts, gamification.ts, openingHours.ts, vetDirectory.ts,
+  chatQuickReplies.ts
+
+Nativo:
+  nativeNavigation.ts, nativeDownload.ts
+
+Diseno:
+  design-tokens.ts, sidebarTutorialContent.ts, paw-cards.ts
+
+Tests (src/lib/__tests__/ — 7 archivos):
+  featureFlags.test.ts, format.test.ts, gamification.test.ts,
+  openingHours.test.ts, vaccines.test.ts, distance.test.ts, plans.test.ts
+
+4.5 TIPOS DEDICADOS (3 archivos)
+---------------------------------
   src/types/capacitor-google-auth.d.ts
   src/types/vetDirectory.ts
-  src/types/ (+ 1 mas)
+  src/types/leaflet-heat.d.ts (o similar)
 
 4.6 INTEGRACIONES
 -----------------
-  src/integrations/supabase/client.ts
-  src/integrations/supabase/types.ts
+  src/integrations/supabase/client.ts  — Cliente Supabase con timeout 15s,
+    header x-client-info: 'paw-friend-web', typed como createClient<any>
+    para tolerar drift entre types.ts y BD real.
+  src/integrations/supabase/types.ts   — Tipos generados de la BD.
 
 ================================================================================
 5. EDGE FUNCTIONS (26 activas + _shared/)
 ================================================================================
 
-| # | Funcion                        | En config.toml | Proposito                           |
-|---|--------------------------------|----------------|-------------------------------------|
-| 1 | bereavement-assistant          | NO             | Asistente IA empatico (memorial)    |
-| 2 | breed-tips                     | SI             | Tips por raza (IA)                  |
-| 3 | flow-create-subscription       | SI             | Crear suscripcion Flow.cl           |
-| 4 | flow-webhook                   | SI             | Webhook de Flow.cl                  |
-| 5 | generate-medical-summary       | SI             | PDF ficha medica                    |
-| 6 | generate-medical-zip           | SI             | ZIP documentos medicos              |
-| 7 | generate-shelters              | SI             | Generar data de refugios            |
-| 8 | generate-sitemap               | SI             | Sitemap SEO                         |
-| 9 | generate-vet-patient-summary   | NO             | Resumen consolidado pacientes vet   |
-|10 | generate-weekly-owner-reports  | SI             | Reporte semanal dueno               |
-|11 | generate-weekly-vet-reports    | SI             | Reporte semanal vet                 |
-|12 | google-calendar-callback       | SI             | OAuth callback Google Calendar      |
-|13 | google-calendar-disconnect     | SI             | Desconectar Google Calendar         |
-|14 | google-calendar-oauth-init     | SI             | Iniciar OAuth Google Calendar       |
-|15 | google-calendar-sync           | SI             | Sync eventos Google Calendar        |
-|16 | log-error                      | NO             | Error logging centralizado          |
-|17 | medical-suggestions            | SI             | Sugerencias medicas IA basicas      |
-|18 | moderate-service-promotion     | SI             | Moderacion de promociones           |
-|19 | ocr-vaccination-card           | NO             | OCR de carnet de vacunacion (IA)    |
-|20 | pet-assistant                  | SI             | Asistente IA basico de mascotas     |
-|21 | process-consultation-transcript| NO             | Transcripcion audio consulta vet    |
-|22 | reminder-cron                  | SI             | Cron de recordatorios               |
-|23 | send-pet-invitation            | NO             | Invitar dueno a gestionar mascota   |
-|24 | send-whatsapp-reminder         | SI             | WhatsApp (pendiente verif. Meta)    |
-|25 | verify-service-provider        | NO             | Verificacion IA de proveedor        |
-|26 | verify-vet-document            | NO             | Verificacion vet IA-assisted        |
+| # | Funcion                        | En config.toml | Proposito                                     |
+|---|--------------------------------|----------------|-----------------------------------------------|
+| 1 | bereavement-assistant          | SI             | Asistente IA empatico para duelo de mascota. Protocolo de crisis incluido (Salud Responde 600 360 7777) |
+| 2 | breed-tips                     | SI             | Tips de cuidado por raza generados con IA      |
+| 3 | flow-create-subscription       | SI             | Crear orden de pago en Flow.cl (HMAC-SHA256). Precios: $3.990/mes, $39.900/ano |
+| 4 | flow-webhook                   | SI             | Webhook server-to-server de Flow.cl. Verifica pago y activa Premium |
+| 5 | generate-medical-summary       | SI             | Genera PDF completo de ficha clinica (pdf-lib). Encoding WinAnsi para chars especiales |
+| 6 | generate-medical-zip           | SI             | Empaqueta todos los documentos medicos en ZIP (jszip) |
+| 7 | generate-shelters              | SI             | Genera/seedea datos de refugios de adopcion con IA. Coordenadas de comunas de Santiago |
+| 8 | generate-sitemap               | SI             | Sitemap XML para pawfriend.cl. 18 comunas + especialidades hardcoded |
+| 9 | generate-vet-patient-summary   | SI             | Resumen clinico consolidado IA (quick notes + medical records de dueno) |
+|10 | generate-weekly-owner-reports  | SI             | Cron semanal (lunes 8AM Chile). Stats de recordatorios, pesos, recordatorios proximos + insight IA en espanol chileno |
+|11 | generate-weekly-vet-reports    | SI             | Cron semanal (lunes 8AM Chile). Bookings, reviews, rating, revenue + insight IA |
+|12 | google-calendar-callback       | SI             | OAuth2 callback: code→tokens, crea calendario "Paw Friend" en Google |
+|13 | google-calendar-disconnect     | SI             | Desconectar: revocar token + eliminar registros locales |
+|14 | google-calendar-oauth-init     | SI             | Inicia OAuth2 flow. Scopes: calendar.events + userinfo.email |
+|15 | google-calendar-sync           | SI             | Sync unidireccional app→Google. Refresca tokens expirados. Eventos de reminders + appointments |
+|16 | log-error                      | SI             | Ingestion de errores del frontend. Rate limit 10/min por IP (in-memory). Escribe a error_logs |
+|17 | medical-suggestions            | SI             | Sugerencias medicas IA basadas en registros de la mascota |
+|18 | moderate-service-promotion     | SI             | Moderacion IA de promociones de proveedores. CORS solo pawfriend.cl |
+|19 | ocr-vaccination-card           | SI             | OCR de imagen de carnet de vacunacion con IA |
+|20 | pet-assistant                  | SI             | Chat IA para duenos de mascotas. Rate limit 30 calls/hora |
+|21 | process-consultation-transcript| SI             | Transcripcion estructurada de consulta vet. Sanitizacion anti prompt injection |
+|22 | reminder-cron                  | SI             | Cron diario 11:00 UTC (8AM Chile). Escanea reminders y citas proximas 24h. Dispara WhatsApp |
+|23 | send-pet-invitation            | SI             | Email de invitacion a dueno cuando vet crea mascota huerfana. Via Resend API |
+|24 | send-whatsapp-reminder         | SI             | WhatsApp via Meta Cloud API. Template "pet_reminder". Pendiente verificacion Meta Business |
+|25 | verify-service-provider        | SI             | Verificacion IA de proveedores. OCR de titulo para vets, perfil para no-vets. Confidence 0-100 |
+|26 | verify-vet-document            | SI             | Verificacion admin-only de documentos vet. Restringido a admin_access |
+
+NOTA SEGURIDAD: TODAS las funciones tienen verify_jwt=false en config.toml.
+Razon: el JWT secret de Supabase fue regenerado, rompiendo validacion a nivel
+gateway. Cada funcion valida internamente via supabase.auth.getUser(token).
+La seguridad se mantiene a nivel aplicacion, no gateway.
 
 _shared/ (6 helpers):
-  ai-base.ts, cors.ts, flow-utils.ts, prompt-utils.ts, rate-limit.ts, payment-gateway.ts
+  ai-base.ts       — callClaude(), verifyAuth(), checkRateLimit(), sanitizeForPrompt(), handleEdgeFunctionError(), logEdgeFunctionCall()
+  cors.ts          — getCorsHeaders() dinamico (pawfriend.cl + localhost:8080/5173)
+  flow-utils.ts    — signFlowParams() HMAC-SHA256
+  payment-gateway.ts — Interfaz PaymentGateway + SimulatedGateway (95% success, dev only)
+  prompt-utils.ts  — escapePromptInput(), wrapUserData() (delimitadores === para IA)
+  rate-limit.ts    — checkAiQuota() via RPC check_and_increment_ai_quota. Default 30/hora. Fail-open on DB error
 
-NOTA: 8 funciones NO estan en config.toml (bereavement-assistant, generate-vet-
-patient-summary, log-error, ocr-vaccination-card, process-consultation-transcript,
-send-pet-invitation, verify-service-provider, verify-vet-document).
-Todas tienen verify_jwt=false (validacion interna via supabase.auth.getUser).
+IA Backend: Todas las funciones IA usan Claude API (modelo claude-sonnet-4-5-20250514,
+max_tokens 600, temperature 0.3). Prompt caching habilitado (cache_control ephemeral).
+Timeout 15 segundos.
 
 ================================================================================
-6. MIGRACIONES SQL (139 total)
+6. MIGRACIONES SQL (145 total)
 ================================================================================
 
-Rango de timestamps: 20251127152253 → 20260512000001
+Rango de timestamps: 20251127152253 → 20260515200000
 + flag: 99999999000000_demo_seed_flag.sql
 
-Ultimas 10:
+Ultimas 15 (las mas recientes):
   20260509000000_rls_notifications_reviews_verifications.sql
   20260509000001_service_providers_pending_and_indexes.sql
   20260509000002_delete_policy_unique_subs_award_points_rpc.sql
@@ -284,86 +342,117 @@ Ultimas 10:
   20260511000000_post_saves_and_content_reports.sql
   20260512000000_error_logs_table.sql
   20260512000001_analytics_events_table.sql
-  99999999000000_demo_seed_flag.sql
+  20260515000000_vet_quick_notes.sql
+  20260515000001_feedback_in_app.sql
+  20260515000002_core_action_missions.sql
+  20260515100000_fix_seed_quality_missions.sql
+  20260515100001_unified_requirement_type_constraint.sql
+  20260515200000_rls_audit_missing_tables.sql
 
-ALERTA — 3 TIMESTAMPS DUPLICADOS:
+Detalle de las ultimas 5 migraciones:
+
+  1. rls_audit_missing_tables — Auditoria RLS sobre las 126 tablas. 124 ya tenian
+     RLS. Habilita RLS en 2 tablas faltantes: paw_missions y vaccination_protocols.
+     Agrega politicas SELECT para usuarios autenticados.
+
+  2. unified_requirement_type_constraint — Redefine CHECK constraint en
+     paw_missions.requirement_type con 14 tipos validos: collect_count,
+     collect_species, collect_species_count, collect_rarity, collect_all_rarities,
+     be_collected, collect_owners, complete_reminders, book_vet, complete_profile,
+     memorial, log_vaccine, leave_review, complete_checklist.
+
+  3. fix_seed_quality_missions — Corrige migracion rota de seed. Re-seedea 8
+     misiones "quality" (care + social) con mapeo correcto de columnas.
+
+  4. core_action_missions — Seedea 8 misiones core-action: core_first_vaccine,
+     core_vaccines_5, core_first_review, core_reviews_5, core_reminders_10,
+     core_reminders_50, core_vet_visit, core_profile_complete.
+
+  5. feedback_in_app — Tabla feedback_in_app para bug reports, ideas, experiencias.
+     Tipos: bug|idea|experience. Status: new|reviewed|resolved|dismissed.
+     RLS: users own, admins all.
+
+ALERTA — 3 TIMESTAMPS DUPLICADOS (heredados, no causan conflictos):
   1. 20260412200000: add_sidebar_tutorial_progress + paw_card_collections_public_view
   2. 20260413000000: ai_cache + premium_b2c_flow
   3. 20260413200000: fix_vet_pet_creation + vet_opening_hours
-
-Todas las migraciones usan CREATE IF NOT EXISTS / DO $$ BEGIN ... EXCEPTION ...
-por lo que son idempotentes. El orden de ejecucion no causa conflictos porque
-operan sobre tablas distintas. Pero es buena practica evitar timestamps duplicados.
+  Todas idempotentes, operan sobre tablas distintas.
 
 ================================================================================
-7. RUTAS (65 paths en App.tsx — 699 lineas)
+7. RUTAS (65+ paths en App.tsx)
 ================================================================================
+
+Todas las paginas usan React.lazy + Suspense para lazy loading.
+QueryClient configurado con staleTime: 5 min, retry: 1, refetchOnWindowFocus: false.
+Capacitor init on load: StatusBar, SplashScreen, back button, deep links, push notifications.
 
 7.1 PUBLICAS (sin login) — 18 rutas
-  /                                Landing
-  /auth                            Login/registro
-  /veterinarios                    Directorio publico vets
+  /                                Landing (HeroV2 + MedicalPDFShowcase + 8 secciones)
+  /auth                            Login/registro (Supabase Auth)
+  /veterinarios                    Directorio publico vets (filtros, busqueda)
   /veterinarios/comuna/:comuna     Filtro por comuna
   /veterinarios/especialidad/:esp  Filtro por especialidad
-  /veterinarios/:slug              Perfil publico vet
-  /precios-veterinarios            Estimador precios
+  /veterinarios/:slug              Perfil publico vet (reviews, horarios, mapa)
+  /precios-veterinarios            Estimador de precios veterinarios
   /precios-veterinarios/comuna/:c  Precios por comuna
-  /para-veterinarios               Landing B2B
-  /registro-veterinario            Registro vet
+  /para-veterinarios               Landing B2B (beneficios para vets)
+  /registro-veterinario            Registro vet (formulario + verificacion)
   /registro-proveedor              Alias → registro-veterinario
   /registro-partner                Registro partner
-  /resena/:token                   Dejar resena
-  /qr/:token                       QR landing
-  /paw-card/:pawCardId             Paw Card landing
-  /medical-share/:token            Ficha compartida (30 dias)
-  /terms                           Terminos
-  /privacy                         Privacidad
+  /resena/:token                   Dejar resena publica (link unico)
+  /qr/:token                       QR landing (ficha publica de mascota)
+  /paw-card/:pawCardId             Paw Card landing (card coleccionable publica)
+  /medical-share/:token            Ficha compartida con vet (valida 30 dias)
+  /terms                           Terminos de servicio
+  /privacy                         Politica de privacidad
 
-7.2 PROTEGIDAS (requieren auth) — 38+ rutas
-  /home                            Dashboard principal
-  /feed                            Feed social
-  /comunidad                       Grupos comunidad
+7.2 PROTEGIDAS (requieren auth) — 40+ rutas
+  /home                            Dashboard principal (status mascota, rutinas hoy, accesos rapidos)
+  /feed                            Feed social (posts, likes, comments, stories, explore)
+  /comunidad                       Grupos de comunidad (por raza/condicion)
   /comunidad/:slug                 Grupo especifico
-  /my-pets                         Mis mascotas
-  /paw-collection                  Coleccion Paw Cards
-  /misiones                        Misiones gamificacion
+  /my-pets                         Mis mascotas (lista + ClaimPetDialog)
   /add-pet                         Agregar mascota
   /edit-pet/:petId                 Editar mascota
-  /medical-records                 Redirect → ficha primera mascota
-  /reminders                       Recordatorios
+  /medical-records                 Redirect → ficha clinica de primera mascota
+  /reminders                       Recordatorios (con gamificacion de completitud)
   /rutinas                         Rutinas semanales
-  /mascota/:petId/rutinas          Rutinas de mascota
-  /calendario                      Calendario unificado
-  /adoption                        Adopcion
-  /paw-game                        Mini-juego gamificacion
+  /mascota/:petId/rutinas          Rutinas de mascota especifica
+  /mascota/:petId/timeline         Timeline cronologico de la mascota
+  /calendario                      Calendario unificado (rutinas + recordatorios + citas)
+  /adoption                        Adopcion (Paw Labs beta)
+  /paw-game                        Mini-juego gamificacion (RoleGuard owner-only)
+  /paw-collection                  Coleccion Paw Cards (RoleGuard owner-only)
+  /misiones                        Misiones gamificacion (RoleGuard owner-only)
   /servicios                       Directorio servicios
+  /services/:type                  Servicios por tipo (walkers, vets, sitters, trainers, groomers)
   /peluquero/perfil                Perfil groomer
-  /services/:type                  Servicios por tipo
-  /maps                            Mapa servicios
-  /chat                            Chat
-  /chat/:conversationId            Conversacion
+  /maps                            Mapa interactivo de servicios (Leaflet)
+  /chat                            Chat (lista conversaciones)
+  /chat/:conversationId            Conversacion especifica
   /profile                         Mi perfil
-  /user/:userId                    Perfil otro usuario
-  /payment-result                  Resultado Flow
-  /en-memoria                      Memorial
-  /donantes-sangre                 Red donantes sangre
-  /ficha/:petId                    Ficha clinica completa
-  /mis-reservas                    Mis reservas
-  /upgrade                         Upgrade Premium
+  /user/:userId                    Perfil de otro usuario
+  /payment-result                  Resultado pago Flow (?status=success|failed)
+  /en-memoria                      Memorial de mascotas fallecidas (IA empatica)
+  /donantes-sangre                 Red donantes sangre (Paw Labs beta)
+  /mis-reservas                    Mis reservas/citas
+  /ficha/:petId                    Ficha clinica completa (tabs: historial, vacunas, documentos, peso, IA)
+  /upgrade                         Upgrade a Premium
   /upgrade/success                 Upgrade exitoso
   /upgrade/cancel                  Upgrade cancelado
-  /reportes                        Reportes analytics
-  /onboarding-mascota              Onboarding dueno
-  /onboarding-vet                  Onboarding vet
-  /analytics-demo                  Analytics demo
+  /reportes                        Reportes analytics (weekly summaries)
+  /panel-pro                       Panel Pro dashboard (analytics avanzados)
+  /onboarding-mascota              Onboarding minimal para duenos nuevos
+  /onboarding-vet                  Onboarding minimal para vets nuevos
+  /analytics-demo                  Analytics dashboard (admin-only)
 
-7.3 PROVIDER (RoleGuard + ProtectedRoute) — 3 rutas
-  /provider/dashboard              Dashboard proveedor
-  /provider/pacientes              Lista pacientes
+7.3 PROVIDER (RoleGuard provider + ProtectedRoute) — 3 rutas
+  /provider/dashboard              Dashboard proveedor (6 metricas, 3 tabs: clinico/negocio/pacientes)
+  /provider/pacientes              Lista pacientes con busqueda
   /provider/profile-edit           Editar perfil proveedor
 
 7.4 ADMIN (AdminRoute + ProtectedRoute) — 2 rutas
-  /admin                           Panel admin
+  /admin                           Panel admin (22 secciones: Dashboard, Finance, Users, Providers, Moderation, Missions, Rewards, ErrorLog, SystemHealth, Team, AuditLog, PendingPets...)
   /demo                            Demo (admin-only)
 
 7.5 REDIRECTS LEGACY — 4
@@ -372,100 +461,420 @@ operan sobre tablas distintas. Pero es buena practica evitar timestamps duplicad
   /mascota/:petId/ficha-clinica → /ficha/:petId
   /pet/:petId/clinical → /ficha/:petId
 
-================================================================================
-8. MODELO DE NEGOCIO (de src/lib/plans.ts)
-================================================================================
-
-B2C (duenos de mascotas):
-  Gratis:   $0/mes    | 2 mascotas | Sin PDF | Sin compartir ficha
-  Premium:  $3.990/mes ($39.900/ano) | Ilimitadas | PDF | Compartir ficha
-
-B2B (veterinarios y clinicas):
-  Gratis:     $0/mes    | 10% comision | 20 clientes
-  Individual: $9.900/mes | 12% comision | 100 clientes
-  Clinica B.: $29.900/mes | 10% comision | 500 clientes | Destacado | Multi-vet
-  Clinica Pro: $59.900/mes | 0% comision | Ilimitados | Destacado | Multi-vet
-
-Pagos via Flow.cl (edge functions flow-create-subscription + flow-webhook).
-Trial 14 dias para Premium B2C (migracion 20260505100000).
+7.6 CATCH-ALL
+  * → NotFound (404)
 
 ================================================================================
-9. HALLAZGOS CRITICOS
+8. MODELO DE NEGOCIO Y PRICING (de src/lib/plans.ts)
 ================================================================================
 
-9.1 SEGURIDAD
-  [OK] MIS_API_KEYS.md en junk/ — NO trackeado por git (.gitignore OK)
-  [OK] .env NO trackeado
-  [OK] RLS activo en analytics_events, error_logs, admin_access
-  [NOTA] Todas las edge functions tienen verify_jwt=false (validacion interna)
+8.1 B2C — DUENOS DE MASCOTAS (2 planes)
 
-9.2 BUNDLE SIZE
-  [ALERTA] index-Bs8re7xz.js = 458 kB (151 kB gzip) — contiene Recharts
-  [ALERTA] AreaChart chunk = 385 kB (105 kB gzip)
-  [INFO] CI limit es 350 kB para index-*.js. El chunk de Recharts puede
-         estar causando falsos positivos o el CI mide otro index.
+NOTA IMPORTANTE: USER_PREMIUM=false actualmente. Todos los usuarios tienen
+acceso completo gratis (pivot medico). Se reactivara cuando haya >5000 MAU.
 
-9.3 MIGRACIONES
-  [ALERTA] 3 pares de timestamps duplicados (detalle en seccion 6)
-  [INFO] Todas idempotentes, sin conflictos reales
+| Feature               | Gratis        | Premium ($3.990/mes, $39.900/ano) |
+|-----------------------|---------------|-----------------------------------|
+| Mascotas              | 2             | Ilimitadas                        |
+| Recordatorios         | 3             | Ilimitados                        |
+| Rutinas/mascota       | 3             | Ilimitadas                        |
+| Analisis IA conducta  | 1/mes         | Ilimitado                         |
+| Asistente vet IA      | 1/mes         | Ilimitado                         |
+| Export PDF ficha      | No            | Si                                |
+| Compartir ficha       | 1/mes         | Ilimitado                         |
+| Historial medico      | 6 meses       | Todo                              |
+| Resumen semanal IA    | No            | Si                                |
+| Comision reservas     | 5%            | 0%                                |
+| Soporte prioritario   | No            | Si                                |
+| Sin publicidad        | No            | Si                                |
+| Panel Pro Analytics   | No            | Si                                |
+| Export reportes       | No            | Si                                |
+| OCR carnet            | 1/mes         | Ilimitado                         |
 
-9.4 EDGE FUNCTIONS
-  [INFO] 8 funciones no estan en config.toml (funcionan pero sin config explicita)
-  [INFO] 5 funciones nuevas no documentadas en CLAUDE.md §6
+8.2 B2B — VETERINARIOS Y CLINICAS (4 planes, ACTIVO)
 
-9.5 DOCUMENTACION DESACTUALIZADA
-  [CRITICO] CLAUDE.md dice 128 migraciones → son 139
-  [CRITICO] CLAUDE.md dice 21 edge functions → son 26
-  [CRITICO] CLAUDE.md dice ~35 paginas → son 64
-  [CRITICO] CLAUDE.md dice ~30 hooks → son 63
-  [CRITICO] CLAUDE.md dice ~60 componentes top-level → son 261 total
-  [CRITICO] CLAUDE.md dice ~20 libs → son 35
-  [ALTO] INDEX.md no refleja auditorias del 2026-04-14
-  [ALTO] MAPA_FUNCIONAL_COMPLETO.md desactualizado (2026-04-10)
-  [MEDIO] AGENTS.md dice 21 edge functions → son 26
+| Feature               | Gratis   | Individual $9.900 | Clinica B. $29.900 | Clinica Pro $59.900 |
+|-----------------------|----------|--------------------|--------------------|---------------------|
+| Precio anual          | $0       | $99.000 ($8.250/m) | $299.000 ($24.900) | $599.000 ($49.900)  |
+| Comision              | 10%      | 10%                | 10%                | 0%                  |
+| Clientes max          | 15       | 100                | 500                | Ilimitados          |
+| Reservas/mes          | 10       | 50                 | Ilimitadas         | Ilimitadas          |
+| Invitaciones resena   | 2/mes    | 5/mes              | 20/mes             | Ilimitadas          |
+| Perfil publico        | Si       | Si                 | Si                 | Si                  |
+| Reviews publicas      | Si       | Si                 | Si                 | Si                  |
+| Directorio            | Si       | Si                 | Si                 | Si                  |
+| Posicion destacada    | No       | No                 | Si                 | Si                  |
+| Multi-vet             | No       | No                 | Si                 | Si                  |
+| Multi-sucursal        | No       | No                 | No                 | Si                  |
+| Branding              | Ninguno  | Basico             | Completo           | Completo            |
+| Analytics             | Ninguno  | Basico             | Avanzado           | Avanzado            |
+| Soporte prioritario   | No       | No                 | No                 | Si                  |
+| API access            | No       | No                 | No                 | Si                  |
+| Audio transcripcion   | No       | Si                 | Si                 | Si                  |
 
-9.6 CARPETAS A LIMPIAR
-  [ALTO] junk/ — 35 archivos legacy (contextos viejos, audits obsoletos,
-         API keys template). Todo gitignoreado o legacy.
-  [MEDIO] dist/ — output viejo (gitignoreado, pero ocupa espacio)
-  [MEDIO] stats.html — 2 MB bundle analysis (gitignoreado)
-  [BAJO] playwright-report/ y test-results/ — artefactos de test
-  [BAJO] src/contexts/ — directorio vacio
-
-9.7 CODIGO
-  [OK] 0 errores TypeScript
-  [OK] Build pasa
-  [OK] Naming conventions respetadas (0 violaciones)
-  [OK] 0 archivos huerfanos en src/ (todos importados)
-  [OK] Solo 1 TODO real (routing.ts:84)
-  [INFO] Paginas potencialmente "podadas" segun FLUJO_COMPLETO.mmd pero
-         aun presentes en App.tsx: PawGame, Missions, PawCollection,
-         Community, Demo, Reportes
+Pagos: Flow.cl (pasarela chilena). Edge functions flow-create-subscription +
+flow-webhook. Credenciales como Supabase secrets (FLOW_API_KEY, FLOW_SECRET_KEY).
+Trial 14 dias para Premium B2C.
 
 ================================================================================
-10. DOCUMENTACION Y CARPETAS
+9. FEATURE FLAGS Y PIVOT MEDICO
 ================================================================================
 
-10.1 DOCUMENTOS VIVOS (mantener actualizados)
-  CLAUDE.md                 — Manual operativo (NECESITA UPDATE)
-  INDEX.md                  — Indice maestro (NECESITA UPDATE)
-  MAPA_FUNCIONAL_COMPLETO.md — Mapa de modulos (NECESITA UPDATE)
-  AGENTS.md                 — Config agentes IA (NECESITA UPDATE menor)
-  diagrams/FLUJO_COMPLETO.mmd — Fuente de verdad flujo (ACTUALIZADO 2026-04-14)
-  diagrams/FLUJOS_MERMAID.md  — Diagramas por modulo
+El sistema de feature flags (src/lib/featureFlags.ts) controla la visibilidad
+de funcionalidades. Regla: no eliminar codigo, solo esconder con flag.
+
+| Flag               | Estado | Descripcion                                      |
+|--------------------|--------|--------------------------------------------------|
+| USER_PREMIUM       | false  | Premium B2C deshabilitado. App 100% gratis para duenos. Reactivar con >5000 MAU |
+| PAWGAME_SIDEBAR    | true   | PawGame visible en sidebar. Secundario al pivot medico |
+| MARKETPLACE        | false  | Marketplace de productos. Fuera de scope medico   |
+| SHARED_WALKS       | false  | Paseos compartidos. No alineado con foco medico   |
+| LOST_PETS_SECTION  | false  | Mascotas perdidas como seccion. Integrado en mapa/feed |
+| PRO_ANALYTICS      | true   | Panel Pro de Analytics + cards en Home             |
+| LABS_ADOPTION      | true   | Adopcion como Paw Labs (beta)                     |
+| LABS_BLOOD_DONORS  | true   | Red donantes de sangre (beta)                     |
+| LABS_COMMUNITY     | true   | Comunidad/grupos por raza. UI lista, sin grupos en DB |
+
+Cuando canAccess() detecta USER_PREMIUM=false, bypasea todos los gates de plan
+y retorna allowed:true para todos los usuarios.
+
+================================================================================
+10. SISTEMA DE ROLES Y EXPERIENCIAS
+================================================================================
+
+10.1 ROLES DISPONIBLES
+
+| Rol        | Determinacion                        | Experiencia UI                    |
+|------------|--------------------------------------|-----------------------------------|
+| owner      | Cualquier usuario autenticado (default) | Entretenida: gamificacion, Paw Cards, feed, colores vivos |
+| provider   | Registro en service_providers        | Profesional: dashboard clinico, tema teal medico, sin gamificacion |
+| admin      | Registro en admin_access (is_active) | Panel interno: metricas, moderacion, sistema |
+
+10.2 DUAL-ROLE SWITCHING (useActiveRole)
+
+- Hook: useActiveRole() en src/hooks/useActiveRole.tsx
+- Context: { role, isProvider, isProviderLoading, toggle, setRole }
+- Detecta si es provider via query a service_providers (TanStack Query)
+- Persiste en localStorage key: pf_active_role
+- Toggle visible en Header como pill segmentado "Dueno" / "Profesional"
+- Al cambiar a owner → redirect a /home + toast
+- Al cambiar a provider → redirect a /provider/dashboard + toast
+- Si isProvider=false y role queda en 'provider', fuerza reset a 'owner'
+
+10.3 GUARDS DE RUTA
+
+- RoleGuard: enforza requiredRole ('owner' | 'provider')
+  - provider requerido + no es provider → redirect a fallback (/home) + toast
+  - provider requerido + en modo owner → auto-switch a provider
+  - owner requerido + en modo provider → auto-switch a owner
+  - Shows null while loading (previene flash-redirect)
+
+- AdminRoute: verifica admin_access con is_active=true
+- ProtectedRoute: verifica sesion autenticada
+
+10.4 SEPARACION DE EXPERIENCIAS
+
+- Provider views (/provider/*): tema profesional teal, sin Paw Cards/misiones/badges
+- Owner views: gradientes, animaciones holo, gamificacion, colores brand purple
+- Sin leakage: menus/sidebar/bottom tabs solo muestran rutas del rol activo
+- Rutas owner-only: /paw-game, /paw-collection, /misiones (RoleGuard owner)
+- Rutas provider-only: /provider/* (RoleGuard provider)
+
+10.5 FLUJO MASCOTA HUERFANA (vet crea mascota sin cuenta de dueno)
+
+1. Vet crea mascota via NewPatientForm → pet con pending_owner_email, owner_id=null
+2. Edge function send-pet-invitation envia email con token via Resend API
+3. Dueno click link → useClaimPetInvitation reclama la mascota
+4. Re-claim si pierde email: useAutoClaimByEmail auto-detecta por email verificado
+5. Re-claim manual: boton "Tengo un codigo de mi vet" en /my-pets (ClaimPetDialog)
+6. Admin monitorea en Admin > Usuarios > Mascotas pendientes (AdminPendingPets)
+
+================================================================================
+11. GAMIFICACION (PawGame, Missions, Paw Cards)
+================================================================================
+
+11.1 SISTEMA DE PUNTOS (src/lib/gamification.ts)
+
+Puntos por accion:
+  booking: 50, review: 25, post: 10, adoption: 100, lostPet: 75, vetVisit: 30
+
+Formula de nivel: level = floor(sqrt(points / 100)) + 1
+Puntos para nivel N: (N-1)^2 * 100
+
+Tiers con nombre:
+  Principiante (L1-4), Avanzado (L5-9), Experto (L10-19), Leyenda (L20+)
+
+11.2 GUARDIAN PROGRESS (GuardianProgress.tsx)
+
+10 tiers de guardian con gradientes y iconos unicos:
+  L1 Cachorro Curioso → L5 Protector Novato → L10 Guardian de Plata →
+  L15 Guardian Dorado → L20 Guardian de Diamante → L25 Guardian Cosmico →
+  L30 Guardian Celestial → L35 Guardian Legendario → L38 Guardian Supremo →
+  L41+ Deidad de las Mascotas
+
+Cada tier: gradiente unico, icono (Zap/Star/Trophy/Crown), XP multiplier.
+Stats visibles: PawPoints total, nivel actual, racha diaria (flame icon).
+
+11.3 PAW CARDS (TCG coleccionables)
+
+PawCardFlippable: card estilo Trading Card Game con:
+  - Flip animado (click o swipe 60px+ horizontal)
+  - Sistema de rareza: common, rare, epic, legendary, mythic (basado en PawPoints)
+  - Efectos holograficos: rainbow overlay, holo pattern, sparkle texture, diagonal shine
+  - Tracking de cursor para glow (CSS custom properties --tcg-glow-x/y)
+  - Paleta de colores por especie + tint por raza
+  - Soporte giroscopio mobile (useGyroscope) para tilt effect
+  - Cara frontal: avatar, raza, edad, genero, badge rareza, PawPoints, badges clinicos
+  - Cara trasera: PawCardBack con stats detallados
+  - viewOnly mode para cards de otros usuarios
+
+11.4 MISIONES (paw_missions en BD)
+
+14 tipos de requisito: collect_count, collect_species, collect_species_count,
+collect_rarity, collect_all_rarities, be_collected, collect_owners,
+complete_reminders, book_vet, complete_profile, memorial, log_vaccine,
+leave_review, complete_checklist.
+
+Categorias: care, social, collection, achievement
+Recompensa: PawPoints variables por mision completada
+
+11.5 CATEGORIZACION DE MODULOS
+
+| Categoria      | Modulos                                  | Indicador        |
+|----------------|------------------------------------------|------------------|
+| Core           | Ficha clinica, PDF/ZIP, directorio vets, upgrade, calendario, reminders, onboarding | Sin banner |
+| Pro            | Analytics, reportes semanales, weekly summary | PremiumGate/PremiumNudge |
+| Paw Labs (Beta)| PawGame, Missions, PawCollection, Comunidad, Adopcion, Donantes sangre | PawLabsBanner |
+| Internal       | Admin panel, Demo, AnalyticsDashboard    | AdminRoute        |
+
+================================================================================
+12. INTEGRACIONES EXTERNAS
+================================================================================
+
+12.1 SUPABASE
+- Auth: email/password, Google OAuth (web + native), Facebook OAuth
+- Database: PostgreSQL con 126 tablas, RLS en 124
+- Storage: buckets medical-documents, pet-photos, avatars
+- Edge Functions: 26 activas (Deno runtime)
+- Realtime: suscripciones en messages (chat), posts (feed)
+- RPCs: can_add_pet, check_and_increment_ai_quota, award_points,
+  increment_provider_views, has_role, is_user_blocked, is_mutual_follow,
+  get_paw_card_ranking
+
+12.2 CLAUDE API (ANTHROPIC)
+- Modelo: claude-sonnet-4-5-20250514
+- Max tokens: 600 | Temperature: 0.3
+- Prompt caching habilitado (cache_control: ephemeral)
+- Funciones que usan IA: pet-assistant, breed-tips, medical-suggestions,
+  bereavement-assistant, generate-shelters, generate-weekly-owner-reports,
+  generate-weekly-vet-reports, process-consultation-transcript,
+  generate-vet-patient-summary, verify-service-provider, ocr-vaccination-card,
+  moderate-service-promotion
+- Rate limit: 30 calls/hora via RPC check_and_increment_ai_quota
+- Rate limit diario: via ai_usage table (calls_today, last_reset_date)
+- Sanitizacion anti prompt injection en process-consultation-transcript
+
+12.3 FLOW.CL (PAGOS)
+- Pasarela chilena para pagos Premium
+- HMAC-SHA256 para firmar parametros
+- Flujo: flow-create-subscription → redirect a Flow → flow-webhook (server-to-server)
+- Idempotencia: orden unica por user+plan
+- Secrets: FLOW_BASE_URL, FLOW_API_KEY, FLOW_SECRET_KEY
+
+12.4 GOOGLE CALENDAR
+- OAuth2 completo (init → callback → sync → disconnect)
+- Sync unidireccional: app → Google
+- Crea calendario "Paw Friend" dedicado en la cuenta del usuario
+- Sincroniza pet_reminders + appointments como eventos
+- Tracking via external_calendar_events table
+- Auto-refresh de tokens expirados
+
+12.5 WHATSAPP CLOUD API (META)
+- Template: "pet_reminder" (categoria Utility, pre-aprobado)
+- Cron diario 8AM Chile escanea reminders proximas 24h
+- Requiere opt-in del usuario (whatsapp_opted_in=true)
+- Logs en whatsapp_message_log
+- PENDIENTE: verificacion de Meta Business Manager
+
+12.6 RESEND (EMAIL)
+- Usado en send-pet-invitation para emails de invitacion de mascotas
+- HTML email con token de claim
+- Fallback a supabase.auth.admin.inviteUserByEmail
+
+12.7 SENTRY (ERROR TRACKING)
+- @sentry/react 10.47.0 integrado
+- initSentry() en main.tsx al startup
+- Frontend: global error handlers + useErrorReporter hook
+- Backend: logEdgeFunctionCall() escribe a system_health_log + analytics_events
+
+12.8 GOOGLE MAPS
+- API key para geocoding/places en frontend
+- Leaflet + react-leaflet para mapas interactivos (NO Google Maps embebido)
+
+12.9 CAPACITOR (MOBILE)
+- @capacitor/core 7.4.4 + android + ios
+- Plugins: SplashScreen, StatusBar, Keyboard, GoogleAuth, PushNotifications
+- App ID: cl.pawfriend.app
+- Android: keystore configurado, compilable
+- iOS: testeado en simulator
+- Deep links configurados
+- Back button handler para Android
+- Stale chunk auto-reload guard en main.tsx
+
+================================================================================
+13. SHARED HELPERS BACKEND (_shared/)
+================================================================================
+
+13.1 ai-base.ts (modulo principal)
+  - corsHeaders: export estatico para pawfriend.cl
+  - getCorsHeaders(req): version dinamica (pawfriend.cl + localhost)
+  - jsonResponse / errorResponse: helpers de respuesta HTTP
+  - createSupabaseClient(authHeader): cliente con service role key
+  - verifyAuth(req): extrae y valida token, retorna { user, supabase }
+    Throws: AUTH_REQUIRED, AUTH_INVALID
+  - checkRateLimit(supabase, userId, skillName, maxPerDay): quota diaria
+    via ai_usage table (calls_today, last_reset_date, calls_total, last_called_at)
+  - sanitizeForPrompt(input): trunca a 500 chars, remueve patrones de injection
+  - callClaude({ systemPrompt, userMessage, maxTokens?, temperature?, model?, images? }):
+    POST a api.anthropic.com/v1/messages. Timeout 15s. Logging de tokens.
+    Throws: RATE_LIMITED, AI_NOT_CONFIGURED, CLAUDE_ERROR_{status}
+  - parseJSON<T>(text, fallback): extrae JSON de bloques markdown
+  - handleEdgeFunctionError(error): mapea codigos a HTTP responses
+  - logEdgeFunctionCall({ functionName, status, executionTimeMs, userId?, error?, metadata? }):
+    escribe a system_health_log, analytics_events, error_logs (si error)
+
+13.2 cors.ts
+  - getCorsHeaders(req): CORS dinamico para 3 origenes permitidos
+  - handleCorsOptions(req): respuesta OPTIONS 204
+
+13.3 rate-limit.ts
+  - checkAiQuota(userId, { limit?, windowSeconds? }): via RPC
+    check_and_increment_ai_quota. Default 30 calls/3600s. Fail-open on error.
+  - rateLimitResponse(quota, corsHeaders): 429 con Retry-After
+
+13.4 flow-utils.ts
+  - signFlowParams(params, secret): HMAC-SHA256 sobre concatenacion
+    key-value ordenada alfabeticamente
+
+13.5 payment-gateway.ts
+  - PaymentGateway interface: createTransaction, confirmTransaction
+  - SimulatedGateway: 95% success rate (solo dev/testing)
+  - getPaymentGateway(): actualmente retorna SimulatedGateway.
+    Logica de produccion Flow esta directamente en flow-create-subscription.
+
+13.6 prompt-utils.ts
+  - escapePromptInput(input, maxLength=200): strip newlines/tabs, double→single
+    quotes, remove backslashes/backticks, collapse whitespace
+  - wrapUserData(label, data): delimitadores === INICIO/FIN para IA
+
+================================================================================
+14. BASE DE DATOS (126 tablas, RLS)
+================================================================================
+
+14.1 RESUMEN
+  - 126 tablas totales en PostgreSQL (Supabase)
+  - 124 tablas con Row Level Security (RLS) habilitado
+  - 2 tablas corregidas en migracion 20260515200000 (paw_missions, vaccination_protocols)
+  - Tipos generados en src/integrations/supabase/types.ts
+
+14.2 GRUPOS PRINCIPALES DE TABLAS
+
+Usuarios y perfiles:
+  profiles, admin_access
+
+Mascotas:
+  pets (con pending_owner_email, owner_id nullable para mascotas huerfanas)
+
+Medico / Clinico:
+  medical_records, medical_documents, vaccination_protocols,
+  consultation_templates, vet_quick_notes
+
+Recordatorios y rutinas:
+  pet_reminders, pet_routines, routine_completions, appointments
+
+Social:
+  posts, post_saves, content_reports, user_follows, blocked_users
+
+Feed y comunidad:
+  stories, community_groups
+
+Adopcion:
+  adoption_posts, adoption_interests, adoption_messages
+
+Gamificacion:
+  achievements, user_achievements, activities, paw_missions,
+  paw_card_collections
+
+Proveedores / Servicios:
+  service_providers, service_reviews, review_invitations, bookings,
+  verification_requests, service_promotions, vet_prices_by_comuna (view),
+  pet_vet_links
+
+Pagos y suscripciones:
+  subscriptions, orders
+
+Mensajeria:
+  messages, conversations (o similar via chat)
+
+Notificaciones:
+  notifications
+
+Admin y sistema:
+  admin_audit_log, system_health_log, error_logs, analytics_events,
+  feedback_in_app
+
+IA:
+  ai_usage, ai_cache
+
+Calendario:
+  google_calendar_tokens, external_calendar_events
+
+WhatsApp:
+  whatsapp_message_log
+
+Otras:
+  partners, shelters
+
+14.3 STORAGE BUCKETS
+  - medical-documents: documentos medicos de mascotas (imagenes, PDFs)
+  - pet-photos: fotos de mascotas
+  - avatars: fotos de perfil de usuarios
+
+14.4 RPCs PRINCIPALES
+  - can_add_pet(p_user_id) — gate de plan (max mascotas)
+  - check_and_increment_ai_quota(p_user_id, p_limit, p_window_seconds) — rate limit IA
+  - award_points(...) — otorgar PawPoints por accion
+  - increment_provider_views(provider_slug) — analytics de perfil vet
+  - has_role(...) — verificacion de rol admin
+  - is_user_blocked(...) — verificacion de bloqueo
+  - is_mutual_follow(...) — verificar follow mutuo (para DMs)
+  - get_paw_card_ranking(...) — ranking mensual de Paw Cards
+
+================================================================================
+15. DOCUMENTACION Y CARPETAS
+================================================================================
+
+15.1 DOCUMENTOS VIVOS (mantener actualizados)
+  CLAUDE.md                   — Manual operativo para agentes IA
+  INDEX.md                    — Indice maestro de documentacion
+  MAPA_FUNCIONAL_COMPLETO.md  — Mapa de modulos, archivos, flujos
+  AGENTS.md                   — Config para agentes IA externos
+  diagrams/FLUJO_COMPLETO.mmd — Fuente de verdad del flujo end-to-end (Mermaid)
+  diagrams/FLUJOS_MERMAID.md  — Diagramas individuales por modulo
   diagrams/MATRIZ_ROLES_PLANES.mmd — Roles y planes
+  CONTRIBUTING.md             — Guia para colaboradores
+  .github/PULL_REQUEST_TEMPLATE.md — Checklist de PR
 
-10.2 AUDITORIAS (audits/)
-  COMPETENCIA_2026_04_08.md          — Analisis competitivo Chile
-  CROSS_PLATFORM_COMPATIBILITY.md    — Compatibilidad multiplataforma
-  REPORTE_CONSOLIDADO_2026_04_11.md  — Snapshot tecnico (superado por 04-14)
-  OPTIMIZACION_COSTOS_2026_04_12.md  — Plan de costos
-  FEEDBACK_VET_SOFIA_2026_04_13.md   — Feedback vet beta tester
+15.2 AUDITORIAS (audits/)
+  COMPETENCIA_2026_04_08.md           — Analisis competitivo Chile
+  CROSS_PLATFORM_COMPATIBILITY.md     — Compatibilidad multiplataforma iOS/Android/Web
+  OPTIMIZACION_COSTOS_2026_04_12.md   — Plan de costos operativos
+  FEEDBACK_VET_SOFIA_2026_04_13.md    — Feedback vet beta tester Sofia
   AUDITORIA_UX_COMPLETA_2026_04_14.md — Auditoria UX completa
-  FEATURES_INCOMPLETAS_2026_04_14.md  — 28 features con gaps
+  FEATURES_INCOMPLETAS_2026_04_14.md  — 28 features con gaps detectados
   CONTEXTO_REVISION_COMPLETA.txt      — Este archivo
 
-10.3 SPECS (docs-specs/) — 9 archivos
+15.3 SPECS (docs-specs/) — 9 archivos
   IDEAS_Y_MEJORAS_PENDIENTES.md
   ANALISIS_PREMIUM_VS_FREE.md
   AUDIO_CONSULTA_VET.md
@@ -476,80 +885,251 @@ Trial 14 dias para Premium B2C (migracion 20260505100000).
   ADMIN_POWERHOUSE_SPEC.md
   ADMIN_CONTROL_CENTER_V2.md
 
-10.4 DESIGN (docs-design/) — 2 archivos
-  PAW_CARDS_TCG_DESIGN.md
-  PROVIDER_LAYOUT_REDESIGN.md
+15.4 DESIGN (docs-design/)
+  PAW_CARDS_TCG_DESIGN.md         — Diseno del sistema TCG
+  PROVIDER_LAYOUT_REDESIGN.md     — Guia de diseno layout proveedor
 
-10.5 _PENDING/ — 21 archivos (planes pendientes)
-10.6 _ARCHIVE/ — 27 archivos (correctamente archivados)
-10.7 junk/ — 35 archivos legacy (LIMPIAR)
+15.5 DOCS OPERACIONALES (docs/)
+  ROADMAP_90_DIAS.md              — 18 items en 4 fases
+  CHECKLIST_OPERACION_DIARIA.md   — Checklist de 10-15 min
+  RITUAL_WEEKLY_OPS.md            — Revision semanal KPIs
+  RELEASE_PROCESS.md              — Flujo de release
+  FEATURE_FLAGS.md                — Listado y reglas
+  MOCKS_MAP.md                    — Auditoria de datos ficticios
+  PERFORMANCE_BUDGET.md           — Web Vitals targets y bundle limits
+  JOURNEYS_UX.md                  — Journeys dueno, vet y admin
+  EDGE_FUNCTIONS_MAP.md           — Mapa de 26 edge fns + helpers
+
+15.6 OTRAS CARPETAS
+  _pending/   — 21+ planes y blueprints pendientes de ejecutar
+  _archive/   — 27+ documentos ejecutados o superados
+  junk/       — 35 archivos legacy (gitignoreado)
+  docs/       — Output de npm run build (GitHub Pages). NO editar manualmente
 
 ================================================================================
-11. CONFIGURACION Y CI/CD
+16. CONFIGURACION Y CI/CD
 ================================================================================
 
-11.1 VITE
+16.1 VITE (vite.config.ts)
   Base: / (dominio custom pawfriend.cl)
   Output: docs/ (GitHub Pages)
-  Dev: localhost:8080
-  Chunking: 6 chunks manuales (react, query, ui, icons, date, supabase)
-  Visualizer: stats.html (gzip + brotli)
+  Dev: host :: (all interfaces), port 8080
+  Chunk size warning: 600 kB
+  Plugins: @vitejs/plugin-react-swc, rollup-plugin-visualizer
+  Path alias: @ → ./src
+  Manual chunks: 7 (react-vendor, query-vendor, ui-vendor, icons-vendor,
+    date-vendor, supabase-vendor, leaflet-vendor)
 
-11.2 TAILWIND
+16.2 TAILWIND (tailwind.config.ts)
   Dark mode: class-based
   Font: Plus Jakarta Sans
-  Colores: brand purple (50-900), health states, medical, premium
+  Colores custom: brand purple (50-900), health states, medical, premium
   Gradients: warm, nature, hero, medical, appointment, premium
-  Plugins: tailwindcss-animate
+  Plugins: tailwindcss-animate, @tailwindcss/typography
 
-11.3 TYPESCRIPT
+16.3 TYPESCRIPT (tsconfig.json)
   Strict: false (permisivo para desarrollo rapido)
   Target: ES2020 (app), ES2022 (node/build)
   Module: ESNext con bundler resolution
   Paths: @/* → ./src/*
 
-11.4 CAPACITOR
+16.4 CAPACITOR (capacitor.config.ts)
   App ID: cl.pawfriend.app
+  App Name: Paw Friend
   Plugins: SplashScreen, StatusBar, Keyboard, GoogleAuth, PushNotifications
   Android: keystore configurado
-  iOS: background purple, content inset automatic
+  iOS: background purple, content inset automatic, scheme Paw Friend
 
-11.5 CI/CD (.github/workflows/)
+16.5 CI/CD (.github/workflows/)
   ci.yml: lint + tsc + build + test:ci + audit + bundle check (350 kB)
   e2e.yml: Playwright cross-browser (chromium, firefox, webkit) + Capacitor sync
 
-11.6 TESTING
-  Unit: vitest + @testing-library/react (7 test files en src/lib/__tests__/)
-  E2E: Playwright (4 specs: add-pet, smoke-navigation, smoke-protected, smoke-public)
-  Hooks: husky + lint-staged (pre-commit)
+16.6 TESTING
+  Unit: vitest + @testing-library/react
+    7 test files en src/lib/__tests__/:
+    featureFlags, format, gamification, openingHours, vaccines, distance, plans
+  E2E: Playwright
+    4 specs: add-pet, smoke-navigation, smoke-protected, smoke-public
+  Hooks: husky + lint-staged (pre-commit: lint + format)
+
+16.7 SCRIPTS DISPONIBLES
+  npm run dev            — Dev server (localhost:8080)
+  npm run build          — Build produccion → docs/
+  npm run preview        — Preview del build
+  npx tsc -b             — Type-check
+  npm run lint           — ESLint (flat config, a11y warnings)
+  npm run test           — Vitest unit tests (watch mode)
+  npm run test:ci        — Vitest sin watch (CI)
+  npm run test:e2e       — Playwright E2E
+  npm run check:all      — tsc + lint + test + build (todo junto)
+  npx cap run android    — Compilar y correr en Android
+  npm run cap:sync       — Sincronizar Capacitor
+  npm run android:run    — Run Android
+  npm run ios:run        — Run iOS
+  npm run android:build  — Build APK/AAB
 
 ================================================================================
-12. RECOMENDACIONES PRIORIZADAS
+17. HALLAZGOS Y ESTADO ACTUAL
 ================================================================================
 
-CRITICO (hacer ahora):
-  1. Actualizar CLAUDE.md con numeros reales (139 mig, 26 fns, 64 pages, etc.)
-  2. Actualizar INDEX.md con auditorias 2026-04-14
-  3. Limpiar junk/ — mover contenido util a _archive/, borrar el resto
+17.1 LO QUE FUNCIONA BIEN
+  [OK] 0 errores TypeScript
+  [OK] Build pasa correctamente
+  [OK] Naming conventions respetadas
+  [OK] RLS habilitado en 124/126 tablas (2 corregidas en ultima migracion)
+  [OK] Todas las edge functions tienen auth interna
+  [OK] Feature flags bien implementados y documentados
+  [OK] Sistema de roles dual-role funcionando
+  [OK] Gamificacion completa (puntos, niveles, misiones, Paw Cards TCG)
+  [OK] Google Calendar end-to-end
+  [OK] Flow.cl pagos con idempotencia
+  [OK] Stale chunk auto-reload para deploys
+  [OK] Error tracking con Sentry + log-error edge function
+  [OK] Rate limiting en todas las funciones IA
+  [OK] Sanitizacion anti prompt injection
+
+17.2 PUNTOS DE ATENCION
+  [INFO] USER_PREMIUM=false — toda la app gratis. Monetizacion solo B2B
+  [INFO] verify_jwt=false en todas las edge functions (seguridad interna OK)
+  [INFO] Supabase client typed como createClient<any> (tolera drift de tipos)
+  [INFO] TypeScript strict: false (desarrollo rapido)
+  [INFO] WhatsApp pendiente verificacion Meta Business
+  [OK] LABS_COMMUNITY: 72 grupos seed (17 razas perros, 7 razas gatos, 18 condiciones, 12 regiones, 18 estilo de vida)
+  [INFO] payment-gateway.ts retorna SimulatedGateway (Flow directo en edge fn)
+
+17.3 BUNDLE SIZE
+  [OK] Recharts separado en recharts-vendor (432 kB / 114 kB gzip). Solo se carga en dashboards (lazy)
+  [OK] Sentry separado en sentry-vendor (458 kB / 151 kB gzip). Cachea independiente
+  [INFO] Leaflet separado como chunk independiente (lazy-load)
+  [INFO] 9 chunks de vendor para caching independiente (react, query, ui, icons, date, supabase, leaflet, recharts, sentry)
+
+17.4 MIGRACIONES
+  [INFO] 3 pares de timestamps duplicados (heredados, idempotentes, sin conflicto)
+  [INFO] Todas las migraciones usan CREATE IF NOT EXISTS / DO $$ EXCEPTION
+
+17.5 TESTING
+  [OK] 12 archivos de unit tests (176 tests) y 4 specs E2E
+  [INFO] Tests cubren: featureFlags, format, gamification, openingHours, vaccines, distance, plans, health-score, commissions, levels, routing, schemas
+
+17.6 CARPETAS A LIMPIAR
+  [OK] junk/ — gitignoreado, solo 1 archivo legacy (MIS_API_KEYS.md)
+  [OK] playwright-report/ y test-results/ — gitignoreados, artefactos auto-generados
+  [OK] src/contexts/ — no existe (limpio)
+
+================================================================================
+18. RECOMENDACIONES PRIORIZADAS
+================================================================================
+
+CRITICO:
+  1. Definir estrategia de monetizacion post-pivot (cuando reactivar USER_PREMIUM)
+  2. Completar verificacion Meta Business para WhatsApp
+  3. [HECHO] Recharts + Sentry separados en vendor chunks dedicados (9 chunks total)
 
 ALTO:
-  4. Agregar 8 edge functions faltantes a config.toml
-  5. Resolver chunk de Recharts (458 kB) — lazy-load o chunk separado
-  6. Actualizar MAPA_FUNCIONAL_COMPLETO.md o agregar nota de superacion
-  7. Decidir sobre paginas "podadas" (PawGame, Missions, etc.) — quitar
-     de App.tsx o re-integrar oficialmente
+  4. [HECHO] Cobertura tests: 12 unit files (176 tests) + 4 E2E — cubren health-score, commissions, levels, routing, schemas
+  5. Considerar TypeScript strict: true para mayor seguridad de tipos
+  6. [HECHO] Crear grupos de comunidad en BD — 72 grupos seed + filtros por categoria en UI
+  7. Evaluar migration de createClient<any> a tipos generados
+  8. Publicar en Google Play Store (Android 70% listo) y App Store (iOS 15%)
 
 MEDIO:
-  8. Eliminar directorio src/contexts/ (vacio)
-  9. Eliminar dist/ (output viejo, ya se usa docs/)
- 10. Mover docs-design/PAW_CARDS_TCG_DESIGN.md a _archive/ (implementado)
- 11. Agregar mas unit tests (solo 7 archivos)
+  9. [OK] junk/ verificado — solo 1 archivo, gitignoreado, no tracked
+  10. Implementar Paw Rewards QR completo (ledger, partner_locations, canje)
+  11. Evaluar SimulatedGateway vs Flow directo en payment-gateway.ts
+  12. Agregar mas unit tests para hooks criticos (useAuth, usePlan, useMedicalRecords)
 
 BAJO:
- 12. Resolver TODO en routing.ts:84
- 13. Limpiar playwright-report/ y test-results/ (artefactos)
- 14. Considerar strict: true en tsconfig para mayor seguridad
+  13. [OK] src/contexts/ no existe
+  14. [OK] Artefactos de test gitignoreados (no tracked)
+  15. Considerar chunk separado para iconos (lucide-react ya separado)
 
 ================================================================================
-FIN DEL REPORTE — Generado 2026-04-14
+RESUMEN DE FLUJOS PRINCIPALES (para analisis de IA externa)
+================================================================================
+
+FLUJO 1: REGISTRO Y ONBOARDING DUENO
+  Landing (/) → /auth (email/Google/Facebook) → /onboarding-mascota (agregar
+  primera mascota) → /home (dashboard con status de mascota, rutinas del dia,
+  accesos rapidos)
+
+FLUJO 2: FICHA CLINICA (JOYA DE LA CORONA)
+  /my-pets → seleccionar mascota → /ficha/:petId
+  Tabs: Historial Medico | Vacunas | Documentos | Peso | IA
+  Acciones: agregar registro, subir documento, exportar PDF, exportar ZIP,
+  compartir con vet (link 30 dias), OCR de carnet de vacunacion, sugerencias IA
+  Feline Grimace Scale disponible para gatos
+
+FLUJO 3: DIRECTORIO DE VETS
+  /veterinarios → buscar por nombre/comuna/especialidad
+  /veterinarios/comuna/:comuna → filtro por ubicacion
+  /veterinarios/especialidad/:esp → filtro por area
+  /veterinarios/:slug → perfil publico (reviews, horarios, precio estimado, mapa)
+  /precios-veterinarios → estimador de costos por comuna
+
+FLUJO 4: REGISTRO Y DASHBOARD VET
+  /para-veterinarios (landing B2B) → /registro-veterinario (formulario + docs)
+  → verificacion IA (verify-service-provider) → aprobacion admin/auto
+  → /provider/dashboard (6 metricas, 3 tabs clinico/negocio/pacientes)
+  → /provider/profile-edit (editar perfil, "ver como me ven los duenos")
+
+FLUJO 5: PAGOS PREMIUM
+  /upgrade → seleccionar plan → flow-create-subscription → redirect Flow.cl
+  → pago → flow-webhook (callback) → /payment-result?status=success
+  (Actualmente deshabilitado para B2C via USER_PREMIUM=false)
+
+FLUJO 6: GAMIFICACION (OWNER ONLY)
+  Acciones (booking, review, post, etc.) → award_points RPC → subir de nivel
+  → desbloquear rareza de Paw Card → coleccionar en /paw-collection
+  → completar misiones en /misiones → tienda de recompensas en /paw-game
+  Paw Cards: TCG con holografia, flip, swipe, giroscopio, 5 niveles de rareza
+
+FLUJO 7: SOCIAL / FEED
+  /feed → crear post (texto + imagen) → likes, comments, saves, shares
+  → reportar contenido (5 razones) → moderacion admin
+  Stories efimeras en header del feed
+  Explore: hashtags, trending, busqueda
+  Follow/unfollow usuarios, DMs (requiere follow mutuo)
+
+FLUJO 8: RECORDATORIOS Y CALENDARIO
+  /reminders → crear recordatorio (vacuna, desparasitacion, cita, etc.)
+  → notificacion push (Capacitor) + WhatsApp (si opt-in) + Google Calendar sync
+  /calendario → vista unificada de rutinas + recordatorios + citas
+  Cron diario 8AM Chile escanea proximas 24h
+
+FLUJO 9: MASCOTA HUERFANA (VET CREA PARA DUENO)
+  Vet: NewPatientForm → pet con pending_owner_email → send-pet-invitation
+  → email con token via Resend API
+  Dueno: click link → useClaimPetInvitation → mascota asignada
+  Auto-claim: useAutoClaimByEmail detecta por email verificado
+  Manual: ClaimPetDialog en /my-pets ("Tengo un codigo de mi vet")
+
+FLUJO 10: ADOPCION (PAW LABS BETA)
+  /adoption → ver posts de adopcion → mostrar interes → mensajeria
+  Datos de refugios generados con IA (generate-shelters)
+  Banner PawLabsBanner indicando estado beta
+
+FLUJO 11: MEMORIAL (EN MEMORIA)
+  /en-memoria → crear memorial de mascota fallecida
+  → BereavementChat: asistente IA empatico (bereavement-assistant)
+  → Protocolo de crisis con telefonos reales (Salud Responde, SAMU)
+
+FLUJO 12: ADMIN
+  /admin → 22 secciones:
+  Dashboard (KPIs: usuarios activos 7d, revenue, providers pendientes)
+  Finance (ordenes, suscripciones)
+  Users (perfiles, mascotas, actividad)
+  Providers (vets, aprobaciones, verificaciones)
+  Moderation (reportes, contenido)
+  Missions (CRUD misiones gamificacion)
+  Rewards (sistema de recompensas)
+  ErrorLog (errores del frontend)
+  SystemHealth (health logs)
+  Team (equipo admin)
+  AuditLog (auditoria de acciones)
+  PendingPets (mascotas sin dueno asignado)
+  Charts: registros usuarios 30d (AreaChart), mascotas 30d (BarChart)
+
+================================================================================
+FIN DEL REPORTE — Generado 2026-04-15
+Commit: 9fbb23ac | Branch: main | 455 archivos fuente | 126 tablas BD
 ================================================================================

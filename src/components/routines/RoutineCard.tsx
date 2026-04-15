@@ -21,6 +21,26 @@ import { format } from 'date-fns';
 
 const DAY_LABELS = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
 
+/** Derive a human-readable frequency label from days_of_week array */
+function getFrequencyLabel(days: number[]): string {
+  if (days.length === 7) return 'Diaria';
+  if (days.length === 0) return '';
+  const weekdays = [1, 2, 3, 4, 5];
+  const weekend = [0, 6];
+  if (weekdays.every((d) => days.includes(d)) && days.length === 5) return 'Lunes a viernes';
+  if (weekend.every((d) => days.includes(d)) && days.length === 2) return 'Fines de semana';
+  return `${days.length} días/sem`;
+}
+
+/** Format time_of_day (HH:mm:ss) to readable format */
+function formatTime(time: string): string {
+  const [h, m] = time.split(':').map(Number);
+  if (h === 0) return `12:${String(m).padStart(2, '0')} AM`;
+  if (h < 12) return `${h}:${String(m).padStart(2, '0')} AM`;
+  if (h === 12) return `12:${String(m).padStart(2, '0')} PM`;
+  return `${h - 12}:${String(m).padStart(2, '0')} PM`;
+}
+
 interface RoutineCardProps {
   routine: Routine;
   todayCompletion?: RoutineCompletion;
@@ -76,8 +96,11 @@ export function RoutineCard({
               )}
             </div>
 
-            {/* Days chips + time */}
+            {/* Frequency label + days chips + time */}
             <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[10px] font-medium text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded">
+                {getFrequencyLabel(routine.days_of_week)}
+              </span>
               <div className="flex gap-0.5">
                 {DAY_LABELS.map((label, i) => (
                   <span
@@ -94,7 +117,7 @@ export function RoutineCard({
                 ))}
               </div>
               <span className="text-xs text-muted-foreground">
-                {routine.time_of_day.slice(0, 5)}
+                {formatTime(routine.time_of_day)}
               </span>
             </div>
 

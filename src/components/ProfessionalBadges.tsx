@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Badge } from "@/components/ui/badge";
-import { Briefcase, Stethoscope, Home, GraduationCap, Dog, Heart } from "@/lib/icons";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Badge } from '@/components/ui/badge';
+import { Briefcase, Stethoscope, Home, GraduationCap, Dog, Heart } from '@/lib/icons';
 
 interface ProfessionalBadgesProps {
   userId: string;
@@ -11,14 +11,16 @@ export const ProfessionalBadges = ({ userId }: ProfessionalBadgesProps) => {
   const { data: roles } = useQuery({
     queryKey: ['user-roles', userId],
     queryFn: async () => {
+      if (!userId) return [];
       const { data, error } = await supabase
         .from('user_roles')
         .select('role')
         .eq('user_id', userId);
-      
+
       if (error) throw error;
       return data;
-    }
+    },
+    enabled: !!userId,
   });
 
   if (!roles || roles.length === 0) return null;
@@ -29,31 +31,36 @@ export const ProfessionalBadges = ({ userId }: ProfessionalBadgesProps) => {
         return {
           label: 'Paseador',
           icon: Dog,
-          className: 'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300'
+          className:
+            'bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/30 dark:text-blue-300',
         };
       case 'dogsitter':
         return {
           label: 'Cuidador',
           icon: Heart,
-          className: 'bg-pink-100 text-pink-800 hover:bg-pink-200 dark:bg-pink-900/30 dark:text-pink-300'
+          className:
+            'bg-pink-100 text-pink-800 hover:bg-pink-200 dark:bg-pink-900/30 dark:text-pink-300',
         };
       case 'veterinarian':
         return {
           label: 'Veterinario',
           icon: Stethoscope,
-          className: 'bg-teal-100 text-teal-800 hover:bg-teal-200 dark:bg-teal-900/30 dark:text-teal-300'
+          className:
+            'bg-teal-100 text-teal-800 hover:bg-teal-200 dark:bg-teal-900/30 dark:text-teal-300',
         };
       case 'trainer':
         return {
           label: 'Entrenador',
           icon: GraduationCap,
-          className: 'bg-orange-100 text-orange-800 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-300'
+          className:
+            'bg-orange-100 text-orange-800 hover:bg-orange-200 dark:bg-orange-900/30 dark:text-orange-300',
         };
       case 'admin':
         return {
           label: 'Admin',
           icon: Briefcase,
-          className: 'bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300'
+          className:
+            'bg-red-100 text-red-800 hover:bg-red-200 dark:bg-red-900/30 dark:text-red-300',
         };
       default:
         return null;
@@ -67,7 +74,7 @@ export const ProfessionalBadges = ({ userId }: ProfessionalBadgesProps) => {
         if (!config) return null;
 
         const Icon = config.icon;
-        
+
         return (
           <Badge
             key={roleData.role}

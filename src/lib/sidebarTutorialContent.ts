@@ -97,27 +97,39 @@ export const SIDEBAR_TUTORIALS: SectionTutorial[] = [
         description:
           'Chatea directamente con otros dueños, veterinarios o proveedores de servicios. Coordina paseos, consultas o simplemente conversa.',
       },
-      {
-        title: 'Paw Cards y colección',
-        description:
-          'Tus mascotas son tus primeras Paw Cards. Escanea las cards de otros usuarios para expandir tu colección. Cada card es única y tiene un ranking basado en cuántas veces ha sido coleccionada.',
-        tip: 'Comparte tu QR para que más personas coleccionen tu Paw Card.',
-      },
+    ],
+  },
+  {
+    sectionKey: 'pawlabs',
+    sectionLabel: 'Paw Labs',
+    color: 'from-pink-500 to-rose-500',
+    steps: [
       {
         title: 'Paw Game',
         description:
-          'Gana PawPoints completando misiones: agregar mascotas, crear recordatorios, publicar en el feed y más. Sube de nivel de Guardian y desbloquea recompensas.',
+          'Gana PawPoints completando misiones: agregar mascotas, crear recordatorios, publicar en el feed y más. Sube de nivel de Guardián y desbloquea recompensas.',
         tip: 'Cada acción en la app te acerca a premios reales.',
+      },
+      {
+        title: 'Misiones',
+        description:
+          'Completa desafíos diarios, semanales y mensuales para ganar puntos y badges exclusivos.',
+      },
+      {
+        title: 'Paw Cards y colección',
+        description:
+          'Tus mascotas son tus primeras Paw Cards. Escanea las cards de otros usuarios para expandir tu colección. Cada card es única y tiene un ranking.',
+        tip: 'Comparte tu QR para que más personas coleccionen tu Paw Card.',
       },
     ],
   },
 ];
 
 /** Claves válidas de sección (para typing) */
-export type SectionKey = 'salud' | 'descubrir' | 'comunidad';
+export type SectionKey = 'salud' | 'descubrir' | 'comunidad' | 'pawlabs';
 
 /** Orden de secciones para el flujo guiado */
-export const SECTION_ORDER: SectionKey[] = ['salud', 'descubrir', 'comunidad'];
+export const SECTION_ORDER: SectionKey[] = ['salud', 'descubrir', 'comunidad', 'pawlabs'];
 
 /** Obtener tutorial por sectionKey */
 export function getTutorialBySection(key: SectionKey): SectionTutorial | undefined {

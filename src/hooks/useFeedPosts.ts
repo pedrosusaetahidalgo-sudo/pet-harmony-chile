@@ -85,7 +85,7 @@ async function fetchFeedPage(
   }
 
   const { data, error } = await query;
-  if (error) throw error;
+  if (error) return { posts: [], nextCursor: null };
 
   // For "following" feed, we need to filter by followed users
   type PostRow = NonNullable<typeof data>[number];

@@ -81,9 +81,12 @@ const communityItems = [
   { title: 'Feed', url: '/feed', icon: Activity },
   { title: 'Comunidad', url: '/comunidad', icon: Users },
   { title: 'Mensajes', url: '/chat', icon: MessageSquare },
-  { title: 'Coleccion', url: '/paw-collection', icon: Trophy },
-  { title: 'Misiones', url: '/misiones', icon: Star },
+];
+
+const pawLabsItems = [
   { title: 'Paw Game', url: '/paw-game', icon: Gamepad2 },
+  { title: 'Misiones', url: '/misiones', icon: Star },
+  { title: 'Coleccion', url: '/paw-collection', icon: Trophy },
 ];
 
 /** Mapeo sección → items */
@@ -91,6 +94,7 @@ const SECTION_ITEMS: Record<SectionKey, typeof healthItems> = {
   salud: healthItems,
   descubrir: discoverItems,
   comunidad: communityItems,
+  pawlabs: pawLabsItems,
 };
 
 /** Mapeo sección → label */
@@ -98,6 +102,7 @@ const SECTION_LABELS: Record<SectionKey, string> = {
   salud: 'Salud',
   descubrir: 'Descubrir',
   comunidad: 'Comunidad',
+  pawlabs: 'Paw Labs',
 };
 
 // Secciones profesionales (modo provider)
@@ -168,7 +173,7 @@ export function AppSidebar() {
 
   const handleSignOut = async () => {
     await signOut();
-    navigate(LINKS.auth());
+    navigate('/');
   };
 
   const handleNavigate = (url: string) => {

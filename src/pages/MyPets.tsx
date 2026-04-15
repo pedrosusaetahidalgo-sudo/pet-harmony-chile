@@ -6,18 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import {
-  Plus,
-  Heart,
-  PawPrint,
-  ChevronDown,
-  MessageCircle,
-  Star,
-  Trophy,
-  FileText,
-} from '@/lib/icons';
+import { Plus, Heart, PawPrint, MessageCircle, Star, Trophy, FileText } from '@/lib/icons';
 import { getRarity, type Rarity } from '@/components/PetCardCompact';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+// Collapsible removed — memorial section always visible
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useToast } from '@/hooks/use-toast';
@@ -135,7 +126,7 @@ const MyPets = () => {
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [sharePetId, setSharePetId] = useState<string | null>(null);
-  const [memorialOpen, setMemorialOpen] = useState(false);
+  // memorialOpen state removed — memorial section always visible now
   const [activeIndex, setActiveIndex] = useState(0);
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -465,35 +456,32 @@ const MyPets = () => {
         </>
       )}
 
-      {/* ── Memorial section ── */}
+      {/* ── Memorial section (siempre visible) ── */}
       {memorialPets.length > 0 && (
-        <Collapsible open={memorialOpen} onOpenChange={setMemorialOpen} className="mt-8">
-          <CollapsibleTrigger className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors w-full py-2">
+        <div className="mt-8 space-y-3">
+          <div className="flex items-center gap-2">
             <Heart className="h-4 w-4 text-purple-400" />
-            <span>En memoria ({memorialPets.length})</span>
-            <ChevronDown
-              className={`h-4 w-4 ml-auto transition-transform ${memorialOpen ? 'rotate-180' : ''}`}
-            />
-          </CollapsibleTrigger>
-          <CollapsibleContent className="mt-3">
-            <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-3 -mx-4 px-4 scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible">
-              {memorialPets.map((pet) => (
-                <div key={pet.id} className="snap-center shrink-0 w-[220px] md:w-auto">
-                  <PawCardMemorial pet={pet} score={petScores[pet.id]} />
-                </div>
-              ))}
-            </div>
+            <h3 className="text-sm font-medium text-muted-foreground">
+              En memoria ({memorialPets.length})
+            </h3>
             <Button
               variant="ghost"
               size="sm"
-              className="mt-3 text-xs text-muted-foreground"
+              className="ml-auto text-xs text-muted-foreground"
               onClick={() => navigate('/en-memoria')}
             >
               <MessageCircle className="h-3.5 w-3.5 mr-1" />
-              Ir al espacio memorial completo
+              Ver memorial completo
             </Button>
-          </CollapsibleContent>
-        </Collapsible>
+          </div>
+          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-3 -mx-4 px-4 scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 md:overflow-visible">
+            {memorialPets.map((pet) => (
+              <div key={pet.id} className="snap-center shrink-0 w-[220px] md:w-auto">
+                <PawCardMemorial pet={pet} score={petScores[pet.id]} />
+              </div>
+            ))}
+          </div>
+        </div>
       )}
 
       {/* ── Delete confirmation ── */}

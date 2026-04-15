@@ -306,7 +306,11 @@ const PetClinicalRecord = () => {
                 o compartir en un viaje.
               </p>
             </div>
-            <MedicalSummaryButton petId={pet.id} petName={pet.name} />
+            <MedicalSummaryButton
+              petId={pet.id}
+              petName={pet.name}
+              bypassGate={viewMode === 'vet'}
+            />
           </div>
         </div>
 

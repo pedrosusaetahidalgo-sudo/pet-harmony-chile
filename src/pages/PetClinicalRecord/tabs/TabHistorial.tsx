@@ -15,6 +15,7 @@ import {
 } from '@/lib/icons';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import {
@@ -174,7 +175,17 @@ export function TabHistorial({ petId }: { petId: string }) {
       <EmptyState
         icon={Clipboard}
         title="Sin registros en la ficha"
-        description="Los registros de consultas, vacunas, examenes y tratamientos apareceran aqui."
+        description="Los registros de consultas, vacunas, exámenes y tratamientos aparecerán aquí."
+        action={
+          <Button
+            variant="default"
+            size="sm"
+            className="gap-2"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            Agregar primer registro
+          </Button>
+        }
       />
     );
   }

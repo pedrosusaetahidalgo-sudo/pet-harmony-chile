@@ -67,12 +67,12 @@ export function PetVetLinksSection({ petId, petName }: PetVetLinksSectionProps) 
                   >
                     <Avatar className="h-9 w-9">
                       <AvatarFallback className="bg-green-100 text-green-700 text-sm">
-                        {(provider?.business_name || 'V')[0].toUpperCase()}
+                        {(provider?.display_name || 'V')[0].toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">
-                        {provider?.business_name || 'Veterinario/a'}
+                        {provider?.display_name || 'Veterinario/a'}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {since ? `Vinculado hace ${since}` : 'Vinculado'}
@@ -113,12 +113,12 @@ export function PetVetLinksSection({ petId, petName }: PetVetLinksSectionProps) 
                     <div className="flex items-center gap-3">
                       <Avatar className="h-9 w-9">
                         <AvatarFallback className="bg-amber-100 text-amber-700 text-sm">
-                          {(provider?.business_name || 'V')[0].toUpperCase()}
+                          {(provider?.display_name || 'V')[0].toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">
-                          {provider?.business_name || 'Veterinario/a'}
+                          {provider?.display_name || 'Veterinario/a'}
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {isVetInitiated ? 'Quiere acceder a la ficha' : 'Pendiente'} ({when})

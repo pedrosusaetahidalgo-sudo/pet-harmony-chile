@@ -17,27 +17,6 @@ export const useStartConversation = () => {
 
     setLoading(true);
     try {
-      // Check for mutual follow requirement
-      const { data: mutualFollow, error: followError } = await supabase.rpc('is_mutual_follow', {
-        user1_id: user.id,
-        user2_id: otherUserId,
-      });
-
-      if (followError) {
-        logger.error('Error checking mutual follow:', followError);
-      }
-
-      if (!mutualFollow) {
-        toast({
-          variant: 'destructive',
-          title: 'Seguimiento mutuo requerido',
-          description:
-            'Debes seguir a este usuario y que él te siga para poder enviar mensajes. Sigue al usuario primero.',
-        });
-        setLoading(false);
-        return;
-      }
-
       // Check if user is blocked
       const { data: isBlocked, error: blockError } = await supabase.rpc('is_user_blocked', {
         blocker_id: user.id,

@@ -3,120 +3,169 @@
  * Extraído del god component (1384 líneas) en el split 2026-04-08.
  */
 
-import React from "react";
+import React from 'react';
 import {
-  Heart, Shield, Syringe, Stethoscope, AlertTriangle, Dog, Cat,
-  Calendar, Phone, Building, Scale, Clipboard, Activity, Pill, FileText,
-  Scissors, Scan, TestTube, Weight, Cpu,
-} from "@/lib/icons";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Skeleton } from "@/components/ui/skeleton";
-import type { PetData } from "./types";
-import { calculateAge } from "./helpers";
+  Heart,
+  Shield,
+  Syringe,
+  Stethoscope,
+  AlertTriangle,
+  Dog,
+  Cat,
+  Calendar,
+  Phone,
+  Building,
+  Scale,
+  Clipboard,
+  Activity,
+  Pill,
+  FileText,
+  Scissors,
+  Scan,
+  TestTube,
+  Weight,
+  Cpu,
+} from '@/lib/icons';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Skeleton } from '@/components/ui/skeleton';
+import type { PetData } from './types';
+import { calculateAge } from './helpers';
 
 // --- Icon / label helpers ---
 
 export function getSpeciesIcon(species?: string) {
   if (!species) return <Dog className="h-5 w-5" />;
   const s = species.toLowerCase();
-  if (s === "gato" || s === "cat") return <Cat className="h-5 w-5" />;
+  if (s === 'gato' || s === 'cat') return <Cat className="h-5 w-5" />;
   return <Dog className="h-5 w-5" />;
 }
 
 export function getRecordTypeIcon(type: string) {
   switch (type.toLowerCase()) {
-    case "vacuna": return <Syringe className="h-4 w-4" />;
-    case "consulta":
-    case "consulta_general":
-    case "control_sano":
-    case "seguimiento":
-    case "segunda_opinion": return <Stethoscope className="h-4 w-4" />;
-    case "urgencia":
-    case "emergencia": return <Heart className="h-4 w-4" />;
-    case "desparasitacion":
-    case "antipulgas": return <Shield className="h-4 w-4" />;
-    case "cirugia":
-    case "cirugía":
-    case "esterilizacion": return <Activity className="h-4 w-4" />;
-    case "limpieza_dental": return <Scissors className="h-4 w-4" />;
-    case "ecografia":
-    case "rayos_x": return <Scan className="h-4 w-4" />;
-    case "examen_sangre":
-    case "examen_orina":
-    case "examen": return <TestTube className="h-4 w-4" />;
-    case "medicamento":
-    case "tratamiento":
-    case "quimioterapia": return <Pill className="h-4 w-4" />;
-    case "rehabilitacion": return <Heart className="h-4 w-4" />;
-    case "hospitalizacion": return <Building className="h-4 w-4" />;
-    case "alergia": return <AlertTriangle className="h-4 w-4" />;
-    case "peso": return <Scale className="h-4 w-4" />;
-    case "microchip": return <Cpu className="h-4 w-4" />;
-    default: return <Clipboard className="h-4 w-4" />;
+    case 'vacuna':
+      return <Syringe className="h-4 w-4" />;
+    case 'consulta':
+    case 'consulta_general':
+    case 'control_sano':
+    case 'seguimiento':
+    case 'segunda_opinion':
+      return <Stethoscope className="h-4 w-4" />;
+    case 'urgencia':
+    case 'emergencia':
+      return <Heart className="h-4 w-4" />;
+    case 'desparasitacion':
+    case 'antipulgas':
+      return <Shield className="h-4 w-4" />;
+    case 'cirugia':
+    case 'cirugía':
+    case 'esterilizacion':
+      return <Activity className="h-4 w-4" />;
+    case 'limpieza_dental':
+      return <Scissors className="h-4 w-4" />;
+    case 'ecografia':
+    case 'rayos_x':
+      return <Scan className="h-4 w-4" />;
+    case 'examen_sangre':
+    case 'examen_orina':
+    case 'examen':
+      return <TestTube className="h-4 w-4" />;
+    case 'medicamento':
+    case 'tratamiento':
+    case 'quimioterapia':
+      return <Pill className="h-4 w-4" />;
+    case 'rehabilitacion':
+      return <Heart className="h-4 w-4" />;
+    case 'hospitalizacion':
+      return <Building className="h-4 w-4" />;
+    case 'alergia':
+      return <AlertTriangle className="h-4 w-4" />;
+    case 'peso':
+      return <Scale className="h-4 w-4" />;
+    case 'microchip':
+      return <Cpu className="h-4 w-4" />;
+    default:
+      return <Clipboard className="h-4 w-4" />;
   }
 }
 
 export function getRecordTypeBadgeClass(type: string): string {
   switch (type.toLowerCase()) {
-    case "vacuna":
-    case "desparasitacion":
-    case "antipulgas": return "bg-green-100 text-green-800 border-green-200";
-    case "consulta":
-    case "consulta_general":
-    case "control_sano":
-    case "seguimiento":
-    case "segunda_opinion": return "bg-blue-100 text-blue-800 border-blue-200";
-    case "medicamento":
-    case "tratamiento":
-    case "quimioterapia": return "bg-purple-100 text-purple-800 border-purple-200";
-    case "cirugia":
-    case "cirugía":
-    case "esterilizacion": return "bg-red-100 text-red-800 border-red-200";
-    case "urgencia":
-    case "emergencia":
-    case "hospitalizacion": return "bg-red-100 text-red-800 border-red-200";
-    case "ecografia":
-    case "rayos_x":
-    case "examen_sangre":
-    case "examen_orina":
-    case "examen": return "bg-amber-100 text-amber-800 border-amber-200";
-    case "rehabilitacion":
-    case "limpieza_dental": return "bg-teal-100 text-teal-800 border-teal-200";
-    case "alergia": return "bg-orange-100 text-orange-800 border-orange-200";
-    case "peso":
-    case "microchip": return "bg-indigo-100 text-indigo-800 border-indigo-200";
-    default: return "bg-slate-100 text-slate-800 border-slate-200";
+    case 'vacuna':
+    case 'desparasitacion':
+    case 'antipulgas':
+      return 'bg-green-100 text-green-800 border-green-200';
+    case 'consulta':
+    case 'consulta_general':
+    case 'control_sano':
+    case 'seguimiento':
+    case 'segunda_opinion':
+      return 'bg-blue-100 text-blue-800 border-blue-200';
+    case 'medicamento':
+    case 'tratamiento':
+    case 'quimioterapia':
+      return 'bg-purple-100 text-purple-800 border-purple-200';
+    case 'cirugia':
+    case 'cirugía':
+    case 'esterilizacion':
+      return 'bg-red-100 text-red-800 border-red-200';
+    case 'urgencia':
+    case 'emergencia':
+    case 'hospitalizacion':
+      return 'bg-red-100 text-red-800 border-red-200';
+    case 'ecografia':
+    case 'rayos_x':
+    case 'examen_sangre':
+    case 'examen_orina':
+    case 'examen':
+      return 'bg-amber-100 text-amber-800 border-amber-200';
+    case 'rehabilitacion':
+    case 'limpieza_dental':
+      return 'bg-teal-100 text-teal-800 border-teal-200';
+    case 'alergia':
+      return 'bg-orange-100 text-orange-800 border-orange-200';
+    case 'peso':
+    case 'microchip':
+      return 'bg-indigo-100 text-indigo-800 border-indigo-200';
+    default:
+      return 'bg-slate-100 text-slate-800 border-slate-200';
   }
 }
 
 export function getDocTypeLabel(type: string): string {
   const labels: Record<string, string> = {
-    vaccine_card: "Carnet de vacunas",
-    id_card: "Identificacion",
-    lab_result: "Resultado de laboratorio",
-    xray: "Radiografia",
-    prescription: "Receta medica",
-    other: "Otro",
+    vaccine_card: 'Carnet de vacunas',
+    id_card: 'Identificacion',
+    lab_result: 'Resultado de laboratorio',
+    xray: 'Radiografia',
+    prescription: 'Receta medica',
+    other: 'Otro',
   };
   return labels[type] || type;
 }
 
 export function getActivityLevelLabel(level?: string): string {
-  if (!level) return "No especificado";
+  if (!level) return 'No especificado';
   const labels: Record<string, string> = {
-    low: "Bajo", medium: "Moderado", high: "Alto", very_high: "Muy alto",
-    sedentary: "Sedentario", active: "Activo",
+    low: 'Bajo',
+    medium: 'Moderado',
+    high: 'Alto',
+    very_high: 'Muy alto',
+    sedentary: 'Sedentario',
+    active: 'Activo',
   };
   return labels[level] || level;
 }
 
 export function getLivingEnvironmentLabel(env?: string): string {
-  if (!env) return "No especificado";
+  if (!env) return 'No especificado';
   const labels: Record<string, string> = {
-    apartment: "Departamento", house: "Casa", house_yard: "Casa con patio",
-    rural: "Rural", farm: "Granja",
+    apartment: 'Departamento',
+    house: 'Casa',
+    house_yard: 'Casa con patio',
+    rural: 'Rural',
+    farm: 'Granja',
   };
   return labels[env] || env;
 }
@@ -146,10 +195,16 @@ export function ClinicalRecordSkeleton() {
 
 // --- Sub-components ---
 
-export function EmptyState({ icon: Icon, title, description }: {
+export function EmptyState({
+  icon: Icon,
+  title,
+  description,
+  action,
+}: {
   icon: React.ElementType;
   title: string;
   description: string;
+  action?: React.ReactNode;
 }) {
   return (
     <Card className="border-dashed">
@@ -157,23 +212,29 @@ export function EmptyState({ icon: Icon, title, description }: {
         <Icon className="h-12 w-12 text-muted-foreground mb-4" />
         <h3 className="text-lg font-semibold mb-2">{title}</h3>
         <p className="text-muted-foreground text-sm max-w-md">{description}</p>
+        {action && <div className="mt-4">{action}</div>}
       </CardContent>
     </Card>
   );
 }
 
-export function InfoRow({ icon: Icon, label, value, className }: {
+export function InfoRow({
+  icon: Icon,
+  label,
+  value,
+  className,
+}: {
   icon: React.ElementType;
   label: string;
   value: React.ReactNode;
   className?: string;
 }) {
   return (
-    <div className={`flex items-start gap-3 ${className || ""}`}>
+    <div className={`flex items-start gap-3 ${className || ''}`}>
       <Icon className="h-4 w-4 text-purple-600 mt-0.5 flex-shrink-0" />
       <div className="min-w-0">
         <p className="text-xs text-muted-foreground">{label}</p>
-        <p className="text-sm font-medium">{value || "No especificado"}</p>
+        <p className="text-sm font-medium">{value || 'No especificado'}</p>
       </div>
     </div>
   );
@@ -205,9 +266,10 @@ export function PetHeader({ pet }: { pet: PetData }) {
                 {getSpeciesIcon(pet.species)}
               </div>
               <p className="text-muted-foreground text-sm">
-                {pet.species}{pet.breed ? ` - ${pet.breed}` : ""}
-                {pet.gender ? ` | ${pet.gender}` : ""}
-                {pet.color ? ` | ${pet.color}` : ""}
+                {pet.species}
+                {pet.breed ? ` - ${pet.breed}` : ''}
+                {pet.gender ? ` | ${pet.gender}` : ''}
+                {pet.color ? ` | ${pet.color}` : ''}
               </p>
             </div>
 
@@ -242,21 +304,27 @@ export function PetHeader({ pet }: { pet: PetData }) {
               {pet.vaccination_status && (
                 <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
                   <Syringe className="h-3 w-3 mr-1" />
-                  {pet.vaccination_status === "up_to_date" ? "Vacunas al día" : pet.vaccination_status}
+                  {pet.vaccination_status === 'up_to_date'
+                    ? 'Vacunas al día'
+                    : pet.vaccination_status}
                 </Badge>
               )}
               {pet.neutered !== null && (
-                <Badge variant="outline" className={pet.neutered
-                  ? "bg-blue-50 text-blue-700 border-blue-200"
-                  : "bg-slate-50 text-slate-600 border-slate-200"
-                }>
-                  {pet.neutered ? "Esterilizado/a" : "No esterilizado/a"}
+                <Badge
+                  variant="outline"
+                  className={
+                    pet.neutered
+                      ? 'bg-blue-50 text-blue-700 border-blue-200'
+                      : 'bg-slate-50 text-slate-600 border-slate-200'
+                  }
+                >
+                  {pet.neutered ? 'Esterilizado/a' : 'No esterilizado/a'}
                 </Badge>
               )}
               {totalAllergies > 0 && (
                 <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
                   <AlertTriangle className="h-3 w-3 mr-1" />
-                  {totalAllergies} {totalAllergies === 1 ? "alergia" : "alergias"}
+                  {totalAllergies} {totalAllergies === 1 ? 'alergia' : 'alergias'}
                 </Badge>
               )}
               {pet.is_adopted && (

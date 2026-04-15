@@ -83,7 +83,7 @@ export const useUnifiedCalendar = (year: number, month: number, filterPetId?: st
         .not('followup_date', 'is', null)
         .gte('followup_date', monthStart)
         .lte('followup_date', monthEnd);
-      if (error) throw error;
+      if (error) return [];
       return (data || []) as Array<{
         id: string;
         pet_id: string;
@@ -118,7 +118,7 @@ export const useUnifiedCalendar = (year: number, month: number, filterPetId?: st
         .eq('provider_id', provider.id)
         .gte('scheduled_date', monthStart)
         .lte('scheduled_date', monthEnd);
-      if (error) throw error;
+      if (error) return [];
       return ((data || []) as any[]).filter(
         (item: any) => item.orders?.payment_status === 'completed'
       );

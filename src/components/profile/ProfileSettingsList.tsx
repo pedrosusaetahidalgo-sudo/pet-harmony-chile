@@ -46,7 +46,7 @@ export function ProfileSettingsList({
 
   const handleSignOut = async () => {
     await signOut();
-    navigate(LINKS.auth());
+    navigate('/');
   };
 
   const rows: SettingRow[] = [

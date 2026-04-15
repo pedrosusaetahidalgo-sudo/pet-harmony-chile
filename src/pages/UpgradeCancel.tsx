@@ -1,8 +1,8 @@
-import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { PageHeader } from "@/components/PageHeader";
-import { LINKS } from "@/lib/links";
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { PageHeader } from '@/components/PageHeader';
+import { LINKS } from '@/lib/links';
 
 export default function UpgradeCancel() {
   const navigate = useNavigate();
@@ -11,22 +11,22 @@ export default function UpgradeCancel() {
     <div className="min-h-screen bg-background">
       <PageHeader title="Pago" onBack={() => navigate(LINKS.profile())} />
       <div className="container px-4 py-12 max-w-md mx-auto animate-fade-in">
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Pago cancelado</CardTitle>
-          <CardDescription className="mt-2">
-            No se realizó ningún cargo. Cuando quieras, puedes volver a intentarlo.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <Button className="w-full h-12" onClick={() => navigate("/upgrade")}>
-            Ver planes de nuevo
-          </Button>
-          <Button variant="ghost" className="w-full" onClick={() => navigate("/")}>
-            Volver al inicio
-          </Button>
-        </CardContent>
-      </Card>
+        <Card>
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">Pago cancelado</CardTitle>
+            <CardDescription className="mt-2">
+              No se realizó ningún cargo. Cuando quieras, puedes volver a intentarlo.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button className="w-full h-12" onClick={() => navigate('/upgrade')}>
+              Ver planes de nuevo
+            </Button>
+            <Button variant="ghost" className="w-full" onClick={() => navigate('/home')}>
+              Volver al inicio
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

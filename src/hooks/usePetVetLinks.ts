@@ -36,7 +36,7 @@ export interface PetVetLinkWithDetails extends PetVetLink {
   } | null;
   service_providers?: {
     id: string;
-    business_name: string | null;
+    display_name: string | null;
     comuna: string | null;
     specialty: string | null;
     user_id: string | null;
@@ -51,11 +51,11 @@ export function usePetVetLinksByPet(petId: string | undefined) {
       if (!petId) return [] as PetVetLinkWithDetails[];
       const { data, error } = await sb
         .from('pet_vet_links')
-        .select('*, service_providers(id, business_name, comuna, specialty, user_id)')
+        .select('*, service_providers(id, display_name, comuna, specialty, user_id)')
         .eq('pet_id', petId)
         .in('status', ['pending', 'active'])
         .order('created_at', { ascending: false });
-      if (error) throw error;
+      if (error) return [] as PetVetLinkWithDetails[];
       return (data || []) as PetVetLinkWithDetails[];
     },
     enabled: !!petId,
@@ -85,7 +85,7 @@ export function usePendingVetLinks() {
         .eq('provider_id', providerRow.id)
         .eq('status', 'pending')
         .order('created_at', { ascending: false });
-      if (error) throw error;
+      if (error) return [] as PetVetLinkWithDetails[];
       return (data || []) as PetVetLinkWithDetails[];
     },
     enabled: !!user,
@@ -114,7 +114,7 @@ export function useLinkedPatients() {
         .eq('provider_id', providerRow.id)
         .eq('status', 'active')
         .order('responded_at', { ascending: false });
-      if (error) throw error;
+      if (error) return [] as PetVetLinkWithDetails[];
       return (data || []) as PetVetLinkWithDetails[];
     },
     enabled: !!user,

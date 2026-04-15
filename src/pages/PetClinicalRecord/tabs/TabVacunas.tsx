@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
-import { Syringe, CheckCircle, AlertTriangle, Clock } from '@/lib/icons';
+import { Syringe, CheckCircle, AlertTriangle, Clock, Plus } from '@/lib/icons';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMedicalRecords } from '@/hooks/useMedicalRecords';
 import { formatDate } from '../helpers';
@@ -77,7 +78,18 @@ export function TabVacunas({ petId }: { petId: string }) {
       <EmptyState
         icon={Syringe}
         title="Sin vacunas registradas"
-        description="Las vacunas que registres apareceran aqui con su fecha, lote, serie y veterinario."
+        description="Las vacunas que registres aparecerán aquí con su fecha, lote, serie y veterinario."
+        action={
+          <Button
+            variant="default"
+            size="sm"
+            className="gap-2"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            <Plus className="h-4 w-4" />
+            Registrar vacuna
+          </Button>
+        }
       />
     );
   }

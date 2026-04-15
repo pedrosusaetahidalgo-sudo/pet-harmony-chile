@@ -59,7 +59,7 @@ export function useVetClinicalNotesByPet(petId: string | undefined) {
         .select('*, service_providers(display_name)')
         .eq('pet_id', petId)
         .order('created_at', { ascending: false });
-      if (error) throw error;
+      if (error) return [];
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return ((data ?? []) as any[]).map((row) => {
         const sp = row.service_providers as { display_name: string } | null;

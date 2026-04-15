@@ -30,6 +30,7 @@
 | [audits/FEEDBACK_VET_SOFIA_2026_04_13.md](audits/FEEDBACK_VET_SOFIA_2026_04_13.md) | Feedback de vet beta tester (Sofia) | Despues de cada sesion con Sofia |
 | [audits/COMPETENCIA_2026_04_08.md](audits/COMPETENCIA_2026_04_08.md) | Analisis competitivo Chile | Cada 3-6 meses o cuando aparezca competidor nuevo |
 | [audits/CROSS_PLATFORM_COMPATIBILITY.md](audits/CROSS_PLATFORM_COMPATIBILITY.md) | Compatibilidad multiplataforma (iOS, Android, Web, Chrome) | Cada cambio de CSS/JS moderno o API de browser |
+| [audits/CONSOLIDADO_QA_2026_04_15.md](audits/CONSOLIDADO_QA_2026_04_15.md) | Consolidado UX audit + console errors + QA Pedro (P0-P3 priorizado) | Despues de cada sesion QA |
 
 ---
 
