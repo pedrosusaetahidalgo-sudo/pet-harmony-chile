@@ -1,4 +1,4 @@
-import { logger } from "@/lib/logger";
+import { logger } from '@/lib/logger';
 /**
  * Google Calendar API integration
  * Syncs provider availability with Google Calendar
@@ -69,7 +69,7 @@ export class GoogleCalendarSync {
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${this.accessToken}`,
+            Authorization: `Bearer ${this.accessToken}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
@@ -96,7 +96,10 @@ export class GoogleCalendarSync {
   /**
    * Create a calendar event
    */
-  async createEvent(event: CalendarEvent, calendarId: string = 'primary'): Promise<CalendarEvent | null> {
+  async createEvent(
+    event: CalendarEvent,
+    calendarId: string = 'primary'
+  ): Promise<CalendarEvent | null> {
     if (!this.accessToken) {
       throw new Error('Google Calendar access token not set');
     }
@@ -107,7 +110,7 @@ export class GoogleCalendarSync {
         {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${this.accessToken}`,
+            Authorization: `Bearer ${this.accessToken}`,
             'Content-Type': 'application/json',
           },
           body: JSON.stringify(event),
@@ -176,12 +179,46 @@ export class GoogleCalendarSync {
 }
 
 /**
- * Request Google Calendar OAuth permission
- * This should be called when provider wants to enable calendar sync
+ * Request Google Calendar OAuth permission.
+ * Calls the google-calendar-oauth-init edge function to get the OAuth URL,
+ * then opens it in a popup. Returns the access token if the user completes
+ * the flow, or null if they cancel.
  */
 export async function requestCalendarPermission(): Promise<string | null> {
-  // NOTE: integración Google Calendar OAuth pendiente. Cuando se implemente,
-  // requiere flow OAuth 2.0 separado del de login (scope calendar.events).
-  return null;
-}
+  try {
+    const { supabase } = await import('@/integrations/supabase/client');
 
+    // Check if user already has a valid token
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    const { data: existingToken } = await supabase
+      .from('google_calendar_tokens')
+      .select('access_token')
+      .eq('user_id', user.id)
+      .maybeSingle();
+
+    if (existingToken?.access_token) {
+      return existingToken.access_token;
+    }
+
+    // No token — initiate OAuth flow
+    const { data, error } = await supabase.functions.invoke('google-calendar-oauth-init', {
+      body: { returnUrl: window.location.href },
+    });
+
+    if (error || !data?.url) {
+      console.error('Google Calendar OAuth init failed:', error);
+      return null;
+    }
+
+    // Open OAuth URL — user will be redirected back after authorization
+    window.location.href = data.url;
+    return null; // Will return after redirect
+  } catch (err) {
+    console.error('Google Calendar permission error:', err);
+    return null;
+  }
+}

@@ -53,7 +53,7 @@ export function useMissions() {
       // 3. Fetch user's collection data for progress
       const { data: ownPets } = await supabase
         .from('pets')
-        .select('id, species')
+        .select('id, species, breed, birth_date, gender, weight, photo_url, microchip_number')
         .eq('owner_id', user.id)
         .eq('lifecycle_status', 'active');
 
@@ -123,7 +123,37 @@ export function useMissions() {
       // Count distinct owners from collected pets
       const distinctOwners = new Set(collectedPets.map((p) => p.owner_id));
 
-      // 4. Compute progress for each mission
+      // 4b. Fetch core-action data for new mission types
+      const [completedRemindersRes, bookingsRes, reviewsRes, vaccineRecordsRes] = await Promise.all(
+        [
+          supabase
+            .from('pet_reminders')
+            .select('id', { count: 'exact', head: true })
+            .eq('owner_id', user.id)
+            .eq('is_completed', true),
+          supabase
+            .from('bookings')
+            .select('id', { count: 'exact', head: true })
+            .eq('user_id', user.id)
+            .eq('status', 'confirmed'),
+          supabase
+            .from('service_reviews')
+            .select('id', { count: 'exact', head: true })
+            .eq('reviewer_id', user.id),
+          supabase
+            .from('medical_records')
+            .select('id', { count: 'exact', head: true })
+            .eq('owner_id', user.id)
+            .eq('record_type', 'vacuna'),
+        ]
+      );
+
+      const completedRemindersCount = completedRemindersRes.count ?? 0;
+      const bookingsCount = bookingsRes.count ?? 0;
+      const reviewsCount = reviewsRes.count ?? 0;
+      const vaccineRecordsCount = vaccineRecordsRes.count ?? 0;
+
+      // 5. Compute progress for each mission
       return missions.map((m: any): MissionProgress => {
         const req = m.requirement_value || {};
         let current = 0;
@@ -181,6 +211,46 @@ export function useMissions() {
           case 'collect_owners':
             target = req.count || 1;
             current = distinctOwners.size;
+            break;
+
+          case 'complete_reminders':
+            target = req.count || 10;
+            current = completedRemindersCount;
+            break;
+
+          case 'book_vet':
+            target = req.count || 1;
+            current = bookingsCount;
+            break;
+
+          case 'leave_review':
+            target = req.count || 1;
+            current = reviewsCount;
+            break;
+
+          case 'log_vaccine':
+            target = req.count || 1;
+            current = vaccineRecordsCount;
+            break;
+
+          case 'complete_profile':
+            // Simplified: count pets with >= pct% completeness
+            target = 1;
+            current = ownPets?.some((p: any) => {
+              const fields = [
+                'species',
+                'breed',
+                'birth_date',
+                'gender',
+                'weight',
+                'photo_url',
+                'microchip_number',
+              ];
+              const filled = fields.filter((f) => (p as any)[f]).length;
+              return (filled / fields.length) * 100 >= (req.pct || 80);
+            })
+              ? 1
+              : 0;
             break;
 
           default:

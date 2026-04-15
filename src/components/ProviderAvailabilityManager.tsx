@@ -1,41 +1,52 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Calendar } from "@/components/ui/calendar";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { CalendarDays, Clock, Save, Trash2 } from "@/lib/icons";
-import { format, addDays } from "date-fns";
-import { es } from "date-fns/locale";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import { GoogleCalendarSync, requestCalendarPermission } from "@/lib/googleCalendar";
-import { Calendar as CalendarIcon, RefreshCw } from "@/lib/icons";
-import { logger } from "@/lib/logger";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Calendar } from '@/components/ui/calendar';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { CalendarDays, Clock, Save, Trash2 } from '@/lib/icons';
+import { format, addDays } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { GoogleCalendarSync, requestCalendarPermission } from '@/lib/googleCalendar';
+import { Calendar as CalendarIcon, RefreshCw } from '@/lib/icons';
+import { logger } from '@/lib/logger';
 
 interface ProviderAvailabilityManagerProps {
-  providerType: "dog_walker" | "dogsitter" | "veterinarian" | "trainer" | "groomer";
+  providerType: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'groomer';
   className?: string;
 }
 
 const timeSlots = [
-  "08:00", "09:00", "10:00", "11:00", "12:00",
-  "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"
+  '08:00',
+  '09:00',
+  '10:00',
+  '11:00',
+  '12:00',
+  '14:00',
+  '15:00',
+  '16:00',
+  '17:00',
+  '18:00',
+  '19:00',
+  '20:00',
 ];
 
 export const ProviderAvailabilityManager = ({
   providerType,
-  className = ""
+  className = '',
 }: ProviderAvailabilityManagerProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
   const [isAvailable, setIsAvailable] = useState(true);
-  const [notes, setNotes] = useState("");
+  const [notes, setNotes] = useState('');
   const [existingAvailability, setExistingAvailability] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -52,15 +63,15 @@ export const ProviderAvailabilityManager = ({
   useEffect(() => {
     if (selectedDate && existingAvailability.length > 0) {
       const dateStr = format(selectedDate, 'yyyy-MM-dd');
-      const existing = existingAvailability.find(a => a.date === dateStr);
+      const existing = existingAvailability.find((a) => a.date === dateStr);
       if (existing) {
         setSelectedSlots(existing.time_slots || []);
         setIsAvailable(existing.is_available);
-        setNotes(existing.notes || "");
+        setNotes(existing.notes || '');
       } else {
         setSelectedSlots([]);
         setIsAvailable(true);
-        setNotes("");
+        setNotes('');
       }
     }
   }, [selectedDate, existingAvailability]);
@@ -86,10 +97,8 @@ export const ProviderAvailabilityManager = ({
   };
 
   const toggleSlot = (slot: string) => {
-    setSelectedSlots(prev => 
-      prev.includes(slot) 
-        ? prev.filter(s => s !== slot)
-        : [...prev, slot].sort()
+    setSelectedSlots((prev) =>
+      prev.includes(slot) ? prev.filter((s) => s !== slot) : [...prev, slot].sort()
     );
   };
 
@@ -98,7 +107,7 @@ export const ProviderAvailabilityManager = ({
 
     try {
       setSyncingCalendar(true);
-      
+
       // Request calendar permission if not already granted
       const token = await requestCalendarPermission();
       if (token) {
@@ -108,9 +117,9 @@ export const ProviderAvailabilityManager = ({
 
       if (!calendarSync.isAvailable()) {
         toast({
-          title: "Sincronización de calendario",
-          description: "Para sincronizar con Google Calendar, primero debes autorizar el acceso. Esta función estará disponible próximamente.",
-          variant: "default",
+          title: 'Conectando con Google Calendar',
+          description:
+            'Te redirigiremos a Google para autorizar el acceso. Vuelve aquí después de autorizar.',
         });
         return;
       }
@@ -127,42 +136,40 @@ export const ProviderAvailabilityManager = ({
 
       // Update availability based on calendar busy times
       for (const unavailable of unavailableSlots) {
-        const existing = existingAvailability.find(a => a.date === unavailable.date);
-        const availableSlots = timeSlots.filter(slot => !unavailable.time_slots.includes(slot));
+        const existing = existingAvailability.find((a) => a.date === unavailable.date);
+        const availableSlots = timeSlots.filter((slot) => !unavailable.time_slots.includes(slot));
 
         if (existing) {
           await supabase
             .from('provider_availability')
             .update({
               time_slots: availableSlots,
-              updated_at: new Date().toISOString()
+              updated_at: new Date().toISOString(),
             })
             .eq('id', existing.id);
         } else {
-          await supabase
-            .from('provider_availability')
-            .insert({
-              user_id: user.id,
-              provider_type: providerType,
-              date: unavailable.date,
-              time_slots: availableSlots,
-              is_available: true
-            });
+          await supabase.from('provider_availability').insert({
+            user_id: user.id,
+            provider_type: providerType,
+            date: unavailable.date,
+            time_slots: availableSlots,
+            is_available: true,
+          });
         }
       }
 
       toast({
-        title: "Calendario sincronizado",
-        description: "Tu disponibilidad se ha actualizado según tu Google Calendar"
+        title: 'Calendario sincronizado',
+        description: 'Tu disponibilidad se ha actualizado según tu Google Calendar',
       });
 
       loadAvailability();
     } catch (error) {
       logger.error('Error syncing calendar:', error);
       toast({
-        variant: "destructive",
-        title: "Algo salió mal",
-        description: "No se pudo sincronizar con Google Calendar"
+        variant: 'destructive',
+        title: 'Algo salió mal',
+        description: 'No se pudo sincronizar con Google Calendar',
       });
     } finally {
       setSyncingCalendar(false);
@@ -175,10 +182,10 @@ export const ProviderAvailabilityManager = ({
     try {
       setSaving(true);
       const dateStr = format(selectedDate, 'yyyy-MM-dd');
-      
+
       // Check if exists
-      const existing = existingAvailability.find(a => a.date === dateStr);
-      
+      const existing = existingAvailability.find((a) => a.date === dateStr);
+
       if (existing) {
         // Update
         const { error } = await supabase
@@ -187,39 +194,37 @@ export const ProviderAvailabilityManager = ({
             time_slots: selectedSlots,
             is_available: isAvailable,
             notes: notes || null,
-            updated_at: new Date().toISOString()
+            updated_at: new Date().toISOString(),
           })
           .eq('id', existing.id);
 
         if (error) throw error;
       } else {
         // Insert
-        const { error } = await supabase
-          .from('provider_availability')
-          .insert({
-            user_id: user.id,
-            provider_type: providerType,
-            date: dateStr,
-            time_slots: selectedSlots,
-            is_available: isAvailable,
-            notes: notes || null
-          });
+        const { error } = await supabase.from('provider_availability').insert({
+          user_id: user.id,
+          provider_type: providerType,
+          date: dateStr,
+          time_slots: selectedSlots,
+          is_available: isAvailable,
+          notes: notes || null,
+        });
 
         if (error) throw error;
       }
 
       toast({
-        title: "Disponibilidad guardada",
-        description: `Tu disponibilidad para ${format(selectedDate, "EEEE d 'de' MMMM", { locale: es })} ha sido actualizada`
+        title: 'Disponibilidad guardada',
+        description: `Tu disponibilidad para ${format(selectedDate, "EEEE d 'de' MMMM", { locale: es })} ha sido actualizada`,
       });
 
       loadAvailability();
     } catch (error) {
       logger.error('Error saving availability:', error);
       toast({
-        variant: "destructive",
-        title: "Algo salió mal",
-        description: "No se pudo guardar la disponibilidad"
+        variant: 'destructive',
+        title: 'Algo salió mal',
+        description: 'No se pudo guardar la disponibilidad',
       });
     } finally {
       setSaving(false);
@@ -228,36 +233,33 @@ export const ProviderAvailabilityManager = ({
 
   const deleteAvailability = async () => {
     if (!selectedDate || !user) return;
-    
+
     const dateStr = format(selectedDate, 'yyyy-MM-dd');
-    const existing = existingAvailability.find(a => a.date === dateStr);
-    
+    const existing = existingAvailability.find((a) => a.date === dateStr);
+
     if (!existing) return;
 
     try {
       setSaving(true);
-      const { error } = await supabase
-        .from('provider_availability')
-        .delete()
-        .eq('id', existing.id);
+      const { error } = await supabase.from('provider_availability').delete().eq('id', existing.id);
 
       if (error) throw error;
 
       toast({
-        title: "Disponibilidad eliminada",
-        description: "La disponibilidad ha sido eliminada"
+        title: 'Disponibilidad eliminada',
+        description: 'La disponibilidad ha sido eliminada',
       });
 
       setSelectedSlots([]);
       setIsAvailable(true);
-      setNotes("");
+      setNotes('');
       loadAvailability();
     } catch (error) {
       logger.error('Error deleting availability:', error);
       toast({
-        variant: "destructive",
-        title: "Algo salió mal",
-        description: "No se pudo eliminar la disponibilidad"
+        variant: 'destructive',
+        title: 'Algo salió mal',
+        description: 'No se pudo eliminar la disponibilidad',
       });
     } finally {
       setSaving(false);
@@ -266,7 +268,7 @@ export const ProviderAvailabilityManager = ({
 
   const hasAvailability = (date: Date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
-    return existingAvailability.some(a => a.date === dateStr && a.is_available);
+    return existingAvailability.some((a) => a.date === dateStr && a.is_available);
   };
 
   return (
@@ -285,13 +287,13 @@ export const ProviderAvailabilityManager = ({
           locale={es}
           disabled={(date) => date < new Date()}
           modifiers={{
-            available: (date) => hasAvailability(date)
+            available: (date) => hasAvailability(date),
           }}
           modifiersStyles={{
-            available: { 
+            available: {
               backgroundColor: 'hsl(var(--primary) / 0.2)',
-              borderRadius: '50%'
-            }
+              borderRadius: '50%',
+            },
           }}
           className="rounded-md border pointer-events-auto"
         />
@@ -303,12 +305,10 @@ export const ProviderAvailabilityManager = ({
                 {format(selectedDate, "EEEE d 'de' MMMM", { locale: es })}
               </Label>
               <div className="flex items-center gap-2">
-                <Label htmlFor="available" className="text-sm">Disponible</Label>
-                <Switch
-                  id="available"
-                  checked={isAvailable}
-                  onCheckedChange={setIsAvailable}
-                />
+                <Label htmlFor="available" className="text-sm">
+                  Disponible
+                </Label>
+                <Switch id="available" checked={isAvailable} onCheckedChange={setIsAvailable} />
               </div>
             </div>
 
@@ -324,10 +324,10 @@ export const ProviderAvailabilityManager = ({
                       <Button
                         key={slot}
                         type="button"
-                        variant={selectedSlots.includes(slot) ? "default" : "outline"}
+                        variant={selectedSlots.includes(slot) ? 'default' : 'outline'}
                         size="sm"
                         onClick={() => toggleSlot(slot)}
-                        className={selectedSlots.includes(slot) ? "bg-primary" : ""}
+                        className={selectedSlots.includes(slot) ? 'bg-primary' : ''}
                       >
                         {slot}
                       </Button>
@@ -380,14 +380,10 @@ export const ProviderAvailabilityManager = ({
                 className="flex-1 bg-gradient-to-r from-primary to-primary/80"
               >
                 <Save className="h-4 w-4 mr-2" />
-                {saving ? "Guardando..." : "Guardar"}
+                {saving ? 'Guardando...' : 'Guardar'}
               </Button>
-              {existingAvailability.some(a => a.date === format(selectedDate, 'yyyy-MM-dd')) && (
-                <Button
-                  variant="destructive"
-                  onClick={deleteAvailability}
-                  disabled={saving}
-                >
+              {existingAvailability.some((a) => a.date === format(selectedDate, 'yyyy-MM-dd')) && (
+                <Button variant="destructive" onClick={deleteAvailability} disabled={saving}>
                   <Trash2 className="h-4 w-4" />
                 </Button>
               )}
@@ -399,18 +395,16 @@ export const ProviderAvailabilityManager = ({
         <div className="space-y-2">
           <Label className="text-sm font-semibold">Próxima disponibilidad</Label>
           {existingAvailability.length === 0 ? (
-            <p className="text-sm text-muted-foreground">
-              No has configurado disponibilidad aún
-            </p>
+            <p className="text-sm text-muted-foreground">No has configurado disponibilidad aún</p>
           ) : (
             <div className="space-y-2 max-h-40 overflow-y-auto">
               {existingAvailability.slice(0, 5).map((avail) => (
-                <div 
-                  key={avail.id} 
+                <div
+                  key={avail.id}
                   className="flex items-center justify-between p-2 bg-background rounded border"
                 >
                   <span className="text-sm font-medium">
-                    {format(new Date(avail.date), "EEE d MMM", { locale: es })}
+                    {format(new Date(avail.date), 'EEE d MMM', { locale: es })}
                   </span>
                   <div className="flex gap-1">
                     {avail.is_available ? (

@@ -212,7 +212,7 @@ export function AppSidebar() {
     <>
       <Sidebar
         collapsible={isMobile ? 'offcanvas' : 'none'}
-        className="border-r border-border/40 w-[200px] h-screen sticky top-0"
+        className="border-r border-border/40 w-[200px] xl:w-[220px] h-screen sticky top-0"
       >
         <SidebarHeader className="p-2 pb-1">
           <button
