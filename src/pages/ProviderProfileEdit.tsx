@@ -50,6 +50,8 @@ const EMPTY: ProviderProfileForm = {
   public_email: null,
   public_phone: null,
   is_directory_visible: false,
+  clinic_name: null,
+  address: null,
 };
 
 export default function ProviderProfileEdit() {
@@ -79,6 +81,8 @@ export default function ProviderProfileEdit() {
       public_email: provider.public_email ?? null,
       public_phone: provider.public_phone ?? null,
       is_directory_visible: provider.is_directory_visible ?? false,
+      clinic_name: provider.clinic_name ?? null,
+      address: provider.address ?? null,
     });
   }, [provider]);
 

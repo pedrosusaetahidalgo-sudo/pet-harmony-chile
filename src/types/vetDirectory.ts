@@ -43,6 +43,8 @@ export interface ServiceProviderRow {
   rating: number | null;
   experience_years: number | null;
 
+  clinic_name: string | null;
+
   // === Campos del pivot médico (migración 20260406) ===
   slug: string | null;
   specialties: string[] | null;

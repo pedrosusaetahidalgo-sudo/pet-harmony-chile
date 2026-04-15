@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import { format, isToday, isTomorrow, isPast } from 'date-fns';
@@ -20,15 +20,29 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { PageHeader } from '@/components/PageHeader';
 import { useReminders } from '@/hooks/useReminders';
 import { LINKS } from '@/lib/links';
+import { REMINDER_TYPES } from '@/lib/reminderTypes';
 import { cn } from '@/lib/utils';
 import { PremiumNudge } from '@/components/PremiumNudge';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { usePlan } from '@/hooks/usePlan';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAuth } from '@/hooks/useAuth';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 /**
  * Pagina agregadora de recordatorios.
@@ -43,6 +57,7 @@ import { Skeleton } from '@/components/ui/skeleton';
  */
 export default function Reminders() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const {
     reminders,
     overdueReminders,
@@ -50,11 +65,37 @@ export default function Reminders() {
     isLoading,
     completeReminder,
     snoozeReminder,
+    addReminder,
   } = useReminders();
   const { isPremium, checkAccess } = usePlan();
   const activeCount = reminders.filter((r) => !r.is_completed).length;
   const reminderAccess = checkAccess('max_reminders', activeCount);
   const showUsageBar = isFeatureEnabled('USER_PREMIUM') && !isPremium;
+
+  // Dialog para agregar recordatorio
+  const [showAddDialog, setShowAddDialog] = useState(false);
+  const [newReminder, setNewReminder] = useState({
+    pet_id: '',
+    type: 'vaccine',
+    title: '',
+    due_date: '',
+  });
+
+  const { data: userPets = [] } = useQuery({
+    queryKey: ['user-pets-reminders', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const { data } = await supabase
+        .from('pets')
+        .select('id, name')
+        .eq('owner_id', user.id)
+        .eq('lifecycle_status', 'active')
+        .order('name');
+      return data || [];
+    },
+    enabled: !!user?.id,
+    staleTime: 5 * 60 * 1000,
+  });
 
   const grouped = useMemo(() => {
     const today: typeof reminders = [];
@@ -88,8 +129,9 @@ export default function Reminders() {
         actions={
           <Button
             size="sm"
-            onClick={() => navigate(LINKS.myPets())}
+            onClick={() => setShowAddDialog(true)}
             className="bg-purple-600 hover:bg-purple-700"
+            disabled={!reminderAccess.allowed}
           >
             <Plus className="h-4 w-4 mr-1" />
             Agregar
@@ -132,13 +174,16 @@ export default function Reminders() {
           <EmptyState
             icon={Bell}
             title="Aún no tienes recordatorios"
-            description="Crea tu primer recordatorio desde la ficha de tu mascota."
+            description="Crea tu primer recordatorio para no olvidar vacunas, controles ni citas."
             action={
               <Button
-                onClick={() => navigate(LINKS.myPets())}
+                onClick={() =>
+                  userPets.length > 0 ? setShowAddDialog(true) : navigate(LINKS.myPets())
+                }
                 className="bg-purple-600 hover:bg-purple-700"
               >
-                Ir a mis mascotas
+                <Plus className="h-4 w-4 mr-1" />
+                {userPets.length > 0 ? 'Crear recordatorio' : 'Agregar mascota primero'}
               </Button>
             }
           />
@@ -206,6 +251,85 @@ export default function Reminders() {
         )}
       </main>
       <ViewTutorial {...TUTORIALS.reminders} />
+
+      {/* Dialog para agregar recordatorio */}
+      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Nuevo Recordatorio</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label>Mascota</Label>
+              <Select
+                value={newReminder.pet_id}
+                onValueChange={(v) => setNewReminder((d) => ({ ...d, pet_id: v }))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecciona mascota" />
+                </SelectTrigger>
+                <SelectContent>
+                  {userPets.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>
+                      {p.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Tipo</Label>
+              <Select
+                value={newReminder.type}
+                onValueChange={(v) => setNewReminder((d) => ({ ...d, type: v }))}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {REMINDER_TYPES.map((rt) => (
+                    <SelectItem key={rt.value} value={rt.value}>
+                      {rt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Título</Label>
+              <Input
+                value={newReminder.title}
+                onChange={(e) => setNewReminder((d) => ({ ...d, title: e.target.value }))}
+                placeholder="Ej: Vacuna antirrábica"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Fecha</Label>
+              <Input
+                type="date"
+                value={newReminder.due_date}
+                onChange={(e) => setNewReminder((d) => ({ ...d, due_date: e.target.value }))}
+              />
+            </div>
+            <Button
+              className="w-full"
+              disabled={!newReminder.pet_id || !newReminder.title || !newReminder.due_date}
+              onClick={() => {
+                addReminder.mutate({
+                  pet_id: newReminder.pet_id,
+                  type: newReminder.type,
+                  title: newReminder.title,
+                  due_date: newReminder.due_date,
+                });
+                setShowAddDialog(false);
+                setNewReminder({ pet_id: '', type: 'vaccine', title: '', due_date: '' });
+              }}
+            >
+              Crear recordatorio
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

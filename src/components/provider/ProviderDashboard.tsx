@@ -270,11 +270,18 @@ const ProviderDashboard = () => {
                 </div>
               </Link>
             )}
-            <Link to="/veterinarios" className="block">
+            <Link
+              to={stats.slug ? `/veterinarios/${stats.slug}` : '/provider/profile-edit'}
+              className="block"
+            >
               <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-teal-200 hover:shadow-sm transition">
                 <div>
                   <p className="text-xs font-semibold">3. Comparte tu URL</p>
-                  <p className="text-[11px] text-muted-foreground">Instagram, WhatsApp, tu red.</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {stats.slug
+                      ? `pawfriend.cl/veterinarios/${stats.slug}`
+                      : 'Completa tu perfil primero'}
+                  </p>
                 </div>
                 <span className="text-teal-500">→</span>
               </div>
