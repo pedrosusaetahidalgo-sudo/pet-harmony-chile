@@ -35,12 +35,12 @@ VALUES
 
   ('core_first_review', 'Primera reseña',
    'Deja tu primera reseña después de una consulta veterinaria',
-   'community', 'star', 'Voz de la Comunidad',
+   'social', 'star', 'Voz de la Comunidad',
    'leave_review', '{"count": 1}'::jsonb, 110, true),
 
   ('core_reviews_5', 'Crítico experto',
    'Deja 5 reseñas para ayudar a otros dueños a elegir veterinario',
-   'community', 'trophy', 'Guía Veterinaria',
+   'social', 'trophy', 'Guía Veterinaria',
    'leave_review', '{"count": 5}'::jsonb, 111, true),
 
   ('core_reminders_10', 'Cuidador puntual',
