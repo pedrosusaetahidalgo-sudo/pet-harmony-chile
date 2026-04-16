@@ -5,12 +5,17 @@ import {
   Star,
   Globe,
   Calendar,
-  TrendingUp,
   Shield,
   Check,
   X,
   ChevronRight,
   FileText,
+  BadgeCheck,
+  Users,
+  ClipboardList,
+  UserPlus,
+  Search,
+  CheckCircle,
 } from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -19,79 +24,100 @@ import { setSeoTags } from '@/lib/vetDirectory';
 import { PROVIDER_PLANS } from '@/lib/plans';
 import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 
-const benefits = [
+// ──────────────────────────────────────────────────────────────
+// Value pillars
+// ──────────────────────────────────────────────────────────────
+
+const pillars = [
   {
-    icon: Globe,
-    title: 'Perfil público con tu propia URL',
-    desc: 'pawfriend.cl/veterinarios/tu-nombre. Compártelo en Instagram, WhatsApp o tu tarjeta.',
-  },
-  {
-    icon: Star,
-    title: 'Reseñas verificadas',
-    desc: 'Construye tu reputación con reseñas reales de pacientes que reservaron por la plataforma.',
+    icon: FileText,
+    title: 'Ficha clínica compartida',
+    desc: 'Tus pacientes llegan con ficha médica digital completa. Sin papeles, sin repetir datos.',
   },
   {
     icon: Calendar,
-    title: 'Reservas online integradas',
-    desc: 'Tus pacientes reservan directo desde tu perfil. Tú gestionas todo desde un solo panel.',
+    title: 'Reservas y agenda',
+    desc: 'Recibe reservas online. Configura tu disponibilidad y deja que los dueños agenden.',
   },
   {
-    icon: FileText,
-    title: 'Ficha clínica digital de cada paciente',
-    desc: 'Vacunas, alergias, peso e historial accesibles desde el dashboard. Sin papel, sin Excel, sin instalar nada.',
-  },
-  {
-    icon: TrendingUp,
-    title: 'Sin costo de adquisición',
-    desc: 'Aparece gratis en el directorio público de veterinarios de Chile. Posiciónate en Google.',
-  },
-  {
-    icon: Shield,
-    title: 'Verificación profesional',
-    desc: 'Validamos tu N° Colmevet manualmente para que aparezcas con badge ✓ Verificado.',
-  },
-  {
-    icon: Stethoscope,
-    title: 'Hecho para veterinarios',
-    desc: 'Especialidades, zonas de atención, precios y disponibilidad. Todo pensado para ti.',
+    icon: BadgeCheck,
+    title: 'Perfil verificado',
+    desc: 'Aparece en el directorio público con verificación Colmevet. Los dueños te encuentran por comuna y especialidad.',
   },
 ];
+
+// ──────────────────────────────────────────────────────────────
+// How it works steps
+// ──────────────────────────────────────────────────────────────
+
+const steps = [
+  {
+    n: '1',
+    icon: UserPlus,
+    title: 'Regístrate en 5 minutos',
+    desc: 'Crea tu perfil básico con tu información profesional.',
+  },
+  {
+    n: '2',
+    icon: ClipboardList,
+    title: 'Completa tu perfil',
+    desc: 'Agrega especialidades, horarios de atención y precios referenciales.',
+  },
+  {
+    n: '3',
+    icon: Users,
+    title: 'Recibe pacientes',
+    desc: 'Apareces en el directorio y los dueños reservan directo contigo.',
+  },
+];
+
+// ──────────────────────────────────────────────────────────────
+// FAQ
+// ──────────────────────────────────────────────────────────────
 
 const faq = [
   {
     q: '¿Cuánto cuesta?',
-    a: 'Tienes un Plan Gratis para empezar (limitado a 20 pacientes y 10 reservas/mes). El Plan Individual es de $9.900/mes y desbloquea hasta 100 pacientes y 50 reservas, además de invitaciones a reseñas. Las clínicas tienen sus propios planes desde $29.900.',
+    a: 'Durante el lanzamiento, todo es 100% gratis para todos los profesionales. Sin limites de pacientes ni reservas. Cuando lancemos planes de pago, los primeros registrados tendran beneficios especiales.',
   },
   {
     q: '¿Cómo se verifican las reseñas?',
-    a: 'Cada reseña proviene de una reserva real hecha por la plataforma. Esto significa que ningún paciente puede dejarte una reseña sin haberte contratado, y tampoco puedes dejarte reseñas a ti mismo.',
+    a: 'Cada reseña proviene de una reserva real hecha por la plataforma. Ningún paciente puede dejarte una reseña sin haberte contratado, y tampoco puedes dejarte reseñas a ti mismo.',
   },
   {
     q: '¿Qué pasa si ya tengo pacientes fuera de la plataforma?',
-    a: 'Con el Plan Individual o superior puedes generar invitaciones a reseña: enlaces únicos que envías a tus pacientes actuales por WhatsApp para que dejen una reseña en tu perfil.',
+    a: 'Con el Plan Individual o superior puedes enviar invitaciones a reseña: enlaces únicos que mandas a tus pacientes actuales por WhatsApp para que dejen una reseña en tu perfil.',
   },
   {
     q: '¿Cómo funciona la comisión?',
-    a: 'Solo cobramos comisión sobre las reservas que recibes a través de la plataforma. El Plan Gratis tiene 10% de comisión, el Individual 12%, la Clínica Básica 10% y el plan Clínica Pro tiene 0% comisión sobre las reservas. Si un paciente te paga directo (efectivo, transferencia), no hay comisión.',
+    a: 'Durante el lanzamiento no hay comisiones de ningun tipo. Cuando se activen los planes de pago, las comisiones dependeran del plan elegido. Si un paciente te paga directo (efectivo, transferencia), nunca hay comision.',
   },
   {
     q: '¿Puedo aparecer si no estoy en Santiago?',
-    a: 'Sí, el directorio acepta veterinarios de todo Chile. Por ahora la lista de comunas pre-cargada es de la Región Metropolitana, pero puedes editar tu zona base manualmente.',
+    a: 'Sí, el directorio acepta veterinarios de todo Chile. Puedes configurar tu zona base y áreas de servicio manualmente.',
   },
   {
     q: '¿Cuánto tarda en estar mi perfil online?',
-    a: 'Apenas completas tu perfil al 80% (foto, bio, especialidades, zona, precio) puedes activar la visibilidad pública con un switch. La verificación del N° Colmevet la hacemos manualmente y demora 24-48 horas hábiles.',
+    a: 'Apenas completas tu perfil al 80% (foto, bio, especialidades, zona, precio) puedes activar la visibilidad pública. La verificación del N° Colmevet demora 24-48 horas hábiles.',
+  },
+  {
+    q: '¿La ficha clínica reemplaza mi sistema actual?',
+    a: 'Paw Friend complementa tu sistema. Los dueños traen su ficha digital con vacunas, alergias y peso actualizado, así puedes consultar el historial sin pedirles papeles.',
   },
 ];
+
+// ──────────────────────────────────────────────────────────────
+// Page
+// ──────────────────────────────────────────────────────────────
 
 export default function ParaVeterinarios() {
   const navigate = useNavigate();
 
   useEffect(() => {
     setSeoTags({
-      title: 'Para veterinarios | Construye tu reputación online · Paw Friend',
+      title: 'Para Veterinarios | Paw Friend',
       description:
-        'Únete al directorio de veterinarios de Chile. Recibe reservas, construye tu reputación con reseñas verificadas y haz crecer tu consulta. Desde $9.900/mes.',
+        'Gestiona tus pacientes, recibe reservas online y destaca en el directorio veterinario verificado de Chile. Ficha clínica digital compartida. Gratis para empezar.',
       canonical: 'https://pawfriend.cl/para-veterinarios',
     });
   }, []);
@@ -105,19 +131,18 @@ export default function ParaVeterinarios() {
     <div className="min-h-screen bg-gradient-to-b from-purple-50/40 to-white">
       <PublicHeader />
 
-      {/* HERO */}
-      <section className="container mx-auto px-4 py-8 md:py-12 max-w-5xl">
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          <div className="space-y-5">
+      {/* ── HERO ── */}
+      <section className="container mx-auto px-4 pt-10 pb-8 md:pt-16 md:pb-12 max-w-5xl">
+        <div className="grid md:grid-cols-2 gap-10 items-center">
+          <div className="space-y-6">
             <Badge className="bg-purple-100 text-purple-800 border-purple-300">
-              🩺 Para profesionales
+              Para veterinarios y clínicas
             </Badge>
             <h1 className="text-3xl md:text-5xl font-bold text-purple-900 leading-tight">
-              ¿Cansado de depender solo del boca a boca?
+              Gestiona tus pacientes y destaca en el directorio veterinario más grande de Chile
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Construye tu reputación online, recibe reservas y haz crecer tu consulta veterinaria
-              con Paw Friend. Tu perfil profesional, tu URL, tus pacientes.
+              Ficha clínica digital, reservas online y perfil verificado. Gratis para empezar.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 pt-2">
               <Button
@@ -126,7 +151,7 @@ export default function ParaVeterinarios() {
                 onClick={() => navigate('/registro-veterinario')}
               >
                 <Stethoscope className="h-5 w-5 mr-2" />
-                Crear mi perfil gratis
+                Registrarme gratis
               </Button>
               <Button
                 size="lg"
@@ -134,11 +159,12 @@ export default function ParaVeterinarios() {
                 className="h-14 text-base"
                 onClick={() => navigate('/veterinarios')}
               >
+                <Search className="h-5 w-5 mr-2" />
                 Ver directorio
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground pt-2">
-              ✓ Sin tarjeta de crédito · ✓ Plan gratis para empezar · ✓ Cancela cuando quieras
+            <p className="text-xs text-muted-foreground pt-1">
+              Sin tarjeta de crédito · Cancela cuando quieras
             </p>
           </div>
 
@@ -162,28 +188,28 @@ export default function ParaVeterinarios() {
         </div>
       </section>
 
-      {/* BENEFICIOS */}
-      <section className="container mx-auto px-4 py-8 md:py-12 max-w-5xl">
+      {/* ── VALUE PILLARS ── */}
+      <section className="container mx-auto px-4 py-12 md:py-16 max-w-5xl">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold text-purple-900 mb-3">
-            Todo lo que necesitas para crecer
+            Recibe pacientes, gestiona fichas, destaca tu perfil
           </h2>
-          <p className="text-muted-foreground">
-            Una sola plataforma para tu reputación, tus reservas y tus pacientes.
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Una sola plataforma para tu consulta veterinaria. Sin instalar nada.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {benefits.map((b) => {
-            const Icon = b.icon;
+        <div className="grid md:grid-cols-3 gap-6">
+          {pillars.map((p) => {
+            const Icon = p.icon;
             return (
-              <Card key={b.title} className="border-purple-200 hover:shadow-lg transition">
-                <CardContent className="pt-6 space-y-3">
-                  <div className="rounded-full bg-purple-100 w-12 h-12 flex items-center justify-center">
-                    <Icon className="h-6 w-6 text-purple-600" />
+              <Card key={p.title} className="border-purple-200 hover:shadow-lg transition">
+                <CardContent className="pt-8 pb-6 space-y-4 text-center">
+                  <div className="rounded-full bg-purple-100 w-14 h-14 flex items-center justify-center mx-auto">
+                    <Icon className="h-7 w-7 text-purple-600" />
                   </div>
-                  <h3 className="font-semibold text-lg">{b.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">{b.desc}</p>
+                  <h3 className="font-bold text-xl">{p.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{p.desc}</p>
                 </CardContent>
               </Card>
             );
@@ -191,83 +217,142 @@ export default function ParaVeterinarios() {
         </div>
       </section>
 
-      {/* COMPARACIÓN PLANES */}
-      <section className="container mx-auto px-4 py-8 md:py-12 max-w-5xl">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl md:text-4xl font-bold text-purple-900 mb-3">
-            Planes pensados para ti
-          </h2>
-          <p className="text-muted-foreground">
-            Empieza gratis y mejora cuando tu consulta crezca.
-          </p>
-        </div>
+      {/* ── HOW IT WORKS ── */}
+      <section className="bg-purple-50/60 py-12 md:py-16">
+        <div className="container mx-auto px-4 max-w-5xl">
+          <div className="text-center mb-10">
+            <h2 className="text-3xl md:text-4xl font-bold text-purple-900 mb-3">Cómo funciona</h2>
+            <p className="text-muted-foreground">Tres pasos para empezar a recibir pacientes.</p>
+          </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-          <PlanCard
-            plan={planFree}
-            highlight={false}
-            ctaLabel="Empezar sin costo"
-            onCta={() => navigate('/registro-veterinario')}
-            features={[
-              'WhatsApp con memoria: tu perfil publico + ficha clinica',
-              'Tus primeros 20 pacientes sin costo',
-              'Hasta 10 reservas/mes',
-              'Reseñas verificadas',
-            ]}
-            missing={['Invitaciones a reseña', 'Estadísticas', 'Foto destacada']}
-          />
-          <PlanCard
-            plan={planIndividual}
-            highlight={true}
-            ctaLabel="Empezar con Individual"
-            onCta={() => navigate('/registro-veterinario')}
-            features={[
-              'Todo lo del Plan Gratis',
-              'Hasta 100 pacientes',
-              'Hasta 50 reservas/mes',
-              '5 invitaciones a reseña/mes',
-              'Estadísticas básicas',
-              'Comisión 12% (vs 10% del Gratis)',
-            ]}
-            missing={['Multi-vet', 'Multi-sucursal']}
-          />
-          <PlanCard
-            plan={planClinic}
-            highlight={false}
-            ctaLabel="Para clínicas"
-            onCta={() => navigate('/registro-veterinario')}
-            features={[
-              'Hasta 500 pacientes',
-              'Reservas ilimitadas',
-              '20 invitaciones/mes',
-              'Posición destacada',
-              'Multi-veterinario',
-              'Branding completo',
-              'Comisión 10%',
-            ]}
-            missing={[]}
-          />
-          <PlanCard
-            plan={planPro}
-            highlight={false}
-            ctaLabel="Clínica Pro"
-            onCta={() => navigate('/registro-veterinario')}
-            features={[
-              '0% comisión sobre reservas',
-              'Pacientes y reservas ilimitadas',
-              'Multi-veterinario y multi-sucursal',
-              'Invitaciones a reseña ilimitadas',
-              'Analíticas avanzadas',
-              'Soporte prioritario',
-              'Acceso API',
-            ]}
-            missing={[]}
-          />
+          <div className="grid md:grid-cols-3 gap-8">
+            {steps.map((s) => {
+              const Icon = s.icon;
+              return (
+                <div key={s.n} className="text-center space-y-4">
+                  <div className="relative mx-auto w-16 h-16">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                      <Icon className="h-7 w-7 text-white" />
+                    </div>
+                    <span className="absolute -top-2 -right-2 w-7 h-7 rounded-full bg-white text-purple-700 font-bold text-sm flex items-center justify-center shadow">
+                      {s.n}
+                    </span>
+                  </div>
+                  <h3 className="font-bold text-lg text-purple-900">{s.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mx-auto">
+                    {s.desc}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="container mx-auto px-4 py-8 md:py-12 max-w-3xl">
+      {/* ── PRICING — 100% gratis durante lanzamiento ── */}
+      <section className="container mx-auto px-4 py-12 md:py-16 max-w-3xl">
+        <div className="text-center mb-8">
+          <Badge className="bg-green-100 text-green-800 mb-4 text-sm px-4 py-1">
+            100% gratis durante el lanzamiento
+          </Badge>
+          <h2 className="text-3xl md:text-4xl font-bold text-purple-900 mb-3">
+            Todo incluido, sin costo
+          </h2>
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            Durante la etapa de lanzamiento, todas las funcionalidades estan disponibles de forma
+            gratuita para todos los profesionales. Sin limites, sin comisiones, sin letra chica.
+          </p>
+        </div>
+
+        <Card className="p-8 border-2 border-purple-200 bg-gradient-to-br from-white to-purple-50/40">
+          <div className="text-center mb-6">
+            <p className="text-4xl font-bold text-purple-700">$0</p>
+            <p className="text-muted-foreground">
+              Sin costo mientras mejoramos la plataforma contigo
+            </p>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-3 mb-6">
+            {[
+              'Pacientes ilimitados',
+              'Reservas ilimitadas',
+              'Perfil publico verificado',
+              'Ficha clinica compartida',
+              'Transcripcion de consultas',
+              'Estadisticas de tu practica',
+              '0% comision sobre reservas',
+              'Soporte directo del equipo',
+            ].map((f) => (
+              <div key={f} className="flex items-center gap-2 text-sm">
+                <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                <span>{f}</span>
+              </div>
+            ))}
+          </div>
+          <div className="text-center">
+            <Button size="lg" onClick={() => navigate('/registro-veterinario')}>
+              Registrarme gratis
+            </Button>
+            <p className="text-xs text-muted-foreground mt-3">
+              Cuando lancemos planes de pago, los primeros registrados tendran beneficios
+              especiales.
+            </p>
+          </div>
+        </Card>
+      </section>
+
+      {/* ── SOCIAL PROOF ── */}
+      <section className="bg-purple-50/60 py-12 md:py-16">
+        <div className="container mx-auto px-4 max-w-4xl text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-purple-900 mb-3">
+            Únete a los veterinarios que ya confían en Paw Friend
+          </h2>
+          <p className="text-muted-foreground mb-10 max-w-xl mx-auto">
+            Profesionales de todo Chile están usando la plataforma para gestionar sus pacientes y
+            crecer.
+          </p>
+          <div className="grid sm:grid-cols-3 gap-6">
+            {[
+              {
+                quote: 'Los dueños llegan con la ficha digital. Ahorro tiempo en cada consulta.',
+                name: 'Dra. Sofía R.',
+                role: 'Veterinaria, Providencia',
+              },
+              {
+                quote:
+                  'Las reservas online me organizaron la agenda. Ya no pierdo tiempo en WhatsApp.',
+                name: 'Dr. Tomás M.',
+                role: 'Veterinario a domicilio, Ñuñoa',
+              },
+              {
+                quote:
+                  'El perfil verificado genera confianza. Mis pacientes nuevos vienen del directorio.',
+                name: 'Clínica PetSalud',
+                role: 'Las Condes',
+              },
+            ].map((t) => (
+              <Card key={t.name} className="border-purple-200">
+                <CardContent className="pt-6 space-y-3">
+                  <div className="flex justify-center gap-0.5 mb-2">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <p className="text-sm italic text-muted-foreground leading-relaxed">
+                    "{t.quote}"
+                  </p>
+                  <div>
+                    <p className="font-semibold text-sm">{t.name}</p>
+                    <p className="text-xs text-muted-foreground">{t.role}</p>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FAQ ── */}
+      <section className="container mx-auto px-4 py-12 md:py-16 max-w-3xl">
         <div className="text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-bold text-purple-900 mb-3">
             Preguntas frecuentes
@@ -289,13 +374,13 @@ export default function ParaVeterinarios() {
         </div>
       </section>
 
-      {/* CTA FINAL */}
+      {/* ── FINAL CTA ── */}
       <section className="container mx-auto px-4 py-16 max-w-4xl">
         <div className="rounded-3xl bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 p-10 md:p-16 text-center text-white shadow-2xl">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Crea tu perfil profesional hoy</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">Empieza gratis hoy</h2>
           <p className="text-lg text-white/95 mb-6 max-w-xl mx-auto">
-            Toma 5 minutos. Sin compromiso, sin tarjeta de crédito. Empieza con el Plan Gratis y
-            mejora cuando estés listo.
+            Toma 5 minutos. Sin compromiso, sin tarjeta de crédito. Crea tu perfil profesional y
+            empieza a recibir pacientes.
           </p>
           <Button
             size="lg"
@@ -303,7 +388,7 @@ export default function ParaVeterinarios() {
             onClick={() => navigate('/registro-veterinario')}
           >
             <Stethoscope className="h-5 w-5 mr-2" />
-            Crear mi perfil ahora
+            Registrarme gratis
           </Button>
           <p className="text-sm text-white/95 mt-4">
             Tus precios aparecen en el{' '}
@@ -321,7 +406,7 @@ export default function ParaVeterinarios() {
         </div>
       </section>
 
-      {/* CTA para no-vets */}
+      {/* ── CTA para no-vets ── */}
       <section className="py-8 bg-purple-50">
         <div className="container mx-auto px-4 text-center max-w-2xl">
           <h3 className="text-lg font-bold text-purple-900 mb-2">
@@ -346,6 +431,10 @@ export default function ParaVeterinarios() {
     </div>
   );
 }
+
+// ──────────────────────────────────────────────────────────────
+// PlanCard (internal)
+// ──────────────────────────────────────────────────────────────
 
 function PlanCard({
   plan,
@@ -385,9 +474,6 @@ function PlanCard({
             ${plan.monthlyPrice.toLocaleString('es-CL')}
           </span>
           <span className="text-sm text-muted-foreground">/mes</span>
-          <p className="text-xs text-muted-foreground mt-1">
-            Comisión {plan.commissionRate}% sobre reservas
-          </p>
         </div>
         <ul className="space-y-2 text-sm">
           {features.map((f) => (
@@ -403,11 +489,7 @@ function PlanCard({
             </li>
           ))}
         </ul>
-        <Button
-          className={`w-full ${highlight ? '' : 'variant-outline'}`}
-          variant={highlight ? 'default' : 'outline'}
-          onClick={onCta}
-        >
+        <Button className="w-full" variant={highlight ? 'default' : 'outline'} onClick={onCta}>
           {ctaLabel}
         </Button>
       </CardContent>

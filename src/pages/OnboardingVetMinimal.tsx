@@ -1,478 +1,201 @@
-import { useState, useMemo, useRef, useCallback } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  Camera,
-  Loader2,
-  Check,
   ChevronRight,
   ChevronLeft,
-  Building2,
-  Sparkles,
+  User,
+  Calendar,
+  Users,
+  Stethoscope,
   MapPin,
   Clock,
-  Phone,
+  CheckCircle2,
+  Sparkles,
+  Search,
+  FileText,
+  Edit,
 } from '@/lib/icons';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from '@/components/ui/command';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/useAuth';
-import { SANTIAGO_COMUNAS, VET_SPECIALTIES } from '@/lib/vetDirectory';
-import { errorMessage } from '@/types/vetDirectory';
-import { onboardingVetSchema } from '@/lib/schemas';
 
-function getInitials(name: string): string {
-  return name
-    .split(' ')
-    .filter(Boolean)
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase();
-}
+const STEP_LABELS = ['Tu perfil', 'Disponibilidad', 'Primer paciente'];
 
 export default function OnboardingVetMinimal() {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   const [step, setStep] = useState(1);
 
-  // Step 1: Profile
-  const [displayName, setDisplayName] = useState('');
-  const [commune, setCommune] = useState('');
-  const [communeOpen, setCommuneOpen] = useState(false);
-  const [specialties, setSpecialties] = useState<string[]>([]);
-  const [providerType, setProviderType] = useState<'individual' | 'clinic' | 'home_visit'>(
-    'individual'
-  );
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-
-  // Step 2: Clinic info
-  const [clinicName, setClinicName] = useState('');
-  const [address, setAddress] = useState('');
-  const [whatsapp, setWhatsapp] = useState('');
-  const [schedule, setSchedule] = useState('');
-  const [bio, setBio] = useState('');
-
-  const [submitting, setSubmitting] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
-
-  const clearFieldError = useCallback((field: string) => {
-    setFieldErrors((prev) => {
-      if (!prev[field]) return prev;
-      const next = { ...prev };
-      delete next[field];
-      return next;
-    });
-  }, []);
-
-  const canAdvanceStep1 = displayName.trim().length > 2;
-
-  const toggleSpecialty = (s: string) => {
-    setSpecialties((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
+  const completeOnboarding = () => {
+    localStorage.setItem('pf_vet_onboarding_complete', 'true');
+    toast.success('Bienvenido a Paw Friend');
+    navigate('/provider/dashboard');
   };
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setPhotoFile(file);
-    setPhotoPreview(URL.createObjectURL(file));
+  const skipAll = () => {
+    localStorage.setItem('pf_vet_onboarding_complete', 'true');
+    toast('Bienvenido a Paw Friend');
+    navigate('/provider/dashboard');
   };
-
-  const handleSubmit = async () => {
-    if (!user) {
-      toast.error('Debes iniciar sesión primero.');
-      return;
-    }
-
-    // Validate all fields with zod
-    const result = onboardingVetSchema.safeParse({
-      displayName,
-      commune,
-      specialties,
-      providerType,
-      clinicName,
-      address,
-      whatsapp,
-      schedule,
-      bio,
-    });
-
-    if (!result.success) {
-      const errs: Record<string, string> = {};
-      for (const issue of result.error.issues) {
-        const key = issue.path[0] as string;
-        if (!errs[key]) errs[key] = issue.message;
-      }
-      setFieldErrors(errs);
-      // If errors are on step 1 fields, go back to step 1
-      if (errs.displayName) {
-        setStep(1);
-      }
-      toast.error('Revisa los campos marcados antes de continuar.');
-      return;
-    }
-    setFieldErrors({});
-
-    setSubmitting(true);
-    try {
-      let avatarUrl: string | null = null;
-
-      // Upload photo if provided
-      if (photoFile) {
-        const ext = photoFile.name.split('.').pop() ?? 'jpg';
-        const path = `providers/${user.id}/avatar.${ext}`;
-        const { error: uploadErr } = await supabase.storage
-          .from('avatars')
-          .upload(path, photoFile, { upsert: true });
-        if (!uploadErr) {
-          const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path);
-          avatarUrl = urlData.publicUrl;
-        }
-      }
-
-      const payload = {
-        user_id: user.id,
-        display_name: displayName.trim(),
-        commune: commune || null,
-        specialties: specialties.length > 0 ? specialties : null,
-        avatar_url: avatarUrl,
-        provider_type: providerType,
-        provider_plan: 'provider_free',
-        is_directory_visible: false,
-        status: 'pending',
-        bio:
-          [bio.trim(), schedule.trim() ? `Horario: ${schedule.trim()}` : '']
-            .filter(Boolean)
-            .join('\n') || null,
-        clinic_name: clinicName.trim() || null,
-        address: address.trim() || null,
-        public_phone: whatsapp.trim() || null,
-      };
-
-      const { error: insertErr } = await supabase.from('service_providers').insert(payload);
-      if (insertErr) throw insertErr;
-
-      const completeness =
-        40 +
-        (clinicName ? 10 : 0) +
-        (address ? 10 : 0) +
-        (bio ? 15 : 0) +
-        (whatsapp ? 10 : 0) +
-        (avatarUrl ? 15 : 0);
-      const pct = Math.min(completeness, 100);
-
-      toast.success(
-        `Tu perfil está al ${pct}%. ${pct < 80 ? 'Completa más para aparecer en el directorio.' : '¡Casi listo!'}`,
-        {
-          duration: 6000,
-        }
-      );
-      navigate('/provider/dashboard');
-    } catch (err: unknown) {
-      toast.error(errorMessage(err, 'Error al crear tu perfil'));
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  const initials = useMemo(() => getInitials(displayName), [displayName]);
-  const progressPct = step === 1 ? 33 : step === 2 ? 66 : 100;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-lg">
-        {/* Progress bar */}
+        {/* Progress indicator */}
         <div className="px-6 pt-6">
           <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
             <span>Paso {step} de 3</span>
-            <span>{progressPct}%</span>
+            <span>{STEP_LABELS[step - 1]}</span>
           </div>
-          <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-gradient-to-r from-purple-500 to-purple-600 rounded-full transition-all duration-500"
-              style={{ width: `${progressPct}%` }}
-            />
+          <div className="flex gap-1.5">
+            {[1, 2, 3].map((s) => (
+              <div
+                key={s}
+                className={`h-2 flex-1 rounded-full transition-all duration-500 ${
+                  s <= step ? 'bg-gradient-to-r from-purple-500 to-purple-600' : 'bg-slate-100'
+                }`}
+              />
+            ))}
           </div>
         </div>
 
-        <CardContent className="p-6 md:p-8 space-y-6">
-          {/* ============ STEP 1: Profile ============ */}
+        <CardContent className="p-6 md:p-8">
+          {/* ============ STEP 1: Complete your professional profile ============ */}
           {step === 1 && (
-            <>
+            <div className="space-y-5">
               <div className="text-center">
-                <h1 className="text-2xl font-bold mb-1">Crea tu perfil veterinario</h1>
+                <div className="mx-auto w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center mb-3">
+                  <User className="h-7 w-7 text-purple-600" />
+                </div>
+                <h1 className="text-2xl font-bold mb-1">Completa tu perfil profesional</h1>
                 <p className="text-sm text-muted-foreground">
-                  Solo necesitamos lo básico. Puedes completar el resto después.
+                  Tu perfil es tu carta de presentacion ante los duenos de mascotas.
                 </p>
               </div>
 
-              {/* Photo */}
-              <div className="flex justify-center">
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="relative group"
-                >
-                  <Avatar className="h-20 w-20 border-2 border-purple-200">
-                    {photoPreview ? <AvatarImage src={photoPreview} alt="Foto de perfil" /> : null}
-                    <AvatarFallback className="bg-purple-100 text-purple-700 text-lg font-semibold">
-                      {initials || '?'}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="absolute inset-0 flex items-center justify-center rounded-full bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Camera className="h-5 w-5 text-white" />
+              {/* What to complete */}
+              <div className="space-y-3">
+                {[
+                  {
+                    icon: Stethoscope,
+                    title: 'Bio y especialidades',
+                    desc: 'Cuenta tu experiencia y que tipo de animales atiendes.',
+                  },
+                  {
+                    icon: MapPin,
+                    title: 'Comuna y direccion',
+                    desc: 'Para que los duenos te encuentren cerca de su ubicacion.',
+                  },
+                  {
+                    icon: CheckCircle2,
+                    title: 'Foto profesional',
+                    desc: 'Los perfiles con foto reciben 3x mas consultas.',
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.title}
+                    className="flex gap-3 items-start p-3 bg-slate-50 rounded-xl"
+                  >
+                    <div className="flex-shrink-0 w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center">
+                      <item.icon className="h-4.5 w-4.5 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">{item.title}</p>
+                      <p className="text-xs text-slate-500">{item.desc}</p>
+                    </div>
                   </div>
-                </button>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handlePhotoChange}
-                />
+                ))}
               </div>
 
-              {/* Name */}
-              <div>
-                <Label htmlFor="vet-name">Nombre *</Label>
-                <Input
-                  id="vet-name"
-                  value={displayName}
-                  onChange={(e) => {
-                    setDisplayName(e.target.value);
-                    clearFieldError('displayName');
+              {/* CTA to profile edit */}
+              <div className="p-4 bg-purple-50 rounded-xl border border-purple-100 text-center">
+                <p className="text-sm text-purple-700 mb-2">
+                  Puedes editar tu perfil ahora o hacerlo despues desde tu dashboard.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    localStorage.setItem('pf_vet_onboarding_complete', 'true');
+                    navigate('/provider/profile-edit');
                   }}
-                  placeholder="Dr. Juan Pérez"
-                />
-                {fieldErrors.displayName && (
-                  <p className="text-xs text-destructive mt-1">{fieldErrors.displayName}</p>
-                )}
+                  className="text-purple-700 border-purple-300 hover:bg-purple-100"
+                >
+                  <Edit className="h-4 w-4 mr-1" /> Editar perfil ahora
+                </Button>
               </div>
 
-              {/* Commune autocomplete */}
-              <div>
-                <Label>Comuna principal</Label>
-                <Popover open={communeOpen} onOpenChange={setCommuneOpen}>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      aria-expanded={communeOpen}
-                      className="w-full justify-between font-normal"
-                    >
-                      {commune || 'Selecciona tu comuna'}
-                      <Check
-                        className={`ml-2 h-4 w-4 shrink-0 ${commune ? 'opacity-100' : 'opacity-0'}`}
-                      />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-full p-0" align="start">
-                    <Command>
-                      <CommandInput placeholder="Buscar comuna..." />
-                      <CommandList>
-                        <CommandEmpty>Sin resultados.</CommandEmpty>
-                        <CommandGroup>
-                          {SANTIAGO_COMUNAS.map((c) => (
-                            <CommandItem
-                              key={c}
-                              value={c}
-                              onSelect={() => {
-                                setCommune(c);
-                                setCommuneOpen(false);
-                              }}
-                            >
-                              <Check
-                                className={`mr-2 h-4 w-4 ${commune === c ? 'opacity-100' : 'opacity-0'}`}
-                              />
-                              {c}
-                            </CommandItem>
-                          ))}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              </div>
-
-              {/* Provider type */}
-              <div>
-                <Label className="mb-2 block">Tipo de perfil</Label>
-                <div className="flex gap-2">
-                  {[
-                    { value: 'individual' as const, label: 'Veterinario independiente' },
-                    { value: 'clinic' as const, label: 'Clínica / Centro veterinario' },
-                    { value: 'home_visit' as const, label: 'Visitas a domicilio' },
-                  ].map((opt) => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => setProviderType(opt.value)}
-                      className={`flex-1 px-3 py-2 rounded-lg text-xs font-medium border transition-colors ${
-                        providerType === opt.value
-                          ? 'bg-purple-600 text-white border-purple-600'
-                          : 'bg-white text-slate-700 border-slate-300 hover:border-purple-400'
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Specialties multi-select */}
-              <div>
-                <Label className="mb-2 block">Especialidades</Label>
-                <div className="flex flex-wrap gap-2">
-                  {VET_SPECIALTIES.map((s) => {
-                    const active = specialties.includes(s);
-                    return (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => toggleSpecialty(s)}
-                        className={`px-3 py-1.5 rounded-full text-sm border transition ${
-                          active
-                            ? 'bg-purple-600 text-white border-purple-600'
-                            : 'bg-white text-foreground border-slate-300 hover:border-purple-400'
-                        }`}
-                      >
-                        {s}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <Button
-                className="w-full"
-                size="lg"
-                disabled={!canAdvanceStep1}
-                onClick={() => setStep(2)}
-              >
+              <Button className="w-full" size="lg" onClick={() => setStep(2)}>
                 Siguiente <ChevronRight className="h-4 w-4 ml-1" />
               </Button>
-            </>
+
+              <button
+                onClick={skipAll}
+                className="w-full text-xs text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                Omitir — lo hago despues
+              </button>
+            </div>
           )}
 
-          {/* ============ STEP 2: Clinic Info ============ */}
+          {/* ============ STEP 2: Availability & bookings ============ */}
           {step === 2 && (
-            <>
+            <div className="space-y-5">
               <div className="text-center">
-                <h1 className="text-xl font-bold mb-1 flex items-center justify-center gap-2">
-                  <Building2 className="h-5 w-5 text-purple-500" />
-                  Tu clínica o consulta
-                </h1>
+                <div className="mx-auto w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center mb-3">
+                  <Calendar className="h-7 w-7 text-emerald-600" />
+                </div>
+                <h1 className="text-2xl font-bold mb-1">Configura tu disponibilidad</h1>
                 <p className="text-sm text-muted-foreground">
-                  Estos datos ayudan a que los dueños te encuentren. Todo es opcional.
+                  Los duenos podran agendar contigo directamente desde la app.
                 </p>
               </div>
 
-              <div>
-                <Label className="flex items-center gap-1.5">
-                  <Building2 className="h-3.5 w-3.5" /> Nombre de la clínica
-                </Label>
-                <Input
-                  value={clinicName}
-                  onChange={(e) => {
-                    setClinicName(e.target.value);
-                    clearFieldError('clinicName');
-                  }}
-                  placeholder="Ej: Clínica Veterinaria PatitasFelices"
-                />
-                {fieldErrors.clinicName ? (
-                  <p className="text-xs text-destructive mt-1">{fieldErrors.clinicName}</p>
-                ) : (
-                  <p className="text-xs text-slate-400 mt-1">Déjalo vacío si eres independiente.</p>
-                )}
+              {/* How bookings work */}
+              <div className="space-y-3">
+                {[
+                  {
+                    icon: Clock,
+                    title: 'Define tus horarios',
+                    desc: 'Configura los dias y bloques horarios en que atiendes.',
+                  },
+                  {
+                    icon: Search,
+                    title: 'Los duenos te encuentran',
+                    desc: 'Tu perfil aparece en el directorio publico filtrable por comuna.',
+                  },
+                  {
+                    icon: Calendar,
+                    title: 'Reservas automaticas',
+                    desc: 'Recibes notificaciones de cada reserva. Confirmas o reprogramas desde tu dashboard.',
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.title}
+                    className="flex gap-3 items-start p-3 bg-slate-50 rounded-xl"
+                  >
+                    <div className="flex-shrink-0 w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center">
+                      <item.icon className="h-4.5 w-4.5 text-emerald-600" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-800">{item.title}</p>
+                      <p className="text-xs text-slate-500">{item.desc}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              <div>
-                <Label className="flex items-center gap-1.5">
-                  <MapPin className="h-3.5 w-3.5" /> Dirección
-                </Label>
-                <Input
-                  value={address}
-                  onChange={(e) => {
-                    setAddress(e.target.value);
-                    clearFieldError('address');
-                  }}
-                  placeholder="Ej: Av. Providencia 1234, Providencia"
-                />
-                {fieldErrors.address && (
-                  <p className="text-xs text-destructive mt-1">{fieldErrors.address}</p>
-                )}
-              </div>
-
-              <div>
-                <Label className="flex items-center gap-1.5">
-                  <Phone className="h-3.5 w-3.5" /> WhatsApp de contacto
-                </Label>
-                <Input
-                  value={whatsapp}
-                  onChange={(e) => {
-                    setWhatsapp(e.target.value);
-                    clearFieldError('whatsapp');
-                  }}
-                  placeholder="+56 9 1234 5678"
-                />
-                {fieldErrors.whatsapp && (
-                  <p className="text-xs text-destructive mt-1">{fieldErrors.whatsapp}</p>
-                )}
-              </div>
-
-              <div>
-                <Label className="flex items-center gap-1.5">
-                  <Clock className="h-3.5 w-3.5" /> Horario de atención
-                </Label>
-                <Input
-                  value={schedule}
-                  onChange={(e) => {
-                    setSchedule(e.target.value);
-                    clearFieldError('schedule');
-                  }}
-                  placeholder="Ej: Lun-Vie 9:00-18:00, Sáb 9:00-13:00"
-                />
-                {fieldErrors.schedule && (
-                  <p className="text-xs text-destructive mt-1">{fieldErrors.schedule}</p>
-                )}
-              </div>
-
-              <div>
-                <Label>Bio profesional</Label>
-                <Textarea
-                  value={bio}
-                  onChange={(e) => {
-                    setBio(e.target.value);
-                    clearFieldError('bio');
-                  }}
-                  placeholder="Cuéntale a los dueños sobre tu experiencia y enfoque profesional..."
-                  rows={3}
-                  maxLength={500}
-                />
-                {fieldErrors.bio && (
-                  <p className="text-xs text-destructive mt-1">{fieldErrors.bio}</p>
-                )}
+              {/* Transparency */}
+              <div className="p-4 bg-emerald-50 rounded-xl border border-emerald-100">
+                <p className="text-sm font-medium text-emerald-800 mb-1">Modelo transparente</p>
+                <p className="text-xs text-emerald-600">
+                  Plan gratuito: comision del 10% por reserva completada. Sin costo fijo mensual.
+                  Planes pagados reducen la comision hasta 0%.
+                </p>
               </div>
 
               <div className="flex gap-3">
                 <Button variant="outline" onClick={() => setStep(1)} className="flex-1" size="lg">
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Atrás
+                  <ChevronLeft className="h-4 w-4 mr-1" /> Atras
                 </Button>
                 <Button onClick={() => setStep(3)} className="flex-1" size="lg">
                   Siguiente <ChevronRight className="h-4 w-4 ml-1" />
@@ -480,47 +203,48 @@ export default function OnboardingVetMinimal() {
               </div>
 
               <button
-                onClick={() => setStep(3)}
+                onClick={skipAll}
                 className="w-full text-xs text-slate-400 hover:text-slate-600 transition-colors"
               >
-                Saltar este paso
+                Omitir
               </button>
-            </>
+            </div>
           )}
 
-          {/* ============ STEP 3: How it works ============ */}
+          {/* ============ STEP 3: Your first patient ============ */}
           {step === 3 && (
-            <>
+            <div className="space-y-5">
               <div className="text-center">
-                <h1 className="text-xl font-bold mb-1 flex items-center justify-center gap-2">
-                  <Sparkles className="h-5 w-5 text-purple-500" />
-                  Cómo funciona Paw Friend
-                </h1>
+                <div className="mx-auto w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center mb-3">
+                  <Users className="h-7 w-7 text-blue-600" />
+                </div>
+                <h1 className="text-2xl font-bold mb-1">Tu primer paciente</h1>
                 <p className="text-sm text-muted-foreground">
-                  Así es como los dueños te encuentran y agendan contigo.
+                  Asi es como los duenos llegan a ti y como puedes crear pacientes.
                 </p>
               </div>
 
-              <div className="space-y-4">
+              {/* How patients work */}
+              <div className="space-y-3">
                 {[
                   {
                     step: '1',
-                    title: 'Los dueños te encuentran',
-                    desc: 'Tu perfil aparece en el directorio público de veterinarios de pawfriend.cl, filtrable por comuna y especialidad.',
+                    title: 'Los duenos te buscan',
+                    desc: 'Desde el directorio publico de pawfriend.cl, filtrable por comuna y especialidad.',
                   },
                   {
                     step: '2',
-                    title: 'Agendan contigo',
-                    desc: 'Los dueños ven tus servicios, precios y disponibilidad, y reservan directamente desde la app.',
+                    title: 'Agendan una cita',
+                    desc: 'Ven tus servicios, precios y disponibilidad. Reservan con un click.',
                   },
                   {
                     step: '3',
-                    title: 'Gestionas desde tu dashboard',
-                    desc: 'Confirmas citas, revisas fichas clínicas y accedes a analytics de tu consulta.',
+                    title: 'Creas el paciente',
+                    desc: 'Desde tu panel puedes crear pacientes, incluso si el dueno no tiene cuenta aun.',
                   },
                 ].map((item) => (
                   <div key={item.step} className="flex gap-3 items-start">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-100 text-purple-700 font-bold text-sm flex items-center justify-center">
+                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-700 font-bold text-sm flex items-center justify-center">
                       {item.step}
                     </div>
                     <div>
@@ -531,39 +255,48 @@ export default function OnboardingVetMinimal() {
                 ))}
               </div>
 
-              {/* Commission transparency */}
-              <div className="p-4 bg-purple-50 rounded-xl border border-purple-100">
-                <p className="text-sm font-medium text-purple-800 mb-1">Modelo transparente</p>
-                <p className="text-xs text-purple-600">
-                  Plan gratuito: comisión del 10% por reserva completada. Sin costo fijo mensual.
-                  Planes pagados reducen la comisión hasta 0%.
-                </p>
+              {/* Key features */}
+              <div className="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                <div className="flex items-start gap-2 mb-2">
+                  <Sparkles className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <p className="text-sm font-medium text-blue-800">Herramientas incluidas</p>
+                </div>
+                <ul className="space-y-1.5 ml-6">
+                  {[
+                    'Ficha clinica digital de cada paciente',
+                    'Notas de consulta y plantillas post-consulta',
+                    'Boton "Ver como me ven los duenos"',
+                    'Analytics de tu consulta',
+                  ].map((feature) => (
+                    <li key={feature} className="flex items-start gap-2">
+                      <CheckCircle2 className="h-3.5 w-3.5 text-blue-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-xs text-blue-700">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
 
               {/* Preview hint */}
               <div className="p-3 bg-slate-50 rounded-lg border text-center">
                 <p className="text-xs text-slate-500">
-                  Después de crear tu perfil, podrás ver exactamente cómo te ven los dueños con el
-                  botón{' '}
-                  <span className="font-medium text-purple-600">"Ver como me ven los dueños"</span>.
+                  Desde tu dashboard podras ver exactamente como te ven los duenos con el boton{' '}
+                  <span className="font-medium text-purple-600">"Ver como me ven los duenos"</span>.
                 </p>
               </div>
 
               <div className="flex gap-3">
                 <Button variant="outline" onClick={() => setStep(2)} className="flex-1" size="lg">
-                  <ChevronLeft className="h-4 w-4 mr-1" /> Atrás
+                  <ChevronLeft className="h-4 w-4 mr-1" /> Atras
                 </Button>
-                <Button className="flex-1" size="lg" disabled={submitting} onClick={handleSubmit}>
-                  {submitting ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" /> Creando perfil...
-                    </>
-                  ) : (
-                    'Crear perfil'
-                  )}
+                <Button className="flex-1" size="lg" onClick={completeOnboarding}>
+                  Ir a mi dashboard <ChevronRight className="h-4 w-4 ml-1" />
                 </Button>
               </div>
-            </>
+
+              <p className="text-xs text-center text-slate-400">
+                Puedes explorar todo esto despues desde tu dashboard.
+              </p>
+            </div>
           )}
         </CardContent>
       </Card>

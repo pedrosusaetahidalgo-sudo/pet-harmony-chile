@@ -985,6 +985,14 @@ export default function AdminDashboard() {
                 label="Edge Functions"
               />
               <HealthBadge status="healthy" label="Frontend" />
+              <HealthBadge
+                status={import.meta.env.VITE_POSTHOG_KEY ? 'healthy' : 'unknown'}
+                label={
+                  import.meta.env.VITE_POSTHOG_KEY
+                    ? 'PostHog activo'
+                    : 'PostHog: configurar VITE_POSTHOG_KEY en .env'
+                }
+              />
             </div>
           ) : (
             <div className="flex gap-3">
