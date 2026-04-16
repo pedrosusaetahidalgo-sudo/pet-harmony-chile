@@ -3,6 +3,7 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Header } from '@/components/Header';
 import { BottomTabBar } from '@/components/BottomTabBar';
+import { FeedbackWidget } from '@/components/FeedbackWidget';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useErrorReporter } from '@/hooks/useErrorReporter';
 import { useAnalyticsTracker } from '@/hooks/useAnalyticsTracker';
@@ -43,6 +44,9 @@ function LayoutInner({ children }: AppLayoutProps) {
 
       {/* Bottom tab bar — solo mobile */}
       <BottomTabBar />
+
+      {/* Feedback widget — floating button + modal */}
+      <FeedbackWidget />
     </div>
   );
 }

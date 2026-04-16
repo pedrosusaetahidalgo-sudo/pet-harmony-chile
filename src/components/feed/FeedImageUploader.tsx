@@ -2,6 +2,12 @@ import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ImagePlus, X, Loader2 } from '@/lib/icons';
 import { useToast } from '@/hooks/use-toast';
+import {
+  compressImage,
+  compressedToFile,
+  validateImageFile,
+  IMAGE_PRESETS,
+} from '@/lib/imageUtils';
 
 interface FeedImageUploaderProps {
   images: File[];
@@ -11,9 +17,6 @@ interface FeedImageUploaderProps {
   maxImages?: number;
   disabled?: boolean;
 }
-
-const MAX_SIZE = 10 * 1024 * 1024; // 10MB
-const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 export function FeedImageUploader({
   images,
@@ -25,38 +28,48 @@ export function FeedImageUploader({
 }: FeedImageUploaderProps) {
   const { toast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [compressing, setCompressing] = useState(false);
 
-  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFiles = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const fileList = e.target.files;
     if (!fileList) return;
 
-    const newFiles: File[] = [];
     const remaining = maxImages - images.length;
+    const filesToProcess: File[] = [];
 
     for (let i = 0; i < Math.min(fileList.length, remaining); i++) {
       const file = fileList[i];
-
-      if (file.size > MAX_SIZE) {
-        toast({
-          variant: 'destructive',
-          title: `${file.name} supera los 10MB`,
-        });
+      const error = validateImageFile(file);
+      if (error) {
+        toast({ variant: 'destructive', title: error });
         continue;
       }
-
-      if (!ALLOWED_TYPES.includes(file.type)) {
-        toast({
-          variant: 'destructive',
-          title: 'Solo se permiten JPEG, PNG, WebP o GIF',
-        });
-        continue;
-      }
-
-      newFiles.push(file);
+      filesToProcess.push(file);
     }
 
-    if (newFiles.length > 0) {
-      onAdd(newFiles);
+    if (filesToProcess.length > 0) {
+      setCompressing(true);
+      try {
+        const compressed = await Promise.all(
+          filesToProcess.map(async (file) => {
+            // GIFs skip compression to preserve animation
+            if (file.type === 'image/gif') return file;
+            const result = await compressImage(file, IMAGE_PRESETS.feed);
+            return compressedToFile(
+              result,
+              `feed-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
+            );
+          })
+        );
+        onAdd(compressed);
+      } catch (err: unknown) {
+        toast({
+          variant: 'destructive',
+          title: (err as Error)?.message || 'Error al comprimir imagenes',
+        });
+      } finally {
+        setCompressing(false);
+      }
     }
 
     // Reset input so same file can be selected again

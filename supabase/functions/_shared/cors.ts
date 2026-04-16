@@ -19,5 +19,5 @@ export function getCorsHeaders(req: Request) {
 }
 
 export function handleCorsOptions(req: Request) {
-  return new Response(null, { headers: getCorsHeaders(req) });
+  return new Response(null, { status: 204, headers: getCorsHeaders(req) });
 }

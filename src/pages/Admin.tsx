@@ -38,6 +38,7 @@ import AdminErrorLog from '@/components/admin/AdminErrorLog';
 import AdminAnalytics from '@/components/admin/AdminAnalytics';
 import AdminPendingPets from '@/components/admin/AdminPendingPets';
 import AdminLeadsCRM from '@/components/admin/AdminLeadsCRM';
+import AdminFeedback from '@/components/admin/AdminFeedback';
 
 // ── Section definitions ──────────────────────────────────
 interface Section {
@@ -109,14 +110,18 @@ function UsersSection() {
 }
 
 function ContentSection() {
-  const [sub, setSub] = useState('moderation');
+  const [sub, setSub] = useState('feedback');
   return (
     <div className="space-y-4">
       <Tabs value={sub} onValueChange={setSub}>
         <TabsList>
+          <TabsTrigger value="feedback">Feedback</TabsTrigger>
           <TabsTrigger value="moderation">Moderación</TabsTrigger>
           <TabsTrigger value="promotions">Promociones</TabsTrigger>
         </TabsList>
+        <TabsContent value="feedback">
+          <AdminFeedback />
+        </TabsContent>
         <TabsContent value="moderation">
           <AdminModeration />
         </TabsContent>

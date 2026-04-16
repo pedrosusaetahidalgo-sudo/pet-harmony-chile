@@ -56,7 +56,7 @@ serve(async (req) => {
     // Obtener proveedores activos no-demo
     const { data: providers, error: provErr } = await supabase
       .from('service_providers')
-      .select('id, user_id, business_name, is_demo')
+      .select('id, user_id, display_name, is_demo')
       .eq('status', 'active');
 
     if (provErr) throw provErr;
@@ -110,7 +110,7 @@ serve(async (req) => {
         const reportContent = {
           provider_id: providerId,
           user_id: userId,
-          business_name: provider.business_name || 'Proveedor',
+          display_name: provider.display_name || 'Proveedor',
           period: { start: periodStart, end: periodEnd },
           bookings: {
             new: newBookings,
@@ -224,7 +224,7 @@ serve(async (req) => {
 });
 
 function buildVetInsightPrompt(report: {
-  business_name: string;
+  display_name: string;
   bookings: {
     new: number;
     completed: number;
@@ -242,7 +242,7 @@ function buildVetInsightPrompt(report: {
       : 'No recibió reseñas nuevas esta semana.';
 
   return (
-    `2 oraciones insight semanal para ${report.business_name}. ` +
+    `2 oraciones insight semanal para ${report.display_name}. ` +
     `Semana: ${bookings.new} nuevas, ${bookings.completed} completadas, ` +
     `${bookings.cancelled} canceladas, ${bookings.no_show} no-show. ` +
     `Revenue: $${revenueFormatted}. ${ratingInfo} Solo 2 oraciones con sugerencia práctica.`

@@ -25,10 +25,7 @@ import { ProfessionalBadges } from '@/components/ProfessionalBadges';
 import { useStartConversation } from '@/hooks/useStartConversation';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { logger } from '@/lib/logger';
-const dogProfileUrl =
-  'https://images.unsplash.com/photo-1552053831-71594a27632d?w=400&h=400&fit=crop&crop=faces';
-const catProfileUrl =
-  'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=400&fit=crop&crop=faces';
+// Fallback images removed — we use inline PawPrint icons instead of external URLs
 
 const UserProfile = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -370,12 +367,18 @@ const UserProfile = () => {
                   key={post.id}
                   className="relative aspect-square group cursor-pointer overflow-hidden rounded-md sm:rounded-lg"
                 >
-                  <img
-                    src={post.image_url || dogProfileUrl}
-                    alt="Post"
-                    loading="lazy"
-                    className="w-full h-full object-cover transition-transform group-hover:scale-110"
-                  />
+                  {post.image_url ? (
+                    <img
+                      src={post.image_url}
+                      alt="Post"
+                      loading="lazy"
+                      className="w-full h-full object-cover transition-transform group-hover:scale-110"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-muted">
+                      <PawPrint className="h-10 w-10 text-muted-foreground/40" />
+                    </div>
+                  )}
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 sm:gap-4 text-white">
                     <div className="flex items-center gap-1">
                       <Heart className="h-4 w-4 sm:h-5 sm:w-5 fill-white" />
@@ -411,14 +414,18 @@ const UserProfile = () => {
                 >
                   <CardContent className="p-0">
                     <div className="relative aspect-square overflow-hidden">
-                      <img
-                        src={
-                          pet.photo_url || (pet.species === 'perro' ? dogProfileUrl : catProfileUrl)
-                        }
-                        alt={pet.name}
-                        loading="lazy"
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform"
-                      />
+                      {pet.photo_url ? (
+                        <img
+                          src={pet.photo_url}
+                          alt={pet.name}
+                          loading="lazy"
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-muted">
+                          <PawPrint className="h-12 w-12 text-muted-foreground/40" />
+                        </div>
+                      )}
                     </div>
                     <div className="p-3 sm:p-4">
                       <h3 className="font-semibold text-sm sm:text-base mb-1 truncate">

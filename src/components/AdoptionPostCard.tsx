@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Heart, MapPin, Calendar, MessageCircle, Eye, Check, X } from '@/lib/icons';
+import { Heart, MapPin, Calendar, MessageCircle, Eye, Check, X, PawPrint } from '@/lib/icons';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useStartConversation } from '@/hooks/useStartConversation';
@@ -54,9 +54,7 @@ export function AdoptionPostCard({ post, onUpdate, isOwner }: AdoptionPostCardPr
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [interests, setInterests] = useState<any[]>([]);
 
-  const mainPhoto =
-    post.photos?.[0] ||
-    'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=400&fit=crop&crop=faces';
+  const mainPhoto = post.photos?.[0] || null;
   const age =
     post.age_years > 0 || post.age_months > 0
       ? `${post.age_years > 0 ? `${post.age_years} año${post.age_years > 1 ? 's' : ''}` : ''} ${post.age_months > 0 ? `${post.age_months} mes${post.age_months > 1 ? 'es' : ''}` : ''}`.trim()
@@ -155,12 +153,18 @@ export function AdoptionPostCard({ post, onUpdate, isOwner }: AdoptionPostCardPr
     <>
       <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/20 rounded-2xl">
         <div className="relative h-44 sm:h-48 overflow-hidden bg-muted">
-          <img
-            src={mainPhoto}
-            alt={post.pet_name}
-            loading="lazy"
-            className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-          />
+          {mainPhoto ? (
+            <img
+              src={mainPhoto}
+              alt={post.pet_name}
+              loading="lazy"
+              className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <PawPrint className="h-14 w-14 text-muted-foreground/40" />
+            </div>
+          )}
           <div className="absolute top-2 right-2">
             <Badge
               className={`${

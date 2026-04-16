@@ -157,11 +157,16 @@ export function calculateProfileCompleteness(p: Partial<ProviderProfileForm> | n
 export const REQUIRED_FOR_DIRECTORY_SCORE = 80;
 
 export async function uploadProviderAvatar(userId: string, file: File): Promise<string> {
-  const ext = file.name.split('.').pop() ?? 'jpg';
+  // Compress avatar before upload
+  const { compressImage, compressedToFile, IMAGE_PRESETS } = await import('@/lib/imageUtils');
+  const compressed = await compressImage(file, IMAGE_PRESETS.avatar);
+  const finalFile = compressedToFile(compressed, `avatar-${Date.now()}`);
+
+  const ext = compressed.format === 'webp' ? 'webp' : 'jpg';
   const path = `${userId}/avatar-${Date.now()}.${ext}`;
   const { error } = await supabase.storage
     .from('avatars')
-    .upload(path, file, { upsert: true, cacheControl: '3600' });
+    .upload(path, finalFile, { upsert: true, cacheControl: '3600' });
   if (error) throw error;
   const { data } = supabase.storage.from('avatars').getPublicUrl(path);
   return data.publicUrl;

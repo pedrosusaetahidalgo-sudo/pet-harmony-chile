@@ -26,6 +26,12 @@ import { Badge } from '@/components/ui/badge';
 import { Upload, Loader2 } from '@/lib/icons';
 import { logger } from '@/lib/logger';
 import {
+  compressImage,
+  compressedToFile,
+  validateImageFile,
+  IMAGE_PRESETS,
+} from '@/lib/imageUtils';
+import {
   HEALTH_STATUS_OPTIONS,
   ADOPTION_REASON_OPTIONS,
   PERSONALITY_OPTIONS,
@@ -57,13 +63,29 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
 
     try {
       const uploadPromises = Array.from(files).map(async (file) => {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `${user?.id}/${fileName}`;
+        const validationError = validateImageFile(file);
+        if (validationError) {
+          toast.error(validationError);
+          return null;
+        }
 
-        const { error: uploadError, data } = await supabase.storage
+        // Compress before upload
+        let uploadFile: File;
+        if (file.type === 'image/gif') {
+          uploadFile = file;
+        } else {
+          const compressed = await compressImage(file, IMAGE_PRESETS.feed);
+          uploadFile = compressedToFile(
+            compressed,
+            `adoption-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`
+          );
+        }
+
+        const filePath = `${user?.id}/${Date.now()}-${Math.random().toString(36).slice(2, 6)}.${uploadFile.name.split('.').pop()}`;
+
+        const { error: uploadError } = await supabase.storage
           .from('pet-photos')
-          .upload(filePath, file);
+          .upload(filePath, uploadFile);
 
         if (uploadError) throw uploadError;
 
@@ -74,9 +96,11 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
         return publicUrl;
       });
 
-      const urls = await Promise.all(uploadPromises);
-      setPhotoUrls((prev) => [...prev, ...urls]);
-      toast.success('Fotos subidas exitosamente');
+      const urls = (await Promise.all(uploadPromises)).filter(Boolean) as string[];
+      if (urls.length > 0) {
+        setPhotoUrls((prev) => [...prev, ...urls]);
+        toast.success('Fotos subidas exitosamente');
+      }
     } catch (error) {
       logger.error('Error uploading photos:', error);
       toast.error('Error al subir las fotos');

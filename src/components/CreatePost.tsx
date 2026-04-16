@@ -1,24 +1,30 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
-import { Image, X, Loader2 } from "@/lib/icons";
-import { LINKS } from "@/lib/links";
-import { useAuth } from "@/hooks/useAuth";
-import { useGamification } from "@/hooks/useGamification";
-import { DEFAULT_POINTS_CONFIG } from "@/lib/gamification";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+import { Image, X, Loader2 } from '@/lib/icons';
+import { LINKS } from '@/lib/links';
+import {
+  compressImage,
+  compressedToFile,
+  validateImageFile,
+  IMAGE_PRESETS,
+} from '@/lib/imageUtils';
+import { useAuth } from '@/hooks/useAuth';
+import { useGamification } from '@/hooks/useGamification';
+import { DEFAULT_POINTS_CONFIG } from '@/lib/gamification';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { logger } from "@/lib/logger";
-import { describeSupabaseError } from "@/lib/supabaseErrors";
-import { POST_TYPES } from "@/lib/postTypes";
+} from '@/components/ui/select';
+import { logger } from '@/lib/logger';
+import { describeSupabaseError } from '@/lib/supabaseErrors';
+import { POST_TYPES } from '@/lib/postTypes';
 
 interface CreatePostProps {
   onSuccess?: () => void;
@@ -29,12 +35,13 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
   const { toast } = useToast();
   const { awardPoints } = useGamification();
   const navigate = useNavigate();
-  const [content, setContent] = useState("");
-  const [postType, setPostType] = useState<string>("foto");
-  const [petId, setPetId] = useState<string>("");
+  const [content, setContent] = useState('');
+  const [postType, setPostType] = useState<string>('foto');
+  const [petId, setPetId] = useState<string>('');
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>("");
+  const [imagePreview, setImagePreview] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [pets, setPets] = useState<any[]>([]);
   const [loadingPets, setLoadingPets] = useState(true);
 
@@ -42,11 +49,11 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
   useEffect(() => {
     const loadPets = async () => {
       if (!user) return;
-      
+
       const { data, error } = await supabase
-        .from("pets")
-        .select("id, name, photo_url")
-        .eq("owner_id", user.id);
+        .from('pets')
+        .select('id, name, photo_url')
+        .eq('owner_id', user.id);
 
       if (!error && data) {
         setPets(data);
@@ -56,51 +63,55 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
     loadPets();
   }, [user]);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const maxSize = 10 * 1024 * 1024; // 10MB
-    if (file.size > maxSize) {
-      toast({ title: "Algo salió mal", description: "La imagen no puede superar los 10MB", variant: "destructive" });
+    const error = validateImageFile(file);
+    if (error) {
+      toast({ title: 'Algo salio mal', description: error, variant: 'destructive' });
       return;
     }
 
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-    if (!allowedTypes.includes(file.type)) {
-      toast({ title: "Algo salió mal", description: "Solo se permiten imágenes JPEG, PNG, WebP o GIF", variant: "destructive" });
-      return;
+    try {
+      // GIFs skip compression to preserve animation
+      let finalFile: File;
+      if (file.type === 'image/gif') {
+        finalFile = file;
+      } else {
+        const compressed = await compressImage(file, IMAGE_PRESETS.feed);
+        finalFile = compressedToFile(compressed, `post-${Date.now()}`);
+      }
+      setImageFile(finalFile);
+      setImagePreview(URL.createObjectURL(finalFile));
+    } catch (err: unknown) {
+      toast({
+        title: 'Algo salio mal',
+        description: (err as Error)?.message || 'Error al procesar imagen',
+        variant: 'destructive',
+      });
     }
-
-    setImageFile(file);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setImagePreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
   };
 
   const removeImage = () => {
     setImageFile(null);
-    setImagePreview("");
+    setImagePreview('');
   };
 
   const uploadImage = async () => {
     if (!imageFile || !user) return null;
 
-    const fileExt = imageFile.name.split(".").pop();
+    const fileExt = imageFile.name.split('.').pop();
     const fileName = `${Math.random()}.${fileExt}`;
     const filePath = `${user.id}/${fileName}`;
 
     const { error: uploadError } = await supabase.storage
-      .from("pet-photos")
+      .from('pet-photos')
       .upload(filePath, imageFile);
 
     if (uploadError) throw uploadError;
 
-    const { data } = supabase.storage
-      .from("pet-photos")
-      .getPublicUrl(filePath);
+    const { data } = supabase.storage.from('pet-photos').getPublicUrl(filePath);
 
     return data.publicUrl;
   };
@@ -110,18 +121,18 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
 
     if (!user) {
       toast({
-        title: "Algo salió mal",
-        description: "Debes iniciar sesión para publicar",
-        variant: "destructive",
+        title: 'Algo salió mal',
+        description: 'Debes iniciar sesión para publicar',
+        variant: 'destructive',
       });
       return;
     }
 
     if (!content.trim()) {
       toast({
-        title: "Algo salió mal",
-        description: "Escribe algo para publicar",
-        variant: "destructive",
+        title: 'Algo salió mal',
+        description: 'Escribe algo para publicar',
+        variant: 'destructive',
       });
       return;
     }
@@ -134,29 +145,33 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
         try {
           imageUrl = await uploadImage();
         } catch (uploadErr) {
-          logger.error("[CreatePost] image upload failed", uploadErr);
+          logger.error('[CreatePost] image upload failed', uploadErr);
           toast({
-            title: "No pudimos subir la foto",
+            title: 'No pudimos subir la foto',
             description:
               describeSupabaseError(uploadErr as Parameters<typeof describeSupabaseError>[0]) ||
-              "Revisa tu conexión y vuelve a intentar. Tu texto no se perdió.",
-            variant: "destructive",
+              'Revisa tu conexión y vuelve a intentar. Tu texto no se perdió.',
+            variant: 'destructive',
           });
           setIsSubmitting(false);
           return;
         }
       }
 
-      const { data: post, error } = await supabase.from("posts").insert({
-        user_id: user.id,
-        content: content.trim(),
-        image_url: imageUrl,
-        pet_id: petId || null,
-        post_type: postType || null,
-      }).select().maybeSingle();
+      const { data: post, error } = await supabase
+        .from('posts')
+        .insert({
+          user_id: user.id,
+          content: content.trim(),
+          image_url: imageUrl,
+          pet_id: petId || null,
+          post_type: postType || null,
+        })
+        .select()
+        .maybeSingle();
 
       if (error) {
-        logger.error("[CreatePost] posts insert failed", error);
+        logger.error('[CreatePost] posts insert failed', error);
         throw error;
       }
 
@@ -164,33 +179,33 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
       try {
         awardPoints({
           points: DEFAULT_POINTS_CONFIG.post,
-          actionType: "post",
+          actionType: 'post',
           actionId: post.id,
-          description: "Post creado",
+          description: 'Post creado',
         });
       } catch (pointsError) {
-        logger.error("Error awarding points:", pointsError);
+        logger.error('Error awarding points:', pointsError);
         // Don't fail the post creation if points fail
       }
 
       toast({
-        title: "¡Publicado!",
-        description: "Tu publicación se ha compartido con la comunidad",
+        title: '¡Publicado!',
+        description: 'Tu publicación se ha compartido con la comunidad',
       });
 
-      setContent("");
-      setPostType("foto");
-      setPetId("");
+      setContent('');
+      setPostType('foto');
+      setPetId('');
       removeImage();
       onSuccess?.();
-    } catch (error: any) {
-      logger.error("[CreatePost] handleSubmit failed", error);
+    } catch (error: unknown) {
+      logger.error('[CreatePost] handleSubmit failed', error);
       toast({
-        title: "No pudimos guardar tu publicación",
+        title: 'No pudimos guardar tu publicación',
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
-          "Inténtalo de nuevo en unos segundos. Tu texto y foto siguen aquí.",
-        variant: "destructive",
+          'Inténtalo de nuevo en unos segundos. Tu texto y foto siguen aquí.',
+        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);
@@ -200,9 +215,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
   if (!user) {
     return (
       <div className="text-center py-8">
-        <p className="text-muted-foreground mb-4">
-          Inicia sesión para crear publicaciones
-        </p>
+        <p className="text-muted-foreground mb-4">Inicia sesión para crear publicaciones</p>
         <Button onClick={() => navigate(LINKS.auth())}>Iniciar Sesión</Button>
       </div>
     );
@@ -225,10 +238,13 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
 
       <Textarea
         placeholder={
-          postType === "pregunta" ? "¿Qué quieres preguntar a la comunidad?" :
-          postType === "consejo" ? "Comparte tu consejo o tip..." :
-          postType === "perdido" ? "Describe a la mascota perdida o encontrada..." :
-          "¿Qué quieres compartir?"
+          postType === 'pregunta'
+            ? '¿Qué quieres preguntar a la comunidad?'
+            : postType === 'consejo'
+              ? 'Comparte tu consejo o tip...'
+              : postType === 'perdido'
+                ? 'Describe a la mascota perdida o encontrada...'
+                : '¿Qué quieres compartir?'
         }
         value={content}
         onChange={(e) => setContent(e.target.value)}
@@ -252,11 +268,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
 
       {imagePreview && (
         <div className="relative">
-          <img
-            src={imagePreview}
-            alt="Preview"
-            className="w-full h-64 object-cover rounded-lg"
-          />
+          <img src={imagePreview} alt="Preview" className="w-full h-64 object-cover rounded-lg" />
           <Button
             type="button"
             variant="destructive"
@@ -273,7 +285,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
         <Button
           type="button"
           variant="outline"
-          onClick={() => document.getElementById("post-image")?.click()}
+          onClick={() => document.getElementById('post-image')?.click()}
         >
           <Image className="h-4 w-4 mr-2" />
           Agregar Foto

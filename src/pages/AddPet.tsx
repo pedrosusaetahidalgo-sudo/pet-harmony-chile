@@ -21,6 +21,14 @@ import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Upload, X, ChevronDown, Stethoscope, Heart } from '@/lib/icons';
 import { LINKS } from '@/lib/links';
+import { ImageCropDialog } from '@/components/ImageCropDialog';
+import {
+  compressImage,
+  compressedToFile,
+  validateImageFile,
+  IMAGE_PRESETS,
+  MIN_DIMENSIONS,
+} from '@/lib/imageUtils';
 import { Badge } from '@/components/ui/badge';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { logger } from '@/lib/logger';
@@ -58,6 +66,8 @@ const AddPet = () => {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string>('');
   const [existingPhotoUrl, setExistingPhotoUrl] = useState<string | null>(null);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const [showCrop, setShowCrop] = useState(false);
   const [selectedPersonality, setSelectedPersonality] = useState<string[]>([]);
   const [customPersonality, setCustomPersonality] = useState('');
   const [showMedical, setShowMedical] = useState(false);
@@ -166,13 +176,35 @@ const AddPet = () => {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setPhotoFile(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+    e.target.value = '';
+
+    const error = validateImageFile(file);
+    if (error) {
+      toast({ title: error, variant: 'destructive' });
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    setCropSrc(url);
+    setShowCrop(true);
+  };
+
+  const handleCropComplete = async (croppedBlob: Blob) => {
+    try {
+      const croppedFile = new File([croppedBlob], 'pet-crop.jpg', { type: 'image/jpeg' });
+      const compressed = await compressImage(croppedFile, IMAGE_PRESETS.pet);
+      const finalFile = compressedToFile(compressed, `pet-${Date.now()}`);
+      setPhotoFile(finalFile);
+      setPhotoPreview(URL.createObjectURL(compressed.blob));
+    } catch (err: unknown) {
+      toast({
+        title: (err as Error)?.message || 'Error al procesar la foto',
+        variant: 'destructive',
+      });
+    } finally {
+      if (cropSrc) URL.revokeObjectURL(cropSrc);
+      setCropSrc(null);
     }
   };
 
@@ -1179,6 +1211,25 @@ const AddPet = () => {
           </div>
         </form>
       </div>
+
+      {/* Crop dialog for pet photo */}
+      {cropSrc && (
+        <ImageCropDialog
+          open={showCrop}
+          onOpenChange={(v) => {
+            setShowCrop(v);
+            if (!v && cropSrc) {
+              URL.revokeObjectURL(cropSrc);
+              setCropSrc(null);
+            }
+          }}
+          imageSrc={cropSrc}
+          aspect={1}
+          cropShape="rect"
+          title="Ajusta la foto de tu mascota"
+          onCropComplete={handleCropComplete}
+        />
+      )}
     </div>
   );
 };

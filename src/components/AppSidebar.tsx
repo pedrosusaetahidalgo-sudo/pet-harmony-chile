@@ -7,7 +7,7 @@ import {
   RefreshCw,
   LogOut,
   Settings,
-  Map,
+  Map as MapIcon,
   Gamepad2,
   UserCog,
   LayoutDashboard,
@@ -73,7 +73,7 @@ const healthItems = [
 const discoverItems = [
   { title: 'Buscar vet', url: '/veterinarios', icon: Search },
   { title: 'Servicios', url: '/servicios', icon: Briefcase },
-  { title: 'Mapa', url: '/maps', icon: Map },
+  { title: 'Mapa', url: '/maps', icon: MapIcon },
   { title: 'Banco de sangre', url: '/donantes-sangre', icon: Droplets },
 ];
 

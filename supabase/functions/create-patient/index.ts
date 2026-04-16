@@ -301,7 +301,17 @@ function validatePayload(
 // ─── Main handler ───────────────────────────────────────────────────
 
 serve(async (req) => {
-  if (req.method === 'OPTIONS') return handleCorsOptions(req);
+  // CORS preflight — respond immediately with 204
+  if (req.method === 'OPTIONS') {
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': req.headers.get('Origin') || 'https://pawfriend.cl',
+        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      },
+    });
+  }
 
   try {
     // ── Auth ──
@@ -321,7 +331,7 @@ serve(async (req) => {
     // ── Verify caller is an active service_provider ──
     const { data: vetProvider, error: providerError } = await supabase
       .from('service_providers')
-      .select('id, business_name, is_verified')
+      .select('id, display_name, is_verified')
       .eq('user_id', vetId)
       .maybeSingle();
 
@@ -462,7 +472,7 @@ serve(async (req) => {
       .single();
 
     const vetName = vetProfile?.display_name || 'Tu veterinario/a';
-    const clinicName = vetProvider.business_name || '';
+    const clinicName = vetProvider.display_name || '';
 
     let emailSent = false;
     let method: 'resend' | 'invite' | 'skip' = 'skip';

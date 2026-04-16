@@ -287,12 +287,12 @@ serve(async (req) => {
       .single();
     const { data: vetProvider } = await supabase
       .from('service_providers')
-      .select('id, business_name')
+      .select('id, display_name')
       .eq('user_id', callerId)
       .maybeSingle();
 
     const vetName = vetProfile?.display_name || 'Tu veterinario/a';
-    const clinicName = vetProvider?.business_name || '';
+    const clinicName = vetProvider?.display_name || '';
 
     // --- Generate invitation token if not exists ---
     let invitationToken = pet.owner_invitation_token;
