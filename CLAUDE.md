@@ -1,7 +1,7 @@
 # Paw Friend -- Manual operativo para Claude Code
 
 > Este archivo es la fuente de verdad para cualquier agente o asistente IA que trabaje en este repositorio.
-> Actualizado: 2026-04-14.
+> Actualizado: 2026-04-15.
 
 ---
 
@@ -49,9 +49,9 @@ src/
   App.tsx              # Rutas principales (lazy-loaded)
   main.tsx             # Entry point
   index.css            # Tailwind + globals
-  pages/               # Una pagina por ruta (64 archivos incl. PetClinicalRecord/)
-  components/          # Componentes reutilizables (261 archivos en 20 subdirs)
-    ui/                # shadcn/ui primitivos (51 archivos, kebab-case)
+  pages/               # Una pagina por ruta (65 archivos incl. PetClinicalRecord/)
+  components/          # Componentes reutilizables (272 archivos en 20 subdirs)
+    ui/                # shadcn/ui primitivos (54 archivos, kebab-case)
     admin/             # Panel admin (21)
     ai/                # Componentes de IA (6)
     analytics/         # Analytics preview (4)
@@ -70,8 +70,8 @@ src/
     routines/          # Rutinas mascotas (4)
     settings/          # Configuracion usuario (1)
     social/            # Feed, posts, follows (1)
-  hooks/               # Custom hooks (63 archivos, useXxx.tsx/.ts)
-  lib/                 # Utilidades y configuracion (35 archivos + 7 tests)
+  hooks/               # Custom hooks (68 archivos, useXxx.tsx/.ts)
+  lib/                 # Utilidades y configuracion (38 archivos + 12 tests)
   integrations/
     supabase/          # Cliente Supabase, types generados
   types/               # Tipos adicionales (capacitor-google-auth.d.ts, vetDirectory.ts)
@@ -128,12 +128,13 @@ AGENTS.md              # Config para agentes IA (Cursor, Copilot, etc.)
 
 ---
 
-## 6. Edge Functions activas (26 + _shared)
+## 6. Edge Functions activas (28 + _shared)
 
 ```
 _shared/                         # Helpers compartidos (ai-base, cors, flow-utils, prompt-utils, rate-limit, payment-gateway)
 bereavement-assistant/           # Asistente IA empatico (memorial)
 breed-tips/                      # Tips por raza (IA)
+create-patient/                  # Crear paciente desde vet (validacion, duplicados, Paw Card, invitar dueno)
 flow-create-subscription/        # Crear suscripcion Flow.cl
 flow-webhook/                    # Webhook de Flow.cl
 generate-medical-summary/        # PDF ficha medica
@@ -154,6 +155,7 @@ ocr-vaccination-card/            # OCR de carnet de vacunacion (IA)
 pet-assistant/                   # Asistente IA basico de mascotas
 process-consultation-transcript/ # Transcripcion audio consulta vet
 reminder-cron/                   # Cron de recordatorios
+send-lead-outreach/              # Outreach a leads veterinarios (email HTML, WhatsApp wa.me URLs)
 send-pet-invitation/             # Invitar dueno a gestionar mascota (vet)
 send-whatsapp-reminder/          # WhatsApp (pendiente verificacion Meta)
 verify-service-provider/         # Verificacion IA de proveedor
@@ -183,7 +185,7 @@ verify-vet-document/             # Verificacion vet IA-assisted
 - `/medical-share/:token` -- Landing publica de ficha compartida (30 dias)
 - `/terms`, `/privacy` -- Legales
 
-### Protegidas (requieren auth) — 38+ rutas
+### Protegidas (requieren auth) — 40 rutas
 - `/home` -- Dashboard principal
 - `/feed` -- Feed social
 - `/comunidad`, `/comunidad/:slug` -- Grupos de comunidad (por raza/condicion)
@@ -195,6 +197,7 @@ verify-vet-document/             # Verificacion vet IA-assisted
 - `/reminders` -- Recordatorios
 - `/rutinas` -- Rutinas semanales por mascota
 - `/mascota/:petId/rutinas` -- Rutinas de una mascota especifica
+- `/mascota/:petId/timeline` -- Timeline de eventos de una mascota
 - `/calendario` -- Calendario unificado (rutinas + recordatorios + citas)
 - `/ficha/:petId` -- Ficha clinica completa (legacy `/mascota/:petId/ficha-clinica` y `/pet/:petId/clinical` redirigen aqui)
 - `/adoption` -- Adopcion
@@ -212,6 +215,7 @@ verify-vet-document/             # Verificacion vet IA-assisted
 - `/payment-result` -- Resultado unificado Flow (?status=success|failed)
 - `/mis-reservas` -- Mis reservas
 - `/reportes` -- Reportes semanales
+- `/panel-pro` -- Panel Pro analytics (Premium)
 - `/onboarding-mascota` -- Onboarding minimal dueno
 - `/onboarding-vet` -- Onboarding minimal veterinario
 - `/analytics-demo` -- Analytics dashboard (standalone demo)
@@ -380,10 +384,19 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 
 - Hook: `useActiveRole()` en `src/hooks/useActiveRole.tsx`
 - Persiste en `localStorage` key `pf_active_role`
-- Toggle visible en Header solo si `isProvider=true`
-- Al cambiar a owner → redirect a `/home`
-- Al cambiar a provider → redirect a `/provider/dashboard`
+- Toggle **siempre visible** en Header para todos los usuarios autenticados
+- **Provider → Owner**: toggle directo + toast + redirect a `/home` (sin popup de confirmacion)
+- **Owner con provider record → Provider**: toggle directo + toast + redirect a `/provider/dashboard`
+- **Owner SIN provider record → Provider**: abre `BecomeProviderDialog` (wizard 2 pasos: tipo + perfil profesional) → crea `service_providers` con `status: 'pending'` → redirect a `/provider/dashboard`
 - `RoleGuard` auto-switchea si usuario accede a ruta del otro rol
+
+### BecomeProviderDialog (registro inline de profesional)
+
+- Archivo: `src/components/BecomeProviderDialog.tsx`
+- **Paso 1**: elegir tipo (individual / domicilio / clinica)
+- **Paso 2**: bio, especialidades, comuna base, areas de servicio (validado con zod)
+- Crea registro `service_providers` con `status: 'pending'`, `is_directory_visible: false`
+- No requiere aprobacion admin para usar la vista provider, pero si para aparecer en directorio publico
 
 ### Flujo mascota huerfana (vet crea mascota sin cuenta de dueno)
 
@@ -401,11 +414,12 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 - `src/components/RoleGuard.tsx` — guard de rutas por rol
 - `src/components/AdminRoute.tsx` — guard admin
 - `src/lib/routing.ts` — helpers `isOwnerRoute()`, `isProviderRoute()`, constantes
-- `src/components/Header.tsx:192-240` — toggle dueno/profesional
+- `src/components/Header.tsx:192-245` — toggle dueno/profesional (siempre visible)
+- `src/components/BecomeProviderDialog.tsx` — wizard registro inline de profesional
 
 ---
 
-## 12. Estado tecnico al cierre 2026-04-14
+## 12. Estado tecnico al cierre 2026-04-15
 
 | Metrica | Valor |
 |---|---|
@@ -414,14 +428,15 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 | Bundle principal (index) | ~334 kB / 100 kB gzip |
 | Chunk mas grande (Recharts) | 458 kB / 151 kB gzip |
 | Vendor splitting | 6 chunks (react, query, ui, icons, date, supabase) |
-| Archivos fuente (src/) | 432 total (64 pages, 261 components, 63 hooks, 35 libs) |
-| Migraciones | 139, hasta `20260512000001` + flag `99999999000000_demo_seed_flag` — **todas aplicadas en prod** |
-| Edge functions | 26 activas + `_shared/` (6 helpers) |
-| Rutas en App.tsx | 65 paths (18 publicas, 38+ protegidas, 3 provider, 2 admin, 4 redirects) |
+| Archivos fuente (src/) | 464 total (65 pages, 272 components, 68 hooks, 38 libs) |
+| Migraciones | 156, hasta `20260517100000` + flag `99999999000000_demo_seed_flag` — **todas aplicadas en prod** |
+| Edge functions | 28 activas + `_shared/` (6 helpers) |
+| Rutas en App.tsx | 67 paths (18 publicas, 40 protegidas, 3 provider, 2 admin, 4 redirects) |
 | Premium B2C Flow | Vivo con idempotencia + rate limit |
 | Google Calendar | Vivo end-to-end |
 | Sentry | Integrado (@sentry/react 10.47.0) |
 | WhatsApp Cloud API | Codigo listo, pendiente verificacion Meta Business |
+| CRM Leads Vet | Vivo — AdminLeadsCRM + edge fn send-lead-outreach |
 
 ---
 

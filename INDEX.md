@@ -2,7 +2,7 @@
 
 > Todos estos documentos deben mantenerse actualizados con cada cambio relevante.
 > Si modificas rutas, navegacion, flujos, planes o features: actualiza el documento correspondiente.
-> Ultima revision: 2026-04-14.
+> Ultima revision: 2026-04-15.
 
 ---
 
@@ -23,7 +23,7 @@
 
 | Documento | Que contiene | Cuando actualizar |
 |---|---|---|
-| [audits/CONTEXTO_REVISION_COMPLETA.txt](audits/CONTEXTO_REVISION_COMPLETA.txt) | Snapshot tecnico completo (432 archivos, 26 fns, 139 mig, 65 rutas) | Cada sesion de auditoria mayor |
+| [audits/CONTEXTO_REVISION_COMPLETA.txt](audits/CONTEXTO_REVISION_COMPLETA.txt) | Snapshot tecnico completo (464 archivos, 28 fns, 156 mig, 67 rutas) | Cada sesion de auditoria mayor |
 | [audits/AUDITORIA_UX_COMPLETA_2026_04_14.md](audits/AUDITORIA_UX_COMPLETA_2026_04_14.md) | Auditoria UX completa con severidad por item | Despues de cambios UX grandes |
 | [audits/FEATURES_INCOMPLETAS_2026_04_14.md](audits/FEATURES_INCOMPLETAS_2026_04_14.md) | 28 features con gaps detectados | Cuando se completen features |
 | [audits/OPTIMIZACION_COSTOS_2026_04_12.md](audits/OPTIMIZACION_COSTOS_2026_04_12.md) | Analisis de costos operativos + plan de eficiencia | Cuando cambien edge functions o infra de costos |
@@ -40,11 +40,8 @@
 |---|---|---|
 | [docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md](docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md) | PDF profesional cronologico + deduplicacion mascotas + sync datos | **Alta** -- Toca joya de la corona + integridad de datos |
 | [docs-specs/ANALISIS_PREMIUM_VS_FREE.md](docs-specs/ANALISIS_PREMIUM_VS_FREE.md) | Analisis de que features deben ser free vs premium + plan de ejecucion | **Alta** -- Define monetizacion |
-| [docs-specs/IDEAS_Y_MEJORAS_PENDIENTES.md](docs-specs/IDEAS_Y_MEJORAS_PENDIENTES.md) | Roadmap de features nuevas: breeding, banco de sangre, mapa pet friendly, seguros | **Alta** -- Documento maestro de roadmap |
 | [docs-specs/FICHA_VET_VIEW_SPEC.md](docs-specs/FICHA_VET_VIEW_SPEC.md) | Vista ficha clinica desde perspectiva vet | **Alta** -- UX veterinario |
 | [docs-specs/ADMIN_CONTROL_CENTER_V2.md](docs-specs/ADMIN_CONTROL_CENTER_V2.md) | Centro de control admin v2 | **Media** -- Admin expandido |
-| [docs-specs/AUDIO_CONSULTA_VET.md](docs-specs/AUDIO_CONSULTA_VET.md) | Transcripcion IA en vivo de consultas veterinarias | **Media** -- Diferenciador B2B, requiere infra IA |
-| [docs-specs/PROPUESTA_SIDEBAR_PROVIDER.md](docs-specs/PROPUESTA_SIDEBAR_PROVIDER.md) | Propuesta sidebar proveedor | **Media** -- UX provider |
 | [docs-specs/UPGRADE_TOGGLE_ROLE.md](docs-specs/UPGRADE_TOGGLE_ROLE.md) | Toggle de rol dueno/vet | **Media** -- UX dual-role |
 
 **Specs ya ejecutadas (movidas a _archive/):**
@@ -77,9 +74,8 @@ Resumen de items activos:
 | 3 | [INTEGRACIONES_SETUP.md](_pending/INTEGRACIONES_SETUP.md) | WhatsApp/Google setup | Alta |
 | 4 | [map-redesign-blueprint.md](_pending/map-redesign-blueprint.md) | Blueprint | Media |
 | 5 | [BASE_DATOS_PARTNERS_CHILE.md](_pending/BASE_DATOS_PARTNERS_CHILE.md) | Data | Media |
-| 6 | [PARTNERS_ONBOARDING.md](_pending/PARTNERS_ONBOARDING.md) | Onboarding partners | Media |
-| 7 | [testing-virtual-user-blueprint.md](_pending/testing-virtual-user-blueprint.md) | Testing Playwright | Media |
-| 8 | [FEATURE_AI_WEB_SEARCH_UPGRADE.md](_pending/features/FEATURE_AI_WEB_SEARCH_UPGRADE.md) | Feature | Media |
+| 6 | [testing-virtual-user-blueprint.md](_pending/testing-virtual-user-blueprint.md) | Testing Playwright | Media |
+| 7 | [FEATURE_AI_WEB_SEARCH_UPGRADE.md](_pending/features/FEATURE_AI_WEB_SEARCH_UPGRADE.md) | Feature | Media |
 
 ---
 
@@ -95,7 +91,7 @@ Resumen de items activos:
 | [docs/MOCKS_MAP.md](docs/MOCKS_MAP.md) | Auditoria de datos ficticios (95%+ limpio) |
 | [docs/PERFORMANCE_BUDGET.md](docs/PERFORMANCE_BUDGET.md) | Web Vitals targets y bundle limits |
 | [docs/JOURNEYS_UX.md](docs/JOURNEYS_UX.md) | Journeys dueno, vet y admin con pantallas clave |
-| [docs/EDGE_FUNCTIONS_MAP.md](docs/EDGE_FUNCTIONS_MAP.md) | Mapa de 26 edge functions + 6 helpers compartidos |
+| [docs/EDGE_FUNCTIONS_MAP.md](docs/EDGE_FUNCTIONS_MAP.md) | Mapa de 28 edge functions + 6 helpers compartidos |
 | [docs/ARQUITECTURA_RESUMEN.md](docs/ARQUITECTURA_RESUMEN.md) | Capas, entry points, modelo de datos, roles |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Guia para colaboradores (setup, comandos, convenciones) |
 | [.github/PULL_REQUEST_TEMPLATE.md](.github/PULL_REQUEST_TEMPLATE.md) | Checklist para PRs |
@@ -116,7 +112,15 @@ Resumen de items activos:
 
 ---
 
-## Planes ejecutados (2026-04-14)
+## Plan activo
+
+| Documento | Que contiene | Estado |
+|---|---|---|
+| [PLAN_MEJORA_INTEGRAL_2026_04_15.md](PLAN_MEJORA_INTEGRAL_2026_04_15.md) | 127 issues en 8 fases (seguridad → IA → perf → data → UX → tests → DX → polish) | Activo |
+
+---
+
+## Planes ejecutados (hasta 2026-04-15)
 
 | Plan | Estado |
 |---|---|
@@ -181,6 +185,11 @@ Documentos ya ejecutados o superados. Conservan valor historico pero no son acci
 | `REDISENO_MY_PETS_CARDS.md` | Ejecutado |
 | `REVISION_PROVIDER_PROFILE_EDIT.md` | Ejecutado |
 | `REPORTE_CONSOLIDADO_2026_04_11.md` | Superado por auditorias 2026-04-14 |
+| `PLAN_EJECUCION_AUDITORIA_2026_04_15.md` | Superado por PLAN_MEJORA_INTEGRAL (127 issues vs 67) |
+| `PARTNERS_ONBOARDING_COMPLETE_2026_04_13.md` | 100% ejecutado (landing, emails, migracion, admin, FAQ) |
+| `ROADMAP_IDEAS_FUTURE.md` | Ideas visionarias, no activas — conservado como referencia |
+| `SPEC_AUDIO_CONSULTA_PENDING.md` | Requiere infra IA externa, no iniciado |
+| `SIDEBAR_PROVIDER_IMPLEMENTED.md` | Sidebar ya implementado en codigo |
 
 ---
 

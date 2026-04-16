@@ -34,7 +34,10 @@ const Auth = () => {
   const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const returnTo = searchParams.get('returnTo');
+  const rawReturnTo = searchParams.get('returnTo');
+  // Prevent open redirect — only allow internal paths
+  const returnTo =
+    rawReturnTo?.startsWith('/') && !rawReturnTo.startsWith('//') ? rawReturnTo : null;
   const { toast } = useToast();
   const { signInWithFacebook, loading: facebookLoading } = useFacebookAuth();
   const hasRedirected = useRef(false);

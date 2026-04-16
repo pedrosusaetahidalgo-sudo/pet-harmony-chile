@@ -17,6 +17,7 @@ export default defineConfig(() => ({
   },
   build: {
     outDir: 'docs',
+    sourcemap: false,
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
