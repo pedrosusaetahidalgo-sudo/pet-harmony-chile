@@ -30,24 +30,11 @@ export function TodayAgendaCard() {
 
       const today = new Date().toISOString().split('T')[0];
 
-      // Obtener provider_id para consultar bookings de directorio
-      const { data: providerRow } = await supabase
-        .from('service_providers')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      const providerId = providerRow?.id;
-
-      // Consultar bookings legacy (vet_id) + directorio (service_provider_id)
-      const orFilter = providerId
-        ? `vet_id.eq.${user.id},service_provider_id.eq.${providerId}`
-        : `vet_id.eq.${user.id}`;
-
+      // Consultar bookings por vet_id (auth user)
       const { data, error } = await sb
         .from('vet_bookings')
         .select('id, scheduled_date, service_type, status, pet_id, owner_id')
-        .or(orFilter)
+        .eq('vet_id', user.id)
         .gte('scheduled_date', today)
         .lt('scheduled_date', today + 'T23:59:59')
         .neq('status', 'cancelled')

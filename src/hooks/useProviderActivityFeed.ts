@@ -55,7 +55,7 @@ export function useProviderActivityFeed() {
         sb
           .from('vet_bookings')
           .select('id, created_at, status')
-          .or(`vet_id.eq.${user.id},service_provider_id.eq.${provider.id}`)
+          .eq('vet_id', user.id)
           .gte('created_at', since)
           .order('created_at', { ascending: false })
           .limit(5),

@@ -75,10 +75,10 @@ export default function MyBookings() {
       const { data, error } = await supabase
         .from('bookings')
         .select(
-          'id, payment_status, created_at, service_slots(id, slot_date, start_time, end_time, service_type, provider_id)'
+          'id, payment_status, booked_at, service_slots(id, slot_date, start_time, end_time, service_type, provider_id)'
         )
         .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .order('booked_at', { ascending: false });
       if (error) throw error;
       if (!data || data.length === 0) return [];
 

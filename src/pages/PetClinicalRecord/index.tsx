@@ -184,7 +184,7 @@ const PetClinicalRecord = () => {
               .select('id')
               .eq('pet_id', pet.id)
               .eq('target_provider_id', provider.id)
-              .eq('is_active', true)
+              .eq('is_revoked', false)
               .maybeSingle();
             if (token) setVetShareTokenId(token.id);
           }

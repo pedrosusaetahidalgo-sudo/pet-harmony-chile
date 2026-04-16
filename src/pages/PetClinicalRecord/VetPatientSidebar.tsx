@@ -17,9 +17,9 @@ export function VetPatientSidebar({ pet }: VetPatientSidebarProps) {
     queryFn: async () => {
       const { data } = await supabase
         .from('medical_records')
-        .select('id, title, record_type, date, attachment_url')
+        .select('id, title, record_type, date, document_url')
         .eq('pet_id', pet.id)
-        .not('attachment_url', 'is', null)
+        .not('document_url', 'is', null)
         .order('date', { ascending: false })
         .limit(10);
       return data || [];
@@ -100,7 +100,7 @@ export function VetPatientSidebar({ pet }: VetPatientSidebarProps) {
               {documents.map((doc: any) => (
                 <a
                   key={doc.id}
-                  href={doc.attachment_url}
+                  href={doc.document_url}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-xs text-blue-600 hover:text-blue-800 hover:underline py-1"

@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { CheckCircle, XCircle, Eye, Image } from '@/lib/icons';
+import { CheckCircle, XCircle, Eye, Image, Loader2 } from '@/lib/icons';
 import {
   Table,
   TableBody,
@@ -23,15 +23,20 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { cn } from '@/lib/utils';
 import type { Tables } from '@/integrations/supabase/types';
 
 const statusLabels: Record<
   string,
-  { label: string; variant: 'default' | 'secondary' | 'destructive' }
+  { label: string; variant: 'default' | 'secondary' | 'destructive'; className: string }
 > = {
-  pending: { label: 'Pendiente', variant: 'secondary' },
-  approved: { label: 'Aprobado', variant: 'default' },
-  rejected: { label: 'Rechazado', variant: 'destructive' },
+  pending: {
+    label: 'Pendiente',
+    variant: 'secondary',
+    className: 'bg-amber-500/20 text-amber-300',
+  },
+  approved: { label: 'Aprobado', variant: 'default', className: 'bg-green-500/20 text-green-300' },
+  rejected: { label: 'Rechazado', variant: 'destructive', className: 'bg-red-500/20 text-red-300' },
 };
 
 const serviceTypeLabels: Record<string, string> = {
@@ -39,7 +44,7 @@ const serviceTypeLabels: Record<string, string> = {
   dog_sitter: 'Cuidado',
   vet: 'Veterinario',
   trainer: 'Entrenamiento',
-  grooming: 'Peluquería',
+  grooming: 'Peluqueria',
   other: 'Otro',
 };
 
@@ -104,97 +109,140 @@ const AdminServicePromotions = () => {
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['admin-service-promotions'] });
-      toast.success(variables.status === 'approved' ? 'Promoción aprobada' : 'Promoción rechazada');
+      toast.success(variables.status === 'approved' ? 'Promocion aprobada' : 'Promocion rechazada');
       setSelectedPromotion(null);
       setRejectionReason('');
     },
     onError: () => {
-      toast.error('Error al procesar promoción');
+      toast.error('Error al procesar promocion');
     },
   });
 
   const pendingCount = promotions?.filter((p) => p.status === 'pending').length || 0;
 
   return (
-    <Card>
+    <Card className="bg-slate-900 border-slate-800">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-slate-100">
           Promociones de Servicios
-          {pendingCount > 0 && <Badge variant="destructive">{pendingCount} pendientes</Badge>}
+          {pendingCount > 0 && (
+            <Badge className="bg-amber-500/20 text-amber-300">{pendingCount} pendientes</Badge>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent>
         {isLoading ? (
           <div className="flex justify-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+            <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
           </div>
         ) : !promotions || promotions.length === 0 ? (
-          <p className="text-muted-foreground text-center py-8">No hay promociones</p>
+          <p className="text-slate-500 text-center py-8">No hay promociones</p>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Título</TableHead>
-                <TableHead>Usuario</TableHead>
-                <TableHead>Tipo</TableHead>
-                <TableHead>Estado</TableHead>
-                <TableHead>Fecha</TableHead>
-                <TableHead>Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {promotions.map((promotion) => (
-                <TableRow key={promotion.id}>
-                  <TableCell className="font-medium max-w-[200px] truncate">
-                    {promotion.title}
-                  </TableCell>
-                  <TableCell>{promotion.profiles?.display_name || 'Sin nombre'}</TableCell>
-                  <TableCell>
-                    <Badge variant="outline">
-                      {serviceTypeLabels[promotion.service_type] || promotion.service_type}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={statusLabels[promotion.status]?.variant || 'secondary'}>
-                      {statusLabels[promotion.status]?.label || promotion.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    {new Date(promotion.created_at).toLocaleDateString('es-CL')}
-                  </TableCell>
-                  <TableCell className="space-x-2">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => setSelectedPromotion(promotion)}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    {promotion.status === 'pending' && (
-                      <>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-slate-800 hover:bg-transparent">
+                  <TableHead className="text-slate-400">Titulo</TableHead>
+                  <TableHead className="text-slate-400">Usuario</TableHead>
+                  <TableHead className="text-slate-400">Tipo</TableHead>
+                  <TableHead className="text-slate-400">Estado</TableHead>
+                  <TableHead className="text-slate-400">Metricas</TableHead>
+                  <TableHead className="text-slate-400">Fecha</TableHead>
+                  <TableHead className="text-slate-400">Acciones</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {promotions.map((promotion) => {
+                  const hasImages = promotion.images && promotion.images.length > 0;
+                  const firstImage = hasImages ? (promotion.images as string[])[0] : null;
+                  const sl = statusLabels[promotion.status];
+
+                  return (
+                    <TableRow key={promotion.id} className="border-slate-800 hover:bg-slate-800/50">
+                      <TableCell className="font-medium max-w-[200px] text-slate-200">
+                        <div className="flex items-center gap-2">
+                          {firstImage && (
+                            <img
+                              src={firstImage}
+                              alt=""
+                              className="h-6 w-6 rounded object-cover shrink-0"
+                              loading="lazy"
+                            />
+                          )}
+                          {!firstImage && hasImages && (
+                            <Image className="h-5 w-5 text-slate-600 shrink-0" />
+                          )}
+                          <span className="truncate">{promotion.title}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-slate-300">
+                        {promotion.profiles?.display_name || 'Sin nombre'}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="border-slate-700 text-slate-300">
+                          {serviceTypeLabels[promotion.service_type] || promotion.service_type}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={cn('text-xs', sl?.className || '')}>
+                          {sl?.label || promotion.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        {promotion.status === 'approved' ? (
+                          <div className="flex items-center gap-3 text-xs text-slate-500">
+                            <span title="Impresiones">--</span>
+                            <span>/</span>
+                            <span title="Clicks">--</span>
+                            <span>/</span>
+                            <span title="CTR">-- %</span>
+                          </div>
+                        ) : (
+                          <span className="text-xs text-slate-600">--</span>
+                        )}
+                      </TableCell>
+                      <TableCell className="text-slate-400 text-sm">
+                        {new Date(promotion.created_at).toLocaleDateString('es-CL')}
+                      </TableCell>
+                      <TableCell className="space-x-2">
                         <Button
                           size="sm"
-                          variant="default"
-                          onClick={() =>
-                            updatePromotionMutation.mutate({ id: promotion.id, status: 'approved' })
-                          }
-                        >
-                          <CheckCircle className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="destructive"
+                          variant="outline"
+                          className="border-slate-700 text-slate-300 hover:bg-slate-800"
                           onClick={() => setSelectedPromotion(promotion)}
                         >
-                          <XCircle className="h-4 w-4" />
+                          <Eye className="h-4 w-4" />
                         </Button>
-                      </>
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                        {promotion.status === 'pending' && (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="default"
+                              onClick={() =>
+                                updatePromotionMutation.mutate({
+                                  id: promotion.id,
+                                  status: 'approved',
+                                })
+                              }
+                            >
+                              <CheckCircle className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="destructive"
+                              onClick={() => setSelectedPromotion(promotion)}
+                            >
+                              <XCircle className="h-4 w-4" />
+                            </Button>
+                          </>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
         )}
 
         <Dialog
@@ -204,46 +252,53 @@ const AdminServicePromotions = () => {
             setRejectionReason('');
           }}
         >
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl bg-slate-900 border-slate-800">
             <DialogHeader>
-              <DialogTitle>Detalles de la Promoción</DialogTitle>
+              <DialogTitle className="text-slate-100">Detalles de la Promocion</DialogTitle>
             </DialogHeader>
             {selectedPromotion && (
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">Título</p>
-                    <p className="font-medium">{selectedPromotion.title}</p>
+                    <p className="text-sm text-slate-500">Titulo</p>
+                    <p className="font-medium text-slate-200">{selectedPromotion.title}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Usuario</p>
-                    <p className="font-medium">
+                    <p className="text-sm text-slate-500">Usuario</p>
+                    <p className="font-medium text-slate-200">
                       {selectedPromotion.profiles?.display_name || 'Sin nombre'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Tipo de Servicio</p>
-                    <Badge>
+                    <p className="text-sm text-slate-500">Tipo de Servicio</p>
+                    <Badge variant="outline" className="border-slate-700 text-slate-300">
                       {serviceTypeLabels[selectedPromotion.service_type] ||
                         selectedPromotion.service_type}
                     </Badge>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Estado</p>
-                    <Badge variant={statusLabels[selectedPromotion.status]?.variant}>
+                    <p className="text-sm text-slate-500">Estado</p>
+                    <Badge
+                      className={cn(
+                        'text-xs',
+                        statusLabels[selectedPromotion.status]?.className || ''
+                      )}
+                    >
                       {statusLabels[selectedPromotion.status]?.label}
                     </Badge>
                   </div>
                 </div>
 
                 <div>
-                  <p className="text-sm text-muted-foreground">Descripción</p>
-                  <p className="bg-muted p-3 rounded">{selectedPromotion.description}</p>
+                  <p className="text-sm text-slate-500">Descripcion</p>
+                  <p className="bg-slate-800 p-3 rounded text-slate-300">
+                    {selectedPromotion.description}
+                  </p>
                 </div>
 
                 {selectedPromotion.images && selectedPromotion.images.length > 0 && (
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">Imágenes</p>
+                    <p className="text-sm text-slate-500 mb-2">Imagenes</p>
                     <div className="grid grid-cols-3 gap-2">
                       {selectedPromotion.images.map((url: string, index: number) => (
                         <a key={index} href={url} target="_blank" rel="noopener noreferrer">
@@ -251,7 +306,7 @@ const AdminServicePromotions = () => {
                             src={url}
                             alt={`Imagen ${index + 1}`}
                             loading="lazy"
-                            className="w-full h-24 object-cover rounded"
+                            className="w-full h-24 object-cover rounded border border-slate-700"
                           />
                         </a>
                       ))}
@@ -261,8 +316,8 @@ const AdminServicePromotions = () => {
 
                 {selectedPromotion.ai_moderation_score && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Puntuación AI</p>
-                    <pre className="bg-muted p-2 rounded text-xs overflow-auto">
+                    <p className="text-sm text-slate-500">Puntuacion AI</p>
+                    <pre className="bg-slate-800 p-2 rounded text-xs overflow-auto text-slate-300">
                       {JSON.stringify(selectedPromotion.ai_moderation_score, null, 2)}
                     </pre>
                   </div>
@@ -270,8 +325,8 @@ const AdminServicePromotions = () => {
 
                 {selectedPromotion.rejection_reason && (
                   <div>
-                    <p className="text-sm text-muted-foreground">Motivo de rechazo</p>
-                    <p className="bg-destructive/10 text-destructive p-2 rounded">
+                    <p className="text-sm text-slate-500">Motivo de rechazo</p>
+                    <p className="bg-red-500/10 text-red-300 p-2 rounded">
                       {selectedPromotion.rejection_reason}
                     </p>
                   </div>
@@ -279,13 +334,12 @@ const AdminServicePromotions = () => {
 
                 {selectedPromotion.status === 'pending' && (
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Motivo de rechazo (opcional)
-                    </p>
+                    <p className="text-sm text-slate-500 mb-2">Motivo de rechazo (opcional)</p>
                     <Textarea
                       placeholder="Escribe el motivo del rechazo..."
                       value={rejectionReason}
                       onChange={(e) => setRejectionReason(e.target.value)}
+                      className="bg-slate-800 border-slate-700 text-slate-200 placeholder:text-slate-500"
                     />
                   </div>
                 )}

@@ -34,7 +34,7 @@ export function Next24hCard() {
         supabase
           .from('vet_bookings')
           .select('id, pet_id', { count: 'exact', head: false })
-          .or(`vet_id.eq.${user.id},service_provider_id.eq.${provider.id}`)
+          .eq('vet_id', user.id)
           .gte('scheduled_date', now.toISOString())
           .lt('scheduled_date', in24h.toISOString())
           .neq('status', 'cancelado'),

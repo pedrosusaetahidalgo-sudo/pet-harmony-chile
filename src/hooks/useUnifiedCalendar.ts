@@ -112,16 +112,27 @@ export const useUnifiedCalendar = (year: number, month: number, filterPetId?: st
 
       const { data, error } = await (supabase as any)
         .from('order_items')
-        .select(
-          'id, service_type, scheduled_date, scheduled_time, pets(name, id), orders!inner(payment_status)'
-        )
+        .select('id, service_type, scheduled_date, pet_ids, orders!inner(payment_status)')
         .eq('provider_id', provider.id)
         .gte('scheduled_date', monthStart)
         .lte('scheduled_date', monthEnd);
       if (error) return [];
-      return ((data || []) as any[]).filter(
+      const completed = ((data || []) as any[]).filter(
         (item: any) => item.orders?.payment_status === 'completed'
       );
+      // Fetch pet names for display
+      const allPetIds = [...new Set(completed.flatMap((item: any) => item.pet_ids || []))];
+      let petMap = new Map<string, string>();
+      if (allPetIds.length > 0) {
+        const { data: pets } = await supabase.from('pets').select('id, name').in('id', allPetIds);
+        petMap = new Map((pets || []).map((p) => [p.id, p.name]));
+      }
+      return completed.map((item: any) => ({
+        ...item,
+        pets: item.pet_ids?.[0]
+          ? { name: petMap.get(item.pet_ids[0]) || 'Paciente', id: item.pet_ids[0] }
+          : null,
+      }));
     },
     enabled: !!user?.id && isProvider,
     staleTime: 2 * 60 * 1000,
@@ -256,7 +267,7 @@ export const useUnifiedCalendar = (year: number, month: number, filterPetId?: st
           pet_name: b.pets?.name ?? '',
           pet_id: b.pets?.id ?? '',
           date: dateStr,
-          time: b.scheduled_time?.slice(0, 5) ?? null,
+          time: null,
           duration_minutes: null,
           status: isPast(new Date(dateStr + 'T23:59:59')) ? 'completed' : 'pending',
           category: b.service_type || 'consultation',

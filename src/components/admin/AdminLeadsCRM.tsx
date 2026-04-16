@@ -46,6 +46,10 @@ import {
   ChevronUp,
   Globe,
   Hash,
+  Building,
+  AlertCircle,
+  ArrowRight,
+  BarChart3,
 } from '@/lib/icons';
 import {
   useLeadsVets,
@@ -180,23 +184,119 @@ export default function AdminLeadsCRM() {
 }
 
 function ClinicasPlaceholder() {
-  // Las clínicas usan los mismos componentes base pero con hooks distintos.
-  // Por ahora muestra un panel funcional que lee de las RPCs de clínicas.
-  const { data: stats } = useLeadsStats(); // Reusamos stats de vets por ahora
+  const { data: stats } = useLeadsStats();
+  const { data: leads = [] } = useLeadsVets({});
+  const [clinicaFilters, setClinicaFilters] = useState<LeadsFilters>({});
+  const [showClinicaFilters, setShowClinicaFilters] = useState(false);
+
+  const conClinica = useMemo(() => leads.filter((l) => l.tiene_clinica_fisica).length, [leads]);
+
   return (
-    <Card className="bg-slate-900 border-slate-800">
-      <CardContent className="p-8 text-center text-slate-400">
-        <p className="text-lg font-medium text-white mb-2">Clínicas Veterinarias RM</p>
-        <p className="text-sm">
-          Pipeline de clínicas listo. Ejecuta{' '}
-          <code className="bg-slate-800 px-1 rounded">python run_clinicas.py</code> para poblar
-          datos.
-        </p>
-        <p className="text-xs mt-2 text-slate-500">
-          Una vez cargados, aparecerán aquí con los mismos controles CRM.
-        </p>
-      </CardContent>
-    </Card>
+    <div className="space-y-4">
+      {/* Stats overview */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StatCard label="Total leads" value={stats?.total ?? 0} icon={Users} />
+        <StatCard
+          label="Con clínica física"
+          value={conClinica}
+          icon={Building}
+          color="text-amber-400"
+        />
+        <StatCard
+          label="Convertidos"
+          value={stats?.por_estado?.convertido ?? 0}
+          icon={CheckCircle2}
+          color="text-green-400"
+        />
+        <StatCard
+          label="Con contacto"
+          value={stats?.con_contacto ?? 0}
+          icon={Phone}
+          color="text-cyan-400"
+        />
+      </div>
+
+      {/* Filters bar */}
+      <div className="space-y-3">
+        <div className="flex gap-2 items-center">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Input
+              placeholder="Buscar clínica..."
+              value={clinicaFilters.busqueda || ''}
+              onChange={(e) => setClinicaFilters((f) => ({ ...f, busqueda: e.target.value }))}
+              className="pl-9 bg-slate-800 border-slate-700 text-white"
+            />
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowClinicaFilters(!showClinicaFilters)}
+            className="border-slate-700 text-slate-300"
+          >
+            <Filter className="h-4 w-4 mr-1" />
+            Filtros
+            {showClinicaFilters ? (
+              <ChevronUp className="h-3 w-3 ml-1" />
+            ) : (
+              <ChevronDown className="h-3 w-3 ml-1" />
+            )}
+          </Button>
+        </div>
+
+        {showClinicaFilters && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 p-3 bg-slate-800/50 rounded-lg border border-slate-700">
+            <Select
+              value={clinicaFilters.estado || 'todos'}
+              onValueChange={(v) =>
+                setClinicaFilters((f) => ({ ...f, estado: v as EstadoLead | 'todos' }))
+              }
+            >
+              <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
+                <SelectValue placeholder="Estado" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="todos">Todos los estados</SelectItem>
+                {ESTADOS.map((e) => (
+                  <SelectItem key={e.value} value={e.value}>
+                    {e.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Input
+              placeholder="Filtrar por comuna..."
+              value={clinicaFilters.comuna || ''}
+              onChange={(e) => setClinicaFilters((f) => ({ ...f, comuna: e.target.value }))}
+              className="bg-slate-800 border-slate-700 text-white"
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Main message card */}
+      <Card className="bg-slate-900 border-slate-800">
+        <CardContent className="p-8 text-center text-slate-400">
+          <Building className="h-10 w-10 mx-auto mb-3 text-slate-500" />
+          <p className="text-lg font-medium text-white mb-2">Clinicas Veterinarias RM</p>
+          <p className="text-sm">
+            Pipeline de clinicas listo. Ejecuta{' '}
+            <code className="bg-slate-800 px-1.5 py-0.5 rounded text-xs">
+              python run_clinicas.py
+            </code>{' '}
+            para poblar datos.
+          </p>
+          <p className="text-xs mt-3 text-slate-500">
+            Una vez cargados, apareceran aqui con los mismos controles CRM.
+          </p>
+          {conClinica > 0 && (
+            <p className="text-xs mt-2 text-amber-400">
+              {conClinica} leads domiciliarios tienen clinica fisica asociada.
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
@@ -215,14 +315,119 @@ function DomiciliariosPanel() {
 
   const { data: leads = [], isLoading } = useLeadsVets(filters);
   const { data: stats } = useLeadsStats();
+
+  const hasActiveFilters = useMemo(() => {
+    return !!(
+      filters.busqueda ||
+      (filters.estado && filters.estado !== 'todos') ||
+      (filters.prioridad && filters.prioridad !== 'todas') ||
+      filters.fuente ||
+      filters.comuna
+    );
+  }, [filters]);
   const updateEstado = useUpdateLeadEstado();
   const registrarContacto = useRegistrarContacto();
   const enviarOutreach = useEnviarOutreach();
 
+  // ── Pipeline funnel ──────────────────────────────────────
+
+  const pipelineStages = useMemo(() => {
+    const stages: { key: EstadoLead; label: string; color: string }[] = [
+      { key: 'pendiente', label: 'Pendiente', color: 'bg-slate-500' },
+      { key: 'contactado', label: 'Contactado', color: 'bg-blue-500' },
+      { key: 'respondio', label: 'Respondio', color: 'bg-yellow-500' },
+      { key: 'interesado', label: 'Interesado', color: 'bg-purple-500' },
+      { key: 'convertido', label: 'Convertido', color: 'bg-green-500' },
+    ];
+    const counts = stages.map((s) => ({
+      ...s,
+      count: stats?.por_estado?.[s.key] ?? 0,
+    }));
+    const maxCount = Math.max(...counts.map((c) => c.count), 1);
+    return { stages: counts, maxCount };
+  }, [stats]);
+
+  const PipelineMetrics = () => (
+    <Card className="bg-slate-900 border-slate-800 mb-4">
+      <CardHeader className="py-3 px-4">
+        <CardTitle className="text-sm text-slate-300 flex items-center gap-2">
+          <TrendingUp className="h-4 w-4" />
+          Pipeline de conversion
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="px-4 pb-4">
+        <div className="space-y-2">
+          {pipelineStages.stages.map((stage, i) => {
+            const pct =
+              pipelineStages.maxCount > 0
+                ? Math.round((stage.count / pipelineStages.maxCount) * 100)
+                : 0;
+            const prev = i > 0 ? pipelineStages.stages[i - 1] : null;
+            const convRate =
+              prev && prev.count > 0 ? Math.round((stage.count / prev.count) * 100) : null;
+            return (
+              <div key={stage.key}>
+                {i > 0 && convRate !== null && (
+                  <div className="flex items-center gap-1 ml-2 my-0.5">
+                    <ArrowRight className="h-3 w-3 text-slate-600" />
+                    <span className="text-[10px] text-slate-500">{convRate}%</span>
+                  </div>
+                )}
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-slate-400 w-24 shrink-0">{stage.label}</span>
+                  <div className="flex-1 bg-slate-800 rounded-full h-5 overflow-hidden">
+                    <div
+                      className={`${stage.color} h-full rounded-full transition-all duration-500 flex items-center justify-end pr-2`}
+                      style={{ width: `${Math.max(pct, 4)}%` }}
+                    >
+                      {pct > 15 && (
+                        <span className="text-[10px] font-bold text-white">{stage.count}</span>
+                      )}
+                    </div>
+                  </div>
+                  {pct <= 15 && (
+                    <span className="text-xs font-medium text-slate-300 w-8 text-right">
+                      {stage.count}
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
+  );
+
+  // ── Avg time in pipeline ────────────────────────────────
+
+  const avgPipelineDays = useMemo(() => {
+    const contactados = leads.filter(
+      (l) =>
+        l.estado_validacion !== 'pendiente' && l.fecha_ultimo_contacto && l.fecha_primer_contacto
+    );
+    if (contactados.length === 0) return null;
+    const totalDays = contactados.reduce((sum, l) => {
+      const created = new Date(l.fecha_captura).getTime();
+      const contacted = new Date(l.fecha_ultimo_contacto!).getTime();
+      return sum + (contacted - created) / (1000 * 60 * 60 * 24);
+    }, 0);
+    return Math.round(totalDays / contactados.length);
+  }, [leads]);
+
+  // ── Leads by fuente chart ───────────────────────────────
+
+  const fuenteData = useMemo(() => {
+    const byFuente = stats?.por_fuente ?? {};
+    const entries = Object.entries(byFuente).sort(([, a], [, b]) => (b as number) - (a as number));
+    const maxVal = entries.length > 0 ? Math.max(...entries.map(([, v]) => v as number), 1) : 1;
+    return { entries, maxVal };
+  }, [stats]);
+
   // ── Stats cards ─────────────────────────────────────────
 
   const StatsCards = () => (
-    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3 mb-4">
+    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 mb-4">
       <StatCard label="Total leads" value={stats?.total ?? leads.length} icon={Users} />
       <StatCard
         label="Pendientes"
@@ -254,8 +459,52 @@ function DomiciliariosPanel() {
         icon={Phone}
         color="text-cyan-400"
       />
+      <StatCard
+        label="Tiempo prom. pipeline"
+        value={avgPipelineDays ?? 0}
+        icon={Clock}
+        color="text-orange-400"
+        suffix={avgPipelineDays !== null ? 'd' : ''}
+      />
     </div>
   );
+
+  // ── Fuente chart ────────────────────────────────────────
+
+  const FuenteChart = () => {
+    if (fuenteData.entries.length === 0) return null;
+    return (
+      <Card className="bg-slate-900 border-slate-800 mb-4">
+        <CardHeader className="py-3 px-4">
+          <CardTitle className="text-sm text-slate-300 flex items-center gap-2">
+            <BarChart3 className="h-4 w-4" />
+            Leads por fuente
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="px-4 pb-4">
+          <div className="space-y-1.5">
+            {fuenteData.entries.map(([fuente, count]) => {
+              const pct = Math.round(((count as number) / fuenteData.maxVal) * 100);
+              return (
+                <div key={fuente} className="flex items-center gap-2">
+                  <span className="text-xs text-slate-400 w-28 shrink-0 truncate">{fuente}</span>
+                  <div className="flex-1 bg-slate-800 rounded h-4 overflow-hidden">
+                    <div
+                      className="bg-indigo-500/70 h-full rounded transition-all duration-500"
+                      style={{ width: `${Math.max(pct, 3)}%` }}
+                    />
+                  </div>
+                  <span className="text-xs font-medium text-slate-300 w-8 text-right">
+                    {count as number}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
   // ── Filtros ─────────────────────────────────────────────
 
@@ -401,7 +650,9 @@ function DomiciliariosPanel() {
               className="rounded border-slate-600"
               aria-label="Seleccionar todos los leads"
             />
-            Seleccionar todos
+            {selectedIds.size > 0
+              ? `${selectedIds.size} de ${leads.length} seleccionados`
+              : 'Seleccionar todos'}
           </label>
         </div>
       </CardHeader>
@@ -410,12 +661,26 @@ function DomiciliariosPanel() {
           {isLoading ? (
             <div className="p-8 text-center text-slate-400">Cargando leads...</div>
           ) : leads.length === 0 ? (
-            <div className="p-8 text-center text-slate-400">
-              No hay leads.{' '}
-              {Object.keys(filters).length > 0 && (
-                <button onClick={() => setFilters({})} className="text-indigo-400 hover:underline">
-                  Limpiar filtros
-                </button>
+            <div className="p-12 text-center">
+              <AlertCircle className="h-8 w-8 mx-auto mb-3 text-slate-600" />
+              <p className="text-slate-400 font-medium">No se encontraron leads</p>
+              {hasActiveFilters ? (
+                <div className="mt-2 space-y-2">
+                  <p className="text-xs text-slate-500">
+                    Los filtros activos no coinciden con ningun lead. Intenta ajustar la busqueda,
+                    el estado o la comuna.
+                  </p>
+                  <button
+                    onClick={() => setFilters({})}
+                    className="text-sm text-indigo-400 hover:underline"
+                  >
+                    Limpiar todos los filtros
+                  </button>
+                </div>
+              ) : (
+                <p className="text-xs text-slate-500 mt-2">
+                  Ejecuta el scraping para poblar el pipeline de leads.
+                </p>
               )}
             </div>
           ) : (
@@ -801,7 +1066,9 @@ function DomiciliariosPanel() {
         </div>
       </div>
 
+      <PipelineMetrics />
       <StatsCards />
+      <FuenteChart />
       <FiltersBar />
       <LeadsTable />
       <OutreachDialog />
@@ -817,18 +1084,23 @@ function StatCard({
   value,
   icon: Icon,
   color = 'text-white',
+  suffix = '',
 }: {
   label: string;
   value: number;
   icon: React.ElementType;
   color?: string;
+  suffix?: string;
 }) {
   return (
     <Card className="bg-slate-900 border-slate-800">
       <CardContent className="p-3 flex items-center gap-3">
         <Icon className={`h-5 w-5 ${color}`} />
         <div>
-          <p className={`text-xl font-bold ${color}`}>{value}</p>
+          <p className={`text-xl font-bold ${color}`}>
+            {value}
+            {suffix}
+          </p>
           <p className="text-[10px] text-slate-400 uppercase">{label}</p>
         </div>
       </CardContent>
