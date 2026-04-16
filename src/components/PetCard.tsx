@@ -129,7 +129,7 @@ const PetCard = ({
   };
 
   const handleOwnerClick = (e?: React.MouseEvent | React.KeyboardEvent) => {
-    e.stopPropagation();
+    e?.stopPropagation();
     if (ownerId) {
       navigate(`/user/${ownerId}`);
     }
