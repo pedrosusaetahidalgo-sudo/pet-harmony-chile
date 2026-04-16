@@ -57,6 +57,7 @@ export function getRecordTypeIcon(type: string) {
       return <Heart className="h-4 w-4" />;
     case 'desparasitacion':
     case 'antipulgas':
+    case 'antiparasitario':
       return <Shield className="h-4 w-4" />;
     case 'cirugia':
     case 'cirugía':
@@ -95,6 +96,7 @@ export function getRecordTypeBadgeClass(type: string): string {
     case 'vacuna':
     case 'desparasitacion':
     case 'antipulgas':
+    case 'antiparasitario':
       return 'bg-green-100 text-green-800 border-green-200';
     case 'consulta':
     case 'consulta_general':

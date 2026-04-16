@@ -44,6 +44,7 @@ const RECORD_TYPE_LABELS: Record<string, string> = {
   emergencia: 'Emergencia',
   desparasitacion: 'Desparasitacion',
   antipulgas: 'Antipulgas',
+  antiparasitario: 'Antiparasitario',
   cirugia: 'Cirugia',
   esterilizacion: 'Esterilizacion',
   limpieza_dental: 'Limpieza dental',

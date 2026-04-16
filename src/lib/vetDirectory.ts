@@ -124,7 +124,10 @@ export function setSeoTags(opts: {
   upsert('meta[property="og:title"]', 'content', opts.title);
   upsert('meta[property="og:type"]', 'content', 'website');
   if (opts.ogImage) upsert('meta[property="og:image"]', 'content', opts.ogImage);
-  if (opts.canonical) upsert('link[rel="canonical"]', 'href', opts.canonical);
+  if (opts.canonical) {
+    upsert('link[rel="canonical"]', 'href', opts.canonical);
+    upsert('meta[property="og:url"]', 'content', opts.canonical);
+  }
 }
 
 export function injectJsonLd(id: string, data: Record<string, unknown>) {

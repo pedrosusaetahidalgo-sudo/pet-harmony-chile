@@ -24,6 +24,7 @@ import {
   Leaf,
   ClipboardList,
   Sparkles,
+  Bug,
 } from '@/lib/icons';
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -60,6 +61,7 @@ import { TabAlimentacion } from './tabs/TabAlimentacion';
 import { TabDocumentos } from './tabs/TabDocumentos';
 import { TabCompartir } from './tabs/TabCompartir';
 import { TabVacunas } from './tabs/TabVacunas';
+import { TabAntiparasitarios } from './tabs/TabAntiparasitarios';
 import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import { generatePDF } from './pdf';
 import { useVetClinicalNotesByPet } from '@/hooks/useVetClinicalNotes';
@@ -392,9 +394,7 @@ const PetClinicalRecord = () => {
                     onShowDirectory={() => navigate('/veterinarios')}
                   />
                 )}
-                {activeAITool === 'prep' && (
-                  <ConsultationPrep petId={pet.id} petName={pet.name} />
-                )}
+                {activeAITool === 'prep' && <ConsultationPrep petId={pet.id} petName={pet.name} />}
                 <Button
                   variant="ghost"
                   size="sm"
@@ -426,35 +426,45 @@ const PetClinicalRecord = () => {
                       className="flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-xl bg-white/80 border border-indigo-100/60 hover:bg-white hover:border-indigo-200 hover:shadow-sm transition-all"
                     >
                       <Stethoscope className="h-5 w-5 text-indigo-600" />
-                      <span className="text-[10px] sm:text-[11px] font-medium text-center leading-tight">Asistente</span>
+                      <span className="text-[10px] sm:text-[11px] font-medium text-center leading-tight">
+                        Asistente
+                      </span>
                     </button>
                     <button
                       onClick={() => setActiveAITool('triage')}
                       className="flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-xl bg-white/80 border border-blue-100/60 hover:bg-white hover:border-blue-200 hover:shadow-sm transition-all"
                     >
                       <Shield className="h-5 w-5 text-blue-600" />
-                      <span className="text-[10px] sm:text-[11px] font-medium text-center leading-tight">Triage</span>
+                      <span className="text-[10px] sm:text-[11px] font-medium text-center leading-tight">
+                        Triage
+                      </span>
                     </button>
                     <button
                       onClick={() => setActiveAITool('nutrition')}
                       className="flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-xl bg-white/80 border border-green-100/60 hover:bg-white hover:border-green-200 hover:shadow-sm transition-all"
                     >
                       <Leaf className="h-5 w-5 text-green-600" />
-                      <span className="text-[10px] sm:text-[11px] font-medium text-center leading-tight">Nutricion</span>
+                      <span className="text-[10px] sm:text-[11px] font-medium text-center leading-tight">
+                        Nutricion
+                      </span>
                     </button>
                     <button
                       onClick={() => setActiveAITool('wound')}
                       className="flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-xl bg-white/80 border border-orange-100/60 hover:bg-white hover:border-orange-200 hover:shadow-sm transition-all"
                     >
                       <Camera className="h-5 w-5 text-orange-600" />
-                      <span className="text-[10px] sm:text-[11px] font-medium text-center leading-tight">Foto herida</span>
+                      <span className="text-[10px] sm:text-[11px] font-medium text-center leading-tight">
+                        Foto herida
+                      </span>
                     </button>
                     <button
                       onClick={() => setActiveAITool('prep')}
                       className="flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-xl bg-white/80 border border-purple-100/60 hover:bg-white hover:border-purple-200 hover:shadow-sm transition-all"
                     >
                       <ClipboardList className="h-5 w-5 text-purple-600" />
-                      <span className="text-[10px] sm:text-[11px] font-medium text-center leading-tight">Consulta</span>
+                      <span className="text-[10px] sm:text-[11px] font-medium text-center leading-tight">
+                        Consulta
+                      </span>
                     </button>
                   </div>
                 </CardContent>
@@ -466,9 +476,7 @@ const PetClinicalRecord = () => {
         {/* Tabs — main content navigation */}
         <Tabs id="clinical-tabs" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="relative">
-            <TabsList
-              className={`flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-1 px-1 sm:grid ${viewMode === 'vet' ? 'sm:grid-cols-5' : 'sm:grid-cols-6'}`}
-            >
+            <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-1 px-1">
               <TabsTrigger
                 value="resumen"
                 className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
@@ -482,6 +490,13 @@ const PetClinicalRecord = () => {
               >
                 <Syringe className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
                 Vacunas
+              </TabsTrigger>
+              <TabsTrigger
+                value="antiparasitarios"
+                className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
+              >
+                <Bug className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+                Antiparasitarios
               </TabsTrigger>
               <TabsTrigger
                 value="historial"
@@ -525,6 +540,10 @@ const PetClinicalRecord = () => {
             <TabVacunas petId={pet.id} />
           </TabsContent>
 
+          <TabsContent value="antiparasitarios" className="mt-4">
+            <TabAntiparasitarios petId={pet.id} />
+          </TabsContent>
+
           <TabsContent value="historial" className="mt-4">
             <TabHistorial petId={pet.id} />
           </TabsContent>
@@ -543,7 +562,6 @@ const PetClinicalRecord = () => {
             </TabsContent>
           )}
         </Tabs>
-
 
         {/* PawPoints nudge — subtle, at the bottom */}
         {viewMode === 'owner' && (

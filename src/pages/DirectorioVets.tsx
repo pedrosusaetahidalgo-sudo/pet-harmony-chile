@@ -97,27 +97,41 @@ export default function DirectorioVets() {
     };
   }, [comunaParam, vets]);
 
+  const seoTitle = useMemo(() => {
+    if (comunaParam && comuna !== 'all') {
+      return specialty !== 'all'
+        ? `Veterinarios de ${specialty} en ${comuna} | Paw Friend`
+        : `Veterinarios en ${comuna} | Paw Friend`;
+    }
+    if (espParam && specialty !== 'all') {
+      return `Veterinarios especialistas en ${specialty} | Paw Friend`;
+    }
+    return 'Veterinarios verificados en Chile | Paw Friend';
+  }, [comunaParam, espParam, comuna, specialty]);
+
+  const seoDesc = useMemo(() => {
+    if (comunaParam && comuna !== 'all') {
+      return `Encuentra los mejores veterinarios en ${comuna}. Compara precios, lee resenas verificadas y agenda tu consulta online en Paw Friend.`;
+    }
+    if (espParam && specialty !== 'all') {
+      return `Directorio de veterinarios especialistas en ${specialty} en Chile. Resenas verificadas, precios y agenda online en Paw Friend.`;
+    }
+    return 'Encuentra veterinarios verificados cerca de tu comuna. Compara precios, lee resenas de otros duenos y agenda tu consulta en Paw Friend.';
+  }, [comunaParam, espParam, comuna, specialty]);
+
+  const seoCanonical = useMemo(() => {
+    if (comunaParam) return `https://pawfriend.cl/veterinarios/comuna/${comunaParam}`;
+    if (espParam) return `https://pawfriend.cl/veterinarios/especialidad/${espParam}`;
+    return 'https://pawfriend.cl/veterinarios';
+  }, [comunaParam, espParam]);
+
   useEffect(() => {
-    const comunaDisplay = comuna !== 'all' ? comuna : null;
-    const titleParts = ['Veterinarios'];
-    if (comunaDisplay) titleParts.push(`en ${comunaDisplay}`);
-    if (specialty !== 'all') titleParts.push(`· ${specialty}`);
-
-    const seoTitle = comunaDisplay
-      ? `Veterinarios en ${comunaDisplay} — Directorio Paw Friend`
-      : `${titleParts.join(' ')} | Paw Friend`;
-    const seoDesc = comunaDisplay
-      ? `Encuentra los mejores veterinarios en ${comunaDisplay}. Compara precios, lee reseñas verificadas y agenda tu consulta online.`
-      : 'Encuentra el mejor veterinario para tu mascota en Chile. Reseñas verificadas, atención a domicilio y en clínica.';
-
     setSeoTags({
       title: seoTitle,
       description: seoDesc,
-      canonical: `https://pawfriend.cl/veterinarios${
-        comunaParam ? `/comuna/${comunaParam}` : ''
-      }${espParam ? `/especialidad/${espParam}` : ''}`,
+      canonical: seoCanonical,
     });
-  }, [comuna, specialty, comunaParam, espParam]);
+  }, [seoTitle, seoDesc, seoCanonical]);
 
   // Cuando el user está logueado, la página se monta dentro de AppLayout
   // (que ya trae header + sidebar), por lo que NO debemos renderizar el
@@ -127,12 +141,14 @@ export default function DirectorioVets() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50/40 to-white">
       <Helmet>
-        <title>Veterinarios verificados en Chile | Paw Friend</title>
-        <meta
-          name="description"
-          content="Encuentra veterinarios verificados cerca de tu comuna. Compara precios, lee resenas de otros duenos y agenda tu consulta en Paw Friend."
-        />
-        <link rel="canonical" href="https://pawfriend.cl/veterinarios" />
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDesc} />
+        <link rel="canonical" href={seoCanonical} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDesc} />
+        <meta property="og:url" content={seoCanonical} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Paw Friend" />
       </Helmet>
       {!user && <PublicHeader />}
 

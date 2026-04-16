@@ -1605,6 +1605,7 @@ export type Database = {
       };
       medical_records: {
         Row: {
+          antiparasitic_type: string | null;
           batch_number: string | null;
           clinic_name: string | null;
           created_at: string;
@@ -1618,6 +1619,7 @@ export type Database = {
           notes: string | null;
           owner_id: string;
           pet_id: string;
+          product_brand: string | null;
           reason: string | null;
           record_type: string;
           serial_number: string | null;
@@ -1629,6 +1631,7 @@ export type Database = {
           visit_date: string | null;
         };
         Insert: {
+          antiparasitic_type?: string | null;
           batch_number?: string | null;
           clinic_name?: string | null;
           created_at?: string;
@@ -1642,6 +1645,7 @@ export type Database = {
           notes?: string | null;
           owner_id: string;
           pet_id: string;
+          product_brand?: string | null;
           reason?: string | null;
           record_type: string;
           serial_number?: string | null;
@@ -1653,6 +1657,7 @@ export type Database = {
           visit_date?: string | null;
         };
         Update: {
+          antiparasitic_type?: string | null;
           batch_number?: string | null;
           clinic_name?: string | null;
           created_at?: string;
@@ -1666,6 +1671,7 @@ export type Database = {
           notes?: string | null;
           owner_id?: string;
           pet_id?: string;
+          product_brand?: string | null;
           reason?: string | null;
           record_type?: string;
           serial_number?: string | null;

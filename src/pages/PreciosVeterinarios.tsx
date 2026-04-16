@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { TrendingUp, MapPin, ChevronRight } from '@/lib/icons';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,24 +23,31 @@ export default function PreciosVeterinarios() {
   const initial = comunaParam ? unslugify(comunaParam) : 'all';
   const [comuna, setComuna] = useState<string>(initial);
 
-  useEffect(() => {
-    const titulo =
+  const seoTitle = useMemo(
+    () =>
       comuna !== 'all'
-        ? `Precios de veterinarios en ${comuna} · Paw Friend`
-        : 'Precios de veterinarios en Chile por comuna · Paw Friend';
-    const desc =
+        ? `Precios de veterinarios en ${comuna} | Paw Friend`
+        : 'Precios de veterinarios en Chile por comuna | Paw Friend',
+    [comuna]
+  );
+  const seoDesc = useMemo(
+    () =>
       comuna !== 'all'
         ? `Compara precios reales de consulta, vacunas, urgencias y mas en ${comuna}. Datos publicados por los propios veterinarios.`
-        : `Compara precios reales de consulta veterinaria, vacunas, urgencias y mas en ${SANTIAGO_COMUNAS.length} comunas de Chile. Sin sorpresas.`;
-    setSeoTags({
-      title: titulo,
-      description: desc,
-      canonical:
-        comuna !== 'all'
-          ? `https://pawfriend.cl/precios-veterinarios/comuna/${slugifyForUrl(comuna)}`
-          : 'https://pawfriend.cl/precios-veterinarios',
-    });
-  }, [comuna]);
+        : `Compara precios reales de consulta veterinaria, vacunas, urgencias y mas en ${SANTIAGO_COMUNAS.length} comunas de Chile. Sin sorpresas.`,
+    [comuna]
+  );
+  const seoCanonical = useMemo(
+    () =>
+      comuna !== 'all'
+        ? `https://pawfriend.cl/precios-veterinarios/comuna/${slugifyForUrl(comuna)}`
+        : 'https://pawfriend.cl/precios-veterinarios',
+    [comuna]
+  );
+
+  useEffect(() => {
+    setSeoTags({ title: seoTitle, description: seoDesc, canonical: seoCanonical });
+  }, [seoTitle, seoDesc, seoCanonical]);
 
   const handleComunaChange = (value: string) => {
     setComuna(value);
@@ -73,6 +81,16 @@ export default function PreciosVeterinarios() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 to-white">
+      <Helmet>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDesc} />
+        <link rel="canonical" href={seoCanonical} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDesc} />
+        <meta property="og:url" content={seoCanonical} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Paw Friend" />
+      </Helmet>
       {!user && <PublicHeader />}
 
       <main className="container mx-auto px-4 py-8 max-w-5xl">

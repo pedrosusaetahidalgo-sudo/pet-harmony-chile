@@ -21,6 +21,10 @@ export interface MedicalRecord {
   next_date: string | null;
   document_url: string | null;
   notes: string | null;
+  batch_number: string | null;
+  serial_number: string | null;
+  antiparasitic_type: string | null;
+  product_brand: string | null;
   created_at: string;
   updated_at: string;
 }

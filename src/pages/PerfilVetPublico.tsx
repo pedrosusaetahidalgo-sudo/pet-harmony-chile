@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import {
   MapPin,
   Star,
@@ -177,39 +178,96 @@ export default function PerfilVetPublico() {
 
   useEffect(() => {
     if (!v) return;
-    const rating = Number(v.avg_rating ?? 0).toFixed(1);
+    const ratingNum = Number(v.avg_rating ?? 0);
+    const ratingStr = ratingNum.toFixed(1);
+    const reviewNum = Number(v.total_reviews ?? 0);
     const areas: string[] = v.service_areas ?? [];
-    const description = `★ ${rating} (${v.total_reviews ?? 0} reseñas) · ${
-      v.price_from ? `Consultas desde ${formatCLP(v.price_from)} · ` : ''
-    }${areas.length > 0 ? `Atiende ${areas.slice(0, 3).join(', ')}` : ''}`;
+    const mainComuna = v.commune || (areas.length > 0 ? areas[0] : null);
+
+    const titleParts = [v.display_name ?? 'Veterinario'];
+    if (mainComuna) titleParts.push(`Veterinario en ${mainComuna}`);
+    titleParts.push('Paw Friend');
+    const seoTitle = titleParts.join(' - ');
+
+    const descParts: string[] = [];
+    if (reviewNum > 0) descParts.push(`★ ${ratingStr} (${reviewNum} resenas)`);
+    if (v.price_from) descParts.push(`Consultas desde ${formatCLP(v.price_from)}`);
+    if (areas.length > 0) descParts.push(`Atiende en ${areas.slice(0, 3).join(', ')}`);
+    if (v.bio) descParts.push(v.bio.slice(0, 120));
+    const seoDesc =
+      descParts.join(' · ') || `Perfil profesional de ${v.display_name} en Paw Friend`;
+    const canonical = `https://pawfriend.cl/veterinarios/${v.slug}`;
 
     setSeoTags({
-      title: `${v.display_name} | Veterinario en Paw Friend`,
-      description,
-      canonical: `https://pawfriend.cl/veterinarios/${v.slug}`,
+      title: seoTitle,
+      description: seoDesc,
+      canonical,
       ogImage: v.avatar_url ?? undefined,
     });
 
-    injectJsonLd('vet-jsonld', {
+    // Build JSON-LD structured data (Schema.org VeterinaryCare)
+    const jsonLd: Record<string, unknown> = {
       '@context': 'https://schema.org',
-      '@type': 'Veterinarian',
+      '@type': 'VeterinaryCare',
       name: v.display_name,
-      image: v.avatar_url ?? undefined,
-      description: v.bio ?? undefined,
-      telephone: v.public_phone ?? undefined,
-      email: v.public_email ?? undefined,
-      address: v.commune
-        ? { '@type': 'PostalAddress', addressLocality: v.commune, addressCountry: 'CL' }
-        : undefined,
-      aggregateRating:
-        Number(v.total_reviews ?? 0) > 0
-          ? {
-              '@type': 'AggregateRating',
-              ratingValue: rating,
-              reviewCount: String(v.total_reviews ?? 0),
-            }
-          : undefined,
-    });
+      url: canonical,
+    };
+    if (v.avatar_url) jsonLd.image = v.avatar_url;
+    if (v.bio) jsonLd.description = v.bio;
+    if (v.public_phone) jsonLd.telephone = v.public_phone;
+    if (v.public_email) jsonLd.email = v.public_email;
+    if (v.price_from) {
+      jsonLd.priceRange = `Desde ${formatCLP(v.price_from)}`;
+    }
+
+    // Address
+    if (mainComuna) {
+      jsonLd.address = {
+        '@type': 'PostalAddress',
+        addressLocality: mainComuna,
+        addressRegion: 'Metropolitana',
+        addressCountry: 'CL',
+      };
+    }
+
+    // AggregateRating — only when real reviews exist
+    if (reviewNum > 0) {
+      jsonLd.aggregateRating = {
+        '@type': 'AggregateRating',
+        ratingValue: ratingStr,
+        reviewCount: String(reviewNum),
+        bestRating: '5',
+        worstRating: '1',
+      };
+    }
+
+    // OpeningHours — parse the opening_hours JSON if available
+    if (v.opening_hours && typeof v.opening_hours === 'object') {
+      const dayMap: Record<string, string> = {
+        lunes: 'Mo',
+        martes: 'Tu',
+        miercoles: 'We',
+        miércoles: 'We',
+        jueves: 'Th',
+        viernes: 'Fr',
+        sabado: 'Sa',
+        sábado: 'Sa',
+        domingo: 'Su',
+      };
+      const specs: string[] = [];
+      for (const [day, hours] of Object.entries(v.opening_hours)) {
+        const abbr = dayMap[day.toLowerCase()];
+        if (!abbr) continue;
+        const h = hours as { open?: string; close?: string; closed?: boolean } | null;
+        if (!h || h.closed) continue;
+        if (h.open && h.close) {
+          specs.push(`${abbr} ${h.open}-${h.close}`);
+        }
+      }
+      if (specs.length > 0) jsonLd.openingHours = specs;
+    }
+
+    injectJsonLd('vet-jsonld', jsonLd);
   }, [v]);
 
   const handleShare = async () => {
@@ -226,6 +284,30 @@ export default function PerfilVetPublico() {
     await navigator.clipboard.writeText(url);
     toast.success('Link copiado al portapapeles');
   };
+
+  const rating = Number(v?.avg_rating ?? 0);
+  const reviewCount = Number(v?.total_reviews ?? 0);
+  const specialties: string[] = v?.specialties ?? [];
+  const serviceAreas: string[] = v?.service_areas ?? [];
+  const visibleReviews = reviews ?? [];
+  const mainComuna = v?.commune || (serviceAreas.length > 0 ? serviceAreas[0] : null);
+
+  const helmetTitle = useMemo(() => {
+    const parts = [v?.display_name ?? 'Veterinario'];
+    if (mainComuna) parts.push(`Veterinario en ${mainComuna}`);
+    parts.push('Paw Friend');
+    return parts.join(' - ');
+  }, [v?.display_name, mainComuna]);
+
+  const helmetDesc = useMemo(() => {
+    const parts: string[] = [];
+    if (reviewCount > 0) parts.push(`${rating.toFixed(1)} estrellas (${reviewCount} resenas)`);
+    if (v?.price_from) parts.push(`Consultas desde ${formatCLP(v.price_from)}`);
+    if (serviceAreas.length > 0) parts.push(`Atiende en ${serviceAreas.slice(0, 3).join(', ')}`);
+    return parts.join(' · ') || `Perfil profesional de ${v?.display_name} en Paw Friend`;
+  }, [v?.display_name, v?.price_from, serviceAreas, reviewCount, rating]);
+
+  const helmetCanonical = `https://pawfriend.cl/veterinarios/${v?.slug}`;
 
   if (isLoading) {
     return (
@@ -256,21 +338,28 @@ export default function PerfilVetPublico() {
     );
   }
 
-  const rating = Number(v.avg_rating ?? 0);
-  const reviewCount = Number(v.total_reviews ?? 0);
-  const specialties: string[] = v.specialties ?? [];
-  const areas: string[] = v.service_areas ?? [];
-  const visibleReviews = reviews ?? [];
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50/40 to-white">
+      <Helmet>
+        <title>{helmetTitle}</title>
+        <meta name="description" content={helmetDesc} />
+        <link rel="canonical" href={helmetCanonical} />
+        <meta property="og:title" content={helmetTitle} />
+        <meta property="og:description" content={helmetDesc} />
+        <meta property="og:url" content={helmetCanonical} />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Paw Friend" />
+        {v.avatar_url && <meta property="og:image" content={v.avatar_url} />}
+      </Helmet>
       {!user && <PublicHeader />}
 
       <main className="container mx-auto px-4 py-6 max-w-4xl space-y-6">
         <Breadcrumbs
           items={[
             { label: 'Veterinarios', to: LINKS.vets() },
-            ...(areas[0] ? [{ label: areas[0], to: LINKS.vetsByComuna(areas[0]) }] : []),
+            ...(serviceAreas[0]
+              ? [{ label: serviceAreas[0], to: LINKS.vetsByComuna(serviceAreas[0]) }]
+              : []),
             { label: v.display_name || 'Perfil' },
           ]}
         />
@@ -314,11 +403,11 @@ export default function PerfilVetPublico() {
                 </div>
               )}
 
-              {areas.length > 0 && (
+              {serviceAreas.length > 0 && (
                 <div className="flex items-start justify-center md:justify-start gap-1 text-sm mb-2">
                   <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0 text-purple-600" />
                   <span>
-                    <strong>Atiende en:</strong> {areas.join(', ')}
+                    <strong>Atiende en:</strong> {serviceAreas.join(', ')}
                   </span>
                 </div>
               )}

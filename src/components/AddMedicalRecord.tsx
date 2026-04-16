@@ -22,7 +22,7 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { CalendarIcon, Plus, Loader2, Sparkles } from '@/lib/icons';
-import { format } from 'date-fns';
+import { format, addMonths } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -70,6 +70,8 @@ export function AddMedicalRecord({
   const [placeId, setPlaceId] = useState('');
   const [batchNumber, setBatchNumber] = useState('');
   const [serialNumber, setSerialNumber] = useState('');
+  const [antiparasiticType, setAntiparasiticType] = useState('');
+  const [productBrand, setProductBrand] = useState('');
   const [suggestions, setSuggestions] = useState<MedicalSuggestion[]>([]);
 
   const queryClient = useQueryClient();
@@ -170,6 +172,8 @@ export function AddMedicalRecord({
           notes,
           batch_number: batchNumber || null,
           serial_number: serialNumber || null,
+          antiparasitic_type: antiparasiticType || null,
+          product_brand: productBrand || null,
         })
         .select('id')
         .single();
@@ -208,23 +212,47 @@ export function AddMedicalRecord({
         reward({ kind: 'vaccine_logged', petId, petName, vaccineName: title });
       }
 
-      // Auto-create reminder for next dose (vaccines & deworming with next_date)
-      if (nextDate && (recordType === 'vacuna' || recordType === 'desparasitacion')) {
+      // Auto-create reminder for next dose (vaccines, deworming & antiparasitarios with next_date)
+      const isAntiparasitario =
+        recordType === 'antiparasitario' ||
+        recordType === 'desparasitacion' ||
+        recordType === 'antipulgas';
+      if (nextDate && (recordType === 'vacuna' || isAntiparasitario)) {
         try {
           const reminderType = recordType === 'vacuna' ? 'vaccine' : 'deworming';
-          const reminderTitle =
-            recordType === 'vacuna'
-              ? `Proxima dosis: ${title}`
-              : `Proxima desparasitacion: ${title}`;
+          let reminderTitle: string;
+          let isRecurring = false;
+          let recurrenceInterval: string | null = null;
+
+          if (recordType === 'vacuna') {
+            reminderTitle = `Proxima dosis: ${title}`;
+          } else if (recordType === 'antiparasitario') {
+            const typeLabel =
+              antiparasiticType === 'interno'
+                ? 'interno'
+                : antiparasiticType === 'externo'
+                  ? 'externo'
+                  : 'antiparasitario';
+            reminderTitle = `Proximo antiparasitario ${typeLabel}: ${title}`;
+            isRecurring = true;
+            // Externo = monthly, interno/ambos = quarterly
+            recurrenceInterval = antiparasiticType === 'externo' ? 'monthly' : 'quarterly';
+          } else {
+            reminderTitle = `Proxima desparasitacion: ${title}`;
+            isRecurring = true;
+            recurrenceInterval = 'quarterly';
+          }
+
           await supabase.from('pet_reminders').insert({
             pet_id: petId,
             owner_id: user.id,
             type: reminderType,
             title: reminderTitle,
             due_date: format(nextDate, 'yyyy-MM-dd'),
-            is_recurring: recordType === 'desparasitacion',
-            recurrence_interval: recordType === 'desparasitacion' ? 'quarterly' : null,
+            is_recurring: isRecurring,
+            recurrence_interval: recurrenceInterval,
           });
+          toast.info('Recordatorio automatico creado para la proxima aplicacion');
           queryClient.invalidateQueries({ queryKey: ['reminders'] });
         } catch (reminderError) {
           logger.error('Error creating auto-reminder:', reminderError);
@@ -259,6 +287,8 @@ export function AddMedicalRecord({
     setPlaceId('');
     setBatchNumber('');
     setSerialNumber('');
+    setAntiparasiticType('');
+    setProductBrand('');
     setSuggestions([]);
   };
 
@@ -409,8 +439,11 @@ export function AddMedicalRecord({
             </div>
           </div>
 
-          {/* Lote y Serie (solo vacunas y desparasitación) */}
-          {(recordType === 'vacuna' || recordType === 'desparasitacion') && (
+          {/* Lote y Serie (vacunas, desparasitacion, antiparasitario) */}
+          {(recordType === 'vacuna' ||
+            recordType === 'desparasitacion' ||
+            recordType === 'antiparasitario' ||
+            recordType === 'antipulgas') && (
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="batch-number">N° de Lote</Label>
@@ -430,6 +463,78 @@ export function AddMedicalRecord({
                   placeholder="Ej: S-56789"
                 />
               </div>
+            </div>
+          )}
+
+          {/* Antiparasitario: tipo + producto/marca + sugerencia de frecuencia */}
+          {recordType === 'antiparasitario' && (
+            <div className="space-y-4 p-3 bg-green-50/50 border border-green-100 rounded-lg">
+              <p className="text-xs font-medium text-green-700">Datos del antiparasitario</p>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="antiparasitic-type">Tipo *</Label>
+                  <Select
+                    value={antiparasiticType}
+                    onValueChange={(val) => {
+                      setAntiparasiticType(val);
+                      // Auto-suggest next date based on type
+                      if (date) {
+                        if (val === 'externo') {
+                          setNextDate(addMonths(date, 1));
+                        } else if (val === 'interno') {
+                          setNextDate(addMonths(date, 3));
+                        } else if (val === 'ambos') {
+                          setNextDate(addMonths(date, 3));
+                        }
+                      }
+                    }}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Selecciona tipo" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-background z-50">
+                      <SelectItem value="interno">Interno (comprimidos, pasta)</SelectItem>
+                      <SelectItem value="externo">Externo (pipeta, collar, spray)</SelectItem>
+                      <SelectItem value="ambos">Ambos (ej. Bravecto, Nexgard Spectra)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="product-brand">Producto / Marca</Label>
+                  <Input
+                    id="product-brand"
+                    list="antiparasitic-brands"
+                    value={productBrand}
+                    onChange={(e) => setProductBrand(e.target.value)}
+                    placeholder="Ej: Bravecto, Nexgard..."
+                  />
+                  <datalist id="antiparasitic-brands">
+                    <option value="Bravecto" />
+                    <option value="Nexgard" />
+                    <option value="Nexgard Spectra" />
+                    <option value="Frontline" />
+                    <option value="Frontline Plus" />
+                    <option value="Simparica" />
+                    <option value="Simparica Trio" />
+                    <option value="Drontal" />
+                    <option value="Drontal Plus" />
+                    <option value="Milbemax" />
+                    <option value="Advocate" />
+                    <option value="Revolution" />
+                    <option value="Seresto (collar)" />
+                    <option value="Scalibor (collar)" />
+                  </datalist>
+                </div>
+              </div>
+              {antiparasiticType && (
+                <p className="text-xs text-green-600">
+                  {antiparasiticType === 'externo'
+                    ? 'Frecuencia sugerida: cada 1 mes. Se sugirio automaticamente la proxima fecha.'
+                    : antiparasiticType === 'interno'
+                      ? 'Frecuencia sugerida: cada 3 meses. Se sugirio automaticamente la proxima fecha.'
+                      : 'Frecuencia sugerida: cada 3 meses (Bravecto/Nexgard Spectra). Se sugirio automaticamente la proxima fecha.'}
+                </p>
+              )}
             </div>
           )}
 
