@@ -1,20 +1,21 @@
 /**
- * Dialog para que un owner (ya logueado) se registre como profesional/vet.
- * Salta el paso de crear cuenta (ya existe). Solo pide tipo + perfil basico.
+ * Dialog para que un owner (ya logueado) se registre como profesional.
+ * Soporta todos los tipos de servicio: vet, groomer, walker, trainer, sitter.
+ * Vet tiene flujo extendido (tipo negocio + especialidades).
+ * Los demás tienen un flujo simplificado (bio + comuna + precio).
  */
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useActiveRole } from '@/hooks/useActiveRole';
-import { vetProfileSchema, type VetProfileFormData } from '@/lib/schemas';
 import { VET_SPECIALTIES, SANTIAGO_COMUNAS, COMUNAS_POR_ZONA } from '@/lib/vetDirectory';
+import { GROOMER_SERVICES } from '@/hooks/useGroomerProfile';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import {
@@ -32,9 +33,84 @@ import {
   ArrowLeft,
   Loader2,
   CheckCircle2,
+  Dog,
+  Scissors,
+  GraduationCap,
+  Heart,
 } from 'lucide-react';
 
+type ServiceType = 'veterinarian' | 'grooming' | 'dog_walker' | 'dogsitter' | 'trainer';
 type ProviderType = 'individual' | 'home_visit' | 'clinic';
+
+const SERVICE_OPTIONS: {
+  value: ServiceType;
+  icon: typeof Stethoscope;
+  title: string;
+  desc: string;
+  color: string;
+}[] = [
+  {
+    value: 'veterinarian',
+    icon: Stethoscope,
+    title: 'Veterinario',
+    desc: 'Consultas, vacunas, cirugía y atención clínica.',
+    color: 'teal',
+  },
+  {
+    value: 'grooming',
+    icon: Scissors,
+    title: 'Peluquería canina',
+    desc: 'Baño, corte, arreglo de raza y spa.',
+    color: 'pink',
+  },
+  {
+    value: 'dog_walker',
+    icon: Dog,
+    title: 'Paseador de perros',
+    desc: 'Paseos diarios y ejercicio al aire libre.',
+    color: 'blue',
+  },
+  {
+    value: 'dogsitter',
+    icon: Heart,
+    title: 'Cuidador de mascotas',
+    desc: 'Cuidado en tu hogar o en el del cuidador.',
+    color: 'purple',
+  },
+  {
+    value: 'trainer',
+    icon: GraduationCap,
+    title: 'Entrenador canino',
+    desc: 'Obediencia, socialización y corrección de conducta.',
+    color: 'orange',
+  },
+];
+
+const VET_TYPE_OPTIONS: {
+  value: ProviderType;
+  icon: typeof Stethoscope;
+  title: string;
+  desc: string;
+}[] = [
+  {
+    value: 'individual',
+    icon: Stethoscope,
+    title: 'Veterinario individual',
+    desc: 'Atiendes en consulta propia o de forma independiente.',
+  },
+  {
+    value: 'home_visit',
+    icon: HomeIcon,
+    title: 'Atención a domicilio',
+    desc: 'Visitas a las mascotas en sus hogares.',
+  },
+  {
+    value: 'clinic',
+    icon: Building2,
+    title: 'Clínica veterinaria',
+    desc: 'Local con varios profesionales.',
+  },
+];
 
 interface Props {
   open: boolean;
@@ -47,103 +123,150 @@ export function BecomeProviderDialog({ open, onOpenChange }: Props) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const [step, setStep] = useState<0 | 1>(0);
+  // Step: 0=service type, 1=vet business type (vet only), 2=profile form
+  const [step, setStep] = useState(0);
+  const [serviceType, setServiceType] = useState<ServiceType | null>(null);
   const [providerType, setProviderType] = useState<ProviderType | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
+
+  // Form fields
+  const [bio, setBio] = useState('');
+  const [commune, setCommune] = useState('');
   const [selectedAreas, setSelectedAreas] = useState<string[]>([]);
+  const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
+  const [selectedGroomerServices, setSelectedGroomerServices] = useState<string[]>([]);
+  const [experienceYears, setExperienceYears] = useState('');
+  const [priceFrom, setPriceFrom] = useState('');
+  const [businessName, setBusinessName] = useState('');
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { errors },
-  } = useForm<VetProfileFormData>({
-    resolver: zodResolver(vetProfileSchema),
-    defaultValues: {
-      bio: '',
-      specialties: [],
-      commune: '',
-      service_areas: [],
-      experience_years: '',
-      price_from: '',
-    },
-  });
+  const isVet = serviceType === 'veterinarian';
+  const isGroomer = serviceType === 'grooming';
 
-  const communeValue = watch('commune');
+  const handleServiceSelect = (type: ServiceType) => {
+    setServiceType(type);
+  };
+
+  const handleNextFromServiceType = () => {
+    if (!serviceType) return;
+    if (isVet) {
+      setStep(1); // go to vet business type
+    } else {
+      setStep(2); // skip to profile form
+    }
+  };
+
+  const handleNextFromVetType = () => {
+    if (!providerType) return;
+    setStep(2);
+  };
 
   const toggleSpecialty = (s: string) => {
-    const next = selectedSpecialties.includes(s)
-      ? selectedSpecialties.filter((x) => x !== s)
-      : [...selectedSpecialties, s];
-    setSelectedSpecialties(next);
-    setValue('specialties', next, { shouldValidate: true });
+    setSelectedSpecialties((prev) =>
+      prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
+    );
+  };
+
+  const toggleGroomerService = (s: string) => {
+    setSelectedGroomerServices((prev) =>
+      prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]
+    );
   };
 
   const toggleArea = (c: string) => {
-    const next = selectedAreas.includes(c)
-      ? selectedAreas.filter((x) => x !== c)
-      : [...selectedAreas, c];
-    setSelectedAreas(next);
-    setValue('service_areas', next, { shouldValidate: true });
+    setSelectedAreas((prev) => (prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]));
   };
 
   const selectAllAreas = () => {
     const all = SANTIAGO_COMUNAS.slice();
     const allSelected = all.every((c) => selectedAreas.includes(c));
-    const next = allSelected ? [] : all;
-    setSelectedAreas(next);
-    setValue('service_areas', next, { shouldValidate: true });
+    setSelectedAreas(allSelected ? [] : all);
   };
 
   const selectZone = (comunas: readonly string[]) => {
     const allInZone = comunas.every((c) => selectedAreas.includes(c));
-    const next = allInZone
-      ? selectedAreas.filter((a) => !comunas.includes(a))
-      : [...new Set([...selectedAreas, ...comunas])];
-    setSelectedAreas(next);
-    setValue('service_areas', next, { shouldValidate: true });
+    setSelectedAreas((prev) =>
+      allInZone ? prev.filter((a) => !comunas.includes(a)) : [...new Set([...prev, ...comunas])]
+    );
   };
 
-  const onSubmitProfile = async (data: VetProfileFormData) => {
-    if (!user || !providerType) return;
+  const canSubmit = () => {
+    if (bio.trim().length < 20) return false;
+    if (!commune) return false;
+    if (selectedAreas.length === 0) return false;
+    if (isVet && selectedSpecialties.length === 0) return false;
+    if (isGroomer && selectedGroomerServices.length === 0) return false;
+    return true;
+  };
+
+  const handleSubmitProfile = async () => {
+    if (!user || !serviceType || !canSubmit()) return;
     setSubmitting(true);
     try {
-      // Get user display_name from profiles
       const { data: profile } = await supabase
         .from('profiles')
         .select('display_name, email')
         .eq('id', user.id)
         .single();
 
-      const displayName = profile?.display_name || user.email?.split('@')[0] || 'Profesional';
+      const displayName =
+        isGroomer && businessName.trim()
+          ? businessName.trim()
+          : profile?.display_name || user.email?.split('@')[0] || 'Profesional';
 
-      const payload = {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const payload: Record<string, any> = {
         user_id: user.id,
         display_name: displayName,
-        bio: data.bio.trim(),
-        provider_type: providerType,
-        specialties: data.specialties,
-        service_areas: data.service_areas,
-        commune: data.commune,
-        experience_years: data.experience_years ? Number(data.experience_years) : null,
-        price_from: data.price_from ? Number(data.price_from) : null,
+        bio: bio.trim(),
+        primary_service_type: serviceType,
+        service_areas: selectedAreas,
+        commune,
+        experience_years: experienceYears ? Number(experienceYears) : null,
+        price_from: priceFrom ? Number(priceFrom) : null,
         public_email: profile?.email || user.email,
         provider_plan: 'provider_free',
         is_directory_visible: false,
         status: 'pending',
       };
 
+      // Vet-specific fields
+      if (isVet) {
+        payload.provider_type = providerType;
+        payload.specialties = selectedSpecialties;
+      }
+
+      // Groomer-specific fields
+      if (isGroomer) {
+        payload.business_name = businessName.trim() || null;
+        payload.services_offered = selectedGroomerServices;
+        payload.base_price_clp = priceFrom ? Number(priceFrom) : null;
+      }
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error } = await (supabase.from('service_providers') as any).insert(payload);
+      const { data: newProvider, error } = await (supabase.from('service_providers') as any)
+        .insert(payload)
+        .select('id')
+        .single();
 
       if (error) throw error;
 
-      // Refetch provider status
-      await queryClient.invalidateQueries({ queryKey: ['is-provider-role'] });
+      // Auto-crear provider_service_offerings
+      if (newProvider?.id) {
+        await supabase.from('provider_service_offerings').upsert(
+          {
+            provider_id: newProvider.id,
+            service_type: serviceType,
+            price_base: priceFrom ? Number(priceFrom) : 0,
+            price_unit: isVet ? 'session' : 'hour',
+            is_active: true,
+          },
+          { onConflict: 'provider_id,service_type' }
+        );
+      }
 
-      // Switch to provider role
+      await queryClient.invalidateQueries({ queryKey: ['is-provider-role'] });
+      await queryClient.invalidateQueries({ queryKey: ['my-provider-profile'] });
+
       setRole('provider');
       onOpenChange(false);
       toast.success(
@@ -163,44 +286,69 @@ export function BecomeProviderDialog({ open, onOpenChange }: Props) {
     }
   };
 
-  const typeOptions: {
-    value: ProviderType;
-    icon: typeof Stethoscope;
-    title: string;
-    desc: string;
-  }[] = [
-    {
-      value: 'individual',
-      icon: Stethoscope,
-      title: 'Veterinario individual',
-      desc: 'Atiendes en consulta propia o de forma independiente.',
-    },
-    {
-      value: 'home_visit',
-      icon: HomeIcon,
-      title: 'Atención a domicilio',
-      desc: 'Visitas a las mascotas en sus hogares.',
-    },
-    {
-      value: 'clinic',
-      icon: Building2,
-      title: 'Clínica veterinaria',
-      desc: 'Local con varios profesionales.',
-    },
-  ];
+  const handleBack = () => {
+    if (step === 2 && isVet) setStep(1);
+    else if (step === 2) setStep(0);
+    else if (step === 1) setStep(0);
+  };
+
+  const serviceLabel = SERVICE_OPTIONS.find((o) => o.value === serviceType)?.title || 'Profesional';
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
-            {step === 0 ? '¿Qué tipo de profesional eres?' : 'Construye tu perfil profesional'}
+            {step === 0 && '¿Qué tipo de profesional eres?'}
+            {step === 1 && '¿Cómo atiendes?'}
+            {step === 2 && `Perfil de ${serviceLabel}`}
           </DialogTitle>
         </DialogHeader>
 
+        {/* Step 0: Choose service type */}
         {step === 0 && (
+          <div className="space-y-2.5 mt-2">
+            {SERVICE_OPTIONS.map((opt) => {
+              const Icon = opt.icon;
+              const active = serviceType === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => handleServiceSelect(opt.value)}
+                  className={`w-full text-left p-3 rounded-lg border-2 transition-all flex items-start gap-3 ${
+                    active ? 'border-teal-500 bg-teal-50' : 'border-slate-200 hover:border-teal-300'
+                  }`}
+                >
+                  <div
+                    className={`rounded-full p-2 ${
+                      active ? 'bg-teal-500 text-white' : 'bg-teal-100 text-teal-600'
+                    }`}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-sm">{opt.title}</h3>
+                    <p className="text-xs text-muted-foreground">{opt.desc}</p>
+                  </div>
+                  {active && <CheckCircle2 className="h-4 w-4 text-teal-600 flex-shrink-0 mt-1" />}
+                </button>
+              );
+            })}
+            <Button
+              className="w-full mt-4"
+              disabled={!serviceType}
+              onClick={handleNextFromServiceType}
+            >
+              Continuar <ArrowRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
+        )}
+
+        {/* Step 1: Vet business type (only for vets) */}
+        {step === 1 && isVet && (
           <div className="space-y-3 mt-2">
-            {typeOptions.map((opt) => {
+            {VET_TYPE_OPTIONS.map((opt) => {
               const Icon = opt.icon;
               const active = providerType === opt.value;
               return (
@@ -227,64 +375,127 @@ export function BecomeProviderDialog({ open, onOpenChange }: Props) {
                 </button>
               );
             })}
-            <Button className="w-full mt-4" disabled={!providerType} onClick={() => setStep(1)}>
-              Continuar <ArrowRight className="h-4 w-4 ml-1" />
-            </Button>
+            <div className="flex justify-between gap-3 pt-2">
+              <Button type="button" variant="outline" onClick={() => setStep(0)}>
+                <ArrowLeft className="h-4 w-4 mr-1" /> Atrás
+              </Button>
+              <Button disabled={!providerType} onClick={handleNextFromVetType}>
+                Continuar <ArrowRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
           </div>
         )}
 
-        {step === 1 && (
-          <form onSubmit={handleSubmit(onSubmitProfile)} className="space-y-4 mt-2">
+        {/* Step 2: Profile form */}
+        {step === 2 && (
+          <div className="space-y-4 mt-2">
+            {/* Business name (groomer only) */}
+            {isGroomer && (
+              <div className="space-y-1.5">
+                <Label>Nombre del negocio</Label>
+                <Input
+                  value={businessName}
+                  onChange={(e) => setBusinessName(e.target.value)}
+                  placeholder="Peluquería Canina Las Patitas"
+                />
+              </div>
+            )}
+
             {/* Bio */}
             <div className="space-y-1.5">
-              <Label htmlFor="bp-bio">Bio profesional *</Label>
+              <Label>Descripción profesional *</Label>
               <Textarea
-                id="bp-bio"
                 placeholder="Cuéntanos tu experiencia, enfoque y qué te diferencia..."
                 rows={3}
                 maxLength={500}
-                {...register('bio')}
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
               />
               <p className="text-xs text-muted-foreground">
-                {watch('bio')?.length || 0}/500 · mínimo 50 caracteres
+                {bio.length}/500 · mínimo 20 caracteres
               </p>
-              {errors.bio && <p className="text-xs text-destructive">{errors.bio.message}</p>}
             </div>
 
-            {/* Especialidades */}
-            <div className="space-y-1.5">
-              <Label>Especialidades * (al menos 1)</Label>
-              <div className="flex flex-wrap gap-1.5">
-                {VET_SPECIALTIES.map((s) => {
-                  const active = selectedSpecialties.includes(s);
-                  return (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => toggleSpecialty(s)}
-                      className={`px-2.5 py-1 rounded-full text-xs border transition ${
-                        active
-                          ? 'bg-teal-600 text-white border-teal-600'
-                          : 'bg-white text-foreground border-slate-300 hover:border-teal-400'
-                      }`}
-                    >
-                      {s}
-                    </button>
-                  );
-                })}
+            {/* Vet specialties */}
+            {isVet && (
+              <div className="space-y-1.5">
+                <Label>Especialidades * (al menos 1)</Label>
+                <div className="flex flex-wrap gap-1.5 max-h-36 overflow-y-auto">
+                  {VET_SPECIALTIES.map((s) => {
+                    const active = selectedSpecialties.includes(s);
+                    return (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => toggleSpecialty(s)}
+                        className={`px-2.5 py-1 rounded-full text-xs border transition ${
+                          active
+                            ? 'bg-teal-600 text-white border-teal-600'
+                            : 'bg-white text-foreground border-slate-300 hover:border-teal-400'
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-              {errors.specialties && (
-                <p className="text-xs text-destructive">{errors.specialties.message}</p>
-              )}
+            )}
+
+            {/* Groomer services */}
+            {isGroomer && (
+              <div className="space-y-1.5">
+                <Label>Servicios que ofreces * (al menos 1)</Label>
+                <div className="flex flex-wrap gap-1.5">
+                  {GROOMER_SERVICES.map((s) => {
+                    const active = selectedGroomerServices.includes(s);
+                    return (
+                      <button
+                        key={s}
+                        type="button"
+                        onClick={() => toggleGroomerService(s)}
+                        className={`px-2.5 py-1 rounded-full text-xs border transition ${
+                          active
+                            ? 'bg-pink-600 text-white border-pink-600'
+                            : 'bg-white text-foreground border-slate-300 hover:border-pink-400'
+                        }`}
+                      >
+                        {s}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Price + experience row */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label>Años de experiencia</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={experienceYears}
+                  onChange={(e) => setExperienceYears(e.target.value)}
+                  placeholder="3"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Precio desde (CLP)</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  value={priceFrom}
+                  onChange={(e) => setPriceFrom(e.target.value)}
+                  placeholder={isVet ? '25000' : '15000'}
+                />
+              </div>
             </div>
 
             {/* Comuna base */}
             <div className="space-y-1.5">
               <Label>Comuna base *</Label>
-              <Select
-                value={communeValue}
-                onValueChange={(v) => setValue('commune', v, { shouldValidate: true })}
-              >
+              <Select value={commune} onValueChange={setCommune}>
                 <SelectTrigger>
                   <SelectValue placeholder="Elige tu comuna principal" />
                 </SelectTrigger>
@@ -296,12 +507,9 @@ export function BecomeProviderDialog({ open, onOpenChange }: Props) {
                   ))}
                 </SelectContent>
               </Select>
-              {errors.commune && (
-                <p className="text-xs text-destructive">{errors.commune.message}</p>
-              )}
             </div>
 
-            {/* Comunas de atencion */}
+            {/* Comunas de atención */}
             <div className="space-y-1.5">
               <Label>Comunas que atiendes * (al menos 1)</Label>
               <div className="mb-2">
@@ -354,22 +562,14 @@ export function BecomeProviderDialog({ open, onOpenChange }: Props) {
                   </div>
                 </div>
               ))}
-              {errors.service_areas && (
-                <p className="text-xs text-destructive">{errors.service_areas.message}</p>
-              )}
             </div>
 
             {/* Actions */}
             <div className="flex justify-between gap-3 pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setStep(0)}
-                disabled={submitting}
-              >
+              <Button type="button" variant="outline" onClick={handleBack} disabled={submitting}>
                 <ArrowLeft className="h-4 w-4 mr-1" /> Atrás
               </Button>
-              <Button type="submit" disabled={submitting}>
+              <Button onClick={handleSubmitProfile} disabled={submitting || !canSubmit()}>
                 {submitting ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-1 animate-spin" /> Creando...
@@ -379,7 +579,7 @@ export function BecomeProviderDialog({ open, onOpenChange }: Props) {
                 )}
               </Button>
             </div>
-          </form>
+          </div>
         )}
       </DialogContent>
     </Dialog>

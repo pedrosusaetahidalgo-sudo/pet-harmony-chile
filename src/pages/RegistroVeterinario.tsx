@@ -182,6 +182,7 @@ export default function RegistroVeterinario() {
         display_name: form.display_name.trim(),
         bio: form.bio.trim(),
         provider_type: form.type!,
+        primary_service_type: 'veterinarian',
         specialties: form.specialties,
         service_areas: form.service_areas,
         commune: form.commune,
@@ -198,11 +199,24 @@ export default function RegistroVeterinario() {
       const { data: provider, error: provErr } = await sb
         .from('service_providers')
         .insert(payload)
-        .select('slug')
+        .select('id, slug')
         .single();
       if (provErr) throw provErr;
 
-      update('createdSlug', (provider as { slug: string }).slug);
+      // Auto-crear provider_service_offerings para categorizar como veterinario
+      const typedProvider = provider as { id: string; slug: string };
+      await sb.from('provider_service_offerings').upsert(
+        {
+          provider_id: typedProvider.id,
+          service_type: 'veterinarian',
+          price_base: form.price_from ? Number(form.price_from) : 0,
+          price_unit: 'session',
+          is_active: true,
+        },
+        { onConflict: 'provider_id,service_type' }
+      );
+
+      update('createdSlug', typedProvider.slug);
       setStep(3);
     } catch (err: unknown) {
       const msg = errorMessage(err, 'Error al crear tu cuenta');
