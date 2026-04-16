@@ -313,7 +313,7 @@ export const Header = () => {
                     {profile?.display_name?.[0] || user?.email?.[0].toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                {userStats && userStats.level > 1 && (
+                {role === 'owner' && userStats && userStats.level > 1 && (
                   <div className="absolute -top-1 -right-1 bg-yellow-400 rounded-full p-0.5">
                     <Crown className="h-3 w-3 text-yellow-900" />
                   </div>
@@ -324,13 +324,13 @@ export const Header = () => {
                   <span className="font-semibold text-sm truncate max-w-[120px]">
                     {profile?.display_name || user?.email?.split('@')[0]}
                   </span>
-                  {userStats && (
+                  {role === 'owner' && userStats && (
                     <Badge variant="outline" className="text-xs px-1.5 py-0 h-5">
                       Nv.{userStats.level}
                     </Badge>
                   )}
                 </div>
-                {profile?.active_title && (
+                {role === 'owner' && profile?.active_title && (
                   <span className="text-[10px] font-medium text-amber-600 truncate max-w-[120px]">
                     {profile.active_title}
                   </span>
