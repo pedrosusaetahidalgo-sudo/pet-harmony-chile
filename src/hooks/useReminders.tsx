@@ -52,10 +52,16 @@ export const useReminders = () => {
     queryKey: ['pet-reminders', user?.id],
     queryFn: async () => {
       if (!user) return [];
+      // Only fetch pending + recently completed (last 30 days) to avoid
+      // downloading entire reminder history for long-time users
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
       const { data, error } = await supabase
         .from('pet_reminders')
         .select('*, pets(name, species)')
         .eq('owner_id', user.id)
+        .or(`is_completed.eq.false,completed_at.gte.${thirtyDaysAgo.toISOString()}`)
         .order('due_date', { ascending: true });
       if (error) throw error;
       return (data || []) as Reminder[];

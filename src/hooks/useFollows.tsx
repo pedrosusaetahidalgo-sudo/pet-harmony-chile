@@ -16,6 +16,7 @@ export const useFollows = (targetUserId?: string) => {
   const queryClient = useQueryClient();
 
   // Get follow status
+  // Single RPC replaces 4 sequential queries
   const {
     data: followStatus,
     isLoading,
@@ -27,39 +28,52 @@ export const useFollows = (targetUserId?: string) => {
         return null;
       }
 
-      // Check if current user follows target
-      const { data: following } = await supabase
-        .from('user_follows')
-        .select('id')
-        .eq('follower_id', user.id)
-        .eq('following_id', targetUserId)
-        .maybeSingle();
+      const { data, error: rpcError } = await supabase.rpc('get_follow_status', {
+        p_viewer_id: user.id,
+        p_target_id: targetUserId,
+      });
 
-      // Check if target follows current user
-      const { data: followedBy } = await supabase
-        .from('user_follows')
-        .select('id')
-        .eq('follower_id', targetUserId)
-        .eq('following_id', user.id)
-        .maybeSingle();
+      if (rpcError) {
+        // Fallback: 4 sequential queries if RPC not yet deployed
+        const [f1, f2, f3, f4] = await Promise.all([
+          supabase
+            .from('user_follows')
+            .select('id')
+            .eq('follower_id', user.id)
+            .eq('following_id', targetUserId)
+            .maybeSingle(),
+          supabase
+            .from('user_follows')
+            .select('id')
+            .eq('follower_id', targetUserId)
+            .eq('following_id', user.id)
+            .maybeSingle(),
+          supabase
+            .from('user_follows')
+            .select('*', { count: 'exact', head: true })
+            .eq('following_id', targetUserId),
+          supabase
+            .from('user_follows')
+            .select('*', { count: 'exact', head: true })
+            .eq('follower_id', targetUserId),
+        ]);
+        return {
+          isFollowing: !!f1.data,
+          isFollowedBy: !!f2.data,
+          isMutualFollow: !!f1.data && !!f2.data,
+          followerCount: f3.count || 0,
+          followingCount: f4.count || 0,
+        };
+      }
 
-      // Get follower/following counts
-      const { count: followerCount } = await supabase
-        .from('user_follows')
-        .select('*', { count: 'exact', head: true })
-        .eq('following_id', targetUserId);
-
-      const { count: followingCount } = await supabase
-        .from('user_follows')
-        .select('*', { count: 'exact', head: true })
-        .eq('follower_id', targetUserId);
-
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const result = data as any;
       return {
-        isFollowing: !!following,
-        isFollowedBy: !!followedBy,
-        isMutualFollow: !!following && !!followedBy,
-        followerCount: followerCount || 0,
-        followingCount: followingCount || 0,
+        isFollowing: result.is_following,
+        isFollowedBy: result.is_followed_by,
+        isMutualFollow: result.is_following && result.is_followed_by,
+        followerCount: result.follower_count || 0,
+        followingCount: result.following_count || 0,
       };
     },
     enabled: !!user?.id && !!targetUserId && user.id !== targetUserId,
