@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>es-CL</string>
+	<key>CFBundleDisplayName</key>
+	<string>Paw Friend</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+	<key>CFBundleIdentifier</key>
+	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSRequiresIPhoneOS</key>
+	<true/>
+	<key>UILaunchStoryboardName</key>
+	<string>LaunchScreen</string>
+	<key>UIMainStoryboardFile</key>
+	<string>Main</string>
+	<key>UIRequiredDeviceCapabilities</key>
+	<array>
+		<string>armv7</string>
+	</array>
+	<key>UISupportedInterfaceOrientations</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UISupportedInterfaceOrientations~ipad</key>
+	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
+	</array>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
+
+	<!-- ═══ Privacy Usage Descriptions (requeridas por Apple) ═══ -->
+	<key>NSCameraUsageDescription</key>
+	<string>Paw Friend necesita acceso a tu cámara para tomar fotos de tu mascota y subir documentos médicos.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Paw Friend necesita acceso a tus fotos para subir imágenes de tu mascota y documentos médicos.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Paw Friend necesita permiso para guardar fotos e imágenes en tu galería.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Paw Friend puede sincronizar los recordatorios y citas de tu mascota con tu calendario.</string>
+	<key>NSUserTrackingUsageDescription</key>
+	<string>Paw Friend usa esta información para mostrarte contenido relevante sobre el cuidado de tu mascota y mejorar tu experiencia en la app.</string>
+
+	<!-- ═══ Facebook Login ═══ -->
+	<key>FacebookAppID</key>
+	<string>__REEMPLAZAR_FACEBOOK_APP_ID__</string>
+	<key>FacebookClientToken</key>
+	<string>__REEMPLAZAR_FACEBOOK_CLIENT_TOKEN__</string>
+	<key>FacebookDisplayName</key>
+	<string>Paw Friend</string>
+
+	<key>CFBundleURLTypes</key>
+	<array>
+		<!-- Capacitor deep link scheme -->
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>cl.pawfriend.app</string>
+			</array>
+		</dict>
+		<!-- Facebook Login URL scheme -->
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb__REEMPLAZAR_FACEBOOK_APP_ID__</string>
+			</array>
+		</dict>
+		<!-- Google Sign-In URL scheme (reversed client ID from GoogleService-Info.plist) -->
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>__REEMPLAZAR_GOOGLE_REVERSED_CLIENT_ID__</string>
+			</array>
+		</dict>
+	</array>
+
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>fbapi</string>
+		<string>fbapi20130214</string>
+		<string>fbapi20130410</string>
+		<string>fbapi20130702</string>
+		<string>fbapi20131010</string>
+		<string>fbapi20131219</string>
+		<string>fbapi20140410</string>
+		<string>fbapi20140116</string>
+		<string>fbapi20150313</string>
+		<string>fbapi20150629</string>
+		<string>fbapi20160328</string>
+		<string>fb-messenger-share-api</string>
+		<string>fbauth2</string>
+		<string>fbshareextension</string>
+	</array>
+
+	<!-- ═══ Associated Domains (for Universal Links / App Links) ═══ -->
+	<!-- Configure in Xcode > Signing & Capabilities > Associated Domains:
+	     applinks:pawfriend.cl
+	     webcredentials:pawfriend.cl
+	-->
+</dict>
+</plist>

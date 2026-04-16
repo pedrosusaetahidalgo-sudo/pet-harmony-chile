@@ -10,38 +10,83 @@ interface FacebookAuthResult {
   error?: string;
 }
 
+// Dynamic import for native Facebook SDK (only available on native)
+let FacebookLogin: typeof import('@capacitor-community/facebook-login').FacebookLogin | null = null;
+
+const initFacebookAuth = async () => {
+  if (Capacitor.isNativePlatform()) {
+    try {
+      const module = await import('@capacitor-community/facebook-login');
+      FacebookLogin = module.FacebookLogin;
+      await FacebookLogin.initialize({
+        appId: import.meta.env.VITE_FACEBOOK_APP_ID || '',
+      });
+    } catch (error) {
+      logger.debug('Facebook Login plugin not available:', error);
+    }
+  }
+};
+
+initFacebookAuth();
+
 export const useFacebookAuth = () => {
   const [loading, setLoading] = useState(false);
-  /**
-   * Sign in with Facebook - handles both web and native platforms
-   */
+
   const signInWithFacebook = useCallback(async (): Promise<FacebookAuthResult> => {
     setLoading(true);
 
     try {
-      const isNative = Capacitor.isNativePlatform();
-
-      if (isNative) {
-        // For native, use web OAuth flow (Facebook SDK integration can be added later)
-        return await handleWebFacebookAuth();
+      if (Capacitor.isNativePlatform() && FacebookLogin) {
+        return await handleNativeFacebookAuth();
       } else {
-        // Web flow using Supabase OAuth
         return await handleWebFacebookAuth();
       }
     } catch (error: unknown) {
       logger.error('Facebook Sign-In error:', error);
-
       const errorMessage = getErrorMessage(error);
       toast.error('Error al iniciar sesión con Facebook', { description: errorMessage });
-
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
-  }, [toast]);
+  }, []);
 
   /**
-   * Handle Facebook Auth on web platform
+   * Native flow: uses Facebook SDK on Android/iOS and passes token to Supabase
+   */
+  const handleNativeFacebookAuth = async (): Promise<FacebookAuthResult> => {
+    try {
+      const result = await FacebookLogin!.login({ permissions: ['email', 'public_profile'] });
+
+      if (!result.accessToken?.token) {
+        return { success: false, error: 'Inicio de sesión cancelado' };
+      }
+
+      // Sign in to Supabase with the Facebook access token
+      const { data, error } = await supabase.auth.signInWithIdToken({
+        provider: 'facebook',
+        token: result.accessToken.token,
+      });
+
+      if (error) throw error;
+
+      if (data.session) {
+        toast('¡Bienvenido!', { description: 'Has iniciado sesión con Facebook' });
+        return { success: true };
+      }
+
+      throw new Error('No se pudo crear la sesión');
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      if (err.message?.includes('cancel') || err.message?.includes('USER_CANCELLATION')) {
+        return { success: false, error: 'Inicio de sesión cancelado' };
+      }
+      throw error;
+    }
+  };
+
+  /**
+   * Web flow: uses Supabase OAuth redirect
    */
   const handleWebFacebookAuth = async (): Promise<FacebookAuthResult> => {
     const redirectTo = isNative()
@@ -57,9 +102,6 @@ export const useFacebookAuth = () => {
     });
 
     if (error) throw error;
-
-    // OAuth redirect will happen, return success
-    // Actual auth state change will be handled by onAuthStateChange
     return { success: true };
   };
 
@@ -69,13 +111,14 @@ export const useFacebookAuth = () => {
   };
 };
 
-/**
- * Get user-friendly error message
- */
 function getErrorMessage(error: unknown): string {
   const message = (error instanceof Error ? error.message : String(error)) || '';
 
-  if (message.includes('popup_closed') || message.includes('cancelled')) {
+  if (
+    message.includes('popup_closed') ||
+    message.includes('cancelled') ||
+    message.includes('cancel')
+  ) {
     return 'Inicio de sesión cancelado por el usuario';
   }
   if (message.includes('network')) {
@@ -83,9 +126,6 @@ function getErrorMessage(error: unknown): string {
   }
   if (message.includes('provider is not enabled')) {
     return 'Facebook Sign-In no está habilitado. Contacta al administrador.';
-  }
-  if (message.includes('invalid_grant')) {
-    return 'La sesión de Facebook expiró. Intenta de nuevo.';
   }
 
   return 'No se pudo iniciar sesión con Facebook. Intenta de nuevo.';

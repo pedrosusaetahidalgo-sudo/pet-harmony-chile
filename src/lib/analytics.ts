@@ -1,15 +1,27 @@
 /**
- * Analytics Event Tracking
- * Tracks key user events via PostHog (when configured) or console fallback.
+ * Analytics Event Tracking — Unified multi-provider analytics.
  *
- * Setup: set VITE_POSTHOG_KEY in .env to enable PostHog.
- * Without the key, events are logged via logger (dev) or silently dropped (prod).
+ * Providers (all optional, graceful degradation):
+ * - PostHog: set VITE_POSTHOG_KEY in .env
+ * - Firebase Analytics: set VITE_FIREBASE_* vars (web) or add google-services.json (native)
+ * - Meta Pixel: set VITE_META_PIXEL_ID (web only; native uses Facebook SDK App Events)
  *
- * PostHog is lazy-loaded via dynamic import to keep it out of the critical path.
- * If posthog-js is not installed, it gracefully falls back to console logging.
+ * All events flow through a single `track()` function that fans out to all active providers.
  */
 
 import { logger } from '@/lib/logger';
+import {
+  initFirebaseAnalytics,
+  logFirebaseEvent,
+  setFirebaseUserId,
+  setFirebaseScreenName,
+} from '@/lib/firebaseConfig';
+import {
+  initMetaPixel,
+  trackMetaEvent,
+  trackMetaCustomEvent,
+  META_EVENT_MAP,
+} from '@/lib/metaPixel';
 
 interface TrackEvent {
   event: string;
@@ -47,48 +59,44 @@ function flushPostHogQueue() {
 }
 
 /**
- * Initialize PostHog lazily. Call once at app start (e.g. in main.tsx).
- * Only loads if VITE_POSTHOG_KEY is set and posthog-js is installed.
+ * Initialize all analytics providers. Call once at app start (e.g. in main.tsx).
  */
 export async function initAnalytics(): Promise<void> {
-  if (_posthogInitAttempted) return;
-  _posthogInitAttempted = true;
+  // PostHog
+  if (!_posthogInitAttempted) {
+    _posthogInitAttempted = true;
 
-  if (!POSTHOG_KEY) {
-    if (IS_DEV) {
-      logger.debug('[Analytics] PostHog deshabilitado — VITE_POSTHOG_KEY no configurada');
-    }
-    return;
-  }
+    if (POSTHOG_KEY) {
+      try {
+        const moduleName = 'posthog' + '-js';
+        const posthogModule = await import(/* @vite-ignore */ moduleName);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const posthog = (posthogModule as any).default ?? posthogModule;
 
-  try {
-    // Dynamic module name prevents Rollup from resolving at build time
-    const moduleName = 'posthog' + '-js';
-    const posthogModule = await import(/* @vite-ignore */ moduleName);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const posthog = (posthogModule as any).default ?? posthogModule;
+        posthog.init(POSTHOG_KEY, {
+          api_host: POSTHOG_HOST,
+          autocapture: false,
+          capture_pageview: false,
+          capture_pageleave: false,
+          persistence: 'localStorage',
+          loaded: () => {
+            if (IS_DEV) logger.debug('[Analytics] PostHog inicializado');
+          },
+        });
 
-    posthog.init(POSTHOG_KEY, {
-      api_host: POSTHOG_HOST,
-      autocapture: false,
-      capture_pageview: false, // Manejado manualmente via useAnalyticsTracker
-      capture_pageleave: false,
-      persistence: 'localStorage',
-      loaded: () => {
-        if (IS_DEV) {
-          logger.debug('[Analytics] PostHog inicializado');
-        }
-      },
-    });
-
-    _posthog = posthog;
-    flushPostHogQueue();
-  } catch {
-    // posthog-js no instalado — fallback silencioso a console
-    if (IS_DEV) {
-      logger.debug('[Analytics] posthog-js no disponible, usando fallback a console');
+        _posthog = posthog;
+        flushPostHogQueue();
+      } catch {
+        if (IS_DEV) logger.debug('[Analytics] posthog-js no disponible');
+      }
     }
   }
+
+  // Firebase Analytics
+  await initFirebaseAnalytics();
+
+  // Meta Pixel (web only)
+  initMetaPixel();
 }
 
 // Key events to track
@@ -174,10 +182,7 @@ export const EVENTS = {
 } as const;
 
 /**
- * Track an analytics event.
- * - PostHog configured → sends to PostHog
- * - PostHog loading → queues for flush
- * - No PostHog → console in dev, silent in prod
+ * Track an analytics event across all providers.
  */
 export function track({ event, properties, userId }: TrackEvent): void {
   const enrichedProperties = {
@@ -191,7 +196,7 @@ export function track({ event, properties, userId }: TrackEvent): void {
     logger.debug('[Analytics]', event, enrichedProperties);
   }
 
-  // Send to PostHog if available or queue for later
+  // PostHog
   if (POSTHOG_KEY) {
     if (_posthog) {
       try {
@@ -203,17 +208,28 @@ export function track({ event, properties, userId }: TrackEvent): void {
       _queue.push({ type: 'capture', args: [event, enrichedProperties] });
     }
   }
+
+  // Firebase Analytics
+  logFirebaseEvent(event, enrichedProperties);
+
+  // Meta Pixel — map to standard events when possible, otherwise custom
+  const metaStandardEvent = META_EVENT_MAP[event];
+  if (metaStandardEvent) {
+    trackMetaEvent(metaStandardEvent, enrichedProperties);
+  } else {
+    trackMetaCustomEvent(event, enrichedProperties);
+  }
 }
 
 /**
- * Identify a user for analytics.
- * Sets user identity in PostHog for cross-session tracking.
+ * Identify a user across all analytics providers.
  */
 export function identify(userId: string, traits?: Record<string, unknown>): void {
   if (IS_DEV) {
     logger.debug('[Analytics] Identify:', userId, traits);
   }
 
+  // PostHog
   if (POSTHOG_KEY) {
     if (_posthog) {
       try {
@@ -225,6 +241,21 @@ export function identify(userId: string, traits?: Record<string, unknown>): void
       _queue.push({ type: 'identify', args: [userId, traits] });
     }
   }
+
+  // Firebase
+  setFirebaseUserId(userId);
+}
+
+/**
+ * Track screen view across all providers. Call from route changes.
+ */
+export function trackScreen(screenName: string): void {
+  if (IS_DEV) {
+    logger.debug('[Analytics] Screen:', screenName);
+  }
+
+  track({ event: EVENTS.PAGE_VIEWED, properties: { screen: screenName } });
+  setFirebaseScreenName(screenName);
 }
 
 /**

@@ -4,6 +4,12 @@
     <string name="title_activity_main">Paw Friend</string>
     <string name="package_name">cl.pawfriend.app</string>
     <string name="custom_url_scheme">cl.pawfriend.app</string>
-    <!-- Google OAuth Web Client ID -->
-    <string name="server_client_id">707954104528-87df2bmt6jeaqe9s6h3tjpdrqth3v03r.apps.googleusercontent.com</string>
+
+    <!-- Google OAuth Web Client ID (must match Supabase + capacitor.config.ts) -->
+    <string name="server_client_id">__REEMPLAZAR_GOOGLE_WEB_CLIENT_ID__</string>
+
+    <!-- Facebook Login (from Meta for Developers > App Dashboard > Settings > Basic) -->
+    <string name="facebook_app_id">__REEMPLAZAR_FACEBOOK_APP_ID__</string>
+    <string name="facebook_client_token">__REEMPLAZAR_FACEBOOK_CLIENT_TOKEN__</string>
+    <string name="fb_login_protocol_scheme">fb__REEMPLAZAR_FACEBOOK_APP_ID__</string>
 </resources>

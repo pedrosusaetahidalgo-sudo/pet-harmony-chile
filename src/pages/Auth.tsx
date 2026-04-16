@@ -12,6 +12,7 @@ import { Dog, Mail, Shield, Stethoscope, Heart } from '@/lib/icons';
 import { FaFacebook } from 'react-icons/fa';
 import { LegalFooter } from '@/components/LegalFooter';
 import { GoogleSignInButton } from '@/components/GoogleSignInButton';
+import { AppleSignInButton } from '@/components/AppleSignInButton';
 import { useFacebookAuth } from '@/hooks/useFacebookAuth';
 import { track, EVENTS } from '@/lib/analytics';
 import { logger } from '@/lib/logger';
@@ -530,10 +531,6 @@ const Auth = () => {
                   {/* Social Login Buttons */}
                   <div className="space-y-3">
                     <GoogleSignInButton mode="signin" />
-                    <p className="text-xs text-muted-foreground text-center px-2">
-                      Si aparece una advertencia de Google, es porque estamos en proceso de
-                      verificación oficial. Continúa con tranquilidad — tu cuenta es segura.
-                    </p>
                     <Button
                       type="button"
                       variant="outline"
@@ -544,6 +541,7 @@ const Auth = () => {
                       <FaFacebook className="mr-2 h-4 w-4 text-blue-600" />
                       {facebookLoading ? 'Conectando...' : 'Continuar con Facebook'}
                     </Button>
+                    <AppleSignInButton mode="signin" />
                   </div>
 
                   {!showEmailPassword ? (
@@ -600,10 +598,6 @@ const Auth = () => {
                   {/* Social Login Buttons */}
                   <div className="space-y-3">
                     <GoogleSignInButton mode="signup" />
-                    <p className="text-xs text-muted-foreground text-center px-2">
-                      Si aparece una advertencia de Google, es porque estamos en proceso de
-                      verificación oficial. Continúa con tranquilidad — tu cuenta es segura.
-                    </p>
                     <Button
                       type="button"
                       variant="outline"
@@ -613,6 +607,7 @@ const Auth = () => {
                       <FaFacebook className="mr-2 h-4 w-4 text-blue-600" />
                       Registrarse con Facebook
                     </Button>
+                    <AppleSignInButton mode="signup" />
                   </div>
 
                   <div className="relative">

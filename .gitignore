@@ -58,3 +58,15 @@ perf-reports/
 
 # Legacy junk folder (archivos pre-Claude, sin valor accionable)
 junk/
+
+# Android signing (NEVER commit)
+*.keystore
+*.jks
+keystore.properties
+android/app/google-services.json
+
+# iOS signing & Firebase (NEVER commit)
+ios/App/App/GoogleService-Info.plist
+*.mobileprovision
+*.p12
+*.cer

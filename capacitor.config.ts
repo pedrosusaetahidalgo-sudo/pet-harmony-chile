@@ -40,11 +40,22 @@ const config: CapacitorConfig = {
     },
     GoogleAuth: {
       scopes: ['profile', 'email'],
-      serverClientId: '811742672720-riinj9cddioietprfcb2jfuq9njenkg6.apps.googleusercontent.com',
+      // Web Client ID — must match the one in Supabase Dashboard > Auth > Google provider
+      // Android & iOS use their own Client IDs via google-services.json / GoogleService-Info.plist
+      serverClientId: '__REEMPLAZAR_GOOGLE_WEB_CLIENT_ID__',
       forceCodeForRefreshToken: true,
+    },
+    FacebookLogin: {
+      // Permissions to request from the user
+      permissions: ['email', 'public_profile'],
     },
     PushNotifications: {
       presentationOptions: ['badge', 'sound', 'alert'],
+    },
+    FirebaseAnalytics: {
+      // Automatic screen tracking disabled — we handle it manually
+      collectionEnabled: true,
+      sessionTimeoutDuration: 1800, // 30 minutes
     },
   },
 };
