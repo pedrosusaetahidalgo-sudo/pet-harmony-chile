@@ -311,7 +311,7 @@ export function BecomeProviderDialog({ open, onOpenChange }: Props) {
                   className={`px-2.5 py-1 rounded-full text-xs border transition font-medium ${
                     SANTIAGO_COMUNAS.every((c) => selectedAreas.includes(c))
                       ? 'bg-teal-700 text-white border-teal-700'
-                      : 'bg-teal-50 text-teal-700 border-teal-300 hover:border-teal-500'
+                      : 'bg-white text-gray-600 border-gray-300 hover:border-teal-500 hover:text-teal-700'
                   }`}
                 >
                   Toda la RM

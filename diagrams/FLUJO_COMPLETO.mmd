@@ -1,15 +1,15 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-14
-    %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (26 activas).
-    %% Cambios 2026-04-14 (sesion hardening):
-    %%   - Paw Game, Missions, PawCollection restaurados como Labs (RoleGuard owner-only)
-    %%   - Community restaurada como Labs
-    %%   - Re-claim: useAutoClaimByEmail + ClaimPetDialog en /my-pets
-    %%   - Admin: mascotas pendientes, KPIs ampliados
-    %%   - Sidebar Owner: Salud | Descubrir | Comunidad (Feed+Mensajes+Labs)
-    %%   - 26 edge functions en config.toml (8 nuevas agregadas)
-    %%   - Leaflet chunk split para performance
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-16
+    %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (28 activas).
+    %% Cambios 2026-04-16:
+    %%   - Booking System V2: availability rules, exceptions, audit trail
+    %%   - 3-step booking flow: mascota > horario > confirmar
+    %%   - Provider inbox: pendientes, confirmar/rechazar/reprogramar
+    %%   - all_bookings_view: vista unificada cross-type
+    %%   - Auto-confirm y booking_events audit trail
+    %%   - Vet ficha redesign: 2-col layout, VetVitalsCard, PatientKPIBar
+    %%   - Quick wins: PublicLayout, EmptyState unificado, format.ts
     %% Regla: este archivo es UN SOLO bloque pegable en mermaid.live
     %% y se actualiza en el MISMO commit que cualquier cambio de flujo.
     %% Ver CLAUDE.md §9.7.1
@@ -173,12 +173,33 @@ flowchart TD
     VET_PERF --> VET_RESENAS["Ver resenas"]
     VET_PERF --> VET_PRECIOS["Ver precios"]
 
-    %% ============ RESERVAS ============
-    VET_AGENDAR --> BK_CAL["Calendario disponibilidad"]
-    BK_CAL --> BK_SLOT["Selecciona horario"]
-    BK_SLOT --> BK_CONFIRM["Confirma reserva"]
-    BK_CONFIRM --> AUTO_REM_BK["Trigger: auto-reminder cita"]
-    BK_CONFIRM --> BK_LIST["Mis reservas /mis-reservas"]
+    %% ============ RESERVAS V2 ============
+    subgraph BOOKING_V2["BOOKING SYSTEM V2"]
+        direction TB
+        VET_AGENDAR --> BK_PET["Paso 1: Selecciona mascota"]
+        BK_PET --> BK_CAL["Paso 2: Calendario disponibilidad"]
+        BK_CAL --> BK_RULES["provider_availability_rules"]
+        BK_CAL --> BK_EXCEPT["provider_availability_exceptions"]
+        BK_CAL --> BK_SLOT["Selecciona horario"]
+        BK_SLOT --> BK_CONFIRM["Paso 3: Confirma reserva"]
+        BK_CONFIRM --> BK_AUTO{"confirmation_mode?"}
+        BK_AUTO -->|auto| BK_CONFIRMED["Auto-confirmado"]
+        BK_AUTO -->|manual| BK_PENDING["Pendiente aprobacion vet"]
+        BK_CONFIRMED --> BK_EVENT["booking_events: created + confirmed"]
+        BK_PENDING --> BK_EVENT_P["booking_events: created"]
+        BK_PENDING --> BK_NOTIFY["Notificacion al vet"]
+    end
+    BK_CONFIRMED --> AUTO_REM_BK["Trigger: auto-reminder cita"]
+    BK_CONFIRMED --> BK_LIST["Mis reservas /mis-reservas"]
+    BK_PENDING --> BK_LIST
+
+    %% Provider inbox
+    VET_RESERVAS_SB --> BK_INBOX["Inbox: pendientes + hoy"]
+    BK_INBOX --> BK_ACCEPT["Confirmar reserva"]
+    BK_INBOX --> BK_REJECT["Rechazar con motivo"]
+    BK_INBOX --> BK_RESCHEDULE["Reprogramar"]
+    BK_ACCEPT --> BK_EVENT
+    BK_REJECT --> BK_EVENT
 
     %% ============ TAB RECORDATORIOS ============
     subgraph RECORDATORIOS["RECORDATORIOS /reminders"]
@@ -389,7 +410,7 @@ flowchart TD
     WEIGHT_CHK -->|Si| WEIGHT_APPEND["Trigger: append weight_history"]
 
     %% ============ BACKEND ============
-    subgraph BACKEND["BACKEND AUTOMATICO (26 edge functions + cron)"]
+    subgraph BACKEND["BACKEND AUTOMATICO (28 edge functions + cron)"]
         direction TB
         CRON["Cron diario 9AM Chile"]
         CRON --> CRON_REMIND["edge fn reminder-cron"]
@@ -410,6 +431,8 @@ flowchart TD
         ADM --> ADM_V["Verificacion Colmevet"]
         ADM --> ADM_M["Moderacion"]
         ADM --> ADM_MET["Metricas"]
+        ADM --> ADM_FIN["Finanzas"]
+        ADM --> ADM_LEADS["CRM Leads"]
         ADM --> ADM_PEND["Mascotas pendientes"]
     end
 

@@ -273,7 +273,7 @@ const PetClinicalRecord = () => {
   return (
     <div className="min-h-screen bg-background">
       <PageHeader
-        title={`Ficha de ${pet.name}`}
+        title={`Ficha clinica de ${pet.name}`}
         subtitle={`${pet.species}${pet.breed ? ` · ${pet.breed}` : ''}`}
         actions={
           <div className="flex items-center gap-2">
@@ -296,21 +296,16 @@ const PetClinicalRecord = () => {
           </div>
         }
       >
-        <Breadcrumbs
-          items={
-            viewMode === 'vet'
-              ? [
-                  { label: 'Pacientes', to: LINKS.providerPatients() },
-                  { label: pet.name },
-                  { label: 'Ficha clínica' },
-                ]
-              : [
-                  { label: 'Mascotas', to: LINKS.myPets() },
-                  { label: pet.name },
-                  { label: 'Ficha clínica' },
-                ]
-          }
-        />
+        {/* Breadcrumbs solo en vista vet — en owner es redundante y apretuja el header */}
+        {viewMode === 'vet' && (
+          <Breadcrumbs
+            items={[
+              { label: 'Pacientes', to: LINKS.providerPatients() },
+              { label: pet.name },
+              { label: 'Ficha clínica' },
+            ]}
+          />
+        )}
       </PageHeader>
       <div className="container max-w-4xl mx-auto p-4 md:p-6 space-y-4">
         {/* Pet selector (multiple pets) */}

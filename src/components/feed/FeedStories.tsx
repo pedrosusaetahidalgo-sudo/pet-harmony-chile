@@ -173,7 +173,7 @@ export function FeedStories() {
             )}
 
             {storyPreview ? (
-              <div className="relative aspect-[9/16] rounded-xl overflow-hidden max-h-64">
+              <div className="relative aspect-square rounded-xl overflow-hidden max-h-72 mx-auto">
                 <img
                   src={storyPreview}
                   alt="Vista previa de historia"

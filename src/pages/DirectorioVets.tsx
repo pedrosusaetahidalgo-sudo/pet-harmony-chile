@@ -198,7 +198,7 @@ export default function DirectorioVets() {
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Buscar por nombre o especialidad…"
+              placeholder="Buscar por nombre del veterinario…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9 h-11"
@@ -227,7 +227,7 @@ export default function DirectorioVets() {
             </Select>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-3 mt-1">
             <Select value={type} onValueChange={setType}>
               <SelectTrigger>
                 <SelectValue placeholder="Tipo" />
@@ -269,7 +269,7 @@ export default function DirectorioVets() {
         </Card>
 
         {/* Filtros rápidos: Abierto ahora + Urgencias */}
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap mb-4">
           <Button
             variant={onlyOpen ? 'default' : 'outline'}
             size="sm"
@@ -293,7 +293,7 @@ export default function DirectorioVets() {
         {/* Estimador de precios — solo cuando hay comuna especifica */}
         {comuna !== 'all' && <PriceEstimatorWidget comuna={comuna} compact />}
 
-        {/* Link al comparador completo */}
+        {/* Link al estimador de precios */}
         <div className="text-center">
           <Link
             to={
@@ -301,7 +301,7 @@ export default function DirectorioVets() {
             }
             className="text-sm text-purple-600 hover:text-purple-700 font-medium hover:underline"
           >
-            Ver comparador de precios por comuna →
+            Ver precios por comuna →
           </Link>
         </div>
 

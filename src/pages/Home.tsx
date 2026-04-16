@@ -753,6 +753,35 @@ export default function Home() {
         </>
       )}
 
+      {/* === Explorar: discoverability de features ocultas === */}
+      {pets.length > 0 && (
+        <section aria-label="Explorar" className="space-y-3">
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
+            Explorar
+          </h2>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            {[
+              { label: 'Feed', desc: 'Fotos y consejos', icon: '📸', to: '/feed' },
+              { label: 'Comunidad', desc: 'Grupos por raza', icon: '👥', to: '/comunidad' },
+              { label: 'Misiones', desc: 'Gana PawPoints', icon: '🎯', to: '/misiones' },
+              { label: 'Paw Game', desc: 'Mini-juego', icon: '🎮', to: '/paw-game' },
+            ].map((item) => (
+              <Card
+                key={item.to}
+                className="cursor-pointer hover:shadow-md transition-shadow border-gray-200"
+                onClick={() => navigate(item.to)}
+              >
+                <CardContent className="p-3 text-center">
+                  <span className="text-2xl block mb-1">{item.icon}</span>
+                  <p className="text-xs font-semibold">{item.label}</p>
+                  <p className="text-[10px] text-muted-foreground">{item.desc}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </section>
+      )}
+
       <ViewTutorial {...TUTORIALS.home} />
     </div>
   );

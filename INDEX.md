@@ -2,7 +2,7 @@
 
 > Todos estos documentos deben mantenerse actualizados con cada cambio relevante.
 > Si modificas rutas, navegacion, flujos, planes o features: actualiza el documento correspondiente.
-> Ultima revision: 2026-04-15.
+> Ultima revision: 2026-04-16.
 
 ---
 
@@ -30,7 +30,7 @@
 | [audits/FEEDBACK_VET_SOFIA_2026_04_13.md](audits/FEEDBACK_VET_SOFIA_2026_04_13.md) | Feedback de vet beta tester (Sofia) | Despues de cada sesion con Sofia |
 | [audits/COMPETENCIA_2026_04_08.md](audits/COMPETENCIA_2026_04_08.md) | Analisis competitivo Chile | Cada 3-6 meses o cuando aparezca competidor nuevo |
 | [audits/CROSS_PLATFORM_COMPATIBILITY.md](audits/CROSS_PLATFORM_COMPATIBILITY.md) | Compatibilidad multiplataforma (iOS, Android, Web, Chrome) | Cada cambio de CSS/JS moderno o API de browser |
-| [audits/CONSOLIDADO_QA_2026_04_15.md](audits/CONSOLIDADO_QA_2026_04_15.md) | Consolidado UX audit + console errors + QA Pedro (P0-P3 priorizado) | Despues de cada sesion QA |
+| [SUGERENCIAS_COMPLETAS_2026_04_16.md](SUGERENCIAS_COMPLETAS_2026_04_16.md) | 49 sugerencias en 10 categorias (seguridad, perf, UX, DB, testing, etc.) | Cada sesion de auditoria |
 
 ---
 
@@ -39,9 +39,9 @@
 | Documento | Que contiene | Prioridad |
 |---|---|---|
 | [docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md](docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md) | PDF profesional cronologico + deduplicacion mascotas + sync datos | **Alta** -- Toca joya de la corona + integridad de datos |
-| [docs-specs/ANALISIS_PREMIUM_VS_FREE.md](docs-specs/ANALISIS_PREMIUM_VS_FREE.md) | Analisis de que features deben ser free vs premium + plan de ejecucion | **Alta** -- Define monetizacion |
 | [docs-specs/ADMIN_CONTROL_CENTER_V2.md](docs-specs/ADMIN_CONTROL_CENTER_V2.md) | Centro de control admin v2 | **Media** -- Admin expandido |
-| [docs-specs/UPGRADE_TOGGLE_ROLE.md](docs-specs/UPGRADE_TOGGLE_ROLE.md) | Toggle de rol dueno/vet | **Media** -- UX dual-role |
+| [docs-specs/MEJORA_IMAGENES_AVATARES.md](docs-specs/MEJORA_IMAGENES_AVATARES.md) | Optimizacion de avatares e imagenes | **Media** -- Performance |
+| [docs-specs/MICROCHIP_REGISTRO_NACIONAL.md](docs-specs/MICROCHIP_REGISTRO_NACIONAL.md) | Integracion registro nacional microchip | **Baja** -- Feature futuro |
 
 **Specs ya ejecutadas (movidas a _archive/):**
 - PLAN_DUAL_PROFILE — 100% ejecutado (ActiveRoleProvider + useActiveRole)
@@ -118,7 +118,8 @@ Resumen de items activos:
 
 | Documento | Que contiene | Estado |
 |---|---|---|
-| [PLAN_MEJORA_INTEGRAL_2026_04_15.md](PLAN_MEJORA_INTEGRAL_2026_04_15.md) | 127 issues en 8 fases (seguridad → IA → perf → data → UX → tests → DX → polish) | Activo |
+| [SUGERENCIAS_COMPLETAS_2026_04_16.md](SUGERENCIAS_COMPLETAS_2026_04_16.md) | 49 sugerencias en 10 categorias con plan de ejecucion de 4 semanas | Activo |
+| [PENDIENTES_MANUALES.md](PENDIENTES_MANUALES.md) | Items que requieren trabajo manual (assets, stores, verificaciones) | Activo |
 
 ---
 
@@ -192,6 +193,15 @@ Documentos ya ejecutados o superados. Conservan valor historico pero no son acci
 | `ROADMAP_IDEAS_FUTURE.md` | Ideas visionarias, no activas — conservado como referencia |
 | `SPEC_AUDIO_CONSULTA_PENDING.md` | Requiere infra IA externa, no iniciado |
 | `SIDEBAR_PROVIDER_IMPLEMENTED.md` | Sidebar ya implementado en codigo |
+| `PLAN_MEJORA_INTEGRAL_2026_04_15.md` | 127 issues, superado por SUGERENCIAS_COMPLETAS_2026_04_16 |
+| `PLAN_PROXIMO.md` | Plan proximo, superado por SUGERENCIAS_COMPLETAS_2026_04_16 |
+| `ADMIN-DASHBOARD-SPEC.md` | Spec de admin dashboard, ejecutado |
+| `AI-QUALITY-AUDIT.md` | Auditoria IA, superada por sugerencias consolidadas |
+| `PLAN_RESERVAS.md` | Sistema reservas V2, ejecutado (booking system V2 en produccion) |
+| `ANALISIS_PREMIUM_VS_FREE.md` | Premium/Free, ejecutado (pricing activo) |
+| `UPGRADE_TOGGLE_ROLE.md` | Toggle role, ejecutado (ActiveRoleProvider) |
+| `CONSOLIDADO_QA_2026_04_15.md` | QA consolidado, superado |
+| `QA_MANUAL_2026_04_15.md` | QA manual, superado |
 
 ---
 

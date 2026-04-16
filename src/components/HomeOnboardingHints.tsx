@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { PawPrint, Bell, MapPin, ArrowRight, CheckCircle, Sparkles } from '@/lib/icons';
+import { PawPrint, Bell, MapPin, ArrowRight, CheckCircle, Sparkles, Trophy } from '@/lib/icons';
 import { useGoToAddPet } from '@/hooks/useCanAddPet';
 
 const STORAGE_KEY = 'pf_onboarding_completed';
@@ -52,6 +52,18 @@ const hints: Hint[] = [
     colorIcon: 'text-indigo-700 bg-indigo-100',
     colorBorder: 'border-l-indigo-500',
     doneBg: 'bg-indigo-50/50',
+  },
+  {
+    id: 'pawpoints',
+    icon: Trophy,
+    title: '4. Gana PawPoints cuidando a tu mascota',
+    description:
+      'Cada accion (vacunar, pasear, socializar) suma puntos. Sube de nivel y desbloquea recompensas.',
+    cta: 'Ver mis PawPoints',
+    colorBg: 'bg-orange-50',
+    colorIcon: 'text-orange-700 bg-orange-100',
+    colorBorder: 'border-l-orange-500',
+    doneBg: 'bg-orange-50/50',
   },
 ];
 
@@ -110,9 +122,10 @@ export function HomeOnboardingHints({ hasPets }: Props) {
     if (id === 'pet') goToAddPet();
     else if (id === 'reminder') navigate('/my-pets');
     else if (id === 'vet') navigate('/veterinarios');
+    else if (id === 'pawpoints') navigate('/misiones');
   };
 
-  const allDone = completed.size >= 3;
+  const allDone = completed.size >= hints.length;
 
   // Show celebration briefly then hide forever
   useEffect(() => {
@@ -150,7 +163,7 @@ export function HomeOnboardingHints({ hasPets }: Props) {
     <section aria-label="Primeros pasos" className="space-y-3">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-          Primeros pasos — {completed.size}/3
+          Primeros pasos — {completed.size}/{hints.length}
         </h2>
       </div>
       <div className="grid gap-3 md:grid-cols-3">

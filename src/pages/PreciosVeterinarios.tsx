@@ -103,7 +103,7 @@ export default function PreciosVeterinarios() {
             ¿Cuánto cuesta el vet en tu comuna?
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Compara precios reales de veterinarios en {SANTIAGO_COMUNAS.length} comunas de Chile.
+            Consulta precios reales de veterinarios en {SANTIAGO_COMUNAS.length} comunas de Chile.
             Datos publicados por los propios veterinarios, sin sorpresas.
           </p>
         </div>

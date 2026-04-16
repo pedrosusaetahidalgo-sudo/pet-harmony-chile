@@ -1,7 +1,7 @@
 # Paw Friend -- Manual operativo para Claude Code
 
 > Este archivo es la fuente de verdad para cualquier agente o asistente IA que trabaje en este repositorio.
-> Actualizado: 2026-04-15.
+> Actualizado: 2026-04-16.
 
 ---
 
@@ -250,15 +250,14 @@ Ver `INDEX.md` para el indice completo con reglas de actualizacion.
 | `diagrams/FLUJOS_MERMAID.md` | Diagramas individuales por modulo |
 | `audits/AUDITORIA_UX_COMPLETA_2026_04_14.md` | Auditoria UX completa (reemplaza reporte 04-11) |
 | `audits/FEATURES_INCOMPLETAS_2026_04_14.md` | 28 features con gaps detectados |
-| `audits/CONTEXTO_REVISION_COMPLETA.txt` | Snapshot tecnico completo regenerado 2026-04-14 |
+| `SUGERENCIAS_COMPLETAS_2026_04_16.md` | 49 sugerencias en 10 categorias (seguridad, perf, UX, DB, etc.) |
 | `audits/OPTIMIZACION_COSTOS_2026_04_12.md` | Analisis de costos operativos y plan de eficiencia |
 | `audits/COMPETENCIA_2026_04_08.md` | Analisis competitivo Chile |
 | `audits/CROSS_PLATFORM_COMPATIBILITY.md` | Compatibilidad multiplataforma (iOS, Android, Web) |
 | `audits/FEEDBACK_VET_SOFIA_2026_04_13.md` | Feedback de vet beta tester Sofia |
 | `docs-specs/` | Specs de features pendientes (ver INDEX.md para listado) |
-| `_archive/PROVIDER_LAYOUT_REDESIGN.md` | Guia de diseno layout proveedor (ejecutado) |
 | `_pending/` | Plans y blueprints pendientes de ejecutar (ver _pending/README.md) |
-| `_archive/` | Documentos ya ejecutados o superados por versiones mas recientes |
+| `_archive/` | 47 documentos ya ejecutados o superados |
 
 ---
 
@@ -419,17 +418,19 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 
 ---
 
-## 12. Estado tecnico al cierre 2026-04-15
+## 12. Estado tecnico al cierre 2026-04-16
 
 | Metrica | Valor |
 |---|---|
 | `npx tsc -b` | 0 errores |
-| `npm run build` | Pasa (1m 24s) |
-| Bundle principal (index) | ~334 kB / 100 kB gzip |
-| Chunk mas grande (Recharts) | 458 kB / 151 kB gzip |
-| Vendor splitting | 6 chunks (react, query, ui, icons, date, supabase) |
-| Archivos fuente (src/) | 464 total (65 pages, 272 components, 68 hooks, 38 libs) |
-| Migraciones | 156, hasta `20260517100000` + flag `99999999000000_demo_seed_flag` — **todas aplicadas en prod** |
+| `npm run lint` | 0 errores (85 warnings a11y) |
+| `npm run test:ci` | 176 tests passed (12 files) |
+| `npm run build` | Pasa (2m 31s) |
+| Bundle principal (index) | ~335 kB / 100 kB gzip |
+| Chunk mas grande (Sentry) | 458 kB / 151 kB gzip |
+| Vendor splitting | 7 chunks (react, query, ui, icons, date, supabase, sentry) |
+| Archivos fuente (src/) | 502+ total (65 pages, 272 components, 68 hooks, 38 libs) |
+| Migraciones | 156+, hasta `20260520000000` (booking V2) + flag `99999999000000_demo_seed_flag` |
 | Edge functions | 28 activas + `_shared/` (6 helpers) |
 | Rutas en App.tsx | 67 paths (18 publicas, 40 protegidas, 3 provider, 2 admin, 4 redirects) |
 | Premium B2C Flow | Vivo con idempotencia + rate limit |
@@ -437,6 +438,7 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 | Sentry | Integrado (@sentry/react 10.47.0) |
 | WhatsApp Cloud API | Codigo listo, pendiente verificacion Meta Business |
 | CRM Leads Vet | Vivo — AdminLeadsCRM + edge fn send-lead-outreach |
+| Booking System V2 | Availability rules, exceptions, audit trail, all_bookings_view |
 
 ---
 
@@ -472,7 +474,7 @@ Para tareas especializadas, invocar el subagente correspondiente. **13 agentes a
 
 ---
 
-## 15. Planes ejecutados (2026-04-14)
+## 15. Planes ejecutados (2026-04-16)
 
 | Plan | Estado | Cambios clave |
 |---|---|---|
@@ -482,6 +484,10 @@ Para tareas especializadas, invocar el subagente correspondiente. **13 agentes a
 | Limpieza de mocks | Aplicado | isPremium bug fix, AnalyticsDashboard aislado admin, chat quick replies extraidos, MOCKS_MAP.md |
 | Auditoria backend | Aplicado | 8 edge functions en config.toml, timestamps duplicados documentados |
 | Operacion y crecimiento 90d | Aplicado | KPIs en AdminDashboard, feature flags Labs, docs operacionales |
+| Booking System V2 | Aplicado | Availability rules, exceptions, audit trail, 3-step flow, provider inbox |
+| Vet ficha redesign | Aplicado | PatientKPIBar, VetFichaView 2-col, VetVitalsCard, calendar split |
+| Quick wins Fase 1 | Aplicado | PublicLayout, EmptyState unificado, sonner unico, format.ts, a11y |
+| Lint cleanup 2026-04-16 | Aplicado | 10 errores lint → 0, eslint ignores android/ios, tipos en useVetAnalytics |
 
 ### Documentos operacionales creados
 

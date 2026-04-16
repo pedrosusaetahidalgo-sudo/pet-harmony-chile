@@ -96,17 +96,34 @@ export function PawCardFlippable({
     setIsFlipped((prev) => !prev);
   }, []);
 
-  /* ── Touch swipe for flip ── */
+  /* ── Touch: distinguish tap from scroll/swipe ── */
   const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const touchMoved = useRef(false);
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    touchMoved.current = false;
   }, []);
-  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    const delta = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(delta) > 60) {
-      setIsFlipped((prev) => !prev);
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    const dx = Math.abs(e.touches[0].clientX - touchStartX.current);
+    const dy = Math.abs(e.touches[0].clientY - touchStartY.current);
+    if (dx > 10 || dy > 10) {
+      touchMoved.current = true;
     }
   }, []);
+  const handleTouchEnd = useCallback(() => {
+    // Only flip on deliberate swipe (not carousel scroll)
+    // Removed: swipe-to-flip was conflicting with carousel scroll
+  }, []);
+  const handleClick = useCallback(() => {
+    // Suppress flip if touch was a scroll/swipe gesture
+    if (touchMoved.current) {
+      touchMoved.current = false;
+      return;
+    }
+    handleFlip();
+  }, [handleFlip]);
 
   return (
     <div className="paw-card-flip-container h-full">
@@ -118,7 +135,7 @@ export function PawCardFlippable({
         role="button"
         tabIndex={0}
         aria-label={isFlipped ? 'Volver al frente' : 'Voltear carta'}
-        onClick={handleFlip}
+        onClick={handleClick}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
@@ -128,6 +145,7 @@ export function PawCardFlippable({
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
         {/* ── FACE A: Front ── */}

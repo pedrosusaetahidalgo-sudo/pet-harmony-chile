@@ -32,8 +32,8 @@ import { BookingFlow } from '@/components/booking/BookingFlow';
 
 import { isOpenNow, getTodayHours } from '@/lib/openingHours';
 
-function useIsOwnProviderSlug(slug: string | undefined, userId: string | undefined): boolean {
-  const { data } = useQuery({
+function useIsOwnProviderSlug(slug: string | undefined, userId: string | undefined) {
+  const { data, isLoading } = useQuery({
     queryKey: ['own-provider-slug', userId],
     enabled: !!userId && !!slug,
     staleTime: 5 * 60 * 1000,
@@ -46,7 +46,10 @@ function useIsOwnProviderSlug(slug: string | undefined, userId: string | undefin
       return data?.slug ?? null;
     },
   });
-  return !!slug && !!data && data === slug;
+  const isOwn = !!slug && !!data && data === slug;
+  // While checking ownership, assume it might be own profile to avoid flash of "not found"
+  const isPending = !!userId && !!slug && isLoading;
+  return { isOwn, isPending };
 }
 
 export default function PerfilVetPublico() {
@@ -55,9 +58,12 @@ export default function PerfilVetPublico() {
   const { user } = useAuth();
   // First try with visibility filter off (for own profile preview)
   // Then fall back to public-only
-  const isOwnProfile = useIsOwnProviderSlug(slug, user?.id);
+  const { isOwn: isOwnProfile, isPending: ownerCheckPending } = useIsOwnProviderSlug(
+    slug,
+    user?.id
+  );
   const { data: vet, isLoading } = useDirectoryVetBySlug(slug, {
-    skipVisibilityFilter: isOwnProfile,
+    skipVisibilityFilter: isOwnProfile || ownerCheckPending,
   });
   const v = vet;
   const { data: reviews } = useVetReviews(v?.id);

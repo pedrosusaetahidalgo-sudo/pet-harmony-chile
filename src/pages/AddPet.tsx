@@ -918,7 +918,7 @@ const AddPet = () => {
                     <Badge
                       key={trait}
                       variant={selectedPersonality.includes(trait) ? 'default' : 'outline'}
-                      className="cursor-pointer hover:bg-primary/80 transition-colors justify-center py-2 text-xs"
+                      className="cursor-pointer hover:bg-primary/80 transition-none justify-center py-2 text-xs select-none"
                       role="option"
                       aria-selected={selectedPersonality.includes(trait)}
                       tabIndex={0}

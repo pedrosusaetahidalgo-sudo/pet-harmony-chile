@@ -4,7 +4,6 @@ import {
   PawPrint,
   Bell,
   Crown,
-  MessageSquare,
   Clock,
   AlertCircle,
   UserPlus,
@@ -14,11 +13,9 @@ import {
   Star,
   Trophy,
   Flame,
-  Sparkles,
   Stethoscope,
 } from '@/lib/icons';
 import { cn } from '@/lib/utils';
-import { isFeatureEnabled } from '@/lib/featureFlags';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -73,7 +70,6 @@ export const Header = () => {
   const [profile, setProfile] = useState<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [userStats, setUserStats] = useState<any>(null);
-  const [msgUnreadCount, setMsgUnreadCount] = useState(0);
   const [becomeProviderOpen, setBecomeProviderOpen] = useState(false);
   const {
     notifications,
@@ -85,47 +81,8 @@ export const Header = () => {
   useEffect(() => {
     if (user) {
       loadProfile();
-      loadUnreadMsgs();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadProfile/loadUnreadMsgs depend on user from closure; listed deps are sufficient
-  }, [user]);
-
-  // Realtime subscription filtrada por conversaciones del usuario
-  useEffect(() => {
-    if (!user) return;
-
-    let channel: ReturnType<typeof supabase.channel> | null = null;
-
-    const setupSubscription = async () => {
-      const { data: conversations } = await supabase
-        .from('conversations')
-        .select('id')
-        .or(`participant1_id.eq.${user.id},participant2_id.eq.${user.id}`);
-
-      if (!conversations || conversations.length === 0) return;
-
-      const convIds = conversations.map((c) => c.id);
-      channel = supabase
-        .channel('header-messages')
-        .on(
-          'postgres_changes',
-          {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'messages',
-            filter: `conversation_id=in.(${convIds.join(',')})`,
-          },
-          () => loadUnreadMsgs()
-        )
-        .subscribe();
-    };
-
-    setupSubscription();
-
-    return () => {
-      if (channel) supabase.removeChannel(channel);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadUnreadMsgs depends on user from closure; listed deps are sufficient
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadProfile depends on user from closure; listed deps are sufficient
   }, [user]);
 
   const loadProfile = async () => {
@@ -149,28 +106,6 @@ export const Header = () => {
     } catch (error) {
       logger.error('Error loading profile:', error);
     }
-  };
-
-  const loadUnreadMsgs = async () => {
-    if (!user) return;
-
-    const { data: conversations } = await supabase
-      .from('conversations')
-      .select('id')
-      .or(`participant1_id.eq.${user.id},participant2_id.eq.${user.id}`);
-
-    if (!conversations || conversations.length === 0) return;
-
-    const convIds = conversations.map((c) => c.id);
-
-    const { count } = await supabase
-      .from('messages')
-      .select('id', { count: 'exact', head: true })
-      .in('conversation_id', convIds)
-      .neq('sender_id', user.id)
-      .is('read_at', null);
-
-    setMsgUnreadCount(count || 0);
   };
 
   return (
@@ -201,75 +136,62 @@ export const Header = () => {
         {/* User Section */}
         {user && (
           <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-            {/* Role toggle — siempre visible. Owner no-provider → abre registro */}
-            <div className="flex items-center bg-gray-100 rounded-full p-0.5 relative">
-              {/* Sliding background indicator */}
-              <div
-                className={cn(
-                  'absolute top-0.5 bottom-0.5 rounded-full transition-all duration-200 ease-out',
-                  role === 'owner'
-                    ? 'left-0.5 bg-purple-100 w-[calc(50%-2px)]'
-                    : 'left-[50%] bg-teal-100 w-[calc(50%-2px)]'
-                )}
-              />
-              <button
-                onClick={() => {
-                  if (role !== 'owner') {
-                    toggle();
-                    navigate('/home');
-                    toast('Cambiaste a vista de dueño');
-                  }
-                }}
-                className={cn(
-                  'relative z-10 flex items-center gap-1.5 h-7 px-2.5 sm:px-3 rounded-full text-xs font-medium transition-colors duration-200',
-                  role === 'owner'
-                    ? 'text-purple-700 font-semibold'
-                    : 'text-gray-400 hover:text-gray-600'
-                )}
-              >
-                <PawPrint className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Dueño</span>
-              </button>
-              <button
-                onClick={() => {
-                  if (role === 'provider') return; // ya esta en modo profesional
-                  if (isProvider) {
-                    // Ya es provider, solo cambiar vista
-                    toggle();
-                    navigate('/provider/dashboard');
-                    toast('Cambiaste a vista profesional');
-                  } else {
-                    // No es provider, abrir formulario de registro
-                    setBecomeProviderOpen(true);
-                  }
-                }}
-                className={cn(
-                  'relative z-10 flex items-center gap-1.5 h-7 px-2.5 sm:px-3 rounded-full text-xs font-medium transition-colors duration-200',
-                  role === 'provider'
-                    ? 'text-teal-700 font-semibold'
-                    : 'text-gray-400 hover:text-gray-600'
-                )}
-              >
-                <Stethoscope className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Profesional</span>
-              </button>
-            </div>
-            <BecomeProviderDialog open={becomeProviderOpen} onOpenChange={setBecomeProviderOpen} />
-            {/* Paw Collection — shiny button (solo modo dueño) */}
-            {role === 'owner' && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => navigate('/paw-collection')}
-                className="relative h-9 w-9 sm:w-auto sm:px-2.5 sm:gap-1.5 paw-collection-btn group"
-              >
-                <Sparkles className="h-4 w-4 text-purple-500 group-hover:text-yellow-400 transition-colors duration-300" />
-                <span className="hidden sm:inline text-xs font-bold bg-gradient-to-r from-purple-600 via-pink-500 to-amber-500 bg-clip-text text-transparent">
-                  Coleccion
-                </span>
-                <span className="sr-only">Mi coleccion de Paw Cards</span>
-              </Button>
+            {/* Role toggle — solo visible si el usuario ya es provider */}
+            {isProvider && (
+              <div className="flex items-center bg-gray-100 rounded-full p-0.5 relative">
+                {/* Sliding background indicator */}
+                <div
+                  className={cn(
+                    'absolute top-0.5 bottom-0.5 rounded-full transition-all duration-200 ease-out',
+                    role === 'owner'
+                      ? 'left-0.5 bg-purple-100 w-[calc(50%-2px)]'
+                      : 'left-[50%] bg-teal-100 w-[calc(50%-2px)]'
+                  )}
+                />
+                <button
+                  onClick={() => {
+                    if (role !== 'owner') {
+                      toggle();
+                      navigate('/home');
+                      toast('Cambiaste a vista de dueño');
+                    }
+                  }}
+                  className={cn(
+                    'relative z-10 flex items-center gap-1.5 h-7 px-2.5 sm:px-3 rounded-full text-xs font-medium transition-colors duration-200',
+                    role === 'owner'
+                      ? 'text-purple-700 font-semibold'
+                      : 'text-gray-400 hover:text-gray-600'
+                  )}
+                >
+                  <PawPrint className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Dueño</span>
+                </button>
+                <button
+                  onClick={() => {
+                    if (role === 'provider') return; // ya esta en modo profesional
+                    if (isProvider) {
+                      // Ya es provider, solo cambiar vista
+                      toggle();
+                      navigate('/provider/dashboard');
+                      toast('Cambiaste a vista profesional');
+                    } else {
+                      // No es provider, abrir formulario de registro
+                      setBecomeProviderOpen(true);
+                    }
+                  }}
+                  className={cn(
+                    'relative z-10 flex items-center gap-1.5 h-7 px-2.5 sm:px-3 rounded-full text-xs font-medium transition-colors duration-200',
+                    role === 'provider'
+                      ? 'text-teal-700 font-semibold'
+                      : 'text-gray-400 hover:text-gray-600'
+                  )}
+                >
+                  <Stethoscope className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">Profesional</span>
+                </button>
+              </div>
             )}
+            <BecomeProviderDialog open={becomeProviderOpen} onOpenChange={setBecomeProviderOpen} />
 
             {/* Notifications Popover */}
             <Popover>
@@ -370,64 +292,6 @@ export const Header = () => {
                 </div>
               </PopoverContent>
             </Popover>
-
-            {/* Messages Popover — hidden when CHAT flag is off */}
-            {isFeatureEnabled('CHAT') && (
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="relative hover:bg-accent min-h-[44px] min-w-[44px]"
-                  >
-                    <MessageSquare className="h-5 w-5" />
-                    {msgUnreadCount > 0 && (
-                      <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-destructive hover:bg-destructive/90">
-                        {msgUnreadCount}
-                      </Badge>
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent
-                  className="w-[min(20rem,calc(100vw-2rem))] p-0"
-                  align="end"
-                  collisionPadding={8}
-                >
-                  <div className="p-3 border-b flex items-center justify-between">
-                    <h4 className="font-semibold text-sm">Mensajes</h4>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-xs h-7"
-                      onClick={() => navigate('/chat')}
-                    >
-                      Ver todos
-                    </Button>
-                  </div>
-                  <div className="p-4 text-center text-sm text-muted-foreground">
-                    <MessageSquare className="h-8 w-8 mx-auto mb-2 text-muted-foreground/40" />
-                    {msgUnreadCount > 0 ? (
-                      <p>
-                        Tienes {msgUnreadCount} mensaje{msgUnreadCount > 1 ? 's' : ''} sin leer
-                      </p>
-                    ) : (
-                      <p>No tienes mensajes nuevos</p>
-                    )}
-                  </div>
-                  <Separator />
-                  <div className="p-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full text-xs"
-                      onClick={() => navigate('/chat')}
-                    >
-                      Ir a mensajes
-                    </Button>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            )}
 
             {/* User avatar → Home */}
             <div

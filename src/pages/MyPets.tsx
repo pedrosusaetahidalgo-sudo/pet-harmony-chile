@@ -324,26 +324,18 @@ const MyPets = () => {
           <h1 className="text-2xl sm:text-3xl font-bold mb-1">Mis Mascotas</h1>
           <p className="text-muted-foreground text-sm">Tus mascotas y sus Paw Cards</p>
         </div>
-        <div className="flex gap-2 items-center">
-          <ClaimPetDialog />
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => navigate('/paw-collection')}
-            className="border-purple-200/60 hover:bg-purple-50/50 sm:w-auto sm:px-3"
-            title="Colección"
-          >
-            <Trophy className="h-4 w-4 text-purple-500" />
-            <span className="hidden sm:inline ml-2">Coleccion</span>
-          </Button>
-          <Button
-            onClick={goToAddPet}
-            className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-xl hover:scale-105"
-          >
-            <Plus className="h-5 w-5 sm:mr-2" />
-            <span className="hidden sm:inline">Agregar Mascota</span>
-          </Button>
-        </div>
+        <Button
+          onClick={goToAddPet}
+          className="bg-purple-600 hover:bg-purple-700 transition-all shadow-lg hover:shadow-xl hover:scale-105"
+        >
+          <Plus className="h-5 w-5 sm:mr-2" />
+          <span className="hidden sm:inline">Agregar Mascota</span>
+        </Button>
+      </div>
+
+      {/* Claim pet link — secondary action */}
+      <div className="mb-4 -mt-4">
+        <ClaimPetDialog />
       </div>
 
       {/* ── Total Paw Points summary ── */}

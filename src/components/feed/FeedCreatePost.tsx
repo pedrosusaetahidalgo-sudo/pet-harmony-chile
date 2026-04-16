@@ -153,8 +153,9 @@ export function FeedCreatePost({ onSuccess }: FeedCreatePostProps) {
       setImages([]);
       setPreviews([]);
 
-      // Refresh feed
-      queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
+      // Refresh feed — await to ensure data is fresh before closing dialog
+      await queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
+      await queryClient.refetchQueries({ queryKey: ['feed-posts'] });
       onSuccess?.();
     } catch (err) {
       if (uploadedImagePaths.length > 0) {
