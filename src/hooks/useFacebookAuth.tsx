@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Capacitor } from '@capacitor/core';
 import { isNative } from '@/lib/platform';
 import { logger } from '@/lib/logger';
@@ -12,8 +12,6 @@ interface FacebookAuthResult {
 
 export const useFacebookAuth = () => {
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
-
   /**
    * Sign in with Facebook - handles both web and native platforms
    */
@@ -34,11 +32,7 @@ export const useFacebookAuth = () => {
       logger.error('Facebook Sign-In error:', error);
 
       const errorMessage = getErrorMessage(error);
-      toast({
-        title: 'Error al iniciar sesión con Facebook',
-        description: errorMessage,
-        variant: 'destructive',
-      });
+      toast.error('Error al iniciar sesión con Facebook', { description: errorMessage });
 
       return { success: false, error: errorMessage };
     } finally {

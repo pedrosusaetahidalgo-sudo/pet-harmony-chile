@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ImagePlus, X, Loader2 } from '@/lib/icons';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import {
   compressImage,
   compressedToFile,
@@ -26,7 +26,6 @@ export function FeedImageUploader({
   maxImages = 10,
   disabled,
 }: FeedImageUploaderProps) {
-  const { toast } = useToast();
   const inputRef = useRef<HTMLInputElement>(null);
   const [compressing, setCompressing] = useState(false);
 
@@ -41,7 +40,7 @@ export function FeedImageUploader({
       const file = fileList[i];
       const error = validateImageFile(file);
       if (error) {
-        toast({ variant: 'destructive', title: error });
+        toast.error(error);
         continue;
       }
       filesToProcess.push(file);
@@ -63,10 +62,7 @@ export function FeedImageUploader({
         );
         onAdd(compressed);
       } catch (err: unknown) {
-        toast({
-          variant: 'destructive',
-          title: (err as Error)?.message || 'Error al comprimir imagenes',
-        });
+        toast.error((err as Error)?.message || 'Error al comprimir imagenes');
       } finally {
         setCompressing(false);
       }

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useMedicalRecords } from '@/hooks/useMedicalRecords';
 import { formatDate } from '../helpers';
-import { EmptyState } from '../shared';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 /** Extract batch/serial: prefer DB columns, fallback to notes parsing (legacy) */
 function extractBatchSerial(r: {
@@ -76,6 +76,7 @@ export function TabVacunas({ petId }: { petId: string }) {
   if (vaccines.length === 0) {
     return (
       <EmptyState
+        variant="card"
         icon={Syringe}
         title="Sin vacunas registradas"
         description="Las vacunas que registres aparecerán aquí con su fecha, lote, serie y veterinario."

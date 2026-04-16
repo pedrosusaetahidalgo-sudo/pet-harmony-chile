@@ -1,29 +1,29 @@
-import { useGamification } from "./useGamification";
-import { useToast } from "./use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { logger } from "@/lib/logger";
-import { useAuth } from "./useAuth";
+import { useGamification } from './useGamification';
+import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
+import { useAuth } from './useAuth';
 
 export type RewardEvent =
-  | { kind: "walk_logged"; petId: string; petName: string }
-  | { kind: "medical_record_added"; petId: string; petName: string }
-  | { kind: "vet_review_left"; vetName: string }
-  | { kind: "pet_profile_completed"; petId: string; petName: string; pct: number }
-  | { kind: "vaccine_logged"; petId: string; petName: string; vaccineName: string };
+  | { kind: 'walk_logged'; petId: string; petName: string }
+  | { kind: 'medical_record_added'; petId: string; petName: string }
+  | { kind: 'vet_review_left'; vetName: string }
+  | { kind: 'pet_profile_completed'; petId: string; petName: string; pct: number }
+  | { kind: 'vaccine_logged'; petId: string; petName: string; vaccineName: string };
 
 const REWARD_CONFIG: Record<
-  RewardEvent["kind"],
+  RewardEvent['kind'],
   { points: number; toastTitle: (e: RewardEvent) => string }
 > = {
-  walk_logged: { points: 5, toastTitle: () => "Paseo registrado" },
-  medical_record_added: { points: 10, toastTitle: () => "Ficha actualizada" },
-  vet_review_left: { points: 15, toastTitle: () => "Reseña enviada" },
+  walk_logged: { points: 5, toastTitle: () => 'Paseo registrado' },
+  medical_record_added: { points: 10, toastTitle: () => 'Ficha actualizada' },
+  vet_review_left: { points: 15, toastTitle: () => 'Reseña enviada' },
   pet_profile_completed: {
     points: 20,
     toastTitle: (e) =>
-      e.kind === "pet_profile_completed" ? `Perfil ${e.pct}% completo` : "Perfil completo",
+      e.kind === 'pet_profile_completed' ? `Perfil ${e.pct}% completo` : 'Perfil completo',
   },
-  vaccine_logged: { points: 10, toastTitle: () => "Vacuna registrada" },
+  vaccine_logged: { points: 10, toastTitle: () => 'Vacuna registrada' },
 };
 
 // Map reward events to pet_activities rows (Fase 3). When the table does not
@@ -38,33 +38,33 @@ type ActivityInsert = {
 
 function buildActivityInsert(event: RewardEvent, ownerId: string): ActivityInsert | null {
   switch (event.kind) {
-    case "walk_logged":
+    case 'walk_logged':
       return {
-        activity_type: "walk",
+        activity_type: 'walk',
         title: `${event.petName} salió a pasear`,
         pet_id: event.petId,
         owner_id: ownerId,
         metadata: {},
       };
-    case "vaccine_logged":
+    case 'vaccine_logged':
       return {
-        activity_type: "vaccine",
+        activity_type: 'vaccine',
         title: `${event.petName}: ${event.vaccineName}`,
         pet_id: event.petId,
         owner_id: ownerId,
         metadata: { vaccine: event.vaccineName },
       };
-    case "medical_record_added":
+    case 'medical_record_added':
       return {
-        activity_type: "vet_visit",
+        activity_type: 'vet_visit',
         title: `${event.petName} visitó al veterinario`,
         pet_id: event.petId,
         owner_id: ownerId,
         metadata: {},
       };
-    case "pet_profile_completed":
+    case 'pet_profile_completed':
       return {
-        activity_type: "achievement",
+        activity_type: 'achievement',
         title: `${event.petName} completó su perfil al ${event.pct}%`,
         pet_id: event.petId,
         owner_id: ownerId,
@@ -82,7 +82,6 @@ function buildActivityInsert(event: RewardEvent, ownerId: string): ActivityInser
  */
 export function useOrganicRewards() {
   const { awardPoints } = useGamification();
-  const { toast } = useToast();
   const { user } = useAuth();
 
   const reward = (event: RewardEvent) => {
@@ -90,21 +89,18 @@ export function useOrganicRewards() {
     if (!config) return;
 
     // Discreet toast, non-blocking
-    toast({
-      title: config.toastTitle(event),
-      description: `+${config.points} puntos`,
-    });
+    toast(config.toastTitle(event), { description: `+${config.points} puntos` });
 
     // Award points in background, errors only to logger
     try {
       awardPoints({
         points: config.points,
         actionType: event.kind,
-        actionId: "petId" in event ? event.petId : undefined,
+        actionId: 'petId' in event ? event.petId : undefined,
         description: config.toastTitle(event),
       });
     } catch (err) {
-      logger.error("[useOrganicRewards] awardPoints failed", err);
+      logger.error('[useOrganicRewards] awardPoints failed', err);
     }
 
     // Also write to pet_activities social feed (Fase 3). Fire-and-forget.
@@ -119,15 +115,15 @@ export function useOrganicRewards() {
           };
         };
         client
-          .from("pet_activities")
+          .from('pet_activities')
           .insert(activity)
           .then(({ error }) => {
             if (error) {
-              logger.error("[useOrganicRewards] pet_activities insert failed", error);
+              logger.error('[useOrganicRewards] pet_activities insert failed', error);
             }
           })
           .catch((err: unknown) => {
-            logger.error("[useOrganicRewards] pet_activities insert threw", err);
+            logger.error('[useOrganicRewards] pet_activities insert threw', err);
           });
       }
     }

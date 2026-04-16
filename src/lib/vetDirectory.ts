@@ -139,11 +139,5 @@ export function injectJsonLd(id: string, data: Record<string, unknown>) {
   el.textContent = JSON.stringify(data);
 }
 
-export function formatCLP(amount: number | null | undefined): string {
-  if (amount == null) return 'Consultar';
-  return new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+// Re-export from canonical location for backward compatibility
+export { formatCLP } from '@/lib/format';

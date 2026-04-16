@@ -2,8 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useActiveRole } from '@/hooks/useActiveRole';
-import { useToast } from '@/hooks/use-toast';
-
+import { toast } from 'sonner';
 export interface FeedbackItem {
   id: string;
   user_id: string;
@@ -45,7 +44,6 @@ async function callFeedbackAdmin(action: string, payload: Record<string, unknown
 export function useSubmitFeedback() {
   const { user } = useAuth();
   const { role: activeRole } = useActiveRole();
-  const { toast } = useToast();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -82,14 +80,11 @@ export function useSubmitFeedback() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast({
-        title: 'Feedback enviado',
-        description: 'Gracias por ayudarnos a mejorar Paw Friend',
-      });
+      toast('Feedback enviado', { description: 'Gracias por ayudarnos a mejorar Paw Friend' });
       queryClient.invalidateQueries({ queryKey: ['my-feedback'] });
     },
     onError: () => {
-      toast({ title: 'Error al enviar feedback', variant: 'destructive' });
+      toast.error('Error al enviar feedback');
     },
   });
 }
@@ -131,14 +126,12 @@ export function useAdminFeedback(statusFilter?: string) {
 // ── Admin: update feedback status ──
 export function useUpdateFeedbackStatus() {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
   return useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       await callFeedbackAdmin('update_status', { id, status });
     },
     onSuccess: () => {
-      toast({ title: 'Estado actualizado' });
+      toast('Estado actualizado');
       queryClient.invalidateQueries({ queryKey: ['admin-feedback'] });
     },
   });
@@ -147,14 +140,12 @@ export function useUpdateFeedbackStatus() {
 // ── Admin: respond to feedback ──
 export function useRespondFeedback() {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
   return useMutation({
     mutationFn: async ({ id, response }: { id: string; response: string }) => {
       await callFeedbackAdmin('respond', { id, response });
     },
     onSuccess: () => {
-      toast({ title: 'Respuesta enviada' });
+      toast('Respuesta enviada');
       queryClient.invalidateQueries({ queryKey: ['admin-feedback'] });
     },
   });
@@ -177,18 +168,16 @@ export function useToggleFeedbackLike() {
 // ── Admin: AI classify feedback ──
 export function useClassifyFeedback() {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
   return useMutation({
     mutationFn: async ({ id }: { id: string }) => {
       return await callFeedbackAdmin('classify', { id });
     },
     onSuccess: () => {
-      toast({ title: 'Feedback clasificado por IA' });
+      toast('Feedback clasificado por IA');
       queryClient.invalidateQueries({ queryKey: ['admin-feedback'] });
     },
     onError: () => {
-      toast({ title: 'Error al clasificar', variant: 'destructive' });
+      toast.error('Error al clasificar');
     },
   });
 }
@@ -196,18 +185,16 @@ export function useClassifyFeedback() {
 // ── Admin: batch classify all unclassified feedback ──
 export function useClassifyFeedbackBatch() {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
   return useMutation({
     mutationFn: async () => {
       return await callFeedbackAdmin('classify_batch', {});
     },
     onSuccess: (data) => {
-      toast({ title: `${data?.classified ?? 0} feedbacks clasificados por IA` });
+      toast(`${data?.classified ?? 0} feedbacks clasificados por IA`);
       queryClient.invalidateQueries({ queryKey: ['admin-feedback'] });
     },
     onError: () => {
-      toast({ title: 'Error en clasificación batch', variant: 'destructive' });
+      toast.error('Error en clasificación batch');
     },
   });
 }
@@ -215,8 +202,6 @@ export function useClassifyFeedbackBatch() {
 // ── Admin: award paw points for feedback ──
 export function useAwardFeedbackPoints() {
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
   return useMutation({
     mutationFn: async ({
       feedbackId,
@@ -230,14 +215,13 @@ export function useAwardFeedbackPoints() {
       await callFeedbackAdmin('award_points', { feedbackId, userId, points });
     },
     onSuccess: (_, variables) => {
-      toast({
-        title: `+${variables.points} Paw Points otorgados`,
+      toast(`+${variables.points} Paw Points otorgados`, {
         description: 'El usuario recibirá los puntos en su cuenta',
       });
       queryClient.invalidateQueries({ queryKey: ['admin-feedback'] });
     },
     onError: () => {
-      toast({ title: 'Error al otorgar puntos', variant: 'destructive' });
+      toast.error('Error al otorgar puntos');
     },
   });
 }

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Heart, FileText, Pencil, Trash2, PawPrint, Sparkles } from '@/lib/icons';
 import { getSpeciesPalette, getBreedTint } from '@/lib/paw-cards';
+import { calculateAge } from '@/lib/format';
 
 interface Pet {
   id: string;
@@ -16,24 +17,6 @@ interface Pet {
   birth_date: string | null;
   photo_url: string | null;
   gender: string | null;
-}
-
-function calculateAge(birthDate: string): string {
-  // Append T00:00:00 to force local-time parsing — Safari interprets
-  // bare YYYY-MM-DD as UTC, which can shift the date by -1 day in UTC- zones.
-  const birth = new Date(birthDate + 'T00:00:00');
-  const now = new Date();
-  let years = now.getFullYear() - birth.getFullYear();
-  let months = now.getMonth() - birth.getMonth();
-  if (months < 0) {
-    years--;
-    months += 12;
-  }
-
-  if (years === 0 && months === 0) return '< 1 mes';
-  if (years === 0) return `${months} ${months === 1 ? 'mes' : 'meses'}`;
-  if (months === 0) return `${years} ${years === 1 ? 'año' : 'años'}`;
-  return `${years} ${years === 1 ? 'año' : 'años'}, ${months} m`;
 }
 
 function formatGender(gender: string): string {

@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useFollows } from '@/hooks/useFollows';
 import { UserPlus, UserCheck, Loader2 } from '@/lib/icons';
 import {
@@ -51,7 +51,6 @@ const PetCard = ({
 }: PetCardProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { toast } = useToast();
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(initialLikes);
   const [commentsCount, setCommentsCount] = useState(initialComments);
@@ -95,11 +94,7 @@ const PetCard = ({
       return;
     }
     if (!user) {
-      toast({
-        variant: 'destructive',
-        title: 'Inicia sesión',
-        description: 'Debes iniciar sesión para dar like',
-      });
+      toast.error('Inicia sesión', { description: 'Debes iniciar sesión para dar like' });
       return;
     }
 
@@ -120,11 +115,7 @@ const PetCard = ({
       }
     } catch (error) {
       logger.error('Error toggling like:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
-        description: 'No se pudo procesar tu like',
-      });
+      toast.error('Algo salió mal', { description: 'No se pudo procesar tu like' });
     }
   };
 

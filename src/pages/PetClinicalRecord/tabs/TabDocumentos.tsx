@@ -10,7 +10,8 @@ import { UploadMedicalDocumentDialog } from '@/components/medical/UploadMedicalD
 import { downloadFile } from '@/lib/nativeDownload';
 import { useAuth } from '@/hooks/useAuth';
 import { formatShortDate } from '../helpers';
-import { EmptyState, getDocTypeLabel } from '../shared';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { getDocTypeLabel } from '../shared';
 
 interface TabDocumentosProps {
   petId: string;
@@ -135,6 +136,7 @@ export function TabDocumentos({ petId, viewMode = 'owner', petOwnerId }: TabDocu
       {/* Lista de documentos o empty state */}
       {!documents || documents.length === 0 ? (
         <EmptyState
+          variant="card"
           icon={FileText}
           title="Sin documentos aún"
           description="Sube fotos de recetas, resultados de laboratorio y carnets de vacunación para tenerlos siempre a mano."

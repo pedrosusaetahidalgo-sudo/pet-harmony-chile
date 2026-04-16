@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Star, Loader2, CheckCircle2, AlertCircle, Stethoscope } from 'lucide-react';
+import { Star, Loader2, CheckCircle2, AlertCircle, Stethoscope } from '@/lib/icons';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -12,7 +12,7 @@ import { track, EVENTS } from '@/lib/analytics';
 import { useInvitationByToken, useSubmitInvitedReview } from '@/hooks/useReviewInvitations';
 import { LINKS } from '@/lib/links';
 import { useAuth } from '@/hooks/useAuth';
-import { PublicHeader, PublicFooter } from './DirectorioVets';
+import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { reviewSchema, type ReviewFormData } from '@/lib/schemas';

@@ -35,7 +35,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 import type { Tables } from '@/integrations/supabase/types';
 
@@ -88,7 +88,6 @@ export const EnhancedBookingDialog = ({
   onBookingComplete,
 }: EnhancedBookingDialogProps) => {
   const { user } = useAuth();
-  const { toast } = useToast();
   const navigate = useNavigate();
 
   const [currentStep, setCurrentStep] = useState(1);
@@ -201,19 +200,14 @@ export const EnhancedBookingDialog = ({
 
       if (error) throw error;
 
-      toast({
-        title: 'Reserva confirmada',
-        description: 'Tu reserva ha sido creada exitosamente.',
-      });
+      toast('Reserva confirmada', { description: 'Tu reserva ha sido creada exitosamente.' });
 
       onBookingComplete();
       onOpenChange(false);
       resetForm();
     } catch (error) {
       logger.error('Error creating booking:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
+      toast.error('Algo salió mal', {
         description: 'No se pudo crear la reserva. Intenta nuevamente.',
       });
     } finally {

@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Capacitor } from '@capacitor/core';
 import { isNative } from '@/lib/platform';
 import { logger } from '@/lib/logger';
@@ -38,8 +38,6 @@ interface GoogleAuthResult {
 
 export const useGoogleAuth = () => {
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
-
   /**
    * Sign in with Google - handles both web and native platforms
    */
@@ -64,11 +62,7 @@ export const useGoogleAuth = () => {
       logger.error('Google Sign-In error:', error);
 
       const errorMessage = getErrorMessage(error);
-      toast({
-        title: 'Error al iniciar sesión con Google',
-        description: errorMessage,
-        variant: 'destructive',
-      });
+      toast.error('Error al iniciar sesión con Google', { description: errorMessage });
 
       return { success: false, error: errorMessage };
     } finally {
@@ -99,10 +93,7 @@ export const useGoogleAuth = () => {
       if (error) throw error;
 
       if (data.session) {
-        toast({
-          title: '¡Bienvenido!',
-          description: `Has iniciado sesión como ${googleUser.email}`,
-        });
+        toast('¡Bienvenido!', { description: `Has iniciado sesión como ${googleUser.email}` });
         return { success: true };
       }
 

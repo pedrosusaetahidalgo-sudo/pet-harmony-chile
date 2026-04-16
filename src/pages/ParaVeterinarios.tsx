@@ -11,13 +11,13 @@ import {
   X,
   ChevronRight,
   FileText,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { setSeoTags } from '@/lib/vetDirectory';
 import { PROVIDER_PLANS } from '@/lib/plans';
-import { PublicHeader, PublicFooter } from './DirectorioVets';
+import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 
 const benefits = [
   {

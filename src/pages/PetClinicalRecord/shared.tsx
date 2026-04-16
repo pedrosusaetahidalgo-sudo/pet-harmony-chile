@@ -195,29 +195,6 @@ export function ClinicalRecordSkeleton() {
 
 // --- Sub-components ---
 
-export function EmptyState({
-  icon: Icon,
-  title,
-  description,
-  action,
-}: {
-  icon: React.ElementType;
-  title: string;
-  description: string;
-  action?: React.ReactNode;
-}) {
-  return (
-    <Card className="border-dashed">
-      <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-        <Icon className="h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-semibold mb-2">{title}</h3>
-        <p className="text-muted-foreground text-sm max-w-md">{description}</p>
-        {action && <div className="mt-4">{action}</div>}
-      </CardContent>
-    </Card>
-  );
-}
-
 export function InfoRow({
   icon: Icon,
   label,

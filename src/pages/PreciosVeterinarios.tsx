@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
-import { TrendingUp, MapPin, ChevronRight } from 'lucide-react';
+import { TrendingUp, MapPin, ChevronRight } from '@/lib/icons';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -11,14 +11,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import PriceEstimatorWidget from '@/components/PriceEstimatorWidget';
-import { PublicHeader, PublicFooter } from '@/pages/DirectorioVets';
+import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 import { useAuth } from '@/hooks/useAuth';
-import {
-  SANTIAGO_COMUNAS,
-  setSeoTags,
-  slugifyForUrl,
-  unslugify,
-} from '@/lib/vetDirectory';
+import { SANTIAGO_COMUNAS, setSeoTags, slugifyForUrl, unslugify } from '@/lib/vetDirectory';
 
 export default function PreciosVeterinarios() {
   const { comuna: comunaParam } = useParams();
@@ -28,18 +23,21 @@ export default function PreciosVeterinarios() {
   const [comuna, setComuna] = useState<string>(initial);
 
   useEffect(() => {
-    const titulo = comuna !== 'all'
-      ? `Precios de veterinarios en ${comuna} · Paw Friend`
-      : 'Precios de veterinarios en Chile por comuna · Paw Friend';
-    const desc = comuna !== 'all'
-      ? `Compara precios reales de consulta, vacunas, urgencias y mas en ${comuna}. Datos publicados por los propios veterinarios.`
-      : `Compara precios reales de consulta veterinaria, vacunas, urgencias y mas en ${SANTIAGO_COMUNAS.length} comunas de Chile. Sin sorpresas.`;
+    const titulo =
+      comuna !== 'all'
+        ? `Precios de veterinarios en ${comuna} · Paw Friend`
+        : 'Precios de veterinarios en Chile por comuna · Paw Friend';
+    const desc =
+      comuna !== 'all'
+        ? `Compara precios reales de consulta, vacunas, urgencias y mas en ${comuna}. Datos publicados por los propios veterinarios.`
+        : `Compara precios reales de consulta veterinaria, vacunas, urgencias y mas en ${SANTIAGO_COMUNAS.length} comunas de Chile. Sin sorpresas.`;
     setSeoTags({
       title: titulo,
       description: desc,
-      canonical: comuna !== 'all'
-        ? `https://pawfriend.cl/precios-veterinarios/comuna/${slugifyForUrl(comuna)}`
-        : 'https://pawfriend.cl/precios-veterinarios',
+      canonical:
+        comuna !== 'all'
+          ? `https://pawfriend.cl/precios-veterinarios/comuna/${slugifyForUrl(comuna)}`
+          : 'https://pawfriend.cl/precios-veterinarios',
     });
   }, [comuna]);
 
@@ -104,7 +102,9 @@ export default function PreciosVeterinarios() {
             <SelectContent>
               <SelectItem value="all">Todas las comunas (vista global)</SelectItem>
               {SANTIAGO_COMUNAS.map((c) => (
-                <SelectItem key={c} value={c}>{c}</SelectItem>
+                <SelectItem key={c} value={c}>
+                  {c}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -150,9 +150,7 @@ export default function PreciosVeterinarios() {
 
         {/* CTA final B2B */}
         <Card className="p-8 text-center bg-gradient-to-br from-purple-600 to-purple-700 text-white shadow-xl">
-          <h2 className="text-2xl md:text-3xl font-bold mb-3">
-            ¿Eres veterinario?
-          </h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-3">¿Eres veterinario?</h2>
           <p className="text-purple-50 mb-5 max-w-xl mx-auto">
             Publica tus precios y aparece en el comparador público de Paw Friend gratis. Capta
             clientes que valoran la transparencia.

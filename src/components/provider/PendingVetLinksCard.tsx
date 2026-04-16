@@ -21,19 +21,7 @@ import {
   useAcceptPetVetLink,
   useRejectPetVetLink,
 } from '@/hooks/usePetVetLinks';
-
-function calculateAge(birthDate: string): string {
-  const birth = new Date(birthDate + 'T00:00:00');
-  const now = new Date();
-  let years = now.getFullYear() - birth.getFullYear();
-  let months = now.getMonth() - birth.getMonth();
-  if (months < 0) {
-    years--;
-    months += 12;
-  }
-  if (years === 0) return `${months || '< 1'} ${months === 1 ? 'mes' : 'meses'}`;
-  return `${years} ${years === 1 ? 'año' : 'años'}`;
-}
+import { calculateAge } from '@/lib/format';
 
 export function PendingVetLinksCard() {
   const { data: pending, isLoading } = usePendingVetLinks();

@@ -3,7 +3,7 @@ import { addDays, addWeeks, addMonths, addYears, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { usePlan } from '@/hooks/usePlan';
 import { awardPoints } from '@/lib/points';
@@ -44,7 +44,6 @@ export interface Reminder {
 
 export const useReminders = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const { checkAccess } = usePlan();
 
@@ -103,7 +102,7 @@ export const useReminders = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pet-reminders'] });
-      toast({ title: 'Recordatorio creado' });
+      toast('Recordatorio creado');
       // Auto-sync con Google Calendar en background si esta conectado.
       // No bloquea la UI ni muestra errores - es best effort.
       supabase.functions.invoke('google-calendar-sync').catch(() => {
@@ -111,10 +110,8 @@ export const useReminders = () => {
       });
     },
     onError: (error: Error) => {
-      toast({
-        title: 'Algo salió mal',
+      toast.error('Algo salió mal', {
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
-        variant: 'destructive',
       });
     },
   });
@@ -133,13 +130,11 @@ export const useReminders = () => {
     },
     onSuccess: (newDate) => {
       queryClient.invalidateQueries({ queryKey: ['pet-reminders'] });
-      toast({ title: `Pospuesto hasta ${format(newDate, "d 'de' MMMM", { locale: es })}` });
+      toast(`Pospuesto hasta ${format(newDate, "d 'de' MMMM", { locale: es })}`);
     },
     onError: (error: Error) => {
-      toast({
-        title: 'No se pudo posponer',
+      toast.error('No se pudo posponer', {
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
-        variant: 'destructive',
       });
     },
   });
@@ -183,17 +178,14 @@ export const useReminders = () => {
       queryClient.invalidateQueries({ queryKey: ['pet-reminders'] });
       if (result?.wasRecurring && result.nextDate) {
         if (result.insertError) {
-          toast({
-            title: 'Recordatorio completado, pero el siguiente no se pudo crear.',
-            variant: 'destructive',
-          });
+          toast.error('Recordatorio completado, pero el siguiente no se pudo crear.');
         } else {
-          toast({
-            title: `Completado — proximo recordatorio creado para ${format(result.nextDate, "d 'de' MMMM", { locale: es })}`,
-          });
+          toast(
+            `Completado — proximo recordatorio creado para ${format(result.nextDate, "d 'de' MMMM", { locale: es })}`
+          );
         }
       } else {
-        toast({ title: 'Recordatorio completado' });
+        toast('Recordatorio completado');
       }
     },
   });

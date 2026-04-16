@@ -122,13 +122,8 @@ export function canAccess(
   return { allowed: true };
 }
 
-export function formatCLP(amount: number): string {
-  return new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
+// Re-export from canonical location for backward compatibility
+export { formatCLP } from '@/lib/format';
 
 // ============================================================
 // Provider plans (veterinarios independientes y clínicas)

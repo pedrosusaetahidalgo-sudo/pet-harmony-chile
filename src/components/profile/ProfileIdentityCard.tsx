@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Crown, Share2, MapPin, MoreVertical } from '@/lib/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { ProfessionalBadges } from '@/components/ProfessionalBadges';
 import {
   DropdownMenu,
@@ -27,7 +27,6 @@ interface ProfileIdentityCardProps {
 
 export function ProfileIdentityCard({ profile, onEditProfile }: ProfileIdentityCardProps) {
   const { user } = useAuth();
-  const { toast } = useToast();
   const navigate = useNavigate();
 
   const displayName = profile?.display_name || user?.email?.split('@')[0] || '';
@@ -38,7 +37,7 @@ export function ProfileIdentityCard({ profile, onEditProfile }: ProfileIdentityC
       navigator.share({ title: 'Paw Friend', text: 'Mira mi perfil en Paw Friend', url: shareUrl });
     } else {
       navigator.clipboard.writeText(shareUrl);
-      toast({ title: 'Link copiado', description: 'Comparte tu perfil con amigos' });
+      toast('Link copiado', { description: 'Comparte tu perfil con amigos' });
     }
   };
 

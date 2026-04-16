@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { FileDown, Loader2, Stethoscope, ClipboardList } from '@/lib/icons';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { downloadFile } from '@/lib/nativeDownload';
@@ -58,7 +58,6 @@ export const MedicalSummaryButton = ({
   variant = 'hero',
   bypassGate = false,
 }: MedicalSummaryButtonProps) => {
-  const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleGenerate = async (mode: 'medical' | 'complete') => {
@@ -76,14 +75,12 @@ export const MedicalSummaryButton = ({
 
       if (data instanceof Blob) {
         await downloadBlob(data, fileName);
-        toast({
-          title: mode === 'complete' ? 'Ficha completa lista' : 'Ficha clínica lista',
+        toast(mode === 'complete' ? 'Ficha completa lista' : 'Ficha clínica lista', {
           description: `La ficha de ${petName || 'tu mascota'} se descargó correctamente`,
         });
       } else if (data?.download_url) {
         await downloadFile(data.download_url, fileName);
-        toast({
-          title: 'Ficha clínica lista',
+        toast('Ficha clínica lista', {
           description: `La ficha de ${petName || 'tu mascota'} se descargó correctamente`,
         });
       } else {
@@ -91,9 +88,7 @@ export const MedicalSummaryButton = ({
       }
     } catch (error) {
       logger.error('Error generating medical summary:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
+      toast.error('Algo salió mal', {
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
           'No se pudo generar la ficha clínica',

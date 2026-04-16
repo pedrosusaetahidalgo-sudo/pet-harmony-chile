@@ -9,7 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { usePlan } from '@/hooks/usePlan';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { LINKS } from '@/lib/links';
 import { PageHeader } from '@/components/PageHeader';
 
@@ -61,7 +61,6 @@ export default function Upgrade() {
   const { user } = useAuth();
   const { isPremium } = usePlan();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [loading, setLoading] = useState<Plan | null>(null);
   const [searchParams] = useSearchParams();
   const highlightFeature = searchParams.get('feature');
@@ -89,11 +88,7 @@ export default function Upgrade() {
       window.location.href = url;
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Error desconocido';
-      toast({
-        title: 'No se pudo iniciar el pago',
-        description: msg,
-        variant: 'destructive',
-      });
+      toast.error('No se pudo iniciar el pago', { description: msg });
       setLoading(null);
     }
   };

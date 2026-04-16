@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Dog, Mail, Shield, Stethoscope, Heart } from '@/lib/icons';
 import { FaFacebook } from 'react-icons/fa';
 import { LegalFooter } from '@/components/LegalFooter';
@@ -37,7 +37,6 @@ const Auth = () => {
   // Prevent open redirect — only allow internal paths
   const returnTo =
     rawReturnTo?.startsWith('/') && !rawReturnTo.startsWith('//') ? rawReturnTo : null;
-  const { toast } = useToast();
   const { signInWithFacebook, loading: facebookLoading } = useFacebookAuth();
   const hasRedirected = useRef(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -111,10 +110,8 @@ const Auth = () => {
             window.history.replaceState({}, document.title, window.location.pathname);
             window.location.href = returnTo || '/home';
           } else if (!session) {
-            toast({
-              title: 'Error en autenticación con Google',
+            toast.error('Error en autenticación con Google', {
               description: 'No pudimos completar el login. Intenta nuevamente.',
-              variant: 'destructive',
             });
           }
         }, 5000)
@@ -124,7 +121,7 @@ const Auth = () => {
       subscription.unsubscribe();
       if (oauthTimeout) clearTimeout(oauthTimeout);
     };
-  }, [navigate, toast, returnTo]);
+  }, [navigate, returnTo]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,17 +160,11 @@ const Auth = () => {
       if (data.user && !data.session) {
         // User created but no session = email confirmation required
         setConfirmationSent(true);
-        toast({
-          title: '¡Revisa tu correo!',
-          description: 'Te enviamos un enlace de confirmación a ' + email,
-        });
+        toast('¡Revisa tu correo!', { description: 'Te enviamos un enlace de confirmación a ' });
       } else if (data.session) {
         // Email confirmation disabled, user is logged in directly
         track({ event: EVENTS.SIGNUP_COMPLETED, userId: data.user?.id });
-        toast({
-          title: '¡Cuenta creada!',
-          description: 'Bienvenido a Paw Friend',
-        });
+        toast('¡Cuenta creada!', { description: 'Bienvenido a Paw Friend' });
         // Hard reload para evitar race condition con useAuth + ProtectedRoute.
         // Usuario nuevo siempre va a /add-pet (onboarding).
         window.location.href = returnTo || '/add-pet';
@@ -187,11 +178,7 @@ const Auth = () => {
       } else if (message.includes('password')) {
         description = 'La contraseña debe tener al menos 6 caracteres.';
       }
-      toast({
-        title: 'Error al crear cuenta',
-        description,
-        variant: 'destructive',
-      });
+      toast.error('Error al crear cuenta');
     } finally {
       setLoading(false);
     }
@@ -223,10 +210,7 @@ const Auth = () => {
       if (error) throw error;
 
       track({ event: EVENTS.LOGIN_COMPLETED });
-      toast({
-        title: '¡Bienvenido de vuelta!',
-        description: 'Has iniciado sesión exitosamente',
-      });
+      toast('¡Bienvenido de vuelta!', { description: 'Has iniciado sesión exitosamente' });
 
       // CRÍTICO: usar window.location.href en vez de navigate() para forzar
       // un page reload completo. Esto evita la race condition entre el listener
@@ -262,11 +246,7 @@ const Auth = () => {
         description =
           'Debes confirmar tu email antes de iniciar sesión. Revisa tu bandeja de entrada.';
       }
-      toast({
-        title: 'Error al iniciar sesión',
-        description,
-        variant: 'destructive',
-      });
+      toast.error('Error al iniciar sesión');
     } finally {
       setLoading(false);
     }
@@ -274,10 +254,8 @@ const Auth = () => {
 
   const handleForgotPassword = async () => {
     if (!email) {
-      toast({
-        title: 'Ingresa tu email',
+      toast.error('Ingresa tu email', {
         description: "Escribe tu email arriba y luego haz clic en '¿Olvidaste tu contraseña?'",
-        variant: 'destructive',
       });
       return;
     }
@@ -287,17 +265,14 @@ const Auth = () => {
         redirectTo: `${window.location.origin}/auth`,
       });
       if (error) throw error;
-      toast({
-        title: 'Revisa tu correo',
+      toast('Revisa tu correo', {
         description: 'Te enviamos un enlace para restablecer tu contraseña.',
       });
     } catch (error: unknown) {
-      toast({
-        title: 'Algo salió mal',
+      toast.error('Algo salió mal', {
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
           'No se pudo enviar el correo de recuperación.',
-        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -306,10 +281,8 @@ const Auth = () => {
 
   const handleMagicLink = async () => {
     if (!email) {
-      toast({
-        title: 'Ingresa tu email',
+      toast.error('Ingresa tu email', {
         description: 'Escribe tu email para recibir un enlace de acceso directo.',
-        variant: 'destructive',
       });
       return;
     }
@@ -321,17 +294,14 @@ const Auth = () => {
       });
       if (error) throw error;
       setMagicLinkSent(true);
-      toast({
-        title: '¡Revisa tu correo!',
+      toast('¡Revisa tu correo!', {
         description: 'Te enviamos un enlace para entrar sin contraseña.',
       });
     } catch (error: unknown) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
           'No se pudo enviar el enlace.',
-        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -349,18 +319,12 @@ const Auth = () => {
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPassword.length < 6) {
-      toast({
-        title: 'Contraseña muy corta',
-        description: 'Mínimo 6 caracteres.',
-        variant: 'destructive',
-      });
+      toast.error('Contraseña muy corta', { description: 'Mínimo 6 caracteres.' });
       return;
     }
     if (newPassword !== newPasswordConfirm) {
-      toast({
-        title: 'Las contraseñas no coinciden',
+      toast.error('Las contraseñas no coinciden', {
         description: 'Verifica que ambas sean iguales.',
-        variant: 'destructive',
       });
       return;
     }
@@ -368,19 +332,14 @@ const Auth = () => {
     try {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
-      toast({
-        title: 'Contraseña actualizada',
-        description: 'Ya puedes usar tu nueva contraseña.',
-      });
+      toast('Contraseña actualizada', { description: 'Ya puedes usar tu nueva contraseña.' });
       setIsPasswordReset(false);
       hasRedirected.current = false;
       navigate('/home', { replace: true });
     } catch (error: unknown) {
-      toast({
-        title: 'Error',
+      toast.error('Error', {
         description:
           (error instanceof Error ? error.message : null) || 'No se pudo actualizar la contraseña.',
-        variant: 'destructive',
       });
     } finally {
       setLoading(false);

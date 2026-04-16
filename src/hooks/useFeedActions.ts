@@ -1,13 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { track, EVENTS } from '@/lib/analytics';
 import type { FeedPost } from './useFeedPosts';
 
 export function useFeedActions() {
   const { user } = useAuth();
-  const { toast } = useToast();
   const queryClient = useQueryClient();
 
   // Optimistic update helper — mutates cached feed pages
@@ -70,10 +69,7 @@ export function useFeedActions() {
         is_liked: isLiked,
         likes_count: isLiked ? p.likes_count + 1 : Math.max(0, p.likes_count - 1),
       }));
-      toast({
-        variant: 'destructive',
-        title: 'No se pudo procesar tu like',
-      });
+      toast.error('No se pudo procesar tu like');
     },
   });
 
@@ -110,10 +106,7 @@ export function useFeedActions() {
         ...p,
         is_saved: isSaved,
       }));
-      toast({
-        variant: 'destructive',
-        title: 'No se pudo guardar la publicación',
-      });
+      toast.error('No se pudo guardar la publicación');
     },
   });
 
@@ -138,13 +131,10 @@ export function useFeedActions() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast({ title: 'Reporte enviado', description: 'Revisaremos esta publicación' });
+      toast('Reporte enviado', { description: 'Revisaremos esta publicación' });
     },
     onError: () => {
-      toast({
-        variant: 'destructive',
-        title: 'No se pudo enviar el reporte',
-      });
+      toast.error('No se pudo enviar el reporte');
     },
   });
 
@@ -160,13 +150,10 @@ export function useFeedActions() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
-      toast({ title: 'Publicación eliminada' });
+      toast('Publicación eliminada');
     },
     onError: () => {
-      toast({
-        variant: 'destructive',
-        title: 'No se pudo eliminar la publicación',
-      });
+      toast.error('No se pudo eliminar la publicación');
     },
   });
 

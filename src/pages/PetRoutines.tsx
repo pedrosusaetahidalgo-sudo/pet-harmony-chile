@@ -4,7 +4,7 @@ import { PageHeader } from '@/components/PageHeader';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
-import { EmptyState } from '@/components/EmptyState';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { Plus, CalendarDays } from '@/lib/icons';
 import { useRoutines, Routine, RoutineInput } from '@/hooks/useRoutines';
 import { RoutineCard } from '@/components/routines/RoutineCard';
@@ -127,6 +127,7 @@ export default function PetRoutines() {
           </div>
         ) : displayRoutines.length === 0 ? (
           <EmptyState
+            variant="compact"
             icon={CalendarDays}
             title="Sin rutinas activas"
             description="Crea rutinas semanales para organizar paseos, comidas, medicacion y mas."

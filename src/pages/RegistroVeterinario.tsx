@@ -9,7 +9,7 @@ import {
   Building2,
   Home as HomeIcon,
   PartyPopper,
-} from 'lucide-react';
+} from '@/lib/icons';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -30,7 +30,7 @@ import { supabase } from '@/integrations/supabase/client';
 const sb = supabase;
 import { errorMessage } from '@/types/vetDirectory';
 import { SANTIAGO_COMUNAS, VET_SPECIALTIES, COMUNAS_POR_ZONA } from '@/lib/vetDirectory';
-import { PublicHeader, PublicFooter } from './DirectorioVets';
+import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 import { PageHeader } from '@/components/PageHeader';
 import { useScrollOnFocus } from '@/hooks/useScrollOnFocus';
 import { vetAccountSchema, vetProfileSchema } from '@/lib/schemas';

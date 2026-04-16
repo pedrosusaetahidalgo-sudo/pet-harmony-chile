@@ -615,6 +615,20 @@ const Maps = () => {
     return markerIcons[type] || markerIcons.service;
   }, []);
 
+  // Get accessible label for a marker based on its data
+  const getMarkerLabel = useCallback((marker: { type: string; data: unknown }): string => {
+    const d = marker.data as Record<string, unknown>;
+    // Lost pets & adoption posts
+    if (d.pet_name) return String(d.pet_name);
+    // Shelters, pet friendly places
+    if (d.name) return String(d.name);
+    // Service providers
+    if (d.display_name) return String(d.display_name);
+    // Partners
+    if (d.brand_name) return String(d.brand_name);
+    return 'Marcador en el mapa';
+  }, []);
+
   // Handle "Mi ubicacion" button
   const handleLocateMe = () => {
     if (!('geolocation' in navigator)) return;
@@ -714,45 +728,59 @@ const Maps = () => {
               (marker) =>
                 Number.isFinite(marker.position?.[0]) && Number.isFinite(marker.position?.[1])
             )
-            .map((marker) => (
-              <Marker key={marker.id} position={marker.position} icon={getIcon(marker.type)}>
-                <Popup maxWidth={340} minWidth={280} className="leaflet-popup-custom">
-                  {getPopupType(marker) === 'petFriendly' ? (
-                    <div className="p-2 space-y-1">
-                      <p className="font-semibold text-sm">
-                        {(marker.data as { name: string }).name}
-                      </p>
-                      <p className="text-xs text-amber-600 font-medium">
-                        {(marker.data as { type: string }).type}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {(marker.data as { desc: string }).desc}
-                      </p>
-                      <p className="text-xs text-muted-foreground flex items-center gap-1">
-                        <MapPin className="h-3 w-3" />
-                        {(marker.data as { address: string }).address}
-                      </p>
-                    </div>
-                  ) : getPopupType(marker) === 'partner' ? (
-                    <PartnerDetailCard
-                      partner={marker.data as import('@/hooks/usePartners').Partner}
-                      userLocation={userLocation || undefined}
-                    />
-                  ) : (
-                    <MapPinPopup
-                      type={getPopupType(marker) as 'lost' | 'adoption' | 'shelter' | 'service'}
-                      data={marker.data as import('@/components/maps/MapPinPopup').MapPinData}
-                      userLocation={userLocation || undefined}
-                      onClose={() => {}}
-                    />
-                  )}
-                </Popup>
-              </Marker>
-            ))}
+            .map((marker) => {
+              const label = getMarkerLabel(marker);
+              return (
+                <Marker
+                  key={marker.id}
+                  position={marker.position}
+                  icon={getIcon(marker.type)}
+                  title={label}
+                  alt={label}
+                >
+                  <Popup maxWidth={340} minWidth={280} className="leaflet-popup-custom">
+                    {getPopupType(marker) === 'petFriendly' ? (
+                      <div className="p-2 space-y-1">
+                        <p className="font-semibold text-sm">
+                          {(marker.data as { name: string }).name}
+                        </p>
+                        <p className="text-xs text-amber-600 font-medium">
+                          {(marker.data as { type: string }).type}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {(marker.data as { desc: string }).desc}
+                        </p>
+                        <p className="text-xs text-muted-foreground flex items-center gap-1">
+                          <MapPin className="h-3 w-3" />
+                          {(marker.data as { address: string }).address}
+                        </p>
+                      </div>
+                    ) : getPopupType(marker) === 'partner' ? (
+                      <PartnerDetailCard
+                        partner={marker.data as import('@/hooks/usePartners').Partner}
+                        userLocation={userLocation || undefined}
+                      />
+                    ) : (
+                      <MapPinPopup
+                        type={getPopupType(marker) as 'lost' | 'adoption' | 'shelter' | 'service'}
+                        data={marker.data as import('@/components/maps/MapPinPopup').MapPinData}
+                        userLocation={userLocation || undefined}
+                        onClose={() => {}}
+                      />
+                    )}
+                  </Popup>
+                </Marker>
+              );
+            })}
 
           {/* User location marker */}
           {userLocation && (
-            <Marker position={[userLocation.lat, userLocation.lng]} icon={userLocationIcon} />
+            <Marker
+              position={[userLocation.lat, userLocation.lng]}
+              icon={userLocationIcon}
+              title="Tu ubicación"
+              alt="Tu ubicación"
+            />
           )}
         </MapContainer>
 

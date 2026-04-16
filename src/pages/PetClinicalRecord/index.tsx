@@ -24,11 +24,13 @@ import {
   Leaf,
   ClipboardList,
   Sparkles,
+  ChevronDown,
 } from '@/lib/icons';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { PetAssistant } from '@/components/ai/PetAssistant';
 import { SymptomTriage } from '@/components/ai/SymptomTriage';
 import { NutritionCoach } from '@/components/ai/NutritionCoach';
@@ -271,18 +273,27 @@ const PetClinicalRecord = () => {
   return (
     <div className="min-h-screen bg-background">
       <PageHeader
-        title={`Ficha clínica de ${pet.name}`}
-        subtitle="Registro veterinario completo"
+        title={`Ficha de ${pet.name}`}
+        subtitle={`${pet.species}${pet.breed ? ` · ${pet.breed}` : ''}`}
         actions={
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => generatePDF(pet, medicalRecords, vetNotesForPdf)}
-            className="flex items-center gap-2"
-          >
-            <Download className="h-4 w-4" />
-            <span className="hidden sm:inline">PDF</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            {viewMode === 'owner' && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate(`/edit-pet/${pet.id}`)}
+                className="h-8 text-xs gap-1.5"
+              >
+                <Clipboard className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Editar</span>
+              </Button>
+            )}
+            <MedicalSummaryButton
+              petId={pet.id}
+              petName={pet.name}
+              bypassGate={viewMode === 'vet'}
+            />
+          </div>
         }
       >
         <Breadcrumbs
@@ -301,12 +312,13 @@ const PetClinicalRecord = () => {
           }
         />
       </PageHeader>
-      <div className="container max-w-4xl mx-auto p-4 md:p-6 space-y-6">
+      <div className="container max-w-4xl mx-auto p-4 md:p-6 space-y-4">
+        {/* Pet selector (multiple pets) */}
         {viewMode === 'owner' && userPets && userPets.length > 1 && (
           <div className="flex items-center gap-3">
             <Label className="text-sm text-muted-foreground whitespace-nowrap">Mascota:</Label>
             <Select value={petId} onValueChange={(id) => navigate(LINKS.petClinical(id))}>
-              <SelectTrigger className="w-full sm:w-[200px]">
+              <SelectTrigger className="w-full sm:w-[200px] h-9">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -320,136 +332,40 @@ const PetClinicalRecord = () => {
           </div>
         )}
 
+        {/* Compact pet card */}
         <PetHeader pet={pet} />
 
-        {/* CTA PDF prominente — joya de la corona (CLAUDE.md §9.6) */}
-        <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/5 via-amber-50/60 to-rose-50/60 p-5 shadow-sm md:p-6">
-          <div className="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-primary/15 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-20 -left-10 h-40 w-40 rounded-full bg-amber-300/20 blur-3xl" />
-          <div className="relative flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="max-w-xl">
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-white/80 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary ring-1 ring-primary/20 backdrop-blur">
-                <FileDown className="h-3.5 w-3.5" />
-                Ficha clínica PDF
-              </span>
-              <h3 className="mt-2 text-lg font-bold tracking-tight md:text-xl">
-                Descarga toda la ficha clínica en un solo PDF
-              </h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Incluye vacunas, alergias e historial completo. Perfecto para llevar al veterinario
-                o compartir en un viaje.
-              </p>
-            </div>
-            <MedicalSummaryButton
-              petId={pet.id}
-              petName={pet.name}
-              bypassGate={viewMode === 'vet'}
-            />
-          </div>
-        </div>
-
-        {/* Agregar registro médico + OCR carnet (owner only) */}
+        {/* Quick actions bar */}
         {viewMode === 'owner' && (
-          <>
-            <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-              <AddMedicalRecord
-                petId={pet.id}
-                petBreed={pet.breed || ''}
-                petSpecies={pet.species}
-                petName={pet.name}
-              />
-            </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <AddMedicalRecord
+              petId={pet.id}
+              petBreed={pet.breed || ''}
+              petSpecies={pet.species}
+              petName={pet.name}
+            />
+            <AddReminderDialog
+              open={showReminderForm}
+              onOpenChange={setShowReminderForm}
+              petId={pet.id}
+              onSubmit={(data) => addReminder.mutate(data)}
+              trigger={
+                <Button variant="outline" size="sm" className="h-9 text-xs gap-1.5">
+                  <Plus className="h-3.5 w-3.5" />
+                  Recordatorio
+                </Button>
+              }
+            />
             <VaccinationCardOCR
               petId={pet.id}
               onSaved={() =>
                 queryClient.invalidateQueries({ queryKey: ['pet-medical-records-pdf', petId] })
               }
             />
-          </>
-        )}
-
-        {/* AI Tools Section */}
-        {showAssistant ? (
-          <PetAssistant petId={pet.id} petName={pet.name} onClose={() => setShowAssistant(false)} />
-        ) : activeAITool === 'triage' ? (
-          <SymptomTriage
-            petId={pet.id}
-            petName={pet.name}
-            onClose={() => setActiveAITool('none')}
-            onShowDirectory={() => navigate('/veterinarios')}
-          />
-        ) : activeAITool === 'nutrition' ? (
-          <NutritionCoach petId={pet.id} petName={pet.name} />
-        ) : activeAITool === 'wound' ? (
-          <WoundVision
-            petId={pet.id}
-            petName={pet.name}
-            onShowDirectory={() => navigate('/veterinarios')}
-          />
-        ) : activeAITool === 'prep' ? (
-          <ConsultationPrep petId={pet.id} petName={pet.name} />
-        ) : (
-          <div className="space-y-2 mb-4">
-            <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
-              <Sparkles className="h-3 w-3" /> Herramientas IA
-            </p>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowAssistant(true)}
-                className="h-9 text-xs gap-1.5 justify-start"
-              >
-                <Stethoscope className="h-3.5 w-3.5 text-primary" /> Asistente
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setActiveAITool('triage')}
-                className="h-9 text-xs gap-1.5 justify-start"
-              >
-                <Shield className="h-3.5 w-3.5 text-blue-600" /> Triage
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setActiveAITool('nutrition')}
-                className="h-9 text-xs gap-1.5 justify-start"
-              >
-                <Leaf className="h-3.5 w-3.5 text-green-600" /> Nutricion
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setActiveAITool('wound')}
-                className="h-9 text-xs gap-1.5 justify-start"
-              >
-                <Camera className="h-3.5 w-3.5 text-orange-600" /> Foto herida
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setActiveAITool('prep')}
-                className="h-9 text-xs gap-1.5 justify-start"
-              >
-                <ClipboardList className="h-3.5 w-3.5 text-indigo-600" /> Preparar consulta
-              </Button>
-            </div>
           </div>
         )}
 
-        {/* Close active AI tool (except PetAssistant which has its own close) */}
-        {activeAITool !== 'none' && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-xs mb-2"
-            onClick={() => setActiveAITool('none')}
-          >
-            Cerrar herramienta
-          </Button>
-        )}
-
+        {/* Tabs — main content navigation */}
         <Tabs id="clinical-tabs" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="relative">
             <TabsList
@@ -481,7 +397,7 @@ const PetClinicalRecord = () => {
                 className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
               >
                 <Activity className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
-                Hábitos
+                Habitos
               </TabsTrigger>
               <TabsTrigger
                 value="documentos"
@@ -500,66 +416,11 @@ const PetClinicalRecord = () => {
                 </TabsTrigger>
               )}
             </TabsList>
-            {/* Scroll fade hint — only on mobile */}
             <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-background to-transparent pointer-events-none sm:hidden" />
           </div>
 
           <TabsContent value="resumen" className="mt-4 space-y-4">
-            {/* PawPoints nudge — solo owner (gamificacion no aplica a vets) */}
-            {viewMode === 'owner' && (
-              <div
-                className="flex items-center gap-3 p-3 rounded-lg bg-purple-50 border border-purple-100 cursor-pointer hover:bg-purple-100/50 transition-colors"
-                onClick={() => navigate('/paw-game')}
-              >
-                <span className="text-lg">🐾</span>
-                <p className="text-xs text-purple-700 flex-1">
-                  Completa la ficha de {pet.name} y gana <strong>30 PawPoints</strong>. Canjea por
-                  descuentos y premios.
-                </p>
-                <span className="text-xs text-purple-500 font-medium flex-shrink-0">
-                  Ver premios →
-                </span>
-              </div>
-            )}
             <TabResumen pet={pet} onRefresh={() => refetchPet()} viewMode={viewMode} />
-            {viewMode === 'owner' && (
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <p className="text-sm text-muted-foreground mb-3">
-                    ¿Necesitas actualizar la información clínica de {pet.name}?
-                  </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate(`/edit-pet/${pet.id}`)}
-                  >
-                    <Clipboard className="h-4 w-4 mr-2" />
-                    Editar datos clínicos
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
-            {viewMode === 'owner' && (
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <p className="text-sm text-muted-foreground mb-3">
-                    Programa recordatorios de vacunas, controles y medicamentos
-                  </p>
-                  <AddReminderDialog
-                    open={showReminderForm}
-                    onOpenChange={setShowReminderForm}
-                    petId={pet.id}
-                    onSubmit={(data) => addReminder.mutate(data)}
-                    trigger={
-                      <Button variant="outline" size="sm">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Agregar Recordatorio
-                      </Button>
-                    }
-                  />
-                </CardContent>
-              </Card>
-            )}
           </TabsContent>
 
           <TabsContent value="vacunas" className="mt-4">
@@ -570,25 +431,8 @@ const PetClinicalRecord = () => {
             <TabHistorial petId={pet.id} />
           </TabsContent>
 
-          <TabsContent value="alimentacion" className="mt-4 space-y-4">
+          <TabsContent value="alimentacion" className="mt-4">
             <TabAlimentacion pet={pet} onRefresh={() => refetchPet()} viewMode={viewMode} />
-            {viewMode === 'owner' && (
-              <Card>
-                <CardContent className="p-4 text-center">
-                  <p className="text-sm text-muted-foreground mb-3">
-                    ¿Necesitas actualizar la información clínica de {pet.name}?
-                  </p>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate(`/edit-pet/${pet.id}`)}
-                  >
-                    <Clipboard className="h-4 w-4 mr-2" />
-                    Editar datos clínicos
-                  </Button>
-                </CardContent>
-              </Card>
-            )}
           </TabsContent>
 
           <TabsContent value="documentos" className="mt-4">
@@ -601,6 +445,122 @@ const PetClinicalRecord = () => {
             </TabsContent>
           )}
         </Tabs>
+
+        {/* AI Tools — collapsible section below tabs */}
+        {viewMode === 'owner' && (
+          <Collapsible>
+            <CollapsibleTrigger asChild>
+              <Button
+                variant="ghost"
+                className="w-full justify-between h-10 text-xs text-muted-foreground hover:text-foreground"
+              >
+                <span className="flex items-center gap-1.5">
+                  <Sparkles className="h-3.5 w-3.5 text-indigo-500" />
+                  Herramientas IA para {pet.name}
+                </span>
+                <ChevronDown className="h-3.5 w-3.5" />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-3 pt-2">
+              {showAssistant ? (
+                <PetAssistant
+                  petId={pet.id}
+                  petName={pet.name}
+                  onClose={() => setShowAssistant(false)}
+                />
+              ) : activeAITool !== 'none' ? (
+                <div className="space-y-2">
+                  {activeAITool === 'triage' && (
+                    <SymptomTriage
+                      petId={pet.id}
+                      petName={pet.name}
+                      onClose={() => setActiveAITool('none')}
+                      onShowDirectory={() => navigate('/veterinarios')}
+                    />
+                  )}
+                  {activeAITool === 'nutrition' && (
+                    <NutritionCoach petId={pet.id} petName={pet.name} />
+                  )}
+                  {activeAITool === 'wound' && (
+                    <WoundVision
+                      petId={pet.id}
+                      petName={pet.name}
+                      onShowDirectory={() => navigate('/veterinarios')}
+                    />
+                  )}
+                  {activeAITool === 'prep' && (
+                    <ConsultationPrep petId={pet.id} petName={pet.name} />
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs"
+                    onClick={() => setActiveAITool('none')}
+                  >
+                    Volver a herramientas
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  <button
+                    onClick={() => setShowAssistant(true)}
+                    className="flex flex-col items-center gap-1.5 p-3 rounded-xl border bg-card hover:bg-accent transition-colors"
+                  >
+                    <Stethoscope className="h-5 w-5 text-primary" />
+                    <span className="text-[11px] font-medium">Asistente</span>
+                    <span className="text-[9px] text-muted-foreground">Preguntas de salud</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveAITool('triage')}
+                    className="flex flex-col items-center gap-1.5 p-3 rounded-xl border bg-card hover:bg-accent transition-colors"
+                  >
+                    <Shield className="h-5 w-5 text-blue-600" />
+                    <span className="text-[11px] font-medium">Triage</span>
+                    <span className="text-[9px] text-muted-foreground">Evaluar urgencia</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveAITool('nutrition')}
+                    className="flex flex-col items-center gap-1.5 p-3 rounded-xl border bg-card hover:bg-accent transition-colors"
+                  >
+                    <Leaf className="h-5 w-5 text-green-600" />
+                    <span className="text-[11px] font-medium">Nutricion</span>
+                    <span className="text-[9px] text-muted-foreground">Plan alimentario</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveAITool('wound')}
+                    className="flex flex-col items-center gap-1.5 p-3 rounded-xl border bg-card hover:bg-accent transition-colors"
+                  >
+                    <Camera className="h-5 w-5 text-orange-600" />
+                    <span className="text-[11px] font-medium">Foto herida</span>
+                    <span className="text-[9px] text-muted-foreground">Evaluar lesion</span>
+                  </button>
+                  <button
+                    onClick={() => setActiveAITool('prep')}
+                    className="flex flex-col items-center gap-1.5 p-3 rounded-xl border bg-card hover:bg-accent transition-colors"
+                  >
+                    <ClipboardList className="h-5 w-5 text-indigo-600" />
+                    <span className="text-[11px] font-medium">Consulta</span>
+                    <span className="text-[9px] text-muted-foreground">Preparar visita</span>
+                  </button>
+                </div>
+              )}
+            </CollapsibleContent>
+          </Collapsible>
+        )}
+
+        {/* PawPoints nudge — subtle, at the bottom */}
+        {viewMode === 'owner' && (
+          <div
+            className="flex items-center gap-3 p-3 rounded-lg bg-purple-50/50 border border-purple-100/50 cursor-pointer hover:bg-purple-50 transition-colors"
+            onClick={() => navigate('/paw-game')}
+          >
+            <span className="text-base">🐾</span>
+            <p className="text-[11px] text-purple-600 flex-1">
+              Completa la ficha de {pet.name} y gana <strong>30 PawPoints</strong>
+            </p>
+            <span className="text-[10px] text-purple-400 font-medium flex-shrink-0">Ver →</span>
+          </div>
+        )}
 
         {/* Tutorial floating button */}
         <ViewTutorial {...TUTORIALS.fichaClinical} />

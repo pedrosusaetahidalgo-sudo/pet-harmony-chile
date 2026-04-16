@@ -13,6 +13,7 @@ interface VetActionsBarProps {
   shareTokenId?: string | null;
   showRecorder?: boolean;
   onRecorderChange?: (open: boolean) => void;
+  onSwitchTab?: (tab: string) => void;
 }
 
 export function VetActionsBar({
@@ -23,16 +24,16 @@ export function VetActionsBar({
   shareTokenId,
   showRecorder = false,
   onRecorderChange,
+  onSwitchTab,
 }: VetActionsBarProps) {
   const [showNoteEditor, setShowNoteEditor] = useState(false);
   const recorderOpen = showRecorder;
   const setRecorderOpen = onRecorderChange ?? (() => {});
 
   const goToDocumentos = () => {
-    const tabTrigger = document.querySelector('[value="documentos"]') as HTMLButtonElement;
-    tabTrigger?.click();
-    // Scroll to top of tabs area
-    tabTrigger?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (onSwitchTab) {
+      onSwitchTab('documentos');
+    }
   };
 
   return (

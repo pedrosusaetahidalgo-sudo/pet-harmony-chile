@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-
+import { toast } from 'sonner';
 interface AISkillOptions<TInput, TOutput> {
   functionName: string;
   skillLabel: string;
@@ -19,7 +18,6 @@ interface AISkillState<TOutput> {
 
 export function useAISkill<TInput, TOutput>(options: AISkillOptions<TInput, TOutput>) {
   const { functionName, skillLabel, maxRetries = 1, onSuccess } = options;
-  const { toast } = useToast();
   const [state, setState] = useState<AISkillState<TOutput>>({
     data: null,
     isLoading: false,
@@ -50,8 +48,7 @@ export function useAISkill<TInput, TOutput>(options: AISkillOptions<TInput, TOut
                 remaining: 0,
                 error: null,
               }));
-              toast({
-                title: 'Límite alcanzado',
+              toast('Límite alcanzado', {
                 description: `Has usado todos tus análisis de ${skillLabel} por hoy. Renueva mañana.`,
               });
               return;
@@ -78,14 +75,12 @@ export function useAISkill<TInput, TOutput>(options: AISkillOptions<TInput, TOut
       }
 
       setState((s) => ({ ...s, isLoading: false, error: lastError }));
-      toast({
-        title: 'Algo salió mal',
+      toast.error('Algo salió mal', {
         description: `No se pudo completar ${skillLabel}. Intenta de nuevo.`,
-        variant: 'destructive',
       });
       return null;
     },
-    [functionName, skillLabel, maxRetries, onSuccess, toast]
+    [functionName, skillLabel, maxRetries, onSuccess]
   );
 
   const reset = useCallback(() => {

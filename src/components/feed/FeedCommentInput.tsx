@@ -3,8 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useQueryClient } from '@tanstack/react-query';
 import { Send } from '@/lib/icons';
-import { useToast } from '@/hooks/use-toast';
-
+import { toast } from 'sonner';
 const COMMENT_MAX_LENGTH = 500;
 
 interface FeedCommentInputProps {
@@ -13,7 +12,6 @@ interface FeedCommentInputProps {
 
 export function FeedCommentInput({ postId }: FeedCommentInputProps) {
   const { user } = useAuth();
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [text, setText] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -24,10 +22,7 @@ export function FeedCommentInput({ postId }: FeedCommentInputProps) {
     const trimmed = text.trim();
     if (!trimmed || submitting) return;
     if (trimmed.length > COMMENT_MAX_LENGTH) {
-      toast({
-        variant: 'destructive',
-        title: `El comentario no puede superar los ${COMMENT_MAX_LENGTH} caracteres`,
-      });
+      toast.error(`El comentario no puede superar los ${COMMENT_MAX_LENGTH} caracteres`);
       return;
     }
     setSubmitting(true);
@@ -44,10 +39,7 @@ export function FeedCommentInput({ postId }: FeedCommentInputProps) {
       // Invalidate feed to refresh comment counts
       queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
     } catch {
-      toast({
-        variant: 'destructive',
-        title: 'No se pudo publicar el comentario',
-      });
+      toast.error('No se pudo publicar el comentario');
     } finally {
       setSubmitting(false);
     }

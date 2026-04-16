@@ -18,7 +18,7 @@ import { Switch } from '@/components/ui/switch';
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Upload, X, ChevronDown, Stethoscope, Heart } from '@/lib/icons';
 import { LINKS } from '@/lib/links';
 import { ImageCropDialog } from '@/components/ImageCropDialog';
@@ -112,7 +112,6 @@ const AddPet = () => {
 
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const { reward } = useOrganicRewards();
   const { can: canAddPet, reason: blockReason, isLoading: checkingLimit } = useCanAddPet();
 
@@ -132,10 +131,8 @@ const AddPet = () => {
         .maybeSingle();
       if (cancelled) return;
       if (error || !data) {
-        toast({
-          title: 'Mascota no encontrada',
+        toast.error('Mascota no encontrada', {
           description: 'No tienes acceso a esta mascota o no existe.',
-          variant: 'destructive',
         });
         navigate(LINKS.myPets());
         return;
@@ -172,7 +169,7 @@ const AddPet = () => {
     return () => {
       cancelled = true;
     };
-  }, [isEdit, petId, user, navigate, toast]);
+  }, [isEdit, petId, user, navigate]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -181,7 +178,7 @@ const AddPet = () => {
 
     const error = validateImageFile(file);
     if (error) {
-      toast({ title: error, variant: 'destructive' });
+      toast.error(error);
       return;
     }
 
@@ -198,10 +195,7 @@ const AddPet = () => {
       setPhotoFile(finalFile);
       setPhotoPreview(URL.createObjectURL(compressed.blob));
     } catch (err: unknown) {
-      toast({
-        title: (err as Error)?.message || 'Error al procesar la foto',
-        variant: 'destructive',
-      });
+      toast.error((err as Error)?.message || 'Error al procesar la foto');
     } finally {
       if (cropSrc) URL.revokeObjectURL(cropSrc);
       setCropSrc(null);
@@ -228,10 +222,8 @@ const AddPet = () => {
 
       return { url: publicUrl, path: fileName };
     } catch (error: unknown) {
-      toast({
-        title: 'Error al subir foto',
+      toast.error('Error al subir foto', {
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
-        variant: 'destructive',
       });
       return null;
     } finally {
@@ -243,10 +235,8 @@ const AddPet = () => {
     e.preventDefault();
 
     if (!user) {
-      toast({
-        title: 'Sesión expirada',
+      toast.error('Sesión expirada', {
         description: 'Tienes que iniciar sesión de nuevo para guardar tu mascota.',
-        variant: 'destructive',
       });
       navigate('/auth');
       return;
@@ -275,11 +265,7 @@ const AddPet = () => {
     if (formData.weight) {
       const w = parseFloat(formData.weight);
       if (w <= 0) {
-        toast({
-          title: 'Algo salió mal',
-          description: 'El peso debe ser mayor a 0',
-          variant: 'destructive',
-        });
+        toast.error('Algo salió mal', { description: 'El peso debe ser mayor a 0' });
         return;
       }
       // Warning (no bloqueante) para pesos fuera de rango esperado por especie
@@ -294,8 +280,7 @@ const AddPet = () => {
       };
       const range = weightRanges[formData.species];
       if (range && (w < range[0] || w > range[1])) {
-        toast({
-          title: 'Peso inusual',
+        toast('Peso inusual', {
           description: `El peso ${w} kg parece fuera de rango para un ${formData.species} (${range[0]}–${range[1]} kg). Puedes continuar si es correcto.`,
         });
       }
@@ -306,10 +291,8 @@ const AddPet = () => {
       const birth = new Date(formData.birth_date + 'T00:00:00');
       const now = new Date();
       if (birth > now) {
-        toast({
-          title: 'Algo salió mal',
+        toast.error('Algo salió mal', {
           description: 'La fecha de nacimiento no puede ser en el futuro',
-          variant: 'destructive',
         });
         return;
       }
@@ -327,10 +310,8 @@ const AddPet = () => {
       const minBirth = new Date();
       minBirth.setFullYear(now.getFullYear() - maxYears);
       if (birth < minBirth) {
-        toast({
-          title: 'Fecha de nacimiento no válida',
+        toast.error('Fecha de nacimiento no válida', {
           description: `Para un ${formData.species}, la fecha de nacimiento no puede ser anterior a hace ${maxYears} años.`,
-          variant: 'destructive',
         });
         return;
       }
@@ -338,20 +319,16 @@ const AddPet = () => {
 
     // Validate adoption_date if provided
     if (formData.adoption_date && new Date(formData.adoption_date) > new Date()) {
-      toast({
-        title: 'Algo salió mal',
+      toast.error('Algo salió mal', {
         description: 'La fecha de adopción no puede ser en el futuro',
-        variant: 'destructive',
       });
       return;
     }
 
     // Validate microchip: estándar ISO 11784/11785 son 15 dígitos numéricos.
     if (formData.microchip_number && !/^\d{15}$/.test(formData.microchip_number.trim())) {
-      toast({
-        title: 'Microchip inválido',
+      toast.error('Microchip inválido', {
         description: 'El número de microchip debe tener exactamente 15 dígitos (estándar ISO).',
-        variant: 'destructive',
       });
       return;
     }
@@ -366,8 +343,7 @@ const AddPet = () => {
       const knownBreeds = BREEDS_BY_SPECIES[formData.species] || [];
       const isKnown = knownBreeds.some((b) => b.value === formData.breed);
       if (!isKnown) {
-        toast({
-          title: 'Raza no reconocida para esta especie',
+        toast('Raza no reconocida para esta especie', {
           description: `"${getBreedLabel(formData.species, formData.breed)}" no está en nuestra lista de razas de ${formData.species}. Presiona "Guardar" de nuevo si es correcta.`,
         });
         setBreedConfirmed(true);
@@ -377,7 +353,7 @@ const AddPet = () => {
 
     // Foto obligatoria
     if (!photoFile && !existingPhotoUrl) {
-      toast({ title: 'La foto de tu mascota es obligatoria', variant: 'destructive' });
+      toast.error('La foto de tu mascota es obligatoria');
       return;
     }
 
@@ -439,8 +415,7 @@ const AddPet = () => {
           .eq('owner_id', user.id);
         if (error) throw error;
 
-        toast({
-          title: 'Cambios guardados',
+        toast('Cambios guardados', {
           description: `Los datos de ${formData.name} se actualizaron correctamente.`,
         });
         navigate(LINKS.myPets());
@@ -459,8 +434,7 @@ const AddPet = () => {
           .eq('species', formData.species);
 
         if (existing && existing.length > 0) {
-          toast({
-            title: 'Posible duplicado',
+          toast('Posible duplicado', {
             description: `Ya tienes un ${formData.species} llamado "${existing[0].name}". Presiona "Guardar" de nuevo si quieres crear otro registro.`,
           });
           setDuplicateBypass(true);
@@ -477,10 +451,8 @@ const AddPet = () => {
             .limit(1);
 
           if (chipMatch && chipMatch.length > 0) {
-            toast({
-              title: 'Microchip ya registrado',
+            toast.error('Microchip ya registrado', {
               description: `Este microchip ya está asociado a "${chipMatch[0].name}". Verifica el número.`,
-              variant: 'destructive',
             });
             setLoading(false);
             return;
@@ -530,8 +502,7 @@ const AddPet = () => {
 
       if (remindersError) {
         logger.error('[AddPet] reminders insert failed', remindersError);
-        toast({
-          title: 'Mascota creada',
+        toast('Mascota creada', {
           description: `Pero los recordatorios automáticos no se pudieron crear (${describeSupabaseError(remindersError)}). Los puedes agregar manualmente.`,
         });
       }
@@ -549,8 +520,7 @@ const AddPet = () => {
         pct: 60,
       });
 
-      toast({
-        title: '¡Mascota agregada!',
+      toast('¡Mascota agregada!', {
         description: `${formData.name} tiene ficha clínica y recordatorios de salud. ¡Explora su perfil!`,
       });
 
@@ -570,10 +540,8 @@ const AddPet = () => {
           .remove([uploadedFilePath])
           .catch(() => {});
       }
-      toast({
-        title: isEdit ? 'Error al guardar cambios' : 'Error al agregar mascota',
+      toast.error(isEdit ? 'Error al guardar cambios' : 'Error al agregar mascota', {
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
-        variant: 'destructive',
       });
     } finally {
       setLoading(false);
@@ -905,17 +873,23 @@ const AddPet = () => {
               <div className="flex flex-col sm:flex-row gap-6 pt-2">
                 <div className="flex items-center gap-3">
                   <Switch
+                    id="neutered"
                     checked={formData.neutered}
                     onCheckedChange={(checked) => updateField('neutered', checked)}
                   />
-                  <Label className="cursor-pointer">Esterilizado/a</Label>
+                  <Label htmlFor="neutered" className="cursor-pointer">
+                    Esterilizado/a
+                  </Label>
                 </div>
                 <div className="flex items-center gap-3">
                   <Switch
+                    id="is_adopted"
                     checked={formData.is_adopted}
                     onCheckedChange={(checked) => updateField('is_adopted', checked)}
                   />
-                  <Label className="cursor-pointer">Adoptado/a</Label>
+                  <Label htmlFor="is_adopted" className="cursor-pointer">
+                    Adoptado/a
+                  </Label>
                 </div>
               </div>
 
@@ -934,13 +908,27 @@ const AddPet = () => {
               {/* Personality */}
               <div className="space-y-3">
                 <Label>Personalidad</Label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                <div
+                  className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2"
+                  role="listbox"
+                  aria-label="Rasgos de personalidad"
+                  aria-multiselectable="true"
+                >
                   {personalityOptions.map((trait) => (
                     <Badge
                       key={trait}
                       variant={selectedPersonality.includes(trait) ? 'default' : 'outline'}
                       className="cursor-pointer hover:bg-primary/80 transition-colors justify-center py-2 text-xs"
+                      role="option"
+                      aria-selected={selectedPersonality.includes(trait)}
+                      tabIndex={0}
                       onClick={() => togglePersonality(trait)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          togglePersonality(trait);
+                        }
+                      }}
                     >
                       {trait}
                     </Badge>
@@ -989,7 +977,16 @@ const AddPet = () => {
                           key={trait}
                           variant="default"
                           className="cursor-pointer text-xs"
+                          role="button"
+                          aria-label={`Quitar ${trait}`}
+                          tabIndex={0}
                           onClick={() => togglePersonality(trait)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              togglePersonality(trait);
+                            }
+                          }}
                         >
                           {trait} ×
                         </Badge>

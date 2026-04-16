@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 import { useGamification } from '@/hooks/useGamification';
 import { DEFAULT_POINTS_CONFIG } from '@/lib/gamification';
@@ -27,7 +27,6 @@ interface FeedCreatePostProps {
 
 export function FeedCreatePost({ onSuccess }: FeedCreatePostProps) {
   const { user } = useAuth();
-  const { toast } = useToast();
   const { awardPoints } = useGamification();
   const queryClient = useQueryClient();
 
@@ -108,9 +107,7 @@ export function FeedCreatePost({ onSuccess }: FeedCreatePostProps) {
               .remove(uploadedImagePaths)
               .catch(() => {});
           }
-          toast({
-            variant: 'destructive',
-            title: 'No pudimos subir la foto',
+          toast.error('No pudimos subir la foto', {
             description:
               describeSupabaseError(err as Parameters<typeof describeSupabaseError>[0]) ||
               'Revisa tu conexion y vuelve a intentar.',
@@ -146,10 +143,7 @@ export function FeedCreatePost({ onSuccess }: FeedCreatePostProps) {
         // Don't fail post if points fail
       }
 
-      toast({
-        title: '¡Publicado!',
-        description: 'Tu publicación se ha compartido con la comunidad',
-      });
+      toast('¡Publicado!', { description: 'Tu publicación se ha compartido con la comunidad' });
 
       // Reset form
       setContent('');
@@ -170,9 +164,7 @@ export function FeedCreatePost({ onSuccess }: FeedCreatePostProps) {
           .catch(() => {});
       }
       logger.error('[FeedCreatePost] submit failed', err);
-      toast({
-        variant: 'destructive',
-        title: 'No pudimos guardar tu publicación',
+      toast.error('No pudimos guardar tu publicación', {
         description:
           describeSupabaseError(err as Parameters<typeof describeSupabaseError>[0]) ||
           'Inténtalo de nuevo.',

@@ -11,7 +11,7 @@ import { getRarity, type Rarity } from '@/components/PetCardCompact';
 // Collapsible removed — memorial section always visible
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -130,7 +130,6 @@ const MyPets = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const goToAddPet = useGoToAddPet();
   const carouselRef = useRef<HTMLDivElement>(null);
 
@@ -153,15 +152,12 @@ const MyPets = () => {
       if (error) throw error;
       setPets(data || []);
     } catch (error: unknown) {
-      toast({
-        title: 'Error al cargar mascotas',
+      toast.error('Error al cargar mascotas', {
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
-        variant: 'destructive',
       });
     } finally {
       setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
   const fetchMemorialPets = useCallback(async () => {
@@ -243,17 +239,12 @@ const MyPets = () => {
 
       if (error) throw error;
 
-      toast({
-        title: 'Mascota eliminada',
-        description: 'La mascota ha sido eliminada exitosamente',
-      });
+      toast('Mascota eliminada', { description: 'La mascota ha sido eliminada exitosamente' });
 
       fetchPets();
     } catch (error: unknown) {
-      toast({
-        title: 'Error al eliminar',
+      toast.error('Error al eliminar', {
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
-        variant: 'destructive',
       });
     } finally {
       setDeleteId(null);

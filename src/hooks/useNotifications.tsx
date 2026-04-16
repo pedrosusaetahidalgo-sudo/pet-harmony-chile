@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
 interface Notification {
@@ -16,8 +16,6 @@ interface Notification {
 export function useNotifications() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const { toast } = useToast();
-
   const userId = user?.id ?? '';
 
   const {
@@ -73,11 +71,7 @@ export function useNotifications() {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },
     onError: () => {
-      toast({
-        title: 'Algo salió mal',
-        description: 'No se pudieron marcar las notificaciones',
-        variant: 'destructive',
-      });
+      toast.error('Algo salió mal', { description: 'No se pudieron marcar las notificaciones' });
     },
   });
 

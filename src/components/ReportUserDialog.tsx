@@ -15,7 +15,7 @@ import { Flag, Loader2 } from '@/lib/icons';
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 
@@ -34,7 +34,6 @@ const REPORT_TYPES = [
 
 const ReportUserDialog = ({ targetUserId, trigger }: ReportUserDialogProps) => {
   const { user } = useAuth();
-  const { toast } = useToast();
   const [open, setOpen] = useState(false);
   const [reportType, setReportType] = useState('spam');
   const [description, setDescription] = useState('');
@@ -59,19 +58,14 @@ const ReportUserDialog = ({ targetUserId, trigger }: ReportUserDialogProps) => {
 
       if (error) throw error;
 
-      toast({
-        title: 'Reporte enviado',
-        description: 'Gracias por tu reporte. Lo revisaremos pronto.',
-      });
+      toast('Reporte enviado', { description: 'Gracias por tu reporte. Lo revisaremos pronto.' });
 
       setOpen(false);
       setDescription('');
       setReportType('spam');
     } catch (error: unknown) {
       logger.error('Error reporting user:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
+      toast.error('Algo salió mal', {
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
           'No se pudo enviar el reporte',

@@ -41,7 +41,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { downloadFile } from '@/lib/nativeDownload';
@@ -70,7 +70,6 @@ const DOCUMENT_TYPE_ICONS: Record<MedicalDocumentType, LucideIcon> = {
 };
 
 export const MedicalDocumentsTab = ({ petId, petName }: MedicalDocumentsTabProps) => {
-  const { toast } = useToast();
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [viewingDocument, setViewingDocument] = useState<{
     url: string;
@@ -105,9 +104,7 @@ export const MedicalDocumentsTab = ({ petId, petName }: MedicalDocumentsTabProps
       const url = await getDownloadUrl(document);
       await downloadFile(url, document.title || 'documento');
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
+      toast.error('Algo salió mal', {
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
           'No se pudo descargar el documento',
@@ -124,9 +121,7 @@ export const MedicalDocumentsTab = ({ petId, petName }: MedicalDocumentsTabProps
         mimeType: document.mime_type,
       });
     } catch (error) {
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
+      toast.error('Algo salió mal', {
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
           'No se pudo abrir el documento',
@@ -163,10 +158,7 @@ export const MedicalDocumentsTab = ({ petId, petName }: MedicalDocumentsTabProps
       // Copy to clipboard
       await navigator.clipboard.writeText(shareUrl);
 
-      toast({
-        title: 'Listo',
-        description: 'Compártelo con tu veterinario. Vence en 30 días.',
-      });
+      toast('Listo', { description: 'Compártelo con tu veterinario. Vence en 30 días.' });
     } catch (error) {
       // Error handled in hook
     }

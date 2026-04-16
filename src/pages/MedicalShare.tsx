@@ -24,10 +24,11 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
-import { PublicHeader, PublicFooter } from './DirectorioVets';
+import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 import { logger } from '@/lib/logger';
 import { openExternalUrl } from '@/lib/nativeNavigation';
 import { downloadFile } from '@/lib/nativeDownload';
+import { calculateAge } from '@/lib/format';
 
 interface SharedPet {
   id: string;
@@ -54,17 +55,6 @@ interface MedicalRecord {
   date: string;
   vet_name: string | null;
   clinic_name: string | null;
-}
-
-function calculateAge(birthDate: string | null): string {
-  if (!birthDate) return 'Edad desconocida';
-  const birth = new Date(birthDate + 'T00:00:00');
-  const now = new Date();
-  const years = now.getFullYear() - birth.getFullYear();
-  const months = now.getMonth() - birth.getMonth();
-  if (years > 0) return `${years} año${years > 1 ? 's' : ''}`;
-  if (months > 0) return `${months} mes${months > 1 ? 'es' : ''}`;
-  return 'Menos de 1 mes';
 }
 
 export default function MedicalShare() {

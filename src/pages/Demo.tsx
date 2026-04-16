@@ -13,7 +13,7 @@ import {
 } from '@/lib/icons';
 import { DEMO_VET_SLUGS } from '@/hooks/useDemoMode';
 import { setSeoTags } from '@/lib/vetDirectory';
-import { PublicHeader, PublicFooter } from './DirectorioVets';
+import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 
 /**
  * Página de demostración para reuniones de venta.

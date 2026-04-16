@@ -2,14 +2,13 @@ import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 import { track, EVENTS } from '@/lib/analytics';
 
 export const useStartConversation = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
 
   const startConversation = async (otherUserId: string) => {
@@ -28,9 +27,7 @@ export const useStartConversation = () => {
       }
 
       if (isBlocked) {
-        toast({
-          variant: 'destructive',
-          title: 'No se puede enviar mensaje',
+        toast.error('No se puede enviar mensaje', {
           description: 'No puedes enviar mensajes a este usuario.',
         });
         setLoading(false);
@@ -58,11 +55,7 @@ export const useStartConversation = () => {
       navigate(`/chat/${conv.id}`);
     } catch (error) {
       logger.error('Error starting conversation:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
-        description: 'No se pudo iniciar la conversación',
-      });
+      toast.error('Algo salió mal', { description: 'No se pudo iniciar la conversación' });
     } finally {
       setLoading(false);
     }

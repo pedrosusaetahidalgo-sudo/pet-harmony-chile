@@ -35,7 +35,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { PublicHeader, PublicFooter } from './DirectorioVets';
+import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 import { SANTIAGO_COMUNAS } from '@/lib/vetDirectory';
 
 // ─── Tipos ──────────────────────────────────────────────────────────────

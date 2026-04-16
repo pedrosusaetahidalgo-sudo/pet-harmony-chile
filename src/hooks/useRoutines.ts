@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format, subDays, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { usePlan } from '@/hooks/usePlan';
 
@@ -78,7 +78,6 @@ export interface RoutineInput {
 
 export const useRoutines = (filterPetId?: string) => {
   const { user } = useAuth();
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const { checkAccess } = usePlan();
 
@@ -148,13 +147,11 @@ export const useRoutines = (filterPetId?: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pet-routines'] });
       queryClient.invalidateQueries({ queryKey: ['unified-calendar'] });
-      toast({ title: 'Rutina creada' });
+      toast('Rutina creada');
     },
     onError: (error: Error) => {
-      toast({
-        title: 'No se pudo crear la rutina',
+      toast.error('No se pudo crear la rutina', {
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
-        variant: 'destructive',
       });
     },
   });
@@ -170,13 +167,11 @@ export const useRoutines = (filterPetId?: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pet-routines'] });
       queryClient.invalidateQueries({ queryKey: ['unified-calendar'] });
-      toast({ title: 'Rutina actualizada' });
+      toast('Rutina actualizada');
     },
     onError: (error: Error) => {
-      toast({
-        title: 'No se pudo actualizar',
+      toast.error('No se pudo actualizar', {
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
-        variant: 'destructive',
       });
     },
   });
@@ -189,7 +184,7 @@ export const useRoutines = (filterPetId?: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pet-routines'] });
       queryClient.invalidateQueries({ queryKey: ['unified-calendar'] });
-      toast({ title: 'Rutina eliminada' });
+      toast('Rutina eliminada');
     },
   });
 
@@ -224,7 +219,7 @@ export const useRoutines = (filterPetId?: string) => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['routine-completions'] });
       queryClient.invalidateQueries({ queryKey: ['unified-calendar'] });
-      toast({ title: 'Rutina completada' });
+      toast('Rutina completada');
     },
   });
 

@@ -15,11 +15,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
-
+import { toast } from 'sonner';
 export function FeedStories() {
   const { user } = useAuth();
-  const { toast } = useToast();
   const { data: storyGroups = [] } = useActiveStories();
   const createStory = useCreateStory();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -84,12 +82,12 @@ export function FeedStories() {
         petId: selectedPetId,
         file: storyFile,
       });
-      toast({ title: '¡Historia publicada!' });
+      toast('¡Historia publicada!');
       setShowCreate(false);
       setStoryFile(null);
       setStoryPreview('');
     } catch {
-      toast({ variant: 'destructive', title: 'No se pudo subir la historia' });
+      toast.error('No se pudo subir la historia');
     }
   };
 

@@ -36,7 +36,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Navigate, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { ServicePromotionsList } from '@/components/ServicePromotionsList';
 import { OfferServiceButton } from '@/components/OfferServiceButton';
 import { MyBookingsHistory } from '@/components/MyBookingsHistory';
@@ -618,7 +618,6 @@ const ServiceDirectory = () => {
 
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { toast } = useToast();
   const [providers, setProviders] = useState<NormalizedProvider[]>([]);
   const [selectedProvider, setSelectedProvider] = useState<NormalizedProvider | null>(null);
   const [loading, setLoading] = useState(true);
@@ -733,9 +732,7 @@ const ServiceDirectory = () => {
       }
     } catch (error) {
       logger.error('Error loading data:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
+      toast.error('Algo salió mal', {
         description: `No se pudo cargar la información de ${config.listTabLabel.toLowerCase()}`,
       });
     } finally {
@@ -926,8 +923,7 @@ const ServiceDirectory = () => {
             <MyBookingsHistory
               serviceType={config.providerType as BookingsServiceType}
               onBookingClick={(booking) => {
-                toast({
-                  title: config.bookingToastLabel,
+                toast(config.bookingToastLabel, {
                   description: `${config.bookingToastLabel} #${booking.id.slice(0, 8)}`,
                 });
               }}

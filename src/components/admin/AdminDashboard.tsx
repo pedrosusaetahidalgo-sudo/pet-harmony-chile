@@ -7,6 +7,7 @@ import AdminKpiCard from '@/components/admin/ui/AdminKpiCard';
 import AdminStatCard from '@/components/admin/ui/AdminStatCard';
 import AdminEmptyState from '@/components/admin/ui/AdminEmptyState';
 import { cn } from '@/lib/utils';
+import { formatCLPCompact } from '@/lib/format';
 import {
   Users,
   DollarSign,
@@ -55,11 +56,8 @@ function pctChange(current: number, previous: number): number {
   return Math.round(((current - previous) / previous) * 100);
 }
 
-function formatCLP(value: number): string {
-  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
-  if (value >= 1_000) return `$${(value / 1_000).toFixed(0)}k`;
-  return `$${value}`;
-}
+// Compact CLP formatting for dashboard cards
+const formatCLP = formatCLPCompact;
 
 // ── Activity item ────────────────────────────────────────
 interface ActivityItem {

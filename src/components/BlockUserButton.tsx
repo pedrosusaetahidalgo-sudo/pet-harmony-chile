@@ -14,7 +14,7 @@ import { Ban, Loader2 } from '@/lib/icons';
 import { useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 import { logger } from '@/lib/logger';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
@@ -31,7 +31,6 @@ const BlockUserButton = ({
   size = 'md',
 }: BlockUserButtonProps) => {
   const { user } = useAuth();
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isBlocking, setIsBlocking] = useState(false);
 
@@ -51,8 +50,7 @@ const BlockUserButton = ({
 
       if (error) throw error;
 
-      toast({
-        title: 'Usuario bloqueado',
+      toast('Usuario bloqueado', {
         description: 'Este usuario ha sido bloqueado y no podrá contactarte.',
       });
 
@@ -62,9 +60,7 @@ const BlockUserButton = ({
       queryClient.invalidateQueries({ queryKey: ['follows', user.id, targetUserId] });
     } catch (error: unknown) {
       logger.error('Error blocking user:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
+      toast.error('Algo salió mal', {
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
           'No se pudo bloquear al usuario',

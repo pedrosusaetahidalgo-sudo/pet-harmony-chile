@@ -1,4 +1,12 @@
-import { format, formatDistanceToNow, isToday, isTomorrow, isYesterday } from 'date-fns';
+import {
+  format,
+  formatDistanceToNow,
+  isToday,
+  isTomorrow,
+  isYesterday,
+  differenceInYears,
+  differenceInMonths,
+} from 'date-fns';
 import { es } from 'date-fns/locale';
 
 export function formatDate(date: string | Date): string {
@@ -26,6 +34,29 @@ export function formatPrice(amount: number): string {
     currency: 'CLP',
     maximumFractionDigits: 0,
   }).format(amount);
+}
+
+/**
+ * Formatea un monto en CLP. Acepta null/undefined → retorna 'Consultar'.
+ * Canonical version — importar desde aquí en vez de definir localmente.
+ */
+export function formatCLP(amount: number | null | undefined): string {
+  if (amount == null) return 'Consultar';
+  return new Intl.NumberFormat('es-CL', {
+    style: 'currency',
+    currency: 'CLP',
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+
+/**
+ * Formatea CLP en forma compacta: $1.2M, $45k, $500.
+ * Usado en dashboards admin donde el espacio es limitado.
+ */
+export function formatCLPCompact(value: number): string {
+  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
+  if (value >= 1_000) return `$${(value / 1_000).toFixed(0)}k`;
+  return `$${value}`;
 }
 
 export function getGreeting(): string {
@@ -128,4 +159,32 @@ export function isGenericDisplayName(name: string | null | undefined): boolean {
   // Matches "Usuario" or our generated pattern (already has a name, not generic)
   if (trimmed === 'usuario') return true;
   return false;
+}
+
+/**
+ * Calcula la edad de una mascota a partir de su fecha de nacimiento.
+ * Acepta null → retorna 'Edad desconocida'.
+ * Canonical version — importar desde aquí en vez de definir localmente.
+ */
+export function calculateAge(birthDate: string | null): string {
+  if (!birthDate) return 'Edad desconocida';
+
+  const birth = new Date(birthDate + 'T00:00:00');
+  if (isNaN(birth.getTime())) return 'Edad no disponible';
+
+  const now = new Date();
+  if (birth > now) return 'Edad no disponible';
+
+  const years = differenceInYears(now, birth);
+
+  // Defensive clamp: ninguna mascota doméstica supera ~30 años. Si la fecha
+  // ingresada da un valor absurdo, lo más probable es un typo del usuario.
+  if (years > 30) return 'Revisa la fecha de nacimiento';
+
+  const months = differenceInMonths(now, birth) % 12;
+
+  if (years === 0 && months === 0) return 'Menos de 1 mes';
+  if (years === 0) return `${months} ${months === 1 ? 'mes' : 'meses'}`;
+  if (months === 0) return `${years} ${years === 1 ? 'año' : 'años'}`;
+  return `${years} ${years === 1 ? 'año' : 'años'}, ${months} ${months === 1 ? 'mes' : 'meses'}`;
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { formatCLP } from '@/lib/format';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -529,7 +530,7 @@ export default function AdminAnalytics() {
     return `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
   };
 
-  const formatCLP = (amount: number) => `$${amount.toLocaleString('es-CL')}`;
+  // formatCLP imported from @/lib/format
 
   const retentionColor = (pct: number) => {
     if (pct < 0) return 'bg-slate-800 text-slate-600';

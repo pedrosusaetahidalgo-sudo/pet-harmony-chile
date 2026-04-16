@@ -18,7 +18,7 @@ import {
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ProfessionalBadges } from '@/components/ProfessionalBadges';
 import { useStartConversation } from '@/hooks/useStartConversation';
@@ -52,7 +52,6 @@ interface PostData {
 const UserProfile = () => {
   const { userId } = useParams<{ userId: string }>();
   const { user } = useAuth();
-  const { toast } = useToast();
   const navigate = useNavigate();
   const { startConversation } = useStartConversation();
 
@@ -105,10 +104,7 @@ const UserProfile = () => {
           .eq('following_id', userId);
 
         setIsFollowing(false);
-        toast({
-          title: 'Dejaste de seguir',
-          description: 'Ya no sigues a este usuario',
-        });
+        toast('Dejaste de seguir', { description: 'Ya no sigues a este usuario' });
       } else {
         await supabase.from('user_follows').insert({
           follower_id: user.id,
@@ -116,20 +112,13 @@ const UserProfile = () => {
         });
 
         setIsFollowing(true);
-        toast({
-          title: '¡Siguiendo!',
-          description: 'Ahora sigues a este usuario',
-        });
+        toast('¡Siguiendo!', { description: 'Ahora sigues a este usuario' });
       }
 
       loadProfileData();
     } catch (error) {
       logger.error('Error toggling follow:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
-        description: 'No se pudo actualizar el seguimiento',
-      });
+      toast.error('Algo salió mal', { description: 'No se pudo actualizar el seguimiento' });
     } finally {
       setFollowLoading(false);
     }
@@ -208,11 +197,7 @@ const UserProfile = () => {
       setPosts(postsData || []);
     } catch (error) {
       logger.error('Error loading profile:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
-        description: 'No se pudo cargar la información del perfil',
-      });
+      toast.error('Algo salió mal', { description: 'No se pudo cargar la información del perfil' });
     } finally {
       setLoading(false);
     }

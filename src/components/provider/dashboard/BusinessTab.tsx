@@ -8,13 +8,7 @@ import { ProviderDirectoryCard } from '../ProviderDirectoryCard';
 import { CreateServicePromotion } from '@/components/CreateServicePromotion';
 import type { ProviderDashboardStats } from '@/hooks/useProviderDashboardStats';
 import type { DailyVetActivity, VetSummary } from '@/hooks/useVetAnalytics';
-
-const formatCLP = (amount: number) =>
-  new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    minimumFractionDigits: 0,
-  }).format(amount);
+import { formatCLP } from '@/lib/format';
 
 interface BusinessTabProps {
   stats: ProviderDashboardStats;

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Image, X, Loader2 } from '@/lib/icons';
 import { LINKS } from '@/lib/links';
 import {
@@ -32,7 +32,6 @@ interface CreatePostProps {
 
 export function CreatePost({ onSuccess }: CreatePostProps) {
   const { user } = useAuth();
-  const { toast } = useToast();
   const { awardPoints } = useGamification();
   const navigate = useNavigate();
   const [content, setContent] = useState('');
@@ -69,7 +68,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
 
     const error = validateImageFile(file);
     if (error) {
-      toast({ title: 'Algo salio mal', description: error, variant: 'destructive' });
+      toast.error('Algo salio mal', { description: error });
       return;
     }
 
@@ -85,10 +84,8 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
       setImageFile(finalFile);
       setImagePreview(URL.createObjectURL(finalFile));
     } catch (err: unknown) {
-      toast({
-        title: 'Algo salio mal',
+      toast.error('Algo salio mal', {
         description: (err as Error)?.message || 'Error al procesar imagen',
-        variant: 'destructive',
       });
     }
   };
@@ -120,20 +117,12 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
     e.preventDefault();
 
     if (!user) {
-      toast({
-        title: 'Algo salió mal',
-        description: 'Debes iniciar sesión para publicar',
-        variant: 'destructive',
-      });
+      toast.error('Algo salió mal', { description: 'Debes iniciar sesión para publicar' });
       return;
     }
 
     if (!content.trim()) {
-      toast({
-        title: 'Algo salió mal',
-        description: 'Escribe algo para publicar',
-        variant: 'destructive',
-      });
+      toast.error('Algo salió mal', { description: 'Escribe algo para publicar' });
       return;
     }
 
@@ -151,12 +140,10 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
           }
         } catch (uploadErr) {
           logger.error('[CreatePost] image upload failed', uploadErr);
-          toast({
-            title: 'No pudimos subir la foto',
+          toast.error('No pudimos subir la foto', {
             description:
               describeSupabaseError(uploadErr as Parameters<typeof describeSupabaseError>[0]) ||
               'Revisa tu conexión y vuelve a intentar. Tu texto no se perdió.',
-            variant: 'destructive',
           });
           setIsSubmitting(false);
           return;
@@ -193,10 +180,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
         // Don't fail the post creation if points fail
       }
 
-      toast({
-        title: '¡Publicado!',
-        description: 'Tu publicación se ha compartido con la comunidad',
-      });
+      toast('¡Publicado!', { description: 'Tu publicación se ha compartido con la comunidad' });
 
       setContent('');
       setPostType('foto');
@@ -211,12 +195,10 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
           .catch(() => {});
       }
       logger.error('[CreatePost] handleSubmit failed', error);
-      toast({
-        title: 'No pudimos guardar tu publicación',
+      toast.error('No pudimos guardar tu publicación', {
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
           'Inténtalo de nuevo en unos segundos. Tu texto y foto siguen aquí.',
-        variant: 'destructive',
       });
     } finally {
       setIsSubmitting(false);

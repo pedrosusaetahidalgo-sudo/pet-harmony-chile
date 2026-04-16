@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { formatCLP } from '@/lib/format';
 import { useProviderDashboardStats } from '@/hooks/useProviderDashboardStats';
 import { useVetAnalytics } from '@/hooks/useVetAnalytics';
 import { usePendingVetLinks } from '@/hooks/usePetVetLinks';
@@ -38,12 +39,7 @@ import { NewPatientForm } from './NewPatientForm';
 import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import { Next24hCard } from './Next24hCard';
 
-const formatCLP = (amount: number) =>
-  new Intl.NumberFormat('es-CL', {
-    style: 'currency',
-    currency: 'CLP',
-    minimumFractionDigits: 0,
-  }).format(amount);
+// formatCLP imported from @/lib/format
 
 const ProviderDashboard = () => {
   const { user } = useAuth();

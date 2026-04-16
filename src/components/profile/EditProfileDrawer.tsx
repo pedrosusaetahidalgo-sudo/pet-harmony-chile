@@ -8,7 +8,7 @@ import { Separator } from '@/components/ui/separator';
 import { Save, Loader2, Upload, Camera } from '@/lib/icons';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { toTitleCase } from '@/lib/format';
 import { logger } from '@/lib/logger';
@@ -74,8 +74,6 @@ export function EditProfileDrawer({
   onSaved,
 }: EditProfileDrawerProps) {
   const { user } = useAuth();
-  const { toast } = useToast();
-
   const [displayName, setDisplayName] = useState('');
   const [bio, setBio] = useState('');
   const [location, setLocation] = useState('');
@@ -114,7 +112,7 @@ export function EditProfileDrawer({
 
     const error = validateImageFile(file, 5 * 1024 * 1024);
     if (error) {
-      toast({ title: error, variant: 'destructive' });
+      toast.error(error);
       return;
     }
 
@@ -141,10 +139,10 @@ export function EditProfileDrawer({
 
       const { data } = supabase.storage.from('avatars').getPublicUrl(path);
       setAvatarUrl(data.publicUrl);
-      toast({ title: 'Foto subida' });
+      toast('Foto subida');
     } catch (err) {
       logger.error('Avatar upload failed', err);
-      toast({ title: 'No se pudo subir la foto', variant: 'destructive' });
+      toast.error('No se pudo subir la foto');
     } finally {
       setUploadingPhoto(false);
       if (cropSrc) URL.revokeObjectURL(cropSrc);
@@ -155,10 +153,7 @@ export function EditProfileDrawer({
   const handleSave = async () => {
     if (!user) return;
     if (!avatarUrl) {
-      toast({
-        title: 'Selecciona un avatar o sube una foto antes de guardar',
-        variant: 'destructive',
-      });
+      toast.error('Selecciona un avatar o sube una foto antes de guardar');
       return;
     }
     setSaving(true);
@@ -176,16 +171,11 @@ export function EditProfileDrawer({
 
     if (error) {
       logger.error('Error saving profile:', error);
-      toast({
-        title: 'Algo salio mal',
+      toast.error('Algo salio mal', {
         description: 'No se pudo guardar el perfil. Intenta de nuevo.',
-        variant: 'destructive',
       });
     } else {
-      toast({
-        title: 'Perfil guardado',
-        description: 'Tus cambios se han guardado correctamente.',
-      });
+      toast('Perfil guardado', { description: 'Tus cambios se han guardado correctamente.' });
       onSaved();
       onOpenChange(false);
     }

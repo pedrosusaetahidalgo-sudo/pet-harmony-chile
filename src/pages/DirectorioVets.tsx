@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import { Helmet } from 'react-helmet-async';
-import { Search, MapPin, Star, Stethoscope, Clock, Phone } from 'lucide-react';
+import { Search, MapPin, Star, Stethoscope, Clock, Phone } from '@/lib/icons';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -17,9 +17,11 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useQuery } from '@tanstack/react-query';
 import { useDirectoryVets, type DirectoryVetFilters } from '@/hooks/useDirectoryVets';
+import type { ServiceProviderRow } from '@/types/vetDirectory';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import PriceEstimatorWidget from '@/components/PriceEstimatorWidget';
+import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 import { isOpenNow, getTodayHours } from '@/lib/openingHours';
 import {
   SANTIAGO_COMUNAS,
@@ -29,8 +31,7 @@ import {
   formatCLP,
 } from '@/lib/vetDirectory';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Vet = any;
+type Vet = ServiceProviderRow;
 
 export default function DirectorioVets() {
   const { comuna: comunaParam, especialidad: espParam } = useParams();
@@ -85,9 +86,9 @@ export default function DirectorioVets() {
   const comunaStats = useMemo(() => {
     if (!comunaParam || vets.length === 0) return null;
     const prices = vets
-      .map((v: Vet) => v.price_from as number | null)
+      .map((v: Vet) => v.price_from)
       .filter((p): p is number => p != null && p > 0);
-    const allSpecs = vets.flatMap((v: Vet) => (v.specialties as string[]) ?? []);
+    const allSpecs = vets.flatMap((v: Vet) => v.specialties ?? []);
     const uniqueSpecs = [...new Set(allSpecs)];
     return {
       count: vets.length,
@@ -438,53 +439,6 @@ function VetCard({ vet, attendsToday }: { vet: Vet; attendsToday?: boolean }) {
   );
 }
 
-function PublicHeader() {
-  return (
-    <header className="bg-white border-b sticky top-0 z-10">
-      <div className="container mx-auto px-4 h-14 flex items-center justify-between max-w-6xl">
-        <Link to="/" className="font-bold text-purple-700 text-lg">
-          🐾 Paw Friend
-        </Link>
-        <div className="flex items-center gap-2">
-          <Link to="/auth">
-            <Button variant="ghost" size="sm">
-              Iniciar sesión
-            </Button>
-          </Link>
-          <Link to="/auth">
-            <Button size="sm">Registrarse</Button>
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}
-
-function PublicFooter() {
-  return (
-    <footer className="border-t bg-white mt-12 py-6 text-center text-sm text-muted-foreground">
-      <div className="container mx-auto px-4">
-        <p className="text-xs">Hecho en Chile, para Chile · Pagos seguros con Flow</p>
-        <p>© {new Date().getFullYear()} Paw Friend Chile · pawfriend.cl</p>
-        <div className="flex flex-wrap justify-center gap-4 mt-2">
-          <Link to="/registro-partner" className="hover:text-purple-700 font-medium">
-            Registra tu negocio
-          </Link>
-          <Link to="/para-veterinarios" className="hover:text-purple-700">
-            Para veterinarios
-          </Link>
-          <Link to="/terms" className="hover:text-purple-700">
-            Términos
-          </Link>
-          <Link to="/privacy" className="hover:text-purple-700">
-            Privacidad
-          </Link>
-        </div>
-      </div>
-    </footer>
-  );
-}
-
 function NewVetsSection({ vets }: { vets: Vet[] }) {
   const ninetyDaysAgo = new Date();
   ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
@@ -514,9 +468,9 @@ function NewVetsSection({ vets }: { vets: Vet[] }) {
               )}
               <Badge className="bg-purple-100 text-purple-700 text-[10px] mb-1">Nuevo</Badge>
               <p className="text-sm font-medium text-purple-900 truncate">{vet.display_name}</p>
-              {(vet.specialties as string[] | null)?.length ? (
+              {vet.specialties?.length ? (
                 <p className="text-[10px] text-muted-foreground truncate">
-                  {(vet.specialties as string[]).slice(0, 2).join(' · ')}
+                  {vet.specialties.slice(0, 2).join(' · ')}
                 </p>
               ) : null}
             </Card>
@@ -528,4 +482,5 @@ function NewVetsSection({ vets }: { vets: Vet[] }) {
   );
 }
 
-export { PublicHeader, PublicFooter };
+// Re-export from canonical location for backwards compatibility
+export { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';

@@ -4,7 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Send, Trash2 } from '@/lib/icons';
@@ -28,7 +28,6 @@ interface PostCommentsProps {
 
 export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
   const { user } = useAuth();
-  const { toast } = useToast();
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
@@ -102,17 +101,10 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
 
       setNewComment('');
       if (onCommentAdded) onCommentAdded();
-      toast({
-        title: 'Comentario publicado',
-        description: 'Tu comentario se ha agregado correctamente',
-      });
+      toast('Comentario publicado', { description: 'Tu comentario se ha agregado correctamente' });
     } catch (error) {
       logger.error('Error posting comment:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
-        description: 'No se pudo publicar el comentario',
-      });
+      toast.error('Algo salió mal', { description: 'No se pudo publicar el comentario' });
     } finally {
       setSubmitting(false);
     }
@@ -124,17 +116,10 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
 
       if (error) throw error;
 
-      toast({
-        title: 'Comentario eliminado',
-        description: 'El comentario se ha eliminado correctamente',
-      });
+      toast('Comentario eliminado', { description: 'El comentario se ha eliminado correctamente' });
     } catch (error) {
       logger.error('Error deleting comment:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
-        description: 'No se pudo eliminar el comentario',
-      });
+      toast.error('Algo salió mal', { description: 'No se pudo eliminar el comentario' });
     }
   };
 

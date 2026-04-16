@@ -12,7 +12,7 @@ import {
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { usePlan } from '@/hooks/usePlan';
 import { calculateBookingCommission } from '@/lib/commissions';
 import { formatCLP } from '@/lib/plans';
@@ -41,7 +41,6 @@ interface Props {
 
 export function BookingModal({ slot, open, onClose }: Props) {
   const { user } = useAuth();
-  const { toast } = useToast();
   const { planId } = usePlan();
   const queryClient = useQueryClient();
   const [petId, setPetId] = useState('');
@@ -93,13 +92,9 @@ export function BookingModal({ slot, open, onClose }: Props) {
       queryClient.invalidateQueries({ queryKey: ['service-slots'] });
       queryClient.invalidateQueries({ queryKey: ['month-slots'] });
       setStep('success');
-      toast({ title: 'Reserva confirmada!', description: '+10 puntos ganados' });
+      toast('Reserva confirmada!', { description: '+10 puntos ganados' });
     } catch {
-      toast({
-        title: 'Algo salió mal',
-        description: 'No se pudo completar la reserva',
-        variant: 'destructive',
-      });
+      toast.error('Algo salió mal', { description: 'No se pudo completar la reserva' });
       setStep('form');
     }
   };

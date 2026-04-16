@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Target, Plus, Trash2, Edit, Loader2, CheckCircle } from '@/lib/icons';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogContent,
@@ -43,7 +43,6 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 export default function AdminMissions() {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [editItem, setEditItem] = useState<Mission | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -75,7 +74,7 @@ export default function AdminMissions() {
   const deleteMission = async (id: string) => {
     const { error } = await supabase.from('paw_missions').delete().eq('id', id);
     if (!error) {
-      toast({ title: 'Mision eliminada' });
+      toast('Mision eliminada');
       queryClient.invalidateQueries({ queryKey: ['admin-missions'] });
     }
   };
@@ -206,7 +205,6 @@ export default function AdminMissions() {
 }
 
 function MissionForm({ initial, onSaved }: { initial: Mission | null; onSaved: () => void }) {
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     title: initial?.title || '',
@@ -228,9 +226,9 @@ function MissionForm({ initial, onSaved }: { initial: Mission | null; onSaved: (
       : await supabase.from('paw_missions').insert(payload);
 
     if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast.error('Error', { description: error.message });
     } else {
-      toast({ title: initial ? 'Actualizada' : 'Creada' });
+      toast(initial ? 'Actualizada' : 'Creada');
       onSaved();
     }
     setLoading(false);

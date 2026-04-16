@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useFeedActions } from '@/hooks/useFeedActions';
 import type { FeedPost as FeedPostType } from '@/hooks/useFeedPosts';
 import { FeedPostHeader } from './FeedPostHeader';
@@ -41,7 +41,6 @@ interface FeedPostCardProps {
 
 export function FeedPostCard({ post, onHashtagClick }: FeedPostCardProps) {
   const { user } = useAuth();
-  const { toast } = useToast();
   const navigate = useNavigate();
   const { toggleLike, toggleSave, reportPost, deletePost } = useFeedActions();
   const [showComments, setShowComments] = useState(false);
@@ -49,10 +48,7 @@ export function FeedPostCard({ post, onHashtagClick }: FeedPostCardProps) {
 
   const handleLike = () => {
     if (!user) {
-      toast({
-        variant: 'destructive',
-        title: 'Inicia sesion para dar like',
-      });
+      toast.error('Inicia sesion para dar like');
       return;
     }
     toggleLike.mutate({ postId: post.id, isLiked: post.is_liked });
@@ -69,7 +65,7 @@ export function FeedPostCard({ post, onHashtagClick }: FeedPostCardProps) {
       navigator.share({ title: 'Mira esta publicación en Paw Friend', url });
     } else {
       navigator.clipboard.writeText(url);
-      toast({ title: 'Enlace copiado' });
+      toast('Enlace copiado');
     }
   };
 

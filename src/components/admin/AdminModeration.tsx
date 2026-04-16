@@ -13,7 +13,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Flag, Trash2, CheckCircle, Loader2, AlertTriangle } from '@/lib/icons';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -36,7 +36,6 @@ interface PostPreview {
 }
 
 export default function AdminModeration() {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [confirmAction, setConfirmAction] = useState<{
     report: ContentReport;
@@ -98,7 +97,7 @@ export default function AdminModeration() {
           .delete()
           .eq('id', report.post_id);
         if (deleteError) {
-          toast({ title: 'Error al eliminar el contenido', variant: 'destructive' });
+          toast.error('Error al eliminar el contenido');
           setConfirmAction(null);
           return;
         }
@@ -112,10 +111,10 @@ export default function AdminModeration() {
       .eq('id', id);
 
     if (!error) {
-      toast({ title: action === 'action_taken' ? 'Contenido eliminado' : 'Reporte descartado' });
+      toast(action === 'action_taken' ? 'Contenido eliminado' : 'Reporte descartado');
       queryClient.invalidateQueries({ queryKey: ['admin-content-reports'] });
     } else {
-      toast({ title: 'Error al actualizar el reporte', variant: 'destructive' });
+      toast.error('Error al actualizar el reporte');
     }
     setConfirmAction(null);
   };

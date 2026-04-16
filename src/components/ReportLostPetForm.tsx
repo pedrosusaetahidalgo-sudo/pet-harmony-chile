@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Loader2 } from '@/lib/icons';
 import DateTimePicker from './DateTimePicker';
 import { COMUNAS_SANTIAGO, getComunaCoords } from '@/lib/locations';
@@ -33,7 +33,6 @@ interface ReportLostPetFormProps {
 const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
   const { user } = useAuth();
   const { awardPoints } = useGamification();
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [rewardOffered, setRewardOffered] = useState(false);
   const [locationAddress, setLocationAddress] = useState('');
@@ -74,10 +73,8 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
 
   const onSubmit = async (data: FormData) => {
     if (!user) {
-      toast({
-        title: 'Algo salió mal',
+      toast.error('Algo salió mal', {
         description: 'Debes iniciar sesión para reportar una mascota',
-        variant: 'destructive',
       });
       return;
     }
@@ -123,18 +120,15 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
         // Don't fail the report creation if points fail
       }
 
-      toast({
-        title: 'Reporte creado',
+      toast('Reporte creado', {
         description: `Tu reporte de mascota ${data.report_type === 'perdida' ? 'perdida' : 'encontrada'} ha sido publicado`,
       });
 
       onSuccess();
     } catch (error) {
       logger.error('Error creating report:', error);
-      toast({
-        title: 'Algo salió mal',
+      toast.error('Algo salió mal', {
         description: 'No se pudo crear el reporte. Intenta nuevamente.',
-        variant: 'destructive',
       });
     } finally {
       setLoading(false);

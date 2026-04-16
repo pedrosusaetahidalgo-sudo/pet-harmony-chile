@@ -26,7 +26,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useDirectoryVetBySlug, useVetReviews, trackProviderView } from '@/hooks/useDirectoryVets';
 import { setSeoTags, injectJsonLd, formatCLP } from '@/lib/vetDirectory';
-import { PublicHeader, PublicFooter } from './DirectorioVets';
+import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 
 import { isOpenNow, getTodayHours } from '@/lib/openingHours';
 

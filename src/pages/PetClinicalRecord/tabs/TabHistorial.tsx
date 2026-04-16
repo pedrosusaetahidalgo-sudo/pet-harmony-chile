@@ -30,7 +30,8 @@ import { useMedicalRecords } from '@/hooks/useMedicalRecords';
 import { useVetClinicalNotesByPet, type VetClinicalNote } from '@/hooks/useVetClinicalNotes';
 import { PremiumNudge } from '@/components/PremiumNudge';
 import { formatDate } from '../helpers';
-import { EmptyState, getRecordTypeBadgeClass, getRecordTypeIcon } from '../shared';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { getRecordTypeBadgeClass, getRecordTypeIcon } from '../shared';
 
 const RECORD_TYPE_LABELS: Record<string, string> = {
   vacuna: 'Vacuna',
@@ -173,6 +174,7 @@ export function TabHistorial({ petId }: { petId: string }) {
   if (unified.length === 0) {
     return (
       <EmptyState
+        variant="card"
         icon={Clipboard}
         title="Sin registros en la ficha"
         description="Los registros de consultas, vacunas, exámenes y tratamientos aparecerán aquí."

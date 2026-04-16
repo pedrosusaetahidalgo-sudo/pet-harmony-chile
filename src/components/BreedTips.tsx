@@ -12,7 +12,7 @@ import {
   Users,
 } from '@/lib/icons';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { usePlan } from '@/hooks/usePlan';
 import { Separator } from '@/components/ui/separator';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
@@ -42,8 +42,6 @@ export function BreedTips({ breed, species }: BreedTipsProps) {
     }
   });
   const [loading, setLoading] = useState(false);
-  const { toast } = useToast();
-
   // Si cambia la raza/especie (al navegar entre mascotas) reseteamos al
   // valor cacheado correspondiente.
   useEffect(() => {
@@ -59,10 +57,8 @@ export function BreedTips({ breed, species }: BreedTipsProps) {
     // Plan gate: free users get 1 analysis/month
     const access = checkAccess('ai_behavior_analysis', usedThisSession ? 1 : 0);
     if (!access.allowed) {
-      toast({
-        title: 'Límite alcanzado',
+      toast.error('Límite alcanzado', {
         description: access.reason || 'Mejora a Premium para análisis ilimitados.',
-        variant: 'destructive',
       });
       return;
     }
@@ -75,16 +71,12 @@ export function BreedTips({ breed, species }: BreedTipsProps) {
 
       if (error) {
         if (error.message.includes('429')) {
-          toast({
-            title: 'Límite alcanzado',
+          toast.error('Límite alcanzado', {
             description: 'Demasiadas solicitudes. Intenta más tarde.',
-            variant: 'destructive',
           });
         } else if (error.message.includes('402')) {
-          toast({
-            title: 'Servicio no disponible',
+          toast.error('Servicio no disponible', {
             description: 'El servicio de IA requiere créditos adicionales.',
-            variant: 'destructive',
           });
         } else {
           throw error;
@@ -100,12 +92,10 @@ export function BreedTips({ breed, species }: BreedTipsProps) {
         // sessionStorage lleno o deshabilitado: no es bloqueante.
       }
     } catch (error: unknown) {
-      toast({
-        title: 'Error al obtener consejos',
+      toast.error('Error al obtener consejos', {
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
           'Ocurrió un error inesperado',
-        variant: 'destructive',
       });
     } finally {
       setLoading(false);

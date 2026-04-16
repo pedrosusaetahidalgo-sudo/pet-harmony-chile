@@ -12,7 +12,7 @@ import { format, addDays } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { GoogleCalendarSync, requestCalendarPermission } from '@/lib/googleCalendar';
 import { Calendar as CalendarIcon, RefreshCw } from '@/lib/icons';
 import { logger } from '@/lib/logger';
@@ -42,7 +42,6 @@ export const ProviderAvailabilityManager = ({
   className = '',
 }: ProviderAvailabilityManagerProps) => {
   const { user } = useAuth();
-  const { toast } = useToast();
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [selectedSlots, setSelectedSlots] = useState<string[]>([]);
   const [isAvailable, setIsAvailable] = useState(true);
@@ -117,8 +116,7 @@ export const ProviderAvailabilityManager = ({
       }
 
       if (!calendarSync.isAvailable()) {
-        toast({
-          title: 'Conectando con Google Calendar',
+        toast('Conectando con Google Calendar', {
           description:
             'Te redirigiremos a Google para autorizar el acceso. Vuelve aquí después de autorizar.',
         });
@@ -159,19 +157,14 @@ export const ProviderAvailabilityManager = ({
         }
       }
 
-      toast({
-        title: 'Calendario sincronizado',
+      toast('Calendario sincronizado', {
         description: 'Tu disponibilidad se ha actualizado según tu Google Calendar',
       });
 
       loadAvailability();
     } catch (error) {
       logger.error('Error syncing calendar:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
-        description: 'No se pudo sincronizar con Google Calendar',
-      });
+      toast.error('Algo salió mal', { description: 'No se pudo sincronizar con Google Calendar' });
     } finally {
       setSyncingCalendar(false);
     }
@@ -214,19 +207,14 @@ export const ProviderAvailabilityManager = ({
         if (error) throw error;
       }
 
-      toast({
-        title: 'Disponibilidad guardada',
+      toast('Disponibilidad guardada', {
         description: `Tu disponibilidad para ${format(selectedDate, "EEEE d 'de' MMMM", { locale: es })} ha sido actualizada`,
       });
 
       loadAvailability();
     } catch (error) {
       logger.error('Error saving availability:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
-        description: 'No se pudo guardar la disponibilidad',
-      });
+      toast.error('Algo salió mal', { description: 'No se pudo guardar la disponibilidad' });
     } finally {
       setSaving(false);
     }
@@ -246,10 +234,7 @@ export const ProviderAvailabilityManager = ({
 
       if (error) throw error;
 
-      toast({
-        title: 'Disponibilidad eliminada',
-        description: 'La disponibilidad ha sido eliminada',
-      });
+      toast('Disponibilidad eliminada', { description: 'La disponibilidad ha sido eliminada' });
 
       setSelectedSlots([]);
       setIsAvailable(true);
@@ -257,11 +242,7 @@ export const ProviderAvailabilityManager = ({
       loadAvailability();
     } catch (error) {
       logger.error('Error deleting availability:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
-        description: 'No se pudo eliminar la disponibilidad',
-      });
+      toast.error('Algo salió mal', { description: 'No se pudo eliminar la disponibilidad' });
     } finally {
       setSaving(false);
     }

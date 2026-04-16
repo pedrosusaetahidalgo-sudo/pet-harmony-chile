@@ -25,7 +25,7 @@ import { CalendarIcon, Plus, Loader2, Sparkles } from '@/lib/icons';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
 import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
@@ -72,7 +72,6 @@ export function AddMedicalRecord({
   const [serialNumber, setSerialNumber] = useState('');
   const [suggestions, setSuggestions] = useState<MedicalSuggestion[]>([]);
 
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const { reward } = useOrganicRewards();
@@ -108,10 +107,8 @@ export function AddMedicalRecord({
       setSuggestions(data.suggestions || []);
     } catch (error) {
       logger.error('Error fetching suggestions:', error);
-      toast({
-        title: 'Error al obtener sugerencias',
+      toast.error('Error al obtener sugerencias', {
         description: 'No se pudieron cargar las recomendaciones de IA',
-        variant: 'destructive',
       });
     } finally {
       setLoadingSuggestions(false);
@@ -143,19 +140,15 @@ export function AddMedicalRecord({
     e.preventDefault();
 
     if (!date || !recordType || !title) {
-      toast({
-        title: 'Campos requeridos',
+      toast.error('Campos requeridos', {
         description: 'Por favor completa los campos obligatorios',
-        variant: 'destructive',
       });
       return;
     }
 
     if (!user) {
-      toast({
-        title: 'Sesión expirada',
+      toast.error('Sesión expirada', {
         description: 'Tienes que iniciar sesion de nuevo para guardar el registro.',
-        variant: 'destructive',
       });
       return;
     }
@@ -207,10 +200,7 @@ export function AddMedicalRecord({
         // Don't fail the medical record creation if points fail
       }
 
-      toast({
-        title: 'Registro creado',
-        description: 'El registro médico se ha guardado correctamente',
-      });
+      toast('Registro creado', { description: 'El registro médico se ha guardado correctamente' });
 
       // Fire-and-forget organic rewards + social activity
       reward({ kind: 'medical_record_added', petId, petName });
@@ -247,12 +237,10 @@ export function AddMedicalRecord({
       setShowRecommendation(true);
       resetForm();
     } catch (error: unknown) {
-      toast({
-        title: 'Error al guardar',
+      toast.error('Error al guardar', {
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
           'Ocurrio un error inesperado',
-        variant: 'destructive',
       });
     } finally {
       setLoading(false);

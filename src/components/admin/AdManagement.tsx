@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import {
   Plus,
   Edit,
@@ -97,15 +97,13 @@ const AdManagement = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['partners'] });
-      toast({ title: 'Anuncio creado exitosamente' });
+      toast('Anuncio creado exitosamente');
       setIsDialogOpen(false);
       resetForm();
     },
     onError: (error: unknown) => {
-      toast({
-        title: 'Algo salio mal',
+      toast.error('Algo salio mal', {
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
-        variant: 'destructive',
       });
     },
   });
@@ -117,15 +115,13 @@ const AdManagement = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['partners'] });
-      toast({ title: 'Anuncio actualizado exitosamente' });
+      toast('Anuncio actualizado exitosamente');
       setIsDialogOpen(false);
       resetForm();
     },
     onError: (error: unknown) => {
-      toast({
-        title: 'Algo salio mal',
+      toast.error('Algo salio mal', {
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
-        variant: 'destructive',
       });
     },
   });
@@ -137,14 +133,12 @@ const AdManagement = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['partners'] });
-      toast({ title: 'Anuncio eliminado exitosamente' });
+      toast('Anuncio eliminado exitosamente');
       setDeleteTarget(null);
     },
     onError: (error: unknown) => {
-      toast({
-        title: 'Algo salio mal',
+      toast.error('Algo salio mal', {
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
-        variant: 'destructive',
       });
       setDeleteTarget(null);
     },

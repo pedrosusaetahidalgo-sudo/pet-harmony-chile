@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, lazy, Suspense } from 'react';
+import { useState, useEffect, useMemo, memo, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -109,6 +109,86 @@ const PET_PROFILE_FIELDS = [
   'photo_url',
   'microchip_number',
 ] as const;
+
+interface BorderStyleDef {
+  gradient: string;
+  speed: string;
+  shadow: string;
+  shadowHover: string;
+  padding: string;
+}
+
+/** Memoized pet avatar for the switcher — avoids recomputing styles and
+ *  ensures the holo-shift animation only runs on the active pet. */
+const PetSwitcherAvatar = memo(function PetSwitcherAvatar({
+  pet,
+  isActive,
+  borderStyle,
+  onSelect,
+}: {
+  pet: Pet;
+  isActive: boolean;
+  borderStyle: BorderStyleDef;
+  onSelect: (id: string) => void;
+}) {
+  const activeOuterStyle = useMemo<React.CSSProperties>(
+    () => ({
+      padding: '3px',
+      background: borderStyle.gradient,
+      backgroundSize: '300% 300%',
+      animation: `holo-shift ${borderStyle.speed} ease-in-out infinite`,
+      boxShadow: borderStyle.shadow,
+    }),
+    [borderStyle.gradient, borderStyle.speed, borderStyle.shadow]
+  );
+
+  const inactiveOuterStyle = useMemo<React.CSSProperties>(() => ({ padding: '3px' }), []);
+
+  const inactiveInnerStyle = useMemo<React.CSSProperties>(
+    () => ({
+      background: borderStyle.gradient,
+      backgroundSize: '300% 300%',
+      opacity: 0.5,
+    }),
+    [borderStyle.gradient]
+  );
+
+  return (
+    <button
+      key={pet.id}
+      onClick={() => onSelect(pet.id)}
+      className="flex flex-col items-center gap-1 flex-shrink-0 group"
+      aria-label={`Seleccionar ${pet.name}`}
+    >
+      <div
+        className={`relative rounded-full transition-all ${isActive ? 'scale-105' : 'group-hover:scale-102'}`}
+        style={isActive ? activeOuterStyle : inactiveOuterStyle}
+      >
+        <div
+          className={`rounded-full p-[2px] ${!isActive ? 'bg-muted group-hover:bg-muted/70' : ''}`}
+          style={!isActive ? inactiveInnerStyle : undefined}
+        >
+          <Avatar className="h-16 w-16 ring-2 ring-background">
+            <AvatarImage src={pet.photo_url || undefined} alt={pet.name} />
+            <AvatarFallback className="bg-purple-100 text-purple-700 text-xl font-bold">
+              {pet.name[0]?.toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+        </div>
+        {isActive && (
+          <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full bg-purple-600 border-2 border-background" />
+        )}
+      </div>
+      <span
+        className={`text-xs font-medium max-w-[72px] truncate ${
+          isActive ? 'text-purple-700 font-bold' : 'text-muted-foreground'
+        }`}
+      >
+        {pet.name}
+      </span>
+    </button>
+  );
+});
 
 export default function Home() {
   const { user } = useAuth();
@@ -427,55 +507,13 @@ export default function Home() {
               const rarity = getRarity(pet.paw_score ?? 0);
               const borderStyle = RARITY_BORDER_STYLES[rarity];
               return (
-                <button
+                <PetSwitcherAvatar
                   key={pet.id}
-                  onClick={() => setActivePetId(pet.id)}
-                  className="flex flex-col items-center gap-1 flex-shrink-0 group"
-                  aria-label={`Seleccionar ${pet.name}`}
-                >
-                  <div
-                    className={`relative rounded-full transition-all ${isActive ? 'scale-105' : 'group-hover:scale-102'}`}
-                    style={{
-                      padding: '3px',
-                      background: isActive ? borderStyle.gradient : undefined,
-                      backgroundSize: '300% 300%',
-                      animation: isActive
-                        ? `holo-shift ${borderStyle.speed} ease-in-out infinite`
-                        : undefined,
-                      boxShadow: isActive ? borderStyle.shadow : undefined,
-                    }}
-                  >
-                    <div
-                      className={`rounded-full p-[2px] ${!isActive ? 'bg-muted group-hover:bg-muted/70' : ''}`}
-                      style={
-                        !isActive
-                          ? {
-                              background: borderStyle.gradient,
-                              backgroundSize: '300% 300%',
-                              opacity: 0.5,
-                            }
-                          : undefined
-                      }
-                    >
-                      <Avatar className="h-16 w-16 ring-2 ring-background">
-                        <AvatarImage src={pet.photo_url || undefined} alt={pet.name} />
-                        <AvatarFallback className="bg-purple-100 text-purple-700 text-xl font-bold">
-                          {pet.name[0]?.toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                    </div>
-                    {isActive && (
-                      <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 rounded-full bg-purple-600 border-2 border-background" />
-                    )}
-                  </div>
-                  <span
-                    className={`text-xs font-medium max-w-[72px] truncate ${
-                      isActive ? 'text-purple-700 font-bold' : 'text-muted-foreground'
-                    }`}
-                  >
-                    {pet.name}
-                  </span>
-                </button>
+                  pet={pet}
+                  isActive={isActive}
+                  borderStyle={borderStyle}
+                  onSelect={setActivePetId}
+                />
               );
             })}
 

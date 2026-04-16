@@ -17,7 +17,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useRequestVetAccess } from '@/hooks/usePetVetLinks';
 import { LINKS } from '@/lib/links';
-import { PublicHeader, PublicFooter } from './DirectorioVets';
+import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 
 interface QRPet {
   id: string;

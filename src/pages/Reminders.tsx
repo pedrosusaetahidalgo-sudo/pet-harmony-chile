@@ -20,20 +20,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { PageHeader } from '@/components/PageHeader';
 import { useReminders } from '@/hooks/useReminders';
 import { LINKS } from '@/lib/links';
-import { REMINDER_TYPES } from '@/lib/reminderTypes';
+import { AddReminderDialog } from '@/components/reminders/AddReminderDialog';
 import { cn } from '@/lib/utils';
 import { PremiumNudge } from '@/components/PremiumNudge';
 import { isFeatureEnabled } from '@/lib/featureFlags';
@@ -74,12 +64,6 @@ export default function Reminders() {
 
   // Dialog para agregar recordatorio
   const [showAddDialog, setShowAddDialog] = useState(false);
-  const [newReminder, setNewReminder] = useState({
-    pet_id: '',
-    type: 'vaccine',
-    title: '',
-    due_date: '',
-  });
 
   const { data: userPets = [] } = useQuery({
     queryKey: ['user-pets-reminders', user?.id],
@@ -253,83 +237,12 @@ export default function Reminders() {
       <ViewTutorial {...TUTORIALS.reminders} />
 
       {/* Dialog para agregar recordatorio */}
-      <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Nuevo Recordatorio</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <div className="space-y-2">
-              <Label>Mascota</Label>
-              <Select
-                value={newReminder.pet_id}
-                onValueChange={(v) => setNewReminder((d) => ({ ...d, pet_id: v }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecciona mascota" />
-                </SelectTrigger>
-                <SelectContent>
-                  {userPets.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>
-                      {p.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Tipo</Label>
-              <Select
-                value={newReminder.type}
-                onValueChange={(v) => setNewReminder((d) => ({ ...d, type: v }))}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {REMINDER_TYPES.map((rt) => (
-                    <SelectItem key={rt.value} value={rt.value}>
-                      {rt.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Título</Label>
-              <Input
-                value={newReminder.title}
-                onChange={(e) => setNewReminder((d) => ({ ...d, title: e.target.value }))}
-                placeholder="Ej: Vacuna antirrábica"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Fecha</Label>
-              <Input
-                type="date"
-                value={newReminder.due_date}
-                onChange={(e) => setNewReminder((d) => ({ ...d, due_date: e.target.value }))}
-              />
-            </div>
-            <Button
-              className="w-full"
-              disabled={!newReminder.pet_id || !newReminder.title || !newReminder.due_date}
-              onClick={() => {
-                addReminder.mutate({
-                  pet_id: newReminder.pet_id,
-                  type: newReminder.type,
-                  title: newReminder.title,
-                  due_date: newReminder.due_date,
-                });
-                setShowAddDialog(false);
-                setNewReminder({ pet_id: '', type: 'vaccine', title: '', due_date: '' });
-              }}
-            >
-              Crear recordatorio
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <AddReminderDialog
+        open={showAddDialog}
+        onOpenChange={setShowAddDialog}
+        pets={userPets}
+        onSubmit={(data) => addReminder.mutate(data)}
+      />
     </div>
   );
 }

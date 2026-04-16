@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Gift, Plus, Trash2, Edit, Loader2, Coins, Package } from '@/lib/icons';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import {
   Dialog,
   DialogContent,
@@ -38,7 +38,6 @@ const CATEGORY_COLORS: Record<string, string> = {
 };
 
 export default function AdminRewards() {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
   const [editItem, setEditItem] = useState<Reward | null>(null);
   const [showForm, setShowForm] = useState(false);
@@ -77,7 +76,7 @@ export default function AdminRewards() {
       .update({ is_active: !current })
       .eq('id', id);
     if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast.error('Error', { description: error.message });
     } else {
       queryClient.invalidateQueries({ queryKey: ['admin-rewards'] });
     }
@@ -86,9 +85,9 @@ export default function AdminRewards() {
   const deleteReward = async (id: string) => {
     const { error } = await supabase.from('paw_shop_rewards').delete().eq('id', id);
     if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast.error('Error', { description: error.message });
     } else {
-      toast({ title: 'Eliminado' });
+      toast('Eliminado');
       queryClient.invalidateQueries({ queryKey: ['admin-rewards'] });
     }
   };
@@ -234,7 +233,6 @@ export default function AdminRewards() {
 }
 
 function RewardForm({ initial, onSaved }: { initial: Reward | null; onSaved: () => void }) {
-  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: initial?.name || '',
@@ -263,9 +261,9 @@ function RewardForm({ initial, onSaved }: { initial: Reward | null; onSaved: () 
       : await supabase.from('paw_shop_rewards').insert(payload);
 
     if (error) {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
+      toast.error('Error', { description: error.message });
     } else {
-      toast({ title: initial ? 'Actualizado' : 'Creado' });
+      toast(initial ? 'Actualizado' : 'Creado');
       onSaved();
     }
     setLoading(false);

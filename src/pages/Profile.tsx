@@ -5,7 +5,7 @@ import { Separator } from '@/components/ui/separator';
 import { PawPrint, Trophy, ChevronRight } from '@/lib/icons';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useGoToAddPet } from '@/hooks/useCanAddPet';
 import { useGamification } from '@/hooks/useGamification';
@@ -45,7 +45,6 @@ interface PetData {
 
 const Profile = () => {
   const { user } = useAuth();
-  const { toast } = useToast();
   const navigate = useNavigate();
   const goToAddPet = useGoToAddPet();
   const { stats, achievements, missions } = useGamification();
@@ -145,11 +144,7 @@ const Profile = () => {
       }
     } catch (error) {
       logger.error('Error loading profile:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
-        description: 'No se pudo cargar la información del perfil',
-      });
+      toast.error('Algo salió mal', { description: 'No se pudo cargar la información del perfil' });
     } finally {
       setLoading(false);
     }

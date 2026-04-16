@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { formatCLP } from '@/lib/format';
 import {
   Area,
   AreaChart,
@@ -165,12 +166,7 @@ export default function ProDashboard() {
     }
   };
 
-  const formatCLP = (amount: number) =>
-    new Intl.NumberFormat('es-CL', {
-      style: 'currency',
-      currency: 'CLP',
-      minimumFractionDigits: 0,
-    }).format(amount);
+  // formatCLP imported from @/lib/format
 
   // ─── Export handler ────────────────────────────────────────────
   const handleExport = (exportFormat: string) => {

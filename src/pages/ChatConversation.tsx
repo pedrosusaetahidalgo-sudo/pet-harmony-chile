@@ -8,7 +8,7 @@ import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { logger } from '@/lib/logger';
@@ -23,7 +23,6 @@ const ChatConversation = () => {
   const { conversationId } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { toast } = useToast();
   const [conversation, setConversation] = useState<ConversationRow | null>(null);
   const [otherUser, setOtherUser] = useState<ProfileRow | null>(null);
   const [messages, setMessages] = useState<MessageRow[]>([]);
@@ -115,11 +114,7 @@ const ChatConversation = () => {
       markAsRead();
     } catch (error) {
       logger.error('Error loading conversation:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
-        description: 'No se pudo cargar la conversación',
-      });
+      toast.error('Algo salió mal', { description: 'No se pudo cargar la conversación' });
       navigate('/chat');
     } finally {
       setLoading(false);
@@ -153,11 +148,7 @@ const ChatConversation = () => {
       inputRef.current?.focus();
     } catch (error) {
       logger.error('Error sending message:', error);
-      toast({
-        variant: 'destructive',
-        title: 'Algo salió mal',
-        description: 'No se pudo enviar el mensaje',
-      });
+      toast.error('Algo salió mal', { description: 'No se pudo enviar el mensaje' });
     }
   };
 
