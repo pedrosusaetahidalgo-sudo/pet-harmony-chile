@@ -31,6 +31,7 @@
 | 10 | [migrations/PLAN_GOOGLE_PLACES_MIGRATION.md](migrations/PLAN_GOOGLE_PLACES_MIGRATION.md) | Migración | 🟡 Media-baja | Cost-gated — requiere decisión sobre costos Google Places |
 | 11 | [feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md](feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md) | Feedback | 🟡 Media-baja | 8/9 done — solo pendiente: localizador tiendas (P4 futuro) + grupos comunidad MVP (P1 scope grande) |
 | 12 | [tooling/](tooling/) | Plan producción | 🟡 Baja | Plan 8 semanas — entra cuando producto esté estable |
+| 13 | [features/COMPETITIVE_VETCHECK_FEATURES.md](features/COMPETITIVE_VETCHECK_FEATURES.md) | Features competitivas | 🟠 Media | 4 fases: copropiedad mascotas, reportes negocio vet, import masivo, cobros WhatsApp + agenda sala |
 
 ---
 

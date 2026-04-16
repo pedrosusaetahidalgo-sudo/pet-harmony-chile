@@ -1,26 +1,185 @@
 import { Link } from 'react-router-dom';
-import { Area, AreaChart, CartesianGrid, XAxis, ResponsiveContainer, Tooltip } from 'recharts';
+import {
+  Area,
+  AreaChart,
+  Bar,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  Tooltip,
+  Cell,
+} from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { TrendingUp, BarChart3, Star, Mail, Users, ArrowRight } from '@/lib/icons';
+import {
+  TrendingUp,
+  BarChart3,
+  Star,
+  Mail,
+  Users,
+  ArrowRight,
+  DollarSign,
+  RefreshCw,
+} from '@/lib/icons';
 import { ProviderDirectoryCard } from '../ProviderDirectoryCard';
+import { ManageResourcesCard } from '../ManageResourcesCard';
 import { CreateServicePromotion } from '@/components/CreateServicePromotion';
 import type { ProviderDashboardStats } from '@/hooks/useProviderDashboardStats';
-import type { DailyVetActivity, VetSummary } from '@/hooks/useVetAnalytics';
+import type { DailyVetActivity, VetSummary, ServiceBreakdown } from '@/hooks/useVetAnalytics';
 import { formatCLP } from '@/lib/format';
 
 interface BusinessTabProps {
   stats: ProviderDashboardStats;
   vetSummary: VetSummary | null;
   bookingsTimeline: DailyVetActivity[];
+  serviceBreakdown: ServiceBreakdown[];
 }
 
-export function BusinessTab({ stats, vetSummary, bookingsTimeline }: BusinessTabProps) {
+const SERVICE_COLORS = [
+  '#9333ea',
+  '#3b82f6',
+  '#10b981',
+  '#f59e0b',
+  '#ef4444',
+  '#8b5cf6',
+  '#06b6d4',
+];
+
+const SERVICE_LABELS: Record<string, string> = {
+  consulta: 'Consulta',
+  vacuna: 'Vacunación',
+  cirugia: 'Cirugía',
+  dental: 'Dental',
+  grooming: 'Peluquería',
+  checkup: 'Control',
+  emergencia: 'Emergencia',
+  otro: 'Otro',
+};
+
+export function BusinessTab({
+  stats,
+  vetSummary,
+  bookingsTimeline,
+  serviceBreakdown,
+}: BusinessTabProps) {
+  const revenue = vetSummary?.revenue ?? stats.estimatedRevenue;
+  const totalBookings = vetSummary?.totalBookings ?? stats.bookingsThisMonth;
+  const avgTicket = totalBookings > 0 ? Math.round(revenue / totalBookings) : 0;
+  const uniqueClients = vetSummary?.uniqueClients ?? stats.patientsThisMonth;
+
+  // Sort breakdown by revenue descending
+  const sortedBreakdown = [...serviceBreakdown]
+    .sort((a, b) => b.revenue - a.revenue)
+    .map((s) => ({
+      ...s,
+      label: SERVICE_LABELS[s.serviceType] || s.serviceType,
+    }));
+
+  const topService = sortedBreakdown[0];
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
       {/* Left: charts + revenue */}
       <div className="lg:col-span-3 space-y-4">
+        {/* KPI Cards - 2 rows of 3 */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {/* Ingresos */}
+          <Card>
+            <CardContent className="p-3">
+              <div className="flex items-center gap-1.5 mb-1">
+                <DollarSign className="h-3.5 w-3.5 text-green-600" />
+                <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium">
+                  Ingresos
+                </span>
+              </div>
+              <p className="text-lg font-bold text-green-700">{formatCLP(revenue)}</p>
+            </CardContent>
+          </Card>
+
+          {/* Ticket promedio */}
+          <Card>
+            <CardContent className="p-3">
+              <div className="flex items-center gap-1.5 mb-1">
+                <TrendingUp className="h-3.5 w-3.5 text-purple-600" />
+                <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium">
+                  Ticket promedio
+                </span>
+              </div>
+              <p className="text-lg font-bold text-purple-700">
+                {avgTicket > 0 ? formatCLP(avgTicket) : '—'}
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Clientes unicos */}
+          <Card>
+            <CardContent className="p-3">
+              <div className="flex items-center gap-1.5 mb-1">
+                <Users className="h-3.5 w-3.5 text-blue-600" />
+                <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium">
+                  Clientes
+                </span>
+              </div>
+              <p className="text-lg font-bold">{uniqueClients}</p>
+            </CardContent>
+          </Card>
+
+          {/* Total reservas */}
+          <Card>
+            <CardContent className="p-3">
+              <div className="flex items-center gap-1.5 mb-1">
+                <BarChart3 className="h-3.5 w-3.5 text-indigo-600" />
+                <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium">
+                  Reservas
+                </span>
+              </div>
+              <p className="text-lg font-bold">{totalBookings}</p>
+            </CardContent>
+          </Card>
+
+          {/* Rating */}
+          <Card>
+            <CardContent className="p-3">
+              <div className="flex items-center gap-1.5 mb-1">
+                <Star className="h-3.5 w-3.5 text-yellow-500" />
+                <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium">
+                  Rating
+                </span>
+              </div>
+              <p className="text-lg font-bold">
+                {stats.avgRating ? stats.avgRating.toFixed(1) : '—'}
+              </p>
+              {stats.totalReviews > 0 && (
+                <p className="text-[10px] text-muted-foreground">{stats.totalReviews} reseñas</p>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Servicio top */}
+          <Card>
+            <CardContent className="p-3">
+              <div className="flex items-center gap-1.5 mb-1">
+                <RefreshCw className="h-3.5 w-3.5 text-teal-600" />
+                <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium">
+                  Servicio top
+                </span>
+              </div>
+              {topService ? (
+                <>
+                  <p className="text-sm font-bold truncate">{topService.label}</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {topService.count} reservas · {formatCLP(topService.revenue)}
+                  </p>
+                </>
+              ) : (
+                <p className="text-lg font-bold text-muted-foreground">—</p>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
         {/* Bookings timeline chart */}
         <Card>
           <CardHeader className="pb-2">
@@ -63,7 +222,10 @@ export function BusinessTab({ stats, vetSummary, bookingsTimeline }: BusinessTab
                           month: 'short',
                         })
                       }
-                      formatter={(v: number) => [v, 'Reservas']}
+                      formatter={(v: number, name: string) => [
+                        name === 'revenue' ? formatCLP(v) : v,
+                        name === 'revenue' ? 'Ingreso' : 'Reservas',
+                      ]}
                       contentStyle={{ fontSize: 12 }}
                     />
                     <Area
@@ -85,64 +247,51 @@ export function BusinessTab({ stats, vetSummary, bookingsTimeline }: BusinessTab
           </CardContent>
         </Card>
 
-        {/* Revenue + clients summary */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {/* Service breakdown chart */}
+        {sortedBreakdown.length > 0 && (
           <Card>
-            <CardContent className="p-3">
-              <div className="flex items-center gap-1.5 mb-1">
-                <TrendingUp className="h-3.5 w-3.5 text-green-600" />
-                <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium">
-                  Ingresos
-                </span>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-green-600" />
+                Ingresos por servicio
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-48">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={sortedBreakdown} layout="vertical" margin={{ left: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#e5e7eb" />
+                    <XAxis
+                      type="number"
+                      tickFormatter={(v) => formatCLP(v)}
+                      tick={{ fontSize: 10 }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <YAxis
+                      type="category"
+                      dataKey="label"
+                      width={90}
+                      tick={{ fontSize: 11 }}
+                      axisLine={false}
+                      tickLine={false}
+                    />
+                    <Tooltip
+                      formatter={(v: number) => [formatCLP(v), 'Ingreso']}
+                      labelFormatter={(l) => `${l}`}
+                      contentStyle={{ fontSize: 12 }}
+                    />
+                    <Bar dataKey="revenue" radius={[0, 4, 4, 0]} barSize={20}>
+                      {sortedBreakdown.map((_, idx) => (
+                        <Cell key={idx} fill={SERVICE_COLORS[idx % SERVICE_COLORS.length]} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
-              <p className="text-lg font-bold text-green-700">
-                {formatCLP(vetSummary?.revenue ?? stats.estimatedRevenue)}
-              </p>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-3">
-              <div className="flex items-center gap-1.5 mb-1">
-                <Users className="h-3.5 w-3.5 text-blue-600" />
-                <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium">
-                  Clientes
-                </span>
-              </div>
-              <p className="text-lg font-bold">
-                {vetSummary?.uniqueClients ?? stats.patientsThisMonth}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-3">
-              <div className="flex items-center gap-1.5 mb-1">
-                <Star className="h-3.5 w-3.5 text-yellow-500" />
-                <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium">
-                  Rating
-                </span>
-              </div>
-              <p className="text-lg font-bold">
-                {stats.avgRating ? stats.avgRating.toFixed(1) : '—'}
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-3">
-              <div className="flex items-center gap-1.5 mb-1">
-                <Mail className="h-3.5 w-3.5 text-pink-500" />
-                <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium">
-                  Resenas
-                </span>
-              </div>
-              <p className="text-lg font-bold">{stats.reviewsThisMonth}</p>
-              {stats.invitationsSent > 0 && (
-                <p className="text-[10px] text-muted-foreground">
-                  {stats.invitationsConverted}/{stats.invitationsSent} invitaciones usadas
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+        )}
 
         {/* Service promotion */}
         <CreateServicePromotion />
@@ -151,6 +300,25 @@ export function BusinessTab({ stats, vetSummary, bookingsTimeline }: BusinessTab
       {/* Right: profile + actions */}
       <div className="lg:col-span-2 space-y-4">
         <ProviderDirectoryCard />
+
+        {/* Resenas + invitaciones */}
+        <Card>
+          <CardContent className="p-3">
+            <div className="flex items-center gap-1.5 mb-2">
+              <Mail className="h-3.5 w-3.5 text-pink-500" />
+              <span className="text-xs font-medium">Reseñas del periodo</span>
+            </div>
+            <p className="text-2xl font-bold">{stats.reviewsThisMonth}</p>
+            {stats.invitationsSent > 0 && (
+              <p className="text-[10px] text-muted-foreground mt-1">
+                {stats.invitationsConverted}/{stats.invitationsSent} invitaciones usadas
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Manage rooms/resources */}
+        {stats.providerId && <ManageResourcesCard providerId={stats.providerId} />}
 
         {/* Visibility tip */}
         {!stats.isDirectoryVisible && (

@@ -233,6 +233,7 @@ const ProviderDashboard = () => {
             stats={stats}
             vetSummary={vetAnalytics?.summary ?? null}
             bookingsTimeline={vetAnalytics?.bookingsTimeline ?? []}
+            serviceBreakdown={vetAnalytics?.serviceBreakdown ?? []}
           />
         </TabsContent>
 

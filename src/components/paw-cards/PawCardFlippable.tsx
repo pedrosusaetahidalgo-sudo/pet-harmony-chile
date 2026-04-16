@@ -4,7 +4,7 @@ import { LINKS } from '@/lib/links';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Heart, FileText, Pencil, Trash2, PawPrint, Sparkles, Share2 } from '@/lib/icons';
+import { Heart, FileText, Pencil, Trash2, PawPrint, Sparkles, Share2, Users } from '@/lib/icons';
 import { getRarity, RARITY_LABELS, RARITY_RING } from '@/components/PetCardCompact';
 import { PawCardHoloPattern } from './PawCardHoloPattern';
 import { PawCardBack } from './PawCardBack';
@@ -36,6 +36,8 @@ interface PawCardFlippableProps {
   pawCardId?: string;
   onDelete?: (id: string) => void;
   onShare?: (id: string) => void;
+  /** Share access with family/caretakers */
+  onShareAccess?: (id: string) => void;
   /** Subtitle override (e.g. owner name for collected cards) */
   subtitle?: string;
   /** Hide action buttons (ficha, edit, delete, share) */
@@ -51,6 +53,7 @@ export function PawCardFlippable({
   pawCardId = '',
   onDelete,
   onShare,
+  onShareAccess,
   subtitle: subtitleOverride,
   viewOnly = false,
   badges,
@@ -284,6 +287,20 @@ export function PawCardFlippable({
                   >
                     <Share2 className="mr-2 h-4 w-4 text-purple-500" />
                     Compartir con tu vet
+                  </Button>
+                )}
+                {onShareAccess && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full border-blue-200/60 hover:bg-blue-50/50"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onShareAccess(pet.id);
+                    }}
+                  >
+                    <Users className="mr-2 h-4 w-4 text-blue-500" />
+                    Compartir acceso
                   </Button>
                 )}
                 <div className="flex gap-2">

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Plus, Heart, PawPrint, MessageCircle, Star, Trophy, FileText } from '@/lib/icons';
+import { Plus, Heart, PawPrint, MessageCircle, Star, Trophy, FileText, Users } from '@/lib/icons';
 import { getRarity, type Rarity } from '@/components/PetCardCompact';
 // Collapsible removed — memorial section always visible
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -30,6 +30,8 @@ import { ClaimPetDialog } from '@/components/ClaimPetDialog';
 import { PawCardFlippable } from '@/components/paw-cards/PawCardFlippable';
 import { PawCardMemorial } from '@/components/paw-cards/PawCardMemorial';
 import { ShareWithVetModal } from '@/components/medical/ShareWithVetModal';
+import { SharePetAccessModal } from '@/components/medical/SharePetAccessModal';
+import { useSharedPets, ROLE_LABELS, type CoOwnerRole, type SharedPet } from '@/hooks/useCoOwners';
 import type { HoloPattern } from '@/lib/paw-cards';
 import { generatePawCardId, getBreedHoloPattern } from '@/lib/paw-cards';
 
@@ -126,6 +128,7 @@ const MyPets = () => {
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [sharePetId, setSharePetId] = useState<string | null>(null);
+  const [shareAccessPetId, setShareAccessPetId] = useState<string | null>(null);
   // memorialOpen state removed — memorial section always visible now
   const [activeIndex, setActiveIndex] = useState(0);
   const { user } = useAuth();
@@ -137,6 +140,9 @@ const MyPets = () => {
   useClaimPetInvitation();
   // Auto-claim mascotas pendientes que coincidan con el email del usuario
   useAutoClaimByEmail();
+
+  // Mascotas compartidas (co-owner)
+  const { data: sharedPets = [] } = useSharedPets();
 
   const fetchPets = useCallback(async () => {
     try {
@@ -407,6 +413,7 @@ const MyPets = () => {
                   pawCardId={pet.paw_card_id || ''}
                   onDelete={setDeleteId}
                   onShare={setSharePetId}
+                  onShareAccess={setShareAccessPetId}
                   badges={getPetBadges(petScores[pet.id])}
                 />
               </div>
@@ -430,6 +437,7 @@ const MyPets = () => {
                   pawCardId={pet.paw_card_id || ''}
                   onDelete={setDeleteId}
                   onShare={setSharePetId}
+                  onShareAccess={setShareAccessPetId}
                   badges={getPetBadges(petScores[pet.id])}
                 />
               </div>
@@ -461,6 +469,32 @@ const MyPets = () => {
             {memorialPets.map((pet) => (
               <div key={pet.id} className="snap-center shrink-0 w-[220px] md:w-auto">
                 <PawCardMemorial pet={pet} score={petScores[pet.id]} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Shared pets section (co-owned) ── */}
+      {sharedPets.length > 0 && (
+        <div className="mt-8 space-y-3">
+          <div className="flex items-center gap-2">
+            <Users className="h-4 w-4 text-blue-500" />
+            <h3 className="text-sm font-medium text-muted-foreground">
+              Mascotas compartidas contigo ({sharedPets.length})
+            </h3>
+          </div>
+          <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-3 -mx-4 px-4 scrollbar-hide md:grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:overflow-visible">
+            {sharedPets.map((pet: SharedPet) => (
+              <div key={pet.id} className="snap-center shrink-0 w-[75vw] max-w-[280px] md:w-auto">
+                <PawCardFlippable
+                  pet={pet}
+                  score={petScores[pet.id]}
+                  holoPattern={(pet.holo_pattern as HoloPattern) || 'holo-none'}
+                  pawCardId={pet.paw_card_id || ''}
+                  viewOnly
+                  subtitle={ROLE_LABELS[pet._coOwnerRole] || 'Compartida'}
+                />
               </div>
             ))}
           </div>
@@ -499,6 +533,16 @@ const MyPets = () => {
         }}
         petId={sharePetId || ''}
         petName={pets.find((p) => p.id === sharePetId)?.name || 'tu mascota'}
+      />
+
+      {/* ── Share pet access (co-owners) modal ── */}
+      <SharePetAccessModal
+        open={!!shareAccessPetId}
+        onOpenChange={(open) => {
+          if (!open) setShareAccessPetId(null);
+        }}
+        petId={shareAccessPetId || ''}
+        petName={pets.find((p) => p.id === shareAccessPetId)?.name || 'tu mascota'}
       />
       <ViewTutorial {...TUTORIALS.myPets} />
     </div>
