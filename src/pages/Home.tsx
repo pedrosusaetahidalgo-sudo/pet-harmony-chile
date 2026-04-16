@@ -413,8 +413,8 @@ export default function Home() {
   }
 
   return (
-    <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-4 md:space-y-6 animate-fade-in bg-slate-50/60 min-h-screen">
-      {/* === Header mínimo === */}
+    <div className="container max-w-5xl mx-auto p-4 md:p-6 space-y-4 animate-fade-in min-h-screen">
+      {/* === Header compact === */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">
           <div className="relative flex-shrink-0">
@@ -424,9 +424,8 @@ export default function Home() {
                 {(() => {
                   if (profile?.display_name) {
                     const parts = profile.display_name.trim().split(/\s+/);
-                    if (parts.length >= 2) {
+                    if (parts.length >= 2)
                       return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
-                    }
                     return profile.display_name[0].toUpperCase();
                   }
                   return user?.email?.[0]?.toUpperCase() || 'U';
@@ -446,14 +445,34 @@ export default function Home() {
             </p>
             {pets.length > 0 && (
               <p className="text-xs text-muted-foreground">
-                {pets.length} {pets.length === 1 ? 'mascota' : 'mascotas'} registradas
+                {pets.length} {pets.length === 1 ? 'mascota' : 'mascotas'}
               </p>
             )}
           </div>
         </div>
+        {/* Quick actions inline */}
+        <div className="flex items-center gap-1.5">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => navigate('/veterinarios?emergencia=true')}
+            title="SOS Vet"
+          >
+            <Phone className="h-4 w-4 text-red-500" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => navigate(LINKS.maps())}
+            title="Mapa"
+          >
+            <Map className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
 
-      {/* === Name prompt for users with generic names === */}
       <NamePromptDialog
         open={showNamePrompt}
         currentName=""
@@ -463,17 +482,11 @@ export default function Home() {
           localStorage.setItem('pf_name_prompt_dismissed', '1');
         }}
       />
-
-      {/* === Trial welcome overlay (shown once) === */}
       <TrialWelcomeOverlay />
-
-      {/* === Trial banner (days remaining) === */}
       <TrialBanner />
-
-      {/* === Onboarding hints dirigidos para usuarios sin mascotas === */}
       <HomeOnboardingHints hasPets={pets.length > 0} />
 
-      {/* === Empty state cuando no hay mascotas === */}
+      {/* === Empty state === */}
       {pets.length === 0 && (
         <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
           <CardContent className="flex flex-col items-center text-center py-10 gap-4">
@@ -481,68 +494,56 @@ export default function Home() {
               <PawPrint className="h-10 w-10 text-purple-500" />
             </div>
             <div>
-              <p className="font-semibold text-base text-purple-900">Tu dashboard aparecerá aquí</p>
+              <p className="font-semibold text-base text-purple-900">Tu dashboard aparecera aqui</p>
               <p className="text-sm text-muted-foreground mt-1 max-w-xs">
-                Agrega tu primera mascota para ver su ficha clínica, recordatorios y más.
+                Agrega tu primera mascota para ver su ficha clinica, recordatorios y mas.
               </p>
             </div>
             <Button
               onClick={() => navigate('/add-pet')}
               className="bg-purple-600 hover:bg-purple-700 text-white"
             >
-              <Plus className="h-4 w-4 mr-2" />
-              Agregar mascota
+              <Plus className="h-4 w-4 mr-2" /> Agregar mascota
             </Button>
           </CardContent>
         </Card>
       )}
 
-      {/* === Contenido principal cuando ya hay mascotas === */}
-      {pets.length === 0 ? null : (
+      {pets.length > 0 && (
         <>
-          {/* === Pet switcher (avatares circulares estilo TCG) === */}
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-hide">
-            {pets.map((pet) => {
-              const isActive = activePetId === pet.id;
-              const rarity = getRarity(pet.paw_score ?? 0);
-              const borderStyle = RARITY_BORDER_STYLES[rarity];
-              return (
-                <PetSwitcherAvatar
-                  key={pet.id}
-                  pet={pet}
-                  isActive={isActive}
-                  borderStyle={borderStyle}
-                  onSelect={setActivePetId}
-                />
-              );
-            })}
-
-            {/* Botón "+" agregar mascota */}
+          {/* === Pet switcher === */}
+          <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
+            {pets.map((pet) => (
+              <PetSwitcherAvatar
+                key={pet.id}
+                pet={pet}
+                isActive={activePetId === pet.id}
+                borderStyle={RARITY_BORDER_STYLES[getRarity(pet.paw_score ?? 0)]}
+                onSelect={setActivePetId}
+              />
+            ))}
             <button
               onClick={goToAddPet}
               className="flex flex-col items-center gap-1 flex-shrink-0 group"
               aria-label="Agregar mascota"
             >
               <div className="rounded-full p-[3px] bg-muted group-hover:bg-purple-100 transition-colors">
-                <div className="h-16 w-16 rounded-full border-2 border-dashed border-purple-400 group-hover:border-purple-600 bg-background flex items-center justify-center transition-colors">
-                  <Plus className="h-7 w-7 text-purple-600 group-hover:text-purple-700 transition-colors" />
+                <div className="h-16 w-16 rounded-full border-2 border-dashed border-purple-400 bg-background flex items-center justify-center">
+                  <Plus className="h-7 w-7 text-purple-600" />
                 </div>
               </div>
-              <span className="text-xs font-medium text-muted-foreground group-hover:text-purple-700">
-                Agregar
-              </span>
+              <span className="text-xs font-medium text-muted-foreground">Agregar</span>
             </button>
           </div>
 
-          {/* === Status cards 2x2 mobile, 4x1 desktop === */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {/* === Status cards 2x2 → 4x1 === */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
             <StatusCard
               icon={Calendar}
-              title="Próxima cita"
+              title="Proxima cita"
               value={nextAppointmentLabel}
-              cta={nextAppointmentForActive ? 'Ver cita' : 'Agendar ahora'}
+              cta={nextAppointmentForActive ? 'Ver' : 'Agendar'}
               accent={nextAppointmentForActive ? 'default' : 'warning'}
-              aria-label={`Próxima cita: ${nextAppointmentLabel}. ${nextAppointmentForActive ? 'Ver cita' : 'Agendar ahora'}`}
               onClick={() => navigate(nextAppointmentForActive ? LINKS.bookings() : LINKS.vets())}
             />
             <StatusCard
@@ -550,36 +551,32 @@ export default function Home() {
               title="Vacunas"
               value={
                 activeVaccine?.upToDate
-                  ? 'Al día'
+                  ? 'Al dia'
                   : activeVaccine?.pendingName
-                    ? `Pendiente: ${activeVaccine.pendingName}`
+                    ? `Pend.`
                     : 'Sin datos'
               }
-              cta={activeVaccine?.upToDate ? 'Ver historial' : 'Ver próxima'}
+              cta={activeVaccine?.upToDate ? 'Historial' : 'Ver'}
               accent={activeVaccine?.upToDate ? 'success' : 'warning'}
-              aria-label={`Vacunas: ${activeVaccine?.upToDate ? 'al día' : 'pendientes'}. ${activeVaccine?.upToDate ? 'Ver historial' : 'Ver próxima vacuna'}`}
               onClick={() =>
-                navigate(
-                  activePet ? `/medical-records?pet=${activePet.id}` : LINKS.medicalRecords()
-                )
+                navigate(activePet ? LINKS.petClinical(activePet.id) : LINKS.medicalRecords())
               }
             />
             <StatusCard
               icon={FileText}
-              title="Ficha médica"
-              value={`${activeCompleteness}% completa`}
-              cta={activeCompleteness >= 80 ? 'Compartir con vet' : 'Completar ficha'}
+              title="Ficha"
+              value={`${activeCompleteness}%`}
+              cta={activeCompleteness >= 80 ? 'Compartir' : 'Completar'}
               accent={activeCompleteness >= 80 ? 'success' : 'default'}
-              aria-label={`Ficha médica: ${activeCompleteness}% completa. ${activeCompleteness >= 80 ? 'Compartir con veterinario' : 'Completar ficha'}`}
               onClick={() =>
                 navigate(activePet ? LINKS.petClinical(activePet.id) : LINKS.medicalRecords())
               }
             />
             <StatusCard
               icon={TrendingUp}
-              title="Estado de salud"
+              title="Salud"
               value={healthScore?.label ?? 'Sin datos'}
-              cta={healthScore?.issues.length ? 'Ver pendientes' : 'Ver ficha'}
+              cta="Ver"
               accent={
                 healthScore?.status === 'good'
                   ? 'success'
@@ -587,262 +584,198 @@ export default function Home() {
                     ? 'warning'
                     : 'default'
               }
-              aria-label={`Estado de salud: ${healthScore?.label ?? 'sin datos'}. ${healthScore?.issues.length ? 'Ver pendientes' : 'Ver ficha'}`}
               onClick={() => navigate(activePet ? LINKS.petClinical(activePet.id) : '/reminders')}
             />
           </div>
 
-          {/* === Botón Emergencia Vet === */}
-          <Card
-            className="border-red-200 bg-gradient-to-r from-red-50 to-orange-50 cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => navigate('/veterinarios?emergencia=true')}
-          >
-            <CardContent className="flex items-center gap-4 py-3">
-              <div className="rounded-full bg-red-100 p-2.5 flex-shrink-0">
-                <Phone className="h-5 w-5 text-red-600" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-bold text-red-800">Emergencia veterinaria</p>
-                <p className="text-xs text-muted-foreground">
-                  Encuentra veterinarios abiertos ahora que atienden urgencias
-                </p>
-              </div>
-              <Button
-                variant="destructive"
-                size="sm"
-                className="flex-shrink-0"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate('/veterinarios?emergencia=true');
-                }}
-              >
-                SOS Vet
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* === HEALTH ALERTS (prioridad máxima, visible inmediatamente) === */}
-          {(overdueReminders.length > 0 || upcomingReminders.length > 0) && (
-            <Card
-              className={`border-l-4 ${overdueReminders.length > 0 ? 'border-l-red-500 bg-red-50/50' : 'border-l-amber-400 bg-amber-50/50'}`}
-            >
-              <CardHeader className="pb-2">
-                <CardTitle className="text-base flex items-center gap-2">
-                  {overdueReminders.length > 0 ? (
-                    <>
-                      <AlertCircle className="h-5 w-5 text-red-600" />
-                      <span className="text-red-900">Requiere atención</span>
-                    </>
-                  ) : (
-                    <>
-                      <Bell className="h-5 w-5 text-amber-600" />
-                      <span className="text-amber-900">Próximos cuidados</span>
-                    </>
-                  )}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-2">
-                {overdueReminders.slice(0, 2).map((r) => (
-                  <div
-                    key={r.id}
-                    className="flex items-center justify-between p-2 rounded-lg bg-white border border-red-200"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold truncate">{r.title}</p>
-                      <p className="text-xs text-red-700 truncate">{r.pets?.name} · vencido</p>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      onClick={() => completeReminder.mutate(r.id)}
-                      title="Marcar como hecho"
-                    >
-                      <CheckCircle2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-                {upcomingReminders.slice(0, 2).map((r) => (
-                  <div
-                    key={r.id}
-                    className="flex items-center justify-between p-2 rounded-lg bg-white border border-amber-200"
-                  >
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium truncate">{r.title}</p>
-                      <p className="text-xs text-muted-foreground truncate">{r.pets?.name}</p>
-                    </div>
-                    <Button size="sm" variant="ghost" onClick={() => completeReminder.mutate(r.id)}>
-                      <CheckCircle2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  variant="link"
-                  size="sm"
-                  onClick={() => navigate('/reminders')}
-                  className="w-full text-xs h-8 mt-1"
+          {/* === Two-column layout: Alerts + Actions === */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Left: Health alerts + Routines */}
+            <div className="space-y-3">
+              {/* Health alerts */}
+              {(overdueReminders.length > 0 || upcomingReminders.length > 0) && (
+                <Card
+                  className={`border-l-4 ${overdueReminders.length > 0 ? 'border-l-red-500 bg-red-50/30' : 'border-l-amber-400 bg-amber-50/30'}`}
                 >
-                  Ver todos los recordatorios →
-                </Button>
-              </CardContent>
-            </Card>
-          )}
+                  <CardContent className="p-3 space-y-2">
+                    <p className="text-xs font-semibold flex items-center gap-1.5">
+                      {overdueReminders.length > 0 ? (
+                        <>
+                          <AlertCircle className="h-3.5 w-3.5 text-red-600" />
+                          <span className="text-red-800">Requiere atencion</span>
+                        </>
+                      ) : (
+                        <>
+                          <Bell className="h-3.5 w-3.5 text-amber-600" />
+                          <span className="text-amber-800">Proximos cuidados</span>
+                        </>
+                      )}
+                    </p>
+                    {overdueReminders.slice(0, 2).map((r) => (
+                      <div
+                        key={r.id}
+                        className="flex items-center justify-between p-1.5 rounded bg-white border border-red-100 text-xs"
+                      >
+                        <div className="min-w-0">
+                          <p className="font-medium truncate">{r.title}</p>
+                          <p className="text-[10px] text-red-600 truncate">
+                            {r.pets?.name} · vencido
+                          </p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-6 w-6 p-0"
+                          onClick={() => completeReminder.mutate(r.id)}
+                        >
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    ))}
+                    {upcomingReminders.slice(0, 2).map((r) => (
+                      <div
+                        key={r.id}
+                        className="flex items-center justify-between p-1.5 rounded bg-white border border-amber-100 text-xs"
+                      >
+                        <div className="min-w-0">
+                          <p className="font-medium truncate">{r.title}</p>
+                          <p className="text-[10px] text-muted-foreground truncate">
+                            {r.pets?.name}
+                          </p>
+                        </div>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-6 w-6 p-0"
+                          onClick={() => completeReminder.mutate(r.id)}
+                        >
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    ))}
+                    <Button
+                      variant="link"
+                      size="sm"
+                      onClick={() => navigate('/reminders')}
+                      className="w-full text-[10px] h-6"
+                    >
+                      Ver todos →
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
 
-          {/* === Rutinas de hoy === */}
-          <TodayRoutinesCard />
+              {/* Today's routines */}
+              <TodayRoutinesCard />
 
-          {/* === Price estimator card === */}
-          <PriceEstimatorCard petName={activePet?.name} />
+              {/* Weekly report */}
+              <WeeklyReportCard />
+            </div>
 
-          {/* === Weekly report card (si hay reporte no leído) === */}
-          <WeeklyReportCard />
+            {/* Right: Quick actions + Gamification */}
+            <div className="space-y-3">
+              {/* Quick actions grid */}
+              <Card>
+                <CardContent className="p-3">
+                  <p className="text-xs font-semibold mb-2 text-muted-foreground">
+                    Acciones rapidas
+                  </p>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-10 text-xs justify-start gap-1.5"
+                      onClick={() => navigate(LINKS.vets())}
+                    >
+                      <Stethoscope className="h-3.5 w-3.5 text-purple-600" /> Reservar vet
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-10 text-xs justify-start gap-1.5"
+                      onClick={() =>
+                        navigate(
+                          activePet ? LINKS.petClinical(activePet.id) : LINKS.medicalRecords()
+                        )
+                      }
+                    >
+                      <FileText className="h-3.5 w-3.5 text-blue-600" /> Ficha medica
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-10 text-xs justify-start gap-1.5"
+                      onClick={() => navigate('/precios-veterinarios')}
+                    >
+                      <TrendingUp className="h-3.5 w-3.5 text-amber-600" /> Precios
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-10 text-xs justify-start gap-1.5"
+                      onClick={() => navigate('/calendario')}
+                    >
+                      <Calendar className="h-3.5 w-3.5 text-indigo-600" /> Calendario
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
 
-          {/* === Checklist anual de cuidado === */}
-          {activePet && <AnnualCareChecklist petId={activePet.id} petName={activePet.name} />}
+              {/* PawGame compact */}
+              {stats && (
+                <Card
+                  className="border-purple-100 bg-purple-50/30 cursor-pointer hover:bg-purple-50/50 transition-colors"
+                  onClick={() => navigate('/paw-game')}
+                >
+                  <CardContent className="flex items-center gap-3 p-3">
+                    <Gamepad2 className="h-5 w-5 text-purple-600 flex-shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-bold text-purple-800">
+                          {stats.points?.toLocaleString('es-CL') || 0} pts
+                        </span>
+                        {stats.level > 1 && (
+                          <span className="text-[10px] bg-purple-200 text-purple-700 px-1 py-0.5 rounded-full">
+                            Lv{stats.level}
+                          </span>
+                        )}
+                        {streakDays > 0 && (
+                          <span className="text-[10px] text-purple-500">🔥{streakDays}d</span>
+                        )}
+                      </div>
+                    </div>
+                    <Trophy className="h-3.5 w-3.5 text-purple-400" />
+                  </CardContent>
+                </Card>
+              )}
 
-          {/* === Tips estacionales por especie === */}
-          {activePet?.species && <SeasonalTipsCard species={activePet.species} />}
+              {/* Pending reviews */}
+              {pendingReviewCount > 0 && (
+                <Card
+                  className="border-amber-100 bg-amber-50/30 cursor-pointer hover:bg-amber-50/50 transition-colors"
+                  onClick={() => navigate('/mis-reservas')}
+                >
+                  <CardContent className="flex items-center gap-3 p-3">
+                    <Star className="h-4 w-4 text-amber-600 flex-shrink-0" />
+                    <p className="text-xs font-medium text-amber-800 flex-1">
+                      {pendingReviewCount}{' '}
+                      {pendingReviewCount === 1 ? 'resena pendiente' : 'resenas pendientes'}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
 
-          {/* === Analytics preview cards === */}
-          {isFeatureEnabled('PRO_ANALYTICS') && (
-            <Suspense fallback={null}>
-              <AnalyticsPreviewCard />
-              {activePet && <PetWellnessPreview petId={activePet.id} petName={activePet.name} />}
-            </Suspense>
-          )}
+              {/* Analytics preview (Pro) */}
+              {isFeatureEnabled('PRO_ANALYTICS') && (
+                <Suspense fallback={null}>
+                  <AnalyticsPreviewCard />
+                </Suspense>
+              )}
+            </div>
+          </div>
         </>
       )}
 
-      {/* === Reseñas pendientes === */}
-      {pendingReviewCount > 0 && (
-        <Card
-          className="border-amber-200 bg-gradient-to-r from-amber-50 to-yellow-50 cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => navigate('/mis-reservas')}
-        >
-          <CardContent className="flex items-center gap-4 py-3">
-            <div className="rounded-full bg-amber-100 p-2.5 flex-shrink-0">
-              <Star className="h-5 w-5 text-amber-600" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-amber-800">
-                {pendingReviewCount}{' '}
-                {pendingReviewCount === 1 ? 'reseña pendiente' : 'reseñas pendientes'}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Tu opinión ayuda a otros dueños a elegir mejor
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* === Acciones rápidas horizontales === */}
-      <div>
-        <h3 className="text-sm font-semibold mb-2">Acciones rápidas</h3>
-        <div className="flex gap-2 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide lg:grid lg:grid-cols-4 lg:overflow-visible">
-          <Button
-            variant="outline"
-            className="flex-shrink-0 snap-start lg:w-full justify-start h-auto py-2.5"
-            onClick={() => navigate(LINKS.vets())}
-          >
-            <Stethoscope className="h-4 w-4 mr-2 text-purple-600" />
-            <span className="text-xs">Reservar vet</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="flex-shrink-0 snap-start lg:w-full justify-start h-auto py-2.5"
-            onClick={() =>
-              navigate(activePet ? `/medical-records?pet=${activePet.id}` : LINKS.medicalRecords())
-            }
-          >
-            <FileText className="h-4 w-4 mr-2 text-blue-600" />
-            <span className="text-xs">Ficha médica</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="flex-shrink-0 snap-start lg:w-full justify-start h-auto py-2.5"
-            onClick={() => navigate('/precios-veterinarios')}
-          >
-            <TrendingUp className="h-4 w-4 mr-2 text-amber-600" />
-            <span className="text-xs">Precios vets</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="flex-shrink-0 snap-start lg:w-full justify-start h-auto py-2.5"
-            onClick={() => navigate(LINKS.maps())}
-          >
-            <Map className="h-4 w-4 mr-2 text-indigo-600" />
-            <span className="text-xs">Mapa</span>
-          </Button>
-        </div>
-      </div>
-
-      {/* === PawGame widget === */}
-      {stats && (
-        <Card
-          className="border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50 cursor-pointer hover:shadow-md transition-shadow"
-          onClick={() => navigate('/paw-game')}
-        >
-          <CardContent className="flex items-center gap-4 py-3">
-            <div className="rounded-full bg-purple-100 p-2.5 flex-shrink-0">
-              <Gamepad2 className="h-5 w-5 text-purple-600" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-purple-800">
-                  {stats.points?.toLocaleString('es-CL') || 0} PawPoints
-                </span>
-                {stats.level > 1 && (
-                  <span className="text-xs bg-purple-200 text-purple-700 px-1.5 py-0.5 rounded-full font-medium">
-                    Nivel {stats.level}
-                  </span>
-                )}
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Gana puntos cuidando a tus mascotas y canjea premios
-              </p>
-            </div>
-            <div className="flex items-center gap-1 text-xs text-purple-500 font-medium flex-shrink-0">
-              <Trophy className="h-3.5 w-3.5" />
-              <span>Jugar</span>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* === Integrations prompt === */}
-      <Card className="border-purple-200 bg-purple-50/50">
-        <CardContent className="flex items-center gap-4 py-4">
-          <div className="rounded-full bg-purple-100 p-2.5 flex-shrink-0">
-            <Link2 className="h-5 w-5 text-purple-600" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold">Conecta tus apps</p>
-            <p className="text-xs text-muted-foreground">
-              Recibe recordatorios por WhatsApp y sincroniza con Google Calendar
-            </p>
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex-shrink-0 border-purple-300 text-purple-700 hover:bg-purple-100"
-            onClick={() => navigate('/profile?tab=integrations')}
-          >
-            <Smartphone className="h-3.5 w-3.5 mr-1" />
-            Configurar
-          </Button>
-        </CardContent>
-      </Card>
-
-      {/* === Activity feed slot === */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-base">Actividad de la comunidad</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ActivityFeed limit={3} />
-        </CardContent>
-      </Card>
-      {/* Tutorial floating button */}
       <ViewTutorial {...TUTORIALS.home} />
     </div>
   );
