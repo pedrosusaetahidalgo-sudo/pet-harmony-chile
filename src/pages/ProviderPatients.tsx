@@ -820,7 +820,7 @@ export default function ProviderPatients() {
                       >
                         <span className="text-xs">📝</span>
                       </Button>
-                      <a href={LINKS.petClinical(patient.pet_id)}>
+                      <a href={LINKS.petClinicalVet(patient.pet_id)}>
                         <Button
                           size="sm"
                           className="h-7 gap-1 text-xs px-2 bg-teal-600 hover:bg-teal-700"

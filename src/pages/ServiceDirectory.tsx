@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -61,6 +60,27 @@ type ProfileTable =
 // Union literal aceptada por los componentes hijos
 type ProviderType = 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'groomer';
 type BookingsServiceType = ProviderType | 'all';
+
+// Normalized provider record used across all service types.
+// Original DB fields are preserved via Record spread; canonical fields are prefixed with _.
+// Dynamic DB fields (total_walks, max_dogs, etc.) vary by profile table, so we use a
+// permissive index signature. The values rendered in JSX are primitives.
+interface NormalizedProvider {
+  // Dynamic fields from Supabase profile tables (walkers, vets, sitters, etc.)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+  id: string;
+  user_id: string;
+  bio?: string | null;
+  experience_years?: number | null;
+  total_reviews?: number | null;
+  is_verified?: boolean | null;
+  profiles?: { id: string; display_name: string | null; avatar_url: string | null } | null;
+  _rating: number;
+  _totalCount: number;
+  _price: number;
+  _services: Record<string, boolean> | null;
+}
 
 interface FilterState {
   searchTerm: string;
@@ -240,7 +260,7 @@ const SERVICE_CONFIG: Record<ServiceType, ServiceConfig> = {
 
 // --- Profile dialog renderers per service type ---
 
-function WalkerProfileDetails({ provider }: { provider: any }) {
+function WalkerProfileDetails({ provider }: { provider: NormalizedProvider }) {
   return (
     <div className="space-y-4 mt-4">
       <div>
@@ -292,7 +312,7 @@ function WalkerProfileDetails({ provider }: { provider: any }) {
           <h4 className="font-semibold mb-2">Servicios</h4>
           <div className="flex flex-wrap gap-2">
             {Object.entries(provider.services).map(
-              ([key, value]: [string, any]) =>
+              ([key, value]: [string, unknown]) =>
                 value && (
                   <Badge key={key} variant="secondary">
                     {key}
@@ -306,7 +326,7 @@ function WalkerProfileDetails({ provider }: { provider: any }) {
   );
 }
 
-function VetProfileDetails({ provider }: { provider: any }) {
+function VetProfileDetails({ provider }: { provider: NormalizedProvider }) {
   return (
     <div className="space-y-4 mt-4">
       <div>
@@ -356,7 +376,7 @@ function VetProfileDetails({ provider }: { provider: any }) {
           <h4 className="font-semibold mb-2">Especialidades</h4>
           <div className="flex flex-wrap gap-2">
             {Object.entries(provider.specialties).map(
-              ([key, value]: [string, any]) =>
+              ([key, value]: [string, unknown]) =>
                 value && (
                   <Badge key={key} variant="secondary">
                     {key}
@@ -370,7 +390,7 @@ function VetProfileDetails({ provider }: { provider: any }) {
   );
 }
 
-function SitterProfileDetails({ provider }: { provider: any }) {
+function SitterProfileDetails({ provider }: { provider: NormalizedProvider }) {
   return (
     <div className="space-y-4 mt-4">
       <div>
@@ -423,7 +443,7 @@ function SitterProfileDetails({ provider }: { provider: any }) {
   );
 }
 
-function TrainerProfileDetails({ provider }: { provider: any }) {
+function TrainerProfileDetails({ provider }: { provider: NormalizedProvider }) {
   return (
     <div className="space-y-4 mt-4">
       <div>
@@ -463,7 +483,7 @@ function TrainerProfileDetails({ provider }: { provider: any }) {
           <h4 className="font-semibold mb-2">Especialidades</h4>
           <div className="flex flex-wrap gap-2">
             {Object.entries(provider.specialties).map(
-              ([key, value]: [string, any]) =>
+              ([key, value]: [string, unknown]) =>
                 value && (
                   <Badge key={key} variant="secondary">
                     {key}
@@ -474,11 +494,11 @@ function TrainerProfileDetails({ provider }: { provider: any }) {
         </div>
       )}
 
-      {provider.training_methods && provider.training_methods.length > 0 && (
+      {provider.training_methods && (provider.training_methods as string[]).length > 0 && (
         <div>
           <h4 className="font-semibold mb-2">Métodos de Entrenamiento</h4>
           <div className="flex flex-wrap gap-2">
-            {provider.training_methods.map((method: string) => (
+            {(provider.training_methods as string[]).map((method: string) => (
               <Badge key={method} variant="outline">
                 {method}
               </Badge>
@@ -490,7 +510,7 @@ function TrainerProfileDetails({ provider }: { provider: any }) {
   );
 }
 
-function GroomerProfileDetails({ provider }: { provider: any }) {
+function GroomerProfileDetails({ provider }: { provider: NormalizedProvider }) {
   return (
     <div className="space-y-4 mt-4">
       <div>
@@ -554,7 +574,10 @@ function GroomerProfileDetails({ provider }: { provider: any }) {
   );
 }
 
-const PROFILE_DETAILS: Record<ServiceType, React.ComponentType<{ provider: any }>> = {
+const PROFILE_DETAILS: Record<
+  ServiceType,
+  React.ComponentType<{ provider: NormalizedProvider }>
+> = {
   walkers: WalkerProfileDetails,
   vets: VetProfileDetails,
   sitters: SitterProfileDetails,
@@ -564,17 +587,22 @@ const PROFILE_DETAILS: Record<ServiceType, React.ComponentType<{ provider: any }
 
 // Normaliza un row de DB a campos canonicos usando la config del tipo de servicio.
 // Los campos originales se conservan (spread) para que *ProfileDetails los lea.
-function normalizeProvider(provider: Record<string, unknown>, cfg: ServiceConfig) {
+function normalizeProvider(
+  provider: Record<string, unknown>,
+  cfg: ServiceConfig
+): NormalizedProvider {
   const rawServices = provider[cfg.servicesField];
   return {
     ...provider,
+    id: provider.id as string,
+    user_id: provider.user_id as string,
     _rating: (provider[cfg.ratingField] as number) ?? 0,
     _totalCount: (provider[cfg.totalCountField] as number) ?? 0,
     _price: (provider[cfg.priceField] as number) ?? 0,
     _services: Array.isArray(rawServices)
       ? Object.fromEntries((rawServices as string[]).map((s) => [s, true]))
       : ((rawServices as Record<string, boolean> | null) ?? null),
-  };
+  } as NormalizedProvider;
 }
 
 // --- Main component ---
@@ -591,8 +619,8 @@ const ServiceDirectory = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
-  const [providers, setProviders] = useState<any[]>([]);
-  const [selectedProvider, setSelectedProvider] = useState<any>(null);
+  const [providers, setProviders] = useState<NormalizedProvider[]>([]);
+  const [selectedProvider, setSelectedProvider] = useState<NormalizedProvider | null>(null);
   const [loading, setLoading] = useState(true);
   const [bookingDialogOpen, setBookingDialogOpen] = useState(false);
   const [profileDialogOpen, setProfileDialogOpen] = useState(false);
@@ -651,7 +679,8 @@ const ServiceDirectory = () => {
 
       // Query config-driven: activeField/activeValue y ratingField vienen de ServiceConfig
 
-      let query = (supabase.from(config.profileTable as any) as any).select('*');
+      // profileTable is a union of known table names; cast needed because .from() expects literal
+      let query = supabase.from(config.profileTable).select('*');
       query = query
         .eq(config.activeField, config.activeValue)
         .order(config.ratingField, { ascending: false, nullsFirst: false });
@@ -759,12 +788,12 @@ const ServiceDirectory = () => {
       }
     });
 
-  const handleOpenBooking = (provider: any) => {
+  const handleOpenBooking = (provider: NormalizedProvider) => {
     setSelectedProvider(provider);
     setBookingDialogOpen(true);
   };
 
-  const handleOpenProfile = (provider: any) => {
+  const handleOpenProfile = (provider: NormalizedProvider) => {
     setSelectedProvider(provider);
     setProfileDialogOpen(true);
   };

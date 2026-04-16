@@ -86,7 +86,7 @@ export function LinkedPatientsCard() {
                   {since && ` · vinculado ${since}`}
                 </p>
               </div>
-              <Link to={LINKS.petClinical(pet?.id || link.pet_id)}>
+              <Link to={LINKS.petClinicalVet(pet?.id || link.pet_id)}>
                 <Button size="sm" variant="outline" className="h-9 gap-1">
                   <FileText className="h-3.5 w-3.5" />
                   <span className="hidden sm:inline">Ficha</span>

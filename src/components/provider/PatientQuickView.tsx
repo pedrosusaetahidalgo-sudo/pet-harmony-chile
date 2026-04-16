@@ -158,7 +158,7 @@ export function PatientQuickView({ petId, open, onClose }: Props) {
 
             {/* Boton ver ficha completa */}
             {petId && (
-              <Link to={LINKS.petClinical(petId)} onClick={onClose}>
+              <Link to={LINKS.petClinicalVet(petId)} onClick={onClose}>
                 <Button className="w-full bg-purple-600 hover:bg-purple-700">
                   <FileText className="h-4 w-4 mr-2" />
                   Ver ficha completa

@@ -126,7 +126,7 @@ export function SharedFichasCard({ providerId }: SharedFichasCardProps) {
                     </>
                   )}
                   <Button size="sm" variant="outline" className="h-11" asChild>
-                    <Link to={LINKS.petClinical(row.pet_id)}>
+                    <Link to={LINKS.petClinicalVet(row.pet_id)}>
                       <Eye className="h-4 w-4 mr-1" />
                       Ver ficha
                     </Link>

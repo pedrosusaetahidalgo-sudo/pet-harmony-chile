@@ -374,7 +374,7 @@ export function VetPatientsList() {
                     </div>
                   </div>
                   <div className="flex gap-1.5 flex-shrink-0">
-                    <Link to={LINKS.petClinical(patient.pet_id)}>
+                    <Link to={LINKS.petClinicalVet(patient.pet_id)}>
                       <Button size="sm" variant="outline" className="h-9 gap-1">
                         <FileText className="h-3.5 w-3.5" />
                         <span className="hidden sm:inline">Ver ficha</span>

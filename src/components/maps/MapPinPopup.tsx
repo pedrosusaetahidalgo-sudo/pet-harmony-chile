@@ -1,20 +1,61 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  MapPin, Calendar, MessageCircle, Eye, Star, 
-  Navigation, Award, Heart, Briefcase, Share2 
-} from "@/lib/icons";
-import { useNavigate } from "react-router-dom";
-import { useStartConversation } from "@/hooks/useStartConversation";
-import { LINKS } from "@/lib/links";
-import { SERVICE_TYPE_LABELS, SERVICE_TYPE_ICONS, type ServiceProvider } from "@/hooks/useServiceProviders";
-import { calculateDistance } from "@/lib/distance";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  MapPin,
+  Calendar,
+  MessageCircle,
+  Eye,
+  Star,
+  Navigation,
+  Award,
+  Heart,
+  Briefcase,
+  Share2,
+} from '@/lib/icons';
+import { useNavigate } from 'react-router-dom';
+import { useStartConversation } from '@/hooks/useStartConversation';
+import { LINKS } from '@/lib/links';
+import {
+  SERVICE_TYPE_LABELS,
+  SERVICE_TYPE_ICONS,
+  type ServiceProvider,
+} from '@/hooks/useServiceProviders';
+import { calculateDistance } from '@/lib/distance';
+
+export interface MapPinData {
+  user_id?: string;
+  reporter_id?: string;
+  latitude?: number;
+  longitude?: number;
+  display_name?: string;
+  avatar_url?: string | null;
+  rating?: number;
+  total_reviews?: number;
+  bio?: string;
+  services?: Array<{ id: string; service_type: string; price_base: number; price_unit: string }>;
+  report_type?: string;
+  pet_name?: string;
+  description?: string;
+  species?: string;
+  breed?: string | null;
+  photo_url?: string | null;
+  photos?: string[] | null;
+  last_seen_location?: string;
+  reward_offered?: boolean;
+  reward_amount?: number | null;
+  location?: string;
+  size?: string | null;
+  name?: string;
+  type?: string;
+  address?: string;
+  [key: string]: unknown;
+}
 
 interface MapPinPopupProps {
-  type: "service" | "lost" | "adoption" | "shelter";
-  data: any;
+  type: 'service' | 'lost' | 'adoption' | 'shelter';
+  data: MapPinData;
   distance?: number; // Distance in km
   userLocation?: { lat: number; lng: number };
   onClose?: () => void;
@@ -43,40 +84,41 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
   };
 
   const handleViewDetails = () => {
-    if (type === "service") {
+    if (type === 'service') {
       navigate(LINKS.userProfile(data.user_id));
-    } else if (type === "lost") {
+    } else if (type === 'lost') {
       navigate(LINKS.maps());
-    } else if (type === "adoption") {
+    } else if (type === 'adoption') {
       navigate(LINKS.adoption());
-    } else if (type === "shelter") {
+    } else if (type === 'shelter') {
       navigate(LINKS.adoption());
     }
     onClose?.();
   };
 
   const handleBook = () => {
-    if (type === "service" && data.services?.[0]) {
+    if (type === 'service' && data.services?.[0]) {
       const firstService = data.services[0];
       const routes: Record<string, string> = {
-        dog_walker: "/services/walkers",
-        dogsitter: "/services/sitters",
-        veterinarian: "/services/vets",
-        trainer: "/services/trainers",
+        dog_walker: '/services/walkers',
+        dogsitter: '/services/sitters',
+        veterinarian: '/services/vets',
+        trainer: '/services/trainers',
       };
-      navigate(routes[firstService.service_type] || "/home");
+      navigate(routes[firstService.service_type] || '/home');
       onClose?.();
     }
   };
 
   const handleShare = () => {
     const shareData = {
-      title: type === "lost"
-        ? `${data.report_type === "perdida" ? "Mascota Perdida" : "Mascota Encontrada"}: ${data.pet_name}`
-        : type === "adoption"
-        ? `Adopta a ${data.pet_name}`
-        : `Servicio: ${data.display_name}`,
-      text: data.description || data.bio || "",
+      title:
+        type === 'lost'
+          ? `${data.report_type === 'perdida' ? 'Mascota Perdida' : 'Mascota Encontrada'}: ${data.pet_name}`
+          : type === 'adoption'
+            ? `Adopta a ${data.pet_name}`
+            : `Servicio: ${data.display_name}`,
+      text: data.description || data.bio || '',
       url: window.location.href,
     };
 
@@ -88,15 +130,15 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
   };
 
   // Service Provider Popup
-  if (type === "service") {
-    const provider = data as ServiceProvider;
+  if (type === 'service') {
+    const provider = data as unknown as ServiceProvider;
     const primaryService = provider.services?.[0];
     const serviceColors: Record<string, string> = {
-      dog_walker: "bg-blue-500",
-      dogsitter: "bg-purple-500",
-      veterinarian: "bg-green-500",
-      trainer: "bg-amber-500",
-      grooming: "bg-pink-500",
+      dog_walker: 'bg-blue-500',
+      dogsitter: 'bg-purple-500',
+      veterinarian: 'bg-green-500',
+      trainer: 'bg-amber-500',
+      grooming: 'bg-pink-500',
     };
 
     return (
@@ -106,7 +148,7 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
             <Avatar className="h-16 w-16 border-4 border-white shadow-lg">
               <AvatarImage src={provider.avatar_url || undefined} />
               <AvatarFallback className="bg-gradient-to-br from-blue-400 to-purple-500 text-white text-lg">
-                {provider.display_name?.charAt(0) || "P"}
+                {provider.display_name?.charAt(0) || 'P'}
               </AvatarFallback>
             </Avatar>
           </div>
@@ -114,10 +156,10 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
 
         <CardContent className="pt-12 pb-4 px-4 space-y-3">
           <div className="text-center">
-            <h3 className="font-bold text-lg truncate">{provider.display_name || "Proveedor"}</h3>
+            <h3 className="font-bold text-lg truncate">{provider.display_name || 'Proveedor'}</h3>
             <div className="flex items-center justify-center gap-1 mt-1">
               <Star className="h-4 w-4 text-yellow-500 fill-yellow-500" />
-              <span className="font-medium">{provider.rating?.toFixed(1) || "0.0"}</span>
+              <span className="font-medium">{provider.rating?.toFixed(1) || '0.0'}</span>
               <span className="text-xs text-muted-foreground">({provider.total_reviews || 0})</span>
             </div>
           </div>
@@ -125,7 +167,8 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
           {primaryService && (
             <div className="text-center">
               <p className="text-sm font-medium text-primary">
-                Desde ${primaryService.price_base.toLocaleString("es-CL")} / {primaryService.price_unit}
+                Desde ${primaryService.price_base.toLocaleString('es-CL')} /{' '}
+                {primaryService.price_unit}
               </p>
             </div>
           )}
@@ -139,40 +182,39 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
 
           <div className="flex flex-wrap justify-center gap-1">
             {provider.services?.slice(0, 3).map((service) => (
-              <Badge 
+              <Badge
                 key={service.id}
                 className={`text-xs ${serviceColors[service.service_type]} text-white`}
               >
                 {SERVICE_TYPE_ICONS[service.service_type as keyof typeof SERVICE_TYPE_ICONS]}
-                {SERVICE_TYPE_LABELS[service.service_type as keyof typeof SERVICE_TYPE_LABELS]?.split(" ")[0]}
+                {
+                  SERVICE_TYPE_LABELS[
+                    service.service_type as keyof typeof SERVICE_TYPE_LABELS
+                  ]?.split(' ')[0]
+                }
               </Badge>
             ))}
           </div>
 
           <div className="flex gap-2 pt-2">
-            <Button 
-              size="sm" 
-              className="flex-1 h-9 text-xs bg-warm-gradient hover:opacity-90" 
+            <Button
+              size="sm"
+              className="flex-1 h-9 text-xs bg-warm-gradient hover:opacity-90"
               onClick={handleBook}
             >
               <Calendar className="h-3 w-3 mr-1" />
               Reservar
             </Button>
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="h-9 px-3" 
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-9 px-3"
               onClick={handleContact}
               disabled={loading}
             >
               <MessageCircle className="h-3 w-3" />
             </Button>
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="h-9 px-3" 
-              onClick={handleViewDetails}
-            >
+            <Button size="sm" variant="outline" className="h-9 px-3" onClick={handleViewDetails}>
               <Eye className="h-3 w-3" />
             </Button>
           </div>
@@ -182,8 +224,8 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
   }
 
   // Lost Pet Popup
-  if (type === "lost") {
-    const isLost = data.report_type === "perdida";
+  if (type === 'lost') {
+    const isLost = data.report_type === 'perdida';
 
     return (
       <Card className="w-[320px] overflow-hidden shadow-lg">
@@ -196,34 +238,37 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
               className="w-full h-full object-cover"
             />
             <div className="absolute top-2 left-2">
-              <Badge
-                className={isLost ? "bg-red-500" : "bg-green-500"}
-              >
-                {isLost ? "🔍 Perdida" : "✅ Encontrada"}
+              <Badge className={isLost ? 'bg-red-500' : 'bg-green-500'}>
+                {isLost ? '🔍 Perdida' : '✅ Encontrada'}
               </Badge>
             </div>
             {data.reward_offered && (
               <Badge className="absolute top-2 right-2 bg-yellow-500 gap-1">
-                <Award className="h-3 w-3" />
-                ${data.reward_amount?.toLocaleString()}
+                <Award className="h-3 w-3" />${data.reward_amount?.toLocaleString()}
               </Badge>
             )}
           </div>
         ) : (
           <div className="relative h-32 bg-gradient-to-br from-red-100 to-red-200 flex items-center justify-center">
-            <div className="text-4xl">{isLost ? "🔍" : "✅"}</div>
+            <div className="text-4xl">{isLost ? '🔍' : '✅'}</div>
             <Badge className="absolute top-2 left-2 bg-red-500">
-              {isLost ? "Perdida" : "Encontrada"}
+              {isLost ? 'Perdida' : 'Encontrada'}
             </Badge>
           </div>
         )}
 
         <CardContent className="p-4 space-y-2">
           <div>
-            <h3 className="font-bold text-lg">{data.pet_name || "Mascota sin identificar"}</h3>
+            <h3 className="font-bold text-lg">{data.pet_name || 'Mascota sin identificar'}</h3>
             <div className="flex items-center gap-2 mt-1">
-              <Badge variant="outline" className="text-xs">{data.species}</Badge>
-              {data.breed && <Badge variant="secondary" className="text-xs">{data.breed}</Badge>}
+              <Badge variant="outline" className="text-xs">
+                {data.species}
+              </Badge>
+              {data.breed && (
+                <Badge variant="secondary" className="text-xs">
+                  {data.breed}
+                </Badge>
+              )}
             </div>
           </div>
 
@@ -243,29 +288,19 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
           </div>
 
           <div className="flex gap-2 pt-2">
-            <Button 
-              size="sm" 
-              className="flex-1 h-9 text-xs bg-warm-gradient hover:opacity-90" 
+            <Button
+              size="sm"
+              className="flex-1 h-9 text-xs bg-warm-gradient hover:opacity-90"
               onClick={handleContact}
               disabled={loading}
             >
               <MessageCircle className="h-3 w-3 mr-1" />
               Contactar
             </Button>
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="h-9 px-3" 
-              onClick={handleViewDetails}
-            >
+            <Button size="sm" variant="outline" className="h-9 px-3" onClick={handleViewDetails}>
               <Eye className="h-3 w-3" />
             </Button>
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="h-9 px-3" 
-              onClick={handleShare}
-            >
+            <Button size="sm" variant="outline" className="h-9 px-3" onClick={handleShare}>
               <Share2 className="h-3 w-3" />
             </Button>
           </div>
@@ -275,7 +310,7 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
   }
 
   // Adoption Post Popup
-  if (type === "adoption") {
+  if (type === 'adoption') {
     const photoUrl = data.photos?.[0];
 
     return (
@@ -288,16 +323,12 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
               loading="lazy"
               className="w-full h-full object-cover"
             />
-            <Badge className="absolute top-2 left-2 bg-orange-500">
-              🧡 En Adopción
-            </Badge>
+            <Badge className="absolute top-2 left-2 bg-orange-500">🧡 En Adopción</Badge>
           </div>
         ) : (
           <div className="relative h-32 bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center">
             <Heart className="h-12 w-12 text-orange-400" />
-            <Badge className="absolute top-2 left-2 bg-orange-500">
-              🧡 En Adopción
-            </Badge>
+            <Badge className="absolute top-2 left-2 bg-orange-500">🧡 En Adopción</Badge>
           </div>
         )}
 
@@ -305,9 +336,19 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
           <div>
             <h3 className="font-bold text-lg">{data.pet_name}</h3>
             <div className="flex items-center gap-2 mt-1">
-              <Badge variant="outline" className="text-xs">{data.species}</Badge>
-              {data.breed && <Badge variant="secondary" className="text-xs">{data.breed}</Badge>}
-              {data.size && <Badge variant="outline" className="text-xs">{data.size}</Badge>}
+              <Badge variant="outline" className="text-xs">
+                {data.species}
+              </Badge>
+              {data.breed && (
+                <Badge variant="secondary" className="text-xs">
+                  {data.breed}
+                </Badge>
+              )}
+              {data.size && (
+                <Badge variant="outline" className="text-xs">
+                  {data.size}
+                </Badge>
+              )}
             </div>
           </div>
 
@@ -329,29 +370,19 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
           </div>
 
           <div className="flex gap-2 pt-2">
-            <Button 
-              size="sm" 
-              className="flex-1 h-9 text-xs bg-orange-500 hover:bg-orange-600" 
+            <Button
+              size="sm"
+              className="flex-1 h-9 text-xs bg-orange-500 hover:bg-orange-600"
               onClick={handleContact}
               disabled={loading}
             >
               <MessageCircle className="h-3 w-3 mr-1" />
               Contactar
             </Button>
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="h-9 px-3" 
-              onClick={handleViewDetails}
-            >
+            <Button size="sm" variant="outline" className="h-9 px-3" onClick={handleViewDetails}>
               <Eye className="h-3 w-3" />
             </Button>
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="h-9 px-3" 
-              onClick={handleShare}
-            >
+            <Button size="sm" variant="outline" className="h-9 px-3" onClick={handleShare}>
               <Share2 className="h-3 w-3" />
             </Button>
           </div>
@@ -361,23 +392,23 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
   }
 
   // Shelter Popup
-  if (type === "shelter") {
+  if (type === 'shelter') {
     return (
       <Card className="w-[320px] overflow-hidden shadow-lg">
         <div className="relative h-32 bg-gradient-to-br from-purple-500 to-purple-600">
           <div className="absolute inset-0 flex items-center justify-center">
             <Briefcase className="h-12 w-12 text-white/80" />
           </div>
-          <Badge className="absolute top-2 left-2 bg-purple-600">
-            🏠 Refugio
-          </Badge>
+          <Badge className="absolute top-2 left-2 bg-purple-600">🏠 Refugio</Badge>
         </div>
 
         <CardContent className="p-4 space-y-2">
           <div>
-            <h3 className="font-bold text-lg">{data.name || "Refugio"}</h3>
+            <h3 className="font-bold text-lg">{data.name || 'Refugio'}</h3>
             {data.type && (
-              <Badge variant="outline" className="text-xs mt-1">{data.type}</Badge>
+              <Badge variant="outline" className="text-xs mt-1">
+                {data.type}
+              </Badge>
             )}
           </div>
 
@@ -399,20 +430,15 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
           </div>
 
           <div className="flex gap-2 pt-2">
-            <Button 
-              size="sm" 
-              className="flex-1 h-9 text-xs bg-purple-500 hover:bg-purple-600" 
+            <Button
+              size="sm"
+              className="flex-1 h-9 text-xs bg-purple-500 hover:bg-purple-600"
               onClick={handleViewDetails}
             >
               <Eye className="h-3 w-3 mr-1" />
               Ver Detalles
             </Button>
-            <Button 
-              size="sm" 
-              variant="outline" 
-              className="h-9 px-3" 
-              onClick={handleShare}
-            >
+            <Button size="sm" variant="outline" className="h-9 px-3" onClick={handleShare}>
               <Share2 className="h-3 w-3" />
             </Button>
           </div>
@@ -425,4 +451,3 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
 };
 
 export default MapPinPopup;
-

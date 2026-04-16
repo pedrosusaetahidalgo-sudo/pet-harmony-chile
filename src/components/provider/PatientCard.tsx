@@ -202,7 +202,7 @@ export function PatientCard({ patient, onRecord, onNote, onConsolidado }: Patien
               <Sparkles className="h-3.5 w-3.5" />
             </Button>
           )}
-          <Link to={LINKS.petClinical(patient.pet_id)} className="flex-1">
+          <Link to={LINKS.petClinicalVet(patient.pet_id)} className="flex-1">
             <Button size="sm" className="w-full h-8 gap-1.5 text-xs bg-teal-600 hover:bg-teal-700">
               <FileText className="h-3.5 w-3.5" />
               Ficha

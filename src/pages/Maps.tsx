@@ -741,7 +741,7 @@ const Maps = () => {
                   ) : (
                     <MapPinPopup
                       type={getPopupType(marker) as 'lost' | 'adoption' | 'shelter' | 'service'}
-                      data={marker.data}
+                      data={marker.data as import('@/components/maps/MapPinPopup').MapPinData}
                       userLocation={userLocation || undefined}
                       onClose={() => {}}
                     />

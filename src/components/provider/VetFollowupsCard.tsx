@@ -103,7 +103,7 @@ export function VetFollowupsCard() {
             className="flex items-center justify-between p-3 bg-white rounded-lg border border-amber-200"
           >
             <Link
-              to={`${LINKS.petClinical(f.pet_id)}?grabar=0`}
+              to={`${LINKS.petClinicalVet(f.pet_id)}&grabar=0`}
               className="min-w-0 flex-1 hover:opacity-80 transition-opacity"
             >
               <p className="text-sm font-semibold truncate">

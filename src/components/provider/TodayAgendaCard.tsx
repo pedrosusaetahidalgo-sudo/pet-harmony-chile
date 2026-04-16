@@ -145,7 +145,7 @@ export function TodayAgendaCard() {
               );
 
               return b.pet_id ? (
-                <Link key={b.id} to={LINKS.petClinical(b.pet_id)} className="block">
+                <Link key={b.id} to={LINKS.petClinicalVet(b.pet_id)} className="block">
                   {content}
                 </Link>
               ) : (

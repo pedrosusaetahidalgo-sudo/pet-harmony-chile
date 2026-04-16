@@ -135,9 +135,13 @@ const PetClinicalRecord = () => {
   const [vetShareTokenId, setVetShareTokenId] = useState<string | null>(null);
   const [showRecorder, setShowRecorder] = useState(false);
 
+  // ?mode=vet forces vet view (used by provider navigation links)
+  const forceVetMode = searchParams.get('mode') === 'vet';
+
   // B7: auto-open recorder with ?grabar=1 (must be before early returns to respect Rules of Hooks)
   const isOwner = pet?.owner_id === user?.id;
-  const viewMode: 'owner' | 'vet' = isOwner ? 'owner' : 'vet';
+  const viewMode: 'owner' | 'vet' =
+    forceVetMode && vetProviderId ? 'vet' : isOwner ? 'owner' : 'vet';
 
   useEffect(() => {
     if (viewMode === 'vet' && searchParams.get('grabar') === '1') {
@@ -146,11 +150,16 @@ const PetClinicalRecord = () => {
   }, [viewMode, searchParams]);
 
   useEffect(() => {
-    if (!pet || !user?.id || pet.owner_id === user.id) {
+    if (!pet || !user?.id) {
       setVetCheckDone(true);
       return;
     }
-    // Non-owner: check if linked vet
+    // Skip vet check only if owner AND not forcing vet mode
+    if (pet.owner_id === user.id && !forceVetMode) {
+      setVetCheckDone(true);
+      return;
+    }
+    // Non-owner or forced vet mode: check if linked vet
     (async () => {
       try {
         const { data: provider } = await supabase
@@ -186,7 +195,7 @@ const PetClinicalRecord = () => {
         setVetCheckDone(true);
       }
     })();
-  }, [pet?.id, user?.id, pet?.owner_id]);
+  }, [pet?.id, user?.id, pet?.owner_id, forceVetMode]);
 
   if (authLoading || petLoading) {
     return <ClinicalRecordSkeleton />;
@@ -216,7 +225,7 @@ const PetClinicalRecord = () => {
     );
   }
 
-  if (!isOwner && !vetCheckDone) {
+  if ((!isOwner || forceVetMode) && !vetCheckDone) {
     return <ClinicalRecordSkeleton />;
   }
 

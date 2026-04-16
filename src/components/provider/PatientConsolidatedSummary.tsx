@@ -53,7 +53,7 @@ export function PatientConsolidatedSummary({ petId, petName, open, onOpenChange 
   const handleGoToFicha = () => {
     if (petId) {
       onOpenChange(false);
-      navigate(LINKS.petClinical(petId));
+      navigate(LINKS.petClinicalVet(petId));
     }
   };
 

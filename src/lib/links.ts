@@ -35,8 +35,11 @@ export const LINKS = {
   /** Agregar mascota */
   addPet: () => '/add-pet',
 
-  /** Ficha clínica de una mascota */
+  /** Ficha clínica de una mascota (vista dueño) */
   petClinical: (petId: string) => `/ficha/${petId}`,
+
+  /** Ficha clínica en vista veterinario (fuerza V2 incluso si el vet es dueño) */
+  petClinicalVet: (petId: string) => `/ficha/${petId}?mode=vet`,
 
   /** Ficha clínica abierta directamente en la pestaña de compartir */
   petClinicalShare: (petId: string) => `/ficha/${petId}?action=share`,
