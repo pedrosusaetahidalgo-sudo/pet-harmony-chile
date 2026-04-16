@@ -1,7 +1,6 @@
 import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { formatDistanceToNowStrict } from 'date-fns';
+import { formatDistanceToNowStrict, isToday } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -20,31 +19,30 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   Search,
   PawPrint,
-  FileText,
   Mail,
   Loader2,
   Clock,
-  Mic,
-  Pencil,
-  ChevronDown,
-  Plus,
   UserPlus,
   Check,
   X,
-  Stethoscope,
-  Calendar,
-  Sparkles,
+  ChevronDown,
+  LayoutGrid,
+  List,
+  ArrowUpDown,
 } from '@/lib/icons';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
 import { NewPatientForm } from '@/components/provider/NewPatientForm';
 import { PatientConsolidatedSummary } from '@/components/provider/PatientConsolidatedSummary';
 import { VetNoteEditor } from '@/components/provider/VetNoteEditor';
 import { ConsultationRecorderModal } from '@/components/provider/ConsultationRecorderModal';
-import type { VetClinicalNote } from '@/hooks/useVetClinicalNotes';
+import { PatientKPIBar } from '@/components/provider/PatientKPIBar';
+import { PatientCard } from '@/components/provider/PatientCard';
+import type { PatientCardData } from '@/components/provider/PatientCard';
+import { getPatientStatus, calculatePetAge } from '@/hooks/usePatientStatus';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
@@ -54,10 +52,17 @@ interface PatientRow {
   pet_name: string;
   species: string | null;
   breed: string | null;
+  birth_date: string | null;
   photo_url: string | null;
   owner_name: string | null;
   last_visit: string;
+  first_visit: string | null;
   source: 'linked' | 'note' | 'shared';
+  // Enriched data
+  allergies_food: string[] | null;
+  allergies_medication: string[] | null;
+  current_medications: Array<{ name: string; dose?: string; frequency?: string }> | null;
+  chronic_conditions_detail: Record<string, unknown> | null;
 }
 
 interface PendingPetRow {
@@ -70,21 +75,42 @@ interface PendingPetRow {
   created_at: string;
 }
 
-const NOTE_TYPE_LABELS: Record<string, string> = {
-  consulta: 'Consulta',
-  vacuna: 'Vacuna',
-  control: 'Control',
-  cirugia: 'Cirugia',
-  urgencia: 'Urgencia',
-  otro: 'Otro',
-};
+type ViewMode = 'cards' | 'table';
+type SortMode = 'last_visit' | 'name' | 'followup';
+type StatusFilter =
+  | 'all'
+  | 'active'
+  | 'new'
+  | 'inactive'
+  | 'followup'
+  | 'overdue'
+  | 'today'
+  | 'pending_claim';
 
 export default function ProviderPatients() {
   const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [filterSpecies, setFilterSpecies] = useState('all');
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
+  const [sortMode, setSortMode] = useState<SortMode>('last_visit');
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    try {
+      return (localStorage.getItem('pf_patients_view') as ViewMode) || 'cards';
+    } catch {
+      return 'cards';
+    }
+  });
   const [resendingId, setResendingId] = useState<string | null>(null);
   const [consolidadoPet, setConsolidadoPet] = useState<{ id: string; name: string } | null>(null);
+  const [activeNoteDialog, setActiveNoteDialog] = useState<{
+    petId: string;
+    petName: string;
+  } | null>(null);
+  const [activeRecorderDialog, setActiveRecorderDialog] = useState<{
+    petId: string;
+    petName: string;
+    species?: string;
+  } | null>(null);
 
   // Fetch provider ID
   const { data: providerId } = useQuery({
@@ -122,7 +148,7 @@ export default function ProviderPatients() {
     enabled: !!user,
   });
 
-  // Pacientes activos (3 fuentes)
+  // Pacientes activos (3 fuentes) — enriched with clinical data
   const {
     data: patients,
     isLoading,
@@ -138,7 +164,7 @@ export default function ProviderPatients() {
         const { data: links } = await sb
           .from('pet_vet_links')
           .select(
-            'pet_id, responded_at, pets(name, species, breed, photo_url), profiles!pet_vet_links_owner_id_fkey(display_name)'
+            'pet_id, responded_at, created_at, pets(name, species, breed, birth_date, photo_url, allergies_food, allergies_medication, current_medications, chronic_conditions_detail), profiles!pet_vet_links_owner_id_fkey(display_name)'
           )
           .eq('provider_id', providerId)
           .eq('status', 'active')
@@ -156,19 +182,27 @@ export default function ProviderPatients() {
             pet_name: pet?.name || 'Mascota',
             species: pet?.species || null,
             breed: pet?.breed || null,
+            birth_date: pet?.birth_date || null,
             photo_url: pet?.photo_url || null,
             owner_name: profile?.display_name || null,
             last_visit: row.responded_at || new Date().toISOString(),
+            first_visit: row.created_at || null,
             source: 'linked',
+            allergies_food: pet?.allergies_food || null,
+            allergies_medication: pet?.allergies_medication || null,
+            current_medications: pet?.current_medications || null,
+            chronic_conditions_detail: pet?.chronic_conditions_detail || null,
           });
         }
       }
 
-      // Notas clinicas — usar providerId (service_providers.id), no user.id
+      // Notas clinicas
       const noteProviderId = providerId || user.id;
       const { data: notes } = await sb
         .from('vet_clinical_notes')
-        .select('pet_id, created_at, pets(name, species, breed, photo_url)')
+        .select(
+          'pet_id, created_at, pets(name, species, breed, birth_date, photo_url, allergies_food, allergies_medication, current_medications, chronic_conditions_detail)'
+        )
         .eq('provider_id', noteProviderId)
         .order('created_at', { ascending: false })
         .limit(200);
@@ -183,10 +217,16 @@ export default function ProviderPatients() {
           pet_name: pet?.name || 'Mascota',
           species: pet?.species || null,
           breed: pet?.breed || null,
+          birth_date: pet?.birth_date || null,
           photo_url: pet?.photo_url || null,
           owner_name: null,
           last_visit: note.created_at,
+          first_visit: note.created_at,
           source: 'note',
+          allergies_food: pet?.allergies_food || null,
+          allergies_medication: pet?.allergies_medication || null,
+          current_medications: pet?.current_medications || null,
+          chronic_conditions_detail: pet?.chronic_conditions_detail || null,
         });
       }
 
@@ -210,10 +250,16 @@ export default function ProviderPatients() {
             pet_name: pet?.name || 'Mascota',
             species: pet?.species || null,
             breed: null,
+            birth_date: null,
             photo_url: pet?.photo_url || null,
             owner_name: null,
             last_visit: row.created_at,
+            first_visit: row.created_at,
             source: 'shared',
+            allergies_food: null,
+            allergies_medication: null,
+            current_medications: null,
+            chronic_conditions_detail: null,
           });
         }
       }
@@ -223,6 +269,57 @@ export default function ProviderPatients() {
       );
     },
     enabled: !!user,
+  });
+
+  // Fetch followup data for all patients
+  const { data: followupMap } = useQuery({
+    queryKey: ['vet-followups-map', providerId],
+    queryFn: async () => {
+      if (!providerId) return new Map<string, { date: string; reason: string | null }>();
+      const { data } = await sb
+        .from('vet_clinical_notes')
+        .select('pet_id, followup_date, followup_reason')
+        .eq('provider_id', providerId)
+        .eq('followup_required', true)
+        .not('followup_date', 'is', null)
+        .order('followup_date', { ascending: true });
+
+      const map = new Map<string, { date: string; reason: string | null }>();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const row of (data || []) as any[]) {
+        // Keep the latest followup per pet
+        if (
+          !map.has(row.pet_id) ||
+          new Date(row.followup_date) > new Date(map.get(row.pet_id)!.date)
+        ) {
+          map.set(row.pet_id, { date: row.followup_date, reason: row.followup_reason });
+        }
+      }
+      return map;
+    },
+    enabled: !!providerId,
+    staleTime: 2 * 60 * 1000,
+  });
+
+  // Fetch note counts per patient
+  const { data: noteCountMap } = useQuery({
+    queryKey: ['vet-note-counts', providerId],
+    queryFn: async () => {
+      if (!providerId) return new Map<string, number>();
+      const { data } = await sb
+        .from('vet_clinical_notes')
+        .select('pet_id')
+        .eq('provider_id', providerId);
+
+      const map = new Map<string, number>();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const row of (data || []) as any[]) {
+        map.set(row.pet_id, (map.get(row.pet_id) || 0) + 1);
+      }
+      return map;
+    },
+    enabled: !!providerId,
+    staleTime: 2 * 60 * 1000,
   });
 
   // Solicitudes pendientes de vinculacion
@@ -286,35 +383,149 @@ export default function ProviderPatients() {
     }
   };
 
-  // Filtrado
-  const filtered = useMemo(() => {
+  // Build enriched patient cards data
+  const enrichedPatients = useMemo((): PatientCardData[] => {
     if (!patients) return [];
-    const q = search.toLowerCase().trim();
-    return patients.filter((p) => {
-      if (filterSpecies !== 'all' && p.species?.toLowerCase() !== filterSpecies) return false;
-      if (!q) return true;
-      return (
-        p.pet_name.toLowerCase().includes(q) ||
-        p.owner_name?.toLowerCase().includes(q) ||
-        p.species?.toLowerCase().includes(q) ||
-        p.breed?.toLowerCase().includes(q)
-      );
+    return patients.map((p) => {
+      const fu = followupMap?.get(p.pet_id);
+      return {
+        pet_id: p.pet_id,
+        pet_name: p.pet_name,
+        species: p.species,
+        breed: p.breed,
+        birth_date: p.birth_date,
+        photo_url: p.photo_url,
+        owner_name: p.owner_name,
+        last_visit: p.last_visit,
+        first_visit: p.first_visit,
+        followup_date: fu?.date ?? null,
+        followup_reason: fu?.reason ?? null,
+        total_notes: noteCountMap?.get(p.pet_id) ?? 0,
+        allergies: [...(p.allergies_food || []), ...(p.allergies_medication || [])],
+        medications: (p.current_medications || []).map((m) => m.name),
+        chronic_conditions: p.chronic_conditions_detail
+          ? Object.keys(p.chronic_conditions_detail)
+          : [],
+      };
     });
-  }, [patients, search, filterSpecies]);
+  }, [patients, followupMap, noteCountMap]);
+
+  // KPI calculations
+  const kpis = useMemo(() => {
+    const now = new Date();
+    let active = 0;
+    let today = 0;
+    let overdue = 0;
+
+    for (const p of enrichedPatients) {
+      const status = getPatientStatus(p.last_visit, p.followup_date ?? null, p.first_visit);
+      if (status.status !== 'inactive') active++;
+      if (status.status === 'followup_overdue') overdue++;
+      if (isToday(new Date(p.last_visit))) today++;
+    }
+
+    return { active, today, overdue, pendingClaim: pendingPets?.length ?? 0 };
+  }, [enrichedPatients, pendingPets]);
+
+  // Handle KPI filter clicks
+  const handleKPIFilter = (key: string | null) => {
+    if (!key) {
+      setStatusFilter('all');
+      return;
+    }
+    const map: Record<string, StatusFilter> = {
+      active: 'active',
+      today: 'today',
+      overdue: 'overdue',
+      pending_claim: 'pending_claim',
+    };
+    setStatusFilter(map[key] || 'all');
+  };
+
+  // Filtered + sorted
+  const filtered = useMemo(() => {
+    const q = search.toLowerCase().trim();
+    let result = enrichedPatients.filter((p) => {
+      if (filterSpecies !== 'all' && p.species?.toLowerCase() !== filterSpecies) return false;
+      if (q) {
+        const match =
+          p.pet_name.toLowerCase().includes(q) ||
+          p.owner_name?.toLowerCase().includes(q) ||
+          p.species?.toLowerCase().includes(q) ||
+          p.breed?.toLowerCase().includes(q);
+        if (!match) return false;
+      }
+
+      if (statusFilter === 'all') return true;
+      const status = getPatientStatus(p.last_visit, p.followup_date ?? null, p.first_visit);
+      switch (statusFilter) {
+        case 'active':
+          return status.status !== 'inactive';
+        case 'new':
+          return status.status === 'new';
+        case 'inactive':
+          return status.status === 'inactive';
+        case 'followup':
+          return status.status === 'followup_soon' || status.status === 'followup_overdue';
+        case 'overdue':
+          return status.status === 'followup_overdue';
+        case 'today':
+          return isToday(new Date(p.last_visit));
+        default:
+          return true;
+      }
+    });
+
+    // Sort
+    result = [...result];
+    switch (sortMode) {
+      case 'name':
+        result.sort((a, b) => a.pet_name.localeCompare(b.pet_name));
+        break;
+      case 'followup':
+        result.sort((a, b) => {
+          if (!a.followup_date && !b.followup_date) return 0;
+          if (!a.followup_date) return 1;
+          if (!b.followup_date) return -1;
+          return new Date(a.followup_date).getTime() - new Date(b.followup_date).getTime();
+        });
+        break;
+      default:
+        result.sort((a, b) => new Date(b.last_visit).getTime() - new Date(a.last_visit).getTime());
+    }
+
+    return result;
+  }, [enrichedPatients, search, filterSpecies, statusFilter, sortMode]);
 
   const speciesOptions = useMemo(() => {
     if (!patients) return [];
     return [...new Set(patients.map((p) => p.species).filter(Boolean))] as string[];
   }, [patients]);
 
+  const toggleView = (v: ViewMode) => {
+    setViewMode(v);
+    try {
+      localStorage.setItem('pf_patients_view', v);
+    } catch {
+      // noop
+    }
+  };
+
   if (isLoading) {
     return (
-      <div className="container max-w-4xl mx-auto p-4 md:p-6 space-y-4">
+      <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-4">
         <Skeleton className="h-10 w-48" />
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-20 w-full" />
+          ))}
+        </div>
         <Skeleton className="h-12 w-full" />
-        {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-24 w-full" />
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-40 w-full" />
+          ))}
+        </div>
       </div>
     );
   }
@@ -337,9 +548,79 @@ export default function ProviderPatients() {
         />
       </div>
 
-      {/* Filtros */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
+      {/* KPIs */}
+      <PatientKPIBar
+        totalActive={kpis.active}
+        todayCount={kpis.today}
+        overdueFollowups={kpis.overdue}
+        pendingClaim={kpis.pendingClaim}
+        activeFilter={statusFilter !== 'all' ? statusFilter : null}
+        onFilterChange={handleKPIFilter}
+      />
+
+      {/* Solicitudes pendientes — collapsible banner */}
+      {pendingLinks && pendingLinks.length > 0 && (
+        <Collapsible>
+          <Card className="border-amber-200 bg-amber-50/30">
+            <CollapsibleTrigger className="w-full">
+              <CardContent className="p-3 flex items-center justify-between">
+                <h2 className="text-xs font-semibold text-amber-700 flex items-center gap-1.5">
+                  <UserPlus className="h-3.5 w-3.5" />
+                  {pendingLinks.length} solicitud(es) pendiente(s)
+                </h2>
+                <ChevronDown className="h-4 w-4 text-amber-600 transition-transform group-data-[state=open]:rotate-180" />
+              </CardContent>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <div className="px-3 pb-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                {pendingLinks.map((link: any) => (
+                  <div
+                    key={link.id}
+                    className="flex items-center gap-2 p-2 bg-white rounded-lg border border-amber-100"
+                  >
+                    <Avatar className="h-8 w-8 flex-shrink-0">
+                      {link.pets?.photo_url && <AvatarImage src={link.pets.photo_url} />}
+                      <AvatarFallback className="bg-amber-100 text-amber-700 text-[10px]">
+                        {(link.pets?.name || 'M')[0].toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-semibold truncate">{link.pets?.name}</p>
+                      <p className="text-[10px] text-muted-foreground truncate">
+                        {link.pets?.species}
+                        {link.profiles?.display_name ? ` · ${link.profiles.display_name}` : ''}
+                      </p>
+                    </div>
+                    <div className="flex gap-1 flex-shrink-0">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-7 w-7 p-0 border-green-300 text-green-700 hover:bg-green-50"
+                        onClick={() => handleAcceptLink(link.id)}
+                      >
+                        <Check className="h-3.5 w-3.5" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-7 w-7 p-0 border-red-300 text-red-600 hover:bg-red-50"
+                        onClick={() => handleRejectLink(link.id)}
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CollapsibleContent>
+          </Card>
+        </Collapsible>
+      )}
+
+      {/* Filters row */}
+      <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+        <div className="relative flex-1 w-full">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Buscar por nombre, dueno, raza..."
@@ -348,114 +629,216 @@ export default function ProviderPatients() {
             className="pl-9 h-9"
           />
         </div>
-        {speciesOptions.length > 1 && (
-          <Select value={filterSpecies} onValueChange={setFilterSpecies}>
-            <SelectTrigger className="w-full sm:w-[140px] h-9">
-              <SelectValue placeholder="Especie" />
+        <div className="flex gap-2 flex-wrap">
+          <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as StatusFilter)}>
+            <SelectTrigger className="w-[150px] h-9">
+              <SelectValue placeholder="Estado" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">Todas</SelectItem>
-              {speciesOptions.map((s) => (
-                <SelectItem key={s} value={s.toLowerCase()}>
-                  {s}
-                </SelectItem>
-              ))}
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="active">Activos</SelectItem>
+              <SelectItem value="new">Nuevos (&lt;30d)</SelectItem>
+              <SelectItem value="inactive">Inactivos (&gt;90d)</SelectItem>
+              <SelectItem value="followup">Con seguimiento</SelectItem>
+              <SelectItem value="overdue">Seg. vencido</SelectItem>
             </SelectContent>
           </Select>
-        )}
+          {speciesOptions.length > 1 && (
+            <Select value={filterSpecies} onValueChange={setFilterSpecies}>
+              <SelectTrigger className="w-[130px] h-9">
+                <SelectValue placeholder="Especie" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todas</SelectItem>
+                {speciesOptions.map((s) => (
+                  <SelectItem key={s} value={s.toLowerCase()}>
+                    {s}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+          <Select value={sortMode} onValueChange={(v) => setSortMode(v as SortMode)}>
+            <SelectTrigger className="w-[150px] h-9">
+              <ArrowUpDown className="h-3.5 w-3.5 mr-1" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="last_visit">Ultima visita</SelectItem>
+              <SelectItem value="name">Nombre</SelectItem>
+              <SelectItem value="followup">Prox. seguimiento</SelectItem>
+            </SelectContent>
+          </Select>
+          {/* View toggle */}
+          <div className="flex border rounded-md">
+            <Button
+              variant={viewMode === 'cards' ? 'default' : 'ghost'}
+              size="sm"
+              className="h-9 w-9 p-0 rounded-r-none"
+              onClick={() => toggleView('cards')}
+              title="Vista cards"
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </Button>
+            <Button
+              variant={viewMode === 'table' ? 'default' : 'ghost'}
+              size="sm"
+              className="h-9 w-9 p-0 rounded-l-none"
+              onClick={() => toggleView('table')}
+              title="Vista tabla"
+            >
+              <List className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
       </div>
 
-      {/* Solicitudes pendientes — banner horizontal compacto */}
-      {pendingLinks && pendingLinks.length > 0 && (
-        <Card className="border-amber-200 bg-amber-50/30">
-          <CardContent className="p-3">
-            <h2 className="text-xs font-semibold text-amber-700 flex items-center gap-1.5 mb-2">
-              <UserPlus className="h-3.5 w-3.5" />
-              {pendingLinks.length} solicitud(es) pendiente(s)
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
-              {pendingLinks.map((link: any) => (
-                <div
-                  key={link.id}
-                  className="flex items-center gap-2 p-2 bg-white rounded-lg border border-amber-100"
-                >
-                  <Avatar className="h-8 w-8 flex-shrink-0">
-                    {link.pets?.photo_url && <AvatarImage src={link.pets.photo_url} />}
-                    <AvatarFallback className="bg-amber-100 text-amber-700 text-[10px]">
-                      {(link.pets?.name || 'M')[0].toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold truncate">{link.pets?.name}</p>
-                    <p className="text-[10px] text-muted-foreground truncate">
-                      {link.pets?.species}
-                      {link.profiles?.display_name ? ` · ${link.profiles.display_name}` : ''}
-                    </p>
-                  </div>
-                  <div className="flex gap-1 flex-shrink-0">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-7 w-7 p-0 border-green-300 text-green-700 hover:bg-green-50"
-                      onClick={() => handleAcceptLink(link.id)}
-                    >
-                      <Check className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-7 w-7 p-0 border-red-300 text-red-600 hover:bg-red-50"
-                      onClick={() => handleRejectLink(link.id)}
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Tabla CRM de pacientes */}
+      {/* Patient list */}
       {filtered.length === 0 ? (
         <div className="text-center py-12">
           <PawPrint className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
           <p className="text-muted-foreground">
-            {search
+            {search || statusFilter !== 'all'
               ? 'No se encontraron pacientes con esos filtros.'
               : 'Aun no tienes pacientes registrados.'}
           </p>
         </div>
+      ) : viewMode === 'cards' ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {filtered.map((patient) => (
+            <PatientCard
+              key={patient.pet_id}
+              patient={patient}
+              onRecord={() =>
+                setActiveRecorderDialog({
+                  petId: patient.pet_id,
+                  petName: patient.pet_name,
+                  species: patient.species ?? undefined,
+                })
+              }
+              onNote={() =>
+                setActiveNoteDialog({ petId: patient.pet_id, petName: patient.pet_name })
+              }
+              onConsolidado={() =>
+                setConsolidadoPet({ id: patient.pet_id, name: patient.pet_name })
+              }
+            />
+          ))}
+        </div>
       ) : (
+        /* Table view */
         <Card>
           <CardContent className="p-0">
-            {/* Header de tabla (solo desktop) */}
             <div className="hidden md:grid grid-cols-12 gap-2 px-4 py-2 bg-muted/50 border-b text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
-              <div className="col-span-4">Paciente</div>
-              <div className="col-span-2">Especie</div>
-              <div className="col-span-2">Dueño</div>
-              <div className="col-span-2">Última visita</div>
-              <div className="col-span-2 text-right">Grabar / Ficha</div>
+              <div className="col-span-3">Paciente</div>
+              <div className="col-span-2">Especie / Edad</div>
+              <div className="col-span-2">Dueno</div>
+              <div className="col-span-1">Notas</div>
+              <div className="col-span-2">Ult. visita</div>
+              <div className="col-span-2 text-right">Acciones</div>
             </div>
             <div className="divide-y divide-border/50">
-              {filtered.map((patient) => (
-                <PatientCardWithSessions
-                  key={patient.pet_id}
-                  patient={patient}
-                  vetUserId={providerId ?? user?.id ?? ''}
-                  providerId={providerId}
-                  onConsolidado={(id, name) => setConsolidadoPet({ id, name })}
-                />
-              ))}
+              {filtered.map((patient) => {
+                const statusInfo = getPatientStatus(
+                  patient.last_visit,
+                  patient.followup_date ?? null,
+                  patient.first_visit
+                );
+                const ago = formatDistanceToNowStrict(new Date(patient.last_visit), {
+                  locale: es,
+                  addSuffix: false,
+                });
+                return (
+                  <div
+                    key={patient.pet_id}
+                    className="flex items-center gap-3 px-4 py-3 md:grid md:grid-cols-12 md:gap-2 hover:bg-muted/30 transition-colors"
+                  >
+                    <div className="md:col-span-3 flex items-center gap-2.5 min-w-0">
+                      <div className="relative">
+                        <Avatar className="h-8 w-8 flex-shrink-0">
+                          {patient.photo_url && (
+                            <AvatarImage src={patient.photo_url} alt={patient.pet_name} />
+                          )}
+                          <AvatarFallback className="bg-teal-100 text-teal-700 font-bold text-xs">
+                            {patient.pet_name[0]?.toUpperCase() || 'M'}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span
+                          className={`absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full border-2 border-white ${statusInfo.dotClass}`}
+                        />
+                      </div>
+                      <span className="text-sm font-semibold truncate">{patient.pet_name}</span>
+                    </div>
+                    <div className="hidden md:flex md:col-span-2 items-center gap-1.5">
+                      <Badge variant="outline" className="text-[10px] bg-muted/50">
+                        {patient.species || 'Mascota'}
+                      </Badge>
+                      {patient.birth_date && (
+                        <span className="text-[10px] text-muted-foreground">
+                          {calculatePetAge(patient.birth_date)}
+                        </span>
+                      )}
+                    </div>
+                    <div className="hidden md:flex md:col-span-2 items-center">
+                      <span className="text-xs text-muted-foreground truncate">
+                        {patient.owner_name || '—'}
+                      </span>
+                    </div>
+                    <div className="hidden md:flex md:col-span-1 items-center">
+                      <span className="text-xs text-muted-foreground">{patient.total_notes}</span>
+                    </div>
+                    <div className="hidden md:flex md:col-span-2 items-center">
+                      <span className="text-xs text-muted-foreground">hace {ago}</span>
+                    </div>
+                    <div className="md:col-span-2 flex gap-1.5 flex-shrink-0 ml-auto">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-7 w-7 p-0 border-red-200 text-red-600 hover:bg-red-50"
+                        title="Grabar consulta"
+                        onClick={() =>
+                          setActiveRecorderDialog({
+                            petId: patient.pet_id,
+                            petName: patient.pet_name,
+                            species: patient.species ?? undefined,
+                          })
+                        }
+                      >
+                        <span className="text-xs">🎙</span>
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-7 w-7 p-0 border-teal-200 text-teal-600 hover:bg-teal-50"
+                        title="Nota rapida"
+                        onClick={() =>
+                          setActiveNoteDialog({
+                            petId: patient.pet_id,
+                            petName: patient.pet_name,
+                          })
+                        }
+                      >
+                        <span className="text-xs">📝</span>
+                      </Button>
+                      <a href={LINKS.petClinical(patient.pet_id)}>
+                        <Button
+                          size="sm"
+                          className="h-7 gap-1 text-xs px-2 bg-teal-600 hover:bg-teal-700"
+                        >
+                          Ficha
+                        </Button>
+                      </a>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
       )}
 
       {/* Mascotas pendientes de dueno */}
-      {pendingPets && pendingPets.length > 0 && (
+      {statusFilter !== 'pending_claim' && pendingPets && pendingPets.length > 0 && (
         <Card className="border-muted">
           <CardContent className="p-3">
             <h2 className="text-xs font-semibold text-muted-foreground flex items-center gap-1.5 mb-2">
@@ -498,7 +881,7 @@ export default function ProviderPatients() {
         </Card>
       )}
 
-      {/* Modal consolidado IA */}
+      {/* Shared dialogs */}
       <PatientConsolidatedSummary
         petId={consolidadoPet?.id ?? null}
         petName={consolidadoPet?.name ?? ''}
@@ -507,263 +890,40 @@ export default function ProviderPatients() {
           if (!open) setConsolidadoPet(null);
         }}
       />
-    </div>
-  );
-}
 
-/** Card de paciente con accordion de sesiones grabadas/escritas */
-function PatientCardWithSessions({
-  patient,
-  vetUserId,
-  providerId,
-  onConsolidado,
-}: {
-  patient: PatientRow;
-  vetUserId: string;
-  providerId: string | null;
-  onConsolidado: (petId: string, petName: string) => void;
-}) {
-  const [showQuickNote, setShowQuickNote] = useState(false);
-  const [showRecorder, setShowRecorder] = useState(false);
-  const ago = formatDistanceToNowStrict(new Date(patient.last_visit), {
-    locale: es,
-    addSuffix: false,
-  });
-
-  // Fetch vet notes for this patient
-  const { data: notes } = useQuery<VetClinicalNote[]>({
-    queryKey: ['vet-notes-for-patient', patient.pet_id, vetUserId],
-    queryFn: async () => {
-      const { data, error } = await sb
-        .from('vet_clinical_notes')
-        .select('*, service_providers(display_name)')
-        .eq('pet_id', patient.pet_id)
-        .eq('provider_id', vetUserId)
-        .order('created_at', { ascending: false })
-        .limit(20);
-      if (error) return [];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return ((data ?? []) as any[]).map((row) => ({
-        ...row,
-        provider_name: row.service_providers?.display_name ?? 'Veterinario',
-      }));
-    },
-    enabled: !!vetUserId,
-    staleTime: 2 * 60 * 1000,
-  });
-
-  const audioCount = notes?.filter((n) => n.source === 'audio_transcription').length ?? 0;
-  const totalNotes = notes?.length ?? 0;
-
-  return (
-    <div className="hover:bg-muted/30 transition-colors">
-      {/* Row principal */}
-      <div className="flex items-center gap-3 px-4 py-3 md:grid md:grid-cols-12 md:gap-2">
-        {/* Paciente (avatar + nombre) */}
-        <div className="md:col-span-4 flex items-center gap-2.5 min-w-0">
-          <Avatar className="h-9 w-9 flex-shrink-0">
-            {patient.photo_url && <AvatarImage src={patient.photo_url} alt={patient.pet_name} />}
-            <AvatarFallback className="bg-teal-100 text-teal-700 font-bold text-xs">
-              {patient.pet_name[0]?.toUpperCase() || 'M'}
-            </AvatarFallback>
-          </Avatar>
-          <div className="min-w-0">
-            <p className="text-sm font-semibold truncate">{patient.pet_name}</p>
-            {totalNotes > 0 && (
-              <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                <Stethoscope className="h-2.5 w-2.5" />
-                {totalNotes} sesion{totalNotes !== 1 ? 'es' : ''}
-                {audioCount > 0 && (
-                  <span className="flex items-center gap-0.5 text-red-500">
-                    <Mic className="h-2.5 w-2.5" /> {audioCount}
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Especie */}
-        <div className="hidden md:flex md:col-span-2 items-center">
-          <Badge variant="outline" className="text-[10px] bg-muted/50">
-            {patient.species || 'Mascota'}
-          </Badge>
-        </div>
-
-        {/* Dueño */}
-        <div className="hidden md:flex md:col-span-2 items-center">
-          <span className="text-xs text-muted-foreground truncate">
-            {patient.owner_name || '—'}
-          </span>
-        </div>
-
-        {/* Última visita */}
-        <div className="hidden md:flex md:col-span-2 items-center">
-          <span className="text-xs text-muted-foreground">hace {ago}</span>
-        </div>
-
-        {/* Acciones */}
-        <div className="md:col-span-2 flex gap-1.5 flex-shrink-0 ml-auto">
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-7 gap-1 text-xs px-2 border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300"
-            title="Grabar consulta con IA"
-            onClick={() => setShowRecorder(true)}
-          >
-            <Mic className="h-3 w-3" />
-            <span className="hidden sm:inline">Grabar</span>
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-7 gap-1 text-xs px-2 border-purple-200 text-purple-600 hover:bg-purple-50"
-            title="Nota clínica rápida"
-            onClick={() => setShowQuickNote(true)}
-          >
-            <Pencil className="h-3 w-3" />
-            <span className="hidden sm:inline">Nota</span>
-          </Button>
-          {totalNotes > 0 && (
-            <Button
-              size="sm"
-              variant="ghost"
-              className="h-7 w-7 p-0 text-teal-700 hover:bg-teal-50"
-              onClick={() => onConsolidado(patient.pet_id, patient.pet_name)}
-              title="Consolidado IA"
-            >
-              <Sparkles className="h-3.5 w-3.5" />
-            </Button>
-          )}
-          <Link to={LINKS.petClinical(patient.pet_id)}>
-            <Button size="sm" variant="default" className="h-7 gap-1 text-xs px-2">
-              <FileText className="h-3 w-3" />
-              Ficha
-            </Button>
-          </Link>
-        </div>
-      </div>
-
-      {/* Accordion de sesiones (expandible) */}
-      {totalNotes > 0 && (
-        <Collapsible>
-          <CollapsibleTrigger className="flex items-center gap-2 text-[11px] text-teal-700 hover:text-teal-900 transition-colors group w-full px-4 pb-2">
-            <Calendar className="h-3 w-3" />
-            <span className="font-medium">Sesiones ({totalNotes})</span>
-            <ChevronDown className="h-3 w-3 ml-auto transition-transform group-data-[state=open]:rotate-180" />
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <div className="px-4 pb-3 space-y-1.5">
-              {notes?.map((note) => (
-                <SessionItem key={note.id} note={note} />
-              ))}
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
-      )}
-
-      {/* Quick note dialog */}
-      {providerId && (
-        <Dialog open={showQuickNote} onOpenChange={setShowQuickNote}>
+      {/* Note editor dialog */}
+      {providerId && activeNoteDialog && (
+        <Dialog
+          open={!!activeNoteDialog}
+          onOpenChange={(open) => !open && setActiveNoteDialog(null)}
+        >
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Nota clinica — {patient.pet_name}</DialogTitle>
+              <DialogTitle>Nota clinica — {activeNoteDialog.petName}</DialogTitle>
             </DialogHeader>
             <VetNoteEditor
-              petId={patient.pet_id}
-              petName={patient.pet_name}
+              petId={activeNoteDialog.petId}
+              petName={activeNoteDialog.petName}
               providerId={providerId}
-              onSaved={() => setShowQuickNote(false)}
+              onSaved={() => {
+                setActiveNoteDialog(null);
+                refetch();
+              }}
             />
           </DialogContent>
         </Dialog>
       )}
 
-      {/* Quick recorder dialog */}
-      {providerId && (
+      {/* Recorder dialog */}
+      {providerId && activeRecorderDialog && (
         <ConsultationRecorderModal
-          open={showRecorder}
-          onOpenChange={setShowRecorder}
+          open={!!activeRecorderDialog}
+          onOpenChange={(open) => !open && setActiveRecorderDialog(null)}
           providerId={providerId}
-          petId={patient.pet_id}
-          petName={patient.pet_name}
-          petSpecies={patient.species ?? undefined}
+          petId={activeRecorderDialog.petId}
+          petName={activeRecorderDialog.petName}
+          petSpecies={activeRecorderDialog.species}
         />
-      )}
-    </div>
-  );
-}
-
-/** Item individual de sesion dentro del accordion */
-function SessionItem({ note }: { note: VetClinicalNote }) {
-  const isAudio = note.source === 'audio_transcription';
-  const dateStr = note.consultation_date ?? note.created_at;
-  let formattedDate = '';
-  try {
-    formattedDate = new Date(dateStr).toLocaleDateString('es-CL', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
-    });
-  } catch {
-    formattedDate = dateStr;
-  }
-
-  return (
-    <div className="p-3 bg-muted/30 rounded-lg border border-border/50">
-      <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-xs text-muted-foreground">{formattedDate}</span>
-        <Badge variant="outline" className="text-[10px]">
-          {NOTE_TYPE_LABELS[note.note_type] || note.note_type}
-        </Badge>
-        {isAudio ? (
-          <Badge variant="outline" className="text-[10px] bg-red-50 text-red-600 border-red-200">
-            <Mic className="h-2.5 w-2.5 mr-0.5" />
-            Grabada
-          </Badge>
-        ) : (
-          <Badge
-            variant="outline"
-            className="text-[10px] bg-slate-50 text-slate-500 border-slate-200"
-          >
-            <Pencil className="h-2.5 w-2.5 mr-0.5" />
-            Manual
-          </Badge>
-        )}
-      </div>
-
-      <p className="text-sm font-medium mt-1">{note.title}</p>
-
-      {note.description && (
-        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{note.description}</p>
-      )}
-
-      {note.followup_date && (
-        <div className="flex items-center gap-1 text-xs text-amber-600 mt-1.5">
-          <Calendar className="h-3 w-3" />
-          Seguimiento: {note.followup_date}
-          {note.followup_reason && <span>— {note.followup_reason}</span>}
-        </div>
-      )}
-
-      {note.alternative_offered && note.alternatives_discussed && (
-        <p className="text-xs text-green-600 mt-1">Alternativas: {note.alternatives_discussed}</p>
-      )}
-
-      {/* Transcripcion original expandible */}
-      {isAudio && note.raw_transcript && (
-        <Collapsible className="mt-2">
-          <CollapsibleTrigger className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground transition-colors group">
-            <Mic className="h-3 w-3 text-red-400" />
-            Ver transcripcion completa
-            <ChevronDown className="h-3 w-3 transition-transform group-data-[state=open]:rotate-180" />
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <div className="mt-1.5 p-2.5 bg-muted/50 rounded text-[11px] leading-relaxed whitespace-pre-wrap max-h-40 overflow-y-auto border border-border/40">
-              {note.raw_transcript}
-            </div>
-          </CollapsibleContent>
-        </Collapsible>
       )}
     </div>
   );

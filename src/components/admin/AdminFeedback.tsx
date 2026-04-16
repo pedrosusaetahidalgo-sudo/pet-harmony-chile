@@ -104,10 +104,18 @@ export default function AdminFeedback() {
     );
   };
 
+  const rated = feedback.filter((f) => f.app_rating != null);
+  const avgRating =
+    rated.length > 0
+      ? (rated.reduce((sum, f) => sum + (f.app_rating ?? 0), 0) / rated.length).toFixed(1)
+      : null;
+
   const counts = {
     total: feedback.length,
     liked: feedback.filter((f) => f.admin_liked).length,
     rewarded: feedback.filter((f) => f.paw_points_awarded > 0).length,
+    rated: rated.length,
+    avgRating,
   };
 
   return (
@@ -120,6 +128,12 @@ export default function AdminFeedback() {
           <span>{counts.total} total</span>
           <span>{counts.liked} destacados</span>
           <span>{counts.rewarded} recompensados</span>
+          {counts.avgRating && (
+            <span className="flex items-center gap-1">
+              <Star className="h-3 w-3 text-amber-400 fill-amber-400" />
+              {counts.avgRating} ({counts.rated})
+            </span>
+          )}
         </div>
       </div>
 
@@ -181,6 +195,21 @@ export default function AdminFeedback() {
                         >
                           +{fb.paw_points_awarded} pts
                         </Badge>
+                      )}
+                      {fb.app_rating != null && (
+                        <span className="flex items-center gap-0.5 ml-1">
+                          {[1, 2, 3, 4, 5].map((s) => (
+                            <Star
+                              key={s}
+                              className={cn(
+                                'h-3 w-3',
+                                s <= fb.app_rating!
+                                  ? 'text-amber-400 fill-amber-400'
+                                  : 'text-slate-600'
+                              )}
+                            />
+                          ))}
+                        </span>
                       )}
                     </div>
                     <span className="text-xs text-muted-foreground whitespace-nowrap">

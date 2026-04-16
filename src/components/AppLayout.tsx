@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { useLocation } from 'react-router-dom';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { AppSidebar } from '@/components/AppSidebar';
 import { Header } from '@/components/Header';
@@ -14,8 +15,14 @@ interface AppLayoutProps {
 
 function LayoutInner({ children }: AppLayoutProps) {
   const isMobile = useIsMobile();
+  const { pathname } = useLocation();
+  const isAdmin = pathname === '/admin';
   useErrorReporter(); // Global error capture to error_logs
   useAnalyticsTracker(); // Page views, dwell time, sessions
+
+  if (isAdmin) {
+    return <div className="min-h-screen bg-background overflow-x-hidden">{children}</div>;
+  }
 
   return (
     <div className="min-h-screen flex w-full bg-background overflow-x-hidden">

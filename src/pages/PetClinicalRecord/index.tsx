@@ -65,6 +65,7 @@ import { VaccinationCardOCR } from '@/components/onboarding/VaccinationCardOCR';
 import { FileDown } from '@/lib/icons';
 import { VetActionsBar } from './VetActionsBar';
 import { VetQuickNotes } from '@/components/provider/VetQuickNotes';
+import { VetFichaView } from './VetFichaView';
 
 const PetClinicalRecord = () => {
   const { petId } = useParams<{ petId: string }>();
@@ -228,6 +229,19 @@ const PetClinicalRecord = () => {
           description="Solo el dueño o un veterinario vinculado puede ver esta ficha clínica."
         />
       </div>
+    );
+  }
+
+  // Vet view: completely different layout
+  if (viewMode === 'vet' && vetProviderId) {
+    return (
+      <VetFichaView
+        pet={pet}
+        vetNotes={vetNotesForPdf || []}
+        providerId={vetProviderId}
+        shareTokenId={vetShareTokenId}
+        onGeneratePDF={() => generatePDF(pet, medicalRecords, vetNotesForPdf)}
+      />
     );
   }
 

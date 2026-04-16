@@ -18,6 +18,7 @@ export interface FeedbackItem {
   admin_liked: boolean;
   paw_points_awarded: number;
   user_display_name: string | null;
+  app_rating: number | null;
   created_at: string;
   updated_at: string;
 }
