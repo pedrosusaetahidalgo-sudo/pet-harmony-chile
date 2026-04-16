@@ -13,7 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 interface OfferServiceButtonProps {
-  serviceType: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'groomer';
+  serviceType: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'grooming';
   serviceName: string;
   className?: string;
 }

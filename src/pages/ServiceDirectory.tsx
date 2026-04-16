@@ -52,7 +52,7 @@ import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { LINKS } from '@/lib/links';
 
 type ServiceType = 'walkers' | 'vets' | 'sitters' | 'trainers' | 'groomers';
-type PrimaryServiceType = 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'groomer';
+type PrimaryServiceType = 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'grooming';
 type BookingsServiceType = PrimaryServiceType | 'all';
 
 // Unified provider record from service_providers table
@@ -193,7 +193,7 @@ const SERVICE_CONFIG: Record<ServiceType, ServiceConfig> = {
     title: 'Peluqueros para Mascotas',
     subtitle: 'Baño, corte y arreglo profesional para perros y gatos',
     icon: Scissors,
-    primaryServiceType: 'groomer',
+    primaryServiceType: 'grooming',
     serviceName: 'Peluquero',
     maxPrice: 100000,
     gradient: 'from-pink-600 via-rose-500 to-red-500',

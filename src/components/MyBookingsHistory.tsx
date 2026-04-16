@@ -33,7 +33,7 @@ interface Booking {
 }
 
 interface MyBookingsHistoryProps {
-  serviceType: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'groomer' | 'all';
+  serviceType: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'grooming' | 'all';
   onBookingClick?: (booking: Booking) => void;
   className?: string;
 }

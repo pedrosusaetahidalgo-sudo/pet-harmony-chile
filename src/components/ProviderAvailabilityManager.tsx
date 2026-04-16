@@ -18,7 +18,7 @@ import { Calendar as CalendarIcon, RefreshCw } from '@/lib/icons';
 import { logger } from '@/lib/logger';
 
 interface ProviderAvailabilityManagerProps {
-  providerType: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'groomer';
+  providerType: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'grooming';
   className?: string;
 }
 

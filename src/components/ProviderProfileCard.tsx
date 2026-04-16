@@ -37,7 +37,7 @@ interface ProviderProfileCardProps {
     _price?: number;
     _services?: Record<string, boolean> | null;
   };
-  providerType: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'groomer';
+  providerType: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'grooming';
   onViewProfile: () => void;
   onBook: () => void;
   onMessage?: () => void;

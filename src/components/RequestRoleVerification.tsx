@@ -28,7 +28,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
 import { logger } from '@/lib/logger';
 
-type ServiceRole = 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'groomer';
+type ServiceRole = 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'grooming';
 
 interface RoleRequestFormData {
   requested_role: ServiceRole;
@@ -204,7 +204,7 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
         return <Stethoscope className="h-5 w-5" />;
       case 'trainer':
         return <GraduationCap className="h-5 w-5" />;
-      case 'groomer':
+      case 'grooming':
         return <Scissors className="h-5 w-5" />;
       default:
         return null;
@@ -221,7 +221,7 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
         return 'Veterinario a Domicilio';
       case 'trainer':
         return 'Entrenador Canino';
-      case 'groomer':
+      case 'grooming':
         return 'Peluquero de Mascotas';
       default:
         return role;
