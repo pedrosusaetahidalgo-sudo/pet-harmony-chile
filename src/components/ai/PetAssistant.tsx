@@ -39,7 +39,11 @@ export function PetAssistant({ petId, petName, onClose }: Props) {
   const isLimitedByPlan = !isPremium && !aiAccess.allowed && history.length > 0;
 
   const { isLoading, error, isRateLimited, invoke, reset } = useAISkill<
-    { question: string; pet_id: string },
+    {
+      question: string;
+      pet_id: string;
+      conversation_history?: Array<{ role: string; content: string }>;
+    },
     PetAssistantResponse
   >({
     functionName: 'pet-assistant',
@@ -53,7 +57,22 @@ export function PetAssistant({ petId, petName, onClose }: Props) {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!question.trim() || isLoading) return;
-    invoke({ question: question.trim(), pet_id: petId });
+    // Build conversation history from previous exchanges for continuity
+    const conversationHistory = history.flatMap((item) => [
+      { role: 'user' as const, content: item.q },
+      {
+        role: 'assistant' as const,
+        content: JSON.stringify({
+          respuesta: item.a.respuesta,
+          nivel_urgencia: item.a.nivel_urgencia,
+        }),
+      },
+    ]);
+    invoke({
+      question: question.trim(),
+      pet_id: petId,
+      conversation_history: conversationHistory.length > 0 ? conversationHistory : undefined,
+    });
   };
 
   const urgencyColors = {

@@ -2,11 +2,15 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
 import { getCorsHeaders } from '../_shared/cors.ts';
+import { logEdgeFunctionCall } from '../_shared/ai-base.ts';
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: getCorsHeaders(req) });
   }
+
+  const startTime = Date.now();
+  let userId = '';
 
   try {
     // Auth
@@ -33,16 +37,17 @@ serve(async (req) => {
       });
     }
 
-    const userId = userData.user.id;
+    userId = userData.user.id;
 
-    const quota = await checkAiQuota(userId, { limit: 5 });
+    // Atomic rate limiting via RPC (5 requests per day)
+    const quota = await checkAiQuota(userId, { limit: 5, windowSeconds: 86400 });
     if (!quota.allowed) {
       return rateLimitResponse(quota, getCorsHeaders(req));
     }
 
     // Parse input
     const body = await req.json();
-    const { question, pet_id } = body;
+    const { question, pet_id, conversation_history } = body;
 
     // Sanitizar input del usuario contra prompt injection
     const sanitize = (s: string) => {
@@ -68,36 +73,6 @@ serve(async (req) => {
         status: 400,
         headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       });
-    }
-
-    // Pivot médico: todos usan límite premium. Reactivar check cuando USER_PREMIUM=true.
-    const dailyLimit = 5;
-
-    // Rate limiting: free = 1/day, premium = 5/day
-    const today = new Date().toISOString().split('T')[0];
-    const { data: usage, error: usageError } = await supabase
-      .from('ai_usage')
-      .select('calls_today, last_reset_date')
-      .eq('user_id', userId)
-      .eq('skill_name', 'pet-assistant')
-      .maybeSingle();
-
-    let callsToday = 0;
-    if (usage) {
-      callsToday = usage.last_reset_date === today ? usage.calls_today : 0;
-    }
-
-    if (callsToday >= dailyLimit) {
-      return new Response(
-        JSON.stringify({
-          error: `Límite diario alcanzado (${dailyLimit} consultas). Intenta de nuevo mañana.`,
-          rate_limited: true,
-        }),
-        {
-          status: 429,
-          headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-        }
-      );
     }
 
     // Fetch pet data
@@ -169,10 +144,33 @@ serve(async (req) => {
       ? reminders.map((r) => `${r.type}: ${r.title} (${r.due_date})`).join('; ')
       : '';
 
-    const systemPrompt = `Vet Paw Friend Chile. Mascota: ${ctx.join(' | ')}${historial !== 'sin historial' ? `\nHist: ${historial}` : ''}${recordatorios ? `\nRec: ${recordatorios}` : ''}
+    const systemPrompt = `Eres el asistente veterinario de Paw Friend, una app chilena de salud de mascotas. Orientas a dueños con información general.
 
-Nombre real. Grave→urgencia+vet. Alergias→advertir. NO diagnosticar. 2-3 oraciones. Chileno.
-JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":false,"sugerencias_accion":[]}`;
+## PACIENTE
+${ctx.join(' | ')}${historial !== 'sin historial' ? `\nHistorial: ${historial}` : ''}${recordatorios ? `\nRecordatorios: ${recordatorios}` : ''}
+
+## REGLAS
+1. Español chileno (tú, tienes). Llama a la mascota por su nombre.
+2. NUNCA des diagnósticos definitivos. Usa "podría ser", "es posible que".
+3. NUNCA sugieras dosis de medicamentos.
+4. Máximo 3 oraciones + sugerencias de acción.
+5. Si hay alergias registradas y tu sugerencia puede entrar en conflicto, advierte.
+6. Si la pregunta NO es sobre salud/cuidado de mascotas: "Solo puedo ayudarte con temas de salud y cuidado de ${pet.name}."
+
+## EMERGENCIAS
+Si la descripción incluye: convulsiones, dificultad respiratoria aguda, sangrado abundante, sospecha de envenenamiento, trauma severo, pérdida de consciencia, distensión abdominal súbita, o no orina en 24h+:
+→ nivel_urgencia="alto", requiere_veterinario=true
+→ Primera línea: "URGENTE: Lleva a ${pet.name} a urgencias veterinarias AHORA."
+
+## FORMATO (JSON sin markdown)
+{"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":false,"sugerencias_accion":[],"disclaimer":"Orientación general. Consulta a tu veterinario para un diagnóstico profesional."}
+
+## EJEMPLOS
+User: "Mi gata está vomitando mucho desde ayer"
+{"respuesta":"Los vómitos frecuentes en Luna pueden tener varias causas. Si lleva más de 24 horas, especialmente si no retiene agua, es importante que la vea un veterinario pronto. Mientras tanto, retira la comida por 4-6 horas y ofrece solo agua en pequeñas cantidades.","nivel_urgencia":"medio","requiere_veterinario":true,"sugerencias_accion":["Retirar comida sólida por 4-6 horas","Ofrecer agua en cantidades pequeñas","Observar si hay sangre en el vómito","Agendar consulta veterinaria hoy"],"disclaimer":"Orientación general. Consulta a tu veterinario para un diagnóstico profesional."}
+
+User: "¿Cada cuánto debo bañar a mi perro?"
+{"respuesta":"Para Max, un baño cada 3-4 semanas suele ser suficiente. Si tiene piel sensible, tu veterinario puede recomendarte una frecuencia diferente. Usa siempre shampoo especial para perros, nunca shampoo humano.","nivel_urgencia":"bajo","requiere_veterinario":false,"sugerencias_accion":["Usar shampoo específico para mascotas","Secar bien después del baño, especialmente las orejas"],"disclaimer":"Orientación general. Consulta a tu veterinario para un diagnóstico profesional."}`;
 
     // Call Claude
     const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
@@ -200,7 +198,18 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
           max_tokens: 500,
           temperature: 0.3,
           system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
-          messages: [{ role: 'user', content: sanitize(question) }],
+          messages: [
+            // Include conversation history (last 4 exchanges max) for continuity
+            ...(Array.isArray(conversation_history)
+              ? conversation_history
+                  .slice(-8) // max 4 user+assistant pairs
+                  .map((m: { role: string; content: string }) => ({
+                    role: m.role === 'user' ? 'user' : 'assistant',
+                    content: m.role === 'user' ? sanitize(m.content) : m.content.slice(0, 500),
+                  }))
+              : []),
+            { role: 'user', content: sanitize(question) },
+          ],
         }),
         signal: controller.signal,
       });
@@ -295,37 +304,12 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
       ? parsed.sugerencias_accion
       : [];
 
-    // Update rate limit
-    if (usage) {
-      await supabase
-        .from('ai_usage')
-        .update({
-          calls_today: callsToday + 1,
-          calls_total: (usage.calls_total || 0) + 1,
-          last_reset_date: today,
-          last_called_at: new Date().toISOString(),
-        })
-        .eq('user_id', userId)
-        .eq('skill_name', 'pet-assistant');
-    } else {
-      await supabase.from('ai_usage').insert({
-        user_id: userId,
-        skill_name: 'pet-assistant',
-        calls_today: 1,
-        calls_total: 1,
-        last_reset_date: today,
-        last_called_at: new Date().toISOString(),
-      });
-    }
-
-    const remaining = 5 - callsToday - 1;
-
     return new Response(
       JSON.stringify({
         ...parsed,
         recordatorios_relevantes: [],
         pet_name: pet.name,
-        remaining,
+        remaining: quota.remaining,
       }),
       {
         status: 200,
@@ -334,6 +318,13 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
     );
   } catch (error: unknown) {
     console.error('pet-assistant error:', error);
+    logEdgeFunctionCall({
+      functionName: 'pet-assistant',
+      status: 'error',
+      executionTimeMs: Date.now() - startTime,
+      userId,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }).catch(() => {});
     return new Response(
       JSON.stringify({
         error: 'An internal error occurred. Please try again later.',

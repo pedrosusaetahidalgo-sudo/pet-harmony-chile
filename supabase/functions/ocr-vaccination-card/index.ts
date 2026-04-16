@@ -119,12 +119,25 @@ serve(async (req) => {
       mediaType = 'image/webp';
     }
 
-    const systemPrompt = `OCR carnet vacunación veterinario Chile.
+    const systemPrompt = `Eres un sistema OCR especializado en carnets de vacunación veterinarios de Chile.
 
-JSON sin markdown:
-{"vaccines":[{"name":"","date":"YYYY-MM-DD|null","batch":"null","vet_name":"null"}],"deworming":[{"product":"","date":"YYYY-MM-DD|null"}],"notes":""}
+## TAREA
+Analiza la imagen del carnet de vacunación de "${pet.name}" y extrae toda la información visible.
 
-Fechas ISO. Ilegible→null. No inventar. No es carnet→arrays vacíos+nota.`;
+## REGLAS
+1. Solo extrae lo que puedes leer con confianza en la imagen.
+2. Si una fecha es ilegible, usa null (NUNCA inventes fechas).
+3. Si no es un carnet de vacunación, responde con arrays vacíos y una nota explicativa.
+4. Fechas en formato ISO: YYYY-MM-DD.
+5. Diferencia entre vacunas y desparasitaciones (antiparasitarios).
+
+## VACUNAS COMUNES EN CHILE (para validar nombres)
+Perros: Séxtuple/Óctuple, Antirrábica, KC (Kennel Cough), Leptospirosis
+Gatos: Triple felina, Antirrábica, Leucemia felina (FeLV)
+Desparasitantes: Drontal, Milbemax, Endogard, Nexgard, Bravecto, Simparica
+
+## FORMATO DE SALIDA (JSON sin markdown)
+{"vaccines":[{"name":"","date":"YYYY-MM-DD|null","batch":"lote o null","vet_name":"nombre vet o null"}],"deworming":[{"product":"","date":"YYYY-MM-DD|null"}],"notes":"observaciones sobre legibilidad"}`;
 
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 30000); // 30s for vision

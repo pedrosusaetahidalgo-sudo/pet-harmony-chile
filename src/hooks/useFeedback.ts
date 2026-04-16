@@ -21,6 +21,14 @@ export interface FeedbackItem {
   app_rating: number | null;
   created_at: string;
   updated_at: string;
+  // AI classification fields
+  ai_category?: string | null;
+  ai_sentiment?: string | null;
+  ai_urgency?: string | null;
+  ai_summary?: string | null;
+  ai_suggested_response?: string | null;
+  ai_tags?: string[] | null;
+  ai_classified_at?: string | null;
 }
 
 // ── Helper: call feedback-admin edge function ──
@@ -162,6 +170,44 @@ export function useToggleFeedbackLike() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-feedback'] });
+    },
+  });
+}
+
+// ── Admin: AI classify feedback ──
+export function useClassifyFeedback() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async ({ id }: { id: string }) => {
+      return await callFeedbackAdmin('classify', { id });
+    },
+    onSuccess: () => {
+      toast({ title: 'Feedback clasificado por IA' });
+      queryClient.invalidateQueries({ queryKey: ['admin-feedback'] });
+    },
+    onError: () => {
+      toast({ title: 'Error al clasificar', variant: 'destructive' });
+    },
+  });
+}
+
+// ── Admin: batch classify all unclassified feedback ──
+export function useClassifyFeedbackBatch() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async () => {
+      return await callFeedbackAdmin('classify_batch', {});
+    },
+    onSuccess: (data) => {
+      toast({ title: `${data?.classified ?? 0} feedbacks clasificados por IA` });
+      queryClient.invalidateQueries({ queryKey: ['admin-feedback'] });
+    },
+    onError: () => {
+      toast({ title: 'Error en clasificación batch', variant: 'destructive' });
     },
   });
 }

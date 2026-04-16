@@ -249,7 +249,14 @@ Solo reales, no inventar.`;
       }
 
       return new Response(
-        JSON.stringify({ success: true, shelters: inserted, count: inserted?.length }),
+        JSON.stringify({
+          success: true,
+          shelters: inserted,
+          count: inserted?.length,
+          ai_generated: true,
+          disclaimer:
+            'Datos generados por IA. La información de contacto, direcciones y nombres pueden no ser exactos. Verifica antes de contactar.',
+        }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

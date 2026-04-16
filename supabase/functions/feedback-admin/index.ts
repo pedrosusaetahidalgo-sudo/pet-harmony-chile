@@ -13,6 +13,7 @@
  */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { getCorsHeaders, handleCorsOptions } from '../_shared/cors.ts';
+import { callClaude, parseJSON } from '../_shared/ai-base.ts';
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const serviceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -170,6 +171,130 @@ Deno.serve(async (req) => {
         }
 
         return json({ success: true, points });
+      }
+
+      // ── AI classify feedback ──
+      case 'classify': {
+        const { id } = body;
+        if (!id) return json({ error: 'id requerido' }, 400);
+
+        const { data: fb, error: fbErr } = await adminClient
+          .from('feedback_in_app')
+          .select('message, category, page_url')
+          .eq('id', id)
+          .single();
+        if (fbErr || !fb) return json({ error: 'Feedback no encontrado' }, 404);
+
+        const classifyPrompt = `Eres el clasificador de feedback de Paw Friend, una app chilena de mascotas.
+
+## CATEGORÍAS
+- bug: Error técnico o funcionalidad rota
+- ux: Problema de usabilidad
+- feature_request: Solicitud de nueva funcionalidad
+- praise: Elogio o feedback positivo
+- complaint: Queja sobre servicio
+- question: Pregunta que necesita respuesta
+- content: Feedback sobre contenido
+- security: Reporte de seguridad o privacidad
+- other: No clasificable
+
+## FORMATO (JSON sin markdown)
+{"category":"bug|ux|feature_request|praise|complaint|question|content|security|other","sentiment":"positive|neutral|negative","urgency":"critical|high|medium|low","summary":"1 oración resumen","suggested_response":"respuesta sugerida (español chileno, 1-2 oraciones)","tags":["tag1"],"affects_feature":"módulo afectado o null"}
+
+## URGENCIA
+- critical: Seguridad, pérdida de datos, feature core roto
+- high: Bug reproducible en feature principal, usuario frustrado
+- medium: Sugerencia valiosa, bug menor, UX confusa
+- low: Nice-to-have, elogio, pregunta general`;
+
+        try {
+          const result = await callClaude({
+            systemPrompt: classifyPrompt,
+            userMessage: `Feedback: "${fb.message}"${fb.category ? `\nCategoría usuario: ${fb.category}` : ''}${fb.page_url ? `\nPágina: ${fb.page_url}` : ''}`,
+            maxTokens: 250,
+            temperature: 0.1,
+            model: 'claude-haiku-4-5-20251001',
+          });
+
+          const classification = parseJSON(result, {
+            category: 'other',
+            sentiment: 'neutral',
+            urgency: 'medium',
+            summary: fb.message.slice(0, 100),
+            suggested_response: null,
+            tags: [],
+            affects_feature: null,
+          });
+
+          // Save classification to feedback record
+          await adminClient
+            .from('feedback_in_app')
+            .update({
+              ai_category: classification.category,
+              ai_sentiment: classification.sentiment,
+              ai_urgency: classification.urgency,
+              ai_summary: classification.summary,
+              ai_suggested_response: classification.suggested_response,
+              ai_tags: classification.tags,
+              ai_classified_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            })
+            .eq('id', id);
+
+          return json({ success: true, classification });
+        } catch (aiErr) {
+          console.error('AI classify error:', aiErr);
+          return json({ error: 'Error al clasificar con IA' }, 502);
+        }
+      }
+
+      // ── Batch classify all unclassified feedback ──
+      case 'classify_batch': {
+        const { data: unclassified } = await adminClient
+          .from('feedback_in_app')
+          .select('id, message, category, page_url')
+          .is('ai_category', null)
+          .order('created_at', { ascending: false })
+          .limit(20);
+
+        if (!unclassified?.length) return json({ success: true, classified: 0 });
+
+        let classified = 0;
+        for (const fb of unclassified) {
+          try {
+            const result = await callClaude({
+              systemPrompt: `Clasificador feedback app mascotas Chile. JSON: {"category":"bug|ux|feature_request|praise|complaint|question|content|security|other","sentiment":"positive|neutral|negative","urgency":"critical|high|medium|low","summary":"1 oración"}`,
+              userMessage: `"${fb.message.slice(0, 300)}"`,
+              maxTokens: 150,
+              temperature: 0.1,
+              model: 'claude-haiku-4-5-20251001',
+            });
+
+            const c = parseJSON(result, {
+              category: 'other',
+              sentiment: 'neutral',
+              urgency: 'medium',
+              summary: fb.message.slice(0, 100),
+            });
+
+            await adminClient
+              .from('feedback_in_app')
+              .update({
+                ai_category: c.category,
+                ai_sentiment: c.sentiment,
+                ai_urgency: c.urgency,
+                ai_summary: c.summary,
+                ai_classified_at: new Date().toISOString(),
+              })
+              .eq('id', fb.id);
+
+            classified++;
+          } catch {
+            console.warn(`Failed to classify feedback ${fb.id}`);
+          }
+        }
+
+        return json({ success: true, classified, total: unclassified.length });
       }
 
       default:

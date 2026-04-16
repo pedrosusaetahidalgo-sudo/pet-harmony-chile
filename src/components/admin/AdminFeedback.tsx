@@ -5,6 +5,8 @@ import {
   useRespondFeedback,
   useToggleFeedbackLike,
   useAwardFeedbackPoints,
+  useClassifyFeedback,
+  useClassifyFeedbackBatch,
 } from '@/hooks/useFeedback';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -38,6 +40,8 @@ import {
   Star,
   Search,
   TrendingUp,
+  Sparkles,
+  Zap,
 } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { format, startOfWeek, subWeeks } from 'date-fns';
@@ -110,6 +114,8 @@ export default function AdminFeedback() {
   const respondFeedback = useRespondFeedback();
   const toggleLike = useToggleFeedbackLike();
   const awardPoints = useAwardFeedbackPoints();
+  const classifyFeedback = useClassifyFeedback();
+  const classifyBatch = useClassifyFeedbackBatch();
 
   // Dialog state
   const [respondingTo, setRespondingTo] = useState<FeedbackItem | null>(null);
@@ -168,9 +174,25 @@ export default function AdminFeedback() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between flex-wrap gap-3">
-        <h2 className="text-lg font-semibold flex items-center gap-2 text-slate-100">
-          <MessageSquare className="h-5 w-5" /> Feedback de usuarios
-        </h2>
+        <div className="flex items-center gap-3">
+          <h2 className="text-lg font-semibold flex items-center gap-2 text-slate-100">
+            <MessageSquare className="h-5 w-5" /> Feedback de usuarios
+          </h2>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 text-xs border-indigo-500/30 text-indigo-400 hover:bg-indigo-950/30"
+            onClick={() => classifyBatch.mutate()}
+            disabled={classifyBatch.isPending}
+          >
+            {classifyBatch.isPending ? (
+              <Loader2 className="h-3 w-3 animate-spin mr-1" />
+            ) : (
+              <Zap className="h-3 w-3 mr-1" />
+            )}
+            Clasificar todo con IA
+          </Button>
+        </div>
         <div className="flex items-center gap-3 text-xs text-slate-400">
           <span>{counts.total} total</span>
           <span>{counts.liked} destacados</span>
@@ -355,6 +377,88 @@ export default function AdminFeedback() {
 
                   {/* Description */}
                   <p className="text-sm text-slate-200">{fb.description}</p>
+
+                  {/* AI Classification */}
+                  {fb.ai_category ? (
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <Sparkles className="h-3 w-3 text-indigo-400" />
+                      <Badge
+                        variant="outline"
+                        className="text-[10px] border-indigo-500/40 text-indigo-300"
+                      >
+                        {fb.ai_category}
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          'text-[10px]',
+                          fb.ai_sentiment === 'positive'
+                            ? 'border-green-500/40 text-green-300'
+                            : fb.ai_sentiment === 'negative'
+                              ? 'border-red-500/40 text-red-300'
+                              : 'border-slate-600 text-slate-400'
+                        )}
+                      >
+                        {fb.ai_sentiment}
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          'text-[10px]',
+                          fb.ai_urgency === 'critical'
+                            ? 'border-red-500/40 text-red-300'
+                            : fb.ai_urgency === 'high'
+                              ? 'border-orange-500/40 text-orange-300'
+                              : fb.ai_urgency === 'medium'
+                                ? 'border-amber-500/40 text-amber-300'
+                                : 'border-slate-600 text-slate-400'
+                        )}
+                      >
+                        {fb.ai_urgency}
+                      </Badge>
+                      {fb.ai_summary && (
+                        <span className="text-[10px] text-slate-500 italic ml-1">
+                          {fb.ai_summary}
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 text-[10px] text-indigo-400 hover:text-indigo-300 px-2"
+                      onClick={() => classifyFeedback.mutate({ id: fb.id })}
+                      disabled={classifyFeedback.isPending}
+                    >
+                      {classifyFeedback.isPending ? (
+                        <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                      ) : (
+                        <Sparkles className="h-3 w-3 mr-1" />
+                      )}
+                      Clasificar con IA
+                    </Button>
+                  )}
+
+                  {/* AI suggested response */}
+                  {fb.ai_suggested_response && !fb.admin_response && (
+                    <div className="bg-indigo-950/20 rounded-md p-2 border border-indigo-900/30">
+                      <p className="text-[10px] font-medium text-indigo-400 mb-0.5">
+                        Respuesta sugerida por IA:
+                      </p>
+                      <p className="text-xs text-slate-400">{fb.ai_suggested_response}</p>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 text-[10px] text-indigo-400 mt-1 px-2"
+                        onClick={() => {
+                          setRespondingTo(fb);
+                          setResponseText(fb.ai_suggested_response || '');
+                        }}
+                      >
+                        Usar como base
+                      </Button>
+                    </div>
+                  )}
 
                   {/* Admin response */}
                   {fb.admin_response && (

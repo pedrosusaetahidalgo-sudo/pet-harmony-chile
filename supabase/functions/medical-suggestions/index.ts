@@ -40,7 +40,7 @@ serve(async (req) => {
       return rateLimitResponse(quota, corsHeaders);
     }
 
-    const { breed, species, recordType } = await req.json();
+    const { breed, species, recordType, petAge, allergies } = await req.json();
 
     // Input validation
     if (!breed || typeof breed !== 'string') {
@@ -99,7 +99,20 @@ JSON array 6-10 items, sin texto:
 Solo tratamientos/vacunas reales en Chile. Chileno.`;
 
     const speciesLabel = species === 'perro' ? 'perro' : species === 'gato' ? 'gato' : species;
-    const userPrompt = `${recordType} para ${speciesLabel} ${breed}, Chile. 6-10 opciones.`;
+    // Enrich with pet age and allergies for better context
+    const ageLabel =
+      typeof petAge === 'number'
+        ? petAge <= 1
+          ? ' (cachorro/gatito)'
+          : petAge >= 8
+            ? ' (senior)'
+            : ' (adulto)'
+        : '';
+    const allergyWarning =
+      Array.isArray(allergies) && allergies.length > 0
+        ? `\nALERGIAS: ${allergies.join(', ')} — NO sugerir estos.`
+        : '';
+    const userPrompt = `${recordType} para ${speciesLabel} ${breed}${ageLabel}, Chile. 6-10 opciones.${allergyWarning}`;
 
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
