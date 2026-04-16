@@ -22,6 +22,7 @@ import {
   ChevronsLeft,
   ChevronRight,
   User,
+  Download,
 } from '@/lib/icons';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import {
@@ -58,6 +59,7 @@ import AdminPendingPets from '@/components/admin/AdminPendingPets';
 import AdminLeadsCRM from '@/components/admin/AdminLeadsCRM';
 import AdminFeedback from '@/components/admin/AdminFeedback';
 import AdminBookingsPanel from '@/components/admin/AdminBookingsPanel';
+import AdminExports from '@/components/admin/AdminExports';
 
 // ── Section definitions ──────────────────────────────────
 interface Section {
@@ -83,6 +85,7 @@ const SECTIONS: Section[] = [
   { id: 'commercial', label: 'Comercial', icon: Megaphone, group: 4 },
   { id: 'leads-crm', label: 'Leads Vets', icon: Target, group: 4 },
   // Group 5: System
+  { id: 'exports', label: 'Exports', icon: Download, group: 5 },
   { id: 'system', label: 'Sistema', icon: Settings, group: 5 },
 ];
 
@@ -430,6 +433,8 @@ const Admin = () => {
         return <CommercialSection />;
       case 'leads-crm':
         return <AdminLeadsCRM />;
+      case 'exports':
+        return <AdminExports />;
       case 'system':
         return <SystemSection />;
       default:
