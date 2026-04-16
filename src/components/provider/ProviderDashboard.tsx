@@ -92,7 +92,7 @@ const ProviderDashboard = () => {
 
   return (
     <div className="space-y-4">
-      {/* ═══ Zona A: Quick Actions Bar ═══ */}
+      {/* ═══ Header + Quick Actions ═══ */}
       <QuickActionsBar
         displayName={profile?.display_name || user?.email?.split('@')[0] || 'Doc'}
         period={period}
@@ -101,107 +101,113 @@ const ProviderDashboard = () => {
         onRecordConsultation={() => setActiveTab('clinico')}
       />
 
-      {/* Profile links */}
-      <div className="flex gap-2 flex-wrap">
-        {stats.slug && (
-          <Link to={`/veterinarios/${stats.slug}`}>
-            <Button variant="outline" size="sm" className="text-xs gap-1">
-              <Eye className="h-3.5 w-3.5" /> Ver perfil publico
-            </Button>
-          </Link>
-        )}
-        <Link to="/provider/profile-edit">
-          <Button variant="outline" size="sm" className="text-xs gap-1">
-            <UserCog className="h-3.5 w-3.5" /> Editar perfil
-          </Button>
-        </Link>
+      {/* ═══ Two-column layout: Metrics+Alerts (left) + Next24h+Actions (right) ═══ */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        {/* Left: 2/3 width — Metrics */}
+        <div className="lg:col-span-2 space-y-3">
+          {/* Metric cards 2x3 → 3x2 */}
+          <div className="grid grid-cols-3 gap-2">
+            <InteractiveMetricCard
+              label="Pacientes"
+              value={stats.patientsThisMonth}
+              subtitle={`${stats.notesThisMonth} nota${stats.notesThisMonth !== 1 ? 's' : ''}`}
+              icon={Users}
+              iconColor="text-teal-600"
+              accentColor="#0d9488"
+              onClick={() => setActiveTab('pacientes')}
+              tooltip="Mascotas unicas atendidas"
+              tooltipWhere="Pacientes"
+            />
+            <InteractiveMetricCard
+              label="Reservas"
+              value={stats.bookingsThisMonth}
+              subtitle="Este mes"
+              icon={Calendar}
+              iconColor="text-slate-500"
+              accentColor="#64748b"
+              onClick={() => setActiveTab('negocio')}
+              tooltip="Reservas agendadas"
+              tooltipWhere="Reservas"
+            />
+            <InteractiveMetricCard
+              label="Ingresos"
+              value={stats.estimatedRevenue > 0 ? formatCLP(stats.estimatedRevenue) : '$0'}
+              subtitle="Este mes"
+              icon={TrendingUp}
+              iconColor="text-emerald-600"
+              accentColor="#059669"
+              onClick={() => setActiveTab('negocio')}
+              tooltip="Reservas completadas"
+              tooltipWhere="Negocio"
+            />
+            <InteractiveMetricCard
+              label="Rating"
+              value={stats.avgRating ? stats.avgRating.toFixed(1) : '—'}
+              subtitle={`${stats.totalReviews} resena${stats.totalReviews !== 1 ? 's' : ''}`}
+              icon={Star}
+              iconColor="text-amber-500"
+              accentColor="#d97706"
+              onClick={() => setActiveTab('negocio')}
+              tooltip="Promedio resenas"
+              tooltipWhere="Resenas"
+            />
+            <InteractiveMetricCard
+              label="Seguimientos"
+              value={stats.followupsPending}
+              subtitle="7 dias"
+              icon={ClipboardList}
+              iconColor="text-orange-500"
+              accentColor="#f97316"
+              onClick={() => setActiveTab('clinico')}
+              tooltip="Seguimientos programados"
+              tooltipWhere="Clinico"
+            />
+            <InteractiveMetricCard
+              label="Fichas"
+              value={stats.sharedFichasThisWeek}
+              subtitle="7 dias"
+              icon={FileText}
+              iconColor="text-blue-500"
+              accentColor="#3b82f6"
+              onClick={() => setActiveTab('clinico')}
+              tooltip="Fichas compartidas"
+              tooltipWhere="Clinico"
+            />
+          </div>
+
+          {/* Alerts banner (compact) */}
+          <AlertsBanner
+            followupsPending={stats.followupsPending}
+            sharedFichasThisWeek={stats.sharedFichasThisWeek}
+            pendingLinksCount={pendingLinksCount}
+            onClickFollowups={() => setActiveTab('clinico')}
+            onClickFichas={() => setActiveTab('clinico')}
+            onClickLinks={() => setActiveTab('clinico')}
+          />
+        </div>
+
+        {/* Right: 1/3 width — Next 24h + Profile links */}
+        <div className="space-y-3">
+          <Next24hCard />
+          <PendingVetLinksCard />
+          <div className="flex gap-2">
+            {stats.slug && (
+              <Link to={`/veterinarios/${stats.slug}`} className="flex-1">
+                <Button variant="outline" size="sm" className="w-full text-xs gap-1 h-9">
+                  <Eye className="h-3.5 w-3.5" /> Ver perfil
+                </Button>
+              </Link>
+            )}
+            <Link to="/provider/profile-edit" className="flex-1">
+              <Button variant="outline" size="sm" className="w-full text-xs gap-1 h-9">
+                <UserCog className="h-3.5 w-3.5" /> Editar
+              </Button>
+            </Link>
+          </div>
+        </div>
       </div>
 
-      {/* ═══ Próximas 24h summary ═══ */}
-      <Next24hCard />
-
-      {/* ═══ Zona B: Alerts ═══ */}
-      <PendingVetLinksCard />
-      <AlertsBanner
-        followupsPending={stats.followupsPending}
-        sharedFichasThisWeek={stats.sharedFichasThisWeek}
-        pendingLinksCount={pendingLinksCount}
-        onClickFollowups={() => setActiveTab('clinico')}
-        onClickFichas={() => setActiveTab('clinico')}
-        onClickLinks={() => setActiveTab('clinico')}
-      />
-
-      {/* ═══ Zona C: Interactive Metric Cards ═══ */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-        <InteractiveMetricCard
-          label="Pacientes"
-          value={stats.patientsThisMonth}
-          subtitle={`${stats.notesThisMonth} nota${stats.notesThisMonth !== 1 ? 's' : ''}`}
-          icon={Users}
-          iconColor="text-teal-600"
-          accentColor="#0d9488"
-          onClick={() => setActiveTab('pacientes')}
-          tooltip="Mascotas unicas atendidas este mes"
-          tooltipWhere="Tab Pacientes"
-        />
-        <InteractiveMetricCard
-          label="Reservas"
-          value={stats.bookingsThisMonth}
-          subtitle="Este mes"
-          icon={Calendar}
-          iconColor="text-slate-500"
-          accentColor="#64748b"
-          onClick={() => setActiveTab('negocio')}
-          tooltip="Reservas agendadas este mes desde el directorio"
-          tooltipWhere="Mis reservas"
-        />
-        <InteractiveMetricCard
-          label="Ingresos"
-          value={stats.estimatedRevenue > 0 ? formatCLP(stats.estimatedRevenue) : '$0'}
-          subtitle="Este mes"
-          icon={TrendingUp}
-          iconColor="text-emerald-600"
-          accentColor="#059669"
-          onClick={() => setActiveTab('negocio')}
-          tooltip="Suma de reservas completadas este mes"
-          tooltipWhere="Tab Negocio > Analytics completos"
-        />
-        <InteractiveMetricCard
-          label="Calificacion"
-          value={stats.avgRating ? stats.avgRating.toFixed(1) : '—'}
-          subtitle={`${stats.totalReviews} resena${stats.totalReviews !== 1 ? 's' : ''}`}
-          icon={Star}
-          iconColor="text-amber-500"
-          accentColor="#d97706"
-          onClick={() => setActiveTab('negocio')}
-          tooltip="Promedio de resenas de tus pacientes"
-          tooltipWhere="Perfil publico > Resenas"
-        />
-        <InteractiveMetricCard
-          label="Seguimientos"
-          value={stats.followupsPending}
-          subtitle="Proximos 7 dias"
-          icon={ClipboardList}
-          iconColor="text-orange-500"
-          accentColor="#f97316"
-          onClick={() => setActiveTab('clinico')}
-          tooltip="Consultas con seguimiento programado para los proximos 7 dias"
-          tooltipWhere="Tab Clinico > Seguimientos"
-        />
-        <InteractiveMetricCard
-          label="Fichas"
-          value={stats.sharedFichasThisWeek}
-          subtitle="Ultimos 7 dias"
-          icon={FileText}
-          iconColor="text-blue-500"
-          accentColor="#3b82f6"
-          onClick={() => setActiveTab('clinico')}
-          tooltip="Fichas medicas compartidas contigo por duenos de mascotas"
-          tooltipWhere="Tab Clinico > Fichas compartidas"
-        />
-      </div>
-
-      {/* ═══ Zona D: Tabbed Content ═══ */}
+      {/* ═══ Tabbed Content ═══ */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="clinico" className="text-xs sm:text-sm gap-1">
@@ -218,11 +224,11 @@ const ProviderDashboard = () => {
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="clinico" className="mt-4">
+        <TabsContent value="clinico" className="mt-3">
           <ClinicalTab providerId={stats.providerId} />
         </TabsContent>
 
-        <TabsContent value="negocio" className="mt-4">
+        <TabsContent value="negocio" className="mt-3">
           <BusinessTab
             stats={stats}
             vetSummary={vetAnalytics?.summary ?? null}
@@ -230,70 +236,49 @@ const ProviderDashboard = () => {
           />
         </TabsContent>
 
-        <TabsContent value="pacientes" className="mt-4">
+        <TabsContent value="pacientes" className="mt-3">
           <PatientsTab onNewPatient={() => setShowNewPatient(true)} />
         </TabsContent>
       </Tabs>
 
-      {/* ═══ Zona E: Activity Feed ═══ */}
-      <ActivityFeed />
-
-      {/* Onboarding: vet sin actividad */}
+      {/* Onboarding: vet sin actividad (compact) */}
       {!hasActivity && (
-        <Card className="border-teal-200 bg-gradient-to-br from-teal-50 to-slate-50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <Stethoscope className="h-4 w-4 text-teal-700" />
-              Primeros pasos
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            <Link to="/provider/profile-edit" className="block">
-              <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-teal-200 hover:shadow-sm transition">
-                <div>
-                  <p className="text-xs font-semibold">1. Completa tu perfil publico</p>
-                  <p className="text-[11px] text-muted-foreground">
-                    Foto, bio, especialidades, comuna.
-                  </p>
-                </div>
-                <span className="text-teal-500">→</span>
-              </div>
-            </Link>
-            {stats.slug && (
-              <Link to={`/veterinarios/${stats.slug}`} className="block">
-                <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-teal-200 hover:shadow-sm transition">
-                  <div>
-                    <p className="text-xs font-semibold">2. Revisa como te ven los duenos</p>
-                    <p className="text-[11px] text-muted-foreground">Abre tu perfil publico.</p>
-                  </div>
-                  <span className="text-teal-500">→</span>
-                </div>
+        <Card className="border-teal-200 bg-teal-50/30">
+          <CardContent className="p-3 space-y-1.5">
+            <p className="text-xs font-semibold text-teal-800 flex items-center gap-1.5">
+              <Stethoscope className="h-3.5 w-3.5" /> Primeros pasos
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
+              <Link
+                to="/provider/profile-edit"
+                className="flex items-center gap-2 p-2 bg-white rounded-lg border border-teal-100 hover:shadow-sm transition text-xs"
+              >
+                <span className="text-teal-600 font-bold">1</span>
+                <span>Completa tu perfil</span>
               </Link>
-            )}
-            <Link
-              to={stats.slug ? `/veterinarios/${stats.slug}` : '/provider/profile-edit'}
-              className="block"
-            >
-              <div className="flex items-center justify-between p-2.5 bg-white rounded-lg border border-teal-200 hover:shadow-sm transition">
-                <div>
-                  <p className="text-xs font-semibold">3. Comparte tu URL</p>
-                  <p className="text-[11px] text-muted-foreground">
-                    {stats.slug
-                      ? `pawfriend.cl/veterinarios/${stats.slug}`
-                      : 'Completa tu perfil primero'}
-                  </p>
-                </div>
-                <span className="text-teal-500">→</span>
-              </div>
-            </Link>
+              {stats.slug && (
+                <Link
+                  to={`/veterinarios/${stats.slug}`}
+                  className="flex items-center gap-2 p-2 bg-white rounded-lg border border-teal-100 hover:shadow-sm transition text-xs"
+                >
+                  <span className="text-teal-600 font-bold">2</span>
+                  <span>Vista previa publica</span>
+                </Link>
+              )}
+              <Link
+                to={stats.slug ? `/veterinarios/${stats.slug}` : '/provider/profile-edit'}
+                className="flex items-center gap-2 p-2 bg-white rounded-lg border border-teal-100 hover:shadow-sm transition text-xs"
+              >
+                <span className="text-teal-600 font-bold">3</span>
+                <span>Comparte tu URL</span>
+              </Link>
+            </div>
           </CardContent>
         </Card>
       )}
 
-      {/* Tutorial floating button */}
       <ViewTutorial {...TUTORIALS.providerDashboard} />
 
-      {/* New Patient Dialog */}
       <Dialog open={showNewPatient} onOpenChange={setShowNewPatient}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
