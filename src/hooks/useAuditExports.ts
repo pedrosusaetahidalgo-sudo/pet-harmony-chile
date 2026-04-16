@@ -1,16 +1,43 @@
-import { useState, useCallback } from 'react';
+/**
+ * ============================================================================
+ * Hook: useAuditExports
+ * ============================================================================
+ *
+ * Maneja el ciclo completo de exports de auditoria:
+ * - Crear job en export_jobs
+ * - Generar Excel client-side
+ * - Subir a Storage (con fallback a descarga directa)
+ * - Historial de exports
+ * - Rate limiting (MAX_EXPORTS_PER_DAY)
+ *
+ * ## Guia para agentes IA
+ *
+ * - Para cambiar el limite diario: editar MAX_EXPORTS_PER_DAY en auditExport.ts
+ * - Para cambiar el bucket de Storage: editar STORAGE_BUCKET abajo
+ * - Para cambiar la duracion del signed URL: editar SIGNED_URL_SECONDS
+ * - El hook expone `canGenerate` que ya incluye validacion de rate limit
+ * ============================================================================
+ */
+import { useState, useCallback, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import {
   generateAuditExport,
+  MAX_EXPORTS_PER_DAY,
   type ExportType,
   type ExportFilters,
   type ExportProgress,
 } from '@/lib/auditExport';
 import { toast } from 'sonner';
 
-interface ExportJob {
+// ── Config (EDITABLE por agente) ───────────────────────────
+const STORAGE_BUCKET = 'audit-exports';
+const SIGNED_URL_SECONDS = 3600; // 1 hora
+const HISTORY_LIMIT = 50;
+
+// ── Types ──────────────────────────────────────────────────
+export interface ExportJob {
   id: string;
   requested_by: string;
   export_type: ExportType;
@@ -29,6 +56,8 @@ interface ExportJob {
   download_count: number;
 }
 
+// ── Hook ───────────────────────────────────────────────────
+
 export function useAuditExports() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -43,12 +72,22 @@ export function useAuditExports() {
         .from('export_jobs')
         .select('*')
         .order('requested_at', { ascending: false })
-        .limit(50);
+        .limit(HISTORY_LIMIT);
       if (error) throw error;
       return data as ExportJob[];
     },
     staleTime: 30_000,
   });
+
+  // Rate limit: count exports today
+  const exportsToday = useMemo(() => {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    return exports.filter((e) => new Date(e.requested_at) >= todayStart).length;
+  }, [exports]);
+
+  const rateLimitReached = exportsToday >= MAX_EXPORTS_PER_DAY;
+  const remainingToday = MAX_EXPORTS_PER_DAY - exportsToday;
 
   // Generate export mutation
   const generateMutation = useMutation({
@@ -60,6 +99,8 @@ export function useAuditExports() {
       filters: ExportFilters;
     }) => {
       if (!user?.email) throw new Error('Usuario no autenticado');
+      if (rateLimitReached)
+        throw new Error(`Limite de ${MAX_EXPORTS_PER_DAY} exports diarios alcanzado`);
 
       setIsGenerating(true);
       setProgress({ step: 'Iniciando...', pct: 0 });
@@ -88,7 +129,7 @@ export function useAuditExports() {
           setProgress
         );
 
-        // 3. Compute hash
+        // 3. Compute SHA-256 hash
         const arrayBuffer = await blob.arrayBuffer();
         const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
@@ -97,16 +138,15 @@ export function useAuditExports() {
         // 4. Upload to Storage
         const filePath = `${user.id}/${new Date().toISOString().slice(0, 7)}/${job.id}.xlsx`;
         const { error: uploadError } = await supabase.storage
-          .from('audit-exports')
+          .from(STORAGE_BUCKET)
           .upload(filePath, blob, {
             contentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             upsert: false,
           });
 
-        // Si el bucket no existe, descargar directamente sin storage
         if (uploadError) {
-          console.warn('Storage upload failed (bucket may not exist):', uploadError.message);
-          // Update job sin file_path
+          console.warn('Storage upload failed:', uploadError.message);
+          // Fallback: update job sin file_path, descarga directa
           await supabase
             .from('export_jobs')
             .update({
@@ -117,42 +157,32 @@ export function useAuditExports() {
               file_hash_sha256: hash,
               completed_at: new Date().toISOString(),
               progress_pct: 100,
-              error_message: 'Archivo generado — descarga directa (bucket no configurado)',
+              error_message: 'Descarga directa (Storage upload fallo)',
             })
             .eq('id', job.id);
-
-          // Direct download
-          downloadBlob(
-            blob,
-            `paw-friend-audit-${exportType}-${new Date().toISOString().slice(0, 10)}.xlsx`
-          );
-          return { jobId: job.id, directDownload: true };
+        } else {
+          // 5. Update job as ready with file_path
+          await supabase
+            .from('export_jobs')
+            .update({
+              status: 'ready',
+              file_path: filePath,
+              file_size_bytes: blob.size,
+              file_hash_sha256: hash,
+              rows_total: totalRows,
+              sheets_count: sheetsCount,
+              completed_at: new Date().toISOString(),
+              progress_pct: 100,
+            })
+            .eq('id', job.id);
         }
 
-        // 5. Update job as ready
-        await supabase
-          .from('export_jobs')
-          .update({
-            status: 'ready',
-            file_path: filePath,
-            file_size_bytes: blob.size,
-            file_hash_sha256: hash,
-            rows_total: totalRows,
-            sheets_count: sheetsCount,
-            completed_at: new Date().toISOString(),
-            progress_pct: 100,
-          })
-          .eq('id', job.id);
+        // Always trigger direct download
+        const filename = `paw-friend-audit-${exportType}-${new Date().toISOString().slice(0, 10)}.xlsx`;
+        downloadBlob(blob, filename);
 
-        // Also trigger direct download
-        downloadBlob(
-          blob,
-          `paw-friend-audit-${exportType}-${new Date().toISOString().slice(0, 10)}.xlsx`
-        );
-
-        return { jobId: job.id, directDownload: false };
+        return { jobId: job.id };
       } catch (err) {
-        // Mark job as failed
         await supabase
           .from('export_jobs')
           .update({
@@ -177,7 +207,7 @@ export function useAuditExports() {
     },
   });
 
-  // Download from Storage
+  // Download from Storage (for historical exports)
   const downloadExport = useCallback(
     async (job: ExportJob) => {
       if (!job.file_path) {
@@ -186,15 +216,14 @@ export function useAuditExports() {
       }
 
       const { data, error } = await supabase.storage
-        .from('audit-exports')
-        .createSignedUrl(job.file_path, 3600); // 1h
+        .from(STORAGE_BUCKET)
+        .createSignedUrl(job.file_path, SIGNED_URL_SECONDS);
 
       if (error || !data?.signedUrl) {
         toast.error('Error generando URL de descarga');
         return;
       }
 
-      // Update download count
       await supabase
         .from('export_jobs')
         .update({
@@ -216,6 +245,11 @@ export function useAuditExports() {
     progress,
     generateExport: generateMutation.mutate,
     downloadExport,
+    // Rate limit info
+    rateLimitReached,
+    exportsToday,
+    remainingToday,
+    maxPerDay: MAX_EXPORTS_PER_DAY,
   };
 }
 

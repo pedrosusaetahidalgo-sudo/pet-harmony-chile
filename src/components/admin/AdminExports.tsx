@@ -1,3 +1,32 @@
+/**
+ * ============================================================================
+ * AdminExports — UI del Audit Export System
+ * ============================================================================
+ *
+ * ## Guia para agentes IA
+ *
+ * Este componente tiene 3 secciones visibles, cada una controlable:
+ *
+ * 1. **Seccion "Nuevo Export"**: formulario para generar exports.
+ *    - Tipos de export: definidos en EXPORT_TYPE_OPTIONS (editable).
+ *    - Boton genera el Excel y lo descarga.
+ *    - Rate limit visible con contador.
+ *
+ * 2. Seccion "En progreso": barra de progreso durante generacion.
+ *    - Solo visible cuando isGenerating === true.
+ *
+ * 3. Seccion "Historial": tabla con ultimos exports + acciones.
+ *    - Columnas definidas en el JSX de la tabla.
+ *    - Boton "Regenerar" crea nuevo export con mismos filtros.
+ *    - Boton "Descargar" genera signed URL desde Storage.
+ *
+ * Para agregar/quitar botones o secciones: buscar los comentarios
+ * "Seccion:" en el JSX.
+ *
+ * Para cambiar los sheets incluidos: editar SHEET_DEFINITIONS en auditExport.ts
+ * (este componente lee los nombres automaticamente de ahi).
+ * ============================================================================
+ */
 import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,16 +43,40 @@ import {
   Loader2,
   Database,
   Calendar,
+  RefreshCw,
 } from '@/lib/icons';
-import { useAuditExports } from '@/hooks/useAuditExports';
-import type { ExportType } from '@/lib/auditExport';
+import { useAuditExports, type ExportJob } from '@/hooks/useAuditExports';
+import { SHEET_DEFINITIONS, type ExportType } from '@/lib/auditExport';
 import { cn } from '@/lib/utils';
+
+// ── Export type options (EDITABLE por agente) ──────────────
+const EXPORT_TYPE_OPTIONS: {
+  value: ExportType;
+  label: string;
+  icon: typeof FileDown;
+  description: string;
+}[] = [
+  {
+    value: 'full',
+    label: 'Full Snapshot',
+    icon: FileDown,
+    description: 'Todas las tablas, todos los registros',
+  },
+  {
+    value: 'period',
+    label: 'Por Periodo',
+    icon: Calendar,
+    description: 'Filtrado por rango de fechas',
+  },
+];
+
+// ── Helpers ────────────────────────────────────────────────
 
 function formatBytes(bytes: number | null): string {
   if (!bytes) return '-';
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1048576) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / 1048576).toFixed(1)} MB`;
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / 1048576).toFixed(1) + ' MB';
 }
 
 function formatDate(date: string | null): string {
@@ -42,6 +95,8 @@ const STATUS_CONFIG: Record<
   expired: { label: 'Expirado', variant: 'secondary' },
 };
 
+// ── Component ──────────────────────────────────────────────
+
 export default function AdminExports() {
   const {
     exports: exportHistory,
@@ -50,6 +105,9 @@ export default function AdminExports() {
     progress,
     generateExport,
     downloadExport,
+    rateLimitReached,
+    remainingToday,
+    maxPerDay,
   } = useAuditExports();
 
   const [exportType, setExportType] = useState<ExportType>('full');
@@ -61,11 +119,20 @@ export default function AdminExports() {
     generateExport({ exportType, filters });
   };
 
-  const canGenerate = !isGenerating && (exportType === 'full' || (fromDate && toDate));
+  const handleRegenerate = (job: ExportJob) => {
+    const filters = (job.filters ?? {}) as { from_date?: string; to_date?: string };
+    generateExport({ exportType: job.export_type, filters });
+  };
+
+  const canGenerate =
+    !isGenerating && !rateLimitReached && (exportType === 'full' || (fromDate && toDate));
+
+  // Sheet names for info display
+  const enabledSheetNames = SHEET_DEFINITIONS.filter((d) => d.enabled).map((d) => d.sheetName);
 
   return (
     <div className="space-y-6">
-      {/* ── Nuevo Export ── */}
+      {/* ── Seccion: Nuevo Export ── */}
       <Card className="border-slate-700 bg-slate-900/50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-slate-100">
@@ -74,41 +141,35 @@ export default function AdminExports() {
           </CardTitle>
           <CardDescription className="text-slate-400">
             Genera un archivo Excel con todas las tablas del sistema, incluyendo un reporte de
-            calidad de datos.
+            calidad de datos con 12 checks automaticos.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Type selector */}
           <div className="flex gap-3">
-            <Button
-              variant={exportType === 'full' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setExportType('full')}
-              className={cn(
-                exportType === 'full'
-                  ? 'bg-indigo-600 hover:bg-indigo-700'
-                  : 'border-slate-600 text-slate-300 hover:bg-slate-800'
-              )}
-            >
-              <FileDown className="h-4 w-4 mr-1.5" />
-              Full Snapshot
-            </Button>
-            <Button
-              variant={exportType === 'period' ? 'default' : 'outline'}
-              size="sm"
-              onClick={() => setExportType('period')}
-              className={cn(
-                exportType === 'period'
-                  ? 'bg-indigo-600 hover:bg-indigo-700'
-                  : 'border-slate-600 text-slate-300 hover:bg-slate-800'
-              )}
-            >
-              <Calendar className="h-4 w-4 mr-1.5" />
-              Por Periodo
-            </Button>
+            {EXPORT_TYPE_OPTIONS.map((opt) => {
+              const Icon = opt.icon;
+              return (
+                <Button
+                  key={opt.value}
+                  variant={exportType === opt.value ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setExportType(opt.value)}
+                  className={cn(
+                    exportType === opt.value
+                      ? 'bg-indigo-600 hover:bg-indigo-700'
+                      : 'border-slate-600 text-slate-300 hover:bg-slate-800'
+                  )}
+                  title={opt.description}
+                >
+                  <Icon className="h-4 w-4 mr-1.5" />
+                  {opt.label}
+                </Button>
+              );
+            })}
           </div>
 
-          {/* Date filters */}
+          {/* Date filters (only for period) */}
           {exportType === 'period' && (
             <div className="flex gap-3 items-end">
               <div className="space-y-1.5">
@@ -132,16 +193,30 @@ export default function AdminExports() {
             </div>
           )}
 
-          {/* Sheets info */}
+          {/* Sheets info (auto-generated from SHEET_DEFINITIONS) */}
           <div className="text-xs text-slate-500">
-            Sheets incluidos: README, Usuarios, Mascotas, Fichas Medicas, Proveedores, Reservas,
-            Pagos, Suscripciones B2B, Resenas, Recordatorios, Config Sistema, Posts Feed, Calidad
-            Datos
+            <span className="text-slate-400 font-medium">
+              {enabledSheetNames.length + 2} sheets:
+            </span>{' '}
+            README, {enabledSheetNames.join(', ')}, Calidad_Datos
           </div>
 
-          {/* Progress bar */}
+          {/* Rate limit indicator */}
+          <div className="text-xs text-slate-500">
+            {rateLimitReached ? (
+              <span className="text-amber-400">
+                Limite diario alcanzado ({maxPerDay}/{maxPerDay}). Intenta manana.
+              </span>
+            ) : (
+              <span>
+                {remainingToday} de {maxPerDay} exports disponibles hoy
+              </span>
+            )}
+          </div>
+
+          {/* ── Seccion: Progreso ── */}
           {isGenerating && progress && (
-            <div className="space-y-2">
+            <div className="space-y-2 p-3 rounded-lg bg-slate-800/50 border border-slate-700">
               <div className="flex items-center justify-between text-xs text-slate-400">
                 <span className="flex items-center gap-1.5">
                   <Loader2 className="h-3 w-3 animate-spin" />
@@ -174,7 +249,7 @@ export default function AdminExports() {
         </CardContent>
       </Card>
 
-      {/* ── Historial ── */}
+      {/* ── Seccion: Historial ── */}
       <Card className="border-slate-700 bg-slate-900/50">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-slate-100">
@@ -182,7 +257,8 @@ export default function AdminExports() {
             Historial de Exports
           </CardTitle>
           <CardDescription className="text-slate-400">
-            Ultimos 50 exports generados.
+            Ultimos {exportHistory.length} exports generados. Descarga desde Storage o regenera con
+            mismos filtros.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -209,7 +285,7 @@ export default function AdminExports() {
                     <th className="text-right py-2 px-2 font-medium">Registros</th>
                     <th className="text-right py-2 px-2 font-medium">Tamano</th>
                     <th className="text-right py-2 px-2 font-medium">Descargas</th>
-                    <th className="text-right py-2 px-2 font-medium">Accion</th>
+                    <th className="text-right py-2 px-2 font-medium">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -254,21 +330,41 @@ export default function AdminExports() {
                           {job.download_count}
                         </td>
                         <td className="py-2 px-2 text-right">
-                          {job.status === 'ready' && job.file_path && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => downloadExport(job)}
-                              className="text-indigo-400 hover:text-indigo-300 h-7 px-2"
-                            >
-                              <Download className="h-3.5 w-3.5" />
-                            </Button>
-                          )}
-                          {job.status === 'failed' && job.error_message && (
-                            <span className="text-xs text-red-400" title={job.error_message}>
-                              Error
-                            </span>
-                          )}
+                          <div className="flex items-center justify-end gap-1">
+                            {/* Boton Descargar (solo si tiene archivo en Storage) */}
+                            {job.status === 'ready' && job.file_path && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => downloadExport(job)}
+                                className="text-indigo-400 hover:text-indigo-300 h-7 px-2"
+                                title="Descargar desde Storage"
+                              >
+                                <Download className="h-3.5 w-3.5" />
+                              </Button>
+                            )}
+                            {/* Boton Regenerar (crea nuevo export con mismos filtros) */}
+                            {job.status === 'ready' && !isGenerating && !rateLimitReached && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleRegenerate(job)}
+                                className="text-slate-400 hover:text-slate-200 h-7 px-2"
+                                title="Regenerar con mismos filtros"
+                              >
+                                <RefreshCw className="h-3.5 w-3.5" />
+                              </Button>
+                            )}
+                            {/* Error message tooltip */}
+                            {job.status === 'failed' && job.error_message && (
+                              <span
+                                className="text-xs text-red-400 max-w-[120px] truncate"
+                                title={job.error_message}
+                              >
+                                {job.error_message}
+                              </span>
+                            )}
+                          </div>
                         </td>
                       </tr>
                     );
