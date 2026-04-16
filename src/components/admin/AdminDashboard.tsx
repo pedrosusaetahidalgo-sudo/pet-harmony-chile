@@ -379,7 +379,7 @@ export default function AdminDashboard() {
     queryKey: ['admin-chart-top-services'],
     staleTime: 120_000,
     queryFn: async () => {
-      const { data } = await supabase.from('bookings').select('service_type');
+      const { data } = await sb.from('all_bookings_view').select('service_type');
 
       if (!data?.length) return [];
 
@@ -423,8 +423,8 @@ export default function AdminDashboard() {
     staleTime: 60_000,
     queryFn: async () => {
       const [bookings, providers, reviews, posts, fichas, pendingPets] = await Promise.all([
-        supabase
-          .from('bookings')
+        sb
+          .from('all_bookings_view')
           .select('*', { count: 'exact', head: true })
           .gte('created_at', weekAgo.toISOString()),
         sb
@@ -520,8 +520,8 @@ export default function AdminDashboard() {
           .select('display_name, status, created_at, provider_type')
           .order('created_at', { ascending: false })
           .limit(5),
-        supabase
-          .from('bookings')
+        sb
+          .from('all_bookings_view')
           .select('service_type, status, created_at')
           .order('created_at', { ascending: false })
           .limit(5),

@@ -58,8 +58,9 @@ export default function AdminMetrics() {
     queryFn: async () => {
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
-      const { count } = await supabase
-        .from('bookings')
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { count } = await (supabase as any)
+        .from('all_bookings_view')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', weekAgo.toISOString());
       return count ?? 0;

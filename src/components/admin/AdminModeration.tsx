@@ -20,8 +20,7 @@ import { es } from 'date-fns/locale';
 
 interface ContentReport {
   id: string;
-  post_id: string | null;
-  comment_id: string | null;
+  post_id: string;
   reporter_id: string;
   reason: string;
   status: string;
@@ -39,7 +38,7 @@ export default function AdminModeration() {
   const queryClient = useQueryClient();
   const [confirmAction, setConfirmAction] = useState<{
     report: ContentReport;
-    action: 'dismissed' | 'action_taken';
+    action: 'dismissed' | 'reviewed';
   } | null>(null);
 
   const { data: reports = [], isLoading } = useQuery({
@@ -86,10 +85,10 @@ export default function AdminModeration() {
 
   const postMap = new Map(postPreviews.map((p) => [p.id, p]));
 
-  const resolveReport = async (id: string, action: 'dismissed' | 'action_taken') => {
+  const resolveReport = async (id: string, action: 'dismissed' | 'reviewed') => {
     // When taking action, delete the post first so the file is never lost
     // if the report-status update later fails
-    if (action === 'action_taken') {
+    if (action === 'reviewed') {
       const report = reports.find((r) => r.id === id);
       if (report?.post_id) {
         const { error: deleteError } = await supabase
@@ -111,7 +110,7 @@ export default function AdminModeration() {
       .eq('id', id);
 
     if (!error) {
-      toast(action === 'action_taken' ? 'Contenido eliminado' : 'Reporte descartado');
+      toast(action === 'reviewed' ? 'Contenido eliminado' : 'Reporte descartado');
       queryClient.invalidateQueries({ queryKey: ['admin-content-reports'] });
     } else {
       toast.error('Error al actualizar el reporte');
@@ -121,15 +120,14 @@ export default function AdminModeration() {
 
   const statusColors: Record<string, string> = {
     pending: 'bg-amber-500/20 text-amber-300',
-    reviewed: 'bg-blue-500/20 text-blue-300',
+    reviewed: 'bg-red-500/20 text-red-300',
     dismissed: 'bg-slate-700/50 text-slate-400',
-    action_taken: 'bg-red-500/20 text-red-300',
   };
 
   // Stats
   const totalReports = reports.length;
   const pendingCount = reports.filter((r) => r.status === 'pending').length;
-  const actionCount = reports.filter((r) => r.status === 'action_taken').length;
+  const actionCount = reports.filter((r) => r.status === 'reviewed').length;
 
   return (
     <div className="space-y-4">
@@ -191,7 +189,7 @@ export default function AdminModeration() {
                       </div>
                       <p className="text-sm text-slate-400">Motivo: {r.reason}</p>
                       <p className="text-xs text-slate-500 font-mono">
-                        ID: {(r.post_id || r.comment_id || '').slice(0, 8)}...
+                        ID: {r.post_id.slice(0, 8)}...
                       </p>
 
                       {/* Post content preview */}
@@ -224,7 +222,7 @@ export default function AdminModeration() {
                         <Button
                           variant="destructive"
                           size="sm"
-                          onClick={() => setConfirmAction({ report: r, action: 'action_taken' })}
+                          onClick={() => setConfirmAction({ report: r, action: 'reviewed' })}
                         >
                           <Trash2 className="h-4 w-4 mr-1" /> Eliminar
                         </Button>
@@ -243,12 +241,12 @@ export default function AdminModeration() {
         <DialogContent className="sm:max-w-md bg-slate-900 border-slate-800">
           <DialogHeader>
             <DialogTitle className="text-slate-100">
-              {confirmAction?.action === 'action_taken'
+              {confirmAction?.action === 'reviewed'
                 ? 'Confirmar eliminacion'
                 : 'Confirmar descarte'}
             </DialogTitle>
             <DialogDescription className="text-slate-400">
-              {confirmAction?.action === 'action_taken'
+              {confirmAction?.action === 'reviewed'
                 ? 'El contenido reportado sera eliminado permanentemente. Esta accion no se puede deshacer.'
                 : 'El reporte sera descartado y el contenido permanecera visible.'}
             </DialogDescription>
@@ -267,10 +265,10 @@ export default function AdminModeration() {
             >
               Cancelar
             </Button>
-            {confirmAction?.action === 'action_taken' ? (
+            {confirmAction?.action === 'reviewed' ? (
               <Button
                 variant="destructive"
-                onClick={() => resolveReport(confirmAction.report.id, 'action_taken')}
+                onClick={() => resolveReport(confirmAction.report.id, 'reviewed')}
               >
                 <Trash2 className="h-4 w-4 mr-1" /> Eliminar contenido
               </Button>

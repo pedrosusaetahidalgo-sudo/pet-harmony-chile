@@ -59,7 +59,7 @@ export default function AdminFinance() {
         (supabase.from('subscriptions') as any).select(
           'status, plan_type, payment_amount_clp, cancelled_at, created_at'
         ),
-        supabase.from('orders').select('total_clp, platform_fee, payment_status, created_at'),
+        supabase.from('orders').select('total_clp, platform_fee_clp, payment_status, created_at'),
       ]);
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -88,7 +88,7 @@ export default function AdminFinance() {
 
       const monthFees = paidOrders
         .filter((o) => new Date(o.created_at) >= monthAgo)
-        .reduce((sum, o) => sum + (o.platform_fee || 0), 0);
+        .reduce((sum, o) => sum + (o.platform_fee_clp || 0), 0);
 
       const failedOrders = ordersData.filter(
         (o) => o.payment_status === 'failed' && new Date(o.created_at) >= weekAgo
@@ -142,7 +142,7 @@ export default function AdminFinance() {
     queryFn: async () => {
       const { data } = await supabase
         .from('orders')
-        .select('id, user_id, total_clp, platform_fee, payment_status, created_at')
+        .select('id, user_id, total_clp, platform_fee_clp, payment_status, created_at')
         .order('created_at', { ascending: false })
         .limit(20);
 
@@ -262,7 +262,7 @@ export default function AdminFinance() {
       [
         `"${o.userName}"`,
         o.total_clp || 0,
-        o.platform_fee || 0,
+        o.platform_fee_clp || 0,
         o.payment_status,
         format(new Date(o.created_at), 'yyyy-MM-dd HH:mm'),
       ].join(',')
@@ -620,7 +620,7 @@ export default function AdminFinance() {
                         {formatClp(order.total_clp || 0)}
                       </td>
                       <td className="py-3 font-mono text-slate-200">
-                        {formatClp(order.platform_fee || 0)}
+                        {formatClp(order.platform_fee_clp || 0)}
                       </td>
                       <td className="py-3">
                         <span
