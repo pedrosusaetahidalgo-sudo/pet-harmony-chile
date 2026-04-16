@@ -26,6 +26,9 @@ import {
   Stethoscope,
   Bell,
   BarChart3,
+  ChevronDown,
+  Compass,
+  Heart,
 } from '@/lib/icons';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { LINKS } from '@/lib/links';
@@ -59,41 +62,60 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 
-// Sidebar organizado en grupos semánticos para mejor navegación
-const healthItems = [
+// ── Owner: 6 items core (siempre visibles) ──
+const coreOwnerItems = [
   { title: 'Inicio', url: '/home', icon: HomeIcon },
   { title: 'Mis Mascotas', url: '/my-pets', icon: PawPrint },
-  { title: 'Recordatorios', url: '/reminders', icon: Bell },
-  { title: 'Rutinas', url: '/rutinas', icon: RefreshCw },
-  { title: 'Calendario', url: '/calendario', icon: CalendarDays },
-  { title: 'Reportes', url: '/reportes', icon: BarChart3 },
-];
-
-const discoverItems = [
   { title: 'Buscar vet', url: '/veterinarios', icon: Search },
-  { title: 'Servicios', url: '/servicios', icon: Briefcase },
-  { title: 'Mapa', url: '/maps', icon: MapIcon },
-  { title: 'Banco de sangre', url: '/donantes-sangre', icon: Droplets },
+  { title: 'Calendario', url: '/calendario', icon: CalendarDays },
+  { title: 'Mis reservas', url: '/mis-reservas', icon: Calendar },
+  { title: 'Recordatorios', url: '/reminders', icon: Bell },
 ];
 
-const communityItems = [
-  { title: 'Feed', url: '/feed', icon: Activity },
-  { title: 'Comunidad', url: '/comunidad', icon: Users },
-  { title: 'Mensajes', url: '/chat', icon: MessageSquare },
+// ── Owner: items secundarios en sección colapsable "Explorar" ──
+// Algunos se filtran por feature flags en el render
+const exploreOwnerItems = [
+  { title: 'Rutinas', url: '/rutinas', icon: RefreshCw, flag: null },
+  { title: 'Reportes', url: '/reportes', icon: BarChart3, flag: null },
+  { title: 'Servicios', url: '/servicios', icon: Briefcase, flag: null },
+  { title: 'Mapa', url: '/maps', icon: MapIcon, flag: null },
+  { title: 'Feed', url: '/feed', icon: Activity, flag: 'FEED' as const },
+  { title: 'Comunidad', url: '/comunidad', icon: Users, flag: 'LABS_COMMUNITY' as const },
+  { title: 'Mensajes', url: '/chat', icon: MessageSquare, flag: 'CHAT' as const },
+  { title: 'Paw Game', url: '/paw-game', icon: Gamepad2, flag: 'PAWGAME_SIDEBAR' as const },
+  { title: 'Misiones', url: '/misiones', icon: Star, flag: 'PAWGAME_SIDEBAR' as const },
+  { title: 'Coleccion', url: '/paw-collection', icon: Trophy, flag: 'PAWGAME_SIDEBAR' as const },
+  { title: 'Adopcion', url: '/adoption', icon: Heart, flag: 'LABS_ADOPTION' as const },
+  {
+    title: 'Banco de sangre',
+    url: '/donantes-sangre',
+    icon: Droplets,
+    flag: 'LABS_BLOOD_DONORS' as const,
+  },
 ];
 
-const pawLabsItems = [
-  { title: 'Paw Game', url: '/paw-game', icon: Gamepad2 },
-  { title: 'Misiones', url: '/misiones', icon: Star },
-  { title: 'Coleccion', url: '/paw-collection', icon: Trophy },
-];
+// Legacy section maps kept for tutorial system compatibility
+const healthItems = coreOwnerItems;
 
-/** Mapeo sección → items */
+/** Mapeo sección → items (kept for tutorial dialog) */
 const SECTION_ITEMS: Record<SectionKey, typeof healthItems> = {
-  salud: healthItems,
-  descubrir: discoverItems,
-  comunidad: communityItems,
-  pawlabs: pawLabsItems,
+  salud: coreOwnerItems,
+  descubrir: [
+    { title: 'Buscar vet', url: '/veterinarios', icon: Search },
+    { title: 'Servicios', url: '/servicios', icon: Briefcase },
+    { title: 'Mapa', url: '/maps', icon: MapIcon },
+    { title: 'Banco de sangre', url: '/donantes-sangre', icon: Droplets },
+  ],
+  comunidad: [
+    { title: 'Feed', url: '/feed', icon: Activity },
+    { title: 'Comunidad', url: '/comunidad', icon: Users },
+    { title: 'Mensajes', url: '/chat', icon: MessageSquare },
+  ],
+  pawlabs: [
+    { title: 'Paw Game', url: '/paw-game', icon: Gamepad2 },
+    { title: 'Misiones', url: '/misiones', icon: Star },
+    { title: 'Coleccion', url: '/paw-collection', icon: Trophy },
+  ],
 };
 
 /** Mapeo sección → label */
@@ -112,6 +134,7 @@ const providerConsultItems = [
   { title: 'Calendario', url: '/calendario', icon: CalendarDays },
 ];
 
+// Filtered at render time by CHAT feature flag
 const providerCommsItems = [{ title: 'Mensajes', url: '/chat', icon: MessageSquare }];
 
 const providerBusinessItems = [
@@ -130,6 +153,7 @@ export function AppSidebar() {
   const { role, isProvider } = useActiveRole();
   const { isPremium } = usePlan();
   const showPremiumBadges = isFeatureEnabled('USER_PREMIUM') && !isPremium;
+  const [exploreOpen, setExploreOpen] = useState(false);
 
   const {
     loaded: tutorialLoaded,
@@ -229,7 +253,7 @@ export function AppSidebar() {
                     <Sparkles className="h-3.5 w-3.5 text-purple-600 flex-shrink-0 mt-0.5" />
                     <div className="min-w-0">
                       <p className="text-[10px] font-semibold text-purple-800 leading-tight">
-                        Recorre cada sección para desbloquearla
+                        Recorre cada seccion para desbloquearla
                       </p>
                       <button
                         onClick={dismissAll}
@@ -242,47 +266,64 @@ export function AppSidebar() {
                 </div>
               )}
 
-              {/* ── Secciones de dueño ── */}
-              {SECTION_ORDER.map((sectionKey, idx) => {
-                const unlocked = isAllComplete || isSectionUnlocked(sectionKey);
-                const items = SECTION_ITEMS[sectionKey];
-                const label = SECTION_LABELS[sectionKey];
+              {/* ── Core: 6 items principales ── */}
+              <SidebarGroup className="py-0.5">
+                <SidebarGroupContent>
+                  <SidebarMenu className="space-y-0">
+                    {coreOwnerItems.map((item) => (
+                      <SidebarMenuItem key={item.title}>
+                        <SidebarMenuButton
+                          isActive={isActive(item.url)}
+                          onClick={() => handleNavigate(item.url)}
+                          className="h-7 text-xs rounded-md transition-all"
+                        >
+                          <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                          <span>{item.title}</span>
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                    ))}
+                  </SidebarMenu>
+                </SidebarGroupContent>
+              </SidebarGroup>
 
-                return (
-                  <div key={sectionKey}>
-                    {idx > 0 && <Separator className="mx-2 my-0.5" />}
-                    <SidebarGroup className="py-0.5">
-                      <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5">
-                        <span className={cn(!unlocked && 'text-muted-foreground/50')}>{label}</span>
-                        {!unlocked && <Lock className="h-2.5 w-2.5 text-muted-foreground/40" />}
-                      </SidebarGroupLabel>
-                      <SidebarGroupContent>
-                        <SidebarMenu className="space-y-0">
-                          {items.map((item) => (
-                            <SidebarMenuItem key={item.title}>
-                              <SidebarMenuButton
-                                isActive={unlocked && isActive(item.url)}
-                                onClick={() =>
-                                  unlocked
-                                    ? handleNavigate(item.url)
-                                    : handleLockedClick(sectionKey)
-                                }
-                                className={cn(
-                                  'h-7 text-xs rounded-md transition-all',
-                                  !unlocked && 'opacity-40 grayscale hover:opacity-60'
-                                )}
-                              >
-                                <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
-                                <span>{item.title}</span>
-                              </SidebarMenuButton>
-                            </SidebarMenuItem>
-                          ))}
-                        </SidebarMenu>
-                      </SidebarGroupContent>
-                    </SidebarGroup>
-                  </div>
-                );
-              })}
+              <Separator className="mx-2 my-0.5" />
+
+              {/* ── Explorar: seccion colapsable con items secundarios ── */}
+              <SidebarGroup className="py-0.5">
+                <SidebarGroupLabel
+                  className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5 cursor-pointer hover:text-foreground transition-colors"
+                  onClick={() => setExploreOpen((prev) => !prev)}
+                >
+                  <Compass className="h-2.5 w-2.5" />
+                  <span>Explorar</span>
+                  <ChevronDown
+                    className={cn(
+                      'h-2.5 w-2.5 ml-auto transition-transform duration-200',
+                      exploreOpen && 'rotate-180'
+                    )}
+                  />
+                </SidebarGroupLabel>
+                {exploreOpen && (
+                  <SidebarGroupContent>
+                    <SidebarMenu className="space-y-0">
+                      {exploreOwnerItems
+                        .filter((item) => item.flag === null || isFeatureEnabled(item.flag))
+                        .map((item) => (
+                          <SidebarMenuItem key={item.title}>
+                            <SidebarMenuButton
+                              isActive={isActive(item.url)}
+                              onClick={() => handleNavigate(item.url)}
+                              className="h-7 text-xs rounded-md transition-all"
+                            >
+                              <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                              <span>{item.title}</span>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        ))}
+                    </SidebarMenu>
+                  </SidebarGroupContent>
+                )}
+              </SidebarGroup>
 
               {/* Link compacto a consultorio para dual-role */}
               {isProvider && (
@@ -353,30 +394,33 @@ export function AppSidebar() {
 
               <Separator className="mx-2 my-0.5" />
 
-              {/* COMUNICACION */}
-              <SidebarGroup className="py-0.5">
-                <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5">
-                  <span className="text-teal-600">Comunicacion</span>
-                </SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenu className="space-y-0">
-                    {providerCommsItems.map((item) => (
-                      <SidebarMenuItem key={item.title}>
-                        <SidebarMenuButton
-                          isActive={isActive(item.url)}
-                          onClick={() => handleNavigate(item.url)}
-                          className="h-7 text-xs rounded-md"
-                        >
-                          <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
-                          <span>{item.title}</span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
-
-              <Separator className="mx-2 my-0.5" />
+              {/* COMUNICACION — solo si CHAT esta habilitado */}
+              {isFeatureEnabled('CHAT') && (
+                <>
+                  <SidebarGroup className="py-0.5">
+                    <SidebarGroupLabel className="text-[9px] uppercase tracking-wider px-3 mb-0 h-5 flex items-center gap-1.5">
+                      <span className="text-teal-600">Comunicacion</span>
+                    </SidebarGroupLabel>
+                    <SidebarGroupContent>
+                      <SidebarMenu className="space-y-0">
+                        {providerCommsItems.map((item) => (
+                          <SidebarMenuItem key={item.title}>
+                            <SidebarMenuButton
+                              isActive={isActive(item.url)}
+                              onClick={() => handleNavigate(item.url)}
+                              className="h-7 text-xs rounded-md"
+                            >
+                              <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                              <span>{item.title}</span>
+                            </SidebarMenuButton>
+                          </SidebarMenuItem>
+                        ))}
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </SidebarGroup>
+                  <Separator className="mx-2 my-0.5" />
+                </>
+              )}
 
               {/* NEGOCIO */}
               <SidebarGroup className="py-0.5">

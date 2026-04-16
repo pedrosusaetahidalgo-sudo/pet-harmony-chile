@@ -363,23 +363,27 @@ export default function MedicalShare() {
               try {
                 const { data: fnData, error: fnErr } = await supabase.functions.invoke(
                   'generate-medical-summary',
-                  { body: { pet_id: pet.id, token } }
+                  {
+                    body: { pet_id: pet.id, token },
+                    headers: { Accept: 'application/pdf' },
+                  }
                 );
                 if (fnErr) throw fnErr;
-                const pdfUrl = fnData?.pdf_url || fnData?.url;
-                if (pdfUrl) {
-                  downloadFile(pdfUrl, `ficha_${pet.name}.pdf`);
-                } else if (fnData?.pdf_base64) {
-                  const byteChars = atob(fnData.pdf_base64);
-                  const byteArray = new Uint8Array(byteChars.length);
-                  for (let i = 0; i < byteChars.length; i++) byteArray[i] = byteChars.charCodeAt(i);
-                  const blob = new Blob([byteArray], { type: 'application/pdf' });
-                  const url = URL.createObjectURL(blob);
+
+                const fileName = `ficha-${(pet.name || 'mascota').replace(/\s+/g, '_')}.pdf`;
+
+                // The edge function returns raw PDF bytes as a Blob
+                if (fnData instanceof Blob) {
+                  const url = URL.createObjectURL(fnData);
                   const a = document.createElement('a');
                   a.href = url;
-                  a.download = `ficha-${pet.name || 'mascota'}.pdf`;
+                  a.download = fileName;
+                  document.body.appendChild(a);
                   a.click();
+                  a.remove();
                   URL.revokeObjectURL(url);
+                } else if (fnData?.download_url) {
+                  downloadFile(fnData.download_url, fileName);
                 } else {
                   throw new Error('No se pudo generar el PDF');
                 }

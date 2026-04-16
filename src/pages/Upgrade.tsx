@@ -175,14 +175,15 @@ export default function Upgrade() {
             {/* Highlight stripe */}
             <div aria-hidden className="absolute inset-x-0 top-0 h-1 bg-premium-gradient" />
             <Badge className="absolute -top-0 right-4 translate-y-3 bg-premium-gradient text-premium-foreground border-0 shadow-premium-sm font-semibold tracking-wide">
-              <Sparkles className="h-3 w-3 mr-1" />2 MESES GRATIS
+              <Sparkles className="h-3 w-3 mr-1" />
+              MEJOR PRECIO
             </Badge>
             <CardHeader>
               <CardTitle className="text-xl flex items-center gap-2">
                 Anual
                 <Crown className="h-4 w-4 text-premium" />
               </CardTitle>
-              <CardDescription>2 meses gratis vs el plan mensual</CardDescription>
+              <CardDescription>Ahorra $7.980 al año vs el plan mensual</CardDescription>
               <div className="pt-4 flex items-baseline gap-2">
                 <span className="text-4xl font-bold tracking-tight bg-premium-gradient bg-clip-text text-transparent">
                   $39.900

@@ -16,6 +16,7 @@ import { LINKS } from '@/lib/links';
 import { cn } from '@/lib/utils';
 import { useReminders } from '@/hooks/useReminders';
 import { useActiveRole } from '@/hooks/useActiveRole';
+import { isFeatureEnabled } from '@/lib/featureFlags';
 
 /**
  * Bottom tab bar nativa para mobile (pivot médico).
@@ -116,12 +117,17 @@ export function BottomTabBar() {
       href: LINKS.bookings(),
       matchPaths: (p) => p === '/mis-reservas',
     },
-    {
-      label: 'Mensajes',
-      icon: MessageSquare,
-      href: LINKS.chat(),
-      matchPaths: (p) => p.startsWith('/chat'),
-    },
+    // Mensajes solo si CHAT esta habilitado
+    ...(isFeatureEnabled('CHAT')
+      ? [
+          {
+            label: 'Mensajes',
+            icon: MessageSquare,
+            href: LINKS.chat(),
+            matchPaths: (p: string) => p.startsWith('/chat'),
+          },
+        ]
+      : []),
     {
       label: 'Perfil',
       icon: User,

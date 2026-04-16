@@ -64,6 +64,27 @@ export const FEATURE_FLAGS = {
    * HABILITADO — UI lista pero sin grupos en DB aun.
    */
   LABS_COMMUNITY: true,
+
+  /**
+   * Lugares pet-friendly en el mapa.
+   * DESHABILITADO — datos hardcodeados (10 lugares fijos en Santiago).
+   * Reactivar cuando exista tabla pet_friendly_places en DB con data real.
+   */
+  MAP_PET_FRIENDLY: false,
+
+  /**
+   * Feed social (publicar fotos, likes, follows).
+   * DESHABILITADO — no alineado con foco medico actual.
+   * Rutas siguen existiendo en App.tsx; solo se esconde de navegacion.
+   */
+  FEED: false,
+
+  /**
+   * Chat / mensajeria directa.
+   * DESHABILITADO — feature incompleto, se esconde de navegacion.
+   * Rutas siguen existiendo en App.tsx.
+   */
+  CHAT: false,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;

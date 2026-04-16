@@ -806,61 +806,123 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // ── Auth ──
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) throw new Error('No authorization header');
-
-    const token = authHeader.replace('Bearer ', '');
-    const { data: userData, error: userError } = await supabase.auth.getUser(token);
-    if (userError || !userData.user) throw new Error('User not authenticated');
-
-    // ── Rate limit (5 req/min — PDF generation is heavy) ──
-    const quota = await checkAiQuota(userData.user.id, { limit: 5, windowSeconds: 60 });
-    if (!quota.allowed) {
-      return rateLimitResponse(quota, corsHeaders);
-    }
-
     const body = await req.json();
     const pet_id = body.pet_id;
     const mode = body.mode === 'complete' ? 'complete' : 'medical';
     const storeInStorage = body.store === true; // Only upload to storage when explicitly asked (for sharing)
+    const shareToken = body.token; // Public share token (for unauthenticated access via /medical-share/:token)
     if (!pet_id || typeof pet_id !== 'string') throw new Error('pet_id is required');
 
-    // ── Ownership / linked-vet check ──
-    const { data: petOwnership, error: ownershipError } = await supabase
-      .from('pets')
-      .select('owner_id')
-      .eq('id', pet_id)
-      .single();
+    // ── Auth: two paths — authenticated user OR valid share token ──
+    // Note: supabase.functions.invoke always sends an Authorization header (anon key
+    // or user JWT). For unauthenticated visitors with a share token, getUser() will
+    // fail — in that case we fall through to the share token path.
+    const authHeader = req.headers.get('Authorization');
+    let isPublicShareAccess = false;
+    let authenticatedUserId: string | null = null;
 
-    if (ownershipError || !petOwnership) throw new Error('Pet not found');
-    const isOwner = petOwnership.owner_id === userData.user.id;
-
-    // Allow linked vets to generate PDF too
-    let isLinkedVet = false;
-    if (!isOwner) {
-      const { data: providerRow } = await supabase
-        .from('service_providers')
-        .select('id')
-        .eq('user_id', userData.user.id)
-        .maybeSingle();
-      if (providerRow?.id) {
-        const { data: link } = await supabase
-          .from('pet_vet_links')
-          .select('id')
-          .eq('pet_id', pet_id)
-          .eq('provider_id', providerRow.id)
-          .eq('status', 'active')
-          .maybeSingle();
-        isLinkedVet = !!link;
+    if (authHeader) {
+      const jwtToken = authHeader.replace('Bearer ', '');
+      const { data: userData } = await supabase.auth.getUser(jwtToken);
+      if (userData?.user) {
+        authenticatedUserId = userData.user.id;
       }
     }
 
-    if (!isOwner && !isLinkedVet) {
-      return new Response(JSON.stringify({ success: false, error: 'Forbidden' }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 403,
-      });
+    if (authenticatedUserId) {
+      // Path 1: Authenticated user (owner or linked vet)
+
+      // ── Rate limit (5 req/min — PDF generation is heavy) ──
+      const quota = await checkAiQuota(authenticatedUserId, { limit: 5, windowSeconds: 60 });
+      if (!quota.allowed) {
+        return rateLimitResponse(quota, corsHeaders);
+      }
+
+      // ── Ownership / linked-vet check ──
+      const { data: petOwnership, error: ownershipError } = await supabase
+        .from('pets')
+        .select('owner_id')
+        .eq('id', pet_id)
+        .single();
+
+      if (ownershipError || !petOwnership) throw new Error('Pet not found');
+      const isOwner = petOwnership.owner_id === authenticatedUserId;
+
+      // Allow linked vets to generate PDF too
+      let isLinkedVet = false;
+      if (!isOwner) {
+        const { data: providerRow } = await supabase
+          .from('service_providers')
+          .select('id')
+          .eq('user_id', authenticatedUserId)
+          .maybeSingle();
+        if (providerRow?.id) {
+          const { data: link } = await supabase
+            .from('pet_vet_links')
+            .select('id')
+            .eq('pet_id', pet_id)
+            .eq('provider_id', providerRow.id)
+            .eq('status', 'active')
+            .maybeSingle();
+          isLinkedVet = !!link;
+        }
+      }
+
+      if (!isOwner && !isLinkedVet) {
+        return new Response(JSON.stringify({ success: false, error: 'Forbidden' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 403,
+        });
+      }
+    } else if (shareToken && typeof shareToken === 'string') {
+      // Path 2: Public access via valid share token (from /medical-share/:token)
+      const { data: tokenData, error: tokenErr } = await supabase
+        .from('medical_share_tokens')
+        .select('id, pet_id, expires_at, is_revoked')
+        .eq('token', shareToken)
+        .maybeSingle();
+
+      if (tokenErr || !tokenData) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Token de compartir invalido' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
+        );
+      }
+
+      if (tokenData.is_revoked) {
+        return new Response(JSON.stringify({ success: false, error: 'Este enlace fue revocado' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 403,
+        });
+      }
+
+      if (new Date(tokenData.expires_at) < new Date()) {
+        return new Response(JSON.stringify({ success: false, error: 'Este enlace ha expirado' }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 410,
+        });
+      }
+
+      // The token must correspond to the requested pet
+      if (tokenData.pet_id !== pet_id) {
+        return new Response(
+          JSON.stringify({ success: false, error: 'Token no corresponde a esta mascota' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
+        );
+      }
+
+      // Rate limit by token id (3 req/min for public access — more restrictive)
+      const quota = await checkAiQuota(`share_${tokenData.id}`, { limit: 3, windowSeconds: 60 });
+      if (!quota.allowed) {
+        return rateLimitResponse(quota, corsHeaders);
+      }
+
+      isPublicShareAccess = true;
+    } else {
+      return new Response(
+        JSON.stringify({ success: false, error: 'Se requiere autenticacion o token de compartir' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      );
     }
 
     // ── Premium plan check: DESACTIVADO durante pivot médico ──
@@ -874,10 +936,13 @@ serve(async (req) => {
     //   );
     // }
 
+    // Public share access: force medical-only mode (no routines/habits exposed)
+    const effectiveMode = isPublicShareAccess ? 'medical' : mode;
+
     // ── Fetch data via updated RPC (v4 supports mode) ──
     const { data: summaryData, error: summaryError } = await supabase.rpc(
       'get_medical_summary_data',
-      { p_pet_id: pet_id, p_mode: mode }
+      { p_pet_id: pet_id, p_mode: effectiveMode }
     );
     if (summaryError) throw summaryError;
     if (!summaryData) throw new Error('No data found');
@@ -1513,13 +1578,13 @@ serve(async (req) => {
     }
 
     // ── Routines section (complete mode only) ──
-    if (mode === 'complete' && routines.length > 0) {
+    if (effectiveMode === 'complete' && routines.length > 0) {
       pdf.y -= 16;
       pdf.drawSectionHeader('Rutinas activas', MED_GREEN);
 
       const DAYS = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
       for (const routine of routines) {
-        pdf.checkNewPage();
+        pdf.ensureSpace(30);
         const daysStr = (routine.days_of_week || []).map((d: number) => DAYS[d] || '?').join(', ');
         const time = routine.time_of_day ? routine.time_of_day.slice(0, 5) : '';
         const duration = routine.duration_minutes ? `${routine.duration_minutes}min` : '';

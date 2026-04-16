@@ -12,7 +12,8 @@ import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { format, isToday, startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
+import { useMyBookingsV2 } from '@/hooks/useMyBookingsV2';
+import { format, startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Calendar, CalendarDays, Clock, CheckCircle2, Inbox, Star } from '@/lib/icons';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -68,8 +69,12 @@ export default function MyBookings() {
   };
 
   // ---- MY BOOKINGS (user's actual reservations) ----
-  const { data: myBookings, isLoading: loadingMyBookings } = useQuery({
-    queryKey: ['my-bookings', user?.id],
+  // V2 bookings from type-specific tables (vet_bookings, walk_bookings, etc.)
+  const { data: v2Bookings, isLoading: loadingV2 } = useMyBookingsV2();
+
+  // V1 bookings from legacy `bookings` table (created via service_slots flow)
+  const { data: v1Bookings, isLoading: loadingV1 } = useQuery({
+    queryKey: ['my-bookings-v1', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
       const { data, error } = await supabase
@@ -115,6 +120,61 @@ export default function MyBookings() {
     },
     enabled: !!user?.id,
   });
+
+  const loadingMyBookings = loadingV1 || loadingV2;
+
+  // Merge V1 and V2 bookings into a unified list, sorted by date descending
+  const myBookings = useMemo(() => {
+    const unified: any[] = [];
+
+    // Add V2 bookings (already in BookingView format)
+    if (v2Bookings) {
+      for (const b of v2Bookings) {
+        unified.push({
+          id: b.id,
+          _source: 'v2' as const,
+          payment_status: b.payment_status ?? b.status,
+          service_slots: {
+            slot_date: b.scheduled_date,
+            start_time: b.start_time,
+            end_time: b.end_time,
+            service_type: b.service_type,
+            provider_id: b.provider_id,
+          },
+          provider: {
+            profiles: {
+              display_name: b.provider_name ?? null,
+              avatar_url: b.provider_avatar ?? null,
+            },
+          },
+          pet_name: b.pet_name,
+          booking_type: b.booking_type,
+          status: b.status,
+        });
+      }
+    }
+
+    // Add V1 bookings (legacy bookings table)
+    if (v1Bookings) {
+      // Avoid duplicates: V1 bookings use a different id space so no collision expected,
+      // but guard with a Set just in case
+      const v2Ids = new Set(unified.map((u) => u.id));
+      for (const b of v1Bookings) {
+        if (!v2Ids.has(b.id)) {
+          unified.push({ ...b, _source: 'v1' as const });
+        }
+      }
+    }
+
+    // Sort by date descending
+    unified.sort((a, b) => {
+      const dateA = a.service_slots?.slot_date || '';
+      const dateB = b.service_slots?.slot_date || '';
+      return dateB.localeCompare(dateA);
+    });
+
+    return unified;
+  }, [v1Bookings, v2Bookings]);
 
   // My bookings metrics
   const todayStr = format(new Date(), 'yyyy-MM-dd');
@@ -309,6 +369,36 @@ export default function MyBookings() {
                   const isPast = slotDate && slotDate < todayStr;
                   const isBookingToday = slotDate === todayStr;
 
+                  // Status display for V2 bookings
+                  const displayStatus =
+                    booking._source === 'v2' ? booking.status : booking.payment_status;
+
+                  const statusLabel =
+                    displayStatus === 'paid' || displayStatus === 'confirmado'
+                      ? 'Confirmada'
+                      : displayStatus === 'pending' || displayStatus === 'pendiente'
+                        ? 'Pendiente'
+                        : displayStatus === 'completado'
+                          ? 'Completada'
+                          : displayStatus === 'cancelado'
+                            ? 'Cancelada'
+                            : displayStatus === 'en_curso'
+                              ? 'En curso'
+                              : displayStatus === 'no_show'
+                                ? 'No se presentó'
+                                : displayStatus || 'Sin estado';
+
+                  const statusVariant =
+                    displayStatus === 'paid' ||
+                    displayStatus === 'confirmado' ||
+                    displayStatus === 'completado'
+                      ? 'default'
+                      : displayStatus === 'pending' ||
+                          displayStatus === 'pendiente' ||
+                          displayStatus === 'en_curso'
+                        ? 'secondary'
+                        : 'outline';
+
                   return (
                     <Card key={booking.id} className={isPast ? 'opacity-60' : ''}>
                       <CardContent className="py-3 px-4">
@@ -336,28 +426,22 @@ export default function MyBookings() {
                               {slot?.start_time && ` · ${slot.start_time.slice(0, 5)}`}
                               {slot?.end_time && `–${slot.end_time.slice(0, 5)}`}
                             </p>
-                            {slot?.service_type && (
-                              <p className="text-xs text-muted-foreground capitalize mt-0.5">
-                                {slot.service_type}
-                              </p>
-                            )}
+                            <div className="flex items-center gap-2 mt-0.5">
+                              {slot?.service_type && (
+                                <p className="text-xs text-muted-foreground capitalize">
+                                  {slot.service_type}
+                                </p>
+                              )}
+                              {booking.pet_name && (
+                                <p className="text-xs text-muted-foreground">
+                                  · {booking.pet_name}
+                                </p>
+                              )}
+                            </div>
                           </div>
                           <div className="text-right flex flex-col items-end gap-1">
-                            <Badge
-                              variant={
-                                booking.payment_status === 'paid'
-                                  ? 'default'
-                                  : booking.payment_status === 'pending'
-                                    ? 'secondary'
-                                    : 'outline'
-                              }
-                              className="text-[10px]"
-                            >
-                              {booking.payment_status === 'paid'
-                                ? 'Confirmada'
-                                : booking.payment_status === 'pending'
-                                  ? 'Pendiente'
-                                  : booking.payment_status || 'Sin estado'}
+                            <Badge variant={statusVariant as any} className="text-[10px]">
+                              {statusLabel}
                             </Badge>
                             {isPast && (
                               <Button

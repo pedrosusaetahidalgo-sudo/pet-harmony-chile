@@ -18,6 +18,7 @@ import {
   Stethoscope,
 } from '@/lib/icons';
 import { cn } from '@/lib/utils';
+import { isFeatureEnabled } from '@/lib/featureFlags';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -370,61 +371,63 @@ export const Header = () => {
               </PopoverContent>
             </Popover>
 
-            {/* Messages Popover */}
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="relative hover:bg-accent min-h-[44px] min-w-[44px]"
+            {/* Messages Popover — hidden when CHAT flag is off */}
+            {isFeatureEnabled('CHAT') && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="relative hover:bg-accent min-h-[44px] min-w-[44px]"
+                  >
+                    <MessageSquare className="h-5 w-5" />
+                    {msgUnreadCount > 0 && (
+                      <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-destructive hover:bg-destructive/90">
+                        {msgUnreadCount}
+                      </Badge>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-[min(20rem,calc(100vw-2rem))] p-0"
+                  align="end"
+                  collisionPadding={8}
                 >
-                  <MessageSquare className="h-5 w-5" />
-                  {msgUnreadCount > 0 && (
-                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs bg-destructive hover:bg-destructive/90">
-                      {msgUnreadCount}
-                    </Badge>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-[min(20rem,calc(100vw-2rem))] p-0"
-                align="end"
-                collisionPadding={8}
-              >
-                <div className="p-3 border-b flex items-center justify-between">
-                  <h4 className="font-semibold text-sm">Mensajes</h4>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-xs h-7"
-                    onClick={() => navigate('/chat')}
-                  >
-                    Ver todos
-                  </Button>
-                </div>
-                <div className="p-4 text-center text-sm text-muted-foreground">
-                  <MessageSquare className="h-8 w-8 mx-auto mb-2 text-muted-foreground/40" />
-                  {msgUnreadCount > 0 ? (
-                    <p>
-                      Tienes {msgUnreadCount} mensaje{msgUnreadCount > 1 ? 's' : ''} sin leer
-                    </p>
-                  ) : (
-                    <p>No tienes mensajes nuevos</p>
-                  )}
-                </div>
-                <Separator />
-                <div className="p-2">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="w-full text-xs"
-                    onClick={() => navigate('/chat')}
-                  >
-                    Ir a mensajes
-                  </Button>
-                </div>
-              </PopoverContent>
-            </Popover>
+                  <div className="p-3 border-b flex items-center justify-between">
+                    <h4 className="font-semibold text-sm">Mensajes</h4>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-xs h-7"
+                      onClick={() => navigate('/chat')}
+                    >
+                      Ver todos
+                    </Button>
+                  </div>
+                  <div className="p-4 text-center text-sm text-muted-foreground">
+                    <MessageSquare className="h-8 w-8 mx-auto mb-2 text-muted-foreground/40" />
+                    {msgUnreadCount > 0 ? (
+                      <p>
+                        Tienes {msgUnreadCount} mensaje{msgUnreadCount > 1 ? 's' : ''} sin leer
+                      </p>
+                    ) : (
+                      <p>No tienes mensajes nuevos</p>
+                    )}
+                  </div>
+                  <Separator />
+                  <div className="p-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full text-xs"
+                      onClick={() => navigate('/chat')}
+                    >
+                      Ir a mensajes
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
 
             {/* User avatar → Home */}
             <div

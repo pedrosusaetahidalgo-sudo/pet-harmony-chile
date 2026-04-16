@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
 import {
   startOfMonth,
   endOfMonth,
@@ -9,8 +9,18 @@ import {
   format,
   parseISO,
   isWithinInterval,
-} from "date-fns";
-import type { AnalyticsPeriod } from "./useProAnalytics";
+} from 'date-fns';
+import type { AnalyticsPeriod } from './useProAnalytics';
+
+interface OrderItemRow {
+  id: string;
+  service_type: string | null;
+  unit_price_clp: number | null;
+  provider_amount_clp: number | null;
+  platform_fee_clp: number | null;
+  scheduled_date: string;
+  orders: { user_id: string; payment_status: string; paid_at: string | null } | null;
+}
 
 export interface VetSummary {
   totalBookings: number;
@@ -35,13 +45,13 @@ export interface ServiceBreakdown {
 function getDateRange(period: AnalyticsPeriod) {
   const now = new Date();
   switch (period) {
-    case "current_month":
+    case 'current_month':
       return { start: startOfMonth(now), end: endOfMonth(now) };
-    case "last_month": {
+    case 'last_month': {
       const prev = subMonths(now, 1);
       return { start: startOfMonth(prev), end: endOfMonth(prev) };
     }
-    case "last_3_months":
+    case 'last_3_months':
       return { start: startOfMonth(subMonths(now, 2)), end: endOfMonth(now) };
   }
 }
@@ -50,38 +60,40 @@ export function useVetAnalytics({ period }: { period: AnalyticsPeriod }) {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["vet-analytics", user?.id, period],
+    queryKey: ['vet-analytics', user?.id, period],
     queryFn: async () => {
       if (!user?.id) return null;
 
       const range = getDateRange(period);
-      const rangeStart = format(range.start, "yyyy-MM-dd");
-      const rangeEnd = format(range.end, "yyyy-MM-dd");
+      const rangeStart = format(range.start, 'yyyy-MM-dd');
+      const rangeEnd = format(range.end, 'yyyy-MM-dd');
 
       // Get provider info
       const { data: provider } = await supabase
-        .from("service_providers")
-        .select("id, rating, total_reviews")
-        .eq("user_id", user.id)
+        .from('service_providers')
+        .select('id, rating, total_reviews')
+        .eq('user_id', user.id)
         .maybeSingle();
 
       if (!provider) return null;
 
       // Get order items for this provider in the period
       const { data: orderItems } = await supabase
-        .from("order_items")
-        .select("id, service_type, unit_price_clp, provider_amount_clp, platform_fee_clp, scheduled_date, orders!inner(user_id, payment_status, paid_at)")
-        .eq("provider_id", provider.id)
-        .gte("scheduled_date", rangeStart)
-        .lte("scheduled_date", rangeEnd);
+        .from('order_items')
+        .select(
+          'id, service_type, unit_price_clp, provider_amount_clp, platform_fee_clp, scheduled_date, orders!inner(user_id, payment_status, paid_at)'
+        )
+        .eq('provider_id', provider.id)
+        .gte('scheduled_date', rangeStart)
+        .lte('scheduled_date', rangeEnd);
 
-      const items = (orderItems || []).filter(
-        (item: any) => item.orders?.payment_status === "completed"
+      const items = ((orderItems ?? []) as unknown as OrderItemRow[]).filter(
+        (item) => item.orders?.payment_status === 'completed'
       );
 
       // Summary
-      const uniqueClientIds = new Set(items.map((item: any) => item.orders?.user_id).filter(Boolean));
-      const totalRevenue = items.reduce((sum: number, item: any) => sum + (item.provider_amount_clp || 0), 0);
+      const uniqueClientIds = new Set(items.map((item) => item.orders?.user_id).filter(Boolean));
+      const totalRevenue = items.reduce((sum, item) => sum + (item.provider_amount_clp || 0), 0);
 
       const summary: VetSummary = {
         totalBookings: items.length,
@@ -97,10 +109,10 @@ export function useVetAnalytics({ period }: { period: AnalyticsPeriod }) {
         end: new Date() < range.end ? new Date() : range.end,
       });
       const bookingsTimeline: DailyVetActivity[] = days.map((day) => {
-        const dayStr = format(day, "yyyy-MM-dd");
-        const dayItems = items.filter((item: any) => {
+        const dayStr = format(day, 'yyyy-MM-dd');
+        const dayItems = items.filter((item) => {
           try {
-            return format(parseISO(item.scheduled_date), "yyyy-MM-dd") === dayStr;
+            return format(parseISO(item.scheduled_date), 'yyyy-MM-dd') === dayStr;
           } catch {
             return false;
           }
@@ -108,14 +120,14 @@ export function useVetAnalytics({ period }: { period: AnalyticsPeriod }) {
         return {
           date: dayStr,
           bookings: dayItems.length,
-          revenue: dayItems.reduce((s: number, i: any) => s + (i.provider_amount_clp || 0), 0),
+          revenue: dayItems.reduce((s, i) => s + (i.provider_amount_clp || 0), 0),
         };
       });
 
       // Service breakdown
       const breakdownMap = new Map<string, { count: number; revenue: number }>();
-      items.forEach((item: any) => {
-        const type = item.service_type || "otro";
+      items.forEach((item) => {
+        const type = item.service_type || 'otro';
         const existing = breakdownMap.get(type) || { count: 0, revenue: 0 };
         existing.count += 1;
         existing.revenue += item.provider_amount_clp || 0;

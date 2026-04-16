@@ -5,10 +5,9 @@
  * Este hook proporciona acceso a la tabla unificada `service_providers`
  * y `provider_service_offerings` que centraliza todos los tipos de proveedores.
  *
- * AUTO-APROBACIÓN: Actualmente configurado para aprobar automáticamente nuevos proveedores.
- * Para cambiar a aprobación manual, modificar:
- * 1. En la base de datos: ALTER TABLE service_providers ALTER COLUMN status SET DEFAULT 'pending';
- * 2. En la función get_or_create_service_provider: cambiar 'approved' por 'pending'
+ * APROBACIÓN MANUAL: Los nuevos proveedores se crean con status 'pending'.
+ * Solo aparecen en el directorio público tras aprobación admin.
+ * La función DB get_or_create_service_provider también usa 'pending' (migración 20260416200000).
  */
 
 import { useState, useCallback } from 'react';

@@ -23,6 +23,7 @@ import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
 import { PageHeader } from '@/components/PageHeader';
 import { MapSearchBar, type MapSearchResult } from '@/components/maps/MapSearchBar';
+import { FEATURE_FLAGS } from '@/lib/featureFlags';
 
 // Fix Leaflet default marker icon issue with bundlers (Vite/Webpack)
 // Leaflet bundler workaround: remove broken default icon URL resolver
@@ -218,100 +219,112 @@ const Maps = () => {
   const { shelters: adoptionShelters } = useAdoptionShelters();
   const { partners } = usePartners();
 
-  // Pet Friendly starter places — datos curados manualmente, no de DB aún
-  const petFriendlyPlaces = useMemo(
-    () => [
-      {
-        id: '1',
-        name: 'Parque Bicentenario',
-        type: 'Parques',
-        lat: -33.4039,
-        lng: -70.5917,
-        desc: 'Amplio parque con zona de perros',
-        address: 'Av. Bicentenario, Vitacura',
-      },
-      {
-        id: '2',
-        name: 'Parque Araucano',
-        type: 'Parques',
-        lat: -33.4087,
-        lng: -70.575,
-        desc: 'Zona pet friendly con bebederos',
-        address: 'Av. Presidente Riesco, Las Condes',
-      },
-      {
-        id: '3',
-        name: 'Starbucks Providencia',
-        type: 'Cafes',
-        lat: -33.4256,
-        lng: -70.6107,
-        desc: 'Terraza pet friendly, agua para mascotas',
-        address: 'Av. Providencia 2124',
-      },
-      {
-        id: '4',
-        name: 'Parque Bustamante',
-        type: 'Parques',
-        lat: -33.4406,
-        lng: -70.6379,
-        desc: 'Parque urbano pet friendly',
-        address: 'Av. Bustamante, Providencia',
-      },
-      {
-        id: '5',
-        name: 'Juan Valdez Costanera',
-        type: 'Cafes',
-        lat: -33.417,
-        lng: -70.606,
-        desc: 'Terraza amplia apta mascotas',
-        address: 'Costanera Center, Providencia',
-      },
-      {
-        id: '6',
-        name: 'Cervecería Kross',
-        type: 'Restaurantes',
-        lat: -33.4343,
-        lng: -70.615,
-        desc: 'Restaurante con terraza pet friendly',
-        address: 'Av. Italia 1421, Providencia',
-      },
-      {
-        id: '7',
-        name: 'Parque Metropolitano (Cerro San Cristóbal)',
-        type: 'Parques',
-        lat: -33.425,
-        lng: -70.633,
-        desc: 'Senderos pet friendly, llevar agua',
-        address: 'Pío Nono 450, Recoleta',
-      },
-      {
-        id: '8',
-        name: 'Café de la Candelaria',
-        type: 'Cafes',
-        lat: -33.443,
-        lng: -70.634,
-        desc: 'Café artesanal, mascotas bienvenidas',
-        address: 'Purísima 165, Bellavista',
-      },
-      {
-        id: '9',
-        name: 'Playa de los Perros Algarrobo',
-        type: 'Playas',
-        lat: -33.364,
-        lng: -71.653,
-        desc: 'Playa habilitada para perros',
-        address: 'Algarrobo, V Región',
-      },
-      {
-        id: '10',
-        name: "Parque O'Higgins",
-        type: 'Parques',
-        lat: -33.4645,
-        lng: -70.6582,
-        desc: 'Gran parque urbano, zona canina',
-        address: 'Av. Beauchef, Santiago Centro',
-      },
-    ],
+  // Pet Friendly places — hidden behind feature flag until real DB table exists.
+  // The hardcoded data below is kept but gated so it never renders to users.
+  const petFriendlyPlaces: {
+    id: string;
+    name: string;
+    type: string;
+    lat: number;
+    lng: number;
+    desc: string;
+    address: string;
+  }[] = useMemo(
+    () =>
+      FEATURE_FLAGS.MAP_PET_FRIENDLY
+        ? [
+            {
+              id: '1',
+              name: 'Parque Bicentenario',
+              type: 'Parques',
+              lat: -33.4039,
+              lng: -70.5917,
+              desc: 'Amplio parque con zona de perros',
+              address: 'Av. Bicentenario, Vitacura',
+            },
+            {
+              id: '2',
+              name: 'Parque Araucano',
+              type: 'Parques',
+              lat: -33.4087,
+              lng: -70.575,
+              desc: 'Zona pet friendly con bebederos',
+              address: 'Av. Presidente Riesco, Las Condes',
+            },
+            {
+              id: '3',
+              name: 'Starbucks Providencia',
+              type: 'Cafes',
+              lat: -33.4256,
+              lng: -70.6107,
+              desc: 'Terraza pet friendly, agua para mascotas',
+              address: 'Av. Providencia 2124',
+            },
+            {
+              id: '4',
+              name: 'Parque Bustamante',
+              type: 'Parques',
+              lat: -33.4406,
+              lng: -70.6379,
+              desc: 'Parque urbano pet friendly',
+              address: 'Av. Bustamante, Providencia',
+            },
+            {
+              id: '5',
+              name: 'Juan Valdez Costanera',
+              type: 'Cafes',
+              lat: -33.417,
+              lng: -70.606,
+              desc: 'Terraza amplia apta mascotas',
+              address: 'Costanera Center, Providencia',
+            },
+            {
+              id: '6',
+              name: 'Cervecería Kross',
+              type: 'Restaurantes',
+              lat: -33.4343,
+              lng: -70.615,
+              desc: 'Restaurante con terraza pet friendly',
+              address: 'Av. Italia 1421, Providencia',
+            },
+            {
+              id: '7',
+              name: 'Parque Metropolitano (Cerro San Cristóbal)',
+              type: 'Parques',
+              lat: -33.425,
+              lng: -70.633,
+              desc: 'Senderos pet friendly, llevar agua',
+              address: 'Pío Nono 450, Recoleta',
+            },
+            {
+              id: '8',
+              name: 'Café de la Candelaria',
+              type: 'Cafes',
+              lat: -33.443,
+              lng: -70.634,
+              desc: 'Café artesanal, mascotas bienvenidas',
+              address: 'Purísima 165, Bellavista',
+            },
+            {
+              id: '9',
+              name: 'Playa de los Perros Algarrobo',
+              type: 'Playas',
+              lat: -33.364,
+              lng: -71.653,
+              desc: 'Playa habilitada para perros',
+              address: 'Algarrobo, V Región',
+            },
+            {
+              id: '10',
+              name: "Parque O'Higgins",
+              type: 'Parques',
+              lat: -33.4645,
+              lng: -70.6582,
+              desc: 'Gran parque urbano, zona canina',
+              address: 'Av. Beauchef, Santiago Centro',
+            },
+          ]
+        : [],
     []
   );
 
@@ -351,6 +364,10 @@ const Maps = () => {
       const showAnimals = activeChip === 'Todos' || activeChip === 'Mascotas';
       const showShelters = activeChip === 'Todos' || activeChip === 'Refugios';
 
+      // NOTE: adoption_posts table has no latitude/longitude columns (only a
+      // text `location` field). The `.filter(post => post.latitude && post.longitude)`
+      // correctly excludes all posts. When the table gets real coords, markers
+      // will appear automatically.
       if (showAnimals && (filters.adoptionView === 'all' || filters.adoptionView === 'animals')) {
         const animalMarkers = (adoptionPosts || [])
           .filter((post) => {
@@ -667,7 +684,7 @@ const Maps = () => {
     return 'service';
   };
 
-  // Tab config
+  // Tab config — pet friendly hidden behind feature flag
   const tabs: { value: MapView; label: string; icon: React.ReactNode; activeClass: string }[] = [
     {
       value: 'lost',
@@ -693,12 +710,16 @@ const Maps = () => {
       icon: <Building2 className="h-4 w-4" />,
       activeClass: 'bg-emerald-500 text-white',
     },
-    {
-      value: 'petFriendly',
-      label: 'Pet Friendly',
-      icon: <Coffee className="h-4 w-4" />,
-      activeClass: 'bg-amber-500 text-white',
-    },
+    ...(FEATURE_FLAGS.MAP_PET_FRIENDLY
+      ? [
+          {
+            value: 'petFriendly' as MapView,
+            label: 'Pet Friendly',
+            icon: <Coffee className="h-4 w-4" />,
+            activeClass: 'bg-amber-500 text-white',
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -840,7 +861,7 @@ const Maps = () => {
           <div className="flex items-center gap-1.5 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 shadow-sm text-xs text-muted-foreground">
             <MapPin className="h-3.5 w-3.5" />
             <span>{filteredMarkers.length} resultados</span>
-            {activeView === 'petFriendly' && (
+            {activeView === 'petFriendly' && FEATURE_FLAGS.MAP_PET_FRIENDLY && (
               <span className="text-amber-600 ml-1">· Datos curados</span>
             )}
           </div>
@@ -862,7 +883,7 @@ const Maps = () => {
         )}
 
         {/* FAB - Floating Action Button */}
-        {activeView !== 'services' && activeView !== 'partners' && (
+        {activeView !== 'services' && activeView !== 'partners' && activeView !== 'petFriendly' && (
           <Button
             onClick={handleFabClick}
             className="absolute bottom-6 right-4 z-[1000] h-14 w-14 rounded-full shadow-lg bg-warm-gradient hover:opacity-90"

@@ -29,7 +29,9 @@ export function usePendingReviews() {
     staleTime: 5 * 60 * 1000,
     queryFn: async () => {
       try {
-        const sb = supabase as any;
+        const sb = supabase as unknown as {
+          from: (table: string) => ReturnType<typeof supabase.from>;
+        };
         const { data, error } = await sb
           .from('pending_reviews')
           .select('*')

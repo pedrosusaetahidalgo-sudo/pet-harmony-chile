@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, memo, lazy, Suspense } from 'react';
+import { useState, useEffect, useMemo, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,10 +21,6 @@ import {
   Syringe,
   FileText,
   TrendingUp,
-  Smartphone,
-  Link2,
-  Gamepad2,
-  Trophy,
   Star,
   Phone,
 } from '@/lib/icons';
@@ -32,7 +28,6 @@ import { getGreeting } from '@/lib/format';
 import { useGamification } from '@/hooks/useGamification';
 import { useReminders } from '@/hooks/useReminders';
 import { StatusCard } from '@/components/home/StatusCard';
-import ActivityFeed from '@/components/social/ActivityFeed';
 import { LINKS } from '@/lib/links';
 import { useGoToAddPet } from '@/hooks/useCanAddPet';
 import { logger } from '@/lib/logger';
@@ -41,17 +36,7 @@ import { WeeklyReportCard } from '@/components/home/WeeklyReportCard';
 import { SeasonalTipsCard } from '@/components/home/SeasonalTipsCard';
 import { TodayRoutinesCard } from '@/components/home/TodayRoutinesCard';
 import { AnnualCareChecklist } from '@/components/home/AnnualCareChecklist';
-const AnalyticsPreviewCard = lazy(() =>
-  import('@/components/analytics/AnalyticsPreviewCard').then((m) => ({
-    default: m.AnalyticsPreviewCard,
-  }))
-);
-const PetWellnessPreview = lazy(() =>
-  import('@/components/analytics/PetWellnessPreview').then((m) => ({
-    default: m.PetWellnessPreview,
-  }))
-);
-import { isFeatureEnabled } from '@/lib/featureFlags';
+// AnalyticsPreviewCard and PetWellnessPreview removed from home — accessible via /panel-pro
 import { isGenericDisplayName } from '@/lib/format';
 import { NamePromptDialog } from '@/components/NamePromptDialog';
 import { computeHealthScore } from '@/lib/health-score';
@@ -349,9 +334,6 @@ export default function Home() {
 
   const activeVaccine = activePet ? vaccineStatus[activePet.id] : undefined;
   const activeCompleteness = activePet ? (completeness[activePet.id] ?? 0) : 0;
-  const streakDays =
-    (stats as unknown as { streak_days?: number } | null | undefined)?.streak_days ?? 0;
-
   // Health score for active pet
   const healthScore = useMemo(() => {
     if (!activePet) return null;
@@ -388,9 +370,6 @@ export default function Home() {
             <Skeleton className="h-3 w-24" />
           </div>
         </div>
-
-        {/* PawGame widget skeleton */}
-        <Skeleton className="h-16 w-full rounded-xl" />
 
         {/* Pet switcher skeleton */}
         <div className="flex gap-3">
@@ -672,23 +651,64 @@ export default function Home() {
               <WeeklyReportCard />
             </div>
 
-            {/* Right: Quick actions + Gamification */}
+            {/* Right: Primary CTAs + secondary info */}
             <div className="space-y-3">
-              {/* Quick actions grid */}
+              {/* Primary CTA: Completa tu ficha (if <80%) or Buscar vet */}
+              {activeCompleteness < 80 && activePet && (
+                <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-violet-50">
+                  <CardContent className="p-4">
+                    <p className="text-sm font-semibold text-purple-900 mb-1">
+                      Completa la ficha de {activePet.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Tu ficha esta al {activeCompleteness}%. Una ficha completa ayuda a tu vet a
+                      dar mejor atencion.
+                    </p>
+                    <Button
+                      size="sm"
+                      className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                      onClick={() => navigate(LINKS.petClinical(activePet.id))}
+                    >
+                      <FileText className="h-3.5 w-3.5 mr-1.5" /> Completar ficha
+                    </Button>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Primary CTA: Buscar vet */}
+              <Card className="border-teal-200 bg-gradient-to-br from-teal-50 to-emerald-50">
+                <CardContent className="p-4">
+                  <p className="text-sm font-semibold text-teal-900 mb-1">Busca un veterinario</p>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    Encuentra vets cerca de ti, compara precios y agenda una hora.
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      className="flex-1 bg-teal-600 hover:bg-teal-700 text-white"
+                      onClick={() => navigate(LINKS.vets())}
+                    >
+                      <Stethoscope className="h-3.5 w-3.5 mr-1.5" /> Buscar vet
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="border-teal-300 text-teal-700"
+                      onClick={() => navigate('/precios-veterinarios')}
+                    >
+                      <TrendingUp className="h-3.5 w-3.5 mr-1.5" /> Precios
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quick actions compact */}
               <Card>
                 <CardContent className="p-3">
                   <p className="text-xs font-semibold mb-2 text-muted-foreground">
                     Acciones rapidas
                   </p>
                   <div className="grid grid-cols-2 gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-10 text-xs justify-start gap-1.5"
-                      onClick={() => navigate(LINKS.vets())}
-                    >
-                      <Stethoscope className="h-3.5 w-3.5 text-purple-600" /> Reservar vet
-                    </Button>
                     <Button
                       variant="outline"
                       size="sm"
@@ -705,14 +725,6 @@ export default function Home() {
                       variant="outline"
                       size="sm"
                       className="h-10 text-xs justify-start gap-1.5"
-                      onClick={() => navigate('/precios-veterinarios')}
-                    >
-                      <TrendingUp className="h-3.5 w-3.5 text-amber-600" /> Precios
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-10 text-xs justify-start gap-1.5"
                       onClick={() => navigate('/calendario')}
                     >
                       <Calendar className="h-3.5 w-3.5 text-indigo-600" /> Calendario
@@ -720,34 +732,6 @@ export default function Home() {
                   </div>
                 </CardContent>
               </Card>
-
-              {/* PawGame compact */}
-              {stats && (
-                <Card
-                  className="border-purple-100 bg-purple-50/30 cursor-pointer hover:bg-purple-50/50 transition-colors"
-                  onClick={() => navigate('/paw-game')}
-                >
-                  <CardContent className="flex items-center gap-3 p-3">
-                    <Gamepad2 className="h-5 w-5 text-purple-600 flex-shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-xs font-bold text-purple-800">
-                          {stats.points?.toLocaleString('es-CL') || 0} pts
-                        </span>
-                        {stats.level > 1 && (
-                          <span className="text-[10px] bg-purple-200 text-purple-700 px-1 py-0.5 rounded-full">
-                            Lv{stats.level}
-                          </span>
-                        )}
-                        {streakDays > 0 && (
-                          <span className="text-[10px] text-purple-500">🔥{streakDays}d</span>
-                        )}
-                      </div>
-                    </div>
-                    <Trophy className="h-3.5 w-3.5 text-purple-400" />
-                  </CardContent>
-                </Card>
-              )}
 
               {/* Pending reviews */}
               {pendingReviewCount > 0 && (
@@ -763,13 +747,6 @@ export default function Home() {
                     </p>
                   </CardContent>
                 </Card>
-              )}
-
-              {/* Analytics preview (Pro) */}
-              {isFeatureEnabled('PRO_ANALYTICS') && (
-                <Suspense fallback={null}>
-                  <AnalyticsPreviewCard />
-                </Suspense>
               )}
             </div>
           </div>

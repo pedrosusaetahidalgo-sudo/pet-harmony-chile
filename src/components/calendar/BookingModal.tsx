@@ -91,6 +91,8 @@ export function BookingModal({ slot, open, onClose }: Props) {
 
       queryClient.invalidateQueries({ queryKey: ['service-slots'] });
       queryClient.invalidateQueries({ queryKey: ['month-slots'] });
+      queryClient.invalidateQueries({ queryKey: ['my-bookings-v1'] });
+      queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
       setStep('success');
       toast('Reserva confirmada!', { description: '+10 puntos ganados' });
     } catch {
