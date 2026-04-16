@@ -33,31 +33,14 @@ export function MemorialFlow({ petId, petName, onComplete, onCancel }: MemorialF
 
     setLoading(true);
     try {
-      const now = new Date();
-      const undoUntil = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-
-      const { error } = await supabase
-        .from('pets')
-        .update({
-          lifecycle_status: 'memorial',
-          passed_away_at: new Date(formData.passed_away_at).toISOString(),
-          passed_away_registered_at: now.toISOString(),
-          passed_away_cause: formData.passed_away_cause || null,
-          memorial_message: formData.memorial_message || null,
-          memorial_undo_until: undoUntil.toISOString(),
-          memorial_visibility: 'memorial_section_only',
-          memorial_remembrance_enabled: false,
-        })
-        .eq('id', petId);
+      const { error } = await supabase.rpc('archive_pet_memorial', {
+        p_pet_id: petId,
+        p_passed_away_at: new Date(formData.passed_away_at).toISOString(),
+        p_cause: formData.passed_away_cause || null,
+        p_message: formData.memorial_message || null,
+      });
 
       if (error) throw error;
-
-      // Mark pending reminders as completed for this pet
-      await supabase
-        .from('pet_reminders')
-        .update({ is_completed: true, completed_at: new Date().toISOString() })
-        .eq('pet_id', petId)
-        .eq('is_completed', false);
 
       setStep('done');
     } catch (err) {

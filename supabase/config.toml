@@ -90,3 +90,9 @@ verify_jwt = false
 
 [functions.verify-vet-document]
 verify_jwt = false
+
+[functions.feedback-admin]
+verify_jwt = false
+
+[functions.send-lead-outreach]
+verify_jwt = false

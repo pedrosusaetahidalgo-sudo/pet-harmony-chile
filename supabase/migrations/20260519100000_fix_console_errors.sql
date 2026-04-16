@@ -38,29 +38,18 @@ CREATE POLICY "Users can insert own feedback"
   ON public.feedback_in_app FOR INSERT
   WITH CHECK (auth.uid() = user_id);
 
--- Admins can read all feedback (using admin_access table)
+-- Admins can read all feedback (using SECURITY DEFINER helper to avoid RLS recursion on admin_access)
 DROP POLICY IF EXISTS "Admins can read all feedback" ON public.feedback_in_app;
 CREATE POLICY "Admins can read all feedback"
   ON public.feedback_in_app FOR SELECT
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.admin_access
-      WHERE admin_access.user_id = auth.uid()
-        AND admin_access.is_active = true
-    )
-  );
+  USING (public.is_active_admin(auth.uid()));
 
 -- Admins can update feedback (status, response, etc.)
 DROP POLICY IF EXISTS "Admins can update feedback" ON public.feedback_in_app;
 CREATE POLICY "Admins can update feedback"
   ON public.feedback_in_app FOR UPDATE
-  USING (
-    EXISTS (
-      SELECT 1 FROM public.admin_access
-      WHERE admin_access.user_id = auth.uid()
-        AND admin_access.is_active = true
-    )
-  );
+  USING (public.is_active_admin(auth.uid()))
+  WITH CHECK (public.is_active_admin(auth.uid()));
 
 -- ══════════════════════════════════════════════════════════════
 -- 2. vet_clinical_notes — add FK to pets if missing

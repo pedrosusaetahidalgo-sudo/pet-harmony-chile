@@ -23,6 +23,16 @@ export interface FeedbackItem {
   updated_at: string;
 }
 
+// ── Helper: call feedback-admin edge function ──
+async function callFeedbackAdmin(action: string, payload: Record<string, unknown>) {
+  const { data, error } = await supabase.functions.invoke('feedback-admin', {
+    body: { action, ...payload },
+  });
+  if (error) throw error;
+  if (data?.error) throw new Error(data.error);
+  return data;
+}
+
 // ── User-facing hook: submit feedback ──
 export function useSubmitFeedback() {
   const { user } = useAuth();
@@ -97,25 +107,15 @@ export function useMyFeedback() {
   });
 }
 
-// ── Admin: all feedback ──
+// ── Admin: all feedback (via edge function) ──
 export function useAdminFeedback(statusFilter?: string) {
   return useQuery({
     queryKey: ['admin-feedback', statusFilter],
     queryFn: async () => {
-      let query = supabase
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .from('feedback_in_app' as any)
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(100);
-
-      if (statusFilter && statusFilter !== 'all') {
-        query = query.eq('status', statusFilter);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      return data as unknown as FeedbackItem[];
+      const result = await callFeedbackAdmin('list', {
+        status: statusFilter || 'new',
+      });
+      return (result.data ?? []) as FeedbackItem[];
     },
   });
 }
@@ -127,12 +127,7 @@ export function useUpdateFeedbackStatus() {
 
   return useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { error } = await supabase
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .from('feedback_in_app' as any)
-        .update({ status, updated_at: new Date().toISOString() })
-        .eq('id', id);
-      if (error) throw error;
+      await callFeedbackAdmin('update_status', { id, status });
     },
     onSuccess: () => {
       toast({ title: 'Estado actualizado' });
@@ -148,17 +143,7 @@ export function useRespondFeedback() {
 
   return useMutation({
     mutationFn: async ({ id, response }: { id: string; response: string }) => {
-      const { error } = await supabase
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .from('feedback_in_app' as any)
-        .update({
-          admin_response: response,
-          admin_responded_at: new Date().toISOString(),
-          status: 'reviewed',
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', id);
-      if (error) throw error;
+      await callFeedbackAdmin('respond', { id, response });
     },
     onSuccess: () => {
       toast({ title: 'Respuesta enviada' });
@@ -173,12 +158,7 @@ export function useToggleFeedbackLike() {
 
   return useMutation({
     mutationFn: async ({ id, liked }: { id: string; liked: boolean }) => {
-      const { error } = await supabase
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .from('feedback_in_app' as any)
-        .update({ admin_liked: liked, updated_at: new Date().toISOString() })
-        .eq('id', id);
-      if (error) throw error;
+      await callFeedbackAdmin('toggle_like', { id, liked });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin-feedback'] });
@@ -201,12 +181,7 @@ export function useAwardFeedbackPoints() {
       userId: string;
       points: number;
     }) => {
-      const { error } = await supabase.rpc('admin_award_feedback_points', {
-        p_feedback_id: feedbackId,
-        p_user_id: userId,
-        p_points: points,
-      });
-      if (error) throw error;
+      await callFeedbackAdmin('award_points', { feedbackId, userId, points });
     },
     onSuccess: (_, variables) => {
       toast({
