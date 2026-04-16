@@ -141,12 +141,17 @@ export const useServiceProviders = () => {
   });
 
   // Obtener proveedores por tipo de servicio
+  // Primero busca por primary_service_type, luego por provider_service_offerings
   const getProvidersByServiceType = useCallback(
     (serviceType: ServiceType) => {
       return (
-        providers?.filter((p) =>
-          p.services?.some((s: ServiceOffering) => s.service_type === serviceType && s.is_active)
-        ) || []
+        providers?.filter((p) => {
+          const primaryType = (p as any).primary_service_type;
+          if (primaryType === serviceType) return true;
+          return p.services?.some(
+            (s: ServiceOffering) => s.service_type === serviceType && s.is_active
+          );
+        }) || []
       );
     },
     [providers]

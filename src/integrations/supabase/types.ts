@@ -3893,6 +3893,7 @@ export type Database = {
           opening_hours: Json | null;
           photos: string[] | null;
           price_from: number | null;
+          primary_service_type: string | null;
           provider_plan: string | null;
           provider_type: string | null;
           public_email: string | null;
@@ -3900,6 +3901,7 @@ export type Database = {
           rating: number | null;
           rejection_reason: string | null;
           service_areas: string[] | null;
+          services_offered: string[] | null;
           slug: string | null;
           specialties: string[] | null;
           status: string | null;
@@ -3910,6 +3912,12 @@ export type Database = {
           verification_documents: string[] | null;
           verified_at: string | null;
           verified_by: string | null;
+          business_name: string | null;
+          base_price_clp: number | null;
+          accepts_cats: boolean | null;
+          accepts_dogs: boolean | null;
+          accepts_long_hair: boolean | null;
+          mobile_service: boolean | null;
         };
         Insert: {
           accepts_emergency?: boolean | null;
@@ -3942,6 +3950,7 @@ export type Database = {
           opening_hours?: Json | null;
           photos?: string[] | null;
           price_from?: number | null;
+          primary_service_type?: string | null;
           provider_plan?: string | null;
           provider_type?: string | null;
           public_email?: string | null;
@@ -3949,6 +3958,7 @@ export type Database = {
           rating?: number | null;
           rejection_reason?: string | null;
           service_areas?: string[] | null;
+          services_offered?: string[] | null;
           slug?: string | null;
           specialties?: string[] | null;
           status?: string | null;
@@ -3959,6 +3969,12 @@ export type Database = {
           verification_documents?: string[] | null;
           verified_at?: string | null;
           verified_by?: string | null;
+          business_name?: string | null;
+          base_price_clp?: number | null;
+          accepts_cats?: boolean | null;
+          accepts_dogs?: boolean | null;
+          accepts_long_hair?: boolean | null;
+          mobile_service?: boolean | null;
         };
         Update: {
           accepts_emergency?: boolean | null;
@@ -3991,6 +4007,7 @@ export type Database = {
           opening_hours?: Json | null;
           photos?: string[] | null;
           price_from?: number | null;
+          primary_service_type?: string | null;
           provider_plan?: string | null;
           provider_type?: string | null;
           public_email?: string | null;
@@ -3998,6 +4015,7 @@ export type Database = {
           rating?: number | null;
           rejection_reason?: string | null;
           service_areas?: string[] | null;
+          services_offered?: string[] | null;
           slug?: string | null;
           specialties?: string[] | null;
           status?: string | null;
@@ -4008,6 +4026,12 @@ export type Database = {
           verification_documents?: string[] | null;
           verified_at?: string | null;
           verified_by?: string | null;
+          business_name?: string | null;
+          base_price_clp?: number | null;
+          accepts_cats?: boolean | null;
+          accepts_dogs?: boolean | null;
+          accepts_long_hair?: boolean | null;
+          mobile_service?: boolean | null;
         };
         Relationships: [];
       };

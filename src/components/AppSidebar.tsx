@@ -173,17 +173,20 @@ export function AppSidebar() {
       if (!user?.id)
         return { hasPets: false, isGroomer: false, providerSlug: null as string | null };
 
-      const [petsResult, groomerResult, providerResult] = await Promise.all([
+      const [petsResult, providerResult] = await Promise.all([
         supabase.from('pets').select('id').eq('owner_id', user.id).limit(1),
-        supabase.from('groomer_profiles').select('id').eq('user_id', user.id).maybeSingle(),
         isProvider
-          ? supabase.from('service_providers').select('slug').eq('user_id', user.id).maybeSingle()
+          ? supabase
+              .from('service_providers')
+              .select('slug, primary_service_type')
+              .eq('user_id', user.id)
+              .maybeSingle()
           : Promise.resolve({ data: null }),
       ]);
 
       return {
         hasPets: (petsResult.data?.length ?? 0) > 0,
-        isGroomer: !!groomerResult.data,
+        isGroomer: providerResult.data?.primary_service_type === 'grooming',
         providerSlug: providerResult.data?.slug ?? null,
       };
     },

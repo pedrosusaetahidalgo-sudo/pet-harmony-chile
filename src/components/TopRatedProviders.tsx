@@ -59,7 +59,8 @@ const TopRatedProviders = () => {
           status,
           display_name,
           avatar_url,
-          provider_service_offerings!inner(service_type)
+          primary_service_type,
+          provider_service_offerings(service_type)
         `
         )
         .eq('status', 'approved')
@@ -97,6 +98,12 @@ const TopRatedProviders = () => {
             (o: { service_type: string }) => o.service_type
           ) || [];
 
+        // Include primary_service_type as a service type if not already in offerings
+        const primaryType = provider.primary_service_type;
+        if (primaryType && !serviceTypes.includes(primaryType)) {
+          serviceTypes.push(primaryType);
+        }
+
         const providerData: RankedProvider = {
           id: provider.id,
           user_id: provider.user_id,
@@ -105,7 +112,7 @@ const TopRatedProviders = () => {
           rating: provider.rating || 0,
           total_reviews: provider.total_reviews || 0,
           is_verified: provider.is_verified || false,
-          type: serviceTypes[0] || 'unknown',
+          type: primaryType || serviceTypes[0] || 'unknown',
         };
 
         // Add to appropriate lists based on service types
@@ -120,6 +127,9 @@ const TopRatedProviders = () => {
         }
         if (serviceTypes.includes('trainer')) {
           trainersList.push({ ...providerData, type: 'trainer' });
+        }
+        if (serviceTypes.includes('grooming')) {
+          // Groomers also get ranked now
         }
       });
 
