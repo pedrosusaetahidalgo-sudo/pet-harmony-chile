@@ -24,7 +24,6 @@ import {
   RefreshCw,
 } from '@/lib/icons';
 import { ProviderDirectoryCard } from '../ProviderDirectoryCard';
-import { ManageResourcesCard } from '../ManageResourcesCard';
 import { CreateServicePromotion } from '@/components/CreateServicePromotion';
 import type { ProviderDashboardStats } from '@/hooks/useProviderDashboardStats';
 import type { DailyVetActivity, VetSummary, ServiceBreakdown } from '@/hooks/useVetAnalytics';
@@ -316,9 +315,6 @@ export function BusinessTab({
             )}
           </CardContent>
         </Card>
-
-        {/* Manage rooms/resources */}
-        {stats.providerId && <ManageResourcesCard providerId={stats.providerId} />}
 
         {/* Visibility tip */}
         {!stats.isDirectoryVisible && (
