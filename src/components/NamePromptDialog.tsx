@@ -76,6 +76,7 @@ export function NamePromptDialog({ open, onDone, currentName }: NamePromptDialog
           <div className="space-y-2">
             <Label htmlFor="promptName">Tu nombre</Label>
             <div className="flex gap-2">
+              {}
               <Input
                 id="promptName"
                 placeholder="Ej: María, Carlos, PetLover..."

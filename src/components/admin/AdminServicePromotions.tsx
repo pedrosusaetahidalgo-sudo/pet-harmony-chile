@@ -1,10 +1,10 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { toast } from "sonner";
-import { CheckCircle, XCircle, Eye, Image } from "@/lib/icons";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { toast } from 'sonner';
+import { CheckCircle, XCircle, Eye, Image } from '@/lib/icons';
 import {
   Table,
   TableBody,
@@ -12,98 +12,115 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from '@/components/ui/table';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
-import { useAuth } from "@/hooks/useAuth";
+} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
+import { useState } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import type { Tables } from '@/integrations/supabase/types';
 
-const statusLabels: Record<string, { label: string; variant: "default" | "secondary" | "destructive" }> = {
-  pending: { label: "Pendiente", variant: "secondary" },
-  approved: { label: "Aprobado", variant: "default" },
-  rejected: { label: "Rechazado", variant: "destructive" },
+const statusLabels: Record<
+  string,
+  { label: string; variant: 'default' | 'secondary' | 'destructive' }
+> = {
+  pending: { label: 'Pendiente', variant: 'secondary' },
+  approved: { label: 'Aprobado', variant: 'default' },
+  rejected: { label: 'Rechazado', variant: 'destructive' },
 };
 
 const serviceTypeLabels: Record<string, string> = {
-  dog_walker: "Paseo",
-  dog_sitter: "Cuidado",
-  vet: "Veterinario",
-  trainer: "Entrenamiento",
-  grooming: "Peluquería",
-  other: "Otro",
+  dog_walker: 'Paseo',
+  dog_sitter: 'Cuidado',
+  vet: 'Veterinario',
+  trainer: 'Entrenamiento',
+  grooming: 'Peluquería',
+  other: 'Otro',
 };
 
 const AdminServicePromotions = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const [selectedPromotion, setSelectedPromotion] = useState<any>(null);
-  const [rejectionReason, setRejectionReason] = useState("");
+  const [selectedPromotion, setSelectedPromotion] = useState<
+    | (Tables<'service_promotions'> & {
+        profiles: { id: string; display_name: string | null; avatar_url: string | null } | null;
+      })
+    | null
+  >(null);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   const { data: promotions, isLoading } = useQuery({
-    queryKey: ["admin-service-promotions"],
+    queryKey: ['admin-service-promotions'],
     queryFn: async () => {
       const { data: promotionsData, error } = await supabase
-        .from("service_promotions")
-        .select("*")
-        .order("created_at", { ascending: false });
+        .from('service_promotions')
+        .select('*')
+        .order('created_at', { ascending: false });
       if (error) throw error;
-      
+
       // Fetch profiles separately
-      const userIds = [...new Set(promotionsData?.map(p => p.user_id) || [])];
+      const userIds = [...new Set(promotionsData?.map((p) => p.user_id) || [])];
       const { data: profilesData } = await supabase
-        .from("profiles")
-        .select("id, display_name, avatar_url")
-        .in("id", userIds);
-      
-      const profilesMap = new Map(profilesData?.map(p => [p.id, p]) || []);
-      
-      return promotionsData?.map(p => ({
-        ...p,
-        profiles: profilesMap.get(p.user_id) || null
-      })) || [];
+        .from('profiles')
+        .select('id, display_name, avatar_url')
+        .in('id', userIds);
+
+      const profilesMap = new Map(profilesData?.map((p) => [p.id, p]) || []);
+
+      return (
+        promotionsData?.map((p) => ({
+          ...p,
+          profiles: profilesMap.get(p.user_id) || null,
+        })) || []
+      );
     },
   });
 
   const updatePromotionMutation = useMutation({
-    mutationFn: async ({ id, status, rejectionReason }: { id: string; status: string; rejectionReason?: string }) => {
+    mutationFn: async ({
+      id,
+      status,
+      rejectionReason,
+    }: {
+      id: string;
+      status: string;
+      rejectionReason?: string;
+    }) => {
       const { error } = await supabase
-        .from("service_promotions")
-        .update({ 
-          status, 
+        .from('service_promotions')
+        .update({
+          status,
           rejection_reason: rejectionReason || null,
           reviewed_at: new Date().toISOString(),
-          reviewed_by: user?.id
+          reviewed_by: user?.id,
         })
-        .eq("id", id);
+        .eq('id', id);
       if (error) throw error;
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["admin-service-promotions"] });
-      toast.success(variables.status === "approved" ? "Promoción aprobada" : "Promoción rechazada");
+      queryClient.invalidateQueries({ queryKey: ['admin-service-promotions'] });
+      toast.success(variables.status === 'approved' ? 'Promoción aprobada' : 'Promoción rechazada');
       setSelectedPromotion(null);
-      setRejectionReason("");
+      setRejectionReason('');
     },
     onError: () => {
-      toast.error("Error al procesar promoción");
+      toast.error('Error al procesar promoción');
     },
   });
 
-  const pendingCount = promotions?.filter(p => p.status === "pending").length || 0;
+  const pendingCount = promotions?.filter((p) => p.status === 'pending').length || 0;
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           Promociones de Servicios
-          {pendingCount > 0 && (
-            <Badge variant="destructive">{pendingCount} pendientes</Badge>
-          )}
+          {pendingCount > 0 && <Badge variant="destructive">{pendingCount} pendientes</Badge>}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -131,21 +148,19 @@ const AdminServicePromotions = () => {
                   <TableCell className="font-medium max-w-[200px] truncate">
                     {promotion.title}
                   </TableCell>
-                  <TableCell>
-                    {promotion.profiles?.display_name || "Sin nombre"}
-                  </TableCell>
+                  <TableCell>{promotion.profiles?.display_name || 'Sin nombre'}</TableCell>
                   <TableCell>
                     <Badge variant="outline">
                       {serviceTypeLabels[promotion.service_type] || promotion.service_type}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={statusLabels[promotion.status]?.variant || "secondary"}>
+                    <Badge variant={statusLabels[promotion.status]?.variant || 'secondary'}>
                       {statusLabels[promotion.status]?.label || promotion.status}
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    {new Date(promotion.created_at).toLocaleDateString("es-CL")}
+                    {new Date(promotion.created_at).toLocaleDateString('es-CL')}
                   </TableCell>
                   <TableCell className="space-x-2">
                     <Button
@@ -155,12 +170,14 @@ const AdminServicePromotions = () => {
                     >
                       <Eye className="h-4 w-4" />
                     </Button>
-                    {promotion.status === "pending" && (
+                    {promotion.status === 'pending' && (
                       <>
                         <Button
                           size="sm"
                           variant="default"
-                          onClick={() => updatePromotionMutation.mutate({ id: promotion.id, status: "approved" })}
+                          onClick={() =>
+                            updatePromotionMutation.mutate({ id: promotion.id, status: 'approved' })
+                          }
                         >
                           <CheckCircle className="h-4 w-4" />
                         </Button>
@@ -180,10 +197,13 @@ const AdminServicePromotions = () => {
           </Table>
         )}
 
-        <Dialog open={!!selectedPromotion} onOpenChange={() => {
-          setSelectedPromotion(null);
-          setRejectionReason("");
-        }}>
+        <Dialog
+          open={!!selectedPromotion}
+          onOpenChange={() => {
+            setSelectedPromotion(null);
+            setRejectionReason('');
+          }}
+        >
           <DialogContent className="max-w-2xl">
             <DialogHeader>
               <DialogTitle>Detalles de la Promoción</DialogTitle>
@@ -197,11 +217,16 @@ const AdminServicePromotions = () => {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Usuario</p>
-                    <p className="font-medium">{selectedPromotion.profiles?.display_name || "Sin nombre"}</p>
+                    <p className="font-medium">
+                      {selectedPromotion.profiles?.display_name || 'Sin nombre'}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Tipo de Servicio</p>
-                    <Badge>{serviceTypeLabels[selectedPromotion.service_type] || selectedPromotion.service_type}</Badge>
+                    <Badge>
+                      {serviceTypeLabels[selectedPromotion.service_type] ||
+                        selectedPromotion.service_type}
+                    </Badge>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Estado</p>
@@ -222,7 +247,12 @@ const AdminServicePromotions = () => {
                     <div className="grid grid-cols-3 gap-2">
                       {selectedPromotion.images.map((url: string, index: number) => (
                         <a key={index} href={url} target="_blank" rel="noopener noreferrer">
-                          <img src={url} alt={`Imagen ${index + 1}`} loading="lazy" className="w-full h-24 object-cover rounded" />
+                          <img
+                            src={url}
+                            alt={`Imagen ${index + 1}`}
+                            loading="lazy"
+                            className="w-full h-24 object-cover rounded"
+                          />
                         </a>
                       ))}
                     </div>
@@ -241,13 +271,17 @@ const AdminServicePromotions = () => {
                 {selectedPromotion.rejection_reason && (
                   <div>
                     <p className="text-sm text-muted-foreground">Motivo de rechazo</p>
-                    <p className="bg-destructive/10 text-destructive p-2 rounded">{selectedPromotion.rejection_reason}</p>
+                    <p className="bg-destructive/10 text-destructive p-2 rounded">
+                      {selectedPromotion.rejection_reason}
+                    </p>
                   </div>
                 )}
 
-                {selectedPromotion.status === "pending" && (
+                {selectedPromotion.status === 'pending' && (
                   <div>
-                    <p className="text-sm text-muted-foreground mb-2">Motivo de rechazo (opcional)</p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Motivo de rechazo (opcional)
+                    </p>
                     <Textarea
                       placeholder="Escribe el motivo del rechazo..."
                       value={rejectionReason}
@@ -257,24 +291,28 @@ const AdminServicePromotions = () => {
                 )}
               </div>
             )}
-            {selectedPromotion?.status === "pending" && (
+            {selectedPromotion?.status === 'pending' && (
               <DialogFooter>
                 <Button
                   variant="destructive"
-                  onClick={() => updatePromotionMutation.mutate({ 
-                    id: selectedPromotion.id, 
-                    status: "rejected",
-                    rejectionReason 
-                  })}
+                  onClick={() =>
+                    updatePromotionMutation.mutate({
+                      id: selectedPromotion.id,
+                      status: 'rejected',
+                      rejectionReason,
+                    })
+                  }
                 >
                   <XCircle className="h-4 w-4 mr-2" />
                   Rechazar
                 </Button>
                 <Button
-                  onClick={() => updatePromotionMutation.mutate({ 
-                    id: selectedPromotion.id, 
-                    status: "approved" 
-                  })}
+                  onClick={() =>
+                    updatePromotionMutation.mutate({
+                      id: selectedPromotion.id,
+                      status: 'approved',
+                    })
+                  }
                 >
                   <CheckCircle className="h-4 w-4 mr-2" />
                   Aprobar

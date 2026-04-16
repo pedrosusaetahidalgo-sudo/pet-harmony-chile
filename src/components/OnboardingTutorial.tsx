@@ -1,9 +1,19 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { X, ArrowRight, ArrowLeft, Home, PawPrint, Calendar, MapPin, Heart, Trophy } from "@/lib/icons";
-import { cn } from "@/lib/utils";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import {
+  X,
+  ArrowRight,
+  ArrowLeft,
+  Home,
+  PawPrint,
+  Calendar,
+  MapPin,
+  Heart,
+  Trophy,
+} from '@/lib/icons';
+import { cn } from '@/lib/utils';
 
 interface TutorialStep {
   id: string;
@@ -15,32 +25,36 @@ interface TutorialStep {
 
 const tutorialSteps: TutorialStep[] = [
   {
-    id: "welcome",
-    title: "¡Bienvenido a Paw Friend!",
-    description: "Paw Friend te ayuda a llevar el control de salud de tu mascota, conectar con servicios y ganar recompensas.",
+    id: 'welcome',
+    title: '¡Bienvenido a Paw Friend!',
+    description:
+      'Paw Friend te ayuda a llevar el control de salud de tu mascota, conectar con servicios y ganar recompensas.',
     icon: <PawPrint className="h-12 w-12" />,
-    color: "from-primary to-secondary",
+    color: 'from-primary to-secondary',
   },
   {
-    id: "pets",
-    title: "Paso 1: Agrega tu Mascota",
-    description: "Crea el perfil de tu compañero peludo con foto, datos médicos y ficha clínica. Ganarás 50 PawPoints al hacerlo.",
+    id: 'pets',
+    title: 'Paso 1: Agrega tu Mascota',
+    description:
+      'Crea el perfil de tu compañero peludo con foto, datos médicos y ficha clínica. Ganarás 50 PawPoints al hacerlo.',
     icon: <PawPrint className="h-12 w-12" />,
-    color: "from-purple-600 to-teal-500",
+    color: 'from-purple-600 to-teal-500',
   },
   {
-    id: "services",
-    title: "Paso 2: Explora Servicios",
-    description: "Paseadores, veterinarios, cuidadores y entrenadores verificados cerca de ti. Reserva de forma segura.",
+    id: 'services',
+    title: 'Paso 2: Explora Servicios',
+    description:
+      'Paseadores, veterinarios, cuidadores y entrenadores verificados cerca de ti. Reserva de forma segura.',
     icon: <Calendar className="h-12 w-12" />,
-    color: "from-orange-500 to-amber-500",
+    color: 'from-orange-500 to-amber-500',
   },
   {
-    id: "rewards",
-    title: "Paso 3: Gana Recompensas",
-    description: "Cada acción suma PawPoints: paseos, vacunas, posts. Sube de nivel y desbloquea beneficios exclusivos.",
+    id: 'rewards',
+    title: 'Paso 3: Gana Recompensas',
+    description:
+      'Cada acción suma PawPoints: paseos, vacunas, posts. Sube de nivel y desbloquea beneficios exclusivos.',
     icon: <Trophy className="h-12 w-12" />,
-    color: "from-amber-500 to-yellow-500",
+    color: 'from-amber-500 to-yellow-500',
   },
 ];
 
@@ -54,7 +68,7 @@ export const OnboardingTutorial = ({ onComplete }: OnboardingTutorialProps) => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    const hasSeenTutorial = localStorage.getItem("hasSeenTutorial");
+    const hasSeenTutorial = localStorage.getItem('hasSeenTutorial');
     if (hasSeenTutorial) {
       setIsVisible(false);
       onComplete();
@@ -76,13 +90,13 @@ export const OnboardingTutorial = ({ onComplete }: OnboardingTutorialProps) => {
   };
 
   const handleComplete = () => {
-    localStorage.setItem("hasSeenTutorial", "true");
+    localStorage.setItem('hasSeenTutorial', 'true');
     setIsVisible(false);
     onComplete();
   };
 
   const handleSkip = () => {
-    localStorage.setItem("hasSeenTutorial", "true");
+    localStorage.setItem('hasSeenTutorial', 'true');
     setIsVisible(false);
     onComplete();
   };
@@ -109,7 +123,7 @@ export const OnboardingTutorial = ({ onComplete }: OnboardingTutorialProps) => {
             >
               <X className="h-5 w-5" />
             </Button>
-            
+
             <div className="flex flex-col items-center text-center">
               <div className="w-20 h-20 rounded-full bg-white/20 flex items-center justify-center mb-4 backdrop-blur-sm">
                 {step.icon}
@@ -125,17 +139,40 @@ export const OnboardingTutorial = ({ onComplete }: OnboardingTutorialProps) => {
 
             {/* Action CTAs per step */}
             {currentStep === 1 && (
-              <Button size="sm" className="w-full mt-3" onClick={() => { onComplete(); navigate('/add-pet'); }}>
+              <Button
+                size="sm"
+                className="w-full mt-3"
+                onClick={() => {
+                  onComplete();
+                  navigate('/add-pet');
+                }}
+              >
                 Agregar mi mascota ahora
               </Button>
             )}
             {currentStep === 2 && (
-              <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => { onComplete(); navigate('/services/walkers'); }}>
+              <Button
+                size="sm"
+                variant="outline"
+                className="w-full mt-3"
+                onClick={() => {
+                  onComplete();
+                  navigate('/services/walkers');
+                }}
+              >
                 Explorar servicios
               </Button>
             )}
             {currentStep === 3 && (
-              <Button size="sm" variant="outline" className="w-full mt-3" onClick={() => { onComplete(); navigate('/paw-game'); }}>
+              <Button
+                size="sm"
+                variant="outline"
+                className="w-full mt-3"
+                onClick={() => {
+                  onComplete();
+                  navigate('/paw-game');
+                }}
+              >
                 Ir al Paw Game
               </Button>
             )}
@@ -146,13 +183,14 @@ export const OnboardingTutorial = ({ onComplete }: OnboardingTutorialProps) => {
                 <button
                   key={index}
                   onClick={() => setCurrentStep(index)}
+                  aria-label={`Paso ${index + 1}`}
                   className={cn(
-                    "h-2 rounded-full transition-all duration-300",
+                    'h-2 rounded-full transition-all duration-300',
                     index === currentStep
-                      ? "w-8 bg-primary"
+                      ? 'w-8 bg-primary'
                       : index < currentStep
-                      ? "w-2 bg-primary/50"
-                      : "w-2 bg-muted"
+                        ? 'w-2 bg-primary/50'
+                        : 'w-2 bg-muted'
                   )}
                 />
               ))}
@@ -161,11 +199,7 @@ export const OnboardingTutorial = ({ onComplete }: OnboardingTutorialProps) => {
             {/* Navigation */}
             <div className="flex gap-3">
               {currentStep > 0 && (
-                <Button
-                  variant="outline"
-                  onClick={handlePrevious}
-                  className="flex-1"
-                >
+                <Button variant="outline" onClick={handlePrevious} className="flex-1">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Anterior
                 </Button>
@@ -173,12 +207,12 @@ export const OnboardingTutorial = ({ onComplete }: OnboardingTutorialProps) => {
               <Button
                 onClick={handleNext}
                 className={cn(
-                  "flex-1 text-white",
+                  'flex-1 text-white',
                   `bg-gradient-to-r ${step.color} hover:opacity-90`
                 )}
               >
                 {currentStep === tutorialSteps.length - 1 ? (
-                  "¡Comenzar!"
+                  '¡Comenzar!'
                 ) : (
                   <>
                     Siguiente
@@ -189,7 +223,7 @@ export const OnboardingTutorial = ({ onComplete }: OnboardingTutorialProps) => {
             </div>
 
             {/* Skip Link */}
-            <button 
+            <button
               onClick={handleSkip}
               className="w-full text-center text-sm text-muted-foreground hover:text-foreground mt-4 transition-colors"
             >

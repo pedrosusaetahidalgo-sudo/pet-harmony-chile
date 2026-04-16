@@ -1,25 +1,25 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { 
-  Calendar, 
-  Clock, 
-  MapPin, 
-  CheckCircle, 
-  XCircle, 
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Calendar,
+  Clock,
+  MapPin,
+  CheckCircle,
+  XCircle,
   AlertCircle,
   History,
-  Filter
-} from "@/lib/icons";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { logger } from "@/lib/logger";
+  Filter,
+} from '@/lib/icons';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { logger } from '@/lib/logger';
 
 interface Booking {
   id: string;
@@ -33,30 +33,30 @@ interface Booking {
 }
 
 interface MyBookingsHistoryProps {
-  serviceType: "dog_walker" | "dogsitter" | "veterinarian" | "trainer" | "groomer" | "all";
+  serviceType: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'groomer' | 'all';
   onBookingClick?: (booking: Booking) => void;
   className?: string;
 }
 
-const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
-  pendiente: { label: "Pendiente", color: "bg-yellow-500/10 text-yellow-700", icon: AlertCircle },
-  confirmado: { label: "Confirmado", color: "bg-blue-500/10 text-blue-700", icon: Calendar },
-  en_curso: { label: "En Curso", color: "bg-green-500/10 text-green-700", icon: Clock },
-  en_progreso: { label: "En Progreso", color: "bg-green-500/10 text-green-700", icon: Clock },
-  completado: { label: "Completado", color: "bg-purple-500/10 text-purple-700", icon: CheckCircle },
-  cancelado: { label: "Cancelado", color: "bg-red-500/10 text-red-700", icon: XCircle }
+const statusConfig: Record<string, { label: string; color: string; icon: React.ElementType }> = {
+  pendiente: { label: 'Pendiente', color: 'bg-yellow-500/10 text-yellow-700', icon: AlertCircle },
+  confirmado: { label: 'Confirmado', color: 'bg-blue-500/10 text-blue-700', icon: Calendar },
+  en_curso: { label: 'En Curso', color: 'bg-green-500/10 text-green-700', icon: Clock },
+  en_progreso: { label: 'En Progreso', color: 'bg-green-500/10 text-green-700', icon: Clock },
+  completado: { label: 'Completado', color: 'bg-purple-500/10 text-purple-700', icon: CheckCircle },
+  cancelado: { label: 'Cancelado', color: 'bg-red-500/10 text-red-700', icon: XCircle },
 };
 
 export const MyBookingsHistory = ({
   serviceType,
   onBookingClick,
-  className = ""
+  className = '',
 }: MyBookingsHistoryProps) => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "upcoming" | "past">("upcoming");
+  const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('upcoming');
 
   useEffect(() => {
     if (user) {
@@ -67,40 +67,44 @@ export const MyBookingsHistory = ({
   const loadBookings = async () => {
     try {
       setLoading(true);
-      let allBookings: Booking[] = [];
+      const allBookings: Booking[] = [];
 
       // Load dog walker bookings
-      if (serviceType === "all" || serviceType === "dog_walker") {
+      if (serviceType === 'all' || serviceType === 'dog_walker') {
         const { data: walkData } = await supabase
           .from('walk_bookings')
-          .select('id, status, scheduled_date, total_price, pickup_address, walker_id, service_type')
+          .select(
+            'id, status, scheduled_date, total_price, pickup_address, walker_id, service_type'
+          )
           .eq('owner_id', user?.id)
           .order('scheduled_date', { ascending: false });
 
         if (walkData) {
-          const providerIds = walkData.map(b => b.walker_id);
+          const providerIds = walkData.map((b) => b.walker_id);
           const { data: profiles } = await supabase
             .from('profiles')
             .select('id, display_name, avatar_url')
             .in('id', providerIds);
 
-          const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+          const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
 
-          allBookings.push(...walkData.map(b => ({
-            id: b.id,
-            status: b.status,
-            scheduled_date: b.scheduled_date,
-            total_price: b.total_price,
-            address: b.pickup_address,
-            service_type: `Paseo - ${b.service_type || 'Regular'}`,
-            provider_name: profileMap.get(b.walker_id)?.display_name,
-            provider_avatar: profileMap.get(b.walker_id)?.avatar_url
-          })));
+          allBookings.push(
+            ...walkData.map((b) => ({
+              id: b.id,
+              status: b.status,
+              scheduled_date: b.scheduled_date,
+              total_price: b.total_price,
+              address: b.pickup_address,
+              service_type: `Paseo - ${b.service_type || 'Regular'}`,
+              provider_name: profileMap.get(b.walker_id)?.display_name,
+              provider_avatar: profileMap.get(b.walker_id)?.avatar_url,
+            }))
+          );
         }
       }
 
       // Load dogsitter bookings
-      if (serviceType === "all" || serviceType === "dogsitter") {
+      if (serviceType === 'all' || serviceType === 'dogsitter') {
         const { data: dogsitterData } = await supabase
           .from('dogsitter_bookings')
           .select('id, status, start_date, total_price, drop_off_address, dogsitter_id')
@@ -108,29 +112,31 @@ export const MyBookingsHistory = ({
           .order('start_date', { ascending: false });
 
         if (dogsitterData) {
-          const providerIds = dogsitterData.map(b => b.dogsitter_id);
+          const providerIds = dogsitterData.map((b) => b.dogsitter_id);
           const { data: profiles } = await supabase
             .from('profiles')
             .select('id, display_name, avatar_url')
             .in('id', providerIds);
 
-          const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+          const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
 
-          allBookings.push(...dogsitterData.map(b => ({
-            id: b.id,
-            status: b.status,
-            scheduled_date: b.start_date,
-            total_price: b.total_price,
-            address: b.drop_off_address,
-            service_type: "Cuidador",
-            provider_name: profileMap.get(b.dogsitter_id)?.display_name,
-            provider_avatar: profileMap.get(b.dogsitter_id)?.avatar_url
-          })));
+          allBookings.push(
+            ...dogsitterData.map((b) => ({
+              id: b.id,
+              status: b.status,
+              scheduled_date: b.start_date,
+              total_price: b.total_price,
+              address: b.drop_off_address,
+              service_type: 'Cuidador',
+              provider_name: profileMap.get(b.dogsitter_id)?.display_name,
+              provider_avatar: profileMap.get(b.dogsitter_id)?.avatar_url,
+            }))
+          );
         }
       }
 
       // Load vet bookings
-      if (serviceType === "all" || serviceType === "veterinarian") {
+      if (serviceType === 'all' || serviceType === 'veterinarian') {
         const { data: vetData } = await supabase
           .from('vet_bookings')
           .select('id, status, scheduled_date, total_price, visit_address, vet_id, service_type')
@@ -138,60 +144,66 @@ export const MyBookingsHistory = ({
           .order('scheduled_date', { ascending: false });
 
         if (vetData) {
-          const providerIds = vetData.map(b => b.vet_id);
+          const providerIds = vetData.map((b) => b.vet_id);
           const { data: profiles } = await supabase
             .from('profiles')
             .select('id, display_name, avatar_url')
             .in('id', providerIds);
 
-          const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+          const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
 
-          allBookings.push(...vetData.map(b => ({
-            id: b.id,
-            status: b.status,
-            scheduled_date: b.scheduled_date,
-            total_price: b.total_price,
-            address: b.visit_address,
-            service_type: `Veterinario - ${b.service_type}`,
-            provider_name: profileMap.get(b.vet_id)?.display_name,
-            provider_avatar: profileMap.get(b.vet_id)?.avatar_url
-          })));
+          allBookings.push(
+            ...vetData.map((b) => ({
+              id: b.id,
+              status: b.status,
+              scheduled_date: b.scheduled_date,
+              total_price: b.total_price,
+              address: b.visit_address,
+              service_type: `Veterinario - ${b.service_type}`,
+              provider_name: profileMap.get(b.vet_id)?.display_name,
+              provider_avatar: profileMap.get(b.vet_id)?.avatar_url,
+            }))
+          );
         }
       }
 
       // Load training bookings
-      if (serviceType === "all" || serviceType === "trainer") {
+      if (serviceType === 'all' || serviceType === 'trainer') {
         const { data: trainingData } = await supabase
           .from('training_bookings')
-          .select('id, status, scheduled_date, total_price, training_address, trainer_id, training_type')
+          .select(
+            'id, status, scheduled_date, total_price, training_address, trainer_id, training_type'
+          )
           .eq('owner_id', user?.id)
           .order('scheduled_date', { ascending: false });
 
         if (trainingData) {
-          const providerIds = trainingData.map(b => b.trainer_id);
+          const providerIds = trainingData.map((b) => b.trainer_id);
           const { data: profiles } = await supabase
             .from('profiles')
             .select('id, display_name, avatar_url')
             .in('id', providerIds);
 
-          const profileMap = new Map(profiles?.map(p => [p.id, p]) || []);
+          const profileMap = new Map(profiles?.map((p) => [p.id, p]) || []);
 
-          allBookings.push(...trainingData.map(b => ({
-            id: b.id,
-            status: b.status,
-            scheduled_date: b.scheduled_date,
-            total_price: b.total_price,
-            address: b.training_address,
-            service_type: `Entrenador - ${b.training_type}`,
-            provider_name: profileMap.get(b.trainer_id)?.display_name,
-            provider_avatar: profileMap.get(b.trainer_id)?.avatar_url
-          })));
+          allBookings.push(
+            ...trainingData.map((b) => ({
+              id: b.id,
+              status: b.status,
+              scheduled_date: b.scheduled_date,
+              total_price: b.total_price,
+              address: b.training_address,
+              service_type: `Entrenador - ${b.training_type}`,
+              provider_name: profileMap.get(b.trainer_id)?.display_name,
+              provider_avatar: profileMap.get(b.trainer_id)?.avatar_url,
+            }))
+          );
         }
       }
 
       // Sort by date
-      allBookings.sort((a, b) => 
-        new Date(b.scheduled_date).getTime() - new Date(a.scheduled_date).getTime()
+      allBookings.sort(
+        (a, b) => new Date(b.scheduled_date).getTime() - new Date(a.scheduled_date).getTime()
       );
 
       setBookings(allBookings);
@@ -202,14 +214,16 @@ export const MyBookingsHistory = ({
     }
   };
 
-  const filteredBookings = bookings.filter(booking => {
+  const filteredBookings = bookings.filter((booking) => {
     const bookingDate = new Date(booking.scheduled_date);
     const now = new Date();
-    
-    if (filter === "upcoming") {
-      return bookingDate >= now || booking.status === "en_curso" || booking.status === "en_progreso";
-    } else if (filter === "past") {
-      return bookingDate < now && booking.status !== "en_curso" && booking.status !== "en_progreso";
+
+    if (filter === 'upcoming') {
+      return (
+        bookingDate >= now || booking.status === 'en_curso' || booking.status === 'en_progreso'
+      );
+    } else if (filter === 'past') {
+      return bookingDate < now && booking.status !== 'en_curso' && booking.status !== 'en_progreso';
     }
     return true;
   });
@@ -233,23 +247,23 @@ export const MyBookingsHistory = ({
         </CardTitle>
         <div className="flex gap-1">
           <Button
-            variant={filter === "upcoming" ? "default" : "ghost"}
+            variant={filter === 'upcoming' ? 'default' : 'ghost'}
             size="sm"
-            onClick={() => setFilter("upcoming")}
+            onClick={() => setFilter('upcoming')}
           >
             Próximas
           </Button>
           <Button
-            variant={filter === "past" ? "default" : "ghost"}
+            variant={filter === 'past' ? 'default' : 'ghost'}
             size="sm"
-            onClick={() => setFilter("past")}
+            onClick={() => setFilter('past')}
           >
             Pasadas
           </Button>
           <Button
-            variant={filter === "all" ? "default" : "ghost"}
+            variant={filter === 'all' ? 'default' : 'ghost'}
             size="sm"
-            onClick={() => setFilter("all")}
+            onClick={() => setFilter('all')}
           >
             Todas
           </Button>
@@ -262,7 +276,8 @@ export const MyBookingsHistory = ({
               <Calendar className="h-7 w-7 text-purple-700" />
             </div>
             <p className="font-semibold mb-1">
-              No tienes reservas {filter === "upcoming" ? "próximas" : filter === "past" ? "pasadas" : ""}
+              No tienes reservas{' '}
+              {filter === 'upcoming' ? 'próximas' : filter === 'past' ? 'pasadas' : ''}
             </p>
             <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-4">
               Agenda tu primera reserva con un servicio verificado.
@@ -270,7 +285,7 @@ export const MyBookingsHistory = ({
             <Button
               size="sm"
               className="bg-purple-600 hover:bg-purple-700 min-h-[44px]"
-              onClick={() => navigate("/servicios")}
+              onClick={() => navigate('/servicios')}
             >
               Agendar tu primera reserva
             </Button>
@@ -286,35 +301,39 @@ export const MyBookingsHistory = ({
                   key={booking.id}
                   className="flex items-center gap-4 p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
                   onClick={() => onBookingClick?.(booking)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onBookingClick?.(booking);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
                 >
                   <Avatar className="h-12 w-12">
                     <AvatarImage src={booking.provider_avatar} />
                     <AvatarFallback className="bg-primary/10">
-                      {booking.provider_name?.[0] || "?"}
+                      {booking.provider_name?.[0] || '?'}
                     </AvatarFallback>
                   </Avatar>
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <p className="font-medium truncate">
-                        {booking.provider_name || "Proveedor"}
-                      </p>
+                      <p className="font-medium truncate">{booking.provider_name || 'Proveedor'}</p>
                       <Badge className={config.color}>
                         <StatusIcon className="h-3 w-3 mr-1" />
                         {config.label}
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground truncate">
-                      {booking.service_type}
-                    </p>
+                    <p className="text-sm text-muted-foreground truncate">{booking.service_type}</p>
                     <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
                       <span className="flex items-center gap-1">
                         <Calendar className="h-3 w-3" />
-                        {format(new Date(booking.scheduled_date), "d MMM yyyy", { locale: es })}
+                        {format(new Date(booking.scheduled_date), 'd MMM yyyy', { locale: es })}
                       </span>
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        {format(new Date(booking.scheduled_date), "HH:mm")}
+                        {format(new Date(booking.scheduled_date), 'HH:mm')}
                       </span>
                     </div>
                   </div>

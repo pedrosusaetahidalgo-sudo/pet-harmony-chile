@@ -2,20 +2,26 @@
  * Upload Medical Document Dialog
  */
 
-import { useState, useRef } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Upload, X, FileText, Loader2 } from "@/lib/icons";
-import { useMedicalDocuments, MedicalDocumentType } from "@/hooks/useMedicalDocuments";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+import { useState, useRef } from 'react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Upload, X, FileText, Loader2 } from '@/lib/icons';
+import { useMedicalDocuments, MedicalDocumentType } from '@/hooks/useMedicalDocuments';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 
 interface UploadMedicalDocumentDialogProps {
   open: boolean;
@@ -61,7 +67,13 @@ export const UploadMedicalDocumentDialog = ({
       }
 
       // Validate file type
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/heic', 'application/pdf'];
+      const allowedTypes = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/heic',
+        'application/pdf',
+      ];
       if (!allowedTypes.includes(file.type)) {
         alert('Tipo de archivo no permitido. Use JPG, PNG, HEIC o PDF');
         return;
@@ -135,20 +147,25 @@ export const UploadMedicalDocumentDialog = ({
               <div
                 className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:bg-muted/50 transition-colors"
                 onClick={() => fileInputRef.current?.click()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    fileInputRef.current?.click();
+                  }
+                }}
+                role="button"
+                tabIndex={0}
               >
                 <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-                <p className="text-sm font-medium mb-1">
-                  Haz clic para seleccionar un archivo
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  JPG, PNG, HEIC o PDF (máx. 10MB)
-                </p>
+                <p className="text-sm font-medium mb-1">Haz clic para seleccionar un archivo</p>
+                <p className="text-xs text-muted-foreground">JPG, PNG, HEIC o PDF (máx. 10MB)</p>
                 <input
                   ref={fileInputRef}
                   type="file"
                   className="hidden"
                   accept="image/jpeg,image/jpg,image/png,image/heic,application/pdf"
                   onChange={handleFileSelect}
+                  aria-label="Seleccionar documento medico"
                 />
               </div>
             ) : (
@@ -172,7 +189,10 @@ export const UploadMedicalDocumentDialog = ({
           {/* Document Type */}
           <div className="space-y-2">
             <Label>Tipo de Documento</Label>
-            <Select value={documentType} onValueChange={(v) => setDocumentType(v as MedicalDocumentType)}>
+            <Select
+              value={documentType}
+              onValueChange={(v) => setDocumentType(v as MedicalDocumentType)}
+            >
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -204,11 +224,11 @@ export const UploadMedicalDocumentDialog = ({
                 <Button
                   variant="outline"
                   className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !issuedAt && "text-muted-foreground"
+                    'w-full justify-start text-left font-normal',
+                    !issuedAt && 'text-muted-foreground'
                   )}
                 >
-                  {issuedAt ? format(issuedAt, "PPP", { locale: es }) : "Seleccionar fecha"}
+                  {issuedAt ? format(issuedAt, 'PPP', { locale: es }) : 'Seleccionar fecha'}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -257,4 +277,3 @@ export const UploadMedicalDocumentDialog = ({
     </Dialog>
   );
 };
-

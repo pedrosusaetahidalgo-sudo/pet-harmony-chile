@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { cn } from "@/lib/utils";
+import { useState } from 'react';
+import { cn } from '@/lib/utils';
 
 interface Props extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallback?: string;
@@ -12,19 +12,18 @@ export function LazyImage({ className, fallback, alt, src, ...props }: Props) {
   const imgSrc = error && fallback ? fallback : src;
 
   return (
-    <div className={cn("relative overflow-hidden bg-muted", className)}>
-      {!loaded && (
-        <div className="absolute inset-0 animate-pulse bg-muted" />
-      )}
+    <div className={cn('relative overflow-hidden bg-muted', className)}>
+      {!loaded && <div className="absolute inset-0 animate-pulse bg-muted" />}
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <img
         src={imgSrc}
-        alt={alt || ""}
+        alt={alt || ''}
         loading="lazy"
         onLoad={() => setLoaded(true)}
         onError={() => setError(true)}
         className={cn(
-          "w-full h-full object-cover transition-opacity duration-300",
-          loaded ? "opacity-100" : "opacity-0"
+          'w-full h-full object-cover transition-opacity duration-300',
+          loaded ? 'opacity-100' : 'opacity-0'
         )}
         {...props}
       />

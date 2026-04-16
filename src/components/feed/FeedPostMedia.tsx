@@ -52,6 +52,7 @@ export function FeedPostMedia({
         <div className="aspect-square bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30 animate-pulse" />
       )}
 
+      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
       <img
         src={src}
         alt={petName || 'Publicacion'}

@@ -161,6 +161,14 @@ export function VaccinationCardOCR({ petId, onSaved }: Props) {
         {!preview ? (
           <div
             onClick={() => fileRef.current?.click()}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                fileRef.current?.click();
+              }
+            }}
+            role="button"
+            tabIndex={0}
             className="border-2 border-dashed border-purple-300 rounded-xl p-8 text-center cursor-pointer hover:border-purple-500 hover:bg-purple-50/50 transition-colors"
           >
             <Camera className="h-10 w-10 text-purple-400 mx-auto mb-2" />
@@ -173,6 +181,7 @@ export function VaccinationCardOCR({ petId, onSaved }: Props) {
               type="file"
               accept="image/*"
               className="hidden"
+              aria-label="Subir carnet de vacunas"
               onChange={handleFileChange}
             />
           </div>

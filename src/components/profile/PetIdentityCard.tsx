@@ -55,6 +55,14 @@ export function PetIdentityCard({ pet }: PetIdentityCardProps) {
         boxShadow: borderStyle.shadow,
       }}
       onClick={() => navigate(LINKS.petClinical(pet.id))}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          navigate(LINKS.petClinical(pet.id));
+        }
+      }}
+      role="button"
+      tabIndex={0}
     >
       <Card className="overflow-hidden border-0 shadow-none">
         <CardContent className="p-0">

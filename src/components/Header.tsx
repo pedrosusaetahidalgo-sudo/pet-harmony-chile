@@ -86,6 +86,7 @@ export const Header = () => {
       loadProfile();
       loadUnreadMsgs();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadProfile/loadUnreadMsgs depend on user from closure; listed deps are sufficient
   }, [user]);
 
   // Realtime subscription filtrada por conversaciones del usuario
@@ -123,6 +124,7 @@ export const Header = () => {
     return () => {
       if (channel) supabase.removeChannel(channel);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadUnreadMsgs depends on user from closure; listed deps are sufficient
   }, [user]);
 
   const loadProfile = async () => {
@@ -178,6 +180,14 @@ export const Header = () => {
         <div
           className="flex items-center flex-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity md:hidden"
           onClick={() => navigate('/home')}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              navigate('/home');
+            }
+          }}
+          role="button"
+          tabIndex={0}
         >
           <img
             src="/paw_friend_icon_principal.svg"
@@ -312,6 +322,15 @@ export const Header = () => {
                             if (!n.is_read) markAsRead(n.id);
                             if (n.action_url) navigate(n.action_url);
                           }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              if (!n.is_read) markAsRead(n.id);
+                              if (n.action_url) navigate(n.action_url);
+                            }
+                          }}
+                          role="button"
+                          tabIndex={0}
                         >
                           <div className={`mt-0.5 flex-shrink-0 ${color}`}>
                             <Icon className="h-5 w-5" />
@@ -411,6 +430,14 @@ export const Header = () => {
             <div
               className="flex items-center gap-2 hover:bg-accent px-1.5 sm:px-2 py-1 rounded-lg transition-colors cursor-pointer min-h-[44px]"
               onClick={() => navigate('/home')}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  navigate('/home');
+                }
+              }}
+              role="button"
+              tabIndex={0}
             >
               <div className="relative flex-shrink-0">
                 <Avatar className="h-8 w-8 ring-2 ring-primary/20">

@@ -1,15 +1,22 @@
-import { useState, useEffect } from "react";
-import { Calendar } from "@/components/ui/calendar";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { CalendarIcon, Clock, AlertCircle } from "@/lib/icons";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { supabase } from "@/integrations/supabase/client";
-import { logger } from "@/lib/logger";
+import { useState, useEffect } from 'react';
+import { Calendar } from '@/components/ui/calendar';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Label } from '@/components/ui/label';
+import { CalendarIcon, Clock, AlertCircle } from '@/lib/icons';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
+import type { Tables } from '@/integrations/supabase/types';
 
 interface TimeSlot {
   start: string;
@@ -27,12 +34,21 @@ interface ServiceAvailabilityCalendarProps {
   showTimeSelect?: boolean;
   className?: string;
   providerId?: string;
-  providerType?: "dog_walker" | "dogsitter" | "veterinarian" | "trainer";
+  providerType?: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer';
 }
 
 const defaultTimeSlots = [
-  "08:00", "09:00", "10:00", "11:00", "12:00",
-  "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"
+  '08:00',
+  '09:00',
+  '10:00',
+  '11:00',
+  '12:00',
+  '14:00',
+  '15:00',
+  '16:00',
+  '17:00',
+  '18:00',
+  '19:00',
 ];
 
 export const ServiceAvailabilityCalendar = ({
@@ -44,11 +60,13 @@ export const ServiceAvailabilityCalendar = ({
   minDate = new Date(),
   maxDate,
   showTimeSelect = true,
-  className = "",
+  className = '',
   providerId,
-  providerType
+  providerType,
 }: ServiceAvailabilityCalendarProps) => {
-  const [providerAvailability, setProviderAvailability] = useState<any[]>([]);
+  const [providerAvailability, setProviderAvailability] = useState<
+    Tables<'provider_availability'>[]
+  >([]);
   const [loading, setLoading] = useState(false);
   const [currentDaySlots, setCurrentDaySlots] = useState<string[]>([]);
 
@@ -56,13 +74,14 @@ export const ServiceAvailabilityCalendar = ({
     if (providerId && providerType) {
       loadProviderAvailability();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadProviderAvailability depends on providerId/providerType from closure; listed deps are sufficient
   }, [providerId, providerType]);
 
   useEffect(() => {
     if (selectedDate && providerAvailability.length > 0) {
       const dateStr = format(selectedDate, 'yyyy-MM-dd');
-      const dayAvail = providerAvailability.find(a => a.date === dateStr);
-      setCurrentDaySlots(dayAvail?.time_slots || []);
+      const dayAvail = providerAvailability.find((a) => a.date === dateStr);
+      setCurrentDaySlots((dayAvail?.time_slots as string[] | undefined) || []);
     } else {
       setCurrentDaySlots([]);
     }
@@ -70,7 +89,7 @@ export const ServiceAvailabilityCalendar = ({
 
   const loadProviderAvailability = async () => {
     if (!providerId || !providerType) return;
-    
+
     setLoading(true);
     try {
       const { data } = await supabase
@@ -81,7 +100,7 @@ export const ServiceAvailabilityCalendar = ({
         .eq('is_available', true)
         .gte('date', format(new Date(), 'yyyy-MM-dd'))
         .order('date', { ascending: true });
-      
+
       setProviderAvailability(data || []);
     } catch (error) {
       logger.error('Error loading availability:', error);
@@ -93,12 +112,11 @@ export const ServiceAvailabilityCalendar = ({
   const hasAvailability = (date: Date) => {
     if (!providerId || providerAvailability.length === 0) return true;
     const dateStr = format(date, 'yyyy-MM-dd');
-    return providerAvailability.some(a => a.date === dateStr);
+    return providerAvailability.some((a) => a.date === dateStr);
   };
 
-  const slotsToShow = providerId && providerAvailability.length > 0 
-    ? currentDaySlots 
-    : defaultTimeSlots;
+  const slotsToShow =
+    providerId && providerAvailability.length > 0 ? currentDaySlots : defaultTimeSlots;
 
   return (
     <Card className={className}>
@@ -121,7 +139,7 @@ export const ServiceAvailabilityCalendar = ({
                 <p className="text-sm">Este proveedor no ha configurado su disponibilidad</p>
               </div>
             )}
-            
+
             <Calendar
               mode="single"
               selected={selectedDate}
@@ -135,15 +153,23 @@ export const ServiceAvailabilityCalendar = ({
                 }
                 return false;
               }}
-              modifiers={providerId ? {
-                available: (date) => hasAvailability(date)
-              } : undefined}
-              modifiersStyles={providerId ? {
-                available: { 
-                  backgroundColor: 'hsl(var(--primary) / 0.15)', 
-                  fontWeight: 'bold' 
-                }
-              } : undefined}
+              modifiers={
+                providerId
+                  ? {
+                      available: (date) => hasAvailability(date),
+                    }
+                  : undefined
+              }
+              modifiersStyles={
+                providerId
+                  ? {
+                      available: {
+                        backgroundColor: 'hsl(var(--primary) / 0.15)',
+                        fontWeight: 'bold',
+                      },
+                    }
+                  : undefined
+              }
               className="rounded-md border pointer-events-auto"
             />
 
@@ -158,10 +184,10 @@ export const ServiceAvailabilityCalendar = ({
                     {slotsToShow.map((time) => (
                       <Button
                         key={time}
-                        variant={selectedTime === time ? "default" : "outline"}
+                        variant={selectedTime === time ? 'default' : 'outline'}
                         size="sm"
                         onClick={() => onTimeSelect(time)}
-                        className={selectedTime === time ? "bg-primary" : ""}
+                        className={selectedTime === time ? 'bg-primary' : ''}
                       >
                         {time}
                       </Button>

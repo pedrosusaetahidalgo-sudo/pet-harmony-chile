@@ -289,6 +289,14 @@ export default function AdminErrorLog() {
                     <div
                       className="flex items-start gap-3 cursor-pointer"
                       onClick={() => setExpandedId(isExpanded ? null : err.id)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          setExpandedId(isExpanded ? null : err.id);
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
                     >
                       <SourceIcon className="h-4 w-4 text-slate-400 mt-0.5 shrink-0" />
                       <div className="flex-1 min-w-0">

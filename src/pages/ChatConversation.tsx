@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { PageHeader } from '@/components/PageHeader';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -14,15 +13,20 @@ import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { logger } from '@/lib/logger';
 import { VET_QUICK_REPLIES } from '@/lib/chatQuickReplies';
+import type { Database } from '@/integrations/supabase/types';
+
+type ConversationRow = Database['public']['Tables']['conversations']['Row'];
+type MessageRow = Database['public']['Tables']['messages']['Row'];
+type ProfileRow = Database['public']['Tables']['profiles']['Row'];
 
 const ChatConversation = () => {
   const { conversationId } = useParams();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [conversation, setConversation] = useState<any>(null);
-  const [otherUser, setOtherUser] = useState<any>(null);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [conversation, setConversation] = useState<ConversationRow | null>(null);
+  const [otherUser, setOtherUser] = useState<ProfileRow | null>(null);
+  const [messages, setMessages] = useState<MessageRow[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -34,6 +38,7 @@ const ChatConversation = () => {
       const cleanup = setupRealtimeSubscription();
       return cleanup;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadConversation/setupRealtimeSubscription depend on conversationId and user from closure; listed deps are sufficient
   }, [conversationId, user]);
 
   useEffect(() => {
@@ -56,7 +61,7 @@ const ChatConversation = () => {
           filter: `conversation_id=eq.${conversationId}`,
         },
         (payload) => {
-          setMessages((prev) => [...prev, payload.new]);
+          setMessages((prev) => [...prev, payload.new as MessageRow]);
           markAsRead().catch(() => {
             /* silent: mark-as-read failure is non-critical */
           });

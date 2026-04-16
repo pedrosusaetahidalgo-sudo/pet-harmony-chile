@@ -296,6 +296,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
           accept="image/*"
           className="hidden"
           onChange={handleImageChange}
+          aria-label="Subir imagen para publicacion"
         />
 
         <Button

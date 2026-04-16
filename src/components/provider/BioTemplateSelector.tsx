@@ -1,22 +1,22 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Sparkles } from "@/lib/icons";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Loader2, Sparkles } from '@/lib/icons';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 const BIO_TEMPLATES = [
   {
-    label: "Clínica general",
-    text: "Médico veterinario con experiencia en medicina interna y cirugía de pequeños animales. Me apasiona la atención preventiva y crear un vínculo de confianza con cada tutor y su mascota.",
+    label: 'Clínica general',
+    text: 'Médico veterinario con experiencia en medicina interna y cirugía de pequeños animales. Me apasiona la atención preventiva y crear un vínculo de confianza con cada tutor y su mascota.',
   },
   {
-    label: "Especialista",
-    text: "Veterinario especializado con formación de posgrado. Mi enfoque combina la evidencia clínica actualizada con un trato cercano, explicando cada paso del tratamiento para que tu mascota reciba la mejor atención posible.",
+    label: 'Especialista',
+    text: 'Veterinario especializado con formación de posgrado. Mi enfoque combina la evidencia clínica actualizada con un trato cercano, explicando cada paso del tratamiento para que tu mascota reciba la mejor atención posible.',
   },
   {
-    label: "Domicilio",
-    text: "Veterinario a domicilio dedicado a reducir el estrés de la visita clínica. Atiendo en la comodidad de tu hogar con el mismo equipamiento y profesionalismo, para que tu mascota se sienta tranquila durante la consulta.",
+    label: 'Domicilio',
+    text: 'Veterinario a domicilio dedicado a reducir el estrés de la visita clínica. Atiendo en la comodidad de tu hogar con el mismo equipamiento y profesionalismo, para que tu mascota se sienta tranquila durante la consulta.',
   },
 ];
 
@@ -27,35 +27,40 @@ interface Props {
   onBioChange: (bio: string) => void;
 }
 
-export function BioTemplateSelector({ specialties, experienceYears, currentBio, onBioChange }: Props) {
+export function BioTemplateSelector({
+  specialties,
+  experienceYears,
+  currentBio,
+  onBioChange,
+}: Props) {
   const [generating, setGenerating] = useState(false);
 
   const handleGenerateAI = async () => {
     setGenerating(true);
     try {
       const prompt = `Redacta una bio profesional de 60-100 palabras en español chileno (tuteo: tú, tienes), para un veterinario con ${
-        experienceYears || "varios"
+        experienceYears || 'varios'
       } años de experiencia${
-        specialties?.length ? `, especializado en ${specialties.join(", ")}` : ""
+        specialties?.length ? `, especializado en ${specialties.join(', ')}` : ''
       }. Tono: profesional pero cercano. No usar emojis. Solo devuelve el texto de la bio, sin comillas ni prefijos.`;
 
-      const { data, error } = await supabase.functions.invoke("pet-assistant", {
+      const { data, error } = await supabase.functions.invoke('pet-assistant', {
         body: { question: prompt, pet_id: null },
       });
 
       if (error) throw error;
 
-      const answer = typeof data === "string" ? data : data?.answer || data?.response || "";
+      const answer = typeof data === 'string' ? data : data?.answer || data?.response || '';
       if (answer) {
         onBioChange(answer);
-        toast.success("Bio generada. Puedes editarla antes de guardar.");
+        toast.success('Bio generada. Puedes editarla antes de guardar.');
       } else {
-        toast.error("No se pudo generar la bio. Intenta de nuevo.");
+        toast.error('No se pudo generar la bio. Intenta de nuevo.');
       }
-    } catch (err: any) {
-      const msg = err?.message || "Error al generar bio";
-      if (msg.includes("rate") || msg.includes("quota")) {
-        toast.error("Llegaste al límite diario de consultas IA. Intenta mañana.");
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al generar bio';
+      if (msg.includes('rate') || msg.includes('quota')) {
+        toast.error('Llegaste al límite diario de consultas IA. Intenta mañana.');
       } else {
         toast.error(msg);
       }
@@ -93,9 +98,13 @@ export function BioTemplateSelector({ specialties, experienceYears, currentBio, 
         className="w-full border-purple-200 text-purple-700 hover:bg-purple-50"
       >
         {generating ? (
-          <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Generando con IA...</>
+          <>
+            <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> Generando con IA...
+          </>
         ) : (
-          <><Sparkles className="h-3.5 w-3.5 mr-1.5" /> Generar bio con IA</>
+          <>
+            <Sparkles className="h-3.5 w-3.5 mr-1.5" /> Generar bio con IA
+          </>
         )}
       </Button>
 

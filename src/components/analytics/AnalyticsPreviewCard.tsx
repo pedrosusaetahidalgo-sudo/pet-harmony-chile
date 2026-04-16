@@ -1,32 +1,33 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Area, AreaChart, XAxis } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ChartContainer, type ChartConfig } from "@/components/ui/chart";
-import { Activity, CheckCircle2, Stethoscope, Syringe } from "@/lib/icons";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useProAnalytics } from "@/hooks/useProAnalytics";
-import { ProUpgradeCTA } from "./ProUpgradeCTA";
-import { usePlan } from "@/hooks/usePlan";
-import { track, EVENTS } from "@/lib/analytics";
-import { LINKS } from "@/lib/links";
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Area, AreaChart, XAxis } from 'recharts';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChartContainer, type ChartConfig } from '@/components/ui/chart';
+import { Activity, CheckCircle2, Stethoscope, Syringe } from '@/lib/icons';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useProAnalytics } from '@/hooks/useProAnalytics';
+import { ProUpgradeCTA } from './ProUpgradeCTA';
+import { usePlan } from '@/hooks/usePlan';
+import { track, EVENTS } from '@/lib/analytics';
+import { LINKS } from '@/lib/links';
 
 const chartConfig: ChartConfig = {
-  reminders: { label: "Recordatorios", color: "hsl(262, 83%, 58%)" },
-  visits: { label: "Visitas vet", color: "hsl(173, 80%, 40%)" },
-  vaccines: { label: "Vacunas", color: "hsl(47, 96%, 53%)" },
+  reminders: { label: 'Recordatorios', color: 'hsl(262, 83%, 58%)' },
+  visits: { label: 'Visitas vet', color: 'hsl(173, 80%, 40%)' },
+  vaccines: { label: 'Vacunas', color: 'hsl(47, 96%, 53%)' },
 };
 
 export function AnalyticsPreviewCard() {
   const navigate = useNavigate();
   const { isPremium } = usePlan();
-  const { data, isLoading } = useProAnalytics({ period: "current_month" });
+  const { data, isLoading } = useProAnalytics({ period: 'current_month' });
 
+  const hasData = !!data;
   useEffect(() => {
-    if (data) {
-      track({ event: EVENTS.ANALYTICS_PREVIEW_VIEWED, properties: { source: "home" } });
+    if (hasData) {
+      track({ event: EVENTS.ANALYTICS_PREVIEW_VIEWED, properties: { source: 'home' } });
     }
-  }, [!!data]);
+  }, [hasData]);
 
   if (isLoading) {
     return <Skeleton className="h-40 w-full rounded-xl" />;

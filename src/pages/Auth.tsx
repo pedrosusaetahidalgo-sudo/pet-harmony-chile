@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -180,16 +179,17 @@ const Auth = () => {
         window.location.href = returnTo || '/add-pet';
         return;
       }
-    } catch (error: any) {
-      let message = error.message;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      let description = message;
       if (message.includes('already registered')) {
-        message = 'Este email ya está registrado. Intenta iniciar sesión.';
+        description = 'Este email ya está registrado. Intenta iniciar sesión.';
       } else if (message.includes('password')) {
-        message = 'La contraseña debe tener al menos 6 caracteres.';
+        description = 'La contraseña debe tener al menos 6 caracteres.';
       }
       toast({
         title: 'Error al crear cuenta',
-        description: message,
+        description,
         variant: 'destructive',
       });
     } finally {
@@ -253,16 +253,18 @@ const Auth = () => {
         window.location.href = dest;
         return;
       }
-    } catch (error: any) {
-      let message = error.message;
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      let description = message;
       if (message.includes('Invalid login credentials')) {
-        message = 'Email o contraseña incorrectos.';
+        description = 'Email o contraseña incorrectos.';
       } else if (message.includes('Email not confirmed')) {
-        message = 'Debes confirmar tu email antes de iniciar sesión. Revisa tu bandeja de entrada.';
+        description =
+          'Debes confirmar tu email antes de iniciar sesión. Revisa tu bandeja de entrada.';
       }
       toast({
         title: 'Error al iniciar sesión',
-        description: message,
+        description,
         variant: 'destructive',
       });
     } finally {
@@ -289,7 +291,7 @@ const Auth = () => {
         title: 'Revisa tu correo',
         description: 'Te enviamos un enlace para restablecer tu contraseña.',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Algo salió mal',
         description:
@@ -323,10 +325,12 @@ const Auth = () => {
         title: '¡Revisa tu correo!',
         description: 'Te enviamos un enlace para entrar sin contraseña.',
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error',
-        description: describeSupabaseError(error) || 'No se pudo enviar el enlace.',
+        description:
+          describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
+          'No se pudo enviar el enlace.',
         variant: 'destructive',
       });
     } finally {
@@ -371,10 +375,11 @@ const Auth = () => {
       setIsPasswordReset(false);
       hasRedirected.current = false;
       navigate('/home', { replace: true });
-    } catch (error: any) {
+    } catch (error: unknown) {
       toast({
         title: 'Error',
-        description: error.message || 'No se pudo actualizar la contraseña.',
+        description:
+          (error instanceof Error ? error.message : null) || 'No se pudo actualizar la contraseña.',
         variant: 'destructive',
       });
     } finally {

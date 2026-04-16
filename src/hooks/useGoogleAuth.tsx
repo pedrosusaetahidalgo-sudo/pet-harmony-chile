@@ -1,21 +1,21 @@
-import { useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { Capacitor } from "@capacitor/core";
-import { isNative } from "@/lib/platform";
-import { logger } from "@/lib/logger";
-type GoogleAuthModule = typeof import("@codetrix-studio/capacitor-google-auth");
+import { useState, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { Capacitor } from '@capacitor/core';
+import { isNative } from '@/lib/platform';
+import { logger } from '@/lib/logger';
+type GoogleAuthModule = typeof import('@codetrix-studio/capacitor-google-auth');
 
 // Dynamic import for Capacitor Google Auth (only available on native)
-let GoogleAuth: GoogleAuthModule["GoogleAuth"] | null = null;
+let GoogleAuth: GoogleAuthModule['GoogleAuth'] | null = null;
 
 // Check if we're on a native platform and load the plugin
 const initGoogleAuth = async () => {
   if (Capacitor.isNativePlatform()) {
     try {
-      const module = await import("@codetrix-studio/capacitor-google-auth");
+      const module = await import('@codetrix-studio/capacitor-google-auth');
       GoogleAuth = module.GoogleAuth;
-      
+
       // Initialize with configuration
       await GoogleAuth.initialize({
         clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID_WEB || '',
@@ -50,7 +50,7 @@ export const useGoogleAuth = () => {
       // NOTE: Forzamos web OAuth flow porque no hay SHA-1 en Google Cloud Console.
       // Para usar native flow: configurar SHA-1 y poner FORCE_WEB_OAUTH = false.
       const FORCE_WEB_OAUTH = false; // Native flow enabled — requires SHA-1 in Google Cloud Console
-      
+
       const isNative = Capacitor.isNativePlatform();
 
       if (isNative && GoogleAuth && !FORCE_WEB_OAUTH) {
@@ -65,15 +65,16 @@ export const useGoogleAuth = () => {
 
       const errorMessage = getErrorMessage(error);
       toast({
-        title: "Error al iniciar sesión con Google",
+        title: 'Error al iniciar sesión con Google',
         description: errorMessage,
-        variant: "destructive",
+        variant: 'destructive',
       });
 
       return { success: false, error: errorMessage };
     } finally {
       setLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- handleNativeGoogleAuth and handleWebGoogleAuth are stable within this component; their only shared dep (toast) is already listed
   }, [toast]);
 
   /**
@@ -83,7 +84,7 @@ export const useGoogleAuth = () => {
     try {
       // Sign in with Google native SDK
       const googleUser = await GoogleAuth.signIn();
-      
+
       if (!googleUser?.authentication?.idToken) {
         throw new Error('No se pudo obtener el token de Google');
       }
@@ -99,7 +100,7 @@ export const useGoogleAuth = () => {
 
       if (data.session) {
         toast({
-          title: "¡Bienvenido!",
+          title: '¡Bienvenido!',
           description: `Has iniciado sesión como ${googleUser.email}`,
         });
         return { success: true };
@@ -109,9 +110,11 @@ export const useGoogleAuth = () => {
     } catch (error: unknown) {
       // Handle user cancellation gracefully
       const err = error as { message?: string; code?: string };
-      if (err.message?.includes('popup_closed') ||
-          err.message?.includes('cancelled') ||
-          err.code === '12501') {
+      if (
+        err.message?.includes('popup_closed') ||
+        err.message?.includes('cancelled') ||
+        err.code === '12501'
+      ) {
         return { success: false, error: 'Inicio de sesión cancelado' };
       }
       throw error;
@@ -187,7 +190,7 @@ export const useGoogleAuth = () => {
 function getErrorMessage(error: unknown): string {
   const err = error as { message?: string };
   const message = err?.message || String(error) || '';
-  
+
   if (message.includes('popup_closed') || message.includes('cancelled')) {
     return 'Inicio de sesión cancelado por el usuario';
   }
@@ -200,6 +203,6 @@ function getErrorMessage(error: unknown): string {
   if (message.includes('invalid_grant')) {
     return 'La sesión de Google expiró. Intenta de nuevo.';
   }
-  
+
   return 'No se pudo iniciar sesión con Google. Intenta de nuevo.';
 }

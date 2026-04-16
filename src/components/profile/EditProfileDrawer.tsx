@@ -309,6 +309,14 @@ export function EditProfileDrawer({
               <div className="space-y-4">
                 <div
                   onClick={() => fileInputRef.current?.click()}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      fileInputRef.current?.click();
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
                   className="flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-muted-foreground/30 p-8 cursor-pointer hover:border-primary/50 transition-colors"
                 >
                   {uploadingPhoto ? (
@@ -329,6 +337,7 @@ export function EditProfileDrawer({
                   accept="image/jpeg,image/png,image/webp"
                   className="hidden"
                   onChange={handleFileSelect}
+                  aria-label="Seleccionar foto de perfil"
                 />
               </div>
             )}

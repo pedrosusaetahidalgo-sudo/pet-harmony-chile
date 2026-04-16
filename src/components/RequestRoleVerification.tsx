@@ -334,7 +334,7 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
 
           {requestedRole && (
             <div className="space-y-2">
-              <Label>
+              <Label htmlFor="document-upload">
                 {requestedRole === 'veterinarian'
                   ? 'Título Profesional (Requerido)'
                   : 'Documento de Identidad (Requerido)'}

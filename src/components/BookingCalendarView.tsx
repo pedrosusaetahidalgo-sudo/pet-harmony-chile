@@ -1,18 +1,19 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Calendar } from "@/components/ui/calendar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { CalendarCheck, Clock, User, CheckCircle } from "@/lib/icons";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { supabase } from "@/integrations/supabase/client";
-import { logger } from "@/lib/logger";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Calendar } from '@/components/ui/calendar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { CalendarCheck, Clock, User, CheckCircle } from '@/lib/icons';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { supabase } from '@/integrations/supabase/client';
+import { logger } from '@/lib/logger';
+import type { Tables } from '@/integrations/supabase/types';
 
 interface BookingCalendarViewProps {
   providerId: string;
-  providerType: "dog_walker" | "dogsitter" | "veterinarian" | "trainer";
+  providerType: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer';
   providerName?: string;
   providerAvatar?: string;
   onSelectDateTime: (date: Date, time: string) => void;
@@ -29,22 +30,23 @@ export const BookingCalendarView = ({
   onSelectDateTime,
   selectedDate,
   selectedTime,
-  className = ""
+  className = '',
 }: BookingCalendarViewProps) => {
-  const [availability, setAvailability] = useState<any[]>([]);
+  const [availability, setAvailability] = useState<Tables<'provider_availability'>[]>([]);
   const [loading, setLoading] = useState(true);
   const [internalDate, setInternalDate] = useState<Date | undefined>(selectedDate);
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
 
   useEffect(() => {
     loadProviderAvailability();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadProviderAvailability depends on providerId/providerType from closure; listed deps are sufficient
   }, [providerId, providerType]);
 
   useEffect(() => {
     if (internalDate && availability.length > 0) {
       const dateStr = format(internalDate, 'yyyy-MM-dd');
-      const dayAvail = availability.find(a => a.date === dateStr);
-      setAvailableSlots(dayAvail?.time_slots || []);
+      const dayAvail = availability.find((a) => a.date === dateStr);
+      setAvailableSlots((dayAvail?.time_slots as string[] | undefined) || []);
     } else {
       setAvailableSlots([]);
     }
@@ -73,7 +75,7 @@ export const BookingCalendarView = ({
 
   const hasAvailability = (date: Date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
-    return availability.some(a => a.date === dateStr);
+    return availability.some((a) => a.date === dateStr);
   };
 
   const handleDateSelect = (date: Date | undefined) => {
@@ -103,9 +105,7 @@ export const BookingCalendarView = ({
               <CalendarCheck className="h-5 w-5 text-primary" />
               Disponibilidad
             </CardTitle>
-            {providerName && (
-              <p className="text-sm text-muted-foreground">{providerName}</p>
-            )}
+            {providerName && <p className="text-sm text-muted-foreground">{providerName}</p>}
           </div>
         </div>
       </CardHeader>
@@ -131,13 +131,13 @@ export const BookingCalendarView = ({
                 return !hasAvailability(date);
               }}
               modifiers={{
-                available: (date) => hasAvailability(date)
+                available: (date) => hasAvailability(date),
               }}
               modifiersStyles={{
-                available: { 
+                available: {
                   backgroundColor: 'hsl(var(--primary) / 0.15)',
-                  fontWeight: 'bold'
-                }
+                  fontWeight: 'bold',
+                },
               }}
               className="rounded-md border pointer-events-auto"
             />
@@ -147,7 +147,7 @@ export const BookingCalendarView = ({
                 <p className="font-semibold text-sm">
                   {format(internalDate, "EEEE d 'de' MMMM", { locale: es })}
                 </p>
-                
+
                 {availableSlots.length > 0 ? (
                   <>
                     <p className="text-sm text-muted-foreground flex items-center gap-2">
@@ -159,10 +159,20 @@ export const BookingCalendarView = ({
                         <Button
                           key={slot}
                           type="button"
-                          variant={selectedTime === slot && selectedDate?.toDateString() === internalDate.toDateString() ? "default" : "outline"}
+                          variant={
+                            selectedTime === slot &&
+                            selectedDate?.toDateString() === internalDate.toDateString()
+                              ? 'default'
+                              : 'outline'
+                          }
                           size="sm"
                           onClick={() => handleTimeSelect(slot)}
-                          className={selectedTime === slot && selectedDate?.toDateString() === internalDate.toDateString() ? "bg-primary" : ""}
+                          className={
+                            selectedTime === slot &&
+                            selectedDate?.toDateString() === internalDate.toDateString()
+                              ? 'bg-primary'
+                              : ''
+                          }
                         >
                           {slot}
                         </Button>

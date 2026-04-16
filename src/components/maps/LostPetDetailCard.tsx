@@ -1,23 +1,39 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { MapPin, Phone, Mail, Calendar, Award, MessageCircle, Share2 } from "@/lib/icons";
-import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
-import { useNavigate } from "react-router-dom";
-import { useStartConversation } from "@/hooks/useStartConversation";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { MapPin, Phone, Mail, Calendar, Award, MessageCircle, Share2 } from '@/lib/icons';
+import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { useNavigate } from 'react-router-dom';
+import { useStartConversation } from '@/hooks/useStartConversation';
+
+interface LostPetReport {
+  pet_name: string;
+  description: string;
+  species: string;
+  breed: string | null;
+  report_type: string;
+  photo_url: string | null;
+  last_seen_location: string;
+  last_seen_date: string;
+  contact_phone: string | null;
+  contact_email: string | null;
+  reward_offered: boolean | null;
+  reward_amount: number | null;
+  reporter_id: string;
+}
 
 interface LostPetDetailCardProps {
-  pet: any;
+  pet: LostPetReport;
   compact?: boolean;
 }
 
 const LostPetDetailCard = ({ pet, compact = false }: LostPetDetailCardProps) => {
   const navigate = useNavigate();
   const { startConversation, loading } = useStartConversation();
-  
-  const isLost = pet.report_type === "perdida";
+
+  const isLost = pet.report_type === 'perdida';
 
   const handleContact = async () => {
     if (pet.reporter_id) {
@@ -28,7 +44,7 @@ const LostPetDetailCard = ({ pet, compact = false }: LostPetDetailCardProps) => 
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({
-        title: `${isLost ? "Mascota Perdida" : "Mascota Encontrada"}: ${pet.pet_name}`,
+        title: `${isLost ? 'Mascota Perdida' : 'Mascota Encontrada'}: ${pet.pet_name}`,
         text: pet.description,
         url: window.location.href,
       });
@@ -52,20 +68,19 @@ const LostPetDetailCard = ({ pet, compact = false }: LostPetDetailCardProps) => 
           )}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <Badge 
-                variant={isLost ? "destructive" : "default"}
-                className={isLost ? "bg-red-500" : "bg-green-500"}
+              <Badge
+                variant={isLost ? 'destructive' : 'default'}
+                className={isLost ? 'bg-red-500' : 'bg-green-500'}
               >
-                {isLost ? "Perdida" : "Encontrada"}
+                {isLost ? 'Perdida' : 'Encontrada'}
               </Badge>
               {pet.reward_offered && (
                 <Badge className="bg-yellow-500 gap-1">
-                  <Award className="h-3 w-3" />
-                  ${pet.reward_amount?.toLocaleString()}
+                  <Award className="h-3 w-3" />${pet.reward_amount?.toLocaleString()}
                 </Badge>
               )}
             </div>
-            <h3 className="font-semibold truncate">{pet.pet_name || "Sin nombre"}</h3>
+            <h3 className="font-semibold truncate">{pet.pet_name || 'Sin nombre'}</h3>
             <p className="text-xs text-muted-foreground">
               {pet.species} {pet.breed && `• ${pet.breed}`}
             </p>
@@ -83,7 +98,12 @@ const LostPetDetailCard = ({ pet, compact = false }: LostPetDetailCardProps) => 
           </span>
         </div>
         <div className="flex gap-2 pt-2">
-          <Button size="sm" className="flex-1 h-10 text-xs" onClick={handleContact} disabled={loading}>
+          <Button
+            size="sm"
+            className="flex-1 h-10 text-xs"
+            onClick={handleContact}
+            disabled={loading}
+          >
             <MessageCircle className="h-3 w-3 mr-1" />
             Contactar
           </Button>
@@ -106,24 +126,23 @@ const LostPetDetailCard = ({ pet, compact = false }: LostPetDetailCardProps) => 
             className="w-full h-full object-cover"
           />
           <div className="absolute top-3 left-3 flex gap-2">
-            <Badge 
-              variant={isLost ? "destructive" : "default"}
-              className={`${isLost ? "bg-red-500" : "bg-green-500"} shadow-lg`}
+            <Badge
+              variant={isLost ? 'destructive' : 'default'}
+              className={`${isLost ? 'bg-red-500' : 'bg-green-500'} shadow-lg`}
             >
-              {isLost ? "🔍 Perdida" : "✅ Encontrada"}
+              {isLost ? '🔍 Perdida' : '✅ Encontrada'}
             </Badge>
           </div>
           {pet.reward_offered && (
             <Badge className="absolute top-3 right-3 bg-yellow-500 shadow-lg gap-1">
-              <Award className="h-3 w-3" />
-              ${pet.reward_amount?.toLocaleString()}
+              <Award className="h-3 w-3" />${pet.reward_amount?.toLocaleString()}
             </Badge>
           )}
         </div>
       )}
       <CardContent className="p-4 space-y-4">
         <div>
-          <h3 className="text-xl font-bold">{pet.pet_name || "Mascota sin identificar"}</h3>
+          <h3 className="text-xl font-bold">{pet.pet_name || 'Mascota sin identificar'}</h3>
           <div className="flex items-center gap-2 mt-1">
             <Badge variant="outline">{pet.species}</Badge>
             {pet.breed && <Badge variant="secondary">{pet.breed}</Badge>}
@@ -140,7 +159,7 @@ const LostPetDetailCard = ({ pet, compact = false }: LostPetDetailCardProps) => 
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-primary" />
             <span>
-              {isLost ? "Vista por última vez" : "Encontrada"}: {" "}
+              {isLost ? 'Vista por última vez' : 'Encontrada'}:{' '}
               {formatDistanceToNow(new Date(pet.last_seen_date), { addSuffix: true, locale: es })}
             </span>
           </div>
@@ -163,7 +182,11 @@ const LostPetDetailCard = ({ pet, compact = false }: LostPetDetailCardProps) => 
         </div>
 
         <div className="flex gap-2 pt-2">
-          <Button className="flex-1 bg-warm-gradient hover:opacity-90" onClick={handleContact} disabled={loading}>
+          <Button
+            className="flex-1 bg-warm-gradient hover:opacity-90"
+            onClick={handleContact}
+            disabled={loading}
+          >
             <MessageCircle className="h-4 w-4 mr-2" />
             Contactar
           </Button>

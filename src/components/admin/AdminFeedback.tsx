@@ -388,6 +388,7 @@ export default function AdminFeedback() {
                 value={customPoints}
                 onChange={(e) => setCustomPoints(e.target.value)}
                 placeholder="Puntos custom"
+                aria-label="Puntos custom"
                 className="flex-1 h-9 rounded-md border border-input bg-transparent px-3 text-sm"
               />
               <Button

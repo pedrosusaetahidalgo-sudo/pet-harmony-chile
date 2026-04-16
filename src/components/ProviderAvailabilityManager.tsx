@@ -58,6 +58,7 @@ export const ProviderAvailabilityManager = ({
     if (user) {
       loadAvailability();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadAvailability depends on user from closure; listed deps are sufficient
   }, [user]);
 
   useEffect(() => {

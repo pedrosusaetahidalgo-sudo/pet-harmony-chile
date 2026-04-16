@@ -1,16 +1,22 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Star, MessageSquare, Filter } from "@/lib/icons";
-import { supabase } from "@/integrations/supabase/client";
-import EnhancedReviewCard from "./EnhancedReviewCard";
-import ProviderRatingSummary from "./ProviderRatingSummary";
-import { logger } from "@/lib/logger";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Star, MessageSquare, Filter } from '@/lib/icons';
+import { supabase } from '@/integrations/supabase/client';
+import EnhancedReviewCard from './EnhancedReviewCard';
+import ProviderRatingSummary from './ProviderRatingSummary';
+import { logger } from '@/lib/logger';
 
 interface ServiceReviewsSectionProps {
   providerId: string;
-  providerType: "walk" | "dogsitter" | "vet" | "training";
+  providerType: 'walk' | 'dogsitter' | 'vet' | 'training';
   rating: number;
   totalReviews: number;
   isVerified?: boolean;
@@ -23,7 +29,7 @@ const ServiceReviewsSection = ({
   rating,
   totalReviews,
   isVerified = false,
-  isProvider = false
+  isProvider = false,
 }: ServiceReviewsSectionProps) => {
   type ReviewRow = {
     id: string;
@@ -45,41 +51,46 @@ const ServiceReviewsSection = ({
 
   const [reviews, setReviews] = useState<ReviewRow[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sortBy, setSortBy] = useState<"recent" | "highest" | "lowest" | "helpful">("recent");
-  const [filterRating, setFilterRating] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<'recent' | 'highest' | 'lowest' | 'helpful'>('recent');
+  const [filterRating, setFilterRating] = useState<string>('all');
   const [ratingDistribution, setRatingDistribution] = useState({
-    5: 0, 4: 0, 3: 0, 2: 0, 1: 0
+    5: 0,
+    4: 0,
+    3: 0,
+    2: 0,
+    1: 0,
   });
 
   useEffect(() => {
     loadReviews();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadReviews depends on providerId/providerType/sortBy/filterRating from closure; listed deps are sufficient
   }, [providerId, providerType, sortBy, filterRating]);
 
-  type ReviewTableName = "walk_reviews" | "dogsitter_reviews" | "vet_reviews" | "training_reviews";
+  type ReviewTableName = 'walk_reviews' | 'dogsitter_reviews' | 'vet_reviews' | 'training_reviews';
 
   const getTableName = (): ReviewTableName => {
     switch (providerType) {
-      case "walk":
-        return "walk_reviews";
-      case "dogsitter":
-        return "dogsitter_reviews";
-      case "vet":
-        return "vet_reviews";
-      case "training":
-        return "training_reviews";
+      case 'walk':
+        return 'walk_reviews';
+      case 'dogsitter':
+        return 'dogsitter_reviews';
+      case 'vet':
+        return 'vet_reviews';
+      case 'training':
+        return 'training_reviews';
     }
   };
 
   const getProviderColumn = () => {
     switch (providerType) {
-      case "walk":
-        return "walker_id";
-      case "dogsitter":
-        return "dogsitter_id";
-      case "vet":
-        return "vet_id";
-      case "training":
-        return "trainer_id";
+      case 'walk':
+        return 'walker_id';
+      case 'dogsitter':
+        return 'dogsitter_id';
+      case 'vet':
+        return 'vet_id';
+      case 'training':
+        return 'trainer_id';
     }
   };
 
@@ -98,9 +109,7 @@ const ServiceReviewsSection = ({
         order: (col: string, opts: { ascending: boolean }) => LooseBuilder;
         limit: (n: number) => Promise<{ data: unknown; error: unknown }>;
       };
-      const initial = supabase
-        .from(tableName as "walk_reviews")
-        .select(`
+      const initial = supabase.from(tableName as 'walk_reviews').select(`
           *,
           owner:owner_id (
             id,
@@ -111,36 +120,34 @@ const ServiceReviewsSection = ({
       let query = (initial as unknown as LooseBuilder).eq(providerColumn, providerId);
 
       // Apply rating filter
-      if (filterRating !== "all") {
-        query = query.eq("rating", parseInt(filterRating));
+      if (filterRating !== 'all') {
+        query = query.eq('rating', parseInt(filterRating));
       }
 
       // Apply sorting
       switch (sortBy) {
-        case "recent":
-          query = query.order("created_at", { ascending: false });
+        case 'recent':
+          query = query.order('created_at', { ascending: false });
           break;
-        case "highest":
-          query = query.order("rating", { ascending: false });
+        case 'highest':
+          query = query.order('rating', { ascending: false });
           break;
-        case "lowest":
-          query = query.order("rating", { ascending: true });
+        case 'lowest':
+          query = query.order('rating', { ascending: true });
           break;
-        case "helpful":
-          query = query.order("helpful_count", { ascending: false });
+        case 'helpful':
+          query = query.order('helpful_count', { ascending: false });
           break;
       }
 
       const { data, error } = await query.limit(20);
 
       if (error) throw error;
-      setReviews(((data ?? []) as unknown) as ReviewRow[]);
+      setReviews((data ?? []) as unknown as ReviewRow[]);
 
       // Calculate distribution (mismo motivo de cast que arriba)
       const allReviews = await (
-        supabase
-          .from(tableName as "walk_reviews")
-          .select("rating") as unknown as {
+        supabase.from(tableName as 'walk_reviews').select('rating') as unknown as {
           eq: (col: string, val: string) => Promise<{ data: { rating: number }[] | null }>;
         }
       ).eq(providerColumn, providerId);
@@ -155,14 +162,14 @@ const ServiceReviewsSection = ({
         setRatingDistribution(dist);
       }
     } catch (error) {
-      logger.error("Error loading reviews:", error);
+      logger.error('Error loading reviews:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const getReviewType = (): "walk" | "dogsitter" | "vet" => {
-    if (providerType === "training") return "vet";
+  const getReviewType = (): 'walk' | 'dogsitter' | 'vet' => {
+    if (providerType === 'training') return 'vet';
     return providerType;
   };
 
@@ -199,7 +206,7 @@ const ServiceReviewsSection = ({
               </SelectContent>
             </Select>
           </div>
-          
+
           <Select value={filterRating} onValueChange={setFilterRating}>
             <SelectTrigger className="w-full sm:w-[140px]">
               <SelectValue placeholder="Filtrar estrellas" />

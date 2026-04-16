@@ -1,36 +1,43 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Calendar } from "@/components/ui/calendar";
-import { COMUNAS_SANTIAGO, getComunaCoords } from "@/lib/locations";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Calendar } from '@/components/ui/calendar';
+import { COMUNAS_SANTIAGO, getComunaCoords } from '@/lib/locations';
 import {
   CalendarCheck,
-  Clock, 
-  MapPin, 
-  Star, 
-  Check, 
-  ChevronLeft, 
+  Clock,
+  MapPin,
+  Star,
+  Check,
+  ChevronLeft,
   ChevronRight,
   DollarSign,
   PawPrint,
   User,
   AlertCircle,
-  CheckCircle
-} from "@/lib/icons";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import { logger } from "@/lib/logger";
+  CheckCircle,
+} from '@/lib/icons';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
+import type { Tables } from '@/integrations/supabase/types';
 
 interface Pet {
   id: string;
@@ -62,15 +69,15 @@ interface EnhancedBookingDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   provider: ProviderData | null;
-  providerType: "dog_walker" | "dogsitter" | "veterinarian" | "trainer" | "groomer";
+  providerType: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'groomer';
   onBookingComplete: () => void;
 }
 
 const steps = [
-  { id: 1, title: "Fecha y Hora", icon: CalendarCheck },
-  { id: 2, title: "Mascota", icon: PawPrint },
-  { id: 3, title: "Detalles", icon: MapPin },
-  { id: 4, title: "Confirmación", icon: Check }
+  { id: 1, title: 'Fecha y Hora', icon: CalendarCheck },
+  { id: 2, title: 'Mascota', icon: PawPrint },
+  { id: 3, title: 'Detalles', icon: MapPin },
+  { id: 4, title: 'Confirmación', icon: Check },
 ];
 
 export const EnhancedBookingDialog = ({
@@ -78,7 +85,7 @@ export const EnhancedBookingDialog = ({
   onOpenChange,
   provider,
   providerType,
-  onBookingComplete
+  onBookingComplete,
 }: EnhancedBookingDialogProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -87,17 +94,17 @@ export const EnhancedBookingDialog = ({
   const [currentStep, setCurrentStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [pets, setPets] = useState<Pet[]>([]);
-  const [availability, setAvailability] = useState<any[]>([]);
-  
+  const [availability, setAvailability] = useState<Tables<'provider_availability'>[]>([]);
+
   // Form state
   const [selectedDate, setSelectedDate] = useState<Date | undefined>();
-  const [selectedTime, setSelectedTime] = useState<string>("");
+  const [selectedTime, setSelectedTime] = useState<string>('');
   const [selectedPets, setSelectedPets] = useState<string[]>([]);
-  const [serviceType, setServiceType] = useState<string>("");
+  const [serviceType, setServiceType] = useState<string>('');
   const [duration, setDuration] = useState<number>(60);
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState('');
   const [coordinates, setCoordinates] = useState<{ lat: number; lng: number } | null>(null);
-  const [instructions, setInstructions] = useState("");
+  const [instructions, setInstructions] = useState('');
   const [availableSlots, setAvailableSlots] = useState<string[]>([]);
 
   useEffect(() => {
@@ -107,14 +114,15 @@ export const EnhancedBookingDialog = ({
         loadProviderAvailability();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadPets/loadProviderAvailability depend on props from closure; listed deps are sufficient
   }, [open, user, provider]);
 
   useEffect(() => {
     if (selectedDate && availability.length > 0) {
       const dateStr = format(selectedDate, 'yyyy-MM-dd');
-      const dayAvail = availability.find(a => a.date === dateStr);
-      setAvailableSlots(dayAvail?.time_slots || []);
-      setSelectedTime("");
+      const dayAvail = availability.find((a) => a.date === dateStr);
+      setAvailableSlots((dayAvail?.time_slots as string[] | undefined) || []);
+      setSelectedTime('');
     }
   }, [selectedDate, availability]);
 
@@ -142,7 +150,7 @@ export const EnhancedBookingDialog = ({
 
   const hasAvailability = (date: Date) => {
     const dateStr = format(date, 'yyyy-MM-dd');
-    return availability.some(a => a.date === dateStr);
+    return availability.some((a) => a.date === dateStr);
   };
 
   const calculateTotal = () => {
@@ -162,7 +170,7 @@ export const EnhancedBookingDialog = ({
       case 3:
         // For dogsitters, address is not required (they drop off at provider's location)
         // For others, address is required (pickup/visit at user's location)
-        return serviceType && (providerType === "dogsitter" || address.trim().length > 0);
+        return serviceType && (providerType === 'dogsitter' || address.trim().length > 0);
       case 4:
         return true;
       default:
@@ -172,7 +180,7 @@ export const EnhancedBookingDialog = ({
 
   const handleSubmit = async () => {
     if (!user || !provider || !selectedDate) return;
-    
+
     setLoading(true);
     try {
       const bookingDate = new Date(selectedDate);
@@ -194,8 +202,8 @@ export const EnhancedBookingDialog = ({
       if (error) throw error;
 
       toast({
-        title: "Reserva confirmada",
-        description: "Tu reserva ha sido creada exitosamente.",
+        title: 'Reserva confirmada',
+        description: 'Tu reserva ha sido creada exitosamente.',
       });
 
       onBookingComplete();
@@ -204,9 +212,9 @@ export const EnhancedBookingDialog = ({
     } catch (error) {
       logger.error('Error creating booking:', error);
       toast({
-        variant: "destructive",
-        title: "Algo salió mal",
-        description: "No se pudo crear la reserva. Intenta nuevamente."
+        variant: 'destructive',
+        title: 'Algo salió mal',
+        description: 'No se pudo crear la reserva. Intenta nuevamente.',
       });
     } finally {
       setLoading(false);
@@ -216,52 +224,52 @@ export const EnhancedBookingDialog = ({
   const resetForm = () => {
     setCurrentStep(1);
     setSelectedDate(undefined);
-    setSelectedTime("");
+    setSelectedTime('');
     setSelectedPets([]);
-    setServiceType("");
+    setServiceType('');
     setDuration(60);
-    setAddress("");
+    setAddress('');
     setCoordinates(null);
-    setInstructions("");
+    setInstructions('');
   };
 
   // Determine pickup/dropoff logic based on service type
   const getServiceLocationLogic = () => {
     switch (providerType) {
-      case "dog_walker":
+      case 'dog_walker':
         return {
-          label: "Dirección de recogida",
-          description: "El paseador recogerá a tu mascota en esta dirección",
-          placeholder: "Ingresa la dirección donde recogerán a tu mascota",
-          isPickup: true
+          label: 'Dirección de recogida',
+          description: 'El paseador recogerá a tu mascota en esta dirección',
+          placeholder: 'Ingresa la dirección donde recogerán a tu mascota',
+          isPickup: true,
         };
-      case "dogsitter":
+      case 'dogsitter':
         return {
-          label: "Dirección de entrega",
-          description: "Llevarás a tu mascota a la dirección del cuidador",
-          placeholder: "La dirección del cuidador se mostrará después de confirmar",
-          isPickup: false
+          label: 'Dirección de entrega',
+          description: 'Llevarás a tu mascota a la dirección del cuidador',
+          placeholder: 'La dirección del cuidador se mostrará después de confirmar',
+          isPickup: false,
         };
-      case "veterinarian":
+      case 'veterinarian':
         return {
-          label: "Dirección de visita",
-          description: "El veterinario visitará a tu mascota en esta dirección",
-          placeholder: "Ingresa la dirección donde se realizará la visita",
-          isPickup: true
+          label: 'Dirección de visita',
+          description: 'El veterinario visitará a tu mascota en esta dirección',
+          placeholder: 'Ingresa la dirección donde se realizará la visita',
+          isPickup: true,
         };
-      case "trainer":
+      case 'trainer':
         return {
-          label: "Dirección de entrenamiento",
-          description: "El entrenador visitará a tu mascota en esta dirección",
-          placeholder: "Ingresa la dirección donde se realizará el entrenamiento",
-          isPickup: true
+          label: 'Dirección de entrenamiento',
+          description: 'El entrenador visitará a tu mascota en esta dirección',
+          placeholder: 'Ingresa la dirección donde se realizará el entrenamiento',
+          isPickup: true,
         };
       default:
         return {
-          label: "Dirección",
-          description: "",
-          placeholder: "Ingresa la dirección",
-          isPickup: true
+          label: 'Dirección',
+          description: '',
+          placeholder: 'Ingresa la dirección',
+          isPickup: true,
         };
     }
   };
@@ -274,27 +282,27 @@ export const EnhancedBookingDialog = ({
         return [
           { value: 'paseo', label: 'Paseo Regular' },
           { value: 'ejercicio', label: 'Ejercicio Intensivo' },
-          { value: 'socializacion', label: 'Socialización' }
+          { value: 'socializacion', label: 'Socialización' },
         ];
       case 'dogsitter':
         return [
           { value: 'hospedaje', label: 'Hospedaje' },
           { value: 'daycare', label: 'Guardería Diurna' },
-          { value: 'visita', label: 'Visita a Domicilio' }
+          { value: 'visita', label: 'Visita a Domicilio' },
         ];
       case 'veterinarian':
         return [
           { value: 'consulta', label: 'Consulta General' },
           { value: 'vacunacion', label: 'Vacunación' },
           { value: 'desparasitacion', label: 'Desparasitación' },
-          { value: 'emergencia', label: 'Emergencia' }
+          { value: 'emergencia', label: 'Emergencia' },
         ];
       case 'trainer':
         return [
           { value: 'obediencia', label: 'Obediencia Básica' },
           { value: 'avanzado', label: 'Entrenamiento Avanzado' },
           { value: 'comportamiento', label: 'Modificación de Conducta' },
-          { value: 'cachorro', label: 'Entrenamiento Cachorro' }
+          { value: 'cachorro', label: 'Entrenamiento Cachorro' },
         ];
       default:
         return [];
@@ -310,7 +318,7 @@ export const EnhancedBookingDialog = ({
         <div className="bg-gradient-to-r from-primary/10 to-primary/5 p-6 border-b">
           <div className="flex items-center gap-4">
             <Avatar className="h-16 w-16 ring-2 ring-primary/20">
-              <AvatarImage src={provider.avatar_url || ""} />
+              <AvatarImage src={provider.avatar_url || ''} />
               <AvatarFallback className="bg-primary/20">
                 <User className="h-8 w-8 text-primary" />
               </AvatarFallback>
@@ -334,21 +342,29 @@ export const EnhancedBookingDialog = ({
         <div className="px-6 py-4 border-b bg-muted/30">
           <div className="flex justify-between">
             {steps.map((step, index) => (
-              <div 
+              <div
                 key={step.id}
                 className={`flex items-center gap-2 ${currentStep >= step.id ? 'text-primary' : 'text-muted-foreground'}`}
               >
-                <div className={`
+                <div
+                  className={`
                   w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium
-                  ${currentStep > step.id ? 'bg-primary text-primary-foreground' : 
-                    currentStep === step.id ? 'bg-primary/20 text-primary border-2 border-primary' : 
-                    'bg-muted text-muted-foreground'}
-                `}>
+                  ${
+                    currentStep > step.id
+                      ? 'bg-primary text-primary-foreground'
+                      : currentStep === step.id
+                        ? 'bg-primary/20 text-primary border-2 border-primary'
+                        : 'bg-muted text-muted-foreground'
+                  }
+                `}
+                >
                   {currentStep > step.id ? <Check className="h-4 w-4" /> : step.id}
                 </div>
                 <span className="hidden sm:inline text-sm font-medium">{step.title}</span>
                 {index < steps.length - 1 && (
-                  <div className={`w-8 h-0.5 mx-2 ${currentStep > step.id ? 'bg-primary' : 'bg-muted'}`} />
+                  <div
+                    className={`w-8 h-0.5 mx-2 ${currentStep > step.id ? 'bg-primary' : 'bg-muted'}`}
+                  />
                 )}
               </div>
             ))}
@@ -361,7 +377,7 @@ export const EnhancedBookingDialog = ({
           {currentStep === 1 && (
             <div className="space-y-4">
               <h3 className="font-semibold text-lg">Selecciona fecha y hora</h3>
-              
+
               {availability.length === 0 ? (
                 <Card className="bg-amber-50 border-amber-200">
                   <CardContent className="p-4 flex items-center gap-3">
@@ -381,7 +397,10 @@ export const EnhancedBookingDialog = ({
                     disabled={(date) => date < new Date() || !hasAvailability(date)}
                     modifiers={{ available: (date) => hasAvailability(date) }}
                     modifiersStyles={{
-                      available: { backgroundColor: 'hsl(var(--primary) / 0.15)', fontWeight: 'bold' }
+                      available: {
+                        backgroundColor: 'hsl(var(--primary) / 0.15)',
+                        fontWeight: 'bold',
+                      },
                     }}
                     className="rounded-md border mx-auto pointer-events-auto"
                   />
@@ -390,13 +409,14 @@ export const EnhancedBookingDialog = ({
                     <div className="space-y-3 animate-fade-in">
                       <Label className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-primary" />
-                        Horarios disponibles para {format(selectedDate, "EEEE d 'de' MMMM", { locale: es })}
+                        Horarios disponibles para{' '}
+                        {format(selectedDate, "EEEE d 'de' MMMM", { locale: es })}
                       </Label>
                       <div className="grid grid-cols-4 gap-2">
                         {availableSlots.map((slot) => (
                           <Button
                             key={slot}
-                            variant={selectedTime === slot ? "default" : "outline"}
+                            variant={selectedTime === slot ? 'default' : 'outline'}
                             size="sm"
                             onClick={() => setSelectedTime(slot)}
                           >
@@ -415,7 +435,7 @@ export const EnhancedBookingDialog = ({
           {currentStep === 2 && (
             <div className="space-y-4">
               <h3 className="font-semibold text-lg">Selecciona tu(s) mascota(s)</h3>
-              
+
               {pets.length === 0 ? (
                 <Card className="bg-muted/50">
                   <CardContent className="p-6 text-center">
@@ -429,18 +449,20 @@ export const EnhancedBookingDialog = ({
               ) : (
                 <div className="grid gap-3">
                   {pets.map((pet) => (
-                    <Card 
+                    <Card
                       key={pet.id}
                       className={`cursor-pointer transition-all ${
-                        selectedPets.includes(pet.id) ? 'ring-2 ring-primary bg-primary/5' : 'hover:bg-muted/50'
+                        selectedPets.includes(pet.id)
+                          ? 'ring-2 ring-primary bg-primary/5'
+                          : 'hover:bg-muted/50'
                       }`}
                       onClick={() => {
                         if (providerType === 'veterinarian' || providerType === 'trainer') {
                           setSelectedPets([pet.id]);
                         } else {
-                          setSelectedPets(prev => 
-                            prev.includes(pet.id) 
-                              ? prev.filter(id => id !== pet.id)
+                          setSelectedPets((prev) =>
+                            prev.includes(pet.id)
+                              ? prev.filter((id) => id !== pet.id)
                               : [...prev, pet.id]
                           );
                         }
@@ -448,7 +470,7 @@ export const EnhancedBookingDialog = ({
                     >
                       <CardContent className="p-4 flex items-center gap-4">
                         <Avatar className="h-14 w-14">
-                          <AvatarImage src={pet.photo_url || ""} />
+                          <AvatarImage src={pet.photo_url || ''} />
                           <AvatarFallback className="bg-primary/10">
                             <PawPrint className="h-6 w-6 text-primary" />
                           </AvatarFallback>
@@ -459,10 +481,7 @@ export const EnhancedBookingDialog = ({
                             {pet.species} • {pet.breed || 'Sin raza'}
                           </p>
                         </div>
-                        <Checkbox 
-                          checked={selectedPets.includes(pet.id)}
-                          className="h-5 w-5"
-                        />
+                        <Checkbox checked={selectedPets.includes(pet.id)} className="h-5 w-5" />
                       </CardContent>
                     </Card>
                   ))}
@@ -483,7 +502,7 @@ export const EnhancedBookingDialog = ({
                     <SelectValue placeholder="Selecciona el servicio" />
                   </SelectTrigger>
                   <SelectContent>
-                    {getServiceOptions().map(option => (
+                    {getServiceOptions().map((option) => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -495,7 +514,10 @@ export const EnhancedBookingDialog = ({
               {(providerType === 'dog_walker' || providerType === 'trainer') && (
                 <div className="space-y-2">
                   <Label>Duración</Label>
-                  <Select value={duration.toString()} onValueChange={(v) => setDuration(parseInt(v))}>
+                  <Select
+                    value={duration.toString()}
+                    onValueChange={(v) => setDuration(parseInt(v))}
+                  >
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
@@ -513,10 +535,12 @@ export const EnhancedBookingDialog = ({
                 <div className="flex items-center gap-2">
                   <Label>{locationLogic.label}</Label>
                   {locationLogic.description && (
-                    <span className="text-xs text-muted-foreground">({locationLogic.description})</span>
+                    <span className="text-xs text-muted-foreground">
+                      ({locationLogic.description})
+                    </span>
                   )}
                 </div>
-                {providerType === "dogsitter" ? (
+                {providerType === 'dogsitter' ? (
                   // For sitters, show provider's address (they drop off at sitter's location)
                   <Card className="bg-muted/50 p-4">
                     <div className="flex items-start gap-3">
@@ -524,7 +548,7 @@ export const EnhancedBookingDialog = ({
                       <div>
                         <p className="font-medium text-sm mb-1">Dirección del cuidador</p>
                         <p className="text-sm text-muted-foreground">
-                          {provider.address || "La dirección se confirmará después de la reserva"}
+                          {provider.address || 'La dirección se confirmará después de la reserva'}
                         </p>
                         <p className="text-xs text-muted-foreground mt-2">
                           Llevarás a tu mascota a esta dirección
@@ -547,7 +571,9 @@ export const EnhancedBookingDialog = ({
                     </SelectTrigger>
                     <SelectContent>
                       {COMUNAS_SANTIAGO.map((c) => (
-                        <SelectItem key={c} value={c}>{c}</SelectItem>
+                        <SelectItem key={c} value={c}>
+                          {c}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -579,7 +605,8 @@ export const EnhancedBookingDialog = ({
                       <span>Fecha y hora</span>
                     </div>
                     <span className="font-medium">
-                      {selectedDate && format(selectedDate, "d 'de' MMMM", { locale: es })} - {selectedTime}
+                      {selectedDate && format(selectedDate, "d 'de' MMMM", { locale: es })} -{' '}
+                      {selectedTime}
                     </span>
                   </div>
 
@@ -589,7 +616,10 @@ export const EnhancedBookingDialog = ({
                       <span>Mascota(s)</span>
                     </div>
                     <span className="font-medium">
-                      {pets.filter(p => selectedPets.includes(p.id)).map(p => p.name).join(', ')}
+                      {pets
+                        .filter((p) => selectedPets.includes(p.id))
+                        .map((p) => p.name)
+                        .join(', ')}
                     </span>
                   </div>
 
@@ -599,8 +629,8 @@ export const EnhancedBookingDialog = ({
                       <span>{locationLogic.label}</span>
                     </div>
                     <span className="font-medium text-right max-w-[200px] truncate">
-                      {providerType === "dogsitter" 
-                        ? (provider.address || "Dirección del cuidador")
+                      {providerType === 'dogsitter'
+                        ? provider.address || 'Dirección del cuidador'
                         : address}
                     </span>
                   </div>
@@ -628,7 +658,9 @@ export const EnhancedBookingDialog = ({
         <div className="p-6 border-t bg-muted/30 flex justify-between">
           <Button
             variant="outline"
-            onClick={() => currentStep > 1 ? setCurrentStep(currentStep - 1) : onOpenChange(false)}
+            onClick={() =>
+              currentStep > 1 ? setCurrentStep(currentStep - 1) : onOpenChange(false)
+            }
           >
             <ChevronLeft className="h-4 w-4 mr-2" />
             {currentStep > 1 ? 'Anterior' : 'Cancelar'}
@@ -649,7 +681,7 @@ export const EnhancedBookingDialog = ({
               disabled={loading}
               className="bg-gradient-to-r from-primary to-primary/80"
             >
-              {loading ? "Reservando..." : "Confirmar Reserva"}
+              {loading ? 'Reservando...' : 'Confirmar Reserva'}
               <CheckCircle className="h-4 w-4 ml-2" />
             </Button>
           )}

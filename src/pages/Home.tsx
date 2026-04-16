@@ -131,6 +131,7 @@ export default function Home() {
     if (user && role === 'owner') {
       void loadData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadData depends on user from closure; adding it would cause infinite loops
   }, [user, role]);
 
   const loadData = async () => {

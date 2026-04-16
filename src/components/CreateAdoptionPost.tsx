@@ -317,16 +317,25 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
           <div className="space-y-3">
             <Label>Convivencia</Label>
             <div className="flex flex-wrap gap-4">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <Checkbox onCheckedChange={(checked) => setValue('good_with_kids', checked)} />
+              <label htmlFor="good-with-kids" className="flex items-center gap-2 cursor-pointer">
+                <Checkbox
+                  id="good-with-kids"
+                  onCheckedChange={(checked) => setValue('good_with_kids', checked)}
+                />
                 <span className="text-sm">Bueno con niños</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <Checkbox onCheckedChange={(checked) => setValue('good_with_dogs', checked)} />
+              <label htmlFor="good-with-dogs" className="flex items-center gap-2 cursor-pointer">
+                <Checkbox
+                  id="good-with-dogs"
+                  onCheckedChange={(checked) => setValue('good_with_dogs', checked)}
+                />
                 <span className="text-sm">Bueno con perros</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <Checkbox onCheckedChange={(checked) => setValue('good_with_cats', checked)} />
+              <label htmlFor="good-with-cats" className="flex items-center gap-2 cursor-pointer">
+                <Checkbox
+                  id="good-with-cats"
+                  onCheckedChange={(checked) => setValue('good_with_cats', checked)}
+                />
                 <span className="text-sm">Bueno con gatos</span>
               </label>
             </div>

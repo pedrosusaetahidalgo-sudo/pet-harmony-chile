@@ -1,14 +1,24 @@
-import { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Star, Trophy, Dog, Home, Stethoscope, GraduationCap, Crown, Medal, Award } from "@/lib/icons";
-import { supabase } from "@/integrations/supabase/client";
-import { useNavigate } from "react-router-dom";
-import { LINKS } from "@/lib/links";
-import { logger } from "@/lib/logger";
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Star,
+  Trophy,
+  Dog,
+  Home,
+  Stethoscope,
+  GraduationCap,
+  Crown,
+  Medal,
+  Award,
+} from '@/lib/icons';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
+import { LINKS } from '@/lib/links';
+import { logger } from '@/lib/logger';
 
 interface RankedProvider {
   id: string;
@@ -38,8 +48,9 @@ const TopRatedProviders = () => {
     try {
       // Load from unified service_providers table - global and unique ranking
       const { data: allProvidersData } = await supabase
-        .from("service_providers")
-        .select(`
+        .from('service_providers')
+        .select(
+          `
           id,
           user_id,
           rating,
@@ -49,11 +60,12 @@ const TopRatedProviders = () => {
           display_name,
           avatar_url,
           provider_service_offerings!inner(service_type)
-        `)
-        .eq("status", "approved")
-        .gt("total_reviews", 0)
-        .order("rating", { ascending: false })
-        .order("total_reviews", { ascending: false });
+        `
+        )
+        .eq('status', 'approved')
+        .gt('total_reviews', 0)
+        .order('rating', { ascending: false })
+        .order('total_reviews', { ascending: false });
 
       if (!allProvidersData) {
         setWalkers([]);
@@ -66,7 +78,7 @@ const TopRatedProviders = () => {
 
       // Get unique providers (one entry per user_id, best rating)
       const uniqueProviders = new Map();
-      allProvidersData.forEach(provider => {
+      allProvidersData.forEach((provider) => {
         const existing = uniqueProviders.get(provider.user_id);
         if (!existing || provider.rating > existing.rating) {
           uniqueProviders.set(provider.user_id, provider);
@@ -79,48 +91,53 @@ const TopRatedProviders = () => {
       const vetsList: RankedProvider[] = [];
       const trainersList: RankedProvider[] = [];
 
-      uniqueProviders.forEach(provider => {
-        const serviceTypes = provider.provider_service_offerings?.map((o: any) => o.service_type) || [];
-        
+      uniqueProviders.forEach((provider) => {
+        const serviceTypes =
+          provider.provider_service_offerings?.map(
+            (o: { service_type: string }) => o.service_type
+          ) || [];
+
         const providerData: RankedProvider = {
           id: provider.id,
           user_id: provider.user_id,
-          display_name: provider.display_name || "Profesional",
+          display_name: provider.display_name || 'Profesional',
           avatar_url: provider.avatar_url,
           rating: provider.rating || 0,
           total_reviews: provider.total_reviews || 0,
           is_verified: provider.is_verified || false,
-          type: serviceTypes[0] || "unknown"
+          type: serviceTypes[0] || 'unknown',
         };
 
         // Add to appropriate lists based on service types
-        if (serviceTypes.includes("dog_walker")) {
-          walkersList.push({ ...providerData, type: "walker" });
+        if (serviceTypes.includes('dog_walker')) {
+          walkersList.push({ ...providerData, type: 'walker' });
         }
-        if (serviceTypes.includes("dogsitter")) {
-          sittersList.push({ ...providerData, type: "sitter" });
+        if (serviceTypes.includes('dogsitter')) {
+          sittersList.push({ ...providerData, type: 'sitter' });
         }
-        if (serviceTypes.includes("veterinarian")) {
-          vetsList.push({ ...providerData, type: "vet" });
+        if (serviceTypes.includes('veterinarian')) {
+          vetsList.push({ ...providerData, type: 'vet' });
         }
-        if (serviceTypes.includes("trainer")) {
-          trainersList.push({ ...providerData, type: "trainer" });
+        if (serviceTypes.includes('trainer')) {
+          trainersList.push({ ...providerData, type: 'trainer' });
         }
       });
 
       // Sort each list and limit to top 10
-      const sortAndLimit = (list: RankedProvider[]) => 
-        list.sort((a, b) => {
-          if (b.rating !== a.rating) return b.rating - a.rating;
-          return b.total_reviews - a.total_reviews;
-        }).slice(0, 10);
+      const sortAndLimit = (list: RankedProvider[]) =>
+        list
+          .sort((a, b) => {
+            if (b.rating !== a.rating) return b.rating - a.rating;
+            return b.total_reviews - a.total_reviews;
+          })
+          .slice(0, 10);
 
       setWalkers(sortAndLimit(walkersList));
       setSitters(sortAndLimit(sittersList));
       setVets(sortAndLimit(vetsList));
       setTrainers(sortAndLimit(trainersList));
     } catch (error) {
-      logger.error("Error loading rankings:", error);
+      logger.error('Error loading rankings:', error);
     } finally {
       setLoading(false);
     }
@@ -141,18 +158,24 @@ const TopRatedProviders = () => {
 
   const getNavigationRoute = (type: string) => {
     switch (type) {
-      case "walker":
-        return "/services/walkers";
-      case "sitter":
-        return "/services/sitters";
-      case "vet":
-        return "/services/vets";
+      case 'walker':
+        return '/services/walkers';
+      case 'sitter':
+        return '/services/sitters';
+      case 'vet':
+        return '/services/vets';
       default:
-        return "/";
+        return '/';
     }
   };
 
-  const ProvidersList = ({ providers, emptyMessage }: { providers: RankedProvider[], emptyMessage: string }) => {
+  const ProvidersList = ({
+    providers,
+    emptyMessage,
+  }: {
+    providers: RankedProvider[];
+    emptyMessage: string;
+  }) => {
     if (loading) {
       return (
         <div className="text-center py-8">
@@ -174,19 +197,21 @@ const TopRatedProviders = () => {
     return (
       <div className="space-y-2">
         {providers.map((provider, index) => (
-          <Card 
+          <Card
             key={provider.id}
             className={`cursor-pointer hover:shadow-md transition-shadow ${
-              index === 0 ? "border-yellow-500/50 bg-yellow-500/5" :
-              index === 1 ? "border-slate-400/50 bg-slate-100/5" :
-              index === 2 ? "border-amber-600/50 bg-amber-600/5" : ""
+              index === 0
+                ? 'border-yellow-500/50 bg-yellow-500/5'
+                : index === 1
+                  ? 'border-slate-400/50 bg-slate-100/5'
+                  : index === 2
+                    ? 'border-amber-600/50 bg-amber-600/5'
+                    : ''
             }`}
             onClick={() => navigate(`/user/${provider.user_id}`)}
           >
             <CardContent className="p-3 flex items-center gap-3">
-              <div className="flex-shrink-0 w-6 flex justify-center">
-                {getRankIcon(index)}
-              </div>
+              <div className="flex-shrink-0 w-6 flex justify-center">{getRankIcon(index)}</div>
               <Avatar className="h-10 w-10">
                 <AvatarImage src={provider.avatar_url || undefined} />
                 <AvatarFallback className="bg-primary/10 text-primary">
@@ -197,14 +222,15 @@ const TopRatedProviders = () => {
                 <div className="flex items-center gap-2">
                   <p className="font-semibold text-sm truncate">{provider.display_name}</p>
                   {provider.is_verified && (
-                    <Badge variant="secondary" className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                    <Badge
+                      variant="secondary"
+                      className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                    >
                       Verificado
                     </Badge>
                   )}
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  {provider.total_reviews} reseñas
-                </p>
+                <p className="text-xs text-muted-foreground">{provider.total_reviews} reseñas</p>
               </div>
               <div className="flex items-center gap-1 flex-shrink-0">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -247,13 +273,10 @@ const TopRatedProviders = () => {
           </TabsList>
 
           <TabsContent value="walkers">
-            <ProvidersList 
-              providers={walkers} 
-              emptyMessage="Aún no hay paseadores calificados" 
-            />
+            <ProvidersList providers={walkers} emptyMessage="Aún no hay paseadores calificados" />
             {walkers.length > 0 && (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full mt-3"
                 onClick={() => navigate(LINKS.services('walkers'))}
               >
@@ -263,13 +286,10 @@ const TopRatedProviders = () => {
           </TabsContent>
 
           <TabsContent value="sitters">
-            <ProvidersList 
-              providers={sitters} 
-              emptyMessage="Aún no hay cuidadores calificados" 
-            />
+            <ProvidersList providers={sitters} emptyMessage="Aún no hay cuidadores calificados" />
             {sitters.length > 0 && (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full mt-3"
                 onClick={() => navigate(LINKS.services('sitters'))}
               >
@@ -279,13 +299,10 @@ const TopRatedProviders = () => {
           </TabsContent>
 
           <TabsContent value="vets">
-            <ProvidersList 
-              providers={vets} 
-              emptyMessage="Aún no hay veterinarios calificados" 
-            />
+            <ProvidersList providers={vets} emptyMessage="Aún no hay veterinarios calificados" />
             {vets.length > 0 && (
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 className="w-full mt-3"
                 onClick={() => navigate(LINKS.vets())}
               >
@@ -295,9 +312,9 @@ const TopRatedProviders = () => {
           </TabsContent>
 
           <TabsContent value="trainers">
-            <ProvidersList 
-              providers={trainers} 
-              emptyMessage="Aún no hay entrenadores calificados" 
+            <ProvidersList
+              providers={trainers}
+              emptyMessage="Aún no hay entrenadores calificados"
             />
           </TabsContent>
         </Tabs>

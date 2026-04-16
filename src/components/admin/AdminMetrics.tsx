@@ -1,8 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, PawPrint, Calendar, TrendingUp, Stethoscope, Star } from "@/lib/icons";
-import { Skeleton } from "@/components/ui/skeleton";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Users, PawPrint, Calendar, TrendingUp, Stethoscope, Star } from '@/lib/icons';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface MetricCardProps {
   title: string;
@@ -25,9 +25,7 @@ function MetricCard({ title, value, icon: Icon, description, loading }: MetricCa
         ) : (
           <>
             <div className="text-2xl font-bold">{value}</div>
-            {description && (
-              <p className="text-xs text-muted-foreground mt-1">{description}</p>
-            )}
+            {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
           </>
         )}
       </CardContent>
@@ -37,69 +35,67 @@ function MetricCard({ title, value, icon: Icon, description, loading }: MetricCa
 
 export default function AdminMetrics() {
   const { data: userCount, isLoading: loadingUsers } = useQuery({
-    queryKey: ["admin-metric-users"],
+    queryKey: ['admin-metric-users'],
     queryFn: async () => {
-      const { count } = await supabase
-        .from("profiles")
-        .select("*", { count: "exact", head: true });
+      const { count } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
       return count ?? 0;
     },
   });
 
   const { data: petCount, isLoading: loadingPets } = useQuery({
-    queryKey: ["admin-metric-pets"],
+    queryKey: ['admin-metric-pets'],
     queryFn: async () => {
       const { count } = await supabase
-        .from("pets")
-        .select("*", { count: "exact", head: true })
-        .eq("lifecycle_status", "active");
+        .from('pets')
+        .select('*', { count: 'exact', head: true })
+        .eq('lifecycle_status', 'active');
       return count ?? 0;
     },
   });
 
   const { data: bookingCount, isLoading: loadingBookings } = useQuery({
-    queryKey: ["admin-metric-bookings-week"],
+    queryKey: ['admin-metric-bookings-week'],
     queryFn: async () => {
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
       const { count } = await supabase
-        .from("bookings")
-        .select("*", { count: "exact", head: true })
-        .gte("created_at", weekAgo.toISOString());
+        .from('bookings')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', weekAgo.toISOString());
       return count ?? 0;
     },
   });
 
   const { data: postCount, isLoading: loadingPosts } = useQuery({
-    queryKey: ["admin-metric-posts-week"],
+    queryKey: ['admin-metric-posts-week'],
     queryFn: async () => {
       const weekAgo = new Date();
       weekAgo.setDate(weekAgo.getDate() - 7);
       const { count } = await supabase
-        .from("posts")
-        .select("*", { count: "exact", head: true })
-        .gte("created_at", weekAgo.toISOString());
+        .from('posts')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', weekAgo.toISOString());
       return count ?? 0;
     },
   });
 
   const { data: providerCount, isLoading: loadingProviders } = useQuery({
-    queryKey: ["admin-metric-providers"],
+    queryKey: ['admin-metric-providers'],
     queryFn: async () => {
-      const { count } = await (supabase
-        .from("service_providers") as any)
-        .select("id", { count: "exact", head: true })
-        .eq("verified", true);
-      return (count as number | null) ?? 0;
+      const { count } = await supabase
+        .from('service_providers')
+        .select('id', { count: 'exact', head: true })
+        .eq('is_verified', true);
+      return count ?? 0;
     },
   });
 
   const { data: reviewCount, isLoading: loadingReviews } = useQuery({
-    queryKey: ["admin-metric-reviews"],
+    queryKey: ['admin-metric-reviews'],
     queryFn: async () => {
       const { count } = await supabase
-        .from("service_reviews")
-        .select("id", { count: "exact", head: true });
+        .from('service_reviews')
+        .select('id', { count: 'exact', head: true });
       return count ?? 0;
     },
   });

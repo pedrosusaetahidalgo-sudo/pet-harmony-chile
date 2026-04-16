@@ -1,16 +1,35 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Heart, MapPin, Calendar, User, MessageCircle, Share2 } from "@/lib/icons";
-import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
-import { useNavigate } from "react-router-dom";
-import { useStartConversation } from "@/hooks/useStartConversation";
-import { LINKS } from "@/lib/links";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Heart, MapPin, Calendar, User, MessageCircle, Share2 } from '@/lib/icons';
+import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { useNavigate } from 'react-router-dom';
+import { useStartConversation } from '@/hooks/useStartConversation';
+import { LINKS } from '@/lib/links';
+
+interface AdoptionPost {
+  pet_name: string;
+  description: string;
+  species: string;
+  breed: string | null;
+  gender: string | null;
+  size: string | null;
+  age_years: number | null;
+  age_months: number | null;
+  location: string;
+  photos: string[] | null;
+  created_at: string;
+  user_id: string;
+  good_with_kids: boolean | null;
+  good_with_dogs: boolean | null;
+  good_with_cats: boolean | null;
+  profiles?: { display_name: string | null; avatar_url: string | null } | null;
+}
 
 interface AdoptionDetailCardProps {
-  post: any;
+  post: AdoptionPost;
   compact?: boolean;
 }
 
@@ -67,36 +86,49 @@ const AdoptionDetailCard = ({ post, compact = false }: AdoptionDetailCardProps) 
             </p>
           </div>
         </div>
-        
+
         <div className="flex flex-wrap gap-1">
           {post.age_years != null && (
             <Badge variant="outline" className="text-xs">
               {post.age_years > 0 ? `${post.age_years} años` : `${post.age_months} meses`}
             </Badge>
           )}
-          {post.size && <Badge variant="outline" className="text-xs">{post.size}</Badge>}
-          {post.gender && <Badge variant="outline" className="text-xs capitalize">{post.gender}</Badge>}
+          {post.size && (
+            <Badge variant="outline" className="text-xs">
+              {post.size}
+            </Badge>
+          )}
+          {post.gender && (
+            <Badge variant="outline" className="text-xs capitalize">
+              {post.gender}
+            </Badge>
+          )}
         </div>
-        
+
         <p className="text-xs text-muted-foreground line-clamp-2">{post.description}</p>
-        
+
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
           <MapPin className="h-3 w-3" />
           <span className="truncate">{post.location}</span>
         </div>
-        
+
         <div className="flex items-center gap-2 text-xs">
           <Avatar className="h-5 w-5">
             <AvatarImage src={post.profiles?.avatar_url} />
-            <AvatarFallback>{post.profiles?.display_name?.charAt(0) || "U"}</AvatarFallback>
+            <AvatarFallback>{post.profiles?.display_name?.charAt(0) || 'U'}</AvatarFallback>
           </Avatar>
           <span className="text-muted-foreground truncate">
-            {post.profiles?.display_name || "Usuario"}
+            {post.profiles?.display_name || 'Usuario'}
           </span>
         </div>
-        
+
         <div className="flex gap-2 pt-2">
-          <Button size="sm" className="flex-1 h-10 text-xs bg-orange-500 hover:bg-orange-600" onClick={handleContact} disabled={loading}>
+          <Button
+            size="sm"
+            className="flex-1 h-10 text-xs bg-orange-500 hover:bg-orange-600"
+            onClick={handleContact}
+            disabled={loading}
+          >
             <MessageCircle className="h-3 w-3 mr-1" />
             Contactar
           </Button>
@@ -118,26 +150,26 @@ const AdoptionDetailCard = ({ post, compact = false }: AdoptionDetailCardProps) 
             loading="lazy"
             className="w-full h-full object-cover"
           />
-          <Badge className="absolute top-3 left-3 bg-orange-500 shadow-lg">
-            🧡 En Adopción
-          </Badge>
+          <Badge className="absolute top-3 left-3 bg-orange-500 shadow-lg">🧡 En Adopción</Badge>
         </div>
       ) : (
         <div className="relative h-32 bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center">
           <Heart className="h-12 w-12 text-orange-400" />
-          <Badge className="absolute top-3 left-3 bg-orange-500 shadow-lg">
-            🧡 En Adopción
-          </Badge>
+          <Badge className="absolute top-3 left-3 bg-orange-500 shadow-lg">🧡 En Adopción</Badge>
         </div>
       )}
-      
+
       <CardContent className="p-4 space-y-4">
         <div>
           <h3 className="text-xl font-bold">{post.pet_name}</h3>
           <div className="flex flex-wrap items-center gap-2 mt-1">
             <Badge variant="outline">{post.species}</Badge>
             {post.breed && <Badge variant="secondary">{post.breed}</Badge>}
-            {post.gender && <Badge variant="outline" className="capitalize">{post.gender}</Badge>}
+            {post.gender && (
+              <Badge variant="outline" className="capitalize">
+                {post.gender}
+              </Badge>
+            )}
           </div>
         </div>
 
@@ -147,8 +179,8 @@ const AdoptionDetailCard = ({ post, compact = false }: AdoptionDetailCardProps) 
             <div>
               <span className="text-muted-foreground">Edad: </span>
               <span className="font-medium">
-                {post.age_years > 0 
-                  ? `${post.age_years} año${post.age_years > 1 ? "s" : ""}` 
+                {post.age_years > 0
+                  ? `${post.age_years} año${post.age_years > 1 ? 's' : ''}`
                   : `${post.age_months} meses`}
               </span>
             </div>
@@ -166,13 +198,19 @@ const AdoptionDetailCard = ({ post, compact = false }: AdoptionDetailCardProps) 
         {/* Compatibility badges */}
         <div className="flex flex-wrap gap-2">
           {post.good_with_kids && (
-            <Badge variant="secondary" className="text-xs">👶 Bueno con niños</Badge>
+            <Badge variant="secondary" className="text-xs">
+              👶 Bueno con niños
+            </Badge>
           )}
           {post.good_with_dogs && (
-            <Badge variant="secondary" className="text-xs">🐕 Bueno con perros</Badge>
+            <Badge variant="secondary" className="text-xs">
+              🐕 Bueno con perros
+            </Badge>
           )}
           {post.good_with_cats && (
-            <Badge variant="secondary" className="text-xs">🐱 Bueno con gatos</Badge>
+            <Badge variant="secondary" className="text-xs">
+              🐱 Bueno con gatos
+            </Badge>
           )}
         </div>
 
@@ -184,20 +222,25 @@ const AdoptionDetailCard = ({ post, compact = false }: AdoptionDetailCardProps) 
           <div className="flex items-center gap-2">
             <Calendar className="h-4 w-4 text-primary" />
             <span>
-              Publicado {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: es })}
+              Publicado{' '}
+              {formatDistanceToNow(new Date(post.created_at), { addSuffix: true, locale: es })}
             </span>
           </div>
           <div className="flex items-center gap-2">
             <Avatar className="h-5 w-5">
               <AvatarImage src={post.profiles?.avatar_url} />
-              <AvatarFallback>{post.profiles?.display_name?.charAt(0) || "U"}</AvatarFallback>
+              <AvatarFallback>{post.profiles?.display_name?.charAt(0) || 'U'}</AvatarFallback>
             </Avatar>
-            <span>{post.profiles?.display_name || "Usuario"}</span>
+            <span>{post.profiles?.display_name || 'Usuario'}</span>
           </div>
         </div>
 
         <div className="flex gap-2 pt-2">
-          <Button className="flex-1 bg-orange-500 hover:bg-orange-600" onClick={handleContact} disabled={loading}>
+          <Button
+            className="flex-1 bg-orange-500 hover:bg-orange-600"
+            onClick={handleContact}
+            disabled={loading}
+          >
             <MessageCircle className="h-4 w-4 mr-2" />
             Contactar
           </Button>

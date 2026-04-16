@@ -512,8 +512,11 @@ const AdminServiceProviders = () => {
                 {/* Campo para motivo de rechazo */}
                 {selectedProvider.status !== 'rejected' && (
                   <div className="space-y-2">
-                    <label className="text-sm">Motivo de rechazo (requerido para rechazar):</label>
+                    <label htmlFor="rejection-reason" className="text-sm">
+                      Motivo de rechazo (requerido para rechazar):
+                    </label>
                     <Textarea
+                      id="rejection-reason"
                       placeholder="Ingrese el motivo de rechazo..."
                       value={rejectionReason}
                       onChange={(e) => setRejectionReason(e.target.value)}

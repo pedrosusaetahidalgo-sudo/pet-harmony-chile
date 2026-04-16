@@ -242,8 +242,9 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
 
     const claudeData = await claudeResponse.json();
     // web_search produces multiple content blocks; grab the last text block
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const textBlocks = (claudeData.content ?? []).filter((b: any) => b.type === 'text');
+    const textBlocks = (claudeData.content ?? []).filter(
+      (b: { type: string }) => b.type === 'text'
+    );
     const responseText: string = textBlocks[textBlocks.length - 1]?.text ?? '';
 
     // Parse response — Claude a veces envuelve el JSON en ```json ... ```
@@ -331,9 +332,7 @@ JSON: {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":
         headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
       }
     );
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('pet-assistant error:', error);
     return new Response(
       JSON.stringify({

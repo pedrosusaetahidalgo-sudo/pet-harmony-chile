@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LINKS } from '@/lib/links';
@@ -125,6 +126,7 @@ export function PetCardCompact({ pet, score, onDelete }: PetCardCompactProps) {
 
   return (
     <div className="tcg-perspective h-full">
+      {/* eslint-disable-next-line jsx-a11y/no-static-element-interactions */}
       <div
         ref={cardRef}
         className="pet-card-tcg h-full"

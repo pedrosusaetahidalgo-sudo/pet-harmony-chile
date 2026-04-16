@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -25,7 +24,30 @@ import { ProfessionalBadges } from '@/components/ProfessionalBadges';
 import { useStartConversation } from '@/hooks/useStartConversation';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { logger } from '@/lib/logger';
+import type { Database } from '@/integrations/supabase/types';
 // Fallback images removed — we use inline PawPrint icons instead of external URLs
+
+type ProfileRow = Database['public']['Tables']['profiles']['Row'];
+type PetRow = Database['public']['Tables']['pets']['Row'];
+
+interface UserStatsData {
+  total_points?: number;
+  level?: number;
+  total_posts?: number;
+  total_reviews?: number;
+  followers_count: number;
+  following_count: number;
+}
+
+interface PostData {
+  id: string;
+  content: string | null;
+  image_url: string | null;
+  created_at: string;
+  likes_count: number;
+  comments_count: number;
+  post_type: string | null;
+}
 
 const UserProfile = () => {
   const { userId } = useParams<{ userId: string }>();
@@ -34,10 +56,10 @@ const UserProfile = () => {
   const navigate = useNavigate();
   const { startConversation } = useStartConversation();
 
-  const [profile, setProfile] = useState<any>(null);
-  const [userStats, setUserStats] = useState<any>(null);
-  const [pets, setPets] = useState<any[]>([]);
-  const [posts, setPosts] = useState<any[]>([]);
+  const [profile, setProfile] = useState<ProfileRow | null>(null);
+  const [userStats, setUserStats] = useState<UserStatsData | null>(null);
+  const [pets, setPets] = useState<PetRow[]>([]);
+  const [posts, setPosts] = useState<PostData[]>([]);
   const [loading, setLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
   const [followLoading, setFollowLoading] = useState(false);
@@ -49,6 +71,7 @@ const UserProfile = () => {
       loadProfileData();
       checkFollowStatus();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadProfileData/checkFollowStatus depend on userId from closure; listed deps are sufficient
   }, [userId]);
 
   const checkFollowStatus = async () => {
@@ -122,15 +145,18 @@ const UserProfile = () => {
       setLoading(true);
 
       // Campos públicos del perfil (nunca exponer whatsapp, plan, admin, etc.)
-      const publicProfileFields =
-        'id, display_name, avatar_url, bio, location, level, points, total_posts, total_reviews, total_adoptions, total_bookings, created_at';
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select(isOwnProfile ? '*' : publicProfileFields)
-        .eq('id', userId)
-        .maybeSingle();
+      const profileQuery = isOwnProfile
+        ? supabase.from('profiles').select('*').eq('id', userId).maybeSingle()
+        : supabase
+            .from('profiles')
+            .select(
+              'id, display_name, avatar_url, bio, location, level, points, total_posts, total_reviews, total_adoptions, total_bookings, created_at'
+            )
+            .eq('id', userId)
+            .maybeSingle();
+      const { data: profileData } = await profileQuery;
 
-      setProfile(profileData);
+      setProfile(profileData as ProfileRow | null);
 
       const [statsRes, followersRes, followingRes] = await Promise.all([
         supabase
@@ -155,16 +181,22 @@ const UserProfile = () => {
       });
 
       // Mascotas: solo datos públicos (nunca datos médicos, microchip, emergencia)
-      const publicPetFields =
-        'id, name, species, breed, photo_url, gender, birth_date, bio, personality';
-      const { data: petsData } = await supabase
-        .from('pets')
-        .select(isOwnProfile ? '*' : publicPetFields)
-        .eq('owner_id', userId)
-        .eq('lifecycle_status', 'active')
-        .order('created_at', { ascending: false });
+      const petsQuery = isOwnProfile
+        ? supabase
+            .from('pets')
+            .select('*')
+            .eq('owner_id', userId)
+            .eq('lifecycle_status', 'active')
+            .order('created_at', { ascending: false })
+        : supabase
+            .from('pets')
+            .select('id, name, species, breed, photo_url, gender, birth_date, bio, personality')
+            .eq('owner_id', userId)
+            .eq('lifecycle_status', 'active')
+            .order('created_at', { ascending: false });
+      const { data: petsData } = await petsQuery;
 
-      setPets(petsData || []);
+      setPets((petsData || []) as PetRow[]);
 
       const { data: postsData } = await supabase
         .from('posts')

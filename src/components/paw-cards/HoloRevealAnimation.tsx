@@ -42,7 +42,7 @@ export function HoloRevealAnimation({ holoPattern, onComplete }: HoloRevealAnima
   if (phase === 'done') return null;
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
       onClick={handleSkip}

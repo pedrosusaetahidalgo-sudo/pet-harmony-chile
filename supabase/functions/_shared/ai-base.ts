@@ -61,8 +61,7 @@ export async function verifyAuth(req: Request) {
 }
 
 export async function checkRateLimit(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  supabase: any,
+  supabase: ReturnType<typeof createClient>,
   userId: string,
   skillName: string,
   maxPerDay: number

@@ -389,12 +389,17 @@ function DomiciliariosPanel() {
           <CardTitle className="text-sm text-slate-300">
             {leads.length} leads{filters.busqueda ? ` (filtrado)` : ''}
           </CardTitle>
-          <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
+          <label
+            htmlFor="leads-select-all"
+            className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer"
+          >
             <input
+              id="leads-select-all"
               type="checkbox"
               checked={selectedIds.size === leads.length && leads.length > 0}
               onChange={selectAll}
               className="rounded border-slate-600"
+              aria-label="Seleccionar todos los leads"
             />
             Seleccionar todos
           </label>
@@ -452,7 +457,9 @@ function DomiciliariosPanel() {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-xs text-slate-400 mb-1 block">Canal</label>
+                <label htmlFor="outreach-canal" className="text-xs text-slate-400 mb-1 block">
+                  Canal
+                </label>
                 <Select
                   value={outreachCanal}
                   onValueChange={(v) => setOutreachCanal(v as 'email' | 'whatsapp')}
@@ -467,7 +474,9 @@ function DomiciliariosPanel() {
                 </Select>
               </div>
               <div>
-                <label className="text-xs text-slate-400 mb-1 block">Template</label>
+                <label htmlFor="outreach-template" className="text-xs text-slate-400 mb-1 block">
+                  Template
+                </label>
                 <Select value={outreachTemplate} onValueChange={setOutreachTemplate}>
                   <SelectTrigger className="bg-slate-800 border-slate-700">
                     <SelectValue />
@@ -872,9 +881,21 @@ function LeadRow({
         onChange={onToggleSelect}
         className="rounded border-slate-600 shrink-0"
         onClick={(e) => e.stopPropagation()}
+        aria-label="Seleccionar lead"
       />
 
-      <div className="flex-1 min-w-0" onClick={onOpenDetail}>
+      <div
+        className="flex-1 min-w-0"
+        onClick={onOpenDetail}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onOpenDetail();
+          }
+        }}
+        role="button"
+        tabIndex={0}
+      >
         <div className="flex items-center gap-2">
           <span className="font-medium text-sm text-white truncate">{lead.nombre_completo}</span>
           <PrioridadBadge prioridad={lead.prioridad_outreach} />

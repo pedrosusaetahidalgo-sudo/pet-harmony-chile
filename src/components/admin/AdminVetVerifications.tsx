@@ -229,6 +229,7 @@ export default function AdminVetVerifications() {
         ref={fileInputRef}
         className="hidden"
         accept="image/*"
+        aria-label="Subir documento de verificacion"
         onChange={(e) => {
           const file = e.target.files?.[0];
           const vetId = fileInputRef.current?.dataset.vetId;

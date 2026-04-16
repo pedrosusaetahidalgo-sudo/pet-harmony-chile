@@ -36,8 +36,7 @@ export function BereavementChat({ petId, petName, onClose }: BereavementChatProp
     if (!user || !hasConsented) return;
     const loadHistory = async () => {
       const { data } = await supabase
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .from('bereavement_chat_messages' as any)
+        .from('bereavement_chat_messages' as 'profiles')
         .select('role, content, safety_flag')
         .eq('user_id', user.id)
         .eq('pet_id', petId || '')
@@ -45,9 +44,14 @@ export function BereavementChat({ petId, petName, onClose }: BereavementChatProp
         .limit(50);
       if (data && data.length > 0) {
         setSaveHistory(true); // ya tenía historial = ya consintió
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setMessages(
-          data.map((m: any) => ({ role: m.role, content: m.content, safetyFlag: m.safety_flag }))
+          (
+            data as unknown as Array<{
+              role: 'user' | 'assistant';
+              content: string;
+              safety_flag: boolean;
+            }>
+          ).map((m) => ({ role: m.role, content: m.content, safetyFlag: m.safety_flag }))
         );
       }
     };
@@ -63,14 +67,14 @@ export function BereavementChat({ petId, petName, onClose }: BereavementChatProp
 
     // Guardar mensaje del usuario si consintió historial
     if (saveHistory && user) {
-      supabase // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .from('bereavement_chat_messages' as any)
+      supabase
+        .from('bereavement_chat_messages' as 'profiles')
         .insert({
           user_id: user.id,
           pet_id: petId || null,
           role: 'user',
           content: userMsg,
-        })
+        } as Record<string, unknown>)
         .then(() => {});
     }
 
@@ -90,15 +94,15 @@ export function BereavementChat({ petId, petName, onClose }: BereavementChatProp
 
       // Guardar respuesta del asistente
       if (saveHistory && user) {
-        supabase // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          .from('bereavement_chat_messages' as any)
+        supabase
+          .from('bereavement_chat_messages' as 'profiles')
           .insert({
             user_id: user.id,
             pet_id: petId || null,
             role: 'assistant',
             content: assistantMsg.content,
             safety_flag: assistantMsg.safetyFlag || false,
-          })
+          } as Record<string, unknown>)
           .then(() => {});
       }
     } catch (err) {
@@ -149,8 +153,12 @@ export function BereavementChat({ petId, petName, onClose }: BereavementChatProp
             Aquí puedes escribirme lo que quieras. No hay respuestas correctas.
           </li>
         </ul>
-        <label className="flex items-start gap-2 text-sm text-slate-600 cursor-pointer">
+        <label
+          htmlFor="bereavement-save-history"
+          className="flex items-start gap-2 text-sm text-slate-600 cursor-pointer"
+        >
           <input
+            id="bereavement-save-history"
             type="checkbox"
             checked={saveHistory}
             onChange={(e) => setSaveHistory(e.target.checked)}

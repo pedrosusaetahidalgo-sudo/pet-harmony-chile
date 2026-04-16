@@ -705,7 +705,7 @@ const AddPet = () => {
             <CardContent className="space-y-6">
               {/* Photo Upload */}
               <div className="space-y-2">
-                <Label>Foto de la Mascota</Label>
+                <Label htmlFor="pet-photo-upload">Foto de la Mascota</Label>
                 <div className="flex items-center gap-4">
                   {photoPreview ? (
                     <div className="relative">
@@ -729,10 +729,14 @@ const AddPet = () => {
                       </Button>
                     </div>
                   ) : (
-                    <label className="flex flex-col items-center justify-center w-32 h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors">
+                    <label
+                      htmlFor="pet-photo-upload"
+                      className="flex flex-col items-center justify-center w-32 h-32 border-2 border-dashed border-border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                    >
                       <Upload className="h-8 w-8 text-muted-foreground mb-2" />
                       <span className="text-xs text-muted-foreground">Subir foto</span>
                       <input
+                        id="pet-photo-upload"
                         type="file"
                         className="hidden"
                         accept="image/*"

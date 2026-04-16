@@ -115,6 +115,7 @@ export function MapSearchBar({
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setFocused(true)}
           placeholder="Buscar veterinaria, refugio, comuna..."
+          aria-label="Buscar en el mapa"
           className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/60 min-w-0"
         />
         {query && (

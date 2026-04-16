@@ -28,7 +28,7 @@ export interface ServiceOffering {
   price_unit: string;
   description?: string;
   max_pets: number;
-  specialties: any[];
+  specialties: string[];
   is_active: boolean;
 }
 
@@ -44,9 +44,9 @@ export interface ServiceProvider {
   latitude: number | null;
   longitude: number | null;
   coverage_radius_km: number;
-  coverage_zones: any[];
+  coverage_zones: string[];
   experience_years: number;
-  certifications: any[];
+  certifications: string[];
   photos: string[];
   status: ProviderStatus;
   is_verified: boolean;
@@ -57,7 +57,7 @@ export interface ServiceProvider {
   rating: number;
   total_reviews: number;
   total_services_completed: number;
-  available_hours: any;
+  available_hours: Record<string, unknown> | null;
   accepts_emergency: boolean;
   created_at: string;
   updated_at: string;
@@ -70,7 +70,7 @@ interface AddServiceParams {
   price_unit?: string;
   description?: string;
   max_pets?: number;
-  specialties?: any[];
+  specialties?: string[];
 }
 
 interface UpdateProviderParams {
@@ -83,7 +83,7 @@ interface UpdateProviderParams {
   longitude?: number;
   coverage_radius_km?: number;
   experience_years?: number;
-  available_hours?: any;
+  available_hours?: Record<string, unknown> | null;
   accepts_emergency?: boolean;
 }
 

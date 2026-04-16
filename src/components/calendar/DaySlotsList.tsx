@@ -1,11 +1,30 @@
-import { SlotCard } from "./SlotCard";
-import { Skeleton } from "@/components/ui/skeleton";
-import { CalendarX } from "@/lib/icons";
+import { SlotCard } from './SlotCard';
+import { Skeleton } from '@/components/ui/skeleton';
+import { CalendarX } from '@/lib/icons';
+
+interface SlotData {
+  id: string;
+  price: number;
+  title: string;
+  slot_date: string;
+  start_time: string;
+  end_time: string;
+  service_type: string;
+  max_capacity: number;
+  current_bookings: number;
+  provider_id: string;
+  provider?: {
+    profiles?: { display_name: string | null; avatar_url: string | null };
+    avg_rating?: number;
+    total_reviews?: number;
+    [key: string]: unknown;
+  };
+}
 
 interface Props {
-  slots: any[];
+  slots: SlotData[];
   isLoading: boolean;
-  onBook: (slot: any) => void;
+  onBook: (slot: SlotData) => void;
 }
 
 export function DaySlotsList({ slots, isLoading, onBook }: Props) {

@@ -15,6 +15,20 @@ import { Button } from '@/components/ui/button';
 import { Plus } from '@/lib/icons';
 import { logger } from '@/lib/logger';
 import { useBlockedUsers } from '@/hooks/useBlockedUsers';
+import type { Database } from '@/integrations/supabase/types';
+
+type ProfileRow = Database['public']['Tables']['profiles']['Row'];
+type MessageRow = Database['public']['Tables']['messages']['Row'];
+
+interface ProcessedConversation {
+  id: string;
+  participant1_id: string;
+  participant2_id: string;
+  last_message_at: string | null;
+  lastMessage: Pick<MessageRow, 'content' | 'created_at' | 'sender_id' | 'read_at'> | null;
+  otherUserId: string;
+  unreadCount: number;
+}
 
 const Chat = () => {
   const { user } = useAuth();
@@ -22,12 +36,11 @@ const Chat = () => {
   const [searchParams] = useSearchParams();
   const { startConversation: startConvo } = useStartConversation();
   const { blockedIds } = useBlockedUsers();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [conversations, setConversations] = useState<any[]>([]);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [profiles, setProfiles] = useState<Map<string, any>>(new Map());
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [followedUsers, setFollowedUsers] = useState<any[]>([]);
+  const [conversations, setConversations] = useState<ProcessedConversation[]>([]);
+  const [profiles, setProfiles] = useState<Map<string, ProfileRow>>(new Map());
+  const [followedUsers, setFollowedUsers] = useState<
+    Pick<ProfileRow, 'id' | 'display_name' | 'avatar_url'>[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [showNewMessage, setShowNewMessage] = useState(false);
@@ -37,6 +50,7 @@ const Chat = () => {
       loadConversations();
       loadFollowedUsers();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadConversations/loadFollowedUsers depend on user from closure; adding them would cause infinite loops
   }, [user]);
 
   // Handle ?user= query param to auto-open conversation
@@ -47,6 +61,7 @@ const Chat = () => {
     if (targetUserId && user && targetUserId !== user.id) {
       startConvo(targetUserId);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- startConvo is stable from hook; only re-run when loading/searchParams/user change
   }, [searchParams, user, loading]);
 
   // Realtime filtrada por conversaciones del usuario
@@ -129,8 +144,10 @@ const Chat = () => {
             ...conv,
             lastMessage,
             otherUserId,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            unreadCount: messages.filter((m: any) => m.sender_id !== user?.id && !m.read_at).length,
+            unreadCount: messages.filter(
+              (m: { sender_id: string; read_at: string | null }) =>
+                m.sender_id !== user?.id && !m.read_at
+            ).length,
           };
         }) || [];
 
@@ -264,6 +281,16 @@ const Chat = () => {
                         setShowNewMessage(false);
                         setSearchQuery('');
                       }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          startConversation(followedUser.id);
+                          setShowNewMessage(false);
+                          setSearchQuery('');
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
                     >
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={followedUser.avatar_url} />
@@ -307,6 +334,14 @@ const Chat = () => {
                   key={conv.id}
                   className="cursor-pointer hover:bg-muted/50 transition-all border-0 shadow-none rounded-lg"
                   onClick={() => navigate(`/chat/${conv.id}`)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      navigate(`/chat/${conv.id}`);
+                    }
+                  }}
+                  role="button"
+                  tabIndex={0}
                 >
                   <CardContent className="p-3 sm:p-4">
                     <div className="flex items-center gap-3">

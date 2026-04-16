@@ -1,15 +1,23 @@
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Flag, Loader2 } from "@/lib/icons";
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import { logger } from "@/lib/logger";
-import { describeSupabaseError } from "@/lib/supabaseErrors";
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Flag, Loader2 } from '@/lib/icons';
+import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { logger } from '@/lib/logger';
+import { describeSupabaseError } from '@/lib/supabaseErrors';
 
 interface ReportUserDialogProps {
   targetUserId: string;
@@ -17,19 +25,19 @@ interface ReportUserDialogProps {
 }
 
 const REPORT_TYPES = [
-  { value: "spam", label: "Spam" },
-  { value: "harassment", label: "Acoso" },
-  { value: "inappropriate", label: "Contenido inapropiado" },
-  { value: "fake", label: "Perfil falso" },
-  { value: "other", label: "Otro" },
+  { value: 'spam', label: 'Spam' },
+  { value: 'harassment', label: 'Acoso' },
+  { value: 'inappropriate', label: 'Contenido inapropiado' },
+  { value: 'fake', label: 'Perfil falso' },
+  { value: 'other', label: 'Otro' },
 ];
 
 const ReportUserDialog = ({ targetUserId, trigger }: ReportUserDialogProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
-  const [reportType, setReportType] = useState("spam");
-  const [description, setDescription] = useState("");
+  const [reportType, setReportType] = useState('spam');
+  const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!user || user.id === targetUserId) {
@@ -42,31 +50,31 @@ const ReportUserDialog = ({ targetUserId, trigger }: ReportUserDialogProps) => {
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase
-        .from("user_reports")
-        .insert({
-          reporter_id: user.id,
-          reported_id: targetUserId,
-          report_type: reportType,
-          description: description || null,
-        });
+      const { error } = await supabase.from('user_reports').insert({
+        reporter_id: user.id,
+        reported_id: targetUserId,
+        report_type: reportType,
+        description: description || null,
+      });
 
       if (error) throw error;
 
       toast({
-        title: "Reporte enviado",
-        description: "Gracias por tu reporte. Lo revisaremos pronto.",
+        title: 'Reporte enviado',
+        description: 'Gracias por tu reporte. Lo revisaremos pronto.',
       });
 
       setOpen(false);
-      setDescription("");
-      setReportType("spam");
-    } catch (error: any) {
-      logger.error("Error reporting user:", error);
+      setDescription('');
+      setReportType('spam');
+    } catch (error: unknown) {
+      logger.error('Error reporting user:', error);
       toast({
-        variant: "destructive",
-        title: "Algo salió mal",
-        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo enviar el reporte",
+        variant: 'destructive',
+        title: 'Algo salió mal',
+        description:
+          describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
+          'No se pudo enviar el reporte',
       });
     } finally {
       setIsSubmitting(false);
@@ -135,7 +143,7 @@ const ReportUserDialog = ({ targetUserId, trigger }: ReportUserDialogProps) => {
                   Enviando...
                 </>
               ) : (
-                "Enviar reporte"
+                'Enviar reporte'
               )}
             </Button>
           </DialogFooter>
@@ -146,4 +154,3 @@ const ReportUserDialog = ({ targetUserId, trigger }: ReportUserDialogProps) => {
 };
 
 export default ReportUserDialog;
-

@@ -2,7 +2,9 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { toast } from 'sonner';
 import {
   DollarSign,
   CreditCard,
@@ -12,10 +14,15 @@ import {
   RefreshCw,
   ArrowUpRight,
   ArrowDownRight,
+  Download,
+  Target,
+  User,
 } from '@/lib/icons';
 import {
   BarChart,
   Bar,
+  LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -25,14 +32,14 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import { format, subDays } from 'date-fns';
+import { format, subDays, subMonths, startOfMonth } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 const STATUS_COLORS: Record<string, string> = {
-  active: 'bg-green-100 text-green-800',
-  pending: 'bg-yellow-100 text-yellow-800',
-  cancelled: 'bg-red-100 text-red-800',
-  expired: 'bg-gray-100 text-gray-800',
+  active: 'bg-green-500/20 text-green-400 border-green-500/30',
+  pending: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
+  cancelled: 'bg-red-500/20 text-red-400 border-red-500/30',
+  expired: 'bg-slate-500/20 text-slate-400 border-slate-500/30',
 };
 
 const PIE_COLORS = ['#8b5cf6', '#06b6d4', '#f59e0b', '#ef4444', '#10b981'];
@@ -67,6 +74,12 @@ export default function AdminFinance() {
       ).length;
       const totalActiveStart = activeSubs.length + cancelledThisMonth;
       const churnRate = totalActiveStart > 0 ? (cancelledThisMonth / totalActiveStart) * 100 : 0;
+      const monthlyChurnDecimal = churnRate / 100;
+
+      // ARPU & LTV
+      const arpu = activeSubs.length > 0 ? mrr / activeSubs.length : 0;
+      const ltv =
+        monthlyChurnDecimal > 0 ? Math.min(arpu * (1 / monthlyChurnDecimal), arpu * 24) : arpu * 24;
 
       const paidOrders = ordersData.filter((o) => o.payment_status === 'paid');
       const monthRevenue = paidOrders
@@ -88,6 +101,8 @@ export default function AdminFinance() {
         monthRevenue,
         monthFees,
         failedOrders,
+        arpu,
+        ltv,
       };
     },
   });
@@ -105,7 +120,6 @@ export default function AdminFinance() {
         .order('created_at', { ascending: false })
         .limit(20);
 
-      // Enrich with user names
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const subs = (data as Array<Record<string, any>>) ?? [];
       if (subs.length === 0) return [];
@@ -121,7 +135,7 @@ export default function AdminFinance() {
     },
   });
 
-  // ── Tabla de órdenes recientes ──
+  // ── Tabla de ordenes recientes ──
   const { data: recentOrders } = useQuery({
     queryKey: ['admin-finance-orders'],
     staleTime: 60_000,
@@ -146,7 +160,7 @@ export default function AdminFinance() {
     },
   });
 
-  // ── Chart: revenue por día ──
+  // ── Chart: revenue por dia ──
   const { data: revenueChart } = useQuery({
     queryKey: ['admin-finance-revenue-chart'],
     staleTime: 120_000,
@@ -174,6 +188,45 @@ export default function AdminFinance() {
     },
   });
 
+  // ── Chart: MRR trend (last 12 months) ──
+  const { data: mrrTrend } = useQuery({
+    queryKey: ['admin-finance-mrr-trend'],
+    staleTime: 120_000,
+    queryFn: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data } = await (supabase.from('subscriptions') as any)
+        .select('status, payment_amount_clp, created_at, cancelled_at')
+        .in('status', ['active', 'cancelled']);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const subs = (data as Array<Record<string, any>>) ?? [];
+      const months: Array<{ label: string; mrr: number }> = [];
+
+      for (let i = 11; i >= 0; i--) {
+        const monthStart = startOfMonth(subMonths(now, i));
+        const monthEnd = startOfMonth(subMonths(now, i - 1));
+
+        // Subs active as of end of this month: created before monthEnd and either still active or cancelled after monthEnd
+        const activeAtMonth = subs.filter((s) => {
+          const created = new Date(s.created_at);
+          if (created >= monthEnd) return false;
+          if (s.status === 'active') return true;
+          if (s.cancelled_at && new Date(s.cancelled_at) >= monthEnd) return true;
+          return false;
+        });
+
+        const mrr = activeAtMonth.reduce((sum, s) => sum + (s.payment_amount_clp || 0), 0);
+
+        months.push({
+          label: format(monthStart, 'MMM yy', { locale: es }),
+          mrr,
+        });
+      }
+
+      return months;
+    },
+  });
+
   // ── Chart: subs por plan ──
   const { data: planDistribution } = useQuery({
     queryKey: ['admin-finance-plan-dist'],
@@ -185,7 +238,6 @@ export default function AdminFinance() {
         .eq('status', 'active');
 
       const counts: Record<string, number> = {};
-
       ((data as Array<Record<string, string>>) ?? []).forEach((s) => {
         const plan = s.plan_type || 'otro';
         counts[plan] = (counts[plan] || 0) + 1;
@@ -197,70 +249,132 @@ export default function AdminFinance() {
 
   const formatClp = (n: number) => `$${n.toLocaleString('es-CL')}`;
 
+  // ── CSV Export ──
+  const handleExportCSV = () => {
+    if (!recentOrders || recentOrders.length === 0) {
+      toast.error('No hay ordenes para exportar');
+      return;
+    }
+
+    const header = 'Usuario,Monto,Comision,Estado,Fecha';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const rows = recentOrders.map((o: Record<string, any>) =>
+      [
+        `"${o.userName}"`,
+        o.total_clp || 0,
+        o.platform_fee || 0,
+        o.payment_status,
+        format(new Date(o.created_at), 'yyyy-MM-dd HH:mm'),
+      ].join(',')
+    );
+
+    const csv = [header, ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `ordenes_pawfriend_${format(now, 'yyyy-MM-dd')}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success('CSV descargado');
+  };
+
+  const handleRetry = () => {
+    toast.info('Reintento no disponible aun');
+  };
+
   return (
     <div className="space-y-6">
       {/* Alerta pagos fallidos */}
       {(financeKpis?.failedOrders ?? 0) > 0 && (
-        <Card className="border-red-300 bg-red-50 dark:border-red-800 dark:bg-red-950">
+        <Card className="border-red-500/30 bg-red-950/50">
           <CardContent className="p-4 flex items-center gap-3">
-            <AlertTriangle className="h-5 w-5 text-red-600" />
-            <p className="text-sm text-red-700 dark:text-red-300">
-              <strong>{financeKpis?.failedOrders}</strong> pagos fallidos en los últimos 7 días
+            <AlertTriangle className="h-5 w-5 text-red-400" />
+            <p className="text-sm text-red-300">
+              <strong>{financeKpis?.failedOrders}</strong> pagos fallidos en los ultimos 7 dias
             </p>
           </CardContent>
         </Card>
       )}
 
       {/* KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {isLoading ? (
-          [1, 2, 3, 4, 5, 6].map((i) => (
-            <Card key={i}>
+          [1, 2, 3, 4, 5].map((i) => (
+            <Card key={i} className="bg-slate-900 border-slate-800">
               <CardContent className="p-6">
-                <Skeleton className="h-10 w-24" />
+                <Skeleton className="h-10 w-24 bg-slate-800" />
               </CardContent>
             </Card>
           ))
         ) : (
           <>
-            <Card>
+            <Card className="bg-slate-900 border-slate-800">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">MRR</CardTitle>
-                <DollarSign className="h-4 w-4 text-muted-foreground" />
+                <CardTitle className="text-sm font-medium text-slate-300">MRR</CardTitle>
+                <DollarSign className="h-4 w-4 text-slate-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{formatClp(financeKpis?.mrr ?? 0)}</div>
-                <p className="text-xs text-muted-foreground">
+                <div className="text-2xl font-bold text-white">
+                  {formatClp(financeKpis?.mrr ?? 0)}
+                </div>
+                <p className="text-xs text-slate-500">
                   {financeKpis?.activeSubs ?? 0} suscripciones activas
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-slate-900 border-slate-800">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Revenue (mes)</CardTitle>
+                <CardTitle className="text-sm font-medium text-slate-300">Revenue (mes)</CardTitle>
                 <ArrowUpRight className="h-4 w-4 text-green-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className="text-2xl font-bold text-white">
                   {formatClp(financeKpis?.monthRevenue ?? 0)}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-slate-500">
                   Comisiones: {formatClp(financeKpis?.monthFees ?? 0)}
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-slate-900 border-slate-800">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Churn rate (30d)</CardTitle>
+                <CardTitle className="text-sm font-medium text-slate-300">Churn (30d)</CardTitle>
                 <ArrowDownRight className="h-4 w-4 text-red-500" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
+                <div className="text-2xl font-bold text-white">
                   {(financeKpis?.churnRate ?? 0).toFixed(1)}%
                 </div>
-                <p className="text-xs text-muted-foreground">Cancelaciones vs activas al inicio</p>
+                <p className="text-xs text-slate-500">Cancelaciones vs activas</p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-900 border-slate-800">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-slate-300">ARPU</CardTitle>
+                <User className="h-4 w-4 text-slate-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-white">
+                  {formatClp(Math.round(financeKpis?.arpu ?? 0))}
+                </div>
+                <p className="text-xs text-slate-500">Ingreso promedio por usuario</p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-slate-900 border-slate-800">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-slate-300">LTV</CardTitle>
+                <Target className="h-4 w-4 text-slate-500" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold text-white">
+                  {formatClp(Math.round(financeKpis?.ltv ?? 0))}
+                </div>
+                <p className="text-xs text-slate-500">Valor de vida del cliente</p>
               </CardContent>
             </Card>
           </>
@@ -269,32 +383,42 @@ export default function AdminFinance() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="lg:col-span-2">
+        <Card className="lg:col-span-2 bg-slate-900 border-slate-800">
           <CardHeader>
-            <CardTitle className="text-base">Revenue diario (30 días)</CardTitle>
+            <CardTitle className="text-base text-slate-200">Revenue diario (30 dias)</CardTitle>
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={revenueChart ?? []}>
-                <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-                <XAxis dataKey="date" tick={{ fontSize: 11 }} interval="preserveStartEnd" />
-                <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip formatter={(v: number) => formatClp(v)} />
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis
+                  dataKey="date"
+                  tick={{ fontSize: 11, fill: '#94a3b8' }}
+                  interval="preserveStartEnd"
+                />
+                <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} />
+                <Tooltip
+                  formatter={(v: number) => formatClp(v)}
+                  contentStyle={{
+                    backgroundColor: '#1e293b',
+                    border: '1px solid #334155',
+                    borderRadius: 8,
+                  }}
+                  labelStyle={{ color: '#cbd5e1' }}
+                />
                 <Bar dataKey="revenue" fill="#10b981" radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-slate-900 border-slate-800">
           <CardHeader>
-            <CardTitle className="text-base">Suscripciones por plan</CardTitle>
+            <CardTitle className="text-base text-slate-200">Suscripciones por plan</CardTitle>
           </CardHeader>
           <CardContent>
             {(planDistribution ?? []).length === 0 ? (
-              <p className="text-sm text-muted-foreground text-center py-8">
-                Sin suscripciones activas
-              </p>
+              <p className="text-sm text-slate-500 text-center py-8">Sin suscripciones activas</p>
             ) : (
               <ResponsiveContainer width="100%" height={220}>
                 <PieChart>
@@ -311,7 +435,13 @@ export default function AdminFinance() {
                       <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#1e293b',
+                      border: '1px solid #334155',
+                      borderRadius: 8,
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             )}
@@ -319,50 +449,109 @@ export default function AdminFinance() {
         </Card>
       </div>
 
-      {/* Tabla suscripciones */}
-      <Card>
+      {/* MRR Trend Chart */}
+      <Card className="bg-slate-900 border-slate-800">
         <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
+          <CardTitle className="text-base text-slate-200">Tendencia MRR (12 meses)</CardTitle>
+          <CardDescription className="text-slate-500">
+            Ingresos recurrentes mensuales estimados
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {!mrrTrend ? (
+            <Skeleton className="h-[200px] w-full bg-slate-800" />
+          ) : (
+            <ResponsiveContainer width="100%" height={200}>
+              <LineChart data={mrrTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis dataKey="label" tick={{ fontSize: 11, fill: '#94a3b8' }} />
+                <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} />
+                <Tooltip
+                  formatter={(v: number) => formatClp(v)}
+                  contentStyle={{
+                    backgroundColor: '#1e293b',
+                    border: '1px solid #334155',
+                    borderRadius: 8,
+                  }}
+                  labelStyle={{ color: '#cbd5e1' }}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="mrr"
+                  stroke="#8b5cf6"
+                  strokeWidth={2}
+                  dot={{ fill: '#8b5cf6', r: 3 }}
+                  activeDot={{ r: 5 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Tabla suscripciones */}
+      <Card className="bg-slate-900 border-slate-800">
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2 text-slate-200">
             <CreditCard className="h-4 w-4" />
             Suscripciones recientes
           </CardTitle>
         </CardHeader>
         <CardContent>
           {!subscriptions ? (
-            <Skeleton className="h-40 w-full" />
+            <Skeleton className="h-40 w-full bg-slate-800" />
           ) : subscriptions.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">Sin suscripciones</p>
+            <p className="text-sm text-slate-500 text-center py-4">Sin suscripciones</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left">
-                    <th className="pb-2 font-medium">Usuario</th>
-                    <th className="pb-2 font-medium">Plan</th>
-                    <th className="pb-2 font-medium">Estado</th>
-                    <th className="pb-2 font-medium">Monto</th>
-                    <th className="pb-2 font-medium">Auto-renew</th>
-                    <th className="pb-2 font-medium">Fecha</th>
+                  <tr className="border-b border-slate-800">
+                    <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+                      Usuario
+                    </th>
+                    <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+                      Plan
+                    </th>
+                    <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+                      Estado
+                    </th>
+                    <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+                      Monto
+                    </th>
+                    <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+                      Auto-renew
+                    </th>
+                    <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+                      Fecha
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {subscriptions.map((sub: Record<string, any>) => (
-                    <tr key={sub.id} className="border-b last:border-0">
-                      <td className="py-2">{sub.userName}</td>
-                      <td className="py-2">
-                        <Badge variant="outline">{sub.plan_type}</Badge>
+                    <tr
+                      key={sub.id}
+                      className="border-b border-slate-800 last:border-0 hover:bg-slate-800/50 transition-colors"
+                    >
+                      <td className="py-3 text-slate-300">{sub.userName}</td>
+                      <td className="py-3">
+                        <Badge variant="outline" className="border-indigo-500/30 text-indigo-400">
+                          {sub.plan_type}
+                        </Badge>
                       </td>
-                      <td className="py-2">
+                      <td className="py-3">
                         <span
-                          className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[sub.status] || 'bg-gray-100'}`}
+                          className={`px-2 py-0.5 rounded-full text-xs font-medium border ${STATUS_COLORS[sub.status] || 'bg-slate-500/20 text-slate-400'}`}
                         >
                           {sub.status}
                         </span>
                       </td>
-                      <td className="py-2">{formatClp(sub.payment_amount_clp || 0)}</td>
-                      <td className="py-2">{sub.auto_renew ? 'Si' : 'No'}</td>
-                      <td className="py-2 text-muted-foreground">
+                      <td className="py-3 font-mono text-slate-200">
+                        {formatClp(sub.payment_amount_clp || 0)}
+                      </td>
+                      <td className="py-3 text-slate-400">{sub.auto_renew ? 'Si' : 'No'}</td>
+                      <td className="py-3 text-slate-500">
                         {format(new Date(sub.created_at), 'dd-MM-yyyy')}
                       </td>
                     </tr>
@@ -374,53 +563,93 @@ export default function AdminFinance() {
         </CardContent>
       </Card>
 
-      {/* Tabla órdenes */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
+      {/* Tabla ordenes */}
+      <Card className="bg-slate-900 border-slate-800">
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle className="text-base flex items-center gap-2 text-slate-200">
             <DollarSign className="h-4 w-4" />
-            Órdenes recientes
+            Ordenes recientes
           </CardTitle>
+          <Button
+            size="sm"
+            variant="outline"
+            className="border-slate-700 text-slate-300 hover:bg-slate-800"
+            onClick={handleExportCSV}
+          >
+            <Download className="h-4 w-4 mr-1.5" />
+            Exportar CSV
+          </Button>
         </CardHeader>
         <CardContent>
           {!recentOrders ? (
-            <Skeleton className="h-40 w-full" />
+            <Skeleton className="h-40 w-full bg-slate-800" />
           ) : recentOrders.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">Sin órdenes</p>
+            <p className="text-sm text-slate-500 text-center py-4">Sin ordenes</p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left">
-                    <th className="pb-2 font-medium">Usuario</th>
-                    <th className="pb-2 font-medium">Monto</th>
-                    <th className="pb-2 font-medium">Fee</th>
-                    <th className="pb-2 font-medium">Estado</th>
-                    <th className="pb-2 font-medium">Fecha</th>
+                  <tr className="border-b border-slate-800">
+                    <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+                      Usuario
+                    </th>
+                    <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+                      Monto
+                    </th>
+                    <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+                      Fee
+                    </th>
+                    <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+                      Estado
+                    </th>
+                    <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+                      Fecha
+                    </th>
+                    <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                   {recentOrders.map((order: Record<string, any>) => (
-                    <tr key={order.id} className="border-b last:border-0">
-                      <td className="py-2">{order.userName}</td>
-                      <td className="py-2">{formatClp(order.total_clp || 0)}</td>
-                      <td className="py-2">{formatClp(order.platform_fee || 0)}</td>
-                      <td className="py-2">
+                    <tr
+                      key={order.id}
+                      className="border-b border-slate-800 last:border-0 hover:bg-slate-800/50 transition-colors"
+                    >
+                      <td className="py-3 text-slate-300">{order.userName}</td>
+                      <td className="py-3 font-mono text-slate-200">
+                        {formatClp(order.total_clp || 0)}
+                      </td>
+                      <td className="py-3 font-mono text-slate-200">
+                        {formatClp(order.platform_fee || 0)}
+                      </td>
+                      <td className="py-3">
                         <span
-                          className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                          className={`px-2 py-0.5 rounded-full text-xs font-medium border ${
                             order.payment_status === 'paid'
-                              ? 'bg-green-100 text-green-800'
+                              ? 'bg-green-500/20 text-green-400 border-green-500/30'
                               : order.payment_status === 'failed'
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-yellow-100 text-yellow-800'
+                                ? 'bg-red-500/20 text-red-400 border-red-500/30'
+                                : 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
                           }`}
                         >
                           {order.payment_status}
                         </span>
                       </td>
-                      <td className="py-2 text-muted-foreground">
+                      <td className="py-3 text-slate-500">
                         {format(new Date(order.created_at), 'dd-MM-yyyy HH:mm')}
+                      </td>
+                      <td className="py-3">
+                        {order.payment_status === 'failed' && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 text-xs text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                            onClick={handleRetry}
+                          >
+                            <RefreshCw className="h-3 w-3 mr-1" />
+                            Reintentar
+                          </Button>
+                        )}
                       </td>
                     </tr>
                   ))}

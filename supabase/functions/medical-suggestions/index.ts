@@ -135,8 +135,7 @@ Solo tratamientos/vacunas reales en Chile. Chileno.`;
     }
 
     const data = await response.json();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const textBlocks = (data.content ?? []).filter((b: any) => b.type === 'text');
+    const textBlocks = (data.content ?? []).filter((b: { type: string }) => b.type === 'text');
     const content = textBlocks[textBlocks.length - 1]?.text;
 
     if (!content) {
@@ -157,14 +156,15 @@ Solo tratamientos/vacunas reales en Chile. Chileno.`;
       }
 
       suggestions = suggestions
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .filter((item: any) => item && typeof item === 'object')
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        .map((item: any) => ({
-          value: item.value || `opcion-${Math.random().toString(36).substr(2, 9)}`,
-          label: item.label || 'Opción sin nombre',
-          description: item.description || 'Sin descripción disponible',
-        }));
+        .filter((item: unknown) => item && typeof item === 'object')
+        .map((item: unknown) => {
+          const obj = item as Record<string, string>;
+          return {
+            value: obj.value || `opcion-${Math.random().toString(36).substr(2, 9)}`,
+            label: obj.label || 'Opción sin nombre',
+            description: obj.description || 'Sin descripción disponible',
+          };
+        });
 
       if (suggestions.length === 0) {
         throw new Error('No se generaron sugerencias válidas');
@@ -174,8 +174,10 @@ Solo tratamientos/vacunas reales en Chile. Chileno.`;
     } catch (parseError) {
       console.error('Error al parsear sugerencias:', parseError);
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const fallbackSuggestions: Record<string, any[]> = {
+      const fallbackSuggestions: Record<
+        string,
+        { value: string; label: string; description: string }[]
+      > = {
         vacuna: [
           {
             value: 'antirrabica',

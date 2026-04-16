@@ -228,6 +228,7 @@ const PawGame = () => {
       const timeout = setTimeout(() => setLoading(false), 3000);
       return () => clearTimeout(timeout);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadGameData depends on user from closure; adding it would cause infinite loops
   }, [user]);
 
   const loadGameData = async () => {

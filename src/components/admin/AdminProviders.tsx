@@ -1,12 +1,12 @@
-import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { toast } from "sonner";
-import { CheckCircle, XCircle, Eye, Dog, Home, Stethoscope, GraduationCap } from "@/lib/icons";
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { toast } from 'sonner';
+import { CheckCircle, XCircle, Eye, Dog, Home, Stethoscope, GraduationCap } from '@/lib/icons';
 import {
   Table,
   TableBody,
@@ -14,20 +14,28 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/table';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-type ProviderType = "walker" | "sitter" | "vet" | "trainer";
+type ProviderType = 'walker' | 'sitter' | 'vet' | 'trainer';
+
+interface ProviderWithProfile {
+  id: string;
+  user_id: string;
+  rating: number | null;
+  total_reviews: number | null;
+  is_verified: boolean;
+  is_active: boolean;
+  experience_years: number | null;
+  bio: string | null;
+  profiles: { id: string; display_name: string | null; avatar_url: string | null } | null;
+  [key: string]: unknown;
+}
 
 const AdminProviders = () => {
   const queryClient = useQueryClient();
-  const [selectedProvider, setSelectedProvider] = useState<any>(null);
-  const [providerType, setProviderType] = useState<ProviderType>("walker");
+  const [selectedProvider, setSelectedProvider] = useState<ProviderWithProfile | null>(null);
+  const [providerType, setProviderType] = useState<ProviderType>('walker');
 
   /**
    * Fetch helper que evita el join PostgREST `profiles:user_id(...)`.
@@ -36,95 +44,131 @@ const AdminProviders = () => {
    * y mergear en cliente. Mismo enfoque que `adoption_posts` post-fix.
    */
   const fetchWithProfiles = async (
-    table: "dog_walker_profiles" | "dogsitter_profiles" | "trainer_profiles"
+    table: 'dog_walker_profiles' | 'dogsitter_profiles' | 'trainer_profiles'
   ) => {
     const { data: rows, error } = await supabase
       .from(table)
-      .select("*")
-      .order("created_at", { ascending: false });
+      .select('*')
+      .order('created_at', { ascending: false });
     if (error) throw error;
     if (!rows || rows.length === 0) return [];
 
-    const userIds = Array.from(new Set(rows.map((r: any) => r.user_id).filter(Boolean)));
-    if (userIds.length === 0) return rows.map((r: any) => ({ ...r, profiles: null }));
+    const userIds = Array.from(new Set(rows.map((r) => r.user_id).filter(Boolean)));
+    if (userIds.length === 0) return rows.map((r) => ({ ...r, profiles: null }));
 
     const { data: profiles } = await supabase
-      .from("profiles")
-      .select("id, display_name, avatar_url")
-      .in("id", userIds);
+      .from('profiles')
+      .select('id, display_name, avatar_url')
+      .in('id', userIds);
 
-    const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]));
-    return rows.map((r: any) => ({
+    const profileMap = new Map((profiles || []).map((p) => [p.id, p]));
+    return rows.map((r) => ({
       ...r,
       profiles: profileMap.get(r.user_id) || null,
     }));
   };
 
   const { data: walkers, isLoading: loadingWalkers } = useQuery({
-    queryKey: ["admin-walkers"],
-    queryFn: () => fetchWithProfiles("dog_walker_profiles"),
+    queryKey: ['admin-walkers'],
+    queryFn: () => fetchWithProfiles('dog_walker_profiles'),
   });
 
   const { data: sitters, isLoading: loadingSitters } = useQuery({
-    queryKey: ["admin-sitters"],
-    queryFn: () => fetchWithProfiles("dogsitter_profiles"),
+    queryKey: ['admin-sitters'],
+    queryFn: () => fetchWithProfiles('dogsitter_profiles'),
   });
 
   const { data: trainers, isLoading: loadingTrainers } = useQuery({
-    queryKey: ["admin-trainers"],
-    queryFn: () => fetchWithProfiles("trainer_profiles"),
+    queryKey: ['admin-trainers'],
+    queryFn: () => fetchWithProfiles('trainer_profiles'),
   });
 
   const verifyMutation = useMutation({
-    mutationFn: async ({ id, type, verified }: { id: string; type: ProviderType; verified: boolean }) => {
+    mutationFn: async ({
+      id,
+      type,
+      verified,
+    }: {
+      id: string;
+      type: ProviderType;
+      verified: boolean;
+    }) => {
       let error;
-      if (type === "walker") {
-        ({ error } = await supabase.from("dog_walker_profiles").update({ is_verified: verified }).eq("id", id));
-      } else if (type === "sitter") {
-        ({ error } = await supabase.from("dogsitter_profiles").update({ is_verified: verified }).eq("id", id));
-      } else if (type === "trainer") {
-        ({ error } = await supabase.from("trainer_profiles").update({ is_verified: verified }).eq("id", id));
+      if (type === 'walker') {
+        ({ error } = await supabase
+          .from('dog_walker_profiles')
+          .update({ is_verified: verified })
+          .eq('id', id));
+      } else if (type === 'sitter') {
+        ({ error } = await supabase
+          .from('dogsitter_profiles')
+          .update({ is_verified: verified })
+          .eq('id', id));
+      } else if (type === 'trainer') {
+        ({ error } = await supabase
+          .from('trainer_profiles')
+          .update({ is_verified: verified })
+          .eq('id', id));
       }
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-walkers"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-sitters"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-trainers"] });
-      toast.success("Proveedor actualizado");
+      queryClient.invalidateQueries({ queryKey: ['admin-walkers'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-sitters'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-trainers'] });
+      toast.success('Proveedor actualizado');
       setSelectedProvider(null);
     },
     onError: () => {
-      toast.error("Error al actualizar proveedor");
+      toast.error('Error al actualizar proveedor');
     },
   });
 
   const toggleActiveMutation = useMutation({
-    mutationFn: async ({ id, type, active }: { id: string; type: ProviderType; active: boolean }) => {
+    mutationFn: async ({
+      id,
+      type,
+      active,
+    }: {
+      id: string;
+      type: ProviderType;
+      active: boolean;
+    }) => {
       let error;
-      if (type === "walker") {
-        ({ error } = await supabase.from("dog_walker_profiles").update({ is_active: active }).eq("id", id));
-      } else if (type === "sitter") {
-        ({ error } = await supabase.from("dogsitter_profiles").update({ is_active: active }).eq("id", id));
-      } else if (type === "trainer") {
-        ({ error } = await supabase.from("trainer_profiles").update({ is_active: active }).eq("id", id));
+      if (type === 'walker') {
+        ({ error } = await supabase
+          .from('dog_walker_profiles')
+          .update({ is_active: active })
+          .eq('id', id));
+      } else if (type === 'sitter') {
+        ({ error } = await supabase
+          .from('dogsitter_profiles')
+          .update({ is_active: active })
+          .eq('id', id));
+      } else if (type === 'trainer') {
+        ({ error } = await supabase
+          .from('trainer_profiles')
+          .update({ is_active: active })
+          .eq('id', id));
       }
       if (error) throw error;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-walkers"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-sitters"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-trainers"] });
-      toast.success("Estado actualizado");
+      queryClient.invalidateQueries({ queryKey: ['admin-walkers'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-sitters'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-trainers'] });
+      toast.success('Estado actualizado');
     },
     onError: () => {
-      toast.error("Error al actualizar estado");
+      toast.error('Error al actualizar estado');
     },
   });
 
-  const renderProviderTable = (providers: any[], type: ProviderType) => {
+  const renderProviderTable = (providers: ProviderWithProfile[], type: ProviderType) => {
     if (!providers || providers.length === 0) {
-      return <p className="text-muted-foreground text-center py-8">No hay proveedores registrados</p>;
+      return (
+        <p className="text-muted-foreground text-center py-8">No hay proveedores registrados</p>
+      );
     }
 
     return (
@@ -142,17 +186,17 @@ const AdminProviders = () => {
           {providers.map((provider) => (
             <TableRow key={provider.id}>
               <TableCell className="font-medium">
-                {provider.profiles?.display_name || "Sin nombre"}
+                {provider.profiles?.display_name || 'Sin nombre'}
               </TableCell>
-              <TableCell>{provider.rating?.toFixed(1) || "N/A"}</TableCell>
+              <TableCell>{provider.rating?.toFixed(1) || 'N/A'}</TableCell>
               <TableCell>
-                <Badge variant={provider.is_verified ? "default" : "secondary"}>
-                  {provider.is_verified ? "Verificado" : "Pendiente"}
+                <Badge variant={provider.is_verified ? 'default' : 'secondary'}>
+                  {provider.is_verified ? 'Verificado' : 'Pendiente'}
                 </Badge>
               </TableCell>
               <TableCell>
-                <Badge variant={provider.is_active ? "default" : "destructive"}>
-                  {provider.is_active ? "Activo" : "Inactivo"}
+                <Badge variant={provider.is_active ? 'default' : 'destructive'}>
+                  {provider.is_active ? 'Activo' : 'Inactivo'}
                 </Badge>
               </TableCell>
               <TableCell className="space-x-2">
@@ -177,10 +221,20 @@ const AdminProviders = () => {
                 )}
                 <Button
                   size="sm"
-                  variant={provider.is_active ? "destructive" : "default"}
-                  onClick={() => toggleActiveMutation.mutate({ id: provider.id, type, active: !provider.is_active })}
+                  variant={provider.is_active ? 'destructive' : 'default'}
+                  onClick={() =>
+                    toggleActiveMutation.mutate({
+                      id: provider.id,
+                      type,
+                      active: !provider.is_active,
+                    })
+                  }
                 >
-                  {provider.is_active ? <XCircle className="h-4 w-4" /> : <CheckCircle className="h-4 w-4" />}
+                  {provider.is_active ? (
+                    <XCircle className="h-4 w-4" />
+                  ) : (
+                    <CheckCircle className="h-4 w-4" />
+                  )}
                 </Button>
               </TableCell>
             </TableRow>
@@ -222,7 +276,7 @@ const AdminProviders = () => {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
               </div>
             ) : (
-              renderProviderTable(walkers || [], "walker")
+              renderProviderTable(walkers || [], 'walker')
             )}
           </TabsContent>
 
@@ -232,7 +286,7 @@ const AdminProviders = () => {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
               </div>
             ) : (
-              renderProviderTable(sitters || [], "sitter")
+              renderProviderTable(sitters || [], 'sitter')
             )}
           </TabsContent>
 
@@ -248,7 +302,7 @@ const AdminProviders = () => {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
               </div>
             ) : (
-              renderProviderTable(trainers || [], "trainer")
+              renderProviderTable(trainers || [], 'trainer')
             )}
           </TabsContent>
         </Tabs>
@@ -263,11 +317,13 @@ const AdminProviders = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Nombre</p>
-                    <p className="font-medium">{selectedProvider.profiles?.display_name || "Sin nombre"}</p>
+                    <p className="font-medium">
+                      {selectedProvider.profiles?.display_name || 'Sin nombre'}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Rating</p>
-                    <p className="font-medium">{selectedProvider.rating?.toFixed(1) || "N/A"}</p>
+                    <p className="font-medium">{selectedProvider.rating?.toFixed(1) || 'N/A'}</p>
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Experiencia</p>
@@ -280,27 +336,31 @@ const AdminProviders = () => {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Bio</p>
-                  <p>{selectedProvider.bio || "Sin descripción"}</p>
+                  <p>{selectedProvider.bio || 'Sin descripción'}</p>
                 </div>
                 <div className="flex gap-2">
                   <Button
-                    onClick={() => verifyMutation.mutate({ 
-                      id: selectedProvider.id, 
-                      type: providerType, 
-                      verified: !selectedProvider.is_verified 
-                    })}
+                    onClick={() =>
+                      verifyMutation.mutate({
+                        id: selectedProvider.id,
+                        type: providerType,
+                        verified: !selectedProvider.is_verified,
+                      })
+                    }
                   >
-                    {selectedProvider.is_verified ? "Quitar verificación" : "Verificar"}
+                    {selectedProvider.is_verified ? 'Quitar verificación' : 'Verificar'}
                   </Button>
                   <Button
-                    variant={selectedProvider.is_active ? "destructive" : "default"}
-                    onClick={() => toggleActiveMutation.mutate({ 
-                      id: selectedProvider.id, 
-                      type: providerType, 
-                      active: !selectedProvider.is_active 
-                    })}
+                    variant={selectedProvider.is_active ? 'destructive' : 'default'}
+                    onClick={() =>
+                      toggleActiveMutation.mutate({
+                        id: selectedProvider.id,
+                        type: providerType,
+                        active: !selectedProvider.is_active,
+                      })
+                    }
                   >
-                    {selectedProvider.is_active ? "Desactivar" : "Activar"}
+                    {selectedProvider.is_active ? 'Desactivar' : 'Activar'}
                   </Button>
                 </div>
               </div>

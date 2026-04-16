@@ -1,24 +1,34 @@
-import { Button } from "@/components/ui/button";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Ban, Loader2 } from "@/lib/icons";
-import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { useToast } from "@/hooks/use-toast";
-import { useQueryClient } from "@tanstack/react-query";
-import { logger } from "@/lib/logger";
-import { describeSupabaseError } from "@/lib/supabaseErrors";
+import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { Ban, Loader2 } from '@/lib/icons';
+import { useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
+import { useQueryClient } from '@tanstack/react-query';
+import { logger } from '@/lib/logger';
+import { describeSupabaseError } from '@/lib/supabaseErrors';
 
 interface BlockUserButtonProps {
   targetUserId: string;
-  variant?: "default" | "outline" | "ghost" | "destructive";
-  size?: "sm" | "md" | "lg";
+  variant?: 'default' | 'outline' | 'ghost' | 'destructive';
+  size?: 'sm' | 'md' | 'lg';
 }
 
-const BlockUserButton = ({ 
-  targetUserId, 
-  variant = "outline",
-  size = "md"
+const BlockUserButton = ({
+  targetUserId,
+  variant = 'outline',
+  size = 'md',
 }: BlockUserButtonProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -34,30 +44,30 @@ const BlockUserButton = ({
 
     setIsBlocking(true);
     try {
-      const { error } = await supabase
-        .from("user_blocks")
-        .insert({
-          blocker_id: user.id,
-          blocked_id: targetUserId,
-        });
+      const { error } = await supabase.from('user_blocks').insert({
+        blocker_id: user.id,
+        blocked_id: targetUserId,
+      });
 
       if (error) throw error;
 
       toast({
-        title: "Usuario bloqueado",
-        description: "Este usuario ha sido bloqueado y no podrá contactarte.",
+        title: 'Usuario bloqueado',
+        description: 'Este usuario ha sido bloqueado y no podrá contactarte.',
       });
 
       // Invalidate relevant queries
-      queryClient.invalidateQueries({ queryKey: ["blocked-users", user.id] });
-      queryClient.invalidateQueries({ queryKey: ["blocked", user.id, targetUserId] });
-      queryClient.invalidateQueries({ queryKey: ["follows", user.id, targetUserId] });
-    } catch (error: any) {
-      logger.error("Error blocking user:", error);
+      queryClient.invalidateQueries({ queryKey: ['blocked-users', user.id] });
+      queryClient.invalidateQueries({ queryKey: ['blocked', user.id, targetUserId] });
+      queryClient.invalidateQueries({ queryKey: ['follows', user.id, targetUserId] });
+    } catch (error: unknown) {
+      logger.error('Error blocking user:', error);
       toast({
-        variant: "destructive",
-        title: "Algo salió mal",
-        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) || "No se pudo bloquear al usuario",
+        variant: 'destructive',
+        title: 'Algo salió mal',
+        description:
+          describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
+          'No se pudo bloquear al usuario',
       });
     } finally {
       setIsBlocking(false);
@@ -65,19 +75,15 @@ const BlockUserButton = ({
   };
 
   const sizeClasses = {
-    sm: "h-10 text-xs px-3",
-    md: "h-9 text-sm px-4",
-    lg: "h-10 text-base px-6",
+    sm: 'h-10 text-xs px-3',
+    md: 'h-9 text-sm px-4',
+    lg: 'h-10 text-base px-6',
   };
 
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button
-          variant={variant}
-          className={sizeClasses[size]}
-          disabled={isBlocking}
-        >
+        <Button variant={variant} className={sizeClasses[size]} disabled={isBlocking}>
           {isBlocking ? (
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
           ) : (
@@ -90,7 +96,8 @@ const BlockUserButton = ({
         <AlertDialogHeader>
           <AlertDialogTitle>Bloquear usuario</AlertDialogTitle>
           <AlertDialogDescription>
-            Este usuario no podrá contactarte ni ver tu contenido. Esta acción se puede deshacer más adelante.
+            Este usuario no podrá contactarte ni ver tu contenido. Esta acción se puede deshacer más
+            adelante.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -103,4 +110,3 @@ const BlockUserButton = ({
 };
 
 export default BlockUserButton;
-

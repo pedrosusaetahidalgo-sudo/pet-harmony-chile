@@ -1,9 +1,9 @@
-import { useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { Capacitor } from "@capacitor/core";
-import { isNative } from "@/lib/platform";
-import { logger } from "@/lib/logger";
+import { useState, useCallback } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
+import { Capacitor } from '@capacitor/core';
+import { isNative } from '@/lib/platform';
+import { logger } from '@/lib/logger';
 
 interface FacebookAuthResult {
   success: boolean;
@@ -30,14 +30,14 @@ export const useFacebookAuth = () => {
         // Web flow using Supabase OAuth
         return await handleWebFacebookAuth();
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error('Facebook Sign-In error:', error);
-      
+
       const errorMessage = getErrorMessage(error);
       toast({
-        title: "Error al iniciar sesión con Facebook",
+        title: 'Error al iniciar sesión con Facebook',
         description: errorMessage,
-        variant: "destructive",
+        variant: 'destructive',
       });
 
       return { success: false, error: errorMessage };
@@ -78,9 +78,9 @@ export const useFacebookAuth = () => {
 /**
  * Get user-friendly error message
  */
-function getErrorMessage(error: any): string {
-  const message = error?.message || error?.toString() || '';
-  
+function getErrorMessage(error: unknown): string {
+  const message = (error instanceof Error ? error.message : String(error)) || '';
+
   if (message.includes('popup_closed') || message.includes('cancelled')) {
     return 'Inicio de sesión cancelado por el usuario';
   }
@@ -93,7 +93,6 @@ function getErrorMessage(error: any): string {
   if (message.includes('invalid_grant')) {
     return 'La sesión de Facebook expiró. Intenta de nuevo.';
   }
-  
+
   return 'No se pudo iniciar sesión con Facebook. Intenta de nuevo.';
 }
-

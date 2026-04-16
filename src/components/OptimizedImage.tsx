@@ -82,6 +82,7 @@ export function OptimizedImage({
       {!showFallback && (
         <>
           {!loaded && <div className="absolute inset-0 animate-pulse bg-muted" />}
+          {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
           <img
             src={src!}
             alt={alt}

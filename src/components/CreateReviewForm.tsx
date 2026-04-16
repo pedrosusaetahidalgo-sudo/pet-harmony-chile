@@ -1,20 +1,20 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Star, Upload, X } from "@/lib/icons";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { toast } from "sonner";
-import { useGamification } from "@/hooks/useGamification";
-import { DEFAULT_POINTS_CONFIG } from "@/lib/gamification";
-import { logger } from "@/lib/logger";
-import { useOrganicRewards } from "@/hooks/useOrganicRewards";
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Star, Upload, X } from '@/lib/icons';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
+import { useGamification } from '@/hooks/useGamification';
+import { DEFAULT_POINTS_CONFIG } from '@/lib/gamification';
+import { logger } from '@/lib/logger';
+import { useOrganicRewards } from '@/hooks/useOrganicRewards';
 
 interface CreateReviewFormProps {
-  reviewType: "walk" | "dogsitter" | "vet";
+  reviewType: 'walk' | 'dogsitter' | 'vet';
   bookingId: string;
   providerId: string;
   onSuccess: () => void;
@@ -26,7 +26,13 @@ interface ReviewFormData {
   comment: string;
 }
 
-const CreateReviewForm = ({ reviewType, bookingId, providerId, onSuccess, onCancel }: CreateReviewFormProps) => {
+const CreateReviewForm = ({
+  reviewType,
+  bookingId,
+  providerId,
+  onSuccess,
+  onCancel,
+}: CreateReviewFormProps) => {
   const { user } = useAuth();
   const { awardPoints } = useGamification();
   const { reward } = useOrganicRewards();
@@ -34,12 +40,16 @@ const CreateReviewForm = ({ reviewType, bookingId, providerId, onSuccess, onCanc
   const [hoveredRating, setHoveredRating] = useState(0);
   const [photos, setPhotos] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
-  const { register, handleSubmit, formState: { errors } } = useForm<ReviewFormData>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<ReviewFormData>();
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (photos.length + files.length > 3) {
-      toast.error("Máximo 3 fotos permitidas");
+      toast.error('Máximo 3 fotos permitidas');
       return;
     }
     setPhotos([...photos, ...files.slice(0, 3 - photos.length)]);
@@ -65,9 +75,9 @@ const CreateReviewForm = ({ reviewType, bookingId, providerId, onSuccess, onCanc
         throw uploadError;
       }
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('walk-photos')
-        .getPublicUrl(filePath);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from('walk-photos').getPublicUrl(filePath);
 
       uploadedUrls.push(publicUrl);
     }
@@ -77,7 +87,7 @@ const CreateReviewForm = ({ reviewType, bookingId, providerId, onSuccess, onCanc
 
   const onSubmit = async (data: ReviewFormData) => {
     if (rating === 0) {
-      toast.error("Por favor selecciona una calificación");
+      toast.error('Por favor selecciona una calificación');
       return;
     }
 
@@ -88,32 +98,32 @@ const CreateReviewForm = ({ reviewType, bookingId, providerId, onSuccess, onCanc
         photoUrls = await uploadPhotos();
       }
 
-      const tableName = reviewType === "walk" 
-        ? "walk_reviews" 
-        : reviewType === "dogsitter" 
-        ? "dogsitter_reviews" 
-        : "vet_reviews";
+      const tableName =
+        reviewType === 'walk'
+          ? 'walk_reviews'
+          : reviewType === 'dogsitter'
+            ? 'dogsitter_reviews'
+            : 'vet_reviews';
 
-      const reviewData: any = {
+      const baseReviewData = {
         booking_id: bookingId,
         owner_id: user!.id,
         rating: rating,
         comment: data.comment || null,
         photos: photoUrls,
-        is_verified: true
+        is_verified: true,
       };
 
-      if (reviewType === "walk") {
-        reviewData.walker_id = providerId;
-      } else if (reviewType === "dogsitter") {
-        reviewData.dogsitter_id = providerId;
-      } else {
-        reviewData.vet_id = providerId;
-      }
+      const reviewData =
+        reviewType === 'walk'
+          ? { ...baseReviewData, walker_id: providerId }
+          : reviewType === 'dogsitter'
+            ? { ...baseReviewData, dogsitter_id: providerId }
+            : { ...baseReviewData, vet_id: providerId };
 
       const { data: review, error } = await supabase
         // Table name is dynamic based on reviewType; cast required for Supabase typed client
-        .from(tableName as "walk_reviews" | "dogsitter_reviews" | "vet_reviews")
+        .from(tableName as 'walk_reviews' | 'dogsitter_reviews' | 'vet_reviews')
         .insert(reviewData)
         .select()
         .maybeSingle();
@@ -124,26 +134,26 @@ const CreateReviewForm = ({ reviewType, bookingId, providerId, onSuccess, onCanc
       try {
         awardPoints({
           points: DEFAULT_POINTS_CONFIG.review,
-          actionType: "review",
+          actionType: 'review',
           actionId: review.id,
-          description: "Reseña escrita",
+          description: 'Reseña escrita',
         });
       } catch (pointsError) {
-        logger.error("Error awarding points:", pointsError);
+        logger.error('Error awarding points:', pointsError);
         // Don't fail the review creation if points fail
       }
 
-      toast.success("¡Reseña publicada exitosamente!");
+      toast.success('¡Reseña publicada exitosamente!');
 
       // Fire-and-forget organic reward when review is for a vet
-      if (reviewType === "vet") {
-        reward({ kind: "vet_review_left", vetName: "veterinario" });
+      if (reviewType === 'vet') {
+        reward({ kind: 'vet_review_left', vetName: 'veterinario' });
       }
 
       onSuccess();
     } catch (error) {
-      logger.error("Error creating review:", error);
-      toast.error("Error al publicar la reseña");
+      logger.error('Error creating review:', error);
+      toast.error('Error al publicar la reseña');
     } finally {
       setUploading(false);
     }
@@ -167,8 +177,8 @@ const CreateReviewForm = ({ reviewType, bookingId, providerId, onSuccess, onCanc
                 <Star
                   className={`h-8 w-8 ${
                     star <= (hoveredRating || rating)
-                      ? "fill-yellow-400 text-yellow-400"
-                      : "text-slate-300"
+                      ? 'fill-yellow-400 text-yellow-400'
+                      : 'text-slate-300'
                   }`}
                 />
               </button>
@@ -180,7 +190,7 @@ const CreateReviewForm = ({ reviewType, bookingId, providerId, onSuccess, onCanc
           <Label htmlFor="comment">Comentario (opcional)</Label>
           <Textarea
             id="comment"
-            {...register("comment")}
+            {...register('comment')}
             placeholder="Comparte tu experiencia con otros usuarios..."
             rows={4}
             className="mt-2"
@@ -210,14 +220,18 @@ const CreateReviewForm = ({ reviewType, bookingId, providerId, onSuccess, onCanc
                 ))}
               </div>
             )}
-            
+
             {photos.length < 3 && (
-              <label className="flex items-center justify-center gap-2 border-2 border-dashed rounded-lg p-4 cursor-pointer hover:bg-muted/50 transition-colors">
+              <label
+                htmlFor="review-photo-upload"
+                className="flex items-center justify-center gap-2 border-2 border-dashed rounded-lg p-4 cursor-pointer hover:bg-muted/50 transition-colors"
+              >
                 <Upload className="h-5 w-5 text-muted-foreground" />
                 <span className="text-sm text-muted-foreground">
                   Subir fotos ({photos.length}/3)
                 </span>
                 <input
+                  id="review-photo-upload"
                   type="file"
                   accept="image/*"
                   multiple
@@ -231,7 +245,7 @@ const CreateReviewForm = ({ reviewType, bookingId, providerId, onSuccess, onCanc
 
         <div className="flex gap-3">
           <Button type="submit" disabled={uploading} className="flex-1">
-            {uploading ? "Publicando..." : "Publicar reseña"}
+            {uploading ? 'Publicando...' : 'Publicar reseña'}
           </Button>
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancelar

@@ -81,6 +81,7 @@ export const PetPawProgress = ({ pets, userId }: PetPawProgressProps) => {
 
   useEffect(() => {
     loadPetProgress();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadPetProgress depends on pets from closure; listed deps are sufficient
   }, [pets]);
 
   const loadPetProgress = async () => {

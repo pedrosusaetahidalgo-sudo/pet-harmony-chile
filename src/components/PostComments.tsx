@@ -1,14 +1,14 @@
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
-import { formatDistanceToNow } from "date-fns";
-import { es } from "date-fns/locale";
-import { Send, Trash2 } from "@/lib/icons";
-import { logger } from "@/lib/logger";
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { useToast } from '@/hooks/use-toast';
+import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { Send, Trash2 } from '@/lib/icons';
+import { logger } from '@/lib/logger';
 
 interface Comment {
   id: string;
@@ -30,13 +30,13 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
   const { user } = useAuth();
   const { toast } = useToast();
   const [comments, setComments] = useState<Comment[]>([]);
-  const [newComment, setNewComment] = useState("");
+  const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     loadComments();
-    
+
     // Realtime subscription
     const channel = supabase
       .channel(`comments-${postId}`)
@@ -46,7 +46,7 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
           event: '*',
           schema: 'public',
           table: 'post_comments',
-          filter: `post_id=eq.${postId}`
+          filter: `post_id=eq.${postId}`,
         },
         () => loadComments()
       )
@@ -55,13 +55,15 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
     return () => {
       supabase.removeChannel(channel);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadComments depends on postId from closure; listed deps are sufficient
   }, [postId]);
 
   const loadComments = async () => {
     try {
       const { data, error } = await supabase
         .from('post_comments')
-        .select(`
+        .select(
+          `
           id,
           content,
           created_at,
@@ -70,7 +72,8 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
             display_name,
             avatar_url
           )
-        `)
+        `
+        )
         .eq('post_id', postId)
         .order('created_at', { ascending: true });
 
@@ -89,28 +92,26 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
 
     try {
       setSubmitting(true);
-      const { error } = await supabase
-        .from('post_comments')
-        .insert({
-          post_id: postId,
-          user_id: user.id,
-          content: newComment.trim()
-        });
+      const { error } = await supabase.from('post_comments').insert({
+        post_id: postId,
+        user_id: user.id,
+        content: newComment.trim(),
+      });
 
       if (error) throw error;
 
-      setNewComment("");
+      setNewComment('');
       if (onCommentAdded) onCommentAdded();
       toast({
-        title: "Comentario publicado",
-        description: "Tu comentario se ha agregado correctamente"
+        title: 'Comentario publicado',
+        description: 'Tu comentario se ha agregado correctamente',
       });
     } catch (error) {
       logger.error('Error posting comment:', error);
       toast({
-        variant: "destructive",
-        title: "Algo salió mal",
-        description: "No se pudo publicar el comentario"
+        variant: 'destructive',
+        title: 'Algo salió mal',
+        description: 'No se pudo publicar el comentario',
       });
     } finally {
       setSubmitting(false);
@@ -119,32 +120,27 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
 
   const handleDelete = async (commentId: string) => {
     try {
-      const { error } = await supabase
-        .from('post_comments')
-        .delete()
-        .eq('id', commentId);
+      const { error } = await supabase.from('post_comments').delete().eq('id', commentId);
 
       if (error) throw error;
 
       toast({
-        title: "Comentario eliminado",
-        description: "El comentario se ha eliminado correctamente"
+        title: 'Comentario eliminado',
+        description: 'El comentario se ha eliminado correctamente',
       });
     } catch (error) {
       logger.error('Error deleting comment:', error);
       toast({
-        variant: "destructive",
-        title: "Algo salió mal",
-        description: "No se pudo eliminar el comentario"
+        variant: 'destructive',
+        title: 'Algo salió mal',
+        description: 'No se pudo eliminar el comentario',
       });
     }
   };
 
   if (loading) {
     return (
-      <div className="text-center py-4 text-sm text-muted-foreground">
-        Cargando comentarios...
-      </div>
+      <div className="text-center py-4 text-sm text-muted-foreground">Cargando comentarios...</div>
     );
   }
 
@@ -176,7 +172,7 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
                   <p className="text-xs text-muted-foreground">
                     {formatDistanceToNow(new Date(comment.created_at), {
                       addSuffix: true,
-                      locale: es
+                      locale: es,
                     })}
                   </p>
                   {user?.id === comment.user_id && (
@@ -213,8 +209,8 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
               className="min-h-[60px] resize-none"
               disabled={submitting}
             />
-            <Button 
-              type="submit" 
+            <Button
+              type="submit"
               size="icon"
               disabled={!newComment.trim() || submitting}
               className="self-end"

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Edge Function: Generate Medical Summary PDF v2
  *
@@ -17,7 +16,15 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { PDFDocument, rgb, StandardFonts } from 'https://esm.sh/pdf-lib@1.17.1';
+import {
+  PDFDocument,
+  PDFPage,
+  PDFFont,
+  PDFImage,
+  rgb,
+  StandardFonts,
+  type RGB,
+} from 'https://esm.sh/pdf-lib@1.17.1';
 import { LOGO_PNG_BASE64 } from './logo.ts';
 import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
 
@@ -240,6 +247,7 @@ function humanizeNotes(raw: string): string {
   const trimmed = raw.trim();
 
   // Try to parse as JSON
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let parsed: any = null;
   try {
     parsed = JSON.parse(trimmed);
@@ -270,6 +278,7 @@ function humanizeNotes(raw: string): string {
     if (parsed.species) parts.push(`Especie: ${parsed.species}`);
     if (parsed.details && Array.isArray(parsed.details)) {
       const detailParts = parsed.details
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .map((d: any) => `${d.label || d.id}: ${d.score} - ${d.description}`)
         .join('; ');
       if (detailParts) parts.push(detailParts);
@@ -315,7 +324,7 @@ function categorizeRecord(type: string): string {
   return 'other';
 }
 
-const CATEGORY_CONFIG: Record<string, { title: string; color: any; bg: any }> = {
+const CATEGORY_CONFIG: Record<string, { title: string; color: RGB; bg: RGB }> = {
   vaccines: { title: 'Vacunas', color: MED_GREEN, bg: LIGHT_GREEN },
   consults: { title: 'Consultas veterinarias', color: DARK_PURPLE, bg: LIGHT_PURPLE },
   procedures: { title: 'Procedimientos y examenes', color: AMBER, bg: LIGHT_AMBER },
@@ -342,15 +351,15 @@ const MAX_FIELD_CHARS = 300;
 // =====================================================================
 
 class PdfBuilder {
-  doc: any;
-  page: any;
+  doc: PDFDocument;
+  page: PDFPage | null;
   y: number;
-  helvetica: any;
-  bold: any;
-  logoImage: any;
+  helvetica: PDFFont;
+  bold: PDFFont;
+  logoImage: PDFImage | null;
   pageCount = 0;
 
-  constructor(doc: any, helvetica: any, bold: any, logoImage: any) {
+  constructor(doc: PDFDocument, helvetica: PDFFont, bold: PDFFont, logoImage: PDFImage | null) {
     this.doc = doc;
     this.helvetica = helvetica;
     this.bold = bold;
@@ -376,7 +385,7 @@ class PdfBuilder {
 
   drawText(
     t: string,
-    opts: { x?: number; size?: number; font?: any; color?: any; maxWidth?: number }
+    opts: { x?: number; size?: number; font?: PDFFont; color?: RGB; maxWidth?: number }
   ) {
     const font = opts.font || this.helvetica;
     const size = opts.size || 9;
@@ -404,8 +413,8 @@ class PdfBuilder {
       x?: number;
       maxWidth?: number;
       size?: number;
-      font?: any;
-      color?: any;
+      font?: PDFFont;
+      color?: RGB;
       lineHeight?: number;
     }
   ) {
@@ -529,7 +538,7 @@ class PdfBuilder {
   }
 
   /** Section header with colored left border and background */
-  drawSectionHeader(title: string, color: any, bgColor: any, count?: number) {
+  drawSectionHeader(title: string, color: RGB, bgColor: RGB, count?: number) {
     this.ensureSpace(35);
     this.y -= 10;
 
@@ -591,7 +600,7 @@ class PdfBuilder {
   }
 
   /** Small bullet item: "  - text" */
-  drawBullet(text: string, opts?: { color?: any; indent?: number }) {
+  drawBullet(text: string, opts?: { color?: RGB; indent?: number }) {
     this.ensureSpace(12);
     const x = opts?.indent ?? MARGIN_L + 14;
     this.drawText(`- ${text}`, { x, size: 8.5, color: opts?.color || TEXT_DARK });
@@ -599,12 +608,13 @@ class PdfBuilder {
   }
 
   /** Wrap a bullet with potentially long text */
-  drawBulletWrapped(text: string, opts?: { color?: any; indent?: number }) {
+  drawBulletWrapped(text: string, opts?: { color?: RGB; indent?: number }) {
     const x = opts?.indent ?? MARGIN_L + 14;
     this.drawWrapped(`- ${text}`, { x, size: 8.5, color: opts?.color || TEXT_DARK });
   }
 
   /** Draw a record entry (vaccine, consult, procedure, etc.) */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   drawRecordEntry(record: any, index: number) {
     this.ensureSpace(45);
 
@@ -874,8 +884,11 @@ serve(async (req) => {
 
     const pet = summaryData.pet;
     const owner = summaryData.owner;
-    const allRecords: any[] = summaryData.all_records || []; // Already ASC from v3 RPC
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const allRecords: any[] = summaryData.all_records || [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const vetNotes: any[] = summaryData.vet_notes || [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const routines: any[] = summaryData.routines || [];
 
     // ══════════════════════════════════════════════════════════
@@ -888,7 +901,7 @@ serve(async (req) => {
 
     // Logo
     const logoBytes = getLogoBytes();
-    let logoImage: any = null;
+    let logoImage: PDFImage | null = null;
     if (logoBytes) {
       try {
         logoImage = await pdfDoc.embedPng(logoBytes);
@@ -1061,6 +1074,7 @@ serve(async (req) => {
       source: 'record' | 'vet_note';
       record_type: string;
       title: string;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       data: any;
     };
 
@@ -1090,7 +1104,7 @@ serve(async (req) => {
     timeline.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     // Type badge colors
-    const TYPE_BADGE: Record<string, { label: string; color: any }> = {
+    const TYPE_BADGE: Record<string, { label: string; color: RGB }> = {
       vacuna: { label: 'Vacuna', color: MED_GREEN },
       consulta: { label: 'Consulta', color: DARK_PURPLE },
       consulta_general: { label: 'Consulta', color: DARK_PURPLE },
@@ -1392,7 +1406,7 @@ serve(async (req) => {
     }
 
     // ── SECTION: Resumen de vacunacion ──
-    const vaccineRecords = allRecords.filter((r: any) => r.record_type === 'vacuna');
+    const vaccineRecords = allRecords.filter((r) => r.record_type === 'vacuna');
     if (vaccineRecords.length > 0) {
       pdf.drawSectionHeader('Resumen de vacunacion', MED_GREEN, LIGHT_GREEN, vaccineRecords.length);
       pdf.y -= 4;
@@ -1427,6 +1441,7 @@ serve(async (req) => {
     }
 
     // ── SECTION: Peso historico ──
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const weightHistory: any[] = Array.isArray(pet.weight_history) ? pet.weight_history : [];
     if (weightHistory.length > 1) {
       pdf.drawSectionHeader('Peso historico', TEXT_GRAY, ROW_ALT, weightHistory.length);
@@ -1573,13 +1588,13 @@ serve(async (req) => {
       },
       status: 200,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error generating medical summary:', error);
     return new Response(
       JSON.stringify({
         success: false,
         error: 'Error al generar la ficha. Intenta de nuevo.',
-        detail: error?.message || String(error),
+        detail: error instanceof Error ? error.message : String(error),
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
