@@ -315,6 +315,32 @@ El proyecto tiene documentos que deben mantenerse actualizados. Ver `INDEX.md` p
 4. **Cabecera con fecha**. Mantener al tope un comentario `%% FLUJO COMPLETO PAW FRIEND — Actualizado YYYY-MM-DD` con la fecha del ultimo cambio real.
 5. **`FLUJOS_MERMAID.md` es secundario**. Sirve para ver modulos aislados, pero NO es la fuente de verdad. Si hay contradiccion entre ambos, gana `FLUJO_COMPLETO.mmd`.
 
+### 9.8. Proteccion de datos de usuarios existentes
+
+Paw Friend tiene usuarios reales en produccion. **Cualquier cambio que afecte datos, esquema, tipos, o contratos existentes debe proteger a los usuarios actuales**. Reglas:
+
+1. **Migracion obligatoria de datos**. Si cambias una columna, tabla, enum, tipo de dato, o estructura JSON almacenada → generar migracion SQL que transforme los datos existentes al nuevo formato. Incluir `UPDATE` o `INSERT ... ON CONFLICT` para filas existentes. Nunca asumir que la tabla esta vacia.
+2. **Defaults para columnas nuevas**. Toda columna `NOT NULL` nueva debe tener `DEFAULT` o un `UPDATE` previo que rellene las filas existentes. Si no, los usuarios actuales quedan con filas invalidas.
+3. **Renombrar, no romper**. Si renombras una columna, campo de tipo TS, key de localStorage, o propiedad de API:
+   - En DB: usar `ALTER TABLE ... RENAME COLUMN` (no drop+create).
+   - En frontend: leer el valor antiguo como fallback durante al menos 1 release. Ejemplo: `localStorage.getItem('new_key') ?? localStorage.getItem('old_key')`.
+   - En tipos TS: si el campo viene de Supabase, primero la migracion SQL, luego regenerar tipos, luego actualizar el codigo.
+4. **Limpiar lo obsoleto**. Despues de migrar, eliminar el codigo/columna/key antiguo **en el mismo PR o en el inmediatamente siguiente**. No dejar fallbacks eternos. Marcar con comentario `// TODO(cleanup): eliminar fallback despues de release YYYY-MM-DD` si no se puede limpiar en el mismo PR.
+5. **Edge functions y RPC**. Si cambias el contrato (parametros o respuesta) de una edge function o RPC que el frontend ya consume → actualizar frontend y backend en el mismo commit. Si hay clientes mobile con cache, considerar versionado o compatibilidad hacia atras temporal.
+6. **Verificar antes de commitear**. Antes de dar por terminado un cambio que toca esquema o datos:
+   - Preguntarse: "Un usuario que creo su cuenta ayer, ¿seguira viendo sus datos correctamente?"
+   - Preguntarse: "Un vet que tiene 50 pacientes, ¿perderia algo?"
+   - Si la respuesta no es un "si" claro → falta migracion o fallback.
+7. **localStorage y estado local**. Si cambias keys de localStorage, sessionStorage, o IndexedDB → migrar el valor existente la primera vez que el usuario abre la app post-update. Patron:
+   ```ts
+   const oldVal = localStorage.getItem('old_key');
+   if (oldVal) {
+     localStorage.setItem('new_key', oldVal);
+     localStorage.removeItem('old_key');
+   }
+   ```
+8. **Nunca DROP TABLE ni DELETE FROM sin WHERE** en migraciones que tocan tablas con datos de usuarios. Si necesitas limpiar, usar `TRUNCATE` solo en tablas de cache/temp, y `DELETE ... WHERE condicion` para el resto.
+
 ---
 
 ## 10. Comandos disponibles
