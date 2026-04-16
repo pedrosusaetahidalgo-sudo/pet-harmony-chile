@@ -19,6 +19,7 @@ import { logger } from '@/lib/logger';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { useScrollOnFocus } from '@/hooks/useScrollOnFocus';
 import { loginSchema, registerSchema } from '@/lib/schemas';
+import { generateDefaultName } from '@/lib/format';
 
 const Auth = () => {
   const [email, setEmail] = useState('');
@@ -149,7 +150,7 @@ const Auth = () => {
         options: {
           emailRedirectTo: redirectUrl,
           data: {
-            display_name: displayName || email.split('@')[0],
+            display_name: displayName.trim() || generateDefaultName(),
           },
         },
       });

@@ -48,8 +48,7 @@ export function getGreeting(): string {
  */
 export function smartCapitalize(text: string): string {
   if (!text.trim()) return text;
-  return text
-    .replace(/(^\s*\w|[.!?]\s+\w)/g, (match) => match.toUpperCase());
+  return text.replace(/(^\s*\w|[.!?]\s+\w)/g, (match) => match.toUpperCase());
 }
 
 export function toTitleCase(text: string): string {
@@ -62,4 +61,71 @@ export function toTitleCase(text: string): string {
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     })
     .join(' ');
+}
+
+// --- Default display name generator ---
+
+const NAME_ADJECTIVES = [
+  'Feliz',
+  'Tierno',
+  'Valiente',
+  'Curioso',
+  'Jugueton',
+  'Dormilon',
+  'Travieso',
+  'Peludo',
+  'Saltarin',
+  'Mimoso',
+  'Alegre',
+  'Brillante',
+  'Suave',
+  'Rapido',
+  'Noble',
+  'Fiel',
+  'Dulce',
+  'Manso',
+  'Audaz',
+  'Sereno',
+];
+
+const NAME_ANIMALS = [
+  'Gatito',
+  'Perrito',
+  'Conejito',
+  'Hamster',
+  'Pajarito',
+  'Tortuga',
+  'Panda',
+  'Koala',
+  'Delfin',
+  'Zorro',
+  'Lobo',
+  'Oso',
+  'Tigre',
+  'Leon',
+  'Halcon',
+  'Colibri',
+  'Nutria',
+  'Foca',
+  'Buho',
+  'Ciervo',
+];
+
+/** Generates a unique-ish friendly display name like "GatitoFeliz_3847" */
+export function generateDefaultName(): string {
+  const adj = NAME_ADJECTIVES[Math.floor(Math.random() * NAME_ADJECTIVES.length)];
+  const animal = NAME_ANIMALS[Math.floor(Math.random() * NAME_ANIMALS.length)];
+  const num = Math.floor(1000 + Math.random() * 9000); // 4-digit number
+  return `${animal}${adj}_${num}`;
+}
+
+/** Checks if a display name looks like a generic/placeholder name */
+export function isGenericDisplayName(name: string | null | undefined): boolean {
+  if (!name || !name.trim()) return true;
+  const trimmed = name.trim().toLowerCase();
+  // Matches email-like names (anything with @ or pure email prefix patterns)
+  if (/^[a-z0-9._+-]+$/.test(trimmed) && trimmed.length > 3) return true;
+  // Matches "Usuario" or our generated pattern (already has a name, not generic)
+  if (trimmed === 'usuario') return true;
+  return false;
 }

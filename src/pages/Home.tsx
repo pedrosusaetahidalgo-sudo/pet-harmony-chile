@@ -52,6 +52,8 @@ const PetWellnessPreview = lazy(() =>
   }))
 );
 import { isFeatureEnabled } from '@/lib/featureFlags';
+import { isGenericDisplayName } from '@/lib/format';
+import { NamePromptDialog } from '@/components/NamePromptDialog';
 import { computeHealthScore } from '@/lib/health-score';
 import { getRarity } from '@/components/PetCardCompact';
 import { RARITY_BORDER_STYLES } from '@/lib/paw-cards';
@@ -123,6 +125,7 @@ export default function Home() {
   const { stats } = useGamification();
   const { upcomingReminders, overdueReminders, completeReminder } = useReminders();
   const pendingReviewCount = usePendingReviewCount();
+  const [showNamePrompt, setShowNamePrompt] = useState(false);
 
   useEffect(() => {
     if (user && role === 'owner') {
@@ -157,7 +160,14 @@ export default function Home() {
       ]);
 
       const profileData = profileResult.data;
-      if (profileData) setProfile(profileData);
+      if (profileData) {
+        setProfile(profileData);
+        // Show name prompt if display_name is generic/missing
+        if (isGenericDisplayName(profileData.display_name)) {
+          const dismissed = localStorage.getItem('pf_name_prompt_dismissed');
+          if (!dismissed) setShowNamePrompt(true);
+        }
+      }
 
       if (appointmentsResult.data) setAppointments(appointmentsResult.data);
 
@@ -361,6 +371,17 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* === Name prompt for users with generic names === */}
+      <NamePromptDialog
+        open={showNamePrompt}
+        currentName=""
+        onDone={(newName) => {
+          setShowNamePrompt(false);
+          setProfile((prev) => (prev ? { ...prev, display_name: newName } : prev));
+          localStorage.setItem('pf_name_prompt_dismissed', '1');
+        }}
+      />
 
       {/* === Trial welcome overlay (shown once) === */}
       <TrialWelcomeOverlay />
