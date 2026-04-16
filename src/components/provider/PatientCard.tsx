@@ -14,6 +14,7 @@ import {
   Pill,
   Stethoscope,
   Calendar,
+  Trash2,
 } from '@/lib/icons';
 import { LINKS } from '@/lib/links';
 import { getPatientStatus, calculatePetAge } from '@/hooks/usePatientStatus';
@@ -42,9 +43,16 @@ interface PatientCardProps {
   onRecord: () => void;
   onNote: () => void;
   onConsolidado: () => void;
+  onDelete?: () => void;
 }
 
-export function PatientCard({ patient, onRecord, onNote, onConsolidado }: PatientCardProps) {
+export function PatientCard({
+  patient,
+  onRecord,
+  onNote,
+  onConsolidado,
+  onDelete,
+}: PatientCardProps) {
   const statusInfo: PatientStatusInfo = getPatientStatus(
     patient.last_visit,
     patient.followup_date ?? null,
@@ -208,6 +216,17 @@ export function PatientCard({ patient, onRecord, onNote, onConsolidado }: Patien
               Ficha
             </Button>
           </Link>
+          {onDelete && (
+            <Button
+              size="sm"
+              variant="ghost"
+              className="h-8 w-8 p-0 text-muted-foreground hover:text-red-600 hover:bg-red-50"
+              onClick={onDelete}
+              title="Desvincular paciente"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>

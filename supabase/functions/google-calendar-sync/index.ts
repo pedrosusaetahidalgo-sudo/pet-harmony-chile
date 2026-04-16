@@ -242,6 +242,73 @@ serve(async (req) => {
       }
     }
 
+    // ── Sync vet_bookings (confirmed/en_curso) ──
+    const { data: bookings } = await supabase
+      .from('vet_bookings')
+      .select(
+        'id, scheduled_date, start_time, end_time, service_type, status, pet_id, pets!pet_id(name), service_provider_id, service_providers!service_provider_id(display_name)'
+      )
+      .eq('owner_id', userId)
+      .in('status', ['confirmado', 'en_curso', 'en_camino'])
+      .gte('scheduled_date', new Date().toISOString());
+
+    for (const b of bookings ?? []) {
+      try {
+        const existingId = mappingByKey.get(`vet_booking:${b.id}`) || null;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const petName = (b as Record<string, any>).pets?.name ?? 'tu mascota';
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const provName =
+          (b as Record<string, any>).service_providers?.display_name ?? 'Veterinario';
+        const start = new Date(b.scheduled_date);
+        // If we have start_time, set exact hour; otherwise use the date as-is
+        if (b.start_time) {
+          const [hh, mm] = b.start_time.split(':');
+          start.setHours(parseInt(hh), parseInt(mm), 0, 0);
+        }
+        const durationMs = 30 * 60_000; // default 30min
+        const end = b.end_time
+          ? (() => {
+              const e = new Date(b.scheduled_date);
+              const [hh, mm] = b.end_time.split(':');
+              e.setHours(parseInt(hh), parseInt(mm), 0, 0);
+              return e;
+            })()
+          : new Date(start.getTime() + durationMs);
+
+        const event: CalendarEventInput = {
+          summary: `🐾 ${b.service_type} — ${petName} con ${provName}`,
+          description: `Reserva en Paw Friend\nServicio: ${b.service_type}\nMascota: ${petName}\nProfesional: ${provName}\nEstado: ${b.status}`,
+          start: { dateTime: start.toISOString(), timeZone: 'America/Santiago' },
+          end: { dateTime: end.toISOString(), timeZone: 'America/Santiago' },
+        };
+
+        const eventId = await upsertGoogleEvent(accessToken, calendarId, event, existingId);
+
+        if (!existingId) {
+          await supabase.from('external_calendar_events').insert({
+            user_id: userId,
+            source_type: 'vet_booking',
+            source_id: b.id,
+            google_event_id: eventId,
+            google_calendar_id: calendarId,
+          });
+          // Also store event ID in booking for quick lookup
+          await supabase.from('vet_bookings').update({ google_event_id: eventId }).eq('id', b.id);
+        } else {
+          await supabase
+            .from('external_calendar_events')
+            .update({ last_synced_at: new Date().toISOString() })
+            .eq('source_type', 'vet_booking')
+            .eq('source_id', b.id);
+        }
+        synced++;
+      } catch (err) {
+        console.warn('[google-calendar-sync] booking failed', b.id, err);
+        failed++;
+      }
+    }
+
     return new Response(JSON.stringify({ synced, failed, calendar_id: calendarId }), {
       status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

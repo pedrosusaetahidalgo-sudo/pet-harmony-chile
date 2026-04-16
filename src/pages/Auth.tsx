@@ -37,6 +37,13 @@ const Auth = () => {
   // Prevent open redirect — only allow internal paths
   const returnTo =
     rawReturnTo?.startsWith('/') && !rawReturnTo.startsWith('//') ? rawReturnTo : null;
+  // Forward ?invitation=TOKEN through redirects so useClaimPetInvitation can process it
+  const invitationToken = searchParams.get('invitation');
+  const buildRedirectUrl = (base: string) => {
+    if (!invitationToken) return base;
+    const sep = base.includes('?') ? '&' : '?';
+    return `${base}${sep}invitation=${encodeURIComponent(invitationToken)}`;
+  };
   const { signInWithFacebook, loading: facebookLoading } = useFacebookAuth();
   const hasRedirected = useRef(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -60,7 +67,7 @@ const Auth = () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session && !hasRedirected.current) {
         hasRedirected.current = true;
-        navigate(returnTo || '/home', { replace: true });
+        navigate(buildRedirectUrl(returnTo || '/home'), { replace: true });
       }
     });
   }, [navigate, returnTo]);
@@ -79,7 +86,7 @@ const Auth = () => {
         hasRedirected.current = true;
         window.history.replaceState({}, document.title, window.location.pathname);
         // Hard reload para evitar race con ProtectedRoute
-        window.location.href = returnTo || '/home';
+        window.location.href = buildRedirectUrl(returnTo || '/home');
       }
     });
 
@@ -90,7 +97,7 @@ const Auth = () => {
         .then(({ data: { session: existingSession } }) => {
           if (existingSession && !hasRedirected.current) {
             hasRedirected.current = true;
-            window.location.href = returnTo || '/home';
+            window.location.href = buildRedirectUrl(returnTo || '/home');
           }
         })
         .catch(() => {
@@ -108,7 +115,7 @@ const Auth = () => {
           if (session && !hasRedirected.current) {
             hasRedirected.current = true;
             window.history.replaceState({}, document.title, window.location.pathname);
-            window.location.href = returnTo || '/home';
+            window.location.href = buildRedirectUrl(returnTo || '/home');
           } else if (!session) {
             toast.error('Error en autenticación con Google', {
               description: 'No pudimos completar el login. Intenta nuevamente.',
@@ -167,7 +174,7 @@ const Auth = () => {
         toast('¡Cuenta creada!', { description: 'Bienvenido a Paw Friend' });
         // Hard reload para evitar race condition con useAuth + ProtectedRoute.
         // Usuario nuevo siempre va a /add-pet (onboarding).
-        window.location.href = returnTo || '/add-pet';
+        window.location.href = buildRedirectUrl(returnTo || '/add-pet');
         return;
       }
     } catch (error: unknown) {

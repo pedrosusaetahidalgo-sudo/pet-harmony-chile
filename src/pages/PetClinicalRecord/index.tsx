@@ -24,13 +24,11 @@ import {
   Leaf,
   ClipboardList,
   Sparkles,
-  ChevronDown,
 } from '@/lib/icons';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { PetAssistant } from '@/components/ai/PetAssistant';
 import { SymptomTriage } from '@/components/ai/SymptomTriage';
 import { NutritionCoach } from '@/components/ai/NutritionCoach';
@@ -365,6 +363,106 @@ const PetClinicalRecord = () => {
           </div>
         )}
 
+        {/* AI Tools — prominent banner above tabs */}
+        {viewMode === 'owner' && (
+          <>
+            {showAssistant ? (
+              <PetAssistant
+                petId={pet.id}
+                petName={pet.name}
+                onClose={() => setShowAssistant(false)}
+              />
+            ) : activeAITool !== 'none' ? (
+              <div className="space-y-2">
+                {activeAITool === 'triage' && (
+                  <SymptomTriage
+                    petId={pet.id}
+                    petName={pet.name}
+                    onClose={() => setActiveAITool('none')}
+                    onShowDirectory={() => navigate('/veterinarios')}
+                  />
+                )}
+                {activeAITool === 'nutrition' && (
+                  <NutritionCoach petId={pet.id} petName={pet.name} />
+                )}
+                {activeAITool === 'wound' && (
+                  <WoundVision
+                    petId={pet.id}
+                    petName={pet.name}
+                    onShowDirectory={() => navigate('/veterinarios')}
+                  />
+                )}
+                {activeAITool === 'prep' && (
+                  <ConsultationPrep petId={pet.id} petName={pet.name} />
+                )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-xs"
+                  onClick={() => setActiveAITool('none')}
+                >
+                  Volver a herramientas
+                </Button>
+              </div>
+            ) : (
+              <Card className="border-indigo-100 bg-gradient-to-r from-indigo-50/80 via-purple-50/60 to-pink-50/40 overflow-hidden">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex items-center gap-2 mb-2.5">
+                    <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center flex-shrink-0 shadow-sm">
+                      <Sparkles className="h-4 w-4 text-white" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold bg-gradient-to-r from-indigo-700 to-purple-700 bg-clip-text text-transparent">
+                        IA para {pet.name}
+                      </p>
+                      <p className="text-[10px] text-muted-foreground">
+                        Herramientas inteligentes de salud
+                      </p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 sm:grid-cols-5 gap-1.5 sm:gap-2">
+                    <button
+                      onClick={() => setShowAssistant(true)}
+                      className="flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-xl bg-white/80 border border-indigo-100/60 hover:bg-white hover:border-indigo-200 hover:shadow-sm transition-all"
+                    >
+                      <Stethoscope className="h-5 w-5 text-indigo-600" />
+                      <span className="text-[10px] sm:text-[11px] font-medium text-center leading-tight">Asistente</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveAITool('triage')}
+                      className="flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-xl bg-white/80 border border-blue-100/60 hover:bg-white hover:border-blue-200 hover:shadow-sm transition-all"
+                    >
+                      <Shield className="h-5 w-5 text-blue-600" />
+                      <span className="text-[10px] sm:text-[11px] font-medium text-center leading-tight">Triage</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveAITool('nutrition')}
+                      className="flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-xl bg-white/80 border border-green-100/60 hover:bg-white hover:border-green-200 hover:shadow-sm transition-all"
+                    >
+                      <Leaf className="h-5 w-5 text-green-600" />
+                      <span className="text-[10px] sm:text-[11px] font-medium text-center leading-tight">Nutricion</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveAITool('wound')}
+                      className="flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-xl bg-white/80 border border-orange-100/60 hover:bg-white hover:border-orange-200 hover:shadow-sm transition-all"
+                    >
+                      <Camera className="h-5 w-5 text-orange-600" />
+                      <span className="text-[10px] sm:text-[11px] font-medium text-center leading-tight">Foto herida</span>
+                    </button>
+                    <button
+                      onClick={() => setActiveAITool('prep')}
+                      className="flex flex-col items-center gap-1 p-2 sm:p-2.5 rounded-xl bg-white/80 border border-purple-100/60 hover:bg-white hover:border-purple-200 hover:shadow-sm transition-all"
+                    >
+                      <ClipboardList className="h-5 w-5 text-purple-600" />
+                      <span className="text-[10px] sm:text-[11px] font-medium text-center leading-tight">Consulta</span>
+                    </button>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </>
+        )}
+
         {/* Tabs — main content navigation */}
         <Tabs id="clinical-tabs" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="relative">
@@ -446,107 +544,6 @@ const PetClinicalRecord = () => {
           )}
         </Tabs>
 
-        {/* AI Tools — collapsible section below tabs */}
-        {viewMode === 'owner' && (
-          <Collapsible>
-            <CollapsibleTrigger asChild>
-              <Button
-                variant="ghost"
-                className="w-full justify-between h-10 text-xs text-muted-foreground hover:text-foreground"
-              >
-                <span className="flex items-center gap-1.5">
-                  <Sparkles className="h-3.5 w-3.5 text-indigo-500" />
-                  Herramientas IA para {pet.name}
-                </span>
-                <ChevronDown className="h-3.5 w-3.5" />
-              </Button>
-            </CollapsibleTrigger>
-            <CollapsibleContent className="space-y-3 pt-2">
-              {showAssistant ? (
-                <PetAssistant
-                  petId={pet.id}
-                  petName={pet.name}
-                  onClose={() => setShowAssistant(false)}
-                />
-              ) : activeAITool !== 'none' ? (
-                <div className="space-y-2">
-                  {activeAITool === 'triage' && (
-                    <SymptomTriage
-                      petId={pet.id}
-                      petName={pet.name}
-                      onClose={() => setActiveAITool('none')}
-                      onShowDirectory={() => navigate('/veterinarios')}
-                    />
-                  )}
-                  {activeAITool === 'nutrition' && (
-                    <NutritionCoach petId={pet.id} petName={pet.name} />
-                  )}
-                  {activeAITool === 'wound' && (
-                    <WoundVision
-                      petId={pet.id}
-                      petName={pet.name}
-                      onShowDirectory={() => navigate('/veterinarios')}
-                    />
-                  )}
-                  {activeAITool === 'prep' && (
-                    <ConsultationPrep petId={pet.id} petName={pet.name} />
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-xs"
-                    onClick={() => setActiveAITool('none')}
-                  >
-                    Volver a herramientas
-                  </Button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  <button
-                    onClick={() => setShowAssistant(true)}
-                    className="flex flex-col items-center gap-1.5 p-3 rounded-xl border bg-card hover:bg-accent transition-colors"
-                  >
-                    <Stethoscope className="h-5 w-5 text-primary" />
-                    <span className="text-[11px] font-medium">Asistente</span>
-                    <span className="text-[9px] text-muted-foreground">Preguntas de salud</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveAITool('triage')}
-                    className="flex flex-col items-center gap-1.5 p-3 rounded-xl border bg-card hover:bg-accent transition-colors"
-                  >
-                    <Shield className="h-5 w-5 text-blue-600" />
-                    <span className="text-[11px] font-medium">Triage</span>
-                    <span className="text-[9px] text-muted-foreground">Evaluar urgencia</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveAITool('nutrition')}
-                    className="flex flex-col items-center gap-1.5 p-3 rounded-xl border bg-card hover:bg-accent transition-colors"
-                  >
-                    <Leaf className="h-5 w-5 text-green-600" />
-                    <span className="text-[11px] font-medium">Nutricion</span>
-                    <span className="text-[9px] text-muted-foreground">Plan alimentario</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveAITool('wound')}
-                    className="flex flex-col items-center gap-1.5 p-3 rounded-xl border bg-card hover:bg-accent transition-colors"
-                  >
-                    <Camera className="h-5 w-5 text-orange-600" />
-                    <span className="text-[11px] font-medium">Foto herida</span>
-                    <span className="text-[9px] text-muted-foreground">Evaluar lesion</span>
-                  </button>
-                  <button
-                    onClick={() => setActiveAITool('prep')}
-                    className="flex flex-col items-center gap-1.5 p-3 rounded-xl border bg-card hover:bg-accent transition-colors"
-                  >
-                    <ClipboardList className="h-5 w-5 text-indigo-600" />
-                    <span className="text-[11px] font-medium">Consulta</span>
-                    <span className="text-[9px] text-muted-foreground">Preparar visita</span>
-                  </button>
-                </div>
-              )}
-            </CollapsibleContent>
-          </Collapsible>
-        )}
 
         {/* PawPoints nudge — subtle, at the bottom */}
         {viewMode === 'owner' && (

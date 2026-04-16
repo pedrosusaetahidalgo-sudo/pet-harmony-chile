@@ -49,6 +49,9 @@ verify_jwt = false
 [functions.reminder-cron]
 verify_jwt = false
 
+[functions.booking-reminders-cron]
+verify_jwt = false
+
 [functions.send-whatsapp-reminder]
 verify_jwt = false
 

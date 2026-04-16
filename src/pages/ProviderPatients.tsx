@@ -21,6 +21,16 @@ import {
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
   Search,
   PawPrint,
   Mail,
@@ -110,6 +120,10 @@ export default function ProviderPatients() {
     petId: string;
     petName: string;
     species?: string;
+  } | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<{
+    petId: string;
+    petName: string;
   } | null>(null);
 
   // Fetch provider ID
@@ -380,6 +394,26 @@ export default function ProviderPatients() {
       toast.error('Error al reenviar la invitacion');
     } finally {
       setResendingId(null);
+    }
+  };
+
+  const handleUnlinkPatient = async (petId: string) => {
+    if (!providerId) return;
+    try {
+      // Deactivate the vet-pet link (soft delete)
+      const { error } = await sb
+        .from('pet_vet_links')
+        .update({ status: 'rejected', responded_at: new Date().toISOString() })
+        .eq('provider_id', providerId)
+        .eq('pet_id', petId)
+        .eq('status', 'active');
+      if (error) throw error;
+      toast.success(`${deleteConfirm?.petName || 'Paciente'} desvinculado`);
+      refetch();
+    } catch {
+      toast.error('Error al desvincular paciente');
+    } finally {
+      setDeleteConfirm(null);
     }
   };
 
@@ -722,6 +756,9 @@ export default function ProviderPatients() {
               onConsolidado={() =>
                 setConsolidadoPet({ id: patient.pet_id, name: patient.pet_name })
               }
+              onDelete={() =>
+                setDeleteConfirm({ petId: patient.pet_id, petName: patient.pet_name })
+              }
             />
           ))}
         </div>
@@ -925,6 +962,28 @@ export default function ProviderPatients() {
           petSpecies={activeRecorderDialog.species}
         />
       )}
+
+      {/* Delete/unlink confirmation */}
+      <AlertDialog open={!!deleteConfirm} onOpenChange={(open) => !open && setDeleteConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Desvincular a {deleteConfirm?.petName}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Se eliminara la vinculacion con este paciente. Tus notas clinicas se mantendran pero
+              ya no aparecera en tu lista. El dueno podra volver a vincularte en el futuro.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700"
+              onClick={() => deleteConfirm && handleUnlinkPatient(deleteConfirm.petId)}
+            >
+              Desvincular
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

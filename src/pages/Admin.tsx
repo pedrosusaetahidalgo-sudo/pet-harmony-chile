@@ -14,6 +14,7 @@ import {
   Megaphone,
   Settings,
   Activity,
+  Calendar,
   Target,
   Bell,
   Search,
@@ -56,6 +57,7 @@ import AdminAnalytics from '@/components/admin/AdminAnalytics';
 import AdminPendingPets from '@/components/admin/AdminPendingPets';
 import AdminLeadsCRM from '@/components/admin/AdminLeadsCRM';
 import AdminFeedback from '@/components/admin/AdminFeedback';
+import AdminBookingsPanel from '@/components/admin/AdminBookingsPanel';
 
 // ── Section definitions ──────────────────────────────────
 interface Section {
@@ -70,6 +72,7 @@ const SECTIONS: Section[] = [
   { id: 'dashboard', label: 'Dashboard', icon: BarChart3, group: 1 },
   { id: 'analytics', label: 'Analytics', icon: Activity, group: 1 },
   // Group 2: Operations
+  { id: 'bookings', label: 'Reservas', icon: Calendar, group: 2 },
   { id: 'providers', label: 'Proveedores', icon: Briefcase, group: 2 },
   { id: 'users', label: 'Usuarios', icon: Users, group: 2 },
   { id: 'finance', label: 'Finanzas', icon: DollarSign, group: 2 },
@@ -411,6 +414,8 @@ const Admin = () => {
         return <AdminDashboard />;
       case 'analytics':
         return <AdminAnalytics />;
+      case 'bookings':
+        return <AdminBookingsPanel />;
       case 'providers':
         return <ProvidersSection />;
       case 'users':

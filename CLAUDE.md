@@ -256,7 +256,7 @@ Ver `INDEX.md` para el indice completo con reglas de actualizacion.
 | `audits/CROSS_PLATFORM_COMPATIBILITY.md` | Compatibilidad multiplataforma (iOS, Android, Web) |
 | `audits/FEEDBACK_VET_SOFIA_2026_04_13.md` | Feedback de vet beta tester Sofia |
 | `docs-specs/` | Specs de features pendientes (ver INDEX.md para listado) |
-| `docs-design/PROVIDER_LAYOUT_REDESIGN.md` | Guia de diseno layout proveedor |
+| `_archive/PROVIDER_LAYOUT_REDESIGN.md` | Guia de diseno layout proveedor (ejecutado) |
 | `_pending/` | Plans y blueprints pendientes de ejecutar (ver _pending/README.md) |
 | `_archive/` | Documentos ya ejecutados o superados por versiones mas recientes |
 

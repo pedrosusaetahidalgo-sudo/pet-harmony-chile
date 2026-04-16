@@ -13,6 +13,7 @@ import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { AvailabilityRulesEditor } from '@/components/provider/AvailabilityRulesEditor';
 import {
   Select,
   SelectContent,
@@ -222,6 +223,9 @@ export default function ProviderProfileEdit() {
                 </TabsTrigger>
                 <TabsTrigger value="pricing" className="text-xs">
                   Precios
+                </TabsTrigger>
+                <TabsTrigger value="schedule" className="text-xs">
+                  Horarios
                 </TabsTrigger>
                 <TabsTrigger value="visibility" className="text-xs">
                   Visibilidad
@@ -489,6 +493,11 @@ export default function ProviderProfileEdit() {
                     </CardContent>
                   </Card>
                 </div>
+              </TabsContent>
+
+              {/* Tab: Horarios */}
+              <TabsContent value="schedule">
+                <AvailabilityRulesEditor providerId={provider?.id} />
               </TabsContent>
 
               {/* Tab: Visibilidad */}

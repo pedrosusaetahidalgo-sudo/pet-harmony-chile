@@ -40,7 +40,6 @@
 |---|---|---|
 | [docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md](docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md) | PDF profesional cronologico + deduplicacion mascotas + sync datos | **Alta** -- Toca joya de la corona + integridad de datos |
 | [docs-specs/ANALISIS_PREMIUM_VS_FREE.md](docs-specs/ANALISIS_PREMIUM_VS_FREE.md) | Analisis de que features deben ser free vs premium + plan de ejecucion | **Alta** -- Define monetizacion |
-| [docs-specs/FICHA_VET_VIEW_SPEC.md](docs-specs/FICHA_VET_VIEW_SPEC.md) | Vista ficha clinica desde perspectiva vet | **Alta** -- UX veterinario |
 | [docs-specs/ADMIN_CONTROL_CENTER_V2.md](docs-specs/ADMIN_CONTROL_CENTER_V2.md) | Centro de control admin v2 | **Media** -- Admin expandido |
 | [docs-specs/UPGRADE_TOGGLE_ROLE.md](docs-specs/UPGRADE_TOGGLE_ROLE.md) | Toggle de rol dueno/vet | **Media** -- UX dual-role |
 
@@ -50,6 +49,9 @@
 - RUTINAS_Y_CALENDARIO_MASCOTA — 100% implementado (rutinas + calendario unificado)
 - PAW_CARDS_COLLECTIBLE — 100% implementado (6 rarezas, flip, QR, holograficos)
 - PAW_MISSIONS_ACHIEVEMENTS — 100% implementado (misiones + logros + paw points)
+- FICHA_VET_VIEW_SPEC — 100% ejecutado (viewMode, VetActionsBar, VetFichaView, invitation handler)
+- VET_PANEL_FICHA_REDESIGN — 100% ejecutado (PatientKPIBar, PatientCard, VetFichaView 2-col, VetVitalsCard)
+- PROVIDER_LAYOUT_REDESIGN — 100% ejecutado (dashboard grid 2-col, MiniProfileCard, sidebar items, tabs perfil)
 
 ---
 

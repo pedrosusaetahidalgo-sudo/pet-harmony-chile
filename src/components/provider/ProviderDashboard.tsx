@@ -20,14 +20,12 @@ import {
   PawPrint,
   Loader2,
   AlertCircle,
-  UserCog,
-  Eye,
 } from '@/lib/icons';
-import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { QuickActionsBar, type DashboardPeriod } from './dashboard/QuickActionsBar';
+import { ProviderBookingsInbox } from './ProviderBookingsInbox';
 import { AlertsBanner } from './dashboard/AlertsBanner';
 import { InteractiveMetricCard } from './dashboard/InteractiveMetricCard';
 import { ClinicalTab } from './dashboard/ClinicalTab';
@@ -38,6 +36,7 @@ import { PendingVetLinksCard } from './PendingVetLinksCard';
 import { NewPatientForm } from './NewPatientForm';
 import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import { Next24hCard } from './Next24hCard';
+import { MiniProfileCard } from './dashboard/MiniProfileCard';
 
 // formatCLP imported from @/lib/format
 
@@ -188,28 +187,25 @@ const ProviderDashboard = () => {
 
         {/* Right: 1/3 width — Next 24h + Profile links */}
         <div className="space-y-3">
+          <MiniProfileCard
+            slug={stats.slug}
+            avgRating={stats.avgRating}
+            totalReviews={stats.totalReviews}
+            isDirectoryVisible={stats.isDirectoryVisible}
+            profileViews={stats.profileViews}
+          />
           <Next24hCard />
           <PendingVetLinksCard />
-          <div className="flex gap-2">
-            {stats.slug && (
-              <Link to={`/veterinarios/${stats.slug}`} className="flex-1">
-                <Button variant="outline" size="sm" className="w-full text-xs gap-1 h-9">
-                  <Eye className="h-3.5 w-3.5" /> Ver perfil
-                </Button>
-              </Link>
-            )}
-            <Link to="/provider/profile-edit" className="flex-1">
-              <Button variant="outline" size="sm" className="w-full text-xs gap-1 h-9">
-                <UserCog className="h-3.5 w-3.5" /> Editar
-              </Button>
-            </Link>
-          </div>
         </div>
       </div>
 
       {/* ═══ Tabbed Content ═══ */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="reservas" className="text-xs sm:text-sm gap-1">
+            <Calendar className="h-3.5 w-3.5 hidden sm:inline-block" />
+            Reservas
+          </TabsTrigger>
           <TabsTrigger value="clinico" className="text-xs sm:text-sm gap-1">
             <Stethoscope className="h-3.5 w-3.5 hidden sm:inline-block" />
             Clinico
@@ -223,6 +219,10 @@ const ProviderDashboard = () => {
             Pacientes
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="reservas" className="mt-3">
+          <ProviderBookingsInbox providerId={stats.providerId} />
+        </TabsContent>
 
         <TabsContent value="clinico" className="mt-3">
           <ClinicalTab providerId={stats.providerId} />

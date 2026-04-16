@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Mic, Pencil, Calendar, ChevronDown, Paperclip } from '@/lib/icons';
+import { Mic, Pencil, Calendar, ChevronDown, Paperclip, Stethoscope, FileText } from '@/lib/icons';
 import { getRecordTypeIcon, getRecordTypeBadgeClass } from './shared';
 import type { VetClinicalNote } from '@/hooks/useVetClinicalNotes';
 
@@ -154,9 +154,27 @@ export function VetClinicalTimeline({ petId, vetNotes }: VetClinicalTimelineProp
       </div>
 
       {filtered.length === 0 ? (
-        <p className="text-sm text-muted-foreground text-center py-8">
-          Sin registros clinicos aun.
-        </p>
+        <div className="flex flex-col items-center justify-center py-12 px-4 text-center border-2 border-dashed border-muted rounded-xl">
+          <div className="h-12 w-12 rounded-full bg-teal-50 flex items-center justify-center mb-3">
+            <Stethoscope className="h-6 w-6 text-teal-500" />
+          </div>
+          <p className="text-sm font-medium mb-1">Sin registros clinicos aun</p>
+          <p className="text-xs text-muted-foreground max-w-xs mb-4">
+            Graba una consulta, escribe una nota clinica o registra signos vitales para comenzar el
+            historial de este paciente.
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/50 rounded-full px-2.5 py-1">
+              <Mic className="h-3 w-3 text-red-400" /> Grabar consulta
+            </span>
+            <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/50 rounded-full px-2.5 py-1">
+              <FileText className="h-3 w-3 text-teal-500" /> Nota rapida
+            </span>
+            <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/50 rounded-full px-2.5 py-1">
+              <Calendar className="h-3 w-3 text-blue-500" /> Agendar seguimiento
+            </span>
+          </div>
+        </div>
       ) : (
         <div className="space-y-6">
           {grouped.map((group) => (

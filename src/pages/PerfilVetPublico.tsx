@@ -27,6 +27,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useDirectoryVetBySlug, useVetReviews, trackProviderView } from '@/hooks/useDirectoryVets';
 import { setSeoTags, injectJsonLd, formatCLP } from '@/lib/vetDirectory';
 import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
+import { BookingFlow } from '@/components/booking/BookingFlow';
 
 import { isOpenNow, getTodayHours } from '@/lib/openingHours';
 
@@ -489,72 +490,17 @@ export default function PerfilVetPublico() {
       <ResponsiveModal
         open={reservaOpen}
         onOpenChange={setReservaOpen}
-        title={`Solicitar consulta a ${v.display_name}`}
-        description="Cuéntale brevemente qué necesita tu mascota. Le enviaremos tu solicitud y te contactará para coordinar."
+        title={`Reservar con ${v.display_name}`}
+        description="Elige tu mascota, fecha y hora para reservar."
       >
-        <div className="space-y-3">
-          {/* Pet selector */}
-          {userPets.length > 1 && (
-            <div>
-              <Label htmlFor="reserva-pet">¿Para cuál mascota?</Label>
-              <select
-                id="reserva-pet"
-                value={selectedPetId}
-                onChange={(e) => setSelectedPetId(e.target.value)}
-                className="w-full mt-1 px-3 py-2 border border-input rounded-md text-sm bg-background"
-              >
-                <option value="">Selecciona tu mascota</option>
-                {userPets.map((pet) => (
-                  <option key={pet.id} value={pet.id}>
-                    {pet.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <div>
-            <Label htmlFor="reserva-date">Fecha y hora tentativa</Label>
-            <input
-              id="reserva-date"
-              type="datetime-local"
-              value={reservaDate}
-              onChange={(e) => setReservaDate(e.target.value)}
-              min={new Date().toISOString().slice(0, 16)}
-              className="w-full mt-1 px-3 py-2 border border-input rounded-md text-sm bg-background"
-            />
-            <p className="text-xs text-muted-foreground mt-1">
-              El veterinario confirmará el horario por chat.
-            </p>
-          </div>
-
-          <div>
-            <Label htmlFor="reserva-msg">Mensaje</Label>
-            <Textarea
-              id="reserva-msg"
-              value={reservaMessage}
-              onChange={(e) => setReservaMessage(e.target.value)}
-              placeholder="Ej: Mi perro Luna necesita su vacuna anual y un control general. Tiene 4 años, raza beagle."
-              rows={4}
-              maxLength={500}
-            />
-            <p className="text-xs text-muted-foreground mt-1">{reservaMessage.length}/500</p>
-          </div>
-
-          <Button
-            onClick={handleSubmitReserva}
-            disabled={reservaLoading}
-            className="w-full bg-purple-600 hover:bg-purple-700"
-          >
-            {reservaLoading ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-1 animate-spin" /> Enviando…
-              </>
-            ) : (
-              'Enviar solicitud'
-            )}
-          </Button>
-        </div>
+        <BookingFlow
+          providerId={v.id}
+          providerName={v.display_name ?? 'Profesional'}
+          serviceType="consulta_general"
+          bookingType="vet"
+          onSuccess={() => setReservaOpen(false)}
+          onClose={() => setReservaOpen(false)}
+        />
       </ResponsiveModal>
     </div>
   );
