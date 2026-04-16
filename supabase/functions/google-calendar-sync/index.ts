@@ -257,8 +257,8 @@ serve(async (req) => {
         const existingId = mappingByKey.get(`vet_booking:${b.id}`) || null;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const petName = (b as Record<string, any>).pets?.name ?? 'tu mascota';
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const provName =
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           (b as Record<string, any>).service_providers?.display_name ?? 'Veterinario';
         const start = new Date(b.scheduled_date);
         // If we have start_time, set exact hour; otherwise use the date as-is

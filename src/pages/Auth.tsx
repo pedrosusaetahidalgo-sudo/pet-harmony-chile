@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -39,11 +39,14 @@ const Auth = () => {
     rawReturnTo?.startsWith('/') && !rawReturnTo.startsWith('//') ? rawReturnTo : null;
   // Forward ?invitation=TOKEN through redirects so useClaimPetInvitation can process it
   const invitationToken = searchParams.get('invitation');
-  const buildRedirectUrl = (base: string) => {
-    if (!invitationToken) return base;
-    const sep = base.includes('?') ? '&' : '?';
-    return `${base}${sep}invitation=${encodeURIComponent(invitationToken)}`;
-  };
+  const buildRedirectUrl = useCallback(
+    (base: string) => {
+      if (!invitationToken) return base;
+      const sep = base.includes('?') ? '&' : '?';
+      return `${base}${sep}invitation=${encodeURIComponent(invitationToken)}`;
+    },
+    [invitationToken]
+  );
   const { signInWithFacebook, loading: facebookLoading } = useFacebookAuth();
   const hasRedirected = useRef(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -70,7 +73,7 @@ const Auth = () => {
         navigate(buildRedirectUrl(returnTo || '/home'), { replace: true });
       }
     });
-  }, [navigate, returnTo]);
+  }, [navigate, returnTo, buildRedirectUrl]);
 
   // redirectUser was removed — all auth redirects now use onAuthStateChange with window.location.href
 
@@ -128,7 +131,7 @@ const Auth = () => {
       subscription.unsubscribe();
       if (oauthTimeout) clearTimeout(oauthTimeout);
     };
-  }, [navigate, returnTo]);
+  }, [navigate, returnTo, buildRedirectUrl]);
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
