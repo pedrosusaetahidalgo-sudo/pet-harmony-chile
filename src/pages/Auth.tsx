@@ -18,6 +18,10 @@ import { track, EVENTS } from '@/lib/analytics';
 import { logger } from '@/lib/logger';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { useScrollOnFocus } from '@/hooks/useScrollOnFocus';
+
+// Feature flags: solo mostrar botones de social login si el provider está configurado
+const FACEBOOK_ENABLED = Boolean(import.meta.env.VITE_FACEBOOK_APP_ID);
+const APPLE_ENABLED = Boolean(import.meta.env.VITE_APPLE_SERVICE_ID);
 import { loginSchema, registerSchema } from '@/lib/schemas';
 import { generateDefaultName } from '@/lib/format';
 
@@ -531,17 +535,19 @@ const Auth = () => {
                   {/* Social Login Buttons */}
                   <div className="space-y-3">
                     <GoogleSignInButton mode="signin" />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full"
-                      onClick={handleFacebookLogin}
-                      disabled={facebookLoading}
-                    >
-                      <FaFacebook className="mr-2 h-4 w-4 text-blue-600" />
-                      {facebookLoading ? 'Conectando...' : 'Continuar con Facebook'}
-                    </Button>
-                    <AppleSignInButton mode="signin" />
+                    {FACEBOOK_ENABLED && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={handleFacebookLogin}
+                        disabled={facebookLoading}
+                      >
+                        <FaFacebook className="mr-2 h-4 w-4 text-blue-600" />
+                        {facebookLoading ? 'Conectando...' : 'Continuar con Facebook'}
+                      </Button>
+                    )}
+                    {APPLE_ENABLED && <AppleSignInButton mode="signin" />}
                   </div>
 
                   {!showEmailPassword ? (
@@ -598,16 +604,18 @@ const Auth = () => {
                   {/* Social Login Buttons */}
                   <div className="space-y-3">
                     <GoogleSignInButton mode="signup" />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="w-full"
-                      onClick={handleFacebookLogin}
-                    >
-                      <FaFacebook className="mr-2 h-4 w-4 text-blue-600" />
-                      Registrarse con Facebook
-                    </Button>
-                    <AppleSignInButton mode="signup" />
+                    {FACEBOOK_ENABLED && (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={handleFacebookLogin}
+                      >
+                        <FaFacebook className="mr-2 h-4 w-4 text-blue-600" />
+                        Registrarse con Facebook
+                      </Button>
+                    )}
+                    {APPLE_ENABLED && <AppleSignInButton mode="signup" />}
                   </div>
 
                   <div className="relative">

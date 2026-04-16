@@ -3,6 +3,9 @@ import { Button } from '@/components/ui/button';
 import { isWeb } from '@/lib/platform';
 
 const CONSENT_KEY = 'pf_cookie_consent';
+const HAS_TRACKING = Boolean(
+  import.meta.env.VITE_META_PIXEL_ID || import.meta.env.VITE_FIREBASE_API_KEY
+);
 
 type ConsentState = 'pending' | 'accepted' | 'rejected';
 
@@ -29,8 +32,8 @@ export const CookieConsentBanner = () => {
     setConsent('rejected');
   };
 
-  // Don't show on native or if already decided
-  if (!isWeb() || consent !== 'pending') return null;
+  // Don't show on native, if already decided, or if no tracking is configured
+  if (!isWeb() || !HAS_TRACKING || consent !== 'pending') return null;
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border p-4 shadow-lg animate-fade-in">
