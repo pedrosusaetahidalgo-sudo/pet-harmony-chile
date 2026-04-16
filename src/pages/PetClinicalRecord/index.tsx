@@ -20,12 +20,20 @@ import {
   Download,
   Plus,
   Syringe,
+  Camera,
+  Leaf,
+  ClipboardList,
+  Sparkles,
 } from '@/lib/icons';
 
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PetAssistant } from '@/components/ai/PetAssistant';
+import { SymptomTriage } from '@/components/ai/SymptomTriage';
+import { NutritionCoach } from '@/components/ai/NutritionCoach';
+import { WoundVision } from '@/components/ai/WoundVision';
+import { ConsultationPrep } from '@/components/ai/ConsultationPrep';
 import { MemorialFlow } from '@/components/memorial/MemorialFlow';
 import {
   Select,
@@ -35,7 +43,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import {
   Dialog,
   DialogContent,
@@ -45,7 +52,8 @@ import {
 } from '@/components/ui/dialog';
 
 import type { PetData } from './types';
-import { ClinicalRecordSkeleton, EmptyState, PetHeader } from './shared';
+import { ClinicalRecordSkeleton, PetHeader } from './shared';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { TabResumen } from './tabs/TabResumen';
 import { TabHistorial } from './tabs/TabHistorial';
 import { TabAlimentacion } from './tabs/TabAlimentacion';
@@ -58,7 +66,7 @@ import { useVetClinicalNotesByPet } from '@/hooks/useVetClinicalNotes';
 import { PageHeader } from '@/components/PageHeader';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { LINKS } from '@/lib/links';
-import { REMINDER_TYPES } from '@/lib/reminderTypes';
+import { AddReminderDialog } from '@/components/reminders/AddReminderDialog';
 import { MedicalSummaryButton } from '@/components/medical/MedicalSummaryButton';
 import { AddMedicalRecord } from '@/components/AddMedicalRecord';
 import { VaccinationCardOCR } from '@/components/onboarding/VaccinationCardOCR';
@@ -76,8 +84,10 @@ const PetClinicalRecord = () => {
   const { addReminder } = useReminders();
   const [showReminderForm, setShowReminderForm] = useState(false);
   const [showAssistant, setShowAssistant] = useState(false);
+  const [activeAITool, setActiveAITool] = useState<
+    'none' | 'triage' | 'nutrition' | 'wound' | 'prep'
+  >('none');
   const [showMemorialFlow, setShowMemorialFlow] = useState(false);
-  const [reminderData, setReminderData] = useState({ type: 'vaccine', title: '', due_date: '' });
 
   const {
     data: pet,
@@ -134,6 +144,7 @@ const PetClinicalRecord = () => {
   const [vetProviderId, setVetProviderId] = useState<string | null>(null);
   const [vetShareTokenId, setVetShareTokenId] = useState<string | null>(null);
   const [showRecorder, setShowRecorder] = useState(false);
+  const [activeTab, setActiveTab] = useState('resumen');
 
   // ?mode=vet forces vet view (used by provider navigation links)
   const forceVetMode = searchParams.get('mode') === 'vet';
@@ -205,6 +216,7 @@ const PetClinicalRecord = () => {
     return (
       <div className="container max-w-4xl mx-auto p-4 md:p-6">
         <EmptyState
+          variant="card"
           icon={AlertTriangle}
           title="Error al cargar"
           description="No se pudo cargar la ficha clínica. Intenta nuevamente."
@@ -217,6 +229,7 @@ const PetClinicalRecord = () => {
     return (
       <div className="container max-w-4xl mx-auto p-4 md:p-6">
         <EmptyState
+          variant="card"
           icon={Dog}
           title="Mascota no encontrada"
           description="No se encontro la mascota solicitada o no tienes permisos para verla."
@@ -233,6 +246,7 @@ const PetClinicalRecord = () => {
     return (
       <div className="container max-w-4xl mx-auto p-4 md:p-6">
         <EmptyState
+          variant="card"
           icon={Shield}
           title="Acceso restringido"
           description="Solo el dueño o un veterinario vinculado puede ver esta ficha clínica."
@@ -354,21 +368,89 @@ const PetClinicalRecord = () => {
           </>
         )}
 
+        {/* AI Tools Section */}
         {showAssistant ? (
           <PetAssistant petId={pet.id} petName={pet.name} onClose={() => setShowAssistant(false)} />
+        ) : activeAITool === 'triage' ? (
+          <SymptomTriage
+            petId={pet.id}
+            petName={pet.name}
+            onClose={() => setActiveAITool('none')}
+            onShowDirectory={() => navigate('/veterinarios')}
+          />
+        ) : activeAITool === 'nutrition' ? (
+          <NutritionCoach petId={pet.id} petName={pet.name} />
+        ) : activeAITool === 'wound' ? (
+          <WoundVision
+            petId={pet.id}
+            petName={pet.name}
+            onShowDirectory={() => navigate('/veterinarios')}
+          />
+        ) : activeAITool === 'prep' ? (
+          <ConsultationPrep petId={pet.id} petName={pet.name} />
         ) : (
+          <div className="space-y-2 mb-4">
+            <p className="text-xs font-medium text-muted-foreground flex items-center gap-1.5">
+              <Sparkles className="h-3 w-3" /> Herramientas IA
+            </p>
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowAssistant(true)}
+                className="h-9 text-xs gap-1.5 justify-start"
+              >
+                <Stethoscope className="h-3.5 w-3.5 text-primary" /> Asistente
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setActiveAITool('triage')}
+                className="h-9 text-xs gap-1.5 justify-start"
+              >
+                <Shield className="h-3.5 w-3.5 text-blue-600" /> Triage
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setActiveAITool('nutrition')}
+                className="h-9 text-xs gap-1.5 justify-start"
+              >
+                <Leaf className="h-3.5 w-3.5 text-green-600" /> Nutricion
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setActiveAITool('wound')}
+                className="h-9 text-xs gap-1.5 justify-start"
+              >
+                <Camera className="h-3.5 w-3.5 text-orange-600" /> Foto herida
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setActiveAITool('prep')}
+                className="h-9 text-xs gap-1.5 justify-start"
+              >
+                <ClipboardList className="h-3.5 w-3.5 text-indigo-600" /> Preparar consulta
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Close active AI tool (except PetAssistant which has its own close) */}
+        {activeAITool !== 'none' && (
           <Button
-            variant="outline"
+            variant="ghost"
             size="sm"
-            onClick={() => setShowAssistant(true)}
-            className="gap-2 mb-4"
+            className="text-xs mb-2"
+            onClick={() => setActiveAITool('none')}
           >
-            <Stethoscope className="h-3.5 w-3.5" />
-            Preguntar a la IA sobre {pet.name}
+            Cerrar herramienta
           </Button>
         )}
 
-        <Tabs defaultValue="resumen" className="w-full">
+        <Tabs id="clinical-tabs" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="relative">
             <TabsList
               className={`flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-1 px-1 sm:grid ${viewMode === 'vet' ? 'sm:grid-cols-5' : 'sm:grid-cols-6'}`}
@@ -463,75 +545,18 @@ const PetClinicalRecord = () => {
                   <p className="text-sm text-muted-foreground mb-3">
                     Programa recordatorios de vacunas, controles y medicamentos
                   </p>
-                  <Dialog open={showReminderForm} onOpenChange={setShowReminderForm}>
-                    <DialogTrigger asChild>
+                  <AddReminderDialog
+                    open={showReminderForm}
+                    onOpenChange={setShowReminderForm}
+                    petId={pet.id}
+                    onSubmit={(data) => addReminder.mutate(data)}
+                    trigger={
                       <Button variant="outline" size="sm">
                         <Plus className="h-4 w-4 mr-2" />
                         Agregar Recordatorio
                       </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Nuevo Recordatorio</DialogTitle>
-                      </DialogHeader>
-                      <div className="space-y-4 pt-2">
-                        <div className="space-y-2">
-                          <Label>Tipo</Label>
-                          <Select
-                            value={reminderData.type}
-                            onValueChange={(v) => setReminderData((d) => ({ ...d, type: v }))}
-                          >
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {REMINDER_TYPES.map((rt) => (
-                                <SelectItem key={rt.value} value={rt.value}>
-                                  {rt.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Título</Label>
-                          <Input
-                            value={reminderData.title}
-                            onChange={(e) =>
-                              setReminderData((d) => ({ ...d, title: e.target.value }))
-                            }
-                            placeholder="Ej: Vacuna antirrábica"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Fecha</Label>
-                          <Input
-                            type="date"
-                            value={reminderData.due_date}
-                            onChange={(e) =>
-                              setReminderData((d) => ({ ...d, due_date: e.target.value }))
-                            }
-                          />
-                        </div>
-                        <Button
-                          className="w-full"
-                          disabled={!reminderData.title || !reminderData.due_date}
-                          onClick={() => {
-                            addReminder.mutate({
-                              pet_id: pet.id,
-                              type: reminderData.type,
-                              title: reminderData.title,
-                              due_date: reminderData.due_date,
-                            });
-                            setShowReminderForm(false);
-                            setReminderData({ type: 'vaccine', title: '', due_date: '' });
-                          }}
-                        >
-                          Crear Recordatorio
-                        </Button>
-                      </div>
-                    </DialogContent>
-                  </Dialog>
+                    }
+                  />
                 </CardContent>
               </Card>
             )}
@@ -634,6 +659,12 @@ const PetClinicalRecord = () => {
             shareTokenId={vetShareTokenId}
             showRecorder={showRecorder}
             onRecorderChange={setShowRecorder}
+            onSwitchTab={(tab) => {
+              setActiveTab(tab);
+              // Scroll the tabs area into view after switching
+              const tabsArea = document.getElementById('clinical-tabs');
+              tabsArea?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
           />
         )}
 
