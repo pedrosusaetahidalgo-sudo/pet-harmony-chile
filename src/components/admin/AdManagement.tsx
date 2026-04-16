@@ -25,6 +25,7 @@ import {
   MousePointerClick,
   TrendingUp,
   Loader2,
+  AlertTriangle,
 } from '@/lib/icons';
 import {
   Dialog,
@@ -33,6 +34,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from '@/components/ui/dialog';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import type { Tables, TablesInsert, TablesUpdate } from '@/integrations/supabase/types';
@@ -41,10 +43,28 @@ type Partner = Tables<'partners'>;
 type PartnerInsert = TablesInsert<'partners'>;
 type PartnerUpdate = TablesUpdate<'partners'>;
 
+const PLACEMENT_COLORS: Record<string, string> = {
+  home: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+  services: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+  map: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+  content: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+  feed: 'bg-pink-500/20 text-pink-300 border-pink-500/30',
+};
+
+const CATEGORY_COLORS: Record<string, string> = {
+  food: 'bg-orange-500/20 text-orange-300 border-orange-500/30',
+  insurance: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30',
+  clinic: 'bg-red-500/20 text-red-300 border-red-500/30',
+  store: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
+  adoption: 'bg-pink-500/20 text-pink-300 border-pink-500/30',
+  general: 'bg-slate-500/20 text-slate-300 border-slate-500/30',
+};
+
 const AdManagement = () => {
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingAd, setEditingAd] = useState<Partner | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<Partner | null>(null);
   const [formData, setFormData] = useState({
     brand_name: '',
     ad_text: '',
@@ -83,7 +103,7 @@ const AdManagement = () => {
     },
     onError: (error: unknown) => {
       toast({
-        title: 'Algo salió mal',
+        title: 'Algo salio mal',
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
         variant: 'destructive',
       });
@@ -103,7 +123,7 @@ const AdManagement = () => {
     },
     onError: (error: unknown) => {
       toast({
-        title: 'Algo salió mal',
+        title: 'Algo salio mal',
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
         variant: 'destructive',
       });
@@ -118,13 +138,15 @@ const AdManagement = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['partners'] });
       toast({ title: 'Anuncio eliminado exitosamente' });
+      setDeleteTarget(null);
     },
     onError: (error: unknown) => {
       toast({
-        title: 'Algo salió mal',
+        title: 'Algo salio mal',
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
         variant: 'destructive',
       });
+      setDeleteTarget(null);
     },
   });
 
@@ -194,7 +216,7 @@ const AdManagement = () => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
       </div>
     );
   }
@@ -203,8 +225,8 @@ const AdManagement = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Gestión de Anuncios</h2>
-          <p className="text-muted-foreground">Administra los anuncios y socios estratégicos</p>
+          <h2 className="text-2xl font-bold text-white">Gestion de Anuncios</h2>
+          <p className="text-slate-400">Administra los anuncios y socios estrategicos</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
@@ -213,26 +235,30 @@ const AdManagement = () => {
               Nuevo Anuncio
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-slate-900 border-slate-800 text-white">
             <DialogHeader>
-              <DialogTitle>{editingAd ? 'Editar Anuncio' : 'Nuevo Anuncio'}</DialogTitle>
-              <DialogDescription>
+              <DialogTitle className="text-white">
+                {editingAd ? 'Editar Anuncio' : 'Nuevo Anuncio'}
+              </DialogTitle>
+              <DialogDescription className="text-slate-400">
                 Crea o edita un anuncio para mostrar en la plataforma
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Nombre de la Marca *</Label>
+                  <Label className="text-slate-300">Nombre de la Marca *</Label>
                   <Input
+                    className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
                     value={formData.brand_name}
                     onChange={(e) => setFormData({ ...formData, brand_name: e.target.value })}
                     placeholder="Ej: PetFood Chile"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Prioridad</Label>
+                  <Label className="text-slate-300">Prioridad</Label>
                   <Input
+                    className="bg-slate-800 border-slate-700 text-white"
                     type="number"
                     value={formData.priority}
                     onChange={(e) =>
@@ -247,18 +273,20 @@ const AdManagement = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Texto del Anuncio *</Label>
+                <Label className="text-slate-300">Texto del Anuncio *</Label>
                 <Textarea
+                  className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
                   value={formData.ad_text}
                   onChange={(e) => setFormData({ ...formData, ad_text: e.target.value })}
-                  placeholder="Descripción breve del anuncio..."
+                  placeholder="Descripcion breve del anuncio..."
                   rows={3}
                 />
               </div>
 
               <div className="space-y-2">
-                <Label>URL de la Imagen</Label>
+                <Label className="text-slate-300">URL de la Imagen</Label>
                 <Input
+                  className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
                   value={formData.ad_image_url}
                   onChange={(e) => setFormData({ ...formData, ad_image_url: e.target.value })}
                   placeholder="https://ejemplo.com/imagen.jpg"
@@ -266,8 +294,9 @@ const AdManagement = () => {
               </div>
 
               <div className="space-y-2">
-                <Label>Enlace del Anuncio *</Label>
+                <Label className="text-slate-300">Enlace del Anuncio *</Label>
                 <Input
+                  className="bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
                   value={formData.ad_link}
                   onChange={(e) => setFormData({ ...formData, ad_link: e.target.value })}
                   placeholder="https://ejemplo.com"
@@ -276,15 +305,15 @@ const AdManagement = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Ubicación *</Label>
+                  <Label className="text-slate-300">Ubicacion *</Label>
                   <Select
                     value={formData.placement}
                     onValueChange={(value) => setFormData({ ...formData, placement: value })}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-slate-800 border-slate-700">
                       <SelectItem value="home">Inicio</SelectItem>
                       <SelectItem value="services">Servicios</SelectItem>
                       <SelectItem value="map">Mapa</SelectItem>
@@ -294,20 +323,20 @@ const AdManagement = () => {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Categoría *</Label>
+                  <Label className="text-slate-300">Categoria *</Label>
                   <Select
                     value={formData.category}
                     onValueChange={(value) => setFormData({ ...formData, category: value })}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-slate-800 border-slate-700">
                       <SelectItem value="food">Alimentos</SelectItem>
                       <SelectItem value="insurance">Seguros</SelectItem>
-                      <SelectItem value="clinic">Clínicas</SelectItem>
+                      <SelectItem value="clinic">Clinicas</SelectItem>
                       <SelectItem value="store">Tiendas</SelectItem>
-                      <SelectItem value="adoption">Adopción</SelectItem>
+                      <SelectItem value="adoption">Adopcion</SelectItem>
                       <SelectItem value="general">General</SelectItem>
                     </SelectContent>
                   </Select>
@@ -316,16 +345,18 @@ const AdManagement = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>Fecha de Inicio (opcional)</Label>
+                  <Label className="text-slate-300">Fecha de Inicio (opcional)</Label>
                   <Input
+                    className="bg-slate-800 border-slate-700 text-white"
                     type="date"
                     value={formData.start_date}
                     onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Fecha de Fin (opcional)</Label>
+                  <Label className="text-slate-300">Fecha de Fin (opcional)</Label>
                   <Input
+                    className="bg-slate-800 border-slate-700 text-white"
                     type="date"
                     value={formData.end_date}
                     onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
@@ -339,15 +370,18 @@ const AdManagement = () => {
                   id="is_active"
                   checked={formData.is_active}
                   onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                  className="rounded"
+                  className="rounded border-slate-600 bg-slate-800"
                   aria-label="Activo"
                 />
-                <Label htmlFor="is_active">Activo</Label>
+                <Label htmlFor="is_active" className="text-slate-300">
+                  Activo
+                </Label>
               </div>
 
               <div className="flex justify-end gap-2">
                 <Button
                   variant="outline"
+                  className="border-slate-700 text-slate-300 hover:bg-slate-800"
                   onClick={() => {
                     setIsDialogOpen(false);
                     resetForm();
@@ -375,41 +409,70 @@ const AdManagement = () => {
 
       <div className="grid gap-4">
         {partners?.map((partner) => (
-          <Card key={partner.id}>
+          <Card key={partner.id} className="bg-slate-900 border-slate-800">
             <CardContent className="pt-6">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="font-semibold text-lg">{partner.brand_name}</h3>
-                    <Badge variant={partner.is_active ? 'default' : 'secondary'}>
+                  <div className="flex items-center gap-2 mb-2 flex-wrap">
+                    <h3 className="font-semibold text-lg text-white">{partner.brand_name}</h3>
+                    <Badge
+                      className={
+                        partner.is_active
+                          ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                          : 'bg-slate-500/20 text-slate-400 border border-slate-500/30'
+                      }
+                    >
                       {partner.is_active ? 'Activo' : 'Inactivo'}
                     </Badge>
-                    <Badge variant="outline">{partner.placement}</Badge>
-                    <Badge variant="outline">{partner.category}</Badge>
+                    <Badge
+                      className={`text-xs border ${PLACEMENT_COLORS[partner.placement] || 'bg-slate-500/20 text-slate-300 border-slate-500/30'}`}
+                    >
+                      {partner.placement}
+                    </Badge>
+                    <Badge
+                      className={`text-xs border ${CATEGORY_COLORS[partner.category] || 'bg-slate-500/20 text-slate-300 border-slate-500/30'}`}
+                    >
+                      {partner.category}
+                    </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground mb-4">{partner.ad_text}</p>
+                  <p className="text-sm text-slate-400 mb-4">{partner.ad_text}</p>
                   <div className="flex items-center gap-6 text-sm">
                     <div className="flex items-center gap-2">
-                      <Eye className="h-4 w-4 text-muted-foreground" />
-                      <span>{partner.impressions || 0} impresiones</span>
+                      <Eye className="h-4 w-4 text-slate-500" />
+                      <span className="font-mono text-slate-300">
+                        {(partner.impressions || 0).toLocaleString('es-CL')}
+                      </span>
+                      <span className="text-slate-500 text-xs">imp</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <MousePointerClick className="h-4 w-4 text-muted-foreground" />
-                      <span>{partner.clicks || 0} clics</span>
+                      <MousePointerClick className="h-4 w-4 text-slate-500" />
+                      <span className="font-mono text-slate-300">
+                        {(partner.clicks || 0).toLocaleString('es-CL')}
+                      </span>
+                      <span className="text-slate-500 text-xs">clics</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <TrendingUp className="h-4 w-4 text-muted-foreground" />
-                      <span>CTR: {getCTR(partner.impressions || 0, partner.clicks || 0)}%</span>
+                      <TrendingUp className="h-4 w-4 text-slate-500" />
+                      <span className="font-mono text-amber-300">
+                        {getCTR(partner.impressions || 0, partner.clicks || 0)}%
+                      </span>
+                      <span className="text-slate-500 text-xs">CTR</span>
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="outline" size="sm" onClick={() => handleEdit(partner)}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-slate-700 text-slate-300 hover:bg-slate-800"
+                    onClick={() => handleEdit(partner)}
+                  >
                     <Edit className="h-4 w-4" />
                   </Button>
                   <Button
                     variant="outline"
                     size="sm"
+                    className="border-slate-700 text-slate-300 hover:bg-slate-800"
                     onClick={() =>
                       toggleActiveMutation.mutate({
                         id: partner.id,
@@ -420,13 +483,10 @@ const AdManagement = () => {
                     {partner.is_active ? 'Desactivar' : 'Activar'}
                   </Button>
                   <Button
-                    variant="destructive"
+                    variant="outline"
                     size="sm"
-                    onClick={() => {
-                      if (confirm('¿Estás seguro de eliminar este anuncio?')) {
-                        deleteMutation.mutate(partner.id);
-                      }
-                    }}
+                    className="border-red-500/30 text-red-400 hover:bg-red-500/10"
+                    onClick={() => setDeleteTarget(partner)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -437,13 +497,51 @@ const AdManagement = () => {
         ))}
 
         {partners?.length === 0 && (
-          <Card>
+          <Card className="bg-slate-900 border-slate-800">
             <CardContent className="pt-6 text-center py-12">
-              <p className="text-muted-foreground">No hay anuncios creados aún</p>
+              <p className="text-slate-400">No hay anuncios creados aun</p>
             </CardContent>
           </Card>
         )}
       </div>
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <DialogContent className="bg-slate-900 border-slate-800 text-white max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-white">
+              <AlertTriangle className="h-5 w-5 text-red-400" />
+              Confirmar eliminacion
+            </DialogTitle>
+            <DialogDescription className="text-slate-400">
+              Estas seguro de eliminar el anuncio{' '}
+              <strong className="text-white">{deleteTarget?.brand_name}</strong>? Esta accion no se
+              puede deshacer.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              className="border-slate-700 text-slate-300 hover:bg-slate-800"
+              onClick={() => setDeleteTarget(null)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <Trash2 className="h-4 w-4 mr-2" />
+              )}
+              Eliminar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

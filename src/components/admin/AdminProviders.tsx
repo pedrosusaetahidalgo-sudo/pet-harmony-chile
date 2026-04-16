@@ -166,36 +166,50 @@ const AdminProviders = () => {
 
   const renderProviderTable = (providers: ProviderWithProfile[], type: ProviderType) => {
     if (!providers || providers.length === 0) {
-      return (
-        <p className="text-muted-foreground text-center py-8">No hay proveedores registrados</p>
-      );
+      return <p className="text-slate-400 text-center py-8">No hay proveedores registrados</p>;
     }
 
     return (
       <Table>
         <TableHeader>
-          <TableRow>
-            <TableHead>Nombre</TableHead>
-            <TableHead>Rating</TableHead>
-            <TableHead>Verificado</TableHead>
-            <TableHead>Activo</TableHead>
-            <TableHead>Acciones</TableHead>
+          <TableRow className="border-slate-800 hover:bg-transparent">
+            <TableHead className="text-slate-400 uppercase text-xs">Nombre</TableHead>
+            <TableHead className="text-slate-400 uppercase text-xs">Rating</TableHead>
+            <TableHead className="text-slate-400 uppercase text-xs">Verificado</TableHead>
+            <TableHead className="text-slate-400 uppercase text-xs">Activo</TableHead>
+            <TableHead className="text-slate-400 uppercase text-xs">Acciones</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {providers.map((provider) => (
-            <TableRow key={provider.id}>
-              <TableCell className="font-medium">
+            <TableRow key={provider.id} className="border-slate-800 hover:bg-slate-800/50">
+              <TableCell className="font-medium text-white">
                 {provider.profiles?.display_name || 'Sin nombre'}
               </TableCell>
-              <TableCell>{provider.rating?.toFixed(1) || 'N/A'}</TableCell>
+              <TableCell className="text-slate-300">
+                {provider.rating?.toFixed(1) || 'N/A'}
+              </TableCell>
               <TableCell>
-                <Badge variant={provider.is_verified ? 'default' : 'secondary'}>
+                <Badge
+                  variant="outline"
+                  className={
+                    provider.is_verified
+                      ? 'bg-green-500/20 text-green-300 border-green-500/30'
+                      : 'bg-amber-500/20 text-amber-300 border-amber-500/30'
+                  }
+                >
                   {provider.is_verified ? 'Verificado' : 'Pendiente'}
                 </Badge>
               </TableCell>
               <TableCell>
-                <Badge variant={provider.is_active ? 'default' : 'destructive'}>
+                <Badge
+                  variant="outline"
+                  className={
+                    provider.is_active
+                      ? 'bg-green-500/20 text-green-300 border-green-500/30'
+                      : 'bg-red-500/20 text-red-300 border-red-500/30'
+                  }
+                >
                   {provider.is_active ? 'Activo' : 'Inactivo'}
                 </Badge>
               </TableCell>
@@ -203,6 +217,7 @@ const AdminProviders = () => {
                 <Button
                   size="sm"
                   variant="outline"
+                  className="border-slate-700 text-slate-300 hover:bg-slate-700 hover:text-white"
                   onClick={() => {
                     setSelectedProvider(provider);
                     setProviderType(type);
@@ -213,7 +228,7 @@ const AdminProviders = () => {
                 {!provider.is_verified && (
                   <Button
                     size="sm"
-                    variant="default"
+                    className="bg-green-600 hover:bg-green-700 text-white"
                     onClick={() => verifyMutation.mutate({ id: provider.id, type, verified: true })}
                   >
                     <CheckCircle className="h-4 w-4" />
@@ -245,26 +260,38 @@ const AdminProviders = () => {
   };
 
   return (
-    <Card>
+    <Card className="bg-slate-900 border-slate-800">
       <CardHeader>
-        <CardTitle>Gestión de Proveedores de Servicios</CardTitle>
+        <CardTitle className="text-white">Gestion de Proveedores de Servicios</CardTitle>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="walkers">
-          <TabsList className="grid grid-cols-4 mb-4">
-            <TabsTrigger value="walkers" className="flex items-center gap-2">
+          <TabsList className="grid grid-cols-4 mb-4 bg-slate-800">
+            <TabsTrigger
+              value="walkers"
+              className="flex items-center gap-2 data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400"
+            >
               <Dog className="h-4 w-4" />
               <span className="hidden sm:inline">Paseadores</span>
             </TabsTrigger>
-            <TabsTrigger value="sitters" className="flex items-center gap-2">
+            <TabsTrigger
+              value="sitters"
+              className="flex items-center gap-2 data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400"
+            >
               <Home className="h-4 w-4" />
               <span className="hidden sm:inline">Cuidadores</span>
             </TabsTrigger>
-            <TabsTrigger value="vets" className="flex items-center gap-2">
+            <TabsTrigger
+              value="vets"
+              className="flex items-center gap-2 data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400"
+            >
               <Stethoscope className="h-4 w-4" />
               <span className="hidden sm:inline">Veterinarios</span>
             </TabsTrigger>
-            <TabsTrigger value="trainers" className="flex items-center gap-2">
+            <TabsTrigger
+              value="trainers"
+              className="flex items-center gap-2 data-[state=active]:bg-slate-700 data-[state=active]:text-white text-slate-400"
+            >
               <GraduationCap className="h-4 w-4" />
               <span className="hidden sm:inline">Entrenadores</span>
             </TabsTrigger>
@@ -291,8 +318,8 @@ const AdminProviders = () => {
           </TabsContent>
 
           <TabsContent value="vets">
-            <p className="text-muted-foreground text-center py-8">
-              La tabla de veterinarios aún no está implementada en el sistema
+            <p className="text-slate-400 text-center py-8">
+              La tabla de veterinarios aun no esta implementada en el sistema
             </p>
           </TabsContent>
 
@@ -308,35 +335,39 @@ const AdminProviders = () => {
         </Tabs>
 
         <Dialog open={!!selectedProvider} onOpenChange={() => setSelectedProvider(null)}>
-          <DialogContent className="max-w-2xl">
+          <DialogContent className="max-w-2xl bg-slate-900 border-slate-800">
             <DialogHeader>
-              <DialogTitle>Detalles del Proveedor</DialogTitle>
+              <DialogTitle className="text-white">Detalles del Proveedor</DialogTitle>
             </DialogHeader>
             {selectedProvider && (
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-muted-foreground">Nombre</p>
-                    <p className="font-medium">
+                    <p className="text-sm text-slate-400">Nombre</p>
+                    <p className="font-medium text-white">
                       {selectedProvider.profiles?.display_name || 'Sin nombre'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Rating</p>
-                    <p className="font-medium">{selectedProvider.rating?.toFixed(1) || 'N/A'}</p>
+                    <p className="text-sm text-slate-400">Rating</p>
+                    <p className="font-medium text-white">
+                      {selectedProvider.rating?.toFixed(1) || 'N/A'}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Experiencia</p>
-                    <p className="font-medium">{selectedProvider.experience_years || 0} años</p>
+                    <p className="text-sm text-slate-400">Experiencia</p>
+                    <p className="font-medium text-white">
+                      {selectedProvider.experience_years || 0} anos
+                    </p>
                   </div>
                   <div>
-                    <p className="text-sm text-muted-foreground">Reseñas</p>
-                    <p className="font-medium">{selectedProvider.total_reviews || 0}</p>
+                    <p className="text-sm text-slate-400">Resenas</p>
+                    <p className="font-medium text-white">{selectedProvider.total_reviews || 0}</p>
                   </div>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Bio</p>
-                  <p>{selectedProvider.bio || 'Sin descripción'}</p>
+                  <p className="text-sm text-slate-400">Bio</p>
+                  <p className="text-slate-300">{selectedProvider.bio || 'Sin descripcion'}</p>
                 </div>
                 <div className="flex gap-2">
                   <Button
@@ -348,7 +379,7 @@ const AdminProviders = () => {
                       })
                     }
                   >
-                    {selectedProvider.is_verified ? 'Quitar verificación' : 'Verificar'}
+                    {selectedProvider.is_verified ? 'Quitar verificacion' : 'Verificar'}
                   </Button>
                   <Button
                     variant={selectedProvider.is_active ? 'destructive' : 'default'}

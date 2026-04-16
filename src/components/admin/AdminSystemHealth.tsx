@@ -39,14 +39,6 @@ const CRITICAL_FUNCTIONS = [
   'reminder-cron',
 ];
 
-interface HealthEntry {
-  function_name: string;
-  status: string;
-  execution_time_ms: number | null;
-  error_message: string | null;
-  created_at: string;
-}
-
 interface FunctionStatus {
   name: string;
   lastStatus: 'success' | 'error' | 'timeout' | 'unknown';
@@ -170,13 +162,13 @@ export default function AdminSystemHealth() {
   const StatusIcon = ({ status }: { status: string }) => {
     switch (status) {
       case 'success':
-        return <CheckCircle className="h-4 w-4 text-green-500" />;
+        return <CheckCircle className="h-4 w-4 text-green-400" />;
       case 'error':
-        return <XCircle className="h-4 w-4 text-red-500" />;
+        return <XCircle className="h-4 w-4 text-red-400" />;
       case 'timeout':
-        return <Clock className="h-4 w-4 text-orange-500" />;
+        return <Clock className="h-4 w-4 text-orange-400" />;
       default:
-        return <Activity className="h-4 w-4 text-gray-400" />;
+        return <Activity className="h-4 w-4 text-slate-500" />;
     }
   };
 
@@ -184,99 +176,115 @@ export default function AdminSystemHealth() {
     <div className="space-y-6">
       {/* Summary KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
+        <Card className="bg-slate-900 border-slate-800">
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Cpu className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">Edge Functions</span>
+              <Cpu className="h-4 w-4 text-slate-500" />
+              <span className="text-sm font-medium text-slate-300">Edge Functions</span>
             </div>
-            <p className="text-2xl font-bold mt-1">{EDGE_FUNCTIONS.length}</p>
-            <p className="text-xs text-muted-foreground">desplegadas</p>
+            <p className="text-2xl font-bold mt-1 text-white">{EDGE_FUNCTIONS.length}</p>
+            <p className="text-xs text-slate-500">desplegadas</p>
           </CardContent>
         </Card>
-        <Card className={totalErrors > 0 ? 'border-red-300' : ''}>
+        <Card
+          className={`bg-slate-900 border-slate-800 ${totalErrors > 0 ? 'border-red-500/40' : ''}`}
+        >
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <XCircle
-                className={`h-4 w-4 ${totalErrors > 0 ? 'text-red-500' : 'text-green-500'}`}
+                className={`h-4 w-4 ${totalErrors > 0 ? 'text-red-400' : 'text-green-400'}`}
               />
-              <span className="text-sm font-medium">Errores (24h)</span>
+              <span className="text-sm font-medium text-slate-300">Errores (24h)</span>
             </div>
-            <p className="text-2xl font-bold mt-1">{totalErrors}</p>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-2xl font-bold mt-1 text-white">{totalErrors}</p>
+            <p className="text-xs text-slate-500">
               {criticalErrors.length > 0
-                ? `${criticalErrors.length} en funciones críticas`
-                : 'Sin errores críticos'}
+                ? `${criticalErrors.length} en funciones criticas`
+                : 'Sin errores criticos'}
             </p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-slate-900 border-slate-800">
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">IA Skills hoy</span>
+              <Zap className="h-4 w-4 text-slate-500" />
+              <span className="text-sm font-medium text-slate-300">IA Skills hoy</span>
             </div>
-            <p className="text-2xl font-bold mt-1">
+            <p className="text-2xl font-bold mt-1 text-white">
               {(aiUsage ?? []).reduce((s, a) => s + a.used, 0)}
             </p>
-            <p className="text-xs text-muted-foreground">invocaciones totales</p>
+            <p className="text-xs text-slate-500">invocaciones totales</p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="bg-slate-900 border-slate-800">
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-500" />
-              <span className="text-sm font-medium">Funciones OK</span>
+              <CheckCircle className="h-4 w-4 text-green-400" />
+              <span className="text-sm font-medium text-slate-300">Funciones OK</span>
             </div>
-            <p className="text-2xl font-bold mt-1">
+            <p className="text-2xl font-bold mt-1 text-white">
               {
                 (healthData ?? []).filter(
                   (f) => f.lastStatus === 'success' || f.lastStatus === 'unknown'
                 ).length
               }
             </p>
-            <p className="text-xs text-muted-foreground">de {EDGE_FUNCTIONS.length} totales</p>
+            <p className="text-xs text-slate-500">de {EDGE_FUNCTIONS.length} totales</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Edge Functions Status */}
-      <Card>
+      <Card className="bg-slate-900 border-slate-800">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 text-base text-white">
             <Cpu className="h-4 w-4" />
             Estado de Edge Functions
           </CardTitle>
-          <CardDescription>Últimas ejecuciones y errores en 24h</CardDescription>
+          <CardDescription className="text-slate-400">
+            Ultimas ejecuciones y errores en 24h
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {loadingHealth ? (
             <div className="space-y-2">
               {[1, 2, 3, 4, 5].map((i) => (
-                <Skeleton key={i} className="h-10 w-full" />
+                <Skeleton key={i} className="h-10 w-full bg-slate-800" />
               ))}
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b text-left">
-                    <th className="pb-2 font-medium">Función</th>
-                    <th className="pb-2 font-medium">Estado</th>
-                    <th className="pb-2 font-medium">Última ejecución</th>
-                    <th className="pb-2 font-medium">Latencia prom.</th>
-                    <th className="pb-2 font-medium">Errores 24h</th>
+                  <tr className="border-b border-slate-800 text-left">
+                    <th className="pb-2 font-medium text-slate-400 uppercase text-xs">Funcion</th>
+                    <th className="pb-2 font-medium text-slate-400 uppercase text-xs">Estado</th>
+                    <th className="pb-2 font-medium text-slate-400 uppercase text-xs">
+                      Ultima ejecucion
+                    </th>
+                    <th className="pb-2 font-medium text-slate-400 uppercase text-xs">
+                      Latencia prom.
+                    </th>
+                    <th className="pb-2 font-medium text-slate-400 uppercase text-xs">
+                      Errores 24h
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {(healthData ?? []).map((fn) => (
-                    <tr key={fn.name} className="border-b last:border-0">
+                    <tr
+                      key={fn.name}
+                      className="border-b border-slate-800 last:border-0 hover:bg-slate-800/50"
+                    >
                       <td className="py-2">
                         <div className="flex items-center gap-2">
-                          <span className="font-mono text-xs">{fn.name}</span>
+                          <span className="font-mono text-xs text-slate-300">{fn.name}</span>
                           {fn.isCritical && (
-                            <Badge variant="destructive" className="text-[10px] px-1 py-0">
-                              CRÍTICO
+                            <Badge
+                              variant="outline"
+                              className="text-[10px] px-1 py-0 bg-red-500/20 text-red-300 border-red-500/30"
+                            >
+                              CRITICO
                             </Badge>
                           )}
                         </div>
@@ -284,21 +292,24 @@ export default function AdminSystemHealth() {
                       <td className="py-2">
                         <StatusIcon status={fn.lastStatus} />
                       </td>
-                      <td className="py-2 text-muted-foreground text-xs">
+                      <td className="py-2 text-slate-500 text-xs">
                         {fn.lastRun
                           ? format(new Date(fn.lastRun), 'dd MMM HH:mm', { locale: es })
                           : 'Sin datos'}
                       </td>
-                      <td className="py-2 text-xs">
-                        {fn.avgLatencyMs != null ? `${fn.avgLatencyMs}ms` : '—'}
+                      <td className="py-2 text-xs text-slate-300">
+                        {fn.avgLatencyMs != null ? `${fn.avgLatencyMs}ms` : '\u2014'}
                       </td>
                       <td className="py-2">
                         {fn.errorsLast24h > 0 ? (
-                          <Badge variant="destructive" className="text-xs">
+                          <Badge
+                            variant="outline"
+                            className="text-xs bg-red-500/20 text-red-300 border-red-500/30"
+                          >
                             {fn.errorsLast24h}
                           </Badge>
                         ) : (
-                          <span className="text-xs text-green-600">0</span>
+                          <span className="text-xs text-green-400">0</span>
                         )}
                       </td>
                     </tr>
@@ -311,30 +322,30 @@ export default function AdminSystemHealth() {
       </Card>
 
       {/* AI Usage */}
-      <Card>
+      <Card className="bg-slate-900 border-slate-800">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-base">
+          <CardTitle className="flex items-center gap-2 text-base text-white">
             <Zap className="h-4 w-4" />
             Uso de IA hoy
           </CardTitle>
-          <CardDescription>Cuota consumida por skill</CardDescription>
+          <CardDescription className="text-slate-400">Cuota consumida por skill</CardDescription>
         </CardHeader>
         <CardContent>
           {loadingAi ? (
-            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full bg-slate-800" />
           ) : (aiUsage ?? []).length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">Sin uso de IA hoy</p>
+            <p className="text-sm text-slate-400 text-center py-4">Sin uso de IA hoy</p>
           ) : (
             <div className="space-y-3">
               {(aiUsage ?? []).map((skill) => (
                 <div key={skill.skill} className="space-y-1">
                   <div className="flex justify-between text-sm">
-                    <span className="font-mono text-xs">{skill.skill}</span>
-                    <span className="text-muted-foreground text-xs">
+                    <span className="font-mono text-xs text-slate-300">{skill.skill}</span>
+                    <span className="text-slate-500 text-xs">
                       {skill.used}/{skill.limit} ({skill.percentage}%)
                     </span>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-2">
+                  <div className="w-full bg-slate-800 rounded-full h-2">
                     <div
                       className={`h-2 rounded-full transition-all ${
                         skill.percentage >= 90

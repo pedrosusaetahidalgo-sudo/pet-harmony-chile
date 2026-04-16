@@ -2,10 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { PawPrint, Mail, Clock, User, Stethoscope } from '@/lib/icons';
+import { PawPrint, Mail, Clock, User, Stethoscope, RefreshCw } from '@/lib/icons';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { toast } from 'sonner';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
@@ -69,7 +71,7 @@ export default function AdminPendingPets() {
     return (
       <div className="space-y-3">
         {[1, 2, 3].map((i) => (
-          <Skeleton key={i} className="h-20 w-full rounded-xl" />
+          <Skeleton key={i} className="h-20 w-full rounded-xl bg-slate-800" />
         ))}
       </div>
     );
@@ -77,11 +79,11 @@ export default function AdminPendingPets() {
 
   if (!pets || pets.length === 0) {
     return (
-      <Card>
+      <Card className="bg-slate-900 border-slate-800">
         <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-          <PawPrint className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">Sin mascotas pendientes</h3>
-          <p className="text-muted-foreground text-sm">
+          <PawPrint className="h-12 w-12 text-slate-500 mb-4" />
+          <h3 className="text-lg font-semibold text-white mb-2">Sin mascotas pendientes</h3>
+          <p className="text-slate-400 text-sm">
             Todas las mascotas creadas por veterinarios ya fueron reclamadas por sus dueños.
           </p>
         </CardContent>
@@ -92,24 +94,24 @@ export default function AdminPendingPets() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Mascotas esperando dueño</h3>
-        <Badge variant="outline" className="bg-amber-50 text-amber-700 border-amber-200">
+        <h3 className="text-lg font-semibold text-white">Mascotas esperando dueño</h3>
+        <Badge variant="outline" className="bg-amber-500/20 text-amber-300 border-amber-500/30">
           {pets.length} pendiente{pets.length !== 1 ? 's' : ''}
         </Badge>
       </div>
 
       <div className="space-y-2">
         {pets.map((pet) => (
-          <Card key={pet.id} className="border-amber-100">
+          <Card key={pet.id} className="bg-slate-900 border-slate-800">
             <CardContent className="py-3 flex items-center gap-4">
-              <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
-                <PawPrint className="h-5 w-5 text-amber-600" />
+              <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center shrink-0">
+                <PawPrint className="h-5 w-5 text-amber-300" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold truncate">
+                <p className="text-sm font-semibold text-white truncate">
                   {pet.name} ({pet.species})
                 </p>
-                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-400">
                   {pet.pending_owner_email && (
                     <span className="flex items-center gap-1">
                       <Mail className="h-3 w-3" />
@@ -137,16 +139,29 @@ export default function AdminPendingPets() {
                   </span>
                 </div>
               </div>
-              <Badge
-                variant="outline"
-                className={
-                  pet.owner_invitation_sent_at
-                    ? 'bg-blue-50 text-blue-700 border-blue-200 text-[10px]'
-                    : 'bg-red-50 text-red-700 border-red-200 text-[10px]'
-                }
-              >
-                {pet.owner_invitation_sent_at ? 'Email enviado' : 'Sin enviar'}
-              </Badge>
+              <div className="flex items-center gap-2 shrink-0">
+                <Badge
+                  variant="outline"
+                  className={
+                    pet.owner_invitation_sent_at
+                      ? 'bg-blue-500/20 text-blue-300 border-blue-500/30 text-[10px]'
+                      : 'bg-red-500/20 text-red-300 border-red-500/30 text-[10px]'
+                  }
+                >
+                  {pet.owner_invitation_sent_at ? 'Email enviado' : 'Sin enviar'}
+                </Badge>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white text-xs"
+                  onClick={() => {
+                    toast.info('Reenviar invitacion aun no implementado');
+                  }}
+                >
+                  <RefreshCw className="h-3 w-3 mr-1" />
+                  Reenviar
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ))}

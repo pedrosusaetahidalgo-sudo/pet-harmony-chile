@@ -14,18 +14,18 @@ interface MetricCardProps {
 
 function MetricCard({ title, value, icon: Icon, description, loading }: MetricCardProps) {
   return (
-    <Card>
+    <Card className="bg-slate-900 border-slate-800">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground" />
+        <CardTitle className="text-sm font-medium text-slate-300">{title}</CardTitle>
+        <Icon className="h-4 w-4 text-slate-500" />
       </CardHeader>
       <CardContent>
         {loading ? (
-          <Skeleton className="h-8 w-20" />
+          <Skeleton className="h-8 w-20 bg-slate-800" />
         ) : (
           <>
-            <div className="text-2xl font-bold">{value}</div>
-            {description && <p className="text-xs text-muted-foreground mt-1">{description}</p>}
+            <div className="text-2xl font-bold text-white">{value}</div>
+            {description && <p className="text-xs text-slate-500 mt-1">{description}</p>}
           </>
         )}
       </CardContent>
@@ -103,7 +103,7 @@ export default function AdminMetrics() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-lg font-semibold mb-4">Métricas generales</h2>
+        <h2 className="text-lg font-semibold text-white mb-4">Metricas generales</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <MetricCard
             title="Usuarios registrados"
@@ -124,21 +124,21 @@ export default function AdminMetrics() {
             loading={loadingProviders}
           />
           <MetricCard
-            title="Reservas (7 días)"
+            title="Reservas (7 dias)"
             value={bookingCount ?? 0}
             icon={Calendar}
-            description="Últimos 7 días"
+            description="Ultimos 7 dias"
             loading={loadingBookings}
           />
           <MetricCard
-            title="Publicaciones (7 días)"
+            title="Publicaciones (7 dias)"
             value={postCount ?? 0}
             icon={TrendingUp}
-            description="Últimos 7 días"
+            description="Ultimos 7 dias"
             loading={loadingPosts}
           />
           <MetricCard
-            title="Reseñas totales"
+            title="Resenas totales"
             value={reviewCount ?? 0}
             icon={Star}
             loading={loadingReviews}

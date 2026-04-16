@@ -40,6 +40,7 @@ import {
   Copy,
   UserPlus,
   MapPin,
+  Phone,
 } from '@/lib/icons';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
@@ -74,18 +75,39 @@ const STATUS_CONFIG: Record<
     label: string;
     variant: 'default' | 'secondary' | 'destructive' | 'outline';
     icon: typeof Clock;
+    darkClass: string;
   }
 > = {
-  pendiente: { label: 'Pendiente', variant: 'outline', icon: Clock },
-  contactado: { label: 'Contactado', variant: 'secondary', icon: MessageSquare },
-  aprobado: { label: 'Aprobado', variant: 'default', icon: CheckCircle },
-  rechazado: { label: 'Rechazado', variant: 'destructive', icon: XCircle },
+  pendiente: {
+    label: 'Pendiente',
+    variant: 'outline',
+    icon: Clock,
+    darkClass: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+  },
+  contactado: {
+    label: 'Contactado',
+    variant: 'secondary',
+    icon: MessageSquare,
+    darkClass: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+  },
+  aprobado: {
+    label: 'Aprobado',
+    variant: 'default',
+    icon: CheckCircle,
+    darkClass: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+  },
+  rechazado: {
+    label: 'Rechazado',
+    variant: 'destructive',
+    icon: XCircle,
+    darkClass: 'bg-red-500/20 text-red-300 border-red-500/30',
+  },
 };
 
 const CATEGORIA_LABELS: Record<string, string> = {
   veterinaria: 'Veterinaria',
   tienda: 'Tienda',
-  peluqueria: 'Peluquería',
+  peluqueria: 'Peluqueria',
   paseador: 'Paseador',
   cuidador: 'Cuidador',
   entrenador: 'Entrenador',
@@ -93,11 +115,11 @@ const CATEGORIA_LABELS: Record<string, string> = {
   seguro: 'Seguro',
   crematorio: 'Crematorio',
   transporte: 'Transporte',
-  alimento: 'Alimentación',
+  alimento: 'Alimentacion',
   otro: 'Otro',
 };
 
-// Categorías que van directo a tabla `partners` (directorio/mapa, sin user_id)
+// Categorias que van directo a tabla `partners` (directorio/mapa, sin user_id)
 const DIRECTORY_CATEGORIES = new Set([
   'tienda',
   'seguro',
@@ -108,7 +130,7 @@ const DIRECTORY_CATEGORIES = new Set([
   'otro',
 ]);
 
-// Categorías que requieren cuenta de usuario (service_providers, groomer, walker, etc.)
+// Categorias que requieren cuenta de usuario (service_providers, groomer, walker, etc.)
 const PROFILE_CATEGORIES = new Set([
   'veterinaria',
   'peluqueria',
@@ -117,7 +139,7 @@ const PROFILE_CATEGORIES = new Set([
   'entrenador',
 ]);
 
-// Mapeo categoría → category para tabla partners
+// Mapeo categoria -> category para tabla partners
 const CAT_TO_PARTNER_CATEGORY: Record<string, string> = {
   tienda: 'store',
   seguro: 'insurance',
@@ -202,7 +224,7 @@ export default function AdminPartnerSubmissions() {
         .from('partner_submissions')
         .update({
           status: 'aprobado',
-          notas_admin: `Creado en directorio automáticamente el ${new Date().toLocaleDateString('es-CL')}`,
+          notas_admin: `Creado en directorio automaticamente el ${new Date().toLocaleDateString('es-CL')}`,
         })
         .eq('id', sub.id);
       if (updateErr) throw updateErr;
@@ -221,9 +243,18 @@ export default function AdminPartnerSubmissions() {
     const base = window.location.origin;
     const link = sub.categoria === 'veterinaria' ? `${base}/registro-veterinario` : `${base}/auth`;
     navigator.clipboard.writeText(
-      `Hola ${sub.nombre_contacto}, tu solicitud en Paw Friend fue aprobada. Crea tu cuenta aquí para aparecer en el directorio: ${link}`
+      `Hola ${sub.nombre_contacto}, tu solicitud en Paw Friend fue aprobada. Crea tu cuenta aqui para aparecer en el directorio: ${link}`
     );
-    toast.success('Mensaje de invitación copiado al portapapeles');
+    toast.success('Mensaje de invitacion copiado al portapapeles');
+  };
+
+  const openWhatsApp = (phone: string, name: string) => {
+    const cleanPhone = phone.replace(/\D/g, '');
+    const fullPhone = cleanPhone.startsWith('56') ? cleanPhone : `56${cleanPhone}`;
+    const msg = encodeURIComponent(
+      `Hola ${name}, te escribimos desde Paw Friend respecto a tu solicitud de partner.`
+    );
+    window.open(`https://wa.me/${fullPhone}?text=${msg}`, '_blank');
   };
 
   const filtered = submissions.filter((s) => {
@@ -256,25 +287,41 @@ export default function AdminPartnerSubmissions() {
 
   return (
     <div className="space-y-4">
-      <Card>
+      <Card className="bg-slate-900 border-slate-800">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-white">
             <Inbox className="h-5 w-5" />
             Solicitudes de Partners ({counts.total})
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {/* Counters */}
+          {/* Pipeline stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
             {[
-              { label: 'Pendientes', count: counts.pendiente, color: 'text-amber-600 bg-amber-50' },
-              { label: 'Contactados', count: counts.contactado, color: 'text-blue-600 bg-blue-50' },
-              { label: 'Aprobados', count: counts.aprobado, color: 'text-green-600 bg-green-50' },
-              { label: 'Total', count: counts.total, color: 'text-slate-600 bg-slate-50' },
+              {
+                label: 'Pendientes',
+                count: counts.pendiente,
+                color: 'bg-amber-500/10 text-amber-300 border border-amber-500/20',
+              },
+              {
+                label: 'Contactados',
+                count: counts.contactado,
+                color: 'bg-blue-500/10 text-blue-300 border border-blue-500/20',
+              },
+              {
+                label: 'Aprobados',
+                count: counts.aprobado,
+                color: 'bg-emerald-500/10 text-emerald-300 border border-emerald-500/20',
+              },
+              {
+                label: 'Total',
+                count: counts.total,
+                color: 'bg-indigo-500/10 text-indigo-300 border border-indigo-500/20',
+              },
             ].map((c) => (
               <div key={c.label} className={`rounded-lg p-3 text-center ${c.color}`}>
                 <p className="text-2xl font-bold">{c.count}</p>
-                <p className="text-xs font-medium">{c.label}</p>
+                <p className="text-xs font-medium opacity-80">{c.label}</p>
               </div>
             ))}
           </div>
@@ -282,19 +329,19 @@ export default function AdminPartnerSubmissions() {
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-2 mb-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
               <Input
                 placeholder="Buscar por nombre, email, comuna..."
-                className="pl-9"
+                className="pl-9 bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="w-[150px] bg-slate-800 border-slate-700 text-white">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-slate-800 border-slate-700">
                 <SelectItem value="all">Todos</SelectItem>
                 <SelectItem value="pendiente">Pendiente</SelectItem>
                 <SelectItem value="contactado">Contactado</SelectItem>
@@ -303,10 +350,10 @@ export default function AdminPartnerSubmissions() {
               </SelectContent>
             </Select>
             <Select value={catFilter} onValueChange={setCatFilter}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Categoría" />
+              <SelectTrigger className="w-[150px] bg-slate-800 border-slate-700 text-white">
+                <SelectValue placeholder="Categoria" />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-slate-800 border-slate-700">
                 <SelectItem value="all">Todas</SelectItem>
                 {Object.entries(CATEGORIA_LABELS).map(([k, v]) => (
                   <SelectItem key={k} value={k}>
@@ -319,25 +366,25 @@ export default function AdminPartnerSubmissions() {
 
           {/* Table */}
           {isLoading ? (
-            <p className="text-center text-muted-foreground py-8">Cargando...</p>
+            <p className="text-center text-slate-400 py-8">Cargando...</p>
           ) : filtered.length === 0 ? (
-            <p className="text-center text-muted-foreground py-8">
+            <p className="text-center text-slate-400 py-8">
               {submissions.length === 0
-                ? 'No hay solicitudes aún'
+                ? 'No hay solicitudes aun'
                 : 'Sin resultados para los filtros'}
             </p>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
-                  <TableRow>
-                    <TableHead>Negocio</TableHead>
-                    <TableHead>Categoría</TableHead>
-                    <TableHead>Contacto</TableHead>
-                    <TableHead>Comuna</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Fecha</TableHead>
-                    <TableHead className="w-[60px]"></TableHead>
+                  <TableRow className="border-slate-800 hover:bg-transparent">
+                    <TableHead className="text-slate-400">Negocio</TableHead>
+                    <TableHead className="text-slate-400">Categoria</TableHead>
+                    <TableHead className="text-slate-400">Contacto</TableHead>
+                    <TableHead className="text-slate-400">Comuna</TableHead>
+                    <TableHead className="text-slate-400">Status</TableHead>
+                    <TableHead className="text-slate-400">Fecha</TableHead>
+                    <TableHead className="w-[100px] text-slate-400"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -346,34 +393,56 @@ export default function AdminPartnerSubmissions() {
                     return (
                       <TableRow
                         key={sub.id}
-                        className="cursor-pointer hover:bg-muted/50"
+                        className="cursor-pointer border-slate-800 hover:bg-slate-800/50"
                         onClick={() => openDetail(sub)}
                       >
-                        <TableCell className="font-medium">{sub.nombre_negocio}</TableCell>
+                        <TableCell className="font-medium text-white">
+                          {sub.nombre_negocio}
+                        </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="text-xs">
+                          <Badge className="text-xs bg-slate-500/20 text-slate-300 border border-slate-500/30">
                             {CATEGORIA_LABELS[sub.categoria] || sub.categoria}
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <div className="text-sm">{sub.nombre_contacto}</div>
-                          <div className="text-xs text-muted-foreground">{sub.email}</div>
+                          <div className="text-sm text-white">{sub.nombre_contacto}</div>
+                          <div className="text-xs text-slate-400">{sub.email}</div>
                         </TableCell>
-                        <TableCell className="text-sm">{sub.comuna || '—'}</TableCell>
+                        <TableCell className="text-sm text-slate-300">
+                          {sub.comuna || '--'}
+                        </TableCell>
                         <TableCell>
-                          <Badge variant={st.variant} className="text-xs">
-                            {st.label}
-                          </Badge>
+                          <Badge className={`text-xs border ${st.darkClass}`}>{st.label}</Badge>
                         </TableCell>
-                        <TableCell className="text-xs text-muted-foreground">
+                        <TableCell className="text-xs text-slate-400">
                           {sub.created_at
                             ? format(new Date(sub.created_at), 'dd MMM', { locale: es })
-                            : '—'}
+                            : '--'}
                         </TableCell>
                         <TableCell>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <Eye className="h-4 w-4" />
-                          </Button>
+                          <div className="flex items-center gap-1">
+                            {sub.telefono && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-emerald-400 hover:text-emerald-300 hover:bg-slate-800"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  openWhatsApp(sub.telefono!, sub.nombre_contacto);
+                                }}
+                                title="WhatsApp"
+                              >
+                                <Phone className="h-4 w-4" />
+                              </Button>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-slate-400 hover:text-white hover:bg-slate-800"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     );
@@ -387,46 +456,59 @@ export default function AdminPartnerSubmissions() {
 
       {/* Detail dialog */}
       <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto bg-slate-900 border-slate-800 text-white">
           {selected && (
             <>
               <DialogHeader>
-                <DialogTitle>{selected.nombre_negocio}</DialogTitle>
+                <DialogTitle className="text-white">{selected.nombre_negocio}</DialogTitle>
               </DialogHeader>
 
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
-                    <p className="text-muted-foreground text-xs">Categoría</p>
-                    <p className="font-medium">
+                    <p className="text-slate-400 text-xs">Categoria</p>
+                    <p className="font-medium text-white">
                       {CATEGORIA_LABELS[selected.categoria] || selected.categoria}
                     </p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Contacto</p>
-                    <p className="font-medium">{selected.nombre_contacto}</p>
+                    <p className="text-slate-400 text-xs">Contacto</p>
+                    <p className="font-medium text-white">{selected.nombre_contacto}</p>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Email</p>
+                    <p className="text-slate-400 text-xs">Email</p>
                     <a
                       href={`mailto:${selected.email}`}
-                      className="font-medium text-brand-600 hover:underline"
+                      className="font-medium text-blue-400 hover:underline"
                     >
                       {selected.email}
                     </a>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-xs">Teléfono</p>
-                    <p className="font-medium">{selected.telefono || '—'}</p>
+                    <p className="text-slate-400 text-xs">Telefono</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium text-white">{selected.telefono || '--'}</p>
+                      {selected.telefono && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-6 w-6 text-emerald-400 hover:text-emerald-300"
+                          onClick={() => openWhatsApp(selected.telefono!, selected.nombre_contacto)}
+                          title="WhatsApp"
+                        >
+                          <Phone className="h-3 w-3" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                   {selected.website && (
                     <div>
-                      <p className="text-muted-foreground text-xs">Website</p>
+                      <p className="text-slate-400 text-xs">Website</p>
                       <a
                         href={selected.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="font-medium text-brand-600 hover:underline flex items-center gap-1"
+                        className="font-medium text-blue-400 hover:underline flex items-center gap-1"
                       >
                         Abrir <ExternalLink className="h-3 w-3" />
                       </a>
@@ -434,44 +516,47 @@ export default function AdminPartnerSubmissions() {
                   )}
                   {selected.instagram && (
                     <div>
-                      <p className="text-muted-foreground text-xs">Instagram</p>
-                      <p className="font-medium">{selected.instagram}</p>
+                      <p className="text-slate-400 text-xs">Instagram</p>
+                      <p className="font-medium text-white">{selected.instagram}</p>
                     </div>
                   )}
                   {selected.comuna && (
                     <div>
-                      <p className="text-muted-foreground text-xs">Comuna</p>
-                      <p className="font-medium">{selected.comuna}</p>
+                      <p className="text-slate-400 text-xs">Comuna</p>
+                      <p className="font-medium text-white">{selected.comuna}</p>
                     </div>
                   )}
                   {selected.ciudad && (
                     <div>
-                      <p className="text-muted-foreground text-xs">Ciudad</p>
-                      <p className="font-medium">{selected.ciudad}</p>
+                      <p className="text-slate-400 text-xs">Ciudad</p>
+                      <p className="font-medium text-white">{selected.ciudad}</p>
                     </div>
                   )}
                 </div>
 
                 {selected.direccion && (
                   <div className="text-sm">
-                    <p className="text-muted-foreground text-xs">Dirección</p>
-                    <p>{selected.direccion}</p>
+                    <p className="text-slate-400 text-xs">Direccion</p>
+                    <p className="text-white">{selected.direccion}</p>
                   </div>
                 )}
 
                 {selected.descripcion && (
                   <div className="text-sm">
-                    <p className="text-muted-foreground text-xs">Descripción</p>
-                    <p className="whitespace-pre-wrap">{selected.descripcion}</p>
+                    <p className="text-slate-400 text-xs">Descripcion</p>
+                    <p className="whitespace-pre-wrap text-white">{selected.descripcion}</p>
                   </div>
                 )}
 
                 {selected.servicios_ofrecidos && selected.servicios_ofrecidos.length > 0 && (
                   <div className="text-sm">
-                    <p className="text-muted-foreground text-xs mb-1">Servicios</p>
+                    <p className="text-slate-400 text-xs mb-1">Servicios</p>
                     <div className="flex flex-wrap gap-1">
                       {selected.servicios_ofrecidos.map((s, i) => (
-                        <Badge key={i} variant="secondary" className="text-xs">
+                        <Badge
+                          key={i}
+                          className="text-xs bg-slate-500/20 text-slate-300 border border-slate-500/30"
+                        >
                           {s}
                         </Badge>
                       ))}
@@ -481,25 +566,25 @@ export default function AdminPartnerSubmissions() {
 
                 {selected.horario && (
                   <div className="text-sm">
-                    <p className="text-muted-foreground text-xs">Horario</p>
-                    <p>{selected.horario}</p>
+                    <p className="text-slate-400 text-xs">Horario</p>
+                    <p className="text-white">{selected.horario}</p>
                   </div>
                 )}
 
-                <hr />
+                <hr className="border-slate-800" />
 
                 {/* Admin controls */}
                 <div className="space-y-3">
                   <div>
-                    <p className="text-sm font-medium mb-1">Estado</p>
+                    <p className="text-sm font-medium mb-1 text-slate-300">Estado</p>
                     <Select
                       value={statusEdit}
                       onValueChange={(v) => setStatusEdit(v as PartnerStatus)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-slate-800 border-slate-700 text-white">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-slate-800 border-slate-700">
                         <SelectItem value="pendiente">Pendiente</SelectItem>
                         <SelectItem value="contactado">Contactado</SelectItem>
                         <SelectItem value="aprobado">Aprobado</SelectItem>
@@ -508,12 +593,12 @@ export default function AdminPartnerSubmissions() {
                     </Select>
                   </div>
                   <div>
-                    <p className="text-sm font-medium mb-1">Notas internas</p>
+                    <p className="text-sm font-medium mb-1 text-slate-300">Notas internas</p>
                     <Textarea
                       value={notasEdit}
                       onChange={(e) => setNotasEdit(e.target.value)}
                       placeholder="Notas privadas (solo admin)..."
-                      className="min-h-[80px]"
+                      className="min-h-[80px] bg-slate-800 border-slate-700 text-white placeholder:text-slate-500"
                     />
                   </div>
                 </div>
@@ -521,10 +606,18 @@ export default function AdminPartnerSubmissions() {
 
               {/* Quick actions */}
               {selected.status !== 'aprobado' && (
-                <div className="flex flex-col gap-2 pt-2 border-t">
-                  <p className="text-xs font-semibold text-muted-foreground uppercase">
-                    Acciones rápidas
-                  </p>
+                <div className="flex flex-col gap-2 pt-2 border-t border-slate-800">
+                  <p className="text-xs font-semibold text-slate-500 uppercase">Acciones rapidas</p>
+                  {selected.telefono && (
+                    <Button
+                      variant="outline"
+                      className="w-full border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/10"
+                      onClick={() => openWhatsApp(selected.telefono!, selected.nombre_contacto)}
+                    >
+                      <Phone className="h-4 w-4 mr-1.5" />
+                      Contactar por WhatsApp
+                    </Button>
+                  )}
                   {DIRECTORY_CATEGORIES.has(selected.categoria) && (
                     <Button
                       variant="default"
@@ -541,18 +634,22 @@ export default function AdminPartnerSubmissions() {
                   {PROFILE_CATEGORIES.has(selected.categoria) && (
                     <Button
                       variant="outline"
-                      className="w-full"
+                      className="w-full border-slate-700 text-slate-300 hover:bg-slate-800"
                       onClick={() => copyInviteLink(selected)}
                     >
                       <Copy className="h-4 w-4 mr-1.5" />
-                      Copiar mensaje de invitación
+                      Copiar mensaje de invitacion
                     </Button>
                   )}
                 </div>
               )}
 
               <DialogFooter className="gap-2">
-                <Button variant="outline" onClick={() => setSelected(null)}>
+                <Button
+                  variant="outline"
+                  className="border-slate-700 text-slate-300 hover:bg-slate-800"
+                  onClick={() => setSelected(null)}
+                >
                   Cancelar
                 </Button>
                 <Button

@@ -6,10 +6,10 @@ import {
   Stethoscope,
   Loader2,
   ExternalLink,
-  Upload,
   Brain,
   AlertTriangle,
-} from 'lucide-react';
+  Clock,
+} from '@/lib/icons';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +21,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useAdminAudit } from '@/hooks/useAdminAudit';
 import { toast } from 'sonner';
 import type { ServiceProviderRow } from '@/types/vetDirectory';
+import { differenceInDays } from 'date-fns';
 
 type Vet = ServiceProviderRow;
 
@@ -32,6 +33,23 @@ interface VerificationResult {
   document_quality: string;
   auto_approved: boolean;
   reasoning?: string;
+}
+
+function WaitingBadge({ createdAt }: { createdAt: string | null }) {
+  if (!createdAt) return null;
+  const days = differenceInDays(new Date(), new Date(createdAt));
+  let colorClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+  if (days > 7) {
+    colorClass = 'bg-red-500/20 text-red-300 border-red-500/30';
+  } else if (days >= 2) {
+    colorClass = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+  }
+  return (
+    <Badge className={`text-xs border ${colorClass}`}>
+      <Clock className="h-3 w-3 mr-1" />
+      {days === 0 ? 'Hoy' : `${days}d esperando`}
+    </Badge>
+  );
 }
 
 /**
@@ -123,7 +141,7 @@ export default function AdminVetVerifications() {
       if (error) throw error;
     },
     onSuccess: (_d, { vetId }) => {
-      toast.success('Verificación rechazada');
+      toast.success('Verificacion rechazada');
       logAction('provider.reject', 'provider', vetId, { method: 'manual_vet_verification' });
       setRejectingId(null);
       setRejectReason('');
@@ -160,7 +178,7 @@ export default function AdminVetVerifications() {
 
       if (!response.ok) {
         const err = await response.json();
-        throw new Error(err.error || 'Error en verificación');
+        throw new Error(err.error || 'Error en verificacion');
       }
 
       return response.json() as Promise<VerificationResult>;
@@ -186,7 +204,7 @@ export default function AdminVetVerifications() {
 
   const handleFileUpload = async (vetId: string, file: File) => {
     if (!file.type.startsWith('image/')) {
-      toast.error('Solo se aceptan imágenes');
+      toast.error('Solo se aceptan imagenes');
       return;
     }
     if (file.size > 10 * 1024 * 1024) {
@@ -206,17 +224,29 @@ export default function AdminVetVerifications() {
 
   function ScoreBadge({ score }: { score: number }) {
     if (score >= 80)
-      return <Badge className="bg-green-100 text-green-800">{score}% - Auto-aprobado</Badge>;
+      return (
+        <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+          {score}% - Auto-aprobado
+        </Badge>
+      );
     if (score >= 50)
-      return <Badge className="bg-yellow-100 text-yellow-800">{score}% - Revisar</Badge>;
-    return <Badge className="bg-red-100 text-red-800">{score}% - Manual</Badge>;
+      return (
+        <Badge className="bg-amber-500/20 text-amber-300 border border-amber-500/30">
+          {score}% - Revisar
+        </Badge>
+      );
+    return (
+      <Badge className="bg-red-500/20 text-red-300 border border-red-500/30">
+        {score}% - Manual
+      </Badge>
+    );
   }
 
   if (isLoading) {
     return (
       <div className="space-y-4">
-        <Skeleton className="h-32 w-full" />
-        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-32 w-full bg-slate-800" />
+        <Skeleton className="h-32 w-full bg-slate-800" />
       </div>
     );
   }
@@ -239,16 +269,16 @@ export default function AdminVetVerifications() {
       />
 
       {/* Pendientes */}
-      <Card>
+      <Card className="bg-slate-900 border-slate-800">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Stethoscope className="h-5 w-5 text-amber-500" />
-            Pendientes de verificación ({pending?.length ?? 0})
+          <CardTitle className="flex items-center gap-2 text-white">
+            <Stethoscope className="h-5 w-5 text-amber-400" />
+            Pendientes de verificacion ({pending?.length ?? 0})
           </CardTitle>
         </CardHeader>
         <CardContent>
           {!pending || pending.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-6">
+            <p className="text-sm text-slate-400 text-center py-6">
               No hay verificaciones pendientes.
             </p>
           ) : (
@@ -258,80 +288,95 @@ export default function AdminVetVerifications() {
                 const isVerifying = verifyingId === vet.id;
 
                 return (
-                  <div key={vet.id} className="border rounded-lg p-4">
+                  <div
+                    key={vet.id}
+                    className="border border-slate-800 rounded-lg p-4 bg-slate-800/50"
+                  >
                     <div className="flex items-start gap-4">
                       {vet.avatar_url ? (
                         <img
                           src={vet.avatar_url}
                           alt={vet.display_name}
-                          className="w-14 h-14 rounded-full object-cover border"
+                          className="w-14 h-14 rounded-full object-cover border border-slate-700"
                         />
                       ) : (
-                        <div className="w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center">
-                          <Stethoscope className="h-6 w-6 text-purple-500" />
+                        <div className="w-14 h-14 rounded-full bg-purple-500/20 flex items-center justify-center">
+                          <Stethoscope className="h-6 w-6 text-purple-300" />
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2 mb-1">
-                          <h3 className="font-semibold truncate">{vet.display_name}</h3>
+                        <div className="flex items-center justify-between gap-2 mb-1 flex-wrap">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <h3 className="font-semibold truncate text-white">
+                              {vet.display_name}
+                            </h3>
+                            <WaitingBadge createdAt={vet.created_at} />
+                          </div>
                           {vet.slug && (
                             <a
                               href={`/veterinarios/${vet.slug}`}
                               target="_blank"
                               rel="noreferrer"
-                              className="text-xs text-purple-700 hover:underline flex items-center gap-1"
+                              className="text-xs text-purple-300 hover:underline flex items-center gap-1"
                             >
                               Ver perfil <ExternalLink className="h-3 w-3" />
                             </a>
                           )}
                         </div>
-                        <div className="text-sm space-y-0.5">
+                        <div className="text-sm space-y-0.5 text-slate-300">
                           <p>
-                            <strong>N° Colmevet:</strong>{' '}
-                            <span className="font-mono">{vet.license_number}</span>
+                            <strong className="text-slate-200">N Colmevet:</strong>{' '}
+                            <span className="font-mono text-amber-300">{vet.license_number}</span>
                           </p>
                           <p>
-                            <strong>Comuna:</strong> {vet.commune ?? '—'}
+                            <strong className="text-slate-200">Comuna:</strong>{' '}
+                            {vet.commune ?? '--'}
                           </p>
                           {vet.public_email && (
                             <p>
-                              <strong>Email:</strong> {vet.public_email}
+                              <strong className="text-slate-200">Email:</strong> {vet.public_email}
                             </p>
                           )}
                         </div>
 
                         {/* AI verification result */}
                         {aiResult && (
-                          <div className="mt-2 p-2 bg-muted/50 rounded-md text-xs space-y-1">
+                          <div className="mt-2 p-3 bg-slate-900/80 border border-slate-700 rounded-md text-xs space-y-1">
                             <div className="flex items-center gap-2">
-                              <Brain className="h-3.5 w-3.5 text-purple-500" />
-                              <span className="font-medium">Resultado IA:</span>
+                              <Brain className="h-3.5 w-3.5 text-purple-300" />
+                              <span className="font-medium text-slate-200">Resultado IA:</span>
                               <ScoreBadge score={aiResult.confidence_score} />
                             </div>
                             {aiResult.extracted_name && (
-                              <p>
-                                Nombre extraído: <strong>{aiResult.extracted_name}</strong>
+                              <p className="text-slate-300">
+                                Nombre extraido:{' '}
+                                <strong className="text-white">{aiResult.extracted_name}</strong>
                               </p>
                             )}
                             {aiResult.extracted_license && (
-                              <p>
-                                N° extraído: <strong>{aiResult.extracted_license}</strong>
+                              <p className="text-slate-300">
+                                N extraido:{' '}
+                                <strong className="text-white">{aiResult.extracted_license}</strong>
                               </p>
                             )}
-                            <p>
-                              Calidad doc: {aiResult.document_quality} · Match nombre:{' '}
-                              {Math.round((aiResult.name_match_score ?? 0) * 100)}%
+                            <p className="text-slate-400">
+                              Calidad doc:{' '}
+                              <span className="text-slate-300">{aiResult.document_quality}</span> ·
+                              Match nombre:{' '}
+                              <span className="text-slate-300">
+                                {Math.round((aiResult.name_match_score ?? 0) * 100)}%
+                              </span>
                             </p>
                           </div>
                         )}
 
-                        <p className="text-xs text-muted-foreground mt-2">
+                        <p className="text-xs text-slate-500 mt-2">
                           Verifica en{' '}
                           <a
                             href="https://www.colegioveterinario.cl"
                             target="_blank"
                             rel="noreferrer"
-                            className="text-purple-700 hover:underline"
+                            className="text-purple-300 hover:underline"
                           >
                             colegioveterinario.cl
                           </a>
@@ -346,6 +391,7 @@ export default function AdminVetVerifications() {
                           value={rejectReason}
                           onChange={(e) => setRejectReason(e.target.value)}
                           rows={2}
+                          className="bg-slate-900 border-slate-700 text-white placeholder:text-slate-500"
                         />
                         <div className="flex gap-2">
                           <Button
@@ -363,6 +409,7 @@ export default function AdminVetVerifications() {
                           <Button
                             size="sm"
                             variant="ghost"
+                            className="text-slate-400 hover:text-white hover:bg-slate-800"
                             onClick={() => {
                               setRejectingId(null);
                               setRejectReason('');
@@ -387,12 +434,18 @@ export default function AdminVetVerifications() {
                           )}
                           Aprobar
                         </Button>
-                        <Button size="sm" variant="outline" onClick={() => setRejectingId(vet.id)}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="border-slate-700 text-slate-300 hover:bg-slate-800"
+                          onClick={() => setRejectingId(vet.id)}
+                        >
                           <XCircle className="h-3 w-3 mr-1" /> Rechazar
                         </Button>
                         <Button
                           size="sm"
                           variant="secondary"
+                          className="bg-purple-500/20 text-purple-300 border border-purple-500/30 hover:bg-purple-500/30"
                           disabled={isVerifying}
                           onClick={() => {
                             if (fileInputRef.current) {
@@ -422,18 +475,16 @@ export default function AdminVetVerifications() {
       </Card>
 
       {/* Verificados */}
-      <Card>
+      <Card className="bg-slate-900 border-slate-800">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CheckCircle2 className="h-5 w-5 text-green-500" />
+          <CardTitle className="flex items-center gap-2 text-white">
+            <CheckCircle2 className="h-5 w-5 text-emerald-400" />
             Verificados recientemente
           </CardTitle>
         </CardHeader>
         <CardContent>
           {!verified || verified.length === 0 ? (
-            <p className="text-sm text-muted-foreground text-center py-4">
-              Aún no hay vets verificados.
-            </p>
+            <p className="text-sm text-slate-400 text-center py-4">Aun no hay vets verificados.</p>
           ) : (
             <div className="space-y-2">
               {verified.map((vet) => {
@@ -441,31 +492,31 @@ export default function AdminVetVerifications() {
                 return (
                   <div
                     key={vet.id}
-                    className="flex items-center gap-3 p-2 hover:bg-muted/50 rounded"
+                    className="flex items-center gap-3 p-2 hover:bg-slate-800/50 rounded"
                   >
                     {vet.avatar_url ? (
                       <img
                         src={vet.avatar_url}
                         alt={vet.display_name}
-                        className="w-8 h-8 rounded-full object-cover"
+                        className="w-8 h-8 rounded-full object-cover border border-slate-700"
                       />
                     ) : (
-                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
-                        <Stethoscope className="h-4 w-4 text-purple-500" />
+                      <div className="w-8 h-8 rounded-full bg-purple-500/20 flex items-center justify-center">
+                        <Stethoscope className="h-4 w-4 text-purple-300" />
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium truncate">{vet.display_name}</p>
-                      <p className="text-xs text-muted-foreground">Colmevet {vet.license_number}</p>
+                      <p className="text-sm font-medium truncate text-white">{vet.display_name}</p>
+                      <p className="text-xs text-slate-400">Colmevet {vet.license_number}</p>
                     </div>
                     <div className="flex items-center gap-2">
                       {aiResult && (
-                        <Badge variant="outline" className="text-xs">
+                        <Badge className="text-xs bg-slate-500/20 text-slate-300 border border-slate-500/30">
                           <Brain className="h-3 w-3 mr-1" />
                           {aiResult.confidence_score}%
                         </Badge>
                       )}
-                      <Badge variant="secondary" className="bg-green-50 text-green-700">
+                      <Badge className="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                         Verificado
                       </Badge>
                     </div>
