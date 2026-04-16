@@ -44,7 +44,6 @@ import { getTutorialBySection, SECTION_ORDER, type SectionKey } from '@/lib/side
 import { Badge } from '@/components/ui/badge';
 import { PremiumBadge } from '@/components/PremiumBadge';
 import { usePlan } from '@/hooks/usePlan';
-import { FeedbackButton } from '@/components/FeedbackButton';
 
 import {
   Sidebar,
@@ -423,11 +422,6 @@ export function AppSidebar() {
         {user && (
           <SidebarFooter className="p-2 border-t border-border/40">
             <SidebarMenu className="space-y-0">
-              <SidebarMenuItem>
-                <div className="px-2 py-0.5">
-                  <FeedbackButton />
-                </div>
-              </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
                   onClick={() => handleNavigate('/settings')}

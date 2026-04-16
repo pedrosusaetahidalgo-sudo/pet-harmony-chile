@@ -52,8 +52,8 @@ function LayoutInner({ children }: AppLayoutProps) {
       {/* Bottom tab bar — solo mobile */}
       <BottomTabBar />
 
-      {/* Feedback widget — floating button + modal */}
-      <FeedbackWidget />
+      {/* Feedback widget — floating button + modal (hidden on home) */}
+      {pathname !== '/home' && <FeedbackWidget />}
     </div>
   );
 }
