@@ -208,7 +208,7 @@ const AddPet = () => {
     }
   };
 
-  const uploadPhoto = async (): Promise<string | null> => {
+  const uploadPhoto = async (): Promise<{ url: string; path: string } | null> => {
     if (!photoFile || !user) return null;
 
     setUploading(true);
@@ -226,7 +226,7 @@ const AddPet = () => {
         data: { publicUrl },
       } = supabase.storage.from('pet-photos').getPublicUrl(fileName);
 
-      return publicUrl;
+      return { url: publicUrl, path: fileName };
     } catch (error: unknown) {
       toast({
         title: 'Error al subir foto',
@@ -382,11 +382,16 @@ const AddPet = () => {
     }
 
     setLoading(true);
+    let uploadedFilePath: string | null = null;
 
     try {
       let photoUrl: string | null = existingPhotoUrl;
       if (photoFile) {
-        photoUrl = await uploadPhoto();
+        const uploadResult = await uploadPhoto();
+        if (uploadResult) {
+          photoUrl = uploadResult.url;
+          uploadedFilePath = uploadResult.path;
+        }
       }
 
       // Core columns (exist since initial migration)
@@ -559,6 +564,12 @@ const AddPet = () => {
         score: 0,
       });
     } catch (error: unknown) {
+      if (uploadedFilePath) {
+        await supabase.storage
+          .from('pet-photos')
+          .remove([uploadedFilePath])
+          .catch(() => {});
+      }
       toast({
         title: isEdit ? 'Error al guardar cambios' : 'Error al agregar mascota',
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),

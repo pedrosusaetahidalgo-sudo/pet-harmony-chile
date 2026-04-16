@@ -66,7 +66,7 @@ export function FeedCreatePost({ onSuccess }: FeedCreatePostProps) {
     [previews]
   );
 
-  const uploadImage = async (file: File): Promise<string> => {
+  const uploadImage = async (file: File): Promise<{ url: string; path: string }> => {
     if (!user) throw new Error('Not authenticated');
     const ext = file.name.split('.').pop();
     const path = `${user.id}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
@@ -75,7 +75,7 @@ export function FeedCreatePost({ onSuccess }: FeedCreatePostProps) {
     if (error) throw error;
 
     const { data } = supabase.storage.from('pet-photos').getPublicUrl(path);
-    return data.publicUrl;
+    return { url: data.publicUrl, path };
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -84,6 +84,7 @@ export function FeedCreatePost({ onSuccess }: FeedCreatePostProps) {
 
     setIsSubmitting(true);
     setUploadProgress(0);
+    const uploadedImagePaths: string[] = [];
 
     try {
       // Upload images
@@ -93,13 +94,20 @@ export function FeedCreatePost({ onSuccess }: FeedCreatePostProps) {
           const total = images.length;
           const urls: string[] = [];
           for (let i = 0; i < total; i++) {
-            const url = await uploadImage(images[i]);
-            urls.push(url);
+            const result = await uploadImage(images[i]);
+            urls.push(result.url);
+            uploadedImagePaths.push(result.path);
             setUploadProgress(Math.round(((i + 1) / total) * 100));
           }
           imageUrl = urls[0]; // Primary image
         } catch (err) {
           logger.error('[FeedCreatePost] image upload failed', err);
+          if (uploadedImagePaths.length > 0) {
+            await supabase.storage
+              .from('pet-photos')
+              .remove(uploadedImagePaths)
+              .catch(() => {});
+          }
           toast({
             variant: 'destructive',
             title: 'No pudimos subir la foto',
@@ -155,6 +163,12 @@ export function FeedCreatePost({ onSuccess }: FeedCreatePostProps) {
       queryClient.invalidateQueries({ queryKey: ['feed-posts'] });
       onSuccess?.();
     } catch (err) {
+      if (uploadedImagePaths.length > 0) {
+        await supabase.storage
+          .from('pet-photos')
+          .remove(uploadedImagePaths)
+          .catch(() => {});
+      }
       logger.error('[FeedCreatePost] submit failed', err);
       toast({
         variant: 'destructive',

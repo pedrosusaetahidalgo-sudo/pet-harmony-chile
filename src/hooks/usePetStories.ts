@@ -168,7 +168,13 @@ export function useCreateStory() {
         caption: caption || null,
       });
 
-      if (error) throw error;
+      if (error) {
+        await supabase.storage
+          .from('pet-photos')
+          .remove([path])
+          .catch(() => {});
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['pet-stories-active'] });

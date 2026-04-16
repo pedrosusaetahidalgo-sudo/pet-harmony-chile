@@ -189,22 +189,22 @@ export const useMedicalDocuments = (petId?: string) => {
         throw new Error('No tienes permiso para eliminar este documento');
       }
 
-      // Delete from storage
+      // Delete from database first — if this fails the file is preserved
+      const { error } = await supabase.from('medical_documents').delete().eq('id', documentId);
+
+      if (error) throw error;
+
+      // Delete from storage after DB record is gone — if this fails it's just
+      // a harmless orphan file and won't affect the user
       if (document?.file_url) {
         const { error: storageError } = await supabase.storage
           .from('medical-documents')
           .remove([document.file_url]);
 
         if (storageError) {
-          logger.error('Storage delete error:', storageError);
-          // Continue with database delete even if storage delete fails
+          logger.error('Storage delete error (orphan file):', storageError);
         }
       }
-
-      // Delete from database
-      const { error } = await supabase.from('medical_documents').delete().eq('id', documentId);
-
-      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['medical-documents', petId] });

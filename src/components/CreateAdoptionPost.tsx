@@ -50,6 +50,7 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photoUrls, setPhotoUrls] = useState<string[]>([]);
+  const [photoPaths, setPhotoPaths] = useState<string[]>([]);
   const [selectedTemperament, setSelectedTemperament] = useState<string[]>([]);
   const { register, handleSubmit, watch, setValue, reset } = useForm();
 
@@ -93,12 +94,16 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
           data: { publicUrl },
         } = supabase.storage.from('pet-photos').getPublicUrl(filePath);
 
-        return publicUrl;
+        return { url: publicUrl, path: filePath };
       });
 
-      const urls = (await Promise.all(uploadPromises)).filter(Boolean) as string[];
-      if (urls.length > 0) {
-        setPhotoUrls((prev) => [...prev, ...urls]);
+      const results = (await Promise.all(uploadPromises)).filter(Boolean) as {
+        url: string;
+        path: string;
+      }[];
+      if (results.length > 0) {
+        setPhotoUrls((prev) => [...prev, ...results.map((r) => r.url)]);
+        setPhotoPaths((prev) => [...prev, ...results.map((r) => r.path)]);
         toast.success('Fotos subidas exitosamente');
       }
     } catch (error) {
@@ -156,9 +161,16 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
       toast.success('Publicación creada exitosamente');
       reset();
       setPhotoUrls([]);
+      setPhotoPaths([]);
       setSelectedTemperament([]);
       onSuccess();
     } catch (error) {
+      if (photoPaths.length > 0) {
+        await supabase.storage
+          .from('pet-photos')
+          .remove(photoPaths)
+          .catch(() => {});
+      }
       logger.error('Error creating post:', error);
       toast.error('Error al crear la publicación');
     } finally {

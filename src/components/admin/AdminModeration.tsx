@@ -88,22 +88,34 @@ export default function AdminModeration() {
   const postMap = new Map(postPreviews.map((p) => [p.id, p]));
 
   const resolveReport = async (id: string, action: 'dismissed' | 'action_taken') => {
+    // When taking action, delete the post first so the file is never lost
+    // if the report-status update later fails
+    if (action === 'action_taken') {
+      const report = reports.find((r) => r.id === id);
+      if (report?.post_id) {
+        const { error: deleteError } = await supabase
+          .from('posts')
+          .delete()
+          .eq('id', report.post_id);
+        if (deleteError) {
+          toast({ title: 'Error al eliminar el contenido', variant: 'destructive' });
+          setConfirmAction(null);
+          return;
+        }
+      }
+    }
+
     const { error } = await supabase
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .from('content_reports' as any)
       .update({ status: action, reviewed_at: new Date().toISOString() })
       .eq('id', id);
 
-    if (action === 'action_taken') {
-      const report = reports.find((r) => r.id === id);
-      if (report?.post_id) {
-        await supabase.from('posts').delete().eq('id', report.post_id);
-      }
-    }
-
     if (!error) {
       toast({ title: action === 'action_taken' ? 'Contenido eliminado' : 'Reporte descartado' });
       queryClient.invalidateQueries({ queryKey: ['admin-content-reports'] });
+    } else {
+      toast({ title: 'Error al actualizar el reporte', variant: 'destructive' });
     }
     setConfirmAction(null);
   };

@@ -78,24 +78,20 @@ const AdminVerificationRequests = () => {
 
   const updateRequestMutation = useMutation({
     mutationFn: async ({ id, status, notes }: { id: string; status: string; notes?: string }) => {
-      const { error } = await supabase
-        .from('verification_requests')
-        .update({
-          status,
-          notes: notes || null,
-          reviewed_at: new Date().toISOString(),
-          reviewed_by: user?.id,
-        })
-        .eq('id', id);
+      if (!user) throw new Error('Usuario no autenticado');
+      const requestToProcess = selectedRequest;
+      const { error } = await supabase.rpc('approve_verification_request', {
+        p_request_id: id,
+        p_reviewer_id: user.id,
+        p_status: status,
+        p_user_id: requestToProcess?.user_id ?? '',
+        p_role: requestToProcess?.requested_role ?? '',
+      });
       if (error) throw error;
 
-      // If approved, add the role to the user
-      if (status === 'approved' && selectedRequest) {
-        const { error: roleError } = await supabase.from('user_roles').insert({
-          user_id: selectedRequest.user_id,
-          role: selectedRequest.requested_role,
-        });
-        if (roleError && !roleError.message.includes('duplicate')) throw roleError;
+      // Persist reviewer notes if provided (not handled by the RPC)
+      if (notes) {
+        await supabase.from('verification_requests').update({ notes }).eq('id', id);
       }
     },
     onSuccess: (_, variables) => {

@@ -98,7 +98,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
     setImagePreview('');
   };
 
-  const uploadImage = async () => {
+  const uploadImage = async (): Promise<{ url: string; path: string } | null> => {
     if (!imageFile || !user) return null;
 
     const fileExt = imageFile.name.split('.').pop();
@@ -113,7 +113,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
 
     const { data } = supabase.storage.from('pet-photos').getPublicUrl(filePath);
 
-    return data.publicUrl;
+    return { url: data.publicUrl, path: filePath };
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -138,12 +138,17 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
     }
 
     setIsSubmitting(true);
+    let uploadedFilePath: string | null = null;
 
     try {
       let imageUrl = null;
       if (imageFile) {
         try {
-          imageUrl = await uploadImage();
+          const uploadResult = await uploadImage();
+          if (uploadResult) {
+            imageUrl = uploadResult.url;
+            uploadedFilePath = uploadResult.path;
+          }
         } catch (uploadErr) {
           logger.error('[CreatePost] image upload failed', uploadErr);
           toast({
@@ -199,6 +204,12 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
       removeImage();
       onSuccess?.();
     } catch (error: unknown) {
+      if (uploadedFilePath) {
+        await supabase.storage
+          .from('pet-photos')
+          .remove([uploadedFilePath])
+          .catch(() => {});
+      }
       logger.error('[CreatePost] handleSubmit failed', error);
       toast({
         title: 'No pudimos guardar tu publicación',

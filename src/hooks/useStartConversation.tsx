@@ -40,34 +40,22 @@ export const useStartConversation = () => {
       // Order participant IDs to maintain constraint
       const [participant1, participant2] = [user.id, otherUserId].sort();
 
-      // Check if conversation already exists
-      const { data: existingConv } = await supabase
+      // Atomic upsert: returns the existing row if the conversation already exists,
+      // or inserts a new one — eliminating the TOCTOU window between check and insert.
+      const { data: conv, error } = await supabase
         .from('conversations')
+        .upsert(
+          { participant1_id: participant1, participant2_id: participant2 },
+          { onConflict: 'participant1_id,participant2_id' }
+        )
         .select('id')
-        .eq('participant1_id', participant1)
-        .eq('participant2_id', participant2)
-        .maybeSingle();
-
-      if (existingConv) {
-        navigate(`/chat/${existingConv.id}`);
-        return;
-      }
-
-      // Create new conversation
-      const { data: newConv, error } = await supabase
-        .from('conversations')
-        .insert({
-          participant1_id: participant1,
-          participant2_id: participant2,
-        })
-        .select()
         .maybeSingle();
 
       if (error) throw error;
-      if (!newConv) throw new Error('No se pudo crear la conversación');
+      if (!conv) throw new Error('No se pudo crear la conversación');
 
       track({ event: EVENTS.CONVERSATION_STARTED, properties: { other_user_id: otherUserId } });
-      navigate(`/chat/${newConv.id}`);
+      navigate(`/chat/${conv.id}`);
     } catch (error) {
       logger.error('Error starting conversation:', error);
       toast({

@@ -44,6 +44,7 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
   const [loading, setLoading] = useState(false);
   const [uploadingDocument, setUploadingDocument] = useState(false);
   const [documentUrls, setDocumentUrls] = useState<string[]>([]);
+  const [documentPaths, setDocumentPaths] = useState<string[]>([]);
   const {
     register,
     handleSubmit,
@@ -86,6 +87,7 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
     setUploadingDocument(true);
     try {
       const uploadedUrls: string[] = [];
+      const uploadedPaths: string[] = [];
 
       for (const file of Array.from(files)) {
         const fileExt = file.name.split('.').pop();
@@ -103,9 +105,11 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
         } = supabase.storage.from('verification-docs').getPublicUrl(filePath);
 
         uploadedUrls.push(publicUrl);
+        uploadedPaths.push(filePath);
       }
 
       setDocumentUrls([...documentUrls, ...uploadedUrls]);
+      setDocumentPaths([...documentPaths, ...uploadedPaths]);
       toast.success('Documento(s) subido(s) correctamente');
     } catch (error) {
       logger.error('Error uploading document:', error);
@@ -153,6 +157,7 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
 
       toast.success('Solicitud enviada. Verificando automáticamente...');
       setDocumentUrls([]);
+      setDocumentPaths([]);
 
       // Trigger AI auto-verification in background
       if (insertedRequest?.id) {
@@ -176,6 +181,12 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
           });
       }
     } catch (error) {
+      if (documentPaths.length > 0) {
+        await supabase.storage
+          .from('verification-docs')
+          .remove(documentPaths)
+          .catch(() => {});
+      }
       logger.error('Error:', error);
       toast.error('Error al enviar la solicitud');
     } finally {

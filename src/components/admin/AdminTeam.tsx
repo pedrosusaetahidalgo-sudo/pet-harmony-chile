@@ -187,14 +187,20 @@ export default function AdminTeam() {
         throw new Error('Usuario no encontrado. Debe tener cuenta en Paw Friend primero.');
       }
 
+      // Upsert on user_id (UNIQUE) to avoid TOCTOU race between checking existence
+      // and inserting — a concurrent invite for the same user would otherwise cause
+      // a unique-constraint error on the plain insert.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { error } = await (supabase.from('admin_access') as any).insert({
-        user_id: profile.id,
-        email,
-        role: 'admin_operator',
-        permissions,
-        is_active: true,
-      });
+      const { error } = await (supabase.from('admin_access') as any).upsert(
+        {
+          user_id: profile.id,
+          email,
+          role: 'admin_operator',
+          permissions,
+          is_active: true,
+        },
+        { onConflict: 'user_id' }
+      );
 
       if (error) throw error;
     },

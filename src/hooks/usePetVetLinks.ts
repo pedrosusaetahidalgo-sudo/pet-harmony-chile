@@ -138,48 +138,33 @@ export function useCreatePetVetLink() {
     }) => {
       if (!user) throw new Error('No autenticado');
 
-      // Si ya existe un link rechazado/revocado para este vet, lo reciclamos
-      // en vez de fallar por UNIQUE constraint (pet_id, provider_id).
-      const { data: existing } = await sb
+      // Atomic upsert: inserts on first request, recycles rejected/revoked links on retry.
+      // Guard against re-opening an already active/pending link is handled by the
+      // status check on the returned row — the DB constraint (pet_id, provider_id)
+      // guarantees only one row exists, so no TOCTOU window.
+      const { data, error } = await sb
         .from('pet_vet_links')
-        .select('id, status')
-        .eq('pet_id', petId)
-        .eq('provider_id', providerId)
-        .maybeSingle();
-
-      if (existing) {
-        if (existing.status === 'pending' || existing.status === 'active') {
-          throw new Error('Ya tienes una solicitud activa con este veterinario');
-        }
-        // Reciclar link rechazado/revocado → volver a pending
-        const { data, error } = await sb
-          .from('pet_vet_links')
-          .update({
+        .upsert(
+          {
+            pet_id: petId,
+            owner_id: user.id,
+            provider_id: providerId,
             status: 'pending',
             message: message || null,
             responded_at: null,
             revoked_at: null,
             created_at: new Date().toISOString(),
-          })
-          .eq('id', existing.id)
-          .select()
-          .single();
-        if (error) throw error;
-        return data as PetVetLink;
-      }
-
-      const { data, error } = await sb
-        .from('pet_vet_links')
-        .insert({
-          pet_id: petId,
-          owner_id: user.id,
-          provider_id: providerId,
-          message: message || null,
-        })
+          },
+          { onConflict: 'pet_id,provider_id' }
+        )
         .select()
         .single();
       if (error) throw error;
-      return data as PetVetLink;
+      const result = data as PetVetLink;
+      if (result.status === 'active') {
+        throw new Error('Ya tienes acceso activo con este veterinario');
+      }
+      return result;
     },
     onSuccess: (_data, vars) => {
       qc.invalidateQueries({ queryKey: ['pet-vet-links', 'by-pet', vars.petId] });
@@ -250,50 +235,31 @@ export function useRequestVetAccess() {
       const { data: pet } = await sb.from('pets').select('owner_id').eq('id', petId).single();
       if (!pet?.owner_id) throw new Error('No se encontró la mascota o no tiene dueño asignado');
 
-      // Check if link already exists
-      const { data: existing } = await sb
+      // Atomic upsert: inserts on first QR scan, recycles rejected/revoked links on retry.
+      // The DB UNIQUE constraint (pet_id, provider_id) ensures no TOCTOU window.
+      const { data, error } = await sb
         .from('pet_vet_links')
-        .select('id, status')
-        .eq('pet_id', petId)
-        .eq('provider_id', providerRow.id)
-        .maybeSingle();
-
-      if (existing) {
-        if (existing.status === 'active') {
-          throw new Error('Ya tienes acceso a esta mascota');
-        }
-        if (existing.status === 'pending') {
-          throw new Error('Ya hay una solicitud pendiente para esta mascota');
-        }
-        // Reciclar link rechazado/revocado
-        const { data, error } = await sb
-          .from('pet_vet_links')
-          .update({
+        .upsert(
+          {
+            pet_id: petId,
+            owner_id: pet.owner_id,
+            provider_id: providerRow.id,
             status: 'pending',
             message: 'Solicitud de acceso via QR',
             responded_at: null,
             revoked_at: null,
             created_at: new Date().toISOString(),
-          })
-          .eq('id', existing.id)
-          .select()
-          .single();
-        if (error) throw error;
-        return data as PetVetLink;
-      }
-
-      const { data, error } = await sb
-        .from('pet_vet_links')
-        .insert({
-          pet_id: petId,
-          owner_id: pet.owner_id,
-          provider_id: providerRow.id,
-          message: 'Solicitud de acceso via QR',
-        })
+          },
+          { onConflict: 'pet_id,provider_id' }
+        )
         .select()
         .single();
       if (error) throw error;
-      return data as PetVetLink;
+      const result = data as PetVetLink;
+      if (result.status === 'active') {
+        throw new Error('Ya tienes acceso a esta mascota');
+      }
+      return result;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['pet-vet-links'] });

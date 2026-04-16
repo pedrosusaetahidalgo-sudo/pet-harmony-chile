@@ -150,7 +150,7 @@ export const useReminders = () => {
       // P6: si es recurrente, crear el proximo automaticamente
       if (reminder?.is_recurring && reminder.recurrence_interval) {
         const newDue = nextDueDate(reminder.due_date, reminder.recurrence_interval);
-        await supabase.from('pet_reminders').insert({
+        const { error: insertError } = await supabase.from('pet_reminders').insert({
           pet_id: reminder.pet_id,
           owner_id: reminder.owner_id,
           type: reminder.type,
@@ -160,7 +160,7 @@ export const useReminders = () => {
           is_recurring: true,
           recurrence_interval: reminder.recurrence_interval,
         });
-        return { wasRecurring: true, nextDate: new Date(newDue) };
+        return { wasRecurring: true, nextDate: new Date(newDue), insertError };
       }
       // Award gamification points (fire-and-forget)
       if (user?.id && reminder) {
@@ -176,9 +176,16 @@ export const useReminders = () => {
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['pet-reminders'] });
       if (result?.wasRecurring && result.nextDate) {
-        toast({
-          title: `Completado — proximo recordatorio creado para ${format(result.nextDate, "d 'de' MMMM", { locale: es })}`,
-        });
+        if (result.insertError) {
+          toast({
+            title: 'Recordatorio completado, pero el siguiente no se pudo crear.',
+            variant: 'destructive',
+          });
+        } else {
+          toast({
+            title: `Completado — proximo recordatorio creado para ${format(result.nextDate, "d 'de' MMMM", { locale: es })}`,
+          });
+        }
       } else {
         toast({ title: 'Recordatorio completado' });
       }

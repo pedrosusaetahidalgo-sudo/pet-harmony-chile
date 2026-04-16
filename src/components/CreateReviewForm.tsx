@@ -59,8 +59,9 @@ const CreateReviewForm = ({
     setPhotos(photos.filter((_, i) => i !== index));
   };
 
-  const uploadPhotos = async (): Promise<string[]> => {
+  const uploadPhotos = async (): Promise<{ urls: string[]; paths: string[] }> => {
     const uploadedUrls: string[] = [];
+    const uploadedPaths: string[] = [];
 
     for (const photo of photos) {
       const fileExt = photo.name.split('.').pop();
@@ -72,6 +73,13 @@ const CreateReviewForm = ({
         .upload(filePath, photo);
 
       if (uploadError) {
+        // Clean up already-uploaded files before rethrowing
+        if (uploadedPaths.length > 0) {
+          await supabase.storage
+            .from('walk-photos')
+            .remove(uploadedPaths)
+            .catch(() => {});
+        }
         throw uploadError;
       }
 
@@ -80,9 +88,10 @@ const CreateReviewForm = ({
       } = supabase.storage.from('walk-photos').getPublicUrl(filePath);
 
       uploadedUrls.push(publicUrl);
+      uploadedPaths.push(filePath);
     }
 
-    return uploadedUrls;
+    return { urls: uploadedUrls, paths: uploadedPaths };
   };
 
   const onSubmit = async (data: ReviewFormData) => {
@@ -92,10 +101,13 @@ const CreateReviewForm = ({
     }
 
     setUploading(true);
+    let uploadedPhotoPaths: string[] = [];
     try {
       let photoUrls: string[] = [];
       if (photos.length > 0) {
-        photoUrls = await uploadPhotos();
+        const uploadResult = await uploadPhotos();
+        photoUrls = uploadResult.urls;
+        uploadedPhotoPaths = uploadResult.paths;
       }
 
       const tableName =
@@ -152,6 +164,12 @@ const CreateReviewForm = ({
 
       onSuccess();
     } catch (error) {
+      if (uploadedPhotoPaths.length > 0) {
+        await supabase.storage
+          .from('walk-photos')
+          .remove(uploadedPhotoPaths)
+          .catch(() => {});
+      }
       logger.error('Error creating review:', error);
       toast.error('Error al publicar la reseña');
     } finally {

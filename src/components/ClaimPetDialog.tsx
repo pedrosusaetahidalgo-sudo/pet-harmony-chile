@@ -15,9 +15,6 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { useQueryClient } from '@tanstack/react-query';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const sb = supabase as any;
-
 /**
  * Dialog that lets an owner manually claim a pet using
  * the invitation token. Useful when:
@@ -36,70 +33,45 @@ export function ClaimPetDialog() {
     setLoading(true);
 
     try {
-      // 1. Find pet by invitation token
-      const { data: pet, error: petErr } = await sb
-        .from('pets')
-        .select('id, name, owner_id, created_by_vet_id, owner_invitation_accepted_at')
-        .eq('owner_invitation_token', token.trim())
-        .maybeSingle();
+      // Single atomic RPC — all 5 steps (assign owner, pet_vet_link, reminders)
+      // run inside one DB transaction, eliminating TOCTOU race conditions.
+      const { data, error } = await supabase.rpc('claim_pet_by_invitation', {
+        p_invitation_token: token.trim(),
+        p_user_id: user.id,
+      });
 
-      if (petErr || !pet) {
-        toast.error('Codigo no valido. Verifica con tu veterinario.');
+      if (error) {
+        toast.error('Error al procesar el codigo');
         return;
       }
 
-      // 2. Already claimed?
-      if (pet.owner_invitation_accepted_at) {
-        if (pet.owner_id === user.id) {
-          toast.info(`${pet.name} ya esta en tu lista de mascotas`);
-        } else {
-          toast.error('Esta mascota ya fue reclamada por otro usuario');
+      const result = data as {
+        success: boolean;
+        error?: string;
+        pet_name?: string;
+        vet_linked?: boolean;
+      };
+
+      if (!result.success) {
+        switch (result.error) {
+          case 'invalid_token':
+            toast.error('Codigo no valido. Verifica con tu veterinario.');
+            break;
+          case 'already_yours':
+            toast.info(`${result.pet_name} ya esta en tu lista de mascotas`);
+            break;
+          case 'claimed_by_other':
+            toast.error('Esta mascota ya fue reclamada por otro usuario');
+            break;
+          default:
+            toast.error('Error al reclamar la mascota');
         }
         return;
       }
 
-      // 3. Claim: set owner_id
-      const { error: updateErr } = await sb
-        .from('pets')
-        .update({
-          owner_id: user.id,
-          owner_invitation_accepted_at: new Date().toISOString(),
-        })
-        .eq('id', pet.id);
-
-      if (updateErr) {
-        toast.error('Error al reclamar la mascota. Intenta de nuevo.');
-        return;
-      }
-
-      // 4. Create pet_vet_link
-      if (pet.created_by_vet_id) {
-        try {
-          const { data: vetProvider } = await supabase
-            .from('service_providers')
-            .select('id')
-            .eq('user_id', pet.created_by_vet_id)
-            .maybeSingle();
-
-          if (vetProvider?.id) {
-            await sb.from('pet_vet_links').upsert(
-              {
-                pet_id: pet.id,
-                owner_id: user.id,
-                provider_id: vetProvider.id,
-                status: 'active',
-                responded_at: new Date().toISOString(),
-              },
-              { onConflict: 'pet_id,provider_id' }
-            );
-          }
-        } catch {
-          // Non-blocking
-        }
-      }
-
+      const vetMsg = result.vet_linked ? ' Tu veterinario ya tiene acceso a la ficha.' : '';
       queryClient.invalidateQueries({ queryKey: ['pets'] });
-      toast.success(`¡${pet.name} ahora es tuya! Tu veterinario ya tiene acceso a la ficha.`);
+      toast.success(`¡${result.pet_name} ahora es tuya!${vetMsg}`);
       setOpen(false);
       setToken('');
     } catch {
