@@ -201,6 +201,7 @@ export function WoundVision({ petId, petName, onShowDirectory }: Props) {
           type="file"
           accept="image/jpeg,image/png,image/webp,image/heic"
           onChange={handleFileChange}
+          aria-label="Subir foto de herida"
           className="hidden"
         />
 

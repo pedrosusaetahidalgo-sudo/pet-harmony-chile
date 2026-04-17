@@ -84,6 +84,7 @@ function AddPetGhostCard({ onClick }: { onClick: () => void }) {
     <div
       role="button"
       tabIndex={0}
+      aria-label="Agregar nueva mascota"
       className="pet-card-holo h-full cursor-pointer opacity-60 hover:opacity-100 transition-opacity"
       onClick={onClick}
       onKeyDown={(e) => {

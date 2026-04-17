@@ -876,6 +876,7 @@ export default function AdminSystemHealth() {
                           </td>
                         </tr>
                         {isExpanded && hasErrors && (
+                          // eslint-disable-next-line jsx-a11y/control-has-associated-label -- <tr> no es control; falso positivo
                           <tr className="bg-slate-900/50">
                             <td colSpan={8} className="px-4 py-3">
                               <p className="text-xs font-semibold text-slate-300 mb-2 flex items-center gap-2">

@@ -286,6 +286,7 @@ export const useUnifiedCalendar = (year: number, month: number, filterPetId?: st
     });
 
     return result;
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- monthStart/monthEnd se derivan de year+month; redundantes
   }, [
     routines,
     monthCompletions,

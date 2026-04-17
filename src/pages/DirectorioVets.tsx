@@ -209,6 +209,7 @@ export default function DirectorioVets() {
               comuna, no en todo Santiago. Antes estaba escondida en una grid
               de 4 columnas con los demas filtros. */}
           <div className="mb-3">
+            {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- <label> visual sobre <Select> shadcn; radix maneja aria-labelledby */}
             <label className="text-xs font-semibold text-purple-700 mb-1 flex items-center gap-1">
               📍 Tu comuna
             </label>

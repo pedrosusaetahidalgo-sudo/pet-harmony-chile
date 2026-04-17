@@ -190,7 +190,13 @@ const OnboardingDuenoMinimal = () => {
               {/* Photo */}
               <div className="flex justify-center">
                 <label className="cursor-pointer">
-                  <input type="file" accept="image/*" className="hidden" onChange={handlePhoto} />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    aria-label="Subir foto de mascota"
+                    className="hidden"
+                    onChange={handlePhoto}
+                  />
                   {photoPreview ? (
                     <img
                       src={photoPreview}
@@ -215,6 +221,7 @@ const OnboardingDuenoMinimal = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 maxLength={50}
+                // eslint-disable-next-line jsx-a11y/no-autofocus -- primer paso del onboarding, foco directo al input es el UX deseado
                 autoFocus
               />
 

@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control -- <label> visuales sobre <Select> shadcn; radix maneja aria-labelledby internamente */
 import { useState } from 'react';
 import {
   Heart,

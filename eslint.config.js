@@ -27,6 +27,9 @@ export default tseslint.config(
       ),
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
+      // label-has-for esta DEPRECADA en jsx-a11y v6.1+; ya cubrimos el caso
+      // moderno con label-has-associated-control. Duplicar warnings solo agrega ruido.
+      "jsx-a11y/label-has-for": "off",
     },
   },
 );

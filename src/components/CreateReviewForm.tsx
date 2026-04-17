@@ -255,6 +255,7 @@ const CreateReviewForm = ({
                   multiple
                   onChange={handlePhotoChange}
                   className="hidden"
+                  aria-label="Subir fotos de reseña"
                 />
               </label>
             )}

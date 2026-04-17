@@ -109,6 +109,7 @@ export default function PreciosVeterinarios() {
         </div>
 
         <Card className="p-4 md:p-6 mb-6 shadow-md">
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- <label> visual sobre <Select> shadcn; radix maneja aria-labelledby */}
           <label className="text-sm font-semibold text-purple-700 mb-2 flex items-center gap-1">
             <MapPin className="h-4 w-4" />
             Tu comuna

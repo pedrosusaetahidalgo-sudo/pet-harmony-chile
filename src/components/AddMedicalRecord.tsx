@@ -372,11 +372,13 @@ export function AddMedicalRecord({
               required
             />
             {recordType === 'vacuna' && (
+              /* eslint-disable jsx-a11y/control-has-associated-label -- <option> dentro de <datalist> no requiere label individual */
               <datalist id="vaccine-suggestions">
                 {getVaccinesForSpecies(petSpecies).map((v) => (
                   <option key={v.name} value={v.name} label={v.description} />
                 ))}
               </datalist>
+              /* eslint-enable jsx-a11y/control-has-associated-label */
             )}
           </div>
 
@@ -508,6 +510,7 @@ export function AddMedicalRecord({
                     onChange={(e) => setProductBrand(e.target.value)}
                     placeholder="Ej: Bravecto, Nexgard..."
                   />
+                  {/* eslint-disable jsx-a11y/control-has-associated-label -- <option> dentro de <datalist> no requiere label individual */}
                   <datalist id="antiparasitic-brands">
                     <option value="Bravecto" />
                     <option value="Nexgard" />
@@ -524,6 +527,7 @@ export function AddMedicalRecord({
                     <option value="Seresto (collar)" />
                     <option value="Scalibor (collar)" />
                   </datalist>
+                  {/* eslint-enable jsx-a11y/control-has-associated-label */}
                 </div>
               </div>
               {antiparasiticType && (

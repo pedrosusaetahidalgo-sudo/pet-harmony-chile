@@ -335,8 +335,17 @@ export function VetPatientsList() {
               return (
                 <div
                   key={patient.pet_id}
-                  className="flex items-center gap-3 p-3 bg-muted/20 rounded-lg border border-muted/40 hover:bg-muted/30 transition cursor-pointer"
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Ver paciente ${patient.pet_name}`}
+                  className="flex items-center gap-3 p-3 bg-muted/20 rounded-lg border border-muted/40 hover:bg-muted/30 transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-purple-500"
                   onClick={() => setSelectedPetId(patient.pet_id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      setSelectedPetId(patient.pet_id);
+                    }
+                  }}
                 >
                   <Avatar className="h-11 w-11">
                     {patient.photo_url ? (

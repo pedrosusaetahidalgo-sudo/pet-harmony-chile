@@ -617,7 +617,9 @@ export default function AdminFinance() {
                     <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
                       Fecha
                     </th>
-                    <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400"></th>
+                    <th className="pb-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">
+                      <span className="sr-only">Acciones</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

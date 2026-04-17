@@ -121,6 +121,7 @@ export function ComboboxWithOther({
           value={otherText}
           onChange={(e) => onValueChange(`otro:${e.target.value}`)}
           placeholder={otherPlaceholder}
+          // eslint-disable-next-line jsx-a11y/no-autofocus -- input "Otro" aparece tras seleccionar opcion, el foco debe ir ahi
           autoFocus
         />
       )}

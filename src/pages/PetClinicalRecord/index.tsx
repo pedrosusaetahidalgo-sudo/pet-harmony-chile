@@ -216,6 +216,7 @@ const PetClinicalRecord = () => {
         setVetCheckDone(true);
       }
     })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- pet se accede via pet?.id y pet?.owner_id ya en deps
   }, [pet?.id, user?.id, pet?.owner_id, forceVetMode]);
 
   if (authLoading || petLoading) {
@@ -569,8 +570,17 @@ const PetClinicalRecord = () => {
         {/* PawPoints nudge — subtle, at the bottom */}
         {viewMode === 'owner' && (
           <div
-            className="flex items-center gap-3 p-3 rounded-lg bg-purple-50/50 border border-purple-100/50 cursor-pointer hover:bg-purple-50 transition-colors"
+            role="button"
+            tabIndex={0}
+            aria-label="Ir a Paw Game"
+            className="flex items-center gap-3 p-3 rounded-lg bg-purple-50/50 border border-purple-100/50 cursor-pointer hover:bg-purple-50 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500"
             onClick={() => navigate('/paw-game')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                navigate('/paw-game');
+              }
+            }}
           >
             <PawPrint className="h-4 w-4 text-purple-600" />
             <p className="text-[11px] text-purple-600 flex-1">

@@ -203,6 +203,7 @@ export function FeedStories() {
                   id="story-file-input"
                   type="file"
                   accept="image/*"
+                  aria-label="Subir foto de historia"
                   className="hidden"
                   onChange={handleFileSelect}
                 />

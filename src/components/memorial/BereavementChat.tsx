@@ -160,6 +160,7 @@ export function BereavementChat({ petId, petName, onClose }: BereavementChatProp
           <input
             id="bereavement-save-history"
             type="checkbox"
+            aria-label="Guardar historial"
             checked={saveHistory}
             onChange={(e) => setSaveHistory(e.target.checked)}
             className="mt-0.5 rounded"

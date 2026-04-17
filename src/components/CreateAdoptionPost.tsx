@@ -372,6 +372,7 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
                 onChange={handlePhotoUpload}
                 className="hidden"
                 id="photo-upload"
+                aria-label="Subir fotos"
               />
               <label htmlFor="photo-upload" className="cursor-pointer">
                 <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />

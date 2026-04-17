@@ -41,7 +41,12 @@ function MiniPawCard({
   const palette = getSpeciesPalette(card.pet.species);
 
   return (
-    <button className="tcg-perspective w-full text-left group" onClick={onSelect}>
+    <button
+      type="button"
+      aria-label={`Ver Paw Card de ${card.pet.name}`}
+      className="tcg-perspective w-full text-left group"
+      onClick={onSelect}
+    >
       <div className="pet-card-tcg transition-transform hover:scale-[1.03]" data-rarity={rarity}>
         <div className="pet-card-tcg-inner" style={{ background: palette.lightBg }}>
           <div className="pet-card-tcg-rainbow" />
@@ -235,6 +240,7 @@ function CardZoomOverlay({ card, onClose }: { card: CollectedCard; onClose: () =
   };
 
   return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- backdrop modal, Escape ya cierra via useEffect keydown listener
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
       style={{
@@ -253,6 +259,7 @@ function CardZoomOverlay({ card, onClose }: { card: CollectedCard; onClose: () =
       </button>
 
       {/* Card — same PawCardFlippable used in MyPets */}
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- solo stopPropagation para evitar cierre del backdrop */}
       <div
         className="tcg-perspective"
         style={{
@@ -370,6 +377,8 @@ const PawCollection = () => {
                 {ranking.slice(0, 5).map((card, i) => (
                   <button
                     key={card.petId}
+                    type="button"
+                    aria-label={`Ver Paw Card de ${card.petName}`}
                     onClick={() => navigate(`/paw-card/${card.pawCardId}`)}
                     className="flex-shrink-0 flex items-center gap-2 p-2 rounded-lg bg-white border border-amber-100 hover:shadow-sm transition-shadow min-w-[140px]"
                   >

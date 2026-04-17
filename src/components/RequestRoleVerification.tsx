@@ -354,6 +354,7 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
                 <input
                   type="file"
                   id="document-upload"
+                  aria-label="Subir documento de verificación"
                   className="hidden"
                   accept=".pdf,.jpg,.jpeg,.png"
                   multiple

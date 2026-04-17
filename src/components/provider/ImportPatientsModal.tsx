@@ -205,6 +205,7 @@ export function ImportPatientsModal({ open, onOpenChange, onComplete }: ImportPa
                 ref={fileInputRef}
                 type="file"
                 accept=".csv,.tsv,.txt"
+                aria-label="Subir archivo CSV de pacientes"
                 className="hidden"
                 onChange={handleFileUpload}
               />
@@ -270,7 +271,9 @@ export function ImportPatientsModal({ open, onOpenChange, onComplete }: ImportPa
               <table className="w-full text-xs">
                 <thead className="sticky top-0 bg-muted/80 backdrop-blur">
                   <tr>
-                    <th className="p-2 text-left w-8" />
+                    <th className="p-2 text-left w-8">
+                      <span className="sr-only">Seleccionar</span>
+                    </th>
                     <th className="p-2 text-left">Mascota</th>
                     <th className="p-2 text-left">Especie</th>
                     <th className="p-2 text-left">Raza</th>

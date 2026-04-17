@@ -248,6 +248,7 @@ export function VetOnboardingWizard() {
                       id="avatar"
                       type="file"
                       accept="image/*"
+                      aria-label="Subir foto de perfil"
                       className="hidden"
                       onChange={handleAvatarUpload}
                       disabled={uploading}

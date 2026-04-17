@@ -733,6 +733,7 @@ const AddPet = () => {
                       <input
                         id="pet-photo-upload"
                         type="file"
+                        aria-label="Subir foto de mascota"
                         className="hidden"
                         accept="image/*"
                         onChange={handleFileChange}

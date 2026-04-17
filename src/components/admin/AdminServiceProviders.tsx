@@ -398,6 +398,7 @@ const AdminServiceProviders = () => {
                         selectedIds.size === paginatedProviders.length
                       }
                       onChange={toggleSelectAll}
+                      aria-label="Seleccionar todos los proveedores"
                       className="rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500 h-4 w-4 cursor-pointer"
                     />
                   </TableHead>
@@ -447,6 +448,7 @@ const AdminServiceProviders = () => {
                           type="checkbox"
                           checked={selectedIds.has(provider.id)}
                           onChange={() => toggleSelection(provider.id)}
+                          aria-label={`Seleccionar proveedor ${provider.display_name ?? provider.id}`}
                           className="rounded border-slate-600 bg-slate-800 text-indigo-500 focus:ring-indigo-500 h-4 w-4 cursor-pointer"
                         />
                       </TableCell>

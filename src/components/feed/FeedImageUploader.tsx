@@ -137,6 +137,7 @@ export function FeedImageUploader({
         type="file"
         accept="image/*"
         multiple
+        aria-label="Subir imagen al feed"
         className="hidden"
         onChange={handleFiles}
         disabled={disabled}

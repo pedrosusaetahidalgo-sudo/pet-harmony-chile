@@ -58,6 +58,7 @@ export function FeedCommentInput({ postId }: FeedCommentInputProps) {
         <input
           id={`comment-${postId}`}
           type="text"
+          aria-label="Escribir comentario"
           placeholder="Agrega un comentario..."
           value={text}
           onChange={(e) => setText(e.target.value)}

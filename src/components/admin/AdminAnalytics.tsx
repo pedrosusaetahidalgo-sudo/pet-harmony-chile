@@ -610,6 +610,7 @@ export default function AdminAnalytics() {
               value={customDays}
               onChange={(e) => setCustomDays(Math.max(1, Math.min(365, Number(e.target.value))))}
               className="w-16 h-7 px-2 text-xs rounded border border-slate-700 bg-slate-900 text-white"
+              aria-label="Días del rango personalizado"
             />
           )}
         </div>

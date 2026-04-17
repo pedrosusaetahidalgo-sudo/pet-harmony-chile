@@ -83,6 +83,7 @@ export function NamePromptDialog({ open, onDone, currentName }: NamePromptDialog
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSave()}
+                // eslint-disable-next-line jsx-a11y/no-autofocus -- dialog prompt es caso valido para autofocus
                 autoFocus
               />
               <Button
