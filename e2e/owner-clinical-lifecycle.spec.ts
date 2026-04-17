@@ -108,15 +108,14 @@ test.describe('Owner clinical lifecycle', () => {
     await expect(page.getByRole('heading', { name: /My Paws|Mis Mascotas/i })).toBeVisible();
   });
 
-  test('Timeline page loads for pet', async ({ page }) => {
-    // Timeline requires a pet ID — test with fake UUID
+  test('Timeline legacy route redirects to ficha with tab=historial', async ({ page }) => {
+    // Reordenamiento v3 (2026-04-17): /mascota/:petId/timeline fue
+    // consolidado como tab Historial en /ficha/:petId. La ruta vieja
+    // ahora redirige para no romper deep links.
     await page.goto('/mascota/00000000-0000-0000-0000-000000000099/timeline', {
       waitUntil: 'domcontentloaded',
     });
     await page.waitForTimeout(1000);
-
-    // Should show timeline header or empty state
-    const heading = page.getByText(/Historia|Timeline|Sin eventos/i);
-    await expect(heading).toBeVisible();
+    await expect(page).toHaveURL(/\/ficha\/.+\?tab=historial/);
   });
 });
