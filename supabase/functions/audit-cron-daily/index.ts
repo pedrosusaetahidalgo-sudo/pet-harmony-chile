@@ -27,6 +27,7 @@
 import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.2';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import { getCorsHeaders } from '../_shared/cors.ts';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Sb = any;
@@ -208,6 +209,12 @@ async function detectNeedsHumanAttention(
 
 serve(
   withTelemetry('audit-cron-daily', async (req) => {
+    // CORS preflight (necesario para invocacion desde el widget admin).
+    const corsHeaders = getCorsHeaders(req);
+    if (req.method === 'OPTIONS') {
+      return new Response(null, { status: 204, headers: corsHeaders });
+    }
+
     try {
       const sb = createClient(
         Deno.env.get('SUPABASE_URL')!,
@@ -277,14 +284,14 @@ serve(
 
       return new Response(JSON.stringify(payload), {
         status: 200,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       console.error('[audit-cron] fatal error:', msg);
       return new Response(JSON.stringify({ error: msg }), {
         status: 500,
-        headers: { 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
   })
