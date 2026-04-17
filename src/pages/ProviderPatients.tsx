@@ -626,17 +626,20 @@ export default function ProviderPatients() {
         onFilterChange={handleKPIFilter}
       />
 
-      {/* Vinculaciones por confirmar — collapsible banner */}
+      {/* Vinculaciones por confirmar — alerta prominente (default open) */}
       {pendingLinks && pendingLinks.length > 0 && (
-        <Collapsible>
-          <Card className="border-amber-200 bg-amber-50/30">
+        <Collapsible defaultOpen>
+          <Card className="border-red-200 bg-red-50/40 shadow-sm ring-1 ring-red-100">
             <CollapsibleTrigger className="w-full">
               <CardContent className="p-3 flex items-center justify-between">
-                <h2 className="text-xs font-semibold text-amber-700 flex items-center gap-1.5">
-                  <UserPlus className="h-3.5 w-3.5" />
-                  {pendingLinks.length} vinculación(es) por confirmar
+                <h2 className="text-sm font-semibold text-red-700 flex items-center gap-2">
+                  <UserPlus className="h-4 w-4" />
+                  <span>
+                    <span className="font-bold">{pendingLinks.length}</span> vinculación(es) por
+                    confirmar
+                  </span>
                 </h2>
-                <ChevronDown className="h-4 w-4 text-amber-600 transition-transform group-data-[state=open]:rotate-180" />
+                <ChevronDown className="h-4 w-4 text-red-600 transition-transform group-data-[state=open]:rotate-180" />
               </CardContent>
             </CollapsibleTrigger>
             <CollapsibleContent>
@@ -645,11 +648,11 @@ export default function ProviderPatients() {
                 {pendingLinks.map((link: any) => (
                   <div
                     key={link.id}
-                    className="flex items-center gap-2 p-2 bg-white rounded-lg border border-amber-100"
+                    className="flex items-center gap-2 p-2 bg-white rounded-lg border border-red-100"
                   >
                     <Avatar className="h-8 w-8 flex-shrink-0">
                       {link.pets?.photo_url && <AvatarImage src={link.pets.photo_url} />}
-                      <AvatarFallback className="bg-amber-100 text-amber-700 text-[10px]">
+                      <AvatarFallback className="bg-red-100 text-red-700 text-[10px]">
                         {(link.pets?.name || 'M')[0].toUpperCase()}
                       </AvatarFallback>
                     </Avatar>

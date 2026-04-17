@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Eye, UserCog, CheckCircle, AlertCircle } from '@/lib/icons';
+import { Eye, UserCog, CheckCircle, AlertCircle, ExternalLink } from '@/lib/icons';
 
 interface MiniProfileCardProps {
   slug: string | null;
@@ -121,18 +121,38 @@ export function MiniProfileCard({
           </span>
         </div>
 
-        {/* Actions */}
-        <div className="flex gap-2">
-          {slug && (
-            <Link to={`/veterinarios/${slug}`} className="flex-1">
-              <Button variant="outline" size="sm" className="w-full text-[10px] gap-1 h-7">
-                <Eye className="h-3 w-3" /> Ver perfil
+        {/* Actions — diferenciador Paw Friend: "ver como me ven los dueños" */}
+        <div className="flex flex-col gap-1.5">
+          {slug ? (
+            <a
+              href={`/veterinarios/${slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block"
+            >
+              <Button
+                size="sm"
+                className="w-full text-[11px] gap-1.5 h-8 bg-teal-600 hover:bg-teal-700 text-white"
+              >
+                <Eye className="h-3.5 w-3.5" />
+                Ver cómo me ven los dueños
+                <ExternalLink className="h-3 w-3 ml-auto opacity-70" />
+              </Button>
+            </a>
+          ) : (
+            <Link to="/provider/profile-edit" className="block">
+              <Button
+                size="sm"
+                variant="outline"
+                className="w-full text-[10px] gap-1 h-8 border-dashed"
+              >
+                <AlertCircle className="h-3 w-3" /> Genera tu perfil público
               </Button>
             </Link>
           )}
-          <Link to="/provider/profile-edit" className="flex-1">
+          <Link to="/provider/profile-edit" className="block">
             <Button variant="outline" size="sm" className="w-full text-[10px] gap-1 h-7">
-              <UserCog className="h-3 w-3" /> Editar
+              <UserCog className="h-3 w-3" /> Editar perfil
             </Button>
           </Link>
         </div>
