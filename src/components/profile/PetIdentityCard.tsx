@@ -46,7 +46,10 @@ export function PetIdentityCard({ pet }: PetIdentityCardProps) {
 
   return (
     <div
-      className="w-36 flex-shrink-0 snap-start rounded-xl cursor-pointer group active:scale-95 transition-all hover:shadow-md"
+      role="button"
+      tabIndex={0}
+      aria-label={`Ver ficha de ${pet.name}`}
+      className="w-36 flex-shrink-0 snap-start rounded-xl cursor-pointer group active:scale-95 transition-all hover:shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500"
       style={{
         padding: borderStyle.padding,
         background: borderStyle.gradient,
@@ -61,8 +64,6 @@ export function PetIdentityCard({ pet }: PetIdentityCardProps) {
           navigate(LINKS.petClinical(pet.id));
         }
       }}
-      role="button"
-      tabIndex={0}
     >
       <Card className="overflow-hidden border-0 shadow-none">
         <CardContent className="p-0">

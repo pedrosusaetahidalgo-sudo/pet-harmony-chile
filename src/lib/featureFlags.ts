@@ -10,13 +10,13 @@
 export const FEATURE_FLAGS = {
   /**
    * B2C Premium para dueños de mascotas.
-   * REACTIVADO 2026-04-17: reset de premium falsos via migracion
-   * 20260526000000_reset_fake_premium_users.sql + flujo Flow.cl activo.
-   * Con este flag en true, solo los usuarios con subscription active real
-   * (pagada via Flow) se ven como premium. Los demas son free.
-   * Los feature gates especificos se definen caso por caso.
+   * DESACTIVADO 2026-04-17: la app entrega 100% de las features a todos,
+   * independiente del plan. La DB ya esta limpia (migracion 20260526000000
+   * reseteo premium falsos a free) y el flujo Flow.cl + apply_premium RPC
+   * siguen activos para upgrades reales. Cuando se decida que bloquear,
+   * poner este flag en true y los PremiumGate pasaran a respetar plan_id.
    */
-  USER_PREMIUM: true,
+  USER_PREMIUM: false,
 
   /**
    * PawGame visible en sidebar principal y Home.
