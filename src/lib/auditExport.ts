@@ -1416,14 +1416,41 @@ async function fetchDeviceCompatibilityReport(): Promise<{
     >();
     const seen = new Set<string>();
 
+    // Fallbacks para sesiones pre-2026-04-17 (sin platform_family/os/browser_family).
+    // Infieren desde user agent guardado en metadata.browser (UA string truncado a 200).
+    const inferPlatform = (ua: string): string => {
+      if (/iPhone|iPad|iPod/i.test(ua) && !/Safari/i.test(ua)) return 'ios_app';
+      if (/Android/i.test(ua) && /wv\)/i.test(ua)) return 'android_app';
+      if (/Mobile|Android|iPhone/i.test(ua)) return 'mobile_web';
+      if (/Mozilla/i.test(ua)) return 'desktop_web';
+      return 'legacy';
+    };
+    const inferOS = (ua: string): string => {
+      if (/iPhone|iPad|iPod/i.test(ua)) return 'iOS';
+      if (/Android/i.test(ua)) return 'Android';
+      if (/Windows/i.test(ua)) return 'Windows';
+      if (/Mac OS X|Macintosh/i.test(ua)) return 'macOS';
+      if (/Linux/i.test(ua)) return 'Linux';
+      return 'Unknown';
+    };
+    const inferBrowser = (ua: string): string => {
+      if (/Edg\//i.test(ua)) return 'Edge';
+      if (/Chrome\//i.test(ua) && !/Chromium/i.test(ua)) return 'Chrome';
+      if (/Firefox\//i.test(ua)) return 'Firefox';
+      if (/Safari\//i.test(ua) && !/Chrome/i.test(ua)) return 'Safari';
+      if (/SamsungBrowser/i.test(ua)) return 'Samsung Internet';
+      return 'Unknown';
+    };
+
     for (const row of sessions) {
       const sessionKey = (row.session_id as string) ?? (row.created_at as string);
       if (seen.has(sessionKey)) continue;
       seen.add(sessionKey);
       const md = (row.metadata as Record<string, unknown> | null) ?? {};
-      const platform = (md.platform_family as string) || 'legacy';
-      const os = (md.os as string) || 'Unknown';
-      const browser = (md.browser_family as string) || 'Unknown';
+      const ua = typeof md.browser === 'string' ? md.browser : '';
+      const platform = (md.platform_family as string) || (ua ? inferPlatform(ua) : 'legacy');
+      const os = (md.os as string) || (ua ? inferOS(ua) : 'Unknown');
+      const browser = (md.browser_family as string) || (ua ? inferBrowser(ua) : 'Unknown');
       const screen = (md.screen as string) || 'Unknown';
       byPlatform[platform] = (byPlatform[platform] ?? 0) + 1;
       byOS[os] = (byOS[os] ?? 0) + 1;

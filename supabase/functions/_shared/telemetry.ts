@@ -142,6 +142,20 @@ export function withTelemetry(
       if (statusCode >= 400) {
         status = "error";
         errorMsg = `HTTP ${statusCode}`;
+        // Intenta extraer el mensaje real del body JSON (sin consumir la Response original)
+        try {
+          const clone = response.clone();
+          const contentType = clone.headers.get("content-type") ?? "";
+          if (contentType.includes("application/json")) {
+            const body = await clone.json();
+            const detail = body?.error ?? body?.message ?? body?.detail;
+            if (typeof detail === "string" && detail.trim()) {
+              errorMsg = `HTTP ${statusCode}: ${detail.slice(0, 300)}`;
+            }
+          }
+        } catch {
+          // No pasa nada si falla el parse — mantiene el HTTP NNN original
+        }
       }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
