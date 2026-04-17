@@ -129,7 +129,10 @@ export function sanitizeForPrompt(input: string): string {
 }
 
 export async function callClaude(options: {
+  /** Bloque estatico del system prompt. Siempre se cachea (TTL 5 min). */
   systemPrompt: string;
+  /** Bloque dinamico opcional (contexto que cambia por llamada). NO se cachea. */
+  dynamicSystemText?: string;
   userMessage: string;
   maxTokens?: number;
   temperature?: number;
@@ -148,11 +151,20 @@ export async function callClaude(options: {
   }
   content.push({ type: "text", text: options.userMessage });
 
+  // System prompt multi-bloque: estatico (cacheable) + dinamico (fresh).
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const systemBlocks: any[] = [
+    { type: "text", text: options.systemPrompt, cache_control: { type: "ephemeral" } },
+  ];
+  if (options.dynamicSystemText) {
+    systemBlocks.push({ type: "text", text: options.dynamicSystemText });
+  }
+
   const body = {
     model: options.model ?? "claude-sonnet-4-6",
     max_tokens: options.maxTokens ?? 600,
     temperature: options.temperature ?? 0.3,
-    system: [{ type: "text", text: options.systemPrompt, cache_control: { type: "ephemeral" } }],
+    system: systemBlocks,
     messages: [{ role: "user", content }],
   };
 
