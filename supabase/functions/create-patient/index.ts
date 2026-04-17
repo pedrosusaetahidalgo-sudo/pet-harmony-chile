@@ -231,7 +231,7 @@ async function sendViaResend(opts: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'Paw Friend <no-reply@pawfriend.cl>',
+      from: Deno.env.get('RESEND_FROM_EMAIL') || 'Paw Friend <onboarding@resend.dev>',
       to: [opts.to],
       subject: opts.subject,
       html: opts.html,
