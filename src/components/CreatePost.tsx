@@ -223,7 +223,10 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
         <SelectContent>
           {POST_TYPES.map((pt) => (
             <SelectItem key={pt.value} value={pt.value}>
-              {pt.emoji} {pt.label}
+              <span className="flex items-center gap-2">
+                <pt.icon className="h-4 w-4" />
+                {pt.label}
+              </span>
             </SelectItem>
           ))}
         </SelectContent>

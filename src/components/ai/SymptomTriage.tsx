@@ -1,5 +1,15 @@
 import { useState } from 'react';
-import { Send, AlertTriangle, Shield, ArrowRight, Stethoscope } from '@/lib/icons';
+import {
+  Send,
+  AlertTriangle,
+  AlertCircle,
+  Clock,
+  CheckCircle2,
+  Shield,
+  ArrowRight,
+  Stethoscope,
+} from '@/lib/icons';
+import type { LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,19 +40,34 @@ interface Props {
   onShowDirectory?: () => void;
 }
 
-const URGENCY_CONFIG = {
-  emergencia: { color: 'bg-red-100 text-red-800 border-red-200', label: 'Emergencia', icon: '🔴' },
+const URGENCY_CONFIG: Record<
+  'emergencia' | 'urgente' | 'pronto' | 'rutina',
+  { color: string; label: string; Icon: LucideIcon; iconClass: string }
+> = {
+  emergencia: {
+    color: 'bg-red-100 text-red-800 border-red-200',
+    label: 'Emergencia',
+    Icon: AlertCircle,
+    iconClass: 'text-red-600',
+  },
   urgente: {
     color: 'bg-orange-100 text-orange-800 border-orange-200',
     label: 'Urgente',
-    icon: '🟠',
+    Icon: AlertTriangle,
+    iconClass: 'text-orange-600',
   },
   pronto: {
     color: 'bg-amber-100 text-amber-800 border-amber-200',
     label: 'Consulta pronto',
-    icon: '🟡',
+    Icon: Clock,
+    iconClass: 'text-amber-600',
   },
-  rutina: { color: 'bg-green-100 text-green-800 border-green-200', label: 'Rutina', icon: '🟢' },
+  rutina: {
+    color: 'bg-green-100 text-green-800 border-green-200',
+    label: 'Rutina',
+    Icon: CheckCircle2,
+    iconClass: 'text-green-600',
+  },
 };
 
 export function SymptomTriage({ petId, petName, onClose, onShowDirectory }: Props) {
@@ -152,17 +177,19 @@ export function SymptomTriage({ petId, petName, onClose, onShowDirectory }: Prop
                 <div className="space-y-2">
                   <div className="bg-muted/50 text-xs px-3 py-2.5 rounded-xl rounded-tl-sm max-w-[85%] space-y-2">
                     {/* Urgency badge */}
-                    {item.data?.urgency && URGENCY_CONFIG[item.data.urgency] && (
-                      <div className="flex items-center gap-1.5">
-                        {item.data.urgency === 'emergencia' && (
-                          <AlertTriangle className="h-3.5 w-3.5 text-red-600" />
-                        )}
-                        <Badge className={`text-[10px] ${URGENCY_CONFIG[item.data.urgency].color}`}>
-                          {URGENCY_CONFIG[item.data.urgency].icon}{' '}
-                          {URGENCY_CONFIG[item.data.urgency].label}
-                        </Badge>
-                      </div>
-                    )}
+                    {item.data?.urgency &&
+                      URGENCY_CONFIG[item.data.urgency] &&
+                      (() => {
+                        const cfg = URGENCY_CONFIG[item.data.urgency];
+                        return (
+                          <div className="flex items-center gap-1.5">
+                            <Badge className={`text-[10px] flex items-center gap-1 ${cfg.color}`}>
+                              <cfg.Icon className={`h-3 w-3 ${cfg.iconClass}`} />
+                              {cfg.label}
+                            </Badge>
+                          </div>
+                        );
+                      })()}
 
                     <p className="whitespace-pre-line leading-relaxed">
                       {item.data?.message || item.content}
@@ -208,14 +235,20 @@ export function SymptomTriage({ petId, petName, onClose, onShowDirectory }: Prop
         {error && <AIErrorState message={error} />}
 
         {/* Result summary card */}
-        {showResult && currentUrgency && URGENCY_CONFIG[currentUrgency] && (
-          <div className={`p-3 rounded-lg border-2 ${URGENCY_CONFIG[currentUrgency].color}`}>
-            <p className="text-xs font-semibold">
-              {URGENCY_CONFIG[currentUrgency].icon} Resultado:{' '}
-              {URGENCY_CONFIG[currentUrgency].label}
-            </p>
-          </div>
-        )}
+        {showResult &&
+          currentUrgency &&
+          URGENCY_CONFIG[currentUrgency] &&
+          (() => {
+            const cfg = URGENCY_CONFIG[currentUrgency];
+            return (
+              <div className={`p-3 rounded-lg border-2 ${cfg.color}`}>
+                <p className="text-xs font-semibold flex items-center gap-1.5">
+                  <cfg.Icon className={`h-4 w-4 ${cfg.iconClass}`} />
+                  Resultado: {cfg.label}
+                </p>
+              </div>
+            );
+          })()}
 
         {!showResult && (
           <form onSubmit={handleSubmit} className="flex gap-2">

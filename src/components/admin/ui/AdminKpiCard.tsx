@@ -4,6 +4,7 @@ import { ArrowUp, ArrowDown } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Link } from 'react-router-dom';
 
 interface AdminKpiCardProps {
   title: string;
@@ -15,6 +16,8 @@ interface AdminKpiCardProps {
   alert?: boolean;
   loading?: boolean;
   sparkData?: number[];
+  to?: string;
+  onClick?: () => void;
 }
 
 export default function AdminKpiCard({
@@ -27,6 +30,8 @@ export default function AdminKpiCard({
   alert = false,
   loading = false,
   sparkData,
+  to,
+  onClick,
 }: AdminKpiCardProps) {
   if (loading) {
     return (
@@ -49,12 +54,19 @@ export default function AdminKpiCard({
 
   const chartData = sparkData?.map((v, i) => ({ i, v }));
 
-  return (
+  const interactive = Boolean(to || onClick);
+
+  const card = (
     <Card
       className={cn(
         'relative overflow-hidden border-slate-800 bg-slate-900 p-4 transition-colors',
-        alert && 'border-orange-500/50 bg-orange-500/5'
+        alert && 'border-orange-500/50 bg-orange-500/5',
+        interactive &&
+          'cursor-pointer hover:border-indigo-500/40 hover:bg-slate-900/80 focus-within:ring-2 focus-within:ring-indigo-500/40'
       )}
+      onClick={onClick}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
     >
       <div className="flex items-start justify-between">
         <div className="min-w-0 flex-1">
@@ -117,4 +129,13 @@ export default function AdminKpiCard({
       )}
     </Card>
   );
+
+  if (to) {
+    return (
+      <Link to={to} className="block focus:outline-none">
+        {card}
+      </Link>
+    );
+  }
+  return card;
 }

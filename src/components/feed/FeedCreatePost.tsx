@@ -195,10 +195,11 @@ export function FeedCreatePost({ onSuccess }: FeedCreatePostProps) {
           <Badge
             key={pt.value}
             variant={postType === pt.value ? 'default' : 'outline'}
-            className="cursor-pointer text-xs px-3 py-1.5 transition-all"
+            className="cursor-pointer text-xs px-3 py-1.5 transition-all flex items-center gap-1.5"
             onClick={() => setPostType(pt.value)}
           >
-            {pt.emoji} {pt.label}
+            <pt.icon className="h-3.5 w-3.5" />
+            {pt.label}
           </Badge>
         ))}
       </div>

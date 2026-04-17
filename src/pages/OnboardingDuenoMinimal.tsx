@@ -16,7 +16,10 @@ import {
   Stethoscope,
   CheckCircle2,
   Sparkles,
+  Dog,
+  Cat,
 } from '@/lib/icons';
+import type { LucideIcon } from 'lucide-react';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { generatePawCardData } from '@/hooks/useHoloPattern';
 
@@ -135,10 +138,10 @@ const OnboardingDuenoMinimal = () => {
     navigate('/home');
   };
 
-  const speciesOptions: { value: Species; label: string; emoji: string }[] = [
-    { value: 'perro', label: 'Perro', emoji: '🐕' },
-    { value: 'gato', label: 'Gato', emoji: '🐈' },
-    { value: 'otro', label: 'Otro', emoji: '🐾' },
+  const speciesOptions: { value: Species; label: string; Icon: LucideIcon }[] = [
+    { value: 'perro', label: 'Perro', Icon: Dog },
+    { value: 'gato', label: 'Gato', Icon: Cat },
+    { value: 'otro', label: 'Otro', Icon: PawPrint },
   ];
 
   const ageOptions: { value: AgeRange; label: string; hint: string }[] = [
@@ -197,7 +200,7 @@ const OnboardingDuenoMinimal = () => {
                     />
                   ) : (
                     <div className="w-24 h-24 rounded-full bg-purple-100 flex flex-col items-center justify-center border-2 border-dashed border-purple-300 hover:border-purple-400 transition-colors">
-                      <span className="text-3xl">🐾</span>
+                      <PawPrint className="h-8 w-8 text-purple-500" />
                       <span className="text-xs text-purple-500 mt-1 flex items-center gap-1">
                         <Camera className="h-3 w-3" /> Foto
                       </span>
@@ -224,13 +227,14 @@ const OnboardingDuenoMinimal = () => {
                       key={opt.value}
                       type="button"
                       onClick={() => setSpecies(species === opt.value ? null : opt.value)}
-                      className={`flex-1 py-2 px-3 rounded-full text-sm font-medium border transition-colors ${
+                      className={`flex-1 py-2 px-3 rounded-full text-sm font-medium border transition-colors flex items-center justify-center gap-1.5 ${
                         species === opt.value
                           ? 'bg-purple-600 text-white border-purple-600'
                           : 'bg-white text-slate-700 border-slate-300 hover:border-purple-400'
                       }`}
                     >
-                      {opt.emoji} {opt.label}
+                      <opt.Icon className="h-4 w-4" />
+                      {opt.label}
                     </button>
                   ))}
                 </div>

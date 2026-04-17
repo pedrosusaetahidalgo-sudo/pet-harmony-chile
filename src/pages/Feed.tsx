@@ -177,13 +177,14 @@ const Feed = () => {
             <Badge
               key={pt.value}
               variant={filterType === pt.value ? 'default' : 'outline'}
-              className="cursor-pointer whitespace-nowrap shrink-0"
+              className="cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1"
               role="button"
               aria-label={`Filtrar por ${pt.label}`}
               aria-pressed={filterType === pt.value}
               onClick={() => setFilterType(filterType === pt.value ? null : pt.value)}
             >
-              {pt.emoji} {pt.label}
+              <pt.icon className="h-3 w-3" />
+              {pt.label}
             </Badge>
           ))}
         </div>

@@ -23,6 +23,10 @@ import {
   TrendingUp,
   Star,
   Phone,
+  Activity,
+  Users,
+  Target,
+  Gamepad2,
 } from '@/lib/icons';
 import { getGreeting } from '@/lib/format';
 import { useGamification } from '@/hooks/useGamification';
@@ -33,6 +37,7 @@ import { useGoToAddPet } from '@/hooks/useCanAddPet';
 import { logger } from '@/lib/logger';
 import { PriceEstimatorCard } from '@/components/home/PriceEstimatorCard';
 import { WeeklyReportCard } from '@/components/home/WeeklyReportCard';
+import { PremiumGate } from '@/components/PremiumGate';
 import { SeasonalTipsCard } from '@/components/home/SeasonalTipsCard';
 import { TodayRoutinesCard } from '@/components/home/TodayRoutinesCard';
 import { AnnualCareChecklist } from '@/components/home/AnnualCareChecklist';
@@ -679,8 +684,41 @@ export default function Home() {
               {/* Today's routines */}
               <TodayRoutinesCard />
 
-              {/* Weekly report */}
-              <WeeklyReportCard />
+              {/* Weekly report (Premium; auto-candado cuando USER_PREMIUM=true) */}
+              <PremiumGate
+                feature="weekly_reports"
+                title="Reporte semanal"
+                description="Tendencias de salud, recordatorios cumplidos y análisis por mascota"
+                blurLevel={4}
+              >
+                <WeeklyReportCard />
+              </PremiumGate>
+
+              {/* Panel Pro (Premium; auto-candado cuando USER_PREMIUM=true) */}
+              <PremiumGate
+                feature="pro_analytics"
+                title="Panel Pro"
+                description="Análisis avanzado de salud, gráficos y descargas en CSV/PDF"
+                blurLevel={4}
+              >
+                <Card
+                  className="border-purple-200 bg-gradient-to-br from-purple-50 to-indigo-50 cursor-pointer hover:shadow-md transition-all"
+                  onClick={() => navigate(LINKS.proDashboard())}
+                >
+                  <CardContent className="p-3 flex items-center gap-3">
+                    <div className="rounded-xl bg-white p-2 shadow-sm">
+                      <TrendingUp className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-purple-900">Panel Pro</p>
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        Analytics avanzados de la salud de tus mascotas
+                      </p>
+                    </div>
+                    <Crown className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                  </CardContent>
+                </Card>
+              </PremiumGate>
             </div>
 
             {/* Right: Primary CTAs + secondary info */}
@@ -792,19 +830,53 @@ export default function Home() {
             Explorar
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {[
-              { label: 'Feed', desc: 'Fotos y consejos', icon: '📸', to: '/feed' },
-              { label: 'Comunidad', desc: 'Grupos por raza', icon: '👥', to: '/comunidad' },
-              { label: 'Misiones', desc: 'Gana PawPoints', icon: '🎯', to: '/misiones' },
-              { label: 'Paw Game', desc: 'Mini-juego', icon: '🎮', to: '/paw-game' },
-            ].map((item) => (
+            {(
+              [
+                {
+                  label: 'Feed',
+                  desc: 'Fotos y consejos',
+                  Icon: Activity,
+                  to: '/feed',
+                  color: 'text-blue-600',
+                  bg: 'bg-blue-50',
+                },
+                {
+                  label: 'Comunidad',
+                  desc: 'Grupos por raza',
+                  Icon: Users,
+                  to: '/comunidad',
+                  color: 'text-teal-600',
+                  bg: 'bg-teal-50',
+                },
+                {
+                  label: 'Misiones',
+                  desc: 'Gana PawPoints',
+                  Icon: Target,
+                  to: '/misiones',
+                  color: 'text-amber-600',
+                  bg: 'bg-amber-50',
+                },
+                {
+                  label: 'Paw Game',
+                  desc: 'Mini-juego',
+                  Icon: Gamepad2,
+                  to: '/paw-game',
+                  color: 'text-purple-600',
+                  bg: 'bg-purple-50',
+                },
+              ] as const
+            ).map((item) => (
               <Card
                 key={item.to}
                 className="cursor-pointer hover:shadow-md transition-shadow border-gray-200"
                 onClick={() => navigate(item.to)}
               >
-                <CardContent className="p-3 text-center">
-                  <span className="text-2xl block mb-1">{item.icon}</span>
+                <CardContent className="p-3 text-center space-y-1.5">
+                  <div
+                    className={`mx-auto w-10 h-10 rounded-full ${item.bg} flex items-center justify-center`}
+                  >
+                    <item.Icon className={`h-5 w-5 ${item.color}`} />
+                  </div>
                   <p className="text-xs font-semibold">{item.label}</p>
                   <p className="text-[10px] text-muted-foreground">{item.desc}</p>
                 </CardContent>

@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { DaySelector } from './DaySelector';
+import { categoryLucideIcon } from './RoutineCard';
 import { RoutineCategory, RoutineInput, ROUTINE_CATEGORIES, Routine } from '@/hooks/useRoutines';
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
@@ -227,7 +228,10 @@ export function RoutineForm({
                           : 'border-border hover:border-purple-200'
                       )}
                     >
-                      <span className="text-base">{categoryEmoji(key)}</span>
+                      {(() => {
+                        const Icon = categoryLucideIcon(key);
+                        return <Icon className="h-4 w-4" />;
+                      })()}
                       <span className="truncate w-full text-center">{cat.label}</span>
                     </button>
                   ))}
@@ -334,16 +338,6 @@ export function RoutineForm({
   );
 }
 
-function categoryEmoji(category: string): string {
-  const map: Record<string, string> = {
-    paseo: '🐾',
-    comida: '🍽️',
-    medicacion: '💊',
-    higiene: '🚿',
-    entrenamiento: '🏋️',
-    juego: '🎮',
-    suplemento: '🌿',
-    otro: '📌',
-  };
-  return map[category] || '📌';
-}
+// Reutilizamos el mapeo Lucide de RoutineCard para mantener consistencia.
+// Emojis dejaron de renderizarse en UI; si routine.icon string legacy
+// viene de DB, el RoutineCard lo ignora y usa este helper.

@@ -4,7 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, CheckCircle, Crown, X, HelpCircle } from '@/lib/icons';
+import { Sparkles, CheckCircle, Crown, X, HelpCircle, Dog, Cat, PawPrint } from '@/lib/icons';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -287,12 +287,12 @@ export default function Upgrade() {
           <div className="mt-8 text-center">
             <div className="inline-flex items-center gap-3 rounded-full bg-green-50 border border-green-200 px-5 py-2.5">
               <div className="flex -space-x-2">
-                {['🐕', '🐈', '🐾'].map((emoji, i) => (
+                {[Dog, Cat, PawPrint].map((IconComp, i) => (
                   <div
                     key={i}
-                    className="h-7 w-7 rounded-full bg-white border-2 border-green-200 flex items-center justify-center text-sm"
+                    className="h-7 w-7 rounded-full bg-white border-2 border-green-200 flex items-center justify-center"
                   >
-                    {emoji}
+                    <IconComp className="h-4 w-4 text-green-700" />
                   </div>
                 ))}
               </div>

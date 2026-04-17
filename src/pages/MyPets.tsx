@@ -38,9 +38,9 @@ import { generatePawCardId, getBreedHoloPattern } from '@/lib/paw-cards';
 function getPetBadges(score: number | undefined): Array<{ label: string; color: string }> {
   const badges: Array<{ label: string; color: string }> = [];
   if (score && score >= 70)
-    badges.push({ label: '💚 Saludable', color: 'bg-green-100 text-green-800' });
+    badges.push({ label: 'Saludable', color: 'bg-green-100 text-green-800' });
   if (score && score >= 90)
-    badges.push({ label: '⭐ Estrella', color: 'bg-amber-100 text-amber-800' });
+    badges.push({ label: 'Estrella', color: 'bg-amber-100 text-amber-800' });
   return badges;
 }
 

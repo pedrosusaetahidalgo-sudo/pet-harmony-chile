@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
@@ -100,8 +101,26 @@ const GROUP_LABELS: Record<number, string> = {
 };
 
 // ── Section renderers with internal subtabs ──────────────
-function ProvidersSection() {
-  const [sub, setSub] = useState('central');
+interface SubSectionProps {
+  sub?: string;
+  onSubChange?: (sub: string) => void;
+}
+
+function useSubState(initial: string, propSub?: string, onChange?: (s: string) => void) {
+  const [internal, setInternal] = useState(propSub ?? initial);
+  const current = propSub ?? internal;
+  const setCurrent = (val: string) => {
+    setInternal(val);
+    onChange?.(val);
+  };
+  useEffect(() => {
+    if (propSub && propSub !== internal) setInternal(propSub);
+  }, [propSub]); // eslint-disable-line react-hooks/exhaustive-deps
+  return [current, setCurrent] as const;
+}
+
+function ProvidersSection({ sub: propSub, onSubChange }: SubSectionProps) {
+  const [sub, setSub] = useSubState('central', propSub, onSubChange);
   return (
     <div className="space-y-4">
       <Tabs value={sub} onValueChange={setSub}>
@@ -124,8 +143,8 @@ function ProvidersSection() {
   );
 }
 
-function UsersSection() {
-  const [sub, setSub] = useState('users');
+function UsersSection({ sub: propSub, onSubChange }: SubSectionProps) {
+  const [sub, setSub] = useSubState('users', propSub, onSubChange);
   return (
     <div className="space-y-4">
       <Tabs value={sub} onValueChange={setSub}>
@@ -152,8 +171,8 @@ function UsersSection() {
   );
 }
 
-function ContentSection() {
-  const [sub, setSub] = useState('feedback');
+function ContentSection({ sub: propSub, onSubChange }: SubSectionProps) {
+  const [sub, setSub] = useSubState('feedback', propSub, onSubChange);
   return (
     <div className="space-y-4">
       <Tabs value={sub} onValueChange={setSub}>
@@ -176,8 +195,8 @@ function ContentSection() {
   );
 }
 
-function GamificationSection() {
-  const [sub, setSub] = useState('rewards');
+function GamificationSection({ sub: propSub, onSubChange }: SubSectionProps) {
+  const [sub, setSub] = useSubState('rewards', propSub, onSubChange);
   return (
     <div className="space-y-4">
       <Tabs value={sub} onValueChange={setSub}>
@@ -196,8 +215,8 @@ function GamificationSection() {
   );
 }
 
-function CommercialSection() {
-  const [sub, setSub] = useState('ads');
+function CommercialSection({ sub: propSub, onSubChange }: SubSectionProps) {
+  const [sub, setSub] = useSubState('ads', propSub, onSubChange);
   return (
     <div className="space-y-4">
       <Tabs value={sub} onValueChange={setSub}>
@@ -216,8 +235,8 @@ function CommercialSection() {
   );
 }
 
-function SystemSection() {
-  const [sub, setSub] = useState('config');
+function SystemSection({ sub: propSub, onSubChange }: SubSectionProps) {
+  const [sub, setSub] = useSubState('config', propSub, onSubChange);
   return (
     <div className="space-y-4">
       <Tabs value={sub} onValueChange={setSub}>
@@ -371,7 +390,14 @@ function SidebarNav({
 
 // ── Main Admin page ──────────────────────────────────────
 const Admin = () => {
-  const [activeSection, setActiveSection] = useState('dashboard');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const sectionFromUrl = searchParams.get('section');
+  const subFromUrl = searchParams.get('sub') ?? undefined;
+  const validSectionIds = SECTIONS.map((s) => s.id);
+  const initialSection =
+    sectionFromUrl && validSectionIds.includes(sectionFromUrl) ? sectionFromUrl : 'dashboard';
+
+  const [activeSection, setActiveSection] = useState(initialSection);
   const [collapsed, setCollapsed] = useState(() => {
     try {
       return localStorage.getItem('pf_admin_sidebar') === 'collapsed';
@@ -395,6 +421,14 @@ const Admin = () => {
     }
   }, [collapsed]);
 
+  // Sync activeSection cuando cambia ?section en la URL
+  useEffect(() => {
+    if (sectionFromUrl && validSectionIds.includes(sectionFromUrl)) {
+      setActiveSection(sectionFromUrl);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sectionFromUrl]);
+
   // Cmd+K / Ctrl+K keyboard shortcut
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -407,11 +441,35 @@ const Admin = () => {
     return () => document.removeEventListener('keydown', handler);
   }, []);
 
-  const handleSelectSection = useCallback((id: string) => {
-    setActiveSection(id);
-    setMobileOpen(false);
-    setCommandOpen(false);
-  }, []);
+  const handleSelectSection = useCallback(
+    (id: string) => {
+      setActiveSection(id);
+      setMobileOpen(false);
+      setCommandOpen(false);
+      const next = new URLSearchParams(searchParams);
+      if (id === 'dashboard') {
+        next.delete('section');
+      } else {
+        next.set('section', id);
+      }
+      next.delete('sub');
+      setSearchParams(next, { replace: true });
+    },
+    [searchParams, setSearchParams]
+  );
+
+  const handleSubChange = useCallback(
+    (sub: string) => {
+      const next = new URLSearchParams(searchParams);
+      if (!sub) {
+        next.delete('sub');
+      } else {
+        next.set('sub', sub);
+      }
+      setSearchParams(next, { replace: true });
+    },
+    [searchParams, setSearchParams]
+  );
 
   const toggleCollapse = useCallback(() => {
     setCollapsed((prev) => !prev);
@@ -428,23 +486,23 @@ const Admin = () => {
       case 'bookings':
         return <AdminBookingsPanel />;
       case 'providers':
-        return <ProvidersSection />;
+        return <ProvidersSection sub={subFromUrl} onSubChange={handleSubChange} />;
       case 'users':
-        return <UsersSection />;
+        return <UsersSection sub={subFromUrl} onSubChange={handleSubChange} />;
       case 'finance':
         return <AdminFinance />;
       case 'content':
-        return <ContentSection />;
+        return <ContentSection sub={subFromUrl} onSubChange={handleSubChange} />;
       case 'gamification':
-        return <GamificationSection />;
+        return <GamificationSection sub={subFromUrl} onSubChange={handleSubChange} />;
       case 'commercial':
-        return <CommercialSection />;
+        return <CommercialSection sub={subFromUrl} onSubChange={handleSubChange} />;
       case 'leads-crm':
         return <AdminLeadsCRM />;
       case 'exports':
         return <AdminExports />;
       case 'system':
-        return <SystemSection />;
+        return <SystemSection sub={subFromUrl} onSubChange={handleSubChange} />;
       default:
         return <AdminDashboard />;
     }
@@ -531,7 +589,12 @@ const Admin = () => {
         </header>
 
         {/* ── Content area ── */}
-        <main className="flex-1 overflow-y-auto px-4 lg:px-6 py-5">{renderSection()}</main>
+        <main
+          className="admin-main flex-1 overflow-y-auto bg-slate-950 px-4 lg:px-6 py-5"
+          style={{ scrollbarGutter: 'stable', scrollbarColor: '#334155 transparent' }}
+        >
+          {renderSection()}
+        </main>
       </div>
 
       {/* ── Command palette ── */}

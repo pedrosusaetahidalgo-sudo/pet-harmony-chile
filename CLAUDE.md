@@ -241,6 +241,11 @@ verify-vet-document/             # Verificacion vet IA-assisted
 
 Ver `INDEX.md` para el indice completo con reglas de actualizacion.
 
+> **Docs vivos** (deben mantenerse sincronizados con el codigo):
+> ver `docs-vivos/README.md`. Hook `PostToolUse` en
+> `.claude/settings.json` + `scripts/check-docs-vivos.mjs` recuerda
+> actualizar el doc correspondiente cuando editas el archivo "dueño".
+
 | Archivo | Contenido |
 |---|---|
 | `INDEX.md` | Indice maestro de documentacion y reglas de actualizacion |

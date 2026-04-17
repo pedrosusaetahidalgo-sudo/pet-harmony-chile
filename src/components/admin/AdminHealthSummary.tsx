@@ -86,7 +86,7 @@ export default function AdminHealthSummary() {
           count: ghostUsers as number,
           threshold: 5,
           icon: Ghost,
-          href: '/admin?section=users',
+          href: '/admin?section=users&sub=ghost-users',
           hint: 'Cuentas creadas por invite sin login',
         },
         {
@@ -94,7 +94,7 @@ export default function AdminHealthSummary() {
           count: pendingPets as number,
           threshold: 20,
           icon: PawPrint,
-          href: '/admin?section=users',
+          href: '/admin?section=users&sub=pending-pets',
           hint: 'Pacientes vet esperando dueno',
         },
         {
@@ -102,7 +102,7 @@ export default function AdminHealthSummary() {
           count: openErrors as number,
           threshold: 10,
           icon: AlertTriangle,
-          href: '/admin?section=system',
+          href: '/admin?section=system&sub=errors',
           hint: 'Errores capturados por log-error',
         },
         {
@@ -110,7 +110,7 @@ export default function AdminHealthSummary() {
           count: unreadFeedback as number,
           threshold: 0,
           icon: MessageSquare,
-          href: '/admin?section=content',
+          href: '/admin?section=content&sub=feedback',
           hint: 'Mensajes de usuarios pendientes',
         },
         {
@@ -118,7 +118,7 @@ export default function AdminHealthSummary() {
           count: pendingVerifs as number,
           threshold: 5,
           icon: Clock,
-          href: '/admin?section=users',
+          href: '/admin?section=users&sub=verifications',
           hint: 'Vets/proveedores esperando approval',
         },
         {
@@ -126,7 +126,7 @@ export default function AdminHealthSummary() {
           count: pendingPartners as number,
           threshold: 5,
           icon: Clock,
-          href: '/admin?section=commercial',
+          href: '/admin?section=commercial&sub=partners',
           hint: 'Solicitudes de partnership',
         },
       ];

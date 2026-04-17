@@ -25,6 +25,7 @@ import {
   ClipboardList,
   Sparkles,
   Bug,
+  PawPrint,
 } from '@/lib/icons';
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -571,7 +572,7 @@ const PetClinicalRecord = () => {
             className="flex items-center gap-3 p-3 rounded-lg bg-purple-50/50 border border-purple-100/50 cursor-pointer hover:bg-purple-50 transition-colors"
             onClick={() => navigate('/paw-game')}
           >
-            <span className="text-base">🐾</span>
+            <PawPrint className="h-4 w-4 text-purple-600" />
             <p className="text-[11px] text-purple-600 flex-1">
               Completa la ficha de {pet.name} y gana <strong>30 PawPoints</strong>
             </p>

@@ -7,6 +7,7 @@ import AdminKpiCard from '@/components/admin/ui/AdminKpiCard';
 import AdminStatCard from '@/components/admin/ui/AdminStatCard';
 import AdminEmptyState from '@/components/admin/ui/AdminEmptyState';
 import AdminHealthSummary from '@/components/admin/AdminHealthSummary';
+import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { formatCLPCompact } from '@/lib/format';
 import {
@@ -682,22 +683,28 @@ export default function AdminDashboard() {
             </div>
             <div className="flex flex-wrap gap-2">
               {(alerts?.staleProviders ?? 0) > 0 && (
-                <Badge className="border-orange-500/30 bg-orange-500/10 text-orange-300 hover:bg-orange-500/20">
-                  <Clock className="mr-1 h-3 w-3" />
-                  {alerts!.staleProviders} proveedores &gt;48h
-                </Badge>
+                <Link to="/admin?section=providers&sub=central">
+                  <Badge className="border-orange-500/30 bg-orange-500/10 text-orange-300 hover:bg-orange-500/20 cursor-pointer">
+                    <Clock className="mr-1 h-3 w-3" />
+                    {alerts!.staleProviders} proveedores &gt;48h
+                  </Badge>
+                </Link>
               )}
               {(alerts?.failedPayments ?? 0) > 0 && (
-                <Badge className="border-red-500/30 bg-red-500/10 text-red-300 hover:bg-red-500/20">
-                  <CreditCard className="mr-1 h-3 w-3" />
-                  {alerts!.failedPayments} pagos fallidos (7d)
-                </Badge>
+                <Link to="/admin?section=finance">
+                  <Badge className="border-red-500/30 bg-red-500/10 text-red-300 hover:bg-red-500/20 cursor-pointer">
+                    <CreditCard className="mr-1 h-3 w-3" />
+                    {alerts!.failedPayments} pagos fallidos (7d)
+                  </Badge>
+                </Link>
               )}
               {(alerts?.criticalErrors ?? 0) > 0 && (
-                <Badge className="border-red-500/30 bg-red-500/10 text-red-300 hover:bg-red-500/20">
-                  <AlertTriangle className="mr-1 h-3 w-3" />
-                  {alerts!.criticalErrors} errores criticos
-                </Badge>
+                <Link to="/admin?section=system&sub=errors">
+                  <Badge className="border-red-500/30 bg-red-500/10 text-red-300 hover:bg-red-500/20 cursor-pointer">
+                    <AlertTriangle className="mr-1 h-3 w-3" />
+                    {alerts!.criticalErrors} errores criticos
+                  </Badge>
+                </Link>
               )}
             </div>
           </CardContent>
@@ -715,6 +722,7 @@ export default function AdminDashboard() {
           deltaLabel="vs semana ant."
           sparkData={activeUsersData?.spark}
           loading={l1}
+          to="/admin?section=users&sub=users"
         />
         <AdminKpiCard
           title="Revenue total"
@@ -725,6 +733,7 @@ export default function AdminDashboard() {
           deltaLabel="vs mes ant."
           sparkData={revenueData?.spark}
           loading={l2}
+          to="/admin?section=finance"
         />
         <AdminKpiCard
           title="Mascotas activas"
@@ -735,6 +744,7 @@ export default function AdminDashboard() {
           deltaLabel="vs semana ant."
           sparkData={petsKpi?.spark}
           loading={l3}
+          to="/admin?section=users&sub=pending-pets"
         />
         <AdminKpiCard
           title="Por revisar"
@@ -743,6 +753,7 @@ export default function AdminDashboard() {
           description="Verificaciones + reportes + promos"
           alert={(pendingReview ?? 0) > 0}
           loading={l4}
+          to="/admin?section=users&sub=verifications"
         />
       </div>
 
@@ -752,30 +763,35 @@ export default function AdminDashboard() {
           label="Fichas con registros"
           value={extraMetrics?.fichasConRegistros ?? 0}
           icon={FileCheck}
+          to="/admin?section=users&sub=users"
         />
         <AdminStatCard
           label="Reservas (7d)"
           value={extraMetrics?.weekBookings ?? 0}
           icon={Clock}
           color="text-purple-400"
+          to="/admin?section=bookings"
         />
         <AdminStatCard
           label="Proveedores aprobados"
           value={extraMetrics?.approvedProviders ?? 0}
           icon={Briefcase}
           color="text-emerald-400"
+          to="/admin?section=providers&sub=central"
         />
         <AdminStatCard
           label="Resenas totales"
           value={extraMetrics?.totalReviews ?? 0}
           icon={Star}
           color="text-amber-400"
+          to="/admin?section=content&sub=moderation"
         />
         <AdminStatCard
           label="Posts (7d)"
           value={extraMetrics?.weekPosts ?? 0}
           icon={TrendingUp}
           color="text-cyan-400"
+          to="/admin?section=content&sub=moderation"
         />
         <AdminStatCard
           label="Mascotas pendientes"
@@ -784,6 +800,7 @@ export default function AdminDashboard() {
           color={
             (extraMetrics?.mascotasPendientes ?? 0) > 0 ? 'text-orange-400' : 'text-indigo-400'
           }
+          to="/admin?section=users&sub=pending-pets"
         />
       </div>
 
@@ -792,7 +809,12 @@ export default function AdminDashboard() {
         <Card className="border-slate-800 bg-slate-900 lg:col-span-2">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium uppercase tracking-wider text-slate-400">
-              Registros (30 dias)
+              <Link
+                to="/admin?section=users&sub=users"
+                className="hover:text-slate-200 transition-colors"
+              >
+                Registros (30 dias) →
+              </Link>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -852,7 +874,9 @@ export default function AdminDashboard() {
         <Card className="border-slate-800 bg-slate-900">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium uppercase tracking-wider text-slate-400">
-              Distribucion de planes
+              <Link to="/admin?section=finance" className="hover:text-slate-200 transition-colors">
+                Distribucion de planes →
+              </Link>
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center justify-center">
@@ -905,7 +929,9 @@ export default function AdminDashboard() {
         <Card className="border-slate-800 bg-slate-900">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium uppercase tracking-wider text-slate-400">
-              Top servicios
+              <Link to="/admin?section=bookings" className="hover:text-slate-200 transition-colors">
+                Top servicios →
+              </Link>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -958,7 +984,12 @@ export default function AdminDashboard() {
         <Card className="border-slate-800 bg-slate-900">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium uppercase tracking-wider text-slate-400">
-              Actividad reciente
+              <Link
+                to="/admin?section=system&sub=audit"
+                className="hover:text-slate-200 transition-colors"
+              >
+                Actividad reciente →
+              </Link>
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -989,36 +1020,47 @@ export default function AdminDashboard() {
       <Card className="border-slate-800 bg-slate-900">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-medium uppercase tracking-wider text-slate-400">
-            Estado del sistema
+            <Link
+              to="/admin?section=system&sub=health"
+              className="hover:text-slate-200 transition-colors"
+            >
+              Estado del sistema →
+            </Link>
           </CardTitle>
         </CardHeader>
         <CardContent>
           {systemHealth ? (
             <div className="flex flex-wrap gap-3">
-              <HealthBadge
-                status={systemHealth.db.status}
-                label="Base de datos"
-                latency={systemHealth.db.latency}
-              />
-              <HealthBadge
-                status={
-                  systemHealth.edgeFn.status === 'ok' || systemHealth.edgeFn.status === 'healthy'
-                    ? 'healthy'
-                    : systemHealth.edgeFn.status === 'unknown'
-                      ? 'unknown'
-                      : 'error'
-                }
-                label="Edge Functions"
-              />
+              <Link to="/admin?section=system&sub=health" className="contents">
+                <HealthBadge
+                  status={systemHealth.db.status}
+                  label="Base de datos"
+                  latency={systemHealth.db.latency}
+                />
+              </Link>
+              <Link to="/admin?section=system&sub=health" className="contents">
+                <HealthBadge
+                  status={
+                    systemHealth.edgeFn.status === 'ok' || systemHealth.edgeFn.status === 'healthy'
+                      ? 'healthy'
+                      : systemHealth.edgeFn.status === 'unknown'
+                        ? 'unknown'
+                        : 'error'
+                  }
+                  label="Edge Functions"
+                />
+              </Link>
               <HealthBadge status="healthy" label="Frontend" />
-              <HealthBadge
-                status={import.meta.env.VITE_POSTHOG_KEY ? 'healthy' : 'unknown'}
-                label={
-                  import.meta.env.VITE_POSTHOG_KEY
-                    ? 'PostHog activo'
-                    : 'PostHog: configurar VITE_POSTHOG_KEY en .env'
-                }
-              />
+              <Link to="/admin?section=system&sub=config" className="contents">
+                <HealthBadge
+                  status={import.meta.env.VITE_POSTHOG_KEY ? 'healthy' : 'unknown'}
+                  label={
+                    import.meta.env.VITE_POSTHOG_KEY
+                      ? 'PostHog activo'
+                      : 'PostHog: configurar VITE_POSTHOG_KEY en .env'
+                  }
+                />
+              </Link>
             </div>
           ) : (
             <div className="flex gap-3">

@@ -43,6 +43,8 @@ import {
   LayoutGrid,
   List,
   ArrowUpDown,
+  Mic,
+  FileText,
 } from '@/lib/icons';
 import { toast } from 'sonner';
 import { NewPatientForm } from '@/components/provider/NewPatientForm';
@@ -958,7 +960,7 @@ export default function ProviderPatients() {
                           })
                         }
                       >
-                        <span className="text-xs">🎙</span>
+                        <Mic className="h-3.5 w-3.5" />
                       </Button>
                       <Button
                         size="sm"
@@ -972,7 +974,7 @@ export default function ProviderPatients() {
                           })
                         }
                       >
-                        <span className="text-xs">📝</span>
+                        <FileText className="h-3.5 w-3.5" />
                       </Button>
                       <a href={LINKS.petClinicalVet(patient.pet_id)}>
                         <Button

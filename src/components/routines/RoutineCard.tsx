@@ -6,7 +6,16 @@ import {
   Pause,
   Trash2,
   Pencil,
+  PawPrint,
+  UtensilsCrossed,
+  Pill,
+  Droplets,
+  Activity,
+  Gamepad2,
+  Leaf,
+  MapPin,
 } from '@/lib/icons';
+import type { LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import {
@@ -79,12 +88,15 @@ export function RoutineCard({
     >
       <CardContent className="p-3">
         <div className="flex items-start gap-3">
-          {/* Category icon */}
+          {/* Category icon — Lucide iconico, respeta color de categoria */}
           <div
-            className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0 text-lg"
+            className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0"
             style={{ backgroundColor: cat.color + '20', color: cat.color }}
           >
-            {routine.icon || categoryEmoji(routine.category)}
+            {(() => {
+              const Icon = categoryLucideIcon(routine.category);
+              return <Icon className="h-5 w-5" style={{ color: cat.color }} />;
+            })()}
           </div>
 
           {/* Content */}
@@ -198,16 +210,33 @@ export function RoutineCard({
   );
 }
 
+// Legacy: stub que preserva retrocompatibilidad con el campo
+// routine.icon string guardado en DB. Para nuevas renderizaciones usar
+// `categoryLucideIcon` abajo.
 function categoryEmoji(category: string): string {
   const map: Record<string, string> = {
-    paseo: '🐾',
-    comida: '🍽️',
-    medicacion: '💊',
-    higiene: '🚿',
-    entrenamiento: '🏋️',
-    juego: '🎮',
-    suplemento: '🌿',
-    otro: '📌',
+    paseo: '',
+    comida: '',
+    medicacion: '',
+    higiene: '',
+    entrenamiento: '',
+    juego: '',
+    suplemento: '',
+    otro: '',
   };
-  return map[category] || '📌';
+  return map[category] || '';
+}
+
+export function categoryLucideIcon(category: string): LucideIcon {
+  const map: Record<string, LucideIcon> = {
+    paseo: PawPrint,
+    comida: UtensilsCrossed,
+    medicacion: Pill,
+    higiene: Droplets,
+    entrenamiento: Activity,
+    juego: Gamepad2,
+    suplemento: Leaf,
+    otro: MapPin,
+  };
+  return map[category] || MapPin;
 }

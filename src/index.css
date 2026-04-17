@@ -2695,6 +2695,23 @@ span {
   scrollbar-color: hsl(var(--muted-foreground) / 0.2) transparent;
 }
 
+/* Admin panel: scrollbar oscuro consistente sobre fondo slate-950 */
+.admin-main::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.admin-main::-webkit-scrollbar-track {
+  background: rgb(15, 23, 42); /* slate-900 */
+}
+.admin-main::-webkit-scrollbar-thumb {
+  background: rgb(51, 65, 85); /* slate-700 */
+  border-radius: 9999px;
+  border: 2px solid rgb(15, 23, 42);
+}
+.admin-main::-webkit-scrollbar-thumb:hover {
+  background: rgb(71, 85, 105); /* slate-600 */
+}
+
 /* ============================================
    ACCESSIBILITY
    ============================================ */
