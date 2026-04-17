@@ -5,6 +5,7 @@ import { es } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { Plus, CalendarDays } from '@/lib/icons';
 import { useNavigate } from 'react-router-dom';
+import { LINKS } from '@/lib/links';
 
 interface UnifiedDayViewProps {
   date: Date;
@@ -82,7 +83,7 @@ export function UnifiedDayView({ date, events, onEventTap }: UnifiedDayViewProps
               size="sm"
               variant="outline"
               className="h-8 text-xs gap-1"
-              onClick={() => navigate('/rutinas')}
+              onClick={() => navigate(LINKS.routinesTab())}
             >
               <Plus className="h-3.5 w-3.5" />
               Rutina
@@ -91,7 +92,7 @@ export function UnifiedDayView({ date, events, onEventTap }: UnifiedDayViewProps
               size="sm"
               variant="outline"
               className="h-8 text-xs gap-1"
-              onClick={() => navigate('/reminders')}
+              onClick={() => navigate(LINKS.remindersTab())}
             >
               <Plus className="h-3.5 w-3.5" />
               Recordatorio

@@ -86,7 +86,7 @@ export function BottomTabBar() {
     {
       label: 'Recordar',
       icon: Bell,
-      href: '/reminders',
+      href: LINKS.remindersTab(),
       matchPaths: (p) => p === '/reminders',
       badge: reminderBadge,
     },

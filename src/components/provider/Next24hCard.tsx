@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Link } from 'react-router-dom';
+import { LINKS } from '@/lib/links';
 
 /**
  * Compact "Próximas 24h" summary card for ProviderDashboard.
@@ -78,7 +79,7 @@ export function Next24hCard() {
       label: 'Citas',
       color: 'text-teal-600',
       bg: 'bg-teal-50',
-      href: '/mis-reservas',
+      href: LINKS.bookingsTab(),
     },
     {
       icon: Users,

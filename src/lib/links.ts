@@ -51,8 +51,24 @@ export const LINKS = {
   medicalRecords: () => '/medical-records',
 
   // === Reservas ===
-  /** Calendario / mis reservas */
+  /** Ruta fisica de mis reservas */
   bookings: () => '/mis-reservas',
+
+  // === Calendario unificado: helpers por intencion (no por ruta fisica) ===
+  /**
+   * Vista de recordatorios. Hoy '/reminders'; cuando el calendario unificado
+   * gane tabs, apuntara a '/calendario?tab=recordatorios'. Usar este helper
+   * en vez de '/reminders' hardcodeado.
+   */
+  remindersTab: () => '/reminders',
+  /** Vista de rutinas (intencion). Hoy '/rutinas'; futuro '/calendario?tab=rutinas'. */
+  routinesTab: () => '/rutinas',
+  /** Vista de reservas (intencion). Hoy '/mis-reservas'; futuro '/calendario?tab=reservas'. */
+  bookingsTab: () => '/mis-reservas',
+  /** Vista "hoy" del calendario unificado. Futuro '/calendario?tab=hoy'. */
+  calendarToday: () => '/calendario',
+  /** Ruta fisica de recordatorios */
+  reminders: () => '/reminders',
 
   // === Provider ===
   /** Dashboard del provider (vet logueado) */

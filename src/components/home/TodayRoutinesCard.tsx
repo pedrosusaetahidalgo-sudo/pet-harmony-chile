@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle2, Circle, SkipForward, CalendarDays } from '@/lib/icons';
 import { useRoutines } from '@/hooks/useRoutines';
 import { cn } from '@/lib/utils';
+import { LINKS } from '@/lib/links';
 
 export function TodayRoutinesCard() {
   const navigate = useNavigate();
@@ -28,7 +29,7 @@ export function TodayRoutinesCard() {
             variant="link"
             size="sm"
             className="text-xs h-6 px-0"
-            onClick={() => navigate('/rutinas')}
+            onClick={() => navigate(LINKS.routinesTab())}
           >
             Ver mas
           </Button>

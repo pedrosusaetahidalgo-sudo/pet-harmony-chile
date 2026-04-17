@@ -16,6 +16,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { format, isToday, isTomorrow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { CalendarDays, Plus, Stethoscope, Bell, PawPrint } from '@/lib/icons';
+import { LINKS } from '@/lib/links';
 
 export default function UnifiedCalendar() {
   const navigate = useNavigate();
@@ -70,11 +71,11 @@ export default function UnifiedCalendar() {
         completeToday.mutate({ routineId: event.source_id });
       }
     } else if (event.type === 'reminder') {
-      navigate('/reminders');
+      navigate(LINKS.remindersTab());
     } else if (event.type === 'booking' || event.type === 'vet_booking') {
-      navigate('/mis-reservas');
+      navigate(LINKS.bookingsTab());
     } else if (event.type === 'followup' && event.pet_id) {
-      navigate(`/ficha/${event.pet_id}`);
+      navigate(LINKS.petClinical(event.pet_id));
     }
   };
 
@@ -223,7 +224,7 @@ export default function UnifiedCalendar() {
                   variant="outline"
                   size="sm"
                   className="flex-1 text-xs h-8 gap-1"
-                  onClick={() => navigate('/reminders')}
+                  onClick={() => navigate(LINKS.remindersTab())}
                 >
                   <Plus className="h-3 w-3" /> Recordatorio
                 </Button>
@@ -231,7 +232,7 @@ export default function UnifiedCalendar() {
                   variant="outline"
                   size="sm"
                   className="flex-1 text-xs h-8 gap-1"
-                  onClick={() => navigate(`/rutinas`)}
+                  onClick={() => navigate(LINKS.routinesTab())}
                 >
                   <Plus className="h-3 w-3" /> Rutina
                 </Button>
@@ -242,7 +243,7 @@ export default function UnifiedCalendar() {
                 variant="outline"
                 size="sm"
                 className="w-full text-xs h-8 gap-1 mt-2"
-                onClick={() => navigate('/mis-reservas')}
+                onClick={() => navigate(LINKS.bookingsTab())}
               >
                 Ver todas las reservas
               </Button>

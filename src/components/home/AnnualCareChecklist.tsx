@@ -5,6 +5,7 @@ import { CheckCircle2, Circle, ClipboardList } from '@/lib/icons';
 import { useReminders } from '@/hooks/useReminders';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
+import { LINKS } from '@/lib/links';
 
 interface ChecklistItem {
   key: string;
@@ -137,7 +138,7 @@ export function AnnualCareChecklist({ petId, petName }: Props) {
             variant="ghost"
             size="sm"
             className="w-full text-xs h-7 mt-1"
-            onClick={() => navigate('/reminders')}
+            onClick={() => navigate(LINKS.remindersTab())}
           >
             Crear recordatorios para lo pendiente
           </Button>

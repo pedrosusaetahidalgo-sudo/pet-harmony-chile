@@ -64,18 +64,18 @@ import {
 
 // ── Owner: 6 items core (siempre visibles) ──
 const coreOwnerItems = [
-  { title: 'Inicio', url: '/home', icon: HomeIcon },
-  { title: 'Mis Mascotas', url: '/my-pets', icon: PawPrint },
-  { title: 'Buscar vet', url: '/veterinarios', icon: Search },
-  { title: 'Calendario', url: '/calendario', icon: CalendarDays },
-  { title: 'Mis reservas', url: '/mis-reservas', icon: Calendar },
-  { title: 'Recordatorios', url: '/reminders', icon: Bell },
+  { title: 'Inicio', url: LINKS.home(), icon: HomeIcon },
+  { title: 'Mis Mascotas', url: LINKS.myPets(), icon: PawPrint },
+  { title: 'Buscar vet', url: LINKS.vets(), icon: Search },
+  { title: 'Calendario', url: LINKS.calendarToday(), icon: CalendarDays },
+  { title: 'Mis reservas', url: LINKS.bookingsTab(), icon: Calendar },
+  { title: 'Recordatorios', url: LINKS.remindersTab(), icon: Bell },
 ];
 
 // ── Owner: items secundarios en sección colapsable "Explorar" ──
 // Algunos se filtran por feature flags en el render
 const exploreOwnerItems = [
-  { title: 'Rutinas', url: '/rutinas', icon: RefreshCw, flag: null },
+  { title: 'Rutinas', url: LINKS.routinesTab(), icon: RefreshCw, flag: null },
   { title: 'Reportes', url: '/reportes', icon: BarChart3, flag: null },
   { title: 'Servicios', url: '/servicios', icon: Briefcase, flag: null },
   { title: 'Mapa', url: '/maps', icon: MapIcon, flag: null },
@@ -128,14 +128,14 @@ const SECTION_LABELS: Record<SectionKey, string> = {
 
 // Secciones profesionales (modo provider)
 const providerConsultItems = [
-  { title: 'Dashboard', url: '/provider/dashboard', icon: LayoutDashboard },
-  { title: 'Pacientes', url: '/provider/pacientes', icon: Users },
-  { title: 'Mis reservas', url: '/mis-reservas', icon: Calendar },
-  { title: 'Calendario', url: '/calendario', icon: CalendarDays },
+  { title: 'Dashboard', url: LINKS.providerDashboard(), icon: LayoutDashboard },
+  { title: 'Pacientes', url: LINKS.providerPatients(), icon: Users },
+  { title: 'Mis reservas', url: LINKS.bookingsTab(), icon: Calendar },
+  { title: 'Calendario', url: LINKS.calendarToday(), icon: CalendarDays },
 ];
 
 // Filtered at render time by CHAT feature flag
-const providerCommsItems = [{ title: 'Mensajes', url: '/chat', icon: MessageSquare }];
+const providerCommsItems = [{ title: 'Mensajes', url: LINKS.chat(), icon: MessageSquare }];
 
 const providerBusinessItems = [
   { title: 'Perfil público', url: '/provider/profile-edit', icon: UserCog },

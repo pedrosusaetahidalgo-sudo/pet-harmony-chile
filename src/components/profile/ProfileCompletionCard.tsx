@@ -65,7 +65,7 @@ export function ProfileCompletionCard({
 
         {upcomingReminders > 0 && (
           <button
-            onClick={() => navigate('/reminders')}
+            onClick={() => navigate(LINKS.remindersTab())}
             className="flex items-center justify-between w-full text-left group"
           >
             <span className="text-sm flex items-center gap-1.5">

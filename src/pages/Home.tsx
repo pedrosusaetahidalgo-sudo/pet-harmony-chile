@@ -563,7 +563,9 @@ export default function Home() {
                     ? 'warning'
                     : 'default'
               }
-              onClick={() => navigate(activePet ? LINKS.petClinical(activePet.id) : '/reminders')}
+              onClick={() =>
+                navigate(activePet ? LINKS.petClinical(activePet.id) : LINKS.remindersTab())
+              }
             />
           </div>
 
@@ -635,7 +637,7 @@ export default function Home() {
                     <Button
                       variant="link"
                       size="sm"
-                      onClick={() => navigate('/reminders')}
+                      onClick={() => navigate(LINKS.remindersTab())}
                       className="w-full text-[10px] h-6"
                     >
                       Ver todos →
@@ -737,7 +739,7 @@ export default function Home() {
               {pendingReviewCount > 0 && (
                 <Card
                   className="border-amber-100 bg-amber-50/30 cursor-pointer hover:bg-amber-50/50 transition-colors"
-                  onClick={() => navigate('/mis-reservas')}
+                  onClick={() => navigate(LINKS.bookingsTab())}
                 >
                   <CardContent className="flex items-center gap-3 p-3">
                     <Star className="h-4 w-4 text-amber-600 flex-shrink-0" />
