@@ -18,6 +18,8 @@ import {
   ChevronRight,
   AlertTriangle,
   Radio,
+  Copy,
+  ExternalLink,
 } from '@/lib/icons';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -315,15 +317,6 @@ const CATEGORY_LABELS: Record<Category | 'all', string> = {
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────
-type PingState = 'idle' | 'running' | 'ok' | 'fail';
-
-interface PingResult {
-  state: PingState;
-  statusCode: number | null;
-  latencyMs: number | null;
-  ranAt: number | null;
-}
-
 interface ErrorEntry {
   id: string;
   message: string;
@@ -342,33 +335,72 @@ interface FunctionRow extends EdgeFunctionMeta {
   recentErrors: ErrorEntry[];
 }
 
-// ─── Live ping helper ─────────────────────────────────────────────────────
-async function pingFunction(name: string): Promise<PingResult> {
+// ─── Supabase dashboard link (extrae project ref del URL) ─────────────────
+function getSupabaseLogsUrl(fnName: string): string | null {
   const base = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-  if (!base) return { state: 'fail', statusCode: null, latencyMs: null, ranAt: Date.now() };
+  if (!base) return null;
+  const match = base.match(/https?:\/\/([^.]+)\.supabase\.co/);
+  const ref = match?.[1];
+  if (!ref) return null;
+  return `https://supabase.com/dashboard/project/${ref}/functions/${fnName}/logs`;
+}
 
-  const url = `${base}/functions/v1/${name}`;
-  const t0 = performance.now();
+// ─── Traffic semantics (reemplaza ping OPTIONS) ───────────────────────────
+type TrafficSignal = 'healthy' | 'failing' | 'idle' | 'never';
 
+function getTrafficSignal(row: FunctionRow): TrafficSignal {
+  if (row.errorsLast24h > 0) return 'failing';
+  if (row.executionsLast24h > 0) return 'healthy';
+  if (row.lastRun) return 'idle';
+  return 'never';
+}
+
+// ─── Diagnostic text builder (pega en Claude) ─────────────────────────────
+function buildDiagnosticText(row: FunctionRow): string {
+  const lines: string[] = [];
+  lines.push(`EDGE FUNCTION: ${row.name}`);
+  lines.push(`Categoria: ${row.category}${row.critical ? ' (CRITICO)' : ''}`);
+  lines.push(`Descripcion: ${row.description}`);
+  lines.push('');
+  lines.push('--- TELEMETRIA ULTIMAS 24h ---');
+  lines.push(`Invocaciones: ${row.executionsLast24h}`);
+  lines.push(`Errores: ${row.errorsLast24h}`);
+  lines.push(`Latencia promedio: ${row.avgLatencyMs != null ? `${row.avgLatencyMs}ms` : 'N/D'}`);
+  lines.push(`Ultimo estado: ${row.lastStatus}`);
+  lines.push(`Ultima ejecucion: ${row.lastRun ? new Date(row.lastRun).toISOString() : 'nunca'}`);
+
+  if (row.recentErrors.length > 0) {
+    lines.push('');
+    lines.push(`--- ULTIMOS ${row.recentErrors.length} ERRORES ---`);
+    for (const err of row.recentErrors) {
+      lines.push('');
+      lines.push(`[${err.created_at}] ${err.severity}${err.resolved ? ' (resuelto)' : ''}`);
+      lines.push(err.message);
+      if (err.context && Object.keys(err.context).length > 0) {
+        lines.push(`context: ${JSON.stringify(err.context)}`);
+      }
+    }
+  }
+  return lines.join('\n');
+}
+
+function buildBulkDiagnostic(rows: FunctionRow[]): string {
+  const failing = rows.filter((r) => r.errorsLast24h > 0 || r.lastStatus === 'error');
+  if (failing.length === 0) return 'Sin funciones con errores en las ultimas 24h.';
+  const header = [
+    `DIAGNOSTICO EDGE FUNCTIONS — ${new Date().toISOString()}`,
+    `Funciones con errores: ${failing.length}/${rows.length}`,
+    '',
+  ].join('\n');
+  return header + failing.map(buildDiagnosticText).join('\n\n========================\n\n');
+}
+
+async function copyToClipboard(text: string): Promise<boolean> {
   try {
-    // CORS preflight: el gateway responde sin invocar la funcion (sin costo).
-    // 404 => funcion no desplegada. 200/204 => desplegada.
-    const res = await fetch(url, {
-      method: 'OPTIONS',
-      headers: {
-        'Access-Control-Request-Method': 'POST',
-        'Access-Control-Request-Headers': 'authorization, content-type, x-client-info',
-      },
-    });
-    const latency = Math.round(performance.now() - t0);
-    return {
-      state: res.status < 400 ? 'ok' : 'fail',
-      statusCode: res.status,
-      latencyMs: latency,
-      ranAt: Date.now(),
-    };
+    await navigator.clipboard.writeText(text);
+    return true;
   } catch {
-    return { state: 'fail', statusCode: null, latencyMs: null, ranAt: Date.now() };
+    return false;
   }
 }
 
@@ -376,8 +408,7 @@ async function pingFunction(name: string): Promise<PingResult> {
 export default function AdminSystemHealth() {
   const [categoryFilter, setCategoryFilter] = useState<Category | 'all'>('all');
   const [expandedFn, setExpandedFn] = useState<string | null>(null);
-  const [pingResults, setPingResults] = useState<Record<string, PingResult>>({});
-  const [pingingAll, setPingingAll] = useState(false);
+  const [copiedFn, setCopiedFn] = useState<string | null>(null);
 
   // Health logs desde system_health_log + errors desde error_logs
   const {
@@ -534,50 +565,42 @@ export default function AdminSystemHealth() {
     return rows.filter((r) => r.category === categoryFilter);
   }, [healthData, categoryFilter]);
 
-  // Ping masivo (paralelizado en tandas de 6)
-  const runPingAll = useCallback(async () => {
-    if (pingingAll) return;
-    setPingingAll(true);
-    const targets = (healthData ?? []).map((r) => r.name);
-    const results: Record<string, PingResult> = {};
-    // Marca todas como running
-    setPingResults((prev) => {
-      const next = { ...prev };
-      for (const n of targets) {
-        next[n] = { state: 'running', statusCode: null, latencyMs: null, ranAt: null };
-      }
-      return next;
-    });
-    const CONCURRENCY = 6;
-    for (let i = 0; i < targets.length; i += CONCURRENCY) {
-      const batch = targets.slice(i, i + CONCURRENCY);
-      const settled = await Promise.all(
-        batch.map((n) => pingFunction(n).then((r) => [n, r] as const))
-      );
-      for (const [n, r] of settled) results[n] = r;
-      setPingResults((prev) => ({ ...prev, ...Object.fromEntries(settled) }));
+  // Copiar diagnostico individual
+  const copyOne = useCallback(async (row: FunctionRow) => {
+    const text = buildDiagnosticText(row);
+    const ok = await copyToClipboard(text);
+    if (ok) {
+      setCopiedFn(row.name);
+      toast.success(`Diagnostico de ${row.name} copiado`);
+      setTimeout(() => setCopiedFn((c) => (c === row.name ? null : c)), 2000);
+    } else {
+      toast.error('No se pudo copiar al clipboard');
     }
-    const okCount = Object.values(results).filter((r) => r.state === 'ok').length;
-    const failCount = Object.values(results).filter((r) => r.state === 'fail').length;
-    toast.success(`Ping completo: ${okCount} OK, ${failCount} fallos`);
-    setPingingAll(false);
-  }, [healthData, pingingAll]);
-
-  const runPingOne = useCallback(async (name: string) => {
-    setPingResults((prev) => ({
-      ...prev,
-      [name]: { state: 'running', statusCode: null, latencyMs: null, ranAt: null },
-    }));
-    const res = await pingFunction(name);
-    setPingResults((prev) => ({ ...prev, [name]: res }));
-    if (res.state === 'ok') toast.success(`${name} responde (${res.latencyMs}ms)`);
-    else toast.error(`${name} no responde (${res.statusCode ?? 'network'})`);
   }, []);
+
+  // Copiar todas las funciones con errores (bulk)
+  const copyAllFailing = useCallback(async () => {
+    const rows = healthData ?? [];
+    const text = buildBulkDiagnostic(rows);
+    const ok = await copyToClipboard(text);
+    if (ok) {
+      const failing = rows.filter((r) => r.errorsLast24h > 0 || r.lastStatus === 'error').length;
+      toast.success(
+        failing > 0
+          ? `${failing} funciones con errores copiadas al clipboard`
+          : 'Sin errores — mensaje de resumen copiado'
+      );
+    } else {
+      toast.error('No se pudo copiar al clipboard');
+    }
+  }, [healthData]);
 
   const totalErrors = (healthData ?? []).reduce((s, f) => s + f.errorsLast24h, 0);
   const criticalErrors = (healthData ?? []).filter((f) => f.critical && f.errorsLast24h > 0);
-  const deployedOk = Object.values(pingResults).filter((r) => r.state === 'ok').length;
-  const deployedFail = Object.values(pingResults).filter((r) => r.state === 'fail').length;
+  const healthyCount = (healthData ?? []).filter(
+    (f) => f.executionsLast24h > 0 && f.errorsLast24h === 0
+  ).length;
+  const idleCount = (healthData ?? []).filter((f) => f.executionsLast24h === 0).length;
   const okCount = (healthData ?? []).filter((f) => f.lastStatus === 'success').length;
 
   const StatusIcon = ({ status }: { status: string }) => {
@@ -593,31 +616,41 @@ export default function AdminSystemHealth() {
     }
   };
 
-  const PingBadge = ({ name }: { name: string }) => {
-    const r = pingResults[name];
-    if (!r || r.state === 'idle') {
-      return <span className="text-xs text-slate-600">—</span>;
+  const TrafficBadge = ({ row }: { row: FunctionRow }) => {
+    const signal = getTrafficSignal(row);
+    if (signal === 'failing') {
+      return (
+        <Badge
+          variant="outline"
+          className="text-[10px] px-1.5 py-0 bg-red-500/20 text-red-300 border-red-500/30"
+          title={`${row.executionsLast24h} invocaciones, ${row.errorsLast24h} errores`}
+        >
+          {row.executionsLast24h} calls · {row.errorsLast24h} err
+        </Badge>
+      );
     }
-    if (r.state === 'running') {
-      return <RefreshCw className="h-3 w-3 animate-spin text-slate-400" />;
-    }
-    if (r.state === 'ok') {
+    if (signal === 'healthy') {
       return (
         <Badge
           variant="outline"
           className="text-[10px] px-1.5 py-0 bg-green-500/20 text-green-300 border-green-500/30"
+          title={`${row.executionsLast24h} invocaciones exitosas`}
         >
-          {r.latencyMs}ms
+          {row.executionsLast24h} calls
         </Badge>
       );
     }
+    if (signal === 'idle') {
+      return (
+        <span className="text-[10px] text-slate-500" title="Sin trafico en las ultimas 24h">
+          sin trafico 24h
+        </span>
+      );
+    }
     return (
-      <Badge
-        variant="outline"
-        className="text-[10px] px-1.5 py-0 bg-red-500/20 text-red-300 border-red-500/30"
-      >
-        {r.statusCode ?? 'off'}
-      </Badge>
+      <span className="text-[10px] text-slate-600" title="Nunca se ha invocado post-deploy">
+        nunca invocada
+      </span>
     );
   };
 
@@ -665,14 +698,14 @@ export default function AdminSystemHealth() {
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
               <Radio className="h-4 w-4 text-slate-500" />
-              <span className="text-sm font-medium text-slate-300">Ping en vivo</span>
+              <span className="text-sm font-medium text-slate-300">Con trafico 24h</span>
             </div>
             <p className="text-2xl font-bold mt-1 text-white">
-              {deployedOk}
+              {healthyCount}
               <span className="text-sm text-slate-500 font-normal"> /{EDGE_FUNCTIONS.length}</span>
             </p>
             <p className="text-xs text-slate-500">
-              {deployedFail > 0 ? `${deployedFail} sin respuesta` : 'sin fallos detectados'}
+              {idleCount > 0 ? `${idleCount} sin invocar en 24h` : 'todas con actividad'}
             </p>
           </CardContent>
         </Card>
@@ -700,7 +733,7 @@ export default function AdminSystemHealth() {
                 Validador Edge Functions
               </CardTitle>
               <CardDescription className="text-slate-400">
-                Ping en vivo + historial + errores. {EDGE_FUNCTIONS.length} funciones catalogadas.
+                Telemetria real (system_health_log). {EDGE_FUNCTIONS.length} funciones catalogadas.
               </CardDescription>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -716,12 +749,13 @@ export default function AdminSystemHealth() {
               </Button>
               <Button
                 size="sm"
-                onClick={runPingAll}
-                disabled={pingingAll || loadingHealth}
+                onClick={copyAllFailing}
+                disabled={loadingHealth}
                 className="bg-indigo-600 hover:bg-indigo-500 text-white"
+                title="Copia las funciones con errores 24h al clipboard — listo para pegar en Claude"
               >
-                <Radio className={cn('h-3 w-3 mr-1.5', pingingAll && 'animate-pulse')} />
-                {pingingAll ? 'Pinging...' : 'Ping a todas'}
+                <Copy className="h-3 w-3 mr-1.5" />
+                Copiar fallas
               </Button>
             </div>
           </div>
@@ -767,7 +801,7 @@ export default function AdminSystemHealth() {
                       Funcion
                     </th>
                     <th scope="col" className="pb-2 font-medium text-slate-400 uppercase text-xs">
-                      Ping
+                      Trafico 24h
                     </th>
                     <th scope="col" className="pb-2 font-medium text-slate-400 uppercase text-xs">
                       Estado
@@ -842,7 +876,7 @@ export default function AdminSystemHealth() {
                             </p>
                           </td>
                           <td className="py-2">
-                            <PingBadge name={fn.name} />
+                            <TrafficBadge row={fn} />
                           </td>
                           <td className="py-2">
                             <StatusIcon status={fn.lastStatus} />
@@ -870,16 +904,42 @@ export default function AdminSystemHealth() {
                             )}
                           </td>
                           <td className="py-2 pl-2 text-right">
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                runPingOne(fn.name);
-                              }}
-                              className="text-[10px] text-indigo-400 hover:text-indigo-300 px-2 py-0.5 rounded border border-slate-700 hover:border-indigo-500/50"
-                            >
-                              ping
-                            </button>
+                            <div className="flex items-center gap-1 justify-end">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  copyOne(fn);
+                                }}
+                                className="text-[10px] text-indigo-400 hover:text-indigo-300 px-2 py-0.5 rounded border border-slate-700 hover:border-indigo-500/50 flex items-center gap-1"
+                                title="Copiar diagnostico al clipboard"
+                              >
+                                {copiedFn === fn.name ? (
+                                  <>
+                                    <CheckCircle className="h-3 w-3 text-green-400" />
+                                    copiado
+                                  </>
+                                ) : (
+                                  <>
+                                    <Copy className="h-3 w-3" />
+                                    copiar
+                                  </>
+                                )}
+                              </button>
+                              {getSupabaseLogsUrl(fn.name) && (
+                                <a
+                                  href={getSupabaseLogsUrl(fn.name) ?? '#'}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="text-[10px] text-slate-400 hover:text-slate-200 px-2 py-0.5 rounded border border-slate-700 hover:border-slate-500 flex items-center gap-1"
+                                  title="Abrir logs en Supabase Dashboard"
+                                >
+                                  <ExternalLink className="h-3 w-3" />
+                                  logs
+                                </a>
+                              )}
+                            </div>
                           </td>
                         </tr>
                         {isExpanded && hasErrors && (
@@ -945,10 +1005,11 @@ export default function AdminSystemHealth() {
             </div>
           )}
           <p className="text-[10px] text-slate-600 mt-3">
-            Las 34 funciones registran telemetría al invocarse (wrapper{' '}
+            Las {EDGE_FUNCTIONS.length} funciones registran telemetria al invocarse (wrapper{' '}
             <span className="font-mono">withTelemetry</span> en{' '}
-            <span className="font-mono">_shared/telemetry.ts</span>). Si una aparece "Sin datos", es
-            porque no se ha invocado post-deploy. Usa ping en vivo para verificar deployment.
+            <span className="font-mono">_shared/telemetry.ts</span>). "Sin trafico 24h" significa
+            que nadie la uso — no implica que este rota. Usa "copiar" para pegar el diagnostico en
+            Claude y "logs" para el dashboard de Supabase.
           </p>
         </CardContent>
       </Card>
