@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
-import { Share2, Copy, PawPrint, Sparkles, Loader2 } from '@/lib/icons';
+import { Share2, Copy, PawPrint, Sparkles, Loader2, FileText } from '@/lib/icons';
 import { PawCardQR } from './PawCardQR';
 import { PawCardHoloPattern } from './PawCardHoloPattern';
 import { HOLO_PATTERN_MAP } from '@/lib/paw-cards';
@@ -16,6 +16,9 @@ interface PawCardBackProps {
   holoPattern: HoloPattern;
   rarity: Rarity;
   collectorCount?: number;
+  /** Callback para abrir la ficha clinica desde el reverso. Si se omite, el
+   *  boton "Ver ficha" no se muestra (ej: vista coleccionable de otro dueno). */
+  onViewFicha?: () => void;
 }
 
 export function PawCardBack({
@@ -25,6 +28,7 @@ export function PawCardBack({
   holoPattern,
   rarity,
   collectorCount = 0,
+  onViewFicha,
 }: PawCardBackProps) {
   const holoConfig = HOLO_PATTERN_MAP[holoPattern];
   const hasPawCard = !!pawCardId;
@@ -165,27 +169,42 @@ export function PawCardBack({
           )}
 
           {/* Actions row */}
-          <div className="flex gap-1.5 w-full">
-            <Button
-              size="sm"
-              variant="outline"
-              className="flex-1 h-7 text-[10px] border-purple-400/20 text-purple-200 bg-purple-500/10 hover:bg-purple-500/25 backdrop-blur-sm rounded-lg disabled:opacity-40"
-              onClick={handleShare}
-              disabled={!hasPawCard}
-            >
-              <Share2 className="mr-1 h-3 w-3" />
-              Compartir
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="flex-1 h-7 text-[10px] border-purple-400/20 text-purple-200 bg-purple-500/10 hover:bg-purple-500/25 backdrop-blur-sm rounded-lg disabled:opacity-40"
-              onClick={handleCopyId}
-              disabled={!hasPawCard}
-            >
-              <Copy className="mr-1 h-3 w-3" />
-              Copiar ID
-            </Button>
+          <div className="flex flex-col gap-1.5 w-full">
+            {onViewFicha && (
+              <Button
+                size="sm"
+                className="w-full h-8 text-[11px] bg-white/15 hover:bg-white/25 text-white border border-white/20 backdrop-blur-sm rounded-lg"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onViewFicha();
+                }}
+              >
+                <FileText className="mr-1.5 h-3.5 w-3.5" />
+                Ver ficha clínica
+              </Button>
+            )}
+            <div className="flex gap-1.5 w-full">
+              <Button
+                size="sm"
+                variant="outline"
+                className="flex-1 h-7 text-[10px] border-purple-400/20 text-purple-200 bg-purple-500/10 hover:bg-purple-500/25 backdrop-blur-sm rounded-lg disabled:opacity-40"
+                onClick={handleShare}
+                disabled={!hasPawCard}
+              >
+                <Share2 className="mr-1 h-3 w-3" />
+                Compartir
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="flex-1 h-7 text-[10px] border-purple-400/20 text-purple-200 bg-purple-500/10 hover:bg-purple-500/25 backdrop-blur-sm rounded-lg disabled:opacity-40"
+                onClick={handleCopyId}
+                disabled={!hasPawCard}
+              >
+                <Copy className="mr-1 h-3 w-3" />
+                Copiar ID
+              </Button>
+            </div>
           </div>
 
           {/* Collector count + Card ID */}

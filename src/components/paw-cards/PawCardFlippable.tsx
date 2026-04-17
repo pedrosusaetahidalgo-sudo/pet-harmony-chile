@@ -344,6 +344,7 @@ export function PawCardFlippable({
             pawCardId={pawCardId}
             holoPattern={holoPattern}
             rarity={rarity}
+            onViewFicha={viewOnly ? undefined : () => navigate(LINKS.petClinical(pet.id))}
           />
         </div>
       </div>
