@@ -330,9 +330,36 @@ interface FunctionRow extends EdgeFunctionMeta {
   lastStatus: 'success' | 'error' | 'timeout' | 'unknown';
   lastRun: string | null;
   avgLatencyMs: number | null;
-  errorsLast24h: number;
+  errorsLast24h: number; // fallas reales (5xx, timeouts, excepciones)
+  clientErrorsLast24h: number; // 4xx (rate limit, input invalido) — NO son fallas
   executionsLast24h: number;
   recentErrors: ErrorEntry[];
+}
+
+/**
+ * Distingue fallas reales del servidor de errores de cliente (4xx).
+ * - timeout / exception sin http_status → falla real
+ * - http_status >= 500 → falla real
+ * - http_status 4xx → error de cliente (rate limit, input invalido) — no es falla
+ * - status !== 'error' → no es falla
+ */
+type HealthLogEntry = Record<string, unknown>;
+
+function isRealFailure(entry: HealthLogEntry): boolean {
+  if (entry.status === 'timeout') return true;
+  if (entry.status !== 'error') return false;
+  const metadata = entry.metadata as Record<string, unknown> | null | undefined;
+  const httpStatus = metadata?.http_status;
+  if (httpStatus == null) return true; // excepcion sin status → real
+  if (typeof httpStatus === 'number' && httpStatus >= 500) return true;
+  return false;
+}
+
+function isClientError(entry: HealthLogEntry): boolean {
+  if (entry.status !== 'error') return false;
+  const metadata = entry.metadata as Record<string, unknown> | null | undefined;
+  const httpStatus = metadata?.http_status;
+  return typeof httpStatus === 'number' && httpStatus >= 400 && httpStatus < 500;
 }
 
 // ─── Supabase dashboard link (extrae project ref del URL) ─────────────────
@@ -364,7 +391,8 @@ function buildDiagnosticText(row: FunctionRow): string {
   lines.push('');
   lines.push('--- TELEMETRIA ULTIMAS 24h ---');
   lines.push(`Invocaciones: ${row.executionsLast24h}`);
-  lines.push(`Errores: ${row.errorsLast24h}`);
+  lines.push(`Fallas reales (5xx/timeout/excepcion): ${row.errorsLast24h}`);
+  lines.push(`Client errors (4xx rate-limit/input invalido): ${row.clientErrorsLast24h}`);
   lines.push(`Latencia promedio: ${row.avgLatencyMs != null ? `${row.avgLatencyMs}ms` : 'N/D'}`);
   lines.push(`Ultimo estado: ${row.lastStatus}`);
   lines.push(`Ultima ejecucion: ${row.lastRun ? new Date(row.lastRun).toISOString() : 'nunca'}`);
@@ -423,7 +451,7 @@ export default function AdminSystemHealth() {
       const [healthRes, errorsRes] = await Promise.all([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (supabase.from('system_health_log') as any)
-          .select('function_name, status, execution_time_ms, error_message, created_at')
+          .select('function_name, status, execution_time_ms, error_message, metadata, created_at')
           .order('created_at', { ascending: false })
           .limit(500),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -450,6 +478,7 @@ export default function AdminSystemHealth() {
           lastRun: null,
           avgLatencyMs: null,
           errorsLast24h: 0,
+          clientErrorsLast24h: 0,
           executionsLast24h: 0,
           recentErrors: [],
         });
@@ -472,19 +501,26 @@ export default function AdminSystemHealth() {
             lastRun: null,
             avgLatencyMs: null,
             errorsLast24h: 0,
+            clientErrorsLast24h: 0,
             executionsLast24h: 0,
             recentErrors: [],
           };
           rowMap.set(fn, row);
         }
         if (!row.lastRun) {
-          row.lastStatus = entry.status as 'success' | 'error' | 'timeout';
+          // lastStatus refleja fallas reales (4xx no es falla)
+          row.lastStatus = isRealFailure(entry)
+            ? 'error'
+            : entry.status === 'timeout'
+              ? 'timeout'
+              : 'success';
           row.lastRun = entry.created_at;
         }
         const t = new Date(entry.created_at).getTime();
         if (t >= dayAgo) {
           row.executionsLast24h++;
-          if (entry.status === 'error') row.errorsLast24h++;
+          if (isRealFailure(entry)) row.errorsLast24h++;
+          else if (isClientError(entry)) row.clientErrorsLast24h++;
         }
         if (entry.execution_time_ms != null) {
           const arr = latencies.get(fn) || [];
@@ -500,10 +536,10 @@ export default function AdminSystemHealth() {
       }
 
       // Asocia errores desde error_logs (match via context.function_name o message prefix)
+      // Filtra 4xx (rate limits, input invalido del cliente) — no son fallas reales
       for (const err of errorEntries) {
-        const ctxFn = (err.context as Record<string, unknown> | null)?.function_name as
-          | string
-          | undefined;
+        const ctx = (err.context as Record<string, unknown> | null) ?? null;
+        const ctxFn = ctx?.function_name as string | undefined;
         let fnName = ctxFn;
         if (!fnName && typeof err.message === 'string') {
           const prefix = err.message.split(':')[0]?.trim();
@@ -512,12 +548,21 @@ export default function AdminSystemHealth() {
         if (!fnName) continue;
         const row = rowMap.get(fnName);
         if (!row) continue;
+
+        // Filtrar 4xx: viene del context.http_status o se detecta por message "HTTP 4xx"
+        const httpStatus = ctx?.http_status;
+        const is4xxByStatus =
+          typeof httpStatus === 'number' && httpStatus >= 400 && httpStatus < 500;
+        const is4xxByMessage =
+          typeof err.message === 'string' && /\bHTTP 4\d\d\b/.test(err.message);
+        if (is4xxByStatus || is4xxByMessage) continue;
+
         if (row.recentErrors.length < 10) {
           row.recentErrors.push({
             id: err.id,
             message: err.message,
             created_at: err.created_at,
-            context: (err.context as Record<string, unknown>) ?? {},
+            context: ctx ?? {},
             severity: err.severity,
             resolved: err.resolved,
           });
@@ -630,13 +675,15 @@ export default function AdminSystemHealth() {
       );
     }
     if (signal === 'healthy') {
+      const clientErrSuffix =
+        row.clientErrorsLast24h > 0 ? ` (${row.clientErrorsLast24h} · 4xx)` : '';
       return (
         <Badge
           variant="outline"
           className="text-[10px] px-1.5 py-0 bg-green-500/20 text-green-300 border-green-500/30"
-          title={`${row.executionsLast24h} invocaciones exitosas`}
+          title={`${row.executionsLast24h} invocaciones, ${row.clientErrorsLast24h} client errors (4xx — no son fallas)`}
         >
-          {row.executionsLast24h} calls
+          {row.executionsLast24h} calls{clientErrSuffix}
         </Badge>
       );
     }

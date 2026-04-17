@@ -59,8 +59,11 @@ export async function logEdgeFunctionCall(opts: LogEdgeCallOptions): Promise<voi
       },
     });
 
-    // 3) error_logs — solo cuando hay error real
-    if (opts.status === "error" && opts.error) {
+    // 3) error_logs — solo cuando hay falla REAL del servidor.
+    //    4xx (rate limit, input invalido del cliente) NO son fallas: los filtramos.
+    const httpStatus = (opts.metadata as Record<string, unknown> | undefined)?.http_status;
+    const is4xx = typeof httpStatus === "number" && httpStatus >= 400 && httpStatus < 500;
+    if (opts.status === "error" && opts.error && !is4xx) {
       await supabase.from("error_logs").insert({
         source: "edge_function",
         severity: "error",
