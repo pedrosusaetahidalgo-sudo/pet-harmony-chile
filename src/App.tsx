@@ -396,6 +396,10 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
+                {/* /services/vets era ruta fantasma (caia en ServiceDirectory
+                    por el :type), pero el directorio canonico de vets es
+                    /veterinarios (publico). Redirect antes de /services/:type. */}
+                <Route path="/services/vets" element={<Navigate to="/veterinarios" replace />} />
                 <Route
                   path="/services/:type"
                   element={

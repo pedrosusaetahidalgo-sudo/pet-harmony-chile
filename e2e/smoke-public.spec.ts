@@ -52,3 +52,8 @@ test('[Pública] Estimador de precios muestra selector de comuna', async ({ page
   await page.goto('/precios-veterinarios', { waitUntil: 'domcontentloaded' });
   await expect(page.getByText(/comuna|selecciona/i).first()).toBeVisible({ timeout: 10_000 });
 });
+
+test('[Pública] /services/vets redirige a /veterinarios (fuente unica)', async ({ page }) => {
+  await page.goto('/services/vets', { waitUntil: 'domcontentloaded' });
+  await expect(page).toHaveURL(/\/veterinarios$/, { timeout: 10_000 });
+});

@@ -20,7 +20,7 @@ const PROTECTED_ROUTES = [
   { path: '/adoption', name: 'Adopción' },
   { path: '/servicios', name: 'Directorio servicios' },
   { path: '/services/walkers', name: 'Paseadores' },
-  { path: '/services/vets', name: 'Veterinarios a domicilio' },
+  // '/services/vets' redirige a /veterinarios (pública) — ver smoke-public.spec.ts
   { path: '/services/sitters', name: 'Cuidadores' },
   { path: '/services/trainers', name: 'Entrenadores' },
   { path: '/services/groomers', name: 'Peluqueros' },
