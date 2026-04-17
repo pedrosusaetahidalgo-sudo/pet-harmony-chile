@@ -66,6 +66,7 @@ export async function injectFakeAuth(
     ({ key, session }) => {
       try {
         window.localStorage.setItem(key, JSON.stringify(session));
+        window.localStorage.setItem('pf_cookie_consent', 'accepted');
       } catch {
         // localStorage puede no estar disponible aún en about:blank;
         // se vuelve a llamar al cargar la página real.

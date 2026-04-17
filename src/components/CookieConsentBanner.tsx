@@ -36,8 +36,13 @@ export const CookieConsentBanner = () => {
   if (!isWeb() || !HAS_TRACKING || consent !== 'pending') return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-card border-t border-border p-4 shadow-lg animate-fade-in">
-      <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center gap-4">
+    <div
+      className="fixed bottom-0 left-0 right-0 z-[60] bg-card border-t border-border px-4 pt-4 shadow-lg animate-fade-in"
+      style={{ paddingBottom: 'calc(1rem + var(--safe-area-bottom))' }}
+      role="region"
+      aria-label="Consentimiento de cookies"
+    >
+      <div className="max-w-4xl mx-auto flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
         <p className="text-sm text-muted-foreground flex-1">
           Usamos cookies y tecnologías similares para mejorar tu experiencia, analizar el uso de la
           app y personalizar contenido. Puedes aceptar o rechazar las cookies opcionales.{' '}
@@ -45,11 +50,15 @@ export const CookieConsentBanner = () => {
             Política de Privacidad
           </a>
         </p>
-        <div className="flex gap-2 shrink-0">
-          <Button variant="outline" size="sm" onClick={handleReject}>
+        <div className="flex flex-col-reverse sm:flex-row gap-2 shrink-0 w-full sm:w-auto">
+          <Button
+            variant="outline"
+            onClick={handleReject}
+            className="w-full sm:w-auto min-h-[44px]"
+          >
             Solo esenciales
           </Button>
-          <Button size="sm" onClick={handleAccept}>
+          <Button onClick={handleAccept} className="w-full sm:w-auto min-h-[44px]">
             Aceptar todas
           </Button>
         </div>
