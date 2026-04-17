@@ -44,6 +44,7 @@ const ChatConversation = lazy(() => import('./pages/ChatConversation'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const DeleteAccount = lazy(() => import('./pages/DeleteAccount'));
 const UserProfile = lazy(() => import('./pages/UserProfile'));
 // Checkout eliminado en pivot médico
 const PaymentResult = lazy(() => import('./pages/PaymentResult'));
@@ -702,6 +703,7 @@ const App = () => (
                 <Route path="/medical-share/:token" element={<MedicalShare />} />
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/delete-account" element={<DeleteAccount />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
