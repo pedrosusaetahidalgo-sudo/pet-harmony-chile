@@ -7,6 +7,7 @@ import AdminKpiCard from '@/components/admin/ui/AdminKpiCard';
 import AdminStatCard from '@/components/admin/ui/AdminStatCard';
 import AdminEmptyState from '@/components/admin/ui/AdminEmptyState';
 import AdminHealthSummary from '@/components/admin/AdminHealthSummary';
+import AdminPulsoDiario from '@/components/admin/AdminPulsoDiario';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { formatCLPCompact } from '@/lib/format';
@@ -671,6 +672,9 @@ export default function AdminDashboard() {
   // ── Render ─────────────────────────────────────────────
   return (
     <div className="space-y-6">
+      {/* ── Pulso Diario: monitor auto-pilotado (audit-cron-daily) ── */}
+      <AdminPulsoDiario />
+
       {/* ── Health Summary (acciones que requieren atencion del admin) ── */}
       <AdminHealthSummary />
 

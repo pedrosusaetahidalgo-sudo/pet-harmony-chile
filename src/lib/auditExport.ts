@@ -960,6 +960,8 @@ function buildClaudeInstructions(): Record<string, unknown> {
   return {
     purpose:
       'Este reporte es la fuente de verdad del estado de Paw Friend. Úsalo para priorizar fixes, nunca para hacer refactors grandes ni features nuevas sin autorización explícita del dueño.',
+    golden_rule:
+      'REGLA DE ORO (Pedro 2026-04-17): JAMAS alterar datos de usuarios ni su experiencia. Si un fix puede caer la pagina o afectar UX → consultar a Pedro antes de pushear. Si hay duda, no pushear. Auto-fixes solo se aplican a ruido (testing data, logs benignos, metadata derivada).',
     workflow: [
       '1. Lee primero `executive_summary.health_score` y `top_issues`.',
       '2. Revisa `recommended_actions` en orden P0 → P1 → P2.',
@@ -977,6 +979,8 @@ function buildClaudeInstructions(): Record<string, unknown> {
       P3: 'Cosmético / tech debt / performance marginal. Solo si sobra tiempo.',
     },
     user_protection_rules: [
+      'REGLA DE ORO: Jamás alterar datos de usuarios reales ni su experiencia. Si hay duda, NO pushear.',
+      'Si un fix puede romper la página o afectar UX (aunque sea remotamente) → consultar a Pedro antes. No pushear ese fix particular hasta tener OK explícito.',
       'NUNCA hacer DROP TABLE ni DELETE sin WHERE en tablas con datos reales.',
       'Si agregas columna NOT NULL: dale DEFAULT o haz UPDATE previo para rellenar filas existentes.',
       'Si renombras columna: usa ALTER TABLE RENAME (no drop+create). Frontend lee valor antiguo como fallback 1 release.',
@@ -984,6 +988,7 @@ function buildClaudeInstructions(): Record<string, unknown> {
       'localStorage/sessionStorage/IndexedDB: si renombras una key, migra el valor antiguo la primera vez que el usuario abre la app post-update.',
       'Edge functions con cambio de contrato: frontend + backend en el mismo commit. Si hay clientes mobile con caché, considerar versionado.',
       'Verifica siempre: "¿Un usuario que creó su cuenta ayer seguirá viendo sus datos?" Si no es un "sí" claro, falta migración/fallback.',
+      'Para auto-fixers: solo se permiten fixes sobre ruido claro (testing data, logs benignos, slugs faltantes). NUNCA sobre datos de mascota/ficha/recordatorio/reserva de un usuario.',
     ],
     do_not_touch: [
       'Ficha médica PDF (generate-medical-summary) y directorio público de vets: joya de la corona. Solo fixes puntuales, nada de refactor.',
