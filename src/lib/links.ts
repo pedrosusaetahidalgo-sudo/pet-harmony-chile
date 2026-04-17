@@ -54,20 +54,19 @@ export const LINKS = {
   /** Ruta fisica de mis reservas */
   bookings: () => '/mis-reservas',
 
-  // === Calendario unificado: helpers por intencion (no por ruta fisica) ===
-  /**
-   * Vista de recordatorios. Hoy '/reminders'; cuando el calendario unificado
-   * gane tabs, apuntara a '/calendario?tab=recordatorios'. Usar este helper
-   * en vez de '/reminders' hardcodeado.
-   */
-  remindersTab: () => '/reminders',
-  /** Vista de rutinas (intencion). Hoy '/rutinas'; futuro '/calendario?tab=rutinas'. */
-  routinesTab: () => '/rutinas',
-  /** Vista de reservas (intencion). Hoy '/mis-reservas'; futuro '/calendario?tab=reservas'. */
-  bookingsTab: () => '/mis-reservas',
-  /** Vista "hoy" del calendario unificado. Futuro '/calendario?tab=hoy'. */
-  calendarToday: () => '/calendario',
-  /** Ruta fisica de recordatorios */
+  // === Calendario unificado: helpers por intencion ===
+  // Apuntan al tab correspondiente en /calendario. Las rutas fisicas
+  // /reminders, /rutinas, /mis-reservas siguen vivas como alias
+  // (deep links desde emails/pushes antiguos).
+  /** Vista de recordatorios dentro del calendario unificado. */
+  remindersTab: () => '/calendario?tab=recordatorios',
+  /** Vista de rutinas dentro del calendario unificado. */
+  routinesTab: () => '/calendario?tab=rutinas',
+  /** Vista de reservas dentro del calendario unificado. */
+  bookingsTab: () => '/calendario?tab=reservas',
+  /** Vista "hoy" del calendario unificado (default). */
+  calendarToday: () => '/calendario?tab=hoy',
+  /** Ruta fisica legacy de recordatorios (dejar para deep links antiguos). */
   reminders: () => '/reminders',
 
   // === Provider ===

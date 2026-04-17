@@ -2,15 +2,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Home as HomeIcon,
   PawPrint,
-  Stethoscope,
-  Bell,
   User,
   LayoutDashboard,
   Calendar,
-  Star,
-  UserCog,
+  CalendarDays,
   Users,
   MessageSquare,
+  Briefcase,
 } from '@/lib/icons';
 import { LINKS } from '@/lib/links';
 import { cn } from '@/lib/utils';
@@ -78,16 +76,26 @@ export function BottomTabBar() {
         p.startsWith('/ficha/'),
     },
     {
-      label: 'Vets',
-      icon: Stethoscope,
-      href: LINKS.vets(),
-      matchPaths: (p) => p.startsWith('/veterinarios'),
+      label: 'Servicios',
+      icon: Briefcase,
+      href: LINKS.servicios(),
+      matchPaths: (p) =>
+        p === '/servicios' ||
+        p.startsWith('/services') ||
+        p.startsWith('/veterinarios') ||
+        p === '/maps' ||
+        p === '/adoption',
     },
     {
-      label: 'Recordar',
-      icon: Bell,
-      href: LINKS.remindersTab(),
-      matchPaths: (p) => p === '/reminders',
+      label: 'Agenda',
+      icon: CalendarDays,
+      href: LINKS.calendarToday(),
+      matchPaths: (p) =>
+        p === '/calendario' ||
+        p === '/reminders' ||
+        p === '/rutinas' ||
+        p === '/mis-reservas' ||
+        p === '/calendar',
       badge: reminderBadge,
     },
     {

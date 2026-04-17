@@ -51,6 +51,7 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
   const [open, setOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [duplicateBypass, setDuplicateBypass] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
   const [showClinical, setShowClinical] = useState(false);
   const {
     register,
@@ -205,66 +206,6 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
             <input type="hidden" {...register('species')} />
           </div>
 
-          {/* Raza */}
-          <div className="space-y-1.5">
-            <Label>Raza</Label>
-            <ComboboxWithOther
-              options={BREEDS_BY_SPECIES[watch('species')] || []}
-              value={watch('breed') || ''}
-              onValueChange={(v) => setValue('breed', v)}
-              placeholder="Selecciona raza"
-              searchPlaceholder="Buscar raza..."
-              emptyMessage="Raza no encontrada."
-              otherPlaceholder="Escribe la raza..."
-            />
-          </div>
-
-          {/* Fecha nacimiento */}
-          <div className="space-y-1.5">
-            <Label htmlFor="np-birth">Fecha de nacimiento</Label>
-            <Input id="np-birth" type="date" {...register('birth_date')} />
-          </div>
-
-          {/* Sexo */}
-          <div className="space-y-1.5">
-            <Label>Sexo</Label>
-            <Select value={sexValue} onValueChange={(v) => setValue('sex', v)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecciona sexo" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="macho">Macho</SelectItem>
-                <SelectItem value="hembra">Hembra</SelectItem>
-                <SelectItem value="desconocido">Desconocido</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Peso */}
-          <div className="space-y-1.5">
-            <Label htmlFor="np-weight">Peso (kg)</Label>
-            <Input
-              id="np-weight"
-              type="number"
-              step="0.1"
-              min="0"
-              placeholder="Ej: 8.5"
-              {...register('weight')}
-            />
-          </div>
-
-          {/* Color */}
-          <div className="space-y-1.5">
-            <Label>Color</Label>
-            <SelectWithOther
-              options={[...PET_COLORS]}
-              value={colorValue}
-              onValueChange={(v) => setValue('color', v)}
-              placeholder="Selecciona color"
-              otherPlaceholder="Describe el color..."
-            />
-          </div>
-
           {/* Nombre del dueno */}
           <div className="space-y-1.5">
             <Label htmlFor="np-owner-name">Nombre del dueño *</Label>
@@ -290,6 +231,90 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
               El dueño recibirá una invitación para vincular a su mascota.
             </p>
           </div>
+
+          {/* Hint "modo rapido": solo 4 campos obligatorios visibles por default.
+              El resto queda en acordeones plegados. */}
+          <p className="text-[11px] text-muted-foreground bg-teal-50 border border-teal-100 rounded-lg px-3 py-2">
+            Puedes crear al paciente con solo estos datos y completar el resto desde la ficha
+            clínica. Los campos de abajo son opcionales.
+          </p>
+
+          {/* Detalles basicos opcionales */}
+          <Collapsible open={showDetails} onOpenChange={setShowDetails}>
+            <CollapsibleTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full justify-between text-sm text-muted-foreground"
+              >
+                Detalles básicos (raza, fecha, sexo, peso, color)
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${showDetails ? 'rotate-180' : ''}`}
+                />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-3 pt-2">
+              {/* Raza */}
+              <div className="space-y-1.5">
+                <Label>Raza</Label>
+                <ComboboxWithOther
+                  options={BREEDS_BY_SPECIES[watch('species')] || []}
+                  value={watch('breed') || ''}
+                  onValueChange={(v) => setValue('breed', v)}
+                  placeholder="Selecciona raza"
+                  searchPlaceholder="Buscar raza..."
+                  emptyMessage="Raza no encontrada."
+                  otherPlaceholder="Escribe la raza..."
+                />
+              </div>
+
+              {/* Fecha nacimiento */}
+              <div className="space-y-1.5">
+                <Label htmlFor="np-birth">Fecha de nacimiento</Label>
+                <Input id="np-birth" type="date" {...register('birth_date')} />
+              </div>
+
+              {/* Sexo */}
+              <div className="space-y-1.5">
+                <Label>Sexo</Label>
+                <Select value={sexValue} onValueChange={(v) => setValue('sex', v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona sexo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="macho">Macho</SelectItem>
+                    <SelectItem value="hembra">Hembra</SelectItem>
+                    <SelectItem value="desconocido">Desconocido</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Peso */}
+              <div className="space-y-1.5">
+                <Label htmlFor="np-weight">Peso (kg)</Label>
+                <Input
+                  id="np-weight"
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  placeholder="Ej: 8.5"
+                  {...register('weight')}
+                />
+              </div>
+
+              {/* Color */}
+              <div className="space-y-1.5">
+                <Label>Color</Label>
+                <SelectWithOther
+                  options={[...PET_COLORS]}
+                  value={colorValue}
+                  onValueChange={(v) => setValue('color', v)}
+                  placeholder="Selecciona color"
+                  otherPlaceholder="Describe el color..."
+                />
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
 
           {/* Datos clínicos opcionales */}
           <Collapsible open={showClinical} onOpenChange={setShowClinical}>

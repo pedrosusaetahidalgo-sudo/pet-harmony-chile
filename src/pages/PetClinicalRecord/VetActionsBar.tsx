@@ -38,42 +38,44 @@ export function VetActionsBar({
 
   return (
     <>
-      {/* Sticky bottom bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/20 bg-white/80 backdrop-blur-xl shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
-        <div className="container max-w-4xl mx-auto px-4 py-3">
-          <div className="flex items-center justify-center gap-3">
+      {/* Sticky bottom bar — SOLO mobile. En desktop VetActionsHeader ya tiene
+          estos CTAs al alcance, asi que aca evitamos duplicar. En mobile el
+          header se colapsa y esta bar es el acceso al alcance del pulgar. */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-white/20 bg-white/80 backdrop-blur-xl shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+        <div className="container max-w-4xl mx-auto px-4 py-3 pb-[calc(0.75rem+var(--safe-area-bottom))]">
+          <div className="flex items-center justify-center gap-2">
             <Button
               variant="outline"
               size="sm"
-              className="flex-1 gap-2 h-10 max-w-[180px] border-purple-200 text-purple-700 hover:bg-purple-50"
+              className="flex-1 gap-2 h-11 border-purple-200 text-purple-700 hover:bg-purple-50"
               onClick={() => setShowNoteEditor(true)}
             >
               <FileText className="h-4 w-4" />
-              Nota clinica
+              Nota
             </Button>
             <Button
               size="sm"
-              className="flex-1 gap-2 h-10 max-w-[180px] bg-purple-600 hover:bg-purple-700 text-white"
+              className="flex-[1.2] gap-2 h-11 bg-purple-600 hover:bg-purple-700 text-white"
               onClick={() => setRecorderOpen(true)}
             >
               <Mic className="h-4 w-4" />
-              Grabar consulta
+              Grabar
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="flex-1 gap-2 h-10 max-w-[180px] border-purple-200 text-purple-700 hover:bg-purple-50"
+              className="flex-1 gap-2 h-11 border-purple-200 text-purple-700 hover:bg-purple-50"
               onClick={goToDocumentos}
             >
               <Clipboard className="h-4 w-4" />
-              Documentos
+              Docs
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Spacer so content isn't hidden behind the bar */}
-      <div className="h-20" />
+      {/* Spacer solo en mobile, para que el contenido no quede tapado por la bar */}
+      <div className="h-20 md:hidden" />
 
       {/* VetNoteEditor Dialog */}
       <Dialog open={showNoteEditor} onOpenChange={setShowNoteEditor}>

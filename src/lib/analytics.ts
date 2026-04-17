@@ -185,13 +185,34 @@ export const EVENTS = {
 } as const;
 
 /**
+ * Normaliza pathnames equivalentes a la "vista lógica" del usuario.
+ *
+ * Importante para agenda unificada: hoy `/reminders`, `/rutinas` y
+ * `/mis-reservas` son rutas fisicas separadas, pero semanticamente son
+ * tabs de `/calendario`. Cuando el refactor a tabs aterrice, los mismos
+ * eventos deben seguir agrupados por la misma vista logica para que
+ * las metricas historicas no se fragmenten.
+ */
+function normalizeAnalyticsPath(pathname: string): string {
+  if (pathname === '/reminders') return '/calendario#recordatorios';
+  if (pathname === '/rutinas') return '/calendario#rutinas';
+  if (pathname === '/mis-reservas') return '/calendario#reservas';
+  // Peek de /mascota/:petId/(timeline|rutinas) a la ficha canonica
+  if (/^\/mascota\/[^/]+\/timeline$/.test(pathname)) return '/ficha#historial';
+  if (/^\/mascota\/[^/]+\/rutinas$/.test(pathname)) return '/calendario#rutinas';
+  return pathname;
+}
+
+/**
  * Track an analytics event across all providers.
  */
 export function track({ event, properties, userId }: TrackEvent): void {
+  const rawPath = window.location.pathname;
   const enrichedProperties = {
     ...properties,
     timestamp: new Date().toISOString(),
-    url: window.location.pathname,
+    url: normalizeAnalyticsPath(rawPath),
+    url_raw: rawPath,
   };
 
   // Always log in dev for debugging

@@ -10,6 +10,8 @@ import {
   Building2,
   Heart,
   MapPin,
+  Stethoscope,
+  PawPrint,
 } from '@/lib/icons';
 import { LINKS } from '@/lib/links';
 import { PageHeader } from '@/components/PageHeader';
@@ -122,6 +124,56 @@ export default function Servicios() {
         onBack={() => navigate(LINKS.home())}
       />
       <div className="container max-w-5xl mx-auto px-4 py-6 md:py-8">
+        {/* Destacados arriba: veterinarios (la mas usada) + adopcion */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-5">
+          <Card
+            onClick={() => navigate(LINKS.vets())}
+            className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-2 border-teal-200 hover:border-teal-400 bg-gradient-to-br from-teal-50 to-cyan-50"
+          >
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="rounded-2xl bg-white p-4 flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+                  <Stethoscope className="h-8 w-8 text-teal-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-bold text-lg">Veterinarios</h3>
+                    <Badge className="text-[10px] bg-teal-600">Destacado</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Directorio público de clínicas y veterinarios verificados. Con reseñas reales y
+                    reserva directa.
+                  </p>
+                </div>
+                <ArrowRight className="h-5 w-5 text-teal-600 group-hover:translate-x-1 transition-all flex-shrink-0" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card
+            onClick={() => navigate(LINKS.adoption())}
+            className="group cursor-pointer transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-2 border-rose-200 hover:border-rose-400 bg-gradient-to-br from-rose-50 to-pink-50"
+          >
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="rounded-2xl bg-white p-4 flex-shrink-0 group-hover:scale-110 transition-transform shadow-sm">
+                  <PawPrint className="h-8 w-8 text-rose-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-bold text-lg">Adopción</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    Mascotas buscando hogar, refugios y organizaciones en Chile.
+                  </p>
+                </div>
+                <ArrowRight className="h-5 w-5 text-rose-600 group-hover:translate-x-1 transition-all flex-shrink-0" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Servicios profesionales */}
+        <h2 className="text-lg font-bold mb-3">Servicios profesionales</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
           {SERVICES.map((service) => {
             const Icon = service.icon;

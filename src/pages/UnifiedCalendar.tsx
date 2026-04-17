@@ -1,9 +1,10 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PageHeader } from '@/components/PageHeader';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CalendarGrid } from '@/components/calendar/CalendarGrid';
 import { UnifiedDayView } from '@/components/calendar/UnifiedDayView';
 import { CalendarFilters } from '@/components/calendar/CalendarFilters';
@@ -18,14 +19,56 @@ import { es } from 'date-fns/locale';
 import { CalendarDays, Plus, Stethoscope, Bell, PawPrint } from '@/lib/icons';
 import { LINKS } from '@/lib/links';
 
+// Valor del tab activo ↔ tipo de evento que muestra.
+// 'hoy' muestra todos los eventos del dia actual.
+type CalendarTab = 'hoy' | 'recordatorios' | 'rutinas' | 'reservas';
+
+const TAB_TO_FILTER: Record<CalendarTab, string> = {
+  hoy: 'all',
+  recordatorios: 'reminder',
+  rutinas: 'routine',
+  reservas: 'booking',
+};
+
+function parseTab(value: string | null): CalendarTab {
+  if (value === 'recordatorios' || value === 'rutinas' || value === 'reservas') return value;
+  return 'hoy';
+}
+
 export default function UnifiedCalendar() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { user } = useAuth();
   const { isProvider } = useActiveRole();
+
+  // Tab inicial desde ?tab=... (deep link friendly)
+  const initialTab = parseTab(searchParams.get('tab'));
+  const [activeTab, setActiveTab] = useState<CalendarTab>(initialTab);
+
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [filterPetId, setFilterPetId] = useState('all');
-  const [filterType, setFilterType] = useState('all');
+  const [filterPetId, setFilterPetId] = useState(searchParams.get('pet') ?? 'all');
+  const [filterType, setFilterType] = useState(TAB_TO_FILTER[initialTab]);
+
+  // Mantiene el filterType sincronizado con el tab activo.
+  useEffect(() => {
+    setFilterType(TAB_TO_FILTER[activeTab]);
+  }, [activeTab]);
+
+  // Si el tab es "hoy", saltamos al dia actual al activarlo.
+  const handleTabChange = (value: string) => {
+    const next = parseTab(value);
+    setActiveTab(next);
+    if (next === 'hoy') {
+      const today = new Date();
+      setSelectedDate(today);
+      setCurrentMonth(today);
+    }
+    // Persiste el tab en URL sin recargar, respetando otros query params
+    const params = new URLSearchParams(searchParams);
+    params.set('tab', next);
+    setSearchParams(params, { replace: true });
+  };
 
   const { data: pets = [] } = useQuery({
     queryKey: ['my-pets-calendar', user?.id],
@@ -106,6 +149,34 @@ export default function UnifiedCalendar() {
       />
 
       <main className="container max-w-3xl mx-auto px-3 py-4 space-y-4 pb-24">
+        {/* Tabs de navegacion por intencion: mantiene las rutas viejas
+            (/reminders, /rutinas, /mis-reservas) vivas como aliases, pero
+            aca en /calendario el usuario puede saltar entre vistas. */}
+        {!isProvider && (
+          <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+            <TabsList className="grid w-full grid-cols-4">
+              <TabsTrigger value="hoy" className="text-xs gap-1">
+                <CalendarDays className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Hoy</span>
+              </TabsTrigger>
+              <TabsTrigger value="recordatorios" className="text-xs gap-1">
+                <Bell className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Recordatorios</span>
+                <span className="sm:hidden">Recordar</span>
+              </TabsTrigger>
+              <TabsTrigger value="rutinas" className="text-xs gap-1">
+                <PawPrint className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Rutinas</span>
+              </TabsTrigger>
+              <TabsTrigger value="reservas" className="text-xs gap-1">
+                <Stethoscope className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Reservas</span>
+                <span className="sm:hidden">Citas</span>
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        )}
+
         {/* Today summary strip */}
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
           <Badge

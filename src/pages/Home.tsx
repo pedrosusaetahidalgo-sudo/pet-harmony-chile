@@ -429,8 +429,19 @@ export default function Home() {
             )}
           </div>
         </div>
-        {/* Quick actions inline */}
+        {/* Quick actions inline + PawPoints chip (visible, feedback Palo) */}
         <div className="flex items-center gap-1.5">
+          {stats && stats.points > 0 && (
+            <button
+              type="button"
+              onClick={() => navigate(LINKS.pawGame())}
+              className="flex items-center gap-1 bg-gradient-to-r from-amber-100 to-yellow-100 border border-amber-200 rounded-full px-2.5 py-1 hover:scale-105 transition-transform"
+              title="Ver Paw Points y progreso"
+            >
+              <Crown className="h-3 w-3 text-amber-600" />
+              <span className="text-[11px] font-bold text-amber-800">{stats.points}</span>
+            </button>
+          )}
           <Button
             variant="ghost"
             size="icon"
@@ -514,6 +525,18 @@ export default function Home() {
               <span className="text-xs font-medium text-muted-foreground">Agregar</span>
             </button>
           </div>
+
+          {/* === CTA principal: joya de la corona en 1 tap === */}
+          {activePet && (
+            <Button
+              size="lg"
+              className="w-full h-12 gap-2 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 shadow-md shadow-purple-500/20 text-white font-semibold"
+              onClick={() => navigate(LINKS.petClinical(activePet.id))}
+            >
+              <FileText className="h-5 w-5" />
+              Abrir ficha clínica de {activePet.name}
+            </Button>
+          )}
 
           {/* === Status cards 2x2 → 4x1 === */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-2">
