@@ -280,7 +280,7 @@ export const SHEET_DEFINITIONS: SheetDefinition[] = [
     sheetName: 'Errores',
     table: 'error_logs',
     select:
-      'id, source, severity, message, user_id, resolved, resolved_at, resolved_by, created_at',
+      'id, source, severity, message, context, user_id, resolved, resolved_at, resolved_by, created_at',
     dateField: 'created_at',
     enabled: true,
     description: 'Log centralizado de errores (frontend + edge functions)',
@@ -794,7 +794,10 @@ interface ErrorGroup {
   first_seen: string | null;
   last_seen: string | null;
   severity: string;
+  sources: string[]; // 'edge_function', 'frontend', etc.
   sample_user_ids: (string | null)[];
+  sample_contexts: Array<Record<string, unknown>>; // hasta 3 contextos (incluye function_name, http_status, etc)
+  unresolved_count: number;
 }
 
 /** Agrupa error_logs por mensaje (colapsa duplicados). */
@@ -811,15 +814,23 @@ function groupErrorLogs(rows: any[]): ErrorGroup[] {
         first_seen: r.created_at,
         last_seen: r.created_at,
         severity: r.severity ?? 'error',
+        sources: [],
         sample_user_ids: [],
+        sample_contexts: [],
+        unresolved_count: 0,
       };
       groups.set(key, g);
     }
     g.count++;
+    if (!r.resolved) g.unresolved_count++;
     if (r.created_at < (g.first_seen ?? '')) g.first_seen = r.created_at;
     if (r.created_at > (g.last_seen ?? '')) g.last_seen = r.created_at;
+    if (r.source && !g.sources.includes(r.source)) g.sources.push(r.source);
     if (g.sample_user_ids.length < 3 && r.user_id && !g.sample_user_ids.includes(r.user_id)) {
       g.sample_user_ids.push(r.user_id);
+    }
+    if (g.sample_contexts.length < 3 && r.context && typeof r.context === 'object') {
+      g.sample_contexts.push(r.context as Record<string, unknown>);
     }
   }
   return Array.from(groups.values()).sort((a, b) => b.count - a.count);
@@ -1103,6 +1114,8 @@ function buildClaudeInstructions(): Record<string, unknown> {
         'Telemetria por edge fn (system_health_log). Campos: executions_24h, real_failures_24h (5xx + timeouts + excepciones), client_errors_24h (4xx no son fallas), avg_latency_ms, last_status, recent_errors. Prioriza funciones con real_failures_24h > 0.',
       device_compatibility:
         'Sesiones por platform_family (ios_app/android_app/mobile_web/desktop_web), os, browser_family, screen. Ventana 30d. Si una plataforma clave (ej. ios_app) tiene 0 sesiones mientras otras tienen tráfico, investiga posible crash o incompatibilidad.',
+      error_logs_grouped_enhanced:
+        'Cada grupo trae: message, count, unresolved_count, sources[], sample_user_ids[], sample_contexts[] (incluye function_name, http_status, stack parcial, etc). Usa sample_contexts para diagnosticar la causa raiz sin abrir Supabase Dashboard.',
     },
     priority_rules: {
       P0: 'Bloquean funcionalidad o exponen bug visible al usuario (ej. export admin roto, schema mismatch). Fix inmediato.',
