@@ -73,24 +73,74 @@ const coreOwnerItems = [
 ];
 
 // ── Owner: items secundarios en sección colapsable "Explorar" ──
-// Algunos se filtran por feature flags en el render
-const exploreOwnerItems = [
-  { title: 'Rutinas', url: LINKS.routinesTab(), icon: RefreshCw, flag: null },
-  { title: 'Reportes', url: '/reportes', icon: BarChart3, flag: null },
-  { title: 'Servicios', url: '/servicios', icon: Briefcase, flag: null },
-  { title: 'Mapa', url: '/maps', icon: MapIcon, flag: null },
-  { title: 'Feed', url: '/feed', icon: Activity, flag: 'FEED' as const },
-  { title: 'Comunidad', url: '/comunidad', icon: Users, flag: 'LABS_COMMUNITY' as const },
-  { title: 'Mensajes', url: '/chat', icon: MessageSquare, flag: 'CHAT' as const },
-  { title: 'Paw Game', url: '/paw-game', icon: Gamepad2, flag: 'PAWGAME_SIDEBAR' as const },
-  { title: 'Misiones', url: '/misiones', icon: Star, flag: 'PAWGAME_SIDEBAR' as const },
-  { title: 'Coleccion', url: '/paw-collection', icon: Trophy, flag: 'PAWGAME_SIDEBAR' as const },
-  { title: 'Adopcion', url: '/adoption', icon: Heart, flag: 'LABS_ADOPTION' as const },
+// Organizados en sub-grupos desplegables (requerimiento Pedro 2026-04-17):
+// dentro de Explorar el usuario puede abrir solo la categoria que le
+// interesa sin el listado plano. Feature flags se aplican en el render.
+type ExploreItem = {
+  title: string;
+  url: string;
+  icon: typeof HomeIcon;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  flag: any;
+};
+
+type ExploreSubgroup = {
+  key: string;
+  label: string;
+  icon: typeof HomeIcon;
+  items: ExploreItem[];
+};
+
+const exploreSubgroups: ExploreSubgroup[] = [
   {
-    title: 'Banco de sangre',
-    url: '/donantes-sangre',
-    icon: Droplets,
-    flag: 'LABS_BLOOD_DONORS' as const,
+    key: 'dia-dia',
+    label: 'Día a día',
+    icon: RefreshCw,
+    items: [
+      { title: 'Rutinas', url: LINKS.routinesTab(), icon: RefreshCw, flag: null },
+      { title: 'Reportes', url: '/reportes', icon: BarChart3, flag: null },
+    ],
+  },
+  {
+    key: 'servicios',
+    label: 'Servicios',
+    icon: Briefcase,
+    items: [
+      { title: 'Servicios', url: '/servicios', icon: Briefcase, flag: null },
+      { title: 'Mapa', url: '/maps', icon: MapIcon, flag: null },
+    ],
+  },
+  {
+    key: 'comunidad',
+    label: 'Comunidad',
+    icon: Users,
+    items: [
+      { title: 'Feed', url: '/feed', icon: Activity, flag: 'FEED' as const },
+      { title: 'Comunidad', url: '/comunidad', icon: Users, flag: 'LABS_COMMUNITY' as const },
+      { title: 'Mensajes', url: '/chat', icon: MessageSquare, flag: 'CHAT' as const },
+    ],
+  },
+  {
+    key: 'paw-labs',
+    label: 'Paw Labs',
+    icon: Trophy,
+    items: [
+      { title: 'Paw Game', url: '/paw-game', icon: Gamepad2, flag: 'PAWGAME_SIDEBAR' as const },
+      { title: 'Misiones', url: '/misiones', icon: Star, flag: 'PAWGAME_SIDEBAR' as const },
+      {
+        title: 'Colección',
+        url: '/paw-collection',
+        icon: Trophy,
+        flag: 'PAWGAME_SIDEBAR' as const,
+      },
+      { title: 'Adopción', url: '/adoption', icon: Heart, flag: 'LABS_ADOPTION' as const },
+      {
+        title: 'Banco de sangre',
+        url: '/donantes-sangre',
+        icon: Droplets,
+        flag: 'LABS_BLOOD_DONORS' as const,
+      },
+    ],
   },
 ];
 
@@ -154,6 +204,15 @@ export function AppSidebar() {
   const { isPremium } = usePlan();
   const showPremiumBadges = isFeatureEnabled('USER_PREMIUM') && !isPremium;
   const [exploreOpen, setExploreOpen] = useState(false);
+  // Estado abierto/cerrado por sub-grupo dentro de Explorar. Por defecto
+  // Paw Labs abierto (el mas "discoverable"); el resto cerrado.
+  const [exploreSubOpen, setExploreSubOpen] = useState<Record<string, boolean>>({
+    'dia-dia': false,
+    servicios: false,
+    comunidad: false,
+    'paw-labs': true,
+  });
+  const toggleSub = (key: string) => setExploreSubOpen((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const {
     loaded: tutorialLoaded,
@@ -308,22 +367,50 @@ export function AppSidebar() {
                 </SidebarGroupLabel>
                 {exploreOpen && (
                   <SidebarGroupContent>
-                    <SidebarMenu className="space-y-0">
-                      {exploreOwnerItems
-                        .filter((item) => item.flag === null || isFeatureEnabled(item.flag))
-                        .map((item) => (
-                          <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton
-                              isActive={isActive(item.url)}
-                              onClick={() => handleNavigate(item.url)}
-                              className="h-7 text-xs rounded-md transition-all"
-                            >
-                              <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
-                              <span>{item.title}</span>
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        ))}
-                    </SidebarMenu>
+                    {/* Sub-grupos desplegables: cada categoria se abre
+                        independiente. Items filtrados por feature flag; si
+                        un sub-grupo queda sin items visibles, no se muestra. */}
+                    {exploreSubgroups.map((group) => {
+                      const visibleItems = group.items.filter(
+                        (item) => item.flag === null || isFeatureEnabled(item.flag)
+                      );
+                      if (visibleItems.length === 0) return null;
+                      const isOpen = !!exploreSubOpen[group.key];
+                      return (
+                        <div key={group.key} className="mb-1">
+                          <button
+                            type="button"
+                            onClick={() => toggleSub(group.key)}
+                            className="w-full flex items-center gap-1.5 px-3 py-1 text-[10px] uppercase tracking-wider text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            <group.icon className="h-2.5 w-2.5" />
+                            <span className="flex-1 text-left">{group.label}</span>
+                            <ChevronDown
+                              className={cn(
+                                'h-2.5 w-2.5 transition-transform duration-200',
+                                isOpen && 'rotate-180'
+                              )}
+                            />
+                          </button>
+                          {isOpen && (
+                            <SidebarMenu className="space-y-0">
+                              {visibleItems.map((item) => (
+                                <SidebarMenuItem key={item.title}>
+                                  <SidebarMenuButton
+                                    isActive={isActive(item.url)}
+                                    onClick={() => handleNavigate(item.url)}
+                                    className="h-7 text-xs rounded-md transition-all pl-6"
+                                  >
+                                    <item.icon className="h-3.5 w-3.5 flex-shrink-0" />
+                                    <span>{item.title}</span>
+                                  </SidebarMenuButton>
+                                </SidebarMenuItem>
+                              ))}
+                            </SidebarMenu>
+                          )}
+                        </div>
+                      );
+                    })}
                   </SidebarGroupContent>
                 )}
               </SidebarGroup>
