@@ -140,8 +140,9 @@ export default function AdminExports() {
             Nuevo Export de Auditoria
           </CardTitle>
           <CardDescription className="text-slate-400">
-            Genera un archivo Excel con todas las tablas del sistema, incluyendo un reporte de
-            calidad de datos con 12 checks automaticos.
+            Genera <strong>2 archivos</strong>: un Excel (.xlsx) con todas las tablas y un JSON
+            (.claude.json) con la misma data en formato machine-readable para analisis automatizado
+            por Claude Code.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">

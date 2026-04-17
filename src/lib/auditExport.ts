@@ -667,7 +667,12 @@ export async function generateAuditExport(
   filters: ExportFilters,
   userEmail: string,
   onProgress?: (p: ExportProgress) => void
-): Promise<{ blob: Blob; totalRows: number; sheetsCount: number }> {
+): Promise<{
+  blob: Blob;
+  jsonBlob: Blob;
+  totalRows: number;
+  sheetsCount: number;
+}> {
   const report = (step: string, pct: number) => onProgress?.({ step, pct });
   const enabledSheets = SHEET_DEFINITIONS.filter((d) => d.enabled);
   const enabledChecks = QUALITY_CHECK_DEFINITIONS.filter((d) => d.enabled);
@@ -760,14 +765,60 @@ export async function generateAuditExport(
 
   report('Finalizando...', 98);
 
-  // 5. Generate blob
+  // 5. Generate Excel blob
   const wbOut = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
   const blob = new Blob([wbOut], {
     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   });
 
+  // 6. Generate Claude-readable JSON blob con misma data (tablas + checks)
+  //    Formato plano y parseable para que Claude Code pueda leer y proponer
+  //    fixes sin abrir Excel. Incluye metadatos, cada tabla con rows, y los
+  //    quality checks con su severidad.
+  const jsonPayload = {
+    meta: {
+      app: 'Paw Friend',
+      export_type: exportType,
+      filters: exportType === 'period' ? filters : null,
+      generated_at: new Date().toISOString(),
+      generated_by: userEmail,
+      total_rows: totalRows,
+      tables_count: sheets.length,
+      sheets_count: sheets.length + 2,
+      fetch_errors: errors,
+    },
+    tables: sheets.map((s) => {
+      const def = enabledSheets.find((d) => d.sheetName === s.name);
+      return {
+        id: def?.id ?? s.name,
+        sheet_name: s.name,
+        table: def?.table ?? null,
+        description: def?.description ?? null,
+        row_count: s.rows.length,
+        error: s.error ?? null,
+        rows: s.rows,
+      };
+    }),
+    quality_checks: qualityChecks.map((c) => ({
+      name: c.name,
+      severity: c.severity,
+      result: c.result,
+      detail: c.detail,
+    })),
+    quality_summary: {
+      total: qualityChecks.length,
+      ok: qualityChecks.filter((c) => c.severity === 'ok').length,
+      warn: qualityChecks.filter((c) => c.severity === 'warn').length,
+      error: qualityChecks.filter((c) => c.severity === 'error').length,
+    },
+  };
+  const jsonBlob = new Blob([JSON.stringify(jsonPayload, null, 2)], {
+    type: 'application/json',
+  });
+
   return {
     blob,
+    jsonBlob,
     totalRows,
     sheetsCount: sheets.length + 2, // +README +DQ
   };

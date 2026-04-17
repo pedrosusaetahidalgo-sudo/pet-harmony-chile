@@ -121,8 +121,8 @@ export function useAuditExports() {
       if (jobError) throw new Error(`Error creando job: ${jobError.message}`);
 
       try {
-        // 2. Generate Excel
-        const { blob, totalRows, sheetsCount } = await generateAuditExport(
+        // 2. Generate Excel + JSON (Claude-readable)
+        const { blob, jsonBlob, totalRows, sheetsCount } = await generateAuditExport(
           exportType,
           filters,
           user.email,
@@ -177,9 +177,12 @@ export function useAuditExports() {
             .eq('id', job.id);
         }
 
-        // Always trigger direct download
-        const filename = `paw-friend-audit-${exportType}-${new Date().toISOString().slice(0, 10)}.xlsx`;
-        downloadBlob(blob, filename);
+        // Always trigger direct download de AMBOS archivos:
+        //  - Excel: formato humano para revision visual
+        //  - JSON: formato machine-readable para Claude Code / analisis automatizado
+        const baseName = `paw-friend-audit-${exportType}-${new Date().toISOString().slice(0, 10)}`;
+        downloadBlob(blob, `${baseName}.xlsx`);
+        downloadBlob(jsonBlob, `${baseName}.claude.json`);
 
         return { jobId: job.id };
       } catch (err) {
@@ -195,7 +198,7 @@ export function useAuditExports() {
       }
     },
     onSuccess: () => {
-      toast.success('Export generado y descargado');
+      toast.success('Export generado — descarga .xlsx + .claude.json');
       queryClient.invalidateQueries({ queryKey: ['audit-exports'] });
     },
     onError: (err: Error) => {

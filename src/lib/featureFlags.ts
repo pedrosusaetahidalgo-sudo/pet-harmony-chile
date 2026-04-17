@@ -10,10 +10,13 @@
 export const FEATURE_FLAGS = {
   /**
    * B2C Premium para dueños de mascotas.
-   * DESHABILITADO en el pivot médico — la app es 100% gratis para usuarios.
-   * Reactivar cuando haya >5000 usuarios activos mensuales.
+   * REACTIVADO 2026-04-17: reset de premium falsos via migracion
+   * 20260526000000_reset_fake_premium_users.sql + flujo Flow.cl activo.
+   * Con este flag en true, solo los usuarios con subscription active real
+   * (pagada via Flow) se ven como premium. Los demas son free.
+   * Los feature gates especificos se definen caso por caso.
    */
-  USER_PREMIUM: false,
+  USER_PREMIUM: true,
 
   /**
    * PawGame visible en sidebar principal y Home.
