@@ -2,6 +2,7 @@ import { useEffect, useRef, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { Capacitor } from '@capacitor/core';
 
 // Session ID persists across page navigations but not tab refreshes
 const SESSION_ID =
@@ -17,6 +18,49 @@ const getDevice = () => {
   if (/Mobile|Android|iPhone/i.test(ua)) return 'mobile';
   if (/Tablet|iPad/i.test(ua)) return 'tablet';
   return 'desktop';
+};
+
+/**
+ * Distingue 4 familias de plataforma (para compatibility dashboard):
+ * - ios_app: Capacitor native iOS
+ * - android_app: Capacitor native Android
+ * - mobile_web: navegador en celular
+ * - desktop_web: navegador desktop/laptop
+ */
+const getPlatformFamily = (): string => {
+  try {
+    if (Capacitor.isNativePlatform()) {
+      const p = Capacitor.getPlatform();
+      if (p === 'ios') return 'ios_app';
+      if (p === 'android') return 'android_app';
+    }
+  } catch {
+    // Capacitor no disponible (SSR, etc.) — sigue con UA
+  }
+  return getDevice() === 'desktop' ? 'desktop_web' : 'mobile_web';
+};
+
+/** Extrae OS family del user agent (best effort). */
+const getOSFamily = (): string => {
+  const ua = navigator.userAgent;
+  if (/iPhone|iPad|iPod/i.test(ua)) return 'iOS';
+  if (/Android/i.test(ua)) return 'Android';
+  if (/Windows/i.test(ua)) return 'Windows';
+  if (/Mac OS X|Macintosh/i.test(ua)) return 'macOS';
+  if (/Linux/i.test(ua)) return 'Linux';
+  return 'Other';
+};
+
+/** Extrae browser family del user agent (best effort). */
+const getBrowserFamily = (): string => {
+  const ua = navigator.userAgent;
+  // Orden importa: Edge antes que Chrome, Chrome antes que Safari
+  if (/Edg\//i.test(ua)) return 'Edge';
+  if (/Chrome\//i.test(ua) && !/Chromium/i.test(ua)) return 'Chrome';
+  if (/Firefox\//i.test(ua)) return 'Firefox';
+  if (/Safari\//i.test(ua) && !/Chrome/i.test(ua)) return 'Safari';
+  if (/SamsungBrowser/i.test(ua)) return 'Samsung Internet';
+  return 'Other';
 };
 
 // Batch queue to avoid too many inserts
@@ -90,6 +134,7 @@ export function useAnalyticsTracker() {
       metadata: {
         referrer: document.referrer || null,
         device: getDevice(),
+        platform_family: getPlatformFamily(),
         screen: `${window.innerWidth}x${window.innerHeight}`,
       },
     });
@@ -110,7 +155,11 @@ export function useAnalyticsTracker() {
         session_id: SESSION_ID,
         metadata: {
           device: getDevice(),
+          platform_family: getPlatformFamily(),
+          os: getOSFamily(),
+          browser_family: getBrowserFamily(),
           browser: navigator.userAgent.slice(0, 200),
+          screen: `${window.innerWidth}x${window.innerHeight}`,
           language: navigator.language,
           timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         },

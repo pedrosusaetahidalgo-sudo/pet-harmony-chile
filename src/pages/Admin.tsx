@@ -54,6 +54,7 @@ import AdminSafetyLogs from '@/components/admin/AdminSafetyLogs';
 import AdminAuditLog from '@/components/admin/AdminAuditLog';
 import AdminSystemHealth from '@/components/admin/AdminSystemHealth';
 import AdminDataQuality from '@/components/admin/AdminDataQuality';
+import AdminDeviceCompatibility from '@/components/admin/AdminDeviceCompatibility';
 import AdminTeam from '@/components/admin/AdminTeam';
 import AdminErrorLog from '@/components/admin/AdminErrorLog';
 import AdminAnalytics from '@/components/admin/AdminAnalytics';
@@ -246,6 +247,7 @@ function SystemSection({ sub: propSub, onSubChange }: SubSectionProps) {
           <TabsTrigger value="errors">Errores</TabsTrigger>
           <TabsTrigger value="health">Health</TabsTrigger>
           <TabsTrigger value="data-quality">Calidad datos</TabsTrigger>
+          <TabsTrigger value="devices">Dispositivos</TabsTrigger>
           <TabsTrigger value="safety">Seguridad</TabsTrigger>
           <TabsTrigger value="audit">Audit Log</TabsTrigger>
           <TabsTrigger value="team">Equipo</TabsTrigger>
@@ -261,6 +263,9 @@ function SystemSection({ sub: propSub, onSubChange }: SubSectionProps) {
         </TabsContent>
         <TabsContent value="data-quality">
           <AdminDataQuality />
+        </TabsContent>
+        <TabsContent value="devices">
+          <AdminDeviceCompatibility />
         </TabsContent>
         <TabsContent value="safety">
           <AdminSafetyLogs />
