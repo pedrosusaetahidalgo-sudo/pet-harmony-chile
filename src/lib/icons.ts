@@ -142,6 +142,7 @@ export {
   Plus,
   QrCode,
   Quote,
+  Radio,
   RefreshCw,
   Route,
   Save,

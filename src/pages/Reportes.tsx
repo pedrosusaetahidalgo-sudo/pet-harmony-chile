@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { FileText, Download, Eye } from '@/lib/icons';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { LiveMonthlyReport } from '@/components/reports/LiveMonthlyReport';
 
 const REPORT_TYPE_LABELS: Record<string, string> = {
   owner_weekly: 'Resumen semanal',
@@ -76,12 +77,28 @@ export default function Reportes() {
         <h1 className="text-xl font-bold">Mis reportes</h1>
       </div>
 
+      {/* Reporte en vivo del mes en curso (siempre visible, se actualiza al consultar) */}
+      <LiveMonthlyReport />
+
+      {/* Historial de reportes periódicos (PDF descargables generados por cron) */}
+      <div className="pt-2">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-sm font-semibold text-muted-foreground">Resúmenes anteriores</h2>
+          {reports && reports.length > 0 && (
+            <Badge variant="outline" className="text-[10px]">
+              {reports.length} {reports.length === 1 ? 'reporte' : 'reportes'}
+            </Badge>
+          )}
+        </div>
+      </div>
+
       {!reports || reports.length === 0 ? (
         <Card>
-          <CardContent className="p-8 text-center">
-            <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-            <p className="text-muted-foreground">
-              Aún no tienes reportes. Tu primer resumen semanal se generará el próximo domingo.
+          <CardContent className="p-6 text-center">
+            <FileText className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+            <p className="text-sm text-muted-foreground">
+              Los resúmenes semanales y mensuales se generan automáticamente. El próximo llegará
+              este domingo.
             </p>
           </CardContent>
         </Card>

@@ -15,9 +15,19 @@ import { useAuth } from '@/hooks/useAuth';
 import { useMyBookingsV2 } from '@/hooks/useMyBookingsV2';
 import { format, startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Calendar, CalendarDays, Clock, CheckCircle2, Inbox, Star } from '@/lib/icons';
+import {
+  Calendar,
+  CalendarDays,
+  Clock,
+  CheckCircle2,
+  Inbox,
+  Star,
+  Plus,
+  Stethoscope,
+} from '@/lib/icons';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 
 const SERVICE_TYPES = [
   { value: 'all', label: 'Todos' },
@@ -350,13 +360,51 @@ export default function MyBookings() {
               </div>
             ) : !myBookings || myBookings.length === 0 ? (
               <Card>
-                <CardContent className="py-12 text-center">
-                  <Inbox className="h-12 w-12 mx-auto text-muted-foreground/40 mb-4" />
-                  <h3 className="font-semibold text-lg mb-1">Sin reservas aún</h3>
-                  <p className="text-muted-foreground text-sm mb-4">
-                    Busca disponibilidad en la pestaña "Buscar disponibilidad" para agendar tu
-                    primera cita.
+                <CardContent className="py-10 px-4 text-center">
+                  <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-purple-50 mb-4">
+                    <Inbox className="h-7 w-7 text-purple-500" />
+                  </div>
+                  <h3 className="font-semibold text-lg mb-1">Aún no tienes reservas</h3>
+                  <p className="text-muted-foreground text-sm mb-5 max-w-sm mx-auto">
+                    Agenda con un veterinario, paseador, cuidador o peluquero de Paw Friend. Sólo
+                    toma un minuto.
                   </p>
+                  <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                    <Button
+                      size="lg"
+                      className="bg-purple-600 hover:bg-purple-700 text-white gap-1.5"
+                      onClick={() => setActiveTab('available')}
+                    >
+                      <Plus className="h-4 w-4" />
+                      Agendar cita
+                    </Button>
+                    <Button asChild size="lg" variant="outline" className="gap-1.5">
+                      <Link to="/veterinarios">
+                        <Stethoscope className="h-4 w-4" />
+                        Ver directorio de vets
+                      </Link>
+                    </Button>
+                  </div>
+                  <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-2 text-left max-w-lg mx-auto">
+                    <div className="rounded-lg border bg-card p-3">
+                      <p className="text-xs font-medium mb-0.5">1. Elige fecha</p>
+                      <p className="text-[11px] text-muted-foreground">
+                        Abre el calendario y selecciona el día.
+                      </p>
+                    </div>
+                    <div className="rounded-lg border bg-card p-3">
+                      <p className="text-xs font-medium mb-0.5">2. Escoge el horario</p>
+                      <p className="text-[11px] text-muted-foreground">
+                        Filtra por tipo de servicio y proveedor.
+                      </p>
+                    </div>
+                    <div className="rounded-lg border bg-card p-3">
+                      <p className="text-xs font-medium mb-0.5">3. Reserva en 1 click</p>
+                      <p className="text-[11px] text-muted-foreground">
+                        Tu cita queda en el calendario al instante.
+                      </p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             ) : (

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { track, EVENTS } from '@/lib/analytics';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -112,6 +113,7 @@ const AddPet = () => {
 
   const { user } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { reward } = useOrganicRewards();
   const { can: canAddPet, reason: blockReason, isLoading: checkingLimit } = useCanAddPet();
 
@@ -414,6 +416,20 @@ const AddPet = () => {
           .eq('id', petId)
           .eq('owner_id', user.id);
         if (error) throw error;
+
+        // Invalidate caches que dependen del nombre/datos de la mascota.
+        // El trigger DB sync_pet_name_in_reminders ya actualiza los titulos
+        // embebidos; aqui forzamos re-fetch de las queries cliente.
+        await Promise.all([
+          queryClient.invalidateQueries({ queryKey: ['pet-reminders'] }),
+          queryClient.invalidateQueries({ queryKey: ['pets'] }),
+          queryClient.invalidateQueries({ queryKey: ['user-pets'] }),
+          queryClient.invalidateQueries({ queryKey: ['user-pets-reminders'] }),
+          queryClient.invalidateQueries({ queryKey: ['pet', petId] }),
+          queryClient.invalidateQueries({ queryKey: ['pet-clinical', petId] }),
+          queryClient.invalidateQueries({ queryKey: ['my-bookings-v1'] }),
+          queryClient.invalidateQueries({ queryKey: ['my-bookings-v2'] }),
+        ]);
 
         toast('Cambios guardados', {
           description: `Los datos de ${formData.name} se actualizaron correctamente.`,

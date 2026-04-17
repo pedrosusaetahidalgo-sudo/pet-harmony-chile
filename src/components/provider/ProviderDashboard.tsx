@@ -37,6 +37,7 @@ import { NewPatientForm } from './NewPatientForm';
 import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import { Next24hCard } from './Next24hCard';
 import { MiniProfileCard } from './dashboard/MiniProfileCard';
+import { VetExposureTips } from './dashboard/VetExposureTips';
 
 // formatCLP imported from @/lib/format
 
@@ -221,7 +222,21 @@ const ProviderDashboard = () => {
         </TabsList>
 
         <TabsContent value="reservas" className="mt-3">
-          <ProviderBookingsInbox providerId={stats.providerId} />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <div className="lg:col-span-2">
+              <ProviderBookingsInbox providerId={stats.providerId} />
+            </div>
+            <div className="lg:col-span-1">
+              <VetExposureTips
+                slug={stats.slug}
+                isDirectoryVisible={stats.isDirectoryVisible}
+                profileViews={stats.profileViews}
+                avgRating={stats.avgRating}
+                totalReviews={stats.totalReviews}
+                bookingsThisMonth={stats.bookingsThisMonth}
+              />
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="clinico" className="mt-3">
