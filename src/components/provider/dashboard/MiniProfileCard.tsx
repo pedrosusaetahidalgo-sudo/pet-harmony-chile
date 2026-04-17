@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from '@/components/ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Eye, UserCog, CheckCircle, AlertCircle, ExternalLink } from '@/lib/icons';
@@ -29,9 +29,12 @@ export function MiniProfileCard({
     queryKey: ['mini-profile-card', user?.id],
     queryFn: async () => {
       if (!user) return null;
+      // Columnas reales en service_providers (ver migracion 20260406000000):
+      // specialties (plural), service_areas (array), base_price_clp.
+      // No hay photo_url directa — se obtiene desde profiles.avatar_url.
       const { data } = await supabase
         .from('service_providers')
-        .select('business_name, photo_url, specialty, comunas_atendidas, base_price')
+        .select('business_name, specialties, service_areas, base_price_clp')
         .eq('user_id', user.id)
         .maybeSingle();
       return data;
@@ -43,10 +46,9 @@ export function MiniProfileCard({
   // Completeness: simple heuristic
   const fields = [
     provider?.business_name,
-    provider?.photo_url,
-    provider?.specialty?.length,
-    provider?.comunas_atendidas?.length,
-    provider?.base_price,
+    provider?.specialties?.length,
+    provider?.service_areas?.length,
+    provider?.base_price_clp,
     slug,
   ];
   const filled = fields.filter(Boolean).length;
@@ -65,7 +67,6 @@ export function MiniProfileCard({
         {/* Avatar + name + rating */}
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10 ring-2 ring-teal-100 flex-shrink-0">
-            <AvatarImage src={provider?.photo_url || undefined} alt={displayName} />
             <AvatarFallback className="bg-teal-50 text-teal-700 text-sm font-bold">
               {initials}
             </AvatarFallback>

@@ -15,7 +15,6 @@ import {
   ChevronDown,
   User,
   Phone,
-  Mail,
   Stethoscope,
   FileText,
   Mic,
@@ -67,7 +66,7 @@ export function VetFichaView({
       if (!pet.owner_id) return null;
       const { data } = await supabase
         .from('profiles')
-        .select('display_name, phone, email')
+        .select('display_name, phone')
         .eq('id', pet.owner_id)
         .maybeSingle();
       return data;
@@ -187,15 +186,8 @@ export function VetFichaView({
                         {ownerProfile.phone}
                       </a>
                     )}
-                    {ownerProfile?.email && (
-                      <a
-                        href={`mailto:${ownerProfile.email}`}
-                        className="flex items-center gap-1 text-teal-600 hover:text-teal-800"
-                      >
-                        <Mail className="h-3 w-3" />
-                        {ownerProfile.email}
-                      </a>
-                    )}
+                    {/* Email del owner no esta en profiles (esta en auth.users).
+                        Para mostrarlo habria que crear una RPC security definer. */}
                   </div>
                 )}
               </div>
