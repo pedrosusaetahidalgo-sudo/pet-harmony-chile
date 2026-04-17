@@ -24,7 +24,7 @@ import { es } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
-// ─── Catalogo completo de edge functions (34) ──────────────────────────────
+// ─── Catalogo completo de edge functions (35) ──────────────────────────────
 type Category =
   | 'ai'
   | 'payments'
@@ -224,6 +224,13 @@ const EDGE_FUNCTIONS: EdgeFunctionMeta[] = [
     critical: false,
     logsHealth: true,
     description: 'Genera data refugios',
+  },
+  {
+    name: 'audit-cron-daily',
+    category: 'cron',
+    critical: false,
+    logsHealth: true,
+    description: 'Snapshot diario salud + auto-fixers',
   },
   // Onboarding / provider
   {
