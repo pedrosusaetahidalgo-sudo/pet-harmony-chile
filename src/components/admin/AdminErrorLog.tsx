@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { track, EVENTS } from '@/lib/analytics';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -183,15 +184,25 @@ export default function AdminErrorLog() {
   // Resolve mutation
   const resolve = useMutation({
     mutationFn: async (errorId: string) => {
+      if (!user?.id) throw new Error('No hay sesion admin');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      await (supabase.from('error_logs') as any)
-        .update({ resolved: true, resolved_at: new Date().toISOString(), resolved_by: user?.id })
+      const { error } = await (supabase.from('error_logs') as any)
+        .update({ resolved: true, resolved_at: new Date().toISOString(), resolved_by: user.id })
         .eq('id', errorId);
+      if (error) throw error;
+      track({
+        event: EVENTS.ADMIN_ACTION,
+        properties: { action: 'error_resolved', error_id: errorId },
+      });
     },
     onSuccess: () => {
       toast.success('Error marcado como resuelto');
       qc.invalidateQueries({ queryKey: ['admin-errors-list'] });
       qc.invalidateQueries({ queryKey: ['admin-errors-kpis'] });
+    },
+    onError: (e: unknown) => {
+      const msg = e instanceof Error ? e.message : 'Error al marcar como resuelto';
+      toast.error(msg);
     },
   });
 

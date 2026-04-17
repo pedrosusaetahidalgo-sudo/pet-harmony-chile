@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import AdminKpiCard from '@/components/admin/ui/AdminKpiCard';
 import AdminStatCard from '@/components/admin/ui/AdminStatCard';
 import AdminEmptyState from '@/components/admin/ui/AdminEmptyState';
+import AdminHealthSummary from '@/components/admin/AdminHealthSummary';
 import { cn } from '@/lib/utils';
 import { formatCLPCompact } from '@/lib/format';
 import {
@@ -669,6 +670,9 @@ export default function AdminDashboard() {
   // ── Render ─────────────────────────────────────────────
   return (
     <div className="space-y-6">
+      {/* ── Health Summary (acciones que requieren atencion del admin) ── */}
+      <AdminHealthSummary />
+
       {/* ── Smart Alerts Banner ── */}
       {hasAlerts && (
         <Card className="border-orange-500/30 bg-orange-500/5">

@@ -19,6 +19,7 @@ import { Mail, Clock, User, Trash2, Ghost, AlertTriangle } from '@/lib/icons';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { toast } from 'sonner';
+import { track, EVENTS } from '@/lib/analytics';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
@@ -66,6 +67,10 @@ export default function AdminGhostUsers() {
       if (error) throw error;
       if (data?.success) {
         toast.success(`${email} eliminado`);
+        track({
+          event: EVENTS.ADMIN_ACTION,
+          properties: { action: 'delete_ghost_user', target_email: email },
+        });
         refetch();
       } else {
         toast.error(data?.error || 'No se pudo eliminar');
@@ -86,6 +91,10 @@ export default function AdminGhostUsers() {
       if (error) throw error;
       if (data?.success) {
         toast.success(`${data.deleted_count} cuentas fantasma eliminadas`);
+        track({
+          event: EVENTS.ADMIN_BULK_ACTION,
+          properties: { action: 'delete_all_ghost_users', count: data.deleted_count },
+        });
         refetch();
       } else {
         toast.error('Error en limpieza masiva');

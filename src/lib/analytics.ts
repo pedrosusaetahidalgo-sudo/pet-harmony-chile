@@ -177,6 +177,11 @@ export const EVENTS = {
   MAP_OPENED: 'map_opened',
   CHAT_STARTED: 'chat_started',
   SHARE_LINK_CREATED: 'share_link_created',
+
+  // Admin actions — para auditoria + futuro AI agent
+  ADMIN_ACTION: 'admin_action',
+  ADMIN_SECTION_VIEWED: 'admin_section_viewed',
+  ADMIN_BULK_ACTION: 'admin_bulk_action',
 } as const;
 
 /**

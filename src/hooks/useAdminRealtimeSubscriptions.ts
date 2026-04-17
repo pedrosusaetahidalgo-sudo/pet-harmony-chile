@@ -63,6 +63,70 @@ const ADMIN_SUBSCRIPTIONS: AdminRealtimeConfig[] = [
     events: ['INSERT', 'UPDATE'],
     invalidateKeys: [['admin-kpi-pets-v2'], ['admin-pending-pets']],
   },
+  // Feedback de usuarios — debe verse en vivo para responder rapido
+  {
+    channelName: 'admin-feedback',
+    table: 'feedback',
+    events: ['INSERT', 'UPDATE'],
+    invalidateKeys: [['admin-feedback'], ['admin-feedback-list']],
+  },
+  // Misiones, rewards y promociones — para gestion de gamificacion
+  {
+    channelName: 'admin-paw-missions',
+    table: 'paw_missions',
+    events: ['INSERT', 'UPDATE', 'DELETE'],
+    invalidateKeys: [['admin-missions']],
+  },
+  {
+    channelName: 'admin-rewards',
+    table: 'rewards',
+    events: ['INSERT', 'UPDATE', 'DELETE'],
+    invalidateKeys: [['admin-rewards']],
+  },
+  {
+    channelName: 'admin-service-promotions',
+    table: 'service_promotions',
+    events: ['INSERT', 'UPDATE', 'DELETE'],
+    invalidateKeys: [['admin-service-promotions']],
+  },
+  // Partners y leads
+  {
+    channelName: 'admin-partner-submissions',
+    table: 'partner_submissions',
+    events: ['INSERT', 'UPDATE'],
+    invalidateKeys: [['admin-partner-submissions']],
+  },
+  // Verifications — para que el badge de pendientes se actualice solo
+  {
+    channelName: 'admin-verification-requests',
+    table: 'verification_requests',
+    events: ['INSERT', 'UPDATE'],
+    invalidateKeys: [['admin-verification-requests']],
+  },
+  {
+    channelName: 'admin-vet-verifications',
+    table: 'vet_verification_results',
+    events: ['INSERT', 'UPDATE'],
+    invalidateKeys: [['admin-vet-verifications']],
+  },
+  // Audit log — para que admin team vea acciones de otros admins en vivo
+  {
+    channelName: 'admin-audit-log',
+    table: 'admin_audit_log',
+    events: ['INSERT'],
+    invalidateKeys: [['admin-audit-log']],
+  },
+  // Analytics events — para dashboard live de pageviews / acciones
+  {
+    channelName: 'admin-analytics-events',
+    table: 'analytics_events',
+    events: ['INSERT'],
+    invalidateKeys: [
+      ['admin-analytics-traffic'],
+      ['admin-analytics-engagement'],
+      ['admin-analytics-features'],
+    ],
+  },
 ];
 
 /**
