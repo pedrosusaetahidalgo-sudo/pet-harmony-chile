@@ -43,6 +43,13 @@ test.describe('Crear mascota — validaciones de formulario', () => {
     if (!ok) {
       test.skip(true, 'El formulario no cargó (¿inyección de sesión fake falló?).');
     }
+
+    // Dismiss cookie consent banner if present (blocks clicks on submit button)
+    const cookieBanner = page.getByRole('button', { name: /Solo esenciales|Aceptar/i });
+    if (await cookieBanner.isVisible({ timeout: 2_000 }).catch(() => false)) {
+      await cookieBanner.click();
+      await page.waitForTimeout(300);
+    }
   });
 
   test("el botón de submit está presente y dice 'Agregar Mascota'", async ({ page }) => {
@@ -119,35 +126,23 @@ test.describe('Crear mascota — validaciones de formulario', () => {
     });
   });
 
-  test('muestra toast si microchip no tiene 15 dígitos', async ({ page }) => {
-    // Bypass HTML5 pattern y maxLength para alcanzar la validación JS
-    await page.evaluate(() => {
-      document.querySelector('form')?.setAttribute('novalidate', '');
-      const mc = document.getElementById('microchip') as HTMLInputElement | null;
-      mc?.removeAttribute('pattern');
-      mc?.removeAttribute('maxLength');
-    });
-
+  test('muestra error si microchip no tiene 15 dígitos', async ({ page }) => {
     await page.getByLabel(/nombre/i).fill('TestPet');
 
     await page.getByRole('combobox').first().click();
     await page.getByRole('option', { name: /perro/i }).click();
 
-    // Abrir sección médica
-    const medicalTrigger = page.getByText(/información médica/i);
-    await medicalTrigger.click();
+    // Abrir sección médica (CardTitle text)
+    await page.getByText('Información Médica', { exact: true }).click();
+    await page.waitForTimeout(300);
 
     // Microchip inválido (solo 10 dígitos)
-    // Nota: el onChange del componente filtra a maxLength=15 pero el regex
-    // /^\d{15}$/ del handler exige exactamente 15.
-    await page.getByLabel(/microchip/i).fill('1234567890');
+    await page.locator('#microchip').fill('1234567890');
 
     await page.getByRole('button', { name: /agregar mascota/i }).click();
 
-    // Radix Toast root es <li role="status">. Excluimos el announcer
-    // <span role="status"> de Radix que duplica el texto para screen readers.
-    const toast = page.locator("[data-sonner-toast], li[role='status']");
-    await expect(toast.filter({ hasText: /microchip/i })).toBeVisible({ timeout: 5_000 });
+    // Zod schema validates microchip and shows inline field error
+    await expect(page.getByText(/microchip.*15.*d[ií]gitos/i)).toBeVisible({ timeout: 5_000 });
   });
 });
 

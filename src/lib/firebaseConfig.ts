@@ -39,8 +39,12 @@ export async function initFirebaseAnalytics(): Promise<void> {
   if (typeof window === 'undefined') return;
 
   try {
-    const { initializeApp } = await import('firebase/app');
-    const { getAnalytics, isSupported } = await import('firebase/analytics');
+    // Dynamic imports via string variables to prevent Vite from resolving
+    // firebase packages at build time when they're not installed.
+    const firebaseAppModule = 'firebase/app';
+    const firebaseAnalyticsModule = 'firebase/analytics';
+    const { initializeApp } = await import(/* @vite-ignore */ firebaseAppModule);
+    const { getAnalytics, isSupported } = await import(/* @vite-ignore */ firebaseAnalyticsModule);
 
     const supported = await isSupported();
     if (!supported) {
@@ -66,7 +70,8 @@ export async function logFirebaseEvent(
   try {
     if (_analytics) {
       // Web
-      const { logEvent } = await import('firebase/analytics');
+      const mod = 'firebase/analytics';
+      const { logEvent } = await import(/* @vite-ignore */ mod);
       logEvent(_analytics, eventName, params);
     } else {
       // Native — try Capacitor plugin
@@ -94,7 +99,8 @@ export async function logFirebaseEvent(
 export async function setFirebaseUserId(userId: string): Promise<void> {
   try {
     if (_analytics) {
-      const { setUserId } = await import('firebase/analytics');
+      const mod = 'firebase/analytics';
+      const { setUserId } = await import(/* @vite-ignore */ mod);
       setUserId(_analytics, userId);
     } else {
       const { Capacitor } = await import('@capacitor/core');
@@ -115,7 +121,8 @@ export async function setFirebaseUserId(userId: string): Promise<void> {
 export async function setFirebaseScreenName(screenName: string): Promise<void> {
   try {
     if (_analytics) {
-      const { logEvent } = await import('firebase/analytics');
+      const mod = 'firebase/analytics';
+      const { logEvent } = await import(/* @vite-ignore */ mod);
       logEvent(_analytics, 'screen_view' as string, { firebase_screen: screenName });
     } else {
       const { Capacitor } = await import('@capacitor/core');

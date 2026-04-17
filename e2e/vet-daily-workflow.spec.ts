@@ -55,9 +55,8 @@ test.describe('Vet daily workflow', () => {
     await page.goto('/mis-reservas', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
 
-    // Should show bookings page or empty state
-    const content = page.getByText(/reservas|citas|No tienes/i);
-    await expect(content).toBeVisible();
+    // Should show bookings heading or empty state
+    await expect(page.getByRole('heading', { name: /reservas/i }).first()).toBeVisible();
   });
 
   test('Vet directory is publicly accessible', async ({ page }) => {
@@ -74,14 +73,16 @@ test.describe('Vet daily workflow', () => {
     await page.goto('/registro-veterinario', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
 
-    // Should show registration form
-    await expect(page.getByText(/Registro|veterinario|profesional/i)).toBeVisible();
+    // Should show registration form heading
+    await expect(
+      page.getByRole('heading', { name: /Registro|profesional|tipo de profesional/i }).first()
+    ).toBeVisible();
   });
 
   test('B2B landing page loads', async ({ page }) => {
     await page.goto('/para-veterinarios', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(1000);
 
-    await expect(page.getByText(/veterinarios|profesionales/i)).toBeVisible();
+    await expect(page.getByRole('heading', { name: /veterinarios/i }).first()).toBeVisible();
   });
 });
