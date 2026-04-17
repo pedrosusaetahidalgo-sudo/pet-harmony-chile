@@ -178,6 +178,49 @@ test.describe('Mobile layout — protected owner routes (no horizontal overflow)
   }
 });
 
+test.describe('Mobile layout — vertical scroll (regresion fix 2026-04-17)', () => {
+  // Tras el fix del scroll desktop (overflow-x clip en #root, no en html)
+  // validamos que el scroll vertical sigue funcionando en mobile tambien.
+  const SCROLL_ROUTES = [
+    { path: '/', label: 'Landing' },
+    { path: '/auth', label: 'Auth' },
+    { path: '/veterinarios', label: 'Directorio Vets' },
+  ];
+
+  for (const route of SCROLL_ROUTES) {
+    test(`${route.label} permite scroll vertical`, async ({ page }) => {
+      await page.goto(route.path, { waitUntil: 'domcontentloaded' });
+      await page.waitForTimeout(600);
+
+      // Verifica que la página tenga contenido suficiente para scrollear
+      const metrics = await page.evaluate(() => {
+        const root = document.documentElement;
+        const body = document.body;
+        return {
+          scrollable:
+            root.scrollHeight > root.clientHeight || body.scrollHeight > body.clientHeight,
+          // window.scrollY despues de scrollTo debe cambiar
+          initialY: window.scrollY,
+        };
+      });
+
+      if (!metrics.scrollable) {
+        // Pagina corta sin contenido suficiente, skip
+        return;
+      }
+
+      // Scroll a 300px y verificar que scrollY cambio
+      await page.evaluate(() => window.scrollTo(0, 300));
+      await page.waitForTimeout(200);
+      const afterScroll = await page.evaluate(() => window.scrollY);
+      expect(
+        afterScroll,
+        `${route.path} should be scrollable vertically (got scrollY=${afterScroll})`
+      ).toBeGreaterThan(0);
+    });
+  }
+});
+
 test.describe('Mobile layout — select/dropdown behavior', () => {
   test('Auth page email input does not trigger zoom on iOS', async ({ page }) => {
     // This test only makes sense on mobile viewports where iOS zoom is an issue

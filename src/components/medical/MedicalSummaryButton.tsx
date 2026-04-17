@@ -71,9 +71,39 @@ export const MedicalSummaryButton = ({
         headers: { Accept: 'application/pdf' },
       });
 
-      if (error) throw error;
+      if (error) {
+        // FunctionsHttpError trae context.response con body JSON del edge fn.
+        // Extraemos el mensaje real para mostrarselo al user en vez del
+        // generico "Edge function returned non-2xx status".
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const ctx = (error as any).context;
+        if (ctx?.response) {
+          try {
+            const body = await ctx.response.clone().text();
+            logger.error('[MedicalSummary] edge fn error body:', {
+              mode,
+              status: ctx.response.status,
+              body: body.slice(0, 500),
+            });
+            // Si el body es JSON con {error} lo usamos; si no, dejamos el raw.
+            let parsed: { error?: string; message?: string } | null = null;
+            try {
+              parsed = JSON.parse(body);
+            } catch {
+              /* no-op: body no es JSON */
+            }
+            const detail = parsed?.error || parsed?.message || body.slice(0, 200);
+            throw new Error(`[${ctx.response.status}] ${detail || 'sin detalle'}`);
+          } catch (parseErr) {
+            if (parseErr instanceof Error && parseErr.message.startsWith('[')) throw parseErr;
+            // fallthrough
+          }
+        }
+        throw error;
+      }
 
       if (data instanceof Blob) {
+        if (data.size === 0) throw new Error('El PDF generado está vacío');
         await downloadBlob(data, fileName);
         toast(mode === 'complete' ? 'Ficha completa lista' : 'Ficha clínica lista', {
           description: `La ficha de ${petName || 'tu mascota'} se descargó correctamente`,
@@ -84,15 +114,24 @@ export const MedicalSummaryButton = ({
           description: `La ficha de ${petName || 'tu mascota'} se descargó correctamente`,
         });
       } else {
-        throw new Error('No se recibió la ficha');
+        logger.error('[MedicalSummary] respuesta inesperada:', { mode, data });
+        throw new Error('No se recibió la ficha (respuesta vacía del servidor)');
       }
     } catch (error) {
-      logger.error('Error generating medical summary:', error);
-      toast.error('Algo salió mal', {
-        description:
-          describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
-          'No se pudo generar la ficha clínica',
-      });
+      logger.error('[MedicalSummary] falló la descarga:', { mode, petId, error });
+      const raw = error instanceof Error ? error.message : String(error);
+      const fromSupabase = describeSupabaseError(
+        error as Parameters<typeof describeSupabaseError>[0]
+      );
+      toast.error(
+        mode === 'complete'
+          ? 'No se pudo generar la ficha completa'
+          : 'No se pudo generar la ficha',
+        {
+          description: fromSupabase || raw || 'Reintenta en unos segundos',
+          duration: 8000,
+        }
+      );
     } finally {
       setIsGenerating(false);
     }
