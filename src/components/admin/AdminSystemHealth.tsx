@@ -750,18 +750,42 @@ export default function AdminSystemHealth() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-slate-800 text-left">
-                    <th className="pb-2 pr-2 font-medium text-slate-400 uppercase text-xs w-6"></th>
-                    <th className="pb-2 font-medium text-slate-400 uppercase text-xs">Funcion</th>
-                    <th className="pb-2 font-medium text-slate-400 uppercase text-xs">Ping</th>
-                    <th className="pb-2 font-medium text-slate-400 uppercase text-xs">Estado</th>
-                    <th className="pb-2 font-medium text-slate-400 uppercase text-xs hidden md:table-cell">
+                    <th
+                      scope="col"
+                      className="pb-2 pr-2 font-medium text-slate-400 uppercase text-xs w-6"
+                    >
+                      <span className="sr-only">Expandir</span>
+                    </th>
+                    <th scope="col" className="pb-2 font-medium text-slate-400 uppercase text-xs">
+                      Funcion
+                    </th>
+                    <th scope="col" className="pb-2 font-medium text-slate-400 uppercase text-xs">
+                      Ping
+                    </th>
+                    <th scope="col" className="pb-2 font-medium text-slate-400 uppercase text-xs">
+                      Estado
+                    </th>
+                    <th
+                      scope="col"
+                      className="pb-2 font-medium text-slate-400 uppercase text-xs hidden md:table-cell"
+                    >
                       Ultima ejec.
                     </th>
-                    <th className="pb-2 font-medium text-slate-400 uppercase text-xs hidden lg:table-cell">
+                    <th
+                      scope="col"
+                      className="pb-2 font-medium text-slate-400 uppercase text-xs hidden lg:table-cell"
+                    >
                       Latencia
                     </th>
-                    <th className="pb-2 font-medium text-slate-400 uppercase text-xs">Err 24h</th>
-                    <th className="pb-2 pl-2 font-medium text-slate-400 uppercase text-xs text-right"></th>
+                    <th scope="col" className="pb-2 font-medium text-slate-400 uppercase text-xs">
+                      Err 24h
+                    </th>
+                    <th
+                      scope="col"
+                      className="pb-2 pl-2 font-medium text-slate-400 uppercase text-xs text-right"
+                    >
+                      <span className="sr-only">Acciones</span>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

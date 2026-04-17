@@ -86,6 +86,7 @@ const Chat = () => {
     return () => {
       supabase.removeChannel(channel);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- conversations (array) cambia en cada loadConversations, solo re-suscribimos cuando length cambia
   }, [user, conversations.length]);
 
   const loadConversations = async () => {

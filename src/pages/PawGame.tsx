@@ -389,6 +389,7 @@ const PawGame = () => {
     if (activeTab === 'ranking' && rankingData.length === 0) {
       loadRanking();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- loadRanking es estable; rankingData.length se usa como guard one-shot (si lo incluimos se re-ejecuta en cada load)
   }, [activeTab]);
 
   const handleDailyCheckIn = async () => {

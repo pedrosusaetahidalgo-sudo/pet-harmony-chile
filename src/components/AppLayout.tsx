@@ -21,7 +21,11 @@ function LayoutInner({ children }: AppLayoutProps) {
   useAnalyticsTracker(); // Page views, dwell time, sessions
 
   if (isAdmin) {
-    return <div className="min-h-screen bg-background overflow-x-hidden">{children}</div>;
+    // flex-1 + w-full: el SidebarProvider padre es flex, sin esto el admin
+    // queda angosto y aparece una barra vacia a la derecha.
+    return (
+      <div className="min-h-screen w-full flex-1 bg-background overflow-x-hidden">{children}</div>
+    );
   }
 
   return (

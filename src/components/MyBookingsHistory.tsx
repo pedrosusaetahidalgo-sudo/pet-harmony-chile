@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -58,13 +58,7 @@ export const MyBookingsHistory = ({
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'upcoming' | 'past'>('upcoming');
 
-  useEffect(() => {
-    if (user) {
-      loadBookings();
-    }
-  }, [user, serviceType]);
-
-  const loadBookings = async () => {
+  const loadBookings = useCallback(async () => {
     try {
       setLoading(true);
       const allBookings: Booking[] = [];
@@ -212,7 +206,13 @@ export const MyBookingsHistory = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, serviceType]);
+
+  useEffect(() => {
+    if (user) {
+      loadBookings();
+    }
+  }, [user, loadBookings]);
 
   const filteredBookings = bookings.filter((booking) => {
     const bookingDate = new Date(booking.scheduled_date);

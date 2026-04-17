@@ -100,6 +100,7 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
         {data.map((b) => (
           <BookingCard
             key={b.id}
+            // eslint-disable-next-line jsx-a11y/aria-role -- `role` es prop custom de BookingCard, no atributo ARIA
             role="provider"
             booking={{
               id: b.id,
@@ -178,6 +179,7 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
           bookingId={cancelTarget.id}
           bookingType={cancelTarget.booking_type}
           currentStatus={cancelTarget.status}
+          // eslint-disable-next-line jsx-a11y/aria-role -- `role` es prop custom de CancelBookingDialog, no atributo ARIA
           role="provider"
         />
       )}

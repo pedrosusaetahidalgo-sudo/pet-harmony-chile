@@ -215,6 +215,7 @@ function CardZoomOverlay({ card, onClose }: { card: CollectedCard; onClose: () =
     };
     window.addEventListener('keydown', handleEsc);
     return () => window.removeEventListener('keydown', handleEsc);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- handleClose es estable tras el primer render; no queremos re-suscribir al keydown
   }, []);
 
   const handleClose = useCallback(() => {
