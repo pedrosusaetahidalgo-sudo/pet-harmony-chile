@@ -231,6 +231,109 @@ export const SHEET_DEFINITIONS: SheetDefinition[] = [
       }));
     },
   },
+  {
+    id: 'subscriptions',
+    sheetName: 'Suscripciones_B2C',
+    table: 'subscriptions',
+    select:
+      'id, user_id, plan_type, status, start_date, end_date, payment_amount_clp, auto_renew, cancelled_at, cancellation_reason, created_at',
+    dateField: 'created_at',
+    enabled: true,
+    description: 'Suscripciones Premium B2C (Flow.cl)',
+  },
+  {
+    id: 'orders',
+    sheetName: 'Ordenes',
+    table: 'orders',
+    select:
+      'id, user_id, order_number, subtotal_clp, platform_fee_clp, total_clp, payment_method, payment_status, paid_at, created_at',
+    dateField: 'created_at',
+    enabled: true,
+    description: 'Ordenes de pago (incluye webpay legacy)',
+  },
+  {
+    id: 'vet_bookings',
+    sheetName: 'Consultas_Vet',
+    table: 'vet_bookings',
+    select:
+      'id, owner_id, vet_id, pet_id, scheduled_date, service_type, status, is_emergency, total_price, payment_status, canceled_at, cancellation_reason, created_at',
+    dateField: 'created_at',
+    enabled: true,
+    description: 'Reservas veterinarias (flow vet domicilio)',
+  },
+  {
+    id: 'content_reports',
+    sheetName: 'Reportes_Contenido',
+    table: 'content_reports',
+    select:
+      'id, post_id, reporter_id, reason, details, status, reviewed_by, reviewed_at, created_at',
+    dateField: 'created_at',
+    enabled: true,
+    description: 'Denuncias de contenido del feed (moderacion)',
+  },
+  {
+    id: 'error_logs',
+    sheetName: 'Errores',
+    table: 'error_logs',
+    select:
+      'id, source, severity, message, user_id, resolved, resolved_at, resolved_by, created_at',
+    dateField: 'created_at',
+    enabled: true,
+    description: 'Log centralizado de errores (frontend + edge functions)',
+  },
+  {
+    id: 'feedback_in_app',
+    sheetName: 'Feedback_Usuarios',
+    table: 'feedback_in_app',
+    select:
+      'id, user_id, type, description, route, role, status, admin_notes, app_rating, created_at',
+    dateField: 'created_at',
+    enabled: true,
+    description: 'Feedback in-app (bugs, ideas, experiencias, rating)',
+  },
+  {
+    id: 'verification_requests',
+    sheetName: 'Verificaciones',
+    table: 'verification_requests',
+    select: 'id, user_id, requested_role, status, notes, reviewed_by, reviewed_at, created_at',
+    dateField: 'created_at',
+    enabled: true,
+    description: 'Solicitudes de verificacion de roles',
+  },
+  {
+    id: 'partner_submissions',
+    sheetName: 'Partners_Solicitudes',
+    table: 'partner_submissions',
+    select:
+      'id, categoria, nombre_negocio, nombre_contacto, email, telefono, website, comuna, ciudad, status, notas_admin, created_at',
+    dateField: 'created_at',
+    enabled: true,
+    description: 'Solicitudes de ingreso como partner',
+  },
+  {
+    id: 'partners',
+    sheetName: 'Partners_Activos',
+    table: 'partners',
+    select:
+      'id, brand_name, ad_text, ad_link, placement, category, is_active, impressions, clicks, priority, start_date, end_date, created_at',
+    dateField: 'created_at',
+    enabled: true,
+    description: 'Anuncios de partners activos (ads)',
+  },
+  {
+    id: 'admin_audit_log',
+    sheetName: 'Audit_Log',
+    table: 'admin_audit_log',
+    select: 'id, admin_user_id, action, target_type, target_id, details, created_at',
+    dateField: 'created_at',
+    enabled: true,
+    description: 'Registro de acciones admin (compliance)',
+    transform: (rows) =>
+      rows.map((r) => ({
+        ...r,
+        details: r.details ? JSON.stringify(r.details) : null,
+      })),
+  },
 ];
 
 // ── Quality Check Definitions (CONFIGURABLE) ───────────────

@@ -57,7 +57,7 @@ export default function AdminHealthSummary() {
             .then((r: any) => r.count ?? 0),
           // Feedback sin responder en últimas 24h
           sb
-            .from('feedback')
+            .from('feedback_in_app')
             .select('id', { count: 'exact', head: true })
             .gte('created_at', since24h)
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -66,14 +66,14 @@ export default function AdminHealthSummary() {
           sb
             .from('verification_requests')
             .select('id', { count: 'exact', head: true })
-            .eq('status', 'pending')
+            .eq('status', 'pendiente')
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .then((r: any) => r.count ?? 0),
           // Partners pendientes
           sb
             .from('partner_submissions')
             .select('id', { count: 'exact', head: true })
-            .eq('status', 'pending')
+            .eq('status', 'pendiente')
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             .then((r: any) => r.count ?? 0)
 

@@ -1,0 +1,1 @@
+import{j as o}from"./ui-vendor-DS1Yg-Ye.js";import{f as r}from"./index-CYnZpwb3.js";import{g as s,a as e}from"./useBookingMutations-DHel1UWw.js";function g({status:a,className:t}){return o.jsx(r,{variant:"secondary",className:`${e(a)} ${t??""}`,children:s(a)})}export{g as B};

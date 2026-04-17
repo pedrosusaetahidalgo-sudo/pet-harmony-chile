@@ -80,6 +80,8 @@ const AdManagement = () => {
 
   const { data: partners, isLoading } = useQuery({
     queryKey: ['partners'],
+    staleTime: 60_000,
+    refetchInterval: 120_000,
     queryFn: async () => {
       const { data, error } = await supabase
         .from('partners')

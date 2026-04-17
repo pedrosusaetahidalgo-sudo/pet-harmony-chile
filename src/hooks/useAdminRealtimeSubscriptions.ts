@@ -66,9 +66,16 @@ const ADMIN_SUBSCRIPTIONS: AdminRealtimeConfig[] = [
   // Feedback de usuarios — debe verse en vivo para responder rapido
   {
     channelName: 'admin-feedback',
-    table: 'feedback',
+    table: 'feedback_in_app',
     events: ['INSERT', 'UPDATE'],
     invalidateKeys: [['admin-feedback'], ['admin-feedback-list']],
+  },
+  // Partners (anuncios) — activacion/desactivacion de ads
+  {
+    channelName: 'admin-partners',
+    table: 'partners',
+    events: ['INSERT', 'UPDATE', 'DELETE'],
+    invalidateKeys: [['partners']],
   },
   // Misiones, rewards y promociones — para gestion de gamificacion
   {

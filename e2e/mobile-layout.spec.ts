@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { injectFakeAuth } from './fixtures/auth';
 
 /**
  * Mobile layout sanity checks.
@@ -101,6 +102,80 @@ test.describe('Mobile layout — interactive elements', () => {
     });
     expect(overflow).toBe(false);
   });
+});
+
+// Rutas owner protegidas — se visitan con sesion fake para detectar overflow
+// horizontal tras el login (pantallas que "se deslizan al lado" en mobile).
+const MOBILE_PROTECTED_ROUTES = [
+  { path: '/home', label: 'Home' },
+  { path: '/my-pets', label: 'My Pets' },
+  { path: '/add-pet', label: 'Add Pet' },
+  { path: '/reminders', label: 'Recordatorios' },
+  { path: '/rutinas', label: 'Rutinas' },
+  { path: '/calendario', label: 'Calendario' },
+  { path: '/mis-reservas', label: 'Mis Reservas' },
+  { path: '/servicios', label: 'Servicios' },
+  { path: '/services/walkers', label: 'Services Walkers' },
+  { path: '/services/sitters', label: 'Services Sitters' },
+  { path: '/maps', label: 'Maps' },
+  { path: '/profile', label: 'Profile' },
+  { path: '/upgrade', label: 'Upgrade' },
+  { path: '/feed', label: 'Feed' },
+  { path: '/comunidad', label: 'Comunidad' },
+  { path: '/adoption', label: 'Adopcion' },
+  { path: '/paw-game', label: 'Paw Game' },
+  { path: '/paw-collection', label: 'Paw Collection' },
+  { path: '/misiones', label: 'Misiones' },
+  { path: '/en-memoria', label: 'En Memoria' },
+  { path: '/donantes-sangre', label: 'Donantes Sangre' },
+  { path: '/panel-pro', label: 'Panel Pro' },
+  { path: '/chat', label: 'Chat' },
+  { path: '/reportes', label: 'Reportes' },
+  { path: '/provider/dashboard', label: 'Provider Dashboard' },
+  { path: '/provider/pacientes', label: 'Provider Pacientes' },
+  { path: '/provider/profile-edit', label: 'Provider Profile Edit' },
+  { path: '/ficha/00000000-0000-0000-0000-000000000001', label: 'Ficha Clinica' },
+];
+
+test.describe('Mobile layout — protected owner routes (no horizontal overflow)', () => {
+  for (const route of MOBILE_PROTECTED_ROUTES) {
+    test(`${route.label} (${route.path}) — no horizontal overflow`, async ({ page }) => {
+      await injectFakeAuth(page);
+      await page.goto(route.path, { waitUntil: 'domcontentloaded' });
+      // Give layout + data a beat to settle
+      await page.waitForTimeout(700);
+
+      const metrics = await page.evaluate(() => {
+        const root = document.documentElement;
+        const overflow = root.scrollWidth > root.clientWidth;
+        // If overflow, find the widest offender to help debugging
+        let offender: { tag: string; cls: string; w: number } | null = null;
+        if (overflow) {
+          const all = Array.from(document.querySelectorAll<HTMLElement>('body *'));
+          let maxRight = 0;
+          for (const el of all) {
+            const rect = el.getBoundingClientRect();
+            if (rect.right > maxRight && rect.width > 0 && rect.height > 0) {
+              maxRight = rect.right;
+              offender = {
+                tag: el.tagName.toLowerCase(),
+                cls: (el.className || '').toString().slice(0, 120),
+                w: Math.round(rect.width),
+              };
+            }
+          }
+        }
+        return { overflow, scrollW: root.scrollWidth, clientW: root.clientWidth, offender };
+      });
+
+      expect(
+        metrics.overflow,
+        `Horizontal overflow on ${route.path}: ` +
+          `scrollW=${metrics.scrollW} clientW=${metrics.clientW} ` +
+          `offender=${metrics.offender ? `${metrics.offender.tag}.${metrics.offender.cls} (w=${metrics.offender.w}px)` : 'n/a'}`
+      ).toBe(false);
+    });
+  }
 });
 
 test.describe('Mobile layout — select/dropdown behavior', () => {

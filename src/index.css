@@ -64,6 +64,28 @@ body {
   font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
 }
 
+/* ── Mobile safety net: prevent horizontal overflow ──
+   La app es mobile-first. Un componente rebelde con min-width fijo o un
+   grid mal dimensionado no deberia arrastrar todo el viewport al lado.
+   Cortamos el overflow-x en html/body y en #root. Componentes que
+   necesiten scroll horizontal (carousels, tablas) deben usar
+   .scrollbar-hide dentro de su propio contenedor con overflow-x:auto. */
+html,
+body,
+#root {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Evitar que imagenes o media con width:auto rompan el layout mobile.
+   Solo img/video (media con ratio intrinseco); svg/canvas usan sus propias
+   clases Tailwind (h-4 w-4, etc) y no deben ser sobrescritas. */
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
 /* No seleccionar texto en UI nativa, sí en inputs/contenido editable */
 body {
   -webkit-user-select: none;

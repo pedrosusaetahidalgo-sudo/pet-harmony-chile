@@ -134,7 +134,7 @@ export default function AdminSystemHealth() {
     },
   });
 
-  // AI usage from ai_usage table
+  // AI usage from ai_usage table (agregado por skill para el dia de hoy)
   const { data: aiUsage, isLoading: loadingAi } = useQuery({
     queryKey: ['admin-ai-usage'],
     staleTime: 60_000,
@@ -142,17 +142,24 @@ export default function AdminSystemHealth() {
       const today = format(new Date(), 'yyyy-MM-dd');
       const { data, error } = await supabase
         .from('ai_usage')
-        .select('skill, daily_count, daily_limit, last_used_at')
-        .eq('usage_date', today);
+        .select('skill_name, calls_today, last_called_at')
+        .eq('last_reset_date', today);
 
       if (error) return [];
-      return (data ?? []).map((r) => ({
-        skill: r.skill,
-        used: r.daily_count,
-        limit: r.daily_limit,
-        lastUsed: r.last_used_at,
-        percentage: r.daily_limit > 0 ? Math.round((r.daily_count / r.daily_limit) * 100) : 0,
-      }));
+
+      const bySkill = new Map<string, { used: number; lastUsed: string | null }>();
+      for (const row of data ?? []) {
+        const current = bySkill.get(row.skill_name) ?? { used: 0, lastUsed: null };
+        current.used += row.calls_today ?? 0;
+        if (row.last_called_at && (!current.lastUsed || row.last_called_at > current.lastUsed)) {
+          current.lastUsed = row.last_called_at;
+        }
+        bySkill.set(row.skill_name, current);
+      }
+
+      return Array.from(bySkill.entries())
+        .map(([skill, v]) => ({ skill, used: v.used, lastUsed: v.lastUsed }))
+        .sort((a, b) => b.used - a.used);
     },
   });
 
@@ -336,26 +343,25 @@ export default function AdminSystemHealth() {
           ) : (aiUsage ?? []).length === 0 ? (
             <p className="text-sm text-slate-400 text-center py-4">Sin uso de IA hoy</p>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-2">
               {(aiUsage ?? []).map((skill) => (
-                <div key={skill.skill} className="space-y-1">
-                  <div className="flex justify-between text-sm">
-                    <span className="font-mono text-xs text-slate-300">{skill.skill}</span>
-                    <span className="text-slate-500 text-xs">
-                      {skill.used}/{skill.limit} ({skill.percentage}%)
-                    </span>
-                  </div>
-                  <div className="w-full bg-slate-800 rounded-full h-2">
-                    <div
-                      className={`h-2 rounded-full transition-all ${
-                        skill.percentage >= 90
-                          ? 'bg-red-500'
-                          : skill.percentage >= 70
-                            ? 'bg-orange-500'
-                            : 'bg-primary'
-                      }`}
-                      style={{ width: `${Math.min(skill.percentage, 100)}%` }}
-                    />
+                <div
+                  key={skill.skill}
+                  className="flex items-center justify-between py-2 border-b border-slate-800 last:border-0"
+                >
+                  <span className="font-mono text-xs text-slate-300">{skill.skill}</span>
+                  <div className="flex items-center gap-3">
+                    {skill.lastUsed && (
+                      <span className="text-slate-500 text-xs">
+                        {format(new Date(skill.lastUsed), 'HH:mm', { locale: es })}
+                      </span>
+                    )}
+                    <Badge
+                      variant="outline"
+                      className="text-xs bg-slate-800 text-slate-200 border-slate-700"
+                    >
+                      {skill.used}
+                    </Badge>
                   </div>
                 </div>
               ))}

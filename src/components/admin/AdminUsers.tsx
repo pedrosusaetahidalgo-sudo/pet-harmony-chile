@@ -124,6 +124,8 @@ const AdminUsers = () => {
   // ── User roles ──
   const { data: userRoles } = useQuery({
     queryKey: ['admin-user-roles'],
+    staleTime: 60_000,
+    refetchInterval: 120_000,
     queryFn: async () => {
       const { data, error } = await supabase.from('user_roles').select('*');
       if (error) throw error;
@@ -134,6 +136,8 @@ const AdminUsers = () => {
   // ── User stats ──
   const { data: userStats } = useQuery({
     queryKey: ['admin-user-stats'],
+    staleTime: 60_000,
+    refetchInterval: 120_000,
     queryFn: async () => {
       const { data, error } = await supabase.from('user_stats').select('*');
       if (error) throw error;
@@ -145,6 +149,7 @@ const AdminUsers = () => {
   const { data: activeSubUsers } = useQuery({
     queryKey: ['admin-active-sub-users'],
     staleTime: 60_000,
+    refetchInterval: 120_000,
     queryFn: async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data, error } = await (supabase.from('subscriptions') as any)
