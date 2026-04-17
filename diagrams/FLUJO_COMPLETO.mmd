@@ -1,7 +1,27 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-16
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-17
     %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (28 activas).
+    %% Cambios 2026-04-17 (Reordenamiento v3):
+    %%   - BottomTabBar owner: Inicio · My Paws · Servicios · Agenda · Perfil
+    %%     (antes "Vets" y "Recordar" como tabs propias)
+    %%   - /calendario gana 4 tabs: Hoy | Recordatorios | Rutinas | Reservas
+    %%     via shadcn Tabs con ?tab=... persistente (deep link)
+    %%   - /reminders /rutinas /mis-reservas siguen vivas como aliases
+    %%   - /services/vets redirige a /veterinarios (fuente unica)
+    %%   - /servicios hub: Veterinarios destacado (teal) + Adopcion (rosa)
+    %%     + 4 categorias profesionales (walkers, sitters, trainers, groomers)
+    %%   - Home: chip PawPoints visible + CTA grande "Abrir ficha clinica
+    %%     de {Pet}" bajo el pet switcher (1 tap a la joya de la corona)
+    %%   - Vet: VetActionsBar solo mobile (desktop usa VetActionsHeader);
+    %%     "Ver como me ven los duenos" prominente en MiniProfileCard
+    %%     (target=_blank); banner de vinculaciones rojo defaultOpen;
+    %%     copy profesional (Registrar nota, Resumen automatico,
+    %%     Vinculacion por confirmar).
+    %%   - Mobile safety net: html/body/#root con max-width:100vw +
+    %%     overflow-x:hidden para prevenir "deslizamiento al lado".
+    %%   - Analytics: normalizeAnalyticsPath agrupa /reminders, /rutinas,
+    %%     /mis-reservas bajo /calendario#{tab} para no fragmentar metricas.
     %% Cambios 2026-04-16:
     %%   - Booking System V2: availability rules, exceptions, audit trail
     %%   - 3-step booking flow: mascota > horario > confirmar
@@ -252,14 +272,30 @@ flowchart TD
     GCAL_OAUTH --> GCAL_TOKEN["refresh_token"]
     GCAL_TOKEN --> GCAL_SYNC
 
-    %% ============ SIDEBAR: SALUD ============
-    subgraph SIDEBAR_SALUD["SIDEBAR: SALUD"]
+    %% ============ BOTTOM TAB BAR OWNER (mobile) v3 ============
+    subgraph BOTTOMBAR_OWNER["BOTTOM TAB BAR OWNER (mobile)"]
+        direction LR
+        BT_INICIO["Inicio /home"]
+        BT_MYPAWS["My Paws /my-pets"]
+        BT_SERVICIOS["Servicios /servicios"]
+        BT_AGENDA["Agenda /calendario"]
+        BT_PERFIL["Perfil /profile"]
+    end
+
+    BT_INICIO --> HOME
+    BT_MYPAWS --> PET_LIST
+    BT_SERVICIOS --> SVC
+    BT_AGENDA --> CAL_GRID
+    BT_PERFIL --> PROFILE
+
+    %% ============ SIDEBAR: SALUD (desktop) ============
+    subgraph SIDEBAR_SALUD["SIDEBAR: SALUD (desktop)"]
         direction TB
         SB_INICIO["Inicio /home"]
         SB_MASCOTAS["Mis mascotas /my-pets"]
-        SB_RECORDATORIOS["Recordatorios /reminders"]
-        SB_RUTINAS["Rutinas /rutinas"]
-        SB_CALENDARIO["Calendario /calendario"]
+        SB_RECORDATORIOS["Recordatorios /reminders (alias → /calendario?tab=recordatorios)"]
+        SB_RUTINAS["Rutinas /rutinas (alias → /calendario?tab=rutinas)"]
+        SB_CALENDARIO["Calendario /calendario (tabs Hoy/Recordatorios/Rutinas/Reservas)"]
     end
 
     SB_INICIO --> HOME
@@ -272,14 +308,15 @@ flowchart TD
     subgraph DESCUBRIR["SIDEBAR: DESCUBRIR"]
         direction TB
         SB_BUSCAR_VET["Buscar vet /veterinarios"]
-        SVC["Servicios /servicios"]
-        SVC --> SVC_TYPES["Paseadores | Cuidadores | Entrenadores | Peluqueros"]
+        SVC["Servicios /servicios (hub v3)"]
+        SVC --> SVC_DESTACADOS["Destacados: Veterinarios · Adopcion"]
+        SVC --> SVC_TYPES["Profesionales: Paseadores | Cuidadores | Entrenadores | Peluqueros"]
         MAPA["Mapa multi-capa /maps"]
         BLOOD_BANK["Banco de sangre /donantes-sangre"]
     end
 
     SB_BUSCAR_VET --> VET_DIR
-    SVC --> VET_DIR
+    SVC_DESTACADOS --> VET_DIR
 
     %% ============ SIDEBAR: COMUNIDAD ============
     subgraph SOCIAL["SIDEBAR: COMUNIDAD"]
