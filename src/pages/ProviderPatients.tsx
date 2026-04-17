@@ -604,7 +604,8 @@ export default function ProviderPatients() {
         <div>
           <h1 className="text-xl font-bold">Mis pacientes</h1>
           <p className="text-sm text-muted-foreground">
-            {patients?.length ?? 0} pacientes · {pendingLinks?.length ?? 0} solicitudes pendientes
+            {patients?.length ?? 0} pacientes · {pendingLinks?.length ?? 0} vinculación(es) por
+            confirmar
           </p>
         </div>
         <NewPatientForm
@@ -625,7 +626,7 @@ export default function ProviderPatients() {
         onFilterChange={handleKPIFilter}
       />
 
-      {/* Solicitudes pendientes — collapsible banner */}
+      {/* Vinculaciones por confirmar — collapsible banner */}
       {pendingLinks && pendingLinks.length > 0 && (
         <Collapsible>
           <Card className="border-amber-200 bg-amber-50/30">
@@ -633,7 +634,7 @@ export default function ProviderPatients() {
               <CardContent className="p-3 flex items-center justify-between">
                 <h2 className="text-xs font-semibold text-amber-700 flex items-center gap-1.5">
                   <UserPlus className="h-3.5 w-3.5" />
-                  {pendingLinks.length} solicitud(es) pendiente(s)
+                  {pendingLinks.length} vinculación(es) por confirmar
                 </h2>
                 <ChevronDown className="h-4 w-4 text-amber-600 transition-transform group-data-[state=open]:rotate-180" />
               </CardContent>
@@ -880,7 +881,7 @@ export default function ProviderPatients() {
                         size="sm"
                         variant="outline"
                         className="h-7 w-7 p-0 border-teal-200 text-teal-600 hover:bg-teal-50"
-                        title="Nota rapida"
+                        title="Registrar nota"
                         onClick={() =>
                           setActiveNoteDialog({
                             petId: patient.pet_id,

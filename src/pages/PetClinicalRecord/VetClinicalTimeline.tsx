@@ -168,7 +168,7 @@ export function VetClinicalTimeline({ petId, vetNotes }: VetClinicalTimelineProp
               <Mic className="h-3 w-3 text-red-400" /> Grabar consulta
             </span>
             <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/50 rounded-full px-2.5 py-1">
-              <FileText className="h-3 w-3 text-teal-500" /> Nota rapida
+              <FileText className="h-3 w-3 text-teal-500" /> Registrar nota
             </span>
             <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground bg-muted/50 rounded-full px-2.5 py-1">
               <Calendar className="h-3 w-3 text-blue-500" /> Agendar seguimiento

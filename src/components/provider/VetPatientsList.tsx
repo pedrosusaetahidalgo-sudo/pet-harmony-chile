@@ -268,12 +268,12 @@ export function VetPatientsList() {
         </div>
       </CardHeader>
       <CardContent>
-        {/* Mascotas pendientes de reclamar */}
+        {/* En espera de confirmacion del propietario */}
         {pendingPets && pendingPets.length > 0 && (
           <div className="mb-4 space-y-2">
             <p className="text-xs font-medium text-amber-700 flex items-center gap-1.5 mb-2">
               <Clock className="h-3.5 w-3.5" />
-              Esperando que el dueño reclame ({pendingPets.length})
+              En espera de confirmación del propietario ({pendingPets.length})
             </p>
             {pendingPets.map((pet) => {
               const wasSent = !!pet.owner_invitation_sent_at;

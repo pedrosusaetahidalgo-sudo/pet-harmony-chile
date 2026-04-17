@@ -66,7 +66,7 @@ export function VetActionsHeader({
           onClick={() => setShowNoteEditor(true)}
         >
           <FileText className="h-4 w-4" />
-          <span className="hidden sm:inline">Nota rapida</span>
+          <span className="hidden sm:inline">Registrar nota</span>
           <span className="sm:hidden">Nota</span>
         </Button>
 
@@ -87,7 +87,7 @@ export function VetActionsHeader({
           onClick={() => setShowConsolidado(true)}
         >
           <Sparkles className="h-4 w-4" />
-          Resumen IA
+          Resumen automatico
         </Button>
         <Button
           size="sm"
@@ -113,7 +113,7 @@ export function VetActionsHeader({
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => setShowConsolidado(true)}>
               <Sparkles className="h-4 w-4 mr-2" />
-              Resumen IA
+              Resumen automatico
             </DropdownMenuItem>
             <DropdownMenuItem onClick={onGeneratePDF}>
               <Download className="h-4 w-4 mr-2" />

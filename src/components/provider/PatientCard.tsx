@@ -205,7 +205,7 @@ export function PatientCard({
               variant="ghost"
               className="h-8 w-8 p-0 text-purple-600 hover:bg-purple-50"
               onClick={onConsolidado}
-              title="Resumen IA"
+              title="Resumen automatico"
             >
               <Sparkles className="h-3.5 w-3.5" />
             </Button>
