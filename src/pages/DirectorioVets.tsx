@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import { Helmet } from 'react-helmet-async';
-import { Search, MapPin, Star, Stethoscope, Clock, Phone } from '@/lib/icons';
+import { Search, MapPin, Star, Stethoscope, Clock, Phone, Map as MapIcon } from '@/lib/icons';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -268,8 +268,8 @@ export default function DirectorioVets() {
           </div>
         </Card>
 
-        {/* Filtros rápidos: Abierto ahora + Urgencias */}
-        <div className="flex gap-2 flex-wrap mb-4">
+        {/* Filtros rápidos + toggle Lista/Mapa */}
+        <div className="flex gap-2 flex-wrap mb-4 items-center">
           <Button
             variant={onlyOpen ? 'default' : 'outline'}
             size="sm"
@@ -288,6 +288,14 @@ export default function DirectorioVets() {
             <Phone className="h-4 w-4 mr-1" />
             Atiende urgencias
           </Button>
+          {/* Toggle a mapa — para los mismos resultados filtrados. El mapa
+              vive en /maps y ya sabe ordenar layers por tipo de proveedor. */}
+          <Link to="/maps" className="ml-auto">
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <MapIcon className="h-4 w-4" />
+              Ver en mapa
+            </Button>
+          </Link>
         </div>
 
         {/* Estimador de precios — solo cuando hay comuna especifica */}

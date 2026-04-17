@@ -31,6 +31,7 @@ import {
   Home,
   AlertCircle,
   Shield,
+  Map,
   type LucideIcon,
 } from '@/lib/icons';
 import { useState, useEffect } from 'react';
@@ -639,13 +640,26 @@ const ServiceDirectory = () => {
           <TabsContent value="list" className="space-y-6 mt-6">
             <ServicePromotionsList serviceType={config.primaryServiceType} />
 
-            {filteredProviders.length > 0 && (
-              <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
+              {filteredProviders.length > 0 ? (
                 <p className="text-sm text-muted-foreground">
                   {filteredProviders.length} {config.resultLabel}
                 </p>
-              </div>
-            )}
+              ) : (
+                <span />
+              )}
+              {/* Toggle a mapa con los resultados filtrados. /maps maneja
+                  los layers internamente segun serviceType. */}
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5"
+                onClick={() => navigate(LINKS.maps())}
+              >
+                <Map className="h-4 w-4" />
+                Ver en mapa
+              </Button>
+            </div>
 
             <div className="grid md:grid-cols-2 gap-6">
               {filteredProviders.map((provider) => (

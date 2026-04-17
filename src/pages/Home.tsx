@@ -501,6 +501,10 @@ export default function Home() {
 
       {pets.length > 0 && (
         <>
+          {/* === Franja "Tu mascota hoy": switcher + CTA ficha + status === */}
+          <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+            Tu mascota hoy
+          </h2>
           {/* === Pet switcher === */}
           <div className="flex gap-3 overflow-x-auto pb-1 -mx-1 px-1 scrollbar-hide">
             {pets.map((pet) => (
@@ -592,7 +596,10 @@ export default function Home() {
             />
           </div>
 
-          {/* === Two-column layout: Alerts + Actions === */}
+          {/* === Franja "Tu agenda": alerts + rutinas + reporte semanal === */}
+          <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide pt-2">
+            Tu agenda
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Left: Health alerts + Routines */}
             <div className="space-y-3">

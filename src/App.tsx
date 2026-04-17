@@ -85,7 +85,10 @@ const AnalyticsDashboard = lazy(() => import('./pages/standalone/AnalyticsDashbo
 const EnMemoria = lazy(() => import('./pages/EnMemoria'));
 const BloodDonors = lazy(() => import('./pages/BloodDonors'));
 const PetRoutines = lazy(() => import('./pages/PetRoutines'));
-const PetTimeline = lazy(() => import('./pages/PetTimeline'));
+// PetTimeline ya no se renderiza como ruta propia: su UI se consolidó
+// como tab "Historial" de la ficha clínica en el reordenamiento v3.
+// El archivo src/pages/PetTimeline.tsx queda disponible por si se
+// necesita restaurar o reutilizar en otro contexto.
 const UnifiedCalendar = lazy(() => import('./pages/UnifiedCalendar'));
 const RegistroPartner = lazy(() => import('./pages/RegistroPartner'));
 
@@ -185,6 +188,20 @@ const LegacyClinicalRedirect = () => {
   const { petId } = useParams<{ petId: string }>();
   const { search } = useLocation();
   return <Navigate to={`/ficha/${petId}${search}`} replace />;
+};
+
+/** /mascota/:petId/timeline → /ficha/:petId?tab=historial (Timeline vive como
+ *  tab Historial en la ficha clinica desde el reordenamiento v3). */
+const LegacyPetTimelineRedirect = () => {
+  const { petId } = useParams<{ petId: string }>();
+  return <Navigate to={`/ficha/${petId}?tab=historial`} replace />;
+};
+
+/** /mascota/:petId/rutinas → /calendario?tab=rutinas&pet=:petId (rutinas
+ *  viven como tab en el calendario unificado desde v3). */
+const LegacyPetRoutinesRedirect = () => {
+  const { petId } = useParams<{ petId: string }>();
+  return <Navigate to={`/calendario?tab=rutinas&pet=${petId}`} replace />;
 };
 
 const App = () => (
@@ -323,26 +340,11 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
-                <Route
-                  path="/mascota/:petId/rutinas"
-                  element={
-                    <ProtectedRoute>
-                      <AppLayout>
-                        <PetRoutines />
-                      </AppLayout>
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/mascota/:petId/timeline"
-                  element={
-                    <ProtectedRoute>
-                      <AppLayout>
-                        <PetTimeline />
-                      </AppLayout>
-                    </ProtectedRoute>
-                  }
-                />
+                {/* Duplicados detectados 2026-04-17: la info vive en ficha
+                    (tab Historial) y en calendario (?tab=rutinas). Redirect
+                    para consolidar sin romper deep links existentes. */}
+                <Route path="/mascota/:petId/rutinas" element={<LegacyPetRoutinesRedirect />} />
+                <Route path="/mascota/:petId/timeline" element={<LegacyPetTimelineRedirect />} />
                 <Route
                   path="/calendario"
                   element={
