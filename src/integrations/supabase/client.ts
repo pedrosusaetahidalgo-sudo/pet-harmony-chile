@@ -5,6 +5,69 @@ import type { Database } from './types';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
+// ── Error monitoring interceptor ──────────────────────────────────────────
+// Captura 4xx/5xx de PostgREST / RPC / edge fns desde el cliente y los
+// manda fire-and-forget a `log-error`. Esto cubre el gap donde errores
+// directos a supabase.from(...).select() nunca llegaban a error_logs.
+// Con throttle client-side (1 log por endpoint+status por minuto) para
+// evitar flood y loops. Silent-fail: nunca rompe la UI.
+const recentLogs = new Map<string, number>();
+const LOG_THROTTLE_MS = 60_000;
+
+// Status codes a IGNORAR (ruido o comportamiento normal):
+// - 401: sesion expirada, Supabase refresca solo
+// - 406: .single() sin filas (comportamiento esperado)
+// - 409: conflict (unique constraint, flujo normal de validacion)
+const SKIP_STATUSES = new Set([401, 406, 409]);
+
+function logSupabaseHttpError(url: string, method: string, status: number, bodyText: string): void {
+  // Evita loops: no loguear errores del propio endpoint log-error
+  if (url.includes('/functions/v1/log-error')) return;
+  // Evita ruido de auth refresh
+  if (url.includes('/auth/v1/token')) return;
+  if (SKIP_STATUSES.has(status)) return;
+
+  // Throttle por endpoint+status
+  const path = url.split('?')[0].replace(SUPABASE_URL, '');
+  const key = `${method}:${path}:${status}`;
+  const now = Date.now();
+  const last = recentLogs.get(key) ?? 0;
+  if (now - last < LOG_THROTTLE_MS) return;
+  recentLogs.set(key, now);
+
+  const severity = status >= 500 ? 'error' : 'warning';
+  const preview = bodyText.slice(0, 300);
+
+  // Fire-and-forget. keepalive: true permite que termine aunque el
+  // usuario navegue (hasta 64KB). No bloquea la UI.
+  try {
+    void fetch(`${SUPABASE_URL}/functions/v1/log-error`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        apikey: SUPABASE_PUBLISHABLE_KEY,
+        Authorization: `Bearer ${SUPABASE_PUBLISHABLE_KEY}`,
+      },
+      body: JSON.stringify({
+        source: 'supabase_client',
+        severity,
+        message: `${method} ${path}: HTTP ${status}`,
+        context: {
+          url: path,
+          method,
+          http_status: status,
+          response_preview: preview,
+        },
+      }),
+      keepalive: true,
+    }).catch(() => {
+      // Silent: no podemos loguear que no podemos loguear
+    });
+  } catch {
+    // Ignore
+  }
+}
+
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
@@ -26,11 +89,27 @@ export const supabase = createClient<any>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY
   },
   global: {
     headers: { 'x-client-info': 'paw-friend-web' },
-    fetch: (url: RequestInfo | URL, options?: RequestInit) => {
+    fetch: async (url: RequestInfo | URL, options?: RequestInit) => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000);
       const signal = options?.signal ? options.signal : controller.signal;
-      return fetch(url, { ...options, signal }).finally(() => clearTimeout(timeoutId));
+      try {
+        const response = await fetch(url, { ...options, signal });
+        // Interceptor: loguea 4xx/5xx a error_logs (fire-and-forget)
+        if (response.status >= 400) {
+          try {
+            const urlStr = typeof url === 'string' ? url : url.toString();
+            const method = options?.method ?? 'GET';
+            const bodyText = await response.clone().text();
+            logSupabaseHttpError(urlStr, method, response.status, bodyText);
+          } catch {
+            // Body no legible: igual logueamos sin preview
+          }
+        }
+        return response;
+      } finally {
+        clearTimeout(timeoutId);
+      }
     },
   },
 });
