@@ -358,25 +358,11 @@ serve(async (req) => {
       emailSent = false;
     } else {
       // ------------------------------------------------------------------
-      // Owner NOT registered → send custom invitation email
+      // Owner NOT registered → send invitation link only (NO auth user creation)
+      // The owner clicks the link, lands on /auth, signs up themselves,
+      // and useAutoClaimByEmail / useClaimPetInvitation auto-links the pet.
       // ------------------------------------------------------------------
-
-      // 1. Generate Supabase invite link (creates the user in auth.users as invited)
-      const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
-        type: 'invite',
-        email,
-        options: { redirectTo },
-      });
-
-      if (linkError) {
-        console.error('Error generating invite link:', linkError);
-        return errorResponse('No se pudo generar la invitacion. Intenta de nuevo.', 500);
-      }
-
-      // The action_link is the full Supabase confirm URL
-      const actionUrl = linkData?.properties?.action_link || redirectTo;
-
-      // 2. Try sending custom HTML email via Resend
+      const actionUrl = redirectTo;
       const petName = pet.name || 'tu mascota';
       const ownerName = pet.pending_owner_name || 'amigo/a';
 
@@ -398,20 +384,11 @@ serve(async (req) => {
         method = 'resend';
         emailSent = true;
       } else {
-        // Fallback: Supabase default invite email
-        console.warn(
-          '[send-pet-invitation] Resend failed, falling back to Supabase invite:',
-          resendResult.error
+        console.error('[send-pet-invitation] Resend failed:', resendResult.error);
+        return errorResponse(
+          'No se pudo enviar el email. Verifica que Resend este configurado.',
+          500
         );
-        const { error: inviteError } = await supabase.auth.admin.inviteUserByEmail(email, {
-          redirectTo,
-        });
-        if (inviteError) {
-          console.error('Error sending Supabase invite:', inviteError);
-          return errorResponse('No se pudo enviar el email de invitacion.', 500);
-        }
-        method = 'invite';
-        emailSent = true;
       }
     }
 

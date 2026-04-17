@@ -504,31 +504,10 @@ serve(async (req) => {
 
       method = 'skip';
     } else {
-      // ── Owner NOT registered → send invitation email ──
-      const redirectTo = `https://pawfriend.cl/auth?returnTo=/my-pets&invitation=${invitationToken}`;
-
-      // Generate Supabase invite link
-      const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
-        type: 'invite',
-        email: data.owner_email,
-        options: { redirectTo },
-      });
-
-      if (linkError) {
-        console.error('[create-patient] generateLink error:', linkError);
-        // Pet was already created — don't fail, just note the invitation issue
-        return jsonResponse(req, {
-          success: true,
-          pet_id: petId,
-          pet_name: data.name,
-          owner_already_registered: false,
-          email_sent: false,
-          invitation_error:
-            'No se pudo generar el link de invitacion. Puedes reenviar desde tu panel.',
-        });
-      }
-
-      const actionUrl = linkData?.properties?.action_link || redirectTo;
+      // ── Owner NOT registered → send invitation link only (NO auth user creation) ──
+      // The owner clicks the link, lands on /auth, signs up themselves,
+      // and useAutoClaimByEmail / useClaimPetInvitation auto-links the pet.
+      const actionUrl = `https://pawfriend.cl/auth?returnTo=/my-pets&invitation=${invitationToken}`;
 
       // Send custom email via Resend
       const html = buildInvitationEmail({
@@ -548,41 +527,22 @@ serve(async (req) => {
       if (resendResult.ok) {
         method = 'resend';
         emailSent = true;
-      } else {
-        // Fallback: Supabase invite
-        console.warn(
-          '[create-patient] Resend failed, falling back to Supabase invite:',
-          resendResult.error
-        );
-        const { error: inviteError } = await supabase.auth.admin.inviteUserByEmail(
-          data.owner_email,
-          {
-            redirectTo,
-          }
-        );
-        if (inviteError) {
-          console.error('[create-patient] Supabase invite error:', inviteError);
-          // Pet already created, just note the failure
-          return jsonResponse(req, {
-            success: true,
-            pet_id: petId,
-            pet_name: data.name,
-            owner_already_registered: false,
-            email_sent: false,
-            invitation_error:
-              'Paciente creado pero no se pudo enviar el email. Puedes reenviar desde tu panel.',
-          });
-        }
-        method = 'invite';
-        emailSent = true;
-      }
-
-      // Update invitation sent timestamp
-      if (emailSent) {
         await supabase
           .from('pets')
           .update({ owner_invitation_sent_at: new Date().toISOString() })
           .eq('id', petId);
+      } else {
+        console.error('[create-patient] Resend failed:', resendResult.error);
+        // No fallback — do NOT create auth user. Just notify the vet.
+        return jsonResponse(req, {
+          success: true,
+          pet_id: petId,
+          pet_name: data.name,
+          owner_already_registered: false,
+          email_sent: false,
+          invitation_error:
+            'Paciente creado pero no se pudo enviar el email. Puedes reenviar desde tu panel.',
+        });
       }
     }
 
