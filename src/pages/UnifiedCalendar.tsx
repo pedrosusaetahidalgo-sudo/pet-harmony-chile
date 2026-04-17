@@ -155,20 +155,26 @@ export default function UnifiedCalendar() {
         {!isProvider && (
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
             <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="hoy" className="text-xs gap-1">
+              <TabsTrigger value="hoy" aria-label="Hoy" className="text-xs gap-1">
                 <CalendarDays className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Hoy</span>
+                <span className="sm:hidden">Hoy</span>
               </TabsTrigger>
-              <TabsTrigger value="recordatorios" className="text-xs gap-1">
+              <TabsTrigger
+                value="recordatorios"
+                aria-label="Recordatorios"
+                className="text-xs gap-1"
+              >
                 <Bell className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Recordatorios</span>
                 <span className="sm:hidden">Recordar</span>
               </TabsTrigger>
-              <TabsTrigger value="rutinas" className="text-xs gap-1">
+              <TabsTrigger value="rutinas" aria-label="Rutinas" className="text-xs gap-1">
                 <PawPrint className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Rutinas</span>
+                <span className="sm:hidden">Rutinas</span>
               </TabsTrigger>
-              <TabsTrigger value="reservas" className="text-xs gap-1">
+              <TabsTrigger value="reservas" aria-label="Reservas" className="text-xs gap-1">
                 <Stethoscope className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Reservas</span>
                 <span className="sm:hidden">Citas</span>
