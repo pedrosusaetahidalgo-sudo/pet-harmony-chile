@@ -49,12 +49,41 @@ CREATE POLICY "admin_update_export_jobs" ON public.export_jobs
   USING (public.is_admin_user(auth.uid()));
 
 -- 3. Seed idempotente: garantizar que Pedro tenga admin_access activo.
---    Si ya existe, no hace nada (ON CONFLICT); si auth.users tiene su id pero
---    admin_access no, lo inserta como super_admin.
+--    Si la fila no existe, la crea como super_admin.
+--    Si existe pero is_active=false, la reactiva (conserva el rol existente).
 INSERT INTO public.admin_access (user_id, email, role, is_active)
 SELECT id, email, 'super_admin', true
 FROM auth.users
 WHERE email = 'pedro.susaeta.hidalgo@gmail.com'
 ON CONFLICT (user_id) DO UPDATE
-  SET is_active = true,
-      role = COALESCE(public.admin_access.role, EXCLUDED.role);
+  SET is_active = true;
+
+-- 4. Bucket audit-exports (privado) + policies de Storage para admins.
+--    El upload falla con 403 si no existe bucket o no hay policy.
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('audit-exports', 'audit-exports', false)
+ON CONFLICT (id) DO NOTHING;
+
+DROP POLICY IF EXISTS "admin_audit_exports_read" ON storage.objects;
+CREATE POLICY "admin_audit_exports_read"
+  ON storage.objects FOR SELECT
+  TO authenticated
+  USING (
+    bucket_id = 'audit-exports' AND public.is_admin_user(auth.uid())
+  );
+
+DROP POLICY IF EXISTS "admin_audit_exports_insert" ON storage.objects;
+CREATE POLICY "admin_audit_exports_insert"
+  ON storage.objects FOR INSERT
+  TO authenticated
+  WITH CHECK (
+    bucket_id = 'audit-exports' AND public.is_admin_user(auth.uid())
+  );
+
+DROP POLICY IF EXISTS "admin_audit_exports_update" ON storage.objects;
+CREATE POLICY "admin_audit_exports_update"
+  ON storage.objects FOR UPDATE
+  TO authenticated
+  USING (
+    bucket_id = 'audit-exports' AND public.is_admin_user(auth.uid())
+  );
