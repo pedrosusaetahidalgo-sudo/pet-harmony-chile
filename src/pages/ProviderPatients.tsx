@@ -414,6 +414,47 @@ export default function ProviderPatients() {
     refetchLinks();
   };
 
+  // Bulk: aceptar todas las vinculaciones pendientes en una pasada.
+  const handleAcceptAllLinks = async () => {
+    if (!pendingLinks || pendingLinks.length === 0) return;
+    const count = pendingLinks.length;
+    if (!window.confirm(`¿Aceptar las ${count} vinculaciones pendientes?`)) return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ids = pendingLinks.map((l: any) => l.id);
+    const { error } = await sb
+      .from('pet_vet_links')
+      .update({ status: 'active', responded_at: new Date().toISOString() })
+      .in('id', ids);
+    if (error) {
+      toast.error('Error al aceptar vinculaciones');
+      return;
+    }
+    toast.success(`${count} vinculacion(es) aceptadas`);
+    refetchLinks();
+    refetch();
+  };
+
+  const handleRejectAllLinks = async () => {
+    if (!pendingLinks || pendingLinks.length === 0) return;
+    const count = pendingLinks.length;
+    if (
+      !window.confirm(`¿Rechazar las ${count} vinculaciones pendientes? Esta accion no se deshace.`)
+    )
+      return;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const ids = pendingLinks.map((l: any) => l.id);
+    const { error } = await sb
+      .from('pet_vet_links')
+      .update({ status: 'rejected', responded_at: new Date().toISOString() })
+      .in('id', ids);
+    if (error) {
+      toast.error('Error al rechazar vinculaciones');
+      return;
+    }
+    toast.success(`${count} vinculacion(es) rechazadas`);
+    refetchLinks();
+  };
+
   const handleResendInvitation = async (petId: string) => {
     setResendingId(petId);
     try {
@@ -622,14 +663,23 @@ export default function ProviderPatients() {
         todayCount={kpis.today}
         overdueFollowups={kpis.overdue}
         pendingClaim={kpis.pendingClaim}
+        pendingLinks={pendingLinks?.length ?? 0}
         activeFilter={statusFilter !== 'all' ? statusFilter : null}
         onFilterChange={handleKPIFilter}
+        onClickPendingLinks={() => {
+          document
+            .getElementById('pending-links-banner')
+            ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }}
       />
 
       {/* Vinculaciones por confirmar — alerta prominente (default open) */}
       {pendingLinks && pendingLinks.length > 0 && (
         <Collapsible defaultOpen>
-          <Card className="border-red-200 bg-red-50/40 shadow-sm ring-1 ring-red-100">
+          <Card
+            id="pending-links-banner"
+            className="border-red-200 bg-red-50/40 shadow-sm ring-1 ring-red-100"
+          >
             <CollapsibleTrigger className="w-full">
               <CardContent className="p-3 flex items-center justify-between">
                 <h2 className="text-sm font-semibold text-red-700 flex items-center gap-2">
@@ -643,7 +693,37 @@ export default function ProviderPatients() {
               </CardContent>
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <div className="px-3 pb-3 grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {/* Bulk actions: aceptar/rechazar todas. Solo se muestra si hay
+                  2+ pendientes (con 1 usar botones individuales del card). */}
+              {pendingLinks.length >= 2 && (
+                <div className="px-3 pb-2 flex items-center justify-end gap-2 border-b border-red-100">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 text-xs gap-1 border-green-300 text-green-700 hover:bg-green-50"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAcceptAllLinks();
+                    }}
+                  >
+                    <Check className="h-3 w-3" />
+                    Aceptar todas ({pendingLinks.length})
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 text-xs gap-1 border-red-300 text-red-600 hover:bg-red-50"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRejectAllLinks();
+                    }}
+                  >
+                    <X className="h-3 w-3" />
+                    Rechazar todas
+                  </Button>
+                </div>
+              )}
+              <div className="px-3 pb-3 pt-2 grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {pendingLinks.map((link: any) => (
                   <div
