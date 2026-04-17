@@ -94,7 +94,9 @@ export function useLeadsVets(filters: LeadsFilters = {}) {
       if (error) throw error;
       return (data || []) as VetLead[];
     },
-    staleTime: 30_000,
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
   });
 }
 
@@ -107,6 +109,8 @@ export function useLeadsStats() {
       return data as LeadsStats;
     },
     staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
   });
 }
 
