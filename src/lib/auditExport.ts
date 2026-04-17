@@ -1218,7 +1218,7 @@ export interface ExportProgress {
 }
 
 /** Limite de exports por dia. El hook lo valida antes de llamar a esta funcion. */
-export const MAX_EXPORTS_PER_DAY = 5;
+export const MAX_EXPORTS_PER_DAY = 10;
 
 export async function generateAuditExport(
   exportType: ExportType,
