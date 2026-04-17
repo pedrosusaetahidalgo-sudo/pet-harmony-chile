@@ -955,6 +955,74 @@ function buildRecommendedActions(
   return actions.sort((a, b) => order[a.priority] - order[b.priority]);
 }
 
+/** Instrucciones embebidas para que un LLM use el reporte correctamente. */
+function buildClaudeInstructions(): Record<string, unknown> {
+  return {
+    purpose:
+      'Este reporte es la fuente de verdad del estado de Paw Friend. Úsalo para priorizar fixes, nunca para hacer refactors grandes ni features nuevas sin autorización explícita del dueño.',
+    workflow: [
+      '1. Lee primero `executive_summary.health_score` y `top_issues`.',
+      '2. Revisa `recommended_actions` en orden P0 → P1 → P2.',
+      '3. Para cada acción: lee `fix_hint` + `location` y navega al código.',
+      '4. Antes de editar: verifica que el fix no afecte datos de usuarios reales (regla §9.8 CLAUDE.md).',
+      '5. Ejecuta `npx tsc -b` + `npm run lint` + `npm run test:ci` post-fix.',
+      '6. Commit con mensaje claro (tipo + scope + descripción).',
+      '7. Push solo cuando 1-3 fixes están agrupados; no pushes fixes aislados.',
+      '8. Si un fix es reversible y afecta prod (migración SQL, edge fn deploy): pide confirmación antes.',
+    ],
+    priority_rules: {
+      P0: 'Bloquean funcionalidad o exponen bug visible al usuario (ej. export admin roto, schema mismatch). Fix inmediato.',
+      P1: 'Alto volumen o riesgo (ej. 281 errores idénticos, FK violation recurrente). Fix en el commit actual.',
+      P2: 'Calidad de datos o UX degradada no crítica (ej. providers sin slug, verifications stale). Fix cuando haya margen.',
+      P3: 'Cosmético / tech debt / performance marginal. Solo si sobra tiempo.',
+    },
+    user_protection_rules: [
+      'NUNCA hacer DROP TABLE ni DELETE sin WHERE en tablas con datos reales.',
+      'Si agregas columna NOT NULL: dale DEFAULT o haz UPDATE previo para rellenar filas existentes.',
+      'Si renombras columna: usa ALTER TABLE RENAME (no drop+create). Frontend lee valor antiguo como fallback 1 release.',
+      'Migraciones SQL: generar archivo en `supabase/migrations/` con timestamp. NO aplicar automáticamente — Pedro lo hace desde Dashboard.',
+      'localStorage/sessionStorage/IndexedDB: si renombras una key, migra el valor antiguo la primera vez que el usuario abre la app post-update.',
+      'Edge functions con cambio de contrato: frontend + backend en el mismo commit. Si hay clientes mobile con caché, considerar versionado.',
+      'Verifica siempre: "¿Un usuario que creó su cuenta ayer seguirá viendo sus datos?" Si no es un "sí" claro, falta migración/fallback.',
+    ],
+    do_not_touch: [
+      'Ficha médica PDF (generate-medical-summary) y directorio público de vets: joya de la corona. Solo fixes puntuales, nada de refactor.',
+      'Flow.cl edge functions (flow-create-subscription, flow-webhook): manejan dinero real. Fix solo con autorización explícita.',
+      'docs/ folder: es output de `npm run build`. Nunca editar a mano.',
+      'Archivos generados: supabase/types.ts (se regenera con CLI), docs/, dist/.',
+    ],
+    commit_conventions: {
+      types: [
+        'feat: nueva funcionalidad',
+        'fix: bug fix',
+        'chore: maintenance (lint, deps)',
+        'refactor: cambio interno sin cambiar comportamiento',
+        'docs: solo documentación',
+        'test: tests',
+        'build: sistema de build / docs/',
+      ],
+      copy_style:
+        'Español chileno tuteado (tú, tienes). Títulos ≤70 caracteres. Cuerpo describe el porqué no el qué.',
+      always_include_coauthor:
+        'Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>',
+    },
+    before_push_checklist: [
+      'tsc -b con 0 errors',
+      'npm run lint con 0 errors (warnings OK si son pre-existentes)',
+      'npm run test:ci con 100% pass',
+      'No hay secretos/tokens en el diff (grep por ANTHROPIC_API_KEY, FLOW_, SUPABASE_SERVICE_)',
+      'No estás pusheando a main con force (--force). Si necesitás rebase, confirma con Pedro primero.',
+    ],
+    escalate_to_human: [
+      'Cualquier cambio a tablas con >100 filas sin backup reciente.',
+      'Cambios de contrato en edge functions que afecten apps mobile (Capacitor).',
+      'Desactivar/cambiar pagos Flow.',
+      'Migraciones que toquen auth.users directamente.',
+      'Drop de columnas que frontend aún usa.',
+    ],
+  };
+}
+
 /** Resumen ejecutivo: KPIs + health score. */
 function buildExecutiveSummary(
   sheets: SheetResult[],
@@ -1187,6 +1255,7 @@ export async function generateAuditExport(
       tables_count: sheets.length,
       sheets_count: sheets.length + 2,
     },
+    claude_instructions: buildClaudeInstructions(),
     executive_summary: executiveSummary,
     recommended_actions: recommendedActions,
     schema_errors: fetchErrorsParsed,
