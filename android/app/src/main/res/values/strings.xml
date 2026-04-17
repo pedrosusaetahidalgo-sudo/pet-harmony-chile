@@ -6,10 +6,10 @@
     <string name="custom_url_scheme">cl.pawfriend.app</string>
 
     <!-- Google OAuth Web Client ID (must match Supabase + capacitor.config.ts) -->
-    <string name="server_client_id">__REEMPLAZAR_GOOGLE_WEB_CLIENT_ID__</string>
+    <string name="server_client_id">1007342168950-ouurre5dhhaup6cb1nfthff587ifo0h4.apps.googleusercontent.com</string>
 
     <!-- Facebook Login (from Meta for Developers > App Dashboard > Settings > Basic) -->
-    <string name="facebook_app_id">__REEMPLAZAR_FACEBOOK_APP_ID__</string>
-    <string name="facebook_client_token">__REEMPLAZAR_FACEBOOK_CLIENT_TOKEN__</string>
-    <string name="fb_login_protocol_scheme">fb__REEMPLAZAR_FACEBOOK_APP_ID__</string>
+    <string name="facebook_app_id">1880064529304462</string>
+    <string name="facebook_client_token">b6eca08bfa408536a2778a91c5ac57da</string>
+    <string name="fb_login_protocol_scheme">fb1880064529304462</string>
 </resources>

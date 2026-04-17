@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [{
+      "appID": "__TEAM_ID__.cl.pawfriend.app",
+      "paths": ["*"]
+    }]
+  },
+  "webcredentials": {
+    "apps": ["__TEAM_ID__.cl.pawfriend.app"]
+  }
+}

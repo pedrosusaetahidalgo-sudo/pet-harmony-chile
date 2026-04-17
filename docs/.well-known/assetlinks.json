@@ -1,0 +1,8 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "cl.pawfriend.app",
+    "sha256_cert_fingerprints": ["94:ED:88:1E:D0:A5:60:56:61:2B:93:29:F6:BE:B6:BA:19:B4:12:06:03:EC:6A:2F:45:6D:9D:6B:EF:3E:99:60"]
+  }
+}]

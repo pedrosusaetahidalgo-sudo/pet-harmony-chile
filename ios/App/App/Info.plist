@@ -60,9 +60,9 @@
 
 	<!-- ═══ Facebook Login ═══ -->
 	<key>FacebookAppID</key>
-	<string>__REEMPLAZAR_FACEBOOK_APP_ID__</string>
+	<string>1880064529304462</string>
 	<key>FacebookClientToken</key>
-	<string>__REEMPLAZAR_FACEBOOK_CLIENT_TOKEN__</string>
+	<string>b6eca08bfa408536a2778a91c5ac57da</string>
 	<key>FacebookDisplayName</key>
 	<string>Paw Friend</string>
 
@@ -79,14 +79,14 @@
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb__REEMPLAZAR_FACEBOOK_APP_ID__</string>
+				<string>fb1880064529304462</string>
 			</array>
 		</dict>
 		<!-- Google Sign-In URL scheme (reversed client ID from GoogleService-Info.plist) -->
 		<dict>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>__REEMPLAZAR_GOOGLE_REVERSED_CLIENT_ID__</string>
+				<string>com.googleusercontent.apps.1007342168950-uskltl6trp5auaja37569ca3bd2b4ai0</string>
 			</array>
 		</dict>
 	</array>

@@ -42,7 +42,7 @@ const config: CapacitorConfig = {
       scopes: ['profile', 'email'],
       // Web Client ID — must match the one in Supabase Dashboard > Auth > Google provider
       // Android & iOS use their own Client IDs via google-services.json / GoogleService-Info.plist
-      serverClientId: '__REEMPLAZAR_GOOGLE_WEB_CLIENT_ID__',
+      serverClientId: '1007342168950-ouurre5dhhaup6cb1nfthff587ifo0h4.apps.googleusercontent.com',
       forceCodeForRefreshToken: true,
     },
     FacebookLogin: {
