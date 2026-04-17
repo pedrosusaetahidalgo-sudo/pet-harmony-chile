@@ -2,8 +2,52 @@
 
 > Documento de referencia: cada modulo, sus archivos, flujo end-to-end y oportunidades de mejora.
 > Generado: 2026-04-10. Verificado contra el codigo real.
-> Ultima sync de metricas: 2026-04-14 (139 migraciones, 26 edge functions + `_shared/`).
+> Ultima sync de metricas: 2026-04-17 (reordenamiento v3 aplicado).
 > Anotaciones de rol: owner (O), provider (P), admin (A), compartido (O+P).
+
+---
+
+## Changelog 2026-04-17 — Reordenamiento v3
+
+Cambios de arquitectura de informacion aplicados. Detalle en
+`INVENTARIO_APP_2026_04_17.md` y `PROPUESTA_REORDENAMIENTO_2026_04_17.md`.
+
+**Navegacion owner**:
+- BottomTabBar: `Inicio · My Paws · Servicios · Agenda · Perfil` (antes
+  `Inicio · My Paws · Vets · Recordar · Perfil`). "Vets" absorbido en
+  "Servicios"; "Recordar" fusionado con `/calendario` bajo "Agenda".
+- `/calendario` gana 4 tabs: **Hoy · Recordatorios · Rutinas · Reservas**
+  (shadcn Tabs, `?tab=...` persistido). `/reminders`, `/rutinas`,
+  `/mis-reservas` siguen vivas como aliases (deep links intactos).
+- `/servicios` reorganizado: Veterinarios (destacado teal) + Adopcion
+  (rosa) sobre 4 categorias profesionales (walkers, sitters, trainers,
+  groomers).
+- `/services/vets` → redirect a `/veterinarios` (fuente unica).
+- Home: chip **PawPoints** visible + CTA grande **"Abrir ficha clinica
+  de {Pet}"** bajo pet switcher (1 tap a la joya de la corona).
+- PawCardBack: boton "Ver ficha clinica" en el reverso (flip intacto).
+
+**Navegacion vet**:
+- MiniProfileCard: boton teal prominente **"Ver como me ven los duenos"**
+  (target=_blank).
+- ProviderPatients: banner de **vinculaciones rojo defaultOpen**.
+- Ficha vet: `VetActionsBar` sticky-bottom **solo en mobile**; desktop
+  usa solo VetActionsHeader (elimina duplicacion).
+- Copy profesional: "Registrar nota", "Resumen automatico",
+  "Vinculacion por confirmar".
+- NewPatientForm: 4 campos obligatorios visibles; detalles/clinicos en
+  acordeones (modo rapido emerge natural).
+
+**Infraestructura**:
+- `src/lib/links.ts`: helpers `remindersTab/routinesTab/bookingsTab/
+  calendarToday` apuntando a `/calendario?tab=X`.
+- `src/lib/analytics.ts`: `normalizeAnalyticsPath()` agrupa rutas de
+  agenda bajo `/calendario#{tab}` para no fragmentar metricas.
+- `src/index.css`: safety net mobile contra horizontal overflow.
+- 68 tests E2E nuevos (iPhone 13/SE) — overflow + regresion v3.
+
+**NO se toca**: ficha clinica interna, Flow.cl, auth, onboarding,
+RoleGuard, edge functions, migraciones SQL, Admin panel.
 
 ---
 
