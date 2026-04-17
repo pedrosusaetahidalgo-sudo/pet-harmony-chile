@@ -28,6 +28,8 @@
  */
 import * as XLSX from 'xlsx';
 import { supabase } from '@/integrations/supabase/client';
+import { BREEDS_BY_SPECIES } from '@/lib/breeds';
+import { COMUNAS_SANTIAGO } from '@/lib/locations';
 
 // ── Types ──────────────────────────────────────────────────
 export type ExportType = 'full' | 'period';
@@ -37,7 +39,7 @@ export interface ExportFilters {
   to_date?: string;
 }
 
-interface QualityCheck {
+export interface QualityCheck {
   name: string;
   result: string;
   severity: 'ok' | 'warn' | 'error';
@@ -513,8 +515,8 @@ const QUALITY_CHECK_DEFINITIONS: QualityCheckDefinition[] = [
       const { count } = await supabase
         .from('pet_reminders')
         .select('id', { count: 'exact', head: true })
-        .eq('status', 'active')
-        .lt('reminder_date', now);
+        .eq('is_completed', false)
+        .lt('due_date', now);
       const n = count ?? 0;
       return {
         name: 'Recordatorios vencidos sin completar',
@@ -550,15 +552,17 @@ const QUALITY_CHECK_DEFINITIONS: QualityCheckDefinition[] = [
     name: 'Config con keys sensibles',
     enabled: true,
     run: async () => {
-      const { data } = await supabase.from('platform_config').select('key');
-      const suspicious = (data ?? []).filter((r) => /key|secret|token|password/i.test(r.key));
+      const { data } = await supabase.from('platform_config').select('config_key');
+      const suspicious = (data ?? []).filter((r) =>
+        /key|secret|token|password/i.test(r.config_key)
+      );
       return {
         name: 'Config con keys sensibles',
         result: `${suspicious.length} keys detectadas`,
         severity: suspicious.length > 0 ? 'warn' : 'ok',
         detail:
           suspicious.length > 0
-            ? `Keys: ${suspicious.map((k) => k.key).join(', ')} — redactadas en export`
+            ? `Keys: ${suspicious.map((k) => k.config_key).join(', ')} — redactadas en export`
             : 'OK',
       };
     },
@@ -584,7 +588,127 @@ const QUALITY_CHECK_DEFINITIONS: QualityCheckDefinition[] = [
       };
     },
   },
+  {
+    id: 'invalid_breeds',
+    name: 'Mascotas con raza fuera del catalogo',
+    enabled: true,
+    run: async () => {
+      const { data } = await supabase.from('pets').select('id, name, species, breed');
+      const pets = data ?? [];
+      const catalogBySpecies = new Map<string, Set<string>>();
+      for (const [sp, breeds] of Object.entries(BREEDS_BY_SPECIES)) {
+        const set = new Set<string>();
+        for (const b of breeds) {
+          set.add(b.value.toLowerCase().trim());
+          set.add(b.label.toLowerCase().trim());
+        }
+        catalogBySpecies.set(sp, set);
+      }
+      const invalid = pets.filter((p) => {
+        if (!p.breed) return false;
+        const sp = (p.species ?? '').toLowerCase();
+        const cat = catalogBySpecies.get(sp);
+        if (!cat) return false;
+        const normalized = String(p.breed).toLowerCase().trim();
+        return !cat.has(normalized);
+      });
+      const n = invalid.length;
+      const examples = invalid
+        .slice(0, 5)
+        .map((p) => `"${p.breed}" (${p.name})`)
+        .join(', ');
+      return {
+        name: 'Mascotas con raza fuera del catalogo',
+        result: `${n} de ${pets.length}`,
+        severity: n > 10 ? 'warn' : n > 0 ? 'warn' : 'ok',
+        detail:
+          n > 0
+            ? `Razas con typo o free-text. Ej: ${examples}${n > 5 ? ` (+${n - 5} mas)` : ''}`
+            : 'Todas las razas existen en el catalogo',
+      };
+    },
+  },
+  {
+    id: 'invalid_locations',
+    name: 'Perfiles con comuna fuera del catalogo',
+    enabled: true,
+    run: async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('id, display_name, location')
+        .not('location', 'is', null);
+      const profiles = data ?? [];
+      const catalog = new Set(COMUNAS_SANTIAGO.map((c) => c.toLowerCase().trim()));
+      const invalid = profiles.filter((p) => {
+        const loc = String(p.location ?? '')
+          .toLowerCase()
+          .trim();
+        return loc && !catalog.has(loc);
+      });
+      const n = invalid.length;
+      const examples = invalid
+        .slice(0, 5)
+        .map((p) => `"${p.location}"`)
+        .join(', ');
+      return {
+        name: 'Perfiles con comuna fuera del catalogo',
+        result: `${n} de ${profiles.length} con location`,
+        severity: n > 0 ? 'warn' : 'ok',
+        detail:
+          n > 0
+            ? `Free-text no matcheable con comunas RM. Ej: ${examples}${n > 5 ? ` (+${n - 5} mas)` : ''}`
+            : 'Todas las comunas existen en el catalogo',
+      };
+    },
+  },
+  {
+    id: 'generic_profiles',
+    name: 'Perfiles con display_name generico',
+    enabled: true,
+    run: async () => {
+      const { data } = await supabase.from('profiles').select('id, display_name');
+      const profiles = data ?? [];
+      const genericPattern = /^(usuario|user|pending|anon)$|^(perro|gato|ave|conejo)[a-z]*_?\d+$/i;
+      const generic = profiles.filter((p) => {
+        const name = String(p.display_name ?? '').trim();
+        if (!name) return true;
+        return genericPattern.test(name);
+      });
+      const n = generic.length;
+      const total = profiles.length;
+      const pct = total > 0 ? Math.round((n / total) * 100) : 0;
+      return {
+        name: 'Perfiles con display_name generico',
+        result: `${n} de ${total} (${pct}%)`,
+        severity: pct > 30 ? 'warn' : 'ok',
+        detail:
+          n > 0
+            ? 'Usuarios que no completaron su nombre real (auto-generado o "Usuario")'
+            : 'Todos tienen nombre personalizado',
+      };
+    },
+  },
 ];
+
+// ── Public API para panel de Data Quality ──────────────────
+export async function runAllQualityChecks(): Promise<QualityCheck[]> {
+  const enabled = QUALITY_CHECK_DEFINITIONS.filter((d) => d.enabled);
+  return Promise.all(
+    enabled.map(async (def) => {
+      try {
+        return await def.run();
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return {
+          name: def.name,
+          result: 'Error al ejecutar',
+          severity: 'error' as const,
+          detail: message,
+        };
+      }
+    })
+  );
+}
 
 // ── Helpers ────────────────────────────────────────────────
 

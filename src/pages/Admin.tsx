@@ -53,6 +53,7 @@ import AdminSettings from '@/components/admin/AdminSettings';
 import AdminSafetyLogs from '@/components/admin/AdminSafetyLogs';
 import AdminAuditLog from '@/components/admin/AdminAuditLog';
 import AdminSystemHealth from '@/components/admin/AdminSystemHealth';
+import AdminDataQuality from '@/components/admin/AdminDataQuality';
 import AdminTeam from '@/components/admin/AdminTeam';
 import AdminErrorLog from '@/components/admin/AdminErrorLog';
 import AdminAnalytics from '@/components/admin/AdminAnalytics';
@@ -244,6 +245,7 @@ function SystemSection({ sub: propSub, onSubChange }: SubSectionProps) {
           <TabsTrigger value="config">Configuracion</TabsTrigger>
           <TabsTrigger value="errors">Errores</TabsTrigger>
           <TabsTrigger value="health">Health</TabsTrigger>
+          <TabsTrigger value="data-quality">Calidad datos</TabsTrigger>
           <TabsTrigger value="safety">Seguridad</TabsTrigger>
           <TabsTrigger value="audit">Audit Log</TabsTrigger>
           <TabsTrigger value="team">Equipo</TabsTrigger>
@@ -256,6 +258,9 @@ function SystemSection({ sub: propSub, onSubChange }: SubSectionProps) {
         </TabsContent>
         <TabsContent value="health">
           <AdminSystemHealth />
+        </TabsContent>
+        <TabsContent value="data-quality">
+          <AdminDataQuality />
         </TabsContent>
         <TabsContent value="safety">
           <AdminSafetyLogs />
@@ -282,9 +287,9 @@ function useAdminPendingCounts() {
           .select('id', { count: 'exact', head: true })
           .eq('status', 'pending'),
         supabase
-          .from('role_verification_requests')
+          .from('verification_requests')
           .select('id', { count: 'exact', head: true })
-          .eq('status', 'pending'),
+          .eq('status', 'pendiente'),
         supabase
           .from('content_reports')
           .select('id', { count: 'exact', head: true })

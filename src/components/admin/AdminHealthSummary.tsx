@@ -1,9 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { runAllQualityChecks } from '@/lib/auditExport';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { Ghost, PawPrint, AlertTriangle, MessageSquare, CheckCircle, Clock } from '@/lib/icons';
+import {
+  Ghost,
+  PawPrint,
+  AlertTriangle,
+  MessageSquare,
+  CheckCircle,
+  Clock,
+  Database,
+} from '@/lib/icons';
 import { Link } from 'react-router-dom';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -135,6 +144,14 @@ export default function AdminHealthSummary() {
     refetchInterval: 60_000,
   });
 
+  // Data quality — comparte cache con AdminDataQuality (5 min)
+  const { data: dqChecks } = useQuery({
+    queryKey: ['admin-data-quality'],
+    queryFn: runAllQualityChecks,
+    staleTime: 5 * 60 * 1000,
+  });
+  const dqIssues = (dqChecks ?? []).filter((c) => c.severity !== 'ok').length;
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -145,7 +162,16 @@ export default function AdminHealthSummary() {
     );
   }
 
-  const critical = (data || []).filter((r) => r.count > r.threshold).length;
+  const dqRow: HealthRow = {
+    label: 'Alertas calidad datos',
+    count: dqIssues,
+    threshold: 3,
+    icon: Database,
+    href: '/admin?section=system&sub=data-quality',
+    hint: 'Checks de integridad + catalogos',
+  };
+  const rows = [...(data || []), dqRow];
+  const critical = rows.filter((r) => r.count > r.threshold).length;
   const allGood = critical === 0;
 
   return (
@@ -168,8 +194,8 @@ export default function AdminHealthSummary() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-        {(data || []).map((row) => {
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-7 gap-3">
+        {rows.map((row) => {
           const Icon = row.icon;
           const isCritical = row.count > row.threshold;
           const isAttention = row.count > 0 && !isCritical;
