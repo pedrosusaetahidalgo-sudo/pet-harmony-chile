@@ -1089,13 +1089,21 @@ function buildClaudeInstructions(): Record<string, unknown> {
     workflow: [
       '1. Lee primero `executive_summary.health_score` y `top_issues`.',
       '2. Revisa `recommended_actions` en orden P0 → P1 → P2.',
-      '3. Para cada acción: lee `fix_hint` + `location` y navega al código.',
-      '4. Antes de editar: verifica que el fix no afecte datos de usuarios reales (regla §9.8 CLAUDE.md).',
-      '5. Ejecuta `npx tsc -b` + `npm run lint` + `npm run test:ci` post-fix.',
-      '6. Commit con mensaje claro (tipo + scope + descripción).',
-      '7. Push solo cuando 1-3 fixes están agrupados; no pushes fixes aislados.',
-      '8. Si un fix es reversible y afecta prod (migración SQL, edge fn deploy): pide confirmación antes.',
+      '3. Chequea `edge_functions.with_failures_24h` — si > 0, mira `edge_functions.functions[i].recent_errors` para la causa raiz.',
+      '4. Chequea `device_compatibility` para detectar plataformas con uso bajo o bugs especificos (ej. iOS=0 pero Android>100 → sospechar crash iOS).',
+      '5. Para cada acción: lee `fix_hint` + `location` y navega al código.',
+      '6. Antes de editar: verifica que el fix no afecte datos de usuarios reales (regla §9.8 CLAUDE.md).',
+      '7. Ejecuta `npx tsc -b` + `npm run lint` + `npm run test:ci` post-fix.',
+      '8. Commit con mensaje claro (tipo + scope + descripción).',
+      '9. Push solo cuando 1-3 fixes están agrupados; no pushes fixes aislados.',
+      '10. Si un fix es reversible y afecta prod (migración SQL, edge fn deploy): pide confirmación antes.',
     ],
+    new_sections_v3: {
+      edge_functions:
+        'Telemetria por edge fn (system_health_log). Campos: executions_24h, real_failures_24h (5xx + timeouts + excepciones), client_errors_24h (4xx no son fallas), avg_latency_ms, last_status, recent_errors. Prioriza funciones con real_failures_24h > 0.',
+      device_compatibility:
+        'Sesiones por platform_family (ios_app/android_app/mobile_web/desktop_web), os, browser_family, screen. Ventana 30d. Si una plataforma clave (ej. ios_app) tiene 0 sesiones mientras otras tienen tráfico, investiga posible crash o incompatibilidad.',
+    },
     priority_rules: {
       P0: 'Bloquean funcionalidad o exponen bug visible al usuario (ej. export admin roto, schema mismatch). Fix inmediato.',
       P1: 'Alto volumen o riesgo (ej. 281 errores idénticos, FK violation recurrente). Fix en el commit actual.',
@@ -1210,6 +1218,238 @@ function buildExecutiveSummary(
   };
 }
 
+// ── Edge Functions Report ──────────────────────────────────
+// Agrega telemetria por funcion desde system_health_log + error_logs
+// Usa misma logica que AdminSystemHealth (filtrando 4xx como no-falla)
+
+interface EdgeFunctionSummary {
+  function_name: string;
+  executions_24h: number;
+  real_failures_24h: number; // 5xx + timeouts + excepciones
+  client_errors_24h: number; // 4xx (rate limit, input invalido)
+  avg_latency_ms: number | null;
+  last_status: 'success' | 'error' | 'timeout' | 'unknown';
+  last_run: string | null;
+  recent_errors: Array<{
+    message: string;
+    created_at: string;
+    severity: string;
+  }>;
+}
+
+async function fetchEdgeFunctionsReport(): Promise<{
+  total_functions: number;
+  with_traffic_24h: number;
+  with_failures_24h: number;
+  functions: EdgeFunctionSummary[];
+}> {
+  try {
+    const [healthRes, errorsRes] = await Promise.all([
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase.from('system_health_log') as any)
+        .select('function_name, status, execution_time_ms, error_message, metadata, created_at')
+        .order('created_at', { ascending: false })
+        .limit(2000),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (supabase.from('error_logs') as any)
+        .select('message, created_at, context, severity')
+        .eq('source', 'edge_function')
+        .order('created_at', { ascending: false })
+        .limit(500),
+    ]);
+
+    const healthEntries = (healthRes.data as Array<Record<string, unknown>>) ?? [];
+    const errorEntries = (errorsRes.data as Array<Record<string, unknown>>) ?? [];
+
+    const dayAgo = Date.now() - 24 * 3600 * 1000;
+    const rowMap = new Map<string, EdgeFunctionSummary>();
+    const latencies = new Map<string, number[]>();
+
+    const isRealFailure = (entry: Record<string, unknown>): boolean => {
+      if (entry.status === 'timeout') return true;
+      if (entry.status !== 'error') return false;
+      const md = entry.metadata as Record<string, unknown> | null | undefined;
+      const httpStatus = md?.http_status;
+      if (httpStatus == null) return true;
+      if (typeof httpStatus === 'number' && httpStatus >= 500) return true;
+      return false;
+    };
+    const isClientError = (entry: Record<string, unknown>): boolean => {
+      if (entry.status !== 'error') return false;
+      const md = entry.metadata as Record<string, unknown> | null | undefined;
+      const httpStatus = md?.http_status;
+      return typeof httpStatus === 'number' && httpStatus >= 400 && httpStatus < 500;
+    };
+
+    for (const entry of healthEntries) {
+      const fn = entry.function_name as string;
+      if (!fn) continue;
+      let row = rowMap.get(fn);
+      if (!row) {
+        row = {
+          function_name: fn,
+          executions_24h: 0,
+          real_failures_24h: 0,
+          client_errors_24h: 0,
+          avg_latency_ms: null,
+          last_status: 'unknown',
+          last_run: null,
+          recent_errors: [],
+        };
+        rowMap.set(fn, row);
+      }
+      if (!row.last_run) {
+        row.last_status = isRealFailure(entry)
+          ? 'error'
+          : entry.status === 'timeout'
+            ? 'timeout'
+            : 'success';
+        row.last_run = entry.created_at as string;
+      }
+      const t = new Date(entry.created_at as string).getTime();
+      if (t >= dayAgo) {
+        row.executions_24h++;
+        if (isRealFailure(entry)) row.real_failures_24h++;
+        else if (isClientError(entry)) row.client_errors_24h++;
+      }
+      if (entry.execution_time_ms != null) {
+        const arr = latencies.get(fn) || [];
+        arr.push(entry.execution_time_ms as number);
+        latencies.set(fn, arr);
+      }
+    }
+    for (const [fn, vals] of latencies) {
+      const row = rowMap.get(fn);
+      if (row && vals.length > 0) {
+        row.avg_latency_ms = Math.round(vals.reduce((a, b) => a + b, 0) / vals.length);
+      }
+    }
+
+    // Asocia errores desde error_logs (solo fallas reales)
+    for (const err of errorEntries) {
+      const ctx = err.context as Record<string, unknown> | null;
+      const ctxFn = ctx?.function_name as string | undefined;
+      let fnName = ctxFn;
+      if (!fnName && typeof err.message === 'string') {
+        const prefix = err.message.split(':')[0]?.trim();
+        if (prefix && rowMap.has(prefix)) fnName = prefix;
+      }
+      if (!fnName) continue;
+      const row = rowMap.get(fnName);
+      if (!row) continue;
+      const httpStatus = ctx?.http_status;
+      const is4xx =
+        (typeof httpStatus === 'number' && httpStatus >= 400 && httpStatus < 500) ||
+        (typeof err.message === 'string' && /\bHTTP 4\d\d\b/.test(err.message));
+      if (is4xx) continue;
+      if (row.recent_errors.length < 5) {
+        row.recent_errors.push({
+          message: String(err.message ?? '').slice(0, 300),
+          created_at: err.created_at as string,
+          severity: err.severity as string,
+        });
+      }
+    }
+
+    const functions = Array.from(rowMap.values()).sort((a, b) => {
+      if (a.real_failures_24h !== b.real_failures_24h)
+        return b.real_failures_24h - a.real_failures_24h;
+      return b.executions_24h - a.executions_24h;
+    });
+
+    return {
+      total_functions: functions.length,
+      with_traffic_24h: functions.filter((f) => f.executions_24h > 0).length,
+      with_failures_24h: functions.filter((f) => f.real_failures_24h > 0).length,
+      functions,
+    };
+  } catch {
+    return { total_functions: 0, with_traffic_24h: 0, with_failures_24h: 0, functions: [] };
+  }
+}
+
+// ── Device Compatibility Report ────────────────────────────
+// Agrega sesiones por platform_family + os + browser del analytics_events
+
+async function fetchDeviceCompatibilityReport(): Promise<{
+  total_sessions_30d: number;
+  by_platform_family: Record<string, number>;
+  by_os: Record<string, number>;
+  by_browser: Record<string, number>;
+  top_combinations: Array<{
+    platform_family: string;
+    os: string;
+    browser_family: string;
+    screen: string;
+    count: number;
+  }>;
+}> {
+  try {
+    const since = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data } = await (supabase.from('analytics_events') as any)
+      .select('session_id, created_at, metadata')
+      .eq('event_type', 'session_start')
+      .gte('created_at', since)
+      .limit(5000);
+
+    const sessions = (data as Array<Record<string, unknown>>) ?? [];
+    const byPlatform: Record<string, number> = {};
+    const byOS: Record<string, number> = {};
+    const byBrowser: Record<string, number> = {};
+    const comboMap = new Map<
+      string,
+      { platform_family: string; os: string; browser_family: string; screen: string; count: number }
+    >();
+    const seen = new Set<string>();
+
+    for (const row of sessions) {
+      const sessionKey = (row.session_id as string) ?? (row.created_at as string);
+      if (seen.has(sessionKey)) continue;
+      seen.add(sessionKey);
+      const md = (row.metadata as Record<string, unknown> | null) ?? {};
+      const platform = (md.platform_family as string) || 'legacy';
+      const os = (md.os as string) || 'Unknown';
+      const browser = (md.browser_family as string) || 'Unknown';
+      const screen = (md.screen as string) || 'Unknown';
+      byPlatform[platform] = (byPlatform[platform] ?? 0) + 1;
+      byOS[os] = (byOS[os] ?? 0) + 1;
+      byBrowser[browser] = (byBrowser[browser] ?? 0) + 1;
+      const key = `${platform}|${os}|${browser}|${screen}`;
+      const cur = comboMap.get(key);
+      if (cur) cur.count++;
+      else
+        comboMap.set(key, {
+          platform_family: platform,
+          os,
+          browser_family: browser,
+          screen,
+          count: 1,
+        });
+    }
+
+    const top = Array.from(comboMap.values())
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 20);
+
+    return {
+      total_sessions_30d: seen.size,
+      by_platform_family: byPlatform,
+      by_os: byOS,
+      by_browser: byBrowser,
+      top_combinations: top,
+    };
+  } catch {
+    return {
+      total_sessions_30d: 0,
+      by_platform_family: {},
+      by_os: {},
+      by_browser: {},
+      top_combinations: [],
+    };
+  }
+}
+
 // ── Main Export Generator ──────────────────────────────────
 
 export interface ExportProgress {
@@ -1248,22 +1488,27 @@ export async function generateAuditExport(
     sheets.push(result);
   }
 
-  // 2. Run quality checks in PARALLEL
-  report('Ejecutando checks de calidad...', 80);
-  const qualityChecks = await Promise.all(
-    enabledChecks.map(async (def) => {
-      try {
-        return await def.run();
-      } catch (err) {
-        return {
-          name: def.name,
-          result: 'Error ejecutando check',
-          severity: 'error' as const,
-          detail: err instanceof Error ? err.message : 'Error desconocido',
-        };
-      }
-    })
-  );
+  // 2. Run quality checks + edge fns + devices reports en PARALELO
+  report('Ejecutando checks de calidad y monitoreo...', 80);
+  const [qualityChecksRaw, edgeFunctionsReport, deviceCompatReport] = await Promise.all([
+    Promise.all(
+      enabledChecks.map(async (def) => {
+        try {
+          return await def.run();
+        } catch (err) {
+          return {
+            name: def.name,
+            result: 'Error ejecutando check',
+            severity: 'error' as const,
+            detail: err instanceof Error ? err.message : 'Error desconocido',
+          };
+        }
+      })
+    ),
+    fetchEdgeFunctionsReport(),
+    fetchDeviceCompatibilityReport(),
+  ]);
+  const qualityChecks = qualityChecksRaw;
 
   // Add errors from sheet fetching as additional DQ checks
   for (const err of errors) {
@@ -1375,7 +1620,7 @@ export async function generateAuditExport(
   const jsonPayload = {
     meta: {
       app: 'Paw Friend',
-      schema_version: 2,
+      schema_version: 3,
       export_type: exportType,
       filters: exportType === 'period' ? filters : null,
       generated_at: new Date().toISOString(),
@@ -1421,6 +1666,8 @@ export async function generateAuditExport(
       warn: qualityChecks.filter((c) => c.severity === 'warn').length,
       error: qualityChecks.filter((c) => c.severity === 'error').length,
     },
+    edge_functions: edgeFunctionsReport,
+    device_compatibility: deviceCompatReport,
   };
   const jsonBlob = new Blob([JSON.stringify(jsonPayload, null, 2)], {
     type: 'application/json',
