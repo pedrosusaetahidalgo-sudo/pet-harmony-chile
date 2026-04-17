@@ -113,3 +113,8 @@ verify_jwt = false
 
 [functions.consultation-prep]
 verify_jwt = false
+
+# ── Audit / Monitoring (agregadas 2026-04-17) ──
+
+[functions.audit-cron-daily]
+verify_jwt = false
