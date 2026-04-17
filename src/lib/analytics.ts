@@ -68,16 +68,14 @@ export async function initAnalytics(): Promise<void> {
 
     if (POSTHOG_KEY) {
       try {
-        const moduleName = 'posthog' + '-js';
-        const posthogModule = await import(/* @vite-ignore */ moduleName);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const posthog = (posthogModule as any).default ?? posthogModule;
+        const posthogModule = await import('posthog-js');
+        const posthog = posthogModule.default;
 
         posthog.init(POSTHOG_KEY, {
           api_host: POSTHOG_HOST,
-          autocapture: false,
-          capture_pageview: false,
-          capture_pageleave: false,
+          autocapture: true,
+          capture_pageview: true,
+          capture_pageleave: true,
           persistence: 'localStorage',
           loaded: () => {
             if (IS_DEV) logger.debug('[Analytics] PostHog inicializado');

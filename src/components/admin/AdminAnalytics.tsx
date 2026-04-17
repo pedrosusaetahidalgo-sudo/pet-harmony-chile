@@ -73,6 +73,8 @@ export default function AdminAnalytics() {
   const { data: trafficKpis, isLoading: l1 } = useQuery({
     queryKey: ['admin-analytics-kpis', rangeDays],
     staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data } = await (supabase.from('analytics_events') as any)
@@ -100,6 +102,8 @@ export default function AdminAnalytics() {
   const { data: engagementKpis } = useQuery({
     queryKey: ['admin-analytics-engagement'],
     staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const thirtyAgo = subDays(now, 30).toISOString();
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -142,6 +146,8 @@ export default function AdminAnalytics() {
   const { data: viewsByDay } = useQuery({
     queryKey: ['admin-analytics-views-day', rangeDays],
     staleTime: 120_000,
+    refetchInterval: 300_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data } = await (supabase.from('analytics_events') as any)
@@ -169,6 +175,8 @@ export default function AdminAnalytics() {
   const { data: topPages } = useQuery({
     queryKey: ['admin-analytics-top-pages', rangeDays],
     staleTime: 120_000,
+    refetchInterval: 300_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data } = await (supabase.from('analytics_events') as any)
@@ -193,6 +201,8 @@ export default function AdminAnalytics() {
   const { data: dwellByPage } = useQuery({
     queryKey: ['admin-analytics-dwell', rangeDays],
     staleTime: 120_000,
+    refetchInterval: 300_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data } = await (supabase.from('analytics_events') as any)
@@ -224,6 +234,8 @@ export default function AdminAnalytics() {
   const { data: deviceData } = useQuery({
     queryKey: ['admin-analytics-devices', rangeDays],
     staleTime: 120_000,
+    refetchInterval: 300_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data } = await (supabase.from('analytics_events') as any)
@@ -247,6 +259,8 @@ export default function AdminAnalytics() {
   const { data: featureUsage } = useQuery({
     queryKey: ['admin-analytics-features', rangeDays],
     staleTime: 120_000,
+    refetchInterval: 300_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data } = await (supabase.from('analytics_events') as any)
@@ -270,6 +284,8 @@ export default function AdminAnalytics() {
   const { data: edgeFnCalls } = useQuery({
     queryKey: ['admin-analytics-edge-fns', rangeDays],
     staleTime: 120_000,
+    refetchInterval: 300_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data } = await (supabase.from('analytics_events') as any)
@@ -301,6 +317,8 @@ export default function AdminAnalytics() {
   const { data: funnel } = useQuery({
     queryKey: ['admin-analytics-funnel'],
     staleTime: 120_000,
+    refetchInterval: 300_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const [profiles, withPets, withRecords, withPdf, withBookings, withPremium] =
         await Promise.all([
@@ -340,6 +358,8 @@ export default function AdminAnalytics() {
   const { data: revenue } = useQuery({
     queryKey: ['admin-analytics-revenue'],
     staleTime: 120_000,
+    refetchInterval: 300_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data: activeSubs } = await (supabase.from('subscriptions' as any) as any)
@@ -380,6 +400,8 @@ export default function AdminAnalytics() {
   const { data: cohortData } = useQuery({
     queryKey: ['admin-analytics-cohort'],
     staleTime: 300_000,
+    refetchInterval: 600_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const sixMonthsAgo = subMonths(now, 6).toISOString();
 

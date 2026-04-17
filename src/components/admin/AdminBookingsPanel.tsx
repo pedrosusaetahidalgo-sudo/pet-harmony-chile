@@ -88,6 +88,8 @@ export default function AdminBookingsPanel() {
       );
     },
     staleTime: 30_000,
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
   });
 
   // Stats

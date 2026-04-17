@@ -112,6 +112,9 @@ const AdminUsers = () => {
       return { data: data ?? [], count: count ?? 0 };
     },
     placeholderData: (prev) => prev,
+    staleTime: 30_000,
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
   });
 
   const profiles = profilesResult?.data ?? [];

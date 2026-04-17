@@ -56,10 +56,12 @@ import AdminTeam from '@/components/admin/AdminTeam';
 import AdminErrorLog from '@/components/admin/AdminErrorLog';
 import AdminAnalytics from '@/components/admin/AdminAnalytics';
 import AdminPendingPets from '@/components/admin/AdminPendingPets';
+import AdminGhostUsers from '@/components/admin/AdminGhostUsers';
 import AdminLeadsCRM from '@/components/admin/AdminLeadsCRM';
 import AdminFeedback from '@/components/admin/AdminFeedback';
 import AdminBookingsPanel from '@/components/admin/AdminBookingsPanel';
 import AdminExports from '@/components/admin/AdminExports';
+import { useAdminRealtimeSubscriptions } from '@/hooks/useAdminRealtimeSubscriptions';
 
 // ── Section definitions ──────────────────────────────────
 interface Section {
@@ -131,6 +133,7 @@ function UsersSection() {
           <TabsTrigger value="users">Gestion</TabsTrigger>
           <TabsTrigger value="verifications">Verificaciones</TabsTrigger>
           <TabsTrigger value="pending-pets">Mascotas pendientes</TabsTrigger>
+          <TabsTrigger value="ghost-users">Cuentas fantasma</TabsTrigger>
         </TabsList>
         <TabsContent value="users">
           <AdminUsers />
@@ -140,6 +143,9 @@ function UsersSection() {
         </TabsContent>
         <TabsContent value="pending-pets">
           <AdminPendingPets />
+        </TabsContent>
+        <TabsContent value="ghost-users">
+          <AdminGhostUsers />
         </TabsContent>
       </Tabs>
     </div>
@@ -375,6 +381,8 @@ const Admin = () => {
   });
   const [mobileOpen, setMobileOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
+
+  useAdminRealtimeSubscriptions();
 
   const { data: pendingCount = 0 } = useAdminPendingCounts();
 

@@ -16,6 +16,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { getCorsHeaders, handleCorsOptions } from '../_shared/cors.ts';
+import { buildInvitationEmail, sendInvitationViaResend } from '../_shared/invitation-email.ts';
 
 // ─── Types ──────────────────────────────────────────────────────────
 
@@ -94,157 +95,10 @@ function generatePawCardId(): string {
   return `PAW-${block(4)}-${block(4)}`;
 }
 
-// ─── Email template (same as send-pet-invitation) ───────────────────
-
-function buildInvitationEmail(opts: {
-  petName: string;
-  ownerName: string;
-  vetName: string;
-  clinicName: string;
-  actionUrl: string;
-}) {
-  const { petName, ownerName, vetName, clinicName, actionUrl } = opts;
-  const firstName = ownerName.split(' ')[0] || ownerName;
-  const LOGO_URL = 'https://pawfriend.cl/lovable-uploads/f78e7803-40e0-4194-9e66-80e4fce27093.png';
-
-  return `<!DOCTYPE html>
-<html lang="es">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${petName} te escribio!</title></head>
-<body style="margin:0;padding:0;background:#fef9f3;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
-<table width="100%" cellpadding="0" cellspacing="0" style="background:#fef9f3;padding:32px 16px;">
-<tr><td align="center">
-<table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#ffffff;border-radius:20px;overflow:hidden;box-shadow:0 8px 32px rgba(249,115,22,0.12);">
-  <tr><td style="background:linear-gradient(135deg,#f97316 0%,#fb923c 50%,#fbbf24 100%);padding:36px 24px 28px;text-align:center;">
-    <img src="${LOGO_URL}" alt="Paw Friend" width="56" height="56" style="border-radius:14px;margin-bottom:8px;border:3px solid rgba(255,255,255,0.3);" />
-    <h1 style="color:#ffffff;font-size:20px;margin:8px 0 0;font-weight:700;">Paw Friend</h1>
-  </td></tr>
-  <tr><td style="padding:28px 28px 0;">
-    <table width="100%" cellpadding="0" cellspacing="0">
-      <tr>
-        <td width="44" valign="top" style="padding-right:12px;">
-          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#f97316,#fbbf24);text-align:center;line-height:44px;font-size:24px;">🐶</div>
-        </td>
-        <td>
-          <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;border-top-left-radius:4px;padding:16px 20px;">
-            <p style="margin:0 0 4px;font-weight:700;color:#c2410c;font-size:13px;">${petName}</p>
-            <p style="margin:0;color:#431407;font-size:15px;line-height:1.5;">
-              Hola ${firstName}! Soy ${petName} y tengo noticias increibles: mi vet me creo una ficha medica digital y necesito que tu la veas!
-            </p>
-          </div>
-        </td>
-      </tr>
-    </table>
-  </td></tr>
-  <tr><td style="padding:20px 28px;">
-    <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:12px;padding:14px 18px;">
-      <p style="margin:0;color:#166534;font-size:13px;">
-        <span style="font-size:16px;vertical-align:middle;">🩺</span>
-        <strong>${vetName}</strong>${clinicName ? ` de ${clinicName}` : ''} acaba de crear la ficha clinica de ${petName} en Paw Friend.
-      </p>
-    </div>
-  </td></tr>
-  <tr><td style="padding:0 28px;">
-    <p style="color:#92400e;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:0 0 12px;">Que vas a encontrar:</p>
-    <table width="100%" cellpadding="0" cellspacing="0">
-      <tr><td style="padding:7px 0;font-size:14px;color:#44403c;">
-        <span style="display:inline-block;width:32px;text-align:center;font-size:18px;">📋</span>
-        Ficha clinica completa, descargable en PDF
-      </td></tr>
-      <tr><td style="padding:7px 0;font-size:14px;color:#44403c;">
-        <span style="display:inline-block;width:32px;text-align:center;font-size:18px;">💉</span>
-        Vacunas y antiparasitarios con recordatorios automaticos
-      </td></tr>
-      <tr><td style="padding:7px 0;font-size:14px;color:#44403c;">
-        <span style="display:inline-block;width:32px;text-align:center;font-size:18px;">🔔</span>
-        Alertas de controles, desparasitaciones y citas
-      </td></tr>
-      <tr><td style="padding:7px 0;font-size:14px;color:#44403c;">
-        <span style="display:inline-block;width:32px;text-align:center;font-size:18px;">📎</span>
-        Examenes, recetas e imagenes en un solo lugar
-      </td></tr>
-      <tr><td style="padding:7px 0;font-size:14px;color:#44403c;">
-        <span style="display:inline-block;width:32px;text-align:center;font-size:18px;">🃏</span>
-        Una Paw Card coleccionable unica de ${petName}!
-      </td></tr>
-      <tr><td style="padding:7px 0;font-size:14px;color:#44403c;">
-        <span style="display:inline-block;width:32px;text-align:center;font-size:18px;">🔗</span>
-        Compartir la ficha con otro vet si viajas o hay urgencia
-      </td></tr>
-    </table>
-  </td></tr>
-  <tr><td style="padding:28px 28px 8px;" align="center">
-    <a href="${actionUrl}" target="_blank"
-       style="display:inline-block;background:linear-gradient(135deg,#f97316,#ea580c);color:#ffffff;font-size:17px;font-weight:700;text-decoration:none;padding:16px 44px;border-radius:14px;box-shadow:0 6px 20px rgba(249,115,22,0.3);letter-spacing:0.3px;">
-      🐾 Ver la ficha de ${petName}
-    </a>
-  </td></tr>
-  <tr><td style="padding:4px 28px 24px;" align="center">
-    <p style="color:#a8a29e;font-size:12px;margin:8px 0 0;">
-      Gratis y toma menos de 1 minuto
-    </p>
-  </td></tr>
-  <tr><td style="padding:0 28px 24px;">
-    <table width="100%" cellpadding="0" cellspacing="0">
-      <tr>
-        <td width="44" valign="top" style="padding-right:12px;">
-          <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#f97316,#fbbf24);text-align:center;line-height:44px;font-size:24px;">🐶</div>
-        </td>
-        <td>
-          <div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;border-top-left-radius:4px;padding:14px 18px;">
-            <p style="margin:0;color:#431407;font-size:14px;line-height:1.5;">
-              Te espero adentro! No me dejes en visto 🥺👉👈
-            </p>
-          </div>
-        </td>
-      </tr>
-    </table>
-  </td></tr>
-  <tr><td style="background:#fafaf9;padding:20px 28px;border-top:1px solid #f5f5f4;">
-    <p style="color:#a8a29e;font-size:11px;text-align:center;margin:0;line-height:1.6;">
-      ${petName} te envio este correo con la ayuda de su vet y de
-      <a href="https://pawfriend.cl" style="color:#f97316;text-decoration:none;font-weight:600;">Paw Friend</a><br>
-      Si no reconoces a ${petName}, puedes ignorar este correo sin problema.
-    </p>
-  </td></tr>
-</table>
-</td></tr>
-</table>
-</body>
-</html>`;
-}
-
-// ─── Send email via Resend ──────────────────────────────────────────
-
-async function sendViaResend(opts: {
-  to: string;
-  subject: string;
-  html: string;
-}): Promise<{ ok: boolean; error?: string }> {
-  const apiKey = Deno.env.get('RESEND_API_KEY');
-  if (!apiKey) return { ok: false, error: 'RESEND_API_KEY not set' };
-
-  const resp = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: Deno.env.get('RESEND_FROM_EMAIL') || 'Paw Friend <onboarding@resend.dev>',
-      to: [opts.to],
-      subject: opts.subject,
-      html: opts.html,
-    }),
-  });
-
-  if (!resp.ok) {
-    const body = await resp.text();
-    console.error('[Resend] error:', resp.status, body);
-    return { ok: false, error: body };
-  }
-  return { ok: true };
-}
+// Email template + Resend sender extraidos a `_shared/invitation-email.ts`
+// (importados arriba). Esto evita duplicar el HTML entre create-patient y
+// send-pet-invitation.
+const sendViaResend = sendInvitationViaResend;
 
 // ─── Validation ─────────────────────────────────────────────────────
 

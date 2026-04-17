@@ -89,6 +89,8 @@ export default function AdminErrorLog() {
   const { data: kpis } = useQuery({
     queryKey: ['admin-errors-kpis'],
     staleTime: 30_000,
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data } = await (supabase.from('error_logs') as any)
@@ -131,6 +133,8 @@ export default function AdminErrorLog() {
   const { data: errors, isLoading } = useQuery({
     queryKey: ['admin-errors-list', sourceFilter, severityFilter],
     staleTime: 30_000,
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let query = (supabase.from('error_logs') as any)

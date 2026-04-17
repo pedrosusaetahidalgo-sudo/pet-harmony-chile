@@ -53,6 +53,9 @@ export default function AdminModeration() {
       if (error) throw error;
       return data as unknown as ContentReport[];
     },
+    staleTime: 30_000,
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
   });
 
   // Fetch post previews for reports that reference posts

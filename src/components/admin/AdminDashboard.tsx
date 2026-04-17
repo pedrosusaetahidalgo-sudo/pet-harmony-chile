@@ -145,6 +145,8 @@ export default function AdminDashboard() {
   const { data: activeUsersData, isLoading: l1 } = useQuery({
     queryKey: ['admin-kpi-active-users-v2'],
     staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // This week
       const { count: thisWeek } = await supabase
@@ -192,6 +194,8 @@ export default function AdminDashboard() {
   const { data: revenueData, isLoading: l2 } = useQuery({
     queryKey: ['admin-kpi-revenue-v2'],
     staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const { data: allPaid } = await supabase
         .from('orders')
@@ -231,6 +235,8 @@ export default function AdminDashboard() {
   const { data: petsKpi, isLoading: l3 } = useQuery({
     queryKey: ['admin-kpi-pets-v2'],
     staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const { count: activePets } = await supabase
         .from('pets')
@@ -272,6 +278,8 @@ export default function AdminDashboard() {
   const { data: pendingReview, isLoading: l4 } = useQuery({
     queryKey: ['admin-kpi-pending-review'],
     staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const [verifs, reports, promos] = await Promise.all([
         supabase
@@ -295,6 +303,8 @@ export default function AdminDashboard() {
   const { data: alerts } = useQuery({
     queryKey: ['admin-smart-alerts'],
     staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const fortyEightHoursAgo = subDays(now, 2);
 
@@ -338,6 +348,8 @@ export default function AdminDashboard() {
   const { data: combinedChartData } = useQuery({
     queryKey: ['admin-chart-combined-v2'],
     staleTime: 120_000,
+    refetchInterval: 120_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const [{ data: users }, { data: pets }] = await Promise.all([
         supabase
@@ -378,6 +390,8 @@ export default function AdminDashboard() {
   const { data: topServicesData } = useQuery({
     queryKey: ['admin-chart-top-services'],
     staleTime: 120_000,
+    refetchInterval: 120_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const { data } = await sb.from('all_bookings_view').select('service_type');
 
@@ -400,6 +414,8 @@ export default function AdminDashboard() {
   const { data: planDistribution } = useQuery({
     queryKey: ['admin-chart-plan-dist'],
     staleTime: 120_000,
+    refetchInterval: 120_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const [{ count: totalProfiles }, premiumResult] = await Promise.all([
         supabase.from('profiles').select('*', { count: 'exact', head: true }),
@@ -421,6 +437,8 @@ export default function AdminDashboard() {
   const { data: extraMetrics } = useQuery({
     queryKey: ['admin-extra-metrics-v2'],
     staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const [bookings, providers, reviews, posts, fichas, pendingPets] = await Promise.all([
         sb
@@ -464,6 +482,8 @@ export default function AdminDashboard() {
   const { data: systemHealth } = useQuery({
     queryKey: ['admin-system-health'],
     staleTime: 30_000,
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // DB ping with latency
       const start = performance.now();
@@ -500,6 +520,8 @@ export default function AdminDashboard() {
   const { data: activityFeed } = useQuery({
     queryKey: ['admin-activity-feed-v2'],
     staleTime: 30_000,
+    refetchInterval: 30_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const items: ActivityItem[] = [];
 

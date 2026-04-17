@@ -53,6 +53,8 @@ export default function AdminFinance() {
   const { data: financeKpis, isLoading } = useQuery({
     queryKey: ['admin-finance-kpis'],
     staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const [subs, orders] = await Promise.all([
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -111,6 +113,8 @@ export default function AdminFinance() {
   const { data: subscriptions } = useQuery({
     queryKey: ['admin-finance-subs-table'],
     staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data } = await (supabase.from('subscriptions') as any)
@@ -139,6 +143,8 @@ export default function AdminFinance() {
   const { data: recentOrders } = useQuery({
     queryKey: ['admin-finance-orders'],
     staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const { data } = await supabase
         .from('orders')
@@ -164,6 +170,8 @@ export default function AdminFinance() {
   const { data: revenueChart } = useQuery({
     queryKey: ['admin-finance-revenue-chart'],
     staleTime: 120_000,
+    refetchInterval: 300_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       const { data } = await supabase
         .from('orders')
@@ -192,6 +200,8 @@ export default function AdminFinance() {
   const { data: mrrTrend } = useQuery({
     queryKey: ['admin-finance-mrr-trend'],
     staleTime: 120_000,
+    refetchInterval: 300_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data } = await (supabase.from('subscriptions') as any)
@@ -231,6 +241,8 @@ export default function AdminFinance() {
   const { data: planDistribution } = useQuery({
     queryKey: ['admin-finance-plan-dist'],
     staleTime: 120_000,
+    refetchInterval: 300_000,
+    refetchOnWindowFocus: true,
     queryFn: async () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data } = await (supabase.from('subscriptions') as any)

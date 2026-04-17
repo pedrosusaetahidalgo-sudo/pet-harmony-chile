@@ -79,6 +79,7 @@ export {
   Flame,
   FlaskConical,
   Gamepad2,
+  Ghost,
   Flower2,
   Gift,
   Globe,
