@@ -172,7 +172,7 @@ const PetClinicalRecord = () => {
       setVetCheckDone(true);
       return;
     }
-    // Non-owner or forced vet mode: check if linked vet
+    // Non-owner or forced vet mode: check if linked vet or creator vet
     (async () => {
       try {
         const { data: provider } = await supabase
@@ -181,6 +181,13 @@ const PetClinicalRecord = () => {
           .eq('user_id', user.id)
           .maybeSingle();
         if (provider?.id) {
+          // Creator vet gets immediate access (orphan pets without pet_vet_links)
+          if (pet.created_by_vet_id === user.id) {
+            setIsLinkedVet(true);
+            setVetProviderId(provider.id);
+            setVetCheckDone(true);
+            return;
+          }
           const { data: link } = await supabase
             .from('pet_vet_links')
             .select('id')

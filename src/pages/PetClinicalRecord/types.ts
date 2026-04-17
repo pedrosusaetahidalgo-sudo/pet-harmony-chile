@@ -66,4 +66,8 @@ export interface PetData {
   memorial_message?: string | null;
   memorial_photo_url?: string | null;
   memorial_undo_until?: string | null;
+  // Vet-created orphan pet fields
+  created_by_vet_id?: string | null;
+  pending_owner_email?: string | null;
+  pending_owner_name?: string | null;
 }

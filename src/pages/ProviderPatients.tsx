@@ -67,7 +67,7 @@ interface PatientRow {
   owner_name: string | null;
   last_visit: string;
   first_visit: string | null;
-  source: 'linked' | 'note' | 'shared';
+  source: 'linked' | 'note' | 'shared' | 'created';
   // Enriched data
   allergies_food: string[] | null;
   allergies_medication: string[] | null;
@@ -276,6 +276,39 @@ export default function ProviderPatients() {
             chronic_conditions_detail: null,
           });
         }
+      }
+
+      // Mascotas creadas por el vet sin dueno (orphan pets)
+      const { data: createdPets } = await sb
+        .from('pets')
+        .select(
+          'id, name, species, breed, birth_date, photo_url, allergies_food, allergies_medication, current_medications, chronic_conditions_detail, created_at, pending_owner_name'
+        )
+        .eq('created_by_vet_id', user.id)
+        .is('owner_id', null)
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const pet of (createdPets || []) as any[]) {
+        const pid = pet.id as string;
+        if (map.has(pid)) continue;
+        map.set(pid, {
+          pet_id: pid,
+          pet_name: pet.name || 'Mascota',
+          species: pet.species || null,
+          breed: pet.breed || null,
+          birth_date: pet.birth_date || null,
+          photo_url: pet.photo_url || null,
+          owner_name: pet.pending_owner_name || null,
+          last_visit: pet.created_at || new Date().toISOString(),
+          first_visit: pet.created_at || null,
+          source: 'created',
+          allergies_food: pet.allergies_food || null,
+          allergies_medication: pet.allergies_medication || null,
+          current_medications: pet.current_medications || null,
+          chronic_conditions_detail: pet.chronic_conditions_detail || null,
+        });
       }
 
       return Array.from(map.values()).sort(
@@ -897,20 +930,30 @@ export default function ProviderPatients() {
                       {pet.species ? ` · ${pet.species}` : ''}
                     </p>
                   </div>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="h-7 gap-1 text-[10px]"
-                    disabled={resendingId === pet.id}
-                    onClick={() => handleResendInvitation(pet.id)}
-                  >
-                    {resendingId === pet.id ? (
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <Mail className="h-3 w-3" />
-                    )}
-                    {pet.owner_invitation_sent_at ? 'Reenviar' : 'Enviar'}
-                  </Button>
+                  <div className="flex gap-1 flex-shrink-0">
+                    <a href={LINKS.petClinicalVet(pet.id)}>
+                      <Button
+                        size="sm"
+                        className="h-7 gap-1 text-[10px] bg-teal-600 hover:bg-teal-700"
+                      >
+                        Ficha
+                      </Button>
+                    </a>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 gap-1 text-[10px]"
+                      disabled={resendingId === pet.id}
+                      onClick={() => handleResendInvitation(pet.id)}
+                    >
+                      {resendingId === pet.id ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <Mail className="h-3 w-3" />
+                      )}
+                      {pet.owner_invitation_sent_at ? 'Reenviar' : 'Enviar'}
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
