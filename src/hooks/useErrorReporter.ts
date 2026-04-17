@@ -7,6 +7,27 @@ const SUPABASE_URL =
 
 let initialized = false;
 
+// Ruido conocido del navegador/libs que NO debe inflar error_logs.
+// Estos errores son benignos o fuera de nuestro control:
+//   - "Lock was stolen..." → Supabase auth multi-tab (no rompe nada)
+//   - "Script error." → 3rd party con CORS bloqueado (sin stack util)
+//   - "ResizeObserver loop..." → conocido de Chrome, inofensivo
+//   - "Non-Error promise rejection captured" → promesas rejectadas con valor no-Error
+//   - "AbortError" / "The operation was aborted" → fetch cancelado intencionalmente
+const IGNORED_MESSAGE_PATTERNS = [
+  /lock was stolen/i,
+  /^script error\.?$/i,
+  /resizeobserver loop (limit exceeded|completed with undelivered notifications)/i,
+  /non-error promise rejection captured/i,
+  /the operation was aborted/i,
+  /^aborterror/i,
+  /network request failed/i, // usualmente offline temporal
+];
+
+function shouldIgnore(message: string): boolean {
+  return IGNORED_MESSAGE_PATTERNS.some((p) => p.test(message));
+}
+
 async function sendError(payload: {
   source: string;
   severity: string;
@@ -15,6 +36,8 @@ async function sendError(payload: {
   context?: Record<string, unknown>;
   user_id?: string;
 }) {
+  if (shouldIgnore(payload.message)) return; // ruido benigno, no reportar
+
   try {
     const {
       data: { session },

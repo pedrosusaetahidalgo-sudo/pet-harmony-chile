@@ -15,8 +15,14 @@ const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 export const supabase = createClient<any>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
   auth: {
     storage: localStorage,
+    // storageKey especifico evita colisiones con otros clients Supabase en la
+    // misma pagina (antes generaba "Lock was stolen" warnings masivos).
+    storageKey: 'pf-auth-v1',
     persistSession: true,
     autoRefreshToken: true,
+    // Evita que Supabase intente usar el Web Locks API (causa race conditions
+    // con multiples tabs); confiamos en localStorage para sincronizar sesion.
+    lock: (_name, _acquireTimeout, fn) => fn(),
   },
   global: {
     headers: { 'x-client-info': 'paw-friend-web' },
