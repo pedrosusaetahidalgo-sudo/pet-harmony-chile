@@ -8,6 +8,7 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/cors.ts';
+import { withTelemetry } from '../_shared/telemetry.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
@@ -103,159 +104,161 @@ function buildEmailHTML(nombre: string, comunas: string, mensajeTexto: string): 
 </html>`;
 }
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'No autorizado' }), {
-        status: 401,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+Deno.serve(
+  withTelemetry('send-lead-outreach', async (req) => {
+    if (req.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders });
     }
 
-    const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-    const supabaseUser = createClient(SUPABASE_URL, authHeader.replace('Bearer ', ''), {
-      global: { headers: { Authorization: authHeader } },
-    });
+    try {
+      const authHeader = req.headers.get('Authorization');
+      if (!authHeader) {
+        return new Response(JSON.stringify({ error: 'No autorizado' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
 
-    const {
-      data: { user },
-    } = await supabaseUser.auth.getUser();
-    if (!user) {
-      return new Response(JSON.stringify({ error: 'No autorizado' }), {
-        status: 401,
+      const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+      const supabaseUser = createClient(SUPABASE_URL, authHeader.replace('Bearer ', ''), {
+        global: { headers: { Authorization: authHeader } },
+      });
+
+      const {
+        data: { user },
+      } = await supabaseUser.auth.getUser();
+      if (!user) {
+        return new Response(JSON.stringify({ error: 'No autorizado' }), {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      const { data: adminCheck } = await supabaseAdmin
+        .from('admin_access')
+        .select('is_active')
+        .eq('user_id', user.id)
+        .eq('is_active', true)
+        .single();
+
+      if (!adminCheck) {
+        return new Response(JSON.stringify({ error: 'Se requiere rol admin' }), {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      const body: OutreachRequest = await req.json();
+      const { lead_ids, canal, template, asunto } = body;
+
+      if (!lead_ids?.length || !canal || !template) {
+        return new Response(JSON.stringify({ error: 'Faltan parametros' }), {
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      const { data: leads, error: leadsError } = await supabaseAdmin
+
+        .schema('leads' as unknown as string)
+        .from('vet_profesionales')
+        .select('id, nombre_completo, email, whatsapp, comunas_cobertura')
+        .in('id', lead_ids);
+
+      if (leadsError) {
+        console.error('Error obteniendo leads:', leadsError);
+        return new Response(JSON.stringify({ error: leadsError.message }), {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      let enviados = 0;
+      let errores = 0;
+      const resultados: { id: string; status: string; detail?: string }[] = [];
+
+      for (const lead of leads || []) {
+        const nombre = lead.nombre_completo?.split(' ')[0] || '';
+        const comunas = (lead.comunas_cobertura || []).join(', ') || 'tu zona';
+        const mensajeTexto = template.replace(/{nombre}/g, nombre).replace(/{comunas}/g, comunas);
+
+        if (canal === 'email') {
+          if (!lead.email) {
+            errores++;
+            resultados.push({ id: lead.id, status: 'skipped', detail: 'Sin email' });
+            continue;
+          }
+
+          if (!RESEND_API_KEY) {
+            // Sin Resend: fallback a mailto link
+            const mailtoUrl = `mailto:${lead.email}?subject=${encodeURIComponent(asunto || 'Invitacion Paw Friend')}&body=${encodeURIComponent(mensajeTexto)}`;
+            resultados.push({ id: lead.id, status: 'mailto_link', detail: mailtoUrl });
+            enviados++;
+            continue;
+          }
+
+          try {
+            const htmlEmail = buildEmailHTML(nombre, comunas, mensajeTexto);
+            const emailRes = await fetch('https://api.resend.com/emails', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${RESEND_API_KEY}`,
+              },
+              body: JSON.stringify({
+                from: 'Pedro de Paw Friend <pedro@pawfriend.cl>',
+                to: [lead.email],
+                subject: asunto || 'Paw Friend te invita: tu perfil veterinario gratis',
+                html: htmlEmail,
+                text: mensajeTexto, // Fallback texto plano
+              }),
+            });
+
+            if (emailRes.ok) {
+              enviados++;
+              resultados.push({ id: lead.id, status: 'sent' });
+            } else {
+              const errDetail = await emailRes.text();
+              errores++;
+              resultados.push({ id: lead.id, status: 'error', detail: errDetail });
+            }
+          } catch (e) {
+            errores++;
+            resultados.push({ id: lead.id, status: 'error', detail: String(e) });
+          }
+        } else if (canal === 'whatsapp') {
+          if (!lead.whatsapp) {
+            errores++;
+            resultados.push({ id: lead.id, status: 'skipped', detail: 'Sin WhatsApp' });
+            continue;
+          }
+          const waUrl = `https://wa.me/${lead.whatsapp.replace('+', '')}?text=${encodeURIComponent(mensajeTexto)}`;
+          enviados++;
+          resultados.push({ id: lead.id, status: 'wa_link', detail: waUrl });
+        }
+
+        // Registrar contacto
+        await supabaseAdmin.rpc('registrar_contacto_lead', {
+          p_lead_id: lead.id,
+          p_canal: canal,
+          p_notas: `Invitacion ${canal} enviada via admin`,
+          p_template: canal === 'email' ? 'invitacion_email' : 'invitacion_whatsapp',
+        });
+
+        if (canal === 'email') {
+          await new Promise((r) => setTimeout(r, 500));
+        }
+      }
+
+      return new Response(JSON.stringify({ enviados, errores, resultados }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
-    }
-
-    const { data: adminCheck } = await supabaseAdmin
-      .from('admin_access')
-      .select('is_active')
-      .eq('user_id', user.id)
-      .eq('is_active', true)
-      .single();
-
-    if (!adminCheck) {
-      return new Response(JSON.stringify({ error: 'Se requiere rol admin' }), {
-        status: 403,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const body: OutreachRequest = await req.json();
-    const { lead_ids, canal, template, asunto } = body;
-
-    if (!lead_ids?.length || !canal || !template) {
-      return new Response(JSON.stringify({ error: 'Faltan parametros' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const { data: leads, error: leadsError } = await supabaseAdmin
-
-      .schema('leads' as unknown as string)
-      .from('vet_profesionales')
-      .select('id, nombre_completo, email, whatsapp, comunas_cobertura')
-      .in('id', lead_ids);
-
-    if (leadsError) {
-      console.error('Error obteniendo leads:', leadsError);
-      return new Response(JSON.stringify({ error: leadsError.message }), {
+    } catch (e) {
+      console.error('Error en send-lead-outreach:', e);
+      return new Response(JSON.stringify({ error: String(e) }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-
-    let enviados = 0;
-    let errores = 0;
-    const resultados: { id: string; status: string; detail?: string }[] = [];
-
-    for (const lead of leads || []) {
-      const nombre = lead.nombre_completo?.split(' ')[0] || '';
-      const comunas = (lead.comunas_cobertura || []).join(', ') || 'tu zona';
-      const mensajeTexto = template.replace(/{nombre}/g, nombre).replace(/{comunas}/g, comunas);
-
-      if (canal === 'email') {
-        if (!lead.email) {
-          errores++;
-          resultados.push({ id: lead.id, status: 'skipped', detail: 'Sin email' });
-          continue;
-        }
-
-        if (!RESEND_API_KEY) {
-          // Sin Resend: fallback a mailto link
-          const mailtoUrl = `mailto:${lead.email}?subject=${encodeURIComponent(asunto || 'Invitacion Paw Friend')}&body=${encodeURIComponent(mensajeTexto)}`;
-          resultados.push({ id: lead.id, status: 'mailto_link', detail: mailtoUrl });
-          enviados++;
-          continue;
-        }
-
-        try {
-          const htmlEmail = buildEmailHTML(nombre, comunas, mensajeTexto);
-          const emailRes = await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${RESEND_API_KEY}`,
-            },
-            body: JSON.stringify({
-              from: 'Pedro de Paw Friend <pedro@pawfriend.cl>',
-              to: [lead.email],
-              subject: asunto || 'Paw Friend te invita: tu perfil veterinario gratis',
-              html: htmlEmail,
-              text: mensajeTexto, // Fallback texto plano
-            }),
-          });
-
-          if (emailRes.ok) {
-            enviados++;
-            resultados.push({ id: lead.id, status: 'sent' });
-          } else {
-            const errDetail = await emailRes.text();
-            errores++;
-            resultados.push({ id: lead.id, status: 'error', detail: errDetail });
-          }
-        } catch (e) {
-          errores++;
-          resultados.push({ id: lead.id, status: 'error', detail: String(e) });
-        }
-      } else if (canal === 'whatsapp') {
-        if (!lead.whatsapp) {
-          errores++;
-          resultados.push({ id: lead.id, status: 'skipped', detail: 'Sin WhatsApp' });
-          continue;
-        }
-        const waUrl = `https://wa.me/${lead.whatsapp.replace('+', '')}?text=${encodeURIComponent(mensajeTexto)}`;
-        enviados++;
-        resultados.push({ id: lead.id, status: 'wa_link', detail: waUrl });
-      }
-
-      // Registrar contacto
-      await supabaseAdmin.rpc('registrar_contacto_lead', {
-        p_lead_id: lead.id,
-        p_canal: canal,
-        p_notas: `Invitacion ${canal} enviada via admin`,
-        p_template: canal === 'email' ? 'invitacion_email' : 'invitacion_whatsapp',
-      });
-
-      if (canal === 'email') {
-        await new Promise((r) => setTimeout(r, 500));
-      }
-    }
-
-    return new Response(JSON.stringify({ enviados, errores, resultados }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  } catch (e) {
-    console.error('Error en send-lead-outreach:', e);
-    return new Response(JSON.stringify({ error: String(e) }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-});
+  })
+);

@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { withTelemetry } from '../_shared/telemetry.ts';
 import {
   corsHeaders,
   jsonResponse,
@@ -40,150 +41,152 @@ const FALLBACK_RESULT: VerificationResult = {
   suggestions: ['Espera la revisión manual de nuestro equipo.'],
 };
 
-Deno.serve(async (req: Request) => {
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  try {
-    // Auth: accept both user token and service role calls
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) return errorResponse('Authorization required', 401);
-
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
-
-    const { verification_request_id } = await req.json();
-    if (!verification_request_id) {
-      return errorResponse('verification_request_id is required', 400);
+Deno.serve(
+  withTelemetry('verify-service-provider', async (req: Request) => {
+    if (req.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders });
     }
 
-    // 1. Load the verification request
-    const { data: request, error: reqErr } = await supabaseAdmin
-      .from('verification_requests')
-      .select('*')
-      .eq('id', verification_request_id)
-      .maybeSingle();
+    try {
+      // Auth: accept both user token and service role calls
+      const authHeader = req.headers.get('Authorization');
+      if (!authHeader) return errorResponse('Authorization required', 401);
 
-    if (reqErr || !request) {
-      return errorResponse('Verification request not found', 404);
-    }
-
-    if (request.status !== 'pendiente') {
-      return jsonResponse({ message: 'Already processed', status: request.status });
-    }
-
-    // 2. Load user profile
-    const { data: profile } = await supabaseAdmin
-      .from('profiles')
-      .select('display_name, avatar_url, bio')
-      .eq('id', request.user_id)
-      .maybeSingle();
-
-    // 3. Load service provider profile if exists
-    const { data: provider } = await supabaseAdmin
-      .from('service_providers')
-      .select(
-        'display_name, bio, avatar_url, experience_years, specialties, service_areas, license_number'
-      )
-      .eq('user_id', request.user_id)
-      .maybeSingle();
-
-    const displayName = provider?.display_name || profile?.display_name || 'Sin nombre';
-    const bio = provider?.bio || profile?.bio || '';
-    const hasPhoto = !!(provider?.avatar_url || profile?.avatar_url);
-    const notes = request.notes || '';
-    const documentUrls: string[] = request.document_urls || [];
-    const role = request.requested_role;
-
-    // 4. Route by role type
-    let result: VerificationResult;
-
-    if (role === 'veterinarian') {
-      result = await verifyVeterinarian(
-        displayName,
-        bio,
-        hasPhoto,
-        notes,
-        documentUrls,
-        provider,
-        supabaseAdmin
+      const supabaseAdmin = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
       );
-    } else {
-      result = await verifyServiceProvider(
-        role,
-        displayName,
-        bio,
-        hasPhoto,
-        notes,
-        documentUrls,
-        provider
-      );
-    }
 
-    // 5. Update verification request
-    const newStatus = result.approved ? 'aprobado' : 'rechazado';
-    const updateData: Record<string, unknown> = {
-      status: newStatus,
-      reviewed_at: new Date().toISOString(),
-      documents: {
-        ai_verification: {
-          result: result,
-          verified_at: new Date().toISOString(),
-          method: role === 'veterinarian' ? 'ai_ocr_name_match' : 'ai_profile_review',
+      const { verification_request_id } = await req.json();
+      if (!verification_request_id) {
+        return errorResponse('verification_request_id is required', 400);
+      }
+
+      // 1. Load the verification request
+      const { data: request, error: reqErr } = await supabaseAdmin
+        .from('verification_requests')
+        .select('*')
+        .eq('id', verification_request_id)
+        .maybeSingle();
+
+      if (reqErr || !request) {
+        return errorResponse('Verification request not found', 404);
+      }
+
+      if (request.status !== 'pendiente') {
+        return jsonResponse({ message: 'Already processed', status: request.status });
+      }
+
+      // 2. Load user profile
+      const { data: profile } = await supabaseAdmin
+        .from('profiles')
+        .select('display_name, avatar_url, bio')
+        .eq('id', request.user_id)
+        .maybeSingle();
+
+      // 3. Load service provider profile if exists
+      const { data: provider } = await supabaseAdmin
+        .from('service_providers')
+        .select(
+          'display_name, bio, avatar_url, experience_years, specialties, service_areas, license_number'
+        )
+        .eq('user_id', request.user_id)
+        .maybeSingle();
+
+      const displayName = provider?.display_name || profile?.display_name || 'Sin nombre';
+      const bio = provider?.bio || profile?.bio || '';
+      const hasPhoto = !!(provider?.avatar_url || profile?.avatar_url);
+      const notes = request.notes || '';
+      const documentUrls: string[] = request.document_urls || [];
+      const role = request.requested_role;
+
+      // 4. Route by role type
+      let result: VerificationResult;
+
+      if (role === 'veterinarian') {
+        result = await verifyVeterinarian(
+          displayName,
+          bio,
+          hasPhoto,
+          notes,
+          documentUrls,
+          provider,
+          supabaseAdmin
+        );
+      } else {
+        result = await verifyServiceProvider(
+          role,
+          displayName,
+          bio,
+          hasPhoto,
+          notes,
+          documentUrls,
+          provider
+        );
+      }
+
+      // 5. Update verification request
+      const newStatus = result.approved ? 'aprobado' : 'rechazado';
+      const updateData: Record<string, unknown> = {
+        status: newStatus,
+        reviewed_at: new Date().toISOString(),
+        documents: {
+          ai_verification: {
+            result: result,
+            verified_at: new Date().toISOString(),
+            method: role === 'veterinarian' ? 'ai_ocr_name_match' : 'ai_profile_review',
+          },
         },
-      },
-    };
+      };
 
-    await supabaseAdmin
-      .from('verification_requests')
-      .update(updateData)
-      .eq('id', verification_request_id);
+      await supabaseAdmin
+        .from('verification_requests')
+        .update(updateData)
+        .eq('id', verification_request_id);
 
-    // 6. If approved, grant the role
-    if (result.approved) {
-      // Insert role
-      await supabaseAdmin.from('user_roles').upsert(
-        {
+      // 6. If approved, grant the role
+      if (result.approved) {
+        // Insert role
+        await supabaseAdmin.from('user_roles').upsert(
+          {
+            user_id: request.user_id,
+            role: role,
+          },
+          { onConflict: 'user_id,role' }
+        );
+
+        // Create notification
+        await supabaseAdmin.from('notifications').insert({
           user_id: request.user_id,
-          role: role,
-        },
-        { onConflict: 'user_id,role' }
-      );
+          type: 'verification_approved',
+          title: '¡Tu solicitud fue aprobada!',
+          body: `Ya puedes ofrecer tus servicios como ${getRoleLabel(role)} en Paw Friend.`,
+          action_url: '/provider/dashboard',
+          reference_id: verification_request_id,
+        });
+      } else {
+        // Notify rejection with suggestions
+        const suggestionText =
+          result.suggestions.length > 0 ? ' ' + result.suggestions.join('. ') : '';
+        await supabaseAdmin.from('notifications').insert({
+          user_id: request.user_id,
+          type: 'verification_rejected',
+          title: 'Tu solicitud necesita ajustes',
+          body: result.reason + suggestionText,
+          action_url: '/profile',
+          reference_id: verification_request_id,
+        });
+      }
 
-      // Create notification
-      await supabaseAdmin.from('notifications').insert({
-        user_id: request.user_id,
-        type: 'verification_approved',
-        title: '¡Tu solicitud fue aprobada!',
-        body: `Ya puedes ofrecer tus servicios como ${getRoleLabel(role)} en Paw Friend.`,
-        action_url: '/provider/dashboard',
-        reference_id: verification_request_id,
+      return jsonResponse({
+        status: newStatus,
+        verification: result,
       });
-    } else {
-      // Notify rejection with suggestions
-      const suggestionText =
-        result.suggestions.length > 0 ? ' ' + result.suggestions.join('. ') : '';
-      await supabaseAdmin.from('notifications').insert({
-        user_id: request.user_id,
-        type: 'verification_rejected',
-        title: 'Tu solicitud necesita ajustes',
-        body: result.reason + suggestionText,
-        action_url: '/profile',
-        reference_id: verification_request_id,
-      });
+    } catch (error) {
+      return handleEdgeFunctionError(error);
     }
-
-    return jsonResponse({
-      status: newStatus,
-      verification: result,
-    });
-  } catch (error) {
-    return handleEdgeFunctionError(error);
-  }
-});
+  })
+);
 
 // ============================================================
 // Verify Veterinarian: OCR document + name match

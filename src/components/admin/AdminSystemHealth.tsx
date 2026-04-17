@@ -50,14 +50,14 @@ const EDGE_FUNCTIONS: EdgeFunctionMeta[] = [
     name: 'flow-create-subscription',
     category: 'payments',
     critical: true,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Crea suscripcion Premium en Flow.cl',
   },
   {
     name: 'flow-webhook',
     category: 'payments',
     critical: true,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Webhook Flow.cl (activa Premium)',
   },
   // IA (logsHealth: true, usan ai-base)
@@ -100,35 +100,35 @@ const EDGE_FUNCTIONS: EdgeFunctionMeta[] = [
     name: 'breed-tips',
     category: 'ai',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Tips por raza (IA)',
   },
   {
     name: 'bereavement-assistant',
     category: 'ai',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Asistente empatico memorial',
   },
   {
     name: 'medical-suggestions',
     category: 'ai',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Sugerencias medicas IA',
   },
   {
     name: 'ocr-vaccination-card',
     category: 'ai',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'OCR carnet vacunacion',
   },
   {
     name: 'process-consultation-transcript',
     category: 'ai',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Transcripcion audio consulta',
   },
   // Medical / PDF (criticos: joya de la corona)
@@ -136,21 +136,21 @@ const EDGE_FUNCTIONS: EdgeFunctionMeta[] = [
     name: 'generate-medical-summary',
     category: 'medical',
     critical: true,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Ficha medica PDF descargable',
   },
   {
     name: 'generate-medical-zip',
     category: 'medical',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'ZIP documentos medicos',
   },
   {
     name: 'generate-vet-patient-summary',
     category: 'medical',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Resumen consolidado pacientes vet',
   },
   // Google Calendar
@@ -158,28 +158,28 @@ const EDGE_FUNCTIONS: EdgeFunctionMeta[] = [
     name: 'google-calendar-oauth-init',
     category: 'google',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Inicia OAuth Google Calendar',
   },
   {
     name: 'google-calendar-callback',
     category: 'google',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Callback OAuth Google',
   },
   {
     name: 'google-calendar-sync',
     category: 'google',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Sync eventos Google Calendar',
   },
   {
     name: 'google-calendar-disconnect',
     category: 'google',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Desconectar Google Calendar',
   },
   // Cron jobs
@@ -187,42 +187,42 @@ const EDGE_FUNCTIONS: EdgeFunctionMeta[] = [
     name: 'reminder-cron',
     category: 'cron',
     critical: true,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Cron recordatorios (1x/dia)',
   },
   {
     name: 'booking-reminders-cron',
     category: 'cron',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Cron reservas proximas',
   },
   {
     name: 'generate-weekly-owner-reports',
     category: 'cron',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Reporte semanal dueno',
   },
   {
     name: 'generate-weekly-vet-reports',
     category: 'cron',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Reporte semanal vet',
   },
   {
     name: 'generate-sitemap',
     category: 'cron',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Genera sitemap SEO',
   },
   {
     name: 'generate-shelters',
     category: 'cron',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Genera data refugios',
   },
   // Onboarding / provider
@@ -230,21 +230,21 @@ const EDGE_FUNCTIONS: EdgeFunctionMeta[] = [
     name: 'create-patient',
     category: 'onboarding',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Vet crea paciente + Paw Card',
   },
   {
     name: 'send-pet-invitation',
     category: 'onboarding',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Invitar dueno a gestionar mascota',
   },
   {
     name: 'send-lead-outreach',
     category: 'onboarding',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Outreach leads vets (email/WA)',
   },
   // Moderacion
@@ -252,21 +252,21 @@ const EDGE_FUNCTIONS: EdgeFunctionMeta[] = [
     name: 'verify-service-provider',
     category: 'moderation',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Verificacion IA proveedor',
   },
   {
     name: 'verify-vet-document',
     category: 'moderation',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Verificacion IA documento vet',
   },
   {
     name: 'moderate-service-promotion',
     category: 'moderation',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Modera promociones',
   },
   // Notificaciones
@@ -274,7 +274,7 @@ const EDGE_FUNCTIONS: EdgeFunctionMeta[] = [
     name: 'send-whatsapp-reminder',
     category: 'notifications',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'WhatsApp (pend. verif. Meta)',
   },
   // Sistema
@@ -282,14 +282,14 @@ const EDGE_FUNCTIONS: EdgeFunctionMeta[] = [
     name: 'log-error',
     category: 'system',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Error logging centralizado',
   },
   {
     name: 'feedback-admin',
     category: 'system',
     critical: false,
-    logsHealth: false,
+    logsHealth: true,
     description: 'Admin feedback endpoint',
   },
 ];
@@ -913,9 +913,10 @@ export default function AdminSystemHealth() {
             </div>
           )}
           <p className="text-[10px] text-slate-600 mt-3">
-            Solo las 5 funciones IA registran historial (usan{' '}
-            <span className="font-mono">logEdgeFunctionCall</span>). Para el resto, usa el ping en
-            vivo o revisa errores en <span className="font-mono">error_logs</span>.
+            Las 34 funciones registran telemetría al invocarse (wrapper{' '}
+            <span className="font-mono">withTelemetry</span> en{' '}
+            <span className="font-mono">_shared/telemetry.ts</span>). Si una aparece "Sin datos", es
+            porque no se ha invocado post-deploy. Usa ping en vivo para verificar deployment.
           </p>
         </CardContent>
       </Card>

@@ -27,6 +27,7 @@ import {
 } from 'https://esm.sh/pdf-lib@1.17.1';
 import { LOGO_PNG_BASE64 } from './logo.ts';
 import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
+import { withTelemetry } from '../_shared/telemetry.ts';
 
 // ── CORS dinamico ──
 const ALLOWED_ORIGINS = ['https://pawfriend.cl', 'http://localhost:8080', 'http://localhost:5173'];
@@ -794,874 +795,898 @@ class PdfBuilder {
 // Main serve
 // =====================================================================
 
-serve(async (req) => {
-  const corsHeaders = getCorsHeaders(req);
+serve(
+  withTelemetry('generate-medical-summary', async (req) => {
+    const corsHeaders = getCorsHeaders(req);
 
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
-  }
-
-  try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
-
-    const body = await req.json();
-    const pet_id = body.pet_id;
-    const mode = body.mode === 'complete' ? 'complete' : 'medical';
-    const storeInStorage = body.store === true; // Only upload to storage when explicitly asked (for sharing)
-    const shareToken = body.token; // Public share token (for unauthenticated access via /medical-share/:token)
-    if (!pet_id || typeof pet_id !== 'string') throw new Error('pet_id is required');
-
-    // ── Auth: two paths — authenticated user OR valid share token ──
-    // Note: supabase.functions.invoke always sends an Authorization header (anon key
-    // or user JWT). For unauthenticated visitors with a share token, getUser() will
-    // fail — in that case we fall through to the share token path.
-    const authHeader = req.headers.get('Authorization');
-    let isPublicShareAccess = false;
-    let authenticatedUserId: string | null = null;
-
-    if (authHeader) {
-      const jwtToken = authHeader.replace('Bearer ', '');
-      const { data: userData } = await supabase.auth.getUser(jwtToken);
-      if (userData?.user) {
-        authenticatedUserId = userData.user.id;
-      }
+    if (req.method === 'OPTIONS') {
+      return new Response(null, { headers: corsHeaders });
     }
 
-    if (authenticatedUserId) {
-      // Path 1: Authenticated user (owner or linked vet)
+    try {
+      const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+      const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+      const supabase = createClient(supabaseUrl, supabaseKey);
 
-      // ── Rate limit (5 req/min — PDF generation is heavy) ──
-      const quota = await checkAiQuota(authenticatedUserId, { limit: 5, windowSeconds: 60 });
-      if (!quota.allowed) {
-        return rateLimitResponse(quota, corsHeaders);
-      }
+      const body = await req.json();
+      const pet_id = body.pet_id;
+      const mode = body.mode === 'complete' ? 'complete' : 'medical';
+      const storeInStorage = body.store === true; // Only upload to storage when explicitly asked (for sharing)
+      const shareToken = body.token; // Public share token (for unauthenticated access via /medical-share/:token)
+      if (!pet_id || typeof pet_id !== 'string') throw new Error('pet_id is required');
 
-      // ── Ownership / linked-vet check ──
-      const { data: petOwnership, error: ownershipError } = await supabase
-        .from('pets')
-        .select('owner_id')
-        .eq('id', pet_id)
-        .single();
+      // ── Auth: two paths — authenticated user OR valid share token ──
+      // Note: supabase.functions.invoke always sends an Authorization header (anon key
+      // or user JWT). For unauthenticated visitors with a share token, getUser() will
+      // fail — in that case we fall through to the share token path.
+      const authHeader = req.headers.get('Authorization');
+      let isPublicShareAccess = false;
+      let authenticatedUserId: string | null = null;
 
-      if (ownershipError || !petOwnership) throw new Error('Pet not found');
-      const isOwner = petOwnership.owner_id === authenticatedUserId;
-
-      // Allow linked vets to generate PDF too
-      let isLinkedVet = false;
-      if (!isOwner) {
-        const { data: providerRow } = await supabase
-          .from('service_providers')
-          .select('id')
-          .eq('user_id', authenticatedUserId)
-          .maybeSingle();
-        if (providerRow?.id) {
-          const { data: link } = await supabase
-            .from('pet_vet_links')
-            .select('id')
-            .eq('pet_id', pet_id)
-            .eq('provider_id', providerRow.id)
-            .eq('status', 'active')
-            .maybeSingle();
-          isLinkedVet = !!link;
+      if (authHeader) {
+        const jwtToken = authHeader.replace('Bearer ', '');
+        const { data: userData } = await supabase.auth.getUser(jwtToken);
+        if (userData?.user) {
+          authenticatedUserId = userData.user.id;
         }
       }
 
-      if (!isOwner && !isLinkedVet) {
-        return new Response(JSON.stringify({ success: false, error: 'Forbidden' }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 403,
-        });
-      }
-    } else if (shareToken && typeof shareToken === 'string') {
-      // Path 2: Public access via valid share token (from /medical-share/:token)
-      const { data: tokenData, error: tokenErr } = await supabase
-        .from('medical_share_tokens')
-        .select('id, pet_id, expires_at, is_revoked')
-        .eq('token', shareToken)
-        .maybeSingle();
+      if (authenticatedUserId) {
+        // Path 1: Authenticated user (owner or linked vet)
 
-      if (tokenErr || !tokenData) {
+        // ── Rate limit (5 req/min — PDF generation is heavy) ──
+        const quota = await checkAiQuota(authenticatedUserId, { limit: 5, windowSeconds: 60 });
+        if (!quota.allowed) {
+          return rateLimitResponse(quota, corsHeaders);
+        }
+
+        // ── Ownership / linked-vet check ──
+        const { data: petOwnership, error: ownershipError } = await supabase
+          .from('pets')
+          .select('owner_id')
+          .eq('id', pet_id)
+          .single();
+
+        if (ownershipError || !petOwnership) throw new Error('Pet not found');
+        const isOwner = petOwnership.owner_id === authenticatedUserId;
+
+        // Allow linked vets to generate PDF too
+        let isLinkedVet = false;
+        if (!isOwner) {
+          const { data: providerRow } = await supabase
+            .from('service_providers')
+            .select('id')
+            .eq('user_id', authenticatedUserId)
+            .maybeSingle();
+          if (providerRow?.id) {
+            const { data: link } = await supabase
+              .from('pet_vet_links')
+              .select('id')
+              .eq('pet_id', pet_id)
+              .eq('provider_id', providerRow.id)
+              .eq('status', 'active')
+              .maybeSingle();
+            isLinkedVet = !!link;
+          }
+        }
+
+        if (!isOwner && !isLinkedVet) {
+          return new Response(JSON.stringify({ success: false, error: 'Forbidden' }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 403,
+          });
+        }
+      } else if (shareToken && typeof shareToken === 'string') {
+        // Path 2: Public access via valid share token (from /medical-share/:token)
+        const { data: tokenData, error: tokenErr } = await supabase
+          .from('medical_share_tokens')
+          .select('id, pet_id, expires_at, is_revoked')
+          .eq('token', shareToken)
+          .maybeSingle();
+
+        if (tokenErr || !tokenData) {
+          return new Response(
+            JSON.stringify({ success: false, error: 'Token de compartir invalido' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
+          );
+        }
+
+        if (tokenData.is_revoked) {
+          return new Response(
+            JSON.stringify({ success: false, error: 'Este enlace fue revocado' }),
+            {
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              status: 403,
+            }
+          );
+        }
+
+        if (new Date(tokenData.expires_at) < new Date()) {
+          return new Response(
+            JSON.stringify({ success: false, error: 'Este enlace ha expirado' }),
+            {
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              status: 410,
+            }
+          );
+        }
+
+        // The token must correspond to the requested pet
+        if (tokenData.pet_id !== pet_id) {
+          return new Response(
+            JSON.stringify({ success: false, error: 'Token no corresponde a esta mascota' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
+          );
+        }
+
+        // Rate limit by token id (3 req/min for public access — more restrictive)
+        const quota = await checkAiQuota(`share_${tokenData.id}`, { limit: 3, windowSeconds: 60 });
+        if (!quota.allowed) {
+          return rateLimitResponse(quota, corsHeaders);
+        }
+
+        isPublicShareAccess = true;
+      } else {
         return new Response(
-          JSON.stringify({ success: false, error: 'Token de compartir invalido' }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
+          JSON.stringify({
+            success: false,
+            error: 'Se requiere autenticacion o token de compartir',
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
         );
       }
 
-      if (tokenData.is_revoked) {
-        return new Response(JSON.stringify({ success: false, error: 'Este enlace fue revocado' }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 403,
-        });
-      }
+      // ── Premium plan check: DESACTIVADO durante pivot médico ──
+      // Reactivar cuando USER_PREMIUM=true en el frontend.
+      // const { data: profileData } = await supabase
+      //   .from('profiles').select('is_premium').eq('id', userData.user.id).single();
+      // if (profileData?.is_premium !== true) {
+      //   return new Response(
+      //     JSON.stringify({ success: false, error: 'Exportar PDF requiere plan Premium' }),
+      //     { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 402 }
+      //   );
+      // }
 
-      if (new Date(tokenData.expires_at) < new Date()) {
-        return new Response(JSON.stringify({ success: false, error: 'Este enlace ha expirado' }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: 410,
-        });
-      }
+      // Public share access: force medical-only mode (no routines/habits exposed)
+      const effectiveMode = isPublicShareAccess ? 'medical' : mode;
 
-      // The token must correspond to the requested pet
-      if (tokenData.pet_id !== pet_id) {
-        return new Response(
-          JSON.stringify({ success: false, error: 'Token no corresponde a esta mascota' }),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 403 }
-        );
-      }
-
-      // Rate limit by token id (3 req/min for public access — more restrictive)
-      const quota = await checkAiQuota(`share_${tokenData.id}`, { limit: 3, windowSeconds: 60 });
-      if (!quota.allowed) {
-        return rateLimitResponse(quota, corsHeaders);
-      }
-
-      isPublicShareAccess = true;
-    } else {
-      return new Response(
-        JSON.stringify({ success: false, error: 'Se requiere autenticacion o token de compartir' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401 }
+      // ── Fetch data via updated RPC (v4 supports mode) ──
+      const { data: summaryData, error: summaryError } = await supabase.rpc(
+        'get_medical_summary_data',
+        { p_pet_id: pet_id, p_mode: effectiveMode }
       );
-    }
+      if (summaryError) throw summaryError;
+      if (!summaryData) throw new Error('No data found');
 
-    // ── Premium plan check: DESACTIVADO durante pivot médico ──
-    // Reactivar cuando USER_PREMIUM=true en el frontend.
-    // const { data: profileData } = await supabase
-    //   .from('profiles').select('is_premium').eq('id', userData.user.id).single();
-    // if (profileData?.is_premium !== true) {
-    //   return new Response(
-    //     JSON.stringify({ success: false, error: 'Exportar PDF requiere plan Premium' }),
-    //     { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 402 }
-    //   );
-    // }
+      const pet = summaryData.pet;
+      const owner = summaryData.owner;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const allRecords: any[] = summaryData.all_records || [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const vetNotes: any[] = summaryData.vet_notes || [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const routines: any[] = summaryData.routines || [];
 
-    // Public share access: force medical-only mode (no routines/habits exposed)
-    const effectiveMode = isPublicShareAccess ? 'medical' : mode;
+      // ══════════════════════════════════════════════════════════
+      // BUILD PDF v3 — Chronological Timeline
+      // ══════════════════════════════════════════════════════════
 
-    // ── Fetch data via updated RPC (v4 supports mode) ──
-    const { data: summaryData, error: summaryError } = await supabase.rpc(
-      'get_medical_summary_data',
-      { p_pet_id: pet_id, p_mode: effectiveMode }
-    );
-    if (summaryError) throw summaryError;
-    if (!summaryData) throw new Error('No data found');
+      const pdfDoc = await PDFDocument.create();
+      const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      const bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
 
-    const pet = summaryData.pet;
-    const owner = summaryData.owner;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const allRecords: any[] = summaryData.all_records || [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const vetNotes: any[] = summaryData.vet_notes || [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const routines: any[] = summaryData.routines || [];
-
-    // ══════════════════════════════════════════════════════════
-    // BUILD PDF v3 — Chronological Timeline
-    // ══════════════════════════════════════════════════════════
-
-    const pdfDoc = await PDFDocument.create();
-    const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
-    const bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-
-    // Logo
-    const logoBytes = getLogoBytes();
-    let logoImage: PDFImage | null = null;
-    if (logoBytes) {
-      try {
-        logoImage = await pdfDoc.embedPng(logoBytes);
-      } catch {
-        /* fallback */
+      // Logo
+      const logoBytes = getLogoBytes();
+      let logoImage: PDFImage | null = null;
+      if (logoBytes) {
+        try {
+          logoImage = await pdfDoc.embedPng(logoBytes);
+        } catch {
+          /* fallback */
+        }
       }
-    }
 
-    const verificationCode = await generateVerificationCode(pet_id, Date.now());
+      const verificationCode = await generateVerificationCode(pet_id, Date.now());
 
-    const pdf = new PdfBuilder(pdfDoc, helvetica, bold, logoImage);
+      const pdf = new PdfBuilder(pdfDoc, helvetica, bold, logoImage);
 
-    // ── PAGE 1: Header ──
-    pdf.newPage();
-    pdf.drawHeader();
+      // ── PAGE 1: Header ──
+      pdf.newPage();
+      pdf.drawHeader();
 
-    // ── SECTION: Identificacion de la mascota ──
-    pdf.drawSectionHeader('Identificacion de la mascota', DARK_PURPLE, LIGHT_PURPLE);
-    pdf.y -= 4;
-
-    const petName = properNoun(pet.name) || 'N/A';
-    const petSpecies = speciesLabel(pet.species);
-    const petBreed = pet.breed ? smartSentenceCase(pet.breed) : '';
-    const speciesBreed = petBreed ? `${petSpecies} - ${petBreed}` : petSpecies;
-    const petAge = calcAge(pet.birth_date);
-    const ageDetail = pet.birth_date ? `${petAge} (nac. ${formatDate(pet.birth_date)})` : petAge;
-
-    pdf.drawFieldPair('Nombre:', petName, 'Especie / Raza:', speciesBreed);
-    pdf.drawFieldPair('Edad:', ageDetail, 'Peso:', pet.weight ? `${pet.weight} kg` : 'N/A');
-    pdf.drawFieldPair(
-      'Sexo:',
-      genderLabel(pet.gender),
-      'Esterilizado/a:',
-      pet.neutered ? (pet.neutered_date ? `Si (${formatDate(pet.neutered_date)})` : 'Si') : 'No'
-    );
-    pdf.drawFieldPair(
-      'Microchip:',
-      pet.microchip_number || 'No registrado',
-      'Grupo sanguineo:',
-      pet.blood_type || 'No registrado'
-    );
-    if (pet.paw_card_id) {
-      pdf.drawField('Paw Card ID:', pet.paw_card_id);
-    }
-
-    // ── SECTION: Responsable ──
-    pdf.drawSectionHeader('Responsable', DARK_PURPLE, LIGHT_PURPLE);
-    pdf.y -= 4;
-
-    pdf.drawFieldPair(
-      'Nombre:',
-      titleCase(owner.display_name) || 'N/A',
-      'Email:',
-      owner.email || 'N/A'
-    );
-    if (pet.emergency_vet_name || pet.emergency_vet_phone) {
-      pdf.drawFieldPair(
-        'Vet emergencia:',
-        titleCase(pet.emergency_vet_name) || 'N/A',
-        'Tel. emergencia:',
-        pet.emergency_vet_phone || 'N/A'
-      );
-    }
-    if (pet.preferred_clinic) {
-      pdf.drawField('Clinica preferida:', titleCase(pet.preferred_clinic));
-    }
-    if (pet.insurance_provider) {
-      const insurance = pet.insurance_policy
-        ? `${titleCase(pet.insurance_provider)} (poliza ${pet.insurance_policy})`
-        : titleCase(pet.insurance_provider);
-      pdf.drawField('Seguro:', insurance);
-    }
-
-    // ── SECTION: Alertas clinicas (solo si hay datos) ──
-    const hasAllergiesFood = pet.allergies_food?.length > 0;
-    const hasAllergiesMed = pet.allergies_medication?.length > 0;
-    const hasAllergiesEnv = pet.allergies_environmental?.length > 0;
-    const hasAllergiesLegacy = pet.allergies?.length > 0;
-    const hasAnyAllergy =
-      hasAllergiesFood || hasAllergiesMed || hasAllergiesEnv || hasAllergiesLegacy;
-
-    const hasConditionsDetail = pet.chronic_conditions_detail?.length > 0;
-    const hasConditionsLegacy = pet.chronic_conditions?.length > 0;
-    const hasAnyCondition = hasConditionsDetail || hasConditionsLegacy;
-
-    const hasMedications =
-      Array.isArray(pet.current_medications) && pet.current_medications.length > 0;
-
-    if (hasAnyAllergy || hasAnyCondition || hasMedications) {
-      pdf.drawSectionHeader('Alertas clinicas', ALERT_RED, LIGHT_RED);
+      // ── SECTION: Identificacion de la mascota ──
+      pdf.drawSectionHeader('Identificacion de la mascota', DARK_PURPLE, LIGHT_PURPLE);
       pdf.y -= 4;
 
-      if (hasAnyAllergy) {
-        pdf.drawText('ALERGIAS', { size: 8.5, font: bold, color: ALERT_RED, x: MARGIN_L + 10 });
-        pdf.y -= 12;
+      const petName = properNoun(pet.name) || 'N/A';
+      const petSpecies = speciesLabel(pet.species);
+      const petBreed = pet.breed ? smartSentenceCase(pet.breed) : '';
+      const speciesBreed = petBreed ? `${petSpecies} - ${petBreed}` : petSpecies;
+      const petAge = calcAge(pet.birth_date);
+      const ageDetail = pet.birth_date ? `${petAge} (nac. ${formatDate(pet.birth_date)})` : petAge;
 
-        if (hasAllergiesFood) {
-          pdf.drawBullet(
-            `Alimento: ${pet.allergies_food.map((a: string) => smartSentenceCase(a)).join(', ')}`,
-            { color: TEXT_DARK }
-          );
-        }
-        if (hasAllergiesMed) {
-          pdf.drawBullet(
-            `Medicamento: ${pet.allergies_medication.map((a: string) => smartSentenceCase(a)).join(', ')}`,
-            { color: TEXT_DARK }
-          );
-        }
-        if (hasAllergiesEnv) {
-          pdf.drawBullet(
-            `Ambiental: ${pet.allergies_environmental.map((a: string) => smartSentenceCase(a)).join(', ')}`,
-            { color: TEXT_DARK }
-          );
-        }
-        if (hasAllergiesLegacy && !hasAllergiesFood && !hasAllergiesMed && !hasAllergiesEnv) {
-          pdf.drawBullet(pet.allergies.map((a: string) => smartSentenceCase(a)).join(', '), {
-            color: TEXT_DARK,
-          });
-        }
-        pdf.y -= 4;
+      pdf.drawFieldPair('Nombre:', petName, 'Especie / Raza:', speciesBreed);
+      pdf.drawFieldPair('Edad:', ageDetail, 'Peso:', pet.weight ? `${pet.weight} kg` : 'N/A');
+      pdf.drawFieldPair(
+        'Sexo:',
+        genderLabel(pet.gender),
+        'Esterilizado/a:',
+        pet.neutered ? (pet.neutered_date ? `Si (${formatDate(pet.neutered_date)})` : 'Si') : 'No'
+      );
+      pdf.drawFieldPair(
+        'Microchip:',
+        pet.microchip_number || 'No registrado',
+        'Grupo sanguineo:',
+        pet.blood_type || 'No registrado'
+      );
+      if (pet.paw_card_id) {
+        pdf.drawField('Paw Card ID:', pet.paw_card_id);
       }
 
-      if (hasAnyCondition) {
-        pdf.drawText('CONDICIONES CRONICAS', {
-          size: 8.5,
-          font: bold,
-          color: ALERT_RED,
-          x: MARGIN_L + 10,
-        });
-        pdf.y -= 12;
+      // ── SECTION: Responsable ──
+      pdf.drawSectionHeader('Responsable', DARK_PURPLE, LIGHT_PURPLE);
+      pdf.y -= 4;
 
-        if (hasConditionsDetail) {
-          for (const c of pet.chronic_conditions_detail) {
-            const parts = [smartSentenceCase(c.condition || c.name || JSON.stringify(c))];
-            if (c.diagnosed_date) parts.push(`desde ${formatDate(c.diagnosed_date)}`);
-            if (c.severity) parts.push(smartSentenceCase(c.severity));
-            pdf.drawBullet(parts.join(', '), { color: TEXT_DARK });
+      pdf.drawFieldPair(
+        'Nombre:',
+        titleCase(owner.display_name) || 'N/A',
+        'Email:',
+        owner.email || 'N/A'
+      );
+      if (pet.emergency_vet_name || pet.emergency_vet_phone) {
+        pdf.drawFieldPair(
+          'Vet emergencia:',
+          titleCase(pet.emergency_vet_name) || 'N/A',
+          'Tel. emergencia:',
+          pet.emergency_vet_phone || 'N/A'
+        );
+      }
+      if (pet.preferred_clinic) {
+        pdf.drawField('Clinica preferida:', titleCase(pet.preferred_clinic));
+      }
+      if (pet.insurance_provider) {
+        const insurance = pet.insurance_policy
+          ? `${titleCase(pet.insurance_provider)} (poliza ${pet.insurance_policy})`
+          : titleCase(pet.insurance_provider);
+        pdf.drawField('Seguro:', insurance);
+      }
+
+      // ── SECTION: Alertas clinicas (solo si hay datos) ──
+      const hasAllergiesFood = pet.allergies_food?.length > 0;
+      const hasAllergiesMed = pet.allergies_medication?.length > 0;
+      const hasAllergiesEnv = pet.allergies_environmental?.length > 0;
+      const hasAllergiesLegacy = pet.allergies?.length > 0;
+      const hasAnyAllergy =
+        hasAllergiesFood || hasAllergiesMed || hasAllergiesEnv || hasAllergiesLegacy;
+
+      const hasConditionsDetail = pet.chronic_conditions_detail?.length > 0;
+      const hasConditionsLegacy = pet.chronic_conditions?.length > 0;
+      const hasAnyCondition = hasConditionsDetail || hasConditionsLegacy;
+
+      const hasMedications =
+        Array.isArray(pet.current_medications) && pet.current_medications.length > 0;
+
+      if (hasAnyAllergy || hasAnyCondition || hasMedications) {
+        pdf.drawSectionHeader('Alertas clinicas', ALERT_RED, LIGHT_RED);
+        pdf.y -= 4;
+
+        if (hasAnyAllergy) {
+          pdf.drawText('ALERGIAS', { size: 8.5, font: bold, color: ALERT_RED, x: MARGIN_L + 10 });
+          pdf.y -= 12;
+
+          if (hasAllergiesFood) {
+            pdf.drawBullet(
+              `Alimento: ${pet.allergies_food.map((a: string) => smartSentenceCase(a)).join(', ')}`,
+              { color: TEXT_DARK }
+            );
           }
-        } else if (hasConditionsLegacy) {
-          for (const c of pet.chronic_conditions) {
-            pdf.drawBullet(smartSentenceCase(c), { color: TEXT_DARK });
+          if (hasAllergiesMed) {
+            pdf.drawBullet(
+              `Medicamento: ${pet.allergies_medication.map((a: string) => smartSentenceCase(a)).join(', ')}`,
+              { color: TEXT_DARK }
+            );
           }
-        }
-        pdf.y -= 4;
-      }
-
-      if (hasMedications) {
-        pdf.drawText('MEDICAMENTOS ACTUALES', {
-          size: 8.5,
-          font: bold,
-          color: AMBER,
-          x: MARGIN_L + 10,
-        });
-        pdf.y -= 12;
-
-        for (const m of pet.current_medications) {
-          const parts = [titleCase(m.name || 'Sin nombre')];
-          if (m.dose) parts.push(m.dose);
-          if (m.frequency) parts.push(smartSentenceCase(m.frequency));
-          pdf.drawBullet(parts.join(' - '), { color: TEXT_DARK });
-        }
-        pdf.y -= 4;
-      }
-    }
-
-    // ── HISTORIAL CLINICO CRONOLOGICO ──
-    // Merge medical_records + vet_clinical_notes into a single chronological timeline (ASC)
-    type TimelineEntry = {
-      date: string;
-      source: 'record' | 'vet_note';
-      record_type: string;
-      title: string;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      data: any;
-    };
-
-    const timeline: TimelineEntry[] = [];
-
-    for (const r of allRecords) {
-      timeline.push({
-        date: r.date || '1900-01-01',
-        source: 'record',
-        record_type: r.record_type || 'otro',
-        title: r.reason || r.title || r.record_type || '',
-        data: r,
-      });
-    }
-
-    for (const n of vetNotes) {
-      timeline.push({
-        date: n.consultation_date || '1900-01-01',
-        source: 'vet_note',
-        record_type: n.note_type || 'nota_vet',
-        title: n.title || 'Nota clinica',
-        data: n,
-      });
-    }
-
-    // Sort ASC by date (oldest first)
-    timeline.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-
-    // Type badge colors
-    const TYPE_BADGE: Record<string, { label: string; color: RGB }> = {
-      vacuna: { label: 'Vacuna', color: MED_GREEN },
-      consulta: { label: 'Consulta', color: DARK_PURPLE },
-      consulta_general: { label: 'Consulta', color: DARK_PURPLE },
-      control_sano: { label: 'Control sano', color: DARK_PURPLE },
-      urgencia: { label: 'Urgencia', color: ALERT_RED },
-      seguimiento: { label: 'Seguimiento', color: DARK_PURPLE },
-      segunda_opinion: { label: '2da opinion', color: DARK_PURPLE },
-      cirugia: { label: 'Cirugia', color: AMBER },
-      cirugía: { label: 'Cirugia', color: AMBER },
-      esterilizacion: { label: 'Esterilizacion', color: AMBER },
-      limpieza_dental: { label: 'Limpieza dental', color: AMBER },
-      ecografia: { label: 'Ecografia', color: AMBER },
-      rayos_x: { label: 'Rayos X', color: AMBER },
-      examen_sangre: { label: 'Examen sangre', color: AMBER },
-      examen_orina: { label: 'Examen orina', color: AMBER },
-      tratamiento: { label: 'Tratamiento', color: DARK_PURPLE },
-      quimioterapia: { label: 'Quimioterapia', color: AMBER },
-      rehabilitacion: { label: 'Rehabilitacion', color: AMBER },
-      hospitalizacion: { label: 'Hospitalizacion', color: ALERT_RED },
-      desparasitacion: { label: 'Desparasitacion', color: MED_GREEN },
-      antipulgas: { label: 'Antipulgas', color: MED_GREEN },
-      nota_vet: { label: 'Nota Vet', color: BRAND_PURPLE },
-    };
-
-    // Header bar
-    pdf.y -= 6;
-    pdf.ensureSpace(30);
-    pdf.page.drawRectangle({
-      x: MARGIN_L,
-      y: pdf.y - 1,
-      width: CONTENT_W,
-      height: 18,
-      color: DARK_PURPLE,
-    });
-    pdf.drawText(`HISTORIAL CLINICO CRONOLOGICO (${timeline.length})`, {
-      x: MARGIN_L + 10,
-      size: 10,
-      font: bold,
-      color: WHITE,
-    });
-    pdf.y -= 18;
-
-    if (timeline.length === 0) {
-      pdf.ensureSpace(20);
-      pdf.drawText('Sin registros medicos aun.', { size: 9, color: TEXT_LIGHT });
-      pdf.y -= 14;
-    } else {
-      let lastYear = '';
-
-      for (let i = 0; i < timeline.length; i++) {
-        const entry = timeline[i];
-        const entryDate = entry.date;
-        const year = entryDate?.slice(0, 4) || '';
-
-        // Year separator
-        if (year && year !== lastYear) {
-          lastYear = year;
-          pdf.ensureSpace(22);
-          pdf.y -= 6;
-          // Draw year separator line
-          const yearLabel = sanitizeForWinAnsi(`── ${year} ──`);
-          const yearW = bold.widthOfTextAtSize(yearLabel, 9);
-          const lineY = pdf.y + 4;
-          pdf.page.drawLine({
-            start: { x: MARGIN_L, y: lineY },
-            end: { x: (PAGE_W - yearW) / 2 - 8, y: lineY },
-            thickness: 0.5,
-            color: BORDER_LIGHT,
-          });
-          pdf.page.drawText(yearLabel, {
-            x: (PAGE_W - yearW) / 2,
-            y: pdf.y,
-            size: 9,
-            font: bold,
-            color: TEXT_GRAY,
-          });
-          pdf.page.drawLine({
-            start: { x: (PAGE_W + yearW) / 2 + 8, y: lineY },
-            end: { x: PAGE_W - MARGIN_R, y: lineY },
-            thickness: 0.5,
-            color: BORDER_LIGHT,
-          });
-          pdf.y -= 14;
-        }
-
-        // Alternating row background
-        pdf.ensureSpace(45);
-        if (i % 2 === 0) {
-          pdf.page.drawRectangle({
-            x: MARGIN_L,
-            y: pdf.y + 4,
-            width: CONTENT_W,
-            height: 18,
-            color: ROW_ALT,
-          });
-        }
-
-        // Type badge (colored dot + label)
-        const badge = TYPE_BADGE[entry.record_type] || {
-          label: smartSentenceCase(entry.record_type),
-          color: TEXT_GRAY,
-        };
-
-        // Date column (left)
-        const dateStr = formatDate(entryDate);
-        pdf.drawText(dateStr, {
-          x: MARGIN_L + 6,
-          size: 8,
-          font: bold,
-          color: TEXT_GRAY,
-        });
-
-        // Badge
-        const badgeLabel = sanitizeForWinAnsi(badge.label);
-        pdf.page.drawRectangle({
-          x: MARGIN_L + 80,
-          y: pdf.y - 2,
-          width: bold.widthOfTextAtSize(badgeLabel, 7) + 8,
-          height: 12,
-          color: badge.color,
-          borderColor: badge.color,
-          borderWidth: 0,
-        });
-        pdf.page.drawText(badgeLabel, {
-          x: MARGIN_L + 84,
-          y: pdf.y,
-          size: 7,
-          font: bold,
-          color: WHITE,
-        });
-
-        // Title
-        const badgeEnd = MARGIN_L + 84 + bold.widthOfTextAtSize(badgeLabel, 7) + 14;
-        const titleText = smartSentenceCase(entry.title) || smartSentenceCase(entry.record_type);
-        pdf.drawText(titleText, {
-          x: badgeEnd,
-          size: 9,
-          font: bold,
-          maxWidth: PAGE_W - MARGIN_R - badgeEnd,
-        });
-        pdf.y -= 15;
-
-        if (entry.source === 'record') {
-          const r = entry.data;
-
-          // Vet + Clinic
-          const vetClinicParts: string[] = [];
-          if (r.veterinarian_name) vetClinicParts.push(titleCase(r.veterinarian_name));
-          if (r.clinic_name) vetClinicParts.push(titleCase(r.clinic_name));
-          if (vetClinicParts.length > 0) {
-            pdf.drawText(vetClinicParts.join(' · '), {
-              x: MARGIN_L + 95,
-              size: 7.5,
-              color: TEXT_LIGHT,
+          if (hasAllergiesEnv) {
+            pdf.drawBullet(
+              `Ambiental: ${pet.allergies_environmental.map((a: string) => smartSentenceCase(a)).join(', ')}`,
+              { color: TEXT_DARK }
+            );
+          }
+          if (hasAllergiesLegacy && !hasAllergiesFood && !hasAllergiesMed && !hasAllergiesEnv) {
+            pdf.drawBullet(pet.allergies.map((a: string) => smartSentenceCase(a)).join(', '), {
+              color: TEXT_DARK,
             });
-            pdf.y -= 11;
           }
+          pdf.y -= 4;
+        }
 
-          // Diagnosis
-          if (r.diagnosis) {
-            pdf.ensureSpace(14);
-            pdf.drawText('Diagnostico:', {
-              x: MARGIN_L + 95,
-              size: 8,
+        if (hasAnyCondition) {
+          pdf.drawText('CONDICIONES CRONICAS', {
+            size: 8.5,
+            font: bold,
+            color: ALERT_RED,
+            x: MARGIN_L + 10,
+          });
+          pdf.y -= 12;
+
+          if (hasConditionsDetail) {
+            for (const c of pet.chronic_conditions_detail) {
+              const parts = [smartSentenceCase(c.condition || c.name || JSON.stringify(c))];
+              if (c.diagnosed_date) parts.push(`desde ${formatDate(c.diagnosed_date)}`);
+              if (c.severity) parts.push(smartSentenceCase(c.severity));
+              pdf.drawBullet(parts.join(', '), { color: TEXT_DARK });
+            }
+          } else if (hasConditionsLegacy) {
+            for (const c of pet.chronic_conditions) {
+              pdf.drawBullet(smartSentenceCase(c), { color: TEXT_DARK });
+            }
+          }
+          pdf.y -= 4;
+        }
+
+        if (hasMedications) {
+          pdf.drawText('MEDICAMENTOS ACTUALES', {
+            size: 8.5,
+            font: bold,
+            color: AMBER,
+            x: MARGIN_L + 10,
+          });
+          pdf.y -= 12;
+
+          for (const m of pet.current_medications) {
+            const parts = [titleCase(m.name || 'Sin nombre')];
+            if (m.dose) parts.push(m.dose);
+            if (m.frequency) parts.push(smartSentenceCase(m.frequency));
+            pdf.drawBullet(parts.join(' - '), { color: TEXT_DARK });
+          }
+          pdf.y -= 4;
+        }
+      }
+
+      // ── HISTORIAL CLINICO CRONOLOGICO ──
+      // Merge medical_records + vet_clinical_notes into a single chronological timeline (ASC)
+      type TimelineEntry = {
+        date: string;
+        source: 'record' | 'vet_note';
+        record_type: string;
+        title: string;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        data: any;
+      };
+
+      const timeline: TimelineEntry[] = [];
+
+      for (const r of allRecords) {
+        timeline.push({
+          date: r.date || '1900-01-01',
+          source: 'record',
+          record_type: r.record_type || 'otro',
+          title: r.reason || r.title || r.record_type || '',
+          data: r,
+        });
+      }
+
+      for (const n of vetNotes) {
+        timeline.push({
+          date: n.consultation_date || '1900-01-01',
+          source: 'vet_note',
+          record_type: n.note_type || 'nota_vet',
+          title: n.title || 'Nota clinica',
+          data: n,
+        });
+      }
+
+      // Sort ASC by date (oldest first)
+      timeline.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+      // Type badge colors
+      const TYPE_BADGE: Record<string, { label: string; color: RGB }> = {
+        vacuna: { label: 'Vacuna', color: MED_GREEN },
+        consulta: { label: 'Consulta', color: DARK_PURPLE },
+        consulta_general: { label: 'Consulta', color: DARK_PURPLE },
+        control_sano: { label: 'Control sano', color: DARK_PURPLE },
+        urgencia: { label: 'Urgencia', color: ALERT_RED },
+        seguimiento: { label: 'Seguimiento', color: DARK_PURPLE },
+        segunda_opinion: { label: '2da opinion', color: DARK_PURPLE },
+        cirugia: { label: 'Cirugia', color: AMBER },
+        cirugía: { label: 'Cirugia', color: AMBER },
+        esterilizacion: { label: 'Esterilizacion', color: AMBER },
+        limpieza_dental: { label: 'Limpieza dental', color: AMBER },
+        ecografia: { label: 'Ecografia', color: AMBER },
+        rayos_x: { label: 'Rayos X', color: AMBER },
+        examen_sangre: { label: 'Examen sangre', color: AMBER },
+        examen_orina: { label: 'Examen orina', color: AMBER },
+        tratamiento: { label: 'Tratamiento', color: DARK_PURPLE },
+        quimioterapia: { label: 'Quimioterapia', color: AMBER },
+        rehabilitacion: { label: 'Rehabilitacion', color: AMBER },
+        hospitalizacion: { label: 'Hospitalizacion', color: ALERT_RED },
+        desparasitacion: { label: 'Desparasitacion', color: MED_GREEN },
+        antipulgas: { label: 'Antipulgas', color: MED_GREEN },
+        nota_vet: { label: 'Nota Vet', color: BRAND_PURPLE },
+      };
+
+      // Header bar
+      pdf.y -= 6;
+      pdf.ensureSpace(30);
+      pdf.page.drawRectangle({
+        x: MARGIN_L,
+        y: pdf.y - 1,
+        width: CONTENT_W,
+        height: 18,
+        color: DARK_PURPLE,
+      });
+      pdf.drawText(`HISTORIAL CLINICO CRONOLOGICO (${timeline.length})`, {
+        x: MARGIN_L + 10,
+        size: 10,
+        font: bold,
+        color: WHITE,
+      });
+      pdf.y -= 18;
+
+      if (timeline.length === 0) {
+        pdf.ensureSpace(20);
+        pdf.drawText('Sin registros medicos aun.', { size: 9, color: TEXT_LIGHT });
+        pdf.y -= 14;
+      } else {
+        let lastYear = '';
+
+        for (let i = 0; i < timeline.length; i++) {
+          const entry = timeline[i];
+          const entryDate = entry.date;
+          const year = entryDate?.slice(0, 4) || '';
+
+          // Year separator
+          if (year && year !== lastYear) {
+            lastYear = year;
+            pdf.ensureSpace(22);
+            pdf.y -= 6;
+            // Draw year separator line
+            const yearLabel = sanitizeForWinAnsi(`── ${year} ──`);
+            const yearW = bold.widthOfTextAtSize(yearLabel, 9);
+            const lineY = pdf.y + 4;
+            pdf.page.drawLine({
+              start: { x: MARGIN_L, y: lineY },
+              end: { x: (PAGE_W - yearW) / 2 - 8, y: lineY },
+              thickness: 0.5,
+              color: BORDER_LIGHT,
+            });
+            pdf.page.drawText(yearLabel, {
+              x: (PAGE_W - yearW) / 2,
+              y: pdf.y,
+              size: 9,
               font: bold,
               color: TEXT_GRAY,
             });
-            pdf.y -= 10;
-            pdf.drawWrapped(smartSentenceCase(String(r.diagnosis).slice(0, MAX_FIELD_CHARS)), {
-              x: MARGIN_L + 108,
-              size: 8,
-              color: TEXT_DARK,
-              maxWidth: CONTENT_W - 108,
+            pdf.page.drawLine({
+              start: { x: (PAGE_W + yearW) / 2 + 8, y: lineY },
+              end: { x: PAGE_W - MARGIN_R, y: lineY },
+              thickness: 0.5,
+              color: BORDER_LIGHT,
+            });
+            pdf.y -= 14;
+          }
+
+          // Alternating row background
+          pdf.ensureSpace(45);
+          if (i % 2 === 0) {
+            pdf.page.drawRectangle({
+              x: MARGIN_L,
+              y: pdf.y + 4,
+              width: CONTENT_W,
+              height: 18,
+              color: ROW_ALT,
             });
           }
 
-          // Treatment
-          if (r.treatment) {
-            const treatmentStr =
-              typeof r.treatment === 'string'
-                ? r.treatment
-                : typeof r.treatment === 'object'
-                  ? ''
-                  : JSON.stringify(r.treatment);
-            if (treatmentStr) {
+          // Type badge (colored dot + label)
+          const badge = TYPE_BADGE[entry.record_type] || {
+            label: smartSentenceCase(entry.record_type),
+            color: TEXT_GRAY,
+          };
+
+          // Date column (left)
+          const dateStr = formatDate(entryDate);
+          pdf.drawText(dateStr, {
+            x: MARGIN_L + 6,
+            size: 8,
+            font: bold,
+            color: TEXT_GRAY,
+          });
+
+          // Badge
+          const badgeLabel = sanitizeForWinAnsi(badge.label);
+          pdf.page.drawRectangle({
+            x: MARGIN_L + 80,
+            y: pdf.y - 2,
+            width: bold.widthOfTextAtSize(badgeLabel, 7) + 8,
+            height: 12,
+            color: badge.color,
+            borderColor: badge.color,
+            borderWidth: 0,
+          });
+          pdf.page.drawText(badgeLabel, {
+            x: MARGIN_L + 84,
+            y: pdf.y,
+            size: 7,
+            font: bold,
+            color: WHITE,
+          });
+
+          // Title
+          const badgeEnd = MARGIN_L + 84 + bold.widthOfTextAtSize(badgeLabel, 7) + 14;
+          const titleText = smartSentenceCase(entry.title) || smartSentenceCase(entry.record_type);
+          pdf.drawText(titleText, {
+            x: badgeEnd,
+            size: 9,
+            font: bold,
+            maxWidth: PAGE_W - MARGIN_R - badgeEnd,
+          });
+          pdf.y -= 15;
+
+          if (entry.source === 'record') {
+            const r = entry.data;
+
+            // Vet + Clinic
+            const vetClinicParts: string[] = [];
+            if (r.veterinarian_name) vetClinicParts.push(titleCase(r.veterinarian_name));
+            if (r.clinic_name) vetClinicParts.push(titleCase(r.clinic_name));
+            if (vetClinicParts.length > 0) {
+              pdf.drawText(vetClinicParts.join(' · '), {
+                x: MARGIN_L + 95,
+                size: 7.5,
+                color: TEXT_LIGHT,
+              });
+              pdf.y -= 11;
+            }
+
+            // Diagnosis
+            if (r.diagnosis) {
               pdf.ensureSpace(14);
-              pdf.drawText('Tratamiento:', {
+              pdf.drawText('Diagnostico:', {
                 x: MARGIN_L + 95,
                 size: 8,
                 font: bold,
                 color: TEXT_GRAY,
               });
               pdf.y -= 10;
-              pdf.drawWrapped(smartSentenceCase(treatmentStr.slice(0, MAX_FIELD_CHARS)), {
+              pdf.drawWrapped(smartSentenceCase(String(r.diagnosis).slice(0, MAX_FIELD_CHARS)), {
                 x: MARGIN_L + 108,
                 size: 8,
                 color: TEXT_DARK,
                 maxWidth: CONTENT_W - 108,
               });
             }
-          }
 
-          // Description (for vaccines/preventive — only if no diagnosis/treatment)
-          if (r.description && !r.diagnosis && !r.treatment) {
-            const descStr = typeof r.description === 'string' ? r.description : '';
-            if (descStr) {
-              pdf.drawWrapped(smartSentenceCase(descStr.slice(0, MAX_FIELD_CHARS)), {
-                x: MARGIN_L + 95,
-                size: 8,
-                color: TEXT_GRAY,
-                maxWidth: CONTENT_W - 95,
-              });
+            // Treatment
+            if (r.treatment) {
+              const treatmentStr =
+                typeof r.treatment === 'string'
+                  ? r.treatment
+                  : typeof r.treatment === 'object'
+                    ? ''
+                    : JSON.stringify(r.treatment);
+              if (treatmentStr) {
+                pdf.ensureSpace(14);
+                pdf.drawText('Tratamiento:', {
+                  x: MARGIN_L + 95,
+                  size: 8,
+                  font: bold,
+                  color: TEXT_GRAY,
+                });
+                pdf.y -= 10;
+                pdf.drawWrapped(smartSentenceCase(treatmentStr.slice(0, MAX_FIELD_CHARS)), {
+                  x: MARGIN_L + 108,
+                  size: 8,
+                  color: TEXT_DARK,
+                  maxWidth: CONTENT_W - 108,
+                });
+              }
             }
-          }
 
-          // Batch/serial for vaccines
-          if (r.batch_number || r.serial_number) {
-            const lotParts: string[] = [];
-            if (r.batch_number) lotParts.push(`Lote: ${r.batch_number}`);
-            if (r.serial_number) lotParts.push(`Serie: ${r.serial_number}`);
-            pdf.drawText(lotParts.join('  |  '), {
-              x: MARGIN_L + 95,
-              size: 7.5,
-              color: TEXT_LIGHT,
-            });
-            pdf.y -= 10;
-          }
+            // Description (for vaccines/preventive — only if no diagnosis/treatment)
+            if (r.description && !r.diagnosis && !r.treatment) {
+              const descStr = typeof r.description === 'string' ? r.description : '';
+              if (descStr) {
+                pdf.drawWrapped(smartSentenceCase(descStr.slice(0, MAX_FIELD_CHARS)), {
+                  x: MARGIN_L + 95,
+                  size: 8,
+                  color: TEXT_GRAY,
+                  maxWidth: CONTENT_W - 95,
+                });
+              }
+            }
 
-          // Next date
-          if (r.next_date) {
-            pdf.drawText(`Proxima fecha: ${formatDate(r.next_date)}`, {
-              x: MARGIN_L + 95,
-              size: 7.5,
-              color: MED_GREEN,
-              font: bold,
-            });
-            pdf.y -= 10;
-          }
-
-          // Notes
-          if (r.notes) {
-            const notesStr = typeof r.notes === 'string' ? r.notes : JSON.stringify(r.notes);
-            const humanized = humanizeNotes(notesStr);
-            if (humanized) {
-              pdf.ensureSpace(14);
-              pdf.drawText('Nota:', {
+            // Batch/serial for vaccines
+            if (r.batch_number || r.serial_number) {
+              const lotParts: string[] = [];
+              if (r.batch_number) lotParts.push(`Lote: ${r.batch_number}`);
+              if (r.serial_number) lotParts.push(`Serie: ${r.serial_number}`);
+              pdf.drawText(lotParts.join('  |  '), {
                 x: MARGIN_L + 95,
                 size: 7.5,
-                font: bold,
                 color: TEXT_LIGHT,
               });
-              pdf.y -= 9;
-              pdf.drawWrapped(smartSentenceCase(humanized), {
-                x: MARGIN_L + 108,
-                size: 7.5,
-                color: TEXT_LIGHT,
-                maxWidth: CONTENT_W - 108,
-              });
+              pdf.y -= 10;
             }
-          }
-        } else {
-          // Vet clinical note
-          const n = entry.data;
 
-          if (n.provider_name) {
-            pdf.drawText(`Vet: ${titleCase(n.provider_name)}`, {
-              x: MARGIN_L + 95,
-              size: 7.5,
-              color: BRAND_PURPLE,
-            });
-            pdf.y -= 11;
-          }
-
-          if (n.description) {
-            pdf.drawWrapped(smartSentenceCase(String(n.description).slice(0, MAX_FIELD_CHARS)), {
-              x: MARGIN_L + 95,
-              size: 8,
-              color: TEXT_DARK,
-              maxWidth: CONTENT_W - 95,
-            });
-          }
-
-          if (n.followup_required && n.followup_date) {
-            pdf.drawText(
-              `Seguimiento: ${formatDate(n.followup_date)}${n.followup_reason ? ' - ' + smartSentenceCase(n.followup_reason) : ''}`,
-              {
+            // Next date
+            if (r.next_date) {
+              pdf.drawText(`Proxima fecha: ${formatDate(r.next_date)}`, {
                 x: MARGIN_L + 95,
                 size: 7.5,
                 color: MED_GREEN,
                 font: bold,
+              });
+              pdf.y -= 10;
+            }
+
+            // Notes
+            if (r.notes) {
+              const notesStr = typeof r.notes === 'string' ? r.notes : JSON.stringify(r.notes);
+              const humanized = humanizeNotes(notesStr);
+              if (humanized) {
+                pdf.ensureSpace(14);
+                pdf.drawText('Nota:', {
+                  x: MARGIN_L + 95,
+                  size: 7.5,
+                  font: bold,
+                  color: TEXT_LIGHT,
+                });
+                pdf.y -= 9;
+                pdf.drawWrapped(smartSentenceCase(humanized), {
+                  x: MARGIN_L + 108,
+                  size: 7.5,
+                  color: TEXT_LIGHT,
+                  maxWidth: CONTENT_W - 108,
+                });
               }
-            );
-            pdf.y -= 10;
+            }
+          } else {
+            // Vet clinical note
+            const n = entry.data;
+
+            if (n.provider_name) {
+              pdf.drawText(`Vet: ${titleCase(n.provider_name)}`, {
+                x: MARGIN_L + 95,
+                size: 7.5,
+                color: BRAND_PURPLE,
+              });
+              pdf.y -= 11;
+            }
+
+            if (n.description) {
+              pdf.drawWrapped(smartSentenceCase(String(n.description).slice(0, MAX_FIELD_CHARS)), {
+                x: MARGIN_L + 95,
+                size: 8,
+                color: TEXT_DARK,
+                maxWidth: CONTENT_W - 95,
+              });
+            }
+
+            if (n.followup_required && n.followup_date) {
+              pdf.drawText(
+                `Seguimiento: ${formatDate(n.followup_date)}${n.followup_reason ? ' - ' + smartSentenceCase(n.followup_reason) : ''}`,
+                {
+                  x: MARGIN_L + 95,
+                  size: 7.5,
+                  color: MED_GREEN,
+                  font: bold,
+                }
+              );
+              pdf.y -= 10;
+            }
           }
+
+          pdf.y -= 6; // spacing between entries
+        }
+      }
+
+      // ── SECTION: Resumen de vacunacion ──
+      const vaccineRecords = allRecords.filter((r) => r.record_type === 'vacuna');
+      if (vaccineRecords.length > 0) {
+        pdf.drawSectionHeader(
+          'Resumen de vacunacion',
+          MED_GREEN,
+          LIGHT_GREEN,
+          vaccineRecords.length
+        );
+        pdf.y -= 4;
+
+        // Table header
+        pdf.ensureSpace(16);
+        const colVac = MARGIN_L + 10;
+        const colDate = MARGIN_L + 200;
+        const colLot = MARGIN_L + 290;
+        const colNext = MARGIN_L + 390;
+
+        pdf.drawText('Vacuna', { x: colVac, size: 8, font: bold, color: TEXT_GRAY });
+        pdf.drawText('Fecha', { x: colDate, size: 8, font: bold, color: TEXT_GRAY });
+        pdf.drawText('Lote/Serie', { x: colLot, size: 8, font: bold, color: TEXT_GRAY });
+        pdf.drawText('Proximo ref.', { x: colNext, size: 8, font: bold, color: TEXT_GRAY });
+        pdf.y -= 12;
+        pdf.drawLine(BORDER_LIGHT);
+
+        for (const v of vaccineRecords) {
+          pdf.ensureSpace(14);
+          pdf.drawText(smartSentenceCase(v.title || 'Vacuna'), {
+            x: colVac,
+            size: 8,
+            maxWidth: 185,
+          });
+          pdf.drawText(formatDate(v.date), { x: colDate, size: 8 });
+          const lot = [v.batch_number, v.serial_number].filter(Boolean).join('/');
+          pdf.drawText(lot || '-', { x: colLot, size: 8 });
+          pdf.drawText(v.next_date ? formatDate(v.next_date) : '-', {
+            x: colNext,
+            size: 8,
+            color: v.next_date ? MED_GREEN : TEXT_LIGHT,
+          });
+          pdf.y -= 13;
+        }
+      }
+
+      // ── SECTION: Peso historico ──
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const weightHistory: any[] = Array.isArray(pet.weight_history) ? pet.weight_history : [];
+      if (weightHistory.length > 1) {
+        pdf.drawSectionHeader('Peso historico', TEXT_GRAY, ROW_ALT, weightHistory.length);
+        pdf.y -= 4;
+
+        // Determine trend
+        const first = parseFloat(weightHistory[0]?.weight) || 0;
+        const last = parseFloat(weightHistory[weightHistory.length - 1]?.weight) || 0;
+        const trend =
+          last > first + 0.5
+            ? 'Tendencia: subiendo'
+            : last < first - 0.5
+              ? 'Tendencia: bajando'
+              : 'Tendencia: estable';
+        pdf.drawText(trend, { x: MARGIN_L + 10, size: 8, color: TEXT_GRAY });
+        pdf.y -= 14;
+
+        // Table
+        const colWDate = MARGIN_L + 10;
+        const colWWeight = MARGIN_L + 150;
+        pdf.drawText('Fecha', { x: colWDate, size: 8, font: bold, color: TEXT_GRAY });
+        pdf.drawText('Peso (kg)', { x: colWWeight, size: 8, font: bold, color: TEXT_GRAY });
+        pdf.y -= 12;
+        pdf.drawLine(BORDER_LIGHT);
+
+        for (const w of weightHistory) {
+          pdf.ensureSpace(13);
+          pdf.drawText(formatDate(w.date), { x: colWDate, size: 8 });
+          pdf.drawText(String(w.weight), { x: colWWeight, size: 8 });
+          pdf.y -= 12;
+        }
+      }
+
+      // ── SECTION: Alimentacion y estilo de vida (solo si hay datos) ──
+      const hasDiet = pet.diet_type || pet.diet_brand || pet.diet_frequency;
+      const hasLifestyle = pet.activity_level || pet.living_environment || pet.behavior_notes;
+
+      if (hasDiet || hasLifestyle) {
+        pdf.drawSectionHeader('Alimentacion y estilo de vida', TEXT_GRAY, ROW_ALT);
+        pdf.y -= 4;
+
+        if (hasDiet) {
+          const dietParts: string[] = [];
+          if (pet.diet_type) dietParts.push(`Tipo: ${smartSentenceCase(pet.diet_type)}`);
+          if (pet.diet_brand) dietParts.push(`Marca: ${titleCase(pet.diet_brand)}`);
+          if (pet.diet_frequency)
+            dietParts.push(`Frecuencia: ${smartSentenceCase(pet.diet_frequency)}`);
+          pdf.drawWrapped(dietParts.join('  |  '), { x: MARGIN_L + 10, size: 8.5 });
+          pdf.y -= 2;
         }
 
-        pdf.y -= 6; // spacing between entries
+        if (pet.activity_level) {
+          pdf.drawField('Nivel actividad:', smartSentenceCase(pet.activity_level), {
+            labelWidth: 110,
+          });
+        }
+        if (pet.living_environment) {
+          pdf.drawField('Ambiente:', smartSentenceCase(pet.living_environment), {
+            labelWidth: 110,
+          });
+        }
+        if (pet.behavior_notes) {
+          pdf.drawText('Notas de comportamiento:', { size: 8.5, font: bold, color: TEXT_GRAY });
+          pdf.y -= 12;
+          pdf.drawWrapped(smartSentenceCase(pet.behavior_notes), {
+            x: MARGIN_L + 10,
+            size: 8.5,
+            color: TEXT_GRAY,
+          });
+        }
       }
-    }
 
-    // ── SECTION: Resumen de vacunacion ──
-    const vaccineRecords = allRecords.filter((r) => r.record_type === 'vacuna');
-    if (vaccineRecords.length > 0) {
-      pdf.drawSectionHeader('Resumen de vacunacion', MED_GREEN, LIGHT_GREEN, vaccineRecords.length);
-      pdf.y -= 4;
+      // ── Routines section (complete mode only) ──
+      if (effectiveMode === 'complete' && routines.length > 0) {
+        pdf.y -= 16;
+        pdf.drawSectionHeader('Rutinas activas', MED_GREEN);
 
-      // Table header
-      pdf.ensureSpace(16);
-      const colVac = MARGIN_L + 10;
-      const colDate = MARGIN_L + 200;
-      const colLot = MARGIN_L + 290;
-      const colNext = MARGIN_L + 390;
+        const DAYS = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
+        for (const routine of routines) {
+          pdf.ensureSpace(30);
+          const daysStr = (routine.days_of_week || [])
+            .map((d: number) => DAYS[d] || '?')
+            .join(', ');
+          const time = routine.time_of_day ? routine.time_of_day.slice(0, 5) : '';
+          const duration = routine.duration_minutes ? `${routine.duration_minutes}min` : '';
+          const category = routine.category ? `[${routine.category}]` : '';
 
-      pdf.drawText('Vacuna', { x: colVac, size: 8, font: bold, color: TEXT_GRAY });
-      pdf.drawText('Fecha', { x: colDate, size: 8, font: bold, color: TEXT_GRAY });
-      pdf.drawText('Lote/Serie', { x: colLot, size: 8, font: bold, color: TEXT_GRAY });
-      pdf.drawText('Proximo ref.', { x: colNext, size: 8, font: bold, color: TEXT_GRAY });
+          pdf.drawText(`${routine.title || 'Sin titulo'} ${category}`, {
+            size: 9,
+            font: bold,
+            color: TEXT_DARK,
+          });
+          pdf.y -= 12;
+          pdf.drawText(`${daysStr}  ${time}  ${duration}`.trim(), {
+            size: 8,
+            color: TEXT_GRAY,
+            x: MARGIN_L + 10,
+          });
+          pdf.y -= 14;
+        }
+      }
+
+      // ── Confidentiality notice ──
       pdf.y -= 12;
-      pdf.drawLine(BORDER_LIGHT);
+      pdf.drawLine();
+      pdf.drawWrapped(CONFIDENTIALITY_NOTICE, {
+        size: 7,
+        color: TEXT_LIGHT,
+        lineHeight: 9,
+      });
 
-      for (const v of vaccineRecords) {
-        pdf.ensureSpace(14);
-        pdf.drawText(smartSentenceCase(v.title || 'Vacuna'), { x: colVac, size: 8, maxWidth: 185 });
-        pdf.drawText(formatDate(v.date), { x: colDate, size: 8 });
-        const lot = [v.batch_number, v.serial_number].filter(Boolean).join('/');
-        pdf.drawText(lot || '-', { x: colLot, size: 8 });
-        pdf.drawText(v.next_date ? formatDate(v.next_date) : '-', {
-          x: colNext,
-          size: 8,
-          color: v.next_date ? MED_GREEN : TEXT_LIGHT,
-        });
-        pdf.y -= 13;
-      }
-    }
+      // ── Footer on all pages ──
+      pdf.drawFooters(verificationCode);
 
-    // ── SECTION: Peso historico ──
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const weightHistory: any[] = Array.isArray(pet.weight_history) ? pet.weight_history : [];
-    if (weightHistory.length > 1) {
-      pdf.drawSectionHeader('Peso historico', TEXT_GRAY, ROW_ALT, weightHistory.length);
-      pdf.y -= 4;
+      // ── Generate PDF bytes ──
+      const pdfBytes = await pdfDoc.save();
+      const safeName = (pet.name || 'mascota')
+        .replace(/\s+/g, '-')
+        .toLowerCase()
+        .replace(/[^a-z0-9-]/g, '');
+      const fileName = `ficha-${safeName}-${Date.now()}.pdf`;
 
-      // Determine trend
-      const first = parseFloat(weightHistory[0]?.weight) || 0;
-      const last = parseFloat(weightHistory[weightHistory.length - 1]?.weight) || 0;
-      const trend =
-        last > first + 0.5
-          ? 'Tendencia: subiendo'
-          : last < first - 0.5
-            ? 'Tendencia: bajando'
-            : 'Tendencia: estable';
-      pdf.drawText(trend, { x: MARGIN_L + 10, size: 8, color: TEXT_GRAY });
-      pdf.y -= 14;
+      // If store=true (for sharing), upload to storage and return signed URL
+      if (storeInStorage) {
+        const filePath = `summaries/${fileName}`;
+        const { error: uploadError } = await supabase.storage
+          .from('medical-documents')
+          .upload(filePath, pdfBytes, { contentType: 'application/pdf', upsert: false });
+        if (uploadError) throw uploadError;
 
-      // Table
-      const colWDate = MARGIN_L + 10;
-      const colWWeight = MARGIN_L + 150;
-      pdf.drawText('Fecha', { x: colWDate, size: 8, font: bold, color: TEXT_GRAY });
-      pdf.drawText('Peso (kg)', { x: colWWeight, size: 8, font: bold, color: TEXT_GRAY });
-      pdf.y -= 12;
-      pdf.drawLine(BORDER_LIGHT);
+        const { data: urlData, error: urlError } = await supabase.storage
+          .from('medical-documents')
+          .createSignedUrl(filePath, 3600);
+        if (urlError) throw urlError;
 
-      for (const w of weightHistory) {
-        pdf.ensureSpace(13);
-        pdf.drawText(formatDate(w.date), { x: colWDate, size: 8 });
-        pdf.drawText(String(w.weight), { x: colWWeight, size: 8 });
-        pdf.y -= 12;
-      }
-    }
-
-    // ── SECTION: Alimentacion y estilo de vida (solo si hay datos) ──
-    const hasDiet = pet.diet_type || pet.diet_brand || pet.diet_frequency;
-    const hasLifestyle = pet.activity_level || pet.living_environment || pet.behavior_notes;
-
-    if (hasDiet || hasLifestyle) {
-      pdf.drawSectionHeader('Alimentacion y estilo de vida', TEXT_GRAY, ROW_ALT);
-      pdf.y -= 4;
-
-      if (hasDiet) {
-        const dietParts: string[] = [];
-        if (pet.diet_type) dietParts.push(`Tipo: ${smartSentenceCase(pet.diet_type)}`);
-        if (pet.diet_brand) dietParts.push(`Marca: ${titleCase(pet.diet_brand)}`);
-        if (pet.diet_frequency)
-          dietParts.push(`Frecuencia: ${smartSentenceCase(pet.diet_frequency)}`);
-        pdf.drawWrapped(dietParts.join('  |  '), { x: MARGIN_L + 10, size: 8.5 });
-        pdf.y -= 2;
+        return new Response(
+          JSON.stringify({ success: true, download_url: urlData.signedUrl, file_path: filePath }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+        );
       }
 
-      if (pet.activity_level) {
-        pdf.drawField('Nivel actividad:', smartSentenceCase(pet.activity_level), {
-          labelWidth: 110,
-        });
-      }
-      if (pet.living_environment) {
-        pdf.drawField('Ambiente:', smartSentenceCase(pet.living_environment), { labelWidth: 110 });
-      }
-      if (pet.behavior_notes) {
-        pdf.drawText('Notas de comportamiento:', { size: 8.5, font: bold, color: TEXT_GRAY });
-        pdf.y -= 12;
-        pdf.drawWrapped(smartSentenceCase(pet.behavior_notes), {
-          x: MARGIN_L + 10,
-          size: 8.5,
-          color: TEXT_GRAY,
-        });
-      }
-    }
-
-    // ── Routines section (complete mode only) ──
-    if (effectiveMode === 'complete' && routines.length > 0) {
-      pdf.y -= 16;
-      pdf.drawSectionHeader('Rutinas activas', MED_GREEN);
-
-      const DAYS = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
-      for (const routine of routines) {
-        pdf.ensureSpace(30);
-        const daysStr = (routine.days_of_week || []).map((d: number) => DAYS[d] || '?').join(', ');
-        const time = routine.time_of_day ? routine.time_of_day.slice(0, 5) : '';
-        const duration = routine.duration_minutes ? `${routine.duration_minutes}min` : '';
-        const category = routine.category ? `[${routine.category}]` : '';
-
-        pdf.drawText(`${routine.title || 'Sin titulo'} ${category}`, {
-          size: 9,
-          font: bold,
-          color: TEXT_DARK,
-        });
-        pdf.y -= 12;
-        pdf.drawText(`${daysStr}  ${time}  ${duration}`.trim(), {
-          size: 8,
-          color: TEXT_GRAY,
-          x: MARGIN_L + 10,
-        });
-        pdf.y -= 14;
-      }
-    }
-
-    // ── Confidentiality notice ──
-    pdf.y -= 12;
-    pdf.drawLine();
-    pdf.drawWrapped(CONFIDENTIALITY_NOTICE, {
-      size: 7,
-      color: TEXT_LIGHT,
-      lineHeight: 9,
-    });
-
-    // ── Footer on all pages ──
-    pdf.drawFooters(verificationCode);
-
-    // ── Generate PDF bytes ──
-    const pdfBytes = await pdfDoc.save();
-    const safeName = (pet.name || 'mascota')
-      .replace(/\s+/g, '-')
-      .toLowerCase()
-      .replace(/[^a-z0-9-]/g, '');
-    const fileName = `ficha-${safeName}-${Date.now()}.pdf`;
-
-    // If store=true (for sharing), upload to storage and return signed URL
-    if (storeInStorage) {
-      const filePath = `summaries/${fileName}`;
-      const { error: uploadError } = await supabase.storage
-        .from('medical-documents')
-        .upload(filePath, pdfBytes, { contentType: 'application/pdf', upsert: false });
-      if (uploadError) throw uploadError;
-
-      const { data: urlData, error: urlError } = await supabase.storage
-        .from('medical-documents')
-        .createSignedUrl(filePath, 3600);
-      if (urlError) throw urlError;
-
+      // Default: return PDF bytes directly (faster, no ugly URL)
+      return new Response(pdfBytes, {
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': `attachment; filename="${fileName}"`,
+        },
+        status: 200,
+      });
+    } catch (error: unknown) {
+      console.error('Error generating medical summary:', error);
       return new Response(
-        JSON.stringify({ success: true, download_url: urlData.signedUrl, file_path: filePath }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
+        JSON.stringify({
+          success: false,
+          error: 'Error al generar la ficha. Intenta de nuevo.',
+          detail: error instanceof Error ? error.message : String(error),
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
     }
-
-    // Default: return PDF bytes directly (faster, no ugly URL)
-    return new Response(pdfBytes, {
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="${fileName}"`,
-      },
-      status: 200,
-    });
-  } catch (error: unknown) {
-    console.error('Error generating medical summary:', error);
-    return new Response(
-      JSON.stringify({
-        success: false,
-        error: 'Error al generar la ficha. Intenta de nuevo.',
-        detail: error instanceof Error ? error.message : String(error),
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
-    );
-  }
-});
+  })
+);

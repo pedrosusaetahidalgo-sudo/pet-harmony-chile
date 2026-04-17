@@ -15,6 +15,7 @@
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { withTelemetry } from '../_shared/telemetry.ts';
 import { getCorsHeaders, handleCorsOptions } from '../_shared/cors.ts';
 import { buildInvitationEmail, sendInvitationViaResend } from '../_shared/invitation-email.ts';
 
@@ -154,265 +155,270 @@ function validatePayload(
 
 // ─── Main handler ───────────────────────────────────────────────────
 
-serve(async (req) => {
-  // CORS preflight — respond immediately with 204
-  if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: {
-        'Access-Control-Allow-Origin': req.headers.get('Origin') || 'https://pawfriend.cl',
-        'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-      },
-    });
-  }
-
-  try {
-    // ── Auth ──
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) return errorResponse(req, 'Authorization required', 401);
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
-    const supabase = createClient(supabaseUrl, serviceRoleKey);
-
-    const token = authHeader.replace('Bearer ', '');
-    const { data: userData, error: userError } = await supabase.auth.getUser(token);
-    if (userError || !userData.user) return errorResponse(req, 'User not authenticated', 401);
-
-    const vetId = userData.user.id;
-
-    // ── Verify caller is an active service_provider ──
-    const { data: vetProvider, error: providerError } = await supabase
-      .from('service_providers')
-      .select('id, display_name, is_verified')
-      .eq('user_id', vetId)
-      .maybeSingle();
-
-    if (providerError || !vetProvider) {
-      return errorResponse(req, 'Solo veterinarios registrados pueden crear pacientes', 403);
+serve(
+  withTelemetry('create-patient', async (req) => {
+    // CORS preflight — respond immediately with 204
+    if (req.method === 'OPTIONS') {
+      return new Response(null, {
+        status: 204,
+        headers: {
+          'Access-Control-Allow-Origin': req.headers.get('Origin') || 'https://pawfriend.cl',
+          'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        },
+      });
     }
 
-    // ── Rate limit: max 20 patients per vet per day ──
-    const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const { count: recentCreations } = await supabase
-      .from('pets')
-      .select('id', { count: 'exact', head: true })
-      .eq('created_by_vet_id', vetId)
-      .gte('created_at', oneDayAgo);
+    try {
+      // ── Auth ──
+      const authHeader = req.headers.get('Authorization');
+      if (!authHeader) return errorResponse(req, 'Authorization required', 401);
 
-    if ((recentCreations ?? 0) >= 20) {
-      return errorResponse(
-        req,
-        'Limite de creacion alcanzado (20 pacientes por dia). Intenta manana.',
-        429
-      );
-    }
+      const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
+      const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+      const supabase = createClient(supabaseUrl, serviceRoleKey);
 
-    // ── Parse & validate body ──
-    const body = await req.json();
-    const validation = validatePayload(body);
-    if (!validation.valid) return errorResponse(req, validation.error, 400);
-    const data = validation.payload;
+      const token = authHeader.replace('Bearer ', '');
+      const { data: userData, error: userError } = await supabase.auth.getUser(token);
+      if (userError || !userData.user) return errorResponse(req, 'User not authenticated', 401);
 
-    // ── Server-side duplicate detection ──
-    if (!data.force_create) {
-      // Check name + species + email
-      const { data: existingPets } = await supabase
+      const vetId = userData.user.id;
+
+      // ── Verify caller is an active service_provider ──
+      const { data: vetProvider, error: providerError } = await supabase
+        .from('service_providers')
+        .select('id, display_name, is_verified')
+        .eq('user_id', vetId)
+        .maybeSingle();
+
+      if (providerError || !vetProvider) {
+        return errorResponse(req, 'Solo veterinarios registrados pueden crear pacientes', 403);
+      }
+
+      // ── Rate limit: max 20 patients per vet per day ──
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const { count: recentCreations } = await supabase
         .from('pets')
-        .select('id, name, owner_id, pending_owner_email')
-        .ilike('name', data.name)
-        .eq('species', data.species);
+        .select('id', { count: 'exact', head: true })
+        .eq('created_by_vet_id', vetId)
+        .gte('created_at', oneDayAgo);
 
-      const ownerEmail = data.owner_email;
-      const match = (existingPets ?? []).find(
-        (p: { pending_owner_email?: string; owner_id?: string }) =>
-          p.pending_owner_email === ownerEmail || p.owner_id
-      );
-
-      if (match) {
-        const msg = match.owner_id
-          ? `Ya existe "${match.name}" en el sistema con un dueno registrado.`
-          : `Otro profesional ya registro "${match.name}" para ${ownerEmail}. Envia de nuevo con force_create=true para crear otro registro.`;
-        return jsonResponse(
+      if ((recentCreations ?? 0) >= 20) {
+        return errorResponse(
           req,
-          { error: msg, code: 'DUPLICATE_DETECTED', existing_pet_id: match.id },
-          409
+          'Limite de creacion alcanzado (20 pacientes por dia). Intenta manana.',
+          429
         );
       }
 
-      // Microchip uniqueness
-      if (data.microchip_number) {
-        const { data: chipMatch } = await supabase
-          .from('pets')
-          .select('id, name')
-          .eq('microchip_number', data.microchip_number)
-          .limit(1);
+      // ── Parse & validate body ──
+      const body = await req.json();
+      const validation = validatePayload(body);
+      if (!validation.valid) return errorResponse(req, validation.error, 400);
+      const data = validation.payload;
 
-        if (chipMatch && chipMatch.length > 0) {
-          return errorResponse(
+      // ── Server-side duplicate detection ──
+      if (!data.force_create) {
+        // Check name + species + email
+        const { data: existingPets } = await supabase
+          .from('pets')
+          .select('id, name, owner_id, pending_owner_email')
+          .ilike('name', data.name)
+          .eq('species', data.species);
+
+        const ownerEmail = data.owner_email;
+        const match = (existingPets ?? []).find(
+          (p: { pending_owner_email?: string; owner_id?: string }) =>
+            p.pending_owner_email === ownerEmail || p.owner_id
+        );
+
+        if (match) {
+          const msg = match.owner_id
+            ? `Ya existe "${match.name}" en el sistema con un dueno registrado.`
+            : `Otro profesional ya registro "${match.name}" para ${ownerEmail}. Envia de nuevo con force_create=true para crear otro registro.`;
+          return jsonResponse(
             req,
-            `Este microchip ya esta asociado a "${chipMatch[0].name}". Verifica el numero.`,
-            409,
-            'DUPLICATE_MICROCHIP'
+            { error: msg, code: 'DUPLICATE_DETECTED', existing_pet_id: match.id },
+            409
           );
         }
+
+        // Microchip uniqueness
+        if (data.microchip_number) {
+          const { data: chipMatch } = await supabase
+            .from('pets')
+            .select('id, name')
+            .eq('microchip_number', data.microchip_number)
+            .limit(1);
+
+          if (chipMatch && chipMatch.length > 0) {
+            return errorResponse(
+              req,
+              `Este microchip ya esta asociado a "${chipMatch[0].name}". Verifica el numero.`,
+              409,
+              'DUPLICATE_MICROCHIP'
+            );
+          }
+        }
       }
-    }
 
-    // ── Generate Paw Card ──
-    const holoPattern = rollHoloPattern();
-    const pawCardId = generatePawCardId();
+      // ── Generate Paw Card ──
+      const holoPattern = rollHoloPattern();
+      const pawCardId = generatePawCardId();
 
-    // ── Build insert payload ──
-    const insertPayload: Record<string, unknown> = {
-      name: data.name,
-      species: data.species,
-      created_by_vet_id: vetId,
-      pending_owner_email: data.owner_email,
-      pending_owner_name: data.owner_name || null,
-      breed: data.breed || null,
-      birth_date: data.birth_date || null,
-      gender: data.sex || null,
-      weight: data.weight ? parseFloat(data.weight) : null,
-      color: data.color || null,
-      holo_pattern: holoPattern,
-      paw_card_id: pawCardId,
-      microchip_number: data.microchip_number || null,
-      blood_type: data.blood_type || null,
-    };
+      // ── Build insert payload ──
+      const insertPayload: Record<string, unknown> = {
+        name: data.name,
+        species: data.species,
+        created_by_vet_id: vetId,
+        pending_owner_email: data.owner_email,
+        pending_owner_name: data.owner_name || null,
+        breed: data.breed || null,
+        birth_date: data.birth_date || null,
+        gender: data.sex || null,
+        weight: data.weight ? parseFloat(data.weight) : null,
+        color: data.color || null,
+        holo_pattern: holoPattern,
+        paw_card_id: pawCardId,
+        microchip_number: data.microchip_number || null,
+        blood_type: data.blood_type || null,
+      };
 
-    if (data.known_allergies) {
-      insertPayload.allergies = data.known_allergies
-        .split(',')
-        .map((a: string) => a.trim())
-        .filter(Boolean);
-    }
-    if (data.chronic_conditions) {
-      insertPayload.chronic_conditions = data.chronic_conditions
-        .split(',')
-        .map((c: string) => c.trim())
-        .filter(Boolean);
-    }
+      if (data.known_allergies) {
+        insertPayload.allergies = data.known_allergies
+          .split(',')
+          .map((a: string) => a.trim())
+          .filter(Boolean);
+      }
+      if (data.chronic_conditions) {
+        insertPayload.chronic_conditions = data.chronic_conditions
+          .split(',')
+          .map((c: string) => c.trim())
+          .filter(Boolean);
+      }
 
-    // ── Insert pet ──
-    const { data: petRow, error: insertError } = await supabase
-      .from('pets')
-      .insert(insertPayload)
-      .select('id')
-      .single();
+      // ── Insert pet ──
+      const { data: petRow, error: insertError } = await supabase
+        .from('pets')
+        .insert(insertPayload)
+        .select('id')
+        .single();
 
-    if (insertError) {
-      console.error('[create-patient] insert error:', insertError);
-      return errorResponse(req, 'Error al crear el paciente: ' + insertError.message, 500);
-    }
+      if (insertError) {
+        console.error('[create-patient] insert error:', insertError);
+        return errorResponse(req, 'Error al crear el paciente: ' + insertError.message, 500);
+      }
 
-    const petId = petRow.id;
+      const petId = petRow.id;
 
-    // ── Generate invitation token ──
-    const invitationToken = crypto.randomUUID();
-    await supabase.from('pets').update({ owner_invitation_token: invitationToken }).eq('id', petId);
-
-    // ── Check if owner already registered (via DB function, not listUsers) ──
-    const { data: existingOwnerId } = await supabase.rpc('get_user_id_by_email', {
-      p_email: data.owner_email,
-    });
-
-    // Fetch vet display name for the email
-    const { data: vetProfile } = await supabase
-      .from('profiles')
-      .select('display_name')
-      .eq('id', vetId)
-      .single();
-
-    const vetName = vetProfile?.display_name || 'Tu veterinario/a';
-    const clinicName = vetProvider.display_name || '';
-
-    let emailSent = false;
-    let method: 'resend' | 'invite' | 'skip' = 'skip';
-    let ownerAlreadyRegistered = false;
-
-    if (existingOwnerId) {
-      // ── Owner exists → link directly ──
-      ownerAlreadyRegistered = true;
-
+      // ── Generate invitation token ──
+      const invitationToken = crypto.randomUUID();
       await supabase
         .from('pets')
-        .update({
-          owner_id: existingOwnerId,
-          owner_invitation_accepted_at: new Date().toISOString(),
-        })
+        .update({ owner_invitation_token: invitationToken })
         .eq('id', petId);
 
-      // Create pet_vet_link
-      await supabase.from('pet_vet_links').upsert(
-        {
-          pet_id: petId,
-          owner_id: existingOwnerId,
-          provider_id: vetProvider.id,
-          status: 'active',
-          responded_at: new Date().toISOString(),
-        },
-        { onConflict: 'pet_id,provider_id' }
-      );
-
-      method = 'skip';
-    } else {
-      // ── Owner NOT registered → send invitation link only (NO auth user creation) ──
-      // The owner clicks the link, lands on /auth, signs up themselves,
-      // and useAutoClaimByEmail / useClaimPetInvitation auto-links the pet.
-      const actionUrl = `https://pawfriend.cl/auth?returnTo=/my-pets&invitation=${invitationToken}`;
-
-      // Send custom email via Resend
-      const html = buildInvitationEmail({
-        petName: data.name,
-        ownerName: data.owner_name || 'amigo/a',
-        vetName,
-        clinicName,
-        actionUrl,
+      // ── Check if owner already registered (via DB function, not listUsers) ──
+      const { data: existingOwnerId } = await supabase.rpc('get_user_id_by_email', {
+        p_email: data.owner_email,
       });
 
-      const resendResult = await sendViaResend({
-        to: data.owner_email,
-        subject: `${data.name} ya tiene ficha veterinaria en Paw Friend 🐾`,
-        html,
-      });
+      // Fetch vet display name for the email
+      const { data: vetProfile } = await supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('id', vetId)
+        .single();
 
-      if (resendResult.ok) {
-        method = 'resend';
-        emailSent = true;
+      const vetName = vetProfile?.display_name || 'Tu veterinario/a';
+      const clinicName = vetProvider.display_name || '';
+
+      let emailSent = false;
+      let method: 'resend' | 'invite' | 'skip' = 'skip';
+      let ownerAlreadyRegistered = false;
+
+      if (existingOwnerId) {
+        // ── Owner exists → link directly ──
+        ownerAlreadyRegistered = true;
+
         await supabase
           .from('pets')
-          .update({ owner_invitation_sent_at: new Date().toISOString() })
+          .update({
+            owner_id: existingOwnerId,
+            owner_invitation_accepted_at: new Date().toISOString(),
+          })
           .eq('id', petId);
-      } else {
-        console.error('[create-patient] Resend failed:', resendResult.error);
-        // No fallback — do NOT create auth user. Just notify the vet.
-        return jsonResponse(req, {
-          success: true,
-          pet_id: petId,
-          pet_name: data.name,
-          owner_already_registered: false,
-          email_sent: false,
-          invitation_error:
-            'Paciente creado pero no se pudo enviar el email. Puedes reenviar desde tu panel.',
-        });
-      }
-    }
 
-    return jsonResponse(req, {
-      success: true,
-      pet_id: petId,
-      pet_name: data.name,
-      method,
-      email_sent: emailSent,
-      email_sent_to: ownerAlreadyRegistered ? null : data.owner_email,
-      owner_already_registered: ownerAlreadyRegistered,
-      invitation_token: invitationToken,
-    });
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    console.error('[create-patient] error:', message);
-    return errorResponse(req, 'Error al crear el paciente. Intenta de nuevo mas tarde.', 500);
-  }
-});
+        // Create pet_vet_link
+        await supabase.from('pet_vet_links').upsert(
+          {
+            pet_id: petId,
+            owner_id: existingOwnerId,
+            provider_id: vetProvider.id,
+            status: 'active',
+            responded_at: new Date().toISOString(),
+          },
+          { onConflict: 'pet_id,provider_id' }
+        );
+
+        method = 'skip';
+      } else {
+        // ── Owner NOT registered → send invitation link only (NO auth user creation) ──
+        // The owner clicks the link, lands on /auth, signs up themselves,
+        // and useAutoClaimByEmail / useClaimPetInvitation auto-links the pet.
+        const actionUrl = `https://pawfriend.cl/auth?returnTo=/my-pets&invitation=${invitationToken}`;
+
+        // Send custom email via Resend
+        const html = buildInvitationEmail({
+          petName: data.name,
+          ownerName: data.owner_name || 'amigo/a',
+          vetName,
+          clinicName,
+          actionUrl,
+        });
+
+        const resendResult = await sendViaResend({
+          to: data.owner_email,
+          subject: `${data.name} ya tiene ficha veterinaria en Paw Friend 🐾`,
+          html,
+        });
+
+        if (resendResult.ok) {
+          method = 'resend';
+          emailSent = true;
+          await supabase
+            .from('pets')
+            .update({ owner_invitation_sent_at: new Date().toISOString() })
+            .eq('id', petId);
+        } else {
+          console.error('[create-patient] Resend failed:', resendResult.error);
+          // No fallback — do NOT create auth user. Just notify the vet.
+          return jsonResponse(req, {
+            success: true,
+            pet_id: petId,
+            pet_name: data.name,
+            owner_already_registered: false,
+            email_sent: false,
+            invitation_error:
+              'Paciente creado pero no se pudo enviar el email. Puedes reenviar desde tu panel.',
+          });
+        }
+      }
+
+      return jsonResponse(req, {
+        success: true,
+        pet_id: petId,
+        pet_name: data.name,
+        method,
+        email_sent: emailSent,
+        email_sent_to: ownerAlreadyRegistered ? null : data.owner_email,
+        owner_already_registered: ownerAlreadyRegistered,
+        invitation_token: invitationToken,
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      console.error('[create-patient] error:', message);
+      return errorResponse(req, 'Error al crear el paciente. Intenta de nuevo mas tarde.', 500);
+    }
+  })
+);

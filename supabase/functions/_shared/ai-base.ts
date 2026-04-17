@@ -220,54 +220,7 @@ export function handleEdgeFunctionError(error: unknown): Response {
 
 /**
  * Log edge function execution to analytics_events + system_health_log.
- * Call at the end of every edge function for telemetry.
+ * Re-exportado desde _shared/telemetry.ts para compatibilidad con las
+ * funciones IA ya existentes que importan { logEdgeFunctionCall } desde ai-base.
  */
-export async function logEdgeFunctionCall(options: {
-  functionName: string;
-  status: "success" | "error" | "timeout";
-  executionTimeMs: number;
-  userId?: string;
-  error?: string;
-  metadata?: Record<string, unknown>;
-}) {
-  try {
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    );
-
-    // Log to system_health_log
-    await supabase.from("system_health_log").insert({
-      function_name: options.functionName,
-      status: options.status,
-      execution_time_ms: options.executionTimeMs,
-      error_message: options.error || null,
-      metadata: options.metadata || {},
-    });
-
-    // Log to analytics_events for usage tracking
-    await supabase.from("analytics_events").insert({
-      event_type: "edge_function_call",
-      event_name: options.functionName,
-      user_id: options.userId || null,
-      duration_ms: options.executionTimeMs,
-      metadata: {
-        status: options.status,
-        ...options.metadata,
-      },
-    });
-
-    // If error, also log to error_logs
-    if (options.status === "error" && options.error) {
-      await supabase.from("error_logs").insert({
-        source: "edge_function",
-        severity: "error",
-        message: `${options.functionName}: ${options.error}`,
-        context: { function_name: options.functionName, ...options.metadata },
-        user_id: options.userId || null,
-      });
-    }
-  } catch {
-    // Best effort — don't fail the main function on telemetry error
-  }
-}
+export { logEdgeFunctionCall } from "./telemetry.ts";
