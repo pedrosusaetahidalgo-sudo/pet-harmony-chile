@@ -1,6 +1,7 @@
 /**
  * Context + localStorage para persistir el rol activo (dueño vs profesional).
  */
+/* eslint-disable react-refresh/only-export-components -- Provider + hook custom conviven (patron estandar de React Context) */
 import {
   createContext,
   useContext,

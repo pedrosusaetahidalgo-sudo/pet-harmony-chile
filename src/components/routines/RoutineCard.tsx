@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- helpers conviven con el componente */
 import {
   CheckCircle2,
   Circle,

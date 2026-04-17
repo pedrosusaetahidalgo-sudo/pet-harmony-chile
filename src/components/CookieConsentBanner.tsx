@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- constantes locales conviven con el componente (no amerita split) */
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { isWeb } from '@/lib/platform';

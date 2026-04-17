@@ -294,7 +294,7 @@ export default function PerfilVetPublico() {
   const rating = Number(v?.avg_rating ?? 0);
   const reviewCount = Number(v?.total_reviews ?? 0);
   const specialties: string[] = v?.specialties ?? [];
-  const serviceAreas: string[] = v?.service_areas ?? [];
+  const serviceAreas: string[] = useMemo(() => v?.service_areas ?? [], [v?.service_areas]);
   const visibleReviews = reviews ?? [];
   const mainComuna = v?.commune || (serviceAreas.length > 0 ? serviceAreas[0] : null);
 

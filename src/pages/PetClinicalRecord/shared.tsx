@@ -2,6 +2,7 @@
  * Componentes y helpers compartidos para PetClinicalRecord y sus tabs.
  * Extraído del god component (1384 líneas) en el split 2026-04-08.
  */
+/* eslint-disable react-refresh/only-export-components -- archivo compartido: componentes + helpers */
 
 import React from 'react';
 import {

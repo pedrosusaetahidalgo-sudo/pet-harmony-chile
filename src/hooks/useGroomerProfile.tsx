@@ -1,9 +1,9 @@
+/* eslint-disable react-refresh/only-export-components -- multiples hooks custom conviven */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 const sb = supabase;
 import { useAuth } from '@/hooks/useAuth';
-import { logger } from "@/lib/logger";
-
+import { logger } from '@/lib/logger';
 
 export interface GroomerProfileRow {
   id: string;
@@ -50,10 +50,7 @@ export function useApprovedGroomers(commune?: string) {
   return useQuery<GroomerProfileRow[]>({
     queryKey: ['groomers-approved', commune],
     queryFn: async () => {
-      let query = sb
-        .from('groomer_profiles')
-        .select('*')
-        .eq('status', 'approved');
+      let query = sb.from('groomer_profiles').select('*').eq('status', 'approved');
       if (commune) query = query.eq('commune', commune);
       const { data, error } = await query
         .order('avg_rating', { ascending: false, nullsFirst: false })
