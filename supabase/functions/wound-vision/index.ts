@@ -158,7 +158,7 @@ Evaluas fotos de heridas, lesiones o condiciones visibles en mascotas para orien
           'anthropic-version': '2023-06-01',
         },
         body: JSON.stringify({
-          model: 'claude-sonnet-4-5-20250514',
+          model: 'claude-sonnet-4-6',
           max_tokens: 500,
           temperature: 0.1,
           system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
@@ -201,7 +201,7 @@ Evaluas fotos de heridas, lesiones o condiciones visibles en mascotas para orien
       console.log(
         JSON.stringify({
           event: 'ai_token_usage',
-          model: 'claude-sonnet-4-5-20250514',
+          model: 'claude-sonnet-4-6',
           function: 'wound-vision',
           input_tokens: claudeData.usage.input_tokens ?? 0,
           output_tokens: claudeData.usage.output_tokens ?? 0,

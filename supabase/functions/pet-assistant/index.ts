@@ -144,23 +144,24 @@ serve(async (req) => {
       ? reminders.map((r) => `${r.type}: ${r.title} (${r.due_date})`).join('; ')
       : '';
 
-    const systemPrompt = `Eres el asistente veterinario de Paw Friend, una app chilena de salud de mascotas. Orientas a dueños con información general.
-
-## PACIENTE
-${ctx.join(' | ')}${historial !== 'sin historial' ? `\nHistorial: ${historial}` : ''}${recordatorios ? `\nRecordatorios: ${recordatorios}` : ''}
+    // System prompt dividido en 2 bloques para maximizar cache hit:
+    // - STATIC_SYSTEM: reglas + formato + ejemplos (idéntico en cada llamada) → cacheable
+    // - dynamicPetBlock: contexto del pet (diferente por llamada) → no cacheable
+    // El modelo concatena ambos bloques como un solo system prompt.
+    const staticSystemPrompt = `Eres el asistente veterinario de Paw Friend, una app chilena de salud de mascotas. Orientas a dueños con información general.
 
 ## REGLAS
-1. Español chileno (tú, tienes). Llama a la mascota por su nombre.
+1. Español chileno (tú, tienes). Llama a la mascota por su nombre (ver PACIENTE más abajo).
 2. NUNCA des diagnósticos definitivos. Usa "podría ser", "es posible que".
 3. NUNCA sugieras dosis de medicamentos.
 4. Máximo 3 oraciones + sugerencias de acción.
 5. Si hay alergias registradas y tu sugerencia puede entrar en conflicto, advierte.
-6. Si la pregunta NO es sobre salud/cuidado de mascotas: "Solo puedo ayudarte con temas de salud y cuidado de ${pet.name}."
+6. Si la pregunta NO es sobre salud/cuidado de mascotas: "Solo puedo ayudarte con temas de salud y cuidado de tu mascota."
 
 ## EMERGENCIAS
 Si la descripción incluye: convulsiones, dificultad respiratoria aguda, sangrado abundante, sospecha de envenenamiento, trauma severo, pérdida de consciencia, distensión abdominal súbita, o no orina en 24h+:
 → nivel_urgencia="alto", requiere_veterinario=true
-→ Primera línea: "URGENTE: Lleva a ${pet.name} a urgencias veterinarias AHORA."
+→ Primera línea: "URGENTE: Lleva a [nombre de la mascota] a urgencias veterinarias AHORA."
 
 ## FORMATO (JSON sin markdown)
 {"respuesta":"","nivel_urgencia":"bajo|medio|alto","requiere_veterinario":false,"sugerencias_accion":[],"disclaimer":"Orientación general. Consulta a tu veterinario para un diagnóstico profesional."}
@@ -171,6 +172,9 @@ User: "Mi gata está vomitando mucho desde ayer"
 
 User: "¿Cada cuánto debo bañar a mi perro?"
 {"respuesta":"Para Max, un baño cada 3-4 semanas suele ser suficiente. Si tiene piel sensible, tu veterinario puede recomendarte una frecuencia diferente. Usa siempre shampoo especial para perros, nunca shampoo humano.","nivel_urgencia":"bajo","requiere_veterinario":false,"sugerencias_accion":["Usar shampoo específico para mascotas","Secar bien después del baño, especialmente las orejas"],"disclaimer":"Orientación general. Consulta a tu veterinario para un diagnóstico profesional."}`;
+
+    const dynamicPetBlock = `## PACIENTE
+${ctx.join(' | ')}${historial !== 'sin historial' ? `\nHistorial: ${historial}` : ''}${recordatorios ? `\nRecordatorios: ${recordatorios}` : ''}`;
 
     // Call Claude
     const apiKey = Deno.env.get('ANTHROPIC_API_KEY');
@@ -197,7 +201,18 @@ User: "¿Cada cuánto debo bañar a mi perro?"
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 500,
           temperature: 0.3,
-          system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
+          system: [
+            // Bloque 1: estatico — se cachea (TTL 5 min). Casi todas las
+            // invocaciones dentro de 5 min reusan este cache (~90% ahorro
+            // de input tokens para este bloque).
+            {
+              type: 'text',
+              text: staticSystemPrompt,
+              cache_control: { type: 'ephemeral' },
+            },
+            // Bloque 2: dinamico por pet — no cacheable (cambia cada call).
+            { type: 'text', text: dynamicPetBlock },
+          ],
           messages: [
             // Include conversation history (last 4 exchanges max) for continuity
             ...(Array.isArray(conversation_history)

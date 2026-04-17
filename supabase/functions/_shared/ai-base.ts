@@ -149,7 +149,7 @@ export async function callClaude(options: {
   content.push({ type: "text", text: options.userMessage });
 
   const body = {
-    model: options.model ?? "claude-sonnet-4-5-20250514",
+    model: options.model ?? "claude-sonnet-4-6",
     max_tokens: options.maxTokens ?? 600,
     temperature: options.temperature ?? 0.3,
     system: [{ type: "text", text: options.systemPrompt, cache_control: { type: "ephemeral" } }],
