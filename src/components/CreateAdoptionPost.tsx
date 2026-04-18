@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
@@ -46,13 +48,46 @@ interface CreateAdoptionPostProps {
   onSuccess: () => void;
 }
 
+// Schema de origen: bloquea adoption_posts con description pobre o sin fotos
+// (eran ~60% de los warnings del audit). La validacion previa era solo
+// `{ required: true }` sobre description y location — permitia "Bsjsjsbs".
+const adoptionPostSchema = z.object({
+  pet_name: z.string().trim().min(1, 'Nombre requerido').max(50, 'Maximo 50 caracteres'),
+  species: z.string().min(1, 'Selecciona una especie'),
+  breed: z.string().trim().max(80).optional().or(z.literal('')),
+  age_years: z.string().optional().or(z.literal('')),
+  age_months: z.string().optional().or(z.literal('')),
+  gender: z.string().optional().or(z.literal('')),
+  size: z.string().optional().or(z.literal('')),
+  description: z
+    .string()
+    .trim()
+    .min(30, 'Describe al menos 30 caracteres: personalidad, habitos, historia')
+    .max(1000, 'Maximo 1000 caracteres'),
+  reason_for_adoption: z.string().optional().or(z.literal('')),
+  health_status: z.string().optional().or(z.literal('')),
+  good_with_kids: z.boolean().optional(),
+  good_with_dogs: z.boolean().optional(),
+  good_with_cats: z.boolean().optional(),
+  location: z.string().trim().min(2, 'Ubicacion requerida').max(100),
+});
+
+type AdoptionPostFormData = z.infer<typeof adoptionPostSchema>;
+
 export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdoptionPostProps) {
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photoUrls, setPhotoUrls] = useState<string[]>([]);
   const [photoPaths, setPhotoPaths] = useState<string[]>([]);
   const [selectedTemperament, setSelectedTemperament] = useState<string[]>([]);
-  const { register, handleSubmit, watch, setValue, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    formState: { errors },
+  } = useForm<AdoptionPostFormData>({ resolver: zodResolver(adoptionPostSchema) });
 
   const species = watch('species');
   const healthStatusValue = watch('health_status') ?? '';
@@ -112,9 +147,15 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: AdoptionPostFormData) => {
     if (!user) return;
+
+    // Validacion de origen: sin fotos no se publica. Antes permitia submit
+    // y el post aparecia vacio en el feed.
+    if (photoUrls.length === 0) {
+      toast.error('Sube al menos una foto para publicar la adopcion');
+      return;
+    }
 
     setIsSubmitting(true);
     try {
@@ -194,7 +235,10 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="pet_name">Nombre de la Mascota *</Label>
-              <Input id="pet_name" {...register('pet_name', { required: true })} />
+              <Input id="pet_name" {...register('pet_name')} />
+              {errors.pet_name && (
+                <p className="text-sm text-destructive mt-1">{errors.pet_name.message}</p>
+              )}
             </div>
 
             <div>
@@ -275,13 +319,16 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
           </div>
 
           <div>
-            <Label htmlFor="description">Descripción *</Label>
+            <Label htmlFor="description">Descripción * (mínimo 30 caracteres)</Label>
             <Textarea
               id="description"
-              {...register('description', { required: true })}
-              placeholder="Describe a la mascota, su personalidad, hábitos..."
+              {...register('description')}
+              placeholder="Describe a la mascota, su personalidad, hábitos, historia..."
               rows={3}
             />
+            {errors.description && (
+              <p className="text-sm text-destructive mt-1">{errors.description.message}</p>
+            )}
           </div>
 
           <div>
@@ -332,21 +379,21 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
               <label htmlFor="good-with-kids" className="flex items-center gap-2 cursor-pointer">
                 <Checkbox
                   id="good-with-kids"
-                  onCheckedChange={(checked) => setValue('good_with_kids', checked)}
+                  onCheckedChange={(checked) => setValue('good_with_kids', checked === true)}
                 />
                 <span className="text-sm">Bueno con niños</span>
               </label>
               <label htmlFor="good-with-dogs" className="flex items-center gap-2 cursor-pointer">
                 <Checkbox
                   id="good-with-dogs"
-                  onCheckedChange={(checked) => setValue('good_with_dogs', checked)}
+                  onCheckedChange={(checked) => setValue('good_with_dogs', checked === true)}
                 />
                 <span className="text-sm">Bueno con perros</span>
               </label>
               <label htmlFor="good-with-cats" className="flex items-center gap-2 cursor-pointer">
                 <Checkbox
                   id="good-with-cats"
-                  onCheckedChange={(checked) => setValue('good_with_cats', checked)}
+                  onCheckedChange={(checked) => setValue('good_with_cats', checked === true)}
                 />
                 <span className="text-sm">Bueno con gatos</span>
               </label>
@@ -355,15 +402,14 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
 
           <div>
             <Label htmlFor="location">Ubicación *</Label>
-            <Input
-              id="location"
-              {...register('location', { required: true })}
-              placeholder="Ciudad, región..."
-            />
+            <Input id="location" {...register('location')} placeholder="Ciudad, región..." />
+            {errors.location && (
+              <p className="text-sm text-destructive mt-1">{errors.location.message}</p>
+            )}
           </div>
 
           <div>
-            <Label>Fotos</Label>
+            <Label>Fotos * (al menos una)</Label>
             <div className="border-2 border-dashed border-border rounded-lg p-6 text-center hover:border-primary/50 transition-colors">
               <input
                 type="file"

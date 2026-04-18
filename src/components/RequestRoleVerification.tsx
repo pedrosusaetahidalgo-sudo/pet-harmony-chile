@@ -403,16 +403,22 @@ export const RequestRoleVerification = ({ defaultRole }: RequestRoleVerification
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="notes">
-              Información Adicional
-              {requestedRole !== 'veterinarian' && ' (Opcional)'}
-            </Label>
+            <Label htmlFor="notes">Información Adicional (mínimo 30 caracteres)</Label>
             <Textarea
               id="notes"
-              placeholder="Experiencia, certificaciones, referencias, etc."
+              placeholder="Describe tu experiencia, certificaciones, años trabajando con mascotas, referencias, etc."
               rows={4}
-              {...register('notes', { required: requestedRole !== 'veterinarian' })}
+              {...register('notes', {
+                required: 'Describe tu experiencia para que podamos verificar tu solicitud',
+                minLength: {
+                  value: 30,
+                  message:
+                    'Cuentanos un poco mas sobre tu experiencia (minimo 30 caracteres). Ejemplo: "3 anos trabajando como peluquera de perros en Las Condes, certificacion en grooming X."',
+                },
+                maxLength: { value: 1000, message: 'Maximo 1000 caracteres' },
+              })}
             />
+            {errors.notes && <p className="text-sm text-red-500">{errors.notes.message}</p>}
           </div>
 
           <Button type="submit" disabled={loading} className="w-full">

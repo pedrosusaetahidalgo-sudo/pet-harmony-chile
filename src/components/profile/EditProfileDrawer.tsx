@@ -7,6 +7,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import { Save, Loader2, Upload, Camera } from '@/lib/icons';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { ComboboxWithOther } from '@/components/ui/combobox-with-other';
+import { COMUNAS_SANTIAGO } from '@/lib/locations';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -355,12 +357,16 @@ export function EditProfileDrawer({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="editLocation">Ubicacion</Label>
-              <Input
-                id="editLocation"
-                placeholder="Ej: Santiago, Chile"
+              <Label htmlFor="editLocation">Comuna</Label>
+              <ComboboxWithOther
+                options={COMUNAS_SANTIAGO.map((c) => ({ value: c, label: c }))}
                 value={location}
-                onChange={(e) => setLocation(e.target.value)}
+                onValueChange={setLocation}
+                placeholder="Selecciona tu comuna"
+                searchPlaceholder="Buscar comuna..."
+                emptyMessage="Comuna no encontrada."
+                otherLabel="Otra"
+                otherPlaceholder="Escribe tu ubicacion (ciudad, pais)..."
               />
             </div>
 

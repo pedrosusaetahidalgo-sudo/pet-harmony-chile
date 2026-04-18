@@ -1020,15 +1020,19 @@ function detectAnomalies(tableId: string, rows: any[]): any[] {
             plan_id: r.plan_id,
           });
         }
-        // Gamificacion inconsistente: puntos acumulados pero level no avanzo.
-        // Normalmente level 2 en ~100 pts. Flag si >= 50 pts y level = 1.
-        if ((r.points ?? 0) >= 50 && (r.level ?? 1) === 1) {
+        // Gamificacion inconsistente: formula real es level = floor(sqrt(points/100))+1.
+        // 100 pts -> level 2, 400 -> level 3. Flag solo si el level en DB esta por
+        // debajo del esperado (trigger SQL no ejecuto, frontend-only calc fallo).
+        const expectedLevel = Math.floor(Math.sqrt(Math.max(r.points ?? 0, 0) / 100)) + 1;
+        const actualLevel = r.level ?? 1;
+        if (expectedLevel > actualLevel) {
           out.push({
             id: r.id,
             issue: 'points_level_mismatch',
             display_name: r.display_name,
             points: r.points,
-            level: r.level,
+            level_actual: actualLevel,
+            level_expected: expectedLevel,
           });
         }
       }

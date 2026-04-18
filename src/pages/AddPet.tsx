@@ -335,18 +335,15 @@ const AddPet = () => {
       return;
     }
 
-    // Validar raza contra especie seleccionada (con combobox ya no debería pasar, pero por seguridad)
-    if (
-      formData.breed &&
-      formData.species &&
-      !breedConfirmed &&
-      !formData.breed.startsWith('otro:')
-    ) {
+    // Validar raza contra catalogo de la especie. El ComboboxWithOther guarda
+    // el value limpio: si no esta en el catalogo, es una entrada "otro" libre.
+    // Pedimos confirmacion explicita para evitar typos silenciosos.
+    if (formData.breed && formData.species && !breedConfirmed) {
       const knownBreeds = BREEDS_BY_SPECIES[formData.species] || [];
       const isKnown = knownBreeds.some((b) => b.value === formData.breed);
       if (!isKnown) {
-        toast('Raza no reconocida para esta especie', {
-          description: `"${getBreedLabel(formData.species, formData.breed)}" no está en nuestra lista de razas de ${formData.species}. Presiona "Guardar" de nuevo si es correcta.`,
+        toast('Raza fuera del catalogo', {
+          description: `"${getBreedLabel(formData.species, formData.breed)}" no esta en nuestra lista de razas de ${formData.species}. Presiona "Guardar" de nuevo si es correcta.`,
         });
         setBreedConfirmed(true);
         return;

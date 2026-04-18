@@ -77,8 +77,15 @@ export type VetProfileFormData = z.infer<typeof vetProfileSchema>;
 export const addPetSchema = z.object({
   name: safeText(50),
   species: z.string().min(1, 'Selecciona una especie'),
-  breed: z.string().optional().or(z.literal('')),
-  birth_date: z.string().optional().or(z.literal('')),
+  breed: z.string().trim().max(80, 'Raza muy larga').optional().or(z.literal('')),
+  birth_date: z
+    .string()
+    .optional()
+    .or(z.literal(''))
+    .refine(
+      (v) => !v || new Date(v).getTime() <= Date.now(),
+      'La fecha de nacimiento no puede ser futura'
+    ),
   gender: z.string().optional().or(z.literal('')),
   size: z.string().optional().or(z.literal('')),
   color: z.string().optional().or(z.literal('')),

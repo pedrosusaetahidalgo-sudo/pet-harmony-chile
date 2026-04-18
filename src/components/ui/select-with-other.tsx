@@ -24,9 +24,10 @@ interface SelectWithOtherProps {
 }
 
 /**
- * Select dropdown that includes an "Otro" option.
- * When "Otro" is selected, a free-text input appears below.
- * The value is stored as "otro:texto" for custom entries.
+ * Select que incluye una opcion "Otro". Cuando se elige, aparece un input
+ * libre y el valor se guarda LIMPIO (sin prefijo). El modo "otro" se
+ * infiere automaticamente al montar si el value no matchea ningun option
+ * (retrocompat con datos tipo "Tabby" sin prefijo).
  */
 export function SelectWithOther({
   options,
@@ -37,19 +38,34 @@ export function SelectWithOther({
   otherPlaceholder = 'Especifica...',
   disabled,
 }: SelectWithOtherProps) {
-  const isOtherValue = value.startsWith('otro:');
-  const selectValue = isOtherValue ? 'otro' : value;
-  const otherText = isOtherValue ? value.slice(5) : '';
+  // Retrocompat: datos antiguos pueden venir con prefijo "otro:" — lo limpiamos.
+  React.useEffect(() => {
+    if (value.startsWith('otro:')) {
+      onValueChange(value.slice(5));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const inCatalog = options.some((opt) => opt.value === value);
+  const [otherMode, setOtherMode] = React.useState<boolean>(() => !!value && !inCatalog);
+
+  React.useEffect(() => {
+    if (inCatalog && otherMode) setOtherMode(false);
+  }, [inCatalog, otherMode]);
+
+  const selectValue = otherMode || (!inCatalog && !!value) ? '__other__' : value;
 
   return (
     <div className="space-y-2">
       <Select
         value={selectValue}
         onValueChange={(v) => {
-          if (v === 'otro') {
-            onValueChange('otro:');
+          if (v === '__other__') {
+            onValueChange('');
+            setOtherMode(true);
           } else {
             onValueChange(v);
+            setOtherMode(false);
           }
         }}
         disabled={disabled}
@@ -63,13 +79,13 @@ export function SelectWithOther({
               {opt.label}
             </SelectItem>
           ))}
-          <SelectItem value="otro">{otherLabel}</SelectItem>
+          <SelectItem value="__other__">{otherLabel}</SelectItem>
         </SelectContent>
       </Select>
-      {selectValue === 'otro' && (
+      {otherMode && (
         <Input
-          value={otherText}
-          onChange={(e) => onValueChange(`otro:${e.target.value}`)}
+          value={value}
+          onChange={(e) => onValueChange(e.target.value)}
           placeholder={otherPlaceholder}
           // eslint-disable-next-line jsx-a11y/no-autofocus -- input "Otro" aparece tras seleccionar opcion, el foco debe ir ahi
           autoFocus

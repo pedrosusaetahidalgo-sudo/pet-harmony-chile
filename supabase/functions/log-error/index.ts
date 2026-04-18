@@ -12,6 +12,28 @@ const corsHeaders = {
 const rateLimits = new Map<string, { count: number; resetAt: number }>();
 const MAX_PER_MINUTE = 10;
 
+// Filtro de origen: ruido benigno no se inserta en error_logs. Causa raiz
+// del viejo auto_fix_benign_errors que BORRABA despues de insertar.
+// Fix escalable: rechazar en el pipeline, no purgar.
+const BENIGN_MESSAGE_PATTERNS: RegExp[] = [
+  /lock was stolen/i,
+  /^script error\.?$/i,
+  /resizeobserver loop (limit exceeded|completed with undelivered notifications)/i,
+  /non-error promise rejection captured/i,
+  /the operation was aborted/i,
+  /^aborterror/i,
+  /network request failed/i,
+  /^warning:/i, // React dev warnings
+  /\bvite:\b/i, // Vite HMR
+  /\[hmr\]/i,
+  /downloadable font/i,
+];
+
+function isBenignNoise(message: string): boolean {
+  if (!message) return true;
+  return BENIGN_MESSAGE_PATTERNS.some((p) => p.test(message));
+}
+
 serve(
   withTelemetry('log-error', async (req) => {
     if (req.method === 'OPTIONS') {
@@ -43,6 +65,15 @@ serve(
       if (!message || typeof message !== 'string') {
         return new Response(JSON.stringify({ error: 'message required' }), {
           status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+
+      // Ruido benigno: devolver 200 sin insertar. Evita inflar error_logs
+      // con cosas como "Lock was stolen" o "ResizeObserver loop".
+      if (isBenignNoise(message)) {
+        return new Response(JSON.stringify({ ok: true, filtered: 'benign_noise' }), {
+          status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }

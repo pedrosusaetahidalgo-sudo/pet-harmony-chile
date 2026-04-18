@@ -316,12 +316,29 @@ serve(
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     } catch (error) {
+      // Enriquecido: incluye nombre del error + stack parcial para que el
+      // audit pueda diagnosticar sin abrir Sentry. Antes solo reportaba el
+      // message generico y no se podia saber que operacion fallo.
+      const name = error instanceof Error ? error.name : 'UnknownError';
       const msg = error instanceof Error ? error.message : String(error);
-      console.error('[google-calendar-sync] error', msg);
-      return new Response(JSON.stringify({ error: msg }), {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      const stack =
+        error instanceof Error && error.stack ? error.stack.split('\n').slice(0, 5).join('\n') : '';
+      console.error('[google-calendar-sync]', name, msg, stack);
+      return new Response(
+        JSON.stringify({
+          error: msg,
+          error_type: name,
+          hint: msg.includes('Refresh failed')
+            ? 'El refresh token de Google expiro o fue revocado. El usuario debe reconectar Google Calendar.'
+            : msg.includes('Event POST failed') || msg.includes('Event PATCH failed')
+              ? 'Google Calendar API rechazo el evento. Verificar scopes y calendar_id.'
+              : 'Revisar logs de Supabase para stack completo.',
+        }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
   })
 );

@@ -32,8 +32,10 @@ interface ComboboxWithOtherProps {
 
 /**
  * Searchable combobox (Command + Popover) with an "Otro" option.
- * When "Otro" is selected, a free-text input appears below.
- * The value is stored as "otro:texto" for custom entries.
+ * Cuando el usuario elige "Otro", aparece un input libre y el valor se
+ * guarda LIMPIO (sin prefijo). El modo "otro" se infiere automaticamente
+ * al montar si `value` no matchea ningun option (retrocompat con datos
+ * existentes tipo "Tabby" sin prefijo).
  */
 export function ComboboxWithOther({
   options,
@@ -48,15 +50,30 @@ export function ComboboxWithOther({
 }: ComboboxWithOtherProps) {
   const [open, setOpen] = React.useState(false);
 
-  const isOtherValue = value.startsWith('otro:');
-  const otherText = isOtherValue ? value.slice(5) : '';
+  // Retrocompat: datos antiguos pueden venir con prefijo "otro:" — lo limpiamos.
+  React.useEffect(() => {
+    if (value.startsWith('otro:')) {
+      onValueChange(value.slice(5));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const inCatalog = options.some((opt) => opt.value === value);
+  const [otherMode, setOtherMode] = React.useState<boolean>(() => !!value && !inCatalog);
+
+  // Si el value cambia desde afuera y matchea catalog, salimos de otherMode.
+  React.useEffect(() => {
+    if (inCatalog && otherMode) setOtherMode(false);
+  }, [inCatalog, otherMode]);
 
   const selectedOption = options.find((opt) => opt.value === value);
-  const displayLabel = isOtherValue
-    ? otherText
-      ? `Otro: ${otherText}`
-      : 'Otro'
-    : (selectedOption?.label ?? '');
+  const displayLabel = selectedOption
+    ? selectedOption.label
+    : otherMode
+      ? value
+        ? `${otherLabel}: ${value}`
+        : otherLabel
+      : '';
 
   return (
     <div className="space-y-2">
@@ -87,6 +104,7 @@ export function ComboboxWithOther({
                     value={opt.label}
                     onSelect={() => {
                       onValueChange(opt.value);
+                      setOtherMode(false);
                       setOpen(false);
                     }}
                   >
@@ -102,12 +120,16 @@ export function ComboboxWithOther({
                 <CommandItem
                   value={otherLabel}
                   onSelect={() => {
-                    onValueChange('otro:');
+                    onValueChange('');
+                    setOtherMode(true);
                     setOpen(false);
                   }}
                 >
                   <Check
-                    className={cn('mr-2 h-4 w-4', isOtherValue ? 'opacity-100' : 'opacity-0')}
+                    className={cn(
+                      'mr-2 h-4 w-4',
+                      otherMode && !inCatalog ? 'opacity-100' : 'opacity-0'
+                    )}
                   />
                   {otherLabel}
                 </CommandItem>
@@ -116,10 +138,10 @@ export function ComboboxWithOther({
           </Command>
         </PopoverContent>
       </Popover>
-      {isOtherValue && (
+      {otherMode && (
         <Input
-          value={otherText}
-          onChange={(e) => onValueChange(`otro:${e.target.value}`)}
+          value={value}
+          onChange={(e) => onValueChange(e.target.value)}
           placeholder={otherPlaceholder}
           // eslint-disable-next-line jsx-a11y/no-autofocus -- input "Otro" aparece tras seleccionar opcion, el foco debe ir ahi
           autoFocus
