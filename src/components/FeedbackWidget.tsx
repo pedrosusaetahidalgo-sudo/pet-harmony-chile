@@ -132,14 +132,19 @@ export function FeedbackWidget() {
   };
 
   const handleRatingSubmit = () => {
-    const nextTab: 'donate-invite' | 'history' =
-      wouldPayValue === 'yes' ? 'donate-invite' : 'history';
+    // 2026-04-19: pedro pide que despues de completar las 3 respuestas
+    // (feedback, rating, wouldPay) SIEMPRE derivemos al popup "y si la
+    // dejamos gratis" con CTA a /donaciones. Antes solo aparecia si
+    // wouldPay='yes' — ahora aplica para yes/maybe/no. Respeta que si
+    // saltaron sin responder nada, van directo a history.
+    const respondioAlgo = ratingValue != null || wouldPayValue != null;
+    const nextTab: 'donate-invite' | 'history' = respondioAlgo ? 'donate-invite' : 'history';
 
     if (!lastFeedbackId) {
       setTab(nextTab);
       return;
     }
-    if (ratingValue == null && wouldPayValue == null) {
+    if (!respondioAlgo) {
       setTab(nextTab);
       return;
     }
@@ -253,8 +258,9 @@ export function FeedbackWidget() {
                   ¿Y si la dejamos <span className="underline">gratis</span>?
                 </p>
                 <p className="text-xs text-white/85 mt-1">
-                  Sabemos que no todos quieren pagar una mensualidad. Pero tal vez puedas aportar lo
-                  que sientas justo, una sola vez.
+                  Gracias por responder. Paw Friend sigue gratis para todos — si quieres, puedes
+                  aportar <b>una sola vez</b> lo que sientas justo y listo, sin suscripciones ni
+                  compromisos.
                 </p>
               </div>
 
