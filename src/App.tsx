@@ -58,6 +58,7 @@ const MyBookings = lazy(() => import('./pages/MyBookings'));
 const Upgrade = lazy(() => import('./pages/Upgrade'));
 const UpgradeSuccess = lazy(() => import('./pages/UpgradeSuccess'));
 const UpgradeCancel = lazy(() => import('./pages/UpgradeCancel'));
+const Donaciones = lazy(() => import('./pages/Donaciones'));
 const Servicios = lazy(() => import('./pages/Servicios'));
 // Peluqueria.tsx eliminada — groomers ahora son tab nativo en /services/groomers
 const GroomerProfileEdit = lazy(() => import('./pages/GroomerProfileEdit'));
@@ -586,6 +587,16 @@ const App = () => (
                   element={
                     <ProtectedRoute>
                       <UpgradeCancel />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/donaciones"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Donaciones />
+                      </AppLayout>
                     </ProtectedRoute>
                   }
                 />

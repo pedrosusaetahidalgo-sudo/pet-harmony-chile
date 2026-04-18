@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { useSubmitFeedback, useMyFeedback } from '@/hooks/useFeedback';
+import { useSubmitFeedback, useMyFeedback, useSubmitFeedbackRating } from '@/hooks/useFeedback';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
@@ -21,6 +21,9 @@ import {
   Loader2,
   CheckCircle,
   MessageCircle,
+  Star,
+  Sparkles,
+  PawPrint,
 } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
@@ -57,15 +60,55 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   dismissed: { label: 'Descartado', color: 'bg-slate-100 text-slate-600' },
 };
 
+const WOULD_PAY_OPTIONS: {
+  value: 'yes' | 'maybe' | 'no';
+  emoji: string;
+  label: string;
+  sub: string;
+  bg: string;
+  ring: string;
+}[] = [
+  {
+    value: 'yes',
+    emoji: '💛',
+    label: 'Si, la pagaria',
+    sub: 'La encuentro imprescindible',
+    bg: 'from-emerald-50 to-emerald-100 border-emerald-200',
+    ring: 'ring-emerald-400',
+  },
+  {
+    value: 'maybe',
+    emoji: '🤔',
+    label: 'Tal vez',
+    sub: 'Depende del precio o las features',
+    bg: 'from-amber-50 to-amber-100 border-amber-200',
+    ring: 'ring-amber-400',
+  },
+  {
+    value: 'no',
+    emoji: '🙅',
+    label: 'No por ahora',
+    sub: 'Prefiero que siga gratis',
+    bg: 'from-rose-50 to-rose-100 border-rose-200',
+    ring: 'ring-rose-400',
+  },
+];
+
 export function FeedbackWidget() {
   const { user } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const [tab, setTab] = useState<'new' | 'history'>('new');
+  const [tab, setTab] = useState<'new' | 'rating' | 'donate-invite' | 'history'>('new');
   const [type, setType] = useState<'bug' | 'idea' | 'experience' | null>(null);
   const [description, setDescription] = useState('');
+  const [lastFeedbackId, setLastFeedbackId] = useState<string | null>(null);
+  const [ratingValue, setRatingValue] = useState<number | null>(null);
+  const [ratingHover, setRatingHover] = useState<number | null>(null);
+  const [wouldPayValue, setWouldPayValue] = useState<'yes' | 'maybe' | 'no' | null>(null);
 
   const submitFeedback = useSubmitFeedback();
+  const submitRating = useSubmitFeedbackRating();
   const { data: myFeedback = [] } = useMyFeedback();
 
   if (!user) return null;
@@ -75,13 +118,44 @@ export function FeedbackWidget() {
     submitFeedback.mutate(
       { type, description: description.trim(), route: location.pathname },
       {
-        onSuccess: () => {
+        onSuccess: (id) => {
           setDescription('');
           setType(null);
-          setTab('history');
+          setLastFeedbackId(id);
+          setRatingValue(null);
+          setRatingHover(null);
+          setWouldPayValue(null);
+          setTab('rating');
         },
       }
     );
+  };
+
+  const handleRatingSubmit = () => {
+    const nextTab: 'donate-invite' | 'history' =
+      wouldPayValue === 'yes' ? 'donate-invite' : 'history';
+
+    if (!lastFeedbackId) {
+      setTab(nextTab);
+      return;
+    }
+    if (ratingValue == null && wouldPayValue == null) {
+      setTab(nextTab);
+      return;
+    }
+    submitRating.mutate(
+      { feedbackId: lastFeedbackId, rating: ratingValue, wouldPay: wouldPayValue },
+      {
+        onSuccess: () => {
+          setTab(nextTab);
+        },
+      }
+    );
+  };
+
+  const goToDonations = () => {
+    resetAndClose();
+    navigate('/donaciones');
   };
 
   const resetAndClose = () => {
@@ -89,10 +163,30 @@ export function FeedbackWidget() {
     setDescription('');
     setType(null);
     setTab('new');
+    setLastFeedbackId(null);
+    setRatingValue(null);
+    setRatingHover(null);
+    setWouldPayValue(null);
   };
 
   return (
     <>
+      {/* Mini-pill de donaciones sobre el FAB (subtle, no intrusivo) */}
+      <button
+        onClick={() => navigate('/donaciones')}
+        className={cn(
+          'fixed z-50 bottom-[124px] right-4 md:bottom-[70px] md:right-6',
+          'flex items-center gap-1 pl-2.5 pr-3 py-1 rounded-full shadow-md',
+          'bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-pink-200/70 dark:border-pink-900/50',
+          'text-pink-600 dark:text-pink-300 text-[11px] font-medium',
+          'hover:bg-pink-50 dark:hover:bg-pink-950/40 hover:scale-[1.03] transition-all'
+        )}
+        aria-label="Ir a donaciones"
+      >
+        <Heart className="h-3 w-3 fill-pink-500 text-pink-500" aria-hidden />
+        ¿Y si la dejamos gratis?
+      </button>
+
       {/* Floating button */}
       <button
         onClick={() => setOpen(true)}
@@ -122,36 +216,217 @@ export function FeedbackWidget() {
             </DialogDescription>
           </DialogHeader>
 
-          {/* Tabs: Nuevo / Historial */}
-          <div className="flex gap-1 bg-muted rounded-lg p-1">
-            <button
-              onClick={() => setTab('new')}
-              className={cn(
-                'flex-1 py-1.5 px-3 text-sm font-medium rounded-md transition-colors',
-                tab === 'new'
-                  ? 'bg-background shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              )}
-            >
-              Nuevo
-            </button>
-            <button
-              onClick={() => setTab('history')}
-              className={cn(
-                'flex-1 py-1.5 px-3 text-sm font-medium rounded-md transition-colors relative',
-                tab === 'history'
-                  ? 'bg-background shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              )}
-            >
-              Mi historial
-              {myFeedback.length > 0 && (
-                <span className="ml-1 text-xs text-muted-foreground">({myFeedback.length})</span>
-              )}
-            </button>
-          </div>
+          {/* Tabs: Nuevo / Historial (ocultos durante pasos intermedios) */}
+          {tab !== 'rating' && tab !== 'donate-invite' && (
+            <div className="flex gap-1 bg-muted rounded-lg p-1">
+              <button
+                onClick={() => setTab('new')}
+                className={cn(
+                  'flex-1 py-1.5 px-3 text-sm font-medium rounded-md transition-colors',
+                  tab === 'new'
+                    ? 'bg-background shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                Nuevo
+              </button>
+              <button
+                onClick={() => setTab('history')}
+                className={cn(
+                  'flex-1 py-1.5 px-3 text-sm font-medium rounded-md transition-colors relative',
+                  tab === 'history'
+                    ? 'bg-background shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                Mi historial
+                {myFeedback.length > 0 && (
+                  <span className="ml-1 text-xs text-muted-foreground">({myFeedback.length})</span>
+                )}
+              </button>
+            </div>
+          )}
 
-          {tab === 'new' ? (
+          {tab === 'donate-invite' ? (
+            <div className="space-y-5">
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-pink-500 via-rose-500 to-amber-500 p-5 text-white text-center">
+                <PawPrint
+                  className="absolute -bottom-2 -left-2 h-16 w-16 text-white/20"
+                  aria-hidden
+                />
+                <Sparkles
+                  className="absolute -top-2 -right-2 h-14 w-14 text-white/20"
+                  aria-hidden
+                />
+                <p className="text-xs uppercase tracking-wide text-white/80 mb-1">
+                  Pregunta amistosa
+                </p>
+                <p className="text-lg font-bold leading-tight">
+                  ¿Y si la dejamos <span className="underline">gratis</span>?
+                </p>
+                <p className="text-xs text-white/85 mt-1">
+                  Sabemos que no todos quieren pagar una mensualidad. Pero tal vez puedas aportar lo
+                  que sientas justo, una sola vez.
+                </p>
+              </div>
+
+              <div className="text-sm text-foreground/80 space-y-2 px-1">
+                <p>
+                  Paw Friend es un proyecto{' '}
+                  <span className="font-semibold">home-made en Chile</span>, hecho por una sola
+                  persona que ama a los peludos. Tu aporte nos ayuda a mantener los servidores, la
+                  seguridad de tus datos y a seguir mejorando la app para toda la comunidad.
+                </p>
+                <p className="text-xs text-muted-foreground italic">
+                  Sin presion: solo te mostramos esto una vez, aqui en tu feedback.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Button
+                  onClick={goToDonations}
+                  className="w-full h-11 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 hover:from-pink-600 hover:via-rose-600 hover:to-amber-600 text-white font-semibold"
+                >
+                  <Heart className="h-4 w-4 mr-2 fill-current" />
+                  Conocer como ayudar
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => setTab('history')}
+                  className="w-full text-muted-foreground"
+                >
+                  Ahora no, gracias
+                </Button>
+              </div>
+            </div>
+          ) : tab === 'rating' ? (
+            <div className="space-y-5">
+              {/* Header celebratorio */}
+              <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-5 text-white text-center">
+                <Sparkles
+                  className="absolute -top-2 -right-2 h-16 w-16 text-white/15"
+                  aria-hidden
+                />
+                <CheckCircle className="h-10 w-10 mx-auto mb-2 drop-shadow" />
+                <p className="text-base font-semibold">¡Gracias por tu feedback!</p>
+                <p className="text-xs text-white/80 mt-0.5">
+                  Antes de cerrar, cuentanos algo rapido
+                </p>
+              </div>
+
+              {/* Star rating */}
+              <div className="space-y-2">
+                <p className="text-sm font-medium text-center">¿Como evaluarias Paw Friend hoy?</p>
+                {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions */}
+                <div
+                  role="group"
+                  aria-label="Evaluacion de 1 a 5 estrellas"
+                  className="flex justify-center gap-1"
+                  onMouseLeave={() => setRatingHover(null)}
+                >
+                  {[1, 2, 3, 4, 5].map((s) => {
+                    const active = (ratingHover ?? ratingValue ?? 0) >= s;
+                    return (
+                      <button
+                        key={s}
+                        type="button"
+                        aria-label={`${s} estrella${s > 1 ? 's' : ''}`}
+                        onClick={() => setRatingValue(s)}
+                        onMouseEnter={() => setRatingHover(s)}
+                        className={cn(
+                          'p-1.5 rounded-full transition-transform',
+                          active ? 'scale-110' : 'hover:scale-110'
+                        )}
+                      >
+                        <Star
+                          className={cn(
+                            'h-9 w-9 transition-colors',
+                            active
+                              ? 'text-amber-400 fill-amber-400 drop-shadow-[0_0_6px_rgba(251,191,36,0.5)]'
+                              : 'text-slate-300'
+                          )}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
+                {ratingValue != null && (
+                  <p className="text-xs text-center text-muted-foreground">
+                    {ratingValue === 5 && '¡Nos encanta! 🎉'}
+                    {ratingValue === 4 && 'Nos alegra que te guste 💜'}
+                    {ratingValue === 3 && 'Vamos a seguir mejorando'}
+                    {ratingValue === 2 && 'Gracias por la honestidad'}
+                    {ratingValue === 1 && 'Perdon, queremos mejorar'}
+                  </p>
+                )}
+              </div>
+
+              {/* Would pay question */}
+              <div className="space-y-2">
+                <div className="rounded-xl border-2 border-dashed border-indigo-200 dark:border-indigo-900 bg-gradient-to-br from-indigo-50/60 to-purple-50/60 dark:from-indigo-950/40 dark:to-purple-950/40 p-3">
+                  <p className="text-sm font-semibold text-center text-indigo-700 dark:text-indigo-300 flex items-center justify-center gap-1.5">
+                    💳 ¿Pagarias por esta app?
+                  </p>
+                  <p className="text-[11px] text-center text-muted-foreground mt-0.5">
+                    Tu respuesta nos ayuda a decidir que features priorizar
+                  </p>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {WOULD_PAY_OPTIONS.map((opt) => {
+                    const selected = wouldPayValue === opt.value;
+                    return (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() => setWouldPayValue(opt.value)}
+                        className={cn(
+                          'flex flex-col items-center justify-center gap-1 p-2.5 rounded-lg border-2 bg-gradient-to-br transition-all text-center',
+                          opt.bg,
+                          selected
+                            ? `ring-2 ring-offset-1 ${opt.ring} scale-[1.02]`
+                            : 'hover:scale-[1.02] opacity-90 hover:opacity-100'
+                        )}
+                      >
+                        <span className="text-2xl leading-none" aria-hidden>
+                          {opt.emoji}
+                        </span>
+                        <span className="text-xs font-semibold text-foreground">{opt.label}</span>
+                        <span className="text-[10px] text-muted-foreground leading-tight">
+                          {opt.sub}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  className="flex-1"
+                  onClick={() => setTab('history')}
+                  disabled={submitRating.isPending}
+                >
+                  Saltar
+                </Button>
+                <Button
+                  onClick={handleRatingSubmit}
+                  disabled={
+                    submitRating.isPending || (ratingValue == null && wouldPayValue == null)
+                  }
+                  className="flex-1 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600"
+                >
+                  {submitRating.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    <Send className="h-4 w-4 mr-2" />
+                  )}
+                  Enviar evaluacion
+                </Button>
+              </div>
+            </div>
+          ) : tab === 'new' ? (
             <div className="space-y-4">
               {/* Type selector */}
               <div>

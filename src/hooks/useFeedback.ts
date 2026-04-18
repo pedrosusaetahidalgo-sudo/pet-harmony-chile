@@ -18,6 +18,7 @@ export interface FeedbackItem {
   paw_points_awarded: number;
   user_display_name: string | null;
   app_rating: number | null;
+  would_pay: 'yes' | 'maybe' | 'no' | null;
   created_at: string;
   updated_at: string;
   // AI classification fields
@@ -65,7 +66,7 @@ export function useSubmitFeedback() {
         .eq('id', user.id)
         .single();
 
-      const { error } = await supabase
+      const { data, error } = await supabase
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .from('feedback_in_app' as any)
         .insert({
@@ -75,9 +76,12 @@ export function useSubmitFeedback() {
           route,
           role: activeRole,
           user_display_name: profile?.display_name || user.email?.split('@')[0] || 'Usuario',
-        });
+        })
+        .select('id')
+        .single();
 
       if (error) throw error;
+      return (data as { id: string }).id;
     },
     onSuccess: () => {
       toast('Feedback enviado', { description: 'Gracias por ayudarnos a mejorar Paw Friend' });
@@ -85,6 +89,37 @@ export function useSubmitFeedback() {
     },
     onError: () => {
       toast.error('Error al enviar feedback');
+    },
+  });
+}
+
+// ── User-facing hook: submit star rating + willingness-to-pay ──
+export function useSubmitFeedbackRating() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      feedbackId,
+      rating,
+      wouldPay,
+    }: {
+      feedbackId: string;
+      rating?: number | null;
+      wouldPay?: 'yes' | 'maybe' | 'no' | null;
+    }) => {
+      const { error } = await supabase.rpc('submit_feedback_rating', {
+        p_feedback_id: feedbackId,
+        p_rating: rating ?? null,
+        p_would_pay: wouldPay ?? null,
+      } as never);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['my-feedback'] });
+      queryClient.invalidateQueries({ queryKey: ['admin-feedback'] });
+    },
+    onError: () => {
+      toast.error('No pudimos guardar tu evaluacion');
     },
   });
 }
@@ -195,6 +230,42 @@ export function useClassifyFeedbackBatch() {
     },
     onError: () => {
       toast.error('Error en clasificación batch');
+    },
+  });
+}
+
+// ── Admin: donations monitoring (read-only) ──
+export interface DonationRow {
+  id: string;
+  user_id: string | null;
+  amount_clp: number;
+  status: 'pending' | 'paid' | 'failed' | 'cancelled';
+  payment_provider: string;
+  payment_provider_id: string | null;
+  commerce_order: string | null;
+  source: string | null;
+  feedback_id: string | null;
+  donor_name: string | null;
+  message: string | null;
+  is_public: boolean;
+  email_contact: string | null;
+  thanked_at: string | null;
+  paid_at: string | null;
+  created_at: string;
+}
+
+export function useAdminDonations() {
+  return useQuery({
+    queryKey: ['admin-donations'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .from('donations' as any)
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(200);
+      if (error) throw error;
+      return (data ?? []) as unknown as DonationRow[];
     },
   });
 }

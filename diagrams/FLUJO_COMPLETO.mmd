@@ -1,6 +1,6 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-17
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-18
     %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (28 activas).
     %% Cambios 2026-04-17 (Reordenamiento v3):
     %%   - BottomTabBar owner: Inicio · My Paws · Servicios · Agenda · Perfil
@@ -357,6 +357,22 @@ flowchart TD
         PAY_RESULT_PAGE --> UPG_OK["/upgrade/success"]
         UPG_OK --> PAY_UNLOCK["Desbloquea: ilimitadas + PDF + compartir"]
         UPG_CANCEL --> UPGRADE
+    end
+
+    %% ============ DONACIONES (validacion MVP) ============
+    subgraph DONACIONES["DONACIONES (validacion MVP)"]
+        direction TB
+        FB_WIDGET["FeedbackWidget floating btn"]
+        FB_WIDGET --> FB_RATING["Paso rating: 5 estrellas + Pagarias?"]
+        FB_RATING -->|Si pagaria| FB_INVITE["Paso Y si la dejamos gratis?"]
+        FB_INVITE --> DON_PAGE["/donaciones"]
+        FB_WIDGET -. mini pill .-> DON_PAGE
+        DON_PAGE --> DON_FORM["Form: nombre + mensaje + publico?"]
+        DON_FORM --> DON_FLOW["flow-create-donation"]
+        DON_FLOW --> DON_PAY["Flow.cl checkout"]
+        DON_PAY -->|Pagado| DON_WH["flow-webhook: status=paid"]
+        DON_WH --> DON_THANKS["send-donation-thanks (Resend)"]
+        DON_THANKS --> DON_OK["/donaciones?status=success"]
     end
 
     %% ============ SIDEBAR PROVIDER ============

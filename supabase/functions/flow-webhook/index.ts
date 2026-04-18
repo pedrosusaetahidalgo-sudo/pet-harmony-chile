@@ -79,34 +79,89 @@ serve(
         return new Response('flow status error', { status: 500 });
       }
 
-      // status: 1=pendiente, 2=pagada, 3=rechazada, 4=anulada
-      if (statusJson.status !== 2) {
-        console.log('[flow-webhook] payment not completed', { token, status: statusJson.status });
-        // Marcar subscription como failed si existe
-        const supabaseAnon = createClient(
-          SUPABASE_URL,
-          Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
-          {
-            auth: { persistSession: false },
-          }
-        );
-        await supabaseAnon
-          .from('subscriptions')
-          .update({ status: 'cancelled' })
-          .eq('payment_provider_id', token)
-          .eq('status', 'pending');
-        return new Response('ok', { status: 200 });
-      }
-
-      // Pagado. Sacar contexto del optional
+      // Parsear optional temprano: necesitamos distinguir donacion vs subscription
       let userId: string | null = null;
       let plan: string | null = null;
+      let paymentType: string | null = null;
       try {
         const optional = JSON.parse(statusJson.optional ?? '{}');
         userId = optional.user_id ?? null;
         plan = optional.plan ?? null;
+        paymentType = optional.type ?? null;
       } catch {
         // ignorar
+      }
+
+      const isDonation = paymentType === 'donation';
+
+      const supabaseAdmin = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, {
+        auth: { persistSession: false },
+      });
+
+      // status: 1=pendiente, 2=pagada, 3=rechazada, 4=anulada
+      if (statusJson.status !== 2) {
+        console.log('[flow-webhook] payment not completed', { token, status: statusJson.status });
+        if (isDonation) {
+          await supabaseAdmin
+            .from('donations')
+            .update({ status: 'failed', updated_at: new Date().toISOString() })
+            .eq('payment_provider_id', token)
+            .eq('status', 'pending');
+        } else {
+          await supabaseAdmin
+            .from('subscriptions')
+            .update({ status: 'cancelled' })
+            .eq('payment_provider_id', token)
+            .eq('status', 'pending');
+        }
+        return new Response('ok', { status: 200 });
+      }
+
+      // Pago confirmado. Si es donacion, solo marcamos paid.
+      if (isDonation) {
+        if (!userId) {
+          console.error('[flow-webhook] donation missing user_id in optional');
+          return new Response('invalid optional', { status: 400 });
+        }
+        const amount = Number(statusJson.amount ?? 0);
+        if (!amount || amount <= 0) {
+          console.error('[flow-webhook] donation invalid amount', statusJson.amount);
+          return new Response('invalid amount', { status: 400 });
+        }
+        const { data: donationRow, error: donErr } = await supabaseAdmin
+          .from('donations')
+          .update({
+            status: 'paid',
+            paid_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('payment_provider_id', token)
+          .eq('status', 'pending')
+          .select('id')
+          .maybeSingle();
+        if (donErr) {
+          console.error('[flow-webhook] donation update failed', donErr);
+          return new Response('donation update failed', { status: 500 });
+        }
+        console.log('[flow-webhook] donation paid', { userId, amount, token });
+
+        // Fire-and-forget: mail de agradecimiento personalizado
+        if (donationRow?.id) {
+          try {
+            await fetch(`${SUPABASE_URL}/functions/v1/send-donation-thanks`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!}`,
+              },
+              body: JSON.stringify({ donation_id: donationRow.id }),
+            });
+          } catch (thanksErr) {
+            console.warn('[flow-webhook] thanks trigger failed', thanksErr);
+          }
+        }
+
+        return new Response('ok', { status: 200 });
       }
 
       if (!userId || !plan || (plan !== 'monthly' && plan !== 'yearly')) {
