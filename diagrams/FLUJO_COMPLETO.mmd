@@ -1,6 +1,6 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-19
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-19 (pivot hibrido 6 motores)
     %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (28 activas).
     %% Cambios 2026-04-17 (Reordenamiento v3):
     %%   - BottomTabBar owner: Inicio · My Paws · Servicios · Agenda · Perfil
@@ -502,9 +502,61 @@ flowchart TD
         ADM --> ADM_LEADS["CRM Leads"]
         ADM --> ADM_PEND["Mascotas pendientes"]
         ADM --> ADM_SALA["Sala de Inversion"]
-        ADM --> ADM_PAW_COMP["Paw Companys (CRUD)"]
+        ADM --> ADM_PAW_COMP["Paw Companys (CRUD + aprobar)"]
+        ADM --> ADM_PAW_VOICES["Paw Voices (CRUD + aprobar)"]
+        ADM --> ADM_ADS["Publicidad (CRUD)"]
         ADM_SALA -. lee .-> DON_DB
         ADM_PAW_COMP -. escribe .-> PAW_COMP_DB
+        ADM_PAW_VOICES -. escribe .-> PAW_VOICES_DB["tabla paw_voices"]
+        ADM_ADS -. escribe .-> ADS_DB["tabla advertisements"]
+    end
+
+    %% ============ PAW CORE (identidad publica) ============
+    subgraph PAW_CORE["PAW CORE /paw-core"]
+        direction TB
+        PC_VISION["Vision + Mision + Valores"]
+        PC_MOTORS["6 motores monetizacion"]
+        PC_FUTURE["Ideas futuras (Paw Crypto, LatAm, ONG)"]
+        PC_VISION --> PC_MOTORS --> PC_FUTURE
+    end
+
+    %% ============ PAW VOICES LANDING ============
+    subgraph PAW_VOICES_LANDING["PAW VOICES /paw-voices"]
+        direction TB
+        PV_HERO["Hero + CTAs"]
+        PV_GRID["PawVoicesGrid (activos)"]
+        PV_FORM["PawVoiceApplyForm"]
+        PV_HERO --> PV_GRID --> PV_FORM
+        PV_FORM --> PV_INSERT["INSERT status=pending"]
+        PV_INSERT -. RLS policy .-> PAW_VOICES_DB
+        PAW_VOICES_DB -. SELECT status=active .-> PV_GRID
+        ADM_PAW_VOICES -. approve .-> PAW_VOICES_DB
+    end
+
+    %% ============ PAW COMPANYS LANDING ============
+    subgraph PAW_COMP_LANDING["PAW COMPANYS /paw-companys"]
+        direction TB
+        PCO_HERO["Hero + Tiers Bronze/Silver/Gold"]
+        PCO_GRID["PawCompanysGrid (activos)"]
+        PCO_FORM["PawCompanyApplyForm"]
+        PCO_HERO --> PCO_GRID --> PCO_FORM
+        PCO_FORM --> PCO_INSERT["INSERT status=pending"]
+        PCO_INSERT -. RLS policy .-> PAW_COMP_DB
+        PAW_COMP_DB -. SELECT is_active=true .-> PCO_GRID
+        ADM_PAW_COMP -. approve .-> PAW_COMP_DB
+    end
+
+    %% ============ ADVERTISING SYSTEM ============
+    subgraph ADVERTISING["PUBLICIDAD (slots Patrocinado)"]
+        direction TB
+        AD_PLACE["AdSlot placement"]
+        AD_RPC["rpc get_ad_for_placement"]
+        AD_IMP["rpc track_ad_impression"]
+        AD_CLICK["rpc track_ad_click"]
+        AD_PLACE --> AD_RPC
+        AD_RPC -. reads .-> ADS_DB
+        AD_PLACE -. on mount .-> AD_IMP
+        AD_PLACE -. on click .-> AD_CLICK
     end
 
     %% ============ SEO ============

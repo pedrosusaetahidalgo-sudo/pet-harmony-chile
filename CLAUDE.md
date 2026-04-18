@@ -108,23 +108,64 @@ AGENTS.md              # Config para agentes IA (Cursor, Copilot, etc.)
 
 ---
 
-## 5. Modelo de negocio y pricing (real, de src/lib/plans.ts)
+## 5. Modelo de negocio y pricing (actualizado 2026-04-19 — hibrido 6 motores)
 
-### B2C (duenos de mascotas)
+Pivot 2026-04-19: eliminamos paywalls B2C. La app es **gratis para dueños**
+sin restricciones de features. La sostenibilidad viene de 6 motores
+complementarios:
 
-| Plan | Precio mensual | Precio anual | Mascotas | PDF | Compartir ficha |
-|---|---|---|---|---|---|
-| Gratis | $0 | $0 | 2 | No | No |
-| Premium | $3.990 | $39.900 | Ilimitadas | Si | Si |
+### B2C (duenos de mascotas) — TODO GRATIS, sin features exclusivas
 
-### B2B (veterinarios y clinicas)
+| Plan | Precio | Features | Badge |
+|---|---|---|---|
+| Gratis | $0 | **Todo disponible** (PDF, ficha compartida, mascotas ilimitadas, IA, analytics) | — |
+| Paw Member (opcional) | $3.990/mes o $39.900/ano | **Mismos features que Gratis** — solo agrega badge de reconocimiento publico | 💛 Paw Member |
 
-| Plan | Precio/mes | Comision | Clientes | Destacado | Multi-vet |
-|---|---|---|---|---|---|
-| Gratis | $0 | 10% | 20 | No | No |
-| Individual | $9.900 | 12% | 100 | No | No |
-| Clinica Basica | $29.900 | 10% | 500 | Si | Si |
-| Clinica Pro | $59.900 | 0% | Ilimitados | Si | Si |
+El id interno en DB sigue siendo `premium` (no romper suscripciones
+antiguas). UI muestra "Paw Member". Ver `src/lib/plans.ts` PLANS.premium.
+
+### B2B (veterinarios y clinicas) — 3 tiers canonicos
+
+| Plan | Precio/mes | Comision | Pacientes | Destacado | Multi-vet | Multi-branch | API |
+|---|---|---|---|---|---|---|---|
+| Free | $0 | 10% | 5 | No | No | No | No |
+| Premium ⭐ | $9.900 | 5% | Ilimitado | Si | Si | No | No |
+| Pro Max 👑 | $29.900 | 0% | Ilimitado | Si | Si | Si | Si |
+
+Estrategia volumen > ticket: apunta a cientos de vets pagando barato.
+
+Aliases legacy (`provider_individual`, `provider_clinic_basic`,
+`provider_clinic_pro`) se normalizan via `normalizeProviderPlanId()` en
+`src/lib/plans.ts`.
+
+### Motores no basados en planes
+
+3. **Donaciones voluntarias** (`/donaciones`): aportes $500-$500k via Flow.
+   Badge Paw Angel (bronze/silver/gold por total acumulado). Paw Points:
+   10 por cada $100 CLP donados (trigger 20260608000000).
+4. **Paw Companys** (`/paw-companys`): sponsors empresariales Bronze
+   ($49.9k+)/Silver ($99.9k+)/Gold ($199.9k+) con workflow de aplicacion
+   publica (mig 20260610000000) + badge + logo en grid publico.
+5. **Paw Voices** (`/paw-voices`): red de creadores/influencers con
+   workflow de aplicacion publica + badge + perfil destacado + codigo
+   promo (mig 20260609000000).
+6. **Publicidad** (`advertisements` table): slots etiquetados "Patrocinado"
+   (SERNAC-compliant). Admin CRUD + RPCs de tracking.
+
+### Rutas publicas del modelo
+
+- `/paw-core` — visión, misión, valores, 6 motores, ideas futuras.
+- `/donaciones` — aportes + muralla Paw Voices + grid Paw Companys +
+  transparencia meta $20M + recap personal donante.
+- `/paw-companys` — landing empresas con form aplicacion.
+- `/paw-voices` — landing creadores con form aplicacion.
+- `/para-veterinarios` — pricing B2B actualizado.
+
+### Aviso legal operacional
+
+Cuenta de Flow a nombre personal del fundador (no SpA). Riesgo fiscal
+mientras no se migre a cuenta SpA. Pedro plan a migrar via Tenpo/Mach/
+Prex. Ver memoria `project_session_2026_04_19_pivot_monetizacion.md`.
 
 ---
 
