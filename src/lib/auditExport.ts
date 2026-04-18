@@ -1752,6 +1752,38 @@ export async function generateAuditExport(
       };
     }),
     error_logs_grouped: errorGroups,
+    error_logs_by_source: (() => {
+      // Agrupa error_logs por source (frontend, supabase_client, edge_function,
+      // console) para ver rapidamente de donde viene el ruido. Incluye top 3
+      // mensajes por source para diagnostico sin abrir Supabase.
+      const bySource: Record<
+        string,
+        {
+          count: number;
+          unresolved: number;
+          top_messages: Array<{ message: string; count: number }>;
+        }
+      > = {};
+      for (const row of errorLogsRows) {
+        const src = String(row.source ?? 'unknown');
+        if (!bySource[src]) bySource[src] = { count: 0, unresolved: 0, top_messages: [] };
+        bySource[src].count++;
+        if (!row.resolved) bySource[src].unresolved++;
+      }
+      for (const src of Object.keys(bySource)) {
+        const msgCounts = new Map<string, number>();
+        for (const row of errorLogsRows) {
+          if (String(row.source ?? 'unknown') !== src) continue;
+          const msg = String(row.message ?? '(sin mensaje)').slice(0, 120);
+          msgCounts.set(msg, (msgCounts.get(msg) ?? 0) + 1);
+        }
+        bySource[src].top_messages = Array.from(msgCounts.entries())
+          .sort((a, b) => b[1] - a[1])
+          .slice(0, 3)
+          .map(([message, count]) => ({ message, count }));
+      }
+      return bySource;
+    })(),
     quality_checks: qualityChecks.map((c) => ({
       name: c.name,
       severity: c.severity,
