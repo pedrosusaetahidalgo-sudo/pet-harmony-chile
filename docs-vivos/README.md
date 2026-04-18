@@ -18,7 +18,7 @@ README es el índice y el contrato de mantenimiento.
 | Flujo end-to-end Mermaid | [`diagrams/FLUJO_COMPLETO.mmd`](../diagrams/FLUJO_COMPLETO.mmd) | `src/App.tsx` (rutas), `BottomTabBar.tsx`, `AppSidebar.tsx`, `Header.tsx`, flujos de negocio | Cualquier cambio de navegación, ruta nueva/eliminada, BottomTabBar, onboarding, pricing, edge fn que cambie un flujo de usuario |
 | Mapa funcional | [`MAPA_FUNCIONAL_COMPLETO.md`](../MAPA_FUNCIONAL_COMPLETO.md) | `src/pages/**`, `src/components/**`, `supabase/functions/**`, `supabase/migrations/**` | Módulo nuevo, feature que cambia comportamiento end-to-end, edge fn nueva/eliminada, migración con cambio de contrato |
 | Inventario de app | [`INVENTARIO_APP_2026_04_17.md`](../INVENTARIO_APP_2026_04_17.md) | `src/App.tsx` rutas | Cuando se agrega/elimina/redirige una ruta, se cambia BottomTabBar, o se detectan duplicados nuevos |
-| Propuesta reordenamiento v3 | [`PROPUESTA_REORDENAMIENTO_2026_04_17.md`](../PROPUESTA_REORDENAMIENTO_2026_04_17.md) | `src/` + `supabase/` | Sólo mientras el plan esté en ejecución. Una vez terminada la v3, mover a `_archive/` y generar la v4 cuando sea |
+| Propuesta reordenamiento v3 | [`PROPUESTA_REORDENAMIENTO_2026_04_17.md`](../docs-raiz/planes/PROPUESTA_REORDENAMIENTO_2026_04_17.md) | `src/` + `supabase/` | Sólo mientras el plan esté en ejecución. Una vez terminada la v3, mover a `_archive/` y generar la v4 cuando sea |
 | Manual operativo para IA | [`CLAUDE.md`](../CLAUDE.md) | Meta-doc | Stack nuevo, convención nueva, regla nueva. Se actualiza por separado al código |
 | Registro de feature flags | Secciones 11.1, 11.2 de `CLAUDE.md` | `src/lib/featureFlags.ts` | Cuando se agrega/quita/flipea un flag |
 

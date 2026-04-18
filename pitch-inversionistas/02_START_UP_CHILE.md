@@ -92,7 +92,7 @@ Una **ficha clinica digital con PDF descargable** + **directorio publico de vete
 
 ### 6.2. Innovacion de metodo (el angulo SUP-CL)
 
-**Desarrollo 15× mas rapido con IA como co-engineer**. Un founder chileno + Claude construyo en 2 meses lo que un equipo de 6-8 personas tarda 12-14 meses. Ver [APALANCAMIENTO_FUNDADOR_IA.md](../APALANCAMIENTO_FUNDADOR_IA.md).
+**Desarrollo 15× mas rapido con IA como co-engineer**. Un founder chileno + Claude construyo en 2 meses lo que un equipo de 6-8 personas tarda 12-14 meses. Ver [APALANCAMIENTO_FUNDADOR_IA.md](../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md).
 
 | | Paw Friend (CL) | Pawp (US) | Fuzzy (US) | Barkibu (ES) |
 |---|---|---|---|---|
@@ -218,7 +218,7 @@ Start-Up Chile no es solo USD $15K. Es:
 ## 13. Anexos
 
 - [CONSOLIDADO_INVERSIONISTAS.md](CONSOLIDADO_INVERSIONISTAS.md)
-- [../APALANCAMIENTO_FUNDADOR_IA.md](../APALANCAMIENTO_FUNDADOR_IA.md)
+- [../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md](../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md)
 - [../CLAUDE.md](../CLAUDE.md)
 - Repositorio disponible bajo NDA
 - Producto vivo: pawfriend.cl

@@ -48,7 +48,7 @@ Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas,
 
 ### 2.2. Componente metodologico innovador
 
-- **Desarrollo asistido por IA como metodologia productiva**: un founder unico + Claude como co-engineer produjo en 2 meses lo que un equipo de 5 expertos senior tarda 6 meses (apalancamiento 15× en tiempo, 32-65× en costo). Ver [APALANCAMIENTO_FUNDADOR_IA.md](../APALANCAMIENTO_FUNDADOR_IA.md).
+- **Desarrollo asistido por IA como metodologia productiva**: un founder unico + Claude como co-engineer produjo en 2 meses lo que un equipo de 5 expertos senior tarda 6 meses (apalancamiento 15× en tiempo, 32-65× en costo). Ver [APALANCAMIENTO_FUNDADOR_IA.md](../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md).
 - **Monetizacion hibrida con impacto social integrado**: Paw Companys (empresas sponsors con badge publico) + donaciones voluntarias con dashboard de transparencia. El excedente financia refugios.
 
 ### 2.3. Grado de novedad (nacional / regional / mundial)
@@ -267,7 +267,7 @@ Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas,
 ## 13. Anexos de evidencia
 
 - [CONSOLIDADO_INVERSIONISTAS.md](CONSOLIDADO_INVERSIONISTAS.md) — deck completo narrativo.
-- [../APALANCAMIENTO_FUNDADOR_IA.md](../APALANCAMIENTO_FUNDADOR_IA.md) — calculo de velocidad vs equipo tradicional.
+- [../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md](../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md) — calculo de velocidad vs equipo tradicional.
 - [../CLAUDE.md](../CLAUDE.md) — manual tecnico del producto.
 - [../MAPA_FUNCIONAL_COMPLETO.md](../MAPA_FUNCIONAL_COMPLETO.md) — inventario de modulos y flujos.
 - [../audits/COMPETENCIA_2026_04_08.md](../audits/COMPETENCIA_2026_04_08.md) — 13 fichas competitivas.

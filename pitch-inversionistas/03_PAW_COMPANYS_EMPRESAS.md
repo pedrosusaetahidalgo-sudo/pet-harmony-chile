@@ -251,7 +251,7 @@ Pedro
 ## 7. Anexos
 
 - [CONSOLIDADO_INVERSIONISTAS.md](CONSOLIDADO_INVERSIONISTAS.md) — deck completo.
-- [../APALANCAMIENTO_FUNDADOR_IA.md](../APALANCAMIENTO_FUNDADOR_IA.md) — credibilidad tecnica.
+- [../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md](../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md) — credibilidad tecnica.
 - Producto en vivo: pawfriend.cl
 - Pagina de Paw Companys (en construccion): pawfriend.cl/paw-companys
 

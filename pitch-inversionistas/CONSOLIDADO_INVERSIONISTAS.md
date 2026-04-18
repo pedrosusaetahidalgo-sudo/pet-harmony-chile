@@ -432,7 +432,7 @@ Claude escribe el **que** (boilerplate, migraciones, tests). El founder puso el 
 
 ### Pre-money defendible
 
-- Base: output de 2 meses = USD $720K-1,44M en valor de mercado (ver [APALANCAMIENTO_FUNDADOR_IA.md](../APALANCAMIENTO_FUNDADOR_IA.md)).
+- Base: output de 2 meses = USD $720K-1,44M en valor de mercado (ver [APALANCAMIENTO_FUNDADOR_IA.md](../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md)).
 - Conservador: pre-money USD 600-900K.
 - Con traccion inicial (20 B2B + 100 Premium): techo USD 1M+ defendible frente a fondos US.
 
@@ -487,12 +487,12 @@ Paw Friend es un proyecto chico. Costos variables **<USD $100/mes**. Cualquier e
 
 | Doc | Contenido |
 |---|---|
-| [../APALANCAMIENTO_FUNDADOR_IA.md](../APALANCAMIENTO_FUNDADOR_IA.md) | Desglose por area de horas founder vs equipo expertos |
+| [../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md](../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md) | Desglose por area de horas founder vs equipo expertos |
 | [../CLAUDE.md](../CLAUDE.md) | Manual operativo tecnico (fuente de verdad del stack) |
 | [../MAPA_FUNCIONAL_COMPLETO.md](../MAPA_FUNCIONAL_COMPLETO.md) | Mapa de modulos, archivos, flujos |
-| [../PITCH_DECK.md](../PITCH_DECK.md) | Deck narrativo 13 slides |
+| [../docs-raiz/pitch/PITCH_DECK.md](../docs-raiz/pitch/PITCH_DECK.md) | Deck narrativo 13 slides |
 | [../INVENTARIO_APP_2026_04_17.md](../INVENTARIO_APP_2026_04_17.md) | Inventario de features funcionales |
-| [../CONSOLIDADO_2026_04_18.md](../CONSOLIDADO_2026_04_18.md) | Snapshot tecnico verificado |
+| [../docs-raiz/pitch/CONSOLIDADO_2026_04_18.md](../docs-raiz/pitch/CONSOLIDADO_2026_04_18.md) | Snapshot tecnico verificado |
 | [../audits/COMPETENCIA_2026_04_08.md](../audits/COMPETENCIA_2026_04_08.md) | 13 fichas completas de competidores |
 | [../sales/PITCH_VET_CORTO.md](../sales/PITCH_VET_CORTO.md) | Pitch comercial B2B para clinicas |
 

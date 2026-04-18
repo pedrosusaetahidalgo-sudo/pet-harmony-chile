@@ -10,7 +10,7 @@
 ## Changelog 2026-04-17 — Reordenamiento v3
 
 Cambios de arquitectura de informacion aplicados. Detalle en
-`INVENTARIO_APP_2026_04_17.md` y `PROPUESTA_REORDENAMIENTO_2026_04_17.md`.
+`INVENTARIO_APP_2026_04_17.md` y `docs-raiz/planes/PROPUESTA_REORDENAMIENTO_2026_04_17.md`.
 
 **Navegacion owner**:
 - BottomTabBar: `Inicio · My Paws · Servicios · Agenda · Perfil` (antes

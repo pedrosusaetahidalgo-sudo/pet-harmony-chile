@@ -37,7 +37,7 @@
 
 Usar la version autocontenida: **[PRESENTACION.html](PRESENTACION.html)**.
 Version detallada con todas las secciones: **[CONSOLIDADO_INVERSIONISTAS.md](CONSOLIDADO_INVERSIONISTAS.md)**.
-Version original 13 slides con notas del fundador: **[../PITCH_DECK.md](../PITCH_DECK.md)**.
+Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_DECK.md](../docs-raiz/pitch/PITCH_DECK.md)**.
 
 ---
 
@@ -90,7 +90,7 @@ Version original 13 slides con notas del fundador: **[../PITCH_DECK.md](../PITCH
 | Lineas en `src/` | ~127.000 |
 | Lineas en `supabase/` | ~32.000 |
 
-### Apalancamiento IA (ver [APALANCAMIENTO_FUNDADOR_IA.md](../APALANCAMIENTO_FUNDADOR_IA.md))
+### Apalancamiento IA (ver [APALANCAMIENTO_FUNDADOR_IA.md](../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md))
 
 | | Realidad | Equipo expertos sin IA |
 |---|---|---|
@@ -263,8 +263,8 @@ Version original 13 slides con notas del fundador: **[../PITCH_DECK.md](../PITCH
 
 - [PRESENTACION.html](PRESENTACION.html) — deck visual imprimible.
 - [CONSOLIDADO_INVERSIONISTAS.md](CONSOLIDADO_INVERSIONISTAS.md) — fuente de verdad unificada.
-- [../APALANCAMIENTO_FUNDADOR_IA.md](../APALANCAMIENTO_FUNDADOR_IA.md) — calculo de velocidad vs equipo.
-- [../PITCH_DECK.md](../PITCH_DECK.md) — version 13 slides con notas fundador.
+- [../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md](../docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md) — calculo de velocidad vs equipo.
+- [../docs-raiz/pitch/PITCH_DECK.md](../docs-raiz/pitch/PITCH_DECK.md) — version 13 slides con notas fundador.
 - [../CLAUDE.md](../CLAUDE.md) — manual tecnico (para due diligence).
 - [../audits/COMPETENCIA_2026_04_08.md](../audits/COMPETENCIA_2026_04_08.md) — 13 fichas competitivas.
 - [../MAPA_FUNCIONAL_COMPLETO.md](../MAPA_FUNCIONAL_COMPLETO.md) — arquitectura producto.

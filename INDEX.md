@@ -30,7 +30,7 @@
 | [audits/FEEDBACK_VET_SOFIA_2026_04_13.md](audits/FEEDBACK_VET_SOFIA_2026_04_13.md) | Feedback de vet beta tester (Sofia) | Despues de cada sesion con Sofia |
 | [audits/COMPETENCIA_2026_04_08.md](audits/COMPETENCIA_2026_04_08.md) | Analisis competitivo Chile | Cada 3-6 meses o cuando aparezca competidor nuevo |
 | [audits/CROSS_PLATFORM_COMPATIBILITY.md](audits/CROSS_PLATFORM_COMPATIBILITY.md) | Compatibilidad multiplataforma (iOS, Android, Web, Chrome) | Cada cambio de CSS/JS moderno o API de browser |
-| [SUGERENCIAS_COMPLETAS_2026_04_16.md](SUGERENCIAS_COMPLETAS_2026_04_16.md) | 49 sugerencias en 10 categorias (seguridad, perf, UX, DB, testing, etc.) | Cada sesion de auditoria |
+| [docs-raiz/planes/SUGERENCIAS_COMPLETAS_2026_04_16.md](docs-raiz/planes/SUGERENCIAS_COMPLETAS_2026_04_16.md) | 49 sugerencias en 10 categorias (seguridad, perf, UX, DB, testing, etc.) | Cada sesion de auditoria |
 
 ---
 
@@ -118,8 +118,8 @@ Resumen de items activos:
 
 | Documento | Que contiene | Estado |
 |---|---|---|
-| [SUGERENCIAS_COMPLETAS_2026_04_16.md](SUGERENCIAS_COMPLETAS_2026_04_16.md) | 49 sugerencias en 10 categorias con plan de ejecucion de 4 semanas | Activo |
-| [PENDIENTES_MANUALES.md](PENDIENTES_MANUALES.md) | Items que requieren trabajo manual (assets, stores, verificaciones) | Activo |
+| [docs-raiz/planes/SUGERENCIAS_COMPLETAS_2026_04_16.md](docs-raiz/planes/SUGERENCIAS_COMPLETAS_2026_04_16.md) | 49 sugerencias en 10 categorias con plan de ejecucion de 4 semanas | Activo |
+| [docs-raiz/operacion/PENDIENTES_MANUALES.md](docs-raiz/operacion/PENDIENTES_MANUALES.md) | Items que requieren trabajo manual (assets, stores, verificaciones) | Activo |
 
 ---
 
@@ -136,9 +136,9 @@ Resumen de items activos:
 | [pitch-inversionistas/02_START_UP_CHILE.md](pitch-inversionistas/02_START_UP_CHILE.md) | Postulacion Start-Up Chile Ignite (USD $15K equity-free) con foco impacto CL | Start-Up Chile |
 | [pitch-inversionistas/03_PAW_COMPANYS_EMPRESAS.md](pitch-inversionistas/03_PAW_COMPANYS_EMPRESAS.md) | Pitch B2B2C para empresas pet-friendly + carta de intro + lista prospects + FAQ | Outreach sponsors |
 | [pitch-inversionistas/04_ANGELES_VC_LATAM.md](pitch-inversionistas/04_ANGELES_VC_LATAM.md) | Pitch pre-seed USD $150K SAFE + preguntas incomodas preparadas + lista angels Tier 1-3 | Platanus, Magma, Kaszek |
-| [PITCH_DECK.md](PITCH_DECK.md) | 13 slides narrativos originales con notas fundador | Fuente narrativa original |
-| [APALANCAMIENTO_FUNDADOR_IA.md](APALANCAMIENTO_FUNDADOR_IA.md) | Output 2 meses vs equipo expertos: 320 hrs = ~4.800 hrs = USD 720K-1,44M | Evidencia velocidad/eficiencia |
-| [CONSOLIDADO_2026_04_18.md](CONSOLIDADO_2026_04_18.md) | Snapshot tecnico verificado (tsc, lint, tests, build) | Evidencia tecnica data room |
+| [docs-raiz/pitch/PITCH_DECK.md](docs-raiz/pitch/PITCH_DECK.md) | 13 slides narrativos originales con notas fundador | Fuente narrativa original |
+| [docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md](docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md) | Output 2 meses vs equipo expertos: 320 hrs = ~4.800 hrs = USD 720K-1,44M | Evidencia velocidad/eficiencia |
+| [docs-raiz/pitch/CONSOLIDADO_2026_04_18.md](docs-raiz/pitch/CONSOLIDADO_2026_04_18.md) | Snapshot tecnico verificado (tsc, lint, tests, build) | Evidencia tecnica data room |
 | [INVENTARIO_APP_2026_04_17.md](INVENTARIO_APP_2026_04_17.md) | Inventario de features funcionales | Scope producto |
 | [sales/PITCH_VET_CORTO.md](sales/PITCH_VET_CORTO.md) | Pitch comercial 1-pager para clinicas | Outbound B2B vets |
 
