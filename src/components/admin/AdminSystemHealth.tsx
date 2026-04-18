@@ -449,32 +449,86 @@ export default function AdminSystemHealth() {
 
   const SUPABASE_URL =
     import.meta.env.VITE_SUPABASE_URL || 'https://gwailbjlvevkhwcrovfd.supabase.co';
+  const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+
+  // Timeout por categoria: las fns IA tienen cold starts de 5-10s,
+  // las de sistema/cron responden <2s. Asi cada fn se evalua segun
+  // su perfil natural, no un timeout uniforme injusto.
+  const pingTimeoutByCategory = (cat: Category): number => {
+    switch (cat) {
+      case 'ai':
+        return 15000;
+      case 'medical':
+      case 'google':
+      case 'notifications':
+        return 10000;
+      default:
+        return 6000;
+    }
+  };
 
   const pingFunction = useCallback(
     async (name: string): Promise<{ status: 'ok' | 'error'; ms: number; detail?: string }> => {
+      const meta = EDGE_FUNCTIONS.find((f) => f.name === name);
+      const timeoutMs = meta ? pingTimeoutByCategory(meta.category) : 8000;
+
+      const attemptOnce = async (): Promise<Response> => {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+        try {
+          return await fetch(`${SUPABASE_URL}/functions/v1/${name}`, {
+            method: 'OPTIONS',
+            headers: {
+              'Access-Control-Request-Method': 'POST',
+              'Access-Control-Request-Headers': 'content-type,authorization,apikey',
+              ...(SUPABASE_ANON_KEY ? { apikey: SUPABASE_ANON_KEY } : {}),
+            },
+            signal: controller.signal,
+          });
+        } finally {
+          clearTimeout(timeoutId);
+        }
+      };
+
       const t0 = Date.now();
-      try {
-        const res = await fetch(`${SUPABASE_URL}/functions/v1/${name}`, {
-          method: 'OPTIONS',
-          headers: {
-            'Access-Control-Request-Method': 'POST',
-            'Access-Control-Request-Headers': 'content-type,authorization',
-            Origin: window.location.origin,
-          },
-        });
-        const ms = Date.now() - t0;
-        // Edge functions responden 200 al CORS preflight; 404 = no deployada.
-        if (res.ok) return { status: 'ok', ms };
-        return { status: 'error', ms, detail: `HTTP ${res.status}` };
-      } catch (err) {
-        return {
-          status: 'error',
-          ms: Date.now() - t0,
-          detail: err instanceof Error ? err.message : 'Network error',
-        };
+      // 1 retry ante network flaky / cold start. Total max ~2x timeoutMs.
+      let lastErr: unknown = null;
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          const res = await attemptOnce();
+          const ms = Date.now() - t0;
+
+          // Interpretacion de status (health check, no auth check):
+          //   2xx/204 → fn responde OPTIONS (deployada).
+          //   401/403 → fn existe pero exige JWT (verify_jwt: true). OK.
+          //   404 → fn NO deployada (error real).
+          //   5xx en 1er intento → retry. Si persiste, error.
+          if (res.ok || res.status === 401 || res.status === 403) {
+            return { status: 'ok', ms };
+          }
+          if (res.status === 404) {
+            return { status: 'error', ms, detail: 'Not deployed (404)' };
+          }
+          // 5xx: reintentar una vez
+          if (res.status >= 500 && attempt === 0) {
+            lastErr = new Error(`HTTP ${res.status}`);
+            continue;
+          }
+          return { status: 'error', ms, detail: `HTTP ${res.status}` };
+        } catch (err) {
+          lastErr = err;
+          // Network/timeout → reintentar una vez
+          if (attempt === 0) continue;
+          break;
+        }
       }
+      return {
+        status: 'error',
+        ms: Date.now() - t0,
+        detail: lastErr instanceof Error ? lastErr.message : 'Network error',
+      };
     },
-    [SUPABASE_URL]
+    [SUPABASE_URL, SUPABASE_ANON_KEY]
   );
 
   const handlePingOne = useCallback(

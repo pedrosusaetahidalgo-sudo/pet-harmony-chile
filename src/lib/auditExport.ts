@@ -1350,17 +1350,38 @@ function buildRecommendedActions(
     });
   }
 
-  // Edge fns con latencia alta → P3 (no bloquea pero vale la pena mirar)
+  // Edge fns con latencia alta → P3 (no bloquea pero vale la pena mirar).
+  // Threshold adaptativo: fns IA naturalmente tardan mas por el modelo.
+  // Solo reportamos las que son lentas PARA SU CATEGORIA.
+  const AI_FUNCTIONS = new Set([
+    'consultation-prep',
+    'symptom-triage',
+    'generate-vet-patient-summary',
+    'generate-medical-summary',
+    'bereavement-assistant',
+    'pet-assistant',
+    'medical-suggestions',
+    'breed-tips',
+    'moderate-service-promotion',
+    'ocr-vaccination-card',
+    'verify-service-provider',
+    'verify-vet-document',
+    'process-consultation-transcript',
+  ]);
   for (const fn of edgeFunctions) {
-    if ((fn.avg_latency_ms ?? 0) > 3000 && fn.executions_24h > 0) {
+    const latency = fn.avg_latency_ms ?? 0;
+    const isAI = AI_FUNCTIONS.has(fn.function_name);
+    const threshold = isAI ? 8000 : 3000;
+    if (latency > threshold && fn.executions_24h > 0) {
       actions.push({
         priority: 'P3',
         category: 'slow_edge_function',
-        issue: `'${fn.function_name}' promedio ${fn.avg_latency_ms}ms`,
+        issue: `'${fn.function_name}' promedio ${latency}ms (${isAI ? 'IA' : 'sistema'}, umbral ${threshold}ms)`,
         count: fn.executions_24h,
         location: `supabase/functions/${fn.function_name}/index.ts`,
-        fix_hint:
-          'Revisar llamadas externas (OpenAI/Anthropic, Google APIs, Flow). Evaluar caching, batching o prompt mas corto.',
+        fix_hint: isAI
+          ? 'Revisar prompt cache (cache_control ephemeral), reducir max_tokens o usar Haiku en vez de Sonnet.'
+          : 'Revisar llamadas externas (Google APIs, Flow) + DB queries. Evaluar caching o batching.',
       });
     }
   }
