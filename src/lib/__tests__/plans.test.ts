@@ -107,38 +107,63 @@ describe('formatCLP', () => {
 });
 
 describe('PROVIDER_PLANS', () => {
-  it('has 3 canonical tiers (basica=provider_free, premium, pro_max)', () => {
-    expect(Object.keys(PROVIDER_PLANS)).toHaveLength(3);
+  it('has 4 canonical tiers (2 tracks: individual + clinic)', () => {
+    expect(Object.keys(PROVIDER_PLANS)).toHaveLength(4);
     expect(Object.keys(PROVIDER_PLANS).sort()).toEqual([
+      'provider_clinic_starter',
       'provider_free',
       'provider_premium',
       'provider_pro_max',
     ]);
   });
 
+  it('individual track: basica + premium (segment=individual)', () => {
+    expect(PROVIDER_PLANS.provider_free.segment).toBe('individual');
+    expect(PROVIDER_PLANS.provider_premium.segment).toBe('individual');
+  });
+
+  it('clinic track: clinic_starter + pro_max (segment=clinic)', () => {
+    expect(PROVIDER_PLANS.provider_clinic_starter.segment).toBe('clinic');
+    expect(PROVIDER_PLANS.provider_pro_max.segment).toBe('clinic');
+  });
+
   it('basica tier shows label "Básica" (id provider_free)', () => {
     expect(PROVIDER_PLANS.provider_free.name).toBe('Básica');
   });
 
-  it('pro max has 0% commission', () => {
+  it('clinic starter is the entry tier for veterinarias', () => {
+    expect(PROVIDER_PLANS.provider_clinic_starter.name).toBe('Clínica');
+    expect(PROVIDER_PLANS.provider_clinic_starter.monthlyPrice).toBe(19900);
+    expect(PROVIDER_PLANS.provider_clinic_starter.features.max_vet_seats).toBe(3);
+    expect(PROVIDER_PLANS.provider_clinic_starter.features.bulk_patient_import).toBe(true);
+  });
+
+  it('pro max has 0% commission and unlimited seats', () => {
     expect(PROVIDER_PLANS.provider_pro_max.commissionRate).toBe(0);
+    expect(PROVIDER_PLANS.provider_pro_max.features.max_vet_seats).toBe(-1);
+    expect(PROVIDER_PLANS.provider_pro_max.features.multiple_branches).toBe(true);
   });
 
-  it('premium has 5% commission', () => {
+  it('premium individual has 5% commission and 1 seat', () => {
     expect(PROVIDER_PLANS.provider_premium.commissionRate).toBe(5);
+    expect(PROVIDER_PLANS.provider_premium.features.max_vet_seats).toBe(1);
   });
 
-  it('basica provider plan has 10% commission', () => {
+  it('basica provider plan has 10% commission and 5 pacientes', () => {
     expect(PROVIDER_PLANS.provider_free.commissionRate).toBe(10);
-  });
-
-  it('basica provider plan has 5 pacientes limit', () => {
     expect(PROVIDER_PLANS.provider_free.features.max_clients).toBe(5);
+    expect(PROVIDER_PLANS.provider_free.features.bulk_patient_import).toBe(false);
   });
 
-  it('premium and pro_max have unlimited clients', () => {
-    expect(PROVIDER_PLANS.provider_premium.features.max_clients).toBe(-1);
-    expect(PROVIDER_PLANS.provider_pro_max.features.max_clients).toBe(-1);
+  it('premium individual does not allow multiple_vets (single seat)', () => {
+    expect(PROVIDER_PLANS.provider_premium.features.multiple_vets).toBe(false);
+  });
+
+  it('clinic tiers allow multiple_vets and bulk import', () => {
+    expect(PROVIDER_PLANS.provider_clinic_starter.features.multiple_vets).toBe(true);
+    expect(PROVIDER_PLANS.provider_clinic_starter.features.bulk_patient_import).toBe(true);
+    expect(PROVIDER_PLANS.provider_pro_max.features.multiple_vets).toBe(true);
+    expect(PROVIDER_PLANS.provider_pro_max.features.bulk_patient_import).toBe(true);
   });
 });
 
@@ -175,9 +200,9 @@ describe('normalizeProviderPlanId', () => {
     expect(normalizeProviderPlanId('provider_individual')).toBe('provider_premium');
   });
 
-  it('maps legacy clinic_basic to premium', async () => {
+  it('maps legacy clinic_basic to clinic_starter (2026-04-19 rename)', async () => {
     const { normalizeProviderPlanId } = await import('../plans');
-    expect(normalizeProviderPlanId('provider_clinic_basic')).toBe('provider_premium');
+    expect(normalizeProviderPlanId('provider_clinic_basic')).toBe('provider_clinic_starter');
   });
 
   it('maps legacy clinic_pro to pro_max', async () => {
@@ -189,6 +214,7 @@ describe('normalizeProviderPlanId', () => {
     const { normalizeProviderPlanId } = await import('../plans');
     expect(normalizeProviderPlanId('provider_free')).toBe('provider_free');
     expect(normalizeProviderPlanId('provider_premium')).toBe('provider_premium');
+    expect(normalizeProviderPlanId('provider_clinic_starter')).toBe('provider_clinic_starter');
     expect(normalizeProviderPlanId('provider_pro_max')).toBe('provider_pro_max');
   });
 

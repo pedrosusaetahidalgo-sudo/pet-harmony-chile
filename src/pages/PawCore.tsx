@@ -254,38 +254,79 @@ export default function PawCore() {
           </CardContent>
         </Card>
 
-        {/* Qué esperamos de los Paw Voices */}
-        <Card className="border-violet-200/70 bg-gradient-to-br from-violet-50/70 to-fuchsia-50/70 dark:from-violet-950/30 dark:to-fuchsia-950/20">
-          <CardContent className="p-5 space-y-3">
-            <div className="flex items-center gap-2">
-              <Megaphone className="h-5 w-5 text-violet-500" />
-              <h2 className="font-semibold text-lg">Paw Voices — nuestra red de creadores</h2>
+        {/* Llamada a la comunidad pet lover — 6 roles distintos */}
+        <Card className="border-pink-200/70 bg-gradient-to-br from-pink-50/70 via-violet-50/50 to-amber-50/40 dark:from-pink-950/30 dark:via-violet-950/20 dark:to-amber-950/10">
+          <CardContent className="p-5 space-y-4">
+            <div className="text-center space-y-1">
+              <div className="flex items-center justify-center gap-2">
+                <Heart className="h-5 w-5 text-pink-500 fill-pink-500" />
+                <h2 className="font-bold text-xl">Si amas a los animales, hay un rol para ti</h2>
+                <Heart className="h-5 w-5 text-pink-500 fill-pink-500" />
+              </div>
+              <p className="text-sm text-muted-foreground max-w-xl mx-auto">
+                Paw Friend lo hacemos <b>porque queremos</b>, por amor a los animales. Queremos que
+                siga gratis para todos y necesitamos una comunidad{' '}
+                <span className="font-semibold text-pink-600 dark:text-pink-300">pet friendly</span>{' '}
+                y{' '}
+                <span className="font-semibold text-violet-600 dark:text-violet-300">
+                  pet lover
+                </span>{' '}
+                que empuje junto. Cada tipo de persona puede ayudar de una forma distinta:
+              </p>
             </div>
-            <p className="text-sm text-foreground/85">
-              Buscamos creadores peludos (TikTok, Instagram, YouTube, LinkedIn) que quieran
-              amplificar la misión. En la etapa inicial te pedimos algo simple:
-            </p>
-            <ul className="text-sm space-y-1.5 list-disc pl-5">
-              <li>Exponer el link de Paw Friend en tu bio o historia.</li>
-              <li>Compartir 1 gráfica o reel al mes (nosotros te lo entregamos listo).</li>
-              <li>Hablar a tu audiencia desde tu experiencia peluda.</li>
-            </ul>
-            <p className="text-sm text-foreground/85 pt-1">
-              A cambio recibís: badge oficial Paw Voice, perfil destacado en el directorio público,
-              código promo para tu audiencia, y mención en nuestras redes.
-            </p>
-            <div className="pt-2">
-              <Button
+
+            <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
+              <RoleTile
+                emoji="💛"
+                title="Dueños"
+                text="Usa la app, cuida a tu peludo y (si quieres) dona lo que sientas justo."
+                cta="Empezar"
+                onClick={() => navigate('/home')}
+              />
+              <RoleTile
+                emoji="🩺"
+                title="Veterinarios"
+                text="Plan Básica gratis para empezar. Directorio público y ficha clínica compartida."
+                cta="Ver planes"
+                onClick={() => navigate('/para-veterinarios')}
+              />
+              <RoleTile
+                emoji="🐕"
+                title="Profesionales no-vet"
+                text="Paseadores, cuidadores, entrenadores, peluqueros. Tu propia vitrina pública."
+                cta="Activar servicios"
+                onClick={() => navigate('/servicios')}
+              />
+              <RoleTile
+                emoji="📣"
+                title="Paw Voices"
+                text="¿Creador en redes? Amplifica la misión con tu voz auténtica. Kit listo."
+                cta="Aplicar"
+                onClick={() => navigate('/paw-voices')}
+              />
+              <RoleTile
+                emoji="🏢"
+                title="Paw Companys"
+                text="¿Tu empresa ama a los peludos? Sponsor mensual con logo destacado + menciones."
+                cta="Aplicar"
+                onClick={() => navigate('/paw-companys')}
+              />
+              <RoleTile
+                emoji="🛍️"
+                title="Paw Partners"
+                text="Tiendas, comida, restaurantes, seguros. Descuentos para Paw Members a cambio de publicidad."
+                cta="Escríbenos"
                 onClick={() =>
                   (window.location.href =
-                    'mailto:pawfriendcl@gmail.com?subject=Quiero%20ser%20Paw%20Voice')
+                    'mailto:pawfriendcl@gmail.com?subject=Quiero%20ser%20Paw%20Partner')
                 }
-                className="bg-gradient-to-r from-violet-500 to-fuchsia-500"
-                size="sm"
-              >
-                Quiero ser Paw Voice →
-              </Button>
+              />
             </div>
+
+            <p className="text-[11px] text-center text-muted-foreground italic pt-2 border-t border-dashed border-pink-200/50">
+              No pedimos exclusividad, no hay letra chica. Si compartes el amor por los animales,
+              aquí hay un lugar.
+            </p>
           </CardContent>
         </Card>
 
@@ -354,5 +395,40 @@ function MotorTile({
         </button>
       )}
     </div>
+  );
+}
+
+function RoleTile({
+  emoji,
+  title,
+  text,
+  cta,
+  onClick,
+}: {
+  emoji: string;
+  title: string;
+  text: string;
+  cta: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="rounded-xl border border-pink-200/60 bg-white/80 dark:bg-slate-900/60 p-3 text-left hover:shadow-md hover:-translate-y-0.5 transition-all group"
+    >
+      <div className="flex items-start gap-2.5">
+        <span className="text-2xl leading-none shrink-0" aria-hidden>
+          {emoji}
+        </span>
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold text-sm leading-tight">{title}</h3>
+          <p className="text-[11px] text-muted-foreground leading-snug mt-0.5">{text}</p>
+          <span className="inline-flex items-center text-[11px] font-medium text-pink-600 dark:text-pink-300 mt-1.5 group-hover:underline">
+            {cta} →
+          </span>
+        </div>
+      </div>
+    </button>
   );
 }

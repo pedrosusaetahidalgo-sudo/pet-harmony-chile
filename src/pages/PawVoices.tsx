@@ -41,12 +41,12 @@ const WE_NEED = [
   {
     emoji: '🎨',
     title: '1 gráfica o reel al mes',
-    text: 'Nosotros te lo entregamos listo. Vos le das tu voz.',
+    text: 'Nosotros te lo entregamos listo. Tú le pones tu voz.',
   },
   {
     emoji: '💬',
     title: 'Hablar desde tu experiencia',
-    text: 'Sin guiones. Contá cómo Paw Friend te sirve a ti y a tus peludos.',
+    text: 'Sin guiones. Cuéntanos cómo Paw Friend te sirve a ti y a tus peludos.',
   },
 ];
 
@@ -63,7 +63,7 @@ export default function PawVoices() {
         <title>Paw Voices — Red de creadores peludos | Paw Friend</title>
         <meta
           name="description"
-          content="Creadores e influencers peludos que amplifican Paw Friend. Sumate, exponé el link, compartí un reel al mes. Badge oficial, perfil destacado y código promo."
+          content="Creadores e influencers peludos que amplifican Paw Friend. Súmate, muestra el link, comparte un reel al mes. Badge oficial, perfil destacado y código promo."
         />
       </Helmet>
       <PageHeader title="Paw Voices" onBack={() => navigate(-1)} />

@@ -93,7 +93,7 @@ export default function PawCompanysPage() {
         <title>Paw Companys — Empresas con corazón peludo | Paw Friend</title>
         <meta
           name="description"
-          content="Empresas que patrocinan Paw Friend y apoyan la causa animal. Badge oficial, logo destacado, audiencia peluda. Sumate como Bronze, Silver o Gold."
+          content="Empresas que patrocinan Paw Friend y apoyan la causa animal. Badge oficial, logo destacado, audiencia peluda. Súmate como Bronze, Silver o Gold."
         />
       </Helmet>
       <PageHeader title="Paw Companys" onBack={() => navigate(-1)} />

@@ -155,16 +155,36 @@ campo `partnership_type` ∈ {'sponsor', 'partner'} (mig 20260611000000).
 
 El id interno en DB sigue siendo `premium` (no romper). UI muestra "Paw Member".
 
-### B2B (vets + veterinarias) — 3 tiers
+### B2B (vets + veterinarias) — 4 tiers en 2 tracks
 
-| Plan | Segmento | Precio/mes | Comisión | Pacientes | Multi-branch | API |
+**Track INDIVIDUAL** (veterinario profesional solo):
+
+| Plan | Precio/mes | Comisión | Pacientes | Seats | Multi-branch | Bulk import |
 |---|---|---|---|---|---|---|
-| Básica | vet individual | $0 | 10% | 5 | No | No |
-| Premium ⭐ | vet con volumen | $9.900 | 5% | Ilimitado | No | No |
-| Pro Max 👑 | veterinaria/clínica | $29.900 | 0% | Ilimitado | Si | Si |
+| Básica | $0 | 10% | 5 | 1 | No | No |
+| Premium ⭐ | $9.900 | 5% | Ilimitado | 1 | No | No |
 
-IDs internos: `provider_free` (Básica), `provider_premium`, `provider_pro_max`.
-Aliases legacy se normalizan via `normalizeProviderPlanId()`.
+**Track CLÍNICA** (veterinaria con varios profesionales):
+
+| Plan | Precio/mes | Comisión | Pacientes | Seats | Multi-branch | Bulk import |
+|---|---|---|---|---|---|---|
+| Clínica 🏥 | $19.900 | 3% | 500 | 3 vets | No | **Sí** (CSV/Excel) |
+| Pro Max 👑 | $29.900 | 0% | Ilimitado | Ilimitado | Sí | Sí |
+
+IDs internos:
+- `provider_free` → Básica (individual)
+- `provider_premium` → Premium (individual)
+- `provider_clinic_starter` → Clínica (clínica entry)
+- `provider_pro_max` → Pro Max (clínica top)
+
+Aliases legacy via `normalizeProviderPlanId()`:
+- `provider_individual` → `provider_premium`
+- `provider_clinic_basic` → `provider_clinic_starter`
+- `provider_clinic_pro` → `provider_pro_max`
+
+Las features distintivas del track Clínica son: múltiples seats (3+ vets
+bajo una cuenta), carga masiva de pacientes vía CSV/Excel (`bulk_patient_import`),
+priority support y branding completo.
 
 ### Rutas del modelo
 

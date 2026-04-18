@@ -86,7 +86,7 @@ const faq = [
   },
   {
     q: '¿Qué pasa si ya tengo pacientes fuera de la plataforma?',
-    a: 'Con el Plan Individual o superior puedes enviar invitaciones a reseña: enlaces únicos que mandas a tus pacientes actuales por WhatsApp para que dejen una reseña en tu perfil.',
+    a: 'Con el plan Premium o superior puedes enviar invitaciones a reseña: enlaces únicos que mandas a tus pacientes actuales por WhatsApp para que dejen una reseña en tu perfil.',
   },
   {
     q: '¿Cómo funciona la comisión?',
@@ -122,12 +122,16 @@ export default function ParaVeterinarios() {
     });
   }, []);
 
-  // 3 tiers canonicos 2026-04-19: Free / Premium / Pro Max.
-  const planFree = PROVIDER_PLANS.provider_free;
+  // 4 tiers en 2 tracks (2026-04-19):
+  // Individual: Básica (free) + Premium.
+  // Clínica: Clínica Starter + Pro Max.
+  const planBasica = PROVIDER_PLANS.provider_free;
   const planPremium = PROVIDER_PLANS.provider_premium;
+  const planClinica = PROVIDER_PLANS.provider_clinic_starter;
   const planProMax = PROVIDER_PLANS.provider_pro_max;
-  void planFree;
+  void planBasica;
   void planPremium;
+  void planClinica;
   void planProMax;
 
   return (

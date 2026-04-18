@@ -509,7 +509,7 @@ export default function Donaciones() {
             Home-made · Chile · Para los peludos amigos
           </p>
           <p className="text-[11px]">
-            Si no puedes donar hoy, igual podes ayudar compartiendo Paw Friend con otro tutor
+            Si no puedes donar hoy, igual puedes ayudar compartiendo Paw Friend con otro tutor
             peludo. Gracias por estar aca 💛
           </p>
         </section>

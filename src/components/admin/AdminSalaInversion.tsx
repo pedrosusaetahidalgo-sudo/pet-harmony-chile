@@ -95,9 +95,12 @@ const SEED_READY_THRESHOLD = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
 
-// Planes pagos (para calcular MRR B2B). Incluye alias legacy + nuevos 2026-04-19.
+// Planes pagos (para calcular MRR B2B). 2 tracks: individual + clinica.
 const PAID_PROVIDER_PLANS = [
+  // Track individual
   'provider_premium',
+  // Track clinica
+  'provider_clinic_starter',
   'provider_pro_max',
   // Legacy aliases — suscripciones creadas antes del rename 2026-04-19.
   // normalizeProviderPlanId() los mapea internamente pero el query de DB
@@ -113,11 +116,12 @@ const PAID_PROVIDER_PLANS = [
 const PROVIDER_PLAN_PRICES: Record<string, number> = {
   provider_free: 0,
   provider_premium: 9900,
+  provider_clinic_starter: 19900,
   provider_pro_max: 29900,
   // Legacy aliases (previo a 2026-04-19)
   provider_individual: 9900,
-  provider_clinic_basic: 29900,
-  provider_clinic_pro: 59900,
+  provider_clinic_basic: 19900,
+  provider_clinic_pro: 29900,
 };
 
 // ── Brand palette ────────────────────────────────────────
