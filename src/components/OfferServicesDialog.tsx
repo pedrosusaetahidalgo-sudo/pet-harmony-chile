@@ -25,6 +25,34 @@ import { COMUNAS_SANTIAGO } from '@/lib/locations';
 
 type OwnerServiceType = 'dog_walker' | 'dogsitter' | 'trainer';
 
+// Dia de semana: 0=domingo, 1=lunes..6=sabado (match con schema
+// provider_availability_rules.day_of_week CHECK).
+interface DayAvailability {
+  enabled: boolean;
+  start: string; // 'HH:MM'
+  end: string; // 'HH:MM'
+}
+
+const DAYS: { dow: number; label: string; short: string }[] = [
+  { dow: 1, label: 'Lunes', short: 'L' },
+  { dow: 2, label: 'Martes', short: 'M' },
+  { dow: 3, label: 'Miercoles', short: 'M' },
+  { dow: 4, label: 'Jueves', short: 'J' },
+  { dow: 5, label: 'Viernes', short: 'V' },
+  { dow: 6, label: 'Sabado', short: 'S' },
+  { dow: 0, label: 'Domingo', short: 'D' },
+];
+
+const DEFAULT_AVAILABILITY: Record<number, DayAvailability> = {
+  1: { enabled: true, start: '09:00', end: '18:00' },
+  2: { enabled: true, start: '09:00', end: '18:00' },
+  3: { enabled: true, start: '09:00', end: '18:00' },
+  4: { enabled: true, start: '09:00', end: '18:00' },
+  5: { enabled: true, start: '09:00', end: '18:00' },
+  6: { enabled: true, start: '10:00', end: '14:00' },
+  0: { enabled: false, start: '10:00', end: '14:00' },
+};
+
 const SERVICE_OPTIONS: {
   value: OwnerServiceType;
   icon: typeof Dog;
@@ -72,6 +100,8 @@ export function OfferServicesDialog({ open, onOpenChange }: Props) {
   const [serviceAreas, setServiceAreas] = useState<string[]>([]);
   const [bio, setBio] = useState('');
   const [priceFrom, setPriceFrom] = useState('');
+  const [availability, setAvailability] =
+    useState<Record<number, DayAvailability>>(DEFAULT_AVAILABILITY);
 
   const reset = () => {
     setStep(1);
@@ -80,6 +110,21 @@ export function OfferServicesDialog({ open, onOpenChange }: Props) {
     setServiceAreas([]);
     setBio('');
     setPriceFrom('');
+    setAvailability(DEFAULT_AVAILABILITY);
+  };
+
+  const toggleDay = (dow: number) => {
+    setAvailability((prev) => ({
+      ...prev,
+      [dow]: { ...prev[dow], enabled: !prev[dow].enabled },
+    }));
+  };
+
+  const updateDayTime = (dow: number, field: 'start' | 'end', value: string) => {
+    setAvailability((prev) => ({
+      ...prev,
+      [dow]: { ...prev[dow], [field]: value },
+    }));
   };
 
   const handleClose = (next: boolean) => {
@@ -93,6 +138,14 @@ export function OfferServicesDialog({ open, onOpenChange }: Props) {
     );
   };
 
+  const enabledDays = Object.entries(availability)
+    .filter(([, day]) => day.enabled)
+    .map(([dow, day]) => ({
+      day_of_week: Number(dow),
+      start_time: day.start,
+      end_time: day.end,
+    }));
+
   const handleSubmit = async () => {
     if (!user || !serviceType || !baseCommune || serviceAreas.length === 0 || !priceFrom) {
       toast.error('Completa todos los campos');
@@ -101,6 +154,16 @@ export function OfferServicesDialog({ open, onOpenChange }: Props) {
     const price = parseInt(priceFrom, 10);
     if (isNaN(price) || price <= 0) {
       toast.error('Precio invalido');
+      return;
+    }
+    if (enabledDays.length === 0) {
+      toast.error('Activa al menos un dia de disponibilidad');
+      return;
+    }
+    // Validar rangos (end > start)
+    const invalidDay = enabledDays.find((d) => d.end_time <= d.start_time);
+    if (invalidDay) {
+      toast.error('La hora de fin debe ser mayor que la de inicio');
       return;
     }
 
@@ -112,6 +175,7 @@ export function OfferServicesDialog({ open, onOpenChange }: Props) {
         p_service_areas: serviceAreas,
         p_bio: bio.trim() || null,
         p_price_from: price,
+        p_availability_rules: enabledDays,
       });
       if (error) throw error;
 
@@ -136,7 +200,7 @@ export function OfferServicesDialog({ open, onOpenChange }: Props) {
         <DialogHeader>
           <DialogTitle>
             Activar servicios{' '}
-            <span className="text-sm font-normal text-muted-foreground">(paso {step}/3)</span>
+            <span className="text-sm font-normal text-muted-foreground">(paso {step}/4)</span>
           </DialogTitle>
         </DialogHeader>
 
@@ -269,6 +333,68 @@ export function OfferServicesDialog({ open, onOpenChange }: Props) {
               </p>
             </div>
 
+            <div className="flex justify-between pt-2">
+              <Button variant="outline" onClick={() => setStep(2)}>
+                <ArrowLeft className="h-4 w-4 mr-1" /> Atras
+              </Button>
+              <Button onClick={() => setStep(4)} disabled={!priceFrom}>
+                Siguiente <ArrowRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div className="space-y-4">
+            <div>
+              <Label>Horarios disponibles *</Label>
+              <p className="text-xs text-muted-foreground mt-0.5 mb-3">
+                Selecciona los dias que atiendes y el rango de horas. Despues puedes ajustarlo desde
+                tu dashboard.
+              </p>
+              <div className="space-y-2">
+                {DAYS.map(({ dow, label }) => {
+                  const day = availability[dow];
+                  return (
+                    <div
+                      key={dow}
+                      className={cn(
+                        'flex items-center gap-2 p-2 rounded-md border transition-colors',
+                        day.enabled ? 'bg-emerald-500/5 border-emerald-500/40' : 'border-border'
+                      )}
+                    >
+                      <Checkbox
+                        id={`day-${dow}`}
+                        checked={day.enabled}
+                        onCheckedChange={() => toggleDay(dow)}
+                      />
+                      <label
+                        htmlFor={`day-${dow}`}
+                        className="text-sm font-medium w-20 cursor-pointer"
+                      >
+                        {label}
+                      </label>
+                      <Input
+                        type="time"
+                        value={day.start}
+                        onChange={(e) => updateDayTime(dow, 'start', e.target.value)}
+                        disabled={!day.enabled}
+                        className="w-28 h-8 text-sm"
+                      />
+                      <span className="text-xs text-muted-foreground">a</span>
+                      <Input
+                        type="time"
+                        value={day.end}
+                        onChange={(e) => updateDayTime(dow, 'end', e.target.value)}
+                        disabled={!day.enabled}
+                        className="w-28 h-8 text-sm"
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             <div className="bg-muted/50 p-3 rounded-lg text-xs space-y-1">
               <p className="font-medium">Resumen</p>
               <p>
@@ -283,15 +409,18 @@ export function OfferServicesDialog({ open, onOpenChange }: Props) {
               <p>
                 · Desde <strong>${parseInt(priceFrom || '0', 10).toLocaleString('es-CL')}</strong>
               </p>
+              <p>
+                · <strong>{enabledDays.length} dias</strong> disponibles
+              </p>
             </div>
 
             <div className="flex justify-between pt-2">
-              <Button variant="outline" onClick={() => setStep(2)} disabled={loading}>
+              <Button variant="outline" onClick={() => setStep(3)} disabled={loading}>
                 <ArrowLeft className="h-4 w-4 mr-1" /> Atras
               </Button>
               <Button
                 onClick={handleSubmit}
-                disabled={loading || !priceFrom}
+                disabled={loading || enabledDays.length === 0}
                 className="bg-emerald-600 hover:bg-emerald-700 text-white"
               >
                 {loading ? (

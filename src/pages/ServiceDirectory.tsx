@@ -101,6 +101,7 @@ interface FilterState {
   minRating: number;
   sortBy: string;
   availableNow: boolean;
+  commune: string; // 'all' = sin filtro
 }
 
 interface ServiceConfig {
@@ -402,6 +403,7 @@ const ServiceDirectory = () => {
     minRating: 0,
     sortBy: 'rating',
     availableNow: false,
+    commune: 'all',
   });
   const [availabilityDates, setAvailabilityDates] = useState<Record<string, string[]>>({});
 
@@ -423,6 +425,7 @@ const ServiceDirectory = () => {
       minRating: 0,
       sortBy: 'rating',
       availableNow: false,
+      commune: 'all',
     });
     setAvailabilityDates({});
   }, [serviceType]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -523,7 +526,23 @@ const ServiceDirectory = () => {
         matchesAvailableNow = providerAvail.includes(todayStr);
       }
 
-      return matchesSearch && matchesRating && matchesPrice && matchesDate && matchesAvailableNow;
+      // Comuna: matchea si es la base O esta en service_areas. 'all' = sin filtro.
+      let matchesCommune = true;
+      if (filters.commune && filters.commune !== 'all') {
+        const target = filters.commune.toLowerCase().trim();
+        const providerCommune = (provider.commune ?? '').toLowerCase().trim();
+        const areas = (provider.service_areas ?? []).map((a) => String(a).toLowerCase().trim());
+        matchesCommune = providerCommune === target || areas.includes(target);
+      }
+
+      return (
+        matchesSearch &&
+        matchesRating &&
+        matchesPrice &&
+        matchesDate &&
+        matchesAvailableNow &&
+        matchesCommune
+      );
     })
     .sort((a, b) => {
       switch (filters.sortBy) {

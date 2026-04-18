@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { VerificationBadge } from '@/components/VerificationBadge';
+import { ProviderScheduleDisplay } from '@/components/ProviderScheduleDisplay';
 import {
   Star,
   CheckCircle2,
@@ -194,6 +195,9 @@ export const ProviderProfileCard = ({
               </div>
             )}
           </div>
+
+          {/* Horarios (provider_availability_rules) */}
+          <ProviderScheduleDisplay providerId={provider.id} compact className="mb-3" />
 
           {/* Services/Specialties Tags */}
           {provider._services &&

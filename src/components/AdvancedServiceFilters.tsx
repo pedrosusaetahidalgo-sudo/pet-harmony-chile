@@ -1,25 +1,32 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
-import { Slider } from "@/components/ui/slider";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { 
-  Search, 
-  SlidersHorizontal, 
-  Calendar as CalendarIcon, 
-  Star, 
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Slider } from '@/components/ui/slider';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Search,
+  SlidersHorizontal,
+  Calendar as CalendarIcon,
+  Star,
   MapPin,
   X,
-  Check
-} from "@/lib/icons";
-import { format } from "date-fns";
-import { es } from "date-fns/locale";
-import { cn } from "@/lib/utils";
+  Check,
+} from '@/lib/icons';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
+import { COMUNAS_SANTIAGO } from '@/lib/locations';
 
 interface FilterState {
   searchTerm: string;
@@ -28,6 +35,7 @@ interface FilterState {
   minRating: number;
   sortBy: string;
   availableNow: boolean;
+  commune: string; // 'all' = sin filtro
 }
 
 interface AdvancedServiceFiltersProps {
@@ -41,15 +49,16 @@ export const AdvancedServiceFilters = ({
   onFiltersChange,
   maxPrice = 100000,
   serviceType,
-  className = ""
+  className = '',
 }: AdvancedServiceFiltersProps) => {
   const [filters, setFilters] = useState<FilterState>({
-    searchTerm: "",
+    searchTerm: '',
     date: undefined,
     priceRange: [0, maxPrice],
     minRating: 0,
-    sortBy: "rating",
-    availableNow: false
+    sortBy: 'rating',
+    availableNow: false,
+    commune: 'all',
   });
   const [isOpen, setIsOpen] = useState(false);
 
@@ -61,12 +70,13 @@ export const AdvancedServiceFilters = ({
 
   const clearFilters = () => {
     const defaultFilters: FilterState = {
-      searchTerm: "",
+      searchTerm: '',
       date: undefined,
       priceRange: [0, maxPrice],
       minRating: 0,
-      sortBy: "rating",
-      availableNow: false
+      sortBy: 'rating',
+      availableNow: false,
+      commune: 'all',
     };
     setFilters(defaultFilters);
     onFiltersChange(defaultFilters);
@@ -76,11 +86,12 @@ export const AdvancedServiceFilters = ({
     filters.date,
     filters.priceRange[0] > 0 || filters.priceRange[1] < maxPrice,
     filters.minRating > 0,
-    filters.availableNow
+    filters.availableNow,
+    filters.commune !== 'all',
   ].filter(Boolean).length;
 
   return (
-    <div className={cn("space-y-4", className)}>
+    <div className={cn('space-y-4', className)}>
       {/* Main Search Bar */}
       <div className="flex gap-2">
         <div className="relative flex-1">
@@ -91,23 +102,23 @@ export const AdvancedServiceFilters = ({
             placeholder="Buscar por nombre o ubicación..."
             className="pl-12 h-12 rounded-xl border-2 focus:border-primary transition-all"
             value={filters.searchTerm}
-            onChange={(e) => updateFilter("searchTerm", e.target.value)}
+            onChange={(e) => updateFilter('searchTerm', e.target.value)}
           />
         </div>
-        
+
         {/* Date Picker */}
         <Popover>
           <PopoverTrigger asChild>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className={cn(
-                "h-12 px-4 rounded-xl border-2 gap-2",
-                filters.date && "border-primary bg-primary/5"
+                'h-12 px-4 rounded-xl border-2 gap-2',
+                filters.date && 'border-primary bg-primary/5'
               )}
             >
               <CalendarIcon className="h-5 w-5" />
               <span className="hidden sm:inline">
-                {filters.date ? format(filters.date, "d MMM", { locale: es }) : "Fecha"}
+                {filters.date ? format(filters.date, 'd MMM', { locale: es }) : 'Fecha'}
               </span>
             </Button>
           </PopoverTrigger>
@@ -115,18 +126,18 @@ export const AdvancedServiceFilters = ({
             <Calendar
               mode="single"
               selected={filters.date}
-              onSelect={(date) => updateFilter("date", date)}
+              onSelect={(date) => updateFilter('date', date)}
               locale={es}
               disabled={(date) => date < new Date()}
               className="pointer-events-auto"
             />
             {filters.date && (
               <div className="p-2 border-t">
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   className="w-full"
-                  onClick={() => updateFilter("date", undefined)}
+                  onClick={() => updateFilter('date', undefined)}
                 >
                   Limpiar fecha
                 </Button>
@@ -138,11 +149,11 @@ export const AdvancedServiceFilters = ({
         {/* Filters Sheet */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className={cn(
-                "h-12 px-4 rounded-xl border-2 gap-2 relative",
-                activeFiltersCount > 0 && "border-primary bg-primary/5"
+                'h-12 px-4 rounded-xl border-2 gap-2 relative',
+                activeFiltersCount > 0 && 'border-primary bg-primary/5'
               )}
             >
               <SlidersHorizontal className="h-5 w-5" />
@@ -176,12 +187,39 @@ export const AdvancedServiceFilters = ({
                   </p>
                 </div>
                 <Button
-                  variant={filters.availableNow ? "default" : "outline"}
+                  variant={filters.availableNow ? 'default' : 'outline'}
                   size="sm"
-                  onClick={() => updateFilter("availableNow", !filters.availableNow)}
+                  onClick={() => updateFilter('availableNow', !filters.availableNow)}
                 >
-                  {filters.availableNow ? <Check className="h-4 w-4" /> : "Activar"}
+                  {filters.availableNow ? <Check className="h-4 w-4" /> : 'Activar'}
                 </Button>
+              </div>
+
+              {/* Commune */}
+              <div className="space-y-2">
+                <Label className="text-base font-semibold flex items-center gap-2">
+                  <MapPin className="h-4 w-4" />
+                  Comuna
+                </Label>
+                <Select
+                  value={filters.commune}
+                  onValueChange={(value) => updateFilter('commune', value)}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Cualquier comuna" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    <SelectItem value="all">Todas las comunas</SelectItem>
+                    {COMUNAS_SANTIAGO.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-muted-foreground">
+                  Incluye profesionales que atienden en esta comuna.
+                </p>
               </div>
 
               {/* Price Range */}
@@ -193,7 +231,7 @@ export const AdvancedServiceFilters = ({
                     min={0}
                     max={maxPrice}
                     step={1000}
-                    onValueChange={(value) => updateFilter("priceRange", value as [number, number])}
+                    onValueChange={(value) => updateFilter('priceRange', value as [number, number])}
                     className="mt-2"
                   />
                   <div className="flex justify-between mt-2 text-sm text-muted-foreground">
@@ -210,13 +248,13 @@ export const AdvancedServiceFilters = ({
                   {[0, 3, 4, 4.5].map((rating) => (
                     <Button
                       key={rating}
-                      variant={filters.minRating === rating ? "default" : "outline"}
+                      variant={filters.minRating === rating ? 'default' : 'outline'}
                       size="sm"
-                      onClick={() => updateFilter("minRating", rating)}
+                      onClick={() => updateFilter('minRating', rating)}
                       className="flex-1"
                     >
                       {rating === 0 ? (
-                        "Todos"
+                        'Todos'
                       ) : (
                         <>
                           <Star className="h-4 w-4 mr-1 fill-yellow-500 text-yellow-500" />
@@ -231,9 +269,9 @@ export const AdvancedServiceFilters = ({
               {/* Sort By */}
               <div className="space-y-4">
                 <Label className="text-base font-semibold">Ordenar por</Label>
-                <Select 
-                  value={filters.sortBy} 
-                  onValueChange={(value) => updateFilter("sortBy", value)}
+                <Select
+                  value={filters.sortBy}
+                  onValueChange={(value) => updateFilter('sortBy', value)}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -248,7 +286,7 @@ export const AdvancedServiceFilters = ({
                 </Select>
               </div>
 
-              <Button 
+              <Button
                 className="w-full h-12 bg-gradient-to-r from-primary to-primary/80"
                 onClick={() => setIsOpen(false)}
               >
@@ -265,12 +303,12 @@ export const AdvancedServiceFilters = ({
           {filters.date && (
             <Badge variant="secondary" className="pl-3 pr-1 py-1 gap-1">
               <CalendarIcon className="h-3 w-3 mr-1" />
-              {format(filters.date, "d MMM", { locale: es })}
+              {format(filters.date, 'd MMM', { locale: es })}
               <Button
                 variant="ghost"
                 size="sm"
                 className="h-4 w-4 p-0 hover:bg-transparent"
-                onClick={() => updateFilter("date", undefined)}
+                onClick={() => updateFilter('date', undefined)}
               >
                 <X className="h-3 w-3" />
               </Button>
@@ -283,7 +321,7 @@ export const AdvancedServiceFilters = ({
                 variant="ghost"
                 size="sm"
                 className="h-4 w-4 p-0 hover:bg-transparent"
-                onClick={() => updateFilter("priceRange", [0, maxPrice])}
+                onClick={() => updateFilter('priceRange', [0, maxPrice])}
               >
                 <X className="h-3 w-3" />
               </Button>
@@ -297,7 +335,7 @@ export const AdvancedServiceFilters = ({
                 variant="ghost"
                 size="sm"
                 className="h-4 w-4 p-0 hover:bg-transparent"
-                onClick={() => updateFilter("minRating", 0)}
+                onClick={() => updateFilter('minRating', 0)}
               >
                 <X className="h-3 w-3" />
               </Button>
@@ -310,7 +348,21 @@ export const AdvancedServiceFilters = ({
                 variant="ghost"
                 size="sm"
                 className="h-4 w-4 p-0 hover:bg-transparent"
-                onClick={() => updateFilter("availableNow", false)}
+                onClick={() => updateFilter('availableNow', false)}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            </Badge>
+          )}
+          {filters.commune !== 'all' && (
+            <Badge variant="secondary" className="pl-3 pr-1 py-1 gap-1">
+              <MapPin className="h-3 w-3 mr-1" />
+              {filters.commune}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-4 w-4 p-0 hover:bg-transparent"
+                onClick={() => updateFilter('commune', 'all')}
               >
                 <X className="h-3 w-3" />
               </Button>
