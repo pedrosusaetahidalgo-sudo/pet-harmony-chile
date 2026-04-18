@@ -294,6 +294,9 @@ colchon operacional. Excedente se destina a causas (refugios).
 **Co-pilot**:
 - **Claude** (Anthropic) como IA co-engineer. Permite ciclos de build + QA de 5-10× mas rapidos
   que un founder solo tradicional. Acreditado en footers publicos ("Con IA de Claude").
+- **Evidencia**: ver [APALANCAMIENTO_FUNDADOR_IA.md](APALANCAMIENTO_FUNDADOR_IA.md) — desglose
+  por area de ~320 hrs humanas vs ~4.800 hrs equivalentes de un equipo de expertos sin IA
+  (apalancamiento 15x en tiempo, 32-65x en costo, USD 720K-1,44M de output de mercado).
 
 **Gap honesto + plan de mitigacion**:
 - Buscando **co-founder comercial/clinico** con equity vested antes del cierre de pre-seed.

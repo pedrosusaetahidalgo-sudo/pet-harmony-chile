@@ -123,6 +123,20 @@ Resumen de items activos:
 
 ---
 
+## Inversionistas y partners
+
+> Set consolidado para data room, pitch y reuniones con fondos / CORFO / Start-Up Chile.
+
+| Documento | Que contiene | Uso |
+|---|---|---|
+| [PITCH_DECK.md](PITCH_DECK.md) | 13 slides narrativos: problema, solucion, traccion, modelo, competencia, equipo, roadmap, ask | Pitch en vivo y deck PDF |
+| [APALANCAMIENTO_FUNDADOR_IA.md](APALANCAMIENTO_FUNDADOR_IA.md) | Output en 2 meses vs equipo de expertos: 320 hrs tuyas = ~4.800 hrs equipo = USD 720K-1,44M de valor | Sustenta velocidad/eficiencia/compromiso ante inversionistas |
+| [CONSOLIDADO_2026_04_18.md](CONSOLIDADO_2026_04_18.md) | Snapshot tecnico verificado (tsc, lint, tests, build) y plan ejecutable | Evidencia tecnica para data room |
+| [INVENTARIO_APP_2026_04_17.md](INVENTARIO_APP_2026_04_17.md) | Inventario de features funcionales | Scope del producto |
+| [sales/PITCH_VET_CORTO.md](sales/PITCH_VET_CORTO.md) | Pitch comercial 1-pager para veterinarias B2B | Outbound a clinicas |
+
+---
+
 ## Planes ejecutados (hasta 2026-04-15)
 
 | Plan | Estado |
