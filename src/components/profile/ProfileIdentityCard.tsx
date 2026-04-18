@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { ProfessionalBadges } from '@/components/ProfessionalBadges';
 import { DonorBadge } from '@/components/DonorBadge';
+import { PawMemberBadge } from '@/components/PawMemberBadge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -87,6 +88,7 @@ export function ProfileIdentityCard({ profile, onEditProfile }: ProfileIdentityC
 
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <ProfessionalBadges userId={user?.id || ''} />
+              <PawMemberBadge userId={user?.id} size="sm" />
               <DonorBadge userId={user?.id} size="sm" />
             </div>
           </div>

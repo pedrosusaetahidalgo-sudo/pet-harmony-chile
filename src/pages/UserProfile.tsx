@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ProfessionalBadges } from '@/components/ProfessionalBadges';
 import { DonorBadge } from '@/components/DonorBadge';
+import { PawMemberBadge } from '@/components/PawMemberBadge';
 import { useStartConversation } from '@/hooks/useStartConversation';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { logger } from '@/lib/logger';
@@ -260,6 +261,7 @@ const UserProfile = () => {
 
                     <div className="mt-3 flex flex-wrap items-center gap-2 justify-center sm:justify-start">
                       <ProfessionalBadges userId={userId || ''} />
+                      <PawMemberBadge userId={userId} size="sm" />
                       <DonorBadge userId={userId} size="sm" />
                     </div>
                   </div>

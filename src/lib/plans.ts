@@ -47,8 +47,12 @@ export const PLANS: Record<PlanId, PlanConfig> = {
   },
   premium: {
     id: 'premium',
-    name: 'Premium',
-    badge: '⭐',
+    // Desde 2026-04-19: renombrado a "Paw Member" (membresia voluntaria).
+    // Mismos features que free — solo otorga badge visual y reconocimiento
+    // publico. No desbloquea nada. El id 'premium' se conserva por
+    // compatibilidad con DB y codigo existente.
+    name: 'Paw Member',
+    badge: '💛',
     monthlyPrice: 3990,
     yearlyPrice: 39900,
     yearlyMonthly: 3325,

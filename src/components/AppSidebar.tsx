@@ -594,6 +594,15 @@ export function AppSidebar() {
             <SidebarMenu className="space-y-0">
               <SidebarMenuItem>
                 <SidebarMenuButton
+                  onClick={() => handleNavigate('/paw-core')}
+                  className="h-7 text-xs rounded-md"
+                >
+                  <PawPrint className="h-3.5 w-3.5 flex-shrink-0" />
+                  <span>Paw Core</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
                   onClick={() => handleNavigate('/settings')}
                   className="h-7 text-xs rounded-md"
                 >
