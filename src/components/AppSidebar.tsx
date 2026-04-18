@@ -143,7 +143,7 @@ const exploreSubgroups: ExploreSubgroup[] = [
   },
   {
     key: 'paw-labs',
-    label: 'Paw Labs',
+    label: 'Beta 🧪',
     icon: Trophy,
     items: [
       { title: 'Paw Game', url: '/paw-game', icon: Gamepad2, flag: 'PAWGAME_SIDEBAR' as const },

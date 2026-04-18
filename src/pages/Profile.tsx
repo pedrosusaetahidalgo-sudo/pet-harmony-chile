@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { PawPrint, Trophy, ChevronRight } from '@/lib/icons';
+import { PawPrint, Trophy, ChevronRight, Heart, Sparkles } from '@/lib/icons';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
@@ -282,6 +282,31 @@ const Profile = () => {
           </div>
         </Card>
       )}
+
+      {/* ── Paw Member — card visible en mobile (P1 #4) ── */}
+      <Card
+        className="border-violet-200/70 bg-gradient-to-br from-violet-50 via-fuchsia-50/60 to-amber-50/40 dark:from-violet-950/30 dark:via-fuchsia-950/20 dark:to-amber-950/10 cursor-pointer hover:shadow-md transition-shadow"
+        onClick={() => navigate('/paw-member')}
+      >
+        <CardContent className="p-4 flex items-center gap-3">
+          <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-violet-500 via-fuchsia-500 to-amber-500 flex items-center justify-center shadow-md shrink-0">
+            <PawPrint className="h-6 w-6 text-white fill-white" />
+            <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center shadow">
+              <Heart className="h-2.5 w-2.5 text-rose-500 fill-rose-500" />
+            </span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-1.5">
+              <span className="font-semibold text-sm">Paw Member</span>
+              <Sparkles className="h-3 w-3 text-amber-500" />
+            </div>
+            <p className="text-xs text-muted-foreground leading-snug">
+              Ver tu aporte, historial de donaciones y descuentos de alianzas.
+            </p>
+          </div>
+          <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
+        </CardContent>
+      </Card>
 
       {/* ── CTA para convertirse en profesional ── */}
       <BecomeProviderCTA />
