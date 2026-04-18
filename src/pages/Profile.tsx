@@ -21,6 +21,7 @@ import { ProfileCompletionCard } from '@/components/profile/ProfileCompletionCar
 import { ProfileSettingsList } from '@/components/profile/ProfileSettingsList';
 import { EditProfileDrawer } from '@/components/profile/EditProfileDrawer';
 import { BecomeProviderCTA } from '@/components/BecomeProviderCTA';
+import { OfferServicesBanner } from '@/components/OfferServicesBanner';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { useActiveRole } from '@/hooks/useActiveRole';
@@ -216,6 +217,9 @@ const Profile = () => {
         petCount={pets.length}
         onEditProfile={() => setEditDrawerOpen(true)}
       />
+
+      {/* ── Bloque C.2: Ofrecer servicios si perfil completo + ficha ── */}
+      <OfferServicesBanner />
 
       {/* ── Bloque D: Social Mini-bar ── */}
       <Card>
