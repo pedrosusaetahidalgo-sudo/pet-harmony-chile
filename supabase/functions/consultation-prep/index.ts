@@ -126,10 +126,9 @@ serve(async (req) => {
       ? `\nUltimos registros: ${records.map((r) => `[${r.date}] ${r.record_type}: ${r.title}`).join('; ')}`
       : '';
 
+    // Bloque estatico (cacheable): rol + reglas + formato. Se cachea 5 min
+    // asi la 2a llamada del dia solo paga tokens del contexto variable.
     const systemPrompt = `Eres el preparador de consultas de Paw Friend, una app chilena de salud de mascotas.
-
-## PACIENTE
-${ctx}${allergies.length ? `\nAlergias: ${allergies.join(', ')}` : ''}${conditions.length ? `\nCondiciones cronicas: ${conditions.join(', ')}` : ''}${meds.length ? `\nMedicamentos: ${meds.join(', ')}` : ''}${reminderCtx}${recordCtx}
 
 ## ROL
 Ayudas al dueño a prepararse para una consulta veterinaria generando:
@@ -149,8 +148,13 @@ Ayudas al dueño a prepararse para una consulta veterinaria generando:
 ## FORMATO (JSON sin markdown)
 {"questions_for_vet":["¿Pregunta 1?","¿Pregunta 2?"],"info_checklist":["Llevar carnet de vacunacion","Anotar ultima desparasitacion"],"observations_to_record":["Registrar frecuencia del sintoma","Anotar horarios"],"tip":"consejo practico para la consulta","disclaimer":"Lista sugerida para aprovechar mejor tu consulta veterinaria."}`;
 
+    // Bloque dinamico: contexto del paciente. No se cachea.
+    const dynamicSystemText = `## PACIENTE
+${ctx}${allergies.length ? `\nAlergias: ${allergies.join(', ')}` : ''}${conditions.length ? `\nCondiciones cronicas: ${conditions.join(', ')}` : ''}${meds.length ? `\nMedicamentos: ${meds.join(', ')}` : ''}${reminderCtx}${recordCtx}`;
+
     const raw = await callClaude({
       systemPrompt,
+      dynamicSystemText,
       userMessage: `Motivo de la consulta: "${sanitizeForPrompt(reason)}"\nGenera la preparacion para la consulta de ${pet.name}.`,
       maxTokens: 500,
       temperature: 0.3,

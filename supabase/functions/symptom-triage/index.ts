@@ -109,10 +109,9 @@ serve(async (req) => {
     const allergies = [pet.allergies_food, pet.allergies_medication].filter(Boolean);
     const conditions = Array.isArray(pet.chronic_conditions) ? pet.chronic_conditions : [];
 
-    const systemPrompt = `Eres el sistema de triage veterinario de Paw Friend, una app chilena de salud de mascotas.
-
-## PACIENTE
-${ctx}${allergies.length ? `\nAlergias: ${allergies.join(', ')}` : ''}${conditions.length ? `\nCondiciones cronicas: ${conditions.join(', ')}` : ''}
+    // Bloque estatico (cacheable): rol + protocolo + reglas + formato. Se cachea
+    // 5 min asi las siguientes llamadas del mismo turno solo pagan el contexto.
+    const systemPromptStatic = `Eres el sistema de triage veterinario de Paw Friend, una app chilena de salud de mascotas.
 
 ## ROL
 Guias al dueño a traves de una evaluacion estructurada de sintomas para determinar la urgencia. NO diagnosticas — clasificas urgencia y orientas al siguiente paso.
@@ -151,6 +150,10 @@ Convulsiones activas, dificultad respiratoria severa, sangrado abundante, sospec
 ## FORMATO (JSON sin markdown)
 {"step":"clasificacion|preguntas|resultado","message":"texto para el usuario","urgency":"emergencia|urgente|pronto|rutina|null","category":"digestivo|respiratorio|dermatologico|musculoesqueletico|neurologico|urinario|ocular_auditivo|comportamental|otro|null","questions":["pregunta 1","pregunta 2"],"action":"ir_urgencias|agendar_hoy|agendar_semana|monitorear|null","show_directory":false,"disclaimer":"Triage orientativo. No reemplaza la consulta veterinaria."}`;
 
+    // Bloque dinamico: contexto del paciente. NO se cachea.
+    const systemPromptDynamic = `## PACIENTE
+${ctx}${allergies.length ? `\nAlergias: ${allergies.join(', ')}` : ''}${conditions.length ? `\nCondiciones cronicas: ${conditions.join(', ')}` : ''}`;
+
     // Build messages with conversation history
     const messages = [
       ...(Array.isArray(conversation_history)
@@ -187,7 +190,10 @@ Convulsiones activas, dificultad respiratoria severa, sangrado abundante, sospec
           model: 'claude-haiku-4-5-20251001',
           max_tokens: 500,
           temperature: 0.25,
-          system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
+          system: [
+            { type: 'text', text: systemPromptStatic, cache_control: { type: 'ephemeral' } },
+            { type: 'text', text: systemPromptDynamic },
+          ],
           messages,
         }),
         signal: controller.signal,

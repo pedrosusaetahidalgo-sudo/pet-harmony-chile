@@ -246,10 +246,9 @@ serve(
       const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
       if (!ANTHROPIC_API_KEY) throw new Error('ANTHROPIC_API_KEY no configurada');
 
-      const systemPrompt = `Eres un asistente clínico veterinario experto. Tu trabajo es generar un CONSOLIDADO CLÍNICO completo a partir de todas las sesiones y registros de un paciente.
-
-## DATOS DEL PACIENTE
-${petContext}
+      // Bloque estatico (cacheable): rol + instrucciones + reglas + formato.
+      // Se cachea 5 min. La 2a llamada del mismo vet solo paga el contexto variable.
+      const systemPromptStatic = `Eres un asistente clínico veterinario experto. Tu trabajo es generar un CONSOLIDADO CLÍNICO completo a partir de todas las sesiones y registros de un paciente.
 
 ## INSTRUCCIONES
 
@@ -272,7 +271,13 @@ Analiza TODAS las sesiones clínicas (del veterinario) y registros médicos (del
 ## FORMATO DE SALIDA
 
 Responde SOLO con JSON válido, sin markdown:
-{"diagnosticos":[{"condicion":"nombre","apariciones":2,"estado":"activo|resuelto|en_tratamiento","ultima_fecha":"YYYY-MM-DD"}],"tratamientos":[{"medicamento":"nombre","dosis":"cantidad","frecuencia":"cada X horas","desde":"YYYY-MM-DD"}],"vacunas":[{"nombre":"nombre","fecha":"YYYY-MM-DD","estado":"al_dia|proxima|vencida","proxima":"YYYY-MM-DD o null"}],"alertas":[{"tipo":"alergia|interaccion|tendencia|cronico","descripcion":"texto corto","severidad":"alta|media|baja"}],"seguimientos":[{"fecha":"YYYY-MM-DD","razon":"texto"}],"resumen_general":"2-3 oraciones del estado actual del paciente","total_sesiones":${totalSessions},"rango_fechas":"fecha_inicio — fecha_fin"}`;
+{"diagnosticos":[{"condicion":"nombre","apariciones":2,"estado":"activo|resuelto|en_tratamiento","ultima_fecha":"YYYY-MM-DD"}],"tratamientos":[{"medicamento":"nombre","dosis":"cantidad","frecuencia":"cada X horas","desde":"YYYY-MM-DD"}],"vacunas":[{"nombre":"nombre","fecha":"YYYY-MM-DD","estado":"al_dia|proxima|vencida","proxima":"YYYY-MM-DD o null"}],"alertas":[{"tipo":"alergia|interaccion|tendencia|cronico","descripcion":"texto corto","severidad":"alta|media|baja"}],"seguimientos":[{"fecha":"YYYY-MM-DD","razon":"texto"}],"resumen_general":"2-3 oraciones del estado actual del paciente","total_sesiones":numero,"rango_fechas":"fecha_inicio — fecha_fin"}`;
+
+      // Bloque dinamico: datos del paciente. NO se cachea.
+      const systemPromptDynamic = `## DATOS DEL PACIENTE
+${petContext}
+
+Total de sesiones a analizar: ${totalSessions}`;
 
       const userMessage = `Genera el consolidado clínico a partir de estos registros:
 
@@ -303,7 +308,10 @@ ${ownerRecordsText || 'Sin registros del dueño.'}`;
             model: 'claude-haiku-4-5-20251001',
             max_tokens: 1500,
             temperature: 0.15,
-            system: [{ type: 'text', text: systemPrompt, cache_control: { type: 'ephemeral' } }],
+            system: [
+              { type: 'text', text: systemPromptStatic, cache_control: { type: 'ephemeral' } },
+              { type: 'text', text: systemPromptDynamic },
+            ],
             messages: [{ role: 'user', content: userMessage }],
           }),
         });

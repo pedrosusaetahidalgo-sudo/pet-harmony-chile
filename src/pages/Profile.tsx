@@ -211,7 +211,11 @@ const Profile = () => {
       </section>
 
       {/* ── Bloque C: Profile Completion + Health Signals ── */}
-      <ProfileCompletionCard profile={profile} petCount={pets.length} />
+      <ProfileCompletionCard
+        profile={profile}
+        petCount={pets.length}
+        onEditProfile={() => setEditDrawerOpen(true)}
+      />
 
       {/* ── Bloque D: Social Mini-bar ── */}
       <Card>
