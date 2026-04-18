@@ -51,7 +51,10 @@ interface SheetResult {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   rows: any[];
   error?: string;
+  truncated?: boolean;
 }
+
+const FETCH_LIMIT = 10000;
 
 // ── Sheet Definitions (CONFIGURABLE) ───────────────────────
 //
@@ -784,13 +787,15 @@ function applyDateFilter(rows: any[], filters: ExportFilters, dateField: string 
 
 async function fetchSheet(def: SheetDefinition, filters: ExportFilters): Promise<SheetResult> {
   try {
-    const { data, error } = await supabase.from(def.table).select(def.select).limit(10000);
+    const { data, error } = await supabase.from(def.table).select(def.select).limit(FETCH_LIMIT);
     if (error) throw new Error(error.message);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let rows = (data ?? []) as any[];
+    // Si devolvio exactamente el limite, probablemente hay mas filas truncadas.
+    const truncated = rows.length === FETCH_LIMIT;
     rows = applyDateFilter(rows, filters, def.dateField);
     if (def.transform) rows = def.transform(rows);
-    return { name: def.sheetName, rows };
+    return { name: def.sheetName, rows, truncated };
   } catch (err) {
     // Error resilience: si una tabla falla, devolver sheet vacio con warning
     return {
@@ -1015,6 +1020,55 @@ function detectAnomalies(tableId: string, rows: any[]): any[] {
             plan_id: r.plan_id,
           });
         }
+        // Gamificacion inconsistente: puntos acumulados pero level no avanzo.
+        // Normalmente level 2 en ~100 pts. Flag si >= 50 pts y level = 1.
+        if ((r.points ?? 0) >= 50 && (r.level ?? 1) === 1) {
+          out.push({
+            id: r.id,
+            issue: 'points_level_mismatch',
+            display_name: r.display_name,
+            points: r.points,
+            level: r.level,
+          });
+        }
+      }
+      break;
+    case 'pets':
+      for (const r of rows) {
+        // birth_date en el futuro = typo de data entry
+        if (r.birth_date) {
+          const bd = new Date(r.birth_date);
+          if (bd.getTime() > Date.now()) {
+            out.push({
+              id: r.id,
+              issue: 'future_birth_date',
+              name: r.name,
+              birth_date: r.birth_date,
+              species: r.species,
+            });
+          }
+        }
+      }
+      break;
+    case 'adoption_posts':
+      for (const r of rows) {
+        if (r.status === 'disponible') {
+          const noPhotos = !Array.isArray(r.photos) || r.photos.length === 0;
+          const shortDesc = String(r.description ?? '').trim().length < 20;
+          if (noPhotos || shortDesc) {
+            out.push({
+              id: r.id,
+              issue:
+                noPhotos && shortDesc
+                  ? 'no_photos_and_weak_desc'
+                  : noPhotos
+                    ? 'no_photos'
+                    : 'weak_description',
+              pet_name: r.pet_name,
+              description_length: String(r.description ?? '').trim().length,
+            });
+          }
+        }
       }
       break;
     case 'verification_requests':
@@ -1060,12 +1114,19 @@ interface RecommendedAction {
   fix_hint: string;
 }
 
+interface EdgeFnForActions {
+  function_name: string;
+  executions_24h: number;
+  avg_latency_ms: number | null;
+}
+
 /** Construye acciones priorizadas desde checks + errors + anomalies. */
 function buildRecommendedActions(
   qualityChecks: QualityCheck[],
   errorGroups: ErrorGroup[],
   fetchErrors: SchemaErrorInfo[],
-  sheets: SheetResult[]
+  sheets: SheetResult[],
+  edgeFunctions: EdgeFnForActions[]
 ): RecommendedAction[] {
   const actions: RecommendedAction[] = [];
 
@@ -1133,12 +1194,51 @@ function buildRecommendedActions(
     if (!def) continue;
     const anomalies = detectAnomalies(def.id, s.rows);
     if (anomalies.length > 0) {
+      // location por tipo de anomalia conocido
+      let location: string | undefined;
+      if (def.id === 'pets') location = 'src/pages/AddPet.tsx + src/pages/EditPet.tsx';
+      else if (def.id === 'profiles') location = 'src/pages/Profile.tsx';
+      else if (def.id === 'adoption_posts') location = 'src/pages/AdoptionForm.tsx';
+      else if (def.id === 'service_providers') location = 'Admin > Verificaciones';
+      else if (def.id === 'verification_requests') location = 'Admin > Verificaciones';
+      else if (def.id === 'subscriptions') location = 'Admin > Finance + Flow webhook';
       actions.push({
         priority: 'P2',
         category: 'anomaly',
         issue: `${anomalies.length} filas con anomalias en '${def.id}'`,
         count: anomalies.length,
+        location,
         fix_hint: `Ver tables[id='${def.id}'].anomaly_rows para detalle`,
+      });
+    }
+  }
+
+  // Tablas truncadas al limite → P1 (dataset incompleto invalida el reporte)
+  for (const s of sheets) {
+    if (!s.truncated) continue;
+    const def = SHEET_DEFINITIONS.find((d) => d.sheetName === s.name);
+    actions.push({
+      priority: 'P1',
+      category: 'truncated_dataset',
+      issue: `Tabla '${def?.id ?? s.name}' alcanzo el limite de ${FETCH_LIMIT} filas`,
+      count: s.rows.length,
+      location: 'src/lib/auditExport.ts — fetchSheet (FETCH_LIMIT)',
+      fix_hint:
+        'El export se trunco. Implementar paginacion (range/keyset) en fetchSheet o usar filtro por periodo mas acotado.',
+    });
+  }
+
+  // Edge fns con latencia alta → P3 (no bloquea pero vale la pena mirar)
+  for (const fn of edgeFunctions) {
+    if ((fn.avg_latency_ms ?? 0) > 3000 && fn.executions_24h > 0) {
+      actions.push({
+        priority: 'P3',
+        category: 'slow_edge_function',
+        issue: `'${fn.function_name}' promedio ${fn.avg_latency_ms}ms`,
+        count: fn.executions_24h,
+        location: `supabase/functions/${fn.function_name}/index.ts`,
+        fix_hint:
+          'Revisar llamadas externas (OpenAI/Anthropic, Google APIs, Flow). Evaluar caching, batching o prompt mas corto.',
       });
     }
   }
@@ -1236,7 +1336,8 @@ function buildExecutiveSummary(
   sheets: SheetResult[],
   qualityChecks: QualityCheck[],
   errorGroups: ErrorGroup[],
-  fetchErrors: SchemaErrorInfo[]
+  fetchErrors: SchemaErrorInfo[],
+  recommendedActions: RecommendedAction[]
 ): Record<string, unknown> {
   const findRows = (id: string) =>
     sheets.find((s) => {
@@ -1276,16 +1377,47 @@ function buildExecutiveSummary(
       error_logs_total: errorLogs.length,
       unique_error_patterns: errorGroups.length,
     },
-    top_issues: [
-      ...fetchErrors.slice(0, 3).map((e) => ({
-        type: 'schema_mismatch',
-        description: `${e.table}.${e.column} no existe`,
-      })),
-      ...errorGroups.slice(0, 3).map((g) => ({
-        type: 'error_spike',
-        description: `${g.message.slice(0, 80)} (${g.count}x)`,
-      })),
-    ],
+    top_issues: (() => {
+      // Prioriza: schema errors -> error spikes -> top acciones P0/P1 -> anomalias de volumen P2
+      const issues: Array<{ type: string; description: string; priority?: string }> = [];
+      for (const e of fetchErrors.slice(0, 3)) {
+        issues.push({
+          type: 'schema_mismatch',
+          priority: 'P0',
+          description: `${e.table}.${e.column} no existe`,
+        });
+      }
+      for (const g of errorGroups.slice(0, 3)) {
+        if (g.count >= 10) {
+          issues.push({
+            type: 'error_spike',
+            priority: g.count >= 100 ? 'P1' : 'P2',
+            description: `${g.message.slice(0, 80)} (${g.count}x)`,
+          });
+        }
+      }
+      // Anomalias de volumen: top 3 acciones con count >= 5
+      const highVolume = recommendedActions
+        .filter((a) => a.category === 'anomaly' && (a.count ?? 0) >= 5)
+        .slice(0, 3);
+      for (const a of highVolume) {
+        issues.push({
+          type: a.category,
+          priority: a.priority,
+          description: a.issue,
+        });
+      }
+      // Si no hay nada urgente, muestra el error mas reciente aunque sea 1 vez
+      if (issues.length === 0 && errorGroups.length > 0) {
+        const g = errorGroups[0];
+        issues.push({
+          type: 'error_spike',
+          priority: 'P3',
+          description: `${g.message.slice(0, 80)} (${g.count}x)`,
+        });
+      }
+      return issues.slice(0, 5);
+    })(),
   };
 }
 
@@ -1702,14 +1834,16 @@ export async function generateAuditExport(
     qualityChecks,
     errorGroups,
     fetchErrorsParsed,
-    sheets
+    sheets,
+    edgeFunctionsReport.functions
   );
 
   const executiveSummary = buildExecutiveSummary(
     sheets,
     qualityChecks,
     errorGroups,
-    fetchErrorsParsed
+    fetchErrorsParsed,
+    recommendedActions
   );
 
   const ROWS_FULL_THRESHOLD = 50;
@@ -1718,7 +1852,7 @@ export async function generateAuditExport(
   const jsonPayload = {
     meta: {
       app: 'Paw Friend',
-      schema_version: 3,
+      schema_version: 4,
       export_type: exportType,
       filters: exportType === 'period' ? filters : null,
       generated_at: new Date().toISOString(),
@@ -1744,6 +1878,7 @@ export async function generateAuditExport(
         table: def?.table ?? null,
         description: def?.description ?? null,
         row_count: rows.length,
+        truncated: s.truncated ?? false,
         error: s.error ?? null,
         aggregates: calcAggregates(id, rows),
         anomaly_rows: detectAnomalies(id, rows),
