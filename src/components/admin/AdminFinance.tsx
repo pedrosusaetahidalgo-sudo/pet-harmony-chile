@@ -362,6 +362,32 @@ export default function AdminFinance() {
 
   return (
     <div className="space-y-6">
+      {/* Modelo de monetizacion hibrido — recordatorio al admin */}
+      <Card className="border-violet-500/30 bg-gradient-to-br from-violet-950/60 to-fuchsia-950/40">
+        <CardContent className="p-4 text-xs text-slate-200 space-y-2">
+          <div className="flex items-center gap-2 text-sm font-semibold text-violet-200">
+            <Heart className="h-4 w-4 text-fuchsia-400 fill-fuchsia-400" />
+            Modelo de monetización (2026-04-19)
+          </div>
+          <p className="text-slate-300/90 leading-relaxed">
+            Paw Friend opera con <b>6 motores</b> de revenue: donaciones voluntarias, Paw Member
+            (membresía opcional B2C), planes vet Free/Premium/Pro Max, Paw Companys (sponsors
+            empresariales), Paw Voices (creadores aliados) y publicidad contratada. Esta vista sigue
+            mostrando MRR + pagos Flow; las <b>donaciones</b> aparecen en{' '}
+            <code>Sala de Inversión</code> y{' '}
+            <code>
+              Content {'>'} Feedback {'>'} Donaciones
+            </code>
+            .
+          </p>
+          <p className="text-[11px] italic text-slate-400">
+            Nota fiscal: mientras la cuenta Flow siga a nombre personal del fundador, las donaciones{' '}
+            <b>no aparecen</b> como revenue SpA. Migrar a cuenta SpA (Mach/Tenpo/Prex) para
+            consolidar contabilidad.
+          </p>
+        </CardContent>
+      </Card>
+
       {/* Alerta pagos fallidos */}
       {(financeKpis?.failedOrders ?? 0) > 0 && (
         <Card className="border-red-500/30 bg-red-950/50">

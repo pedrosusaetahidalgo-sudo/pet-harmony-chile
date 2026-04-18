@@ -509,6 +509,65 @@ export default function Donaciones() {
             peludo. Gracias por estar aca 💛
           </p>
         </section>
+
+        {/* Pie legal — cumplimiento normativa Chile */}
+        <section
+          className="rounded-lg border border-muted bg-muted/30 p-4 space-y-2 text-[11px] leading-relaxed text-muted-foreground"
+          aria-label="Información legal sobre los aportes"
+        >
+          <h3 className="text-xs font-semibold text-foreground">Información legal</h3>
+          <ul className="space-y-1.5 list-disc pl-4">
+            <li>
+              Los aportes son <b>voluntarios</b> y no constituyen pago por servicio ni membresía.
+              Paw Friend es y seguirá siendo gratis para todos los tutores.
+            </li>
+            <li>
+              <b>No son deducibles de impuestos.</b> Paw Friend SpA es una empresa comercial y no
+              está inscrita como donataria en el registro del SII (Ley 19.885 sobre donaciones con
+              beneficios tributarios).
+            </li>
+            <li>
+              Tienes derecho a solicitar la <b>devolución del aporte dentro de 10 días corridos</b>{' '}
+              desde la transacción, conforme a la Ley 19.496 de Protección al Consumidor,
+              escribiendo a{' '}
+              <a
+                href="mailto:pawfriendcl@gmail.com?subject=Solicitud%20de%20devoluci%C3%B3n%20de%20aporte"
+                className="underline hover:text-foreground"
+              >
+                pawfriendcl@gmail.com
+              </a>
+              .
+            </li>
+            <li>
+              El aporte <b>no otorga</b> membresía Premium, beneficios tributarios, ventajas ni
+              acceso preferente en la plataforma.
+            </li>
+            <li>
+              Los pagos se procesan a través de <b>Flow.cl</b>. No almacenamos los datos de tu
+              tarjeta. Para más detalles revisa nuestra{' '}
+              <button
+                type="button"
+                onClick={() => navigate('/privacy')}
+                className="underline hover:text-foreground"
+              >
+                Política de Privacidad
+              </button>{' '}
+              y{' '}
+              <button
+                type="button"
+                onClick={() => navigate('/terms')}
+                className="underline hover:text-foreground"
+              >
+                Términos y Condiciones
+              </button>
+              .
+            </li>
+          </ul>
+          <p className="text-[10px] italic pt-1 border-t border-dashed">
+            Paw Friend es un proyecto <i>home-made</i> desarrollado por una persona en Chile. Los
+            aportes cubren servidores, edge functions, seguridad de datos y desarrollo continuo.
+          </p>
+        </section>
       </div>
     </div>
   );
