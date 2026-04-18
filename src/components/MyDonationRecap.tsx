@@ -66,12 +66,12 @@ export function MyDonationRecap({ className }: MyDonationRecapProps) {
           </Badge>
         </header>
 
-        <div className="grid grid-cols-2 gap-3 relative">
+        <div className="grid grid-cols-3 gap-2 relative">
           <div className="rounded-lg border border-violet-200/60 bg-white/70 dark:bg-slate-900/60 p-3">
             <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
               Total acumulado
             </div>
-            <div className="text-xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent leading-tight">
+            <div className="text-lg font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent leading-tight">
               {formatCLP(data.total_clp)}
             </div>
             <div className="text-[10px] text-muted-foreground mt-0.5">
@@ -81,14 +81,27 @@ export function MyDonationRecap({ className }: MyDonationRecapProps) {
 
           <div className="rounded-lg border border-violet-200/60 bg-white/70 dark:bg-slate-900/60 p-3">
             <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
+              Equivalente/mes
+            </div>
+            <div className="text-lg font-bold text-foreground leading-tight">
+              {formatCLP(data.avg_monthly_clp)}
+            </div>
+            <div className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1">
+              <Sparkles className="h-3 w-3" />
+              simula membresía
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-violet-200/60 bg-white/70 dark:bg-slate-900/60 p-3">
+            <div className="text-[10px] uppercase tracking-wide text-muted-foreground">
               Este mes
             </div>
-            <div className="text-xl font-bold text-foreground leading-tight">
+            <div className="text-lg font-bold text-foreground leading-tight">
               {formatCLP(data.month_clp)}
             </div>
             <div className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1">
               <Calendar className="h-3 w-3" />
-              {firstFmt ? `desde ${firstFmt}` : 'miembro activo'}
+              {data.account_months} {data.account_months === 1 ? 'mes' : 'meses'} en la app
             </div>
           </div>
         </div>

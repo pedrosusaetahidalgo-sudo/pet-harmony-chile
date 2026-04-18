@@ -53,7 +53,7 @@ export function DonationsTransparency({ className }: DonationsTransparencyProps)
           </Badge>
         </header>
 
-        {/* Barra de meta — NO expone el monto total recaudado */}
+        {/* Barra de meta SIN monto visible — solo % de avance. */}
         <div className="space-y-2">
           <div className="flex items-baseline justify-between gap-2">
             <span className="text-xs text-muted-foreground">
@@ -63,7 +63,9 @@ export function DonationsTransparency({ className }: DonationsTransparencyProps)
               </span>{' '}
               de la meta anual
             </span>
-            <span className="text-[11px] text-muted-foreground italic">objetivo $20M CLP</span>
+            <span className="text-[11px] text-muted-foreground italic">
+              🐾 gracias a cada aporte
+            </span>
           </div>
           <Progress
             value={pct}
@@ -72,8 +74,7 @@ export function DonationsTransparency({ className }: DonationsTransparencyProps)
           />
           <p className="text-[11px] text-muted-foreground italic pt-0.5">
             La meta cubre servidores, edge functions, seguridad y sostener Paw Friend gratis todo el
-            año. Mostramos el % de avance, no el monto total para no desalentar la donación cuando
-            estamos recién empezando.
+            año. Mostramos solo el % de avance.
           </p>
         </div>
 
