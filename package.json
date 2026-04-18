@@ -24,6 +24,8 @@
     "test:all": "tsc -b && eslint . && vitest run && playwright test --project=\"Desktop Chrome\" --project=\"Mobile Safari (iPhone 13)\"",
     "test:all:unit": "tsc -b && eslint . && vitest run",
     "test:e2e": "playwright test --project=\"Desktop Chrome\" --project=\"Mobile Safari (iPhone 13)\"",
+    "smoke": "playwright test smoke- --project=\"Desktop Chrome\"",
+    "smoke:full": "playwright test smoke-",
     "test:e2e:full": "playwright test",
     "test:e2e:safari": "playwright test --project=\"Desktop Safari\" --project=\"Mobile Safari (iPhone 13)\"",
     "test:e2e:ui": "playwright test --ui",
