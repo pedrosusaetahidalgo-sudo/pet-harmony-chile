@@ -145,8 +145,9 @@ export default function PawCore() {
               <h2 className="font-semibold text-lg">Cómo nos sostenemos</h2>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              6 motores de revenue que financian la operación. Ninguno bloquea features del lado
-              dueño — todos son opcionales o del lado profesional.
+              5 motores de monetización + 3 tipos de alianzas. Ninguno bloquea features del lado
+              dueño — todos son opcionales o del lado profesional. La app es y va a seguir siendo
+              gratis.
             </p>
             <div className="grid sm:grid-cols-2 gap-3">
               <MotorTile
@@ -172,17 +173,30 @@ export default function PawCore() {
               <MotorTile
                 icon={<Building2 className="h-4 w-4 text-amber-600" />}
                 title="Paw Companys"
-                text="Empresas con corazón peludo. Badge + grid público en /donaciones."
+                text="Empresas sponsor con aporte mensual. Badge + grid público en /donaciones."
+                action={{
+                  label: 'Ver /paw-companys',
+                  onClick: () => navigate('/paw-companys'),
+                }}
               />
               <MotorTile
                 icon={<Megaphone className="h-4 w-4 text-fuchsia-500" />}
                 title="Paw Voices"
-                text="Creadores aliados que comparten la misión. Próximamente con perfil dedicado."
+                text="Creadores peludos que amplifican la misión desde sus redes."
+                action={{
+                  label: 'Ver /paw-voices',
+                  onClick: () => navigate('/paw-voices'),
+                }}
+              />
+              <MotorTile
+                icon={<Trophy className="h-4 w-4 text-yellow-600" />}
+                title="Paw Partners"
+                text="Tiendas, accesorios, comida, restaurantes y seguros que ofrecen descuentos a Paw Members. Publicidad gratuita a cambio."
               />
               <MotorTile
                 icon={<Trophy className="h-4 w-4 text-yellow-600" />}
                 title="Publicidad transparente"
-                text="Slots de banners claramente etiquetados. No vendemos tus datos personales."
+                text="Slots de banners claramente etiquetados 'Patrocinado' (SERNAC). No vendemos tus datos personales."
               />
             </div>
           </CardContent>

@@ -3,6 +3,24 @@ import { supabase } from '@/integrations/supabase/client';
 
 export type PawCompanyTier = 'bronze' | 'silver' | 'gold';
 export type PawCompanyStatus = 'pending' | 'active' | 'inactive' | 'rejected';
+/**
+ * Tipo de alianza (2026-04-19):
+ * - 'sponsor' = empresa que aporta dinero mensual (Paw Companys clasico).
+ * - 'partner' = tienda/accesorios/restaurante que aporta descuentos/flujo
+ *   a cambio de exposicion (Paw Partners).
+ */
+export type PartnershipType = 'sponsor' | 'partner';
+
+export interface PawMemberDiscount {
+  id: string;
+  name: string;
+  slug: string;
+  logo_url: string | null;
+  website: string | null;
+  description: string | null;
+  paw_member_discount: string;
+  partnership_type: PartnershipType;
+}
 
 export interface PawCompany {
   id: string;
@@ -19,6 +37,8 @@ export interface PawCompany {
   contact_email: string | null;
   started_at: string | null;
   notes: string | null;
+  partnership_type: PartnershipType;
+  paw_member_discount: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -117,6 +137,23 @@ export function useUpsertPawCompany() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['paw-companys'] });
     },
+  });
+}
+
+/**
+ * Lista publica de partners con descuentos activos para Paw Members.
+ * Usa el RPC get_paw_member_discounts (SECURITY DEFINER).
+ */
+export function usePawMemberDiscounts() {
+  return useQuery({
+    queryKey: ['paw-member-discounts'],
+    queryFn: async (): Promise<PawMemberDiscount[]> => {
+      const { data, error } = await supabase.rpc('get_paw_member_discounts');
+      if (error) throw error;
+      return (data ?? []) as PawMemberDiscount[];
+    },
+    staleTime: 10 * 60_000,
+    gcTime: 30 * 60_000,
   });
 }
 

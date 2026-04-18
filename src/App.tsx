@@ -55,7 +55,8 @@ const Maps = lazy(() => import('./pages/Maps'));
 const ProviderDashboard = lazy(() => import('./components/provider/ProviderDashboard'));
 const PetClinicalRecord = lazy(() => import('./pages/PetClinicalRecord'));
 const MyBookings = lazy(() => import('./pages/MyBookings'));
-const Upgrade = lazy(() => import('./pages/Upgrade'));
+// Upgrade page removida 2026-04-19: /upgrade redirect a /paw-member.
+// Los callbacks de Flow (success/cancel) se mantienen abajo.
 const UpgradeSuccess = lazy(() => import('./pages/UpgradeSuccess'));
 const UpgradeCancel = lazy(() => import('./pages/UpgradeCancel'));
 const Donaciones = lazy(() => import('./pages/Donaciones'));
@@ -568,16 +569,11 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
-                <Route
-                  path="/upgrade"
-                  element={
-                    <ProtectedRoute>
-                      <AppLayout>
-                        <Upgrade />
-                      </AppLayout>
-                    </ProtectedRoute>
-                  }
-                />
+                {/* /upgrade (2026-04-19): con el pivot a Paw Member (voluntario, */}
+                {/* solo badge), ya no hay "Premium B2C" que vender. La ruta */}
+                {/* redirige a /paw-member. Los callbacks de Flow (/upgrade/success */}
+                {/* y /upgrade/cancel) se mantienen para no romper webhooks en vuelo. */}
+                <Route path="/upgrade" element={<Navigate to="/paw-member" replace />} />
                 <Route
                   path="/upgrade/success"
                   element={

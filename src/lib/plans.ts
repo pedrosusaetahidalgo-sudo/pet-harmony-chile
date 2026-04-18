@@ -190,12 +190,14 @@ export interface ProviderPlanConfig {
 }
 
 export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
-  // Free: para que el vet pruebe Paw Friend. 5 pacientes vinculados
-  // (limite real para vet en ejercicio), directorio publico, sin
+  // Basica (id 'provider_free' conservado por retrocompat DB): para que el
+  // vet pruebe Paw Friend. 5 pacientes vinculados, directorio publico, sin
   // features avanzadas. Comision 10% en bookings.
+  // 2026-04-19: Pedro clarifica que B2B es OPCIONAL solo para escalar. El
+  // plan Basica cubre a vets que recien empiezan o tienen poco volumen.
   provider_free: {
     id: 'provider_free',
-    name: 'Free',
+    name: 'Básica',
     segment: 'individual',
     badge: '',
     monthlyPrice: 0,

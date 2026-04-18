@@ -108,60 +108,86 @@ AGENTS.md              # Config para agentes IA (Cursor, Copilot, etc.)
 
 ---
 
-## 5. Modelo de negocio y pricing (actualizado 2026-04-19 — hibrido 6 motores)
+## 5. Modelo de negocio FINAL (2026-04-19 — aspiracion 100% gratis B2C)
 
-Pivot 2026-04-19: eliminamos paywalls B2C. La app es **gratis para dueños**
-sin restricciones de features. La sostenibilidad viene de 6 motores
-complementarios:
+**Norte del proyecto**: que Paw Friend sea gratis para dueños y 100%
+opcional en todo. La monetización es lo que permite sostener la
+operación sin condicionar la experiencia del dueño de mascota.
 
-### B2C (duenos de mascotas) — TODO GRATIS, sin features exclusivas
+### Los 5 tipos de monetización
+
+| # | Motor | Quien paga | Obligatorio? | Cuando se activa |
+|---|---|---|---|---|
+| 1 | **Donaciones voluntarias** | Dueños que quieran aportar | Opcional siempre | Siempre disponible en /donaciones |
+| 2 | **Paw Member** ($3.990/mes) | Dueños que quieran sostener | Opcional | Badge 💛 + acceso a descuentos de alianzas |
+| 3 | **B2B Vets (3 tiers)** | Vets individuales | Solo para escalar | Cuando supera 5 pacientes o necesita features pro |
+| 4 | **B2B Veterinarias** (clínicas) | Clínicas con varias sucursales | Solo para escalar | Tier Pro Max ($29.900) es el plan "veterinaria" |
+| 5 | **Publicidad** | Partners | Solo si hay flujo | Si cruzamos N MAU que justifique slots |
+
+### Las 3 alianzas
+
+| Alianza | Quien | Qué aporta | Qué recibe |
+|---|---|---|---|
+| **Paw Voices** | Creadores/influencers peludos | Exposición de la app a su audiencia | Badge oficial + perfil destacado + código promo |
+| **Paw Companys** | Empresas sponsor con aporte monetario mensual | $49.9k / $99.9k / $199.9k CLP/mes | Logo en grid /donaciones + badge Bronze/Silver/Gold + menciones |
+| **Paw Partners** (nombre tentativo) | Tiendas de accesorios, comida, restaurantes, seguros | Descuentos a Paw Members + flujo a su negocio | Publicidad gratuita en la app (barter) |
+
+Paw Companys y Paw Partners comparten la misma tabla `paw_companys` con
+campo `partnership_type` ∈ {'sponsor', 'partner'} (mig 20260611000000).
+
+### Los 4 tipos de clientes
+
+1. **Dueños de mascotas** — usuario central. Todo gratis. Membresía Paw
+   Member y donaciones son 100% opcionales.
+2. **Veterinarios** — individuales. Plan Básica ($0, 5 pacientes) cubre
+   vets con poco volumen. Premium/Pro Max solo para escalar.
+3. **Personas que ofrecen servicios de mascotas no-vet** — walkers,
+   sitters, trainers, groomers. Usan `/servicios` como vitrina.
+4. **Tiendas/accesorios/restaurantes/seguros** — relación Paw Partner:
+   publicidad gratuita a cambio de descuentos para Paw Members.
+
+### B2C (dueños) — TODO GRATIS, sin features exclusivas
 
 | Plan | Precio | Features | Badge |
 |---|---|---|---|
-| Gratis | $0 | **Todo disponible** (PDF, ficha compartida, mascotas ilimitadas, IA, analytics) | — |
-| Paw Member (opcional) | $3.990/mes o $39.900/ano | **Mismos features que Gratis** — solo agrega badge de reconocimiento publico | 💛 Paw Member |
+| Gratis | $0 | Todo disponible (PDF, ficha compartida, mascotas ilimitadas, IA, analytics) | — |
+| Paw Member (opcional) | $3.990/mes o $39.900/año | Mismos features + badge + acceso a descuentos de alianzas | 💛 Paw Member |
 
-El id interno en DB sigue siendo `premium` (no romper suscripciones
-antiguas). UI muestra "Paw Member". Ver `src/lib/plans.ts` PLANS.premium.
+El id interno en DB sigue siendo `premium` (no romper). UI muestra "Paw Member".
 
-### B2B (veterinarios y clinicas) — 3 tiers canonicos
+### B2B (vets + veterinarias) — 3 tiers
 
-| Plan | Precio/mes | Comision | Pacientes | Destacado | Multi-vet | Multi-branch | API |
-|---|---|---|---|---|---|---|---|
-| Free | $0 | 10% | 5 | No | No | No | No |
-| Premium ⭐ | $9.900 | 5% | Ilimitado | Si | Si | No | No |
-| Pro Max 👑 | $29.900 | 0% | Ilimitado | Si | Si | Si | Si |
+| Plan | Segmento | Precio/mes | Comisión | Pacientes | Multi-branch | API |
+|---|---|---|---|---|---|---|
+| Básica | vet individual | $0 | 10% | 5 | No | No |
+| Premium ⭐ | vet con volumen | $9.900 | 5% | Ilimitado | No | No |
+| Pro Max 👑 | veterinaria/clínica | $29.900 | 0% | Ilimitado | Si | Si |
 
-Estrategia volumen > ticket: apunta a cientos de vets pagando barato.
+IDs internos: `provider_free` (Básica), `provider_premium`, `provider_pro_max`.
+Aliases legacy se normalizan via `normalizeProviderPlanId()`.
 
-Aliases legacy (`provider_individual`, `provider_clinic_basic`,
-`provider_clinic_pro`) se normalizan via `normalizeProviderPlanId()` en
-`src/lib/plans.ts`.
+### Rutas del modelo
 
-### Motores no basados en planes
+- `/paw-core` — visión, misión, valores, 5 motores, ideas futuras.
+- `/paw-member` — página personal del user con aporte total, equivalente
+  mensual, historial, descuentos de alianzas.
+- `/donaciones` — aportes + muralla + grid Paw Companys + transparencia.
+- `/paw-companys` — landing empresas con form aplicación.
+- `/paw-voices` — landing creadores con form aplicación.
+- `/para-veterinarios` — pricing B2B.
+- `/upgrade` → redirige a `/paw-member` (Premium B2C descontinuado).
 
-3. **Donaciones voluntarias** (`/donaciones`): aportes $500-$500k via Flow.
-   Badge Paw Angel (bronze/silver/gold por total acumulado). Paw Points:
-   10 por cada $100 CLP donados (trigger 20260608000000).
-4. **Paw Companys** (`/paw-companys`): sponsors empresariales Bronze
-   ($49.9k+)/Silver ($99.9k+)/Gold ($199.9k+) con workflow de aplicacion
-   publica (mig 20260610000000) + badge + logo en grid publico.
-5. **Paw Voices** (`/paw-voices`): red de creadores/influencers con
-   workflow de aplicacion publica + badge + perfil destacado + codigo
-   promo (mig 20260609000000).
-6. **Publicidad** (`advertisements` table): slots etiquetados "Patrocinado"
-   (SERNAC-compliant). Admin CRUD + RPCs de tracking.
+### Fondos y capital
 
-### Rutas publicas del modelo
+Orden de prioridad en la búsqueda de financiamiento:
+1. **Capital semilla público**: CORFO (SSAF-I, Semilla Expande), Chile
+   Emprende, Start-Up Chile Ignite.
+2. **Grants** de fundaciones que apoyen bienestar animal (futuro).
+3. **Capital privado (VCs/angels)**: solo después de alcanzar volumen
+   de usuarios que justifique una ronda. Score VC mejora con el modelo
+   híbrido + alianzas (MRR defendible).
 
-- `/paw-core` — visión, misión, valores, 6 motores, ideas futuras.
-- `/donaciones` — aportes + muralla Paw Voices + grid Paw Companys +
-  transparencia meta $20M + recap personal donante.
-- `/paw-companys` — landing empresas con form aplicacion.
-- `/paw-voices` — landing creadores con form aplicacion.
-- `/para-veterinarios` — pricing B2B actualizado.
-
-### Aviso legal operacional
+### Aviso fiscal operacional
 
 Cuenta de Flow a nombre personal del fundador (no SpA). Riesgo fiscal
 mientras no se migre a cuenta SpA. Pedro plan a migrar via Tenpo/Mach/

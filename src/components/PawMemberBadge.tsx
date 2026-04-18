@@ -50,7 +50,7 @@ export function PawMemberBadge({ userId, size = 'md', className }: PawMemberBadg
             <div className="font-semibold">Miembro voluntario de Paw Friend 💛</div>
             {since && <div className="text-muted-foreground">Desde {since}</div>}
             <div className="text-[10px] text-muted-foreground italic">
-              Sin beneficios exclusivos — todo Paw Friend sigue gratis.
+              La app sigue 100% gratis · Acceso a descuentos de nuestras alianzas
             </div>
           </div>
         </TooltipContent>

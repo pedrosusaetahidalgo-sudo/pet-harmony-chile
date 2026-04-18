@@ -107,13 +107,17 @@ describe('formatCLP', () => {
 });
 
 describe('PROVIDER_PLANS', () => {
-  it('has 3 canonical tiers (free, premium, pro_max)', () => {
+  it('has 3 canonical tiers (basica=provider_free, premium, pro_max)', () => {
     expect(Object.keys(PROVIDER_PLANS)).toHaveLength(3);
     expect(Object.keys(PROVIDER_PLANS).sort()).toEqual([
       'provider_free',
       'provider_premium',
       'provider_pro_max',
     ]);
+  });
+
+  it('basica tier shows label "Básica" (id provider_free)', () => {
+    expect(PROVIDER_PLANS.provider_free.name).toBe('Básica');
   });
 
   it('pro max has 0% commission', () => {
@@ -124,11 +128,11 @@ describe('PROVIDER_PLANS', () => {
     expect(PROVIDER_PLANS.provider_premium.commissionRate).toBe(5);
   });
 
-  it('free provider plan has 10% commission', () => {
+  it('basica provider plan has 10% commission', () => {
     expect(PROVIDER_PLANS.provider_free.commissionRate).toBe(10);
   });
 
-  it('free provider plan has 5 pacientes limit', () => {
+  it('basica provider plan has 5 pacientes limit', () => {
     expect(PROVIDER_PLANS.provider_free.features.max_clients).toBe(5);
   });
 

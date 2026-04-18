@@ -14,12 +14,16 @@ import {
   MessageSquare,
   Home,
   Coins,
+  Gift,
+  ExternalLink,
+  Building2,
 } from '@/lib/icons';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useAuth } from '@/hooks/useAuth';
 import { useMyDonationStats, useMyDonationHistory } from '@/hooks/usePublicDonations';
 import { useDonorBadge } from '@/hooks/useDonorBadge';
+import { usePawMemberDiscounts } from '@/hooks/usePawCompanys';
 import { formatCLP } from '@/lib/format';
 import { PageHeader } from '@/components/PageHeader';
 import { DonorBadge } from '@/components/DonorBadge';
@@ -32,6 +36,7 @@ export default function PawMember() {
   const { data: stats, isLoading: statsLoading } = useMyDonationStats(!!user);
   const { data: history, isLoading: histLoading } = useMyDonationHistory(!!user);
   const { data: donorBadge } = useDonorBadge(user?.id);
+  const { data: memberDiscounts } = usePawMemberDiscounts();
 
   useEffect(() => {
     document.title = 'Paw Member — Tu aporte | Paw Friend';
@@ -152,6 +157,74 @@ export default function PawMember() {
             />
           </div>
         ) : null}
+
+        {/* Descuentos de alianzas para Paw Members (placeholder hasta que haya activos) */}
+        {memberDiscounts && memberDiscounts.length > 0 ? (
+          <Card className="border-violet-200/70 bg-gradient-to-br from-violet-50/70 to-fuchsia-50/50 dark:from-violet-950/30 dark:to-fuchsia-950/20">
+            <CardContent className="p-5 space-y-3">
+              <div className="flex items-center gap-2">
+                <Gift className="h-5 w-5 text-violet-500" />
+                <h2 className="font-semibold text-lg">Descuentos de tus alianzas</h2>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Nuestros Paw Partners y Paw Companys ofrecen estos beneficios a miembros activos.
+              </p>
+              <div className="grid sm:grid-cols-2 gap-2">
+                {memberDiscounts.map((d) => (
+                  <a
+                    key={d.id}
+                    href={d.website ?? '#'}
+                    target={d.website ? '_blank' : undefined}
+                    rel={d.website ? 'noopener noreferrer nofollow' : undefined}
+                    className="flex items-center gap-2 p-2.5 rounded-lg border bg-white/70 dark:bg-slate-900/60 hover:shadow-sm transition-shadow"
+                  >
+                    {d.logo_url ? (
+                      <img
+                        src={d.logo_url}
+                        alt={`Logo ${d.name}`}
+                        className="h-8 w-8 rounded-md object-contain bg-white border shrink-0"
+                      />
+                    ) : (
+                      <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center shrink-0">
+                        <Building2 className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm font-semibold truncate">{d.name}</span>
+                        <Badge
+                          variant="outline"
+                          className="text-[9px] capitalize"
+                          aria-label={`Tipo de alianza ${d.partnership_type}`}
+                        >
+                          {d.partnership_type === 'partner' ? 'Paw Partner' : 'Paw Company'}
+                        </Badge>
+                      </div>
+                      <p className="text-[11px] text-violet-700 dark:text-violet-300 line-clamp-2">
+                        🎁 {d.paw_member_discount}
+                      </p>
+                    </div>
+                    {d.website && (
+                      <ExternalLink className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                    )}
+                  </a>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card className="border-violet-200/50 bg-gradient-to-br from-violet-50/40 to-fuchsia-50/30 dark:from-violet-950/20 dark:to-fuchsia-950/10 border-dashed border-2">
+            <CardContent className="p-5 text-center space-y-2">
+              <Gift className="h-8 w-8 mx-auto text-violet-400" />
+              <h3 className="font-semibold text-sm">Descuentos de alianzas — próximamente</h3>
+              <p className="text-xs text-muted-foreground max-w-md mx-auto">
+                Estamos armando alianzas con tiendas peludas, veterinarias, comida y accesorios que
+                van a ofrecer <b>descuentos exclusivos</b> para Paw Members. Avisamos acá en cuanto
+                estén vivos.
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Paw Points + Tier badge info */}
         {donorBadge && (
