@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export type PawCompanyTier = 'bronze' | 'silver' | 'gold';
+export type PawCompanyStatus = 'pending' | 'active' | 'inactive' | 'rejected';
 
 export interface PawCompany {
   id: string;
@@ -14,6 +15,8 @@ export interface PawCompany {
   monthly_clp: number | null;
   featured: boolean;
   is_active: boolean;
+  status: PawCompanyStatus;
+  contact_email: string | null;
   started_at: string | null;
   notes: string | null;
   created_at: string;
@@ -30,6 +33,8 @@ export interface PawCompanyInput {
   monthly_clp?: number | null;
   featured?: boolean;
   is_active?: boolean;
+  status?: PawCompanyStatus;
+  contact_email?: string | null;
   started_at?: string | null;
   notes?: string | null;
 }
@@ -126,6 +131,38 @@ export function useDeletePawCompany() {
         .eq('id', id);
       if (error) throw error;
       return id;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['paw-companys'] });
+    },
+  });
+}
+
+/**
+ * Aplicacion publica de una empresa para ser Paw Company.
+ * Envia con status='pending' + is_active=false (no visible hasta aprobacion admin).
+ */
+export function useApplyAsPawCompany() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (
+      input: Omit<PawCompanyInput, 'status' | 'is_active' | 'featured' | 'notes'>
+    ) => {
+      const payload = {
+        ...input,
+        status: 'pending' as const,
+        is_active: false,
+        featured: false,
+        notes: null,
+      };
+      const { data, error } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .from('paw_companys' as any)
+        .insert(payload)
+        .select('id')
+        .single();
+      if (error) throw error;
+      return (data as { id: string }).id;
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['paw-companys'] });

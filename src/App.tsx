@@ -61,6 +61,7 @@ const UpgradeCancel = lazy(() => import('./pages/UpgradeCancel'));
 const Donaciones = lazy(() => import('./pages/Donaciones'));
 const PawCore = lazy(() => import('./pages/PawCore'));
 const PawVoicesPage = lazy(() => import('./pages/PawVoices'));
+const PawCompanysPage = lazy(() => import('./pages/PawCompanysPage'));
 const Servicios = lazy(() => import('./pages/Servicios'));
 // Peluqueria.tsx eliminada — groomers ahora son tab nativo en /services/groomers
 const GroomerProfileEdit = lazy(() => import('./pages/GroomerProfileEdit'));
@@ -619,6 +620,15 @@ const App = () => (
                   element={
                     <PublicWithLayoutIfAuth>
                       <PawVoicesPage />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
+                {/* Paw Companys — pagina publica (empresas aliadas) */}
+                <Route
+                  path="/paw-companys"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <PawCompanysPage />
                     </PublicWithLayoutIfAuth>
                   }
                 />
