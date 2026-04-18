@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { ProfessionalBadges } from '@/components/ProfessionalBadges';
+import { DonorBadge } from '@/components/DonorBadge';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -84,8 +85,9 @@ export function ProfileIdentityCard({ profile, onEditProfile }: ProfileIdentityC
               <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{profile.bio}</p>
             )}
 
-            <div className="mt-2">
+            <div className="mt-2 flex flex-wrap items-center gap-2">
               <ProfessionalBadges userId={user?.id || ''} />
+              <DonorBadge userId={user?.id} size="sm" />
             </div>
           </div>
         </div>

@@ -82,6 +82,24 @@ function SectionFallback() {
 }
 import { useAdminRealtimeSubscriptions } from '@/hooks/useAdminRealtimeSubscriptions';
 
+/** Relativo compacto para el chip del boton "Refrescar todo". */
+function formatRelativeShort(date: Date): string {
+  const diffMs = Date.now() - date.getTime();
+  const diffSec = Math.floor(diffMs / 1000);
+  if (diffSec < 30) return 'hace segundos';
+  const diffMin = Math.floor(diffSec / 60);
+  if (diffMin < 1) return 'hace <1m';
+  if (diffMin < 60) return `hace ${diffMin}m`;
+  const diffHr = Math.floor(diffMin / 60);
+  if (diffHr < 24) return `hace ${diffHr}h`;
+  return date.toLocaleDateString('es-CL', {
+    day: '2-digit',
+    month: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
 // ── Section definitions ──────────────────────────────────
 interface Section {
   id: string;
@@ -439,6 +457,16 @@ const Admin = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const [isRefreshingAll, setIsRefreshingAll] = useState(false);
+  const [lastRefreshedAt, setLastRefreshedAt] = useState<Date | null>(() => {
+    try {
+      const raw = localStorage.getItem('pf_admin_last_refresh');
+      if (!raw) return null;
+      const ts = Number(raw);
+      return Number.isFinite(ts) ? new Date(ts) : null;
+    } catch {
+      return null;
+    }
+  });
   const queryClient = useQueryClient();
 
   // Botón global: invalida todas las queries del admin (prefix 'admin-*').
@@ -453,6 +481,13 @@ const Admin = () => {
           return key.startsWith('admin-') || key.startsWith('admin_');
         },
       });
+      const now = new Date();
+      setLastRefreshedAt(now);
+      try {
+        localStorage.setItem('pf_admin_last_refresh', String(now.getTime()));
+      } catch {
+        // noop si el storage falla (incognito, cuota)
+      }
       toast.success('Admin actualizado — todos los paneles recargaron datos');
     } catch (err) {
       toast.error('No se pudo refrescar. Intenta de nuevo.');
@@ -463,6 +498,17 @@ const Admin = () => {
       setTimeout(() => setIsRefreshingAll(false), 500);
     }
   }, [queryClient]);
+
+  // Re-render cada 30s para que la hora relativa del ultimo refresh
+  // se mantenga fresca ("hace 2 minutos" -> "hace 3 minutos").
+  const [refreshTick, setRefreshTick] = useState(0);
+  useEffect(() => {
+    if (!lastRefreshedAt) return;
+    const interval = setInterval(() => setRefreshTick((t) => t + 1), 30_000);
+    return () => clearInterval(interval);
+  }, [lastRefreshedAt]);
+  // refreshTick solo fuerza re-render, lo referenciamos para que eslint no lo elimine.
+  void refreshTick;
 
   useAdminRealtimeSubscriptions();
 
@@ -630,18 +676,32 @@ const Admin = () => {
             </kbd>
           </button>
 
-          {/* Refrescar todo */}
-          <button
-            onClick={handleRefreshAll}
-            disabled={isRefreshingAll}
-            title="Refresca todos los paneles del admin a la vez (equivale a entrar a cada uno y tocar su boton refresh)"
-            className="flex items-center gap-1.5 h-8 px-2.5 rounded-md border border-slate-700 bg-slate-800/50 text-slate-300 text-xs hover:border-indigo-500/40 hover:text-indigo-300 transition-colors disabled:opacity-60"
-          >
-            <RefreshCw className={cn('h-3.5 w-3.5', isRefreshingAll && 'animate-spin')} />
-            <span className="hidden md:inline">
-              {isRefreshingAll ? 'Refrescando...' : 'Refrescar todo'}
-            </span>
-          </button>
+          {/* Refrescar todo + timestamp del ultimo refresh */}
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={handleRefreshAll}
+              disabled={isRefreshingAll}
+              title={
+                lastRefreshedAt
+                  ? `Ultimo refresh: ${lastRefreshedAt.toLocaleString('es-CL')}`
+                  : 'Refresca todos los paneles del admin a la vez (equivale a entrar a cada uno y tocar su boton refresh)'
+              }
+              className="flex items-center gap-1.5 h-8 px-2.5 rounded-md border border-slate-700 bg-slate-800/50 text-slate-300 text-xs hover:border-indigo-500/40 hover:text-indigo-300 transition-colors disabled:opacity-60"
+            >
+              <RefreshCw className={cn('h-3.5 w-3.5', isRefreshingAll && 'animate-spin')} />
+              <span className="hidden md:inline">
+                {isRefreshingAll ? 'Refrescando...' : 'Refrescar todo'}
+              </span>
+            </button>
+            {lastRefreshedAt && !isRefreshingAll && (
+              <span
+                className="hidden lg:inline text-[10px] text-slate-500 italic"
+                aria-label={`Ultimo refresh: ${lastRefreshedAt.toLocaleString('es-CL')}`}
+              >
+                {formatRelativeShort(lastRefreshedAt)}
+              </span>
+            )}
+          </div>
 
           {/* Notification bell */}
           <button className="relative p-1.5 rounded-md text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 transition-colors">
