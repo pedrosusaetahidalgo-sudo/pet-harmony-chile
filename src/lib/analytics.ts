@@ -34,6 +34,33 @@ const POSTHOG_KEY = import.meta.env.VITE_POSTHOG_KEY as string | undefined;
 const POSTHOG_HOST =
   (import.meta.env.VITE_POSTHOG_HOST as string | undefined) || 'https://us.i.posthog.com';
 
+// Rutas con tokens que NO deben salir a PostHog (privacy leak).
+// El path completo se guarda igual en logs internos, solo se saneam para analytics.
+const TOKEN_ROUTE_PATTERNS: Array<{ re: RegExp; replace: string }> = [
+  { re: /\/qr\/[^/?#]+/g, replace: '/qr/[redacted]' },
+  { re: /\/medical-share\/[^/?#]+/g, replace: '/medical-share/[redacted]' },
+  { re: /\/paw-card\/[^/?#]+/g, replace: '/paw-card/[redacted]' },
+  { re: /\/resena\/[^/?#]+/g, replace: '/resena/[redacted]' },
+];
+
+function scrubTokenizedUrl(value: unknown): unknown {
+  if (typeof value !== 'string') return value;
+  let out = value;
+  for (const { re, replace } of TOKEN_ROUTE_PATTERNS) {
+    out = out.replace(re, replace);
+  }
+  return out;
+}
+
+function sanitizeProperties(properties: Record<string, unknown>): Record<string, unknown> {
+  const URL_KEYS = ['$current_url', '$pathname', '$referrer', 'url', 'url_raw', 'screen'];
+  const next: Record<string, unknown> = { ...properties };
+  for (const key of URL_KEYS) {
+    if (key in next) next[key] = scrubTokenizedUrl(next[key]);
+  }
+  return next;
+}
+
 // ── Lazy PostHog singleton ──────────────────────────────
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let _posthog: any | null = null;
@@ -62,11 +89,15 @@ function flushPostHogQueue() {
  * Initialize all analytics providers. Call once at app start (e.g. in main.tsx).
  */
 export async function initAnalytics(): Promise<void> {
-  // PostHog
+  // PostHog — skip en dev para evitar contaminar prod con eventos de localhost.
+  // Opt-in con VITE_POSTHOG_ENABLE_IN_DEV=1 si algun dia se quiere debuggear.
   if (!_posthogInitAttempted) {
     _posthogInitAttempted = true;
 
-    if (POSTHOG_KEY) {
+    const enableInDev = import.meta.env.VITE_POSTHOG_ENABLE_IN_DEV === '1';
+    const shouldInitPosthog = POSTHOG_KEY && (!IS_DEV || enableInDev);
+
+    if (shouldInitPosthog) {
       try {
         const posthogModule = await import('posthog-js');
         const posthog = posthogModule.default;
@@ -77,6 +108,10 @@ export async function initAnalytics(): Promise<void> {
           capture_pageview: true,
           capture_pageleave: true,
           persistence: 'localStorage',
+          // Saneamos URLs con tokens antes de que salgan del cliente
+          // (aplicado tambien a autocapture + pageview, no solo a track()).
+          sanitize_properties: (properties) =>
+            sanitizeProperties(properties as Record<string, unknown>),
           loaded: () => {
             if (IS_DEV) logger.debug('[Analytics] PostHog inicializado');
           },
@@ -87,6 +122,10 @@ export async function initAnalytics(): Promise<void> {
       } catch {
         if (IS_DEV) logger.debug('[Analytics] posthog-js no disponible');
       }
+    } else if (POSTHOG_KEY && IS_DEV) {
+      logger.debug(
+        '[Analytics] PostHog deshabilitado en dev (set VITE_POSTHOG_ENABLE_IN_DEV=1 para forzar)'
+      );
     }
   }
 
@@ -208,12 +247,13 @@ function normalizeAnalyticsPath(pathname: string): string {
  */
 export function track({ event, properties, userId }: TrackEvent): void {
   const rawPath = window.location.pathname;
-  const enrichedProperties = {
+  const scrubbedRawPath = scrubTokenizedUrl(rawPath) as string;
+  const enrichedProperties = sanitizeProperties({
     ...properties,
     timestamp: new Date().toISOString(),
-    url: normalizeAnalyticsPath(rawPath),
-    url_raw: rawPath,
-  };
+    url: normalizeAnalyticsPath(scrubbedRawPath),
+    url_raw: scrubbedRawPath,
+  });
 
   // Always log in dev for debugging
   if (IS_DEV) {

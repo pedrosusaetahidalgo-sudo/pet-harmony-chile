@@ -1,6 +1,6 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-18
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-19
     %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (28 activas).
     %% Cambios 2026-04-17 (Reordenamiento v3):
     %%   - BottomTabBar owner: Inicio · My Paws · Servicios · Agenda · Perfil
@@ -359,8 +359,8 @@ flowchart TD
         UPG_CANCEL --> UPGRADE
     end
 
-    %% ============ DONACIONES (validacion MVP) ============
-    subgraph DONACIONES["DONACIONES (validacion MVP)"]
+    %% ============ DONACIONES + COMUNIDAD (validacion MVP) ============
+    subgraph DONACIONES["DONACIONES + COMUNIDAD"]
         direction TB
         FB_WIDGET["FeedbackWidget floating btn"]
         FB_WIDGET --> FB_RATING["Paso rating: 5 estrellas + Pagarias?"]
@@ -373,6 +373,20 @@ flowchart TD
         DON_PAY -->|Pagado| DON_WH["flow-webhook: status=paid"]
         DON_WH --> DON_THANKS["send-donation-thanks (Resend)"]
         DON_THANKS --> DON_OK["/donaciones?status=success"]
+
+        %% Muralla publica Paw Voices (RPC SECURITY DEFINER)
+        DON_PAGE --> PAW_VOICES["PawVoicesWall (publica)"]
+        PAW_VOICES --> RPC_VOICES["rpc get_public_donations"]
+        RPC_VOICES -. lee .-> DON_DB["tabla donations: is_public=true AND status=paid"]
+
+        %% Paw Companys: sponsors empresariales
+        DON_PAGE --> PAW_COMP_GRID["PawCompanysGrid (publica)"]
+        PAW_COMP_GRID -. lee .-> PAW_COMP_DB["tabla paw_companys: is_active=true"]
+
+        %% Tarjeta de transparencia publica
+        DON_PAGE --> DON_TRANSP["DonationsTransparency (KPIs publicos)"]
+        DON_TRANSP --> RPC_STATS["rpc get_donations_public_stats"]
+        RPC_STATS -. agregados de .-> DON_DB
     end
 
     %% ============ SIDEBAR PROVIDER ============
@@ -487,6 +501,10 @@ flowchart TD
         ADM --> ADM_FIN["Finanzas"]
         ADM --> ADM_LEADS["CRM Leads"]
         ADM --> ADM_PEND["Mascotas pendientes"]
+        ADM --> ADM_SALA["Sala de Inversion"]
+        ADM --> ADM_PAW_COMP["Paw Companys (CRUD)"]
+        ADM_SALA -. lee .-> DON_DB
+        ADM_PAW_COMP -. escribe .-> PAW_COMP_DB
     end
 
     %% ============ SEO ============

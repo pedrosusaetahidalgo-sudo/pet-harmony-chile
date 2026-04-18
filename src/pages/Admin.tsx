@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, lazy, Suspense } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
@@ -60,14 +60,26 @@ import AdminDataQuality from '@/components/admin/AdminDataQuality';
 import AdminDeviceCompatibility from '@/components/admin/AdminDeviceCompatibility';
 import AdminTeam from '@/components/admin/AdminTeam';
 import AdminErrorLog from '@/components/admin/AdminErrorLog';
-import AdminAnalytics from '@/components/admin/AdminAnalytics';
 import AdminPendingPets from '@/components/admin/AdminPendingPets';
 import AdminGhostUsers from '@/components/admin/AdminGhostUsers';
 import AdminLeadsCRM from '@/components/admin/AdminLeadsCRM';
-import AdminFeedback from '@/components/admin/AdminFeedback';
 import AdminBookingsPanel from '@/components/admin/AdminBookingsPanel';
 import AdminExports from '@/components/admin/AdminExports';
-import AdminSalaInversion from '@/components/admin/AdminSalaInversion';
+import AdminPawCompanys from '@/components/admin/AdminPawCompanys';
+
+// Heavy sections lazy-loaded para no inflar el chunk inicial de /admin
+// (AdminSalaInversion + AdminAnalytics usan Recharts; AdminFeedback es grande).
+const AdminSalaInversion = lazy(() => import('@/components/admin/AdminSalaInversion'));
+const AdminAnalytics = lazy(() => import('@/components/admin/AdminAnalytics'));
+const AdminFeedback = lazy(() => import('@/components/admin/AdminFeedback'));
+
+function SectionFallback() {
+  return (
+    <div className="flex items-center justify-center py-24 text-sm text-muted-foreground">
+      Cargando sección…
+    </div>
+  );
+}
 import { useAdminRealtimeSubscriptions } from '@/hooks/useAdminRealtimeSubscriptions';
 
 // ── Section definitions ──────────────────────────────────
@@ -230,12 +242,16 @@ function CommercialSection({ sub: propSub, onSubChange }: SubSectionProps) {
         <TabsList>
           <TabsTrigger value="ads">Anuncios</TabsTrigger>
           <TabsTrigger value="partners">Partners</TabsTrigger>
+          <TabsTrigger value="paw-companys">Paw Companys</TabsTrigger>
         </TabsList>
         <TabsContent value="ads">
           <AdManagement />
         </TabsContent>
         <TabsContent value="partners">
           <AdminPartnerSubmissions />
+        </TabsContent>
+        <TabsContent value="paw-companys">
+          <AdminPawCompanys />
         </TabsContent>
       </Tabs>
     </div>
@@ -648,7 +664,7 @@ const Admin = () => {
           className="admin-main flex-1 overflow-y-auto bg-slate-950 px-4 lg:px-6 py-5"
           style={{ scrollbarGutter: 'stable', scrollbarColor: '#334155 transparent' }}
         >
-          {renderSection()}
+          <Suspense fallback={<SectionFallback />}>{renderSection()}</Suspense>
         </main>
       </div>
 

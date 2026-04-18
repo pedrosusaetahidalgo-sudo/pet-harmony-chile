@@ -1,0 +1,134 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+
+export type PawCompanyTier = 'bronze' | 'silver' | 'gold';
+
+export interface PawCompany {
+  id: string;
+  name: string;
+  slug: string;
+  logo_url: string | null;
+  website: string | null;
+  description: string | null;
+  tier: PawCompanyTier;
+  monthly_clp: number | null;
+  featured: boolean;
+  is_active: boolean;
+  started_at: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PawCompanyInput {
+  name: string;
+  slug: string;
+  logo_url?: string | null;
+  website?: string | null;
+  description?: string | null;
+  tier: PawCompanyTier;
+  monthly_clp?: number | null;
+  featured?: boolean;
+  is_active?: boolean;
+  started_at?: string | null;
+  notes?: string | null;
+}
+
+const PUBLIC_COLUMNS = 'id,name,slug,logo_url,website,description,tier,featured,started_at';
+
+export function usePublicPawCompanys() {
+  return useQuery({
+    queryKey: ['paw-companys', 'public'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .from('paw_companys' as any)
+        .select(PUBLIC_COLUMNS)
+        .eq('is_active', true)
+        .order('featured', { ascending: false })
+        .order('tier', { ascending: true })
+        .order('name', { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as unknown as Array<
+        Pick<
+          PawCompany,
+          | 'id'
+          | 'name'
+          | 'slug'
+          | 'logo_url'
+          | 'website'
+          | 'description'
+          | 'tier'
+          | 'featured'
+          | 'started_at'
+        >
+      >;
+    },
+    staleTime: 10 * 60_000,
+    gcTime: 30 * 60_000,
+  });
+}
+
+export function useAdminPawCompanys() {
+  return useQuery({
+    queryKey: ['paw-companys', 'admin'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .from('paw_companys' as any)
+        .select('*')
+        .order('is_active', { ascending: false })
+        .order('featured', { ascending: false })
+        .order('name', { ascending: true });
+      if (error) throw error;
+      return (data ?? []) as unknown as PawCompany[];
+    },
+    staleTime: 60_000,
+  });
+}
+
+export function useUpsertPawCompany() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, input }: { id?: string; input: PawCompanyInput }) => {
+      if (id) {
+        const { error } = await supabase
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .from('paw_companys' as any)
+          .update(input)
+          .eq('id', id);
+        if (error) throw error;
+        return id;
+      }
+      const { data, error } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .from('paw_companys' as any)
+        .insert(input)
+        .select('id')
+        .single();
+      if (error) throw error;
+      return (data as { id: string }).id;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['paw-companys'] });
+    },
+  });
+}
+
+export function useDeletePawCompany() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .from('paw_companys' as any)
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+      return id;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['paw-companys'] });
+    },
+  });
+}

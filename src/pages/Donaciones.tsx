@@ -18,6 +18,9 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { PageHeader } from '@/components/PageHeader';
+import { PawVoicesWall } from '@/components/PawVoicesWall';
+import { PawCompanysGrid } from '@/components/PawCompanysGrid';
+import { DonationsTransparency } from '@/components/DonationsTransparency';
 import { cn } from '@/lib/utils';
 
 const PRESETS = [
@@ -342,6 +345,12 @@ export default function Donaciones() {
           </CardContent>
         </Card>
 
+        {/* Muralla Paw Voices — voces reales de la comunidad */}
+        <PawVoicesWall />
+
+        {/* Paw Companys — grid de sponsors empresariales */}
+        <PawCompanysGrid />
+
         {/* Donar */}
         <Card className="border-pink-200/70">
           <CardContent className="p-5 space-y-4">
@@ -481,6 +490,9 @@ export default function Donaciones() {
             </p>
           </CardContent>
         </Card>
+
+        {/* Transparencia publica */}
+        <DonationsTransparency />
 
         {/* Cierre emocional */}
         <section className="text-center text-sm text-muted-foreground space-y-1">
