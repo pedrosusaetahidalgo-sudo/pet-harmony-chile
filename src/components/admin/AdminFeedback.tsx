@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   useAdminFeedback,
   useUpdateFeedbackStatus,
@@ -131,7 +132,16 @@ function buildWeeklyRatingData(items: FeedbackItem[]) {
   });
 }
 
+const VALID_TABS = ['buzon', 'recepcion', 'donaciones'] as const;
+type FeedbackTab = (typeof VALID_TABS)[number];
+
 export default function AdminFeedback() {
+  // Deeplink via ?tab=donaciones (usado por KPI cards de Dashboard y Finance)
+  const [searchParams, setSearchParams] = useSearchParams();
+  const rawTab = searchParams.get('tab');
+  const activeTab: FeedbackTab = (VALID_TABS as readonly string[]).includes(rawTab ?? '')
+    ? (rawTab as FeedbackTab)
+    : 'buzon';
   const [statusFilter, setStatusFilter] = useState('new');
   const [searchText, setSearchText] = useState('');
   const { data: feedback = [], isLoading } = useAdminFeedback(statusFilter);
@@ -276,7 +286,11 @@ export default function AdminFeedback() {
         </div>
       </div>
 
-      <Tabs defaultValue="buzon" className="w-full">
+      <Tabs
+        value={activeTab}
+        onValueChange={(v) => setSearchParams({ tab: v }, { replace: true })}
+        className="w-full"
+      >
         <TabsList className="bg-slate-900 border border-slate-800">
           <TabsTrigger
             value="buzon"

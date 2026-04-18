@@ -30,6 +30,7 @@ import {
   Database,
   Zap,
   CheckCircle,
+  Heart,
 } from '@/lib/icons';
 import {
   AreaChart,
@@ -299,6 +300,34 @@ export default function AdminDashboard() {
           .eq('status', 'pending'),
       ]);
       return (verifs.count ?? 0) + (reports.count ?? 0) + (promos.count ?? 0);
+    },
+  });
+
+  // ── KPI: Donaciones (mes actual) ──
+  // Stream de ingresos distinto a subs/orders. Se muestra como stat card
+  // secundaria con link directo al panel de Donaciones del AdminFeedback.
+  const { data: donationsKpi } = useQuery({
+    queryKey: ['admin-kpi-donations-month'],
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
+    queryFn: async () => {
+      const { data } = await sb
+        .from('donations')
+        .select('amount_clp, status, paid_at, created_at, thanked_at')
+        .eq('status', 'paid');
+      const rows = (data ?? []) as Array<{
+        amount_clp: number;
+        paid_at: string | null;
+        created_at: string;
+        thanked_at: string | null;
+      }>;
+      const thisMonth = rows
+        .filter((d) => new Date(d.paid_at ?? d.created_at) >= monthAgo)
+        .reduce((s, d) => s + (Number(d.amount_clp) || 0), 0);
+      const monthCount = rows.filter((d) => new Date(d.paid_at ?? d.created_at) >= monthAgo).length;
+      const thanksPending = rows.filter((d) => !d.thanked_at).length;
+      return { thisMonth, monthCount, thanksPending };
     },
   });
 
@@ -762,7 +791,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* ── Secondary stats ── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
         <AdminStatCard
           label="Fichas con registros"
           value={extraMetrics?.fichasConRegistros ?? 0}
@@ -805,6 +834,17 @@ export default function AdminDashboard() {
             (extraMetrics?.mascotasPendientes ?? 0) > 0 ? 'text-orange-400' : 'text-indigo-400'
           }
           to="/admin?section=users&sub=pending-pets"
+        />
+        <AdminStatCard
+          label={
+            (donationsKpi?.thanksPending ?? 0) > 0
+              ? `Donaciones (mes) · ${donationsKpi?.thanksPending} mail pendiente`
+              : 'Donaciones (mes)'
+          }
+          value={formatCLP(donationsKpi?.thisMonth ?? 0)}
+          icon={Heart}
+          color={(donationsKpi?.thanksPending ?? 0) > 0 ? 'text-amber-400' : 'text-pink-400'}
+          to="/admin?section=content&sub=feedback&tab=donaciones"
         />
       </div>
 

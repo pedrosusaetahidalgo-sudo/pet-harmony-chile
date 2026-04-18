@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
+import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -17,6 +19,8 @@ import {
   Download,
   Target,
   User,
+  Heart,
+  Mail,
 } from '@/lib/icons';
 import {
   BarChart,
@@ -105,6 +109,58 @@ export default function AdminFinance() {
         failedOrders,
         arpu,
         ltv,
+      };
+    },
+  });
+
+  // ── KPIs de donaciones ──
+  // Las donaciones Flow son un stream de ingresos separado de subs/orders.
+  // Se calcula total pagado, ticket promedio, delta mes a mes y mails pendientes.
+  const { data: donationKpis, isLoading: donationsLoading } = useQuery({
+    queryKey: ['admin-finance-donations'],
+    staleTime: 60_000,
+    refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .from('donations' as any)
+        .select('amount_clp, status, paid_at, created_at, thanked_at, user_id, source');
+      if (error) throw error;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const rows = (data ?? []) as Array<Record<string, any>>;
+      const paid = rows.filter((d) => d.status === 'paid');
+      const total = paid.reduce((s, d) => s + (Number(d.amount_clp) || 0), 0);
+      const thisMonth = paid
+        .filter((d) => new Date(d.paid_at ?? d.created_at) >= monthAgo)
+        .reduce((s, d) => s + (Number(d.amount_clp) || 0), 0);
+      const lastMonthStart = subDays(now, 60);
+      const lastMonth = paid
+        .filter((d) => {
+          const dt = new Date(d.paid_at ?? d.created_at);
+          return dt >= lastMonthStart && dt < monthAgo;
+        })
+        .reduce((s, d) => s + (Number(d.amount_clp) || 0), 0);
+      const avg = paid.length > 0 ? Math.round(total / paid.length) : 0;
+      const uniqueDonors = new Set(paid.map((d) => d.user_id).filter(Boolean)).size;
+      const thanksPending = paid.filter((d) => !d.thanked_at).length;
+      const delta =
+        lastMonth === 0
+          ? thisMonth > 0
+            ? 100
+            : 0
+          : Math.round(((thisMonth - lastMonth) / lastMonth) * 100);
+      return {
+        total,
+        thisMonth,
+        lastMonth,
+        delta,
+        avg,
+        paidCount: paid.length,
+        pendingCount: rows.filter((d) => d.status === 'pending').length,
+        failedCount: rows.filter((d) => d.status === 'failed' || d.status === 'cancelled').length,
+        uniqueDonors,
+        thanksPending,
       };
     },
   });
@@ -392,6 +448,113 @@ export default function AdminFinance() {
           </>
         )}
       </div>
+
+      {/* Donaciones: stream separado de ingresos (Flow via /donaciones + widget
+          de feedback). No confundir con MRR: las donaciones son one-shot y no
+          otorgan Premium. */}
+      <Card className="border-pink-500/30 bg-gradient-to-br from-pink-950/30 to-rose-950/20">
+        <CardHeader className="pb-2">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <CardTitle className="text-base text-pink-200 flex items-center gap-2">
+              <Heart className="h-4 w-4 fill-pink-400 text-pink-400" />
+              Donaciones
+            </CardTitle>
+            <Link
+              to="/admin?section=content&sub=feedback&tab=donaciones"
+              className="text-xs text-pink-300 hover:text-pink-200 underline-offset-2 hover:underline"
+            >
+              Ver panel completo →
+            </Link>
+          </div>
+          <CardDescription className="text-pink-300/70 text-xs">
+            Aportes voluntarios via Flow. No son MRR y no otorgan Premium.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {donationsLoading ? (
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+              {[1, 2, 3, 4, 5].map((i) => (
+                <Skeleton key={i} className="h-16 bg-slate-800" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+              <div>
+                <p className="text-[11px] uppercase tracking-wide text-pink-300/80">
+                  Total recaudado
+                </p>
+                <p className="text-xl font-bold text-white mt-0.5">
+                  {formatClp(donationKpis?.total ?? 0)}
+                </p>
+                <p className="text-[11px] text-pink-300/60">
+                  {donationKpis?.paidCount ?? 0} donaciones pagadas
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] uppercase tracking-wide text-pink-300/80">Este mes</p>
+                <p className="text-xl font-bold text-white mt-0.5">
+                  {formatClp(donationKpis?.thisMonth ?? 0)}
+                </p>
+                <p
+                  className={cn(
+                    'text-[11px] font-medium',
+                    (donationKpis?.delta ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'
+                  )}
+                >
+                  {(donationKpis?.delta ?? 0) >= 0 ? '▲' : '▼'} {Math.abs(donationKpis?.delta ?? 0)}
+                  % vs mes ant.
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] uppercase tracking-wide text-pink-300/80">
+                  Ticket promedio
+                </p>
+                <p className="text-xl font-bold text-white mt-0.5">
+                  {formatClp(donationKpis?.avg ?? 0)}
+                </p>
+                <p className="text-[11px] text-pink-300/60">
+                  {donationKpis?.uniqueDonors ?? 0} donantes unicos
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] uppercase tracking-wide text-pink-300/80">
+                  Pending / failed
+                </p>
+                <p className="text-xl font-bold text-white mt-0.5">
+                  {donationKpis?.pendingCount ?? 0}
+                  <span className="text-base text-pink-300/60">
+                    {' '}
+                    / {donationKpis?.failedCount ?? 0}
+                  </span>
+                </p>
+                <p className="text-[11px] text-pink-300/60">Confirmaciones de Flow pendientes</p>
+              </div>
+              <div>
+                <p className="text-[11px] uppercase tracking-wide text-pink-300/80 flex items-center gap-1">
+                  <Mail className="h-3 w-3" /> Mails agradecimiento
+                </p>
+                <p className="text-xl font-bold text-white mt-0.5">
+                  {(donationKpis?.paidCount ?? 0) - (donationKpis?.thanksPending ?? 0)}
+                  <span className="text-base text-pink-300/60">
+                    {' '}
+                    / {donationKpis?.paidCount ?? 0}
+                  </span>
+                </p>
+                <p
+                  className={cn(
+                    'text-[11px]',
+                    (donationKpis?.thanksPending ?? 0) > 0 ? 'text-amber-300' : 'text-pink-300/60'
+                  )}
+                >
+                  {(donationKpis?.thanksPending ?? 0) > 0
+                    ? `${donationKpis?.thanksPending} sin enviar`
+                    : 'Todo al dia'}
+                </p>
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

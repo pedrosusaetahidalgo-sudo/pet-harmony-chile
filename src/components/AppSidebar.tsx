@@ -111,13 +111,34 @@ const exploreSubgroups: ExploreSubgroup[] = [
     ],
   },
   {
-    key: 'comunidad',
-    label: 'Comunidad',
+    // Nota: se llamaba "Comunidad" pero con FEED y CHAT desactivados quedaba
+    // como "Comunidad > Comunidad" (subgrupo y item con el mismo nombre).
+    // Renombrado a "Social" para evitar la duplicacion visual.
+    key: 'social',
+    label: 'Social',
     icon: Users,
     items: [
       { title: 'Feed', url: '/feed', icon: Activity, flag: 'FEED' as const },
-      { title: 'Comunidad', url: '/comunidad', icon: Users, flag: 'LABS_COMMUNITY' as const },
+      { title: 'Grupos', url: '/comunidad', icon: Users, flag: 'LABS_COMMUNITY' as const },
       { title: 'Mensajes', url: '/chat', icon: MessageSquare, flag: 'CHAT' as const },
+    ],
+  },
+  {
+    // Causas: adopcion, banco de sangre y donaciones. Antes adopcion y banco
+    // de sangre estaban enterrados dentro de Paw Labs junto a gamificacion,
+    // lo que mezclaba impacto real con features beta ludicas.
+    key: 'causas',
+    label: 'Causas',
+    icon: Heart,
+    items: [
+      { title: 'Adopción', url: '/adoption', icon: Heart, flag: 'LABS_ADOPTION' as const },
+      {
+        title: 'Banco de sangre',
+        url: '/donantes-sangre',
+        icon: Droplets,
+        flag: 'LABS_BLOOD_DONORS' as const,
+      },
+      { title: 'Donaciones', url: '/donaciones', icon: Heart, flag: null },
     ],
   },
   {
@@ -132,13 +153,6 @@ const exploreSubgroups: ExploreSubgroup[] = [
         url: '/paw-collection',
         icon: Trophy,
         flag: 'PAWGAME_SIDEBAR' as const,
-      },
-      { title: 'Adopción', url: '/adoption', icon: Heart, flag: 'LABS_ADOPTION' as const },
-      {
-        title: 'Banco de sangre',
-        url: '/donantes-sangre',
-        icon: Droplets,
-        flag: 'LABS_BLOOD_DONORS' as const,
       },
     ],
   },
@@ -205,12 +219,14 @@ export function AppSidebar() {
   const showPremiumBadges = isFeatureEnabled('USER_PREMIUM') && !isPremium;
   const [exploreOpen, setExploreOpen] = useState(false);
   // Estado abierto/cerrado por sub-grupo dentro de Explorar. Por defecto
-  // Paw Labs abierto (el mas "discoverable"); el resto cerrado.
+  // Causas abierto (nuevo y el mas accionable: adopcion, sangre, donaciones);
+  // el resto cerrado para no saturar.
   const [exploreSubOpen, setExploreSubOpen] = useState<Record<string, boolean>>({
     'dia-dia': false,
     servicios: false,
-    comunidad: false,
-    'paw-labs': true,
+    social: false,
+    causas: true,
+    'paw-labs': false,
   });
   const toggleSub = (key: string) => setExploreSubOpen((prev) => ({ ...prev, [key]: !prev[key] }));
 
@@ -555,6 +571,26 @@ export function AppSidebar() {
 
         {user && (
           <SidebarFooter className="p-2 border-t border-border/40">
+            {/* CTA fijo de donaciones: mas llamativo que los items normales
+                del footer (gradiente rosa suave + icono relleno) pero sin ser
+                tan fuerte como un boton primario. Visible en cualquier ruta. */}
+            <button
+              onClick={() => handleNavigate('/donaciones')}
+              className={cn(
+                'w-full flex items-center gap-2 px-2.5 py-1.5 mb-1 rounded-md',
+                'bg-gradient-to-r from-pink-50 via-rose-50 to-amber-50',
+                'dark:from-pink-950/40 dark:via-rose-950/30 dark:to-amber-950/30',
+                'border border-pink-200/70 dark:border-pink-900/50',
+                'text-pink-700 dark:text-pink-300 text-xs font-medium',
+                'hover:from-pink-100 hover:via-rose-100 hover:to-amber-100',
+                'dark:hover:from-pink-900/50 dark:hover:via-rose-900/40 dark:hover:to-amber-900/40',
+                'transition-colors'
+              )}
+              aria-label="Apoyar Paw Friend con una donacion"
+            >
+              <Heart className="h-3.5 w-3.5 flex-shrink-0 fill-pink-500 text-pink-500" />
+              <span>Apoyar Paw Friend</span>
+            </button>
             <SidebarMenu className="space-y-0">
               <SidebarMenuItem>
                 <SidebarMenuButton

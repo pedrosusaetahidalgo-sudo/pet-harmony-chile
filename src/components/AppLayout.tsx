@@ -56,8 +56,10 @@ function LayoutInner({ children }: AppLayoutProps) {
       {/* Bottom tab bar — solo mobile */}
       <BottomTabBar />
 
-      {/* Feedback widget — floating button + modal (hidden on home) */}
-      {pathname !== '/home' && <FeedbackWidget />}
+      {/* Feedback widget — floating button + modal.
+          Antes estaba oculto en /home, pero ahi es justo donde mas usuarios
+          buscan dar feedback o donar. Se muestra en todas las rutas auth. */}
+      <FeedbackWidget />
     </div>
   );
 }

@@ -171,23 +171,11 @@ export function FeedbackWidget() {
 
   return (
     <>
-      {/* Mini-pill de donaciones sobre el FAB (subtle, no intrusivo) */}
-      <button
-        onClick={() => navigate('/donaciones')}
-        className={cn(
-          'fixed z-50 bottom-[124px] right-4 md:bottom-[70px] md:right-6',
-          'flex items-center gap-1 pl-2.5 pr-3 py-1 rounded-full shadow-md',
-          'bg-white/95 dark:bg-slate-900/95 backdrop-blur border border-pink-200/70 dark:border-pink-900/50',
-          'text-pink-600 dark:text-pink-300 text-[11px] font-medium',
-          'hover:bg-pink-50 dark:hover:bg-pink-950/40 hover:scale-[1.03] transition-all'
-        )}
-        aria-label="Ir a donaciones"
-      >
-        <Heart className="h-3 w-3 fill-pink-500 text-pink-500" aria-hidden />
-        ¿Y si la dejamos gratis?
-      </button>
-
-      {/* Floating button */}
+      {/* Floating button.
+          Nota: habia un mini-pill "¿Y si la dejamos gratis?" encima del FAB,
+          pero era redundante con el boton "Apoyar Paw Friend" del sidebar, el
+          item Donaciones del subgrupo Causas y la invitacion a donar que ya
+          aparece dentro del flujo del modal cuando el usuario marca wouldPay=yes. */}
       <button
         onClick={() => setOpen(true)}
         className={cn(
