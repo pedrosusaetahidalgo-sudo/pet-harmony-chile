@@ -38,6 +38,7 @@ import {
 } from 'recharts';
 import { format, subDays, subMonths, startOfMonth } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { track, EVENTS } from '@/lib/analytics';
 
 const STATUS_COLORS: Record<string, string> = {
   active: 'bg-green-500/20 text-green-400 border-green-500/30',
@@ -323,6 +324,14 @@ export default function AdminFinance() {
       toast.error('No hay ordenes para exportar');
       return;
     }
+    track({
+      event: EVENTS.ADMIN_ACTION,
+      properties: {
+        action: 'export_csv',
+        section: 'finance',
+        rows: recentOrders.length,
+      },
+    });
 
     const header = 'Usuario,Monto,Comision,Estado,Fecha';
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

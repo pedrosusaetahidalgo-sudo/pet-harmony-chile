@@ -43,6 +43,7 @@ import {
 import { format, subDays, subMonths, startOfMonth, differenceInMonths } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
+import { track, EVENTS } from '@/lib/analytics';
 
 const PIE_COLORS = ['#6366f1', '#06b6d4', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 const FUNNEL_COLORS = ['#6366f1', '#818cf8', '#a5b4fc', '#06b6d4', '#22d3ee', '#67e8f9'];
@@ -475,6 +476,14 @@ export default function AdminAnalytics() {
 
   // ── CSV Export ──
   const handleExportCSV = () => {
+    track({
+      event: EVENTS.ADMIN_ACTION,
+      properties: {
+        action: 'export_csv',
+        section: 'analytics',
+        range_days: rangeDays,
+      },
+    });
     const lines: string[] = [];
 
     // KPIs

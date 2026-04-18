@@ -11,6 +11,7 @@ import {
   type BookingCardData,
 } from '@/components/booking/BookingCard';
 import { CancelBookingDialog } from '@/components/booking/CancelBookingDialog';
+import { BookingDetailDrawer } from '@/components/booking/BookingDetailDrawer';
 import { useProviderBookingsInbox } from '@/hooks/useProviderBookingsInbox';
 import {
   useConfirmBooking,
@@ -27,6 +28,7 @@ interface ProviderBookingsInboxProps {
 export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps) {
   const [tab, setTab] = useState('pending');
   const [cancelTarget, setCancelTarget] = useState<BookingCardData | null>(null);
+  const [detailTarget, setDetailTarget] = useState<BookingCardData | null>(null);
 
   const statusFilter: Record<string, BookingStatus | BookingStatus[]> = {
     pending: 'pendiente',
@@ -70,7 +72,7 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
         setCancelTarget(booking);
         break;
       case 'detail':
-        // TODO: open detail drawer
+        setDetailTarget(booking);
         break;
     }
   };
@@ -181,6 +183,15 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
           currentStatus={cancelTarget.status}
           // eslint-disable-next-line jsx-a11y/aria-role -- `role` es prop custom de CancelBookingDialog, no atributo ARIA
           role="provider"
+        />
+      )}
+
+      {detailTarget && (
+        <BookingDetailDrawer
+          open={!!detailTarget}
+          onOpenChange={(open) => !open && setDetailTarget(null)}
+          bookingId={detailTarget.id}
+          bookingType={detailTarget.booking_type}
         />
       )}
     </>

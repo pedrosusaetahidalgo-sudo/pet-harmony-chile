@@ -21,6 +21,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import AdminEmptyState from '@/components/admin/ui/AdminEmptyState';
 import { formatCLPCompact } from '@/lib/format';
 import { cn } from '@/lib/utils';
+import { track, EVENTS } from '@/lib/analytics';
 import { Link } from 'react-router-dom';
 import {
   Trophy,
@@ -1208,6 +1209,13 @@ export default function AdminSalaInversion() {
 
   // ── Export brief ──
   const handleExportBrief = () => {
+    track({
+      event: EVENTS.ADMIN_ACTION,
+      properties: {
+        action: 'export_brief',
+        section: 'sala_inversion',
+      },
+    });
     const lines: string[] = [];
     lines.push('PAW FRIEND — Brief inversor');
     lines.push(`Snapshot: ${snapshotDate}`);

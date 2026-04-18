@@ -30,6 +30,7 @@ import { format, subDays } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
+import { track, EVENTS } from '@/lib/analytics';
 
 const ACTION_ICONS: Record<string, React.ElementType> = {
   'provider.approve': UserCheck,
@@ -189,6 +190,16 @@ export default function AdminAuditLog() {
 
   const handleExportCSV = () => {
     if (!filtered.length) return;
+    track({
+      event: EVENTS.ADMIN_ACTION,
+      properties: {
+        action: 'export_csv',
+        section: 'audit_log',
+        rows: filtered.length,
+        has_text_filter: Boolean(textFilter),
+        has_date_range: Boolean(dateRange),
+      },
+    });
     const header = 'Accion,Admin,Tipo objetivo,ID objetivo,Fecha,Detalles';
     const rows = filtered.map((e) => {
       const details = Object.entries(e.details)
