@@ -1691,8 +1691,10 @@ export interface ExportProgress {
   pct: number;
 }
 
-/** Limite de exports por dia. El hook lo valida antes de llamar a esta funcion. */
-export const MAX_EXPORTS_PER_DAY = 10;
+/** Limite de exports por dia. El hook lo valida antes de llamar a esta funcion.
+ *  Valor alto = practicamente ilimitado para admin. Cuando quieras volver a
+ *  limitar, bajalo a 10 o al numero que tenga sentido por usuario. */
+export const MAX_EXPORTS_PER_DAY = 999;
 
 export async function generateAuditExport(
   exportType: ExportType,

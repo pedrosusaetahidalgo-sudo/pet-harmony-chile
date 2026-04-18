@@ -202,9 +202,11 @@ export default function AdminExports() {
             README, {enabledSheetNames.join(', ')}, Calidad_Datos
           </div>
 
-          {/* Rate limit indicator */}
+          {/* Rate limit indicator (oculto cuando el limite es practicamente ilimitado) */}
           <div className="text-xs text-slate-500">
-            {rateLimitReached ? (
+            {maxPerDay >= 100 ? (
+              <span>Exports sin limite diario por ahora</span>
+            ) : rateLimitReached ? (
               <span className="text-amber-400">
                 Limite diario alcanzado ({maxPerDay}/{maxPerDay}). Intenta manana.
               </span>
