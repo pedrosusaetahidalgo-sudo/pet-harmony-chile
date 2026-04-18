@@ -341,6 +341,47 @@ export const SHEET_DEFINITIONS: SheetDefinition[] = [
         details: r.details ? JSON.stringify(r.details) : null,
       })),
   },
+  {
+    id: 'provider_availability_rules',
+    sheetName: 'Horarios_Providers',
+    table: 'provider_availability_rules',
+    select:
+      'id, provider_id, day_of_week, start_time, end_time, service_type, slot_duration_minutes, is_active, created_at',
+    dateField: 'created_at',
+    enabled: true,
+    description:
+      'Reglas de disponibilidad semanal (booking V2) — indica que providers tienen horarios configurados.',
+  },
+  {
+    id: 'provider_availability_exceptions',
+    sheetName: 'Horarios_Excepciones',
+    table: 'provider_availability_exceptions',
+    select:
+      'id, provider_id, exception_date, exception_type, start_time, end_time, reason, created_at',
+    dateField: 'exception_date',
+    enabled: true,
+    description: 'Bloqueos (vacaciones) y aperturas puntuales por encima de las reglas semanales.',
+  },
+  {
+    id: 'user_roles',
+    sheetName: 'Roles_Usuarios',
+    table: 'user_roles',
+    select: 'id, user_id, role, created_at',
+    dateField: 'created_at',
+    enabled: true,
+    description:
+      'Roles asignados (veterinarian/dogsitter/dog_walker/trainer/grooming/admin) — auditoria de accesos.',
+  },
+  {
+    id: 'ai_usage',
+    sheetName: 'Uso_IA',
+    table: 'ai_usage',
+    select: 'id, user_id, skill_name, calls_today, calls_total, last_called_at',
+    dateField: 'last_called_at',
+    enabled: true,
+    description:
+      'Uso de IA por usuario y skill (monitoreo de costos Anthropic/OpenAI + rate limits).',
+  },
 ];
 
 // ── Quality Check Definitions (CONFIGURABLE) ───────────────
@@ -522,6 +563,71 @@ const QUALITY_CHECK_DEFINITIONS: QualityCheckDefinition[] = [
         result: `${n} encontrados`,
         severity: n > 0 ? 'warn' : 'ok',
         detail: n > 0 ? 'No tienen URL publica en directorio' : 'OK',
+      };
+    },
+  },
+  {
+    id: 'providers_no_availability_rules',
+    name: 'Providers aprobados sin reglas de horario',
+    enabled: true,
+    run: async () => {
+      const { data: providers } = await supabase
+        .from('service_providers')
+        .select('id, display_name, primary_service_type')
+        .eq('status', 'aprobado')
+        .eq('is_directory_visible', true);
+      const allProviderIds = (providers ?? []).map((p) => p.id);
+      if (allProviderIds.length === 0) {
+        return {
+          name: 'Providers aprobados sin reglas de horario',
+          result: '0 providers aprobados',
+          severity: 'ok' as const,
+          detail: 'OK',
+        };
+      }
+      const { data: rules } = await supabase
+        .from('provider_availability_rules')
+        .select('provider_id')
+        .eq('is_active', true)
+        .in('provider_id', allProviderIds);
+      const withRules = new Set((rules ?? []).map((r) => r.provider_id));
+      const without = (providers ?? []).filter((p) => !withRules.has(p.id));
+      const n = without.length;
+      const examples = without
+        .slice(0, 3)
+        .map((p) => `${p.display_name} (${p.primary_service_type})`)
+        .join(', ');
+      return {
+        name: 'Providers aprobados sin reglas de horario',
+        result: `${n} de ${allProviderIds.length}`,
+        severity: n > 0 ? 'warn' : 'ok',
+        detail:
+          n > 0
+            ? `Aparecen en directorio pero sin horarios — booking V2 no matchea. Ej: ${examples}. Fix: que editen horarios en /provider/profile-edit?tab=schedule`
+            : 'Todos los providers visibles tienen reglas configuradas',
+      };
+    },
+  },
+  {
+    id: 'owner_activated_services_24h',
+    name: 'Servicios activados por duenos (24h)',
+    enabled: true,
+    run: async () => {
+      const dayAgo = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+      const { count } = await supabase
+        .from('admin_audit_log')
+        .select('id', { count: 'exact', head: true })
+        .eq('action', 'owner.activate_service')
+        .gte('created_at', dayAgo);
+      const n = count ?? 0;
+      return {
+        name: 'Servicios activados por duenos (24h)',
+        result: `${n} activaciones`,
+        severity: 'ok' as const,
+        detail:
+          n > 0
+            ? `${n} duenos auto-aprobaron servicios (paseo/cuidado/entrenador) en las ultimas 24h`
+            : 'Sin nuevas activaciones de servicios owner-driven',
       };
     },
   },

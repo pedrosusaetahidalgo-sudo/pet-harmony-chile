@@ -40,6 +40,14 @@ const ADMIN_SUBSCRIPTIONS: AdminRealtimeConfig[] = [
     events: ['INSERT', 'UPDATE'],
     invalidateKeys: [['admin-service-providers'], ['admin-providers']],
   },
+  // Nuevas reglas de horarios (booking V2) — para que admin vea providers
+  // que acaban de activar servicios con el wizard owner-driven.
+  {
+    channelName: 'admin-availability-rules',
+    table: 'provider_availability_rules',
+    events: ['INSERT', 'UPDATE', 'DELETE'],
+    invalidateKeys: [['provider-availability-rules'], ['admin-service-providers']],
+  },
   {
     channelName: 'admin-subscriptions',
     table: 'subscriptions',

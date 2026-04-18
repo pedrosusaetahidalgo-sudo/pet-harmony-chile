@@ -437,6 +437,74 @@ export default function AdminSystemHealth() {
   const [categoryFilter, setCategoryFilter] = useState<Category | 'all'>('all');
   const [expandedFn, setExpandedFn] = useState<string | null>(null);
   const [copiedFn, setCopiedFn] = useState<string | null>(null);
+  // Ping manual: estado por nombre de edge fn. Usa CORS preflight OPTIONS
+  // para validar que la fn este deployada sin invocarla ni gastar tokens IA.
+  const [pingState, setPingState] = useState<
+    Record<string, { status: 'pinging' | 'ok' | 'error'; ms?: number; detail?: string }>
+  >({});
+  const [pingingAll, setPingingAll] = useState(false);
+
+  const SUPABASE_URL =
+    import.meta.env.VITE_SUPABASE_URL || 'https://gwailbjlvevkhwcrovfd.supabase.co';
+
+  const pingFunction = useCallback(
+    async (name: string): Promise<{ status: 'ok' | 'error'; ms: number; detail?: string }> => {
+      const t0 = Date.now();
+      try {
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/${name}`, {
+          method: 'OPTIONS',
+          headers: {
+            'Access-Control-Request-Method': 'POST',
+            'Access-Control-Request-Headers': 'content-type,authorization',
+            Origin: window.location.origin,
+          },
+        });
+        const ms = Date.now() - t0;
+        // Edge functions responden 200 al CORS preflight; 404 = no deployada.
+        if (res.ok) return { status: 'ok', ms };
+        return { status: 'error', ms, detail: `HTTP ${res.status}` };
+      } catch (err) {
+        return {
+          status: 'error',
+          ms: Date.now() - t0,
+          detail: err instanceof Error ? err.message : 'Network error',
+        };
+      }
+    },
+    [SUPABASE_URL]
+  );
+
+  const handlePingOne = useCallback(
+    async (name: string) => {
+      setPingState((prev) => ({ ...prev, [name]: { status: 'pinging' } }));
+      const result = await pingFunction(name);
+      setPingState((prev) => ({ ...prev, [name]: result }));
+    },
+    [pingFunction]
+  );
+
+  const handlePingAll = useCallback(async () => {
+    setPingingAll(true);
+    // Inicializa todas como "pinging"
+    const names = EDGE_FUNCTIONS.map((f) => f.name);
+    setPingState(Object.fromEntries(names.map((n) => [n, { status: 'pinging' as const }])));
+    // Corre en paralelo con limite de concurrencia 5 para no saturar
+    const concurrency = 5;
+    let idx = 0;
+    const workers = Array.from({ length: concurrency }).map(async () => {
+      while (idx < names.length) {
+        const i = idx++;
+        const n = names[i];
+        const result = await pingFunction(n);
+        setPingState((prev) => ({ ...prev, [n]: result }));
+      }
+    });
+    await Promise.all(workers);
+    setPingingAll(false);
+    const results = Object.values(pingState);
+    const ok = results.filter((r) => r?.status === 'ok').length;
+    toast.success(`Ping completado: ${ok}/${names.length} respondieron OK`);
+  }, [pingFunction, pingState]);
 
   // Health logs desde system_health_log + errors desde error_logs
   const {
@@ -796,6 +864,17 @@ export default function AdminSystemHealth() {
               </Button>
               <Button
                 size="sm"
+                variant="outline"
+                onClick={handlePingAll}
+                disabled={pingingAll}
+                className="border-slate-700 bg-slate-800 text-slate-200 hover:bg-slate-700"
+                title="Valida via CORS preflight que cada fn este deployada. No invoca ni gasta tokens."
+              >
+                <Radio className={cn('h-3 w-3 mr-1.5', pingingAll && 'animate-pulse')} />
+                {pingingAll ? 'Pingeando...' : 'Ping todas'}
+              </Button>
+              <Button
+                size="sm"
                 onClick={copyAllFailing}
                 disabled={loadingHealth}
                 className="bg-indigo-600 hover:bg-indigo-500 text-white"
@@ -952,6 +1031,43 @@ export default function AdminSystemHealth() {
                           </td>
                           <td className="py-2 pl-2 text-right">
                             <div className="flex items-center gap-1 justify-end">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handlePingOne(fn.name);
+                                }}
+                                disabled={pingState[fn.name]?.status === 'pinging'}
+                                className={cn(
+                                  'text-[10px] px-2 py-0.5 rounded border flex items-center gap-1',
+                                  pingState[fn.name]?.status === 'ok'
+                                    ? 'text-green-400 border-green-500/40 hover:border-green-500/60'
+                                    : pingState[fn.name]?.status === 'error'
+                                      ? 'text-red-400 border-red-500/40 hover:border-red-500/60'
+                                      : 'text-slate-400 border-slate-700 hover:border-slate-500 hover:text-slate-200'
+                                )}
+                                title={
+                                  pingState[fn.name]?.status === 'ok'
+                                    ? `OK ${pingState[fn.name]?.ms}ms`
+                                    : pingState[fn.name]?.status === 'error'
+                                      ? `Error: ${pingState[fn.name]?.detail}`
+                                      : 'Verificar que la fn este deployada (CORS preflight)'
+                                }
+                              >
+                                <Radio
+                                  className={cn(
+                                    'h-3 w-3',
+                                    pingState[fn.name]?.status === 'pinging' && 'animate-pulse'
+                                  )}
+                                />
+                                {pingState[fn.name]?.status === 'pinging'
+                                  ? '...'
+                                  : pingState[fn.name]?.status === 'ok'
+                                    ? `${pingState[fn.name]?.ms}ms`
+                                    : pingState[fn.name]?.status === 'error'
+                                      ? 'error'
+                                      : 'ping'}
+                              </button>
                               <button
                                 type="button"
                                 onClick={(e) => {
