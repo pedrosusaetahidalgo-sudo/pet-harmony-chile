@@ -27,6 +27,11 @@ const BENIGN_MESSAGE_PATTERNS: RegExp[] = [
   /\bvite:\b/i, // Vite HMR
   /\[hmr\]/i,
   /downloadable font/i,
+  // Google Calendar: usuario revoco acceso. google-calendar-sync ya marca
+  // revoked_at y devuelve 400 con reconnect hint. No es falla del sistema.
+  /invalid_grant/i,
+  /Refresh failed.*invalid_grant/i,
+  /google_calendar_revoked/i,
 ];
 
 function isBenignNoise(message: string): boolean {
