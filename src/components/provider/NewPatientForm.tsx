@@ -209,7 +209,7 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
           {/* Nombre del dueno */}
           <div className="space-y-1.5">
             <Label htmlFor="np-owner-name">Nombre del dueño *</Label>
-            <Input id="np-owner-name" placeholder="Ej: Pedro Susaeta" {...register('owner_name')} />
+            <Input id="np-owner-name" placeholder="Ej: María López" {...register('owner_name')} />
             {errors.owner_name && (
               <p className="text-xs text-destructive">{errors.owner_name.message}</p>
             )}

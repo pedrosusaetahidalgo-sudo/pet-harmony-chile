@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Pulse</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <rect x="45" y="92" width="110" height="16" rx="8" fill="#FFFFFF" opacity="0.25"/>
+  <path d="M 45 100 L 70 100 L 82 78 L 95 125 L 108 70 L 122 130 L 135 100 L 155 100"
+        stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <circle cx="155" cy="100" r="6" fill="#FCD34D"/>
+
+</svg>

@@ -81,7 +81,7 @@ const TEMPLATES = {
     asunto: 'Paw Friend te invita: tu perfil veterinario gratis + ficha clinica digital',
     cuerpo: `Hola {nombre},
 
-Soy Pedro Susaeta, fundador de Paw Friend (pawfriend.cl), una plataforma chilena hecha para veterinarios y duenos de mascotas.
+Soy parte del equipo fundador de Paw Friend (pawfriend.cl), una plataforma chilena hecha para veterinarios y duenos de mascotas.
 
 Te escribo porque vi que ofreces atencion en {comunas} y creo que Paw Friend te puede servir mucho. La plataforma tiene dos experiencias:
 
@@ -104,14 +104,14 @@ ${REGISTRO_VET_URL}
 Si tienes dudas, respondeme este correo o escribeme por WhatsApp al +56 9 XXXX XXXX.
 
 Saludos,
-Pedro Susaeta
-Fundador, Paw Friend
-pawfriend.cl`,
+Equipo Paw Friend
+pawfriend.cl
+pawfriendcl@gmail.com`,
   },
   invitacion_whatsapp: {
     nombre: 'Invitacion a registrarse (WhatsApp)',
     asunto: '',
-    cuerpo: `Hola {nombre}! Soy Pedro de Paw Friend (pawfriend.cl).
+    cuerpo: `Hola {nombre}! Te escribimos desde Paw Friend (pawfriend.cl).
 
 Vi que haces atencion veterinaria en {comunas} y queria invitarte a la plataforma.
 
@@ -139,10 +139,10 @@ Los duenos de mascotas en {comunas} estan buscando veterinarios activamente y tu
 Registrarte toma 2 minutos y es gratis:
 ${REGISTRO_VET_URL}
 
-Si prefieres, puedo yo misma crear tu cuenta y enviarte el acceso listo.
+Si prefieres, te ayudamos a crear tu cuenta y te enviamos el acceso listo.
 
 Saludos,
-Pedro`,
+Equipo Paw Friend`,
   },
   seguimiento_whatsapp: {
     nombre: 'Seguimiento (WhatsApp)',

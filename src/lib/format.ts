@@ -69,7 +69,7 @@ export function getGreeting(): string {
 /**
  * Capitaliza la primera letra de cada palabra (excepto preposiciones comunes).
  * Útil para normalizar nombres de perfil.
- * "pedro susaeta" → "Pedro Susaeta"
+ * "maria lopez" → "Maria Lopez"
  * "maria del carmen" → "Maria del Carmen"
  */
 /**

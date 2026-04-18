@@ -126,14 +126,21 @@ Resumen de items activos:
 ## Inversionistas y partners
 
 > Set consolidado para data room, pitch y reuniones con fondos / CORFO / Start-Up Chile.
+> **Folder dedicado**: [pitch-inversionistas/](pitch-inversionistas/) con presentacion HTML bonita + MDs por audiencia.
 
 | Documento | Que contiene | Uso |
 |---|---|---|
-| [PITCH_DECK.md](PITCH_DECK.md) | 13 slides narrativos: problema, solucion, traccion, modelo, competencia, equipo, roadmap, ask | Pitch en vivo y deck PDF |
-| [APALANCAMIENTO_FUNDADOR_IA.md](APALANCAMIENTO_FUNDADOR_IA.md) | Output en 2 meses vs equipo de expertos: 320 hrs tuyas = ~4.800 hrs equipo = USD 720K-1,44M de valor | Sustenta velocidad/eficiencia/compromiso ante inversionistas |
-| [CONSOLIDADO_2026_04_18.md](CONSOLIDADO_2026_04_18.md) | Snapshot tecnico verificado (tsc, lint, tests, build) y plan ejecutable | Evidencia tecnica para data room |
-| [INVENTARIO_APP_2026_04_17.md](INVENTARIO_APP_2026_04_17.md) | Inventario de features funcionales | Scope del producto |
-| [sales/PITCH_VET_CORTO.md](sales/PITCH_VET_CORTO.md) | Pitch comercial 1-pager para veterinarias B2B | Outbound a clinicas |
+| [pitch-inversionistas/PRESENTACION.html](pitch-inversionistas/PRESENTACION.html) | **Presentacion visual** autocontenida con paleta Paw Friend (morado brand + dorado + verde medical). Imprimible a PDF | Reunion en vivo o PDF para envio |
+| [pitch-inversionistas/CONSOLIDADO_INVERSIONISTAS.md](pitch-inversionistas/CONSOLIDADO_INVERSIONISTAS.md) | Fuente de verdad unificada: narrativa emocional + datos + todas las secciones | Deep read + preparacion de pitch |
+| [pitch-inversionistas/01_CORFO_SSAF-I.md](pitch-inversionistas/01_CORFO_SSAF-I.md) | Postulacion CORFO SSAF-I (USD $28K) con ejes de innovacion, impacto, exportacion | CORFO |
+| [pitch-inversionistas/02_START_UP_CHILE.md](pitch-inversionistas/02_START_UP_CHILE.md) | Postulacion Start-Up Chile Ignite (USD $15K equity-free) con foco impacto CL | Start-Up Chile |
+| [pitch-inversionistas/03_PAW_COMPANYS_EMPRESAS.md](pitch-inversionistas/03_PAW_COMPANYS_EMPRESAS.md) | Pitch B2B2C para empresas pet-friendly + carta de intro + lista prospects + FAQ | Outreach sponsors |
+| [pitch-inversionistas/04_ANGELES_VC_LATAM.md](pitch-inversionistas/04_ANGELES_VC_LATAM.md) | Pitch pre-seed USD $150K SAFE + preguntas incomodas preparadas + lista angels Tier 1-3 | Platanus, Magma, Kaszek |
+| [PITCH_DECK.md](PITCH_DECK.md) | 13 slides narrativos originales con notas fundador | Fuente narrativa original |
+| [APALANCAMIENTO_FUNDADOR_IA.md](APALANCAMIENTO_FUNDADOR_IA.md) | Output 2 meses vs equipo expertos: 320 hrs = ~4.800 hrs = USD 720K-1,44M | Evidencia velocidad/eficiencia |
+| [CONSOLIDADO_2026_04_18.md](CONSOLIDADO_2026_04_18.md) | Snapshot tecnico verificado (tsc, lint, tests, build) | Evidencia tecnica data room |
+| [INVENTARIO_APP_2026_04_17.md](INVENTARIO_APP_2026_04_17.md) | Inventario de features funcionales | Scope producto |
+| [sales/PITCH_VET_CORTO.md](sales/PITCH_VET_CORTO.md) | Pitch comercial 1-pager para clinicas | Outbound B2B vets |
 
 ---
 

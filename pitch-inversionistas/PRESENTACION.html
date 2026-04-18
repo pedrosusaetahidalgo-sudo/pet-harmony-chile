@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend — Presentación para inversionistas</title>
+  <meta name="description" content="Paw Friend: la ficha médica digital de tu mascota, hecha en Chile. Presentación para inversionistas, fondos públicos y empresas socias." />
+  <meta name="theme-color" content="#9333ea" />
+  <link rel="icon" type="image/svg+xml" href="../public/paw_friend_icon_principal.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-50:  #faf5ff;
+      --brand-100: #f3e8ff;
+      --brand-200: #e9d5ff;
+      --brand-300: #d8b4fe;
+      --brand-400: #c084fc;
+      --brand-500: #a855f7;
+      --brand-600: #9333ea;
+      --brand-700: #7e22ce;
+      --brand-800: #6b21a8;
+      --brand-900: #581c87;
+      --gold:      #eab308;
+      --gold-soft: #fef3c7;
+      --medical:   #10b981;
+      --vet:       #f59e0b;
+      --ink:       #1a102b;
+      --ink-soft:  #4b3b66;
+      --paper:     #faf7ff;
+      --surface:   #ffffff;
+      --border:    #e5d5f7;
+      --hero-grad: linear-gradient(135deg, #581c87 0%, #9333ea 45%, #c084fc 80%, #eab308 100%);
+      --deep-grad: linear-gradient(135deg, #2a1046 0%, #581c87 50%, #9333ea 100%);
+      --gold-grad: linear-gradient(135deg, #9333ea 0%, #eab308 100%);
+      --card-shadow: 0 10px 40px -10px rgba(147, 51, 234, 0.18);
+      --card-shadow-hover: 0 24px 60px -12px rgba(147, 51, 234, 0.35);
+      --radius-xl: 24px;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --radius-sm: 8px;
+      --slide-padding-y: 56px;
+      --slide-padding-x: 72px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; scroll-snap-type: y mandatory; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* PROGRESS BAR */
+    .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: rgba(147,51,234,0.08); z-index: 200; }
+    .progress-bar { height: 100%; background: var(--gold-grad); width: 0%; transition: width 0.2s ease-out; }
+
+    /* TOP BAR */
+    .topbar {
+      position: fixed; top: 3px; left: 0; right: 0; height: 52px;
+      padding: 0 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(229,213,247,0.6);
+      z-index: 150; font-size: 13px;
+    }
+    .topbar-brand { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--ink); }
+    .topbar-brand img { height: 30px; width: auto; display: block; }
+    .topbar-meta { display: flex; gap: 18px; align-items: center; color: var(--ink-soft); font-weight: 500; }
+    .topbar-meta .chip { padding: 4px 10px; background: var(--brand-50); border: 1px solid var(--border); border-radius: 999px; font-size: 12px; }
+    .topbar-counter { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--brand-700); }
+    @media (max-width: 900px) { .topbar-meta .chip { display: none; } .topbar { padding: 0 16px; } }
+
+    /* SIDE NAV */
+    .sidenav { position: fixed; top: 50%; right: 20px; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; z-index: 150; }
+    .dot { width: 10px; height: 10px; border-radius: 999px; background: rgba(147,51,234,0.25); border: 2px solid transparent; cursor: pointer; transition: all 0.2s; position: relative; }
+    .dot:hover { background: var(--brand-500); transform: scale(1.2); }
+    .dot.active { background: var(--brand-600); transform: scale(1.4); box-shadow: 0 0 0 4px rgba(147,51,234,0.18); }
+    .dot .label { position: absolute; right: 22px; top: 50%; transform: translateY(-50%); background: var(--ink); color: #fff; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .dot:hover .label { opacity: 1; }
+    @media (max-width: 900px) { .sidenav { display: none; } }
+
+    /* KB HINT */
+    .kbhint { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: rgba(26,16,43,0.85); color: rgba(255,255,255,0.9); padding: 8px 16px; border-radius: 999px; font-size: 12px; font-weight: 500; z-index: 150; backdrop-filter: blur(10px); display: flex; gap: 16px; align-items: center; transition: opacity 0.4s; }
+    .kbhint kbd { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 1px 6px; font-size: 11px; font-family: inherit; font-weight: 600; }
+    .kbhint.hide { opacity: 0; pointer-events: none; }
+    @media (max-width: 700px) { .kbhint { display: none; } }
+
+    /* SLIDE BASE */
+    .slide { min-height: 100vh; padding: var(--slide-padding-y) var(--slide-padding-x); padding-top: calc(var(--slide-padding-y) + 55px); display: flex; flex-direction: column; justify-content: center; scroll-snap-align: start; scroll-snap-stop: always; position: relative; overflow: hidden; }
+    .slide-num { position: absolute; top: 70px; right: 32px; font-size: 12px; font-weight: 700; color: var(--ink-soft); letter-spacing: 0.12em; opacity: 0.6; font-variant-numeric: tabular-nums; }
+    .slide.dark .slide-num { color: rgba(255,255,255,0.6); }
+    .container { max-width: 1160px; margin: 0 auto; width: 100%; }
+
+    .slide.dark { background: var(--deep-grad); color: #fff; }
+    .slide.dark h1, .slide.dark h2, .slide.dark h3 { color: #fff; }
+    .slide.dark p { color: rgba(255,255,255,0.88); }
+    .slide.grad { background: var(--hero-grad); color: #fff; }
+    .slide.grad h1, .slide.grad h2, .slide.grad h3 { color: #fff; }
+    .slide.soft { background: linear-gradient(180deg, #faf5ff 0%, #ffffff 60%, #faf5ff 100%); }
+
+    .blob { position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none; opacity: 0.35; z-index: 0; }
+    .blob-1 { top: -120px; right: -100px; width: 420px; height: 420px; background: var(--brand-300); }
+    .blob-2 { bottom: -120px; left: -80px; width: 360px; height: 360px; background: #fbbf24; opacity: 0.25; }
+    .slide.dark .blob-1 { background: #a855f7; opacity: 0.4; }
+    .slide.dark .blob-2 { background: #eab308; opacity: 0.18; }
+    .slide > .container { position: relative; z-index: 1; }
+
+    /* TYPOGRAPHY */
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--brand-700); padding: 6px 14px; background: var(--brand-100); border-radius: 999px; margin-bottom: 18px; }
+    .slide.dark .eyebrow, .slide.grad .eyebrow { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+    h1 { font-size: clamp(42px, 6.5vw, 88px); font-weight: 800; line-height: 1; letter-spacing: -0.035em; }
+    h2 { font-size: clamp(32px, 4.2vw, 52px); font-weight: 800; line-height: 1.05; letter-spacing: -0.025em; margin-bottom: 16px; }
+    h3 { font-size: 20px; font-weight: 700; line-height: 1.3; color: var(--ink); margin-bottom: 8px; }
+    .lead { font-size: clamp(17px, 1.8vw, 22px); color: var(--ink-soft); line-height: 1.5; max-width: 820px; margin-bottom: 32px; }
+    .slide.dark .lead, .slide.grad .lead { color: rgba(255,255,255,0.92); }
+    p { font-size: 16px; color: var(--ink-soft); }
+
+    /* GRID + CARDS */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-top: 28px; }
+    .grid-2 { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    @media (max-width: 800px) { .grid-2, .grid-3 { grid-template-columns: 1fr; } }
+
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 22px; box-shadow: var(--card-shadow); transition: transform 0.2s, box-shadow 0.2s; position: relative; }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--card-shadow-hover); }
+    .card .ico { width: 48px; height: 48px; border-radius: 12px; background: var(--brand-100); color: var(--brand-700); display: inline-flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 700; margin-bottom: 14px; overflow: hidden; }
+    .card .ico img, .card .ico svg { width: 100%; height: 100%; object-fit: contain; display: block; }
+    .card .ico.brandsvg { background: transparent; padding: 0; }
+    .card p { font-size: 14.5px; line-height: 1.5; }
+
+    .slide.dark .card { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); backdrop-filter: blur(10px); }
+    .slide.dark .card h3 { color: #fff; }
+    .slide.dark .card p { color: rgba(255,255,255,0.85); }
+    .slide.dark .card .ico { background: rgba(255,255,255,0.12); color: #fff; }
+
+    /* STATS */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; margin-top: 24px; }
+    .stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 22px 16px; text-align: center; box-shadow: var(--card-shadow); }
+    .stat-value { font-size: clamp(28px, 3.5vw, 40px); font-weight: 800; background: var(--gold-grad); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; line-height: 1; font-variant-numeric: tabular-nums; }
+    .stat-label { font-size: 13px; color: var(--ink-soft); margin-top: 8px; font-weight: 500; line-height: 1.3; }
+    .slide.dark .stat { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12); }
+    .slide.dark .stat-label { color: rgba(255,255,255,0.75); }
+
+    /* TABLE */
+    .tbl-wrap { margin-top: 24px; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--card-shadow); background: var(--surface); }
+    table { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+    th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { background: var(--brand-50); color: var(--brand-800); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--brand-50); }
+    td.strong { font-weight: 700; color: var(--brand-800); }
+    td.gold { color: #a16207; font-weight: 700; font-variant-numeric: tabular-nums; }
+    td.green { color: var(--medical); font-weight: 700; }
+    tr.highlight { background: var(--brand-100); }
+    tr.highlight td { background: var(--brand-100); font-weight: 700; }
+    .slide.dark .tbl-wrap { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); }
+    .slide.dark table { color: rgba(255,255,255,0.92); }
+    .slide.dark th { background: rgba(255,255,255,0.08); color: #fff; }
+    .slide.dark td { border-bottom-color: rgba(255,255,255,0.08); }
+    .slide.dark tr:hover td { background: rgba(255,255,255,0.04); }
+
+    /* QUOTES */
+    .quote { background: var(--surface); border-left: 4px solid var(--brand-600); border-radius: 10px; padding: 18px 22px; margin-top: 14px; box-shadow: var(--card-shadow); }
+    .quote p { font-size: 16px; font-style: italic; color: var(--ink); margin-bottom: 6px; }
+    .quote cite { font-size: 12px; color: var(--ink-soft); font-style: normal; font-weight: 600; }
+    .slide.dark .quote { background: rgba(255,255,255,0.08); border-left-color: var(--gold); }
+    .slide.dark .quote p { color: #fff; }
+    .slide.dark .quote cite { color: rgba(255,255,255,0.7); }
+
+    /* PILLS */
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+    .pill { background: var(--brand-100); color: var(--brand-800); padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+    .pill.gold { background: var(--gold-soft); color: #a16207; }
+    .pill.green { background: #d1fae5; color: var(--medical); }
+    .slide.dark .pill { background: rgba(255,255,255,0.12); color: #fff; }
+    .slide.dark .pill.gold { background: rgba(234,179,8,0.25); color: #fde68a; }
+
+    /* BULLETS */
+    .bullets { list-style: none; padding: 0; margin-top: 16px; }
+    .bullets li { padding: 8px 0 8px 30px; position: relative; font-size: 15px; color: var(--ink); border-bottom: 1px solid var(--border); line-height: 1.5; }
+    .bullets li:last-child { border-bottom: none; }
+    .bullets li::before { content: "✓"; position: absolute; left: 0; top: 10px; color: var(--brand-700); font-weight: 800; width: 20px; height: 20px; background: var(--brand-100); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+    .slide.dark .bullets li { color: rgba(255,255,255,0.92); border-bottom-color: rgba(255,255,255,0.1); }
+    .slide.dark .bullets li::before { background: rgba(234,179,8,0.25); color: var(--gold); }
+
+    /* COVER */
+    .cover { text-align: center; align-items: center; }
+    .cover-logo { margin-bottom: 32px; filter: drop-shadow(0 20px 60px rgba(147,51,234,0.4)); animation: float 6s ease-in-out infinite; }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .cover-logo img { width: 160px; height: 160px; display: block; }
+    .cover h1 { font-family: 'Fredoka', sans-serif; font-weight: 600; color: #fff; margin-bottom: 8px; text-shadow: 0 2px 30px rgba(0,0,0,0.15); }
+    .cover .tagline { font-size: clamp(19px, 2.4vw, 28px); font-weight: 500; color: #fff; max-width: 720px; margin: 20px auto 12px; opacity: 0.98; line-height: 1.35; }
+    .cover .subtag { font-size: 15px; color: rgba(255,255,255,0.8); font-style: italic; margin-bottom: 36px; }
+    .cover-meta { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+    .cover-meta .chip { background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.25); color: #fff; padding: 8px 16px; border-radius: 999px; font-size: 13px; font-weight: 600; backdrop-filter: blur(10px); }
+    .cover-scroll { position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%); color: rgba(255,255,255,0.7); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; animation: bounce 2s infinite; }
+    @keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(8px); } }
+
+    /* EMOTIONAL */
+    .emotional-head { font-size: clamp(34px, 5vw, 60px); font-weight: 800; line-height: 1.08; letter-spacing: -0.025em; margin-bottom: 24px; }
+    .emotional-head .hl { background: linear-gradient(135deg, #fef3c7 0%, #eab308 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .founder-sig { display: flex; align-items: center; gap: 14px; margin-top: 32px; padding: 16px 20px; background: rgba(255,255,255,0.08); border-radius: 14px; max-width: 560px; }
+    .founder-sig .avatar { width: 48px; height: 48px; border-radius: 50%; background: var(--gold-grad); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 22px; flex: none; }
+    .founder-sig .name { font-weight: 700; color: #fff; font-size: 15px; }
+    .founder-sig .role { font-size: 13px; color: rgba(255,255,255,0.75); }
+
+    /* LEVERAGE HERO */
+    .leverage-hero { text-align: center; padding: 36px 32px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-xl); margin-top: 24px; }
+    .leverage-big { font-size: clamp(72px, 14vw, 160px); font-weight: 800; line-height: 1; background: linear-gradient(135deg, #fff 0%, #fde68a 50%, #eab308 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; letter-spacing: -0.04em; }
+    .leverage-lbl { font-size: 16px; color: rgba(255,255,255,0.85); font-weight: 500; max-width: 620px; margin: 0 auto; }
+    .leverage-cols { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 32px; text-align: left; }
+    @media (max-width: 700px) { .leverage-cols { grid-template-columns: 1fr; } }
+    .leverage-col { background: rgba(255,255,255,0.06); padding: 18px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.08); }
+    .leverage-col .num { font-size: 28px; font-weight: 800; color: var(--gold); font-variant-numeric: tabular-nums; }
+    .leverage-col .lbl { font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 4px; }
+
+    /* SPOTLIGHT */
+    .spotlight { margin-top: 24px; padding: 22px 26px; background: var(--brand-50); border-left: 4px solid var(--brand-600); border-radius: var(--radius-md); }
+    .spotlight strong { color: var(--brand-800); font-size: 16px; }
+    .spotlight p { margin-top: 6px; font-size: 14.5px; }
+    .slide.dark .spotlight { background: rgba(234,179,8,0.1); border-left-color: var(--gold); }
+    .slide.dark .spotlight strong { color: var(--gold); }
+    .slide.dark .spotlight p { color: rgba(255,255,255,0.88); }
+
+    /* CTA */
+    .cta-final { text-align: center; align-items: center; }
+    .cta-btn { display: inline-flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.35); padding: 16px 32px; border-radius: 999px; margin-top: 28px; font-weight: 700; font-size: 17px; color: #fff; text-decoration: none; backdrop-filter: blur(10px); transition: all 0.2s; }
+    .cta-btn:hover { background: rgba(255,255,255,0.25); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+    .cta-tail { margin-top: 40px; font-size: 13px; color: rgba(255,255,255,0.75); max-width: 640px; }
+
+    /* FOOTER */
+    footer { background: var(--ink); color: rgba(255,255,255,0.7); padding: 28px 40px; text-align: center; font-size: 13px; scroll-snap-align: end; }
+    footer strong { color: #fff; }
+    footer code { background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 4px; font-size: 12px; }
+
+    /* PRINT */
+    @media print {
+      html { scroll-snap-type: none; }
+      .progress, .topbar, .sidenav, .kbhint, .cover-scroll { display: none !important; }
+      .slide { min-height: auto; padding: 40px 30px !important; page-break-inside: avoid; page-break-after: always; }
+      .slide.dark, .slide.grad { color: #fff !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      body { background: #fff; }
+    }
+
+    /* MOBILE */
+    @media (max-width: 700px) {
+      :root { --slide-padding-y: 40px; --slide-padding-x: 20px; }
+      html { scroll-snap-type: none; }
+      .slide-num { top: 60px; right: 20px; font-size: 11px; }
+      .leverage-hero { padding: 24px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+<div class="topbar">
+  <div class="topbar-brand">
+    <img src="../paw-friend-assets/svg/paw_friend_wordmark_horizontal.svg" alt="Paw Friend" />
+  </div>
+  <div class="topbar-meta">
+    <span class="chip">Presentación · 2026-04-19</span>
+    <span class="chip">pawfriend.cl</span>
+    <span class="topbar-counter" id="counter">01 / 14</span>
+  </div>
+</div>
+
+<nav class="sidenav" id="sidenav" aria-label="Navegación de slides">
+  <a href="#s1"  class="dot" data-idx="0"><span class="label">1 · Portada</span></a>
+  <a href="#s2"  class="dot" data-idx="1"><span class="label">2 · Por qué existimos</span></a>
+  <a href="#s3"  class="dot" data-idx="2"><span class="label">3 · El problema</span></a>
+  <a href="#s4"  class="dot" data-idx="3"><span class="label">4 · La solución</span></a>
+  <a href="#s5"  class="dot" data-idx="4"><span class="label">5 · Producto en vivo</span></a>
+  <a href="#s6"  class="dot" data-idx="5"><span class="label">6 · Avances</span></a>
+  <a href="#s7"  class="dot" data-idx="6"><span class="label">7 · Cómo ganamos plata</span></a>
+  <a href="#s8"  class="dot" data-idx="7"><span class="label">8 · Alianzas y números</span></a>
+  <a href="#s9"  class="dot" data-idx="8"><span class="label">9 · Mercado</span></a>
+  <a href="#s10" class="dot" data-idx="9"><span class="label">10 · Competencia</span></a>
+  <a href="#s11" class="dot" data-idx="10"><span class="label">11 · Una persona + IA</span></a>
+  <a href="#s12" class="dot" data-idx="11"><span class="label">12 · Equipo y plan</span></a>
+  <a href="#s13" class="dot" data-idx="12"><span class="label">13 · Lo que pedimos</span></a>
+  <a href="#s14" class="dot" data-idx="13"><span class="label">14 · Contacto</span></a>
+</nav>
+
+<div class="kbhint" id="kbhint">
+  <span><kbd>↓</kbd> <kbd>Espacio</kbd> siguiente</span>
+  <span><kbd>↑</kbd> anterior</span>
+  <span><kbd>Inicio</kbd> / <kbd>Fin</kbd> saltar</span>
+</div>
+
+<!-- SLIDE 1 · PORTADA -->
+<section class="slide grad cover" id="s1">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <span class="slide-num">01 / 14</span>
+  <div class="container">
+    <div class="cover-logo">
+      <img src="../paw-friend-assets/svg/paw_friend_icon_reverse.svg" alt="Paw Friend" />
+    </div>
+    <h1>Paw Friend</h1>
+    <p class="tagline">La ficha médica digital de tu mascota,<br>conectada con tu veterinario.</p>
+    <p class="subtag">Hecha en Chile, a mano, con inteligencia artificial.</p>
+    <div class="cover-meta">
+      <span class="chip">🇨🇱 Chile</span>
+      <span class="chip">🐾 pawfriend.cl</span>
+      <span class="chip">💛 Gratis para dueños</span>
+      <span class="chip">📅 2026-04-19</span>
+    </div>
+  </div>
+  <div class="cover-scroll">Scroll ↓</div>
+</section>
+
+<!-- SLIDE 2 · POR QUÉ EXISTIMOS -->
+<section class="slide dark" id="s2">
+  <div class="blob blob-1"></div>
+  <span class="slide-num">02 / 14</span>
+  <div class="container">
+    <span class="eyebrow">Por qué existimos</span>
+    <h2 class="emotional-head">
+      Amamos a las mascotas.<br>
+      <span class="hl">Queremos que cuidarlas sea gratis.</span><br>
+      Necesitamos tu ayuda.
+    </h2>
+    <p class="lead">
+      En Chile, 7 de cada 10 hogares tienen mascota. Pero viven con el carnet de vacunas
+      en la guantera del auto y recuerdan las dosis de memoria. Paw Friend es nuestra
+      carta de amor a cada perro, cada gato, y a cada dueño que se ha sentido solo en
+      una sala de urgencia veterinaria.
+    </p>
+    <div class="founder-sig">
+      <div class="avatar">🐾</div>
+      <div>
+        <div class="name">Paw Founder</div>
+        <div class="role">Fundador · Dueño de Kai (perro) y Ema (gata)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3 · EL PROBLEMA -->
+<section class="slide soft" id="s3">
+  <span class="slide-num">03 / 14</span>
+  <div class="container">
+    <span class="eyebrow">El problema real</span>
+    <h2>Hoy el cuidado de mascotas en Chile funciona con papel y WhatsApp</h2>
+    <p class="lead">El dueño olvida vacunas. El veterinario toma notas en Word. Los refugios piden donaciones por Instagram sin ningún control. Nadie ha unido las puntas.</p>
+
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/01_paw_print.svg" alt=""></div>
+        <h3>El dueño</h3>
+        <p>El carnet de vacunas vive en papel. Las dosis se olvidan. Los documentos se pierden al cambiar de veterinario.</p>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/10_stethoscope.svg" alt=""></div>
+        <h3>El veterinario de barrio</h3>
+        <p>Agenda en papel, recordatorios a mano, WhatsApp para todo. Los programas para clínicas grandes (QVET, VetPraxis) no publican precios ni sirven a clínicas chicas.</p>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/06_pet_house.svg" alt=""></div>
+        <h3>Los refugios</h3>
+        <p>No hay una plataforma que conecte a donantes con causas cercanas. Los aportes se pierden entre Instagram y transferencias sin control.</p>
+      </div>
+    </div>
+
+    <div class="grid grid-2" style="margin-top: 20px;">
+      <div class="quote">
+        <p>"A Pepa la vacunaron hace 6 meses y no sé si ya le toca la siguiente. El carnet está en la guantera del auto."</p>
+        <cite>— Paloma, dueña que probó la app · iPhone · 2 mascotas</cite>
+      </div>
+      <div class="quote">
+        <p>"Yo tomo notas en Word y las mando por WhatsApp. Me gustaría que todo quedara en un solo lugar."</p>
+        <cite>— Sofía Rosi · veterinaria que probó la app</cite>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4 · LA SOLUCIÓN -->
+<section class="slide" id="s4">
+  <span class="slide-num">04 / 14</span>
+  <div class="container">
+    <span class="eyebrow">La solución</span>
+    <h2>Una ficha médica que el dueño descarga, el veterinario actualiza y la comunidad apoya</h2>
+    <p class="lead">Cuatro partes integradas en una sola app, viva hoy en <strong>pawfriend.cl</strong>.</p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/14_clinical_record.svg" alt=""></div>
+        <h3>Ficha médica digital + PDF</h3>
+        <p>La joya de la corona. Todas las vacunas, consultas y recetas de tu mascota. Con un click bajas un PDF para llevar al veterinario, o compartes un link seguro que dura 30 días. Con la cámara se escanea el carnet de papel.</p>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/22_search.svg" alt=""></div>
+        <h3>Directorio de veterinarios</h3>
+        <p>El único en Chile con precios claros por comuna. Aparece en Google cuando alguien busca "veterinario en Providencia". Abierto a todos, sin registro.</p>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/15_calendar.svg" alt=""></div>
+        <h3>Agenda + reseñas + chat</h3>
+        <p>Reserva de hora online, recordatorios automáticos de vacunas, reseñas después de cada consulta. Conecta al dueño con su clínica sin intermediarios.</p>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/04_heart_paw.svg" alt=""></div>
+        <h3>Donaciones + empresas socias</h3>
+        <p>Muro público con mensajes reales de dueños, aportes trazables a refugios, y empresas pet-friendly que patrocinan con una insignia visible.</p>
+      </div>
+    </div>
+
+    <div class="spotlight">
+      <strong>"Todo lo que ves ya existe en pawfriend.cl. No es una maqueta."</strong>
+      <p>App viva y probada en iPhone, Android y web. Diseñada y construida en 2 meses por 1 persona + inteligencia artificial.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5 · PRODUCTO EN VIVO -->
+<section class="slide soft" id="s5">
+  <span class="slide-num">05 / 14</span>
+  <div class="container">
+    <span class="eyebrow">Producto en vivo</span>
+    <h2>No es una promesa de lo que será. Es una demostración de lo que ya es.</h2>
+
+    <div class="grid grid-2" style="margin-top: 28px;">
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/19_mobile_app.svg" alt=""></div>
+        <h3>Para el dueño de mascota</h3>
+        <ul class="bullets">
+          <li>Ficha médica completa + PDF descargable</li>
+          <li>Escanea el carnet de vacunas con la cámara</li>
+          <li>Recordatorios automáticos + calendario único</li>
+          <li>Directorio público de veterinarios con precios</li>
+          <li>Comparte la ficha con link seguro por 30 días</li>
+          <li>Muro de donaciones y mensajes reales</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/10_stethoscope.svg" alt=""></div>
+        <h3>Para el veterinario</h3>
+        <ul class="bullets">
+          <li>Panel de pacientes + agenda + historial completo</li>
+          <li>Plantillas de consulta + transcripción de audio</li>
+          <li>Vista previa "cómo me ven los dueños"</li>
+          <li>Reportes semanales + estadísticas automáticas</li>
+          <li>Reserva online con comisión según plan</li>
+          <li>Multi-sucursal (plan Pro Max)</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 36px;">Tecnología probada</h3>
+    <div class="pills">
+      <span class="pill">Web (navegador)</span>
+      <span class="pill">App para iPhone</span>
+      <span class="pill">App para Android</span>
+      <span class="pill gold">Pagos con Flow.cl</span>
+      <span class="pill green">Base de datos segura</span>
+      <span class="pill">Agenda con Google Calendar</span>
+      <span class="pill">Inteligencia artificial Claude</span>
+    </div>
+
+    <div class="spotlight" style="margin-top: 24px;">
+      <strong>Panel interno propio — "Sala de Inversión" en vivo</strong>
+      <p>Esta presentación nace del panel interno de la app. Incluye tablero de control, finanzas, pulso diario, arreglos automáticos y monitoreo de donaciones y opiniones en tiempo real.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6 · AVANCES -->
+<section class="slide dark" id="s6">
+  <div class="blob blob-2"></div>
+  <span class="slide-num">06 / 14</span>
+  <div class="container">
+    <span class="eyebrow">Avances</span>
+    <h2>Velocidad de construcción, voluntad de pago medida, y una señal única</h2>
+    <p class="lead">Los números que ves son reales. El panel interno se actualiza solo cada día.</p>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-value">3</div><div class="stat-label">Plataformas vivas: web, iPhone, Android</div></div>
+      <div class="stat"><div class="stat-value">67</div><div class="stat-label">Pantallas funcionando</div></div>
+      <div class="stat"><div class="stat-value">2</div><div class="stat-label">Clientes reales probando la app</div></div>
+      <div class="stat"><div class="stat-value">2 meses</div><div class="stat-label">Desde cero hasta producto completo</div></div>
+      <div class="stat"><div class="stat-value">&lt;US$100</div><div class="stat-label">Costo mensual de operación</div></div>
+      <div class="stat"><div class="stat-value">100%</div><div class="stat-label">Feedback de clientes incorporado</div></div>
+    </div>
+
+    <h3 style="margin-top: 40px; color: #fff;">Diferenciales únicos en el mercado chileno</h3>
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/28_idea.svg" alt=""></div>
+        <h3>Medimos la voluntad de pago</h3>
+        <p>Le preguntamos al dueño "¿pagarías por esta app?" con sí / quizás / no. Anticipa qué porcentaje va a pagar antes de cobrarle. Ningún competidor lo mide.</p>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/04_heart_paw.svg" alt=""></div>
+        <h3>Donaciones como termómetro</h3>
+        <p>El botón de donar mide cuántos dueños aportan sin recibir nada a cambio. Es la prueba más honesta de cuánto nos quieren sus dueños.</p>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/20_chat.svg" alt=""></div>
+        <h3>Feedback real, ya probado</h3>
+        <p>Sofía (veterinaria) y Paloma (dueña) probaron en iPhone y Android. Cada bug y cada sugerencia quedó documentada y ya fue arreglada.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 7 · CÓMO GANAMOS PLATA -->
+<section class="slide" id="s7">
+  <span class="slide-num">07 / 14</span>
+  <div class="container">
+    <span class="eyebrow">Cómo ganamos plata</span>
+    <h2>5 fuentes de ingreso, todas opcionales</h2>
+    <p class="lead">La app es gratis para el dueño de mascota. El dinero viene por otros lados: veterinarios que quieren crecer, empresas que patrocinan, y quienes deciden donar.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Fuente</th>
+            <th>Quién paga</th>
+            <th>Cuánto</th>
+            <th>Cuándo entra</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="strong">💛 Donaciones</td>
+            <td>Dueños que quieran aportar</td>
+            <td class="gold">Voluntario</td>
+            <td>Siempre disponible</td>
+          </tr>
+          <tr>
+            <td class="strong">💛 Paw Member</td>
+            <td>Dueños que quieran sostener la app</td>
+            <td class="gold">$3.990 al mes</td>
+            <td>Opcional: da insignia + descuentos de socios</td>
+          </tr>
+          <tr>
+            <td class="strong">🩺 Veterinarios independientes</td>
+            <td>Vets con clínica propia</td>
+            <td class="gold">$0 / $9.900 / $29.900 al mes</td>
+            <td>Cuando crecen: más de 5 pacientes o funciones avanzadas</td>
+          </tr>
+          <tr>
+            <td class="strong">🏥 Clínicas grandes</td>
+            <td>Clínicas con varias sucursales</td>
+            <td class="gold">$29.900 al mes (Pro Max)</td>
+            <td>Plan con multi-sucursal y conexión a otros sistemas</td>
+          </tr>
+          <tr>
+            <td class="strong">📰 Publicidad</td>
+            <td>Marcas pet-friendly</td>
+            <td class="gold">Por negociar</td>
+            <td>Solo cuando tengamos muchos usuarios activos</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="spotlight">
+      <strong>El dueño de mascota = gratis para siempre, sin funciones bloqueadas.</strong>
+      <p>Paw Member es solo una insignia de apoyo y descuentos de marcas socias. No bloquea la ficha, el PDF, la inteligencia artificial ni las estadísticas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 8 · ALIANZAS + NÚMEROS CLAVE -->
+<section class="slide soft" id="s8">
+  <span class="slide-num">08 / 14</span>
+  <div class="container">
+    <span class="eyebrow">Las 3 alianzas</span>
+    <h2>Paw Voices, Paw Companys y Paw Partners</h2>
+    <p class="lead">Tres relaciones distintas que hacen crecer la app sin cobrarle nada al dueño.</p>
+
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/30_star.svg" alt=""></div>
+        <h3>Paw Voices</h3>
+        <p><strong>Creadores e influencers peludos.</strong> Recomiendan la app a su audiencia y reciben insignia oficial, perfil destacado y código de descuento para compartir.</p>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/26_clinic.svg" alt=""></div>
+        <h3>Paw Companys</h3>
+        <p><strong>Empresas que nos patrocinan con un aporte mensual.</strong> $49.900 / $99.900 / $199.900 al mes → su logo en la app, insignia Bronce / Plata / Oro y menciones públicas.</p>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/24_partnership.svg" alt=""></div>
+        <h3>Paw Partners</h3>
+        <p><strong>Tiendas, comida, restaurantes, seguros.</strong> Ofrecen descuentos a Paw Members → los mostramos gratis en la app. Un trueque justo que no le cuesta nada al dueño.</p>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 40px;">Los números importantes (en sencillo)</h3>
+    <div class="stats">
+      <div class="stat"><div class="stat-value">US$ 15-20</div><div class="stat-label">Lo que deja al mes un cliente que paga</div></div>
+      <div class="stat"><div class="stat-value">US$ 300-500</div><div class="stat-label">Lo que un cliente vale en 1 a 2 años</div></div>
+      <div class="stat"><div class="stat-value">US$ 15-30</div><div class="stat-label">Lo que cuesta conseguir un cliente nuevo</div></div>
+      <div class="stat"><div class="stat-value">2-4 meses</div><div class="stat-label">Para recuperar cada peso invertido</div></div>
+      <div class="stat"><div class="stat-value">+10×</div><div class="stat-label">Por cada $1 en marketing, recuperamos +$10</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 9 · MERCADO -->
+<section class="slide" id="s9">
+  <span class="slide-num">09 / 14</span>
+  <div class="container">
+    <span class="eyebrow">Mercado</span>
+    <h2>Chile + Latinoamérica andina — ventana de 12 a 18 meses</h2>
+    <p class="lead">Solo Chile no es suficiente para un fondo grande. Sumando Perú y Colombia, el negocio se vuelve atractivo para una inversión seria.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Nivel</th><th>Qué significa</th><th>Tamaño</th><th>De dónde sale</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="strong">Mercado total</td><td>Hogares con mascota × gasto en apps (CL+PE+CO)</td><td class="gold">~US$ 2.500 millones al año</td><td>20 millones de hogares × US$ 125 al año</td></tr>
+          <tr><td class="strong">Mercado accesible</td><td>Dueños que usan tecnología + veterinarios dispuestos a pagar</td><td class="gold">~US$ 120 millones al año</td><td>5% del total</td></tr>
+          <tr class="highlight"><td>Nuestra meta 3 años</td><td>Crecimiento orgánico + fondos públicos + empresas socias</td><td class="gold">~US$ 3 a 4 millones al año</td><td>5-6% del accesible en Chile + piloto regional</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top: 32px;">Por qué ahora</h3>
+    <ul class="bullets">
+      <li>7 de cada 10 hogares en Chile tienen mascota. El mercado mueve más de US$ 1.000 millones al año. Menos del 15% está digitalizado.</li>
+      <li>La Ley 21.020 (tenencia responsable) obliga a registrar mascotas con un código único. Paw Friend ya integra el QR.</li>
+      <li>Costos de operación bajo US$ 100 al mes. Podemos avanzar sin apuro.</li>
+      <li>QVET (competencia española con 8.000 clientes) no tiene vendedores en Chile. Hay ventana antes que entren.</li>
+      <li>Después de la pandemia, la gente busca online antes de ir al veterinario.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- SLIDE 10 · COMPETENCIA -->
+<section class="slide soft" id="s10">
+  <span class="slide-num">10 / 14</span>
+  <div class="container">
+    <span class="eyebrow">Competencia</span>
+    <h2>Los únicos que combinan dueño + veterinario + directorio + comunidad</h2>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th></th><th>Con directorio en Google</th><th>Sin directorio en Google</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="strong">Solo para veterinarios</td><td>Veterinariachile.com (pasivo)</td><td>QVET · VetPraxis · GVET · Milovet</td></tr>
+          <tr><td class="strong">Solo para dueños</td><td>—</td><td>Petsy · CuidaPet · Duko · Wolkie</td></tr>
+          <tr class="highlight"><td style="color: var(--brand-800);">Dueño + veterinario + comunidad</td><td style="color: var(--brand-800); font-weight: 800;">Paw Friend 🐾</td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top: 40px;">5 ventajas difíciles de copiar</h3>
+    <div class="grid">
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/22_search.svg" alt=""></div>
+        <h3>Aparecemos en Google</h3>
+        <p>Cada veterinario tiene una página pública que Google indexa. Ningún competidor lo tiene abierto al dueño.</p>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/25_growth.svg" alt=""></div>
+        <h3>Precios a la vista</h3>
+        <p>Cada veterinario muestra su precio en pesos chilenos. QVET y VetPraxis no publican precio.</p>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/24_partnership.svg" alt=""></div>
+        <h3>Conexión dueño ↔ veterinario</h3>
+        <p>Reserva + ficha + reseña, todo en la misma app. Los competidores solo resuelven una parte.</p>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/04_heart_paw.svg" alt=""></div>
+        <h3>Empresas socias visibles</h3>
+        <p>Respaldo real que nadie tiene. Convierte la responsabilidad social de las empresas en un canal de ventas.</p>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/27_rocket.svg" alt=""></div>
+        <h3>Hecho en Chile con IA</h3>
+        <p>Costos bajo US$ 100 al mes. Quemamos poco, duramos mucho.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 11 · UNA PERSONA + IA -->
+<section class="slide dark" id="s11">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <span class="slide-num">11 / 14</span>
+  <div class="container">
+    <span class="eyebrow">El superpoder</span>
+    <h2>Una persona + IA construyó en 2 meses lo que un equipo de 5 expertos tardaría 2 años y medio</h2>
+    <p class="lead">Paw Friend es la prueba de que la inteligencia artificial no reemplaza al ingeniero: lo multiplica por 15.</p>
+
+    <div class="leverage-hero">
+      <div class="leverage-big">15×</div>
+      <div class="leverage-lbl">Cuánto más rápido avanza una persona con IA, comparado con un equipo tradicional de ingenieros expertos</div>
+
+      <div class="leverage-cols">
+        <div class="leverage-col">
+          <div class="num">320 horas</div>
+          <div class="lbl">Tiempo humano total, marzo a abril 2026</div>
+        </div>
+        <div class="leverage-col">
+          <div class="num">~4.800 horas</div>
+          <div class="lbl">Lo que tardaría un equipo de 5 expertos</div>
+        </div>
+        <div class="leverage-col">
+          <div class="num">US$ 1,44 M</div>
+          <div class="lbl">Valor del trabajo a tarifa de experto en EEUU</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tbl-wrap" style="margin-top: 28px;">
+      <table>
+        <thead>
+          <tr><th>Área</th><th>Nuestro tiempo</th><th>Experto tradicional</th><th>Ahorro</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Pantallas y diseño de la app</td><td>90 horas</td><td>1.100 horas</td><td class="gold">12×</td></tr>
+          <tr><td>Base de datos y servidor</td><td>55 horas</td><td>800 horas</td><td class="gold">15×</td></tr>
+          <tr><td>Ficha médica + PDF (la joya)</td><td>20 horas</td><td>220 horas</td><td class="gold">11×</td></tr>
+          <tr><td>Pagos con Flow.cl</td><td>15 horas</td><td>170 horas</td><td class="gold">11×</td></tr>
+          <tr><td>Inteligencia artificial (escáner, asistente)</td><td>15 horas</td><td>180 horas</td><td class="gold">12×</td></tr>
+          <tr><td>Panel interno de administración</td><td>25 horas</td><td>370 horas</td><td class="gold">15×</td></tr>
+          <tr><td>Seguridad y auditorías</td><td>18 horas</td><td>240 horas</td><td class="gold">13×</td></tr>
+          <tr><td>Apps para iPhone y Android</td><td>10 horas</td><td>130 horas</td><td class="gold">13×</td></tr>
+          <tr class="highlight"><td>TOTAL</td><td>~320 horas</td><td>~4.800 horas</td><td style="color: var(--gold);">~15×</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="spotlight">
+      <strong>Lo que la IA NO hace</strong>
+      <p>Claude escribe el <em>código</em>: plantillas, consultas a la base de datos, pruebas. El fundador aporta las <em>decisiones</em>: qué cobrar en Chile, cómo proteger los datos reales, el cambio a donaciones + empresas socias, los ajustes con la veterinaria que probó la app, los textos en lenguaje chileno, los roles de dueño y veterinario, el posicionamiento "hecho en Chile". Un equipo construye lo que se le pide; sin criterio del fundador, no hay Paw Friend — hay otra app veterinaria más.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 12 · EQUIPO Y PLAN -->
+<section class="slide" id="s12">
+  <span class="slide-num">12 / 14</span>
+  <div class="container">
+    <span class="eyebrow">Equipo y plan</span>
+    <h2>Quién lo construye y qué viene</h2>
+
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/28_idea.svg" alt=""></div>
+        <h3>Paw Founder</h3>
+        <p><strong>Fundador y líder.</strong> Ingeniero de software con más de 10 años de experiencia. Dueño de SpA SUSAETA GARNHAM SOFTWARE ENGINEERING (78.328.659-9).</p>
+        <p style="margin-top: 10px;">Construyó el producto completo. Dueño de Kai (perro) y Ema (gata), clientes número 1 y 2.</p>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/23_cloud.svg" alt=""></div>
+        <h3>Claude (Anthropic)</h3>
+        <p><strong>Copiloto de inteligencia artificial.</strong> Permite construir y probar 5 a 10 veces más rápido que un fundador solo.</p>
+        <p style="margin-top: 10px;">Lo acreditamos en los pies de página de toda la app — transparencia total con el usuario.</p>
+      </div>
+      <div class="card">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/10_stethoscope.svg" alt=""></div>
+        <h3>Consejeros</h3>
+        <p><strong>Sofía Rosi</strong> — veterinaria que probó la app desde el día uno. Pidió agregar lote y serie de vacuna, antiparasitarios con alarma.</p>
+        <p style="margin-top: 10px;"><strong>Paloma</strong> — dueña que probó la app en iPhone. Pidió simplificar la navegación y la gamificación.</p>
+      </div>
+    </div>
+
+    <div class="spotlight" style="margin-top: 32px;">
+      <strong>Lo que nos falta</strong>
+      <p>Buscamos un socio comercial o veterinario experimentado que se una con participación progresiva antes de cerrar la primera ronda. Ya tenemos candidatos conversando con nosotros.</p>
+    </div>
+
+    <h3 style="margin-top: 32px;">Plan 12 meses</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Fase</th><th>Meses</th><th>Foco</th><th>Metas</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="strong">1</td><td>1 a 3</td><td>Primeros clientes + empresas socias</td><td>100 Paw Members · 20 clínicas pagando · 3 empresas socias · socio firmado</td></tr>
+          <tr><td class="strong">2</td><td>4 a 6</td><td>Consolidar Chile</td><td>500 Paw Members · 60 clínicas · 10 empresas socias · postular a CORFO + Start-Up Chile</td></tr>
+          <tr><td class="strong">3</td><td>7 a 12</td><td>Piloto en Latinoamérica</td><td>2.000 Paw Members · 150 clínicas · 20 empresas socias · ronda de ángeles en la región</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 13 · LO QUE PEDIMOS -->
+<section class="slide dark" id="s13">
+  <div class="blob blob-2"></div>
+  <span class="slide-num">13 / 14</span>
+  <div class="container">
+    <span class="eyebrow">Lo que pedimos</span>
+    <h2>US$ 150.000 en nuestra primera ronda, con tope de valoración en US$ 1,2 millones</h2>
+    <p class="lead">Alcanza para 12 a 14 meses de operación, cerrar el socio comercial y llegar a la siguiente ronda con números reales sobre la mesa.</p>
+
+    <div class="stats" style="margin-top: 24px;">
+      <div class="stat"><div class="stat-value">US$ 2 K</div><div class="stat-label">Ingreso mensual al mes 3</div></div>
+      <div class="stat"><div class="stat-value">US$ 8 K</div><div class="stat-label">Ingreso mensual al mes 6</div></div>
+      <div class="stat"><div class="stat-value">US$ 40 K</div><div class="stat-label">Ingreso mensual al mes 12 (= US$ 500 K al año)</div></div>
+      <div class="stat"><div class="stat-value">US$ 80 K</div><div class="stat-label">Ingreso mensual al mes 18 (listos para siguiente ronda)</div></div>
+    </div>
+
+    <h3 style="margin-top: 40px; color: #fff;">En qué usamos la plata</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Uso</th><th>%</th><th>Monto (US$)</th><th>Qué compramos</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="strong">Socio comercial + 1 ingeniero</td><td>45%</td><td class="gold">$67 K</td><td>Sueldos por 12 meses</td></tr>
+          <tr><td class="strong">Vendedor para clínicas + responsable de empresas socias</td><td>20%</td><td class="gold">$30 K</td><td>Salir a buscar clínicas y cerrar empresas pet-friendly</td></tr>
+          <tr><td class="strong">Marketing online para dueños</td><td>15%</td><td class="gold">$22 K</td><td>Publicidad en Meta y Google + contenido</td></tr>
+          <tr><td class="strong">Legal + contabilidad + protección de datos</td><td>10%</td><td class="gold">$15 K</td><td>Sociedad + contratos + marca registrada</td></tr>
+          <tr><td class="strong">Servidores + reserva</td><td>10%</td><td class="gold">$15 K</td><td>Infraestructura y colchón de emergencia</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 style="margin-top: 32px; color: #fff;">Lo que estamos dispuestos a negociar</h3>
+    <div class="pills">
+      <span class="pill">Silla de observador para el inversionista líder</span>
+      <span class="pill">Derecho a participar en la siguiente ronda</span>
+      <span class="pill">Reporte mensual detallado</span>
+      <span class="pill gold">Acceso al panel "Sala de Inversión"</span>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 14 · CONTACTO + IMPACTO -->
+<section class="slide grad cta-final" id="s14">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <span class="slide-num">14 / 14</span>
+  <div class="container">
+    <span class="eyebrow">Impacto · transparencia · llamado</span>
+    <h2>Amamos a las mascotas.<br>Queremos que Paw Friend sea gratis para quien lo necesite.</h2>
+    <p class="lead" style="color: rgba(255,255,255,0.95); max-width: 760px; margin: 0 auto 20px;">
+      Con tu ayuda — fondos públicos, inversionistas ángeles, empresas socias — podemos llegar a cada clínica y cada dueño de Chile. Y de ahí a Latinoamérica.
+    </p>
+
+    <div class="grid grid-3" style="max-width: 900px; margin: 32px auto 0;">
+      <div class="card" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.18);">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/30_star.svg" alt=""></div>
+        <h3 style="color: #fff;">Paw Voices</h3>
+        <p style="color: rgba(255,255,255,0.85);">Muro público. Respaldo real imposible de falsear.</p>
+      </div>
+      <div class="card" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.18);">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/26_clinic.svg" alt=""></div>
+        <h3 style="color: #fff;">Paw Companys</h3>
+        <p style="color: rgba(255,255,255,0.85);">Patrocinio mensual + insignia. Lo que sobra se destina a refugios con trazabilidad.</p>
+      </div>
+      <div class="card" style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.18);">
+        <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/29_target.svg" alt=""></div>
+        <h3 style="color: #fff;">Panel público</h3>
+        <p style="color: rgba(255,255,255,0.85);">Total recaudado, destinado y pendiente. Cada aporte es rastreable.</p>
+      </div>
+    </div>
+
+    <a href="mailto:pawfriendcl@gmail.com?subject=Me interesa Paw Friend" class="cta-btn">
+      ✉️ pawfriendcl@gmail.com
+    </a>
+    <p class="cta-tail">pawfriend.cl · SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · 78.328.659-9<br>Esta presentación está viva — cada dato se actualiza desde el panel interno de la app.</p>
+  </div>
+</section>
+
+<footer>
+  <p><strong>Paw Friend</strong> — Hecha en Chile, a mano, con inteligencia artificial.</p>
+  <p style="margin-top: 8px;">© 2026 Paw Friend · SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · 78.328.659-9 · Actualizado 2026-04-19</p>
+</footer>
+
+<script>
+  (function() {
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const dots = Array.from(document.querySelectorAll('.dot'));
+    const counter = document.getElementById('counter');
+    const progressBar = document.getElementById('progressBar');
+    const kbhint = document.getElementById('kbhint');
+    const total = slides.length;
+    let current = 0;
+
+    function updateActive(idx) {
+      current = Math.max(0, Math.min(total - 1, idx));
+      dots.forEach((d, i) => d.classList.toggle('active', i === current));
+      if (counter) counter.textContent = String(current + 1).padStart(2, '0') + ' / ' + String(total).padStart(2, '0');
+      if (progressBar) progressBar.style.width = ((current + 1) / total * 100) + '%';
+    }
+
+    function goTo(idx) {
+      const target = Math.max(0, Math.min(total - 1, idx));
+      slides[target].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+          const idx = slides.indexOf(entry.target);
+          if (idx !== -1) updateActive(idx);
+        }
+      });
+    }, { threshold: [0.5] });
+    slides.forEach(s => io.observe(s));
+
+    let hintHidden = false;
+    function hideHint() {
+      if (!hintHidden && kbhint) { kbhint.classList.add('hide'); hintHidden = true; }
+    }
+    document.addEventListener('keydown', (e) => {
+      if (['ArrowDown', 'PageDown', ' '].includes(e.key)) {
+        e.preventDefault(); goTo(current + 1); hideHint();
+      } else if (['ArrowUp', 'PageUp'].includes(e.key)) {
+        e.preventDefault(); goTo(current - 1); hideHint();
+      } else if (e.key === 'Home') {
+        e.preventDefault(); goTo(0); hideHint();
+      } else if (e.key === 'End') {
+        e.preventDefault(); goTo(total - 1); hideHint();
+      }
+    });
+
+    let scrollCount = 0;
+    window.addEventListener('scroll', () => {
+      scrollCount++;
+      if (scrollCount > 2) hideHint();
+    }, { passive: true });
+
+    updateActive(0);
+  })();
+</script>
+
+</body>
+</html>

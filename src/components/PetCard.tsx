@@ -153,7 +153,7 @@ const PetCard = ({
                 <AvatarImage src={ownerAvatar} alt={ownerName} />
                 <AvatarFallback className="bg-warm-gradient text-white font-semibold text-sm">
                   {(() => {
-                    // Show initials from real name (e.g., "Pedro Susaeta" -> "P.S.")
+                    // Show initials from real name (e.g., "Maria Lopez" -> "M.L.")
                     const nameParts = ownerName.trim().split(/\s+/);
                     if (nameParts.length >= 2) {
                       return `${nameParts[0][0].toUpperCase()}.${nameParts[nameParts.length - 1][0].toUpperCase()}.`;

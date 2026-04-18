@@ -240,5 +240,5 @@ Este documento se actualiza en cada milestone:
 - **Post 100 B2B activas**: medir costo por cliente servido vs benchmark SaaS LATAM.
 - **Cada 3 meses**: snapshot de commits, tests, edge fns para mantener datos frescos.
 
-**Responsable**: Pedro Susaeta Hidalgo (founder).
-**Revisor sugerido**: co-founder comercial + advisor financiero antes de data room.
+**Responsable**: Paw Founder (fundador).
+**Revisor sugerido**: socio comercial + asesor financiero antes del data room.

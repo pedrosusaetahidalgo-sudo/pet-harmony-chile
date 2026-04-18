@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Chat</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <path d="M 45 60 Q 45 50 55 50 L 145 50 Q 155 50 155 60 L 155 115 Q 155 125 145 125 L 90 125 L 70 150 L 75 125 L 55 125 Q 45 125 45 115 Z" fill="#FFFFFF"/>
+  <circle cx="78" cy="87" r="5" fill="#FCD34D"/>
+  <circle cx="100" cy="87" r="5" fill="#FCD34D"/>
+  <circle cx="122" cy="87" r="5" fill="#FCD34D"/>
+
+</svg>

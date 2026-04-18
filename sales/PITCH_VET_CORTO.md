@@ -69,5 +69,5 @@ Te toma 10 minutos. Si quedas conforme, eliges plan. Si no, lo borras sin compro
 
 ---
 
-Pedro Susaeta · <<TODO Pedro: agregar tu numero aqui>>
-pawfriend.cl · pedro.susaeta.hidalgo@gmail.com
+Equipo Paw Friend · <<TODO: agregar numero de contacto>>
+pawfriend.cl · pawfriendcl@gmail.com

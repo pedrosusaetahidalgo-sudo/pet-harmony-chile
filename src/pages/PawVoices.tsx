@@ -175,14 +175,12 @@ export default function PawVoices() {
         {/* Link al brief */}
         <section className="text-center text-sm text-muted-foreground space-y-1 pt-2">
           <p>
-            ¿Quieres más contexto? Descarga el brief completo desde{' '}
+            ¿Quieres más contexto? Pídenos el brief completo a{' '}
             <a
-              href="https://github.com/pedrosusaetahidalgo-sudo/pet-harmony-chile/blob/main/docs/BRIEF_PAW_VOICES.md"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="mailto:pawfriendcl@gmail.com?subject=Brief%20Paw%20Voices"
               className="underline hover:text-foreground"
             >
-              aquí
+              pawfriendcl@gmail.com
             </a>
             .
           </p>

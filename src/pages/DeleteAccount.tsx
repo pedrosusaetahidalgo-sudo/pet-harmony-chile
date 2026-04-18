@@ -38,11 +38,8 @@ const DeleteAccount = () => {
                 </li>
                 <li>
                   <strong>Por email:</strong> Envía un correo a{' '}
-                  <a
-                    href="mailto:pedro.susaeta.hidalgo@gmail.com"
-                    className="text-primary underline"
-                  >
-                    pedro.susaeta.hidalgo@gmail.com
+                  <a href="mailto:pawfriendcl@gmail.com" className="text-primary underline">
+                    pawfriendcl@gmail.com
                   </a>{' '}
                   con el asunto "Eliminar cuenta" desde el email asociado a tu cuenta. Procesaremos
                   tu solicitud en un máximo de 30 días.

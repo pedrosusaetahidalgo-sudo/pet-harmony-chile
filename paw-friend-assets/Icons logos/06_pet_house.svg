@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Pet House</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <path d="M 50 110 L 100 65 L 150 110 L 150 155 L 50 155 Z" fill="#FFFFFF"/>
+  <path d="M 45 115 L 100 60 L 155 115" stroke="#FCD34D" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <path d="M 85 155 L 85 128 Q 85 115 100 115 Q 115 115 115 128 L 115 155 Z" fill="#9333EA"/>
+  <ellipse cx="100.0" cy="146.8" rx="8.4" ry="6.8" transform="rotate(0 100.0 146.8)" fill="#FCD34D"/>
+  <ellipse cx="90.5" cy="137.0" rx="3.0" ry="4.2" transform="rotate(-22 90.5 137.0)" fill="#FCD34D"/>
+  <ellipse cx="96.6" cy="131.6" rx="2.7" ry="3.8" transform="rotate(-10 96.6 131.6)" fill="#FCD34D"/>
+  <ellipse cx="103.4" cy="131.6" rx="2.7" ry="3.8" transform="rotate(10 103.4 131.6)" fill="#FCD34D"/>
+  <ellipse cx="109.5" cy="137.0" rx="3.0" ry="4.2" transform="rotate(22 109.5 137.0)" fill="#FCD34D"/>
+
+</svg>

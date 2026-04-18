@@ -47,10 +47,10 @@ Si necesitas ayuda armando tu perfil, te ayudo en una llamada de 15 minutos.
 
 ## Contacto
 
-**Pedro Susaeta** · Fundador
+**Equipo Paw Friend**
 
-📱 WhatsApp: <<TODO Pedro: agregar tu número aquí>>
-✉️ Email: <<TODO Pedro: agregar tu email aquí>>
+📱 WhatsApp: <<TODO: agregar número de contacto>>
+✉️ Email: pawfriendcl@gmail.com
 🌐 pawfriend.cl
 📍 Santiago, Chile
 

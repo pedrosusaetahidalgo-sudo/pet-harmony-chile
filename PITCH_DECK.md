@@ -27,8 +27,8 @@
 
          Hecho en Chile, de pura mano, con IA de Claude.
 
-                    [Pedro Susaeta — Founder]
-            pedro.susaeta.hidalgo@gmail.com · pawfriend.cl
+                      [Paw Founder]
+              pawfriendcl@gmail.com · pawfriend.cl
                      Abril 2026 · Santiago, Chile
 ```
 
@@ -281,11 +281,11 @@ colchon operacional. Excedente se destina a causas (refugios).
 
 **Titulo**: *Quien lo construye.*
 
-**Founder**:
-- **Pedro Susaeta Hidalgo** — Software engineer, dueno de SpA SUSAETA GARNHAM SOFTWARE
-  ENGINEERING (78.328.659-9). Builder del producto completo (frontend, backend, mobile, DevOps).
-  Dueno de perro real (Kai, pastor suizo) — cliente N°1.
-- **Foto real + LinkedIn + GitHub**.
+**Fundador**:
+- **Paw Founder** — Ingeniero de software (10+ años). SpA SUSAETA GARNHAM SOFTWARE
+  ENGINEERING (78.328.659-9). Construyó el producto completo (frontend, backend, mobile, DevOps).
+  Dueño real de Kai (perro, pastor suizo) y Ema (gata) — clientes N°1 y 2.
+- **Perfil privado disponible bajo NDA**.
 
 **Advisors / mentoring** *(rellenar)*:
 - `[RELLENAR: nombre vet advisor clinico]` — Sofia Rosi (si acepta oficializar).
@@ -378,7 +378,7 @@ colchon operacional. Excedente se destina a causas (refugios).
 - Milestone-based reporting mensual (Sala de Inversion snapshot).
 
 **Contacto**:
-- pedro.susaeta.hidalgo@gmail.com · pawfriend.cl
+- pawfriendcl@gmail.com · pawfriend.cl
 - Calendly: `[RELLENAR link]`
 
 ---

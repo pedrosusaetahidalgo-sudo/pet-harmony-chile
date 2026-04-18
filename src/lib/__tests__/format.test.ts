@@ -37,7 +37,7 @@ describe('smartCapitalize', () => {
 
 describe('toTitleCase', () => {
   it('capitalizes each word', () => {
-    expect(toTitleCase('pedro susaeta')).toBe('Pedro Susaeta');
+    expect(toTitleCase('maria lopez')).toBe('Maria Lopez');
   });
 
   it('keeps prepositions lowercase except at start', () => {
