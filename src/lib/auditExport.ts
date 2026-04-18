@@ -411,6 +411,41 @@ const QUALITY_CHECK_DEFINITIONS: QualityCheckDefinition[] = [
     },
   },
   {
+    id: 'stale_verification_requests',
+    name: 'Verification requests pending >7 dias',
+    enabled: true,
+    run: async () => {
+      const sevenDaysAgo = new Date(Date.now() - 7 * 86400000).toISOString();
+      const { data } = await supabase
+        .from('verification_requests')
+        .select('id, requested_role, notes, created_at')
+        .eq('status', 'pendiente')
+        .lt('created_at', sevenDaysAgo);
+      const rows = data ?? [];
+      const n = rows.length;
+      // Clasificar: junk (ruido claro) vs legitimate (requiere decision humana)
+      const JUNK_RE = /^[a-z]{1,12}$|^(asd|qwe|test|prueba|jhq|wes|wed|hhh|bbb|yyy|ydu|wdw)/i;
+      const junk = rows.filter((r) => {
+        const txt = String(r.notes ?? '').trim();
+        if (txt.length < 5) return true;
+        if (!/\s/.test(txt) && JUNK_RE.test(txt)) return true;
+        return false;
+      }).length;
+      const legit = n - junk;
+      return {
+        name: 'Verification requests pending >7 dias',
+        result: `${n} pending (${junk} ruido auto-fixable, ${legit} requieren revision)`,
+        severity: legit > 0 ? 'warn' : n > 0 ? 'ok' : 'ok',
+        detail:
+          legit > 0
+            ? `Revisar desde Admin > Verificaciones. El auto-fixer ya purga los ${junk} junk en su proxima corrida.`
+            : n > 0
+              ? `Los ${junk} seran auto-rechazados en la proxima corrida de run_daily_auto_fixers().`
+              : 'OK',
+      };
+    },
+  },
+  {
     id: 'stale_bookings',
     name: 'Reservas confirmadas sin cierre',
     enabled: true,
@@ -572,7 +607,19 @@ const QUALITY_CHECK_DEFINITIONS: QualityCheckDefinition[] = [
     name: 'Tablas con 0 registros',
     enabled: true,
     run: async () => {
-      const tables = ['bookings', 'payment_history', 'service_reviews', 'provider_subscriptions'];
+      // Tablas estructuralmente vacias (features sin trafico aun): no son warning.
+      // Solo warn si aparece una NUEVA tabla inesperadamente vacia.
+      const expectedEmpty = new Set([
+        'bookings',
+        'payment_history',
+        'service_reviews',
+        'provider_subscriptions',
+        'orders',
+        'vet_bookings',
+        'content_reports',
+        'partner_submissions',
+      ]);
+      const tables = Array.from(expectedEmpty);
       const results = await Promise.all(
         tables.map(async (t) => {
           const { count } = await supabase.from(t).select('id', { count: 'exact', head: true });
@@ -580,11 +627,20 @@ const QUALITY_CHECK_DEFINITIONS: QualityCheckDefinition[] = [
         })
       );
       const empty = results.filter((r) => r.count === 0).map((r) => r.table);
+      const unexpectedEmpty = empty.filter((t) => !expectedEmpty.has(t));
       return {
         name: 'Tablas con 0 registros',
-        result: empty.length > 0 ? empty.join(', ') : 'Todas tienen datos',
-        severity: empty.length > 0 ? 'warn' : 'ok',
-        detail: empty.length > 0 ? 'Puede ser normal si la feature no se ha usado aun' : 'OK',
+        result:
+          empty.length > 0
+            ? `${empty.length} esperadas vacias: ${empty.join(', ')}`
+            : 'Todas tienen datos',
+        severity: unexpectedEmpty.length > 0 ? 'warn' : 'ok',
+        detail:
+          unexpectedEmpty.length > 0
+            ? `Inesperado: ${unexpectedEmpty.join(', ')}`
+            : empty.length > 0
+              ? 'Features nuevas sin trafico aun — esperado'
+              : 'OK',
       };
     },
   },
@@ -613,17 +669,18 @@ const QUALITY_CHECK_DEFINITIONS: QualityCheckDefinition[] = [
         return !cat.has(normalized);
       });
       const n = invalid.length;
-      const examples = invalid
+      const uniqueValues = Array.from(new Set(invalid.map((p) => String(p.breed).trim())));
+      const examples = uniqueValues
         .slice(0, 5)
-        .map((p) => `"${p.breed}" (${p.name})`)
+        .map((v) => `"${v}"`)
         .join(', ');
       return {
         name: 'Mascotas con raza fuera del catalogo',
-        result: `${n} de ${pets.length}`,
+        result: `${n} filas / ${uniqueValues.length} valores unicos (de ${pets.length} total)`,
         severity: n > 10 ? 'warn' : n > 0 ? 'warn' : 'ok',
         detail:
           n > 0
-            ? `Razas con typo o free-text. Ej: ${examples}${n > 5 ? ` (+${n - 5} mas)` : ''}`
+            ? `Free-text o typo. Valores: ${examples}${uniqueValues.length > 5 ? ` (+${uniqueValues.length - 5} mas)` : ''}. Fix causa raiz: usar Combobox en AddPet/EditPet.`
             : 'Todas las razas existen en el catalogo',
       };
     },
@@ -646,17 +703,18 @@ const QUALITY_CHECK_DEFINITIONS: QualityCheckDefinition[] = [
         return loc && !catalog.has(loc);
       });
       const n = invalid.length;
-      const examples = invalid
+      const uniqueValues = Array.from(new Set(invalid.map((p) => String(p.location).trim())));
+      const examples = uniqueValues
         .slice(0, 5)
-        .map((p) => `"${p.location}"`)
+        .map((v) => `"${v}"`)
         .join(', ');
       return {
         name: 'Perfiles con comuna fuera del catalogo',
-        result: `${n} de ${profiles.length} con location`,
+        result: `${n} filas / ${uniqueValues.length} valores unicos (de ${profiles.length} con location)`,
         severity: n > 0 ? 'warn' : 'ok',
         detail:
           n > 0
-            ? `Free-text no matcheable con comunas RM. Ej: ${examples}${n > 5 ? ` (+${n - 5} mas)` : ''}`
+            ? `Free-text no matcheable con comunas RM. Valores: ${examples}${uniqueValues.length > 5 ? ` (+${uniqueValues.length - 5} mas)` : ''}. Fix causa raiz: usar Combobox con COMUNAS_SANTIAGO en formulario de perfil.`
             : 'Todas las comunas existen en el catalogo',
       };
     },
