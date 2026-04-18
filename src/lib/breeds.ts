@@ -10,7 +10,7 @@ export interface BreedOption {
 
 export const BREEDS_BY_SPECIES: Record<string, BreedOption[]> = {
   perro: [
-    { value: 'quiltro_mestizo', label: 'Quiltro (mestizo)' },
+    { value: 'mestizo', label: 'Mestizo' },
     { value: 'pastor_aleman', label: 'Pastor alemán' },
     { value: 'labrador_retriever', label: 'Labrador retriever' },
     { value: 'golden_retriever', label: 'Golden retriever' },
