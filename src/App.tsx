@@ -12,6 +12,7 @@ import { isNative } from '@/lib/platform';
 import ProtectedRoute from './components/ProtectedRoute';
 import { ActiveRoleProvider } from './hooks/useActiveRole';
 import { RoleGuard } from './components/RoleGuard';
+import { FeatureGuard } from './components/FeatureGuard';
 
 /** Envuelve la página con AppLayout solo si el user está logueado.
  *  Para rutas públicas (directorio vets, perfiles públicos) que deben verse
@@ -232,13 +233,18 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
+                {/* Social: /feed, /comunidad, /comunidad/:slug — rutas con */}
+                {/* feature flags (FEED, LABS_COMMUNITY). Si la flag esta */}
+                {/* en false (ver src/lib/featureFlags.ts), redirigen a /home. */}
                 <Route
                   path="/feed"
                   element={
                     <ProtectedRoute>
-                      <AppLayout>
-                        <Feed />
-                      </AppLayout>
+                      <FeatureGuard flag="FEED">
+                        <AppLayout>
+                          <Feed />
+                        </AppLayout>
+                      </FeatureGuard>
                     </ProtectedRoute>
                   }
                 />
@@ -246,9 +252,11 @@ const App = () => (
                   path="/comunidad"
                   element={
                     <ProtectedRoute>
-                      <AppLayout>
-                        <Community />
-                      </AppLayout>
+                      <FeatureGuard flag="LABS_COMMUNITY">
+                        <AppLayout>
+                          <Community />
+                        </AppLayout>
+                      </FeatureGuard>
                     </ProtectedRoute>
                   }
                 />
@@ -256,9 +264,11 @@ const App = () => (
                   path="/comunidad/:slug"
                   element={
                     <ProtectedRoute>
-                      <AppLayout>
-                        <Community />
-                      </AppLayout>
+                      <FeatureGuard flag="LABS_COMMUNITY">
+                        <AppLayout>
+                          <Community />
+                        </AppLayout>
+                      </FeatureGuard>
                     </ProtectedRoute>
                   }
                 />
@@ -429,13 +439,17 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
+                {/* Chat: feature flag CHAT (hoy false en featureFlags.ts). */}
+                {/* Si se reactiva, quitar FeatureGuard o ajustar flag. */}
                 <Route
                   path="/chat"
                   element={
                     <ProtectedRoute>
-                      <AppLayout>
-                        <Chat />
-                      </AppLayout>
+                      <FeatureGuard flag="CHAT">
+                        <AppLayout>
+                          <Chat />
+                        </AppLayout>
+                      </FeatureGuard>
                     </ProtectedRoute>
                   }
                 />
@@ -443,9 +457,11 @@ const App = () => (
                   path="/chat/:conversationId"
                   element={
                     <ProtectedRoute>
-                      <AppLayout>
-                        <ChatConversation />
-                      </AppLayout>
+                      <FeatureGuard flag="CHAT">
+                        <AppLayout>
+                          <ChatConversation />
+                        </AppLayout>
+                      </FeatureGuard>
                     </ProtectedRoute>
                   }
                 />
@@ -684,6 +700,11 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
+                {/* Onboarding minimal: flows post-registro fullscreen (sin */}
+                {/* AppLayout intencionalmente). Ruta huerfana en sidebar */}
+                {/* porque son deeplinks desde el signup o email de bienvenida. */}
+                {/* Los componentes OnboardingDuenoMinimal/OnboardingVetMinimal */}
+                {/* estan listos para reactivar cuando se defina el flow formal. */}
                 <Route
                   path="/onboarding-mascota"
                   element={
