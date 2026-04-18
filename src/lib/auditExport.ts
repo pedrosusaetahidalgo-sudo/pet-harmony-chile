@@ -1571,8 +1571,8 @@ function buildExecutiveSummary(
 interface EdgeFunctionSummary {
   function_name: string;
   executions_24h: number;
-  real_failures_24h: number; // 5xx + timeouts + excepciones
-  client_errors_24h: number; // 4xx (rate limit, input invalido)
+  real_failures_24h: number;
+  client_errors_24h: number;
   avg_latency_ms: number | null;
   last_status: 'success' | 'error' | 'timeout' | 'unknown';
   last_run: string | null;
@@ -1581,6 +1581,87 @@ interface EdgeFunctionSummary {
     created_at: string;
     severity: string;
   }>;
+  /** Score 0-100 que responde "esta fn esta cumpliendo su funcion?".
+   *  100 = perfecta · 70+ = healthy · 40-69 = degradada · <40 = failing. */
+  health_score: number;
+  health_label: 'healthy' | 'ok' | 'degraded' | 'failing' | 'unused';
+}
+
+// Fns IA conocidas (threshold de latencia mayor).
+const AI_EDGE_FUNCTIONS = new Set([
+  'consultation-prep',
+  'symptom-triage',
+  'generate-vet-patient-summary',
+  'generate-medical-summary',
+  'bereavement-assistant',
+  'pet-assistant',
+  'medical-suggestions',
+  'breed-tips',
+  'moderate-service-promotion',
+  'ocr-vaccination-card',
+  'verify-service-provider',
+  'verify-vet-document',
+  'process-consultation-transcript',
+]);
+
+/**
+ * Calcula un score 0-100 que responde "la fn esta cumpliendo su funcion?".
+ *
+ * Ponderacion:
+ *   - 50 pts: confiabilidad (1 - real_failures/executions).
+ *   - 30 pts: latencia vs threshold de su categoria (IA 8s, resto 3s).
+ *   - 20 pts: tiene trafico O ultima corrida fue < 48h (si esta deployada
+ *     pero nadie la invoca, tambien cumple su funcion tecnicamente).
+ *
+ * Una fn sin ninguna ejecucion de referencia retorna label 'unused'.
+ */
+function calculateFunctionScore(fn: EdgeFunctionSummary): {
+  score: number;
+  label: EdgeFunctionSummary['health_label'];
+} {
+  const isAI = AI_EDGE_FUNCTIONS.has(fn.function_name);
+  const latencyThreshold = isAI ? 8000 : 3000;
+  const hasAnySignal = fn.executions_24h > 0 || fn.last_run !== null;
+
+  if (!hasAnySignal) {
+    // Nunca invocada, sin telemetria: no podemos evaluar.
+    return { score: 0, label: 'unused' };
+  }
+
+  // 50 pts confiabilidad.
+  let reliability = 50;
+  if (fn.executions_24h > 0) {
+    const successRate = 1 - fn.real_failures_24h / fn.executions_24h;
+    reliability = Math.round(50 * Math.max(0, successRate));
+  } else if (fn.last_status === 'error') {
+    // Sin trafico 24h pero ultimo estado fue error.
+    reliability = 25;
+  }
+  // Si sin trafico pero last_status success, mantiene 50 (probablemente cron ok).
+
+  // 30 pts latencia (solo penaliza si hay trafico real).
+  let latency = 30;
+  if (fn.avg_latency_ms != null && fn.executions_24h > 0) {
+    const ratio = fn.avg_latency_ms / latencyThreshold;
+    if (ratio <= 1) latency = 30;
+    else if (ratio <= 2) latency = Math.round(30 * (2 - ratio));
+    else latency = 0;
+  }
+
+  // 20 pts actividad / viveza.
+  let activity = 20;
+  if (fn.executions_24h === 0 && fn.last_run) {
+    const hoursSinceLastRun = (Date.now() - new Date(fn.last_run).getTime()) / 3600_000;
+    if (hoursSinceLastRun > 168)
+      activity = 5; // >1 semana sin correr
+    else if (hoursSinceLastRun > 48) activity = 10;
+    else activity = 15;
+  }
+
+  const score = Math.max(0, Math.min(100, reliability + latency + activity));
+  const label: EdgeFunctionSummary['health_label'] =
+    score >= 90 ? 'healthy' : score >= 70 ? 'ok' : score >= 40 ? 'degraded' : 'failing';
+  return { score, label };
 }
 
 async function fetchEdgeFunctionsReport(): Promise<{
@@ -1641,6 +1722,8 @@ async function fetchEdgeFunctionsReport(): Promise<{
           last_status: 'unknown',
           last_run: null,
           recent_errors: [],
+          health_score: 0,
+          health_label: 'unused',
         };
         rowMap.set(fn, row);
       }
@@ -1697,9 +1780,17 @@ async function fetchEdgeFunctionsReport(): Promise<{
       }
     }
 
+    // Enriquecer cada fn con su health_score antes de ordenar.
+    for (const fn of rowMap.values()) {
+      const { score, label } = calculateFunctionScore(fn);
+      fn.health_score = score;
+      fn.health_label = label;
+    }
     const functions = Array.from(rowMap.values()).sort((a, b) => {
+      // Orden: fallas primero, luego por score ascendente (peor al inicio).
       if (a.real_failures_24h !== b.real_failures_24h)
         return b.real_failures_24h - a.real_failures_24h;
+      if (a.health_score !== b.health_score) return a.health_score - b.health_score;
       return b.executions_24h - a.executions_24h;
     });
 
