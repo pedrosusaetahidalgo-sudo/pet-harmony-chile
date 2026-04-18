@@ -43,6 +43,8 @@ import {
   Zap,
   Award,
   PawPrint,
+  Heart,
+  Star,
 } from '@/lib/icons';
 import {
   AreaChart,
@@ -68,6 +70,13 @@ const TARGETS_90D = {
   mrr_clp: 1_900_000,
   retention_d30_pct: 30,
   wau_min: 500,
+  // Canal comunitario: donaciones one-shot via Flow + sponsors Paw Companys.
+  // No es revenue core, pero es proxy de NPS monetizable y moat social.
+  donations_clp: 500_000,
+  paw_companys: 3,
+  // Voluntad de pago (widget de feedback): % de respuestas "yes" en wouldPay.
+  willingness_yes_pct: 40,
+  rating_avg: 4.3,
 };
 
 const ANGEL_READY_THRESHOLD = {
@@ -256,6 +265,37 @@ const DATA_ROOM_DEFAULT: DataRoomItem[] = [
     detail: 'Data Processing Agreement para GDPR/CCPA',
     done: false,
   },
+  {
+    id: 'donations-live',
+    label: 'Flujo de donaciones en vivo',
+    detail: '/donaciones activo con Flow + mails de gracias',
+    done: true,
+  },
+  {
+    id: 'paw-voices-public',
+    label: 'Muralla Paw Voices publica',
+    detail: 'Mensajes reales de donantes visibles en /donaciones',
+    done: false,
+  },
+  {
+    id: 'paw-companys-first',
+    label: 'Primeros 3 Paw Companys',
+    detail: 'Sponsors empresariales con badge en /donaciones',
+    done: false,
+    critical: true,
+  },
+  {
+    id: 'transparencia-dashboard',
+    label: 'Dashboard publico de transparencia',
+    detail: 'Recaudado / destinado / refugios aliados',
+    done: false,
+  },
+  {
+    id: 'convenio-refugio',
+    label: 'Convenio con refugio aliado',
+    detail: 'Al menos 1 organizacion recibiendo excedente',
+    done: false,
+  },
 ];
 
 function loadChecklist(): DataRoomItem[] {
@@ -376,6 +416,16 @@ const FINANCING_DEFAULT: FinancingRoute[] = [
     requisito: 'Tesis LATAM expansion',
     status: 'no-iniciado',
     dilutivo: true,
+  },
+  {
+    id: 'paw-companys',
+    nombre: 'Paw Companys (sponsors empresariales)',
+    montoCLP: '$49.9K-$199.9K / mes',
+    montoUSD: '$55-220 / mes',
+    etapa: 'Traccion inicial',
+    requisito: '/donaciones publico + Paw Voices + dashboard de transparencia',
+    status: 'no-iniciado',
+    dilutivo: false,
   },
 ];
 
@@ -1066,6 +1116,96 @@ export default function AdminSalaInversion() {
     },
   });
 
+  // ── Comunidad: donaciones + voluntad de pago ──
+  // Signal de demanda monetizable que ningun competidor mide.
+  // wouldPay (yes/maybe/no) = predictor de conversion Premium.
+  // Donaciones = techo emocional por aporte voluntario (no subscription).
+  const { data: community, isLoading: communityLoading } = useQuery({
+    queryKey: ['sala-inversion-community'],
+    staleTime: 120_000,
+    refetchInterval: 300_000,
+    refetchOnWindowFocus: true,
+    queryFn: async () => {
+      const [donationsRes, ratingsRes] = await Promise.all([
+        sb
+          .from('donations')
+          .select('amount_clp, status, paid_at, created_at, thanked_at, user_id, source'),
+        sb
+          .from('feedback_in_app')
+          .select('app_rating, would_pay, created_at')
+          .gte('created_at', subDays(now, 90).toISOString()),
+      ]);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const donations = (donationsRes.data ?? []) as any[];
+      const paid = donations.filter((d) => d.status === 'paid');
+      const paidTotal = paid.reduce(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (s: number, d: any) => s + (Number(d.amount_clp) || 0),
+        0
+      );
+      const paidThisMonth = paid
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .filter((d: any) => new Date(d.paid_at ?? d.created_at) >= monthAgo)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .reduce((s: number, d: any) => s + (Number(d.amount_clp) || 0), 0);
+      const uniqueDonors = new Set(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        paid.map((d: any) => d.user_id).filter(Boolean)
+      ).size;
+      const avgTicket = paid.length > 0 ? Math.round(paidTotal / paid.length) : 0;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const thanksPending = paid.filter((d: any) => !d.thanked_at).length;
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const ratings = (ratingsRes.data ?? []) as any[];
+      const ratingsWithStars = ratings.filter(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (r: any) => typeof r.app_rating === 'number' && r.app_rating > 0
+      );
+      const avgRating =
+        ratingsWithStars.length > 0
+          ? ratingsWithStars.reduce(
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              (s: number, r: any) => s + Number(r.app_rating || 0),
+              0
+            ) / ratingsWithStars.length
+          : 0;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const withWouldPay = ratings.filter((r: any) => !!r.would_pay);
+      const wouldPayYes = withWouldPay.filter(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (r: any) => r.would_pay === 'yes'
+      ).length;
+      const wouldPayMaybe = withWouldPay.filter(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (r: any) => r.would_pay === 'maybe'
+      ).length;
+      const wouldPayNo = withWouldPay.filter(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (r: any) => r.would_pay === 'no'
+      ).length;
+      const wouldPayTotal = withWouldPay.length;
+      const yesPct = wouldPayTotal > 0 ? Math.round((wouldPayYes / wouldPayTotal) * 100) : 0;
+
+      return {
+        paidTotal,
+        paidThisMonth,
+        paidCount: paid.length,
+        uniqueDonors,
+        avgTicket,
+        thanksPending,
+        avgRating: Math.round(avgRating * 10) / 10,
+        ratingsCount: ratingsWithStars.length,
+        wouldPayYes,
+        wouldPayMaybe,
+        wouldPayNo,
+        wouldPayTotal,
+        yesPct,
+      };
+    },
+  });
+
   // ── Export brief ──
   const handleExportBrief = () => {
     const lines: string[] = [];
@@ -1112,6 +1252,20 @@ export default function AdminSalaInversion() {
     lines.push('=== MRR trend 6m ===');
     lines.push('Mes,MRR,Suscripciones');
     (mrrTrend ?? []).forEach((m) => lines.push(`${m.month},${m.mrr},${m.subs}`));
+    lines.push('');
+    lines.push('=== Comunidad (donaciones + voluntad de pago) ===');
+    lines.push(`Donaciones recaudadas total (CLP),${community?.paidTotal ?? 0}`);
+    lines.push(`Donaciones mes actual (CLP),${community?.paidThisMonth ?? 0}`);
+    lines.push(`Donaciones pagadas (count),${community?.paidCount ?? 0}`);
+    lines.push(`Donantes unicos,${community?.uniqueDonors ?? 0}`);
+    lines.push(`Ticket promedio (CLP),${community?.avgTicket ?? 0}`);
+    lines.push(`Mails de gracias pendientes,${community?.thanksPending ?? 0}`);
+    lines.push(`Rating promedio (1-5),${community?.avgRating ?? 0}`);
+    lines.push(`Ratings recibidos 90d,${community?.ratingsCount ?? 0}`);
+    lines.push(`Would pay - YES %,${community?.yesPct ?? 0}`);
+    lines.push(
+      `Would pay raw,yes=${community?.wouldPayYes ?? 0} maybe=${community?.wouldPayMaybe ?? 0} no=${community?.wouldPayNo ?? 0}`
+    );
 
     const csv = lines.join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -1576,6 +1730,114 @@ export default function AdminSalaInversion() {
           </CardContent>
         </Card>
 
+        {/* ── Comunidad: donaciones + voluntad de pago ── */}
+        <Card className="bg-white border-slate-200 shadow-sm">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base font-semibold text-slate-900 flex items-center gap-2">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-50 text-rose-600 ring-1 ring-rose-100">
+                <Heart className="h-4 w-4" />
+              </div>
+              <Link
+                to="/admin?section=content&sub=feedback&tab=donaciones"
+                className="hover:text-rose-700 transition-colors"
+              >
+                Comunidad: donaciones + voluntad de pago &rarr;
+              </Link>
+            </CardTitle>
+            <CardDescription className="text-sm text-slate-600">
+              Signal unico para VC: cuantos usuarios pagan voluntariamente (donaciones) y cuantos
+              dicen "si pagaria" en el widget de feedback. Predictor de conversion Premium + techo
+              emocional del producto. No confundir con MRR: donaciones son one-shot.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <KpiCard
+                title="Donaciones total"
+                value={formatCLPCompact(community?.paidTotal ?? 0)}
+                icon={Heart}
+                tone="coral"
+                description={`${community?.paidCount ?? 0} aportes · ${community?.uniqueDonors ?? 0} donantes unicos`}
+                loading={communityLoading}
+                to="/admin?section=content&sub=feedback&tab=donaciones"
+              />
+              <KpiCard
+                title="Este mes"
+                value={formatCLPCompact(community?.paidThisMonth ?? 0)}
+                icon={DollarSign}
+                tone="emerald"
+                description={`Ticket promedio ${formatCLPCompact(community?.avgTicket ?? 0)}`}
+                loading={communityLoading}
+              />
+              <KpiCard
+                title="Rating app"
+                value={
+                  community?.ratingsCount ? `${(community?.avgRating ?? 0).toFixed(1)} / 5` : '—'
+                }
+                icon={Star}
+                tone="gold"
+                description={`${community?.ratingsCount ?? 0} ratings 90d`}
+                loading={communityLoading}
+                to="/admin?section=content&sub=feedback&tab=recepcion"
+                alert={Boolean(
+                  community?.ratingsCount && (community?.avgRating ?? 0) < TARGETS_90D.rating_avg
+                )}
+              />
+              <KpiCard
+                title="Would pay (yes)"
+                value={community?.wouldPayTotal ? `${community?.yesPct ?? 0}%` : '—'}
+                icon={TrendingUp}
+                tone={
+                  (community?.yesPct ?? 0) >= TARGETS_90D.willingness_yes_pct ? 'emerald' : 'brand'
+                }
+                description={`yes ${community?.wouldPayYes ?? 0} · maybe ${community?.wouldPayMaybe ?? 0} · no ${community?.wouldPayNo ?? 0}`}
+                loading={communityLoading}
+                to="/admin?section=content&sub=feedback&tab=recepcion"
+              />
+            </div>
+
+            <div className="mt-5 space-y-3">
+              <MetaRow
+                icon={Heart}
+                label="Donaciones acumuladas (CLP)"
+                current={community?.paidTotal ?? 0}
+                target={TARGETS_90D.donations_clp}
+                formatter={formatCLPCompact}
+              />
+              <MetaRow
+                icon={Star}
+                label="Rating promedio"
+                current={Math.round((community?.avgRating ?? 0) * 100) / 100}
+                target={TARGETS_90D.rating_avg}
+                formatter={(v) => v.toFixed(1)}
+              />
+              <MetaRow
+                icon={TrendingUp}
+                label="Would pay (yes %)"
+                current={community?.yesPct ?? 0}
+                target={TARGETS_90D.willingness_yes_pct}
+                suffix="%"
+              />
+            </div>
+
+            {(community?.thanksPending ?? 0) > 0 && (
+              <div className="mt-4 flex items-center gap-2.5 p-3.5 rounded-xl border border-amber-200 bg-amber-50">
+                <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0" />
+                <p className="text-sm text-amber-800 flex-1">
+                  {community?.thanksPending} mails de gracias pendientes. Cada donante merece
+                  confirmacion + mensaje personal antes de 24h.
+                </p>
+                <Link
+                  to="/admin?section=content&sub=feedback&tab=donaciones"
+                  className="text-sm text-amber-800 font-semibold underline hover:text-amber-900 shrink-0"
+                >
+                  Ir a donaciones &rarr;
+                </Link>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* ── Leads funnel ── */}
         <Card className="bg-white border-slate-200 shadow-sm">
           <CardHeader className="pb-3">
@@ -1820,6 +2082,8 @@ export default function AdminSalaInversion() {
                       </td>
                       <td className="py-3 pr-4 sm:pr-0">
                         <button
+                          type="button"
+                          aria-label={`Cambiar estado de ${route.nombre}`}
                           onClick={() => cycleFinancingStatus(route.id)}
                           className={cn(
                             'px-2.5 py-1 rounded-md text-[11px] font-semibold border transition-all',
