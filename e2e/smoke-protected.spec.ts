@@ -5,34 +5,66 @@ import { test, expect } from '@playwright/test';
  * Sin sesión → deben redirigir a /auth.
  * Con sesión → deben cargar sin crash.
  *
- * Estos tests verifican que ProtectedRoute funciona y que las páginas
- * no crashean al cargarse. No prueban lógica de negocio.
+ * Cobertura 2026-04-19: 30+ rutas protegidas (dueño + provider + admin).
+ * No prueban lógica de negocio, solo que ProtectedRoute funciona y no crashean.
  */
 
 const PROTECTED_ROUTES = [
+  // Core dueño
   { path: '/home', name: 'Dashboard principal' },
-  { path: '/feed', name: 'Feed social' },
-  { path: '/comunidad', name: 'Comunidad / Grupos' },
   { path: '/my-pets', name: 'Mis mascotas' },
   { path: '/add-pet', name: 'Agregar mascota' },
-  { path: '/medical-records', name: 'Registros médicos' },
+  { path: '/edit-pet/test-dummy-id', name: 'Editar mascota' },
+  { path: '/ficha/test-dummy-id', name: 'Ficha clínica' },
+  { path: '/medical-records', name: 'Registros médicos (legacy redirect)' },
+  // Ficha clinica
   { path: '/reminders', name: 'Recordatorios' },
+  { path: '/rutinas', name: 'Rutinas' },
+  { path: '/calendario', name: 'Calendario unificado' },
+  // Causas
   { path: '/adoption', name: 'Adopción' },
+  { path: '/donantes-sangre', name: 'Donantes de sangre' },
+  { path: '/en-memoria', name: 'En memoria (memorial)' },
+  // Social (hoy con FeatureGuard redirect)
+  { path: '/feed', name: 'Feed social' },
+  { path: '/comunidad', name: 'Comunidad / Grupos' },
+  { path: '/chat', name: 'Mensajes' },
+  // Servicios
   { path: '/servicios', name: 'Directorio servicios' },
   { path: '/services/walkers', name: 'Paseadores' },
-  // '/services/vets' redirige a /veterinarios (pública) — ver smoke-public.spec.ts
   { path: '/services/sitters', name: 'Cuidadores' },
   { path: '/services/trainers', name: 'Entrenadores' },
   { path: '/services/groomers', name: 'Peluqueros' },
+  { path: '/peluquero/perfil', name: 'Perfil peluquero' },
   { path: '/maps', name: 'Mapa de servicios' },
-  { path: '/chat', name: 'Mensajes' },
+  // Perfil y cuenta
   { path: '/profile', name: 'Mi perfil' },
-  { path: '/settings', name: 'Configuración' },
-  { path: '/upgrade', name: 'Upgrade Premium' },
-  { path: '/mis-reservas', name: 'Mis reservas' },
+  { path: '/user/test-dummy-id', name: 'Perfil de otro usuario' },
+  { path: '/settings', name: 'Configuración (redirect)' },
+  // Monetizacion
+  { path: '/donaciones', name: 'Donaciones' },
+  { path: '/paw-core', name: 'Paw Core (identidad)' },
+  { path: '/paw-member', name: 'Paw Member (aporte personal)' },
+  { path: '/upgrade', name: 'Upgrade (redirect a paw-member)' },
+  // Gamificacion
   { path: '/paw-game', name: 'Paw Game' },
+  { path: '/paw-collection', name: 'Paw Collection' },
+  { path: '/misiones', name: 'Misiones' },
+  // Reservas + reportes
+  { path: '/mis-reservas', name: 'Mis reservas' },
+  { path: '/reportes', name: 'Reportes' },
+  { path: '/panel-pro', name: 'Panel Pro (analytics)' },
+  // Onboarding (huerfanos intencionalmente)
+  { path: '/onboarding-mascota', name: 'Onboarding dueño minimal' },
+  { path: '/onboarding-vet', name: 'Onboarding vet minimal' },
+  // Provider
   { path: '/provider/dashboard', name: 'Dashboard proveedor' },
+  { path: '/provider/pacientes', name: 'Pacientes proveedor' },
   { path: '/provider/profile-edit', name: 'Editar perfil proveedor' },
+  // Admin only
+  { path: '/admin', name: 'Panel admin' },
+  { path: '/analytics-demo', name: 'Analytics demo (admin)' },
+  { path: '/demo', name: 'Demo admin' },
 ];
 
 test.describe('Rutas protegidas — sin sesión redirigen a /auth', () => {
