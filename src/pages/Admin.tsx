@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import {
   Shield,
@@ -24,6 +25,8 @@ import {
   ChevronRight,
   User,
   Download,
+  Trophy,
+  RefreshCw,
 } from '@/lib/icons';
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet';
 import {
@@ -64,6 +67,7 @@ import AdminLeadsCRM from '@/components/admin/AdminLeadsCRM';
 import AdminFeedback from '@/components/admin/AdminFeedback';
 import AdminBookingsPanel from '@/components/admin/AdminBookingsPanel';
 import AdminExports from '@/components/admin/AdminExports';
+import AdminSalaInversion from '@/components/admin/AdminSalaInversion';
 import { useAdminRealtimeSubscriptions } from '@/hooks/useAdminRealtimeSubscriptions';
 
 // ── Section definitions ──────────────────────────────────
@@ -77,6 +81,7 @@ interface Section {
 const SECTIONS: Section[] = [
   // Group 1: Core
   { id: 'dashboard', label: 'Dashboard', icon: BarChart3, group: 1 },
+  { id: 'sala-inversion', label: 'Sala de Inversion', icon: Trophy, group: 1 },
   { id: 'analytics', label: 'Analytics', icon: Activity, group: 1 },
   // Group 2: Operations
   { id: 'bookings', label: 'Reservas', icon: Calendar, group: 2 },
@@ -417,6 +422,31 @@ const Admin = () => {
   });
   const [mobileOpen, setMobileOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
+  const [isRefreshingAll, setIsRefreshingAll] = useState(false);
+  const queryClient = useQueryClient();
+
+  // Botón global: invalida todas las queries del admin (prefix 'admin-*').
+  // Util cuando el realtime se desconecto o el usuario volvio de pestaña
+  // y quiere forzar actualizacion sin ir panel por panel.
+  const handleRefreshAll = useCallback(async () => {
+    setIsRefreshingAll(true);
+    try {
+      await queryClient.invalidateQueries({
+        predicate: (query) => {
+          const key = String(query.queryKey[0] ?? '');
+          return key.startsWith('admin-') || key.startsWith('admin_');
+        },
+      });
+      toast.success('Admin actualizado — todos los paneles recargaron datos');
+    } catch (err) {
+      toast.error('No se pudo refrescar. Intenta de nuevo.');
+      console.error(err);
+    } finally {
+      // Pequeno delay para que la animacion del spinner se vea aunque
+      // las queries resuelvan rapido.
+      setTimeout(() => setIsRefreshingAll(false), 500);
+    }
+  }, [queryClient]);
 
   useAdminRealtimeSubscriptions();
 
@@ -491,6 +521,8 @@ const Admin = () => {
     switch (activeSection) {
       case 'dashboard':
         return <AdminDashboard />;
+      case 'sala-inversion':
+        return <AdminSalaInversion />;
       case 'analytics':
         return <AdminAnalytics />;
       case 'bookings':
@@ -580,6 +612,19 @@ const Admin = () => {
             <kbd className="ml-1 px-1.5 py-0.5 rounded bg-slate-700/60 text-[10px] font-mono text-slate-500">
               Ctrl+K
             </kbd>
+          </button>
+
+          {/* Refrescar todo */}
+          <button
+            onClick={handleRefreshAll}
+            disabled={isRefreshingAll}
+            title="Refresca todos los paneles del admin a la vez (equivale a entrar a cada uno y tocar su boton refresh)"
+            className="flex items-center gap-1.5 h-8 px-2.5 rounded-md border border-slate-700 bg-slate-800/50 text-slate-300 text-xs hover:border-indigo-500/40 hover:text-indigo-300 transition-colors disabled:opacity-60"
+          >
+            <RefreshCw className={cn('h-3.5 w-3.5', isRefreshingAll && 'animate-spin')} />
+            <span className="hidden md:inline">
+              {isRefreshingAll ? 'Refrescando...' : 'Refrescar todo'}
+            </span>
           </button>
 
           {/* Notification bell */}

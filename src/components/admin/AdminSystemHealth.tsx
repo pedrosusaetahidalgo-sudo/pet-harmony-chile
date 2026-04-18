@@ -613,10 +613,14 @@ export default function AdminSystemHealth() {
 
   const handlePingAll = useCallback(async () => {
     setPingingAll(true);
-    // Inicializa todas como "pinging"
     const names = EDGE_FUNCTIONS.map((f) => f.name);
     setPingState(Object.fromEntries(names.map((n) => [n, { status: 'pinging' as const }])));
-    // Corre en paralelo con limite de concurrencia 5 para no saturar
+
+    // Contadores locales — NO leer state de React al final (closure captura
+    // el valor viejo y el toast siempre saldria 0/N). Fix del bug previo.
+    let okCount = 0;
+    let errCount = 0;
+
     const concurrency = 5;
     let idx = 0;
     const workers = Array.from({ length: concurrency }).map(async () => {
@@ -624,15 +628,20 @@ export default function AdminSystemHealth() {
         const i = idx++;
         const n = names[i];
         const result = await pingFunction(n);
+        if (result.status === 'ok') okCount++;
+        else errCount++;
         setPingState((prev) => ({ ...prev, [n]: result }));
       }
     });
     await Promise.all(workers);
     setPingingAll(false);
-    const results = Object.values(pingState);
-    const ok = results.filter((r) => r?.status === 'ok').length;
-    toast.success(`Ping completado: ${ok}/${names.length} respondieron OK`);
-  }, [pingFunction, pingState]);
+
+    if (errCount === 0) {
+      toast.success(`Ping completado: ${okCount}/${names.length} respondieron OK`);
+    } else {
+      toast.info(`Ping completado: ${okCount} OK, ${errCount} con error (de ${names.length})`);
+    }
+  }, [pingFunction]);
 
   // Health logs desde system_health_log + errors desde error_logs
   const {
