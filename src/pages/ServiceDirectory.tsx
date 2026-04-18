@@ -406,6 +406,29 @@ const ServiceDirectory = () => {
     commune: 'all',
   });
   const [availabilityDates, setAvailabilityDates] = useState<Record<string, string[]>>({});
+  // provider_availability_rules por provider_id (booking V2). Cada regla:
+  // { day_of_week, start_time, end_time }. Usado para filter por fecha/hora real.
+  const [availabilityRules, setAvailabilityRules] = useState<
+    Record<string, Array<{ day_of_week: number; start_time: string; end_time: string }>>
+  >({});
+  // Comuna del user (para badge "En tu comuna"). Carga una vez al montar.
+  const [userCommune, setUserCommune] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user?.id) return;
+    let cancel = false;
+    supabase
+      .from('profiles')
+      .select('location')
+      .eq('id', user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (!cancel) setUserCommune(data?.location ?? null);
+      });
+    return () => {
+      cancel = true;
+    };
+  }, [user?.id]);
 
   useEffect(() => {
     if (!isValidType) return;
@@ -461,15 +484,23 @@ const ServiceDirectory = () => {
       if (error) throw error;
 
       if (providersData && providersData.length > 0) {
-        // Load availability
+        // Load availability legacy (tabla provider_availability) y v2 (rules) en paralelo.
         const userIds = providersData.map((p) => p.user_id).filter(Boolean);
-        const { data: availData } = await supabase
-          .from('provider_availability')
-          .select('user_id, date')
-          .eq('provider_type', config.primaryServiceType)
-          .eq('is_available', true)
-          .gte('date', format(new Date(), 'yyyy-MM-dd'))
-          .in('user_id', userIds);
+        const providerIds = providersData.map((p) => p.id);
+        const [{ data: availData }, { data: rulesData }] = await Promise.all([
+          supabase
+            .from('provider_availability')
+            .select('user_id, date')
+            .eq('provider_type', config.primaryServiceType)
+            .eq('is_available', true)
+            .gte('date', format(new Date(), 'yyyy-MM-dd'))
+            .in('user_id', userIds),
+          supabase
+            .from('provider_availability_rules')
+            .select('provider_id, day_of_week, start_time, end_time')
+            .eq('is_active', true)
+            .in('provider_id', providerIds),
+        ]);
 
         const availMap: Record<string, string[]> = {};
         availData?.forEach((a) => {
@@ -477,6 +508,20 @@ const ServiceDirectory = () => {
           availMap[a.user_id].push(a.date);
         });
         setAvailabilityDates(availMap);
+
+        const rulesMap: Record<
+          string,
+          Array<{ day_of_week: number; start_time: string; end_time: string }>
+        > = {};
+        rulesData?.forEach((r) => {
+          if (!rulesMap[r.provider_id]) rulesMap[r.provider_id] = [];
+          rulesMap[r.provider_id].push({
+            day_of_week: r.day_of_week,
+            start_time: r.start_time,
+            end_time: r.end_time,
+          });
+        });
+        setAvailabilityRules(rulesMap);
 
         setProviders(
           providersData.map((p) => ({
@@ -516,14 +561,30 @@ const ServiceDirectory = () => {
       if (filters.date) {
         const dateStr = format(filters.date, 'yyyy-MM-dd');
         const providerAvail = availabilityDates[provider.user_id] || [];
-        matchesDate = providerAvail.includes(dateStr);
+        const legacyMatch = providerAvail.includes(dateStr);
+        // v2: si el provider tiene rules para el day_of_week de la fecha seleccionada
+        const dow = filters.date.getDay();
+        const providerRules = availabilityRules[provider.id] || [];
+        const v2Match = providerRules.some((r) => r.day_of_week === dow);
+        matchesDate = legacyMatch || v2Match;
       }
 
       let matchesAvailableNow = true;
       if (filters.availableNow) {
-        const todayStr = format(new Date(), 'yyyy-MM-dd');
+        const now = new Date();
+        const todayStr = format(now, 'yyyy-MM-dd');
         const providerAvail = availabilityDates[provider.user_id] || [];
-        matchesAvailableNow = providerAvail.includes(todayStr);
+        const legacyMatch = providerAvail.includes(todayStr);
+        // v2: rule activa HOY cuya hora actual caiga en el rango
+        const providerRules = availabilityRules[provider.id] || [];
+        const nowHM = now.toTimeString().slice(0, 5);
+        const v2Match = providerRules.some(
+          (r) =>
+            r.day_of_week === now.getDay() &&
+            r.start_time.slice(0, 5) <= nowHM &&
+            nowHM < r.end_time.slice(0, 5)
+        );
+        matchesAvailableNow = legacyMatch || v2Match;
       }
 
       // Comuna: matchea si es la base O esta en service_areas. 'all' = sin filtro.
@@ -698,6 +759,7 @@ const ServiceDirectory = () => {
                   providerType={config.primaryServiceType}
                   onViewProfile={() => handleOpenProfile(provider)}
                   onBook={() => handleOpenBooking(provider)}
+                  userCommune={userCommune}
                 />
               ))}
             </div>

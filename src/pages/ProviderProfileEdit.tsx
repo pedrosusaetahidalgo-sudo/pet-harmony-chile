@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Camera, ExternalLink, Loader2, Save, Stethoscope } from '@/lib/icons';
 import { PageHeader } from '@/components/PageHeader';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -57,6 +57,9 @@ const EMPTY: ProviderProfileForm = {
 
 export default function ProviderProfileEdit() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  // ?tab=schedule abre directo en horarios (post-activacion de servicios).
+  const initialTab = searchParams.get('tab') ?? 'info';
   const { user } = useAuth();
   const { data: provider, isLoading } = useMyProvider();
   const upsert = useUpsertProviderProfile();
@@ -210,7 +213,7 @@ export default function ProviderProfileEdit() {
             </Card>
 
             {/* Tabs */}
-            <Tabs defaultValue="info" className="space-y-4">
+            <Tabs defaultValue={initialTab} className="space-y-4">
               <TabsList className="grid grid-cols-5 w-full h-9">
                 <TabsTrigger value="info" className="text-xs">
                   Info

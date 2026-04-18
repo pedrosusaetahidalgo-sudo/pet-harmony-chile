@@ -179,10 +179,13 @@ export function OfferServicesDialog({ open, onOpenChange }: Props) {
       });
       if (error) throw error;
 
-      toast.success('Servicios activados! Ya apareces en el directorio.');
+      toast.success('Servicios activados! Ya apareces en el directorio.', {
+        description: 'Puedes ajustar tus horarios cuando quieras desde tu perfil.',
+      });
       queryClient.invalidateQueries({ queryKey: ['can-offer-services'] });
       handleClose(false);
-      navigate('/provider/dashboard');
+      // Lleva directo al tab de horarios para afinar el setup inicial.
+      navigate('/provider/profile-edit?tab=schedule');
       void data;
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Error al activar servicios';

@@ -27,6 +27,8 @@ interface ProviderProfileCardProps {
       avatar_url: string | null;
     };
     bio?: string;
+    commune?: string | null;
+    service_areas?: string[] | null;
     total_reviews?: number;
     is_verified?: boolean;
     experience_years?: number;
@@ -42,6 +44,9 @@ interface ProviderProfileCardProps {
   onViewProfile: () => void;
   onBook: () => void;
   onMessage?: () => void;
+  /** Comuna del usuario que visualiza (del profile). Si matchea commune o
+   * service_areas del provider, muestra badge "En tu comuna". */
+  userCommune?: string | null;
   className?: string;
 }
 
@@ -94,12 +99,23 @@ export const ProviderProfileCard = ({
   onViewProfile,
   onBook,
   onMessage,
+  userCommune,
   className = '',
 }: ProviderProfileCardProps) => {
   const config = providerTypeConfig[providerType];
 
   const price = provider._price ?? 0;
   const totalCount = provider._totalCount ?? 0;
+
+  const matchesUserCommune = (() => {
+    if (!userCommune) return false;
+    const target = userCommune.toLowerCase().trim();
+    if (!target) return false;
+    const providerCommune = (provider.commune ?? '').toLowerCase().trim();
+    if (providerCommune === target) return true;
+    const areas = (provider.service_areas ?? []).map((a) => String(a).toLowerCase().trim());
+    return areas.includes(target);
+  })();
 
   return (
     <Card
@@ -152,6 +168,15 @@ export const ProviderProfileCard = ({
                       totalServices={totalCount}
                       className="mt-1"
                     />
+                  )}
+                  {matchesUserCommune && (
+                    <Badge
+                      variant="outline"
+                      className="mt-1 bg-emerald-500/10 text-emerald-700 border-emerald-500/30 text-xs"
+                    >
+                      <MapPin className="h-3 w-3 mr-1" />
+                      En tu comuna
+                    </Badge>
                   )}
                 </div>
               </div>
