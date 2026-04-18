@@ -335,21 +335,38 @@ function useAdminPendingCounts() {
   return useQuery({
     queryKey: ['admin-pending-counts'],
     queryFn: async () => {
-      const [providersRes, verificationsRes, moderationRes] = await Promise.all([
-        supabase
-          .from('service_providers')
-          .select('id', { count: 'exact', head: true })
-          .eq('status', 'pending'),
-        supabase
-          .from('verification_requests')
-          .select('id', { count: 'exact', head: true })
-          .eq('status', 'pendiente'),
-        supabase
-          .from('content_reports')
-          .select('id', { count: 'exact', head: true })
-          .eq('status', 'pending'),
-      ]);
-      return (providersRes.count ?? 0) + (verificationsRes.count ?? 0) + (moderationRes.count ?? 0);
+      const [providersRes, verificationsRes, moderationRes, voicesRes, companysRes] =
+        await Promise.all([
+          supabase
+            .from('service_providers')
+            .select('id', { count: 'exact', head: true })
+            .eq('status', 'pending'),
+          supabase
+            .from('verification_requests')
+            .select('id', { count: 'exact', head: true })
+            .eq('status', 'pendiente'),
+          supabase
+            .from('content_reports')
+            .select('id', { count: 'exact', head: true })
+            .eq('status', 'pending'),
+          // 2026-04-19: agregar Paw Voices pendientes al badge global.
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (supabase.from('paw_voices' as any) as any)
+            .select('id', { count: 'exact', head: true })
+            .eq('status', 'pending'),
+          // 2026-04-19: agregar Paw Companys pendientes al badge global.
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (supabase.from('paw_companys' as any) as any)
+            .select('id', { count: 'exact', head: true })
+            .eq('status', 'pending'),
+        ]);
+      return (
+        (providersRes.count ?? 0) +
+        (verificationsRes.count ?? 0) +
+        (moderationRes.count ?? 0) +
+        (voicesRes.count ?? 0) +
+        (companysRes.count ?? 0)
+      );
     },
     staleTime: 60_000,
     refetchInterval: 120_000,

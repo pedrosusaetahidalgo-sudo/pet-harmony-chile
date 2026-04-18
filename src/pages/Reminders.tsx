@@ -178,13 +178,8 @@ export default function Reminders() {
         {showUsageBar && (
           <PremiumNudge
             feature="max_reminders"
-            title={reminderAccess.allowed ? 'Plan gratuito' : 'Límite alcanzado'}
-            description={
-              reminderAccess.allowed
-                ? 'Tienes un número limitado de recordatorios activos. Con Premium son ilimitados.'
-                : 'Llegaste al límite de recordatorios de tu plan. Mejora a Premium para agregar más.'
-            }
-            usage={{ current: activeCount, max: 3 }}
+            title="Recordatorios sin límite 💛"
+            description="Paw Friend es gratis para todos, sin límite de recordatorios. Si te sirve, apóyanos con un aporte voluntario."
             variant="inline"
           />
         )}

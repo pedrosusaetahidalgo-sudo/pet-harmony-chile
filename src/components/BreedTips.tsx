@@ -110,9 +110,8 @@ export function BreedTips({ breed, species }: BreedTipsProps) {
       return (
         <PremiumNudge
           feature="ai_behavior_analysis"
-          title="Análisis por raza agotado"
-          description="Usaste tu análisis gratuito este mes. Con Premium tienes análisis ilimitados para cada raza."
-          usage={{ current: 1, max: 1 }}
+          title="¿Te sirvió el análisis?"
+          description="Si los tips por raza te ayudaron, apóyanos con un aporte para que sigamos siendo gratis."
           variant="card"
         />
       );

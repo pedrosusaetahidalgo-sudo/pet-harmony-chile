@@ -57,8 +57,8 @@ export function ProfileSettingsList({
     },
     {
       icon: CreditCard,
-      label: isPremium ? 'Mi plan y facturación' : 'Mejorar a Premium',
-      onClick: () => navigate('/upgrade'),
+      label: isPremium ? 'Mi membresía Paw Member' : 'Ser Paw Member 💛',
+      onClick: () => navigate('/paw-member'),
     },
     {
       icon: Link2,

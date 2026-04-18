@@ -608,13 +608,15 @@ const AddPet = () => {
                 </div>
               </div>
               <CardTitle className="text-2xl">
-                Suma más mascotas con{' '}
-                <span className="bg-premium-gradient bg-clip-text text-transparent">Premium</span>
+                Agrega todas las mascotas que{' '}
+                <span className="bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">
+                  quieras
+                </span>
               </CardTitle>
               <CardDescription className="text-base mt-2 leading-relaxed">
-                Tu plan gratis incluye 1 mascota. Con Premium agregas todas las que quieras y
-                desbloqueas la ficha clínica completa, recordatorios ilimitados y exportación de
-                fichas.
+                Paw Friend es gratis para todos. Puedes agregar todas las mascotas que necesites,
+                con ficha clínica completa, recordatorios ilimitados y exportación PDF. Si te sirve,
+                apóyanos con un aporte voluntario.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">

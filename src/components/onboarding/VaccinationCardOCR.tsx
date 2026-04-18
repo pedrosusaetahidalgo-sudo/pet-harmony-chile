@@ -211,9 +211,8 @@ export function VaccinationCardOCR({ petId, onSaved }: Props) {
             {!result && !ocrAccess.allowed && (
               <PremiumNudge
                 feature="ocr_scans"
-                title="Escaneos de carnet agotados"
-                description="Usaste tu escaneo gratuito este mes. Con Premium tienes escaneos ilimitados."
-                usage={{ current: scansUsed, max: 1 }}
+                title="¿Te sirvió el escaneo del carnet?"
+                description="Escanear con IA consume recursos. Si te sirve, apóyanos para que siga siendo gratis."
                 variant="card"
               />
             )}

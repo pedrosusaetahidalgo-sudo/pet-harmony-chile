@@ -244,8 +244,8 @@ export function TabHistorial({ petId }: { petId: string }) {
       {isHistoryLimited && (
         <PremiumNudge
           feature="medical_history"
-          title="Ficha clínica limitada a 6 meses"
-          description="Con Premium puedes ver todo el historial completo de tu mascota, sin límite de fecha."
+          title="Historial clínico completo"
+          description="Tienes acceso al historial completo de tu mascota sin límite de fecha. Si te sirve, apóyanos para seguir siendo gratis."
           variant="inline"
         />
       )}

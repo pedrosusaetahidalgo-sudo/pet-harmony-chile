@@ -124,7 +124,7 @@ export const TUTORIALS = {
       {
         title: 'Agregar mascota',
         description:
-          'Toca el boton "+" para crear una nueva mascota. Necesitas nombre, especie y foto. Con Premium puedes agregar ilimitadas.',
+          'Toca el botón "+" para crear una nueva mascota. Necesitas nombre, especie y foto. Puedes agregar todas las mascotas que quieras, sin límite.',
       },
       {
         title: 'Paw Card',

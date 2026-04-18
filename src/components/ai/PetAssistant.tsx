@@ -202,9 +202,8 @@ export function PetAssistant({ petId, petName, onClose }: Props) {
             )}
             <PremiumNudge
               feature="ai_vet_assistant"
-              title="Consultas IA agotadas"
-              description={`Usaste tu consulta gratuita este mes. Con Premium tienes consultas ilimitadas sobre ${petName}.`}
-              usage={{ current: history.length, max: 1 }}
+              title="¿Te sirvió la consulta IA?"
+              description={`Hicimos el esfuerzo de responder sobre ${petName}. Si te sirvió, apóyanos para que siga gratis para todos.`}
               variant="card"
             />
           </>

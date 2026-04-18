@@ -178,7 +178,9 @@ export function BookingModal({ slot, open, onClose }: Props) {
                     <span className="text-muted-foreground">Tarifa de servicio (5%)</span>
                     <span>{formatCLP(userFee)}</span>
                   </div>
-                  <p className="text-[11px] text-amber-600">Con Premium pagas $0 de tarifa</p>
+                  <p className="text-[11px] text-amber-600">
+                    Tarifa de servicio voluntaria — Paw Friend sigue gratis
+                  </p>
                 </>
               )}
               <div className="flex items-center justify-between text-sm font-bold pt-1">

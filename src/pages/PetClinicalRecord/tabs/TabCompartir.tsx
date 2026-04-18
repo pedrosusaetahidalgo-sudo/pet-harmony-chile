@@ -132,8 +132,8 @@ export function TabCompartir({ petId, petName }: { petId: string; petName: strin
               {shareLimitReached && (
                 <PremiumNudge
                   feature="share_clinical"
-                  title="Límite de enlaces alcanzado"
-                  description="Con Premium puedes compartir la ficha clínica de tu mascota con todos los veterinarios que necesites."
+                  title="Compartir con vets"
+                  description="Puedes compartir la ficha con todos los vets que necesites, sin límite. Si te sirve, apóyanos."
                   variant="inline"
                 />
               )}

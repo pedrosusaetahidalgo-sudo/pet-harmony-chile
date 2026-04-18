@@ -29,6 +29,9 @@ import {
   BadgeCheck,
   Users,
   TrendingUp,
+  Building2,
+  Megaphone,
+  ShoppingBag,
 } from '@/lib/icons';
 
 // ──────────────────────────────────────────────────────────────
@@ -502,6 +505,132 @@ const Index = () => {
               </AccordionItem>
             ))}
           </Accordion>
+        </div>
+      </section>
+
+      {/* 9.5 · Llamada a la comunidad pet lover — 6 roles */}
+      <section className="px-4 py-20 md:py-24 bg-gradient-to-b from-pink-50/40 via-white to-amber-50/30">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-10">
+            <div className="inline-flex items-center gap-2 text-xs font-semibold text-pink-600 bg-pink-50 px-3 py-1 rounded-full mb-3">
+              <Heart className="h-3.5 w-3.5 fill-pink-500" />
+              Comunidad pet lover
+            </div>
+            <h2 className="text-3xl md:text-5xl font-black tracking-tight">
+              Si amas a los animales,{' '}
+              <span className="bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 bg-clip-text text-transparent">
+                hay un rol para ti
+              </span>
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-base md:text-lg text-muted-foreground">
+              Paw Friend lo hacemos <b>porque queremos</b>, por amor a los animales. Queremos que
+              siga gratis para todos y necesitamos una comunidad{' '}
+              <span className="font-semibold text-pink-600">pet friendly</span> y{' '}
+              <span className="font-semibold text-violet-600">pet lover</span> que empuje junto.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {[
+              {
+                icon: Heart,
+                emoji: '💛',
+                title: 'Dueños',
+                text: 'Usa la app, cuida a tu peludo y (si quieres) dona lo que sientas justo.',
+                cta: 'Empezar gratis',
+                to: '/auth',
+                color: 'from-pink-500 to-rose-500',
+              },
+              {
+                icon: Stethoscope,
+                emoji: '🩺',
+                title: 'Veterinarios',
+                text: 'Plan Básica gratis para empezar. Directorio público y ficha compartida.',
+                cta: 'Ver planes',
+                to: '/para-veterinarios',
+                color: 'from-sky-500 to-cyan-500',
+              },
+              {
+                icon: PawPrint,
+                emoji: '🐕',
+                title: 'Profesionales no-vet',
+                text: 'Paseadores, cuidadores, entrenadores, peluqueros. Tu propia vitrina pública.',
+                cta: 'Registrarme',
+                to: '/registro-veterinario',
+                color: 'from-emerald-500 to-teal-500',
+              },
+              {
+                icon: Megaphone,
+                emoji: '📣',
+                title: 'Paw Voices',
+                text: '¿Creador en redes? Amplifica la misión con tu voz auténtica.',
+                cta: 'Aplicar',
+                to: '/paw-voices',
+                color: 'from-violet-500 to-fuchsia-500',
+              },
+              {
+                icon: Building2,
+                emoji: '🏢',
+                title: 'Paw Companys',
+                text: '¿Tu empresa ama a los peludos? Sponsor mensual con logo + menciones.',
+                cta: 'Aplicar',
+                to: '/paw-companys',
+                color: 'from-amber-500 to-orange-500',
+              },
+              {
+                icon: ShoppingBag,
+                emoji: '🛍️',
+                title: 'Paw Partners',
+                text: 'Tiendas, comida, restaurantes, seguros. Descuentos a Paw Members.',
+                cta: 'Escríbenos',
+                to: 'mailto:pawfriendcl@gmail.com?subject=Paw Partner',
+                color: 'from-rose-500 to-pink-500',
+              },
+            ].map((role) => {
+              const Icon = role.icon;
+              const isExternal = role.to.startsWith('mailto:');
+              const content = (
+                <>
+                  <div
+                    className={`h-12 w-12 rounded-full bg-gradient-to-br ${role.color} flex items-center justify-center shadow-md mb-3`}
+                  >
+                    <Icon className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="flex items-center gap-1.5 mb-1">
+                    <span aria-hidden>{role.emoji}</span>
+                    <h3 className="font-bold text-base">{role.title}</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-snug mb-3">{role.text}</p>
+                  <span className="inline-flex items-center gap-1 text-sm font-semibold text-primary group-hover:underline">
+                    {role.cta} <ArrowRight className="h-3.5 w-3.5" />
+                  </span>
+                </>
+              );
+              return isExternal ? (
+                <a
+                  key={role.title}
+                  href={role.to}
+                  className="group rounded-2xl border bg-white p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all text-left"
+                >
+                  {content}
+                </a>
+              ) : (
+                <button
+                  key={role.title}
+                  type="button"
+                  onClick={() => navigate(role.to)}
+                  className="group rounded-2xl border bg-white p-5 hover:shadow-lg hover:-translate-y-0.5 transition-all text-left"
+                >
+                  {content}
+                </button>
+              );
+            })}
+          </div>
+
+          <p className="mt-10 text-center text-sm text-muted-foreground italic">
+            No pedimos exclusividad, no hay letra chica. Si compartes el amor por los animales, aquí
+            hay un lugar.
+          </p>
         </div>
       </section>
 
