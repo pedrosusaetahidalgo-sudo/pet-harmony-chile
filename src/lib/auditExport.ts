@@ -893,6 +893,260 @@ const QUALITY_CHECK_DEFINITIONS: QualityCheckDefinition[] = [
       };
     },
   },
+
+  // ── Detectores nuevos 2026-04-19 (P0 + P1 + P2) ───────────
+  // Cobertura: donations, subscriptions, specialized bookings, paw_companys,
+  // adoption_posts (photos), auth.users sin profile, missions.
+  // ==========================================================
+
+  // P0 — plata / bugs criticos
+  {
+    id: 'donations_stuck_pending',
+    name: 'Donaciones stuck en pending >2h',
+    enabled: true,
+    run: async () => {
+      const twoHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+      const { count } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .from('donations' as any)
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'pending')
+        .lt('created_at', twoHoursAgo);
+      const n = count ?? 0;
+      return {
+        name: 'Donaciones stuck en pending >2h',
+        result: `${n} donaciones pendientes`,
+        severity: n > 0 ? 'warn' : 'ok',
+        detail:
+          n > 0
+            ? 'Flow nunca confirmo el pago. Revisar flow-webhook en Supabase logs. Si el pago realmente fallo, el usuario deberia reintentar.'
+            : 'OK, no hay donaciones trabadas',
+      };
+    },
+  },
+  {
+    id: 'donations_thanks_unsent',
+    name: 'Donaciones pagadas sin mail de gracias >24h',
+    enabled: true,
+    run: async () => {
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      const { count } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .from('donations' as any)
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'paid')
+        .is('thanked_at', null)
+        .lt('paid_at', oneDayAgo);
+      const n = count ?? 0;
+      return {
+        name: 'Donaciones pagadas sin mail de gracias >24h',
+        result: `${n} sin agradecer`,
+        severity: n > 0 ? 'error' : 'ok',
+        detail:
+          n > 0
+            ? 'Edge fn send-donation-thanks no corrio (Resend caido o RESEND_API_KEY invalida). Revisar logs + re-enviar manualmente si hace falta.'
+            : 'OK, todos los donantes recibieron su mail',
+      };
+    },
+  },
+  {
+    id: 'subscriptions_expired_active',
+    name: 'Suscripciones activas con end_date vencida',
+    enabled: true,
+    run: async () => {
+      const now = new Date().toISOString();
+      const { count } = await supabase
+        .from('subscriptions')
+        .select('id', { count: 'exact', head: true })
+        .eq('status', 'active')
+        .lt('end_date', now);
+      const n = count ?? 0;
+      return {
+        name: 'Suscripciones activas con end_date vencida',
+        result: `${n} suscripciones`,
+        severity: n > 0 ? 'error' : 'ok',
+        detail:
+          n > 0
+            ? 'El trigger de downgrade no corrio o Flow webhook no notifico. User aun ve premium sin haber pagado. Revisar flow-webhook + trigger update_user_premium_status.'
+            : 'OK, no hay suscripciones zombi',
+      };
+    },
+  },
+
+  // P1 — data quality importante
+  {
+    id: 'specialized_bookings_stale',
+    name: 'Bookings especializados pendientes >48h',
+    enabled: true,
+    run: async () => {
+      const twoDaysAgo = new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString();
+      const tables = ['vet_bookings', 'walk_bookings', 'dogsitter_bookings', 'training_bookings'];
+      let total = 0;
+      const breakdown: string[] = [];
+      for (const table of tables) {
+        const { count } = await supabase
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          .from(table as any)
+          .select('id', { count: 'exact', head: true })
+          .eq('status', 'pendiente')
+          .lt('created_at', twoDaysAgo);
+        const n = count ?? 0;
+        if (n > 0) breakdown.push(`${table}: ${n}`);
+        total += n;
+      }
+      return {
+        name: 'Bookings especializados pendientes >48h',
+        result: `${total} total${breakdown.length ? ` (${breakdown.join(', ')})` : ''}`,
+        severity: total > 3 ? 'warn' : total > 0 ? 'warn' : 'ok',
+        detail:
+          total > 0
+            ? 'Reservas en pendiente sin respuesta del proveedor >48h. Vet/walker/sitter no confirmo ni cancelo. Considerar recordatorio automatico al proveedor.'
+            : 'OK, no hay reservas abandonadas',
+      };
+    },
+  },
+  {
+    id: 'paw_companys_incomplete',
+    name: 'Paw Companys activos con perfil incompleto',
+    enabled: true,
+    run: async () => {
+      const { data } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .from('paw_companys' as any)
+        .select('id, name, logo_url, description')
+        .eq('is_active', true);
+      type Row = { id: string; name: string; logo_url: string | null; description: string | null };
+      const sponsors = (data ?? []) as Row[];
+      const incomplete = sponsors.filter((s) => !s.logo_url || !s.description);
+      const n = incomplete.length;
+      const examples = incomplete
+        .slice(0, 3)
+        .map((s) => `"${s.name}"`)
+        .join(', ');
+      return {
+        name: 'Paw Companys activos con perfil incompleto',
+        result: `${n} de ${sponsors.length}`,
+        severity: n > 0 ? 'warn' : 'ok',
+        detail:
+          n > 0
+            ? `Sponsors sin logo o sin descripcion — se ven pobres en /donaciones. Completar: ${examples}${n > 3 ? `, +${n - 3} mas` : ''}.`
+            : 'OK, todos los sponsors tienen perfil completo',
+      };
+    },
+  },
+  {
+    id: 'adoption_posts_no_photos',
+    name: 'Adopciones disponibles sin fotos',
+    enabled: true,
+    run: async () => {
+      const { data } = await supabase
+        .from('adoption_posts')
+        .select('id, pet_name, photos, status')
+        .eq('status', 'disponible');
+      type Row = { id: string; pet_name: string; photos: string[] | null };
+      const posts = (data ?? []) as Row[];
+      const noPhotos = posts.filter((p) => !p.photos || p.photos.length === 0);
+      const n = noPhotos.length;
+      return {
+        name: 'Adopciones disponibles sin fotos',
+        result: `${n} de ${posts.length}`,
+        severity: n > 0 ? 'warn' : 'ok',
+        detail:
+          n > 0
+            ? 'Posts de adopcion sin foto tienen mucho menos engagement. Contactar al publicante para que agregue imagen.'
+            : 'OK, todas las adopciones tienen foto',
+      };
+    },
+  },
+  {
+    id: 'auth_users_without_profile',
+    name: 'Users en auth sin profile (onboarding roto)',
+    enabled: true,
+    run: async () => {
+      // RPC admin-only. Non-admin retorna 0 automaticamente.
+      const { data, error } = await supabase.rpc('count_users_without_profile');
+      if (error) {
+        return {
+          name: 'Users en auth sin profile (onboarding roto)',
+          result: 'RPC no disponible',
+          severity: 'ok' as const,
+          detail:
+            'La RPC count_users_without_profile aun no esta aplicada. Correr migration 20260607000000.',
+        };
+      }
+      const n = typeof data === 'number' ? data : 0;
+      return {
+        name: 'Users en auth sin profile (onboarding roto)',
+        result: `${n} users sin profile`,
+        severity: n > 0 ? 'error' : 'ok',
+        detail:
+          n > 0
+            ? 'auth.users registrados pero sin fila en public.profiles. El trigger de creacion de perfil fallo o fue eliminado. Usuario queda roto al hacer login.'
+            : 'OK, todos los users tienen profile',
+      };
+    },
+  },
+
+  // P2 — nice-to-have / observability
+  {
+    id: 'missions_abandoned',
+    name: 'Misiones iniciadas pero abandonadas >30d',
+    enabled: true,
+    run: async () => {
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      const nowIso = new Date().toISOString();
+      const { count } = await supabase
+        .from('user_missions')
+        .select('id', { count: 'exact', head: true })
+        .eq('completed', false)
+        .lt('started_at', thirtyDaysAgo)
+        // expires_at: o bien NULL (sin expiracion) o aun vigente
+        .or(`expires_at.is.null,expires_at.gte.${nowIso}`);
+      const n = count ?? 0;
+      return {
+        name: 'Misiones iniciadas pero abandonadas >30d',
+        result: `${n} misiones`,
+        severity: n > 20 ? 'warn' : 'ok',
+        detail:
+          n > 0
+            ? 'Users que empezaron misiones pero nunca las terminaron. Candidato a notificacion "te faltan X pasos" o ajuste de dificultad.'
+            : 'OK, no hay misiones abandonadas',
+      };
+    },
+  },
+  {
+    id: 'donations_goal_progress',
+    name: 'Progreso hacia la meta de $20M',
+    enabled: true,
+    run: async () => {
+      const { data, error } = await supabase.rpc('get_donations_goal_progress');
+      if (error) {
+        return {
+          name: 'Progreso hacia la meta de $20M',
+          result: 'RPC no disponible',
+          severity: 'ok' as const,
+          detail:
+            'RPC get_donations_goal_progress aun no aplicada. Correr migration 20260606000000.',
+        };
+      }
+      const row = Array.isArray(data) ? data[0] : data;
+      const pct = Number((row as { percent?: number } | null)?.percent ?? 0);
+      const donorsMonth = Number((row as { donors_month?: number } | null)?.donors_month ?? 0);
+      return {
+        name: 'Progreso hacia la meta de $20M',
+        result: `${pct}% · ${donorsMonth} donantes este mes`,
+        severity: 'ok' as const,
+        detail:
+          pct < 5
+            ? 'Aun muy lejos. Priorizar outreach a Paw Companys + campana en redes.'
+            : pct < 50
+              ? 'Progreso inicial. Mantener flujo de donaciones y sumar sponsors.'
+              : pct < 100
+                ? 'Buen ritmo, a menos de la mitad de la meta anual.'
+                : 'Meta alcanzada 🎉 considerar subir el objetivo del proximo periodo.',
+      };
+    },
+  },
 ];
 
 // ── Public API para panel de Data Quality ──────────────────

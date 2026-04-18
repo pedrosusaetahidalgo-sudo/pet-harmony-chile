@@ -206,7 +206,11 @@ Deno.serve(
                 Authorization: `Bearer ${RESEND_API_KEY}`,
               },
               body: JSON.stringify({
-                from: 'Pedro de Paw Friend <pedro@pawfriend.cl>',
+                // from: dominio verificado en Resend. Mantener pawfriend.cl.
+                // reply_to: correo de contacto oficial (Gmail) para que
+                // respuestas del vet lleguen a Pedro directamente.
+                from: 'Paw Friend <hola@pawfriend.cl>',
+                reply_to: ['pawfriendcl@gmail.com'],
                 to: [lead.email],
                 subject: asunto || 'Paw Friend te invita: tu perfil veterinario gratis',
                 html: htmlEmail,

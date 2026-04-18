@@ -177,7 +177,11 @@ serve(
           Authorization: `Bearer ${RESEND_API_KEY}`,
         },
         body: JSON.stringify({
-          from: 'Pedro de Paw Friend <pedro@pawfriend.cl>',
+          // from: dominio verificado en Resend. Mantener pawfriend.cl.
+          // reply_to: correo de contacto oficial (Gmail del proyecto) para
+          // que las respuestas del donante lleguen a Pedro directamente.
+          from: 'Paw Friend <hola@pawfriend.cl>',
+          reply_to: ['pawfriendcl@gmail.com'],
           to: [email],
           subject: `Gracias por tu aporte a Paw Friend, ${name} 💛`,
           html: htmlTemplate(name, donation.amount_clp, donation.message),
