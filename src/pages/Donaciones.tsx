@@ -21,6 +21,7 @@ import { PageHeader } from '@/components/PageHeader';
 import { PawVoicesWall } from '@/components/PawVoicesWall';
 import { PawCompanysGrid } from '@/components/PawCompanysGrid';
 import { DonationsTransparency } from '@/components/DonationsTransparency';
+import { MyDonationRecap } from '@/components/MyDonationRecap';
 import { cn } from '@/lib/utils';
 
 const PRESETS = [
@@ -145,6 +146,12 @@ export default function Donaciones() {
       />
 
       <div className="container max-w-3xl mx-auto px-4 py-10 space-y-8 animate-fade-in">
+        {/* Recap personal del user logueado (si ya dono) */}
+        <MyDonationRecap />
+
+        {/* Meta y transparencia — primer toque antes del hero emocional */}
+        <DonationsTransparency />
+
         {/* Hero emocional */}
         <section className="text-center space-y-3">
           <Badge variant="outline" className="bg-pink-50 border-pink-200 text-pink-700 text-[11px]">
@@ -337,10 +344,10 @@ export default function Donaciones() {
               </span>
             </div>
             <a
-              href="mailto:pedro@pawfriend.cl?subject=Quiero%20aportar%20a%20Paw%20Friend"
+              href="mailto:pawfriendcl@gmail.com?subject=Quiero%20aportar%20a%20Paw%20Friend"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-violet-700 dark:text-violet-300 hover:underline"
             >
-              Escribeme a pedro@pawfriend.cl →
+              Escríbenos a pawfriendcl@gmail.com →
             </a>
           </CardContent>
         </Card>
@@ -490,9 +497,6 @@ export default function Donaciones() {
             </p>
           </CardContent>
         </Card>
-
-        {/* Transparencia publica */}
-        <DonationsTransparency />
 
         {/* Cierre emocional */}
         <section className="text-center text-sm text-muted-foreground space-y-1">
