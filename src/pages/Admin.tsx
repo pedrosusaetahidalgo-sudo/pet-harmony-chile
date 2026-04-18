@@ -66,6 +66,8 @@ import AdminLeadsCRM from '@/components/admin/AdminLeadsCRM';
 import AdminBookingsPanel from '@/components/admin/AdminBookingsPanel';
 import AdminExports from '@/components/admin/AdminExports';
 import AdminPawCompanys from '@/components/admin/AdminPawCompanys';
+import AdminPawVoices from '@/components/admin/AdminPawVoices';
+import AdminAdvertisements from '@/components/admin/AdminAdvertisements';
 
 // Heavy sections lazy-loaded para no inflar el chunk inicial de /admin
 // (AdminSalaInversion + AdminAnalytics usan Recharts; AdminFeedback es grande).
@@ -253,23 +255,31 @@ function GamificationSection({ sub: propSub, onSubChange }: SubSectionProps) {
 }
 
 function CommercialSection({ sub: propSub, onSubChange }: SubSectionProps) {
-  const [sub, setSub] = useSubState('ads', propSub, onSubChange);
+  const [sub, setSub] = useSubState('paw-companys', propSub, onSubChange);
   return (
     <div className="space-y-4">
       <Tabs value={sub} onValueChange={setSub}>
-        <TabsList>
-          <TabsTrigger value="ads">Anuncios</TabsTrigger>
-          <TabsTrigger value="partners">Partners</TabsTrigger>
+        <TabsList className="flex flex-wrap gap-1 h-auto">
           <TabsTrigger value="paw-companys">Paw Companys</TabsTrigger>
+          <TabsTrigger value="paw-voices">Paw Voices</TabsTrigger>
+          <TabsTrigger value="advertisements">Publicidad</TabsTrigger>
+          <TabsTrigger value="ads">Anuncios (legacy)</TabsTrigger>
+          <TabsTrigger value="partners">Partners (legacy)</TabsTrigger>
         </TabsList>
+        <TabsContent value="paw-companys">
+          <AdminPawCompanys />
+        </TabsContent>
+        <TabsContent value="paw-voices">
+          <AdminPawVoices />
+        </TabsContent>
+        <TabsContent value="advertisements">
+          <AdminAdvertisements />
+        </TabsContent>
         <TabsContent value="ads">
           <AdManagement />
         </TabsContent>
         <TabsContent value="partners">
           <AdminPartnerSubmissions />
-        </TabsContent>
-        <TabsContent value="paw-companys">
-          <AdminPawCompanys />
         </TabsContent>
       </Tabs>
     </div>

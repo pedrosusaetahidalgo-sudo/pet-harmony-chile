@@ -22,6 +22,7 @@ import { PawVoicesWall } from '@/components/PawVoicesWall';
 import { PawCompanysGrid } from '@/components/PawCompanysGrid';
 import { DonationsTransparency } from '@/components/DonationsTransparency';
 import { MyDonationRecap } from '@/components/MyDonationRecap';
+import { AdSlot } from '@/components/AdSlot';
 import { cn } from '@/lib/utils';
 
 const PRESETS = [
@@ -357,6 +358,9 @@ export default function Donaciones() {
 
         {/* Paw Companys — grid de sponsors empresariales */}
         <PawCompanysGrid />
+
+        {/* Slot patrocinado (si hay ads activos en donations_page) */}
+        <AdSlot placement="donations_page" />
 
         {/* Donar */}
         <Card className="border-pink-200/70">

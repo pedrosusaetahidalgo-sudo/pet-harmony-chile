@@ -60,6 +60,7 @@ const UpgradeSuccess = lazy(() => import('./pages/UpgradeSuccess'));
 const UpgradeCancel = lazy(() => import('./pages/UpgradeCancel'));
 const Donaciones = lazy(() => import('./pages/Donaciones'));
 const PawCore = lazy(() => import('./pages/PawCore'));
+const PawVoicesPage = lazy(() => import('./pages/PawVoices'));
 const Servicios = lazy(() => import('./pages/Servicios'));
 // Peluqueria.tsx eliminada — groomers ahora son tab nativo en /services/groomers
 const GroomerProfileEdit = lazy(() => import('./pages/GroomerProfileEdit'));
@@ -612,6 +613,15 @@ const App = () => (
                   }
                 />
                 <Route path="/calendar" element={<Navigate to="/mis-reservas" replace />} />
+                {/* Paw Voices — pagina publica (creadores/influencers) */}
+                <Route
+                  path="/paw-voices"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <PawVoicesPage />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
                 {/* Directorio público de veterinarios (sin login).
                   Si el user está logueado, lo envolvemos con AppLayout para
                   mantener header/sidebar consistente con el resto de la app. */}
