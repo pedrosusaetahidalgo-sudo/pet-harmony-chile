@@ -414,13 +414,16 @@ function buildDiagnosticText(row: FunctionRow): string {
 
 function buildBulkDiagnostic(rows: FunctionRow[]): string {
   const failing = rows.filter((r) => r.errorsLast24h > 0 || r.lastStatus === 'error');
-  if (failing.length === 0) return 'Sin funciones con errores en las ultimas 24h.';
+  const idle = rows.filter((r) => r.executionsLast24h === 0 && r.lastStatus !== 'error');
+  const healthy = rows.filter((r) => r.executionsLast24h > 0 && r.errorsLast24h === 0);
   const header = [
     `DIAGNOSTICO EDGE FUNCTIONS — ${new Date().toISOString()}`,
-    `Funciones con errores: ${failing.length}/${rows.length}`,
+    `Total: ${rows.length} | Con errores: ${failing.length} | Healthy: ${healthy.length} | Sin trafico 24h: ${idle.length}`,
     '',
   ].join('\n');
-  return header + failing.map(buildDiagnosticText).join('\n\n========================\n\n');
+  // Todas las fns en orden: fallando primero, luego healthy, luego idle.
+  const ordered = [...failing, ...healthy, ...idle];
+  return header + ordered.map(buildDiagnosticText).join('\n\n========================\n\n');
 }
 
 async function copyToClipboard(text: string): Promise<boolean> {
@@ -691,7 +694,8 @@ export default function AdminSystemHealth() {
     }
   }, []);
 
-  // Copiar todas las funciones con errores (bulk)
+  // Copia TODAS las edge fns al clipboard en markdown (fallando primero,
+  // luego healthy, luego idle). Listo para pegar en Claude para auditoria.
   const copyAllFailing = useCallback(async () => {
     const rows = healthData ?? [];
     const text = buildBulkDiagnostic(rows);
@@ -700,8 +704,8 @@ export default function AdminSystemHealth() {
       const failing = rows.filter((r) => r.errorsLast24h > 0 || r.lastStatus === 'error').length;
       toast.success(
         failing > 0
-          ? `${failing} funciones con errores copiadas al clipboard`
-          : 'Sin errores — mensaje de resumen copiado'
+          ? `${rows.length} fns copiadas (${failing} con errores al inicio)`
+          : `${rows.length} fns copiadas — todas healthy o idle`
       );
     } else {
       toast.error('No se pudo copiar al clipboard');
@@ -878,7 +882,7 @@ export default function AdminSystemHealth() {
                 onClick={copyAllFailing}
                 disabled={loadingHealth}
                 className="bg-indigo-600 hover:bg-indigo-500 text-white"
-                title="Copia las funciones con errores 24h al clipboard — listo para pegar en Claude"
+                title="Copia TODAS las edge fns al clipboard en markdown — listo para pegar en Claude"
               >
                 <Copy className="h-3 w-3 mr-1.5" />
                 Copiar fallas

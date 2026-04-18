@@ -44,6 +44,7 @@ import {
   Database,
   Calendar,
   RefreshCw,
+  Copy,
 } from '@/lib/icons';
 import { useAuditExports, type ExportJob } from '@/hooks/useAuditExports';
 import { SHEET_DEFINITIONS, type ExportType } from '@/lib/auditExport';
@@ -105,6 +106,8 @@ export default function AdminExports() {
     progress,
     generateExport,
     downloadExport,
+    lastJsonText,
+    copyLastJsonToClipboard,
     rateLimitReached,
     remainingToday,
     maxPerDay,
@@ -231,24 +234,43 @@ export default function AdminExports() {
             </div>
           )}
 
-          {/* Generate button */}
-          <Button
-            onClick={handleGenerate}
-            disabled={!canGenerate}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white"
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Generando...
-              </>
-            ) : (
-              <>
-                <Download className="h-4 w-4 mr-2" />
-                Generar Export
-              </>
+          {/* Generate + Copy JSON actions */}
+          <div className="flex flex-wrap gap-2">
+            <Button
+              onClick={handleGenerate}
+              disabled={!canGenerate}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Generando...
+                </>
+              ) : (
+                <>
+                  <Download className="h-4 w-4 mr-2" />
+                  Generar Export
+                </>
+              )}
+            </Button>
+            {lastJsonText && (
+              <Button
+                onClick={copyLastJsonToClipboard}
+                variant="outline"
+                className="border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10"
+                title={`JSON listo (${Math.round(lastJsonText.length / 1024)} KB) — pegar en Claude para auditar`}
+              >
+                <Copy className="h-4 w-4 mr-2" />
+                Copiar JSON al clipboard
+              </Button>
             )}
-          </Button>
+          </div>
+          {lastJsonText && (
+            <p className="text-xs text-slate-500">
+              Ultimo export listo para copiar ({Math.round(lastJsonText.length / 1024)} KB). El
+              Excel ya se descargo; el JSON queda aca para pegarlo directo en Claude.
+            </p>
+          )}
         </CardContent>
       </Card>
 

@@ -758,14 +758,23 @@ const QUALITY_CHECK_DEFINITIONS: QualityCheckDefinition[] = [
     name: 'Mascotas con raza fuera del catalogo',
     enabled: true,
     run: async () => {
+      // Normalizacion NFD + quitar acentos (consistente con filterBreeds).
+      // Bug previo: "Pastor holandes" no matcheaba "Pastor holandés" solo
+      // por la tilde.
+      const norm = (s: string) =>
+        s
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .trim();
       const { data } = await supabase.from('pets').select('id, name, species, breed');
       const pets = data ?? [];
       const catalogBySpecies = new Map<string, Set<string>>();
       for (const [sp, breeds] of Object.entries(BREEDS_BY_SPECIES)) {
         const set = new Set<string>();
         for (const b of breeds) {
-          set.add(b.value.toLowerCase().trim());
-          set.add(b.label.toLowerCase().trim());
+          set.add(norm(b.value));
+          set.add(norm(b.label));
         }
         catalogBySpecies.set(sp, set);
       }
@@ -774,8 +783,7 @@ const QUALITY_CHECK_DEFINITIONS: QualityCheckDefinition[] = [
         const sp = (p.species ?? '').toLowerCase();
         const cat = catalogBySpecies.get(sp);
         if (!cat) return false;
-        const normalized = String(p.breed).toLowerCase().trim();
-        return !cat.has(normalized);
+        return !cat.has(norm(String(p.breed)));
       });
       const n = invalid.length;
       const uniqueValues = Array.from(new Set(invalid.map((p) => String(p.breed).trim())));
@@ -799,16 +807,20 @@ const QUALITY_CHECK_DEFINITIONS: QualityCheckDefinition[] = [
     name: 'Perfiles con comuna fuera del catalogo',
     enabled: true,
     run: async () => {
+      const norm = (s: string) =>
+        s
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .trim();
       const { data } = await supabase
         .from('profiles')
         .select('id, display_name, location')
         .not('location', 'is', null);
       const profiles = data ?? [];
-      const catalog = new Set(COMUNAS_SANTIAGO.map((c) => c.toLowerCase().trim()));
+      const catalog = new Set(COMUNAS_SANTIAGO.map(norm));
       const invalid = profiles.filter((p) => {
-        const loc = String(p.location ?? '')
-          .toLowerCase()
-          .trim();
+        const loc = norm(String(p.location ?? ''));
         return loc && !catalog.has(loc);
       });
       const n = invalid.length;

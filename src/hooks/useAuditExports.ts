@@ -63,6 +63,9 @@ export function useAuditExports() {
   const queryClient = useQueryClient();
   const [progress, setProgress] = useState<ExportProgress | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  // JSON del ultimo export generado — disponible para copiar al clipboard.
+  // Se setea en la mutation y se resetea cuando se genera uno nuevo.
+  const [lastJsonText, setLastJsonText] = useState<string | null>(null);
 
   // Fetch export history
   const { data: exports = [], isLoading: isLoadingHistory } = useQuery({
@@ -177,12 +180,13 @@ export function useAuditExports() {
             .eq('id', job.id);
         }
 
-        // Always trigger direct download de AMBOS archivos:
-        //  - Excel: formato humano para revision visual
-        //  - JSON: formato machine-readable para Claude Code / analisis automatizado
+        // Excel: descarga fisica para revision humana.
+        // JSON: NO se descarga — queda en estado local para "Copiar JSON"
+        // al clipboard (listo para pegar en Claude).
         const baseName = `paw-friend-audit-${exportType}-${new Date().toISOString().slice(0, 10)}`;
         downloadBlob(blob, `${baseName}.xlsx`);
-        downloadBlob(jsonBlob, `${baseName}.claude.json`);
+        const jsonText = await jsonBlob.text();
+        setLastJsonText(jsonText);
 
         return { jobId: job.id };
       } catch (err) {
@@ -198,7 +202,7 @@ export function useAuditExports() {
       }
     },
     onSuccess: () => {
-      toast.success('Export generado — descarga .xlsx + .claude.json');
+      toast.success('Export generado — Excel descargado. JSON listo para copiar.');
       queryClient.invalidateQueries({ queryKey: ['audit-exports'] });
     },
     onError: (err: Error) => {
@@ -241,6 +245,19 @@ export function useAuditExports() {
     [queryClient]
   );
 
+  const copyLastJsonToClipboard = useCallback(async () => {
+    if (!lastJsonText) {
+      toast.error('Genera un export primero para copiar el JSON');
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(lastJsonText);
+      toast.success('JSON copiado al clipboard — listo para pegar en Claude');
+    } catch {
+      toast.error('No se pudo copiar al clipboard');
+    }
+  }, [lastJsonText]);
+
   return {
     exports,
     isLoadingHistory,
@@ -248,6 +265,8 @@ export function useAuditExports() {
     progress,
     generateExport: generateMutation.mutate,
     downloadExport,
+    lastJsonText,
+    copyLastJsonToClipboard,
     // Rate limit info
     rateLimitReached,
     exportsToday,

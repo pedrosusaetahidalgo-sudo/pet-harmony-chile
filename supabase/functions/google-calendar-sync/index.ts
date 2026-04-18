@@ -24,6 +24,15 @@ import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withTelemetry } from '../_shared/telemetry.ts';
 
+// Error custom para senalar que el refresh token fue revocado/expirado.
+// El handler lo captura y devuelve 400 con hint de reconectar (no 500).
+class GoogleTokenRevokedError extends Error {
+  constructor(public detail: string) {
+    super('google_calendar_revoked');
+    this.name = 'GoogleTokenRevokedError';
+  }
+}
+
 async function refreshAccessToken(refreshToken: string, clientId: string, clientSecret: string) {
   const params = new URLSearchParams({
     refresh_token: refreshToken,
@@ -37,7 +46,14 @@ async function refreshAccessToken(refreshToken: string, clientId: string, client
     body: params.toString(),
   });
   const json = await resp.json();
-  if (!resp.ok) throw new Error(`Refresh failed: ${JSON.stringify(json)}`);
+  if (!resp.ok) {
+    // invalid_grant = refresh token revocado/expirado o scope cambio.
+    // No es un fallo del servidor: el usuario tiene que reconectar.
+    if (json?.error === 'invalid_grant') {
+      throw new GoogleTokenRevokedError(json.error_description || 'Token revocado');
+    }
+    throw new Error(`Refresh failed: ${JSON.stringify(json)}`);
+  }
   return json as { access_token: string; expires_in: number };
 }
 
@@ -316,9 +332,43 @@ serve(
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     } catch (error) {
-      // Enriquecido: incluye nombre del error + stack parcial para que el
-      // audit pueda diagnosticar sin abrir Sentry. Antes solo reportaba el
-      // message generico y no se podia saber que operacion fallo.
+      // Token revocado → marcar en DB y devolver 400 (no 500).
+      // Evita inflar error_logs con errores recurrentes y da al frontend
+      // una razon accionable ("reconecta tu cuenta").
+      if (error instanceof GoogleTokenRevokedError) {
+        try {
+          const supabase = createClient(
+            Deno.env.get('SUPABASE_URL')!,
+            Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,
+            { auth: { persistSession: false } }
+          );
+          const authHeader = req.headers.get('Authorization');
+          if (authHeader) {
+            const token = authHeader.replace('Bearer ', '');
+            const { data: userData } = await supabase.auth.getUser(token);
+            if (userData?.user?.id) {
+              await supabase
+                .from('google_calendar_tokens')
+                .update({ revoked_at: new Date().toISOString() })
+                .eq('user_id', userData.user.id);
+            }
+          }
+        } catch (markErr) {
+          console.warn('[google-calendar-sync] no se pudo marcar revoked_at', markErr);
+        }
+        return new Response(
+          JSON.stringify({
+            error: 'google_calendar_revoked',
+            detail: error.detail,
+            hint: 'Reconecta tu cuenta de Google Calendar desde Ajustes > Integraciones.',
+          }),
+          {
+            status: 400,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+
       const name = error instanceof Error ? error.name : 'UnknownError';
       const msg = error instanceof Error ? error.message : String(error);
       const stack =
@@ -328,9 +378,8 @@ serve(
         JSON.stringify({
           error: msg,
           error_type: name,
-          hint: msg.includes('Refresh failed')
-            ? 'El refresh token de Google expiro o fue revocado. El usuario debe reconectar Google Calendar.'
-            : msg.includes('Event POST failed') || msg.includes('Event PATCH failed')
+          hint:
+            msg.includes('Event POST failed') || msg.includes('Event PATCH failed')
               ? 'Google Calendar API rechazo el evento. Verificar scopes y calendar_id.'
               : 'Revisar logs de Supabase para stack completo.',
         }),
