@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { BuiltWithClaude } from '@/components/BuiltWithClaude';
 
 export function PublicHeader() {
   return (
@@ -29,6 +30,9 @@ export function PublicFooter() {
       <div className="container mx-auto px-4">
         <p className="text-xs">Hecho en Chile, para Chile · Pagos seguros con Flow</p>
         <p>© {new Date().getFullYear()} Paw Friend Chile · pawfriend.cl</p>
+        <div className="mt-2 flex justify-center">
+          <BuiltWithClaude />
+        </div>
         <div className="flex flex-wrap justify-center gap-4 mt-2">
           <Link to="/registro-partner" className="hover:text-purple-700 font-medium">
             Registra tu negocio
