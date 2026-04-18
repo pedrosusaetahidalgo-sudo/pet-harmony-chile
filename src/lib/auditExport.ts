@@ -804,7 +804,7 @@ const QUALITY_CHECK_DEFINITIONS: QualityCheckDefinition[] = [
   },
   {
     id: 'invalid_locations',
-    name: 'Perfiles con comuna fuera del catalogo',
+    name: 'Perfiles con ubicacion fuera del catalogo RM',
     enabled: true,
     run: async () => {
       const norm = (s: string) =>
@@ -819,24 +819,50 @@ const QUALITY_CHECK_DEFINITIONS: QualityCheckDefinition[] = [
         .not('location', 'is', null);
       const profiles = data ?? [];
       const catalog = new Set(COMUNAS_SANTIAGO.map(norm));
-      const invalid = profiles.filter((p) => {
+      const outOfCatalog = profiles.filter((p) => {
         const loc = norm(String(p.location ?? ''));
         return loc && !catalog.has(loc);
       });
-      const n = invalid.length;
-      const uniqueValues = Array.from(new Set(invalid.map((p) => String(p.location).trim())));
-      const examples = uniqueValues
+
+      // El formulario de perfil (EditProfileDrawer) ofrece un ComboboxWithOther
+      // con COMUNAS_SANTIAGO + opcion "Otra" que acepta texto libre. Eso
+      // significa que valores fuera de catalogo son legitimos si parecen
+      // una ubicacion razonable (Madrid, Vina del Mar, Concepcion, etc).
+      // Solo flaggear como sospechosos los que son claramente junk.
+      const suspicious = outOfCatalog.filter((p) => {
+        const raw = String(p.location ?? '').trim();
+        if (raw.length < 2 || raw.length > 80) return true;
+        if (/^\d+$/.test(raw)) return true; // solo numeros
+        if (/[<>{}\\]/.test(raw)) return true; // caracteres raros
+        return false;
+      });
+      const custom = outOfCatalog.length - suspicious.length;
+
+      const uniqueSuspicious = Array.from(
+        new Set(suspicious.map((p) => String(p.location).trim()))
+      );
+      const examples = uniqueSuspicious
         .slice(0, 5)
         .map((v) => `"${v}"`)
         .join(', ');
+
+      const sev: 'ok' | 'warn' | 'critical' = suspicious.length > 0 ? 'warn' : 'ok';
+      const resultMsg =
+        suspicious.length > 0
+          ? `${suspicious.length} sospechoso(s) + ${custom} "Otra" legitimo(s) (de ${profiles.length})`
+          : `${custom} usuarios con ubicacion fuera de RM via opcion "Otra" (de ${profiles.length})`;
+      const detailMsg =
+        suspicious.length > 0
+          ? `Valores sospechosos (length 0-1, solo digitos o caracteres raros): ${examples}. Revisar manualmente.`
+          : custom > 0
+            ? 'Comportamiento esperado: el form usa ComboboxWithOther con opcion "Otra" para usuarios fuera de la RM.'
+            : 'Todas las ubicaciones estan en el catalogo RM.';
+
       return {
-        name: 'Perfiles con comuna fuera del catalogo',
-        result: `${n} filas / ${uniqueValues.length} valores unicos (de ${profiles.length} con location)`,
-        severity: n > 0 ? 'warn' : 'ok',
-        detail:
-          n > 0
-            ? `Free-text no matcheable con comunas RM. Valores: ${examples}${uniqueValues.length > 5 ? ` (+${uniqueValues.length - 5} mas)` : ''}. Fix causa raiz: usar Combobox con COMUNAS_SANTIAGO en formulario de perfil.`
-            : 'Todas las comunas existen en el catalogo',
+        name: 'Perfiles con ubicacion fuera del catalogo RM',
+        result: resultMsg,
+        severity: sev,
+        detail: detailMsg,
       };
     },
   },
