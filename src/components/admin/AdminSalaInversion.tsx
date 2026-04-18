@@ -95,10 +95,26 @@ const SEED_READY_THRESHOLD = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
 
-const PAID_PROVIDER_PLANS = ['provider_individual', 'provider_clinic_basic', 'provider_clinic_pro'];
+// Planes pagos (para calcular MRR B2B). Incluye alias legacy + nuevos 2026-04-19.
+const PAID_PROVIDER_PLANS = [
+  'provider_premium',
+  'provider_pro_max',
+  // Legacy aliases — suscripciones creadas antes del rename 2026-04-19.
+  // normalizeProviderPlanId() los mapea internamente pero el query de DB
+  // necesita los strings viejos hasta que se corra la migracion de rename.
+  'provider_individual',
+  'provider_clinic_basic',
+  'provider_clinic_pro',
+];
 
+// Mapa de precios mensuales por plan. Incluye alias legacy para que las
+// suscripciones creadas antes del rename 2026-04-19 sigan contabilizando
+// MRR correctamente hasta que se normalicen en DB.
 const PROVIDER_PLAN_PRICES: Record<string, number> = {
   provider_free: 0,
+  provider_premium: 9900,
+  provider_pro_max: 29900,
+  // Legacy aliases (previo a 2026-04-19)
   provider_individual: 9900,
   provider_clinic_basic: 29900,
   provider_clinic_pro: 59900,

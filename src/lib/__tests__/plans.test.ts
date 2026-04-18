@@ -107,16 +107,34 @@ describe('formatCLP', () => {
 });
 
 describe('PROVIDER_PLANS', () => {
-  it('has 4 plans', () => {
-    expect(Object.keys(PROVIDER_PLANS)).toHaveLength(4);
+  it('has 3 canonical tiers (free, premium, pro_max)', () => {
+    expect(Object.keys(PROVIDER_PLANS)).toHaveLength(3);
+    expect(Object.keys(PROVIDER_PLANS).sort()).toEqual([
+      'provider_free',
+      'provider_premium',
+      'provider_pro_max',
+    ]);
   });
 
-  it('clinic pro has 0% commission', () => {
-    expect(PROVIDER_PLANS.provider_clinic_pro.commissionRate).toBe(0);
+  it('pro max has 0% commission', () => {
+    expect(PROVIDER_PLANS.provider_pro_max.commissionRate).toBe(0);
+  });
+
+  it('premium has 5% commission', () => {
+    expect(PROVIDER_PLANS.provider_premium.commissionRate).toBe(5);
   });
 
   it('free provider plan has 10% commission', () => {
     expect(PROVIDER_PLANS.provider_free.commissionRate).toBe(10);
+  });
+
+  it('free provider plan has 5 pacientes limit', () => {
+    expect(PROVIDER_PLANS.provider_free.features.max_clients).toBe(5);
+  });
+
+  it('premium and pro_max have unlimited clients', () => {
+    expect(PROVIDER_PLANS.provider_premium.features.max_clients).toBe(-1);
+    expect(PROVIDER_PLANS.provider_pro_max.features.max_clients).toBe(-1);
   });
 });
 
@@ -126,18 +144,53 @@ describe('canProviderAccess', () => {
     expect(result.allowed).toBe(false);
   });
 
-  it('allows clinic_basic featured_position', () => {
-    const result = canProviderAccess('provider_clinic_basic', 'featured_position');
+  it('allows premium featured_position', () => {
+    const result = canProviderAccess('provider_premium', 'featured_position');
     expect(result.allowed).toBe(true);
   });
 
-  it('blocks free provider at client limit', () => {
-    const result = canProviderAccess('provider_free', 'max_clients', 20);
+  it('blocks free provider at client limit (5)', () => {
+    const result = canProviderAccess('provider_free', 'max_clients', 5);
     expect(result.allowed).toBe(false);
   });
 
-  it('allows clinic_pro unlimited clients', () => {
-    const result = canProviderAccess('provider_clinic_pro', 'max_clients', 9999);
+  it('allows pro_max unlimited clients', () => {
+    const result = canProviderAccess('provider_pro_max', 'max_clients', 9999);
     expect(result.allowed).toBe(true);
+  });
+
+  it('pro_max has multiple_branches enabled, premium does not', () => {
+    expect(PROVIDER_PLANS.provider_pro_max.features.multiple_branches).toBe(true);
+    expect(PROVIDER_PLANS.provider_premium.features.multiple_branches).toBe(false);
+  });
+});
+
+describe('normalizeProviderPlanId', () => {
+  it('maps legacy individual to premium', async () => {
+    const { normalizeProviderPlanId } = await import('../plans');
+    expect(normalizeProviderPlanId('provider_individual')).toBe('provider_premium');
+  });
+
+  it('maps legacy clinic_basic to premium', async () => {
+    const { normalizeProviderPlanId } = await import('../plans');
+    expect(normalizeProviderPlanId('provider_clinic_basic')).toBe('provider_premium');
+  });
+
+  it('maps legacy clinic_pro to pro_max', async () => {
+    const { normalizeProviderPlanId } = await import('../plans');
+    expect(normalizeProviderPlanId('provider_clinic_pro')).toBe('provider_pro_max');
+  });
+
+  it('passes through canonical IDs', async () => {
+    const { normalizeProviderPlanId } = await import('../plans');
+    expect(normalizeProviderPlanId('provider_free')).toBe('provider_free');
+    expect(normalizeProviderPlanId('provider_premium')).toBe('provider_premium');
+    expect(normalizeProviderPlanId('provider_pro_max')).toBe('provider_pro_max');
+  });
+
+  it('defaults unknown IDs to provider_free', async () => {
+    const { normalizeProviderPlanId } = await import('../plans');
+    expect(normalizeProviderPlanId(null)).toBe('provider_free');
+    expect(normalizeProviderPlanId('xxx')).toBe('provider_free');
   });
 });

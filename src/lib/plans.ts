@@ -129,11 +129,32 @@ export { formatCLP } from '@/lib/format';
 // Provider plans (veterinarios independientes y clínicas)
 // ============================================================
 
-export type ProviderPlanId =
-  | 'provider_free'
-  | 'provider_individual'
-  | 'provider_clinic_basic'
-  | 'provider_clinic_pro';
+// ============================================================
+// Provider plans (2026-04-19): 3 tiers canonicos Free / Premium / Pro Max.
+// IDs legacy (provider_individual, provider_clinic_basic, provider_clinic_pro)
+// se normalizan a los nuevos via normalizeProviderPlanId() para no romper
+// suscripciones antiguas en DB.
+// ============================================================
+
+export type ProviderPlanId = 'provider_free' | 'provider_premium' | 'provider_pro_max';
+
+/** Alias de IDs antiguos → nuevos. Solo para backward compat en lecturas. */
+export const DEPRECATED_PROVIDER_PLAN_ALIASES: Record<string, ProviderPlanId> = {
+  provider_individual: 'provider_premium',
+  provider_clinic_basic: 'provider_premium',
+  provider_clinic_pro: 'provider_pro_max',
+};
+
+/**
+ * Normaliza cualquier ID de plan (nuevo o legacy) al ID canonico actual.
+ * Si el ID no matchea ninguno conocido, retorna 'provider_free' por defecto
+ * seguro (mejor que crashear).
+ */
+export function normalizeProviderPlanId(id: string | null | undefined): ProviderPlanId {
+  if (!id) return 'provider_free';
+  if (id === 'provider_free' || id === 'provider_premium' || id === 'provider_pro_max') return id;
+  return DEPRECATED_PROVIDER_PLAN_ALIASES[id] ?? 'provider_free';
+}
 
 export interface ProviderPlanFeatures {
   max_clients: number;
@@ -165,9 +186,12 @@ export interface ProviderPlanConfig {
 }
 
 export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
+  // Free: para que el vet pruebe Paw Friend. 5 pacientes vinculados
+  // (limite real para vet en ejercicio), directorio publico, sin
+  // features avanzadas. Comision 10% en bookings.
   provider_free: {
     id: 'provider_free',
-    name: 'Gratis',
+    name: 'Free',
     segment: 'individual',
     badge: '',
     monthlyPrice: 0,
@@ -175,7 +199,7 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
     yearlyMonthly: 0,
     commissionRate: 10,
     features: {
-      max_clients: 15,
+      max_clients: 5,
       max_bookings_per_month: 10,
       max_review_invitations_per_month: 2,
       public_profile: true,
@@ -191,24 +215,29 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
       audio_transcription: false,
     },
   },
-  provider_individual: {
-    id: 'provider_individual',
-    name: 'Individual',
+  // Premium: para el vet que ya trabaja con Paw Friend. Ilimitado en
+  // volumen, destacado en directorio, analytics basico, audio. Sin
+  // multi-clinica ni API. Comision 5%.
+  // Precio bajo intencional (volumen > ticket): apunta a cientos de
+  // vets pagando barato, no a decenas pagando caro.
+  provider_premium: {
+    id: 'provider_premium',
+    name: 'Premium',
     segment: 'individual',
-    badge: '🩺',
+    badge: '⭐',
     monthlyPrice: 9900,
     yearlyPrice: 99000,
     yearlyMonthly: 8250,
-    commissionRate: 10,
+    commissionRate: 5,
     features: {
-      max_clients: 100,
-      max_bookings_per_month: 50,
-      max_review_invitations_per_month: 5,
+      max_clients: -1,
+      max_bookings_per_month: -1,
+      max_review_invitations_per_month: -1,
       public_profile: true,
       public_reviews: true,
       directory_listing: true,
-      featured_position: false,
-      multiple_vets: false,
+      featured_position: true,
+      multiple_vets: true,
       multiple_branches: false,
       branding_level: 'basic',
       analytics_level: 'basic',
@@ -217,40 +246,18 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
       audio_transcription: true,
     },
   },
-  provider_clinic_basic: {
-    id: 'provider_clinic_basic',
-    name: 'Clínica Básica',
+  // Pro Max: para clinicas con multiples sucursales. Todo ilimitado,
+  // branding completo, analytics avanzada, API, priority support,
+  // cero comision en bookings. El tier "todo incluido".
+  // Precio accesible intencional para clinicas chicas/medianas chilenas.
+  provider_pro_max: {
+    id: 'provider_pro_max',
+    name: 'Pro Max',
     segment: 'clinic',
-    badge: '🏥',
+    badge: '👑',
     monthlyPrice: 29900,
     yearlyPrice: 299000,
     yearlyMonthly: 24900,
-    commissionRate: 10,
-    features: {
-      max_clients: 500,
-      max_bookings_per_month: -1,
-      max_review_invitations_per_month: 20,
-      public_profile: true,
-      public_reviews: true,
-      directory_listing: true,
-      featured_position: true,
-      multiple_vets: true,
-      multiple_branches: false,
-      branding_level: 'full',
-      analytics_level: 'advanced',
-      priority_support: false,
-      api_access: false,
-      audio_transcription: true,
-    },
-  },
-  provider_clinic_pro: {
-    id: 'provider_clinic_pro',
-    name: 'Clínica Pro',
-    segment: 'clinic',
-    badge: '⭐',
-    monthlyPrice: 59900,
-    yearlyPrice: 599000,
-    yearlyMonthly: 49900,
     commissionRate: 0,
     features: {
       max_clients: -1,
@@ -290,8 +297,8 @@ export function canProviderAccess(
       ).find(([, p]) => p.features[feature] === true);
       return {
         allowed: false,
-        reason: `Disponible desde el plan ${minPlan?.[1].name ?? 'Individual'}`,
-        upgradeRequired: minPlan?.[0] ?? 'provider_individual',
+        reason: `Disponible desde el plan ${minPlan?.[1].name ?? 'Premium'}`,
+        upgradeRequired: minPlan?.[0] ?? 'provider_premium',
       };
     }
     return { allowed: true };
@@ -303,19 +310,14 @@ export function canProviderAccess(
       return {
         allowed: false,
         reason: 'No disponible en tu plan actual',
-        upgradeRequired: 'provider_individual',
+        upgradeRequired: 'provider_premium',
       };
     }
     if (currentUsage !== undefined && currentUsage >= value) {
       return {
         allowed: false,
         reason: `Llegaste al límite de ${value} este mes. Mejora tu plan para más.`,
-        upgradeRequired:
-          planId === 'provider_free'
-            ? 'provider_individual'
-            : planId === 'provider_individual'
-              ? 'provider_clinic_basic'
-              : 'provider_clinic_pro',
+        upgradeRequired: planId === 'provider_free' ? 'provider_premium' : 'provider_pro_max',
       };
     }
     return { allowed: true };

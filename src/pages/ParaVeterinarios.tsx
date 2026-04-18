@@ -122,10 +122,13 @@ export default function ParaVeterinarios() {
     });
   }, []);
 
+  // 3 tiers canonicos 2026-04-19: Free / Premium / Pro Max.
   const planFree = PROVIDER_PLANS.provider_free;
-  const planIndividual = PROVIDER_PLANS.provider_individual;
-  const planClinic = PROVIDER_PLANS.provider_clinic_basic;
-  const planPro = PROVIDER_PLANS.provider_clinic_pro;
+  const planPremium = PROVIDER_PLANS.provider_premium;
+  const planProMax = PROVIDER_PLANS.provider_pro_max;
+  void planFree;
+  void planPremium;
+  void planProMax;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50/40 to-white">
