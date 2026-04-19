@@ -408,7 +408,9 @@ function StepAccount({
   return (
     <div className="space-y-4">
       <div className="text-center mb-2">
-        <h1 className="text-2xl font-bold mb-1">Datos de tu cuenta</h1>
+        <h1 className="font-display font-semibold text-3xl md:text-4xl mb-1 tracking-tight">
+          Datos de tu cuenta
+        </h1>
         <p className="text-sm text-muted-foreground">Vamos a crear tu cuenta en Paw Friend.</p>
       </div>
 
@@ -516,7 +518,9 @@ function StepProfile({
   return (
     <div className="space-y-5">
       <div className="text-center mb-2">
-        <h1 className="text-2xl font-bold mb-1">Construye tu perfil</h1>
+        <h1 className="font-display font-semibold text-3xl md:text-4xl mb-1 tracking-tight">
+          Construye tu perfil
+        </h1>
         <p className="text-sm text-muted-foreground">Esto es lo que verán tus futuros pacientes.</p>
       </div>
 
@@ -696,7 +700,9 @@ function StepDone({ slug }: { slug?: string }) {
       <div className="inline-flex p-4 rounded-full bg-green-100 mb-2">
         <PartyPopper className="h-12 w-12 text-green-600" />
       </div>
-      <h1 className="text-2xl font-bold">¡Bienvenido a Paw Friend!</h1>
+      <h1 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">
+        ¡Bienvenido a Paw Friend!
+      </h1>
       <p className="text-muted-foreground">
         Tu cuenta fue creada con éxito. Completa tu perfil al 80% para aparecer en el directorio
         público.

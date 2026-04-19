@@ -74,7 +74,9 @@ export default function Reportes() {
     <div className="container max-w-3xl mx-auto p-4 space-y-4">
       <div className="flex items-center gap-2">
         <FileText className="h-6 w-6 text-purple-600" />
-        <h1 className="text-xl font-bold">Mis reportes</h1>
+        <h1 className="font-display font-semibold text-2xl md:text-3xl tracking-tight">
+          Mis reportes
+        </h1>
       </div>
 
       {/* Reporte en vivo del mes en curso (siempre visible, se actualiza al consultar) */}

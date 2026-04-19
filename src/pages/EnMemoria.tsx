@@ -95,7 +95,9 @@ export default function EnMemoria() {
     return (
       <div className="container max-w-4xl mx-auto p-6 text-center py-20 space-y-4">
         <Heart className="h-16 w-16 mx-auto mb-4 text-purple-300" />
-        <h1 className="text-xl font-semibold mb-2">En memoria</h1>
+        <h1 className="font-display font-semibold text-2xl md:text-3xl mb-2 tracking-tight">
+          En memoria
+        </h1>
         <p className="text-muted-foreground max-w-md mx-auto">
           Este es un espacio para honrar a las mascotas que ya no nos acompañan. Puedes registrar su
           despedida desde la ficha clínica de tu mascota.

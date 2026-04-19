@@ -536,7 +536,7 @@ const PawGame = () => {
                 <PawPrint className="h-8 w-8 text-white" />
               </div>
               <div>
-                <h1 className="text-3xl md:text-4xl font-bold">
+                <h1 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">
                   <span className="bg-gradient-to-r from-yellow-500 via-orange-500 to-red-500 bg-clip-text text-transparent">
                     Paw Game
                   </span>

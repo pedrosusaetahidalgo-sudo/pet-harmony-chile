@@ -5193,9 +5193,9 @@ Con la expansión de §24.1 a §24.24, la librería cubre:
 
 ---
 
-## 25. Cierre
+## 27. Cierre
 
-Esta librería contiene **más de 100 prompts** copy-paste-ready.
+Esta librería contiene **más de 140 prompts** copy-paste-ready.
 
 **Cada prompt:**
 - Incluye TODO el contexto necesario (paleta, tipografía, estilo, reglas SVG)
