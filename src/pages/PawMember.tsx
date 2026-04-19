@@ -99,9 +99,9 @@ export default function PawMember() {
                 <Sparkles className="h-3 w-3 mr-1" />
                 Paw Member
               </Badge>
-              <h1 className="text-2xl md:text-3xl font-bold">
+              <h1 className="font-display font-semibold text-3xl md:text-4xl leading-tight tracking-tight">
                 Gracias por sostener{' '}
-                <span className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-rose-500 bg-clip-text text-transparent">
+                <span className="bg-brand-gold-gradient bg-clip-text text-transparent">
                   Paw Friend
                 </span>
               </h1>

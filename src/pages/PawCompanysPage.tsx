@@ -13,7 +13,10 @@ import {
   Users,
   PawPrint,
   ShieldCheck,
+  Handshake,
+  Store,
 } from '@/lib/icons';
+import type { LucideIcon } from 'lucide-react';
 import { PageHeader } from '@/components/PageHeader';
 import { PawCompanysGrid } from '@/components/PawCompanysGrid';
 import { PawCompanyApplyForm } from '@/components/PawCompanyApplyForm';
@@ -41,19 +44,19 @@ const BENEFITS = [
   },
 ];
 
-const WHAT_WE_NEED = [
+const WHAT_WE_NEED: { icon: LucideIcon; title: string; text: string }[] = [
   {
-    emoji: '🤝',
+    icon: Handshake,
     title: 'Una alianza mensual',
     text: 'Aporte mensual por transferencia (sin letra chica, sin compromisos largos).',
   },
   {
-    emoji: '🐾',
+    icon: PawPrint,
     title: 'Producto o servicio relacionado',
     text: 'Nos importa que tu empresa tenga sentido para tutores peludos o veterinarios.',
   },
   {
-    emoji: '💛',
+    icon: Heart,
     title: 'Amor por los animales',
     text: 'No aceptamos empresas que no se alineen con la misión de Paw Friend.',
   },
@@ -117,9 +120,9 @@ export default function PawCompanysPage() {
             <Building2 className="h-3 w-3 mr-1" />
             Red de empresas aliadas
           </Badge>
-          <h1 className="text-3xl md:text-4xl font-bold leading-tight">
+          <h1 className="font-display font-semibold text-4xl md:text-5xl leading-[1.08] tracking-tight">
             Haz que tu empresa sea una{' '}
-            <span className="bg-gradient-to-r from-amber-500 via-rose-500 to-pink-500 bg-clip-text text-transparent">
+            <span className="bg-audience-companys-gradient bg-clip-text text-transparent">
               Paw Company
             </span>
           </h1>
@@ -132,7 +135,7 @@ export default function PawCompanysPage() {
               onClick={() =>
                 document.getElementById('aplicar')?.scrollIntoView({ behavior: 'smooth' })
               }
-              className="bg-gradient-to-r from-amber-500 to-rose-500"
+              className="bg-audience-companys-gradient shadow-audience-companys"
             >
               Quiero aplicar →
             </Button>
@@ -186,17 +189,23 @@ export default function PawCompanysPage() {
               <h2 className="font-semibold text-lg">Qué esperamos de ti</h2>
             </div>
             <ul className="space-y-2.5">
-              {WHAT_WE_NEED.map((item) => (
-                <li key={item.title} className="flex gap-3">
-                  <span className="text-lg leading-none" aria-hidden>
-                    {item.emoji}
-                  </span>
-                  <div>
-                    <div className="font-semibold text-sm">{item.title}</div>
-                    <p className="text-xs text-muted-foreground leading-snug">{item.text}</p>
-                  </div>
-                </li>
-              ))}
+              {WHAT_WE_NEED.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <li key={item.title} className="flex gap-3 items-start">
+                    <span
+                      className="shrink-0 w-8 h-8 rounded-lg bg-violet-50 dark:bg-violet-950/30 flex items-center justify-center mt-0.5"
+                      aria-hidden
+                    >
+                      <Icon className="h-4 w-4 text-violet-600 dark:text-violet-300" />
+                    </span>
+                    <div>
+                      <div className="font-semibold text-sm">{item.title}</div>
+                      <p className="text-xs text-muted-foreground leading-snug">{item.text}</p>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </CardContent>
         </Card>

@@ -118,7 +118,9 @@ export default function Donaciones() {
           <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg">
             <Heart className="h-10 w-10 text-white fill-white" />
           </div>
-          <h1 className="text-3xl font-bold">¡Gracias, de verdad!</h1>
+          <h1 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">
+            ¡Gracias, de verdad!
+          </h1>
           <p className="text-muted-foreground">
             Tu donación ayuda a que Paw Friend siga siendo gratis para miles de tutores peludos en
             Chile. Vamos a actualizar la meta en los próximos días.
@@ -164,10 +166,10 @@ export default function Donaciones() {
             <Sparkles className="h-3 w-3 mr-1" />
             Home-made en Chile
           </Badge>
-          <h1 className="text-3xl md:text-4xl font-bold leading-tight">
+          <h1 className="font-display font-semibold text-4xl md:text-5xl leading-[1.08] tracking-tight">
             Si las donaciones alcanzan,
             <br />
-            <span className="bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 bg-clip-text text-transparent">
+            <span className="bg-brand-gold-gradient bg-clip-text text-transparent">
               Paw Friend sigue gratis.
             </span>
           </h1>

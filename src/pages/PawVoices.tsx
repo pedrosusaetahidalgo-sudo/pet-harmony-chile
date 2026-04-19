@@ -4,7 +4,18 @@ import { Helmet } from 'react-helmet-async';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Megaphone, Sparkles, Heart, Gift, Crown, Zap } from '@/lib/icons';
+import {
+  Megaphone,
+  Sparkles,
+  Heart,
+  Gift,
+  Crown,
+  Zap,
+  Link2,
+  Palette,
+  MessageCircle,
+} from '@/lib/icons';
+import type { LucideIcon } from 'lucide-react';
 import { PageHeader } from '@/components/PageHeader';
 import { PawVoicesGrid } from '@/components/PawVoicesGrid';
 import { PawVoiceApplyForm } from '@/components/PawVoiceApplyForm';
@@ -32,19 +43,19 @@ const BENEFITS = [
   },
 ];
 
-const WE_NEED = [
+const WE_NEED: { icon: LucideIcon; title: string; text: string }[] = [
   {
-    emoji: '🔗',
+    icon: Link2,
     title: 'Exponer el link',
     text: 'pawfriend.cl en tu bio, historia o pie de reel.',
   },
   {
-    emoji: '🎨',
+    icon: Palette,
     title: '1 gráfica o reel al mes',
     text: 'Nosotros te lo entregamos listo. Tú le pones tu voz.',
   },
   {
-    emoji: '💬',
+    icon: MessageCircle,
     title: 'Hablar desde tu experiencia',
     text: 'Sin guiones. Cuéntanos cómo Paw Friend te sirve a ti y a tus peludos.',
   },
@@ -87,9 +98,9 @@ export default function PawVoices() {
             <Megaphone className="h-3 w-3 mr-1" />
             Red de creadores peludos
           </Badge>
-          <h1 className="text-3xl md:text-4xl font-bold leading-tight">
+          <h1 className="font-display font-semibold text-4xl md:text-5xl leading-[1.08] tracking-tight">
             Sé una{' '}
-            <span className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-rose-500 bg-clip-text text-transparent">
+            <span className="bg-audience-voices-gradient bg-clip-text text-transparent">
               voz peluda
             </span>{' '}
             de Paw Friend
@@ -103,7 +114,7 @@ export default function PawVoices() {
               onClick={() =>
                 document.getElementById('aplicar')?.scrollIntoView({ behavior: 'smooth' })
               }
-              className="bg-gradient-to-r from-violet-500 to-fuchsia-500"
+              className="bg-audience-voices-gradient shadow-audience-voices"
             >
               Quiero aplicar →
             </Button>
@@ -127,17 +138,23 @@ export default function PawVoices() {
               En la etapa inicial es algo simple. Nada de contratos ni letra chica:
             </p>
             <ul className="space-y-2.5">
-              {WE_NEED.map((item) => (
-                <li key={item.title} className="flex gap-3">
-                  <span className="text-lg leading-none" aria-hidden>
-                    {item.emoji}
-                  </span>
-                  <div>
-                    <div className="font-semibold text-sm">{item.title}</div>
-                    <p className="text-xs text-muted-foreground leading-snug">{item.text}</p>
-                  </div>
-                </li>
-              ))}
+              {WE_NEED.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <li key={item.title} className="flex gap-3 items-start">
+                    <span
+                      className="shrink-0 w-8 h-8 rounded-lg bg-pink-50 dark:bg-pink-950/30 flex items-center justify-center mt-0.5"
+                      aria-hidden
+                    >
+                      <Icon className="h-4 w-4 text-pink-600 dark:text-pink-300" />
+                    </span>
+                    <div>
+                      <div className="font-semibold text-sm">{item.title}</div>
+                      <p className="text-xs text-muted-foreground leading-snug">{item.text}</p>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
           </CardContent>
         </Card>

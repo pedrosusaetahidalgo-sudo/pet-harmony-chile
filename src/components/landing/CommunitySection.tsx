@@ -50,37 +50,32 @@ export function CommunitySection() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {COMMUNITY_CARDS.map(
-            ({ iconSrc, emoji, title, description, cta, to, accentFrom, accentTo }) => (
-              <button
-                key={title}
-                type="button"
-                onClick={() => handleClick(to)}
-                className="group relative flex flex-col items-start overflow-hidden rounded-2xl border border-neutral-200/60 bg-white p-5 text-left shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          {COMMUNITY_CARDS.map(({ iconSrc, title, description, cta, to, accentFrom, accentTo }) => (
+            <button
+              key={title}
+              type="button"
+              onClick={() => handleClick(to)}
+              className="group relative flex flex-col items-start overflow-hidden rounded-2xl border border-neutral-200/60 bg-white p-5 text-left shadow-card transition-all hover:-translate-y-0.5 hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            >
+              <div
+                className={`mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${accentFrom} ${accentTo} shadow-md`}
               >
-                <div
-                  className={`mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br ${accentFrom} ${accentTo} shadow-md`}
-                >
-                  <img
-                    src={iconSrc}
-                    alt=""
-                    aria-hidden
-                    className="h-6 w-6 brightness-0 invert"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="mb-1 flex items-center gap-1.5">
-                  <span aria-hidden>{emoji}</span>
-                  <h3 className="text-base font-bold tracking-tight">{title}</h3>
-                </div>
-                <p className="mb-3 text-sm leading-snug text-muted-foreground">{description}</p>
-                <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-primary group-hover:underline">
-                  {cta}
-                  <ArrowRight className="h-3.5 w-3.5" />
-                </span>
-              </button>
-            )
-          )}
+                <img
+                  src={iconSrc}
+                  alt=""
+                  aria-hidden
+                  className="h-6 w-6 brightness-0 invert"
+                  loading="lazy"
+                />
+              </div>
+              <h3 className="mb-1 text-base font-bold tracking-tight">{title}</h3>
+              <p className="mb-3 text-sm leading-snug text-muted-foreground">{description}</p>
+              <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-primary group-hover:underline">
+                {cta}
+                <ArrowRight className="h-3.5 w-3.5" />
+              </span>
+            </button>
+          ))}
         </div>
 
         <p className="mt-10 text-center text-sm italic text-muted-foreground">{COMMUNITY.closer}</p>

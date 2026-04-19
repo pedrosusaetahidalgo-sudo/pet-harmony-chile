@@ -43,7 +43,7 @@ export function EcosystemSection() {
 
         {/* Grid 4 cards */}
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {PILLARS.map(({ iconSrc, emoji, title, description, accentFrom, accentTo, href }) => (
+          {PILLARS.map(({ iconSrc, title, description, accentFrom, accentTo, href }) => (
             <button
               key={title}
               type="button"
@@ -67,14 +67,9 @@ export function EcosystemSection() {
                   loading="lazy"
                 />
               </div>
-              <div className="flex items-center gap-1.5">
-                <span aria-hidden className="text-base">
-                  {emoji}
-                </span>
-                <h3 className="text-lg font-bold tracking-tight text-foreground md:text-xl">
-                  {title}
-                </h3>
-              </div>
+              <h3 className="text-lg font-bold tracking-tight text-foreground md:text-xl">
+                {title}
+              </h3>
               <p className="text-sm leading-relaxed text-muted-foreground">{description}</p>
               <span className="mt-auto inline-flex items-center gap-1 text-sm font-semibold text-primary opacity-0 transition-opacity group-hover:opacity-100">
                 Explorar

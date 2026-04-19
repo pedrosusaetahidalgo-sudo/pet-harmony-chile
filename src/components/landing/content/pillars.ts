@@ -4,10 +4,8 @@
  */
 
 export interface Pillar {
-  /** Path al icono custom dentro de /public/icons/landing/ */
+  /** Path al icono custom dentro de /public/icons/landing/ (brand SVG squircle) */
   iconSrc: string;
-  /** Emoji solo para fallback / SR / mobile compact */
-  emoji: string;
   title: string;
   description: string;
   /** Color de acento (Tailwind utility class fragment) */
@@ -23,7 +21,6 @@ export interface Pillar {
 export const PILLARS: readonly Pillar[] = [
   {
     iconSrc: '/icons/landing/13_health_monitored.svg',
-    emoji: '🩺',
     title: 'Salud',
     description:
       'Ficha clínica PDF, vacunas al día, recordatorios automáticos, OCR del carnet con IA.',
@@ -33,7 +30,6 @@ export const PILLARS: readonly Pillar[] = [
   },
   {
     iconSrc: '/icons/landing/20_chat.svg',
-    emoji: '🧡',
     title: 'Comunidad',
     description: 'Feed pet lover, grupos por raza, adopciones. El lado humano de tener un peludo.',
     accentFrom: 'from-rose-400',
@@ -42,7 +38,6 @@ export const PILLARS: readonly Pillar[] = [
   },
   {
     iconSrc: '/icons/landing/12_first_aid.svg',
-    emoji: '🚨',
     title: 'Emergencias',
     description: 'Red de donantes de sangre, vets de urgencia 24h, ficha compartida en 1 toque.',
     accentFrom: 'from-amber-400',
@@ -51,7 +46,6 @@ export const PILLARS: readonly Pillar[] = [
   },
   {
     iconSrc: '/icons/landing/11_pet_beloved.svg',
-    emoji: '🌸',
     title: 'Memoria',
     description: 'Cápsulas del alma, memorial de los que se fueron. Espacio para honrar.',
     accentFrom: 'from-violet-400',
@@ -62,7 +56,6 @@ export const PILLARS: readonly Pillar[] = [
 
 export interface CommunityCard {
   iconSrc: string;
-  emoji: string;
   title: string;
   description: string;
   cta: string;
@@ -76,7 +69,6 @@ export interface CommunityCard {
 export const COMMUNITY_CARDS: readonly CommunityCard[] = [
   {
     iconSrc: '/icons/landing/04_heart_paw.svg',
-    emoji: '💛',
     title: 'Paw Member',
     description:
       'Aporta $3.990/mes voluntario. Mismas features, badge de honor que sostiene el proyecto.',
@@ -87,7 +79,6 @@ export const COMMUNITY_CARDS: readonly CommunityCard[] = [
   },
   {
     iconSrc: '/icons/landing/27_rocket.svg',
-    emoji: '📣',
     title: 'Paw Voices',
     description:
       '¿Creador en redes? Amplifica la misión con tu voz auténtica. Badge oficial + perfil.',
@@ -98,7 +89,6 @@ export const COMMUNITY_CARDS: readonly CommunityCard[] = [
   },
   {
     iconSrc: '/icons/landing/24_partnership.svg',
-    emoji: '🏢',
     title: 'Paw Companys',
     description:
       '¿Tu empresa ama a los peludos? Sponsor mensual con logo + menciones + impacto medible.',
@@ -109,7 +99,6 @@ export const COMMUNITY_CARDS: readonly CommunityCard[] = [
   },
   {
     iconSrc: '/icons/landing/26_clinic.svg',
-    emoji: '🛍️',
     title: 'Paw Partners',
     description:
       'Tiendas, comida, restaurantes, seguros. Descuentos a Paw Members ↔ publicidad gratis.',
@@ -120,7 +109,6 @@ export const COMMUNITY_CARDS: readonly CommunityCard[] = [
   },
   {
     iconSrc: '/icons/landing/12_first_aid.svg',
-    emoji: '🩸',
     title: 'Donante de sangre',
     description:
       'Si tu peludo califica, salva la vida de otro peludo en urgencia. Red activa en Chile.',
