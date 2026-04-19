@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend × Paw Voices — Para creadores peludos</title>
+  <meta name="description" content="Paw Voices: red de creadores e influencers peludos que amplifican Paw Friend. Sin contratos, sin guiones, sin compromiso de ventas. Badge oficial + perfil destacado + código promo." />
+  <meta name="theme-color" content="#9333ea" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://pawfriend.cl/pitch/voices.html" />
+  <link rel="icon" type="image/svg+xml" href="/paw_friend_icon_principal.svg" />
+
+  <!-- Open Graph (WhatsApp, LinkedIn, Facebook) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Paw Friend" />
+  <meta property="og:url" content="https://pawfriend.cl/pitch/voices.html" />
+  <meta property="og:title" content="Paw Voices — Red de creadores peludos" />
+  <meta property="og:description" content="Sin contratos, sin guiones, sin compromiso de ventas. Badge oficial + perfil destacado en la app + código promo personal. 100% voluntario." />
+  <meta property="og:image" content="https://pawfriend.cl/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="es_CL" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Paw Voices — Red de creadores peludos" />
+  <meta name="twitter:description" content="Sin contratos, sin guiones. Badge + perfil destacado + código promo. 100% voluntario." />
+  <meta name="twitter:image" content="https://pawfriend.cl/og-image.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --brand-50:#faf5ff; --brand-100:#f3e8ff; --brand-200:#e9d5ff; --brand-300:#d8b4fe;
+      --brand-400:#c084fc; --brand-500:#a855f7; --brand-600:#9333ea; --brand-700:#7e22ce;
+      --brand-800:#6b21a8; --brand-900:#581c87;
+      --voice-pink:#ec4899; --voice-fuchsia:#d946ef; --voice-rose:#f43f5e; --voice-violet:#8b5cf6;
+      --gold:#eab308; --gold-soft:#fef3c7; --gold-dark:#a16207;
+      --medical:#10b981; --ink:#1a102b; --ink-soft:#4b3b66;
+      --paper:#fff7fb; --surface:#ffffff; --border:#f9d3eb;
+      --hero-grad: linear-gradient(135deg,#581c87 0%,#9333ea 35%,#ec4899 75%,#fbbf24 100%);
+      --deep-grad: linear-gradient(135deg,#1f0738 0%,#581c87 50%,#ec4899 100%);
+      --voice-grad: linear-gradient(135deg,#9333ea 0%,#ec4899 100%);
+      --warm-grad: linear-gradient(135deg,#ec4899 0%,#f43f5e 50%,#fbbf24 100%);
+      --card-shadow: 0 10px 40px -10px rgba(236,72,153,.18);
+      --card-shadow-hover: 0 24px 60px -12px rgba(236,72,153,.35);
+      --radius-xl:24px; --radius-lg:18px; --radius-md:12px;
+      --slide-py:56px; --slide-px:72px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
+    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+    .progress{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(236,72,153,.08);z-index:200}
+    .progress-bar{height:100%;background:var(--warm-grad);width:0%;transition:width .2s ease-out}
+
+    .topbar{position:fixed;top:3px;left:0;right:0;height:52px;padding:0 32px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(249,211,235,.7);z-index:150;font-size:13px}
+    .topbar-brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ink)}
+    .topbar-brand img{height:30px;width:auto;display:block}
+    .topbar-meta{display:flex;gap:18px;align-items:center;color:var(--ink-soft);font-weight:500}
+    .topbar-meta .chip{padding:4px 10px;background:#fdf2f8;border:1px solid var(--border);border-radius:999px;font-size:12px}
+    .topbar-counter{font-variant-numeric:tabular-nums;font-weight:700;color:var(--voice-pink)}
+    @media(max-width:900px){.topbar-meta .chip{display:none}.topbar{padding:0 16px}}
+
+    .sidenav{position:fixed;top:50%;right:20px;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:150}
+    .dot{width:10px;height:10px;border-radius:999px;background:rgba(236,72,153,.25);border:2px solid transparent;cursor:pointer;transition:all .2s;position:relative}
+    .dot:hover{background:var(--voice-pink);transform:scale(1.2)}
+    .dot.active{background:var(--voice-pink);transform:scale(1.4);box-shadow:0 0 0 4px rgba(236,72,153,.18)}
+    .dot .label{position:absolute;right:22px;top:50%;transform:translateY(-50%);background:var(--ink);color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
+    .dot:hover .label{opacity:1}
+    @media(max-width:900px){.sidenav{display:none}}
+
+    .kbhint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(26,16,43,.85);color:rgba(255,255,255,.9);padding:8px 16px;border-radius:999px;font-size:12px;font-weight:500;z-index:150;backdrop-filter:blur(10px);display:flex;gap:16px;align-items:center;transition:opacity .4s}
+    .kbhint kbd{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:4px;padding:1px 6px;font-size:11px;font-family:inherit;font-weight:600}
+    .kbhint.hide{opacity:0;pointer-events:none}
+    @media(max-width:700px){.kbhint{display:none}}
+
+    .slide{min-height:100vh;padding:var(--slide-py) var(--slide-px);padding-top:calc(var(--slide-py) + 55px);display:flex;flex-direction:column;justify-content:center;scroll-snap-align:start;scroll-snap-stop:always;position:relative;overflow:hidden}
+    .slide-num{position:absolute;top:70px;right:32px;font-size:12px;font-weight:700;color:var(--ink-soft);letter-spacing:.12em;opacity:.6;font-variant-numeric:tabular-nums}
+    .slide.dark .slide-num{color:rgba(255,255,255,.6)}
+    .container{max-width:1160px;margin:0 auto;width:100%}
+    .slide.dark{background:var(--deep-grad);color:#fff}
+    .slide.dark h1,.slide.dark h2,.slide.dark h3{color:#fff}
+    .slide.dark p{color:rgba(255,255,255,.88)}
+    .slide.grad{background:var(--hero-grad);color:#fff}
+    .slide.grad h1,.slide.grad h2,.slide.grad h3{color:#fff}
+    .slide.warm{background:var(--warm-grad);color:#fff}
+    .slide.warm h1,.slide.warm h2,.slide.warm h3{color:#fff}
+    .slide.soft{background:linear-gradient(180deg,#fff7fb 0%,#fff 60%,#fdf2f8 100%)}
+    .blob{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;opacity:.35;z-index:0}
+    .blob-1{top:-120px;right:-100px;width:420px;height:420px;background:var(--voice-pink)}
+    .blob-2{bottom:-120px;left:-80px;width:360px;height:360px;background:#fbbf24;opacity:.3}
+    .slide.dark .blob-1{background:var(--voice-fuchsia);opacity:.45}
+    .slide.dark .blob-2{background:#eab308;opacity:.18}
+    .slide>.container{position:relative;z-index:1}
+
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--voice-pink);padding:6px 14px;background:#fce7f3;border-radius:999px;margin-bottom:18px}
+    .slide.dark .eyebrow,.slide.grad .eyebrow,.slide.warm .eyebrow{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25)}
+    h1{font-size:clamp(42px,6.5vw,88px);font-weight:800;line-height:1;letter-spacing:-.035em}
+    h2{font-size:clamp(32px,4.2vw,52px);font-weight:800;line-height:1.05;letter-spacing:-.025em;margin-bottom:16px}
+    h3{font-size:20px;font-weight:700;line-height:1.3;color:var(--ink);margin-bottom:8px}
+    .lead{font-size:clamp(17px,1.8vw,22px);color:var(--ink-soft);line-height:1.5;max-width:820px;margin-bottom:32px}
+    .slide.dark .lead,.slide.grad .lead,.slide.warm .lead{color:rgba(255,255,255,.92)}
+    p{font-size:16px;color:var(--ink-soft)}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:28px}
+    .grid-2{grid-template-columns:1fr 1fr;gap:24px}
+    .grid-3{grid-template-columns:repeat(3,1fr);gap:18px}
+    .grid-4{grid-template-columns:repeat(4,1fr);gap:16px}
+    @media(max-width:900px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+    @media(max-width:1100px) and (min-width:901px){.grid-4{grid-template-columns:repeat(2,1fr)}}
+
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px 22px;box-shadow:var(--card-shadow);transition:transform .2s,box-shadow .2s;position:relative}
+    .card:hover{transform:translateY(-3px);box-shadow:var(--card-shadow-hover)}
+    .card .ico{width:48px;height:48px;border-radius:12px;background:#fce7f3;color:var(--voice-pink);display:inline-flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;margin-bottom:14px;overflow:hidden}
+    .card .ico img{width:60%;height:60%;object-fit:contain;display:block}
+    .card p{font-size:14.5px;line-height:1.5}
+    .slide.dark .card,.slide.warm .card,.slide.grad .card{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);backdrop-filter:blur(10px)}
+    .slide.dark .card h3,.slide.warm .card h3,.slide.grad .card h3{color:#fff}
+    .slide.dark .card p,.slide.warm .card p,.slide.grad .card p{color:rgba(255,255,255,.88)}
+    .slide.dark .card .ico,.slide.warm .card .ico,.slide.grad .card .ico{background:rgba(255,255,255,.15);color:#fff}
+
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:24px}
+    .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:22px 16px;text-align:center;box-shadow:var(--card-shadow)}
+    .stat-value{font-size:clamp(28px,3.5vw,40px);font-weight:800;background:var(--voice-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1;font-variant-numeric:tabular-nums}
+    .stat-label{font-size:13px;color:var(--ink-soft);margin-top:8px;font-weight:500;line-height:1.3}
+    .slide.dark .stat,.slide.warm .stat,.slide.grad .stat{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
+    .slide.dark .stat-label,.slide.warm .stat-label,.slide.grad .stat-label{color:rgba(255,255,255,.78)}
+
+    .bullets{list-style:none;padding:0;margin-top:16px}
+    .bullets li{padding:8px 0 8px 30px;position:relative;font-size:15px;color:var(--ink);border-bottom:1px solid var(--border);line-height:1.5}
+    .bullets li:last-child{border-bottom:none}
+    .bullets li::before{content:"♥";position:absolute;left:0;top:9px;color:var(--voice-pink);font-weight:800;width:20px;height:20px;background:#fce7f3;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px}
+    .slide.dark .bullets li,.slide.warm .bullets li,.slide.grad .bullets li{color:rgba(255,255,255,.92);border-bottom-color:rgba(255,255,255,.12)}
+    .slide.dark .bullets li::before,.slide.warm .bullets li::before,.slide.grad .bullets li::before{background:rgba(255,255,255,.18);color:#fff}
+
+    .quote{background:var(--surface);border-left:4px solid var(--voice-pink);border-radius:10px;padding:18px 22px;margin-top:14px;box-shadow:var(--card-shadow)}
+    .quote p{font-size:16px;font-style:italic;color:var(--ink);margin-bottom:6px}
+    .quote cite{font-size:12px;color:var(--ink-soft);font-style:normal;font-weight:600}
+
+    /* Cover */
+    .cover{text-align:center;align-items:center}
+    .cover-logo{margin-bottom:32px;filter:drop-shadow(0 20px 60px rgba(236,72,153,.4));animation:float 6s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .cover-logo img{width:160px;height:160px;display:block}
+    .cover h1{font-family:'Fredoka',sans-serif;font-weight:600;color:#fff;margin-bottom:8px;text-shadow:0 2px 30px rgba(0,0,0,.15)}
+    .cover .tagline{font-size:clamp(19px,2.4vw,28px);font-weight:500;color:#fff;max-width:760px;margin:20px auto 12px;opacity:.98;line-height:1.35}
+    .cover .subtag{font-size:15px;color:rgba(255,255,255,.85);font-style:italic;margin-bottom:36px}
+    .cover-meta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+    .cover-meta .chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);color:#fff;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:600;backdrop-filter:blur(10px)}
+    .cover-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.7);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;animation:bounce 2s infinite}
+    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+    /* Spotlight + steps */
+    .spotlight{margin-top:30px;padding:22px 26px;background:linear-gradient(135deg,#fce7f3 0%,#fef3c7 100%);border-left:4px solid var(--voice-pink);border-radius:14px}
+    .spotlight strong{display:block;font-size:18px;color:var(--voice-pink);margin-bottom:6px}
+    .spotlight p{font-size:14.5px;color:var(--ink-soft)}
+
+    .step-row{display:flex;gap:24px;align-items:start;padding:18px;border-radius:var(--radius-lg);background:var(--surface);box-shadow:var(--card-shadow);margin-bottom:14px}
+    .step-row .step-n{flex:none;width:48px;height:48px;border-radius:50%;background:var(--voice-grad);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px}
+    .step-row .step-body h3{margin-bottom:4px}
+    .step-row .step-body p{font-size:15px}
+
+    /* Founder sig */
+    .founder-sig{display:inline-flex;align-items:center;gap:14px;margin-top:32px;padding:16px 20px;background:rgba(255,255,255,.12);border-radius:14px;backdrop-filter:blur(10px)}
+    .founder-sig .avatar{width:48px;height:48px;border-radius:50%;background:var(--warm-grad);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:22px;flex:none}
+    .founder-sig .info{display:flex;flex-direction:column;gap:2px;text-align:left}
+    .founder-sig .name{font-size:15px;font-weight:700;color:#fff}
+    .founder-sig .role{font-size:12px;color:rgba(255,255,255,.78)}
+
+    /* CTA */
+    .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s,box-shadow .15s;border:none;cursor:pointer}
+    .btn-primary{background:#fff;color:var(--voice-pink);box-shadow:0 10px 28px -8px rgba(255,255,255,.55)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 40px -10px rgba(255,255,255,.7)}
+    .btn-ghost{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.3)}
+    .btn-ghost:hover{background:rgba(255,255,255,.24)}
+
+    @media print{
+      .topbar,.sidenav,.kbhint,.progress{display:none}
+      .slide{min-height:auto;page-break-after:always;scroll-snap-align:none}
+    }
+
+    /* ═══ MEJORAS VISUALES 2026-04-19 ═══════════════════════════════════ */
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease-out,transform .7s cubic-bezier(.2,.8,.2,1)}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
+    .stat{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+    .stat.visible{opacity:1;transform:translateY(0);animation:statPop .6s ease-out}
+    @keyframes statPop{0%{transform:scale(.94)}60%{transform:scale(1.03)}100%{transform:scale(1)}}
+    .faq-card{cursor:pointer;user-select:none;transition:transform .2s,box-shadow .2s}
+    .faq-card h3{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .faq-card h3::after{content:"+";flex:none;width:28px;height:28px;border-radius:50%;background:#fce7f3;color:var(--voice-pink);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;transition:background .2s,color .2s,transform .2s}
+    .faq-card[aria-expanded="true"] h3::after{content:"−";background:var(--voice-pink);color:#fff;transform:rotate(180deg)}
+    .faq-card[aria-expanded="false"] p{max-height:0;opacity:0;overflow:hidden;margin:0;transition:max-height .3s,opacity .2s,margin .2s}
+    .faq-card[aria-expanded="true"] p{max-height:240px;opacity:1;margin-top:10px;transition:max-height .4s,opacity .3s .1s,margin .3s}
+    .faq-card:focus-visible{outline:2px solid var(--voice-pink);outline-offset:2px}
+
+    /* Galería Paw Voices fundadores (placeholders animados) */
+    .voices-gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:16px;margin-top:28px;padding:24px;background:linear-gradient(135deg,rgba(236,72,153,.06) 0%,rgba(251,191,36,.06) 100%);border:1px dashed rgba(236,72,153,.3);border-radius:var(--radius-lg)}
+    .voice-card{aspect-ratio:4/5;border-radius:var(--radius-md);background:var(--surface);border:1px solid var(--border);overflow:hidden;position:relative;transition:transform .3s,box-shadow .3s}
+    .voice-card:hover{transform:translateY(-4px) rotate(-1deg);box-shadow:0 20px 40px -10px rgba(236,72,153,.3)}
+    .voice-avatar{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:800;color:#fff;position:relative}
+    .voice-avatar.g1{background:linear-gradient(135deg,#ec4899 0%,#f43f5e 100%)}
+    .voice-avatar.g2{background:linear-gradient(135deg,#8b5cf6 0%,#d946ef 100%)}
+    .voice-avatar.g3{background:linear-gradient(135deg,#f59e0b 0%,#ec4899 100%)}
+    .voice-avatar.g4{background:linear-gradient(135deg,#06b6d4 0%,#8b5cf6 100%)}
+    .voice-avatar.g5{background:linear-gradient(135deg,#10b981 0%,#ec4899 100%)}
+    .voice-avatar.g6{background:linear-gradient(135deg,#fbbf24 0%,#f43f5e 100%)}
+    .voice-meta{padding:10px 12px;font-size:12px}
+    .voice-meta-name{font-weight:700;color:var(--ink);font-size:13px}
+    .voice-meta-handle{color:var(--ink-soft);font-size:11px;margin-top:2px}
+    .voice-badge{position:absolute;top:10px;right:10px;padding:3px 8px;background:rgba(255,255,255,.95);border-radius:999px;font-size:9px;font-weight:800;color:var(--voice-pink);letter-spacing:.08em;text-transform:uppercase;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+    .gallery-note{margin-top:12px;font-size:11px;color:var(--ink-soft);text-align:center;font-style:italic;grid-column:1/-1}
+
+    @media (prefers-reduced-motion: reduce){
+      .reveal,.reveal.visible,.stat,.stat.visible{opacity:1;transform:none;transition:none;animation:none}
+      .faq-card[aria-expanded="false"] p{max-height:none;opacity:1;margin-top:10px}
+      .voice-card:hover{transform:none}
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+<header class="topbar">
+  <div class="topbar-brand">
+    <img src="/paw_friend_icon_principal.svg" alt="Paw Friend" />
+    <span>Paw Friend × Paw Voices</span>
+  </div>
+  <div class="topbar-meta">
+    <span class="chip">Para creadores peludos</span>
+    <span class="chip">Sin contrato · Sin guion</span>
+    <span class="topbar-counter"><span id="curSlide">1</span>/9</span>
+  </div>
+</header>
+
+<nav class="sidenav" aria-label="Slides">
+  <a class="dot active" href="#s1" data-slide="1"><span class="label">Portada</span></a>
+  <a class="dot" href="#s2" data-slide="2"><span class="label">Quiénes somos</span></a>
+  <a class="dot" href="#s3" data-slide="3"><span class="label">Por qué tú</span></a>
+  <a class="dot" href="#s4" data-slide="4"><span class="label">Qué te damos</span></a>
+  <a class="dot" href="#s5" data-slide="5"><span class="label">Qué te pedimos</span></a>
+  <a class="dot" href="#s6" data-slide="6"><span class="label">Cómo nos sostenemos</span></a>
+  <a class="dot" href="#s7" data-slide="7"><span class="label">Cómo aplicar</span></a>
+  <a class="dot" href="#s8" data-slide="8"><span class="label">FAQ</span></a>
+  <a class="dot" href="#s9" data-slide="9"><span class="label">Súmate</span></a>
+</nav>
+
+<div class="kbhint" id="kbhint">
+  <span><kbd>↓</kbd> <kbd>↑</kbd> navegar</span>
+  <span><kbd>Esc</kbd> ocultar</span>
+</div>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 1 · COVER                                                 -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide grad cover" id="s1">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="container">
+    <div class="cover-logo"><img src="/paw_friend_icon_principal.svg" alt="Paw Friend" /></div>
+    <h1>Paw Voices</h1>
+    <p class="tagline">Si tus peludos te dieron audiencia,<br/>ayúdanos a darles algo de vuelta.</p>
+    <p class="subtag">Red de creadores e influencers que amplifican Paw Friend con su voz auténtica.</p>
+    <div class="cover-meta">
+      <span class="chip">Sin contrato · Sin guion</span>
+      <span class="chip">Badge oficial + perfil destacado</span>
+      <span class="chip">Chile + Latam · 2026</span>
+    </div>
+  </div>
+  <div class="cover-scroll">↓ Desliza</div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 2 · QUIÉNES SOMOS                                        -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide" id="s2">
+  <span class="slide-num">02 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Quiénes somos</span>
+    <h2>Paw Friend, hecho en Chile<br/>por una persona y mucha comunidad.</h2>
+    <p class="lead">La ficha clínica digital de mascotas chilenas + directorio de veterinarios verificados + comunidad pet lover. 100% gratis para los dueños. Para siempre.</p>
+
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/14_clinical_record.svg" alt=""/></div>
+        <h3>Ficha clínica + PDF</h3>
+        <p>Vacunas, alergias, microchip, historial. Compartible por WhatsApp en 3 toques. Gratis siempre.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/22_search.svg" alt=""/></div>
+        <h3>Vets verificados</h3>
+        <p>Directorio público por comuna y especialidad. Reseñas reales (solo con reserva).</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/04_heart_paw.svg" alt=""/></div>
+        <h3>Comunidad pet lover</h3>
+        <p>Donantes de sangre, memorial, adopción. Ecosistema completo, no app puntual.</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-value">100%</div><div class="stat-label">Gratis para dueños<br/>(siempre)</div></div>
+      <div class="stat"><div class="stat-value">1</div><div class="stat-label">Persona detrás<br/>(con IA de copiloto)</div></div>
+      <div class="stat"><div class="stat-value">Chile</div><div class="stat-label">Hecho acá,<br/>escalando a Latam</div></div>
+      <div class="stat"><div class="stat-value">SpA</div><div class="stat-label">Empresa formal<br/>SUSAETA GARNHAM</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 3 · POR QUÉ TÚ                                            -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide soft" id="s3">
+  <span class="slide-num">03 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Por qué te buscamos</span>
+    <h2>Buscamos voces auténticas,<br/>no contratos publicitarios.</h2>
+    <p class="lead">Si tu cuenta vive de tus peludos —Instagram, TikTok, YouTube, Twitch— y tu audiencia confía en lo que recomiendas, queremos sumarte como Paw Voice oficial.</p>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/04_heart_paw.svg" alt=""/></div>
+        <h3>Amas a los peludos de verdad</h3>
+        <p>No nos importa el follower count. Nos importa que tu contenido nazca del cariño real, no del calendario editorial.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/30_star.svg" alt=""/></div>
+        <h3>Tu audiencia te cree</h3>
+        <p>Comunidades chicas y comprometidas pesan más que millones de seguidores fríos. Si te leen, escuchan y te toman en serio: encajas.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/20_chat.svg" alt=""/></div>
+        <h3>Tienes voz propia</h3>
+        <p>No buscamos influencers que repitan briefs. Queremos creadores que cuenten cómo Paw Friend les sirve a ellos, en sus palabras.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/27_rocket.svg" alt=""/></div>
+        <h3>Crees en proyectos chilenos</h3>
+        <p>Paw Friend es home-made. Si te emociona apoyar tecnología hecha en Chile que escala a Latam, este es tu lugar.</p>
+      </div>
+    </div>
+
+    <!-- Galería Paw Voices fundadores: 6 slots placeholder hasta tener creators reales -->
+    <h3 style="margin-top:40px;font-size:18px">Paw Voices fundadores — 6 lugares disponibles</h3>
+    <div class="voices-gallery" aria-label="Galería de Paw Voices fundadores">
+      <div class="voice-card">
+        <div class="voice-avatar g1">🐾<span class="voice-badge">Tu lugar</span></div>
+        <div class="voice-meta"><div class="voice-meta-name">Tu nombre</div><div class="voice-meta-handle">@tu_handle</div></div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-avatar g2">💛<span class="voice-badge">Tu lugar</span></div>
+        <div class="voice-meta"><div class="voice-meta-name">Tu nombre</div><div class="voice-meta-handle">@tu_handle</div></div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-avatar g3">🐕<span class="voice-badge">Tu lugar</span></div>
+        <div class="voice-meta"><div class="voice-meta-name">Tu nombre</div><div class="voice-meta-handle">@tu_handle</div></div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-avatar g4">🐈<span class="voice-badge">Tu lugar</span></div>
+        <div class="voice-meta"><div class="voice-meta-name">Tu nombre</div><div class="voice-meta-handle">@tu_handle</div></div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-avatar g5">🦴<span class="voice-badge">Tu lugar</span></div>
+        <div class="voice-meta"><div class="voice-meta-name">Tu nombre</div><div class="voice-meta-handle">@tu_handle</div></div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-avatar g6">🏡<span class="voice-badge">Tu lugar</span></div>
+        <div class="voice-meta"><div class="voice-meta-name">Tu nombre</div><div class="voice-meta-handle">@tu_handle</div></div>
+      </div>
+      <p class="gallery-note">↑ 6 Paw Voices fundadores con prioridad histórica en cada programa nuevo. Tu cara vive aquí cuando te sumes.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 4 · QUÉ TE DAMOS                                         -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide warm" id="s4">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <span class="slide-num">04 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Tus beneficios</span>
+    <h2>Qué te damos por ser<br/>Paw Voice oficial.</h2>
+    <p class="lead">Sin "comisión por venta", sin "afiliados ocultos". Lo que recibes es real, visible y escalable a medida que la app crece.</p>
+
+    <div class="grid grid-4">
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/30_star.svg" alt=""/></div>
+        <h3>Badge oficial</h3>
+        <p>"Paw Voice" visible en tu perfil dentro de la app y en cada mención pública. Reconocimiento de la comunidad.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/22_search.svg" alt=""/></div>
+        <h3>Perfil destacado</h3>
+        <p>Apareces en /paw-voices con tu link, historia, peludos y código promo único.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/04_heart_paw.svg" alt=""/></div>
+        <h3>Código promo único</h3>
+        <p>Tu audiencia recibe beneficios cuando lo usa. Tú recibes métricas y reconocimiento público.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/27_rocket.svg" alt=""/></div>
+        <h3>Beta access</h3>
+        <p>Primera fila en features nuevas. Línea directa con el fundador para feedback y co-creación.</p>
+      </div>
+    </div>
+
+    <div class="spotlight" style="background:rgba(255,255,255,.18);border-left-color:#fff;color:#fff">
+      <strong style="color:#fff">Y si Paw Friend se vuelve grande, escalamos juntos.</strong>
+      <p style="color:rgba(255,255,255,.92)">Los Paw Voices fundadores tienen prioridad en cualquier programa nuevo: eventos privados, viajes patrocinados, co-creación de productos. Sin promesas vacías: lo iremos construyendo a medida que crezcamos.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 5 · QUÉ TE PEDIMOS                                       -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide" id="s5">
+  <span class="slide-num">05 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Tu compromiso</span>
+    <h2>Qué te pedimos a ti.</h2>
+    <p class="lead">Poco. En serio. La idea es que se sienta como contar algo que te gusta, no como cumplir un brief.</p>
+
+    <div class="step-row">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <h3>🔗 Expone el link</h3>
+        <p>pawfriend.cl en tu bio, descripción de canal, pie de reel o donde te haga sentido. Solo eso ya nos ayuda.</p>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <h3>🎨 1 reel o gráfica al mes</h3>
+        <p>Te entregamos plantillas listas (gráficas, captions, b-roll). Tú le pones tu voz, tu peludo y tu estilo. No queremos que parezca ad — queremos que parezca tú.</p>
+      </div>
+    </div>
+
+    <div class="step-row">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <h3>💬 Habla desde tu experiencia</h3>
+        <p>Sin guiones obligatorios. Sin claims forzados. Cuéntale a tu audiencia cómo Paw Friend te sirve a ti y a tus peludos. Tu voz vale más que un script nuestro.</p>
+      </div>
+    </div>
+
+    <div class="quote">
+      <p>"Lo que mejor convierte no es el ad perfecto, es la persona real diciendo 'esto me ahorró un susto a las 3 AM con mi gato'."</p>
+      <cite>— Paw Founder</cite>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 6 · CÓMO NOS SOSTENEMOS                                  -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide soft" id="s6">
+  <span class="slide-num">06 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Transparencia total</span>
+    <h2>Cómo nos sostenemos<br/>(y por qué importa).</h2>
+    <p class="lead">Paw Friend es 100% gratis para los dueños. Sin paywalls, sin gates ocultos, sin "compra premium para descargar tu PDF". El proyecto se sostiene con 5 motores opcionales — ninguno bloquea la experiencia del dueño.</p>
+
+    <ul class="bullets">
+      <li><strong>Donaciones voluntarias.</strong> En /donaciones, transparente y trazable a refugios.</li>
+      <li><strong>Paw Member ($3.990/mes voluntario).</strong> Mismas features que el plan gratis, solo badge 💛 de honor.</li>
+      <li><strong>Veterinarios B2B.</strong> Plan Free gratis (5 pacientes), Premium $9.900/mes para vets individuales, Pro Max $29.900/mes para clínicas con múltiples profesionales.</li>
+      <li><strong>Paw Companys.</strong> Empresas que patrocinan ($49.900-$199.900/mes) con badge público y trazabilidad a refugios.</li>
+      <li><strong>Paw Voices (tú).</strong> Sin pago directo, pero amplificas. A medida que crecemos juntos, escalamos las contrapartidas.</li>
+    </ul>
+
+    <div class="spotlight">
+      <strong>Tu valor no es CPM, es confianza.</strong>
+      <p>Por eso no te pagamos por post. Te damos visibilidad real, beta access y la promesa de que crecemos juntos. Cuando Paw Friend tenga programas más maduros (eventos, viajes, co-creación), los fundadores Paw Voices tienen prioridad.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 7 · CÓMO APLICAR                                         -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide" id="s7">
+  <span class="slide-num">07 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Proceso simple</span>
+    <h2>Cómo aplicar como Paw Voice.</h2>
+    <p class="lead">3 pasos, 1 semana, 0 burocracia.</p>
+
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/19_mobile_app.svg" alt=""/></div>
+        <h3>1 · Llena el form</h3>
+        <p>En pawfriend.cl/paw-voices o escríbenos a pawfriendcl@gmail.com con tus links, tu peludo y por qué quieres sumarte.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/20_chat.svg" alt=""/></div>
+        <h3>2 · Conversamos</h3>
+        <p>Llamada de 15-20 min para conocernos, ver tu estilo y alinear expectativas. Sin presión: si no calza, queda como amistad.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/27_rocket.svg" alt=""/></div>
+        <h3>3 · Activación</h3>
+        <p>Te creamos perfil destacado, badge oficial, código promo único, plantillas. Listas en menos de 7 días.</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-value">15-20'</div><div class="stat-label">Llamada inicial</div></div>
+      <div class="stat"><div class="stat-value">7 días</div><div class="stat-label">Activación post-aprobación</div></div>
+      <div class="stat"><div class="stat-value">0</div><div class="stat-label">Contratos eternos<br/>o exclusividad</div></div>
+      <div class="stat"><div class="stat-value">∞</div><div class="stat-label">Salida libre cuando<br/>tú decidas</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 8 · FAQ                                                  -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide soft" id="s8">
+  <span class="slide-num">08 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Anticipamos tus dudas</span>
+    <h2>Preguntas frecuentes.</h2>
+
+    <div class="grid grid-2">
+      <div class="card faq-card">
+        <h3>¿Me pagan por post?</h3>
+        <p>No. La idea es construir contigo a largo plazo. A medida que Paw Friend crezca, los Paw Voices fundadores tienen prioridad en programas pagados (eventos, viajes, co-creación de producto).</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Tengo que firmar contrato?</h3>
+        <p>No. Es una alianza voluntaria. Si en algún momento no te hace sentido, sales. Sin penalizaciones, sin cláusulas raras.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Hay exclusividad de marca pet?</h3>
+        <p>No. Puedes seguir trabajando con cualquier marca que quieras. Solo te pedimos que cuando hables de Paw Friend, sea desde tu experiencia real.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Cuánta gente debo tener?</h3>
+        <p>No nos importa el número. Nos importa la conexión. Si tu comunidad te cree, te lee y te cita —aunque sean 500 personas— encajas.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Mi audiencia recibe algo con mi código?</h3>
+        <p>Sí. Beneficios reales: acceso anticipado a features, badge especial al sumarse desde tu link, prioridad en eventos. Lo definimos contigo.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Soy de fuera de Chile, puedo entrar?</h3>
+        <p>Sí. La visión de Paw Friend es Latam. Si eres creador peludo en Argentina, México, Colombia, Perú, etc., bienvenida/o.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 9 · CTA FINAL                                            -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide grad" id="s9">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <span class="slide-num">09 / 09</span>
+  <div class="container" style="text-align:center">
+    <span class="eyebrow">Tu turno</span>
+    <h2 style="font-size:clamp(40px,5.5vw,72px)">¿Sumas tu voz?<br/>Hay un lugar para ti.</h2>
+    <p class="lead" style="margin-left:auto;margin-right:auto">Fundadores Paw Voices entran con prioridad histórica en cada programa nuevo. No es un slot publicitario: es un lugar en la mesa de cómo Paw Friend crece.</p>
+
+    <div class="cta-row" style="justify-content:center">
+      <a class="btn btn-primary" href="https://pawfriend.cl/paw-voices" target="_blank" rel="noopener">📩 Aplicar como Paw Voice</a>
+      <a class="btn btn-ghost" href="mailto:pawfriendcl@gmail.com?subject=Paw%20Voice%20-%20Aplicación">✉️ Escríbenos directo</a>
+    </div>
+
+    <div class="founder-sig">
+      <div class="avatar">PF</div>
+      <div class="info">
+        <span class="name">Paw Founder</span>
+        <span class="role">pawfriendcl@gmail.com · pawfriend.cl/paw-voices</span>
+      </div>
+    </div>
+
+    <p style="color:rgba(255,255,255,.78);font-size:13px;margin-top:24px;max-width:600px;margin-left:auto;margin-right:auto">
+      Hecho en Chile por una persona y mucha comunidad. Si tu peludo te dio audiencia, ayúdanos a darles algo de vuelta a todos los peludos de Latam.
+    </p>
+
+    <p style="color:rgba(255,255,255,.65);font-size:12px;margin-top:24px;max-width:600px;margin-left:auto;margin-right:auto">
+      SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9<br/>
+      Luis Pasteur 6111 Dp 201, Vitacura, Santiago de Chile<br/>
+      <span style="opacity:.8">Versión 2026-04-19 · pawfriend.cl/pitch/voices.html</span>
+    </p>
+  </div>
+</section>
+
+<script>
+  const progressBar=document.getElementById('progressBar'),curSlide=document.getElementById('curSlide'),slides=document.querySelectorAll('.slide'),dots=document.querySelectorAll('.sidenav .dot'),kbhint=document.getElementById('kbhint');
+  function updateProgress(){const s=window.scrollY,m=document.documentElement.scrollHeight-window.innerHeight;progressBar.style.width=(s/m*100).toFixed(2)+'%'}
+  function updateActive(){const c=window.scrollY+window.innerHeight/2;let a=0;slides.forEach((s,i)=>{const t=s.offsetTop,b=t+s.offsetHeight;if(c>=t&&c<b)a=i});dots.forEach((d,i)=>d.classList.toggle('active',i===a));if(curSlide)curSlide.textContent=(a+1).toString()}
+  document.addEventListener('scroll',()=>{updateProgress();updateActive()},{passive:true});updateProgress();updateActive();
+  document.addEventListener('keydown',e=>{const c=Array.from(slides).findIndex(s=>{const r=s.getBoundingClientRect();return r.top<=window.innerHeight/2&&r.bottom>window.innerHeight/2});if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();slides[Math.min(c+1,slides.length-1)].scrollIntoView({behavior:'smooth'})}else if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();slides[Math.max(c-1,0)].scrollIntoView({behavior:'smooth'})}else if(e.key==='Escape'){kbhint.classList.toggle('hide')}});
+  setTimeout(()=>kbhint.classList.add('hide'),5000);
+
+  // ═══ Mejoras 2026-04-19: reveal + FAQ accordion ═══
+  const revealTargets=document.querySelectorAll('.card, .stat, .step-row, .quote, .spotlight, .tbl-wrap, .voices-gallery, .voice-card, .reveal');
+  const revealIO=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){entry.target.classList.add('visible');revealIO.unobserve(entry.target)}
+    });
+  },{threshold:0.15,rootMargin:'0px 0px -8% 0px'});
+  revealTargets.forEach(el=>{
+    if(!el.classList.contains('reveal')&&!el.classList.contains('stat'))el.classList.add('reveal');
+    revealIO.observe(el);
+  });
+  document.querySelectorAll('.faq-card').forEach(card=>{
+    card.setAttribute('aria-expanded','false');card.setAttribute('role','button');card.setAttribute('tabindex','0');
+    const toggle=()=>card.setAttribute('aria-expanded',String(card.getAttribute('aria-expanded')!=='true'));
+    card.addEventListener('click',toggle);
+    card.addEventListener('keydown',(e)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}});
+  });
+</script>
+
+</body>
+</html>
