@@ -30,7 +30,12 @@ export interface InboxBooking {
 
 interface InboxFilter {
   status?: BookingStatus | BookingStatus[];
-  date?: string; // "YYYY-MM-DD"
+  date?: string; // "YYYY-MM-DD" exacto
+  fromDate?: string; // "YYYY-MM-DD" desde (inclusive)
+  toDate?: string; // "YYYY-MM-DD" hasta (inclusive)
+  serviceType?: string; // filtra por service_type exacto
+  petId?: string; // filtra por pet_id exacto
+  searchQuery?: string; // matchea en pet_name u owner_name (client-side)
 }
 
 export function useProviderBookingsInbox(providerId: string | undefined, filter: InboxFilter = {}) {
@@ -63,12 +68,39 @@ export function useProviderBookingsInbox(providerId: string | undefined, filter:
         query = query
           .gte('scheduled_date', filter.date + 'T00:00:00')
           .lt('scheduled_date', filter.date + 'T23:59:59');
+      } else {
+        if (filter.fromDate) {
+          query = query.gte('scheduled_date', filter.fromDate);
+        }
+        if (filter.toDate) {
+          query = query.lte('scheduled_date', filter.toDate + 'T23:59:59');
+        }
+      }
+
+      if (filter.serviceType) {
+        query = query.eq('service_type', filter.serviceType);
+      }
+
+      if (filter.petId) {
+        query = query.eq('pet_id', filter.petId);
       }
 
       const { data, error } = await query;
       if (error) throw error;
 
-      return (data ?? []).map(
+      const rows = data ?? [];
+
+      // Client-side search (pet_name OR owner_name contains the query, case-insensitive)
+      const normalizedQuery = filter.searchQuery?.trim().toLowerCase() ?? '';
+      const filtered = normalizedQuery
+        ? rows.filter((row) => {
+            const petName = (row.pet?.name ?? '').toLowerCase();
+            const ownerName = (row.owner?.display_name ?? '').toLowerCase();
+            return petName.includes(normalizedQuery) || ownerName.includes(normalizedQuery);
+          })
+        : rows;
+
+      return filtered.map(
         (row): InboxBooking => ({
           id: row.id,
           booking_type: 'vet',

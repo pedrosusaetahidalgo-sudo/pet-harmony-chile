@@ -38,6 +38,7 @@ import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import { Next24hCard } from './Next24hCard';
 import { MiniProfileCard } from './dashboard/MiniProfileCard';
 import { VetExposureTips } from './dashboard/VetExposureTips';
+import { GoogleCalendarStatusBanner } from '@/components/GoogleCalendarStatusBanner';
 
 // formatCLP imported from @/lib/format
 
@@ -92,6 +93,8 @@ const ProviderDashboard = () => {
 
   return (
     <div className="space-y-4">
+      <GoogleCalendarStatusBanner settingsHref="/profile" />
+
       {/* ═══ Header + Quick Actions ═══ */}
       <QuickActionsBar
         displayName={profile?.display_name || user?.email?.split('@')[0] || 'Doc'}

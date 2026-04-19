@@ -53,6 +53,12 @@ export function useAvailableSlots({
           .not('status', 'in', '("cancelado","no_show")'),
       ]);
 
+      // Propagar el primer error para que react-query lo exponga como isError.
+      const firstError = rulesRes.error ?? exceptionsRes.error ?? bookingsRes.error;
+      if (firstError) {
+        throw firstError;
+      }
+
       const rules: AvailabilityRule[] = rulesRes.data ?? [];
       const exceptions: AvailabilityException[] = exceptionsRes.data ?? [];
       const bookings: ExistingBooking[] = (bookingsRes.data ?? []).map((b) => ({

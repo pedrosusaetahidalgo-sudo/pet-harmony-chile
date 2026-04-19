@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import {
@@ -40,6 +40,21 @@ interface AddMedicalRecordProps {
   petBreed: string;
   petSpecies: string;
   petName?: string;
+  /**
+   * Si se provee, al abrir el dialog se pre-rellenan fecha + clinica y se
+   * linkea el medical_record creado al booking (medical_records.booking_id).
+   * Pensado para el flujo "Cita completada -> Crear nota clinica".
+   */
+  fromBooking?: {
+    bookingId: string;
+    bookingDate: string; // YYYY-MM-DD
+    serviceType?: string;
+    providerName?: string;
+  };
+  /** Si true y fromBooking esta presente, abre el dialog automaticamente. */
+  autoOpen?: boolean;
+  /** Callback que se dispara despues de guardar el record exitosamente. */
+  onSaved?: (medicalRecordId: string) => void;
 }
 
 interface MedicalSuggestion {
@@ -53,6 +68,9 @@ export function AddMedicalRecord({
   petBreed,
   petSpecies,
   petName = 'Tu mascota',
+  fromBooking,
+  autoOpen = false,
+  onSaved,
 }: AddMedicalRecordProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -77,6 +95,34 @@ export function AddMedicalRecord({
   const queryClient = useQueryClient();
   const { user } = useAuth();
   const { reward } = useOrganicRewards();
+
+  // Pre-fill desde una cita completada.
+  // Efecto idempotente: solo corre la primera vez que fromBooking aparece.
+  useEffect(() => {
+    if (!fromBooking) return;
+    // Solo sobreescribe si los campos estan vacios (no pisamos typing del vet).
+    if (!date && fromBooking.bookingDate) {
+      setDate(new Date(fromBooking.bookingDate + 'T12:00:00'));
+    }
+    if (!veterinarianName && fromBooking.providerName) {
+      setVeterinarianName(fromBooking.providerName);
+    }
+    if (!recordType && fromBooking.serviceType) {
+      // Mapeo parcial service_type -> record_type; caer a 'consultation' si no matchea.
+      const map: Record<string, string> = {
+        consulta_general: 'consultation',
+        vacunacion: 'vaccine',
+        cirugia: 'surgery',
+        emergencia: 'consultation',
+        dental: 'consultation',
+      };
+      setRecordType(map[fromBooking.serviceType] ?? 'consultation');
+    }
+    if (autoOpen && !open) {
+      setOpen(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- corre solo cuando cambia fromBooking.bookingId
+  }, [fromBooking?.bookingId, autoOpen]);
 
   // Fetch veterinarias for selection
   const { data: veterinarias } = useQuery({
@@ -157,29 +203,42 @@ export function AddMedicalRecord({
 
     setLoading(true);
     try {
+      const insertPayload: Record<string, unknown> = {
+        pet_id: petId,
+        owner_id: user.id,
+        record_type: recordType,
+        title,
+        description,
+        date: format(date, 'yyyy-MM-dd'),
+        next_date: nextDate ? format(nextDate, 'yyyy-MM-dd') : null,
+        clinic_name: clinicName,
+        veterinarian_name: veterinarianName,
+        notes,
+        batch_number: batchNumber || null,
+        serial_number: serialNumber || null,
+        antiparasitic_type: antiparasiticType || null,
+        product_brand: productBrand || null,
+      };
+      // Link al booking si se creo desde una cita completada.
+      // Columnas agregadas en migracion 20260612000000.
+      if (fromBooking?.bookingId) {
+        insertPayload.booking_id = fromBooking.bookingId;
+        insertPayload.booking_type = 'vet';
+      }
+
       const { data: medicalRecord, error } = await supabase
         .from('medical_records')
-        .insert({
-          pet_id: petId,
-          owner_id: user.id,
-          record_type: recordType,
-          title,
-          description,
-          date: format(date, 'yyyy-MM-dd'),
-          next_date: nextDate ? format(nextDate, 'yyyy-MM-dd') : null,
-          clinic_name: clinicName,
-          veterinarian_name: veterinarianName,
-          notes,
-          batch_number: batchNumber || null,
-          serial_number: serialNumber || null,
-          antiparasitic_type: antiparasiticType || null,
-          product_brand: productBrand || null,
-        })
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- booking_id/booking_type agregadas en migracion 20260612000000, tipos sin regenerar
+        .insert(insertPayload as any)
         .select('id')
         .single();
 
       if (error) throw error;
       if (!medicalRecord) throw new Error('No se pudo crear el registro.');
+
+      // Notifica al caller (ej: BookingDetailDrawer) que el record fue creado
+      // para que pueda cerrar el drawer, navegar, etc.
+      onSaved?.(medicalRecord.id);
 
       // Award points for vet visit
       try {

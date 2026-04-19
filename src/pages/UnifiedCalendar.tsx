@@ -18,6 +18,7 @@ import { format, isToday, isTomorrow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { CalendarDays, Plus, Stethoscope, Bell, PawPrint } from '@/lib/icons';
 import { LINKS } from '@/lib/links';
+import { GoogleCalendarStatusBanner } from '@/components/GoogleCalendarStatusBanner';
 
 // Valor del tab activo ↔ tipo de evento que muestra.
 // 'hoy' muestra todos los eventos del dia actual.
@@ -149,6 +150,8 @@ export default function UnifiedCalendar() {
       />
 
       <main className="container max-w-3xl mx-auto px-3 py-4 space-y-4 pb-24">
+        <GoogleCalendarStatusBanner settingsHref="/profile" />
+
         {/* Tabs de navegacion por intencion: mantiene las rutas viejas
             (/reminders, /rutinas, /mis-reservas) vivas como aliases, pero
             aca en /calendario el usuario puede saltar entre vistas. */}

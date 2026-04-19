@@ -1,23 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import type {
-  BookingType,
-  BookingStatus,
-  BookingEventType,
-  ActorRole,
-} from '@/lib/bookingStateMachine';
+import type { BookingType, BookingStatus } from '@/lib/bookingStateMachine';
 import { getBookingTable } from '@/lib/bookingStateMachine';
+import type { BookingEvent } from '@/hooks/useBookingEvents';
 
-export interface BookingEvent {
-  id: string;
-  event_type: BookingEventType;
-  actor_id: string | null;
-  actor_role: ActorRole | null;
-  previous_status: string | null;
-  new_status: string | null;
-  metadata: Record<string, unknown>;
-  created_at: string;
-}
+export type { BookingEvent };
 
 export interface BookingDetail {
   id: string;
@@ -34,8 +21,11 @@ export interface BookingDetail {
   is_emergency: boolean;
   symptoms: string | null;
   confirmed_at: string | null;
+  started_at: string | null;
   canceled_at: string | null;
   cancellation_reason: string | null;
+  private_notes: string | null;
+  follow_up_booking_id: string | null;
   created_at: string;
   // Joined
   owner_name: string | null;
@@ -45,6 +35,10 @@ export interface BookingDetail {
   pet_name: string | null;
   pet_species: string | null;
   pet_photo: string | null;
+  // Notas clinicas linkeadas (via mig 20260612000000/004).
+  // null si no hay nota linkeada todavia; { id } si ya fue creada.
+  linked_medical_record_id: string | null;
+  linked_vet_clinical_note_id: string | null;
   // Events
   events: BookingEvent[];
 }
@@ -73,13 +67,30 @@ export function useBookingDetail(bookingId: string | undefined, bookingType: Boo
 
       if (error || !booking) return null;
 
-      // Fetch events
-      const { data: events } = await supabase
-        .from('booking_events')
-        .select('*')
-        .eq('booking_type', bookingType)
-        .eq('booking_id', bookingId)
-        .order('created_at', { ascending: true });
+      // Fetch events + linked clinical notes en paralelo.
+      // Las notas linkeadas usan columnas agregadas en migs 20260612000000/004
+      // (tipos TS sin regenerar -> cast via any).
+      const [eventsRes, medicalRes, vetNoteRes] = await Promise.all([
+        supabase
+          .from('booking_events')
+          .select('*')
+          .eq('booking_type', bookingType)
+          .eq('booking_id', bookingId)
+          .order('created_at', { ascending: true }),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- booking_id agregada en mig 20260612000000
+        (supabase.from('medical_records') as any)
+          .select('id')
+          .eq('booking_id', bookingId)
+          .maybeSingle(),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- booking_id agregada en mig 20260612000004
+        (supabase.from('vet_clinical_notes') as any)
+          .select('id')
+          .eq('booking_id', bookingId)
+          .maybeSingle(),
+      ]);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const b = booking as any;
 
       return {
         id: booking.id,
@@ -96,8 +107,11 @@ export function useBookingDetail(bookingId: string | undefined, bookingType: Boo
         is_emergency: booking.is_emergency ?? false,
         symptoms: booking.symptoms ?? null,
         confirmed_at: booking.confirmed_at ?? null,
+        started_at: b.started_at ?? null,
         canceled_at: booking.canceled_at ?? null,
         cancellation_reason: booking.cancellation_reason ?? null,
+        private_notes: b.private_notes ?? null,
+        follow_up_booking_id: b.follow_up_booking_id ?? null,
         created_at: booking.created_at,
         owner_name: booking.owner?.display_name ?? null,
         owner_avatar: booking.owner?.avatar_url ?? null,
@@ -106,7 +120,9 @@ export function useBookingDetail(bookingId: string | undefined, bookingType: Boo
         pet_name: booking.pet?.name ?? null,
         pet_species: booking.pet?.species ?? null,
         pet_photo: booking.pet?.photo_url ?? null,
-        events: (events ?? []) as BookingEvent[],
+        linked_medical_record_id: medicalRes.data?.id ?? null,
+        linked_vet_clinical_note_id: vetNoteRes.data?.id ?? null,
+        events: (eventsRes.data ?? []) as BookingEvent[],
       };
     },
     enabled: !!bookingId,

@@ -7,11 +7,13 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { AvailabilityCalendar } from './AvailabilityCalendar';
-import { useCreateBooking } from '@/hooks/useBookingMutations';
+import { SlotConflictDialog } from './SlotConflictDialog';
+import { BookingConflictError, useCreateBooking } from '@/hooks/useBookingMutations';
+import { useAvailableSlots } from '@/hooks/useAvailableSlots';
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import type { ComputedSlot } from '@/lib/availabilitySlots';
+import { findAlternativeSlots, type ComputedSlot } from '@/lib/availabilitySlots';
 import type { BookingType } from '@/lib/bookingStateMachine';
 
 interface BookingFlowProps {
@@ -50,6 +52,16 @@ export function BookingFlow({
   const [selectedDate, setSelectedDate] = useState<string | undefined>();
   const [selectedSlot, setSelectedSlot] = useState<ComputedSlot | null>(null);
   const [notes, setNotes] = useState('');
+  const [conflictAlternatives, setConflictAlternatives] = useState<ComputedSlot[] | null>(null);
+
+  // Lee slots disponibles del provider para poder sugerir alternativas en
+  // caso de colision. Se invalida automaticamente cuando cambia el slot.
+  const { data: slotsByDate } = useAvailableSlots({
+    providerId,
+    serviceType,
+    fromDate: selectedDate ? new Date(selectedDate + 'T00:00:00') : new Date(),
+    days: 14,
+  });
 
   // Fetch user's pets
   const { data: pets = [] } = useQuery({
@@ -76,20 +88,38 @@ export function BookingFlow({
   const handleConfirm = async () => {
     if (!selectedPet || !selectedDate || !selectedSlot) return;
 
-    await createBooking.mutateAsync({
-      providerId,
-      serviceType,
-      bookingType,
-      petId: selectedPet.id,
-      scheduledDate: selectedDate,
-      startTime: selectedSlot.start,
-      endTime: selectedSlot.end,
-      notes: notes || undefined,
-      isEmergency,
-      confirmationMode: 'auto',
-    });
+    try {
+      await createBooking.mutateAsync({
+        providerId,
+        serviceType,
+        bookingType,
+        petId: selectedPet.id,
+        scheduledDate: selectedDate,
+        startTime: selectedSlot.start,
+        endTime: selectedSlot.end,
+        notes: notes || undefined,
+        isEmergency,
+        confirmationMode: 'auto',
+      });
 
-    onSuccess?.();
+      onSuccess?.();
+    } catch (err) {
+      if (err instanceof BookingConflictError) {
+        const alternatives =
+          slotsByDate && selectedDate
+            ? findAlternativeSlots(selectedDate, selectedSlot.start, slotsByDate, 3)
+            : [];
+        setConflictAlternatives(alternatives);
+      }
+      // Otros errores los maneja el mutation via toast.
+    }
+  };
+
+  const handlePickAlternative = (slot: ComputedSlot) => {
+    setSelectedDate(slot.date);
+    setSelectedSlot(slot);
+    setConflictAlternatives(null);
+    setStep('confirm');
   };
 
   const goBack = () => {
@@ -261,6 +291,16 @@ export function BookingFlow({
           </Button>
         </div>
       )}
+
+      <SlotConflictDialog
+        open={conflictAlternatives !== null}
+        onOpenChange={(open) => {
+          if (!open) setConflictAlternatives(null);
+        }}
+        alternatives={conflictAlternatives ?? []}
+        onPickAlternative={handlePickAlternative}
+        onCancel={() => setStep('slot')}
+      />
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { HomeOnboardingHints } from '@/components/HomeOnboardingHints';
+import { GoogleCalendarStatusBanner } from '@/components/GoogleCalendarStatusBanner';
 import { TrialWelcomeOverlay, TrialBanner } from '@/components/TrialWelcomeBanner';
 import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import {
@@ -398,6 +399,8 @@ export default function Home() {
 
   return (
     <div className="container max-w-5xl mx-auto p-4 md:p-6 space-y-4 animate-fade-in min-h-screen">
+      <GoogleCalendarStatusBanner settingsHref="/profile" />
+
       {/* === Header compact === */}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">

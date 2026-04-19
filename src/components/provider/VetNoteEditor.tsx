@@ -1,41 +1,43 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Loader2, FileText } from "@/lib/icons";
-import { toast } from "sonner";
-import {
-  useCreateVetClinicalNote,
-  type VetNoteType,
-} from "@/hooks/useVetClinicalNotes";
-import ConsultationTemplateSelector from "./ConsultationTemplateSelector";
-import SaveTemplateButton from "./SaveTemplateButton";
+} from '@/components/ui/select';
+import { Loader2, FileText } from '@/lib/icons';
+import { toast } from 'sonner';
+import { useCreateVetClinicalNote, type VetNoteType } from '@/hooks/useVetClinicalNotes';
+import ConsultationTemplateSelector from './ConsultationTemplateSelector';
+import SaveTemplateButton from './SaveTemplateButton';
 
 interface VetNoteEditorProps {
   shareTokenId?: string | null;
   providerId: string;
   petId: string;
   petName: string;
+  /**
+   * Si se provee, la nota quedara linkeada al booking
+   * (vet_clinical_notes.booking_id). Flujo cita completada -> crear nota.
+   */
+  bookingId?: string;
   onSaved?: () => void;
 }
 
 const NOTE_TYPES: { value: VetNoteType; label: string }[] = [
-  { value: "consulta", label: "Consulta" },
-  { value: "vacuna", label: "Vacuna" },
-  { value: "control", label: "Control" },
-  { value: "cirugia", label: "Cirugia" },
-  { value: "urgencia", label: "Urgencia" },
-  { value: "otro", label: "Otro" },
+  { value: 'consulta', label: 'Consulta' },
+  { value: 'vacuna', label: 'Vacuna' },
+  { value: 'control', label: 'Control' },
+  { value: 'cirugia', label: 'Cirugia' },
+  { value: 'urgencia', label: 'Urgencia' },
+  { value: 'otro', label: 'Otro' },
 ];
 
 export function VetNoteEditor({
@@ -43,22 +45,23 @@ export function VetNoteEditor({
   providerId,
   petId,
   petName,
+  bookingId,
   onSaved,
 }: VetNoteEditorProps) {
-  const [noteType, setNoteType] = useState<VetNoteType>("consulta");
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [noteType, setNoteType] = useState<VetNoteType>('consulta');
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [alternativeOffered, setAlternativeOffered] = useState(false);
-  const [alternativesDiscussed, setAlternativesDiscussed] = useState("");
+  const [alternativesDiscussed, setAlternativesDiscussed] = useState('');
   const [followupRequired, setFollowupRequired] = useState(false);
-  const [followupDate, setFollowupDate] = useState("");
-  const [followupReason, setFollowupReason] = useState("");
+  const [followupDate, setFollowupDate] = useState('');
+  const [followupReason, setFollowupReason] = useState('');
 
   const createNote = useCreateVetClinicalNote();
 
   const handleSubmit = async () => {
     if (!title.trim()) {
-      toast.error("El titulo es obligatorio");
+      toast.error('El titulo es obligatorio');
       return;
     }
 
@@ -70,21 +73,24 @@ export function VetNoteEditor({
       title: title.trim(),
       description: description.trim() || undefined,
       alternativeOffered,
-      alternativesDiscussed: alternativeOffered ? alternativesDiscussed.trim() || undefined : undefined,
+      alternativesDiscussed: alternativeOffered
+        ? alternativesDiscussed.trim() || undefined
+        : undefined,
       followupRequired,
       followupDate: followupRequired ? followupDate || undefined : undefined,
       followupReason: followupRequired ? followupReason.trim() || undefined : undefined,
+      bookingId,
     });
 
     toast.success(`Nota guardada en la ficha de ${petName}`);
-    setTitle("");
-    setDescription("");
-    setNoteType("consulta");
+    setTitle('');
+    setDescription('');
+    setNoteType('consulta');
     setAlternativeOffered(false);
-    setAlternativesDiscussed("");
+    setAlternativesDiscussed('');
     setFollowupRequired(false);
-    setFollowupDate("");
-    setFollowupReason("");
+    setFollowupDate('');
+    setFollowupReason('');
     onSaved?.();
   };
 
@@ -102,9 +108,10 @@ export function VetNoteEditor({
           <ConsultationTemplateSelector
             providerId={providerId}
             onSelect={(body) => {
-              if (body.title && typeof body.title === "string") setTitle(body.title);
-              if (body.description && typeof body.description === "string") setDescription(body.description);
-              if (body.noteType && typeof body.noteType === "string") {
+              if (body.title && typeof body.title === 'string') setTitle(body.title);
+              if (body.description && typeof body.description === 'string')
+                setDescription(body.description);
+              if (body.noteType && typeof body.noteType === 'string') {
                 const valid = NOTE_TYPES.find((t) => t.value === body.noteType);
                 if (valid) setNoteType(valid.value);
               }
@@ -114,10 +121,7 @@ export function VetNoteEditor({
 
         <div className="space-y-1.5">
           <Label className="text-xs">Tipo de nota</Label>
-          <Select
-            value={noteType}
-            onValueChange={(v) => setNoteType(v as VetNoteType)}
-          >
+          <Select value={noteType} onValueChange={(v) => setNoteType(v as VetNoteType)}>
             <SelectTrigger className="h-11">
               <SelectValue />
             </SelectTrigger>
@@ -225,9 +229,7 @@ export function VetNoteEditor({
           disabled={createNote.isPending || !title.trim()}
           className="w-full h-11"
         >
-          {createNote.isPending ? (
-            <Loader2 className="h-4 w-4 animate-spin mr-2" />
-          ) : null}
+          {createNote.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
           Guardar nota clinica
         </Button>
       </CardContent>

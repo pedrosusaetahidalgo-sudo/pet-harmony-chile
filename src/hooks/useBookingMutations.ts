@@ -26,6 +26,19 @@ interface CreateBookingInput {
   confirmationMode?: 'auto' | 'manual';
 }
 
+/**
+ * Error lanzado cuando el slot ya fue reservado por otra persona (error 23505
+ * de Postgres al intentar insert). El consumidor puede detectarlo y mostrar
+ * sugerencias de slots alternativos.
+ */
+export class BookingConflictError extends Error {
+  readonly code = 'BOOKING_CONFLICT';
+  constructor(message = 'Este horario ya fue reservado por alguien mas.') {
+    super(message);
+    this.name = 'BookingConflictError';
+  }
+}
+
 export function useCreateBooking() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -80,7 +93,7 @@ export function useCreateBooking() {
 
       if (error) {
         if (error.code === '23505') {
-          throw new Error('Este horario ya fue reservado por alguien mas. Elige otro.');
+          throw new BookingConflictError();
         }
         throw error;
       }
@@ -96,6 +109,9 @@ export function useCreateBooking() {
       );
     },
     onError: (error: Error) => {
+      // BookingConflictError lo maneja el componente con UI de sugerencias;
+      // no mostramos toast generico para no duplicar feedback.
+      if (error instanceof BookingConflictError) return;
       toast.error(error.message || 'Error al crear la reserva');
     },
   });

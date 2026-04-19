@@ -181,3 +181,46 @@ export function isSlotAvailable(
   const slot = slots.find((s) => s.start === startTime);
   return slot ? slot.available : false;
 }
+
+/**
+ * Busca hasta `maxSuggestions` slots disponibles cercanos a un slot target.
+ * Prioriza: (1) mismo dia con minima distancia horaria,
+ *           (2) dias siguientes mismo horario aproximado,
+ *           (3) cualquier slot disponible ordenado por cercania temporal.
+ *
+ * Retorna los slots sugeridos ordenados por cercania al target.
+ * Se usa en colisiones de booking para ofrecer alternativas.
+ */
+export function findAlternativeSlots(
+  targetDate: string, // "YYYY-MM-DD"
+  targetStartTime: string, // "HH:mm"
+  slotsByDate: { date: string; slots: ComputedSlot[] }[],
+  maxSuggestions = 3
+): ComputedSlot[] {
+  const targetTimestamp = new Date(`${targetDate}T${targetStartTime}:00`).getTime();
+
+  const flat: { slot: ComputedSlot; distance: number; sameDay: boolean }[] = [];
+  for (const day of slotsByDate) {
+    for (const slot of day.slots) {
+      if (!slot.available) continue;
+      // Skip the exact target slot (no point suggesting it back)
+      if (slot.date === targetDate && slot.start === targetStartTime) continue;
+
+      const slotTs = new Date(`${slot.date}T${slot.start}:00`).getTime();
+      const distance = Math.abs(slotTs - targetTimestamp);
+      flat.push({
+        slot,
+        distance,
+        sameDay: slot.date === targetDate,
+      });
+    }
+  }
+
+  // Same-day alternatives ranked first, then chronologically closest
+  flat.sort((a, b) => {
+    if (a.sameDay !== b.sameDay) return a.sameDay ? -1 : 1;
+    return a.distance - b.distance;
+  });
+
+  return flat.slice(0, maxSuggestions).map((e) => e.slot);
+}

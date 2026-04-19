@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { FileText, Mic, Clipboard } from '@/lib/icons';
@@ -14,6 +14,14 @@ interface VetActionsBarProps {
   showRecorder?: boolean;
   onRecorderChange?: (open: boolean) => void;
   onSwitchTab?: (tab: string) => void;
+  /**
+   * Si se provee, indica que el vet llego a la ficha desde una cita completada
+   * (via query param `?booking=...`). VetNoteEditor recibe este id para
+   * persistirlo en vet_clinical_notes.booking_id.
+   */
+  linkedBookingId?: string;
+  /** Si true, abre el editor de notas al montar. */
+  autoOpenNoteEditor?: boolean;
 }
 
 export function VetActionsBar({
@@ -25,10 +33,20 @@ export function VetActionsBar({
   showRecorder = false,
   onRecorderChange,
   onSwitchTab,
+  linkedBookingId,
+  autoOpenNoteEditor = false,
 }: VetActionsBarProps) {
   const [showNoteEditor, setShowNoteEditor] = useState(false);
   const recorderOpen = showRecorder;
   const setRecorderOpen = onRecorderChange ?? (() => {});
+
+  // Auto-abre el editor cuando el vet llega desde "Crear nota clinica" en el
+  // BookingDetailDrawer (query param ?booking=...).
+  useEffect(() => {
+    if (autoOpenNoteEditor) {
+      setShowNoteEditor(true);
+    }
+  }, [autoOpenNoteEditor]);
 
   const goToDocumentos = () => {
     if (onSwitchTab) {
@@ -88,6 +106,7 @@ export function VetActionsBar({
             petName={petName}
             providerId={providerId}
             shareTokenId={shareTokenId}
+            bookingId={linkedBookingId}
             onSaved={() => setShowNoteEditor(false)}
           />
         </DialogContent>

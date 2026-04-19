@@ -17,6 +17,7 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useProviderAvailabilityRules } from '@/hooks/useProviderAvailabilityRules';
+import { AvailabilityPreview } from './AvailabilityPreview';
 
 interface AvailabilityRulesEditorProps {
   providerId: string | undefined;
@@ -112,6 +113,8 @@ export function AvailabilityRulesEditor({ providerId }: AvailabilityRulesEditorP
 
   return (
     <div className="space-y-4">
+      <AvailabilityPreview rules={rules} />
+
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">

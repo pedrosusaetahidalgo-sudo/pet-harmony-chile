@@ -2,7 +2,7 @@
 
 > Todos estos documentos deben mantenerse actualizados con cada cambio relevante.
 > Si modificas rutas, navegacion, flujos, planes o features: actualiza el documento correspondiente.
-> Ultima revision: 2026-04-16.
+> Ultima revision: 2026-04-18.
 
 ---
 
@@ -42,6 +42,7 @@
 | [docs-specs/ADMIN_CONTROL_CENTER_V2.md](docs-specs/ADMIN_CONTROL_CENTER_V2.md) | Centro de control admin v2 | **Media** -- Admin expandido |
 | [docs-specs/MEJORA_IMAGENES_AVATARES.md](docs-specs/MEJORA_IMAGENES_AVATARES.md) | Optimizacion de avatares e imagenes | **Media** -- Performance |
 | [docs-specs/MICROCHIP_REGISTRO_NACIONAL.md](docs-specs/MICROCHIP_REGISTRO_NACIONAL.md) | Integracion registro nacional microchip | **Baja** -- Feature futuro |
+| [docs-specs/BOOKING_SYSTEM_OVERHAUL_PLAN.md](docs-specs/BOOKING_SYSTEM_OVERHAUL_PLAN.md) | Plan maestro rediseno sistema reservas/citas (owner + vet + admin), 4 fases | **Alta** -- Cita es fuente de ficha clinica + motor B2B Premium |
 
 **Specs ya ejecutadas (movidas a _archive/):**
 - PLAN_DUAL_PROFILE — 100% ejecutado (ActiveRoleProvider + useActiveRole)
@@ -60,6 +61,7 @@
 | Documento | Que contiene |
 |---|---|
 | [docs-design/PAW_CARDS_TCG_DESIGN.md](docs-design/PAW_CARDS_TCG_DESIGN.md) | Guia de diseno visual Paw Cards TCG (rarezas, holograficos, anatomia de carta, animaciones) |
+| [docs-raiz/marketing/PAWFRIEND_LANDING_IMMERSIVE_MASTERPLAN.md](docs-raiz/marketing/PAWFRIEND_LANDING_IMMERSIVE_MASTERPLAN.md) | Masterplan exhaustivo del rediseno landing v3 (24 secciones + apendices). Ejecutado 2026-04-18: nueva estructura `src/components/landing/`, video real en hero, copy alineado a modelo post-pivot, footer rico, `/faq` separado |
 
 ---
 

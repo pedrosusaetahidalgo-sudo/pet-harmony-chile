@@ -13,10 +13,11 @@ import {
   isToday,
 } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { ChevronLeft, ChevronRight, Clock } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAvailableSlots } from '@/hooks/useAvailableSlots';
+import { formatBookingDate } from '@/lib/format';
 import type { ComputedSlot } from '@/lib/availabilitySlots';
 
 interface AvailabilityCalendarProps {
@@ -39,7 +40,13 @@ export function AvailabilityCalendar({
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [viewDate, setViewDate] = useState<string | null>(selectedDate ?? null);
 
-  const { data: slotsData, isLoading } = useAvailableSlots({
+  const {
+    data: slotsData,
+    isLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = useAvailableSlots({
     providerId,
     serviceType,
     fromDate: startOfMonth(currentMonth),
@@ -98,6 +105,36 @@ export function AvailabilityCalendar({
             <Skeleton key={i} className="h-10 rounded-md" />
           ))}
         </div>
+      ) : isError ? (
+        <div
+          role="alert"
+          className="rounded-lg border border-red-200 bg-red-50 p-4 text-center space-y-3"
+        >
+          <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-red-100">
+            <AlertTriangle className="h-5 w-5 text-red-700" aria-hidden="true" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-red-900">
+              No pudimos cargar los horarios disponibles.
+            </p>
+            <p className="text-xs text-red-700 mt-0.5">
+              Puede ser un problema de conexion. Intenta nuevamente.
+            </p>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => refetch()}
+            disabled={isFetching}
+            className="gap-1.5 border-red-300 text-red-900 hover:bg-red-100"
+          >
+            <RefreshCw
+              className={`h-3.5 w-3.5 ${isFetching ? 'animate-spin' : ''}`}
+              aria-hidden="true"
+            />
+            Reintentar
+          </Button>
+        </div>
       ) : (
         <div className="grid grid-cols-7 gap-1">
           {/* Empty cells for offset */}
@@ -141,10 +178,9 @@ export function AvailabilityCalendar({
       {/* Time slots for selected date */}
       {viewDate && (
         <div className="space-y-2">
-          <h4 className="text-sm font-medium flex items-center gap-1.5">
-            <Clock className="h-4 w-4" />
-            Horarios disponibles —{' '}
-            {format(new Date(viewDate + 'T12:00:00'), "EEEE d 'de' MMMM", { locale: es })}
+          <h4 className="text-sm font-medium flex items-center gap-1.5 capitalize">
+            <Clock className="h-4 w-4" aria-hidden="true" />
+            Horarios disponibles — {formatBookingDate(viewDate)}
           </h4>
 
           {selectedSlots.length === 0 ? (

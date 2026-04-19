@@ -1,24 +1,9 @@
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
-import {
-  Calendar,
-  Clock,
-  Stethoscope,
-  Dog,
-  Cat,
-  PawPrint,
-  AlertTriangle,
-  User,
-} from 'lucide-react';
+import { Calendar, Clock, Dog, Cat, PawPrint, AlertTriangle, User } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BookingStatusBadge } from './BookingStatusBadge';
-import {
-  getAvailableTransitions,
-  type BookingStatus,
-  type BookingType,
-  type ActorRole,
-} from '@/lib/bookingStateMachine';
+import { type BookingStatus, type BookingType } from '@/lib/bookingStateMachine';
+import { formatBookingDate, formatTimeRange, formatCLP } from '@/lib/format';
 
 export interface BookingCardData {
   id: string;
@@ -37,6 +22,10 @@ export interface BookingCardData {
   pet_name?: string | null;
   pet_species?: string | null;
   pet_photo?: string | null;
+  /** IDs necesarios para follow-up creation y otros deep links. Opcionales. */
+  owner_id?: string;
+  pet_id?: string | null;
+  provider_id?: string;
 }
 
 export type BookingAction =
@@ -77,17 +66,11 @@ const serviceLabel = (type: string): string => {
 };
 
 export function BookingCard({ booking, role, onAction }: BookingCardProps) {
-  const date = new Date(booking.scheduled_date);
-  const formattedDate = format(date, "EEEE d 'de' MMMM", { locale: es });
-  const timeStr = booking.start_time
-    ? `${booking.start_time.substring(0, 5)}${booking.end_time ? ' - ' + booking.end_time.substring(0, 5) : ''}`
-    : 'Hora por confirmar';
+  const formattedDate = formatBookingDate(booking.scheduled_date);
+  const timeStr = formatTimeRange(booking.start_time, booking.end_time) || 'Hora por confirmar';
 
   const contactName = role === 'owner' ? booking.provider_name : booking.owner_name;
   const contactAvatar = role === 'owner' ? booking.provider_avatar : booking.owner_avatar;
-
-  const actorRole: ActorRole = role;
-  const transitions = getAvailableTransitions(booking.status, actorRole);
 
   return (
     <Card
@@ -144,9 +127,7 @@ export function BookingCard({ booking, role, onAction }: BookingCardProps) {
 
             {/* Price */}
             {booking.total_price != null && booking.total_price > 0 && (
-              <p className="text-sm font-semibold">
-                ${booking.total_price.toLocaleString('es-CL')}
-              </p>
+              <p className="text-sm font-semibold">{formatCLP(booking.total_price)}</p>
             )}
           </div>
 

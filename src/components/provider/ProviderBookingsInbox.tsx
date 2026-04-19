@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Inbox, CalendarDays, Clock, History } from 'lucide-react';
+import { Inbox, CheckCircle2, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 import {
   BookingCard,
   type BookingAction,
@@ -12,6 +12,7 @@ import {
 } from '@/components/booking/BookingCard';
 import { CancelBookingDialog } from '@/components/booking/CancelBookingDialog';
 import { BookingDetailDrawer } from '@/components/booking/BookingDetailDrawer';
+import { FollowUpDialog } from '@/components/booking/FollowUpDialog';
 import { useProviderBookingsInbox } from '@/hooks/useProviderBookingsInbox';
 import {
   useConfirmBooking,
@@ -20,6 +21,7 @@ import {
   useMarkNoShow,
 } from '@/hooks/useBookingMutations';
 import type { BookingStatus } from '@/lib/bookingStateMachine';
+import { InboxFiltersBar, EMPTY_INBOX_FILTERS, type InboxFilters } from './InboxFiltersBar';
 
 interface ProviderBookingsInboxProps {
   providerId: string | undefined;
@@ -29,6 +31,8 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
   const [tab, setTab] = useState('pending');
   const [cancelTarget, setCancelTarget] = useState<BookingCardData | null>(null);
   const [detailTarget, setDetailTarget] = useState<BookingCardData | null>(null);
+  const [followUpTarget, setFollowUpTarget] = useState<BookingCardData | null>(null);
+  const [filters, setFilters] = useState<InboxFilters>(EMPTY_INBOX_FILTERS);
 
   const statusFilter: Record<string, BookingStatus | BookingStatus[]> = {
     pending: 'pendiente',
@@ -39,20 +43,41 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
 
   const todayStr = format(new Date(), 'yyyy-MM-dd');
 
-  const pendingQuery = useProviderBookingsInbox(providerId, { status: 'pendiente' });
+  // Extrae los filtros aplicables a cada query (sin status + sin date exacto).
+  // El `date` exacto solo lo usa el tab "today". Los rangos fromDate/toDate
+  // si aplican cross-tab.
+  const sharedFilter = {
+    serviceType: filters.serviceType !== 'all' ? filters.serviceType : undefined,
+    searchQuery: filters.searchQuery || undefined,
+    fromDate: filters.fromDate || undefined,
+    toDate: filters.toDate || undefined,
+  };
+
+  const pendingQuery = useProviderBookingsInbox(providerId, {
+    status: 'pendiente',
+    ...sharedFilter,
+  });
   const todayQuery = useProviderBookingsInbox(providerId, {
     status: statusFilter.today as BookingStatus[],
     date: todayStr,
+    ...sharedFilter,
+    // fromDate/toDate se ignoran cuando `date` exacto esta presente
   });
-  const upcomingQuery = useProviderBookingsInbox(providerId, { status: 'confirmado' });
+  const upcomingQuery = useProviderBookingsInbox(providerId, {
+    status: 'confirmado',
+    ...sharedFilter,
+  });
   const pastQuery = useProviderBookingsInbox(providerId, {
     status: statusFilter.past as BookingStatus[],
+    ...sharedFilter,
   });
 
   const confirmBooking = useConfirmBooking();
   const startBooking = useStartBooking();
   const markCompleted = useMarkCompleted();
   const markNoShow = useMarkNoShow();
+
+  const pendingCount = pendingQuery.data?.length ?? 0;
 
   const handleAction = (action: BookingAction, booking: BookingCardData) => {
     switch (action) {
@@ -63,7 +88,18 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
         startBooking.mutate({ bookingId: booking.id, bookingType: booking.booking_type });
         break;
       case 'complete':
-        markCompleted.mutate({ bookingId: booking.id, bookingType: booking.booking_type });
+        markCompleted.mutate(
+          { bookingId: booking.id, bookingType: booking.booking_type },
+          {
+            onSuccess: () => {
+              // Ofrecer seguimiento solo para citas vet (walk/dogsitter/training
+              // no requieren follow-up clinico).
+              if (booking.booking_type === 'vet') {
+                setFollowUpTarget(booking);
+              }
+            },
+          }
+        );
         break;
       case 'no_show':
         markNoShow.mutate({ bookingId: booking.id, bookingType: booking.booking_type });
@@ -77,7 +113,53 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
     }
   };
 
-  const renderBookings = (data: typeof pendingQuery.data, isLoading: boolean) => {
+  const confirmAllPending = () => {
+    if (!pendingQuery.data) return;
+    for (const b of pendingQuery.data) {
+      confirmBooking.mutate({ bookingId: b.id, bookingType: b.booking_type });
+    }
+  };
+
+  const renderEmpty = (variant: 'pending' | 'today' | 'upcoming' | 'past') => {
+    const copy = {
+      pending: {
+        icon: CheckCircle2,
+        title: 'Sin pendientes por revisar',
+        text: 'Todo al dia. Las nuevas reservas aparecen aca cuando los duenos piden cita.',
+      },
+      today: {
+        icon: Inbox,
+        title: 'Sin citas para hoy',
+        text: 'No tienes nada agendado hoy. Revisa la pestana Proximos para ver las siguientes.',
+      },
+      upcoming: {
+        icon: Inbox,
+        title: 'Sin citas proximas',
+        text: 'Cuando alguien reserve, aparecera aca. Revisa tu disponibilidad para recibir mas.',
+      },
+      past: {
+        icon: Inbox,
+        title: 'Sin historial todavia',
+        text: 'Las citas completadas, canceladas o no presentadas quedan registradas aca.',
+      },
+    }[variant];
+    const Icon = copy.icon;
+    return (
+      <div className="text-center py-10 space-y-2">
+        <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+          <Icon className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
+        </div>
+        <p className="text-sm font-medium">{copy.title}</p>
+        <p className="text-xs text-muted-foreground max-w-sm mx-auto">{copy.text}</p>
+      </div>
+    );
+  };
+
+  const renderBookings = (
+    data: typeof pendingQuery.data,
+    isLoading: boolean,
+    variant: 'pending' | 'today' | 'upcoming' | 'past'
+  ) => {
     if (isLoading) {
       return (
         <div className="space-y-3">
@@ -89,12 +171,7 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
     }
 
     if (!data || data.length === 0) {
-      return (
-        <div className="text-center py-8 text-sm text-muted-foreground">
-          <Inbox className="h-8 w-8 mx-auto mb-2 opacity-40" />
-          Sin reservas en esta seccion
-        </div>
-      );
+      return renderEmpty(variant);
     }
 
     return (
@@ -119,6 +196,9 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
               pet_name: b.pet_name,
               pet_species: b.pet_species,
               pet_photo: b.pet_photo,
+              owner_id: b.owner_id,
+              pet_id: b.pet_id,
+              provider_id: providerId,
             }}
             onAction={handleAction}
           />
@@ -132,18 +212,28 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
-            <Inbox className="h-4 w-4" />
+            <Inbox className="h-4 w-4" aria-hidden="true" />
             Bandeja de reservas
+            {pendingCount > 0 && (
+              <span className="ml-auto inline-flex items-center gap-1 text-xs font-medium text-amber-900 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">
+                <AlertCircle className="h-3 w-3" aria-hidden="true" />
+                {pendingCount} requiere{pendingCount === 1 ? '' : 'n'} tu accion
+              </span>
+            )}
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-3">
+          <InboxFiltersBar value={filters} onChange={setFilters} />
           <Tabs value={tab} onValueChange={setTab}>
             <TabsList className="w-full grid grid-cols-4">
               <TabsTrigger value="pending" className="text-xs">
                 Pendientes
-                {(pendingQuery.data?.length ?? 0) > 0 && (
-                  <span className="ml-1 bg-amber-500 text-white rounded-full px-1.5 text-[10px]">
-                    {pendingQuery.data?.length}
+                {pendingCount > 0 && (
+                  <span
+                    aria-label={`${pendingCount} pendientes`}
+                    className="ml-1 bg-amber-500 text-white rounded-full px-1.5 text-[10px] font-semibold"
+                  >
+                    {pendingCount}
                   </span>
                 )}
               </TabsTrigger>
@@ -158,17 +248,33 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="pending" className="mt-3">
-              {renderBookings(pendingQuery.data, pendingQuery.isLoading)}
+            <TabsContent value="pending" className="mt-3 space-y-3">
+              {pendingCount > 1 && (
+                <div className="flex items-center justify-between rounded-md border border-amber-200 bg-amber-50 px-3 py-2">
+                  <p className="text-xs text-amber-900">
+                    Tienes {pendingCount} reservas esperando tu confirmacion.
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="h-7 text-xs border-amber-300 text-amber-900 hover:bg-amber-100"
+                    disabled={confirmBooking.isPending}
+                    onClick={confirmAllPending}
+                  >
+                    Confirmar todas
+                  </Button>
+                </div>
+              )}
+              {renderBookings(pendingQuery.data, pendingQuery.isLoading, 'pending')}
             </TabsContent>
             <TabsContent value="today" className="mt-3">
-              {renderBookings(todayQuery.data, todayQuery.isLoading)}
+              {renderBookings(todayQuery.data, todayQuery.isLoading, 'today')}
             </TabsContent>
             <TabsContent value="upcoming" className="mt-3">
-              {renderBookings(upcomingQuery.data, upcomingQuery.isLoading)}
+              {renderBookings(upcomingQuery.data, upcomingQuery.isLoading, 'upcoming')}
             </TabsContent>
             <TabsContent value="past" className="mt-3">
-              {renderBookings(pastQuery.data, pastQuery.isLoading)}
+              {renderBookings(pastQuery.data, pastQuery.isLoading, 'past')}
             </TabsContent>
           </Tabs>
         </CardContent>
@@ -181,6 +287,11 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
           bookingId={cancelTarget.id}
           bookingType={cancelTarget.booking_type}
           currentStatus={cancelTarget.status}
+          scheduledAt={
+            cancelTarget.start_time
+              ? `${cancelTarget.scheduled_date}T${cancelTarget.start_time.slice(0, 5)}`
+              : cancelTarget.scheduled_date
+          }
           // eslint-disable-next-line jsx-a11y/aria-role -- `role` es prop custom de CancelBookingDialog, no atributo ARIA
           role="provider"
         />
@@ -192,6 +303,20 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
           onOpenChange={(open) => !open && setDetailTarget(null)}
           bookingId={detailTarget.id}
           bookingType={detailTarget.booking_type}
+          viewerRole="provider"
+        />
+      )}
+
+      {followUpTarget && providerId && followUpTarget.owner_id && followUpTarget.pet_id && (
+        <FollowUpDialog
+          open={!!followUpTarget}
+          onOpenChange={(open) => !open && setFollowUpTarget(null)}
+          originalBookingId={followUpTarget.id}
+          providerId={providerId}
+          ownerId={followUpTarget.owner_id}
+          petId={followUpTarget.pet_id}
+          serviceType={followUpTarget.service_type || 'consulta_general'}
+          defaultStartTime={followUpTarget.start_time?.slice(0, 5) || '10:00'}
         />
       )}
     </>

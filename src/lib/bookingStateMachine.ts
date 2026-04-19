@@ -84,24 +84,28 @@ export function statusToEventType(newStatus: BookingStatus, actor: ActorRole): B
   }
 }
 
+/**
+ * Paleta WCAG AA para badges de estado.
+ * Contraste verificado en bg-*-50 + text-*-900 (+ border-*-200 para refuerzo).
+ */
 export function getStatusColor(status: BookingStatus): string {
   switch (status) {
     case 'pendiente':
-      return 'bg-amber-100 text-amber-800';
+      return 'bg-amber-50 text-amber-900 border border-amber-200';
     case 'confirmado':
-      return 'bg-blue-100 text-blue-800';
+      return 'bg-emerald-50 text-emerald-900 border border-emerald-200';
     case 'en_camino':
-      return 'bg-indigo-100 text-indigo-800';
+      return 'bg-sky-50 text-sky-900 border border-sky-200';
     case 'en_curso':
-      return 'bg-green-100 text-green-800';
+      return 'bg-indigo-50 text-indigo-900 border border-indigo-200';
     case 'completado':
-      return 'bg-emerald-100 text-emerald-800';
+      return 'bg-green-50 text-green-900 border border-green-300';
     case 'cancelado':
-      return 'bg-red-100 text-red-800';
+      return 'bg-slate-50 text-slate-700 border border-slate-200';
     case 'no_show':
-      return 'bg-slate-100 text-slate-800';
+      return 'bg-red-50 text-red-900 border border-red-200';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-gray-50 text-gray-900 border border-gray-200';
   }
 }
 

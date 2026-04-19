@@ -8,6 +8,8 @@ import AdminStatCard from '@/components/admin/ui/AdminStatCard';
 import AdminEmptyState from '@/components/admin/ui/AdminEmptyState';
 import AdminHealthSummary from '@/components/admin/AdminHealthSummary';
 import AdminPulsoDiario from '@/components/admin/AdminPulsoDiario';
+import { BookingPulseWidget } from '@/components/admin/BookingPulseWidget';
+import { NotificationDeliveryWidget } from '@/components/admin/NotificationDeliveryWidget';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { formatCLPCompact } from '@/lib/format';
@@ -703,6 +705,12 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       {/* ── Pulso Diario: monitor auto-pilotado (audit-cron-daily) ── */}
       <AdminPulsoDiario />
+
+      {/* ── Pulso de Reservas: KPIs de booking system ── */}
+      <BookingPulseWidget />
+
+      {/* ── Entrega de notificaciones ultimas 24h (notification_attempts) ── */}
+      <NotificationDeliveryWidget />
 
       {/* ── Health Summary (acciones que requieren atencion del admin) ── */}
       <AdminHealthSummary />

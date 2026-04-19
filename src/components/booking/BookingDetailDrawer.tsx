@@ -5,20 +5,28 @@ import {
   SheetHeader,
   SheetTitle,
 } from '@/components/ui/sheet';
-import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { CalendarDays, Clock, AlertTriangle, PawPrint, User, History } from '@/lib/icons';
+import {
+  CalendarDays,
+  Clock,
+  AlertTriangle,
+  PawPrint,
+  User,
+  CheckCircle2,
+  Play,
+  ArrowRight,
+} from '@/lib/icons';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { useBookingDetail, type BookingEvent } from '@/hooks/useBookingDetail';
-import {
-  getStatusColor,
-  getStatusLabel,
-  type BookingType,
-  type BookingEventType,
-} from '@/lib/bookingStateMachine';
-import { formatCLP } from '@/lib/format';
+import { Link } from 'react-router-dom';
+import { useBookingDetail } from '@/hooks/useBookingDetail';
+import { BookingStatusBadge } from './BookingStatusBadge';
+import { BookingTimeline } from './BookingTimeline';
+import { BookingToMedicalRecordCTA } from './BookingToMedicalRecordCTA';
+import { BookingPrivateNotes } from './BookingPrivateNotes';
+import type { BookingType } from '@/lib/bookingStateMachine';
+import { formatCLP, formatBookingDate, formatTimeRange } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 interface BookingDetailDrawerProps {
@@ -26,31 +34,23 @@ interface BookingDetailDrawerProps {
   onOpenChange: (open: boolean) => void;
   bookingId: string | undefined;
   bookingType: BookingType;
+  /**
+   * Rol desde el que se ve el detalle. Define qué secciones privadas
+   * se muestran (ej: private_notes solo para provider/admin).
+   * Default 'owner' por seguridad.
+   */
+  viewerRole?: 'owner' | 'provider' | 'admin';
 }
-
-const EVENT_LABEL: Record<BookingEventType, string> = {
-  created: 'Reserva creada',
-  confirmed: 'Reserva confirmada',
-  cancelled_by_owner: 'Cancelada por el dueño',
-  cancelled_by_provider: 'Cancelada por el proveedor',
-  rescheduled: 'Reprogramada',
-  in_progress: 'Consulta iniciada',
-  completed: 'Completada',
-  no_show: 'No se presentó',
-  reviewed: 'Reseña recibida',
-  payment_received: 'Pago recibido',
-  payment_refunded: 'Pago reembolsado',
-  reminder_sent: 'Recordatorio enviado',
-  en_camino: 'Proveedor en camino',
-};
 
 export function BookingDetailDrawer({
   open,
   onOpenChange,
   bookingId,
   bookingType,
+  viewerRole = 'owner',
 }: BookingDetailDrawerProps) {
   const { data, isLoading } = useBookingDetail(bookingId, bookingType);
+  const isVetViewer = viewerRole === 'provider' || viewerRole === 'admin';
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -76,14 +76,12 @@ export function BookingDetailDrawer({
           <div className="mt-4 space-y-5">
             {/* Status */}
             <div className="flex items-center gap-2 flex-wrap">
-              <Badge className={cn('text-xs', getStatusColor(data.status))}>
-                {getStatusLabel(data.status)}
-              </Badge>
+              <BookingStatusBadge status={data.status} />
               {data.is_emergency && (
-                <Badge variant="destructive" className="text-xs gap-1">
-                  <AlertTriangle className="h-3 w-3" />
+                <span className="inline-flex items-center gap-1 text-xs font-medium text-red-900 bg-red-50 border border-red-200 rounded-full px-2 py-0.5">
+                  <AlertTriangle className="h-3 w-3" aria-hidden="true" />
                   Emergencia
-                </Badge>
+                </span>
               )}
               <span className="text-xs text-muted-foreground ml-auto">#{data.id.slice(0, 8)}</span>
             </div>
@@ -127,18 +125,12 @@ export function BookingDetailDrawer({
               <InfoTile
                 icon={<CalendarDays className="h-4 w-4" />}
                 label="Fecha"
-                value={format(new Date(data.scheduled_date), "d 'de' MMMM yyyy", { locale: es })}
+                value={formatBookingDate(data.scheduled_date) || '—'}
               />
               <InfoTile
                 icon={<Clock className="h-4 w-4" />}
                 label="Horario"
-                value={
-                  data.start_time
-                    ? `${data.start_time.slice(0, 5)}${
-                        data.end_time ? ` – ${data.end_time.slice(0, 5)}` : ''
-                      }`
-                    : '—'
-                }
+                value={formatTimeRange(data.start_time, data.end_time) || '—'}
               />
               <InfoTile label="Servicio" value={data.service_type || '—'} className="col-span-2" />
               {data.total_price != null && (
@@ -149,6 +141,35 @@ export function BookingDetailDrawer({
                 />
               )}
             </div>
+
+            {/* Metadata extendida (timestamps + follow-up link) */}
+            <BookingMetaStrip
+              confirmedAt={data.confirmed_at}
+              startedAt={data.started_at}
+              completedAt={data.status === 'completado' ? (data.canceled_at ?? null) : null}
+              followUpBookingId={data.follow_up_booking_id}
+              bookingType={data.booking_type}
+            />
+
+            {/* Cita completada -> crear/ver nota clinica */}
+            {data.status === 'completado' && data.pet_id && (
+              <BookingToMedicalRecordCTA
+                bookingId={data.id}
+                petId={data.pet_id}
+                existingMedicalRecordId={
+                  data.linked_vet_clinical_note_id ?? data.linked_medical_record_id ?? null
+                }
+              />
+            )}
+
+            {/* Notas privadas del vet (solo visible para provider/admin) */}
+            {isVetViewer && data.booking_type === 'vet' && (
+              <BookingPrivateNotes
+                bookingId={data.id}
+                bookingType="vet"
+                initialValue={data.private_notes}
+              />
+            )}
 
             {/* Sintomas / razon cancelacion */}
             {data.symptoms && (
@@ -169,19 +190,7 @@ export function BookingDetailDrawer({
             )}
 
             {/* Timeline */}
-            {data.events.length > 0 && (
-              <div className="space-y-2">
-                <div className="flex items-center gap-1.5 text-sm font-semibold">
-                  <History className="h-4 w-4" />
-                  Historial ({data.events.length})
-                </div>
-                <ol className="space-y-2 border-l-2 border-muted pl-4">
-                  {data.events.map((ev) => (
-                    <EventRow key={ev.id} event={ev} />
-                  ))}
-                </ol>
-              </div>
-            )}
+            <BookingTimeline events={data.events} />
           </div>
         )}
       </SheetContent>
@@ -211,19 +220,59 @@ function InfoTile({
   );
 }
 
-function EventRow({ event }: { event: BookingEvent }) {
-  const label = EVENT_LABEL[event.event_type] ?? event.event_type;
+function BookingMetaStrip({
+  confirmedAt,
+  startedAt,
+  followUpBookingId,
+  bookingType,
+}: {
+  confirmedAt: string | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  followUpBookingId: string | null;
+  bookingType: BookingType;
+}) {
+  const items: Array<{ icon: React.ReactNode; label: string; value: string }> = [];
+
+  if (confirmedAt) {
+    items.push({
+      icon: <CheckCircle2 className="h-3 w-3 text-emerald-700" aria-hidden="true" />,
+      label: 'Confirmada',
+      value: format(new Date(confirmedAt), 'd MMM · HH:mm', { locale: es }),
+    });
+  }
+  if (startedAt) {
+    items.push({
+      icon: <Play className="h-3 w-3 text-indigo-700" aria-hidden="true" />,
+      label: 'Iniciada',
+      value: format(new Date(startedAt), 'd MMM · HH:mm', { locale: es }),
+    });
+  }
+
+  if (items.length === 0 && !followUpBookingId) return null;
+
   return (
-    <li className="relative">
-      <span
-        aria-hidden
-        className="absolute -left-[22px] top-1 h-2.5 w-2.5 rounded-full bg-primary/60 border-2 border-background"
-      />
-      <div className="text-sm font-medium">{label}</div>
-      <div className="text-[11px] text-muted-foreground">
-        {format(new Date(event.created_at), 'd MMM yyyy · HH:mm', { locale: es })}
-        {event.actor_role && ` · por ${event.actor_role}`}
-      </div>
-    </li>
+    <div className="rounded-lg border border-slate-200 bg-slate-50/60 p-2 space-y-1.5">
+      {items.length > 0 && (
+        <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px]">
+          {items.map((item, i) => (
+            <span key={i} className="inline-flex items-center gap-1 text-slate-700">
+              {item.icon}
+              <span className="font-medium">{item.label}:</span>
+              <span className="text-slate-600">{item.value}</span>
+            </span>
+          ))}
+        </div>
+      )}
+      {followUpBookingId && bookingType === 'vet' && (
+        <Link
+          to={`/provider/dashboard?booking=${followUpBookingId}`}
+          className="inline-flex items-center gap-1 text-[11px] font-medium text-indigo-700 hover:text-indigo-900 hover:underline"
+        >
+          Ver cita de seguimiento
+          <ArrowRight className="h-3 w-3" aria-hidden="true" />
+        </Link>
+      )}
+    </div>
   );
 }

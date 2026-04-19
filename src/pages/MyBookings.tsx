@@ -4,6 +4,7 @@ import { PageHeader } from '@/components/PageHeader';
 import { CalendarGrid } from '@/components/calendar/CalendarGrid';
 import { DaySlotsList } from '@/components/calendar/DaySlotsList';
 import { BookingModal } from '@/components/calendar/BookingModal';
+import { GoogleCalendarStatusBanner } from '@/components/GoogleCalendarStatusBanner';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useMyBookingsV2 } from '@/hooks/useMyBookingsV2';
 import { format, startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { formatBookingDate, formatTimeRange } from '@/lib/format';
 import {
   Calendar,
   CalendarDays,
@@ -299,6 +301,8 @@ export default function MyBookings() {
     <>
       <PageHeader title="Mis reservas" />
       <div className="container max-w-6xl mx-auto p-4 space-y-4">
+        <GoogleCalendarStatusBanner settingsHref="/profile" />
+
         {/* Mini métricas de MIS reservas */}
         <div className="grid grid-cols-3 gap-3">
           <Card>
@@ -467,12 +471,10 @@ export default function MyBookings() {
                                 </Badge>
                               )}
                             </div>
-                            <p className="text-xs text-muted-foreground">
-                              {slotDate
-                                ? format(parseISO(slotDate), "EEEE d 'de' MMMM", { locale: es })
-                                : '—'}
-                              {slot?.start_time && ` · ${slot.start_time.slice(0, 5)}`}
-                              {slot?.end_time && `–${slot.end_time.slice(0, 5)}`}
+                            <p className="text-xs text-muted-foreground capitalize">
+                              {slotDate ? formatBookingDate(slotDate) : '—'}
+                              {slot?.start_time &&
+                                ` · ${formatTimeRange(slot.start_time, slot.end_time)}`}
                             </p>
                             <div className="flex items-center gap-2 mt-0.5">
                               {slot?.service_type && (

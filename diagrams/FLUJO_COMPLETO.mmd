@@ -1,7 +1,19 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-19 (pivot hibrido 6 motores)
-    %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (28 activas).
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-18 (Booking System Overhaul)
+    %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (29 activas).
+    %% Cambios 2026-04-18 (Booking System Overhaul):
+    %%   - Banner GoogleCalendarStatusBanner en /home, /mis-reservas, /calendario,
+    %%     /provider/dashboard cuando google_calendar_tokens.revoked_at IS NOT NULL.
+    %%   - AvailabilityPreview en /provider/dashboard tab Disponibilidad.
+    %%   - InboxFiltersBar en ProviderBookingsInbox (search + service_type + rango fecha).
+    %%   - SlotConflictDialog: al colisionar slot muestra 3 alternativas cercanas.
+    %%   - BookingTimeline reutilizable en drawers (consume booking_events).
+    %%   - CancelBookingDialog y RescheduleDialog muestran politica segun scheduledAt.
+    %%   - Admin: BookingPulseWidget con confirmacion/cancelacion/no-show rates.
+    %%   - Edge fn nueva: sync-payment-to-booking.
+    %%   - booking-reminders-cron agrega WhatsApp + notification_attempts tracking.
+    %%   - Migraciones pendientes de aplicar: 20260612000000-20260612000003.
     %% Cambios 2026-04-17 (Reordenamiento v3):
     %%   - BottomTabBar owner: Inicio · My Paws · Servicios · Agenda · Perfil
     %%     (antes "Vets" y "Recordar" como tabs propias)

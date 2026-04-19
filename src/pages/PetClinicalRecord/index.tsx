@@ -163,6 +163,10 @@ const PetClinicalRecord = () => {
     }
   }, [viewMode, searchParams]);
 
+  // Si viene desde "Crear nota clinica" en BookingDetailDrawer (?booking=...)
+  // extraemos el booking_id para linkeo en vet_clinical_notes/medical_records.
+  const linkedBookingId = searchParams.get('booking') || undefined;
+
   useEffect(() => {
     if (!pet || !user?.id) {
       setVetCheckDone(true);
@@ -347,6 +351,15 @@ const PetClinicalRecord = () => {
               petBreed={pet.breed || ''}
               petSpecies={pet.species}
               petName={pet.name}
+              fromBooking={
+                linkedBookingId
+                  ? {
+                      bookingId: linkedBookingId,
+                      bookingDate: new Date().toISOString().slice(0, 10),
+                    }
+                  : undefined
+              }
+              autoOpen={!!linkedBookingId}
             />
             <AddReminderDialog
               open={showReminderForm}
@@ -647,6 +660,8 @@ const PetClinicalRecord = () => {
             shareTokenId={vetShareTokenId}
             showRecorder={showRecorder}
             onRecorderChange={setShowRecorder}
+            linkedBookingId={linkedBookingId}
+            autoOpenNoteEditor={!!linkedBookingId}
             onSwitchTab={(tab) => {
               setActiveTab(tab);
               // Scroll the tabs area into view after switching

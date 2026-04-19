@@ -39,6 +39,11 @@ interface CreateNoteArgs {
   followupReason?: string;
   source?: 'manual' | 'audio_transcription';
   rawTranscript?: string;
+  /**
+   * Si se provee, la nota queda linkeada al booking que la origino
+   * (columna vet_clinical_notes.booking_id agregada en mig 20260612000004).
+   */
+  bookingId?: string;
 }
 
 // La tabla vet_clinical_notes no existe aun en los tipos generados de Supabase.
@@ -121,6 +126,8 @@ export function useCreateVetClinicalNote() {
           source: args.source || 'manual',
           raw_transcript: args.rawTranscript || null,
           consultation_date: new Date().toISOString().split('T')[0],
+          // Link opcional a cita origen (mig 20260612000004)
+          booking_id: args.bookingId || null,
         })
         .select()
         .single();

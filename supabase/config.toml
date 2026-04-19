@@ -126,3 +126,8 @@ verify_jwt = false
 
 [functions.send-donation-thanks]
 verify_jwt = false
+
+# ── Booking System Overhaul (agregadas 2026-04-18) ──
+
+[functions.sync-payment-to-booking]
+verify_jwt = false
