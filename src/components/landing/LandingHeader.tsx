@@ -1,12 +1,73 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import type { LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { useAuth } from '@/hooks/useAuth';
 import { LINKS } from '@/lib/links';
-import { Menu } from '@/lib/icons';
+import { Briefcase, Coins, Heart, LogIn, Menu, Sparkles, Stethoscope } from '@/lib/icons';
 import { HEADER } from './content/copy';
 import { cn } from '@/lib/utils';
+
+type MobileNavItem = {
+  icon: LucideIcon;
+  label: string;
+  subtitle: string;
+  href: string;
+};
+
+type MobileNavSection = {
+  title: string;
+  items: MobileNavItem[];
+};
+
+const MOBILE_NAV_SECTIONS: MobileNavSection[] = [
+  {
+    title: 'Para tu peludo',
+    items: [
+      {
+        icon: Stethoscope,
+        label: 'Buscar un vet',
+        subtitle: 'Directorio verificado por comuna',
+        href: '/veterinarios',
+      },
+      {
+        icon: Coins,
+        label: 'Estimar precio consulta',
+        subtitle: 'Promedio por comuna',
+        href: '/precios-veterinarios',
+      },
+    ],
+  },
+  {
+    title: 'Soy profesional',
+    items: [
+      {
+        icon: Briefcase,
+        label: 'Planes para veterinarios',
+        subtitle: 'Desde $0 · 4 tiers',
+        href: '/para-veterinarios',
+      },
+    ],
+  },
+  {
+    title: 'El proyecto',
+    items: [
+      {
+        icon: Heart,
+        label: 'Apoyar',
+        subtitle: 'Donaciones y Paw Member',
+        href: '/donaciones',
+      },
+      {
+        icon: Sparkles,
+        label: 'Nuestra historia',
+        subtitle: 'Por qué existe Paw Friend',
+        href: '/paw-core',
+      },
+    ],
+  },
+];
 
 /**
  * Header sticky del landing nuevo. Contraste con [PublicHeader.tsx](
@@ -105,33 +166,68 @@ export function LandingHeader() {
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-72 sm:max-w-sm">
+            <SheetContent side="right" className="w-80 overflow-y-auto sm:max-w-sm">
               <SheetTitle className="sr-only">Menú principal</SheetTitle>
-              <nav aria-label="Móvil" className="mt-6">
-                <ul className="flex flex-col gap-1">
-                  {HEADER.navItems.map((item) => (
-                    <li key={item.href}>
-                      <Link
-                        to={item.href}
-                        onClick={() => setSheetOpen(false)}
-                        className="block rounded-xl px-4 py-3 text-base font-semibold text-foreground hover:bg-foreground/5"
-                      >
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                  {!user && (
-                    <li className="mt-3">
-                      <Link
-                        to={LINKS.auth()}
-                        onClick={() => setSheetOpen(false)}
-                        className="block rounded-xl px-4 py-3 text-base font-semibold text-foreground hover:bg-foreground/5"
-                      >
-                        {HEADER.ctaAuth}
-                      </Link>
-                    </li>
-                  )}
-                </ul>
+
+              {/* Brand header dentro del sheet */}
+              <div className="mt-2 flex items-center gap-2 border-b border-border/50 pb-4">
+                <img
+                  src="/paw_friend_icon_principal.svg"
+                  alt=""
+                  width={32}
+                  height={32}
+                  className="h-8 w-8"
+                  aria-hidden="true"
+                />
+                <div className="leading-tight">
+                  <p className="text-base font-bold tracking-tight">
+                    <span className="text-purple-800">{HEADER.brandLead}</span>
+                    <span className="ml-0.5 text-purple-500">{HEADER.brandTail}</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground">Hecho en Chile · Gratis</p>
+                </div>
+              </div>
+
+              <nav aria-label="Móvil" className="mt-5 space-y-5">
+                {MOBILE_NAV_SECTIONS.map((section) => (
+                  <div key={section.title}>
+                    <p className="px-2 text-[11px] font-bold uppercase tracking-[0.12em] text-purple-600">
+                      {section.title}
+                    </p>
+                    <ul className="mt-2 flex flex-col gap-1">
+                      {section.items.map(({ icon: Icon, label, subtitle, href }) => (
+                        <li key={href}>
+                          <Link
+                            to={href}
+                            onClick={() => setSheetOpen(false)}
+                            className="group flex items-start gap-3 rounded-xl px-3 py-3 transition-colors hover:bg-purple-50 active:bg-purple-100"
+                          >
+                            <span className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-purple-100 text-purple-700 transition-colors group-hover:bg-purple-200">
+                              <Icon className="h-5 w-5" aria-hidden="true" />
+                            </span>
+                            <span className="flex min-w-0 flex-col leading-tight">
+                              <span className="text-sm font-semibold text-foreground">{label}</span>
+                              <span className="text-xs text-muted-foreground">{subtitle}</span>
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+
+                {!user && (
+                  <div className="border-t border-border/50 pt-4">
+                    <Link
+                      to={LINKS.auth()}
+                      onClick={() => setSheetOpen(false)}
+                      className="flex items-center justify-center gap-2 rounded-xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground hover:bg-foreground/5"
+                    >
+                      <LogIn className="h-4 w-4" aria-hidden="true" />
+                      {HEADER.ctaAuth}
+                    </Link>
+                  </div>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
