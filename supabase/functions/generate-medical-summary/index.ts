@@ -512,7 +512,8 @@ class PdfBuilder {
     subtitle: string,
     paws: { label: string; value: string }[],
     verificationCode: string,
-    generatedAt: string
+    generatedAt: string,
+    modeLabel: string
   ) {
     // Banner púrpura suave arriba
     this.page!.drawRectangle({
@@ -556,7 +557,7 @@ class PdfBuilder {
       font: this.bold,
       color: PURPLE_DARK,
     });
-    this.drawText('Ficha clinica veterinaria', {
+    this.drawText(modeLabel, {
       x: logoEndX,
       y: PAGE_H - 72,
       size: FS_H3,
@@ -885,12 +886,13 @@ class PdfBuilder {
   }
 
   // ── Timeline entry (usado en historial clinico) ──
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
   drawTimelineEntry(entry: {
     date: string;
     record_type: string;
     title: string;
     source: 'record' | 'vet_note';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: any;
   }) {
     this.ensureSpace(42);
@@ -1314,7 +1316,11 @@ serve(
       ];
       if (pet.paw_card_id) vitals.push({ label: 'Paw Card ID', value: String(pet.paw_card_id) });
 
-      pdf.drawCover(petName, subtitle, vitals, verificationCode, generatedAt);
+      const modeLabel =
+        effectiveMode === 'complete'
+          ? 'Ficha clinica completa  ·  Medica + habitos + rutinas'
+          : 'Ficha clinica  ·  Solo historial medico y vacunas';
+      pdf.drawCover(petName, subtitle, vitals, verificationCode, generatedAt, modeLabel);
 
       // ── Alertas críticas en portada (alergias + condiciones + medicamentos) ──
       const allergyLines: string[] = [];
@@ -1519,11 +1525,11 @@ serve(
         pdf.drawTable(['Fecha', 'Peso'], rows, [260, 256]);
       }
 
-      // ── Alimentación y estilo de vida ──
+      // ── Alimentación y estilo de vida (solo mode complete — son habitos, no clinico) ──
       const hasDiet = pet.diet_type || pet.diet_brand || pet.diet_frequency;
       const hasLifestyle = pet.activity_level || pet.living_environment || pet.behavior_notes;
 
-      if (hasDiet || hasLifestyle) {
+      if (effectiveMode === 'complete' && (hasDiet || hasLifestyle)) {
         pdf.drawSectionHeader('Alimentacion y estilo de vida');
 
         if (hasDiet) {
