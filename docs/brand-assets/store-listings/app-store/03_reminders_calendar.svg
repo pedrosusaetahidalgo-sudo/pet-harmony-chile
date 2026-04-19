@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1242 2688" width="1242" height="2688" role="img" aria-label="App Store screenshot 3 — Reminders + calendar">
+  <title>App Store iPhone 6.5" · Slide 3 · Recordatorios</title>
+  <desc>Recordatorios automáticos + sync con Google Calendar.</desc>
+  <defs>
+    <radialGradient id="as3-bg" cx="0.5" cy="0.3" r="0.9">
+      <stop offset="0" stop-color="#fef3c7"/>
+      <stop offset="0.5" stop-color="#fdf2f8"/>
+      <stop offset="1" stop-color="#be185d"/>
+    </radialGradient>
+  </defs>
+  <rect width="1242" height="2688" fill="url(#as3-bg)"/>
+  <rect x="0" y="0" width="1242" height="80" fill="rgba(255,255,255,0.08)"/>
+  <g transform="translate(621 220)">
+    <rect x="-180" y="-30" width="360" height="60" rx="30" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+    <text x="0" y="8" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="22" fill="#ffffff" letter-spacing="6">RECORDATORIOS AUTOMÁTICOS</text>
+  </g>
+  <text x="621" y="440" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="112" fill="#1a102b" letter-spacing="-4">Vacunas al día</text>
+  <text x="621" y="570" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="112" fill="#1a102b" letter-spacing="-4">sin pensar,</text>
+  <text x="621" y="700" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="112" fill="#ec4899" letter-spacing="-4">sin olvidar.</text>
+  <text x="621" y="820" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="500" font-size="38" fill="#4b3b66">Recordatorios + sync con Google Calendar.</text>
+  <g transform="translate(621 1700)">
+    <rect x="-340" y="-820" width="680" height="1560" rx="90" fill="#831843"/>
+    <rect x="-310" y="-780" width="620" height="1480" rx="58" fill="#ffffff"/>
+    <rect x="-90" y="-800" width="180" height="28" rx="14" fill="#1a102b"/>
+    <!-- Header -->
+    <rect x="-310" y="-770" width="620" height="110" fill="#ec4899"/>
+    <text x="-260" y="-710" font-family="'Fredoka',sans-serif" font-weight="600" font-size="34" fill="#ffffff">Calendario · Kai</text>
+    <text x="-260" y="-678" font-family="'Plus Jakarta Sans',sans-serif" font-weight="500" font-size="22" fill="rgba(255,255,255,0.85)">Marzo 2026</text>
+    <!-- Mini calendar grid -->
+    <g transform="translate(-290 -620)">
+      <g font-family="'Plus Jakarta Sans',sans-serif" font-weight="700" font-size="18" fill="#4b3b66">
+        <text x="20" y="0">L</text><text x="100" y="0">M</text><text x="180" y="0">M</text>
+        <text x="260" y="0">J</text><text x="340" y="0">V</text><text x="420" y="0">S</text>
+        <text x="500" y="0">D</text>
+      </g>
+      <g font-family="'Plus Jakarta Sans',sans-serif" font-weight="600" font-size="24" fill="#1a102b">
+        <text x="20" y="50">1</text><text x="100" y="50">2</text><text x="180" y="50">3</text>
+        <text x="260" y="50">4</text><text x="340" y="50">5</text><text x="420" y="50">6</text>
+        <text x="500" y="50">7</text>
+        <text x="20" y="110">8</text><text x="100" y="110">9</text><text x="180" y="110">10</text>
+        <text x="260" y="110">11</text><text x="340" y="110">12</text><text x="420" y="110">13</text>
+        <text x="500" y="110">14</text>
+        <rect x="-5" y="135" width="40" height="40" rx="20" fill="#eab308"/>
+        <text x="20" y="170" fill="#ffffff">15</text>
+        <text x="100" y="170">16</text><text x="180" y="170">17</text>
+        <text x="260" y="170">18</text><text x="340" y="170">19</text><text x="420" y="170">20</text>
+        <text x="500" y="170">21</text>
+        <text x="20" y="230">22</text><text x="100" y="230">23</text><text x="180" y="230">24</text>
+        <text x="260" y="230">25</text><text x="340" y="230">26</text><text x="420" y="230">27</text>
+        <text x="500" y="230">28</text>
+      </g>
+    </g>
+    <!-- Reminder cards -->
+    <rect x="-290" y="-260" width="580" height="140" rx="24" fill="#fef3c7" stroke="#eab308" stroke-width="3"/>
+    <circle cx="-230" cy="-190" r="28" fill="#eab308"/>
+    <path d="M-240 -188 L-238 -182 M-232 -188 L-224 -196 M-240 -196 L-224 -196" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <text x="-180" y="-205" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="16" fill="#b45309" letter-spacing="2">HOY · 15 MAR</text>
+    <text x="-180" y="-170" font-family="'Fredoka',sans-serif" font-weight="600" font-size="30" fill="#1a102b">Vacuna séxtuple</text>
+    <text x="-180" y="-140" font-family="'Plus Jakarta Sans',sans-serif" font-weight="500" font-size="22" fill="#78350f">16:00 · Clínica Patitas</text>
+    <rect x="-290" y="-100" width="580" height="140" rx="24" fill="#ecfdf5" stroke="#10b981" stroke-width="3"/>
+    <circle cx="-230" cy="-30" r="28" fill="#10b981"/>
+    <path d="M-242 -30 L-235 -22 L-218 -40" stroke="#ffffff" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="-180" y="-45" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="16" fill="#047857" letter-spacing="2">COMPLETADA</text>
+    <text x="-180" y="-10" font-family="'Fredoka',sans-serif" font-weight="600" font-size="30" fill="#1a102b">Antiparasitario</text>
+    <text x="-180" y="20" font-family="'Plus Jakarta Sans',sans-serif" font-weight="500" font-size="22" fill="#047857">Hace 2 semanas</text>
+    <!-- Google Calendar sync -->
+    <rect x="-290" y="60" width="580" height="110" rx="24" fill="#f3e8ff" stroke="#9333ea" stroke-width="2"/>
+    <g transform="translate(-252 115)">
+      <rect x="-24" y="-24" width="48" height="48" rx="8" fill="#ffffff" stroke="#4285f4" stroke-width="3"/>
+      <text x="0" y="6" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="20" fill="#4285f4">G</text>
+    </g>
+    <text x="-195" y="100" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="16" fill="#7e22ce" letter-spacing="2">SYNC ACTIVO</text>
+    <text x="-195" y="135" font-family="'Fredoka',sans-serif" font-weight="600" font-size="26" fill="#1a102b">Google Calendar</text>
+    <circle cx="220" cy="115" r="14" fill="#10b981"/>
+    <path d="M213 115 L218 120 L227 110" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <rect x="-310" y="620" width="620" height="90" fill="#faf5ff"/>
+    <line x1="-310" y1="620" x2="310" y2="620" stroke="#e9d5ff" stroke-width="1"/>
+    <circle cx="0" cy="660" r="14" fill="#ec4899"/>
+    <rect x="-70" y="700" width="140" height="4" rx="2" fill="#1a102b" opacity=".3"/>
+  </g>
+  <rect x="0" y="2608" width="1242" height="80" fill="rgba(255,255,255,0.08)"/>
+</svg>

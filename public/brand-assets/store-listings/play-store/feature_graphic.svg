@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 500" width="1024" height="500" role="img" aria-label="Play Store feature graphic">
+  <title>Play Store · Feature graphic 1024×500</title>
+  <desc>Banner destacado del Play Store. Gradient purple-gold cinematográfico con logo + tagline.</desc>
+  <defs>
+    <linearGradient id="pg-base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2a1046"/>
+      <stop offset="0.5" stop-color="#581c87"/>
+      <stop offset="1" stop-color="#9333ea"/>
+    </linearGradient>
+    <radialGradient id="pg-gold" cx="0.85" cy="0.3" r="0.45">
+      <stop offset="0" stop-color="#eab308" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#eab308" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="pg-sq">
+      <path d="M 850 250 C 910 250, 940 280, 940 340 C 940 400, 910 430, 850 430 C 790 430, 760 400, 760 340 C 760 280, 790 250, 850 250 Z"/>
+    </clipPath>
+    <linearGradient id="pg-mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#eab308"/>
+      <stop offset="1" stop-color="#fcd34d"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="500" fill="url(#pg-base)"/>
+  <rect width="1024" height="500" fill="url(#pg-gold)"/>
+  <g fill="rgba(255,255,255,0.04)">
+    <circle cx="100" cy="80" r="1.5"/><circle cx="220" cy="60" r="1.5"/><circle cx="340" cy="100" r="1.5"/>
+    <circle cx="460" cy="70" r="1.5"/><circle cx="580" cy="110" r="1.5"/><circle cx="700" cy="80" r="1.5"/>
+    <circle cx="160" cy="240" r="1.5"/><circle cx="280" cy="220" r="1.5"/><circle cx="400" cy="260" r="1.5"/>
+    <circle cx="520" cy="230" r="1.5"/><circle cx="120" cy="400" r="1.5"/><circle cx="340" cy="380" r="1.5"/>
+  </g>
+  <!-- Logo mark right -->
+  <path d="M 850 180 C 950 180, 1000 240, 1000 340 C 1000 440, 950 500, 850 500 C 750 500, 700 440, 700 340 C 700 240, 750 180, 850 180 Z" fill="url(#pg-mark)"/>
+  <g clip-path="url(#pg-sq)" transform="translate(0 -10)">
+    <ellipse cx="850" cy="370" rx="65" ry="55" fill="#ffffff"/>
+    <ellipse cx="790" cy="305" rx="22" ry="28" transform="rotate(-22 790 305)" fill="#ffffff"/>
+    <ellipse cx="830" cy="258" rx="20" ry="26" transform="rotate(-10 830 258)" fill="#ffffff"/>
+    <ellipse cx="870" cy="258" rx="20" ry="26" transform="rotate(10 870 258)" fill="#ffffff"/>
+    <ellipse cx="910" cy="305" rx="22" ry="28" transform="rotate(22 910 305)" fill="#ffffff"/>
+  </g>
+  <!-- Eyebrow -->
+  <g transform="translate(60 90)">
+    <rect x="0" y="0" width="300" height="40" rx="20" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.28)" stroke-width="1.5"/>
+    <circle cx="22" cy="20" r="7" fill="#eab308"/>
+    <text x="42" y="26" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="12" fill="#ffffff" letter-spacing="4">PAW FRIEND · HECHO EN CHILE</text>
+  </g>
+  <!-- Title -->
+  <text x="60" y="230" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="72" fill="#ffffff" letter-spacing="-2.5">La ficha médica</text>
+  <text x="60" y="310" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="72" letter-spacing="-2.5">
+    <tspan fill="#ffffff">de tu mascota,</tspan>
+    <tspan fill="#eab308"> gratis.</tspan>
+  </text>
+  <!-- Subtitle -->
+  <text x="60" y="370" font-family="'Plus Jakarta Sans',sans-serif" font-weight="500" font-size="22" fill="rgba(255,255,255,0.9)">PDF descargable · Directorio vets · Recordatorios automáticos</text>
+  <!-- CTA -->
+  <rect x="60" y="410" width="220" height="56" rx="28" fill="#ffffff"/>
+  <text x="170" y="445" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="18" fill="#9333ea">Descarga gratis →</text>
+</svg>
