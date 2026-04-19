@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend — Sample Dashboard para Paw Companys</title>
+  <meta name="description" content="Ejemplo del reporte mensual que reciben las Paw Companys: impresiones, engagement, perfil demográfico, contribución a refugios, posicionamiento del logo. Todos los números en esta demo son ilustrativos." />
+  <meta name="theme-color" content="#9333ea" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://pawfriend.cl/pitch/sample-dashboard.html" />
+  <link rel="icon" type="image/svg+xml" href="/paw_friend_icon_principal.svg" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Paw Friend" />
+  <meta property="og:url" content="https://pawfriend.cl/pitch/sample-dashboard.html" />
+  <meta property="og:title" content="Sample Dashboard — Paw Companys" />
+  <meta property="og:description" content="Ejemplo del reporte mensual que reciben las Paw Companys." />
+  <meta property="og:image" content="https://pawfriend.cl/og-image.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --brand-50: #faf5ff; --brand-100: #f3e8ff; --brand-200: #e9d5ff;
+      --brand-500: #a855f7; --brand-600: #9333ea; --brand-700: #7e22ce;
+      --brand-900: #581c87;
+      --gold: #eab308; --emerald: #10b981; --rose: #ec4899;
+      --ink: #1a102b; --ink-soft: #4b3b66;
+      --paper: #faf7ff; --border: #e5d5f7; --surface: #fff;
+      --radius-lg: 20px; --radius-md: 14px; --radius-sm: 10px;
+      --shadow-soft: 0 8px 30px -10px rgba(147,51,234,.15);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    /* Disclaimer banner */
+    .demo-banner {
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border-bottom: 2px solid #eab308;
+      padding: 12px 20px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #713f12;
+      position: sticky; top: 0; z-index: 50;
+    }
+    .demo-banner strong { background: #eab308; color: #fff; padding: 3px 10px; border-radius: 999px; margin-right: 8px; font-weight: 800; letter-spacing: .05em; font-size: 11px; text-transform: uppercase; }
+
+    /* Header */
+    header.hero {
+      background: linear-gradient(135deg, #581c87 0%, #9333ea 50%, #eab308 120%);
+      color: #fff;
+      padding: 48px 0 64px;
+      position: relative;
+      overflow: hidden;
+    }
+    header.hero::after {
+      content: ""; position: absolute; top: -80px; right: -80px;
+      width: 320px; height: 320px; border-radius: 50%;
+      background: rgba(255,255,255,.08); pointer-events: none;
+    }
+    .hero-tag {
+      display: inline-flex; gap: 8px; align-items: center;
+      padding: 6px 14px;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 999px;
+      font-size: 12px; font-weight: 700;
+      backdrop-filter: blur(8px);
+      letter-spacing: .05em; text-transform: uppercase;
+    }
+    header h1 {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: clamp(28px, 4vw, 44px);
+      line-height: 1.1;
+      margin: 16px 0 10px;
+    }
+    header p { font-size: 17px; opacity: .9; max-width: 620px; }
+    .hero-meta {
+      display: flex; gap: 16px; flex-wrap: wrap;
+      margin-top: 28px;
+      font-size: 13px; font-weight: 600;
+    }
+    .hero-meta span { opacity: .85; }
+
+    /* KPIs */
+    .kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+      margin-top: -40px;
+      padding-bottom: 36px;
+    }
+    @media (max-width: 820px) { .kpis { grid-template-columns: repeat(2, 1fr); } }
+    .kpi {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px 22px 20px;
+      box-shadow: var(--shadow-soft);
+      position: relative;
+      overflow: hidden;
+    }
+    .kpi::before {
+      content: ""; position: absolute; inset: 0 0 auto 0; height: 4px;
+      background: var(--accent, var(--brand-600));
+    }
+    .kpi-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+    .kpi-value { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 32px; margin: 6px 0 4px; color: var(--ink); }
+    .kpi-delta { font-size: 12px; font-weight: 700; }
+    .delta-up { color: #059669; }
+    .delta-flat { color: var(--ink-soft); }
+    .kpi:nth-child(1) { --accent: #9333ea; }
+    .kpi:nth-child(2) { --accent: #eab308; }
+    .kpi:nth-child(3) { --accent: #10b981; }
+    .kpi:nth-child(4) { --accent: #ec4899; }
+
+    /* Section */
+    section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 28px 24px;
+      margin-top: 28px;
+      box-shadow: var(--shadow-soft);
+    }
+    section h2 {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600; font-size: 22px;
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 4px;
+    }
+    section h2 .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--brand-600); }
+    section .sub { font-size: 14px; color: var(--ink-soft); margin-bottom: 20px; }
+
+    /* Chart fake (pure CSS bars) */
+    .chart {
+      display: grid;
+      grid-template-columns: 80px 1fr 70px;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 13px;
+    }
+    .chart-label { font-weight: 600; color: var(--ink); }
+    .chart-bar {
+      height: 28px;
+      background: linear-gradient(90deg, var(--brand-100), var(--brand-500));
+      border-radius: 8px;
+      position: relative;
+    }
+    .chart-value { font-weight: 700; text-align: right; font-variant-numeric: tabular-nums; color: var(--brand-700); }
+
+    /* Demographic grid */
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    @media (max-width: 820px) { .demo-grid { grid-template-columns: 1fr; } }
+    .demo-card {
+      padding: 18px;
+      background: linear-gradient(135deg, var(--brand-50), #fff);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+    }
+    .demo-card h4 { font-size: 12px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--brand-700); margin-bottom: 10px; }
+    .demo-card ul { list-style: none; display: grid; gap: 6px; font-size: 14px; }
+    .demo-card li { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px dashed var(--border); }
+    .demo-card li:last-child { border-bottom: none; }
+    .demo-card .pct { font-weight: 700; color: var(--ink); }
+
+    /* Refugios table */
+    table { width: 100%; border-collapse: collapse; font-size: 14px; margin-top: 4px; }
+    th, td { padding: 12px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); background: var(--brand-50); }
+    td.num { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+    tr:hover td { background: var(--brand-50); }
+    tfoot td { font-weight: 700; background: var(--brand-50); color: var(--brand-900); }
+
+    /* Footer positioning */
+    .positioning {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
+    @media (max-width: 820px) { .positioning { grid-template-columns: 1fr; } }
+    .screenshot-box {
+      background: linear-gradient(135deg, #f3e8ff, #faf5ff);
+      border: 2px dashed var(--brand-300);
+      border-radius: var(--radius-md);
+      padding: 40px 24px;
+      text-align: center;
+      font-size: 13px;
+      color: var(--brand-700);
+      font-weight: 600;
+    }
+    .screenshot-box .big { font-size: 40px; display: block; margin-bottom: 8px; }
+
+    /* Signoff */
+    .signoff {
+      margin: 40px auto;
+      padding: 24px;
+      background: linear-gradient(135deg, var(--brand-900), var(--brand-600));
+      color: #fff;
+      border-radius: var(--radius-lg);
+      text-align: center;
+    }
+    .signoff a { color: #eab308; font-weight: 700; text-decoration: none; }
+    .signoff a:hover { text-decoration: underline; }
+
+    footer {
+      text-align: center;
+      padding: 28px 24px 40px;
+      font-size: 12px;
+      color: var(--ink-soft);
+    }
+
+    @media print {
+      .demo-banner { position: static; }
+      section, .kpi { box-shadow: none; page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="demo-banner" role="alert">
+  <strong>DEMO</strong>
+  Reporte mensual de ejemplo para Paw Companys · Números ilustrativos, no reflejan datos reales actuales · Versión 2026-04-19
+</div>
+
+<header class="hero">
+  <div class="container">
+    <span class="hero-tag">📊 Reporte mensual Paw Companys</span>
+    <h1>Gildemeister × Paw Friend</h1>
+    <p>Resumen de impacto del período Mayo 2026. Este es el tipo de reporte que recibirá cada Paw Company activa, al primer día hábil de cada mes.</p>
+    <div class="hero-meta">
+      <span>🗓️ Período: 01 al 31 de mayo 2026</span>
+      <span>📦 Tier: <strong>Paw Fundadora</strong> (período sin costo)</span>
+      <span>🎯 Sector: Retail automotriz · Slot exclusivo</span>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- KPIs principales -->
+  <section style="margin-top:-40px;padding:0;background:transparent;border:none;box-shadow:none">
+    <div class="kpis">
+      <div class="kpi">
+        <div class="kpi-label">Impresiones del logo</div>
+        <div class="kpi-value">28.450</div>
+        <div class="kpi-delta delta-up">▲ Primera medición</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Clicks al sitio corporativo</div>
+        <div class="kpi-value">412</div>
+        <div class="kpi-delta delta-up">CTR 1,45%</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Aporte a refugios</div>
+        <div class="kpi-value">$24.800</div>
+        <div class="kpi-delta delta-up">30% del excedente</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-label">Paw Members activos</div>
+        <div class="kpi-value">1.283</div>
+        <div class="kpi-delta delta-up">▲ ramp-up</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Engagement breakdown -->
+  <section>
+    <h2><span class="dot"></span>Engagement por sección de la app</h2>
+    <p class="sub">Dónde aparecieron las impresiones del logo durante el período.</p>
+
+    <div class="chart">
+      <span class="chart-label">/donaciones</span>
+      <div class="chart-bar" style="width:92%"></div>
+      <span class="chart-value">18.320</span>
+    </div>
+    <div class="chart">
+      <span class="chart-label">Home feed</span>
+      <div class="chart-bar" style="width:58%;background:linear-gradient(90deg,#fef3c7,#eab308)"></div>
+      <span class="chart-value">6.210</span>
+    </div>
+    <div class="chart">
+      <span class="chart-label">/paw-core</span>
+      <div class="chart-bar" style="width:24%;background:linear-gradient(90deg,#d1fae5,#10b981)"></div>
+      <span class="chart-value">2.480</span>
+    </div>
+    <div class="chart">
+      <span class="chart-label">Newsletter</span>
+      <div class="chart-bar" style="width:14%;background:linear-gradient(90deg,#fce7f3,#ec4899)"></div>
+      <span class="chart-value">1.440</span>
+    </div>
+  </section>
+
+  <!-- Demografía -->
+  <section>
+    <h2><span class="dot" style="background:#eab308"></span>Perfil demográfico agregado</h2>
+    <p class="sub">De quienes hicieron click al sitio de tu marca desde la app. Datos anónimos y agregados — jamás compartimos PII.</p>
+
+    <div class="demo-grid">
+      <div class="demo-card">
+        <h4>Edad</h4>
+        <ul>
+          <li><span>18-27</span><span class="pct">12%</span></li>
+          <li><span>28-37</span><span class="pct">41%</span></li>
+          <li><span>38-47</span><span class="pct">28%</span></li>
+          <li><span>48+</span><span class="pct">19%</span></li>
+        </ul>
+      </div>
+      <div class="demo-card">
+        <h4>Comunas top (RM)</h4>
+        <ul>
+          <li><span>Las Condes</span><span class="pct">18%</span></li>
+          <li><span>Vitacura</span><span class="pct">14%</span></li>
+          <li><span>Ñuñoa</span><span class="pct">12%</span></li>
+          <li><span>Providencia</span><span class="pct">11%</span></li>
+          <li><span>La Reina</span><span class="pct">9%</span></li>
+          <li><span>Regiones + resto RM</span><span class="pct">36%</span></li>
+        </ul>
+      </div>
+      <div class="demo-card">
+        <h4>Tipo de mascota</h4>
+        <ul>
+          <li><span>🐕 Perro</span><span class="pct">64%</span></li>
+          <li><span>🐈 Gato</span><span class="pct">31%</span></li>
+          <li><span>🐇 Otros</span><span class="pct">5%</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Refugios -->
+  <section>
+    <h2><span class="dot" style="background:#10b981"></span>Aporte a refugios del período</h2>
+    <p class="sub">30% del excedente destinado a refugios chilenos. Trazabilidad pública en <strong>/donaciones</strong>.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Refugio</th>
+          <th>Comuna</th>
+          <th style="text-align:right">Monto CLP</th>
+          <th style="text-align:right">% total</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Fundación San Francisco de Asís</td>
+          <td>La Florida</td>
+          <td class="num">$9.920</td>
+          <td class="num">40%</td>
+        </tr>
+        <tr>
+          <td>Patitas Chile</td>
+          <td>Puente Alto</td>
+          <td class="num">$7.440</td>
+          <td class="num">30%</td>
+        </tr>
+        <tr>
+          <td>Refugio Nono</td>
+          <td>Maipú</td>
+          <td class="num">$4.960</td>
+          <td class="num">20%</td>
+        </tr>
+        <tr>
+          <td>Hogar Canino Esperanza</td>
+          <td>Colina</td>
+          <td class="num">$2.480</td>
+          <td class="num">10%</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">Total aportado en tu nombre este mes</td>
+          <td class="num">$24.800</td>
+          <td class="num">100%</td>
+        </tr>
+      </tfoot>
+    </table>
+  </section>
+
+  <!-- Logo positioning -->
+  <section>
+    <h2><span class="dot" style="background:#ec4899"></span>Posicionamiento visual del logo</h2>
+    <p class="sub">Dónde apareció el logo de tu marca este mes. Capturas reales adjuntas en el reporte enviado.</p>
+
+    <div class="positioning">
+      <div class="screenshot-box">
+        <span class="big">🖼️</span>
+        Screenshots reales del grid de Paw Companys en <strong>/donaciones</strong> + banner home<br/>
+        <small style="display:block;margin-top:10px;opacity:.7">En el reporte real se incluyen 3-5 capturas de pantalla comprimidas</small>
+      </div>
+      <div>
+        <h4 style="font-size:13px;font-weight:700;color:var(--brand-700);margin-bottom:12px">Ubicaciones activas</h4>
+        <ul style="list-style:none;font-size:14px;display:grid;gap:8px">
+          <li>✅ Grid /donaciones (ring púrpura + badge <strong>Fundadora</strong>)</li>
+          <li>✅ Home banner semana 1 y 3 (exclusivo primer mes)</li>
+          <li>✅ /paw-core grid partners</li>
+          <li>✅ Newsletter mensual (1 mención)</li>
+          <li style="opacity:.6">○ Mapa de servicios (activable Silver+)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Próximo período -->
+  <section>
+    <h2><span class="dot" style="background:#9333ea"></span>Qué viene el próximo período</h2>
+    <p class="sub">Items a coordinar con tu equipo para el próximo mes. Tú decides cuáles activar.</p>
+    <ul style="list-style:none;display:grid;gap:10px;font-size:14px">
+      <li>📅 <strong>Call de feedback mes 3</strong> — Te escribo para agendar (15 min, no obligatorio).</li>
+      <li>🎬 <strong>Video co-creado</strong> — Si quieren aprovechar contenido conjunto para sus redes, propongo 3 ideas en la call.</li>
+      <li>💡 <strong>Activación experiencial opcional</strong> — Idea "Test drive con tu peludo" lista para co-diseñar si les interesa.</li>
+      <li>🏆 <strong>Upgrade a Silver con 20% descuento histórico</strong> — Activable al cierre del período Fundador si eligen continuar.</li>
+    </ul>
+  </section>
+
+  <div class="signoff">
+    <p style="font-family:'Fredoka',sans-serif;font-size:22px;font-weight:600;margin-bottom:8px">Gracias por ser parte del día 1.</p>
+    <p style="opacity:.9;font-size:14px;max-width:540px;margin:0 auto">Paw Friend existe porque empresas como Gildemeister creyeron antes que nadie. Los números de arriba son tuyos también — de la comunidad pet chilena que ustedes ayudaron a construir.</p>
+    <p style="margin-top:16px;font-size:14px">— Paw Founder · <a href="mailto:pawfriendcl@gmail.com">pawfriendcl@gmail.com</a></p>
+  </div>
+
+</div>
+
+<footer>
+  <strong>DEMO</strong> · Los números en este reporte son ilustrativos · Paw Friend · Versión 2026-04-19<br/>
+  SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9 · pawfriend.cl
+</footer>
+
+</body>
+</html>

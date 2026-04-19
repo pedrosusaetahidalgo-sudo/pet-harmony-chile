@@ -33,6 +33,7 @@ export interface PawCompany {
   monthly_clp: number | null;
   featured: boolean;
   is_active: boolean;
+  is_founder: boolean;
   status: PawCompanyStatus;
   contact_email: string | null;
   started_at: string | null;
@@ -59,7 +60,8 @@ export interface PawCompanyInput {
   notes?: string | null;
 }
 
-const PUBLIC_COLUMNS = 'id,name,slug,logo_url,website,description,tier,featured,started_at';
+const PUBLIC_COLUMNS =
+  'id,name,slug,logo_url,website,description,tier,featured,is_founder,started_at';
 
 export function usePublicPawCompanys() {
   return useQuery({
@@ -70,6 +72,7 @@ export function usePublicPawCompanys() {
         .from('paw_companys' as any)
         .select(PUBLIC_COLUMNS)
         .eq('is_active', true)
+        .order('is_founder', { ascending: false })
         .order('featured', { ascending: false })
         .order('tier', { ascending: true })
         .order('name', { ascending: true });
@@ -85,6 +88,7 @@ export function usePublicPawCompanys() {
           | 'description'
           | 'tier'
           | 'featured'
+          | 'is_founder'
           | 'started_at'
         >
       >;

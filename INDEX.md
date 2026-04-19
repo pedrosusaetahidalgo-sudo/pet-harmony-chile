@@ -138,6 +138,10 @@ Resumen de items activos:
 > - Paw Voices (creadores) → https://pawfriend.cl/pitch/voices.html
 >
 > Fuente editable: [public/pitch/](public/pitch/) — **NO TOCAR manualmente sin autorizacion**, ver [public/pitch/README.md](public/pitch/README.md). Registrados en [docs-vivos/README.md](docs-vivos/README.md).
+>
+> **🎯 Outreach a prospectos reales**: carpeta [docs-raiz/marketing/outreach/](docs-raiz/marketing/outreach/) con estrategia "Paw Fundadores" + 3 propuestas personalizadas (ManpowerGroup, Gildemeister, 3 creators).
+>
+> **📊 Sample dashboard** (adjuntar a correos corporativos): https://pawfriend.cl/pitch/sample-dashboard.html
 
 | Documento | Que contiene | Uso |
 |---|---|---|

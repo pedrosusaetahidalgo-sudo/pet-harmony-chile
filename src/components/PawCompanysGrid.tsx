@@ -1,7 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Building2, ExternalLink, Sparkles, PawPrint } from '@/lib/icons';
+import { Building2, ExternalLink, Sparkles, PawPrint, Crown } from '@/lib/icons';
 import { usePublicPawCompanys } from '@/hooks/usePawCompanys';
 import { cn } from '@/lib/utils';
 
@@ -80,6 +80,7 @@ export function PawCompanysGrid({ className }: PawCompanysGridProps) {
       <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
         {data.map((company) => {
           const tier = TIER_STYLES[company.tier];
+          const isFounder = company.is_founder;
           const content = (
             <CardContent className="p-4 space-y-2.5 h-full flex flex-col">
               <div className="flex items-start justify-between gap-2">
@@ -95,10 +96,21 @@ export function PawCompanysGrid({ className }: PawCompanysGridProps) {
                     <Building2 className="h-5 w-5 text-muted-foreground" />
                   </div>
                 )}
-                <Badge variant="outline" className={cn('text-[10px]', tier.badgeClass)}>
-                  <PawPrint className="h-3 w-3 mr-0.5" />
-                  {tier.label}
-                </Badge>
+                <div className="flex flex-col items-end gap-1">
+                  {isFounder && (
+                    <Badge
+                      variant="outline"
+                      className="text-[9px] font-bold bg-gradient-to-r from-purple-600 via-fuchsia-500 to-amber-400 text-white border-0 px-2 py-0.5"
+                    >
+                      <Crown className="h-3 w-3 mr-0.5" />
+                      FUNDADORA
+                    </Badge>
+                  )}
+                  <Badge variant="outline" className={cn('text-[10px]', tier.badgeClass)}>
+                    <PawPrint className="h-3 w-3 mr-0.5" />
+                    {tier.label}
+                  </Badge>
+                </div>
               </div>
               <div className="space-y-0.5 flex-1">
                 <h3 className="font-semibold text-sm leading-tight">{company.name}</h3>
@@ -117,6 +129,10 @@ export function PawCompanysGrid({ className }: PawCompanysGridProps) {
             </CardContent>
           );
 
+          const founderCardClass = isFounder
+            ? 'ring-2 ring-offset-2 ring-purple-400/60 shadow-purple-200/40'
+            : '';
+
           if (company.website) {
             return (
               <a
@@ -129,7 +145,8 @@ export function PawCompanysGrid({ className }: PawCompanysGridProps) {
                 <Card
                   className={cn(
                     'h-full transition-all hover:shadow-md hover:-translate-y-0.5',
-                    tier.cardClass
+                    tier.cardClass,
+                    founderCardClass
                   )}
                 >
                   {content}
@@ -139,7 +156,7 @@ export function PawCompanysGrid({ className }: PawCompanysGridProps) {
           }
 
           return (
-            <Card key={company.id} className={cn('h-full', tier.cardClass)}>
+            <Card key={company.id} className={cn('h-full', tier.cardClass, founderCardClass)}>
               {content}
             </Card>
           );
