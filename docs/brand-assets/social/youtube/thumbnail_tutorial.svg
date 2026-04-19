@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" role="img" aria-label="YouTube thumbnail — Tutorial">
+  <title>YouTube Thumbnail · Tutorial ficha PDF</title>
+  <desc>Thumbnail 1280×720 para YouTube. Layout split 50/50: screenshot izquierda + copy grande derecha.</desc>
+  <defs>
+    <linearGradient id="yt-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2a1046"/>
+      <stop offset="1" stop-color="#581c87"/>
+    </linearGradient>
+    <radialGradient id="yt-glow" cx="0.75" cy="0.3" r="0.5">
+      <stop offset="0" stop-color="#eab308" stop-opacity=".3"/>
+      <stop offset="1" stop-color="#eab308" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="yt-text-gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fde68a"/>
+      <stop offset="1" stop-color="#eab308"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#yt-bg)"/>
+  <rect width="1280" height="720" fill="url(#yt-glow)"/>
+  <!-- Left: screenshot/phone mockup -->
+  <g transform="translate(240 360)">
+    <rect x="-150" y="-280" width="300" height="560" rx="40" fill="#1a0a2e"/>
+    <rect x="-136" y="-266" width="272" height="532" rx="28" fill="#ffffff"/>
+    <rect x="-40" y="-276" width="80" height="14" rx="7" fill="#1a0a2e"/>
+    <!-- Content mockup -->
+    <rect x="-120" y="-240" width="240" height="50" rx="10" fill="#9333ea"/>
+    <text x="-108" y="-206" font-family="'Fredoka',sans-serif" font-weight="600" font-size="18" fill="#ffffff">Ficha · Kai</text>
+    <rect x="-120" y="-175" width="240" height="80" rx="10" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+    <circle cx="-96" cy="-135" r="14" fill="#10b981"/>
+    <path d="M-104 -135 L-98 -129 L-88 -141" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <rect x="-72" y="-142" width="120" height="6" rx="3" fill="#047857"/>
+    <rect x="-72" y="-128" width="80" height="5" rx="2.5" fill="#047857" opacity=".6"/>
+    <rect x="-120" y="-85" width="240" height="70" rx="10" fill="#fef3c7" stroke="#eab308" stroke-width="2"/>
+    <rect x="-108" y="-68" width="80" height="8" rx="4" fill="#eab308"/>
+    <rect x="-108" y="-50" width="160" height="14" rx="7" fill="#b45309"/>
+    <rect x="-120" y="-4" width="240" height="60" rx="10" fill="#faf5ff"/>
+    <rect x="-108" y="18" width="180" height="6" rx="3" fill="#9333ea" opacity=".4"/>
+    <rect x="-108" y="36" width="140" height="4" rx="2" fill="#4b3b66" opacity=".4"/>
+    <!-- CTA -->
+    <rect x="-80" y="80" width="160" height="40" rx="20" fill="#9333ea"/>
+    <text x="0" y="106" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="14" fill="#ffffff">DESCARGAR PDF</text>
+    <!-- Play button overlay -->
+    <circle cx="0" cy="180" r="54" fill="rgba(147,51,234,0.9)" stroke="#ffffff" stroke-width="4"/>
+    <path d="M-18 -22 L24 0 L-18 22 Z" transform="translate(0 180) scale(0.7)" fill="#ffffff"/>
+  </g>
+  <!-- Right: title -->
+  <text x="520" y="230" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="700" font-size="82" fill="#ffffff" letter-spacing="-2.5" stroke="#1a0a2e" stroke-width="4" paint-order="stroke">Así funciona</text>
+  <text x="520" y="320" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="700" font-size="82" fill="#ffffff" letter-spacing="-2.5" stroke="#1a0a2e" stroke-width="4" paint-order="stroke">la ficha PDF</text>
+  <text x="520" y="420" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="700" font-size="82" fill="url(#yt-text-gold)" letter-spacing="-2.5" stroke="#1a0a2e" stroke-width="4" paint-order="stroke">de Paw Friend</text>
+  <!-- Duration badge -->
+  <g transform="translate(520 490)">
+    <rect x="0" y="0" width="140" height="50" rx="25" fill="#ec4899"/>
+    <text x="70" y="32" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="20" fill="#ffffff">3 MIN</text>
+  </g>
+  <!-- Subtitle -->
+  <text x="520" y="600" font-family="'Plus Jakarta Sans',sans-serif" font-weight="700" font-size="28" fill="#fde68a">Paso a paso · gratis</text>
+  <!-- Watermark -->
+  <g transform="translate(1160 40)">
+    <rect x="0" y="0" width="80" height="28" rx="14" fill="rgba(0,0,0,0.5)"/>
+    <text x="40" y="19" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="12" fill="#ffffff" letter-spacing="2">PAW FRIEND</text>
+  </g>
+</svg>
