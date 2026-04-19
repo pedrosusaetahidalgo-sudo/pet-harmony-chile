@@ -98,6 +98,7 @@ const PetRoutines = lazy(() => import('./pages/PetRoutines'));
 // necesita restaurar o reutilizar en otro contexto.
 const UnifiedCalendar = lazy(() => import('./pages/UnifiedCalendar'));
 const RegistroPartner = lazy(() => import('./pages/RegistroPartner'));
+const FAQ = lazy(() => import('./pages/FAQ'));
 
 /** Inicialización nativa: StatusBar, SplashScreen, back button, push notifications */
 async function initNative() {
@@ -779,6 +780,7 @@ const App = () => (
                 <Route path="/medical-share/:token" element={<MedicalShare />} />
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/faq" element={<FAQ />} />
                 <Route path="/delete-account" element={<DeleteAccount />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

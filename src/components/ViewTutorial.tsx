@@ -110,9 +110,9 @@ export const TUTORIALS = {
           'Usa los botones inferiores para navegar: My Paws (mascotas), Veterinarios (directorio), Feed (comunidad), y Perfil.',
       },
       {
-        title: 'Premium trial',
+        title: 'Todo gratis para dueños',
         description:
-          'Si ves el banner morado, tienes Premium activo por 14 dias gratis. Aprovecha para probar PDF, compartir ficha y el asistente IA.',
+          'PDF descargable, compartir ficha, asistente IA, mascotas ilimitadas — todo está gratis para siempre. Si quieres apoyar el proyecto, hay donaciones y Paw Member voluntario ($3.990/mes solo badge).',
       },
     ],
   },
@@ -171,12 +171,12 @@ export const TUTORIALS = {
       {
         title: 'Compartir ficha',
         description:
-          'Tab "Compartir" permite vincular con tu veterinario o generar enlace publico temporal (30 dias). Premium: compartir ilimitado.',
+          'Tab "Compartir" permite vincular con tu veterinario o generar enlace publico temporal (30 dias). Compartir ilimitado, gratis para todos.',
       },
       {
         title: 'PDF descargable',
         description:
-          'En "Documentos" puedes descargar la ficha clinica como PDF profesional. Requiere Premium.',
+          'En "Documentos" puedes descargar la ficha clinica como PDF profesional. Gratis para todos los dueños.',
       },
     ],
   },

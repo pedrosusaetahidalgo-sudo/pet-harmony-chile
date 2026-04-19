@@ -255,6 +255,52 @@
       .slide-num { top: 60px; right: 20px; font-size: 11px; }
       .leverage-hero { padding: 24px 16px; }
     }
+
+    /* ═══════════════════════════════════════════════════════════════════
+       MEJORAS VISUALES 2026-04-19 (aplicadas tras masterplan review)
+       - Reveal on scroll con stagger
+       - Counter animation en stats
+       - FAQ accordion click-to-expand
+       - Card-link (cards clickeables con arrow)
+       - Hover glow mejorado
+       - Respeta prefers-reduced-motion
+       ═══════════════════════════════════════════════════════════════════ */
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s ease-out, transform .7s cubic-bezier(.2,.8,.2,1); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal.d1 { transition-delay: .08s }
+    .reveal.d2 { transition-delay: .16s }
+    .reveal.d3 { transition-delay: .24s }
+    .reveal.d4 { transition-delay: .32s }
+    .stat { opacity: 0; transform: translateY(14px); transition: opacity .5s, transform .5s }
+    .stat.visible { opacity: 1; transform: translateY(0); animation: statPop .6s ease-out }
+    @keyframes statPop { 0% { transform: scale(.94) } 60% { transform: scale(1.03) } 100% { transform: scale(1) } }
+    .card-link { display: block; text-decoration: none; color: inherit; position: relative; padding-right: 56px }
+    .card-link::after { content: "→"; position: absolute; top: 24px; right: 24px; width: 32px; height: 32px; border-radius: 50%; background: var(--brand-100); color: var(--brand-700); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; transition: transform .25s, background .25s, color .25s }
+    .card-link:hover { transform: translateY(-4px); box-shadow: var(--card-shadow-hover) }
+    .card-link:hover::after { transform: translateX(4px); background: var(--brand-600); color: #fff }
+    .card-link .card-cta { display: block; margin-top: 12px; font-size: 13px; font-weight: 700; color: var(--brand-700); letter-spacing: .02em }
+    .slide.dark .card-link::after, .slide.grad .card-link::after { background: rgba(255,255,255,.15); color: #fff }
+    .slide.dark .card-link:hover::after, .slide.grad .card-link:hover::after { background: #fff; color: var(--brand-800) }
+    .slide.dark .card-link .card-cta, .slide.grad .card-link .card-cta { color: var(--gold) }
+    .faq-card { cursor: pointer; user-select: none; transition: transform .2s, box-shadow .2s }
+    .faq-card h3 { display: flex; justify-content: space-between; align-items: center; gap: 12px }
+    .faq-card h3::after { content: "+"; flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--brand-100); color: var(--brand-700); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; transition: transform .2s, background .2s, color .2s }
+    .faq-card[aria-expanded="true"] h3::after { content: "−"; background: var(--brand-600); color: #fff; transform: rotate(180deg) }
+    .faq-card[aria-expanded="false"] p { max-height: 0; opacity: 0; overflow: hidden; margin: 0; transition: max-height .3s, opacity .2s, margin .2s }
+    .faq-card[aria-expanded="true"] p { max-height: 240px; opacity: 1; margin-top: 10px; transition: max-height .4s, opacity .3s .1s, margin .3s }
+    .faq-card:focus-visible { outline: 2px solid var(--brand-600); outline-offset: 2px }
+    /* Decks-grid: 3 links cruzados a los 3 HTMLs dedicados */
+    .decks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 28px auto 0; max-width: 720px }
+    @media (max-width: 800px) { .decks-grid { grid-template-columns: 1fr } }
+    .deck-link { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 16px 20px; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18); border-radius: 14px; color: #fff; text-decoration: none; transition: background .2s, transform .2s, border-color .2s; backdrop-filter: blur(10px) }
+    .deck-link:hover { background: rgba(255,255,255,.15); border-color: rgba(255,255,255,.32); transform: translateY(-2px) }
+    .deck-link-title { font-size: 14px; font-weight: 800; letter-spacing: -.01em }
+    .deck-link-sub { font-size: 11px; color: rgba(255,255,255,.72); font-weight: 500 }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .reveal.visible, .stat, .stat.visible { opacity: 1; transform: none; transition: none; animation: none }
+      .faq-card[aria-expanded="false"] p { max-height: none; opacity: 1; margin-top: 10px }
+      .card-link:hover, .faq-card:hover { transform: none }
+    }
   </style>
 </head>
 <body>
@@ -569,6 +615,13 @@
       <strong>El dueño de mascota = gratis para siempre, sin funciones bloqueadas.</strong>
       <p>Paw Member es solo una insignia de apoyo y descuentos de marcas socias. No bloquea la ficha, el PDF, la inteligencia artificial ni las estadísticas.</p>
     </div>
+
+    <p style="margin-top: 20px; font-size: 13.5px; color: var(--ink-soft); text-align: center;">
+      Cada motor tiene pitch dedicado:
+      <a href="PRESENTACION_VOICES.html" style="color: var(--brand-700); font-weight: 700; text-decoration: none;">Paw Voices →</a> ·
+      <a href="PRESENTACION_COMPANYS.html" style="color: var(--brand-700); font-weight: 700; text-decoration: none;">Paw Companys →</a> ·
+      <a href="PRESENTACION_PARTNERS.html" style="color: var(--brand-700); font-weight: 700; text-decoration: none;">Paw Partners →</a>
+    </p>
   </div>
 </section>
 
@@ -581,21 +634,24 @@
     <p class="lead">Tres relaciones distintas que hacen crecer la app sin cobrarle nada al dueño.</p>
 
     <div class="grid grid-3">
-      <div class="card">
+      <a class="card card-link reveal" href="PRESENTACION_VOICES.html">
         <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/30_star.svg" alt=""></div>
         <h3>Paw Voices</h3>
         <p><strong>Creadores e influencers peludos.</strong> Recomiendan la app a su audiencia y reciben insignia oficial, perfil destacado y código de descuento para compartir.</p>
-      </div>
-      <div class="card">
+        <span class="card-cta">Ver pitch dedicado →</span>
+      </a>
+      <a class="card card-link reveal d1" href="PRESENTACION_COMPANYS.html">
         <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/26_clinic.svg" alt=""></div>
         <h3>Paw Companys</h3>
         <p><strong>Empresas que nos patrocinan con un aporte mensual.</strong> $49.900 / $99.900 / $199.900 al mes → su logo en la app, insignia Bronce / Plata / Oro y menciones públicas.</p>
-      </div>
-      <div class="card">
+        <span class="card-cta">Ver pitch dedicado →</span>
+      </a>
+      <a class="card card-link reveal d2" href="PRESENTACION_PARTNERS.html">
         <div class="ico brandsvg"><img src="../paw-friend-assets/Icons%20logos/24_partnership.svg" alt=""></div>
         <h3>Paw Partners</h3>
         <p><strong>Tiendas, comida, restaurantes, seguros.</strong> Ofrecen descuentos a Paw Members → los mostramos gratis en la app. Un trueque justo que no le cuesta nada al dueño.</p>
-      </div>
+        <span class="card-cta">Ver pitch dedicado →</span>
+      </a>
     </div>
 
     <h3 style="margin-top: 40px;">Los números importantes (en sencillo)</h3>
@@ -872,6 +928,25 @@
     <a href="mailto:pawfriendcl@gmail.com?subject=Me interesa Paw Friend" class="cta-btn">
       ✉️ pawfriendcl@gmail.com
     </a>
+
+    <div style="margin-top: 40px;">
+      <p style="color: rgba(255,255,255,0.85); font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px;">Decks dedicados por audiencia</p>
+      <div class="decks-grid">
+        <a class="deck-link" href="PRESENTACION_VOICES.html">
+          <span class="deck-link-title">📣 Paw Voices</span>
+          <span class="deck-link-sub">Para creadores e influencers</span>
+        </a>
+        <a class="deck-link" href="PRESENTACION_COMPANYS.html">
+          <span class="deck-link-title">🏢 Paw Companys</span>
+          <span class="deck-link-sub">Para empresas sponsor</span>
+        </a>
+        <a class="deck-link" href="PRESENTACION_PARTNERS.html">
+          <span class="deck-link-title">🛍️ Paw Partners</span>
+          <span class="deck-link-sub">Para tiendas y servicios (barter)</span>
+        </a>
+      </div>
+    </div>
+
     <p class="cta-tail">pawfriend.cl · SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · 78.328.659-9<br>Esta presentación está viva — cada dato se actualiza desde el panel interno de la app.</p>
   </div>
 </section>
@@ -936,6 +1011,38 @@
     }, { passive: true });
 
     updateActive(0);
+
+    // ═══ Mejoras visuales (2026-04-19) ═══════════════════════════════════
+    // Reveal on scroll + animación sutil de stats + FAQ accordion
+
+    const revealTargets = document.querySelectorAll('.card, .stat, .step-row, .tier, .quote, .spotlight, .tbl-wrap, .reveal, .decks-grid');
+    const revealIO = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealIO.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+    revealTargets.forEach(el => {
+      if (!el.classList.contains('reveal') && !el.classList.contains('stat')) el.classList.add('reveal');
+      revealIO.observe(el);
+    });
+
+    // FAQ accordion: cards con .faq-card se colapsan/expanden al click
+    document.querySelectorAll('.faq-card').forEach(card => {
+      card.setAttribute('aria-expanded', 'false');
+      card.setAttribute('role', 'button');
+      card.setAttribute('tabindex', '0');
+      const toggle = () => {
+        const isOpen = card.getAttribute('aria-expanded') === 'true';
+        card.setAttribute('aria-expanded', String(!isOpen));
+      };
+      card.addEventListener('click', toggle);
+      card.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
+      });
+    });
   })();
 </script>
 

@@ -50,7 +50,7 @@ siempre.
 
 Hoy busco 4 tipos de personas:
 
-→ Si tienes mascota: pruebala en pawfriend.cl (gratis hasta 2 mascotas).
+→ Si tienes mascota: pruebala en pawfriend.cl (gratis para siempre, sin limites).
 → Si eres vet: plan gratis para partir, escribeme por DM y te doy acceso.
 → Si eres proveedor (tienda, paseador, peluquero, refugio): 0 comision
   los primeros 3 meses para partners fundadores.
@@ -115,10 +115,11 @@ duenos, vets y proveedores que hoy trabajan desconectados.
 
 Cuatro pitches honestos. Elige el tuyo:
 
-Si tienes mascota → pawfriend.cl. Gratis hasta 2 mascotas. Premium
-$3.990/mes si quieres el PDF descargable y compartir la ficha con tu
-vet en un click. Y si algo no funciona, me avisas desde la app y lo
-arreglo yo mismo.
+Si tienes mascota → pawfriend.cl. 100% gratis, para siempre. Mascotas
+ilimitadas, ficha clinica PDF descargable, compartirla con tu vet en un
+click — todo gratis. Si quieres apoyar el proyecto, hay donaciones y
+Paw Member voluntario ($3.990/mes solo badge, no desbloquea nada). Y si
+algo no funciona, me avisas desde la app y lo arreglo yo mismo.
 
 Si eres veterinario → hablemos. Plan gratis para partir, dashboard de
 pacientes, y la ficha del paciente llega a tu bandeja antes de la
@@ -181,8 +182,9 @@ La app esta en desarrollo activo y queda harto por mejorar. Si entras
 y algo no te cuadra, hay un boton para dejarme feedback directo. Lo
 leo yo y lo arreglo yo.
 
-Gratis hasta 2 mascotas. Si tienes mas o quieres el PDF descargable,
-hay un plan premium a $3.990 al mes.
+Gratis para siempre. Mascotas ilimitadas, PDF, compartir ficha — todo
+sin pagar. Si quieres apoyar el proyecto, hay Paw Member voluntario
+($3.990/mes solo badge) y donaciones.
 
 No es una app para jugar. Es para que cuando pase algo — y algo va a
 pasar — no estes buscando papeles.

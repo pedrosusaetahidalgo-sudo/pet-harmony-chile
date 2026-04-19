@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend × Paw Partners — Para tiendas, restaurantes, seguros y servicios pet</title>
+  <meta name="description" content="Paw Partners: barter sin plata. Das descuentos a Paw Members, recibes publicidad gratis en la app más usada por dueños de mascotas en Chile. Win-win medible." />
+  <meta name="theme-color" content="#9333ea" />
+  <link rel="icon" type="image/svg+xml" href="../public/paw_friend_icon_principal.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --brand-50:#faf5ff; --brand-100:#f3e8ff; --brand-200:#e9d5ff; --brand-300:#d8b4fe;
+      --brand-400:#c084fc; --brand-500:#a855f7; --brand-600:#9333ea; --brand-700:#7e22ce;
+      --brand-800:#6b21a8; --brand-900:#581c87;
+      --partner-em:#10b981; --partner-teal:#14b8a6; --partner-cyan:#06b6d4;
+      --gold:#eab308; --ink:#1a102b; --ink-soft:#4b3b66;
+      --paper:#f7fdfb; --surface:#ffffff; --border:#cffce0;
+      --hero-grad: linear-gradient(135deg,#0f766e 0%,#10b981 40%,#a855f7 80%,#9333ea 100%);
+      --deep-grad: linear-gradient(135deg,#064e3b 0%,#0f766e 50%,#9333ea 100%);
+      --partner-grad: linear-gradient(135deg,#10b981 0%,#9333ea 100%);
+      --barter-grad: linear-gradient(135deg,#10b981 0%,#14b8a6 50%,#06b6d4 100%);
+      --card-shadow: 0 10px 40px -10px rgba(16,185,129,.18);
+      --card-shadow-hover: 0 24px 60px -12px rgba(16,185,129,.35);
+      --radius-xl:24px; --radius-lg:18px; --radius-md:12px;
+      --slide-py:56px; --slide-px:72px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
+    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+
+    .progress{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(16,185,129,.08);z-index:200}
+    .progress-bar{height:100%;background:var(--barter-grad);width:0%;transition:width .2s ease-out}
+
+    .topbar{position:fixed;top:3px;left:0;right:0;height:52px;padding:0 32px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(207,252,224,.6);z-index:150;font-size:13px}
+    .topbar-brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ink)}
+    .topbar-brand img{height:30px;width:auto;display:block}
+    .topbar-meta{display:flex;gap:18px;align-items:center;color:var(--ink-soft);font-weight:500}
+    .topbar-meta .chip{padding:4px 10px;background:#ecfdf5;border:1px solid var(--border);border-radius:999px;font-size:12px}
+    .topbar-counter{font-variant-numeric:tabular-nums;font-weight:700;color:var(--partner-em)}
+    @media(max-width:900px){.topbar-meta .chip{display:none}.topbar{padding:0 16px}}
+
+    .sidenav{position:fixed;top:50%;right:20px;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:150}
+    .dot{width:10px;height:10px;border-radius:999px;background:rgba(16,185,129,.25);border:2px solid transparent;cursor:pointer;transition:all .2s;position:relative}
+    .dot:hover{background:var(--partner-em);transform:scale(1.2)}
+    .dot.active{background:var(--partner-em);transform:scale(1.4);box-shadow:0 0 0 4px rgba(16,185,129,.18)}
+    .dot .label{position:absolute;right:22px;top:50%;transform:translateY(-50%);background:var(--ink);color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
+    .dot:hover .label{opacity:1}
+    @media(max-width:900px){.sidenav{display:none}}
+
+    .kbhint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(26,16,43,.85);color:rgba(255,255,255,.9);padding:8px 16px;border-radius:999px;font-size:12px;font-weight:500;z-index:150;backdrop-filter:blur(10px);display:flex;gap:16px;align-items:center;transition:opacity .4s}
+    .kbhint kbd{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:4px;padding:1px 6px;font-size:11px;font-family:inherit;font-weight:600}
+    .kbhint.hide{opacity:0;pointer-events:none}
+    @media(max-width:700px){.kbhint{display:none}}
+
+    .slide{min-height:100vh;padding:var(--slide-py) var(--slide-px);padding-top:calc(var(--slide-py) + 55px);display:flex;flex-direction:column;justify-content:center;scroll-snap-align:start;scroll-snap-stop:always;position:relative;overflow:hidden}
+    .slide-num{position:absolute;top:70px;right:32px;font-size:12px;font-weight:700;color:var(--ink-soft);letter-spacing:.12em;opacity:.6;font-variant-numeric:tabular-nums}
+    .slide.dark .slide-num{color:rgba(255,255,255,.6)}
+    .container{max-width:1160px;margin:0 auto;width:100%}
+    .slide.dark{background:var(--deep-grad);color:#fff}
+    .slide.dark h1,.slide.dark h2,.slide.dark h3{color:#fff}
+    .slide.dark p{color:rgba(255,255,255,.88)}
+    .slide.grad{background:var(--hero-grad);color:#fff}
+    .slide.grad h1,.slide.grad h2,.slide.grad h3{color:#fff}
+    .slide.barter{background:var(--barter-grad);color:#fff}
+    .slide.barter h1,.slide.barter h2,.slide.barter h3{color:#fff}
+    .slide.soft{background:linear-gradient(180deg,#f7fdfb 0%,#fff 60%,#ecfdf5 100%)}
+    .blob{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;opacity:.35;z-index:0}
+    .blob-1{top:-120px;right:-100px;width:420px;height:420px;background:var(--partner-em)}
+    .blob-2{bottom:-120px;left:-80px;width:360px;height:360px;background:#9333ea;opacity:.25}
+    .slide.dark .blob-1{background:var(--partner-em);opacity:.45}
+    .slide.dark .blob-2{background:#a855f7;opacity:.25}
+    .slide>.container{position:relative;z-index:1}
+
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--partner-em);padding:6px 14px;background:#d1fae5;border-radius:999px;margin-bottom:18px}
+    .slide.dark .eyebrow,.slide.grad .eyebrow,.slide.barter .eyebrow{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25)}
+    h1{font-size:clamp(42px,6.5vw,88px);font-weight:800;line-height:1;letter-spacing:-.035em}
+    h2{font-size:clamp(32px,4.2vw,52px);font-weight:800;line-height:1.05;letter-spacing:-.025em;margin-bottom:16px}
+    h3{font-size:20px;font-weight:700;line-height:1.3;color:var(--ink);margin-bottom:8px}
+    .lead{font-size:clamp(17px,1.8vw,22px);color:var(--ink-soft);line-height:1.5;max-width:820px;margin-bottom:32px}
+    .slide.dark .lead,.slide.grad .lead,.slide.barter .lead{color:rgba(255,255,255,.92)}
+    p{font-size:16px;color:var(--ink-soft)}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:28px}
+    .grid-2{grid-template-columns:1fr 1fr;gap:24px}
+    .grid-3{grid-template-columns:repeat(3,1fr);gap:18px}
+    .grid-4{grid-template-columns:repeat(4,1fr);gap:16px}
+    @media(max-width:900px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+    @media(max-width:1100px) and (min-width:901px){.grid-4{grid-template-columns:repeat(2,1fr)}}
+
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px 22px;box-shadow:var(--card-shadow);transition:transform .2s,box-shadow .2s;position:relative}
+    .card:hover{transform:translateY(-3px);box-shadow:var(--card-shadow-hover)}
+    .card .ico{width:48px;height:48px;border-radius:12px;background:#d1fae5;color:var(--partner-em);display:inline-flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;margin-bottom:14px;overflow:hidden}
+    .card .ico img{width:60%;height:60%;object-fit:contain;display:block}
+    .card p{font-size:14.5px;line-height:1.5}
+    .slide.dark .card,.slide.barter .card,.slide.grad .card{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);backdrop-filter:blur(10px)}
+    .slide.dark .card h3,.slide.barter .card h3,.slide.grad .card h3{color:#fff}
+    .slide.dark .card p,.slide.barter .card p,.slide.grad .card p{color:rgba(255,255,255,.88)}
+    .slide.dark .card .ico,.slide.barter .card .ico,.slide.grad .card .ico{background:rgba(255,255,255,.15);color:#fff}
+
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:24px}
+    .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:22px 16px;text-align:center;box-shadow:var(--card-shadow)}
+    .stat-value{font-size:clamp(28px,3.5vw,40px);font-weight:800;background:var(--partner-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1;font-variant-numeric:tabular-nums}
+    .stat-label{font-size:13px;color:var(--ink-soft);margin-top:8px;font-weight:500;line-height:1.3}
+    .slide.dark .stat,.slide.barter .stat,.slide.grad .stat{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
+    .slide.dark .stat-label,.slide.barter .stat-label,.slide.grad .stat-label{color:rgba(255,255,255,.78)}
+
+    .bullets{list-style:none;padding:0;margin-top:16px}
+    .bullets li{padding:8px 0 8px 30px;position:relative;font-size:15px;color:var(--ink);border-bottom:1px solid var(--border);line-height:1.5}
+    .bullets li:last-child{border-bottom:none}
+    .bullets li::before{content:"⇄";position:absolute;left:0;top:8px;color:var(--partner-em);font-weight:800;width:22px;height:20px;background:#d1fae5;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px}
+    .slide.dark .bullets li,.slide.barter .bullets li,.slide.grad .bullets li{color:rgba(255,255,255,.92);border-bottom-color:rgba(255,255,255,.12)}
+    .slide.dark .bullets li::before,.slide.barter .bullets li::before,.slide.grad .bullets li::before{background:rgba(255,255,255,.18);color:#fff}
+
+    .quote{background:var(--surface);border-left:4px solid var(--partner-em);border-radius:10px;padding:18px 22px;margin-top:14px;box-shadow:var(--card-shadow)}
+    .quote p{font-size:16px;font-style:italic;color:var(--ink);margin-bottom:6px}
+    .quote cite{font-size:12px;color:var(--ink-soft);font-style:normal;font-weight:600}
+
+    .tbl-wrap{margin-top:24px;border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--card-shadow);background:var(--surface)}
+    table{width:100%;border-collapse:collapse;font-size:14.5px}
+    th,td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border)}
+    th{background:#ecfdf5;color:#065f46;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:#f0fdf4}
+    td.strong{font-weight:700;color:#065f46}
+    td.green{color:var(--partner-em);font-weight:700}
+
+    /* Cover */
+    .cover{text-align:center;align-items:center}
+    .cover-logo{margin-bottom:32px;filter:drop-shadow(0 20px 60px rgba(16,185,129,.4));animation:float 6s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .cover-logo img{width:160px;height:160px;display:block}
+    .cover h1{font-family:'Fredoka',sans-serif;font-weight:600;color:#fff;margin-bottom:8px;text-shadow:0 2px 30px rgba(0,0,0,.15)}
+    .cover .tagline{font-size:clamp(19px,2.4vw,28px);font-weight:500;color:#fff;max-width:760px;margin:20px auto 12px;opacity:.98;line-height:1.35}
+    .cover .subtag{font-size:15px;color:rgba(255,255,255,.85);font-style:italic;margin-bottom:36px}
+    .cover-meta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+    .cover-meta .chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);color:#fff;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:600;backdrop-filter:blur(10px)}
+    .cover-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.7);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;animation:bounce 2s infinite}
+    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+    /* Spotlight + barter visual */
+    .spotlight{margin-top:30px;padding:22px 26px;background:linear-gradient(135deg,#d1fae5 0%,#f3e8ff 100%);border-left:4px solid var(--partner-em);border-radius:14px}
+    .spotlight strong{display:block;font-size:18px;color:var(--partner-em);margin-bottom:6px}
+    .spotlight p{font-size:14.5px;color:var(--ink-soft)}
+
+    /* Barter visual: 2 columnas con arrow al centro */
+    .barter-vis{display:grid;grid-template-columns:1fr 80px 1fr;gap:0;align-items:center;margin-top:32px}
+    @media(max-width:800px){.barter-vis{grid-template-columns:1fr;gap:18px}.barter-arrow{transform:rotate(90deg);justify-self:center}}
+    .barter-side{padding:24px;background:rgba(255,255,255,.12);border-radius:var(--radius-lg);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(10px)}
+    .barter-side h3{color:#fff;font-size:18px;margin-bottom:12px}
+    .barter-side ul{list-style:none;padding:0;margin:0}
+    .barter-side ul li{padding:6px 0;font-size:14px;color:rgba(255,255,255,.92);position:relative;padding-left:18px}
+    .barter-side ul li::before{content:"•";position:absolute;left:0;color:#fff;font-weight:800}
+    .barter-arrow{justify-self:center;font-size:48px;color:#fff;font-weight:300}
+
+    /* Step row */
+    .step-row{display:flex;gap:24px;align-items:start;padding:18px;border-radius:var(--radius-lg);background:var(--surface);box-shadow:var(--card-shadow);margin-bottom:14px}
+    .step-row .step-n{flex:none;width:48px;height:48px;border-radius:50%;background:var(--partner-grad);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px}
+    .step-row .step-body h3{margin-bottom:4px}
+    .step-row .step-body p{font-size:15px}
+
+    /* Founder sig */
+    .founder-sig{display:inline-flex;align-items:center;gap:14px;margin-top:32px;padding:16px 20px;background:rgba(255,255,255,.12);border-radius:14px;backdrop-filter:blur(10px)}
+    .founder-sig .avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#10b981 0%,#fbbf24 100%);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:22px;flex:none}
+    .founder-sig .info{display:flex;flex-direction:column;gap:2px;text-align:left}
+    .founder-sig .name{font-size:15px;font-weight:700;color:#fff}
+    .founder-sig .role{font-size:12px;color:rgba(255,255,255,.78)}
+
+    .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s,box-shadow .15s;border:none;cursor:pointer}
+    .btn-primary{background:#fff;color:var(--partner-em);box-shadow:0 10px 28px -8px rgba(255,255,255,.55)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 40px -10px rgba(255,255,255,.7)}
+    .btn-ghost{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.3)}
+    .btn-ghost:hover{background:rgba(255,255,255,.24)}
+
+    /* Verticals */
+    .verticals{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:24px}
+    .vertical{padding:18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--card-shadow);text-align:center}
+    .vertical-emoji{font-size:32px;margin-bottom:8px;display:block}
+    .vertical-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
+    .vertical-eg{font-size:12px;color:var(--ink-soft);line-height:1.4}
+
+    @media print{
+      .topbar,.sidenav,.kbhint,.progress{display:none}
+      .slide{min-height:auto;page-break-after:always;scroll-snap-align:none}
+    }
+
+    /* ═══ MEJORAS VISUALES 2026-04-19 ═══════════════════════════════════ */
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease-out,transform .7s cubic-bezier(.2,.8,.2,1)}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
+    .stat{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+    .stat.visible{opacity:1;transform:translateY(0);animation:statPop .6s ease-out}
+    @keyframes statPop{0%{transform:scale(.94)}60%{transform:scale(1.03)}100%{transform:scale(1)}}
+    .faq-card{cursor:pointer;user-select:none;transition:transform .2s,box-shadow .2s}
+    .faq-card h3{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .faq-card h3::after{content:"+";flex:none;width:28px;height:28px;border-radius:50%;background:#d1fae5;color:var(--partner-em);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;transition:background .2s,color .2s,transform .2s}
+    .faq-card[aria-expanded="true"] h3::after{content:"−";background:var(--partner-em);color:#fff;transform:rotate(180deg)}
+    .faq-card[aria-expanded="false"] p{max-height:0;opacity:0;overflow:hidden;margin:0;transition:max-height .3s,opacity .2s,margin .2s}
+    .faq-card[aria-expanded="true"] p{max-height:260px;opacity:1;margin-top:10px;transition:max-height .4s,opacity .3s .1s,margin .3s}
+    .faq-card:focus-visible{outline:2px solid var(--partner-em);outline-offset:2px}
+
+    /* Mini-mapa Chile estilizado con pines de rubros */
+    .chile-map-wrap{display:grid;grid-template-columns:280px 1fr;gap:28px;align-items:center;margin-top:32px;padding:24px;background:linear-gradient(135deg,#ecfdf5 0%,#faf5ff 100%);border:1px solid var(--border);border-radius:var(--radius-lg)}
+    @media (max-width:800px){.chile-map-wrap{grid-template-columns:1fr;gap:20px}}
+    .chile-map{position:relative;aspect-ratio:1/2.4;max-width:220px;margin:0 auto}
+    .chile-map svg{width:100%;height:100%;display:block;filter:drop-shadow(0 8px 20px rgba(16,185,129,.25))}
+    .chile-map-pin{position:absolute;width:28px;height:28px;margin-left:-14px;margin-top:-14px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,.2);animation:pinBounce 2s infinite;transition:transform .2s}
+    .chile-map-pin:hover{transform:scale(1.3);z-index:10}
+    @keyframes pinBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+    .pin-1{top:18%;left:48%;background:#fff;animation-delay:0s}
+    .pin-2{top:32%;left:52%;background:#fff;animation-delay:.3s}
+    .pin-3{top:40%;left:48%;background:#10b981;animation-delay:.6s}
+    .pin-4{top:55%;left:52%;background:#fff;animation-delay:.9s}
+    .pin-5{top:72%;left:48%;background:#fff;animation-delay:1.2s}
+    .map-legend ul{list-style:none;padding:0;margin:12px 0 0 0;display:grid;grid-template-columns:1fr 1fr;gap:6px}
+    .map-legend li{font-size:12px;color:var(--ink-soft);padding-left:18px;position:relative}
+    .map-legend li::before{content:"●";position:absolute;left:0;top:0;color:var(--partner-em);font-size:14px}
+
+    /* Counter "X de 20 fundadores" */
+    .founders-counter{display:inline-flex;flex-direction:column;align-items:flex-start;gap:8px;padding:16px 22px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);border-radius:16px;backdrop-filter:blur(10px);margin-top:20px}
+    .founders-counter-top{display:flex;align-items:center;gap:12px;color:#fff;font-weight:700;font-size:14px}
+    .founders-counter-num{font-variant-numeric:tabular-nums;font-size:28px;font-weight:800;background:linear-gradient(135deg,#fff 0%,#fbbf24 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+    .founders-bar{width:100%;min-width:240px;height:6px;background:rgba(255,255,255,.2);border-radius:999px;overflow:hidden}
+    .founders-bar-fill{height:100%;background:linear-gradient(90deg,#fff 0%,#fbbf24 100%);border-radius:999px;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+
+    @media (prefers-reduced-motion: reduce){
+      .reveal,.reveal.visible,.stat,.stat.visible{opacity:1;transform:none;transition:none;animation:none}
+      .faq-card[aria-expanded="false"] p{max-height:none;opacity:1;margin-top:10px}
+      .chile-map-pin{animation:none}
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+<header class="topbar">
+  <div class="topbar-brand">
+    <img src="../public/paw_friend_icon_principal.svg" alt="Paw Friend" />
+    <span>Paw Friend × Paw Partners</span>
+  </div>
+  <div class="topbar-meta">
+    <span class="chip">Barter sin plata</span>
+    <span class="chip">Win-win medible</span>
+    <span class="topbar-counter"><span id="curSlide">1</span>/9</span>
+  </div>
+</header>
+
+<nav class="sidenav" aria-label="Slides">
+  <a class="dot active" href="#s1" data-slide="1"><span class="label">Portada</span></a>
+  <a class="dot" href="#s2" data-slide="2"><span class="label">Quiénes somos</span></a>
+  <a class="dot" href="#s3" data-slide="3"><span class="label">El barter</span></a>
+  <a class="dot" href="#s4" data-slide="4"><span class="label">Para qué rubros</span></a>
+  <a class="dot" href="#s5" data-slide="5"><span class="label">Qué te damos</span></a>
+  <a class="dot" href="#s6" data-slide="6"><span class="label">Qué ofreces</span></a>
+  <a class="dot" href="#s7" data-slide="7"><span class="label">Activación</span></a>
+  <a class="dot" href="#s8" data-slide="8"><span class="label">FAQ</span></a>
+  <a class="dot" href="#s9" data-slide="9"><span class="label">Súmate</span></a>
+</nav>
+
+<div class="kbhint" id="kbhint">
+  <span><kbd>↓</kbd> <kbd>↑</kbd> navegar</span>
+  <span><kbd>Esc</kbd> ocultar</span>
+</div>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 1 · COVER                                                 -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide grad cover" id="s1">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="container">
+    <div class="cover-logo"><img src="../public/paw_friend_icon_principal.svg" alt="Paw Friend" /></div>
+    <h1>Paw Partners</h1>
+    <p class="tagline">Tú das un descuento a Paw Members.<br/>Nosotros te damos publicidad gratis.</p>
+    <p class="subtag">Barter sin plata para tiendas, comida, restaurantes pet-friendly, peluquerías, seguros y más.</p>
+    <div class="cover-meta">
+      <span class="chip">Sin pagar nada</span>
+      <span class="chip">Sin contrato eterno</span>
+      <span class="chip">Win-win medible</span>
+    </div>
+  </div>
+  <div class="cover-scroll">↓ Desliza</div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 2 · QUIÉNES SOMOS                                        -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide" id="s2">
+  <span class="slide-num">02 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Quiénes somos</span>
+    <h2>Paw Friend, hecho en Chile.</h2>
+    <p class="lead">La app de salud y vida de mascotas chilenas. Ficha clínica digital + directorio de vets verificados + comunidad pet lover. 100% gratis para los dueños. Sostenido por aliados como tú.</p>
+
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/14_clinical_record.svg" alt=""/></div>
+        <h3>Ficha clínica + PDF</h3>
+        <p>Vacunas, alergias, microchip, historial. Compartible por WhatsApp en 3 toques.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/22_search.svg" alt=""/></div>
+        <h3>Directorio de vets</h3>
+        <p>Por comuna y especialidad. Verificación Colmevet. Reseñas reales (solo con reserva).</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/04_heart_paw.svg" alt=""/></div>
+        <h3>Comunidad pet lover</h3>
+        <p>Donantes de sangre, adopción, memorial, recordatorios automáticos.</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-value">100%</div><div class="stat-label">Gratis para<br/>dueños siempre</div></div>
+      <div class="stat"><div class="stat-value">Chile</div><div class="stat-label">Hecho acá,<br/>escalando a Latam</div></div>
+      <div class="stat"><div class="stat-value">SpA</div><div class="stat-label">Empresa formal<br/>con boleta</div></div>
+      <div class="stat"><div class="stat-value">Vivo</div><div class="stat-label">pawfriend.cl<br/>en producción</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 3 · EL BARTER                                            -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide barter" id="s3">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <span class="slide-num">03 / 09</span>
+  <div class="container">
+    <span class="eyebrow">El intercambio</span>
+    <h2>Barter sin plata.<br/>Win-win medible.</h2>
+    <p class="lead">No es un programa de afiliados. No es un ad de pago. Es un intercambio honesto: tú ofreces algo de valor a nuestra comunidad pet lover, nosotros te damos visibilidad permanente en la app.</p>
+
+    <div class="barter-vis">
+      <div class="barter-side">
+        <h3>🛍️ Tú das</h3>
+        <ul>
+          <li>Descuento o beneficio para Paw Members (5% / 10% / 15% / regalo / 2x1, lo que te haga sentido)</li>
+          <li>Validez mínima 6 meses</li>
+          <li>Stock disponible (sin "agotado siempre")</li>
+          <li>Atención básica si llega un cliente referido</li>
+        </ul>
+      </div>
+      <div class="barter-arrow">⇄</div>
+      <div class="barter-side">
+        <h3>🐾 Recibes</h3>
+        <ul>
+          <li>Perfil destacado en /paw-partners con tu logo, descripción, dirección y link</li>
+          <li>Aparición en sección "Beneficios" dentro de la app</li>
+          <li>Mención en redes oficiales al sumarte</li>
+          <li>Métricas: cuántos Paw Members canjearon tu beneficio</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="spotlight" style="background:rgba(255,255,255,.18);border-left-color:#fff">
+      <strong style="color:#fff">Cero plata cambia de manos. Cero comisión por venta.</strong>
+      <p style="color:rgba(255,255,255,.9)">Tú entregas valor a clientes nuevos. Nosotros amplificamos tu marca en la comunidad pet más activa de Chile. Si en 6 meses no funcionó, sales sin penalización.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 4 · PARA QUÉ RUBROS                                      -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide soft" id="s4">
+  <span class="slide-num">04 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Quiénes encajan</span>
+    <h2>Para qué rubros<br/>fue diseñado.</h2>
+    <p class="lead">Cualquier negocio cuya audiencia sea —o pueda ser— dueños de mascotas. Si tu producto o servicio tiene sentido para alguien con un peludo en casa, encajas.</p>
+
+    <div class="verticals">
+      <div class="vertical">
+        <span class="vertical-emoji">🍖</span>
+        <div class="vertical-title">Alimento y snacks</div>
+        <div class="vertical-eg">Pet shops, marcas de comida, snacks artesanales</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">✂️</span>
+        <div class="vertical-title">Peluquería y estética</div>
+        <div class="vertical-eg">Groomers, baños, spa para mascotas</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">☕</span>
+        <div class="vertical-title">Restaurantes pet-friendly</div>
+        <div class="vertical-eg">Cafés, restaurantes, terrazas que aceptan peludos</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🛡️</span>
+        <div class="vertical-title">Seguros pet</div>
+        <div class="vertical-eg">Aseguradoras con productos para mascotas</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🦴</span>
+        <div class="vertical-title">Accesorios</div>
+        <div class="vertical-eg">Collares, juguetes, camas, ropa</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🚶</span>
+        <div class="vertical-title">Servicios</div>
+        <div class="vertical-eg">Paseadores, sitters, daycare, hoteles caninos</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🎓</span>
+        <div class="vertical-title">Entrenamiento</div>
+        <div class="vertical-eg">Educación canina, conducta, terapia animal</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🌿</span>
+        <div class="vertical-title">Bienestar y salud</div>
+        <div class="vertical-eg">Suplementos, fitoterapia, productos naturales</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🏨</span>
+        <div class="vertical-title">Hospedaje pet-friendly</div>
+        <div class="vertical-eg">Hoteles, cabañas, Airbnbs que aceptan mascotas</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">📸</span>
+        <div class="vertical-title">Fotografía</div>
+        <div class="vertical-eg">Sesiones para peludos, retratos, eventos</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">💐</span>
+        <div class="vertical-title">Cremación y memorial</div>
+        <div class="vertical-eg">Servicios funerarios respetuosos para mascotas</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🏥</span>
+        <div class="vertical-title">Farmacia veterinaria</div>
+        <div class="vertical-eg">Cadenas con descuento pet, parafarmacia</div>
+      </div>
+    </div>
+
+    <!-- Mini-mapa Chile estilizado: señala el alcance nacional -->
+    <div class="chile-map-wrap">
+      <div class="chile-map" aria-label="Mapa de Chile estilizado con pines de rubros Paw Partner">
+        <svg viewBox="0 0 80 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="chileGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#10b981" stop-opacity="0.95"/>
+              <stop offset="100%" stop-color="#9333ea" stop-opacity="0.85"/>
+            </linearGradient>
+          </defs>
+          <!-- Silueta estilizada de Chile (simplified) -->
+          <path d="M 40 4 Q 45 8 44 18 L 43 32 Q 46 42 44 54 L 43 72 Q 46 86 44 102 L 43 120 Q 46 136 43 152 L 42 170 Q 44 184 39 196 Q 35 192 36 184 L 37 168 Q 34 152 37 138 L 38 120 Q 35 104 38 90 L 39 72 Q 36 56 39 42 L 40 24 Q 37 14 40 4 Z" fill="url(#chileGrad)" stroke="#fff" stroke-width="1" stroke-linejoin="round"/>
+        </svg>
+        <span class="chile-map-pin pin-1" title="Arica / Iquique">🛍️</span>
+        <span class="chile-map-pin pin-2" title="La Serena">✂️</span>
+        <span class="chile-map-pin pin-3" title="Santiago Metropolitana">🍖</span>
+        <span class="chile-map-pin pin-4" title="Concepción">☕</span>
+        <span class="chile-map-pin pin-5" title="Puerto Montt">🏨</span>
+      </div>
+      <div class="map-legend">
+        <h3 style="margin:0 0 6px 0;font-size:18px">Alcance nacional, rubros cruzados.</h3>
+        <p style="font-size:14px;color:var(--ink-soft);margin-bottom:10px">Paw Members en todo Chile descubren beneficios filtrados por comuna. Pet shop de Providencia, café pet-friendly de Concepción, cabaña pet-friendly de Puerto Varas — todos escaneables por cercanía.</p>
+        <ul>
+          <li>🛍️ Norte · pet shops</li>
+          <li>✂️ Centro-norte · peluquerías</li>
+          <li>🍖 RM · alimento & restaurantes</li>
+          <li>☕ Centro-sur · pet-friendly</li>
+          <li>🏨 Sur · hospedaje pet-friendly</li>
+          <li>💡 +tu rubro en tu ciudad</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 5 · QUÉ TE DAMOS                                          -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide" id="s5">
+  <span class="slide-num">05 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Tus beneficios concretos</span>
+    <h2>Qué te damos por sumarte.</h2>
+    <p class="lead">Visibilidad permanente, no impresiones efímeras. Reportes reales, no impressions infladas. Y una comunidad que confía en nuestras recomendaciones.</p>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/22_search.svg" alt=""/></div>
+        <h3>Perfil dedicado en la app</h3>
+        <p>Tu logo, dirección, link, horario, descripción del beneficio. Visible para todos los Paw Members. Editable cuando quieras.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/19_mobile_app.svg" alt=""/></div>
+        <h3>Aparición en /paw-partners</h3>
+        <p>Página pública de partners con SEO orgánico. Los dueños descubren tu negocio antes incluso de bajar la app.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/30_star.svg" alt=""/></div>
+        <h3>Mención en redes oficiales</h3>
+        <p>Posteamos tu sumada inicial en Instagram + LinkedIn de Paw Friend. Re-share periódico cuando hagas algo destacable.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/25_growth.svg" alt=""/></div>
+        <h3>Métricas de canje</h3>
+        <p>Reporte mensual: cuántos Paw Members vieron tu perfil, cuántos canjearon el beneficio, NPS asociado a tu marca.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/04_heart_paw.svg" alt=""/></div>
+        <h3>Aval social real</h3>
+        <p>Tu marca aparece en una app que la gente eligió descargar para cuidar a su peludo. Confianza por asociación.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="../paw-friend-assets/Icons%20logos/24_partnership.svg" alt=""/></div>
+        <h3>Networking pet community</h3>
+        <p>Conexión con otros Paw Partners, eventos compartidos, posibilidad de cross-promotion entre rubros complementarios.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 6 · QUÉ OFRECES                                           -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide soft" id="s6">
+  <span class="slide-num">06 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Tu compromiso</span>
+    <h2>Lo único que te pedimos<br/>a cambio.</h2>
+    <p class="lead">Que entregues valor real a la comunidad. Tú decides cuánto y cómo, pero tiene que ser tangible. Estos son ejemplos de barter aceptados:</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo de partner</th>
+            <th>Ejemplo de beneficio aceptado</th>
+            <th>Validez mínima</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="strong">🍖 Pet shop / alimento</td>
+            <td>10% off en compras sobre $20.000 con código PawMember</td>
+            <td class="green">6 meses</td>
+          </tr>
+          <tr>
+            <td class="strong">✂️ Peluquería pet</td>
+            <td>15% off en primer baño + corte para Paw Members nuevos</td>
+            <td class="green">6 meses</td>
+          </tr>
+          <tr>
+            <td class="strong">☕ Café pet-friendly</td>
+            <td>Premio para el peludo (galleta artesanal) en cada visita</td>
+            <td class="green">6 meses</td>
+          </tr>
+          <tr>
+            <td class="strong">🛡️ Seguro pet</td>
+            <td>1er mes gratis o 20% off en plan anual</td>
+            <td class="green">6 meses</td>
+          </tr>
+          <tr>
+            <td class="strong">🚶 Paseadores / sitters</td>
+            <td>1 paseo gratis al contratar paquete mensual</td>
+            <td class="green">6 meses</td>
+          </tr>
+          <tr>
+            <td class="strong">🏨 Hospedaje pet-friendly</td>
+            <td>10% off en estadías + tarifa pet sin recargo</td>
+            <td class="green">6 meses</td>
+          </tr>
+          <tr>
+            <td class="strong">🦴 Accesorios</td>
+            <td>Envío gratis sobre $30.000 + 5% off con código</td>
+            <td class="green">6 meses</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="spotlight">
+      <strong>Lo que NO aceptamos:</strong>
+      <p>"5% off solo el primer día del mes en productos sin stock". El barter es real o no es. Si el beneficio se siente trampa, tu marca queda mal asociada con la nuestra.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 7 · ACTIVACIÓN                                           -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide" id="s7">
+  <span class="slide-num">07 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Cómo nos sumamos</span>
+    <h2>Activación en 5 días.<br/>Sin contratos eternos.</h2>
+    <p class="lead">Proceso simple, salida limpia si decides no continuar.</p>
+
+    <div class="step-row">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <h3>Llenas el formulario en /registro-partner</h3>
+        <p>Datos básicos: nombre del negocio, rubro, ciudad, qué beneficio quieres ofrecer. Toma 5 minutos.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <h3>Validamos en 48 horas</h3>
+        <p>Revisamos que tu negocio exista (RUT o RRSS), que el beneficio sea real y que el rubro encaje. Si todo OK, te confirmamos por mail.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <h3>Te creamos el perfil + activamos</h3>
+        <p>Tu perfil aparece en /paw-partners y dentro de la app. Te enviamos kit gráfico (logo Paw Partner para tus redes, banner para tu local).</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-n">4</div>
+      <div class="step-body">
+        <h3>Reporte mensual de canjes</h3>
+        <p>Cada mes te llega: visitas a tu perfil, canjes del beneficio, comentarios de la comunidad. Honesto, sin inflar números.</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-value">5'</div><div class="stat-label">Llenar formulario</div></div>
+      <div class="stat"><div class="stat-value">48 h</div><div class="stat-label">Validación</div></div>
+      <div class="stat"><div class="stat-value">5 d</div><div class="stat-label">Activación total</div></div>
+      <div class="stat"><div class="stat-value">$0</div><div class="stat-label">Costo en pesos</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 8 · FAQ                                                  -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide soft" id="s8">
+  <span class="slide-num">08 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Anticipamos tus dudas</span>
+    <h2>FAQ Paw Partners.</h2>
+
+    <div class="grid grid-2">
+      <div class="card faq-card">
+        <h3>¿Cuánto cuesta?</h3>
+        <p>$0. Es barter puro. Tú das beneficio a Paw Members, nosotros te damos visibilidad. No hay comisión por venta, no hay cuota mensual, no hay activación pagada.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Cuánto tráfico tiene la app hoy?</h3>
+        <p>Te respondemos con el número real al momento de la conversación. Si es bajo, lo decimos: "estamos en ramp-up post-pivot 2026-04-19". Sin inflar.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Hay contrato formal?</h3>
+        <p>Acuerdo simple por correo (no escritura pública). Compromiso mínimo 6 meses para mantener el beneficio activo. Salida libre con 30 días de aviso.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Puedo cambiar mi beneficio?</h3>
+        <p>Sí, una vez al cuatrimestre. Te avisamos cuando se acerque el cambio para que actualices el perfil sin perder visibilidad.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Cómo se canjea el beneficio?</h3>
+        <p>El Paw Member muestra su badge digital en la app o usa tu código promo. Tú decides el método más simple para tu operación (código, screenshot del badge, ID de cuenta, etc.).</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Diferencia con Paw Companys?</h3>
+        <p>Paw Companys son sponsors empresariales con aporte mensual ($49.900-$199.900). Paw Partners es barter sin plata. Pueden coexistir si tu empresa quiere ambas relaciones.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Pueden sumarse veterinarios?</h3>
+        <p>Vets tienen su propio programa B2B (planes Free/Premium/Pro Max en /para-veterinarios). Si eres clínica que también quiere descuento para Paw Members, podemos combinar.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Y si soy de regiones?</h3>
+        <p>Bienvenido. Filtramos por ciudad/comuna en el directorio. Partners de Valparaíso, Concepción, La Serena, sur de Chile, todos sumando.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 9 · CTA FINAL                                            -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide grad" id="s9">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <span class="slide-num">09 / 09</span>
+  <div class="container" style="text-align:center">
+    <span class="eyebrow">Tu turno</span>
+    <h2 style="font-size:clamp(40px,5.5vw,72px)">¿Sumas tu negocio<br/>como Paw Partner?</h2>
+    <p class="lead" style="margin-left:auto;margin-right:auto">Los primeros 20 partners fundadores entran con 0% comisión histórica si en algún momento abrimos modelo pagado, exclusividad de subrubro opcional y banner destacado en /paw-partners durante 12 meses.</p>
+
+    <div class="cta-row" style="justify-content:center">
+      <a class="btn btn-primary" href="https://pawfriend.cl/registro-partner" target="_blank" rel="noopener">📩 Registrarme como Partner</a>
+      <a class="btn btn-ghost" href="mailto:pawfriendcl@gmail.com?subject=Paw%20Partner%20-%20Mi%20negocio">✉️ Escríbenos directo</a>
+    </div>
+
+    <div class="founders-counter" role="status" aria-label="Partners fundadores">
+      <div class="founders-counter-top">
+        <span class="founders-counter-num" data-founders-current="0">0</span>
+        <span>de 20 partners fundadores · Oferta histórica disponible</span>
+      </div>
+      <div class="founders-bar"><div class="founders-bar-fill" style="width: 0%;"></div></div>
+    </div>
+
+    <div class="founder-sig">
+      <div class="avatar">PF</div>
+      <div class="info">
+        <span class="name">Paw Founder</span>
+        <span class="role">pawfriendcl@gmail.com · pawfriend.cl/registro-partner</span>
+      </div>
+    </div>
+
+    <p style="color:rgba(255,255,255,.78);font-size:13px;margin-top:24px;max-width:600px;margin-left:auto;margin-right:auto">
+      Cero plata cambia de manos. Tú entregas valor a clientes nuevos. Nosotros amplificamos tu marca en la comunidad pet más activa de Chile. Win-win medible.
+    </p>
+  </div>
+</section>
+
+<script>
+  const progressBar=document.getElementById('progressBar'),curSlide=document.getElementById('curSlide'),slides=document.querySelectorAll('.slide'),dots=document.querySelectorAll('.sidenav .dot'),kbhint=document.getElementById('kbhint');
+  function updateProgress(){const s=window.scrollY,m=document.documentElement.scrollHeight-window.innerHeight;progressBar.style.width=(s/m*100).toFixed(2)+'%'}
+  function updateActive(){const c=window.scrollY+window.innerHeight/2;let a=0;slides.forEach((s,i)=>{const t=s.offsetTop,b=t+s.offsetHeight;if(c>=t&&c<b)a=i});dots.forEach((d,i)=>d.classList.toggle('active',i===a));if(curSlide)curSlide.textContent=(a+1).toString()}
+  document.addEventListener('scroll',()=>{updateProgress();updateActive()},{passive:true});updateProgress();updateActive();
+  document.addEventListener('keydown',e=>{const c=Array.from(slides).findIndex(s=>{const r=s.getBoundingClientRect();return r.top<=window.innerHeight/2&&r.bottom>window.innerHeight/2});if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();slides[Math.min(c+1,slides.length-1)].scrollIntoView({behavior:'smooth'})}else if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();slides[Math.max(c-1,0)].scrollIntoView({behavior:'smooth'})}else if(e.key==='Escape'){kbhint.classList.toggle('hide')}});
+  setTimeout(()=>kbhint.classList.add('hide'),5000);
+
+  // ═══ Mejoras 2026-04-19: reveal + FAQ accordion ═══
+  const revealTargets=document.querySelectorAll('.card, .stat, .step-row, .quote, .spotlight, .tbl-wrap, .vertical, .chile-map-wrap, .founders-counter, .reveal');
+  const revealIO=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){entry.target.classList.add('visible');revealIO.unobserve(entry.target)}
+    });
+  },{threshold:0.15,rootMargin:'0px 0px -8% 0px'});
+  revealTargets.forEach(el=>{
+    if(!el.classList.contains('reveal')&&!el.classList.contains('stat'))el.classList.add('reveal');
+    revealIO.observe(el);
+  });
+  document.querySelectorAll('.faq-card').forEach(card=>{
+    card.setAttribute('aria-expanded','false');card.setAttribute('role','button');card.setAttribute('tabindex','0');
+    const toggle=()=>card.setAttribute('aria-expanded',String(card.getAttribute('aria-expanded')!=='true'));
+    card.addEventListener('click',toggle);
+    card.addEventListener('keydown',(e)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}});
+  });
+</script>
+
+</body>
+</html>

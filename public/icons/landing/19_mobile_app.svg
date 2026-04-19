@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Mobile App</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <rect x="68" y="45" width="64" height="110" rx="10" fill="#FFFFFF"/>
+  <rect x="76" y="60" width="48" height="70" rx="3" fill="#9333EA"/>
+  <circle cx="100" cy="142" r="5" fill="#9333EA"/>
+  <ellipse cx="100.0" cy="100.1" rx="9.9" ry="8.1" transform="rotate(0 100.0 100.1)" fill="#FCD34D"/>
+  <ellipse cx="88.8" cy="88.4" rx="3.6" ry="5.0" transform="rotate(-22 88.8 88.4)" fill="#FCD34D"/>
+  <ellipse cx="96.0" cy="82.1" rx="3.1" ry="4.5" transform="rotate(-10 96.0 82.1)" fill="#FCD34D"/>
+  <ellipse cx="104.0" cy="82.1" rx="3.1" ry="4.5" transform="rotate(10 104.0 82.1)" fill="#FCD34D"/>
+  <ellipse cx="111.2" cy="88.4" rx="3.6" ry="5.0" transform="rotate(22 111.2 88.4)" fill="#FCD34D"/>
+
+</svg>

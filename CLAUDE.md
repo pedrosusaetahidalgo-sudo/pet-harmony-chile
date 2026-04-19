@@ -271,6 +271,7 @@ verify-vet-document/             # Verificacion vet IA-assisted
 - `/paw-card/:pawCardId` -- Landing publica de Paw Card coleccionable
 - `/medical-share/:token` -- Landing publica de ficha compartida (30 dias)
 - `/terms`, `/privacy` -- Legales
+- `/faq` -- Preguntas frecuentes (extraidas del landing en rediseno 2026-04-18)
 
 ### Protegidas (requieren auth) — 40 rutas
 - `/home` -- Dashboard principal

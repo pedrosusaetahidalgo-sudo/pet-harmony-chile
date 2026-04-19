@@ -121,6 +121,7 @@ export {
   MicOff,
   Minus,
   Monitor,
+  Moon,
   MoreHorizontal,
   MoreVertical,
   MousePointer,

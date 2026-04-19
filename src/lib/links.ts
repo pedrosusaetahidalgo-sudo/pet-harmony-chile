@@ -116,6 +116,26 @@ export const LINKS = {
   petRoutines: (petId: string) => `/mascota/${petId}/rutinas`,
   /** Calendario unificado */
   calendar: () => '/calendario',
+
+  // === Modelo de negocio (post pivot 2026-04-19) ===
+  /** Identidad del proyecto: visión, misión, valores, motores */
+  pawCore: () => '/paw-core',
+  /** Membresía voluntaria (badge, sin features extra) */
+  pawMember: () => '/paw-member',
+  /** Donaciones voluntarias */
+  donaciones: () => '/donaciones',
+  /** Página pública de creadores aliados */
+  pawVoices: () => '/paw-voices',
+  /** Página pública de empresas sponsor */
+  pawCompanys: () => '/paw-companys',
+  /** Estimador de precios por comuna */
+  preciosVeterinarios: () => '/precios-veterinarios',
+  /** Registro de partners (tiendas, peluquerías, etc.) */
+  registroPartner: () => '/registro-partner',
+  /** Memorial de mascotas */
+  enMemoria: () => '/en-memoria',
+  /** FAQ pública */
+  faq: () => '/faq',
 } as const;
 
 function slugify(value: string): string {
