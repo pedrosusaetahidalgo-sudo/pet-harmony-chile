@@ -145,7 +145,7 @@ export default function ParaVeterinarios() {
             <Badge className="bg-purple-100 text-purple-800 border-purple-300">
               Para veterinarios y clínicas
             </Badge>
-            <h1 className="text-3xl md:text-5xl font-bold text-purple-900 leading-tight">
+            <h1 className="font-display font-semibold text-4xl md:text-6xl text-purple-900 leading-[1.05] tracking-tight">
               Gestiona tus pacientes y destaca en el directorio veterinario más grande de Chile
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">

@@ -476,7 +476,7 @@ export default function RegistroPartner() {
             <Sparkles className="h-4 w-4" />
             Programa de Partners
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold mb-3">
+          <h1 className="font-display font-semibold text-4xl md:text-5xl mb-3 leading-[1.08] tracking-tight">
             Haz crecer tu negocio con Paw Friend
           </h1>
           <p className="text-lg text-white/80 max-w-2xl mx-auto">

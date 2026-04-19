@@ -103,7 +103,9 @@ export default function Demo() {
           <Badge className="bg-amber-100 text-amber-800 border-amber-300 mb-2">
             🎯 Modo demostración
           </Badge>
-          <h1 className="text-2xl md:text-3xl font-bold mb-2">Paw Friend — Demo en vivo</h1>
+          <h1 className="font-display font-semibold text-3xl md:text-5xl mb-2 tracking-tight">
+            Paw Friend — Demo en vivo
+          </h1>
           <p className="text-sm text-muted-foreground">
             Elige qué perfil mostrar en la reunión según el tipo de profesional con quien te estás
             reuniendo.

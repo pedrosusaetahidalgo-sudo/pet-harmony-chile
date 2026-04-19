@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-label="Gradient mesh hero background" preserveAspectRatio="xMidYMid slice">
+  <title>Mesh gradient hero brand 2.0</title>
+  <desc>Background abstracto mesh-like con blobs purple + gold + rose. Usar detrás de heros cinemáticos.</desc>
+  <defs>
+    <radialGradient id="mg-1" cx="0.2" cy="0.3" r="0.5">
+      <stop offset="0" stop-color="#9333ea" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#9333ea" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="mg-2" cx="0.8" cy="0.2" r="0.4">
+      <stop offset="0" stop-color="#eab308" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#eab308" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="mg-3" cx="0.7" cy="0.9" r="0.5">
+      <stop offset="0" stop-color="#ec4899" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#ec4899" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="mg-4" cx="0.15" cy="0.85" r="0.4">
+      <stop offset="0" stop-color="#581c87" stop-opacity="0.8"/>
+      <stop offset="1" stop-color="#581c87" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="mg-base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2a1046"/>
+      <stop offset="1" stop-color="#581c87"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#mg-base)"/>
+  <rect width="1200" height="800" fill="url(#mg-1)"/>
+  <rect width="1200" height="800" fill="url(#mg-2)"/>
+  <rect width="1200" height="800" fill="url(#mg-3)"/>
+  <rect width="1200" height="800" fill="url(#mg-4)"/>
+</svg>

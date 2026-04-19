@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Empty state: no reminders">
+  <title>Sin recordatorios · Todo en orden</title>
+  <desc>Calendario tranquilo con zzz. No hay pendientes.</desc>
+  <defs>
+    <linearGradient id="nr-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f3e8ff"/>
+      <stop offset="1" stop-color="#fef3c7"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#nr-bg)" rx="20"/>
+  <!-- Calendar body -->
+  <rect x="135" y="90" width="130" height="150" rx="12" fill="#ffffff" stroke="#9333ea" stroke-width="3"/>
+  <!-- Calendar top strip -->
+  <rect x="135" y="90" width="130" height="32" rx="12" fill="#9333ea"/>
+  <rect x="135" y="114" width="130" height="8" fill="#9333ea"/>
+  <!-- Rings -->
+  <rect x="155" y="78" width="6" height="24" rx="3" fill="#7e22ce"/>
+  <rect x="239" y="78" width="6" height="24" rx="3" fill="#7e22ce"/>
+  <!-- Calendar grid dots -->
+  <g fill="#e9d5ff">
+    <circle cx="155" cy="145" r="4"/><circle cx="175" cy="145" r="4"/><circle cx="195" cy="145" r="4"/>
+    <circle cx="215" cy="145" r="4"/><circle cx="235" cy="145" r="4"/><circle cx="155" cy="165" r="4"/>
+    <circle cx="175" cy="165" r="4"/><circle cx="195" cy="165" r="4"/><circle cx="215" cy="165" r="4"/>
+    <circle cx="235" cy="165" r="4"/><circle cx="155" cy="185" r="4"/><circle cx="175" cy="185" r="4"/>
+    <circle cx="195" cy="185" r="4"/><circle cx="215" cy="185" r="4"/><circle cx="235" cy="185" r="4"/>
+    <circle cx="155" cy="205" r="4"/><circle cx="175" cy="205" r="4"/>
+  </g>
+  <!-- Highlighted today (smiley) -->
+  <circle cx="200" cy="175" r="22" fill="#eab308"/>
+  <circle cx="193" cy="170" r="2.5" fill="#1a102b"/>
+  <circle cx="207" cy="170" r="2.5" fill="#1a102b"/>
+  <path d="M190 180 Q200 188, 210 180" stroke="#1a102b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Zzz sleeping -->
+  <text x="285" y="85" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="30" fill="#9333ea">z</text>
+  <text x="308" y="70" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="22" fill="#9333ea" opacity=".7">z</text>
+  <text x="325" y="58" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="16" fill="#9333ea" opacity=".5">z</text>
+  <!-- Small stars -->
+  <path d="M95 130 l2 4 4 1 -3 3 1 4 -4 -2 -4 2 1 -4 -3 -3 4 -1 z" fill="#eab308" opacity=".8"/>
+  <path d="M300 200 l2 4 4 1 -3 3 1 4 -4 -2 -4 2 1 -4 -3 -3 4 -1 z" fill="#eab308" opacity=".8"/>
+</svg>

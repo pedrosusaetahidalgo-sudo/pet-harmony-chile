@@ -386,7 +386,7 @@ export default function PerfilVetPublico() {
             )}
 
             <div className="flex-1 text-center md:text-left">
-              <h1 className="text-2xl md:text-3xl font-bold text-purple-900">
+              <h1 className="font-display font-semibold text-3xl md:text-4xl text-purple-900 tracking-tight">
                 {v.display_name}
                 {v.is_verified && (
                   <span className="ml-2 text-blue-500 text-base align-middle">✓ Verificado</span>

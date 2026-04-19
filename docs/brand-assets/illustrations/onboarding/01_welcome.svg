@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Onboarding welcome">
+  <title>Bienvenida a Paw Friend</title>
+  <desc>Ilustración hero del onboarding. Perro y gato mirando al usuario con ternura, fondo cálido con el logo.</desc>
+  <defs>
+    <radialGradient id="ow-bg" cx="0.5" cy="0.4" r="0.7">
+      <stop offset="0" stop-color="#fef3c7"/>
+      <stop offset="1" stop-color="#f3e8ff"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#ow-bg)" rx="24"/>
+  <!-- Sun/halo behind pets -->
+  <circle cx="200" cy="170" r="105" fill="#fef3c7" opacity=".6"/>
+  <!-- Dog (left) -->
+  <ellipse cx="145" cy="250" rx="58" ry="72" fill="#9333ea"/>
+  <ellipse cx="145" cy="180" rx="50" ry="48" fill="#9333ea"/>
+  <ellipse cx="110" cy="150" rx="14" ry="26" transform="rotate(-18 110 150)" fill="#7e22ce"/>
+  <ellipse cx="180" cy="150" rx="14" ry="26" transform="rotate(18 180 150)" fill="#7e22ce"/>
+  <ellipse cx="112" cy="156" rx="8" ry="16" transform="rotate(-18 112 156)" fill="#ec4899"/>
+  <ellipse cx="178" cy="156" rx="8" ry="16" transform="rotate(18 178 156)" fill="#ec4899"/>
+  <!-- Dog eyes -->
+  <circle cx="130" cy="180" r="5" fill="#1a102b"/>
+  <circle cx="160" cy="180" r="5" fill="#1a102b"/>
+  <circle cx="131" cy="178" r="1.5" fill="#ffffff"/>
+  <circle cx="161" cy="178" r="1.5" fill="#ffffff"/>
+  <!-- Dog nose + smile -->
+  <ellipse cx="145" cy="198" rx="6" ry="4" fill="#1a102b"/>
+  <path d="M135 212 Q145 220, 155 212" stroke="#1a102b" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Cat (right) -->
+  <ellipse cx="255" cy="250" rx="48" ry="62" fill="#eab308"/>
+  <ellipse cx="255" cy="185" rx="44" ry="44" fill="#eab308"/>
+  <!-- Cat triangular ears -->
+  <path d="M228 155 L220 115 L250 145 Z" fill="#eab308"/>
+  <path d="M282 155 L290 115 L260 145 Z" fill="#eab308"/>
+  <path d="M230 150 L226 125 L244 145 Z" fill="#ec4899"/>
+  <path d="M280 150 L284 125 L266 145 Z" fill="#ec4899"/>
+  <!-- Cat eyes -->
+  <ellipse cx="243" cy="183" rx="5" ry="7" fill="#1a102b"/>
+  <ellipse cx="267" cy="183" rx="5" ry="7" fill="#1a102b"/>
+  <circle cx="244" cy="181" r="1.3" fill="#ffffff"/>
+  <circle cx="268" cy="181" r="1.3" fill="#ffffff"/>
+  <!-- Cat nose + whiskers -->
+  <path d="M252 198 L255 203 L258 198 Z" fill="#ec4899"/>
+  <path d="M255 203 Q250 208, 245 210" stroke="#1a102b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M255 203 Q260 208, 265 210" stroke="#1a102b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <line x1="234" y1="200" x2="218" y2="198" stroke="#1a102b" stroke-width="1" stroke-linecap="round"/>
+  <line x1="234" y1="205" x2="218" y2="208" stroke="#1a102b" stroke-width="1" stroke-linecap="round"/>
+  <line x1="276" y1="200" x2="292" y2="198" stroke="#1a102b" stroke-width="1" stroke-linecap="round"/>
+  <line x1="276" y1="205" x2="292" y2="208" stroke="#1a102b" stroke-width="1" stroke-linecap="round"/>
+  <!-- Hearts floating -->
+  <path d="M200 80 C194 72, 180 72, 180 84 C180 92, 200 106, 200 106 C200 106, 220 92, 220 84 C220 72, 206 72, 200 80 Z" fill="#ec4899" opacity=".8"/>
+  <!-- Sparkles -->
+  <path d="M70 120 l3 7 7 1 -5 5 1 7 -6 -4 -6 4 1 -7 -5 -5 7 -1 z" fill="#eab308"/>
+  <path d="M340 110 l3 7 7 1 -5 5 1 7 -6 -4 -6 4 1 -7 -5 -5 7 -1 z" fill="#eab308"/>
+  <!-- Ground hint -->
+  <ellipse cx="200" cy="350" rx="160" ry="14" fill="#9333ea" opacity=".12"/>
+</svg>

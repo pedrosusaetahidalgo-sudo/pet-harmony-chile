@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" role="img" aria-label="Empty state: no feed yet">
+  <title>Feed vacío · Nada por mostrar aún</title>
+  <desc>Burbuja de chat con tres puntos suspensivos, esperando contenido.</desc>
+  <defs>
+    <linearGradient id="nf-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fdf2f8"/>
+      <stop offset="1" stop-color="#f3e8ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#nf-bg)" rx="20"/>
+  <!-- Main bubble -->
+  <path d="M90 90 Q90 70 110 70 L280 70 Q300 70 300 90 L300 180 Q300 200 280 200 L190 200 L150 230 L165 200 L110 200 Q90 200 90 180 Z" fill="#ffffff" stroke="#ec4899" stroke-width="3"/>
+  <!-- 3 dots -->
+  <circle cx="160" cy="135" r="10" fill="#ec4899"/>
+  <circle cx="195" cy="135" r="10" fill="#9333ea"/>
+  <circle cx="230" cy="135" r="10" fill="#eab308"/>
+  <!-- Paw print decoration -->
+  <g transform="translate(70 225)" opacity=".6">
+    <ellipse cx="0" cy="12" rx="8" ry="6" fill="#ec4899"/>
+    <ellipse cx="-7" cy="3" rx="3" ry="4" transform="rotate(-18 -7 3)" fill="#ec4899"/>
+    <ellipse cx="-3" cy="-2" rx="2.5" ry="3" transform="rotate(-6 -3 -2)" fill="#ec4899"/>
+    <ellipse cx="3" cy="-2" rx="2.5" ry="3" transform="rotate(6 3 -2)" fill="#ec4899"/>
+    <ellipse cx="7" cy="3" rx="3" ry="4" transform="rotate(18 7 3)" fill="#ec4899"/>
+  </g>
+  <g transform="translate(330 235)" opacity=".6">
+    <ellipse cx="0" cy="12" rx="8" ry="6" fill="#9333ea"/>
+    <ellipse cx="-7" cy="3" rx="3" ry="4" transform="rotate(-18 -7 3)" fill="#9333ea"/>
+    <ellipse cx="-3" cy="-2" rx="2.5" ry="3" transform="rotate(-6 -3 -2)" fill="#9333ea"/>
+    <ellipse cx="3" cy="-2" rx="2.5" ry="3" transform="rotate(6 3 -2)" fill="#9333ea"/>
+    <ellipse cx="7" cy="3" rx="3" ry="4" transform="rotate(18 7 3)" fill="#9333ea"/>
+  </g>
+  <!-- Sparkles -->
+  <path d="M60 100 l2 5 5 1 -4 3 1 5 -4 -2 -4 2 1 -5 -4 -3 5 -1 z" fill="#eab308"/>
+  <path d="M340 90 l2 5 5 1 -4 3 1 5 -4 -2 -4 2 1 -5 -4 -3 5 -1 z" fill="#eab308"/>
+</svg>

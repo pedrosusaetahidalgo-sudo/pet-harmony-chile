@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Onboarding Paw Member optional">
+  <title>Paw Member · Opcional, nunca necesario</title>
+  <desc>Badge Paw Member flotando con corazón al lado. Mensaje: siempre opcional.</desc>
+  <defs>
+    <linearGradient id="opm-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fef3c7"/><stop offset="1" stop-color="#fdf2f8"/></linearGradient>
+    <linearGradient id="opm-badge" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9333ea"/><stop offset="0.55" stop-color="#d946ef"/><stop offset="1" stop-color="#eab308"/></linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#opm-bg)" rx="24"/>
+  <!-- Glow halo -->
+  <circle cx="200" cy="200" r="130" fill="#eab308" opacity=".15"/>
+  <circle cx="200" cy="200" r="100" fill="#eab308" opacity=".2"/>
+  <!-- Badge -->
+  <g transform="translate(200 200)">
+    <path d="M0 -90 L14 -76 L30 -82 L32 -66 L48 -58 L40 -44 L50 -32 L36 -22 L42 -6 L26 -2 L24 14 L8 10 L0 26 L-8 10 L-24 14 L-26 -2 L-42 -6 L-36 -22 L-50 -32 L-40 -44 L-48 -58 L-32 -66 L-30 -82 L-14 -76 Z" fill="url(#opm-badge)"/>
+    <circle cx="0" cy="-28" r="40" fill="#ffffff"/>
+    <ellipse cx="0" cy="-18" rx="12" ry="10" fill="url(#opm-badge)"/>
+    <ellipse cx="-16" cy="-36" rx="5" ry="7" transform="rotate(-20 -16 -36)" fill="url(#opm-badge)"/>
+    <ellipse cx="-6" cy="-44" rx="4.5" ry="5.5" transform="rotate(-8 -6 -44)" fill="url(#opm-badge)"/>
+    <ellipse cx="6" cy="-44" rx="4.5" ry="5.5" transform="rotate(8 6 -44)" fill="url(#opm-badge)"/>
+    <ellipse cx="16" cy="-36" rx="5" ry="7" transform="rotate(20 16 -36)" fill="url(#opm-badge)"/>
+    <text x="0" y="46" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="10" fill="#ffffff" letter-spacing="3">MEMBER</text>
+  </g>
+  <!-- Heart orbit -->
+  <path d="M100 120 C94 112, 80 112, 80 124 C80 132, 100 146, 100 146 C100 146, 120 132, 120 124 C120 112, 106 112, 100 120 Z" fill="#ec4899"/>
+  <path d="M315 275 C309 267, 295 267, 295 279 C295 287, 315 301, 315 301 C315 301, 335 287, 335 279 C335 267, 321 267, 315 275 Z" fill="#ec4899" opacity=".6"/>
+  <!-- Sparkles -->
+  <path d="M70 300 l3 7 7 1 -5 5 1 7 -6 -4 -6 4 1 -7 -5 -5 7 -1 z" fill="#eab308"/>
+  <path d="M330 110 l3 7 7 1 -5 5 1 7 -6 -4 -6 4 1 -7 -5 -5 7 -1 z" fill="#eab308"/>
+  <!-- Optional label -->
+  <rect x="140" y="330" width="120" height="32" rx="16" fill="#ffffff" stroke="#eab308" stroke-width="2"/>
+  <text x="200" y="351" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="500" font-size="14" fill="#b45309">Siempre opcional</text>
+</svg>

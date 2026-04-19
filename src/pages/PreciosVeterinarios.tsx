@@ -99,7 +99,7 @@ export default function PreciosVeterinarios() {
             <TrendingUp className="h-3.5 w-3.5" />
             Transparencia de precios
           </div>
-          <h1 className="text-3xl md:text-5xl font-bold text-purple-900 mb-3">
+          <h1 className="font-display font-semibold text-4xl md:text-6xl text-purple-900 mb-3 leading-[1.05] tracking-tight">
             ¿Cuánto cuesta el vet en tu comuna?
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">

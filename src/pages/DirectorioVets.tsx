@@ -155,7 +155,7 @@ export default function DirectorioVets() {
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         {comunaParam && comuna !== 'all' ? (
           <div className="mb-8">
-            <h1 className="text-3xl md:text-5xl font-bold text-purple-900 mb-3">
+            <h1 className="font-display font-semibold text-4xl md:text-6xl text-purple-900 mb-3 leading-[1.05] tracking-tight">
               Veterinarios en {comuna}
             </h1>
             <p className="text-lg text-muted-foreground mb-4">
@@ -184,7 +184,7 @@ export default function DirectorioVets() {
           </div>
         ) : (
           <div className="text-center mb-8">
-            <h1 className="text-3xl md:text-5xl font-bold text-purple-900 mb-3">
+            <h1 className="font-display font-semibold text-4xl md:text-6xl text-purple-900 mb-3 leading-[1.05] tracking-tight">
               Encuentra el veterinario ideal
             </h1>
             <p className="text-lg text-muted-foreground">

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80" role="img" aria-label="Paw dots tileable pattern">
+  <title>Pattern paw dots (tileable 80×80)</title>
+  <desc>Patrón repetitivo sutil con huellitas de pata para wallpaper subtle. Uso sobre fondo brand-50.</desc>
+  <!-- Paw 1 top-left -->
+  <g transform="translate(15 18)" opacity=".08">
+    <ellipse cx="0" cy="6" rx="5" ry="4" fill="#9333ea"/>
+    <ellipse cx="-4" cy="0" rx="1.8" ry="2.5" transform="rotate(-18 -4 0)" fill="#9333ea"/>
+    <ellipse cx="-1.5" cy="-3" rx="1.5" ry="2" transform="rotate(-6 -1.5 -3)" fill="#9333ea"/>
+    <ellipse cx="1.5" cy="-3" rx="1.5" ry="2" transform="rotate(6 1.5 -3)" fill="#9333ea"/>
+    <ellipse cx="4" cy="0" rx="1.8" ry="2.5" transform="rotate(18 4 0)" fill="#9333ea"/>
+  </g>
+  <!-- Paw 2 bottom-right -->
+  <g transform="translate(55 58) rotate(30)" opacity=".08">
+    <ellipse cx="0" cy="6" rx="5" ry="4" fill="#9333ea"/>
+    <ellipse cx="-4" cy="0" rx="1.8" ry="2.5" transform="rotate(-18 -4 0)" fill="#9333ea"/>
+    <ellipse cx="-1.5" cy="-3" rx="1.5" ry="2" transform="rotate(-6 -1.5 -3)" fill="#9333ea"/>
+    <ellipse cx="1.5" cy="-3" rx="1.5" ry="2" transform="rotate(6 1.5 -3)" fill="#9333ea"/>
+    <ellipse cx="4" cy="0" rx="1.8" ry="2.5" transform="rotate(18 4 0)" fill="#9333ea"/>
+  </g>
+</svg>

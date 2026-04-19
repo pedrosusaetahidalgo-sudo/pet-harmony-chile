@@ -89,7 +89,9 @@ export default function FAQ() {
               <Bell className="h-3.5 w-3.5" />
               Preguntas frecuentes
             </span>
-            <h1 className="mt-4 text-3xl font-black tracking-tight md:text-5xl">¿Alguna duda?</h1>
+            <h1 className="mt-4 font-display font-semibold text-4xl md:text-6xl tracking-tight leading-[1.05]">
+              ¿Alguna duda?
+            </h1>
             <p className="mt-3 text-base text-muted-foreground md:text-lg">
               Lo más preguntado por la comunidad. Si no encuentras tu respuesta, escríbenos a{' '}
               <a

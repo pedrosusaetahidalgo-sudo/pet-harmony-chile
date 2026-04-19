@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img" aria-label="Onboarding vet directory">
+  <title>Encuentra tu vet de barrio</title>
+  <desc>Mapa estilizado con pines de vets verificados.</desc>
+  <defs>
+    <linearGradient id="ov-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ecfdf5"/><stop offset="1" stop-color="#f3e8ff"/></linearGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#ov-bg)" rx="24"/>
+  <!-- Map paper -->
+  <rect x="50" y="60" width="300" height="280" rx="14" fill="#ffffff" stroke="#10b981" stroke-width="2"/>
+  <!-- Streets -->
+  <g stroke="#d1fae5" stroke-width="3" fill="none" stroke-linecap="round">
+    <path d="M50 150 Q150 140 200 160 Q280 180 350 170"/>
+    <path d="M50 250 L200 260 L350 240"/>
+    <path d="M120 60 Q130 200 110 340"/>
+    <path d="M260 60 Q270 180 280 340"/>
+  </g>
+  <!-- Districts faint -->
+  <rect x="60" y="70" width="130" height="85" rx="6" fill="#f3e8ff" opacity=".4"/>
+  <rect x="210" y="170" width="130" height="100" rx="6" fill="#fef3c7" opacity=".4"/>
+  <rect x="60" y="250" width="110" height="85" rx="6" fill="#ecfdf5" opacity=".6"/>
+  <!-- Vet pins (3) -->
+  <g transform="translate(140 130)">
+    <path d="M0 -24 C-15 -24, -24 -14, -24 0 C-24 16, 0 40, 0 40 C0 40, 24 16, 24 0 C24 -14, 15 -24, 0 -24 Z" fill="#10b981"/>
+    <circle cx="0" cy="-2" r="10" fill="#ffffff"/>
+    <path d="M-3 -6 L-3 -2 M-5 -4 L-1 -4" stroke="#10b981" stroke-width="1.5" stroke-linecap="round"/>
+    <circle cx="3" cy="1" r="3" fill="#10b981"/>
+  </g>
+  <g transform="translate(250 210)">
+    <path d="M0 -24 C-15 -24, -24 -14, -24 0 C-24 16, 0 40, 0 40 C0 40, 24 16, 24 0 C24 -14, 15 -24, 0 -24 Z" fill="#9333ea"/>
+    <circle cx="0" cy="-2" r="10" fill="#ffffff"/>
+    <path d="M0 -8 L0 4 M-6 -2 L6 -2" stroke="#9333ea" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(115 280)">
+    <path d="M0 -24 C-15 -24, -24 -14, -24 0 C-24 16, 0 40, 0 40 C0 40, 24 16, 24 0 C24 -14, 15 -24, 0 -24 Z" fill="#eab308"/>
+    <circle cx="0" cy="-2" r="10" fill="#ffffff"/>
+    <path d="M-6 -6 Q0 -12 6 -6 Q3 -2 0 -1 Q-3 -2 -6 -6 Z" fill="#eab308"/>
+  </g>
+  <!-- Search bar -->
+  <rect x="90" y="100" width="220" height="28" rx="14" fill="#ffffff" stroke="#e9d5ff" stroke-width="2"/>
+  <circle cx="110" cy="114" r="6" fill="none" stroke="#9333ea" stroke-width="2"/>
+  <line x1="115" y1="119" x2="121" y2="125" stroke="#9333ea" stroke-width="2" stroke-linecap="round"/>
+  <rect x="128" y="110" width="150" height="8" rx="4" fill="#e9d5ff"/>
+  <!-- Sparkles -->
+  <path d="M365 105 l2 5 5 1 -4 3 1 5 -4 -2 -4 2 1 -5 -4 -3 5 -1 z" fill="#eab308" opacity=".8"/>
+  <path d="M35 280 l2 5 5 1 -4 3 1 5 -4 -2 -4 2 1 -5 -4 -3 5 -1 z" fill="#eab308" opacity=".8"/>
+</svg>
