@@ -194,7 +194,9 @@ export default function MedicalShare() {
           <div className="inline-flex p-4 rounded-full bg-amber-100 mb-4">
             <AlertCircle className="h-12 w-12 text-amber-500" />
           </div>
-          <h1 className="text-2xl font-bold mb-2">No se puede acceder</h1>
+          <h1 className="font-display font-semibold text-2xl md:text-3xl mb-2 tracking-tight">
+            No se puede acceder
+          </h1>
           <p className="text-muted-foreground mb-6">{error}</p>
           <div className="flex gap-3 justify-center">
             <Button variant="outline" onClick={() => window.location.reload()}>

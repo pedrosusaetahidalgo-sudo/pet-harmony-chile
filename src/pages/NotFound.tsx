@@ -25,7 +25,9 @@ const NotFound = () => {
         <div className="mx-auto mb-6 h-20 w-20 rounded-full bg-amber-100 flex items-center justify-center">
           <PawPrint className="h-10 w-10 text-amber-600" />
         </div>
-        <h1 className="mb-3 text-5xl font-bold text-foreground">404</h1>
+        <h1 className="mb-3 font-display font-semibold text-5xl md:text-6xl tracking-tight text-foreground">
+          404
+        </h1>
         <p className="mb-2 text-xl font-semibold text-foreground">Esta página se nos perdió</p>
         <p className="mb-8 text-muted-foreground">
           Tal vez fue tras un gato. Volvamos a terreno conocido.

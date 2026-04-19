@@ -48,7 +48,7 @@ export default function PawMember() {
         <Card className="max-w-md">
           <CardContent className="p-6 text-center space-y-3">
             <PawPrint className="h-10 w-10 mx-auto text-violet-500" />
-            <h1 className="text-xl font-bold">Paw Member</h1>
+            <h1 className="font-display font-semibold text-2xl tracking-tight">Paw Member</h1>
             <p className="text-sm text-muted-foreground">
               Inicia sesión para ver tu aporte a Paw Friend.
             </p>

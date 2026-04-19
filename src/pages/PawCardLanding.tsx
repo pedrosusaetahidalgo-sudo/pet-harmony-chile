@@ -277,7 +277,9 @@ const PawCardLanding = () => {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-50 to-white dark:from-purple-950/30 dark:to-background">
         <div className="text-center space-y-4">
           <PawPrint className="h-12 w-12 text-muted-foreground/40 mx-auto" />
-          <h1 className="text-xl font-bold">Paw Card no encontrada</h1>
+          <h1 className="font-display font-semibold text-2xl tracking-tight">
+            Paw Card no encontrada
+          </h1>
           <p className="text-sm text-muted-foreground">Esta carta no existe o fue eliminada</p>
           <Button onClick={() => navigate('/')} variant="outline">
             Volver al inicio

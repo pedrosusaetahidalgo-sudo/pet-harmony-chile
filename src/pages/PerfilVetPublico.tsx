@@ -332,7 +332,9 @@ export default function PerfilVetPublico() {
       <div className="min-h-screen bg-purple-50">
         {!user && <PublicHeader />}
         <main className="container mx-auto px-4 py-16 max-w-md text-center">
-          <h1 className="text-2xl font-bold mb-2">Veterinario no encontrado</h1>
+          <h1 className="font-display font-semibold text-2xl md:text-3xl mb-2 tracking-tight">
+            Veterinario no encontrado
+          </h1>
           <p className="text-muted-foreground mb-4">
             Este perfil no existe o no está disponible públicamente.
           </p>
