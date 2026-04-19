@@ -24,6 +24,42 @@ export function formatDateTime(date: string | Date): string {
   return `${dateStr} a las ${timeStr}`;
 }
 
+/**
+ * Normaliza una hora TIME de Postgres ("HH:mm:ss" o "HH:mm") a "HH:mm".
+ * Safe con null/undefined → retorna ''. Usar en UI de bookings.
+ */
+export function formatTime(time: string | null | undefined): string {
+  if (!time) return '';
+  return time.slice(0, 5);
+}
+
+/**
+ * Formatea un rango de horas "HH:mm:ss" + "HH:mm:ss" → "09:00 – 09:30".
+ * Si falta end, retorna solo start. Si falta start, retorna ''.
+ */
+export function formatTimeRange(
+  start: string | null | undefined,
+  end: string | null | undefined
+): string {
+  const s = formatTime(start);
+  const e = formatTime(end);
+  if (!s) return '';
+  if (!e) return s;
+  return `${s} – ${e}`;
+}
+
+/**
+ * Formatea una fecha ISO para cards de booking (Día de semana + día + mes).
+ * Acepta "yyyy-MM-dd" o ISO completo. Retorna "lunes 21 de abril" o similar.
+ */
+export function formatBookingDate(date: string | Date | null | undefined): string {
+  if (!date) return '';
+  const d =
+    typeof date === 'string' ? new Date(date.length === 10 ? date + 'T12:00:00' : date) : date;
+  if (isNaN(d.getTime())) return '';
+  return format(d, "EEEE d 'de' MMMM", { locale: es });
+}
+
 export function formatRelative(date: string | Date): string {
   return formatDistanceToNow(new Date(date), { addSuffix: true, locale: es });
 }
