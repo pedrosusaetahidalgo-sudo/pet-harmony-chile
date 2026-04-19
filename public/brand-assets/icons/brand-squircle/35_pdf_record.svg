@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="PDF clinical record">
+  <title>Ficha clínica PDF</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  <path d="M60 45 L120 45 L145 70 L145 155 C145 158, 142 160, 140 160 L60 160 C58 160, 55 158, 55 155 L55 50 C55 47, 58 45, 60 45 Z" fill="#FFFFFF"/>
+  <path d="M120 45 L120 70 L145 70 Z" fill="#E9D5FF"/>
+  <rect x="68" y="90" width="64" height="5" rx="2.5" fill="#9333EA" opacity=".35"/>
+  <rect x="68" y="103" width="54" height="5" rx="2.5" fill="#9333EA" opacity=".35"/>
+  <rect x="68" y="116" width="60" height="5" rx="2.5" fill="#9333EA" opacity=".35"/>
+  <rect x="68" y="129" width="40" height="5" rx="2.5" fill="#9333EA" opacity=".35"/>
+  <rect x="68" y="142" width="46" height="5" rx="2.5" fill="#EAB308"/>
+</svg>

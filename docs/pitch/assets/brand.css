@@ -1,0 +1,182 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   Paw Friend · Brand 2.0 — CSS compartido para pitch HTMLs
+   ═══════════════════════════════════════════════════════════════════════════
+
+   Proxy de los tokens de /src/index.css para uso en los 7 HTMLs de /pitch/.
+   Espeja 1:1 el sistema del app React para evitar divergencia cross-surface.
+
+   Uso:
+     <link rel="stylesheet" href="/pitch/assets/brand.css">
+
+   Actualizado: 2026-04-19
+   Fuente de verdad: docs-raiz/pawfriend-rebrand-rollout-masterplan.md §11
+   ════════════════════════════════════════════════════════════════════════ */
+
+/* ── Fonts ═══════════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
+
+/* ── Tokens raíz ══════════════════════════════════════════════════════════ */
+:root {
+  /* Brand Purple (primary) */
+  --brand-50: #faf5ff;
+  --brand-100: #f3e8ff;
+  --brand-200: #e9d5ff;
+  --brand-300: #d8b4fe;
+  --brand-400: #c084fc;
+  --brand-500: #a855f7;
+  --brand-600: #9333ea;
+  --brand-700: #7e22ce;
+  --brand-800: #6b21a8;
+  --brand-900: #581c87;
+
+  /* Gold (secondary) */
+  --gold-50: #fffbeb;
+  --gold-100: #fef3c7;
+  --gold-200: #fde68a;
+  --gold-300: #fcd34d;
+  --gold-400: #fbbf24;
+  --gold-500: #f59e0b;
+  --gold-600: #d97706;
+  --gold-700: #b45309;
+  --gold-800: #92400e;
+  --gold-900: #78350f;
+
+  /* Audience palettes */
+  --audience-invest-from: #9333ea;
+  --audience-invest-to: #eab308;
+  --audience-invest-deep: #581c87;
+  --audience-invest-accent: #b45309;
+
+  --audience-companys-from: #581c87;
+  --audience-companys-to: #9333ea;
+  --audience-companys-deep: #2a1046;
+  --audience-companys-accent: #7e22ce;
+
+  --audience-partners-from: #047857;
+  --audience-partners-to: #10b981;
+  --audience-partners-deep: #064e3b;
+  --audience-partners-accent: #059669;
+
+  --audience-voices-from: #be185d;
+  --audience-voices-to: #ec4899;
+  --audience-voices-deep: #831843;
+  --audience-voices-accent: #db2777;
+
+  /* Gradients brand */
+  --brand-gold-gradient: linear-gradient(135deg, #9333ea 0%, #eab308 100%);
+  --brand-deep-gradient: linear-gradient(135deg, #2a1046 0%, #581c87 50%, #9333ea 100%);
+  --audience-invest-gradient: linear-gradient(135deg, #9333ea 0%, #eab308 100%);
+  --audience-companys-gradient: linear-gradient(135deg, #581c87 0%, #9333ea 100%);
+  --audience-partners-gradient: linear-gradient(135deg, #047857 0%, #10b981 100%);
+  --audience-voices-gradient: linear-gradient(135deg, #be185d 0%, #ec4899 100%);
+
+  /* Ink + paper */
+  --ink: #1a102b;
+  --ink-soft: #4b3b66;
+  --ink-faint: #94889e;
+  --paper: #faf7ff;
+  --surface: #ffffff;
+  --surface-alt: #fbf7ff;
+  --border: #e9d5ff;
+
+  /* Motion */
+  --motion-fast: 150ms;
+  --motion-normal: 250ms;
+  --motion-slow: 400ms;
+  --motion-hero: 700ms;
+  --motion-ease-out-soft: cubic-bezier(.2, .8, .2, 1);
+  --motion-ease-out-pop: cubic-bezier(.16, 1, .3, 1);
+
+  /* Shadow scale */
+  --shadow-flat: 0 0 0 1px rgba(0, 0, 0, 0.04);
+  --shadow-soft: 0 2px 10px -4px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 10px 30px -12px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 24px 60px -16px rgba(0, 0, 0, 0.18);
+  --shadow-brand-glow: 0 10px 30px -12px rgba(147, 51, 234, 0.35);
+  --shadow-gold-glow: 0 10px 40px -10px rgba(234, 179, 8, 0.45);
+  --shadow-audience-invest: 0 10px 30px -12px rgba(234, 179, 8, 0.45);
+  --shadow-audience-companys: 0 10px 30px -12px rgba(147, 51, 234, 0.45);
+  --shadow-audience-partners: 0 10px 30px -12px rgba(16, 185, 129, 0.45);
+  --shadow-audience-voices: 0 10px 30px -12px rgba(236, 72, 153, 0.45);
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --radius-3xl: 36px;
+
+  /* Typography stack */
+  --font-display: 'Fredoka', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+}
+
+/* ── Reset mínimo + defaults brand ═══════════════════════════════════════ */
+.pf-reset * { margin: 0; padding: 0; box-sizing: border-box; }
+.pf-reset body,
+body.pf-reset {
+  font-family: var(--font-sans);
+  color: var(--ink);
+  background: var(--paper);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+
+/* ── Typography utility classes (brand 2.0) ═══════════════════════════════ */
+.pf-font-display { font-family: var(--font-display); }
+.pf-font-sans { font-family: var(--font-sans); }
+.pf-font-mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* Escala tipográfica */
+.pf-h1-hero { font-family: var(--font-display); font-weight: 600; font-size: clamp(44px, 6.4vw, 88px); line-height: 1.02; letter-spacing: -.025em; }
+.pf-h1-page { font-family: var(--font-display); font-weight: 600; font-size: clamp(30px, 4vw, 48px); line-height: 1.08; letter-spacing: -.02em; }
+.pf-h2 { font-family: var(--font-sans); font-weight: 800; font-size: clamp(24px, 3.2vw, 40px); line-height: 1.1; letter-spacing: -.02em; }
+.pf-h3 { font-family: var(--font-sans); font-weight: 700; font-size: 18px; line-height: 1.3; }
+.pf-body-lead { font-size: clamp(17px, 1.9vw, 20px); line-height: 1.55; color: var(--ink-soft); }
+.pf-body { font-size: 15.5px; line-height: 1.55; color: var(--ink); }
+.pf-caption { font-size: 12.5px; color: var(--ink-soft); }
+.pf-eyebrow { font-size: 11px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--brand-700); }
+.pf-kpi { font-family: var(--font-display); font-weight: 600; font-size: clamp(32px, 5vw, 48px); line-height: 1; font-variant-numeric: tabular-nums; }
+.pf-mono-value { font-family: var(--font-mono); font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* ── Gradient helpers ═════════════════════════════════════════════════════ */
+.pf-bg-brand-gold { background: var(--brand-gold-gradient); }
+.pf-bg-brand-deep { background: var(--brand-deep-gradient); }
+.pf-bg-invest { background: var(--audience-invest-gradient); }
+.pf-bg-companys { background: var(--audience-companys-gradient); }
+.pf-bg-partners { background: var(--audience-partners-gradient); }
+.pf-bg-voices { background: var(--audience-voices-gradient); }
+
+.pf-text-gradient {
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+
+/* ── Shadow helpers ═══════════════════════════════════════════════════════ */
+.pf-shadow-soft { box-shadow: var(--shadow-soft); }
+.pf-shadow-md { box-shadow: var(--shadow-md); }
+.pf-shadow-lg { box-shadow: var(--shadow-lg); }
+.pf-shadow-brand-glow { box-shadow: var(--shadow-brand-glow); }
+.pf-shadow-gold-glow { box-shadow: var(--shadow-gold-glow); }
+
+/* ── Motion respeta reduced-motion ═══════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Print pass-through ══════════════════════════════════════════════════ */
+@media print {
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

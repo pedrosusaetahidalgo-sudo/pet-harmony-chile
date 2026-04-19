@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Map pin with paw">
+  <title>Directorio público de veterinarios</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#10B981"/>
+  <path d="M100 45 C125 45, 145 63, 145 90 C145 120, 100 165, 100 165 C100 165, 55 120, 55 90 C55 63, 75 45, 100 45 Z" fill="#FFFFFF"/>
+  <circle cx="100" cy="92" r="25" fill="#10B981"/>
+  <ellipse cx="100" cy="100" rx="9" ry="7" fill="#FFFFFF"/>
+  <ellipse cx="86" cy="86" rx="4" ry="5" transform="rotate(-18 86 86)" fill="#FFFFFF"/>
+  <ellipse cx="94" cy="80" rx="3.5" ry="4" transform="rotate(-6 94 80)" fill="#FFFFFF"/>
+  <ellipse cx="106" cy="80" rx="3.5" ry="4" transform="rotate(6 106 80)" fill="#FFFFFF"/>
+  <ellipse cx="114" cy="86" rx="4" ry="5" transform="rotate(18 114 86)" fill="#FFFFFF"/>
+</svg>

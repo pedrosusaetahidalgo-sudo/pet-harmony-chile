@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" width="800" height="200" role="img" aria-label="Paw Friend lockup with tagline">
+  <title>Paw Friend · Lockup con tagline</title>
+  <desc>Logo horizontal con mark, wordmark y tagline "La ficha médica de tu mascota" debajo.</desc>
+  <defs>
+    <clipPath id="sq-lock">
+      <path d="M 100 40 C 160 40, 180 60, 180 120 C 180 180, 160 200, 100 200 C 40 200, 20 180, 20 120 C 20 60, 40 40, 100 40 Z"/>
+    </clipPath>
+  </defs>
+  <path d="M 100 40 C 160 40, 180 60, 180 120 C 180 180, 160 200, 100 200 C 40 200, 20 180, 20 120 C 20 60, 40 40, 100 40 Z" fill="#9333EA" transform="translate(0,-20)"/>
+  <g clip-path="url(#sq-lock)" transform="translate(0,-20)">
+    <ellipse cx="100" cy="140" rx="44" ry="36" fill="#FFFFFF"/>
+    <ellipse cx="60" cy="92" rx="16" ry="20" transform="rotate(-18 60 92)" fill="#FFFFFF"/>
+    <ellipse cx="86" cy="67" rx="14" ry="18" transform="rotate(-6 86 67)" fill="#FFFFFF"/>
+    <ellipse cx="114" cy="67" rx="14" ry="18" transform="rotate(6 114 67)" fill="#FFFFFF"/>
+    <ellipse cx="140" cy="92" rx="16" ry="20" transform="rotate(18 140 92)" fill="#FFFFFF"/>
+  </g>
+  <text x="220" y="95" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="64" fill="#1A102B" letter-spacing="-2">Paw Friend</text>
+  <text x="220" y="135" font-family="'Plus Jakarta Sans','Helvetica',sans-serif" font-weight="500" font-size="22" fill="#4B3B66" letter-spacing="-0.3">La ficha médica de tu mascota</text>
+</svg>

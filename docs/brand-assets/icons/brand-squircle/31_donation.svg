@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Donation">
+  <title>Donaciones</title>
+  <defs><linearGradient id="g31" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9333EA"/><stop offset="1" stop-color="#EAB308"/></linearGradient></defs>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="url(#g31)"/>
+  <path d="M100 150 C80 130, 60 115, 60 95 C60 80, 72 70, 85 70 C93 70, 100 75, 100 85 C100 75, 107 70, 115 70 C128 70, 140 80, 140 95 C140 115, 120 130, 100 150 Z" fill="#FFFFFF"/>
+  <ellipse cx="100" cy="55" rx="10" ry="8" fill="#FFFFFF" opacity=".85"/>
+  <ellipse cx="72" cy="48" rx="7" ry="6" fill="#FFFFFF" opacity=".7"/>
+  <ellipse cx="128" cy="48" rx="7" ry="6" fill="#FFFFFF" opacity=".7"/>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Invoice SpA">
+  <title>Factura electrónica SpA</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  <path d="M65 40 L135 40 L135 160 L120 152 L105 160 L90 152 L75 160 L65 152 Z" fill="#FFFFFF"/>
+  <rect x="78" y="62" width="44" height="5" rx="2.5" fill="#9333EA" opacity=".4"/>
+  <rect x="78" y="76" width="34" height="4" rx="2" fill="#9333EA" opacity=".3"/>
+  <rect x="78" y="96" width="50" height="4" rx="2" fill="#9333EA" opacity=".3"/>
+  <rect x="78" y="107" width="40" height="4" rx="2" fill="#9333EA" opacity=".3"/>
+  <rect x="78" y="118" width="46" height="4" rx="2" fill="#9333EA" opacity=".3"/>
+  <rect x="78" y="133" width="28" height="6" rx="3" fill="#EAB308"/>
+  <circle cx="118" cy="138" r="8" fill="none" stroke="#EAB308" stroke-width="2"/>
+  <path d="M114 138 L117 141 L122 135" stroke="#EAB308" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
