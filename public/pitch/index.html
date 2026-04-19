@@ -117,20 +117,41 @@
       background: #fff;
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 32px 30px 28px;
+      padding: 0 30px 28px;
       display: flex; flex-direction: column;
       transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
       overflow: hidden;
       box-shadow: var(--shadow-soft);
     }
-    .deck::before {
-      content: ""; position: absolute; inset: 0 0 auto 0; height: 6px;
-      background: var(--accent, var(--brand-600));
-      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-    }
     .deck:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--brand-300); }
 
-    .deck-tag { display: inline-flex; align-items: center; gap: 6px; align-self: flex-start; padding: 5px 12px; background: var(--accent-soft, var(--brand-50)); color: var(--accent-strong, var(--brand-700)); border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 14px; }
+    /* Audience banner — grande, prominente, al tope de la card */
+    .deck-banner {
+      margin: 0 -30px 22px;
+      padding: 22px 30px 18px;
+      background: var(--accent-bg, linear-gradient(135deg, var(--brand-600), var(--brand-800)));
+      color: #fff;
+      display: flex; align-items: center; gap: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+    .deck-banner::after {
+      content: ""; position: absolute; top: -40px; right: -40px;
+      width: 120px; height: 120px; border-radius: 50%;
+      background: rgba(255,255,255,.12); pointer-events: none;
+    }
+    .deck-banner-icon {
+      width: 56px; height: 56px; flex-shrink: 0;
+      background: rgba(255,255,255,.18); border: 2px solid rgba(255,255,255,.35);
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      backdrop-filter: blur(6px);
+      position: relative; z-index: 1;
+    }
+    .deck-banner-text { position: relative; z-index: 1; }
+    .deck-banner-label { font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; opacity: .82; margin-bottom: 2px; }
+    .deck-banner-audience { font-family: 'Fredoka', 'Plus Jakarta Sans', sans-serif; font-weight: 600; font-size: 22px; line-height: 1.2; }
     .deck h2 { font-family: 'Fredoka', 'Plus Jakarta Sans', sans-serif; font-weight: 600; font-size: 28px; line-height: 1.15; color: var(--ink); margin-bottom: 10px; }
     .deck .subtitle { color: var(--ink-soft); font-size: 15.5px; margin-bottom: 18px; }
 
@@ -153,13 +174,12 @@
     .btn-ghost:hover { background: var(--brand-50); border-color: var(--brand-300); }
 
     /* Accents per audience */
-    .deck.invest   { --accent: linear-gradient(135deg, #9333ea, #eab308); --accent-strong: #b45309; --accent-soft: #fef3c7; --accent-shadow: rgba(234,179,8,.4); }
-    .deck.invest::before { background: linear-gradient(135deg, #9333ea, #eab308); }
+    .deck.invest   { --accent: linear-gradient(135deg, #9333ea, #eab308); --accent-strong: #b45309; --accent-soft: #fef3c7; --accent-shadow: rgba(234,179,8,.4); --accent-bg: linear-gradient(135deg, #581c87 0%, #9333ea 50%, #eab308 100%); }
     .deck.invest .btn-primary { background: linear-gradient(135deg, #9333ea, #eab308); }
 
-    .deck.companys { --accent: #9333ea; --accent-strong: #7e22ce; --accent-soft: #f3e8ff; --accent-shadow: rgba(147,51,234,.45); }
-    .deck.partners { --accent: #10b981; --accent-strong: #047857; --accent-soft: #d1fae5; --accent-shadow: rgba(16,185,129,.45); }
-    .deck.voices   { --accent: #ec4899; --accent-strong: #be185d; --accent-soft: #fce7f3; --accent-shadow: rgba(236,72,153,.45); }
+    .deck.companys { --accent: #9333ea; --accent-strong: #7e22ce; --accent-soft: #f3e8ff; --accent-shadow: rgba(147,51,234,.45); --accent-bg: linear-gradient(135deg, #581c87 0%, #9333ea 100%); }
+    .deck.partners { --accent: #10b981; --accent-strong: #047857; --accent-soft: #d1fae5; --accent-shadow: rgba(16,185,129,.45); --accent-bg: linear-gradient(135deg, #047857 0%, #10b981 100%); }
+    .deck.voices   { --accent: #ec4899; --accent-strong: #be185d; --accent-soft: #fce7f3; --accent-shadow: rgba(236,72,153,.45); --accent-bg: linear-gradient(135deg, #be185d 0%, #ec4899 100%); }
 
     /* INFO BLOCK */
     .info {
@@ -235,7 +255,13 @@
 
   <!-- Inversionistas -->
   <article class="deck invest">
-    <span class="deck-tag">Inversionistas</span>
+    <div class="deck-banner">
+      <div class="deck-banner-icon">💼</div>
+      <div class="deck-banner-text">
+        <div class="deck-banner-label">Audiencia · 1 de 4</div>
+        <div class="deck-banner-audience">Inversionistas</div>
+      </div>
+    </div>
     <h2>CORFO · Start-Up Chile · Angels LATAM</h2>
     <p class="subtitle">Pitch visual para fondos públicos, Ignite y ronda pre-seed USD $150K SAFE.</p>
     <ul>
@@ -251,7 +277,13 @@
 
   <!-- Companys -->
   <article class="deck companys">
-    <span class="deck-tag">Paw Companys</span>
+    <div class="deck-banner">
+      <div class="deck-banner-icon">🏢</div>
+      <div class="deck-banner-text">
+        <div class="deck-banner-label">Audiencia · 2 de 4</div>
+        <div class="deck-banner-audience">Paw Companys</div>
+      </div>
+    </div>
     <h2>Empresas sponsor con impacto medible</h2>
     <p class="subtitle">Para marcas pet-friendly que quieren aparecer en <code>/donaciones</code> con badge Bronze / Silver / Gold.</p>
     <ul>
@@ -267,7 +299,13 @@
 
   <!-- Partners -->
   <article class="deck partners">
-    <span class="deck-tag">Paw Partners</span>
+    <div class="deck-banner">
+      <div class="deck-banner-icon">🤝</div>
+      <div class="deck-banner-text">
+        <div class="deck-banner-label">Audiencia · 3 de 4</div>
+        <div class="deck-banner-audience">Paw Partners</div>
+      </div>
+    </div>
     <h2>Barter sin plata: descuento ↔ publicidad</h2>
     <p class="subtitle">Tiendas, restaurantes, seguros y servicios pet. Das un beneficio a Paw Members, recibes visibilidad en la app.</p>
     <ul>
@@ -283,7 +321,13 @@
 
   <!-- Voices -->
   <article class="deck voices">
-    <span class="deck-tag">Paw Voices</span>
+    <div class="deck-banner">
+      <div class="deck-banner-icon">🎙️</div>
+      <div class="deck-banner-text">
+        <div class="deck-banner-label">Audiencia · 4 de 4</div>
+        <div class="deck-banner-audience">Paw Voices</div>
+      </div>
+    </div>
     <h2>Creadores peludos, sin contratos</h2>
     <p class="subtitle">Para influencers con audiencia pet. Sin guiones, sin plata por post. Badge, perfil destacado y código promo.</p>
     <ul>
