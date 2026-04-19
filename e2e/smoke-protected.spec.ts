@@ -41,9 +41,7 @@ const PROTECTED_ROUTES = [
   { path: '/profile', name: 'Mi perfil' },
   { path: '/user/test-dummy-id', name: 'Perfil de otro usuario' },
   { path: '/settings', name: 'Configuración (redirect)' },
-  // Monetizacion
-  { path: '/donaciones', name: 'Donaciones' },
-  { path: '/paw-core', name: 'Paw Core (identidad)' },
+  // Monetizacion (/donaciones y /paw-core son publicas desde 2026-04-19)
   { path: '/paw-member', name: 'Paw Member (aporte personal)' },
   { path: '/upgrade', name: 'Upgrade (redirect a paw-member)' },
   // Gamificacion

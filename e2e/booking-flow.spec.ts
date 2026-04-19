@@ -1,5 +1,18 @@
 import { test, expect } from '@playwright/test';
 
+// Helper: pre-acepta el banner de cookies para que no tape los selectores.
+// El banner usa localStorage.pf_cookie_consent; basta con setearlo antes
+// de cargar la pagina.
+async function acceptCookies(page: import('@playwright/test').Page) {
+  await page.addInitScript(() => {
+    try {
+      window.localStorage.setItem('pf_cookie_consent', 'accepted');
+    } catch {
+      /* localStorage puede no estar disponible aun */
+    }
+  });
+}
+
 /**
  * Smoke E2E para el sistema de reservas (sin auth real: validamos landing +
  * deep links publicos + redirects). Cuando existe cuenta de prueba podemos
@@ -43,10 +56,14 @@ test.describe('Booking system - rutas protegidas', () => {
 });
 
 test.describe('Booking system - rutas publicas', () => {
+  test.beforeEach(async ({ page }) => {
+    await acceptCookies(page);
+  });
+
   test('/veterinarios carga y muestra directorio', async ({ page }) => {
     await page.goto('/veterinarios', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('body')).toBeVisible();
-    // Debe contener texto relevante del directorio o filtros
+    // Esperar al input de busqueda (siempre presente, fuera de la query).
+    await expect(page.getByPlaceholder(/buscar/i).first()).toBeVisible({ timeout: 15_000 });
     const content = await page.textContent('body');
     expect(content?.toLowerCase() ?? '').toMatch(/veterinario|comuna|especialidad|directorio/);
   });
@@ -63,10 +80,11 @@ test.describe('Booking system - rutas publicas', () => {
 
   test('/registro-veterinario formulario carga', async ({ page }) => {
     await page.goto('/registro-veterinario', { waitUntil: 'domcontentloaded' });
-    await expect(page.locator('body')).toBeVisible();
-    // Debe tener al menos un input o select
-    const inputCount = await page.locator('input, select, textarea').count();
-    expect(inputCount).toBeGreaterThan(0);
+    // El wizard arranca en paso 1 (eligir tipo) sin inputs todavia.
+    // Validar que aparezca el heading del wizard.
+    await expect(page.getByRole('heading', { name: /Registro profesional/i }).first()).toBeVisible({
+      timeout: 15_000,
+    });
   });
 });
 

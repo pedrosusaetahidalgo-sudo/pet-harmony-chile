@@ -8,7 +8,9 @@ import { test, expect } from '@playwright/test';
 test.describe('Landing page', () => {
   test('muestra el logo y CTA de registro', async ({ page }) => {
     await page.goto('/', { waitUntil: 'domcontentloaded' });
-    await expect(page.getByText(/paw.*friend/i).first()).toBeVisible({ timeout: 15_000 });
+    // Logo del header (img) es visible en todos los viewports;
+    // el wordmark span esta oculto en mobile (hidden sm:inline).
+    await expect(page.getByAltText(/paw friend/i).first()).toBeVisible({ timeout: 15_000 });
     // CTAs reales del Hero (botones, no links): "Crear cuenta gratis" o "Ya tengo cuenta"
     const cta = page
       .getByRole('button', { name: /crear cuenta|ya tengo cuenta|ir al inicio/i })

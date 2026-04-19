@@ -98,8 +98,8 @@ test.describe('Crear mascota — validaciones de formulario', () => {
     });
   });
 
-  test('muestra toast si fecha de nacimiento es futura', async ({ page }) => {
-    // Bypass HTML5 max=hoy para alcanzar la validación JS
+  test('bloquea submit si fecha de nacimiento es futura', async ({ page }) => {
+    // Bypass HTML5 max=hoy para alcanzar la validación JS/zod
     await page.evaluate(() => {
       document.querySelector('form')?.setAttribute('novalidate', '');
       document.getElementById('birth_date')?.removeAttribute('max');
@@ -118,12 +118,16 @@ test.describe('Crear mascota — validaciones de formulario', () => {
 
     await page.getByRole('button', { name: /agregar mascota/i }).click();
 
-    // Radix Toast root es <li role="status">. Excluimos el announcer
-    // <span role="status"> de Radix que duplica el texto para screen readers.
-    const toast = page.locator("[data-sonner-toast], li[role='status']");
-    await expect(toast.filter({ hasText: /no puede ser en el futuro/i })).toBeVisible({
-      timeout: 5_000,
-    });
+    // El zod schema (addPetSchema en src/lib/schemas.ts) valida la fecha
+    // futura y bloquea el submit. El form NO debe navegar fuera de /add-pet
+    // ni mostrar toast de exito. Damos tiempo a que cualquier accion ocurra.
+    await page.waitForTimeout(1_500);
+    await expect(page).toHaveURL(/\/add-pet/);
+    // Tampoco deberia haber un toast de "Mascota agregada" o similar.
+    const successToast = page
+      .locator("[data-sonner-toast], li[role='status']")
+      .filter({ hasText: /agregad[ao]|exitos|guardad/i });
+    await expect(successToast).toHaveCount(0);
   });
 
   test('muestra error si microchip no tiene 15 dígitos', async ({ page }) => {

@@ -24,6 +24,8 @@ const PUBLIC_ROUTES = [
   { path: '/registro-partner', name: 'Registro partner' },
   { path: '/paw-voices', name: 'Landing Paw Voices' },
   { path: '/paw-companys', name: 'Landing Paw Companys' },
+  { path: '/donaciones', name: 'Donaciones' },
+  { path: '/paw-core', name: 'Paw Core (identidad)' },
   { path: '/terms', name: 'Términos de servicio' },
   { path: '/privacy', name: 'Política de privacidad' },
   { path: '/delete-account', name: 'Eliminar cuenta' },

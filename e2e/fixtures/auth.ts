@@ -6,9 +6,9 @@ import { Page } from '@playwright/test';
  * necesitan engañar a `ProtectedRoute` (no van a hacer queries reales).
  *
  * Cómo funciona:
- *   - supabase-js v2 lee la sesión desde `localStorage` con la clave
- *     `sb-<project-ref>-auth-token`. La clave se calcula a partir del
- *     subdominio de VITE_SUPABASE_URL.
+ *   - El cliente Supabase del repo configura `storageKey: 'pf-auth-v1'`
+ *     (ver src/integrations/supabase/client.ts). Esa es la key real
+ *     donde supabase-js busca la sesión persistida.
  *   - Si la sesión existe y `expires_at` está en el futuro, getSession()
  *     la devuelve sin tocar la red. Eso satisface a `useAuth().user`.
  *   - El access_token es un string cualquiera porque estos tests NO van
@@ -26,15 +26,13 @@ import { Page } from '@playwright/test';
  */
 export async function injectFakeAuth(
   page: Page,
-  opts: { projectRef?: string; userId?: string; email?: string } = {}
+  opts: { storageKey?: string; userId?: string; email?: string } = {}
 ): Promise<void> {
-  // Project ref del .env del repo (gwailbjlvevkhwcrovfd). Si en CI cambia
-  // el supabase URL, hay que pasar `projectRef` por parámetro.
-  const projectRef = opts.projectRef ?? 'gwailbjlvevkhwcrovfd';
+  // Storage key debe coincidir con la del cliente Supabase real
+  // (src/integrations/supabase/client.ts → storageKey: 'pf-auth-v1').
+  const storageKey = opts.storageKey ?? 'pf-auth-v1';
   const userId = opts.userId ?? '00000000-0000-0000-0000-000000000001';
   const email = opts.email ?? 'playwright@pawfriend.local';
-
-  const storageKey = `sb-${projectRef}-auth-token`;
 
   // Sesión válida por 1 hora
   const expiresAt = Math.floor(Date.now() / 1000) + 3600;
