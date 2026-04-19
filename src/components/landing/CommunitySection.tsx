@@ -37,7 +37,7 @@ export function CommunitySection() {
           </span>
           <h2
             id="comunidad-title"
-            className="mt-4 text-3xl font-black leading-[1.05] tracking-tight md:text-5xl"
+            className="mt-4 font-display font-semibold text-4xl leading-[1.05] tracking-tight md:text-6xl"
           >
             {COMMUNITY.h2Lead}{' '}
             <span className="bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 bg-clip-text text-transparent">

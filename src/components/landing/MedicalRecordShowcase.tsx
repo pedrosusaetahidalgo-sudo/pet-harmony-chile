@@ -150,7 +150,7 @@ export function MedicalRecordShowcase() {
             </span>
             <h2
               id="ficha-title"
-              className="mt-4 text-3xl font-black leading-[1.05] tracking-tight md:text-5xl"
+              className="mt-4 font-display font-semibold text-4xl leading-[1.05] tracking-tight md:text-6xl"
             >
               {MEDICAL.h2Lead}{' '}
               <span className="bg-gradient-to-r from-purple-600 via-fuchsia-500 to-amber-500 bg-clip-text text-transparent">

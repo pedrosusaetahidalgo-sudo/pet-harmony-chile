@@ -221,7 +221,9 @@ const AdManagement = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-white">Gestion de Anuncios</h2>
+          <h2 className="font-display font-semibold text-3xl tracking-tight text-white">
+            Gestión de Anuncios
+          </h2>
           <p className="text-slate-400">Administra los anuncios y socios estrategicos</p>
         </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

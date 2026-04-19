@@ -1328,7 +1328,9 @@ export default function AdminSalaInversion() {
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="text-2xl font-bold text-slate-900">Sala de Inversion</h2>
+                  <h2 className="font-display font-semibold text-3xl tracking-tight text-slate-900">
+                    Sala de Inversión
+                  </h2>
                   <Badge
                     variant="outline"
                     className={cn(

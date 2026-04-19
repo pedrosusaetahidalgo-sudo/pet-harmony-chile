@@ -132,7 +132,9 @@ export function VetOnboardingWizard() {
             <div className="mx-auto w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
               <PartyPopper className="h-8 w-8 text-green-600" />
             </div>
-            <h2 className="text-xl font-bold">¡Perfil creado!</h2>
+            <h2 className="font-display font-semibold text-2xl md:text-3xl tracking-tight">
+              ¡Perfil creado!
+            </h2>
             <p className="text-sm text-muted-foreground">
               Tu perfil profesional está listo. Puedes editarlo cuando quieras desde tu panel.
             </p>

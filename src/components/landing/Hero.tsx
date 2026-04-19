@@ -44,7 +44,7 @@ export function Hero() {
 
             <h1
               id="hero-title"
-              className="mt-4 text-[2.25rem] font-black leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl"
+              className="mt-4 font-display font-semibold text-[2.5rem] leading-[1.02] tracking-tight sm:text-6xl md:text-7xl lg:text-[5.5rem]"
             >
               {HERO.h1Lead}{' '}
               <span className="bg-gradient-to-br from-purple-600 via-purple-500 to-fuchsia-500 bg-clip-text text-transparent">

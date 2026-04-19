@@ -31,7 +31,7 @@ export function EcosystemSection() {
           </span>
           <h2
             id="ecosistema-title"
-            className="mt-4 text-3xl font-black leading-[1.05] tracking-tight md:text-5xl"
+            className="mt-4 font-display font-semibold text-4xl leading-[1.05] tracking-tight md:text-6xl"
           >
             {ECOSYSTEM.h2Lead}{' '}
             <span className="bg-gradient-to-r from-purple-600 via-fuchsia-500 to-amber-500 bg-clip-text text-transparent">

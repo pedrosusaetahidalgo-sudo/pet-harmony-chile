@@ -370,7 +370,9 @@ const Auth = () => {
             <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mb-4">
               <Shield className="w-8 h-8 text-white" />
             </div>
-            <CardTitle className="text-2xl font-bold text-center">Nueva contraseña</CardTitle>
+            <CardTitle className="font-display font-semibold text-3xl tracking-tight text-center">
+              Nueva contraseña
+            </CardTitle>
             <CardDescription className="text-center text-base">
               Ingresa tu nueva contraseña para restablecer el acceso a tu cuenta.
             </CardDescription>
@@ -422,7 +424,9 @@ const Auth = () => {
             <div className="w-16 h-16 bg-purple-600 rounded-full flex items-center justify-center mb-4">
               <Mail className="w-8 h-8 text-white" />
             </div>
-            <CardTitle className="text-2xl font-bold text-center">¡Revisa tu correo!</CardTitle>
+            <CardTitle className="font-display font-semibold text-3xl tracking-tight text-center">
+              ¡Revisa tu correo!
+            </CardTitle>
             <CardDescription className="text-center text-base">
               Enviamos un enlace de acceso a <strong>{email}</strong>.
               <br />
@@ -449,7 +453,9 @@ const Auth = () => {
             <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mb-4">
               <Mail className="w-8 h-8 text-white" />
             </div>
-            <CardTitle className="text-2xl font-bold text-center">¡Revisa tu correo!</CardTitle>
+            <CardTitle className="font-display font-semibold text-3xl tracking-tight text-center">
+              ¡Revisa tu correo!
+            </CardTitle>
             <CardDescription className="text-center text-base">
               Enviamos un enlace de confirmación a <strong>{email}</strong>.
               <br />
@@ -475,7 +481,9 @@ const Auth = () => {
         <Card className="w-full max-w-md animate-fade-in relative z-10 shadow-lg border-border/50">
           <CardHeader className="space-y-1 flex flex-col items-center">
             <img src="/paw_friend_icon_principal.svg" alt="Paw Friend" className="w-16 h-16 mb-4" />
-            <CardTitle className="text-2xl font-bold text-center">Paw Friend</CardTitle>
+            <CardTitle className="font-display font-semibold text-3xl md:text-4xl tracking-tight text-center">
+              Paw Friend
+            </CardTitle>
             <CardDescription className="text-center">
               Cuida la salud de tu mascota con veterinarios verificados
             </CardDescription>
@@ -707,7 +715,7 @@ const Auth = () => {
             alt="Paw Friend"
             className="w-20 h-20 mx-auto mb-2 brightness-0 invert"
           />
-          <h2 className="text-3xl font-bold leading-tight">
+          <h2 className="font-display font-semibold text-4xl leading-[1.05] tracking-tight">
             Cuida la salud de tu mascota como nunca antes
           </h2>
           <p className="text-lg text-purple-100">

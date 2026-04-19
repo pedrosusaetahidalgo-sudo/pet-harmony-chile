@@ -49,7 +49,7 @@ export function ForVetsSection() {
             </span>
             <h2
               id="para-vets-title"
-              className="mt-4 text-3xl font-black leading-[1.05] tracking-tight md:text-5xl"
+              className="mt-4 font-display font-semibold text-4xl leading-[1.05] tracking-tight md:text-6xl"
             >
               {FOR_VETS.h2Lead}{' '}
               <span className="bg-gradient-to-r from-amber-300 to-rose-400 bg-clip-text text-transparent">

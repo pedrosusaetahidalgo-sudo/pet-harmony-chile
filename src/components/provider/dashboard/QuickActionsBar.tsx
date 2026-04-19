@@ -39,7 +39,9 @@ export function QuickActionsBar({
           <Stethoscope className="h-5 w-5 text-teal-700" />
         </div>
         <div>
-          <h2 className="text-lg font-semibold text-slate-900 tracking-tight">Dr. {firstName}</h2>
+          <h2 className="font-display font-semibold text-xl md:text-2xl text-slate-900 tracking-tight">
+            Dr. {firstName}
+          </h2>
           <p className="text-xs text-slate-500 capitalize">{today}</p>
         </div>
       </div>

@@ -39,7 +39,7 @@ export function ProblemSection() {
 
         <h2
           id="problema-title"
-          className="mt-6 text-3xl font-black leading-[1.1] tracking-tight md:text-5xl lg:text-6xl"
+          className="mt-6 font-display font-semibold text-4xl leading-[1.05] tracking-tight md:text-6xl lg:text-7xl"
         >
           {PROBLEM.h2Line1}
           <br />

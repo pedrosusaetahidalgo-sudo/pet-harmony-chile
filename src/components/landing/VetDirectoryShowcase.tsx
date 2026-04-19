@@ -37,7 +37,7 @@ export function VetDirectoryShowcase() {
             </span>
             <h2
               id="directorio-title"
-              className="mt-4 text-3xl font-black leading-[1.05] tracking-tight md:text-5xl"
+              className="mt-4 font-display font-semibold text-4xl leading-[1.05] tracking-tight md:text-6xl"
             >
               {VETS_DIRECTORY.h2Lead}{' '}
               <span className="bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 bg-clip-text text-transparent">

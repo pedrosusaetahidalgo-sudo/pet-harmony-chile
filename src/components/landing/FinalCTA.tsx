@@ -39,7 +39,7 @@ export function FinalCTA() {
             />
             <h2
               id="cta-final-title"
-              className="mx-auto max-w-2xl text-3xl font-black leading-[1.05] tracking-tight text-white md:text-5xl"
+              className="mx-auto max-w-2xl font-display font-semibold text-4xl leading-[1.05] tracking-tight text-white md:text-6xl"
             >
               {FINAL_CTA.h2Lead}
               <br />
