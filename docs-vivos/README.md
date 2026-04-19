@@ -21,6 +21,7 @@ README es el índice y el contrato de mantenimiento.
 | Propuesta reordenamiento v3 | [`PROPUESTA_REORDENAMIENTO_2026_04_17.md`](../docs-raiz/planes/PROPUESTA_REORDENAMIENTO_2026_04_17.md) | `src/` + `supabase/` | Sólo mientras el plan esté en ejecución. Una vez terminada la v3, mover a `_archive/` y generar la v4 cuando sea |
 | Manual operativo para IA | [`CLAUDE.md`](../CLAUDE.md) | Meta-doc | Stack nuevo, convención nueva, regla nueva. Se actualiza por separado al código |
 | Registro de feature flags | Secciones 11.1, 11.2 de `CLAUDE.md` | `src/lib/featureFlags.ts` | Cuando se agrega/quita/flipea un flag |
+| Pitch decks públicos (4) | [`public/pitch/`](../public/pitch/) | `src/lib/plans.ts`, `CLAUDE.md §5`, `src/pages/PawCore.tsx`, `src/pages/PawVoices.tsx`, `src/pages/PawCompanys.tsx`, `marketing/PITCH_DECKS_MASTERPLANS.md` | Cambio de pricing, modelo de negocio, tiers Paw Companys, copy de beneficios Voices, o identidad Paw Core. Ver [public/pitch/README.md](../public/pitch/README.md) para reglas de edición |
 
 ## Dueños secundarios (si tocás estos, verificá docs)
 

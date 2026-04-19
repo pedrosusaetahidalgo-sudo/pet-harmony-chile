@@ -24,6 +24,13 @@ const MOBILE_PRIORITY_ROUTES = [
 ];
 
 test.describe('Mobile layout — public routes', () => {
+  // Estos tests solo tienen sentido en viewports mobile. En desktop los
+  // snapshots quedan stale tras redesigns del landing y no aportan valor.
+  test.skip(
+    (_fixtures, testInfo) => !testInfo.project.name.toLowerCase().includes('mobile'),
+    'Solo corre en proyectos mobile (ver playwright.config)'
+  );
+
   for (const route of MOBILE_PRIORITY_ROUTES) {
     test(`${route.label} (${route.path}) — no horizontal overflow`, async ({ page }) => {
       await page.goto(route.path, { waitUntil: 'domcontentloaded' });

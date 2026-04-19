@@ -129,6 +129,15 @@ Resumen de items activos:
 
 > Set consolidado para data room, pitch y reuniones con fondos / CORFO / Start-Up Chile.
 > **Folder dedicado**: [pitch-inversionistas/](pitch-inversionistas/) con presentacion HTML bonita + MDs por audiencia.
+>
+> **🔗 Enlaces publicos (enviar por email/WhatsApp/LinkedIn)** — deployed en `pawfriend.cl/pitch/`:
+> - Landing con los 4 → https://pawfriend.cl/pitch/
+> - Inversionistas → https://pawfriend.cl/pitch/inversionistas.html
+> - Paw Companys (empresas sponsor) → https://pawfriend.cl/pitch/companys.html
+> - Paw Partners (tiendas / barter) → https://pawfriend.cl/pitch/partners.html
+> - Paw Voices (creadores) → https://pawfriend.cl/pitch/voices.html
+>
+> Fuente editable: [public/pitch/](public/pitch/) — **NO TOCAR manualmente sin autorizacion**, ver [public/pitch/README.md](public/pitch/README.md). Registrados en [docs-vivos/README.md](docs-vivos/README.md).
 
 | Documento | Que contiene | Uso |
 |---|---|---|

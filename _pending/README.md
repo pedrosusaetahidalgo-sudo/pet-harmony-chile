@@ -2,7 +2,7 @@
 
 > **Propósito:** staging de MDs accionables que aún **no** se han ejecutado (total o parcialmente).
 > **Qué NO vive aquí:** docs vivas ([CLAUDE.md](../CLAUDE.md), [INDEX.md](../INDEX.md), [MAPA_FUNCIONAL_COMPLETO.md](../MAPA_FUNCIONAL_COMPLETO.md), [AGENTS.md](../AGENTS.md), [diagrams/](../diagrams/)), auditorías ([audits/](../audits/)), archivados ([_archive/](../_archive/)).
-> **Última actualización:** 2026-04-14
+> **Última actualización:** 2026-04-19
 
 ---
 
@@ -20,7 +20,7 @@
 | # | Documento | Tipo | Prioridad | Estado |
 |---|---|---|---|---|
 | 1 | [ROTAR_API_KEYS.md](ROTAR_API_KEYS.md) | Runbook seguridad | 🔴 Alta | Requiere dashboards externos — Pedro debe ejecutar manualmente |
-| 2 | [PARTNERS_ONBOARDING.md](PARTNERS_ONBOARDING.md) | Plan partners | 🟠 Media | Landing + emails + migración + admin panel OK. Falta: aplicar migración en Supabase + flujo auto-aprobación + links visibles |
+| 2 | ~~PARTNERS_ONBOARDING.md~~ | Plan partners | — | ✅ Ejecutado 2026-04-13. Archivado como `_archive/PARTNERS_ONBOARDING_COMPLETE_2026_04_13.md`. Aprobación manual via admin panel es el flujo correcto (evita spam). |
 | 3 | [BASE_DATOS_PARTNERS_CHILE.md](BASE_DATOS_PARTNERS_CHILE.md) | Data | 🟠 Media | Parcial — migración schema + seed refugios OK, falta poblar partners con data real |
 | 4 | [map-redesign-blueprint.md](map-redesign-blueprint.md) | Blueprint | 🟠 Media | Parcial — tab Partners + deep linking implementados, bottom sheet/clustering/FAB radial pendientes |
 | 5 | [features/FEATURE_AI_WEB_SEARCH_UPGRADE.md](features/FEATURE_AI_WEB_SEARCH_UPGRADE.md) | Feature | 🟠 Media | Pendiente — requiere decisión del dueño (scope ~14h + tokens) |

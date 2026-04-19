@@ -28,6 +28,14 @@ const OWNERS = [
     doc: 'CLAUDE.md §11 (estado de flags)',
   },
   {
+    re: /src[\\/]lib[\\/]plans\.ts$/,
+    doc: 'public/pitch/*.html (pricing vet + tiers Paw Companys) + CLAUDE.md §5',
+  },
+  {
+    re: /src[\\/]pages[\\/](PawCore|PawVoices|PawCompanys)\.tsx$/,
+    doc: 'public/pitch/*.html (mantener consistencia con copy público)',
+  },
+  {
     re: /src[\\/]lib[\\/]links\.ts$/,
     doc: 'diagrams/FLUJO_COMPLETO.mmd (si cambiaste semántica de ruta)',
   },
