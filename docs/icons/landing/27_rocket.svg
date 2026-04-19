@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Rocket</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <path d="M 100 45 Q 75 65 75 110 L 75 135 L 125 135 L 125 110 Q 125 65 100 45 Z" fill="#FFFFFF"/>
+  <circle cx="100" cy="90" r="11" fill="#FCD34D"/>
+  <path d="M 75 110 L 55 125 L 60 145 L 75 135 Z" fill="#FFFFFF"/>
+  <path d="M 125 110 L 145 125 L 140 145 L 125 135 Z" fill="#FFFFFF"/>
+  <path d="M 88 140 Q 88 155 100 160 Q 112 155 112 140 Z" fill="#FCD34D"/>
+
+</svg>
