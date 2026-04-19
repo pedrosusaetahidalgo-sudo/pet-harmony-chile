@@ -21,8 +21,13 @@ describe('PLANS', () => {
     expect(PLANS.premium.features.max_pets).toBe(-1);
   });
 
-  it('free plan limits to 2 pets', () => {
-    expect(PLANS.free.features.max_pets).toBe(2);
+  // 2026-04-19: B2C 100% gratis — free tiene los mismos features que premium.
+  it('free plan also has unlimited pets (B2C 100% gratis)', () => {
+    expect(PLANS.free.features.max_pets).toBe(-1);
+  });
+
+  it('free plan has PDF export enabled (joya de la corona disponible para todos)', () => {
+    expect(PLANS.free.features.export_pdf).toBe(true);
   });
 });
 

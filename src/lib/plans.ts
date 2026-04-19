@@ -20,6 +20,13 @@ export interface PlanConfig {
 }
 
 export const PLANS: Record<PlanId, PlanConfig> = {
+  // 2026-04-19: modelo B2C 100% gratis. El plan "free" tiene los mismos
+  // features que Paw Member — la membresia solo otorga badge visual y
+  // reconocimiento publico, nunca bloquea funcionalidad. Los caps
+  // historicos (max_pets=2, export_pdf=false, etc.) se reemplazaron por
+  // valores ilimitados para que un usuario free pueda usar toda la app.
+  // Si en el futuro se decide volver a capear features B2C, se cambia
+  // aqui sin tocar la UI (canAccess sigue respetando estos numeros).
   free: {
     id: 'free',
     name: 'Gratis',
@@ -28,21 +35,21 @@ export const PLANS: Record<PlanId, PlanConfig> = {
     yearlyPrice: 0,
     yearlyMonthly: 0,
     features: {
-      max_pets: 2,
-      max_reminders: 3,
-      max_routines_per_pet: 3,
-      ai_behavior_analysis: 1,
-      ai_vet_assistant: 1,
-      export_pdf: false,
-      share_clinical: 1,
-      medical_history: '6_months',
-      weekly_summary: false,
-      booking_user_fee: 5,
+      max_pets: -1,
+      max_reminders: -1,
+      max_routines_per_pet: -1,
+      ai_behavior_analysis: -1,
+      ai_vet_assistant: -1,
+      export_pdf: true,
+      share_clinical: -1,
+      medical_history: 'all',
+      weekly_summary: true,
+      booking_user_fee: 0,
       priority_support: false,
-      ad_free: false,
-      pro_analytics: false,
-      analytics_export: false,
-      ocr_scans: 1,
+      ad_free: true,
+      pro_analytics: true,
+      analytics_export: true,
+      ocr_scans: -1,
     },
   },
   premium: {
