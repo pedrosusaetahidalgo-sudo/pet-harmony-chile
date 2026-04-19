@@ -1,7 +1,7 @@
 flowchart TD
 
   %% MATRIZ COMPLETA ROLES + PLANES - Paw Friend
-  %% Actualizado 2026-04-13
+  %% Actualizado 2026-04-19 (pivot B2C 100% gratis + B2B 4 tiers / 2 tracks)
   %%
   %% LEYENDA DE COLORES POR NODO:
   %%   Verde    #d1fae5 = Sin restriccion, disponible para todos
@@ -59,18 +59,18 @@ flowchart TD
     subgraph SALUD["Seccion Salud"]
       direction TB
       O_HOME["HOME /home<br/>Pet switcher, status cards,<br/>recordatorios, Paw Game widget<br/>Sin restriccion"]
-      O_PETS["MIS MASCOTAS /my-pets<br/>FREE: max 2 mascotas<br/>PREMIUM: ilimitadas<br/>Enforcement: RPC can_add_pet"]
-      O_ADDPET["AGREGAR MASCOTA /add-pet<br/>FREE: 2do pet bloqueado<br/>PREMIUM: sin limite<br/>Enforcement: RPC server-side"]
+      O_PETS["MIS MASCOTAS /my-pets<br/>B2C 100% gratis - Mascotas ilimitadas"]
+      O_ADDPET["AGREGAR MASCOTA /add-pet<br/>Sin restriccion"]
       O_EDITPET["EDITAR MASCOTA /edit-pet/:id<br/>Sin restriccion"]
-      O_REMIND["RECORDATORIOS /reminders<br/>FREE: 3 activos max<br/>PREMIUM: ilimitados<br/>Enforcement: hook useReminders"]
+      O_REMIND["RECORDATORIOS /reminders<br/>Sin restriccion - Recordatorios ilimitados"]
     end
 
     subgraph FICHA["Ficha Clinica - Joya de la Corona"]
       direction TB
-      O_FICHA["FICHA COMPLETA /ficha/:petId<br/>Acceso siempre<br/>FREE: historial 6 meses<br/>PREMIUM: historial completo"]
-      O_PDF["EXPORTAR PDF<br/>FREE: BLOQUEADO<br/>PREMIUM: habilitado<br/>PremiumGate + server 402"]
-      O_SHARE_MED["COMPARTIR FICHA<br/>FREE: 1 token activo<br/>PREMIUM: ilimitado<br/>Enforcement: useMedicalSharing"]
-      O_OCR["OCR CARNET VACUNAS<br/>FREE: 1 escaneo<br/>PREMIUM: ilimitado<br/>Enforcement: client-side"]
+      O_FICHA["FICHA COMPLETA /ficha/:petId<br/>Historial completo para todos"]
+      O_PDF["EXPORTAR PDF v3<br/>Sin restriccion - Portada + timeline + tablas + watermark share"]
+      O_SHARE_MED["COMPARTIR FICHA<br/>Sin restriccion - Tokens ilimitados"]
+      O_OCR["OCR CARNET VACUNAS<br/>Sin restriccion - Escaneos ilimitados"]
     end
 
     subgraph DESCUBRIR["Seccion Descubrir"]
@@ -94,8 +94,8 @@ flowchart TD
       direction TB
       O_ADOPT["ADOPCION /adoption<br/>Sin restriccion"]
       O_MEMORIAL["EN MEMORIA /en-memoria<br/>Sin restriccion"]
-      O_REPORTS["REPORTES SEMANALES /reportes<br/>FREE: bloqueado<br/>PREMIUM: habilitado<br/>Enforcement: PremiumGate"]
-      O_UPGRADE["PAGINA PREMIUM /upgrade<br/>Siempre visible"]
+      O_REPORTS["REPORTES SEMANALES /reportes<br/>Sin restriccion - Disponible para todos"]
+      O_UPGRADE["PAGINA PAW MEMBER /paw-member<br/>Opcional - badge solamente, no desbloquea nada"]
       O_PROFILE["MI PERFIL /profile<br/>Sin restriccion"]
       O_SETTINGS["CONFIGURACION /settings<br/>Sin restriccion"]
       O_ONBOARD["ONBOARDING /onboarding-mascota<br/>Sin restriccion"]
@@ -131,12 +131,12 @@ flowchart TD
   %% ============================================
   %% PLANES VETERINARIOS B2B
   %% ============================================
-  subgraph VET_PLANS["PLANES VETERINARIOS B2B"]
+  subgraph VET_PLANS["PLANES VETERINARIOS B2B - 4 tiers / 2 tracks (2026-04-19)"]
     direction LR
-    VP_FREE["VET GRATIS<br/>15 clientes<br/>10 reservas/mes<br/>2 invitaciones resena<br/>Comision 10%<br/>Sin destacado"]
-    VP_IND["INDIVIDUAL $9.900/mes<br/>100 clientes<br/>50 reservas/mes<br/>5 invitaciones<br/>Audio transcripcion<br/>Comision 10%"]
-    VP_BASIC["CLINICA BASICA $29.900/mes<br/>500 clientes<br/>Reservas ilimitadas<br/>20 invitaciones - Multi-vet<br/>Destacado directorio<br/>Comision 10%"]
-    VP_PRO["CLINICA PRO $59.900/mes<br/>Clientes ilimitados<br/>Todo ilimitado<br/>Comision 0%<br/>Analytics avanzados<br/>API access - Soporte prioritario"]
+    VP_BASICA["BASICA $0/mes<br/>Individual<br/>5 pacientes - 1 seat<br/>Directorio publico<br/>Comision 10%"]
+    VP_PREMIUM["PREMIUM $9.900/mes ⭐<br/>Individual<br/>Pacientes ilimitados - 1 seat<br/>Destacado + audio transcripcion<br/>Comision 5%"]
+    VP_CLINICA["CLINICA $19.900/mes 🏥<br/>Entry clinica<br/>500 pacientes - 3 seats<br/>Bulk import CSV + analytics<br/>Comision 3%"]
+    VP_PROMAX["PRO MAX $29.900/mes 👑<br/>Clinica top<br/>Todo ilimitado - Multi-sucursal<br/>API + priority support<br/>Comision 0%"]
   end
 
   %% ============================================
@@ -144,8 +144,8 @@ flowchart TD
   %% ============================================
   subgraph B2C_PLANS["PLANES B2C - Duenos de mascotas"]
     direction LR
-    PLAN_FREE["GRATIS $0<br/>..............................<br/>2 mascotas<br/>3 recordatorios<br/>Historial 6 meses<br/>1 ficha compartida<br/>1 consulta IA/mes<br/>1 OCR scan<br/>NO PDF ficha clinica<br/>NO Resumen semanal IA<br/>NO Analytics<br/>CON publicidad<br/>Tarifa reserva: $5"]
-    PLAN_PREMIUM["PREMIUM $3.990/mes<br/>..............................<br/>Mascotas ilimitadas<br/>Recordatorios ilimitados<br/>Historial completo<br/>Fichas compartidas ilimitadas<br/>Consultas IA ilimitadas<br/>OCR scans ilimitados<br/>PDF ficha clinica<br/>Resumen semanal IA<br/>Analytics completos<br/>Sin publicidad<br/>Tarifa reserva: $0<br/>..............................<br/>Anual: $39.900<br/>Primeros 500: precio fijo"]
+    PLAN_FREE["GRATIS $0<br/>..............................<br/>100 percent gratis<br/>Mascotas ilimitadas<br/>Recordatorios ilimitados<br/>Historial completo<br/>Fichas compartidas ilimitadas<br/>Consultas IA ilimitadas<br/>OCR scans ilimitados<br/>PDF ficha clinica<br/>Resumen semanal IA<br/>Analytics completos<br/>Sin publicidad<br/>Tarifa reserva: $0<br/>..............................<br/>Todo incluido, para siempre"]
+    PLAN_PREMIUM["PAW MEMBER $3.990/mes o $39.900/ano<br/>..............................<br/>Opcional - solo badge + reconocimiento<br/>..............................<br/>Mismos features que el plan gratis<br/>+ badge visible 💛 Paw Member<br/>+ acceso a descuentos de alianzas<br/>+ ayuda a sostener el proyecto<br/>..............................<br/>NO desbloquea funcionalidad"]
   end
 
   %% ============================================
@@ -153,8 +153,8 @@ flowchart TD
   %% ============================================
   subgraph IA["FUNCIONES IA - Edge Functions"]
     direction TB
-    AI_PET["pet-assistant<br/>Asistente veterinario<br/>FREE: 1 consulta/mes<br/>PREMIUM: ilimitado<br/>Role: Ambos"]
-    AI_BREED["breed-tips<br/>Tips por raza<br/>FREE: 1 uso/sesion<br/>PREMIUM: ilimitado<br/>Role: Ambos"]
+    AI_PET["pet-assistant<br/>Asistente veterinario<br/>Sin restriccion - Consultas ilimitadas<br/>Role: Ambos"]
+    AI_BREED["breed-tips<br/>Tips por raza<br/>Sin restriccion - Usos ilimitados<br/>Role: Ambos"]
     AI_BEREAVE["bereavement-assistant<br/>Asistente empatico memorial<br/>Sin restriccion<br/>Role: Ambos"]
     AI_MED_SUG["medical-suggestions<br/>Sugerencias medicas<br/>Sin restriccion<br/>Role: Ambos"]
     AI_OCR_FN["ocr-vaccination-card<br/>OCR carnet vacunas<br/>FREE: 1 scan<br/>PREMIUM: ilimitado<br/>Role: Ambos"]

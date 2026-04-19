@@ -1,5 +1,13 @@
 /**
- * Edge Function: Generate ZIP of all medical documents for a pet
+ * Edge Function: Generate ZIP of all medical documents for a pet — v2 (2026-04-19)
+ *
+ * Rediseño: el ZIP ahora incluye:
+ *   1. README.txt con índice legible (nombre, tipo, fecha, tamaño)
+ *   2. ficha-clinica.pdf generada on-the-fly (la joya de la corona dentro del bundle)
+ *   3. Subcarpeta /documentos/ con los archivos subidos por el dueño o vet
+ *
+ * Esto transforma el ZIP de un bundle opaco a un paquete profesional que
+ * se puede compartir con otro vet o especialista y entender al abrirlo.
  */
 
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
@@ -9,7 +17,6 @@ import { checkAiQuota, rateLimitResponse } from '../_shared/rate-limit.ts';
 import { getCorsHeaders } from '../_shared/cors.ts';
 import { withTelemetry } from '../_shared/telemetry.ts';
 
-// Mapeo mime_type -> extension. Solo los que más vemos en medical documents.
 const MIME_TO_EXT: Record<string, string> = {
   'application/pdf': 'pdf',
   'image/jpeg': 'jpg',
@@ -27,10 +34,32 @@ const extFromMime = (mime: string | null | undefined): string => {
   return MIME_TO_EXT[mime.toLowerCase()] ?? 'bin';
 };
 
-// Sanitiza el nombre del archivo para que sea valido en cualquier OS
 const safeName = (raw: string): string => raw.replace(/[\\/:*?"<>|]/g, '_').slice(0, 100);
 
-// Procesa documentos en chunks para no agotar memoria con muchos archivos
+function formatBytes(n: number): string {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+function formatDate(d: string | null | undefined): string {
+  if (!d) return '';
+  try {
+    return new Date(d).toLocaleDateString('es-CL', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    });
+  } catch {
+    return d;
+  }
+}
+
+function pad(str: string, width: number): string {
+  if (str.length >= width) return str.slice(0, width);
+  return str + ' '.repeat(width - str.length);
+}
+
 async function inChunks<T, R>(
   items: T[],
   chunkSize: number,
@@ -54,7 +83,6 @@ serve(
     }
 
     try {
-      // Initialize Supabase client
       const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
       const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
       const supabase = createClient(supabaseUrl, supabaseKey);
@@ -67,29 +95,46 @@ serve(
       const { data: userData, error: userError } = await supabase.auth.getUser(token);
       if (userError || !userData.user) throw new Error('User not authenticated');
 
-      // ── Rate limit (3 req/min — ZIP generation is heaviest) ──
+      // Rate limit (3 req/min)
       const quota = await checkAiQuota(userData.user.id, { limit: 3, windowSeconds: 60 });
-      if (!quota.allowed) {
-        return rateLimitResponse(quota, corsHeaders);
-      }
+      if (!quota.allowed) return rateLimitResponse(quota, corsHeaders);
 
       const { pet_id } = await req.json();
-
       if (!pet_id || typeof pet_id !== 'string') {
         throw new Error('pet_id is required and must be a string');
       }
 
-      // Ownership check
-      const { data: petOwnership, error: ownershipError } = await supabase
+      // Ownership + linked-vet check
+      const { data: petRow, error: petError } = await supabase
         .from('pets')
-        .select('owner_id')
+        .select('owner_id, name')
         .eq('id', pet_id)
         .single();
 
-      if (ownershipError || !petOwnership) {
-        throw new Error('Pet not found');
+      if (petError || !petRow) throw new Error('Pet not found');
+
+      const isOwner = petRow.owner_id === userData.user.id;
+      let isLinkedVet = false;
+
+      if (!isOwner) {
+        const { data: providerRow } = await supabase
+          .from('service_providers')
+          .select('id')
+          .eq('user_id', userData.user.id)
+          .maybeSingle();
+        if (providerRow?.id) {
+          const { data: link } = await supabase
+            .from('pet_vet_links')
+            .select('id')
+            .eq('pet_id', pet_id)
+            .eq('provider_id', providerRow.id)
+            .eq('status', 'active')
+            .maybeSingle();
+          isLinkedVet = !!link;
+        }
       }
-      if (petOwnership.owner_id !== userData.user.id) {
+
+      if (!isOwner && !isLinkedVet) {
         return new Response(JSON.stringify({ success: false, error: 'Forbidden' }), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           status: 403,
@@ -97,23 +142,45 @@ serve(
       }
 
       // Get all documents for the pet
-      const { data: documents, error: docsError } = await supabase
+      const { data: documents } = await supabase
         .from('medical_documents')
-        .select('id, file_url, title, type, mime_type')
-        .eq('pet_id', pet_id);
+        .select('id, file_url, title, type, mime_type, file_size, created_at')
+        .eq('pet_id', pet_id)
+        .order('created_at', { ascending: true });
 
-      if (docsError) throw docsError;
+      const docs = documents ?? [];
 
-      if (!documents || documents.length === 0) {
-        throw new Error('No documents found for this pet');
-      }
-
-      // Construir el ZIP en memoria. Procesamos en chunks de 5 para no saturar
-      // si la mascota tiene muchos documentos.
+      // ── Build ZIP ──
       const zip = new JSZip();
       const usedNames = new Set<string>();
 
-      await inChunks(documents, 5, async (doc) => {
+      // 1. Generar ficha PDF y agregarla en la raíz del ZIP
+      let fichaBytes: Uint8Array | null = null;
+      try {
+        const fichaResp = await fetch(`${supabaseUrl}/functions/v1/generate-medical-summary`, {
+          method: 'POST',
+          headers: {
+            Authorization: authHeader,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ pet_id, mode: 'complete' }),
+        });
+        if (fichaResp.ok) {
+          const contentType = fichaResp.headers.get('content-type') || '';
+          if (contentType.includes('pdf')) {
+            const buf = await fichaResp.arrayBuffer();
+            fichaBytes = new Uint8Array(buf);
+            zip.file('ficha-clinica.pdf', fichaBytes);
+          }
+        }
+      } catch (e) {
+        console.warn('[medical-zip] no se pudo generar la ficha PDF:', e);
+      }
+
+      // 2. Procesar documentos subidos en subcarpeta /documentos/
+      const docIndex: Array<{ name: string; type: string; date: string; size: string }> = [];
+
+      await inChunks(docs, 5, async (doc) => {
         const { data: blob, error: dlError } = await supabase.storage
           .from('medical-documents')
           .download(doc.file_url);
@@ -126,7 +193,6 @@ serve(
         const ext = extFromMime(doc.mime_type);
         const baseName = safeName(doc.title || doc.id);
         let fileName = `${baseName}.${ext}`;
-        // Evitar duplicados de nombre dentro del ZIP
         let n = 2;
         while (usedNames.has(fileName)) {
           fileName = `${baseName}-${n}.${ext}`;
@@ -135,11 +201,93 @@ serve(
         usedNames.add(fileName);
 
         const arrayBuffer = await blob.arrayBuffer();
-        zip.file(fileName, new Uint8Array(arrayBuffer));
+        const bytes = new Uint8Array(arrayBuffer);
+        zip.file(`documentos/${fileName}`, bytes);
+
+        docIndex.push({
+          name: fileName,
+          type: doc.type || '-',
+          date: formatDate(doc.created_at),
+          size: formatBytes(bytes.byteLength),
+        });
       });
 
-      if (Object.keys(zip.files).length === 0) {
-        throw new Error('No se pudo descargar ningún documento de la mascota');
+      // 3. README.txt con índice legible
+      const petName = petRow.name || 'mascota';
+      const generatedAt = new Date().toLocaleString('es-CL', {
+        dateStyle: 'long',
+        timeStyle: 'short',
+      });
+
+      const readmeLines: string[] = [
+        '════════════════════════════════════════════════════════════',
+        `  PAW FRIEND — Expediente de ${petName}`,
+        '════════════════════════════════════════════════════════════',
+        '',
+        `Generado: ${generatedAt}`,
+        `Total de archivos: ${Object.keys(zip.files).length}`,
+        '',
+        'Contenido del paquete:',
+        '────────────────────────────────────────────────────────────',
+        '',
+      ];
+
+      if (fichaBytes) {
+        readmeLines.push(
+          '📄 ficha-clinica.pdf',
+          '   Ficha clínica generada automáticamente por Paw Friend.',
+          '   Incluye datos de la mascota, alertas clínicas, historial',
+          '   cronológico, vacunación, peso histórico y rutinas.',
+          ''
+        );
+      }
+
+      if (docIndex.length > 0) {
+        readmeLines.push(
+          '📁 documentos/',
+          '   Archivos originales subidos por el responsable o vet.',
+          '',
+          '   ' + pad('Archivo', 50) + pad('Tipo', 20) + pad('Fecha', 16) + 'Tamaño',
+          '   ' + '─'.repeat(98)
+        );
+        for (const d of docIndex) {
+          readmeLines.push('   ' + pad(d.name, 50) + pad(d.type, 20) + pad(d.date, 16) + d.size);
+        }
+        readmeLines.push('');
+      }
+
+      if (!fichaBytes && docIndex.length === 0) {
+        readmeLines.push(
+          '⚠️  Este expediente está vacío.',
+          '   No se encontraron documentos médicos ni se pudo generar',
+          '   la ficha clínica. Verifica que la mascota tenga registros',
+          '   antes de descargar el ZIP.',
+          ''
+        );
+      }
+
+      readmeLines.push(
+        '────────────────────────────────────────────────────────────',
+        '',
+        'Cómo usar este paquete:',
+        '',
+        '  • ficha-clinica.pdf es un resumen profesional listo para',
+        '    compartir con veterinarios o especialistas.',
+        '  • Los archivos en documentos/ son los originales subidos',
+        '    (análisis, recetas, fotos, etc.).',
+        '',
+        'Contacto: pawfriend.cl',
+        'Documento confidencial. No reemplaza un informe clínico profesional.',
+        '',
+        '════════════════════════════════════════════════════════════'
+      );
+
+      zip.file('README.txt', readmeLines.join('\n'));
+
+      // Validación: si solo hay README (sin ficha ni docs), error
+      const realFiles = Object.keys(zip.files).filter((f) => f !== 'README.txt');
+      if (realFiles.length === 0) {
+        throw new Error('No se pudo generar ningún contenido para el ZIP');
       }
 
       const zipBytes = await zip.generateAsync({
@@ -148,8 +296,11 @@ serve(
         compressionOptions: { level: 6 },
       });
 
-      // Subir el ZIP a Storage
-      const zipPath = `zips/${pet_id}-${Date.now()}.zip`;
+      const safePet = petName
+        .replace(/\s+/g, '-')
+        .toLowerCase()
+        .replace(/[^a-z0-9-]/g, '');
+      const zipPath = `zips/${safePet}-${Date.now()}.zip`;
       const { error: uploadError } = await supabase.storage
         .from('medical-documents')
         .upload(zipPath, zipBytes, {
@@ -170,7 +321,7 @@ serve(
           success: true,
           download_url: urlData.signedUrl,
           file_path: zipPath,
-          document_count: Object.keys(zip.files).length,
+          document_count: realFiles.length,
         }),
         {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },

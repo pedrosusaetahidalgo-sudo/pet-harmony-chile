@@ -334,7 +334,7 @@ Crear rutina:
   → /rutinas → boton + Nueva → RoutineForm dialog
   → Selecciona mascota, categoria, dias, hora
   → INSERT pet_routines (RLS: solo owner)
-  → Plan gratis: max 3 rutinas por mascota
+  → Sin restriccion (2026-04-19: B2C 100% gratis, rutinas ilimitadas)
 
 Completar rutina del dia:
   → /rutinas o /home widget → boton "Hecho"

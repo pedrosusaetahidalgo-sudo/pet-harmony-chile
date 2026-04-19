@@ -415,6 +415,7 @@ function RoleTile({
     <button
       type="button"
       onClick={onClick}
+      aria-label={`${title}: ${cta}`}
       className="rounded-xl border border-pink-200/60 bg-white/80 dark:bg-slate-900/60 p-3 text-left hover:shadow-md hover:-translate-y-0.5 transition-all group"
     >
       <div className="flex items-start gap-2.5">

@@ -127,9 +127,7 @@ flowchart TD
         PET_LIST --> PET_EDIT
     end
 
-    PET_ADD --> PLAN_CHK{"Limite plan?"}
-    PLAN_CHK -->|"Gratis max 2"| UPGRADE
-    PLAN_CHK -->|OK| PET_FORM["Formulario mascota"]
+    PET_ADD --> PET_FORM["Formulario mascota"]
     PET_FORM --> DUP_CHECK{"Duplicado?"}
     DUP_CHECK -->|"Nombre+especie existe"| DUP_WARN["Alerta: ya tienes esta mascota"]
     DUP_CHECK -->|"Microchip existe"| DUP_BLOCK["Error: microchip ya registrado"]
