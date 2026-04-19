@@ -1,0 +1,1434 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend — Recorrido · Qué es, por qué existe, cómo funciona</title>
+  <meta name="description" content="Un recorrido de 2 minutos por Paw Friend: la ficha médica digital de tu mascota, hecha en Chile por una persona con inteligencia artificial. Core, features y modelo en una sola página." />
+  <meta name="theme-color" content="#9333ea" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://pawfriend.cl/pitch/recorrido.html" />
+  <link rel="icon" type="image/svg+xml" href="/paw_friend_icon_principal.svg" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Paw Friend" />
+  <meta property="og:url" content="https://pawfriend.cl/pitch/recorrido.html" />
+  <meta property="og:title" content="Paw Friend — Un recorrido de 2 minutos" />
+  <meta property="og:description" content="Qué es, por qué existe, cómo lo estamos haciendo. Un brief inmersivo antes de entrar al deck específico." />
+  <meta property="og:image" content="https://pawfriend.cl/og-image.jpg" />
+  <meta property="og:locale" content="es_CL" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Paw Friend — Recorrido" />
+  <meta name="twitter:description" content="Qué es, por qué existe, cómo lo estamos haciendo. 2 minutos." />
+  <meta name="twitter:image" content="https://pawfriend.cl/og-image.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --brand-50: #faf5ff; --brand-100: #f3e8ff; --brand-200: #e9d5ff;
+      --brand-300: #d8b4fe; --brand-400: #c084fc; --brand-500: #a855f7;
+      --brand-600: #9333ea; --brand-700: #7e22ce; --brand-800: #6b21a8; --brand-900: #581c87;
+      --gold: #eab308; --gold-soft: #fef3c7; --gold-dark: #a16207;
+      --emerald: #10b981; --rose: #ec4899;
+      --ink: #1a102b; --ink-soft: #4b3b66; --ink-faint: #94889e;
+      --paper: #faf7ff; --surface: #fff;
+      --border: #e9d5ff;
+      --mono: 'JetBrains Mono', ui-monospace, monospace;
+      --radius-xl: 28px; --radius-lg: 20px; --radius-md: 14px; --radius-sm: 10px;
+      --shadow-sm: 0 2px 10px -2px rgba(147, 51, 234, .12);
+      --shadow-md: 0 10px 40px -10px rgba(147, 51, 234, .18);
+      --shadow-lg: 0 28px 80px -16px rgba(147, 51, 234, .32);
+      --deep-grad: linear-gradient(135deg, #1a0a2e 0%, #3b0e6e 45%, #7e22ce 100%);
+      --hero-grad: linear-gradient(135deg, #2a1046 0%, #581c87 40%, #9333ea 75%, #eab308 115%);
+      --warm-grad: linear-gradient(135deg, #9333ea 0%, #eab308 100%);
+      --emerald-grad: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    ::selection { background: var(--brand-300); color: var(--ink); }
+
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 28px; }
+    @media (max-width: 720px) { .container { padding: 0 20px; } }
+
+    /* ─────────────────────────────────────────────────────────
+       TOPBAR — minimal, sticky, visible en toda la sesión
+       ───────────────────────────────────────────────────────── */
+    .topbar {
+      position: sticky; top: 0; z-index: 60;
+      backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, .82);
+      border-bottom: 1px solid rgba(229, 213, 247, .55);
+    }
+    .topbar-inner {
+      max-width: 1160px; margin: 0 auto;
+      padding: 14px 28px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .topbar-brand {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 800; font-size: 15px;
+      color: var(--ink); text-decoration: none;
+    }
+    .topbar-brand img { height: 30px; width: auto; display: block; }
+    .topbar-brand span small {
+      font-weight: 500; font-size: 12px;
+      color: var(--ink-faint); margin-left: 6px;
+    }
+    .topbar-cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px;
+      background: var(--ink);
+      color: #fff;
+      border-radius: 999px;
+      font-weight: 700; font-size: 13px;
+      text-decoration: none;
+      transition: background .2s;
+    }
+    .topbar-cta:hover { background: var(--brand-800); }
+    @media (max-width: 600px) { .topbar-brand span { display: none; } }
+
+    /* ─────────────────────────────────────────────────────────
+       HERO — cinematográfico, full viewport
+       ───────────────────────────────────────────────────────── */
+    .hero {
+      min-height: calc(100vh - 62px);
+      background: var(--hero-grad);
+      color: #fff;
+      padding: 80px 28px 100px;
+      position: relative;
+      overflow: hidden;
+      display: flex; align-items: center;
+    }
+    .hero::before {
+      content: "";
+      position: absolute; top: -30%; left: -10%;
+      width: 70%; height: 140%;
+      background: radial-gradient(ellipse, rgba(234, 179, 8, .3), transparent 60%);
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    .hero::after {
+      content: "";
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='90' height='90' viewBox='0 0 90 90'><circle cx='45' cy='45' r='1.2' fill='rgba(255,255,255,0.08)'/></svg>");
+      pointer-events: none;
+      opacity: .6;
+    }
+    .hero-inner {
+      position: relative; z-index: 2;
+      max-width: 1160px; margin: 0 auto; width: 100%;
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+      .hero-mark-wrap { display: flex; justify-content: center; order: -1; }
+    }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 7px 14px;
+      background: rgba(255, 255, 255, .12);
+      border: 1px solid rgba(255, 255, 255, .25);
+      border-radius: 999px;
+      font-size: 11.5px; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: #fff;
+      backdrop-filter: blur(8px);
+    }
+    .hero-eyebrow .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 0 4px rgba(234, 179, 8, .3);
+      animation: pulse 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .7; transform: scale(.82); }
+    }
+
+    .hero h1 {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: clamp(44px, 6.4vw, 80px);
+      line-height: 1.02;
+      letter-spacing: -.025em;
+      margin: 20px 0 16px;
+      color: #fff;
+      text-shadow: 0 2px 40px rgba(0, 0, 0, .2);
+    }
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(135deg, #fef3c7 0%, #eab308 60%, #f59e0b 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-sub {
+      font-size: clamp(17px, 1.9vw, 21px);
+      color: rgba(255, 255, 255, .92);
+      line-height: 1.5;
+      max-width: 540px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 900px) { .hero-sub { margin-left: auto; margin-right: auto; } }
+
+    .hero-chips {
+      display: flex; flex-wrap: wrap; gap: 10px;
+    }
+    @media (max-width: 900px) { .hero-chips { justify-content: center; } }
+    .hero-chip {
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, .1);
+      border: 1px solid rgba(255, 255, 255, .22);
+      border-radius: 999px;
+      font-size: 12.5px; font-weight: 600;
+      color: #fff;
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-mark {
+      width: clamp(220px, 30vw, 340px);
+      aspect-ratio: 1;
+      background: var(--surface);
+      border-radius: 32% 28% 30% 34%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 30px 80px -20px rgba(0, 0, 0, .4),
+                  inset 0 -20px 60px rgba(234, 179, 8, .15);
+      animation: floatMark 7s ease-in-out infinite;
+      position: relative;
+    }
+    @keyframes floatMark {
+      0%, 100% { transform: translateY(0) rotate(0); }
+      50% { transform: translateY(-14px) rotate(-1.5deg); }
+    }
+    .hero-mark img { width: 72%; height: 72%; display: block; }
+    .hero-mark::before {
+      content: "";
+      position: absolute; inset: -20px;
+      border: 2px dashed rgba(255, 255, 255, .18);
+      border-radius: 34% 30% 32% 36%;
+      pointer-events: none;
+    }
+
+    .hero-scroll-hint {
+      position: absolute; bottom: 32px; left: 50%;
+      transform: translateX(-50%);
+      color: rgba(255, 255, 255, .7);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      z-index: 3;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+    }
+    .hero-scroll-hint svg { width: 16px; height: 16px; animation: bounce 2s infinite; }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    /* ─────────────────────────────────────────────────────────
+       SECTION BASE
+       ───────────────────────────────────────────────────────── */
+    section.band { padding: 96px 0; position: relative; }
+    section.band.dark { background: var(--deep-grad); color: #fff; overflow: hidden; }
+    section.band.dark h2, section.band.dark h3 { color: #fff; }
+    section.band.dark p { color: rgba(255, 255, 255, .85); }
+    section.band.dark .eyebrow-dark { color: #fde68a; }
+
+    section.band.soft { background: linear-gradient(180deg, #fff 0%, #faf5ff 100%); }
+    @media (max-width: 720px) { section.band { padding: 72px 0; } }
+
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 14px;
+      background: var(--brand-50);
+      border: 1px solid var(--brand-200);
+      border-radius: 999px;
+      font-size: 11px; font-weight: 800;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--brand-700);
+      margin-bottom: 20px;
+    }
+    section.band.dark .eyebrow {
+      background: rgba(234, 179, 8, .16);
+      border-color: rgba(234, 179, 8, .3);
+      color: var(--gold);
+    }
+
+    h2 {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: clamp(32px, 4.6vw, 54px);
+      line-height: 1.08;
+      letter-spacing: -.022em;
+      margin-bottom: 16px;
+      color: var(--ink);
+    }
+    h3 {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 1.25;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .lead {
+      font-size: clamp(17px, 1.9vw, 20px);
+      line-height: 1.55;
+      color: var(--ink-soft);
+      max-width: 760px;
+    }
+    .lead.center { margin-left: auto; margin-right: auto; text-align: center; }
+
+    /* ─────────────────────────────────────────────────────────
+       SECCIÓN 1 — PROBLEMA (dark)
+       ───────────────────────────────────────────────────────── */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-top: 56px;
+    }
+    @media (max-width: 820px) { .problem-grid { grid-template-columns: 1fr; } }
+    .problem-stat {
+      padding: 32px 26px;
+      background: rgba(255, 255, 255, .06);
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+    .problem-stat::before {
+      content: "";
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: var(--warm-grad);
+    }
+    .problem-big {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: clamp(40px, 5.5vw, 60px);
+      line-height: 1;
+      background: linear-gradient(135deg, #fff 0%, #fde68a 60%, #eab308 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+      letter-spacing: -.02em;
+    }
+    .problem-label {
+      font-size: 14.5px;
+      color: rgba(255, 255, 255, .82);
+      line-height: 1.5;
+    }
+    .problem-quote {
+      max-width: 720px;
+      margin: 64px auto 0;
+      padding: 32px 36px;
+      background: rgba(255, 255, 255, .05);
+      border-left: 3px solid var(--gold);
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 500;
+      font-size: clamp(19px, 2.2vw, 24px);
+      font-style: italic;
+      color: #fff;
+      line-height: 1.35;
+      position: relative;
+    }
+    .problem-quote cite {
+      display: block;
+      margin-top: 14px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-style: normal;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: .06em;
+      color: rgba(255, 255, 255, .65);
+    }
+
+    /* ─────────────────────────────────────────────────────────
+       SECCIÓN 2 — 4 PILARES
+       ───────────────────────────────────────────────────────── */
+    .pillars {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-top: 56px;
+    }
+    @media (max-width: 1000px) { .pillars { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .pillars { grid-template-columns: 1fr; } }
+    .pillar {
+      padding: 28px 24px 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      transition: transform .25s, box-shadow .25s, border-color .25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .pillar:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--brand-300);
+    }
+    .pillar::after {
+      content: attr(data-n);
+      position: absolute; top: 20px; right: 22px;
+      font-family: var(--mono);
+      font-size: 11px; font-weight: 700;
+      color: var(--brand-300);
+      letter-spacing: .1em;
+    }
+    .pillar-ico {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: var(--brand-50);
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+    .pillar-ico img { width: 60%; height: 60%; object-fit: contain; }
+    .pillar h3 { font-size: 18px; }
+    .pillar p { font-size: 14px; color: var(--ink-soft); line-height: 1.5; }
+
+    /* ─────────────────────────────────────────────────────────
+       SECCIÓN 3 — LA JOYA (PDF showcase)
+       ───────────────────────────────────────────────────────── */
+    .jewel {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 56px;
+      align-items: center;
+      margin-top: 48px;
+    }
+    @media (max-width: 900px) { .jewel { grid-template-columns: 1fr; gap: 40px; } }
+
+    .jewel-copy .eyebrow-gold {
+      display: inline-block;
+      padding: 5px 12px;
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      border: 1px solid #fbbf24;
+      border-radius: 999px;
+      font-size: 11px; font-weight: 800;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--gold-dark);
+      margin-bottom: 16px;
+    }
+    .jewel-h {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: clamp(30px, 4vw, 46px);
+      line-height: 1.08;
+      letter-spacing: -.018em;
+      margin-bottom: 18px;
+    }
+    .jewel-h em {
+      font-style: normal;
+      background: var(--warm-grad);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .jewel-points {
+      list-style: none;
+      margin-top: 24px;
+      display: grid; gap: 12px;
+    }
+    .jewel-points li {
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 12px;
+      align-items: start;
+      font-size: 15px;
+      color: var(--ink);
+    }
+    .jewel-points li::before {
+      content: "";
+      width: 22px; height: 22px;
+      border-radius: 7px;
+      background: var(--warm-grad);
+      position: relative;
+      flex: none;
+      box-shadow: 0 4px 12px -4px rgba(234, 179, 8, .5);
+      background-image:
+        linear-gradient(135deg, rgba(255,255,255,.35), transparent 50%),
+        var(--warm-grad);
+    }
+    .jewel-points li::after {
+      content: "✓";
+      position: absolute;
+      width: 22px; height: 22px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 800; font-size: 13px;
+      transform: translateX(2px) translateY(2px);
+      pointer-events: none;
+    }
+
+    /* Fake PDF document */
+    .pdf-mockup {
+      background: #fff;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      padding: 28px 28px 32px;
+      border: 1px solid var(--border);
+      position: relative;
+      transform: rotate(-1.2deg);
+      transition: transform .4s;
+    }
+    .pdf-mockup:hover { transform: rotate(0); }
+    .pdf-mockup::before {
+      content: "";
+      position: absolute; inset: -16px -16px auto auto;
+      width: 70px; height: 70px;
+      background: var(--warm-grad);
+      border-radius: 50%;
+      opacity: .18;
+      filter: blur(20px);
+      z-index: -1;
+    }
+    .pdf-ribbon {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--brand-100);
+      margin-bottom: 18px;
+    }
+    .pdf-ribbon-left {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .pdf-ribbon-left .ico {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: var(--brand-100);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .pdf-ribbon-left .ico img { width: 60%; height: 60%; }
+    .pdf-ribbon-left .t {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+    .pdf-ribbon-left .t small {
+      display: block;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10.5px;
+      color: var(--ink-soft);
+      font-weight: 500;
+      letter-spacing: .04em;
+    }
+    .pdf-ribbon-right {
+      font-size: 10px; font-weight: 800;
+      letter-spacing: .1em;
+      color: var(--brand-700);
+      background: var(--brand-50);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .pdf-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .pdf-field {
+      padding: 10px 12px;
+      background: var(--brand-50);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+    }
+    .pdf-field-label {
+      font-size: 9px; font-weight: 800;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: var(--brand-700);
+      margin-bottom: 2px;
+    }
+    .pdf-field-value {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--ink);
+      line-height: 1.2;
+    }
+    .pdf-chart {
+      margin-top: 14px;
+      padding: 14px 16px;
+      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+      border-radius: 10px;
+      font-size: 11.5px;
+      color: #047857;
+      font-weight: 600;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+    }
+    .pdf-chart-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, .2);
+    }
+    .pdf-chart-bar {
+      height: 6px; border-radius: 999px;
+      background: rgba(16, 185, 129, .2);
+      position: relative;
+      overflow: hidden;
+    }
+    .pdf-chart-bar span {
+      display: block; height: 100%;
+      background: var(--emerald-grad);
+      border-radius: 999px;
+    }
+    .pdf-timeline {
+      margin-top: 14px;
+      display: grid;
+      gap: 8px;
+    }
+    .pdf-event {
+      display: grid;
+      grid-template-columns: 14px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 9px 12px;
+      background: #faf7ff;
+      border-radius: 8px;
+      font-size: 11.5px;
+      border: 1px solid rgba(229, 213, 247, .7);
+    }
+    .pdf-event-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--brand-500);
+    }
+    .pdf-event-dot.gold { background: var(--gold); }
+    .pdf-event-dot.rose { background: var(--rose); }
+    .pdf-event-title { font-weight: 700; color: var(--ink); }
+    .pdf-event-date {
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: var(--ink-soft);
+      font-weight: 600;
+    }
+
+    /* ─────────────────────────────────────────────────────────
+       SECCIÓN 4 — FEATURES GRID (6 tiles rápidos)
+       ───────────────────────────────────────────────────────── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 56px;
+    }
+    @media (max-width: 900px) { .features { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .features { grid-template-columns: 1fr; } }
+    .feature {
+      padding: 24px 22px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      transition: transform .2s, border-color .2s;
+      position: relative;
+    }
+    .feature:hover {
+      transform: translateY(-3px);
+      border-color: var(--brand-300);
+      box-shadow: var(--shadow-sm);
+    }
+    .feature-head {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 10px;
+    }
+    .feature-ico {
+      width: 40px; height: 40px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, var(--brand-50), #fff);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      flex: none;
+    }
+    .feature-ico img { width: 60%; height: 60%; }
+    .feature-title {
+      font-weight: 800;
+      font-size: 14.5px;
+      color: var(--ink);
+    }
+    .feature p {
+      font-size: 13.5px;
+      color: var(--ink-soft);
+      line-height: 1.55;
+    }
+    .feature-badge {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 2px 8px;
+      background: var(--brand-50);
+      border-radius: 999px;
+      font-size: 10px; font-weight: 800;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--brand-700);
+    }
+
+    /* ─────────────────────────────────────────────────────────
+       SECCIÓN 5 — CÓMO LO HACEMOS (dark + leverage)
+       ───────────────────────────────────────────────────────── */
+    .how-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 56px;
+      align-items: center;
+      margin-top: 48px;
+    }
+    @media (max-width: 900px) { .how-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+    .leverage-hero {
+      padding: 44px 40px;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid rgba(255, 255, 255, .12);
+      border-radius: var(--radius-xl);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .leverage-hero::before {
+      content: "";
+      position: absolute; inset: -50%;
+      background: radial-gradient(circle, rgba(234, 179, 8, .15), transparent 50%);
+      pointer-events: none;
+    }
+    .leverage-big {
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 700;
+      font-size: clamp(80px, 12vw, 160px);
+      line-height: 1;
+      background: linear-gradient(135deg, #fff 0%, #fde68a 50%, #eab308 100%);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+      letter-spacing: -.04em;
+      position: relative;
+    }
+    .leverage-label {
+      font-size: 15px;
+      color: rgba(255, 255, 255, .85);
+      max-width: 420px;
+      margin: 0 auto;
+      line-height: 1.4;
+      position: relative;
+    }
+    .leverage-breakdown {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 14px;
+      margin-top: 28px;
+      text-align: left;
+      position: relative;
+    }
+    @media (max-width: 560px) { .leverage-breakdown { grid-template-columns: 1fr; } }
+    .leverage-col {
+      padding: 16px 16px;
+      background: rgba(255, 255, 255, .06);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, .08);
+    }
+    .leverage-col .n {
+      font-family: var(--mono);
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--gold);
+      font-variant-numeric: tabular-nums;
+    }
+    .leverage-col .l {
+      font-size: 12px;
+      color: rgba(255, 255, 255, .75);
+      margin-top: 4px;
+    }
+
+    .how-points {
+      list-style: none;
+      display: grid; gap: 16px;
+    }
+    .how-point {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 18px;
+      align-items: start;
+    }
+    .how-point-n {
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: rgba(234, 179, 8, .18);
+      border: 1px solid rgba(234, 179, 8, .4);
+      color: var(--gold);
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 600;
+      font-size: 20px;
+      display: flex; align-items: center; justify-content: center;
+      flex: none;
+    }
+    .how-point-body h4 {
+      font-weight: 800;
+      font-size: 15.5px;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .how-point-body p {
+      font-size: 14px;
+      color: rgba(255, 255, 255, .82);
+      line-height: 1.5;
+    }
+
+    /* ─────────────────────────────────────────────────────────
+       SECCIÓN 6 — EL MODELO (6 motores compactos)
+       ───────────────────────────────────────────────────────── */
+    .motors {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 48px;
+    }
+    @media (max-width: 820px) { .motors { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 520px) { .motors { grid-template-columns: 1fr; } }
+    .motor {
+      padding: 18px 20px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; gap: 14px;
+    }
+    .motor-emoji {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: var(--brand-50);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex: none;
+    }
+    .motor-body { flex: 1; }
+    .motor-name {
+      font-weight: 800;
+      font-size: 13.5px;
+      color: var(--ink);
+    }
+    .motor-sub {
+      font-size: 12px;
+      color: var(--ink-soft);
+      margin-top: 1px;
+    }
+    .motor-owner {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--brand-700);
+      padding: 2px 8px;
+      background: var(--brand-50);
+      border-radius: 999px;
+    }
+
+    /* ─────────────────────────────────────────────────────────
+       CTA FINAL
+       ───────────────────────────────────────────────────────── */
+    .cta-band {
+      padding: 80px 0 60px;
+      background:
+        radial-gradient(ellipse 70% 80% at 20% 100%, rgba(236, 72, 153, .25), transparent 60%),
+        radial-gradient(ellipse 70% 80% at 80% 0%, rgba(234, 179, 8, .25), transparent 60%),
+        var(--hero-grad);
+      color: #fff;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-band h2 {
+      color: #fff;
+      max-width: 760px; margin: 0 auto 14px;
+      font-size: clamp(32px, 4.6vw, 52px);
+    }
+    .cta-band .lead {
+      color: rgba(255, 255, 255, .9);
+      margin: 0 auto 40px;
+    }
+
+    .cta-main {
+      display: inline-flex; align-items: center; gap: 12px;
+      padding: 20px 40px;
+      background: #fff;
+      color: var(--brand-800);
+      border-radius: 999px;
+      font-weight: 800; font-size: 17px;
+      text-decoration: none;
+      box-shadow: 0 24px 70px -20px rgba(0, 0, 0, .5),
+                  0 0 0 4px rgba(255, 255, 255, .12);
+      transition: transform .2s, box-shadow .2s;
+      position: relative;
+    }
+    .cta-main:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 32px 80px -20px rgba(0, 0, 0, .6),
+                  0 0 0 6px rgba(255, 255, 255, .18);
+    }
+    .cta-main .arr {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--warm-grad);
+      color: #fff;
+      font-weight: 900;
+      transition: transform .2s;
+    }
+    .cta-main:hover .arr { transform: translateX(4px); }
+    .cta-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 24px;
+      background: rgba(255, 255, 255, .1);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, .25);
+      border-radius: 999px;
+      font-weight: 700; font-size: 14px;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      transition: background .2s, transform .2s, border-color .2s;
+      margin-left: 8px;
+    }
+    .cta-secondary:hover {
+      background: rgba(255, 255, 255, .2);
+      border-color: rgba(255, 255, 255, .45);
+      transform: translateY(-2px);
+    }
+    @media (max-width: 560px) {
+      .cta-main { padding: 16px 28px; font-size: 15px; }
+      .cta-secondary { margin-left: 0; margin-top: 10px; }
+    }
+
+    .decks-picker {
+      margin: 56px auto 0;
+      max-width: 900px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    @media (max-width: 720px) { .decks-picker { grid-template-columns: repeat(2, 1fr); } }
+    .decks-picker-label {
+      grid-column: 1 / -1;
+      font-size: 11.5px; font-weight: 800;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: rgba(255, 255, 255, .65);
+      margin-bottom: 4px;
+    }
+    .deck-link {
+      display: flex; flex-direction: column; align-items: flex-start;
+      gap: 3px;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, .08);
+      border: 1px solid rgba(255, 255, 255, .18);
+      border-radius: 14px;
+      color: #fff;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      transition: background .2s, transform .2s, border-color .2s;
+      text-align: left;
+    }
+    .deck-link:hover {
+      background: rgba(255, 255, 255, .15);
+      border-color: rgba(255, 255, 255, .35);
+      transform: translateY(-2px);
+    }
+    .deck-link-title { font-size: 13px; font-weight: 800; letter-spacing: -.01em; }
+    .deck-link-sub { font-size: 10.5px; color: rgba(255, 255, 255, .7); font-weight: 500; }
+
+    /* ─────────────────────────────────────────────────────────
+       FOOTER
+       ───────────────────────────────────────────────────────── */
+    footer.tour-footer {
+      padding: 32px 28px 44px;
+      text-align: center;
+      font-size: 12.5px;
+      color: var(--ink-faint);
+      line-height: 1.7;
+      background: var(--paper);
+      border-top: 1px solid var(--border);
+    }
+    footer.tour-footer strong { color: var(--ink-soft); font-weight: 700; }
+    footer.tour-footer a { color: var(--brand-700); text-decoration: none; font-weight: 700; }
+    footer.tour-footer a:hover { text-decoration: underline; }
+
+    /* ─────────────────────────────────────────────────────────
+       REVEAL ON SCROLL
+       ───────────────────────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .8s cubic-bezier(.2, .8, .2, 1),
+                  transform .8s cubic-bezier(.2, .8, .2, 1);
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal.d1 { transition-delay: .08s; }
+    .reveal.d2 { transition-delay: .16s; }
+    .reveal.d3 { transition-delay: .24s; }
+    .reveal.d4 { transition-delay: .32s; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .reveal.visible { opacity: 1; transform: none; transition: none; }
+      .hero-mark, .hero-scroll-hint svg, .hero-eyebrow .dot { animation: none; }
+    }
+
+    @media print {
+      .topbar, .hero-scroll-hint { display: none; }
+      section.band { page-break-inside: avoid; padding: 40px 0; }
+      section.band.dark, .hero, .cta-band {
+        -webkit-print-color-adjust: exact; print-color-adjust: exact;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<!-- TOPBAR                                                        -->
+<!-- ──────────────────────────────────────────────────────────── -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="topbar-brand" href="/pitch/">
+      <img src="/paw_friend_icon_principal.svg" alt="Paw Friend" />
+      <span>Paw Friend<small>· Recorrido</small></span>
+    </a>
+    <a class="topbar-cta" href="https://pawfriend.cl" target="_blank" rel="noopener">
+      Abrir la app ↗
+    </a>
+  </div>
+</header>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<!-- HERO — cover cinematográfico                                  -->
+<!-- ──────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <span class="hero-eyebrow"><span class="dot" aria-hidden="true"></span>Un recorrido de 2 minutos</span>
+      <h1>La ficha médica de tu mascota,<br/><em>hecha en Chile.</em></h1>
+      <p class="hero-sub">Paw Friend es lo que un dueño de mascota necesita para dejar de olvidar vacunas, y lo que un veterinario necesita para dejar de vivir en WhatsApp. Gratis para dueños. Para siempre.</p>
+      <div class="hero-chips">
+        <span class="hero-chip">💛 100% gratis B2C</span>
+        <span class="hero-chip">📄 Ficha PDF + directorio público</span>
+        <span class="hero-chip">🇨🇱 SpA formal · RUT chileno</span>
+      </div>
+    </div>
+    <div class="hero-mark-wrap">
+      <div class="hero-mark">
+        <img src="/paw_friend_icon_principal.svg" alt="Paw Friend" />
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll-hint" aria-hidden="true">
+    <span>scroll</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+  </div>
+</section>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<!-- 1 · EL PROBLEMA (dark)                                        -->
+<!-- ──────────────────────────────────────────────────────────── -->
+<section class="band dark">
+  <div class="container">
+    <span class="eyebrow reveal">01 · Por qué existimos</span>
+    <h2 class="reveal">Chile ama a sus mascotas.<br/>Y aún así, las cuida con papel.</h2>
+    <p class="lead reveal d1" style="color:rgba(255,255,255,.88)">7 de cada 10 hogares tienen mascota, pero la información de su salud vive en libretas perdidas, WhatsApps que se borran y carnets que caducan en la guantera del auto. Cuando aparece una urgencia, nada está a mano.</p>
+
+    <div class="problem-grid">
+      <div class="problem-stat reveal">
+        <div class="problem-big">7 de 10</div>
+        <div class="problem-label">Hogares chilenos tienen al menos una mascota — el mercado existe y es masivo.</div>
+      </div>
+      <div class="problem-stat reveal d1">
+        <div class="problem-big">&lt; 15%</div>
+        <div class="problem-label">De ese universo tiene algún registro digital serio de salud. El resto vive en papel.</div>
+      </div>
+      <div class="problem-stat reveal d2">
+        <div class="problem-big">0 apps</div>
+        <div class="problem-label">Integran ficha médica + directorio público de vets + comunidad en una sola herramienta, hasta ahora.</div>
+      </div>
+    </div>
+
+    <blockquote class="problem-quote reveal d3">
+      "A Pepa la vacunaron hace 6 meses y no sé si ya le toca la siguiente. El carnet está en la guantera del auto."
+      <cite>— Paloma · dueña que probó la app · iPhone · 2 mascotas</cite>
+    </blockquote>
+  </div>
+</section>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<!-- 2 · LOS 4 PILARES                                              -->
+<!-- ──────────────────────────────────────────────────────────── -->
+<section class="band">
+  <div class="container">
+    <span class="eyebrow reveal">02 · La solución</span>
+    <h2 class="reveal">Cuatro piezas que se sostienen entre sí.</h2>
+    <p class="lead reveal d1">No es otra app de recordatorios. No es otro CRM para clínicas. Es el único producto chileno que une al dueño, al veterinario, al directorio público y a la comunidad bajo una sola plataforma — y lo regala al dueño.</p>
+
+    <div class="pillars">
+      <article class="pillar reveal" data-n="01">
+        <div class="pillar-ico"><img src="/paw-friend-assets/Icons%20logos/14_clinical_record.svg" alt=""/></div>
+        <h3>Ficha clínica + PDF</h3>
+        <p>Vacunas, consultas, alergias, microchip, peso. Descargable en PDF. Compartible por link seguro 30 días.</p>
+      </article>
+      <article class="pillar reveal d1" data-n="02">
+        <div class="pillar-ico"><img src="/paw-friend-assets/Icons%20logos/22_search.svg" alt=""/></div>
+        <h3>Directorio público de vets</h3>
+        <p>Indexado por Google. Precios claros por comuna. Reseñas con reserva real. Abierto sin login.</p>
+      </article>
+      <article class="pillar reveal d2" data-n="03">
+        <div class="pillar-ico"><img src="/paw-friend-assets/Icons%20logos/15_calendar.svg" alt=""/></div>
+        <h3>Agenda + recordatorios</h3>
+        <p>Reservas online vet-a-dueño. Google Calendar sync. Recordatorios de vacunas y antiparasitarios automáticos.</p>
+      </article>
+      <article class="pillar reveal d3" data-n="04">
+        <div class="pillar-ico"><img src="/paw-friend-assets/Icons%20logos/04_heart_paw.svg" alt=""/></div>
+        <h3>Comunidad + refugios</h3>
+        <p>Donantes de sangre, memorial, adopción, muro público de Paw Voices. Trazabilidad de aportes a refugios.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<!-- 3 · LA JOYA — PDF SHOWCASE                                    -->
+<!-- ──────────────────────────────────────────────────────────── -->
+<section class="band soft">
+  <div class="container">
+    <div class="jewel">
+      <div class="jewel-copy">
+        <span class="eyebrow-gold reveal">★ La joya de la corona</span>
+        <h2 class="jewel-h reveal d1">Un <em>PDF serio</em> que cualquier veterinario reconoce al instante.</h2>
+        <p class="lead reveal d2">El dueño abre la app, elige la mascota, y en 1 click tiene la ficha médica completa lista para llevar a cualquier clínica del país. Con portada, timeline, tablas y watermark institucional.</p>
+        <ul class="jewel-points">
+          <li class="reveal d3">Portada con foto, datos, microchip y vigencia.</li>
+          <li class="reveal d3">Timeline cronológico de eventos clínicos.</li>
+          <li class="reveal d4">Tablas separadas de vacunas, antiparasitarios y consultas.</li>
+          <li class="reveal d4">Link compartido que caduca a los 30 días.</li>
+        </ul>
+      </div>
+
+      <div class="pdf-mockup reveal d2" aria-label="Mockup del PDF de ficha médica">
+        <div class="pdf-ribbon">
+          <div class="pdf-ribbon-left">
+            <div class="ico"><img src="/paw-friend-assets/Icons%20logos/14_clinical_record.svg" alt=""/></div>
+            <div class="t">Ficha médica · Kai<small>pawfriend.cl · 2 páginas</small></div>
+          </div>
+          <div class="pdf-ribbon-right">PDF</div>
+        </div>
+
+        <div class="pdf-row">
+          <div class="pdf-field">
+            <div class="pdf-field-label">Especie · raza</div>
+            <div class="pdf-field-value">🐕 Pastor suizo</div>
+          </div>
+          <div class="pdf-field">
+            <div class="pdf-field-label">Edad · peso</div>
+            <div class="pdf-field-value">4 años · 32 kg</div>
+          </div>
+        </div>
+
+        <div class="pdf-chart">
+          <span class="pdf-chart-dot" aria-hidden="true"></span>
+          <div class="pdf-chart-bar"><span style="width:84%"></span></div>
+          <span>Vacunas al día · 84%</span>
+        </div>
+
+        <div class="pdf-timeline">
+          <div class="pdf-event">
+            <span class="pdf-event-dot" aria-hidden="true"></span>
+            <span class="pdf-event-title">Vacuna séxtuple · refuerzo anual</span>
+            <span class="pdf-event-date">15·03·2026</span>
+          </div>
+          <div class="pdf-event">
+            <span class="pdf-event-dot gold" aria-hidden="true"></span>
+            <span class="pdf-event-title">Antiparasitario interno</span>
+            <span class="pdf-event-date">02·03·2026</span>
+          </div>
+          <div class="pdf-event">
+            <span class="pdf-event-dot rose" aria-hidden="true"></span>
+            <span class="pdf-event-title">Consulta · chequeo de rutina</span>
+            <span class="pdf-event-date">18·02·2026</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<!-- 4 · FEATURES RÁPIDOS                                           -->
+<!-- ──────────────────────────────────────────────────────────── -->
+<section class="band">
+  <div class="container">
+    <span class="eyebrow reveal">03 · Qué más hay</span>
+    <h2 class="reveal">Seis features que ya están vivas.</h2>
+    <p class="lead reveal d1">No es roadmap. No es promesa. Todo esto está funcionando hoy en producción en web, iPhone y Android.</p>
+
+    <div class="features">
+      <article class="feature reveal">
+        <div class="feature-head">
+          <div class="feature-ico"><img src="/paw-friend-assets/Icons%20logos/22_search.svg" alt=""/></div>
+          <span class="feature-title">Escaneo OCR del carnet</span>
+        </div>
+        <p>Apuntas la cámara al carnet de vacunas de papel y Paw Friend extrae las dosis automáticamente.</p>
+        <span class="feature-badge">IA · viva</span>
+      </article>
+
+      <article class="feature reveal d1">
+        <div class="feature-head">
+          <div class="feature-ico"><img src="/paw-friend-assets/Icons%20logos/21_notification.svg" alt=""/></div>
+          <span class="feature-title">Recordatorios y cron</span>
+        </div>
+        <p>Vacunas, antiparasitarios y controles avisan solos. Se sincronizan con tu Google Calendar.</p>
+        <span class="feature-badge">Automático</span>
+      </article>
+
+      <article class="feature reveal d2">
+        <div class="feature-head">
+          <div class="feature-ico"><img src="/paw-friend-assets/Icons%20logos/30_star.svg" alt=""/></div>
+          <span class="feature-title">Paw Cards coleccionables</span>
+        </div>
+        <p>Cada mascota tiene una tarjeta única con QR público que lleva a su perfil — útil para placas y redes.</p>
+        <span class="feature-badge">Social</span>
+      </article>
+
+      <article class="feature reveal">
+        <div class="feature-head">
+          <div class="feature-ico"><img src="/paw-friend-assets/Icons%20logos/15_calendar.svg" alt=""/></div>
+          <span class="feature-title">Reserva online real</span>
+        </div>
+        <p>Reglas de disponibilidad, excepciones, multi-branch. Flow.cl como pasarela integrada.</p>
+        <span class="feature-badge">Booking V2</span>
+      </article>
+
+      <article class="feature reveal d1">
+        <div class="feature-head">
+          <div class="feature-ico"><img src="/paw-friend-assets/Icons%20logos/04_heart_paw.svg" alt=""/></div>
+          <span class="feature-title">Donaciones trazables</span>
+        </div>
+        <p>Cada aporte queda en un muro público con trazabilidad al refugio que lo recibe.</p>
+        <span class="feature-badge">Pública</span>
+      </article>
+
+      <article class="feature reveal d2">
+        <div class="feature-head">
+          <div class="feature-ico"><img src="/paw-friend-assets/Icons%20logos/19_mobile_app.svg" alt=""/></div>
+          <span class="feature-title">Apps mobile nativas</span>
+        </div>
+        <p>iOS y Android compilados con Capacitor 7. Mismo producto en web, iPhone y Android.</p>
+        <span class="feature-badge">3 plataformas</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<!-- 5 · CÓMO LO HACEMOS (dark + leverage)                         -->
+<!-- ──────────────────────────────────────────────────────────── -->
+<section class="band dark">
+  <div class="container">
+    <span class="eyebrow reveal">04 · Cómo lo estamos haciendo</span>
+    <h2 class="reveal">Una persona + IA, construyendo a velocidad de equipo.</h2>
+    <p class="lead reveal d1" style="color:rgba(255,255,255,.88)">Paw Friend es la prueba de que la inteligencia artificial no reemplaza al ingeniero — lo multiplica. Lo que a un equipo tradicional de cinco expertos le tomaría más de dos años, aquí se construyó en dos meses con un costo operacional por debajo de US$ 100 al mes.</p>
+
+    <div class="how-grid">
+      <div class="leverage-hero reveal d2">
+        <div class="leverage-big">15×</div>
+        <div class="leverage-label">La velocidad real a la que una persona con IA avanza frente a un equipo tradicional</div>
+        <div class="leverage-breakdown">
+          <div class="leverage-col">
+            <div class="n">320 h</div>
+            <div class="l">Tiempo humano total<br/>mar — abr 2026</div>
+          </div>
+          <div class="leverage-col">
+            <div class="n">~4.800 h</div>
+            <div class="l">Equivalente a 5 expertos<br/>trabajando 2 años</div>
+          </div>
+          <div class="leverage-col">
+            <div class="n">&lt; US$ 100</div>
+            <div class="l">Costo mensual de<br/>operación en producción</div>
+          </div>
+        </div>
+      </div>
+
+      <ul class="how-points">
+        <li class="how-point reveal d1">
+          <div class="how-point-n">1</div>
+          <div class="how-point-body">
+            <h4>Producto vivo en 3 plataformas</h4>
+            <p>Web en pawfriend.cl, app para iPhone y Android compiladas con Capacitor 7. El mismo código, los mismos datos.</p>
+          </div>
+        </li>
+        <li class="how-point reveal d2">
+          <div class="how-point-n">2</div>
+          <div class="how-point-body">
+            <h4>Infraestructura profesional</h4>
+            <p>Supabase con RLS estricto, 28 edge functions, Flow.cl para pagos, Sentry, telemetría y panel interno de auditoría diaria.</p>
+          </div>
+        </li>
+        <li class="how-point reveal d3">
+          <div class="how-point-n">3</div>
+          <div class="how-point-body">
+            <h4>Validado con usuarios reales</h4>
+            <p>Sofía (veterinaria) y Paloma (dueña) probaron en iPhone y Android desde el día uno. Cada feedback quedó documentado y aplicado.</p>
+          </div>
+        </li>
+        <li class="how-point reveal d4">
+          <div class="how-point-n">4</div>
+          <div class="how-point-body">
+            <h4>Sociedad formal</h4>
+            <p>SpA SUSAETA GARNHAM SOFTWARE ENGINEERING (RUT 78.328.659-9). Factura electrónica afecta IVA, compliance SII desde el día uno.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<!-- 6 · MODELO (6 motores compactos)                              -->
+<!-- ──────────────────────────────────────────────────────────── -->
+<section class="band soft">
+  <div class="container">
+    <span class="eyebrow reveal">05 · Cómo se sostiene</span>
+    <h2 class="reveal">Seis motores opcionales.<br/>Ninguno lo paga el dueño.</h2>
+    <p class="lead reveal d1">La app es gratis para el dueño de mascota. Para siempre. Lo que la sostiene viene de otros seis lados — todos transparentes, todos públicos en <code style="font-family:var(--mono);font-size:.88em;background:var(--brand-50);padding:2px 8px;border-radius:6px;color:var(--brand-700)">/paw-core</code>.</p>
+
+    <div class="motors">
+      <div class="motor reveal">
+        <div class="motor-emoji">💛</div>
+        <div class="motor-body">
+          <div class="motor-name">Donaciones</div>
+          <div class="motor-sub">Dueños que quieren aportar</div>
+        </div>
+        <span class="motor-owner">opt-in</span>
+      </div>
+      <div class="motor reveal d1">
+        <div class="motor-emoji">⭐</div>
+        <div class="motor-body">
+          <div class="motor-name">Paw Member</div>
+          <div class="motor-sub">$3.990/mes · badge + alianzas</div>
+        </div>
+        <span class="motor-owner">opt-in</span>
+      </div>
+      <div class="motor reveal d2">
+        <div class="motor-emoji">🩺</div>
+        <div class="motor-body">
+          <div class="motor-name">Vets individuales</div>
+          <div class="motor-sub">$0 / $9.900 / mes</div>
+        </div>
+        <span class="motor-owner">B2B</span>
+      </div>
+      <div class="motor reveal d2">
+        <div class="motor-emoji">🏥</div>
+        <div class="motor-body">
+          <div class="motor-name">Clínicas</div>
+          <div class="motor-sub">$19.900 / $29.900 / mes</div>
+        </div>
+        <span class="motor-owner">B2B</span>
+      </div>
+      <div class="motor reveal d3">
+        <div class="motor-emoji">🏢</div>
+        <div class="motor-body">
+          <div class="motor-name">Paw Companys</div>
+          <div class="motor-sub">Empresas sponsor con causa</div>
+        </div>
+        <span class="motor-owner">CSR</span>
+      </div>
+      <div class="motor reveal d3">
+        <div class="motor-emoji">🎙️</div>
+        <div class="motor-body">
+          <div class="motor-name">Paw Voices + Partners</div>
+          <div class="motor-sub">Creadores y barter</div>
+        </div>
+        <span class="motor-owner">sin $</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<!-- CTA FINAL                                                      -->
+<!-- ──────────────────────────────────────────────────────────── -->
+<section class="cta-band">
+  <div class="container">
+    <h2 class="reveal">Ahora que lo viste,<br/>elige por dónde entrar.</h2>
+    <p class="lead center reveal d1">Este recorrido es el brief general. Abajo tienes el deck específico de tu mundo — o puedes abrir la app ahora mismo y probarla tú.</p>
+
+    <div class="reveal d2" style="display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px">
+      <a href="https://pawfriend.cl/auth" target="_blank" rel="noopener" class="cta-main">
+        Crear mi cuenta gratis
+        <span class="arr" aria-hidden="true">→</span>
+      </a>
+      <a href="https://pawfriend.cl" target="_blank" rel="noopener" class="cta-secondary">
+        🐾 Explorar la app
+      </a>
+    </div>
+
+    <div class="decks-picker">
+      <span class="decks-picker-label">¿Vienes por algo específico? Entra directo a tu deck</span>
+      <a class="deck-link reveal" href="inversionistas.html">
+        <span class="deck-link-title">💼 Inversionistas</span>
+        <span class="deck-link-sub">CORFO · Angels · VC</span>
+      </a>
+      <a class="deck-link reveal d1" href="companys.html">
+        <span class="deck-link-title">🏢 Paw Companys</span>
+        <span class="deck-link-sub">Empresas sponsor</span>
+      </a>
+      <a class="deck-link reveal d2" href="partners.html">
+        <span class="deck-link-title">🛍️ Paw Partners</span>
+        <span class="deck-link-sub">Tiendas y servicios</span>
+      </a>
+      <a class="deck-link reveal d3" href="voices.html">
+        <span class="deck-link-title">🎙️ Paw Voices</span>
+        <span class="deck-link-sub">Creadores peludos</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ──────────────────────────────────────────────────────────── -->
+<!-- FOOTER                                                         -->
+<!-- ──────────────────────────────────────────────────────────── -->
+<footer class="tour-footer">
+  <strong>Paw Friend</strong> · Hecho en Chile, a mano, con inteligencia artificial.<br/>
+  SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9 · Luis Pasteur 6111 Dp 201, Vitacura<br/>
+  <a href="https://pawfriend.cl">pawfriend.cl</a> · <a href="mailto:pawfriendcl@gmail.com">pawfriendcl@gmail.com</a> · Versión 2026-04-19
+</footer>
+
+<script>
+  // Reveal on scroll con IntersectionObserver
+  (function () {
+    const targets = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) {
+      targets.forEach(el => el.classList.add('visible'));
+      return;
+    }
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.14, rootMargin: '0px 0px -6% 0px' });
+    targets.forEach(el => io.observe(el));
+  })();
+</script>
+
+</body>
+</html>

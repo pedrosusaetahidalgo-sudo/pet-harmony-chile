@@ -50,8 +50,9 @@
     }
 
     *{margin:0;padding:0;box-sizing:border-box}
-    html{scroll-behavior:smooth;scroll-snap-type:y mandatory}
-    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+    html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+    @media(max-width:900px),(max-height:720px){html{scroll-snap-type:none}}
+    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.55;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
 
     /* ── Progress bar ── */
     .progress{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(147,51,234,.08);z-index:200}
@@ -64,7 +65,9 @@
     .topbar-meta{display:flex;gap:18px;align-items:center;color:var(--ink-soft);font-weight:500}
     .topbar-meta .chip{padding:4px 10px;background:var(--brand-50);border:1px solid var(--border);border-radius:999px;font-size:12px}
     .topbar-counter{font-variant-numeric:tabular-nums;font-weight:700;color:var(--brand-700)}
-    @media(max-width:900px){.topbar-meta .chip{display:none}.topbar{padding:0 16px}}
+    .topbar-tour{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:700;color:var(--brand-700);background:linear-gradient(135deg,#fef3c7,#fde68a);border:1px solid rgba(234,179,8,.35);text-decoration:none;transition:transform .15s,box-shadow .15s}
+    .topbar-tour:hover{transform:translateY(-1px);box-shadow:0 8px 20px -6px rgba(234,179,8,.5)}
+    @media(max-width:900px){.topbar-meta .chip{display:none}.topbar{padding:0 16px}.topbar-tour{padding:4px 9px;font-size:11px}}
 
     /* ── Side nav ── */
     .sidenav{position:fixed;top:50%;right:20px;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:150}
@@ -82,7 +85,8 @@
     @media(max-width:700px){.kbhint{display:none}}
 
     /* ── Slides ── */
-    .slide{min-height:100vh;padding:var(--slide-py) var(--slide-px);padding-top:calc(var(--slide-py) + 55px);display:flex;flex-direction:column;justify-content:center;scroll-snap-align:start;scroll-snap-stop:always;position:relative;overflow:hidden}
+    .slide{min-height:100vh;min-height:100dvh;padding:var(--slide-py) var(--slide-px);padding-top:calc(var(--slide-py) + 55px);padding-bottom:calc(var(--slide-py) + 24px);display:flex;flex-direction:column;justify-content:center;scroll-snap-align:start;scroll-snap-stop:normal;position:relative;overflow:visible}
+    @media(max-height:820px){.slide{justify-content:flex-start;min-height:auto;padding-top:calc(var(--slide-py) + 72px)}}
     .slide-num{position:absolute;top:70px;right:32px;font-size:12px;font-weight:700;color:var(--ink-soft);letter-spacing:.12em;opacity:.6;font-variant-numeric:tabular-nums}
     .slide.dark .slide-num{color:rgba(255,255,255,.6)}
     .container{max-width:1160px;margin:0 auto;width:100%}
@@ -118,8 +122,9 @@
     @media(max-width:800px){.grid-2,.grid-3{grid-template-columns:1fr}}
     .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px 22px;box-shadow:var(--card-shadow);transition:transform .2s,box-shadow .2s;position:relative}
     .card:hover{transform:translateY(-3px);box-shadow:var(--card-shadow-hover)}
-    .card .ico{width:48px;height:48px;border-radius:12px;background:var(--brand-100);color:var(--brand-700);display:inline-flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;margin-bottom:14px;overflow:hidden}
-    .card .ico img{width:60%;height:60%;object-fit:contain;display:block}
+    .card .ico{width:52px;height:52px;border-radius:14px;background:transparent;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;overflow:hidden;filter:drop-shadow(0 6px 14px rgba(147,51,234,.18))}
+    .card .ico img{width:100%;height:100%;object-fit:contain;display:block}
+    .slide.dark .card .ico,.slide.csr .card .ico{filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))}
     .card p{font-size:14.5px;line-height:1.5}
     .slide.dark .card,.slide.csr .card{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);backdrop-filter:blur(10px)}
     .slide.dark .card h3,.slide.csr .card h3{color:#fff}
@@ -265,7 +270,7 @@
     <span>Paw Friend × Paw Companys</span>
   </div>
   <div class="topbar-meta">
-    <span class="chip">Sponsorship con causa</span>
+    <a class="topbar-tour" href="recorrido.html">★ Recorrido general</a>
     <span class="chip">Bronze · Silver · Gold</span>
     <span class="topbar-counter"><span id="curSlide">1</span>/10</span>
   </div>
