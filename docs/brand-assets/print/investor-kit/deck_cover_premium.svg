@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080" role="img" aria-label="Investor deck cover premium">
+  <title>Investor Deck Cover · Paw Friend premium</title>
+  <desc>Cover 1920×1080 para decks investor. Gradient cinematográfico purple→fuchsia→gold con mark central flotante.</desc>
+  <defs>
+    <radialGradient id="inv-bg-1" cx="0.25" cy="0.3" r="0.55">
+      <stop offset="0" stop-color="#9333ea" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#9333ea" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="inv-bg-2" cx="0.8" cy="0.25" r="0.45">
+      <stop offset="0" stop-color="#eab308" stop-opacity=".7"/>
+      <stop offset="1" stop-color="#eab308" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="inv-bg-3" cx="0.7" cy="0.85" r="0.5">
+      <stop offset="0" stop-color="#ec4899" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#ec4899" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="inv-base" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1a0a2e"/>
+      <stop offset="1" stop-color="#3b0e6e"/>
+    </linearGradient>
+    <clipPath id="inv-sq">
+      <path d="M 960 350 C 1110 350, 1185 425, 1185 575 C 1185 725, 1110 800, 960 800 C 810 800, 735 725, 735 575 C 735 425, 810 350, 960 350 Z"/>
+    </clipPath>
+    <mask id="inv-heart">
+      <rect width="1920" height="1080" fill="white"/>
+      <path d="M 960 790 C 948 775, 928 760, 916 745 C 904 730, 908 708, 928 703 C 942 700, 954 708, 960 718 C 966 708, 978 700, 992 703 C 1012 708, 1016 730, 1004 745 C 992 760, 972 775, 960 790 Z" fill="black"/>
+    </mask>
+    <linearGradient id="inv-mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9333ea"/>
+      <stop offset="0.55" stop-color="#d946ef"/>
+      <stop offset="1" stop-color="#eab308"/>
+    </linearGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#inv-base)"/>
+  <rect width="1920" height="1080" fill="url(#inv-bg-1)"/>
+  <rect width="1920" height="1080" fill="url(#inv-bg-2)"/>
+  <rect width="1920" height="1080" fill="url(#inv-bg-3)"/>
+  <!-- Dot pattern overlay -->
+  <g fill="rgba(255,255,255,0.04)">
+    <circle cx="200" cy="200" r="2"/><circle cx="500" cy="150" r="2"/><circle cx="800" cy="220" r="2"/>
+    <circle cx="1200" cy="180" r="2"/><circle cx="1500" cy="240" r="2"/><circle cx="1700" cy="160" r="2"/>
+    <circle cx="300" cy="480" r="2"/><circle cx="600" cy="520" r="2"/><circle cx="1300" cy="460" r="2"/>
+    <circle cx="1600" cy="500" r="2"/><circle cx="150" cy="780" r="2"/><circle cx="450" cy="820" r="2"/>
+    <circle cx="1450" cy="780" r="2"/><circle cx="1750" cy="820" r="2"/>
+  </g>
+  <!-- Logo mark floating -->
+  <path d="M 960 350 C 1110 350, 1185 425, 1185 575 C 1185 725, 1110 800, 960 800 C 810 800, 735 725, 735 575 C 735 425, 810 350, 960 350 Z" fill="url(#inv-mark)" filter="url(#inv-shadow)"/>
+  <g clip-path="url(#inv-sq)">
+    <ellipse cx="960" cy="645" rx="115" ry="100" fill="#ffffff" mask="url(#inv-heart)"/>
+    <ellipse cx="858" cy="525" rx="40" ry="50" transform="rotate(-22 858 525)" fill="#ffffff"/>
+    <ellipse cx="925" cy="460" rx="37" ry="46" transform="rotate(-10 925 460)" fill="#ffffff"/>
+    <ellipse cx="995" cy="460" rx="37" ry="46" transform="rotate(10 995 460)" fill="#ffffff"/>
+    <ellipse cx="1062" cy="525" rx="40" ry="50" transform="rotate(22 1062 525)" fill="#ffffff"/>
+  </g>
+  <!-- Eyebrow top -->
+  <g transform="translate(80 80)">
+    <rect x="0" y="0" width="360" height="54" rx="27" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+    <circle cx="28" cy="27" r="8" fill="#eab308"/>
+    <text x="52" y="34" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="14" fill="#ffffff" letter-spacing="4">PAW FRIEND · HECHO EN CHILE</text>
+  </g>
+  <!-- Title -->
+  <text x="80" y="920" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="120" fill="#ffffff" letter-spacing="-4">La ficha médica</text>
+  <text x="80" y="1050" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="120" letter-spacing="-4">
+    <tspan fill="#ffffff">de tu mascota,</tspan>
+    <tspan fill="#eab308"> en PDF.</tspan>
+  </text>
+  <!-- Footer -->
+  <g transform="translate(1840 1020) scale(-1 1)">
+    <text x="0" y="0" font-family="'Plus Jakarta Sans',sans-serif" font-weight="600" font-size="16" fill="rgba(255,255,255,0.65)" letter-spacing="3" text-anchor="start" transform="scale(-1 1)">pawfriend.cl · Deck investor · 2026</text>
+  </g>
+</svg>

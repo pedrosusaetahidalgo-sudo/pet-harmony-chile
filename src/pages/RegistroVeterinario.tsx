@@ -358,7 +358,9 @@ function StepType({
   return (
     <div className="space-y-4">
       <div className="text-center mb-2">
-        <h1 className="text-2xl font-bold mb-1">¿Qué tipo de profesional eres?</h1>
+        <h1 className="font-display font-semibold text-3xl md:text-4xl mb-1 tracking-tight">
+          ¿Qué tipo de profesional eres?
+        </h1>
         <p className="text-sm text-muted-foreground">Elige el que mejor te describe.</p>
       </div>
 

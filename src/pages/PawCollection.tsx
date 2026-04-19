@@ -323,9 +323,9 @@ const PawCollection = () => {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold flex items-center gap-2">
+            <h1 className="font-display font-semibold text-3xl tracking-tight flex items-center gap-2">
               <Trophy className="h-6 w-6 text-purple-500" />
-              Mi Coleccion
+              Mi Colección
             </h1>
             <p className="text-sm text-muted-foreground">Tus Paw Cards y las que has escaneado</p>
           </div>

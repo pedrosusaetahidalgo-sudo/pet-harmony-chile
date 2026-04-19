@@ -66,7 +66,9 @@ export default function OnboardingVetMinimal() {
                 <div className="mx-auto w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center mb-3">
                   <User className="h-7 w-7 text-purple-600" />
                 </div>
-                <h1 className="text-2xl font-bold mb-1">Completa tu perfil profesional</h1>
+                <h1 className="font-display font-semibold text-3xl md:text-4xl mb-1 tracking-tight">
+                  Completa tu perfil profesional
+                </h1>
                 <p className="text-sm text-muted-foreground">
                   Tu perfil es tu carta de presentacion ante los duenos de mascotas.
                 </p>
@@ -144,7 +146,9 @@ export default function OnboardingVetMinimal() {
                 <div className="mx-auto w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center mb-3">
                   <Calendar className="h-7 w-7 text-emerald-600" />
                 </div>
-                <h1 className="text-2xl font-bold mb-1">Configura tu disponibilidad</h1>
+                <h1 className="font-display font-semibold text-3xl md:text-4xl mb-1 tracking-tight">
+                  Configura tu disponibilidad
+                </h1>
                 <p className="text-sm text-muted-foreground">
                   Los duenos podran agendar contigo directamente desde la app.
                 </p>
@@ -218,7 +222,9 @@ export default function OnboardingVetMinimal() {
                 <div className="mx-auto w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center mb-3">
                   <Users className="h-7 w-7 text-blue-600" />
                 </div>
-                <h1 className="text-2xl font-bold mb-1">Tu primer paciente</h1>
+                <h1 className="font-display font-semibold text-3xl md:text-4xl mb-1 tracking-tight">
+                  Tu primer paciente
+                </h1>
                 <p className="text-sm text-muted-foreground">
                   Asi es como los duenos llegan a ti y como puedes crear pacientes.
                 </p>

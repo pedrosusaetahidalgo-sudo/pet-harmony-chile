@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080" role="img" aria-label="WhatsApp catalog — Ficha PDF">
+  <title>WhatsApp Business Catalog · Ficha PDF</title>
+  <desc>Tarjeta de catálogo 1:1 para WhatsApp Business: producto "Ficha médica PDF".</desc>
+  <defs>
+    <linearGradient id="wa-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#faf5ff"/>
+      <stop offset="1" stop-color="#fef3c7"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#wa-bg)"/>
+  <!-- Header brand bar -->
+  <rect x="60" y="80" width="260" height="64" rx="32" fill="#ffffff" stroke="#e9d5ff" stroke-width="2"/>
+  <g transform="translate(92 94)">
+    <rect x="0" y="0" width="36" height="36" rx="9" fill="#9333ea"/>
+    <ellipse cx="18" cy="24" rx="8" ry="6" fill="#ffffff"/>
+    <ellipse cx="10" cy="14" rx="3" ry="4" transform="rotate(-18 10 14)" fill="#ffffff"/>
+    <ellipse cx="14" cy="9" rx="2.5" ry="3" transform="rotate(-6 14 9)" fill="#ffffff"/>
+    <ellipse cx="22" cy="9" rx="2.5" ry="3" transform="rotate(6 22 9)" fill="#ffffff"/>
+    <ellipse cx="26" cy="14" rx="3" ry="4" transform="rotate(18 26 14)" fill="#ffffff"/>
+  </g>
+  <text x="145" y="124" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="18" fill="#1a102b" letter-spacing="-0.3">Paw Friend</text>
+  <!-- Price badge top-right -->
+  <rect x="840" y="80" width="180" height="64" rx="32" fill="#10b981"/>
+  <text x="930" y="123" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="24" fill="#ffffff">GRATIS</text>
+  <!-- Product hero -->
+  <rect x="140" y="220" width="800" height="520" rx="40" fill="#ffffff" stroke="#e9d5ff" stroke-width="2"/>
+  <!-- PDF mockup -->
+  <g transform="translate(540 480)">
+    <rect x="-160" y="-220" width="320" height="420" rx="16" fill="#faf5ff" stroke="#9333ea" stroke-width="3"/>
+    <path d="M100 -220 L160 -160 L100 -160 Z" fill="#e9d5ff"/>
+    <rect x="-130" y="-190" width="180" height="10" rx="5" fill="#9333ea"/>
+    <circle cx="-90" cy="-110" r="35" fill="#9333ea"/>
+    <ellipse cx="-90" cy="-96" rx="18" ry="14" fill="#ffffff"/>
+    <ellipse cx="-114" cy="-128" rx="7" ry="10" transform="rotate(-18 -114 -128)" fill="#ffffff"/>
+    <ellipse cx="-100" cy="-142" rx="6" ry="8" transform="rotate(-6 -100 -142)" fill="#ffffff"/>
+    <ellipse cx="-80" cy="-142" rx="6" ry="8" transform="rotate(6 -80 -142)" fill="#ffffff"/>
+    <ellipse cx="-66" cy="-128" rx="7" ry="10" transform="rotate(18 -66 -128)" fill="#ffffff"/>
+    <rect x="-40" y="-130" width="175" height="10" rx="5" fill="#9333ea" opacity=".5"/>
+    <rect x="-40" y="-110" width="130" height="7" rx="3.5" fill="#4b3b66" opacity=".4"/>
+    <rect x="-40" y="-95" width="155" height="7" rx="3.5" fill="#4b3b66" opacity=".4"/>
+    <rect x="-140" y="-50" width="300" height="52" rx="14" fill="#ecfdf5" stroke="#10b981" stroke-width="2"/>
+    <circle cx="-108" cy="-24" r="14" fill="#10b981"/>
+    <path d="M-116 -24 L-112 -18 L-100 -32" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <rect x="-84" y="-32" width="220" height="8" rx="4" fill="#047857" opacity=".7"/>
+    <rect x="-84" y="-16" width="180" height="8" rx="4" fill="#047857" opacity=".5"/>
+    <rect x="-140" y="20" width="300" height="52" rx="14" fill="#fef3c7" stroke="#eab308" stroke-width="2"/>
+    <circle cx="-108" cy="46" r="14" fill="#eab308"/>
+    <rect x="-84" y="38" width="220" height="8" rx="4" fill="#b45309" opacity=".7"/>
+    <rect x="-84" y="54" width="160" height="8" rx="4" fill="#b45309" opacity=".5"/>
+    <rect x="-100" y="100" width="200" height="60" rx="30" fill="#9333ea"/>
+    <text x="0" y="140" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="20" fill="#ffffff">DESCARGAR PDF</text>
+  </g>
+  <!-- Title + desc -->
+  <text x="540" y="830" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="62" fill="#1a102b" letter-spacing="-1.5">Ficha médica PDF</text>
+  <text x="540" y="900" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="500" font-size="28" fill="#4b3b66">La llevas al vet en 1 click.</text>
+  <!-- CTA -->
+  <rect x="290" y="960" width="500" height="80" rx="40" fill="#9333ea"/>
+  <text x="540" y="1013" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="28" fill="#ffffff">Crear la mía gratis</text>
+</svg>

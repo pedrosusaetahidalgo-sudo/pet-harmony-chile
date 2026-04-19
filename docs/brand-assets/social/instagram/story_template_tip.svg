@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920" role="img" aria-label="Instagram story template — Tip">
+  <title>IG Story · Tip de salud peluda</title>
+  <desc>Template 1080×1920 portrait para stories IG. Safe zones: top 220px, bottom 250px libres.</desc>
+  <defs>
+    <linearGradient id="ig-st-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a1046"/>
+      <stop offset="0.4" stop-color="#9333ea"/>
+      <stop offset="1" stop-color="#ec4899"/>
+    </linearGradient>
+    <radialGradient id="ig-st-glow" cx="0.5" cy="0.4" r="0.5">
+      <stop offset="0" stop-color="#eab308" stop-opacity=".35"/>
+      <stop offset="1" stop-color="#eab308" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#ig-st-bg)"/>
+  <rect width="1080" height="1920" fill="url(#ig-st-glow)"/>
+  <!-- Safe zone marker -->
+  <line x1="0" y1="220" x2="1080" y2="220" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="8,8"/>
+  <line x1="0" y1="1670" x2="1080" y2="1670" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="8,8"/>
+  <!-- Brand watermark top -->
+  <g transform="translate(540 340)" opacity=".9">
+    <rect x="-80" y="-28" width="160" height="56" rx="28" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+    <text x="0" y="7" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="15" fill="#ffffff" letter-spacing="4">PAW FRIEND</text>
+  </g>
+  <!-- Eyebrow -->
+  <text x="540" y="440" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="22" fill="#fde68a" letter-spacing="6">TIP DEL DÍA</text>
+  <!-- Headline -->
+  <text x="540" y="580" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="92" fill="#ffffff" letter-spacing="-2">Vacunas al día</text>
+  <text x="540" y="690" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="92" fill="#ffffff" letter-spacing="-2">sin pensar.</text>
+  <!-- Body card -->
+  <rect x="120" y="800" width="840" height="520" rx="32" fill="rgba(255,255,255,0.95)"/>
+  <!-- Body content -->
+  <g transform="translate(180 870)">
+    <circle cx="32" cy="32" r="32" fill="#f3e8ff"/>
+    <path d="M20 32 L28 40 L44 24" stroke="#9333ea" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="85" y="40" font-family="'Fredoka',sans-serif" font-weight="600" font-size="32" fill="#1a102b">Paw Friend te avisa.</text>
+  </g>
+  <g transform="translate(180 970)">
+    <circle cx="32" cy="32" r="32" fill="#fef3c7"/>
+    <circle cx="32" cy="32" r="14" fill="none" stroke="#eab308" stroke-width="4"/>
+    <circle cx="32" cy="32" r="4" fill="#eab308"/>
+    <text x="85" y="40" font-family="'Fredoka',sans-serif" font-weight="600" font-size="32" fill="#1a102b">En su fecha exacta.</text>
+  </g>
+  <g transform="translate(180 1070)">
+    <circle cx="32" cy="32" r="32" fill="#ecfdf5"/>
+    <path d="M20 28 Q32 20 44 28" stroke="#10b981" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <path d="M20 38 Q32 46 44 38" stroke="#10b981" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <text x="85" y="40" font-family="'Fredoka',sans-serif" font-weight="600" font-size="32" fill="#1a102b">Sincronizado con Google Cal.</text>
+  </g>
+  <rect x="180" y="1180" width="720" height="100" rx="50" fill="#9333ea"/>
+  <text x="540" y="1245" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="30" fill="#ffffff">Crear mi ficha gratis</text>
+  <!-- Swipe up hint -->
+  <text x="540" y="1590" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="700" font-size="26" fill="rgba(255,255,255,0.85)" letter-spacing="3">pawfriend.cl</text>
+  <path d="M540 1620 L540 1650 M530 1630 L540 1620 L550 1630" stroke="rgba(255,255,255,0.7)" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

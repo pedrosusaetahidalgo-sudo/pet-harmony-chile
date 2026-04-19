@@ -1,8 +1,8 @@
-import { ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft } from "@/lib/icons";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from '@/lib/icons';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface PageHeaderProps {
   title: string;
@@ -46,11 +46,11 @@ export function PageHeader({
   return (
     <header
       className={cn(
-        "sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border/60",
-        "px-3 py-2 md:px-4 md:py-3",
+        'sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border/60',
+        'px-3 py-2 md:px-4 md:py-3',
         className
       )}
-      style={{ paddingTop: "calc(var(--safe-area-top) + 0.5rem)" }}
+      style={{ paddingTop: 'calc(var(--safe-area-top) + 0.5rem)' }}
     >
       <div className="flex items-center gap-2 min-w-0">
         {back && (
@@ -65,7 +65,7 @@ export function PageHeader({
           </Button>
         )}
         <div className="flex-1 min-w-0">
-          <h1 className="text-base md:text-lg font-semibold truncate leading-tight">
+          <h1 className="font-display font-semibold text-base md:text-lg truncate leading-tight tracking-tight">
             {title}
           </h1>
           {subtitle && (
@@ -74,9 +74,7 @@ export function PageHeader({
             </p>
           )}
         </div>
-        {actions && (
-          <div className="flex-shrink-0 flex items-center gap-1">{actions}</div>
-        )}
+        {actions && <div className="flex-shrink-0 flex items-center gap-1">{actions}</div>}
       </div>
       {children && <div className="mt-2">{children}</div>}
     </header>
