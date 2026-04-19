@@ -176,6 +176,7 @@ export const FOOTER = {
       title: 'Sobre Paw Friend',
       links: [
         { label: 'Paw Core (visión)', href: '/paw-core' },
+        { label: 'Para inversionistas', href: '/pitch/recorrido.html' },
         { label: 'Preguntas frecuentes', href: '/faq' },
         { label: 'Términos', href: '/terms' },
         { label: 'Privacidad', href: '/privacy' },

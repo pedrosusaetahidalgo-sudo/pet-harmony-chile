@@ -51,16 +51,33 @@ export function RichFooter() {
                   {col.title}
                 </h4>
                 <ul className="mt-4 space-y-2.5">
-                  {col.links.map((link) => (
-                    <li key={link.href}>
-                      <Link
-                        to={link.href}
-                        className="text-sm text-muted-foreground transition-colors hover:text-primary"
-                      >
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
+                  {col.links.map((link) => {
+                    // Los href que apuntan a HTML estaticos (public/pitch/*.html)
+                    // o URLs absolutas no pueden usar react-router <Link> —
+                    // cae como ruta no encontrada. Se renderizan como <a>.
+                    const isExternal = link.href.endsWith('.html') || link.href.startsWith('http');
+                    return (
+                      <li key={link.href}>
+                        {isExternal ? (
+                          <a
+                            href={link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                          >
+                            {link.label}
+                          </a>
+                        ) : (
+                          <Link
+                            to={link.href}
+                            className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                          >
+                            {link.label}
+                          </Link>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </nav>
             ))}
