@@ -607,24 +607,25 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
+                {/* /donaciones — página pública. Donaciones.tsx ya redirige a /auth
+                    si el user anónimo hace click en donar. El resto (muralla,
+                    transparencia, Paw Companys grid) se lee sin login. */}
                 <Route
                   path="/donaciones"
                   element={
-                    <ProtectedRoute>
-                      <AppLayout>
-                        <Donaciones />
-                      </AppLayout>
-                    </ProtectedRoute>
+                    <PublicWithLayoutIfAuth>
+                      <Donaciones />
+                    </PublicWithLayoutIfAuth>
                   }
                 />
+                {/* /paw-core — página pública estratégica. Contenido 100% estático
+                    (misión, visión, valores, modelo). No requiere user data. */}
                 <Route
                   path="/paw-core"
                   element={
-                    <ProtectedRoute>
-                      <AppLayout>
-                        <PawCore />
-                      </AppLayout>
-                    </ProtectedRoute>
+                    <PublicWithLayoutIfAuth>
+                      <PawCore />
+                    </PublicWithLayoutIfAuth>
                   }
                 />
                 <Route
