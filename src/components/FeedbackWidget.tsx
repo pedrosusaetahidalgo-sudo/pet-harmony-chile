@@ -24,7 +24,12 @@ import {
   Star,
   Sparkles,
   PawPrint,
+  HelpCircle,
+  Ban,
+  PartyPopper,
+  CreditCard,
 } from '@/lib/icons';
+import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -62,7 +67,8 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
 
 const WOULD_PAY_OPTIONS: {
   value: 'yes' | 'maybe' | 'no';
-  emoji: string;
+  icon: LucideIcon;
+  iconColor: string;
   label: string;
   sub: string;
   bg: string;
@@ -70,15 +76,17 @@ const WOULD_PAY_OPTIONS: {
 }[] = [
   {
     value: 'yes',
-    emoji: '💛',
-    label: 'Si, la pagaria',
+    icon: Heart,
+    iconColor: 'text-emerald-600 fill-emerald-500',
+    label: 'Sí, la pagaría',
     sub: 'La encuentro imprescindible',
     bg: 'from-emerald-50 to-emerald-100 border-emerald-200',
     ring: 'ring-emerald-400',
   },
   {
     value: 'maybe',
-    emoji: '🤔',
+    icon: HelpCircle,
+    iconColor: 'text-amber-600',
     label: 'Tal vez',
     sub: 'Depende del precio o las features',
     bg: 'from-amber-50 to-amber-100 border-amber-200',
@@ -86,7 +94,8 @@ const WOULD_PAY_OPTIONS: {
   },
   {
     value: 'no',
-    emoji: '🙅',
+    icon: Ban,
+    iconColor: 'text-rose-600',
     label: 'No por ahora',
     sub: 'Prefiero que siga gratis',
     bg: 'from-rose-50 to-rose-100 border-rose-200',
@@ -345,12 +354,22 @@ export function FeedbackWidget() {
                   })}
                 </div>
                 {ratingValue != null && (
-                  <p className="text-xs text-center text-muted-foreground">
-                    {ratingValue === 5 && '¡Nos encanta! 🎉'}
-                    {ratingValue === 4 && 'Nos alegra que te guste 💜'}
+                  <p className="text-xs text-center text-muted-foreground inline-flex items-center justify-center gap-1.5 w-full">
+                    {ratingValue === 5 && (
+                      <>
+                        <PartyPopper className="h-3.5 w-3.5 text-amber-500" />
+                        ¡Nos encanta!
+                      </>
+                    )}
+                    {ratingValue === 4 && (
+                      <>
+                        <Heart className="h-3.5 w-3.5 text-violet-500 fill-violet-500" />
+                        Nos alegra que te guste
+                      </>
+                    )}
                     {ratingValue === 3 && 'Vamos a seguir mejorando'}
                     {ratingValue === 2 && 'Gracias por la honestidad'}
-                    {ratingValue === 1 && 'Perdon, queremos mejorar'}
+                    {ratingValue === 1 && 'Perdón, queremos mejorar'}
                   </p>
                 )}
               </div>
@@ -359,15 +378,17 @@ export function FeedbackWidget() {
               <div className="space-y-2">
                 <div className="rounded-xl border-2 border-dashed border-indigo-200 dark:border-indigo-900 bg-gradient-to-br from-indigo-50/60 to-purple-50/60 dark:from-indigo-950/40 dark:to-purple-950/40 p-3">
                   <p className="text-sm font-semibold text-center text-indigo-700 dark:text-indigo-300 flex items-center justify-center gap-1.5">
-                    💳 ¿Pagarias por esta app?
+                    <CreditCard className="h-4 w-4" />
+                    ¿Pagarías por esta app?
                   </p>
                   <p className="text-[11px] text-center text-muted-foreground mt-0.5">
-                    Tu respuesta nos ayuda a decidir que features priorizar
+                    Tu respuesta nos ayuda a decidir qué features priorizar
                   </p>
                 </div>
                 <div className="grid grid-cols-3 gap-2">
                   {WOULD_PAY_OPTIONS.map((opt) => {
                     const selected = wouldPayValue === opt.value;
+                    const Icon = opt.icon;
                     return (
                       <button
                         key={opt.value}
@@ -381,9 +402,7 @@ export function FeedbackWidget() {
                             : 'hover:scale-[1.02] opacity-90 hover:opacity-100'
                         )}
                       >
-                        <span className="text-2xl leading-none" aria-hidden>
-                          {opt.emoji}
-                        </span>
+                        <Icon className={cn('h-6 w-6', opt.iconColor)} aria-hidden />
                         <span className="text-xs font-semibold text-foreground">{opt.label}</span>
                         <span className="text-[10px] text-muted-foreground leading-tight">
                           {opt.sub}

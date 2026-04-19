@@ -242,7 +242,9 @@ export function PetHeader({ pet }: { pet: PetData }) {
           <div className="flex-1 min-w-0 space-y-3">
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-2xl font-bold">{pet.name}</h1>
+                <h1 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">
+                  {pet.name}
+                </h1>
                 {getSpeciesIcon(pet.species)}
               </div>
               <p className="text-muted-foreground text-sm">

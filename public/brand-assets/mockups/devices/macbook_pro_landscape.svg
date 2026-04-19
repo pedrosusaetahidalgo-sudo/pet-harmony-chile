@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000" role="img" aria-label="MacBook Pro landscape mockup">
+  <title>MacBook Pro 14" · Silver</title>
+  <desc>Mockup vectorial de MacBook Pro open laptop. Screen placeholder editable.</desc>
+  <defs>
+    <linearGradient id="mbp-screen-frame" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a2a2f"/>
+      <stop offset="1" stop-color="#0a0a0e"/>
+    </linearGradient>
+    <linearGradient id="mbp-base" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e5e5ea"/>
+      <stop offset="0.5" stop-color="#c7c7cc"/>
+      <stop offset="1" stop-color="#8e8e93"/>
+    </linearGradient>
+    <linearGradient id="mbp-hinge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#aeaeb2"/>
+      <stop offset="1" stop-color="#636366"/>
+    </linearGradient>
+  </defs>
+  <!-- Laptop base (deck) -->
+  <path d="M 100 820 L 1500 820 L 1560 880 L 40 880 Z" fill="url(#mbp-base)"/>
+  <!-- Trackpad hint -->
+  <rect x="600" y="835" width="400" height="8" rx="4" fill="#8e8e93" opacity=".4"/>
+  <!-- Hinge -->
+  <rect x="150" y="810" width="1300" height="14" fill="url(#mbp-hinge)"/>
+  <!-- Screen outer frame -->
+  <rect x="150" y="80" width="1300" height="740" rx="14" fill="url(#mbp-screen-frame)"/>
+  <!-- Inner screen bezel -->
+  <rect x="164" y="94" width="1272" height="708" rx="6" fill="#0a0a0e"/>
+  <!-- Notch (MBP 14+) -->
+  <rect x="740" y="80" width="120" height="22" rx="4" fill="#0a0a0e"/>
+  <!-- Screen content placeholder -->
+  <rect x="168" y="120" width="1264" height="678" rx="6" fill="#faf5ff" stroke="#9333ea" stroke-width="2" stroke-dasharray="10,8" opacity=".8"/>
+  <text x="800" y="450" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="28" fill="#9333ea" letter-spacing="5">SCREENSHOT AQUÍ</text>
+  <text x="800" y="490" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="500" font-size="18" fill="#9333ea" opacity=".7">2880 × 1800 · MacBook Pro 14"</text>
+  <!-- Apple logo (front, slightly embossed) -->
+  <ellipse cx="800" cy="460" rx="40" ry="45" fill="#c7c7cc" opacity=".08"/>
+  <!-- Camera on notch -->
+  <circle cx="800" cy="91" r="4" fill="#1a1a22"/>
+  <circle cx="800" cy="91" r="2" fill="#0a0a0e"/>
+  <!-- Shadow -->
+  <ellipse cx="800" cy="900" rx="760" ry="14" fill="#000000" opacity=".3"/>
+</svg>

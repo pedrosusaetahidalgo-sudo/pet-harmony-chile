@@ -300,8 +300,8 @@ export default function ProDashboard() {
         {/* Header */}
         <div className="flex items-center justify-between gap-3 flex-wrap">
           <div>
-            <h1 className="text-xl font-bold flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-teal-600" />
+            <h1 className="font-display font-semibold text-2xl md:text-3xl tracking-tight flex items-center gap-2">
+              <BarChart3 className="h-6 w-6 text-teal-600" />
               Panel Pro
             </h1>
             <p className="text-sm text-muted-foreground">Analytics de tu consultorio</p>
@@ -610,8 +610,8 @@ export default function ProDashboard() {
       {/* Header + Filters */}
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div>
-          <h1 className="text-xl font-bold flex items-center gap-2">
-            <BarChart3 className="h-5 w-5 text-purple-600" />
+          <h1 className="font-display font-semibold text-2xl md:text-3xl tracking-tight flex items-center gap-2">
+            <BarChart3 className="h-6 w-6 text-purple-600" />
             Panel Pro
           </h1>
           <p className="text-sm text-muted-foreground">Analytics detallados de tus mascotas</p>

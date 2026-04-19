@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920" role="img" aria-label="Instagram Story countdown">
+  <title>IG Story · Countdown launch</title>
+  <desc>Template para countdown sticker IG Story. Hero mark + área sticker.</desc>
+  <defs>
+    <radialGradient id="scd-bg" cx="0.5" cy="0.3" r="0.9">
+      <stop offset="0" stop-color="#fef3c7"/>
+      <stop offset="0.5" stop-color="#9333ea"/>
+      <stop offset="1" stop-color="#1a0a2e"/>
+    </radialGradient>
+    <linearGradient id="scd-mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9333ea"/>
+      <stop offset="0.5" stop-color="#d946ef"/>
+      <stop offset="1" stop-color="#eab308"/>
+    </linearGradient>
+    <clipPath id="scd-sq">
+      <path d="M 540 580 C 700 580, 780 660, 780 820 C 780 980, 700 1060, 540 1060 C 380 1060, 300 980, 300 820 C 300 660, 380 580, 540 580 Z"/>
+    </clipPath>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#scd-bg)"/>
+  <!-- Safe zone guides -->
+  <line x1="0" y1="220" x2="1080" y2="220" stroke="rgba(255,255,255,0.05)" stroke-dasharray="6,6"/>
+  <line x1="0" y1="1670" x2="1080" y2="1670" stroke="rgba(255,255,255,0.05)" stroke-dasharray="6,6"/>
+  <!-- Sparkle stars in background -->
+  <g fill="rgba(255,255,255,0.4)">
+    <path d="M120 350 l5 12 12 1 -9 8 2 12 -10 -6 -10 6 2 -12 -9 -8 12 -1 z"/>
+    <path d="M920 400 l4 10 10 1 -7 6 1 10 -8 -5 -8 5 1 -10 -7 -6 10 -1 z"/>
+    <path d="M160 1450 l4 8 8 1 -6 5 1 8 -7 -4 -7 4 1 -8 -6 -5 8 -1 z"/>
+    <path d="M900 1500 l5 10 10 1 -8 7 2 10 -9 -5 -9 5 2 -10 -8 -7 10 -1 z"/>
+  </g>
+  <!-- Eyebrow -->
+  <text x="540" y="330" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="26" fill="#fde68a" letter-spacing="8">FALTA POCO</text>
+  <!-- Hero title -->
+  <text x="540" y="450" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="88" fill="#ffffff" letter-spacing="-2">Paw Friend</text>
+  <text x="540" y="535" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="60" fill="#fde68a" letter-spacing="-1">se lanza pronto</text>
+  <!-- Logo mark centered with floating -->
+  <path d="M 540 580 C 700 580, 780 660, 780 820 C 780 980, 700 1060, 540 1060 C 380 1060, 300 980, 300 820 C 300 660, 380 580, 540 580 Z" fill="url(#scd-mark)" filter="drop-shadow(0 12px 40px rgba(0,0,0,0.4))"/>
+  <g clip-path="url(#scd-sq)">
+    <ellipse cx="540" cy="880" rx="105" ry="90" fill="#ffffff"/>
+    <ellipse cx="450" cy="780" rx="38" ry="48" transform="rotate(-22 450 780)" fill="#ffffff"/>
+    <ellipse cx="510" cy="720" rx="35" ry="43" transform="rotate(-10 510 720)" fill="#ffffff"/>
+    <ellipse cx="570" cy="720" rx="35" ry="43" transform="rotate(10 570 720)" fill="#ffffff"/>
+    <ellipse cx="630" cy="780" rx="38" ry="48" transform="rotate(22 630 780)" fill="#ffffff"/>
+  </g>
+  <!-- Orbit ring -->
+  <circle cx="540" cy="820" r="270" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-dasharray="10,8"/>
+  <!-- Countdown sticker area (safe zone for IG sticker placement) -->
+  <g transform="translate(540 1280)">
+    <rect x="-320" y="-80" width="640" height="160" rx="80" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.4)" stroke-width="3" stroke-dasharray="12,8"/>
+    <text x="0" y="-10" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="16" fill="rgba(255,255,255,0.7)" letter-spacing="4">◆ AQUÍ VA EL STICKER COUNTDOWN IG ◆</text>
+    <text x="0" y="28" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="500" font-size="14" fill="rgba(255,255,255,0.5)">(Use native IG countdown sticker)</text>
+  </g>
+  <!-- CTA bottom -->
+  <text x="540" y="1550" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="500" font-size="42" fill="#ffffff">Activa el recordatorio</text>
+  <path d="M540 1580 L540 1620 M526 1600 L540 1620 L554 1600" stroke="rgba(255,255,255,0.7)" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Brand watermark -->
+  <text x="540" y="1730" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="22" fill="rgba(255,255,255,0.85)" letter-spacing="8">@PAWFRIEND.CL</text>
+</svg>

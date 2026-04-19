@@ -645,7 +645,9 @@ export default function ProviderPatients() {
       {/* Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-xl font-bold">Mis pacientes</h1>
+          <h1 className="font-display font-semibold text-2xl md:text-3xl tracking-tight">
+            Mis pacientes
+          </h1>
           <p className="text-sm text-muted-foreground">
             {patients?.length ?? 0} pacientes · {pendingLinks?.length ?? 0} vinculación(es) por
             confirmar

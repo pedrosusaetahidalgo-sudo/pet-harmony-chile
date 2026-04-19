@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1200" width="1600" height="1200" role="img" aria-label="iPad Pro landscape mockup">
+  <title>iPad Pro 13" · Landscape · Silver</title>
+  <desc>Mockup vectorial iPad Pro landscape con bezels modernos. Screenshot placeholder editable.</desc>
+  <defs>
+    <linearGradient id="ipad-body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e5e5ea"/>
+      <stop offset="0.5" stop-color="#c7c7cc"/>
+      <stop offset="1" stop-color="#aeaeb2"/>
+    </linearGradient>
+    <linearGradient id="ipad-bezel" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f5f5f7"/>
+      <stop offset="0.08" stop-color="#c7c7cc"/>
+      <stop offset="0.92" stop-color="#c7c7cc"/>
+      <stop offset="1" stop-color="#f5f5f7"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer body -->
+  <rect x="50" y="100" width="1500" height="1040" rx="50" fill="url(#ipad-body)"/>
+  <rect x="52" y="102" width="1496" height="1036" rx="48" fill="none" stroke="url(#ipad-bezel)" stroke-width="3" opacity=".5"/>
+  <!-- Screen bezel inner -->
+  <rect x="80" y="130" width="1440" height="980" rx="26" fill="#0a0a0e"/>
+  <!-- Screen placeholder -->
+  <rect x="82" y="132" width="1436" height="976" rx="24" fill="#faf5ff" stroke="#9333ea" stroke-width="2" stroke-dasharray="10,8" opacity=".8"/>
+  <text x="800" y="610" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="28" fill="#9333ea" letter-spacing="5">SCREENSHOT AQUÍ</text>
+  <text x="800" y="650" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="500" font-size="18" fill="#9333ea" opacity=".7">2732 × 2048 · iPad Pro 13" landscape</text>
+  <!-- Camera (front) -->
+  <circle cx="800" cy="105" r="8" fill="#0a0a0e"/>
+  <circle cx="800" cy="105" r="4" fill="#1a1a22"/>
+  <!-- USB-C / stand port hint (bottom center) -->
+  <rect x="780" y="1138" width="40" height="4" rx="2" fill="#aeaeb2" opacity=".6"/>
+  <!-- Apple logo hint back (subtle shading on left) -->
+  <ellipse cx="800" cy="620" rx="30" ry="35" fill="#e5e5ea" opacity=".15"/>
+  <!-- Shadow -->
+  <ellipse cx="800" cy="1170" rx="720" ry="14" fill="#000000" opacity=".25"/>
+</svg>

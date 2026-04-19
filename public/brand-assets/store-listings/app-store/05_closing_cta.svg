@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1242 2688" width="1242" height="2688" role="img" aria-label="App Store screenshot 5 — Closing CTA">
+  <title>App Store iPhone 6.5" · Slide 5 · Cierre hecho en Chile</title>
+  <desc>Cierre emocional: gratis siempre + hecho en Chile. CTA descargar.</desc>
+  <defs>
+    <radialGradient id="as5-bg" cx="0.5" cy="0.3" r="0.9">
+      <stop offset="0" stop-color="#2a1046"/>
+      <stop offset="0.4" stop-color="#581c87"/>
+      <stop offset="1" stop-color="#9333ea"/>
+    </radialGradient>
+    <radialGradient id="as5-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#eab308" stop-opacity=".4"/>
+      <stop offset="1" stop-color="#eab308" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="as5-mark" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9333ea"/>
+      <stop offset="0.5" stop-color="#d946ef"/>
+      <stop offset="1" stop-color="#eab308"/>
+    </linearGradient>
+    <clipPath id="as5-sq">
+      <path d="M 621 1100 C 820 1100, 920 1200, 920 1400 C 920 1600, 820 1700, 621 1700 C 422 1700, 322 1600, 322 1400 C 322 1200, 422 1100, 621 1100 Z"/>
+    </clipPath>
+  </defs>
+  <rect width="1242" height="2688" fill="url(#as5-bg)"/>
+  <rect width="1242" height="2688" fill="url(#as5-glow)"/>
+  <!-- Star pattern decorative -->
+  <g fill="rgba(255,255,255,0.08)">
+    <circle cx="150" cy="400" r="3"/><circle cx="320" cy="350" r="2.5"/><circle cx="520" cy="420" r="3"/>
+    <circle cx="780" cy="380" r="2.5"/><circle cx="960" cy="430" r="3"/><circle cx="1100" cy="360" r="2.5"/>
+    <circle cx="200" cy="700" r="2.5"/><circle cx="1020" cy="720" r="3"/>
+    <circle cx="130" cy="2100" r="3"/><circle cx="400" cy="2200" r="2.5"/><circle cx="900" cy="2150" r="3"/>
+    <circle cx="1100" cy="2250" r="2.5"/>
+  </g>
+  <rect x="0" y="0" width="1242" height="80" fill="rgba(255,255,255,0.08)"/>
+  <!-- Top eyebrow -->
+  <g transform="translate(621 220)">
+    <rect x="-200" y="-30" width="400" height="60" rx="30" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+    <circle cx="-160" cy="0" r="10" fill="#eab308"/>
+    <text x="10" y="8" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="22" fill="#ffffff" letter-spacing="6">HECHO EN CHILE · GRATIS</text>
+  </g>
+  <!-- Title block -->
+  <text x="621" y="500" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="112" fill="#ffffff" letter-spacing="-4">Gratis para</text>
+  <text x="621" y="620" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="112" fill="#ffffff" letter-spacing="-4">dueños peludos.</text>
+  <text x="621" y="800" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="140" fill="#eab308" letter-spacing="-4">Para siempre.</text>
+  <!-- Brand mark centered -->
+  <path d="M 621 1100 C 820 1100, 920 1200, 920 1400 C 920 1600, 820 1700, 621 1700 C 422 1700, 322 1600, 322 1400 C 322 1200, 422 1100, 621 1100 Z" fill="url(#as5-mark)"/>
+  <g clip-path="url(#as5-sq)">
+    <ellipse cx="621" cy="1490" rx="130" ry="115" fill="#ffffff"/>
+    <ellipse cx="509" cy="1350" rx="47" ry="60" transform="rotate(-22 509 1350)" fill="#ffffff"/>
+    <ellipse cx="587" cy="1275" rx="43" ry="53" transform="rotate(-10 587 1275)" fill="#ffffff"/>
+    <ellipse cx="655" cy="1275" rx="43" ry="53" transform="rotate(10 655 1275)" fill="#ffffff"/>
+    <ellipse cx="733" cy="1350" rx="47" ry="60" transform="rotate(22 733 1350)" fill="#ffffff"/>
+    <!-- Heart negative space -->
+    <path d="M 621 1545 C 610 1530, 592 1515, 580 1500 C 568 1485, 573 1465, 595 1460 C 610 1457, 621 1465, 621 1478 C 621 1465, 632 1457, 647 1460 C 669 1465, 674 1485, 662 1500 C 650 1515, 632 1530, 621 1545 Z" fill="url(#as5-mark)"/>
+  </g>
+  <!-- Features row -->
+  <g font-family="'Plus Jakarta Sans',sans-serif" font-weight="700" font-size="26" fill="#ffffff" opacity=".95">
+    <g transform="translate(180 1870)">
+      <circle cx="0" cy="0" r="32" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+      <path d="M-12 0 L-4 8 L12 -10" stroke="#10b981" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="50" y="9">Ficha PDF</text>
+    </g>
+    <g transform="translate(500 1870)">
+      <circle cx="0" cy="0" r="32" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+      <path d="M-12 0 L-4 8 L12 -10" stroke="#10b981" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="50" y="9">Directorio vets</text>
+    </g>
+    <g transform="translate(180 1980)">
+      <circle cx="0" cy="0" r="32" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+      <path d="M-12 0 L-4 8 L12 -10" stroke="#10b981" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="50" y="9">Recordatorios</text>
+    </g>
+    <g transform="translate(500 1980)">
+      <circle cx="0" cy="0" r="32" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+      <path d="M-12 0 L-4 8 L12 -10" stroke="#10b981" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="50" y="9">Comunidad</text>
+    </g>
+  </g>
+  <!-- CTA -->
+  <rect x="221" y="2200" width="800" height="160" rx="80" fill="#ffffff"/>
+  <text x="621" y="2303" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="48" fill="#9333ea">DESCARGAR GRATIS</text>
+  <!-- Domain footer -->
+  <text x="621" y="2440" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="500" font-size="28" fill="rgba(255,255,255,0.7)" letter-spacing="4">pawfriend.cl</text>
+  <rect x="0" y="2608" width="1242" height="80" fill="rgba(255,255,255,0.08)"/>
+</svg>
