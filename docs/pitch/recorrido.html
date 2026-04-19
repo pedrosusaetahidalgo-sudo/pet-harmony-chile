@@ -915,39 +915,103 @@
 
     .decks-picker {
       margin: 56px auto 0;
-      max-width: 900px;
+      max-width: 1040px;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
+      gap: 16px;
     }
-    @media (max-width: 720px) { .decks-picker { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 780px) { .decks-picker { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 440px) { .decks-picker { grid-template-columns: 1fr; } }
     .decks-picker-label {
       grid-column: 1 / -1;
+      text-align: center;
       font-size: 11.5px; font-weight: 800;
-      letter-spacing: .14em; text-transform: uppercase;
-      color: rgba(255, 255, 255, .65);
-      margin-bottom: 4px;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: rgba(255, 255, 255, .78);
+      margin-bottom: 10px;
     }
     .deck-link {
-      display: flex; flex-direction: column; align-items: flex-start;
-      gap: 3px;
-      padding: 14px 18px;
-      background: rgba(255, 255, 255, .08);
-      border: 1px solid rgba(255, 255, 255, .18);
-      border-radius: 14px;
-      color: #fff;
+      position: relative;
+      display: flex; flex-direction: column;
+      gap: 10px;
+      padding: 22px 22px 20px;
+      background: #fff;
+      border: 1px solid rgba(255, 255, 255, .5);
+      border-radius: 18px;
+      color: var(--ink);
       text-decoration: none;
-      backdrop-filter: blur(10px);
-      transition: background .2s, transform .2s, border-color .2s;
+      box-shadow: 0 18px 50px -14px rgba(0, 0, 0, .4);
+      transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .25s;
+      overflow: hidden;
       text-align: left;
     }
-    .deck-link:hover {
-      background: rgba(255, 255, 255, .15);
-      border-color: rgba(255, 255, 255, .35);
-      transform: translateY(-2px);
+    .deck-link::before {
+      content: "";
+      position: absolute; top: 0; left: 0; right: 0; height: 5px;
+      background: var(--accent, var(--brand-600));
     }
-    .deck-link-title { font-size: 13px; font-weight: 800; letter-spacing: -.01em; }
-    .deck-link-sub { font-size: 10.5px; color: rgba(255, 255, 255, .7); font-weight: 500; }
+    .deck-link:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 28px 70px -16px rgba(0, 0, 0, .55);
+    }
+    .deck-link-icon {
+      width: 48px; height: 48px;
+      border-radius: 14px;
+      background: var(--accent-ico, var(--brand-600));
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      flex: none;
+      box-shadow: 0 8px 20px -6px var(--accent-shadow, rgba(147,51,234,.45));
+    }
+    .deck-link-icon svg { width: 24px; height: 24px; }
+    .deck-link-title {
+      font-size: 16px; font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -.01em;
+      line-height: 1.2;
+    }
+    .deck-link-sub {
+      font-size: 12.5px;
+      color: var(--ink-soft);
+      font-weight: 500;
+      line-height: 1.35;
+    }
+    .deck-link-cta {
+      margin-top: auto;
+      padding-top: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent-text, var(--brand-700));
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .deck-link-cta::after { content: "→"; transition: transform .2s; font-weight: 900; }
+    .deck-link:hover .deck-link-cta::after { transform: translateX(4px); }
+    .deck-link.investors {
+      --accent: linear-gradient(90deg, #9333ea, #eab308);
+      --accent-ico: linear-gradient(135deg, #9333ea, #eab308);
+      --accent-text: #a16207;
+      --accent-shadow: rgba(234, 179, 8, .4);
+    }
+    .deck-link.companys {
+      --accent: linear-gradient(90deg, #581c87, #9333ea);
+      --accent-ico: linear-gradient(135deg, #581c87, #9333ea);
+      --accent-text: #7e22ce;
+      --accent-shadow: rgba(147, 51, 234, .45);
+    }
+    .deck-link.partners {
+      --accent: linear-gradient(90deg, #047857, #10b981);
+      --accent-ico: linear-gradient(135deg, #047857, #10b981);
+      --accent-text: #047857;
+      --accent-shadow: rgba(16, 185, 129, .4);
+    }
+    .deck-link.voices {
+      --accent: linear-gradient(90deg, #be185d, #ec4899);
+      --accent-ico: linear-gradient(135deg, #be185d, #ec4899);
+      --accent-text: #be185d;
+      --accent-shadow: rgba(236, 72, 153, .4);
+    }
 
     /* ─────────────────────────────────────────────────────────
        FOOTER
@@ -1381,21 +1445,62 @@
 
     <div class="decks-picker">
       <span class="decks-picker-label">¿Vienes por algo específico? Entra directo a tu deck</span>
-      <a class="deck-link reveal" href="inversionistas.html">
-        <span class="deck-link-title">💼 Inversionistas</span>
-        <span class="deck-link-sub">CORFO · Angels · VC</span>
+
+      <a class="deck-link investors reveal" href="inversionistas.html">
+        <span class="deck-link-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 20h18"/>
+            <path d="M5 20V9l5-3 4 2 5-3v15"/>
+            <path d="M9 20v-5h6v5"/>
+            <path d="M14 6l5-3" opacity=".6"/>
+            <path d="M19 3v4h-4" opacity=".6"/>
+          </svg>
+        </span>
+        <span class="deck-link-title">Inversionistas</span>
+        <span class="deck-link-sub">CORFO · Start-Up Chile · Angels LATAM</span>
+        <span class="deck-link-cta">Ver pitch</span>
       </a>
-      <a class="deck-link reveal d1" href="companys.html">
-        <span class="deck-link-title">🏢 Paw Companys</span>
-        <span class="deck-link-sub">Empresas sponsor</span>
+
+      <a class="deck-link companys reveal d1" href="companys.html">
+        <span class="deck-link-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="2" width="16" height="20" rx="2"/>
+            <path d="M9 7h1.5M13.5 7H15M9 11h1.5M13.5 11H15M9 15h1.5M13.5 15H15"/>
+            <path d="M10.5 22v-4h3v4"/>
+          </svg>
+        </span>
+        <span class="deck-link-title">Paw Companys</span>
+        <span class="deck-link-sub">Empresas sponsor con impacto medible</span>
+        <span class="deck-link-cta">Ver propuesta</span>
       </a>
-      <a class="deck-link reveal d2" href="partners.html">
-        <span class="deck-link-title">🛍️ Paw Partners</span>
-        <span class="deck-link-sub">Tiendas y servicios</span>
+
+      <a class="deck-link partners reveal d2" href="partners.html">
+        <span class="deck-link-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 14l-3.5-3.5a2.5 2.5 0 0 1 0-3.5L6 5.5"/>
+            <path d="M16 14l3.5-3.5a2.5 2.5 0 0 0 0-3.5L18 5.5"/>
+            <path d="M6 5.5l2-1 3 2 3-2 2 1"/>
+            <path d="M8 14l2 2 2-1 2 1 2-2"/>
+            <path d="M10 16l2 2 2-2"/>
+          </svg>
+        </span>
+        <span class="deck-link-title">Paw Partners</span>
+        <span class="deck-link-sub">Tiendas, seguros, servicios · barter</span>
+        <span class="deck-link-cta">Ver barter</span>
       </a>
-      <a class="deck-link reveal d3" href="voices.html">
-        <span class="deck-link-title">🎙️ Paw Voices</span>
-        <span class="deck-link-sub">Creadores peludos</span>
+
+      <a class="deck-link voices reveal d3" href="voices.html">
+        <span class="deck-link-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="9" y="2" width="6" height="12" rx="3"/>
+            <path d="M5 10a7 7 0 0 0 14 0"/>
+            <path d="M12 17v4"/>
+            <path d="M8 21h8"/>
+          </svg>
+        </span>
+        <span class="deck-link-title">Paw Voices</span>
+        <span class="deck-link-sub">Creadores peludos sin contrato</span>
+        <span class="deck-link-cta">Ver programa</span>
       </a>
     </div>
   </div>

@@ -13,6 +13,11 @@ import {
   Home,
   FileText,
   MapPin,
+  Building2,
+  Megaphone,
+  MessageCircle,
+  Pencil,
+  Route,
 } from '@/lib/icons';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -113,7 +118,7 @@ export default function Donaciones() {
           <div className="mx-auto w-20 h-20 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-lg">
             <Heart className="h-10 w-10 text-white fill-white" />
           </div>
-          <h1 className="text-3xl font-bold">¡Gracias, de verdad! 💛</h1>
+          <h1 className="text-3xl font-bold">¡Gracias, de verdad!</h1>
           <p className="text-muted-foreground">
             Tu donación ayuda a que Paw Friend siga siendo gratis para miles de tutores peludos en
             Chile. Vamos a actualizar la meta en los próximos días.
@@ -163,7 +168,7 @@ export default function Donaciones() {
             Si las donaciones alcanzan,
             <br />
             <span className="bg-gradient-to-r from-pink-500 via-rose-500 to-amber-500 bg-clip-text text-transparent">
-              Paw Friend sigue gratis 💛
+              Paw Friend sigue gratis.
             </span>
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto text-sm md:text-base">
@@ -242,39 +247,34 @@ export default function Donaciones() {
               <h2 className="font-semibold">Hacia donde vamos con tu ayuda</h2>
             </div>
             <ul className="text-sm space-y-2.5 text-foreground/80">
-              <li className="flex gap-2">
-                <span className="text-lg leading-none" aria-hidden>
-                  🐾
-                </span>
+              <li className="flex gap-2 items-start">
+                <PawPrint className="h-4 w-4 text-rose-500 shrink-0 mt-0.5" aria-hidden />
                 <span>
                   <b>Hoy:</b> mantener la app gratis y segura para tutores y vets de todo Chile.
                 </span>
               </li>
-              <li className="flex gap-2">
-                <span className="text-lg leading-none" aria-hidden>
-                  🏃
-                </span>
+              <li className="flex gap-2 items-start">
+                <Route className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" aria-hidden />
                 <span>
                   <b>Pronto:</b> mapa de <b>callejeros</b> reportables con apoyo colectivo — comida,
-                  rescate, esterilizacion.
+                  rescate, esterilización.
                 </span>
               </li>
-              <li className="flex gap-2">
-                <span className="text-lg leading-none" aria-hidden>
-                  🏠
-                </span>
+              <li className="flex gap-2 items-start">
+                <Home className="h-4 w-4 text-emerald-600 shrink-0 mt-0.5" aria-hidden />
                 <span>
-                  <b>Siguiente fase:</b> modulo de <b>adopciones</b> con refugios aliados
-                  verificados y seguimiento post-adopcion.
+                  <b>Siguiente fase:</b> módulo de <b>adopciones</b> con refugios aliados
+                  verificados y seguimiento post-adopción.
                 </span>
               </li>
-              <li className="flex gap-2">
-                <span className="text-lg leading-none" aria-hidden>
-                  💛
-                </span>
+              <li className="flex gap-2 items-start">
+                <Heart
+                  className="h-4 w-4 text-pink-500 fill-pink-500 shrink-0 mt-0.5"
+                  aria-hidden
+                />
                 <span>
-                  <b>Futuro:</b> canal transparente para <b>derivar excedentes</b>a hogares de
-                  transito y clinicas veterinarias de bajo costo.
+                  <b>Futuro:</b> canal transparente para <b>derivar excedentes</b> a hogares de
+                  tránsito y clínicas veterinarias de bajo costo.
                 </span>
               </li>
             </ul>
@@ -301,33 +301,33 @@ export default function Donaciones() {
               Paw Friend te representa, puedes aportar sin gastar un peso:
             </p>
             <ul className="text-sm space-y-2 text-foreground/80">
-              <li className="flex gap-2">
-                <span aria-hidden>📱</span>
+              <li className="flex gap-2 items-start">
+                <Megaphone className="h-4 w-4 text-fuchsia-600 shrink-0 mt-0.5" aria-hidden />
                 <span>
                   <b>Paw Voices:</b> ser una de las voces peludas de la marca en TikTok, Instagram,
                   FB o YouTube. Creadores chicos, medianos y grandes bienvenidos. Te damos un{' '}
                   <b>badge oficial de Paw Voice</b> para tu perfil.
                 </span>
               </li>
-              <li className="flex gap-2">
-                <span aria-hidden>🏢</span>
+              <li className="flex gap-2 items-start">
+                <Building2 className="h-4 w-4 text-violet-600 shrink-0 mt-0.5" aria-hidden />
                 <span>
-                  <b>Paw Companys:</b> alianza con empresas que aman a los animales. Banner y pagina
-                  de logos de partners, mas <b>badge oficial de Paw Company</b>
-                  para usar en sus canales y productos.
+                  <b>Paw Companys:</b> alianza con empresas que aman a los animales. Banner y página
+                  de logos de partners, más <b>badge oficial de Paw Company</b> para usar en sus
+                  canales y productos.
                 </span>
               </li>
-              <li className="flex gap-2">
-                <span aria-hidden>🗣️</span>
+              <li className="flex gap-2 items-start">
+                <MessageCircle className="h-4 w-4 text-sky-600 shrink-0 mt-0.5" aria-hidden />
                 <span>
                   <b>Compartir</b> la app con otros tutores, veterinarios o rescatistas que
                   conozcas.
                 </span>
               </li>
-              <li className="flex gap-2">
-                <span aria-hidden>✍️</span>
+              <li className="flex gap-2 items-start">
+                <Pencil className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" aria-hidden />
                 <span>
-                  <b>Mandarnos feedback</b> honesto: que te sirve, que no, que extrañas.
+                  <b>Mandarnos feedback</b> honesto: qué te sirve, qué no, qué extrañas.
                 </span>
               </li>
             </ul>
