@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Cat Face</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <path d="M 65 70 L 78 100 L 78 130 Q 78 148 100 148 Q 122 148 122 130 L 122 100 L 135 70 L 118 85 L 82 85 Z" fill="#FFFFFF"/>
+  <ellipse cx="100" cy="125" rx="8" ry="5" fill="#FCD34D"/>
+  <circle cx="88" cy="108" r="3.5" fill="#9333EA"/>
+  <circle cx="112" cy="108" r="3.5" fill="#9333EA"/>
+  <path d="M 75 128 L 68 130 M 75 132 L 68 135 M 125 128 L 132 130 M 125 132 L 132 135"
+        stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+
+</svg>

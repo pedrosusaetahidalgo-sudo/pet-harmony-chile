@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Cloud</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <path d="M 55 125 Q 42 125 42 110 Q 42 95 58 93 Q 62 75 82 75 Q 100 75 105 90 Q 115 82 130 88 Q 150 95 150 115 Q 150 130 135 130 L 58 130 Q 55 130 55 125 Z" fill="#FFFFFF"/>
+  <circle cx="100" cy="108" r="6" fill="#FCD34D"/>
+
+</svg>

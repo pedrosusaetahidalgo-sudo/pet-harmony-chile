@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Pill</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <g transform="rotate(-30 100 100)">
+    <rect x="48" y="85" width="104" height="30" rx="15" fill="#FFFFFF"/>
+    <rect x="48" y="85" width="52" height="30" rx="15" fill="#FCD34D"/>
+    <line x1="100" y1="85" x2="100" y2="115" stroke="#9333EA" stroke-width="3"/>
+  </g>
+
+</svg>

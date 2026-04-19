@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Target</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <circle cx="100" cy="100" r="55" fill="#FFFFFF"/>
+  <circle cx="100" cy="100" r="38" fill="#9333EA"/>
+  <circle cx="100" cy="100" r="22" fill="#FFFFFF"/>
+  <circle cx="100" cy="100" r="9" fill="#FCD34D"/>
+
+</svg>

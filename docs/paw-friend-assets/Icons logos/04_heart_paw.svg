@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Heart with Paw</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <path d="M 100 155 C 65 130, 50 105, 58 85
+           C 65 68, 85 68, 100 85
+           C 115 68, 135 68, 142 85
+           C 150 105, 135 130, 100 155 Z" fill="#FFFFFF"/>
+  <ellipse cx="100.0" cy="117.3" rx="18.7" ry="15.3" transform="rotate(0 100.0 117.3)" fill="#FCD34D"/>
+  <ellipse cx="78.8" cy="95.2" rx="6.8" ry="9.3" transform="rotate(-22 78.8 95.2)" fill="#FCD34D"/>
+  <ellipse cx="92.3" cy="83.3" rx="6.0" ry="8.5" transform="rotate(-10 92.3 83.3)" fill="#FCD34D"/>
+  <ellipse cx="107.7" cy="83.3" rx="6.0" ry="8.5" transform="rotate(10 107.7 83.3)" fill="#FCD34D"/>
+  <ellipse cx="121.2" cy="95.2" rx="6.8" ry="9.3" transform="rotate(22 121.2 95.2)" fill="#FCD34D"/>
+
+</svg>

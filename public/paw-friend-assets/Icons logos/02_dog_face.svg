@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Dog Face</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <path d="M 65 95 Q 65 62 100 62 Q 135 62 135 95 L 135 120 Q 135 150 100 150 Q 65 150 65 120 Z" fill="#FFFFFF"/>
+  <path d="M 68 82 Q 52 68 54 92 Q 58 108 70 104 Z" fill="#FFFFFF"/>
+  <path d="M 132 82 Q 148 68 146 92 Q 142 108 130 104 Z" fill="#FFFFFF"/>
+  <ellipse cx="100" cy="125" rx="18" ry="12" fill="#FCD34D"/>
+  <ellipse cx="100" cy="119" rx="5" ry="4" fill="#9333EA"/>
+  <circle cx="87" cy="100" r="3.5" fill="#9333EA"/>
+  <circle cx="113" cy="100" r="3.5" fill="#9333EA"/>
+
+</svg>

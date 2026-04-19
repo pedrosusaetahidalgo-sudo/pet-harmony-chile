@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Medical Cross</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <circle cx="100" cy="100" r="55" fill="#FFFFFF"/>
+  <rect x="88" y="70" width="24" height="60" rx="4" fill="#9333EA"/>
+  <rect x="70" y="88" width="60" height="24" rx="4" fill="#9333EA"/>
+
+</svg>

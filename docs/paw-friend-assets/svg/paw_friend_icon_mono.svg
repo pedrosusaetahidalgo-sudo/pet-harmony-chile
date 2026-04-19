@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" width="680" height="680">
+  <title>Paw Friend Monocromático</title>
+  <defs>
+    <mask id="heart-cutout-m">
+      <rect width="680" height="680" fill="white"/>
+      <path d="M 340 480 C 332 470, 318 460, 310 450 C 302 440, 305 425, 318 422 C 327 420, 335 425, 340 432 C 345 425, 353 420, 362 422 C 375 425, 378 440, 370 450 C 362 460, 348 470, 340 480 Z" fill="black"/>
+    </mask>
+  </defs>
+  <ellipse cx="340" cy="430" rx="155" ry="135" fill="#000000" mask="url(#heart-cutout-m)"/>
+  <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#000000"/>
+  <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#000000"/>
+  <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#000000"/>
+  <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#000000"/>
+</svg>

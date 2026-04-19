@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Growth</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <rect x="45" y="135" width="20" height="25" rx="3" fill="#FFFFFF" opacity="0.55"/>
+  <rect x="75" y="115" width="20" height="45" rx="3" fill="#FFFFFF" opacity="0.75"/>
+  <rect x="105" y="95" width="20" height="65" rx="3" fill="#FFFFFF" opacity="0.9"/>
+  <rect x="135" y="70" width="20" height="90" rx="3" fill="#FFFFFF"/>
+  <path d="M 55 125 L 85 105 L 115 85 L 145 60" stroke="#FCD34D" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <polygon points="140,55 158,55 150,72" fill="#FCD34D"/>
+
+</svg>

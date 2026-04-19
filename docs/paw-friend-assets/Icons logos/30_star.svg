@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Star</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <path d="M 100 48
+           L 115 85
+           L 155 88
+           L 124 114
+           L 134 152
+           L 100 130
+           L 66 152
+           L 76 114
+           L 45 88
+           L 85 85 Z" fill="#FFFFFF"/>
+  <path d="M 100 68
+           L 110 93
+           L 137 95
+           L 116 112
+           L 123 138
+           L 100 124
+           L 77 138
+           L 84 112
+           L 63 95
+           L 90 93 Z" fill="#FCD34D"/>
+
+</svg>
