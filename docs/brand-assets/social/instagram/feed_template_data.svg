@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080" role="img" aria-label="Instagram feed template — Data stat">
+  <title>IG Feed · Data / Stat highlight</title>
+  <desc>Template 1080×1080 para data points / milestones. Número hero Fredoka con gradient purple-gold.</desc>
+  <defs>
+    <radialGradient id="data-bg" cx="0.5" cy="0.4" r="0.7">
+      <stop offset="0" stop-color="#1a0a2e"/>
+      <stop offset="0.5" stop-color="#581c87"/>
+      <stop offset="1" stop-color="#2a1046"/>
+    </radialGradient>
+    <radialGradient id="data-glow" cx="0.5" cy="0.5" r="0.4">
+      <stop offset="0" stop-color="#eab308" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#eab308" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="data-num" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fde68a"/>
+      <stop offset="0.55" stop-color="#eab308"/>
+      <stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#data-bg)"/>
+  <rect width="1080" height="1080" fill="url(#data-glow)"/>
+  <!-- Star dust -->
+  <g fill="rgba(255,255,255,0.1)">
+    <circle cx="150" cy="180" r="3"/><circle cx="300" cy="130" r="2.5"/><circle cx="520" cy="160" r="3"/>
+    <circle cx="780" cy="180" r="2.5"/><circle cx="920" cy="140" r="3"/>
+    <circle cx="200" cy="880" r="3"/><circle cx="470" cy="920" r="2.5"/><circle cx="860" cy="900" r="3"/>
+  </g>
+  <!-- Eyebrow -->
+  <g transform="translate(540 170)">
+    <rect x="-140" y="-30" width="280" height="60" rx="30" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+    <text x="0" y="8" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="18" fill="#fde68a" letter-spacing="6">DATO DEL MES</text>
+  </g>
+  <!-- Hero number -->
+  <text x="540" y="510" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="700" font-size="260" fill="url(#data-num)" letter-spacing="-10">7/10</text>
+  <!-- Context -->
+  <text x="540" y="620" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="500" font-size="44" fill="#ffffff" letter-spacing="-1">hogares chilenos tienen</text>
+  <text x="540" y="680" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="500" font-size="44" fill="#ffffff" letter-spacing="-1">al menos una mascota.</text>
+  <!-- Mini chart visualization -->
+  <g transform="translate(540 810)">
+    <g>
+      <!-- 10 rectangles with 7 highlighted -->
+      <rect x="-250" y="-30" width="40" height="60" rx="6" fill="#eab308"/>
+      <rect x="-200" y="-30" width="40" height="60" rx="6" fill="#eab308"/>
+      <rect x="-150" y="-30" width="40" height="60" rx="6" fill="#eab308"/>
+      <rect x="-100" y="-30" width="40" height="60" rx="6" fill="#eab308"/>
+      <rect x="-50" y="-30" width="40" height="60" rx="6" fill="#eab308"/>
+      <rect x="0" y="-30" width="40" height="60" rx="6" fill="#eab308"/>
+      <rect x="50" y="-30" width="40" height="60" rx="6" fill="#eab308"/>
+      <rect x="100" y="-30" width="40" height="60" rx="6" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+      <rect x="150" y="-30" width="40" height="60" rx="6" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+      <rect x="200" y="-30" width="40" height="60" rx="6" fill="rgba(255,255,255,0.15)" stroke="rgba(255,255,255,0.35)" stroke-width="2"/>
+    </g>
+  </g>
+  <!-- Source / brand footer -->
+  <text x="540" y="960" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="500" font-size="22" fill="rgba(255,255,255,0.65)" letter-spacing="2">Fuente: INE + Censo Pets Chile 2023</text>
+  <!-- Brand watermark -->
+  <g transform="translate(540 1020)">
+    <rect x="-140" y="-24" width="280" height="48" rx="24" fill="#ffffff"/>
+    <text x="0" y="6" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="16" fill="#9333ea" letter-spacing="4">@PAWFRIEND.CL</text>
+  </g>
+</svg>

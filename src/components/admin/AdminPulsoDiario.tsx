@@ -299,7 +299,7 @@ export default function AdminPulsoDiario() {
           <div className="rounded-md border border-green-500/30 bg-green-500/5 p-3 text-center">
             <CheckCircle2 className="h-5 w-5 text-green-400 mx-auto mb-1" />
             <p className="text-xs text-green-300 font-medium">
-              Nada requiere tu atención hoy — todo ok ✓
+              Nada requiere tu atención hoy — todo en orden.
             </p>
           </div>
         )}

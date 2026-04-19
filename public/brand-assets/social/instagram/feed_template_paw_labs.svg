@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" width="1080" height="1080" role="img" aria-label="Instagram feed template — Paw Labs">
+  <title>IG Feed · Paw Labs beta</title>
+  <desc>Template 1080×1080 para posts de features beta (Paw Labs). Banner experimental amarillo + mockup.</desc>
+  <defs>
+    <linearGradient id="lab-bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fef3c7"/>
+      <stop offset="0.4" stop-color="#f3e8ff"/>
+      <stop offset="1" stop-color="#581c87"/>
+    </linearGradient>
+    <linearGradient id="lab-badge" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#eab308"/>
+      <stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#lab-bg)"/>
+  <!-- Top beta banner -->
+  <rect x="0" y="0" width="1080" height="100" fill="url(#lab-badge)"/>
+  <g transform="translate(540 52)">
+    <circle cx="-180" cy="0" r="16" fill="#ffffff"/>
+    <path d="M-186 -3 L-180 3 L-174 -8" stroke="#b45309" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="0" y="8" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="22" fill="#78350f" letter-spacing="8">PAW LABS · BETA EXPERIMENTAL</text>
+  </g>
+  <!-- Eyebrow -->
+  <g transform="translate(540 190)">
+    <rect x="-160" y="-30" width="320" height="60" rx="30" fill="#ffffff" stroke="#e9d5ff" stroke-width="2"/>
+    <text x="0" y="8" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="18" fill="#7e22ce" letter-spacing="5">NUEVO EN PAW FRIEND</text>
+  </g>
+  <!-- Title -->
+  <text x="540" y="330" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="72" fill="#1a102b" letter-spacing="-2">Asistente médico</text>
+  <text x="540" y="410" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="72" fill="#9333ea" letter-spacing="-2">con IA.</text>
+  <!-- Feature mockup -->
+  <g transform="translate(540 680)">
+    <rect x="-280" y="-180" width="560" height="360" rx="28" fill="#ffffff" stroke="#9333ea" stroke-width="3"/>
+    <!-- AI avatar -->
+    <circle cx="-200" cy="-120" r="40" fill="#9333ea"/>
+    <path d="M-220 -125 C-215 -135, -205 -140, -200 -140 C-195 -140, -185 -135, -180 -125 C-178 -115, -182 -105, -195 -100 C-200 -92, -195 -92, -195 -92 L-205 -92 C-205 -92, -210 -92, -205 -100 C-218 -105, -222 -115, -220 -125 Z" fill="#ffffff"/>
+    <circle cx="-208" cy="-122" r="3" fill="#9333ea"/>
+    <circle cx="-192" cy="-122" r="3" fill="#9333ea"/>
+    <!-- Chat bubble -->
+    <rect x="-140" y="-160" width="400" height="120" rx="20" fill="#faf5ff" stroke="#e9d5ff" stroke-width="2"/>
+    <text x="-120" y="-130" font-family="'Fredoka',sans-serif" font-weight="600" font-size="22" fill="#1a102b">Sugerencia clínica:</text>
+    <rect x="-120" y="-115" width="340" height="6" rx="3" fill="#9333ea" opacity=".35"/>
+    <rect x="-120" y="-100" width="280" height="6" rx="3" fill="#9333ea" opacity=".35"/>
+    <rect x="-120" y="-85" width="300" height="6" rx="3" fill="#9333ea" opacity=".35"/>
+    <rect x="-120" y="-70" width="220" height="6" rx="3" fill="#9333ea" opacity=".35"/>
+    <!-- User reply -->
+    <rect x="60" y="0" width="200" height="50" rx="18" fill="#9333ea"/>
+    <text x="160" y="32" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="700" font-size="16" fill="#ffffff">Entendido</text>
+    <!-- Disclaimer -->
+    <rect x="-260" y="80" width="520" height="70" rx="14" fill="#fef3c7"/>
+    <path d="M-230 105 L-225 113 L-215 103" stroke="#b45309" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="-223" cy="108" r="14" fill="none" stroke="#b45309" stroke-width="2.5"/>
+    <text x="-200" y="105" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="14" fill="#b45309" letter-spacing="2">IMPORTANTE</text>
+    <text x="-200" y="128" font-family="'Plus Jakarta Sans',sans-serif" font-weight="500" font-size="14" fill="#78350f">No reemplaza diagnóstico veterinario.</text>
+  </g>
+  <!-- CTA -->
+  <rect x="290" y="950" width="500" height="80" rx="40" fill="#9333ea"/>
+  <text x="540" y="1003" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="26" fill="#ffffff">Probar el beta →</text>
+</svg>

@@ -48,7 +48,10 @@ import {
   DollarSign,
   BarChart3,
   Mail,
+  HelpCircle,
+  Ban,
 } from '@/lib/icons';
+import type { LucideIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { format, startOfWeek, subWeeks } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -85,23 +88,26 @@ const POINT_PRESETS = [
 
 const WOULD_PAY_META: Record<
   'yes' | 'maybe' | 'no',
-  { label: string; emoji: string; color: string; bar: string }
+  { label: string; icon: LucideIcon; iconColor: string; color: string; bar: string }
 > = {
   yes: {
-    label: 'Si pagaria',
-    emoji: '💛',
+    label: 'Sí pagaría',
+    icon: Heart,
+    iconColor: 'text-emerald-400 fill-emerald-400',
     color: 'text-emerald-300 border-emerald-500/40',
     bar: 'bg-emerald-400',
   },
   maybe: {
     label: 'Tal vez',
-    emoji: '🤔',
+    icon: HelpCircle,
+    iconColor: 'text-amber-400',
     color: 'text-amber-300 border-amber-500/40',
     bar: 'bg-amber-400',
   },
   no: {
-    label: 'No pagaria',
-    emoji: '🙅',
+    label: 'No pagaría',
+    icon: Ban,
+    iconColor: 'text-rose-400',
     color: 'text-rose-300 border-rose-500/40',
     bar: 'bg-rose-400',
   },
@@ -416,11 +422,12 @@ export default function AdminFeedback() {
                   <div className="space-y-2">
                     {receptionStats.wpBreakdown.map((item) => {
                       const meta = WOULD_PAY_META[item.key];
+                      const MetaIcon = meta.icon;
                       return (
                         <div key={item.key} className="space-y-1">
                           <div className="flex items-center justify-between text-xs">
                             <span className="text-slate-300 flex items-center gap-1.5">
-                              <span aria-hidden>{meta.emoji}</span>
+                              <MetaIcon className={cn('h-3.5 w-3.5', meta.iconColor)} aria-hidden />
                               {meta.label}
                             </span>
                             <span className="text-slate-400">
@@ -659,15 +666,26 @@ export default function AdminFeedback() {
                               ))}
                             </span>
                           )}
-                          {fb.would_pay && (
-                            <Badge
-                              variant="outline"
-                              className={cn('text-[10px] ml-1', WOULD_PAY_META[fb.would_pay].color)}
-                            >
-                              {WOULD_PAY_META[fb.would_pay].emoji}{' '}
-                              {WOULD_PAY_META[fb.would_pay].label}
-                            </Badge>
-                          )}
+                          {fb.would_pay &&
+                            (() => {
+                              const wpMeta = WOULD_PAY_META[fb.would_pay];
+                              const WPIcon = wpMeta.icon;
+                              return (
+                                <Badge
+                                  variant="outline"
+                                  className={cn(
+                                    'text-[10px] ml-1 inline-flex items-center gap-1',
+                                    wpMeta.color
+                                  )}
+                                >
+                                  <WPIcon
+                                    className={cn('h-2.5 w-2.5', wpMeta.iconColor)}
+                                    aria-hidden
+                                  />
+                                  {wpMeta.label}
+                                </Badge>
+                              );
+                            })()}
                         </div>
                         <span className="text-xs text-slate-500 whitespace-nowrap">
                           {format(new Date(fb.created_at), 'd MMM yyyy HH:mm', { locale: es })}

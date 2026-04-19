@@ -41,7 +41,7 @@ import {
   type AdvertisementInput,
   type AdPlacement,
 } from '@/hooks/useAdvertisements';
-import { Plus, Pencil, Trash2, ExternalLink, Megaphone } from '@/lib/icons';
+import { Plus, Pencil, Trash2, ExternalLink, Megaphone, Eye, MousePointerClick } from '@/lib/icons';
 
 const PLACEMENT_LABEL: Record<AdPlacement, string> = {
   home_feed: 'Home Feed',
@@ -307,9 +307,11 @@ export default function AdminAdvertisements() {
                   <div className="text-xs text-muted-foreground truncate">
                     {ad.start_date} → {ad.end_date} · prioridad {ad.priority}
                   </div>
-                  <div className="text-[11px] text-muted-foreground">
-                    👁️ {ad.impressions_count} impresiones · 🔗 {ad.clicks_count} clicks · CTR{' '}
-                    {ctr(ad)}
+                  <div className="text-[11px] text-muted-foreground flex items-center gap-1.5 flex-wrap">
+                    <Eye className="h-3 w-3" aria-hidden /> {ad.impressions_count} impresiones
+                    <span>·</span>
+                    <MousePointerClick className="h-3 w-3" aria-hidden /> {ad.clicks_count} clicks
+                    <span>· CTR {ctr(ad)}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">

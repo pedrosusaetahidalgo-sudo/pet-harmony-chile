@@ -426,7 +426,7 @@ export default function Home() {
             )}
           </div>
           <div className="min-w-0">
-            <p className="text-sm font-semibold truncate">
+            <p className="font-display font-semibold text-base md:text-lg truncate tracking-tight">
               {getGreeting()},{' '}
               {profile?.display_name?.split(/\s+/)[0] || user?.email?.split('@')[0] || 'Amigo'}
             </p>
