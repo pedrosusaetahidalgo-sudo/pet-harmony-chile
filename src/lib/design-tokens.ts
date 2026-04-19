@@ -76,6 +76,106 @@ export const SHADOWS = {
   card: 'shadow-sm',
   cardHover: 'hover:shadow-md transition-shadow',
   elevated: 'shadow-lg',
+  /* Brand 2.0 */
+  brandGlow: 'shadow-brand-glow',
+  goldGlow: 'shadow-gold-glow',
+  brandHover: 'hover:shadow-brand-hover transition-shadow duration-normal',
+} as const;
+
+/**
+ * Brand 2.0 — Tokens de marca elevados
+ * Ver docs/pawfriend-rebrand-rollout-masterplan.md §5 + §11.
+ */
+
+/** Tipografía display (Fredoka) — usar en H1 de landing/page hero y hero numbers */
+export const DISPLAY = {
+  /** H1 hero cinematográfico (landing, pitch cover) */
+  hero: 'font-display font-semibold text-4xl md:text-6xl leading-[1.05] tracking-tight',
+  /** H1 de página interna */
+  pageTitle: 'font-display font-semibold text-3xl md:text-4xl leading-tight tracking-tight',
+  /** Número grande (KPI, hero stat) */
+  kpi: 'font-display font-semibold text-3xl md:text-5xl tabular-nums leading-none',
+  /** Valor de sección destacada */
+  sectionValue: 'font-display font-semibold text-2xl md:text-3xl leading-tight',
+} as const;
+
+/** Tipografía mono tabular — para valores numéricos exactos */
+export const MONO = {
+  /** Valores monetarios tabulares */
+  value: 'font-mono font-bold tabular-nums',
+  /** Código inline (/paths, codes) */
+  code: 'font-mono text-xs px-1.5 py-0.5 rounded bg-muted',
+  /** Labels de teclas */
+  kbd: 'font-mono text-xs px-2 py-0.5 rounded bg-muted border border-border',
+} as const;
+
+/** Motion tokens — brand 2.0 */
+export const MOTION = {
+  /** Transición rápida (hover, focus) */
+  fast: 'transition duration-fast ease-out-soft',
+  /** Transición estándar (expand, fade) */
+  normal: 'transition duration-normal ease-out-soft',
+  /** Transición lenta (reveal on scroll) */
+  slow: 'transition duration-slow ease-out-soft',
+  /** Entrada hero (grand entrance) */
+  hero: 'transition duration-hero ease-out-pop',
+  /** Hover lift estándar */
+  lift: 'transition-transform duration-normal ease-out-soft hover:-translate-y-1',
+  /** Hover scale sutil */
+  scale: 'transition-transform duration-fast ease-out-soft hover:scale-[1.02]',
+} as const;
+
+/** Paletas por audiencia — brand 2.0 */
+export const AUDIENCE = {
+  invest: {
+    from: 'from-[#9333ea]',
+    to: 'to-[#eab308]',
+    gradient: 'bg-gradient-to-br from-[#9333ea] to-[#eab308]',
+    text: 'text-[#b45309]',
+    bg: 'bg-[#fef3c7]',
+    ring: 'ring-[#eab308]',
+    shadow: 'shadow-audience-invest',
+  },
+  companys: {
+    from: 'from-[#581c87]',
+    to: 'to-[#9333ea]',
+    gradient: 'bg-gradient-to-br from-[#581c87] to-[#9333ea]',
+    text: 'text-[#7e22ce]',
+    bg: 'bg-[#f3e8ff]',
+    ring: 'ring-[#9333ea]',
+    shadow: 'shadow-audience-companys',
+  },
+  partners: {
+    from: 'from-[#047857]',
+    to: 'to-[#10b981]',
+    gradient: 'bg-gradient-to-br from-[#047857] to-[#10b981]',
+    text: 'text-[#047857]',
+    bg: 'bg-[#d1fae5]',
+    ring: 'ring-[#10b981]',
+    shadow: 'shadow-audience-partners',
+  },
+  voices: {
+    from: 'from-[#be185d]',
+    to: 'to-[#ec4899]',
+    gradient: 'bg-gradient-to-br from-[#be185d] to-[#ec4899]',
+    text: 'text-[#be185d]',
+    bg: 'bg-[#fce7f3]',
+    ring: 'ring-[#ec4899]',
+    shadow: 'shadow-audience-voices',
+  },
+} as const;
+
+/** Gold premium tokens — reservado para celebración/member/hero */
+export const GOLD = {
+  gradient: 'bg-brand-gold-gradient',
+  text: 'text-gold-700',
+  textBright: 'text-gold-500',
+  bg: 'bg-gold-50',
+  bgSoft: 'bg-gold-100',
+  border: 'border-gold-300',
+  glow: 'shadow-gold-glow',
+  /** Badge Paw Member */
+  memberBadge: 'bg-brand-gold-gradient text-white font-bold shadow-gold-glow',
 } as const;
 
 /** Colores semanticos por contexto */

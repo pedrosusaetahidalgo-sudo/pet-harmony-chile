@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Fredoka:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -30,7 +30,7 @@
   --safe-area-left: env(safe-area-inset-left, 0px);
   --safe-area-right: env(safe-area-inset-right, 0px);
 
-  /* ── Brand Purple Scale ── */
+  /* ── Brand 2.0 Primary: Purple Scale ── */
   --brand-50: #faf5ff;
   --brand-100: #f3e8ff;
   --brand-200: #e9d5ff;
@@ -42,7 +42,46 @@
   --brand-800: #6b21a8;
   --brand-900: #581c87;
 
-  /* ── Health State Tokens ── */
+  /* ── Brand 2.0 Secondary: Gold Scale (elevada a token oficial) ── */
+  --gold-50: #fffbeb;
+  --gold-100: #fef3c7;
+  --gold-200: #fde68a;
+  --gold-300: #fcd34d;
+  --gold-400: #fbbf24;
+  --gold-500: #f59e0b;
+  --gold-600: #d97706;
+  --gold-700: #b45309;
+  --gold-800: #92400e;
+  --gold-900: #78350f;
+
+  /* ── Brand 2.0 Audience Palettes (cuadricromía por contexto) ──
+     Elevadas desde los HTMLs de pitch a token de sistema.
+     Uso:
+       - Inversionistas: páginas de investor outreach + pitch HTML
+       - Companys: páginas de sponsor empresarial
+       - Partners: páginas de barter/tiendas/servicios
+       - Voices: páginas de creators/influencers                       */
+  --audience-invest-from: #9333ea;
+  --audience-invest-to: #eab308;
+  --audience-invest-deep: #581c87;
+  --audience-invest-accent: #b45309;
+
+  --audience-companys-from: #581c87;
+  --audience-companys-to: #9333ea;
+  --audience-companys-deep: #2a1046;
+  --audience-companys-accent: #7e22ce;
+
+  --audience-partners-from: #047857;
+  --audience-partners-to: #10b981;
+  --audience-partners-deep: #064e3b;
+  --audience-partners-accent: #059669;
+
+  --audience-voices-from: #be185d;
+  --audience-voices-to: #ec4899;
+  --audience-voices-deep: #831843;
+  --audience-voices-accent: #db2777;
+
+  /* ── Health State Tokens (product layer, plano no dorado) ── */
   --health-good: #16a34a;
   --health-good-bg: #f0fdf4;
   --health-attention: #d97706;
@@ -52,8 +91,60 @@
   --health-unknown: #64748b;
   --health-unknown-bg: #f8fafc;
 
-  /* ── Typography ── */
+  /* ── Brand 2.0 Motion Tokens ──
+     3 curvas × 4 duraciones. Respeta prefers-reduced-motion.     */
+  --motion-fast: 150ms;
+  --motion-normal: 250ms;
+  --motion-slow: 400ms;
+  --motion-hero: 700ms;
+  --motion-ease-out-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --motion-ease-out-pop: cubic-bezier(0.16, 1, 0.3, 1);
+  --motion-ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
+
+  /* ── Brand 2.0 Shadow Scale ── */
+  --shadow-flat: 0 0 0 1px rgba(0, 0, 0, 0.04);
+  --shadow-soft: 0 2px 10px -4px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 10px 30px -12px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 24px 60px -16px rgba(0, 0, 0, 0.18);
+  --shadow-brand-glow: 0 10px 30px -12px rgba(147, 51, 234, 0.35);
+  --shadow-gold-glow: 0 10px 40px -10px rgba(234, 179, 8, 0.45);
+
+  /* ── Typography (brand 2.0) ── */
+  --font-display: 'Fredoka', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', monospace;
+  /* Legacy (mantener retrocompat) */
   --font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+}
+
+/* ═══ Brand 2.0 utility classes ═══════════════════════════════════════
+   Uso rápido sin tocar Tailwind config en componentes puntuales.
+   Preferir clases de Tailwind (font-display, shadow-brand-glow, etc.)
+   cuando estén disponibles — estas son helper para transición.        */
+.font-display {
+  font-family: var(--font-display);
+}
+.font-mono-brand {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+.shadow-brand-glow {
+  box-shadow: var(--shadow-brand-glow);
+}
+.shadow-gold-glow {
+  box-shadow: var(--shadow-gold-glow);
+}
+
+/* Respeta preferencias de motion reducido a nivel global */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Capacitor: feel nativo */

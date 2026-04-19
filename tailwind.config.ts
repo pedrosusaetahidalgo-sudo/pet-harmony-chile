@@ -20,6 +20,8 @@ export default {
     extend: {
       fontFamily: {
         sans: ["'Plus Jakarta Sans'", 'system-ui', 'sans-serif'],
+        display: ["'Fredoka'", "'Plus Jakarta Sans'", 'system-ui', 'sans-serif'],
+        mono: ["'JetBrains Mono'", 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       colors: {
         border: 'hsl(var(--border))',
@@ -82,7 +84,7 @@ export default {
           dark: 'hsl(var(--premium-dark))',
           glow: 'hsl(var(--premium-glow))',
         },
-        /* ── Brand Purple Scale ── */
+        /* ── Brand Purple Scale (brand 2.0 primary) ── */
         brand: {
           50: '#faf5ff',
           100: '#f3e8ff',
@@ -94,6 +96,42 @@ export default {
           700: '#7e22ce',
           800: '#6b21a8',
           900: '#581c87',
+        },
+        /* ── Gold Scale (brand 2.0 secondary — elevada a token oficial) ── */
+        gold: {
+          50: '#fffbeb',
+          100: '#fef3c7',
+          200: '#fde68a',
+          300: '#fcd34d',
+          400: '#fbbf24',
+          500: '#f59e0b',
+          600: '#d97706',
+          700: '#b45309',
+          800: '#92400e',
+          900: '#78350f',
+        },
+        /* ── Audience Palettes (elevadas desde pitch HTMLs) ── */
+        audience: {
+          /* Inversionistas: purple + gold lockup */
+          'invest-from': '#9333ea',
+          'invest-to': '#eab308',
+          'invest-deep': '#581c87',
+          'invest-accent': '#b45309',
+          /* Companys: deep purple institucional */
+          'companys-from': '#581c87',
+          'companys-to': '#9333ea',
+          'companys-deep': '#2a1046',
+          'companys-accent': '#7e22ce',
+          /* Partners: emerald colaborativo */
+          'partners-from': '#047857',
+          'partners-to': '#10b981',
+          'partners-deep': '#064e3b',
+          'partners-accent': '#059669',
+          /* Voices: rose cálido aspiracional */
+          'voices-from': '#be185d',
+          'voices-to': '#ec4899',
+          'voices-deep': '#831843',
+          'voices-accent': '#db2777',
         },
         /* ── Semantic Colors ── */
         success: {
@@ -132,8 +170,16 @@ export default {
         'appointment-gradient': 'var(--appointment-gradient)',
         'premium-gradient': 'var(--premium-gradient)',
         'premium-gradient-soft': 'var(--premium-gradient-soft)',
+        /* ── Brand 2.0 gradients ── */
+        'brand-gold-gradient': 'linear-gradient(135deg, #9333ea 0%, #eab308 100%)',
+        'brand-deep-gradient': 'linear-gradient(135deg, #2a1046 0%, #581c87 50%, #9333ea 100%)',
+        'audience-invest-gradient': 'linear-gradient(135deg, #9333ea 0%, #eab308 100%)',
+        'audience-companys-gradient': 'linear-gradient(135deg, #581c87 0%, #9333ea 100%)',
+        'audience-partners-gradient': 'linear-gradient(135deg, #047857 0%, #10b981 100%)',
+        'audience-voices-gradient': 'linear-gradient(135deg, #be185d 0%, #ec4899 100%)',
       },
       boxShadow: {
+        /* Legacy (no remover) */
         soft: '0 2px 8px -2px rgba(0,0,0,0.08)',
         card: '0 4px 12px -2px rgba(0,0,0,0.06)',
         elevated: '0 8px 24px -4px rgba(0,0,0,0.1)',
@@ -141,6 +187,29 @@ export default {
         medium: 'var(--shadow-medium)',
         premium: 'var(--premium-shadow)',
         'premium-sm': 'var(--premium-shadow-sm)',
+        /* ── Brand 2.0 scale (4 elevaciones + 2 especiales) ── */
+        flat: '0 0 0 1px rgba(0,0,0,0.04)',
+        'brand-glow': '0 10px 30px -12px rgba(147,51,234,0.35)',
+        'brand-hover': '0 24px 60px -16px rgba(147,51,234,0.22)',
+        'gold-glow': '0 10px 40px -10px rgba(234,179,8,0.45)',
+        'gold-hover': '0 24px 60px -16px rgba(234,179,8,0.35)',
+        /* Audience shadows */
+        'audience-invest': '0 10px 30px -12px rgba(234,179,8,0.45)',
+        'audience-companys': '0 10px 30px -12px rgba(147,51,234,0.45)',
+        'audience-partners': '0 10px 30px -12px rgba(16,185,129,0.45)',
+        'audience-voices': '0 10px 30px -12px rgba(236,72,153,0.45)',
+      },
+      transitionTimingFunction: {
+        /* ── Motion curves brand 2.0 ── */
+        'out-soft': 'cubic-bezier(.2,.8,.2,1)',
+        'out-pop': 'cubic-bezier(.16,1,.3,1)',
+      },
+      transitionDuration: {
+        /* ── Motion durations brand 2.0 ── */
+        fast: '150ms',
+        normal: '250ms',
+        slow: '400ms',
+        hero: '700ms',
       },
       borderRadius: {
         lg: '14px',

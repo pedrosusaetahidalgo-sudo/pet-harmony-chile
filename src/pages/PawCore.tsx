@@ -57,8 +57,8 @@ export default function PawCore() {
       />
 
       <div className="container max-w-3xl mx-auto px-4 py-10 space-y-8 animate-fade-in">
-        {/* Hero */}
-        <section className="text-center space-y-3">
+        {/* Hero — Brand 2.0: Fredoka display + gradient purple-gold */}
+        <section className="text-center space-y-4">
           <Badge
             variant="outline"
             className="bg-violet-50 border-violet-200 text-violet-700 text-[11px]"
@@ -66,13 +66,13 @@ export default function PawCore() {
             <PawPrint className="h-3 w-3 mr-1" />
             Paw Core · Identidad del proyecto
           </Badge>
-          <h1 className="text-3xl md:text-4xl font-bold leading-tight">
+          <h1 className="font-display font-semibold text-4xl md:text-5xl leading-[1.08] tracking-tight">
             ¿Quiénes somos y hacia{' '}
-            <span className="bg-gradient-to-r from-violet-500 via-fuchsia-500 to-rose-500 bg-clip-text text-transparent">
+            <span className="bg-brand-gold-gradient bg-clip-text text-transparent">
               dónde vamos?
             </span>
           </h1>
-          <p className="text-muted-foreground max-w-xl mx-auto text-sm md:text-base">
+          <p className="text-muted-foreground max-w-xl mx-auto text-sm md:text-base leading-relaxed">
             Paw Friend es un proyecto hecho con amor en Chile por una persona que decidió dedicar
             tiempo a cuidar a las mascotas de la comunidad. Todo sin cobrar por ello.
           </p>
