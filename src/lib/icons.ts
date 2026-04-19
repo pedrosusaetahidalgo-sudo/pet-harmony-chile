@@ -150,6 +150,7 @@ export {
   Quote,
   Radio,
   RefreshCw,
+  Repeat,
   Route,
   Save,
   Scale,

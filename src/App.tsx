@@ -92,10 +92,11 @@ const AnalyticsDashboard = lazy(() => import('./pages/standalone/AnalyticsDashbo
 const EnMemoria = lazy(() => import('./pages/EnMemoria'));
 const BloodDonors = lazy(() => import('./pages/BloodDonors'));
 const PetRoutines = lazy(() => import('./pages/PetRoutines'));
-// PetTimeline ya no se renderiza como ruta propia: su UI se consolidó
-// como tab "Historial" de la ficha clínica en el reordenamiento v3.
-// El archivo src/pages/PetTimeline.tsx queda disponible por si se
-// necesita restaurar o reutilizar en otro contexto.
+// PetTimeline: eliminado 2026-04-19. Su UI vive como tab "Historial" de
+// la ficha clinica, y TabHistorial ahora absorbio las 4 fuentes que
+// PetTimeline unificaba: pet_reminders completados, pet_activities,
+// routine_completions y memorial_events. El redirect legacy
+// LegacyPetTimelineRedirect apunta a /ficha/:petId?tab=historial.
 const UnifiedCalendar = lazy(() => import('./pages/UnifiedCalendar'));
 const RegistroPartner = lazy(() => import('./pages/RegistroPartner'));
 const FAQ = lazy(() => import('./pages/FAQ'));
