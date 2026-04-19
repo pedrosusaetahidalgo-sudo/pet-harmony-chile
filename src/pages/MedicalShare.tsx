@@ -242,7 +242,9 @@ export default function MedicalShare() {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <h1 className="text-2xl font-bold">{pet.name}</h1>
+                <h1 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">
+                  {pet.name}
+                </h1>
                 <p className="text-white/80">
                   {pet.species} {pet.breed ? `· ${pet.breed}` : ''} · {calculateAge(pet.birth_date)}
                 </p>

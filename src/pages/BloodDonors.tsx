@@ -150,7 +150,9 @@ export default function BloodDonors() {
       <div className="text-center space-y-2">
         <div className="flex items-center justify-center gap-2">
           <Droplets className="h-7 w-7 text-red-500" />
-          <h1 className="text-2xl font-bold">Banco de Sangre</h1>
+          <h1 className="font-display font-semibold text-3xl md:text-4xl tracking-tight">
+            Banco de Sangre
+          </h1>
         </div>
         <p className="text-sm text-muted-foreground max-w-md mx-auto">
           Encuentra donantes de sangre para tu mascota o registra a la tuya como donante. Un

@@ -88,7 +88,9 @@ export default function DejarResena() {
           <div className="inline-flex p-4 rounded-full bg-green-100 mb-4">
             <CheckCircle2 className="h-12 w-12 text-green-600" />
           </div>
-          <h1 className="text-2xl font-bold mb-2">¡Gracias por tu reseña!</h1>
+          <h1 className="font-display font-semibold text-3xl md:text-4xl mb-2 tracking-tight">
+            ¡Gracias por tu reseña!
+          </h1>
           <p className="text-muted-foreground mb-6">
             Tu opinión ya está publicada en el perfil de {provider?.display_name}.
           </p>
@@ -286,7 +288,9 @@ function ErrorState({ title, message }: { title: string; message: string }) {
       <PublicHeader />
       <main className="container mx-auto px-4 py-10 md:py-16 max-w-md text-center">
         <AlertCircle className="h-12 w-12 mx-auto text-amber-500 mb-3" />
-        <h1 className="text-2xl font-bold mb-2">{title}</h1>
+        <h1 className="font-display font-semibold text-3xl md:text-4xl mb-2 tracking-tight">
+          {title}
+        </h1>
         <p className="text-muted-foreground mb-6">{message}</p>
         <Link to="/veterinarios">
           <Button>Ver directorio de veterinarios</Button>
