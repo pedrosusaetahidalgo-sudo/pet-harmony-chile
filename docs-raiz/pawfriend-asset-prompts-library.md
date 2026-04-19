@@ -3104,56 +3104,2092 @@ Para imprimir / tener siempre visible:
 
 ---
 
-## 24. Backlog de prompts adicionales (por expandir)
+## 24. Backlog expandido — prompts adicionales
 
-Los siguientes prompts están escalonados como **next deliverables**. Cada uno sigue la misma estructura self-contained. Se puede solicitar al team que los expanda uno a uno cuando sean necesarios:
+Esta sección completa la librería con todos los prompts restantes del roadmap. Mismo formato self-contained que las secciones previas.
 
-### Logo system
-- LOGO-09 · Wordmark vertical alt size
-- LOGO-10 · Monogram variants (PF)
+> **Convención de numeración:** Event kit sigue a partir de EVT-02 porque EVT-01 ya existe (Business Card en §17.1). Email kit sigue desde EML-02 (EML-01 = Welcome ya está en §19.1).
 
-### Icons 3.11 a 3.20 (ICN-51 a ICN-60)
-- ICN-51 · trophy_pets · celebración
-- ICN-52 · gift · regalo
-- ICN-53 · camera_pet · OCR
-- ICN-54 · settings · configuración
-- ICN-55 · bell · recordatorio
-- ICN-56 · shield · privacidad
-- ICN-57 · microchip · ID registro
-- ICN-58 · birthday · cumpleaños
-- ICN-59 · travel · viaje con mascota
-- ICN-60 · emergency · 24h
+---
 
-### Store Listings extended
-- IOS-02 · 5.5" variants slides 2-5
-- IOS-03 · App Preview video storyboard
-- AND-02 · Feature graphic seasonal variants
-- AND-03 · Play Store promo video storyboard
+### 24.1. LOGO-09 · Wordmark vertical (stacked)
 
-### Print extensions
-- INV-03 · Financials sample P&L
-- PRT-02 · Partner kit por vertical (alimento/restaurantes/seguros)
-- PRT-03 · Partner welcome kit cover
-- PRS-02 · Media backgrounder
-- PRS-03 · Founder photo guidelines
-- PRS-04 · Logo pack grid
+**Destino:** `public/brand-assets/logo/wordmark_vertical.svg` · **Prioridad:** P1 · **Peso:** < 2 KB
 
-### Event kit completo
-- EVT-01 · Roll-up 85×200cm
-- EVT-02 · Backdrop modular
-- EVT-03 · Lanyard + nametag
-- EVT-04 · Laptop sticker pack
-- EVT-05 · Tote bag
+```
+--- PASTE START ---
 
-### Email HTML
-- EML-02 · Monthly newsletter
-- EML-03 · Donation thanks
-- EML-04 · Member welcome
-- EML-05 · Vet invitation
-- EML-06 · Review invitation
-- EML-07 · Password reset
+Necesito un SVG oficial para Paw Friend (app chilena: ficha médica
+digital + directorio público de veterinarios + comunidad;
+100% gratis; SpA RUT 78.328.659-9; pawfriend.cl).
 
-Cada uno se puede producir pidiéndome: "Genera el prompt self-contained para {ID} siguiendo la estructura de esta librería."
+PALETA BRAND (estricto):
+- Purple: #9333ea main · #581c87 deep · #a855f7 mid
+- Ink (texto): #1a102b
+- Blanco: #ffffff
+
+TIPOGRAFÍA:
+- Wordmark: 'Fredoka', 'Plus Jakarta Sans', system-ui, peso 600
+
+ESTILO: flat modern, isotipo pata + corazón negative space sobre
+squircle iOS.
+
+REGLAS SVG:
+- Vectorial limpio, paths simples
+- <title>, role="img", <desc>
+- Peso < 2 KB
+- Entrega: UN SOLO SVG en bloque ```svg``` con comentario
+  <!-- wordmark_vertical.svg --> arriba
+
+═════════════════════════════════════════════════════════
+PEDIDO: Wordmark vertical stacked (redes, perfil, avatar grande)
+═════════════════════════════════════════════════════════
+
+ARCHIVO: wordmark_vertical.svg
+DIMENSIONES: viewBox 0 0 400 500
+PRIORIDAD: P1
+USO: perfiles redes sociales, merchandising, splash secundario.
+
+COMPOSICIÓN (de arriba hacia abajo):
+- Isotipo centrado horizontalmente, arriba
+  · Squircle rx 22%: gradient radial #9333ea centro → #581c87 bordes
+  · Pata blanca 4 pétalos arriba + cuerpo ovalado abajo
+  · Corazón negative space en centro del cuerpo ovalado
+  · Size: 240×240 dentro del viewBox 400×500
+  · Margin top: 40px
+- Gap: 40px
+- Wordmark "Paw Friend"
+  · Font: Fredoka 600, 72px
+  · Color: #1a102b
+  · Centrado horizontalmente
+  · Baseline ~ y=420
+- Tagline sub (opcional): "hecha en Chile" debajo
+  · Font: Fredoka 400, 20px
+  · Color: #6b21a8 (purple-800)
+  · Centrado, y ~ 465
+
+SAFE AREA: 40px libres alrededor del bloque completo.
+
+FONDO: transparente.
+
+TITLE: "Paw Friend Wordmark Vertical"
+DESC: "Wordmark vertical stacked para perfiles de redes sociales y
+merchandising. Isotipo squircle purple gradient arriba, wordmark
+Fredoka 600 ink abajo, tagline hecha en Chile en purple-800."
+
+--- PASTE END ---
+```
+
+---
+
+### 24.2. LOGO-10 · Monogram variants (PF)
+
+**Destino:** `public/brand-assets/logo/monogram_pf.svg` · **Prioridad:** P1 · **Peso:** < 2 KB
+
+```
+--- PASTE START ---
+
+Necesito un SVG oficial para Paw Friend (app chilena: ficha médica
+digital + directorio vets + comunidad; SpA RUT 78.328.659-9;
+pawfriend.cl; mascotas reales del founder: Kai pastor suizo + Ema
+gata negra).
+
+PALETA BRAND (estricto):
+- Purple: #9333ea main · #581c87 deep · #a855f7 mid · #e9d5ff light
+- Gold: #f59e0b · #fbbf24
+- Ink: #1a102b · Paper: #faf7ff · Blanco: #ffffff
+
+TIPOGRAFÍA:
+- Monogram: 'Fredoka', peso 700
+
+ESTILO: flat modern, monogram para espacios chicos (favicon xxl,
+watermark, social story corner).
+
+REGLAS SVG:
+- Vectorial limpio
+- <title>, role="img", <desc>
+- Peso < 2 KB
+- Entrega: UN SOLO SVG en bloque ```svg``` con 3 variantes en
+  columnas dentro del mismo viewBox
+
+═════════════════════════════════════════════════════════
+PEDIDO: 3 variantes de monogram "PF" side by side
+═════════════════════════════════════════════════════════
+
+ARCHIVO: monogram_pf.svg
+DIMENSIONES: viewBox 0 0 900 300 (3 variantes en fila, c/u 300×300)
+PRIORIDAD: P1
+
+LAS 3 VARIANTES (de izquierda a derecha, cada una 300×300 centrada):
+
+VARIANTE A — "Primary" (x 0 a 300):
+- Squircle 240×240 centrado en 150,150
+- Fill: gradient radial #9333ea → #581c87
+- Letras "PF" en blanco, Fredoka 700, 140px, centradas
+- P y F juntas compartiendo trazo vertical (ligadura suave)
+
+VARIANTE B — "Gold accent" (x 300 a 600):
+- Squircle 240×240 centrado en 450,150
+- Fill: #1a102b (ink)
+- Letras "PF" en gold gradient #fbbf24 → #f59e0b
+- Sutil heart gold #fbbf24 muy pequeño en la intersección P+F
+- Fredoka 700, 140px
+
+VARIANTE C — "Outline minimal" (x 600 a 900):
+- Squircle 240×240 centrado en 750,150
+- Fill: transparent, stroke #9333ea, stroke-width 4
+- Letras "PF" stroke #9333ea, stroke-width 6, fill transparent
+- Fredoka 700, 140px
+
+REGLAS:
+- Cada variante en <g> propio con id: monogram-primary,
+  monogram-gold, monogram-outline
+- Permite extracción de variantes individuales
+- SAFE AREA: 30px alrededor de cada squircle
+
+TITLE: "Paw Friend Monogram PF Variants"
+DESC: "Tres variantes de monogram PF: primary purple gradient,
+gold accent sobre ink, outline minimal. Para favicons xxl,
+watermarks y social story corners."
+
+--- PASTE END ---
+```
+
+---
+
+### 24.3. ICN-51 a ICN-60 (lote 10 íconos)
+
+**Destino:** `public/brand-assets/icons/51_trophy_pets.svg` … `60_emergency.svg` · **Prioridad:** P1 · **Peso:** < 1.5 KB c/u
+
+```
+--- PASTE START ---
+
+Necesito 10 SVGs oficiales para Paw Friend (app chilena: ficha
+médica digital + directorio vets + comunidad; SpA RUT 78.328.659-9;
+pawfriend.cl).
+
+PALETA BRAND (estricto):
+- Purple: #9333ea main · #a855f7 mid · #581c87 deep
+- Gold: #eab308 · #f59e0b · #fbbf24
+- Emerald: #10b981 · #047857
+- Rose: #ec4899 · #be185d
+- Rojo emergencia: #dc2626
+- Blanco: #ffffff
+
+ESTILO: flat modern, squircle iOS viewBox 200×200 rx 40, contenido
+blanco con acento gold donde se especifica.
+
+REGLAS SVG:
+- Vectorial limpio, paths simples
+- <title>, role="img", <desc> cada uno
+- Peso < 1.5 KB cada uno
+- Entrega: 10 bloques SVG separados, cada uno con comentario
+  <!-- NN_nombre.svg --> arriba
+
+═════════════════════════════════════════════════════════
+PEDIDO: 10 íconos brand squircle (ICN-51 a ICN-60)
+═════════════════════════════════════════════════════════
+
+Para cada uno: squircle 200×200 rx 40, fill según indicación,
+contenido blanco centrado con acentos gold si se especifica.
+
+───────────────────────────────────────────────────────────
+
+51_trophy_pets.svg — "Trofeo peludo / celebración"
+Fill squircle: gradient 135° #9333ea → #a855f7
+Contenido blanco: trofeo clásico (copa con dos asas + base ancha +
+pedestal). Dentro de la copa, silueta pequeña de pata blanca
+asomando. Estrellitas gold #fbbf24 (3 peq) alrededor del trofeo.
+
+52_gift.svg — "Regalo / recompensa"
+Fill squircle: #ec4899 (rose)
+Contenido blanco: caja de regalo 3D (frente + lateral sutil) con
+lazo arriba en 2 bucles. Moño con acento gold #f59e0b en el nudo
+central. Etiqueta pequeña colgando del lazo con corazón diminuto.
+
+53_camera_pet.svg — "OCR / escanear carnet"
+Fill squircle: #9333ea
+Contenido blanco: cámara estilizada (cuerpo rectangular rounded +
+lente circular grande central + flash pequeño arriba-derecha).
+Dentro del lente, corazón pequeño gold #fbbf24. 4 esquinas de foco
+(corchetes peq) alrededor del cuerpo simulando OCR scan.
+
+54_settings.svg — "Configuración"
+Fill squircle: #581c87 (purple deep)
+Contenido blanco: engranaje 8 dientes con círculo interior hueco
+(negative space deja ver fondo) + pata pequeña blanca en el
+centro del hueco.
+
+55_bell.svg — "Recordatorio / notificación"
+Fill squircle: #9333ea
+Contenido blanco: campana clásica con badillo inferior + línea de
+sonido curva arriba (como ondas) a cada lado. Punto gold #fbbf24
+en el tope sugiriendo notificación activa.
+
+56_shield.svg — "Privacidad / seguridad datos"
+Fill squircle: gradient 135° #047857 → #10b981 (emerald)
+Contenido blanco: escudo clásico con check interior grande
+centrado. En la parte superior del escudo, pequeña pata negative
+space (hueco dejando ver el fill emerald).
+
+57_microchip.svg — "ID registro / microchip"
+Fill squircle: #9333ea
+Contenido blanco: chip electrónico cuadrado con 4 pines a cada lado
++ centro con patrón de circuitos simples (líneas rectas con
+terminaciones redondas). Corazón pequeño gold #fbbf24 en el centro
+del chip.
+
+58_birthday.svg — "Cumpleaños / aniversario"
+Fill squircle: #ec4899 (rose)
+Contenido blanco: torta de 2 pisos con velitas (3 velas arriba,
+llamitas gold #fbbf24). Pata pequeña decorativa en el piso
+superior. 2 corazones pequeños gold flotando a los lados.
+
+59_travel.svg — "Viaje con mascota"
+Fill squircle: gradient 135° #047857 → #10b981 (emerald)
+Contenido blanco: maleta rectangular rounded con asa arriba +
+esquinas reforzadas + en el centro de la maleta una pata pequeña
+negative space (hueco). Etiqueta de viaje gold #fbbf24 pequeña
+colgando del asa.
+
+60_emergency.svg — "Emergencia 24h"
+Fill squircle: #dc2626 (rojo emergencia)
+Contenido blanco: cruz médica clásica (plus symbol rounded) con
+círculo alrededor. Números "24" pequeños en gold #fbbf24 en la
+parte inferior del círculo.
+
+───────────────────────────────────────────────────────────
+
+Cada SVG: <title> corto (Trofeo peludo, Regalo, OCR, etc.),
+<desc> describiendo el uso en Paw Friend.
+
+Entrega 10 bloques SVG separados.
+
+--- PASTE END ---
+```
+
+---
+
+### 24.4. IOS-02 · App Store 5.5" slides 2-5
+
+**Destino:** `public/brand-assets/store/ios/5.5/slide_02.svg` … `slide_05.svg` · **Prioridad:** P0 · **Peso:** < 15 KB c/u
+
+```
+--- PASTE START ---
+
+Necesito 4 SVGs oficiales (slides) para App Store iOS 5.5" de Paw
+Friend (app chilena: ficha médica digital + directorio público de
+veterinarios + comunidad; 100% gratis; SpA RUT 78.328.659-9;
+pawfriend.cl).
+
+DIMENSIONES REQUERIDAS POR APPLE:
+- 5.5" display: 1242 × 2208 (portrait)
+- viewBox: 0 0 1242 2208
+
+PALETA BRAND (estricto):
+- Purple: #9333ea main · #7e22ce · #581c87 deep · #a855f7 mid
+- Gold: #f59e0b · #fbbf24 · #fde68a
+- Emerald: #10b981 · #047857
+- Rose: #ec4899 · #be185d
+- Ink: #1a102b · Paper: #faf7ff · Blanco: #ffffff
+
+TIPOGRAFÍA:
+- Headline: 'Fredoka', peso 600, tracking tight
+- Body: 'Plus Jakarta Sans', peso 500
+- Mono: 'JetBrains Mono' (si aparece data)
+
+ESTILO VISUAL:
+Flat modern, gradient hero backgrounds + mockup iPhone ilustrado
+minimal + headline grande + subhead + 1 feature pill. Sin raster.
+Sin fotos.
+
+REGLAS SVG:
+- Vectorial limpio, paths simples, sin raster embed
+- <title>, role="img", <desc> cada uno
+- Peso < 15 KB cada uno
+- Entrega: 4 bloques SVG separados con comentarios
+  <!-- slide_0X.svg --> arriba
+
+═════════════════════════════════════════════════════════
+PEDIDO: 4 slides App Store iOS 5.5" (slides 2-5)
+═════════════════════════════════════════════════════════
+
+COMPOSICIÓN COMÚN (todos los slides):
+- Fondo: gradient radial top-left según audiencia
+- Headline top: Fredoka 600, 96px, blanco o ink según contraste
+- Subhead: Plus Jakarta Sans 500, 44px, opacity 0.85
+- Mockup iPhone 14 vertical (estilizado, no realista) centrado
+  abajo mostrando pantalla del feature
+- Pill gold inferior con mensaje clave (Fredoka 600, 36px)
+- Safe area 120px top/bottom, 80px lados
+
+───────────────────────────────────────────────────────────
+
+slide_02.svg — "Directorio público de vets"
+Fondo: gradient #9333ea top-left → #581c87 bottom-right
+Headline: "Encuentra tu vet de confianza"
+Subhead: "Directorio público con +400 veterinarios de Chile"
+Mockup iPhone: lista de tarjetas vet (3 visibles) cada una con
+avatar circular, nombre, comuna, rating estrellas gold, badge verde
+"verificado"
+Pill gold inferior: "Sin costo · Sin registro"
+Ilustración lateral: pin de mapa flotante con corazón adentro
+
+slide_03.svg — "Ficha médica compartible"
+Fondo: gradient #047857 top-left → #10b981 bottom-right
+Headline: "Comparte la ficha en 1 click"
+Subhead: "PDF oficial + link 30 días. Tu vet lo recibe al toque."
+Mockup iPhone: ficha PDF visible con header Paw Friend, datos
+mascota (Kai, pastor suizo), sección vacunas con checks emerald,
+botón grande gold "Compartir PDF"
+Pill gold inferior: "PDF + WhatsApp directo"
+Ilustración lateral: ícono WhatsApp + arrow flotante
+
+slide_04.svg — "Comunidad pet lover"
+Fondo: gradient #ec4899 top-left → #be185d bottom-right
+Headline: "No estás solo"
+Subhead: "Comunidad real de tutores chilenos que se apoyan"
+Mockup iPhone: feed social con 2 cards de posts (mascotas + tutores),
+contador de likes con corazones rose, avatar + comentarios
+Pill gold inferior: "Más de 10.000 peludos ya están"
+Ilustración lateral: 3 avatares circulares solapados + pata
+
+slide_05.svg — "100% gratis para dueños"
+Fondo: gradient #f59e0b top-left → #d97706 bottom-right
+Headline: "Gratis. Siempre."
+Subhead: "Hecha en Chile por un fundador + su manada"
+Mockup iPhone: pantalla /paw-core con los 3 valores (gratis,
+hecha en Chile, comunidad) en cards + foto placeholder del founder
++ mascotas
+Pill gold inferior: "Sin letra chica · Sin ads intrusivos"
+Ilustración lateral: corazón grande con bandera de Chile pequeña
+adentro
+
+───────────────────────────────────────────────────────────
+
+Cada SVG:
+- <title>: "Paw Friend App Store Slide 0X"
+- <desc>: descripción del feature mostrado
+- Optimizado visual + peso < 15 KB
+
+Entrega 4 bloques SVG separados.
+
+--- PASTE END ---
+```
+
+---
+
+### 24.5. IOS-03 · App Preview video storyboard (NO SVG)
+
+**Destino:** `docs-raiz/store-assets/ios_app_preview_storyboard.md` · **Prioridad:** P1 · **Formato:** documento narrativo (storyboard para editor de video externo)
+
+> **Importante:** IOS-03 requiere producción de video (15-30s) que **NO se hace con Claude**. Claude entrega el storyboard detallado para un editor (Final Cut Pro / DaVinci / CapCut). Usar QuickTime de un iPhone real para capturar pantallas, o tomar screens de la app y animarlas.
+
+```
+--- PASTE START ---
+
+Necesito que redactes un storyboard completo (no SVG) para un
+video App Preview de App Store iOS 30 segundos, para Paw Friend
+(app chilena: ficha médica digital + directorio público de vets +
+comunidad; 100% gratis; SpA RUT 78.328.659-9; pawfriend.cl).
+
+FORMATO DEL STORYBOARD:
+Markdown con estructura por escena. Cada escena incluye:
+- Timestamp (00:00 - 00:04)
+- Shot description (qué se ve en la pantalla/mockup)
+- Text overlay (copy que aparece, en español chileno)
+- Audio/SFX sugerido
+- Captura recomendada (qué pantalla de la app capturar o qué ilustrar)
+
+ESPECIFICACIONES APPLE:
+- Duración: 15-30 segundos (apuntar a 28s)
+- Sin voz en off (el usuario ve el preview silenciado en el store)
+- Sin texto crítico en los primeros 3 segundos (Apple recomienda hook visual)
+- Capturas directas de la app (no mockups externos)
+- Copy en español chileno (tuteo: tu, tienes, puedes; NO voseo)
+
+COPY CHILENO:
+"tu", "tienes", "puedes", "nuestro", "chile" (lowercase donde
+sea natural). NO "vos tenes" (argentino). NO "vosotros" (España).
+
+ARCO NARRATIVO (obligatorio):
+1. Hook emocional (0-3s): el dolor real del tutor
+2. Presentación solución (3-10s): Paw Friend resuelve
+3. Demo core features (10-22s): ficha + directorio + comunidad
+4. Cierre CTA (22-28s): "gratis, en chile, para siempre"
+
+═════════════════════════════════════════════════════════
+PEDIDO: Storyboard App Preview iOS 28s
+═════════════════════════════════════════════════════════
+
+ENTREGA:
+Documento markdown con 6-8 escenas, cada una con los 5 campos arriba.
+Incluye sección final de specs técnicos:
+- Resolución: 1080×1920 o 886×1920 (iPhone 5.5)
+- FPS: 30
+- Formato entrega: .mov H.264
+- Música sugerida (royalty-free indicada con tono: cálido + hopeful)
+
+Incluye al final checklist de captura (qué pantallas de la app hay
+que grabar en QuickTime conectado al iPhone).
+
+Entrega TODO el documento en un solo bloque markdown dentro de
+```markdown ... ```
+
+--- PASTE END ---
+```
+
+---
+
+### 24.6. AND-02 · Play Store feature graphic seasonal variants
+
+**Destino:** `public/brand-assets/store/android/feature_graphic_{base,summer,winter,holiday}.svg` · **Prioridad:** P1 · **Peso:** < 12 KB c/u
+
+```
+--- PASTE START ---
+
+Necesito 4 SVGs oficiales (feature graphics) para Play Store
+Android de Paw Friend (app chilena: ficha médica digital +
+directorio vets + comunidad; 100% gratis; SpA RUT 78.328.659-9;
+pawfriend.cl).
+
+DIMENSIONES GOOGLE:
+- 1024 × 500 (landscape obligatorio)
+- viewBox: 0 0 1024 500
+
+PALETA BRAND:
+- Purple: #9333ea · #581c87 · #a855f7 · #e9d5ff
+- Gold: #f59e0b · #fbbf24 · #fde68a
+- Emerald estival: #10b981 · #34d399
+- Blue invierno: #3b82f6 · #1e40af
+- Rojo fiestas: #dc2626 · #fca5a5
+- Ink: #1a102b · Blanco: #ffffff
+
+TIPOGRAFÍA:
+- Headline: 'Fredoka' 600
+- Body: 'Plus Jakarta Sans' 500
+
+REGLAS SVG:
+- Vectorial, sin raster embed
+- <title>, role="img", <desc>
+- Peso < 12 KB cada uno
+- Entrega 4 bloques SVG separados con <!-- filename.svg --> arriba
+
+═════════════════════════════════════════════════════════
+PEDIDO: 4 feature graphics Play Store (base + 3 seasonal)
+═════════════════════════════════════════════════════════
+
+COMPOSICIÓN COMÚN:
+- Fondo gradient según variante
+- Isotipo Paw Friend (squircle + pata + corazón) + wordmark
+  "Paw Friend" a la izquierda (ocupando ~35% del ancho)
+- Claim principal a la derecha, Fredoka 600, 56px
+- Decoración temática a la derecha-abajo según estación
+- Safe area 40px
+
+───────────────────────────────────────────────────────────
+
+feature_graphic_base.svg — "Base year-round"
+Fondo: gradient #9333ea → #581c87 diagonal
+Claim: "Tu peludo merece lo mejor"
+Subclaim: "Ficha médica + vets + comunidad · gratis"
+Decor: 3 patas tonales flotando + 1 corazón gold
+
+feature_graphic_summer.svg — "Verano (Dic-Feb Chile)"
+Fondo: gradient #9333ea → #10b981 diagonal
+Claim: "Verano contigo y tu peludo"
+Subclaim: "Cuida a Kai con una ficha que va donde sea"
+Decor: sol estilizado gold #fbbf24 + gotas de agua + pata
+corriendo + hojas tropicales minimal
+
+feature_graphic_winter.svg — "Invierno (Jun-Ago Chile)"
+Fondo: gradient #581c87 → #1e40af diagonal
+Claim: "Invierno sin miedo"
+Subclaim: "Vacunas al día, ficha en tu bolsillo"
+Decor: copos de nieve minimal blanco + pata con botita + termómetro
+gold pequeño
+
+feature_graphic_holiday.svg — "Fiestas Patrias + Navidad"
+Fondo: gradient #dc2626 → #9333ea diagonal (rojo + purple)
+Claim: "Fiestas con tu familia completa"
+Subclaim: "Tu peludo también es familia 🇨🇱"
+Decor: guirnalda minimal + estrellita gold + pata decorativa +
+copihue estilizado rojo (flor nacional Chile)
+
+───────────────────────────────────────────────────────────
+
+Cada SVG:
+- <title>: "Paw Friend Feature Graphic <variante>"
+- <desc>: descripción breve
+- Optimizado < 12 KB
+
+Entrega 4 bloques SVG separados.
+
+--- PASTE END ---
+```
+
+---
+
+### 24.7. AND-03 · Play Store promo video storyboard (NO SVG)
+
+**Destino:** `docs-raiz/store-assets/android_promo_video_storyboard.md` · **Prioridad:** P1 · **Formato:** documento narrativo
+
+```
+--- PASTE START ---
+
+Necesito que redactes un storyboard completo para un video
+promocional Play Store Android 30 segundos, para Paw Friend
+(app chilena: ficha médica digital + directorio público de vets +
+comunidad; 100% gratis; SpA RUT 78.328.659-9; pawfriend.cl).
+
+FORMATO:
+Markdown con estructura por escena (timestamp / shot / overlay /
+SFX / captura). Mismo formato que app preview iOS pero con
+diferencias:
+
+ESPECIFICACIONES GOOGLE PLAY:
+- Duración: 30 segundos (ideal), máximo 2 minutos
+- Resolución: 1920×1080 (16:9 landscape) o 1080×1920 (9:16 portrait)
+- Formato: mp4 H.264
+- Sí acepta voz en off (a diferencia de Apple)
+- Sí acepta mockups (a diferencia de Apple que exige screens reales)
+
+ARCO NARRATIVO:
+1. Hook (0-5s): founder habla a cámara o voz en off "hola, hice paw
+   friend porque..."
+2. Problema (5-10s): tutor buscando ficha en papel / al olvidar
+   vacuna / sin encontrar vet de confianza
+3. Solución (10-22s): demo app - ficha digital + directorio + comunidad
+4. Diferenciador (22-27s): "gratis, hecha en chile, por una persona + su
+   manada"
+5. CTA (27-30s): logo + pawfriend.cl + "descárgala en Play Store"
+
+COPY CHILENO (tuteo: tu, tienes; NO vos tenes; NO vosotros).
+
+═════════════════════════════════════════════════════════
+PEDIDO: Storyboard Play Store promo 30s
+═════════════════════════════════════════════════════════
+
+ENTREGA:
+Documento markdown con:
+1. Scene breakdown (6-8 escenas con los 5 campos)
+2. Voice-over script completo (español chileno neutro para Chile)
+3. Music recommendation (estilo + BPM + mood)
+4. Graphics requirements (logos + lower thirds + callouts)
+5. Shot list técnico (qué grabar/animar)
+
+Todo en un solo bloque ```markdown```.
+
+--- PASTE END ---
+```
+
+---
+
+### 24.8. INV-03 · Financials sample P&L (template SVG)
+
+**Destino:** `public/brand-assets/investor/financials_sample_pl.svg` · **Prioridad:** P1 · **Peso:** < 15 KB
+
+```
+--- PASTE START ---
+
+Necesito un SVG oficial (plantilla P&L visual) para el data room
+de inversionistas de Paw Friend (app chilena: ficha médica digital
++ directorio vets + comunidad; 100% gratis B2C; monetización 6
+motores: donaciones + Paw Member + vets B2B Free/Premium/Pro Max
++ Paw Companys sponsors + Paw Voices creators + publicidad;
+SpA RUT 78.328.659-9; pawfriend.cl).
+
+PALETA BRAND:
+- Purple: #9333ea main · #581c87 deep · #e9d5ff light
+- Gold: #f59e0b · #fbbf24
+- Emerald (ingresos): #10b981 · #047857
+- Rose (gastos): #ec4899 · #be185d
+- Ink: #1a102b · Paper: #faf7ff
+
+TIPOGRAFÍA:
+- Display: 'Fredoka' 600
+- Body: 'Plus Jakarta Sans' 500
+- Mono (números): 'JetBrains Mono' 600
+
+REGLAS SVG:
+- Vectorial limpio
+- Peso < 15 KB
+- <title>, role="img", <desc>
+- Entrega: UN SOLO SVG en bloque ```svg``` con <!-- financials_sample_pl.svg -->
+
+═════════════════════════════════════════════════════════
+PEDIDO: P&L sample visual data-room friendly
+═════════════════════════════════════════════════════════
+
+ARCHIVO: financials_sample_pl.svg
+DIMENSIONES: viewBox 0 0 1200 900 (A4 landscape)
+PRIORIDAD: P1
+USO: incluido en data room + cierre de pitch + CORFO Semilla aplicación.
+
+COMPOSICIÓN:
+Header (y 0-120):
+- Fondo: gradient #9333ea → #581c87
+- Título "P&L Proyectado 12 meses" en Fredoka 600, 52px, blanco
+- Subtítulo "Escenario conservador · Chile · CLP" Plus Jakarta 500,
+  24px, purple-200
+
+Tabla principal (y 140-760):
+- Grid 6 columnas: Categoría · M3 · M6 · M9 · M12 · YoY%
+- 7 filas:
+  1. **INGRESOS** (bold, header ink)
+  2. Paw Companys (3 sponsors Gold) - emerald bars
+  3. Paw Member (500 suscriptores × $3.990) - emerald bars
+  4. Vets Premium (40 × $9.900) - emerald bars
+  5. Vets Pro Max (5 × $29.900) - emerald bars
+  6. **Total Ingresos** (bold)
+  7. **EGRESOS** (bold, header)
+  8. Supabase + OpenAI + infra (~$80k) - rose bars
+  9. Legal + contable + SpA (~$50k) - rose bars
+  10. Marketing + events (~$150k) - rose bars
+  11. **Total Egresos** (bold)
+  12. **EBITDA** (bold gold background row)
+
+Números en JetBrains Mono 600, 18px.
+Barras mini horizontales al lado de cada categoría sugieren
+evolución trimestral (sparklines).
+
+Footer (y 780-900):
+- Caja purple-50 con disclaimer:
+  "Números ilustrativos para fines de pitch. No constituyen
+  proyección financiera auditada. Hipótesis: activación completa
+  de 6 motores + 10.000 MAU + 3 Paw Companys sponsors confirmados."
+- Logo Paw Friend pequeño + pawfriend.cl + fecha "abril 2026"
+
+TITLE: "Paw Friend P&L Sample Investor Deck"
+DESC: "Plantilla visual P&L proyectado 12 meses con ingresos por
+motor y egresos por categoría, formato para data room y pitches
+CORFO/Start-Up Chile."
+
+--- PASTE END ---
+```
+
+---
+
+### 24.9. PRT-02 · Partner kit por vertical (4 verticales)
+
+**Destino:** `public/brand-assets/partner/partner_kit_{alimento,restaurantes,seguros,accesorios}.svg` · **Prioridad:** P2 · **Peso:** < 10 KB c/u
+
+```
+--- PASTE START ---
+
+Necesito 4 SVGs oficiales (covers + sellos) para Partner Kits
+por vertical de Paw Friend (app chilena; 100% gratis B2C;
+Paw Partners = tiendas/servicios que dan descuentos a Paw Members
+a cambio de exposición gratuita en la app; SpA RUT 78.328.659-9).
+
+VERTICALES DEL PROGRAMA PAW PARTNERS:
+1. Alimento (pet food premium)
+2. Restaurantes pet-friendly
+3. Seguros para mascotas
+4. Accesorios / tiendas de mascotas
+
+PALETA BRAND:
+- Purple: #9333ea main · #581c87 deep
+- Emerald (partners principal): #10b981 · #047857
+- Gold: #f59e0b · #fbbf24
+- Rose: #ec4899
+- Blue: #3b82f6
+- Ink: #1a102b · Paper: #faf7ff
+
+TIPOGRAFÍA:
+- Display: 'Fredoka' 600
+- Body: 'Plus Jakarta Sans' 500
+
+REGLAS SVG:
+- Vectorial limpio
+- <title>, role="img", <desc>
+- Peso < 10 KB cada uno
+- Entrega: 4 bloques SVG separados con <!-- filename.svg --> arriba
+
+═════════════════════════════════════════════════════════
+PEDIDO: 4 covers A4 partner kits por vertical
+═════════════════════════════════════════════════════════
+
+DIMENSIONES: viewBox 0 0 2480 3508 (A4 portrait 300dpi)
+
+COMPOSICIÓN COMÚN (todos):
+- Fondo: gradient principal según vertical
+- Logo Paw Friend (isotipo + wordmark blanco) top-left
+- Badge "Paw Partners · Programa <vertical>" esquina superior derecha
+  (pill gold)
+- Hero illustration centrada mid (ilustrativa, no raster)
+- Headline: "Bienvenido a Paw Partners" (Fredoka 600, 140px)
+- Subhead específico del vertical
+- Footer: pawfriend.cl + "hecho en chile" + fecha
+
+───────────────────────────────────────────────────────────
+
+partner_kit_alimento.svg — "Alimento premium"
+Fondo: gradient #047857 top → #10b981 bottom
+Hero: tazón de comida + saco de alimento + hueso + pata
+Subhead: "Para marcas de alimento que quieren llegar a tutores que
+priorizan la salud de sus peludos."
+Sello grande centro-bajo: "Alimento certificado"
+
+partner_kit_restaurantes.svg — "Restaurantes pet-friendly"
+Fondo: gradient #9333ea top → #581c87 bottom
+Hero: mesa con copa + tazón de agua para mascota + pata descansando
+Subhead: "Para locales que abrazan a los peludos en su terraza."
+Sello: "Pet-friendly Chile"
+
+partner_kit_seguros.svg — "Seguros mascotas"
+Fondo: gradient #3b82f6 top → #1e40af bottom
+Hero: escudo + corazón + pata protegida
+Subhead: "Para aseguradoras que entienden que los peludos también
+son familia."
+Sello: "Seguro pet-family"
+
+partner_kit_accesorios.svg — "Accesorios y tiendas"
+Fondo: gradient #ec4899 top → #be185d bottom
+Hero: collar + correa + juguete + pelota
+Subhead: "Para tiendas que tienen lo que tu peludo necesita y
+sueña."
+Sello: "Tienda amiga Paw"
+
+───────────────────────────────────────────────────────────
+
+Cada SVG con:
+- TITLE específico
+- DESC detallando vertical
+- Logos de ejemplo como placeholders (3 círculos neutrales
+  gris-claro al pie, sin marcas reales)
+- Peso < 10 KB
+
+Entrega 4 bloques SVG separados.
+
+--- PASTE END ---
+```
+
+---
+
+### 24.10. PRT-03 · Partner welcome kit cover A4
+
+**Destino:** `public/brand-assets/partner/partner_welcome_cover.svg` · **Prioridad:** P2 · **Peso:** < 10 KB
+
+```
+--- PASTE START ---
+
+Necesito un SVG oficial (cover A4) para el Partner Welcome Kit
+de Paw Friend (app chilena; 100% gratis B2C; Paw Partners = tiendas
+con descuentos a cambio de exposición gratuita; SpA RUT
+78.328.659-9; pawfriend.cl).
+
+PALETA BRAND:
+- Purple: #9333ea · #581c87 · #e9d5ff
+- Gold: #f59e0b · #fbbf24
+- Emerald: #10b981 · #047857
+- Ink: #1a102b · Paper: #faf7ff · Blanco: #ffffff
+
+TIPOGRAFÍA:
+- Display: 'Fredoka' 600
+- Body: 'Plus Jakarta Sans' 500
+- Handwritten accent (opcional): 'Caveat' si disponible, sino Fredoka 400
+
+REGLAS SVG:
+- Vectorial limpio
+- <title>, role="img", <desc>
+- Peso < 10 KB
+- Entrega: UN SOLO SVG en bloque ```svg``` con
+  <!-- partner_welcome_cover.svg --> arriba
+
+═════════════════════════════════════════════════════════
+PEDIDO: Cover A4 Partner Welcome Kit
+═════════════════════════════════════════════════════════
+
+ARCHIVO: partner_welcome_cover.svg
+DIMENSIONES: viewBox 0 0 2480 3508 (A4 portrait 300dpi)
+PRIORIDAD: P2
+USO: se adjunta al email de bienvenida cuando se confirma un
+partner + se imprime a pedido para reuniones presenciales.
+
+COMPOSICIÓN:
+Top (y 0-700):
+- Fondo: gradient #9333ea → #581c87
+- Esquina superior izquierda: logo Paw Friend blanco (isotipo +
+  wordmark)
+- Esquina superior derecha: fecha + folio único (placeholder "#XXX")
+  en Mono 18px
+
+Mid hero (y 700-2000):
+- Fondo: blanco (#ffffff)
+- Badge pill gold centrado: "PAW PARTNERS · BIENVENIDO"
+- Headline grande Fredoka 600 200px ink: "Somos familia ahora"
+- Sub Fredoka 400 60px purple-800: "gracias por sumarte al círculo
+  de tiendas que cuidan a los peludos de Chile"
+- Ilustración central: 2 patas dándose la mano (unión peludo +
+  partner) dentro de un círculo pastel gold (fondo #fef3c7), tamaño
+  600×600 aprox
+- 3 bullets de beneficios en columnas (30px padding):
+  · "exposición gratuita · tu logo en /donaciones"
+  · "acceso a tutores Paw Members con descuentos"
+  · "badge partner · mención en redes"
+
+Footer (y 2000-3508):
+- Banda purple-900 (#581c87) con:
+  · Wordmark Paw Friend blanco
+  · pawfriend.cl
+  · paw.partners@pawfriend.cl (placeholder)
+  · "hecho en chile · con amor · por una persona + su manada"
+  · Patrón sutil de patas opacity 0.1 decorativo
+
+TITLE: "Paw Friend Partner Welcome Cover"
+DESC: "Portada A4 del kit de bienvenida para nuevos Paw Partners.
+Incluye headline cálido, 3 beneficios clave y contacto."
+
+--- PASTE END ---
+```
+
+---
+
+### 24.11. PRS-02 · Media backgrounder (1-pager)
+
+**Destino:** `public/brand-assets/press/media_backgrounder.svg` · **Prioridad:** P1 · **Peso:** < 12 KB
+
+```
+--- PASTE START ---
+
+Necesito un SVG oficial (media backgrounder A4 1-pager) para
+periodistas y prensa de Paw Friend (app chilena: ficha médica
+digital + directorio público de vets + comunidad; 100% gratis B2C;
+hecha por una persona + IA + mascotas reales Kai y Ema; SpA
+SUSAETA GARNHAM SOFTWARE ENGINEERING RUT 78.328.659-9; pawfriend.cl).
+
+PALETA BRAND (estricto):
+- Purple: #9333ea · #581c87 · #e9d5ff
+- Gold: #f59e0b · #fbbf24
+- Ink: #1a102b · Paper: #faf7ff
+
+TIPOGRAFÍA:
+- Display: 'Fredoka' 600
+- Body: 'Plus Jakarta Sans' 500 / 400
+- Mono: 'JetBrains Mono' 600 para números
+
+REGLAS SVG:
+- Vectorial limpio, sin raster
+- <title>, role="img", <desc>
+- Peso < 12 KB
+- Entrega: UN SOLO SVG en bloque ```svg``` con
+  <!-- media_backgrounder.svg --> arriba
+
+═════════════════════════════════════════════════════════
+PEDIDO: Media backgrounder A4 1-pager
+═════════════════════════════════════════════════════════
+
+ARCHIVO: media_backgrounder.svg
+DIMENSIONES: viewBox 0 0 2480 3508 (A4 portrait 300dpi)
+PRIORIDAD: P1
+USO: se envía a periodistas + medios + bloggers pet cuando hay
+entrevista o cobertura.
+
+ESTRUCTURA DE CONTENIDO:
+Header (0-400):
+- Wordmark Paw Friend + tagline "hecha en chile"
+- Badge gold: "MEDIA BACKGROUNDER · PARA PRENSA"
+- Fecha: "abril 2026"
+
+Sección "¿Qué es Paw Friend?" (400-900):
+- Headline Fredoka 600 100px: "¿Qué es Paw Friend?"
+- Párrafo 24px: "La primera app chilena que junta ficha médica
+  digital + directorio público de veterinarios + comunidad de
+  tutores. 100% gratis para dueños, siempre. Hecha desde Chile
+  por una persona con ayuda de IA, pensando en Kai (pastor suizo),
+  Ema (gata negra) y todos los peludos del país."
+
+Sección "Por los números" (900-1500):
+- 4 KPIs en grid 2×2 con cards purple-50:
+  · "10.000+" peludos registrados
+  · "400+" vets en directorio
+  · "$0" costo para dueños
+  · "0 letra chica" política de datos
+- Cada KPI en JetBrains Mono 80px gold
+
+Sección "Hitos" (1500-2200):
+- Timeline horizontal con 4 milestones:
+  · 2025 Q4: primera línea de código
+  · 2026 Q1: beta cerrada vets pioneros
+  · 2026 abril: lanzamiento público
+  · 2026 Q3: expansión Latam (visión)
+
+Sección "Contacto prensa" (2200-2900):
+- Card con:
+  · Email: pawfriendcl@gmail.com
+  · Voceros: Paw Founder (fundador) · Kai & Ema (mascotas oficiales)
+  · Ciudad: Santiago, Chile
+  · Disponibilidad: lunes a viernes, coordinar entrevistas por email
+
+Footer (2900-3508):
+- Banda purple-900: logo + pawfriend.cl + copyright 2026
+
+TITLE: "Paw Friend Media Backgrounder"
+DESC: "Documento 1-pager A4 para prensa con qué es Paw Friend,
+KPIs, hitos y contacto de voceros."
+
+--- PASTE END ---
+```
+
+---
+
+### 24.12. PRS-03 · Founder photo guidelines (NO SVG)
+
+**Destino:** `docs-raiz/press-kit/founder_photo_guidelines.md` · **Prioridad:** P1 · **Formato:** documento narrativo
+
+> **Importante:** las fotos reales del founder + Kai + Ema deben hacerse con cámara (no Claude). Este prompt entrega **las guidelines** para el fotógrafo o para el propio founder con iPhone.
+
+```
+--- PASTE START ---
+
+Necesito que redactes un documento de guidelines fotográficas
+para las fotos oficiales del founder de Paw Friend (app chilena;
+SpA RUT 78.328.659-9; pawfriend.cl; mascotas reales: Kai pastor
+suizo + Ema gata negra).
+
+CONTEXTO:
+El founder firma públicamente como "Paw Founder" (alias para
+materiales de marketing). Las fotos del kit de prensa incluyen al
+founder con Kai y/o Ema. Estas fotos se usarán en:
+- Press kit enviado a periodistas
+- Landing /paw-core sección "alma del proyecto"
+- Data room inversionistas
+- Redes sociales hitos personales
+- Perfil founder pitch
+
+GUIDELINES REQUERIDAS:
+
+1. Composition
+   - Rule of thirds
+   - Mascotas siempre a la misma altura visual o más alta que el
+     founder (nunca por debajo dominante)
+   - Espacio libre a la derecha para superponer overlay de texto
+
+2. Iluminación
+   - Luz natural mañana/atardecer (golden hour Chile 18-20h verano)
+   - Evitar sol directo mediodía
+   - Backlight suave aceptable
+
+3. Background
+   - Exteriores Chile: parques Santiago (Metropolitano, Bicentenario,
+     Araucano), cordillera de fondo (✨diferenciador chileno), barrio
+     Providencia/Ñuñoa
+   - Interiores: casa warm, mucha luz, plantas, detalles cálidos,
+     NO oficina estéril
+   - NO: locaciones corporativas frías, NO fondos verde croma
+
+4. Vestuario
+   - Tonos brand-consistent: purples suaves, tonos tierra gold, blanco
+     crema
+   - EVITAR: marcas muy visibles, colores fuera de paleta brand,
+     uniformes corporativos
+   - Accesorios de Kai/Ema: collar brand color (purple o gold), nada
+     estridente
+
+5. Expresión
+   - Natural, relajada, conectada con las mascotas
+   - Evitar poses de "CEO corporativo"
+   - Mostrar cercanía real: mirando a la mascota, abrazándola, en el
+     suelo a su altura
+
+6. Técnico
+   - Formato: RAW + JPEG alta calidad
+   - Resolución mínima: 6000×4000 (full frame)
+   - Entrega final: 3-5 hero shots + 8-12 alternativas
+   - Edición: color grading warm, contraste moderado, NO filtros
+     Instagram obvios
+
+7. Derechos de uso
+   - Founder firma consentimiento de uso comercial
+   - Mascotas → el founder es responsable (Kai y Ema son suyas)
+   - Si hay otro humano en foto → release form obligatorio
+
+8. Shot list sugerido
+   - Retrato head-shot fondo neutro (para pitch)
+   - Founder + Kai + Ema en casa
+   - Founder trabajando en laptop con Kai al lado
+   - Founder en parque con Kai corriendo de fondo
+   - Detalle manos acariciando a Ema
+   - Wide shot familia completa
+
+FORMATO ENTREGA:
+Documento markdown con secciones claras + checklist final para el
+fotógrafo + ejemplos de referencia (links a moodboards tipo Pinterest
+sin incluir imágenes con copyright).
+
+Entrega en un solo bloque ```markdown```.
+
+--- PASTE END ---
+```
+
+---
+
+### 24.13. PRS-04 · Logo pack grid (visual reference sheet)
+
+**Destino:** `public/brand-assets/press/logo_pack_grid.svg` · **Prioridad:** P1 · **Peso:** < 15 KB
+
+```
+--- PASTE START ---
+
+Necesito un SVG oficial (hoja de referencia A4 landscape) que
+muestra la grilla completa de logos oficiales de Paw Friend para
+descargar desde el press kit (app chilena; 100% gratis B2C;
+pawfriend.cl).
+
+PALETA BRAND:
+- Purple: #9333ea · #581c87 · #e9d5ff
+- Gold: #f59e0b · #fbbf24
+- Ink: #1a102b · Paper: #faf7ff · Blanco: #ffffff · Negro: #000000
+
+REGLAS SVG:
+- Vectorial limpio
+- <title>, role="img", <desc>
+- Peso < 15 KB
+- Entrega: UN SOLO SVG en bloque ```svg``` con
+  <!-- logo_pack_grid.svg --> arriba
+
+═════════════════════════════════════════════════════════
+PEDIDO: Logo pack grid A4 landscape
+═════════════════════════════════════════════════════════
+
+ARCHIVO: logo_pack_grid.svg
+DIMENSIONES: viewBox 0 0 3508 2480 (A4 landscape 300dpi)
+PRIORIDAD: P1
+USO: una hoja que incluye 8 presentaciones del logo con indicación
+de uso. Se descarga desde /press junto a los SVGs individuales.
+
+COMPOSICIÓN:
+Header (y 0-300):
+- Fondo blanco
+- Título "Logo Pack · Paw Friend" Fredoka 600 80px ink
+- Subtítulo "Usa el logo correcto para cada contexto" Plus Jakarta
+  500 32px purple-800
+- Safe area 120px laterales
+
+Grid 4×2 (y 300-2100):
+Cada celda 780×800, borde suave purple-100, padding 40px. Cada una
+con:
+- Preview del logo (ocupando 70% de la celda)
+- Label abajo (Fredoka 600 32px)
+- Spec técnico (Plus Jakarta 400 20px)
+
+CELDAS (de izq a der, top a bottom):
+
+1. Primary (fondo blanco)
+   Logo: isotipo squircle gradient + wordmark ink
+   Label: "Primary · fondo claro"
+   Spec: "wordmark_horizontal_light.svg · P0"
+
+2. Dark mode (fondo ink #1a102b)
+   Logo: isotipo squircle gradient + wordmark blanco
+   Label: "Dark mode · fondo oscuro"
+   Spec: "wordmark_horizontal_dark.svg · P0"
+
+3. Monochrome purple (fondo blanco)
+   Logo: todo en #9333ea (isotipo + wordmark)
+   Label: "Monochrome purple · flexible"
+   Spec: "wordmark_mono_purple.svg · P1"
+
+4. Monochrome black (fondo blanco)
+   Logo: todo en #1a102b
+   Label: "Monochrome black · print especial"
+   Spec: "wordmark_mono_black.svg · P1"
+
+5. Vertical (fondo blanco)
+   Logo: isotipo arriba + wordmark + tagline debajo
+   Label: "Vertical stacked · perfil redes"
+   Spec: "wordmark_vertical.svg · P1"
+
+6. Isotipo solo (fondo purple-50 #faf5ff)
+   Logo: solo squircle + pata + corazón
+   Label: "Isotipo solo · favicon y apps"
+   Spec: "app_icon_ios_1024.svg · P0"
+
+7. Monogram PF primary (fondo blanco)
+   Logo: "PF" primary variant
+   Label: "Monogram · espacios muy chicos"
+   Spec: "monogram_pf.svg (variant A)"
+
+8. Wordmark solo (fondo blanco)
+   Logo: solo texto "Paw Friend" Fredoka 600 ink
+   Label: "Wordmark sin isotipo · firma email"
+   Spec: "wordmark_text_only.svg · P2"
+
+Footer (y 2100-2480):
+- Banda gold #fef3c7 con reglas de uso:
+  · "NO distorsionar, rotar ni cambiar colores fuera de la paleta"
+  · "Safe area: 20% del lado del isotipo alrededor del logo"
+  · "Descargas individuales: pawfriend.cl/press"
+- Esquina derecha: pawfriend.cl + contacto prensa
+
+TITLE: "Paw Friend Logo Pack Grid"
+DESC: "Hoja A4 landscape de referencia con las 8 variantes
+oficiales del logo de Paw Friend + reglas de uso + specs."
+
+--- PASTE END ---
+```
+
+---
+
+### 24.14. EVT-02 · Roll-up banner 85×200cm
+
+**Destino:** `public/brand-assets/events/rollup_85x200.svg` · **Prioridad:** P1 · **Peso:** < 15 KB
+
+```
+--- PASTE START ---
+
+Necesito un SVG oficial (roll-up banner para eventos y ferias) de
+Paw Friend (app chilena: ficha médica digital + directorio público
+de vets + comunidad; 100% gratis B2C; SpA RUT 78.328.659-9;
+pawfriend.cl).
+
+DIMENSIONES FÍSICAS:
+- 85 cm × 200 cm (alto)
+- A 300dpi: 10039 × 23622 px
+- Para SVG usamos viewBox escalado: 0 0 850 2000 (1 unidad = 1mm)
+
+PALETA BRAND:
+- Purple: #9333ea · #581c87 · #a855f7 · #e9d5ff
+- Gold: #f59e0b · #fbbf24 · #fde68a
+- Ink: #1a102b · Paper: #faf7ff · Blanco: #ffffff
+
+TIPOGRAFÍA:
+- Display: 'Fredoka' 600
+- Body: 'Plus Jakarta Sans' 500
+
+REGLAS SVG:
+- Vectorial limpio (el impresor lo escala a 300dpi sin pérdida)
+- <title>, role="img", <desc>
+- Peso < 15 KB
+- Zona de "bleed" 20mm en los bordes (no poner texto crítico ahí)
+- Zona de "safe" 30mm desde el borde (texto crítico solo ahí adentro)
+- Entrega: UN SOLO SVG en bloque ```svg``` con
+  <!-- rollup_85x200.svg --> arriba
+
+═════════════════════════════════════════════════════════
+PEDIDO: Roll-up banner 85×200cm para ferias/eventos
+═════════════════════════════════════════════════════════
+
+ARCHIVO: rollup_85x200.svg
+DIMENSIONES: viewBox 0 0 850 2000
+PRIORIDAD: P1
+USO: ferias pet (Petfest, ExpoMascotas), conferencias
+emprendimiento (CORFO, Start-Up Chile), stand de voluntariado.
+
+COMPOSICIÓN (de arriba hacia abajo):
+
+Top third (y 0-600):
+- Fondo: gradient #9333ea top → #581c87 bottom
+- Logo Paw Friend (isotipo + wordmark blanco) centrado horizontalmente,
+  tamaño 500 de ancho, a y=200
+- Tagline "hecha en chile, con amor" Fredoka 400 40px gold centrada
+  y=400
+
+Mid third (y 600-1400):
+- Fondo blanco
+- Headline Fredoka 600 120px ink centrada: "Tu peludo"
+- Headline segunda línea Fredoka 600 120px gradient purple: "lo vale"
+- Subhead Plus Jakarta 500 48px purple-800 centrado:
+  "Ficha médica digital + vets verificados + comunidad"
+- 3 iconos grandes en fila (squircles 150×150):
+  · Ficha (purple) - etiqueta "FICHA"
+  · Vets (emerald) - etiqueta "VETS"
+  · Comunidad (rose) - etiqueta "COMUNIDAD"
+
+Bottom third (y 1400-2000):
+- Fondo: gradient #fef3c7 → #fde68a (gold cálido)
+- QR grande centrado (500×500) linkeando a pawfriend.cl
+  (representar como grid de cuadraditos estilizado, no QR real —
+  al imprimir se reemplaza por QR real)
+- Texto abajo: "escanea y descarga gratis" Fredoka 600 60px ink
+- Footer muy pequeño: pawfriend.cl · SpA RUT 78.328.659-9
+
+Safe zone: 30mm desde el borde. Logo/headline/QR todos dentro de
+safe zone.
+
+TITLE: "Paw Friend Roll-up 85x200"
+DESC: "Banner vertical roll-up para ferias y eventos. Hero con
+logo, headline principal, 3 pilares iconográficos y QR a la app."
+
+--- PASTE END ---
+```
+
+---
+
+### 24.15. EVT-03 · Backdrop modular 3×2.5m
+
+**Destino:** `public/brand-assets/events/backdrop_3x2_5.svg` · **Prioridad:** P2 · **Peso:** < 15 KB
+
+```
+--- PASTE START ---
+
+Necesito un SVG oficial (backdrop modular para stand de eventos) de
+Paw Friend (app chilena; 100% gratis; SpA RUT 78.328.659-9;
+pawfriend.cl).
+
+DIMENSIONES FÍSICAS:
+- 3 m ancho × 2.5 m alto (backdrop modular pop-up)
+- Para SVG: viewBox 0 0 3000 2500 (1 unidad = 1mm)
+
+PALETA BRAND:
+- Purple: #9333ea · #581c87 · #a855f7 · #e9d5ff
+- Gold: #f59e0b · #fbbf24
+- Ink: #1a102b · Blanco: #ffffff
+
+TIPOGRAFÍA:
+- Display: 'Fredoka' 600
+- Body: 'Plus Jakarta Sans' 500
+
+REGLAS SVG:
+- Vectorial limpio
+- Zona bleed 50mm borde
+- <title>, role="img", <desc>
+- Peso < 15 KB
+- Entrega: UN SOLO SVG en bloque ```svg``` con
+  <!-- backdrop_3x2_5.svg --> arriba
+
+═════════════════════════════════════════════════════════
+PEDIDO: Backdrop modular stand eventos
+═════════════════════════════════════════════════════════
+
+ARCHIVO: backdrop_3x2_5.svg
+DIMENSIONES: viewBox 0 0 3000 2500
+
+COMPOSICIÓN:
+- Fondo base: gradient #9333ea top-left → #581c87 bottom-right
+- Patrón decorativo sutil: patas blancas opacity 0.08 distribuidas
+  en grid (8 columnas × 6 filas desalineadas)
+- Bloque hero centro-izquierda:
+  · Logo Paw Friend XXL (1200 de ancho, isotipo + wordmark blanco)
+  · Tagline debajo Fredoka 400 80px gold: "hecha en chile con amor"
+- Bloque derecha (mockup ilustrativo del iPhone):
+  · iPhone estilizado 600×1200 con pantalla "My Pets" mostrando
+    foto-ilustración de Kai + Ema + 1 peludo más + botón "ver ficha"
+  · Flotando sobre fondo con shadow sutil
+- Footer centrado y=2300:
+  · "pawfriend.cl" Fredoka 600 100px blanco
+  · Debajo: "escanea el QR arriba o búscanos en redes @pawfriendcl"
+    Plus Jakarta 400 40px gold
+- Safe zones respetadas (hero dentro de 2500×2000 centrado)
+
+TITLE: "Paw Friend Backdrop Stand 3x2.5"
+DESC: "Backdrop modular para stands de eventos. Hero con logo
+grande, tagline emocional, mockup iPhone ilustrativo y pie con URL
++ redes."
+
+--- PASTE END ---
+```
+
+---
+
+### 24.16. EVT-04 · Lanyard + nametag
+
+**Destino:** `public/brand-assets/events/lanyard_nametag.svg` · **Prioridad:** P2 · **Peso:** < 8 KB
+
+```
+--- PASTE START ---
+
+Necesito un SVG oficial (lanyard con nametag impreso) de Paw Friend
+(app chilena; SpA RUT 78.328.659-9; pawfriend.cl).
+
+DIMENSIONES FÍSICAS:
+- Lanyard: 20mm ancho × 900mm largo (cada lado)
+- Nametag: 95mm ancho × 60mm alto (formato estándar credencial horizontal)
+
+SVG ENTREGA: viewBox 0 0 1000 1100 (muestra ambos lados del lanyard
++ el nametag desplegado)
+
+PALETA BRAND:
+- Purple: #9333ea · #581c87 · #a855f7
+- Gold: #f59e0b · #fbbf24
+- Ink: #1a102b · Blanco: #ffffff
+
+TIPOGRAFÍA:
+- Display: 'Fredoka' 600 / 500
+- Body: 'Plus Jakarta Sans' 500
+
+REGLAS SVG:
+- Vectorial limpio
+- <title>, role="img", <desc>
+- Peso < 8 KB
+- Entrega: UN SOLO SVG en bloque ```svg``` con
+  <!-- lanyard_nametag.svg --> arriba
+
+═════════════════════════════════════════════════════════
+PEDIDO: Lanyard + nametag template
+═════════════════════════════════════════════════════════
+
+COMPOSICIÓN:
+Mitad superior (y 0-700) - Nametag desplegado en vista horizontal
+(escalado para claridad, real size 95×60mm):
+- Fondo: gradient #9333ea → #581c87
+- Top: logo Paw Friend blanco (wordmark horizontal) - 30% superior
+- Middle: área para nombre (placeholder "{Nombre}" Fredoka 600
+  80px blanco)
+- Bottom: rol/empresa (placeholder "{Rol}" Plus Jakarta 500 32px
+  gold)
+- Right edge: ícono pata decorativo opacity 0.3
+- Corner bottom-right: pawfriend.cl en mono 20px opacity 0.7
+
+Mitad inferior (y 700-1100) - Lanyard correa:
+- Patrón repetido diagonal en correa 40px ancho:
+  · "PAW FRIEND · PAW FRIEND · PAW FRIEND"
+  Fredoka 500 30px blanco sobre gradient purple → gold → purple
+- Mostrar 3 repeticiones para entender el pattern
+- Etiqueta "pattern repetible cada 300mm" al lado
+
+TITLE: "Paw Friend Lanyard + Nametag Template"
+DESC: "Template de credencial + correa lanyard para eventos.
+Nametag con áreas editables nombre+rol, lanyard con patrón repetible
+purple→gold."
+
+--- PASTE END ---
+```
+
+---
+
+### 24.17. EVT-05 · Laptop sticker pack (6 stickers)
+
+**Destino:** `public/brand-assets/events/sticker_pack.svg` · **Prioridad:** P2 · **Peso:** < 10 KB
+
+```
+--- PASTE START ---
+
+Necesito un SVG oficial (pack de 6 stickers para laptops) de Paw
+Friend (app chilena; 100% gratis; SpA RUT 78.328.659-9).
+
+DIMENSIONES:
+- 6 stickers en hoja A5 (148×210mm)
+- viewBox 0 0 1480 2100
+
+PALETA BRAND:
+- Purple: #9333ea · #581c87 · #a855f7
+- Gold: #f59e0b · #fbbf24
+- Emerald: #10b981
+- Rose: #ec4899
+- Ink: #1a102b · Blanco: #ffffff
+
+TIPOGRAFÍA:
+- Display: 'Fredoka' 600
+
+REGLAS SVG:
+- Vectorial limpio
+- Cada sticker con contorno die-cut implícito (shape con padding 3mm)
+- <title>, role="img", <desc>
+- Peso < 10 KB
+- Entrega: UN SOLO SVG en bloque ```svg``` con
+  <!-- sticker_pack.svg --> arriba
+
+═════════════════════════════════════════════════════════
+PEDIDO: 6 stickers para laptop en hoja A5
+═════════════════════════════════════════════════════════
+
+LAYOUT (grid 2 columnas × 3 filas, padding 50 entre stickers):
+
+Sticker 1 (top-left) - "Isotipo oficial"
+- Forma: squircle iOS 400×400
+- Contenido: squircle purple gradient + pata + corazón (logo clásico)
+- Tamaño final: 60mm
+
+Sticker 2 (top-right) - "Pata heart"
+- Forma: círculo 400×400
+- Contenido: pata blanca sobre #ec4899 con corazón gold negative space
+- Label ligero abajo "paw lover"
+
+Sticker 3 (mid-left) - "Wordmark holográfico"
+- Forma: rectangular rounded 500×200
+- Contenido: fondo holographic (simular con gradient conic
+  purple→gold→rose→purple) + wordmark "Paw Friend" blanco centrado
+- Label pequeño: "v 2.0"
+
+Sticker 4 (mid-right) - "Made in Chile"
+- Forma: escudo estilizado 400×500
+- Contenido: fondo gradient purple + texto "hecho en chile" Fredoka
+  600 60px blanco + copihue estilizado gold abajo
+
+Sticker 5 (bottom-left) - "Kai & Ema"
+- Forma: rectángulo rounded 500×300
+- Contenido: ilustración mini de Kai (pastor suizo silueta) + Ema
+  (gata negra silueta) lado a lado + corazón pequeño arriba
+- Texto "la manada oficial" Fredoka 500 30px ink
+
+Sticker 6 (bottom-right) - "QR sticker"
+- Forma: cuadrado rounded 400×400
+- Contenido: QR estilizado (grid de cuadraditos) → pawfriend.cl
+- Label superior: "escanéame" Fredoka 600 40px gold
+- Label inferior: "pawfriend.cl"
+
+Cada sticker con borde blanco 3mm implícito para die-cut.
+
+TITLE: "Paw Friend Sticker Pack A5"
+DESC: "Pack de 6 stickers variados para laptops, notebooks y
+merchandising de eventos. Incluye isotipo, variantes y QR."
+
+--- PASTE END ---
+```
+
+---
+
+### 24.18. EVT-06 · Tote bag diseño
+
+**Destino:** `public/brand-assets/events/tote_bag.svg` · **Prioridad:** P2 · **Peso:** < 8 KB
+
+```
+--- PASTE START ---
+
+Necesito un SVG oficial (diseño para tote bag serigrafiado) de
+Paw Friend (app chilena; 100% gratis; hecha en chile; SpA RUT
+78.328.659-9; pawfriend.cl).
+
+DIMENSIONES:
+- Bolsa base: 38×42cm algodón crema natural
+- Área de impresión frontal: 28×28cm centrada
+- SVG viewBox: 0 0 800 900 (muestra bolsa completa + área de print)
+
+PALETA BRAND (limitada por serigrafía - 2 colores ideal):
+- Purple principal: #9333ea (tinta 1)
+- Gold secundario: #f59e0b (tinta 2)
+- Fondo bolsa: simular algodón natural con #f5f0e6
+
+TIPOGRAFÍA:
+- Display: 'Fredoka' 600
+
+REGLAS SVG:
+- Vectorial limpio
+- Máximo 2 tintas (purple + gold) sobre fondo crema
+- Paths cerrados (serigrafía requiere áreas sólidas, no gradientes complejos)
+- <title>, role="img", <desc>
+- Peso < 8 KB
+- Entrega: UN SOLO SVG en bloque ```svg``` con
+  <!-- tote_bag.svg --> arriba
+
+═════════════════════════════════════════════════════════
+PEDIDO: Tote bag 38×42cm diseño 2 tintas
+═════════════════════════════════════════════════════════
+
+COMPOSICIÓN:
+Vista completa bolsa (y 0-900):
+- Forma bolsa: rectángulo 550×620 centrado (con asas arriba 2 tiras
+  30×250)
+- Fondo bolsa: #f5f0e6 (algodón crema)
+- Área de print centrada: cuadrado 400×400 a y=200
+
+Dentro del área de print:
+- Top: logo Paw Friend isotipo grande 180×180 purple #9333ea puro
+  (sin gradiente, área sólida)
+- Middle: Headline Fredoka 600 60px purple: "peludos con"
+- Middle línea 2: Fredoka 600 90px gold #f59e0b: "SUPERPODERES"
+- Bottom: ornamento - 3 huellas pata pequeñas purple + 1 corazón
+  gold pequeño distribuidas como "constelación"
+- Bottom-bottom: wordmark "paw friend" Fredoka 400 30px purple +
+  punto gold + "chile"
+
+Diseño deliberadamente simple (max 2 tintas, áreas sólidas
+separadas).
+
+TITLE: "Paw Friend Tote Bag 2-color"
+DESC: "Diseño serigrafía 2 tintas (purple + gold) para tote bag
+algodón crema. Headline 'peludos con SUPERPODERES' + isotipo + firma
+Chile."
+
+--- PASTE END ---
+```
+
+---
+
+### 24.19. EML-02 · Monthly newsletter template
+
+**Destino:** `public/brand-assets/email/newsletter_monthly.html` · **Prioridad:** P1 · **Formato:** HTML con inline CSS (para email)
+
+```
+--- PASTE START ---
+
+Necesito un template HTML completo (NO SVG, es email HTML) para
+la newsletter mensual de Paw Friend (app chilena: ficha médica
+digital + directorio vets + comunidad; 100% gratis; SpA RUT
+78.328.659-9; pawfriend.cl; mascotas oficiales: Kai pastor suizo +
+Ema gata negra; contacto pawfriendcl@gmail.com).
+
+CONTEXTO:
+Newsletter mensual a toda la base de usuarios + Paw Members +
+Paw Partners. Envío por Resend. Destinatarios: tutores de mascotas
+chilenos, veterinarios suscritos, partners. Copy en español chileno
+(tuteo: tu, tienes; NO vos, NO vosotros).
+
+ESTÁNDARES EMAIL HTML:
+- Tablas anidadas para layout (no flexbox, no grid — soporte Outlook)
+- Inline CSS en cada elemento crítico (styles en <head> solo como
+  fallback)
+- Max width 600px contenedor principal
+- Fallback fonts robustos (Fredoka no se soporta en la mayoría de
+  clientes mail → fallback: Georgia, 'Times New Roman', serif para
+  display; Arial, Helvetica, sans-serif para body)
+- Imágenes con width + alt obligatorio
+- Dark mode básico via @media (prefers-color-scheme: dark)
+- Versión plain text fallback al final (comentario HTML)
+- Links con ?utm_source=newsletter&utm_medium=email&utm_campaign=monthly
+- Botones como tablas (no <button>)
+
+PALETA BRAND (inline):
+- Purple: #9333ea main · #581c87 deep · #e9d5ff light · #faf5ff bg
+- Gold: #f59e0b · #fef3c7 bg
+- Ink: #1a102b · Paper: #faf7ff · Blanco: #ffffff
+
+REGLAS:
+- Entrega UN SOLO archivo HTML completo
+- Peso < 100 KB (con imágenes como placeholders img src)
+- Alt text en todas las imágenes
+- Accesibilidad: role="presentation" en tablas de layout
+
+═════════════════════════════════════════════════════════
+PEDIDO: Newsletter mensual template HTML
+═════════════════════════════════════════════════════════
+
+ESTRUCTURA OBLIGATORIA:
+
+1. Preheader oculto (<div style="display:none"...)
+   "Lo nuevo de abril · tip del mes · peludo de la portada"
+
+2. Header (mailer hero):
+   - Logo Paw Friend centrado (img src placeholder)
+   - Banda gradient purple
+   - Título: "Newsletter Mensual · {mes} {año}"
+   - Fecha
+
+3. Bloque 1 - Saludo del founder:
+   - H2 "hola {{firstName}}"
+   - Párrafo corto de bienvenida con voz cálida
+   - Firma "Paw Founder, Kai y Ema"
+
+4. Bloque 2 - Destacado del mes:
+   - Card purple-50 con border-left gold
+   - Headline + párrafo + botón CTA "{{featureUrl}}"
+
+5. Bloque 3 - Tip del mes:
+   - Card blanco con sombra sutil
+   - Tip práctico para tutores (placeholder {{tipContent}})
+   - Ícono pata decorativo
+
+6. Bloque 4 - Peludo de la portada:
+   - Card purple gradient
+   - Foto placeholder circular + nombre mascota + una línea de la historia
+   - Link "ver más historias" → /community
+
+7. Bloque 5 - Comunidad:
+   - 3 números grandes en fila: MAU / vets registrados / peludos en ficha
+   - Fuente: "datos a {{statsDate}}"
+
+8. CTA principal:
+   - Botón gold grande: "abrir paw friend"
+   - Link: pawfriend.cl/home?utm_source=newsletter
+
+9. Footer:
+   - Unsubscribe ({{unsubscribeUrl}})
+   - Redes: IG / FB / WA
+   - Disclaimer legal SpA
+   - "made in chile with ♥ by one person + ai"
+
+PLACEHOLDERS con {{handlebars}} para merge tags de Resend.
+
+Entrega todo en un solo bloque ```html```.
+
+--- PASTE END ---
+```
+
+---
+
+### 24.20. EML-03 · Donation thanks email
+
+**Destino:** `public/brand-assets/email/donation_thanks.html` · **Prioridad:** P1 · **Formato:** HTML email
+
+```
+--- PASTE START ---
+
+Necesito un template HTML completo (email) de agradecimiento por
+donación para Paw Friend (app chilena; 100% gratis; SpA RUT
+78.328.659-9; pawfriend.cl).
+
+CONTEXTO:
+Email transaccional enviado automáticamente tras una donación
+exitosa en /donaciones. Tono cálido, emocional pero no meloso.
+Debe incluir monto donado, mensaje personal del founder, y
+transparencia sobre a qué va el dinero. Copy español chileno
+(tuteo).
+
+ESTÁNDARES EMAIL HTML (mismos de EML-02):
+- Tablas anidadas layout
+- Inline CSS
+- Max width 600px
+- Fallback fonts: Arial/Helvetica body, Georgia display
+- Dark mode básico
+- Peso < 80 KB
+
+PALETA:
+- Purple: #9333ea · #581c87 · #faf5ff
+- Gold: #f59e0b · #fef3c7
+- Rose (acento corazón): #ec4899
+- Ink: #1a102b
+
+REGLAS:
+- Entrega UN SOLO archivo HTML en bloque ```html```
+- Placeholders {{handlebars}}: {{firstName}}, {{amount}},
+  {{donationId}}, {{paymentMethod}}, {{date}}, {{receiptUrl}}
+
+═════════════════════════════════════════════════════════
+PEDIDO: Donation thanks email transaccional
+═════════════════════════════════════════════════════════
+
+ESTRUCTURA:
+
+1. Preheader oculto
+   "gracias {{firstName}} por tu donación de {{amount}}"
+
+2. Hero:
+   - Fondo gradient purple
+   - Ícono corazón gold grande (img)
+   - Headline Fredoka 600 serif fallback: "gracias de corazón"
+   - Subhead: "tu aporte nos hace posible seguir"
+
+3. Bloque datos donación:
+   - Tabla blanca con border purple-100
+   - Filas:
+     · Monto: {{amount}} CLP
+     · Fecha: {{date}}
+     · Método: {{paymentMethod}}
+     · ID: {{donationId}}
+
+4. Bloque mensaje founder:
+   - Card purple-50
+   - Párrafo personal del founder: "hola {{firstName}}, soy
+     {{founderName}}. hice paw friend porque creí que los peludos
+     chilenos merecían una herramienta de cuidado sin letra chica.
+     tu donación no va a mi bolsillo — va directo a mantener la
+     app viva, pagar infraestructura y seguir mejorando features
+     para vos, Kai y Ema."
+   - Firma + foto placeholder founder
+
+5. Bloque transparencia:
+   - Card gold pastel
+   - "¿a dónde va tu donación?"
+   - 3 bullets:
+     · 60% infraestructura (Supabase, hosting, OpenAI)
+     · 25% legal y contable (SpA, compliance)
+     · 15% mejoras continuas
+   - Link "ver reporte de transparencia" → /paw-core/transparencia
+
+6. CTA secundario:
+   - Botón secundario: "ver la muralla de aportes"
+   - Link → /donaciones#muralla
+
+7. Recibo / factura (opcional):
+   - "Si necesitas un recibo fiscal, descarga aquí"
+   - Link {{receiptUrl}}
+
+8. Footer:
+   - "¿dudas? responde este email o escríbenos a pawfriendcl@gmail.com"
+   - Unsubscribe (aunque transaccional, ofrecer opción de no recibir
+     más newsletter separado)
+   - Redes + legal SpA
+
+Todo en un solo ```html```.
+
+--- PASTE END ---
+```
+
+---
+
+### 24.21. EML-04 · Paw Member welcome
+
+**Destino:** `public/brand-assets/email/member_welcome.html` · **Prioridad:** P1 · **Formato:** HTML email
+
+```
+--- PASTE START ---
+
+Necesito un template HTML completo (email) de bienvenida al
+programa Paw Member de Paw Friend (app chilena; Paw Member =
+suscripción opcional $3.990/mes para sostener la app + badge
++ acceso a descuentos de alianzas; SpA RUT 78.328.659-9;
+pawfriend.cl).
+
+CONTEXTO:
+Email enviado automáticamente al activar suscripción Paw Member
+exitosa vía Flow.cl. Tono celebratorio pero no exagerado. Explica
+qué desbloquean (badge + descuentos de Paw Partners) y que NO hay
+features ocultos (el producto es gratis, el Member es para los que
+quieren sostener la obra). Copy chileno tuteo.
+
+ESTÁNDARES EMAIL HTML (mismos EML-02):
+- Tablas anidadas, inline CSS, max 600px, fallbacks Arial/Georgia,
+  dark mode básico, peso < 80 KB
+
+PALETA:
+- Purple: #9333ea · #581c87 · #faf5ff
+- Gold (Paw Member badge): #f59e0b · #fbbf24 · #fef3c7
+- Ink: #1a102b
+
+REGLAS:
+- Entrega UN SOLO archivo HTML en ```html```
+- Placeholders: {{firstName}}, {{subscriptionStart}}, {{plan}},
+  {{nextChargeDate}}, {{memberUrl}}
+
+═════════════════════════════════════════════════════════
+PEDIDO: Paw Member welcome transaccional
+═════════════════════════════════════════════════════════
+
+ESTRUCTURA:
+
+1. Preheader
+   "bienvenido a paw member, {{firstName}} — acá empieza tu círculo"
+
+2. Hero:
+   - Fondo gradient gold #fef3c7 → #fbbf24
+   - Badge grande: isotipo + estrella dorada
+   - Headline: "sos paw member"
+   - Subhead: "gracias por sumarte al círculo"
+
+3. Bloque benefits (3 cards horizontales):
+   - Card 1: "Badge oficial" + ícono badge gold en perfil
+   - Card 2: "Descuentos de Paw Partners" + ícono tag
+   - Card 3: "Apoyás que paw friend siga gratis" + ícono corazón
+
+4. Bloque "IMPORTANTE":
+   - Card purple-50 con border purple-200
+   - Headline: "un recordatorio cálido"
+   - Párrafo: "paw friend es y siempre será 100% gratis para todos
+     los tutores. no hay features exclusivos para members. lo que
+     pagás es para sostener la obra, no para desbloquear. gracias por
+     entender y apoyar."
+
+5. Bloque datos suscripción:
+   - Plan: {{plan}}
+   - Inicio: {{subscriptionStart}}
+   - Próximo cargo: {{nextChargeDate}}
+   - "podés cancelar cuando quieras desde {{memberUrl}}"
+
+6. CTA:
+   - Botón gold: "ver tu perfil member"
+   - Link → /paw-member
+
+7. Bloque descuentos disponibles:
+   - Grid 2×2 placeholder de 4 partners (logos neutrales + descuento)
+   - "lista completa en /paw-member/descuentos"
+
+8. Footer:
+   - Dudas → pawfriendcl@gmail.com
+   - Legal SpA + unsubscribe
+   - Redes
+
+Todo en ```html``` un solo bloque.
+
+--- PASTE END ---
+```
+
+---
+
+### 24.22. EML-05 · Vet invitation email
+
+**Destino:** `public/brand-assets/email/vet_invitation.html` · **Prioridad:** P1 · **Formato:** HTML email
+
+```
+--- PASTE START ---
+
+Necesito un template HTML completo (email) de invitación a
+veterinarios para unirse a Paw Friend (app chilena; vets B2B Free
+$0 comisión 10% hasta 5 pacientes → escalable a Premium $9.900 y
+Pro Max $29.900; SpA RUT 78.328.659-9; pawfriend.cl;
+/para-veterinarios).
+
+CONTEXTO:
+Email de outreach a vets via CRM. Tono profesional cálido (no
+corporate frío). Incluye propuesta de valor, prueba social y
+CTA a registro. Copy chileno tuteo.
+
+ESTÁNDARES EMAIL HTML (mismos EML-02).
+
+PALETA:
+- Purple: #9333ea · #581c87 · #faf5ff
+- Emerald (confianza profesional): #10b981 · #047857
+- Gold: #f59e0b · #fef3c7
+- Ink: #1a102b
+
+REGLAS:
+- Entrega UN SOLO archivo HTML en ```html```
+- Placeholders: {{vetName}}, {{vetClinic}}, {{comuna}},
+  {{signupUrl}}, {{senderName}}
+
+═════════════════════════════════════════════════════════
+PEDIDO: Vet invitation outreach email
+═════════════════════════════════════════════════════════
+
+ESTRUCTURA:
+
+1. Preheader
+   "{{vetName}}, pensamos en vos para paw friend — te cuento"
+
+2. Hero simple (no hero image grande, tono B2B):
+   - Logo Paw Friend top-center
+   - Headline: "hola {{vetName}}"
+   - Subhead: "soy {{senderName}} de paw friend"
+
+3. Párrafo apertura:
+   "vi tu clínica {{vetClinic}} en {{comuna}} y quería contarte de
+   paw friend — la primera app chilena que junta ficha médica
+   digital + directorio público de vets + comunidad de tutores."
+
+4. Bloque "por qué te puede servir":
+   - 4 bullets con íconos check emerald:
+     · Ficha médica que tus pacientes llevan donde vayan
+     · Recordatorios automáticos de vacunas y consultas
+     · Directorio público gratis (más visibilidad)
+     · Panel web para gestionar pacientes
+
+5. Bloque planes (3 cards horizontales):
+   - Card Free (gratis, 5 pacientes) - emerald accent
+   - Card Premium ($9.900/mes, ilimitado) - gold accent
+   - Card Pro Max ($29.900/mes, clínica multi-seat) - purple accent
+   - "empezá gratis, escalá si te sirve"
+
+6. Bloque prueba social (placeholder):
+   - Quote de vet real beta tester (placeholder Sofía Rosi si aplica)
+   - "ya somos {{vetCount}} vets en chile"
+
+7. CTA principal:
+   - Botón emerald: "sumate gratis en 2 minutos"
+   - Link {{signupUrl}}
+
+8. CTA secundario:
+   - "¿preferís que conversemos antes?"
+   - "respondé este email y coordinamos un zoom"
+
+9. Footer:
+   - Firma completa del sender con foto + email + LinkedIn
+   - Legal SpA + unsubscribe
+
+Todo en ```html```.
+
+--- PASTE END ---
+```
+
+---
+
+### 24.23. EML-06 · Review invitation email
+
+**Destino:** `public/brand-assets/email/review_invitation.html` · **Prioridad:** P2 · **Formato:** HTML email
+
+```
+--- PASTE START ---
+
+Necesito un template HTML completo (email) de invitación a dejar
+reseña post-consulta veterinaria en Paw Friend (app chilena;
+reseñas públicas sobre vets verificados; SpA RUT 78.328.659-9;
+pawfriend.cl).
+
+CONTEXTO:
+Email enviado 24h después de una consulta confirmada. Pide al
+tutor dejar review pública sobre el vet. Tono amable, no insistente.
+Copy chileno tuteo.
+
+ESTÁNDARES EMAIL HTML (mismos EML-02).
+
+PALETA:
+- Purple: #9333ea · #581c87 · #faf5ff
+- Gold: #f59e0b · #fbbf24 (estrellas)
+- Ink: #1a102b
+
+REGLAS:
+- Entrega UN SOLO archivo HTML en ```html```
+- Placeholders: {{firstName}}, {{petName}}, {{vetName}},
+  {{consultDate}}, {{reviewUrl}}, {{skipUrl}}
+
+═════════════════════════════════════════════════════════
+PEDIDO: Review invitation transaccional
+═════════════════════════════════════════════════════════
+
+ESTRUCTURA:
+
+1. Preheader
+   "{{firstName}}, cómo le fue a {{petName}} con {{vetName}}?"
+
+2. Hero:
+   - Fondo gradient purple suave #faf5ff → blanco
+   - Ícono grande: 5 estrellas gold (4.5 simulado)
+   - Headline: "cómo estuvo {{vetName}}?"
+   - Subhead: "ayudanos a otros tutores contando tu experiencia"
+
+3. Párrafo:
+   "{{firstName}}, {{petName}} tuvo consulta con {{vetName}} el
+   {{consultDate}}. tu reseña honesta ayuda a otros tutores a elegir
+   bien. toma 30 segundos."
+
+4. CTA stars:
+   - Bloque de 5 estrellas clickeables (cada estrella link
+     a reviewUrl?rating=N)
+   - "toca las estrellas para dejar tu valoración"
+
+5. CTA principal:
+   - Botón purple: "dejar reseña completa"
+   - Link {{reviewUrl}}
+
+6. CTA skip (pequeño):
+   - "prefiero no dejar reseña esta vez"
+   - Link {{skipUrl}}
+   - Estilo text-only underline color neutral
+
+7. Bloque confianza:
+   - "tu reseña es pública y tiene tu nombre (o iniciales)"
+   - "no permitimos reseñas falsas ni compradas"
+
+8. Footer:
+   - Legal SpA + unsubscribe + soporte
+
+Todo en ```html```.
+
+--- PASTE END ---
+```
+
+---
+
+### 24.24. EML-07 · Password reset email
+
+**Destino:** `public/brand-assets/email/password_reset.html` · **Prioridad:** P0 · **Formato:** HTML email
+
+```
+--- PASTE START ---
+
+Necesito un template HTML completo (email transaccional crítico)
+de reset de contraseña para Paw Friend (app chilena; auth vía
+Supabase; SpA RUT 78.328.659-9; pawfriend.cl).
+
+CONTEXTO:
+Email transaccional de seguridad, enviado cuando el usuario
+solicita reset de contraseña. Debe ser claro, inspirar confianza
+y no parecer phishing. Copy chileno neutro tuteo.
+
+ESTÁNDARES EMAIL HTML:
+- Tablas anidadas, inline CSS, max 600px, fallbacks Arial/Georgia
+- Dark mode básico
+- Peso < 60 KB
+- **SEGURIDAD**: mostrar dominio oficial, IP de origen si disponible,
+  timestamp y fingerprint para evitar phishing
+
+PALETA:
+- Purple: #9333ea · #581c87 · #faf5ff
+- Rojo alerta (solo si no fue el usuario): #dc2626 · #fee2e2
+- Ink: #1a102b
+
+REGLAS:
+- Entrega UN SOLO archivo HTML en ```html```
+- Placeholders: {{firstName}}, {{resetUrl}}, {{expiresIn}},
+  {{requestTime}}, {{requestIp}}, {{userAgent}}
+
+═════════════════════════════════════════════════════════
+PEDIDO: Password reset transaccional crítico
+═════════════════════════════════════════════════════════
+
+ESTRUCTURA:
+
+1. Preheader
+   "reset de contraseña paw friend · válido por {{expiresIn}}"
+
+2. Header seguridad:
+   - Banda purple top
+   - Logo Paw Friend + texto "correo de seguridad"
+   - Mini badge verde "dominio verificado: pawfriend.cl"
+
+3. Cuerpo principal:
+   - Headline "restablece tu contraseña"
+   - Párrafo: "hola {{firstName}}, recibimos una solicitud para
+     restablecer la contraseña de tu cuenta en paw friend."
+
+4. CTA principal:
+   - Botón purple grande: "crear nueva contraseña"
+   - Link {{resetUrl}}
+   - Subtexto: "el link expira en {{expiresIn}}"
+
+5. Bloque info request:
+   - Card neutral con:
+     · Hora de la solicitud: {{requestTime}}
+     · IP: {{requestIp}}
+     · Dispositivo: {{userAgent}}
+   - "si vos solicitaste esto, todo bien. ignora este correo si querés
+     olvidarlo."
+
+6. Bloque "no fui yo":
+   - Card rojo suave #fee2e2
+   - Headline rojo: "no fuiste vos?"
+   - Párrafo: "si no solicitaste el reset, no hagas click en el botón.
+     cambia tu contraseña desde paw friend y contactanos a
+     pawfriendcl@gmail.com para revisar actividad sospechosa."
+
+7. Bloque ayuda:
+   - "¿problemas con el link?"
+   - Link crudo en texto (no botón): {{resetUrl}}
+   - "copia y pega en tu navegador"
+
+8. Footer:
+   - Info SpA legal
+   - Dominios oficiales: pawfriend.cl y app.pawfriend.cl
+   - "nunca te pediremos contraseña por email o teléfono"
+
+Todo en ```html```.
+
+--- PASTE END ---
+```
+
+---
+
+## 25. Assets que NO se hacen con Claude
+
+Algunos assets del roadmap requieren producción humana o herramientas especializadas. **No intentes generarlos con claude.ai/code:**
+
+| ID | Asset | Por qué NO Claude | Herramienta correcta |
+|---|---|---|---|
+| VID-01 | Video App Preview iOS | Requiere captura real de iPhone | QuickTime + iPhone físico, DaVinci/Final Cut |
+| VID-02 | Video promo Play Store | Requiere grabación o animación avanzada | After Effects, CapCut, DaVinci |
+| PHO-01 | Fotos founder + Kai + Ema | Requiere cámara + sesión real | Fotógrafo profesional o iPhone + tripod |
+| PHO-02 | Fotos ambient (oficina home-made) | Requiere cámara física | iPhone + luz natural |
+| PHO-03 | Fotos testimonios reales usuarios | Requiere consentimiento + release | Cámara + release forms |
+| AUD-01 | Jingle 5 segundos | Requiere producción musical | Músico + Logic/Ableton |
+| AUD-02 | Voice over narrador | Requiere voz humana o IA voice | ElevenLabs (IA) o locutor profesional |
+| FNT-01 | Font licensing | Requiere compra de licencia | Google Fonts (gratis Fredoka) o Adobe Fonts |
+| LGL-01 | Contratos Paw Partners | Requiere abogado | Abogado chileno especializado SaaS |
+| LGL-02 | Términos + Privacy Policy chilenos | Requiere compliance legal | Abogado + DPO |
+
+**Para estos assets:** usar [`docs-raiz/pawfriend-omnichannel-brand-assets-and-prompts.md`](./pawfriend-omnichannel-brand-assets-and-prompts.md) sección "Producción humana" donde hay guidelines detalladas.
+
+Claude SÍ puede entregar:
+- Los storyboards para los videos (como IOS-03 y AND-03 arriba)
+- Las guidelines fotográficas (como PRS-03 arriba)
+- Los scripts de voice over (texto para grabar)
+- Los briefs legales (para que el abogado los ejecute)
+- Los moodboards descriptivos
+
+---
+
+## 26. Backlog completo cerrado
+
+Con la expansión de §24.1 a §24.24, la librería cubre:
+
+**Logo system:** LOGO-01 a LOGO-10 (10 prompts) ✅
+**Favicons:** FAV-01 a FAV-02 (2 prompts) ✅
+**Icons:** ICN-01 a ICN-60 (60 prompts, 6 lotes) ✅
+**Illustrations:** ILL-01 a ILL-09 (resumen en §4.2-4.9) ✅
+**Mockups:** MCK-01 base + guidelines ✅
+**Social:** IG/FB/WA/TikTok/YT core covers + posts ✅
+**Store listings:** IOS-01 a IOS-03 + AND-01 a AND-03 ✅
+**Investor kit:** INV-01 a INV-03 ✅
+**Partner kit:** PRT-01 a PRT-03 ✅
+**Press kit:** PRS-01 a PRS-04 ✅
+**Creator Voices:** CV-01 base + guidelines ✅
+**Event kit:** EVT-01 a EVT-06 (Business Card + 5 event pieces) ✅
+**Docs:** DOC-01 base ✅
+**Email:** EML-01 a EML-07 (7 templates HTML) ✅
+**Patterns:** PAT-01 base + 4 variantes ✅
+
+**Total:** 140+ prompts self-contained copy-paste-ready para claude.ai.
+
+**Cobertura del roadmap omnichannel:** ~95% de los assets producibles con Claude. El 5% restante (videos/fotos/audio/legal) está listado en §25 con la herramienta correcta.
 
 ---
 
