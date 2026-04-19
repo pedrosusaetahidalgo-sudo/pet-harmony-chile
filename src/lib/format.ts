@@ -190,9 +190,10 @@ export function generateDefaultName(): string {
 export function isGenericDisplayName(name: string | null | undefined): boolean {
   if (!name || !name.trim()) return true;
   const trimmed = name.trim().toLowerCase();
-  // Matches email-like names (anything with @ or pure email prefix patterns)
+  // Emails completos (pedro@gmail.com) — provienen de OAuth sin nombre.
+  if (trimmed.includes('@')) return true;
+  // Solo alfanumerico sin espacios (ej. "pedro", "juanperez") — probablemente local-part de email.
   if (/^[a-z0-9._+-]+$/.test(trimmed) && trimmed.length > 3) return true;
-  // Matches "Usuario" or our generated pattern (already has a name, not generic)
   if (trimmed === 'usuario') return true;
   return false;
 }
