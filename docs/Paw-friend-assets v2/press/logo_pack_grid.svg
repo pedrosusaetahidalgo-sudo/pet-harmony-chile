@@ -1,0 +1,160 @@
+<!-- logo_pack_grid.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 1754" role="img" aria-label="Paw Friend Logo Pack Grid" width="1240" height="1754">
+  <title>Paw Friend Logo Pack Grid</title>
+  <desc>Hoja de referencia A4 con todas las variantes del logo (primary, dark, mono, wordmarks, vertical, monogram) + reglas de uso.</desc>
+  <defs><linearGradient id="lp" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2a1046" stop-opacity="1"/><stop offset="100%" stop-color="#9333ea" stop-opacity="1"/></linearGradient></defs>
+  <rect width="1240" height="1754" fill="#faf7ff"/>
+
+  <!-- Header -->
+  <rect x="0" y="0" width="1240" height="150" fill="url(#lp)"/>
+  <g transform="translate(80, 55)">
+    <rect x="0" y="0" width="50" height="50" rx="11" fill="#ffffff"/>
+    <g transform="translate(25, 27) scale(0.063)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#9333ea"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#9333ea"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#9333ea"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#9333ea"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#9333ea"/></g>
+  </g>
+  <text x="150" y="78" font-family="Fredoka, sans-serif" font-weight="600" font-size="24" fill="#ffffff">Paw Friend</text>
+  <text x="150" y="105" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="13" fill="#ffffff" fill-opacity="0.85">Logo Pack · Hoja de referencia</text>
+
+  <!-- Title -->
+  <text x="80" y="220" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="12" letter-spacing="4" fill="#9333ea">SISTEMA DE LOGOS</text>
+  <text x="80" y="270" font-family="Fredoka, sans-serif" font-weight="600" font-size="36" fill="#1a102b">Todas las variantes oficiales</text>
+
+  <!-- GRID 3 cols × 3 rows -->
+
+  <!-- Row 1: Primary / Reverse / Mono -->
+  <!-- Primary -->
+  <g transform="translate(80, 340)">
+    <rect x="0" y="0" width="340" height="260" rx="14" fill="#ffffff" stroke="#e9d5ff"/>
+    <rect x="1" y="1" width="338" height="190" fill="#faf5ff"/>
+    <g transform="translate(120, 40)">
+      <rect x="0" y="0" width="100" height="100" rx="22" fill="#9333ea"/>
+      <g transform="translate(50, 52) scale(0.125)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/></g>
+    </g>
+    <text x="170" y="215" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="2" fill="#9333ea">PRIMARY</text>
+    <text x="170" y="238" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#4b3b66">app_icon_ios_1024.svg</text>
+  </g>
+  <!-- Reverse (dark) -->
+  <g transform="translate(450, 340)">
+    <rect x="0" y="0" width="340" height="260" rx="14" fill="#ffffff" stroke="#e9d5ff"/>
+    <rect x="1" y="1" width="338" height="190" fill="#0F172A"/>
+    <g transform="translate(120, 40)">
+      <rect x="0" y="0" width="100" height="100" rx="22" fill="#0F172A"/>
+      <g transform="translate(50, 52) scale(0.125)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#c084fc"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#c084fc"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#c084fc"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#c084fc"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#c084fc"/></g>
+    </g>
+    <text x="170" y="215" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="2" fill="#9333ea">DARK</text>
+    <text x="170" y="238" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#4b3b66">icon_dark.svg</text>
+  </g>
+  <!-- Mono -->
+  <g transform="translate(820, 340)">
+    <rect x="0" y="0" width="340" height="260" rx="14" fill="#ffffff" stroke="#e9d5ff"/>
+    <rect x="1" y="1" width="338" height="190" fill="#ffffff"/>
+    <g transform="translate(120, 40)">
+      <g transform="translate(50, 52) scale(0.125)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#1a102b"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#1a102b"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#1a102b"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#1a102b"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#1a102b"/></g>
+    </g>
+    <text x="170" y="215" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="2" fill="#9333ea">MONO</text>
+    <text x="170" y="238" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#4b3b66">icon_mono.svg</text>
+  </g>
+
+  <!-- Row 2: Wordmarks -->
+  <!-- Horizontal light -->
+  <g transform="translate(80, 630)">
+    <rect x="0" y="0" width="530" height="180" rx="14" fill="#ffffff" stroke="#e9d5ff"/>
+    <rect x="1" y="1" width="528" height="130" fill="#faf7ff"/>
+    <g transform="translate(50, 40)">
+      <rect x="0" y="0" width="60" height="60" rx="13" fill="#9333ea"/>
+      <g transform="translate(30, 33) scale(0.075)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/></g>
+    </g>
+    <text x="125" y="80" font-family="Fredoka, sans-serif" font-weight="600" font-size="40" fill="#6b21a8" letter-spacing="-1">paw</text>
+    <text x="212" y="80" font-family="Fredoka, sans-serif" font-weight="500" font-size="40" fill="#9333ea" letter-spacing="-1">friend</text>
+    <text x="265" y="155" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="2" fill="#9333ea">WORDMARK HORIZONTAL LIGHT</text>
+  </g>
+  <!-- Horizontal dark -->
+  <g transform="translate(630, 630)">
+    <rect x="0" y="0" width="530" height="180" rx="14" fill="#ffffff" stroke="#e9d5ff"/>
+    <rect x="1" y="1" width="528" height="130" fill="#2a1046"/>
+    <g transform="translate(50, 40)">
+      <rect x="0" y="0" width="60" height="60" rx="13" fill="#ffffff"/>
+      <g transform="translate(30, 33) scale(0.075)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#9333ea"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#9333ea"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#9333ea"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#9333ea"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#9333ea"/></g>
+    </g>
+    <text x="125" y="80" font-family="Fredoka, sans-serif" font-weight="600" font-size="40" fill="#ffffff" letter-spacing="-1">paw</text>
+    <text x="212" y="80" font-family="Fredoka, sans-serif" font-weight="500" font-size="40" fill="#d8b4fe" letter-spacing="-1">friend</text>
+    <text x="265" y="155" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="2" fill="#9333ea">WORDMARK HORIZONTAL DARK</text>
+  </g>
+
+  <!-- Row 3: Vertical / Monogram variants -->
+  <!-- Vertical -->
+  <g transform="translate(80, 840)">
+    <rect x="0" y="0" width="340" height="320" rx="14" fill="#ffffff" stroke="#e9d5ff"/>
+    <rect x="1" y="1" width="338" height="250" fill="#faf7ff"/>
+    <g transform="translate(130, 40)">
+      <rect x="0" y="0" width="80" height="80" rx="18" fill="#9333ea"/>
+      <g transform="translate(40, 42) scale(0.1)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/></g>
+    </g>
+    <text x="170" y="175" text-anchor="middle" font-family="Fredoka, sans-serif" letter-spacing="-1">
+      <tspan font-weight="600" font-size="36" fill="#6b21a8">paw</tspan><tspan font-weight="500" font-size="36" fill="#9333ea"> friend</tspan>
+    </text>
+    <text x="170" y="210" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="400" font-size="12" fill="#6b21a8" letter-spacing="1">hecha en Chile</text>
+    <text x="170" y="290" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="2" fill="#9333ea">VERTICAL STACKED</text>
+  </g>
+  <!-- Monogram primary -->
+  <g transform="translate(450, 840)">
+    <rect x="0" y="0" width="340" height="320" rx="14" fill="#ffffff" stroke="#e9d5ff"/>
+    <rect x="1" y="1" width="338" height="250" fill="#faf7ff"/>
+    <rect x="110" y="60" width="120" height="120" rx="27" fill="#9333ea"/>
+    <text x="170" y="150" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="70" fill="#ffffff" letter-spacing="-3">PF</text>
+    <text x="170" y="290" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="2" fill="#9333ea">MONOGRAM PRIMARY</text>
+  </g>
+  <!-- Monogram gold -->
+  <g transform="translate(820, 840)">
+    <rect x="0" y="0" width="340" height="320" rx="14" fill="#ffffff" stroke="#e9d5ff"/>
+    <rect x="1" y="1" width="338" height="250" fill="#faf7ff"/>
+    <rect x="110" y="60" width="120" height="120" rx="27" fill="#1a102b"/>
+    <text x="170" y="150" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="70" fill="#fbbf24" letter-spacing="-3">PF</text>
+    <text x="170" y="290" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="2" fill="#9333ea">MONOGRAM GOLD</text>
+  </g>
+
+  <!-- Usage rules -->
+  <rect x="80" y="1200" width="1080" height="260" rx="16" fill="#f3e8ff"/>
+  <text x="110" y="1245" font-family="Fredoka, sans-serif" font-weight="600" font-size="22" fill="#9333ea">Reglas de uso</text>
+  <g font-family="'Plus Jakarta Sans', sans-serif" font-size="14" fill="#4b3b66" font-weight="500">
+    <text x="110" y="1290">✓ Usar variante primary sobre fondos claros</text>
+    <text x="110" y="1320">✓ Usar variante dark sobre fondos oscuros (&lt; 30% luminosidad)</text>
+    <text x="110" y="1350">✓ Respetar safe area mínima = altura del isotipo</text>
+    <text x="110" y="1380">✗ No alterar proporciones, colores ni rotación</text>
+    <text x="110" y="1410">✗ No agregar efectos (sombras, outline, bevel)</text>
+    <text x="110" y="1440">✗ No recortar o enmascarar parcialmente el isotipo</text>
+  </g>
+
+  <!-- Footer -->
+  <line x1="80" y1="1620" x2="1160" y2="1620" stroke="#e9d5ff"/>
+  <text x="80" y="1665" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="12" fill="#9333ea">Descarga del pack completo</text>
+  <text x="80" y="1690" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="13" fill="#1a102b">pawfriend.cl/brand-assets/logo/</text>
+  <text x="1160" y="1710" text-anchor="end" font-family="monospace" font-size="10" fill="#94889e">Versión 2026-04-19</text>
+</svg>

@@ -1,0 +1,84 @@
+<!-- feature_graphic_winter.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 500" role="img" aria-label="Paw Friend Feature Graphic Winter" width="1024" height="500">
+  <title>Paw Friend Feature Graphic Winter</title>
+  <desc>Feature graphic invernal (Jun-Ago Chile) con copos, pata con botita y termómetro.</desc>
+  <defs><linearGradient id="fg-win" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#581c87" stop-opacity="1"/><stop offset="100%" stop-color="#1e40af" stop-opacity="1"/></linearGradient></defs>
+  <rect width="1024" height="500" fill="url(#fg-win)"/>
+
+  <!-- LEFT: Isotipo + wordmark (ocupa ~35%) -->
+  <g transform="translate(60, 150)">
+    <rect x="0" y="0" width="160" height="160" rx="35" fill="#ffffff"/>
+    <g transform="translate(80, 85) scale(0.2)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#9333ea"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#9333ea"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#9333ea"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#9333ea"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#9333ea"/></g>
+  </g>
+  <text x="240" y="220" font-family="Fredoka, sans-serif" font-weight="600" font-size="52" fill="#ffffff" letter-spacing="-1.5">Paw</text>
+  <text x="240" y="275" font-family="Fredoka, sans-serif" font-weight="500" font-size="52" fill="#ffffff" fill-opacity="0.85" letter-spacing="-1.5">Friend</text>
+  <text x="240" y="315" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" fill="#ffffff" fill-opacity="0.7" letter-spacing="3">HECHA EN CHILE</text>
+
+  <!-- RIGHT: Claim + subclaim -->
+  <text x="480" y="200" font-family="Fredoka, sans-serif" font-weight="600" font-size="40" fill="#ffffff">Invierno sin miedo</text>
+  <text x="480" y="250" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="18" fill="#ffffff" fill-opacity="0.85">Vacunas al día, ficha en tu bolsillo</text>
+
+  <!-- Decor thematic -->
+  
+  <!-- Copos de nieve -->
+  <g fill="#ffffff" opacity="0.85">
+    <g transform="translate(700, 110)">
+      <line x1="0" y1="-10" x2="0" y2="10" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="-10" y1="0" x2="10" y2="0" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="-7" y1="-7" x2="7" y2="7" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="-7" y1="7" x2="7" y2="-7" stroke="#ffffff" stroke-width="1.5"/>
+    </g>
+    <g transform="translate(830, 150) scale(0.7)">
+      <line x1="0" y1="-10" x2="0" y2="10" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="-10" y1="0" x2="10" y2="0" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="-7" y1="-7" x2="7" y2="7" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="-7" y1="7" x2="7" y2="-7" stroke="#ffffff" stroke-width="1.5"/>
+    </g>
+    <g transform="translate(950, 210)">
+      <line x1="0" y1="-10" x2="0" y2="10" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="-10" y1="0" x2="10" y2="0" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="-7" y1="-7" x2="7" y2="7" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="-7" y1="7" x2="7" y2="-7" stroke="#ffffff" stroke-width="1.5"/>
+    </g>
+    <g transform="translate(620, 320) scale(0.6)">
+      <line x1="0" y1="-10" x2="0" y2="10" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="-10" y1="0" x2="10" y2="0" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="-7" y1="-7" x2="7" y2="7" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="-7" y1="7" x2="7" y2="-7" stroke="#ffffff" stroke-width="1.5"/>
+    </g>
+    <g transform="translate(880, 380)">
+      <line x1="0" y1="-10" x2="0" y2="10" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="-10" y1="0" x2="10" y2="0" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="-7" y1="-7" x2="7" y2="7" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="-7" y1="7" x2="7" y2="-7" stroke="#ffffff" stroke-width="1.5"/>
+    </g>
+  </g>
+  <!-- Pata con botita -->
+  <g transform="translate(760, 350)">
+    <g transform="scale(0.08)">
+      <ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/>
+    </g>
+    <!-- Botita azul -->
+    <ellipse cx="22" cy="60" rx="40" ry="14" fill="#3b82f6"/>
+    <rect x="-13" y="50" width="70" height="14" fill="#3b82f6"/>
+    <line x1="-10" y1="58" x2="55" y2="58" stroke="#ffffff" stroke-width="1.5"/>
+  </g>
+  <!-- Termómetro gold mini -->
+  <g transform="translate(920, 330)">
+    <rect x="0" y="0" width="10" height="50" rx="5" fill="#fbbf24"/>
+    <circle cx="5" cy="55" r="8" fill="#eab308"/>
+    <rect x="3" y="5" width="4" height="40" fill="#DC2626"/>
+  </g>
+
+
+  <!-- URL bottom -->
+  <text x="480" y="440" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="16" fill="#ffffff" fill-opacity="0.8" letter-spacing="3">pawfriend.cl</text>
+</svg>

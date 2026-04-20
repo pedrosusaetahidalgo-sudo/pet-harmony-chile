@@ -1,0 +1,34 @@
+<!-- samsung_s24_ultra_portrait.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 1260" role="img" aria-label="Samsung Galaxy S24 Ultra portrait mockup" width="600" height="1260">
+  <title>Samsung Galaxy S24 Ultra portrait mockup</title>
+  <desc>Mockup vectorial Samsung S24 Ultra titanium gray con screen placeholder dashed purple. Para marketing y landing Paw Friend.</desc>
+  <defs><linearGradient id="s24body" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#8a8a95" stop-opacity="1"/><stop offset="50%" stop-color="#6b6b74" stop-opacity="1"/><stop offset="100%" stop-color="#5c5c64" stop-opacity="1"/></linearGradient></defs>
+  <!-- Body titanium -->
+  <rect x="30" y="30" width="540" height="1200" rx="44" fill="url(#s24body)"/>
+  <!-- Highlight inner -->
+  <rect x="30" y="30" width="540" height="80" rx="44" fill="#ffffff" opacity="0.05"/>
+  <!-- Screen bezel (black frame) -->
+  <rect x="50" y="50" width="500" height="1160" rx="34" fill="#0a0a0e"/>
+  <!-- Screen placeholder dashed -->
+  <rect x="52" y="52" width="496" height="1156" rx="32" fill="#faf5ff"
+        stroke="#9333ea" stroke-width="2" stroke-dasharray="8,6" opacity="0.85"/>
+  <!-- Texto centro -->
+  <text x="300" y="620" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="18" letter-spacing="5" fill="#9333ea">SCREENSHOT AQUÍ</text>
+  <text x="300" y="650" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-size="14" fill="#9333ea" opacity="0.7">1440 × 3120 · S24 Ultra</text>
+  <!-- Punch-hole centered top -->
+  <circle cx="300" cy="88" r="9" fill="#0a0a0e"/>
+  <circle cx="300" cy="86" r="4" fill="#1a1a22"/>
+  <!-- Camera array trasero izq -->
+  <circle cx="78" cy="100" r="10" fill="#1a1a22" stroke="#3a3a45" stroke-width="1.5"/>
+  <circle cx="78" cy="130" r="10" fill="#1a1a22" stroke="#3a3a45" stroke-width="1.5"/>
+  <circle cx="78" cy="160" r="7"  fill="#1a1a22" stroke="#3a3a45" stroke-width="1.5"/>
+  <!-- Side buttons -->
+  <rect x="566" y="260" width="4" height="70"  rx="2" fill="#3a3a45"/>
+  <rect x="566" y="350" width="4" height="110" rx="2" fill="#3a3a45"/>
+  <!-- S-Pen slot -->
+  <rect x="470" y="1220" width="40" height="6" rx="3" fill="#3a3a45" opacity="0.7"/>
+  <!-- Ground shadow -->
+  <ellipse cx="300" cy="1245" rx="260" ry="8" fill="#000" opacity="0.25"/>
+</svg>

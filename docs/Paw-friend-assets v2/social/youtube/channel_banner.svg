@@ -1,0 +1,57 @@
+<!-- channel_banner.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2560 1440" role="img" aria-label="Paw Friend YouTube Channel Banner" width="2560" height="1440">
+  <title>Paw Friend YouTube Channel Banner</title>
+  <desc>Channel banner 2560×1440 con safe zone centered TV/desktop/mobile: logo, wordmark, tagline, schedule y social pills.</desc>
+  <defs><radialGradient id="ytbg" cx="50%" cy="50%" r="75%"><stop offset="0%" stop-color="#9333ea" stop-opacity="1"/><stop offset="50%" stop-color="#581c87" stop-opacity="1"/><stop offset="100%" stop-color="#2a1046" stop-opacity="1"/></radialGradient><radialGradient id="ytglow" cx="80%" cy="20%" r="35%"><stop offset="0%" stop-color="#eab308" stop-opacity="0.25"/><stop offset="100%" stop-color="#eab308" stop-opacity="0"/></radialGradient><radialGradient id="ytiso" cx="50%" cy="45%" r="70%"><stop offset="0%" stop-color="#9333ea" stop-opacity="1"/><stop offset="100%" stop-color="#581c87" stop-opacity="1"/></radialGradient><mask id="yt-heart"><rect width="680" height="680" fill="white"/><path d="M 340 480 C 332 470, 318 460, 310 450 C 302 440, 305 425, 318 422 C 327 420, 335 425, 340 432 C 345 425, 353 420, 362 422 C 375 425, 378 440, 370 450 C 362 460, 348 470, 340 480 Z" fill="black"/></mask></defs>
+  <rect width="2560" height="1440" fill="url(#ytbg)"/>
+  <rect width="2560" height="1440" fill="url(#ytglow)"/>
+  <!-- Decorative paws fuera safe zone -->
+  <g opacity="0.08" fill="#ffffff">
+    <ellipse cx="200" cy="1200" rx="50" ry="42"/>
+    <ellipse cx="160" cy="1160" rx="18" ry="23" transform="rotate(-22 160 1160)"/>
+    <ellipse cx="2360" cy="240" rx="50" ry="42"/>
+    <ellipse cx="2400" cy="200" rx="18" ry="23" transform="rotate(22 2400 200)"/>
+  </g>
+  <path d="M 300 370 L 309.0 391.0 L 330 400 L 309.0 409.0 L 300 430 L 291.0 409.0 L 270 400 L 291.0 391.0 Z" fill="#eab308" opacity="0.6"/>
+  <path d="M 2200 1072 L 2208.4 1091.6 L 2228 1100 L 2208.4 1108.4 L 2200 1128 L 2191.6 1108.4 L 2172 1100 L 2191.6 1091.6 Z" fill="#eab308" opacity="0.6"/>
+  <!-- Star dust -->
+  <g fill="#ffffff" opacity="0.1">
+    <circle cx="400" cy="600" r="4"/><circle cx="2000" cy="800" r="5"/>
+    <circle cx="1200" cy="400" r="3"/><circle cx="800" cy="1200" r="4"/>
+    <circle cx="2300" cy="400" r="3"/><circle cx="600" cy="1000" r="3"/>
+  </g>
+
+  <!-- SAFE ZONE: logo + wordmark + tagline + schedule + socials -->
+  <!-- Isotipo 120×120 -->
+  <g transform="translate(550, 640)">
+    <rect x="0" y="0" width="120" height="120" rx="27" fill="url(#ytiso)"/>
+    <g transform="translate(60, 60) scale(0.176)">
+      <ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff" mask="url(#yt-heart)"/><ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/><ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/><ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/><ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/>
+    </g>
+  </g>
+  <!-- Wordmark -->
+  <text x="700" y="720" font-family="Fredoka, sans-serif"
+        font-weight="600" font-size="96" fill="#ffffff">Paw Friend</text>
+  <text x="700" y="780" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="500" font-size="32" fill="#ffffff" fill-opacity="0.85">La ficha médica de tu mascota, hecha en Chile</text>
+  <!-- Schedule pill -->
+  <rect x="700" y="810" width="420" height="50" rx="25"
+        fill="#ffffff" fill-opacity="0.15" stroke="#ffffff" stroke-opacity="0.3" stroke-width="2"/>
+  <text x="910" y="842" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="18" letter-spacing="4" fill="#fde68a">NUEVOS VIDEOS CADA VIERNES</text>
+  <!-- Social pills right -->
+  <g transform="translate(1700, 680)">
+    <rect x="0" y="0" width="280" height="56" rx="28"
+          fill="#ffffff" fill-opacity="0.12" stroke="#ffffff" stroke-opacity="0.25" stroke-width="2"/>
+    <text x="140" y="36" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+          font-weight="700" font-size="20" fill="#ffffff">@pawfriend.cl</text>
+    <rect x="0" y="76" width="130" height="56" rx="28"
+          fill="#ffffff" fill-opacity="0.12" stroke="#ffffff" stroke-opacity="0.25" stroke-width="2"/>
+    <text x="65" y="112" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+          font-weight="700" font-size="20" fill="#ffffff">IG</text>
+    <rect x="150" y="76" width="130" height="56" rx="28"
+          fill="#ffffff" fill-opacity="0.12" stroke="#ffffff" stroke-opacity="0.25" stroke-width="2"/>
+    <text x="215" y="112" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+          font-weight="700" font-size="20" fill="#ffffff">TikTok</text>
+  </g>
+</svg>

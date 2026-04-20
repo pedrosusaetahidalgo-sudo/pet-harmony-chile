@@ -1,0 +1,91 @@
+<!-- 07_paw_member.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="Android slide 07 · Paw Member" width="1080" height="1920">
+  <title>Android slide 07 · Paw Member</title>
+  <desc>Slide 7 Play Store Android mostrando Paw Member con badge gold y 4 beneficios + pricing opcional.</desc>
+  <defs><radialGradient id="and7" cx="50%" cy="40%" r="75%"><stop offset="0%" stop-color="#fef3c7"/><stop offset="100%" stop-color="#f3e8ff"/></radialGradient></defs>
+  <rect width="1080" height="1920" fill="url(#and7)"/>
+  <rect x="290" y="170" width="500" height="54" rx="27" fill="#9333ea"/>
+  <text x="540" y="206" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="20" letter-spacing="5" fill="#ffffff">APOYA EL PROYECTO</text>
+  <text x="540" y="360" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">Sostén el</text>
+  <text x="540" y="460" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">proyecto</text>
+  <text x="540" y="560" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">sin bloqueos.</text>
+
+  <text x="540" y="660" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="500" font-size="30" fill="#4b3b66">Donación opcional. Features siempre libres.</text>
+
+  <!-- Phone mockup Android -->
+  <g transform="translate(240, 730)">
+    <rect x="0" y="0" width="600" height="1150" rx="60" fill="#1a102b"/>
+    <rect x="16" y="16" width="568" height="1118" rx="50" fill="#ffffff"/>
+    
+    <rect x="16" y="16" width="568" height="130" fill="#eab308"/>
+    <text x="300" y="92" text-anchor="middle" font-family="Fredoka, sans-serif"
+          font-weight="600" font-size="36" fill="#b45309">Paw Member</text>
+
+    <!-- Badge gold gradient hero -->
+    <defs>
+      <linearGradient id="mbadge" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#fbbf24"/>
+        <stop offset="100%" stop-color="#b45309"/>
+      </linearGradient>
+    </defs>
+    <g transform="translate(300, 340)">
+      <rect x="-120" y="-120" width="240" height="240" rx="55" fill="url(#mbadge)"/>
+      <!-- Heart top -->
+      <path d="M 0 -40 C -22 -56, -26 -76, -17 -80 C -10 -82, -5 -78, 0 -74 C 5 -78, 10 -82, 17 -80 C 26 -76, 22 -56, 0 -40 Z" fill="#ffffff"/>
+      <!-- Paw center -->
+      <g transform="translate(0, 10) scale(1.5)">
+        <ellipse cx="0" cy="10" rx="18" ry="15" fill="#ffffff"/>
+        <ellipse cx="-16" cy="-5" rx="6" ry="8" transform="rotate(-22 -16 -5)" fill="#ffffff"/>
+        <ellipse cx="-6" cy="-14" rx="5.5" ry="7" transform="rotate(-10 -6 -14)" fill="#ffffff"/>
+        <ellipse cx="6" cy="-14" rx="5.5" ry="7" transform="rotate(10 6 -14)" fill="#ffffff"/>
+        <ellipse cx="16" cy="-5" rx="6" ry="8" transform="rotate(22 16 -5)" fill="#ffffff"/>
+      </g>
+      <text x="0" y="100" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+            font-weight="800" font-size="24" letter-spacing="6" fill="#ffffff">MEMBER</text>
+    </g>
+
+    <!-- Benefits list 4 items -->
+    <g transform="translate(60, 560)">
+      <circle cx="20" cy="20" r="16" fill="#eab308"/>
+      <path d="M 14 20 L 18 25 L 27 15" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="55" y="25" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="18" fill="#1a102b">Badge oficial en tu perfil</text>
+    </g>
+    <g transform="translate(60, 620)">
+      <circle cx="20" cy="20" r="16" fill="#eab308"/>
+      <path d="M 14 20 L 18 25 L 27 15" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="55" y="25" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="18" fill="#1a102b">Acceso a alianzas exclusivas</text>
+    </g>
+    <g transform="translate(60, 680)">
+      <circle cx="20" cy="20" r="16" fill="#eab308"/>
+      <path d="M 14 20 L 18 25 L 27 15" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="55" y="25" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="18" fill="#1a102b">Kit físico de agradecimiento</text>
+    </g>
+    <g transform="translate(60, 740)">
+      <circle cx="20" cy="20" r="16" fill="#eab308"/>
+      <path d="M 14 20 L 18 25 L 27 15" stroke="#ffffff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="55" y="25" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="18" fill="#1a102b">Soporte prioritario</text>
+    </g>
+
+    <!-- Price -->
+    <text x="300" y="860" text-anchor="middle" font-family="Fredoka, sans-serif"
+          font-weight="600" font-size="44" fill="#9333ea">$3.990/mes</text>
+    <text x="300" y="893" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+          font-weight="500" font-size="15" fill="#4b3b66">cancelable · todas las features siempre libres</text>
+
+    <!-- CTA -->
+    <rect x="80" y="930" width="440" height="70" rx="35" fill="#9333ea"/>
+    <text x="300" y="975" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+          font-weight="800" font-size="22" fill="#ffffff">Sostener el proyecto</text>
+
+    <!-- Material bottom nav -->
+    <rect x="16" y="1064" width="568" height="70" fill="#ffffff"/>
+    <line x1="16" y1="1064" x2="584" y2="1064" stroke="#e9d5ff" stroke-width="1"/>
+    <circle cx="120" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="260" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="400" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="540" cy="1100" r="15" fill="#9333ea"/>
+
+  </g>
+</svg>

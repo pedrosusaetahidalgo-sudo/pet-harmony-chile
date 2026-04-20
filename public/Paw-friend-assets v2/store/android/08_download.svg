@@ -1,0 +1,98 @@
+<!-- 08_download.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="Android slide 08 · Download CTA" width="1080" height="1920">
+  <title>Android slide 08 · Download CTA</title>
+  <desc>Slide 8 Play Store Android con CTA final: logo hero, stats sociales y link descarga.</desc>
+  <defs><radialGradient id="and8" cx="50%" cy="40%" r="75%"><stop offset="0%" stop-color="#faf5ff"/><stop offset="100%" stop-color="#fef3c7"/></radialGradient></defs>
+  <rect width="1080" height="1920" fill="url(#and8)"/>
+  <rect x="290" y="170" width="500" height="54" rx="27" fill="#9333ea"/>
+  <text x="540" y="206" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="20" letter-spacing="5" fill="#ffffff">TU PELUDO TE ESPERA</text>
+  <text x="540" y="360" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">Gratis.</text>
+  <text x="540" y="460" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">Simple.</text>
+  <text x="540" y="560" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">Hecha en Chile.</text>
+
+  <text x="540" y="660" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="500" font-size="30" fill="#4b3b66">Descarga Paw Friend ahora.</text>
+
+  <!-- Phone mockup Android -->
+  <g transform="translate(240, 730)">
+    <rect x="0" y="0" width="600" height="1150" rx="60" fill="#1a102b"/>
+    <rect x="16" y="16" width="568" height="1118" rx="50" fill="#ffffff"/>
+    
+    <!-- Full brand immersive background -->
+    <defs>
+      <radialGradient id="ctabg" cx="50%" cy="40%" r="80%">
+        <stop offset="0%" stop-color="#9333ea"/>
+        <stop offset="100%" stop-color="#2a1046"/>
+      </radialGradient>
+    </defs>
+    <rect x="16" y="16" width="568" height="1118" rx="50" fill="url(#ctabg)"/>
+
+    <!-- Sparkles -->
+    <g fill="#ffffff" opacity="0.15">
+      <circle cx="80" cy="120" r="3"/>
+      <circle cx="520" cy="180" r="4"/>
+      <circle cx="120" cy="550" r="3"/>
+      <circle cx="480" cy="700" r="3"/>
+      <circle cx="60" cy="900" r="4"/>
+      <circle cx="540" cy="980" r="3"/>
+    </g>
+
+    <!-- Mega isotipo hero -->
+    <g transform="translate(300, 380)">
+      <rect x="-140" y="-140" width="280" height="280" rx="62" fill="#ffffff"/>
+      <g transform="translate(0, 5) scale(0.35)">
+        <ellipse cx="340" cy="430" rx="155" ry="135" fill="#9333ea"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#9333ea"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#9333ea"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#9333ea"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#9333ea"/>
+      </g>
+    </g>
+
+    <!-- Wordmark -->
+    <text x="300" y="620" text-anchor="middle" font-family="Fredoka, sans-serif"
+          font-weight="600" font-size="56" fill="#ffffff" letter-spacing="-1.5">paw friend</text>
+    <text x="300" y="662" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+          font-weight="500" font-size="18" fill="#fde68a" letter-spacing="5">HECHA EN CHILE</text>
+
+    <!-- 3 quick stats -->
+    <g transform="translate(60, 720)">
+      <text x="70" y="30" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="36" fill="#fde68a">+1.000</text>
+      <text x="70" y="55" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#ffffff" fill-opacity="0.7">mascotas</text>
+
+      <text x="240" y="30" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="36" fill="#fde68a">+50</text>
+      <text x="240" y="55" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#ffffff" fill-opacity="0.7">vets RM</text>
+
+      <text x="410" y="30" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="36" fill="#fde68a">4.8★</text>
+      <text x="410" y="55" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#ffffff" fill-opacity="0.7">rating</text>
+    </g>
+
+    <!-- CTA descarga -->
+    <rect x="80" y="830" width="440" height="80" rx="40" fill="#eab308"/>
+    <text x="300" y="880" text-anchor="middle" font-family="Fredoka, sans-serif"
+          font-weight="600" font-size="28" fill="#1a102b">Descargar gratis</text>
+
+    <!-- URL -->
+    <text x="300" y="960" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+          font-weight="700" font-size="22" fill="#fde68a" letter-spacing="3">PAWFRIEND.CL</text>
+
+    <!-- Chile flag -->
+    <g transform="translate(250, 990)">
+      <rect x="0" y="0" width="40" height="12" fill="#ffffff"/>
+      <rect x="0" y="12" width="40" height="12" fill="#DC2626"/>
+      <rect x="0" y="0" width="12" height="12" fill="#0057B7"/>
+      <polygon points="6,3 7,5 9,5 7.5,7 8,9 6,8 4,9 4.5,7 3,5 5,5" fill="#ffffff"/>
+      <text x="52" y="18" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="14" fill="#ffffff" fill-opacity="0.75">Hecho con amor en Chile</text>
+    </g>
+
+    <!-- Material bottom nav -->
+    <rect x="16" y="1064" width="568" height="70" fill="#ffffff"/>
+    <line x1="16" y1="1064" x2="584" y2="1064" stroke="#e9d5ff" stroke-width="1"/>
+    <circle cx="120" cy="1100" r="15" fill="#9333ea"/>
+    <circle cx="260" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="400" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="540" cy="1100" r="12" fill="#94889e"/>
+
+  </g>
+</svg>

@@ -1,0 +1,96 @@
+<!-- monthly_newsletter.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>Paw Friend · Newsletter mensual</title>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      body { background-color: #2a1046 !important; }
+    }
+    body, table, td { margin:0; padding:0; }
+    a { text-decoration: none; }
+  </style>
+</head>
+<body style="margin:0;padding:0;background-color:#faf7ff;font-family:Arial,Helvetica,sans-serif;">
+<span style="display:none;max-height:0;overflow:hidden;color:transparent;">Tus números del mes + novedades + historia destacada</span>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#faf7ff;">
+  <tr><td align="center" style="padding:40px 20px;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="background-color:#ffffff;border-radius:14px;overflow:hidden;">
+
+
+        <tr>
+          <td style="background:linear-gradient(135deg,#2a1046 0%,#581c87 50%,#9333ea 100%);padding:40px 30px;text-align:center;">
+            <div style="display:inline-block;width:72px;height:72px;background:#ffffff;border-radius:16px;line-height:72px;margin:0 auto 16px;text-align:center;">
+              <span style="font-family:Arial;font-size:34px;color:#9333ea;font-weight:700;">📰</span>
+            </div>
+            <h1 style="margin:0 0 8px;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:32px;font-weight:700;letter-spacing:-0.5px;">¿Qué pasó en {{mes}}?</h1>
+            <p style="margin:0;color:rgba(255,255,255,0.9);font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.5;">Lo nuevo de Paw Friend, en 3 minutos.</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:40px 30px;">
+            <h2 style="margin:0 0 16px;color:#9333ea;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:700;">Novedades del mes</h2>
+            <p style="margin:0 0 20px;color:#1a102b;font-size:15px;line-height:1.6;font-family:Arial;">
+              Este mes lanzamos <strong style="color:#9333ea;">Paw Cards coleccionables</strong>, integramos <strong>+12 clínicas nuevas</strong> en el directorio y empezamos a testear búsqueda por síntomas con IA.
+            </p>
+
+            <h2 style="margin:30px 0 16px;color:#9333ea;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:700;">Números del mes</h2>
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom:30px;">
+              <tr>
+                <td width="32%" style="padding:14px 10px;background:#faf5ff;border-radius:10px;text-align:center;">
+                  <p style="margin:0;color:#9333ea;font-size:28px;font-weight:700;font-family:Arial;">+{mascotas_mes}</p>
+                  <p style="margin:4px 0 0;color:#4b3b66;font-size:12px;font-family:Arial;">mascotas nuevas</p>
+                </td>
+                <td width="2%"></td>
+                <td width="32%" style="padding:14px 10px;background:#ecfdf5;border-radius:10px;text-align:center;">
+                  <p style="margin:0;color:#047857;font-size:28px;font-weight:700;font-family:Arial;">+{vets_mes}</p>
+                  <p style="margin:4px 0 0;color:#4b3b66;font-size:12px;font-family:Arial;">vets activos</p>
+                </td>
+                <td width="2%"></td>
+                <td width="32%" style="padding:14px 10px;background:#fef3c7;border-radius:10px;text-align:center;">
+                  <p style="margin:0;color:#b45309;font-size:28px;font-weight:700;font-family:Arial;">{rating_mes}★</p>
+                  <p style="margin:4px 0 0;color:#4b3b66;font-size:12px;font-family:Arial;">rating promedio</p>
+                </td>
+              </tr>
+            </table>
+
+            <h2 style="margin:30px 0 16px;color:#9333ea;font-family:Arial,Helvetica,sans-serif;font-size:20px;font-weight:700;">Historia del mes</h2>
+            <div style="background:#f3e8ff;border-left:4px solid #9333ea;padding:20px;border-radius:0 10px 10px 0;margin-bottom:30px;">
+              <p style="margin:0;color:#1a102b;font-size:14px;font-style:italic;font-family:Arial;line-height:1.6;">
+                "{testimonio_texto}"
+              </p>
+              <p style="margin:10px 0 0;color:#9333ea;font-weight:700;font-size:13px;font-family:Arial;">— {testimonio_autor}</p>
+            </div>
+
+            <p style="margin:0 0 20px;color:#1a102b;font-size:15px;line-height:1.6;font-family:Arial;text-align:center;">
+              Si algo del mes te llamó la atención, respondenos este correo. Leemos todo.
+            </p>
+
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr><td align="center" style="padding:20px 0;">
+                <a href="https://pawfriend.cl/home" style="display:inline-block;background:#9333ea;color:#ffffff;padding:14px 36px;border-radius:28px;font-weight:700;font-size:15px;font-family:Arial;">Ir al panel</a>
+              </td></tr>
+            </table>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="background-color:#f3e8ff;padding:25px 30px;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#4b3b66;line-height:1.6;">
+            <p style="margin:0 0 8px;"><strong>Paw Friend</strong> · Hecho en Chile, a mano, con inteligencia artificial.</p>
+            <p style="margin:0 0 8px;"><a href="https://pawfriend.cl" style="color:#9333ea;font-weight:700;">pawfriend.cl</a> · pawfriendcl@gmail.com</p>
+            <p style="margin:0 0 8px;color:#94889e;">SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9 · Luis Pasteur 6111 Dp 201, Vitacura</p>
+            <p style="margin:0;">
+              <a href="https://pawfriend.cl/profile" style="color:#9333ea;">Gestionar preferencias</a>
+              &nbsp;·&nbsp;
+              <a href="https://pawfriend.cl/unsubscribe?token={{{{TOKEN}}}}" style="color:#9333ea;">Darte de baja</a>
+            </p>
+          </td>
+        </tr>
+  </table>
+  </td></tr>
+</table>
+</body>
+</html>

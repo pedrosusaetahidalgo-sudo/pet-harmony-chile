@@ -1,0 +1,97 @@
+<!-- slide_02.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1242 2208" role="img" aria-label="App Store Slide 02 · Directorio vets" width="1242" height="2208">
+  <title>App Store Slide 02 · Directorio vets</title>
+  <desc>Slide 2 de iOS 5.5" mostrando directorio público de veterinarios con rating y verificación.</desc>
+  <defs><radialGradient id="g02" cx="15%" cy="15%" r="110%"><stop offset="0%" stop-color="#9333ea"/><stop offset="100%" stop-color="#581c87"/></radialGradient></defs>
+  <rect width="1242" height="2208" fill="url(#g02)"/>
+
+  <!-- Decorative dots pattern -->
+  <g fill="#ffffff" opacity="0.08">
+    <circle cx="150" cy="180" r="4"/>
+    <circle cx="1080" cy="220" r="5"/>
+    <circle cx="90" cy="380" r="3"/>
+    <circle cx="1120" cy="450" r="3"/>
+  </g>
+
+  <!-- Headline (Fredoka 600, 96px, white) -->
+  <text x="621" y="320" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="600" font-size="96" fill="#ffffff" letter-spacing="-2">Encuentra tu vet de confianza</text>
+
+  <!-- Subhead (Plus Jakarta Sans 500, 44px) -->
+  <text x="621" y="410" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="500" font-size="40" fill="#ffffff" fill-opacity="0.88">Directorio público con +400 veterinarios de Chile</text>
+
+  <!-- Phone mockup iPhone 14 style - centered -->
+  <g transform="translate(321, 540)">
+    <rect x="0" y="0" width="600" height="1220" rx="85" fill="#1a102b"/>
+    <rect x="18" y="18" width="564" height="1184" rx="73" fill="#ffffff"/>
+    <!-- Dynamic island -->
+    <rect x="235" y="48" width="130" height="28" rx="14" fill="#1a102b"/>
+    
+    <!-- Header purple -->
+    <rect x="18" y="18" width="564" height="130" rx="73" fill="#9333ea"/>
+    <rect x="18" y="110" width="564" height="40" fill="#9333ea"/>
+    <text x="300" y="95" text-anchor="middle" font-family="Fredoka, sans-serif"
+          font-weight="600" font-size="30" fill="#ffffff">Directorio vets</text>
+
+    <!-- Search bar -->
+    <rect x="40" y="170" width="520" height="64" rx="32" fill="#faf5ff"/>
+    <circle cx="72" cy="202" r="10" fill="none" stroke="#94889e" stroke-width="2.5"/>
+    <text x="96" y="210" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="18" fill="#94889e">Buscar por comuna</text>
+
+    <!-- 3 vet cards -->
+    <g transform="translate(40, 260)">
+      <rect x="0" y="0" width="520" height="180" rx="18" fill="#ffffff" stroke="#e9d5ff"/>
+      <circle cx="55" cy="60" r="36" fill="#10b981"/>
+      <text x="55" y="70" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="26" fill="#ffffff">C</text>
+      <text x="108" y="50" font-family="Fredoka, sans-serif" font-weight="600" font-size="26" fill="#1a102b">Clínica Cafati</text>
+      <text x="108" y="80" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#4b3b66">Las Condes · 2.1 km</text>
+      <rect x="108" y="95" width="90" height="28" rx="14" fill="#ecfdf5"/>
+      <text x="153" y="114" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="13" fill="#047857">VERIFICADO</text>
+      <g transform="translate(20, 140)" fill="#eab308">
+        <polygon points="8,0 10,5 16,5 11,9 13,15 8,11 3,15 5,9 0,5 6,5"/>
+        <polygon points="28,0 30,5 36,5 31,9 33,15 28,11 23,15 25,9 20,5 26,5"/>
+        <polygon points="48,0 50,5 56,5 51,9 53,15 48,11 43,15 45,9 40,5 46,5"/>
+        <polygon points="68,0 70,5 76,5 71,9 73,15 68,11 63,15 65,9 60,5 66,5"/>
+        <polygon points="88,0 90,5 96,5 91,9 93,15 88,11 83,15 85,9 80,5 86,5"/>
+      </g>
+      <text x="130" y="154" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="14" fill="#1a102b">4.9</text>
+    </g>
+    <g transform="translate(40, 460)">
+      <rect x="0" y="0" width="520" height="180" rx="18" fill="#ffffff" stroke="#e9d5ff"/>
+      <circle cx="55" cy="60" r="36" fill="#9333ea"/>
+      <text x="55" y="70" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="26" fill="#ffffff">V</text>
+      <text x="108" y="50" font-family="Fredoka, sans-serif" font-weight="600" font-size="26" fill="#1a102b">VetExpress</text>
+      <text x="108" y="80" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#4b3b66">Vitacura · 3.8 km</text>
+      <rect x="108" y="95" width="90" height="28" rx="14" fill="#ecfdf5"/>
+      <text x="153" y="114" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="13" fill="#047857">VERIFICADO</text>
+    </g>
+    <g transform="translate(40, 660)">
+      <rect x="0" y="0" width="520" height="180" rx="18" fill="#ffffff" stroke="#e9d5ff"/>
+      <circle cx="55" cy="60" r="36" fill="#eab308"/>
+      <text x="55" y="70" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="26" fill="#b45309">P</text>
+      <text x="108" y="50" font-family="Fredoka, sans-serif" font-weight="600" font-size="26" fill="#1a102b">Pet Medical</text>
+      <text x="108" y="80" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#4b3b66">La Reina · 5.2 km</text>
+    </g>
+
+    <!-- Counter badge -->
+    <rect x="140" y="870" width="320" height="48" rx="24" fill="#f3e8ff"/>
+    <text x="300" y="901" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="18" fill="#6b21a8">+400 veterinarios en Chile</text>
+
+  </g>
+
+  <!-- Map pin flotante con corazón -->
+<g transform="translate(950, 1400)">
+  <path d="M 0 -40 Q -28 -40 -28 -12 Q -28 6 0 30 Q 28 6 28 -12 Q 28 -40 0 -40 Z" fill="#eab308" opacity="0.95"/>
+  <path d="M 0 -8 C -5 -12, -12 -14, -14 -10 C -15 -6, -11 -2, -7 1 C -4 3, 0 7, 0 7 C 0 7, 4 3, 7 1 C 11 -2, 15 -6, 14 -10 C 12 -14, 5 -12, 0 -8 Z" fill="#ec4899"/>
+</g>
+
+  <!-- Pill gold inferior -->
+  <rect x="281" y="1870" width="680" height="100" rx="50" fill="#eab308"/>
+  <text x="621" y="1932" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="600" font-size="36" fill="#1a102b">Sin costo · Sin registro</text>
+
+  <!-- Brand watermark bottom -->
+  <text x="621" y="2090" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="700" font-size="22" letter-spacing="5" fill="#ffffff" fill-opacity="0.7">PAWFRIEND.CL</text>
+</svg>

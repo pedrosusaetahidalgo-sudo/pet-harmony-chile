@@ -1,0 +1,69 @@
+<!-- 03_historial.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="Android Historial médico" width="1080" height="1920">
+  <title>Android Historial médico</title>
+  <desc>Play Store screenshot Android con timeline de historial médico Paw Friend.</desc>
+  <defs><radialGradient id="and3bg" cx="50%" cy="40%" r="75%"><stop offset="0%" stop-color="#fdf2f8" stop-opacity="1"/><stop offset="100%" stop-color="#f3e8ff" stop-opacity="1"/></radialGradient></defs>
+  <rect width="1080" height="1920" fill="url(#and3bg)"/>
+  <!-- Eyebrow pill -->
+  <rect x="290" y="170" width="500" height="54" rx="27" fill="#9333ea"/>
+  <text x="540" y="206" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="20" letter-spacing="5" fill="#ffffff">HISTORIAL COMPLETO</text>
+  <text x="540" y="360" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">Cada vacuna,</text>
+  <text x="540" y="460" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">cada control,</text>
+  <text x="540" y="560" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">en un solo lugar.</text>
+
+  <text x="540" y="660" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="500" font-size="30" fill="#4b3b66">Compartible con tu vet de un toque.</text>
+  <!-- Phone mockup Android -->
+  <g transform="translate(240, 730)">
+    <rect x="0" y="0" width="600" height="1150" rx="60" fill="#1a102b"/>
+    <rect x="16" y="16" width="568" height="1118" rx="50" fill="#ffffff"/>
+    
+    <rect x="16" y="16" width="568" height="130" fill="#9333ea"/>
+    <text x="300" y="92" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="36" fill="#ffffff">Historial de Kai</text>
+    <!-- Timeline vertical -->
+    <line x1="70" y1="220" x2="70" y2="980" stroke="#e9d5ff" stroke-width="3"/>
+    <g transform="translate(40, 220)">
+      <circle cx="30" cy="30" r="18" fill="#10b981"/>
+      <path d="M 22 30 L 28 36 L 40 22" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <rect x="75" y="0" width="445" height="110" rx="14" fill="#ecfdf5" stroke="#10b981" stroke-width="1" stroke-opacity="0.3"/>
+      <text x="95" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="16" fill="#047857">VACUNA</text>
+      <text x="95" y="62" font-family="Fredoka, sans-serif" font-weight="600" font-size="22" fill="#1a102b">Rabia + Sextuple</text>
+      <text x="95" y="90" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#4b3b66">15 mar 2026 · Clínica Cafati</text>
+    </g>
+    <g transform="translate(40, 360)">
+      <circle cx="30" cy="30" r="18" fill="#9333ea"/>
+      <rect x="22" y="22" width="16" height="16" rx="2" fill="#ffffff"/>
+      <rect x="75" y="0" width="445" height="110" rx="14" fill="#faf5ff" stroke="#9333ea" stroke-width="1" stroke-opacity="0.3"/>
+      <text x="95" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="16" fill="#9333ea">MEDICACIÓN</text>
+      <text x="95" y="62" font-family="Fredoka, sans-serif" font-weight="600" font-size="22" fill="#1a102b">Antiparasitario mensual</text>
+      <text x="95" y="90" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#4b3b66">Hoy · recordatorio activado</text>
+    </g>
+    <g transform="translate(40, 500)">
+      <circle cx="30" cy="30" r="18" fill="#eab308"/>
+      <rect x="21" y="21" width="18" height="18" rx="2" fill="#ffffff"/>
+      <line x1="25" y1="27" x2="35" y2="27" stroke="#b45309" stroke-width="1.5"/>
+      <line x1="25" y1="32" x2="33" y2="32" stroke="#b45309" stroke-width="1.5"/>
+      <rect x="75" y="0" width="445" height="110" rx="14" fill="#fef3c7" stroke="#eab308" stroke-width="1" stroke-opacity="0.3"/>
+      <text x="95" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="16" fill="#b45309">CONSULTA</text>
+      <text x="95" y="62" font-family="Fredoka, sans-serif" font-weight="600" font-size="22" fill="#1a102b">Chequeo anual</text>
+      <text x="95" y="90" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#4b3b66">28 feb 2026 · Dra. Muñoz</text>
+    </g>
+    <g transform="translate(40, 640)">
+      <circle cx="30" cy="30" r="18" fill="#ec4899"/>
+      <path d="M 22 30 L 30 22 L 38 30 L 30 38 Z" fill="#ffffff"/>
+      <rect x="75" y="0" width="445" height="110" rx="14" fill="#fdf2f8" stroke="#ec4899" stroke-width="1" stroke-opacity="0.3"/>
+      <text x="95" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="16" fill="#be185d">PESO</text>
+      <text x="95" y="62" font-family="Fredoka, sans-serif" font-weight="600" font-size="22" fill="#1a102b">32.5 kg · estable</text>
+      <text x="95" y="90" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#4b3b66">10 feb 2026 · pesada en casa</text>
+    </g>
+
+    <!-- Material bottom nav -->
+    <rect x="16" y="1064" width="568" height="70" fill="#ffffff"/>
+    <line x1="16" y1="1064" x2="584" y2="1064" stroke="#e9d5ff" stroke-width="1"/>
+    <circle cx="120" cy="1100" r="15" fill="#9333ea"/>
+    <circle cx="260" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="400" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="540" cy="1100" r="12" fill="#94889e"/>
+  </g>
+</svg>

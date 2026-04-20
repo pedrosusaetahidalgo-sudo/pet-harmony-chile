@@ -1,0 +1,14 @@
+<!-- splash_android.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1920" role="img" aria-label="Paw Friend Android Splash" width="1920" height="1920">
+  <title>Paw Friend Android Splash</title>
+  <desc>Splash screen Android 12+ con isotipo oficial central y wordmark lowercase sobre gradient brand.</desc>
+  <defs><radialGradient id="bg-splash-and" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="#9333ea" stop-opacity="1"/><stop offset="100%" stop-color="#581c87" stop-opacity="1"/></radialGradient><mask id="pf-heart-5"><rect width="680" height="680" fill="white"/><path d="M 340 480 C 332 470, 318 460, 310 450 C 302 440, 305 425, 318 422 C 327 420, 335 425, 340 432 C 345 425, 353 420, 362 422 C 375 425, 378 440, 370 450 C 362 460, 348 470, 340 480 Z" fill="black"/></mask></defs>
+  <rect width="1920" height="1920" fill="url(#bg-splash-and)"/>
+  <g transform="translate(660, 460) scale(0.882)">
+    <path d="M 340 40 C 540 40, 640 140, 640 340 C 640 540, 540 640, 340 640 C 140 640, 40 540, 40 340 C 40 140, 140 40, 340 40 Z" fill="#9333ea"/>
+    <ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff" mask="url(#pf-heart-5)"/><ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/><ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/><ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/><ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/>
+  </g>
+  <text x="960" y="1280" text-anchor="middle"
+        font-family="Fredoka, 'Plus Jakarta Sans', system-ui, sans-serif"
+        font-size="96" font-weight="600" fill="#ffffff">paw friend</text>
+</svg>

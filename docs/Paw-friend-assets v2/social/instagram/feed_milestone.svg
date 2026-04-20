@@ -1,0 +1,40 @@
+<!-- feed_milestone.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="Paw Friend IG Feed Milestone" width="1080" height="1080">
+  <title>Paw Friend IG Feed Milestone</title>
+  <desc>Template IG feed 1080×1080 para anunciar milestones. Número hero editable con gradient gold.</desc>
+  <defs><radialGradient id="igbg" cx="50%" cy="45%" r="80%"><stop offset="0%" stop-color="#581c87" stop-opacity="1"/><stop offset="60%" stop-color="#9333ea" stop-opacity="1"/><stop offset="100%" stop-color="#2a1046" stop-opacity="1"/></radialGradient><radialGradient id="igglow" cx="50%" cy="50%" r="35%"><stop offset="0%" stop-color="#eab308" stop-opacity="0.3"/><stop offset="60%" stop-color="#eab308" stop-opacity="0"/></radialGradient><linearGradient id="ignum" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ffffff" stop-opacity="1"/><stop offset="50%" stop-color="#fde68a" stop-opacity="1"/><stop offset="100%" stop-color="#eab308" stop-opacity="1"/></linearGradient></defs>
+  <rect width="1080" height="1080" fill="url(#igbg)"/>
+  <rect width="1080" height="1080" fill="url(#igglow)"/>
+  <!-- Star dust -->
+  <g fill="#ffffff" opacity="0.15">
+    <circle cx="120" cy="200" r="3"/><circle cx="900" cy="150" r="2"/>
+    <circle cx="180" cy="450" r="4"/><circle cx="960" cy="500" r="3"/>
+    <circle cx="80"  cy="750" r="2"/><circle cx="990" cy="820" r="4"/>
+    <circle cx="300" cy="950" r="3"/><circle cx="750" cy="900" r="2"/>
+    <circle cx="450" cy="100" r="2"/><circle cx="600" cy="260" r="3"/>
+    <circle cx="150" cy="620" r="3"/><circle cx="900" cy="650" r="2"/>
+  </g>
+  <!-- Eyebrow pill -->
+  <rect x="440" y="130" width="200" height="60" rx="30"
+        fill="#ffffff" fill-opacity="0.12" stroke="#ffffff" stroke-opacity="0.25" stroke-width="2"/>
+  <text x="540" y="168" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="22" letter-spacing="8" fill="#fde68a">MILESTONE</text>
+  <!-- Número hero gigante -->
+  <text x="540" y="620" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="700" font-size="260" fill="url(#ignum)" letter-spacing="-10">1.000</text>
+  <!-- Sub caption -->
+  <text x="540" y="720" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="500" font-size="44" fill="#ffffff">mascotas registradas</text>
+  <text x="540" y="780" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="500" font-size="44" fill="#ffffff">en 30 días</text>
+  <!-- Sparkles scattered -->
+  <path d="M 120 332 L 125.4 344.6 L 138 350 L 125.4 355.4 L 120 368 L 114.6 355.4 L 102 350 L 114.6 344.6 Z" fill="#eab308"/>
+  <path d="M 960 364 L 964.8 375.2 L 976 380 L 964.8 384.8 L 960 396 L 955.2 384.8 L 944 380 L 955.2 375.2 Z" fill="#eab308"/>
+  <path d="M 200 806 L 204.2 815.8 L 214 820 L 204.2 824.2 L 200 834 L 195.8 824.2 L 186 820 L 195.8 815.8 Z" fill="#eab308"/>
+  <path d="M 880 840 L 886.0 854.0 L 900 860 L 886.0 866.0 L 880 880 L 874.0 866.0 L 860 860 L 874.0 854.0 Z" fill="#eab308"/>
+  <path d="M 540 145 L 544.5 155.5 L 555 160 L 544.5 164.5 L 540 175 L 535.5 164.5 L 525 160 L 535.5 155.5 Z" fill="#eab308"/>
+  <!-- Brand watermark -->
+  <rect x="400" y="1000" width="280" height="50" rx="25" fill="#ffffff"/>
+  <text x="540" y="1032" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="18" letter-spacing="4" fill="#9333ea">@PAWFRIEND.CL</text>
+</svg>

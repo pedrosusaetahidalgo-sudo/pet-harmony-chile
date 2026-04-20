@@ -1,0 +1,106 @@
+<!-- media_backgrounder.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 1754" role="img" aria-label="Paw Friend Media Backgrounder" width="1240" height="1754">
+  <title>Paw Friend Media Backgrounder</title>
+  <desc>Ficha de prensa A4 con datos clave, quote del founder, ángulos narrativos y recursos descargables.</desc>
+  <defs><linearGradient id="mb-hdr" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#2a1046" stop-opacity="1"/><stop offset="100%" stop-color="#9333ea" stop-opacity="1"/></linearGradient></defs>
+  <rect width="1240" height="1754" fill="#faf7ff"/>
+
+  <!-- Header -->
+  <rect x="0" y="0" width="1240" height="170" fill="url(#mb-hdr)"/>
+  <g transform="translate(80, 65)">
+    <rect x="0" y="0" width="60" height="60" rx="13" fill="#ffffff"/>
+    <g transform="translate(30, 33) scale(0.075)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#9333ea"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#9333ea"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#9333ea"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#9333ea"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#9333ea"/></g>
+  </g>
+  <text x="160" y="90" font-family="Fredoka, sans-serif" font-weight="600" font-size="28" fill="#ffffff">Paw Friend</text>
+  <text x="160" y="120" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" fill="#ffffff" fill-opacity="0.85">Media Backgrounder · Ficha para prensa</text>
+
+  <!-- Title -->
+  <text x="80" y="240" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="12" letter-spacing="4" fill="#9333ea">FICHA DE PRENSA</text>
+  <text x="80" y="290" font-family="Fredoka, sans-serif" font-weight="600" font-size="36" fill="#1a102b">Qué es Paw Friend</text>
+
+  <!-- Descripción -->
+  <text x="80" y="340" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#4b3b66">La primera ficha médica digital de mascotas + directorio público de veterinarios de Chile,</text>
+  <text x="80" y="365" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#4b3b66">hecha por una persona con apoyo de IA. Gratis para todos los tutores.</text>
+
+  <!-- 6 datos clave grid 3x2 -->
+  <g transform="translate(80, 430)">
+    <rect x="0" y="0" width="360" height="130" rx="12" fill="#faf5ff" stroke="#e9d5ff"/>
+    <text x="20" y="35" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="3" fill="#9333ea">FUNDACIÓN</text>
+    <text x="20" y="75" font-family="Fredoka, sans-serif" font-weight="600" font-size="28" fill="#1a102b">Enero 2026</text>
+    <text x="20" y="108" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="13" fill="#4b3b66">Santiago, Chile</text>
+  </g>
+  <g transform="translate(460, 430)">
+    <rect x="0" y="0" width="360" height="130" rx="12" fill="#fef3c7" stroke="#fde68a"/>
+    <text x="20" y="35" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="3" fill="#b45309">FOUNDER</text>
+    <text x="20" y="75" font-family="Fredoka, sans-serif" font-weight="600" font-size="28" fill="#1a102b">1 persona + IA</text>
+    <text x="20" y="108" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="13" fill="#4b3b66">Con apoyo de agentes LLM</text>
+  </g>
+  <g transform="translate(840, 430)">
+    <rect x="0" y="0" width="320" height="130" rx="12" fill="#ecfdf5" stroke="#10b981" stroke-opacity="0.3"/>
+    <text x="20" y="35" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="3" fill="#047857">PLATAFORMAS</text>
+    <text x="20" y="75" font-family="Fredoka, sans-serif" font-weight="600" font-size="28" fill="#1a102b">3 live</text>
+    <text x="20" y="108" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="13" fill="#4b3b66">Web + iOS + Android</text>
+  </g>
+  <g transform="translate(80, 590)">
+    <rect x="0" y="0" width="360" height="130" rx="12" fill="#fdf2f8" stroke="#ec4899" stroke-opacity="0.3"/>
+    <text x="20" y="35" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="3" fill="#be185d">USUARIOS</text>
+    <text x="20" y="75" font-family="Fredoka, sans-serif" font-weight="600" font-size="28" fill="#1a102b">1.000+ mascotas</text>
+    <text x="20" y="108" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="13" fill="#4b3b66">En los primeros 30 días</text>
+  </g>
+  <g transform="translate(460, 590)">
+    <rect x="0" y="0" width="360" height="130" rx="12" fill="#faf5ff" stroke="#e9d5ff"/>
+    <text x="20" y="35" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="3" fill="#9333ea">VETS PARTNERS</text>
+    <text x="20" y="75" font-family="Fredoka, sans-serif" font-weight="600" font-size="28" fill="#1a102b">+50 activos</text>
+    <text x="20" y="108" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="13" fill="#4b3b66">Región Metropolitana</text>
+  </g>
+  <g transform="translate(840, 590)">
+    <rect x="0" y="0" width="320" height="130" rx="12" fill="#fef3c7" stroke="#fde68a"/>
+    <text x="20" y="35" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="3" fill="#b45309">MODELO</text>
+    <text x="20" y="75" font-family="Fredoka, sans-serif" font-weight="600" font-size="28" fill="#1a102b">100% gratis B2C</text>
+    <text x="20" y="108" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="13" fill="#4b3b66">Monetización B2B</text>
+  </g>
+
+  <!-- Quote -->
+  <rect x="80" y="790" width="1080" height="200" rx="16" fill="#2a1046"/>
+  <text x="130" y="840" font-family="Fredoka, sans-serif" font-weight="600" font-size="56" fill="#eab308">"</text>
+  <text x="180" y="860" font-family="Fredoka, sans-serif" font-style="italic" font-weight="500" font-size="22" fill="#ffffff">En Chile, 7 de cada 10 hogares tiene mascota, pero menos del 15%</text>
+  <text x="180" y="895" font-family="Fredoka, sans-serif" font-style="italic" font-weight="500" font-size="22" fill="#ffffff">digitaliza su salud. Paw Friend nace para cerrar ese puente y</text>
+  <text x="180" y="930" font-family="Fredoka, sans-serif" font-style="italic" font-weight="500" font-size="22" fill="#ffffff">demostrar que con IA, una persona puede construir una plataforma seria."</text>
+  <text x="1130" y="970" text-anchor="end" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="14" fill="#fde68a">— Paw Founder, fundador</text>
+
+  <!-- Featuring angles -->
+  <text x="80" y="1060" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="12" letter-spacing="4" fill="#9333ea">ÁNGULOS DE HISTORIA SUGERIDOS</text>
+  <g font-family="'Plus Jakarta Sans', sans-serif" font-size="15" fill="#4b3b66" font-weight="500">
+    <circle cx="100" cy="1100" r="4" fill="#9333ea"/>
+    <text x="120" y="1104">Solo founders + IA: el nuevo tamaño mínimo viable de un startup chileno</text>
+    <circle cx="100" cy="1135" r="4" fill="#9333ea"/>
+    <text x="120" y="1139">La digitalización del cuidado animal en LatAm</text>
+    <circle cx="100" cy="1170" r="4" fill="#9333ea"/>
+    <text x="120" y="1174">Gratis para siempre B2C: el modelo de monetización indirecta</text>
+    <circle cx="100" cy="1205" r="4" fill="#9333ea"/>
+    <text x="120" y="1209">Cómo un founder entrena a la IA a escribir su propio producto</text>
+    <circle cx="100" cy="1240" r="4" fill="#9333ea"/>
+    <text x="120" y="1244">Kai y Ema: las dos mascotas que son el corazón del proyecto</text>
+  </g>
+
+  <!-- Resources box -->
+  <rect x="80" y="1310" width="1080" height="230" rx="16" fill="#f3e8ff"/>
+  <text x="110" y="1355" font-family="Fredoka, sans-serif" font-weight="600" font-size="22" fill="#9333ea">Recursos descargables</text>
+  <g font-family="'Plus Jakarta Sans', sans-serif" font-size="14" fill="#4b3b66" font-weight="500">
+    <text x="110" y="1400">📂 Logo pack · pawfriend.cl/brand-assets/logo/</text>
+    <text x="110" y="1430">📸 Founder photos · pawfriend.cl/brand-assets/founder/</text>
+    <text x="110" y="1460">📱 Screenshots app · pawfriend.cl/brand-assets/screenshots/</text>
+    <text x="110" y="1490">📰 Press releases anteriores · pawfriend.cl/prensa/</text>
+    <text x="110" y="1520">🎥 Demo video · pawfriend.cl/demo</text>
+  </g>
+
+  <!-- Footer -->
+  <line x1="80" y1="1620" x2="1160" y2="1620" stroke="#e9d5ff"/>
+  <text x="80" y="1665" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="12" fill="#9333ea">Contacto prensa</text>
+  <text x="80" y="1690" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="13" fill="#1a102b">Paw Founder · pawfriendcl@gmail.com · pawfriend.cl</text>
+  <text x="1160" y="1710" text-anchor="end" font-family="monospace" font-size="10" fill="#94889e">Versión 2026-04-19</text>
+</svg>

@@ -1,0 +1,19 @@
+<!-- business_card_front.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 330" role="img" aria-label="Paw Friend Business Card Front" width="540" height="330">
+  <title>Paw Friend Business Card Front</title>
+  <desc>Cara frontal 90×55mm tarjeta presentación founder con isotipo centrado y wordmark.</desc>
+  <defs><linearGradient id="bc-bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#2a1046" stop-opacity="1"/><stop offset="50%" stop-color="#581c87" stop-opacity="1"/><stop offset="100%" stop-color="#9333ea" stop-opacity="1"/></linearGradient></defs>
+  <rect width="540" height="330" fill="url(#bc-bg)"/>
+  <g transform="translate(210, 70)">
+    <rect x="0" y="0" width="120" height="120" rx="27" fill="#9333ea"/>
+    <g transform="translate(60, 62) scale(0.15)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/></g>
+  </g>
+  <text x="270" y="240" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="36" fill="#ffffff">Paw Friend</text>
+  <text x="270" y="275" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-style="italic" font-size="16" fill="#ffffff" fill-opacity="0.85">Founder · hecha en Chile</text>
+  <!-- Decorative sparkle -->
+  <path d="M 480 285 L 485 293 L 495 298 L 485 303 L 480 311 L 475 303 L 465 298 L 475 293 Z" fill="#fbbf24"/>
+</svg>

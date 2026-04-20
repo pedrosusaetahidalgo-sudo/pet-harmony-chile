@@ -1,0 +1,93 @@
+<!-- 05_paw_cards.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="Android slide 05 · Paw Cards" width="1080" height="1920">
+  <title>Android slide 05 · Paw Cards</title>
+  <desc>Slide 5 Play Store Android con Paw Card holográfica de Kai en rareza legendaria.</desc>
+  <defs><radialGradient id="and5" cx="50%" cy="40%" r="75%"><stop offset="0%" stop-color="#f3e8ff"/><stop offset="100%" stop-color="#9333ea"/></radialGradient></defs>
+  <rect width="1080" height="1920" fill="url(#and5)"/>
+  <rect x="290" y="170" width="500" height="54" rx="27" fill="#9333ea"/>
+  <text x="540" y="206" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="20" letter-spacing="5" fill="#ffffff">PAW CARDS HOLOGRÁFICAS</text>
+  <text x="540" y="360" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">Cada peludo</text>
+  <text x="540" y="460" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">tiene su</text>
+  <text x="540" y="560" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">carta única.</text>
+
+  <text x="540" y="660" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="500" font-size="30" fill="#4b3b66">Rarezas, stats y colección completa.</text>
+
+  <!-- Phone mockup Android -->
+  <g transform="translate(240, 730)">
+    <rect x="0" y="0" width="600" height="1150" rx="60" fill="#1a102b"/>
+    <rect x="16" y="16" width="568" height="1118" rx="50" fill="#ffffff"/>
+    
+    <defs>
+      <linearGradient id="pawholo" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#ec4899"/>
+        <stop offset="33%" stop-color="#eab308"/>
+        <stop offset="66%" stop-color="#10b981"/>
+        <stop offset="100%" stop-color="#9333ea"/>
+      </linearGradient>
+    </defs>
+
+    <rect x="16" y="16" width="568" height="130" fill="#9333ea"/>
+    <text x="300" y="92" text-anchor="middle" font-family="Fredoka, sans-serif"
+          font-weight="600" font-size="36" fill="#ffffff">Paw Cards</text>
+
+    <!-- Large card featured (Kai, legendaria) -->
+    <rect x="140" y="200" width="320" height="520" rx="24" fill="url(#pawholo)" opacity="0.3"/>
+    <rect x="150" y="210" width="300" height="500" rx="20" fill="#ffffff"/>
+    <!-- Card rarity ribbon -->
+    <rect x="150" y="210" width="300" height="40" rx="20" fill="#eab308"/>
+    <text x="300" y="237" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+          font-weight="800" font-size="14" letter-spacing="4" fill="#b45309">★ LEGENDARIA</text>
+
+    <!-- Photo placeholder -->
+    <rect x="175" y="270" width="250" height="250" rx="14" fill="#f3e8ff"/>
+    <g transform="translate(300, 395) scale(2.5)">
+      <ellipse cx="340" cy="430" rx="155" ry="135" fill="#9333ea"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#9333ea"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#9333ea"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#9333ea"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#9333ea"/>
+    </g>
+
+    <!-- Name + species -->
+    <text x="300" y="560" text-anchor="middle" font-family="Fredoka, sans-serif"
+          font-weight="600" font-size="36" fill="#1a102b">Kai</text>
+    <text x="300" y="590" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+          font-weight="500" font-size="16" fill="#4b3b66">Pastor suizo · Santiago</text>
+
+    <!-- Stats row -->
+    <g transform="translate(170, 615)" font-family="'Plus Jakarta Sans', sans-serif">
+      <text x="0" y="12" font-weight="800" font-size="10" letter-spacing="2" fill="#9333ea">ENERGÍA</text>
+      <text x="0" y="32" font-weight="700" font-size="18" fill="#1a102b">92</text>
+      <text x="90" y="12" font-weight="800" font-size="10" letter-spacing="2" fill="#047857">SALUD</text>
+      <text x="90" y="32" font-weight="700" font-size="18" fill="#1a102b">98</text>
+      <text x="180" y="12" font-weight="800" font-size="10" letter-spacing="2" fill="#b45309">AMOR</text>
+      <text x="180" y="32" font-weight="700" font-size="18" fill="#1a102b">∞</text>
+    </g>
+
+    <!-- QR mini -->
+    <rect x="230" y="670" width="40" height="40" rx="4" fill="#1a102b"/>
+
+    <!-- Collection preview 3 thumbnail cards fanned -->
+    <g transform="translate(100, 760)">
+      <rect x="0" y="0" width="100" height="140" rx="10" fill="#ffffff" stroke="#e9d5ff" transform="rotate(-10 50 70)"/>
+      <rect x="140" y="-8" width="100" height="140" rx="10" fill="#ffffff" stroke="#e9d5ff"/>
+      <rect x="280" y="0" width="100" height="140" rx="10" fill="#ffffff" stroke="#e9d5ff" transform="rotate(10 330 70)"/>
+    </g>
+
+    <!-- CTA -->
+    <rect x="100" y="930" width="400" height="70" rx="35" fill="#9333ea"/>
+    <text x="300" y="975" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+          font-weight="800" font-size="22" fill="#ffffff">Ver mi colección</text>
+
+    <!-- Material bottom nav -->
+    <rect x="16" y="1064" width="568" height="70" fill="#ffffff"/>
+    <line x1="16" y1="1064" x2="584" y2="1064" stroke="#e9d5ff" stroke-width="1"/>
+    <circle cx="120" cy="1100" r="15" fill="#9333ea"/>
+    <circle cx="260" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="400" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="540" cy="1100" r="12" fill="#94889e"/>
+
+  </g>
+</svg>

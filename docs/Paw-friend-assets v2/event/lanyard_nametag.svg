@@ -1,0 +1,60 @@
+<!-- lanyard_nametag.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 900" role="img" aria-label="Paw Friend Lanyard + Nametag" width="600" height="900">
+  <title>Paw Friend Lanyard + Nametag</title>
+  <desc>Lanyard con cinta brand y nametag colgante 9×12cm con isotipo, nombre editable y handle.</desc>
+  <defs><linearGradient id="ln-strap" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#7e22ce" stop-opacity="1"/><stop offset="100%" stop-color="#581c87" stop-opacity="1"/></linearGradient><linearGradient id="ln-card" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#9333ea" stop-opacity="1"/><stop offset="50%" stop-color="#7e22ce" stop-opacity="1"/><stop offset="100%" stop-color="#9333ea" stop-opacity="1"/></linearGradient></defs>
+  <rect width="600" height="900" fill="#faf7ff"/>
+
+  <!-- Lanyard strap top (40mm wide translates to ~80px) -->
+  <path d="M 220 40 L 240 300 L 360 300 L 380 40 Z" fill="url(#ln-strap)"/>
+  <!-- Repeat paw pattern en la cinta -->
+  <g transform="translate(300, 150) scale(0.04)" fill="#ffffff" opacity="0.25">
+    <ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/>
+  </g>
+  <g transform="translate(300, 220) scale(0.04)" fill="#ffffff" opacity="0.25">
+    <ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/>
+  </g>
+  <!-- Clip -->
+  <rect x="270" y="280" width="60" height="30" rx="3" fill="#6b6b74"/>
+
+  <!-- Nametag card -->
+  <rect x="120" y="320" width="360" height="500" rx="20" fill="url(#ln-card)"/>
+  <!-- Top brand strip -->
+  <rect x="120" y="320" width="360" height="100" rx="20" fill="#ffffff"/>
+  <rect x="120" y="400" width="360" height="20" fill="#ffffff"/>
+  <g transform="translate(260, 340)">
+    <rect x="0" y="0" width="80" height="80" rx="18" fill="#9333ea"/>
+    <g transform="translate(40, 42) scale(0.1)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/></g>
+  </g>
+
+  <!-- Role chip -->
+  <rect x="200" y="460" width="200" height="40" rx="20" fill="#eab308"/>
+  <text x="300" y="488" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" letter-spacing="4" fill="#1a102b">FOUNDER</text>
+
+  <!-- Name -->
+  <text x="300" y="570" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="42" fill="#ffffff">&#123;&#123;NOMBRE&#125;&#125;</text>
+
+  <!-- Handle -->
+  <text x="300" y="620" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="20" fill="#ffffff" fill-opacity="0.85">@&#123;&#123;handle&#125;&#125;</text>
+
+  <!-- Wordmark -->
+  <text x="300" y="720" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="28" letter-spacing="-0.8">
+    <tspan font-weight="600" fill="#ffffff">paw</tspan><tspan font-weight="500" fill="#fde68a"> friend</tspan>
+  </text>
+
+  <!-- QR -->
+  <rect x="230" y="740" width="140" height="60" rx="8" fill="#ffffff"/>
+  <text x="300" y="780" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="16" fill="#9333ea">pawfriend.cl</text>
+</svg>

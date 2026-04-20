@@ -1,0 +1,33 @@
+<!-- no_paw_cards.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="No has creado Paw Cards aún" width="400" height="300">
+  <title>No has creado Paw Cards aún</title>
+  <desc>Empty state para colección de Paw Cards vacía en Paw Friend.</desc>
+  <defs><linearGradient id="emp6" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f3e8ff" stop-opacity="1"/><stop offset="100%" stop-color="#fdf2f8" stop-opacity="1"/></linearGradient></defs>
+  <rect width="400" height="300" fill="url(#emp6)"/>
+  <!-- 3 cards en abanico -->
+  <g transform="translate(150, 95) rotate(-15 45 65)">
+    <rect x="0" y="0" width="90" height="130" rx="8" fill="#ffffff" stroke="#9333ea" stroke-width="2"/>
+    <g transform="translate(45, 65) scale(0.3)" opacity="0.25">
+      <ellipse cx="0" cy="8.0" rx="18.0" ry="15.0" fill="#9333ea"/><ellipse cx="-16.0" cy="-10.0" rx="6.0" ry="8.0" transform="rotate(-22 -16.0 -10.0)" fill="#9333ea"/><ellipse cx="-6.0" cy="-19.0" rx="5.5" ry="7.0" transform="rotate(-10 -6.0 -19.0)" fill="#9333ea"/><ellipse cx="6.0" cy="-19.0" rx="5.5" ry="7.0" transform="rotate(10 6.0 -19.0)" fill="#9333ea"/><ellipse cx="16.0" cy="-10.0" rx="6.0" ry="8.0" transform="rotate(22 16.0 -10.0)" fill="#9333ea"/>
+    </g>
+  </g>
+  <g transform="translate(175, 100)">
+    <rect x="0" y="0" width="90" height="130" rx="8" fill="#ffffff" stroke="#9333ea" stroke-width="2"/>
+    <g transform="translate(45, 65) scale(0.3)" opacity="0.25">
+      <ellipse cx="0" cy="8.0" rx="18.0" ry="15.0" fill="#9333ea"/><ellipse cx="-16.0" cy="-10.0" rx="6.0" ry="8.0" transform="rotate(-22 -16.0 -10.0)" fill="#9333ea"/><ellipse cx="-6.0" cy="-19.0" rx="5.5" ry="7.0" transform="rotate(-10 -6.0 -19.0)" fill="#9333ea"/><ellipse cx="6.0" cy="-19.0" rx="5.5" ry="7.0" transform="rotate(10 6.0 -19.0)" fill="#9333ea"/><ellipse cx="16.0" cy="-10.0" rx="6.0" ry="8.0" transform="rotate(22 16.0 -10.0)" fill="#9333ea"/>
+    </g>
+  </g>
+  <g transform="translate(210, 95) rotate(15 45 65)">
+    <rect x="0" y="0" width="90" height="130" rx="8" fill="#ffffff" stroke="#9333ea"
+          stroke-width="2" stroke-dasharray="5,4"/>
+    <text x="45" y="55" text-anchor="middle" font-family="Fredoka, sans-serif"
+          font-size="40" font-weight="700" fill="#9333ea" opacity="0.6">?</text>
+    <g transform="translate(45, 85) scale(0.25)" opacity="0.15">
+      <ellipse cx="0" cy="8.0" rx="18.0" ry="15.0" fill="#9333ea"/><ellipse cx="-16.0" cy="-10.0" rx="6.0" ry="8.0" transform="rotate(-22 -16.0 -10.0)" fill="#9333ea"/><ellipse cx="-6.0" cy="-19.0" rx="5.5" ry="7.0" transform="rotate(-10 -6.0 -19.0)" fill="#9333ea"/><ellipse cx="6.0" cy="-19.0" rx="5.5" ry="7.0" transform="rotate(10 6.0 -19.0)" fill="#9333ea"/><ellipse cx="16.0" cy="-10.0" rx="6.0" ry="8.0" transform="rotate(22 16.0 -10.0)" fill="#9333ea"/>
+    </g>
+  </g>
+  <!-- Sparkles -->
+  <path d="M 70 53 L 72.1 57.9 L 77 60 L 72.1 62.1 L 70 67 L 67.9 62.1 L 63 60 L 67.9 57.9 Z" fill="#eab308"/>
+  <path d="M 340 83 L 342.1 87.9 L 347 90 L 342.1 92.1 L 340 97 L 337.9 92.1 L 333 90 L 337.9 87.9 Z" fill="#eab308"/>
+  <path d="M 100 249 L 101.8 253.2 L 106 255 L 101.8 256.8 L 100 261 L 98.2 256.8 L 94 255 L 98.2 253.2 Z" fill="#eab308"/>
+</svg>

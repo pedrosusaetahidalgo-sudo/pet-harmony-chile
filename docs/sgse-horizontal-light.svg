@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 160">
+  <title>SGSE - Horizontal light</title>
+  <rect width="400" height="160" fill="#F6F2EC"/>
+  <g transform="translate(120 80)">
+    <polygon points="0,-36 13,-18 0,0 -13,-18" fill="#1A2332"/>
+    <polygon points="36,0 18,13 0,0 18,-13" fill="#5BA499"/>
+    <polygon points="0,36 -13,18 0,0 13,18" fill="#1A2332"/>
+    <polygon points="-36,0 -18,-13 0,0 -18,13" fill="#1A2332"/>
+  </g>
+  <text x="185" y="95" font-family="Inter, 'Helvetica Neue', Helvetica, Arial, sans-serif" font-size="36" font-weight="500" fill="#0F172A" letter-spacing="4">SGSE</text>
+</svg>

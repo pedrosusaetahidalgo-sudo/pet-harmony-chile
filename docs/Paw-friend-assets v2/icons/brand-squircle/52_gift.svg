@@ -1,0 +1,18 @@
+<!-- 52_gift.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Regalo" width="200" height="200">
+  <title>Regalo</title>
+  <desc>Caja de regalo con moño y acento gold. Ícono 52 para recompensas Paw Friend.</desc>
+  <path d="M 100 10 C 170 10, 190 30, 190 100 C 190 170, 170 190, 100 190 C 30 190, 10 170, 10 100 C 10 30, 30 10, 100 10 Z" fill="#ec4899"/>
+  <!-- Caja 3D con frente y lateral -->
+  <rect x="55" y="95" width="90" height="60" fill="#ffffff"/>
+  <!-- División vertical centro -->
+  <rect x="95" y="95" width="10" height="60" fill="#be185d"/>
+  <!-- Lazo horizontal centro caja -->
+  <rect x="55" y="120" width="90" height="10" fill="#be185d"/>
+  <!-- Moño arriba -->
+  <path d="M 100 95 L 80 70 Q 65 65 65 80 Q 65 92 85 95 L 100 95 L 115 95 Q 135 92 135 80 Q 135 65 120 70 Z" fill="#ffffff"/>
+  <circle cx="100" cy="88" r="6" fill="#f59e0b"/>
+  <!-- Etiqueta con corazón colgante -->
+  <line x1="100" y1="95" x2="100" y2="75" stroke="#ffffff" stroke-width="1.5"/>
+  <path d="M 140 107.8 C 134.8 104.4, 134.0 100.4, 138.0 101.8 C 139.2 103.0, 140 103.8, 140 104.6 C 140 103.8, 140.8 103.0, 142.0 101.8 C 146.0 100.4, 145.2 104.4, 140 107.8 Z" fill="#fbbf24"/>
+</svg>

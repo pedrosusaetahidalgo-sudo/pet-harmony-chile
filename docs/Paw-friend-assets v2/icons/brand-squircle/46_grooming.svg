@@ -1,0 +1,18 @@
+<!-- 46_grooming.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Aseo y peluquería" width="200" height="200">
+  <title>Aseo y peluquería</title>
+  <desc>Tijeras de peluquería con burbujas. Ícono 46 para servicios de grooming Paw Friend.</desc>
+  <path d="M 100 10 C 170 10, 190 30, 190 100 C 190 170, 170 190, 100 190 C 30 190, 10 170, 10 100 C 10 30, 30 10, 100 10 Z" fill="#9333ea"/>
+  <!-- Tijeras cruzadas X -->
+  <line x1="65" y1="55" x2="125" y2="115" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+  <line x1="135" y1="55" x2="75" y2="115" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+  <!-- Anillos abajo -->
+  <circle cx="65" cy="128" r="11" fill="none" stroke="#ffffff" stroke-width="4"/>
+  <circle cx="135" cy="128" r="11" fill="none" stroke="#ffffff" stroke-width="4"/>
+  <!-- Tornillo central -->
+  <circle cx="100" cy="115" r="3" fill="#eab308"/>
+  <!-- Burbujitas de jabón -->
+  <circle cx="42" cy="52" r="6" fill="#ffffff" opacity="0.8"/>
+  <circle cx="162" cy="68" r="5" fill="#ffffff" opacity="0.8"/>
+  <circle cx="168" cy="158" r="7" fill="#ffffff" opacity="0.8"/>
+</svg>

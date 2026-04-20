@@ -1,0 +1,109 @@
+<!-- slide_04.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1242 2208" role="img" aria-label="App Store Slide 04 · Comunidad pet lover" width="1242" height="2208">
+  <title>App Store Slide 04 · Comunidad pet lover</title>
+  <desc>Slide 4 de iOS 5.5" mostrando feed social de tutores chilenos con posts y likes.</desc>
+  <defs><radialGradient id="g04" cx="15%" cy="15%" r="110%"><stop offset="0%" stop-color="#ec4899"/><stop offset="100%" stop-color="#be185d"/></radialGradient></defs>
+  <rect width="1242" height="2208" fill="url(#g04)"/>
+
+  <!-- Decorative dots pattern -->
+  <g fill="#ffffff" opacity="0.08">
+    <circle cx="150" cy="180" r="4"/>
+    <circle cx="1080" cy="220" r="5"/>
+    <circle cx="90" cy="380" r="3"/>
+    <circle cx="1120" cy="450" r="3"/>
+  </g>
+
+  <!-- Headline (Fredoka 600, 96px, white) -->
+  <text x="621" y="320" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="600" font-size="96" fill="#ffffff" letter-spacing="-2">No estás solo</text>
+
+  <!-- Subhead (Plus Jakarta Sans 500, 44px) -->
+  <text x="621" y="410" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="500" font-size="40" fill="#ffffff" fill-opacity="0.88">Comunidad real de tutores chilenos que se apoyan</text>
+
+  <!-- Phone mockup iPhone 14 style - centered -->
+  <g transform="translate(321, 540)">
+    <rect x="0" y="0" width="600" height="1220" rx="85" fill="#1a102b"/>
+    <rect x="18" y="18" width="564" height="1184" rx="73" fill="#ffffff"/>
+    <!-- Dynamic island -->
+    <rect x="235" y="48" width="130" height="28" rx="14" fill="#1a102b"/>
+    
+    <!-- Header rose -->
+    <rect x="18" y="18" width="564" height="130" rx="73" fill="#ec4899"/>
+    <rect x="18" y="110" width="564" height="40" fill="#ec4899"/>
+    <text x="300" y="95" text-anchor="middle" font-family="Fredoka, sans-serif"
+          font-weight="600" font-size="28" fill="#ffffff">Comunidad</text>
+
+    <!-- Post 1 -->
+    <g transform="translate(40, 180)">
+      <rect x="0" y="0" width="520" height="370" rx="18" fill="#ffffff" stroke="#e9d5ff"/>
+      <!-- Avatar + name -->
+      <circle cx="45" cy="45" r="28" fill="#ec4899"/>
+      <text x="45" y="54" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="20" fill="#ffffff">P</text>
+      <text x="85" y="40" font-family="Fredoka, sans-serif" font-weight="600" font-size="20" fill="#1a102b">Paloma</text>
+      <text x="85" y="62" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" fill="#94889e">@palomapetlover · hace 2h</text>
+      <!-- Photo placeholder -->
+      <rect x="20" y="90" width="480" height="200" rx="12" fill="#f3e8ff"/>
+      <g transform="translate(260, 195) scale(0.2)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#ec4899"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ec4899"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ec4899"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ec4899"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ec4899"/></g>
+      <!-- Caption -->
+      <text x="20" y="315" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#1a102b">"Primer día con Mía en Paw Friend.</text>
+      <text x="20" y="338" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#1a102b">¡Por fin todo en un lugar!"</text>
+      <!-- Likes row -->
+      <path d="M 25 357 C 22 353, 19 352, 17 354 C 14 357, 17 361, 25 368 C 33 361, 36 357, 33 354 C 31 352, 28 353, 25 357 Z" fill="#ec4899"/>
+      <text x="45" y="366" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="14" fill="#1a102b">127 corazones</text>
+    </g>
+
+    <!-- Post 2 -->
+    <g transform="translate(40, 580)">
+      <rect x="0" y="0" width="520" height="260" rx="18" fill="#ffffff" stroke="#e9d5ff"/>
+      <circle cx="45" cy="45" r="28" fill="#10b981"/>
+      <text x="45" y="54" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="20" fill="#ffffff">S</text>
+      <text x="85" y="40" font-family="Fredoka, sans-serif" font-weight="600" font-size="20" fill="#1a102b">Sofía</text>
+      <text x="85" y="62" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" fill="#94889e">@sofi_pets · hace 5h</text>
+      <text x="20" y="110" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#1a102b">"Encontré súper vet en Ñuñoa gracias al</text>
+      <text x="20" y="133" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#1a102b">directorio. Los que recomiendan son</text>
+      <text x="20" y="156" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#1a102b">tutores reales, se nota."</text>
+      <!-- Like + comment -->
+      <g transform="translate(20, 200)">
+        <path d="M 5 5 C 2 1, -1 0, -3 2 C -6 5, -3 9, 5 16 C 13 9, 16 5, 13 2 C 11 0, 8 1, 5 5 Z" fill="#ec4899"/>
+        <text x="28" y="17" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="13" fill="#1a102b">89</text>
+      </g>
+      <g transform="translate(100, 200)">
+        <path d="M 0 0 L 18 0 Q 22 0 22 4 L 22 12 Q 22 16 18 16 L 6 16 L 0 20 Z" fill="#9333ea"/>
+        <text x="30" y="15" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="13" fill="#1a102b">12 comentarios</text>
+      </g>
+    </g>
+
+    <!-- Counter bottom -->
+    <rect x="100" y="880" width="400" height="48" rx="24" fill="#fdf2f8"/>
+    <text x="300" y="911" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="16" fill="#be185d">+10.000 peludos en la comunidad</text>
+
+  </g>
+
+  <!-- 3 avatares solapados + pata flotante -->
+<g transform="translate(960, 1500)">
+  <circle cx="0" cy="0" r="34" fill="#eab308" stroke="#ffffff" stroke-width="4"/>
+  <circle cx="40" cy="-10" r="34" fill="#9333ea" stroke="#ffffff" stroke-width="4"/>
+  <circle cx="80" cy="0" r="34" fill="#10b981" stroke="#ffffff" stroke-width="4"/>
+  <g transform="translate(40, -10) scale(0.08)">
+    <ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/>
+  </g>
+</g>
+
+  <!-- Pill gold inferior -->
+  <rect x="281" y="1870" width="680" height="100" rx="50" fill="#eab308"/>
+  <text x="621" y="1932" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="600" font-size="36" fill="#1a102b">Más de 10.000 peludos ya están</text>
+
+  <!-- Brand watermark bottom -->
+  <text x="621" y="2090" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="700" font-size="22" letter-spacing="5" fill="#ffffff" fill-opacity="0.7">PAWFRIEND.CL</text>
+</svg>

@@ -475,17 +475,35 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-primary/5 via-background to-secondary/5 relative overflow-hidden">
+    <div className="min-h-screen flex flex-col md:flex-row bg-gradient-to-br from-purple-50/60 via-white to-pink-50/40 relative overflow-hidden">
+      {/* Decorative blobs (izquierda, sutiles) */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-24 -left-24 w-[420px] h-[420px] rounded-full blur-3xl opacity-30 bg-purple-200"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute bottom-0 left-1/4 w-[320px] h-[320px] rounded-full blur-3xl opacity-30 bg-pink-200"
+      />
+
       {/* Left side: Auth form */}
-      <div className="flex-1 flex flex-col items-center justify-center p-4">
-        <Card className="w-full max-w-md animate-fade-in relative z-10 shadow-lg border-border/50">
-          <CardHeader className="space-y-1 flex flex-col items-center">
-            <img src="/paw_friend_icon_principal.svg" alt="Paw Friend" className="w-16 h-16 mb-4" />
-            <CardTitle className="font-display font-semibold text-3xl md:text-4xl tracking-tight text-center">
-              Paw Friend
+      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 relative z-10">
+        <Card className="w-full max-w-md animate-fade-in shadow-xl border-border/40 rounded-2xl backdrop-blur-sm bg-white/95">
+          <CardHeader className="space-y-2 flex flex-col items-center pt-8 pb-4">
+            {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- fallback: si v2 aun no esta desplegado, cargamos el icono anterior */}
+            <img
+              src="/Paw-friend-assets v2/logo/app_icon_ios_1024.svg"
+              alt="Paw Friend"
+              className="w-16 h-16 mb-2 drop-shadow-md"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).src = '/paw_friend_icon_principal.svg';
+              }}
+            />
+            <CardTitle className="font-display font-semibold text-3xl md:text-4xl tracking-tight text-center bg-gradient-to-r from-purple-700 to-pink-600 bg-clip-text text-transparent">
+              Bienvenido
             </CardTitle>
-            <CardDescription className="text-center">
-              Cuida la salud de tu mascota con veterinarios verificados
+            <CardDescription className="text-center text-sm max-w-xs">
+              Entra o crea tu cuenta para que la ficha medica de tu peludo viva siempre contigo.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -707,40 +725,108 @@ const Auth = () => {
         </div>
       </div>
 
-      {/* Right side: Hero visual (hidden on mobile) */}
-      <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-purple-600 to-purple-800 flex-col items-center justify-center p-12 text-white">
-        <div className="max-w-md text-center space-y-6">
-          <img
-            src="/paw_friend_icon_principal.svg"
-            alt="Paw Friend"
-            className="w-20 h-20 mx-auto mb-2 brightness-0 invert"
-          />
-          <h2 className="font-display font-semibold text-4xl leading-[1.05] tracking-tight">
-            Cuida la salud de tu mascota como nunca antes
-          </h2>
-          <p className="text-lg text-purple-100">
-            Únete a dueños chilenos que ya confían su mascota a veterinarios verificados en Paw
-            Friend.
-          </p>
-          <div className="flex justify-center gap-6 pt-8">
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center">
-                <Shield className="w-6 h-6" />
-              </div>
-              <span className="text-sm font-medium">Datos protegidos</span>
+      {/* Right side: Hero emocional (hidden en mobile) */}
+      <div className="hidden md:flex md:w-1/2 relative overflow-hidden bg-gradient-to-br from-purple-700 via-purple-600 to-purple-900 text-white">
+        {/* Blobs decorativos animados */}
+        <div
+          aria-hidden
+          className="absolute -top-32 -right-20 w-[500px] h-[500px] rounded-full bg-pink-400/30 blur-3xl animate-pulse"
+          style={{ animationDuration: '6s' }}
+        />
+        <div
+          aria-hidden
+          className="absolute bottom-0 -left-24 w-[400px] h-[400px] rounded-full bg-amber-400/20 blur-3xl"
+        />
+
+        {/* Paw prints flotantes decorativos */}
+        <div aria-hidden className="absolute inset-0 opacity-10 pointer-events-none">
+          <span className="absolute top-[12%] left-[15%] text-5xl rotate-12">🐾</span>
+          <span className="absolute top-[28%] right-[18%] text-4xl -rotate-12">🐾</span>
+          <span className="absolute bottom-[22%] left-[20%] text-3xl rotate-45">🐾</span>
+          <span className="absolute top-[55%] right-[12%] text-3xl">🐾</span>
+          <span className="absolute bottom-[10%] right-[25%] text-4xl -rotate-6">🐾</span>
+        </div>
+
+        <div className="relative z-10 flex flex-col justify-between p-10 xl:p-14 w-full">
+          {/* Wordmark */}
+          <div className="mb-4">
+            {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- fallback: ocultar img si el archivo aun no esta disponible */}
+            <img
+              src="/Paw-friend-assets v2/logo/wordmark_horizontal_darkmode.svg"
+              alt="Paw Friend"
+              className="h-12 w-auto"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).style.display = 'none';
+              }}
+            />
+          </div>
+
+          {/* Contenido central */}
+          <div className="max-w-md space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/15 backdrop-blur-sm border border-white/20 text-xs font-semibold tracking-wide uppercase">
+              <span>🇨🇱 Hecho en Chile</span>
             </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center">
-                <Stethoscope className="w-6 h-6" />
+            <h2 className="font-display font-semibold text-4xl xl:text-5xl leading-[1.05] tracking-tight">
+              La ficha medica de tu peludo,{' '}
+              <span className="bg-gradient-to-r from-pink-200 to-amber-200 bg-clip-text text-transparent">
+                en tu bolsillo
+              </span>
+            </h2>
+            <p className="text-lg text-purple-100/90 leading-relaxed">
+              Ficha clinica completa, directorio de veterinarios verificados y cuidado diario.
+              Gratis para todos los dueños.
+            </p>
+
+            {/* Trust strip: 3 beneficios destacados */}
+            <div className="grid grid-cols-3 gap-3 pt-4">
+              <div className="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 p-3 text-center">
+                <div className="w-10 h-10 mx-auto rounded-full bg-white/15 flex items-center justify-center mb-2">
+                  <Stethoscope className="w-5 h-5" />
+                </div>
+                <div className="text-xs font-semibold">Vets verificados</div>
+                <div className="text-[10px] text-purple-200/80 mt-0.5">Colmevet</div>
               </div>
-              <span className="text-sm font-medium">Vets verificados</span>
-            </div>
-            <div className="flex flex-col items-center gap-2">
-              <div className="w-12 h-12 rounded-full bg-white/15 flex items-center justify-center">
-                <Heart className="w-6 h-6" />
+              <div className="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 p-3 text-center">
+                <div className="w-10 h-10 mx-auto rounded-full bg-white/15 flex items-center justify-center mb-2">
+                  <Shield className="w-5 h-5" />
+                </div>
+                <div className="text-xs font-semibold">Tus datos</div>
+                <div className="text-[10px] text-purple-200/80 mt-0.5">Protegidos</div>
               </div>
-              <span className="text-sm font-medium">Hecho en Chile 🇨🇱</span>
+              <div className="rounded-xl bg-white/10 backdrop-blur-sm border border-white/15 p-3 text-center">
+                <div className="w-10 h-10 mx-auto rounded-full bg-white/15 flex items-center justify-center mb-2">
+                  <Heart className="w-5 h-5" />
+                </div>
+                <div className="text-xs font-semibold">Gratis</div>
+                <div className="text-[10px] text-purple-200/80 mt-0.5">Para siempre</div>
+              </div>
             </div>
+
+            {/* Quote emocional */}
+            <div className="mt-6 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/15 p-5">
+              <p className="text-sm leading-relaxed italic text-purple-50">
+                "Por fin todas las vacunas de mis perros en un solo lugar. Me ahorro los cuadernos y
+                los PDFs sueltos."
+              </p>
+              <p className="text-xs text-purple-200/80 mt-2 font-semibold">
+                — Sofia R., vet beta tester
+              </p>
+            </div>
+          </div>
+
+          {/* Footer mini */}
+          <div className="flex items-center justify-between text-xs text-purple-200/70 pt-6">
+            <a href="/refugios-hogares" className="hover:text-white transition">
+              Hogares de adopcion
+            </a>
+            <span>·</span>
+            <a href="/veterinarios" className="hover:text-white transition">
+              Directorio vets
+            </a>
+            <span>·</span>
+            <a href="/para-veterinarios" className="hover:text-white transition">
+              Eres veterinario?
+            </a>
           </div>
         </div>
       </div>

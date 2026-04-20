@@ -1,0 +1,108 @@
+<!-- slide_05.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1242 2208" role="img" aria-label="App Store Slide 05 · Gratis siempre" width="1242" height="2208">
+  <title>App Store Slide 05 · Gratis siempre</title>
+  <desc>Slide 5 de iOS 5.5" mostrando los 3 valores de Paw Friend: gratis, hecha en Chile, comunidad.</desc>
+  <defs><radialGradient id="g05" cx="15%" cy="15%" r="110%"><stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#d97706"/></radialGradient></defs>
+  <rect width="1242" height="2208" fill="url(#g05)"/>
+
+  <!-- Decorative dots pattern -->
+  <g fill="#ffffff" opacity="0.08">
+    <circle cx="150" cy="180" r="4"/>
+    <circle cx="1080" cy="220" r="5"/>
+    <circle cx="90" cy="380" r="3"/>
+    <circle cx="1120" cy="450" r="3"/>
+  </g>
+
+  <!-- Headline (Fredoka 600, 96px, white) -->
+  <text x="621" y="320" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="600" font-size="96" fill="#ffffff" letter-spacing="-2">Gratis. Siempre.</text>
+
+  <!-- Subhead (Plus Jakarta Sans 500, 44px) -->
+  <text x="621" y="410" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="500" font-size="40" fill="#ffffff" fill-opacity="0.88">Hecha en Chile por un fundador + su manada</text>
+
+  <!-- Phone mockup iPhone 14 style - centered -->
+  <g transform="translate(321, 540)">
+    <rect x="0" y="0" width="600" height="1220" rx="85" fill="#1a102b"/>
+    <rect x="18" y="18" width="564" height="1184" rx="73" fill="#ffffff"/>
+    <!-- Dynamic island -->
+    <rect x="235" y="48" width="130" height="28" rx="14" fill="#1a102b"/>
+    
+    <!-- Header gold -->
+    <rect x="18" y="18" width="564" height="130" rx="73" fill="#eab308"/>
+    <rect x="18" y="110" width="564" height="40" fill="#eab308"/>
+    <text x="300" y="95" text-anchor="middle" font-family="Fredoka, sans-serif"
+          font-weight="600" font-size="30" fill="#b45309">/paw-core · valores</text>
+
+    <!-- 3 value cards -->
+    <g transform="translate(40, 180)">
+      <rect x="0" y="0" width="520" height="140" rx="16" fill="#fef3c7"/>
+      <g transform="translate(45, 45)">
+        <circle cx="25" cy="25" r="26" fill="#eab308"/>
+        <text x="25" y="34" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="24" fill="#ffffff">$0</text>
+      </g>
+      <text x="115" y="55" font-family="Fredoka, sans-serif" font-weight="600" font-size="26" fill="#1a102b">Gratis. Siempre.</text>
+      <text x="115" y="90" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#4b3b66">Features core sin paywalls.</text>
+      <text x="115" y="115" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#4b3b66">Tu aporte es opcional.</text>
+    </g>
+
+    <g transform="translate(40, 340)">
+      <rect x="0" y="0" width="520" height="140" rx="16" fill="#f3e8ff"/>
+      <g transform="translate(45, 45)">
+        <circle cx="25" cy="25" r="26" fill="#9333ea"/>
+        <text x="25" y="34" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="22" fill="#ffffff">CL</text>
+      </g>
+      <text x="115" y="55" font-family="Fredoka, sans-serif" font-weight="600" font-size="26" fill="#1a102b">Hecha en Chile</text>
+      <text x="115" y="90" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#4b3b66">Por un fundador + su manada.</text>
+      <text x="115" y="115" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#4b3b66">Con IA como aliada.</text>
+    </g>
+
+    <g transform="translate(40, 500)">
+      <rect x="0" y="0" width="520" height="140" rx="16" fill="#ecfdf5"/>
+      <g transform="translate(45, 45)">
+        <circle cx="25" cy="25" r="26" fill="#10b981"/>
+        <g transform="translate(25, 26) scale(0.05)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/></g>
+      </g>
+      <text x="115" y="55" font-family="Fredoka, sans-serif" font-weight="600" font-size="26" fill="#1a102b">Comunidad</text>
+      <text x="115" y="90" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#4b3b66">+10.000 tutores chilenos.</text>
+      <text x="115" y="115" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#4b3b66">Sin letra chica, sin ads intrusivos.</text>
+    </g>
+
+    <!-- Founder + manada placeholder -->
+    <rect x="40" y="670" width="520" height="200" rx="16" fill="#faf5ff" stroke="#e9d5ff" stroke-width="1" stroke-dasharray="6,4"/>
+    <circle cx="150" cy="770" r="50" fill="#9333ea" opacity="0.4"/>
+    <text x="150" y="778" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="16" fill="#ffffff">founder</text>
+    <circle cx="260" cy="790" r="35" fill="#eab308" opacity="0.55"/>
+    <text x="260" y="798" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="14" fill="#1a102b">Kai</text>
+    <circle cx="340" cy="790" r="35" fill="#1a102b" opacity="0.7"/>
+    <text x="340" y="798" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="14" fill="#ffffff">Ema</text>
+    <text x="420" y="780" font-family="Fredoka, sans-serif" font-weight="600" font-size="20" fill="#1a102b">La manada</text>
+    <text x="420" y="805" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="13" fill="#4b3b66">Paw Founder + Kai + Ema</text>
+
+  </g>
+
+  <!-- Corazón con bandera Chile -->
+<g transform="translate(1000, 1100)">
+  <path d="M 0 50 C -45 5, -60 -30, -35 -45 C -20 -50, -8 -42, 0 -30 C 8 -42, 20 -50, 35 -45 C 60 -30, 45 5, 0 50 Z" fill="#eab308" opacity="0.95"/>
+  <!-- Bandera Chile mini -->
+  <g transform="translate(-22, -15)">
+    <rect x="0" y="0" width="44" height="14" fill="#ffffff"/>
+    <rect x="0" y="14" width="44" height="14" fill="#DC2626"/>
+    <rect x="0" y="0" width="14" height="14" fill="#0057B7"/>
+    <polygon points="7,3 8,6 11,6 8.5,8 9.5,11 7,9 4.5,11 5.5,8 3,6 6,6" fill="#ffffff"/>
+  </g>
+</g>
+
+  <!-- Pill gold inferior -->
+  <rect x="281" y="1870" width="680" height="100" rx="50" fill="#eab308"/>
+  <text x="621" y="1932" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="600" font-size="36" fill="#1a102b">Sin letra chica · Sin ads intrusivos</text>
+
+  <!-- Brand watermark bottom -->
+  <text x="621" y="2090" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="700" font-size="22" letter-spacing="5" fill="#ffffff" fill-opacity="0.7">PAWFRIEND.CL</text>
+</svg>

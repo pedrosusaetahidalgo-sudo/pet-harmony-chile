@@ -1,0 +1,63 @@
+<!-- bio_template.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="Paw Voice Bio Card Template" width="1080" height="1080">
+  <title>Paw Voice Bio Card Template</title>
+  <desc>Bio card template 1080×1080 editable por creadores con avatar, handle, bio, código promo y CTA.</desc>
+  <defs><linearGradient id="cv-bg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fdf2f8" stop-opacity="1"/><stop offset="50%" stop-color="#fef3c7" stop-opacity="1"/><stop offset="100%" stop-color="#fdf2f8" stop-opacity="1"/></linearGradient><linearGradient id="cv-badge" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#be185d" stop-opacity="1"/><stop offset="100%" stop-color="#ec4899" stop-opacity="1"/></linearGradient><linearGradient id="cv-cta" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ec4899" stop-opacity="1"/><stop offset="100%" stop-color="#be185d" stop-opacity="1"/></linearGradient></defs>
+  <rect width="1080" height="1080" fill="url(#cv-bg)"/>
+  <g opacity="0.05" fill="#ec4899">
+    <g transform="translate(100, 950) scale(0.25)">
+      <ellipse cx="340" cy="430" rx="155" ry="135" fill="#ec4899"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ec4899"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ec4899"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ec4899"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ec4899"/>
+    </g>
+    <g transform="translate(950, 80) scale(0.22)">
+      <ellipse cx="340" cy="430" rx="155" ry="135" fill="#ec4899"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ec4899"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ec4899"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ec4899"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ec4899"/>
+    </g>
+  </g>
+
+  <!-- Top badge -->
+  <rect x="380" y="80" width="320" height="56" rx="28" fill="url(#cv-badge)"/>
+  <text x="540" y="115" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="18" letter-spacing="6" fill="#ffffff">PAW VOICE OFICIAL</text>
+
+  <!-- Avatar placeholder -->
+  <circle cx="540" cy="290" r="100" fill="#ec4899" fill-opacity="0.15" stroke="#ec4899" stroke-opacity="0.4" stroke-width="3" stroke-dasharray="6,5"/>
+  <text x="540" y="298" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" letter-spacing="3" fill="#ec4899" fill-opacity="0.6">TU FOTO</text>
+
+  <!-- Handle -->
+  <text x="540" y="490" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="48" fill="#1a102b">@tu_handle</text>
+
+  <!-- Platforms row -->
+  <g transform="translate(410, 530)">
+    <circle cx="30" cy="30" r="20" fill="#ec4899"/>
+    <text x="30" y="38" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" fill="#ffffff" font-weight="700">IG</text>
+    <circle cx="130" cy="30" r="20" fill="#1a102b"/>
+    <text x="130" y="38" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="12" fill="#ffffff" font-weight="700">TT</text>
+    <circle cx="230" cy="30" r="20" fill="#DC2626"/>
+    <text x="230" y="38" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" fill="#ffffff" font-weight="700">YT</text>
+  </g>
+
+  <!-- Bio placeholder -->
+  <rect x="120" y="600" width="840" height="140" rx="20" fill="#ffffff" stroke="#fce7f3"/>
+  <text x="540" y="650" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-style="italic" font-weight="500" font-size="20" fill="#be185d">&#123;&#123;Tu bio en 2-3 líneas · hablá de tu</text>
+  <text x="540" y="680" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-style="italic" font-weight="500" font-size="20" fill="#be185d">peludo, tu pasión por los animales,</text>
+  <text x="540" y="710" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-style="italic" font-weight="500" font-size="20" fill="#be185d">tu voz&#125;&#125;</text>
+
+  <!-- Promo code block -->
+  <rect x="120" y="770" width="840" height="160" rx="24" fill="#1a102b"/>
+  <text x="540" y="810" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="18" letter-spacing="5" fill="#fde68a">TU CÓDIGO PROMO</text>
+  <text x="540" y="880" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="78" fill="#ffffff" letter-spacing="8">KAI10</text>
+  <text x="540" y="915" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" fill="#ffffff" fill-opacity="0.75">Tu audiencia ahorra. Tú ganas reconocimiento.</text>
+
+  <!-- CTA -->
+  <rect x="390" y="960" width="300" height="60" rx="30" fill="url(#cv-cta)"/>
+  <text x="540" y="1000" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="20" fill="#ffffff">pawfriend.cl/paw-voices</text>
+
+  <!-- Watermark -->
+  <text x="540" y="1055" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" letter-spacing="4" fill="#1a102b" fill-opacity="0.6">@pawfriend.cl</text>
+</svg>

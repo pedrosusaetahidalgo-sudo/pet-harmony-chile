@@ -1,0 +1,13 @@
+<!-- 49_heart_monitoring.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Monitoreo cardíaco" width="200" height="200">
+  <title>Monitoreo cardíaco</title>
+  <desc>Corazón con línea ECG. Ícono 49 para signos vitales y salud continua Paw Friend.</desc>
+  <path d="M 100 10 C 170 10, 190 30, 190 100 C 190 170, 170 190, 100 190 C 30 190, 10 170, 10 100 C 10 30, 30 10, 100 10 Z" fill="#10b981"/>
+  <!-- Corazón izquierda -->
+  <path d="M 78 116.0 C 52.0 99.0, 48.0 79.0, 68.0 86.0 C 74.0 92.0, 78 96.0, 78 100.0 C 78 96.0, 82.0 92.0, 88.0 86.0 C 108.0 79.0, 104.0 99.0, 78 116.0 Z" fill="#ffffff"/>
+  <!-- Línea ECG -->
+  <path d="M 55 110 L 88 110 L 98 88 L 113 132 L 128 82 L 143 118 L 158 110"
+        stroke="#ffffff" stroke-width="4" fill="none"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="158" cy="110" r="4" fill="#ffffff"/>
+</svg>

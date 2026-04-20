@@ -1,0 +1,52 @@
+<!-- paw_member.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="WhatsApp Catalog · Paw Member" width="1080" height="1080">
+  <title>WhatsApp Catalog · Paw Member</title>
+  <desc>Card Paw Member (donación opcional) para catalog WhatsApp Business.</desc>
+  <defs><linearGradient id="bg-member" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef3c7" stop-opacity="1"/><stop offset="100%" stop-color="#faf5ff" stop-opacity="1"/></linearGradient><linearGradient id="badge-member" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fbbf24" stop-opacity="1"/><stop offset="100%" stop-color="#b45309" stop-opacity="1"/></linearGradient></defs>
+  <rect width="1080" height="1080" fill="url(#bg-member)"/>
+  <!-- Header brand badge -->
+  <rect x="60" y="80" width="260" height="64" rx="32" fill="#ffffff"/>
+  <g transform="translate(96, 112)">
+    <rect x="-18" y="-18" width="36" height="36" rx="8" fill="#9333ea"/>
+    <!-- Paw mini interior -->
+    <ellipse cx="0" cy="4" rx="5" ry="4" fill="#ffffff"/>
+    <ellipse cx="-4" cy="-2" rx="1.8" ry="2.5" transform="rotate(-22)" fill="#ffffff"/>
+    <ellipse cx="-1.5" cy="-5" rx="1.5" ry="2" transform="rotate(-10)" fill="#ffffff"/>
+    <ellipse cx="1.5" cy="-5" rx="1.5" ry="2" transform="rotate(10)" fill="#ffffff"/>
+    <ellipse cx="4" cy="-2" rx="1.8" ry="2.5" transform="rotate(22)" fill="#ffffff"/>
+  </g>
+  <text x="140" y="120" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="20" fill="#9333ea">Paw Friend</text>
+  <!-- Price badge top right -->
+  <rect x="760" y="80" width="260" height="64" rx="32" fill="#eab308"/>
+  <text x="890" y="122" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="22" fill="#b45309">$3.990/mes</text>
+  <!-- Hero area white card -->
+  <rect x="140" y="220" width="800" height="520" rx="40" fill="#ffffff"/>
+  
+  <!-- Badge gold gradient -->
+  <g transform="translate(540, 480)">
+    <rect x="-100" y="-100" width="200" height="200" rx="44" fill="url(#badge-member)"/>
+    <!-- Heart arriba -->
+    <path d="M 0 -20 C -18 -34, -22 -48, -14 -52 C -8 -54, -4 -50, 0 -46 C 4 -50, 8 -54, 14 -52 C 22 -48, 18 -34, 0 -20 Z" fill="#ffffff"/>
+    <!-- Mini paw central -->
+    <g transform="translate(0, 20)">
+      <ellipse cx="0" cy="10" rx="18" ry="15" fill="#ffffff"/>
+      <ellipse cx="-16" cy="-5" rx="6" ry="8" transform="rotate(-22 -16 -5)" fill="#ffffff"/>
+      <ellipse cx="-6" cy="-14" rx="5.5" ry="7" transform="rotate(-10 -6 -14)" fill="#ffffff"/>
+      <ellipse cx="6"  cy="-14" rx="5.5" ry="7" transform="rotate(10 6 -14)"  fill="#ffffff"/>
+      <ellipse cx="16" cy="-5" rx="6" ry="8" transform="rotate(22 16 -5)" fill="#ffffff"/>
+    </g>
+    <text x="0" y="82" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+          font-weight="800" font-size="20" letter-spacing="6" fill="#ffffff">MEMBER</text>
+  </g>
+  <!-- Copy title -->
+  <text x="540" y="830" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="600" font-size="62" fill="#1a102b">Paw Member</text>
+  <text x="540" y="895" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="500" font-size="26" fill="#4b3b66">Tu badge que sostiene el proyecto.</text>
+  <!-- CTA pill -->
+  <rect x="290" y="955" width="500" height="80" rx="40" fill="#9333ea"/>
+  <text x="540" y="1008" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="26" fill="#ffffff">Sostener →</text>
+</svg>

@@ -1,0 +1,38 @@
+<!-- email_signature.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 200" role="img" aria-label="Paw Friend Email Signature" width="600" height="200">
+  <title>Paw Friend Email Signature</title>
+  <desc>Email signature 600×200 para founder con brand + info contacto + social + legal footer.</desc>
+  <defs><linearGradient id="sig-sep" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#9333ea" stop-opacity="1"/><stop offset="50%" stop-color="#eab308" stop-opacity="1"/><stop offset="100%" stop-color="#9333ea" stop-opacity="1"/></linearGradient></defs>
+  <rect width="600" height="200" fill="#ffffff"/>
+  <g transform="translate(20, 40)">
+    <rect x="0" y="0" width="60" height="60" rx="13" fill="#9333ea"/>
+    <g transform="translate(30, 32) scale(0.075)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/></g>
+  </g>
+  <text x="90" y="75" font-family="Fredoka, sans-serif" font-size="20" letter-spacing="-0.5">
+    <tspan font-weight="600" fill="#6b21a8">paw</tspan><tspan font-weight="500" fill="#9333ea"> friend</tspan>
+  </text>
+  <text x="90" y="100" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-style="italic" font-size="11" fill="#9333ea">Hecho en Chile</text>
+  <rect x="200" y="20" width="1.5" height="160" fill="url(#sig-sep)"/>
+  <text x="220" y="52" font-family="Fredoka, sans-serif" font-weight="600" font-size="22" fill="#1a102b">Paw Founder</text>
+  <text x="220" y="75" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-style="italic" font-size="12" fill="#4b3b66">Founder · Paw Friend</text>
+  <line x1="220" y1="92" x2="580" y2="92" stroke="#f3e8ff" stroke-width="1"/>
+  <circle cx="228" cy="110" r="4" fill="#ec4899"/>
+  <text x="240" y="114" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#4b3b66">pawfriendcl@gmail.com</text>
+  <circle cx="228" cy="132" r="4" fill="#10b981"/>
+  <text x="240" y="136" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#4b3b66">+56 9 XXXX XXXX</text>
+  <circle cx="228" cy="154" r="4" fill="#9333ea"/>
+  <text x="240" y="158" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="12" fill="#9333ea">pawfriend.cl</text>
+  <g transform="translate(440, 146)">
+    <circle cx="10" cy="10" r="11" fill="#ec4899"/>
+    <text x="10" y="14" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" fill="#ffffff" font-weight="800">IG</text>
+    <circle cx="38" cy="10" r="11" fill="#1a102b"/>
+    <text x="38" y="14" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" fill="#ffffff" font-weight="800">TT</text>
+    <circle cx="66" cy="10" r="11" fill="#DC2626"/>
+    <text x="66" y="14" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" fill="#ffffff" font-weight="800">YT</text>
+  </g>
+  <text x="220" y="185" font-family="'Plus Jakarta Sans', sans-serif" font-style="italic" font-size="8" fill="#94889e">SpA SUSAETA GARNHAM · RUT 78.328.659-9 · Luis Pasteur 6111 Dp 201, Vitacura</text>
+</svg>

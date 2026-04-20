@@ -1,0 +1,23 @@
+<!-- 58_birthday.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Cumpleaños y aniversario" width="200" height="200">
+  <title>Cumpleaños y aniversario</title>
+  <desc>Torta 2 pisos con velitas gold y pata decorativa. Ícono 58 para cumpleaños Paw Friend.</desc>
+  <path d="M 100 10 C 170 10, 190 30, 190 100 C 190 170, 170 190, 100 190 C 30 190, 10 170, 10 100 C 10 30, 30 10, 100 10 Z" fill="#ec4899"/>
+  <!-- Piso inferior torta -->
+  <rect x="45" y="118" width="110" height="30" rx="3" fill="#ffffff"/>
+  <!-- Piso superior -->
+  <rect x="60" y="90" width="80" height="28" rx="3" fill="#ffffff"/>
+  <!-- 3 velas -->
+  <rect x="75" y="70" width="5" height="20" fill="#ffffff"/>
+  <rect x="97" y="65" width="5" height="25" fill="#ffffff"/>
+  <rect x="119" y="70" width="5" height="20" fill="#ffffff"/>
+  <!-- Llamitas gold -->
+  <ellipse cx="77.5" cy="65" rx="3" ry="5" fill="#fbbf24"/>
+  <ellipse cx="99.5" cy="60" rx="3" ry="5" fill="#fbbf24"/>
+  <ellipse cx="121.5" cy="65" rx="3" ry="5" fill="#fbbf24"/>
+  <!-- Mini paw en piso superior -->
+  <ellipse cx="100" cy="107.4" rx="5.4" ry="4.5" fill="#ec4899"/><ellipse cx="95.2" cy="102.0" rx="1.8" ry="2.4" transform="rotate(-22 95.2 102.0)" fill="#ec4899"/><ellipse cx="98.2" cy="99.3" rx="1.6" ry="2.1" transform="rotate(-10 98.2 99.3)" fill="#ec4899"/><ellipse cx="101.8" cy="99.3" rx="1.6" ry="2.1" transform="rotate(10 101.8 99.3)" fill="#ec4899"/><ellipse cx="104.8" cy="102.0" rx="1.8" ry="2.4" transform="rotate(22 104.8 102.0)" fill="#ec4899"/>
+  <!-- Corazones flotando -->
+  <path d="M 40 88.5 C 33.5 84.25, 32.5 79.25, 37.5 81.0 C 39.0 82.5, 40 83.5, 40 84.5 C 40 83.5, 41.0 82.5, 42.5 81.0 C 47.5 79.25, 46.5 84.25, 40 88.5 Z" fill="#fbbf24"/>
+  <path d="M 160 98.5 C 153.5 94.25, 152.5 89.25, 157.5 91.0 C 159.0 92.5, 160 93.5, 160 94.5 C 160 93.5, 161.0 92.5, 162.5 91.0 C 167.5 89.25, 166.5 94.25, 160 98.5 Z" fill="#fbbf24"/>
+</svg>

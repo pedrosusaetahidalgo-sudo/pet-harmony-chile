@@ -1,0 +1,87 @@
+<!-- review_invitation.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="x-apple-disable-message-reformatting">
+  <title>¿Cómo estuvo tu visita a {{vet_name}}?</title>
+  <style>
+    @media (prefers-color-scheme: dark) {
+      body { background-color: #2a1046 !important; }
+    }
+    body, table, td { margin:0; padding:0; }
+    a { text-decoration: none; }
+  </style>
+</head>
+<body style="margin:0;padding:0;background-color:#faf7ff;font-family:Arial,Helvetica,sans-serif;">
+<span style="display:none;max-height:0;overflow:hidden;color:transparent;">30 segundos para ayudar a otros tutores a elegir bien.</span>
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#faf7ff;">
+  <tr><td align="center" style="padding:40px 20px;">
+  <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="background-color:#ffffff;border-radius:14px;overflow:hidden;">
+
+
+        <tr>
+          <td style="background:linear-gradient(135deg,#9333ea 0%,#a855f7 100%);padding:40px 30px;text-align:center;">
+            <div style="display:inline-block;width:72px;height:72px;background:#ffffff;border-radius:16px;line-height:72px;margin:0 auto 16px;text-align:center;">
+              <span style="font-family:Arial;font-size:34px;color:#9333ea;font-weight:700;">★</span>
+            </div>
+            <h1 style="margin:0 0 8px;color:#ffffff;font-family:Arial,Helvetica,sans-serif;font-size:32px;font-weight:700;letter-spacing:-0.5px;">¿Cómo le fue a {{petName}}?</h1>
+            <p style="margin:0;color:rgba(255,255,255,0.9);font-family:Arial,Helvetica,sans-serif;font-size:16px;line-height:1.5;">30 segundos para contar tu experiencia con {{vet_name}}.</p>
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:40px 30px;">
+            <p style="margin:0 0 25px;color:#1a102b;font-family:Arial;font-size:16px;line-height:1.6;">
+              {firstName}, {petName} tuvo consulta con <strong style="color:#9333ea;">{vet_name}</strong> el {consultDate}. Tu reseña honesta ayuda a otros tutores a elegir bien.
+            </p>
+
+            <div style="background:#faf5ff;border-radius:14px;padding:24px;text-align:center;margin:0 0 30px;">
+              <p style="margin:0 0 16px;color:#4b3b66;font-family:Arial;font-size:13px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">TOCÁ LAS ESTRELLAS</p>
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" align="center">
+                <tr>
+                  <td><a href="{reviewUrl}?rating=1" style="display:inline-block;padding:8px;font-size:36px;color:#eab308;text-decoration:none;">★</a></td>
+                  <td><a href="{reviewUrl}?rating=2" style="display:inline-block;padding:8px;font-size:36px;color:#eab308;text-decoration:none;">★</a></td>
+                  <td><a href="{reviewUrl}?rating=3" style="display:inline-block;padding:8px;font-size:36px;color:#eab308;text-decoration:none;">★</a></td>
+                  <td><a href="{reviewUrl}?rating=4" style="display:inline-block;padding:8px;font-size:36px;color:#eab308;text-decoration:none;">★</a></td>
+                  <td><a href="{reviewUrl}?rating=5" style="display:inline-block;padding:8px;font-size:36px;color:#eab308;text-decoration:none;">★</a></td>
+                </tr>
+              </table>
+              <p style="margin:12px 0 0;color:#94889e;font-family:Arial;font-size:12px;">Tu valoración queda registrada al tocar una estrella.</p>
+            </div>
+
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tr><td align="center" style="padding:10px 0 30px;">
+                <a href="{reviewUrl}" style="display:inline-block;background:#9333ea;color:#ffffff;padding:14px 36px;border-radius:28px;font-weight:700;font-size:15px;font-family:Arial;">Dejar reseña completa</a>
+              </td></tr>
+            </table>
+
+            <div style="background:#ecfdf5;border-radius:10px;padding:16px;margin:20px 0;">
+              <p style="margin:0;color:#047857;font-family:Arial;font-size:13px;line-height:1.5;">
+                <strong>Sin reseñas falsas.</strong> Tu reseña es pública con tu nombre (o iniciales) y no permitimos reseñas compradas o automáticas.
+              </p>
+            </div>
+
+            <p style="margin:20px 0 0;text-align:center;">
+              <a href="{skipUrl}" style="color:#94889e;font-family:Arial;font-size:13px;text-decoration:underline;">Prefiero no dejar reseña esta vez</a>
+            </p>
+          </td>
+        </tr>
+
+        <tr>
+          <td style="background-color:#f3e8ff;padding:25px 30px;text-align:center;font-family:Arial,Helvetica,sans-serif;font-size:12px;color:#4b3b66;line-height:1.6;">
+            <p style="margin:0 0 8px;"><strong>Paw Friend</strong> · Hecho en Chile, a mano, con inteligencia artificial.</p>
+            <p style="margin:0 0 8px;"><a href="https://pawfriend.cl" style="color:#9333ea;font-weight:700;">pawfriend.cl</a> · pawfriendcl@gmail.com</p>
+            <p style="margin:0 0 8px;color:#94889e;">SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9 · Luis Pasteur 6111 Dp 201, Vitacura</p>
+            <p style="margin:0;">
+              <a href="https://pawfriend.cl/profile" style="color:#9333ea;">Gestionar preferencias</a>
+              &nbsp;·&nbsp;
+              <a href="https://pawfriend.cl/unsubscribe?token={{{{TOKEN}}}}" style="color:#9333ea;">Darte de baja</a>
+            </p>
+          </td>
+        </tr>
+  </table>
+  </td></tr>
+</table>
+</body>
+</html>

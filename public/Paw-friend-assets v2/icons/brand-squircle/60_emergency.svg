@@ -1,0 +1,14 @@
+<!-- 60_emergency.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Emergencia 24h" width="200" height="200">
+  <title>Emergencia 24h</title>
+  <desc>Cruz médica con círculo y rótulo 24h gold. Ícono 60 para emergencias veterinarias Paw Friend.</desc>
+  <path d="M 100 10 C 170 10, 190 30, 190 100 C 190 170, 170 190, 100 190 C 30 190, 10 170, 10 100 C 10 30, 30 10, 100 10 Z" fill="#dc2626"/>
+  <!-- Círculo alrededor -->
+  <circle cx="100" cy="100" r="55" fill="none" stroke="#ffffff" stroke-width="6"/>
+  <!-- Cruz médica plus -->
+  <rect x="90" y="70" width="20" height="60" rx="3" fill="#ffffff"/>
+  <rect x="70" y="90" width="60" height="20" rx="3" fill="#ffffff"/>
+  <!-- "24" gold abajo -->
+  <text x="100" y="168" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-size="22" font-weight="700" fill="#fbbf24">24h</text>
+</svg>

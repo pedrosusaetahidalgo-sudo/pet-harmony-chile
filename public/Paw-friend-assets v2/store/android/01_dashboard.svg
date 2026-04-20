@@ -1,0 +1,82 @@
+<!-- 01_dashboard.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="Android Dashboard" width="1080" height="1920">
+  <title>Android Dashboard</title>
+  <desc>Play Store screenshot Android con dashboard de Paw Friend.</desc>
+  <defs><radialGradient id="and1bg" cx="50%" cy="40%" r="75%"><stop offset="0%" stop-color="#f3e8ff" stop-opacity="1"/><stop offset="100%" stop-color="#fef3c7" stop-opacity="1"/></radialGradient></defs>
+  <rect width="1080" height="1920" fill="url(#and1bg)"/>
+  <!-- Eyebrow pill -->
+  <rect x="290" y="170" width="500" height="54" rx="27" fill="#9333ea"/>
+  <text x="540" y="206" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="20" letter-spacing="5" fill="#ffffff">TODO TU PELUDO EN UN LUGAR</text>
+  <text x="540" y="360" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">La ficha médica de</text>
+  <text x="540" y="460" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">tu peludo</text>
+  <text x="540" y="560" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">en tu bolsillo.</text>
+
+  <text x="540" y="660" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="500" font-size="30" fill="#4b3b66">Gratis, simple, hecho en Chile.</text>
+  <!-- Phone mockup Android -->
+  <g transform="translate(240, 730)">
+    <rect x="0" y="0" width="600" height="1150" rx="60" fill="#1a102b"/>
+    <rect x="16" y="16" width="568" height="1118" rx="50" fill="#ffffff"/>
+    
+    <rect x="16" y="16" width="568" height="130" fill="#9333ea"/>
+    <text x="300" y="92" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="36" fill="#ffffff">Mi Paw Friend</text>
+    <!-- Pet card -->
+    <rect x="40" y="180" width="520" height="280" rx="20" fill="#faf5ff"/>
+    <circle cx="120" cy="320" r="60" fill="#9333ea"/>
+    <g transform="translate(120, 320) scale(2)">
+      <ellipse cx="0" cy="6" rx="5" ry="4" fill="#ffffff"/>
+      <ellipse cx="-4" cy="0" rx="1.8" ry="2.5" transform="rotate(-22)" fill="#ffffff"/>
+      <ellipse cx="-1.5" cy="-4" rx="1.5" ry="2" transform="rotate(-10)" fill="#ffffff"/>
+      <ellipse cx="1.5" cy="-4" rx="1.5" ry="2" transform="rotate(10)" fill="#ffffff"/>
+      <ellipse cx="4" cy="0" rx="1.8" ry="2.5" transform="rotate(22)" fill="#ffffff"/>
+    </g>
+    <text x="200" y="280" font-family="Fredoka, sans-serif" font-weight="600" font-size="34" fill="#1a102b">Kai</text>
+    <text x="200" y="315" font-family="'Plus Jakarta Sans', sans-serif" font-size="20" fill="#4b3b66">Pastor suizo · 3 años</text>
+    <text x="200" y="350" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="16" fill="#047857">✓ ficha completa</text>
+    <!-- Quick action icons -->
+    <g transform="translate(50, 500)">
+      <rect x="0" y="0" width="120" height="120" rx="16" fill="#fef3c7"/>
+      <text x="60" y="75" text-anchor="middle" font-family="sans-serif" font-size="42" fill="#eab308">♥</text>
+      <text x="60" y="148" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="16" fill="#4b3b66">Salud</text>
+    </g>
+    <g transform="translate(185, 500)">
+      <rect x="0" y="0" width="120" height="120" rx="16" fill="#ecfdf5"/>
+      <g transform="translate(60, 62) scale(1.8)">
+        <ellipse cx="0" cy="4" rx="5" ry="4" fill="#10b981"/>
+        <ellipse cx="-4" cy="-2" rx="1.8" ry="2.5" transform="rotate(-22)" fill="#10b981"/>
+        <ellipse cx="-1.5" cy="-5" rx="1.5" ry="2" transform="rotate(-10)" fill="#10b981"/>
+        <ellipse cx="1.5" cy="-5" rx="1.5" ry="2" transform="rotate(10)" fill="#10b981"/>
+        <ellipse cx="4" cy="-2" rx="1.8" ry="2.5" transform="rotate(22)" fill="#10b981"/>
+      </g>
+      <text x="60" y="148" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="16" fill="#4b3b66">Vets</text>
+    </g>
+    <g transform="translate(320, 500)">
+      <rect x="0" y="0" width="120" height="120" rx="16" fill="#fdf2f8"/>
+      <circle cx="60" cy="55" r="20" fill="#ec4899"/>
+      <path d="M 50 55 L 58 63 L 72 49" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="60" y="148" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="16" fill="#4b3b66">Chat</text>
+    </g>
+    <g transform="translate(455, 500)">
+      <rect x="0" y="0" width="120" height="120" rx="16" fill="#f3e8ff"/>
+      <rect x="45" y="35" width="30" height="40" rx="3" fill="#9333ea"/>
+      <line x1="52" y1="50" x2="68" y2="50" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="52" y1="58" x2="68" y2="58" stroke="#ffffff" stroke-width="1.5"/>
+      <line x1="52" y1="66" x2="65" y2="66" stroke="#ffffff" stroke-width="1.5"/>
+      <text x="60" y="148" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="16" fill="#4b3b66">Ficha</text>
+    </g>
+    <!-- Next appointment -->
+    <rect x="40" y="700" width="520" height="130" rx="16" fill="#ecfdf5"/>
+    <text x="60" y="732" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" letter-spacing="2" fill="#047857">PRÓXIMA CITA</text>
+    <text x="60" y="770" font-family="Fredoka, sans-serif" font-weight="600" font-size="28" fill="#1a102b">Mañana · 10:30</text>
+    <text x="60" y="805" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="18" fill="#4b3b66">Clínica Cafati · vacuna anual</text>
+
+    <!-- Material bottom nav -->
+    <rect x="16" y="1064" width="568" height="70" fill="#ffffff"/>
+    <line x1="16" y1="1064" x2="584" y2="1064" stroke="#e9d5ff" stroke-width="1"/>
+    <circle cx="120" cy="1100" r="15" fill="#9333ea"/>
+    <circle cx="260" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="400" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="540" cy="1100" r="12" fill="#94889e"/>
+  </g>
+</svg>

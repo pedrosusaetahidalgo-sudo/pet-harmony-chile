@@ -1,0 +1,46 @@
+<!-- paw_voice.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="WhatsApp Catalog · Paw Voices" width="1080" height="1080">
+  <title>WhatsApp Catalog · Paw Voices</title>
+  <desc>Card Paw Voices (creadores de contenido) para catalog WhatsApp Business.</desc>
+  <defs><linearGradient id="bg-voice" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fdf2f8" stop-opacity="1"/><stop offset="100%" stop-color="#faf5ff" stop-opacity="1"/></linearGradient><linearGradient id="badge-voice" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#be185d" stop-opacity="1"/><stop offset="100%" stop-color="#ec4899" stop-opacity="1"/></linearGradient></defs>
+  <rect width="1080" height="1080" fill="url(#bg-voice)"/>
+  <!-- Header brand badge -->
+  <rect x="60" y="80" width="260" height="64" rx="32" fill="#ffffff"/>
+  <g transform="translate(96, 112)">
+    <rect x="-18" y="-18" width="36" height="36" rx="8" fill="#9333ea"/>
+    <!-- Paw mini interior -->
+    <ellipse cx="0" cy="4" rx="5" ry="4" fill="#ffffff"/>
+    <ellipse cx="-4" cy="-2" rx="1.8" ry="2.5" transform="rotate(-22)" fill="#ffffff"/>
+    <ellipse cx="-1.5" cy="-5" rx="1.5" ry="2" transform="rotate(-10)" fill="#ffffff"/>
+    <ellipse cx="1.5" cy="-5" rx="1.5" ry="2" transform="rotate(10)" fill="#ffffff"/>
+    <ellipse cx="4" cy="-2" rx="1.8" ry="2.5" transform="rotate(22)" fill="#ffffff"/>
+  </g>
+  <text x="140" y="120" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="20" fill="#9333ea">Paw Friend</text>
+  <!-- Price badge top right -->
+  <rect x="760" y="80" width="260" height="64" rx="32" fill="#ec4899"/>
+  <text x="890" y="122" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="22" fill="#ffffff">$0</text>
+  <!-- Hero area white card -->
+  <rect x="140" y="220" width="800" height="520" rx="40" fill="#ffffff"/>
+  
+  <g transform="translate(540, 480)">
+    <rect x="-100" y="-100" width="200" height="200" rx="44" fill="url(#badge-voice)"/>
+    <!-- Microphone -->
+    <rect x="-22" y="-65" width="44" height="75" rx="22" fill="#ffffff"/>
+    <path d="M -38 -20 Q -38 28 0 28 Q 38 28 38 -20" stroke="#ffffff" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <line x1="0" y1="28" x2="0" y2="52" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+    <line x1="-18" y1="57" x2="18" y2="57" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+    <text x="0" y="92" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+          font-weight="800" font-size="20" letter-spacing="6" fill="#ffffff">VOICE</text>
+  </g>
+  <!-- Copy title -->
+  <text x="540" y="830" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="600" font-size="62" fill="#1a102b">Paw Voices</text>
+  <text x="540" y="895" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="500" font-size="26" fill="#4b3b66">Creadores peludos amplificando.</text>
+  <!-- CTA pill -->
+  <rect x="290" y="955" width="500" height="80" rx="40" fill="#ec4899"/>
+  <text x="540" y="1008" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="26" fill="#ffffff">Aplicar →</text>
+</svg>

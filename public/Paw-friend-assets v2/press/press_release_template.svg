@@ -1,0 +1,57 @@
+<!-- press_release_template.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 1754" role="img" aria-label="Paw Friend Press Release Template" width="1240" height="1754">
+  <title>Paw Friend Press Release Template</title>
+  <desc>Template press release A4 con placeholders editables en formato editorial estándar prensa LatAm.</desc>
+  <rect width="1240" height="1754" fill="#faf7ff"/>
+
+  <!-- Header -->
+  <g transform="translate(80, 100)">
+    <rect x="0" y="0" width="60" height="60" rx="13" fill="#9333ea"/>
+    <g transform="translate(30, 33) scale(0.075)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/></g>
+  </g>
+  <text x="155" y="135" font-family="Fredoka, sans-serif" font-weight="600" font-size="32" fill="#1a102b">Paw Friend</text>
+  <text x="1160" y="135" text-anchor="end" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" letter-spacing="3" fill="#9333ea">PARA PUBLICACIÓN INMEDIATA</text>
+  <line x1="80" y1="175" x2="1160" y2="175" stroke="#e9d5ff" stroke-width="1"/>
+
+  <!-- Date -->
+  <text x="80" y="230" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#4b3b66">&#123;&#123;FECHA&#125;&#125;, Santiago, Chile</text>
+
+  <!-- Headline placeholder -->
+  <rect x="80" y="280" width="1080" height="160" rx="8" fill="#faf5ff" stroke="#9333ea" stroke-width="2" stroke-dasharray="8,6"/>
+  <text x="620" y="370" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="36" fill="#1a102b" font-style="italic" opacity="0.6">&#123;&#123;HEADLINE · máx 15 palabras&#125;&#125;</text>
+  <text x="620" y="415" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="18" fill="#4b3b66" font-style="italic" opacity="0.6">&#123;&#123;Subtitle 1 línea explicativa&#125;&#125;</text>
+
+  <!-- 5 paragraphs -->
+  <text x="80" y="470" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="10" letter-spacing="3" fill="#9333ea">PÁRRAFO 1 · HOOK + QUIÉN QUÉ CUÁNDO</text>
+  <rect x="80" y="480" width="1080" height="130" rx="6" fill="#faf7ff" stroke="#e9d5ff" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="80" y="625" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="10" letter-spacing="3" fill="#9333ea">PÁRRAFO 2 · PROBLEMA + SOLUCIÓN</text>
+  <rect x="80" y="635" width="1080" height="130" rx="6" fill="#faf7ff" stroke="#e9d5ff" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="80" y="780" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="10" letter-spacing="3" fill="#9333ea">PÁRRAFO 3 · QUOTE DEL FOUNDER</text>
+  <rect x="80" y="790" width="1080" height="130" rx="6" fill="#faf7ff" stroke="#eab308" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="80" y="935" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="10" letter-spacing="3" fill="#9333ea">PÁRRAFO 4 · DATOS / MILESTONES</text>
+  <rect x="80" y="945" width="1080" height="130" rx="6" fill="#faf7ff" stroke="#e9d5ff" stroke-width="1" stroke-dasharray="5,3"/>
+  <text x="80" y="1090" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="10" letter-spacing="3" fill="#9333ea">PÁRRAFO 5 · NEXT STEPS + CTA</text>
+  <rect x="80" y="1100" width="1080" height="130" rx="6" fill="#faf7ff" stroke="#e9d5ff" stroke-width="1" stroke-dasharray="5,3"/>
+
+
+  <!-- Boilerplate -->
+  <rect x="80" y="1260" width="1080" height="220" rx="16" fill="#f3e8ff"/>
+  <text x="110" y="1305" font-family="Fredoka, sans-serif" font-weight="600" font-size="20" fill="#9333ea">## SOBRE PAW FRIEND</text>
+  <g font-family="'Plus Jakarta Sans', sans-serif" font-size="14" fill="#4b3b66" font-weight="500">
+    <text x="110" y="1345">Paw Friend es la ficha médica digital de mascotas + directorio público de veterinarios</text>
+    <text x="110" y="1370">+ comunidad pet lover chilena. Hecha en Chile por una persona con apoyo de IA,</text>
+    <text x="110" y="1395">es 100% gratis para dueños de mascotas. Operada por SpA SUSAETA GARNHAM SOFTWARE</text>
+    <text x="110" y="1420">ENGINEERING (RUT 78.328.659-9). Web: pawfriend.cl.</text>
+  </g>
+
+  <!-- Contact footer -->
+  <line x1="80" y1="1540" x2="1160" y2="1540" stroke="#e9d5ff" stroke-width="1"/>
+  <text x="80" y="1585" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" fill="#9333ea">Contacto para prensa</text>
+  <text x="80" y="1615" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="14" fill="#1a102b">Paw Founder · pawfriendcl@gmail.com</text>
+  <text x="80" y="1645" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#4b3b66">pawfriend.cl/brand-assets/ (logo pack + founder photos)</text>
+  <text x="80" y="1685" font-family="monospace" font-size="10" fill="#94889e">Versión 2026-04-19</text>
+</svg>

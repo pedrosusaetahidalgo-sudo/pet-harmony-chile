@@ -1,0 +1,57 @@
+<!-- directorio.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="WhatsApp Catalog · Directorio veterinarios" width="1080" height="1080">
+  <title>WhatsApp Catalog · Directorio veterinarios</title>
+  <desc>Card directorio de vets para catalog WhatsApp Business. Audiencia partners en emerald.</desc>
+  <defs><linearGradient id="bg-dir" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ecfdf5" stop-opacity="1"/><stop offset="100%" stop-color="#f3e8ff" stop-opacity="1"/></linearGradient></defs>
+  <rect width="1080" height="1080" fill="url(#bg-dir)"/>
+  <!-- Header brand badge -->
+  <rect x="60" y="80" width="260" height="64" rx="32" fill="#ffffff"/>
+  <g transform="translate(96, 112)">
+    <rect x="-18" y="-18" width="36" height="36" rx="8" fill="#9333ea"/>
+    <!-- Paw mini interior -->
+    <ellipse cx="0" cy="4" rx="5" ry="4" fill="#ffffff"/>
+    <ellipse cx="-4" cy="-2" rx="1.8" ry="2.5" transform="rotate(-22)" fill="#ffffff"/>
+    <ellipse cx="-1.5" cy="-5" rx="1.5" ry="2" transform="rotate(-10)" fill="#ffffff"/>
+    <ellipse cx="1.5" cy="-5" rx="1.5" ry="2" transform="rotate(10)" fill="#ffffff"/>
+    <ellipse cx="4" cy="-2" rx="1.8" ry="2.5" transform="rotate(22)" fill="#ffffff"/>
+  </g>
+  <text x="140" y="120" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="20" fill="#9333ea">Paw Friend</text>
+  <!-- Price badge top right -->
+  <rect x="760" y="80" width="260" height="64" rx="32" fill="#10b981"/>
+  <text x="890" y="122" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="22" fill="#ffffff">GRATIS</text>
+  <!-- Hero area white card -->
+  <rect x="140" y="220" width="800" height="520" rx="40" fill="#ffffff"/>
+  
+  <!-- Mapa background -->
+  <rect x="200" y="280" width="680" height="400" rx="20" fill="#ecfdf5"/>
+  <!-- Streets grid -->
+  <line x1="200" y1="400" x2="880" y2="400" stroke="#10b981" stroke-width="3" opacity="0.3"/>
+  <line x1="200" y1="560" x2="880" y2="560" stroke="#10b981" stroke-width="3" opacity="0.3"/>
+  <line x1="400" y1="280" x2="400" y2="680" stroke="#10b981" stroke-width="3" opacity="0.3"/>
+  <line x1="680" y1="280" x2="680" y2="680" stroke="#10b981" stroke-width="3" opacity="0.3"/>
+  <!-- Pins 3 vets -->
+  <g transform="translate(400, 400)">
+    <path d="M 0 -30 Q -20 -30 -20 -10 Q -20 5 0 25 Q 20 5 20 -10 Q 20 -30 0 -30 Z" fill="#10b981"/>
+    <circle cx="0" cy="-12" r="7" fill="#ffffff"/>
+  </g>
+  <g transform="translate(540, 480)">
+    <path d="M 0 -35 Q -24 -35 -24 -12 Q -24 6 0 30 Q 24 6 24 -12 Q 24 -35 0 -35 Z"
+          fill="#9333ea" stroke="#eab308" stroke-width="4"/>
+    <circle cx="0" cy="-14" r="9" fill="#ffffff"/>
+  </g>
+  <g transform="translate(680, 400)">
+    <path d="M 0 -30 Q -20 -30 -20 -10 Q -20 5 0 25 Q 20 5 20 -10 Q 20 -30 0 -30 Z" fill="#eab308"/>
+    <circle cx="0" cy="-12" r="7" fill="#ffffff"/>
+  </g>
+  <!-- Copy title -->
+  <text x="540" y="830" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="600" font-size="62" fill="#1a102b">Directorio de vets</text>
+  <text x="540" y="895" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="500" font-size="26" fill="#4b3b66">Encuentra el tuyo por comuna.</text>
+  <!-- CTA pill -->
+  <rect x="290" y="955" width="500" height="80" rx="40" fill="#10b981"/>
+  <text x="540" y="1008" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="26" fill="#ffffff">Ver cerca de mí →</text>
+</svg>

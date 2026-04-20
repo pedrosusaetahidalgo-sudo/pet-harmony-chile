@@ -1,0 +1,30 @@
+<!-- no_notifications.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Todo al día sin notificaciones" width="400" height="300">
+  <title>Todo al día sin notificaciones</title>
+  <desc>Empty state para bandeja de notificaciones vacía en Paw Friend.</desc>
+  <defs><linearGradient id="emp5" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#fef3c7" stop-opacity="1"/><stop offset="100%" stop-color="#faf5ff" stop-opacity="1"/></linearGradient></defs>
+  <rect width="400" height="300" fill="url(#emp5)"/>
+  <!-- Campana grande con hojas -->
+  <path d="M 200 80 Q 230 83 230 140 L 240 162 L 160 162 L 170 140 Q 170 83 200 80 Z" fill="#9333ea"/>
+  <path d="M 188 162 Q 188 178 200 178 Q 212 178 212 162" fill="#9333ea"/>
+  <!-- Hojas decorativas -->
+  <ellipse cx="175" cy="95" rx="8" ry="14" fill="#10b981" transform="rotate(-30 175 95)"/>
+  <ellipse cx="225" cy="95" rx="8" ry="14" fill="#10b981" transform="rotate(30 225 95)"/>
+  <!-- Check grande sobre campana -->
+  <circle cx="200" cy="128" r="24" fill="#10b981"/>
+  <path d="M 187 128 L 196 138 L 215 118" stroke="#ffffff" stroke-width="4"
+        fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Zzz -->
+  <text x="265" y="115" font-family="Fredoka, sans-serif" font-size="22"
+        font-weight="700" fill="#9333ea" opacity="0.5">z</text>
+  <text x="290" y="100" font-family="Fredoka, sans-serif" font-size="16"
+        font-weight="700" fill="#9333ea" opacity="0.3">z</text>
+  <!-- Ondas sonido dormidas -->
+  <path d="M 100 195 Q 120 205 100 215" stroke="#9333ea" stroke-width="2"
+        fill="none" stroke-dasharray="3,3" opacity="0.3"/>
+  <path d="M 300 195 Q 280 205 300 215" stroke="#9333ea" stroke-width="2"
+        fill="none" stroke-dasharray="3,3" opacity="0.3"/>
+  <!-- Sparkles -->
+  <path d="M 65 63 L 67.1 67.9 L 72 70 L 67.1 72.1 L 65 77 L 62.9 72.1 L 58 70 L 62.9 67.9 Z" fill="#eab308"/>
+  <path d="M 335 233 L 337.1 237.9 L 342 240 L 337.1 242.1 L 335 247 L 332.9 242.1 L 328 240 L 332.9 237.9 Z" fill="#eab308"/>
+</svg>

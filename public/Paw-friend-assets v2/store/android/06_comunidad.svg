@@ -1,0 +1,79 @@
+<!-- 06_comunidad.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="Android slide 06 · Comunidad" width="1080" height="1920">
+  <title>Android slide 06 · Comunidad</title>
+  <desc>Slide 6 Play Store Android mostrando feed social con posts de tutores y vets chilenos.</desc>
+  <defs><radialGradient id="and6" cx="50%" cy="40%" r="75%"><stop offset="0%" stop-color="#fdf2f8"/><stop offset="100%" stop-color="#ec4899"/></radialGradient></defs>
+  <rect width="1080" height="1920" fill="url(#and6)"/>
+  <rect x="290" y="170" width="500" height="54" rx="27" fill="#9333ea"/>
+  <text x="540" y="206" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="20" letter-spacing="5" fill="#ffffff">COMUNIDAD REAL</text>
+  <text x="540" y="360" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">Tutores y vets</text>
+  <text x="540" y="460" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">chilenos</text>
+  <text x="540" y="560" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">que se apoyan.</text>
+
+  <text x="540" y="660" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="500" font-size="30" fill="#4b3b66">Feed real, sin bots. Tu tribu peluda te espera.</text>
+
+  <!-- Phone mockup Android -->
+  <g transform="translate(240, 730)">
+    <rect x="0" y="0" width="600" height="1150" rx="60" fill="#1a102b"/>
+    <rect x="16" y="16" width="568" height="1118" rx="50" fill="#ffffff"/>
+    
+    <rect x="16" y="16" width="568" height="130" fill="#ec4899"/>
+    <text x="300" y="92" text-anchor="middle" font-family="Fredoka, sans-serif"
+          font-weight="600" font-size="36" fill="#ffffff">Comunidad</text>
+
+    <!-- Post 1 -->
+    <g transform="translate(40, 180)">
+      <rect x="0" y="0" width="520" height="340" rx="18" fill="#ffffff" stroke="#e9d5ff"/>
+      <circle cx="45" cy="45" r="26" fill="#ec4899"/>
+      <text x="45" y="54" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="18" fill="#ffffff">P</text>
+      <text x="85" y="38" font-family="Fredoka, sans-serif" font-weight="600" font-size="20" fill="#1a102b">Paloma</text>
+      <text x="85" y="60" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" fill="#94889e">@palomapetlover · hace 2h</text>
+      <rect x="20" y="90" width="480" height="180" rx="12" fill="#f3e8ff"/>
+      <g transform="translate(260, 180) scale(1.5)">
+        <ellipse cx="340" cy="430" rx="155" ry="135" fill="#ec4899"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ec4899"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ec4899"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ec4899"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ec4899"/>
+      </g>
+      <g transform="translate(20, 290)">
+        <path d="M 5 10 C 2 6, -2 4, -4 6 C -7 9, -4 13, 5 22 C 14 13, 17 9, 14 6 C 12 4, 8 6, 5 10 Z" fill="#ec4899"/>
+        <text x="30" y="24" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="14" fill="#1a102b">127</text>
+        <text x="75" y="24" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" fill="#4b3b66">💬 23 comentarios</text>
+      </g>
+    </g>
+
+    <!-- Post 2 -->
+    <g transform="translate(40, 550)">
+      <rect x="0" y="0" width="520" height="180" rx="18" fill="#ffffff" stroke="#e9d5ff"/>
+      <circle cx="45" cy="45" r="26" fill="#10b981"/>
+      <text x="45" y="54" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="18" fill="#ffffff">M</text>
+      <text x="85" y="38" font-family="Fredoka, sans-serif" font-weight="600" font-size="20" fill="#1a102b">Dra. Muñoz · vet</text>
+      <text x="85" y="60" font-family="'Plus Jakarta Sans', sans-serif" font-size="13" fill="#94889e">@vetmunoz · hace 4h</text>
+      <text x="20" y="100" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="15" fill="#1a102b">"Recordatorio: temporada de vacuna</text>
+      <text x="20" y="122" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="15" fill="#1a102b">antirrábica en abril. Reserven con tiempo 🐾"</text>
+      <g transform="translate(20, 145)">
+        <path d="M 5 5 C 2 1, -2 -1, -4 1 C -7 4, -4 8, 5 17 C 14 8, 17 4, 14 1 C 12 -1, 8 1, 5 5 Z" fill="#ec4899"/>
+        <text x="30" y="19" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="13" fill="#1a102b">89</text>
+      </g>
+    </g>
+
+    <!-- Big counter -->
+    <rect x="80" y="770" width="440" height="120" rx="60" fill="#fdf2f8"/>
+    <text x="300" y="818" text-anchor="middle" font-family="Fredoka, sans-serif"
+          font-weight="600" font-size="44" fill="#be185d">+10.000</text>
+    <text x="300" y="858" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+          font-weight="500" font-size="18" fill="#be185d">peludos en la comunidad</text>
+
+    <!-- Material bottom nav -->
+    <rect x="16" y="1064" width="568" height="70" fill="#ffffff"/>
+    <line x1="16" y1="1064" x2="584" y2="1064" stroke="#e9d5ff" stroke-width="1"/>
+    <circle cx="120" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="260" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="400" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="540" cy="1100" r="15" fill="#9333ea"/>
+
+  </g>
+</svg>

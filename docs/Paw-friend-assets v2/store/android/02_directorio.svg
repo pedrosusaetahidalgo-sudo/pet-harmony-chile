@@ -1,0 +1,66 @@
+<!-- 02_directorio.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="Android Directorio vets" width="1080" height="1920">
+  <title>Android Directorio vets</title>
+  <desc>Play Store screenshot Android con directorio público de veterinarios Paw Friend.</desc>
+  <defs><radialGradient id="and2bg" cx="50%" cy="40%" r="75%"><stop offset="0%" stop-color="#ecfdf5" stop-opacity="1"/><stop offset="100%" stop-color="#f3e8ff" stop-opacity="1"/></radialGradient></defs>
+  <rect width="1080" height="1920" fill="url(#and2bg)"/>
+  <!-- Eyebrow pill -->
+  <rect x="290" y="170" width="500" height="54" rx="27" fill="#9333ea"/>
+  <text x="540" y="206" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="20" letter-spacing="5" fill="#ffffff">VETS TRANSPARENTES</text>
+  <text x="540" y="360" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">Encuentra al vet</text>
+  <text x="540" y="460" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">ideal</text>
+  <text x="540" y="560" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">cerca tuyo.</text>
+
+  <text x="540" y="660" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="500" font-size="30" fill="#4b3b66">Con precios, reseñas reales y ubicación.</text>
+  <!-- Phone mockup Android -->
+  <g transform="translate(240, 730)">
+    <rect x="0" y="0" width="600" height="1150" rx="60" fill="#1a102b"/>
+    <rect x="16" y="16" width="568" height="1118" rx="50" fill="#ffffff"/>
+    
+    <rect x="16" y="16" width="568" height="130" fill="#10b981"/>
+    <text x="300" y="92" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="36" fill="#ffffff">Directorio vets</text>
+    <!-- Search bar -->
+    <rect x="40" y="180" width="520" height="70" rx="35" fill="#faf5ff" stroke="#e9d5ff"/>
+    <circle cx="75" cy="215" r="10" fill="none" stroke="#94889e" stroke-width="2.5"/>
+    <line x1="82" y1="222" x2="89" y2="229" stroke="#94889e" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="105" y="225" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="22" fill="#94889e">Buscar por comuna...</text>
+    <!-- Vet list 3 items -->
+    <g transform="translate(40, 290)">
+      <rect x="0" y="0" width="520" height="180" rx="20" fill="#ffffff" stroke="#e9d5ff"/>
+      <circle cx="50" cy="55" r="32" fill="#10b981"/>
+      <text x="50" y="63" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="24" fill="#ffffff">C</text>
+      <text x="100" y="50" font-family="Fredoka, sans-serif" font-weight="600" font-size="28" fill="#1a102b">Clínica Cafati</text>
+      <text x="100" y="80" font-family="'Plus Jakarta Sans', sans-serif" font-size="18" fill="#4b3b66">Las Condes · 2.1 km</text>
+      <rect x="20" y="115" width="100" height="36" rx="18" fill="#fef3c7"/>
+      <text x="70" y="139" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="16" fill="#b45309">★ 4.9</text>
+      <rect x="135" y="115" width="120" height="36" rx="18" fill="#ecfdf5"/>
+      <text x="195" y="139" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="15" fill="#047857">$18-35k</text>
+    </g>
+    <g transform="translate(40, 500)">
+      <rect x="0" y="0" width="520" height="180" rx="20" fill="#ffffff" stroke="#e9d5ff"/>
+      <circle cx="50" cy="55" r="32" fill="#9333ea"/>
+      <text x="50" y="63" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="24" fill="#ffffff">V</text>
+      <text x="100" y="50" font-family="Fredoka, sans-serif" font-weight="600" font-size="28" fill="#1a102b">VetExpress Vitacura</text>
+      <text x="100" y="80" font-family="'Plus Jakarta Sans', sans-serif" font-size="18" fill="#4b3b66">Vitacura · 3.8 km</text>
+      <rect x="20" y="115" width="100" height="36" rx="18" fill="#fef3c7"/>
+      <text x="70" y="139" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="16" fill="#b45309">★ 4.7</text>
+    </g>
+    <g transform="translate(40, 710)">
+      <rect x="0" y="0" width="520" height="180" rx="20" fill="#ffffff" stroke="#e9d5ff"/>
+      <circle cx="50" cy="55" r="32" fill="#eab308"/>
+      <text x="50" y="63" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="24" fill="#b45309">P</text>
+      <text x="100" y="50" font-family="Fredoka, sans-serif" font-weight="600" font-size="28" fill="#1a102b">Pet Medical La Reina</text>
+      <text x="100" y="80" font-family="'Plus Jakarta Sans', sans-serif" font-size="18" fill="#4b3b66">La Reina · 5.2 km</text>
+    </g>
+
+    <!-- Material bottom nav -->
+    <rect x="16" y="1064" width="568" height="70" fill="#ffffff"/>
+    <line x1="16" y1="1064" x2="584" y2="1064" stroke="#e9d5ff" stroke-width="1"/>
+    <circle cx="120" cy="1100" r="15" fill="#9333ea"/>
+    <circle cx="260" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="400" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="540" cy="1100" r="12" fill="#94889e"/>
+  </g>
+</svg>

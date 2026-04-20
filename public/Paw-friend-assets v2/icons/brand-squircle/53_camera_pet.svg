@@ -1,0 +1,22 @@
+<!-- 53_camera_pet.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="OCR escanear carnet" width="200" height="200">
+  <title>OCR escanear carnet</title>
+  <desc>Cámara con corazón en lente y corchetes de enfoque OCR. Ícono 53 para escaneo de carnets Paw Friend.</desc>
+  <path d="M 100 10 C 170 10, 190 30, 190 100 C 190 170, 170 190, 100 190 C 30 190, 10 170, 10 100 C 10 30, 30 10, 100 10 Z" fill="#9333ea"/>
+  <!-- Cuerpo cámara -->
+  <rect x="45" y="70" width="110" height="80" rx="10" fill="#ffffff"/>
+  <!-- Lente grande -->
+  <circle cx="100" cy="110" r="25" fill="#7e22ce"/>
+  <circle cx="100" cy="110" r="18" fill="#6b21a8"/>
+  <!-- Corazón gold dentro del lente -->
+  <path d="M 100 116.2 C 92.2 111.1, 91.0 105.1, 97.0 107.2 C 98.8 109.0, 100 110.2, 100 111.4 C 100 110.2, 101.2 109.0, 103.0 107.2 C 109.0 105.1, 107.8 111.1, 100 116.2 Z" fill="#fbbf24"/>
+  <!-- Flash arriba der -->
+  <rect x="130" y="75" width="15" height="10" rx="2" fill="#eab308"/>
+  <!-- Viewfinder arriba izq -->
+  <rect x="60" y="60" width="30" height="10" rx="2" fill="#ffffff"/>
+  <!-- 4 esquinas OCR scan -->
+  <path d="M 40 75 L 40 65 L 50 65" stroke="#eab308" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 160 75 L 160 65 L 150 65" stroke="#eab308" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 40 145 L 40 155 L 50 155" stroke="#eab308" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M 160 145 L 160 155 L 150 155" stroke="#eab308" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

@@ -1,0 +1,32 @@
+<!-- 57_microchip.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="ID registro microchip" width="200" height="200">
+  <title>ID registro microchip</title>
+  <desc>Chip con pines y corazón gold central. Ícono 57 para identificación y registro Paw Friend.</desc>
+  <path d="M 100 10 C 170 10, 190 30, 190 100 C 190 170, 170 190, 100 190 C 30 190, 10 170, 10 100 C 10 30, 30 10, 100 10 Z" fill="#9333ea"/>
+  <!-- Chip cuerpo cuadrado -->
+  <rect x="65" y="65" width="70" height="70" rx="6" fill="#ffffff"/>
+  <!-- 4 pines a cada lado -->
+  <g fill="#ffffff">
+    <rect x="55" y="78" width="10" height="5"/>
+    <rect x="55" y="96" width="10" height="5"/>
+    <rect x="55" y="114" width="10" height="5"/>
+    <rect x="135" y="78" width="10" height="5"/>
+    <rect x="135" y="96" width="10" height="5"/>
+    <rect x="135" y="114" width="10" height="5"/>
+    <rect x="78" y="55" width="5" height="10"/>
+    <rect x="96" y="55" width="5" height="10"/>
+    <rect x="114" y="55" width="5" height="10"/>
+    <rect x="78" y="135" width="5" height="10"/>
+    <rect x="96" y="135" width="5" height="10"/>
+    <rect x="114" y="135" width="5" height="10"/>
+  </g>
+  <!-- Circuitos dentro del chip -->
+  <g stroke="#9333ea" stroke-width="2" stroke-linecap="round" fill="none">
+    <path d="M 75 80 L 85 80 L 85 90"/>
+    <path d="M 125 80 L 115 80 L 115 90"/>
+    <path d="M 75 120 L 85 120 L 85 110"/>
+    <path d="M 125 120 L 115 120 L 115 110"/>
+  </g>
+  <!-- Corazón gold centro -->
+  <path d="M 100 109.9 C 90.9 103.95, 89.5 96.95, 96.5 99.4 C 98.6 101.5, 100 102.9, 100 104.3 C 100 102.9, 101.4 101.5, 103.5 99.4 C 110.5 96.95, 109.1 103.95, 100 109.9 Z" fill="#fbbf24"/>
+</svg>

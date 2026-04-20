@@ -1,0 +1,10 @@
+<!-- pwa_maskable_512.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Paw Friend PWA Maskable Icon" width="512" height="512">
+  <title>Paw Friend PWA Maskable Icon</title>
+  <desc>Maskable icon 512×512 con pata blanca centrada en safe zone radius 40% sobre fondo sólido brand.</desc>
+  <defs><mask id="pf-heart-6"><rect width="680" height="680" fill="white"/><path d="M 340 480 C 332 470, 318 460, 310 450 C 302 440, 305 425, 318 422 C 327 420, 335 425, 340 432 C 345 425, 353 420, 362 422 C 375 425, 378 440, 370 450 C 362 460, 348 470, 340 480 Z" fill="black"/></mask></defs>
+  <rect width="512" height="512" fill="#9333ea"/>
+  <g transform="translate(86, 86) scale(0.5)">
+    <ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff" mask="url(#pf-heart-6)"/><ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/><ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/><ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/><ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/>
+  </g>
+</svg>

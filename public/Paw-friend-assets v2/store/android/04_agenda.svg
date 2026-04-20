@@ -1,0 +1,90 @@
+<!-- 04_agenda.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="Android slide 04 · Agenda" width="1080" height="1920">
+  <title>Android slide 04 · Agenda</title>
+  <desc>Slide 4 Play Store Android mostrando calendario + 3 recordatorios del día con deeplink a vet.</desc>
+  <defs><radialGradient id="and4" cx="50%" cy="40%" r="75%"><stop offset="0%" stop-color="#fef3c7"/><stop offset="100%" stop-color="#eab308"/></radialGradient></defs>
+  <rect width="1080" height="1920" fill="url(#and4)"/>
+  <rect x="290" y="170" width="500" height="54" rx="27" fill="#9333ea"/>
+  <text x="540" y="206" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="20" letter-spacing="5" fill="#ffffff">NUNCA MÁS SE TE OLVIDA</text>
+  <text x="540" y="360" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">Recordatorios</text>
+  <text x="540" y="460" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">que llegan</text>
+  <text x="540" y="560" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" fill="#1a102b">siempre a tiempo.</text>
+
+  <text x="540" y="660" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="500" font-size="30" fill="#4b3b66">Antiparasitarios, vacunas, pesajes. La app los sigue por ti.</text>
+
+  <!-- Phone mockup Android -->
+  <g transform="translate(240, 730)">
+    <rect x="0" y="0" width="600" height="1150" rx="60" fill="#1a102b"/>
+    <rect x="16" y="16" width="568" height="1118" rx="50" fill="#ffffff"/>
+    
+    <rect x="16" y="16" width="568" height="130" fill="#eab308"/>
+    <text x="300" y="92" text-anchor="middle" font-family="Fredoka, sans-serif"
+          font-weight="600" font-size="36" fill="#b45309">Agenda</text>
+
+    <!-- Month mini calendar -->
+    <rect x="40" y="180" width="520" height="280" rx="20" fill="#fef3c7"/>
+    <text x="60" y="220" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" letter-spacing="3" fill="#b45309">ABRIL 2026</text>
+    <text x="60" y="265" font-family="Fredoka, sans-serif" font-weight="600" font-size="32" fill="#1a102b">Próximos eventos</text>
+    <!-- Day dots row -->
+    <g transform="translate(60, 310)" font-family="'Plus Jakarta Sans', sans-serif" font-size="14" fill="#94889e" font-weight="500">
+      <circle cx="20" cy="40" r="18" fill="#ffffff"/>
+      <text x="20" y="45" text-anchor="middle" font-size="12" fill="#1a102b">18</text>
+      <circle cx="80" cy="40" r="18" fill="#ffffff"/>
+      <text x="80" y="45" text-anchor="middle" font-size="12" fill="#1a102b">19</text>
+      <circle cx="140" cy="40" r="22" fill="#eab308"/>
+      <text x="140" y="46" text-anchor="middle" font-size="14" fill="#ffffff" font-weight="700">20</text>
+      <circle cx="200" cy="40" r="18" fill="#ffffff"/>
+      <text x="200" y="45" text-anchor="middle" font-size="12" fill="#1a102b">21</text>
+      <circle cx="260" cy="40" r="22" fill="#9333ea"/>
+      <text x="260" y="46" text-anchor="middle" font-size="14" fill="#ffffff" font-weight="700">22</text>
+      <circle cx="320" cy="40" r="18" fill="#ffffff"/>
+      <text x="320" y="45" text-anchor="middle" font-size="12" fill="#1a102b">23</text>
+      <circle cx="380" cy="40" r="18" fill="#ffffff"/>
+      <text x="380" y="45" text-anchor="middle" font-size="12" fill="#1a102b">24</text>
+    </g>
+    <!-- Event preview -->
+    <rect x="80" y="400" width="440" height="40" rx="8" fill="#ffffff"/>
+    <circle cx="100" cy="420" r="6" fill="#eab308"/>
+    <text x="115" y="426" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" fill="#1a102b">20 abr · Antiparasitario mensual</text>
+
+    <!-- Today's events list -->
+    <text x="60" y="510" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" letter-spacing="3" fill="#9333ea">HOY · 3 RECORDATORIOS</text>
+
+    <g transform="translate(40, 540)">
+      <rect x="0" y="0" width="520" height="130" rx="16" fill="#ffffff" stroke="#e9d5ff"/>
+      <rect x="0" y="0" width="8" height="130" fill="#10b981"/>
+      <text x="30" y="35" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="14" fill="#047857">10:30</text>
+      <text x="30" y="70" font-family="Fredoka, sans-serif" font-weight="600" font-size="22" fill="#1a102b">Control veterinario · Kai</text>
+      <text x="30" y="100" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" fill="#4b3b66">Clínica Cafati · Las Condes</text>
+      <rect x="400" y="40" width="100" height="40" rx="20" fill="#10b981"/>
+      <text x="450" y="65" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="13" fill="#ffffff">Ver mapa</text>
+    </g>
+
+    <g transform="translate(40, 690)">
+      <rect x="0" y="0" width="520" height="130" rx="16" fill="#ffffff" stroke="#e9d5ff"/>
+      <rect x="0" y="0" width="8" height="130" fill="#9333ea"/>
+      <text x="30" y="35" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="14" fill="#9333ea">14:00</text>
+      <text x="30" y="70" font-family="Fredoka, sans-serif" font-weight="600" font-size="22" fill="#1a102b">Antiparasitario · Ema</text>
+      <text x="30" y="100" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" fill="#4b3b66">Dosis mensual · recordatorio</text>
+    </g>
+
+    <g transform="translate(40, 840)">
+      <rect x="0" y="0" width="520" height="130" rx="16" fill="#ffffff" stroke="#e9d5ff"/>
+      <rect x="0" y="0" width="8" height="130" fill="#ec4899"/>
+      <text x="30" y="35" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="14" fill="#be185d">18:00</text>
+      <text x="30" y="70" font-family="Fredoka, sans-serif" font-weight="600" font-size="22" fill="#1a102b">Pesaje mensual · Kai</text>
+      <text x="30" y="100" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" fill="#4b3b66">Seguimiento peso</text>
+    </g>
+
+    <!-- Material bottom nav -->
+    <rect x="16" y="1064" width="568" height="70" fill="#ffffff"/>
+    <line x1="16" y1="1064" x2="584" y2="1064" stroke="#e9d5ff" stroke-width="1"/>
+    <circle cx="120" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="260" cy="1100" r="12" fill="#94889e"/>
+    <circle cx="400" cy="1100" r="15" fill="#9333ea"/>
+    <circle cx="540" cy="1100" r="12" fill="#94889e"/>
+
+  </g>
+</svg>

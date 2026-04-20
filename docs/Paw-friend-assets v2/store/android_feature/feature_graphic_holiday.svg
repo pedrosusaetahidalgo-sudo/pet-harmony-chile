@@ -1,0 +1,77 @@
+<!-- feature_graphic_holiday.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 500" role="img" aria-label="Paw Friend Feature Graphic Holiday" width="1024" height="500">
+  <title>Paw Friend Feature Graphic Holiday</title>
+  <desc>Feature graphic fiestas con guirnalda, copihue nacional chileno y pata con lazo.</desc>
+  <defs><linearGradient id="fg-hol" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#dc2626" stop-opacity="1"/><stop offset="100%" stop-color="#9333ea" stop-opacity="1"/></linearGradient></defs>
+  <rect width="1024" height="500" fill="url(#fg-hol)"/>
+
+  <!-- LEFT: Isotipo + wordmark (ocupa ~35%) -->
+  <g transform="translate(60, 150)">
+    <rect x="0" y="0" width="160" height="160" rx="35" fill="#ffffff"/>
+    <g transform="translate(80, 85) scale(0.2)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#9333ea"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#9333ea"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#9333ea"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#9333ea"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#9333ea"/></g>
+  </g>
+  <text x="240" y="220" font-family="Fredoka, sans-serif" font-weight="600" font-size="52" fill="#ffffff" letter-spacing="-1.5">Paw</text>
+  <text x="240" y="275" font-family="Fredoka, sans-serif" font-weight="500" font-size="52" fill="#ffffff" fill-opacity="0.85" letter-spacing="-1.5">Friend</text>
+  <text x="240" y="315" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" fill="#ffffff" fill-opacity="0.7" letter-spacing="3">HECHA EN CHILE</text>
+
+  <!-- RIGHT: Claim + subclaim -->
+  <text x="480" y="200" font-family="Fredoka, sans-serif" font-weight="600" font-size="40" fill="#ffffff">Fiestas con tu familia completa</text>
+  <text x="480" y="250" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="18" fill="#ffffff" fill-opacity="0.85">Tu peludo también es familia</text>
+
+  <!-- Decor thematic -->
+  
+  <!-- Guirnalda minimal curva -->
+  <path d="M 480 120 Q 600 100 700 125 Q 800 145 900 115" stroke="#eab308" stroke-width="2" fill="none" opacity="0.7"/>
+  <!-- Luces de guirnalda -->
+  <g>
+    <circle cx="530" cy="118" r="5" fill="#eab308"/>
+    <circle cx="580" cy="110" r="5" fill="#dc2626"/>
+    <circle cx="630" cy="110" r="5" fill="#ffffff"/>
+    <circle cx="680" cy="122" r="5" fill="#eab308"/>
+    <circle cx="730" cy="128" r="5" fill="#dc2626"/>
+    <circle cx="780" cy="132" r="5" fill="#ffffff"/>
+    <circle cx="830" cy="128" r="5" fill="#eab308"/>
+    <circle cx="880" cy="118" r="5" fill="#dc2626"/>
+  </g>
+  <!-- Estrellita gold -->
+  <g transform="translate(920, 90)">
+    <polygon points="0,-14 4,-4 14,-4 6,3 9,14 0,7 -9,14 -6,3 -14,-4 -4,-4"
+             fill="#eab308" stroke="#ffffff" stroke-width="1"/>
+  </g>
+  <!-- Pata decorativa con lazo -->
+  <g transform="translate(860, 370)">
+    <g transform="scale(0.09)">
+      <ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/>
+    </g>
+    <!-- Lazo rojo arriba -->
+    <path d="M 22 -5 L 10 -20 Q 5 -15 10 -5 L 22 -5 L 34 -5 Q 39 -15 34 -20 L 22 -5 Z" fill="#dc2626"/>
+    <circle cx="22" cy="-5" r="4" fill="#fca5a5"/>
+  </g>
+  <!-- Copihue estilizado (flor nacional Chile) -->
+  <g transform="translate(700, 395)">
+    <!-- 3 pétalos rojos -->
+    <ellipse cx="0" cy="0" rx="16" ry="26" fill="#dc2626" transform="rotate(-30)"/>
+    <ellipse cx="0" cy="0" rx="16" ry="26" fill="#dc2626" transform="rotate(30)"/>
+    <ellipse cx="0" cy="-3" rx="14" ry="24" fill="#dc2626"/>
+    <!-- Centro gold -->
+    <circle cx="0" cy="0" r="7" fill="#eab308"/>
+    <circle cx="0" cy="0" r="3" fill="#b45309"/>
+  </g>
+  <!-- Pequeñas estrellitas -->
+  <g fill="#ffffff" opacity="0.4">
+    <polygon points="550,280 553,288 561,288 555,294 558,303 550,297 542,303 545,294 539,288 547,288"/>
+    <polygon points="970,280 972,285 978,285 974,289 976,295 970,291 964,295 966,289 962,285 968,285"/>
+  </g>
+
+
+  <!-- URL bottom -->
+  <text x="480" y="440" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="16" fill="#ffffff" fill-opacity="0.8" letter-spacing="3">pawfriend.cl</text>
+</svg>

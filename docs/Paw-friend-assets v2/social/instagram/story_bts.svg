@@ -1,0 +1,43 @@
+<!-- story_bts.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="Paw Friend IG Story BTS" width="1080" height="1920">
+  <title>Paw Friend IG Story BTS</title>
+  <desc>Template IG Story portrait para Behind the Scenes. Polaroid con imagen placeholder y caption emocional.</desc>
+  <defs><linearGradient id="stbg" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#2a1046" stop-opacity="1"/><stop offset="50%" stop-color="#581c87" stop-opacity="1"/><stop offset="100%" stop-color="#9333ea" stop-opacity="1"/></linearGradient></defs>
+  <rect width="1080" height="1920" fill="url(#stbg)"/>
+  <!-- Sparkles decorativas -->
+  <g fill="#ffffff" opacity="0.1">
+    <circle cx="150" cy="300" r="3"/><circle cx="920" cy="350" r="4"/>
+    <circle cx="200" cy="900" r="3"/><circle cx="900" cy="1100" r="3"/>
+    <circle cx="100" cy="1500" r="2"/><circle cx="950" cy="1600" r="3"/>
+  </g>
+  <!-- Eyebrow pill (dentro safe zone y=220+) -->
+  <rect x="420" y="290" width="240" height="50" rx="25"
+        fill="#ffffff" fill-opacity="0.15" stroke="#ffffff" stroke-opacity="0.3" stroke-width="2"/>
+  <text x="540" y="322" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="18" letter-spacing="5" fill="#fde68a">BEHIND THE SCENES</text>
+  <!-- Polaroid frame -->
+  <rect x="90" y="400" width="900" height="1000" rx="20" fill="#ffffff"/>
+  <!-- Placeholder image area -->
+  <rect x="120" y="430" width="840" height="840" rx="12" fill="#f3e8ff"
+        stroke="#9333ea" stroke-width="2" stroke-dasharray="10,8" opacity="0.7"/>
+  <text x="540" y="870" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="500" font-size="42" fill="#9333ea" opacity="0.6">FOTO AQUÍ</text>
+  <!-- Caption polaroid -->
+  <text x="540" y="1360" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="500" font-style="italic" font-size="32" fill="#1a102b">Un día en la vida de Paw Founder</text>
+  <!-- Caption sticker -->
+  <rect x="140" y="1430" width="800" height="140" rx="30" fill="#ffffff"/>
+  <text x="540" y="1490" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="600" font-size="44" fill="#1a102b">Así construimos Paw Friend</text>
+  <text x="540" y="1535" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-weight="500" font-style="italic" font-size="28" fill="#9333ea">—con amor, desde Chile</text>
+  <!-- Swipe up hint -->
+  <text x="540" y="1620" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="700" font-size="26" letter-spacing="3" fill="#ffffff" fill-opacity="0.85">pawfriend.cl</text>
+  <path d="M 525 1645 L 540 1660 L 555 1645" stroke="#ffffff" stroke-width="3"
+        fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+  <!-- Brand watermark bottom-right -->
+  <text x="980" y="1880" text-anchor="end" font-family="'Plus Jakarta Sans', sans-serif"
+        font-weight="800" font-size="16" letter-spacing="4"
+        fill="#ffffff" fill-opacity="0.65">@PAWFRIEND.CL</text>
+</svg>

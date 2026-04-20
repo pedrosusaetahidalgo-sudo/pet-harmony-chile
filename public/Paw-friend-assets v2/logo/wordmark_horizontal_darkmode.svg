@@ -1,0 +1,14 @@
+<!-- wordmark_horizontal_darkmode.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" role="img" aria-label="Paw Friend Wordmark Horizontal Dark Mode" width="800" height="200">
+  <title>Paw Friend Wordmark Horizontal Dark Mode</title>
+  <desc>Wordmark para fondos oscuros: squircle blanco con pata purple + paw en blanco y friend en purple-300.</desc>
+  <defs><mask id="pf-heart-7"><rect width="120" height="120" fill="white"/><path d="M 60 88 C 56 84, 49 80, 45 76 C 41 72, 43 65, 50 64 C 55 63, 58 65, 60 68 C 62 65, 65 63, 70 64 C 77 65, 79 72, 75 76 C 71 80, 64 84, 60 88 Z" fill="black"/></mask></defs>
+  <g transform="translate(40, 40)">
+    <path d="M 60 8 C 92 8, 112 28, 112 60 C 112 92, 92 112, 60 112 C 28 112, 8 92, 8 60 C 8 28, 28 8, 60 8 Z" fill="#ffffff"/>
+    <ellipse cx="60" cy="78" rx="28" ry="24" fill="#9333ea" mask="url(#pf-heart-7)"/><ellipse cx="35" cy="49" rx="10" ry="12" transform="rotate(-22 35 49)" fill="#9333ea"/><ellipse cx="51" cy="33" rx="9" ry="11" transform="rotate(-10 51 33)" fill="#9333ea"/><ellipse cx="69" cy="33" rx="9" ry="11" transform="rotate(10 69 33)" fill="#9333ea"/><ellipse cx="85" cy="49" rx="10" ry="12" transform="rotate(22 85 49)" fill="#9333ea"/>
+  </g>
+  <text x="185" y="130" font-family="Fredoka, sans-serif"
+        font-size="72" font-weight="600" fill="#ffffff" letter-spacing="-1.5">paw</text>
+  <text x="338" y="130" font-family="Fredoka, sans-serif"
+        font-size="72" font-weight="500" fill="#d8b4fe" letter-spacing="-1.5">friend</text>
+</svg>

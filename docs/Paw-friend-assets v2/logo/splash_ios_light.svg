@@ -1,0 +1,17 @@
+<!-- splash_ios_light.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2732 2732" role="img" aria-label="Paw Friend iOS Splash Light" width="2732" height="2732">
+  <title>Paw Friend iOS Splash Light</title>
+  <desc>Splash screen iOS light: fondo gradient gold→purple→white, isotipo central oficial y wordmark Fredoka.</desc>
+  <defs><radialGradient id="bg-splash-light" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="#fef3c7" stop-opacity="1"/><stop offset="50%" stop-color="#f3e8ff" stop-opacity="1"/><stop offset="100%" stop-color="#ffffff" stop-opacity="1"/></radialGradient><mask id="pf-heart-4l"><rect width="680" height="680" fill="white"/><path d="M 340 480 C 332 470, 318 460, 310 450 C 302 440, 305 425, 318 422 C 327 420, 335 425, 340 432 C 345 425, 353 420, 362 422 C 375 425, 378 440, 370 450 C 362 460, 348 470, 340 480 Z" fill="black"/></mask></defs>
+  <rect width="2732" height="2732" fill="url(#bg-splash-light)"/>
+  <g transform="translate(1026, 1026)">
+    <path d="M 340 40 C 540 40, 640 140, 640 340 C 640 540, 540 640, 340 640 C 140 640, 40 540, 40 340 C 40 140, 140 40, 340 40 Z" fill="#9333ea"/>
+    <ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff" mask="url(#pf-heart-4l)"/><ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/><ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/><ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/><ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/>
+  </g>
+  <text x="1366" y="1880" text-anchor="middle"
+        font-family="Fredoka, 'Plus Jakarta Sans', system-ui, sans-serif"
+        font-size="120" font-weight="600" fill="#1a102b">paw friend</text>
+  <text x="1366" y="1970" text-anchor="middle"
+        font-family="'Plus Jakarta Sans', system-ui, sans-serif"
+        font-size="44" font-weight="500" fill="#4b3b66">La ficha médica de tu mascota</text>
+</svg>

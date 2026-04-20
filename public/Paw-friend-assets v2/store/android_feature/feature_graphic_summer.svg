@@ -1,0 +1,65 @@
+<!-- feature_graphic_summer.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 500" role="img" aria-label="Paw Friend Feature Graphic Summer" width="1024" height="500">
+  <title>Paw Friend Feature Graphic Summer</title>
+  <desc>Feature graphic veraniego (Dic-Feb Chile) con sol, gotas de agua y hojas tropicales.</desc>
+  <defs><linearGradient id="fg-sum" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#9333ea" stop-opacity="1"/><stop offset="100%" stop-color="#10b981" stop-opacity="1"/></linearGradient></defs>
+  <rect width="1024" height="500" fill="url(#fg-sum)"/>
+
+  <!-- LEFT: Isotipo + wordmark (ocupa ~35%) -->
+  <g transform="translate(60, 150)">
+    <rect x="0" y="0" width="160" height="160" rx="35" fill="#ffffff"/>
+    <g transform="translate(80, 85) scale(0.2)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#9333ea"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#9333ea"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#9333ea"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#9333ea"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#9333ea"/></g>
+  </g>
+  <text x="240" y="220" font-family="Fredoka, sans-serif" font-weight="600" font-size="52" fill="#ffffff" letter-spacing="-1.5">Paw</text>
+  <text x="240" y="275" font-family="Fredoka, sans-serif" font-weight="500" font-size="52" fill="#ffffff" fill-opacity="0.85" letter-spacing="-1.5">Friend</text>
+  <text x="240" y="315" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" fill="#ffffff" fill-opacity="0.7" letter-spacing="3">HECHA EN CHILE</text>
+
+  <!-- RIGHT: Claim + subclaim -->
+  <text x="480" y="200" font-family="Fredoka, sans-serif" font-weight="600" font-size="40" fill="#ffffff">Verano contigo y tu peludo</text>
+  <text x="480" y="250" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="18" fill="#ffffff" fill-opacity="0.85">Cuida a Kai con una ficha que va donde sea</text>
+
+  <!-- Decor thematic -->
+  
+  <!-- Sol estilizado gold -->
+  <g transform="translate(900, 160)">
+    <circle cx="0" cy="0" r="42" fill="#fbbf24"/>
+    <!-- Rays -->
+    <g stroke="#fbbf24" stroke-width="4" stroke-linecap="round">
+      <line x1="0" y1="-52" x2="0" y2="-62"/>
+      <line x1="37" y1="-37" x2="44" y2="-44"/>
+      <line x1="52" y1="0" x2="62" y2="0"/>
+      <line x1="37" y1="37" x2="44" y2="44"/>
+      <line x1="0" y1="52" x2="0" y2="62"/>
+      <line x1="-37" y1="37" x2="-44" y2="44"/>
+      <line x1="-52" y1="0" x2="-62" y2="0"/>
+      <line x1="-37" y1="-37" x2="-44" y2="-44"/>
+    </g>
+  </g>
+  <!-- Gotas de agua azul -->
+  <g fill="#22d3ee" opacity="0.85">
+    <path d="M 760 300 C 753 300, 752 310, 760 318 C 768 310, 767 300, 760 300 Z"/>
+    <path d="M 820 360 C 813 360, 812 370, 820 378 C 828 370, 827 360, 820 360 Z"/>
+    <path d="M 700 410 C 693 410, 692 420, 700 428 C 708 420, 707 410, 700 410 Z"/>
+  </g>
+  <!-- Pata corriendo -->
+  <g transform="translate(640, 340) scale(0.06) rotate(-15)">
+    <ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/>
+  </g>
+  <!-- Hojas tropicales minimal -->
+  <g fill="#34d399" opacity="0.75">
+    <path d="M 940 380 Q 960 360 970 400 Q 960 430 940 380 Z"/>
+    <path d="M 870 430 Q 885 410 895 440 Q 888 465 870 430 Z"/>
+  </g>
+
+
+  <!-- URL bottom -->
+  <text x="480" y="440" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="16" fill="#ffffff" fill-opacity="0.8" letter-spacing="3">pawfriend.cl</text>
+</svg>

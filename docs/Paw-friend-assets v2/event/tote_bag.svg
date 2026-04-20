@@ -1,0 +1,53 @@
+<!-- tote_bag.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1200" role="img" aria-label="Paw Friend Tote Bag Design" width="1000" height="1200">
+  <title>Paw Friend Tote Bag Design</title>
+  <desc>Tote bag 38×42cm en algodón crudo con isotipo + wordmark en serigrafía brand purple.</desc>
+  <rect width="1000" height="1200" fill="#fef3c7"/>
+
+  <!-- Tote bag silhouette -->
+  <path d="M 150 250 L 850 250 L 820 1100 Q 820 1130 790 1130 L 210 1130 Q 180 1130 180 1100 Z" fill="#faf7ff"/>
+  <!-- Handles -->
+  <path d="M 280 250 Q 280 110 380 110 L 380 250" fill="none" stroke="#faf7ff" stroke-width="30" stroke-linecap="round"/>
+  <path d="M 620 250 Q 620 110 720 110 L 720 250" fill="none" stroke="#faf7ff" stroke-width="30" stroke-linecap="round"/>
+
+  <!-- Hero design printed on the bag -->
+  <g transform="translate(350, 400)">
+    <rect x="0" y="0" width="300" height="300" rx="65" fill="#9333ea"/>
+    <g transform="translate(150, 158) scale(0.38)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/></g>
+  </g>
+  <text x="500" y="790" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="66" letter-spacing="-1.5">
+    <tspan font-weight="600" fill="#6b21a8">paw</tspan><tspan font-weight="500" fill="#9333ea"> friend</tspan>
+  </text>
+  <text x="500" y="840" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="400" font-size="20" fill="#6b21a8" letter-spacing="4">HECHA EN CHILE</text>
+
+  <!-- Bottom small paw decoration -->
+  <g transform="translate(470, 950) scale(0.08)" opacity="0.4">
+    <ellipse cx="340" cy="430" rx="155" ry="135" fill="#9333ea"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#9333ea"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#9333ea"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#9333ea"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#9333ea"/>
+  </g>
+
+  <!-- Wall / background info plate -->
+  <rect x="40" y="40" width="320" height="170" rx="16" fill="#ffffff" stroke="#e9d5ff"/>
+  <text x="60" y="75" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="3" fill="#9333ea">TOTE BAG DESIGN</text>
+  <text x="60" y="110" font-family="Fredoka, sans-serif" font-weight="600" font-size="22" fill="#1a102b">Paw Friend</text>
+  <text x="60" y="140" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#4b3b66">Tamaño: 38×42cm</text>
+  <text x="60" y="160" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#4b3b66">Material: algodón crudo 100%</text>
+  <text x="60" y="180" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#4b3b66">Impresión: serigrafía 2 colores</text>
+
+  <!-- Legend -->
+  <rect x="640" y="40" width="320" height="170" rx="16" fill="#ffffff" stroke="#e9d5ff"/>
+  <text x="660" y="75" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="11" letter-spacing="3" fill="#9333ea">COLORES PANTONE</text>
+  <rect x="660" y="95" width="30" height="30" rx="4" fill="#9333ea"/>
+  <text x="700" y="115" font-family="monospace" font-size="12" fill="#1a102b">PANTONE 267C</text>
+  <rect x="660" y="135" width="30" height="30" rx="4" fill="#6b21a8"/>
+  <text x="700" y="155" font-family="monospace" font-size="12" fill="#1a102b">PANTONE 2613C</text>
+  <rect x="660" y="175" width="30" height="30" rx="4" fill="#fef3c7"/>
+  <text x="700" y="195" font-family="monospace" font-size="12" fill="#1a102b">Fondo: crudo natural</text>
+</svg>

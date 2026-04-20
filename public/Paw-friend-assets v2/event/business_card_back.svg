@@ -1,0 +1,58 @@
+<!-- business_card_back.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 330" role="img" aria-label="Paw Friend Business Card Back" width="540" height="330">
+  <title>Paw Friend Business Card Back</title>
+  <desc>Cara trasera 90×55mm tarjeta con info contacto, RUT y QR placeholder.</desc>
+  <rect width="540" height="330" fill="#ffffff"/>
+  <rect width="540" height="330" fill="none" stroke="#f3e8ff" stroke-width="2"/>
+
+  <!-- Left column -->
+  <g transform="translate(30, 40)">
+    <rect x="0" y="0" width="40" height="40" rx="9" fill="#9333ea"/>
+    <g transform="translate(20, 22) scale(0.05)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/></g>
+  </g>
+  <text x="30" y="115" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" letter-spacing="3" fill="#9333ea">PAW FOUNDER</text>
+  <text x="30" y="135" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#4b3b66">Fundador</text>
+
+  <!-- Right column info stack -->
+  <g transform="translate(190, 60)">
+    <circle cx="0" cy="0" r="6" fill="#ec4899"/>
+    <text x="15" y="4" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#1a102b">pawfriendcl@gmail.com</text>
+    <circle cx="0" cy="40" r="6" fill="#9333ea"/>
+    <text x="15" y="44" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#1a102b">pawfriend.cl</text>
+    <circle cx="0" cy="80" r="6" fill="#10b981"/>
+    <text x="15" y="84" font-family="monospace" font-size="12" fill="#1a102b">RUT 78.328.659-9</text>
+    <circle cx="0" cy="120" r="6" fill="#eab308"/>
+    <text x="15" y="124" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="10" fill="#1a102b">Luis Pasteur 6111 Dp 201, Vitacura</text>
+  </g>
+
+  <!-- QR placeholder -->
+  <rect x="380" y="60" width="120" height="120" fill="#1a102b"/>
+  <g fill="#ffffff">
+    <rect x="388" y="68" width="20" height="20"/>
+    <rect x="472" y="68" width="20" height="20"/>
+    <rect x="388" y="152" width="20" height="20"/>
+    <rect x="400" y="100" width="10" height="10"/>
+    <rect x="420" y="90" width="10" height="10"/>
+    <rect x="440" y="110" width="10" height="10"/>
+    <rect x="460" y="130" width="10" height="10"/>
+    <rect x="440" y="150" width="10" height="10"/>
+    <rect x="420" y="140" width="10" height="10"/>
+    <rect x="400" y="120" width="10" height="10"/>
+    <rect x="460" y="90" width="10" height="10"/>
+  </g>
+  <circle cx="440" cy="120" r="14" fill="#9333ea"/>
+  <g transform="translate(440, 122) scale(0.03)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/></g>
+  <text x="440" y="200" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-style="italic" font-size="10" fill="#4b3b66">Escanea →</text>
+
+  <!-- Footer -->
+  <line x1="30" y1="290" x2="510" y2="290" stroke="#f3e8ff" stroke-width="1"/>
+  <text x="270" y="315" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-style="italic" font-size="9" fill="#94889e">SpA SUSAETA GARNHAM SOFTWARE ENGINEERING</text>
+</svg>

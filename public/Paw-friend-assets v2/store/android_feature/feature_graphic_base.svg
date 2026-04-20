@@ -1,0 +1,63 @@
+<!-- feature_graphic_base.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 500" role="img" aria-label="Paw Friend Feature Graphic Base" width="1024" height="500">
+  <title>Paw Friend Feature Graphic Base</title>
+  <desc>Feature graphic base year-round para Play Store 1024×500 con claim de propuesta de valor principal.</desc>
+  <defs><linearGradient id="fg-base" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#9333ea" stop-opacity="1"/><stop offset="100%" stop-color="#581c87" stop-opacity="1"/></linearGradient></defs>
+  <rect width="1024" height="500" fill="url(#fg-base)"/>
+
+  <!-- LEFT: Isotipo + wordmark (ocupa ~35%) -->
+  <g transform="translate(60, 150)">
+    <rect x="0" y="0" width="160" height="160" rx="35" fill="#ffffff"/>
+    <g transform="translate(80, 85) scale(0.2)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#9333ea"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#9333ea"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#9333ea"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#9333ea"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#9333ea"/></g>
+  </g>
+  <text x="240" y="220" font-family="Fredoka, sans-serif" font-weight="600" font-size="52" fill="#ffffff" letter-spacing="-1.5">Paw</text>
+  <text x="240" y="275" font-family="Fredoka, sans-serif" font-weight="500" font-size="52" fill="#ffffff" fill-opacity="0.85" letter-spacing="-1.5">Friend</text>
+  <text x="240" y="315" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" fill="#ffffff" fill-opacity="0.7" letter-spacing="3">HECHA EN CHILE</text>
+
+  <!-- RIGHT: Claim + subclaim -->
+  <text x="480" y="200" font-family="Fredoka, sans-serif" font-weight="600" font-size="40" fill="#ffffff">Tu peludo merece lo mejor</text>
+  <text x="480" y="250" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="18" fill="#ffffff" fill-opacity="0.85">Ficha médica + vets + comunidad · gratis</text>
+
+  <!-- Decor thematic -->
+  
+  <!-- 3 patas flotando tonal -->
+  <g transform="translate(900, 80) scale(0.1)" opacity="0.85">
+    <ellipse cx="340" cy="430" rx="155" ry="135" fill="#eab308"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#eab308"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#eab308"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#eab308"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#eab308"/>
+  </g>
+  <g transform="translate(830, 360) scale(0.08)" opacity="0.6">
+    <ellipse cx="340" cy="430" rx="155" ry="135" fill="#d8b4fe"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#d8b4fe"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#d8b4fe"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#d8b4fe"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#d8b4fe"/>
+  </g>
+  <g transform="translate(720, 310) scale(0.05)" opacity="0.45">
+    <ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/>
+  </g>
+  <!-- Corazón gold flotando -->
+  <g transform="translate(880, 270)">
+    <path d="M 0 18 C -16 4, -22 -10, -10 -14 C -3 -16, 2 -12, 0 -8 C -2 -12, 3 -16, 10 -14 C 22 -10, 16 4, 0 18 Z" fill="#eab308"/>
+  </g>
+  <!-- Sparkles -->
+  <g fill="#ffffff" opacity="0.3">
+    <circle cx="550" cy="120" r="3"/>
+    <circle cx="770" cy="150" r="4"/>
+    <circle cx="960" cy="220" r="3"/>
+  </g>
+
+
+  <!-- URL bottom -->
+  <text x="480" y="440" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="16" fill="#ffffff" fill-opacity="0.8" letter-spacing="3">pawfriend.cl</text>
+</svg>

@@ -1,0 +1,74 @@
+<!-- laptop_sticker_pack.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" role="img" aria-label="Paw Friend Laptop Sticker Pack" width="800" height="800">
+  <title>Paw Friend Laptop Sticker Pack</title>
+  <desc>Sticker pack 6 stickers 6×6cm die-cut para laptop/notebook con variantes brand.</desc>
+  <defs><linearGradient id="ssk-grid" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#faf5ff" stop-opacity="1"/><stop offset="100%" stop-color="#fdf2f8" stop-opacity="1"/></linearGradient></defs>
+  <rect width="800" height="800" fill="url(#ssk-grid)"/>
+
+  <!-- Grid 3x2 stickers -->
+  <!-- Sticker 1: Squircle isotype -->
+  <g transform="translate(80, 90)">
+    <rect x="0" y="0" width="180" height="180" rx="40" fill="#9333ea"/>
+    <g transform="translate(90, 95) scale(0.22)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/></g>
+    <circle cx="90" cy="90" r="93" fill="none" stroke="#ffffff" stroke-width="6" stroke-dasharray="0"/>
+  </g>
+  <!-- Sticker 2: Wordmark horizontal -->
+  <g transform="translate(290, 90)">
+    <rect x="0" y="0" width="240" height="180" rx="20" fill="#ffffff"/>
+    <circle cx="120" cy="90" r="93" fill="none" stroke="#ffffff" stroke-width="6"/>
+    <text x="120" y="100" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="32" letter-spacing="-1">
+      <tspan font-weight="600" fill="#6b21a8">paw</tspan><tspan font-weight="500" fill="#9333ea"> friend</tspan>
+    </text>
+    <text x="120" y="130" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="400" font-size="11" fill="#6b21a8" letter-spacing="1.5">hecha en Chile</text>
+  </g>
+  <!-- Sticker 3: Paw heart -->
+  <g transform="translate(560, 90)">
+    <rect x="0" y="0" width="180" height="180" rx="40" fill="#ec4899"/>
+    <path d="M 90 135 C 58 105, 45 80, 65 70 C 75 65, 85 72, 90 80 C 95 72, 105 65, 115 70 C 135 80, 122 105, 90 135 Z" fill="#ffffff"/>
+    <g transform="translate(90, 90) scale(0.05)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#ec4899"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ec4899"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ec4899"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ec4899"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ec4899"/></g>
+  </g>
+  <!-- Sticker 4: PF monogram -->
+  <g transform="translate(80, 310)">
+    <rect x="0" y="0" width="180" height="180" rx="40" fill="#1a102b"/>
+    <text x="90" y="120" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="700" font-size="100" fill="#fbbf24" letter-spacing="-4">PF</text>
+  </g>
+  <!-- Sticker 5: Community circle -->
+  <g transform="translate(290, 310)">
+    <rect x="0" y="0" width="240" height="180" rx="20" fill="#10b981"/>
+    <circle cx="85" cy="85" r="24" fill="#ffffff"/>
+    <circle cx="135" cy="85" r="24" fill="#ffffff"/>
+    <circle cx="110" cy="125" r="26" fill="#ffffff"/>
+    <g transform="translate(110, 125) scale(0.045)"><ellipse cx="340" cy="430" rx="155" ry="135" fill="#10b981"/>
+<ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#10b981"/>
+<ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#10b981"/>
+<ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#10b981"/>
+<ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#10b981"/></g>
+    <text x="190" y="95" font-family="Fredoka, sans-serif" font-weight="600" font-size="20" fill="#ffffff">comunidad</text>
+    <text x="190" y="120" font-family="Fredoka, sans-serif" font-weight="500" font-size="16" fill="#ffffff" fill-opacity="0.85">peluda</text>
+  </g>
+  <!-- Sticker 6: "Made with IA" -->
+  <g transform="translate(560, 310)">
+    <rect x="0" y="0" width="180" height="180" rx="40" fill="#eab308"/>
+    <text x="90" y="80" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="28" fill="#1a102b">hecho</text>
+    <text x="90" y="115" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="28" fill="#1a102b">con IA</text>
+    <path d="M 90 135 L 95 145 L 105 150 L 95 155 L 90 165 L 85 155 L 75 150 L 85 145 Z" fill="#1a102b"/>
+  </g>
+
+  <!-- Footer label -->
+  <text x="400" y="560" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" letter-spacing="5" fill="#9333ea">PAW FRIEND STICKER PACK</text>
+  <text x="400" y="585" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="12" fill="#4b3b66">6 stickers · Die-cut recomendado · Vinilo mate</text>
+
+  <!-- Size ref -->
+  <line x1="80" y1="620" x2="260" y2="620" stroke="#94889e" stroke-width="1"/>
+  <line x1="80" y1="615" x2="80" y2="625" stroke="#94889e" stroke-width="1"/>
+  <line x1="260" y1="615" x2="260" y2="625" stroke="#94889e" stroke-width="1"/>
+  <text x="170" y="640" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-size="11" fill="#94889e">60 mm</text>
+</svg>

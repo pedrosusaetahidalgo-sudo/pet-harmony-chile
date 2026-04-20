@@ -1,0 +1,28 @@
+<!-- no_medical_records.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Sin registros médicos aún" width="400" height="300">
+  <title>Sin registros médicos aún</title>
+  <desc>Empty state para historia clínica vacía en Paw Friend.</desc>
+  <defs><linearGradient id="emp3" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#faf5ff" stop-opacity="1"/><stop offset="100%" stop-color="#f3e8ff" stop-opacity="1"/></linearGradient></defs>
+  <rect width="400" height="300" fill="url(#emp3)"/>
+  <!-- Carpeta folder abierta -->
+  <path d="M 115 115 L 165 115 L 180 100 L 290 100 Q 300 100 300 110 L 300 220 Q 300 230 290 230 L 115 230 Q 105 230 105 220 L 105 125 Q 105 115 115 115 Z"
+        fill="#9333ea"/>
+  <!-- Papel saliendo -->
+  <rect x="130" y="130" width="155" height="90" rx="4" fill="#ffffff"/>
+  <line x1="145" y1="155" x2="250" y2="155" stroke="#94889e" stroke-width="1.5" opacity="0.4"/>
+  <line x1="145" y1="170" x2="220" y2="170" stroke="#94889e" stroke-width="1.5" opacity="0.3"/>
+  <!-- Lápiz diagonal -->
+  <g transform="translate(305, 165) rotate(-40)">
+    <rect x="0" y="0" width="48" height="9" rx="2" fill="#eab308"/>
+    <polygon points="-7,0 0,4.5 0,9 -7,9" fill="#1a102b"/>
+    <rect x="40" y="0" width="8" height="9" fill="#ec4899"/>
+  </g>
+  <!-- Pata + corazón combinados -->
+  <g transform="translate(55, 240) scale(0.5)">
+    <ellipse cx="0" cy="8.0" rx="18.0" ry="15.0" fill="#9333ea"/><ellipse cx="-16.0" cy="-10.0" rx="6.0" ry="8.0" transform="rotate(-22 -16.0 -10.0)" fill="#9333ea"/><ellipse cx="-6.0" cy="-19.0" rx="5.5" ry="7.0" transform="rotate(-10 -6.0 -19.0)" fill="#9333ea"/><ellipse cx="6.0" cy="-19.0" rx="5.5" ry="7.0" transform="rotate(10 6.0 -19.0)" fill="#9333ea"/><ellipse cx="16.0" cy="-10.0" rx="6.0" ry="8.0" transform="rotate(22 16.0 -10.0)" fill="#9333ea"/>
+  </g>
+  <path d="M 52 235.5 C 45.5 231.25, 44.5 226.25, 49.5 228.0 C 51.0 229.5, 52 230.5, 52 231.5 C 52 230.5, 53.0 229.5, 54.5 228.0 C 59.5 226.25, 58.5 231.25, 52 235.5 Z" fill="#eab308"/>
+  <!-- Sparkles -->
+  <path d="M 340 57 L 342.4 62.6 L 348 65 L 342.4 67.4 L 340 73 L 337.6 67.4 L 332 65 L 337.6 62.6 Z" fill="#eab308"/>
+  <path d="M 280 252 L 281.8 256.2 L 286 258 L 281.8 259.8 L 280 264 L 278.2 259.8 L 274 258 L 278.2 256.2 Z" fill="#eab308"/>
+</svg>

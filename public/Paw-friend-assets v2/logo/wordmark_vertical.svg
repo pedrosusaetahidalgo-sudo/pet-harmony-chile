@@ -1,0 +1,16 @@
+<!-- wordmark_vertical.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-label="Paw Friend Wordmark Vertical" width="400" height="500">
+  <title>Paw Friend Wordmark Vertical</title>
+  <desc>Wordmark vertical stacked para perfiles de redes y merchandising: isotipo oficial arriba + paw friend Fredoka 600/500 + tagline hecha en Chile en purple-800.</desc>
+  <defs><mask id="pf-heart-9"><rect width="680" height="680" fill="white"/><path d="M 340 480 C 332 470, 318 460, 310 450 C 302 440, 305 425, 318 422 C 327 420, 335 425, 340 432 C 345 425, 353 420, 362 422 C 375 425, 378 440, 370 450 C 362 460, 348 470, 340 480 Z" fill="black"/></mask></defs>
+  <g transform="translate(80, 40) scale(0.353)">
+    <path d="M 340 40 C 540 40, 640 140, 640 340 C 640 540, 540 640, 340 640 C 140 640, 40 540, 40 340 C 40 140, 140 40, 340 40 Z" fill="#9333ea"/>
+    <ellipse cx="340" cy="430" rx="155" ry="135" fill="#ffffff" mask="url(#pf-heart-9)"/><ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#ffffff"/><ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#ffffff"/><ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#ffffff"/><ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#ffffff"/>
+  </g>
+  <text x="200" y="400" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-size="64" letter-spacing="-1.5">
+    <tspan font-weight="600" fill="#6b21a8">paw</tspan><tspan font-weight="500" fill="#9333ea"> friend</tspan>
+  </text>
+  <text x="200" y="445" text-anchor="middle" font-family="Fredoka, sans-serif"
+        font-size="18" font-weight="400" fill="#6b21a8" letter-spacing="2">hecha en Chile</text>
+</svg>
