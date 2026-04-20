@@ -154,7 +154,7 @@ export default function PostAdoptionCheckin() {
             <h1 className="text-xl font-display font-semibold">Check-in no disponible</h1>
             <p className="text-sm text-muted-foreground">
               Este enlace no existe, ya caduco, o no tienes acceso. Si crees que es un error,
-              escribenos a <strong>pawfriendcl@gmail.com</strong>.
+              escribenos a <strong>pedrosusaeta@pawfriend.cl</strong>.
             </p>
             <Button onClick={() => navigate('/home')}>Ir al inicio</Button>
           </CardContent>
@@ -197,7 +197,7 @@ export default function PostAdoptionCheckin() {
             <p className="text-sm text-muted-foreground">
               Tu respuesta nos ayuda a cerrar el ciclo de la adopcion y aporta data de calidad al
               refugio. Si hay algo en que podamos ayudarte, escribinos a{' '}
-              <strong>pawfriendcl@gmail.com</strong>.
+              <strong>pedrosusaeta@pawfriend.cl</strong>.
             </p>
             {pet && (
               <div className="flex items-center justify-center gap-3 pt-2 text-sm text-muted-foreground">

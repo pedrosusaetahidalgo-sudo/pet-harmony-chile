@@ -25,6 +25,21 @@ const COMUNAS = [
   'estacion-central',
 ];
 
+// Blog posts estáticos — sincronizar manualmente con src/content/blog/index.ts
+// cuando se agregue un post nuevo (1/semana).
+const BLOG_POSTS: { slug: string; publishedAt: string }[] = [
+  { slug: 'desparasitacion-perro-gato-cada-cuanto-chile', publishedAt: '2026-04-21' },
+  { slug: 'donde-pasear-perro-santiago-parques', publishedAt: '2026-04-21' },
+  { slug: 'cuanto-cuesta-tener-perro-primer-ano-chile', publishedAt: '2026-04-21' },
+  { slug: 'protocolo-mascota-perdida-maipu', publishedAt: '2026-04-21' },
+  { slug: 'seguro-mascotas-chile-vale-la-pena', publishedAt: '2026-04-21' },
+  { slug: 'peluquero-perros-vitacura-como-elegir', publishedAt: '2026-04-21' },
+  { slug: 'adoptar-perro-nunoa-refugios-responsables', publishedAt: '2026-04-21' },
+  { slug: 'cuanto-cuesta-veterinario-las-condes', publishedAt: '2026-04-21' },
+  { slug: 'cronograma-vacunas-cachorro-chile', publishedAt: '2026-04-21' },
+  { slug: 'veterinario-urgencia-providencia-3am', publishedAt: '2026-04-21' },
+];
+
 const ESPECIALIDADES = [
   'medicina-general',
   'cirugia',
@@ -69,6 +84,12 @@ serve(
       urls.push(url(SITE + '/para-veterinarios', 'weekly', '0.9'));
       urls.push(url(SITE + '/registro-veterinario', 'monthly', '0.7'));
       urls.push(url(SITE + '/precios-veterinarios', 'weekly', '0.9'));
+      urls.push(url(SITE + '/blog', 'weekly', '0.8'));
+
+      // Blog posts
+      for (const p of BLOG_POSTS) {
+        urls.push(url(`${SITE}/blog/${p.slug}`, 'monthly', '0.7', p.publishedAt));
+      }
 
       // Precios por comuna (top 5 por poblacion)
       const PRECIOS_TOP = ['santiago', 'las-condes', 'providencia', 'nunoa', 'maipu'];

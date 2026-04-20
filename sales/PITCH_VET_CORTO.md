@@ -70,4 +70,4 @@ Te toma 10 minutos. Si quedas conforme, eliges plan. Si no, lo borras sin compro
 ---
 
 Equipo Paw Friend · <<TODO: agregar numero de contacto>>
-pawfriend.cl · pawfriendcl@gmail.com
+pawfriend.cl · pedrosusaeta@pawfriend.cl

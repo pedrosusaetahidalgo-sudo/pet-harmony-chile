@@ -106,7 +106,7 @@ Si tienes dudas, respondeme este correo o escribeme por WhatsApp al +56 9 XXXX X
 Saludos,
 Equipo Paw Friend
 pawfriend.cl
-pawfriendcl@gmail.com`,
+pedrosusaeta@pawfriend.cl`,
   },
   invitacion_whatsapp: {
     nombre: 'Invitacion a registrarse (WhatsApp)',

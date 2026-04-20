@@ -69,7 +69,7 @@ export function PawCompanysGrid({ className }: PawCompanysGridProps) {
         <p className="text-sm text-muted-foreground max-w-xl mx-auto">
           Aliados que patrocinan la causa todos los meses. ¿Tu empresa también ama a los peludos?{' '}
           <a
-            href="mailto:pawfriendcl@gmail.com?subject=Quiero%20ser%20Paw%20Company"
+            href="mailto:pedrosusaeta@pawfriend.cl?subject=Quiero%20ser%20Paw%20Company"
             className="underline underline-offset-2 font-medium"
           >
             Escríbenos

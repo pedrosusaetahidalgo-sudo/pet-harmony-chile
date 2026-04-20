@@ -226,7 +226,7 @@ const PrivacyPolicy = () => {
               <h2 className="text-2xl font-semibold mb-3">11. Contacto</h2>
               <p className="text-muted-foreground">
                 Para cualquier consulta sobre el tratamiento de tus datos, ejercer tus derechos o
-                reportar anuncios inapropiados, escríbenos a <code>pawfriendcl@gmail.com</code>.
+                reportar anuncios inapropiados, escríbenos a <code>pedrosusaeta@pawfriend.cl</code>.
               </p>
               <p className="text-muted-foreground mt-2">
                 Si tiene preguntas sobre esta política de privacidad o cómo manejamos sus datos,

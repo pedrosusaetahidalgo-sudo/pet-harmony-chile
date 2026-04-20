@@ -101,6 +101,6 @@
   <!-- Footer -->
   <line x1="80" y1="1620" x2="1160" y2="1620" stroke="#e9d5ff"/>
   <text x="80" y="1665" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="12" fill="#9333ea">Contacto prensa</text>
-  <text x="80" y="1690" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="13" fill="#1a102b">Paw Founder · pawfriendcl@gmail.com · pawfriend.cl</text>
+  <text x="80" y="1690" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="13" fill="#1a102b">Paw Founder · pedrosusaeta@pawfriend.cl · pawfriend.cl</text>
   <text x="1160" y="1710" text-anchor="end" font-family="monospace" font-size="10" fill="#94889e">Versión 2026-04-19</text>
 </svg>

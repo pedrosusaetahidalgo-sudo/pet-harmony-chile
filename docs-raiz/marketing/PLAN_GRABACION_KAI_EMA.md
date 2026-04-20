@@ -329,6 +329,6 @@ Hacemos las cosas **por amor a los peludos**. El metraje de Kai y Ema es la prue
 
 ---
 
-**Contacto**: `pawfriendcl@gmail.com`
+**Contacto**: `pedrosusaeta@pawfriend.cl`
 **Versión**: 2026-04-19
 **Hecho en Chile con 💜 por Kai 🐕 y Ema 🐈.**

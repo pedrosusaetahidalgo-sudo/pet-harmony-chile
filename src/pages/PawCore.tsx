@@ -333,7 +333,7 @@ export default function PawCore() {
                 cta="Escríbenos"
                 onClick={() =>
                   (window.location.href =
-                    'mailto:pawfriendcl@gmail.com?subject=Quiero%20ser%20Paw%20Partner')
+                    'mailto:pedrosusaeta@pawfriend.cl?subject=Quiero%20ser%20Paw%20Partner')
                 }
               />
             </div>
@@ -354,10 +354,10 @@ export default function PawCore() {
           <p className="text-[11px]">
             ¿Tienes ideas para Paw Core? Escríbenos a{' '}
             <a
-              href="mailto:pawfriendcl@gmail.com?subject=Ideas%20para%20Paw%20Core"
+              href="mailto:pedrosusaeta@pawfriend.cl?subject=Ideas%20para%20Paw%20Core"
               className="underline hover:text-foreground"
             >
-              pawfriendcl@gmail.com
+              pedrosusaeta@pawfriend.cl
             </a>
           </p>
         </section>

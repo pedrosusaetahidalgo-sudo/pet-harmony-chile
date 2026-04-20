@@ -182,7 +182,7 @@ Pedro
 
 **Ask**: USD $[X] en SAFE @ $[X]M post money para 12 meses de runway + contratación de 1 PM + 1 dev.
 
-**Contacto**: Pedro Susaeta, pawfriendcl@gmail.com, https://pawfriend.cl/pitch/
+**Contacto**: Pedro Susaeta, pedrosusaeta@pawfriend.cl, https://pawfriend.cl/pitch/
 
 ---
 

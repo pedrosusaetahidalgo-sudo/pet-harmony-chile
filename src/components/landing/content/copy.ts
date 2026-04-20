@@ -143,7 +143,7 @@ export const HEADER = {
  */
 export const FOOTER = {
   tagline: 'Hecho en Chile, para Chile y Latam · Pagos seguros con Flow',
-  contactEmail: 'pawfriendcl@gmail.com',
+  contactEmail: 'pedrosusaeta@pawfriend.cl',
   columns: [
     {
       title: 'Producto',

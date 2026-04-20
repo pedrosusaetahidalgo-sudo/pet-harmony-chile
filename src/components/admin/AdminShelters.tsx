@@ -32,6 +32,7 @@ import {
   Search,
   ExternalLink,
 } from 'lucide-react';
+import AdminSheltersGeocodeButton from './AdminSheltersGeocodeButton';
 
 interface AdminShelter {
   id: string;
@@ -154,6 +155,9 @@ export default function AdminShelters() {
 
   return (
     <div className="space-y-4">
+      {/* Geocoding pendiente (INIT-23) */}
+      <AdminSheltersGeocodeButton />
+
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <StatMini label="Total" value={shelters?.length || 0} />

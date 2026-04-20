@@ -5,7 +5,7 @@
 > **Ticket**: **$49.900-$199.900 CLP/mes**.
 >
 > Ultima revision: 2026-04-19.
-> Contacto: pawfriendcl@gmail.com · pawfriend.cl/paw-companys
+> Contacto: pedrosusaeta@pawfriend.cl · pawfriend.cl/paw-companys
 
 ---
 
@@ -39,7 +39,7 @@ Nos encantaria que `[empresa]` sea una de las **primeras 5 Paw Companys** de Chi
 
 Un abrazo,
 Equipo Paw Friend
-pawfriendcl@gmail.com · +56 9 XXX XX XXX
+pedrosusaeta@pawfriend.cl · +56 9 XXX XX XXX
 
 ---
 
@@ -126,7 +126,7 @@ pawfriendcl@gmail.com · +56 9 XXX XX XXX
 - Testimonio en cada post de expansion regional.
 
 **Contacto**:
-pawfriendcl@gmail.com
+pedrosusaeta@pawfriend.cl
 pawfriend.cl/paw-companys
 
 ---
@@ -262,7 +262,7 @@ Pedro
 **Via form en linea** (2 minutos, nos llega al email del equipo):
 [pawfriend.cl/aplicar?tipo=paw_companys](https://pawfriend.cl/aplicar?tipo=paw_companys)
 
-**Via email directo**: pawfriendcl@gmail.com con asunto `[Paw Companys]`.
+**Via email directo**: pedrosusaeta@pawfriend.cl con asunto `[Paw Companys]`.
 
 ¿Tu marca es mas chica y prefiere barter (descuentos por visibilidad)?
 Considera postular como **Paw Partner** en:
@@ -271,6 +271,6 @@ Considera postular como **Paw Partner** en:
 ---
 
 **Contacto**:
-Paw Founder · pawfriendcl@gmail.com
+Paw Founder · pedrosusaeta@pawfriend.cl
 SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9
 Luis Pasteur 6111 Dp 201, Vitacura, Santiago

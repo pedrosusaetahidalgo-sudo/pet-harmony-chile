@@ -34,7 +34,7 @@
 > Gracias por tu tiempo y por el cariño que tienes por los peludos — esa es la mejor credencial que puedo pedir.
 >
 > **Paw Founder**
-> `pawfriendcl@gmail.com`
+> `pedrosusaeta@pawfriend.cl`
 > pawfriend.cl
 > SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9
 
@@ -153,6 +153,6 @@ Si prefieren una variación del tier Fundador, también lo conversamos — la pr
 ---
 
 **Paw Founder**
-pawfriendcl@gmail.com · pawfriend.cl
+pedrosusaeta@pawfriend.cl · pawfriend.cl
 SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · 78.328.659-9
 Hecho en Chile con amor a los peludos 🐾

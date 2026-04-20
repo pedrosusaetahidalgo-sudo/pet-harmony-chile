@@ -214,14 +214,14 @@ export default function PawVoices() {
           <p>
             ¿Quieres más contexto? Pídenos el brief completo a{' '}
             <a
-              href="mailto:pawfriendcl@gmail.com?subject=Brief%20Paw%20Voices"
+              href="mailto:pedrosusaeta@pawfriend.cl?subject=Brief%20Paw%20Voices"
               className="underline hover:text-foreground"
             >
-              pawfriendcl@gmail.com
+              pedrosusaeta@pawfriend.cl
             </a>
             .
           </p>
-          <p className="text-[11px] italic">Contacto directo: pawfriendcl@gmail.com</p>
+          <p className="text-[11px] italic">Contacto directo: pedrosusaeta@pawfriend.cl</p>
         </section>
       </div>
     </div>

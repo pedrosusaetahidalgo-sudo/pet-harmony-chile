@@ -93,6 +93,17 @@ export const useMedicalSharing = (petId?: string) => {
         .maybeSingle();
 
       if (error) throw error;
+
+      // INIT-08: si el share esta dirigido a un vet especifico, notificarle
+      // por email. Fire-and-forget — si falla no bloquea la creacion del share.
+      if (data?.id && targetProviderId) {
+        supabase.functions
+          .invoke('notify-vet-share', { body: { share_token_id: data.id } })
+          .catch(() => {
+            // Best effort; el dueño ya tiene el link de respaldo
+          });
+      }
+
       return data as ShareToken;
     },
     onSuccess: (data) => {

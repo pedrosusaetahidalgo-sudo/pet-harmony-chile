@@ -5,7 +5,7 @@
 > **Stage**: producto en produccion, pre-traccion comercial, founder solo + co-founder en pipeline.
 >
 > Ultima revision: 2026-04-19.
-> Contacto: pawfriendcl@gmail.com
+> Contacto: pedrosusaeta@pawfriend.cl
 
 ---
 
@@ -278,13 +278,13 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 **Via form en linea** (2 minutos, nos llega al email del founder):
 [pawfriend.cl/aplicar?tipo=angels_vc](https://pawfriend.cl/aplicar?tipo=angels_vc)
 
-**Via email directo**: pawfriendcl@gmail.com con asunto `[Angel/VC]` y
+**Via email directo**: pedrosusaeta@pawfriend.cl con asunto `[Angel/VC]` y
 breve nota sobre tu fondo/perfil de inversion.
 
 ---
 
 **Contacto**:
-Paw Founder · pawfriendcl@gmail.com
+Paw Founder · pedrosusaeta@pawfriend.cl
 SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9
 Luis Pasteur 6111 Dp 201, Vitacura, Santiago
 

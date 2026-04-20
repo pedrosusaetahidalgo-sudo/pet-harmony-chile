@@ -147,7 +147,7 @@ mascotas para cargar):
 **Opcion B — Form de contacto** (si prefieres que te llamemos primero):
 [pawfriend.cl/aplicar?tipo=refugio](https://pawfriend.cl/aplicar?tipo=refugio)
 
-**Opcion C — Email directo**: pawfriendcl@gmail.com con asunto
+**Opcion C — Email directo**: pedrosusaeta@pawfriend.cl con asunto
 `[Hogar de adopcion]`.
 
 - **Instagram**: [@pawfriend.cl](https://instagram.com/pawfriend.cl)

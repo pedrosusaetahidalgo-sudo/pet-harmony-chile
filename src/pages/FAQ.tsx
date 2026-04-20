@@ -95,10 +95,10 @@ export default function FAQ() {
             <p className="mt-3 text-base text-muted-foreground md:text-lg">
               Lo más preguntado por la comunidad. Si no encuentras tu respuesta, escríbenos a{' '}
               <a
-                href="mailto:pawfriendcl@gmail.com"
+                href="mailto:pedrosusaeta@pawfriend.cl"
                 className="font-semibold text-primary hover:underline"
               >
-                pawfriendcl@gmail.com
+                pedrosusaeta@pawfriend.cl
               </a>
               .
             </p>

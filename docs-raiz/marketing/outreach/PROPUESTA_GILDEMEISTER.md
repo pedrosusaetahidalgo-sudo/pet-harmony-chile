@@ -34,7 +34,7 @@
 > Gracias por tu tiempo,
 >
 > **Paw Founder**
-> `pawfriendcl@gmail.com`
+> `pedrosusaeta@pawfriend.cl`
 > pawfriend.cl
 > SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9
 
@@ -188,6 +188,6 @@ Si prefieren ajustar el tier (ej. arrancar directo Silver con descuento, o hacer
 ---
 
 **Paw Founder**
-pawfriendcl@gmail.com · pawfriend.cl
+pedrosusaeta@pawfriend.cl · pawfriend.cl
 SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · 78.328.659-9
 Hecho en Chile con amor a los peludos 🐾

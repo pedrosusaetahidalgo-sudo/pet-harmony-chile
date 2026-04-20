@@ -207,10 +207,10 @@ Deno.serve(
               },
               body: JSON.stringify({
                 // from: dominio verificado en Resend. Mantener pawfriend.cl.
-                // reply_to: correo de contacto oficial (Gmail) para que
+                // reply_to: correo de contacto oficial para que las
                 // respuestas del vet lleguen a Pedro directamente.
                 from: 'Paw Friend <hola@pawfriend.cl>',
-                reply_to: ['pawfriendcl@gmail.com'],
+                reply_to: ['pedrosusaeta@pawfriend.cl'],
                 to: [lead.email],
                 subject: asunto || 'Paw Friend te invita: tu perfil veterinario gratis',
                 html: htmlEmail,

@@ -107,7 +107,7 @@ Este folder se actualiza:
 ## Contacto
 
 **Paw Founder** · Paw Friend
-pawfriendcl@gmail.com
+pedrosusaeta@pawfriend.cl
 SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9
 Luis Pasteur 6111 Dp 201, Vitacura, Santiago
 pawfriend.cl · Repositorio disponible bajo NDA

@@ -2131,7 +2131,7 @@ SECTION 4 · ASK + USE OF FUNDS (y=1420 a y=1650):
   · 20% Legal & compliance (ícono shield)
   · 10% Buffer operativo (ícono piggy)
 - CTA pill x=400 y=1600 w=440 h=56 rx=28 fill #eab308:
-  "pawfriendcl@gmail.com" Jakarta 800 size 18 fill #1a102b
+  "pedrosusaeta@pawfriend.cl" Jakarta 800 size 18 fill #1a102b
 
 ───────────────────────────────────────────────────────────
 FOOTER (y=1690 a y=1754):
@@ -2142,7 +2142,7 @@ FOOTER (y=1690 a y=1754):
     78.328.659-9" Jakarta 500 size 11 fill #4b3b66
   · Centro: "Luis Pasteur 6111 Dp 201 · Vitacura · Santiago"
     Jakarta 500 size 11
-  · Derecha: "pawfriend.cl · pawfriendcl@gmail.com" Jakarta 700
+  · Derecha: "pawfriend.cl · pedrosusaeta@pawfriend.cl" Jakarta 700
     size 11 fill #9333ea
 
 TITLE: "Paw Friend Executive Summary"
@@ -2232,7 +2232,7 @@ LAYOUT:
    - Fondo amber tint #fef3c7 opacity=0.15
    - Border dashed #eab308
    - Text "Disponible bajo NDA firmado. Contactar
-     pawfriendcl@gmail.com" Jakarta 500 size 16 fill #fde68a
+     pedrosusaeta@pawfriend.cl" Jakarta 500 size 16 fill #fde68a
      centered
 
 6) FOOTER (y=1650 a y=1754):
@@ -2409,7 +2409,7 @@ LAYOUT EDITORIAL PRESS-STANDARD:
    - Divider line brand-200
    - Text distribuido:
      · "Contacto para prensa" Jakarta 800 size 11 fill #9333ea
-     · "Paw Founder · pawfriendcl@gmail.com" Jakarta 600 size 14
+     · "Paw Founder · pedrosusaeta@pawfriend.cl" Jakarta 600 size 14
      · "pawfriend.cl/brand-assets/ (logo pack + founder photos)"
        Jakarta 500 size 12 fill #4b3b66 mono
      · "Versión 2026-04-19" Jakarta 500 size 10 fill #94889e mono
@@ -2601,7 +2601,7 @@ BACK · business_card_back.svg:
 
 4) Right column (x=200, info stack):
    - Labels with line before each:
-     · Email (email icon + "pawfriendcl@gmail.com") y=60
+     · Email (email icon + "pedrosusaeta@pawfriend.cl") y=60
      · Web ("pawfriend.cl") y=100
      · RUT (mono "78.328.659-9") y=140
      · Dirección ("Luis Pasteur 6111 Dp 201, Vitacura") y=180
@@ -2685,7 +2685,7 @@ LAYOUT:
    - Divider thin brand-100 y=90
 
    - Contact rows (Jakarta 500 size 13):
-     · Icon email + "pawfriendcl@gmail.com" y=110 fill #4b3b66
+     · Icon email + "pedrosusaeta@pawfriend.cl" y=110 fill #4b3b66
      · Icon phone + "+56 9 XXXX XXXX" y=132 fill #4b3b66
      · Icon web + "pawfriend.cl" y=154 fill #9333ea font-weight 700
 
@@ -2878,7 +2878,7 @@ STRUCTURE HTML:
         <tr>
           <td style="background-color:#f3e8ff;padding:25px 30px;text-align:center;font-family:Arial;font-size:12px;color:#4b3b66;line-height:1.6;">
             <p style="margin:0 0 8px;"><strong>Paw Friend</strong> · Hecho en Chile, a mano, con inteligencia artificial.</p>
-            <p style="margin:0 0 8px;">pawfriend.cl · pawfriendcl@gmail.com</p>
+            <p style="margin:0 0 8px;">pawfriend.cl · pedrosusaeta@pawfriend.cl</p>
             <p style="margin:0 0 8px;color:#94889e;">SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9 · Luis Pasteur 6111 Dp 201, Vitacura</p>
             <p style="margin:0;">
               <a href="https://pawfriend.cl/profile" style="color:#9333ea;text-decoration:none;">Gestionar preferencias</a>
@@ -4017,7 +4017,7 @@ Sección "Hitos" (1500-2200):
 
 Sección "Contacto prensa" (2200-2900):
 - Card con:
-  · Email: pawfriendcl@gmail.com
+  · Email: pedrosusaeta@pawfriend.cl
   · Voceros: Paw Founder (fundador) · Kai & Ema (mascotas oficiales)
   · Ciudad: Santiago, Chile
   · Disponibilidad: lunes a viernes, coordinar entrevistas por email
@@ -4609,7 +4609,7 @@ Necesito un template HTML completo (NO SVG, es email HTML) para
 la newsletter mensual de Paw Friend (app chilena: ficha médica
 digital + directorio vets + comunidad; 100% gratis; SpA RUT
 78.328.659-9; pawfriend.cl; mascotas oficiales: Kai pastor suizo +
-Ema gata negra; contacto pawfriendcl@gmail.com).
+Ema gata negra; contacto pedrosusaeta@pawfriend.cl).
 
 CONTEXTO:
 Newsletter mensual a toda la base de usuarios + Paw Members +
@@ -4787,7 +4787,7 @@ ESTRUCTURA:
    - Link {{receiptUrl}}
 
 8. Footer:
-   - "¿dudas? responde este email o escríbenos a pawfriendcl@gmail.com"
+   - "¿dudas? responde este email o escríbenos a pedrosusaeta@pawfriend.cl"
    - Unsubscribe (aunque transaccional, ofrecer opción de no recibir
      más newsletter separado)
    - Redes + legal SpA
@@ -4876,7 +4876,7 @@ ESTRUCTURA:
    - "lista completa en /paw-member/descuentos"
 
 8. Footer:
-   - Dudas → pawfriendcl@gmail.com
+   - Dudas → pedrosusaeta@pawfriend.cl
    - Legal SpA + unsubscribe
    - Redes
 
@@ -5120,7 +5120,7 @@ ESTRUCTURA:
    - Headline rojo: "no fuiste vos?"
    - Párrafo: "si no solicitaste el reset, no hagas click en el botón.
      cambia tu contraseña desde paw friend y contactanos a
-     pawfriendcl@gmail.com para revisar actividad sospechosa."
+     pedrosusaeta@pawfriend.cl para revisar actividad sospechosa."
 
 7. Bloque ayuda:
    - "¿problemas con el link?"

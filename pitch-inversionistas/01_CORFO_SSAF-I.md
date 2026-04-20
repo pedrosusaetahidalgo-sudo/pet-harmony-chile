@@ -27,7 +27,7 @@ Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas,
 | **Inicio de actividades SII** | 2026-04-17 |
 | **Domicilio comercial** | Luis Pasteur 6111 Dp 201, Vitacura, Santiago |
 | **Fundador** | Paw Founder |
-| **Email de contacto** | pawfriendcl@gmail.com |
+| **Email de contacto** | pedrosusaeta@pawfriend.cl |
 | **Sector CIIU** | 620 — Actividades de programacion informatica y consultoria |
 | **Vertical** | Pet-tech / HealthTech veterinaria |
 | **Etapa** | Producto en produccion (MVP+) con beta testers reales |
@@ -281,12 +281,12 @@ Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas,
 **Via form en linea** (2 minutos, nos llega al email del equipo):
 [pawfriend.cl/aplicar?tipo=corfo](https://pawfriend.cl/aplicar?tipo=corfo)
 
-**Via email directo**: pawfriendcl@gmail.com con asunto `[CORFO]` y
+**Via email directo**: pedrosusaeta@pawfriend.cl con asunto `[CORFO]` y
 adjunto de este documento.
 
 ---
 
 **Contacto**:
-Paw Founder · pawfriendcl@gmail.com
+Paw Founder · pedrosusaeta@pawfriend.cl
 SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9
 Luis Pasteur 6111 Dp 201, Vitacura, Santiago

@@ -160,6 +160,7 @@ export const EVENTS = {
   MEDICAL_RECORD_ADDED: 'medical_record_added',
   FICHA_COMPLETE: 'complete_ficha',
   FICHA_SHARED: 'share_ficha',
+  MEDICAL_SHARE_OPENED: 'medical_share_opened',
   REMINDER_CREATED: 'reminder_created',
   REMINDER_COMPLETED: 'reminder_completed',
   DOCUMENT_UPLOADED: 'document_uploaded',

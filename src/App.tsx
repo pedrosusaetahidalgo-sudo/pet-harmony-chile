@@ -111,6 +111,8 @@ const PetRoutines = lazy(() => import('./pages/PetRoutines'));
 const UnifiedCalendar = lazy(() => import('./pages/UnifiedCalendar'));
 const RegistroPartner = lazy(() => import('./pages/RegistroPartner'));
 const FAQ = lazy(() => import('./pages/FAQ'));
+const BlogIndex = lazy(() => import('./pages/BlogIndex'));
+const BlogPost = lazy(() => import('./pages/BlogPost'));
 
 /** Inicialización nativa: StatusBar, SplashScreen, back button, push notifications */
 async function initNative() {
@@ -154,8 +156,29 @@ async function initNative() {
     if (permResult.receive === 'granted') {
       await PushNotifications.register();
 
-      PushNotifications.addListener('registration', (token) => {
-        // Token disponible para enviar a backend si se necesita
+      // INIT-16: persistir token en device_tokens para que backend pueda
+      // disparar push a este dispositivo.
+      PushNotifications.addListener('registration', async (token) => {
+        try {
+          const { supabase } = await import('@/integrations/supabase/client');
+          const { Capacitor } = await import('@capacitor/core');
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          if (!user) return;
+          const platform = Capacitor.getPlatform() === 'ios' ? 'ios' : 'android';
+          await supabase.from('device_tokens').upsert(
+            {
+              user_id: user.id,
+              platform,
+              token: token.value,
+              enabled: true,
+            },
+            { onConflict: 'user_id,token' }
+          );
+        } catch {
+          // Best effort — no bloqueamos la app si el upsert falla
+        }
       });
 
       PushNotifications.addListener('pushNotificationReceived', (notification) => {
@@ -916,6 +939,8 @@ const App = () => (
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/faq" element={<FAQ />} />
+                <Route path="/blog" element={<BlogIndex />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/delete-account" element={<DeleteAccount />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />

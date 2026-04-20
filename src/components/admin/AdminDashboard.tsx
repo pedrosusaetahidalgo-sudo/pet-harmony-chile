@@ -7,6 +7,11 @@ import AdminKpiCard from '@/components/admin/ui/AdminKpiCard';
 import AdminStatCard from '@/components/admin/ui/AdminStatCard';
 import AdminEmptyState from '@/components/admin/ui/AdminEmptyState';
 import AdminHealthSummary from '@/components/admin/AdminHealthSummary';
+import AdminNorthStarHeader from '@/components/admin/AdminNorthStarHeader';
+import AdminPDFFunnelWidget from '@/components/admin/AdminPDFFunnelWidget';
+import AdminMRRChart from '@/components/admin/AdminMRRChart';
+import AdminComunaGap from '@/components/admin/AdminComunaGap';
+import AdminAdoptionFunnel from '@/components/admin/AdminAdoptionFunnel';
 import AdminPulsoDiario from '@/components/admin/AdminPulsoDiario';
 import { BookingPulseWidget } from '@/components/admin/BookingPulseWidget';
 import { NotificationDeliveryWidget } from '@/components/admin/NotificationDeliveryWidget';
@@ -703,6 +708,21 @@ export default function AdminDashboard() {
   // ── Render ─────────────────────────────────────────────
   return (
     <div className="space-y-6">
+      {/* ── North Star Plan 90d (INIT-03): NSM + 5 KPIs top ── */}
+      <AdminNorthStarHeader />
+
+      {/* ── Embudo Joya de la Corona + MRR B2B 6 semanas ── */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <AdminPDFFunnelWidget />
+        <AdminMRRChart />
+      </div>
+
+      {/* ── Gap comunas demanda/oferta (priorizar outreach B2B INIT-09) ── */}
+      <AdminComunaGap />
+
+      {/* ── Embudo adopción: shelter onboarding → transfer ── */}
+      <AdminAdoptionFunnel />
+
       {/* ── Pulso Diario: monitor auto-pilotado (audit-cron-daily) ── */}
       <AdminPulsoDiario />
 

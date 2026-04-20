@@ -79,8 +79,8 @@ export default function OnboardingShelter() {
 
         <p className="text-xs text-center text-muted-foreground mt-8">
           Cualquier duda escribenos a{' '}
-          <a href="mailto:pawfriendcl@gmail.com" className="text-purple-600 hover:underline">
-            pawfriendcl@gmail.com
+          <a href="mailto:pedrosusaeta@pawfriend.cl" className="text-purple-600 hover:underline">
+            pedrosusaeta@pawfriend.cl
           </a>
           . Te respondemos siempre.
         </p>

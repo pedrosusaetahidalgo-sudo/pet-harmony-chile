@@ -4,7 +4,7 @@
 > y reuniones con empresas interesadas en sponsor.
 >
 > Ultima revision: **2026-04-19**.
-> Responsable: Paw Founder · pawfriendcl@gmail.com
+> Responsable: Paw Founder · pedrosusaeta@pawfriend.cl
 
 ---
 
@@ -331,7 +331,7 @@ Claude escribe el **que** (boilerplate, migraciones, tests). El founder puso el 
 - Dueño de SpA SUSAETA GARNHAM SOFTWARE ENGINEERING (RUT **78.328.659-9**). Inicio SII en domicilio comercial Luis Pasteur 6111 Dp 201, Vitacura.
 - Construyó el producto completo: frontend, backend, mobile, DevOps, producto, copy, seguridad.
 - Dueño real de **Kai** (perro, pastor suizo) y **Ema** (gata) — clientes N°1 y 2.
-- Contacto: pawfriendcl@gmail.com
+- Contacto: pedrosusaeta@pawfriend.cl
 - Repositorio disponible bajo NDA
 
 ### Co-pilot

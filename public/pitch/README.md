@@ -117,6 +117,6 @@ metadata OG.
 
 ## Contacto
 
-**Paw Founder** · `pawfriendcl@gmail.com` · pawfriend.cl
+**Paw Founder** · `pedrosusaeta@pawfriend.cl` · pawfriend.cl
 SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9
 Luis Pasteur 6111 Dp 201, Vitacura, Santiago de Chile

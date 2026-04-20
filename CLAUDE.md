@@ -600,7 +600,7 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
   Tipos sin tabla publica (corfo/startup/angels/refugio/vet) solo
   marcan approved (leads internos + onboarding propio).
 - **Edge fn** `notify-pitch-application`: email Resend a
-  `PITCH_NOTIFICATION_EMAIL` (default `pawfriendcl@gmail.com`) con CTA
+  `PITCH_NOTIFICATION_EMAIL` (default `pedrosusaeta@pawfriend.cl`) con CTA
   directo a `admin?section=system&sub=pitch-applications`.
 - **Pagina publica**: `/aplicar?tipo=<kind>` (`src/pages/Aplicar.tsx`)
   con form dinamico por tipo + usa `<CategoryIcon />` del brand v2.

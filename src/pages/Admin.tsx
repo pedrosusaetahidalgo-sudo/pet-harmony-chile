@@ -42,6 +42,7 @@ import {
 import AdminDashboard from '@/components/admin/AdminDashboard';
 import AdminServiceProviders from '@/components/admin/AdminServiceProviders';
 import AdminProviders from '@/components/admin/AdminProviders';
+import AdminVetsAtChurnRisk from '@/components/admin/AdminVetsAtChurnRisk';
 import AdminShelters from '@/components/admin/AdminShelters';
 import AdminVetVerifications from '@/components/admin/AdminVetVerifications';
 import AdminUsers from '@/components/admin/AdminUsers';
@@ -60,6 +61,8 @@ import AdminSafetyLogs from '@/components/admin/AdminSafetyLogs';
 import AdminAuditLog from '@/components/admin/AdminAuditLog';
 import AdminSystemHealth from '@/components/admin/AdminSystemHealth';
 import AdminDataQuality from '@/components/admin/AdminDataQuality';
+import AdminDataExport from '@/components/admin/AdminDataExport';
+import AdminMigrationsStatus from '@/components/admin/AdminMigrationsStatus';
 import AdminDeviceCompatibility from '@/components/admin/AdminDeviceCompatibility';
 import AdminTeam from '@/components/admin/AdminTeam';
 import AdminErrorLog from '@/components/admin/AdminErrorLog';
@@ -170,6 +173,7 @@ function ProvidersSection({ sub: propSub, onSubChange }: SubSectionProps) {
           <TabsTrigger value="central">Todos</TabsTrigger>
           <TabsTrigger value="vets">Vets Colmevet</TabsTrigger>
           <TabsTrigger value="shelters">Refugios</TabsTrigger>
+          <TabsTrigger value="churn">Churn risk</TabsTrigger>
           <TabsTrigger value="legacy">Legacy</TabsTrigger>
         </TabsList>
         <TabsContent value="central">
@@ -180,6 +184,9 @@ function ProvidersSection({ sub: propSub, onSubChange }: SubSectionProps) {
         </TabsContent>
         <TabsContent value="shelters">
           <AdminShelters />
+        </TabsContent>
+        <TabsContent value="churn">
+          <AdminVetsAtChurnRisk />
         </TabsContent>
         <TabsContent value="legacy">
           <AdminProviders />
@@ -305,6 +312,8 @@ function SystemSection({ sub: propSub, onSubChange }: SubSectionProps) {
           <TabsTrigger value="errors">Errores</TabsTrigger>
           <TabsTrigger value="health">Health</TabsTrigger>
           <TabsTrigger value="data-quality">Calidad datos</TabsTrigger>
+          <TabsTrigger value="export">Export CSV</TabsTrigger>
+          <TabsTrigger value="migrations">Migraciones</TabsTrigger>
           <TabsTrigger value="devices">Dispositivos</TabsTrigger>
           <TabsTrigger value="safety">Seguridad</TabsTrigger>
           <TabsTrigger value="audit">Audit Log</TabsTrigger>
@@ -327,6 +336,12 @@ function SystemSection({ sub: propSub, onSubChange }: SubSectionProps) {
         </TabsContent>
         <TabsContent value="data-quality">
           <AdminDataQuality />
+        </TabsContent>
+        <TabsContent value="export">
+          <AdminDataExport />
+        </TabsContent>
+        <TabsContent value="migrations">
+          <AdminMigrationsStatus />
         </TabsContent>
         <TabsContent value="devices">
           <AdminDeviceCompatibility />

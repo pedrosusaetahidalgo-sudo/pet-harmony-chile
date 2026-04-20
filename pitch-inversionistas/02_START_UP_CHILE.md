@@ -25,7 +25,7 @@
 | RUT | 78.328.659-9 |
 | Dominio | pawfriend.cl |
 | Fundador | Paw Founder |
-| Email | pawfriendcl@gmail.com |
+| Email | pedrosusaeta@pawfriend.cl |
 | Etapa | MVP en produccion con beta testers reales |
 | Industria | Pet-tech / HealthTech veterinaria |
 | Modelo | SaaS B2C + B2B + B2B2C |
@@ -230,11 +230,11 @@ Start-Up Chile no es solo USD $15K. Es:
 **Via form en linea** (2 minutos, nos llega al email del equipo):
 [pawfriend.cl/aplicar?tipo=startup_chile](https://pawfriend.cl/aplicar?tipo=startup_chile)
 
-**Via email directo**: pawfriendcl@gmail.com con asunto `[Start-Up Chile]`
+**Via email directo**: pedrosusaeta@pawfriend.cl con asunto `[Start-Up Chile]`
 y adjunto de este documento.
 
 ---
 
 **Contacto**:
-Paw Founder · pawfriendcl@gmail.com
+Paw Founder · pedrosusaeta@pawfriend.cl
 SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9

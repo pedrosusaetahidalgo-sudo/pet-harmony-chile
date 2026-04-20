@@ -72,7 +72,7 @@ export function PawCompanyApplyForm() {
       const msg = err instanceof Error ? err.message : 'Error desconocido';
       if (msg.toLowerCase().includes('duplicate') || msg.includes('slug')) {
         toast.error('Ya existe una Paw Company con ese nombre', {
-          description: 'Si es tu empresa, escríbenos a pawfriendcl@gmail.com.',
+          description: 'Si es tu empresa, escríbenos a pedrosusaeta@pawfriend.cl.',
         });
       } else {
         toast.error('No pudimos enviar tu aplicación', { description: msg });
@@ -94,8 +94,8 @@ export function PawCompanyApplyForm() {
           </p>
           <p className="text-[11px] text-muted-foreground italic">
             Si tienes urgencia, escríbenos directo a{' '}
-            <a href="mailto:pawfriendcl@gmail.com?subject=Paw%20Company" className="underline">
-              pawfriendcl@gmail.com
+            <a href="mailto:pedrosusaeta@pawfriend.cl?subject=Paw%20Company" className="underline">
+              pedrosusaeta@pawfriend.cl
             </a>
           </p>
         </CardContent>

@@ -283,6 +283,6 @@ Abrazo a ti y a [nombre mascota] 🐾
 
 ---
 
-**Contacto**: `pawfriendcl@gmail.com`
+**Contacto**: `pedrosusaeta@pawfriend.cl`
 **Versión**: 2026-04-19
 **Hecho en Chile con amor a los peludos 🐾**

@@ -43,6 +43,10 @@ import { SeasonalTipsCard } from '@/components/home/SeasonalTipsCard';
 import { TodayRoutinesCard } from '@/components/home/TodayRoutinesCard';
 import { AnnualCareChecklist } from '@/components/home/AnnualCareChecklist';
 import { FirstPdfNudge } from '@/components/home/FirstPdfNudge';
+import { PawFriendPicks } from '@/components/home/PawFriendPicks';
+import { NextBookingCard } from '@/components/home/NextBookingCard';
+import { WeekActivitiesCard } from '@/components/home/WeekActivitiesCard';
+import { CareStreakCard } from '@/components/home/CareStreakCard';
 // AnalyticsPreviewCard and PetWellnessPreview removed from home — accessible via /panel-pro
 import { isGenericDisplayName } from '@/lib/format';
 import { NamePromptDialog } from '@/components/NamePromptDialog';
@@ -487,6 +491,18 @@ export default function Home() {
 
       {/* Nudge joya de la corona: empujar primer PDF (playbook §9.3) */}
       <FirstPdfNudge firstPetId={pets[0]?.id ?? null} petsCount={pets.length} />
+
+      {/* Tu próxima cita confirmada / pendiente */}
+      {pets.length > 0 && <NextBookingCard />}
+
+      {/* Actividades de la próxima semana (reminders + bookings) */}
+      {pets.length > 0 && <WeekActivitiesCard />}
+
+      {/* Racha de cuidado — gamificación light */}
+      {pets.length > 0 && <CareStreakCard />}
+
+      {/* Paw Friend Recomendados: descubrir vets con rating alto en 1 tap */}
+      {pets.length > 0 && <PawFriendPicks />}
 
       {/* === Empty state === */}
       {pets.length === 0 && (

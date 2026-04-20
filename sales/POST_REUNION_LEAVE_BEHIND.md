@@ -50,7 +50,7 @@ Si necesitas ayuda armando tu perfil, te ayudo en una llamada de 15 minutos.
 **Equipo Paw Friend**
 
 📱 WhatsApp: <<TODO: agregar número de contacto>>
-✉️ Email: pawfriendcl@gmail.com
+✉️ Email: pedrosusaeta@pawfriend.cl
 🌐 pawfriend.cl
 📍 Santiago, Chile
 

@@ -169,5 +169,5 @@ Para cada prospecto, antes de apretar "enviar":
 
 ---
 
-**Contacto**: `pawfriendcl@gmail.com`
+**Contacto**: `pedrosusaeta@pawfriend.cl`
 **Versión**: 2026-04-19

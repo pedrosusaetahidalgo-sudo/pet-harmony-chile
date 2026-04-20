@@ -103,7 +103,7 @@ export const COMMUNITY_CARDS: readonly CommunityCard[] = [
     description:
       'Tiendas, comida, restaurantes, seguros. Descuentos a Paw Members ↔ publicidad gratis.',
     cta: 'Escríbenos',
-    to: 'mailto:pawfriendcl@gmail.com?subject=Paw Partner',
+    to: 'mailto:pedrosusaeta@pawfriend.cl?subject=Paw Partner',
     accentFrom: 'from-rose-400',
     accentTo: 'to-pink-600',
   },

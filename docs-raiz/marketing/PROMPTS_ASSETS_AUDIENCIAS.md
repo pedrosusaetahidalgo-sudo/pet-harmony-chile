@@ -607,6 +607,6 @@ mayor a menor impacto visual:
 
 ---
 
-**Contacto**: `pawfriendcl@gmail.com`
+**Contacto**: `pedrosusaeta@pawfriend.cl`
 **Versión**: 2026-04-19
 **Hecho en Chile con 💜 y mucho amor a los peludos.**

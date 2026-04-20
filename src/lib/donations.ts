@@ -8,4 +8,4 @@
 
 export const DONATIONS_GOAL_CLP = 20_000_000;
 
-export const DONATIONS_CONTACT_EMAIL = 'pawfriendcl@gmail.com';
+export const DONATIONS_CONTACT_EMAIL = 'pedrosusaeta@pawfriend.cl';

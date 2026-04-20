@@ -45,6 +45,7 @@ import { FoundingVetBanner } from '@/components/landing/FoundingVetBanner';
 import { FOUNDING_VET } from '@/lib/config/marketingConfig';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import { VetOnboardingInlineForm } from '@/components/VetOnboardingInlineForm';
+import { VetValueCalculator } from '@/components/landing/VetValueCalculator';
 
 // ──────────────────────────────────────────────────────────────
 // Problem statement
@@ -583,6 +584,11 @@ export default function ParaVeterinarios() {
           ))}
         </div>
       </section>
+
+      {/* ═══════════════════════════════════════════════════════════
+          7b. CALCULADORA DE VALOR (INIT-06 Plan 90d)
+          ═══════════════════════════════════════════════════════════ */}
+      <VetValueCalculator />
 
       {/* ═══════════════════════════════════════════════════════════
           8. FAQ

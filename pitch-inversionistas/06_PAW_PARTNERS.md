@@ -135,7 +135,7 @@ por tamaño.
 
 **Postula online en 2 minutos**: [pawfriend.cl/aplicar?tipo=paw_partners](https://pawfriend.cl/aplicar?tipo=paw_partners)
 
-Si prefieres mandar un correo directo: **pawfriendcl@gmail.com** con
+Si prefieres mandar un correo directo: **pedrosusaeta@pawfriend.cl** con
 asunto `[Paw Partner]` y cuentanos de tu marca, el beneficio que puedes
 ofrecer y como te contactamos.
 

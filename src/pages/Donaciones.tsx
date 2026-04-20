@@ -421,7 +421,7 @@ export default function Donaciones() {
               </span>
             </div>
             <a
-              href="mailto:pawfriendcl@gmail.com?subject=Quiero%20aportar%20a%20Paw%20Friend"
+              href={`mailto:${CONTACT_EMAIL}?subject=Quiero%20aportar%20a%20Paw%20Friend`}
               className="inline-flex items-center gap-1.5 text-sm font-medium text-violet-700 dark:text-violet-300 hover:underline"
             >
               Escríbenos a {CONTACT_EMAIL} →

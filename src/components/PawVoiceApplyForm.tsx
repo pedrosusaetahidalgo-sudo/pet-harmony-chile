@@ -100,10 +100,10 @@ export function PawVoiceApplyForm() {
           <p className="text-[11px] text-muted-foreground italic">
             Si tienes urgencia, escríbenos directo a{' '}
             <a
-              href="mailto:pawfriendcl@gmail.com?subject=Aplicación%20Paw%20Voice"
+              href="mailto:pedrosusaeta@pawfriend.cl?subject=Aplicación%20Paw%20Voice"
               className="underline"
             >
-              pawfriendcl@gmail.com
+              pedrosusaeta@pawfriend.cl
             </a>
           </p>
         </CardContent>

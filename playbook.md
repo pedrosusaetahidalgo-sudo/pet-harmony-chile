@@ -261,7 +261,7 @@ Justificación de subida 2-3x (solo cuando haya data):
 >
 > ¿15 min el jueves o viernes para mostrarte en vivo?
 >
-> — {{founder}} (pawfriendcl@gmail.com)
+> — {{founder}} (pedrosusaeta@pawfriend.cl)
 > PD: lo hago solo, desde Chile, con ayuda de IA. Sin VC, sin exit forzado. Tu clínica es mi cliente, no mi "user".
 
 **Estructura del script:**

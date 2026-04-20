@@ -21,6 +21,7 @@ import type { ServiceProviderRow } from '@/types/vetDirectory';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import PriceEstimatorWidget from '@/components/PriceEstimatorWidget';
+import { ComunaPicksCard } from '@/components/directory/ComunaPicksCard';
 import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 import { isOpenNow, getTodayHours } from '@/lib/openingHours';
 import {
@@ -190,6 +191,13 @@ export default function DirectorioVets() {
             <p className="text-lg text-muted-foreground">
               para tu mascota en Chile · resenas verificadas
             </p>
+          </div>
+        )}
+
+        {/* Recomendados de la comuna (INIT descubrimiento) */}
+        {comunaParam && comuna !== 'all' && !isLoading && (
+          <div className="mb-6">
+            <ComunaPicksCard comuna={comuna} />
           </div>
         )}
 

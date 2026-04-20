@@ -28,7 +28,7 @@
          Hecho en Chile, de pura mano, con IA de Claude.
 
                       [Paw Founder]
-              pawfriendcl@gmail.com · pawfriend.cl
+              pedrosusaeta@pawfriend.cl · pawfriend.cl
                      Abril 2026 · Santiago, Chile
 ```
 
@@ -378,7 +378,7 @@ colchon operacional. Excedente se destina a causas (refugios).
 - Milestone-based reporting mensual (Sala de Inversion snapshot).
 
 **Contacto**:
-- pawfriendcl@gmail.com · pawfriend.cl
+- pedrosusaeta@pawfriend.cl · pawfriend.cl
 - Calendly: `[RELLENAR link]`
 
 ---

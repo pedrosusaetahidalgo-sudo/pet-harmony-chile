@@ -103,4 +103,4 @@ export const STORAGE_KEYS = {
 // Contact info canonico (evita hardcode del email en multiples lugares)
 // ────────────────────────────────────────────────────────────
 
-export const CONTACT_EMAIL = readStringEnv('VITE_CONTACT_EMAIL', 'pawfriendcl@gmail.com');
+export const CONTACT_EMAIL = readStringEnv('VITE_CONTACT_EMAIL', 'pedrosusaeta@pawfriend.cl');

@@ -63,6 +63,27 @@ export default function ShelterProfile() {
     }
     setSaving(true);
     try {
+      // INIT-23: si address o commune cambió, geocodear via Nominatim
+      // para mostrar el refugio en el mapa de adopción con coords reales.
+      // Si falla, guardar igual sin coords (no bloqueante).
+      type GeocodeUpdate = { latitude?: number; longitude?: number };
+      const addressChanged = (shelter.address || '') !== address.trim();
+      const communeChanged = shelter.commune !== commune;
+      let geocodeUpdate: GeocodeUpdate = {};
+
+      if ((addressChanged || communeChanged) && (address.trim() || commune)) {
+        try {
+          const { data: geo, error: geoErr } = await supabase.functions.invoke('geocode-address', {
+            body: { address: address.trim(), commune },
+          });
+          if (!geoErr && geo?.lat && geo?.lng) {
+            geocodeUpdate = { latitude: geo.lat, longitude: geo.lng };
+          }
+        } catch {
+          // Geocoding no es crítico — el perfil se guarda igual
+        }
+      }
+
       const { error } = await // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (supabase.from('adoption_centers' as any) as any)
         .update({
@@ -76,12 +97,17 @@ export default function ShelterProfile() {
           social_media: instagram.trim() ? { instagram: instagram.trim() } : {},
           capacity: capacity ? Number(capacity) : null,
           accepts_donations: acceptsDonations,
+          ...geocodeUpdate,
         })
         .eq('id', shelter.id);
       if (error) throw error;
       await refetch();
       await queryClient.invalidateQueries({ queryKey: ['shelter'] });
-      toast.success('Perfil actualizado');
+      if (geocodeUpdate.latitude) {
+        toast.success('Perfil actualizado con ubicación en el mapa');
+      } else {
+        toast.success('Perfil actualizado');
+      }
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'No se pudo actualizar');
     } finally {

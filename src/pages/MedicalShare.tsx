@@ -29,6 +29,7 @@ import { logger } from '@/lib/logger';
 import { openExternalUrl } from '@/lib/nativeNavigation';
 import { downloadFile } from '@/lib/nativeDownload';
 import { calculateAge } from '@/lib/format';
+import { track, EVENTS } from '@/lib/analytics';
 
 interface SharedPet {
   id: string;
@@ -110,6 +111,17 @@ export default function MedicalShare() {
         .from('medical_share_tokens')
         .update({ last_accessed_at: new Date().toISOString() })
         .eq('id', tokenData.id);
+
+      // 2b. Track apertura de ficha compartida (North Star INIT-02).
+      // Sin PII: solo token_id + pet_id. El evento se cuenta en PostHog.
+      track({
+        event: EVENTS.MEDICAL_SHARE_OPENED,
+        properties: {
+          share_token_id: tokenData.id,
+          pet_id: tokenData.pet_id,
+          is_first_open: tokenData.last_accessed_at === null,
+        },
+      });
 
       // 3. Cargar pet
       const { data: petData, error: petErr } = await supabase

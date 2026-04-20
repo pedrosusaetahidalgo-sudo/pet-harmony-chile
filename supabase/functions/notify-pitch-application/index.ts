@@ -30,7 +30,7 @@ const KIND_LABELS: Record<string, string> = {
   otro: 'Otro',
 };
 
-const NOTIFICATION_EMAIL = Deno.env.get('PITCH_NOTIFICATION_EMAIL') || 'pawfriendcl@gmail.com';
+const NOTIFICATION_EMAIL = Deno.env.get('PITCH_NOTIFICATION_EMAIL') || 'pedrosusaeta@pawfriend.cl';
 
 function jsonResponse(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {

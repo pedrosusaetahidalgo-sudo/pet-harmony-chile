@@ -127,8 +127,8 @@ const TermsOfService = () => {
                   <strong>Derecho de retracto</strong>: conforme a la Ley 19.496 de Protección al
                   Consumidor, el usuario puede solicitar la devolución del aporte dentro de los 10
                   días corridos desde la transacción escribiendo a{' '}
-                  <code>pawfriendcl@gmail.com</code>. La devolución se realizará por el mismo medio
-                  de pago utilizado.
+                  <code>pedrosusaeta@pawfriend.cl</code>. La devolución se realizará por el mismo
+                  medio de pago utilizado.
                 </li>
                 <li>
                   El procesamiento del pago se realiza a través de <strong>Flow.cl</strong>. Paw
@@ -215,7 +215,7 @@ const TermsOfService = () => {
                 </li>
                 <li>
                   Los usuarios pueden reportar anuncios inapropiados escribiendo a
-                  <code> pawfriendcl@gmail.com</code>.
+                  <code> pedrosusaeta@pawfriend.cl</code>.
                 </li>
               </ul>
             </section>
@@ -253,7 +253,7 @@ const TermsOfService = () => {
               </p>
               <ul className="list-disc list-inside text-muted-foreground ml-4 mt-2 space-y-1">
                 <li>
-                  Email oficial: <code>pawfriendcl@gmail.com</code>
+                  Email oficial: <code>pedrosusaeta@pawfriend.cl</code>
                 </li>
                 <li>A través de la sección de Configuración en la aplicación</li>
               </ul>

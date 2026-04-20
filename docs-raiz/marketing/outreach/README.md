@@ -83,5 +83,5 @@ vean el proyecto funcionando con tracción. Mantén la puerta abierta:
 
 ## Contacto
 
-**Paw Founder** · `pawfriendcl@gmail.com` · pawfriend.cl
+**Paw Founder** · `pedrosusaeta@pawfriend.cl` · pawfriend.cl
 SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9
