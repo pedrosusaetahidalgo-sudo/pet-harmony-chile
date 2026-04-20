@@ -135,3 +135,9 @@ verify_jwt = false
 # ── Pitch applications (agregada 2026-04-20) ──
 [functions.notify-pitch-application]
 verify_jwt = false
+
+[functions.bulk-import-pets]
+verify_jwt = false
+
+[functions.post-adoption-checkin-cron]
+verify_jwt = false

@@ -238,86 +238,58 @@ export default function ShelterBulkImport() {
     }
     setImporting(true);
     try {
-      // 1. Crear audit record
-      const { data: audit, error: auditError } =
-        await // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (supabase.from('adoption_bulk_imports' as any) as any)
-          .insert({
-            adoption_center_id: shelter.id,
-            uploaded_by: user.id,
-            filename,
-            total_rows: rows.length,
-          })
-          .select('id')
-          .single();
-
-      if (auditError) throw auditError;
-
-      // 2. Armar payload de pets
-      const now = new Date().toISOString();
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const pets: any[] = validRows.map((r) => {
+      // Enviar al edge fn bulk-import-pets: evita timeouts cliente +
+      // rate limit server-side + auth verificada en edge.
+      const rowsPayload = validRows.map((r) => {
         const p = r.parsed!;
         const raw = r.raw as Record<string, string>;
         return {
-          owner_id: null,
           name: p.name,
           species: p.species,
-          breed: p.breed || null,
-          sex: p.sex || null,
+          breed: p.breed,
+          sex: p.sex,
           birth_year: p.birth_year,
           birth_month: p.birth_month,
-          size: p.size || null,
-          description: p.description || null,
-          temperament: p.temperament || null,
+          size: p.size,
+          description: p.description,
+          temperament: p.temperament,
           photo_url: p.photo_url,
-          microchip_number: p.microchip || null,
-          sterilized: toBool(raw.sterilized),
-          vaccinated: toBool(raw.vaccinated),
-          dewormed: toBool(raw.dewormed),
-          health_status: p.health_status || null,
-          created_by_shelter_id: shelter.id,
-          shelter_intake_at: now,
-          shelter_notes: p.shelter_notes || null,
-          shelter_source_label: 'bulk_import',
+          microchip: p.microchip,
+          health_status: p.health_status,
+          shelter_notes: p.shelter_notes,
+          sterilized: raw.sterilized,
+          vaccinated: raw.vaccinated,
+          dewormed: raw.dewormed,
         };
       });
 
-      // 3. Insertar en batches de 50
-      const batchSize = 50;
-      let inserted = 0;
-      const errors: unknown[] = [];
-      for (let i = 0; i < pets.length; i += batchSize) {
-        const batch = pets.slice(i, i + batchSize);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const { error, count } = await (supabase.from('pets') as any).insert(batch, {
-          count: 'exact',
-        });
-        if (error) {
-          errors.push({ batchStart: i, message: error.message });
-        } else {
-          inserted += count ?? batch.length;
-        }
-      }
+      const { data, error } = await supabase.functions.invoke('bulk-import-pets', {
+        body: {
+          adoption_center_id: shelter.id,
+          filename,
+          rows: rowsPayload,
+        },
+      });
 
-      // 4. Actualizar audit record
-      if (audit?.id) {
-        await // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (supabase.from('adoption_bulk_imports' as any) as any)
-          .update({
-            success_count: inserted,
-            error_count: errors.length,
-            errors: errors,
-            status: errors.length ? 'completed' : 'completed',
-            completed_at: new Date().toISOString(),
-          })
-          .eq('id', audit.id);
+      if (error) throw error;
+      const result = data as {
+        success?: boolean;
+        inserted?: number;
+        batch_errors?: number;
+        invalid_rows?: number;
+        error?: string;
+      } | null;
+
+      if (!result || result.error) {
+        throw new Error(result?.error || 'Respuesta invalida de bulk-import-pets');
       }
 
       await queryClient.invalidateQueries({ queryKey: ['shelter'] });
       await queryClient.invalidateQueries({ queryKey: ['shelter-pets'] });
 
-      setResult({ ok: inserted, fail: errors.length });
+      const inserted = result.inserted ?? 0;
+      const fail = (result.batch_errors ?? 0) + (result.invalid_rows ?? 0);
+      setResult({ ok: inserted, fail });
       toast.success(`${inserted} mascotas cargadas`);
     } catch (err: unknown) {
       console.error(err);

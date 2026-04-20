@@ -1,0 +1,152 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="500" viewBox="0 0 1000 500">
+  <title>Paw Partners — Discount Coupon</title>
+  <defs>
+    <linearGradient id="emeraldTint" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#D1FAE5"/>
+      <stop offset="100%" stop-color="#A7F3D0"/>
+    </linearGradient>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10B981"/><stop offset="50%" stop-color="#14B8A6"/><stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+    <radialGradient id="violetGlow" cx="0.2" cy="0.2" r="0.55">
+      <stop offset="0%" stop-color="#9333EA" stop-opacity="0.55"/><stop offset="60%" stop-color="#9333EA" stop-opacity="0.1"/><stop offset="100%" stop-color="#9333EA" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="squircleClip">
+      <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    </clipPath>
+    <mask id="heartMask">
+      <rect x="-200" y="-200" width="1400" height="1400" fill="white"/>
+      <path d="M 512 560 C 504 550, 490 540, 482 530 C 474 520, 477 505, 490 502 C 499 500, 507 505, 512 512 C 517 505, 525 500, 534 502 C 547 505, 550 520, 542 530 C 534 540, 520 550, 512 560 Z" fill="black"/>
+    </mask>
+  </defs>
+
+  <!-- Coupon background: rounded rect white -->
+  <rect x="10" y="10" width="980" height="480" rx="20" fill="#FFFFFF" stroke="#CFFCE0" stroke-width="2"/>
+
+  <!-- Left emerald tint (0-350 = 35%) -->
+  <path d="M 30 10 L 350 10 L 350 490 L 30 490 Q 10 490 10 470 L 10 30 Q 10 10 30 10 Z" fill="url(#emeraldTint)"/>
+
+  <!-- Squircle 160px at (95, 170) -->
+  <g transform="translate(38.47 127.33) scale(0.2667)">
+    <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="url(#tileGrad)"/>
+    <g clip-path="url(#squircleClip)">
+      <rect x="212" y="120" width="600" height="600" fill="url(#violetGlow)"/>
+      <g stroke="#FFFFFF" fill="none" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity="0.38">
+        <path d="M 744 455 L 280 455"/>
+        <path d="M 305 438 L 280 455 L 305 472"/>
+        <path d="M 280 575 L 744 575"/>
+        <path d="M 719 558 L 744 575 L 719 592"/>
+      </g>
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#heartMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <!-- "Paw Partners" label under squircle -->
+  <text x="175" y="380" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="18" font-weight="700" fill="#065F46" text-anchor="middle" letter-spacing="2">PAW PARTNERS</text>
+  <text x="175" y="405" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="13" font-weight="500" fill="#10B981" text-anchor="middle" letter-spacing="1">Aliado verificado</text>
+
+  <!-- Main coupon area -->
+  <text x="390" y="100" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="20" font-weight="600" fill="#065F46" letter-spacing="3">DESCUENTO PAW MEMBER</text>
+
+  <!-- Giant % discount -->
+  <text x="390" y="230" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="128" font-weight="700" fill="#10B981" letter-spacing="-4">15%</text>
+  <text x="590" y="230" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="28" font-weight="500" fill="#0F766E" letter-spacing="-0.5">OFF</text>
+
+  <!-- Partner info -->
+  <g transform="translate(390, 290)">
+    <line x1="0" y1="0" x2="320" y2="0" stroke="#10B981" stroke-width="1" opacity="0.4"/>
+    <text x="0" y="36" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="32" font-weight="700" fill="#1A102B" letter-spacing="-1" font-style="italic">[ Aliado ]</text>
+    <text x="0" y="72" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="20" font-weight="500" fill="#0F766E" letter-spacing="-0.2">📍 [ Comuna ] · Válido hasta [ fecha ]</text>
+  </g>
+
+  <!-- Small fine print -->
+  <text x="390" y="450" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="12" font-weight="400" fill="#6B7280" letter-spacing="0.2">Aplica presentando tu cuenta Paw Friend activa · No acumulable con otras promociones</text>
+
+  <!-- Dotted cut-line vertical at x=760 -->
+  <line x1="760" y1="30" x2="760" y2="470" stroke="#10B981" stroke-width="2" stroke-dasharray="4,6" opacity="0.55"/>
+  <!-- Cut marks (scissors hint) at top -->
+  <circle cx="760" cy="30" r="4" fill="#FFFFFF" stroke="#10B981" stroke-width="1.5"/>
+  <circle cx="760" cy="470" r="4" fill="#FFFFFF" stroke="#10B981" stroke-width="1.5"/>
+
+  <!-- Right stub area (760-980) -->
+  <!-- Small rotated squircle stub -->
+  <g transform="translate(870 95) scale(0.12) rotate(-18 512 420)">
+    <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="url(#tileGrad)"/>
+    <g clip-path="url(#squircleClip)">
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#heartMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <!-- QR placeholder 140×140 at (800, 200) -->
+  <g transform="translate(800, 200)">
+    <rect x="0" y="0" width="140" height="140" rx="8" fill="#FFFFFF" stroke="#1A102B" stroke-width="2"/>
+    <!-- Fake QR pattern -->
+    <g fill="#1A102B">
+      <!-- Corner markers -->
+      <rect x="8" y="8" width="28" height="28"/>
+      <rect x="14" y="14" width="16" height="16" fill="#FFFFFF"/>
+      <rect x="18" y="18" width="8" height="8"/>
+      <rect x="104" y="8" width="28" height="28"/>
+      <rect x="110" y="14" width="16" height="16" fill="#FFFFFF"/>
+      <rect x="114" y="18" width="8" height="8"/>
+      <rect x="8" y="104" width="28" height="28"/>
+      <rect x="14" y="110" width="16" height="16" fill="#FFFFFF"/>
+      <rect x="18" y="114" width="8" height="8"/>
+      <!-- Random dots to look QR-like -->
+      <rect x="44" y="10" width="6" height="6"/>
+      <rect x="56" y="10" width="6" height="6"/>
+      <rect x="74" y="10" width="6" height="6"/>
+      <rect x="90" y="10" width="6" height="6"/>
+      <rect x="44" y="22" width="6" height="6"/>
+      <rect x="68" y="22" width="6" height="6"/>
+      <rect x="86" y="22" width="6" height="6"/>
+      <rect x="44" y="44" width="6" height="6"/>
+      <rect x="56" y="44" width="6" height="6"/>
+      <rect x="68" y="44" width="6" height="6"/>
+      <rect x="86" y="44" width="6" height="6"/>
+      <rect x="98" y="44" width="6" height="6"/>
+      <rect x="118" y="44" width="6" height="6"/>
+      <rect x="50" y="56" width="6" height="6"/>
+      <rect x="62" y="56" width="6" height="6"/>
+      <rect x="80" y="56" width="6" height="6"/>
+      <rect x="104" y="56" width="6" height="6"/>
+      <rect x="118" y="56" width="6" height="6"/>
+      <rect x="44" y="68" width="6" height="6"/>
+      <rect x="62" y="68" width="6" height="6"/>
+      <rect x="74" y="68" width="6" height="6"/>
+      <rect x="98" y="68" width="6" height="6"/>
+      <rect x="110" y="68" width="6" height="6"/>
+      <rect x="50" y="80" width="6" height="6"/>
+      <rect x="68" y="80" width="6" height="6"/>
+      <rect x="86" y="80" width="6" height="6"/>
+      <rect x="104" y="80" width="6" height="6"/>
+      <rect x="44" y="92" width="6" height="6"/>
+      <rect x="56" y="92" width="6" height="6"/>
+      <rect x="80" y="92" width="6" height="6"/>
+      <rect x="98" y="92" width="6" height="6"/>
+      <rect x="118" y="92" width="6" height="6"/>
+      <rect x="50" y="104" width="6" height="6"/>
+      <rect x="68" y="104" width="6" height="6"/>
+      <rect x="86" y="104" width="6" height="6"/>
+      <rect x="104" y="104" width="6" height="6"/>
+      <rect x="118" y="104" width="6" height="6"/>
+      <rect x="50" y="116" width="6" height="6"/>
+      <rect x="62" y="116" width="6" height="6"/>
+      <rect x="80" y="116" width="6" height="6"/>
+      <rect x="104" y="116" width="6" height="6"/>
+    </g>
+  </g>
+
+  <text x="870" y="370" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="14" font-weight="600" fill="#10B981" text-anchor="middle" letter-spacing="2">ESCANEA</text>
+  <text x="870" y="390" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="12" font-weight="500" fill="#0F766E" text-anchor="middle" letter-spacing="0.3">para validar descuento</text>
+
+  <text x="870" y="445" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="10" font-weight="500" fill="#6B7280" text-anchor="middle" letter-spacing="2">PAW PARTNERS</text>
+</svg>

@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <title>Paw Partners — Instagram "Nuevo Aliado"</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F7FDFB"/>
+      <stop offset="100%" stop-color="#ECFDF5"/>
+    </linearGradient>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10B981"/><stop offset="50%" stop-color="#14B8A6"/><stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+    <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+    <radialGradient id="violetGlow" cx="0.2" cy="0.2" r="0.55">
+      <stop offset="0%" stop-color="#9333EA" stop-opacity="0.55"/><stop offset="60%" stop-color="#9333EA" stop-opacity="0.1"/><stop offset="100%" stop-color="#9333EA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="violetOrb">
+      <stop offset="0%" stop-color="#9333EA" stop-opacity="0.22"/><stop offset="100%" stop-color="#9333EA" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="squircleClip">
+      <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    </clipPath>
+    <mask id="heartMask">
+      <rect x="-200" y="-200" width="1400" height="1400" fill="white"/>
+      <path d="M 512 560 C 504 550, 490 540, 482 530 C 474 520, 477 505, 490 502 C 499 500, 507 505, 512 512 C 517 505, 525 500, 534 502 C 547 505, 550 520, 542 530 C 534 540, 520 550, 512 560 Z" fill="black"/>
+    </mask>
+  </defs>
+
+  <rect width="1080" height="1080" fill="url(#bgGrad)"/>
+  <ellipse cx="200" cy="200" rx="360" ry="280" fill="url(#violetOrb)"/>
+
+  <!-- ⇄ arrows ambient bg -->
+  <g stroke="#10B981" fill="none" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" opacity="0.13">
+    <path d="M 1000 540 L 80 540"/>
+    <path d="M 115 520 L 80 540 L 115 560"/>
+    <path d="M 80 600 L 1000 600"/>
+    <path d="M 965 580 L 1000 600 L 965 620"/>
+  </g>
+
+  <!-- "NUEVO ALIADO" badge top -->
+  <g transform="translate(540, 90)">
+    <rect x="-180" y="0" width="360" height="50" rx="25" fill="#10B981"/>
+    <text x="0" y="34" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="24" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="5">✨ NUEVO ALIADO</text>
+  </g>
+
+  <!-- Small Paw Partners squircle at top right for brand presence -->
+  <g transform="translate(36 130) scale(0.2)">
+    <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="url(#tileGrad)"/>
+    <g clip-path="url(#squircleClip)">
+      <rect x="212" y="120" width="600" height="600" fill="url(#violetGlow)"/>
+      <g stroke="#FFFFFF" fill="none" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity="0.38">
+        <path d="M 744 455 L 280 455"/>
+        <path d="M 305 438 L 280 455 L 305 472"/>
+        <path d="M 280 575 L 744 575"/>
+        <path d="M 719 558 L 744 575 L 719 592"/>
+      </g>
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#heartMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+    </g>
+  </g>
+  <text x="200" y="220" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="28" font-weight="700" fill="#10B981" letter-spacing="-0.5">Paw Partners</text>
+
+  <!-- Partner logo slot: large circle with emerald ring 8px -->
+  <circle cx="540" cy="520" r="204" fill="url(#ringGrad)"/>
+  <circle cx="540" cy="520" r="196" fill="#F7FDFB"/>
+  <circle cx="540" cy="520" r="196" fill="none" stroke="#CFFCE0" stroke-width="2" stroke-dasharray="6,6" opacity="0.8"/>
+  <text x="540" y="510" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="24" font-weight="600" fill="#10B981" text-anchor="middle" letter-spacing="3" opacity="0.7">LOGO DEL</text>
+  <text x="540" y="545" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="24" font-weight="600" fill="#10B981" text-anchor="middle" letter-spacing="3" opacity="0.7">ALIADO</text>
+
+  <!-- Partner name + comuna -->
+  <text x="540" y="810" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="56" font-weight="700" fill="#1A102B" text-anchor="middle" letter-spacing="-1.5" font-style="italic">[ Nombre Aliado ]</text>
+  <text x="540" y="864" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="32" font-weight="500" fill="#0F766E" text-anchor="middle" letter-spacing="-0.3">📍 [ Comuna ], Santiago</text>
+
+  <!-- NUEVO PAW PARTNER emerald pill -->
+  <g transform="translate(540, 970)">
+    <rect x="-230" y="-34" width="460" height="68" rx="34" fill="#10B981"/>
+    <text x="0" y="9" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="26" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="4">NUEVO PAW PARTNER</text>
+  </g>
+
+  <!-- Footer -->
+  <text x="540" y="1050" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="18" font-weight="500" fill="#10B981" text-anchor="middle" letter-spacing="4">PAWFRIEND.CL/PAW-PARTNERS</text>
+</svg>

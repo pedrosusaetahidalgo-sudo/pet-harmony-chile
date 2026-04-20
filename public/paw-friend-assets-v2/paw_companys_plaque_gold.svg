@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1200" viewBox="0 0 1600 1200">
+  <title>Paw Company — Gold Certificate</title>
+  <defs>
+    <linearGradient id="paperGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FAF7FF"/><stop offset="100%" stop-color="#F3E8FF"/>
+    </linearGradient>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#581C87"/><stop offset="50%" stop-color="#9333EA"/><stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+    <linearGradient id="metalGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#78350F"/><stop offset="22%" stop-color="#D97706"/><stop offset="42%" stop-color="#FACC15"/><stop offset="50%" stop-color="#FEF3C7"/><stop offset="58%" stop-color="#FACC15"/><stop offset="78%" stop-color="#D97706"/><stop offset="100%" stop-color="#78350F"/>
+    </linearGradient>
+    <path id="outerSq" d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    <path id="innerSq" d="M 512 144 C 696 144, 788 236, 788 420 C 788 604, 696 696, 512 696 C 328 696, 236 604, 236 420 C 236 236, 328 144, 512 144 Z"/>
+    <clipPath id="innerClip"><use href="#innerSq"/></clipPath>
+    <mask id="heartMask">
+      <rect x="-200" y="-200" width="1400" height="1400" fill="white"/>
+      <path d="M 512 560 C 504 550, 490 540, 482 530 C 474 520, 477 505, 490 502 C 499 500, 507 505, 512 512 C 517 505, 525 500, 534 502 C 547 505, 550 520, 542 530 C 534 540, 520 550, 512 560 Z" fill="black"/>
+    </mask>
+    <g id="pawContent">
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#heartMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+    </g>
+  </defs>
+
+  <rect width="1600" height="1200" fill="url(#paperGrad)"/>
+
+  <g opacity="0.06" transform="translate(83.2 432) scale(1.4)">
+    <use href="#outerSq" fill="#9333EA"/>
+    <g clip-path="url(#innerClip)"><use href="#pawContent"/></g>
+  </g>
+
+  <rect x="40" y="40" width="1520" height="1120" rx="16" fill="none" stroke="#A16207" stroke-width="3" opacity="0.65"/>
+  <rect x="55" y="55" width="1490" height="1090" rx="10" fill="none" stroke="#A16207" stroke-width="1" opacity="0.4"/>
+  <g stroke="#A16207" stroke-width="2" fill="none" opacity="0.7">
+    <path d="M 90 90 Q 120 90 120 120"/>
+    <path d="M 1510 90 Q 1480 90 1480 120"/>
+    <path d="M 90 1110 Q 120 1110 120 1080"/>
+    <path d="M 1510 1110 Q 1480 1110 1480 1080"/>
+    <circle cx="100" cy="100" r="3" fill="#A16207"/>
+    <circle cx="1500" cy="100" r="3" fill="#A16207"/>
+    <circle cx="100" cy="1100" r="3" fill="#A16207"/>
+    <circle cx="1500" cy="1100" r="3" fill="#A16207"/>
+  </g>
+
+  <g transform="translate(509.86 -8) scale(0.5667)">
+    <use href="#outerSq" fill="url(#metalGold)"/>
+    <use href="#innerSq" fill="url(#tileGrad)"/>
+    <use href="#innerSq" fill="none" stroke="rgba(0,0,0,0.22)" stroke-width="1.5"/>
+    <g clip-path="url(#innerClip)"><use href="#pawContent"/></g>
+    <ellipse cx="360" cy="190" rx="160" ry="32" fill="white" fill-opacity="0.28" transform="rotate(-32 360 190)" clip-path="url(#innerClip)"/>
+  </g>
+
+  <text x="800" y="480" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="600" fill="#6B21A8" text-anchor="middle" letter-spacing="6">PAW COMPANY</text>
+  <text x="800" y="555" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="64" font-weight="700" fill="#A16207" text-anchor="middle" letter-spacing="8">GOLD</text>
+
+  <g opacity="0.6">
+    <line x1="500" y1="600" x2="700" y2="600" stroke="#A16207" stroke-width="1"/>
+    <circle cx="800" cy="600" r="4" fill="#A16207"/>
+    <line x1="900" y1="600" x2="1100" y2="600" stroke="#A16207" stroke-width="1"/>
+  </g>
+
+  <text x="800" y="660" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="20" font-weight="500" fill="#7E22CE" text-anchor="middle" letter-spacing="5">OTORGADO A</text>
+  <text x="800" y="740" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="54" font-weight="700" fill="#1A102B" text-anchor="middle" letter-spacing="-1" font-style="italic">[ Nombre Empresa ]</text>
+  <text x="800" y="840" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="26" font-weight="500" fill="#6B21A8" text-anchor="middle" letter-spacing="-0.3">En reconocimiento a su aporte</text>
+  <text x="800" y="880" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="26" font-weight="500" fill="#6B21A8" text-anchor="middle" letter-spacing="-0.3">al bienestar animal</text>
+
+  <g transform="translate(380, 1000)">
+    <line x1="0" y1="0" x2="280" y2="0" stroke="#1A102B" stroke-width="1.5"/>
+    <text x="140" y="36" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="20" font-weight="600" fill="#1A102B" text-anchor="middle" letter-spacing="0.5">Paw Founder</text>
+    <text x="140" y="62" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="16" font-weight="500" fill="#7E22CE" text-anchor="middle" letter-spacing="0.3">PawFriend.cl</text>
+  </g>
+
+  <g transform="translate(940, 1000)">
+    <line x1="0" y1="0" x2="280" y2="0" stroke="#1A102B" stroke-width="1.5"/>
+    <text x="140" y="36" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="20" font-weight="600" fill="#1A102B" text-anchor="middle" letter-spacing="0.5">YYYY-MM-DD</text>
+    <text x="140" y="62" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="16" font-weight="500" fill="#7E22CE" text-anchor="middle" letter-spacing="3">FECHA</text>
+  </g>
+</svg>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="AI brain">
+  <title>Inteligencia artificial veterinaria</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  <path d="M100 55 C118 55, 135 65, 140 82 C148 88, 150 98, 145 108 C148 118, 145 128, 135 132 C132 140, 122 145, 112 142 C105 148, 95 148, 88 142 C78 145, 68 140, 65 132 C55 128, 52 118, 55 108 C50 98, 52 88, 60 82 C65 65, 82 55, 100 55 Z" fill="#FFFFFF"/>
+  <circle cx="85" cy="95" r="4" fill="#9333EA"/>
+  <circle cx="115" cy="95" r="4" fill="#9333EA"/>
+  <line x1="85" y1="95" x2="100" y2="115" stroke="#9333EA" stroke-width="2" stroke-linecap="round"/>
+  <line x1="115" y1="95" x2="100" y2="115" stroke="#9333EA" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="100" cy="115" r="4" fill="#9333EA"/>
+  <path d="M150 45 L154 52 L161 54 L154 56 L150 63 L146 56 L139 54 L146 52 Z" fill="#EAB308"/>
+</svg>

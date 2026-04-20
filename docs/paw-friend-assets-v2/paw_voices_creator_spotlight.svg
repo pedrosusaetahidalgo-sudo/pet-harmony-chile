@@ -1,0 +1,142 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1500" viewBox="0 0 1200 1500">
+  <title>Paw Voices — Creator Spotlight Card</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFF7FB"/>
+      <stop offset="100%" stop-color="#FDF2F8"/>
+    </linearGradient>
+    <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="50%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#FBBF24"/>
+    </linearGradient>
+    <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="50%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#FBBF24"/>
+    </linearGradient>
+    <linearGradient id="dotGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#EC4899"/>
+    </linearGradient>
+    <clipPath id="squircleClipMini">
+      <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    </clipPath>
+    <mask id="heartMask">
+      <rect x="-200" y="-200" width="1400" height="1400" fill="white"/>
+      <path d="M 512 560 C 504 550, 490 540, 482 530 C 474 520, 477 505, 490 502 C 499 500, 507 505, 512 512 C 517 505, 525 500, 534 502 C 547 505, 550 520, 542 530 C 534 540, 520 550, 512 560 Z" fill="black"/>
+    </mask>
+    <clipPath id="photoClip">
+      <circle cx="600" cy="470" r="160"/>
+    </clipPath>
+    <radialGradient id="violetBlob">
+      <stop offset="0%" stop-color="#9333EA" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#9333EA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="goldBlob">
+      <stop offset="0%" stop-color="#FBBF24" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#FBBF24" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="1500" fill="url(#bgGrad)"/>
+
+  <!-- Top gradient strip with wordmark -->
+  <rect x="0" y="0" width="1200" height="160" fill="url(#headerGrad)"/>
+
+  <!-- Mini squircle in header at (60, 40), 80×80 -->
+  <g transform="translate(31.7 -8) scale(0.1333)">
+    <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="#FFFFFF"/>
+    <g clip-path="url(#squircleClipMini)">
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="#9333EA" mask="url(#heartMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#9333EA"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#9333EA"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#9333EA"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#9333EA"/>
+      <g stroke="#EC4899" fill="none" stroke-linecap="round" stroke-width="18">
+        <path d="M 706 275 A 30 30 0 0 1 727 296"/>
+        <path d="M 712 251 A 55 55 0 0 1 751 290"/>
+        <path d="M 719 227 A 80 80 0 0 1 775 283"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Wordmark in header -->
+  <text x="180" y="108" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="44" font-weight="700" fill="#FFFFFF" letter-spacing="-1.2">Paw Voıces</text>
+  <circle cx="275" cy="76" r="6" fill="#FBBF24"/>
+
+  <!-- Right side header tagline -->
+  <text x="1140" y="100" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#FFFFFF" text-anchor="end" opacity="0.9" letter-spacing="1">CREATOR SPOTLIGHT</text>
+
+  <!-- Ambient blobs -->
+  <ellipse cx="1050" cy="480" rx="250" ry="200" fill="url(#violetBlob)"/>
+  <ellipse cx="150" cy="900" rx="220" ry="200" fill="url(#goldBlob)"/>
+
+  <!-- Photo frame: ring + photo circle -->
+  <!-- Gradient ring (12px thick) -->
+  <circle cx="600" cy="470" r="172" fill="url(#ringGrad)"/>
+  <!-- White gap between ring and photo -->
+  <circle cx="600" cy="470" r="164" fill="#FFF7FB"/>
+  <!-- Photo placeholder: soft pink bg + paw silhouette -->
+  <circle cx="600" cy="470" r="160" fill="#FCE7F3"/>
+  <g clip-path="url(#photoClip)">
+    <!-- Stylized pet silhouette inside (placeholder) -->
+    <g transform="translate(450 340) scale(0.3)" opacity="0.7">
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="#9333EA"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#9333EA"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#9333EA"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#9333EA"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#9333EA"/>
+    </g>
+    <text x="600" y="600" font-family="Fredoka, 'Nunito', sans-serif" font-size="16" fill="#9333EA" text-anchor="middle" font-weight="600" letter-spacing="2" opacity="0.6">TU FOTO AQUÍ</text>
+  </g>
+
+  <!-- Name -->
+  <text x="600" y="740" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="64" font-weight="700" fill="#1A102B" text-anchor="middle" letter-spacing="-2">Luna &amp; Toby</text>
+
+  <!-- Handle -->
+  <text x="600" y="800" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="32" font-weight="500" fill="#9333EA" text-anchor="middle" letter-spacing="-0.3">@luna_y_toby</text>
+
+  <!-- Stats row -->
+  <g transform="translate(600, 880)">
+    <text x="-130" y="0" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="36" font-weight="700" fill="#1A102B" text-anchor="middle">12.4K</text>
+    <text x="-130" y="34" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="18" font-weight="500" fill="#6B21A8" text-anchor="middle" letter-spacing="1">SEGUIDORES</text>
+    <line x1="-40" y1="-20" x2="-40" y2="30" stroke="#F9D3EB" stroke-width="2"/>
+    <text x="130" y="0" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="36" font-weight="700" fill="#1A102B" text-anchor="middle">87</text>
+    <text x="130" y="34" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="18" font-weight="500" fill="#6B21A8" text-anchor="middle" letter-spacing="1">HISTORIAS</text>
+  </g>
+
+  <!-- Verified Paw Voice pill -->
+  <g transform="translate(600, 980)">
+    <rect x="-200" y="-34" width="400" height="68" rx="34" fill="#FCE7F3" stroke="#9333EA" stroke-width="2"/>
+    <text x="0" y="9" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="24" font-weight="700" fill="#9333EA" text-anchor="middle" letter-spacing="-0.3">Verified Paw Voice 💛</text>
+  </g>
+
+  <!-- Quote/bio slot -->
+  <g transform="translate(600, 1140)">
+    <text x="0" y="0" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="28" font-weight="500" fill="#1A102B" text-anchor="middle" letter-spacing="-0.3" font-style="italic">"Cada ladrido tiene una historia.</text>
+    <text x="0" y="44" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="28" font-weight="500" fill="#1A102B" text-anchor="middle" letter-spacing="-0.3" font-style="italic">Aquí comparto las de Toby."</text>
+  </g>
+
+  <!-- Soft gold separator -->
+  <rect x="450" y="1270" width="300" height="3" rx="1.5" fill="#FBBF24" opacity="0.6"/>
+
+  <!-- Categories / specialty tags -->
+  <g transform="translate(600, 1340)">
+    <g transform="translate(-260, 0)">
+      <rect x="0" y="-22" width="160" height="44" rx="22" fill="#FEF3C7"/>
+      <text x="80" y="7" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="18" font-weight="600" fill="#92400E" text-anchor="middle">Adopción</text>
+    </g>
+    <g transform="translate(-80, 0)">
+      <rect x="0" y="-22" width="160" height="44" rx="22" fill="#FCE7F3"/>
+      <text x="80" y="7" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="18" font-weight="600" fill="#9333EA" text-anchor="middle">Entrenamiento</text>
+    </g>
+    <g transform="translate(100, 0)">
+      <rect x="0" y="-22" width="160" height="44" rx="22" fill="#DBEAFE"/>
+      <text x="80" y="7" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="18" font-weight="600" fill="#1E40AF" text-anchor="middle">Salud</text>
+    </g>
+  </g>
+
+  <!-- Bottom brand -->
+  <text x="600" y="1450" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="20" font-weight="600" fill="#9333EA" text-anchor="middle" letter-spacing="4">PAWFRIEND.CL / PAW-VOICES</text>
+</svg>

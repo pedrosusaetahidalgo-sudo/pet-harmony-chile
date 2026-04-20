@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 680" width="680" height="680" role="img" aria-label="Paw Friend mark square">
+  <title>Paw Friend · Mark square (app icon / favicon)</title>
+  <desc>Isotipo Paw Friend simplificado para app icon y favicons pequeños.</desc>
+  <defs>
+    <clipPath id="squircle-sq">
+      <path d="M 340 40 C 540 40, 640 140, 640 340 C 640 540, 540 640, 340 640 C 140 640, 40 540, 40 340 C 40 140, 140 40, 340 40 Z"/>
+    </clipPath>
+  </defs>
+  <path d="M 340 40 C 540 40, 640 140, 640 340 C 640 540, 540 640, 340 640 C 140 640, 40 540, 40 340 C 40 140, 140 40, 340 40 Z" fill="#9333EA"/>
+  <g clip-path="url(#squircle-sq)">
+    <ellipse cx="340" cy="445" rx="160" ry="130" fill="#FFFFFF"/>
+    <ellipse cx="205" cy="285" rx="60" ry="72" transform="rotate(-20 205 285)" fill="#FFFFFF"/>
+    <ellipse cx="290" cy="195" rx="54" ry="66" transform="rotate(-8 290 195)" fill="#FFFFFF"/>
+    <ellipse cx="390" cy="195" rx="54" ry="66" transform="rotate(8 390 195)" fill="#FFFFFF"/>
+    <ellipse cx="475" cy="285" rx="60" ry="72" transform="rotate(20 475 285)" fill="#FFFFFF"/>
+  </g>
+</svg>

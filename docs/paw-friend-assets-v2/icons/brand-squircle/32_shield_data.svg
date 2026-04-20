@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Data shield">
+  <title>Privacidad de datos</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  <path d="M100 50 L135 65 L135 110 C135 130, 120 145, 100 155 C80 145, 65 130, 65 110 L65 65 Z" fill="#FFFFFF"/>
+  <rect x="85" y="95" width="30" height="26" rx="4" fill="#9333EA"/>
+  <path d="M92 95 L92 88 C92 82, 95 78, 100 78 C105 78, 108 82, 108 88 L108 95" fill="none" stroke="#9333EA" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="100" cy="108" r="3" fill="#FFFFFF"/>
+  <path d="M155 48 L162 42 L162 53 L155 59 Z" fill="#EAB308"/>
+</svg>

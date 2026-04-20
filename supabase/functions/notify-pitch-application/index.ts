@@ -133,6 +133,65 @@ function buildEmailHtml(app: {
 </body></html>`;
 }
 
+/**
+ * Envia notificacion opcional a Slack/Discord si los webhooks estan
+ * configurados como secretos. Ambos son "best effort" — si fallan, no
+ * bloquean el flujo del email.
+ */
+async function sendToSlack(opts: {
+  kindLabel: string;
+  name: string;
+  email: string;
+  org: string | null;
+  message: string | null;
+  adminUrl: string;
+}): Promise<boolean> {
+  const webhook = Deno.env.get('SLACK_PITCH_WEBHOOK_URL');
+  if (!webhook) return false;
+  try {
+    const text = `*Nueva postulacion · ${opts.kindLabel}*\n*${opts.name}*${opts.org ? ` (${opts.org})` : ''}\n📧 ${opts.email}${opts.message ? `\n> ${opts.message.slice(0, 200)}${opts.message.length > 200 ? '…' : ''}` : ''}\n<${opts.adminUrl}|Revisar en Admin>`;
+    const resp = await fetch(webhook, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, mrkdwn: true }),
+    });
+    return resp.ok;
+  } catch (err) {
+    console.error('[notify-pitch-application] Slack error:', err);
+    return false;
+  }
+}
+
+async function sendToDiscord(opts: {
+  kindLabel: string;
+  name: string;
+  email: string;
+  org: string | null;
+  message: string | null;
+  adminUrl: string;
+}): Promise<boolean> {
+  const webhook = Deno.env.get('DISCORD_PITCH_WEBHOOK_URL');
+  if (!webhook) return false;
+  try {
+    const embed = {
+      title: `Nueva postulacion · ${opts.kindLabel}`,
+      description: `**${opts.name}**${opts.org ? ` · ${opts.org}` : ''}\n📧 ${opts.email}${opts.message ? `\n\n${opts.message.slice(0, 300)}${opts.message.length > 300 ? '…' : ''}` : ''}`,
+      color: 0x9333ea, // purple
+      url: opts.adminUrl,
+      timestamp: new Date().toISOString(),
+    };
+    const resp = await fetch(webhook, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ embeds: [embed] }),
+    });
+    return resp.ok;
+  } catch (err) {
+    console.error('[notify-pitch-application] Discord error:', err);
+    return false;
+  }
+}
+
 async function sendEmail(opts: { to: string; subject: string; html: string }): Promise<boolean> {
   const apiKey = Deno.env.get('RESEND_API_KEY');
   if (!apiKey) {
@@ -201,15 +260,33 @@ serve(
 
       const html = buildEmailHtml(app as Parameters<typeof buildEmailHtml>[0]);
 
-      const sent = await sendEmail({
-        to: NOTIFICATION_EMAIL,
-        subject,
-        html,
-      });
+      const adminUrl = 'https://pawfriend.cl/admin?section=system&sub=pitch-applications';
+
+      const [emailSent, slackSent, discordSent] = await Promise.all([
+        sendEmail({ to: NOTIFICATION_EMAIL, subject, html }),
+        sendToSlack({
+          kindLabel: label,
+          name: app.contact_name,
+          email: app.contact_email,
+          org: app.organization_name,
+          message: app.message,
+          adminUrl,
+        }),
+        sendToDiscord({
+          kindLabel: label,
+          name: app.contact_name,
+          email: app.contact_email,
+          org: app.organization_name,
+          message: app.message,
+          adminUrl,
+        }),
+      ]);
 
       return jsonResponse({
         success: true,
-        email_sent: sent,
+        email_sent: emailSent,
+        slack_sent: slackSent,
+        discord_sent: discordSent,
       });
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);

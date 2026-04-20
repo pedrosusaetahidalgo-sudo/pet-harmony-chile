@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="900" viewBox="0 0 2400 900">
+  <title>Paw Voices — Hero Banner</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFF7FB"/>
+      <stop offset="100%" stop-color="#FDF2F8"/>
+    </linearGradient>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="50%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#FBBF24"/>
+    </linearGradient>
+    <linearGradient id="dotGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#EC4899"/>
+    </linearGradient>
+    <clipPath id="squircleClip">
+      <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    </clipPath>
+    <mask id="heartMask">
+      <rect x="-200" y="-200" width="1400" height="1400" fill="white"/>
+      <path d="M 512 560 C 504 550, 490 540, 482 530 C 474 520, 477 505, 490 502 C 499 500, 507 505, 512 512 C 517 505, 525 500, 534 502 C 547 505, 550 520, 542 530 C 534 540, 520 550, 512 560 Z" fill="black"/>
+    </mask>
+    <radialGradient id="violetBlob">
+      <stop offset="0%" stop-color="#9333EA" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#9333EA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="goldBlob">
+      <stop offset="0%" stop-color="#FBBF24" stop-opacity="0.20"/>
+      <stop offset="100%" stop-color="#FBBF24" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="pinkBlob">
+      <stop offset="0%" stop-color="#EC4899" stop-opacity="0.18"/>
+      <stop offset="100%" stop-color="#EC4899" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="2400" height="900" fill="url(#bgGrad)"/>
+
+  <!-- Ambient blobs para profundidad -->
+  <ellipse cx="2100" cy="180" rx="420" ry="320" fill="url(#violetBlob)"/>
+  <ellipse cx="2280" cy="820" rx="380" ry="300" fill="url(#goldBlob)"/>
+  <ellipse cx="1500" cy="810" rx="320" ry="200" fill="url(#pinkBlob)"/>
+  <ellipse cx="250" cy="150" rx="280" ry="200" fill="url(#violetBlob)" opacity="0.5"/>
+
+  <!-- Squircle 320px at (120, 290) -->
+  <g transform="translate(7 226) scale(0.5333)">
+    <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="url(#tileGrad)"/>
+    <g clip-path="url(#squircleClip)">
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#heartMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+      <g stroke="#FFFFFF" fill="none" stroke-linecap="round" stroke-width="18">
+        <path d="M 706 275 A 30 30 0 0 1 727 296"/>
+        <path d="M 712 251 A 55 55 0 0 1 751 290"/>
+        <path d="M 719 227 A 80 80 0 0 1 775 283"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Pequeño wordmark arriba del headline -->
+  <text x="520" y="340" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="34" font-weight="600" fill="#9333EA" letter-spacing="4">PAW VOICES</text>
+
+  <!-- Headline -->
+  <text x="520" y="450" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="96" font-weight="700" fill="#1A102B" letter-spacing="-3">Amplifica lo que más quieres</text>
+
+  <!-- Subtitle -->
+  <text x="520" y="540" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="40" font-weight="500" fill="#6B21A8" letter-spacing="-0.5">Los creadores que hablan de quienes más amas: tus peludos.</text>
+
+  <!-- CTA pill -->
+  <g transform="translate(520, 620)">
+    <rect x="0" y="0" width="320" height="72" rx="36" fill="#9333EA"/>
+    <text x="160" y="48" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="28" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="-0.5">Descubre la comunidad</text>
+  </g>
+</svg>

@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <title>Paw Investors — Social OG Card</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1A102B"/>
+      <stop offset="55%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1A102B"/><stop offset="50%" stop-color="#9333EA"/><stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+    <radialGradient id="greenAccent" cx="0.85" cy="0.88" r="0.28">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.5"/><stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="greenBg" cx="0.9" cy="0.85" r="0.4">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.25"/><stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="squircleClip">
+      <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    </clipPath>
+    <mask id="arrowMask">
+      <rect x="-200" y="-200" width="1400" height="1400" fill="white"/>
+      <path d="M 512 488 L 558 534 L 530 534 L 530 572 L 494 572 L 494 534 L 466 534 Z" fill="black"/>
+    </mask>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bgGrad)"/>
+  <rect width="1200" height="630" fill="url(#greenBg)"/>
+
+  <!-- Gold hairline frame around canvas (executive frame) -->
+  <rect x="20" y="20" width="1160" height="590" rx="16" fill="none" stroke="#EAB308" stroke-width="2" opacity="0.7"/>
+
+  <!-- Gold hairline around squircle (240×240 at 60, 195) -->
+  <path d="M 180 193 C 204 193, 212 201, 212 225 C 212 249, 204 257, 180 257 C 156 257, 148 249, 148 225 C 148 201, 156 193, 180 193 Z" fill="none" stroke="#EAB308" stroke-width="3" opacity="0.9" transform="translate(-0.64 -0.96) scale(1.0083)" transform-origin="180 225"/>
+
+  <!-- Squircle 240×240 at (60, 195) -->
+  <g transform="translate(-24.8 147) scale(0.4)">
+    <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="url(#tileGrad)"/>
+    <g clip-path="url(#squircleClip)">
+      <rect x="212" y="120" width="600" height="600" fill="url(#greenAccent)"/>
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#arrowMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <text x="360" y="230" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="600" fill="#EAB308" letter-spacing="6">PAW FRIEND · INVERSIÓN</text>
+
+  <text x="360" y="340" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="72" font-weight="700" text-anchor="start" letter-spacing="-2">
+    <tspan fill="#FFFFFF">Paw</tspan><tspan fill="#EAB308"> Investors</tspan>
+  </text>
+
+  <text x="360" y="400" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="30" font-weight="500" fill="#FFFFFF" opacity="0.9" letter-spacing="-0.3">Round &amp; data room</text>
+
+  <text x="360" y="465" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="400" fill="#EAB308" opacity="0.8" letter-spacing="-0.2">Chile artesanal · IA co-engineered · Salud animal</text>
+
+  <!-- Footer -->
+  <g transform="translate(60, 555)">
+    <rect x="0" y="0" width="12" height="28" rx="6" fill="#EAB308"/>
+    <text x="28" y="22" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="600" fill="#FFFFFF" letter-spacing="-0.3">pawfriend.cl/pitch-deck</text>
+  </g>
+</svg>

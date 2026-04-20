@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2560" height="1440" viewBox="0 0 2560 1440">
+  <title>Paw Friend · Inversión — Pitch Deck Cover</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1A102B"/>
+      <stop offset="50%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1A102B"/><stop offset="50%" stop-color="#9333EA"/><stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+    <radialGradient id="greenAccent" cx="0.85" cy="0.88" r="0.28">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.5"/><stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="greenBg" cx="0.9" cy="0.85" r="0.4">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.3"/><stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="squircleClip">
+      <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    </clipPath>
+    <mask id="arrowMask">
+      <rect x="-200" y="-200" width="1400" height="1400" fill="white"/>
+      <path d="M 512 488 L 558 534 L 530 534 L 530 572 L 494 572 L 494 534 L 466 534 Z" fill="black"/>
+    </mask>
+    <g id="pawWithArrow">
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#arrowMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+    </g>
+  </defs>
+
+  <rect width="2560" height="1440" fill="url(#bgGrad)"/>
+  <!-- Green mission accent bottom-right of canvas -->
+  <rect width="2560" height="1440" fill="url(#greenBg)"/>
+
+  <!-- Eyebrow top -->
+  <text x="1280" y="200" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="30" font-weight="600" fill="#EAB308" text-anchor="middle" letter-spacing="10">PITCH DECK · 2026</text>
+
+  <!-- Gold hairline around squircle (offset +4) -->
+  <path d="M 1280 375 C 1400 375, 1460 435, 1460 555 C 1460 675, 1400 735, 1280 735 C 1160 735, 1100 675, 1100 555 C 1100 435, 1160 375, 1280 375 Z" fill="none" stroke="#EAB308" stroke-width="3" opacity="0.9" transform="translate(-1.6 -2.4) scale(1.011)" transform-origin="1280 555"/>
+
+  <!-- Squircle 360×360 centered at (1100, 380) = (1280, 555) center -->
+  <g transform="translate(972.8 308) scale(0.6)">
+    <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="url(#tileGrad)"/>
+    <g clip-path="url(#squircleClip)">
+      <rect x="212" y="120" width="600" height="600" fill="url(#greenAccent)"/>
+      <use href="#pawWithArrow"/>
+    </g>
+  </g>
+
+  <!-- Title -->
+  <text x="1280" y="890" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="96" font-weight="700" text-anchor="middle" letter-spacing="-3">
+    <tspan fill="#FFFFFF">Paw Friend</tspan><tspan fill="#EAB308"> · Inversión</tspan>
+  </text>
+
+  <!-- Subtitle -->
+  <text x="1280" y="980" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="38" font-weight="500" fill="#EAB308" text-anchor="middle" letter-spacing="3">Chile artesanal · IA co-engineered · Salud animal</text>
+
+  <!-- Decorative gold line under subtitle -->
+  <line x1="1080" y1="1030" x2="1480" y2="1030" stroke="#EAB308" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- Value props row (optional, for emphasis) -->
+  <g font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="24" font-weight="500" fill="#FFFFFF" text-anchor="middle" opacity="0.88" letter-spacing="1">
+    <text x="880" y="1100">Bienestar</text>
+    <text x="1280" y="1100">Tecnología</text>
+    <text x="1680" y="1100">Mercado</text>
+  </g>
+
+  <!-- Bottom: Paw Founder + year -->
+  <text x="1280" y="1380" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#FFFFFF" text-anchor="middle" opacity="0.7" letter-spacing="4">PAW FOUNDER · 2026</text>
+</svg>

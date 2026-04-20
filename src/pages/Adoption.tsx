@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useMemo, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import { LINKS } from '@/lib/links';
 import { useNavigate } from 'react-router-dom';
 import { PawLabsBanner } from '@/components/PawLabsBanner';
 import { EmptyStateIllustration } from '@/components/EmptyStateIllustration';
+import { loadPreferences, rankByMatch, type MatchablePost } from '@/lib/adoptionMatch';
 
 // Lazy: estos componentes pesan (forms con react-hook-form, listas con queries
 // propias). Cargarlos bajo demanda reduce el bundle inicial de Adoption.tsx.
@@ -73,6 +74,14 @@ const Adoption = () => {
     },
     enabled: !!user && selectedTab !== 'shelters',
   });
+
+  // Ranking por match si el user tiene preferencias guardadas en localStorage.
+  // Si no hay preferencias, no reordena (respeta created_at).
+  const rankedPosts = useMemo(() => {
+    if (!posts || selectedTab !== 'available') return posts ?? [];
+    const prefs = loadPreferences();
+    return rankByMatch(posts as MatchablePost[], prefs) as typeof posts;
+  }, [posts, selectedTab]);
 
   const handlePostCreated = () => {
     setShowCreateDialog(false);
@@ -194,9 +203,9 @@ const Adoption = () => {
                   <div key={i} className="h-96 bg-muted/50 animate-pulse rounded-xl" />
                 ))}
               </div>
-            ) : posts && posts.length > 0 ? (
+            ) : rankedPosts && rankedPosts.length > 0 ? (
               <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                {posts.map((post) => (
+                {rankedPosts.map((post) => (
                   <AdoptionPostCard
                     key={post.id}
                     post={post}

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360">
+  <title>Paw Partners — Email Header</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="50%" stop-color="#14B8A6"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+    <radialGradient id="violetGlowBig" cx="0.2" cy="0.3" r="0.6">
+      <stop offset="0%" stop-color="#9333EA" stop-opacity="0.45"/>
+      <stop offset="100%" stop-color="#9333EA" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="pawColor" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="#14B8A6"/>
+    </linearGradient>
+    <clipPath id="squircleClip">
+      <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    </clipPath>
+    <mask id="heartMask">
+      <rect x="-200" y="-200" width="1400" height="1400" fill="white"/>
+      <path d="M 512 560 C 504 550, 490 540, 482 530 C 474 520, 477 505, 490 502 C 499 500, 507 505, 512 512 C 517 505, 525 500, 534 502 C 547 505, 550 520, 542 530 C 534 540, 520 550, 512 560 Z" fill="black"/>
+    </mask>
+  </defs>
+
+  <rect width="1200" height="360" fill="url(#bgGrad)"/>
+  <rect width="1200" height="360" fill="url(#violetGlowBig)"/>
+
+  <!-- White squircle 200px at (80, 80) with emerald paw inside -->
+  <g transform="translate(9.34 40) scale(0.3333)">
+    <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="#FFFFFF"/>
+    <g clip-path="url(#squircleClip)">
+      <!-- ⇄ arrows inside the tile -->
+      <g stroke="#10B981" fill="none" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity="0.25">
+        <path d="M 744 455 L 280 455"/>
+        <path d="M 305 438 L 280 455 L 305 472"/>
+        <path d="M 280 575 L 744 575"/>
+        <path d="M 719 558 L 744 575 L 719 592"/>
+      </g>
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="url(#pawColor)" mask="url(#heartMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="url(#pawColor)"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="url(#pawColor)"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="url(#pawColor)"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="url(#pawColor)"/>
+    </g>
+  </g>
+
+  <!-- Wordmark white -->
+  <text x="310" y="180" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="72" font-weight="700" fill="#FFFFFF" letter-spacing="-2">Paw Partners</text>
+  <!-- Violet dot above "a" in "Partners" -->
+  <circle cx="482" cy="130" r="9" fill="#9333EA"/>
+  <circle cx="482" cy="130" r="6" fill="#C4B5FD"/>
+
+  <!-- Descriptor -->
+  <text x="310" y="230" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="26" font-weight="500" fill="#FFFFFF" opacity="0.9" letter-spacing="0.5">Red de aliados · Paw Friend</text>
+
+  <!-- Violet hairline bottom 4px -->
+  <rect x="0" y="356" width="1200" height="4" fill="#9333EA"/>
+</svg>

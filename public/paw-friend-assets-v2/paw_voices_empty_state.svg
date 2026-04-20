@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <title>Paw Voices — Empty State</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFF7FB"/>
+      <stop offset="100%" stop-color="#FDF2F8"/>
+    </linearGradient>
+    <linearGradient id="micBody" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#7E22CE"/>
+    </linearGradient>
+    <linearGradient id="micHighlight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="spotlight" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#FCE7F3" stop-opacity="0.9"/>
+      <stop offset="70%" stop-color="#FCE7F3" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#FCE7F3" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#bgGrad)"/>
+
+  <!-- Spotlight soft pink behind mic -->
+  <circle cx="400" cy="270" r="260" fill="url(#spotlight)"/>
+
+  <!-- Confetti atrás (sutil) -->
+  <g opacity="0.85">
+    <rect x="140" y="120" width="14" height="24" rx="3" fill="#9333EA" transform="rotate(22 147 132)"/>
+    <rect x="660" y="150" width="14" height="24" rx="3" fill="#FBBF24" transform="rotate(-18 667 162)"/>
+    <circle cx="200" cy="80" r="7" fill="#EC4899"/>
+    <circle cx="620" cy="90" r="8" fill="#9333EA"/>
+    <rect x="100" y="340" width="12" height="20" rx="3" fill="#FBBF24" transform="rotate(45 106 350)"/>
+    <rect x="700" y="380" width="14" height="22" rx="3" fill="#EC4899" transform="rotate(-25 707 391)"/>
+    <circle cx="90" cy="220" r="6" fill="#9333EA"/>
+    <circle cx="710" cy="250" r="7" fill="#FBBF24"/>
+    <rect x="530" y="60" width="10" height="18" rx="2" fill="#9333EA" transform="rotate(15 535 69)"/>
+    <rect x="260" y="50" width="12" height="20" rx="3" fill="#FBBF24" transform="rotate(-30 266 60)"/>
+  </g>
+
+  <!-- Microphone -->
+  <!-- Shadow behind mic -->
+  <ellipse cx="400" cy="470" rx="85" ry="10" fill="#9333EA" opacity="0.15"/>
+
+  <!-- Base -->
+  <ellipse cx="400" cy="460" rx="75" ry="12" fill="#6B21A8"/>
+  <rect x="325" y="450" width="150" height="14" rx="7" fill="#7E22CE"/>
+
+  <!-- Stand -->
+  <rect x="390" y="370" width="20" height="90" fill="#7E22CE"/>
+
+  <!-- Connector between mic and stand -->
+  <rect x="380" y="360" width="40" height="14" rx="4" fill="#6B21A8"/>
+
+  <!-- Mic capsule -->
+  <rect x="330" y="160" width="140" height="210" rx="70" fill="url(#micBody)"/>
+
+  <!-- Grille lines (suggest texture) -->
+  <g stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.4">
+    <line x1="350" y1="210" x2="450" y2="210"/>
+    <line x1="350" y1="240" x2="450" y2="240"/>
+    <line x1="350" y1="270" x2="450" y2="270"/>
+    <line x1="350" y1="300" x2="450" y2="300"/>
+    <line x1="350" y1="330" x2="450" y2="330"/>
+  </g>
+
+  <!-- Mic highlight (vertical strip) -->
+  <rect x="346" y="175" width="18" height="180" rx="9" fill="url(#micHighlight)"/>
+
+  <!-- Tiny violet paw on top of mic -->
+  <g transform="translate(360 100) scale(0.13)">
+    <ellipse cx="512" cy="510" rx="155" ry="135" fill="#9333EA"/>
+    <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#9333EA"/>
+    <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#9333EA"/>
+    <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#9333EA"/>
+    <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#9333EA"/>
+  </g>
+
+  <!-- Copy -->
+  <text x="400" y="530" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="28" font-weight="700" fill="#1A102B" text-anchor="middle" letter-spacing="-0.5">Aún no hay Paw Voices en esta categoría</text>
+  <text x="400" y="568" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="19" font-weight="500" fill="#6B21A8" text-anchor="middle" letter-spacing="-0.2">Sé el primero en compartir la historia de tu peludo</text>
+</svg>

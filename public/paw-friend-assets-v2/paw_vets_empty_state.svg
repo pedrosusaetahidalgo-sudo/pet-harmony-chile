@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">
+  <title>Paw Vets — Empty State</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F0FDFA"/>
+      <stop offset="100%" stop-color="#ECFDF5"/>
+    </linearGradient>
+    <linearGradient id="clipboardBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F0FDFA"/>
+    </linearGradient>
+    <linearGradient id="clipGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#0F766E"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="800" height="600" fill="url(#bgGrad)"/>
+
+  <!-- Soft shadow under clipboard -->
+  <ellipse cx="400" cy="510" rx="180" ry="12" fill="#0F766E" opacity="0.1"/>
+
+  <!-- Clipboard shadow layer -->
+  <rect x="258" y="145" width="300" height="360" rx="16" fill="#0F766E" opacity="0.12"/>
+
+  <!-- Clipboard body -->
+  <rect x="250" y="140" width="300" height="360" rx="16" fill="url(#clipboardBody)" stroke="#A7F3D0" stroke-width="2"/>
+
+  <!-- Clamp top -->
+  <rect x="350" y="120" width="100" height="40" rx="6" fill="url(#clipGrad)"/>
+  <circle cx="400" cy="128" r="5" fill="#064E3B"/>
+  <rect x="385" y="114" width="30" height="8" rx="4" fill="#0F766E"/>
+
+  <!-- Hole punched top -->
+  <circle cx="400" cy="175" r="6" fill="#F0FDFA" stroke="#A7F3D0" stroke-width="1.5"/>
+
+  <!-- Content lines (hint of a form) at top -->
+  <line x1="280" y1="215" x2="420" y2="215" stroke="#A7F3D0" stroke-width="2" stroke-linecap="round"/>
+  <line x1="280" y1="232" x2="380" y2="232" stroke="#D1FAE5" stroke-width="2" stroke-linecap="round"/>
+  <line x1="280" y1="260" x2="450" y2="260" stroke="#A7F3D0" stroke-width="2" stroke-linecap="round"/>
+  <line x1="280" y1="277" x2="400" y2="277" stroke="#D1FAE5" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Heart-monitor EKG squiggle inside clipboard -->
+  <g fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M 275 370 L 310 370 L 320 355 L 330 385 L 340 330 L 350 400 L 360 370 L 400 370 L 410 355 L 420 385 L 430 330 L 440 400 L 450 370 L 525 370"/>
+  </g>
+
+  <!-- Heart symbol at end of EKG -->
+  <path d="M 500 355 C 496 350, 489 347, 485 343 C 481 338, 482 331, 489 331 C 493 331, 497 333, 500 336 C 503 333, 507 331, 511 331 C 518 331, 519 338, 515 343 C 511 347, 504 350, 500 355 Z" fill="#F59E0B" opacity="0.85"/>
+
+  <!-- Baseline hint -->
+  <line x1="275" y1="430" x2="525" y2="430" stroke="#D1FAE5" stroke-width="2" stroke-linecap="round"/>
+  <line x1="275" y1="450" x2="450" y2="450" stroke="#D1FAE5" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Cross cue at top of clipboard -->
+  <g transform="translate(290, 185)">
+    <rect x="0" y="5" width="22" height="4" rx="1" fill="#F59E0B"/>
+    <rect x="9" y="-4" width="4" height="22" rx="1" fill="#F59E0B"/>
+  </g>
+
+  <!-- Tiny amber paw lower-right -->
+  <g transform="translate(600 400) scale(0.07) rotate(-8 512 420)" opacity="0.9">
+    <ellipse cx="512" cy="510" rx="155" ry="135" fill="#F59E0B"/>
+    <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#F59E0B"/>
+    <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#F59E0B"/>
+    <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#F59E0B"/>
+    <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#F59E0B"/>
+  </g>
+
+  <!-- Copy -->
+  <text x="400" y="535" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="26" font-weight="700" fill="#064E3B" text-anchor="middle" letter-spacing="-0.5">Aún no hay pacientes</text>
+  <text x="400" y="575" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="20" font-weight="500" fill="#0F766E" text-anchor="middle" letter-spacing="-0.3">Carga el primero y listo.</text>
+</svg>

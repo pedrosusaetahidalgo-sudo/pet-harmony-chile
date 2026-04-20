@@ -1,0 +1,97 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="900" viewBox="0 0 2400 900">
+  <title>Paw Companys — Hero Banner</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3B0764"/>
+      <stop offset="55%" stop-color="#6B21A8"/>
+      <stop offset="100%" stop-color="#A78BFA"/>
+    </linearGradient>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#581C87"/>
+      <stop offset="50%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+    <linearGradient id="metalBronze" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#451A03"/><stop offset="22%" stop-color="#9A3412"/><stop offset="42%" stop-color="#EA580C"/><stop offset="50%" stop-color="#FDBA74"/><stop offset="58%" stop-color="#EA580C"/><stop offset="78%" stop-color="#9A3412"/><stop offset="100%" stop-color="#451A03"/>
+    </linearGradient>
+    <linearGradient id="metalSilver" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1E293B"/><stop offset="22%" stop-color="#64748B"/><stop offset="42%" stop-color="#CBD5E1"/><stop offset="50%" stop-color="#F8FAFC"/><stop offset="58%" stop-color="#CBD5E1"/><stop offset="78%" stop-color="#64748B"/><stop offset="100%" stop-color="#1E293B"/>
+    </linearGradient>
+    <linearGradient id="metalGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#78350F"/><stop offset="22%" stop-color="#D97706"/><stop offset="42%" stop-color="#FACC15"/><stop offset="50%" stop-color="#FEF3C7"/><stop offset="58%" stop-color="#FACC15"/><stop offset="78%" stop-color="#D97706"/><stop offset="100%" stop-color="#78350F"/>
+    </linearGradient>
+    <path id="outerSq" d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    <path id="innerSq" d="M 512 144 C 696 144, 788 236, 788 420 C 788 604, 696 696, 512 696 C 328 696, 236 604, 236 420 C 236 236, 328 144, 512 144 Z"/>
+    <clipPath id="innerClip"><use href="#innerSq"/></clipPath>
+    <mask id="heartMask">
+      <rect x="-200" y="-200" width="1400" height="1400" fill="white"/>
+      <path d="M 512 560 C 504 550, 490 540, 482 530 C 474 520, 477 505, 490 502 C 499 500, 507 505, 512 512 C 517 505, 525 500, 534 502 C 547 505, 550 520, 542 530 C 534 540, 520 550, 512 560 Z" fill="black"/>
+    </mask>
+    <g id="pawContent">
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#heartMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+    </g>
+  </defs>
+
+  <rect width="2400" height="900" fill="url(#bgGrad)"/>
+
+  <!-- Gold laurel arcs en esquinas bajas (18% opacity) -->
+  <g stroke="#FBBF24" fill="none" stroke-width="3" stroke-linecap="round" opacity="0.18">
+    <path d="M 60 850 Q 140 770 320 790"/>
+    <path d="M 2340 850 Q 2260 770 2080 790"/>
+    <path d="M 90 800 L 70 790" stroke-width="2"/>
+    <path d="M 140 780 L 118 768" stroke-width="2"/>
+    <path d="M 195 782 L 175 770" stroke-width="2"/>
+    <path d="M 250 790 L 232 782" stroke-width="2"/>
+    <path d="M 2310 800 L 2330 790" stroke-width="2"/>
+    <path d="M 2260 780 L 2282 768" stroke-width="2"/>
+    <path d="M 2205 782 L 2225 770" stroke-width="2"/>
+    <path d="M 2150 790 L 2168 782" stroke-width="2"/>
+  </g>
+
+  <!-- Brand eyebrow -->
+  <text x="1200" y="120" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="24" font-weight="600" fill="#FBBF24" text-anchor="middle" letter-spacing="6">PAW FRIEND · SUB-BRAND</text>
+
+  <!-- Headline -->
+  <text x="1200" y="200" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="72" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="-2">Súmate como Paw Company</text>
+
+  <!-- 3 tier squircles (280px each, centered row) -->
+  <!-- Bronze at (720, 280) -->
+  <g transform="translate(621.06 224) scale(0.4667)">
+    <use href="#outerSq" fill="url(#metalBronze)"/>
+    <use href="#innerSq" fill="url(#tileGrad)"/>
+    <use href="#innerSq" fill="none" stroke="rgba(0,0,0,0.22)" stroke-width="1.5"/>
+    <g clip-path="url(#innerClip)"><use href="#pawContent"/></g>
+    <ellipse cx="360" cy="190" rx="160" ry="32" fill="white" fill-opacity="0.28" transform="rotate(-32 360 190)" clip-path="url(#innerClip)"/>
+  </g>
+  <!-- Silver at (1060, 280) -->
+  <g transform="translate(961.06 224) scale(0.4667)">
+    <use href="#outerSq" fill="url(#metalSilver)"/>
+    <use href="#innerSq" fill="url(#tileGrad)"/>
+    <use href="#innerSq" fill="none" stroke="rgba(0,0,0,0.22)" stroke-width="1.5"/>
+    <g clip-path="url(#innerClip)"><use href="#pawContent"/></g>
+    <ellipse cx="360" cy="190" rx="160" ry="32" fill="white" fill-opacity="0.28" transform="rotate(-32 360 190)" clip-path="url(#innerClip)"/>
+  </g>
+  <!-- Gold at (1400, 280) -->
+  <g transform="translate(1301.06 224) scale(0.4667)">
+    <use href="#outerSq" fill="url(#metalGold)"/>
+    <use href="#innerSq" fill="url(#tileGrad)"/>
+    <use href="#innerSq" fill="none" stroke="rgba(0,0,0,0.22)" stroke-width="1.5"/>
+    <g clip-path="url(#innerClip)"><use href="#pawContent"/></g>
+    <ellipse cx="360" cy="190" rx="160" ry="32" fill="white" fill-opacity="0.28" transform="rotate(-32 360 190)" clip-path="url(#innerClip)"/>
+  </g>
+
+  <!-- Tier labels -->
+  <text x="860" y="625" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="32" font-weight="700" fill="#FDBA74" text-anchor="middle" letter-spacing="3">BRONZE</text>
+  <text x="1200" y="625" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="32" font-weight="700" fill="#F8FAFC" text-anchor="middle" letter-spacing="3">SILVER</text>
+  <text x="1540" y="625" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="32" font-weight="700" fill="#FEF3C7" text-anchor="middle" letter-spacing="3">GOLD</text>
+
+  <!-- Price line -->
+  <text x="1200" y="720" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="34" font-weight="600" fill="#FBBF24" text-anchor="middle" letter-spacing="-0.5">Bronze $49.900 · Silver $99.900 · Gold $199.900 / mes</text>
+
+  <!-- Descriptor -->
+  <text x="1200" y="775" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#C4B5FD" text-anchor="middle" letter-spacing="-0.2">Tu empresa aportando al bienestar animal, con reconocimiento formal</text>
+</svg>

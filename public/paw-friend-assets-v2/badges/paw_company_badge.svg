@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Paw Company badge">
+  <title>Paw Company · Badge oficial (Bronze · Silver · Gold)</title>
+  <defs>
+    <linearGradient id="pcb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#581C87"/><stop offset="1" stop-color="#9333EA"/></linearGradient>
+  </defs>
+  <rect x="10" y="10" width="180" height="180" rx="36" fill="url(#pcb)"/>
+  <rect x="70" y="50" width="60" height="80" rx="4" fill="#FFFFFF"/>
+  <rect x="78" y="60" width="8" height="8" fill="url(#pcb)"/>
+  <rect x="96" y="60" width="8" height="8" fill="url(#pcb)"/>
+  <rect x="114" y="60" width="8" height="8" fill="url(#pcb)"/>
+  <rect x="78" y="78" width="8" height="8" fill="url(#pcb)"/>
+  <rect x="96" y="78" width="8" height="8" fill="url(#pcb)"/>
+  <rect x="114" y="78" width="8" height="8" fill="url(#pcb)"/>
+  <rect x="78" y="96" width="8" height="8" fill="url(#pcb)"/>
+  <rect x="96" y="96" width="8" height="8" fill="url(#pcb)"/>
+  <rect x="114" y="96" width="8" height="8" fill="url(#pcb)"/>
+  <rect x="92" y="118" width="16" height="12" fill="url(#pcb)"/>
+  <circle cx="80" cy="148" r="5" fill="#B45309"/>
+  <circle cx="100" cy="148" r="5" fill="#94A3B8"/>
+  <circle cx="120" cy="148" r="5" fill="#EAB308"/>
+  <text x="100" y="178" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="12" fill="#FFFFFF" letter-spacing="4">PAW COMPANY</text>
+</svg>

@@ -16,6 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/PageHeader';
+import { ShelterMetricsPanel } from '@/components/shelter/ShelterMetricsPanel';
 import {
   Upload,
   Heart,
@@ -131,6 +132,9 @@ export default function ShelterDashboard() {
             color={shelter.verified ? 'green' : 'amber'}
           />
         </div>
+
+        {/* Metricas operativas (si hay pets) */}
+        <ShelterMetricsPanel shelter={shelter} />
 
         {/* Quick actions */}
         <div className="grid md:grid-cols-3 gap-3">

@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" width="400" height="500" role="img" aria-label="Paw Friend wordmark vertical">
+  <title>Paw Friend · Wordmark vertical</title>
+  <desc>Logo vertical con mark arriba y wordmark Paw Friend abajo. Para posters, eventos, splash screens.</desc>
+  <defs>
+    <clipPath id="sq-vert">
+      <path d="M 200 70 C 300 70, 350 120, 350 220 C 350 320, 300 370, 200 370 C 100 370, 50 320, 50 220 C 50 120, 100 70, 200 70 Z"/>
+    </clipPath>
+    <linearGradient id="gold-vert" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#9333EA"/>
+      <stop offset="1" stop-color="#7E22CE"/>
+    </linearGradient>
+  </defs>
+  <path d="M 200 70 C 300 70, 350 120, 350 220 C 350 320, 300 370, 200 370 C 100 370, 50 320, 50 220 C 50 120, 100 70, 200 70 Z" fill="url(#gold-vert)"/>
+  <g clip-path="url(#sq-vert)">
+    <ellipse cx="200" cy="275" rx="80" ry="68" fill="#FFFFFF"/>
+    <ellipse cx="132" cy="195" rx="28" ry="36" transform="rotate(-18 132 195)" fill="#FFFFFF"/>
+    <ellipse cx="175" cy="150" rx="26" ry="32" transform="rotate(-6 175 150)" fill="#FFFFFF"/>
+    <ellipse cx="225" cy="150" rx="26" ry="32" transform="rotate(6 225 150)" fill="#FFFFFF"/>
+    <ellipse cx="268" cy="195" rx="28" ry="36" transform="rotate(18 268 195)" fill="#FFFFFF"/>
+  </g>
+  <text x="200" y="440" text-anchor="middle" font-family="'Fredoka','Plus Jakarta Sans',sans-serif" font-weight="600" font-size="58" fill="#1A102B" letter-spacing="-1.5">Paw Friend</text>
+</svg>

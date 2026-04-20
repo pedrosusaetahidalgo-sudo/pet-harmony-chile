@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="900" viewBox="0 0 2400 900">
+  <title>Paw Partners — Hero Banner</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F7FDFB"/>
+      <stop offset="50%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#ECFDF5"/>
+    </linearGradient>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="50%" stop-color="#14B8A6"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+    <radialGradient id="violetGlow" cx="0.2" cy="0.2" r="0.55">
+      <stop offset="0%" stop-color="#9333EA" stop-opacity="0.55"/>
+      <stop offset="60%" stop-color="#9333EA" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#9333EA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="violetOrb">
+      <stop offset="0%" stop-color="#9333EA" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#9333EA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="emeraldOrb">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="dotGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#7E22CE"/>
+    </linearGradient>
+    <clipPath id="squircleClip">
+      <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    </clipPath>
+    <mask id="heartMask">
+      <rect x="-200" y="-200" width="1400" height="1400" fill="white"/>
+      <path d="M 512 560 C 504 550, 490 540, 482 530 C 474 520, 477 505, 490 502 C 499 500, 507 505, 512 512 C 517 505, 525 500, 534 502 C 547 505, 550 520, 542 530 C 534 540, 520 550, 512 560 Z" fill="black"/>
+    </mask>
+  </defs>
+
+  <rect width="2400" height="900" fill="url(#bgGrad)"/>
+
+  <!-- Violet orb top-left (20%) -->
+  <ellipse cx="340" cy="240" rx="420" ry="320" fill="url(#violetOrb)"/>
+  <!-- Emerald orb bottom-right -->
+  <ellipse cx="2100" cy="720" rx="420" ry="300" fill="url(#emeraldOrb)"/>
+
+  <!-- ⇄ arrows ambient bg (full-width, subtle) -->
+  <g stroke="#10B981" fill="none" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity="0.18">
+    <path d="M 1960 420 L 440 420"/>
+    <path d="M 490 400 L 440 420 L 490 440"/>
+    <path d="M 440 480 L 1960 480"/>
+    <path d="M 1910 460 L 1960 480 L 1910 500"/>
+  </g>
+
+  <!-- PAW PARTNERS eyebrow -->
+  <text x="1200" y="150" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="26" font-weight="600" fill="#10B981" text-anchor="middle" letter-spacing="6">PAW FRIEND · SUB-BRAND</text>
+
+  <!-- Squircle 320×320 centered at (1040, 200) -->
+  <g transform="translate(926.93 136) scale(0.5333)">
+    <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="url(#tileGrad)"/>
+    <g clip-path="url(#squircleClip)">
+      <rect x="212" y="120" width="600" height="600" fill="url(#violetGlow)"/>
+      <!-- ⇄ interior on tile -->
+      <g stroke="#FFFFFF" fill="none" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" opacity="0.38">
+        <path d="M 744 455 L 280 455"/>
+        <path d="M 305 438 L 280 455 L 305 472"/>
+        <path d="M 280 575 L 744 575"/>
+        <path d="M 719 558 L 744 575 L 719 592"/>
+      </g>
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#heartMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <!-- Headline centered below squircle -->
+  <text x="1200" y="630" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="96" font-weight="700" fill="#065F46" text-anchor="middle" letter-spacing="-3">Crecemos juntos</text>
+
+  <!-- Subtitle -->
+  <text x="1200" y="710" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="36" font-weight="500" fill="#065F46" text-anchor="middle" letter-spacing="-0.5">Descuentos para Paw Members · Publicidad gratis para tu negocio</text>
+
+  <!-- CTA pill -->
+  <g transform="translate(1080, 770)">
+    <rect x="0" y="0" width="240" height="72" rx="36" fill="#10B981"/>
+    <text x="120" y="48" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="28" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="-0.5">Súmate como aliado</text>
+  </g>
+</svg>

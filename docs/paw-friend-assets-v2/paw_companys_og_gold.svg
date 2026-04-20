@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <title>Paw Company — GOLD — OG Card</title>
+  <defs>
+    <linearGradient id="paperGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FAF7FF"/><stop offset="100%" stop-color="#F3E8FF"/>
+    </linearGradient>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#581C87"/><stop offset="50%" stop-color="#9333EA"/><stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+    <linearGradient id="metalTier" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#78350F"/><stop offset="22%" stop-color="#D97706"/><stop offset="42%" stop-color="#FACC15"/><stop offset="50%" stop-color="#FEF3C7"/><stop offset="58%" stop-color="#FACC15"/><stop offset="78%" stop-color="#D97706"/><stop offset="100%" stop-color="#78350F"/>
+    </linearGradient>
+    <path id="outerSq" d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    <path id="innerSq" d="M 512 144 C 696 144, 788 236, 788 420 C 788 604, 696 696, 512 696 C 328 696, 236 604, 236 420 C 236 236, 328 144, 512 144 Z"/>
+    <clipPath id="innerClip"><use href="#innerSq"/></clipPath>
+    <mask id="heartMask">
+      <rect x="-200" y="-200" width="1400" height="1400" fill="white"/>
+      <path d="M 512 560 C 504 550, 490 540, 482 530 C 474 520, 477 505, 490 502 C 499 500, 507 505, 512 512 C 517 505, 525 500, 534 502 C 547 505, 550 520, 542 530 C 534 540, 520 550, 512 560 Z" fill="black"/>
+    </mask>
+    <g id="pawContent">
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#heartMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+    </g>
+    <radialGradient id="violetBlob"><stop offset="0%" stop-color="#9333EA" stop-opacity="0.18"/><stop offset="100%" stop-color="#9333EA" stop-opacity="0"/></radialGradient>
+    <radialGradient id="tierBlob"><stop offset="0%" stop-color="#A16207" stop-opacity="0.22"/><stop offset="100%" stop-color="#A16207" stop-opacity="0"/></radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#paperGrad)"/>
+  <ellipse cx="1050" cy="140" rx="280" ry="200" fill="url(#violetBlob)"/>
+  <ellipse cx="1150" cy="560" rx="260" ry="200" fill="url(#tierBlob)"/>
+  <rect x="20" y="20" width="1160" height="590" rx="32" fill="none" stroke="#A16207" stroke-width="2" opacity="0.5"/>
+
+  <!-- Squircle 240px at (60, 195) -->
+  <g transform="translate(-24.8 147) scale(0.4)">
+    <use href="#outerSq" fill="url(#metalTier)"/>
+    <use href="#innerSq" fill="url(#tileGrad)"/>
+    <use href="#innerSq" fill="none" stroke="rgba(0,0,0,0.22)" stroke-width="1.5"/>
+    <g clip-path="url(#innerClip)"><use href="#pawContent"/></g>
+    <ellipse cx="360" cy="190" rx="160" ry="32" fill="white" fill-opacity="0.28" transform="rotate(-32 360 190)" clip-path="url(#innerClip)"/>
+  </g>
+
+  <text x="360" y="240" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="600" fill="#6B21A8" letter-spacing="4">PAW FRIEND · SUB-BRAND</text>
+  <text x="360" y="320" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="64" font-weight="700" fill="#1A102B" letter-spacing="-2">Paw Company</text>
+
+  <!-- Tier pill -->
+  <g transform="translate(360, 360)">
+    <rect x="0" y="0" width="140" height="56" rx="28" fill="#FEF3C7" stroke="#A16207" stroke-width="2"/>
+    <text x="70" y="38" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="28" font-weight="700" fill="#A16207" text-anchor="middle" letter-spacing="4">GOLD</text>
+  </g>
+
+  <text x="360" y="475" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="36" font-weight="600" fill="#1A102B" letter-spacing="-1" font-style="italic">[ Nombre Empresa ]</text>
+  <text x="360" y="515" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="20" font-weight="500" fill="#6B21A8" letter-spacing="-0.2">Aporta al bienestar animal en Chile</text>
+
+  <g transform="translate(60, 555)">
+    <rect x="0" y="0" width="12" height="28" rx="6" fill="url(#tileGrad)"/>
+    <text x="28" y="22" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="600" fill="#1A102B" letter-spacing="-0.3">pawfriend.cl/donaciones</text>
+  </g>
+</svg>

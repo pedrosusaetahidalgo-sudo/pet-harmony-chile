@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="900" viewBox="0 0 2400 900">
+  <title>Paw Vets — Hero Banner</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F0FDFA"/>
+      <stop offset="100%" stop-color="#FEF3C7"/>
+    </linearGradient>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <clipPath id="squircleClip">
+      <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    </clipPath>
+    <mask id="crossMask">
+      <rect x="-200" y="-200" width="1400" height="1400" fill="white"/>
+      <path d="M 506 510 H 518 V 524 H 532 V 536 H 518 V 550 H 506 V 536 H 492 V 524 H 506 Z" fill="black"/>
+    </mask>
+  </defs>
+
+  <rect width="2400" height="900" fill="url(#bgGrad)"/>
+
+  <!-- Stethoscope line art bottom at 15% opacity -->
+  <g stroke="#0F766E" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity="0.15">
+    <path d="M 60 620 L 60 580 Q 60 560, 80 560 L 100 560"/>
+    <path d="M 120 620 L 120 580 Q 120 560, 140 560 L 160 560"/>
+    <path d="M 90 620 Q 120 680, 220 700 Q 360 720, 480 680 Q 620 640, 760 700 Q 920 760, 1080 720 Q 1260 670, 1440 720 Q 1620 770, 1800 730 Q 1980 690, 2120 740"/>
+    <circle cx="2160" cy="750" r="28" fill="#0F766E" fill-opacity="0.05"/>
+    <circle cx="2160" cy="750" r="16" fill="#0F766E" fill-opacity="0.1"/>
+  </g>
+
+  <text x="520" y="300" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="26" font-weight="600" fill="#0F766E" letter-spacing="6">PAW FRIEND · PARA VETERINARIOS</text>
+
+  <!-- Squircle 320×320 at (120, 290) -->
+  <g transform="translate(7 226) scale(0.5333)">
+    <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="url(#tileGrad)"/>
+    <g clip-path="url(#squircleClip)">
+      <g fill="none" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.55">
+        <path d="M 250 540 Q 250 695, 390 715"/>
+        <circle cx="390" cy="715" r="11" stroke-width="4" fill="#FFFFFF" fill-opacity="0.15"/>
+      </g>
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#crossMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+      <circle cx="755" cy="190" r="14" fill="#9333EA"/>
+      <circle cx="755" cy="190" r="22" fill="none" stroke="#9333EA" stroke-width="3" opacity="0.4"/>
+    </g>
+  </g>
+
+  <!-- Headline -->
+  <text x="520" y="410" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="84" font-weight="700" fill="#064E3B" letter-spacing="-3">Ficha clínica digital</text>
+  <text x="520" y="490" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="84" font-weight="700" fill="#064E3B" letter-spacing="-3">sin instalar nada</text>
+
+  <text x="520" y="560" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="32" font-weight="500" fill="#065F46" letter-spacing="-0.5">Para vets individuales y clínicas · 100% gratis para los dueños</text>
+
+  <!-- CTA pills -->
+  <g transform="translate(520, 620)">
+    <rect x="0" y="0" width="260" height="72" rx="36" fill="#0F766E"/>
+    <text x="130" y="48" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="28" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="-0.3">Registra tu clínica</text>
+  </g>
+  <g transform="translate(800, 620)">
+    <rect x="0" y="0" width="200" height="72" rx="36" fill="none" stroke="#0F766E" stroke-width="2"/>
+    <text x="100" y="48" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="26" font-weight="600" fill="#0F766E" text-anchor="middle" letter-spacing="-0.3">Ver demo</text>
+  </g>
+</svg>
