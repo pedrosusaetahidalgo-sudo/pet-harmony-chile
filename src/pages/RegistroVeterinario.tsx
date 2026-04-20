@@ -34,6 +34,7 @@ import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 import { PageHeader } from '@/components/PageHeader';
 import { useScrollOnFocus } from '@/hooks/useScrollOnFocus';
 import { vetAccountSchema, vetProfileSchema } from '@/lib/schemas';
+import { track, EVENTS } from '@/lib/analytics';
 
 type ProviderType = 'individual' | 'home_visit' | 'clinic';
 
@@ -217,6 +218,15 @@ export default function RegistroVeterinario() {
       );
 
       update('createdSlug', typedProvider.slug);
+      track({
+        event: EVENTS.VET_SIGNUP_COMPLETED,
+        properties: {
+          provider_type: form.type,
+          commune: form.commune,
+          specialties_count: form.specialties.length,
+          provider_id: typedProvider.id,
+        },
+      });
       setStep(3);
     } catch (err: unknown) {
       const msg = errorMessage(err, 'Error al crear tu cuenta');
@@ -236,6 +246,12 @@ export default function RegistroVeterinario() {
 
   const next = () => {
     if (!validateStep()) return;
+    if (step === 0) {
+      track({
+        event: EVENTS.VET_SIGNUP_STARTED,
+        properties: { provider_type: form.type },
+      });
+    }
     if (step === 2) {
       void handleSignupAndCreateProvider();
       return;

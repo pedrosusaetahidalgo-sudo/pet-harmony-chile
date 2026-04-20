@@ -88,6 +88,14 @@ export const FEATURE_FLAGS = {
    * Rutas siguen existiendo en App.tsx.
    */
   CHAT: false,
+
+  /**
+   * Donaciones recurrentes mensuales en /donaciones (playbook §9.2).
+   * BLOQUEADO hasta migrar cuenta Flow a SpA (riesgo fiscal: suscripciones
+   * recurrentes a cuenta personal agravan el problema). UI + edge fn listas,
+   * solo activar este flag cuando Flow.cl tenga titular SpA.
+   */
+  DONATIONS_MONTHLY: false,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;

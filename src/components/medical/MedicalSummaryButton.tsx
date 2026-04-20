@@ -22,6 +22,8 @@ import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { downloadFile } from '@/lib/nativeDownload';
 import { isNative } from '@/lib/platform';
 import { PremiumGate } from '@/components/PremiumGate';
+import { track, EVENTS } from '@/lib/analytics';
+import { STORAGE_KEYS } from '@/lib/config/marketingConfig';
 
 /** Download a Blob directly — no external URL needed */
 async function downloadBlob(blob: Blob, fileName: string) {
@@ -105,11 +107,34 @@ export const MedicalSummaryButton = ({
       if (data instanceof Blob) {
         if (data.size === 0) throw new Error('El PDF generado está vacío');
         await downloadBlob(data, fileName);
+        try {
+          localStorage.setItem(STORAGE_KEYS.firstPdfDone, '1');
+        } catch {
+          /* storage unavailable: no-op */
+        }
+        track({
+          event: EVENTS.CLINICAL_PDF_DOWNLOADED,
+          properties: { pet_id: petId, mode, source: 'medical_summary_button' },
+        });
         toast(mode === 'complete' ? 'Ficha completa lista' : 'Ficha clínica lista', {
           description: `La ficha de ${petName || 'tu mascota'} se descargó correctamente`,
         });
       } else if (data?.download_url) {
         await downloadFile(data.download_url, fileName);
+        try {
+          localStorage.setItem(STORAGE_KEYS.firstPdfDone, '1');
+        } catch {
+          /* storage unavailable: no-op */
+        }
+        track({
+          event: EVENTS.CLINICAL_PDF_DOWNLOADED,
+          properties: {
+            pet_id: petId,
+            mode,
+            source: 'medical_summary_button',
+            via: 'signed_url',
+          },
+        });
         toast('Ficha clínica lista', {
           description: `La ficha de ${petName || 'tu mascota'} se descargó correctamente`,
         });

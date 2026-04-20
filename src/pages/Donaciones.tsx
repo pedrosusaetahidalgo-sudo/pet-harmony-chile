@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Card, CardContent } from '@/components/ui/card';
@@ -29,13 +29,17 @@ import { DonationsTransparency } from '@/components/DonationsTransparency';
 import { MyDonationRecap } from '@/components/MyDonationRecap';
 import { AdSlot } from '@/components/AdSlot';
 import { cn } from '@/lib/utils';
+import { track, EVENTS } from '@/lib/analytics';
+import { FEATURE_FLAGS } from '@/lib/featureFlags';
+import {
+  DONATION_PRESETS,
+  DONATION_MIN_CLP,
+  DONATION_MAX_CLP,
+  CONTACT_EMAIL,
+} from '@/lib/config/marketingConfig';
 
-const PRESETS = [
-  { amount: 1000, label: '$1.000', sub: 'Un cafecito 🐾' },
-  { amount: 3000, label: '$3.000', sub: 'Un paseo con premios' },
-  { amount: 5000, label: '$5.000', sub: 'El favorito', featured: true },
-  { amount: 10000, label: '$10.000', sub: 'Salvador peludo' },
-];
+// Presets de donacion vienen de marketingConfig (editables via config o env)
+const PRESETS = DONATION_PRESETS;
 
 const STRENGTHS = [
   {
@@ -55,8 +59,9 @@ const STRENGTHS = [
   },
 ];
 
-const MIN = 500;
-const MAX = 500000;
+// Limites de monto vienen de marketingConfig (override env VITE_DONATION_MIN_CLP / MAX).
+const MIN = DONATION_MIN_CLP;
+const MAX = DONATION_MAX_CLP;
 
 export default function Donaciones() {
   const { user } = useAuth();
@@ -70,6 +75,7 @@ export default function Donaciones() {
   const [donorName, setDonorName] = useState('');
   const [donorMessage, setDonorMessage] = useState('');
   const [isPublic, setIsPublic] = useState(false);
+  const [frequency, setFrequency] = useState<'once' | 'monthly'>('once');
 
   const amount = custom ? Math.floor(Number(custom)) : (selected ?? 0);
   const validAmount = Number.isFinite(amount) && amount >= MIN && amount <= MAX;
@@ -80,10 +86,23 @@ export default function Donaciones() {
       return;
     }
     if (!validAmount) {
-      toast.error('Ingresa un monto entre $500 y $500.000');
+      toast.error(
+        `Ingresa un monto entre $${MIN.toLocaleString('es-CL')} y $${MAX.toLocaleString('es-CL')}`
+      );
       return;
     }
     setLoading(true);
+    track({
+      event: EVENTS.DONATION_INITIATED,
+      properties: {
+        amount,
+        is_custom: Boolean(custom),
+        is_public: isPublic,
+        has_message: Boolean(donorMessage.trim()),
+        frequency,
+        source: 'donaciones_page',
+      },
+    });
     try {
       const { data, error } = await supabase.functions.invoke('flow-create-donation', {
         body: {
@@ -92,6 +111,10 @@ export default function Donaciones() {
           donor_name: donorName.trim() || null,
           message: donorMessage.trim() || null,
           is_public: isPublic,
+          // Requiere edge fn con soporte recurring=true (activar tras migrar
+          // Flow a cuenta SpA + actualizar flow-create-donation). Hoy flag
+          // DONATIONS_MONTHLY=false → siempre viaja 'once'.
+          frequency,
         },
       });
       if (error) throw error;
@@ -106,6 +129,15 @@ export default function Donaciones() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (status === 'success') {
+      track({
+        event: EVENTS.DONATION_COMPLETED,
+        properties: { source: 'flow_redirect' },
+      });
+    }
+  }, [status]);
 
   if (status === 'success') {
     return (
@@ -350,7 +382,7 @@ export default function Donaciones() {
               href="mailto:pawfriendcl@gmail.com?subject=Quiero%20aportar%20a%20Paw%20Friend"
               className="inline-flex items-center gap-1.5 text-sm font-medium text-violet-700 dark:text-violet-300 hover:underline"
             >
-              Escríbenos a pawfriendcl@gmail.com →
+              Escríbenos a {CONTACT_EMAIL} →
             </a>
           </CardContent>
         </Card>
@@ -370,9 +402,48 @@ export default function Donaciones() {
             <div className="text-center space-y-1">
               <h2 className="text-xl font-bold">Elige tu aporte</h2>
               <p className="text-xs text-muted-foreground">
-                Pago seguro via Flow. Sin suscripción ni cobros recurrentes.
+                {frequency === 'monthly'
+                  ? 'Aporte recurrente mensual · cancela cuando quieras'
+                  : 'Pago seguro via Flow. Sin suscripción ni cobros recurrentes.'}
               </p>
             </div>
+
+            {FEATURE_FLAGS.DONATIONS_MONTHLY && (
+              <div
+                role="tablist"
+                aria-label="Frecuencia del aporte"
+                className="grid grid-cols-2 gap-1 rounded-xl bg-muted p-1"
+              >
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={frequency === 'once'}
+                  onClick={() => setFrequency('once')}
+                  className={cn(
+                    'rounded-lg py-2 text-sm font-semibold transition-all',
+                    frequency === 'once'
+                      ? 'bg-white text-pink-700 shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  Una vez
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={frequency === 'monthly'}
+                  onClick={() => setFrequency('monthly')}
+                  className={cn(
+                    'rounded-lg py-2 text-sm font-semibold transition-all',
+                    frequency === 'monthly'
+                      ? 'bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground'
+                  )}
+                >
+                  Cada mes 💛
+                </button>
+              </div>
+            )}
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {PRESETS.map((p) => {
@@ -428,7 +499,7 @@ export default function Donaciones() {
                   className="flex-1 h-10 rounded-md border border-input bg-background px-3 text-sm"
                 />
                 <span className="self-center text-xs text-muted-foreground">
-                  Min $500 · Max $500.000
+                  Min ${MIN.toLocaleString('es-CL')} · Max ${MAX.toLocaleString('es-CL')}
                 </span>
               </div>
             </div>
@@ -501,6 +572,13 @@ export default function Donaciones() {
               Esto es un aporte voluntario, no te da Premium. Queremos que la app siga siendo gratis
               para todos.
             </p>
+
+            {frequency === 'monthly' && (
+              <div className="rounded-lg bg-emerald-50 border border-emerald-200/70 p-3 text-center text-xs text-emerald-900">
+                <b>Sin miedo:</b> cancelas cuando quieras desde tu perfil · si el primer mes no te
+                convence, te devolvemos sin preguntas (escribe a {CONTACT_EMAIL}).
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -537,10 +615,10 @@ export default function Donaciones() {
               desde la transacción, conforme a la Ley 19.496 de Protección al Consumidor,
               escribiendo a{' '}
               <a
-                href="mailto:pawfriendcl@gmail.com?subject=Solicitud%20de%20devoluci%C3%B3n%20de%20aporte"
+                href={`mailto:${CONTACT_EMAIL}?subject=Solicitud%20de%20devoluci%C3%B3n%20de%20aporte`}
                 className="underline hover:text-foreground"
               >
-                pawfriendcl@gmail.com
+                {CONTACT_EMAIL}
               </a>
               .
             </li>

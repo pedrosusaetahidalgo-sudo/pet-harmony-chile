@@ -42,6 +42,7 @@ import { PremiumGate } from '@/components/PremiumGate';
 import { SeasonalTipsCard } from '@/components/home/SeasonalTipsCard';
 import { TodayRoutinesCard } from '@/components/home/TodayRoutinesCard';
 import { AnnualCareChecklist } from '@/components/home/AnnualCareChecklist';
+import { FirstPdfNudge } from '@/components/home/FirstPdfNudge';
 // AnalyticsPreviewCard and PetWellnessPreview removed from home — accessible via /panel-pro
 import { isGenericDisplayName } from '@/lib/format';
 import { NamePromptDialog } from '@/components/NamePromptDialog';
@@ -483,6 +484,9 @@ export default function Home() {
       <TrialWelcomeOverlay />
       <TrialBanner />
       <HomeOnboardingHints hasPets={pets.length > 0} />
+
+      {/* Nudge joya de la corona: empujar primer PDF (playbook §9.3) */}
+      <FirstPdfNudge firstPetId={pets[0]?.id ?? null} petsCount={pets.length} />
 
       {/* === Empty state === */}
       {pets.length === 0 && (

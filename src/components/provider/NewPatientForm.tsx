@@ -29,6 +29,7 @@ import { SelectWithOther } from '@/components/ui/select-with-other';
 import { ComboboxWithOther } from '@/components/ui/combobox-with-other';
 import { BREEDS_BY_SPECIES } from '@/lib/breeds';
 import { newPatientSchema, type NewPatientFormData } from '@/lib/schemas';
+import { track, EVENTS } from '@/lib/analytics';
 
 const SPECIES_OPTIONS = [
   { value: 'perro', label: 'Perro' },
@@ -134,6 +135,16 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
 
       setDuplicateBypass(false);
       toast.success(`Paciente ${data.name} creado correctamente`);
+
+      track({
+        event: EVENTS.VET_PATIENT_CREATED,
+        properties: {
+          species: data.species,
+          owner_already_registered: Boolean(result?.owner_already_registered),
+          email_sent: Boolean(result?.email_sent),
+          via: 'new_patient_form',
+        },
+      });
 
       if (result?.owner_already_registered) {
         toast.success(

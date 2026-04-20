@@ -139,8 +139,19 @@ export default function PawCompanysPage() {
             >
               Quiero aplicar →
             </Button>
-            <Button variant="outline" onClick={() => navigate('/paw-core')}>
-              Ver nuestra misión
+            <Button
+              variant="outline"
+              asChild
+              className="border-amber-300 text-amber-800 hover:bg-amber-50"
+            >
+              <a href="/pitch/companys.html" target="_blank" rel="noopener noreferrer">
+                Ver pitch completo (5 min)
+              </a>
+            </Button>
+            <Button variant="ghost" asChild className="text-purple-800 hover:bg-purple-50">
+              <a href="mailto:pawfriendcl@gmail.com?subject=Paw%20Company%20%E2%80%94%20Quiero%20agendar%20reuni%C3%B3n%20(15%20min)&body=Hola%20Paw%20Founder%2C%0A%0AMe%20gustar%C3%ADa%20coordinar%20una%20reuni%C3%B3n%20de%2015%20minutos%20para%20conocer%20m%C3%A1s%20sobre%20Paw%20Companys%20y%20explorar%20si%20tiene%20sentido%20para%20nuestra%20empresa.%0A%0AEmpresa%3A%20%0AContacto%3A%20%0ADisponibilidad%3A%20%0A%0AGracias!">
+                Agendar reunión (15 min) →
+              </a>
             </Button>
           </div>
         </section>

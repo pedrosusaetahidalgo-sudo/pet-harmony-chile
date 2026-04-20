@@ -23,6 +23,8 @@ import { Badge } from '@/components/ui/badge';
 import { setSeoTags } from '@/lib/vetDirectory';
 import { PROVIDER_PLANS } from '@/lib/plans';
 import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
+import { FoundingVetBanner } from '@/components/landing/FoundingVetBanner';
+import { FOUNDING_VET } from '@/lib/config/marketingConfig';
 
 // ──────────────────────────────────────────────────────────────
 // Value pillars
@@ -72,39 +74,52 @@ const steps = [
 ];
 
 // ──────────────────────────────────────────────────────────────
-// FAQ
+// FAQ — se construye con valores de marketingConfig para evitar
+// duplicar precios/deadlines del Founding Vet Offer en strings.
 // ──────────────────────────────────────────────────────────────
 
-const faq = [
-  {
-    q: '¿Cuánto cuesta?',
-    a: 'Durante el lanzamiento, todo es 100% gratis para todos los profesionales. Sin limites de pacientes ni reservas. Cuando lancemos planes de pago, los primeros registrados tendran beneficios especiales.',
-  },
-  {
-    q: '¿Cómo se verifican las reseñas?',
-    a: 'Cada reseña proviene de una reserva real hecha por la plataforma. Ningún paciente puede dejarte una reseña sin haberte contratado, y tampoco puedes dejarte reseñas a ti mismo.',
-  },
-  {
-    q: '¿Qué pasa si ya tengo pacientes fuera de la plataforma?',
-    a: 'Con el plan Premium o superior puedes enviar invitaciones a reseña: enlaces únicos que mandas a tus pacientes actuales por WhatsApp para que dejen una reseña en tu perfil.',
-  },
-  {
-    q: '¿Cómo funciona la comisión?',
-    a: 'Durante el lanzamiento no hay comisiones de ningun tipo. Cuando se activen los planes de pago, las comisiones dependeran del plan elegido. Si un paciente te paga directo (efectivo, transferencia), nunca hay comision.',
-  },
-  {
-    q: '¿Puedo aparecer si no estoy en Santiago?',
-    a: 'Sí, el directorio acepta veterinarios de todo Chile. Puedes configurar tu zona base y áreas de servicio manualmente.',
-  },
-  {
-    q: '¿Cuánto tarda en estar mi perfil online?',
-    a: 'Apenas completas tu perfil al 80% (foto, bio, especialidades, zona, precio) puedes activar la visibilidad pública. La verificación del N° Colmevet demora 24-48 horas hábiles.',
-  },
-  {
-    q: '¿La ficha clínica reemplaza mi sistema actual?',
-    a: 'Paw Friend complementa tu sistema. Los dueños traen su ficha digital con vacunas, alergias y peso actualizado, así puedes consultar el historial sin pedirles papeles.',
-  },
-];
+function buildFaq() {
+  const deadlineLabel = FOUNDING_VET.deadline.toLocaleDateString('es-CL', {
+    day: 'numeric',
+    month: 'long',
+  });
+  const discountPct = Math.round(100 - (FOUNDING_VET.priceClp / FOUNDING_VET.publicPriceClp) * 100);
+  const publicPrice = `$${FOUNDING_VET.publicPriceClp.toLocaleString('es-CL')}`;
+  const foundingPrice = `$${FOUNDING_VET.priceClp.toLocaleString('es-CL')}`;
+
+  return [
+    {
+      q: '¿Cuánto cuesta?',
+      a: `Durante el lanzamiento todo es 100% gratis para todos los profesionales: sin limites de pacientes ni reservas. Cuando activemos Premium post-lanzamiento, el precio publico sera ${publicPrice}/mes. Los primeros ${FOUNDING_VET.spotsTotal} veterinarios que se registren antes del ${deadlineLabel} quedan locked a ${foundingPrice}/mes por vida (Founding Vet Offer · ${discountPct}% off lifetime) + badge Vet Pionero + onboarding 1-on-1 con el fundador.`,
+    },
+    {
+      q: '¿Cómo se verifican las reseñas?',
+      a: 'Cada reseña proviene de una reserva real hecha por la plataforma. Ningún paciente puede dejarte una reseña sin haberte contratado, y tampoco puedes dejarte reseñas a ti mismo.',
+    },
+    {
+      q: '¿Qué pasa si ya tengo pacientes fuera de la plataforma?',
+      a: 'Con el plan Premium o superior puedes enviar invitaciones a reseña: enlaces únicos que mandas a tus pacientes actuales por WhatsApp para que dejen una reseña en tu perfil.',
+    },
+    {
+      q: '¿Cómo funciona la comisión?',
+      a: 'Durante el lanzamiento no hay comisiones de ningun tipo. Cuando se activen los planes de pago, las comisiones dependeran del plan elegido. Si un paciente te paga directo (efectivo, transferencia), nunca hay comision.',
+    },
+    {
+      q: '¿Puedo aparecer si no estoy en Santiago?',
+      a: 'Sí, el directorio acepta veterinarios de todo Chile. Puedes configurar tu zona base y áreas de servicio manualmente.',
+    },
+    {
+      q: '¿Cuánto tarda en estar mi perfil online?',
+      a: 'Apenas completas tu perfil al 80% (foto, bio, especialidades, zona, precio) puedes activar la visibilidad pública. La verificación del N° Colmevet demora 24-48 horas hábiles.',
+    },
+    {
+      q: '¿La ficha clínica reemplaza mi sistema actual?',
+      a: 'Paw Friend complementa tu sistema. Los dueños traen su ficha digital con vacunas, alergias y peso actualizado, así puedes consultar el historial sin pedirles papeles.',
+    },
+  ];
+}
+
+const faq = buildFaq();
 
 // ──────────────────────────────────────────────────────────────
 // Page
@@ -194,6 +209,9 @@ export default function ParaVeterinarios() {
           </div>
         </div>
       </section>
+
+      {/* ── FOUNDING VET OFFER (playbook §9.4) ── */}
+      <FoundingVetBanner />
 
       {/* ── VALUE PILLARS ── */}
       <section className="container mx-auto px-4 py-12 md:py-16 max-w-5xl">

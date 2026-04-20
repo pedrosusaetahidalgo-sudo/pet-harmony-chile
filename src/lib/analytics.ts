@@ -192,6 +192,22 @@ export const EVENTS = {
   PREMIUM_STARTED: 'premium_started',
   PREMIUM_CONVERTED: 'premium_converted',
 
+  // Donations (playbook §9.1 · 2026-04-19)
+  DONATION_INITIATED: 'donation_initiated',
+  DONATION_COMPLETED: 'donation_completed',
+
+  // B2B Vet funnel (playbook §9.1 · 2026-04-19)
+  // Nota: vet_patient_created se dispara en cada paciente — "first patient"
+  // se calcula en PostHog filtrando por unique provider_id.
+  VET_SIGNUP_STARTED: 'vet_signup_started',
+  VET_SIGNUP_COMPLETED: 'vet_signup_completed',
+  VET_PATIENT_CREATED: 'vet_patient_created',
+  FOUNDING_VET_CTA_CLICKED: 'founding_vet_cta_clicked',
+
+  // First PDF nudge (playbook §9.3 · 2026-04-19)
+  FIRST_PDF_NUDGE_SHOWN: 'first_pdf_nudge_shown',
+  FIRST_PDF_NUDGE_CLICKED: 'first_pdf_nudge_clicked',
+
   // Pro Analytics
   ANALYTICS_PREVIEW_VIEWED: 'analytics_preview_viewed',
   ANALYTICS_PREVIEW_CTA_CLICKED: 'analytics_preview_cta_clicked',

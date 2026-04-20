@@ -26,7 +26,10 @@ const MOBILE_PRIORITY_ROUTES = [
 test.describe('Mobile layout — public routes', () => {
   // Estos tests solo tienen sentido en viewports mobile. En desktop los
   // snapshots quedan stale tras redesigns del landing y no aportan valor.
-  test.beforeEach((_, testInfo) => {
+  // Playwright requiere destructuring pattern en el primer argumento;
+  // no necesitamos ningun fixture aqui, solo testInfo del segundo arg.
+  // eslint-disable-next-line no-empty-pattern
+  test.beforeEach(({}, testInfo) => {
     test.skip(
       !testInfo.project.name.toLowerCase().includes('mobile'),
       'Solo corre en proyectos mobile (ver playwright.config)'
@@ -147,7 +150,8 @@ const MOBILE_PROTECTED_ROUTES = [
 ];
 
 test.describe('Mobile layout — protected owner routes (no horizontal overflow)', () => {
-  test.beforeEach((_, testInfo) => {
+  // eslint-disable-next-line no-empty-pattern
+  test.beforeEach(({}, testInfo) => {
     test.skip(
       !testInfo.project.name.toLowerCase().includes('mobile'),
       'Solo corre en proyectos mobile (ver playwright.config)'
