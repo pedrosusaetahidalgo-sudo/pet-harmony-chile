@@ -103,11 +103,9 @@ export function RichFooter() {
           >
             {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- graceful fallback: esconder img si el archivo aun no existe en public/ */}
             <img
-              src="/sgse-logo.svg"
-              alt="SGSE"
-              className="h-4 w-auto"
-              width={16}
-              height={16}
+              src="/sgse-horizontal-light.svg"
+              alt="SGSE — Susaeta Garnham Software Engineering"
+              className="h-5 w-auto opacity-80"
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).style.display = 'none';
               }}
