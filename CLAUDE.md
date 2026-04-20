@@ -573,6 +573,41 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 - `supabase/functions/send-pet-invitation/` — ahora acepta callers vet o shelter (mismo token, email con copy dinamico)
 - `supabase/functions/_shared/invitation-email.ts` — template con `sourceKind: 'vet' | 'shelter'`
 
+### Brand kit v2 (2026-04-20)
+
+- **Ubicacion canonica**: `public/paw-friend-assets-v2/`. Auto-contenida con
+  `logo/`, `favicon/`, `icons/brand-squircle/`, `icons/v1-legacy/` (45 iconos
+  heredados), `icons/categories/` (6 slots para los iconos nuevos de audiencia),
+  `illustrations/empty-states/`, `email/`, `event/`, `social/`, `store/`, etc.
+- **Componente central**: `src/components/CategoryIcon.tsx` con tipos
+  `voice | partner | company | shelter | investor | vet`. Renderiza el SVG
+  de `/paw-friend-assets-v2/icons/categories/<kind>.svg` con fallback
+  automatico a icono Lucide si el SVG aun no esta en produccion.
+- **Como extender**: cuando se agregue un tipo nuevo de audiencia, crear
+  el SVG en `icons/categories/`, agregar el kind al type `CategoryKind`
+  en `CategoryIcon.tsx` y agregar meta (label/fallback/color). En el
+  resto del codigo se usa `<CategoryIcon kind="xxx" badge size="lg" />`.
+
+### Sistema de aplicaciones pitch (2026-04-20)
+
+- **Tabla**: `pitch_applications` (mig `20260625000000`). RLS: insert
+  publico con `status='submitted'`, read/update solo admin + applicant
+  logueado puede leer sus propias apps.
+- **Rate limit** (mig `20260625000001`): trigger BEFORE INSERT que
+  rechaza >= 3 apps submitted/email/24h o duplicados mismo kind+email.
+- **RPC** `approve_pitch_application(id, notes)`: segun kind crea row
+  publica en `paw_companys` (sponsor|partner) o `paw_voices` (active).
+  Tipos sin tabla publica (corfo/startup/angels/refugio/vet) solo
+  marcan approved (leads internos + onboarding propio).
+- **Edge fn** `notify-pitch-application`: email Resend a
+  `PITCH_NOTIFICATION_EMAIL` (default `pawfriendcl@gmail.com`) con CTA
+  directo a `admin?section=system&sub=pitch-applications`.
+- **Pagina publica**: `/aplicar?tipo=<kind>` (`src/pages/Aplicar.tsx`)
+  con form dinamico por tipo + usa `<CategoryIcon />` del brand v2.
+- **Admin**: `src/components/admin/AdminPitchApplications.tsx` en
+  `Admin > Sistema > Postulaciones` con filtros, detalle modal y
+  acciones (aprobar/rechazar/contactado/en-proceso/notas).
+
 ---
 
 ## 12. Estado tecnico al cierre 2026-04-16

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Bone</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <g transform="rotate(-30 100 100)">
+    <circle cx="60" cy="75" r="18" fill="#FFFFFF"/>
+    <circle cx="60" cy="125" r="18" fill="#FFFFFF"/>
+    <circle cx="140" cy="75" r="18" fill="#FFFFFF"/>
+    <circle cx="140" cy="125" r="18" fill="#FFFFFF"/>
+    <rect x="55" y="75" width="90" height="50" fill="#FFFFFF"/>
+  </g>
+
+</svg>

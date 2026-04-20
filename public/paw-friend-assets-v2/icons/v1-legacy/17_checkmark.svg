@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Checkmark</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <circle cx="100" cy="100" r="58" fill="#FFFFFF"/>
+  <path d="M 72 102 L 92 122 L 132 82" stroke="#FCD34D" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+</svg>

@@ -35,6 +35,7 @@ import {
   Search,
   PawPrint,
 } from 'lucide-react';
+import { CategoryIcon } from '@/components/CategoryIcon';
 
 type ShelterType = 'all' | 'ong' | 'fundacion' | 'refugio' | 'independiente' | 'municipal';
 
@@ -139,9 +140,7 @@ export default function RefugiosHogares() {
       <div className="bg-gradient-to-b from-purple-50 via-purple-50/60 to-white border-b border-purple-100">
         <div className="container max-w-6xl mx-auto px-4 py-10 sm:py-14">
           <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-4">
-            <div className="h-14 w-14 rounded-full bg-purple-600 text-white flex items-center justify-center shadow-lg">
-              <Heart className="h-7 w-7" />
-            </div>
+            <CategoryIcon kind="shelter" badge size="lg" className="shadow-lg" />
             <h1 className="text-3xl sm:text-4xl font-bold">Hogares de adopcion en Chile</h1>
             <p className="text-muted-foreground">
               Encuentra refugios, ONGs y rescatistas que estan dando en adopcion. Cuando adoptes, te

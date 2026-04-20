@@ -28,20 +28,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  ArrowRight,
-  CheckCircle2,
-  Heart,
-  Loader2,
-  Building2,
-  Users,
-  Stethoscope,
-  Megaphone,
-  Target,
-  Sparkles,
-  MessageCircle,
-  Home as HomeIcon,
-} from 'lucide-react';
+import { ArrowRight, CheckCircle2, Loader2, Users, MessageCircle } from 'lucide-react';
+import { CategoryIcon, type CategoryKind } from '@/components/CategoryIcon';
 
 type Kind =
   | 'corfo'
@@ -59,7 +47,12 @@ interface KindConfig {
   eyebrow: string;
   headline: string;
   subhead: string;
-  icon: typeof Heart;
+  /**
+   * Referencia al set de iconos de categoria (v2 brand kit). `null`
+   * usa un icono generico Lucide (para tipos sin categoria publica:
+   * corfo, startup_chile, angels_vc, otro).
+   */
+  categoryIcon: CategoryKind | null;
   color: string;
   orgLabel?: string;
   extraFields?: Array<{
@@ -81,7 +74,7 @@ const KIND_CONFIG: Record<Kind, KindConfig> = {
     headline: 'Registra tu hogar de adopcion',
     subhead:
       'Gestion gratis de mascotas, carga masiva, ficha medica PDF y transferencia al adoptante.',
-    icon: HomeIcon,
+    categoryIcon: 'shelter',
     color: 'purple',
     orgLabel: 'Nombre del refugio / fundacion',
     extraFields: [
@@ -112,7 +105,7 @@ const KIND_CONFIG: Record<Kind, KindConfig> = {
     headline: 'Suma tu marca como Paw Partner',
     subhead:
       'Ofrece un descuento a nuestros Paw Members y aparece gratis en el directorio de alianzas.',
-    icon: Megaphone,
+    categoryIcon: 'partner',
     color: 'pink',
     orgLabel: 'Nombre comercial de tu marca',
     extraFields: [
@@ -152,7 +145,7 @@ const KIND_CONFIG: Record<Kind, KindConfig> = {
     eyebrow: 'Sponsors · Empresas pet-friendly',
     headline: 'Patrocina Paw Friend',
     subhead: 'Aporte mensual con badge publico (Bronze $49.9k · Silver $99.9k · Gold $199.9k).',
-    icon: Building2,
+    categoryIcon: 'company',
     color: 'amber',
     orgLabel: 'Razon social de la empresa',
     extraFields: [
@@ -188,7 +181,7 @@ const KIND_CONFIG: Record<Kind, KindConfig> = {
     headline: 'Unete como Paw Voice',
     subhead:
       'Amplifica adopciones y contenido emocional a tu audiencia. Badge oficial + codigo promo.',
-    icon: Sparkles,
+    categoryIcon: 'voice',
     color: 'pink',
     orgLabel: 'Nombre artistico (opcional)',
     extraFields: [
@@ -220,7 +213,7 @@ const KIND_CONFIG: Record<Kind, KindConfig> = {
     headline: 'Suma tu clinica o consulta a Paw Friend',
     subhead:
       'Directorio publico, ficha clinica compartida, recordatorios automaticos. Plan Basica gratis.',
-    icon: Stethoscope,
+    categoryIcon: 'vet',
     color: 'teal',
     orgLabel: 'Nombre de la clinica (opcional)',
     extraFields: [
@@ -244,7 +237,7 @@ const KIND_CONFIG: Record<Kind, KindConfig> = {
     eyebrow: 'Fondos publicos',
     headline: 'Postulacion CORFO · Semilla Expande · SSAF-I',
     subhead: 'Material interno / apoyo en postulacion. No va a directorio publico.',
-    icon: Target,
+    categoryIcon: 'investor',
     color: 'teal',
   },
   startup_chile: {
@@ -252,7 +245,7 @@ const KIND_CONFIG: Record<Kind, KindConfig> = {
     eyebrow: 'Aceleradora publica',
     headline: 'Start-Up Chile Ignite',
     subhead: 'Material interno / apoyo en postulacion. No va a directorio publico.',
-    icon: Target,
+    categoryIcon: 'investor',
     color: 'amber',
   },
   angels_vc: {
@@ -260,7 +253,7 @@ const KIND_CONFIG: Record<Kind, KindConfig> = {
     eyebrow: 'Inversionistas',
     headline: 'Pre-seed / seed round',
     subhead: 'Conversacion privada con inversionistas. No va a directorio publico.',
-    icon: Target,
+    categoryIcon: 'investor',
     color: 'purple',
   },
   otro: {
@@ -268,7 +261,7 @@ const KIND_CONFIG: Record<Kind, KindConfig> = {
     eyebrow: 'Contacto',
     headline: 'Cuentanos en que estas pensando',
     subhead: 'Alianza, medio de prensa, gobierno, integracion tecnica. Te respondemos siempre.',
-    icon: MessageCircle,
+    categoryIcon: null,
     color: 'purple',
   },
 };
@@ -314,7 +307,6 @@ export default function Aplicar() {
   const setField = (k: string, v: string) => setForm((f) => ({ ...f, [k]: v }));
   const setExtraField = (k: string, v: string) => setExtra((e) => ({ ...e, [k]: v }));
 
-  const Icon = cfg.icon;
   const colorClasses = useMemo(() => {
     switch (cfg.color) {
       case 'pink':
@@ -464,11 +456,21 @@ export default function Aplicar() {
           >
             {cfg.eyebrow}
           </Badge>
-          <div
-            className={`mx-auto h-14 w-14 rounded-full ${colorClasses.bg} text-white flex items-center justify-center shadow-lg`}
-          >
-            <Icon className="h-7 w-7" />
-          </div>
+          {cfg.categoryIcon ? (
+            <CategoryIcon
+              kind={cfg.categoryIcon}
+              badge
+              size="lg"
+              className="shadow-lg"
+              aria-label={cfg.label}
+            />
+          ) : (
+            <div
+              className={`mx-auto h-14 w-14 rounded-full ${colorClasses.bg} text-white flex items-center justify-center shadow-lg`}
+            >
+              <MessageCircle className="h-7 w-7" />
+            </div>
+          )}
           <h1 className="text-3xl sm:text-4xl font-display font-semibold tracking-tight">
             {cfg.headline}
           </h1>

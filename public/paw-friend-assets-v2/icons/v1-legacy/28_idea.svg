@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <title>Idea</title>
+  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
+  
+  <path d="M 100 50 Q 70 50 70 82 Q 70 100 85 115 L 85 130 L 115 130 L 115 115 Q 130 100 130 82 Q 130 50 100 50 Z" fill="#FFFFFF"/>
+  <rect x="88" y="135" width="24" height="8" rx="2" fill="#FFFFFF"/>
+  <rect x="92" y="148" width="16" height="6" rx="2" fill="#FFFFFF"/>
+  <path d="M 95 95 L 95 82 L 105 82 L 105 95" stroke="#FCD34D" stroke-width="4" stroke-linecap="round" fill="none"/>
+
+</svg>

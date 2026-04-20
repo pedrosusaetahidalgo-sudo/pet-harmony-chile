@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="172 80 680 680">
+  <title>Paw Investors</title>
+  <defs>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1A102B"/>
+      <stop offset="50%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+    <radialGradient id="greenAccent" cx="0.88" cy="0.9" r="0.28">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="squircleClip">
+      <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    </clipPath>
+    <!-- Mask: flecha ascendente en negative space (reemplaza al corazón para señal clara de inversión) -->
+    <mask id="arrowMask">
+      <rect x="172" y="80" width="680" height="680" fill="white"/>
+      <path d="M 512 488 L 558 534 L 530 534 L 530 572 L 494 572 L 494 534 L 466 534 Z" fill="black"/>
+    </mask>
+  </defs>
+
+  <!-- Hairline gold ejecutivo -->
+  <path d="M 512 116 C 714 116, 816 218, 816 420 C 816 622, 714 724, 512 724 C 310 724, 208 622, 208 420 C 208 218, 310 116, 512 116 Z" fill="none" stroke="#EAB308" stroke-width="3" opacity="0.9"/>
+
+  <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="url(#tileGrad)"/>
+
+  <g clip-path="url(#squircleClip)">
+    <!-- Green accent (health mission link) -->
+    <rect x="212" y="120" width="600" height="600" fill="url(#greenAccent)"/>
+
+    <!-- Paw con FLECHA en el pad -->
+    <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#arrowMask)"/>
+    <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+    <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+    <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+    <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+  </g>
+</svg>

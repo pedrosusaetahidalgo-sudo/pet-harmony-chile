@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="172 80 680 680">
+  <title>Paw Voices</title>
+  <defs>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="50%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#FBBF24"/>
+    </linearGradient>
+    <clipPath id="squircleClip">
+      <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    </clipPath>
+    <mask id="heartMask">
+      <rect x="172" y="80" width="680" height="680" fill="white"/>
+      <path d="M 512 560 C 504 550, 490 540, 482 530 C 474 520, 477 505, 490 502 C 499 500, 507 505, 512 512 C 517 505, 525 500, 534 502 C 547 505, 550 520, 542 530 C 534 540, 520 550, 512 560 Z" fill="black"/>
+    </mask>
+  </defs>
+
+  <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="url(#tileGrad)"/>
+
+  <g clip-path="url(#squircleClip)">
+    <!-- Paw idéntica al master -->
+    <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#heartMask)"/>
+    <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+    <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+    <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+    <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+
+    <!-- Sound waves desde el borde sup-der del toe exterior derecho -->
+    <g stroke="#FFFFFF" fill="none" stroke-linecap="round" stroke-width="18">
+      <path d="M 706 275 A 30 30 0 0 1 727 296"/>
+      <path d="M 712 251 A 55 55 0 0 1 751 290"/>
+      <path d="M 719 227 A 80 80 0 0 1 775 283"/>
+    </g>
+  </g>
+</svg>

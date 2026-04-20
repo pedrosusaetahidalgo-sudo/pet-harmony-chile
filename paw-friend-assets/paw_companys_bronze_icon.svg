@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="172 80 680 680">
+  <title>Paw Companys — Bronze</title>
+  <defs>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#581C87"/>
+      <stop offset="50%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+    <linearGradient id="metalBronze" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#451A03"/>
+      <stop offset="22%" stop-color="#9A3412"/>
+      <stop offset="42%" stop-color="#EA580C"/>
+      <stop offset="50%" stop-color="#FDBA74"/>
+      <stop offset="58%" stop-color="#EA580C"/>
+      <stop offset="78%" stop-color="#9A3412"/>
+      <stop offset="100%" stop-color="#451A03"/>
+    </linearGradient>
+    <clipPath id="innerClip">
+      <path d="M 512 144 C 696 144, 788 236, 788 420 C 788 604, 696 696, 512 696 C 328 696, 236 604, 236 420 C 236 236, 328 144, 512 144 Z"/>
+    </clipPath>
+    <mask id="heartMask">
+      <rect x="172" y="80" width="680" height="680" fill="white"/>
+      <path d="M 512 560 C 504 550, 490 540, 482 530 C 474 520, 477 505, 490 502 C 499 500, 507 505, 512 512 C 517 505, 525 500, 534 502 C 547 505, 550 520, 542 530 C 534 540, 520 550, 512 560 Z" fill="black"/>
+    </mask>
+  </defs>
+
+  <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="url(#metalBronze)"/>
+  <path d="M 512 144 C 696 144, 788 236, 788 420 C 788 604, 696 696, 512 696 C 328 696, 236 604, 236 420 C 236 236, 328 144, 512 144 Z" fill="url(#tileGrad)"/>
+  <path d="M 512 144 C 696 144, 788 236, 788 420 C 788 604, 696 696, 512 696 C 328 696, 236 604, 236 420 C 236 236, 328 144, 512 144 Z" fill="none" stroke="rgba(0,0,0,0.22)" stroke-width="1.5"/>
+
+  <g clip-path="url(#innerClip)">
+    <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#heartMask)"/>
+    <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+    <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+    <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+    <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+  </g>
+  <ellipse cx="360" cy="190" rx="160" ry="32" fill="white" fill-opacity="0.28" transform="rotate(-32 360 190)" clip-path="url(#innerClip)"/>
+</svg>

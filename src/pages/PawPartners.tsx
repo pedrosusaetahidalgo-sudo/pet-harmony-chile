@@ -34,6 +34,7 @@ import {
   Globe,
   Tag,
 } from 'lucide-react';
+import { CategoryIcon } from '@/components/CategoryIcon';
 
 interface PublicPartner {
   id: string;
@@ -121,9 +122,7 @@ export default function PawPartners() {
             <Badge variant="outline" className="bg-pink-100 text-pink-700 border-transparent">
               <Tag className="h-3 w-3 mr-1" /> Alianzas con causa
             </Badge>
-            <div className="h-14 w-14 rounded-full bg-gradient-to-br from-pink-500 to-purple-600 text-white flex items-center justify-center shadow-lg">
-              <Megaphone className="h-7 w-7" />
-            </div>
+            <CategoryIcon kind="partner" badge size="lg" className="shadow-lg" />
             <h1 className="text-3xl sm:text-5xl font-display font-semibold tracking-tight">
               Paw Partners
             </h1>
