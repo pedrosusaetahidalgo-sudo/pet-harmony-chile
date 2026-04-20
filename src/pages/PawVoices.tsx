@@ -17,6 +17,7 @@ import {
 } from '@/lib/icons';
 import type { LucideIcon } from 'lucide-react';
 import { PageHeader } from '@/components/PageHeader';
+import { CategoryIcon } from '@/components/CategoryIcon';
 import { PawVoicesGrid } from '@/components/PawVoicesGrid';
 import { PawVoiceApplyForm } from '@/components/PawVoiceApplyForm';
 
@@ -98,6 +99,9 @@ export default function PawVoices() {
             <Megaphone className="h-3 w-3 mr-1" />
             Red de creadores peludos
           </Badge>
+          <div className="flex justify-center pt-2">
+            <CategoryIcon kind="voice" variant="full" className="h-28 w-28" />
+          </div>
           <h1 className="font-display font-semibold text-4xl md:text-5xl leading-[1.08] tracking-tight">
             Sé una{' '}
             <span className="bg-audience-voices-gradient bg-clip-text text-transparent">

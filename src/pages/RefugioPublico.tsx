@@ -33,6 +33,7 @@ import {
   HandHeart,
 } from 'lucide-react';
 import { isShelterDonationsEnabled } from '@/lib/featureFlags';
+import { CategoryIcon } from '@/components/CategoryIcon';
 
 interface PublicShelter {
   id: string;
@@ -170,9 +171,7 @@ export default function RefugioPublico() {
                     className="h-full w-full object-cover"
                   />
                 ) : (
-                  <div className="h-full w-full bg-purple-100 flex items-center justify-center text-purple-600">
-                    <HomeIcon className="h-7 w-7" />
-                  </div>
+                  <CategoryIcon kind="shelter" variant="icon" className="h-20 w-20" />
                 )}
               </div>
               <div className="flex-1 min-w-0">

@@ -225,7 +225,7 @@ function PartnerCard({ partner }: { partner: PublicPartner }) {
     <Card className="hover:border-pink-300 hover:shadow-md transition overflow-hidden group">
       <CardContent className="p-5">
         <div className="flex items-start gap-3 mb-3">
-          <div className="h-12 w-12 rounded-lg bg-muted flex-shrink-0 overflow-hidden flex items-center justify-center">
+          <div className="h-12 w-12 rounded-lg bg-white border flex-shrink-0 overflow-hidden flex items-center justify-center">
             {partner.logo_url ? (
               <img
                 src={partner.logo_url}
@@ -234,7 +234,7 @@ function PartnerCard({ partner }: { partner: PublicPartner }) {
                 loading="lazy"
               />
             ) : (
-              <Store className="h-5 w-5 text-muted-foreground" />
+              <CategoryIcon kind="partner" variant="icon" className="h-11 w-11" />
             )}
           </div>
           <div className="flex-1 min-w-0">

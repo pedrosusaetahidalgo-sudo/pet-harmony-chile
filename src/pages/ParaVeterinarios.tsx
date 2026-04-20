@@ -25,6 +25,7 @@ import { PROVIDER_PLANS } from '@/lib/plans';
 import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 import { FoundingVetBanner } from '@/components/landing/FoundingVetBanner';
 import { FOUNDING_VET } from '@/lib/config/marketingConfig';
+import { CategoryIcon } from '@/components/CategoryIcon';
 
 // ──────────────────────────────────────────────────────────────
 // Value pillars
@@ -160,6 +161,7 @@ export default function ParaVeterinarios() {
             <Badge className="bg-purple-100 text-purple-800 border-purple-300">
               Para veterinarios y clínicas
             </Badge>
+            <CategoryIcon kind="vet" variant="full" className="h-24 w-auto -mb-2" />
             <h1 className="font-display font-semibold text-4xl md:text-6xl text-purple-900 leading-[1.05] tracking-tight">
               Gestiona tus pacientes y destaca en el directorio veterinario más grande de Chile
             </h1>

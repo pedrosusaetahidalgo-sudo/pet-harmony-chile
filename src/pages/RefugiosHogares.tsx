@@ -270,9 +270,12 @@ function ShelterCard({ shelter }: { shelter: PublicShelter }) {
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="h-full w-full bg-purple-100 flex items-center justify-center text-purple-600">
-                {typeIcon(shelter.type)}
-              </div>
+              <CategoryIcon
+                kind="shelter"
+                variant="icon"
+                className="h-14 w-14"
+                aria-label={shelter.legal_name}
+              />
             )}
           </div>
           <div className="flex-1 min-w-0 pt-6">

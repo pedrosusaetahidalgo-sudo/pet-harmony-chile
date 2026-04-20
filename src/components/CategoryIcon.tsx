@@ -1,19 +1,22 @@
 /**
- * CategoryIcon — icono de audiencia / categoria de Paw Friend.
+ * CategoryIcon — icono de audiencia / categoria de Paw Friend (brand v2).
  *
- * Renderiza el SVG del brand kit v2 (`/paw-friend-assets-v2/icons/categories/<kind>.svg`)
- * si esta disponible. Si el archivo aun no existe o el browser falla la
- * carga, cae graciosamente al icono Lucide correspondiente. Esto permite
- * que Pedro vaya soltando los SVGs que esta diseñando sin romper la
- * app mientras tanto.
+ * Renderiza el SVG oficial del brand kit v2 en `/paw-friend-assets-v2/`:
+ *   - voice      → paw_voices_{icon|full}.svg
+ *   - partner    → paw_partners_{icon|full}.svg
+ *   - company    → paw_companys_{bronze|silver|gold}_{icon|full}.svg
+ *   - shelter    → paw_shelter_{icon|full}.svg
+ *   - investor   → paw_investors_{icon|full}.svg
+ *   - vet        → paw_vets_{icon|full}.svg
  *
- * Kinds soportados (1:1 con los tipos de pitch_applications):
- *   - voice      → Paw Voices (creadores)
- *   - partner    → Paw Partners (tiendas/alianzas)
- *   - company    → Paw Companys (sponsors)
- *   - shelter    → Hogares de adopcion
- *   - investor   → Inversionistas
- *   - vet        → Veterinarios
+ * Variantes:
+ *   - `icon` (default): squircle con el simbolo, cuadrado. Ideal para
+ *     avatars/badges/hero circles.
+ *   - `full`: version con wordmark / texto incluido. Ideal para headers
+ *     de paginas de categoria (ej. el titulo de /paw-partners).
+ *
+ * Fallback: si el archivo no carga (404 o error), cae al icono Lucide
+ * equivalente sin romper la UI.
  */
 import { useState } from 'react';
 import type { LucideIcon } from 'lucide-react';
@@ -28,16 +31,18 @@ import {
 import { cn } from '@/lib/utils';
 
 export type CategoryKind = 'voice' | 'partner' | 'company' | 'shelter' | 'investor' | 'vet';
+export type CompanyTier = 'bronze' | 'silver' | 'gold';
+export type CategoryVariant = 'icon' | 'full';
 
 interface CategoryMeta {
   label: string;
-  /** Lucide icon fallback mientras el SVG v2 no exista. */
+  /** Lucide icon fallback si el SVG v2 no carga. */
   fallback: LucideIcon;
   /** Color base Tailwind del badge/squircle. */
   color: 'purple' | 'pink' | 'amber' | 'teal';
 }
 
-// eslint-disable-next-line react-refresh/only-export-components -- constante compartida de labels/colores de categorias; util exportarla para reusar en paginas que no usan el componente directamente
+// eslint-disable-next-line react-refresh/only-export-components -- constante compartida; util reusarla en paginas que no renderizan el componente directamente
 export const CATEGORY_META: Record<CategoryKind, CategoryMeta> = {
   voice: { label: 'Paw Voice', fallback: Sparkles, color: 'pink' },
   partner: { label: 'Paw Partner', fallback: Megaphone, color: 'pink' },
@@ -47,8 +52,23 @@ export const CATEGORY_META: Record<CategoryKind, CategoryMeta> = {
   vet: { label: 'Veterinario', fallback: Stethoscope, color: 'teal' },
 };
 
-function svgPath(kind: CategoryKind): string {
-  return `/paw-friend-assets-v2/icons/categories/${kind}.svg`;
+/** Stem de archivo por kind. */
+const KIND_STEM: Record<CategoryKind, string> = {
+  voice: 'paw_voices',
+  partner: 'paw_partners',
+  company: 'paw_companys',
+  shelter: 'paw_shelter',
+  investor: 'paw_investors',
+  vet: 'paw_vets',
+};
+
+function svgPath(kind: CategoryKind, variant: CategoryVariant, tier?: CompanyTier): string {
+  const stem = KIND_STEM[kind];
+  if (kind === 'company') {
+    const t = tier || 'bronze';
+    return `/paw-friend-assets-v2/${stem}_${t}_${variant}.svg`;
+  }
+  return `/paw-friend-assets-v2/${stem}_${variant}.svg`;
 }
 
 interface Props {
@@ -56,12 +76,16 @@ interface Props {
   className?: string;
   /**
    * Si `true`, envuelve el icono en un circulo con color de fondo de la
-   * categoria (util para badges grandes / hero). Por defecto el icono
-   * se renderiza directo (inline).
+   * categoria (util para hero sections que quieren solo el simbolo).
+   * Ignorado cuando `variant='full'` (el wordmark ya trae fondo propio).
    */
   badge?: boolean;
-  /** Tamaño del icono interno cuando badge=true. Default 'md'. */
+  /** Tamaño del badge (solo si badge=true). Default 'md'. */
   size?: 'sm' | 'md' | 'lg';
+  /** 'icon' (squircle del simbolo) o 'full' (con texto). Default 'icon'. */
+  variant?: CategoryVariant;
+  /** Solo para kind='company': tier Bronze/Silver/Gold. Default 'bronze'. */
+  tier?: CompanyTier;
   /** Aria-label override. Default usa CATEGORY_META.label. */
   'aria-label'?: string;
 }
@@ -75,11 +99,16 @@ export function CategoryIcon({
   className,
   badge = false,
   size = 'md',
+  variant = 'icon',
+  tier,
   'aria-label': ariaLabel,
 }: Props) {
   const meta = CATEGORY_META[kind];
   const [brokenSvg, setBrokenSvg] = useState(false);
   const Fallback = meta.fallback;
+
+  // Modo 'full' nunca lleva badge: el SVG ya es el wordmark completo.
+  const useBadge = badge && variant === 'icon';
 
   const sizes = {
     sm: { icon: 'h-4 w-4', wrap: 'h-8 w-8' },
@@ -88,19 +117,19 @@ export function CategoryIcon({
   }[size];
 
   const iconNode = brokenSvg ? (
-    <Fallback className={cn(badge ? sizes.icon : className)} aria-hidden />
+    <Fallback className={cn(useBadge ? sizes.icon : className)} aria-hidden />
   ) : (
-    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- graceful fallback si el SVG v2 aun no esta desplegado
+    // eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- graceful fallback al Lucide equivalente si el SVG no carga
     <img
-      src={svgPath(kind)}
+      src={svgPath(kind, variant, tier)}
       alt={ariaLabel || meta.label}
-      className={cn(badge ? sizes.icon : className, 'object-contain')}
+      className={cn(useBadge ? sizes.icon : className, 'object-contain')}
       onError={() => setBrokenSvg(true)}
       loading="lazy"
     />
   );
 
-  if (!badge) return iconNode;
+  if (!useBadge) return iconNode;
 
   const colorClass = {
     purple: 'bg-purple-100 text-purple-700',
@@ -112,7 +141,7 @@ export function CategoryIcon({
   return (
     <div
       className={cn(
-        'rounded-full flex items-center justify-center flex-shrink-0',
+        'rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden',
         sizes.wrap,
         colorClass,
         className

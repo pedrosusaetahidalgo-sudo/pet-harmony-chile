@@ -1,9 +1,10 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Building2, ExternalLink, Sparkles, PawPrint, Crown } from '@/lib/icons';
+import { ExternalLink, Sparkles, PawPrint, Crown } from '@/lib/icons';
 import { usePublicPawCompanys } from '@/hooks/usePawCompanys';
 import { cn } from '@/lib/utils';
+import { CategoryIcon } from '@/components/CategoryIcon';
 
 const TIER_STYLES: Record<
   'bronze' | 'silver' | 'gold',
@@ -92,9 +93,13 @@ export function PawCompanysGrid({ className }: PawCompanysGridProps) {
                     className="h-10 w-10 rounded-md object-contain bg-white border"
                   />
                 ) : (
-                  <div className="h-10 w-10 rounded-md bg-muted flex items-center justify-center">
-                    <Building2 className="h-5 w-5 text-muted-foreground" />
-                  </div>
+                  <CategoryIcon
+                    kind="company"
+                    tier={company.tier}
+                    variant="icon"
+                    className="h-10 w-10 rounded-md bg-white border p-0.5"
+                    aria-label={`Paw Company ${tier.label}`}
+                  />
                 )}
                 <div className="flex flex-col items-end gap-1">
                   {isFounder && (
