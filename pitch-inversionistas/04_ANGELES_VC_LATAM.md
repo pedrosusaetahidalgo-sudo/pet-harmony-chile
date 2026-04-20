@@ -273,6 +273,16 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 
 ---
 
+## Siguiente paso — Contacto para conversacion
+
+**Via form en linea** (2 minutos, nos llega al email del founder):
+[pawfriend.cl/aplicar?tipo=angels_vc](https://pawfriend.cl/aplicar?tipo=angels_vc)
+
+**Via email directo**: pawfriendcl@gmail.com con asunto `[Angel/VC]` y
+breve nota sobre tu fondo/perfil de inversion.
+
+---
+
 **Contacto**:
 Paw Founder · pawfriendcl@gmail.com
 SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9

@@ -54,6 +54,7 @@ import AdminMissions from '@/components/admin/AdminMissions';
 import AdManagement from '@/components/admin/AdManagement';
 import AdminPartnerSubmissions from '@/components/admin/AdminPartnerSubmissions';
 import AdminSettings from '@/components/admin/AdminSettings';
+import AdminPitchApplications from '@/components/admin/AdminPitchApplications';
 import AdminSafetyLogs from '@/components/admin/AdminSafetyLogs';
 import AdminAuditLog from '@/components/admin/AdminAuditLog';
 import AdminSystemHealth from '@/components/admin/AdminSystemHealth';
@@ -298,6 +299,7 @@ function SystemSection({ sub: propSub, onSubChange }: SubSectionProps) {
       <Tabs value={sub} onValueChange={setSub}>
         <TabsList className="flex flex-wrap gap-1 h-auto">
           <TabsTrigger value="config">Configuracion</TabsTrigger>
+          <TabsTrigger value="pitch-applications">Postulaciones</TabsTrigger>
           <TabsTrigger value="errors">Errores</TabsTrigger>
           <TabsTrigger value="health">Health</TabsTrigger>
           <TabsTrigger value="data-quality">Calidad datos</TabsTrigger>
@@ -308,6 +310,9 @@ function SystemSection({ sub: propSub, onSubChange }: SubSectionProps) {
         </TabsList>
         <TabsContent value="config">
           <AdminSettings />
+        </TabsContent>
+        <TabsContent value="pitch-applications">
+          <AdminPitchApplications />
         </TabsContent>
         <TabsContent value="errors">
           <AdminErrorLog />

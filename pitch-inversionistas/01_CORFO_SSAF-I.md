@@ -276,6 +276,16 @@ Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas,
 
 ---
 
+## Siguiente paso — Postulacion / Contacto
+
+**Via form en linea** (2 minutos, nos llega al email del equipo):
+[pawfriend.cl/aplicar?tipo=corfo](https://pawfriend.cl/aplicar?tipo=corfo)
+
+**Via email directo**: pawfriendcl@gmail.com con asunto `[CORFO]` y
+adjunto de este documento.
+
+---
+
 **Contacto**:
 Paw Founder · pawfriendcl@gmail.com
 SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9

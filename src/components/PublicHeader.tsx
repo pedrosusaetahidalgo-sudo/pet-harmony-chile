@@ -1,8 +1,8 @@
-import { Heart, PawPrint, Stethoscope } from "@/lib/icons";
-import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
-import { LINKS } from "@/lib/links";
+import { Heart, PawPrint, Stethoscope } from '@/lib/icons';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { useAuth } from '@/hooks/useAuth';
+import { LINKS } from '@/lib/links';
 
 export const PublicHeader = () => {
   const { user } = useAuth();
@@ -11,7 +11,11 @@ export const PublicHeader = () => {
     <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
       <div className="flex h-16 items-center px-4 gap-2">
         <Link to="/" className="flex items-center gap-2 flex-1 min-w-0">
-          <img src="/paw_friend_icon_principal.svg" alt="Paw Friend" className="h-9 w-9 flex-shrink-0" />
+          <img
+            src="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg"
+            alt="Paw Friend"
+            className="h-9 w-9 flex-shrink-0"
+          />
           <span className="font-bold text-lg truncate">
             <span className="text-purple-800">Paw</span>
             <span className="text-purple-500 ml-0.5">Friend</span>

@@ -131,3 +131,7 @@ verify_jwt = false
 
 [functions.sync-payment-to-booking]
 verify_jwt = false
+
+# ── Pitch applications (agregada 2026-04-20) ──
+[functions.notify-pitch-application]
+verify_jwt = false

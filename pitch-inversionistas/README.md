@@ -18,6 +18,7 @@
 | [03_PAW_COMPANYS_EMPRESAS.md](03_PAW_COMPANYS_EMPRESAS.md) | **Empresas pet-friendly** | Pitch B2B2C para sponsors recurrentes |
 | [04_ANGELES_VC_LATAM.md](04_ANGELES_VC_LATAM.md) | **Angels / VC LATAM** | Pitch pre-seed USD $150K SAFE |
 | [05_HOGARES_DE_ADOPCION.md](05_HOGARES_DE_ADOPCION.md) | **Refugios / ONGs / rescatistas** | Onboarding de hogares de adopcion a la red |
+| [06_PAW_PARTNERS.md](06_PAW_PARTNERS.md) | **Tiendas / servicios aliados** | Barter de descuentos por visibilidad (Paw Partners) |
 
 ---
 

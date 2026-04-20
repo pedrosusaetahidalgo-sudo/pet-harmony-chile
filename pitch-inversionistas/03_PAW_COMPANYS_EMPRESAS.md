@@ -257,6 +257,19 @@ Pedro
 
 ---
 
+## Siguiente paso — Postulacion / Contacto
+
+**Via form en linea** (2 minutos, nos llega al email del equipo):
+[pawfriend.cl/aplicar?tipo=paw_companys](https://pawfriend.cl/aplicar?tipo=paw_companys)
+
+**Via email directo**: pawfriendcl@gmail.com con asunto `[Paw Companys]`.
+
+¿Tu marca es mas chica y prefiere barter (descuentos por visibilidad)?
+Considera postular como **Paw Partner** en:
+[pawfriend.cl/aplicar?tipo=paw_partners](https://pawfriend.cl/aplicar?tipo=paw_partners).
+
+---
+
 **Contacto**:
 Paw Founder · pawfriendcl@gmail.com
 SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9

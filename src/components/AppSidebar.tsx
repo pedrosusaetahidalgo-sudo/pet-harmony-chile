@@ -310,7 +310,7 @@ export function AppSidebar() {
             className="flex items-center gap-2.5 px-2 py-1.5 w-full hover:opacity-80 transition-opacity cursor-pointer rounded-lg"
           >
             <img
-              src="/paw_friend_icon_principal.svg"
+              src="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg"
               alt="Paw Friend"
               className="h-8 w-8 flex-shrink-0"
             />

@@ -89,6 +89,8 @@ const OnboardingDuenoMinimal = lazy(() => import('./pages/OnboardingDuenoMinimal
 const OnboardingShelter = lazy(() => import('./pages/OnboardingShelter'));
 const RefugiosHogares = lazy(() => import('./pages/RefugiosHogares'));
 const RefugioPublico = lazy(() => import('./pages/RefugioPublico'));
+const Aplicar = lazy(() => import('./pages/Aplicar'));
+const PawPartners = lazy(() => import('./pages/PawPartners'));
 const ShelterDashboard = lazy(() => import('./pages/shelter/ShelterDashboard'));
 const ShelterPets = lazy(() => import('./pages/shelter/ShelterPets'));
 const ShelterBulkImport = lazy(() => import('./pages/shelter/ShelterBulkImport'));
@@ -790,6 +792,26 @@ const App = () => (
                   element={
                     <PublicWithLayoutIfAuth>
                       <RefugioPublico />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
+
+                {/* Directorio publico de Paw Partners (tiendas/servicios aliados) */}
+                <Route
+                  path="/paw-partners"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <PawPartners />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
+
+                {/* Formulario publico de postulacion (pitch decks → /aplicar?tipo=...) */}
+                <Route
+                  path="/aplicar"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <Aplicar />
                     </PublicWithLayoutIfAuth>
                   }
                 />

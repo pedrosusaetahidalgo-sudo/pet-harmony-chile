@@ -42,7 +42,7 @@ export function MedicalRecordShowcase() {
                 <div className="flex items-center justify-between border-b border-neutral-200 pb-3">
                   <div className="flex items-center gap-2">
                     <img
-                      src="/paw_friend_icon_principal.svg"
+                      src="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg"
                       alt=""
                       aria-hidden
                       className="h-6 w-6"

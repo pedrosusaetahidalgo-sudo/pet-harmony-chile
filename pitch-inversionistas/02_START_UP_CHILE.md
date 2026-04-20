@@ -225,6 +225,16 @@ Start-Up Chile no es solo USD $15K. Es:
 
 ---
 
+## Siguiente paso — Postulacion / Contacto
+
+**Via form en linea** (2 minutos, nos llega al email del equipo):
+[pawfriend.cl/aplicar?tipo=startup_chile](https://pawfriend.cl/aplicar?tipo=startup_chile)
+
+**Via email directo**: pawfriendcl@gmail.com con asunto `[Start-Up Chile]`
+y adjunto de este documento.
+
+---
+
 **Contacto**:
 Paw Founder · pawfriendcl@gmail.com
 SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9

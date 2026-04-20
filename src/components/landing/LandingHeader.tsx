@@ -105,7 +105,7 @@ export function LandingHeader() {
         {/* Brand */}
         <Link to="/" className="flex min-w-0 flex-shrink-0 items-center gap-2">
           <img
-            src="/paw_friend_icon_principal.svg"
+            src="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg"
             alt="Paw Friend"
             width={36}
             height={36}
@@ -172,7 +172,7 @@ export function LandingHeader() {
               {/* Brand header dentro del sheet */}
               <div className="mt-2 flex items-center gap-2 border-b border-border/50 pb-4">
                 <img
-                  src="/paw_friend_icon_principal.svg"
+                  src="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg"
                   alt=""
                   width={32}
                   height={32}

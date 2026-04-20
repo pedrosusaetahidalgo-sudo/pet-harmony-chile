@@ -11,19 +11,25 @@
   "categories": ["health", "lifestyle", "social"],
   "icons": [
     {
-      "src": "/pwa-icon-192.png",
+      "src": "/paw-friend-assets-v2/logo/pwa_icon_192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/pwa-icon-512.png",
+      "src": "/paw-friend-assets-v2/logo/pwa_icon_512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "/pwa-splash-1024.png",
+      "src": "/paw-friend-assets-v2/logo/pwa_icon_maskable_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/paw-friend-assets-v2/logo/pwa_splash_1024.png",
       "sizes": "1024x1024",
       "type": "image/png",
       "purpose": "any"

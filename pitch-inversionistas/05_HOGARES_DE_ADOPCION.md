@@ -138,11 +138,19 @@ campañas estacionales).
 
 ---
 
-## 8. Contacto
+## 8. Siguiente paso
 
-- **Email**: pawfriendcl@gmail.com
+**Opcion A — Registro directo en la app** (recomendado si ya tienes
+mascotas para cargar):
+[pawfriend.cl/onboarding-shelter](https://pawfriend.cl/onboarding-shelter)
+
+**Opcion B — Form de contacto** (si prefieres que te llamemos primero):
+[pawfriend.cl/aplicar?tipo=refugio](https://pawfriend.cl/aplicar?tipo=refugio)
+
+**Opcion C — Email directo**: pawfriendcl@gmail.com con asunto
+`[Hogar de adopcion]`.
+
 - **Instagram**: [@pawfriend.cl](https://instagram.com/pawfriend.cl)
-- **Registro directo**: [pawfriend.cl/onboarding-shelter](https://pawfriend.cl/onboarding-shelter)
 - **Directorio publico de refugios**: [pawfriend.cl/refugios-hogares](https://pawfriend.cl/refugios-hogares)
 
 ---

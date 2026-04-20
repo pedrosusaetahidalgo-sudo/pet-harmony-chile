@@ -80,7 +80,7 @@ Resumen de items activos:
 | 5 | [BASE_DATOS_PARTNERS_CHILE.md](_pending/BASE_DATOS_PARTNERS_CHILE.md) | Data | Media |
 | 6 | [testing-virtual-user-blueprint.md](_pending/testing-virtual-user-blueprint.md) | Testing Playwright | Media |
 | 7 | [FEATURE_AI_WEB_SEARCH_UPGRADE.md](_pending/features/FEATURE_AI_WEB_SEARCH_UPGRADE.md) | Feature | Media |
-| 8 | [PLAN_ADOPCION_CENTROS_2026_04_20.md](_pending/PLAN_ADOPCION_CENTROS_2026_04_20.md) | Refugios como onboarding inicial (Fases 1-6 implementadas, 7-9 pendientes) | Alta |
+| 8 | [PLAN_ADOPCION_CENTROS_2026_04_20.md](_pending/PLAN_ADOPCION_CENTROS_2026_04_20.md) | Refugios como onboarding inicial (ejecutado 2026-04-20) | Completado |
 
 ---
 

@@ -138,7 +138,7 @@ function FounderPlaceholder() {
         {/* Patrón decorativo */}
         <div className="absolute inset-0 flex items-center justify-center">
           <img
-            src="/paw_friend_icon_principal.svg"
+            src="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg"
             alt=""
             aria-hidden
             className="h-44 w-44 opacity-90 drop-shadow-2xl"

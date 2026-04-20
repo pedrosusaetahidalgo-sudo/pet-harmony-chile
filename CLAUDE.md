@@ -215,7 +215,7 @@ Prex. Ver memoria `project_session_2026_04_19_pivot_monetizacion.md`.
 
 ---
 
-## 6. Edge Functions activas (28 + _shared)
+## 6. Edge Functions activas (29 + _shared)
 
 ```
 _shared/                         # Helpers compartidos (ai-base, cors, flow-utils, prompt-utils, rate-limit, payment-gateway)
@@ -247,13 +247,14 @@ send-pet-invitation/             # Invitar dueno a gestionar mascota (vet)
 send-whatsapp-reminder/          # WhatsApp (pendiente verificacion Meta)
 verify-service-provider/         # Verificacion IA de proveedor
 verify-vet-document/             # Verificacion vet IA-assisted
+notify-pitch-application/        # Email a Pedro cuando alguien postula via /aplicar (any tipo)
 ```
 
 ---
 
 ## 7. Rutas principales (de src/App.tsx)
 
-### Publicas (sin login) — 18 rutas
+### Publicas (sin login) — 22 rutas
 - `/` -- Landing
 - `/auth` -- Login/registro
 - `/veterinarios` -- Directorio publico vets
@@ -265,7 +266,11 @@ verify-vet-document/             # Verificacion vet IA-assisted
 - `/para-veterinarios` -- Landing B2B
 - `/registro-veterinario` -- Registro vet
 - `/registro-proveedor` -- Alias de `/registro-veterinario`
-- `/registro-partner` -- Registro partner
+- `/registro-partner` -- Registro partner (legacy)
+- `/refugios-hogares` -- Directorio publico refugios / hogares de adopcion
+- `/refugios/:slug` -- Perfil publico refugio (SEO)
+- `/paw-partners` -- Directorio publico Paw Partners (tiendas/servicios aliados con descuentos)
+- `/aplicar` -- Form de postulacion generico (tipos: corfo, startup_chile, paw_companys, angels_vc, refugio, paw_partners, vet, paw_voices, otro)
 - `/resena/:token` -- Dejar resena publica
 - `/qr/:token` -- Landing publica de QR de mascota
 - `/paw-card/:pawCardId` -- Landing publica de Paw Card coleccionable

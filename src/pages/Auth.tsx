@@ -492,11 +492,12 @@ const Auth = () => {
           <CardHeader className="space-y-2 flex flex-col items-center pt-8 pb-4">
             {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- fallback: si v2 aun no esta desplegado, cargamos el icono anterior */}
             <img
-              src="/Paw-friend-assets v2/logo/app_icon_ios_1024.svg"
+              src="/paw-friend-assets-v2/logo/app_icon_ios_1024.svg"
               alt="Paw Friend"
               className="w-16 h-16 mb-2 drop-shadow-md"
               onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = '/paw_friend_icon_principal.svg';
+                (e.currentTarget as HTMLImageElement).src =
+                  '/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg';
               }}
             />
             <CardTitle className="font-display font-semibold text-3xl md:text-4xl tracking-tight text-center bg-gradient-to-r from-purple-700 to-pink-600 bg-clip-text text-transparent">
@@ -752,7 +753,7 @@ const Auth = () => {
           <div className="mb-4">
             {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- fallback: ocultar img si el archivo aun no esta disponible */}
             <img
-              src="/Paw-friend-assets v2/logo/wordmark_horizontal_darkmode.svg"
+              src="/paw-friend-assets-v2/logo/wordmark_horizontal_darkmode.svg"
               alt="Paw Friend"
               className="h-12 w-auto"
               onError={(e) => {

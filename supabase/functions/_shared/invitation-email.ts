@@ -1,8 +1,13 @@
 // Email template compartido para invitaciones de mascotas (vet → dueño).
 // Usa la paleta de marca Paw Friend: morado #9333EA primary.
 
-const LOGO_URL = 'https://pawfriend.cl/pwa-icon-512.png';
-const WORDMARK_URL = 'https://pawfriend.cl/paw_friend_wordmark_horizontal.svg';
+// Brand kit v2 (2026-04-20): assets canonicos servidos desde /paw-friend-assets-v2/.
+// Los paths antiguos en raiz de /public siguen funcionando como fallback para
+// deploys viejos no rebuildeados; el code de esta edge fn usa v2 cuando Pedro
+// hace redeploy.
+const LOGO_URL = 'https://pawfriend.cl/paw-friend-assets-v2/logo/pwa_icon_512.png';
+const WORDMARK_URL =
+  'https://pawfriend.cl/paw-friend-assets-v2/logo/paw_friend_wordmark_horizontal.svg';
 
 export function buildInvitationEmail(opts: {
   petName: string;

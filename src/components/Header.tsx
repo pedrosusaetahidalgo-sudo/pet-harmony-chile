@@ -126,7 +126,7 @@ export const Header = () => {
           tabIndex={0}
         >
           <img
-            src="/paw_friend_icon_principal.svg"
+            src="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg"
             alt="Paw Friend"
             className="h-7 w-7 flex-shrink-0"
           />
