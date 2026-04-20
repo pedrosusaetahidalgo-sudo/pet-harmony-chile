@@ -14,6 +14,7 @@ import { VetDirectoryShowcase } from '@/components/landing/VetDirectoryShowcase'
 import { AlmaSection } from '@/components/landing/AlmaSection';
 import { ForVetsSection } from '@/components/landing/ForVetsSection';
 import { CommunitySection } from '@/components/landing/CommunitySection';
+import { AudiencesStrip } from '@/components/landing/AudiencesStrip';
 import { FinalCTA } from '@/components/landing/FinalCTA';
 import { RichFooter } from '@/components/landing/RichFooter';
 
@@ -66,6 +67,7 @@ const Index = () => {
         <AlmaSection />
         <ForVetsSection />
         <CommunitySection />
+        <AudiencesStrip />
         <FinalCTA />
       </main>
 
