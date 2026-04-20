@@ -86,6 +86,12 @@ const MedicalShare = lazy(() => import('./pages/MedicalShare'));
 const Reminders = lazy(() => import('./pages/Reminders'));
 const OnboardingVetMinimal = lazy(() => import('./pages/OnboardingVetMinimal'));
 const OnboardingDuenoMinimal = lazy(() => import('./pages/OnboardingDuenoMinimal'));
+const OnboardingShelter = lazy(() => import('./pages/OnboardingShelter'));
+const ShelterDashboard = lazy(() => import('./pages/shelter/ShelterDashboard'));
+const ShelterPets = lazy(() => import('./pages/shelter/ShelterPets'));
+const ShelterBulkImport = lazy(() => import('./pages/shelter/ShelterBulkImport'));
+const ShelterProfile = lazy(() => import('./pages/shelter/ShelterProfile'));
+const ShelterTransferPet = lazy(() => import('./pages/shelter/ShelterTransferPet'));
 const Reportes = lazy(() => import('./pages/Reportes'));
 const ProDashboard = lazy(() => import('./pages/ProDashboard'));
 const AnalyticsDashboard = lazy(() => import('./pages/standalone/AnalyticsDashboard'));
@@ -380,6 +386,79 @@ const App = () => (
                       <AppLayout>
                         <Adoption />
                       </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Onboarding refugios / hogares de adopcion */}
+                <Route
+                  path="/onboarding-shelter"
+                  element={
+                    <ProtectedRoute>
+                      <OnboardingShelter />
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Area privada del refugio. RoleGuard fuerza shelter role +
+                    redirige si el user no tiene cuenta de refugio. */}
+                <Route
+                  path="/shelter/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <RoleGuard requiredRole="shelter" fallback="/onboarding-shelter">
+                        <AppLayout>
+                          <ShelterDashboard />
+                        </AppLayout>
+                      </RoleGuard>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/shelter/pets"
+                  element={
+                    <ProtectedRoute>
+                      <RoleGuard requiredRole="shelter" fallback="/onboarding-shelter">
+                        <AppLayout>
+                          <ShelterPets />
+                        </AppLayout>
+                      </RoleGuard>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/shelter/bulk-import"
+                  element={
+                    <ProtectedRoute>
+                      <RoleGuard requiredRole="shelter" fallback="/onboarding-shelter">
+                        <AppLayout>
+                          <ShelterBulkImport />
+                        </AppLayout>
+                      </RoleGuard>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/shelter/profile"
+                  element={
+                    <ProtectedRoute>
+                      <RoleGuard requiredRole="shelter" fallback="/onboarding-shelter">
+                        <AppLayout>
+                          <ShelterProfile />
+                        </AppLayout>
+                      </RoleGuard>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/shelter/transfer/:petId"
+                  element={
+                    <ProtectedRoute>
+                      <RoleGuard requiredRole="shelter" fallback="/onboarding-shelter">
+                        <AppLayout>
+                          <ShelterTransferPet />
+                        </AppLayout>
+                      </RoleGuard>
                     </ProtectedRoute>
                   }
                 />

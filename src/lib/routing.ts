@@ -103,6 +103,19 @@ export const PROVIDER_ONLY_ROUTES = [
   '/panel-pro',
 ] as const;
 
+/**
+ * Rutas exclusivas de refugios/hogares de adopcion. Un owner que intente
+ * acceder sera redirigido a /home por ShelterRoute / RoleGuard.
+ */
+export const SHELTER_ONLY_ROUTES = [
+  '/shelter/dashboard',
+  '/shelter/pets',
+  '/shelter/bulk-import',
+  '/shelter/profile',
+  '/shelter/donations',
+  '/shelter/transfer',
+] as const;
+
 /** Check if a path is an owner-only route */
 export function isOwnerRoute(path: string): boolean {
   return OWNER_ONLY_ROUTES.some((r) => path.startsWith(r));
@@ -111,6 +124,11 @@ export function isOwnerRoute(path: string): boolean {
 /** Check if a path is a provider-only route */
 export function isProviderRoute(path: string): boolean {
   return PROVIDER_ONLY_ROUTES.some((r) => path.startsWith(r));
+}
+
+/** Check if a path is a shelter-only route */
+export function isShelterRoute(path: string): boolean {
+  return SHELTER_ONLY_ROUTES.some((r) => path.startsWith(r));
 }
 
 export const AUTH_REDIRECTS = {
@@ -122,6 +140,8 @@ export const AUTH_REDIRECTS = {
   ownerWithoutPets: '/add-pet',
   /** Default post-login para vets/providers */
   provider: '/provider/dashboard',
+  /** Default post-login para refugios/hogares */
+  shelter: '/shelter/dashboard',
   /** Post-logout */
   afterLogout: '/auth',
 } as const;

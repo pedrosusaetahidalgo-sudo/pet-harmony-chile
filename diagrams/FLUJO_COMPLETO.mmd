@@ -1,6 +1,17 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-18 (Booking System Overhaul)
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-20 (Refugios como onboarding)
+    %% Cambios 2026-04-20 (Adopcion Centros):
+    %%   - Nuevo rol "shelter" (ademas de owner y provider).
+    %%   - Tabla adoption_centers (cuenta real del refugio).
+    %%   - Rutas /onboarding-shelter y /shelter/{dashboard,pets,bulk-import,profile,transfer/:petId}.
+    %%   - BecomeShelterDialog (wizard 3 pasos).
+    %%   - Bulk import CSV/XLSX hasta 500 filas -> tabla adoption_bulk_imports.
+    %%   - Transferencia pet shelter->adopter reutiliza pending_owner_email + owner_invitation_token.
+    %%   - Pets extendidos: created_by_shelter_id, shelter_intake_at, shelter_adopted_at, shelter_notes.
+    %%   - Donations extendidas (hooks DB, UI pendiente): beneficiary_type, beneficiary_adoption_center_id.
+    %%   - Migracion nueva: 20260620000000_adoption_centers.sql.
+    %% Cambios 2026-04-18 (Booking System Overhaul):
     %% Alineado con CLAUDE.md §7 rutas, §6 edge functions (29 activas).
     %% Cambios 2026-04-18 (Booking System Overhaul):
     %%   - Banner GoogleCalendarStatusBanner en /home, /mis-reservas, /calendario,
@@ -583,3 +594,37 @@ flowchart TD
     H_QUICK --> MAPA
     H_ROUTINES --> RUT_LIST
     H_FEED --> FEED_LIST
+
+    %% ============ SHELTER / REFUGIOS (2026-04-20) ============
+    subgraph SHELTER_FLOW["REFUGIOS / HOGARES DE ADOPCION"]
+        direction TB
+        SH_ONB["/onboarding-shelter (landing)"]
+        SH_DIALOG["BecomeShelterDialog wizard 3 pasos"]
+        SH_DB["Supabase adoption_centers status=active"]
+        SH_DASH["/shelter/dashboard stats + pets + accesos"]
+        SH_PETS["/shelter/pets listado con filtros"]
+        SH_BULK["/shelter/bulk-import CSV/XLSX max 500"]
+        SH_PROF["/shelter/profile editar publico"]
+        SH_TRANSFER["/shelter/transfer/:petId entregar a adoptante"]
+        SH_AUDIT["adoption_bulk_imports audit trail"]
+
+        SH_ONB --> SH_DIALOG --> SH_DB --> SH_DASH
+        SH_DASH --> SH_PETS
+        SH_DASH --> SH_BULK
+        SH_DASH --> SH_PROF
+        SH_PETS --> SH_TRANSFER
+        SH_BULK -. log .-> SH_AUDIT
+        SH_BULK -. inserts .-> PETS_DB[(pets con created_by_shelter_id)]
+
+        SH_TRANSFER -. setea pending_owner_email + owner_invitation_token .-> PETS_DB
+        SH_TRANSFER --> SH_LINK["Link copiable + WhatsApp CTA"]
+        SH_LINK -. /home?invitation=TOKEN .-> CLAIM["useClaimPetInvitation + RPC claim_pet_by_invitation"]
+        CLAIM --> OWNER_MY_PETS["Adoptante recibe ficha COMPLETA en /my-pets"]
+    end
+
+    %% CTA desde /adoption hacia onboarding shelter
+    ADOP_LANDING["/adoption banner CTA ¿Tienes un hogar?"] --> SH_ONB
+
+    %% Rol shelter en sistema
+    ROLE_CTX["useActiveRole: owner | provider | shelter"] -. query .-> SH_DB
+    ROLE_GUARD_SH["RoleGuard requiredRole=shelter"] --> SH_DASH

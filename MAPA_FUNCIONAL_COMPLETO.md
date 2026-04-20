@@ -727,26 +727,66 @@ Visualizacion:
 
 ---
 
-## 12. ADOPCION <a id="12-adopcion"></a>
+## 12. ADOPCION Y CENTROS <a id="12-adopcion"></a>
+
+Desde 2026-04-20 la adopcion funciona como **onboarding inicial** de mascotas:
+los refugios / hogares de adopcion (rol `shelter`) cargan las fichas medicas
+mientras tienen a los animales a su cargo, y cuando alguien adopta se les
+**transfiere la ficha completa** (reutilizando el flujo
+`pending_owner_email` + `owner_invitation_token`).
 
 ```
-Adopcion
-├── Paginas
-│   └── src/pages/Adoption.tsx                        # Posts de adopcion + refugios
+Adopcion + Refugios
+├── Paginas publicas / owner
+│   ├── src/pages/Adoption.tsx                            # Posts de adopcion + CTA registrar refugio
+│   └── src/pages/OnboardingShelter.tsx                   # Landing onboarding refugio
+├── Paginas shelter (RoleGuard requiredRole="shelter")
+│   ├── src/pages/shelter/ShelterDashboard.tsx            # Panel: stats + pets recientes + accesos rapidos
+│   ├── src/pages/shelter/ShelterPets.tsx                 # Lista completa mascotas a cargo
+│   ├── src/pages/shelter/ShelterBulkImport.tsx           # Carga masiva CSV/XLSX (max 500 filas)
+│   ├── src/pages/shelter/ShelterProfile.tsx              # Editar perfil publico
+│   └── src/pages/shelter/ShelterTransferPet.tsx          # Entregar mascota al adoptante
 ├── Componentes
-│   ├── src/components/AdoptionPostCard.tsx             # Card post
-│   ├── src/components/CreateAdoptionPost.tsx           # Crear post adopcion
-│   ├── src/components/AdoptionSheltersList.tsx         # Lista refugios
-│   └── src/components/maps/AdoptionDetailCard.tsx      # Popup mapa
+│   ├── src/components/BecomeShelterDialog.tsx            # Wizard 3 pasos registro refugio
+│   ├── src/components/AdoptionPostCard.tsx               # Card post
+│   ├── src/components/CreateAdoptionPost.tsx             # Crear post adopcion
+│   ├── src/components/AdoptionSheltersList.tsx           # Lista refugios IA publica
+│   └── src/components/maps/AdoptionDetailCard.tsx        # Popup mapa
+├── Hooks
+│   ├── src/hooks/useShelter.ts                           # adoption_center del user
+│   └── src/hooks/useActiveRole.tsx                       # roles 3-way owner/provider/shelter
+├── Tablas (Supabase)
+│   ├── adoption_centers                                  # Cuenta del refugio (user_id, legal_name, type, ...)
+│   ├── adoption_shelters                                 # Catalogo IA publico (scraped, no-cuenta)
+│   ├── adoption_posts / adoption_interests / adoption_messages  # posts publicos
+│   ├── adoption_bulk_imports                             # Audit trail de cargas masivas
+│   └── pets (+ columnas created_by_shelter_id, shelter_intake_at, shelter_adopted_at, shelter_notes)
 └── Edge Functions
-    └── supabase/functions/generate-shelters/           # Generar data refugios
+    ├── supabase/functions/generate-shelters/             # Generar data refugios IA (catalogo publico)
+    └── supabase/functions/send-pet-invitation/           # Email invitacion (vet hoy; shelter next)
 ```
 
-### Oportunidades de mejora
-- **Filtros** por especie, tamano, edad, comuna
-- **Match** automatico segun preferencias del adoptante
-- **Seguimiento post-adopcion** (como esta la mascota 1 mes despues)
-- **Coordinacion con refugios** reales (API/integración)
+### Flujo refugio -> adoptante
+1. User se registra como refugio -> `BecomeShelterDialog` crea `adoption_centers` status=active.
+2. Carga mascotas: `/shelter/bulk-import` (CSV/XLSX) o `/add-pet` individual.
+3. Post-intereses, refugio va a `/shelter/transfer/:petId` -> setea
+   `pending_owner_email` + `shelter_adopted_at` + genera link `?invitation=TOKEN`.
+4. Adoptante abre link -> `useClaimPetInvitation` + RPC `claim_pet_by_invitation`
+   reclaman pet con ficha medica completa.
+
+### Migraciones clave
+- `20260620000000_adoption_centers.sql` (2026-04-20): crea adoption_centers,
+  adoption_bulk_imports, extiende pets (shelter_*) y donations (beneficiary_*),
+  agrega claimed_by_adoption_center_id a adoption_shelters.
+
+### Oportunidades pendientes
+- **Edge fn shelter-aware**: actualizar `send-pet-invitation` para aceptar
+  `created_by_shelter_id` ademas de `created_by_vet_id`.
+- **Donaciones dirigidas**: UI en `/donaciones` + panel refugio (hooks DB ya listos).
+- **Landing publica refugio** (`/refugios/:slug`) + directorio publico `/refugios-hogares`.
+- **Verificacion admin**: panel para aprobar refugios y otorgar badge "Verificado".
+- **Match automatico** segun preferencias del adoptante.
+- **Seguimiento post-adopcion**: check-ins a 1/3/6 meses.
 
 ---
 

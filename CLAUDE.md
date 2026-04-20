@@ -490,13 +490,15 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 |---|---|---|
 | **owner** (dueno) | Cualquier usuario autenticado. Default. | Entretenida: gamificacion, Paw Cards, feed social, colores vivos. |
 | **provider** (vet/profesional) | Registro en tabla `service_providers`. | Profesional: dashboard clinico, pacientes, agenda. Sin gamificacion. |
+| **shelter** (refugio/hogar de adopcion) | Registro en tabla `adoption_centers` (mig `20260620000000`). | Operativo: dashboard mascotas, bulk import, transferencia al adoptante. Sin gamificacion. Cuenta gratis siempre. |
 | **admin** | Registro en tabla `admin_access` con `is_active=true`. | Panel interno con metricas, moderacion, sistema. |
 
 ### Principios de separacion
 
 1. **Provider = profesional sin gamificacion**. Las vistas `/provider/*` no importan ni muestran Paw Game, Paw Cards, misiones, badges ni efectos visuales ludicos.
-2. **Owner = entretenido y util**. Las vistas de dueno pueden usar gradientes, animaciones holo, gamificacion, siempre alineada con salud real de la mascota.
-3. **Sin leakage**: menus, sidebar y bottom tabs muestran solo rutas del rol activo. Rutas owner-only (`/paw-game`, `/paw-collection`, `/misiones`) usan `RoleGuard requiredRole="owner"`. Rutas provider-only (`/provider/*`) usan `RoleGuard requiredRole="provider"`.
+2. **Shelter = operativo sin gamificacion**. Las vistas `/shelter/*` son profesionales orientadas a operacion (cargar mascotas, entregar en adopcion, gestionar perfil publico).
+3. **Owner = entretenido y util**. Las vistas de dueno pueden usar gradientes, animaciones holo, gamificacion, siempre alineada con salud real de la mascota.
+4. **Sin leakage**: menus, sidebar y bottom tabs muestran solo rutas del rol activo. Rutas owner-only (`/paw-game`, `/paw-collection`, `/misiones`) usan `RoleGuard requiredRole="owner"`. Rutas provider-only (`/provider/*`) usan `RoleGuard requiredRole="provider"`. Rutas shelter-only (`/shelter/*`) usan `RoleGuard requiredRole="shelter"`.
 
 ### Cambio de rol (usuarios dual-role)
 
@@ -516,24 +518,39 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 - Crea registro `service_providers` con `status: 'pending'`, `is_directory_visible: false`
 - No requiere aprobacion admin para usar la vista provider, pero si para aparecer en directorio publico
 
-### Flujo mascota huerfana (vet crea mascota sin cuenta de dueno)
+### Flujo mascota huerfana (vet o refugio crean mascota sin cuenta de dueno)
 
-1. Vet crea mascota via `NewPatientForm` → pet con `pending_owner_email`, `owner_id=null`
-2. Edge function `send-pet-invitation` envia email con token
-3. Dueno click link → `useClaimPetInvitation` reclama la mascota
-4. **Re-claim si pierde email**: `useAutoClaimByEmail` auto-detecta mascotas por email verificado
-5. **Re-claim manual**: boton "Tengo un codigo de mi vet" en `/my-pets` (`ClaimPetDialog`)
-6. Admin puede monitorear mascotas pendientes en Admin > Usuarios > Mascotas pendientes
+1. Vet crea mascota via `NewPatientForm` → pet con `pending_owner_email`, `owner_id=null`, `created_by_vet_id=callerId`
+2. **Refugio** crea mascota via `/shelter/bulk-import` o formulario individual → pet con `created_by_shelter_id`
+3. Edge function `send-pet-invitation` envia email con token (vet); o refugio usa link manual copiable en `/shelter/transfer/:petId`
+4. Dueno click link (`?invitation=TOKEN`) → `useClaimPetInvitation` reclama la mascota
+5. **Re-claim si pierde email**: `useAutoClaimByEmail` auto-detecta mascotas por email verificado
+6. **Re-claim manual**: boton "Tengo un codigo de mi vet" en `/my-pets` (`ClaimPetDialog`)
+7. Admin puede monitorear mascotas pendientes en Admin > Usuarios > Mascotas pendientes
+
+### Flujo refugio → adoptante (nuevo 2026-04-20)
+
+1. Refugio se registra via `BecomeShelterDialog` → crea `adoption_centers` con `status='active'`
+2. Refugio carga mascotas via `/shelter/bulk-import` (CSV/Excel) o una por una en `/add-pet`
+3. Cuando adoptante muestra interes y es aceptado, refugio va a `/shelter/transfer/:petId`:
+   - Setea `pet.pending_owner_email`, `owner_invitation_token`, `shelter_adopted_at = now()`
+   - Muestra link copiable + boton WhatsApp
+   - Best-effort: llama a `send-pet-invitation` (pendiente de actualizar edge fn para aceptar shelters)
+4. Adoptante abre link → reclama la mascota con ficha medica COMPLETA
 
 ### Archivos clave
 
-- `src/hooks/useActiveRole.tsx` — contexto + provider + persistencia
+- `src/hooks/useActiveRole.tsx` — contexto 3 roles (owner/provider/shelter) + persistencia
+- `src/hooks/useShelter.ts` — query del adoption_center del user actual
 - `src/hooks/useIsAdmin.tsx` — deteccion admin (tabla + fallback RPC)
-- `src/components/RoleGuard.tsx` — guard de rutas por rol
+- `src/components/RoleGuard.tsx` — guard de rutas por rol (soporta `'owner' | 'provider' | 'shelter'`)
 - `src/components/AdminRoute.tsx` — guard admin
-- `src/lib/routing.ts` — helpers `isOwnerRoute()`, `isProviderRoute()`, constantes
+- `src/lib/routing.ts` — helpers `isOwnerRoute()`, `isProviderRoute()`, `isShelterRoute()`, constantes
 - `src/components/Header.tsx:192-245` — toggle dueno/profesional (siempre visible)
 - `src/components/BecomeProviderDialog.tsx` — wizard registro inline de profesional
+- `src/components/BecomeShelterDialog.tsx` — wizard registro inline de refugio (3 pasos)
+- `src/pages/OnboardingShelter.tsx` — landing de onboarding para refugios
+- `src/pages/shelter/*` — dashboard, mascotas, bulk import, perfil, transferencia
 
 ---
 

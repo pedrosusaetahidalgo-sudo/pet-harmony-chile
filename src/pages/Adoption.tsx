@@ -4,8 +4,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus, Heart, MessageCircle, Building2, Sparkles } from '@/lib/icons';
+import { Home as HomeIcon, ArrowRight } from 'lucide-react';
 import { AdoptionPostCard } from '@/components/AdoptionPostCard';
 import { useAuth } from '@/hooks/useAuth';
+import { useActiveRole } from '@/hooks/useActiveRole';
 import { PageHeader } from '@/components/PageHeader';
 import { LINKS } from '@/lib/links';
 import { useNavigate } from 'react-router-dom';
@@ -21,6 +23,7 @@ const AdoptionSheltersList = lazy(() => import('@/components/AdoptionSheltersLis
 const Adoption = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isShelter, isShelterLoading } = useActiveRole();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [selectedTab, setSelectedTab] = useState('available');
 
@@ -84,6 +87,45 @@ const Adoption = () => {
       />
       <div className="container max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
         <PawLabsBanner description="Publica mascotas en adopcion o encuentra refugios cercanos. Plataforma en crecimiento." />
+
+        {/* CTA refugios: si el user no es shelter aun, ofrecer registro */}
+        {!isShelterLoading && !isShelter && (
+          <button
+            type="button"
+            onClick={() => navigate('/onboarding-shelter')}
+            className="w-full text-left p-4 rounded-xl border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-white hover:border-purple-400 hover:shadow-md transition group"
+          >
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-purple-600 text-white flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition">
+                <HomeIcon className="h-5 w-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-sm text-purple-900">
+                  ¿Tienes un hogar o refugio de adopcion?
+                </h3>
+                <p className="text-xs text-purple-700/80">
+                  Registrate gratis: carga masiva, ficha medica, transferencia al adoptante.
+                </p>
+              </div>
+              <ArrowRight className="h-5 w-5 text-purple-600 group-hover:translate-x-1 transition" />
+            </div>
+          </button>
+        )}
+
+        {/* Si ya es shelter, atajo al dashboard */}
+        {!isShelterLoading && isShelter && (
+          <button
+            type="button"
+            onClick={() => navigate('/shelter/dashboard')}
+            className="w-full text-left p-3 rounded-xl bg-purple-600 text-white hover:bg-purple-700 transition"
+          >
+            <div className="flex items-center gap-3">
+              <HomeIcon className="h-5 w-5" />
+              <span className="flex-1 text-sm font-semibold">Ir al panel de mi refugio</span>
+              <ArrowRight className="h-5 w-5" />
+            </div>
+          </button>
+        )}
         <div className="flex flex-col gap-3 sm:gap-4">
           {selectedTab !== 'shelters' && (
             <Button
