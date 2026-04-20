@@ -127,11 +127,12 @@ export const HEADER = {
   brandLead: 'Paw',
   brandTail: 'Friend',
   navItems: [
-    { label: 'Veterinarios', href: '/veterinarios' },
-    { label: 'Para vets', href: '/para-veterinarios' },
-    { label: 'Apoyar', href: '/donaciones' },
-    { label: 'Nuestra historia', href: '/paw-core' },
-  ],
+    { label: 'Veterinarios publicos', href: '/veterinarios', cta: false },
+    // Item con cta=true se renderiza como boton destacado en LandingHeader.
+    { label: '¿Eres vet?', href: '/para-veterinarios', cta: true },
+    { label: 'Apoyar', href: '/donaciones', cta: false },
+    { label: 'Nuestra historia', href: '/paw-core', cta: false },
+  ] as ReadonlyArray<{ label: string; href: string; cta: boolean }>,
   ctaAuth: 'Iniciar sesión',
   ctaCreate: 'Crear cuenta gratis',
   ctaHome: 'Ir al inicio',

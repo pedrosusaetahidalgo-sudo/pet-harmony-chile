@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360">
+  <title>Paw Vets — Email Header</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#10B981"/><stop offset="100%" stop-color="#F59E0B"/>
+    </linearGradient>
+    <radialGradient id="softRight" cx="0.85" cy="0.5" r="0.6">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="squircleClip">
+      <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    </clipPath>
+    <mask id="crossMask">
+      <rect x="-200" y="-200" width="1400" height="1400" fill="white"/>
+      <path d="M 506 510 H 518 V 524 H 532 V 536 H 518 V 550 H 506 V 536 H 492 V 524 H 506 Z" fill="black"/>
+    </mask>
+  </defs>
+
+  <rect width="1200" height="360" fill="url(#bgGrad)"/>
+  <rect width="1200" height="360" fill="url(#softRight)"/>
+
+  <!-- Squircle 200px at (80, 80) -->
+  <g transform="translate(9.34 40) scale(0.3333)">
+    <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="#FFFFFF"/>
+    <g clip-path="url(#squircleClip)">
+      <g fill="none" stroke="#10B981" stroke-width="4" stroke-linecap="round" opacity="0.4">
+        <path d="M 250 540 Q 250 695, 390 715"/>
+        <circle cx="390" cy="715" r="11" stroke-width="4" fill="#10B981" fill-opacity="0.08"/>
+      </g>
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="url(#tileGrad)" mask="url(#crossMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="url(#tileGrad)"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="url(#tileGrad)"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="url(#tileGrad)"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="url(#tileGrad)"/>
+    </g>
+  </g>
+
+  <!-- Wordmark white -->
+  <text x="310" y="170" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="72" font-weight="700" fill="#FFFFFF" letter-spacing="-2">Paw Vets</text>
+
+  <!-- Descriptor -->
+  <text x="310" y="220" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="24" font-weight="500" fill="#FFFFFF" opacity="0.92" letter-spacing="0.5">Ficha clínica digital · Paw Friend</text>
+
+  <!-- Teal pill status -->
+  <g transform="translate(310, 250)">
+    <rect x="0" y="0" width="200" height="44" rx="22" fill="#FFFFFF" opacity="0.95"/>
+    <text x="100" y="30" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="18" font-weight="700" fill="#0F766E" text-anchor="middle" letter-spacing="3">PARA VETERINARIOS</text>
+  </g>
+
+  <!-- Violet pulse dot mini top-right corner -->
+  <circle cx="1140" cy="50" r="10" fill="#9333EA"/>
+  <circle cx="1140" cy="50" r="16" fill="none" stroke="#9333EA" stroke-width="2" opacity="0.4"/>
+
+  <!-- Violet hairline bottom -->
+  <rect x="0" y="356" width="1200" height="4" fill="#9333EA"/>
+</svg>

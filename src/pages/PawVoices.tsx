@@ -80,6 +80,16 @@ export default function PawVoices() {
       </Helmet>
       <PageHeader title="Paw Voices" onBack={() => navigate(-1)} />
 
+      {/* Hero banner del brand kit v2 */}
+      <div className="relative overflow-hidden">
+        <img
+          src="/paw-friend-assets-v2/paw_voices_hero_banner.svg"
+          alt="Paw Voices · creadores peludos"
+          className="w-full h-32 sm:h-48 object-cover"
+          loading="eager"
+        />
+      </div>
+
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10"

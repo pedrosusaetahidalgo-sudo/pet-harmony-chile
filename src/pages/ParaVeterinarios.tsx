@@ -205,6 +205,7 @@ export default function ParaVeterinarios() {
       description:
         'Gestiona tus pacientes, recibe reservas online y destaca en el directorio veterinario verificado de Chile. Ficha clinica digital compartida. Gratis para empezar.',
       canonical: 'https://pawfriend.cl/para-veterinarios',
+      ogImage: 'https://pawfriend.cl/paw-friend-assets-v2/paw_vets_og_card.svg',
     });
   }, []);
 
@@ -275,10 +276,10 @@ export default function ParaVeterinarios() {
 
             <div className="relative">
               <img
-                src="https://images.unsplash.com/photo-1612531386530-97286d97c2d2?w=700&h=700&fit=crop"
-                alt="Veterinario revisando mascota"
-                loading="lazy"
-                className="rounded-2xl shadow-2xl w-full object-cover aspect-square"
+                src="/paw-friend-assets-v2/paw_vets_hero.svg"
+                alt="Paw Vets · comunidad de veterinarios Paw Friend"
+                loading="eager"
+                className="rounded-2xl shadow-2xl w-full object-cover aspect-[4/3]"
               />
               <div className="absolute -bottom-4 -left-4 bg-white rounded-xl shadow-lg p-4 max-w-[220px]">
                 <div className="flex items-center gap-1 mb-1">

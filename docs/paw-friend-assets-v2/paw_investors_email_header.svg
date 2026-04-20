@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360">
+  <title>Paw Investors — Email Header</title>
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1A102B"/>
+      <stop offset="50%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1A102B"/><stop offset="50%" stop-color="#9333EA"/><stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+    <radialGradient id="greenAccent" cx="0.85" cy="0.88" r="0.28">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.5"/><stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="greenBg" cx="0.9" cy="0.9" r="0.35">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.22"/><stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="squircleClip">
+      <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    </clipPath>
+    <mask id="arrowMask">
+      <rect x="-200" y="-200" width="1400" height="1400" fill="white"/>
+      <path d="M 512 488 L 558 534 L 530 534 L 530 572 L 494 572 L 494 534 L 466 534 Z" fill="black"/>
+    </mask>
+  </defs>
+
+  <rect width="1200" height="360" fill="url(#bgGrad)"/>
+  <rect width="1200" height="360" fill="url(#greenBg)"/>
+
+  <!-- Gold hairline around squircle (200×200 at 80, 80) -->
+  <path d="M 180 76 C 242 76, 264 98, 264 180 C 264 262, 242 284, 180 284 C 118 284, 96 262, 96 180 C 96 98, 118 76, 180 76 Z" fill="none" stroke="#EAB308" stroke-width="3" opacity="0.9" transform="translate(-0.4 -1.2) scale(1.01)" transform-origin="180 180"/>
+
+  <!-- Squircle 200×200 at (80, 80) -->
+  <g transform="translate(9.34 40) scale(0.3333)">
+    <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="url(#tileGrad)"/>
+    <g clip-path="url(#squircleClip)">
+      <rect x="212" y="120" width="600" height="600" fill="url(#greenAccent)"/>
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#arrowMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <!-- Wordmark (white + gold on dark bg variant) -->
+  <text x="310" y="170" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="68" font-weight="700" letter-spacing="-2">
+    <tspan fill="#FFFFFF">Paw</tspan><tspan fill="#EAB308"> Investors</tspan>
+  </text>
+
+  <text x="310" y="220" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="24" font-weight="500" fill="#FFFFFF" opacity="0.92" letter-spacing="0.5">Round &amp; data room · Paw Friend</text>
+
+  <!-- Gold pill CONFIDENTIAL -->
+  <g transform="translate(310, 252)">
+    <rect x="0" y="0" width="220" height="44" rx="22" fill="#FEF3C7"/>
+    <text x="110" y="30" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="18" font-weight="700" fill="#713F12" text-anchor="middle" letter-spacing="3">CONFIDENTIAL · 2026</text>
+  </g>
+
+  <!-- Gold hairline TOP and BOTTOM -->
+  <rect x="0" y="0" width="1200" height="3" fill="#EAB308"/>
+  <rect x="0" y="357" width="1200" height="3" fill="#EAB308"/>
+</svg>

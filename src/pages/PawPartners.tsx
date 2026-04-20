@@ -35,6 +35,7 @@ import {
   Tag,
 } from 'lucide-react';
 import { CategoryIcon } from '@/components/CategoryIcon';
+import { CategoryApplyInlineForm } from '@/components/CategoryApplyInlineForm';
 
 interface PublicPartner {
   id: string;
@@ -113,11 +114,27 @@ export default function PawPartners() {
           name="description"
           content="Tiendas, veterinarias, seguros y servicios aliados que ofrecen descuentos exclusivos a Paw Members."
         />
+        <meta
+          property="og:image"
+          content="https://pawfriend.cl/paw-friend-assets-v2/paw_partners_og_card.svg"
+        />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
 
-      {/* Hero */}
+      {/* Hero banner del brand kit v2 */}
+      <div className="relative overflow-hidden">
+        <img
+          src="/paw-friend-assets-v2/paw_partners_hero.svg"
+          alt="Paw Partners · alianzas con causa"
+          className="w-full h-40 sm:h-56 object-cover"
+          loading="eager"
+        />
+      </div>
+
+      {/* Hero texto */}
       <div className="bg-gradient-to-br from-pink-50 via-purple-50/60 to-white border-b border-purple-100">
-        <div className="container max-w-6xl mx-auto px-4 py-12 sm:py-16">
+        <div className="container max-w-6xl mx-auto px-4 py-10 sm:py-14">
           <div className="flex flex-col items-center text-center max-w-2xl mx-auto space-y-4">
             <Badge variant="outline" className="bg-pink-100 text-pink-700 border-transparent">
               <Tag className="h-3 w-3 mr-1" /> Alianzas con causa
@@ -179,8 +196,13 @@ export default function PawPartners() {
           </div>
         ) : filtered.length === 0 ? (
           <Card>
-            <CardContent className="py-16 text-center space-y-3">
-              <Megaphone className="h-10 w-10 text-muted-foreground mx-auto" />
+            <CardContent className="py-10 text-center space-y-3">
+              <img
+                src="/paw-friend-assets-v2/paw_partners_empty_state.svg"
+                alt="Sin partners"
+                className="w-64 mx-auto"
+                loading="lazy"
+              />
               <div>
                 <p className="text-sm font-semibold">Aun no hay partners en esta categoria</p>
                 <p className="text-xs text-muted-foreground mt-1">
@@ -188,7 +210,7 @@ export default function PawPartners() {
                 </p>
               </div>
               <Button asChild variant="outline">
-                <Link to="/aplicar?tipo=paw_partners">Sumar mi marca</Link>
+                <a href="#postular-partner">Sumar mi marca</a>
               </Button>
             </CardContent>
           </Card>
@@ -200,21 +222,59 @@ export default function PawPartners() {
           </div>
         )}
 
-        {/* CTA final */}
-        <Card className="mt-10 bg-gradient-to-br from-purple-600 to-pink-600 text-white border-0">
-          <CardContent className="p-8 text-center space-y-4">
-            <h2 className="text-2xl font-display font-semibold">¿Tienes una marca pet-friendly?</h2>
-            <p className="text-purple-100 max-w-xl mx-auto">
-              Suma tu tienda, clinica o servicio como Paw Partner. Ofreces un beneficio a Paw
-              Members y apareces gratis en este directorio con link directo a tu marca.
+        {/* Form inline de postulacion */}
+        <section id="postular-partner" className="mt-14 pt-8 border-t border-slate-100">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl sm:text-3xl font-display font-semibold">
+              Suma tu marca al directorio
+            </h2>
+            <p className="text-muted-foreground text-sm mt-2 max-w-xl mx-auto">
+              Ofreces un beneficio a Paw Members, apareces gratis en este directorio. Sin
+              compromiso. Respondemos en 1-3 dias habiles.
             </p>
-            <Button asChild variant="secondary" size="lg">
-              <Link to="/aplicar?tipo=paw_partners">
-                Postular como Paw Partner <ArrowRight className="h-4 w-4 ml-1" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
+          </div>
+          <div className="max-w-2xl mx-auto">
+            <CategoryApplyInlineForm
+              kind="paw_partners"
+              categoryIcon="partner"
+              title="Postula en 2 minutos"
+              subtitle="El equipo revisa tu marca y te contactamos."
+              orgLabel="Nombre comercial de tu marca"
+              submitLabel="Postular como Paw Partner"
+              successMessage="Revisaremos tu marca y te escribimos en 1-3 dias habiles para alinear el beneficio y activarte en el directorio."
+              successCta={{ href: '/paw-member', label: 'Hacerme Paw Member' }}
+              extraFields={[
+                {
+                  key: 'vertical',
+                  label: 'Categoria',
+                  type: 'select',
+                  options: [
+                    'Accesorios y retail',
+                    'Comida y snacks',
+                    'Veterinaria',
+                    'Grooming',
+                    'Guarderia / Hospedaje',
+                    'Seguros',
+                    'Restaurantes pet-friendly',
+                    'Otro',
+                  ],
+                  required: true,
+                },
+                {
+                  key: 'discount',
+                  label: 'Descuento para Paw Members',
+                  placeholder: '15% off, envio gratis, 1er mes gratis...',
+                  required: true,
+                },
+                {
+                  key: 'commune',
+                  label: 'Zona de cobertura',
+                  placeholder: 'Las Condes · RM · Nacional',
+                },
+              ]}
+            />
+          </div>
+        </section>
       </div>
     </div>
   );

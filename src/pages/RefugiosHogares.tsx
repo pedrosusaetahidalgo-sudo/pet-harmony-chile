@@ -8,6 +8,7 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -36,6 +37,7 @@ import {
   PawPrint,
 } from 'lucide-react';
 import { CategoryIcon } from '@/components/CategoryIcon';
+import { CategoryApplyInlineForm } from '@/components/CategoryApplyInlineForm';
 
 type ShelterType = 'all' | 'ong' | 'fundacion' | 'refugio' | 'independiente' | 'municipal';
 
@@ -136,6 +138,18 @@ export default function RefugiosHogares() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Helmet>
+        <title>Hogares de adopcion · Paw Friend</title>
+        <meta
+          name="description"
+          content="Refugios, ONGs y rescatistas chilenos dando mascotas en adopcion. Cuando adoptes, te entregamos la ficha medica completa."
+        />
+        <meta
+          property="og:image"
+          content="https://pawfriend.cl/paw-friend-assets-v2/paw_shelter_full.svg"
+        />
+        <meta property="og:type" content="website" />
+      </Helmet>
       {/* Hero */}
       <div className="bg-gradient-to-b from-purple-50 via-purple-50/60 to-white border-b border-purple-100">
         <div className="container max-w-6xl mx-auto px-4 py-10 sm:py-14">
@@ -236,6 +250,48 @@ export default function RefugiosHogares() {
             ))}
           </div>
         )}
+
+        {/* Form inline de postulacion */}
+        <section
+          id="postular-refugio"
+          className="mt-14 pt-10 border-t border-slate-100 max-w-2xl mx-auto"
+        >
+          <div className="text-center mb-6">
+            <h2 className="text-2xl sm:text-3xl font-display font-semibold">
+              Registra tu hogar de adopcion
+            </h2>
+            <p className="text-muted-foreground text-sm mt-2">
+              Gratis para siempre. Cargas tus mascotas, entregas la ficha al adoptante, recibes
+              apoyo de la comunidad.
+            </p>
+          </div>
+          <CategoryApplyInlineForm
+            kind="refugio"
+            categoryIcon="shelter"
+            title="Postula en 2 minutos"
+            subtitle="Revisamos y te contactamos en 1-3 dias habiles."
+            orgLabel="Nombre del refugio o fundacion"
+            submitLabel="Postular mi refugio"
+            directOnboarding={{ href: '/onboarding-shelter', label: 'Registrar ahora' }}
+            successMessage="Recibimos tu postulacion. Revisaremos en 1-3 dias y te enviamos el acceso a tu panel de refugio para que empieces a cargar mascotas."
+            successCta={{ href: '/onboarding-shelter', label: 'Abrir cuenta de refugio' }}
+            extraFields={[
+              {
+                key: 'type',
+                label: 'Tipo de organizacion',
+                type: 'select',
+                options: ['Refugio', 'ONG', 'Fundacion', 'Rescatista independiente', 'Municipal'],
+                required: true,
+              },
+              { key: 'commune', label: 'Comuna base', required: true },
+              {
+                key: 'animals_in_care',
+                label: 'Animales a cargo aproximados',
+                placeholder: '50',
+              },
+            ]}
+          />
+        </section>
       </div>
     </div>
   );

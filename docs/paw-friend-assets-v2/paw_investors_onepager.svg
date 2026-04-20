@@ -1,0 +1,156 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2480" height="3508" viewBox="0 0 2480 3508">
+  <title>Paw Friend · Inversión — Executive One-Pager</title>
+  <defs>
+    <linearGradient id="darkGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1A102B"/>
+      <stop offset="60%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+    <linearGradient id="tileGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1A102B"/><stop offset="50%" stop-color="#9333EA"/><stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+    <radialGradient id="greenAccent" cx="0.85" cy="0.88" r="0.28">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.5"/><stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="greenTop" cx="0.85" cy="0.85" r="0.35">
+      <stop offset="0%" stop-color="#10B981" stop-opacity="0.25"/><stop offset="100%" stop-color="#10B981" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="squircleClip">
+      <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z"/>
+    </clipPath>
+    <mask id="arrowMask">
+      <rect x="-200" y="-200" width="1400" height="1400" fill="white"/>
+      <path d="M 512 488 L 558 534 L 530 534 L 530 572 L 494 572 L 494 534 L 466 534 Z" fill="black"/>
+    </mask>
+  </defs>
+
+  <!-- Paper background -->
+  <rect width="2480" height="3508" fill="#FAF7FF"/>
+
+  <!-- TOP 25% dark section (0 to 877) -->
+  <rect width="2480" height="877" fill="url(#darkGrad)"/>
+  <rect width="2480" height="877" fill="url(#greenTop)"/>
+
+  <!-- Eyebrow -->
+  <text x="1240" y="130" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="26" font-weight="600" fill="#EAB308" text-anchor="middle" letter-spacing="10">EXECUTIVE ONE-PAGER · 2026</text>
+
+  <!-- Gold hairline around squircle (480×480 at 1000, 180) - squircle bounds 1000-1480 × 180-660 -->
+  <path d="M 1240 176 C 1400 176, 1484 260, 1484 420 C 1484 580, 1400 664, 1240 664 C 1080 664, 996 580, 996 420 C 996 260, 1080 176, 1240 176 Z" fill="none" stroke="#EAB308" stroke-width="4" opacity="0.9" transform="translate(-2.13 -3.2) scale(1.008)" transform-origin="1240 420"/>
+
+  <!-- Squircle 480×480 at (1000, 180) -->
+  <g transform="translate(830.4 84) scale(0.8)">
+    <path d="M 512 120 C 712 120, 812 220, 812 420 C 812 620, 712 720, 512 720 C 312 720, 212 620, 212 420 C 212 220, 312 120, 512 120 Z" fill="url(#tileGrad)"/>
+    <g clip-path="url(#squircleClip)">
+      <rect x="212" y="120" width="600" height="600" fill="url(#greenAccent)"/>
+      <ellipse cx="512" cy="510" rx="155" ry="135" fill="#FFFFFF" mask="url(#arrowMask)"/>
+      <ellipse cx="372" cy="350" rx="55" ry="68" transform="rotate(-22 372 350)" fill="#FFFFFF"/>
+      <ellipse cx="460" cy="260" rx="50" ry="62" transform="rotate(-10 460 260)" fill="#FFFFFF"/>
+      <ellipse cx="564" cy="260" rx="50" ry="62" transform="rotate(10 564 260)" fill="#FFFFFF"/>
+      <ellipse cx="652" cy="350" rx="55" ry="68" transform="rotate(22 652 350)" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <!-- Wordmark below squircle (on dark bg: white + gold) -->
+  <text x="1240" y="770" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="74" font-weight="700" text-anchor="middle" letter-spacing="-2">
+    <tspan fill="#FFFFFF">Paw Friend</tspan><tspan fill="#EAB308"> · Inversión</tspan>
+  </text>
+  <text x="1240" y="830" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="28" font-weight="500" fill="#EAB308" text-anchor="middle" opacity="0.9" letter-spacing="3">Chile artesanal · IA co-engineered</text>
+
+  <!-- BOTTOM paper section with 4 slots -->
+  <!-- Gold hairline separator between top and bottom -->
+  <rect x="140" y="945" width="2200" height="3" fill="#EAB308" opacity="0.7"/>
+
+  <!-- Center title for paper section -->
+  <text x="1240" y="1010" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="26" font-weight="600" fill="#7E22CE" text-anchor="middle" letter-spacing="8">TESIS DE INVERSIÓN · EXECUTIVE SUMMARY</text>
+
+  <!-- Vertical gold hairline separator between columns -->
+  <line x1="1240" y1="1100" x2="1240" y2="3280" stroke="#EAB308" stroke-width="2" opacity="0.55"/>
+  <!-- Horizontal gold hairline separator between rows -->
+  <line x1="140" y1="2190" x2="2340" y2="2190" stroke="#EAB308" stroke-width="2" opacity="0.55"/>
+
+  <!-- Slot 1: PROBLEMA (top-left) -->
+  <g transform="translate(180, 1120)">
+    <rect x="0" y="0" width="200" height="56" rx="28" fill="#9333EA"/>
+    <text x="100" y="38" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="24" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="4">PROBLEMA</text>
+  </g>
+  <text x="180" y="1260" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="44" font-weight="700" fill="#1A102B" letter-spacing="-1">¿Qué está roto?</text>
+  <text x="180" y="1340" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="26" font-weight="500" fill="#4C1D95" letter-spacing="-0.3" font-style="italic">[ Tu problema aquí — dolor concreto, con dato ]</text>
+  <line x1="180" y1="1390" x2="340" y2="1390" stroke="#EAB308" stroke-width="2"/>
+  <text x="180" y="1450" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#1A102B" letter-spacing="-0.2">· [ pain point concreto 1 ]</text>
+  <text x="180" y="1500" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#1A102B" letter-spacing="-0.2">· [ pain point concreto 2 ]</text>
+  <text x="180" y="1550" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#1A102B" letter-spacing="-0.2">· [ pain point concreto 3 ]</text>
+  <!-- Metric placeholder -->
+  <g transform="translate(180, 1700)">
+    <rect x="0" y="0" width="880" height="200" rx="12" fill="#F3E8FF" stroke="#E5D5F7" stroke-width="1.5"/>
+    <text x="440" y="90" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="80" font-weight="700" fill="#9333EA" text-anchor="middle" letter-spacing="-2">[ 00% ]</text>
+    <text x="440" y="150" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#4C1D95" text-anchor="middle" letter-spacing="2">DATO CLAVE DEL MERCADO</text>
+  </g>
+
+  <!-- Slot 2: SOLUCIÓN (top-right) -->
+  <g transform="translate(1300, 1120)">
+    <rect x="0" y="0" width="200" height="56" rx="28" fill="#9333EA"/>
+    <text x="100" y="38" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="24" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="4">SOLUCIÓN</text>
+  </g>
+  <text x="1300" y="1260" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="44" font-weight="700" fill="#1A102B" letter-spacing="-1">Paw Friend · Cómo</text>
+  <text x="1300" y="1340" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="26" font-weight="500" fill="#4C1D95" letter-spacing="-0.3" font-style="italic">[ 2-3 líneas de pitch técnico — B2B2C, ficha clínica, red de partners ]</text>
+  <line x1="1300" y1="1390" x2="1460" y2="1390" stroke="#EAB308" stroke-width="2"/>
+  <text x="1300" y="1450" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#1A102B" letter-spacing="-0.2">· B2B2C: vet-tech para clínicas + dueños</text>
+  <text x="1300" y="1500" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#1A102B" letter-spacing="-0.2">· IA co-engineered: agentes + automatización</text>
+  <text x="1300" y="1550" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#1A102B" letter-spacing="-0.2">· Red Paw Partners: barter + crecimiento</text>
+  <g transform="translate(1300, 1700)">
+    <rect x="0" y="0" width="880" height="200" rx="12" fill="#F3E8FF" stroke="#E5D5F7" stroke-width="1.5"/>
+    <text x="440" y="90" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="60" font-weight="700" fill="#9333EA" text-anchor="middle" letter-spacing="-1">Freemium · B2B2C</text>
+    <text x="440" y="150" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#4C1D95" text-anchor="middle" letter-spacing="2">MODELO DE NEGOCIO</text>
+  </g>
+
+  <!-- Slot 3: TRACCIÓN (bottom-left) -->
+  <g transform="translate(180, 2240)">
+    <rect x="0" y="0" width="210" height="56" rx="28" fill="#9333EA"/>
+    <text x="105" y="38" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="24" font-weight="700" fill="#FFFFFF" text-anchor="middle" letter-spacing="4">TRACCIÓN</text>
+  </g>
+  <text x="180" y="2380" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="44" font-weight="700" fill="#1A102B" letter-spacing="-1">Dónde estamos</text>
+  <text x="180" y="2460" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="26" font-weight="500" fill="#4C1D95" letter-spacing="-0.3" font-style="italic">[ Métricas reales · usuarios, clínicas, engagement ]</text>
+  <line x1="180" y1="2510" x2="340" y2="2510" stroke="#EAB308" stroke-width="2"/>
+  <!-- 3 metric stats -->
+  <g transform="translate(180, 2570)">
+    <text x="0" y="0" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="56" font-weight="700" fill="#10B981" letter-spacing="-1">[ XXX ]</text>
+    <text x="0" y="50" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="20" font-weight="500" fill="#065F46" letter-spacing="2">DUEÑOS ACTIVOS</text>
+  </g>
+  <g transform="translate(540, 2570)">
+    <text x="0" y="0" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="56" font-weight="700" fill="#10B981" letter-spacing="-1">[ XX ]</text>
+    <text x="0" y="50" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="20" font-weight="500" fill="#065F46" letter-spacing="2">CLÍNICAS B2B</text>
+  </g>
+  <g transform="translate(180, 2740)">
+    <text x="0" y="0" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="56" font-weight="700" fill="#10B981" letter-spacing="-1">[ XX% ]</text>
+    <text x="0" y="50" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="20" font-weight="500" fill="#065F46" letter-spacing="2">RETENCIÓN 30D</text>
+  </g>
+  <g transform="translate(540, 2740)">
+    <text x="0" y="0" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="56" font-weight="700" fill="#10B981" letter-spacing="-1">[ XX ]</text>
+    <text x="0" y="50" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="20" font-weight="500" fill="#065F46" letter-spacing="2">PAW PARTNERS</text>
+  </g>
+
+  <!-- Slot 4: ASK (bottom-right) -->
+  <g transform="translate(1300, 2240)">
+    <rect x="0" y="0" width="140" height="56" rx="28" fill="#EAB308"/>
+    <text x="70" y="38" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="24" font-weight="700" fill="#1A102B" text-anchor="middle" letter-spacing="4">ASK</text>
+  </g>
+  <text x="1300" y="2380" font-family="Fredoka, 'Nunito', ui-rounded, system-ui, sans-serif" font-size="44" font-weight="700" fill="#1A102B" letter-spacing="-1">Qué buscamos</text>
+  <text x="1300" y="2460" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="26" font-weight="500" fill="#4C1D95" letter-spacing="-0.3" font-style="italic">[ Monto · Tramo · Uso de fondos ]</text>
+  <line x1="1300" y1="2510" x2="1460" y2="2510" stroke="#EAB308" stroke-width="2"/>
+  <!-- Big number -->
+  <g transform="translate(1300, 2570)">
+    <rect x="0" y="0" width="880" height="420" rx="16" fill="#FEF3C7" stroke="#EAB308" stroke-width="2" opacity="0.6"/>
+    <text x="440" y="140" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="96" font-weight="700" fill="#1A102B" text-anchor="middle" letter-spacing="-3">USD [ XXX ]K</text>
+    <text x="440" y="210" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="28" font-weight="500" fill="#4C1D95" text-anchor="middle" letter-spacing="2">RONDA SEED · PRE-SEED</text>
+    <line x1="120" y1="260" x2="760" y2="260" stroke="#EAB308" stroke-width="1" opacity="0.5"/>
+    <text x="40" y="310" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#1A102B" letter-spacing="-0.2">· [ % ] producto &amp; equipo técnico</text>
+    <text x="40" y="350" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#1A102B" letter-spacing="-0.2">· [ % ] GTM &amp; adquisición</text>
+    <text x="40" y="390" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#1A102B" letter-spacing="-0.2">· [ % ] operación &amp; runway</text>
+  </g>
+
+  <!-- Footer -->
+  <line x1="140" y1="3320" x2="2340" y2="3320" stroke="#EAB308" stroke-width="1" opacity="0.5"/>
+  <text x="180" y="3400" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="600" fill="#1A102B" letter-spacing="2">PAW FOUNDER · 2026</text>
+  <text x="1240" y="3400" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#7E22CE" text-anchor="middle" letter-spacing="2">pawfriend.cl/pitch-deck</text>
+  <text x="2300" y="3400" font-family="Fredoka, 'Nunito', ui-rounded, sans-serif" font-size="22" font-weight="500" fill="#EAB308" text-anchor="end" letter-spacing="4">CONFIDENTIAL</text>
+</svg>
