@@ -86,6 +86,16 @@ export function PawVoicesGrid({ className, limit }: PawVoicesGridProps) {
         </p>
       </header>
 
+      {/* Creator spotlight del brand kit v2 */}
+      <div className="max-w-md mx-auto -mb-4 pointer-events-none opacity-90">
+        <img
+          src="/paw-friend-assets-v2/paw_voices_creator_spotlight.svg"
+          alt="Paw Voice creator spotlight"
+          className="w-full h-auto"
+          loading="lazy"
+        />
+      </div>
+
       <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
         {voices.map((voice) => {
           const platformLabel = PLATFORM_LABEL[voice.platform] ?? voice.platform;

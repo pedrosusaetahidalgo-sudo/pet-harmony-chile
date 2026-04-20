@@ -35,7 +35,7 @@ export function DemoModal({ open, onOpenChange }: DemoModalProps) {
             controls
             playsInline
             preload="metadata"
-            poster="/og-image.jpg"
+            poster="/paw-friend-assets-v2/social/og_image.jpg"
           >
             <source src="/videos/hero-pet.mp4" type="video/mp4" />
             {/* Track vacío hasta tener captions reales (video sin audio por ahora) */}

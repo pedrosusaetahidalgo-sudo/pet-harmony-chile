@@ -91,6 +91,7 @@ const RefugiosHogares = lazy(() => import('./pages/RefugiosHogares'));
 const RefugioPublico = lazy(() => import('./pages/RefugioPublico'));
 const Aplicar = lazy(() => import('./pages/Aplicar'));
 const PawPartners = lazy(() => import('./pages/PawPartners'));
+const PostAdoptionCheckin = lazy(() => import('./pages/PostAdoptionCheckin'));
 const ShelterDashboard = lazy(() => import('./pages/shelter/ShelterDashboard'));
 const ShelterPets = lazy(() => import('./pages/shelter/ShelterPets'));
 const ShelterBulkImport = lazy(() => import('./pages/shelter/ShelterBulkImport'));
@@ -813,6 +814,16 @@ const App = () => (
                     <PublicWithLayoutIfAuth>
                       <Aplicar />
                     </PublicWithLayoutIfAuth>
+                  }
+                />
+
+                {/* Check-in post-adopcion (link desde email del cron) */}
+                <Route
+                  path="/post-adoption/:id"
+                  element={
+                    <ProtectedRoute>
+                      <PostAdoptionCheckin />
+                    </ProtectedRoute>
                   }
                 />
                 <Route

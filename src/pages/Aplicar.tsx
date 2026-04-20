@@ -445,6 +445,38 @@ export default function Aplicar() {
       <Helmet>
         <title>{cfg.headline} · Paw Friend</title>
         <meta name="description" content={cfg.subhead} />
+        {cfg.categoryIcon === 'partner' && (
+          <meta
+            property="og:image"
+            content="https://pawfriend.cl/paw-friend-assets-v2/paw_partners_og_card.svg"
+          />
+        )}
+        {cfg.categoryIcon === 'vet' && (
+          <meta
+            property="og:image"
+            content="https://pawfriend.cl/paw-friend-assets-v2/paw_vets_og_card.svg"
+          />
+        )}
+        {cfg.categoryIcon === 'voice' && (
+          <meta
+            property="og:image"
+            content="https://pawfriend.cl/paw-friend-assets-v2/paw_voices_og_card.svg"
+          />
+        )}
+        {cfg.categoryIcon === 'investor' && (
+          <meta
+            property="og:image"
+            content="https://pawfriend.cl/paw-friend-assets-v2/paw_investors_og_card.svg"
+          />
+        )}
+        {cfg.categoryIcon === 'company' && (
+          <meta
+            property="og:image"
+            content="https://pawfriend.cl/paw-friend-assets-v2/paw_companys_og_gold.svg"
+          />
+        )}
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
 
       <div className="container max-w-3xl mx-auto px-4 py-10">

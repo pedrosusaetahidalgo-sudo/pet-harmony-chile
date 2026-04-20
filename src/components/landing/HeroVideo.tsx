@@ -69,7 +69,7 @@ export function HeroVideo({ compact = false }: { compact?: boolean }) {
           <div className="relative aspect-[9/19.5] w-full">
             {reducedMotion ? (
               <img
-                src="/og-image.jpg"
+                src="/paw-friend-assets-v2/social/og_image.jpg"
                 alt="Paw Friend"
                 className="h-full w-full object-cover"
                 loading="eager"
@@ -82,7 +82,7 @@ export function HeroVideo({ compact = false }: { compact?: boolean }) {
                 loop
                 playsInline
                 preload="metadata"
-                poster="/og-image.jpg"
+                poster="/paw-friend-assets-v2/social/og_image.jpg"
                 aria-hidden="true"
               >
                 <source src="/videos/hero-pet.mp4" type="video/mp4" />

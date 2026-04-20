@@ -77,6 +77,12 @@ export default function PawVoices() {
           name="description"
           content="Creadores e influencers peludos que amplifican Paw Friend. Súmate, muestra el link, comparte un reel al mes. Badge oficial, perfil destacado y código promo."
         />
+        <meta
+          property="og:image"
+          content="https://pawfriend.cl/paw-friend-assets-v2/paw_voices_og_card.svg"
+        />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
       <PageHeader title="Paw Voices" onBack={() => navigate(-1)} />
 
