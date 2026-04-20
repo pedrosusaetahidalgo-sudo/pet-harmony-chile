@@ -20,6 +20,7 @@ import { es } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { logger } from '@/lib/logger';
+import { EmptyStateIllustration } from '@/components/EmptyStateIllustration';
 
 interface Booking {
   id: string;
@@ -271,10 +272,8 @@ export const MyBookingsHistory = ({
       </CardHeader>
       <CardContent>
         {filteredBookings.length === 0 ? (
-          <div className="text-center py-10 px-4">
-            <div className="inline-flex h-14 w-14 rounded-full bg-purple-100 items-center justify-center mb-3">
-              <Calendar className="h-7 w-7 text-purple-700" />
-            </div>
+          <div className="text-center py-6 px-4">
+            <EmptyStateIllustration kind="bookings" className="w-48 mb-2" />
             <p className="font-semibold mb-1">
               No tienes reservas{' '}
               {filter === 'upcoming' ? 'próximas' : filter === 'past' ? 'pasadas' : ''}

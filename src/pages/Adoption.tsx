@@ -12,6 +12,7 @@ import { PageHeader } from '@/components/PageHeader';
 import { LINKS } from '@/lib/links';
 import { useNavigate } from 'react-router-dom';
 import { PawLabsBanner } from '@/components/PawLabsBanner';
+import { EmptyStateIllustration } from '@/components/EmptyStateIllustration';
 
 // Lazy: estos componentes pesan (forms con react-hook-form, listas con queries
 // propias). Cargarlos bajo demanda reduce el bundle inicial de Adoption.tsx.
@@ -281,8 +282,8 @@ const Adoption = () => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-8 md:py-12 bg-muted/20 rounded-xl">
-                <MessageCircle className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <div className="text-center py-6 md:py-8 bg-muted/20 rounded-xl">
+                <EmptyStateIllustration kind="conversations" className="w-52 mb-2" />
                 <h3 className="text-base sm:text-lg font-semibold mb-2">
                   No has mostrado interés en ninguna mascota
                 </h3>

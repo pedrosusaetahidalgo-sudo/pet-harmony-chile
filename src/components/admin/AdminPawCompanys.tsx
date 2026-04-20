@@ -54,6 +54,7 @@ import {
   X,
 } from '@/lib/icons';
 import { formatCLP } from '@/lib/format';
+import { CategoryIcon } from '@/components/CategoryIcon';
 
 const TIER_LABEL: Record<PawCompanyTier, string> = {
   bronze: 'Bronze',
@@ -221,7 +222,7 @@ export default function AdminPawCompanys() {
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
             <CardTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-amber-500" />
+              <CategoryIcon kind="company" variant="icon" className="h-6 w-6" />
               Paw Companys
               {pendingCount > 0 && (
                 <Badge className="bg-amber-500 text-white">{pendingCount} pendientes</Badge>
@@ -394,7 +395,7 @@ export default function AdminPawCompanys() {
           <div className="text-sm text-muted-foreground py-6 text-center">Cargando…</div>
         ) : filtered.length === 0 ? (
           <div className="text-sm text-muted-foreground py-10 text-center space-y-2">
-            <Building2 className="h-8 w-8 mx-auto text-muted-foreground/60" />
+            <CategoryIcon kind="company" variant="icon" className="h-12 w-12 mx-auto" />
             <p>
               Aún no hay Paw Companys. Crea el primer sponsor para que aparezca en{' '}
               <code>/donaciones</code>.
@@ -417,9 +418,12 @@ export default function AdminPawCompanys() {
                       loading="lazy"
                     />
                   ) : (
-                    <div className="h-10 w-10 rounded-md bg-muted flex items-center justify-center shrink-0">
-                      <Building2 className="h-5 w-5 text-muted-foreground" />
-                    </div>
+                    <CategoryIcon
+                      kind="company"
+                      tier={c.tier}
+                      variant="icon"
+                      className="h-10 w-10 rounded-md bg-white border shrink-0 p-0.5"
+                    />
                   )}
                   <div className="flex-1 min-w-[200px]">
                     <div className="flex items-center gap-1.5 flex-wrap">

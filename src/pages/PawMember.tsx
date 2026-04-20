@@ -19,6 +19,7 @@ import {
   Building2,
 } from '@/lib/icons';
 import { format } from 'date-fns';
+import { CategoryIcon } from '@/components/CategoryIcon';
 import { es } from 'date-fns/locale';
 import { useAuth } from '@/hooks/useAuth';
 import { useMyDonationStats, useMyDonationHistory } from '@/hooks/usePublicDonations';
@@ -185,9 +186,11 @@ export default function PawMember() {
                         className="h-8 w-8 rounded-md object-contain bg-white border shrink-0"
                       />
                     ) : (
-                      <div className="h-8 w-8 rounded-md bg-muted flex items-center justify-center shrink-0">
-                        <Building2 className="h-4 w-4 text-muted-foreground" />
-                      </div>
+                      <CategoryIcon
+                        kind={d.partnership_type === 'partner' ? 'partner' : 'company'}
+                        variant="icon"
+                        className="h-8 w-8 rounded-md bg-white border shrink-0 p-0.5"
+                      />
                     )}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">

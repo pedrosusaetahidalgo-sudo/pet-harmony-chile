@@ -22,6 +22,7 @@ import {
   type PawVoiceStatus,
 } from '@/hooks/usePawVoices';
 import { Megaphone, Check, X, Sparkles, Trash2, ExternalLink, User } from '@/lib/icons';
+import { CategoryIcon } from '@/components/CategoryIcon';
 
 const STATUS_LABEL: Record<PawVoiceStatus, string> = {
   pending: 'Pendiente',
@@ -124,7 +125,7 @@ export default function AdminPawVoices() {
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
             <CardTitle className="flex items-center gap-2">
-              <Megaphone className="h-5 w-5 text-violet-500" />
+              <CategoryIcon kind="voice" variant="icon" className="h-6 w-6" />
               Paw Voices
               {pendingCount > 0 && (
                 <Badge className="bg-amber-500 text-white">{pendingCount} pendientes</Badge>
@@ -155,7 +156,7 @@ export default function AdminPawVoices() {
           <div className="text-sm text-muted-foreground py-6 text-center">Cargando…</div>
         ) : filtered.length === 0 ? (
           <div className="text-sm text-muted-foreground py-10 text-center space-y-2">
-            <Megaphone className="h-8 w-8 mx-auto text-muted-foreground/60" />
+            <CategoryIcon kind="voice" variant="icon" className="h-12 w-12 mx-auto" />
             <p>No hay Paw Voices en esta vista.</p>
           </div>
         ) : (
