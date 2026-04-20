@@ -10,20 +10,42 @@ export function buildInvitationEmail(opts: {
   vetName: string;
   clinicName: string;
   actionUrl: string;
+  /**
+   * Tipo de quien invita. 'vet' = veterinario (default).
+   * 'shelter' = refugio/hogar de adopcion que entrega la mascota al adoptante.
+   * Ajusta copy del email y etiquetas visibles.
+   */
+  sourceKind?: 'vet' | 'shelter';
 }): string {
   const { petName, ownerName, vetName, clinicName, actionUrl } = opts;
+  const sourceKind = opts.sourceKind || 'vet';
   const firstName = ownerName.split(' ')[0] || ownerName;
   const safePetName = escapeHtml(petName);
   const safeFirstName = escapeHtml(firstName);
   const safeVetName = escapeHtml(vetName);
   const safeClinicName = escapeHtml(clinicName);
+  const isShelter = sourceKind === 'shelter';
+  // Copy dinamico segun fuente de la invitacion
+  const sourceIcon = isShelter ? '🏡' : '🩺';
+  const bubblePetMsg = isShelter
+    ? `Hola ${safeFirstName}! Soy ${safePetName}. Desde hoy estoy con mi nueva familia y el refugio que me cuidaba te esta entregando mi historia completa.`
+    : `Hola ${safeFirstName}! Soy ${safePetName} y tengo noticias geniales: mi vet me creo una ficha medica digital, y necesito que la tengas tu tambien.`;
+  const sourceCardMsg = isShelter
+    ? `<strong>${safeVetName}</strong>${safeClinicName ? ` de ${safeClinicName}` : ''} te entrega la ficha completa de ${safePetName}: historial, vacunas, fotos y notas del cuidado en el refugio.`
+    : `<strong>${safeVetName}</strong>${safeClinicName ? ` de ${safeClinicName}` : ''} acaba de crear la ficha clinica de ${safePetName} en Paw Friend.`;
+  const subjectHint = isShelter
+    ? `ya llega a tu casa con su ficha medica`
+    : `ya tiene ficha veterinaria`;
+  const footerLine = isShelter
+    ? `${safePetName} te envio este correo con la ayuda del refugio y de`
+    : `${safePetName} te envio este correo con la ayuda de su vet y de`;
 
   return `<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${safePetName} ya tiene ficha en Paw Friend</title>
+<title>${safePetName} ${subjectHint} en Paw Friend</title>
 </head>
 <body style="margin:0;padding:0;background:#faf5ff;font-family:'Plus Jakarta Sans','Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1e293b;">
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#faf5ff;padding:32px 16px;">
@@ -50,7 +72,7 @@ export function buildInvitationEmail(opts: {
           <div style="background:#f3e8ff;border:1px solid #e9d5ff;border-radius:18px;border-top-left-radius:4px;padding:18px 22px;">
             <p style="margin:0 0 6px;font-weight:700;color:#7e22ce;font-size:13px;letter-spacing:0.2px;">${safePetName} dice:</p>
             <p style="margin:0;color:#3b0764;font-size:15px;line-height:1.55;">
-              Hola ${safeFirstName}! Soy ${safePetName} y tengo noticias geniales: mi vet me creo una ficha medica digital, y necesito que la tengas tu tambien.
+              ${bubblePetMsg}
             </p>
           </div>
         </td>
@@ -62,8 +84,8 @@ export function buildInvitationEmail(opts: {
   <tr><td style="padding:20px 32px 0;">
     <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:1px solid #bbf7d0;border-radius:14px;padding:16px 20px;">
       <p style="margin:0;color:#15803d;font-size:13px;line-height:1.55;">
-        <span style="font-size:18px;vertical-align:middle;margin-right:6px;">🩺</span>
-        <strong>${safeVetName}</strong>${safeClinicName ? ` de ${safeClinicName}` : ''} acaba de crear la ficha clinica de ${safePetName} en Paw Friend.
+        <span style="font-size:18px;vertical-align:middle;margin-right:6px;">${sourceIcon}</span>
+        ${sourceCardMsg}
       </p>
     </div>
   </td></tr>
@@ -133,7 +155,7 @@ export function buildInvitationEmail(opts: {
   <!-- Footer -->
   <tr><td style="background:#faf5ff;padding:22px 32px;border-top:1px solid #f3e8ff;">
     <p style="color:#94a3b8;font-size:11px;text-align:center;margin:0;line-height:1.7;">
-      ${safePetName} te envio este correo con la ayuda de su vet y de
+      ${footerLine}
       <a href="https://pawfriend.cl" style="color:#9333ea;text-decoration:none;font-weight:600;">Paw Friend</a><br>
       Si no reconoces a ${safePetName}, puedes ignorar este correo sin problema.
     </p>

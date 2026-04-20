@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -30,7 +31,7 @@ import { MyDonationRecap } from '@/components/MyDonationRecap';
 import { AdSlot } from '@/components/AdSlot';
 import { cn } from '@/lib/utils';
 import { track, EVENTS } from '@/lib/analytics';
-import { FEATURE_FLAGS } from '@/lib/featureFlags';
+import { FEATURE_FLAGS, isFeatureEnabled } from '@/lib/featureFlags';
 import {
   DONATION_PRESETS,
   DONATION_MIN_CLP,
@@ -77,6 +78,40 @@ export default function Donaciones() {
   const [isPublic, setIsPublic] = useState(false);
   const [frequency, setFrequency] = useState<'once' | 'monthly'>('once');
 
+  // Donaciones dirigidas a refugio. Feature-flagged: la UI y el envio al
+  // backend viven aca pero el boton de dirigir solo aparece cuando
+  // FEATURE_FLAGS.SHELTER_DONATIONS = true (activar cuando Flow migre a SpA).
+  // Si llegan con ?refugio=ID, preseleccionamos ese refugio.
+  const shelterDonationsEnabled = isFeatureEnabled('SHELTER_DONATIONS');
+  const refugioParam = searchParams.get('refugio');
+  const [beneficiaryShelterId, setBeneficiaryShelterId] = useState<string | null>(
+    shelterDonationsEnabled ? refugioParam : null
+  );
+
+  const { data: shelterOptions } = useQuery<
+    Array<{ id: string; legal_name: string; commune: string }>
+  >({
+    queryKey: ['donation-shelter-options'],
+    queryFn: async () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data } = await (supabase.from('adoption_centers' as any) as any)
+        .select('id, legal_name, commune')
+        .eq('status', 'active')
+        .eq('accepts_donations', true)
+        .order('legal_name');
+      return (data as Array<{ id: string; legal_name: string; commune: string }>) || [];
+    },
+    enabled: shelterDonationsEnabled,
+  });
+
+  const beneficiaryShelter = useMemo(
+    () =>
+      shelterDonationsEnabled && beneficiaryShelterId
+        ? (shelterOptions || []).find((s) => s.id === beneficiaryShelterId) || null
+        : null,
+    [shelterDonationsEnabled, beneficiaryShelterId, shelterOptions]
+  );
+
   const amount = custom ? Math.floor(Number(custom)) : (selected ?? 0);
   const validAmount = Number.isFinite(amount) && amount >= MIN && amount <= MAX;
 
@@ -101,6 +136,8 @@ export default function Donaciones() {
         has_message: Boolean(donorMessage.trim()),
         frequency,
         source: 'donaciones_page',
+        beneficiary_type: beneficiaryShelter ? 'adoption_center' : 'general',
+        beneficiary_adoption_center_id: beneficiaryShelter?.id ?? null,
       },
     });
     try {
@@ -115,6 +152,11 @@ export default function Donaciones() {
           // Flow a cuenta SpA + actualizar flow-create-donation). Hoy flag
           // DONATIONS_MONTHLY=false → siempre viaja 'once'.
           frequency,
+          // Donacion dirigida a un refugio (feature-flagged). Si el flag esta
+          // apagado viaja undefined y la edge fn usa beneficiary_type='general'
+          // por default (la columna tiene DEFAULT 'general' en DB).
+          beneficiary_type: beneficiaryShelter ? 'adoption_center' : undefined,
+          beneficiary_adoption_center_id: beneficiaryShelter?.id,
         },
       });
       if (error) throw error;
@@ -445,6 +487,49 @@ export default function Donaciones() {
               </div>
             )}
 
+            {/* Donacion dirigida a refugio (feature-flagged hasta migrar Flow a SpA) */}
+            {shelterDonationsEnabled && (shelterOptions?.length ?? 0) > 0 && (
+              <div className="rounded-lg border border-purple-200 bg-purple-50/60 p-3 space-y-2">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Heart className="h-4 w-4 text-purple-600" />
+                    <span className="text-sm font-semibold text-purple-900">
+                      Dirigir la donacion a un refugio
+                    </span>
+                  </div>
+                  {beneficiaryShelterId && (
+                    <button
+                      type="button"
+                      onClick={() => setBeneficiaryShelterId(null)}
+                      className="text-[11px] text-purple-700 hover:underline"
+                    >
+                      Quitar
+                    </button>
+                  )}
+                </div>
+                <p className="text-[11px] text-purple-700/80">
+                  Paw Friend actua como intermediario. Retenemos una comision operativa y
+                  transferimos el saldo al refugio elegido.
+                </p>
+                <label htmlFor="donation-shelter-select" className="sr-only">
+                  Refugio beneficiario
+                </label>
+                <select
+                  id="donation-shelter-select"
+                  value={beneficiaryShelterId ?? ''}
+                  onChange={(e) => setBeneficiaryShelterId(e.target.value || null)}
+                  className="w-full h-9 rounded-md border border-purple-200 bg-white px-3 text-sm"
+                >
+                  <option value="">Fondo general de Paw Friend</option>
+                  {(shelterOptions || []).map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.legal_name} · {s.commune}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
               {PRESETS.map((p) => {
                 const active = !custom && selected === p.amount;
@@ -565,7 +650,14 @@ export default function Donaciones() {
               ) : (
                 <Heart className="h-4 w-4 mr-2 fill-current" />
               )}
-              Donar {validAmount ? `$${amount.toLocaleString('es-CL')}` : 'a Paw Friend'}
+              Donar{' '}
+              {validAmount
+                ? beneficiaryShelter
+                  ? `$${amount.toLocaleString('es-CL')} a ${beneficiaryShelter.legal_name}`
+                  : `$${amount.toLocaleString('es-CL')}`
+                : beneficiaryShelter
+                  ? `a ${beneficiaryShelter.legal_name}`
+                  : 'a Paw Friend'}
             </Button>
 
             <p className="text-[11px] text-center text-muted-foreground italic">

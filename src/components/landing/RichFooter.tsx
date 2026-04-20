@@ -91,6 +91,32 @@ export function RichFooter() {
           </p>
           <BuiltWithClaude />
         </div>
+
+        {/* Firma legal: operado por SGSE (Susaeta Garnham Software Engineering) */}
+        <div className="mt-4 flex items-center justify-center gap-2 border-t border-border/50 pt-4">
+          <a
+            href="https://sgse.cl"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-2 opacity-60 transition hover:opacity-100"
+            aria-label="Operado por Susaeta Garnham Software Engineering"
+          >
+            {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- graceful fallback: esconder img si el archivo aun no existe en public/ */}
+            <img
+              src="/sgse-logo.svg"
+              alt="SGSE"
+              className="h-4 w-auto"
+              width={16}
+              height={16}
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).style.display = 'none';
+              }}
+            />
+            <span className="text-[10px] font-medium tracking-wide text-muted-foreground group-hover:text-foreground">
+              Operado por SGSE · Susaeta Garnham Software Engineering
+            </span>
+          </a>
+        </div>
       </div>
     </footer>
   );

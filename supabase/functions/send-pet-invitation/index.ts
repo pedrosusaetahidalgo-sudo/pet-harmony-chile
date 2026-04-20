@@ -69,66 +69,108 @@ serve(
 
       const callerId = userData.user.id;
 
-      // --- Rate limit: max 5 invitations per user per day ---
-      const supabaseAdmin = createClient(
-        Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-      );
-
-      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-      const { count: recentInvites } = await supabaseAdmin
-        .from('pets')
-        .select('id', { count: 'exact', head: true })
-        .eq('created_by_vet_id', callerId)
-        .not('owner_invitation_sent_at', 'is', null)
-        .gte('owner_invitation_sent_at', oneDayAgo);
-
-      if ((recentInvites ?? 0) >= 5) {
-        return errorResponse('Límite de invitaciones alcanzado (5 por día). Intenta mañana.', 429);
-      }
-
       // --- Parse body ---
       const { pet_id } = await req.json();
       if (!pet_id || typeof pet_id !== 'string') {
         return errorResponse('pet_id is required and must be a string', 400);
       }
 
-      // --- Fetch pet + vet profile ---
+      // --- Rate limit: max 5 invitations per user per day (combina vet + shelter) ---
+      const supabaseAdmin = createClient(
+        Deno.env.get('SUPABASE_URL') ?? '',
+        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      );
+
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+
+      // Fetch shelter del caller (si tiene) para evaluar rate limit combinado.
+      const { data: callerShelter } = await supabaseAdmin
+        .from('adoption_centers')
+        .select('id, legal_name, type')
+        .eq('user_id', callerId)
+        .maybeSingle();
+
+      const shelterIds = callerShelter ? [callerShelter.id] : [];
+
+      // Contamos invitaciones recientes enviadas por este caller (vet o shelter).
+      const recentVetInvitesQuery = supabaseAdmin
+        .from('pets')
+        .select('id', { count: 'exact', head: true })
+        .eq('created_by_vet_id', callerId)
+        .not('owner_invitation_sent_at', 'is', null)
+        .gte('owner_invitation_sent_at', oneDayAgo);
+
+      const { count: recentVetInvites } = await recentVetInvitesQuery;
+
+      let recentShelterInvites = 0;
+      if (shelterIds.length > 0) {
+        const { count } = await supabaseAdmin
+          .from('pets')
+          .select('id', { count: 'exact', head: true })
+          .in('created_by_shelter_id', shelterIds)
+          .not('owner_invitation_sent_at', 'is', null)
+          .gte('owner_invitation_sent_at', oneDayAgo);
+        recentShelterInvites = count ?? 0;
+      }
+
+      const totalRecent = (recentVetInvites ?? 0) + recentShelterInvites;
+      if (totalRecent >= 5) {
+        return errorResponse('Límite de invitaciones alcanzado (5 por día). Intenta mañana.', 429);
+      }
+
+      // --- Fetch pet con ambos FKs ---
       const { data: pet, error: petError } = await supabase
         .from('pets')
         .select(
-          'id, name, pending_owner_email, pending_owner_name, owner_invitation_token, owner_invitation_sent_at, created_by_vet_id'
+          'id, name, pending_owner_email, pending_owner_name, owner_invitation_token, owner_invitation_sent_at, created_by_vet_id, created_by_shelter_id'
         )
         .eq('id', pet_id)
         .single();
 
       if (petError || !pet) return errorResponse('Mascota no encontrada', 404);
-      if (pet.created_by_vet_id !== callerId) {
+
+      // Determinar tipo de caller respecto a esta mascota.
+      const callerIsVet = pet.created_by_vet_id === callerId;
+      const callerIsShelter = !!callerShelter?.id && pet.created_by_shelter_id === callerShelter.id;
+
+      if (!callerIsVet && !callerIsShelter) {
         return errorResponse(
-          'Solo el veterinario que creo el registro puede enviar la invitacion',
+          'Solo el veterinario o refugio que cargo la ficha puede enviar la invitacion',
           403
         );
       }
+
       if (!pet.pending_owner_email) {
         return errorResponse('Esta mascota no tiene un email de dueno pendiente', 400);
       }
 
       const email = pet.pending_owner_email;
+      const sourceKind: 'vet' | 'shelter' = callerIsShelter ? 'shelter' : 'vet';
 
-      // Fetch vet name + clinic for the email
-      const { data: vetProfile } = await supabase
-        .from('profiles')
-        .select('display_name')
-        .eq('id', callerId)
-        .single();
-      const { data: vetProvider } = await supabase
-        .from('service_providers')
-        .select('id, display_name')
-        .eq('user_id', callerId)
-        .maybeSingle();
+      // Fetch del perfil del caller para el email. Para vet, usa display_name +
+      // service_providers (clinica). Para shelter, usa adoption_centers.legal_name.
+      let senderName = 'Paw Friend';
+      let senderSubLabel = '';
+      let vetProviderId: string | null = null;
 
-      const vetName = vetProfile?.display_name || 'Tu veterinario/a';
-      const clinicName = vetProvider?.display_name || '';
+      if (callerIsShelter && callerShelter) {
+        senderName = callerShelter.legal_name;
+        senderSubLabel = ''; // el nombre del refugio ya es suficiente
+      } else {
+        const { data: vetProfile } = await supabase
+          .from('profiles')
+          .select('display_name')
+          .eq('id', callerId)
+          .single();
+        const { data: vetProvider } = await supabase
+          .from('service_providers')
+          .select('id, display_name')
+          .eq('user_id', callerId)
+          .maybeSingle();
+        senderName = vetProfile?.display_name || 'Tu veterinario/a';
+        senderSubLabel = vetProvider?.display_name || '';
+        vetProviderId = vetProvider?.id ?? null;
+      }
 
       // --- Generate invitation token if not exists ---
       let invitationToken = pet.owner_invitation_token;
@@ -164,16 +206,16 @@ serve(
 
       if (userByEmail) {
         // ------------------------------------------------------------------
-        // Owner already registered → no email, vet shares link manually
-        // (or sends magic link if we want auto-login)
+        // Owner already registered → no email, vet/shelter shares link manually
         // ------------------------------------------------------------------
-        // Pre-create active pet_vet_link since both users exist
-        if (vetProvider?.id) {
+        // Pre-create active pet_vet_link solo si el caller es vet con provider_id.
+        // Para shelter no aplica (refugio no es "proveedor de servicios" en ese sentido).
+        if (callerIsVet && vetProviderId) {
           await supabase.from('pet_vet_links').upsert(
             {
               pet_id,
               owner_id: userByEmail.id,
-              provider_id: vetProvider.id,
+              provider_id: vetProviderId,
               status: 'active',
               responded_at: new Date().toISOString(),
             },
@@ -205,14 +247,20 @@ serve(
         const html = buildInvitationEmail({
           petName,
           ownerName,
-          vetName,
-          clinicName,
+          vetName: senderName,
+          clinicName: senderSubLabel,
           actionUrl,
+          sourceKind,
         });
+
+        const subject =
+          sourceKind === 'shelter'
+            ? `${petName} llega a tu casa con su ficha medica 🐾`
+            : `${petName} ya tiene ficha veterinaria en Paw Friend 🐾`;
 
         const resendResult = await sendViaResend({
           to: email,
-          subject: `${petName} ya tiene ficha veterinaria en Paw Friend 🐾`,
+          subject,
           html,
         });
 
@@ -244,6 +292,7 @@ serve(
         email_sent_to: userByEmail ? null : email,
         owner_already_registered: !!userByEmail,
         invitation_token: invitationToken,
+        source_kind: sourceKind,
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);

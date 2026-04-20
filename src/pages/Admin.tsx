@@ -42,6 +42,7 @@ import {
 import AdminDashboard from '@/components/admin/AdminDashboard';
 import AdminServiceProviders from '@/components/admin/AdminServiceProviders';
 import AdminProviders from '@/components/admin/AdminProviders';
+import AdminShelters from '@/components/admin/AdminShelters';
 import AdminVetVerifications from '@/components/admin/AdminVetVerifications';
 import AdminUsers from '@/components/admin/AdminUsers';
 import AdminVerificationRequests from '@/components/admin/AdminVerificationRequests';
@@ -166,6 +167,7 @@ function ProvidersSection({ sub: propSub, onSubChange }: SubSectionProps) {
         <TabsList>
           <TabsTrigger value="central">Todos</TabsTrigger>
           <TabsTrigger value="vets">Vets Colmevet</TabsTrigger>
+          <TabsTrigger value="shelters">Refugios</TabsTrigger>
           <TabsTrigger value="legacy">Legacy</TabsTrigger>
         </TabsList>
         <TabsContent value="central">
@@ -173,6 +175,9 @@ function ProvidersSection({ sub: propSub, onSubChange }: SubSectionProps) {
         </TabsContent>
         <TabsContent value="vets">
           <AdminVetVerifications />
+        </TabsContent>
+        <TabsContent value="shelters">
+          <AdminShelters />
         </TabsContent>
         <TabsContent value="legacy">
           <AdminProviders />

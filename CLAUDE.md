@@ -535,8 +535,19 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 3. Cuando adoptante muestra interes y es aceptado, refugio va a `/shelter/transfer/:petId`:
    - Setea `pet.pending_owner_email`, `owner_invitation_token`, `shelter_adopted_at = now()`
    - Muestra link copiable + boton WhatsApp
-   - Best-effort: llama a `send-pet-invitation` (pendiente de actualizar edge fn para aceptar shelters)
+   - Llama a `send-pet-invitation` que ya acepta shelters (email con copy adaptado)
 4. Adoptante abre link → reclama la mascota con ficha medica COMPLETA
+
+### Donaciones dirigidas a refugio (feature-flagged)
+
+- Feature flag `SHELTER_DONATIONS` en `src/lib/featureFlags.ts` (hoy = `false`).
+- Se activa cuando la cuenta Flow.cl migre a SpA (riesgo fiscal).
+- UI lista en `src/pages/Donaciones.tsx`: selector de refugio beneficiario
+  (aparece solo si el flag esta `true`).
+- Backend: tabla `donations.beneficiary_type` + `beneficiary_adoption_center_id`
+  ya existen (mig `20260620000000`). Edge fn `flow-create-donation` debe
+  propagar estos campos cuando el flag se active.
+- Query param `?refugio=ID` preselecciona el refugio al entrar a `/donaciones`.
 
 ### Archivos clave
 
@@ -551,6 +562,11 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 - `src/components/BecomeShelterDialog.tsx` — wizard registro inline de refugio (3 pasos)
 - `src/pages/OnboardingShelter.tsx` — landing de onboarding para refugios
 - `src/pages/shelter/*` — dashboard, mascotas, bulk import, perfil, transferencia
+- `src/pages/RefugiosHogares.tsx` — directorio publico `/refugios-hogares`
+- `src/pages/RefugioPublico.tsx` — perfil publico `/refugios/:slug`
+- `src/components/admin/AdminShelters.tsx` — panel admin (Proveedores > Refugios): verificar, suspender, activar
+- `supabase/functions/send-pet-invitation/` — ahora acepta callers vet o shelter (mismo token, email con copy dinamico)
+- `supabase/functions/_shared/invitation-email.ts` — template con `sourceKind: 'vet' | 'shelter'`
 
 ---
 

@@ -1,6 +1,13 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-20 (Refugios como onboarding)
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-20 (Refugios MVP completo)
+    %% Cambios 2026-04-20 PM (Fases 7-9 completas):
+    %%   - Edge fn send-pet-invitation acepta vet OR shelter (caller).
+    %%   - Directorio publico /refugios-hogares + perfil /refugios/:slug con SEO.
+    %%   - Panel admin Admin > Proveedores > Refugios (verificar/suspender).
+    %%   - Selector de refugio beneficiario en /donaciones (feature-flag SHELTER_DONATIONS).
+    %%   - Pitch deck 05_HOGARES_DE_ADOPCION.md + README actualizado.
+    %%   - Footer landing: firma SGSE (Susaeta Garnham Software Engineering).
     %% Cambios 2026-04-20 (Adopcion Centros):
     %%   - Nuevo rol "shelter" (ademas de owner y provider).
     %%   - Tabla adoption_centers (cuenta real del refugio).
@@ -594,6 +601,18 @@ flowchart TD
     H_QUICK --> MAPA
     H_ROUTINES --> RUT_LIST
     H_FEED --> FEED_LIST
+
+    %% ============ REFUGIOS PUBLICO (2026-04-20) ============
+    subgraph SHELTER_PUBLIC["REFUGIOS — AREA PUBLICA"]
+        direction TB
+        PUB_DIR_SH["/refugios-hogares directorio SEO"]
+        PUB_PROF_SH["/refugios/:slug perfil publico"]
+        PUB_ADM_SH["Admin > Proveedores > Refugios verificar/suspender"]
+        DON_PAGE["/donaciones"]
+        DON_PAGE -. feature-flag SHELTER_DONATIONS .-> PUB_PROF_SH
+
+        PUB_DIR_SH --> PUB_PROF_SH
+    end
 
     %% ============ SHELTER / REFUGIOS (2026-04-20) ============
     subgraph SHELTER_FLOW["REFUGIOS / HOGARES DE ADOPCION"]

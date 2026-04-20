@@ -739,7 +739,9 @@ mientras tienen a los animales a su cargo, y cuando alguien adopta se les
 Adopcion + Refugios
 ├── Paginas publicas / owner
 │   ├── src/pages/Adoption.tsx                            # Posts de adopcion + CTA registrar refugio
-│   └── src/pages/OnboardingShelter.tsx                   # Landing onboarding refugio
+│   ├── src/pages/OnboardingShelter.tsx                   # Landing onboarding refugio
+│   ├── src/pages/RefugiosHogares.tsx                     # Directorio publico /refugios-hogares (SEO)
+│   └── src/pages/RefugioPublico.tsx                      # Perfil publico /refugios/:slug (SEO + CTA)
 ├── Paginas shelter (RoleGuard requiredRole="shelter")
 │   ├── src/pages/shelter/ShelterDashboard.tsx            # Panel: stats + pets recientes + accesos rapidos
 │   ├── src/pages/shelter/ShelterPets.tsx                 # Lista completa mascotas a cargo
@@ -748,6 +750,7 @@ Adopcion + Refugios
 │   └── src/pages/shelter/ShelterTransferPet.tsx          # Entregar mascota al adoptante
 ├── Componentes
 │   ├── src/components/BecomeShelterDialog.tsx            # Wizard 3 pasos registro refugio
+│   ├── src/components/admin/AdminShelters.tsx            # Admin > Proveedores > Refugios (verificar/suspender)
 │   ├── src/components/AdoptionPostCard.tsx               # Card post
 │   ├── src/components/CreateAdoptionPost.tsx             # Crear post adopcion
 │   ├── src/components/AdoptionSheltersList.tsx           # Lista refugios IA publica
@@ -763,7 +766,7 @@ Adopcion + Refugios
 │   └── pets (+ columnas created_by_shelter_id, shelter_intake_at, shelter_adopted_at, shelter_notes)
 └── Edge Functions
     ├── supabase/functions/generate-shelters/             # Generar data refugios IA (catalogo publico)
-    └── supabase/functions/send-pet-invitation/           # Email invitacion (vet hoy; shelter next)
+    └── supabase/functions/send-pet-invitation/           # Email invitacion (acepta vet o shelter)
 ```
 
 ### Flujo refugio -> adoptante
@@ -780,13 +783,22 @@ Adopcion + Refugios
   agrega claimed_by_adoption_center_id a adoption_shelters.
 
 ### Oportunidades pendientes
-- **Edge fn shelter-aware**: actualizar `send-pet-invitation` para aceptar
-  `created_by_shelter_id` ademas de `created_by_vet_id`.
-- **Donaciones dirigidas**: UI en `/donaciones` + panel refugio (hooks DB ya listos).
-- **Landing publica refugio** (`/refugios/:slug`) + directorio publico `/refugios-hogares`.
-- **Verificacion admin**: panel para aprobar refugios y otorgar badge "Verificado".
-- **Match automatico** segun preferencias del adoptante.
-- **Seguimiento post-adopcion**: check-ins a 1/3/6 meses.
+- **Donaciones dirigidas a refugio**: activar feature flag `SHELTER_DONATIONS` en
+  `src/lib/featureFlags.ts` cuando cuenta Flow migre a SpA + actualizar edge
+  fn `flow-create-donation` para propagar `beneficiary_type` / `beneficiary_adoption_center_id`.
+- **Match automatico** segun preferencias del adoptante (vivienda, horas en
+  casa, experiencia previa -> ranking).
+- **Seguimiento post-adopcion**: check-ins a 1/3/6 meses via email + pulso del vinculo.
+- **Panel metricas refugio**: grafico mensual de adopciones, tiempo promedio
+  de estadia en cuidado, mascotas mas vistas.
+
+### Completado (2026-04-20)
+- Edge fn `send-pet-invitation` ahora acepta callers `created_by_shelter_id`.
+- Panel admin `AdminShelters` en Admin > Proveedores > Refugios con verificar,
+  suspender, activar.
+- Directorio publico `/refugios-hogares` + perfil publico `/refugios/:slug`.
+- Selector de refugio beneficiario en `/donaciones` (gated por feature flag).
+- Pitch deck `pitch-inversionistas/05_HOGARES_DE_ADOPCION.md`.
 
 ---
 

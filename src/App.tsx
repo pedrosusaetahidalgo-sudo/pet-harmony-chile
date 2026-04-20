@@ -87,6 +87,8 @@ const Reminders = lazy(() => import('./pages/Reminders'));
 const OnboardingVetMinimal = lazy(() => import('./pages/OnboardingVetMinimal'));
 const OnboardingDuenoMinimal = lazy(() => import('./pages/OnboardingDuenoMinimal'));
 const OnboardingShelter = lazy(() => import('./pages/OnboardingShelter'));
+const RefugiosHogares = lazy(() => import('./pages/RefugiosHogares'));
+const RefugioPublico = lazy(() => import('./pages/RefugioPublico'));
 const ShelterDashboard = lazy(() => import('./pages/shelter/ShelterDashboard'));
 const ShelterPets = lazy(() => import('./pages/shelter/ShelterPets'));
 const ShelterBulkImport = lazy(() => import('./pages/shelter/ShelterBulkImport'));
@@ -769,6 +771,25 @@ const App = () => (
                   element={
                     <PublicWithLayoutIfAuth>
                       <PerfilVetPublico />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
+
+                {/* Directorio publico de refugios / hogares de adopcion (SEO).
+                    Accesible con o sin login. Si esta logueado, AppLayout. */}
+                <Route
+                  path="/refugios-hogares"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <RefugiosHogares />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
+                <Route
+                  path="/refugios/:slug"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <RefugioPublico />
                     </PublicWithLayoutIfAuth>
                   }
                 />
