@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { FileText } from '@/lib/icons';
 import { useNavigate } from 'react-router-dom';
-import { PremiumGate } from '@/components/PremiumGate';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { usePlan } from '@/hooks/usePlan';
 
@@ -79,17 +78,10 @@ export function WeeklyReportCard() {
     },
   });
 
-  // Si USER_PREMIUM está activo y el usuario es free, mostrar sample con gate
+  // Si USER_PREMIUM está activo y el usuario es free, mostrar sample (sin gate
+  // bloqueante: el pivot 2026-04-19 dejó todo B2C gratis).
   if (showPremiumTeaser) {
-    return (
-      <PremiumGate
-        feature="weekly_summary"
-        title="Resumen semanal IA"
-        description="Recibe un análisis semanal del estado de salud de tus mascotas generado por IA"
-      >
-        <WeeklyReportSampleCard />
-      </PremiumGate>
-    );
+    return <WeeklyReportSampleCard />;
   }
 
   if (!report) return null;

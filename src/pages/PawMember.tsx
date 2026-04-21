@@ -24,11 +24,13 @@ import { es } from 'date-fns/locale';
 import { useAuth } from '@/hooks/useAuth';
 import { useMyDonationStats, useMyDonationHistory } from '@/hooks/usePublicDonations';
 import { useDonorBadge } from '@/hooks/useDonorBadge';
+import { useIsPawMember } from '@/hooks/useIsPawMember';
 import { usePawMemberDiscounts } from '@/hooks/usePawCompanys';
 import { formatCLP } from '@/lib/format';
 import { PageHeader } from '@/components/PageHeader';
 import { DonorBadge } from '@/components/DonorBadge';
 import { PawMemberBadge } from '@/components/PawMemberBadge';
+import { PlanComparisonTableB2C } from '@/components/pricing/PlanComparisonTable';
 import { cn } from '@/lib/utils';
 
 export default function PawMember() {
@@ -37,6 +39,7 @@ export default function PawMember() {
   const { data: stats, isLoading: statsLoading } = useMyDonationStats(!!user);
   const { data: history, isLoading: histLoading } = useMyDonationHistory(!!user);
   const { data: donorBadge } = useDonorBadge(user?.id);
+  const { data: memberInfo } = useIsPawMember(user?.id);
   const { data: memberDiscounts } = usePawMemberDiscounts();
 
   useEffect(() => {
@@ -125,6 +128,27 @@ export default function PawMember() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Tabla comparativa Gratis vs Paw Member: deja claro que la membresia
+            NO desbloquea features, solo badge + acceso a descuentos de alianzas. */}
+        <section aria-labelledby="plan-comparison-heading" className="space-y-3">
+          <div className="text-center">
+            <h2
+              id="plan-comparison-heading"
+              className="font-display font-semibold text-xl md:text-2xl tracking-tight"
+            >
+              ¿Que diferencia hay con ser Paw Member?
+            </h2>
+            <p className="text-xs text-muted-foreground mt-1">
+              La app es gratis para todos. Paw Member es tu forma de sostenerla.
+            </p>
+          </div>
+          <PlanComparisonTableB2C
+            isMember={memberInfo?.is_member}
+            onMember={() => navigate('/donaciones?frecuencia=monthly')}
+            onDonate={() => navigate('/donaciones')}
+          />
+        </section>
 
         {/* KPIs grandes */}
         {statsLoading ? (

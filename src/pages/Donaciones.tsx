@@ -76,7 +76,13 @@ export default function Donaciones() {
   const [donorName, setDonorName] = useState('');
   const [donorMessage, setDonorMessage] = useState('');
   const [isPublic, setIsPublic] = useState(false);
-  const [frequency, setFrequency] = useState<'once' | 'monthly'>('once');
+  // Si la URL trae ?frecuencia=monthly (ej: clic desde PlanComparisonTableB2C
+  // en /paw-member), preseleccionamos la frecuencia mensual para que el user
+  // caiga directo en el flujo de membresia recurrente.
+  const frecuenciaParam = searchParams.get('frecuencia');
+  const [frequency, setFrequency] = useState<'once' | 'monthly'>(
+    frecuenciaParam === 'monthly' ? 'monthly' : 'once'
+  );
 
   // Donaciones dirigidas a refugio. Feature-flagged: la UI y el envio al
   // backend viven aca pero el boton de dirigir solo aparece cuando

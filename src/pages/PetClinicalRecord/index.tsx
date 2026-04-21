@@ -323,11 +323,7 @@ const PetClinicalRecord = () => {
                 <span className="hidden sm:inline">Editar</span>
               </Button>
             )}
-            <MedicalSummaryButton
-              petId={pet.id}
-              petName={pet.name}
-              bypassGate={viewMode === 'vet'}
-            />
+            <MedicalSummaryButton petId={pet.id} petName={pet.name} />
           </div>
         }
       >

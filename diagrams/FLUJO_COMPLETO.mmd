@@ -1,6 +1,16 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-20 PM (Auditoría E2E Lotes A-H)
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-21 (PlanComparisonTable B2C/B2B)
+    %% Cambios 2026-04-21:
+    %%   - Componente unico PlanComparisonTable (B2C + B2B vet) en src/components/pricing/.
+    %%   - /paw-member muestra tabla Gratis vs Paw Member con banner "NO desbloquea features".
+    %%     CTA "Hacerme Paw Member" → /donaciones?frecuencia=monthly (preselecciona mensual).
+    %%   - /para-veterinarios + /provider/upgrade consolidados sobre mismo componente.
+    %%   - LockedOverlay default route /upgrade → /provider/upgrade; copy sin "Premium" generico.
+    %%   - ProUpgradeCTA default route /upgrade → /paw-member; copy centrado en "Sostener Paw Friend".
+    %%   - PremiumGate removido (era pass-through desde pivot 2026-04-19). Callsites unwrapped.
+    %%
+    %% Historico 2026-04-20 PM (Auditoría E2E Lotes A-H)
     %% Cambios 2026-04-20 PM (Auditoría E2E pre-launch 1 junio 2026):
     %%   - Lote A: 5 migraciones B2B (plan_lifecycle, featured_position, clinic_vet_seats,
     %%     booking_commission, subscriptions_b2b_support).

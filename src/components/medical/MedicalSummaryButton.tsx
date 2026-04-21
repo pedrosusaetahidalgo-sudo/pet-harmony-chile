@@ -21,7 +21,6 @@ import { logger } from '@/lib/logger';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { downloadFile } from '@/lib/nativeDownload';
 import { isNative } from '@/lib/platform';
-import { PremiumGate } from '@/components/PremiumGate';
 import { track, EVENTS } from '@/lib/analytics';
 import { STORAGE_KEYS } from '@/lib/config/marketingConfig';
 
@@ -50,15 +49,12 @@ interface MedicalSummaryButtonProps {
   petId: string;
   petName?: string;
   variant?: 'hero' | 'inline';
-  /** Skip PremiumGate (e.g. for linked vets who should always have access) */
-  bypassGate?: boolean;
 }
 
 export const MedicalSummaryButton = ({
   petId,
   petName,
   variant = 'hero',
-  bypassGate = false,
 }: MedicalSummaryButtonProps) => {
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -223,15 +219,5 @@ export const MedicalSummaryButton = ({
     </DropdownMenu>
   );
 
-  if (bypassGate) return heroContent;
-
-  return (
-    <PremiumGate
-      feature="export_pdf"
-      title="Ficha clínica en PDF"
-      description="Genera un PDF profesional con toda la ficha clínica de tu mascota"
-    >
-      {heroContent}
-    </PremiumGate>
-  );
+  return heroContent;
 };
