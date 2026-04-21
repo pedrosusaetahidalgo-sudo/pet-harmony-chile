@@ -25,6 +25,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { ConstraintViolationsWidget } from '@/components/admin/ConstraintViolationsWidget';
 // E.2 auditoria top-tier 2026-04-20: catalogo + helpers extraidos a
 // subfolder ./systemHealth/ para reducir el god component (-479L).
 import {
@@ -485,6 +486,11 @@ export default function AdminSystemHealth() {
 
   return (
     <div className="space-y-6">
+      {/* Prevención #3 (2026-04-21): alerta en tiempo real si algún deploy
+          rompe un CHECK/FK/NOT NULL/UNIQUE — agrupa por patrón y muestra
+          conteo 24h / 7d. Discreto en estado sano. */}
+      <ConstraintViolationsWidget />
+
       {/* Summary KPIs */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="bg-slate-900 border-slate-800">
