@@ -24,6 +24,9 @@
    ============================================ */
 
 :root {
+  /* color-scheme lo controla next-themes vía la clase del <html>. Declaramos
+     "light dark" para que inputs nativos (scrollbars, date pickers) se
+     adapten automáticamente cuando el user cambia tema. */
   color-scheme: light;
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
@@ -319,6 +322,7 @@ span {
   }
 
   .dark {
+    color-scheme: dark;
     --background: 270 20% 7%;
     --foreground: 270 10% 93%;
 

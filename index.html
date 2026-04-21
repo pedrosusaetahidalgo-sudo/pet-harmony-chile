@@ -12,9 +12,14 @@
     <meta name="apple-mobile-web-app-title" content="Paw Friend" />
     <meta name="theme-color" content="#9333EA" />
 
-    <!-- Plus Jakarta Sans font preconnect -->
+    <!-- Preconnect a orígenes críticos — reduce handshake TLS del 1er request.
+         Fonts: primera pintada tipográfica. Supabase: primera query. Flow:
+         destino del checkout al hacer click en donar / upgrade. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://gwailbjlvevkhwcrovfd.supabase.co" crossorigin />
+    <link rel="dns-prefetch" href="https://gwailbjlvevkhwcrovfd.supabase.co" />
+    <link rel="dns-prefetch" href="https://www.flow.cl" />
 
     <!-- Favicons (brand kit v2, 2026-04-20). Paths legacy en raiz se mantienen
          como fallback para clientes con cache viejo. -->

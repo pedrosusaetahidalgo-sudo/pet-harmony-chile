@@ -5,6 +5,12 @@
  * Confirmamos el pago consultando getStatus, validamos firma, y aplicamos premium.
  *
  * NUNCA confiamos en el body del webhook sin verificar contra Flow primero.
+ *
+ * Idempotencia (2026-04-20, P0-2):
+ *   Flow reenvía el callback si no recibe 200 rápido o por su propio fault
+ *   tolerance. Usamos la tabla `payment_events(flow_token, status_code)` como
+ *   lock: el primer INSERT ON CONFLICT DO NOTHING decide quién procesa.
+ *   Duplicados cortan con 200 sin volver a ejecutar efectos laterales.
  */
 
 import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
@@ -39,6 +45,33 @@ serve(
     }
     if (req.method !== 'POST') {
       return new Response('Method not allowed', { status: 405 });
+    }
+
+    // Cliente admin se crea arriba: lo necesitamos para el lock de idempotencia
+    // antes de ejecutar cualquier efecto lateral.
+    const supabaseAdmin = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, {
+      auth: { persistSession: false },
+    });
+
+    // Tracking del evento actual para poder actualizar outcome al final.
+    let currentToken: string | null = null;
+    let currentStatus: number | null = null;
+
+    async function markOutcome(outcome: 'ok' | 'failed' | 'skipped', errorMessage?: string) {
+      if (!currentToken || currentStatus === null) return;
+      try {
+        await supabaseAdmin
+          .from('payment_events')
+          .update({
+            processed_at: new Date().toISOString(),
+            outcome,
+            error_message: errorMessage ?? null,
+          })
+          .eq('flow_token', currentToken)
+          .eq('status_code', currentStatus);
+      } catch (e) {
+        console.warn('[flow-webhook] markOutcome failed', e);
+      }
     }
 
     try {
@@ -79,7 +112,71 @@ serve(
         return new Response('flow status error', { status: 500 });
       }
 
-      // Parsear optional temprano: necesitamos distinguir donacion vs subscription
+      const statusCode = Number(statusJson.status);
+      if (!Number.isInteger(statusCode)) {
+        console.error('[flow-webhook] non-integer status', statusJson.status);
+        return new Response('bad status', { status: 400 });
+      }
+
+      // ───────────────────────────────────────────────────────────────
+      // LOCK DE IDEMPOTENCIA (P0-2 — auditoría top-tier 2026-04-20)
+      //
+      // Insertar en payment_events con PK (flow_token, status_code).
+      // Si ya existe un row con el mismo par → este webhook es
+      // duplicado; devolvemos 200 y salimos SIN ejecutar nada más.
+      // ───────────────────────────────────────────────────────────────
+      currentToken = token;
+      currentStatus = statusCode;
+
+      const { data: lockRow, error: lockErr } = await supabaseAdmin
+        .from('payment_events')
+        .insert({
+          flow_token: token,
+          status_code: statusCode,
+          payload_summary: {
+            amount: statusJson.amount ?? null,
+            currency: statusJson.currency ?? null,
+            media: statusJson.paymentData?.media ?? null,
+          },
+        })
+        .select('flow_token')
+        .maybeSingle();
+
+      if (lockErr) {
+        // `maybeSingle()` devuelve error si hay conflicto con PK existente.
+        // Tratamos el conflicto (código 23505 en PostgREST mensajes) como
+        // "ya procesado" y salimos con 200. Cualquier otro error lo
+        // propagamos.
+        const isConflict =
+          lockErr.code === '23505' ||
+          /duplicate key/i.test(lockErr.message ?? '') ||
+          /violates unique/i.test(lockErr.message ?? '');
+
+        if (isConflict) {
+          console.log('[flow-webhook] duplicate webhook, already processed', {
+            token,
+            statusCode,
+          });
+          return new Response('already processed', { status: 200 });
+        }
+
+        console.error('[flow-webhook] lock insert failed', lockErr);
+        return new Response('lock error', { status: 500 });
+      }
+
+      if (!lockRow) {
+        // Defensivo: sin fila devuelta significa que hubo conflicto manejado
+        // a nivel de política; tratamos como ya procesado.
+        console.log('[flow-webhook] lock returned no row, treating as duplicate', {
+          token,
+          statusCode,
+        });
+        return new Response('already processed', { status: 200 });
+      }
+
+      // ───────────────────────────────────────────────────────────────
+
+      // Parsear optional: necesitamos distinguir donacion vs subscription
       let userId: string | null = null;
       let plan: string | null = null;
       let paymentType: string | null = null;
@@ -97,13 +194,9 @@ serve(
       const isDonation = paymentType === 'donation';
       const isB2B = orderType === 'b2b_vet';
 
-      const supabaseAdmin = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, {
-        auth: { persistSession: false },
-      });
-
       // status: 1=pendiente, 2=pagada, 3=rechazada, 4=anulada
-      if (statusJson.status !== 2) {
-        console.log('[flow-webhook] payment not completed', { token, status: statusJson.status });
+      if (statusCode !== 2) {
+        console.log('[flow-webhook] payment not completed', { token, status: statusCode });
         if (isDonation) {
           await supabaseAdmin
             .from('donations')
@@ -117,6 +210,7 @@ serve(
             .eq('payment_provider_id', token)
             .eq('status', 'pending');
         }
+        await markOutcome('ok');
         return new Response('ok', { status: 200 });
       }
 
@@ -124,11 +218,13 @@ serve(
       if (isDonation) {
         if (!userId) {
           console.error('[flow-webhook] donation missing user_id in optional');
+          await markOutcome('skipped', 'missing user_id in optional');
           return new Response('invalid optional', { status: 400 });
         }
         const amount = Number(statusJson.amount ?? 0);
         if (!amount || amount <= 0) {
           console.error('[flow-webhook] donation invalid amount', statusJson.amount);
+          await markOutcome('skipped', 'invalid amount');
           return new Response('invalid amount', { status: 400 });
         }
         const { data: donationRow, error: donErr } = await supabaseAdmin
@@ -144,6 +240,7 @@ serve(
           .maybeSingle();
         if (donErr) {
           console.error('[flow-webhook] donation update failed', donErr);
+          await markOutcome('failed', donErr.message);
           return new Response('donation update failed', { status: 500 });
         }
         console.log('[flow-webhook] donation paid', { userId, amount, token });
@@ -164,23 +261,22 @@ serve(
           }
         }
 
+        await markOutcome('ok');
         return new Response('ok', { status: 200 });
       }
 
       if (!userId || !plan) {
         console.error('[flow-webhook] missing user_id/plan in optional', statusJson.optional);
+        await markOutcome('skipped', 'missing user_id/plan in optional');
         return new Response('invalid optional', { status: 400 });
       }
 
       const amount = Number(statusJson.amount ?? 0);
       if (!amount || amount <= 0) {
         console.error('[flow-webhook] invalid amount', statusJson.amount);
+        await markOutcome('skipped', 'invalid amount');
         return new Response('invalid amount', { status: 400 });
       }
-
-      const supabase = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, {
-        auth: { persistSession: false },
-      });
 
       // ─────────────────────────────────────────────────────────────────
       // B2B VET: actualiza service_providers.provider_plan + lifecycle
@@ -189,6 +285,7 @@ serve(
         const validB2BPlans = ['provider_premium', 'provider_clinic_starter', 'provider_pro_max'];
         if (!validB2BPlans.includes(plan)) {
           console.error('[flow-webhook] invalid B2B plan', plan);
+          await markOutcome('skipped', `invalid B2B plan: ${plan}`);
           return new Response('invalid B2B plan', { status: 400 });
         }
 
@@ -196,7 +293,7 @@ serve(
         const expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // +30d
         const nextBillingAt = expiresAt;
 
-        const { error: spErr } = await supabase
+        const { error: spErr } = await supabaseAdmin
           .from('service_providers')
           .update({
             provider_plan: plan,
@@ -211,11 +308,12 @@ serve(
 
         if (spErr) {
           console.error('[flow-webhook] b2b service_providers update failed', spErr);
+          await markOutcome('failed', spErr.message);
           return new Response('b2b update failed', { status: 500 });
         }
 
         // Marcar subscription pendiente como activa
-        await supabase
+        await supabaseAdmin
           .from('subscriptions')
           .update({
             status: 'active',
@@ -226,6 +324,7 @@ serve(
           .eq('status', 'pending');
 
         console.log('[flow-webhook] b2b vet plan activated', { userId, plan, amount, token });
+        await markOutcome('ok');
         return new Response('ok', { status: 200 });
       }
 
@@ -234,17 +333,18 @@ serve(
       // ─────────────────────────────────────────────────────────────────
       if (plan !== 'monthly' && plan !== 'yearly') {
         console.error('[flow-webhook] invalid B2C plan', plan);
+        await markOutcome('skipped', `invalid B2C plan: ${plan}`);
         return new Response('invalid plan', { status: 400 });
       }
 
       // Borrar el subscription pending placeholder antes de aplicar (apply_premium hace insert)
-      await supabase
+      await supabaseAdmin
         .from('subscriptions')
         .delete()
         .eq('payment_provider_id', token)
         .eq('status', 'pending');
 
-      const { error: rpcError } = await supabase.rpc('apply_premium', {
+      const { error: rpcError } = await supabaseAdmin.rpc('apply_premium', {
         p_user_id: userId,
         p_plan: plan,
         p_amount_clp: amount,
@@ -253,14 +353,17 @@ serve(
 
       if (rpcError) {
         console.error('[flow-webhook] apply_premium failed', rpcError);
+        await markOutcome('failed', rpcError.message);
         return new Response('apply_premium failed', { status: 500 });
       }
 
       console.log('[flow-webhook] premium applied', { userId, plan, amount, token });
+      await markOutcome('ok');
       return new Response('ok', { status: 200 });
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error);
       console.error('[flow-webhook] error', msg);
+      await markOutcome('failed', msg);
       return new Response('error', { status: 500 });
     }
   })

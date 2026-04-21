@@ -1,61 +1,142 @@
 project_id = "gwailbjlvevkhwcrovfd"
 
 # ── Edge Functions ──────────────────────────────────────────────
-# verify_jwt = false en TODAS las funciones.
-# Motivo: el JWT secret del proyecto fue regenerado y los tokens
-# de sesión existentes fallan la validación del gateway (401 Invalid JWT).
-# Cada función valida auth internamente con supabase.auth.getUser(token),
-# así que la seguridad se mantiene igual.
+# Política (2026-04-20 — Auditoría top-tier P0):
+#
+#   verify_jwt = true  → funciones llamadas desde el frontend con
+#                        `Authorization: Bearer <access_token>`.
+#                        El gateway valida el JWT antes de invocar la fn,
+#                        reduciendo surface de ataque (requests sin token
+#                        nunca llegan al code path).
+#
+#   verify_jwt = false → webhooks externos (Flow), OAuth callbacks,
+#                        crons pg_cron con service_role, y funciones
+#                        invocadas service-to-service (ej. send-donation-thanks
+#                        disparada desde flow-webhook).
+#
+# Historia: entre 2026-04-11 y 2026-04-19 TODAS estaban en false por una
+# rotación de JWT secret que invalidaba tokens antiguos. Esos tokens ya
+# expiraron (TTL 1h), así que reactivamos el gateway check en las fns que
+# igual validaban internamente con supabase.auth.getUser(token).
 
+# ═══════════════════════════════════════════════════════════════════════
+# GRUPO A — verify_jwt = true (llamadas desde frontend con bearer)
+# ═══════════════════════════════════════════════════════════════════════
+
+# Pagos B2C / B2B (el user inicia el checkout desde la app)
+[functions.flow-create-subscription]
+verify_jwt = true
+
+[functions.flow-create-donation]
+verify_jwt = true
+
+# AI features (user pregunta / sube foto / pide análisis)
 [functions.pet-assistant]
-verify_jwt = false
+verify_jwt = true
 
 [functions.breed-tips]
-verify_jwt = false
+verify_jwt = true
 
 [functions.medical-suggestions]
-verify_jwt = false
+verify_jwt = true
+
+[functions.bereavement-assistant]
+verify_jwt = true
+
+[functions.symptom-triage]
+verify_jwt = true
+
+[functions.nutrition-coach]
+verify_jwt = true
+
+[functions.wound-vision]
+verify_jwt = true
+
+[functions.consultation-prep]
+verify_jwt = true
+
+[functions.ocr-vaccination-card]
+verify_jwt = true
+
+[functions.process-consultation-transcript]
+verify_jwt = true
 
 [functions.moderate-service-promotion]
-verify_jwt = false
+verify_jwt = true
 
-[functions.generate-shelters]
-verify_jwt = false
-
-[functions.flow-create-subscription]
-verify_jwt = false
-
+# Ficha clínica / documentos (owner o vet autenticado)
 [functions.generate-medical-summary]
-verify_jwt = false
+verify_jwt = true
 
 [functions.generate-medical-zip]
-verify_jwt = false
+verify_jwt = true
 
+[functions.generate-vet-patient-summary]
+verify_jwt = true
+
+[functions.generate-shelter-report-pdf]
+verify_jwt = true
+
+# Operativo vet / shelter
+[functions.create-patient]
+verify_jwt = true
+
+[functions.send-pet-invitation]
+verify_jwt = true
+
+[functions.bulk-import-pets]
+verify_jwt = true
+
+# Google Calendar (flujo iniciado por user logueado)
 [functions.google-calendar-oauth-init]
-verify_jwt = false
+verify_jwt = true
 
 [functions.google-calendar-sync]
-verify_jwt = false
+verify_jwt = true
 
 [functions.google-calendar-disconnect]
-verify_jwt = false
+verify_jwt = true
 
+# Admin / feedback / outreach
+[functions.feedback-admin]
+verify_jwt = true
+
+[functions.send-lead-outreach]
+verify_jwt = true
+
+[functions.verify-vet-document]
+verify_jwt = true
+
+[functions.verify-service-provider]
+verify_jwt = true
+
+[functions.generate-shelters]
+verify_jwt = true
+
+# ═══════════════════════════════════════════════════════════════════════
+# GRUPO B — verify_jwt = false (webhooks, OAuth callbacks, crons,
+# invocaciones service-to-service). Son endpoints sin bearer de usuario.
+# ═══════════════════════════════════════════════════════════════════════
+
+# Webhook de Flow.cl (no viene con JWT — se valida con firma HMAC)
 [functions.flow-webhook]
 verify_jwt = false
 
+# OAuth callback Google (redirect del browser sin Authorization header)
 [functions.google-calendar-callback]
 verify_jwt = false
 
+# Crons programados (pg_cron dispara con service_role)
 [functions.reminder-cron]
 verify_jwt = false
 
 [functions.booking-reminders-cron]
 verify_jwt = false
 
-[functions.send-whatsapp-reminder]
+[functions.audit-cron-daily]
 verify_jwt = false
 
-[functions.generate-sitemap]
+[functions.post-adoption-checkin-cron]
 verify_jwt = false
 
 [functions.generate-weekly-owner-reports]
@@ -64,84 +145,24 @@ verify_jwt = false
 [functions.generate-weekly-vet-reports]
 verify_jwt = false
 
-# ── Funciones que faltaban en config.toml (agregadas 2026-04-14) ──
-# Usadas activamente desde el frontend pero no declaradas previamente.
-
-[functions.create-patient]
-verify_jwt = false
-
-[functions.send-pet-invitation]
-verify_jwt = false
-
-[functions.bereavement-assistant]
-verify_jwt = false
-
-[functions.ocr-vaccination-card]
-verify_jwt = false
-
+# Logger anónimo: lo llaman usuarios logueados y anónimos (errorboundary).
+# Rate limit propio persistente en BD (ver migración 20260713000001).
 [functions.log-error]
 verify_jwt = false
 
-[functions.process-consultation-transcript]
-verify_jwt = false
-
-[functions.generate-vet-patient-summary]
-verify_jwt = false
-
-[functions.verify-service-provider]
-verify_jwt = false
-
-[functions.verify-vet-document]
-verify_jwt = false
-
-[functions.feedback-admin]
-verify_jwt = false
-
-[functions.send-lead-outreach]
-verify_jwt = false
-
-# ── Nuevas features IA (agregadas 2026-04-16) ──
-
-[functions.symptom-triage]
-verify_jwt = false
-
-[functions.nutrition-coach]
-verify_jwt = false
-
-[functions.wound-vision]
-verify_jwt = false
-
-[functions.consultation-prep]
-verify_jwt = false
-
-# ── Audit / Monitoring (agregadas 2026-04-17) ──
-
-[functions.audit-cron-daily]
-verify_jwt = false
-
-# ── Donaciones (agregadas 2026-04-18) ──
-
-[functions.flow-create-donation]
+# Invocadas service-to-service desde otras edge fns o triggers SQL
+[functions.send-whatsapp-reminder]
 verify_jwt = false
 
 [functions.send-donation-thanks]
 verify_jwt = false
 
-# ── Booking System Overhaul (agregadas 2026-04-18) ──
+[functions.notify-pitch-application]
+verify_jwt = false
 
 [functions.sync-payment-to-booking]
 verify_jwt = false
 
-# ── Pitch applications (agregada 2026-04-20) ──
-[functions.notify-pitch-application]
-verify_jwt = false
-
-[functions.bulk-import-pets]
-verify_jwt = false
-
-[functions.post-adoption-checkin-cron]
-verify_jwt = false
-
-# ── Shelter report PDF (agregada 2026-04-20 tanda 15) ──
-[functions.generate-shelter-report-pdf]
+# Sitemap / SEO endpoints (crawler friendly, sin auth)
+[functions.generate-sitemap]
 verify_jwt = false

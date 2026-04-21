@@ -31,6 +31,8 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { logger } from '@/lib/logger';
 import { toast } from 'sonner';
 import { BecomeProviderDialog } from '@/components/BecomeProviderDialog';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { haptics } from '@/lib/haptics';
 
 const notificationIconMap: Record<string, { icon: React.ElementType; color: string }> = {
   reminder_due: { icon: Clock, color: 'text-amber-500' },
@@ -151,6 +153,7 @@ export const Header = () => {
                 <button
                   onClick={() => {
                     if (role !== 'owner') {
+                      haptics.navigate();
                       toggle();
                       navigate('/home');
                       toast('Cambiaste a vista de dueño');
@@ -171,11 +174,13 @@ export const Header = () => {
                     if (role === 'provider') return; // ya esta en modo profesional
                     if (isProvider) {
                       // Ya es provider, solo cambiar vista
+                      haptics.navigate();
                       toggle();
                       navigate('/provider/dashboard');
                       toast('Cambiaste a vista profesional');
                     } else {
                       // No es provider, abrir formulario de registro
+                      haptics.confirm();
                       setBecomeProviderOpen(true);
                     }
                   }}
@@ -192,6 +197,9 @@ export const Header = () => {
               </div>
             )}
             <BecomeProviderDialog open={becomeProviderOpen} onOpenChange={setBecomeProviderOpen} />
+
+            {/* Dark mode toggle — discreto, antes de notificaciones */}
+            <ThemeToggle />
 
             {/* Notifications Popover */}
             <Popover>

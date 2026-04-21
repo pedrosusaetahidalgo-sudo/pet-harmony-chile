@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Heart, CheckCircle, Sparkles } from '@/lib/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { PageHeader } from '@/components/PageHeader';
+import { haptics } from '@/lib/haptics';
 
 /**
  * PawMemberSuccess — callback de Flow.cl cuando el pago B2C se confirma.
@@ -27,6 +28,7 @@ export default function PawMemberSuccess() {
   const queryClient = useQueryClient();
 
   useEffect(() => {
+    haptics.success();
     queryClient.invalidateQueries({ queryKey: ['my-donation-stats'] });
     queryClient.invalidateQueries({ queryKey: ['my-donation-history'] });
     queryClient.invalidateQueries({ queryKey: ['public-donations'] });

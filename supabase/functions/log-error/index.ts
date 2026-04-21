@@ -3,9 +3,27 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { withTelemetry } from '../_shared/telemetry.ts';
 import { getCorsHeaders } from '../_shared/cors.ts';
 
-// Simple in-memory rate limit (per IP, resets on cold start)
-const rateLimits = new Map<string, { count: number; resetAt: number }>();
-const MAX_PER_MINUTE = 10;
+/**
+ * P0-3 — Rate limit persistente (auditoría top-tier 2026-04-20).
+ *
+ * Antes: Map<IP, count> en memoria. Se reseteaba en cada cold start,
+ *        ofrecía protección casi nula ante un flood distribuido.
+ *
+ * Ahora: RPC `check_and_increment_ip_quota(ip, scope, limit, window)`
+ *        (ver migración 20260713000001_log_error_rate_limit.sql).
+ *        Atómica, security definer, persistente.
+ *
+ * Límite: 30 requests/60s por IP para scope `log_error`.
+ *         Suficiente para burst legítimos (ErrorBoundary disparando
+ *         múltiples, pantallas con muchos assets fallando, etc.).
+ *
+ * Fail-open: si la RPC falla (DB caída, rol mal configurado) permitimos
+ *           la request y logueamos el error en consola. Preferible a
+ *           dejar de aceptar errores del cliente, que es justamente lo
+ *           que queremos visibilidad.
+ */
+const MAX_PER_MINUTE = 30;
+const WINDOW_SECONDS = 60;
 
 // Filtro de origen: ruido benigno no se inserta en error_logs. Causa raiz
 // del viejo auto_fix_benign_errors que BORRABA despues de insertar.
@@ -41,23 +59,46 @@ serve(
       return new Response('ok', { headers: corsHeaders });
     }
 
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
     try {
-      // Rate limit by IP
       const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown';
-      const now = Date.now();
-      const limit = rateLimits.get(ip);
 
-      if (limit && limit.resetAt > now && limit.count >= MAX_PER_MINUTE) {
-        return new Response(JSON.stringify({ error: 'Rate limited' }), {
-          status: 429,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-      }
+      // Rate limit persistente via RPC (P0-3).
+      const { data: quotaRows, error: quotaErr } = await supabase.rpc(
+        'check_and_increment_ip_quota',
+        {
+          p_ip: ip,
+          p_scope: 'log_error',
+          p_limit: MAX_PER_MINUTE,
+          p_window_seconds: WINDOW_SECONDS,
+        }
+      );
 
-      if (!limit || limit.resetAt <= now) {
-        rateLimits.set(ip, { count: 1, resetAt: now + 60_000 });
+      if (quotaErr) {
+        // Fail-open: permitimos seguir pero dejamos rastro para Sentry.
+        console.warn('[log-error] rate limit RPC failed, allowing request', quotaErr);
       } else {
-        limit.count++;
+        const row = Array.isArray(quotaRows) ? quotaRows[0] : quotaRows;
+        if (row && row.allowed === false) {
+          return new Response(
+            JSON.stringify({
+              error: 'Rate limited',
+              reset_in_seconds: row.reset_in_seconds ?? WINDOW_SECONDS,
+            }),
+            {
+              status: 429,
+              headers: {
+                ...corsHeaders,
+                'Content-Type': 'application/json',
+                'Retry-After': String(row.reset_in_seconds ?? WINDOW_SECONDS),
+              },
+            }
+          );
+        }
       }
 
       const body = await req.json();
@@ -78,11 +119,6 @@ serve(
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
       }
-
-      const supabase = createClient(
-        Deno.env.get('SUPABASE_URL') ?? '',
-        Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-      );
 
       await supabase.from('error_logs').insert({
         source: source || 'frontend',

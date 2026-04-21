@@ -189,6 +189,25 @@ const Missions = () => {
 
       <div className="container px-4 py-8 max-w-4xl mx-auto animate-fade-in space-y-6">
         <PawLabsBanner description="Completa misiones de cuidado para desbloquear logros. Sistema en mejora continua." />
+
+        {/* Contexto Paw Points — clarifica qué son y qué podrán hacer
+            (auditoría top-tier 2026-04-20, C.4). Disipa confusión
+            reportada por Palo: "veo puntos pero no sé para qué". */}
+        <Card className="border-amber-200/60 bg-gradient-to-br from-amber-50/60 to-yellow-50/40">
+          <CardContent className="p-4 text-sm text-amber-900 space-y-1">
+            <div className="flex items-center gap-2 font-semibold">
+              <Crown className="h-4 w-4 text-amber-600" />
+              ¿Qué son los Paw Points?
+            </div>
+            <p className="leading-relaxed text-amber-900/85">
+              Son reconocimiento por cuidar bien a tus peludos: completar recordatorios, llevar la
+              ficha al día, agregar vacunas, invitar a tu vet. Los acumulás completando misiones.{' '}
+              <span className="font-medium">Pronto</span> se podrán canjear por descuentos con
+              nuestros Paw Partners (tiendas, peluquerías, seguros).
+            </p>
+          </CardContent>
+        </Card>
+
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="shrink-0">

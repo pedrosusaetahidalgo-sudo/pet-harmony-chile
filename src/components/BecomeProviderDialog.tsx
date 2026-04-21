@@ -397,6 +397,8 @@ export function BecomeProviderDialog({ open, onOpenChange }: Props) {
                   value={businessName}
                   onChange={(e) => setBusinessName(e.target.value)}
                   placeholder="Peluquería Canina Las Patitas"
+                  autoComplete="organization"
+                  autoCapitalize="words"
                 />
               </div>
             )}
@@ -474,6 +476,7 @@ export function BecomeProviderDialog({ open, onOpenChange }: Props) {
                 <Label>Años de experiencia</Label>
                 <Input
                   type="number"
+                  inputMode="numeric"
                   min={0}
                   value={experienceYears}
                   onChange={(e) => setExperienceYears(e.target.value)}
@@ -484,6 +487,7 @@ export function BecomeProviderDialog({ open, onOpenChange }: Props) {
                 <Label>Precio desde (CLP)</Label>
                 <Input
                   type="number"
+                  inputMode="numeric"
                   min={0}
                   value={priceFrom}
                   onChange={(e) => setPriceFrom(e.target.value)}

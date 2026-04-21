@@ -304,7 +304,13 @@ export function AppSidebar() {
         collapsible={isMobile ? 'offcanvas' : 'none'}
         className="border-r border-border/40 w-[200px] xl:w-[220px] h-screen sticky top-0"
       >
-        <SidebarHeader className="p-2 pb-1">
+        {/* pt dinámico = safe-area-top + 0.5rem para respetar el notch iOS
+            cuando el sidebar es offcanvas en mobile. En desktop
+            safe-area-top = 0 y se comporta igual que antes. */}
+        <SidebarHeader
+          className="p-2 pb-1"
+          style={{ paddingTop: 'calc(var(--safe-area-top) + 0.5rem)' }}
+        >
           <button
             onClick={() => handleNavigate('/home')}
             className="flex items-center gap-2.5 px-2 py-1.5 w-full hover:opacity-80 transition-opacity cursor-pointer rounded-lg"

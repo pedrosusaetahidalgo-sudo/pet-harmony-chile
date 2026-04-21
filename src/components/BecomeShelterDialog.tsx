@@ -249,6 +249,8 @@ export function BecomeShelterDialog({ open, onOpenChange }: Props) {
                 onChange={(e) => setLegalName(e.target.value)}
                 placeholder="Refugio Huellitas Felices"
                 maxLength={120}
+                autoComplete="organization"
+                autoCapitalize="words"
               />
             </div>
 
@@ -259,6 +261,9 @@ export function BecomeShelterDialog({ open, onOpenChange }: Props) {
                 onChange={(e) => setRut(e.target.value)}
                 placeholder="76.123.456-7"
                 maxLength={12}
+                inputMode="text"
+                autoComplete="off"
+                autoCapitalize="characters"
               />
               <p className="text-xs text-muted-foreground">
                 Si eres ONG o fundacion con RUT, nos ayuda a verificarte mas rapido.
@@ -311,6 +316,8 @@ export function BecomeShelterDialog({ open, onOpenChange }: Props) {
                     value={commune}
                     onChange={(e) => setCommune(e.target.value)}
                     placeholder="Comuna"
+                    autoComplete="address-level2"
+                    autoCapitalize="words"
                   />
                 )}
               </div>
@@ -322,6 +329,7 @@ export function BecomeShelterDialog({ open, onOpenChange }: Props) {
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 placeholder="Av. Siempre Viva 123"
+                autoComplete="street-address"
               />
             </div>
 
@@ -330,6 +338,10 @@ export function BecomeShelterDialog({ open, onOpenChange }: Props) {
                 <Label>Email de contacto</Label>
                 <Input
                   type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  autoCapitalize="off"
+                  spellCheck={false}
                   value={contactEmail}
                   onChange={(e) => setContactEmail(e.target.value)}
                   placeholder={user?.email || 'contacto@refugio.cl'}
@@ -338,6 +350,9 @@ export function BecomeShelterDialog({ open, onOpenChange }: Props) {
               <div className="space-y-1.5">
                 <Label>Telefono</Label>
                 <Input
+                  type="tel"
+                  inputMode="tel"
+                  autoComplete="tel"
                   value={contactPhone}
                   onChange={(e) => setContactPhone(e.target.value)}
                   placeholder="+56 9 1234 5678"
@@ -349,6 +364,11 @@ export function BecomeShelterDialog({ open, onOpenChange }: Props) {
               <div className="space-y-1.5">
                 <Label>Sitio web</Label>
                 <Input
+                  type="url"
+                  inputMode="url"
+                  autoComplete="url"
+                  autoCapitalize="off"
+                  spellCheck={false}
                   value={website}
                   onChange={(e) => setWebsite(e.target.value)}
                   placeholder="https://..."
@@ -360,6 +380,9 @@ export function BecomeShelterDialog({ open, onOpenChange }: Props) {
                   value={instagram}
                   onChange={(e) => setInstagram(e.target.value)}
                   placeholder="@refugio_huellitas"
+                  autoCapitalize="off"
+                  autoCorrect="off"
+                  spellCheck={false}
                 />
               </div>
             </div>
@@ -419,6 +442,7 @@ export function BecomeShelterDialog({ open, onOpenChange }: Props) {
               <Label>Capacidad aproximada (numero de animales)</Label>
               <Input
                 type="number"
+                inputMode="numeric"
                 min={0}
                 value={capacity}
                 onChange={(e) => setCapacity(e.target.value)}

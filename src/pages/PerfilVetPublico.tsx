@@ -30,6 +30,7 @@ import { useDirectoryVetBySlug, useVetReviews, trackProviderView } from '@/hooks
 import { setSeoTags, injectJsonLd, formatCLP } from '@/lib/vetDirectory';
 import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 import { BookingFlow } from '@/components/booking/BookingFlow';
+import { UpgradePlanBanner } from '@/components/provider/dashboard/UpgradePlanBanner';
 
 import { isOpenNow, getTodayHours } from '@/lib/openingHours';
 
@@ -372,6 +373,11 @@ export default function PerfilVetPublico() {
             { label: v.display_name || 'Perfil' },
           ]}
         />
+
+        {/* Upsell banner solo cuando el vet dueño mira su propio perfil público
+            (QW-11 auditoría top-tier 2026-04-20). No afecta a visitantes, y
+            UpgradePlanBanner ya oculta solo si ya está en plan pagado. */}
+        {isOwnProfile && <UpgradePlanBanner />}
 
         {/* Hero */}
         <Card className="p-6 md:p-8">

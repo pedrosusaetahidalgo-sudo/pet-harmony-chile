@@ -240,6 +240,14 @@ const LegacyClinicalRedirect = () => {
   return <Navigate to={`/ficha/${petId}${search}`} replace />;
 };
 
+/** ErrorBoundary con scope por ruta: al cambiar pathname el boundary se
+ *  remonta (gracias a la key) y se resetea el estado de error, así el
+ *  usuario puede navegar para recuperarse sin hacer reload. */
+function RouteScopedErrorBoundary({ children }: { children: ReactNode }) {
+  const { pathname } = useLocation();
+  return <ErrorBoundary key={pathname}>{children}</ErrorBoundary>;
+}
+
 /** /mascota/:petId/timeline → /ficha/:petId?tab=historial (Timeline vive como
  *  tab Historial en la ficha clinica desde el reordenamiento v3). */
 const LegacyPetTimelineRedirect = () => {
@@ -261,7 +269,7 @@ const App = () => (
       <CookieConsentBanner />
       <BrowserRouter>
         <ActiveRoleProvider>
-          <ErrorBoundary>
+          <RouteScopedErrorBoundary>
             <Suspense fallback={<PageLoader />}>
               <Routes>
                 <Route path="/" element={<Index />} />
@@ -1029,7 +1037,7 @@ const App = () => (
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
-          </ErrorBoundary>
+          </RouteScopedErrorBoundary>
         </ActiveRoleProvider>
       </BrowserRouter>
     </TooltipProvider>

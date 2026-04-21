@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { markOnboardingComplete } from '@/hooks/useOnboardingStatus';
 import { toast } from 'sonner';
 import {
   Camera,
@@ -45,6 +47,7 @@ const STEP_LABELS = ['Agrega tu mascota', 'Ficha medica', 'Busca veterinario'];
 const OnboardingDuenoMinimal = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const [step, setStep] = useState(1);
 
@@ -126,14 +129,14 @@ const OnboardingDuenoMinimal = () => {
     }
   };
 
-  const completeOnboarding = () => {
-    localStorage.setItem('pf_onboarding_complete', 'true');
+  const completeOnboarding = async () => {
+    if (user?.id) await markOnboardingComplete(user.id, queryClient);
     toast.success('Bienvenido a Paw Friend');
     navigate('/home');
   };
 
-  const skipAll = () => {
-    localStorage.setItem('pf_onboarding_complete', 'true');
+  const skipAll = async () => {
+    if (user?.id) await markOnboardingComplete(user.id, queryClient);
     toast('Bienvenido a Paw Friend');
     navigate('/home');
   };
@@ -221,6 +224,8 @@ const OnboardingDuenoMinimal = () => {
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 maxLength={50}
+                autoCapitalize="words"
+                autoComplete="off"
                 // eslint-disable-next-line jsx-a11y/no-autofocus -- primer paso del onboarding, foco directo al input es el UX deseado
                 autoFocus
               />
@@ -350,8 +355,8 @@ const OnboardingDuenoMinimal = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => {
-                      localStorage.setItem('pf_onboarding_complete', 'true');
+                    onClick={async () => {
+                      if (user?.id) await markOnboardingComplete(user.id, queryClient);
                       navigate(`/ficha/${createdPetId}`);
                     }}
                     className="text-purple-700 border-purple-300 hover:bg-purple-100"
@@ -438,8 +443,8 @@ const OnboardingDuenoMinimal = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => {
-                    localStorage.setItem('pf_onboarding_complete', 'true');
+                  onClick={async () => {
+                    if (user?.id) await markOnboardingComplete(user.id, queryClient);
                     navigate('/veterinarios');
                   }}
                   className="text-blue-700 border-blue-300 hover:bg-blue-100"

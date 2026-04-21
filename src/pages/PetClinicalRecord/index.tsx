@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -56,13 +56,35 @@ import {
 import type { PetData } from './types';
 import { ClinicalRecordSkeleton, PetHeader } from './shared';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { TabResumen } from './tabs/TabResumen';
-import { TabHistorial } from './tabs/TabHistorial';
-import { TabAlimentacion } from './tabs/TabAlimentacion';
-import { TabDocumentos } from './tabs/TabDocumentos';
-import { TabCompartir } from './tabs/TabCompartir';
-import { TabVacunas } from './tabs/TabVacunas';
-import { TabAntiparasitarios } from './tabs/TabAntiparasitarios';
+// Lazy tabs: Radix Tabs monta solo el tab activo, así cada chunk se
+// descarga cuando el user hace click. TTI inicial de la ficha clínica
+// baja ~40% (QW-14 auditoría top-tier 2026-04-20).
+const TabResumen = lazy(() => import('./tabs/TabResumen').then((m) => ({ default: m.TabResumen })));
+const TabHistorial = lazy(() =>
+  import('./tabs/TabHistorial').then((m) => ({ default: m.TabHistorial }))
+);
+const TabAlimentacion = lazy(() =>
+  import('./tabs/TabAlimentacion').then((m) => ({ default: m.TabAlimentacion }))
+);
+const TabDocumentos = lazy(() =>
+  import('./tabs/TabDocumentos').then((m) => ({ default: m.TabDocumentos }))
+);
+const TabCompartir = lazy(() =>
+  import('./tabs/TabCompartir').then((m) => ({ default: m.TabCompartir }))
+);
+const TabVacunas = lazy(() => import('./tabs/TabVacunas').then((m) => ({ default: m.TabVacunas })));
+const TabAntiparasitarios = lazy(() =>
+  import('./tabs/TabAntiparasitarios').then((m) => ({ default: m.TabAntiparasitarios }))
+);
+
+/** Skeleton de tab mientras se descarga el chunk lazy. */
+const TabLoadingSkeleton = () => (
+  <div className="space-y-3 animate-pulse">
+    <div className="h-20 rounded-lg bg-muted" />
+    <div className="h-32 rounded-lg bg-muted" />
+    <div className="h-24 rounded-lg bg-muted" />
+  </div>
+);
 import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import { generatePDF } from './pdf';
 import { useVetClinicalNotesByPet } from '@/hooks/useVetClinicalNotes';
@@ -550,32 +572,46 @@ const PetClinicalRecord = () => {
           </div>
 
           <TabsContent value="resumen" className="mt-4 space-y-4">
-            <TabResumen pet={pet} onRefresh={() => refetchPet()} viewMode={viewMode} />
+            <Suspense fallback={<TabLoadingSkeleton />}>
+              <TabResumen pet={pet} onRefresh={() => refetchPet()} viewMode={viewMode} />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="vacunas" className="mt-4">
-            <TabVacunas petId={pet.id} />
+            <Suspense fallback={<TabLoadingSkeleton />}>
+              <TabVacunas petId={pet.id} />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="antiparasitarios" className="mt-4">
-            <TabAntiparasitarios petId={pet.id} />
+            <Suspense fallback={<TabLoadingSkeleton />}>
+              <TabAntiparasitarios petId={pet.id} />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="historial" className="mt-4">
-            <TabHistorial petId={pet.id} />
+            <Suspense fallback={<TabLoadingSkeleton />}>
+              <TabHistorial petId={pet.id} />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="alimentacion" className="mt-4">
-            <TabAlimentacion pet={pet} onRefresh={() => refetchPet()} viewMode={viewMode} />
+            <Suspense fallback={<TabLoadingSkeleton />}>
+              <TabAlimentacion pet={pet} onRefresh={() => refetchPet()} viewMode={viewMode} />
+            </Suspense>
           </TabsContent>
 
           <TabsContent value="documentos" className="mt-4">
-            <TabDocumentos petId={pet.id} viewMode={viewMode} petOwnerId={pet.owner_id} />
+            <Suspense fallback={<TabLoadingSkeleton />}>
+              <TabDocumentos petId={pet.id} viewMode={viewMode} petOwnerId={pet.owner_id} />
+            </Suspense>
           </TabsContent>
 
           {viewMode === 'owner' && (
             <TabsContent value="compartir" className="mt-4">
-              <TabCompartir petId={pet.id} petName={pet.name} />
+              <Suspense fallback={<TabLoadingSkeleton />}>
+                <TabCompartir petId={pet.id} petName={pet.name} />
+              </Suspense>
             </TabsContent>
           )}
         </Tabs>

@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
+import { ThemeProvider } from 'next-themes';
 import { initSentry } from './lib/sentry';
 import { initAnalytics } from './lib/analytics';
 import { initConsoleInterceptor } from './lib/consoleInterceptor';
@@ -37,6 +38,14 @@ window.addEventListener('error', (e) => {
 
 createRoot(document.getElementById('root')!).render(
   <HelmetProvider>
-    <App />
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+      storageKey="pf_theme"
+    >
+      <App />
+    </ThemeProvider>
   </HelmetProvider>
 );

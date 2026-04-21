@@ -57,6 +57,7 @@ import { getRarity } from '@/components/PetCardCompact';
 import { RARITY_BORDER_STYLES } from '@/lib/paw-cards';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePendingReviewCount } from '@/hooks/usePendingReviews';
+import { usePublicDonationStats } from '@/hooks/usePublicDonations';
 import { formatDistanceToNowStrict, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useActiveRole } from '@/hooks/useActiveRole';
@@ -203,6 +204,7 @@ export default function Home() {
   const { stats } = useGamification();
   const { upcomingReminders, overdueReminders, completeReminder } = useReminders();
   const pendingReviewCount = usePendingReviewCount();
+  const { data: publicDonationStats } = usePublicDonationStats();
   const [showNamePrompt, setShowNamePrompt] = useState(false);
 
   useEffect(() => {
@@ -433,15 +435,46 @@ export default function Home() {
             )}
           </div>
           <div className="min-w-0">
-            <p className="font-display font-semibold text-base md:text-lg truncate tracking-tight">
-              {getGreeting()},{' '}
-              {profile?.display_name?.split(/\s+/)[0] || user?.email?.split('@')[0] || 'Amigo'}
+            <p className="font-display font-semibold text-base md:text-lg truncate tracking-tight flex items-center gap-1.5">
+              <span className="truncate">
+                {getGreeting()},{' '}
+                {profile?.display_name?.split(/\s+/)[0] || user?.email?.split('@')[0] || 'Amigo'}
+              </span>
+              {/* Badge Paw Member — signal de confianza y reconocimiento
+                  (QW-12 auditoría top-tier 2026-04-20). */}
+              {profile?.is_premium && (
+                <button
+                  type="button"
+                  onClick={() => navigate(LINKS.pawMember())}
+                  className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-pink-100 to-amber-100 border border-pink-200 px-2 py-0.5 text-[10px] font-semibold text-pink-800 hover:scale-105 transition-transform"
+                  title="Eres Paw Member 💛 — ver tu aporte"
+                  aria-label="Eres Paw Member, ver tu aporte"
+                >
+                  💛 Paw Member
+                </button>
+              )}
             </p>
-            {pets.length > 0 && (
-              <p className="text-xs text-muted-foreground">
-                {pets.length} {pets.length === 1 ? 'mascota' : 'mascotas'}
-              </p>
-            )}
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              {pets.length > 0 && (
+                <span>
+                  {pets.length} {pets.length === 1 ? 'mascota' : 'mascotas'}
+                </span>
+              )}
+              {/* Contador público — micro-prueba social, enlazado a /donaciones */}
+              {publicDonationStats && publicDonationStats.donors_total > 0 && (
+                <>
+                  {pets.length > 0 && <span aria-hidden>·</span>}
+                  <button
+                    type="button"
+                    onClick={() => navigate(LINKS.donaciones())}
+                    className="underline decoration-dotted underline-offset-2 hover:text-pink-600 transition-colors"
+                    title="Ver donaciones y transparencia"
+                  >
+                    {publicDonationStats.donors_total.toLocaleString('es-CL')} tutores sosteniendo
+                  </button>
+                </>
+              )}
+            </div>
           </div>
         </div>
         {/* Quick actions inline + PawPoints chip (visible, feedback Palo) */}
@@ -449,9 +482,10 @@ export default function Home() {
           {stats && stats.points > 0 && (
             <button
               type="button"
-              onClick={() => navigate(LINKS.pawGame())}
+              onClick={() => navigate('/misiones')}
               className="flex items-center gap-1 bg-gradient-to-r from-amber-100 to-yellow-100 border border-amber-200 rounded-full px-2.5 py-1 hover:scale-105 transition-transform"
-              title="Ver Paw Points y progreso"
+              title={`${stats.points} Paw Points · los ganas cuidando a tus peludos. Tocá para ver misiones.`}
+              aria-label={`${stats.points} Paw Points ganados. Ver misiones para ganar más.`}
             >
               <Crown className="h-3 w-3 text-amber-600" />
               <span className="text-[11px] font-bold text-amber-800">{stats.points}</span>

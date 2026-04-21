@@ -1,17 +1,11 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  CheckCircle,
-  XCircle,
-  Calendar,
-  ArrowRight,
-  ArrowLeft,
-  RefreshCw,
-} from "@/lib/icons";
-import { AppLayout } from "@/components/AppLayout";
-import { LINKS } from "@/lib/links";
+import { useEffect, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { CheckCircle, XCircle, Calendar, ArrowRight, ArrowLeft, RefreshCw } from '@/lib/icons';
+import { AppLayout } from '@/components/AppLayout';
+import { LINKS } from '@/lib/links';
+import { haptics } from '@/lib/haptics';
 
 /**
  * Pagina unificada de resultado de pago.
@@ -25,21 +19,24 @@ import { LINKS } from "@/lib/links";
  * Webpay esta deprecado (Premium B2C y B2B usan Flow). El edge function
  * webpay-confirm fue eliminado en commit chore.
  */
-type PaymentStatus = "success" | "failed";
+type PaymentStatus = 'success' | 'failed';
 
 const PaymentResult = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const initialStatus = (searchParams.get("status") as PaymentStatus | null) ?? "failed";
+  const initialStatus = (searchParams.get('status') as PaymentStatus | null) ?? 'failed';
   const [status] = useState<PaymentStatus>(initialStatus);
-  const orderNumber = searchParams.get("order");
+  const orderNumber = searchParams.get('order');
 
   useEffect(() => {
     // Sin lifecycle de procesamiento: Flow siempre vuelve con ?status=...
-  }, []);
+    // Haptic feedback coherente con el resultado (QW-5 auditoría top-tier).
+    if (initialStatus === 'success') haptics.success();
+    else haptics.error();
+  }, [initialStatus]);
 
   // === Render por estado ===
-  if (status === "success") {
+  if (status === 'success') {
     return (
       <AppLayout>
         <div className="container max-w-lg mx-auto px-4 py-16">

@@ -455,6 +455,8 @@ function StepAccount({
           value={form.display_name}
           onChange={(e) => update('display_name', e.target.value)}
           placeholder="Dr. Juan Pérez"
+          autoComplete="name"
+          autoCapitalize="words"
         />
         {fieldErrors.display_name && (
           <p className="text-sm text-destructive mt-1">{fieldErrors.display_name}</p>
@@ -466,6 +468,10 @@ function StepAccount({
         <Input
           id="email"
           type="email"
+          inputMode="email"
+          autoComplete="email"
+          autoCapitalize="off"
+          spellCheck={false}
           value={form.email}
           onChange={(e) => update('email', e.target.value)}
           placeholder="tu@email.cl"
@@ -478,6 +484,7 @@ function StepAccount({
         <Input
           id="password"
           type="password"
+          autoComplete="new-password"
           value={form.password}
           onChange={(e) => update('password', e.target.value)}
           placeholder="Mínimo 6 caracteres"
@@ -491,6 +498,9 @@ function StepAccount({
         <Label htmlFor="phone">Teléfono de contacto</Label>
         <Input
           id="phone"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
           value={form.phone}
           onChange={(e) => update('phone', e.target.value)}
           placeholder="+56 9 1234 5678"

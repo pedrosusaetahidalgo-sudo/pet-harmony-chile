@@ -7,6 +7,7 @@ import { Check, Sparkles, Stethoscope } from '@/lib/icons';
 import { useQueryClient } from '@tanstack/react-query';
 import { useProviderPlan } from '@/hooks/useProviderPlan';
 import { PageHeader } from '@/components/PageHeader';
+import { haptics } from '@/lib/haptics';
 
 /**
  * ProviderUpgradeSuccess — callback Flow.cl al confirmar pago B2B vet.
@@ -20,6 +21,7 @@ export default function ProviderUpgradeSuccess() {
   const { data: planCtx } = useProviderPlan();
 
   useEffect(() => {
+    haptics.success();
     queryClient.invalidateQueries({ queryKey: ['provider-plan-context'] });
     queryClient.invalidateQueries({ queryKey: ['provider-plan-banner'] });
     queryClient.invalidateQueries({ queryKey: ['provider-current-plan'] });

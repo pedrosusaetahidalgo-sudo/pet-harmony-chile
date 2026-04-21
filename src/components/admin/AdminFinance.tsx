@@ -39,6 +39,7 @@ import {
 import { format, subDays, subMonths, startOfMonth } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { track, EVENTS } from '@/lib/analytics';
+import { PaymentEventsFailedWidget } from '@/components/admin/PaymentEventsFailedWidget';
 
 const STATUS_COLORS: Record<string, string> = {
   active: 'bg-green-500/20 text-green-400 border-green-500/30',
@@ -362,6 +363,10 @@ export default function AdminFinance() {
 
   return (
     <div className="space-y-6">
+      {/* Observabilidad P0-2: webhook Flow con outcome failed/skipped en 7d.
+          Aparece solo si hay problemas; discreto en modo sano. */}
+      <PaymentEventsFailedWidget />
+
       {/* Modelo de monetizacion hibrido — recordatorio al admin */}
       <Card className="border-violet-500/30 bg-gradient-to-br from-violet-950/60 to-fuchsia-950/40">
         <CardContent className="p-4 text-xs text-slate-200 space-y-2">

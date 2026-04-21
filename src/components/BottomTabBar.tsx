@@ -15,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { useReminders } from '@/hooks/useReminders';
 import { useActiveRole } from '@/hooks/useActiveRole';
 import { isFeatureEnabled } from '@/lib/featureFlags';
+import { haptics } from '@/lib/haptics';
 
 /**
  * Bottom tab bar nativa para mobile (pivot médico).
@@ -160,7 +161,10 @@ export function BottomTabBar() {
           return (
             <button
               key={tab.label}
-              onClick={() => navigate(tab.href)}
+              onClick={() => {
+                if (!active) haptics.navigate();
+                navigate(tab.href);
+              }}
               className={cn(
                 'flex flex-col items-center justify-center gap-0.5 flex-1 h-full',
                 'touch-manipulation transition-colors active:bg-muted/50',
