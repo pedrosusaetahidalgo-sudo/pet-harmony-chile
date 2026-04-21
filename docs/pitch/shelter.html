@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend × Paw Shelter — Para refugios y hogares de adopción</title>
+  <meta name="description" content="Paw Shelter: cuenta gratis para siempre. Carga masiva de mascotas, ficha clínica que viaja con la adopción, directorio público para que los adoptantes te encuentren. Sin costo, siempre." />
+  <meta name="theme-color" content="#b45309" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://pawfriend.cl/pitch/shelter.html" />
+  <link rel="icon" type="image/svg+xml" href="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg" />
+
+  <!-- Open Graph (WhatsApp, LinkedIn, Facebook) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Paw Friend" />
+  <meta property="og:url" content="https://pawfriend.cl/pitch/shelter.html" />
+  <meta property="og:title" content="Paw Shelter — Cuenta gratis para refugios y hogares de adopción" />
+  <meta property="og:description" content="Carga masiva de mascotas, ficha clínica que viaja con el adoptante, directorio público con SEO. Cuenta gratis para siempre." />
+  <meta property="og:image" content="https://pawfriend.cl/paw-friend-assets-v2/social/og_image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="es_CL" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Paw Shelter — Cuenta gratis para refugios" />
+  <meta name="twitter:description" content="Bulk import, transferencia con ficha clínica completa, directorio público. Sin costo, siempre." />
+  <meta name="twitter:image" content="https://pawfriend.cl/paw-friend-assets-v2/social/og_image.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/pitch/assets/brand.css" />
+  <style>
+    /* ── Tokens (Paw Shelter brand: amber + rose, en eco al squircle v2) ── */
+    :root {
+      --brand-50:#faf5ff; --brand-100:#f3e8ff; --brand-200:#e9d5ff; --brand-300:#d8b4fe;
+      --brand-400:#c084fc; --brand-500:#a855f7; --brand-600:#9333ea; --brand-700:#7e22ce;
+      --brand-800:#6b21a8; --brand-900:#581c87;
+      --shelter-amber:#f59e0b; --shelter-orange:#ea580c; --shelter-rose:#f43f5e;
+      --shelter-deep:#b45309; --shelter-darker:#92400e;
+      --gold:#eab308; --ink:#1a102b; --ink-soft:#4b3b66;
+      --paper:#fffbf5; --surface:#ffffff; --border:#fde68a;
+      --hero-grad: linear-gradient(135deg,#b45309 0%,#f59e0b 35%,#f43f5e 70%,#9333ea 100%);
+      --deep-grad: linear-gradient(135deg,#7c2d12 0%,#b45309 50%,#9333ea 100%);
+      --shelter-grad: linear-gradient(135deg,#f59e0b 0%,#f43f5e 100%);
+      --care-grad: linear-gradient(135deg,#f59e0b 0%,#ea580c 50%,#f43f5e 100%);
+      --card-shadow: 0 10px 40px -10px rgba(245,158,11,.18);
+      --card-shadow-hover: 0 24px 60px -12px rgba(245,158,11,.35);
+      --radius-xl:24px; --radius-lg:18px; --radius-md:12px;
+      --slide-py:56px; --slide-px:72px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+    @media(max-width:900px),(max-height:720px){html{scroll-snap-type:none}}
+    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.55;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+
+    .progress{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(245,158,11,.08);z-index:200}
+    .progress-bar{height:100%;background:var(--care-grad);width:0%;transition:width .2s ease-out}
+
+    .topbar{position:fixed;top:3px;left:0;right:0;height:52px;padding:0 32px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(253,230,138,.7);z-index:150;font-size:13px}
+    .topbar-brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ink)}
+    .topbar-brand img{height:30px;width:auto;display:block}
+    .topbar-meta{display:flex;gap:18px;align-items:center;color:var(--ink-soft);font-weight:500}
+    .topbar-meta .chip{padding:4px 10px;background:#fef3c7;border:1px solid var(--border);border-radius:999px;font-size:12px}
+    .topbar-counter{font-variant-numeric:tabular-nums;font-weight:700;color:var(--shelter-deep)}
+    .topbar-tour{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:700;color:#7e22ce;background:linear-gradient(135deg,#fef3c7,#fde68a);border:1px solid rgba(234,179,8,.35);text-decoration:none;transition:transform .15s,box-shadow .15s}
+    .topbar-tour:hover{transform:translateY(-1px);box-shadow:0 8px 20px -6px rgba(234,179,8,.5)}
+    @media(max-width:900px){.topbar-meta .chip{display:none}.topbar{padding:0 16px}.topbar-tour{padding:4px 9px;font-size:11px}}
+
+    .sidenav{position:fixed;top:50%;right:20px;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:150}
+    .dot{width:10px;height:10px;border-radius:999px;background:rgba(245,158,11,.25);border:2px solid transparent;cursor:pointer;transition:all .2s;position:relative}
+    .dot:hover{background:var(--shelter-amber);transform:scale(1.2)}
+    .dot.active{background:var(--shelter-amber);transform:scale(1.4);box-shadow:0 0 0 4px rgba(245,158,11,.18)}
+    .dot .label{position:absolute;right:22px;top:50%;transform:translateY(-50%);background:var(--ink);color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
+    .dot:hover .label{opacity:1}
+    @media(max-width:900px){.sidenav{display:none}}
+
+    .kbhint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(26,16,43,.85);color:rgba(255,255,255,.9);padding:8px 16px;border-radius:999px;font-size:12px;font-weight:500;z-index:150;backdrop-filter:blur(10px);display:flex;gap:16px;align-items:center;transition:opacity .4s}
+    .kbhint kbd{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:4px;padding:1px 6px;font-size:11px;font-family:inherit;font-weight:600}
+    .kbhint.hide{opacity:0;pointer-events:none}
+    @media(max-width:700px){.kbhint{display:none}}
+
+    .slide{min-height:100vh;min-height:100dvh;padding:var(--slide-py) var(--slide-px);padding-top:calc(var(--slide-py) + 55px);padding-bottom:calc(var(--slide-py) + 24px);display:flex;flex-direction:column;justify-content:center;scroll-snap-align:start;scroll-snap-stop:normal;position:relative;overflow:visible}
+    @media(max-height:820px){.slide{justify-content:flex-start;min-height:auto;padding-top:calc(var(--slide-py) + 72px)}}
+    .slide-num{position:absolute;top:70px;right:32px;font-size:12px;font-weight:700;color:var(--ink-soft);letter-spacing:.12em;opacity:.6;font-variant-numeric:tabular-nums}
+    .slide.dark .slide-num{color:rgba(255,255,255,.6)}
+    .container{max-width:1160px;margin:0 auto;width:100%}
+    .slide.dark{background:var(--deep-grad);color:#fff}
+    .slide.dark h1,.slide.dark h2,.slide.dark h3{color:#fff}
+    .slide.dark p{color:rgba(255,255,255,.88)}
+    .slide.grad{background:var(--hero-grad);color:#fff}
+    .slide.grad h1,.slide.grad h2,.slide.grad h3{color:#fff}
+    .slide.care{background:var(--care-grad);color:#fff}
+    .slide.care h1,.slide.care h2,.slide.care h3{color:#fff}
+    .slide.soft{background:linear-gradient(180deg,#fffbf5 0%,#fff 60%,#fef3c7 100%)}
+    .blob{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;opacity:.35;z-index:0}
+    .blob-1{top:-120px;right:-100px;width:420px;height:420px;background:var(--shelter-amber)}
+    .blob-2{bottom:-120px;left:-80px;width:360px;height:360px;background:var(--shelter-rose);opacity:.25}
+    .slide.dark .blob-1{background:var(--shelter-amber);opacity:.45}
+    .slide.dark .blob-2{background:var(--shelter-rose);opacity:.25}
+    .slide>.container{position:relative;z-index:1}
+
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--shelter-deep);padding:6px 14px;background:#fef3c7;border-radius:999px;margin-bottom:18px}
+    .slide.dark .eyebrow,.slide.grad .eyebrow,.slide.care .eyebrow{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25)}
+    h1{font-size:clamp(42px,6.5vw,88px);font-weight:800;line-height:1;letter-spacing:-.035em}
+    h2{font-size:clamp(32px,4.2vw,52px);font-weight:800;line-height:1.05;letter-spacing:-.025em;margin-bottom:16px}
+    h3{font-size:20px;font-weight:700;line-height:1.3;color:var(--ink);margin-bottom:8px}
+    .lead{font-size:clamp(17px,1.8vw,22px);color:var(--ink-soft);line-height:1.5;max-width:820px;margin-bottom:32px}
+    .slide.dark .lead,.slide.grad .lead,.slide.care .lead{color:rgba(255,255,255,.92)}
+    p{font-size:16px;color:var(--ink-soft)}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:28px}
+    .grid-2{grid-template-columns:1fr 1fr;gap:24px}
+    .grid-3{grid-template-columns:repeat(3,1fr);gap:18px}
+    .grid-4{grid-template-columns:repeat(4,1fr);gap:16px}
+    @media(max-width:900px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+    @media(max-width:1100px) and (min-width:901px){.grid-4{grid-template-columns:repeat(2,1fr)}}
+
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px 22px;box-shadow:var(--card-shadow);transition:transform .2s,box-shadow .2s;position:relative}
+    .card:hover{transform:translateY(-3px);box-shadow:var(--card-shadow-hover)}
+    .card .ico{width:52px;height:52px;border-radius:14px;background:transparent;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;overflow:hidden;filter:drop-shadow(0 6px 14px rgba(245,158,11,.22))}
+    .card .ico img{width:100%;height:100%;object-fit:contain;display:block}
+    .card p{font-size:14.5px;line-height:1.5}
+    .slide.dark .card,.slide.care .card,.slide.grad .card{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);backdrop-filter:blur(10px)}
+    .slide.dark .card h3,.slide.care .card h3,.slide.grad .card h3{color:#fff}
+    .slide.dark .card p,.slide.care .card p,.slide.grad .card p{color:rgba(255,255,255,.88)}
+    .slide.dark .card .ico,.slide.care .card .ico,.slide.grad .card .ico{filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))}
+
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:24px}
+    .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:22px 16px;text-align:center;box-shadow:var(--card-shadow)}
+    .stat-value{font-size:clamp(28px,3.5vw,40px);font-weight:800;background:var(--shelter-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1;font-variant-numeric:tabular-nums}
+    .stat-label{font-size:13px;color:var(--ink-soft);margin-top:8px;font-weight:500;line-height:1.3}
+    .slide.dark .stat,.slide.care .stat,.slide.grad .stat{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
+    .slide.dark .stat-label,.slide.care .stat-label,.slide.grad .stat-label{color:rgba(255,255,255,.78)}
+
+    .bullets{list-style:none;padding:0;margin-top:16px}
+    .bullets li{padding:8px 0 8px 30px;position:relative;font-size:15px;color:var(--ink);border-bottom:1px solid var(--border);line-height:1.5}
+    .bullets li:last-child{border-bottom:none}
+    .bullets li::before{content:"♥";position:absolute;left:0;top:8px;color:var(--shelter-rose);font-weight:800;width:22px;height:20px;background:#fee2e2;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px}
+    .slide.dark .bullets li,.slide.care .bullets li,.slide.grad .bullets li{color:rgba(255,255,255,.92);border-bottom-color:rgba(255,255,255,.12)}
+    .slide.dark .bullets li::before,.slide.care .bullets li::before,.slide.grad .bullets li::before{background:rgba(255,255,255,.18);color:#fff}
+
+    .quote{background:var(--surface);border-left:4px solid var(--shelter-amber);border-radius:10px;padding:18px 22px;margin-top:14px;box-shadow:var(--card-shadow)}
+    .quote p{font-size:16px;font-style:italic;color:var(--ink);margin-bottom:6px}
+    .quote cite{font-size:12px;color:var(--ink-soft);font-style:normal;font-weight:600}
+
+    .tbl-wrap{margin-top:24px;border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--card-shadow);background:var(--surface)}
+    table{width:100%;border-collapse:collapse;font-size:14.5px}
+    th,td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border)}
+    th{background:#fef3c7;color:#92400e;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:#fffbeb}
+    td.strong{font-weight:700;color:#92400e}
+    td.amber{color:var(--shelter-deep);font-weight:700}
+
+    /* Cover */
+    .cover{text-align:center;align-items:center}
+    .cover-logo{margin-bottom:32px;filter:drop-shadow(0 20px 60px rgba(245,158,11,.4));animation:float 6s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .cover-logo img{width:auto;height:auto;max-width:min(560px,85vw);max-height:260px;display:block}
+    .cover h1{font-family:'Fredoka',sans-serif;font-weight:600;color:#fff;margin-bottom:8px;text-shadow:0 2px 30px rgba(0,0,0,.15)}
+    .cover .tagline{font-size:clamp(19px,2.4vw,28px);font-weight:500;color:#fff;max-width:760px;margin:20px auto 12px;opacity:.98;line-height:1.35}
+    .cover .subtag{font-size:15px;color:rgba(255,255,255,.85);font-style:italic;margin-bottom:36px}
+    .cover-meta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+    .cover-meta .chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);color:#fff;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:600;backdrop-filter:blur(10px)}
+    .cover-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.7);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;animation:bounce 2s infinite}
+    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+    .spotlight{margin-top:30px;padding:22px 26px;background:linear-gradient(135deg,#fef3c7 0%,#fee2e2 100%);border-left:4px solid var(--shelter-amber);border-radius:14px}
+    .spotlight strong{display:block;font-size:18px;color:var(--shelter-deep);margin-bottom:6px}
+    .spotlight p{font-size:14.5px;color:var(--ink-soft)}
+
+    /* Transferencia visual: 2 columnas con arrow */
+    .barter-vis{display:grid;grid-template-columns:1fr 80px 1fr;gap:0;align-items:center;margin-top:32px}
+    @media(max-width:800px){.barter-vis{grid-template-columns:1fr;gap:18px}.barter-arrow{transform:rotate(90deg);justify-self:center}}
+    .barter-side{padding:24px;background:rgba(255,255,255,.12);border-radius:var(--radius-lg);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(10px)}
+    .barter-side h3{color:#fff;font-size:18px;margin-bottom:12px}
+    .barter-side ul{list-style:none;padding:0;margin:0}
+    .barter-side ul li{padding:6px 0;font-size:14px;color:rgba(255,255,255,.92);position:relative;padding-left:18px}
+    .barter-side ul li::before{content:"•";position:absolute;left:0;color:#fff;font-weight:800}
+    .barter-arrow{justify-self:center;font-size:48px;color:#fff;font-weight:300}
+
+    /* Step row */
+    .step-row{display:flex;gap:24px;align-items:start;padding:18px;border-radius:var(--radius-lg);background:var(--surface);box-shadow:var(--card-shadow);margin-bottom:14px}
+    .step-row .step-n{flex:none;width:48px;height:48px;border-radius:50%;background:var(--shelter-grad);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px}
+    .step-row .step-body h3{margin-bottom:4px}
+    .step-row .step-body p{font-size:15px}
+
+    /* Founder sig */
+    .founder-sig{display:inline-flex;align-items:center;gap:14px;margin-top:32px;padding:16px 20px;background:rgba(255,255,255,.12);border-radius:14px;backdrop-filter:blur(10px)}
+    .founder-sig .avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#f59e0b 0%,#f43f5e 100%);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:22px;flex:none}
+    .founder-sig .info{display:flex;flex-direction:column;gap:2px;text-align:left}
+    .founder-sig .name{font-size:15px;font-weight:700;color:#fff}
+    .founder-sig .role{font-size:12px;color:rgba(255,255,255,.78)}
+
+    .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s,box-shadow .15s;border:none;cursor:pointer}
+    .btn-primary{background:#fff;color:var(--shelter-deep);box-shadow:0 10px 28px -8px rgba(255,255,255,.55)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 40px -10px rgba(255,255,255,.7)}
+    .btn-ghost{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.3)}
+    .btn-ghost:hover{background:rgba(255,255,255,.24)}
+
+    /* Tipos de refugio cards (paralelo a verticals de Partners) */
+    .verticals{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:24px}
+    .vertical{padding:18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--card-shadow);text-align:center}
+    .vertical-emoji{font-size:32px;margin-bottom:8px;display:block}
+    .vertical-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
+    .vertical-eg{font-size:12px;color:var(--ink-soft);line-height:1.4}
+
+    @media print{
+      .topbar,.sidenav,.kbhint,.progress{display:none}
+      .slide{min-height:auto;page-break-after:always;scroll-snap-align:none}
+    }
+
+    /* Reveal + FAQ */
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease-out,transform .7s cubic-bezier(.2,.8,.2,1)}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
+    .stat{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+    .stat.visible{opacity:1;transform:translateY(0);animation:statPop .6s ease-out}
+    @keyframes statPop{0%{transform:scale(.94)}60%{transform:scale(1.03)}100%{transform:scale(1)}}
+    .faq-card{cursor:pointer;user-select:none;transition:transform .2s,box-shadow .2s}
+    .faq-card h3{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .faq-card h3::after{content:"+";flex:none;width:28px;height:28px;border-radius:50%;background:#fef3c7;color:var(--shelter-deep);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;transition:background .2s,color .2s,transform .2s}
+    .faq-card[aria-expanded="true"] h3::after{content:"−";background:var(--shelter-amber);color:#fff;transform:rotate(180deg)}
+    .faq-card[aria-expanded="false"] p{max-height:0;opacity:0;overflow:hidden;margin:0;transition:max-height .3s,opacity .2s,margin .2s}
+    .faq-card[aria-expanded="true"] p{max-height:280px;opacity:1;margin-top:10px;transition:max-height .4s,opacity .3s .1s,margin .3s}
+    .faq-card:focus-visible{outline:2px solid var(--shelter-amber);outline-offset:2px}
+
+    @media (prefers-reduced-motion: reduce){
+      .reveal,.reveal.visible,.stat,.stat.visible{opacity:1;transform:none;transition:none;animation:none}
+      .faq-card[aria-expanded="false"] p{max-height:none;opacity:1;margin-top:10px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+<header class="topbar">
+  <div class="topbar-brand">
+    <img src="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg" alt="Paw Friend" />
+    <span>Paw Friend × Paw Shelter</span>
+  </div>
+  <div class="topbar-meta">
+    <a class="topbar-tour" href="recorrido.html">★ Recorrido general</a>
+    <span class="chip">Cuenta gratis siempre</span>
+    <span class="topbar-counter"><span id="curSlide">1</span>/9</span>
+  </div>
+</header>
+
+<nav class="sidenav" aria-label="Slides">
+  <a class="dot active" href="#s1" data-slide="1"><span class="label">Portada</span></a>
+  <a class="dot" href="#s2" data-slide="2"><span class="label">Quiénes somos</span></a>
+  <a class="dot" href="#s3" data-slide="3"><span class="label">La causa</span></a>
+  <a class="dot" href="#s4" data-slide="4"><span class="label">Para qué refugios</span></a>
+  <a class="dot" href="#s5" data-slide="5"><span class="label">Qué te damos</span></a>
+  <a class="dot" href="#s6" data-slide="6"><span class="label">Cómo funciona</span></a>
+  <a class="dot" href="#s7" data-slide="7"><span class="label">Activación</span></a>
+  <a class="dot" href="#s8" data-slide="8"><span class="label">FAQ</span></a>
+  <a class="dot" href="#s9" data-slide="9"><span class="label">Súmate</span></a>
+</nav>
+
+<div class="kbhint" id="kbhint">
+  <span><kbd>↓</kbd> <kbd>↑</kbd> navegar</span>
+  <span><kbd>Esc</kbd> ocultar</span>
+</div>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 1 · COVER                                                 -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide grad cover" id="s1">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="container">
+    <div class="cover-logo"><img src="/paw-friend-assets-v2/paw_shelter_full.svg" alt="Paw Shelter" /></div>
+    <h1>Paw Shelter</h1>
+    <p class="tagline">Cuando el peludo se va a su nueva casa,<br/>su ficha clínica se va con él.</p>
+    <p class="subtag">Cuenta gratis para siempre. Carga masiva, transferencia con un link, directorio público con SEO.</p>
+    <div class="cover-meta">
+      <span class="chip">Sin costo</span>
+      <span class="chip">Bulk import CSV/Excel</span>
+      <span class="chip">Para refugios y hogares</span>
+    </div>
+  </div>
+  <div class="cover-scroll">↓ Desliza</div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 2 · QUIÉNES SOMOS                                        -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide" id="s2">
+  <span class="slide-num">02 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Quiénes somos</span>
+    <h2>Paw Friend, hecho en Chile.</h2>
+    <p class="lead">La app de salud y vida de mascotas chilenas. Ficha clínica digital + directorio de vets verificados + comunidad pet lover. 100% gratis para los dueños. Y para los refugios, también gratis. Siempre.</p>
+
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/14_clinical_record.svg" alt=""/></div>
+        <h3>Ficha clínica + PDF</h3>
+        <p>Vacunas, alergias, microchip, antiparasitarios, esterilización. Todo lo que un adoptante necesita saber.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/06_pet_house.svg" alt=""/></div>
+        <h3>Directorio público</h3>
+        <p>Tu refugio aparece en /refugios-hogares con perfil propio, mascotas en adopción, ubicación y contacto.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/04_heart_paw.svg" alt=""/></div>
+        <h3>Comunidad activa</h3>
+        <p>Donantes de sangre, adopción responsable, recordatorios. La gente que llega a Paw Friend ya quiere ayudar.</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-value">$0</div><div class="stat-label">Cuenta refugio<br/>gratis siempre</div></div>
+      <div class="stat"><div class="stat-value">CSV</div><div class="stat-label">Bulk import<br/>de mascotas</div></div>
+      <div class="stat"><div class="stat-value">SEO</div><div class="stat-label">Perfil público<br/>indexable</div></div>
+      <div class="stat"><div class="stat-value">Vivo</div><div class="stat-label">pawfriend.cl<br/>en producción</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 3 · LA CAUSA                                              -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide care" id="s3">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <span class="slide-num">03 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Por qué existimos para ti</span>
+    <h2>El problema real:<br/>la ficha se pierde en planillas.</h2>
+    <p class="lead">Los refugios chilenos cargan con el peso administrativo de cientos de mascotas: vacunas, esterilizaciones, antiparasitarios, registros visuales. Cuando llega el adoptante, recibe una hoja impresa o un Excel desordenado. La trazabilidad se rompe ahí.</p>
+
+    <div class="barter-vis">
+      <div class="barter-side">
+        <h3>📋 Hoy en muchos refugios</h3>
+        <ul>
+          <li>Planilla Excel compartida con 5 versiones distintas</li>
+          <li>Ficha en papel que el adoptante puede perder</li>
+          <li>Vacunas anotadas en cuaderno o en el carnet físico</li>
+          <li>Sin perfil público — adoptantes llegan por boca a boca</li>
+          <li>Cero seguimiento post-adopción</li>
+        </ul>
+      </div>
+      <div class="barter-arrow">→</div>
+      <div class="barter-side">
+        <h3>🐾 Con Paw Shelter</h3>
+        <ul>
+          <li>Mascotas cargadas con un Excel/CSV en 5 minutos</li>
+          <li>Ficha digital permanente que viaja con el adoptante</li>
+          <li>Directorio público con SEO para que te encuentren</li>
+          <li>Transferencia con un link (sin perder el historial)</li>
+          <li>El nuevo dueño usa la misma app para mantener la ficha</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="spotlight" style="background:rgba(255,255,255,.18);border-left-color:#fff">
+      <strong style="color:#fff">La ficha es de la mascota, no de quien la cuida.</strong>
+      <p style="color:rgba(255,255,255,.9)">Cuando una mascota cambia de manos, su salud no debería empezar de cero. Paw Shelter resuelve la continuidad clínica entre el refugio y la familia que adopta.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 4 · PARA QUÉ REFUGIOS                                    -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide soft" id="s4">
+  <span class="slide-num">04 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Quiénes encajan</span>
+    <h2>Para qué refugios<br/>fue diseñado.</h2>
+    <p class="lead">Cualquier persona u organización que cuide mascotas en tránsito hacia adopción responsable. Sin distinción entre formal e informal: si entregas mascotas a familias, encajas.</p>
+
+    <div class="verticals">
+      <div class="vertical">
+        <span class="vertical-emoji">🏠</span>
+        <div class="vertical-title">Refugios formales</div>
+        <div class="vertical-eg">Fundaciones con personalidad jurídica y voluntariado activo</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">💛</span>
+        <div class="vertical-title">Hogares de tránsito</div>
+        <div class="vertical-eg">Personas que reciben temporalmente mascotas hasta su adopción</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🐕</span>
+        <div class="vertical-title">Rescatistas independientes</div>
+        <div class="vertical-eg">Voluntarios que rescatan, esterilizan y dan en adopción por cuenta propia</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🏥</span>
+        <div class="vertical-title">Programas municipales</div>
+        <div class="vertical-eg">Departamentos de tenencia responsable que coordinan adopciones</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🐈</span>
+        <div class="vertical-title">Colonias felinas</div>
+        <div class="vertical-eg">Rescatistas de gatos comunitarios con flujo regular de adopción</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🚨</span>
+        <div class="vertical-title">Rescate post-emergencia</div>
+        <div class="vertical-eg">Equipos que coordinan rescate tras incendios, inundaciones, desastres</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🩺</span>
+        <div class="vertical-title">Clínicas con programa social</div>
+        <div class="vertical-eg">Veterinarias que esterilizan y dan en adopción mascotas abandonadas</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🌾</span>
+        <div class="vertical-title">Refugios rurales</div>
+        <div class="vertical-eg">Sectores rurales con grandes lotes de animales rescatados</div>
+      </div>
+    </div>
+
+    <div class="spotlight">
+      <strong>No exigimos personalidad jurídica.</strong>
+      <p>Si tu trabajo es rescatar, esterilizar y entregar mascotas a familias responsables — bienvenido. Validamos por evidencia (RRSS activas, fotos del refugio, contacto verificable), no por papeleo.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 5 · QUÉ TE DAMOS                                          -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide" id="s5">
+  <span class="slide-num">05 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Tus herramientas concretas</span>
+    <h2>Qué te damos por sumarte.</h2>
+    <p class="lead">Todo lo que necesitas para gestionar mascotas en tránsito y entregarlas con su ficha completa al adoptante. Sin costo, sin límites artificiales.</p>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/19_mobile_app.svg" alt=""/></div>
+        <h3>Bulk import CSV/Excel</h3>
+        <p>Sube cientos de mascotas con una planilla. Mapea columnas (nombre, raza, edad, sexo, esterilizado, vacunas, foto URL) y listo.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/14_clinical_record.svg" alt=""/></div>
+        <h3>Ficha clínica completa</h3>
+        <p>Vacunas con lote, antiparasitarios con próxima dosis, esterilización, microchip, alergias. Todo el historial digitalizado y portable.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/22_search.svg" alt=""/></div>
+        <h3>Perfil público con SEO</h3>
+        <p>Tu refugio en <code>/refugios/tu-slug</code>: descripción, contacto, mascotas en adopción, fotos. Indexable en Google para que te encuentren orgánicamente.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/24_partnership.svg" alt=""/></div>
+        <h3>Transferencia al adoptante</h3>
+        <p>Cuando alguien adopta, copias un link, lo mandas por WhatsApp y la familia recibe la mascota con la ficha completa al reclamarla.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/06_pet_house.svg" alt=""/></div>
+        <h3>Directorio en /refugios-hogares</h3>
+        <p>Aparición pública con filtros por comuna y especie. Adoptantes responsables descubren tu refugio antes de bajar la app.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/04_heart_paw.svg" alt=""/></div>
+        <h3>Donaciones dirigidas (próximo)</h3>
+        <p>En cuanto activemos donaciones a refugios específicos (pendiente migración SpA), tu organización podrá recibir aportes vía Flow con trazabilidad.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 6 · CÓMO FUNCIONA                                         -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide soft" id="s6">
+  <span class="slide-num">06 / 09</span>
+  <div class="container">
+    <span class="eyebrow">El flujo completo</span>
+    <h2>Cómo funciona<br/>de punta a punta.</h2>
+    <p class="lead">De la planilla Excel desordenada a la ficha digital que viaja con la mascota.</p>
+
+    <div class="step-row">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <h3>Cargas tus mascotas (1 vez)</h3>
+        <p>Subes un CSV/Excel con todos los animales en tu refugio. Nombre, raza, edad, sexo, esterilizado, vacunas, foto. Demora minutos para 100+ mascotas.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <h3>Mantienes la ficha al día</h3>
+        <p>Cada vez que vacunas, desparasitas o esterilizas, actualizas la ficha. La info queda timestamped y firmada por quien la cargó.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <h3>Cuando hay adoptante, generas el link</h3>
+        <p>En <code>/shelter/transfer/:petId</code> ingresas el email del adoptante. Te genera un link único + WhatsApp pre-llenado.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-n">4</div>
+      <div class="step-body">
+        <h3>El adoptante abre el link y reclama</h3>
+        <p>Al hacer click se crea su cuenta (o usa la existente) y la mascota queda asociada a él/ella con la ficha clínica completa. La continuidad clínica está intacta.</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-value">5'</div><div class="stat-label">Carga inicial<br/>100 mascotas</div></div>
+      <div class="stat"><div class="stat-value">1 link</div><div class="stat-label">Para transferir<br/>al adoptante</div></div>
+      <div class="stat"><div class="stat-value">100%</div><div class="stat-label">Ficha clínica<br/>preservada</div></div>
+      <div class="stat"><div class="stat-value">$0</div><div class="stat-label">Costo total<br/>siempre</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 7 · ACTIVACIÓN                                           -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide" id="s7">
+  <span class="slide-num">07 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Cómo te sumas</span>
+    <h2>Activación en menos de 1 día.</h2>
+    <p class="lead">Sin contratos, sin fees, sin condiciones letra chica. Solo necesitamos validar que tu refugio existe y que las fotos son reales.</p>
+
+    <div class="step-row">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <h3>Postulas en <code>/aplicar?tipo=refugio</code></h3>
+        <p>Form simple: nombre del refugio, ciudad, link a RRSS o web, foto del lugar. Toma 5 minutos.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <h3>Validamos en menos de 24 horas</h3>
+        <p>Revisamos que el refugio exista (RRSS activas, fotos consistentes, contacto verificable). Te confirmamos por mail.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <h3>Te activamos la cuenta shelter</h3>
+        <p>Tu rol cambia a "shelter" en la app. Acceso a <code>/shelter/dashboard</code>, <code>/shelter/bulk-import</code>, <code>/shelter/transfer/:petId</code> y perfil público en <code>/refugios/tu-slug</code>.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-n">4</div>
+      <div class="step-body">
+        <h3>Cargas tus mascotas y empiezas</h3>
+        <p>Plantilla Excel/CSV descargable. Subes una vez, ajustas online cuando cambia algo. Listo para entregar adopciones digitalizadas.</p>
+      </div>
+    </div>
+
+    <div class="spotlight">
+      <strong>¿Y si soy hogar de tránsito sin formalidad?</strong>
+      <p>Igual encajas. Validamos por evidencia, no por personalidad jurídica. Lo único que pedimos: que las mascotas existan, que el cuidado sea responsable y que la entrega sea a familias verificadas.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 8 · FAQ                                                  -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide soft" id="s8">
+  <span class="slide-num">08 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Anticipamos tus dudas</span>
+    <h2>FAQ Paw Shelter.</h2>
+
+    <div class="grid grid-2">
+      <div class="card faq-card">
+        <h3>¿Cuánto cuesta?</h3>
+        <p>$0. Cuenta refugio gratis para siempre. Sin límite de mascotas, sin límite de transferencias, sin features pagados. La sostenibilidad de Paw Friend viene de otros canales (Paw Member, Paw Companys, B2B vets).</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Necesito ser fundación con RUT?</h3>
+        <p>No. Aceptamos hogares de tránsito informales, rescatistas independientes, programas municipales y refugios formales. Validamos por evidencia: RRSS activas, fotos del refugio, contacto verificable.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Cómo carga 200 mascotas?</h3>
+        <p>Descarga la plantilla CSV/Excel, llénala con tus mascotas (nombre, raza, edad, sexo, esterilizado, vacunas, URL de foto) y la subes en <code>/shelter/bulk-import</code>. Demora 5 minutos para 100+.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿La ficha clínica del adoptante se ve?</h3>
+        <p>Sí. Cuando el adoptante reclama la mascota, ve la ficha clínica COMPLETA (vacunas con lote, esterilización, antiparasitarios, alergias, microchip). Continuidad clínica al 100%.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Puedo recibir donaciones?</h3>
+        <p>Hoy las donaciones van a Paw Friend (cuenta SpA). En cuanto activemos donaciones dirigidas (feature flag <code>SHELTER_DONATIONS</code>, pendiente migración cuenta Flow), tu refugio podrá recibir aportes con trazabilidad.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Y si el adoptante no usa la app?</h3>
+        <p>El link de reclamo le crea la cuenta automáticamente al hacer click. No necesita conocer Paw Friend antes. Recibe la ficha y desde ahí decide si sigue usando la app para gestionar la salud de la mascota.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Puedo transferir a otro refugio?</h3>
+        <p>Sí. La transferencia funciona refugio→adoptante o refugio→refugio. La ficha clínica viaja siempre con la mascota.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Cuántos voluntarios pueden gestionar las mascotas?</h3>
+        <p>Múltiples seats sin costo. Cada voluntario tiene su propio login y queda registrado quién hizo cada cambio en la ficha (auditoría completa).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 9 · CTA FINAL                                            -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide grad" id="s9">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <span class="slide-num">09 / 09</span>
+  <div class="container" style="text-align:center">
+    <span class="eyebrow">Tu turno</span>
+    <h2 style="font-size:clamp(40px,5.5vw,72px)">¿Sumas tu refugio<br/>a Paw Shelter?</h2>
+    <p class="lead" style="margin-left:auto;margin-right:auto">Cuenta gratis para siempre. Bulk import desde el día uno. Tus adopciones llevan ficha clínica completa. Tu refugio aparece en el directorio público con SEO real.</p>
+
+    <div class="cta-row" style="justify-content:center">
+      <a class="btn btn-primary" href="https://pawfriend.cl/aplicar?tipo=refugio" target="_blank" rel="noopener">📩 Postular mi refugio</a>
+      <a class="btn btn-ghost" href="https://pawfriend.cl/refugios-hogares" target="_blank" rel="noopener">🏠 Ver directorio</a>
+    </div>
+
+    <div class="founder-sig">
+      <div class="avatar">PF</div>
+      <div class="info">
+        <span class="name">Paw Founder</span>
+        <span class="role">pedrosusaeta@pawfriend.cl · pawfriend.cl/aplicar?tipo=refugio</span>
+      </div>
+    </div>
+
+    <p style="color:rgba(255,255,255,.78);font-size:13px;margin-top:24px;max-width:600px;margin-left:auto;margin-right:auto">
+      Cuando una mascota cambia de manos, su salud no debería empezar de cero. Paw Shelter resuelve la continuidad clínica entre el refugio y la familia que adopta. Sin costo, siempre.
+    </p>
+
+    <p style="color:rgba(255,255,255,.7);font-size:12px;margin-top:28px">
+      SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9<br/>
+      Luis Pasteur 6111 Dp 201, Vitacura, Santiago de Chile<br/>
+      <span style="opacity:.8">Versión 2026-04-20 · pawfriend.cl/pitch/shelter.html</span>
+    </p>
+  </div>
+</section>
+
+<script>
+  const progressBar=document.getElementById('progressBar'),curSlide=document.getElementById('curSlide'),slides=document.querySelectorAll('.slide'),dots=document.querySelectorAll('.sidenav .dot'),kbhint=document.getElementById('kbhint');
+  function updateProgress(){const s=window.scrollY,m=document.documentElement.scrollHeight-window.innerHeight;progressBar.style.width=(s/m*100).toFixed(2)+'%'}
+  function updateActive(){const c=window.scrollY+window.innerHeight/2;let a=0;slides.forEach((s,i)=>{const t=s.offsetTop,b=t+s.offsetHeight;if(c>=t&&c<b)a=i});dots.forEach((d,i)=>d.classList.toggle('active',i===a));if(curSlide)curSlide.textContent=(a+1).toString()}
+  document.addEventListener('scroll',()=>{updateProgress();updateActive()},{passive:true});updateProgress();updateActive();
+  document.addEventListener('keydown',e=>{const c=Array.from(slides).findIndex(s=>{const r=s.getBoundingClientRect();return r.top<=window.innerHeight/2&&r.bottom>window.innerHeight/2});if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();slides[Math.min(c+1,slides.length-1)].scrollIntoView({behavior:'smooth'})}else if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();slides[Math.max(c-1,0)].scrollIntoView({behavior:'smooth'})}else if(e.key==='Escape'){kbhint.classList.toggle('hide')}});
+  setTimeout(()=>kbhint.classList.add('hide'),5000);
+
+  const revealTargets=document.querySelectorAll('.card, .stat, .step-row, .quote, .spotlight, .tbl-wrap, .vertical, .reveal');
+  const revealIO=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){entry.target.classList.add('visible');revealIO.unobserve(entry.target)}
+    });
+  },{threshold:0.15,rootMargin:'0px 0px -8% 0px'});
+  revealTargets.forEach(el=>{
+    if(!el.classList.contains('reveal')&&!el.classList.contains('stat'))el.classList.add('reveal');
+    revealIO.observe(el);
+  });
+  document.querySelectorAll('.faq-card').forEach(card=>{
+    card.setAttribute('aria-expanded','false');card.setAttribute('role','button');card.setAttribute('tabindex','0');
+    const toggle=()=>card.setAttribute('aria-expanded',String(card.getAttribute('aria-expanded')!=='true'));
+    card.addEventListener('click',toggle);
+    card.addEventListener('keydown',(e)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}});
+  });
+</script>
+
+</body>
+</html>
