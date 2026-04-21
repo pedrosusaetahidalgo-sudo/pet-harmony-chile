@@ -31,6 +31,16 @@ function loadSentry() {
       dsn: import.meta.env.VITE_SENTRY_DSN || '',
       environment: 'production',
       tracesSampleRate: 0.1,
+      // Performance budget (I.4 auditoría top-tier 2026-04-20):
+      // browserTracingIntegration activo con sample rate conservador.
+      // Captura automáticamente navegación SPA + fetch/XHR con timing.
+      // Usar Sentry Dashboard → Performance para alertas p95 > 3s.
+      integrations: [mod.browserTracingIntegration({ enableInp: true })],
+      tracePropagationTargets: [
+        'https://gwailbjlvevkhwcrovfd.supabase.co',
+        'https://pawfriend.cl',
+        /^\/(?!paw-friend-assets-v2)/,
+      ],
       replaysSessionSampleRate: 0,
       // Bajado de 0.5 a 0.1 (INIT-12): menos replays por error, menos
       // egress + menos riesgo de llegar a tier pago de Sentry.

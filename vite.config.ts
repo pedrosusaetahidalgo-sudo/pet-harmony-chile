@@ -21,35 +21,68 @@ export default defineConfig(() => ({
     chunkSizeWarningLimit: 600,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'query-vendor': ['@tanstack/react-query'],
-          'ui-vendor': [
-            '@radix-ui/react-dialog',
-            '@radix-ui/react-tabs',
-            '@radix-ui/react-select',
-            '@radix-ui/react-accordion',
-            '@radix-ui/react-avatar',
-            '@radix-ui/react-dropdown-menu',
-            '@radix-ui/react-popover',
-            '@radix-ui/react-tooltip',
-            '@radix-ui/react-toast',
-            '@radix-ui/react-switch',
-          ],
-          // Sacar lucide del bundle principal: las ~150 keb de íconos viven
-          // en su propio chunk y se cachean independientemente.
-          'icons-vendor': ['lucide-react'],
-          // date-fns es pesado y se usa transversalmente.
-          'date-vendor': ['date-fns'],
-          // Supabase client + auth listener.
-          'supabase-vendor': ['@supabase/supabase-js'],
-          // Leaflet solo se usa en /maps (lazy). Chunk separado para no inflar index.
-          'leaflet-vendor': ['leaflet', 'react-leaflet'],
-          // Recharts (~432 kB) solo se usa en dashboards/admin (lazy).
-          // Chunk separado para que no infle el bundle principal.
-          'recharts-vendor': ['recharts'],
-          // Sentry (~458 kB) se carga al inicio pero cachea independientemente.
-          'sentry-vendor': ['@sentry/react'],
+        manualChunks(id) {
+          // Vendors: agrupaciones por librería.
+          if (id.includes('node_modules')) {
+            if (
+              id.includes('react-router-dom') ||
+              id.includes('react-dom') ||
+              /react\/[^/]+$/.test(id) ||
+              id.includes('node_modules/react/')
+            ) {
+              return 'react-vendor';
+            }
+            if (id.includes('@tanstack/react-query')) return 'query-vendor';
+            if (id.includes('@radix-ui/')) return 'ui-vendor';
+            if (id.includes('lucide-react')) return 'icons-vendor';
+            if (id.includes('date-fns')) return 'date-vendor';
+            if (id.includes('@supabase/supabase-js')) return 'supabase-vendor';
+            if (id.includes('leaflet')) return 'leaflet-vendor';
+            if (id.includes('recharts')) return 'recharts-vendor';
+            if (id.includes('@sentry/')) return 'sentry-vendor';
+            // Resto de vendors: un chunk "misc" para no fragmentar demasiado.
+            return 'vendor-misc';
+          }
+
+          // Role-based code splitting (H.4 auditoría top-tier 2026-04-20):
+          // owners no descargan chunks de admin/provider/shelter hasta
+          // que navegan a esas rutas.
+          if (id.includes('/src/components/admin/') || id.includes('/src/pages/Admin.')) {
+            return 'app-admin';
+          }
+          if (
+            id.includes('/src/components/provider/') ||
+            id.includes('/src/pages/Provider') ||
+            id.includes('/src/pages/PerfilVetPublico') ||
+            id.includes('/src/pages/RegistroVeterinario') ||
+            id.includes('/src/pages/ParaVeterinarios') ||
+            id.includes('/src/pages/PreciosVeterinarios') ||
+            id.includes('/src/pages/DirectorioVets')
+          ) {
+            return 'app-provider';
+          }
+          if (
+            id.includes('/src/pages/shelter/') ||
+            id.includes('/src/pages/RefugiosHogares') ||
+            id.includes('/src/pages/RefugioPublico') ||
+            id.includes('/src/pages/OnboardingShelter')
+          ) {
+            return 'app-shelter';
+          }
+          // Pitch / aplicar / transparencia / paw-companys / paw-voices:
+          // páginas "institucionales" que pocos users abren regularmente.
+          if (
+            id.includes('/src/pages/Aplicar') ||
+            id.includes('/src/pages/Transparencia') ||
+            id.includes('/src/pages/PawCore') ||
+            id.includes('/src/pages/PawCompanysPage') ||
+            id.includes('/src/pages/PawVoices') ||
+            id.includes('/src/pages/PawPartners')
+          ) {
+            return 'app-institutional';
+          }
+
+          return undefined; // resto queda en index/lazy chunks por defecto.
         },
       },
     },

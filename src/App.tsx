@@ -149,11 +149,20 @@ async function initNative() {
     }
   });
 
-  // Deep links (OAuth callbacks)
+  // Deep links — maneja custom scheme (OAuth callbacks) y Universal
+  // Links / App Links (épica D.3 auditoría top-tier 2026-04-20).
   CapApp.addListener('appUrlOpen', ({ url }) => {
-    const slug = url.split('cl.pawfriend.app://').pop();
-    if (slug) {
-      window.location.href = '/' + slug;
+    // Custom scheme: cl.pawfriend.app://qr/abc → '/qr/abc'
+    if (url.startsWith('cl.pawfriend.app://')) {
+      const slug = url.split('cl.pawfriend.app://').pop();
+      if (slug) window.location.href = '/' + slug;
+      return;
+    }
+    // Universal Link iOS / App Link Android: https://pawfriend.cl/qr/abc
+    const PROD_ORIGIN = 'https://pawfriend.cl';
+    if (url.startsWith(PROD_ORIGIN)) {
+      const path = url.slice(PROD_ORIGIN.length) || '/';
+      window.location.href = path;
     }
   });
 

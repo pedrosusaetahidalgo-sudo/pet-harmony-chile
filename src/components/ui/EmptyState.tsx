@@ -1,12 +1,13 @@
 import type { ReactNode } from 'react';
-import type { LucideIcon } from '@/lib/icons';
+import { AlertCircle, Loader2, type LucideIcon } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
 export interface EmptyStateProps {
-  icon: LucideIcon | React.ElementType;
+  /** Requerido salvo para variants "loading" / "error", donde es opcional. */
+  icon?: LucideIcon | React.ElementType;
   title: string;
   description?: string;
   action?: React.ReactNode;
@@ -21,14 +22,16 @@ export interface EmptyStateProps {
   /**
    * Visual variant:
    * - "default" — simple centered text (original ui/EmptyState)
-   * - "compact" — smaller text, icon in colored bg pill, fade-in animation (original components/EmptyState)
-   * - "card" — wrapped in a dashed-border Card (original shared.tsx EmptyState)
+   * - "compact" — smaller text, icon in colored bg pill, fade-in animation
+   * - "card"    — wrapped in a dashed-border Card
+   * - "loading" — skeleton + spinner centrado (F.4 auditoría top-tier)
+   * - "error"   — icono rojo + retry button (F.4 auditoría top-tier)
    */
-  variant?: 'default' | 'compact' | 'card';
+  variant?: 'default' | 'compact' | 'card' | 'loading' | 'error';
 }
 
 export function EmptyState({
-  icon: Icon,
+  icon,
   title,
   description,
   action,
@@ -48,6 +51,60 @@ export function EmptyState({
       navigate(actionUrl);
     }
   };
+
+  // Loading: spinner centrado + mensaje.
+  if (variant === 'loading') {
+    return (
+      <div
+        className={cn(
+          'flex flex-col items-center justify-center py-12 px-4 text-center animate-fade-in',
+          className
+        )}
+        role="status"
+        aria-live="polite"
+        aria-busy="true"
+      >
+        <Loader2 className="h-8 w-8 text-primary animate-spin mb-3" />
+        <p className="font-medium text-sm">{title}</p>
+        {description && (
+          <p className="text-xs text-muted-foreground max-w-[300px] mt-1">{description}</p>
+        )}
+        {children}
+      </div>
+    );
+  }
+
+  // Error: destructive icon + retry button si onAction/actionLabel.
+  if (variant === 'error') {
+    const ErrIcon = icon ?? AlertCircle;
+    return (
+      <div
+        className={cn(
+          'flex flex-col items-center justify-center py-12 px-4 text-center animate-fade-in',
+          className
+        )}
+        role="alert"
+      >
+        <div className="h-14 w-14 rounded-2xl bg-destructive/10 flex items-center justify-center mb-4">
+          <ErrIcon className="h-7 w-7 text-destructive" />
+        </div>
+        <p className="font-semibold text-sm mb-1">{title}</p>
+        {description && (
+          <p className="text-xs text-muted-foreground max-w-[320px] mb-4">{description}</p>
+        )}
+        {action}
+        {!action && actionLabel && (onAction || actionUrl) && (
+          <Button size="sm" variant="outline" onClick={handleAction}>
+            {actionLabel}
+          </Button>
+        )}
+        {children}
+      </div>
+    );
+  }
+
+  // A partir de aquí los variants original requieren icon definido.
+  const Icon = icon ?? AlertCircle;
 
   if (variant === 'card') {
     return (
