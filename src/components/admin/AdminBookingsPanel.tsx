@@ -140,6 +140,55 @@ export default function AdminBookingsPanel() {
     staleTime: 60_000,
   });
 
+  // CC-34 (Booking V3 Fase 5): Top 5 providers por bookings últimos 30d.
+  // Requerido por el master plan §26.4 "dashboard admin recomendado".
+  const { data: topProviders } = useQuery({
+    queryKey: ['admin-top-providers-30d'],
+    queryFn: async () => {
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      const { data } = await supabase
+        .from('vet_bookings')
+        .select('service_provider_id')
+        .gte('created_at', thirtyDaysAgo)
+        .not('service_provider_id', 'is', null);
+
+      const counts = new Map<string, number>();
+      for (const row of data ?? []) {
+        const id = (row as { service_provider_id: string | null }).service_provider_id;
+        if (!id) continue;
+        counts.set(id, (counts.get(id) ?? 0) + 1);
+      }
+      const top = Array.from(counts.entries())
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5);
+      if (top.length === 0) return [];
+
+      const ids = top.map(([id]) => id);
+      const { data: providers } = await supabase
+        .from('service_providers')
+        .select('id, display_name, slug, commune')
+        .in('id', ids);
+
+      const byId = new Map(
+        (providers ?? []).map((p) => [
+          p.id,
+          {
+            name: (p as { display_name?: string | null }).display_name ?? 'Sin nombre',
+            slug: (p as { slug?: string | null }).slug ?? null,
+            commune: (p as { commune?: string | null }).commune ?? null,
+          },
+        ])
+      );
+
+      return top.map(([id, count]) => ({
+        id,
+        count,
+        ...(byId.get(id) ?? { name: 'Desconocido', slug: null, commune: null }),
+      }));
+    },
+    staleTime: 120_000,
+  });
+
   const cancelBooking = useCancelBooking();
 
   const filtered = (bookings ?? []).filter((b) => {
@@ -204,6 +253,34 @@ export default function AdminBookingsPanel() {
           </CardContent>
         </Card>
       </div>
+
+      {/* CC-34: Top 5 providers (últimos 30d) */}
+      {topProviders && topProviders.length > 0 && (
+        <Card className="bg-slate-900 border-slate-800">
+          <CardContent className="p-4">
+            <p className="text-xs text-slate-400 uppercase tracking-wide font-semibold mb-3">
+              Top proveedores (30d)
+            </p>
+            <div className="space-y-1.5">
+              {topProviders.map((p, idx) => (
+                <div
+                  key={p.id}
+                  className="flex items-center gap-3 text-sm text-slate-200 border-b border-slate-800 pb-1.5 last:border-0 last:pb-0"
+                >
+                  <span className="text-slate-500 w-5 text-xs">#{idx + 1}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{p.name}</p>
+                    {p.commune && (
+                      <p className="text-[11px] text-slate-500 truncate">{p.commune}</p>
+                    )}
+                  </div>
+                  <span className="text-sm font-bold text-emerald-400">{p.count}</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Filters */}
       <div className="flex items-center gap-3 flex-wrap">

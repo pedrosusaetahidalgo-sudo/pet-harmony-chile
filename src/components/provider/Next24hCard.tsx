@@ -31,11 +31,11 @@ export function Next24hCard() {
       const todayStr = now.toISOString().split('T')[0];
 
       const [bookingsRes, reviewsRes] = await Promise.all([
-        // Bookings in next 24h
+        // Bookings in next 24h — captura ambos caminos (directorio V2 + legacy vet_id).
         supabase
           .from('vet_bookings')
           .select('id, pet_id', { count: 'exact', head: false })
-          .eq('vet_id', user.id)
+          .or(`service_provider_id.eq.${provider.id},vet_id.eq.${user.id}`)
           .gte('scheduled_date', now.toISOString())
           .lt('scheduled_date', in24h.toISOString())
           .neq('status', 'cancelado'),

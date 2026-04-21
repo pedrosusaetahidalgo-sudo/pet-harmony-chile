@@ -30,15 +30,32 @@ export function TodayAgendaCard() {
 
       const today = new Date().toISOString().split('T')[0];
 
-      // Consultar bookings por vet_id (auth user)
-      const { data, error } = await sb
+      // 1) Resolver el service_provider_id del user actual.
+      // Sin esto, los bookings que llegan via directorio publico (Booking V2)
+      // no aparecen en "Hoy" porque solo traen service_provider_id, no vet_id.
+      // Mantenemos compatibilidad con bookings legacy (vet_id = user.id) via OR.
+      const { data: provider } = await supabase
+        .from('service_providers')
+        .select('id')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      const providerId = provider?.id ?? null;
+
+      // 2) Query con OR: captura ambos caminos (directorio V2 + legacy).
+      let query = sb
         .from('vet_bookings')
         .select('id, scheduled_date, service_type, status, pet_id, owner_id')
-        .eq('vet_id', user.id)
         .gte('scheduled_date', today)
         .lt('scheduled_date', today + 'T23:59:59')
         .neq('status', 'cancelled')
         .order('scheduled_date', { ascending: true });
+
+      query = providerId
+        ? query.or(`service_provider_id.eq.${providerId},vet_id.eq.${user.id}`)
+        : query.eq('vet_id', user.id);
+
+      const { data, error } = await query;
 
       if (error || !data) return [];
 

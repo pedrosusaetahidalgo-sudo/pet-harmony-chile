@@ -75,10 +75,21 @@ export function UnifiedDayView({ date, events, onEventTap }: UnifiedDayViewProps
               Sin actividades para este día
             </p>
             <p className="text-xs text-muted-foreground/60 mt-1">
-              Agrega una rutina o recordatorio para empezar
+              Agenda una cita, rutina o recordatorio
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2 justify-center">
+            {/* CC-11: CTA para iniciar reserva desde calendario.
+                Cierra el gap entre "ver calendario" y "agendar": antes el
+                tutor debía salir al directorio manualmente. */}
+            <Button
+              size="sm"
+              className="h-8 text-xs gap-1 bg-purple-600 hover:bg-purple-700"
+              onClick={() => navigate(LINKS.vets())}
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Agendar cita
+            </Button>
             <Button
               size="sm"
               variant="outline"

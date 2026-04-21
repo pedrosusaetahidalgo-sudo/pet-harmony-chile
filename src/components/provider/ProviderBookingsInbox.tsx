@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Inbox, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Inbox, CheckCircle2, AlertCircle, Download } from 'lucide-react';
+import { buildCsv, downloadCsv } from '@/lib/export/csv';
 import { format } from 'date-fns';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -13,6 +14,7 @@ import {
 import { CancelBookingDialog } from '@/components/booking/CancelBookingDialog';
 import { BookingDetailDrawer } from '@/components/booking/BookingDetailDrawer';
 import { FollowUpDialog } from '@/components/booking/FollowUpDialog';
+import { RescheduleDialog } from '@/components/booking/RescheduleDialog';
 import { useProviderBookingsInbox } from '@/hooks/useProviderBookingsInbox';
 import {
   useConfirmBooking,
@@ -32,6 +34,8 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
   const [cancelTarget, setCancelTarget] = useState<BookingCardData | null>(null);
   const [detailTarget, setDetailTarget] = useState<BookingCardData | null>(null);
   const [followUpTarget, setFollowUpTarget] = useState<BookingCardData | null>(null);
+  // CC-26: provider puede reprogramar (antes solo owner).
+  const [rescheduleTarget, setRescheduleTarget] = useState<BookingCardData | null>(null);
   const [filters, setFilters] = useState<InboxFilters>(EMPTY_INBOX_FILTERS);
 
   const statusFilter: Record<string, BookingStatus | BookingStatus[]> = {
@@ -106,6 +110,9 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
         break;
       case 'cancel':
         setCancelTarget(booking);
+        break;
+      case 'reschedule':
+        setRescheduleTarget(booking);
         break;
       case 'detail':
         setDetailTarget(booking);
@@ -207,6 +214,45 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
     );
   };
 
+  // CC-33: exportar bookings visibles del tab actual a CSV.
+  const exportVisibleToCsv = () => {
+    const currentData =
+      tab === 'pending'
+        ? pendingQuery.data
+        : tab === 'today'
+          ? todayQuery.data
+          : tab === 'upcoming'
+            ? upcomingQuery.data
+            : pastQuery.data;
+    if (!currentData || currentData.length === 0) {
+      return;
+    }
+    const rows = currentData.map((b) => ({
+      fecha: b.scheduled_date?.split('T')[0] ?? '',
+      hora: b.start_time?.slice(0, 5) ?? '',
+      estado: b.status,
+      tipo_servicio: b.service_type,
+      mascota: b.pet_name ?? '',
+      dueno: b.owner_name ?? '',
+      precio_clp: b.total_price ?? '',
+      urgencia: b.is_emergency ? 'sí' : 'no',
+      id: b.id,
+    }));
+    const csv = buildCsv(rows, [
+      { key: 'fecha', label: 'Fecha' },
+      { key: 'hora', label: 'Hora' },
+      { key: 'estado', label: 'Estado' },
+      { key: 'tipo_servicio', label: 'Servicio' },
+      { key: 'mascota', label: 'Mascota' },
+      { key: 'dueno', label: 'Dueño' },
+      { key: 'precio_clp', label: 'Precio CLP' },
+      { key: 'urgencia', label: 'Urgencia' },
+      { key: 'id', label: 'Booking ID' },
+    ]);
+    const ts = new Date().toISOString().split('T')[0];
+    downloadCsv(csv, `paw-friend-reservas-${tab}-${ts}`);
+  };
+
   return (
     <>
       <Card>
@@ -220,6 +266,16 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
                 {pendingCount} requiere{pendingCount === 1 ? '' : 'n'} tu accion
               </span>
             )}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="ml-auto h-7 text-xs gap-1"
+              onClick={exportVisibleToCsv}
+              aria-label="Exportar bookings visibles a CSV"
+            >
+              <Download className="h-3.5 w-3.5" aria-hidden="true" />
+              CSV
+            </Button>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -317,6 +373,22 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
           petId={followUpTarget.pet_id}
           serviceType={followUpTarget.service_type || 'consulta_general'}
           defaultStartTime={followUpTarget.start_time?.slice(0, 5) || '10:00'}
+        />
+      )}
+
+      {/* CC-26: RescheduleDialog con role='provider' → grace 12h (vs 24h del owner).
+          Usa rpc_reschedule_booking (CC-19) si está desplegada, fallback a UPDATE. */}
+      {rescheduleTarget && providerId && (
+        <RescheduleDialog
+          open={!!rescheduleTarget}
+          onOpenChange={(open) => !open && setRescheduleTarget(null)}
+          bookingId={rescheduleTarget.id}
+          bookingType={rescheduleTarget.booking_type}
+          providerId={providerId}
+          serviceType={rescheduleTarget.service_type}
+          currentScheduledAt={rescheduleTarget.scheduled_date}
+          role="provider"
+          onSuccess={() => setRescheduleTarget(null)}
         />
       )}
     </>

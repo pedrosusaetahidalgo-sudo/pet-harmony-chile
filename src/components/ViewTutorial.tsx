@@ -107,7 +107,7 @@ export const TUTORIALS = {
       {
         title: 'Acciones rapidas',
         description:
-          'Usa los botones inferiores para navegar: My Paws (mascotas), Veterinarios (directorio), Feed (comunidad), y Perfil.',
+          'Usa los botones inferiores para navegar: Mis Mascotas, Servicios (veterinarios y más), Agenda y Perfil.',
       },
       {
         title: 'Todo gratis para dueños',

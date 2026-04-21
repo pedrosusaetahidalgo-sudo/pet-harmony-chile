@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// CC-22 (Booking V3 Master Plan): tab "Buscar disponibilidad" retirado.
+// Ahora hay una sola vista — mis reservas + CTAs claros a /veterinarios
+// (canonical entry point). La búsqueda vive en el directorio, no acá.
 import { useState, useMemo } from 'react';
 import { PageHeader } from '@/components/PageHeader';
-import { CalendarGrid } from '@/components/calendar/CalendarGrid';
-import { DaySlotsList } from '@/components/calendar/DaySlotsList';
-import { BookingModal } from '@/components/calendar/BookingModal';
 import { GoogleCalendarStatusBanner } from '@/components/GoogleCalendarStatusBanner';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,38 +15,15 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useMyBookingsV2 } from '@/hooks/useMyBookingsV2';
 import { format, startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { formatBookingDate, formatTimeRange } from '@/lib/format';
-import {
-  Calendar,
-  CalendarDays,
-  Clock,
-  CheckCircle2,
-  Inbox,
-  Star,
-  Plus,
-  Stethoscope,
-} from '@/lib/icons';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Calendar, CalendarDays, CheckCircle2, Inbox, Star, Plus, Stethoscope } from '@/lib/icons';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
-
-const SERVICE_TYPES = [
-  { value: 'all', label: 'Todos' },
-  { value: 'vet', label: 'Veterinaria' },
-  { value: 'walk', label: 'Paseo' },
-  { value: 'dogsitter', label: 'Cuidador' },
-  { value: 'training', label: 'Entrenamiento' },
-  { value: 'grooming', label: 'Peluquería' },
-];
+import { FEATURE_FLAGS } from '@/lib/featureFlags';
+import { buildIcs, downloadIcs, bookingToIcsEvent } from '@/lib/calendar/ics';
 
 export default function MyBookings() {
   const { user } = useAuth();
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [filterType, setFilterType] = useState('all');
-  const [bookingSlot, setBookingSlot] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'my-bookings' | 'available'>('my-bookings');
   const [reviewBooking, setReviewBooking] = useState<any>(null);
   const [reviewRating, setReviewRating] = useState(0);
   const [reviewHover, setReviewHover] = useState(0);
@@ -210,93 +187,6 @@ export default function MyBookings() {
 
   const myTotalCount = myBookings?.length ?? 0;
 
-  // ---- AVAILABLE SLOTS (browse & book) ----
-  const dateStr = format(selectedDate, 'yyyy-MM-dd');
-  const { data: slots, isLoading } = useQuery({
-    queryKey: ['service-slots', dateStr, filterType],
-    queryFn: async () => {
-      let query = supabase
-        .from('service_slots')
-        .select(
-          'id, slot_date, start_time, end_time, service_type, provider_id, price, max_capacity, current_bookings, title, is_active'
-        )
-        .eq('slot_date', dateStr)
-        .eq('is_active', true)
-        .order('start_time');
-
-      if (filterType !== 'all') {
-        query = query.eq('service_type', filterType);
-      }
-
-      const { data: rawSlots, error } = await query;
-      if (error) throw error;
-      if (!rawSlots || rawSlots.length === 0) return [];
-
-      const providerIds = Array.from(
-        new Set(rawSlots.map((s: any) => s.provider_id).filter(Boolean))
-      );
-      if (providerIds.length === 0) {
-        return rawSlots.map((s: any) => ({ ...s, provider: null }));
-      }
-
-      const { data: providers } = await supabase
-        .from('service_providers')
-        .select('id, user_id, avg_rating, total_reviews')
-        .in('id', providerIds);
-
-      const userIds = Array.from(
-        new Set((providers || []).map((p: any) => p.user_id).filter(Boolean))
-      );
-      const { data: profiles } = userIds.length
-        ? await supabase.from('profiles').select('id, display_name, avatar_url').in('id', userIds)
-        : { data: [] as any[] };
-
-      const profileMap = new Map((profiles || []).map((p: any) => [p.id, p]));
-      const providerMap = new Map(
-        (providers || []).map((p: any) => [
-          p.id,
-          { ...p, profiles: profileMap.get(p.user_id) || null },
-        ])
-      );
-
-      return rawSlots.map((s: any) => ({
-        ...s,
-        provider: providerMap.get(s.provider_id) || null,
-      }));
-    },
-    enabled: activeTab === 'available',
-  });
-
-  // Fetch slots count per day for the month (for calendar dots)
-  const monthStart = format(
-    new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1),
-    'yyyy-MM-dd'
-  );
-  const monthEnd = format(
-    new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0),
-    'yyyy-MM-dd'
-  );
-
-  const { data: monthSlots } = useQuery({
-    queryKey: ['month-slots', monthStart, monthEnd],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('service_slots')
-        .select('slot_date')
-        .eq('is_active', true)
-        .gte('slot_date', monthStart)
-        .lte('slot_date', monthEnd);
-      if (error) throw error;
-
-      const counts: Record<string, number> = {};
-      data?.forEach((s) => {
-        counts[s.slot_date] = (counts[s.slot_date] || 0) + 1;
-      });
-      return counts;
-    },
-    enabled: activeTab === 'available',
-  });
-
   return (
     <>
       <PageHeader title="Mis reservas" />
@@ -343,238 +233,214 @@ export default function MyBookings() {
           </Card>
         </div>
 
-        {/* Tabs: Mis Reservas vs Buscar disponibilidad */}
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="my-bookings">
-              <Inbox className="h-4 w-4 mr-2" />
-              Mis reservas
-            </TabsTrigger>
-            <TabsTrigger value="available">
-              <Calendar className="h-4 w-4 mr-2" />
-              Buscar disponibilidad
-            </TabsTrigger>
-          </TabsList>
-
-          {/* Tab: Mis reservas */}
-          <TabsContent value="my-bookings" className="mt-4">
-            {loadingMyBookings ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600" />
-              </div>
-            ) : !myBookings || myBookings.length === 0 ? (
-              <Card>
-                <CardContent className="py-10 px-4 text-center">
-                  <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-purple-50 mb-4">
-                    <Inbox className="h-7 w-7 text-purple-500" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-1">Aún no tienes reservas</h3>
-                  <p className="text-muted-foreground text-sm mb-5 max-w-sm mx-auto">
-                    Agenda con un veterinario, paseador, cuidador o peluquero de Paw Friend. Sólo
-                    toma un minuto.
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                    <Button
-                      size="lg"
-                      className="bg-purple-600 hover:bg-purple-700 text-white gap-1.5"
-                      onClick={() => setActiveTab('available')}
-                    >
+        {/* CC-22: Vista única de "Mis reservas". La búsqueda vive en /veterinarios. */}
+        <div className="mt-4">
+          {/* CTA primaria para agendar una cita nueva + ICS export opcional */}
+          {myBookings && myBookings.length > 0 && (
+            <div className="mb-3 flex flex-wrap justify-end gap-2">
+              {FEATURE_FLAGS.ICS_EXPORT && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5"
+                  onClick={() => {
+                    // CC-32: export .ics para Apple/Outlook. Incluye todas las
+                    // citas futuras no canceladas.
+                    const future = myBookings.filter(
+                      (b: any) =>
+                        (b.service_slots?.slot_date ?? b.scheduled_date?.split('T')[0]) >=
+                          todayStr && !['cancelado', 'no_show'].includes(b.status ?? '')
+                    );
+                    if (future.length === 0) {
+                      toast.info('No hay citas futuras para exportar');
+                      return;
+                    }
+                    const events = future.map((b: any) =>
+                      bookingToIcsEvent({
+                        id: b.id,
+                        kind: b.booking_type ?? 'vet',
+                        scheduled_date:
+                          b.scheduled_date ?? `${b.service_slots?.slot_date}T00:00:00`,
+                        start_time: b.start_time ?? b.service_slots?.start_time ?? null,
+                        end_time: b.end_time ?? b.service_slots?.end_time ?? null,
+                        service_type: b.service_type ?? b.service_slots?.service_type ?? 'Cita',
+                        status: b.status ?? 'confirmado',
+                        pet_name: b.pet_name ?? null,
+                        provider_name: b.provider?.profiles?.display_name ?? null,
+                      })
+                    );
+                    const ics = buildIcs(events, 'Paw Friend · Mis reservas');
+                    downloadIcs(ics, `paw-friend-reservas-${todayStr}.ics`);
+                    toast.success('Calendario descargado');
+                  }}
+                >
+                  <CalendarDays className="h-4 w-4" />
+                  Descargar calendario
+                </Button>
+              )}
+              <Button asChild size="sm" className="bg-purple-600 hover:bg-purple-700 gap-1.5">
+                <Link to="/veterinarios">
+                  <Plus className="h-4 w-4" />
+                  Agendar nueva cita
+                </Link>
+              </Button>
+            </div>
+          )}
+          {loadingMyBookings ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600" />
+            </div>
+          ) : !myBookings || myBookings.length === 0 ? (
+            <Card>
+              <CardContent className="py-10 px-4 text-center">
+                <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-purple-50 mb-4">
+                  <Inbox className="h-7 w-7 text-purple-500" />
+                </div>
+                <h3 className="font-semibold text-lg mb-1">Aún no tienes reservas</h3>
+                <p className="text-muted-foreground text-sm mb-5 max-w-sm mx-auto">
+                  Agenda con un veterinario, paseador, cuidador o peluquero de Paw Friend. Sólo toma
+                  un minuto.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                  <Button
+                    asChild
+                    size="lg"
+                    className="bg-purple-600 hover:bg-purple-700 text-white gap-1.5"
+                  >
+                    <Link to="/veterinarios">
                       <Plus className="h-4 w-4" />
                       Agendar cita
-                    </Button>
-                    <Button asChild size="lg" variant="outline" className="gap-1.5">
-                      <Link to="/veterinarios">
-                        <Stethoscope className="h-4 w-4" />
-                        Ver directorio de vets
-                      </Link>
-                    </Button>
+                    </Link>
+                  </Button>
+                  <Button asChild size="lg" variant="outline" className="gap-1.5">
+                    <Link to="/servicios">
+                      <Stethoscope className="h-4 w-4" />
+                      Ver otros servicios
+                    </Link>
+                  </Button>
+                </div>
+                <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-2 text-left max-w-lg mx-auto">
+                  <div className="rounded-lg border bg-card p-3">
+                    <p className="text-xs font-medium mb-0.5">1. Elige fecha</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      Abre el calendario y selecciona el día.
+                    </p>
                   </div>
-                  <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-2 text-left max-w-lg mx-auto">
-                    <div className="rounded-lg border bg-card p-3">
-                      <p className="text-xs font-medium mb-0.5">1. Elige fecha</p>
-                      <p className="text-[11px] text-muted-foreground">
-                        Abre el calendario y selecciona el día.
-                      </p>
-                    </div>
-                    <div className="rounded-lg border bg-card p-3">
-                      <p className="text-xs font-medium mb-0.5">2. Escoge el horario</p>
-                      <p className="text-[11px] text-muted-foreground">
-                        Filtra por tipo de servicio y proveedor.
-                      </p>
-                    </div>
-                    <div className="rounded-lg border bg-card p-3">
-                      <p className="text-xs font-medium mb-0.5">3. Reserva en 1 click</p>
-                      <p className="text-[11px] text-muted-foreground">
-                        Tu cita queda en el calendario al instante.
-                      </p>
-                    </div>
+                  <div className="rounded-lg border bg-card p-3">
+                    <p className="text-xs font-medium mb-0.5">2. Escoge el horario</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      Filtra por tipo de servicio y proveedor.
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-3">
-                {myBookings.map((booking: any) => {
-                  const slot = booking.service_slots;
-                  const provider = booking.provider;
-                  const profile = provider?.profiles;
-                  const slotDate = slot?.slot_date;
-                  const isPast = slotDate && slotDate < todayStr;
-                  const isBookingToday = slotDate === todayStr;
+                  <div className="rounded-lg border bg-card p-3">
+                    <p className="text-xs font-medium mb-0.5">3. Reserva en 1 click</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      Tu cita queda en el calendario al instante.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="space-y-3">
+              {myBookings.map((booking: any) => {
+                const slot = booking.service_slots;
+                const provider = booking.provider;
+                const profile = provider?.profiles;
+                const slotDate = slot?.slot_date;
+                const isPast = slotDate && slotDate < todayStr;
+                const isBookingToday = slotDate === todayStr;
 
-                  // Status display for V2 bookings
-                  const displayStatus =
-                    booking._source === 'v2' ? booking.status : booking.payment_status;
+                // Status display for V2 bookings
+                const displayStatus =
+                  booking._source === 'v2' ? booking.status : booking.payment_status;
 
-                  const statusLabel =
-                    displayStatus === 'paid' || displayStatus === 'confirmado'
-                      ? 'Confirmada'
-                      : displayStatus === 'pending' || displayStatus === 'pendiente'
-                        ? 'Pendiente'
-                        : displayStatus === 'completado'
-                          ? 'Completada'
-                          : displayStatus === 'cancelado'
-                            ? 'Cancelada'
-                            : displayStatus === 'en_curso'
-                              ? 'En curso'
-                              : displayStatus === 'no_show'
-                                ? 'No se presentó'
-                                : displayStatus || 'Sin estado';
+                const statusLabel =
+                  displayStatus === 'paid' || displayStatus === 'confirmado'
+                    ? 'Confirmada'
+                    : displayStatus === 'pending' || displayStatus === 'pendiente'
+                      ? 'Pendiente'
+                      : displayStatus === 'completado'
+                        ? 'Completada'
+                        : displayStatus === 'cancelado'
+                          ? 'Cancelada'
+                          : displayStatus === 'en_curso'
+                            ? 'En curso'
+                            : displayStatus === 'no_show'
+                              ? 'No se presentó'
+                              : displayStatus || 'Sin estado';
 
-                  const statusVariant =
-                    displayStatus === 'paid' ||
-                    displayStatus === 'confirmado' ||
-                    displayStatus === 'completado'
-                      ? 'default'
-                      : displayStatus === 'pending' ||
-                          displayStatus === 'pendiente' ||
-                          displayStatus === 'en_curso'
-                        ? 'secondary'
-                        : 'outline';
+                const statusVariant =
+                  displayStatus === 'paid' ||
+                  displayStatus === 'confirmado' ||
+                  displayStatus === 'completado'
+                    ? 'default'
+                    : displayStatus === 'pending' ||
+                        displayStatus === 'pendiente' ||
+                        displayStatus === 'en_curso'
+                      ? 'secondary'
+                      : 'outline';
 
-                  return (
-                    <Card key={booking.id} className={isPast ? 'opacity-60' : ''}>
-                      <CardContent className="py-3 px-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <span className="font-medium text-sm truncate">
-                                {profile?.display_name || 'Proveedor'}
-                              </span>
-                              {isBookingToday && (
-                                <Badge variant="default" className="text-[10px] px-1.5 py-0">
-                                  Hoy
-                                </Badge>
-                              )}
-                              {isPast && (
-                                <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
-                                  Pasada
-                                </Badge>
-                              )}
-                            </div>
-                            <p className="text-xs text-muted-foreground capitalize">
-                              {slotDate ? formatBookingDate(slotDate) : '—'}
-                              {slot?.start_time &&
-                                ` · ${formatTimeRange(slot.start_time, slot.end_time)}`}
-                            </p>
-                            <div className="flex items-center gap-2 mt-0.5">
-                              {slot?.service_type && (
-                                <p className="text-xs text-muted-foreground capitalize">
-                                  {slot.service_type}
-                                </p>
-                              )}
-                              {booking.pet_name && (
-                                <p className="text-xs text-muted-foreground">
-                                  · {booking.pet_name}
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                          <div className="text-right flex flex-col items-end gap-1">
-                            <Badge variant={statusVariant as any} className="text-[10px]">
-                              {statusLabel}
-                            </Badge>
+                return (
+                  <Card key={booking.id} className={isPast ? 'opacity-60' : ''}>
+                    <CardContent className="py-3 px-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="font-medium text-sm truncate">
+                              {profile?.display_name || 'Proveedor'}
+                            </span>
+                            {isBookingToday && (
+                              <Badge variant="default" className="text-[10px] px-1.5 py-0">
+                                Hoy
+                              </Badge>
+                            )}
                             {isPast && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                className="text-xs text-purple-600 h-7 px-2"
-                                onClick={() => setReviewBooking(booking)}
-                              >
-                                <Star className="h-3 w-3 mr-1" />
-                                Reseña
-                              </Button>
+                              <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                                Pasada
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-xs text-muted-foreground capitalize">
+                            {slotDate ? formatBookingDate(slotDate) : '—'}
+                            {slot?.start_time &&
+                              ` · ${formatTimeRange(slot.start_time, slot.end_time)}`}
+                          </p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            {slot?.service_type && (
+                              <p className="text-xs text-muted-foreground capitalize">
+                                {slot.service_type}
+                              </p>
+                            )}
+                            {booking.pet_name && (
+                              <p className="text-xs text-muted-foreground">· {booking.pet_name}</p>
                             )}
                           </div>
                         </div>
-                      </CardContent>
-                    </Card>
-                  );
-                })}
-              </div>
-            )}
-          </TabsContent>
-
-          {/* Tab: Buscar disponibilidad */}
-          <TabsContent value="available" className="mt-4 space-y-4">
-            {/* Filter chips */}
-            <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
-              {SERVICE_TYPES.map((type) => (
-                <button
-                  key={type.value}
-                  onClick={() => setFilterType(type.value)}
-                  className={`flex-shrink-0 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
-                    filterType === type.value
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                  }`}
-                >
-                  {type.label}
-                </button>
-              ))}
+                        <div className="text-right flex flex-col items-end gap-1">
+                          <Badge variant={statusVariant as any} className="text-[10px]">
+                            {statusLabel}
+                          </Badge>
+                          {isPast && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-xs text-purple-600 h-7 px-2"
+                              onClick={() => setReviewBooking(booking)}
+                            >
+                              <Star className="h-3 w-3 mr-1" />
+                              Reseña
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
-
-            {/* Grid: Calendario + Slots del día */}
-            <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-              <div className="lg:col-span-3">
-                <Card className="border-0 shadow-md">
-                  <CardContent className="pt-4">
-                    <CalendarGrid
-                      currentMonth={currentMonth}
-                      selectedDate={selectedDate}
-                      onSelectDate={setSelectedDate}
-                      onChangeMonth={setCurrentMonth}
-                      slotsPerDay={monthSlots || {}}
-                    />
-                  </CardContent>
-                </Card>
-              </div>
-              <div className="lg:col-span-2">
-                <Card className="h-full">
-                  <CardContent className="pt-4">
-                    <h2 className="text-sm font-semibold mb-3 flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-purple-500" />
-                      {format(selectedDate, 'EEEE d MMMM', { locale: es })}
-                    </h2>
-                    <DaySlotsList
-                      slots={slots || []}
-                      isLoading={isLoading}
-                      onBook={setBookingSlot}
-                    />
-                  </CardContent>
-                </Card>
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
-
-        {/* Booking modal */}
-        {bookingSlot && (
-          <BookingModal
-            slot={bookingSlot}
-            open={!!bookingSlot}
-            onClose={() => setBookingSlot(null)}
-          />
-        )}
+          )}
+        </div>
 
         {/* Review dialog */}
         <ResponsiveModal

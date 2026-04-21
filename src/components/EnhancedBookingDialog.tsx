@@ -1,3 +1,17 @@
+/**
+ * @deprecated (CC-23 · Booking V3 Master Plan Fase 3)
+ *
+ * ❌ NO USAR EN CÓDIGO NUEVO. Este dialog es legacy: mantiene su propio
+ * state machine separado del oficial (`src/lib/bookingStateMachine.ts`)
+ * y duplica lógica con `BookingFlow`.
+ *
+ * Usado hoy solo desde `src/pages/ServiceDirectory.tsx` para agendar
+ * walkers / sitters / trainers / groomers. Se migrará a `BookingFlow`
+ * en Fase 4 (tras agregar soporte completo multi-mascota en el wizard).
+ *
+ * Si necesitas crear un booking desde código nuevo, usar `BookingFlow`
+ * con el prop `bookingType` correspondiente ('walk'|'dogsitter'|'training').
+ */
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';

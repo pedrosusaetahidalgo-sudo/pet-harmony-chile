@@ -7,15 +7,23 @@
  * (La sincronización inversa Google -> app requiere watch channels +
  * webhook publico, queda para una próxima iteración.)
  *
- * Body: { user_id?: string }  (si no viene, lo saca del Bearer token)
+ * Body:
+ *   - { action?: 'sync' }  — default: sync full del user (reminders + appointments + bookings)
+ *   - { action: 'delete', source_type, source_id }  — borra un evento puntual
+ *     (ej. al cancelar un booking). Idempotente: 404 en Google no es error.
  *
  * Auth: Bearer token del user (manual)
  *
- * Estrategia:
+ * Estrategia (sync):
  *   1. Refresca access_token si está vencido
  *   2. Lista todos los pet_reminders no completados + appointments futuros
  *   3. Por cada uno, busca en external_calendar_events si ya existe
  *   4. Si existe -> PATCH (update); si no -> INSERT (create)
+ *
+ * Estrategia (delete):
+ *   1. Busca google_event_id en external_calendar_events por (source_type, source_id)
+ *   2. Si existe, DELETE el evento en Google (ignorando 404)
+ *   3. Borra el mapping en external_calendar_events
  */
 
 import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
@@ -87,6 +95,27 @@ async function upsertGoogleEvent(
   return json.id;
 }
 
+/**
+ * Borra un evento de Google Calendar. Idempotente: si el evento ya no existe
+ * (404 o 410 Gone), lo tratamos como éxito — el objetivo era que NO estuviera.
+ */
+async function deleteGoogleEvent(
+  accessToken: string,
+  calendarId: string,
+  eventId: string
+): Promise<void> {
+  const url = `https://www.googleapis.com/calendar/v3/calendars/${encodeURIComponent(calendarId)}/events/${encodeURIComponent(eventId)}`;
+  const resp = await fetch(url, {
+    method: 'DELETE',
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  if (resp.ok) return;
+  // 404 Not Found / 410 Gone → evento ya no existe en Google: idempotente.
+  if (resp.status === 404 || resp.status === 410) return;
+  const text = await resp.text().catch(() => '');
+  throw new Error(`Event DELETE failed (${resp.status}): ${text}`);
+}
+
 serve(
   withTelemetry('google-calendar-sync', async (req) => {
     const corsHeaders = getCorsHeaders(req);
@@ -122,6 +151,27 @@ serve(
         return rateLimitResponse(quota, corsHeaders);
       }
 
+      // Parse body para soportar action: 'delete'.
+      // Si no hay body o action != 'delete', seguimos con sync completo (default).
+      let requestedAction: 'sync' | 'delete' = 'sync';
+      let deleteSourceType: string | null = null;
+      let deleteSourceId: string | null = null;
+      if (req.method === 'POST') {
+        try {
+          const body = await req.json();
+          if (body?.action === 'delete') {
+            requestedAction = 'delete';
+            deleteSourceType = String(body.source_type ?? '');
+            deleteSourceId = String(body.source_id ?? '');
+            if (!deleteSourceType || !deleteSourceId) {
+              throw new Error('delete action requires source_type and source_id');
+            }
+          }
+        } catch {
+          // body no-JSON o vacío: caer a sync por default (comportamiento previo)
+        }
+      }
+
       // Tokens del user
       const { data: tokenRow, error: tokErr } = await supabase
         .from('google_calendar_tokens')
@@ -130,6 +180,14 @@ serve(
         .maybeSingle();
 
       if (tokErr || !tokenRow) {
+        // Para delete: si el user nunca conectó Google, no hay nada que hacer.
+        // Respondemos 200 para que el caller (cancelBooking) no vea error.
+        if (requestedAction === 'delete') {
+          return new Response(JSON.stringify({ deleted: false, reason: 'not_connected' }), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
         return new Response(JSON.stringify({ error: 'Google Calendar not connected' }), {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -153,6 +211,51 @@ serve(
       }
 
       const calendarId = tokenRow.calendar_id || 'primary';
+
+      // ── Action: DELETE (cancel on Google + remove mapping) ──
+      // Llamado desde useCancelBooking para eliminar el evento en Google
+      // cuando el tutor o provider cancela una reserva.
+      if (requestedAction === 'delete' && deleteSourceType && deleteSourceId) {
+        const { data: mapping } = await supabase
+          .from('external_calendar_events')
+          .select('google_event_id, google_calendar_id')
+          .eq('user_id', userId)
+          .eq('source_type', deleteSourceType)
+          .eq('source_id', deleteSourceId)
+          .maybeSingle();
+
+        if (!mapping) {
+          // No hay mapping: nunca se sincronizó. Respuesta idempotente.
+          return new Response(JSON.stringify({ deleted: false, reason: 'no_mapping' }), {
+            status: 200,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
+        try {
+          await deleteGoogleEvent(
+            accessToken,
+            mapping.google_calendar_id || calendarId,
+            mapping.google_event_id
+          );
+        } catch (err) {
+          console.warn('[google-calendar-sync] delete failed', err);
+          // Seguimos adelante: queremos dejar la DB limpia aunque Google falle,
+          // para no dejar mappings huérfanos. El user puede re-sincronizar.
+        }
+
+        await supabase
+          .from('external_calendar_events')
+          .delete()
+          .eq('user_id', userId)
+          .eq('source_type', deleteSourceType)
+          .eq('source_id', deleteSourceId);
+
+        return new Response(JSON.stringify({ deleted: true }), {
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
 
       // Fetch reminders + appointments del user
       const { data: reminders } = await supabase

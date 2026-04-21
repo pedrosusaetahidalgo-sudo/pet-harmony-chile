@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { Sentry } from '@/lib/sentry';
+import { track, EVENTS } from '@/lib/analytics';
 import {
   type BookingType,
   type BookingStatus,
@@ -47,9 +49,67 @@ export function useCreateBooking() {
     mutationFn: async (input: CreateBookingInput) => {
       if (!user) throw new Error('No autenticado');
 
+      // ─── Path A: RPC server-authoritative (CC-18, solo vet por ahora) ───
+      // La RPC valida pet ownership, provider activo, slot disponible,
+      // min_lead_time antes de insertar. Si no está desplegada aún,
+      // caemos al path legacy (insert directo) sin romper la app.
+      if (input.bookingType === 'vet' && input.startTime && input.endTime) {
+        try {
+          const { data: newBookingId, error: rpcErr } = await supabase.rpc('rpc_create_booking', {
+            p_provider_id: input.providerId,
+            p_service_type: input.serviceType,
+            p_pet_id: input.petId,
+            p_scheduled_date: input.scheduledDate,
+            p_start_time: input.startTime,
+            p_end_time: input.endTime,
+            p_notes: input.notes ?? null,
+            p_is_emergency: input.isEmergency ?? false,
+            p_confirmation_mode: input.confirmationMode ?? 'auto',
+          });
+
+          if (!rpcErr && newBookingId) {
+            // Trae el booking creado para que onSuccess tenga el shape esperado.
+            const { data: created, error: fetchErr } = await supabase
+              .from('vet_bookings')
+              .select('*')
+              .eq('id', newBookingId)
+              .single();
+
+            if (!fetchErr && created) {
+              return created;
+            }
+          }
+
+          // Traducir errores típicos del RPC a errores tipados.
+          if (rpcErr) {
+            const msg = rpcErr.message ?? '';
+            if (rpcErr.code === '23505' || msg.includes('slot_not_available')) {
+              throw new BookingConflictError();
+            }
+            if (msg.includes('pet_not_owned')) {
+              throw new Error('No puedes reservar con una mascota que no es tuya.');
+            }
+            if (msg.includes('scheduled_in_past')) {
+              throw new Error('La fecha/hora seleccionada ya pasó.');
+            }
+            if (msg.includes('provider_not_found')) {
+              throw new Error('El veterinario no está disponible.');
+            }
+            // Cualquier otro error del RPC (función no existe, etc.) →
+            // fallback al insert directo más abajo.
+          }
+        } catch (err) {
+          // Si es BookingConflictError, propagar. Otros errores → fallback.
+          if (err instanceof BookingConflictError) throw err;
+          // Continua al path B.
+        }
+      }
+
+      // ─── Path B: Insert directo legacy (comportamiento previo) ───
+      // Se mantiene para walk/dogsitter/training (no cubiertos por RPC aún)
+      // y como fallback cuando la migración 20260725000005 aún no se aplicó.
       const table = getBookingTable(input.bookingType);
 
-      // Build insert payload based on booking type
       const basePayload: Record<string, unknown> = {
         owner_id: user.id,
         scheduled_date: input.scheduledDate,
@@ -100,18 +160,43 @@ export function useCreateBooking() {
 
       return data;
     },
-    onSuccess: (data) => {
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
       queryClient.invalidateQueries({ queryKey: ['available-slots'] });
       queryClient.invalidateQueries({ queryKey: ['provider-inbox'] });
-      toast.success(
-        data.status === 'confirmado' ? 'Hora confirmada' : 'Solicitud de reserva enviada'
-      );
+
+      // CC-12: evento de funnel. booking_confirmed se dispara al crear
+      // SIEMPRE que el booking quede en 'confirmado' (auto-confirm del
+      // provider). Si queda pendiente, igual queremos trackear el created
+      // flow: ya emite BOOKING_COMPLETED el wizard (legacy rename pending).
+      track({
+        event: EVENTS.BOOKING_CONFIRMED,
+        properties: {
+          booking_id: data.id,
+          booking_type: variables.bookingType,
+          service_type: variables.serviceType,
+          provider_id: variables.providerId,
+          confirmation_mode: variables.confirmationMode ?? 'auto',
+          is_emergency: variables.isEmergency ?? false,
+          auto_confirmed: data.status === 'confirmado',
+        },
+      });
+
+      if (data.status === 'confirmado') {
+        toast.success('Cita confirmada', {
+          description: 'Te avisaremos con un recordatorio antes de la hora.',
+        });
+      } else {
+        toast.success('Enviada al veterinario', {
+          description: 'Te avisaremos cuando confirme tu hora.',
+        });
+      }
     },
     onError: (error: Error) => {
       // BookingConflictError lo maneja el componente con UI de sugerencias;
       // no mostramos toast generico para no duplicar feedback.
       if (error instanceof BookingConflictError) return;
+      Sentry.captureException(error, { tags: { op: 'booking_mutation', action: 'create' } });
       toast.error(error.message || 'Error al crear la reserva');
     },
   });
@@ -139,6 +224,59 @@ export function useCancelBooking() {
         throw new Error('No puedes cancelar esta reserva en su estado actual');
       }
 
+      // ─── Path A: RPC server-side (CC-19) ───
+      // Solo para vet bookings por ahora. Valida grace window server-side
+      // y registra booking_event mediante trigger.
+      if (input.bookingType === 'vet') {
+        try {
+          const { error: rpcErr } = await supabase.rpc('rpc_cancel_booking', {
+            p_booking_id: input.bookingId,
+            p_reason: input.reason ?? null,
+          });
+
+          if (!rpcErr) {
+            // Success: google calendar delete + toast (onSuccess se encarga).
+            if (input.bookingType === 'vet') {
+              void supabase.functions
+                .invoke('google-calendar-sync', {
+                  body: {
+                    action: 'delete',
+                    source_type: 'vet_booking',
+                    source_id: input.bookingId,
+                  },
+                })
+                .catch((err: unknown) => {
+                  Sentry.captureException(err, {
+                    tags: { op: 'booking_mutation', action: 'google_calendar_delete_on_cancel' },
+                  });
+                });
+            }
+            return;
+          }
+
+          // Mapear errores del RPC a mensajes usuario-friendly.
+          const msg = rpcErr.message ?? '';
+          if (msg.includes('reason_required_outside_grace')) {
+            throw new Error(
+              'Estás fuera del plazo de cancelación sin costo. Por favor indica un motivo.'
+            );
+          }
+          if (msg.includes('cannot_cancel_terminal_status')) {
+            throw new Error('Esta reserva ya no se puede cancelar.');
+          }
+          if (msg.includes('not_authorized')) {
+            throw new Error('No tienes permiso para cancelar esta reserva.');
+          }
+          // Otro error → caer a fallback.
+        } catch (err) {
+          // Propagar si es Error tipado; otros errores → fallback.
+          if (err instanceof Error && err.message.startsWith('Estás fuera')) throw err;
+          if (err instanceof Error && err.message.startsWith('Esta reserva')) throw err;
+          if (err instanceof Error && err.message.startsWith('No tienes')) throw err;
+        }
+      }
+
+      // ─── Path B: UPDATE directo (fallback) ───
       const table = getBookingTable(input.bookingType);
       const { error } = await supabase
         .from(table)
@@ -151,14 +289,39 @@ export function useCancelBooking() {
         .eq('id', input.bookingId);
 
       if (error) throw error;
+
+      // Borrar evento asociado en Google Calendar (best-effort, no bloquea UX).
+      // CC-02 del master plan: evita que queden eventos fantasma en el Google
+      // del tutor tras cancelar. La edge fn es idempotente si no hay mapping.
+      if (input.bookingType === 'vet') {
+        void supabase.functions
+          .invoke('google-calendar-sync', {
+            body: { action: 'delete', source_type: 'vet_booking', source_id: input.bookingId },
+          })
+          .catch((err: unknown) => {
+            Sentry.captureException(err, {
+              tags: { op: 'booking_mutation', action: 'google_calendar_delete_on_cancel' },
+            });
+          });
+      }
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
       queryClient.invalidateQueries({ queryKey: ['available-slots'] });
       queryClient.invalidateQueries({ queryKey: ['booking-detail'] });
+      track({
+        event: EVENTS.BOOKING_CANCELLED,
+        properties: {
+          booking_id: variables.bookingId,
+          booking_type: variables.bookingType,
+          actor: 'owner',
+          had_reason: !!variables.reason,
+        },
+      });
       toast.success('Reserva cancelada');
     },
     onError: (error: Error) => {
+      Sentry.captureException(error, { tags: { op: 'booking_mutation', action: 'cancel' } });
       toast.error(error.message || 'Error al cancelar');
     },
   });
@@ -182,6 +345,41 @@ export function useRescheduleBooking() {
     mutationFn: async (input: RescheduleBookingInput) => {
       if (!user) throw new Error('No autenticado');
 
+      // ─── Path A: RPC server-side (CC-19) ───
+      // Valida grace window, state machine y slot nuevo disponible.
+      if (input.bookingType === 'vet' && input.newStartTime && input.newEndTime) {
+        try {
+          const { error: rpcErr } = await supabase.rpc('rpc_reschedule_booking', {
+            p_booking_id: input.bookingId,
+            p_new_date: input.newDate,
+            p_new_start_time: input.newStartTime,
+            p_new_end_time: input.newEndTime,
+          });
+
+          if (!rpcErr) return;
+
+          const msg = rpcErr.message ?? '';
+          if (rpcErr.code === '23505' || msg.includes('new_slot_not_available')) {
+            throw new BookingConflictError('El nuevo horario ya fue reservado por alguien más.');
+          }
+          if (msg.includes('outside_reschedule_grace')) {
+            throw new Error('Estás fuera del plazo para reprogramar sin costo.');
+          }
+          if (msg.includes('cannot_reschedule_in_current_status')) {
+            throw new Error('Esta reserva ya no se puede reprogramar.');
+          }
+          // Otro error → fallback.
+        } catch (err) {
+          if (err instanceof BookingConflictError) throw err;
+          if (
+            err instanceof Error &&
+            (err.message.startsWith('Estás fuera') || err.message.startsWith('Esta reserva'))
+          )
+            throw err;
+        }
+      }
+
+      // ─── Path B: UPDATE directo (fallback) ───
       const table = getBookingTable(input.bookingType);
       const updatePayload: Record<string, unknown> = {
         scheduled_date: input.newDate,
@@ -199,13 +397,22 @@ export function useRescheduleBooking() {
 
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
       queryClient.invalidateQueries({ queryKey: ['available-slots'] });
       queryClient.invalidateQueries({ queryKey: ['booking-detail'] });
+      track({
+        event: EVENTS.BOOKING_RESCHEDULED,
+        properties: {
+          booking_id: variables.bookingId,
+          booking_type: variables.bookingType,
+          actor: 'owner',
+        },
+      });
       toast.success('Reserva reprogramada');
     },
-    onError: () => {
+    onError: (error: Error) => {
+      Sentry.captureException(error, { tags: { op: 'booking_mutation', action: 'reschedule' } });
       toast.error('Error al reprogramar');
     },
   });
@@ -233,12 +440,22 @@ export function useConfirmBooking() {
         .eq('id', input.bookingId);
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['provider-inbox'] });
       queryClient.invalidateQueries({ queryKey: ['booking-detail'] });
+      track({
+        event: EVENTS.BOOKING_CONFIRMED,
+        properties: {
+          booking_id: variables.bookingId,
+          booking_type: variables.bookingType,
+          actor: 'provider',
+          auto_confirmed: false,
+        },
+      });
       toast.success('Reserva confirmada');
     },
-    onError: () => {
+    onError: (error: Error) => {
+      Sentry.captureException(error, { tags: { op: 'booking_mutation', action: 'confirm' } });
       toast.error('Error al confirmar');
     },
   });
@@ -258,12 +475,21 @@ export function useMarkCompleted() {
         .eq('id', input.bookingId);
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['provider-inbox'] });
       queryClient.invalidateQueries({ queryKey: ['booking-detail'] });
+      if (variables.bookingType === 'vet') {
+        track({
+          event: EVENTS.BOOKING_COMPLETED_VET,
+          properties: {
+            booking_id: variables.bookingId,
+          },
+        });
+      }
       toast.success('Atencion completada');
     },
-    onError: () => {
+    onError: (error: Error) => {
+      Sentry.captureException(error, { tags: { op: 'booking_mutation', action: 'complete' } });
       toast.error('Error al completar');
     },
   });
@@ -283,12 +509,20 @@ export function useMarkNoShow() {
         .eq('id', input.bookingId);
       if (error) throw error;
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['provider-inbox'] });
       queryClient.invalidateQueries({ queryKey: ['booking-detail'] });
+      track({
+        event: EVENTS.BOOKING_NO_SHOW,
+        properties: {
+          booking_id: variables.bookingId,
+          booking_type: variables.bookingType,
+        },
+      });
       toast.success('Marcado como no presentado');
     },
-    onError: () => {
+    onError: (error: Error) => {
+      Sentry.captureException(error, { tags: { op: 'booking_mutation', action: 'no_show' } });
       toast.error('Error al marcar no-show');
     },
   });
@@ -313,7 +547,8 @@ export function useStartBooking() {
       queryClient.invalidateQueries({ queryKey: ['booking-detail'] });
       toast.success('Atencion iniciada');
     },
-    onError: () => {
+    onError: (error: Error) => {
+      Sentry.captureException(error, { tags: { op: 'booking_mutation', action: 'start' } });
       toast.error('Error al iniciar');
     },
   });

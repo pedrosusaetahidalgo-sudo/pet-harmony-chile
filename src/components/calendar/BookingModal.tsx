@@ -1,3 +1,19 @@
+/**
+ * @deprecated (CC-23 · Booking V3 Master Plan Fase 3)
+ *
+ * ❌ NO USAR EN CÓDIGO NUEVO. Este modal pertenece al legacy path V1
+ * basado en tabla `service_slots` + tabla `bookings` (V1). La ruta
+ * canónica para crear reservas es ahora `BookingFlow` / `BookingWizardV3`
+ * en `src/components/booking/BookingFlow.tsx`.
+ *
+ * Eliminado del flujo tutor en 2026-07 (CC-22): ya no se monta desde
+ * `/mis-reservas`. Se conserva temporalmente para no romper integraciones
+ * internas que aún consuman service_slots. Se eliminará en Fase 6 tras
+ * verificar analytics que confirmen 0 usos en las últimas 4 semanas.
+ *
+ * Si necesitas crear un booking desde un componente nuevo, usar:
+ *   <BookingFlow providerId={...} providerName={...} bookingType="vet" />
+ */
 import { useState } from 'react';
 import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { Button } from '@/components/ui/button';

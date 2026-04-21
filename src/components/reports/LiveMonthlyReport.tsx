@@ -193,7 +193,7 @@ async function fetchProviderMonthly(
     sb
       .from('vet_bookings')
       .select('id, status', { count: 'exact' })
-      .eq('vet_id', userId)
+      .or(`service_provider_id.eq.${provider.id},vet_id.eq.${userId}`)
       .gte('scheduled_date', startIso)
       .lte('scheduled_date', endIso),
     sb

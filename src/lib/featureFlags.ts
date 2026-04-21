@@ -106,6 +106,39 @@ export const FEATURE_FLAGS = {
    * perfil publico del refugio + selector en /donaciones.
    */
   SHELTER_DONATIONS: true,
+
+  // ── Booking V3 Master Plan (docs-raiz/planes/BOOKING_SYSTEM_MASTER_PLAN.md) ──
+
+  /**
+   * Booking Wizard V3 — reemplaza BookingFlow actual con wizard de 3 pasos
+   * (service+slot → details → confirm) con auto-select, precio visible,
+   * PolicyBanner y BookingSuccessScreen.
+   * DESACTIVADO por default. Activar por rollout gradual 10% → 50% → 100%.
+   */
+  BOOKING_V3_WIZARD: false,
+
+  /**
+   * Calendario operativo del provider — ruta /provider/agenda con vista
+   * dia/semana/mes y drag-to-reschedule. Reemplaza la agenda 24h actual
+   * de TodayAgendaCard como unica fuente visual.
+   * DESACTIVADO hasta que el componente ProviderAgendaCalendar este listo.
+   */
+  PROVIDER_AGENDA_CALENDAR: false,
+
+  /**
+   * Push FCM para provider cuando llega booking nuevo (booking.created).
+   * Infraestructura (send-push-notification edge fn + fcm_tokens) ya existe;
+   * solo falta encender el trigger. Activar 1 a 1 con smoke test real para
+   * evitar incidente tipo verify_jwt (ver feedback_no_global_jwt_flip).
+   */
+  PROVIDER_PUSH: false,
+
+  /**
+   * Export de calendario en formato .ics (Apple Calendar / Outlook).
+   * Util para tutores que no quieren conectar Google Calendar.
+   * DESACTIVADO hasta implementar el util + boton.
+   */
+  ICS_EXPORT: false,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;

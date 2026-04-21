@@ -149,11 +149,23 @@ export function AvailabilityCalendar({
             const isPast = isBefore(day, startOfDay(new Date())) && !isToday(day);
             const isSelected = viewDate === dateStr;
 
+            // CC-10: etiqueta accesible + tooltip nativo con el count de horarios.
+            // Antes solo había un dot sin número: el tutor no sabía si había 1 o 10.
+            const dayLabel = format(day, 'd');
+            const accessibleLabel =
+              hasSlots && !isPast
+                ? `${dayLabel} — ${slotCount} ${slotCount === 1 ? 'horario disponible' : 'horarios disponibles'}`
+                : isPast
+                  ? `${dayLabel} (fecha pasada)`
+                  : `${dayLabel} (sin horarios)`;
+
             return (
               <button
                 key={dateStr}
                 disabled={isPast || !hasSlots}
                 onClick={() => setViewDate(dateStr)}
+                aria-label={accessibleLabel}
+                title={accessibleLabel}
                 className={`
                   relative h-10 rounded-md text-sm transition-colors
                   ${isPast ? 'text-muted-foreground/40 cursor-not-allowed' : ''}
@@ -163,11 +175,16 @@ export function AvailabilityCalendar({
                   ${isToday(day) && !isSelected ? 'ring-1 ring-purple-300' : ''}
                 `}
               >
-                {format(day, 'd')}
+                {dayLabel}
                 {hasSlots && !isPast && (
                   <span
-                    className={`absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full ${isSelected ? 'bg-white' : 'bg-purple-500'}`}
-                  />
+                    aria-hidden="true"
+                    className={`absolute bottom-0.5 left-1/2 -translate-x-1/2 min-w-[14px] h-[14px] px-1 rounded-full text-[9px] font-semibold leading-[14px] text-center ${
+                      isSelected ? 'bg-white/20 text-white' : 'bg-purple-100 text-purple-700'
+                    }`}
+                  >
+                    {slotCount}
+                  </span>
                 )}
               </button>
             );

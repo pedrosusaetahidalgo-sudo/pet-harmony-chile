@@ -112,7 +112,7 @@ export function useProviderDashboardStats() {
         sb
           .from('vet_bookings')
           .select('id, total_price, status')
-          .eq('vet_id', user.id)
+          .or(`service_provider_id.eq.${provider.id},vet_id.eq.${user.id}`)
           .gte('scheduled_date', startOfMonth),
         supabase
           .from('service_reviews')

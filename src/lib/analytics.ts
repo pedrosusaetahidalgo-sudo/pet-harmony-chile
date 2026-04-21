@@ -181,6 +181,22 @@ export const EVENTS = {
   CHECKOUT_STARTED: 'checkout_started',
   PAYMENT_COMPLETED: 'payment_completed',
 
+  // Booking V3 funnel (CC-12 · docs-raiz/planes/BOOKING_SYSTEM_MASTER_PLAN.md §26)
+  // Eventos que faltaban para reconstruir el funnel de reserva completo:
+  // directory → provider → start → service → slot → created → confirmed → completed.
+  BOOKING_SELECT_SERVICE: 'booking_select_service',
+  BOOKING_SELECT_SLOT: 'booking_select_slot',
+  BOOKING_CONFLICT_SHOWN: 'booking_conflict_shown',
+  BOOKING_CONFLICT_RESOLVED: 'booking_conflict_resolved',
+  BOOKING_CONFIRMED: 'booking_confirmed',
+  BOOKING_CANCELLED: 'booking_cancelled',
+  BOOKING_RESCHEDULED: 'booking_rescheduled',
+  BOOKING_NO_SHOW: 'booking_no_show',
+  BOOKING_COMPLETED_VET: 'booking_completed_vet',
+  REMINDER_SENT: 'reminder_sent',
+  REMINDER_TAPPED: 'reminder_tapped',
+  FOLLOW_UP_CREATED: 'follow_up_created',
+
   // Gamification
   STREAK_CLAIMED: 'streak_claimed',
   MISSION_COMPLETED: 'mission_completed',

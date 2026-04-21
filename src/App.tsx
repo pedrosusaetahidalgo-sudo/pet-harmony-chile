@@ -80,6 +80,9 @@ const PerfilVetPublico = lazy(() => import('./pages/PerfilVetPublico'));
 const Demo = lazy(() => import('./pages/Demo'));
 const ProviderProfileEdit = lazy(() => import('./pages/ProviderProfileEdit'));
 const ProviderPatients = lazy(() => import('./pages/ProviderPatients'));
+// CC-25: Booking V3 Fase 4 · vista agenda semanal del provider.
+// Gated por FEATURE_FLAGS.PROVIDER_AGENDA_CALENDAR — hoy false.
+const ProviderAgenda = lazy(() => import('./pages/ProviderAgenda'));
 const RegistroVeterinario = lazy(() => import('./pages/RegistroVeterinario'));
 const ParaVeterinarios = lazy(() => import('./pages/ParaVeterinarios'));
 const PreciosVeterinarios = lazy(() => import('./pages/PreciosVeterinarios'));
@@ -713,6 +716,23 @@ const App = () => (
                         <AppLayout>
                           <ProviderPatients />
                         </AppLayout>
+                      </RoleGuard>
+                    </ProtectedRoute>
+                  }
+                />
+                {/* CC-25: /provider/agenda · Booking V3 Fase 4.
+                    Gated con FeatureGuard PROVIDER_AGENDA_CALENDAR.
+                    Cuando esté off, redirige al dashboard. */}
+                <Route
+                  path="/provider/agenda"
+                  element={
+                    <ProtectedRoute>
+                      <RoleGuard requiredRole="provider">
+                        <FeatureGuard flag="PROVIDER_AGENDA_CALENDAR">
+                          <AppLayout>
+                            <ProviderAgenda />
+                          </AppLayout>
+                        </FeatureGuard>
                       </RoleGuard>
                     </ProtectedRoute>
                   }

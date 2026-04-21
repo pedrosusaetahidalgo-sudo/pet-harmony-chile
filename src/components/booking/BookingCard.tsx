@@ -192,9 +192,16 @@ export function BookingCard({ booking, role, onAction }: BookingCardProps) {
           )}
 
           {role === 'provider' && ['pendiente', 'confirmado'].includes(booking.status) && (
-            <Button variant="destructive" size="sm" onClick={() => onAction('cancel', booking)}>
-              Cancelar
-            </Button>
+            <>
+              {/* CC-26: provider puede reprogramar (antes solo owner). Usa la
+                  misma mutation (rpc_reschedule_booking con grace 12h). */}
+              <Button variant="outline" size="sm" onClick={() => onAction('reschedule', booking)}>
+                Reprogramar
+              </Button>
+              <Button variant="destructive" size="sm" onClick={() => onAction('cancel', booking)}>
+                Cancelar
+              </Button>
+            </>
           )}
         </div>
       </CardContent>

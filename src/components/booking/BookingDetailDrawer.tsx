@@ -20,11 +20,13 @@ import {
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Link } from 'react-router-dom';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useBookingDetail } from '@/hooks/useBookingDetail';
 import { BookingStatusBadge } from './BookingStatusBadge';
 import { BookingTimeline } from './BookingTimeline';
 import { BookingToMedicalRecordCTA } from './BookingToMedicalRecordCTA';
 import { BookingPrivateNotes } from './BookingPrivateNotes';
+import { PatientBriefing } from '@/components/provider/PatientBriefing';
 import type { BookingType } from '@/lib/bookingStateMachine';
 import { formatCLP, formatBookingDate, formatTimeRange } from '@/lib/format';
 import { cn } from '@/lib/utils';
@@ -51,10 +53,20 @@ export function BookingDetailDrawer({
 }: BookingDetailDrawerProps) {
   const { data, isLoading } = useBookingDetail(bookingId, bookingType);
   const isVetViewer = viewerRole === 'provider' || viewerRole === 'admin';
+  // CC-08: en mobile se abre como bottom-sheet (ergonomia thumb).
+  // En desktop se mantiene como drawer derecho.
+  const isMobile = useIsMobile();
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-full sm:max-w-lg overflow-y-auto">
+      <SheetContent
+        side={isMobile ? 'bottom' : 'right'}
+        className={
+          isMobile
+            ? 'h-[92vh] max-h-[92vh] rounded-t-2xl overflow-y-auto'
+            : 'w-full sm:max-w-lg overflow-y-auto'
+        }
+      >
         <SheetHeader>
           <SheetTitle>Detalle de la reserva</SheetTitle>
           <SheetDescription>
@@ -150,6 +162,11 @@ export function BookingDetailDrawer({
               followUpBookingId={data.follow_up_booking_id}
               bookingType={data.booking_type}
             />
+
+            {/* CC-29: PatientBriefing solo para vet/admin viendo bookings vet. */}
+            {isVetViewer && data.booking_type === 'vet' && data.pet_id && (
+              <PatientBriefing petId={data.pet_id} />
+            )}
 
             {/* Cita completada -> crear/ver nota clinica */}
             {data.status === 'completado' && data.pet_id && (
