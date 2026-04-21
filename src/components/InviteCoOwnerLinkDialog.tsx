@@ -18,7 +18,7 @@ import { toast } from 'sonner';
  * El row en pet_co_owners ya se creo con invitation_token + invited_email.
  * Esta UI le da al user un link copiable + botones de share para que lo
  * mande a la persona. Al abrir el link, el hook
- * useAutoAcceptCoOwnerInvitation (en MyPets/Home) procesa el token tras
+ * CoOwnerInviteReceivedDialog (en MyPets/Home) procesa el token tras
  * el registro.
  *
  * Si el email SI tiene cuenta, la notificacion in-app la dispara el
@@ -55,7 +55,7 @@ export function InviteCoOwnerLinkDialog({
   const [copied, setCopied] = useState(false);
 
   // Link apunta a /my-pets porque ese es el lugar que monta
-  // useAutoAcceptCoOwnerInvitation y procesa el token. La ruta es
+  // CoOwnerInviteReceivedDialog y procesa el token. La ruta es
   // protegida; si el user no tiene cuenta, ProtectedRoute lo manda a
   // /auth con returnTo y al volver procesa el token automaticamente.
   const link = `${ORIGIN}/my-pets?co_owner=${invitationToken}`;
