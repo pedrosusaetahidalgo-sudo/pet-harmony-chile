@@ -37,17 +37,17 @@ const Adoption = () => {
   } = useQuery({
     queryKey: ['adoption-posts', selectedTab],
     queryFn: async () => {
+      // Bug fix 2026-04-21: el join `profiles:user_id (...)` fallaba
+      // porque adoption_posts.user_id tiene FK a auth.users (no a
+      // profiles). PostgREST no resolvia la relacion y devolvia 0 rows
+      // silenciosamente → los posts NUNCA aparecian aunque se guardaran.
+      //
+      // AdoptionPostCard no consume post.profiles (solo
+      // interest.profiles que tiene su propia query). Removemos el
+      // join y quedamos con select(*) simple.
       let query = supabase
         .from('adoption_posts')
-        .select(
-          `
-          *,
-          profiles:user_id (
-            display_name,
-            avatar_url
-          )
-        `
-        )
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (selectedTab === 'my-posts') {

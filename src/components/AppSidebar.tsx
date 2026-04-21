@@ -97,10 +97,11 @@ type ExploreSubgroup = {
 
 const exploreSubgroups: ExploreSubgroup[] = [
   {
-    // Día a día: list views temporales distintas al calendario visual.
-    // Mis reservas y Recordatorios vienen aqui desde el core (2026-04-21)
-    // para eliminar la ilusion de "3 items que llevan al mismo page".
-    // El item subitem "Rutinas" renombrado mantiene deep link al tab del calendario.
+    // Día a día: list views temporales + interacciones comunitarias
+    // que el usuario revisa a diario.
+    // 2026-04-21 update: Grupos vive aqui (feedback Pedro). Feed y
+    // Mensajes viven en "Social" (cuando esten habilitados por flag);
+    // Social se auto-oculta via filter render si queda sin items visibles.
     key: 'dia-dia',
     label: 'Día a día',
     icon: RefreshCw,
@@ -108,6 +109,7 @@ const exploreSubgroups: ExploreSubgroup[] = [
       { title: 'Mis reservas', url: LINKS.bookings(), icon: Calendar, flag: null },
       { title: 'Recordatorios', url: LINKS.reminders(), icon: Bell, flag: null },
       { title: 'Rutinas', url: LINKS.routinesTab(), icon: RefreshCw, flag: null },
+      { title: 'Grupos', url: '/comunidad', icon: Users, flag: 'LABS_COMMUNITY' as const },
       { title: 'Reportes', url: '/reportes', icon: BarChart3, flag: null },
     ],
   },
@@ -118,15 +120,14 @@ const exploreSubgroups: ExploreSubgroup[] = [
     items: [{ title: 'Mapa', url: '/maps', icon: MapIcon, flag: null }],
   },
   {
-    // 2026-04-21: "Social" renombrado a "Comunidad". Antes decia "Social"
-    // porque FEED+CHAT desactivados dejaban solo "Grupos" y quedaba
-    // "Comunidad > Comunidad". Con la consolidacion, "Comunidad" es el
-    // grupo y "Grupos" queda como item dentro sin choque semantico.
-    key: 'comunidad',
-    label: 'Comunidad',
-    icon: Users,
+    // Social: solo Feed y Mensajes (cuando sus flags lo habiliten).
+    // Grupos se movio a "Dia a dia" 2026-04-21. Mientras FEED y CHAT
+    // esten en false, este subgrupo queda vacio y se auto-oculta en el
+    // render filter (linea 399) — no se muestra como subgrupo huerfano.
+    key: 'social',
+    label: 'Social',
+    icon: Activity,
     items: [
-      { title: 'Grupos', url: '/comunidad', icon: Users, flag: 'LABS_COMMUNITY' as const },
       { title: 'Feed', url: '/feed', icon: Activity, flag: 'FEED' as const },
       { title: 'Mensajes', url: '/chat', icon: MessageSquare, flag: 'CHAT' as const },
     ],
@@ -234,7 +235,7 @@ export function AppSidebar() {
   const [exploreSubOpen, setExploreSubOpen] = useState<Record<string, boolean>>({
     'dia-dia': true,
     mapa: false,
-    comunidad: false,
+    social: false,
     causas: true,
     'paw-labs': false,
   });
