@@ -83,16 +83,19 @@ serve(
       let userId: string | null = null;
       let plan: string | null = null;
       let paymentType: string | null = null;
+      let orderType: string | null = null;
       try {
         const optional = JSON.parse(statusJson.optional ?? '{}');
         userId = optional.user_id ?? null;
         plan = optional.plan ?? null;
         paymentType = optional.type ?? null;
+        orderType = optional.order_type ?? null;
       } catch {
         // ignorar
       }
 
       const isDonation = paymentType === 'donation';
+      const isB2B = orderType === 'b2b_vet';
 
       const supabaseAdmin = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, {
         auth: { persistSession: false },
@@ -164,7 +167,7 @@ serve(
         return new Response('ok', { status: 200 });
       }
 
-      if (!userId || !plan || (plan !== 'monthly' && plan !== 'yearly')) {
+      if (!userId || !plan) {
         console.error('[flow-webhook] missing user_id/plan in optional', statusJson.optional);
         return new Response('invalid optional', { status: 400 });
       }
@@ -178,6 +181,61 @@ serve(
       const supabase = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!, {
         auth: { persistSession: false },
       });
+
+      // ─────────────────────────────────────────────────────────────────
+      // B2B VET: actualiza service_providers.provider_plan + lifecycle
+      // ─────────────────────────────────────────────────────────────────
+      if (isB2B) {
+        const validB2BPlans = ['provider_premium', 'provider_clinic_starter', 'provider_pro_max'];
+        if (!validB2BPlans.includes(plan)) {
+          console.error('[flow-webhook] invalid B2B plan', plan);
+          return new Response('invalid B2B plan', { status: 400 });
+        }
+
+        const now = new Date();
+        const expiresAt = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // +30d
+        const nextBillingAt = expiresAt;
+
+        const { error: spErr } = await supabase
+          .from('service_providers')
+          .update({
+            provider_plan: plan,
+            plan_started_at: now.toISOString(),
+            plan_expires_at: expiresAt.toISOString(),
+            plan_next_billing_at: nextBillingAt.toISOString(),
+            plan_cancelled_at: null,
+            plan_billing_cycle: 'monthly',
+            featured_until: expiresAt.toISOString(),
+          })
+          .eq('user_id', userId);
+
+        if (spErr) {
+          console.error('[flow-webhook] b2b service_providers update failed', spErr);
+          return new Response('b2b update failed', { status: 500 });
+        }
+
+        // Marcar subscription pendiente como activa
+        await supabase
+          .from('subscriptions')
+          .update({
+            status: 'active',
+            start_date: now.toISOString(),
+            end_date: expiresAt.toISOString(),
+          })
+          .eq('payment_provider_id', token)
+          .eq('status', 'pending');
+
+        console.log('[flow-webhook] b2b vet plan activated', { userId, plan, amount, token });
+        return new Response('ok', { status: 200 });
+      }
+
+      // ─────────────────────────────────────────────────────────────────
+      // B2C Paw Member (legacy monthly/yearly)
+      // ─────────────────────────────────────────────────────────────────
+      if (plan !== 'monthly' && plan !== 'yearly') {
+        console.error('[flow-webhook] invalid B2C plan', plan);
+        return new Response('invalid plan', { status: 400 });
+      }
 
       // Borrar el subscription pending placeholder antes de aplicar (apply_premium hace insert)
       await supabase

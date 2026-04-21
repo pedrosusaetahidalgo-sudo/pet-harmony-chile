@@ -13,6 +13,8 @@ import { openExternalUrl } from '@/lib/nativeNavigation';
 import { formatShortDate } from '../helpers';
 import { PetQRDisplay } from '@/components/medical/PetQRDisplay';
 import { PetVetLinksSection } from '@/components/medical/PetVetLinksSection';
+import { InviteVetDialog } from '@/components/InviteVetDialog';
+import { UserPlus } from '@/lib/icons';
 
 export function TabCompartir({ petId, petName }: { petId: string; petName: string }) {
   const {
@@ -26,6 +28,7 @@ export function TabCompartir({ petId, petName }: { petId: string; petName: strin
     shareLimitReached,
   } = useMedicalSharing(petId);
   const [legacyOpen, setLegacyOpen] = useState(false);
+  const [inviteVetOpen, setInviteVetOpen] = useState(false);
 
   const handleCopy = useCallback(
     async (token: string) => {
@@ -94,6 +97,31 @@ export function TabCompartir({ petId, petName }: { petId: string; petName: strin
     <div className="space-y-4">
       {/* ═══ Sección principal: vincular con vet ═══ */}
       <PetVetLinksSection petId={petId} petName={petName} />
+
+      {/* ═══ Invitar vet de cabecera que aun no esta en Paw Friend (viral loop) ═══ */}
+      <Card className="border-purple-200/60 bg-gradient-to-br from-purple-50/40 to-white">
+        <CardContent className="p-4 flex flex-col md:flex-row md:items-center gap-3">
+          <div className="flex-1 space-y-1">
+            <h3 className="font-semibold text-sm flex items-center gap-2">
+              <UserPlus className="h-4 w-4 text-purple-600" />
+              Tu vet aun no esta en Paw Friend?
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              Invitalo por WhatsApp. Cuando se registre podras compartirle la ficha clinica con un
+              click.
+            </p>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setInviteVetOpen(true)}
+            className="shrink-0"
+          >
+            Invitar a mi vet
+          </Button>
+        </CardContent>
+      </Card>
+      <InviteVetDialog open={inviteVetOpen} onOpenChange={setInviteVetOpen} petName={petName} />
 
       {/* ═══ QR de la ficha clínica ═══ */}
       <PetQRDisplay petId={petId} petName={petName} />

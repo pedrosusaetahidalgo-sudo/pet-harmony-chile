@@ -39,7 +39,11 @@ export function useDirectoryVets(filters: DirectoryVetFilters) {
       const from = (pageParam as number) * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
 
+      // Ordering: featured_until (vigente) DESC primero, luego rating, luego reviews.
+      // Mig 20260712010000 agrega featured_until que flow-webhook setea al activar
+      // plan pago. Vets con featured vigente aparecen arriba del directorio.
       const { data, error } = await query
+        .order('featured_until', { ascending: false, nullsFirst: false })
         .order('avg_rating', { ascending: false, nullsFirst: false })
         .order('total_reviews', { ascending: false, nullsFirst: false })
         .range(from, to);

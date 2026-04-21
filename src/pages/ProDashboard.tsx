@@ -50,6 +50,9 @@ import { usePlan } from '@/hooks/usePlan';
 import { useProAnalytics, type AnalyticsPeriod } from '@/hooks/useProAnalytics';
 import { useVetAnalytics } from '@/hooks/useVetAnalytics';
 import { useActiveRole } from '@/hooks/useActiveRole';
+import { useProviderPlan } from '@/hooks/useProviderPlan';
+import { Link } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
 import { LockedOverlay } from '@/components/analytics/LockedOverlay';
 import { ProUpgradeCTA } from '@/components/analytics/ProUpgradeCTA';
 import { track, EVENTS } from '@/lib/analytics';
@@ -116,6 +119,7 @@ export default function ProDashboard() {
   const { user } = useAuth();
   const { isPremium, checkAccess } = usePlan();
   const { isProvider } = useActiveRole();
+  const { data: providerPlanCtx } = useProviderPlan();
   const [period, setPeriod] = useState<AnalyticsPeriod>('current_month');
   const [selectedPetId, setSelectedPetId] = useState<string>('all');
 
@@ -323,6 +327,46 @@ export default function ProDashboard() {
         </div>
 
         {!isPremium && <ProUpgradeCTA variant="banner" context="pro_dashboard_header" />}
+
+        {/* Gate B2B vet: si provider free, mostrar banner upgrade a Premium */}
+        {isProvider && providerPlanCtx?.isFree && (
+          <Card className="border-primary/40 bg-gradient-to-br from-primary/5 to-purple-50/30">
+            <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3">
+              <BarChart3 className="h-5 w-5 text-primary shrink-0" />
+              <div className="flex-1 space-y-1 min-w-0">
+                <h3 className="font-semibold text-sm">Panel Pro limitado</h3>
+                <p className="text-xs text-muted-foreground">
+                  Tu plan Básica ve indicadores generales. Premium ($9.900/mes) añade analytics
+                  básica; Clínica y Pro Max añaden analytics avanzada.
+                </p>
+              </div>
+              <Button asChild size="sm" className="shrink-0">
+                <Link to="/provider/upgrade">Ver planes</Link>
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Chip nivel analytics segun plan B2B */}
+        {isProvider && providerPlanCtx && !providerPlanCtx.isFree && (
+          <div className="flex items-center gap-2">
+            <Badge
+              variant="outline"
+              className={
+                providerPlanCtx.analyticsLevel === 'advanced'
+                  ? 'bg-emerald-50 border-emerald-300 text-emerald-700'
+                  : 'bg-primary/10 border-primary/30 text-primary'
+              }
+            >
+              {providerPlanCtx.analyticsLevel === 'advanced'
+                ? 'Analytics avanzada'
+                : 'Analytics básica'}
+            </Badge>
+            <span className="text-[11px] text-muted-foreground">
+              Plan {providerPlanCtx.planName}
+            </span>
+          </div>
+        )}
 
         {/* KPI Cards */}
         {vetLoading ? (

@@ -1,10 +1,17 @@
 /**
  * Edge Function: flow-create-subscription
- * Crea un pago en Flow.cl para Premium B2C ($3.990 mensual o $39.900 anual).
- * Devuelve la URL de pago a la que redirigir al usuario.
  *
- * Body: { plan: 'monthly' | 'yearly' }
+ * Crea un pago en Flow.cl. Soporta 2 tracks:
+ *  - B2C (Paw Member): plan 'monthly' ($3.990) o 'yearly' ($39.900).
+ *  - B2B (Vet providers): plan 'provider_premium' ($9.900), 'provider_clinic_starter'
+ *    ($19.900) o 'provider_pro_max' ($29.900). Ciclo mensual implicito.
+ *
+ * Body: { plan: 'monthly' | 'yearly' | 'provider_premium' | 'provider_clinic_starter' | 'provider_pro_max' }
  * Resp: { url: string, token: string } | { error }
+ *
+ * Al confirmar pago, flow-webhook actualiza:
+ *  - B2C → donations.status='paid' (Paw Member badge)
+ *  - B2B → service_providers.provider_plan + plan_started_at + plan_expires_at
  */
 
 import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
@@ -21,8 +28,23 @@ const SITE_URL = 'https://pawfriend.cl';
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 
 const PRICES: Record<string, number> = {
+  // B2C Paw Member
   monthly: 3990,
   yearly: 39900,
+  // B2B Vet providers (mensual)
+  provider_premium: 9900,
+  provider_clinic_starter: 19900,
+  provider_pro_max: 29900,
+};
+
+const B2B_PLANS = new Set(['provider_premium', 'provider_clinic_starter', 'provider_pro_max']);
+
+const PLAN_SUBJECTS: Record<string, string> = {
+  monthly: 'Paw Friend — Paw Member mensual',
+  yearly: 'Paw Friend — Paw Member anual',
+  provider_premium: 'Paw Friend — Plan Premium vet',
+  provider_clinic_starter: 'Paw Friend — Plan Clínica',
+  provider_pro_max: 'Paw Friend — Plan Pro Max',
 };
 
 /** Firma HMAC-SHA256 sobre params alfabéticamente concatenados (key1value1key2value2…) */
@@ -93,10 +115,26 @@ serve(
       // Body
       const body = await req.json();
       const plan = body?.plan as string | undefined;
-      if (!plan || (plan !== 'monthly' && plan !== 'yearly')) {
-        throw new Error("Invalid plan: must be 'monthly' or 'yearly'");
+      if (!plan || !(plan in PRICES)) {
+        throw new Error(
+          "Invalid plan: must be 'monthly', 'yearly', 'provider_premium', 'provider_clinic_starter' or 'provider_pro_max'"
+        );
       }
       const amount = PRICES[plan];
+      const isB2B = B2B_PLANS.has(plan);
+      const orderType = isB2B ? 'b2b_vet' : 'b2c_paw_member';
+
+      // Para B2B verificamos que el user tenga un service_providers row activo
+      if (isB2B) {
+        const { data: sp, error: spErr } = await supabase
+          .from('service_providers')
+          .select('id, provider_plan')
+          .eq('user_id', userId)
+          .maybeSingle();
+        if (spErr || !sp) {
+          throw new Error('Debes registrarte como veterinario antes de contratar un plan B2B');
+        }
+      }
 
       // Idempotencia: si ya existe una subscription pendiente reciente (<5 min), reutilizar
       const { data: existingPending } = await supabase
@@ -124,21 +162,29 @@ serve(
         );
       }
 
-      const commerceOrder = `PF-${userId.slice(0, 8)}-${Date.now()}`;
+      const orderPrefix = isB2B ? 'PFB2B' : 'PF';
+      const commerceOrder = `${orderPrefix}-${userId.slice(0, 8)}-${Date.now()}`;
 
-      // Optional contexto que se nos devuelve en el callback
-      const optional = JSON.stringify({ user_id: userId, plan });
+      // Optional contexto que se nos devuelve en el callback (Flow lo pasa al webhook)
+      const optional = JSON.stringify({ user_id: userId, plan, order_type: orderType });
+
+      // URLs de retorno limpias (Lote D auditoría pre-launch 2026-04-20, Opción B).
+      // Legacy /upgrade/success y /upgrade/cancel redirigen via 301 a /paw-member/*
+      // en App.tsx por si Flow siguiera redirigiendo a ellas.
+      const urlReturn = isB2B
+        ? `${SITE_URL}/provider/upgrade/success`
+        : `${SITE_URL}/paw-member/success`;
 
       const params: Record<string, string> = {
         apiKey: FLOW_API_KEY,
         commerceOrder,
-        subject: plan === 'yearly' ? 'Paw Friend Premium (anual)' : 'Paw Friend Premium (mensual)',
+        subject: PLAN_SUBJECTS[plan] ?? 'Paw Friend',
         currency: 'CLP',
         amount: String(amount),
         email: userEmail,
         paymentMethod: '9', // 9 = todas las opciones
         urlConfirmation: `${SUPABASE_URL}/functions/v1/flow-webhook`,
-        urlReturn: `${SITE_URL}/upgrade/success`,
+        urlReturn,
         optional,
       };
 
@@ -170,10 +216,13 @@ serve(
         throw new Error('Flow API rejected the request');
       }
 
-      // Registramos un subscription pendiente para tener trazabilidad
+      // Registramos un subscription pendiente para tener trazabilidad.
+      // Tanto B2C (monthly/yearly) como B2B (provider_*) usan la misma tabla
+      // con order_type como discriminador (agregado en mig 20260712040000).
       await supabase.from('subscriptions').insert({
         user_id: userId,
         plan_type: plan,
+        order_type: orderType,
         status: 'pending',
         start_date: new Date().toISOString(),
         end_date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365 * 5).toISOString(), // placeholder; el webhook lo corrige

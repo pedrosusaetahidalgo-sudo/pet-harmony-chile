@@ -39,6 +39,7 @@ import { Next24hCard } from './Next24hCard';
 import { MiniProfileCard } from './dashboard/MiniProfileCard';
 import { VetExposureTips } from './dashboard/VetExposureTips';
 import { GoogleCalendarStatusBanner } from '@/components/GoogleCalendarStatusBanner';
+import { UpgradePlanBanner } from './dashboard/UpgradePlanBanner';
 
 // formatCLP imported from @/lib/format
 
@@ -94,6 +95,7 @@ const ProviderDashboard = () => {
   return (
     <div className="space-y-4">
       <GoogleCalendarStatusBanner settingsHref="/profile" />
+      <UpgradePlanBanner />
 
       {/* ═══ Header + Quick Actions ═══ */}
       <QuickActionsBar

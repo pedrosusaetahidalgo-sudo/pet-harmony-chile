@@ -12,7 +12,6 @@
 - **Repo**: github.com/pedrosusaetahidalgo-sudo/pet-harmony-chile, branch `main`
 - **Supabase project**: `gwailbjlvevkhwcrovfd`
 - **Mobile**: Capacitor 7 (Android compilable, iOS testeado en simulator)
-- **Joya de la corona**: ficha medica PDF descargable + directorio publico de veterinarios. Solo fixes puntuales, nada de refactor grande.
 
 ---
 
@@ -386,10 +385,7 @@ Tuteo chileno: **tu, tienes, puedes**. NO voseo argentino (vos, tenes, podes). N
 - "recordatorio" (no alarma)
 - "Paw Friend" (marca, siempre con mayusculas)
 
-### 9.6. Joya de la corona
-La ficha medica PDF + directorio publico de vets son las features mas valiosas. Solo fixes puntuales, nada de refactor grande sin autorizacion explicita del dueno.
-
-### 9.7. Documentacion viva
+### 9.6. Documentacion viva
 El proyecto tiene documentos que deben mantenerse actualizados. Ver `INDEX.md` para el indice completo.
 
 **Documentos vivos** (SIEMPRE mantener actualizados):
@@ -400,7 +396,7 @@ El proyecto tiene documentos que deben mantenerse actualizados. Ver `INDEX.md` p
 
 **Regla**: si modificas rutas, navegacion, flujos de usuario, paginas, planes, o features criticas → actualizar el documento correspondiente **en el mismo commit**. Si se cambia BottomTabBar, Sidebar, Auth, pricing, o cualquier flujo critico, los diagramas y el mapa funcional deben reflejar el cambio.
 
-#### 9.7.1. Regla del diagrama Mermaid completo
+#### 9.6.1. Regla del diagrama Mermaid completo
 
 `diagrams/FLUJO_COMPLETO.mmd` es la **fuente de verdad unica** del flujo de la app y tiene reglas estrictas:
 
@@ -413,7 +409,7 @@ El proyecto tiene documentos que deben mantenerse actualizados. Ver `INDEX.md` p
 4. **Cabecera con fecha**. Mantener al tope un comentario `%% FLUJO COMPLETO PAW FRIEND — Actualizado YYYY-MM-DD` con la fecha del ultimo cambio real.
 5. **`FLUJOS_MERMAID.md` es secundario**. Sirve para ver modulos aislados, pero NO es la fuente de verdad. Si hay contradiccion entre ambos, gana `FLUJO_COMPLETO.mmd`.
 
-### 9.8. Proteccion de datos de usuarios existentes
+### 9.7. Proteccion de datos de usuarios existentes
 
 Paw Friend tiene usuarios reales en produccion. **Cualquier cambio que afecte datos, esquema, tipos, o contratos existentes debe proteger a los usuarios actuales**. Reglas:
 

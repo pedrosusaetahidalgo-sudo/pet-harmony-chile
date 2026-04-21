@@ -141,3 +141,7 @@ verify_jwt = false
 
 [functions.post-adoption-checkin-cron]
 verify_jwt = false
+
+# ── Shelter report PDF (agregada 2026-04-20 tanda 15) ──
+[functions.generate-shelter-report-pdf]
+verify_jwt = false

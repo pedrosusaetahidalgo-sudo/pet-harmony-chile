@@ -9,6 +9,7 @@ import AdminEmptyState from '@/components/admin/ui/AdminEmptyState';
 import AdminHealthSummary from '@/components/admin/AdminHealthSummary';
 import AdminNorthStarHeader from '@/components/admin/AdminNorthStarHeader';
 import AdminPDFFunnelWidget from '@/components/admin/AdminPDFFunnelWidget';
+import AdminActivationFunnelWidget from '@/components/admin/AdminActivationFunnelWidget';
 import AdminMRRChart from '@/components/admin/AdminMRRChart';
 import AdminComunaGap from '@/components/admin/AdminComunaGap';
 import AdminAdoptionFunnel from '@/components/admin/AdminAdoptionFunnel';
@@ -711,11 +712,14 @@ export default function AdminDashboard() {
       {/* ── North Star Plan 90d (INIT-03): NSM + 5 KPIs top ── */}
       <AdminNorthStarHeader />
 
-      {/* ── Embudo Joya de la Corona + MRR B2B 6 semanas ── */}
+      {/* ── Embudo activacion 30d + Embudo Joya de la Corona ── */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <AdminActivationFunnelWidget />
         <AdminPDFFunnelWidget />
-        <AdminMRRChart />
       </div>
+
+      {/* ── MRR B2B 6 semanas ── */}
+      <AdminMRRChart />
 
       {/* ── Gap comunas demanda/oferta (priorizar outreach B2B INIT-09) ── */}
       <AdminComunaGap />

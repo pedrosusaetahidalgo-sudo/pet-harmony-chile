@@ -204,6 +204,7 @@ export const EVENTS = {
   VET_SIGNUP_COMPLETED: 'vet_signup_completed',
   VET_PATIENT_CREATED: 'vet_patient_created',
   FOUNDING_VET_CTA_CLICKED: 'founding_vet_cta_clicked',
+  OWNER_INVITED_VET: 'owner_invited_vet',
 
   // First PDF nudge (playbook §9.3 · 2026-04-19)
   FIRST_PDF_NUDGE_SHOWN: 'first_pdf_nudge_shown',

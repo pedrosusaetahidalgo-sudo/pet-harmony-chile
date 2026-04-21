@@ -436,8 +436,8 @@ export function BecomeShelterDialog({ open, onOpenChange }: Props) {
               <label htmlFor="accepts_donations" className="text-sm cursor-pointer flex-1">
                 <span className="font-semibold">Quiero recibir donaciones dirigidas</span>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  La comunidad podra donar directamente a tu causa. Activaremos esto cuando tengamos
-                  el sistema de transferencias listo.
+                  La comunidad puede donar directamente a tu refugio desde el perfil publico y desde
+                  /donaciones seleccionandote como beneficiario.
                 </p>
               </label>
             </div>

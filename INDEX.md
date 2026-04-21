@@ -81,6 +81,7 @@ Resumen de items activos:
 | 6 | [testing-virtual-user-blueprint.md](_pending/testing-virtual-user-blueprint.md) | Testing Playwright | Media |
 | 7 | [FEATURE_AI_WEB_SEARCH_UPGRADE.md](_pending/features/FEATURE_AI_WEB_SEARCH_UPGRADE.md) | Feature | Media |
 | 8 | [PLAN_ADOPCION_CENTROS_2026_04_20.md](_pending/PLAN_ADOPCION_CENTROS_2026_04_20.md) | Refugios como onboarding inicial (ejecutado 2026-04-20) | Completado |
+| 9 | [auditoria-e2e/](_pending/auditoria-e2e/) | Auditoría E2E onboardings pre-launch 1 junio 2026 (30 ONBDs + plan de lotes A-I en ejecución) | Alta — en curso |
 
 ---
 

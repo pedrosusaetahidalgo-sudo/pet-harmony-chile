@@ -233,6 +233,16 @@ export default function Donaciones() {
 
         {/* Meta y transparencia — primer toque antes del hero emocional */}
         <DonationsTransparency />
+        <div className="text-center">
+          <Button
+            asChild
+            variant="ghost"
+            size="sm"
+            className="text-xs text-muted-foreground hover:text-primary"
+          >
+            <a href="/transparencia">Ver desglose completo de transparencia →</a>
+          </Button>
+        </div>
 
         {/* Hero emocional */}
         <section className="text-center space-y-3">

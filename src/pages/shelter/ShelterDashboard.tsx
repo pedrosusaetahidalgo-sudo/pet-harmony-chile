@@ -27,7 +27,10 @@ import {
   MessageCircle,
   Share2,
   Loader2,
+  FileDown,
 } from 'lucide-react';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 interface MiniPet {
   id: string;
@@ -42,6 +45,50 @@ interface MiniPet {
 export default function ShelterDashboard() {
   const navigate = useNavigate();
   const { shelter, isLoading } = useShelter();
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
+
+  const handleDownloadPdf = async () => {
+    if (!shelter?.id || downloadingPdf) return;
+    setDownloadingPdf(true);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) {
+        toast.error('Sesion expirada, vuelve a iniciar sesion');
+        return;
+      }
+      const supabaseUrl =
+        (import.meta.env.VITE_SUPABASE_URL as string | undefined) ??
+        'https://gwailbjlvevkhwcrovfd.supabase.co';
+      const res = await fetch(`${supabaseUrl}/functions/v1/generate-shelter-report-pdf`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ shelter_id: shelter.id }),
+      });
+      if (!res.ok) {
+        const err = await res.text();
+        toast.error('No pudimos generar el PDF');
+        console.error('shelter pdf error:', err);
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `refugio-${shelter.slug || shelter.id}.pdf`;
+      a.click();
+      URL.revokeObjectURL(url);
+      toast.success('PDF descargado');
+    } catch (err) {
+      console.error(err);
+      toast.error('Error generando PDF');
+    } finally {
+      setDownloadingPdf(false);
+    }
+  };
 
   const { data: pets } = useQuery<MiniPet[]>({
     queryKey: ['shelter-pets', 'summary', shelter?.id],
@@ -157,6 +204,38 @@ export default function ShelterDashboard() {
             description="Que ve la gente cuando llega a tu refugio."
           />
         </div>
+
+        {/* Descarga PDF catalogo mascotas en custodia (para donantes/prensa) */}
+        <Card>
+          <CardContent className="p-4 flex flex-col md:flex-row md:items-center gap-3">
+            <div className="flex-1 space-y-1">
+              <h3 className="font-semibold text-sm flex items-center gap-2">
+                <FileDown className="h-4 w-4" />
+                Reporte PDF de mascotas en custodia
+              </h3>
+              <p className="text-xs text-muted-foreground">
+                Util para compartir con donantes, medios o adoptantes. Incluye foto, edad,
+                descripcion y como contactarte.
+              </p>
+            </div>
+            <Button
+              onClick={handleDownloadPdf}
+              disabled={downloadingPdf}
+              size="sm"
+              variant="outline"
+            >
+              {downloadingPdf ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-1 animate-spin" /> Generando...
+                </>
+              ) : (
+                <>
+                  <FileDown className="h-4 w-4 mr-1" /> Descargar PDF
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Pets recientes */}
         <div className="space-y-3">

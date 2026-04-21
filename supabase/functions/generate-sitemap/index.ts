@@ -28,6 +28,8 @@ const COMUNAS = [
 // Blog posts estáticos — sincronizar manualmente con src/content/blog/index.ts
 // cuando se agregue un post nuevo (1/semana).
 const BLOG_POSTS: { slug: string; publishedAt: string }[] = [
+  { slug: 'como-saber-si-mi-perro-tiene-dolor', publishedAt: '2026-04-21' },
+  { slug: 'barf-vs-pellet-que-conviene-perros', publishedAt: '2026-04-21' },
   { slug: 'desparasitacion-perro-gato-cada-cuanto-chile', publishedAt: '2026-04-21' },
   { slug: 'donde-pasear-perro-santiago-parques', publishedAt: '2026-04-21' },
   { slug: 'cuanto-cuesta-tener-perro-primer-ano-chile', publishedAt: '2026-04-21' },
@@ -85,6 +87,9 @@ serve(
       urls.push(url(SITE + '/registro-veterinario', 'monthly', '0.7'));
       urls.push(url(SITE + '/precios-veterinarios', 'weekly', '0.9'));
       urls.push(url(SITE + '/blog', 'weekly', '0.8'));
+      urls.push(url(SITE + '/transparencia', 'weekly', '0.8'));
+      urls.push(url(SITE + '/donaciones', 'weekly', '0.8'));
+      urls.push(url(SITE + '/paw-core', 'monthly', '0.7'));
 
       // Blog posts
       for (const p of BLOG_POSTS) {

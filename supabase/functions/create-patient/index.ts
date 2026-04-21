@@ -187,12 +187,37 @@ serve(
       // ── Verify caller is an active service_provider ──
       const { data: vetProvider, error: providerError } = await supabase
         .from('service_providers')
-        .select('id, display_name, is_verified')
+        .select('id, display_name, is_verified, provider_plan')
         .eq('user_id', vetId)
         .maybeSingle();
 
       if (providerError || !vetProvider) {
         return errorResponse(req, 'Solo veterinarios registrados pueden crear pacientes', 403);
+      }
+
+      // ── Gate max_clients segun plan B2B (auditoría 2026-04-20) ──
+      // provider_free: 5 pacientes | provider_clinic_starter: 500 |
+      // provider_premium y provider_pro_max: ilimitado
+      const PLAN_MAX_CLIENTS: Record<string, number> = {
+        provider_free: 5,
+        provider_premium: -1,
+        provider_clinic_starter: 500,
+        provider_pro_max: -1,
+      };
+      const maxClients = PLAN_MAX_CLIENTS[vetProvider.provider_plan ?? 'provider_free'] ?? 5;
+      if (maxClients !== -1) {
+        const { count: currentPatients } = await supabase
+          .from('pet_vet_links')
+          .select('pet_id', { count: 'exact', head: true })
+          .eq('vet_id', vetProvider.id);
+        if ((currentPatients ?? 0) >= maxClients) {
+          return errorResponse(
+            req,
+            `Llegaste al limite de ${maxClients} pacientes del plan ${vetProvider.provider_plan}. Actualiza tu plan para crear mas.`,
+            403,
+            'plan_limit_reached'
+          );
+        }
       }
 
       // ── Rate limit: max 20 patients per vet per day ──

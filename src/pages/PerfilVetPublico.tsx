@@ -11,6 +11,7 @@ import {
   Loader2,
   Clock,
   Phone,
+  Award,
 } from '@/lib/icons';
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
@@ -394,6 +395,18 @@ export default function PerfilVetPublico() {
                   <span className="ml-2 text-blue-500 text-base align-middle">✓ Verificado</span>
                 )}
               </h1>
+              {(v as { excellence_badge_at?: string | null }).excellence_badge_at && (
+                <div className="flex items-center justify-center md:justify-start gap-1.5 mt-1 mb-1">
+                  <Badge
+                    variant="outline"
+                    className="bg-amber-50 border-amber-300 text-amber-800 gap-1"
+                  >
+                    <Award className="h-3.5 w-3.5" />
+                    Vet Verificado Excelente
+                  </Badge>
+                  <span className="text-[10px] text-muted-foreground italic">3+ reseñas 5★</span>
+                </div>
+              )}
               <p className="text-muted-foreground mb-2">
                 {v.provider_type === 'home_visit'
                   ? 'Veterinario a domicilio'

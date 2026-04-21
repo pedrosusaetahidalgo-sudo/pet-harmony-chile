@@ -53,6 +53,88 @@ const Index = () => {
           content="Ficha clínica digital, veterinarios verificados por comuna, recordatorios y comunidad pet lover. Hecho en Chile, gratis para siempre."
         />
         <link rel="canonical" href="https://pawfriend.cl/" />
+
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Paw Friend" />
+        <meta property="og:url" content="https://pawfriend.cl/" />
+        <meta property="og:title" content="Paw Friend — La salud de tu peludo, en un solo lugar" />
+        <meta
+          property="og:description"
+          content="Ficha clínica digital, veterinarios verificados por comuna, recordatorios y comunidad pet lover. Gratis para siempre. Hecho en Chile."
+        />
+        <meta
+          property="og:image"
+          content="https://pawfriend.cl/paw-friend-assets-v2/og/og-home.png"
+        />
+        <meta property="og:locale" content="es_CL" />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Paw Friend — La salud de tu peludo, en un solo lugar" />
+        <meta
+          name="twitter:description"
+          content="Ficha clínica, vets por comuna, recordatorios y comunidad. Gratis siempre."
+        />
+        <meta
+          name="twitter:image"
+          content="https://pawfriend.cl/paw-friend-assets-v2/og/og-home.png"
+        />
+
+        {/* JSON-LD: Organization */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Organization',
+            name: 'Paw Friend',
+            url: 'https://pawfriend.cl',
+            logo: 'https://pawfriend.cl/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg',
+            description:
+              'Plataforma chilena para la salud integral de mascotas. Ficha clínica, vets verificados y recordatorios. Gratis para dueños.',
+            sameAs: [
+              'https://www.instagram.com/pawfriend.cl',
+              'https://www.tiktok.com/@pawfriend.cl',
+            ],
+            address: {
+              '@type': 'PostalAddress',
+              addressCountry: 'CL',
+              addressRegion: 'Región Metropolitana',
+            },
+          })}
+        </script>
+
+        {/* JSON-LD: WebSite con SearchAction */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'WebSite',
+            name: 'Paw Friend',
+            url: 'https://pawfriend.cl',
+            potentialAction: {
+              '@type': 'SearchAction',
+              target: 'https://pawfriend.cl/veterinarios/comuna/{search_term_string}',
+              'query-input': 'required name=search_term_string',
+            },
+          })}
+        </script>
+
+        {/* JSON-LD: SoftwareApplication (para indicar que es una app gratis) */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'SoftwareApplication',
+            name: 'Paw Friend',
+            operatingSystem: 'Web, Android, iOS',
+            applicationCategory: 'HealthApplication',
+            offers: {
+              '@type': 'Offer',
+              price: '0',
+              priceCurrency: 'CLP',
+            },
+            description:
+              'App chilena para la salud de tu mascota: ficha clínica, recordatorios y vets verificados.',
+          })}
+        </script>
       </Helmet>
 
       <LandingHeader />

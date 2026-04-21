@@ -54,13 +54,20 @@ const Admin = lazy(() => import('./pages/Admin'));
 const Maps = lazy(() => import('./pages/Maps'));
 // Premium eliminado en pivot médico
 const ProviderDashboard = lazy(() => import('./components/provider/ProviderDashboard'));
+const ProviderUpgrade = lazy(() => import('./pages/ProviderUpgrade'));
+const ProviderSeats = lazy(() => import('./pages/ProviderSeats'));
+const AcceptClinicSeat = lazy(() => import('./pages/AcceptClinicSeat'));
 const PetClinicalRecord = lazy(() => import('./pages/PetClinicalRecord'));
 const MyBookings = lazy(() => import('./pages/MyBookings'));
 // Upgrade page removida 2026-04-19: /upgrade redirect a /paw-member.
-// Los callbacks de Flow (success/cancel) se mantienen abajo.
-const UpgradeSuccess = lazy(() => import('./pages/UpgradeSuccess'));
-const UpgradeCancel = lazy(() => import('./pages/UpgradeCancel'));
+// Callbacks limpios de Flow (Lote D auditoría pre-launch 2026-04-20, Opción B).
+// Las rutas legacy /upgrade/success y /upgrade/cancel redirigen aquí vía 301.
+const PawMemberSuccess = lazy(() => import('./pages/PawMemberSuccess'));
+const PawMemberCancel = lazy(() => import('./pages/PawMemberCancel'));
+const ProviderUpgradeSuccess = lazy(() => import('./pages/ProviderUpgradeSuccess'));
+const ProviderUpgradeCancel = lazy(() => import('./pages/ProviderUpgradeCancel'));
 const Donaciones = lazy(() => import('./pages/Donaciones'));
+const Transparencia = lazy(() => import('./pages/Transparencia'));
 const PawCore = lazy(() => import('./pages/PawCore'));
 const PawVoicesPage = lazy(() => import('./pages/PawVoices'));
 const PawCompanysPage = lazy(() => import('./pages/PawCompanysPage'));
@@ -648,6 +655,40 @@ const App = () => (
                   }
                 />
                 <Route
+                  path="/provider/upgrade"
+                  element={
+                    <ProtectedRoute>
+                      <RoleGuard requiredRole="provider">
+                        <AppLayout>
+                          <ProviderUpgrade />
+                        </AppLayout>
+                      </RoleGuard>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/provider/seats"
+                  element={
+                    <ProtectedRoute>
+                      <RoleGuard requiredRole="provider">
+                        <AppLayout>
+                          <ProviderSeats />
+                        </AppLayout>
+                      </RoleGuard>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/provider/accept-seat"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <AcceptClinicSeat />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
                   path="/provider/pacientes"
                   element={
                     <ProtectedRoute>
@@ -694,24 +735,56 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
-                {/* /upgrade (2026-04-19): con el pivot a Paw Member (voluntario, */}
-                {/* solo badge), ya no hay "Premium B2C" que vender. La ruta */}
-                {/* redirige a /paw-member. Los callbacks de Flow (/upgrade/success */}
-                {/* y /upgrade/cancel) se mantienen para no romper webhooks en vuelo. */}
+                {/* /upgrade/* legacy (2026-04-19 pivot + Lote D 2026-04-20).
+                    Redirects a las rutas limpias /paw-member/* Opción B elegida.
+                    Si Flow sigue redirigiendo a URLs antiguas, el 301 mantiene el flujo
+                    sin pérdida. */}
                 <Route path="/upgrade" element={<Navigate to="/paw-member" replace />} />
                 <Route
                   path="/upgrade/success"
+                  element={<Navigate to="/paw-member/success" replace />}
+                />
+                <Route
+                  path="/upgrade/cancel"
+                  element={<Navigate to="/paw-member/cancel" replace />}
+                />
+                <Route
+                  path="/paw-member/success"
                   element={
                     <ProtectedRoute>
-                      <UpgradeSuccess />
+                      <PawMemberSuccess />
                     </ProtectedRoute>
                   }
                 />
                 <Route
-                  path="/upgrade/cancel"
+                  path="/paw-member/cancel"
                   element={
                     <ProtectedRoute>
-                      <UpgradeCancel />
+                      <PawMemberCancel />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/provider/upgrade/success"
+                  element={
+                    <ProtectedRoute>
+                      <RoleGuard requiredRole="provider">
+                        <AppLayout>
+                          <ProviderUpgradeSuccess />
+                        </AppLayout>
+                      </RoleGuard>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/provider/upgrade/cancel"
+                  element={
+                    <ProtectedRoute>
+                      <RoleGuard requiredRole="provider">
+                        <AppLayout>
+                          <ProviderUpgradeCancel />
+                        </AppLayout>
+                      </RoleGuard>
                     </ProtectedRoute>
                   }
                 />
@@ -723,6 +796,16 @@ const App = () => (
                   element={
                     <PublicWithLayoutIfAuth>
                       <Donaciones />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
+                {/* /transparencia — página pública con desglose costos + metas
+                    en vivo + muralla donaciones públicas + Paw Companys grid. */}
+                <Route
+                  path="/transparencia"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <Transparencia />
                     </PublicWithLayoutIfAuth>
                   }
                 />

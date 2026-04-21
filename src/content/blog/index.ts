@@ -42,6 +42,32 @@ export interface BlogPostEntry {
 export const POSTS: BlogPostEntry[] = [
   {
     meta: {
+      slug: 'como-saber-si-mi-perro-tiene-dolor',
+      title: 'Cómo saber si tu perro o gato tiene dolor (señales y cuándo correr al vet)',
+      excerpt:
+        'Señales sutiles de dolor en perros y gatos que suelen pasarse por alto. 12 signos conductuales + físicos, escala de urgencia, qué no hacer (automedicar) y cómo triage te ayuda a decidir.',
+      publishedAt: '2026-04-21',
+      author: 'Paw Friend',
+      tags: ['dolor', 'salud', 'perro', 'gato', 'emergencia'],
+      estimatedReadMinutes: 10,
+    },
+    Component: lazy(() => import('./como-saber-si-mi-perro-tiene-dolor')),
+  },
+  {
+    meta: {
+      slug: 'barf-vs-pellet-que-conviene-perros',
+      title: 'BARF vs pellet: qué conviene darle a tu perro (guía sin ideología)',
+      excerpt:
+        'Comparativa honesta de BARF (dieta cruda) vs pellet (balanceado comercial) para perros en Chile. Costos reales, riesgos sanitarios, qué dicen los veterinarios y caso por caso según edad y raza.',
+      publishedAt: '2026-04-21',
+      author: 'Paw Friend',
+      tags: ['alimento', 'barf', 'pellet', 'nutricion', 'perro'],
+      estimatedReadMinutes: 9,
+    },
+    Component: lazy(() => import('./barf-vs-pellet-que-conviene-perros')),
+  },
+  {
+    meta: {
       slug: 'desparasitacion-perro-gato-cada-cuanto-chile',
       title: 'Cada cuánto desparasitar a tu perro o gato: guía completa Chile',
       excerpt:

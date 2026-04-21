@@ -159,6 +159,7 @@ export const FOOTER = {
       title: 'Comunidad',
       links: [
         { label: 'Donaciones', href: '/donaciones' },
+        { label: 'Transparencia', href: '/transparencia' },
         { label: 'Paw Voices (creadores)', href: '/paw-voices' },
         { label: 'Paw Companys (empresas)', href: '/paw-companys' },
         { label: 'Paw Member', href: '/paw-member' },

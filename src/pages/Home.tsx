@@ -47,6 +47,8 @@ import { PawFriendPicks } from '@/components/home/PawFriendPicks';
 import { NextBookingCard } from '@/components/home/NextBookingCard';
 import { WeekActivitiesCard } from '@/components/home/WeekActivitiesCard';
 import { CareStreakCard } from '@/components/home/CareStreakCard';
+import { PetsHealthPanel } from '@/components/home/PetsHealthPanel';
+import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
 // AnalyticsPreviewCard and PetWellnessPreview removed from home — accessible via /panel-pro
 import { isGenericDisplayName } from '@/lib/format';
 import { NamePromptDialog } from '@/components/NamePromptDialog';
@@ -501,8 +503,14 @@ export default function Home() {
       {/* Racha de cuidado — gamificación light */}
       {pets.length > 0 && <CareStreakCard />}
 
+      {/* Panel de salud por mascota (solo si hay 2+) */}
+      {pets.length >= 2 && <PetsHealthPanel />}
+
       {/* Paw Friend Recomendados: descubrir vets con rating alto en 1 tap */}
       {pets.length > 0 && <PawFriendPicks />}
+
+      {/* PWA install prompt contextual (solo user con 3+ sesiones, no standalone) */}
+      <PWAInstallPrompt />
 
       {/* === Empty state === */}
       {pets.length === 0 && (

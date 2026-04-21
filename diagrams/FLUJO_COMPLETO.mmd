@@ -1,5 +1,36 @@
 flowchart TD
     %% ============================================================
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-20 PM (Auditoría E2E Lotes A-H)
+    %% Cambios 2026-04-20 PM (Auditoría E2E pre-launch 1 junio 2026):
+    %%   - Lote A: 5 migraciones B2B (plan_lifecycle, featured_position, clinic_vet_seats,
+    %%     booking_commission, subscriptions_b2b_support).
+    %%   - Lote B: flow-create-subscription + flow-webhook extendidos a 5 planes (monthly,
+    %%     yearly, provider_premium $9.9k, provider_clinic_starter $19.9k, provider_pro_max $29.9k).
+    %%     Gating max_clients, audio_transcription, bulk_import segun plan vet.
+    %%   - Lote C: /provider/upgrade con 4 tiers + value prop, /provider/seats, /provider/accept-seat,
+    %%     UpgradePlanBanner dashboard, gate featured_position en directorio, banner analytics segun plan.
+    %%   - Lote D: callbacks limpios /paw-member/success|cancel y /provider/upgrade/success|cancel.
+    %%     Legacy /upgrade/* redirige 301. UpgradeSuccess/Cancel.tsx borrados (huerfanos).
+    %%   - Lote F: SHELTER_DONATIONS=true (SpA ya constituida, cuenta bancaria esta semana).
+    %%   - Lote G: send-whatsapp-reminder code listo + runbook WHATSAPP_CLOUD_API_DEPLOY.md.
+    %%     Pedro: set secrets META_WA_ACCESS_TOKEN + META_WA_PHONE_NUMBER_ID + crear template
+    %%     pet_reminder en Meta + deploy edge fn.
+    %%   - Lote H: DNS_EMAIL_SETUP.md runbook SPF/DKIM/DMARC. INDEX.md actualizado.
+    %% ============================================================
+    %% FLUJO UPGRADE B2B VET (nuevo)
+    %%   /provider/dashboard -> UpgradePlanBanner -> /provider/upgrade
+    %%     -> Click tier -> supabase.functions.invoke('flow-create-subscription',{plan})
+    %%     -> Flow.cl checkout -> user paga
+    %%     -> flow-webhook: rama isB2B actualiza service_providers (provider_plan,
+    %%        plan_started_at, plan_expires_at=+30d, featured_until=+30d, plan_billing_cycle=monthly)
+    %%     -> redirect /provider/upgrade/success -> invalida cache useProviderPlan
+    %%   Cron diario 03:00 UTC: downgrade_expired_vet_plans() baja vets con plan_expires_at pasado.
+    %% ============================================================
+    %% FLUJO UPGRADE B2C PAW MEMBER (renovado)
+    %%   /paw-member -> click Suscribirme -> flow-create-subscription({plan:monthly|yearly})
+    %%     -> Flow.cl -> flow-webhook apply_premium RPC + donations.status='paid'
+    %%     -> /paw-member/success (antes /upgrade/success, copy renovado)
+    %% ============================================================
     %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-20 (Refugios MVP completo)
     %% Cambios 2026-04-20 PM (Fases 7-9 completas):
     %%   - Edge fn send-pet-invitation acepta vet OR shelter (caller).
@@ -647,3 +678,61 @@ flowchart TD
     %% Rol shelter en sistema
     ROLE_CTX["useActiveRole: owner | provider | shelter"] -. query .-> SH_DB
     ROLE_GUARD_SH["RoleGuard requiredRole=shelter"] --> SH_DASH
+
+    %% ============ UPGRADE B2B VET (2026-04-20 Lote C+D) ============
+    subgraph VET_UPGRADE["UPGRADE B2B VET — Auditoria E2E pre-launch"]
+        direction TB
+        PROV_DASH["/provider/dashboard"]
+        UP_BANNER["UpgradePlanBanner si plan_free"]
+        PROV_UPGRADE["/provider/upgrade 4 tiers con value prop"]
+        FLOW_CS["edge fn flow-create-subscription plan=provider_premium|clinic_starter|pro_max"]
+        FLOW_PAY["Flow.cl checkout"]
+        FLOW_WH["edge fn flow-webhook rama isB2B"]
+        SP_UPDATE["service_providers: provider_plan + plan_started_at + plan_expires_at=+30d + featured_until"]
+        PROV_UP_SUCCESS["/provider/upgrade/success copy por plan activo"]
+        PROV_UP_CANCEL["/provider/upgrade/cancel neutro"]
+        SEATS_PAGE["/provider/seats gate clinic_starter/pro_max"]
+        ACCEPT_SEAT["/provider/accept-seat?token= RPC accept_clinic_seat_invitation"]
+        CRON_DOWN["cron downgrade-expired-vet-plans-daily 03:00 UTC"]
+
+        PROV_DASH --> UP_BANNER
+        UP_BANNER --> PROV_UPGRADE
+        PROV_UPGRADE --> FLOW_CS
+        FLOW_CS --> FLOW_PAY
+        FLOW_PAY --> FLOW_WH
+        FLOW_WH --> SP_UPDATE
+        SP_UPDATE --> PROV_UP_SUCCESS
+        FLOW_PAY -. cancel .-> PROV_UP_CANCEL
+        SP_UPDATE -. clinic/pro_max .-> SEATS_PAGE
+        SEATS_PAGE -. invitar vet .-> ACCEPT_SEAT
+        CRON_DOWN -. plan_expires_at < NOW .-> SP_UPDATE
+    end
+
+    %% ============ CALLBACKS B2C PAW MEMBER LIMPIOS (Lote D) ============
+    subgraph PM_CALLBACKS["CALLBACKS PAW MEMBER — Opcion B limpia"]
+        direction TB
+        PM_PAGE["/paw-member"]
+        PM_FLOW["flow-create-subscription plan=monthly|yearly"]
+        PM_WEBHOOK["flow-webhook apply_premium RPC"]
+        PM_SUCCESS["/paw-member/success copy renovado"]
+        PM_CANCEL["/paw-member/cancel neutro"]
+        LEGACY_S["/upgrade/success"]
+        LEGACY_C["/upgrade/cancel"]
+
+        PM_PAGE --> PM_FLOW
+        PM_FLOW --> PM_WEBHOOK
+        PM_WEBHOOK --> PM_SUCCESS
+        PM_FLOW -. cancel .-> PM_CANCEL
+        LEGACY_S -. Navigate 301 .-> PM_SUCCESS
+        LEGACY_C -. Navigate 301 .-> PM_CANCEL
+    end
+
+    %% ============ GATING B2B POR PLAN (Lotes B+C) ============
+    subgraph B2B_GATING["FEATURE GATING SEGUN PLAN VET"]
+        direction TB
+        GATE_MC["create-patient: max_clients 5 / 500 / ilimitado"]
+        GATE_AUD["process-consultation-transcript: bloquea provider_free"]
+        GATE_BULK["bulk-import-pets: vet B2B requires clinic_starter/pro_max"]
+        GATE_FEAT["useDirectoryVets: ordena featured_until DESC primero"]
+        GATE_ANALYTICS["ProDashboard banner si provider_free; chip basic/advanced si pago"]
+    end

@@ -38,7 +38,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { setSeoTags } from '@/lib/vetDirectory';
+import { setSeoTags, injectJsonLd } from '@/lib/vetDirectory';
 import { PROVIDER_PLANS } from '@/lib/plans';
 import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 import { FoundingVetBanner } from '@/components/landing/FoundingVetBanner';
@@ -207,6 +207,76 @@ export default function ParaVeterinarios() {
         'Gestiona tus pacientes, recibe reservas online y destaca en el directorio veterinario verificado de Chile. Ficha clinica digital compartida. Gratis para empezar.',
       canonical: 'https://pawfriend.cl/para-veterinarios',
       ogImage: 'https://pawfriend.cl/paw-friend-assets-v2/paw_vets_og_card.svg',
+    });
+
+    injectJsonLd('jsonld-para-vets-product', {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: 'Paw Friend para veterinarios',
+      description:
+        'Plataforma para veterinarios en Chile: ficha clinica digital, directorio publico verificado, reservas online, reportes semanales.',
+      brand: { '@type': 'Brand', name: 'Paw Friend' },
+      offers: [
+        {
+          '@type': 'Offer',
+          name: 'Basica',
+          price: '0',
+          priceCurrency: 'CLP',
+          availability: 'https://schema.org/InStock',
+        },
+        {
+          '@type': 'Offer',
+          name: 'Premium',
+          price: '9900',
+          priceCurrency: 'CLP',
+          availability: 'https://schema.org/InStock',
+        },
+        {
+          '@type': 'Offer',
+          name: 'Clinica',
+          price: '19900',
+          priceCurrency: 'CLP',
+          availability: 'https://schema.org/InStock',
+        },
+        {
+          '@type': 'Offer',
+          name: 'Pro Max',
+          price: '29900',
+          priceCurrency: 'CLP',
+          availability: 'https://schema.org/InStock',
+        },
+      ],
+    });
+
+    injectJsonLd('jsonld-para-vets-faq', {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: '¿Cuánto cuesta empezar?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'El plan Basica es gratis hasta 5 pacientes. Luego Premium $9.900/mes o Clinica $19.900/mes.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: '¿Necesito cobrar por la app?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'No. Puedes usarla solo como directorio + ficha clinica. Si quieres recibir pagos, activas Flow.cl y Paw Friend cobra 0-10% segun plan.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: '¿Los dueños pagan por usar Paw Friend?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'No. Paw Friend es gratis para dueños de mascotas. Nuestra monetizacion son los planes para vets y donaciones voluntarias.',
+          },
+        },
+      ],
     });
   }, []);
 

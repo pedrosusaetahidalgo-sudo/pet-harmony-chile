@@ -56,6 +56,31 @@ serve(
         });
       }
 
+      // ---------- Gate audio_transcription por plan B2B (auditoría 2026-04-20) ----
+      // provider_free NO tiene audio. provider_premium+ sí.
+      const { data: providerRow } = await supabaseClient
+        .from('service_providers')
+        .select('provider_plan')
+        .eq('user_id', userData.user.id)
+        .maybeSingle();
+      const callerPlan = providerRow?.provider_plan ?? 'provider_free';
+      const PLANS_WITH_AUDIO = new Set([
+        'provider_premium',
+        'provider_clinic_starter',
+        'provider_pro_max',
+      ]);
+      if (!PLANS_WITH_AUDIO.has(callerPlan)) {
+        return new Response(
+          JSON.stringify({
+            error:
+              'La transcripcion de audio esta disponible desde el plan Premium. Actualiza tu plan en /provider/upgrade.',
+            code: 'plan_feature_locked',
+            upgrade_required: 'provider_premium',
+          }),
+          { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       // ---------- Rate limit (15 por hora) ----------
       const quota = await checkAiQuota(userData.user.id, {
         limit: 15,

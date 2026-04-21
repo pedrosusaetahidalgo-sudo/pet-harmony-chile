@@ -99,13 +99,12 @@ export const FEATURE_FLAGS = {
 
   /**
    * Donaciones dirigidas a un refugio / hogar de adopcion.
-   * BLOQUEADO hasta migrar cuenta Flow a SpA (tesoreria separada para poder
-   * transferir fondos a terceros). Hooks DB listos (beneficiary_type,
-   * beneficiary_adoption_center_id) + UI en perfil publico del refugio +
-   * selector en /donaciones. Activar este flag cuando Flow.cl tenga titular
-   * SpA y exista operativa para transferir al refugio.
+   * ACTIVADO 2026-04-20 (Lote F auditoría pre-launch): Pedro confirmó SpA
+   * ya constituida (SGSE SpA) + cuenta bancaria esta semana. Hooks DB
+   * listos (beneficiary_type, beneficiary_adoption_center_id) + UI en
+   * perfil publico del refugio + selector en /donaciones.
    */
-  SHELTER_DONATIONS: false,
+  SHELTER_DONATIONS: true,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;
