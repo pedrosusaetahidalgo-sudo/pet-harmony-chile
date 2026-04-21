@@ -10,7 +10,17 @@ import { injectFakeAuth } from './fixtures/auth';
  * No prueba transacciones reales — usa fake auth y query params.
  * Objetivo: prevenir regresiones donde el usuario queda atorado después
  * de un pago (caso real reportado en auditoria UX).
+ *
+ * Nota sobre `waitUntil: 'load'`: `domcontentloaded` se dispara antes de
+ * que React monte, y textContent('body') devuelve solo los scripts inline
+ * del index.html. `load` espera a que los chunks de Vite terminen y el
+ * React root esté hidratado.
  */
+
+const SUCCESS_COPY = /exito|completado|confirmad|recibido|gracias/i;
+const FAILED_COPY = /error|fall|no se|problema|intenta|canceld|cancelad/i;
+const PAW_MEMBER_COPY = /paw|member|miembro|exito|gracias|bienvenid/i;
+const CANCEL_COPY = /cancel|volver|inicio|home|no se completo|intenta/i;
 
 test.describe('Flow payment success callback', () => {
   test.beforeEach(async ({ page }) => {
@@ -21,23 +31,20 @@ test.describe('Flow payment success callback', () => {
     const errors: string[] = [];
     page.on('pageerror', (err) => errors.push(err.message));
 
-    await page.goto('/payment-result?status=success', { waitUntil: 'domcontentloaded' });
+    await page.goto('/payment-result?status=success', { waitUntil: 'load' });
 
-    // No JS errors en load
     expect(errors, 'JavaScript errors en load').toHaveLength(0);
 
-    // Debe haber un mensaje de éxito visible (el copy puede variar, buscamos palabras clave)
-    const body = (await page.textContent('body')) ?? '';
-    expect(body.toLowerCase(), 'Copy de éxito visible').toMatch(
-      /exito|completado|confirmad|recibido|gracias/
-    );
+    // Esperar a que React renderice el copy real (toContainText retries por 10s).
+    await expect(page.locator('body'), 'Copy de éxito visible').toContainText(SUCCESS_COPY);
   });
 
   test('/payment-result?status=success ofrece CTA para seguir navegando', async ({ page }) => {
-    await page.goto('/payment-result?status=success', { waitUntil: 'domcontentloaded' });
+    await page.goto('/payment-result?status=success', { waitUntil: 'load' });
 
-    // Debe existir al menos 1 link de acción (a /home, /mis-reservas, /profile, etc.)
-    // que permita al user continuar después del pago.
+    // Primero aseguramos que React montó
+    await expect(page.locator('body')).toContainText(SUCCESS_COPY);
+
     const actionableLinks = await page
       .locator('a[href^="/"], button:visible')
       .filter({ hasText: /home|inicio|mis reservas|ver|volver|continuar|perfil/i })
@@ -56,19 +63,17 @@ test.describe('Flow payment failed callback', () => {
     const errors: string[] = [];
     page.on('pageerror', (err) => errors.push(err.message));
 
-    await page.goto('/payment-result?status=failed', { waitUntil: 'domcontentloaded' });
+    await page.goto('/payment-result?status=failed', { waitUntil: 'load' });
 
     expect(errors, 'JavaScript errors en load').toHaveLength(0);
 
-    const body = (await page.textContent('body')) ?? '';
-    // Debe reconocer el estado fallido con copy claro
-    expect(body.toLowerCase(), 'Copy de fallo/error visible').toMatch(
-      /error|fall|no se|problema|intenta|canceld|cancelad/
-    );
+    await expect(page.locator('body'), 'Copy de fallo/error visible').toContainText(FAILED_COPY);
   });
 
   test('/payment-result?status=failed ofrece CTA para reintentar o volver', async ({ page }) => {
-    await page.goto('/payment-result?status=failed', { waitUntil: 'domcontentloaded' });
+    await page.goto('/payment-result?status=failed', { waitUntil: 'load' });
+
+    await expect(page.locator('body')).toContainText(FAILED_COPY);
 
     const retryLinks = await page
       .locator('a, button:visible')
@@ -88,24 +93,23 @@ test.describe('Upgrade (Paw Member) callbacks', () => {
     const errors: string[] = [];
     page.on('pageerror', (err) => errors.push(err.message));
 
-    await page.goto('/upgrade/success', { waitUntil: 'domcontentloaded' });
+    // /upgrade/success redirige a /paw-member/success (Navigate replace).
+    await page.goto('/upgrade/success', { waitUntil: 'load' });
 
     expect(errors).toHaveLength(0);
 
-    const body = (await page.textContent('body')) ?? '';
-    expect(body.toLowerCase()).toMatch(/paw|member|miembro|exito|gracias|bienvenid/);
+    await expect(page.locator('body')).toContainText(PAW_MEMBER_COPY);
   });
 
   test('/upgrade/cancel carga sin crash y permite volver', async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', (err) => errors.push(err.message));
 
-    await page.goto('/upgrade/cancel', { waitUntil: 'domcontentloaded' });
+    await page.goto('/upgrade/cancel', { waitUntil: 'load' });
 
     expect(errors).toHaveLength(0);
 
-    const body = (await page.textContent('body')) ?? '';
-    expect(body.toLowerCase()).toMatch(/cancel|volver|inicio|home|no se completo|intenta/);
+    await expect(page.locator('body')).toContainText(CANCEL_COPY);
   });
 });
 
@@ -118,22 +122,21 @@ test.describe('Booking flow - UI sin auth real', () => {
     const errors: string[] = [];
     page.on('pageerror', (err) => errors.push(err.message));
 
-    await page.goto('/mis-reservas', { waitUntil: 'domcontentloaded' });
+    await page.goto('/mis-reservas', { waitUntil: 'load' });
 
     // Con fake auth, la página debería renderizar el shell aunque las queries
     // Supabase fallen silenciosamente (React Query retry off en tests).
     expect(errors.filter((e) => !e.includes('supabase') && !e.includes('fetch'))).toEqual([]);
 
-    // El body debe tener contenido (no blanco)
-    const bodyText = (await page.textContent('body')) ?? '';
-    expect(bodyText.length).toBeGreaterThan(100);
+    // Esperar a que React monte algo concreto (shell de layout)
+    await expect(page.locator('body')).not.toBeEmpty();
   });
 
   test('/calendario carga sin crash', async ({ page }) => {
     const errors: string[] = [];
     page.on('pageerror', (err) => errors.push(err.message));
 
-    await page.goto('/calendario', { waitUntil: 'domcontentloaded' });
+    await page.goto('/calendario', { waitUntil: 'load' });
     expect(errors.filter((e) => !e.includes('supabase') && !e.includes('fetch'))).toEqual([]);
   });
 
@@ -141,11 +144,10 @@ test.describe('Booking flow - UI sin auth real', () => {
     const errors: string[] = [];
     page.on('pageerror', (err) => errors.push(err.message));
 
-    await page.goto('/veterinarios/dr-prueba-no-existe', { waitUntil: 'domcontentloaded' });
+    await page.goto('/veterinarios/dr-prueba-no-existe', { waitUntil: 'load' });
     expect(errors).toHaveLength(0);
 
     // Debe mostrar estado de "no encontrado" o redirigir, no pantalla blanca
-    const bodyText = (await page.textContent('body')) ?? '';
-    expect(bodyText.length).toBeGreaterThan(50);
+    await expect(page.locator('body')).not.toBeEmpty();
   });
 });

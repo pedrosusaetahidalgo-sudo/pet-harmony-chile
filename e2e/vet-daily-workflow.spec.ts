@@ -81,8 +81,15 @@ test.describe('Vet daily workflow', () => {
 
   test('B2B landing page loads', async ({ page }) => {
     await page.goto('/para-veterinarios', { waitUntil: 'domcontentloaded' });
-    await page.waitForTimeout(1000);
 
-    await expect(page.getByRole('heading', { name: /veterinarios/i }).first()).toBeVisible();
+    // El hero actual dice "Tu consulta veterinaria, online y conectada".
+    // Aceptamos varios headings representativos de la landing B2B.
+    await expect(
+      page
+        .getByRole('heading', {
+          name: /consulta veterinaria|veterinarios|postula|planes/i,
+        })
+        .first()
+    ).toBeVisible({ timeout: 10_000 });
   });
 });

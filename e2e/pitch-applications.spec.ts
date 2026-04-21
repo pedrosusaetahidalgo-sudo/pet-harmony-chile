@@ -14,6 +14,19 @@
  */
 import { test, expect } from '@playwright/test';
 
+// Pre-acepta el banner de cookies para que no intercepte clicks en mobile.
+// El banner usa localStorage.pf_cookie_consent. addInitScript corre antes de
+// que la SPA monte, asi que el banner nunca aparece.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    try {
+      window.localStorage.setItem('pf_cookie_consent', 'accepted');
+    } catch {
+      /* localStorage puede no estar disponible aun */
+    }
+  });
+});
+
 test.describe('Sistema de aplicaciones pitch', () => {
   test('/aplicar?tipo=paw_partners carga form con campos esperados', async ({ page }) => {
     await page.goto('/aplicar?tipo=paw_partners');

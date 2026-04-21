@@ -7,6 +7,10 @@ import { dirname, resolve } from 'node:path';
  * Sirve via http-server en puerto 8765.
  *
  * Output: public/landing/screenshots/decks/<nombre>-<slide>.png
+ *
+ * Requisito: levantar `npx http-server public -p 8765` en paralelo antes de
+ * correr este spec. Si el server no responde, toda la suite se saltea con
+ * `test.skip` para que `npm run test:all` no falle por un servicio opcional.
  */
 
 const OUT = resolve(process.cwd(), 'public/landing/screenshots/decks');
@@ -55,11 +59,33 @@ function ensureDir(p: string) {
   mkdirSync(dirname(p), { recursive: true });
 }
 
+async function isHttpServerUp(): Promise<boolean> {
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 1500);
+    const res = await fetch(BASE, { signal: ctrl.signal });
+    clearTimeout(t);
+    return res.ok || res.status < 500;
+  } catch {
+    return false;
+  }
+}
+
 test.describe('Decks mejorados — capturas', () => {
+  let serverUp = false;
+
+  test.beforeAll(async () => {
+    serverUp = await isHttpServerUp();
+  });
+
   for (const target of TARGETS) {
     for (const slide of target.slides) {
       test(`${target.slug} · ${slide.name}`, async ({ page, browserName }) => {
         test.skip(browserName !== 'chromium', 'Solo Chromium');
+        test.skip(
+          !serverUp,
+          'http-server no esta corriendo en :8765. Levantar con `npx http-server public -p 8765` para generar capturas.'
+        );
         await page.setViewportSize({ width: 1440, height: 900 });
         await page.goto(`${BASE}/${target.file}`, { waitUntil: 'networkidle' });
         await page.waitForTimeout(800);

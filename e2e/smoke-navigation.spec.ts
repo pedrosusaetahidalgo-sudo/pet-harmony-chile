@@ -37,7 +37,13 @@ test.describe('Auth page', () => {
 
   test('muestra tagline unificado', async ({ page }) => {
     await page.goto('/auth', { waitUntil: 'domcontentloaded' });
-    await expect(page.getByText(/cuida la salud|veterinarios verificados/i).first()).toBeVisible();
+    // Desktop muestra "Ficha clinica completa, directorio de veterinarios verificados"
+    // en el panel izquierdo (hidden md:flex). Mobile muestra el copy del form:
+    // "la ficha medica de tu peludo viva siempre contigo". Aceptamos cualquiera
+    // para cubrir ambos breakpoints.
+    await expect(
+      page.getByText(/veterinarios verificados|ficha medica|ficha clinica|tu peludo/i).first()
+    ).toBeVisible({ timeout: 10_000 });
   });
 });
 
