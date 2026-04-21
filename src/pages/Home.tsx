@@ -57,7 +57,7 @@ import { RARITY_BORDER_STYLES } from '@/lib/paw-cards';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePendingReviewCount } from '@/hooks/usePendingReviews';
 import { usePublicDonationStats } from '@/hooks/usePublicDonations';
-import { useAutoAcceptCoOwnerInvitation } from '@/hooks/useAutoAcceptCoOwnerInvitation';
+import { CoOwnerInviteReceivedDialog } from '@/components/CoOwnerInviteReceivedDialog';
 import { formatDistanceToNowStrict, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useActiveRole } from '@/hooks/useActiveRole';
@@ -205,9 +205,6 @@ export default function Home() {
   const { upcomingReminders, overdueReminders, completeReminder } = useReminders();
   const pendingReviewCount = usePendingReviewCount();
   const { data: publicDonationStats } = usePublicDonationStats();
-  // Procesa ?co_owner=TOKEN si el user aterriza aqui desde un link de
-  // invitacion (WhatsApp del dialog post-AddPet, o noti in-app).
-  useAutoAcceptCoOwnerInvitation();
   const [showNamePrompt, setShowNamePrompt] = useState(false);
 
   useEffect(() => {
@@ -939,6 +936,9 @@ export default function Home() {
       )}
 
       <ViewTutorial {...TUTORIALS.home} />
+
+      {/* Dialog aceptar/rechazar invitación co-owner (2026-04-21) */}
+      <CoOwnerInviteReceivedDialog />
     </div>
   );
 }

@@ -14,7 +14,8 @@ import { formatShortDate } from '../helpers';
 import { PetQRDisplay } from '@/components/medical/PetQRDisplay';
 import { PetVetLinksSection } from '@/components/medical/PetVetLinksSection';
 import { InviteVetDialog } from '@/components/InviteVetDialog';
-import { UserPlus } from '@/lib/icons';
+import { SharePetAccessModal } from '@/components/medical/SharePetAccessModal';
+import { UserPlus, Users as UsersIcon } from '@/lib/icons';
 
 export function TabCompartir({ petId, petName }: { petId: string; petName: string }) {
   const {
@@ -29,6 +30,7 @@ export function TabCompartir({ petId, petName }: { petId: string; petName: strin
   } = useMedicalSharing(petId);
   const [legacyOpen, setLegacyOpen] = useState(false);
   const [inviteVetOpen, setInviteVetOpen] = useState(false);
+  const [sharePeopleOpen, setSharePeopleOpen] = useState(false);
 
   const handleCopy = useCallback(
     async (token: string) => {
@@ -122,6 +124,36 @@ export function TabCompartir({ petId, petName }: { petId: string; petName: strin
         </CardContent>
       </Card>
       <InviteVetDialog open={inviteVetOpen} onOpenChange={setInviteVetOpen} petName={petName} />
+
+      {/* ═══ Compartir con personas cercanas (co-owners, 2026-04-21) ═══ */}
+      <Card className="border-blue-200/60 bg-gradient-to-br from-blue-50/40 to-white">
+        <CardContent className="p-4 flex flex-col md:flex-row md:items-center gap-3">
+          <div className="flex-1 space-y-1">
+            <h3 className="font-semibold text-sm flex items-center gap-2">
+              <UsersIcon className="h-4 w-4 text-blue-600" />
+              Compartir con tu pareja, familia o cuidador
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              Dale acceso a la ficha a otra persona (co-dueño, familiar, cuidador o entrenador).
+              Podrá ver o editar según el rol que elijas.
+            </p>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setSharePeopleOpen(true)}
+            className="shrink-0"
+          >
+            Gestionar accesos
+          </Button>
+        </CardContent>
+      </Card>
+      <SharePetAccessModal
+        open={sharePeopleOpen}
+        onOpenChange={setSharePeopleOpen}
+        petId={petId}
+        petName={petName}
+      />
 
       {/* ═══ QR de la ficha clínica ═══ */}
       <PetQRDisplay petId={petId} petName={petName} />

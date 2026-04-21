@@ -25,7 +25,7 @@ import {
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { useGoToAddPet } from '@/hooks/useCanAddPet';
 import { useClaimPetInvitation } from '@/hooks/useClaimPetInvitation';
-import { useAutoAcceptCoOwnerInvitation } from '@/hooks/useAutoAcceptCoOwnerInvitation';
+import { CoOwnerInviteReceivedDialog } from '@/components/CoOwnerInviteReceivedDialog';
 import { useAutoClaimByEmail } from '@/hooks/useAutoClaimByEmail';
 import { ClaimPetDialog } from '@/components/ClaimPetDialog';
 import { PawCardFlippable } from '@/components/paw-cards/PawCardFlippable';
@@ -140,8 +140,6 @@ const MyPets = () => {
 
   // Procesar invitación si viene con ?invitation=TOKEN (vet → dueño)
   useClaimPetInvitation();
-  // Auto-aceptar invitación co-owner si viene con ?co_owner=TOKEN
-  useAutoAcceptCoOwnerInvitation();
   // Auto-claim mascotas pendientes que coincidan con el email del usuario
   useAutoClaimByEmail();
 
@@ -551,6 +549,9 @@ const MyPets = () => {
         petName={pets.find((p) => p.id === shareAccessPetId)?.name || 'tu mascota'}
       />
       <ViewTutorial {...TUTORIALS.myPets} />
+
+      {/* ── Dialog aceptar/rechazar invitación co-owner (2026-04-21) ── */}
+      <CoOwnerInviteReceivedDialog />
     </div>
   );
 };
