@@ -34,14 +34,15 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label={label}
       title={label}
       onClick={() => setTheme(nextTheme)}
-      className={cn(
-        'min-h-[44px] min-w-[44px] hover:bg-accent',
-        !mounted && 'opacity-0 pointer-events-none',
-        className
-      )}
+      className={cn('min-h-[44px] min-w-[44px] hover:bg-accent', className)}
     >
-      {isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-      <span className="sr-only">Tema actual: {mounted ? (theme ?? 'system') : 'cargando'}</span>
+      {/* Renderiza siempre el icono Moon como default (tema = light). Post-mount
+          si el tema es dark, se cambia a Sun. Asi el boton es visible incluso
+          antes de que next-themes termine de hidratar. */}
+      {mounted && isDark ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+      <span className="sr-only">
+        {mounted ? `Cambiar tema (actual: ${theme ?? 'light'})` : 'Cambiar tema'}
+      </span>
     </Button>
   );
 }

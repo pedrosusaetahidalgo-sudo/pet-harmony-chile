@@ -38,10 +38,17 @@ window.addEventListener('error', (e) => {
 
 createRoot(document.getElementById('root')!).render(
   <HelmetProvider>
+    {/* defaultTheme="light": el dark mode es opt-in via ThemeToggle en
+        Header. NO respetamos automáticamente la preferencia del OS
+        (prefers-color-scheme) porque muchos users tienen iOS en dark
+        auto y abrir la app en dark sin haber elegido rompe expectativa
+        (reporte Pedro 2026-04-20). enableSystem queda en false por lo
+        mismo — si el user elige "system" desde Settings, respetará OS,
+        pero no arranca ahí. */}
     <ThemeProvider
       attribute="class"
-      defaultTheme="system"
-      enableSystem
+      defaultTheme="light"
+      enableSystem={false}
       disableTransitionOnChange
       storageKey="pf_theme"
     >
