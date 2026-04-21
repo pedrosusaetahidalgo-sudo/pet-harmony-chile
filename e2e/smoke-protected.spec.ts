@@ -59,10 +59,24 @@ const PROTECTED_ROUTES = [
   { path: '/provider/dashboard', name: 'Dashboard proveedor' },
   { path: '/provider/pacientes', name: 'Pacientes proveedor' },
   { path: '/provider/profile-edit', name: 'Editar perfil proveedor' },
+  { path: '/provider/upgrade', name: 'Provider upgrade' },
+  { path: '/provider/seats', name: 'Provider seats' },
+  { path: '/provider/accept-seat', name: 'Accept clinic seat' },
+  // Shelter (agregado 2026-04-21)
+  { path: '/shelter/dashboard', name: 'Dashboard refugio' },
+  { path: '/shelter/pets', name: 'Mascotas refugio' },
+  { path: '/shelter/bulk-import', name: 'Bulk import refugio' },
+  { path: '/shelter/profile', name: 'Perfil refugio' },
+  { path: '/shelter/transfer/test-id', name: 'Transferir mascota' },
+  { path: '/onboarding-shelter', name: 'Onboarding refugio' },
   // Admin only
   { path: '/admin', name: 'Panel admin' },
   { path: '/analytics-demo', name: 'Analytics demo (admin)' },
   { path: '/demo', name: 'Demo admin' },
+  // Paw Member + pagos (2026-04-21)
+  { path: '/paw-member', name: 'Paw Member perfil' },
+  { path: '/paw-member/success', name: 'Paw Member success' },
+  { path: '/paw-member/cancel', name: 'Paw Member cancel' },
 ];
 
 test.describe('Rutas protegidas — sin sesión redirigen a /auth', () => {

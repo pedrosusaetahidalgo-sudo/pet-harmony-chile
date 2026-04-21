@@ -136,3 +136,6 @@ verify_jwt = false
 
 [functions.send-co-owner-invitation]
 verify_jwt = false
+
+[functions.generate-daily-digest]
+verify_jwt = false
