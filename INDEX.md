@@ -129,6 +129,7 @@ Resumen de items activos:
 | [docs-raiz/planes/SMOKE_TEST_COHERENCE_DIA_2.sql](docs-raiz/planes/SMOKE_TEST_COHERENCE_DIA_2.sql) | Smoke test SQL (5 checks defensivos) para validar wiring notifs post re-deploy edge fns | Activo |
 | [docs-raiz/planes/SMOKE_MANUAL_COHERENCE.md](docs-raiz/planes/SMOKE_MANUAL_COHERENCE.md) | Smoke manual end-to-end con tráfico real: 4 escenarios (adopción / prevenciones / booking reminder / sidebar) + SQL de verificación | Activo |
 | [docs-raiz/planes/EJECUCION_COHERENCE_FASE_FINAL.md](docs-raiz/planes/EJECUCION_COHERENCE_FASE_FINAL.md) | Fase final: 4 gaps reales resueltos post repo-vs-plan (label antiparasitic, collapse progressive, invalidaciones my-applications, toast proxima dosis) | Completado |
+| [docs-raiz/planes/EJECUCION_COHERENCE_FASE_6.md](docs-raiz/planes/EJECUCION_COHERENCE_FASE_6.md) | Fase 6 hardening: fix regresion reorg-v3 + refactor frequencies + E2E Playwright Coherence + pendientes manuales acumulados | Completado |
 | [docs-raiz/planes/SUGERENCIAS_COMPLETAS_2026_04_16.md](docs-raiz/planes/SUGERENCIAS_COMPLETAS_2026_04_16.md) | 49 sugerencias en 10 categorias con plan de ejecucion de 4 semanas | Activo |
 | [docs-raiz/operacion/PENDIENTES_MANUALES.md](docs-raiz/operacion/PENDIENTES_MANUALES.md) | Items que requieren trabajo manual (assets, stores, verificaciones) | Activo |
 

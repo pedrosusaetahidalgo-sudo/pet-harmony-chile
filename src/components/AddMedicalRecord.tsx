@@ -35,6 +35,7 @@ import { useOrganicRewards } from '@/hooks/useOrganicRewards';
 import { MEDICAL_RECORD_TYPES } from '@/lib/medicalRecordTypes';
 import { PostRecordRecommendation } from '@/components/medical/PostRecordRecommendation';
 import { getVaccinesForSpecies } from '@/lib/vaccines';
+import { nextPreventiveCareDate, type AntiparasiticType } from '@/lib/frequencies';
 
 interface AddMedicalRecordProps {
   petId: string;
@@ -284,24 +285,18 @@ export function AddMedicalRecord({
       // Si el usuario definio next_date, el trigger la respeta; si no, se
       // auto-calcula +12m vacuna, +3m deworming interno, +1m flea externo
       // (Bravecto/Nexgard Spectra +3m).
-      const isAntiparasitario =
-        recordType === 'antiparasitario' ||
-        recordType === 'desparasitacion' ||
-        recordType === 'antipulgas';
-
       // Toast unificado con preview de proxima dosis (plan apendice C.3).
-      // Si el user definio next_date manualmente lo respetamos; si no y
-      // es vacuna/antiparasitario, mostramos la fecha que el trigger SQL
-      // calculara para el reminder automatico.
-      if (recordType === 'vacuna' || isAntiparasitario) {
-        const nextDoseDate = nextDate
-          ? nextDate
-          : recordType === 'vacuna'
-            ? addMonths(date, 12)
-            : antiparasiticType === 'externo' &&
-                !/bravecto|nexgard spectra/i.test(productBrand ?? '')
-              ? addMonths(date, 1)
-              : addMonths(date, 3);
+      // La logica de calculo vive en src/lib/frequencies.ts para estar
+      // alineada con el trigger SQL create_vaccine_reminder().
+      const nextDoseDate = nextPreventiveCareDate({
+        recordType,
+        date,
+        antiparasiticType: (antiparasiticType || null) as AntiparasiticType | null,
+        productBrand: productBrand || null,
+        nextDateOverride: nextDate ?? null,
+      });
+
+      if (nextDoseDate) {
         toast.success('Registro creado', {
           description: `Te recordaremos la próxima dosis: ${format(nextDoseDate, "d 'de' MMMM yyyy", { locale: es })}`,
         });

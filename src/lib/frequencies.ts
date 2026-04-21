@@ -88,3 +88,38 @@ export function reminderTypeForAntiparasitic(
   // Interno/ambos/desconocido = comprimido gastrointestinal → 'deworming'
   return type === 'externo' ? 'flea' : 'deworming';
 }
+
+/**
+ * Helper unificado para preventive care: dado un `record_type` del
+ * medical_record y los campos relacionados, devuelve la fecha de la
+ * proxima dosis o `null` si el tipo de record no genera reminder.
+ *
+ * Usado por:
+ *  - Toast post-save en AddMedicalRecord (informa al user).
+ *  - Potencialmente admin/debug views que quieran previsualizar.
+ *
+ * DEBE mantenerse en sync con el trigger SQL create_vaccine_reminder()
+ * (mig 20260521000040). Si un valor cambia aqui, cambiar alla tambien.
+ */
+export function nextPreventiveCareDate(params: {
+  recordType: string;
+  date: Date;
+  antiparasiticType?: AntiparasiticType | null;
+  productBrand?: string | null;
+  nextDateOverride?: Date | null;
+}): Date | null {
+  const { recordType, date, antiparasiticType, productBrand, nextDateOverride } = params;
+
+  const isAntiparasitario =
+    recordType === 'antiparasitario' ||
+    recordType === 'desparasitacion' ||
+    recordType === 'antipulgas';
+
+  if (recordType === 'vacuna') {
+    return nextVaccineDate(date, nextDateOverride);
+  }
+  if (isAntiparasitario) {
+    return nextDateOverride ?? nextAntiparasiticDate(date, antiparasiticType, productBrand);
+  }
+  return null;
+}
