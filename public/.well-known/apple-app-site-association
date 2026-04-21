@@ -3,7 +3,7 @@
     "apps": [],
     "details": [
       {
-        "appID": "__TEAM_ID__.cl.pawfriend.app",
+        "appID": "7Q8L7A2WM7.cl.pawfriend.app",
         "paths": [
           "/qr/*",
           "/paw-card/*",
@@ -26,6 +26,6 @@
     ]
   },
   "webcredentials": {
-    "apps": ["__TEAM_ID__.cl.pawfriend.app"]
+    "apps": ["7Q8L7A2WM7.cl.pawfriend.app"]
   }
 }

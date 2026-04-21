@@ -372,6 +372,47 @@ Generar archivo en `supabase/migrations/` con timestamp `YYYYMMDDHHMMSS_descripc
 
 **Nota sobre timestamps duplicados**: existen 3 pares de migraciones con el mismo timestamp (20260412200000, 20260413000000, 20260413200000). No rompen nada porque son idempotentes y afectan tablas distintas. Supabase las ejecuta en orden alfabetico cuando el timestamp coincide. NO renombrar archivos ya aplicados en produccion.
 
+**REGLA 9.2.1 (2026-04-21) — Triggers plpgsql con smoke inline**:
+plpgsql es lazy-validation: `CREATE FUNCTION` valida sintaxis pero NO valida
+refs a columnas/tablas dentro del cuerpo. El trigger se crea bien y explota
+solo cuando un usuario real lo dispara, posiblemente meses después.
+
+Incidentes documentados:
+- `sync_vaccination_status()` referenciaba `pets.vaccines_up_to_date`
+  (columna inexistente) → 4 meses roto sin detectar.
+- `notify_adoption_interest()` hacía `JOIN pets p ON p.id = ap.pet_id`
+  (adoption_posts no tiene pet_id, solo pet_name).
+- `create_default_reminders_for_new_pet()` insertaba con `user_id`
+  (columna real: `owner_id`).
+
+**Regla**: toda migración que crea o modifica un trigger plpgsql DEBE
+incluir al final un smoke test:
+
+```sql
+CREATE OR REPLACE FUNCTION mi_trigger() RETURNS TRIGGER AS $$ ... $$;
+DROP TRIGGER IF EXISTS t ON mi_tabla;
+CREATE TRIGGER t AFTER INSERT ON mi_tabla FOR EACH ROW EXECUTE FUNCTION mi_trigger();
+
+-- Smoke test: verificacion de refs del trigger. Rollback al final.
+DO $$
+DECLARE
+  v_id UUID;
+BEGIN
+  INSERT INTO mi_tabla (cols_minimas) VALUES (...) RETURNING id INTO v_id;
+  -- Si el trigger tiene refs rotas, explota aqui y la mig falla.
+  DELETE FROM mi_tabla WHERE id = v_id;
+EXCEPTION WHEN OTHERS THEN
+  RAISE EXCEPTION 'Trigger smoke test failed: %', SQLERRM;
+END $$;
+```
+
+Si el trigger no permite insert sintético (ej: requiere FK válida a user
+real), usar datos dummy con rollback completo. Lo importante: ejercitar
+el trigger AL APLICAR, no en prod.
+
+Query de auditoría para triggers existentes: [docs-raiz/planes/AUDIT_BROKEN_TRIGGERS.sql](docs-raiz/planes/AUDIT_BROKEN_TRIGGERS.sql).
+Correr tras cada tanda de migraciones.
+
 ### 9.3. Pagos con Flow.cl
 Pagos Premium B2C y B2B usan **Flow.cl**, NO Webpay. Edge function `flow-create-subscription`. Credenciales como secrets de Supabase (nunca en codigo).
 

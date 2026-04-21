@@ -103,22 +103,40 @@ export function AdoptionPostCard({ post, onUpdate, isOwner }: AdoptionPostCardPr
 
   const loadInterests = async () => {
     try {
+      // Bug fix 2026-04-21: adoption_interests.interested_user_id tiene FK
+      // a auth.users (no profiles). El join implicito fallaba silencioso.
+      // Hacemos batch fetch de profiles aparte y merge manual.
       const { data, error } = await supabase
         .from('adoption_interests')
-        .select(
-          `
-          *,
-          profiles:interested_user_id (
-            display_name,
-            avatar_url
-          )
-        `
-        )
+        .select('*')
         .eq('adoption_post_id', post.id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setInterests(data || []);
+
+      const rows = data || [];
+      if (rows.length > 0) {
+        const userIds = Array.from(new Set(rows.map((r) => r.interested_user_id).filter(Boolean)));
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('id, display_name, avatar_url')
+          .in('id', userIds);
+        const profileMap = new Map(
+          (profilesData || []).map((p) => [
+            p.id,
+            { display_name: p.display_name, avatar_url: p.avatar_url },
+          ])
+        );
+        // Attach profiles en formato compatible con el render existente.
+        setInterests(
+          rows.map((r) => ({
+            ...r,
+            profiles: profileMap.get(r.interested_user_id) ?? null,
+          }))
+        );
+      } else {
+        setInterests([]);
+      }
     } catch (error) {
       logger.error('Error loading interests:', error);
       toast.error('Error al cargar intereses');

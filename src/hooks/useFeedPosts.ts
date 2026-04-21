@@ -37,6 +37,11 @@ async function fetchFeedPage(
   search?: string
 ): Promise<{ posts: FeedPost[]; nextCursor: string | null }> {
   // Build query with joins — works without the RPC being deployed
+  // Bug fix 2026-04-21: el join `profiles:user_id (...)` fallaba silencioso
+  // porque posts.user_id tiene FK a auth.users (NO a profiles). PostgREST
+  // no resolvia la relacion → 0 rows devueltas → Feed vacio para todos.
+  // Solucion: quitar el join y hacer batch fetch de profiles aparte,
+  // merge manual en JS (ver bloque despues del query).
   let query = supabase
     .from('posts')
     .select(
@@ -50,10 +55,6 @@ async function fetchFeedPage(
       likes_count,
       comments_count,
       created_at,
-      profiles:user_id (
-        display_name,
-        avatar_url
-      ),
       pets:pet_id (
         name,
         photo_url
@@ -101,6 +102,25 @@ async function fetchFeedPage(
     filteredData = filteredData.filter((p) => followingIds.has(p.user_id));
   }
 
+  // Batch fetch profiles for all post authors (2026-04-21 fix).
+  // posts.user_id → auth.users, no FK directa a profiles, asi que el
+  // join implicito fallaba. Hacemos query separada via profiles.id
+  // (profiles.id === auth.users.id en este schema).
+  const profileMap = new Map<string, { display_name: string | null; avatar_url: string | null }>();
+  if (filteredData.length > 0) {
+    const uniqueUserIds = Array.from(new Set(filteredData.map((p) => p.user_id)));
+    const { data: profilesData } = await supabase
+      .from('profiles')
+      .select('id, display_name, avatar_url')
+      .in('id', uniqueUserIds);
+    for (const pr of profilesData ?? []) {
+      profileMap.set(pr.id, {
+        display_name: pr.display_name,
+        avatar_url: pr.avatar_url,
+      });
+    }
+  }
+
   // Check liked/saved status for current user in batch
   let likedSet = new Set<string>();
   let savedSet = new Set<string>();
@@ -134,25 +154,26 @@ async function fetchFeedPage(
   }
 
   // Normalize the response
-  const posts: FeedPost[] = filteredData.map((p) => ({
-    id: p.id,
-    user_id: p.user_id,
-    pet_id: p.pet_id,
-    content: p.content,
-    image_url: p.image_url,
-    post_type: p.post_type,
-    likes_count: p.likes_count || 0,
-    comments_count: p.comments_count || 0,
-    created_at: p.created_at,
-    owner_name:
-      (p.profiles as unknown as { display_name: string | null } | null)?.display_name || null,
-    owner_avatar:
-      (p.profiles as unknown as { avatar_url: string | null } | null)?.avatar_url || null,
-    pet_name: (p.pets as unknown as { name: string | null } | null)?.name || null,
-    pet_photo: (p.pets as unknown as { photo_url: string | null } | null)?.photo_url || null,
-    is_liked: likedSet.has(p.id),
-    is_saved: savedSet.has(p.id),
-  }));
+  const posts: FeedPost[] = filteredData.map((p) => {
+    const profile = profileMap.get(p.user_id);
+    return {
+      id: p.id,
+      user_id: p.user_id,
+      pet_id: p.pet_id,
+      content: p.content,
+      image_url: p.image_url,
+      post_type: p.post_type,
+      likes_count: p.likes_count || 0,
+      comments_count: p.comments_count || 0,
+      created_at: p.created_at,
+      owner_name: profile?.display_name ?? null,
+      owner_avatar: profile?.avatar_url ?? null,
+      pet_name: (p.pets as unknown as { name: string | null } | null)?.name || null,
+      pet_photo: (p.pets as unknown as { photo_url: string | null } | null)?.photo_url || null,
+      is_liked: likedSet.has(p.id),
+      is_saved: savedSet.has(p.id),
+    };
+  });
 
   const nextCursor = posts.length === PAGE_SIZE ? posts[posts.length - 1].created_at : null;
 
