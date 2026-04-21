@@ -21,7 +21,8 @@ import {
 } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon, Plus, Loader2, Sparkles } from '@/lib/icons';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { CalendarIcon, Plus, Loader2, Sparkles, ChevronDown } from '@/lib/icons';
 import { format, addMonths } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
@@ -91,6 +92,11 @@ export function AddMedicalRecord({
   const [antiparasiticType, setAntiparasiticType] = useState('');
   const [productBrand, setProductBrand] = useState('');
   const [suggestions, setSuggestions] = useState<MedicalSuggestion[]>([]);
+  // Progressive disclosure (plan apendice C): los 3 campos requeridos
+  // (tipo, titulo, fecha) siempre visibles. El resto (veterinaria, vet
+  // name, descripcion, notas) viven en un collapse "Mas detalles" para
+  // reducir fricciones en el caso comun.
+  const [moreDetailsOpen, setMoreDetailsOpen] = useState(false);
 
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -263,8 +269,6 @@ export function AddMedicalRecord({
         // Don't fail the medical record creation if points fail
       }
 
-      toast('Registro creado', { description: 'El registro médico se ha guardado correctamente' });
-
       // Fire-and-forget organic rewards + social activity
       reward({ kind: 'medical_record_added', petId, petName });
       if (recordType === 'vacuna') {
@@ -280,17 +284,33 @@ export function AddMedicalRecord({
       // Si el usuario definio next_date, el trigger la respeta; si no, se
       // auto-calcula +12m vacuna, +3m deworming interno, +1m flea externo
       // (Bravecto/Nexgard Spectra +3m).
-      //
-      // Si quieres volver al insert manual como fallback, consulta el
-      // historial git commit que introdujo esta migracion.
       const isAntiparasitario =
         recordType === 'antiparasitario' ||
         recordType === 'desparasitacion' ||
         recordType === 'antipulgas';
+
+      // Toast unificado con preview de proxima dosis (plan apendice C.3).
+      // Si el user definio next_date manualmente lo respetamos; si no y
+      // es vacuna/antiparasitario, mostramos la fecha que el trigger SQL
+      // calculara para el reminder automatico.
       if (recordType === 'vacuna' || isAntiparasitario) {
-        toast.info('Recordatorio automatico creado para la proxima aplicacion');
+        const nextDoseDate = nextDate
+          ? nextDate
+          : recordType === 'vacuna'
+            ? addMonths(date, 12)
+            : antiparasiticType === 'externo' &&
+                !/bravecto|nexgard spectra/i.test(productBrand ?? '')
+              ? addMonths(date, 1)
+              : addMonths(date, 3);
+        toast.success('Registro creado', {
+          description: `Te recordaremos la próxima dosis: ${format(nextDoseDate, "d 'de' MMMM yyyy", { locale: es })}`,
+        });
         queryClient.invalidateQueries({ queryKey: ['reminders'] });
         queryClient.invalidateQueries({ queryKey: ['pet-reminders'] });
+      } else {
+        toast.success('Registro creado', {
+          description: 'El registro médico se ha guardado correctamente',
+        });
       }
 
       queryClient.invalidateQueries({ queryKey: ['medical-records'] });
@@ -508,7 +528,7 @@ export function AddMedicalRecord({
               <p className="text-xs font-medium text-green-700">Datos del antiparasitario</p>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="antiparasitic-type">Tipo *</Label>
+                  <Label htmlFor="antiparasitic-type">Tipo (opcional)</Label>
                   <Select
                     value={antiparasiticType}
                     onValueChange={(val) => {
@@ -576,57 +596,82 @@ export function AddMedicalRecord({
             </div>
           )}
 
-          {/* Veterinaria */}
-          <div className="space-y-2">
-            <Label htmlFor="place">Veterinaria/Clínica</Label>
-            <Select value={placeId} onValueChange={handlePlaceSelect}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecciona una veterinaria" />
-              </SelectTrigger>
-              <SelectContent className="bg-background z-50">
-                {veterinarias?.map((vet) => (
-                  <SelectItem key={vet.id} value={vet.id}>
-                    {vet.name} - {vet.address}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {/* ── Collapse "Más detalles" (progressive disclosure) ──
+               Plan §16 apendice C: el flujo minimo viable pide solo
+               tipo + titulo + fecha. El resto de campos (veterinaria,
+               profesional, descripcion, notas) son opcionales y viven
+               aca para no saturar la UX del caso comun. */}
+          <Collapsible open={moreDetailsOpen} onOpenChange={setMoreDetailsOpen}>
+            <CollapsibleTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="w-full justify-between text-sm font-normal"
+                aria-expanded={moreDetailsOpen}
+              >
+                <span>
+                  {moreDetailsOpen ? 'Ocultar más detalles' : 'Agregar más detalles (opcional)'}
+                </span>
+                <ChevronDown
+                  className={cn('h-4 w-4 transition-transform', moreDetailsOpen && 'rotate-180')}
+                />
+              </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-4 pt-3">
+              {/* Veterinaria */}
+              <div className="space-y-2">
+                <Label htmlFor="place">Veterinaria/Clínica</Label>
+                <Select value={placeId} onValueChange={handlePlaceSelect}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecciona una veterinaria" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-background z-50">
+                    {veterinarias?.map((vet) => (
+                      <SelectItem key={vet.id} value={vet.id}>
+                        {vet.name} - {vet.address}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
-          {/* Veterinario */}
-          <div className="space-y-2">
-            <Label htmlFor="vet-name">Nombre del Veterinario</Label>
-            <Input
-              id="vet-name"
-              value={veterinarianName}
-              onChange={(e) => setVeterinarianName(e.target.value)}
-              placeholder="Ej: Dr. Juan Pérez"
-            />
-          </div>
+              {/* Veterinario */}
+              <div className="space-y-2">
+                <Label htmlFor="vet-name">Nombre del Veterinario</Label>
+                <Input
+                  id="vet-name"
+                  value={veterinarianName}
+                  onChange={(e) => setVeterinarianName(e.target.value)}
+                  placeholder="Ej: Dr. Juan Pérez"
+                />
+              </div>
 
-          {/* Descripción */}
-          <div className="space-y-2">
-            <Label htmlFor="description">Descripción</Label>
-            <Textarea
-              id="description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Detalles del procedimiento, tratamiento o consulta..."
-              rows={3}
-            />
-          </div>
+              {/* Descripción */}
+              <div className="space-y-2">
+                <Label htmlFor="description">Descripción</Label>
+                <Textarea
+                  id="description"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  placeholder="Detalles del procedimiento, tratamiento o consulta..."
+                  rows={3}
+                />
+              </div>
 
-          {/* Notas */}
-          <div className="space-y-2">
-            <Label htmlFor="notes">Notas Adicionales</Label>
-            <Textarea
-              id="notes"
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Observaciones, reacciones, instrucciones de seguimiento..."
-              rows={3}
-            />
-          </div>
+              {/* Notas */}
+              <div className="space-y-2">
+                <Label htmlFor="notes">Notas Adicionales</Label>
+                <Textarea
+                  id="notes"
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Observaciones, reacciones, instrucciones de seguimiento..."
+                  rows={3}
+                />
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
 
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>

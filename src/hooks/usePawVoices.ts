@@ -122,6 +122,11 @@ export function useApplyAsPawVoice() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['paw-voices'] });
+      // 2026-04-21 (plan §33.4): invalidar tambien el widget "Mis
+      // postulaciones" del profile para que el user vea su aplicacion
+      // recien creada sin tener que hacer refresh. Mismo patron del fix
+      // de adopciones Dia 1.
+      qc.invalidateQueries({ queryKey: ['my-applications'] });
     },
   });
 }

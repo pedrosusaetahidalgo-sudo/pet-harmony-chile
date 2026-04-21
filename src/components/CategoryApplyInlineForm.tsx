@@ -11,6 +11,7 @@
  */
 import { useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { z } from 'zod';
 import { supabase } from '@/integrations/supabase/client';
@@ -98,6 +99,7 @@ export function CategoryApplyInlineForm({
   headerExtra,
 }: Props) {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
@@ -160,6 +162,9 @@ export function CategoryApplyInlineForm({
           /* silent */
         }
       }
+      // Plan §33.4: invalidar widget "Mis postulaciones" en profile
+      // para que el user vea su aplicacion recien enviada sin refresh.
+      queryClient.invalidateQueries({ queryKey: ['my-applications'] });
       setSubmitted(true);
       onSuccess?.();
       toast.success('Recibimos tu postulacion');

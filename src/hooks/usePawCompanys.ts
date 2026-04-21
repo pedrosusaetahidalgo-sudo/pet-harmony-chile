@@ -207,6 +207,9 @@ export function useApplyAsPawCompany() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['paw-companys'] });
+      // 2026-04-21 (plan §33.4): invalidar widget "Mis postulaciones"
+      // en profile para feedback inmediato al user tras aplicar.
+      qc.invalidateQueries({ queryKey: ['my-applications'] });
     },
   });
 }
