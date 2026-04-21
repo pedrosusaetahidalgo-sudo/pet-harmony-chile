@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend × Paw Vets — Para veterinarios y clínicas en Chile</title>
+  <meta name="description" content="Paw Vets: ficha clínica digital, agenda online, perfil público con reseñas reales y reducción de tiempo administrativo. Plan Free $0 · Premium $9.900 · Clínica $19.900 · Pro Max $29.900." />
+  <meta name="theme-color" content="#0369a1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="canonical" href="https://pawfriend.cl/pitch/vets.html" />
+  <link rel="icon" type="image/svg+xml" href="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg" />
+
+  <!-- Open Graph (WhatsApp, LinkedIn, Facebook) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Paw Friend" />
+  <meta property="og:url" content="https://pawfriend.cl/pitch/vets.html" />
+  <meta property="og:title" content="Paw Vets — Ficha digital, agenda y reseñas reales para veterinarios" />
+  <meta property="og:description" content="Plan Free $0/5 pacientes. Premium $9.900 ilimitado. Clínica $19.900 con bulk import. Pro Max $29.900 sin comisión. Hecho en Chile." />
+  <meta property="og:image" content="https://pawfriend.cl/paw-friend-assets-v2/social/og_image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="es_CL" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Paw Vets — Para veterinarios chilenos" />
+  <meta name="twitter:description" content="Ficha digital + agenda + reseñas verificadas. Free / Premium / Clínica / Pro Max." />
+  <meta name="twitter:image" content="https://pawfriend.cl/paw-friend-assets-v2/social/og_image.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fredoka:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/pitch/assets/brand.css" />
+  <style>
+    /* ── Tokens (Paw Vets brand: sky-blue + emerald, aval médico profesional) ── */
+    :root {
+      --brand-50:#faf5ff; --brand-100:#f3e8ff; --brand-200:#e9d5ff; --brand-300:#d8b4fe;
+      --brand-400:#c084fc; --brand-500:#a855f7; --brand-600:#9333ea; --brand-700:#7e22ce;
+      --brand-800:#6b21a8; --brand-900:#581c87;
+      --vet-sky:#0ea5e9; --vet-blue:#3b82f6; --vet-deep:#0369a1;
+      --vet-darker:#075985; --vet-em:#10b981;
+      --gold:#eab308; --ink:#1a102b; --ink-soft:#4b3b66;
+      --paper:#f5fbff; --surface:#ffffff; --border:#bae6fd;
+      --hero-grad: linear-gradient(135deg,#075985 0%,#0ea5e9 35%,#10b981 70%,#9333ea 100%);
+      --deep-grad: linear-gradient(135deg,#0c4a6e 0%,#075985 50%,#9333ea 100%);
+      --vet-grad: linear-gradient(135deg,#0ea5e9 0%,#9333ea 100%);
+      --plan-grad: linear-gradient(135deg,#0ea5e9 0%,#10b981 50%,#3b82f6 100%);
+      --card-shadow: 0 10px 40px -10px rgba(14,165,233,.18);
+      --card-shadow-hover: 0 24px 60px -12px rgba(14,165,233,.35);
+      --radius-xl:24px; --radius-lg:18px; --radius-md:12px;
+      --slide-py:56px; --slide-px:72px;
+    }
+
+    *{margin:0;padding:0;box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-snap-type:y proximity}
+    @media(max-width:900px),(max-height:720px){html{scroll-snap-type:none}}
+    body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper);line-height:1.55;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;overflow-x:hidden}
+
+    .progress{position:fixed;top:0;left:0;right:0;height:3px;background:rgba(14,165,233,.08);z-index:200}
+    .progress-bar{height:100%;background:var(--plan-grad);width:0%;transition:width .2s ease-out}
+
+    .topbar{position:fixed;top:3px;left:0;right:0;height:52px;padding:0 32px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid rgba(186,230,253,.7);z-index:150;font-size:13px}
+    .topbar-brand{display:flex;align-items:center;gap:10px;font-weight:700;color:var(--ink)}
+    .topbar-brand img{height:30px;width:auto;display:block}
+    .topbar-meta{display:flex;gap:18px;align-items:center;color:var(--ink-soft);font-weight:500}
+    .topbar-meta .chip{padding:4px 10px;background:#e0f2fe;border:1px solid var(--border);border-radius:999px;font-size:12px}
+    .topbar-counter{font-variant-numeric:tabular-nums;font-weight:700;color:var(--vet-deep)}
+    .topbar-tour{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:999px;font-size:11.5px;font-weight:700;color:#7e22ce;background:linear-gradient(135deg,#fef3c7,#fde68a);border:1px solid rgba(234,179,8,.35);text-decoration:none;transition:transform .15s,box-shadow .15s}
+    .topbar-tour:hover{transform:translateY(-1px);box-shadow:0 8px 20px -6px rgba(234,179,8,.5)}
+    @media(max-width:900px){.topbar-meta .chip{display:none}.topbar{padding:0 16px}.topbar-tour{padding:4px 9px;font-size:11px}}
+
+    .sidenav{position:fixed;top:50%;right:20px;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:150}
+    .dot{width:10px;height:10px;border-radius:999px;background:rgba(14,165,233,.25);border:2px solid transparent;cursor:pointer;transition:all .2s;position:relative}
+    .dot:hover{background:var(--vet-sky);transform:scale(1.2)}
+    .dot.active{background:var(--vet-sky);transform:scale(1.4);box-shadow:0 0 0 4px rgba(14,165,233,.18)}
+    .dot .label{position:absolute;right:22px;top:50%;transform:translateY(-50%);background:var(--ink);color:#fff;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .2s}
+    .dot:hover .label{opacity:1}
+    @media(max-width:900px){.sidenav{display:none}}
+
+    .kbhint{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(26,16,43,.85);color:rgba(255,255,255,.9);padding:8px 16px;border-radius:999px;font-size:12px;font-weight:500;z-index:150;backdrop-filter:blur(10px);display:flex;gap:16px;align-items:center;transition:opacity .4s}
+    .kbhint kbd{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:4px;padding:1px 6px;font-size:11px;font-family:inherit;font-weight:600}
+    .kbhint.hide{opacity:0;pointer-events:none}
+    @media(max-width:700px){.kbhint{display:none}}
+
+    .slide{min-height:100vh;min-height:100dvh;padding:var(--slide-py) var(--slide-px);padding-top:calc(var(--slide-py) + 55px);padding-bottom:calc(var(--slide-py) + 24px);display:flex;flex-direction:column;justify-content:center;scroll-snap-align:start;scroll-snap-stop:normal;position:relative;overflow:visible}
+    @media(max-height:820px){.slide{justify-content:flex-start;min-height:auto;padding-top:calc(var(--slide-py) + 72px)}}
+    .slide-num{position:absolute;top:70px;right:32px;font-size:12px;font-weight:700;color:var(--ink-soft);letter-spacing:.12em;opacity:.6;font-variant-numeric:tabular-nums}
+    .slide.dark .slide-num{color:rgba(255,255,255,.6)}
+    .container{max-width:1160px;margin:0 auto;width:100%}
+    .slide.dark{background:var(--deep-grad);color:#fff}
+    .slide.dark h1,.slide.dark h2,.slide.dark h3{color:#fff}
+    .slide.dark p{color:rgba(255,255,255,.88)}
+    .slide.grad{background:var(--hero-grad);color:#fff}
+    .slide.grad h1,.slide.grad h2,.slide.grad h3{color:#fff}
+    .slide.plans{background:var(--plan-grad);color:#fff}
+    .slide.plans h1,.slide.plans h2,.slide.plans h3{color:#fff}
+    .slide.soft{background:linear-gradient(180deg,#f5fbff 0%,#fff 60%,#e0f2fe 100%)}
+    .blob{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;opacity:.35;z-index:0}
+    .blob-1{top:-120px;right:-100px;width:420px;height:420px;background:var(--vet-sky)}
+    .blob-2{bottom:-120px;left:-80px;width:360px;height:360px;background:var(--vet-em);opacity:.25}
+    .slide.dark .blob-1{background:var(--vet-sky);opacity:.45}
+    .slide.dark .blob-2{background:#a855f7;opacity:.25}
+    .slide>.container{position:relative;z-index:1}
+
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--vet-deep);padding:6px 14px;background:#e0f2fe;border-radius:999px;margin-bottom:18px}
+    .slide.dark .eyebrow,.slide.grad .eyebrow,.slide.plans .eyebrow{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25)}
+    h1{font-size:clamp(42px,6.5vw,88px);font-weight:800;line-height:1;letter-spacing:-.035em}
+    h2{font-size:clamp(32px,4.2vw,52px);font-weight:800;line-height:1.05;letter-spacing:-.025em;margin-bottom:16px}
+    h3{font-size:20px;font-weight:700;line-height:1.3;color:var(--ink);margin-bottom:8px}
+    .lead{font-size:clamp(17px,1.8vw,22px);color:var(--ink-soft);line-height:1.5;max-width:820px;margin-bottom:32px}
+    .slide.dark .lead,.slide.grad .lead,.slide.plans .lead{color:rgba(255,255,255,.92)}
+    p{font-size:16px;color:var(--ink-soft)}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:28px}
+    .grid-2{grid-template-columns:1fr 1fr;gap:24px}
+    .grid-3{grid-template-columns:repeat(3,1fr);gap:18px}
+    .grid-4{grid-template-columns:repeat(4,1fr);gap:16px}
+    @media(max-width:900px){.grid-2,.grid-3,.grid-4{grid-template-columns:1fr}}
+    @media(max-width:1100px) and (min-width:901px){.grid-4{grid-template-columns:repeat(2,1fr)}}
+
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px 22px;box-shadow:var(--card-shadow);transition:transform .2s,box-shadow .2s;position:relative}
+    .card:hover{transform:translateY(-3px);box-shadow:var(--card-shadow-hover)}
+    .card .ico{width:52px;height:52px;border-radius:14px;background:transparent;display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;overflow:hidden;filter:drop-shadow(0 6px 14px rgba(14,165,233,.22))}
+    .card .ico img{width:100%;height:100%;object-fit:contain;display:block}
+    .card p{font-size:14.5px;line-height:1.5}
+    .slide.dark .card,.slide.plans .card,.slide.grad .card{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);backdrop-filter:blur(10px)}
+    .slide.dark .card h3,.slide.plans .card h3,.slide.grad .card h3{color:#fff}
+    .slide.dark .card p,.slide.plans .card p,.slide.grad .card p{color:rgba(255,255,255,.88)}
+    .slide.dark .card .ico,.slide.plans .card .ico,.slide.grad .card .ico{filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))}
+
+    .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-top:24px}
+    .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:22px 16px;text-align:center;box-shadow:var(--card-shadow)}
+    .stat-value{font-size:clamp(28px,3.5vw,40px);font-weight:800;background:var(--vet-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;line-height:1;font-variant-numeric:tabular-nums}
+    .stat-label{font-size:13px;color:var(--ink-soft);margin-top:8px;font-weight:500;line-height:1.3}
+    .slide.dark .stat,.slide.plans .stat,.slide.grad .stat{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18)}
+    .slide.dark .stat-label,.slide.plans .stat-label,.slide.grad .stat-label{color:rgba(255,255,255,.78)}
+
+    .bullets{list-style:none;padding:0;margin-top:16px}
+    .bullets li{padding:8px 0 8px 30px;position:relative;font-size:15px;color:var(--ink);border-bottom:1px solid var(--border);line-height:1.5}
+    .bullets li:last-child{border-bottom:none}
+    .bullets li::before{content:"✓";position:absolute;left:0;top:8px;color:var(--vet-em);font-weight:800;width:22px;height:20px;background:#d1fae5;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px}
+    .slide.dark .bullets li,.slide.plans .bullets li,.slide.grad .bullets li{color:rgba(255,255,255,.92);border-bottom-color:rgba(255,255,255,.12)}
+    .slide.dark .bullets li::before,.slide.plans .bullets li::before,.slide.grad .bullets li::before{background:rgba(255,255,255,.18);color:#fff}
+
+    .quote{background:var(--surface);border-left:4px solid var(--vet-sky);border-radius:10px;padding:18px 22px;margin-top:14px;box-shadow:var(--card-shadow)}
+    .quote p{font-size:16px;font-style:italic;color:var(--ink);margin-bottom:6px}
+    .quote cite{font-size:12px;color:var(--ink-soft);font-style:normal;font-weight:600}
+
+    .tbl-wrap{margin-top:24px;border-radius:var(--radius-md);overflow:hidden;box-shadow:var(--card-shadow);background:var(--surface)}
+    table{width:100%;border-collapse:collapse;font-size:14.5px}
+    th,td{padding:12px 16px;text-align:left;border-bottom:1px solid var(--border)}
+    th{background:#e0f2fe;color:#0c4a6e;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em}
+    tr:last-child td{border-bottom:none}
+    tr:hover td{background:#f0f9ff}
+    td.strong{font-weight:700;color:#0c4a6e}
+    td.sky{color:var(--vet-deep);font-weight:700}
+    td.center{text-align:center}
+
+    /* Cover */
+    .cover{text-align:center;align-items:center}
+    .cover-logo{margin-bottom:32px;filter:drop-shadow(0 20px 60px rgba(14,165,233,.4));animation:float 6s ease-in-out infinite}
+    @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+    .cover-logo img{width:auto;height:auto;max-width:min(560px,85vw);max-height:260px;display:block}
+    .cover h1{font-family:'Fredoka',sans-serif;font-weight:600;color:#fff;margin-bottom:8px;text-shadow:0 2px 30px rgba(0,0,0,.15)}
+    .cover .tagline{font-size:clamp(19px,2.4vw,28px);font-weight:500;color:#fff;max-width:760px;margin:20px auto 12px;opacity:.98;line-height:1.35}
+    .cover .subtag{font-size:15px;color:rgba(255,255,255,.85);font-style:italic;margin-bottom:36px}
+    .cover-meta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+    .cover-meta .chip{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);color:#fff;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:600;backdrop-filter:blur(10px)}
+    .cover-scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.7);font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;animation:bounce 2s infinite}
+    @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(8px)}}
+
+    .spotlight{margin-top:30px;padding:22px 26px;background:linear-gradient(135deg,#e0f2fe 0%,#d1fae5 100%);border-left:4px solid var(--vet-sky);border-radius:14px}
+    .spotlight strong{display:block;font-size:18px;color:var(--vet-deep);margin-bottom:6px}
+    .spotlight p{font-size:14.5px;color:var(--ink-soft)}
+
+    /* Antes / despues visual: 2 columnas */
+    .barter-vis{display:grid;grid-template-columns:1fr 80px 1fr;gap:0;align-items:center;margin-top:32px}
+    @media(max-width:800px){.barter-vis{grid-template-columns:1fr;gap:18px}.barter-arrow{transform:rotate(90deg);justify-self:center}}
+    .barter-side{padding:24px;background:rgba(255,255,255,.12);border-radius:var(--radius-lg);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(10px)}
+    .barter-side h3{color:#fff;font-size:18px;margin-bottom:12px}
+    .barter-side ul{list-style:none;padding:0;margin:0}
+    .barter-side ul li{padding:6px 0;font-size:14px;color:rgba(255,255,255,.92);position:relative;padding-left:18px}
+    .barter-side ul li::before{content:"•";position:absolute;left:0;color:#fff;font-weight:800}
+    .barter-arrow{justify-self:center;font-size:48px;color:#fff;font-weight:300}
+
+    /* Step row */
+    .step-row{display:flex;gap:24px;align-items:start;padding:18px;border-radius:var(--radius-lg);background:var(--surface);box-shadow:var(--card-shadow);margin-bottom:14px}
+    .step-row .step-n{flex:none;width:48px;height:48px;border-radius:50%;background:var(--vet-grad);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px}
+    .step-row .step-body h3{margin-bottom:4px}
+    .step-row .step-body p{font-size:15px}
+
+    /* Founder sig */
+    .founder-sig{display:inline-flex;align-items:center;gap:14px;margin-top:32px;padding:16px 20px;background:rgba(255,255,255,.12);border-radius:14px;backdrop-filter:blur(10px)}
+    .founder-sig .avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#0ea5e9 0%,#10b981 100%);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:22px;flex:none}
+    .founder-sig .info{display:flex;flex-direction:column;gap:2px;text-align:left}
+    .founder-sig .name{font-size:15px;font-weight:700;color:#fff}
+    .founder-sig .role{font-size:12px;color:rgba(255,255,255,.78)}
+
+    .cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:32px}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:14px;font-weight:700;font-size:15px;text-decoration:none;transition:transform .15s,box-shadow .15s;border:none;cursor:pointer}
+    .btn-primary{background:#fff;color:var(--vet-deep);box-shadow:0 10px 28px -8px rgba(255,255,255,.55)}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 40px -10px rgba(255,255,255,.7)}
+    .btn-ghost{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.3)}
+    .btn-ghost:hover{background:rgba(255,255,255,.24)}
+
+    /* Tipos de vet (vertical cards) */
+    .verticals{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:24px}
+    .vertical{padding:18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);box-shadow:var(--card-shadow);text-align:center}
+    .vertical-emoji{font-size:32px;margin-bottom:8px;display:block}
+    .vertical-title{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:4px}
+    .vertical-eg{font-size:12px;color:var(--ink-soft);line-height:1.4}
+
+    /* Pricing cards */
+    .plans{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:32px}
+    @media(max-width:1100px){.plans{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:600px){.plans{grid-template-columns:1fr}}
+    .plan{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(10px);border-radius:var(--radius-lg);padding:22px 20px;color:#fff;display:flex;flex-direction:column;position:relative;overflow:hidden}
+    .plan.featured{background:rgba(255,255,255,.18);border:2px solid #fff;transform:translateY(-6px);box-shadow:0 20px 50px -12px rgba(0,0,0,.3)}
+    .plan-tag{position:absolute;top:-1px;right:14px;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#7c2d12;padding:4px 12px;border-radius:0 0 8px 8px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+    .plan-emoji{font-size:32px;margin-bottom:8px}
+    .plan-name{font-size:18px;font-weight:800;margin-bottom:4px;color:#fff}
+    .plan-track{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.75;margin-bottom:14px}
+    .plan-price{font-size:28px;font-weight:800;color:#fff;line-height:1;margin-bottom:4px}
+    .plan-price-suffix{font-size:13px;font-weight:500;opacity:.78}
+    .plan-comm{font-size:12px;color:rgba(255,255,255,.78);margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.18)}
+    .plan ul{list-style:none;padding:0;margin:0;flex:1}
+    .plan ul li{font-size:13.5px;padding:5px 0 5px 18px;color:rgba(255,255,255,.92);position:relative;line-height:1.4}
+    .plan ul li::before{content:"✓";position:absolute;left:0;color:#fff;font-weight:800}
+
+    @media print{
+      .topbar,.sidenav,.kbhint,.progress{display:none}
+      .slide{min-height:auto;page-break-after:always;scroll-snap-align:none}
+    }
+
+    /* Reveal + FAQ */
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease-out,transform .7s cubic-bezier(.2,.8,.2,1)}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+    .reveal.d1{transition-delay:.08s}.reveal.d2{transition-delay:.16s}.reveal.d3{transition-delay:.24s}.reveal.d4{transition-delay:.32s}
+    .stat{opacity:0;transform:translateY(14px);transition:opacity .5s,transform .5s}
+    .stat.visible{opacity:1;transform:translateY(0);animation:statPop .6s ease-out}
+    @keyframes statPop{0%{transform:scale(.94)}60%{transform:scale(1.03)}100%{transform:scale(1)}}
+    .faq-card{cursor:pointer;user-select:none;transition:transform .2s,box-shadow .2s}
+    .faq-card h3{display:flex;justify-content:space-between;align-items:center;gap:12px}
+    .faq-card h3::after{content:"+";flex:none;width:28px;height:28px;border-radius:50%;background:#e0f2fe;color:var(--vet-deep);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;transition:background .2s,color .2s,transform .2s}
+    .faq-card[aria-expanded="true"] h3::after{content:"−";background:var(--vet-sky);color:#fff;transform:rotate(180deg)}
+    .faq-card[aria-expanded="false"] p{max-height:0;opacity:0;overflow:hidden;margin:0;transition:max-height .3s,opacity .2s,margin .2s}
+    .faq-card[aria-expanded="true"] p{max-height:280px;opacity:1;margin-top:10px;transition:max-height .4s,opacity .3s .1s,margin .3s}
+    .faq-card:focus-visible{outline:2px solid var(--vet-sky);outline-offset:2px}
+
+    @media (prefers-reduced-motion: reduce){
+      .reveal,.reveal.visible,.stat,.stat.visible{opacity:1;transform:none;transition:none;animation:none}
+      .faq-card[aria-expanded="false"] p{max-height:none;opacity:1;margin-top:10px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+<header class="topbar">
+  <div class="topbar-brand">
+    <img src="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg" alt="Paw Friend" />
+    <span>Paw Friend × Paw Vets</span>
+  </div>
+  <div class="topbar-meta">
+    <a class="topbar-tour" href="recorrido.html">★ Recorrido general</a>
+    <span class="chip">Free $0 · Premium $9.900</span>
+    <span class="topbar-counter"><span id="curSlide">1</span>/9</span>
+  </div>
+</header>
+
+<nav class="sidenav" aria-label="Slides">
+  <a class="dot active" href="#s1" data-slide="1"><span class="label">Portada</span></a>
+  <a class="dot" href="#s2" data-slide="2"><span class="label">Quiénes somos</span></a>
+  <a class="dot" href="#s3" data-slide="3"><span class="label">El problema</span></a>
+  <a class="dot" href="#s4" data-slide="4"><span class="label">Para qué vets</span></a>
+  <a class="dot" href="#s5" data-slide="5"><span class="label">Qué te damos</span></a>
+  <a class="dot" href="#s6" data-slide="6"><span class="label">Planes y precios</span></a>
+  <a class="dot" href="#s7" data-slide="7"><span class="label">Activación</span></a>
+  <a class="dot" href="#s8" data-slide="8"><span class="label">FAQ</span></a>
+  <a class="dot" href="#s9" data-slide="9"><span class="label">Súmate</span></a>
+</nav>
+
+<div class="kbhint" id="kbhint">
+  <span><kbd>↓</kbd> <kbd>↑</kbd> navegar</span>
+  <span><kbd>Esc</kbd> ocultar</span>
+</div>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 1 · COVER                                                 -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide grad cover" id="s1">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="container">
+    <div class="cover-logo"><img src="/paw-friend-assets-v2/paw_vets_full.svg" alt="Paw Vets" /></div>
+    <h1>Paw Vets</h1>
+    <p class="tagline">Tu ficha clínica digital,<br/>tu agenda y tu perfil verificado.</p>
+    <p class="subtag">Para vets independientes y clínicas multi-vet en Chile. Empieza gratis, escala cuando crezcas.</p>
+    <div class="cover-meta">
+      <span class="chip">Plan Free $0</span>
+      <span class="chip">Premium $9.900/mes</span>
+      <span class="chip">Pro Max sin comisión</span>
+    </div>
+  </div>
+  <div class="cover-scroll">↓ Desliza</div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 2 · QUIÉNES SOMOS                                        -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide" id="s2">
+  <span class="slide-num">02 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Quiénes somos</span>
+    <h2>Paw Friend, hecho en Chile.</h2>
+    <p class="lead">La app de salud y vida de mascotas chilenas. Ficha clínica digital + directorio de vets verificados + comunidad pet lover. 100% gratis para los dueños. Sostenido en parte por vets que escalan con nosotros.</p>
+
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/14_clinical_record.svg" alt=""/></div>
+        <h3>Ficha clínica + PDF</h3>
+        <p>Vacunas, alergias, microchip, antiparasitarios, esterilización. Todo en un lugar, exportable a PDF y compartible con el dueño en 1 click.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/22_search.svg" alt=""/></div>
+        <h3>Directorio público</h3>
+        <p>Tu perfil en /veterinarios y /veterinarios/:slug. Filtros por comuna y especialidad. Verificación Colmevet. Reseñas reales (solo con reserva confirmada).</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/15_calendar.svg" alt=""/></div>
+        <h3>Agenda con buffer</h3>
+        <p>Horarios disponibles, buffer entre consultas, sincronización con Google Calendar. Reservas online sin doble booking.</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-value">100%</div><div class="stat-label">Gratis para<br/>dueños siempre</div></div>
+      <div class="stat"><div class="stat-value">Free</div><div class="stat-label">Plan vet inicial<br/>$0/5 pacientes</div></div>
+      <div class="stat"><div class="stat-value">SpA</div><div class="stat-label">Empresa formal<br/>con boleta</div></div>
+      <div class="stat"><div class="stat-value">Vivo</div><div class="stat-label">pawfriend.cl<br/>en producción</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 3 · EL PROBLEMA                                           -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide plans" id="s3">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <span class="slide-num">03 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Por qué existimos para ti</span>
+    <h2>2 a 3 horas al día<br/>perdidas en administración.</h2>
+    <p class="lead">Los vets chilenos cargan ficha en cuaderno físico, agendan por WhatsApp, recuerdan vacunas en planilla Excel y mandan recordatorios manuales. La consulta se cobra; el trabajo administrativo, no. Paw Vets te devuelve esas horas.</p>
+
+    <div class="barter-vis">
+      <div class="barter-side">
+        <h3>📋 Hoy en muchas clínicas</h3>
+        <ul>
+          <li>Ficha en cuaderno físico o Word desordenado</li>
+          <li>Agenda en WhatsApp, doble booking frecuente</li>
+          <li>Recordatorios de vacunas anotados a mano</li>
+          <li>Sin perfil público con SEO — pacientes llegan por boca a boca</li>
+          <li>PDF de ficha cuando un dueño la pide: 30 min de tipeo</li>
+          <li>Reseñas falsas o inexistentes</li>
+        </ul>
+      </div>
+      <div class="barter-arrow">→</div>
+      <div class="barter-side">
+        <h3>🩺 Con Paw Vets</h3>
+        <ul>
+          <li>Ficha digital con plantillas post-consulta editables</li>
+          <li>Agenda online con buffer y sincronización Google Calendar</li>
+          <li>Recordatorios automáticos al dueño (vacunas, antiparasitarios)</li>
+          <li>Perfil público en /veterinarios/:slug indexable en Google</li>
+          <li>PDF de ficha + ZIP de documentos en 1 click, compartible 30 días</li>
+          <li>Reseñas verificadas (solo con reserva confirmada)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="spotlight" style="background:rgba(255,255,255,.18);border-left-color:#fff">
+      <strong style="color:#fff">El tiempo administrativo ya no es facturable. Paw Vets lo elimina.</strong>
+      <p style="color:rgba(255,255,255,.9)">Cada hora que recuperas es una consulta más posible. O una hora más con tu familia. O simplemente una hora menos de burnout.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 4 · PARA QUÉ VETS                                        -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide soft" id="s4">
+  <span class="slide-num">04 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Quiénes encajan</span>
+    <h2>Para qué tipo de vet<br/>fue diseñado.</h2>
+    <p class="lead">Cualquier veterinario que atienda mascotas. Independiente, en clínica, especialista, a domicilio o móvil. Empezar siempre es gratis.</p>
+
+    <div class="verticals">
+      <div class="vertical">
+        <span class="vertical-emoji">🩺</span>
+        <div class="vertical-title">Vet independiente</div>
+        <div class="vertical-eg">Profesional solo, consulta en su propio espacio o domicilio</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🏥</span>
+        <div class="vertical-title">Clínica multi-vet</div>
+        <div class="vertical-eg">3+ veterinarios bajo una misma marca, gestión coordinada</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🐕</span>
+        <div class="vertical-title">Especialistas</div>
+        <div class="vertical-eg">Dermatología, oftalmología, cardiología, oncología, exóticos</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🚐</span>
+        <div class="vertical-title">Vet móvil</div>
+        <div class="vertical-eg">Servicio en terreno, ruta diaria por comunas</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🏠</span>
+        <div class="vertical-title">Vet a domicilio</div>
+        <div class="vertical-eg">Consulta en casa del paciente, ideal para gatos y geriátricos</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🌾</span>
+        <div class="vertical-title">Vet rural</div>
+        <div class="vertical-eg">Cobertura amplia, mascotas + grandes, conexión intermitente</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">🦴</span>
+        <div class="vertical-title">Cirujano</div>
+        <div class="vertical-eg">Centro quirúrgico, derivaciones de otras clínicas</div>
+      </div>
+      <div class="vertical">
+        <span class="vertical-emoji">💉</span>
+        <div class="vertical-title">Programa esterilización</div>
+        <div class="vertical-eg">Clínicas con foco en tenencia responsable y rescates</div>
+      </div>
+    </div>
+
+    <div class="spotlight">
+      <strong>¿Recién egresado o en práctica?</strong>
+      <p>Plan Free es perfecto: 5 pacientes activos, perfil verificable en el directorio. Sin tarjeta de crédito requerida. Cuando crezcas, cambias a Premium o Clínica con un click.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 5 · QUÉ TE DAMOS                                          -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide" id="s5">
+  <span class="slide-num">05 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Tus herramientas concretas</span>
+    <h2>Qué te damos por sumarte.</h2>
+    <p class="lead">Todo lo que necesitas para profesionalizar tu consulta sin perder horas en aprender un sistema complicado. Diseñado por una persona que escuchó a vets reales (saluda a Sofia 👋).</p>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/14_clinical_record.svg" alt=""/></div>
+        <h3>Ficha clínica + plantillas</h3>
+        <p>Plantillas post-consulta editables (control sano, vacunación, dermatología, urgencia). Vacunas con lote y serie. Antiparasitarios con próxima dosis. Microchip, esterilización, alergias.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/15_calendar.svg" alt=""/></div>
+        <h3>Agenda con buffer</h3>
+        <p>Horarios configurables por día, buffer entre consultas, excepciones, sincronización bidireccional con Google Calendar. Reservas online desde tu perfil público.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/22_search.svg" alt=""/></div>
+        <h3>Perfil público con SEO</h3>
+        <p>Tu perfil en /veterinarios/:slug. Indexable en Google. Filtros por comuna y especialidad. Botón "ver como me ven los dueños" para previsualizar tu propio perfil sin salir.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/30_star.svg" alt=""/></div>
+        <h3>Reseñas verificadas</h3>
+        <p>Solo dueños que confirmaron una reserva contigo pueden dejar reseña. Sin reviews falsas, sin sabotaje de competencia. Confianza real.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/19_mobile_app.svg" alt=""/></div>
+        <h3>PDF + ZIP compartible</h3>
+        <p>Genera PDF de ficha clínica completa o ZIP con todos los documentos. Link de share válido 30 días para que el dueño lo entregue a otro vet en una segunda opinión.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/04_heart_paw.svg" alt=""/></div>
+        <h3>Recordatorios automáticos</h3>
+        <p>Al dueño le llegan recordatorios automáticos de vacunas próximas, antiparasitarios vencidos y controles de seguimiento. Tu adherencia clínica sube sin esfuerzo administrativo.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/24_partnership.svg" alt=""/></div>
+        <h3>Bulk import (Clínica/Pro Max)</h3>
+        <p>¿Vienes de otro sistema? Sube un CSV con tus pacientes existentes en minutos. Perfecto para clínicas que migran desde planilla Excel o software legacy.</p>
+      </div>
+      <div class="card">
+        <div class="ico"><img src="/paw-friend-assets-v2/icons/v1-legacy/28_idea.svg" alt=""/></div>
+        <h3>Sugerencias IA + transcripción</h3>
+        <p>Asistente IA con sugerencias médicas básicas (no reemplaza criterio clínico). Transcripción de audio de consulta para que dictes y la app llene la ficha.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 6 · PLANES Y PRECIOS                                      -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide plans" id="s6">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <span class="slide-num">06 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Pricing transparente</span>
+    <h2>4 planes. 2 tracks.<br/>Empieza gratis.</h2>
+    <p class="lead">Track <strong>Individual</strong> para vets solos. Track <strong>Clínica</strong> para equipos multi-vet con bulk import y multi-sucursal. Comisión decreciente según plan: pagas más, comisión baja.</p>
+
+    <div class="plans">
+      <div class="plan">
+        <div class="plan-emoji">🌱</div>
+        <div class="plan-name">Básica</div>
+        <div class="plan-track">Individual</div>
+        <div class="plan-price">$0<span class="plan-price-suffix">/mes</span></div>
+        <div class="plan-comm">10% comisión sobre reservas</div>
+        <ul>
+          <li>5 pacientes activos</li>
+          <li>1 seat (tú)</li>
+          <li>Ficha clínica completa</li>
+          <li>Agenda básica</li>
+          <li>Perfil público</li>
+          <li>Reseñas verificadas</li>
+        </ul>
+      </div>
+      <div class="plan featured">
+        <span class="plan-tag">⭐ Recomendado</span>
+        <div class="plan-emoji">🚀</div>
+        <div class="plan-name">Premium</div>
+        <div class="plan-track">Individual</div>
+        <div class="plan-price">$9.900<span class="plan-price-suffix">/mes</span></div>
+        <div class="plan-comm">5% comisión sobre reservas</div>
+        <ul>
+          <li>Pacientes ilimitados</li>
+          <li>1 seat (tú)</li>
+          <li>Plantillas post-consulta</li>
+          <li>Sync Google Calendar</li>
+          <li>Recordatorios automáticos</li>
+          <li>Sugerencias IA + transcripción</li>
+          <li>Reportes semanales</li>
+        </ul>
+      </div>
+      <div class="plan">
+        <div class="plan-emoji">🏥</div>
+        <div class="plan-name">Clínica</div>
+        <div class="plan-track">Equipo</div>
+        <div class="plan-price">$19.900<span class="plan-price-suffix">/mes</span></div>
+        <div class="plan-comm">3% comisión sobre reservas</div>
+        <ul>
+          <li>500 pacientes activos</li>
+          <li>3 seats de vet</li>
+          <li>Bulk import CSV/Excel</li>
+          <li>Todo lo de Premium</li>
+          <li>Priority support</li>
+          <li>Métricas de equipo</li>
+        </ul>
+      </div>
+      <div class="plan">
+        <div class="plan-emoji">👑</div>
+        <div class="plan-name">Pro Max</div>
+        <div class="plan-track">Equipo top</div>
+        <div class="plan-price">$29.900<span class="plan-price-suffix">/mes</span></div>
+        <div class="plan-comm">0% comisión sobre reservas</div>
+        <ul>
+          <li>Pacientes ilimitados</li>
+          <li>Seats ilimitados</li>
+          <li>Multi-sucursal</li>
+          <li>Bulk import + branding completo</li>
+          <li>Todo lo de Clínica</li>
+          <li>Account manager dedicado</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="spotlight" style="background:rgba(255,255,255,.18);border-left-color:#fff">
+      <strong style="color:#fff">Sin permanencia. Cambia de plan en cualquier momento.</strong>
+      <p style="color:rgba(255,255,255,.9)">Empieza Free, sube a Premium cuando crezcas, salta a Clínica cuando armes equipo, llega a Pro Max cuando tengas multi-sucursal. Cada cambio toma segundos en /upgrade.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 7 · ACTIVACIÓN                                           -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide" id="s7">
+  <span class="slide-num">07 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Cómo te sumas</span>
+    <h2>Activación en 1 día.<br/>Sin migración compleja.</h2>
+    <p class="lead">Proceso simple. Validamos tu título Colmevet y te activamos. No necesitas instalar nada — funciona en navegador y como app móvil.</p>
+
+    <div class="step-row">
+      <div class="step-n">1</div>
+      <div class="step-body">
+        <h3>Te registras en <code>/registro-veterinario</code></h3>
+        <p>Datos básicos: nombre, RUT, número de Colmevet, comuna principal, especialidades. Toma 5 minutos.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-n">2</div>
+      <div class="step-body">
+        <h3>Validamos Colmevet en menos de 24 horas</h3>
+        <p>Verificamos que tu inscripción esté activa en el Colegio Médico Veterinario. Si todo OK, te activamos como provider.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-n">3</div>
+      <div class="step-body">
+        <h3>Configuras tu perfil + agenda</h3>
+        <p>Subes tu foto, escribes bio, defines especialidades, configuras horarios disponibles, conectas Google Calendar. Botón "ver como me ven los dueños" para validar.</p>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-n">4</div>
+      <div class="step-body">
+        <h3>Cargas tu primer paciente y empiezas</h3>
+        <p>Crea tu primer paciente o invita al dueño. Si vienes con base de pacientes y necesitas bulk, hacemos un CSV juntos (Clínica/Pro Max).</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-value">5'</div><div class="stat-label">Llenar formulario</div></div>
+      <div class="stat"><div class="stat-value">24 h</div><div class="stat-label">Validación Colmevet</div></div>
+      <div class="stat"><div class="stat-value">1 día</div><div class="stat-label">Activación total</div></div>
+      <div class="stat"><div class="stat-value">$0</div><div class="stat-label">Si empiezas en Free</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 8 · FAQ                                                  -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide soft" id="s8">
+  <span class="slide-num">08 / 09</span>
+  <div class="container">
+    <span class="eyebrow">Anticipamos tus dudas</span>
+    <h2>FAQ Paw Vets.</h2>
+
+    <div class="grid grid-2">
+      <div class="card faq-card">
+        <h3>¿Necesito tarjeta de crédito para Free?</h3>
+        <p>No. Plan Free $0 sin tarjeta. Solo cuando subas a Premium, Clínica o Pro Max te pedimos medio de pago (Flow.cl, RUT chileno).</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Cómo funciona la comisión?</h3>
+        <p>Sobre el monto de la reserva confirmada. 10% en Free, 5% en Premium, 3% en Clínica, 0% en Pro Max. La comisión la cobramos sobre el ingreso bruto de la reserva, no sobre tu sueldo.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Vienen pacientes nuevos o solo migro los existentes?</h3>
+        <p>Ambos. Tu perfil público en /veterinarios y /veterinarios/:slug está indexado en Google y aparece cuando dueños buscan vet por comuna. Y migras tus pacientes existentes con bulk import (Clínica/Pro Max) o uno por uno.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Puedo cambiar de plan?</h3>
+        <p>Sí, en cualquier momento. Si subes, el cobro es prorrateado. Si bajas, el cambio aplica al final del periodo facturado. Sin permanencia ni multas.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Mis pacientes ven la ficha?</h3>
+        <p>El dueño tiene acceso a la ficha de SU mascota (es de la mascota, no tuya). Puede compartirla con otro vet en una segunda opinión vía link de 30 días. Tú decides qué notas son privadas (visibles solo para ti) vs visibles.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Se puede usar offline?</h3>
+        <p>La app es PWA con caché parcial: lectura offline OK, escritura requiere conexión (sincroniza al recuperar señal). Para vets rurales con conexión intermitente, esto cubre el 90% de los casos.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Hay versión móvil?</h3>
+        <p>Sí. Web + Android + iOS. Misma cuenta, todo sincronizado. App nativa Capacitor 7. La PWA también funciona si prefieres no instalar.</p>
+      </div>
+      <div class="card faq-card">
+        <h3>¿Y si soy clínica con varias sucursales?</h3>
+        <p>Plan Pro Max ($29.900/mes, 0% comisión) tiene multi-sucursal nativo. Cada sucursal con su agenda, su equipo de vets y branding compartido. Account manager dedicado.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ────────────────────────────────────────────────────────────── -->
+<!-- SLIDE 9 · CTA FINAL                                            -->
+<!-- ────────────────────────────────────────────────────────────── -->
+<section class="slide grad" id="s9">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <span class="slide-num">09 / 09</span>
+  <div class="container" style="text-align:center">
+    <span class="eyebrow">Tu turno</span>
+    <h2 style="font-size:clamp(40px,5.5vw,72px)">¿Sumas tu consulta<br/>a Paw Vets?</h2>
+    <p class="lead" style="margin-left:auto;margin-right:auto">Plan Free para empezar sin tarjeta. Premium para escalar. Clínica para coordinar equipo. Pro Max para multi-sucursal sin comisión. Tú eliges, cuando estés listo.</p>
+
+    <div class="cta-row" style="justify-content:center">
+      <a class="btn btn-primary" href="https://pawfriend.cl/registro-veterinario" target="_blank" rel="noopener">📩 Registrarme como vet</a>
+      <a class="btn btn-ghost" href="https://pawfriend.cl/para-veterinarios" target="_blank" rel="noopener">🩺 Ver landing completa</a>
+    </div>
+
+    <div class="founder-sig">
+      <div class="avatar">PF</div>
+      <div class="info">
+        <span class="name">Paw Founder</span>
+        <span class="role">pedrosusaeta@pawfriend.cl · pawfriend.cl/registro-veterinario</span>
+      </div>
+    </div>
+
+    <p style="color:rgba(255,255,255,.78);font-size:13px;margin-top:24px;max-width:600px;margin-left:auto;margin-right:auto">
+      El tiempo administrativo ya no es facturable. Paw Vets te lo devuelve. Cada hora recuperada es una consulta más posible o una hora con tu familia. Hecho en Chile, para vets chilenos.
+    </p>
+
+    <p style="color:rgba(255,255,255,.7);font-size:12px;margin-top:28px">
+      SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9<br/>
+      Luis Pasteur 6111 Dp 201, Vitacura, Santiago de Chile<br/>
+      <span style="opacity:.8">Versión 2026-04-20 · pawfriend.cl/pitch/vets.html</span>
+    </p>
+  </div>
+</section>
+
+<script>
+  const progressBar=document.getElementById('progressBar'),curSlide=document.getElementById('curSlide'),slides=document.querySelectorAll('.slide'),dots=document.querySelectorAll('.sidenav .dot'),kbhint=document.getElementById('kbhint');
+  function updateProgress(){const s=window.scrollY,m=document.documentElement.scrollHeight-window.innerHeight;progressBar.style.width=(s/m*100).toFixed(2)+'%'}
+  function updateActive(){const c=window.scrollY+window.innerHeight/2;let a=0;slides.forEach((s,i)=>{const t=s.offsetTop,b=t+s.offsetHeight;if(c>=t&&c<b)a=i});dots.forEach((d,i)=>d.classList.toggle('active',i===a));if(curSlide)curSlide.textContent=(a+1).toString()}
+  document.addEventListener('scroll',()=>{updateProgress();updateActive()},{passive:true});updateProgress();updateActive();
+  document.addEventListener('keydown',e=>{const c=Array.from(slides).findIndex(s=>{const r=s.getBoundingClientRect();return r.top<=window.innerHeight/2&&r.bottom>window.innerHeight/2});if(e.key==='ArrowDown'||e.key==='PageDown'||e.key===' '){e.preventDefault();slides[Math.min(c+1,slides.length-1)].scrollIntoView({behavior:'smooth'})}else if(e.key==='ArrowUp'||e.key==='PageUp'){e.preventDefault();slides[Math.max(c-1,0)].scrollIntoView({behavior:'smooth'})}else if(e.key==='Escape'){kbhint.classList.toggle('hide')}});
+  setTimeout(()=>kbhint.classList.add('hide'),5000);
+
+  const revealTargets=document.querySelectorAll('.card, .stat, .step-row, .quote, .spotlight, .tbl-wrap, .vertical, .plan, .reveal');
+  const revealIO=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){entry.target.classList.add('visible');revealIO.unobserve(entry.target)}
+    });
+  },{threshold:0.15,rootMargin:'0px 0px -8% 0px'});
+  revealTargets.forEach(el=>{
+    if(!el.classList.contains('reveal')&&!el.classList.contains('stat'))el.classList.add('reveal');
+    revealIO.observe(el);
+  });
+  document.querySelectorAll('.faq-card').forEach(card=>{
+    card.setAttribute('aria-expanded','false');card.setAttribute('role','button');card.setAttribute('tabindex','0');
+    const toggle=()=>card.setAttribute('aria-expanded',String(card.getAttribute('aria-expanded')!=='true'));
+    card.addEventListener('click',toggle);
+    card.addEventListener('keydown',(e)=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();toggle()}});
+  });
+</script>
+
+</body>
+</html>
