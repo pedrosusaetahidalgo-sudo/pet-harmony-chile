@@ -15,6 +15,7 @@ import PointsWidget from '@/components/PointsWidget';
 import AchievementBadge from '@/components/AchievementBadge';
 import MissionCard from '@/components/MissionCard';
 import { IntegrationsCard } from '@/components/settings/IntegrationsCard';
+import { NotificationPrefsSection } from '@/components/settings/NotificationPrefsSection';
 import { ProfileIdentityCard } from '@/components/profile/ProfileIdentityCard';
 import { PetIdentityCard, AddPetCard } from '@/components/profile/PetIdentityCard';
 import { ProfileCompletionCard } from '@/components/profile/ProfileCompletionCard';
@@ -397,6 +398,13 @@ const Profile = () => {
             <SheetTitle>Notificaciones</SheetTitle>
           </SheetHeader>
           <div className="mt-6 space-y-4">
+            {/* Preferencias granulares (D.4 auditoría top-tier 2026-04-21) */}
+            <NotificationPrefsSection />
+            {/* Toggles legacy (push_enabled, reminder_notifications,
+                social_notifications) se mantienen abajo como fallback
+                mientras se migra progresivamente a user_notification_prefs. */}
+            <Separator className="my-6" />
+            <p className="text-xs text-muted-foreground uppercase tracking-wider">Ajustes legacy</p>
             <div className="flex items-center justify-between">
               <div>
                 <p className="font-medium text-sm">Recordatorios de salud</p>
