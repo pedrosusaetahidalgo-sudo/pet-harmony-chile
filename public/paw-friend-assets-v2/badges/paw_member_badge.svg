@@ -1,14 +1,92 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Paw Member badge">
-  <title>Paw Member · Badge oficial</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024" role="img" aria-label="Paw Member badge">
+  <title>Paw Member — Ring Dorado + Corona Premium</title>
   <defs>
-    <linearGradient id="pmb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#9333EA"/><stop offset="0.55" stop-color="#D946EF"/><stop offset="1" stop-color="#EAB308"/></linearGradient>
+    <linearGradient id="violetBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#7e22ce"/>
+    </linearGradient>
+
+    <linearGradient id="goldRing" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#78350f"/>
+      <stop offset="22%" stop-color="#d97706"/>
+      <stop offset="42%" stop-color="#facc15"/>
+      <stop offset="50%" stop-color="#fef3c7"/>
+      <stop offset="58%" stop-color="#facc15"/>
+      <stop offset="78%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </linearGradient>
+
+    <linearGradient id="crownStroke" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+
+    <linearGradient id="topSheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+
+    <path id="squirclePath" d="M 512 60 C 812 60, 964 212, 964 512 C 964 812, 812 964, 512 964 C 212 964, 60 812, 60 512 C 60 212, 212 60, 512 60 Z"/>
+    <path id="innerSquircle" d="M 512 120 C 772 120, 904 252, 904 512 C 904 772, 772 904, 512 904 C 252 904, 120 772, 120 512 C 120 252, 252 120, 512 120 Z"/>
+    <clipPath id="innerClip"><use href="#innerSquircle"/></clipPath>
+
+    <filter id="crownShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
+      <feOffset dx="0" dy="3"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
   </defs>
-  <rect x="10" y="10" width="180" height="180" rx="36" fill="url(#pmb)"/>
-  <circle cx="100" cy="95" r="52" fill="#FFFFFF"/>
-  <ellipse cx="100" cy="107" rx="14" ry="11" fill="url(#pmb)"/>
-  <ellipse cx="82" cy="88" rx="6" ry="7.5" transform="rotate(-20 82 88)" fill="url(#pmb)"/>
-  <ellipse cx="94" cy="78" rx="5" ry="6" transform="rotate(-8 94 78)" fill="url(#pmb)"/>
-  <ellipse cx="106" cy="78" rx="5" ry="6" transform="rotate(8 106 78)" fill="url(#pmb)"/>
-  <ellipse cx="118" cy="88" rx="6" ry="7.5" transform="rotate(20 118 88)" fill="url(#pmb)"/>
-  <text x="100" y="172" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-weight="800" font-size="13" fill="#FFFFFF" letter-spacing="4">PAW MEMBER</text>
+
+  <use href="#squirclePath" fill="url(#goldRing)"/>
+  <use href="#innerSquircle" fill="url(#violetBg)"/>
+  <use href="#innerSquircle" fill="none" stroke="rgba(0,0,0,0.22)" stroke-width="1.5"/>
+
+  <g clip-path="url(#innerClip)">
+    <rect x="120" y="120" width="784" height="320" fill="url(#topSheen)"/>
+  </g>
+
+  <ellipse cx="300" cy="160" rx="180" ry="32" fill="#ffffff" fill-opacity="0.45" transform="rotate(-28 300 160)"/>
+
+  <g>
+    <circle cx="90" cy="512" r="14" fill="#9333EA"/>
+    <circle cx="86" cy="508" r="4" fill="#ffffff" opacity="0.7"/>
+    <circle cx="934" cy="512" r="14" fill="#9333EA"/>
+    <circle cx="930" cy="508" r="4" fill="#ffffff" opacity="0.7"/>
+  </g>
+
+  <g clip-path="url(#innerClip)">
+    <g transform="translate(120 160) scale(1.152)">
+      <ellipse cx="340" cy="430" rx="155" ry="135" fill="#FFFFFF"/>
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#FFFFFF"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#FFFFFF"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#FFFFFF"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <path d="M 512 720 C 498 704, 475 688, 461 672 C 447 656, 451 631, 473 627 C 489 624, 503 631, 512 643 C 521 631, 535 624, 551 627 C 573 631, 577 656, 563 672 C 549 688, 526 704, 512 720 Z" fill="url(#violetBg)"/>
+
+  <g filter="url(#crownShadow)" clip-path="url(#innerClip)">
+    <g fill="none" stroke="url(#crownStroke)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M 320 310 L 332 200 L 366 275 L 400 235 L 456 275 L 512 180 L 568 275 L 624 235 L 658 275 L 692 200 L 704 310"/>
+      <line x1="312" y1="310" x2="712" y2="310"/>
+      <line x1="338" y1="335" x2="686" y2="335"/>
+    </g>
+
+    <g stroke="url(#crownStroke)" stroke-width="8" fill="#1a102b">
+      <circle cx="332" cy="195" r="14"/>
+      <circle cx="400" cy="230" r="12"/>
+      <circle cx="512" cy="172" r="16"/>
+      <circle cx="624" cy="230" r="12"/>
+      <circle cx="692" cy="195" r="14"/>
+    </g>
+
+    <g fill="none" stroke="url(#crownStroke)" stroke-width="6" stroke-linecap="round">
+      <path d="M 530 290 Q 498 290, 498 272 Q 498 258, 510 254"/>
+    </g>
+    <circle cx="440" cy="285" r="4" fill="url(#crownStroke)"/>
+    <circle cx="584" cy="285" r="4" fill="url(#crownStroke)"/>
+  </g>
 </svg>
