@@ -126,7 +126,8 @@ Resumen de items activos:
 | [docs-raiz/planes/EJECUCION_COHERENCE_PLAN_DIA_1.md](docs-raiz/planes/EJECUCION_COHERENCE_PLAN_DIA_1.md) | Ejecucion Dia 1 del plan: Fase 0 hotfixes + Fase 1 navegacion + Fase 2 preventive care. 3 migraciones aplicadas + deploy 9 edge fns | Completado |
 | [docs-raiz/planes/SMOKE_TEST_COHERENCE_DIA_1.sql](docs-raiz/planes/SMOKE_TEST_COHERENCE_DIA_1.sql) | Smoke test SQL (8 checks) para validar las 3 migraciones Dia 1 en prod | Activo |
 | [docs-raiz/planes/EJECUCION_COHERENCE_PLAN_DIA_2.md](docs-raiz/planes/EJECUCION_COHERENCE_PLAN_DIA_2.md) | Ejecucion Dia 2: Fase 3 wiring notifs + Fase 4 optimistic updates booking + Fase 5 tab Prevenciones | Completado |
-| [docs-raiz/planes/SMOKE_TEST_COHERENCE_DIA_2.sql](docs-raiz/planes/SMOKE_TEST_COHERENCE_DIA_2.sql) | Smoke test SQL (6 checks) para validar wiring notifs post re-deploy edge fns | Activo |
+| [docs-raiz/planes/SMOKE_TEST_COHERENCE_DIA_2.sql](docs-raiz/planes/SMOKE_TEST_COHERENCE_DIA_2.sql) | Smoke test SQL (5 checks defensivos) para validar wiring notifs post re-deploy edge fns | Activo |
+| [docs-raiz/planes/SMOKE_MANUAL_COHERENCE.md](docs-raiz/planes/SMOKE_MANUAL_COHERENCE.md) | Smoke manual end-to-end con tráfico real: 4 escenarios (adopción / prevenciones / booking reminder / sidebar) + SQL de verificación | Activo |
 | [docs-raiz/planes/SUGERENCIAS_COMPLETAS_2026_04_16.md](docs-raiz/planes/SUGERENCIAS_COMPLETAS_2026_04_16.md) | 49 sugerencias en 10 categorias con plan de ejecucion de 4 semanas | Activo |
 | [docs-raiz/operacion/PENDIENTES_MANUALES.md](docs-raiz/operacion/PENDIENTES_MANUALES.md) | Items que requieren trabajo manual (assets, stores, verificaciones) | Activo |
 
