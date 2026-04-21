@@ -161,10 +161,12 @@ export function AddMedicalRecord({
       if (error) throw error;
       setSuggestions(data.suggestions || []);
     } catch (error) {
-      logger.error('Error fetching suggestions:', error);
-      toast.error('Error al obtener sugerencias', {
-        description: 'No se pudieron cargar las recomendaciones de IA',
-      });
+      // Las sugerencias son "nice to have". Si falla la IA o la edge fn
+      // devuelve fallback estatico, el user sigue pudiendo escribir el
+      // titulo a mano. No mostramos toast de error para no generar ruido
+      // percibido como bug (el form funciona igual).
+      logger.warn('Suggestions not available, continuing without:', error);
+      setSuggestions([]);
     } finally {
       setLoadingSuggestions(false);
     }

@@ -43,12 +43,14 @@ export function NextBookingCard() {
     refetchInterval: 2 * 60_000,
     queryFn: async () => {
       if (!user?.id) return null;
+      // Bug fix 2026-04-21: el join `profiles!vet_bookings_vet_id_fkey`
+      // fallaba porque vet_bookings.vet_id tiene FK a auth.users (no a
+      // profiles). PostgREST devolvia 400. Fetch separado + merge manual.
       const { data } = await sb
         .from('vet_bookings')
         .select(
           `id, scheduled_date, service_type, status, visit_address, vet_id, pet_id,
-           pets(name),
-           profiles!vet_bookings_vet_id_fkey(display_name, avatar_url)`
+           pets(name)`
         )
         .eq('owner_id', user.id)
         .in('status', ['pendiente', 'confirmado', 'en_camino'])
@@ -58,6 +60,17 @@ export function NextBookingCard() {
         .maybeSingle();
 
       if (!data) return null;
+
+      // Fetch vet profile aparte (profiles.id = auth.users.id por convencion).
+      let vetProfile: { display_name: string | null; avatar_url: string | null } | null = null;
+      if (data.vet_id) {
+        const { data: prof } = await sb
+          .from('profiles')
+          .select('display_name, avatar_url')
+          .eq('id', data.vet_id)
+          .maybeSingle();
+        vetProfile = prof ?? null;
+      }
 
       // Normalize nested
       return {
@@ -69,8 +82,8 @@ export function NextBookingCard() {
         vet_id: data.vet_id,
         pet_id: data.pet_id,
         pet_name: data.pets?.name ?? null,
-        vet_display_name: data.profiles?.display_name ?? null,
-        vet_avatar_url: data.profiles?.avatar_url ?? null,
+        vet_display_name: vetProfile?.display_name ?? null,
+        vet_avatar_url: vetProfile?.avatar_url ?? null,
       };
     },
   });

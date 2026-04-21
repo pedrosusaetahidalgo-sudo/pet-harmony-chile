@@ -84,9 +84,44 @@ serve(
         });
       }
 
+      // Fallback estatico reusable (se usa si Claude falla, API key no esta
+      // seteada, o rate-limit upstream). Retornamos 200 con fallback en vez
+      // de 500 para que el frontend muestre opciones y no bloquee al user.
+      const fallbackSuggestions: Record<
+        string,
+        { value: string; label: string; description: string }[]
+      > = {
+        vacuna: [
+          { value: 'antirrabica', label: 'Vacuna Antirrábica', description: 'Vacuna obligatoria contra la rabia' },
+          { value: 'multiple', label: 'Vacuna Múltiple', description: 'Protege contra varias enfermedades' },
+          { value: 'refuerzo-anual', label: 'Refuerzo Anual', description: 'Refuerzo de vacunación anual' },
+        ],
+        consulta_general: [
+          { value: 'consulta-general', label: 'Consulta General', description: 'Consulta veterinaria de rutina' },
+          { value: 'chequeo-anual', label: 'Chequeo Anual', description: 'Revisión médica completa anual' },
+          { value: 'consulta-seguimiento', label: 'Consulta de Seguimiento', description: 'Seguimiento de tratamiento' },
+        ],
+        antiparasitario: [
+          { value: 'bravecto', label: 'Bravecto', description: 'Antiparasitario externo 3 meses' },
+          { value: 'nexgard', label: 'Nexgard', description: 'Antiparasitario externo mensual' },
+          { value: 'drontal', label: 'Drontal Plus', description: 'Desparasitación interna' },
+        ],
+        cirugia: [
+          { value: 'esterilizacion', label: 'Esterilización', description: 'Cirugía de esterilización' },
+          { value: 'castracion', label: 'Castración', description: 'Cirugía de castración' },
+        ],
+      };
+      function withFallback(key: string) {
+        return fallbackSuggestions[key] ?? fallbackSuggestions.consulta_general;
+      }
+
       const ANTHROPIC_API_KEY = Deno.env.get('ANTHROPIC_API_KEY');
       if (!ANTHROPIC_API_KEY) {
-        throw new Error('ANTHROPIC_API_KEY no está configurada');
+        console.warn('ANTHROPIC_API_KEY no seteada — retornando fallback estatico');
+        return new Response(
+          JSON.stringify({ suggestions: withFallback(recordType), source: 'fallback_no_key' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
 
       console.log(
@@ -134,19 +169,23 @@ Solo tratamientos/vacunas reales en Chile. Chileno.`;
 
       if (!response.ok) {
         if (response.status === 429) {
+          // Rate limit → fallback estatico en vez de 429 (mejor UX).
+          console.warn('Claude API 429, serving fallback');
           return new Response(
-            JSON.stringify({
-              error: 'Límite de solicitudes excedido. Por favor, intenta de nuevo más tarde.',
-            }),
-            { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            JSON.stringify({ suggestions: withFallback(recordType), source: 'fallback_rate_limit' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
         const errorText = await response.text();
         console.error('Claude API error:', response.status, errorText);
-        return new Response(JSON.stringify({ error: 'Error al obtener sugerencias' }), {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        // Cualquier otro error upstream → fallback estatico, NO 500.
+        return new Response(
+          JSON.stringify({
+            suggestions: withFallback(recordType),
+            source: 'fallback_api_error',
+          }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
 
       const data = await response.json();
@@ -187,109 +226,8 @@ Solo tratamientos/vacunas reales en Chile. Chileno.`;
 
         console.log(`Generadas ${suggestions.length} sugerencias con Claude`);
       } catch (parseError) {
-        console.error('Error al parsear sugerencias:', parseError);
-
-        const fallbackSuggestions: Record<
-          string,
-          { value: string; label: string; description: string }[]
-        > = {
-          vacuna: [
-            {
-              value: 'antirrabica',
-              label: 'Vacuna Antirrábica',
-              description: 'Vacuna obligatoria contra la rabia',
-            },
-            {
-              value: 'multiple',
-              label: 'Vacuna Múltiple',
-              description: 'Protege contra varias enfermedades',
-            },
-            {
-              value: 'refuerzo-anual',
-              label: 'Refuerzo Anual',
-              description: 'Refuerzo de vacunación anual',
-            },
-          ],
-          consulta: [
-            {
-              value: 'consulta-general',
-              label: 'Consulta General',
-              description: 'Consulta veterinaria de rutina',
-            },
-            {
-              value: 'chequeo-anual',
-              label: 'Chequeo Anual',
-              description: 'Revisión médica completa anual',
-            },
-            {
-              value: 'consulta-seguimiento',
-              label: 'Consulta de Seguimiento',
-              description: 'Seguimiento de tratamiento',
-            },
-          ],
-          medicamento: [
-            {
-              value: 'antipulgas',
-              label: 'Antipulgas',
-              description: 'Tratamiento preventivo contra pulgas',
-            },
-            {
-              value: 'desparasitante',
-              label: 'Desparasitante',
-              description: 'Elimina parásitos internos',
-            },
-            {
-              value: 'suplemento-vitaminico',
-              label: 'Suplemento Vitamínico',
-              description: 'Suplemento nutricional',
-            },
-          ],
-          cirugia: [
-            {
-              value: 'esterilizacion',
-              label: 'Esterilización',
-              description: 'Cirugía de esterilización',
-            },
-            { value: 'castracion', label: 'Castración', description: 'Cirugía de castración' },
-            {
-              value: 'cirugia-correctiva',
-              label: 'Cirugía Correctiva',
-              description: 'Corregir un problema',
-            },
-          ],
-          examen: [
-            {
-              value: 'analisis-sangre',
-              label: 'Análisis de Sangre',
-              description: 'Examen de sangre completo',
-            },
-            { value: 'analisis-orina', label: 'Análisis de Orina', description: 'Examen de orina' },
-            {
-              value: 'radiografia',
-              label: 'Radiografía',
-              description: 'Estudio de imagen por rayos X',
-            },
-          ],
-          emergencia: [
-            {
-              value: 'accidente',
-              label: 'Accidente',
-              description: 'Emergencia por accidente o trauma',
-            },
-            {
-              value: 'intoxicacion',
-              label: 'Intoxicación',
-              description: 'Emergencia por intoxicación',
-            },
-            {
-              value: 'dificultad-respiratoria',
-              label: 'Dificultad Respiratoria',
-              description: 'Emergencia respiratoria',
-            },
-          ],
-        };
-
-        suggestions = fallbackSuggestions[recordType] || fallbackSuggestions.consulta;
+        console.error('Error al parsear sugerencias, usando fallback estatico:', parseError);
+        suggestions = withFallback(recordType);
       }
 
       // ── Guardar en cache (TTL 30 días) ──
@@ -313,11 +251,27 @@ Solo tratamientos/vacunas reales en Chile. Chileno.`;
       });
     } catch (error) {
       console.error('Error in medical-suggestions function:', error);
+      // Fallback last-resort: nunca romper el form del user con 500.
+      // Devolvemos un set generico de sugerencias para que el usuario pueda
+      // seguir. Si se conoce el recordType del body, usar ese fallback.
+      let recordTypeFallback: string = 'consulta_general';
+      try {
+        const body = await req.clone().json();
+        if (typeof body?.recordType === 'string') recordTypeFallback = body.recordType;
+      } catch {
+        // body no parseable, usar default
+      }
+      const genericFallback = [
+        { value: 'consulta-general', label: 'Consulta General', description: 'Consulta veterinaria de rutina' },
+        { value: 'chequeo-anual', label: 'Chequeo Anual', description: 'Revisión médica completa anual' },
+      ];
       return new Response(
         JSON.stringify({
-          error: 'Error al procesar la solicitud. Por favor, intenta de nuevo más tarde.',
+          suggestions: genericFallback,
+          source: 'fallback_catch_all',
+          recordType: recordTypeFallback,
         }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
   })
