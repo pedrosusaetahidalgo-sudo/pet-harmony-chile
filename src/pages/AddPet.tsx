@@ -591,14 +591,43 @@ const AddPet = () => {
                 invited_email: normalizedEmail,
                 status: 'pending',
               })
-              .select('invitation_token')
+              .select('id, invitation_token')
               .single();
 
             if (inviteErr) throw inviteErr;
 
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const inviteRowId = (invite as any)?.id ?? null;
+
+            // Email automatico (Fase 2 2026-04-21): fire-and-forget. No
+            // bloquea el flow de crear mascota si Resend falla.
+            if (inviteRowId) {
+              (async () => {
+                try {
+                  const {
+                    data: { session },
+                  } = await supabase.auth.getSession();
+                  if (!session?.access_token) return;
+                  await fetch(
+                    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-co-owner-invitation`,
+                    {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${session.access_token}`,
+                      },
+                      body: JSON.stringify({ pet_co_owner_id: inviteRowId }),
+                    }
+                  );
+                } catch (emailErr) {
+                  logger.warn('[AddPet] co-owner email failed', emailErr);
+                }
+              })();
+            }
+
             if (targetId) {
               toast.success('Invitación enviada', {
-                description: `Le llegó una notificación a ${normalizedEmail} para aceptar o rechazar.`,
+                description: `Le llegó una notificación a ${normalizedEmail} en Paw Friend + email de invitación.`,
               });
             } else if (invite?.invitation_token) {
               pendingInviteDialog = {

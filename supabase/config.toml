@@ -133,3 +133,6 @@ verify_jwt = false
 
 [functions.generate-shelter-report-pdf]
 verify_jwt = false
+
+[functions.send-co-owner-invitation]
+verify_jwt = false
