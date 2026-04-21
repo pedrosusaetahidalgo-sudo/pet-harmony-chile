@@ -425,7 +425,7 @@
     }
     .cover-illustration {
       width: 100%;
-      max-width: 420px;
+      max-width: 540px;
       filter: drop-shadow(0 24px 60px rgba(0,0,0,0.4));
       animation: slowRock 8s ease-in-out infinite;
     }
@@ -443,13 +443,13 @@
     /* ========= SLIDE 2 — PROBLEM ========= */
     .problem-layout {
       display: grid;
-      grid-template-columns: 1.3fr 1fr;
-      gap: 56px;
+      grid-template-columns: 1.5fr 0.7fr;
+      gap: 48px;
       align-items: center;
     }
     .problem-illus {
       width: 100%;
-      max-width: 340px;
+      max-width: 320px;
       margin: 0 auto;
       filter: drop-shadow(0 20px 48px rgba(0,0,0,0.3));
       animation: slowRock 10s ease-in-out infinite;
@@ -457,27 +457,27 @@
     .problem-stats {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-top: 24px;
+      gap: 16px;
+      margin-top: 28px;
     }
     .problem-stat {
-      padding: 18px 16px;
+      padding: 22px 18px;
       background: rgba(255,255,255,0.06);
-      border-radius: 14px;
+      border-radius: 16px;
       border: 1px solid rgba(255,255,255,0.12);
       backdrop-filter: blur(10px);
     }
     .problem-stat .p-num {
       font-family: 'Fredoka', sans-serif;
-      font-size: clamp(32px, 3.6vw, 48px);
+      font-size: clamp(44px, 5vw, 68px);
       font-weight: 700;
       line-height: 1;
       color: var(--gold-light);
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       text-shadow: 0 0 24px rgba(234,179,8,0.35);
     }
     .problem-stat .p-label {
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
       color: rgba(255,255,255,0.85);
       line-height: 1.35;
@@ -497,10 +497,38 @@
     .phone-mockup {
       position: relative;
       width: 100%;
-      max-width: 280px;
+      max-width: 340px;
       margin: 0 auto;
       filter: drop-shadow(0 32px 80px rgba(147,51,234,0.4));
       animation: phoneFloat 6s ease-in-out infinite;
+    }
+    .solution-pricing {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 6px 0 22px;
+    }
+    .solution-pricing .sp-chip {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 8px;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, rgba(234,179,8,0.12), rgba(147,51,234,0.10));
+      border: 1px solid rgba(234,179,8,0.35);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--ink-soft);
+    }
+    .solution-pricing .sp-chip strong {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #9333ea 0%, #eab308 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1;
     }
     @keyframes phoneFloat {
       0%, 100% { transform: translateY(0) rotate(-2deg); }
@@ -587,33 +615,37 @@
       line-height: 1.4;
     }
     .product-stats {
-      display: flex;
-      gap: 18px;
-      margin-top: 18px;
-      padding: 14px 18px;
-      background: linear-gradient(90deg, rgba(234,179,8,0.08), rgba(147,51,234,0.1));
-      border: 1px solid rgba(253,224,71,0.3);
-      border-radius: 12px;
-      flex-wrap: wrap;
-      justify-content: space-around;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-top: 22px;
+      padding: 24px 22px;
+      background: linear-gradient(90deg, rgba(234,179,8,0.10), rgba(147,51,234,0.12));
+      border: 1px solid rgba(253,224,71,0.35);
+      border-radius: 16px;
+      text-align: center;
     }
     .product-stat strong {
       display: block;
       font-family: 'Fredoka', sans-serif;
-      font-size: 22px;
+      font-size: clamp(40px, 4.6vw, 64px);
+      font-weight: 700;
       color: var(--gold-light);
       line-height: 1;
+      text-shadow: 0 0 28px rgba(234,179,8,0.45);
+      margin-bottom: 6px;
     }
     .product-stat span {
-      font-size: 10px;
-      color: rgba(255,255,255,0.75);
-      font-weight: 600;
+      font-size: 11px;
+      color: rgba(255,255,255,0.8);
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
+      display: block;
     }
     @media (max-width: 900px) {
       .product-grid { grid-template-columns: 1fr; }
-      .product-stats { flex-direction: column; gap: 12px; }
+      .product-stats { grid-template-columns: repeat(2, 1fr); gap: 12px; }
     }
 
     /* ========= SLIDE 5 — MARKET (animated map) ========= */
@@ -629,29 +661,50 @@
       gap: 16px;
     }
     .market-stat {
-      padding: 18px 16px;
+      padding: 22px 20px;
       background: var(--surface);
-      border-radius: 14px;
+      border-radius: 16px;
       border: 1px solid var(--border);
       box-shadow: 0 6px 18px -8px rgba(147,51,234,0.15);
     }
     .market-stat .m-num {
       font-family: 'Fredoka', sans-serif;
-      font-size: clamp(28px, 3.2vw, 42px);
+      font-size: clamp(40px, 4.4vw, 60px);
       font-weight: 700;
       line-height: 1;
       background: linear-gradient(135deg, #9333ea 0%, #eab308 100%);
       -webkit-background-clip: text;
       background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .market-stat .m-lbl {
-      font-size: 12px;
+      font-size: 13px;
       color: var(--ink-soft);
       font-weight: 600;
       line-height: 1.35;
     }
+    .som-chip {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 10px;
+      margin: 24px auto 0;
+      padding: 14px 22px;
+      background: linear-gradient(135deg, rgba(234,179,8,0.15), rgba(147,51,234,0.12));
+      border: 1.5px solid rgba(234,179,8,0.4);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--ink-soft);
+    }
+    .som-chip strong {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--brand-700);
+      line-height: 1;
+    }
+    .som-wrap { display: flex; justify-content: center; }
     .map-wrap {
       position: relative;
       aspect-ratio: 4 / 5;
@@ -720,7 +773,7 @@
       border-radius: 10px;
     }
     .rev-card h4 {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 800;
       color: #fff;
       margin-bottom: 4px;
@@ -730,14 +783,27 @@
       color: rgba(255,255,255,0.65);
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      margin-bottom: 8px;
+      margin-bottom: 12px;
       font-weight: 700;
     }
     .rev-card .rev-price {
-      font-size: 12px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: clamp(18px, 1.9vw, 26px);
       color: var(--gold-light);
       font-weight: 700;
-      line-height: 1.3;
+      line-height: 1.15;
+      text-shadow: 0 0 20px rgba(234,179,8,0.35);
+    }
+    .rev-card .rev-price small {
+      display: block;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.75);
+      margin-top: 4px;
+      text-shadow: none;
     }
     @media (max-width: 900px) { .revenue-grid { grid-template-columns: 1fr 1fr; } }
 
@@ -761,27 +827,40 @@
     .proj-col { position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; height: 100%; justify-content: flex-end; }
     .proj-stack { display: flex; gap: 4px; align-items: flex-end; height: clamp(180px, 26vh, 220px); }
     .proj-bar {
-      width: 18px;
-      border-radius: 5px 5px 0 0;
+      width: 22px;
+      border-radius: 6px 6px 0 0;
       transition: height 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
       height: 0;
       position: relative;
     }
     .proj-bar.cons { background: linear-gradient(180deg, #d8b4fe 0%, #a855f7 100%); }
-    .proj-bar.base { background: linear-gradient(180deg, #fde047 0%, #eab308 100%); }
+    .proj-bar.base {
+      background: linear-gradient(180deg, #fde047 0%, #eab308 100%);
+      box-shadow: 0 0 20px rgba(234,179,8,0.45);
+    }
     .proj-bar.opti { background: linear-gradient(180deg, #6ee7b7 0%, #10b981 100%); }
     .proj-bar::after {
       content: attr(data-val);
       position: absolute;
-      top: -18px;
+      top: -24px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 9px;
+      font-size: 12px;
       font-weight: 800;
       color: var(--ink);
       white-space: nowrap;
       opacity: 0;
       transition: opacity 0.4s 1s;
+      font-variant-numeric: tabular-nums;
+    }
+    .proj-bar.base::after {
+      background: linear-gradient(135deg, #fde047, #eab308);
+      color: var(--ink);
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 13px;
+      box-shadow: 0 4px 12px rgba(234,179,8,0.4);
+      top: -30px;
     }
     .proj-col.reveal .proj-bar::after { opacity: 1; }
     .proj-year {
@@ -959,7 +1038,7 @@
     .roadmap::before {
       content: '';
       position: absolute;
-      top: 28px;
+      top: 34px;
       left: 8%;
       right: 8%;
       height: 3px;
@@ -974,17 +1053,17 @@
       padding: 0 4px;
     }
     .rm-dot {
-      width: 56px; height: 56px;
+      width: 68px; height: 68px;
       border-radius: 999px;
       background: linear-gradient(135deg, #fde047 0%, #eab308 100%);
       color: var(--ink);
       font-weight: 900;
       font-family: 'Fredoka', sans-serif;
-      font-size: 20px;
+      font-size: 26px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       border: 3px solid #2a1046;
       box-shadow: 0 0 0 2px rgba(253,224,71,0.3), 0 8px 24px rgba(234,179,8,0.5);
       position: relative;
@@ -1008,23 +1087,24 @@
       100% { transform: scale(1.8); opacity: 0; }
     }
     .rm-date {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 900;
       color: var(--gold-light);
       text-transform: uppercase;
       letter-spacing: 0.1em;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .rm-title {
-      font-size: 14px;
+      font-size: 18px;
       font-weight: 800;
       color: #fff;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
     }
     .rm-desc {
-      font-size: 12px;
-      color: rgba(255,255,255,0.78);
-      line-height: 1.4;
+      font-size: 13px;
+      color: rgba(255,255,255,0.82);
+      line-height: 1.5;
     }
     .rm-note {
       margin-top: 24px;
@@ -1046,7 +1126,7 @@
     /* ========= SLIDE 10 — ASK ========= */
     .ask-hero {
       display: grid;
-      grid-template-columns: 1fr 0.4fr;
+      grid-template-columns: 1fr 0.55fr;
       gap: 32px;
       align-items: center;
     }
@@ -1058,7 +1138,7 @@
     }
     .ask-icon {
       width: 100%;
-      max-width: 200px;
+      max-width: 320px;
       filter: drop-shadow(0 24px 60px rgba(234,179,8,0.5));
       animation: askSpin 16s linear infinite;
     }
@@ -1100,17 +1180,17 @@
     .ask-item { text-align: center; }
     .ask-item .ask-num {
       font-family: 'Fredoka', sans-serif;
-      font-size: clamp(28px, 3.4vw, 46px);
+      font-size: clamp(40px, 4.6vw, 64px);
       font-weight: 700;
       line-height: 1;
       color: var(--gold-light);
-      margin-bottom: 4px;
+      margin-bottom: 8px;
       text-shadow: 0 0 32px rgba(234,179,8,0.5);
     }
     .ask-item .ask-label {
-      font-size: 10px;
+      font-size: 11px;
       font-weight: 800;
-      color: rgba(255,255,255,0.85);
+      color: rgba(255,255,255,0.9);
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
@@ -1139,15 +1219,16 @@
     }
     .use-item .u-pct {
       font-family: 'Fredoka', sans-serif;
-      font-size: 24px;
+      font-size: clamp(30px, 3.2vw, 44px);
       font-weight: 700;
       color: var(--gold-light);
       line-height: 1;
-      margin-bottom: 4px;
+      margin-bottom: 6px;
+      text-shadow: 0 0 20px rgba(234,179,8,0.4);
     }
     .use-item .u-lbl {
-      font-size: 10px;
-      color: rgba(255,255,255,0.78);
+      font-size: 11px;
+      color: rgba(255,255,255,0.82);
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -1297,6 +1378,12 @@
           <h2 class="headline">
             Una ficha única: dueño <span class="gradient-text">↔</span> vet <span class="gradient-text">↔</span> comunidad.
           </h2>
+          <div class="solution-pricing">
+            <span class="sp-chip"><strong>$0</strong> dueños, siempre</span>
+            <span class="sp-chip"><strong>$9.9k</strong> vet individual</span>
+            <span class="sp-chip"><strong>$19.9k</strong> clínicas</span>
+            <span class="sp-chip"><strong>$49.9k+</strong> sponsors</span>
+          </div>
           <div class="solution-layout">
             <div class="feature-list">
               <div class="feature-item">
@@ -1475,9 +1562,15 @@
               </svg>
             </div>
           </div>
-          <p style="font-size: 14px; color: var(--ink-mute); margin-top: 24px; font-style: italic; text-align: center;">
-            SOM maduro realista (7-10 años): <strong style="color: var(--brand-700);">700k - 1.4M usuarios · 1.800 - 3.600 vets pagando comisión</strong>
-          </p>
+          <div class="som-wrap">
+            <div class="som-chip">
+              <span>SOM maduro 7–10 años:</span>
+              <strong>700k – 1.4M</strong>
+              <span>usuarios ·</span>
+              <strong>1.800 – 3.600</strong>
+              <span>vets pagando comisión</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -1498,31 +1591,31 @@
               <img src="/paw-friend-assets-v2/badges/paw_member_badge.svg" alt="" />
               <h4>Paw Member</h4>
               <div class="rev-who">Dueños · opt-in</div>
-              <div class="rev-price">$3.990<br>CLP/mes</div>
+              <div class="rev-price">$3.990<small>CLP / mes</small></div>
             </div>
             <div class="rev-card">
               <img src="/paw-friend-assets-v2/icons/brand-squircle/31_donation.svg" alt="" />
               <h4>Donaciones</h4>
               <div class="rev-who">Dueños · opt-in</div>
-              <div class="rev-price">Monto<br>libre</div>
+              <div class="rev-price">Libre<small>monto voluntario</small></div>
             </div>
             <div class="rev-card featured">
               <img src="/paw-friend-assets-v2/paw_vets_icon.svg" alt="" />
               <h4>Comisión vets</h4>
               <div class="rev-who">Vets · automática</div>
-              <div class="rev-price">10% · 5%<br>3% · 0%</div>
+              <div class="rev-price">10–0%<small>revenue-share</small></div>
             </div>
             <div class="rev-card">
               <img src="/paw-friend-assets-v2/icons/brand-squircle/37_invoice.svg" alt="" />
               <h4>Suscripción B2B</h4>
               <div class="rev-who">Vets + clínicas</div>
-              <div class="rev-price">$9.9k -<br>$29.9k CLP</div>
+              <div class="rev-price">$9.9–29.9k<small>CLP / mes</small></div>
             </div>
             <div class="rev-card">
               <img src="/paw-friend-assets-v2/paw_companys_gold_icon.svg" alt="" />
               <h4>Paw Companys</h4>
               <div class="rev-who">Empresas sponsor</div>
-              <div class="rev-price">$49.9k -<br>$199.9k CLP</div>
+              <div class="rev-price">$49.9–199.9k<small>CLP / mes</small></div>
             </div>
           </div>
           <div class="rm-note" style="margin-top: 28px;">
