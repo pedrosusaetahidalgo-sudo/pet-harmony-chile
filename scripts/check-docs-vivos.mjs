@@ -17,7 +17,7 @@ import { readFileSync } from 'node:fs';
 const OWNERS = [
   {
     re: /src[\\/]App\.tsx$/,
-    doc: 'diagrams/FLUJO_COMPLETO.mmd + MAPA_FUNCIONAL_COMPLETO.md + INVENTARIO_APP_2026_04_17.md',
+    doc: 'diagrams/FLUJO_COMPLETO.mmd + MAPA_FUNCIONAL_COMPLETO.md + INVENTARIO_APP_2026_04_17.md + docs-raiz/CONTEXTO_IA_EXTERNA.md §5 (rutas)',
   },
   {
     re: /src[\\/]components[\\/](BottomTabBar|AppSidebar|Header)\.tsx$/,
@@ -29,7 +29,15 @@ const OWNERS = [
   },
   {
     re: /src[\\/]lib[\\/]plans\.ts$/,
-    doc: 'public/pitch/*.html (pricing vet + tiers Paw Companys) + CLAUDE.md §5',
+    doc: 'public/pitch/*.html (pricing vet + tiers Paw Companys) + CLAUDE.md §5 + docs-raiz/CONTEXTO_IA_EXTERNA.md §3',
+  },
+  {
+    re: /src[\\/]hooks[\\/]useActiveRole\.tsx$/,
+    doc: 'docs-raiz/CONTEXTO_IA_EXTERNA.md §4 (roles) + CLAUDE.md §11.2',
+  },
+  {
+    re: /package\.json$/,
+    doc: 'docs-raiz/CONTEXTO_IA_EXTERNA.md §2 (stack) si cambió una dependencia central',
   },
   {
     re: /src[\\/]pages[\\/](PawCore|PawVoices|PawCompanys)\.tsx$/,

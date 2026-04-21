@@ -22,6 +22,7 @@ README es el índice y el contrato de mantenimiento.
 | Manual operativo para IA | [`CLAUDE.md`](../CLAUDE.md) | Meta-doc | Stack nuevo, convención nueva, regla nueva. Se actualiza por separado al código |
 | Registro de feature flags | Secciones 11.1, 11.2 de `CLAUDE.md` | `src/lib/featureFlags.ts` | Cuando se agrega/quita/flipea un flag |
 | Pitch decks públicos (4) | [`public/pitch/`](../public/pitch/) | `src/lib/plans.ts`, `CLAUDE.md §5`, `src/pages/PawCore.tsx`, `src/pages/PawVoices.tsx`, `src/pages/PawCompanys.tsx`, `marketing/PITCH_DECKS_MASTERPLANS.md` | Cambio de pricing, modelo de negocio, tiers Paw Companys, copy de beneficios Voices, o identidad Paw Core. Ver [public/pitch/README.md](../public/pitch/README.md) para reglas de edición |
+| Contexto para IA externa (Perplexity/Claude.ai/ChatGPT) | [`docs-raiz/CONTEXTO_IA_EXTERNA.md`](../docs-raiz/CONTEXTO_IA_EXTERNA.md) | `src/App.tsx` (rutas), `src/lib/plans.ts` (monetización), `src/hooks/useActiveRole.tsx` (roles), `package.json` (stack), `CLAUDE.md` (reglas), `supabase/functions/**` (edge fns) | Cambio de modelo de negocio, pricing, roles, stack, rutas públicas, edge fns activas, o estado técnico al cierre. También actualizar la fecha en la cabecera |
 
 ## Dueños secundarios (si tocás estos, verificá docs)
 
