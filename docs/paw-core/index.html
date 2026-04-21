@@ -12,9 +12,14 @@
     <meta name="apple-mobile-web-app-title" content="Paw Friend" />
     <meta name="theme-color" content="#9333EA" />
 
-    <!-- Plus Jakarta Sans font preconnect -->
+    <!-- Preconnect a orígenes críticos — reduce handshake TLS del 1er request.
+         Fonts: primera pintada tipográfica. Supabase: primera query. Flow:
+         destino del checkout al hacer click en donar / upgrade. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://gwailbjlvevkhwcrovfd.supabase.co" crossorigin />
+    <link rel="dns-prefetch" href="https://gwailbjlvevkhwcrovfd.supabase.co" />
+    <link rel="dns-prefetch" href="https://www.flow.cl" />
 
     <!-- Favicons (brand kit v2, 2026-04-20). Paths legacy en raiz se mantienen
          como fallback para clientes con cache viejo. -->
@@ -45,16 +50,16 @@
 
     <!-- Preload del video hero (mejora LCP en desktop). En mobile el video se carga lazy. -->
     <link rel="preload" as="video" type="video/mp4" href="/videos/hero-pet.mp4" media="(min-width: 768px)" />
-    <script type="module" crossorigin src="/assets/index-CW-pQi4c.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/ui-vendor-DAevSpB6.js">
-    <link rel="modulepreload" crossorigin href="/assets/recharts-vendor-Cmj8gfkw.js">
-    <link rel="modulepreload" crossorigin href="/assets/query-vendor-DwUwcDmV.js">
-    <link rel="modulepreload" crossorigin href="/assets/react-vendor-Bpd7I82i.js">
-    <link rel="modulepreload" crossorigin href="/assets/icons-vendor-Cmi2_gmV.js">
-    <link rel="modulepreload" crossorigin href="/assets/supabase-vendor-DnGMKqUF.js">
+    <script type="module" crossorigin src="/assets/index-Bz6_9Lfe.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/ui-vendor-Dv_Zvb1N.js">
+    <link rel="modulepreload" crossorigin href="/assets/recharts-vendor-CgKaFOHe.js">
+    <link rel="modulepreload" crossorigin href="/assets/query-vendor-BsSQnoTm.js">
+    <link rel="modulepreload" crossorigin href="/assets/react-vendor-CH4GbtC2.js">
+    <link rel="modulepreload" crossorigin href="/assets/icons-vendor-BPFyymSK.js">
+    <link rel="modulepreload" crossorigin href="/assets/supabase-vendor-5IJfeDnK.js">
     <link rel="modulepreload" crossorigin href="/assets/date-vendor-CMftGCCT.js">
-    <link rel="modulepreload" crossorigin href="/assets/leaflet-vendor-tho7777x.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DdfCkMrl.css">
+    <link rel="modulepreload" crossorigin href="/assets/leaflet-vendor-Bp5oVaDu.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-Bjc2k6IV.css">
   </head>
 
   <body>

@@ -1,10 +1,29 @@
 {
   "applinks": {
     "apps": [],
-    "details": [{
-      "appID": "__TEAM_ID__.cl.pawfriend.app",
-      "paths": ["*"]
-    }]
+    "details": [
+      {
+        "appID": "__TEAM_ID__.cl.pawfriend.app",
+        "paths": [
+          "/qr/*",
+          "/paw-card/*",
+          "/medical-share/*",
+          "/veterinarios/*",
+          "/refugios/*",
+          "/paw-member",
+          "/paw-member/*",
+          "/donaciones",
+          "/transparencia",
+          "/paw-companys",
+          "/paw-voices",
+          "/paw-partners",
+          "/aplicar",
+          "/resena/*",
+          "NOT /admin",
+          "NOT /admin/*"
+        ]
+      }
+    ]
   },
   "webcredentials": {
     "apps": ["__TEAM_ID__.cl.pawfriend.app"]
