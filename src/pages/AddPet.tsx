@@ -20,7 +20,8 @@ import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { Upload, X, ChevronDown, Stethoscope, Heart } from '@/lib/icons';
+import { Upload, X, ChevronDown, Stethoscope, Heart, Users as UsersIcon } from '@/lib/icons';
+import { InviteCoOwnerLinkDialog } from '@/components/InviteCoOwnerLinkDialog';
 import { LINKS } from '@/lib/links';
 import { ImageCropDialog } from '@/components/ImageCropDialog';
 import {
@@ -84,6 +85,19 @@ const AddPet = () => {
   } | null>(null);
   const [duplicateBypass, setDuplicateBypass] = useState(false);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  // Co-owner invite (solo en CREATE mode; feature 2026-04-21)
+  const [shareWithSomeone, setShareWithSomeone] = useState(false);
+  const [coOwnerEmail, setCoOwnerEmail] = useState('');
+  const [coOwnerRole, setCoOwnerRole] = useState<
+    'co_owner' | 'caretaker' | 'trainer' | 'family_member'
+  >('co_owner');
+  const [inviteLinkDialog, setInviteLinkDialog] = useState<{
+    open: boolean;
+    token: string;
+    email: string;
+    petName: string;
+  }>({ open: false, token: '', email: '', petName: '' });
 
   const [formData, setFormData] = useState({
     name: '',
@@ -533,19 +547,100 @@ const AddPet = () => {
         pct: 60,
       });
 
+      // Co-owner invite (feature 2026-04-21): si el user marcó compartir y
+      // puso email válido, crear invitación y mostrar link (si no tiene
+      // cuenta) o solo toast (si tiene cuenta — la noti la dispara el
+      // trigger trg_notify_co_owner_on_invite).
+      // pendingInviteDialog queda no-null si hay que mostrar el dialog de
+      // link al final (email invitado sin cuenta). Asi decidimos despues si
+      // mostrar el reveal o el dialog.
+      let pendingInviteDialog: {
+        token: string;
+        email: string;
+        petName: string;
+      } | null = null;
+
+      if (shareWithSomeone) {
+        const normalizedEmail = coOwnerEmail.trim().toLowerCase();
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail);
+        if (emailOk && normalizedEmail !== user.email?.toLowerCase()) {
+          try {
+            // ¿El email ya tiene cuenta? RPC get_user_id_by_email
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { data: targetUserId } = await (supabase as any).rpc('get_user_id_by_email', {
+              p_email: normalizedEmail,
+            });
+            const targetId = typeof targetUserId === 'string' ? targetUserId : null;
+
+            const ROLE_PERMS: Record<typeof coOwnerRole, string[]> = {
+              co_owner: ['view_record', 'add_records', 'edit_pet'],
+              caretaker: ['view_record', 'add_notes'],
+              family_member: ['view_record'],
+              trainer: ['view_record', 'add_routines'],
+            };
+
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const { data: invite, error: inviteErr } = await (supabase as any)
+              .from('pet_co_owners')
+              .insert({
+                pet_id: createdPet.id,
+                user_id: targetId ?? user.id, // placeholder hasta que se registre
+                role: coOwnerRole,
+                permissions: ROLE_PERMS[coOwnerRole],
+                invited_by: user.id,
+                invited_email: normalizedEmail,
+                status: 'pending',
+              })
+              .select('invitation_token')
+              .single();
+
+            if (inviteErr) throw inviteErr;
+
+            if (targetId) {
+              toast.success('Invitación enviada', {
+                description: `Le llegó una notificación a ${normalizedEmail} para aceptar o rechazar.`,
+              });
+            } else if (invite?.invitation_token) {
+              pendingInviteDialog = {
+                token: String(invite.invitation_token),
+                email: normalizedEmail,
+                petName: formData.name,
+              };
+            }
+          } catch (inviteErr) {
+            logger.error('[AddPet] co-owner invite failed', inviteErr);
+            toast('La mascota se creó, pero no pudimos enviar la invitación', {
+              description: 'Podes invitar a esta persona más tarde desde la ficha de la mascota.',
+            });
+          }
+        } else if (emailOk && normalizedEmail === user.email?.toLowerCase()) {
+          toast('No podes invitarte a vos mismo', {
+            description: 'Usamos el email de otra persona para el co-acceso.',
+          });
+        }
+      }
+
       toast('¡Mascota agregada!', {
         description: `${formData.name} tiene ficha clínica y recordatorios de salud. ¡Explora su perfil!`,
       });
 
-      setRevealData({
-        name: formData.name,
-        species: formData.species,
-        breed: formData.breed || null,
-        photo_url: photoUrl,
-        pawCardId: payload.paw_card_id as string,
-        holoPattern: payload.holo_pattern as HoloPattern,
-        score: 0,
-      });
+      // Si hay dialog de invitación pendiente (email sin cuenta), lo
+      // abrimos y postergamos el reveal hasta que se cierre (onDone
+      // navega a /my-pets). Caso contrario, el reveal dispara la
+      // ceremonia normal.
+      if (pendingInviteDialog) {
+        setInviteLinkDialog({ open: true, ...pendingInviteDialog });
+      } else {
+        setRevealData({
+          name: formData.name,
+          species: formData.species,
+          breed: formData.breed || null,
+          photo_url: photoUrl,
+          pawCardId: payload.paw_card_id as string,
+          holoPattern: payload.holo_pattern as HoloPattern,
+          score: 0,
+        });
+      }
     } catch (error: unknown) {
       if (uploadedFilePath) {
         await supabase.storage
@@ -1026,6 +1121,69 @@ const AddPet = () => {
             </CardContent>
           </Card>
 
+          {/* Compartir con otra persona — solo en CREATE mode (feature 2026-04-21) */}
+          {!isEdit && (
+            <Card>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <UsersIcon className="h-5 w-5 text-primary" />
+                  <div className="flex-1">
+                    <CardTitle className="text-base">Compartir con otra persona</CardTitle>
+                    <CardDescription>
+                      Podés invitar a tu pareja, familia o cuidador a ver la ficha
+                    </CardDescription>
+                  </div>
+                  <Switch
+                    checked={shareWithSomeone}
+                    onCheckedChange={setShareWithSomeone}
+                    aria-label="Invitar a otra persona"
+                  />
+                </div>
+              </CardHeader>
+              {shareWithSomeone && (
+                <CardContent className="space-y-3 pt-0">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="coOwnerEmail">Email de la persona</Label>
+                    <Input
+                      id="coOwnerEmail"
+                      type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      autoCapitalize="off"
+                      spellCheck={false}
+                      value={coOwnerEmail}
+                      onChange={(e) => setCoOwnerEmail(e.target.value)}
+                      placeholder="tu-pareja@email.cl"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label>Como va a aparecer</Label>
+                    <Select
+                      value={coOwnerRole}
+                      onValueChange={(v) => setCoOwnerRole(v as typeof coOwnerRole)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="co_owner">Co-dueño/a (puede editar la ficha)</SelectItem>
+                        <SelectItem value="family_member">Familiar (solo ver)</SelectItem>
+                        <SelectItem value="caretaker">Cuidador/a (ver y agregar notas)</SelectItem>
+                        <SelectItem value="trainer">
+                          Entrenador/a (ver y agregar rutinas)
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Si ya tiene cuenta en Paw Friend, le llega una notificación para aceptar o
+                    rechazar. Si no, te damos un link para mandarle.
+                  </p>
+                </CardContent>
+              )}
+            </Card>
+          )}
+
           {/* Medical Info Card (Collapsible) */}
           <Collapsible open={showMedical} onOpenChange={setShowMedical}>
             <Card>
@@ -1258,6 +1416,17 @@ const AddPet = () => {
           onCropComplete={handleCropComplete}
         />
       )}
+
+      {/* Dialog post-create cuando el email invitado no tiene cuenta.
+          Al cerrarlo navega a /my-pets (feature 2026-04-21). */}
+      <InviteCoOwnerLinkDialog
+        open={inviteLinkDialog.open}
+        onOpenChange={(open) => setInviteLinkDialog((prev) => ({ ...prev, open }))}
+        invitationToken={inviteLinkDialog.token}
+        invitedEmail={inviteLinkDialog.email}
+        petName={inviteLinkDialog.petName}
+        onDone={() => navigate(LINKS.myPets())}
+      />
     </div>
   );
 };

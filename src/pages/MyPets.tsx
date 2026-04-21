@@ -25,6 +25,7 @@ import {
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { useGoToAddPet } from '@/hooks/useCanAddPet';
 import { useClaimPetInvitation } from '@/hooks/useClaimPetInvitation';
+import { useAutoAcceptCoOwnerInvitation } from '@/hooks/useAutoAcceptCoOwnerInvitation';
 import { useAutoClaimByEmail } from '@/hooks/useAutoClaimByEmail';
 import { ClaimPetDialog } from '@/components/ClaimPetDialog';
 import { PawCardFlippable } from '@/components/paw-cards/PawCardFlippable';
@@ -137,8 +138,10 @@ const MyPets = () => {
   const goToAddPet = useGoToAddPet();
   const carouselRef = useRef<HTMLDivElement>(null);
 
-  // Procesar invitación si viene con ?invitation=TOKEN
+  // Procesar invitación si viene con ?invitation=TOKEN (vet → dueño)
   useClaimPetInvitation();
+  // Auto-aceptar invitación co-owner si viene con ?co_owner=TOKEN
+  useAutoAcceptCoOwnerInvitation();
   // Auto-claim mascotas pendientes que coincidan con el email del usuario
   useAutoClaimByEmail();
 
