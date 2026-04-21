@@ -12,6 +12,16 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import {
+  bulletList,
+  cta,
+  emailFooter,
+  emailHeader,
+  paragraph,
+  spacer,
+} from '../_shared/email-blocks.ts';
+import { renderEmail } from '../_shared/email-layout.ts';
+import { TAGLINE } from '../_shared/email-theme.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -33,79 +43,66 @@ function errorResponse(message: string, status = 500) {
   });
 }
 
-function escapeHtml(s: string | null | undefined): string {
-  if (!s) return '';
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
 function buildEmailHtml(shelterName: string, contactName: string, dashboardUrl: string): string {
-  return `<!DOCTYPE html>
-<html><body style="margin:0;padding:0;background:#faf5ff;font-family:system-ui,Arial,sans-serif;color:#1f2937">
-<table width="100%" cellpadding="0" cellspacing="0" style="padding:32px 16px">
-<tr><td align="center">
-<table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.08)">
-  <tr><td style="background:linear-gradient(135deg,#7c3aed 0%,#ec4899 100%);padding:32px 24px;color:#fff;text-align:center">
-    <div style="font-size:13px;text-transform:uppercase;letter-spacing:.12em;opacity:.85">Bienvenido a Paw Friend</div>
-    <div style="font-size:48px;margin:12px 0">🏡</div>
-    <div style="font-size:24px;font-weight:800;line-height:1.2">${escapeHtml(shelterName)}</div>
-    <div style="font-size:13px;margin-top:4px;opacity:.9">ya es parte de la red de refugios</div>
-  </td></tr>
+  const body = [
+    emailHeader({
+      variant: 'emoji',
+      eyebrow: 'Bienvenidos a Paw Friend',
+      emoji: '🏡',
+      title: shelterName,
+      tagline: TAGLINE.shelter,
+    }),
+    paragraph({
+      text: `Hola ${contactName},`,
+      size: 'lg',
+    }),
+    paragraph(
+      'Gracias por sumarse a Paw Friend. Desde hoy, las mascotas que tienen a su cuidado pueden cargarse en la plataforma con su ficha médica digital, y cuando alguien las adopte, esa ficha viaja con ellas. Nada se pierde entre el refugio y el nuevo dueño.'
+    ),
+    bulletList({
+      label: 'Checklist primeros 4 pasos',
+      items: [
+        {
+          icon: '📋',
+          text: 'Completa el perfil público del refugio (dirección, misión, capacidad).',
+        },
+        {
+          icon: '📥',
+          text: 'Carga tus mascotas actuales vía bulk import CSV/XLSX o una por una.',
+        },
+        {
+          icon: '🔗',
+          text: 'Genera el link de transferencia cuando alguien adopte.',
+        },
+        {
+          icon: '💛',
+          text: 'Activa donaciones dirigidas si quieren recibir aportes (opcional, cuando la plataforma lo habilite).',
+        },
+      ],
+    }),
+    cta({
+      text: 'Ir al panel refugio',
+      url: dashboardUrl,
+    }),
+    paragraph({
+      text: '¿Alguna duda durante el onboarding? Responde a este email directamente o escribe a pedrosusaeta@pawfriend.cl. Personalmente los primeros 30 días estamos acompañando a cada refugio para que saque el máximo provecho.',
+      muted: true,
+    }),
+    paragraph({
+      text: 'Gracias por el trabajo que hacen. Cada mascota que pasa por su refugio y encuentra hogar responsable es un pequeño milagro. Paw Friend existe para amplificarlo.',
+      muted: true,
+      size: 'sm',
+    }),
+    spacer('md'),
+    emailFooter(),
+  ].join('');
 
-  <tr><td style="padding:28px 24px">
-    <p style="margin:0 0 16px;font-size:16px;line-height:1.5">
-      Hola ${escapeHtml(contactName)},
-    </p>
-    <p style="margin:0 0 20px;font-size:15px;line-height:1.6">
-      Gracias por sumarse a Paw Friend. Desde hoy, las mascotas que tienen a su cuidado
-      pueden ser cargadas en la plataforma con su ficha médica digital, y cuando alguien
-      las adopte, esa ficha viaja con ellas. Nada se pierde entre su refugio y el nuevo dueño.
-    </p>
-
-    <div style="background:#faf5ff;border-left:4px solid #7c3aed;padding:16px 20px;border-radius:8px;margin:20px 0">
-      <p style="margin:0 0 12px;font-size:14px;font-weight:700;color:#7c3aed">
-        Checklist primeros 4 pasos
-      </p>
-      <ol style="margin:0;padding-left:20px;font-size:14px;line-height:1.8;color:#1f2937">
-        <li>Completa el perfil público del refugio (dirección, misión, capacidad).</li>
-        <li>Carga tus mascotas actuales vía bulk import CSV/XLSX o una por una.</li>
-        <li>Genera el link de transferencia cuando alguien adopte.</li>
-        <li>Activa donaciones dirigidas si quieres recibir aportes (opcional, cuando la plataforma lo habilite).</li>
-      </ol>
-    </div>
-
-    <div style="text-align:center;margin:28px 0">
-      <a href="${escapeHtml(dashboardUrl)}"
-         style="display:inline-block;background:linear-gradient(135deg,#7c3aed 0%,#ec4899 100%);color:#fff;text-decoration:none;padding:14px 32px;border-radius:999px;font-weight:700;font-size:15px">
-        Ir al panel refugio →
-      </a>
-    </div>
-
-    <p style="margin:24px 0 16px;font-size:14px;line-height:1.6;color:#4b5563">
-      ¿Alguna duda durante el onboarding? Responde a este email directamente o escribe a
-      <a href="mailto:pedrosusaeta@pawfriend.cl" style="color:#7c3aed">pedrosusaeta@pawfriend.cl</a>.
-      Personalmente los primeros 30 días estamos acompañando a cada refugio para que saque
-      el máximo provecho.
-    </p>
-
-    <p style="margin:0;font-size:13px;color:#6b7280;line-height:1.5">
-      Gracias por el trabajo que hacen. Cada mascota que pasa por su refugio y encuentra
-      hogar responsable es un pequeño milagro. Paw Friend existe para amplificarlo.
-    </p>
-  </td></tr>
-
-  <tr><td style="background:#f9fafb;padding:16px 24px;text-align:center;border-top:1px solid #e5e7eb">
-    <p style="margin:0;font-size:11px;color:#6b7280">
-      Paw Friend · pawfriend.cl · hecho en Chile por un founder + IA
-    </p>
-  </td></tr>
-</table>
-</td></tr></table>
-</body></html>`;
+  return renderEmail({
+    title: `¡Bienvenidos a Paw Friend, ${shelterName}!`,
+    preheader: `Tu refugio ya es parte de la red. Carga tus primeras mascotas y empezá en 10 minutos.`,
+    body,
+    width: 'wide',
+  });
 }
 
 async function handle(req: Request): Promise<Response> {

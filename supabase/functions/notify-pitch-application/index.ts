@@ -11,6 +11,23 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import {
+  blockquote,
+  cta,
+  emailFooter,
+  emailHeader,
+  metaTable,
+  section,
+  spacer,
+  type MetaRow,
+} from '../_shared/email-blocks.ts';
+import {
+  escapeHtml,
+  escapeUrl,
+  renderEmail,
+  sendEmail as sendResendEmail,
+} from '../_shared/email-layout.ts';
+import { BRAND, FONT, NEUTRAL, SIZE, SPACE } from '../_shared/email-theme.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -32,6 +49,8 @@ const KIND_LABELS: Record<string, string> = {
 
 const NOTIFICATION_EMAIL = Deno.env.get('PITCH_NOTIFICATION_EMAIL') || 'pedrosusaeta@pawfriend.cl';
 
+const ADMIN_URL = 'https://pawfriend.cl/admin?section=system&sub=pitch-applications';
+
 function jsonResponse(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -44,16 +63,6 @@ function errorResponse(message: string, status = 500) {
     status,
     headers: { ...corsHeaders, 'Content-Type': 'application/json' },
   });
-}
-
-function escapeHtml(s: string): string {
-  if (!s) return '';
-  return s
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
 }
 
 function buildEmailHtml(app: {
@@ -70,67 +79,64 @@ function buildEmailHtml(app: {
   created_at: string;
 }): string {
   const label = KIND_LABELS[app.kind] || app.kind;
-  const payloadRows = Object.entries(app.payload || {})
+
+  // Contact card custom (nombre grande + org + email/phone como links)
+  const contactCard = section(
+    `
+<h2 style="margin:0 0 ${SPACE.sm};font-family:${FONT.display};font-size:${SIZE.h2};color:${NEUTRAL[900]};font-weight:700;">${escapeHtml(app.contact_name)}</h2>
+${app.organization_name ? `<p style="margin:0 0 6px;color:${NEUTRAL[500]};font-size:${SIZE.body};">${escapeHtml(app.organization_name)}</p>` : ''}
+<p style="margin:0;color:${NEUTRAL[600]};font-size:${SIZE.body};line-height:1.6;">
+<a href="mailto:${escapeUrl(app.contact_email)}" style="color:${BRAND[700]};text-decoration:none;">${escapeHtml(app.contact_email)}</a>
+${app.contact_phone ? ` · <a href="tel:${escapeUrl(app.contact_phone)}" style="color:${BRAND[700]};text-decoration:none;">${escapeHtml(app.contact_phone)}</a>` : ''}
+${app.website ? `<br><a href="${escapeUrl(app.website)}" target="_blank" rel="noopener noreferrer" style="color:${BRAND[700]};text-decoration:none;">${escapeHtml(app.website)}</a>` : ''}
+</p>
+`,
+    `${SPACE.xl} ${SPACE['2xl']}`
+  );
+
+  // Convertimos el payload (datos adicionales) en rows de metaTable
+  const metaRows: MetaRow[] = Object.entries(app.payload || {})
     .filter(([, v]) => v !== null && v !== '' && v !== undefined)
-    .map(
-      ([k, v]) =>
-        `<tr><td style="padding:6px 12px;color:#6b7280;font-size:12px;text-transform:uppercase;letter-spacing:.05em">${escapeHtml(k)}</td><td style="padding:6px 12px;color:#111827">${escapeHtml(String(v))}</td></tr>`
-    )
-    .join('');
+    .map(([k, v]) => ({
+      label: k.replace(/_/g, ' '),
+      value: String(v),
+    }));
 
-  return `<!DOCTYPE html>
-<html><body style="margin:0;padding:0;background:#faf5ff;font-family:system-ui,Arial,sans-serif;color:#1f2937">
-<table width="100%" cellpadding="0" cellspacing="0" style="padding:32px 16px">
-<tr><td align="center">
-<table width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.08)">
-  <tr><td style="background:linear-gradient(135deg,#9333ea 0%,#c084fc 100%);padding:24px;color:#fff">
-    <div style="font-size:12px;text-transform:uppercase;letter-spacing:.12em;opacity:.9">Nueva postulacion — Paw Friend</div>
-    <div style="font-size:24px;font-weight:800;margin-top:4px">${escapeHtml(label)}</div>
-  </td></tr>
-  <tr><td style="padding:24px">
-    <h2 style="margin:0 0 12px;font-size:18px;color:#111827">${escapeHtml(app.contact_name)}</h2>
-    ${app.organization_name ? `<p style="margin:0 0 4px;color:#6b7280;font-size:14px">${escapeHtml(app.organization_name)}</p>` : ''}
-    <p style="margin:0;color:#6b7280;font-size:14px">
-      <a href="mailto:${escapeHtml(app.contact_email)}" style="color:#7c3aed">${escapeHtml(app.contact_email)}</a>
-      ${app.contact_phone ? ` · <a href="tel:${escapeHtml(app.contact_phone)}" style="color:#7c3aed">${escapeHtml(app.contact_phone)}</a>` : ''}
-    </p>
-    ${app.website ? `<p style="margin:4px 0 0;color:#6b7280;font-size:14px"><a href="${escapeHtml(app.website)}" target="_blank" rel="noopener noreferrer" style="color:#7c3aed">${escapeHtml(app.website)}</a></p>` : ''}
-  </td></tr>
+  const body = [
+    emailHeader({
+      variant: 'emoji',
+      eyebrow: 'Nueva postulacion',
+      emoji: '📮',
+      title: label,
+      tagline: 'Paw Friend · admin',
+    }),
+    contactCard,
+    app.message ? blockquote(app.message) : '',
+    metaRows.length ? metaTable(metaRows) : '',
+    spacer('md'),
+    cta({
+      text: 'Revisar en Admin',
+      url: ADMIN_URL,
+    }),
+    section(
+      `<p style="margin:0;font-size:${SIZE.xs};color:${NEUTRAL[500]};line-height:1.6;">
+ID: <code style="background:${NEUTRAL[100]};padding:2px 6px;border-radius:4px;color:${NEUTRAL[700]};font-family:${FONT.mono};">${escapeHtml(app.id)}</code>
+${app.source_url ? `<br>Origen: ${escapeHtml(app.source_url)}` : ''}
+</p>`,
+      `${SPACE.md} ${SPACE['2xl']} ${SPACE.xl}`
+    ),
+    emailFooter({
+      note: 'Notificación interna · Paw Friend admin',
+      homeMade: false,
+    }),
+  ].join('');
 
-  ${
-    app.message
-      ? `<tr><td style="padding:0 24px 24px">
-    <div style="background:#faf5ff;border-left:4px solid #9333ea;border-radius:8px;padding:16px">
-      <div style="font-size:12px;color:#7c3aed;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px">Mensaje</div>
-      <p style="margin:0;color:#1f2937;font-size:14px;line-height:1.55;white-space:pre-wrap">${escapeHtml(app.message)}</p>
-    </div>
-  </td></tr>`
-      : ''
-  }
-
-  ${
-    payloadRows
-      ? `<tr><td style="padding:0 24px 24px">
-    <div style="font-size:12px;color:#7c3aed;font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Datos adicionales</div>
-    <table style="width:100%;border-collapse:collapse;background:#f9fafb;border-radius:8px;overflow:hidden">${payloadRows}</table>
-  </td></tr>`
-      : ''
-  }
-
-  <tr><td style="padding:16px 24px;background:#f9fafb;border-top:1px solid #e5e7eb;font-size:12px;color:#6b7280">
-    <div>ID: <code style="color:#374151">${escapeHtml(app.id)}</code></div>
-    ${app.source_url ? `<div style="margin-top:4px">Origen: ${escapeHtml(app.source_url)}</div>` : ''}
-    <div style="margin-top:8px">
-      <a href="https://pawfriend.cl/admin?section=system&sub=pitch-applications"
-         style="display:inline-block;background:#9333ea;color:#fff;padding:8px 16px;border-radius:8px;text-decoration:none;font-weight:700;font-size:13px">
-        Revisar en Admin
-      </a>
-    </div>
-  </td></tr>
-</table>
-</td></tr>
-</table>
-</body></html>`;
+  return renderEmail({
+    title: `Nueva postulacion · ${label} · ${app.contact_name}`,
+    preheader: `${label} · ${app.contact_name}${app.organization_name ? ` (${app.organization_name})` : ''} · ${app.contact_email}`,
+    body,
+    width: 'wide',
+  });
 }
 
 /**
@@ -193,37 +199,11 @@ async function sendToDiscord(opts: {
 }
 
 async function sendEmail(opts: { to: string; subject: string; html: string }): Promise<boolean> {
-  const apiKey = Deno.env.get('RESEND_API_KEY');
-  if (!apiKey) {
-    console.warn('[notify-pitch-application] RESEND_API_KEY not set, skipping email');
-    return false;
+  const result = await sendResendEmail(opts);
+  if (!result.ok) {
+    console.warn('[notify-pitch-application] email not sent:', result.error);
   }
-  const from = Deno.env.get('RESEND_FROM_EMAIL') || 'Paw Friend <onboarding@resend.dev>';
-  try {
-    const resp = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        from,
-        to: [opts.to],
-        subject: opts.subject,
-        html: opts.html,
-        reply_to: 'hola@pawfriend.cl',
-      }),
-    });
-    if (!resp.ok) {
-      const body = await resp.text();
-      console.error('[notify-pitch-application] Resend error:', resp.status, body);
-      return false;
-    }
-    return true;
-  } catch (err) {
-    console.error('[notify-pitch-application] fetch error:', err);
-    return false;
-  }
+  return result.ok;
 }
 
 serve(
@@ -260,8 +240,6 @@ serve(
 
       const html = buildEmailHtml(app as Parameters<typeof buildEmailHtml>[0]);
 
-      const adminUrl = 'https://pawfriend.cl/admin?section=system&sub=pitch-applications';
-
       const [emailSent, slackSent, discordSent] = await Promise.all([
         sendEmail({ to: NOTIFICATION_EMAIL, subject, html }),
         sendToSlack({
@@ -270,7 +248,7 @@ serve(
           email: app.contact_email,
           org: app.organization_name,
           message: app.message,
-          adminUrl,
+          adminUrl: ADMIN_URL,
         }),
         sendToDiscord({
           kindLabel: label,
@@ -278,7 +256,7 @@ serve(
           email: app.contact_email,
           org: app.organization_name,
           message: app.message,
-          adminUrl,
+          adminUrl: ADMIN_URL,
         }),
       ]);
 

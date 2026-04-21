@@ -13,6 +13,17 @@ import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.2';
 import { withTelemetry } from '../_shared/telemetry.ts';
 import { getCorsHeaders } from '../_shared/cors.ts';
+import {
+  blockquote,
+  bulletList,
+  emailFooter,
+  emailHeader,
+  paragraph,
+  signature,
+  spacer,
+} from '../_shared/email-blocks.ts';
+import { renderEmail } from '../_shared/email-layout.ts';
+import { GRADIENT, TAGLINE } from '../_shared/email-theme.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -21,61 +32,61 @@ const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 function htmlTemplate(name: string, amount: number, message: string | null) {
   const formatted = amount.toLocaleString('es-CL');
   const sigName = name && name.length > 0 ? name : 'Amigue peludo';
-  const messageBlock = message
-    ? `
-      <blockquote style="margin:16px 0; padding:12px 14px; border-left: 3px solid #f472b6; background:#fdf2f8; color:#831843; font-style:italic; border-radius:6px;">
-        "${message.replace(/</g, '&lt;')}"
-      </blockquote>
-    `
-    : '';
-  return `<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <title>Gracias por tu aporte</title>
-</head>
-<body style="margin:0; padding:0; background:#fff7ed; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; color:#1f2937;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:24px 0;">
-    <tr>
-      <td align="center">
-        <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 6px 24px rgba(236,72,153,0.12);">
-          <tr>
-            <td style="background: linear-gradient(135deg,#ec4899,#f59e0b); padding: 28px 28px 20px; color:#fff; text-align:center;">
-              <div style="font-size:34px; line-height:1;">🐾💛</div>
-              <h1 style="margin: 8px 0 0; font-size:22px; letter-spacing:-0.01em;">Gracias, ${sigName}</h1>
-              <p style="margin: 6px 0 0; font-size: 13px; opacity:.9;">Tu donacion llego con patitas a Paw Friend</p>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding: 24px 28px; font-size:15px; line-height:1.55;">
-              <p>Soy Pedro, la persona detras de Paw Friend. Leer que alguien como tu decidio donar <b>$${formatted} CLP</b> me hace el dia.</p>
-              <p>Quiero que sepas algo: <b>detras de esta app hay alguien como tu</b> — que ama a los animales, que los quiere cuidar, y que lo va a hacer con un poquito de ayuda tuya. No es una empresa gigante, es un humano peludo mas.</p>
-              <p>Este aporte no solo mantiene una app: <b>es un gesto hacia los que cuidan a los peludos todos los dias</b> — tutores, veterinarios, rescatistas, voluntarios de refugios.</p>
-              <p style="margin: 14px 0 6px; font-weight:600; color:#be185d;">Hacia donde vamos con lo recaudado</p>
-              <ul style="padding-left:18px; margin: 6px 0 10px;">
-                <li><b>Hoy:</b> servidores, seguridad de datos y que la app siga 100% gratis para cualquier tutor.</li>
-                <li><b>Pronto:</b> mapa de <b>callejeros</b> reportables con apoyo colectivo (comida, rescate, esterilizacion).</li>
-                <li><b>Siguiente fase:</b> modulo de <b>adopciones</b> serio, con refugios aliados verificados.</li>
-                <li><b>Futuro:</b> canal transparente para <b>derivar excedentes</b> a hogares de transito y clinicas de bajo costo.</li>
-              </ul>
-              ${messageBlock}
-              <p style="margin-top:18px;">Gracias por cuidar a los peludos. Si tienes ideas, reclamos o simplemente quieres saludar, respondeme este correo — lo leo yo.</p>
-              <p style="margin: 22px 0 0;">Con carino,<br /><b>Pedro</b> · Paw Friend 🐾</p>
-            </td>
-          </tr>
-          <tr>
-            <td style="padding: 14px 28px 24px; font-size:12px; color:#6b7280; border-top:1px solid #f3e8ff;">
-              Si no fuiste tu quien hizo esta donacion, respondenos y lo revisamos.
-              <br />
-              <a href="https://pawfriend.cl" style="color:#db2777; text-decoration:none;">pawfriend.cl</a>
-            </td>
-          </tr>
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>`;
+
+  const body = [
+    emailHeader({
+      variant: 'emoji',
+      gradient: GRADIENT.warm,
+      emoji: '🐾💛',
+      title: `Gracias, ${sigName}`,
+      tagline: TAGLINE.donation,
+    }),
+    paragraph(
+      `Soy Pedro, la persona detras de Paw Friend. Leer que alguien como tu decidio donar $${formatted} CLP me hace el dia.`
+    ),
+    paragraph(
+      'Quiero que sepas algo: detras de esta app hay alguien como tu — que ama a los animales, que los quiere cuidar, y que lo va a hacer con un poquito de ayuda tuya. No es una empresa gigante, es un humano peludo mas.'
+    ),
+    paragraph(
+      'Este aporte no solo mantiene una app: es un gesto hacia los que cuidan a los peludos todos los dias — tutores, veterinarios, rescatistas, voluntarios de refugios.'
+    ),
+    bulletList({
+      label: 'Hacia donde vamos con lo recaudado',
+      items: [
+        {
+          icon: '🛡️',
+          text: 'Hoy: servidores, seguridad de datos y que la app siga 100% gratis para cualquier tutor.',
+        },
+        {
+          icon: '🗺️',
+          text: 'Pronto: mapa de callejeros reportables con apoyo colectivo (comida, rescate, esterilizacion).',
+        },
+        {
+          icon: '🏡',
+          text: 'Siguiente fase: modulo de adopciones serio, con refugios aliados verificados.',
+        },
+        {
+          icon: '💛',
+          text: 'Futuro: canal transparente para derivar excedentes a hogares de transito y clinicas de bajo costo.',
+        },
+      ],
+    }),
+    message ? blockquote(message) : '',
+    signature({
+      intro:
+        'Gracias por cuidar a los peludos. Si tienes ideas, reclamos o simplemente quieres saludar, respondeme este correo — lo leo yo.',
+    }),
+    spacer('md'),
+    emailFooter({
+      note: 'Si no fuiste tu quien hizo esta donacion, respondenos y lo revisamos.',
+    }),
+  ].join('');
+
+  return renderEmail({
+    title: `Gracias por tu aporte a Paw Friend, ${sigName}`,
+    preheader: `Tu donacion de $${formatted} CLP ya llego. Este correo es un gracias humano, no automático.`,
+    body,
+  });
 }
 
 function textTemplate(name: string, amount: number, message: string | null) {

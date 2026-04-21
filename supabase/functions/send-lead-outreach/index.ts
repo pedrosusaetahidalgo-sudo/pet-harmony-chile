@@ -4,18 +4,31 @@
  * Solo accesible por admin autenticado.
  *
  * Para WhatsApp: retorna URLs wa.me para envío manual (API Meta pendiente).
+ *
+ * 2026-04-21: refactor a sistema unificado `_shared/email-*`. Fix: logo URL
+ * que apuntaba a `/lovable-uploads/*.png` (legacy, inconsistente con brand
+ * v2) ahora usa el logo canónico. Paleta indigo → púrpura oficial.
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders } from '../_shared/cors.ts';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import {
+  bulletList,
+  cta,
+  emailFooter,
+  emailHeader,
+  paragraph,
+  section,
+} from '../_shared/email-blocks.ts';
+import { escapeHtml, renderEmail } from '../_shared/email-layout.ts';
+import { BRAND, NEUTRAL, SIZE, SPACE, TAGLINE } from '../_shared/email-theme.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
 const REGISTRO_VET_URL = 'https://pawfriend.cl/registro-veterinario';
-const LOGO_URL = 'https://pawfriend.cl/lovable-uploads/f78e7803-40e0-4194-9e66-80e4fce27093.png';
 
 interface OutreachRequest {
   lead_ids: string[];
@@ -24,84 +37,95 @@ interface OutreachRequest {
   asunto?: string;
 }
 
-/** Genera el HTML del email con branding Paw Friend */
-function buildEmailHTML(nombre: string, comunas: string, mensajeTexto: string): string {
-  // Convertir saltos de línea del template a párrafos HTML
-  const parrafos = mensajeTexto
-    .split('\n\n')
-    .filter(Boolean)
-    .map((p) => {
-      // Detectar listas (líneas que empiezan con -)
-      if (p.includes('\n-')) {
-        const lines = p.split('\n');
-        const intro = lines[0].startsWith('-')
-          ? ''
-          : `<p style="margin:0 0 8px;color:#334155;">${lines[0]}</p>`;
-        const items = lines
-          .filter((l) => l.startsWith('-'))
-          .map((l) => `<li style="margin:4px 0;color:#334155;">${l.slice(1).trim()}</li>`)
-          .join('');
-        return `${intro}<ul style="margin:0 0 16px;padding-left:20px;">${items}</ul>`;
-      }
-      // Detectar headers (PARA TI, PARA LOS DUEÑOS, etc.)
-      if (p === p.toUpperCase() && p.length < 60 && !p.includes('http')) {
-        return `<p style="margin:20px 0 8px;font-weight:700;color:#4f46e5;font-size:14px;text-transform:uppercase;letter-spacing:0.5px;">${p}</p>`;
-      }
-      // Detectar links
-      const withLinks = p.replace(
-        /(https?:\/\/[^\s]+)/g,
-        '<a href="$1" style="color:#4f46e5;text-decoration:underline;">$1</a>'
+/**
+ * Convierte un template de texto plano (con líneas en blanco = párrafos,
+ * líneas que empiezan con `-` = bullets, líneas UPPER = headers) en bloques
+ * del sistema de email compartido.
+ *
+ * Estrategia:
+ *  - Bloques separados por doble \n
+ *  - Si el bloque contiene líneas con `-`, usamos bulletList
+ *  - Si es UPPER en su totalidad, lo tratamos como eyebrow
+ *  - Resto: paragraph con links autodetectados (linkify en HTML seguro)
+ */
+function templateToBlocks(mensajeTexto: string): string {
+  const chunks = mensajeTexto.split('\n\n').filter((c) => c.trim().length > 0);
+  const out: string[] = [];
+  for (const chunk of chunks) {
+    const lines = chunk.split('\n');
+    const bulletLines = lines.filter((l) => l.trim().startsWith('-'));
+
+    // Es una lista si al menos la mitad de las líneas son bullets
+    if (bulletLines.length >= 2 && bulletLines.length >= lines.length - 1) {
+      const intro = lines.find((l) => !l.trim().startsWith('-'))?.trim();
+      if (intro) out.push(paragraph(intro));
+      out.push(
+        bulletList({
+          items: bulletLines.map((l) => ({
+            icon: '✓',
+            text: l.replace(/^\s*-\s*/, '').trim(),
+          })),
+        })
       );
-      return `<p style="margin:0 0 12px;color:#334155;line-height:1.6;">${withLinks}</p>`;
-    })
-    .join('');
+      continue;
+    }
 
-  return `<!DOCTYPE html>
-<html lang="es">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f1f5f9;">
-    <tr><td align="center" style="padding:32px 16px;">
-      <table role="presentation" width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+    // Header UPPER
+    const trimmed = chunk.trim();
+    if (trimmed === trimmed.toUpperCase() && trimmed.length < 60 && !trimmed.includes('http')) {
+      out.push(
+        section(
+          `<p style="margin:0;color:${BRAND[700]};font-size:${SIZE.sm};font-weight:700;text-transform:uppercase;letter-spacing:0.8px;">${escapeHtml(trimmed)}</p>`,
+          `${SPACE.xl} ${SPACE['2xl']} ${SPACE.sm}`
+        )
+      );
+      continue;
+    }
 
-        <!-- Header con logo -->
-        <tr><td style="background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);padding:32px 40px;text-align:center;">
-          <img src="${LOGO_URL}" alt="Paw Friend" width="60" height="60" style="border-radius:12px;margin-bottom:12px;" />
-          <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;">Paw Friend</h1>
-          <p style="margin:4px 0 0;color:#c7d2fe;font-size:13px;">La plataforma veterinaria de Chile</p>
-        </td></tr>
+    // Párrafo normal con linkify seguro (primero escapamos, después
+    // convertimos las URLs escapadas en <a>)
+    const escaped = escapeHtml(trimmed);
+    const linkified = escaped.replace(
+      /(https?:\/\/[^\s&<>"]+)/g,
+      (m) =>
+        `<a href="${m}" target="_blank" rel="noopener noreferrer" style="color:${BRAND[700]};text-decoration:underline;">${m}</a>`
+    );
+    out.push(
+      section(
+        `<p style="margin:0;color:${NEUTRAL[700]};font-size:${SIZE.md};line-height:1.6;">${linkified}</p>`,
+        `${SPACE.sm} ${SPACE['2xl']}`
+      )
+    );
+  }
+  return out.join('');
+}
 
-        <!-- Cuerpo del email -->
-        <tr><td style="padding:32px 40px;">
-          ${parrafos}
-        </td></tr>
+/** Genera el HTML del email con branding Paw Friend */
+function buildEmailHTML(_nombre: string, _comunas: string, mensajeTexto: string): string {
+  const body = [
+    emailHeader({
+      variant: 'logo',
+      tagline: TAGLINE.vet,
+    }),
+    templateToBlocks(mensajeTexto),
+    cta({
+      text: 'Crear mi perfil veterinario gratis',
+      url: REGISTRO_VET_URL,
+      hint: 'Plan Básica gratuito · 5 pacientes · sin comisión de suscripción',
+    }),
+    emailFooter({
+      note: 'Recibes este correo porque tu perfil profesional aparece en directorios públicos.',
+      secondary: 'Si no deseas recibir más correos, responde con "No me contacten".',
+    }),
+  ].join('');
 
-        <!-- CTA Button -->
-        <tr><td style="padding:0 40px 32px;" align="center">
-          <a href="${REGISTRO_VET_URL}" style="display:inline-block;background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:8px;font-weight:600;font-size:15px;">
-            Crear mi perfil veterinario gratis
-          </a>
-        </td></tr>
-
-        <!-- Separador -->
-        <tr><td style="padding:0 40px;"><hr style="border:none;border-top:1px solid #e2e8f0;margin:0;" /></td></tr>
-
-        <!-- Footer -->
-        <tr><td style="padding:24px 40px;text-align:center;">
-          <p style="margin:0 0 8px;color:#94a3b8;font-size:12px;">
-            Paw Friend — pawfriend.cl
-          </p>
-          <p style="margin:0;color:#cbd5e1;font-size:11px;">
-            Recibes este correo porque tu perfil profesional aparece en directorios publicos.
-            <br/>Si no deseas recibir mas correos, responde con "No me contacten".
-          </p>
-        </td></tr>
-
-      </table>
-    </td></tr>
-  </table>
-</body>
-</html>`;
+  return renderEmail({
+    title: 'Paw Friend — tu perfil veterinario gratis',
+    preheader:
+      'Los dueños de mascotas de Chile buscan vet todos los días. Tu ficha digital te posiciona primero.',
+    body,
+    width: 'wide',
+  });
 }
 
 Deno.serve(
