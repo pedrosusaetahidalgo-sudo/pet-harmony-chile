@@ -13,8 +13,9 @@ export const FEATURE_FLAGS = {
    * DESACTIVADO 2026-04-17: la app entrega 100% de las features a todos,
    * independiente del plan. La DB ya esta limpia (migracion 20260526000000
    * reseteo premium falsos a free) y el flujo Flow.cl + apply_premium RPC
-   * siguen activos para upgrades reales. Cuando se decida que bloquear,
-   * poner este flag en true y los PremiumGate pasaran a respetar plan_id.
+   * siguen activos para upgrades reales. Si en el futuro se decide volver
+   * a capear features B2C, activar este flag y reintroducir los gates en
+   * los callsites relevantes (hoy PremiumGate fue removido).
    */
   USER_PREMIUM: false,
 

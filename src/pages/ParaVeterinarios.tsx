@@ -19,8 +19,6 @@ import {
   Stethoscope,
   Star,
   Calendar,
-  Check,
-  X,
   ChevronRight,
   FileText,
   BadgeCheck,
@@ -39,7 +37,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { setSeoTags, injectJsonLd } from '@/lib/vetDirectory';
-import { PROVIDER_PLANS } from '@/lib/plans';
+import { PlanComparisonTableVet } from '@/components/pricing/PlanComparisonTable';
 import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 import { FoundingVetBanner } from '@/components/landing/FoundingVetBanner';
 import { FOUNDING_VET } from '@/lib/config/marketingConfig';
@@ -531,70 +529,12 @@ export default function ParaVeterinarios() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
-            <PlanCard
-              plan={PROVIDER_PLANS.provider_free}
-              ctaLabel="Empezar gratis"
-              onCta={scrollToForm}
-              segment="Individual"
-              features={[
-                '5 pacientes',
-                'Perfil publico',
-                'Ficha clinica compartida',
-                'Reservas online',
-              ]}
-              missing={['Estadisticas avanzadas', 'Bulk import']}
-            />
-            <PlanCard
-              plan={PROVIDER_PLANS.provider_premium}
-              highlight
-              ctaLabel="Postular"
-              onCta={scrollToForm}
-              segment="Individual"
-              features={[
-                'Pacientes ilimitados',
-                'Todo lo de Basica',
-                'Transcripcion IA',
-                'Estadisticas + reportes',
-                'Invitaciones a reseña',
-              ]}
-              missing={['Multi-sede', 'Seats multiples']}
-            />
-            <PlanCard
-              plan={PROVIDER_PLANS.provider_clinic_starter}
-              ctaLabel="Postular"
-              onCta={scrollToForm}
-              segment="Clinica"
-              features={[
-                '500 pacientes',
-                '3 seats / vets',
-                'Bulk import CSV',
-                'Ficha compartida entre seats',
-                'Branding de clinica',
-              ]}
-              missing={['Multi-sede', 'Comision 0%']}
-            />
-            <PlanCard
-              plan={PROVIDER_PLANS.provider_pro_max}
-              ctaLabel="Postular"
-              onCta={scrollToForm}
-              segment="Clinica"
-              features={[
-                'Pacientes ilimitados',
-                'Seats ilimitados',
-                'Multi-sede',
-                '0% comision',
-                'Priority support',
-                'Branding completo',
-              ]}
-              missing={[]}
-            />
-          </div>
-
-          <p className="text-xs text-center text-muted-foreground mt-8">
-            Los precios son referenciales post-lanzamiento. Durante el lanzamiento todos los planes
-            tienen todo incluido gratis.
-          </p>
+          <PlanComparisonTableVet
+            onCta={scrollToForm}
+            ctaLabel={(planId) => (planId === 'provider_free' ? 'Empezar gratis' : 'Postular')}
+            recommendedPlanId="provider_premium"
+            footerNote="Los precios son referenciales post-lanzamiento. Durante el lanzamiento todos los planes tienen todo incluido gratis."
+          />
         </div>
       </section>
 
@@ -747,82 +687,5 @@ export default function ParaVeterinarios() {
 
       <PublicFooter />
     </div>
-  );
-}
-
-// ──────────────────────────────────────────────────────────────
-// PlanCard
-// ──────────────────────────────────────────────────────────────
-
-function PlanCard({
-  plan,
-  highlight,
-  ctaLabel,
-  onCta,
-  features,
-  missing,
-  segment,
-}: {
-  plan: { id: string; name: string; monthlyPrice: number; commissionRate: number };
-  highlight?: boolean;
-  ctaLabel: string;
-  onCta: () => void;
-  features: string[];
-  missing: string[];
-  segment: 'Individual' | 'Clinica';
-}) {
-  return (
-    <Card
-      className={`relative flex flex-col ${
-        highlight ? 'border-purple-500 border-2 shadow-xl md:scale-105' : 'border-purple-200'
-      }`}
-    >
-      {highlight && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <Badge className="bg-purple-600 text-white shadow">⭐ Mas popular</Badge>
-        </div>
-      )}
-      <CardContent className="pt-6 space-y-4 flex-1 flex flex-col">
-        <div>
-          <Badge
-            variant="outline"
-            className={`mb-2 text-[10px] ${
-              segment === 'Clinica'
-                ? 'bg-teal-50 text-teal-700 border-teal-200'
-                : 'bg-purple-50 text-purple-700 border-purple-200'
-            }`}
-          >
-            {segment}
-          </Badge>
-          <h3 className="font-bold text-xl">{plan.name}</h3>
-        </div>
-        <div>
-          <span className="text-3xl font-bold text-purple-700">
-            ${plan.monthlyPrice.toLocaleString('es-CL')}
-          </span>
-          <span className="text-sm text-muted-foreground">/mes</span>
-          <p className="text-xs text-muted-foreground mt-1">
-            Post-lanzamiento · {plan.commissionRate * 100}% comision
-          </p>
-        </div>
-        <ul className="space-y-2 text-sm flex-1">
-          {features.map((f) => (
-            <li key={f} className="flex items-start gap-2">
-              <Check className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
-              <span>{f}</span>
-            </li>
-          ))}
-          {missing.map((m) => (
-            <li key={m} className="flex items-start gap-2 text-muted-foreground">
-              <X className="h-4 w-4 flex-shrink-0 mt-0.5" />
-              <span>{m}</span>
-            </li>
-          ))}
-        </ul>
-        <Button className="w-full" variant={highlight ? 'default' : 'outline'} onClick={onCta}>
-          {ctaLabel}
-        </Button>
-      </CardContent>
-    </Card>
   );
 }

@@ -94,7 +94,7 @@ RoleGuard, edge functions, migraciones SQL, Admin panel.
 | Paw Game, Misiones, Coleccion | O | RoleGuard(owner) |
 | Adopcion, Donantes Sangre, Memorial | O (Labs) | ProtectedRoute |
 | Admin Panel | A | AdminRoute |
-| Analytics Pro, Reportes | O (Premium) | ProtectedRoute + PremiumGate |
+| Analytics Pro, Reportes | O | ProtectedRoute (100% gratis; era PremiumGate antes del pivot 2026-04-19) |
 
 ---
 
@@ -654,14 +654,19 @@ Pagos
 
 ### Flujo end-to-end
 ```
-/upgrade → muestra planes B2C (Gratis vs Premium $3.990/mes)
-  → Click "Suscribirse" → flow-create-subscription edge function
-  → Redirige a Flow.cl (pasarela chilena)
-  → Usuario paga → Flow envia webhook
-  → flow-webhook verifica + actualiza BD (idempotente + rate limited)
-  → Redirige a /upgrade/success o /upgrade/cancel
-  → usePlan refleja nuevo estado (is_premium = true)
-  → Desbloquea: mascotas ilimitadas, PDF, compartir ficha
+Paw Member (B2C voluntario, 2026-04-19+):
+/paw-member → PlanComparisonTableB2C (Gratis vs Paw Member $3.990)
+  → Banner honesto: "NO desbloquea features — solo badge + alianzas"
+  → Click "Hacerme Paw Member" → /donaciones?frecuencia=monthly
+  → flow-create-donation edge function (recurring)
+  → Flow.cl → webhook → is_premium=true + badge 💛
+  → La app sigue 100% gratis para todos (no caps, no gates).
+
+Upgrade B2B Vet:
+/provider/upgrade → PlanComparisonTableVet (4 tiers)
+  → Click "Activar" → flow-create-subscription
+  → Flow.cl → webhook → provider_plan updated
+  → Desbloquea: seats, bulk import, analytics, 0% comisión (Pro Max)
 ```
 
 ### Oportunidades de mejora

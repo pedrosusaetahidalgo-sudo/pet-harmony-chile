@@ -38,7 +38,6 @@ import { useGoToAddPet } from '@/hooks/useCanAddPet';
 import { logger } from '@/lib/logger';
 import { PriceEstimatorCard } from '@/components/home/PriceEstimatorCard';
 import { WeeklyReportCard } from '@/components/home/WeeklyReportCard';
-import { PremiumGate } from '@/components/PremiumGate';
 import { SeasonalTipsCard } from '@/components/home/SeasonalTipsCard';
 import { TodayRoutinesCard } from '@/components/home/TodayRoutinesCard';
 import { AnnualCareChecklist } from '@/components/home/AnnualCareChecklist';
@@ -58,6 +57,7 @@ import { RARITY_BORDER_STYLES } from '@/lib/paw-cards';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePendingReviewCount } from '@/hooks/usePendingReviews';
 import { usePublicDonationStats } from '@/hooks/usePublicDonations';
+import { useAutoAcceptCoOwnerInvitation } from '@/hooks/useAutoAcceptCoOwnerInvitation';
 import { formatDistanceToNowStrict, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useActiveRole } from '@/hooks/useActiveRole';
@@ -205,6 +205,9 @@ export default function Home() {
   const { upcomingReminders, overdueReminders, completeReminder } = useReminders();
   const pendingReviewCount = usePendingReviewCount();
   const { data: publicDonationStats } = usePublicDonationStats();
+  // Procesa ?co_owner=TOKEN si el user aterriza aqui desde un link de
+  // invitacion (WhatsApp del dialog post-AddPet, o noti in-app).
+  useAutoAcceptCoOwnerInvitation();
   const [showNamePrompt, setShowNamePrompt] = useState(false);
 
   useEffect(() => {
@@ -749,41 +752,25 @@ export default function Home() {
               {/* Today's routines */}
               <TodayRoutinesCard />
 
-              {/* Weekly report (Premium; auto-candado cuando USER_PREMIUM=true) */}
-              <PremiumGate
-                feature="weekly_reports"
-                title="Reporte semanal"
-                description="Tendencias de salud, recordatorios cumplidos y análisis por mascota"
-                blurLevel={4}
-              >
-                <WeeklyReportCard />
-              </PremiumGate>
+              <WeeklyReportCard />
 
-              {/* Panel Pro (Premium; auto-candado cuando USER_PREMIUM=true) */}
-              <PremiumGate
-                feature="pro_analytics"
-                title="Panel Pro"
-                description="Análisis avanzado de salud, gráficos y descargas en CSV/PDF"
-                blurLevel={4}
+              <Card
+                className="border-purple-200 bg-gradient-to-br from-purple-50 to-indigo-50 cursor-pointer hover:shadow-md transition-all"
+                onClick={() => navigate(LINKS.proDashboard())}
               >
-                <Card
-                  className="border-purple-200 bg-gradient-to-br from-purple-50 to-indigo-50 cursor-pointer hover:shadow-md transition-all"
-                  onClick={() => navigate(LINKS.proDashboard())}
-                >
-                  <CardContent className="p-3 flex items-center gap-3">
-                    <div className="rounded-xl bg-white p-2 shadow-sm">
-                      <TrendingUp className="h-5 w-5 text-purple-600" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-purple-900">Panel Pro</p>
-                      <p className="text-[11px] text-muted-foreground truncate">
-                        Analytics avanzados de la salud de tus mascotas
-                      </p>
-                    </div>
-                    <Crown className="h-4 w-4 text-amber-500 flex-shrink-0" />
-                  </CardContent>
-                </Card>
-              </PremiumGate>
+                <CardContent className="p-3 flex items-center gap-3">
+                  <div className="rounded-xl bg-white p-2 shadow-sm">
+                    <TrendingUp className="h-5 w-5 text-purple-600" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-purple-900">Panel Pro</p>
+                    <p className="text-[11px] text-muted-foreground truncate">
+                      Analytics avanzados de la salud de tus mascotas
+                    </p>
+                  </div>
+                  <Crown className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                </CardContent>
+              </Card>
             </div>
 
             {/* Right: Primary CTAs + secondary info */}
