@@ -24,6 +24,7 @@
 import { serve } from 'https://deno.land/std@0.190.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.57.2';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import { canReceive, logAttempt } from '../_shared/notification-prefs.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': 'https://pawfriend.cl',
@@ -115,22 +116,35 @@ serve(
         throw new Error('Missing required fields');
       }
 
-      // Fetch profile para obtener teléfono y consentimiento
-      const { data: profile, error: profileErr } = await supabase
-        .from('profiles')
-        .select('display_name, whatsapp_number, whatsapp_opted_in')
-        .eq('id', payload.user_id)
-        .maybeSingle();
-
-      if (profileErr || !profile) {
-        throw new Error('Profile not found');
-      }
-      if (!profile.whatsapp_opted_in || !profile.whatsapp_number) {
-        // Silencioso: el user no acepto WhatsApp, no es error
+      // D.4 prefs + WhatsApp opt-in check centralizado (canReceive).
+      // Si el user no puede recibir, skipeamos silencioso y lo registramos
+      // en notification_attempts con status='skipped'.
+      const canWhatsApp = await canReceive(supabase, payload.user_id, 'pet_reminders', 'whatsapp');
+      if (!canWhatsApp) {
+        await logAttempt(supabase, {
+          bookingType: payload.appointment_id ? 'appointment' : 'pet_reminder',
+          bookingId: payload.appointment_id ?? payload.reminder_id ?? null,
+          reminderType: payload.reminder_type,
+          channel: 'whatsapp',
+          recipientId: payload.user_id,
+          status: 'skipped',
+          errorMessage: 'not_opted_in_or_no_phone',
+        });
         return new Response(JSON.stringify({ skipped: 'not_opted_in' }), {
           status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
+      }
+
+      // Fetch profile para obtener nombre y telefono (canReceive ya valido opt-in)
+      const { data: profile, error: profileErr } = await supabase
+        .from('profiles')
+        .select('display_name, whatsapp_number')
+        .eq('id', payload.user_id)
+        .maybeSingle();
+
+      if (profileErr || !profile || !profile.whatsapp_number) {
+        throw new Error('Profile not found or phone missing');
       }
 
       // Normalizar telefono a E.164 sin signos (+569... -> 569...)
@@ -174,7 +188,9 @@ serve(
         errorMessage = err instanceof Error ? err.message : String(err);
       }
 
-      // Bitacora
+      // Bitacora legacy (whatsapp_message_log) + nueva (notification_attempts).
+      // Mantenemos ambas mientras la migracion a notification_attempts
+      // madura (cron y UI admin aun leen de whatsapp_message_log).
       await supabase.from('whatsapp_message_log').insert({
         user_id: payload.user_id,
         template_name: 'pet_reminder',
@@ -184,6 +200,18 @@ serve(
         error_message: errorMessage,
         related_reminder_id: payload.reminder_id || null,
         related_appointment_id: payload.appointment_id || null,
+      });
+
+      await logAttempt(supabase, {
+        bookingType: payload.appointment_id ? 'appointment' : 'pet_reminder',
+        bookingId: payload.appointment_id ?? payload.reminder_id ?? null,
+        reminderType: payload.reminder_type,
+        channel: 'whatsapp',
+        recipientId: payload.user_id,
+        recipientContact: toPhone,
+        status: status === 'sent' ? 'sent' : 'failed',
+        errorMessage: errorMessage,
+        externalId: metaMessageId,
       });
 
       if (status === 'failed') {

@@ -16,23 +16,35 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { format, isToday, isTomorrow } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { CalendarDays, Plus, Stethoscope, Bell, PawPrint } from '@/lib/icons';
+import { CalendarDays, Plus, Stethoscope, Bell, PawPrint, Syringe } from '@/lib/icons';
 import { LINKS } from '@/lib/links';
 import { GoogleCalendarStatusBanner } from '@/components/GoogleCalendarStatusBanner';
 
 // Valor del tab activo ↔ tipo de evento que muestra.
 // 'hoy' muestra todos los eventos del dia actual.
-type CalendarTab = 'hoy' | 'recordatorios' | 'rutinas' | 'reservas';
+// 'prevenciones' filtra solo reminders de categoria canonica (vaccine/deworming/flea).
+type CalendarTab = 'hoy' | 'recordatorios' | 'rutinas' | 'reservas' | 'prevenciones';
 
 const TAB_TO_FILTER: Record<CalendarTab, string> = {
   hoy: 'all',
   recordatorios: 'reminder',
   rutinas: 'routine',
   reservas: 'booking',
+  prevenciones: 'prevention',
 };
 
+/** Categorias de reminder que cuentan como "prevencion clinica". */
+const PREVENTION_CATEGORIES = new Set(['vaccine', 'deworming', 'flea']);
+
 function parseTab(value: string | null): CalendarTab {
-  if (value === 'recordatorios' || value === 'rutinas' || value === 'reservas') return value;
+  if (
+    value === 'recordatorios' ||
+    value === 'rutinas' ||
+    value === 'reservas' ||
+    value === 'prevenciones'
+  ) {
+    return value;
+  }
   return 'hoy';
 }
 
@@ -105,7 +117,11 @@ export default function UnifiedCalendar() {
     dayEvents = dayEvents.filter((e) => e.type !== 'routine');
   }
 
-  if (filterType !== 'all') {
+  if (filterType === 'prevention') {
+    dayEvents = dayEvents.filter(
+      (e) => e.type === 'reminder' && PREVENTION_CATEGORIES.has(e.category)
+    );
+  } else if (filterType !== 'all') {
     dayEvents = dayEvents.filter((e) => e.type === filterType);
   }
 
@@ -157,11 +173,16 @@ export default function UnifiedCalendar() {
             aca en /calendario el usuario puede saltar entre vistas. */}
         {!isProvider && (
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="hoy" aria-label="Hoy" className="text-xs gap-1">
                 <CalendarDays className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Hoy</span>
                 <span className="sm:hidden">Hoy</span>
+              </TabsTrigger>
+              <TabsTrigger value="prevenciones" aria-label="Prevenciones" className="text-xs gap-1">
+                <Syringe className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">Prevenciones</span>
+                <span className="sm:hidden">Vacunas</span>
               </TabsTrigger>
               <TabsTrigger
                 value="recordatorios"
@@ -170,7 +191,7 @@ export default function UnifiedCalendar() {
               >
                 <Bell className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Recordatorios</span>
-                <span className="sm:hidden">Recordar</span>
+                <span className="sm:hidden">Otros</span>
               </TabsTrigger>
               <TabsTrigger value="rutinas" aria-label="Rutinas" className="text-xs gap-1">
                 <PawPrint className="h-3.5 w-3.5" />

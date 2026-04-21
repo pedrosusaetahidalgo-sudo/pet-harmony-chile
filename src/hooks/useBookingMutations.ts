@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, type QueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
@@ -12,6 +12,97 @@ import {
   canTransition,
   statusToEventType,
 } from '@/lib/bookingStateMachine';
+
+// ── Optimistic helpers ──────────────────────────────────────
+//
+// Plan PRODUCT_SYSTEM_COHERENCE §33.8 y §42 Fase 4.
+// Reducen el lag 500ms-2s perceived en mobile al confirmar/cancelar/
+// reprogramar bookings. Patron: onMutate snapshot + setQueriesData con
+// cambio optimista, onError rollback, onSettled invalidate para traer
+// la verdad del server.
+
+const BOOKING_CACHE_KEYS = ['my-bookings', 'provider-inbox', 'booking-detail'] as const;
+
+type CacheSnapshot = Array<[readonly unknown[], unknown]>;
+
+/**
+ * Toma snapshots de todas las queries que listan bookings, para poder
+ * rollback si la mutation falla.
+ */
+function snapshotBookingQueries(qc: QueryClient): CacheSnapshot {
+  const snapshots: CacheSnapshot = [];
+  for (const key of BOOKING_CACHE_KEYS) {
+    const entries = qc.getQueriesData({ queryKey: [key] });
+    for (const [qk, data] of entries) {
+      snapshots.push([qk, data]);
+    }
+  }
+  return snapshots;
+}
+
+/**
+ * Restaura snapshots de booking queries tras un error.
+ */
+function rollbackBookingQueries(qc: QueryClient, snapshot: CacheSnapshot): void {
+  for (const [qk, data] of snapshot) {
+    qc.setQueryData(qk, data);
+  }
+}
+
+/**
+ * Aplica un patch a todos los bookings con `id === bookingId` en cualquier
+ * query cacheada bajo las claves de booking. Maneja listas arrays y el
+ * shape { pages: [] } de useInfiniteQuery.
+ */
+function optimisticPatchBooking(
+  qc: QueryClient,
+  bookingId: string,
+  patch: Record<string, unknown>
+): void {
+  for (const key of BOOKING_CACHE_KEYS) {
+    qc.setQueriesData({ queryKey: [key] }, (old: unknown) => {
+      if (!old) return old;
+      if (Array.isArray(old)) {
+        return (old as Array<Record<string, unknown>>).map((b) =>
+          b && b.id === bookingId ? { ...b, ...patch } : b
+        );
+      }
+      if (typeof old === 'object' && old !== null && 'id' in old) {
+        const item = old as Record<string, unknown>;
+        return item.id === bookingId ? { ...item, ...patch } : old;
+      }
+      if (
+        typeof old === 'object' &&
+        old !== null &&
+        'pages' in old &&
+        Array.isArray((old as { pages: unknown[] }).pages)
+      ) {
+        const infinite = old as { pages: unknown[] };
+        return {
+          ...infinite,
+          pages: infinite.pages.map((page) =>
+            Array.isArray(page)
+              ? (page as Array<Record<string, unknown>>).map((b) =>
+                  b && b.id === bookingId ? { ...b, ...patch } : b
+                )
+              : page
+          ),
+        };
+      }
+      return old;
+    });
+  }
+}
+
+/**
+ * Invalida todas las queries de booking tras settle (onSettled).
+ */
+function invalidateBookingQueries(qc: QueryClient): void {
+  for (const key of BOOKING_CACHE_KEYS) {
+    qc.invalidateQueries({ queryKey: [key] });
+  }
+  qc.invalidateQueries({ queryKey: ['available-slots'] });
+}
 
 // ── Create Booking ──────────────────────────────────────────
 
@@ -305,10 +396,19 @@ export function useCancelBooking() {
           });
       }
     },
+    // ── Optimistic update: marcar inmediatamente como cancelado en cache ──
+    onMutate: async (input) => {
+      await queryClient.cancelQueries({ queryKey: ['my-bookings'] });
+      await queryClient.cancelQueries({ queryKey: ['provider-inbox'] });
+      const snapshot = snapshotBookingQueries(queryClient);
+      optimisticPatchBooking(queryClient, input.bookingId, {
+        status: 'cancelado',
+        canceled_at: new Date().toISOString(),
+        cancellation_reason: input.reason ?? null,
+      });
+      return { snapshot };
+    },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
-      queryClient.invalidateQueries({ queryKey: ['available-slots'] });
-      queryClient.invalidateQueries({ queryKey: ['booking-detail'] });
       track({
         event: EVENTS.BOOKING_CANCELLED,
         properties: {
@@ -320,10 +420,12 @@ export function useCancelBooking() {
       });
       toast.success('Reserva cancelada');
     },
-    onError: (error: Error) => {
+    onError: (error: Error, _vars, context) => {
+      if (context?.snapshot) rollbackBookingQueries(queryClient, context.snapshot);
       Sentry.captureException(error, { tags: { op: 'booking_mutation', action: 'cancel' } });
       toast.error(error.message || 'Error al cancelar');
     },
+    onSettled: () => invalidateBookingQueries(queryClient),
   });
 }
 
@@ -397,10 +499,17 @@ export function useRescheduleBooking() {
 
       if (error) throw error;
     },
+    onMutate: async (input) => {
+      await queryClient.cancelQueries({ queryKey: ['my-bookings'] });
+      await queryClient.cancelQueries({ queryKey: ['provider-inbox'] });
+      const snapshot = snapshotBookingQueries(queryClient);
+      const patch: Record<string, unknown> = { scheduled_date: input.newDate };
+      if (input.newStartTime) patch.start_time = input.newStartTime;
+      if (input.newEndTime) patch.end_time = input.newEndTime;
+      optimisticPatchBooking(queryClient, input.bookingId, patch);
+      return { snapshot };
+    },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['my-bookings'] });
-      queryClient.invalidateQueries({ queryKey: ['available-slots'] });
-      queryClient.invalidateQueries({ queryKey: ['booking-detail'] });
       track({
         event: EVENTS.BOOKING_RESCHEDULED,
         properties: {
@@ -411,10 +520,12 @@ export function useRescheduleBooking() {
       });
       toast.success('Reserva reprogramada');
     },
-    onError: (error: Error) => {
+    onError: (error: Error, _vars, context) => {
+      if (context?.snapshot) rollbackBookingQueries(queryClient, context.snapshot);
       Sentry.captureException(error, { tags: { op: 'booking_mutation', action: 'reschedule' } });
       toast.error('Error al reprogramar');
     },
+    onSettled: () => invalidateBookingQueries(queryClient),
   });
 }
 
@@ -440,9 +551,16 @@ export function useConfirmBooking() {
         .eq('id', input.bookingId);
       if (error) throw error;
     },
+    onMutate: async (input) => {
+      await queryClient.cancelQueries({ queryKey: ['provider-inbox'] });
+      const snapshot = snapshotBookingQueries(queryClient);
+      optimisticPatchBooking(queryClient, input.bookingId, {
+        status: 'confirmado',
+        confirmed_at: new Date().toISOString(),
+      });
+      return { snapshot };
+    },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['provider-inbox'] });
-      queryClient.invalidateQueries({ queryKey: ['booking-detail'] });
       track({
         event: EVENTS.BOOKING_CONFIRMED,
         properties: {
@@ -454,10 +572,12 @@ export function useConfirmBooking() {
       });
       toast.success('Reserva confirmada');
     },
-    onError: (error: Error) => {
+    onError: (error: Error, _vars, context) => {
+      if (context?.snapshot) rollbackBookingQueries(queryClient, context.snapshot);
       Sentry.captureException(error, { tags: { op: 'booking_mutation', action: 'confirm' } });
       toast.error('Error al confirmar');
     },
+    onSettled: () => invalidateBookingQueries(queryClient),
   });
 }
 
@@ -475,9 +595,13 @@ export function useMarkCompleted() {
         .eq('id', input.bookingId);
       if (error) throw error;
     },
+    onMutate: async (input) => {
+      await queryClient.cancelQueries({ queryKey: ['provider-inbox'] });
+      const snapshot = snapshotBookingQueries(queryClient);
+      optimisticPatchBooking(queryClient, input.bookingId, { status: 'completado' });
+      return { snapshot };
+    },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['provider-inbox'] });
-      queryClient.invalidateQueries({ queryKey: ['booking-detail'] });
       if (variables.bookingType === 'vet') {
         track({
           event: EVENTS.BOOKING_COMPLETED_VET,
@@ -488,10 +612,12 @@ export function useMarkCompleted() {
       }
       toast.success('Atencion completada');
     },
-    onError: (error: Error) => {
+    onError: (error: Error, _vars, context) => {
+      if (context?.snapshot) rollbackBookingQueries(queryClient, context.snapshot);
       Sentry.captureException(error, { tags: { op: 'booking_mutation', action: 'complete' } });
       toast.error('Error al completar');
     },
+    onSettled: () => invalidateBookingQueries(queryClient),
   });
 }
 
@@ -509,9 +635,13 @@ export function useMarkNoShow() {
         .eq('id', input.bookingId);
       if (error) throw error;
     },
+    onMutate: async (input) => {
+      await queryClient.cancelQueries({ queryKey: ['provider-inbox'] });
+      const snapshot = snapshotBookingQueries(queryClient);
+      optimisticPatchBooking(queryClient, input.bookingId, { status: 'no_show' });
+      return { snapshot };
+    },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['provider-inbox'] });
-      queryClient.invalidateQueries({ queryKey: ['booking-detail'] });
       track({
         event: EVENTS.BOOKING_NO_SHOW,
         properties: {
@@ -521,10 +651,12 @@ export function useMarkNoShow() {
       });
       toast.success('Marcado como no presentado');
     },
-    onError: (error: Error) => {
+    onError: (error: Error, _vars, context) => {
+      if (context?.snapshot) rollbackBookingQueries(queryClient, context.snapshot);
       Sentry.captureException(error, { tags: { op: 'booking_mutation', action: 'no_show' } });
       toast.error('Error al marcar no-show');
     },
+    onSettled: () => invalidateBookingQueries(queryClient),
   });
 }
 
@@ -542,14 +674,20 @@ export function useStartBooking() {
         .eq('id', input.bookingId);
       if (error) throw error;
     },
+    onMutate: async (input) => {
+      await queryClient.cancelQueries({ queryKey: ['provider-inbox'] });
+      const snapshot = snapshotBookingQueries(queryClient);
+      optimisticPatchBooking(queryClient, input.bookingId, { status: 'en_curso' });
+      return { snapshot };
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['provider-inbox'] });
-      queryClient.invalidateQueries({ queryKey: ['booking-detail'] });
       toast.success('Atencion iniciada');
     },
-    onError: (error: Error) => {
+    onError: (error: Error, _vars, context) => {
+      if (context?.snapshot) rollbackBookingQueries(queryClient, context.snapshot);
       Sentry.captureException(error, { tags: { op: 'booking_mutation', action: 'start' } });
       toast.error('Error al iniciar');
     },
+    onSettled: () => invalidateBookingQueries(queryClient),
   });
 }
