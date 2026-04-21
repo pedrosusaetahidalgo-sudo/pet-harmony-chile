@@ -23,6 +23,7 @@ import { ProfileSettingsList } from '@/components/profile/ProfileSettingsList';
 import { EditProfileDrawer } from '@/components/profile/EditProfileDrawer';
 import { BecomeProviderCTA } from '@/components/BecomeProviderCTA';
 import { OfferServicesBanner } from '@/components/OfferServicesBanner';
+import { MyApplicationsSection } from '@/components/MyApplicationsSection';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { useActiveRole } from '@/hooks/useActiveRole';
@@ -221,6 +222,11 @@ const Profile = () => {
 
       {/* ── Bloque C.2: Ofrecer servicios si perfil completo + ficha ── */}
       <OfferServicesBanner />
+
+      {/* ── Bloque C.3: Mis postulaciones (Paw Voices / Companys / Pitch).
+            Se auto-esconde si el usuario no ha postulado a nada. Plan
+            PRODUCT_SYSTEM_COHERENCE_MASTER_PLAN §33.4. ── */}
+      <MyApplicationsSection />
 
       {/* ── Bloque D: Social Mini-bar ── */}
       <Card>

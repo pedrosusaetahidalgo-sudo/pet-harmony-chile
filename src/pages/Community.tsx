@@ -18,7 +18,7 @@ import {
   MapPin,
   Sparkles,
 } from '@/lib/icons';
-import { PawLabsBanner } from '@/components/PawLabsBanner';
+import { NewBadge } from '@/components/NewBadge';
 import {
   useCommunityGroups,
   useMyGroupMemberships,
@@ -108,7 +108,11 @@ function GroupList() {
           </div>
         )}
 
-        <PawLabsBanner description="Comunidad esta en beta. Conecta con otros duenos por raza, condicion medica, region o interes." />
+        <NewBadge
+          variant="community"
+          title="Comunidad"
+          description="Conecta con otros dueños por raza, condición médica, región o interés."
+        />
 
         {!isLoading && filtered.length === 0 && (
           <EmptyState

@@ -88,15 +88,14 @@ export function BottomTabBar() {
         p === '/adoption',
     },
     {
+      // Tab Agenda = fuente unica temporal. Matchea /calendario y sus
+      // list views asociadas (Mis reservas, Recordatorios, Rutinas) para
+      // que desde esas paginas la tab siga marcada activa.
       label: 'Agenda',
       icon: CalendarDays,
       href: LINKS.calendarToday(),
       matchPaths: (p) =>
-        p === '/calendario' ||
-        p === '/reminders' ||
-        p === '/rutinas' ||
-        p === '/mis-reservas' ||
-        p === '/calendar',
+        p === '/calendario' || p === '/reminders' || p === '/rutinas' || p === '/mis-reservas',
       badge: reminderBadge,
     },
     {

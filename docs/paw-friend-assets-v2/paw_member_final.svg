@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <title>Paw Member — Ring Dorado + Corona Premium</title>
+  <defs>
+    <!-- Violeta master Paw Friend -->
+    <linearGradient id="violetBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#7e22ce"/>
+    </linearGradient>
+
+    <!-- Ring metálico dorado: 7 stops mirrored con highlight central blanco (estilo Paw Companys Gold) -->
+    <linearGradient id="goldRing" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#78350f"/>
+      <stop offset="22%" stop-color="#d97706"/>
+      <stop offset="42%" stop-color="#facc15"/>
+      <stop offset="50%" stop-color="#fef3c7"/>
+      <stop offset="58%" stop-color="#facc15"/>
+      <stop offset="78%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#78350f"/>
+    </linearGradient>
+
+    <!-- Corona stroke gradient (amarillo → naranja, como la referencia) -->
+    <linearGradient id="crownStroke" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="50%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+
+    <!-- Sheen sutil para ring -->
+    <linearGradient id="topSheen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- Outer squircle (border del ring) -->
+    <path id="squirclePath" d="M 512 60 C 812 60, 964 212, 964 512 C 964 812, 812 964, 512 964 C 212 964, 60 812, 60 512 C 60 212, 212 60, 512 60 Z"/>
+    <!-- Inner squircle (contenido violeta) -->
+    <path id="innerSquircle" d="M 512 120 C 772 120, 904 252, 904 512 C 904 772, 772 904, 512 904 C 252 904, 120 772, 120 512 C 120 252, 252 120, 512 120 Z"/>
+    <clipPath id="innerClip"><use href="#innerSquircle"/></clipPath>
+
+    <!-- Drop shadow suave para corona -->
+    <filter id="crownShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
+      <feOffset dx="0" dy="3"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.45"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- RING dorado metálico -->
+  <use href="#squirclePath" fill="url(#goldRing)"/>
+
+  <!-- Inner violeta (paw area) -->
+  <use href="#innerSquircle" fill="url(#violetBg)"/>
+
+  <!-- Soft inner shadow line entre ring y content -->
+  <use href="#innerSquircle" fill="none" stroke="rgba(0,0,0,0.22)" stroke-width="1.5"/>
+
+  <!-- Sheen en inner (opcional, sutil) -->
+  <g clip-path="url(#innerClip)">
+    <rect x="120" y="120" width="784" height="320" fill="url(#topSheen)"/>
+  </g>
+
+  <!-- Ring shine highlight arriba-izquierda (estilo Paw Companys) -->
+  <ellipse cx="300" cy="160" rx="180" ry="32" fill="#ffffff" fill-opacity="0.45" transform="rotate(-28 300 160)"/>
+
+  <!-- 2 gemas violetas laterales en el ring como "medalla" -->
+  <g>
+    <circle cx="90" cy="512" r="14" fill="#9333EA"/>
+    <circle cx="86" cy="508" r="4" fill="#ffffff" opacity="0.7"/>
+    <circle cx="934" cy="512" r="14" fill="#9333EA"/>
+    <circle cx="930" cy="508" r="4" fill="#ffffff" opacity="0.7"/>
+  </g>
+
+  <!-- PAW idéntica al master, dentro del inner squircle -->
+  <!-- Master paw ocupa su squircle de 680; aquí inner squircle es 784. Scale 1.152, center (512, 512) -->
+  <!-- Shift paw hacia abajo para dejar espacio a la corona arriba -->
+  <g clip-path="url(#innerClip)">
+    <g transform="translate(120 160) scale(1.152)">
+      <ellipse cx="340" cy="430" rx="155" ry="135" fill="#FFFFFF"/>
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)" fill="#FFFFFF"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)" fill="#FFFFFF"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)" fill="#FFFFFF"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)" fill="#FFFFFF"/>
+    </g>
+  </g>
+
+  <!-- Corazón violeta recortado del pad (pad center escalado: 512, 655) -->
+  <path d="
+    M 512 720
+    C 498 704, 475 688, 461 672
+    C 447 656, 451 631, 473 627
+    C 489 624, 503 631, 512 643
+    C 521 631, 535 624, 551 627
+    C 573 631, 577 656, 563 672
+    C 549 688, 526 704, 512 720 Z"
+    fill="url(#violetBg)"/>
+
+  <!-- =========================== -->
+  <!-- CORONA line-art arriba del paw, estilo referencia -->
+  <!-- =========================== -->
+  <!-- Posición: coronando el paw, tapando parcialmente el toe central superior -->
+  <!-- Anchor: center (512, 275), crown width ~360, height ~160 -->
+  <g filter="url(#crownShadow)" clip-path="url(#innerClip)">
+
+    <!-- CROWN BODY: path con 5 puntas + valles entre puntas + base -->
+    <!-- Puntas: 5 peaks en (332, 195), (400, 235), (512, 175), (624, 235), (692, 195) -->
+    <!-- Valleys entre peaks: (366, 275), (456, 275), (568, 275), (658, 275) -->
+    <!-- Base: (320, 310) a (704, 310) -->
+    <g fill="none" stroke="url(#crownStroke)" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+
+      <!-- Upper silhouette: left rise + 5 peaks + right descent -->
+      <path d="
+        M 320 310
+        L 332 200
+        L 366 275
+        L 400 235
+        L 456 275
+        L 512 180
+        L 568 275
+        L 624 235
+        L 658 275
+        L 692 200
+        L 704 310
+      "/>
+
+      <!-- Base line (doble línea como la referencia) -->
+      <line x1="312" y1="310" x2="712" y2="310"/>
+      <line x1="338" y1="335" x2="686" y2="335"/>
+
+    </g>
+
+    <!-- 5 círculos en las puntas (peak dots como la referencia) -->
+    <g stroke="url(#crownStroke)" stroke-width="8" fill="#1a102b">
+      <circle cx="332" cy="195" r="14"/>
+      <circle cx="400" cy="230" r="12"/>
+      <circle cx="512" cy="172" r="16"/>
+      <circle cx="624" cy="230" r="12"/>
+      <circle cx="692" cy="195" r="14"/>
+    </g>
+
+    <!-- Pequeños detalles decorativos (como los puntos y la C central de la referencia) -->
+    <g fill="none" stroke="url(#crownStroke)" stroke-width="6" stroke-linecap="round">
+      <!-- "C" stylized en el centro de la base -->
+      <path d="M 530 290 Q 498 290, 498 272 Q 498 258, 510 254"/>
+    </g>
+    <!-- Tiny dots a los lados del detalle central -->
+    <circle cx="440" cy="285" r="4" fill="url(#crownStroke)"/>
+    <circle cx="584" cy="285" r="4" fill="url(#crownStroke)"/>
+
+  </g>
+</svg>

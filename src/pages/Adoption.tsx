@@ -1,5 +1,5 @@
 import { lazy, Suspense, useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -11,7 +11,7 @@ import { useActiveRole } from '@/hooks/useActiveRole';
 import { PageHeader } from '@/components/PageHeader';
 import { LINKS } from '@/lib/links';
 import { useNavigate } from 'react-router-dom';
-import { PawLabsBanner } from '@/components/PawLabsBanner';
+import { NewBadge } from '@/components/NewBadge';
 import { EmptyStateIllustration } from '@/components/EmptyStateIllustration';
 import { loadPreferences, rankByMatch, type MatchablePost } from '@/lib/adoptionMatch';
 
@@ -26,6 +26,7 @@ const Adoption = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isShelter, isShelterLoading } = useActiveRole();
+  const queryClient = useQueryClient();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [selectedTab, setSelectedTab] = useState('available');
 
@@ -84,8 +85,13 @@ const Adoption = () => {
   }, [posts, selectedTab]);
 
   const handlePostCreated = () => {
+    // Bug fix 2026-04-21: refetch() era no-op cuando la query estaba
+    // `enabled: false` (tab "shelters"). Invalidamos TODAS las variantes
+    // de ['adoption-posts', *] y auto-cambiamos a "my-posts" para que el
+    // usuario vea su publicacion recien creada sin dudar si se guardo.
     setShowCreateDialog(false);
-    refetch();
+    queryClient.invalidateQueries({ queryKey: ['adoption-posts'] });
+    setSelectedTab('my-posts');
   };
 
   return (
@@ -96,7 +102,11 @@ const Adoption = () => {
         onBack={() => navigate(LINKS.home())}
       />
       <div className="container max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
-        <PawLabsBanner description="Publica mascotas en adopcion o encuentra refugios cercanos. Plataforma en crecimiento." />
+        <NewBadge
+          variant="impact"
+          title="Adopción"
+          description="Publica mascotas buscando hogar o descubre refugios cercanos."
+        />
 
         {/* CTA refugios: si el user no es shelter aun, ofrecer registro */}
         {!isShelterLoading && !isShelter && (

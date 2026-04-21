@@ -62,14 +62,18 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 
-// ── Owner: 6 items core (siempre visibles) ──
+// ── Owner: 5 items core (siempre visibles) ──
+// 2026-04-21 (plan PRODUCT_SYSTEM_COHERENCE Fase 1): antes eran 6 items
+// pero Calendario + Mis reservas + Recordatorios apuntaban todos a
+// /calendario?tab=X (mismo page, distintos tabs). Consolidamos a un solo
+// "Agenda" en core y las list views dedicadas (Mis reservas, Recordatorios,
+// Rutinas) viven en el subgrupo "Día a día" de Explorar.
 const coreOwnerItems = [
   { title: 'Inicio', url: LINKS.home(), icon: HomeIcon },
   { title: 'Mis Mascotas', url: LINKS.myPets(), icon: PawPrint },
+  { title: 'Agenda', url: LINKS.calendarToday(), icon: CalendarDays },
   { title: 'Buscar vet', url: LINKS.vets(), icon: Search },
-  { title: 'Calendario', url: LINKS.calendarToday(), icon: CalendarDays },
-  { title: 'Mis reservas', url: LINKS.bookingsTab(), icon: Calendar },
-  { title: 'Recordatorios', url: LINKS.remindersTab(), icon: Bell },
+  { title: 'Servicios', url: '/servicios', icon: Briefcase },
 ];
 
 // ── Owner: items secundarios en sección colapsable "Explorar" ──
@@ -93,33 +97,37 @@ type ExploreSubgroup = {
 
 const exploreSubgroups: ExploreSubgroup[] = [
   {
+    // Día a día: list views temporales distintas al calendario visual.
+    // Mis reservas y Recordatorios vienen aqui desde el core (2026-04-21)
+    // para eliminar la ilusion de "3 items que llevan al mismo page".
+    // El item subitem "Rutinas" renombrado mantiene deep link al tab del calendario.
     key: 'dia-dia',
     label: 'Día a día',
     icon: RefreshCw,
     items: [
+      { title: 'Mis reservas', url: LINKS.bookings(), icon: Calendar, flag: null },
+      { title: 'Recordatorios', url: LINKS.reminders(), icon: Bell, flag: null },
       { title: 'Rutinas', url: LINKS.routinesTab(), icon: RefreshCw, flag: null },
       { title: 'Reportes', url: '/reportes', icon: BarChart3, flag: null },
     ],
   },
   {
-    key: 'servicios',
-    label: 'Servicios',
-    icon: Briefcase,
-    items: [
-      { title: 'Servicios', url: '/servicios', icon: Briefcase, flag: null },
-      { title: 'Mapa', url: '/maps', icon: MapIcon, flag: null },
-    ],
+    key: 'mapa',
+    label: 'Descubrir',
+    icon: MapIcon,
+    items: [{ title: 'Mapa', url: '/maps', icon: MapIcon, flag: null }],
   },
   {
-    // Nota: se llamaba "Comunidad" pero con FEED y CHAT desactivados quedaba
-    // como "Comunidad > Comunidad" (subgrupo y item con el mismo nombre).
-    // Renombrado a "Social" para evitar la duplicacion visual.
-    key: 'social',
-    label: 'Social',
+    // 2026-04-21: "Social" renombrado a "Comunidad". Antes decia "Social"
+    // porque FEED+CHAT desactivados dejaban solo "Grupos" y quedaba
+    // "Comunidad > Comunidad". Con la consolidacion, "Comunidad" es el
+    // grupo y "Grupos" queda como item dentro sin choque semantico.
+    key: 'comunidad',
+    label: 'Comunidad',
     icon: Users,
     items: [
-      { title: 'Feed', url: '/feed', icon: Activity, flag: 'FEED' as const },
       { title: 'Grupos', url: '/comunidad', icon: Users, flag: 'LABS_COMMUNITY' as const },
+      { title: 'Feed', url: '/feed', icon: Activity, flag: 'FEED' as const },
       { title: 'Mensajes', url: '/chat', icon: MessageSquare, flag: 'CHAT' as const },
     ],
   },
@@ -219,12 +227,14 @@ export function AppSidebar() {
   const showPremiumBadges = isFeatureEnabled('USER_PREMIUM') && !isPremium;
   const [exploreOpen, setExploreOpen] = useState(false);
   // Estado abierto/cerrado por sub-grupo dentro de Explorar. Por defecto
-  // Causas abierto (nuevo y el mas accionable: adopcion, sangre, donaciones);
+  // "Dia a dia" abierto (contiene Mis reservas/Recordatorios/Rutinas/Reportes,
+  // las list views que antes estaban en el core del sidebar). Causas
+  // tambien abierto por ser accionable (adopcion, sangre, donaciones);
   // el resto cerrado para no saturar.
   const [exploreSubOpen, setExploreSubOpen] = useState<Record<string, boolean>>({
-    'dia-dia': false,
-    servicios: false,
-    social: false,
+    'dia-dia': true,
+    mapa: false,
+    comunidad: false,
     causas: true,
     'paw-labs': false,
   });

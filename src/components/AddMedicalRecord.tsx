@@ -271,51 +271,26 @@ export function AddMedicalRecord({
         reward({ kind: 'vaccine_logged', petId, petName, vaccineName: title });
       }
 
-      // Auto-create reminder for next dose (vaccines, deworming & antiparasitarios with next_date)
+      // 2026-04-21 (plan §31.2): eliminamos el insert manual de pet_reminders
+      // aqui. Ahora es el trigger SQL create_vaccine_reminder() (mig
+      // 20260521000040) quien inserta con la taxonomia canonica
+      // (vaccine | deworming | flea) y frecuencia auto-calculada alineada
+      // con src/lib/frequencies.ts. Dos fuentes → una fuente.
+      //
+      // Si el usuario definio next_date, el trigger la respeta; si no, se
+      // auto-calcula +12m vacuna, +3m deworming interno, +1m flea externo
+      // (Bravecto/Nexgard Spectra +3m).
+      //
+      // Si quieres volver al insert manual como fallback, consulta el
+      // historial git commit que introdujo esta migracion.
       const isAntiparasitario =
         recordType === 'antiparasitario' ||
         recordType === 'desparasitacion' ||
         recordType === 'antipulgas';
-      if (nextDate && (recordType === 'vacuna' || isAntiparasitario)) {
-        try {
-          const reminderType = recordType === 'vacuna' ? 'vaccine' : 'deworming';
-          let reminderTitle: string;
-          let isRecurring = false;
-          let recurrenceInterval: string | null = null;
-
-          if (recordType === 'vacuna') {
-            reminderTitle = `Proxima dosis: ${title}`;
-          } else if (recordType === 'antiparasitario') {
-            const typeLabel =
-              antiparasiticType === 'interno'
-                ? 'interno'
-                : antiparasiticType === 'externo'
-                  ? 'externo'
-                  : 'antiparasitario';
-            reminderTitle = `Proximo antiparasitario ${typeLabel}: ${title}`;
-            isRecurring = true;
-            // Externo = monthly, interno/ambos = quarterly
-            recurrenceInterval = antiparasiticType === 'externo' ? 'monthly' : 'quarterly';
-          } else {
-            reminderTitle = `Proxima desparasitacion: ${title}`;
-            isRecurring = true;
-            recurrenceInterval = 'quarterly';
-          }
-
-          await supabase.from('pet_reminders').insert({
-            pet_id: petId,
-            owner_id: user.id,
-            type: reminderType,
-            title: reminderTitle,
-            due_date: format(nextDate, 'yyyy-MM-dd'),
-            is_recurring: isRecurring,
-            recurrence_interval: recurrenceInterval,
-          });
-          toast.info('Recordatorio automatico creado para la proxima aplicacion');
-          queryClient.invalidateQueries({ queryKey: ['reminders'] });
-        } catch (reminderError) {
-          logger.error('Error creating auto-reminder:', reminderError);
-        }
+      if (recordType === 'vacuna' || isAntiparasitario) {
+        toast.info('Recordatorio automatico creado para la proxima aplicacion');
+        queryClient.invalidateQueries({ queryKey: ['reminders'] });
+        queryClient.invalidateQueries({ queryKey: ['pet-reminders'] });
       }
 
       queryClient.invalidateQueries({ queryKey: ['medical-records'] });

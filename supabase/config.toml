@@ -139,3 +139,37 @@ verify_jwt = false
 
 [functions.generate-daily-digest]
 verify_jwt = false
+
+# ── Edge functions huerfanas registradas 2026-04-21 (plan de coherencia
+#    Fase 0). Antes estaban en supabase/functions/ pero no en config.toml,
+#    asi que los triggers SQL + crons que las invocaban via pg_net fallaban
+#    silenciosamente (fire-and-forget). Todas tienen verify_jwt = false
+#    porque se invocan desde crons o triggers server-side con service_role.
+# ───────────────────────────────────────────────────────────────────────
+
+[functions.send-push-notification]
+verify_jwt = false
+
+[functions.send-inactive-user-reminder]
+verify_jwt = false
+
+[functions.send-monthly-vet-stats]
+verify_jwt = false
+
+[functions.send-new-pet-drip]
+verify_jwt = false
+
+[functions.send-pet-birthday-greeting]
+verify_jwt = false
+
+[functions.send-shelter-welcome]
+verify_jwt = false
+
+[functions.backup-weekly-snapshot]
+verify_jwt = false
+
+[functions.geocode-address]
+verify_jwt = false
+
+[functions.notify-vet-share]
+verify_jwt = false

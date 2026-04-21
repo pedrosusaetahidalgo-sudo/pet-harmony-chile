@@ -122,6 +122,8 @@ Resumen de items activos:
 
 | Documento | Que contiene | Estado |
 |---|---|---|
+| [docs-raiz/planes/PRODUCT_SYSTEM_COHERENCE_MASTER_PLAN.md](docs-raiz/planes/PRODUCT_SYSTEM_COHERENCE_MASTER_PLAN.md) | Plan maestro 2026-04-21: coherencia booking + preventive care + navegacion + adopciones + wiring + Beta Labs. 43 secciones + 15 apendices, evidencia linea por linea | Activo — Dia 1 ejecutado |
+| [docs-raiz/planes/EJECUCION_COHERENCE_PLAN_DIA_1.md](docs-raiz/planes/EJECUCION_COHERENCE_PLAN_DIA_1.md) | Ejecucion Dia 1 del plan: Fase 0 hotfixes + Fase 1 navegacion + Fase 2 preventive care. 3 migraciones pendientes de Pedro + deploy 9 edge fns | Activo — Dia 2 pendiente |
 | [docs-raiz/planes/SUGERENCIAS_COMPLETAS_2026_04_16.md](docs-raiz/planes/SUGERENCIAS_COMPLETAS_2026_04_16.md) | 49 sugerencias en 10 categorias con plan de ejecucion de 4 semanas | Activo |
 | [docs-raiz/operacion/PENDIENTES_MANUALES.md](docs-raiz/operacion/PENDIENTES_MANUALES.md) | Items que requieren trabajo manual (assets, stores, verificaciones) | Activo |
 

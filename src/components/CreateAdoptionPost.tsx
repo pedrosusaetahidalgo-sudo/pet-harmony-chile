@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
@@ -76,6 +77,7 @@ type AdoptionPostFormData = z.infer<typeof adoptionPostSchema>;
 
 export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdoptionPostProps) {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [photoUrls, setPhotoUrls] = useState<string[]>([]);
   const [photoPaths, setPhotoPaths] = useState<string[]>([]);
@@ -198,6 +200,11 @@ export function CreateAdoptionPost({ open, onOpenChange, onSuccess }: CreateAdop
         logger.error('Error awarding points:', pointsError);
         // Don't fail the adoption post creation if points fail
       }
+
+      // Defensa en profundidad: invalidamos aqui tambien por si el caller
+      // no lo hace (bug historico en Adoption.tsx donde refetch() no corria
+      // si la query estaba disabled en el tab shelters).
+      queryClient.invalidateQueries({ queryKey: ['adoption-posts'] });
 
       toast.success('Publicación creada exitosamente');
       reset();

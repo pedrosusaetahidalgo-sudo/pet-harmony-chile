@@ -866,7 +866,9 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
-                <Route path="/calendar" element={<Navigate to="/mis-reservas" replace />} />
+                {/* 2026-04-21: antes redirigia a /mis-reservas (confuso), */}
+                {/* ahora al calendario unificado que es la superficie temporal default. */}
+                <Route path="/calendar" element={<Navigate to="/calendario?tab=hoy" replace />} />
                 {/* Paw Voices — pagina publica (creadores/influencers) */}
                 <Route
                   path="/paw-voices"

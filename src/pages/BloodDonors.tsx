@@ -27,7 +27,7 @@ import { toast } from 'sonner';
 import { Skeleton } from '@/components/ui/skeleton';
 import { COMUNAS_SANTIAGO } from '@/lib/locations';
 import { useStartConversation } from '@/hooks/useStartConversation';
-import { PawLabsBanner } from '@/components/PawLabsBanner';
+import { NewBadge } from '@/components/NewBadge';
 
 // Blood type options by species
 const DOG_BLOOD_TYPES = ['DEA 1.1+', 'DEA 1.1-', 'DEA 3', 'DEA 4', 'DEA 5', 'DEA 7'];
@@ -145,7 +145,11 @@ export default function BloodDonors() {
 
   return (
     <div className="container max-w-4xl mx-auto p-4 md:p-6 space-y-6 animate-fade-in">
-      <PawLabsBanner description="Banco de sangre comunitario para mascotas. Conectamos donantes con quienes lo necesitan." />
+      <NewBadge
+        variant="impact"
+        title="Banco de sangre"
+        description="Red comunitaria de donantes. Conectamos donantes con mascotas que lo necesitan."
+      />
       {/* Header */}
       <div className="text-center space-y-2">
         <div className="flex items-center justify-center gap-2">
