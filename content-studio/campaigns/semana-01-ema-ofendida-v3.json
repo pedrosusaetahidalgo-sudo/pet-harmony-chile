@@ -1,0 +1,154 @@
+{
+  "slug": "semana-01-ema-ofendida-v3",
+  "pilar": "A",
+  "publishDate": "2026-05-04",
+  "platforms": ["instagram", "tiktok", "reels", "linkedin"],
+  "caption": {
+    "instagram": "Tienes un favorito… aunque no quieras.\n\nUno tiene ficha clínica.\nEl otro no.\n\nY cuando pasa algo, se nota.\n\nOrdénalo en 2 minutos en pawfriend.cl 🐾",
+    "tiktok": "Tu gato ya sabe esto 😾👇 pawfriend.cl",
+    "linkedin": "Cuando tienes más de una mascota, la información se fragmenta.\n\nPaw Friend centraliza la ficha clínica de cada mascota en un solo lugar, simple y gratis.\n\npawfriend.cl · Hecho en Chile"
+  },
+  "hashtags": {
+    "instagram": "#mascotaschile #gatoschile #perroschile #pawfriend #vet #fichaclinica",
+    "tiktok": "#mascotaschile #gatosdetiktok #perrostiktok #petcare #vet #pawfriend",
+    "linkedin": "#PetTech #StartupChile #HealthTech #SaaS"
+  },
+  "music": {
+    "path": "music/semana-01-ema-ofendida-v3.mp3",
+    "searchTags": "chill,upbeat,happy"
+  },
+  "staticAssets": [
+    {
+      "id": "ig-1-cover",
+      "layout": "carousel-cover",
+      "data": {
+        "headline": "Tienes un favorito",
+        "sub": "Aunque no quieras",
+        "imageSearch": "cat serious staring camera portrait",
+        "visualHint": "Split diagonal. Parte superior #9333EA con perro feliz iluminado. Parte inferior #0F172A con gato serio en sombra. Texto centrado cruzando ambas zonas. Glow sutil amber en la línea divisoria.",
+        "imagePath": "stock/semana-01-ema-ofendida-v3-ig-1-cover-01f74c5928.jpg"
+      }
+    },
+    {
+      "id": "ig-2-body",
+      "layout": "carousel-body",
+      "data": {
+        "headline": "Uno tiene todo",
+        "sub": "El otro… nada",
+        "imageSearch": "happy dog veterinarian checkup",
+        "visualHint": "Comparación lado a lado. Izquierda fondo claro con checklist ordenado (vacunas, peso, vet). Derecha fondo oscuro con iconos caóticos desordenados. Contraste fuerte tipo before/after.",
+        "imagePath": "stock/semana-01-ema-ofendida-v3-ig-2-body-229cc2bfa7.jpg"
+      }
+    },
+    {
+      "id": "ig-3-cta",
+      "layout": "carousel-cta",
+      "data": {
+        "headline": "Ten todo ordenado",
+        "sub": "Gratis en pawfriend.cl",
+        "imageSearch": "person smartphone dog cozy home",
+        "visualHint": "Fondo #FAF5FF. Mockup teléfono centrado con flechas entrando desde iconos de salud. Botón grande morado con sombra profunda. Elementos flotantes suaves.",
+        "imagePath": "stock/semana-01-ema-ofendida-v3-ig-3-cta-2fa5f8acdb.jpg"
+      }
+    }
+  ],
+  "reel": {
+    "brandHandle": "@pawfriend.cl",
+    "scenes": [
+      {
+        "durationInSeconds": 2.5,
+        "kind": "hook",
+        "headline": "Tienes un favorito",
+        "sub": "Y no lo sabías",
+        "voiceText": "Tienes un favorito entre tus mascotas. Y no lo sabías.",
+        "stockSearch": "dog and cat looking at owner comparison",
+        "mediaKind": "video",
+        "mediaPath": "stock/semana-01-ema-ofendida-v3-01-f8574c9ebe.mp4",
+        "voicePath": "voice/semana-01-ema-ofendida-v3/01-ac4d78002870.mp3",
+        "captionsPath": "captions/semana-01-ema-ofendida-v3/01-ac4d78002870.json"
+      },
+      {
+        "durationInSeconds": 3.5,
+        "kind": "context",
+        "headline": "Uno tiene ficha clínica",
+        "sub": "Todo ordenado",
+        "voiceText": "Uno tiene su ficha clínica. Todo ordenado: vacunas, peso, veterinario.",
+        "stockSearch": "dog vet check happy organized",
+        "mediaKind": "video",
+        "mediaPath": "stock/semana-01-ema-ofendida-v3-02-76f27a0fad.mp4",
+        "voicePath": "voice/semana-01-ema-ofendida-v3/02-7c29a540f753.mp3",
+        "captionsPath": "captions/semana-01-ema-ofendida-v3/02-7c29a540f753.json"
+      },
+      {
+        "durationInSeconds": 3.5,
+        "kind": "punch",
+        "headline": "El otro no",
+        "sub": "Y se nota",
+        "voiceText": "El otro no. Y se nota más de lo que crees.",
+        "stockSearch": "cat judging annoyed close up",
+        "mediaKind": "video",
+        "mediaPath": "stock/semana-01-ema-ofendida-v3-03-c203e878f3.mp4",
+        "voicePath": "voice/semana-01-ema-ofendida-v3/03-5a629bf00f69.mp3",
+        "captionsPath": "captions/semana-01-ema-ofendida-v3/03-5a629bf00f69.json"
+      },
+      {
+        "durationInSeconds": 3.5,
+        "kind": "punch",
+        "headline": "Cuando pasa algo",
+        "sub": "Te complicas",
+        "voiceText": "Y cuando pasa algo, te complicas. No tienes nada a mano.",
+        "stockSearch": "stressed pet owner searching phone documents",
+        "mediaKind": "video",
+        "mediaPath": "stock/semana-01-ema-ofendida-v3-04-655b208c40.mp4",
+        "voicePath": "voice/semana-01-ema-ofendida-v3/04-0e1f845a0923.mp3",
+        "captionsPath": "captions/semana-01-ema-ofendida-v3/04-0e1f845a0923.json"
+      },
+      {
+        "durationInSeconds": 5,
+        "kind": "cta",
+        "headline": "Hazlo en 2 minutos",
+        "sub": "pawfriend.cl",
+        "voiceText": "Hazlo en dos minutos en pawfriend punto cl. Gratis para tu mascota.",
+        "mediaKind": "mockup",
+        "mockupView": "home",
+        "voicePath": "voice/semana-01-ema-ofendida-v3/05-43271e35a5cb.mp3",
+        "captionsPath": "captions/semana-01-ema-ofendida-v3/05-43271e35a5cb.json"
+      }
+    ]
+  },
+  "abVariants": {
+    "hooks": [
+      {
+        "headline": "Tu gato ya lo notó",
+        "voiceText": "Tu gato ya notó algo que tú todavía no.",
+        "angle": "curiosidad"
+      },
+      {
+        "headline": "Error típico con mascotas",
+        "voiceText": "Este es el error típico cuando tienes más de una mascota.",
+        "angle": "error común"
+      },
+      {
+        "headline": "No es favoritismo… pero",
+        "voiceText": "No es favoritismo… pero se siente como si lo fuera.",
+        "angle": "emocional"
+      }
+    ],
+    "captions": [
+      {
+        "platform": "instagram",
+        "text": "No es favoritismo… pero parece.\n\nUno con ficha clínica.\nEl otro no.\n\nArréglalo en pawfriend.cl 🐾"
+      },
+      {
+        "platform": "tiktok",
+        "text": "Tu mascota lo nota 😾👇 pawfriend.cl"
+      }
+    ]
+  },
+  "meta": {
+    "hookScore": 9,
+    "retentionScore": 9,
+    "clarityScore": 9,
+    "viralityScore": 9
+  }
+}

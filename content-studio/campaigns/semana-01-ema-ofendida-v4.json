@@ -1,0 +1,161 @@
+{
+  "slug": "semana-01-ema-ofendida-v4",
+  "pilar": "A",
+  "publishDate": "2026-05-04",
+  "platforms": ["instagram", "tiktok", "reels", "linkedin"],
+  "caption": {
+    "instagram": "Tienes un favorito. Y tu mascota ya se dio cuenta.\n\nUna con su ficha clínica ordenada: vacunas, peso, vet, todo a mano.\nLa otra, nada.\n\nHasta que se enferma. Y no sabes qué mostrarle al veterinario.\n\nDos minutos en pawfriend.cl. Y las dos quedan iguales. 🐾\n\n→ Síguenos en @pawfriend.app",
+    "tiktok": "Tu mascota ya se dio cuenta 😾 → pawfriend.cl",
+    "linkedin": "Cuando tienes más de una mascota, la información médica se fragmenta entre papeles, carnets y capturas de WhatsApp.\n\nPaw Friend centraliza la ficha clínica de cada una en 2 minutos. Gratis, sin paywall.\n\npawfriend.cl · Hecho en Chile"
+  },
+  "hashtags": {
+    "instagram": "#mascotaschile #gatoschile #perroschile #pawfriend #fichaclinica #vet",
+    "tiktok": "#mascotaschile #gatosdetiktok #perrostiktok #petcare #pawfriend #vet",
+    "linkedin": "#PetTech #StartupChile #HealthTech #SaaSChile"
+  },
+  "music": {
+    "path": "music/semana-01-ema-ofendida-v3.mp3",
+    "searchTags": "chill,upbeat,happy"
+  },
+  "staticAssets": [
+    {
+      "id": "ig-1-cover",
+      "layout": "carousel-cover",
+      "data": {
+        "headline": "Tienes un favorito",
+        "sub": "Y tu mascota lo sabe",
+        "imagePath": "custom/scene-01-hook.png"
+      }
+    },
+    {
+      "id": "ig-2-body",
+      "layout": "carousel-body",
+      "data": {
+        "headline": "Una tiene su historia",
+        "sub": "Vacunas, peso, vet, todo a mano",
+        "imagePath": "custom/scene-02-context.png"
+      }
+    },
+    {
+      "id": "ig-3-body",
+      "layout": "carousel-body",
+      "data": {
+        "headline": "La otra, nada",
+        "sub": "Hasta que algo pasa",
+        "imagePath": "custom/scene-03-punch.png"
+      }
+    },
+    {
+      "id": "ig-4-cta",
+      "layout": "carousel-cta",
+      "data": {
+        "headline": "Dos minutos",
+        "sub": "Y las dos quedan iguales",
+        "imagePath": "custom/scene-05-cta.png"
+      }
+    },
+    {
+      "id": "linkedin-hero",
+      "layout": "linkedin-hero",
+      "data": {
+        "headline": "Ficha clínica digital para mascotas. Gratis.",
+        "sub": "Paw Friend · Hecho en Chile"
+      }
+    }
+  ],
+  "reel": {
+    "brandHandle": "@pawfriend.app",
+    "scenes": [
+      {
+        "durationInSeconds": 3.2,
+        "kind": "hook",
+        "headline": "Tienes un favorito",
+        "sub": "Y tu mascota lo sabe",
+        "voiceText": "Tienes un favorito entre tus mascotas. Y tu mascota ya lo sabe.",
+        "mediaPath": "custom/scene-01-hook.png",
+        "mediaKind": "image",
+        "voicePath": "voice/semana-01-ema-ofendida-v4/01-7f8d17a9f085.mp3",
+        "captionsPath": "captions/semana-01-ema-ofendida-v4/01-7f8d17a9f085.json"
+      },
+      {
+        "durationInSeconds": 4.5,
+        "kind": "context",
+        "headline": "Una tiene su historia",
+        "sub": "Vacunas, peso, el vet",
+        "voiceText": "Una tiene todo ordenado. Vacunas, peso, el vet.",
+        "mediaPath": "custom/scene-02-context.png",
+        "mediaKind": "image",
+        "voicePath": "voice/semana-01-ema-ofendida-v4/02-58ec54200589.mp3",
+        "captionsPath": "captions/semana-01-ema-ofendida-v4/02-58ec54200589.json"
+      },
+      {
+        "durationInSeconds": 4,
+        "kind": "punch",
+        "headline": "La otra, nada",
+        "sub": "Y se nota",
+        "voiceText": "La otra no tiene nada. Y eso se nota.",
+        "mediaPath": "custom/scene-03-punch.png",
+        "mediaKind": "image",
+        "voicePath": "voice/semana-01-ema-ofendida-v4/03-0171ecf4542a.mp3",
+        "captionsPath": "captions/semana-01-ema-ofendida-v4/03-0171ecf4542a.json"
+      },
+      {
+        "durationInSeconds": 4.5,
+        "kind": "punch",
+        "headline": "Hasta que se enferma",
+        "sub": "¡Y no sabes qué mostrarle!",
+        "voiceText": "Hasta que se enferma. ¡Y no sabes qué mostrarle!",
+        "mediaPath": "custom/scene-04-crisis.png",
+        "mediaKind": "image",
+        "voicePath": "voice/semana-01-ema-ofendida-v4/04-a7e5fd072a37.mp3",
+        "captionsPath": "captions/semana-01-ema-ofendida-v4/04-a7e5fd072a37.json"
+      },
+      {
+        "durationInSeconds": 5.5,
+        "kind": "cta",
+        "headline": "Dos minutos",
+        "sub": "Y las dos quedan iguales",
+        "voiceText": "Dos minutos en Paw Friend punto cl. Y las dos mascotas quedan iguales.",
+        "mediaPath": "custom/scene-05-cta.png",
+        "mediaKind": "image",
+        "voicePath": "voice/semana-01-ema-ofendida-v4/05-af51a29ccaf2.mp3",
+        "captionsPath": "captions/semana-01-ema-ofendida-v4/05-af51a29ccaf2.json"
+      }
+    ]
+  },
+  "abVariants": {
+    "hooks": [
+      {
+        "headline": "Tu mascota ya se dio cuenta",
+        "voiceText": "Tu mascota ya se dio cuenta de algo que tú no.",
+        "angle": "POV mascota"
+      },
+      {
+        "headline": "El error silencioso",
+        "voiceText": "El error silencioso de tener dos mascotas y solo ocuparse de una.",
+        "angle": "error común"
+      },
+      {
+        "headline": "Una tiene, la otra no",
+        "voiceText": "Una tiene todo. La otra, nada. Y un día eso importa.",
+        "angle": "paralelismo"
+      }
+    ],
+    "captions": [
+      {
+        "platform": "instagram",
+        "text": "Es el 'quiero por igual a los dos' pero tus papeles dicen otra cosa.\n\nVacunas, peso, vet: una lo tiene ordenado.\nLa otra, nada.\n\nArréglalo en 2 minutos. pawfriend.cl 🐾"
+      },
+      {
+        "platform": "tiktok",
+        "text": "Una tiene ficha clínica. La otra no. ¿Adivina quién se enoja? 😾 pawfriend.cl"
+      }
+    ]
+  },
+  "meta": {
+    "hookScore": 9,
+    "retentionScore": 9,
+    "clarityScore": 9,
+    "viralityScore": 8
+  }
+}

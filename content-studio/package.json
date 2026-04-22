@@ -1,0 +1,35 @@
+{
+  "name": "paw-friend-content-studio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pipeline programatico para generar assets de Instagram/TikTok/LinkedIn. Usa Satori (estaticos) + Remotion (video).",
+  "scripts": {
+    "render:static": "node scripts/render-static.mjs",
+    "render:video": "node scripts/render-video.mjs",
+    "render:all": "node scripts/render-all.mjs",
+    "voices": "node --env-file=.env scripts/generate-voices.mjs",
+    "stock": "node --env-file=.env scripts/fetch-stock.mjs",
+    "music": "node scripts/fetch-music.mjs",
+    "captions": "node scripts/generate-captions.mjs",
+    "setup:whisper": "node scripts/setup-whisper.mjs",
+    "studio": "remotion studio"
+  },
+  "dependencies": {
+    "@fontsource/inter": "^5.0.19",
+    "@remotion/bundler": "^4.0.237",
+    "@remotion/captions": "^4.0.237",
+    "@remotion/cli": "^4.0.237",
+    "@remotion/install-whisper-cpp": "^4.0.237",
+    "@remotion/renderer": "^4.0.237",
+    "@remotion/transitions": "^4.0.237",
+    "@resvg/resvg-js": "^2.6.2",
+    "ffmpeg-static": "^5.3.0",
+    "music-metadata": "^11.12.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "remotion": "^4.0.237",
+    "satori": "^0.12.1",
+    "satori-html": "^0.3.2"
+  }
+}

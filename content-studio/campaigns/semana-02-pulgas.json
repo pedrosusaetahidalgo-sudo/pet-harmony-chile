@@ -1,0 +1,110 @@
+{
+  "slug": "semana-02-pulgas",
+  "pilar": "C",
+  "publishDate": "2026-05-11",
+  "title": "3 señales de pulgas que el 90% ignora",
+  "platforms": ["instagram", "tiktok", "reels", "linkedin"],
+  "hashtags": {
+    "instagram": "#mascotaschile #perroschile #gatoschile #saludmascota #tipsveterinarios #pawfriend",
+    "tiktok": "#tipsveterinarios #perros #gatos #mascotas #chile #pulgas #saludanimal",
+    "linkedin": "#PetHealth #PetTech #SaaSChile #HealthTech"
+  },
+  "caption": {
+    "instagram": "Las pulgas no siempre se ven. Estas 3 señales las descubrí revisando la ficha de mi perro en Paw Friend:\n\n1. Se rasca atrás de la oreja o base de la cola (no siempre todo el cuerpo).\n2. Puntitos negros en la cama que NO son tierra (es caca de pulga).\n3. Se lame compulsivamente la base de la cola o las patas traseras.\n\nSi ves al menos 2, consulta con tu veterinario. Y si quieres llevar un registro ordenado de antiparasitarios, Paw Friend es gratis: pawfriend.cl 🐾",
+    "tiktok": "3 señales de pulgas que el 90% ignora. La #2 te va a sorprender. Guarda este video 📌",
+    "linkedin": "Paw Friend no reemplaza al veterinario, lo complementa. Llevar un registro ordenado de antiparasitarios, vacunas y síntomas le da al dueño información útil y al vet un historial real.\n\nGratis en pawfriend.cl"
+  },
+  "staticAssets": [
+    {
+      "id": "ig-1-cover",
+      "layout": "carousel-cover",
+      "data": {
+        "title": "3 señales de pulgas.",
+        "subtitle": "Que el 90% ignora."
+      }
+    },
+    {
+      "id": "ig-2-body",
+      "layout": "carousel-body",
+      "data": {
+        "subtitle": "Señal #1",
+        "title": "Se rasca atrás de la oreja.",
+        "body": "Las pulgas no atacan todo el cuerpo. Empiezan en zonas cálidas: orejas y base de la cola."
+      }
+    },
+    {
+      "id": "ig-3-body",
+      "layout": "carousel-body",
+      "data": {
+        "subtitle": "Señal #2 (la que todos ignoran)",
+        "title": "Puntitos negros en la cama.",
+        "body": "Parecen tierra, pero no. Es caca de pulga. Ponlos sobre papel húmedo: si se vuelven rojos, es sangre digerida."
+      }
+    },
+    {
+      "id": "ig-4-body",
+      "layout": "carousel-body",
+      "data": {
+        "subtitle": "Señal #3",
+        "title": "Se lame compulsivamente.",
+        "body": "Especialmente base de la cola y patas traseras. No es manía, es picazón."
+      }
+    },
+    {
+      "id": "ig-5-cta",
+      "layout": "carousel-cta",
+      "data": {
+        "title": "Lleva registro de antiparasitarios. Gratis.",
+        "body": "Paw Friend te recuerda cuándo toca la próxima dosis."
+      }
+    },
+    {
+      "id": "linkedin-hero",
+      "layout": "linkedin-hero",
+      "data": {
+        "subtitle": "Paw Friend · Tips vet",
+        "title": "3 señales de pulgas que el 90% de los dueños ignora."
+      }
+    }
+  ],
+  "reel": {
+    "brandHandle": "@pawfriend.cl",
+    "scenes": [
+      {
+        "durationInSeconds": 2,
+        "kind": "hook",
+        "headline": "3 señales de pulgas.",
+        "sub": "La #2 te sorprende.",
+        "voiceText": "Tres señales de pulgas. La número dos te va a sorprender."
+      },
+      {
+        "durationInSeconds": 3.5,
+        "kind": "context",
+        "headline": "#1 Se rasca la oreja.",
+        "sub": "Zonas cálidas, no todo el cuerpo.",
+        "voiceText": "Uno. Se rasca atrás de la oreja. Las pulgas empiezan por zonas cálidas."
+      },
+      {
+        "durationInSeconds": 4,
+        "kind": "context",
+        "headline": "#2 Puntitos en la cama.",
+        "sub": "No es tierra. Es caca de pulga.",
+        "voiceText": "Dos. Puntitos negros en la cama. No es tierra. Es caca de pulga."
+      },
+      {
+        "durationInSeconds": 3,
+        "kind": "punch",
+        "headline": "#3 Se lame la cola.",
+        "sub": "Compulsivo, no es manía.",
+        "voiceText": "Tres. Se lame la cola, compulsivo. No es manía."
+      },
+      {
+        "durationInSeconds": 3.5,
+        "kind": "cta",
+        "headline": "Lleva registro.",
+        "sub": "Gratis en pawfriend.cl",
+        "voiceText": "Lleva el registro. Gratis, en pawfriend punto cl."
+      }
+    ]
+  }
+}

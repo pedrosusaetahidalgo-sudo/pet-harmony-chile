@@ -1,0 +1,110 @@
+{
+  "slug": "semana-03-vet-3-segundos",
+  "pilar": "A",
+  "publishDate": "2026-05-18",
+  "title": "Le pasé la ficha de Kai al vet en 3 segundos",
+  "platforms": ["instagram", "tiktok", "reels", "linkedin"],
+  "hashtags": {
+    "instagram": "#perroschile #veterinariochile #mascotaschile #fichamedica #pawfriend #pastorsuizo",
+    "tiktok": "#veterinario #perros #tipsmascotas #chile #pawfriend",
+    "linkedin": "#PetTech #HealthTech #SaaSChile #StartupChile"
+  },
+  "caption": {
+    "instagram": "Cambié de veterinario y tenía que llevar toda la historia de Kai (pastor suizo, 3 años). Antes: carpeta con papeles, carnet de vacunas, capturas de WhatsApp del vet anterior.\n\nAhora: abro Paw Friend, botón 'Compartir ficha', mando el link. El vet nuevo lo abre, ve todo: vacunas, peso histórico, antiparasitarios, alergia al pollo. Total: 3 segundos.\n\nGratis en pawfriend.cl. Hecho en Chile 🇨🇱",
+    "tiktok": "Cambié de vet y le mandé la ficha completa de Kai en 3 segundos. Así 👇 pawfriend.cl",
+    "linkedin": "La fricción de compartir información médica entre veterinarios era enorme: carpetas, WhatsApp, carnets perdidos. En Paw Friend construimos un link compartible con expiración de 30 días que le da al vet acceso read-only a la ficha completa.\n\nGratis para el dueño. Sin cuenta requerida para el vet. pawfriend.cl"
+  },
+  "staticAssets": [
+    {
+      "id": "ig-1-cover",
+      "layout": "carousel-cover",
+      "data": {
+        "title": "Cambié de vet.",
+        "subtitle": "Esto pasó."
+      }
+    },
+    {
+      "id": "ig-2-body",
+      "layout": "carousel-body",
+      "data": {
+        "subtitle": "Antes",
+        "title": "Carpeta con papeles.",
+        "body": "Carnet de vacunas suelto. Capturas de WhatsApp del vet anterior. Historia incompleta."
+      }
+    },
+    {
+      "id": "ig-3-body",
+      "layout": "carousel-body",
+      "data": {
+        "subtitle": "Ahora",
+        "title": "Botón 'Compartir ficha'.",
+        "body": "Se genera un link. Lo mandas al vet. Él lo abre y ve todo: vacunas, peso, alergias, antiparasitarios."
+      }
+    },
+    {
+      "id": "ig-4-body",
+      "layout": "carousel-body",
+      "data": {
+        "subtitle": "El detalle",
+        "title": "El link expira en 30 días.",
+        "body": "Tu data no vive eterna en el WhatsApp de un vet que ya no visitas."
+      }
+    },
+    {
+      "id": "ig-5-cta",
+      "layout": "carousel-cta",
+      "data": {
+        "title": "Haz la ficha de tu mascota. Gratis.",
+        "body": "Así, cuando cambies de vet, es 1 click."
+      }
+    },
+    {
+      "id": "linkedin-hero",
+      "layout": "linkedin-hero",
+      "data": {
+        "subtitle": "Paw Friend · Compartir ficha",
+        "title": "El vet abre la ficha completa en 3 segundos. Sin crear cuenta."
+      }
+    }
+  ],
+  "reel": {
+    "brandHandle": "@pawfriend.cl",
+    "scenes": [
+      {
+        "durationInSeconds": 2.5,
+        "kind": "hook",
+        "headline": "Cambié de vet.",
+        "sub": "Esto pasó.",
+        "voiceText": "Cambié de veterinario. Mira lo que pasó."
+      },
+      {
+        "durationInSeconds": 4,
+        "kind": "context",
+        "headline": "Antes: papeles sueltos.",
+        "sub": "Carnets, capturas, historia rota.",
+        "voiceText": "Antes: papeles sueltos. Carnets, capturas de WhatsApp, historia rota."
+      },
+      {
+        "durationInSeconds": 4,
+        "kind": "context",
+        "headline": "Ahora: un click.",
+        "sub": "El vet ve todo en 3 segundos.",
+        "voiceText": "Ahora: un click. Y el vet ve todo en tres segundos."
+      },
+      {
+        "durationInSeconds": 3,
+        "kind": "punch",
+        "headline": "El link expira en 30 días.",
+        "sub": "Tu data es tuya.",
+        "voiceText": "El link expira en treinta días. Tu data es tuya."
+      },
+      {
+        "durationInSeconds": 2.5,
+        "kind": "cta",
+        "headline": "Haz la ficha.",
+        "sub": "Gratis en pawfriend.cl",
+        "voiceText": "Haz la ficha. Gratis, en pawfriend punto cl."
+      }
+    ]
+  }
+}

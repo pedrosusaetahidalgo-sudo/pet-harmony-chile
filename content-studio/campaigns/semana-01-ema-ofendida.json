@@ -1,0 +1,123 @@
+{
+  "slug": "semana-01-ema-ofendida",
+  "pilar": "A",
+  "publishDate": "2026-05-04",
+  "title": "Ema está ofendida (y tiene razón)",
+  "platforms": ["instagram", "tiktok", "reels", "linkedin"],
+  "hashtags": {
+    "instagram": "#mascotaschile #gatoschile #perroschile #pawfriend #fichamedica #vidademascota",
+    "tiktok": "#mascotas #gatosdetiktok #perrostiktok #chile #tipsparamascotas #petfriendly",
+    "linkedin": "#Mascotas #PetTech #SaaSChile #StartupChile #HealthTech"
+  },
+  "caption": {
+    "instagram": "Ema (gata) se dio cuenta que Kai (perro) ahora tiene ficha médica en Paw Friend y ella no. Ofendida estaba poco. 😼\n\nLa buena: en Paw Friend la ficha de tu mascota es gratis para siempre. Vacunas, peso, recordatorios, y puedes compartirla con tu veterinario en 1 click.\n\nEntra a pawfriend.cl y hazle la ficha a la tuya en 2 minutos. Hecho en Chile 🇨🇱",
+    "tiktok": "Kai tiene ficha médica. Ema no. Y se dio cuenta 😼 Gratis en pawfriend.cl",
+    "linkedin": "Construyendo Paw Friend: la ficha médica digital para mascotas que decidimos hacer 100% gratis para los dueños. Porque la salud de tu mascota no debería depender de un paywall.\n\npawfriend.cl · Hecho en Chile 🇨🇱"
+  },
+  "staticAssets": [
+    {
+      "id": "ig-1-cover",
+      "layout": "carousel-cover",
+      "data": {
+        "title": "Ema está ofendida.",
+        "subtitle": "Y tiene razón."
+      }
+    },
+    {
+      "id": "ig-2-body",
+      "layout": "carousel-body",
+      "data": {
+        "subtitle": "El contexto",
+        "title": "Kai ahora tiene ficha médica.",
+        "body": "Vacunas, peso, antiparasitarios, todo en un lugar. Y la comparte con su veterinario."
+      }
+    },
+    {
+      "id": "ig-3-body",
+      "layout": "carousel-body",
+      "data": {
+        "subtitle": "El problema",
+        "title": "Ema no tiene.",
+        "body": "Y se dio cuenta. Ahora anda resentida por la casa."
+      }
+    },
+    {
+      "id": "ig-4-body",
+      "layout": "carousel-body",
+      "data": {
+        "subtitle": "La solución",
+        "title": "Hoy lo arreglamos.",
+        "body": "Paw Friend es gratis. Para siempre. Para todas las mascotas de la casa."
+      }
+    },
+    {
+      "id": "ig-5-cta",
+      "layout": "carousel-cta",
+      "data": {
+        "title": "Hazle la ficha a tu mascota en 2 minutos.",
+        "body": "Gratis. En serio. Sin letra chica."
+      }
+    },
+    {
+      "id": "linkedin-hero",
+      "layout": "linkedin-hero",
+      "data": {
+        "subtitle": "Paw Friend",
+        "title": "Ficha médica digital para mascotas. 100% gratis."
+      }
+    }
+  ],
+  "reel": {
+    "brandHandle": "@pawfriend.cl",
+    "scenes": [
+      {
+        "durationInSeconds": 2,
+        "kind": "hook",
+        "headline": "Ema está ofendida.",
+        "sub": "Y tiene razón.",
+        "voiceText": "¡Ema está ofendida! Y tiene razón.",
+        "stockSearch": "angry cat stare closeup",
+        "mediaPath": "stock/semana-01-ema-ofendida-01-b708757045.mp4",
+        "mediaKind": "video",
+        "voicePath": "voice/semana-01-ema-ofendida/01-c650c99d56aa.mp3",
+        "captionsPath": "captions/semana-01-ema-ofendida/01-c650c99d56aa.json"
+      },
+      {
+        "durationInSeconds": 4,
+        "kind": "context",
+        "headline": "Kai ya tiene ficha médica.",
+        "sub": "Vacunas, peso, vet, todo.",
+        "voiceText": "¡Kai ya tiene su ficha médica! Vacunas, peso, veterinario, todo.",
+        "stockSearch": "dog veterinarian checkup consultation",
+        "mediaPath": "stock/semana-01-ema-ofendida-02-1b431e3745.mp4",
+        "mediaKind": "video",
+        "voicePath": "voice/semana-01-ema-ofendida/02-8dfdd476adb7.mp3",
+        "captionsPath": "captions/semana-01-ema-ofendida/02-8dfdd476adb7.json"
+      },
+      {
+        "durationInSeconds": 3,
+        "kind": "punch",
+        "headline": "Ema no.",
+        "sub": "Y se dio cuenta.",
+        "voiceText": "¿Ema? No. Y se dio cuenta.",
+        "stockSearch": "cat stare judgmental suspicious",
+        "mediaPath": "stock/semana-01-ema-ofendida-03-d79b858d70.mp4",
+        "mediaKind": "video",
+        "voicePath": "voice/semana-01-ema-ofendida/03-2d3fe451227a.mp3",
+        "captionsPath": "captions/semana-01-ema-ofendida/03-2d3fe451227a.json"
+      },
+      {
+        "durationInSeconds": 4.5,
+        "kind": "cta",
+        "headline": "Hazle la suya.",
+        "sub": "Gratis en pawfriend.cl",
+        "voiceText": "¡Hazle la suya! Gratis, en pawfriend punto cl.",
+        "stockSearch": "person using smartphone pet app",
+        "mediaPath": "stock/semana-01-ema-ofendida-04-20ab8a5a7d.mp4",
+        "mediaKind": "video",
+        "voicePath": "voice/semana-01-ema-ofendida/04-b71321fe7543.mp3",
+        "captionsPath": "captions/semana-01-ema-ofendida/04-b71321fe7543.json"
+      }
+    ]
+  }
+}

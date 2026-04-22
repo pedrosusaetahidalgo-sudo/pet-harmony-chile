@@ -1,0 +1,110 @@
+{
+  "slug": "semana-04-urgencia-vs-esperar",
+  "pilar": "C",
+  "publishDate": "2026-05-25",
+  "title": "Urgencia vet vs esperar: 5 criterios en 30s",
+  "platforms": ["instagram", "tiktok", "reels", "linkedin"],
+  "hashtags": {
+    "instagram": "#veterinariochile #mascotaschile #emergenciaveterinaria #saludmascota #pawfriend",
+    "tiktok": "#veterinario #emergencia #mascotas #chile #saludanimal #tips",
+    "linkedin": "#PetHealth #PetTech #SaaSChile"
+  },
+  "caption": {
+    "instagram": "¿Urgencia o puedes esperar hasta mañana? Los 5 criterios que todo dueño debería tener claros:\n\n1. No puede respirar bien (lengua azul o violeta) → URGENCIA.\n2. Sangrado que no para después de 5 min de presión directa → URGENCIA.\n3. Convulsiones, desmayo, o no reacciona → URGENCIA.\n4. Vómito o diarrea con sangre, o más de 6 veces en 4 horas → URGENCIA.\n5. Abdomen duro e hinchado (posible torsión gástrica) → URGENCIA.\n\nSi NO tiene ninguna de estas pero tu mascota está rara, llama al vet y decidan juntos.\n\nGuarda el post 📌 Puede salvarle la vida a alguien.\n\npawfriend.cl",
+    "tiktok": "¿Urgencia vet o puedes esperar? 5 criterios. Guarda esto, puede salvar una vida 📌",
+    "linkedin": "Contenido educativo basado en guidelines veterinarias estándar. Paw Friend no reemplaza al veterinario, pero puede ayudar al dueño a decidir mejor cuándo consultar.\n\npawfriend.cl"
+  },
+  "staticAssets": [
+    {
+      "id": "ig-1-cover",
+      "layout": "carousel-cover",
+      "data": {
+        "title": "Urgencia o esperar.",
+        "subtitle": "5 criterios en 30s."
+      }
+    },
+    {
+      "id": "ig-2-body",
+      "layout": "carousel-body",
+      "data": {
+        "subtitle": "Criterio #1",
+        "title": "No puede respirar.",
+        "body": "Lengua azul o violeta. Jadeo forzado. URGENCIA inmediata."
+      }
+    },
+    {
+      "id": "ig-3-body",
+      "layout": "carousel-body",
+      "data": {
+        "subtitle": "Criterio #2",
+        "title": "Sangrado que no para.",
+        "body": "Después de 5 min de presión directa, si sigue: URGENCIA."
+      }
+    },
+    {
+      "id": "ig-4-body",
+      "layout": "carousel-body",
+      "data": {
+        "subtitle": "Criterios #3, 4 y 5",
+        "title": "Convulsión, vómito con sangre, abdomen hinchado.",
+        "body": "Cualquiera de los tres → vete al vet de urgencia, no esperes."
+      }
+    },
+    {
+      "id": "ig-5-cta",
+      "layout": "carousel-cta",
+      "data": {
+        "title": "Guarda el post. Puede salvar una vida.",
+        "body": "Y si quieres llevar un registro de salud, Paw Friend es gratis."
+      }
+    },
+    {
+      "id": "linkedin-hero",
+      "layout": "linkedin-hero",
+      "data": {
+        "subtitle": "Paw Friend · Tips vet",
+        "title": "Urgencia vet o esperar: los 5 criterios que todo dueño debería tener claros."
+      }
+    }
+  ],
+  "reel": {
+    "brandHandle": "@pawfriend.cl",
+    "scenes": [
+      {
+        "durationInSeconds": 2,
+        "kind": "hook",
+        "headline": "¿Urgencia o esperar?",
+        "sub": "5 criterios.",
+        "voiceText": "¿Urgencia o esperar? Cinco criterios."
+      },
+      {
+        "durationInSeconds": 3.5,
+        "kind": "context",
+        "headline": "#1 Lengua azul.",
+        "sub": "No respira bien. URGENCIA.",
+        "voiceText": "Uno. Lengua azul. No respira bien. Urgencia."
+      },
+      {
+        "durationInSeconds": 3.5,
+        "kind": "context",
+        "headline": "#2 Sangrado no para.",
+        "sub": "Tras 5 min de presión. URGENCIA.",
+        "voiceText": "Dos. Sangrado que no para después de cinco minutos de presión. Urgencia."
+      },
+      {
+        "durationInSeconds": 3.5,
+        "kind": "context",
+        "headline": "#3, 4, 5",
+        "sub": "Convulsión, vómito con sangre, panza hinchada.",
+        "voiceText": "Tres, cuatro, cinco. Convulsión. Vómito con sangre. Panza hinchada."
+      },
+      {
+        "durationInSeconds": 3.5,
+        "kind": "cta",
+        "headline": "Guarda el post.",
+        "sub": "Puede salvar una vida.",
+        "voiceText": "Guarda el post. Puede salvar una vida. Paw Friend punto cl."
+      }
+    ]
+  }
+}
