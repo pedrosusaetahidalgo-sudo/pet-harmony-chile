@@ -49,14 +49,36 @@ export function usePetVetLinksByPet(petId: string | undefined) {
     queryKey: ['pet-vet-links', 'by-pet', petId],
     queryFn: async () => {
       if (!petId) return [] as PetVetLinkWithDetails[];
-      const { data, error } = await sb
+      // Bug fix 2026-04-21: el select con join implicito a service_providers
+      // daba 400 en PostgREST. Usamos batch fetch separado (igual patron
+      // que NextBookingCard, useFeedPosts, AdoptionPostCard).
+      const { data: links, error } = await sb
         .from('pet_vet_links')
-        .select('*, service_providers(id, display_name, comuna, specialty, user_id)')
+        .select('*')
         .eq('pet_id', petId)
         .in('status', ['pending', 'active'])
         .order('created_at', { ascending: false });
-      if (error) return [] as PetVetLinkWithDetails[];
-      return (data || []) as PetVetLinkWithDetails[];
+      if (error || !links) return [] as PetVetLinkWithDetails[];
+
+      const providerIds = Array.from(
+        new Set(
+          (links as PetVetLink[]).map((l) => l.provider_id).filter(Boolean)
+        )
+      );
+      if (providerIds.length === 0) return links as PetVetLinkWithDetails[];
+
+      const { data: providers } = await sb
+        .from('service_providers')
+        .select('id, display_name, comuna, specialty, user_id')
+        .in('id', providerIds);
+
+      const providerMap = new Map(
+        ((providers as Array<{ id: string }>) || []).map((p) => [p.id, p])
+      );
+      return (links as PetVetLink[]).map((l) => ({
+        ...l,
+        service_providers: l.provider_id ? providerMap.get(l.provider_id) ?? null : null,
+      })) as PetVetLinkWithDetails[];
     },
     enabled: !!petId,
   });
