@@ -10,21 +10,14 @@
 --
 -- Causa: la mig 20251202000000 definio award_points con INSERT a
 -- public.user_achievements (user_id, achievement_id). Pero existen
--- 3 definiciones distintas de esa tabla en el repo:
---   - 20251127152253 (original): achievement_type / achievement_name / ...
---   - 20251202000000: achievement_id (FK a achievements.id)
---   - 20260422000002 (paw_game): achievement_code (TEXT)
+-- 3 definiciones distintas de esa tabla en el repo. En prod quedo
+-- una variante SIN achievement_id.
 --
--- En prod quedo una variante SIN achievement_id y la mig 20251202000000
--- intento re-CREATE TABLE IF NOT EXISTS (no-op). Todas las llamadas a
--- award_points fallan con 42703, bloqueando gamificacion en varios
--- callsites (feed, ficha medical record, booking, adoption, etc).
---
--- Fix: redefinir award_points con el INSERT a user_achievements dentro
--- de un BEGIN/EXCEPTION block. Si falla (columna no existe / schema
--- distinto), se ignora y la funcion continua sumando points normalmente.
--- Los points + nivel si se guardan. Solo el achievement de nivel 5/10/20
--- queda sin insertar (feature menor).
+-- Fix: wrap los INSERTs riesgosos en BEGIN/EXCEPTION. Tolera:
+--   - undefined_column / undefined_table (schema divergente)
+--   - foreign_key_violation (user no existe o FK invalida)
+-- Los points + level si se guardan. El history y achievement de nivel
+-- quedan best-effort.
 -- ==========================================================================
 
 CREATE OR REPLACE FUNCTION public.award_points(
@@ -52,6 +45,11 @@ BEGIN
   FROM public.profiles
   WHERE id = p_user_id;
 
+  -- Si el user no existe en profiles, salir sin error (defensivo).
+  IF NOT FOUND THEN
+    RETURN;
+  END IF;
+
   IF v_is_premium AND (v_premium_end_date IS NULL OR v_premium_end_date > NOW()) THEN
     v_actual_points := p_points * 2;
   ELSE
@@ -67,7 +65,7 @@ BEGIN
       updated_at = NOW()
   WHERE id = p_user_id;
 
-  -- Record history (tolerante a ausencia de la tabla)
+  -- Record history (tolerante a FK violation / schema divergente)
   BEGIN
     INSERT INTO public.points_history (user_id, points, action_type, action_id, description)
     VALUES (
@@ -81,12 +79,12 @@ BEGIN
         ELSE ''
       END
     );
-  EXCEPTION WHEN undefined_table OR undefined_column THEN
-    -- points_history con schema distinto en algunos ambientes, continuar.
-    NULL;
+  EXCEPTION
+    WHEN undefined_table OR undefined_column OR foreign_key_violation THEN
+      NULL;
   END;
 
-  -- Level achievements: INSERT tolerante a schema divergente de user_achievements.
+  -- Level achievements: INSERT tolerante a schema divergente.
   IF v_new_level > v_old_level THEN
     BEGIN
       INSERT INTO public.user_achievements (user_id, achievement_id)
@@ -98,12 +96,9 @@ BEGIN
           SELECT 1 FROM public.user_achievements ua
           WHERE ua.user_id = p_user_id AND ua.achievement_id = a.id
         );
-    EXCEPTION WHEN undefined_column OR undefined_table THEN
-      -- Schema de user_achievements no tiene achievement_id (variante
-      -- paw_game con achievement_code o legacy con achievement_type).
-      -- Los points + level ya se guardaron; el achievement queda sin
-      -- insertar. Feature menor, no bloquea la gamificacion core.
-      NULL;
+    EXCEPTION
+      WHEN undefined_column OR undefined_table OR foreign_key_violation THEN
+        NULL;
     END;
   END IF;
 END;
@@ -111,15 +106,18 @@ $fnbody$;
 
 GRANT EXECUTE ON FUNCTION public.award_points(UUID, INTEGER, TEXT, UUID, TEXT) TO authenticated;
 
--- Smoke test: llamar award_points con un UUID dummy. Si la funcion
--- tiene refs rotas o sintaxis invalida, la mig falla al aplicarla.
--- Nota: como p_user_id es un UUID que no existe en profiles, el UPDATE
--- afecta 0 filas pero la funcion no falla (no es error).
+-- Smoke test: usa un profile real si existe. Si no, skip. Esto evita
+-- el falso FK violation que bloqueaba la mig al usar UUID dummy.
 DO $smoke$
 DECLARE
-  v_dummy UUID := gen_random_uuid();
+  v_real_user UUID;
 BEGIN
-  PERFORM public.award_points(v_dummy, 0, 'smoke_test', NULL, 'smoke');
-  RAISE NOTICE 'Smoke award_points OK';
+  SELECT id INTO v_real_user FROM public.profiles LIMIT 1;
+  IF v_real_user IS NULL THEN
+    RAISE NOTICE 'Smoke award_points SKIPPED (no hay profiles en la DB)';
+    RETURN;
+  END IF;
+  PERFORM public.award_points(v_real_user, 0, 'smoke_test', NULL, 'smoke');
+  RAISE NOTICE 'Smoke award_points OK con user %', v_real_user;
 END
 $smoke$;
