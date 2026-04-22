@@ -22,7 +22,7 @@ import {
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { CalendarIcon, Plus, Loader2, Sparkles, ChevronDown } from '@/lib/icons';
+import { CalendarIcon, Plus, Loader2, ChevronDown } from '@/lib/icons';
 import { format, addMonths } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
@@ -59,12 +59,6 @@ interface AddMedicalRecordProps {
   onSaved?: (medicalRecordId: string) => void;
 }
 
-interface MedicalSuggestion {
-  value: string;
-  label: string;
-  description?: string;
-}
-
 export function AddMedicalRecord({
   petId,
   petBreed,
@@ -76,7 +70,6 @@ export function AddMedicalRecord({
 }: AddMedicalRecordProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
   const [recordType, setRecordType] = useState('');
   const [showRecommendation, setShowRecommendation] = useState(false);
   const [savedRecordType, setSavedRecordType] = useState('');
@@ -92,7 +85,6 @@ export function AddMedicalRecord({
   const [serialNumber, setSerialNumber] = useState('');
   const [antiparasiticType, setAntiparasiticType] = useState('');
   const [productBrand, setProductBrand] = useState('');
-  const [suggestions, setSuggestions] = useState<MedicalSuggestion[]>([]);
   // Progressive disclosure (plan apendice C): los 3 campos requeridos
   // (tipo, titulo, fecha) siempre visibles. El resto (veterinaria, vet
   // name, descripcion, notas) viven en un collapse "Mas detalles" para
@@ -149,40 +141,14 @@ export function AddMedicalRecord({
   // (migración 20260421000000_expand_medical_record_types.sql)
   const recordTypes = MEDICAL_RECORD_TYPES;
 
-  const fetchSuggestions = async (type: string) => {
-    if (!petBreed || !petSpecies) return;
-
-    setLoadingSuggestions(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('medical-suggestions', {
-        body: { breed: petBreed, species: petSpecies, recordType: type },
-      });
-
-      if (error) throw error;
-      setSuggestions(data.suggestions || []);
-    } catch (error) {
-      // Las sugerencias son "nice to have". Si falla la IA o la edge fn
-      // devuelve fallback estatico, el user sigue pudiendo escribir el
-      // titulo a mano. No mostramos toast de error para no generar ruido
-      // percibido como bug (el form funciona igual).
-      logger.warn('Suggestions not available, continuing without:', error);
-      setSuggestions([]);
-    } finally {
-      setLoadingSuggestions(false);
-    }
-  };
-
+  // 2026-04-21 (feedback Pedro): las sugerencias IA no aportaban valor real.
+  // Cuando la IA funcionaba, eran redundantes con el <datalist> del Título.
+  // Cuando fallaba, mostraba fallback genérico ("Consulta General" aunque
+  // fuera Vacuna). Eliminamos la card completa; el datalist del input
+  // Título ya tiene las vacunas comunes por especie (ver getVaccinesForSpecies).
   const handleTypeChange = (type: string) => {
     setRecordType(type);
     setTitle('');
-    fetchSuggestions(type);
-  };
-
-  const handleSuggestionSelect = (suggestion: MedicalSuggestion) => {
-    setTitle(suggestion.label);
-    if (suggestion.description) {
-      setDescription(suggestion.description);
-    }
   };
 
   const handlePlaceSelect = (placeId: string) => {
@@ -340,7 +306,6 @@ export function AddMedicalRecord({
     setSerialNumber('');
     setAntiparasiticType('');
     setProductBrand('');
-    setSuggestions([]);
   };
 
   return (
@@ -377,39 +342,10 @@ export function AddMedicalRecord({
             </Select>
           </div>
 
-          {/* Sugerencias de IA */}
-          {loadingSuggestions && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Obteniendo sugerencias de Claude...
-            </div>
-          )}
-
-          {suggestions.length > 0 && (
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-primary" />
-                Sugerencias para {petBreed}
-              </Label>
-              <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto p-2 bg-muted/30 rounded-lg">
-                {suggestions.map((suggestion, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => handleSuggestionSelect(suggestion)}
-                    className="text-left p-2 text-sm rounded-md hover:bg-primary/10 transition-colors border border-border/50"
-                  >
-                    <div className="font-medium">{suggestion.label}</div>
-                    {suggestion.description && (
-                      <div className="text-xs text-muted-foreground mt-1">
-                        {suggestion.description}
-                      </div>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* 2026-04-21 (feedback Pedro): card de sugerencias IA removida.
+               Aportaba ruido cuando la IA fallaba (mostraba "Consulta
+               General" incluso para Vacuna). El <datalist> del input
+               Título ya muestra vacunas comunes por especie. */}
 
           {/* Título */}
           <div className="space-y-2">

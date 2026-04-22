@@ -125,7 +125,7 @@ export function LandingHeader() {
                 <Link
                   to={item.href}
                   className={cn(
-                    'rounded-lg px-3 py-2 text-sm font-semibold transition-colors',
+                    'whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold transition-colors',
                     item.cta
                       ? 'border border-purple-300 bg-purple-50 text-purple-700 hover:bg-purple-100 hover:border-purple-400 shadow-sm'
                       : 'text-foreground/80 hover:bg-foreground/5 hover:text-foreground'

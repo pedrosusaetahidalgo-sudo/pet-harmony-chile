@@ -195,10 +195,14 @@ export function SymptomTriage({ petId, petName, onClose, onShowDirectory }: Prop
                       {item.data?.message || item.content}
                     </p>
 
-                    {/* Suggested questions */}
+                    {/* Suggested question — una sola, la mas relevante.
+                         Feedback Pedro 2026-04-21: "deberia ser la pregunta
+                         de a una y las respuestas. no muchas preguntas".
+                         La IA puede devolver varias en data.questions pero
+                         mostramos solo la primera para no abrumar. */}
                     {item.data?.questions && item.data.questions.length > 0 && (
                       <div className="space-y-1 pt-1">
-                        {item.data.questions.map((q, j) => (
+                        {item.data.questions.slice(0, 1).map((q, j) => (
                           <button
                             key={j}
                             onClick={() => handleQuestionClick(q)}

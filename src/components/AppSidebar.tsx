@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Calendar,
   CalendarDays,
@@ -47,6 +47,8 @@ import { getTutorialBySection, SECTION_ORDER, type SectionKey } from '@/lib/side
 import { Badge } from '@/components/ui/badge';
 import { PremiumBadge } from '@/components/PremiumBadge';
 import { usePlan } from '@/hooks/usePlan';
+import { RoleToggle } from '@/components/RoleToggle';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 import {
   Sidebar,
@@ -226,19 +228,57 @@ export function AppSidebar() {
   const { role, isProvider } = useActiveRole();
   const { isPremium } = usePlan();
   const showPremiumBadges = isFeatureEnabled('USER_PREMIUM') && !isPremium;
-  const [exploreOpen, setExploreOpen] = useState(false);
-  // Estado abierto/cerrado por sub-grupo dentro de Explorar. Por defecto
-  // "Dia a dia" abierto (contiene Mis reservas/Recordatorios/Rutinas/Reportes,
-  // las list views que antes estaban en el core del sidebar). Causas
-  // tambien abierto por ser accionable (adopcion, sangre, donaciones);
-  // el resto cerrado para no saturar.
-  const [exploreSubOpen, setExploreSubOpen] = useState<Record<string, boolean>>({
+  // Persistencia del estado de "Explorar" en localStorage — feedback
+  // Pedro 2026-04-21: "el sidebar se recoge cada cambio de vista".
+  // AppLayout se remonta en cada ruta, asi que useState se resetea.
+  // Guardamos/leemos de localStorage para que el usuario mantenga sus
+  // elecciones de colapso al navegar.
+  const EXPLORE_LS_KEY = 'pf-sidebar-explore-v1';
+  const EXPLORE_SUB_LS_KEY = 'pf-sidebar-explore-sub-v1';
+
+  const [exploreOpen, setExploreOpen] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const stored = window.localStorage.getItem(EXPLORE_LS_KEY);
+    return stored === null ? false : stored === 'true';
+  });
+
+  // Default: "Dia a dia" + "Causas" abiertos (items mas accionables).
+  const DEFAULT_SUB_STATE: Record<string, boolean> = {
     'dia-dia': true,
     mapa: false,
     social: false,
     causas: true,
     'paw-labs': false,
+  };
+  const [exploreSubOpen, setExploreSubOpen] = useState<Record<string, boolean>>(() => {
+    if (typeof window === 'undefined') return DEFAULT_SUB_STATE;
+    try {
+      const stored = window.localStorage.getItem(EXPLORE_SUB_LS_KEY);
+      if (stored) {
+        return { ...DEFAULT_SUB_STATE, ...(JSON.parse(stored) as Record<string, boolean>) };
+      }
+    } catch {
+      /* parse error: fallback a default */
+    }
+    return DEFAULT_SUB_STATE;
   });
+
+  // Persistir al cambiar.
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(EXPLORE_LS_KEY, String(exploreOpen));
+    }
+  }, [exploreOpen]);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.setItem(EXPLORE_SUB_LS_KEY, JSON.stringify(exploreSubOpen));
+      } catch {
+        /* storage full / disabled: ignorar */
+      }
+    }
+  }, [exploreSubOpen]);
+
   const toggleSub = (key: string) => setExploreSubOpen((prev) => ({ ...prev, [key]: !prev[key] }));
 
   const {
@@ -588,6 +628,12 @@ export function AppSidebar() {
 
         {user && (
           <SidebarFooter className="p-2 border-t border-border/40">
+            {/* 2026-04-21 (feedback Pedro): toggle rol movido aqui desde
+                Header. Solo se muestra en stack si el user es provider
+                (variant='pill' legacy ya no se usa). */}
+            <RoleToggle variant="stack" />
+            <div className="h-px bg-border/40 mx-2 my-1" />
+
             {/* CTA fijo de donaciones: mas llamativo que los items normales
                 del footer (gradiente rosa suave + icono relleno) pero sin ser
                 tan fuerte como un boton primario. Visible en cualquier ruta. */}
@@ -633,8 +679,16 @@ export function AppSidebar() {
                   className="h-7 text-xs rounded-md"
                 >
                   <Settings className="h-3.5 w-3.5 flex-shrink-0" />
-                  <span>Configuracion</span>
+                  <span>Configuración</span>
                 </SidebarMenuButton>
+              </SidebarMenuItem>
+              {/* 2026-04-21: ThemeToggle movido aqui desde Header. El
+                  ThemeToggle original es un <Button> icon-only, lo
+                  renderizamos como item inline envuelto en el patron del menu. */}
+              <SidebarMenuItem>
+                <div className="h-7 rounded-md hover:bg-sidebar-accent/60 transition-colors px-2 flex items-center gap-2 text-xs cursor-pointer">
+                  <ThemeToggle />
+                </div>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton

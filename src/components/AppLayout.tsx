@@ -77,9 +77,22 @@ function LayoutInner({ children }: AppLayoutProps) {
   );
 }
 
+/**
+ * Lee la cookie `sidebar:state` que SidebarProvider setea al toggle.
+ * Al remontarse AppLayout en cada ruta, esta función restaura el
+ * estado previo del usuario en vez de forzar siempre abierto.
+ * Feedback Pedro 2026-04-21: "el sidebar se recoge cada cambio de vista".
+ */
+function readSidebarCookieOpen(): boolean {
+  if (typeof document === 'undefined') return true;
+  const match = document.cookie.match(/(?:^|;\s*)sidebar:state=([^;]+)/);
+  if (!match) return true; // default: abierto
+  return match[1] === 'true';
+}
+
 export function AppLayout({ children }: AppLayoutProps) {
   return (
-    <SidebarProvider defaultOpen={true}>
+    <SidebarProvider defaultOpen={readSidebarCookieOpen()}>
       <LayoutInner>{children}</LayoutInner>
     </SidebarProvider>
   );

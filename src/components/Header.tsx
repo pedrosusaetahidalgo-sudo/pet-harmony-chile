@@ -13,7 +13,6 @@ import {
   Star,
   Trophy,
   Flame,
-  Stethoscope,
 } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -29,10 +28,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { logger } from '@/lib/logger';
-import { toast } from 'sonner';
-import { BecomeProviderDialog } from '@/components/BecomeProviderDialog';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import { haptics } from '@/lib/haptics';
 
 const notificationIconMap: Record<string, { icon: React.ElementType; color: string }> = {
   reminder_due: { icon: Clock, color: 'text-amber-500' },
@@ -66,13 +61,12 @@ function timeAgo(dateStr: string): string {
 
 export const Header = () => {
   const { user } = useAuth();
-  const { role, isProvider, toggle } = useActiveRole();
+  const { role } = useActiveRole();
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [profile, setProfile] = useState<any>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [userStats, setUserStats] = useState<any>(null);
-  const [becomeProviderOpen, setBecomeProviderOpen] = useState(false);
   const {
     notifications,
     unreadCount: notifUnreadCount,
@@ -138,68 +132,9 @@ export const Header = () => {
         {/* User Section */}
         {user && (
           <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-            {/* Role toggle — solo visible si el usuario ya es provider */}
-            {isProvider && (
-              <div className="flex items-center bg-gray-100 rounded-full p-0.5 relative">
-                {/* Sliding background indicator */}
-                <div
-                  className={cn(
-                    'absolute top-0.5 bottom-0.5 rounded-full transition-all duration-200 ease-out',
-                    role === 'owner'
-                      ? 'left-0.5 bg-purple-100 w-[calc(50%-2px)]'
-                      : 'left-[50%] bg-teal-100 w-[calc(50%-2px)]'
-                  )}
-                />
-                <button
-                  onClick={() => {
-                    if (role !== 'owner') {
-                      haptics.navigate();
-                      toggle();
-                      navigate('/home');
-                      toast('Cambiaste a vista de dueño');
-                    }
-                  }}
-                  className={cn(
-                    'relative z-10 flex items-center gap-1.5 h-7 px-2.5 sm:px-3 rounded-full text-xs font-medium transition-colors duration-200',
-                    role === 'owner'
-                      ? 'text-purple-700 font-semibold'
-                      : 'text-gray-400 hover:text-gray-600'
-                  )}
-                >
-                  <PawPrint className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Dueño</span>
-                </button>
-                <button
-                  onClick={() => {
-                    if (role === 'provider') return; // ya esta en modo profesional
-                    if (isProvider) {
-                      // Ya es provider, solo cambiar vista
-                      haptics.navigate();
-                      toggle();
-                      navigate('/provider/dashboard');
-                      toast('Cambiaste a vista profesional');
-                    } else {
-                      // No es provider, abrir formulario de registro
-                      haptics.confirm();
-                      setBecomeProviderOpen(true);
-                    }
-                  }}
-                  className={cn(
-                    'relative z-10 flex items-center gap-1.5 h-7 px-2.5 sm:px-3 rounded-full text-xs font-medium transition-colors duration-200',
-                    role === 'provider'
-                      ? 'text-teal-700 font-semibold'
-                      : 'text-gray-400 hover:text-gray-600'
-                  )}
-                >
-                  <Stethoscope className="h-3.5 w-3.5" />
-                  <span className="hidden sm:inline">Profesional</span>
-                </button>
-              </div>
-            )}
-            <BecomeProviderDialog open={becomeProviderOpen} onOpenChange={setBecomeProviderOpen} />
-
-            {/* Dark mode toggle — discreto, antes de notificaciones */}
-            <ThemeToggle />
+            {/* 2026-04-21 (feedback Pedro): toggle rol Dueño/Profesional
+                movido al sidebar footer para limpiar el Header. ThemeToggle
+                tambien migrado al sidebar. Ver RoleToggle + AppSidebar. */}
 
             {/* Notifications Popover */}
             <Popover>
