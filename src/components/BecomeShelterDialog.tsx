@@ -16,7 +16,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useActiveRole } from '@/hooks/useActiveRole';
 import { SANTIAGO_COMUNAS } from '@/lib/vetDirectory';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -203,6 +209,11 @@ export function BecomeShelterDialog({ open, onOpenChange }: Props) {
             {step === 1 && 'Ubicacion y contacto'}
             {step === 2 && 'Tu mision y alcance'}
           </DialogTitle>
+          <DialogDescription>
+            {step === 0 && 'Elige el tipo de organizacion y danos tu nombre legal.'}
+            {step === 1 && 'Comuna donde operas y datos de contacto publicos.'}
+            {step === 2 && 'Cuenta tu mision y las razas/especies que acoges.'}
+          </DialogDescription>
         </DialogHeader>
 
         {/* Step 0: Tipo + nombre legal */}

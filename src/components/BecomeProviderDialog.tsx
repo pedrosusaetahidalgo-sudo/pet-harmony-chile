@@ -13,7 +13,13 @@ import { useAuth } from '@/hooks/useAuth';
 import { useActiveRole } from '@/hooks/useActiveRole';
 import { VET_SPECIALTIES, SANTIAGO_COMUNAS, COMUNAS_POR_ZONA } from '@/lib/vetDirectory';
 import { GROOMER_SERVICES } from '@/hooks/useGroomerProfile';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -303,6 +309,11 @@ export function BecomeProviderDialog({ open, onOpenChange }: Props) {
             {step === 1 && '¿Cómo atiendes?'}
             {step === 2 && `Perfil de ${serviceLabel}`}
           </DialogTitle>
+          <DialogDescription>
+            {step === 0 && 'Elige el tipo de servicio que ofreces a los dueños de mascotas.'}
+            {step === 1 && 'Indica cómo prefieres atender a tus clientes.'}
+            {step === 2 && 'Completa los datos básicos de tu perfil público.'}
+          </DialogDescription>
         </DialogHeader>
 
         {/* Step 0: Choose service type */}

@@ -57,6 +57,15 @@ export function useVetPatientSummary() {
     setIsCached(false);
 
     try {
+      // 2026-04-21: fix 401 — forzar refresh del token si esta por expirar.
+      // Supabase JWT default expires_in=3600s. En sesiones largas el token
+      // caduca antes de invocar la edge fn y nos tira 401 "User not
+      // authenticated". getSession() refresca automaticamente si corresponde.
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        throw new Error('Sesión expirada. Vuelve a iniciar sesión.');
+      }
+
       const { data: responseData, error: fnError } = await supabase.functions.invoke(
         'generate-vet-patient-summary',
         { body: { petId } }

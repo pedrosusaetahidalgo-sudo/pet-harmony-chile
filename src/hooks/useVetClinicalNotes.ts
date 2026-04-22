@@ -109,6 +109,24 @@ export function useCreateVetClinicalNote() {
   return useMutation({
     mutationFn: async (args: CreateNoteArgs) => {
       if (!user) throw new Error('No autenticado');
+
+      // 2026-04-21: pre-check defensivo antes de intentar INSERT.
+      // RLS niega si providerId no corresponde a un service_providers
+      // row del user actual. En vez de un 403 crudo, validamos primero
+      // y mostramos mensaje claro.
+      const { data: ownProvider } = await sb
+        .from('service_providers')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('id', args.providerId)
+        .maybeSingle();
+
+      if (!ownProvider) {
+        throw new Error(
+          'Este perfil de profesional no te pertenece. Verifica que estés en tu cuenta vet correcta.'
+        );
+      }
+
       const { data, error } = await sb
         .from('vet_clinical_notes')
         .insert({
@@ -131,7 +149,16 @@ export function useCreateVetClinicalNote() {
         })
         .select()
         .single();
-      if (error) throw error;
+      if (error) {
+        // Traducir 403/RLS a mensaje claro (ej: intento insert en paciente
+        // sin link activo via pet_vet_links).
+        if (error.code === '42501' || error.message?.includes('row-level security')) {
+          throw new Error(
+            'No tienes permiso para registrar una consulta en este paciente. Asegurate de tener un vínculo activo.'
+          );
+        }
+        throw error;
+      }
       return data;
     },
     onSuccess: (_data: unknown, args: CreateNoteArgs) => {
@@ -142,8 +169,8 @@ export function useCreateVetClinicalNote() {
         queryKey: ['vet-clinical-notes-provider', args.providerId],
       });
     },
-    onError: () => {
-      toast.error('Error al guardar la nota clinica');
+    onError: (err: Error) => {
+      toast.error(err.message || 'Error al guardar la nota clínica');
     },
   });
 }

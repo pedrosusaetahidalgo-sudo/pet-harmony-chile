@@ -30,6 +30,12 @@ export function useProcessTranscript() {
     setData(null);
 
     try {
+      // 2026-04-21: fix 401 — refresh del token antes de invocar.
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        throw new Error('Sesión expirada. Vuelve a iniciar sesión.');
+      }
+
       const { data: responseData, error: fnError } = await supabase.functions.invoke(
         'process-consultation-transcript',
         {
