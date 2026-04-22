@@ -38,11 +38,7 @@
 
 | Documento | Que contiene | Prioridad |
 |---|---|---|
-| [docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md](docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md) | PDF profesional cronologico + deduplicacion mascotas + sync datos | **Alta** -- Toca joya de la corona + integridad de datos |
-| [docs-specs/ADMIN_CONTROL_CENTER_V2.md](docs-specs/ADMIN_CONTROL_CENTER_V2.md) | Centro de control admin v2 | **Media** -- Admin expandido |
-| [docs-specs/MEJORA_IMAGENES_AVATARES.md](docs-specs/MEJORA_IMAGENES_AVATARES.md) | Optimizacion de avatares e imagenes | **Media** -- Performance |
 | [docs-specs/MICROCHIP_REGISTRO_NACIONAL.md](docs-specs/MICROCHIP_REGISTRO_NACIONAL.md) | Integracion registro nacional microchip | **Baja** -- Feature futuro |
-| [docs-specs/BOOKING_SYSTEM_OVERHAUL_PLAN.md](docs-specs/BOOKING_SYSTEM_OVERHAUL_PLAN.md) | Plan maestro rediseno sistema reservas/citas (owner + vet + admin), 4 fases | **Alta** -- Cita es fuente de ficha clinica + motor B2B Premium |
 
 **Specs ya ejecutadas (movidas a _archive/):**
 - PLAN_DUAL_PROFILE — 100% ejecutado (ActiveRoleProvider + useActiveRole)
@@ -53,6 +49,11 @@
 - FICHA_VET_VIEW_SPEC — 100% ejecutado (viewMode, VetActionsBar, VetFichaView, invitation handler)
 - VET_PANEL_FICHA_REDESIGN — 100% ejecutado (PatientKPIBar, PatientCard, VetFichaView 2-col, VetVitalsCard)
 - PROVIDER_LAYOUT_REDESIGN — 100% ejecutado (dashboard grid 2-col, MiniProfileCard, sidebar items, tabs perfil)
+- VACUNAS_ANTIPARASITARIOS_SOFIA — 100% ejecutado (TabVacunas + TabAntiparasitarios + trigger auto-reminder)
+- MEJORA_IMAGENES_AVATARES — 100% ejecutado (imageUtils con compressImage + upload propio + crop)
+- CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS — 100% ejecutado (PDF v3 cronologico + ZIP v2)
+- ADMIN_CONTROL_CENTER_V2 — 100% ejecutado (error_logs + telemetria + Admin Powerhouse + Pulso Diario)
+- BOOKING_SYSTEM_OVERHAUL_PLAN — superseded por [docs-raiz/planes/BOOKING_SYSTEM_MASTER_PLAN.md](docs-raiz/planes/BOOKING_SYSTEM_MASTER_PLAN.md) (2026-04-21)
 
 ---
 
@@ -80,8 +81,7 @@ Resumen de items activos:
 | 5 | [BASE_DATOS_PARTNERS_CHILE.md](_pending/BASE_DATOS_PARTNERS_CHILE.md) | Data | Media |
 | 6 | [testing-virtual-user-blueprint.md](_pending/testing-virtual-user-blueprint.md) | Testing Playwright | Media |
 | 7 | [FEATURE_AI_WEB_SEARCH_UPGRADE.md](_pending/features/FEATURE_AI_WEB_SEARCH_UPGRADE.md) | Feature | Media |
-| 8 | [PLAN_ADOPCION_CENTROS_2026_04_20.md](_pending/PLAN_ADOPCION_CENTROS_2026_04_20.md) | Refugios como onboarding inicial (ejecutado 2026-04-20) | Completado |
-| 9 | [auditoria-e2e/](_pending/auditoria-e2e/) | Auditoría E2E onboardings pre-launch 1 junio 2026 (30 ONBDs + plan de lotes A-I en ejecución) | Alta — en curso |
+| 8 | [auditoria-e2e/](_pending/auditoria-e2e/) | Auditoría E2E onboardings pre-launch 1 junio 2026 (30 ONBDs + plan de lotes A-I en ejecución) | Alta — en curso |
 
 ---
 
@@ -122,14 +122,11 @@ Resumen de items activos:
 
 | Documento | Que contiene | Estado |
 |---|---|---|
-| [docs-raiz/planes/PRODUCT_SYSTEM_COHERENCE_MASTER_PLAN.md](docs-raiz/planes/PRODUCT_SYSTEM_COHERENCE_MASTER_PLAN.md) | Plan maestro 2026-04-21: coherencia booking + preventive care + navegacion + adopciones + wiring + Beta Labs. 43 secciones + 15 apendices, evidencia linea por linea | Activo — Dia 1 ejecutado |
-| [docs-raiz/planes/EJECUCION_COHERENCE_PLAN_DIA_1.md](docs-raiz/planes/EJECUCION_COHERENCE_PLAN_DIA_1.md) | Ejecucion Dia 1 del plan: Fase 0 hotfixes + Fase 1 navegacion + Fase 2 preventive care. 3 migraciones aplicadas + deploy 9 edge fns | Completado |
-| [docs-raiz/planes/SMOKE_TEST_COHERENCE_DIA_1.sql](docs-raiz/planes/SMOKE_TEST_COHERENCE_DIA_1.sql) | Smoke test SQL (8 checks) para validar las 3 migraciones Dia 1 en prod | Activo |
-| [docs-raiz/planes/EJECUCION_COHERENCE_PLAN_DIA_2.md](docs-raiz/planes/EJECUCION_COHERENCE_PLAN_DIA_2.md) | Ejecucion Dia 2: Fase 3 wiring notifs + Fase 4 optimistic updates booking + Fase 5 tab Prevenciones | Completado |
-| [docs-raiz/planes/SMOKE_TEST_COHERENCE_DIA_2.sql](docs-raiz/planes/SMOKE_TEST_COHERENCE_DIA_2.sql) | Smoke test SQL (5 checks defensivos) para validar wiring notifs post re-deploy edge fns | Activo |
-| [docs-raiz/planes/SMOKE_MANUAL_COHERENCE.md](docs-raiz/planes/SMOKE_MANUAL_COHERENCE.md) | Smoke manual end-to-end con tráfico real: 4 escenarios (adopción / prevenciones / booking reminder / sidebar) + SQL de verificación | Activo |
-| [docs-raiz/planes/EJECUCION_COHERENCE_FASE_FINAL.md](docs-raiz/planes/EJECUCION_COHERENCE_FASE_FINAL.md) | Fase final: 4 gaps reales resueltos post repo-vs-plan (label antiparasitic, collapse progressive, invalidaciones my-applications, toast proxima dosis) | Completado |
-| [docs-raiz/planes/EJECUCION_COHERENCE_FASE_6.md](docs-raiz/planes/EJECUCION_COHERENCE_FASE_6.md) | Fase 6 hardening: fix regresion reorg-v3 + refactor frequencies + E2E Playwright Coherence + pendientes manuales acumulados | Completado |
+| [docs-raiz/planes/PRODUCT_SYSTEM_COHERENCE_MASTER_PLAN.md](docs-raiz/planes/PRODUCT_SYSTEM_COHERENCE_MASTER_PLAN.md) | Plan maestro 2026-04-21: coherencia booking + preventive care + navegacion + adopciones + wiring + Beta Labs. 43 secciones + 15 apendices, evidencia linea por linea | Ejecutado 100% (Dia 1 + Dia 2 + Fase Final + Fase 6 archivados en `_archive/`) |
+| [docs-raiz/planes/BOOKING_SYSTEM_MASTER_PLAN.md](docs-raiz/planes/BOOKING_SYSTEM_MASTER_PLAN.md) | Plan maestro booking 2026-04-21: 16 brechas. P0 (B2, B3, B8) ejecutados. B5-B16 (P1/P2) pendientes | Activo — P0 ejecutados, P1/P2 pendientes |
+| [docs-raiz/planes/DOCUMENTS_AND_EMAILS_REDESIGN_MASTER_PLAN.md](docs-raiz/planes/DOCUMENTS_AND_EMAILS_REDESIGN_MASTER_PLAN.md) | Rediseno documental y emails: Fase 1 ejecutada (fundacion + 5 templates). Fases 2-4 pendientes | Activo — Fase 1 completa |
+| [docs-raiz/planes/HUGGINGFACE_INTEGRATIONS_PLAN.md](docs-raiz/planes/HUGGINGFACE_INTEGRATIONS_PLAN.md) | Plan 4 fases integracion HF para bajar costos IA (Whisper, Donut, RMBG, bge-m3, Llama 3.2) | Activo — sin iniciar |
+| [docs-raiz/planes/INSTAGRAM_IMPLEMENTATION_PLAN_PAWFRIEND.md](docs-raiz/planes/INSTAGRAM_IMPLEMENTATION_PLAN_PAWFRIEND.md) | Plan maestro Instagram @pawfriend.app (operacional, no codigo) | Activo — sin iniciar |
 | [docs-raiz/planes/SUGERENCIAS_COMPLETAS_2026_04_16.md](docs-raiz/planes/SUGERENCIAS_COMPLETAS_2026_04_16.md) | 49 sugerencias en 10 categorias con plan de ejecucion de 4 semanas | Activo |
 | [docs-raiz/operacion/PENDIENTES_MANUALES.md](docs-raiz/operacion/PENDIENTES_MANUALES.md) | Items que requieren trabajo manual (assets, stores, verificaciones) | Activo |
 

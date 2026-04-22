@@ -717,6 +717,14 @@ Para tareas especializadas, invocar el subagente correspondiente. **13 agentes a
 | Vet ficha redesign | Aplicado | PatientKPIBar, VetFichaView 2-col, VetVitalsCard, calendar split |
 | Quick wins Fase 1 | Aplicado | PublicLayout, EmptyState unificado, sonner unico, format.ts, a11y |
 | Lint cleanup 2026-04-16 | Aplicado | 10 errores lint → 0, eslint ignores android/ios, tipos en useVetAnalytics |
+| Vacunas + Antiparasitarios (INIT-07 Sofia) | Aplicado | TabVacunas + TabAntiparasitarios en PetClinicalRecord, mig 20260416210000 campos estructurados, mig 20260629000000 trigger auto-reminder |
+| Mejora imagenes y avatares | Aplicado | `src/lib/imageUtils.ts` con compressImage + presets avatar/pet/feed, upload propio en EditProfileDrawer, crop en `ImageCropper.tsx` |
+| Adopcion como onboarding (centros de adopcion) | Aplicado | Rol shelter, tabla `adoption_centers`, BecomeShelterDialog, dashboard, bulk import CSV/XLSX, transferencia a adoptante |
+| Features competitivas VetCheck | Aplicado | Copropiedad (pet_co_owners + dialogs), bulk import de pacientes, reportes negocio vet, cobros WhatsApp/agenda |
+| Consolidacion ficha + PDF profesional | Aplicado | PDF v3 cronologico con portada + timeline + tablas + watermark, ZIP v2, RPC `get_medical_summary_data` (sesion 2026-04-19) |
+| Admin Control Center V2 | Aplicado | `error_logs` + edge fn `log-error` + withTelemetry + Admin Powerhouse 8 secciones + Pulso Diario + audit-cron-daily |
+| Booking System Overhaul P0 (B2, B3, B8) | Aplicado | TodayAgendaCard usa `service_provider_id`, RescheduleDialog para provider con grace 12h, BottomTabBar "Mis Mascotas" |
+| Product System Coherence Plan | Aplicado | Dia 1 + Dia 2 + Fase Final + Fase 6 al 100%: navegacion coherente, preventive care canonico, optimistic updates booking, tab Prevenciones, helpers centralizados |
 
 ### Documentos operacionales creados
 

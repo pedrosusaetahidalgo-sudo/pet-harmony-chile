@@ -78,7 +78,7 @@ Del mapeo exhaustivo de [`supabase/functions/`](../../supabase/functions/):
 
 | Pieza | Origen técnico | Audiencia | Formato | Estado |
 |---|---|---|---|---|
-| **PDF Ficha Clínica** (joya de la corona) | [`generate-medical-summary/index.ts`](../../supabase/functions/generate-medical-summary/index.ts) — usa `pdf-lib` server-side | Owner, Vet (vía share) | PDF | ⭐ Visual premium ya v3. Spec [`CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md`](../../docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md) pendiente Fase 3 del plan de coherencia. |
+| **PDF Ficha Clínica** (joya de la corona) | [`generate-medical-summary/index.ts`](../../supabase/functions/generate-medical-summary/index.ts) — usa `pdf-lib` server-side | Owner, Vet (vía share) | PDF | ⭐ Visual premium ya v3. Spec archivada: [`_archive/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md`](../../_archive/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md) (100% ejecutada). |
 | **ZIP documentos médicos** | [`generate-medical-zip/index.ts`](../../supabase/functions/generate-medical-zip/index.ts) | Owner + Vet compartido | ZIP | ⚠️ Falta README.md interno estandarizado + ficha auto incluida (ver Fase 3) |
 | **Resumen paciente vet (PDF)** | [`generate-vet-patient-summary/index.ts`](../../supabase/functions/generate-vet-patient-summary/index.ts) | Vet | PDF | ⚠️ Beta — validar con Sofia antes de generalizar |
 | **Shelter report PDF** | [`generate-shelter-report-pdf/index.ts`](../../supabase/functions/generate-shelter-report-pdf/index.ts) | Shelter | PDF | 🟡 Nuevo — no auditado aún |

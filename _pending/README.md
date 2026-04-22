@@ -2,7 +2,7 @@
 
 > **Propósito:** staging de MDs accionables que aún **no** se han ejecutado (total o parcialmente).
 > **Qué NO vive aquí:** docs vivas ([CLAUDE.md](../CLAUDE.md), [INDEX.md](../INDEX.md), [MAPA_FUNCIONAL_COMPLETO.md](../MAPA_FUNCIONAL_COMPLETO.md), [AGENTS.md](../AGENTS.md), [diagrams/](../diagrams/)), auditorías ([audits/](../audits/)), archivados ([_archive/](../_archive/)).
-> **Última actualización:** 2026-04-19
+> **Última actualización:** 2026-04-21
 
 ---
 
@@ -31,7 +31,7 @@
 | 10 | [migrations/PLAN_GOOGLE_PLACES_MIGRATION.md](migrations/PLAN_GOOGLE_PLACES_MIGRATION.md) | Migración | 🟡 Media-baja | Cost-gated — requiere decisión sobre costos Google Places |
 | 11 | [feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md](feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md) | Feedback | 🟡 Media-baja | 8/9 done — solo pendiente: localizador tiendas (P4 futuro) + grupos comunidad MVP (P1 scope grande) |
 | 12 | [tooling/](tooling/) | Plan producción | 🟡 Baja | Plan 8 semanas — entra cuando producto esté estable |
-| 13 | [features/COMPETITIVE_VETCHECK_FEATURES.md](features/COMPETITIVE_VETCHECK_FEATURES.md) | Features competitivas | 🟠 Media | 4 fases: copropiedad mascotas, reportes negocio vet, import masivo, cobros WhatsApp + agenda sala |
+| 13 | [auditoria-e2e/05-PLAN_EJECUCION.md](auditoria-e2e/05-PLAN_EJECUCION.md) | Plan QA E2E | 🟡 Media-baja | Pendiente — plan de ejecución derivado de auditoría E2E de onboardings |
 
 ---
 
@@ -71,6 +71,14 @@
 | `docs-specs/COMPARTIR_FICHA_V2.md` → `_archive/` | 100% ejecutado: pet_vet_links, ShareWithVetModal, bidireccional | 2026-04-13 |
 | `docs-specs/OPTIMIZACION_PROMPTS_AI.md` → `_archive/` | Parcial archivado: seguridad prompts OK, Haiku migration OK | 2026-04-13 |
 | `ANALISIS_LIMPIEZA_DEMO_USERS.md` → `_archive/` | Ejecutado — limpieza de ~100 users demo completada | 2026-04-12 |
+| `docs-specs/VACUNAS_ANTIPARASITARIOS_SOFIA.md` → `_archive/` | 100% ejecutado: TabVacunas/TabAntiparasitarios + migs 20260416210000 y 20260629000000 (trigger auto-reminder) | 2026-04-21 |
+| `docs-specs/MEJORA_IMAGENES_AVATARES.md` → `_archive/` | 100% ejecutado: imageUtils.ts con compressImage, upload propio en EditProfileDrawer, presets avatar/pet/feed | 2026-04-21 |
+| `PLAN_ADOPCION_CENTROS_2026_04_20.md` → `_archive/` | 100% ejecutado: rol shelter, adoption_centers, dashboard, bulk import, transferencia a adoptante | 2026-04-21 |
+| `features/COMPETITIVE_VETCHECK_FEATURES.md` → `_archive/` | 100% ejecutado: pet_co_owners + CoOwnerInviteReceivedDialog + ImportPatientsModal + ShelterBulkImport | 2026-04-21 |
+| `docs-specs/BOOKING_SYSTEM_OVERHAUL_PLAN.md` → `_archive/` | Superseded por [BOOKING_SYSTEM_MASTER_PLAN.md](../docs-raiz/planes/BOOKING_SYSTEM_MASTER_PLAN.md) (2026-04-21) | 2026-04-21 |
+| `docs-specs/CONSOLIDACION_FICHA_PDF_Y_DATOS_UNIFICADOS.md` → `_archive/` | 100% ejecutado: PDF v3 cronológico, ZIP v2, RPC get_medical_summary_data (sesión 2026-04-19) | 2026-04-21 |
+| `docs-specs/ADMIN_CONTROL_CENTER_V2.md` → `_archive/` | 100% ejecutado: error_logs, edge fn log-error, telemetría, 8 secciones admin (admin-powerhouse + live + telemetry) | 2026-04-21 |
+| `docs-raiz/planes/EJECUCION_COHERENCE_*` + `SMOKE_*` → `_archive/` | Plan maestro Coherence ejecutado 100% en scope (Día 1 + Día 2 + Fase Final + Fase 6) | 2026-04-21 |
 
 ---
 

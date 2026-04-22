@@ -58,7 +58,7 @@ Infraestructura agregada:
 - Migración SQL para vistas `mau_owners_v`, `nsm_30d_v`, `mrr_b2b_v` — pendiente aplicar prod.
 - Evento analytics `MEDICAL_SHARE_OPENED` + track en `MedicalShare.tsx`.
 - Componente `AdminNorthStarHeader` al tope de admin Dashboard.
-- Spec INIT-07 (vacunas + antiparasitarios Sofia) en `docs-specs/VACUNAS_ANTIPARASITARIOS_SOFIA.md`.
+- Spec INIT-07 (vacunas + antiparasitarios Sofia) ejecutada — archivada en [_archive/VACUNAS_ANTIPARASITARIOS_SOFIA.md](../../_archive/VACUNAS_ANTIPARASITARIOS_SOFIA.md).
 
 ### Confirmaciones de Pedro (2026-04-20)
 - ✅ 30-40 hrs/sem disponibles.

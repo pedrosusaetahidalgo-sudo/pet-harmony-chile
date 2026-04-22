@@ -1,7 +1,7 @@
 # Runbook — Sistema de Reservas (Booking System)
 
 > Guia operativa para diagnosticar y resolver incidentes del sistema de reservas.
-> Referencia: [docs-specs/BOOKING_SYSTEM_OVERHAUL_PLAN.md](../../docs-specs/BOOKING_SYSTEM_OVERHAUL_PLAN.md).
+> Referencia: [docs-raiz/planes/BOOKING_SYSTEM_MASTER_PLAN.md](../planes/BOOKING_SYSTEM_MASTER_PLAN.md) (plan activo); spec archivada: [_archive/BOOKING_SYSTEM_OVERHAUL_PLAN.md](../../_archive/BOOKING_SYSTEM_OVERHAUL_PLAN.md).
 
 ---
 

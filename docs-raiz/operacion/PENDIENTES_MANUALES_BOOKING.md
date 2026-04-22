@@ -1,7 +1,7 @@
 # Pendientes manuales — Booking System Overhaul
 
 > **Fecha**: 2026-04-18.
-> **Contexto**: Fase 2+3 del [plan maestro](../../docs-specs/BOOKING_SYSTEM_OVERHAUL_PLAN.md).
+> **Contexto**: Fase 2+3 del plan maestro archivado ([_archive/BOOKING_SYSTEM_OVERHAUL_PLAN.md](../../_archive/BOOKING_SYSTEM_OVERHAUL_PLAN.md)). Sucesor: [docs-raiz/planes/BOOKING_SYSTEM_MASTER_PLAN.md](../planes/BOOKING_SYSTEM_MASTER_PLAN.md).
 > **Quién aplica**: Pedro.
 > **Por qué manual**: las migraciones SQL toca aplicarlas desde Supabase Dashboard (regla CLAUDE.md §9.2), y los deploys de edge functions requieren CLI.
 
