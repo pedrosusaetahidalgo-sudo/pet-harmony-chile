@@ -2,12 +2,13 @@
 
 > Pegar este bloque como "memoria" o primer mensaje al iniciar una conversacion
 > con una IA externa que NO tiene acceso al repo. Cubre producto, stack,
-> monetizacion, roles y estado tecnico al 2026-04-21.
+> monetizacion, roles y estado tecnico al 2026-04-22.
 >
-> Actualizado: 2026-04-21 (tarde, tras Booking Master Plan V3 + anti-spam).
+> Actualizado: 2026-04-22 (tras Content Studio v2 + batch 14 bugs post-smoke
+> + Apple Sign-In end-to-end + limpieza repo).
 > Mantener sincronizado cuando cambie el modelo de negocio, los roles o el
 > stack. Para el detalle tecnico completo, la fuente de verdad sigue siendo
-> `CLAUDE.md` + `INDEX.md` + `MAPA_FUNCIONAL_COMPLETO.md`.
+> [CLAUDE.md](../CLAUDE.md) + [INDEX.md](../INDEX.md) + [MAPA_FUNCIONAL_COMPLETO.md](../MAPA_FUNCIONAL_COMPLETO.md).
 
 ---
 
@@ -36,6 +37,14 @@
 - Mobile: Capacitor 7 (Android compilable, iOS testeado en simulator).
 - Observabilidad: Sentry + PostHog + Firebase Analytics.
 - Tests: Vitest (unit) + Playwright (E2E, 336/336 verde).
+- Auth social: Apple Sign-In end-to-end (Team `7Q8L7A2WM7`, Service
+  `cl.pawfriend.web`, Key `8KX2B9489M`), Google OAuth, Meta pendiente
+  (espera decision Consumer vs Empresa).
+- **Content Studio v2** (2026-04-22, pipeline interno en `content-studio/`):
+  Satori + Remotion (video) + whisper (transcripcion) + ElevenLabs Pro
+  (voz) + Midjourney Basic (imagenes). Render PNG/MP4 para Instagram/
+  TikTok. Pausado hasta filmar Kai/Ema/Otto/Miguel propios (ver
+  `content-studio/SHOT_LIST.md`).
 
 No hay: Zustand, Redux, Next.js.
 
@@ -138,48 +147,77 @@ Todas envueltas con `withTelemetry` (2026-04-17).
   end-to-end; debe ser un solo bloque Mermaid pegable en mermaid.live.
 - PowerShell no soporta heredoc bash (Pedro corre Windows).
 - Comandos Supabase CLI siempre con `npx` (`npx supabase ...`).
+- **Triggers plpgsql con smoke inline** (regla 9.2.1, 2026-04-21):
+  toda migracion que crea o modifica un trigger plpgsql DEBE incluir
+  un `DO $$ ... $$` con ROLLBACK que lo ejercite. plpgsql valida lazy
+  las refs a columnas; sin smoke el trigger se crea "ok" y explota
+  meses despues en prod con usuarios reales. Incidentes 2026-04-21:
+  `sync_vaccination_status`, `notify_adoption_interest`,
+  `create_default_reminders_for_new_pet`, `award_points`.
+- Toda ruta de archivo (.sql, .ts, .md) y URL mencionada en respuesta
+  va como link markdown clickeable, nunca como texto plano.
+- Nunca flipear `verify_jwt` en bloque en >1 edge fn a la vez; hacerlo
+  1 a 1 con smoke real (incidente 2026-04-20).
+- Nunca hardcodear JWTs en `cron.schedule`; usar vault
+  `current_setting('app.settings.service_role_key')`.
 
-## 8. Estado tecnico (2026-04-21)
+## 8. Estado tecnico (2026-04-22)
 
-- Ramas: `main` al dia. Ultimo commit: `91f1bd3d feat(booking): Master
-  Plan V3 completo — fases 0-5 + anti-spam`.
-- Recientes (semana 2026-04-21):
-  - Booking Master Plan V3 fases 0-5: timezone por provider,
-    availability rules + lead windows, RPC `get_available_slots_range`,
-    RPC `create_booking`, RPC `cancel/reschedule`, view `v_all_bookings`,
-    push al provider on new booking, auto-cancel cron de pending.
-  - Anti-spam en push triggers: chequeo `user_notification_prefs` +
-    dedup via `notification_attempts` UNIQUE index (mig `20260725000011`).
-  - Vault para service_role_key (mig `20260725000009/10`): nunca JWT
-    hardcoded en triggers SQL.
-  - `user_notification_prefs` granular (3 categorias × 3 canales).
-  - Co-ownership de mascotas: invite por email (Resend), dialog
-    accept/reject, seccion compartir en ficha.
-  - Daily digest cron + smoke shelter/admin/gate en E2E.
-  - Fix CHECK `pet_reminders.type` sin 'deworming' (bloqueaba crear
-    mascota) + 3 prevenciones: smoke SQL post-migracion, E2E con
-    triggers + RLS reales, widget admin de violaciones de schema.
-  - E2E realignment: 21 tests corregidos por drift de UI.
+- Ramas: `main` al dia. Ultimo commit: `6bbab0f9 feat(content-studio):
+  pipeline programatico de social media ads`.
+- Recientes (2026-04-21 → 2026-04-22):
+  - **Content Studio v2 pusheado** (`6bbab0f9`): 47 archivos, 9561 lineas.
+    Stack Satori+Remotion+whisper+ElevenLabs Pro+Midjourney Basic.
+    Pedro pago ambas suscripciones. Pausado hasta filmar mascotas propias.
+    Guia siguiente en `content-studio/SHOT_LIST.md`.
+  - **Batch 14 bugs post-smoke** (2026-04-21, hasta `ad5f2a78`): 9 migs
+    SQL, 6 commits. Patrones recurrentes resueltos: joins
+    `profiles`/`auth.users` rotos, triggers plpgsql lazy-validation
+    (`sync_vaccination_status`, `notify_adoption_interest`,
+    `create_default_reminders_for_new_pet`), varchar/text mismatch,
+    JWT refresh en sesiones >1h, `award_points` defensivo ante schemas
+    divergentes + smoke con user real, DialogDescription a11y.
+  - **Apple Sign-In end-to-end** (2026-04-21): Team `7Q8L7A2WM7`,
+    Service `cl.pawfriend.web`, Key `8KX2B9489M`, JWT generado via
+    script `scripts/generate-apple-client-secret.mjs`. App Store Connect
+    creada. Meta bloqueado decidiendo Consumer vs Empresa. Google
+    esperando reverificacion carnet Play Console.
+  - **Limpieza repo** (`49386538`): 14 specs/planes ejecutados archivados
+    (Vacunas Sofia, Ficha PDF v3, Admin V2, Booking Overhaul, Adopcion,
+    VetCheck, Coherence Plan, etc). Indices CLAUDE/INDEX/_pending al dia.
+  - Pitch inversionista: `pitch-inversionistas/07_ROBERTO_CAMHI.md`
+    (guia llamada 1:1 con angel founder Mapcity/Apanio, mentor
+    FI/Start-Up Chile/CORFO).
+  - Contexto previo (semana 2026-04-20/21): Booking Master Plan V3
+    fases 0-5 + anti-spam, vault para service_role_key, prefs granulares
+    `user_notification_prefs` (3 categorias × 3 canales), dedup via
+    `notification_attempts` UNIQUE, co-ownership de mascotas, daily
+    digest cron, fix CHECK `pet_reminders.type` + 3 prevenciones,
+    E2E realignment.
 - Tests: `npm run test:ci` ~176 unit verdes; Playwright 336/336.
 - Type-check: `npx tsc -b` 0 errores.
 - Lint: 0 errores, ~85 warnings a11y.
 - Build: pasa, ~2m 31s. Bundle principal ~335 kB / 100 kB gzip.
-- Migraciones: ultima aplicada serie `20260725000011`
-  (booking_push_antispam). Pitch applications `20260625000000` ya en prod.
+- Migraciones: serie `20260725000011` (booking_push_antispam) +
+  hotfixes plpgsql de 2026-04-21. Pitch applications `20260625000000`
+  en prod.
 - Rutas totales: 67.
 
-## 9. Que esta en curso (2026-04-21)
+## 9. Que esta en curso (2026-04-22)
 
-- Prod: app sana para crear mascotas (fix 2026-04-20/21).
-- Booking V3 desplegado con triggers seguros (prefs + dedup).
+- Prod: app sana para crear mascotas, triggers plpgsql verificados con
+  smoke inline tras el batch de 14 bugs.
+- Content Studio v2 listo tecnicamente; generacion **pausada** hasta
+  filmar a Kai / Ema / Otto / Miguel (ver [content-studio/SHOT_LIST.md](../content-studio/SHOT_LIST.md)).
 - Pendientes operacionales Pedro (no Claude):
-  - Aplicar migraciones `20260725000000-011` desde Supabase Dashboard
-    si aun no estan todas en prod.
   - Migrar cuenta Flow a SpA (riesgo fiscal de cuenta personal).
-  - Apple Developer + Play Console + assets para stores.
-  - Verificacion Meta WhatsApp.
-- Roadmap 90d en `docs-raiz/planes/` (28 iniciativas priorizadas por RICE).
+  - Decidir Meta WhatsApp tipo Consumer vs Empresa + verificacion.
+  - Google Play Console: espera reverificacion carnet (desde 2026-04-22).
+  - Apple Developer + assets stores (Sign-In ya listo).
+- Roadmap 90d en [docs-raiz/planes/](planes/) (28 iniciativas priorizadas por RICE).
 - Testimonios multi-rol: Sofia Rosi (vet beta) + 2 vets mas + 3 duenos.
+- Lanzamiento publico: 1 junio 2026, modo autonomo, Flow $100 real.
+  SHELTER_DONATIONS activable cuando SpA quede operativa en Flow.
 
 ## 10. Mi perro y mi gata
 
@@ -190,14 +228,16 @@ En copy publico uso alias "Paw Founder", no mi nombre real.
 
 ## 11. Documentos clave del repo para profundizar
 
-- `CLAUDE.md` — manual operativo completo (fuente de verdad).
-- `INDEX.md` — indice maestro de docs.
-- `MAPA_FUNCIONAL_COMPLETO.md` — mapa de modulos y flujos.
-- `AGENTS.md` — config para agentes IA externos (Cursor, Copilot).
-- `diagrams/FLUJO_COMPLETO.mmd` — diagrama Mermaid end-to-end.
-- `docs-raiz/planes/` — roadmap 90d y specs priorizadas.
-- `pitch-inversionistas/` — decks y docs para CORFO, Start-Up Chile,
-  angels/VCs, Paw Companys, Paw Voices, Paw Partners.
+- [CLAUDE.md](../CLAUDE.md) — manual operativo completo (fuente de verdad).
+- [INDEX.md](../INDEX.md) — indice maestro de docs.
+- [MAPA_FUNCIONAL_COMPLETO.md](../MAPA_FUNCIONAL_COMPLETO.md) — mapa de modulos y flujos.
+- [AGENTS.md](../AGENTS.md) — config para agentes IA externos (Cursor, Copilot).
+- [diagrams/FLUJO_COMPLETO.mmd](../diagrams/FLUJO_COMPLETO.mmd) — diagrama Mermaid end-to-end.
+- [docs-raiz/planes/](planes/) — roadmap 90d y specs priorizadas.
+- [pitch-inversionistas/](../pitch-inversionistas/) — decks y docs para CORFO, Start-Up Chile,
+  angels/VCs (incluye `07_ROBERTO_CAMHI.md`), Paw Companys, Paw Voices, Paw Partners.
+- [content-studio/](../content-studio/) — pipeline programatico de social
+  media ads. Ver `SHOT_LIST.md` para lo que viene.
 
 ---
 
