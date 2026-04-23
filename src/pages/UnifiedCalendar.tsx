@@ -10,6 +10,7 @@ import { UnifiedDayView } from '@/components/calendar/UnifiedDayView';
 import { CalendarFilters } from '@/components/calendar/CalendarFilters';
 import { CalendarEvent, useUnifiedCalendar } from '@/hooks/useUnifiedCalendar';
 import { useRoutines } from '@/hooks/useRoutines';
+import { useReminders } from '@/hooks/useReminders';
 import { useActiveRole } from '@/hooks/useActiveRole';
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
@@ -19,6 +20,9 @@ import { es } from 'date-fns/locale';
 import { CalendarDays, Plus, Stethoscope, Bell, PawPrint, Syringe } from '@/lib/icons';
 import { LINKS } from '@/lib/links';
 import { GoogleCalendarStatusBanner } from '@/components/GoogleCalendarStatusBanner';
+import { RoutineForm } from '@/components/routines/RoutineForm';
+import { AddReminderDialog } from '@/components/reminders/AddReminderDialog';
+import { toast } from 'sonner';
 
 // Valor del tab activo ↔ tipo de evento que muestra.
 // 'hoy' muestra todos los eventos del dia actual.
@@ -107,7 +111,52 @@ export default function UnifiedCalendar() {
     petId
   );
 
-  const { completeToday, skipToday } = useRoutines();
+  const { completeToday, skipToday, addRoutine } = useRoutines();
+  const { addReminder } = useReminders();
+
+  // Dialogs para crear desde calendario
+  const [routineDialogOpen, setRoutineDialogOpen] = useState(false);
+  const [reminderDialogOpen, setReminderDialogOpen] = useState(false);
+
+  // CTA "Agendar cita" — lleva al usuario al flow de reserva con mascota
+  // pre-seleccionada. Si tiene 1 mascota, va directo a ficha?action=book.
+  // Si tiene varias, manda a /my-pets para que elija. Si no tiene, a /add-pet.
+  const handleAddBooking = () => {
+    if (pets.length === 0) {
+      toast('Primero agrega una mascota', {
+        description: 'Para reservar una cita necesitamos saber de cuál mascota hablamos.',
+      });
+      navigate(LINKS.addPet());
+      return;
+    }
+    if (pets.length === 1) {
+      navigate(LINKS.petClinicalBook(pets[0].id));
+      return;
+    }
+    navigate(LINKS.myPets());
+  };
+
+  const handleAddRoutine = () => {
+    if (pets.length === 0) {
+      toast('Primero agrega una mascota', {
+        description: 'Las rutinas se asocian a una mascota.',
+      });
+      navigate(LINKS.addPet());
+      return;
+    }
+    setRoutineDialogOpen(true);
+  };
+
+  const handleAddReminder = () => {
+    if (pets.length === 0) {
+      toast('Primero agrega una mascota', {
+        description: 'Los recordatorios se asocian a una mascota.',
+      });
+      navigate(LINKS.addPet());
+      return;
+    }
+    setReminderDialogOpen(true);
+  };
 
   const dateStr = format(selectedDate, 'yyyy-MM-dd');
   let dayEvents = eventsForDate(dateStr);
@@ -317,15 +366,22 @@ export default function UnifiedCalendar() {
                 {dayEvents.length} {dayEvents.length === 1 ? 'evento' : 'eventos'}
               </span>
             </div>
-            <UnifiedDayView date={selectedDate} events={dayEvents} onEventTap={handleEventTap} />
-            {/* Quick add buttons */}
+            <UnifiedDayView
+              date={selectedDate}
+              events={dayEvents}
+              onEventTap={handleEventTap}
+              onAddBooking={!isProvider ? handleAddBooking : undefined}
+              onAddRoutine={!isProvider ? handleAddRoutine : undefined}
+              onAddReminder={!isProvider ? handleAddReminder : undefined}
+            />
+            {/* Quick add buttons — abren dialogs in-place para crear sin salir del calendario */}
             {!isProvider && (
               <div className="flex gap-2 pt-2">
                 <Button
                   variant="outline"
                   size="sm"
                   className="flex-1 text-xs h-8 gap-1"
-                  onClick={() => navigate(LINKS.remindersTab())}
+                  onClick={handleAddReminder}
                 >
                   <Plus className="h-3 w-3" /> Recordatorio
                 </Button>
@@ -333,7 +389,7 @@ export default function UnifiedCalendar() {
                   variant="outline"
                   size="sm"
                   className="flex-1 text-xs h-8 gap-1"
-                  onClick={() => navigate(LINKS.routinesTab())}
+                  onClick={handleAddRoutine}
                 >
                   <Plus className="h-3 w-3" /> Rutina
                 </Button>
@@ -352,6 +408,29 @@ export default function UnifiedCalendar() {
           </div>
         </div>
       </main>
+
+      {/* Dialogs para crear rutina/recordatorio sin salir del calendario */}
+      {!isProvider && (
+        <>
+          <RoutineForm
+            open={routineDialogOpen}
+            onOpenChange={setRoutineDialogOpen}
+            onSubmit={(data) => {
+              addRoutine.mutate(data, {
+                onSuccess: () => setRoutineDialogOpen(false),
+              });
+            }}
+            defaultPetId={filterPetId !== 'all' ? filterPetId : undefined}
+            isLoading={addRoutine.isPending}
+          />
+          <AddReminderDialog
+            open={reminderDialogOpen}
+            onOpenChange={setReminderDialogOpen}
+            pets={pets}
+            onSubmit={(data) => addReminder.mutate(data)}
+          />
+        </>
+      )}
     </>
   );
 }

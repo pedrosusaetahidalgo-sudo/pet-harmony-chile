@@ -4,13 +4,17 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Button } from '@/components/ui/button';
 import { Plus, CalendarDays } from '@/lib/icons';
-import { useNavigate } from 'react-router-dom';
-import { LINKS } from '@/lib/links';
 
 interface UnifiedDayViewProps {
   date: Date;
   events: CalendarEvent[];
   onEventTap?: (event: CalendarEvent) => void;
+  /** Callback del CTA "Agendar cita" — abrir flow de reserva */
+  onAddBooking?: () => void;
+  /** Callback del CTA "Rutina" — abrir dialog de crear rutina */
+  onAddRoutine?: () => void;
+  /** Callback del CTA "Recordatorio" — abrir dialog de crear recordatorio */
+  onAddReminder?: () => void;
 }
 
 /** Group timed events by hour for visual structure */
@@ -25,8 +29,14 @@ function groupByHour(events: CalendarEvent[]): Map<string, CalendarEvent[]> {
   return groups;
 }
 
-export function UnifiedDayView({ date, events, onEventTap }: UnifiedDayViewProps) {
-  const navigate = useNavigate();
+export function UnifiedDayView({
+  date,
+  events,
+  onEventTap,
+  onAddBooking,
+  onAddRoutine,
+  onAddReminder,
+}: UnifiedDayViewProps) {
   const timed = events
     .filter((e) => e.time)
     .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
@@ -79,35 +89,41 @@ export function UnifiedDayView({ date, events, onEventTap }: UnifiedDayViewProps
             </p>
           </div>
           <div className="flex flex-wrap gap-2 justify-center">
-            {/* CC-11: CTA para iniciar reserva desde calendario.
-                Cierra el gap entre "ver calendario" y "agendar": antes el
-                tutor debía salir al directorio manualmente. */}
-            <Button
-              size="sm"
-              className="h-8 text-xs gap-1 bg-purple-600 hover:bg-purple-700"
-              onClick={() => navigate(LINKS.vets())}
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Agendar cita
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-8 text-xs gap-1"
-              onClick={() => navigate(LINKS.routinesTab())}
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Rutina
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-8 text-xs gap-1"
-              onClick={() => navigate(LINKS.remindersTab())}
-            >
-              <Plus className="h-3.5 w-3.5" />
-              Recordatorio
-            </Button>
+            {/* CC-11: CTA para iniciar reserva/rutina/recordatorio desde calendario.
+                Abre dialog in-place (Rutina/Recordatorio) o navega al flow
+                de booking con pre-seleccion de mascota (Agendar cita). */}
+            {onAddBooking && (
+              <Button
+                size="sm"
+                className="h-8 text-xs gap-1 bg-purple-600 hover:bg-purple-700"
+                onClick={onAddBooking}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Agendar cita
+              </Button>
+            )}
+            {onAddRoutine && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 text-xs gap-1"
+                onClick={onAddRoutine}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Rutina
+              </Button>
+            )}
+            {onAddReminder && (
+              <Button
+                size="sm"
+                variant="outline"
+                className="h-8 text-xs gap-1"
+                onClick={onAddReminder}
+              >
+                <Plus className="h-3.5 w-3.5" />
+                Recordatorio
+              </Button>
+            )}
           </div>
         </div>
       )}
