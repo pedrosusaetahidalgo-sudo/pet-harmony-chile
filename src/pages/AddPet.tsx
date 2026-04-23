@@ -677,6 +677,18 @@ const AddPet = () => {
           .remove([uploadedFilePath])
           .catch(() => {});
       }
+      // Logueamos el error completo (incluido el payload que enviamos) para
+      // poder diagnosticar fallos opacos sin depender del toast. En prod
+      // queda visible en Sentry/log-error; en dev aparece en la consola.
+      logger.error('[AddPet] submit failed', {
+        isEdit,
+        error,
+        errorName: (error as { name?: string })?.name,
+        errorMessage: (error as Error)?.message,
+        errorCode: (error as { code?: string })?.code,
+        errorDetails: (error as { details?: string })?.details,
+        errorHint: (error as { hint?: string })?.hint,
+      });
       toast.error(isEdit ? 'Error al guardar cambios' : 'Error al agregar mascota', {
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
       });
@@ -998,12 +1010,21 @@ const AddPet = () => {
                   <Label htmlFor="weight">Peso (kg)</Label>
                   <Input
                     id="weight"
-                    type="number"
+                    // type="text" + inputMode="decimal" + pattern fuerza el
+                    // teclado numerico con punto en iOS (type="number" muestra
+                    // coma segun locale es_CL). Convertimos , → . para que
+                    // parseFloat funcione sin romper si el usuario igual tipea.
+                    type="text"
                     inputMode="decimal"
-                    step="0.1"
-                    min="0"
+                    pattern="[0-9]*\.?[0-9]*"
+                    autoComplete="off"
                     value={formData.weight}
-                    onChange={(e) => updateField('weight', e.target.value)}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(',', '.');
+                      // Solo digitos y un punto decimal (evita letras/simbolos)
+                      const clean = raw.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+                      updateField('weight', clean);
+                    }}
                     placeholder="5.5"
                   />
                 </div>

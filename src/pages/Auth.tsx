@@ -177,12 +177,11 @@ const Auth = () => {
         setConfirmationSent(true);
         toast('¡Revisa tu correo!', { description: 'Te enviamos un enlace de confirmación a ' });
       } else if (data.session) {
-        // Email confirmation disabled, user is logged in directly
+        // Email confirmation disabled, user is logged in directly.
+        // Hard reload para evitar race condition con useAuth + ProtectedRoute.
         track({ event: EVENTS.SIGNUP_COMPLETED, userId: data.user?.id });
         toast('¡Cuenta creada!', { description: 'Bienvenido a Paw Friend' });
-        // Hard reload para evitar race condition con useAuth + ProtectedRoute.
-        // Usuario nuevo siempre va a /add-pet (onboarding).
-        window.location.href = buildRedirectUrl(returnTo || '/add-pet');
+        window.location.href = buildRedirectUrl(returnTo || '/home');
         return;
       }
     } catch (error: unknown) {

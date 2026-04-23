@@ -31,6 +31,13 @@ const CONSTRAINT_MESSAGES: Record<string, string> = {
     'La especie seleccionada no está permitida. Avisa al equipo si crees que es un error.',
   pets_birth_date_reasonable:
     'La fecha de nacimiento no es válida (debe estar dentro de los últimos 30 años y no en el futuro).',
+  pets_size_check:
+    'El tamaño seleccionado no está permitido. Elige uno del listado (miniatura, pequeño, mediano, grande, gigante).',
+  pets_gender_check: 'El género debe ser macho, hembra o desconocido.',
+  chk_pet_has_responsible:
+    'La mascota debe tener un dueño o un veterinario creador. No se puede crear sin responsable.',
+  pet_reminders_type_check:
+    'El tipo de recordatorio automático no es válido. Avisa al equipo (posible migración SQL pendiente).',
 };
 
 /**
@@ -49,14 +56,21 @@ export function describeSupabaseError(
     details: err.details,
     hint: err.hint,
   });
-  // Mensaje específico por nombre de constraint si lo identificamos
+  // Mensaje específico por nombre de constraint si lo identificamos.
+  // Si reconocemos el nombre pero no lo tenemos mapeado, lo mostramos
+  // igual (mejor saber cuál constraint rompió que un mensaje genérico).
   const constraintMatch = err.message?.match(/constraint "([^"]+)"/);
-  if (constraintMatch && CONSTRAINT_MESSAGES[constraintMatch[1]]) {
-    return CONSTRAINT_MESSAGES[constraintMatch[1]];
+  if (constraintMatch) {
+    const name = constraintMatch[1];
+    if (CONSTRAINT_MESSAGES[name]) return CONSTRAINT_MESSAGES[name];
+    return `Una regla de la base de datos rechazó el registro (${name}). Revisa el campo asociado o avisa al equipo técnico.`;
   }
-  if (err.code && POSTGRES_MESSAGES[err.code]) return POSTGRES_MESSAGES[err.code];
   if (err.message?.includes('JWT')) return 'Tu sesión expiró. Inicia sesión de nuevo.';
   if (err.message?.includes('violates row-level security'))
     return 'No tienes permisos para realizar esta acción.';
+  if (err.code && POSTGRES_MESSAGES[err.code]) return POSTGRES_MESSAGES[err.code];
+  // Último recurso: mostrar el mensaje real del servidor antes que el fallback genérico.
+  const parts = [err.message, err.details, err.hint].filter(Boolean);
+  if (parts.length > 0) return parts.join(' — ');
   return fallback;
 }
