@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { track, EVENTS } from '@/lib/analytics';
+import { isFeatureEnabled } from '@/lib/featureFlags';
+import OnboardingQuickFlow from '@/pages/OnboardingQuickFlow';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -58,7 +60,20 @@ import type { HoloPattern } from '@/lib/paw-cards';
 
 const personalityOptions: string[] = [...PERSONALITY_OPTIONS];
 
+// Wrapper: decide entre el wizard minimal V2 (flag ON, modo create) y el
+// formulario legacy largo (flag OFF o edit mode). El legacy se mantiene
+// intacto en AddPetLegacy para respetar rules-of-hooks y permitir rollback
+// instantaneo por flag.
 const AddPet = () => {
+  const { petId } = useParams<{ petId: string }>();
+  const isEdit = !!petId;
+  if (!isEdit && isFeatureEnabled('ONBOARDING_V2_MINIMAL')) {
+    return <OnboardingQuickFlow />;
+  }
+  return <AddPetLegacy />;
+};
+
+const AddPetLegacy = () => {
   useScrollOnFocus();
   const { petId } = useParams<{ petId: string }>();
   const isEdit = !!petId;
