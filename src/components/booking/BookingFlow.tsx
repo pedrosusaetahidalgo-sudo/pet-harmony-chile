@@ -76,7 +76,7 @@ export function BookingFlow({
         .from('pets')
         .select('id, name, species, photo_url')
         .eq('owner_id', user.id)
-        .is('deceased_at', null)
+        .eq('lifecycle_status', 'active')
         .order('name');
       return (data ?? []) as Pet[];
     },

@@ -135,9 +135,10 @@ const exploreSubgroups: ExploreSubgroup[] = [
     ],
   },
   {
-    // Causas: adopcion, banco de sangre y donaciones. Antes adopcion y banco
-    // de sangre estaban enterrados dentro de Paw Labs junto a gamificacion,
-    // lo que mezclaba impacto real con features beta ludicas.
+    // Causas: adopcion y banco de sangre. "Donaciones" se eliminó de aquí
+    // porque el CTA "Apoyar Paw Friend" del footer del sidebar ya lleva a
+    // /donaciones — tener ambos era duplicar la misma accion con pills
+    // distintas y confundia al usuario.
     key: 'causas',
     label: 'Causas',
     icon: Heart,
@@ -149,7 +150,6 @@ const exploreSubgroups: ExploreSubgroup[] = [
         icon: Droplets,
         flag: 'LABS_BLOOD_DONORS' as const,
       },
-      { title: 'Donaciones', url: '/donaciones', icon: Heart, flag: null },
     ],
   },
   {

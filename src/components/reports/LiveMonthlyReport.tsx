@@ -94,8 +94,9 @@ async function fetchOwnerMonthly(
       .lte('scheduled_date', endIso),
     sb
       .from('medical_share_tokens')
+      // La columna real es owner_id (mig 20251223000000). created_by nunca existio.
       .select('id', { count: 'exact', head: true })
-      .eq('created_by', userId)
+      .eq('owner_id', userId)
       .gte('created_at', startIso)
       .lte('created_at', endIso),
     sb
@@ -103,10 +104,12 @@ async function fetchOwnerMonthly(
       .select('id', { count: 'exact', head: true })
       .eq('owner_id', userId)
       .eq('lifecycle_status', 'active'),
+    // "Eventos medicos" = medical_records creados este mes para cualquier mascota del user.
+    // Tabla es medical_records (no medical_events, que nunca existio) y se une via pets.owner_id.
     sb
-      .from('medical_events')
-      .select('id', { count: 'exact', head: true })
-      .eq('user_id', userId)
+      .from('medical_records')
+      .select('id, pets!inner(owner_id)', { count: 'exact', head: true })
+      .eq('pets.owner_id', userId)
       .gte('created_at', startIso)
       .lte('created_at', endIso),
   ]);
