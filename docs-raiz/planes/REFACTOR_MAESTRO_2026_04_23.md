@@ -1164,7 +1164,7 @@ NOSE_PRINT_PUBLIC_SCAN: false,    // ruta /nose-scan publica
 **Generación**: edge function `generate-insights-landing` que combina:
 - Queries agregadas sobre `pets`, `medical_records`, `pet_reminders`, `vet_bookings`
 - Template SEO-friendly con schema.org / FAQ markup
-- Pre-renderizado vía [scripts/generate-spa-routes.mjs](../../scripts/generate-spa-routes.mjs) (ya existe, extender)
+- Pre-renderizado vía [scripts/post-build-spa-routes.mjs](../../scripts/post-build-spa-routes.mjs) (ya existe, extender)
 
 **Requisito crítico**: umbral mínimo de 50 mascotas por insight para evitar identificabilidad. Si hay <50 golden retrievers, la página dice "insuficiente data, ayúdanos agregando a tu mascota" (viral loop).
 
@@ -1684,6 +1684,105 @@ Todo el resto del plan es consecuencia de esta frase.
 
 ## 9. Arquitectura técnica requerida
 
+### 9.0. PROTECCIÓN FÉRREA DE DATOS EXISTENTES (lectura obligatoria antes de cualquier migración)
+
+> **Estado de prod al 2026-04-23**: hay usuarios reales con mascotas reales usando Paw Friend. Ninguna acción de este plan puede borrar, corromper, o hacer inaccesible data existente. Esta sección es la aplicación del [CLAUDE.md §9.7](../../CLAUDE.md) reforzada al máximo para este refactor.
+
+#### 9.0.1. Las 12 reglas férreas (todas negociables = 0)
+
+1. **NUNCA `DROP TABLE` sobre**: `pets`, `profiles`, `auth.users`, `medical_records`, `pet_reminders`, `vet_bookings`, `bookings`, `service_providers`, `adoption_centers`, `pet_co_owners`, `medical_share_tokens`, `memorial_events`, `donations`, `paw_companys`, `paw_voices`, `pitch_applications`.
+
+2. **NUNCA `DELETE FROM` sin `WHERE` específico** en tablas con data de usuarios. Cualquier delete debe filtrarse por un dato concreto (`id = X`, `owner_id = ... AND created_at < ...`), nunca barrido.
+
+3. **NUNCA `ALTER TABLE ... DROP COLUMN`** sin haber migrado los datos de esa columna a la nueva estructura Y haberlo probado en staging. Si se va a droppear, primero `RENAME` a `col_deprecated` y mantener 1 release antes de drop real.
+
+4. **Renombrar columnas → `RENAME COLUMN`, nunca drop + create nueva**. Los datos deben mantenerse.
+
+5. **Columnas nuevas `NOT NULL` sin `DEFAULT`**: solo si la migración incluye un `UPDATE` previo que rellene TODAS las filas existentes. Si hay >100k filas, usar batch update con `WHERE id > last_id LIMIT 1000` para no bloquear.
+
+6. **Nuevas tablas con FK a `pets` o `profiles`**: siempre `ON DELETE CASCADE` si la nueva tabla es metadata puramente de la mascota. Si puede tener valor propio (ej: `memorial_events`), usar `ON DELETE SET NULL` o lógica custom.
+
+7. **Triggers plpgsql**: regla 9.2.1 de CLAUDE.md (smoke test inline + EXCEPTION WHEN OTHERS en INSERTs secundarios). **Sin excepciones**.
+
+8. **Cambios de enum**: nunca `DROP TYPE`. Usar `ALTER TYPE ... ADD VALUE 'nuevo'` para agregar. Para eliminar valores, primero migrar filas.
+
+9. **`is_public`, `lifecycle_status`, `deleted_at` (soft delete)**: si se necesita ocultar una mascota o perfil, usar soft delete (`lifecycle_status='archived'` o `deleted_at=now()`). **Nunca hard delete**.
+
+10. **Backup automático antes de cada migración**: Pedro saca backup Supabase antes de aplicar cualquier migración de este plan. Si la mig falla o corrompe data, restauración desde backup es el plan B.
+
+11. **Mascotas huérfanas** (creadas por vet o refugio sin dueño): deben preservarse con su `created_by_vet_id` o `created_by_shelter_id` + `pending_owner_email`. Nunca eliminar por "limpieza" porque aún no tienen dueño — son data legítima esperando reclamo.
+
+12. **Auth**: no renombrar ni eliminar `auth.users` IDs. Cualquier columna `owner_id UUID` se mantiene apuntando a `auth.users(id)` con `ON DELETE CASCADE` solo para datos derivados (fotos, recordatorios), NUNCA para mascotas (las mascotas sobreviven al borrado del dueño en auth pidiendo re-claim — ver mig `20260413200000_fix_vet_pet_creation.sql`).
+
+#### 9.0.2. Checklist pre-migración (aplicar a cada una)
+
+Antes de aplicar CUALQUIER migración de este plan, Pedro (o el que la aplique) debe verificar:
+
+- [ ] ¿La migración toca `pets`, `profiles`, `auth.users`, `medical_records` o `pet_reminders`? Si sí → triple revisión.
+- [ ] ¿Droppea alguna columna o tabla? Si sí → documentar dónde se migra la data antes.
+- [ ] ¿Agrega columna `NOT NULL`? Si sí → tiene `DEFAULT` o `UPDATE` previo para filas existentes.
+- [ ] ¿Crea o modifica trigger plpgsql? Si sí → tiene smoke test inline con rollback (regla 9.2.1).
+- [ ] ¿Afecta RLS? Si sí → verificar que no bloquee acceso a usuarios existentes.
+- [ ] ¿Backup actualizado hecho? Si no → hacerlo antes de ejecutar.
+- [ ] ¿Pregunta del dueño: "un usuario que creó su cuenta ayer, ¿sigue viendo sus datos correctamente?" → SÍ con evidencia.
+- [ ] ¿Pregunta del vet: "un vet con 50 pacientes pendientes, ¿perdería alguno?" → NO con evidencia.
+- [ ] ¿Rollback claro documentado? → SÍ escrito arriba del SQL.
+
+#### 9.0.3. Migraciones nuevas — todas son ADITIVAS
+
+Todas las migraciones que este plan propone son **adiciones puras**, no destructivas:
+
+- `pet_timeline_events` (nueva tabla, no toca existentes)
+- `pet_id_cards` (nueva tabla)
+- `owner_audio_notes` (nueva tabla)
+- `nose_prints` (nueva tabla + pgvector extension)
+- `paw_passport_cache` (nueva tabla)
+- `consent_opt_in_data` (nueva tabla)
+- `walks_detail` (nueva tabla)
+- `insights_aggregates` (vistas materializadas, no afecta tablas base)
+- `partner_integrations`, `partner_api_keys`, `partner_scanner_events`, `partner_api_audit` (nuevas)
+- `insurance_policies_link`, `insurance_commissions` (nuevas)
+
+**Zero DROP, zero RENAME destructivo, zero DELETE masivo.**
+
+Las columnas en tablas existentes solo se agregan (`ADD COLUMN IF NOT EXISTS`), nunca se modifican. Excepciones: si durante Fase 0 descubrimos un campo obsoleto en `pets` con llenado <1%, seguir proceso del punto 3 (rename → deprecated → drop en release siguiente).
+
+#### 9.0.4. Features escondidas ≠ data eliminada
+
+Esconder una feature con feature flag **NO elimina nada de DB**. El código sigue en el repo. Las tablas siguen con data. Solo la UI oculta la ruta/componente.
+
+Ejemplos concretos:
+- Si se esconde Paw Game → tabla `game_sessions` sigue con records históricos
+- Si se esconde Feed → posts viejos siguen en `posts`, `post_likes`, `post_comments`
+- Si se esconde Chat → `chat_conversations` y `chat_messages` siguen intactas
+
+Decisión de eliminar data histórica: solo tras 6+ meses de flag OFF y revisión explícita en el ritual mensual (sección 2.10.3). Nunca durante el refactor.
+
+#### 9.0.5. Columnas candidatas a revisión (NO eliminar sin aprobación explícita)
+
+Durante la auditoría Fase 0 puede detectarse que estas columnas/tablas están sub-utilizadas. **Ninguna se elimina** sin decisión explícita de Pedro y backup verificado:
+
+| Tabla / columna | Uso estimado | Acción propuesta |
+|---|---|---|
+| `pets.is_public` | Medio | Mantener, se reutiliza en compartir |
+| `pets.color` | Bajo pero útil | Mantener, es dato de cédula |
+| `pets.personality` (array) | Bajo | Mantener, nice-to-have visible |
+| `pets.vaccination_status` | Legacy (reemplazado por timeline) | Mantener hasta Fase 1 completa, luego candidate a rename+deprecated |
+| `pets.special_needs` | Muy bajo | Mantener, potencial input clínico |
+| `pets.medical_notes` | Bajo (texto libre) | Mantener, migrar contenido a timeline en Fase 1 |
+| `paw_points_ledger` | Alto en records, bajo en valor | Mantener para compatibilidad gamificación |
+| `post_*` (feed) | Legacy, flag OFF | Mantener hasta decisión ritual +6 meses |
+| `chat_*` | Legacy, flag OFF | Mantener hasta decisión ritual +6 meses |
+
+#### 9.0.6. Estrategia de testing durante el refactor
+
+Antes de cada deploy a prod con cambios de este plan:
+
+1. **Staging con copia de prod**: backup prod → restore a env staging → aplicar mig → validar
+2. **Queries de verificación post-mig**: para cada tabla tocada, `COUNT(*)` antes y después debe cuadrar (o crecer, nunca decrecer)
+3. **Smoke test con usuario real demo**: login con cuenta demo, verificar que ve sus mascotas, ficha, recordatorios, reservas
+4. **Monitoring 24h post-deploy**: alertas en Sentry + audit snapshot (ya existe sistema) para detectar regresiones
+
 ### 9.1. Nuevas tablas SQL (redactadas, sin aplicar)
 
 Migraciones a crear:
@@ -1862,37 +1961,56 @@ export const FEATURE_FLAGS = {
   PROVIDER_PUSH: false,
   ICS_EXPORT: false,
 
-  // ── Nuevos Fase 0 (frankenstein tamer) ──
-  PAWGAME_PROMINENT: false,
-  PAWGAME_MISSIONS: true,
-  PAWGAME_ARCADE: true,
-  HOME_PET_FOCUS: true,
-  FICHA_HISTORIA_TAB: true,
-  BOTTOM_TAB_V2: true,
-  SIDEBAR_COLLAPSED: true,
-  ONBOARDING_V2_MINIMAL: true,
-  PAW_POINTS_CANONICAL: true,
+  // ── Nuevos Fase 0 (frankenstein tamer + pilares trinidad) ──
+  PAWGAME_PROMINENT: false,           // Paw Game NO en home/bottomtab
+  PAWGAME_MISSIONS: true,              // /misiones accesible pero secundario
+  PAWGAME_ARCADE: true,                // mini-juego accesible pero secundario
+  HOME_PET_FOCUS: true,                // nuevo home "mascota en foco"
+  FICHA_HISTORIA_TAB: true,            // tab Historia como default en ficha
+  BOTTOM_TAB_V2: true,                 // BottomTab de 4 ejes
+  SIDEBAR_COLLAPSED: true,             // sidebar 3 grupos default + resto colapsado
+  ONBOARDING_V2_MINIMAL: true,         // onboarding 3 pasos minimal
+  PAW_POINTS_CANONICAL: true,          // puntos solo por cuidado real
+  PET_ID_CARD_V1: true,                // Pet ID Card estilo cédula
+  TIMELINE_CATEGORIES: true,           // timeline unificado con 10 categorías
+  OWNER_AUDIO_NOTES: true,             // Audio notes desde el dueño
+  QUICK_ACTIONS_HUB: true,             // Widget one-tap en Home
 
   // ── Nuevos Fase 1 (moat emergente) ──
-  NOSE_PRINT_ENABLED: false,          // gradual rollout
-  NOSE_PRINT_ONBOARDING: false,
-  NOSE_PRINT_PUBLIC_SCAN: false,
-  PAW_PASSPORT: false,
-  PARTNER_DISCOUNTS: false,
-  PUBLIC_INSIGHTS: false,
-  MEMORIAL_SHARE: false,
-  SHELTER_FOLLOWUP: false,
+  NOSE_PRINT_ENABLED: false,           // gradual rollout 10% → 50% → 100%
+  NOSE_PRINT_ONBOARDING: false,        // integrar en flujo signup mascota
+  NOSE_PRINT_PUBLIC_SCAN: false,       // ruta /nose-scan publica
+  PAW_PASSPORT: false,                 // PDF + share card
+  PARTNER_DISCOUNTS: false,            // descuentos en partners para Paw Members
+  PUBLIC_INSIGHTS: false,              // landings SEO /insights/*
+  MEMORIAL_SHARE: false,               // memorial compartible viral
+  SHELTER_FOLLOWUP: false,             // follow-up auto post-adopción
+  WALK_GPS_TRACKING: false,            // GPS background con consent
+  CASCADE_AUTO_REMINDERS: true,        // post-vacuna crea reminder próxima (ya existe parcial)
+  CASCADE_WEIGHT_ALERTS: false,        // alerta si peso baja 10%+
+  CASCADE_BIRTHDAY_AUTO: true,         // share card automática cumpleaños
 
   // ── Nuevos Fase 2 (producto invisible) ──
-  EMBEDDED_INSURANCE: false,
-  PHARMA_INSIGHTS_API: false,
-  RETAIL_FULFILLMENT: false,
-  B2B_API: false,
-  LATAM_MX: false,
-  LATAM_AR: false,
-  LATAM_CO: false,
+  EMBEDDED_INSURANCE: false,           // seguros embebidos con aseguradora partner
+  PHARMA_INSIGHTS_API: false,          // dashboard B2B + estudios custom
+  RETAIL_FULFILLMENT: false,           // comisión sobre GMV referido
+  B2B_API: false,                      // API pagada para vets grandes / aseguradoras
+  PARTNER_SCANNER_API: false,          // scanner físico en puntos de partner
+  PARTNER_AUTO_TIMELINE: false,        // auto-crear eventos desde scanner
+  PASSIVE_DETECTION_GPS: false,        // geofence clínicas veterinarias
+  CASCADE_AI_SUGGESTIONS: false,       // AI layer que sugiere next action
+  CASCADE_INACTIVITY_CHECK: false,     // push si no hay actividad 7d
+  AI_PATTERN_DETECTION: false,         // ML sobre patrones de cuidado
+  LATAM_MX: false,                     // expansión México
+  LATAM_AR: false,                     // expansión Argentina
+  LATAM_CO: false,                     // expansión Colombia
 } as const;
 ```
+
+**Estado inicial de rollout por fase**:
+- **Fase 0**: 9 flags nuevos — la mayoría en `true` desde el deploy (cambios UI unificación). No hay riesgo de rollout gradual porque son refactors visuales con fallback claro.
+- **Fase 1**: 12 flags nuevos — la mayoría en `false`, activados gradualmente. Nose print requiere rollout 10/50/100 con monitoring.
+- **Fase 2**: 13 flags nuevos — todos en `false` hasta partners/deals firmados.
 
 ---
 
