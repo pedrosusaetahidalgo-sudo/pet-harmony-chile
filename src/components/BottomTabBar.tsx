@@ -9,6 +9,7 @@ import {
   Users,
   MessageSquare,
   Briefcase,
+  Stethoscope,
 } from '@/lib/icons';
 import { LINKS } from '@/lib/links';
 import { cn } from '@/lib/utils';
@@ -58,7 +59,8 @@ export function BottomTabBar() {
   const dueSoon = upcomingReminders.filter((r) => new Date(r.due_date) <= in24h).length;
   const reminderBadge = overdueReminders.length + dueSoon;
 
-  const OWNER_TABS: Tab[] = [
+  // ── OWNER V1 (5 tabs, legacy) ──
+  const OWNER_TABS_V1: Tab[] = [
     {
       label: 'Inicio',
       icon: HomeIcon,
@@ -88,9 +90,6 @@ export function BottomTabBar() {
         p === '/adoption',
     },
     {
-      // Tab Agenda = fuente unica temporal. Matchea /calendario y sus
-      // list views asociadas (Mis reservas, Recordatorios, Rutinas) para
-      // que desde esas paginas la tab siga marcada activa.
       label: 'Agenda',
       icon: CalendarDays,
       href: LINKS.calendarToday(),
@@ -105,6 +104,47 @@ export function BottomTabBar() {
       matchPaths: (p) => p === '/profile' || p === '/settings',
     },
   ];
+
+  // ── OWNER V2 (4 tabs, Refactor Maestro §5.2.1) ──
+  // Activado con flag BOTTOM_TAB_V2. Colapsa "Servicios" + "Agenda" a "Vets" +
+  // mueve agenda dentro del Home. Bottom tab tiene 1 solo norte: la mascota.
+  const OWNER_TABS_V2: Tab[] = [
+    {
+      label: 'Mascota',
+      icon: PawPrint,
+      href: LINKS.home(),
+      matchPaths: (p) =>
+        p === '/home' ||
+        p === '/my-pets' ||
+        p === '/add-pet' ||
+        p.startsWith('/pet/') ||
+        p.startsWith('/edit-pet/') ||
+        p.startsWith('/ficha/'),
+    },
+    {
+      label: 'Calendario',
+      icon: CalendarDays,
+      href: LINKS.calendarToday(),
+      matchPaths: (p) =>
+        p === '/calendario' || p === '/reminders' || p === '/rutinas' || p === '/mis-reservas',
+      badge: reminderBadge,
+    },
+    {
+      label: 'Vets',
+      icon: Stethoscope,
+      href: LINKS.vets(),
+      matchPaths: (p) =>
+        p.startsWith('/veterinarios') || p === '/servicios' || p.startsWith('/services'),
+    },
+    {
+      label: 'Yo',
+      icon: User,
+      href: LINKS.profile(),
+      matchPaths: (p) => p === '/profile' || p === '/settings',
+    },
+  ];
+
+  const OWNER_TABS = isFeatureEnabled('BOTTOM_TAB_V2') ? OWNER_TABS_V2 : OWNER_TABS_V1;
 
   const PROVIDER_TABS: Tab[] = [
     {

@@ -62,6 +62,8 @@ import { formatDistanceToNowStrict, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useActiveRole } from '@/hooks/useActiveRole';
 import ProviderDashboard from '@/components/provider/ProviderDashboard';
+import { isFeatureEnabled } from '@/lib/featureFlags';
+import { HomePetFocusV2 } from '@/components/home/HomePetFocusV2';
 
 interface Pet {
   id: string;
@@ -189,7 +191,19 @@ const PetSwitcherAvatar = memo(function PetSwitcherAvatar({
   );
 });
 
+// Wrapper que elige entre el Home legacy (dashboard completo) y el
+// Home PetFocus V2 (Refactor Maestro 2026-04-23 §5.2.2) segun el flag.
+// El switch esta en un wrapper aparte para evitar violar rules-of-hooks
+// (el legacy tiene 30+ hooks que no deben ser condicionales).
 export default function Home() {
+  const { role } = useActiveRole();
+  if (isFeatureEnabled('HOME_PET_FOCUS') && role !== 'provider') {
+    return <HomePetFocusV2 />;
+  }
+  return <HomeLegacyDashboard />;
+}
+
+function HomeLegacyDashboard() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const goToAddPet = useGoToAddPet();
