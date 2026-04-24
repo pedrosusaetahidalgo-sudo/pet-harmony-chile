@@ -16,7 +16,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { RotateCw, Download, Share2 } from '@/lib/icons';
+import { RefreshCw, Download, Share2 } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 
 interface PetIdCardData {
@@ -342,7 +342,7 @@ export function PetIdCardDisplay({
             className="h-8 text-xs gap-1.5"
             onClick={() => setIsFlipped(!isFlipped)}
           >
-            <RotateCw className="h-3 w-3" />
+            <RefreshCw className="h-3 w-3" />
             {isFlipped ? 'Ver frente' : 'Ver reverso'}
           </Button>
           {onDownload && (
