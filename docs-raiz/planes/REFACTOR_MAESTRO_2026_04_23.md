@@ -1337,6 +1337,22 @@ Convertir la data en revenue B2B sin comprometer la experiencia del dueño. **El
 
 ## 8. Modelo de negocio pivotado
 
+### 8.1.a. Refinamiento 2026-04-23 tarde (Pedro reprioriza)
+
+> Tras debate sobre hipótesis validadas vs por-validar, se ajusta la prioridad de revenue streams:
+>
+> **Core del motor (no depende de partners)**:
+> - Insights B2B (Pharma, Seguros, Estudios académicos)
+> - Seguros embebidos (comisión vía aseguradora)
+> - Paw Member + Apoyar Paw Friend (B2C voluntario)
+>
+> **Nice-to-have (si entran, aceleran; si no, el plan sigue)**:
+> - Partners retail (Mathiesen, Kiwoko, Pet Zone, etc.)
+> - Retail fulfillment
+> - Scanner físico en partners
+>
+> **Implicancia**: Fase 1 prioriza nose print + paw passport + pipeline insights + conversación con 1 aseguradora. **Scanner físico + partners retail se pospone a Fase 2 o Y2**. El plan no se atasca si ningún retail partner firma en Y1.
+
 ### 8.1. Principio rector (directiva Pedro 2026-04-23)
 
 > **El dueño NUNCA paga por features. El acceso a la ficha completa, a la huella, a la Pet ID Card, a todos los insights, a los partners y a la exportación es 100% gratuito para siempre.**
