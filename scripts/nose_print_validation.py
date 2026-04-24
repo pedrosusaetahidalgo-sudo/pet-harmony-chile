@@ -281,8 +281,12 @@ def write_report(pets, embeddings, same_sims, cross_sims, metrics, decision):
     for m in metrics:
         lines.append(f"| {m['threshold']:.2f} | {m['same_accuracy']*100:.1f}% | {m['false_positive_rate']*100:.1f}% |")
     lines.append("")
-    lines.append(f"**Same-pet similitudes**: min={min(same_sims):.3f}, max={max(same_sims):.3f}, mean={sum(same_sims)/len(same_sims):.3f}")
-    lines.append(f"**Cross-pet similitudes**: min={min(cross_sims):.3f}, max={max(cross_sims):.3f}, mean={sum(cross_sims)/len(cross_sims):.3f}")
+    if same_sims:
+        lines.append(f"**Same-pet similitudes**: min={min(same_sims):.3f}, max={max(same_sims):.3f}, mean={sum(same_sims)/len(same_sims):.3f}")
+    if cross_sims:
+        lines.append(f"**Cross-pet similitudes**: min={min(cross_sims):.3f}, max={max(cross_sims):.3f}, mean={sum(cross_sims)/len(cross_sims):.3f}")
+    else:
+        lines.append(f"**Cross-pet**: N/A (modo quick con 1 mascota)")
     lines.append("")
     lines.append("---")
     lines.append("")
@@ -352,7 +356,7 @@ def main():
     is_quick_single = args.quick and len(pets) == 1
 
     if is_quick_single:
-        # Reporte simplificado
+        # Reporte simplificado (sin emojis Unicode para compat Windows cp1252)
         print("\n" + "=" * 70)
         print("RESULTADOS QUICK CHECK (1 mascota)")
         print("=" * 70)
@@ -366,14 +370,16 @@ def main():
             print(f"  Similitud mean: {mean_sim:.3f}")
             print()
             if mean_sim >= 0.85:
-                print(f"  ✅ MUY BUENO: el modelo reconoce al mismo animal con alta confianza")
-                print(f"     Proximo paso: tomar fotos a las otras 4 mascotas y correr test completo")
+                print("  [MUY BUENO] El modelo reconoce al mismo animal con alta confianza")
+                print("     Proximo paso: tomar fotos a las otras mascotas y correr test completo")
             elif mean_sim >= 0.70:
-                print(f"  ⚠️  ACEPTABLE: similitud decente, podria mejorar con fine-tuning")
-                print(f"     Proximo paso: tomar fotos a las otras mascotas para test completo")
+                print("  [ACEPTABLE] Similitud decente, probablemente mejora con fine-tuning o Petnow API")
+                print("     Proximo paso: tomar fotos a las otras mascotas para test completo")
             else:
-                print(f"  ❌ BAJO: similitud insuficiente, revisar calidad de fotos")
-                print(f"     Tips: mejor luz, menor distancia (15cm), enfoque nitido")
+                print("  [MARGINAL] Similitud baja para MobileNetV3 base. Considerar:")
+                print("    - Mejor calidad de fotos (luz, enfoque, 15cm distancia)")
+                print("    - Fine-tuning con Pet Biometric dataset en Fase 1")
+                print("    - API comercial Petnow (modelo especializado en narices)")
         else:
             print("  [WARN] No hay pares suficientes para analizar")
         print("=" * 70)
