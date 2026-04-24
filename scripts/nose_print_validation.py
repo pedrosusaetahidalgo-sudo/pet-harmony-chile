@@ -103,8 +103,12 @@ def extract_embedding(model, image_path):
 # Validacion
 # ─────────────────────────────────────────────────────────────────────────────
 
-def collect_photos():
-    """Recolecta fotos organizadas por mascota."""
+def collect_photos(quick_mode=False):
+    """Recolecta fotos organizadas por mascota.
+
+    Si quick_mode=True, permite correr con solo 1 mascota (test parcial,
+    solo mide same-pet accuracy).
+    """
     if not PHOTOS_DIR.exists():
         print(f"[ERROR] Carpeta no existe: {PHOTOS_DIR}")
         print(f"\nPor favor crear la estructura:")
@@ -127,12 +131,19 @@ def collect_photos():
             pets[pet_dir.name] = photos
             print(f"[OK] {pet_dir.name}: {len(photos)} fotos")
 
-    if len(pets) < 2:
-        print(f"\n[ERROR] Necesitamos al menos 2 mascotas con 2+ fotos cada una.")
+    min_pets = 1 if quick_mode else 2
+    if len(pets) < min_pets:
+        if quick_mode:
+            print(f"\n[ERROR] Necesitamos al menos 1 mascota con 2+ fotos para quick-check.")
+        else:
+            print(f"\n[ERROR] Necesitamos al menos 2 mascotas con 2+ fotos cada una.")
+            print(f"Tip: correr con --quick para validar setup con solo 1 mascota.")
         print(f"Encontradas: {len(pets)}")
         sys.exit(1)
 
     print(f"\n[INFO] Total: {len(pets)} mascotas, {sum(len(p) for p in pets.values())} fotos")
+    if quick_mode and len(pets) == 1:
+        print("[INFO] MODO QUICK: solo 1 mascota, skip cross-pet analysis")
     return pets
 
 
@@ -314,17 +325,60 @@ def write_report(pets, embeddings, same_sims, cross_sims, metrics, decision):
 # ─────────────────────────────────────────────────────────────────────────────
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(description="Nose Print Validation")
+    parser.add_argument(
+        "--quick",
+        action="store_true",
+        help="Quick check con 1 mascota (solo mide same-pet accuracy, setup check)"
+    )
+    args = parser.parse_args()
+
     print("=" * 70)
     print("NOSE PRINT VALIDATION — Fase -1 Refactor Maestro Paw Friend")
+    if args.quick:
+        print("           *** MODO QUICK CHECK (1 mascota) ***")
     print("=" * 70)
     print()
 
-    pets = collect_photos()
+    pets = collect_photos(quick_mode=args.quick)
     model = load_model()
     embeddings = compute_embeddings(model, pets)
 
     print("\n[INFO] Analizando similitudes...")
     same_sims, cross_sims, detailed = analyze_similarities(embeddings)
+
+    # Modo quick con 1 mascota: no hay cross_sims
+    is_quick_single = args.quick and len(pets) == 1
+
+    if is_quick_single:
+        # Reporte simplificado
+        print("\n" + "=" * 70)
+        print("RESULTADOS QUICK CHECK (1 mascota)")
+        print("=" * 70)
+        if same_sims:
+            mean_sim = sum(same_sims) / len(same_sims)
+            min_sim = min(same_sims)
+            max_sim = max(same_sims)
+            print(f"  Pares analizados (same-pet): {len(same_sims)}")
+            print(f"  Similitud min:  {min_sim:.3f}")
+            print(f"  Similitud max:  {max_sim:.3f}")
+            print(f"  Similitud mean: {mean_sim:.3f}")
+            print()
+            if mean_sim >= 0.85:
+                print(f"  ✅ MUY BUENO: el modelo reconoce al mismo animal con alta confianza")
+                print(f"     Proximo paso: tomar fotos a las otras 4 mascotas y correr test completo")
+            elif mean_sim >= 0.70:
+                print(f"  ⚠️  ACEPTABLE: similitud decente, podria mejorar con fine-tuning")
+                print(f"     Proximo paso: tomar fotos a las otras mascotas para test completo")
+            else:
+                print(f"  ❌ BAJO: similitud insuficiente, revisar calidad de fotos")
+                print(f"     Tips: mejor luz, menor distancia (15cm), enfoque nitido")
+        else:
+            print("  [WARN] No hay pares suficientes para analizar")
+        print("=" * 70)
+        write_report(pets, embeddings, same_sims, cross_sims, [], ("QUICK_CHECK", "Modo quick con 1 mascota", {"threshold": 0, "same_accuracy": 0, "false_positive_rate": 0}))
+        return
 
     print(f"\n[INFO] Calculando metricas para {len(THRESHOLDS)} thresholds...")
     metrics = compute_metrics(same_sims, cross_sims, THRESHOLDS)
