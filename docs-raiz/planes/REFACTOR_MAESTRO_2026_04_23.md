@@ -1783,6 +1783,111 @@ Antes de cada deploy a prod con cambios de este plan:
 3. **Smoke test con usuario real demo**: login con cuenta demo, verificar que ve sus mascotas, ficha, recordatorios, reservas
 4. **Monitoring 24h post-deploy**: alertas en Sentry + audit snapshot (ya existe sistema) para detectar regresiones
 
+### 9.0.bis Inventario real DB prod al 2026-04-23 — 150 tablas clasificadas
+
+> **Hallazgo crítico del auditoría** (Pedro corrió query `SELECT tablename FROM pg_tables WHERE schemaname='public'` 2026-04-23): la DB de prod tiene **150 tablas activas**, no ~50 como el plan asumía. 276 migraciones aplicadas. Hay tablas duplicadas (mismo concepto en 2–3 tablas distintas), tablas huérfanas (existen en DB pero el código no las usa), y tablas zombies (feature apagado por flag pero data sigue).
+>
+> Este inventario es la **base real** sobre la que se ejecuta el refactor. No podemos agregar más tablas nuevas sin entender qué ya existe.
+
+#### 9.0.bis.1 Clasificación en 5 buckets
+
+**Bucket A — CORE del nuevo plan (usar activamente)** — 22 tablas:
+
+`pets`, `profiles`, `medical_records`, `pet_reminders`, `vet_bookings`, `bookings`, `service_providers`, `adoption_centers`, `pet_co_owners`, `medical_share_tokens`, `memorial_events`, `donations`, `paw_companys`, `paw_voices`, `pitch_applications`, `vaccine_schedule_doses`, `vaccination_protocols`, `vet_clinical_notes`, `pet_routines`, `routine_completions`, `admin_access`, `analytics_events`.
+
+**Bucket B — LEGACY ACTIVA (mantener y eventualmente conectar al eje)** — ~50 tablas:
+
+Perfiles especializados, booking, reviews, providers, comunidad, gamificación básica, notificaciones, error logging, CRM vets, adoption flow, documentos. Ejemplos: `device_tokens`, `notification_preferences`, `pet_documents`, `provider_availability`, `error_logs`, `audit_snapshots`, `consultation_templates`, etc.
+
+**Bucket C — LEGACY DORMIDA (flag OFF, data quieta, no tocar)** — ~35 tablas:
+
+Feed social, chat, paseos compartidos, dogsitter full flow, training, marketplace, advertisements. Ejemplos: `posts`, `post_comments`, `post_likes`, `chat_*`, `shared_walks`, `dogsitter_*`, `training_*`, `orders`, `order_items`, `cart_items`, `advertisements`, `shared_walk_participants`, `walk_routes`, `walk_bookings`, `walk_reviews`, `pending_reviews`, etc.
+
+**Bucket D — HUÉRFANAS (DB pero sin uso en código)** — ~5 tablas detectadas:
+
+Tablas que existen en `types.ts` (generado de Supabase) pero ningún componente/hook las consulta. **No se alimentan, no se leen, pero ocupan espacio mental y físico**:
+
+- `comprehensive_medical_records` — tabla alternativa a `medical_records` que nunca se adoptó. Solo en types.ts.
+- `vet_pet_relationships` — tercer intento de modelar relación vet↔mascota. Solo en types.ts.
+- `points_history` — tabla alternativa a `paw_point_transactions`. Solo en types.ts.
+- `virtual_routes` — feature experimental abandonada.
+- `activities` vs `pet_activities` vs `user_activities` — probable duplicación histórica.
+
+**Bucket E — DUPLICACIONES DEL MISMO CONCEPTO (resolver antes de Fase 0)** — 5 grupos críticos:
+
+Este es el hallazgo más importante. Hay **5 conceptos modelados por múltiples tablas** que crean ambigüedad:
+
+| Concepto | Tablas existentes | Tabla canónica propuesta | Acción |
+|---|---|---|---|
+| **Medical records** | `medical_records`, `comprehensive_medical_records` | `medical_records` + nuevo `pet_timeline_events` | Huerfana `comprehensive_*` → rename a `_deprecated` en Fase 1 |
+| **Relación vet↔mascota** | `pet_vet_links`, `vet_pet_relationships`, `pet_co_owners` | `pet_vet_links` (vets) + `pet_co_owners` (co-dueños, no vets) | `vet_pet_relationships` huérfana → rename `_deprecated` |
+| **Puntos de gamificación** | `paw_point_transactions`, `points_history` | `paw_point_transactions` | `points_history` huérfana → rename `_deprecated` |
+| **Perfiles de servicio** | `service_providers` + `vet_profiles` + `dog_walker_profiles` + `dogsitter_profiles` + `trainer_profiles` + `groomer_profiles` | `service_providers` (unificada) | Los 5 perfiles especializados → mantener como legacy read-only, migrar datos residuales |
+| **Bookings** | `bookings`, `vet_bookings`, `dogsitter_bookings`, `walk_bookings`, `training_bookings`, `appointments` | `vet_bookings` (canónica vet), `bookings` (otros servicios) | Los 4 "_bookings" especializados y `appointments` → mantener read-only, migrar datos si corresponde |
+
+#### 9.0.bis.2 Gamificación — el frankenstein más profundo
+
+Sistema de puntos/logros modelado en **~20 tablas**. Muchas con uso bajo o cero:
+
+`achievements`, `activities`, `daily_challenges`, `guardian_levels`, `missions`, `paw_badges`, `paw_card_collections`, `paw_game_monthly_rankings`, `paw_missions`, `paw_point_transactions`, `paw_shop_rewards`, `pet_activities`, `pet_activity_cheers`, `pet_paw_progress`, `points_history`, `rewards`, `user_achievements`, `user_activities`, `user_challenges`, `user_guardian_progress`, `user_mission_progress`, `user_missions`, `user_paw_badges`, `user_rewards`, `user_shop_redemptions`.
+
+**Acción Fase 0**: auditar cuáles tienen data real (>100 filas) y cuáles son schema muerto. Las últimas → mover a bucket D, documentar para posible drop en 6+ meses.
+
+**Decisión del plan post-refactor**: gamificación se colapsa a 3 tablas canónicas:
+- `paw_point_transactions` — ledger único
+- `pet_timeline_events` categoría `milestone` — reemplaza achievements individuales
+- `paw_badges` + `user_paw_badges` — badges visibles (simplificada)
+
+El resto se marca como legacy dormida.
+
+#### 9.0.bis.3 Regla de ejecución
+
+**Ninguna migración de las propuestas 9.1 se aplica sin antes**:
+
+1. **Confirmar tabla canónica** en caso de concepto duplicado (bucket E)
+2. **Migrar datos residuales** de tablas huérfanas/legacy a la canónica si corresponde
+3. **Rename a `_deprecated`** las huérfanas (no drop aún)
+4. **Actualizar types.ts** regenerando desde Supabase tras cada rename
+5. **Verificar que el código no referencia** las tablas deprecated
+
+#### 9.0.bis.4 Query de verificación ejecutar cada fase
+
+Para detectar nuevas duplicaciones o huérfanas a medida que el refactor avanza:
+
+```sql
+-- Tablas con 0 filas (potenciales huérfanas)
+SELECT schemaname, relname, n_live_tup AS filas
+FROM pg_stat_user_tables
+WHERE schemaname='public' AND n_live_tup = 0
+ORDER BY relname;
+
+-- Tablas con >100 filas pero sin INSERT reciente (data vieja, tabla dormida)
+SELECT schemaname, relname, n_live_tup AS filas,
+       last_autovacuum, last_analyze
+FROM pg_stat_user_tables
+WHERE schemaname='public'
+  AND n_live_tup > 100
+  AND (last_autovacuum IS NULL OR last_autovacuum < NOW() - INTERVAL '30 days')
+ORDER BY n_live_tup DESC;
+
+-- Cross-check: qué tablas están en DB pero NO en types.ts ni referenciadas en src/
+-- (correr manualmente: generar lista de DB, diff con grep -r en src/)
+```
+
+#### 9.0.bis.5 Lista concreta de acciones pre-Fase 0
+
+Antes de aplicar cualquier migración nueva del plan:
+
+- [ ] Correr query de 0-filas y listar tablas sin data (candidatas a drop futuro)
+- [ ] Auditar uso real de las ~20 tablas de gamificación — cuáles tienen >100 filas
+- [ ] Rename `comprehensive_medical_records` → `comprehensive_medical_records_deprecated_20260424`
+- [ ] Rename `vet_pet_relationships` → `vet_pet_relationships_deprecated_20260424`
+- [ ] Rename `points_history` → `points_history_deprecated_20260424`
+- [ ] Rename `virtual_routes` → `virtual_routes_deprecated_20260424` (validar primero que no se use)
+- [ ] Regenerar types.ts post-renames: `npx supabase gen types typescript --project-id gwailbjlvevkhwcrovfd > src/integrations/supabase/types.ts`
+- [ ] Verificar que nada compila roto: `npx tsc -b`
+- [ ] Documentar en `_pending/DB_DEPRECATED_TABLES_REVIEW_2026_10_24.md` lista para eliminación definitiva en 6 meses
+
 ### 9.1. Nuevas tablas SQL (redactadas, sin aplicar)
 
 Migraciones a crear:
