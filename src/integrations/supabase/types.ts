@@ -1339,7 +1339,7 @@ export type Database = {
           },
         ];
       };
-      comprehensive_medical_records: {
+      comprehensive_medical_records_deprecated_20260424: {
         Row: {
           date: string | null;
           id: string;
@@ -2412,6 +2412,30 @@ export type Database = {
         };
         Relationships: [];
       };
+      ip_request_quota: {
+        Row: {
+          count: number;
+          ip: string;
+          scope: string;
+          updated_at: string;
+          window_start: string;
+        };
+        Insert: {
+          count?: number;
+          ip: string;
+          scope?: string;
+          updated_at?: string;
+          window_start?: string;
+        };
+        Update: {
+          count?: number;
+          ip?: string;
+          scope?: string;
+          updated_at?: string;
+          window_start?: string;
+        };
+        Relationships: [];
+      };
       lost_pets: {
         Row: {
           breed: string | null;
@@ -2877,6 +2901,132 @@ export type Database = {
         };
         Relationships: [];
       };
+      nose_print_test_sessions: {
+        Row: {
+          avg_quality_score: number | null;
+          created_at: string;
+          embedding_generated: boolean | null;
+          id: string;
+          notes: string | null;
+          num_frames_captured: number;
+          num_frames_uploaded: number;
+          num_valid_frames: number | null;
+          owner_email: string | null;
+          owner_location: string | null;
+          owner_name: string;
+          pet_age_months: number | null;
+          pet_breed: string | null;
+          pet_name: string;
+          pet_sex: string | null;
+          pet_species: string;
+          photo_urls: Json;
+          processed_at: string | null;
+          processing_status: string;
+          protocol_version: string;
+          screen_resolution: string | null;
+          user_agent: string | null;
+        };
+        Insert: {
+          avg_quality_score?: number | null;
+          created_at?: string;
+          embedding_generated?: boolean | null;
+          id?: string;
+          notes?: string | null;
+          num_frames_captured?: number;
+          num_frames_uploaded?: number;
+          num_valid_frames?: number | null;
+          owner_email?: string | null;
+          owner_location?: string | null;
+          owner_name: string;
+          pet_age_months?: number | null;
+          pet_breed?: string | null;
+          pet_name: string;
+          pet_sex?: string | null;
+          pet_species: string;
+          photo_urls?: Json;
+          processed_at?: string | null;
+          processing_status?: string;
+          protocol_version?: string;
+          screen_resolution?: string | null;
+          user_agent?: string | null;
+        };
+        Update: {
+          avg_quality_score?: number | null;
+          created_at?: string;
+          embedding_generated?: boolean | null;
+          id?: string;
+          notes?: string | null;
+          num_frames_captured?: number;
+          num_frames_uploaded?: number;
+          num_valid_frames?: number | null;
+          owner_email?: string | null;
+          owner_location?: string | null;
+          owner_name?: string;
+          pet_age_months?: number | null;
+          pet_breed?: string | null;
+          pet_name?: string;
+          pet_sex?: string | null;
+          pet_species?: string;
+          photo_urls?: Json;
+          processed_at?: string | null;
+          processing_status?: string;
+          protocol_version?: string;
+          screen_resolution?: string | null;
+          user_agent?: string | null;
+        };
+        Relationships: [];
+      };
+      notification_attempts: {
+        Row: {
+          attempted_at: string;
+          booking_id: string | null;
+          booking_type: string | null;
+          channel: string;
+          delivered_at: string | null;
+          error_message: string | null;
+          external_id: string | null;
+          id: string;
+          metadata: Json | null;
+          read_at: string | null;
+          recipient_contact: string | null;
+          recipient_id: string | null;
+          reminder_type: string;
+          status: string;
+        };
+        Insert: {
+          attempted_at?: string;
+          booking_id?: string | null;
+          booking_type?: string | null;
+          channel: string;
+          delivered_at?: string | null;
+          error_message?: string | null;
+          external_id?: string | null;
+          id?: string;
+          metadata?: Json | null;
+          read_at?: string | null;
+          recipient_contact?: string | null;
+          recipient_id?: string | null;
+          reminder_type: string;
+          status: string;
+        };
+        Update: {
+          attempted_at?: string;
+          booking_id?: string | null;
+          booking_type?: string | null;
+          channel?: string;
+          delivered_at?: string | null;
+          error_message?: string | null;
+          external_id?: string | null;
+          id?: string;
+          metadata?: Json | null;
+          read_at?: string | null;
+          recipient_contact?: string | null;
+          recipient_id?: string | null;
+          reminder_type?: string;
+          status?: string;
+        };
+        Relationships: [];
+      };
       notification_preferences: {
         Row: {
           created_at: string | null;
@@ -3070,6 +3220,90 @@ export type Database = {
           webpay_token?: string | null;
         };
         Relationships: [];
+      };
+      owner_audio_notes: {
+        Row: {
+          audio_mime_type: string | null;
+          audio_url: string;
+          created_at: string;
+          duration_seconds: number | null;
+          error_message: string | null;
+          event_at: string;
+          id: string;
+          location_name: string | null;
+          owner_id: string;
+          pet_id: string;
+          processing_status: Database['public']['Enums']['audio_note_processing_status'];
+          retry_count: number;
+          reviewed_at: string | null;
+          size_bytes: number | null;
+          structured_at: string | null;
+          structured_data: Json | null;
+          timeline_event_id: string | null;
+          transcribed_at: string | null;
+          transcript: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          audio_mime_type?: string | null;
+          audio_url: string;
+          created_at?: string;
+          duration_seconds?: number | null;
+          error_message?: string | null;
+          event_at: string;
+          id?: string;
+          location_name?: string | null;
+          owner_id: string;
+          pet_id: string;
+          processing_status?: Database['public']['Enums']['audio_note_processing_status'];
+          retry_count?: number;
+          reviewed_at?: string | null;
+          size_bytes?: number | null;
+          structured_at?: string | null;
+          structured_data?: Json | null;
+          timeline_event_id?: string | null;
+          transcribed_at?: string | null;
+          transcript?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          audio_mime_type?: string | null;
+          audio_url?: string;
+          created_at?: string;
+          duration_seconds?: number | null;
+          error_message?: string | null;
+          event_at?: string;
+          id?: string;
+          location_name?: string | null;
+          owner_id?: string;
+          pet_id?: string;
+          processing_status?: Database['public']['Enums']['audio_note_processing_status'];
+          retry_count?: number;
+          reviewed_at?: string | null;
+          size_bytes?: number | null;
+          structured_at?: string | null;
+          structured_data?: Json | null;
+          timeline_event_id?: string | null;
+          transcribed_at?: string | null;
+          transcript?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'owner_audio_notes_pet_id_fkey';
+            columns: ['pet_id'];
+            isOneToOne: false;
+            referencedRelation: 'pets';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'owner_audio_notes_timeline_event_id_fkey';
+            columns: ['timeline_event_id'];
+            isOneToOne: false;
+            referencedRelation: 'pet_timeline_events';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       partner_submissions: {
         Row: {
@@ -3568,6 +3802,36 @@ export type Database = {
         };
         Relationships: [];
       };
+      payment_events: {
+        Row: {
+          error_message: string | null;
+          flow_token: string;
+          outcome: string | null;
+          payload_summary: Json;
+          processed_at: string | null;
+          received_at: string;
+          status_code: number;
+        };
+        Insert: {
+          error_message?: string | null;
+          flow_token: string;
+          outcome?: string | null;
+          payload_summary?: Json;
+          processed_at?: string | null;
+          received_at?: string;
+          status_code: number;
+        };
+        Update: {
+          error_message?: string | null;
+          flow_token?: string;
+          outcome?: string | null;
+          payload_summary?: Json;
+          processed_at?: string | null;
+          received_at?: string;
+          status_code?: number;
+        };
+        Relationships: [];
+      };
       payment_history: {
         Row: {
           amount: number;
@@ -3957,6 +4221,68 @@ export type Database = {
           },
         ];
       };
+      pet_id_cards: {
+        Row: {
+          card_number: string;
+          created_at: string;
+          default_qr_mode: string;
+          expires_at: string | null;
+          id: string;
+          is_active: boolean;
+          issued_at: string;
+          metadata: Json;
+          pdf_url: string | null;
+          pet_id: string;
+          png_url: string | null;
+          svg_url: string | null;
+          updated_at: string;
+          version: number;
+          wallet_pass_url: string | null;
+        };
+        Insert: {
+          card_number: string;
+          created_at?: string;
+          default_qr_mode?: string;
+          expires_at?: string | null;
+          id?: string;
+          is_active?: boolean;
+          issued_at?: string;
+          metadata?: Json;
+          pdf_url?: string | null;
+          pet_id: string;
+          png_url?: string | null;
+          svg_url?: string | null;
+          updated_at?: string;
+          version?: number;
+          wallet_pass_url?: string | null;
+        };
+        Update: {
+          card_number?: string;
+          created_at?: string;
+          default_qr_mode?: string;
+          expires_at?: string | null;
+          id?: string;
+          is_active?: boolean;
+          issued_at?: string;
+          metadata?: Json;
+          pdf_url?: string | null;
+          pet_id?: string;
+          png_url?: string | null;
+          svg_url?: string | null;
+          updated_at?: string;
+          version?: number;
+          wallet_pass_url?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'pet_id_cards_pet_id_fkey';
+            columns: ['pet_id'];
+            isOneToOne: false;
+            referencedRelation: 'pets';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
       pet_paw_progress: {
         Row: {
           activity_score: number | null;
@@ -4144,6 +4470,80 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: 'pet_routines_pet_id_fkey';
+            columns: ['pet_id'];
+            isOneToOne: false;
+            referencedRelation: 'pets';
+            referencedColumns: ['id'];
+          },
+        ];
+      };
+      pet_timeline_events: {
+        Row: {
+          category: Database['public']['Enums']['timeline_category'];
+          created_at: string;
+          data: Json | null;
+          description: string | null;
+          event_at: string;
+          id: string;
+          is_milestone: boolean;
+          is_user_reported: boolean;
+          location_geojson: Json | null;
+          media_urls: Json | null;
+          pet_id: string;
+          recorded_at: string;
+          recorded_by: string | null;
+          related_record_id: string | null;
+          related_record_table: string | null;
+          source: Database['public']['Enums']['timeline_event_source'];
+          title: string;
+          updated_at: string;
+          visibility: string;
+        };
+        Insert: {
+          category: Database['public']['Enums']['timeline_category'];
+          created_at?: string;
+          data?: Json | null;
+          description?: string | null;
+          event_at: string;
+          id?: string;
+          is_milestone?: boolean;
+          is_user_reported?: boolean;
+          location_geojson?: Json | null;
+          media_urls?: Json | null;
+          pet_id: string;
+          recorded_at?: string;
+          recorded_by?: string | null;
+          related_record_id?: string | null;
+          related_record_table?: string | null;
+          source?: Database['public']['Enums']['timeline_event_source'];
+          title: string;
+          updated_at?: string;
+          visibility?: string;
+        };
+        Update: {
+          category?: Database['public']['Enums']['timeline_category'];
+          created_at?: string;
+          data?: Json | null;
+          description?: string | null;
+          event_at?: string;
+          id?: string;
+          is_milestone?: boolean;
+          is_user_reported?: boolean;
+          location_geojson?: Json | null;
+          media_urls?: Json | null;
+          pet_id?: string;
+          recorded_at?: string;
+          recorded_by?: string | null;
+          related_record_id?: string | null;
+          related_record_table?: string | null;
+          source?: Database['public']['Enums']['timeline_event_source'];
+          title?: string;
+          updated_at?: string;
+          visibility?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'pet_timeline_events_pet_id_fkey';
             columns: ['pet_id'];
             isOneToOne: false;
             referencedRelation: 'pets';
@@ -4620,7 +5020,7 @@ export type Database = {
         };
         Relationships: [];
       };
-      points_history: {
+      points_history_deprecated_20260424: {
         Row: {
           action_id: string | null;
           action_type: string;
@@ -4890,6 +5290,7 @@ export type Database = {
           is_premium: boolean | null;
           level: number;
           location: string | null;
+          onboarding_completed_at: string | null;
           phone: string | null;
           plan_badge: string | null;
           plan_expires_at: string | null;
@@ -4924,6 +5325,7 @@ export type Database = {
           is_premium?: boolean | null;
           level?: number;
           location?: string | null;
+          onboarding_completed_at?: string | null;
           phone?: string | null;
           plan_badge?: string | null;
           plan_expires_at?: string | null;
@@ -4958,6 +5360,7 @@ export type Database = {
           is_premium?: boolean | null;
           level?: number;
           location?: string | null;
+          onboarding_completed_at?: string | null;
           phone?: string | null;
           plan_badge?: string | null;
           plan_expires_at?: string | null;
@@ -5074,6 +5477,9 @@ export type Database = {
           end_time: string;
           id: string;
           is_active: boolean;
+          is_emergency_slot: boolean;
+          max_advance_days: number;
+          min_lead_time_minutes: number;
           provider_id: string;
           service_type: string | null;
           slot_duration_minutes: number;
@@ -5088,6 +5494,9 @@ export type Database = {
           end_time: string;
           id?: string;
           is_active?: boolean;
+          is_emergency_slot?: boolean;
+          max_advance_days?: number;
+          min_lead_time_minutes?: number;
           provider_id: string;
           service_type?: string | null;
           slot_duration_minutes?: number;
@@ -5102,6 +5511,9 @@ export type Database = {
           end_time?: string;
           id?: string;
           is_active?: boolean;
+          is_emergency_slot?: boolean;
+          max_advance_days?: number;
+          min_lead_time_minutes?: number;
           provider_id?: string;
           service_type?: string | null;
           slot_duration_minutes?: number;
@@ -5210,6 +5622,7 @@ export type Database = {
           accepts_senior_pets: boolean | null;
           created_at: string;
           description: string | null;
+          duration_minutes: number | null;
           id: string;
           is_active: boolean | null;
           max_pets: number | null;
@@ -5217,8 +5630,10 @@ export type Database = {
           price_per_additional_pet: number | null;
           price_unit: string | null;
           provider_id: string;
+          requires_pre_check_in: boolean;
           service_type: string;
           services_included: Json | null;
+          slug: string | null;
           specialties: Json | null;
           updated_at: string;
         };
@@ -5228,6 +5643,7 @@ export type Database = {
           accepts_senior_pets?: boolean | null;
           created_at?: string;
           description?: string | null;
+          duration_minutes?: number | null;
           id?: string;
           is_active?: boolean | null;
           max_pets?: number | null;
@@ -5235,8 +5651,10 @@ export type Database = {
           price_per_additional_pet?: number | null;
           price_unit?: string | null;
           provider_id: string;
+          requires_pre_check_in?: boolean;
           service_type: string;
           services_included?: Json | null;
+          slug?: string | null;
           specialties?: Json | null;
           updated_at?: string;
         };
@@ -5246,6 +5664,7 @@ export type Database = {
           accepts_senior_pets?: boolean | null;
           created_at?: string;
           description?: string | null;
+          duration_minutes?: number | null;
           id?: string;
           is_active?: boolean | null;
           max_pets?: number | null;
@@ -5253,8 +5672,10 @@ export type Database = {
           price_per_additional_pet?: number | null;
           price_unit?: string | null;
           provider_id?: string;
+          requires_pre_check_in?: boolean;
           service_type?: string;
           services_included?: Json | null;
+          slug?: string | null;
           specialties?: Json | null;
           updated_at?: string;
         };
@@ -5611,6 +6032,7 @@ export type Database = {
           emergency_surcharge_pct: number | null;
           excellence_badge_at: string | null;
           experience_years: number | null;
+          featured_until: string | null;
           id: string;
           is_demo: boolean;
           is_directory_visible: boolean | null;
@@ -5641,6 +6063,7 @@ export type Database = {
           slug: string | null;
           specialties: string[] | null;
           status: string | null;
+          timezone: string;
           total_reviews: number | null;
           total_services_completed: number | null;
           updated_at: string;
@@ -5674,6 +6097,7 @@ export type Database = {
           emergency_surcharge_pct?: number | null;
           excellence_badge_at?: string | null;
           experience_years?: number | null;
+          featured_until?: string | null;
           id?: string;
           is_demo?: boolean;
           is_directory_visible?: boolean | null;
@@ -5704,6 +6128,7 @@ export type Database = {
           slug?: string | null;
           specialties?: string[] | null;
           status?: string | null;
+          timezone?: string;
           total_reviews?: number | null;
           total_services_completed?: number | null;
           updated_at?: string;
@@ -5737,6 +6162,7 @@ export type Database = {
           emergency_surcharge_pct?: number | null;
           excellence_badge_at?: string | null;
           experience_years?: number | null;
+          featured_until?: string | null;
           id?: string;
           is_demo?: boolean;
           is_directory_visible?: boolean | null;
@@ -5767,6 +6193,7 @@ export type Database = {
           slug?: string | null;
           specialties?: string[] | null;
           status?: string | null;
+          timezone?: string;
           total_reviews?: number | null;
           total_services_completed?: number | null;
           updated_at?: string;
@@ -5996,6 +6423,7 @@ export type Database = {
           created_at: string | null;
           end_date: string;
           id: string;
+          order_type: string | null;
           payment_amount_clp: number | null;
           payment_provider_id: string | null;
           plan_type: string;
@@ -6011,6 +6439,7 @@ export type Database = {
           created_at?: string | null;
           end_date: string;
           id?: string;
+          order_type?: string | null;
           payment_amount_clp?: number | null;
           payment_provider_id?: string | null;
           plan_type: string;
@@ -6026,6 +6455,7 @@ export type Database = {
           created_at?: string | null;
           end_date?: string;
           id?: string;
+          order_type?: string | null;
           payment_amount_clp?: number | null;
           payment_provider_id?: string | null;
           plan_type?: string;
@@ -6610,6 +7040,66 @@ export type Database = {
           },
         ];
       };
+      user_notification_prefs: {
+        Row: {
+          daily_digest_email: boolean;
+          daily_digest_in_app: boolean;
+          daily_digest_push: boolean;
+          gamification_in_app: boolean;
+          gamification_push: boolean;
+          marketing_email: boolean;
+          marketing_push: boolean;
+          pet_reminders_email: boolean;
+          pet_reminders_push: boolean;
+          social_in_app: boolean;
+          social_push: boolean;
+          transactional_email: boolean;
+          transactional_push: boolean;
+          updated_at: string;
+          user_id: string;
+          weekly_digest_email: boolean;
+          weekly_digest_push: boolean;
+        };
+        Insert: {
+          daily_digest_email?: boolean;
+          daily_digest_in_app?: boolean;
+          daily_digest_push?: boolean;
+          gamification_in_app?: boolean;
+          gamification_push?: boolean;
+          marketing_email?: boolean;
+          marketing_push?: boolean;
+          pet_reminders_email?: boolean;
+          pet_reminders_push?: boolean;
+          social_in_app?: boolean;
+          social_push?: boolean;
+          transactional_email?: boolean;
+          transactional_push?: boolean;
+          updated_at?: string;
+          user_id: string;
+          weekly_digest_email?: boolean;
+          weekly_digest_push?: boolean;
+        };
+        Update: {
+          daily_digest_email?: boolean;
+          daily_digest_in_app?: boolean;
+          daily_digest_push?: boolean;
+          gamification_in_app?: boolean;
+          gamification_push?: boolean;
+          marketing_email?: boolean;
+          marketing_push?: boolean;
+          pet_reminders_email?: boolean;
+          pet_reminders_push?: boolean;
+          social_in_app?: boolean;
+          social_push?: boolean;
+          transactional_email?: boolean;
+          transactional_push?: boolean;
+          updated_at?: string;
+          user_id?: string;
+          weekly_digest_email?: boolean;
+          weekly_digest_push?: boolean;
+        };
+        Relationships: [];
+      };
       user_paw_badges: {
         Row: {
           badge_id: string;
@@ -6779,7 +7269,7 @@ export type Database = {
             foreignKeyName: 'user_routes_route_id_fkey';
             columns: ['route_id'];
             isOneToOne: false;
-            referencedRelation: 'virtual_routes';
+            referencedRelation: 'virtual_routes_deprecated_20260424';
             referencedColumns: ['id'];
           },
         ];
@@ -7296,7 +7786,7 @@ export type Database = {
           },
         ];
       };
-      vet_pet_relationships: {
+      vet_pet_relationships_deprecated_20260424: {
         Row: {
           created_at: string | null;
           expires_at: string | null;
@@ -7717,7 +8207,7 @@ export type Database = {
           },
         ];
       };
-      virtual_routes: {
+      virtual_routes_deprecated_20260424: {
         Row: {
           checkpoints: Json;
           created_at: string;
@@ -8206,6 +8696,43 @@ export type Database = {
         };
         Relationships: [];
       };
+      v_all_bookings: {
+        Row: {
+          canceled_at: string | null;
+          canceled_by: string | null;
+          cancellation_reason: string | null;
+          commission_amount_clp: number | null;
+          commission_rate: number | null;
+          confirmation_mode: string | null;
+          confirmed_at: string | null;
+          created_at: string | null;
+          duration_minutes: number | null;
+          end_time: string | null;
+          follow_up_booking_id: string | null;
+          google_event_id: string | null;
+          id: string | null;
+          is_emergency: boolean | null;
+          kind: string | null;
+          notes_owner: string | null;
+          notes_private_provider: string | null;
+          owner_id: string | null;
+          payment_status: string | null;
+          pet_ids: string[] | null;
+          price_clp: number | null;
+          reminder_24h_sent: boolean | null;
+          reminder_2h_sent: boolean | null;
+          rescheduled_from: string | null;
+          scheduled_at: string | null;
+          service_provider_id: string | null;
+          service_type: string | null;
+          start_time: string | null;
+          started_at: string | null;
+          status: string | null;
+          updated_at: string | null;
+          vet_id: string | null;
+        };
+        Relationships: [];
+      };
       vet_prices_by_comuna: {
         Row: {
           comuna: string | null;
@@ -8221,6 +8748,7 @@ export type Database = {
       };
     };
     Functions: {
+      _get_service_role_key: { Args: never; Returns: string };
       accept_clinic_seat_invitation: {
         Args: { p_token: string };
         Returns: {
@@ -8334,6 +8862,12 @@ export type Database = {
         Returns: boolean;
       };
       assert_demo_user: { Args: { target_user_id: string }; Returns: undefined };
+      auto_cancel_stale_pending_bookings: {
+        Args: never;
+        Returns: {
+          cancelled_count: number;
+        }[];
+      };
       auto_claim_co_owner_by_email: {
         Args: { p_email: string; p_user_id: string };
         Returns: number;
@@ -8402,6 +8936,19 @@ export type Database = {
           reset_in_seconds: number;
         }[];
       };
+      check_and_increment_ip_quota: {
+        Args: {
+          p_ip: string;
+          p_limit?: number;
+          p_scope?: string;
+          p_window_seconds?: number;
+        };
+        Returns: {
+          allowed: boolean;
+          remaining: number;
+          reset_in_seconds: number;
+        }[];
+      };
       check_and_increment_payment_quota: {
         Args: { p_limit?: number; p_user_id: string; p_window_seconds?: number };
         Returns: {
@@ -8425,6 +8972,7 @@ export type Database = {
       generate_default_display_name: { Args: never; Returns: string };
       generate_medical_share_token: { Args: never; Returns: string };
       generate_order_number: { Args: never; Returns: string };
+      generate_pet_id_card_number: { Args: never; Returns: string };
       generate_provider_slug: {
         Args: { provider_name: string };
         Returns: string;
@@ -8611,6 +9159,10 @@ export type Database = {
           pet_id: string;
         }[];
       };
+      pets_with_co_ownership: {
+        Args: { check_user_id: string };
+        Returns: string[];
+      };
       points_for_next_level: {
         Args: { current_level: number };
         Returns: number;
@@ -8632,6 +9184,14 @@ export type Database = {
           p_template?: string;
         };
         Returns: undefined;
+      };
+      resolve_pet_identity: {
+        Args: { p_input: string; p_input_type?: string };
+        Returns: {
+          confidence: number;
+          match_type: string;
+          pet_id: string;
+        }[];
       };
       rpc_activation_funnel_30d: {
         Args: never;
@@ -8673,7 +9233,38 @@ export type Database = {
           vets_count: number;
         }[];
       };
+      rpc_create_booking: {
+        Args: {
+          p_confirmation_mode?: string;
+          p_end_time: string;
+          p_is_emergency?: boolean;
+          p_notes?: string;
+          p_pet_id: string;
+          p_provider_id: string;
+          p_scheduled_date: string;
+          p_service_type: string;
+          p_start_time: string;
+        };
+        Returns: string;
+      };
       rpc_donations_30d_clp: { Args: never; Returns: number };
+      rpc_get_available_slots_range: {
+        Args: {
+          p_date_from: string;
+          p_date_to: string;
+          p_is_emergency?: boolean;
+          p_provider_id: string;
+          p_service_type?: string;
+        };
+        Returns: {
+          available: boolean;
+          booked: number;
+          capacity: number;
+          slot_date: string;
+          slot_end: string;
+          slot_start: string;
+        }[];
+      };
       rpc_mau_owners_30d: { Args: never; Returns: number };
       rpc_mrr_b2b_clp: { Args: never; Returns: number };
       rpc_mrr_timeseries: {
@@ -8791,11 +9382,48 @@ export type Database = {
         Returns: undefined;
       };
       upsert_lead_vet: { Args: { p_data: Json }; Returns: string };
+      user_can_receive_notification: {
+        Args: { p_category: string; p_channel: string; p_user_id: string };
+        Returns: boolean;
+      };
+      user_owns_pet: {
+        Args: { check_pet_id: string; check_user_id: string };
+        Returns: boolean;
+      };
     };
     Enums: {
       app_role: 'admin' | 'veterinarian' | 'dog_walker' | 'user' | 'dogsitter' | 'trainer';
+      audio_note_processing_status:
+        | 'pending'
+        | 'transcribing'
+        | 'structuring'
+        | 'review'
+        | 'done'
+        | 'failed'
+        | 'rejected';
       provider_status: 'pending' | 'approved' | 'rejected' | 'suspended';
       service_type: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer' | 'grooming';
+      timeline_category:
+        | 'health'
+        | 'weight'
+        | 'nutrition'
+        | 'hygiene'
+        | 'activity'
+        | 'social'
+        | 'purchases'
+        | 'home'
+        | 'milestone'
+        | 'legal';
+      timeline_event_source:
+        | 'manual'
+        | 'audio'
+        | 'auto_trigger'
+        | 'ocr'
+        | 'vet_note'
+        | 'shelter_transfer'
+        | 'partner_integration'
+        | 'import'
+        | 'system';
       vet_pet_relationship_type: 'primary_vet' | 'consulting' | 'emergency' | 'specialist';
     };
     CompositeTypes: {
@@ -8923,8 +9551,40 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ['admin', 'veterinarian', 'dog_walker', 'user', 'dogsitter', 'trainer'],
+      audio_note_processing_status: [
+        'pending',
+        'transcribing',
+        'structuring',
+        'review',
+        'done',
+        'failed',
+        'rejected',
+      ],
       provider_status: ['pending', 'approved', 'rejected', 'suspended'],
       service_type: ['dog_walker', 'dogsitter', 'veterinarian', 'trainer', 'grooming'],
+      timeline_category: [
+        'health',
+        'weight',
+        'nutrition',
+        'hygiene',
+        'activity',
+        'social',
+        'purchases',
+        'home',
+        'milestone',
+        'legal',
+      ],
+      timeline_event_source: [
+        'manual',
+        'audio',
+        'auto_trigger',
+        'ocr',
+        'vet_note',
+        'shelter_transfer',
+        'partner_integration',
+        'import',
+        'system',
+      ],
       vet_pet_relationship_type: ['primary_vet', 'consulting', 'emergency', 'specialist'],
     },
   },
