@@ -100,6 +100,7 @@ const OnboardingShelter = lazy(() => import('./pages/OnboardingShelter'));
 const RefugiosHogares = lazy(() => import('./pages/RefugiosHogares'));
 const RefugioPublico = lazy(() => import('./pages/RefugioPublico'));
 const Aplicar = lazy(() => import('./pages/Aplicar'));
+const NosePrintTest = lazy(() => import('./pages/NosePrintTest'));
 const PawPartners = lazy(() => import('./pages/PawPartners'));
 const PostAdoptionCheckin = lazy(() => import('./pages/PostAdoptionCheckin'));
 const ShelterDashboard = lazy(() => import('./pages/shelter/ShelterDashboard'));
@@ -961,6 +962,10 @@ const App = () => (
                     </PublicWithLayoutIfAuth>
                   }
                 />
+
+                {/* Pagina publica de crowdsourcing nose print (Refactor Maestro 2026-04-24) */}
+                {/* Standalone sin layout para captura full-screen. */}
+                <Route path="/nose-print-test" element={<NosePrintTest />} />
 
                 {/* Check-in post-adopcion (link desde email del cron) */}
                 <Route
