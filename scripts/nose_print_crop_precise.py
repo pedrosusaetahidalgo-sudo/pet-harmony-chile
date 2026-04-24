@@ -34,10 +34,22 @@ try:
     )
     from PIL import Image
     import numpy as np
-    from sklearn.metrics.pairwise import cosine_similarity
 except ImportError as e:
     print(f"[ERROR] Falta dependencia: {e}")
     sys.exit(1)
+
+
+def cosine_similarity(a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    """Cosine similarity sin scipy/sklearn (evita DLL flapack issue en Windows)."""
+    a = np.asarray(a)
+    b = np.asarray(b)
+    if a.ndim == 1:
+        a = a.reshape(1, -1)
+    if b.ndim == 1:
+        b = b.reshape(1, -1)
+    a_norm = a / (np.linalg.norm(a, axis=1, keepdims=True) + 1e-12)
+    b_norm = b / (np.linalg.norm(b, axis=1, keepdims=True) + 1e-12)
+    return a_norm @ b_norm.T
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -173,26 +185,28 @@ def extract_embedding(embed_processor, embed_model, img: Image.Image):
 
 
 def main():
+    import gc
+
     print("=" * 70)
     print("NOSE PRINT — CROP PRECISO (Grounding DINO + DINOv2-large)")
     print("=" * 70)
     print()
 
     pets = collect_photos()
-    det_proc, det_model = load_detector()
-    emb_proc, emb_model = load_embedder()
-
-    # Procesar todas las fotos
-    print("[INFO] Detectando nariz + extrayendo embeddings...\n")
-    embeddings = {}
     total = sum(len(p) for p in pets.values())
-    done = 0
+
+    # ─── FASE 1: detectar narices + guardar crops en memoria (sin embedder) ───
+    det_proc, det_model = load_detector()
+    print("[INFO] FASE 1/2: detectando narices...\n")
+
+    crops_cache: dict[str, list[dict]] = {}
     detected_count = 0
     fallback_count = 0
+    done = 0
     t_start = time.time()
 
     for pet_name, photos in pets.items():
-        embeddings[pet_name] = []
+        crops_cache[pet_name] = []
         for photo in photos:
             done += 1
             try:
@@ -204,15 +218,50 @@ def main():
                 else:
                     fallback_count += 1
                     status = "fallback"
-                emb = extract_embedding(emb_proc, emb_model, crop)
-                embeddings[pet_name].append({"photo": photo.name, "embedding": emb})
+                # Guardar crop (como PIL Image) en memoria, no como path
+                crops_cache[pet_name].append({"photo": photo.name, "crop": crop})
                 print(f"[{done}/{total}] {pet_name}/{photo.name}... {status}")
             except Exception as e:
                 print(f"[{done}/{total}] {photo.name}... ERROR: {e}")
 
+    det_time = time.time() - t_start
+    print(f"\n[INFO] Deteccion completa en {det_time:.1f}s")
+    print(f"[INFO] Narices detectadas: {detected_count}/{total} ({100 * detected_count / total:.0f}%)")
+
+    # Liberar Grounding DINO antes de cargar DINOv2
+    print("\n[INFO] Liberando Grounding DINO de memoria...")
+    del det_model
+    del det_proc
+    gc.collect()
+    try:
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+    except Exception:
+        pass
+
+    # ─── FASE 2: cargar DINOv2-large + extraer embeddings de los crops ───
+    emb_proc, emb_model = load_embedder()
+    print("[INFO] FASE 2/2: extrayendo embeddings...\n")
+
+    embeddings = {}
+    done = 0
+    t_emb = time.time()
+    for pet_name, items in crops_cache.items():
+        embeddings[pet_name] = []
+        for item in items:
+            done += 1
+            try:
+                emb = extract_embedding(emb_proc, emb_model, item["crop"])
+                embeddings[pet_name].append({"photo": item["photo"], "embedding": emb})
+                if done % 10 == 0 or done == total:
+                    print(f"[{done}/{total}] embeddings OK")
+            except Exception as e:
+                print(f"[{done}/{total}] ERROR embedding: {e}")
+
+    emb_time = time.time() - t_emb
     elapsed = time.time() - t_start
-    print(f"\n[INFO] Procesadas {done} fotos en {elapsed:.1f}s ({elapsed/done:.2f}s/img)")
-    print(f"[INFO] Narices detectadas: {detected_count}/{total} ({100*detected_count/total:.0f}%)")
+    print(f"\n[INFO] Embeddings en {emb_time:.1f}s")
+    print(f"[INFO] Total pipeline: {elapsed:.1f}s ({elapsed / total:.2f}s/img)")
     print(f"[INFO] Fallback (crop central): {fallback_count}/{total}")
 
     # Analisis

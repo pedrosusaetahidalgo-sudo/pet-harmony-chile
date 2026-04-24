@@ -1,0 +1,17 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+======================================================================
+NOSE PRINT — CROP PRECISO (Grounding DINO + DINOv2-large)
+======================================================================
+
+[OK] border_collie_1: 5 fotos
+[OK] border_collie_2: 5 fotos
+[OK] mi_gato: 6 fotos
+[OK] pastor_suizo_1: 6 fotos
+[OK] pastor_suizo_2: 5 fotos
+[OK] pastor_suizo_3: 18 fotos
+[OK] terrier_chileno: 4 fotos
+[INFO] Total: 7 mascotas, 49 fotos
+
+[INFO] Cargando Grounding DINO tiny (detector de nariz)...
+       Primera vez descarga ~170MB
+Loading weights:   0%|          | 0/990 [00:00<?, ?it/s]Loading weights:  11%|#         | 104/990 [00:00<00:00, 1034.45it/s]Loading weights:  21%|##1       | 208/990 [00:00<00:00, 934.19it/s] Loading weights:  31%|###       | 305/990 [00:00<00:00, 925.35it/s]Loading weights:  42%|####1     | 411/990 [00:00<00:00, 969.85it/s]Loading weights:  53%|#####3    | 526/990 [00:00<00:00, 1026.56it/s]Loading weights:  64%|######3   | 630/990 [00:00<00:00, 1013.74it/s]Loading weights:  74%|#######3  | 732/990 [00:00<00:00, 956.59it/s] Loading weights:  84%|########4 | 833/990 [00:00<00:00, 972.42it/s]Loading weights:  94%|#########4| 932/990 [00:00<00:00, 976.85it/s]Loading weights: 100%|##########| 990/990 [00:00<00:00, 1000.33it/s]
