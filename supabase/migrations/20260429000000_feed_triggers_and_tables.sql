@@ -82,8 +82,12 @@ CREATE POLICY "Stories are public while active" ON pet_stories
 CREATE POLICY "Users manage own stories" ON pet_stories
   FOR ALL USING (auth.uid() = user_id);
 
+-- Nota 2026-04-23: el predicado NO puede usar now() (Postgres requiere
+-- funciones IMMUTABLE en index predicates, da 42P17). El filtro por
+-- vencimiento se hace en query time — las stories expiradas se excluyen
+-- via RLS policy (USING expires_at > now()).
 CREATE INDEX IF NOT EXISTS idx_pet_stories_active
-  ON pet_stories (expires_at DESC) WHERE expires_at > now();
+  ON pet_stories (expires_at DESC);
 
 -- ============================================================
 -- 5. Tabla: post_reports (moderacion)
