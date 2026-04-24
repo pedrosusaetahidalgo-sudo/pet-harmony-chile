@@ -75,3 +75,13 @@ ios/App/App/GoogleService-Info.plist
 # Refactor Maestro 2026-04-23: fotos de validacion nose print (privadas)
 _pending/nose_print_test_photos/
 .venv-nose-print/
+
+# Datasets de fine-tuning (GB de imagenes, nunca commit)
+# Usamos /* para permitir excepciones con !
+_pending/datasets/*
+!_pending/datasets/README.md
+!_pending/datasets/dogfacenet/
+!_pending/datasets/oxford-pets/
+!_pending/datasets/stanford-dogs/
+_pending/datasets/*/*
+!_pending/datasets/*/.gitkeep
