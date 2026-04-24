@@ -242,12 +242,17 @@ export function AppSidebar() {
     return stored === null ? false : stored === 'true';
   });
 
-  // Default: "Dia a dia" + "Causas" abiertos (items mas accionables).
+  // Refactor Maestro §5.2.4: SIDEBAR_COLLAPSED colapsa los 2 grupos
+  // secundarios (causas + paw-labs) y mantiene solo "Dia a dia" abierto.
+  // Reduce overwhelm visual, el usuario expande manualmente lo que necesita.
+  //
+  // Default legacy: "Dia a dia" + "Causas" abiertos.
+  const sidebarCollapsed = isFeatureEnabled('SIDEBAR_COLLAPSED');
   const DEFAULT_SUB_STATE: Record<string, boolean> = {
     'dia-dia': true,
     mapa: false,
     social: false,
-    causas: true,
+    causas: !sidebarCollapsed, // si colapsado, arranca cerrado
     'paw-labs': false,
   };
   const [exploreSubOpen, setExploreSubOpen] = useState<Record<string, boolean>>(() => {

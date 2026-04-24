@@ -56,6 +56,14 @@ import {
 import type { PetData } from './types';
 import { ClinicalRecordSkeleton, PetHeader } from './shared';
 import { EmptyState } from '@/components/ui/EmptyState';
+import { isFeatureEnabled } from '@/lib/featureFlags';
+// Refactor Maestro §2.4.3 — tab Historia (timeline unificado 10 categorias),
+// pilar 3 de la Trinidad del Corazon. Se monta cuando FICHA_HISTORIA_TAB activo.
+const HistoriaTimelineView = lazy(() =>
+  import('@/components/medical/HistoriaTimelineView').then((m) => ({
+    default: m.HistoriaTimelineView,
+  }))
+);
 // Lazy tabs: Radix Tabs monta solo el tab activo, así cada chunk se
 // descarga cuando el user hace click. TTI inicial de la ficha clínica
 // baja ~40% (QW-14 auditoría top-tier 2026-04-20).
@@ -169,7 +177,10 @@ const PetClinicalRecord = () => {
   const [vetProviderId, setVetProviderId] = useState<string | null>(null);
   const [vetShareTokenId, setVetShareTokenId] = useState<string | null>(null);
   const [showRecorder, setShowRecorder] = useState(false);
-  const [activeTab, setActiveTab] = useState('resumen');
+  // Refactor Maestro §2.4.3: tab "historia" es default cuando el flag esta ON.
+  // Fallback a "resumen" hasta que se active.
+  const historiaTabEnabled = isFeatureEnabled('FICHA_HISTORIA_TAB');
+  const [activeTab, setActiveTab] = useState(historiaTabEnabled ? 'historia' : 'resumen');
 
   // ?mode=vet forces vet view (used by provider navigation links)
   const forceVetMode = searchParams.get('mode') === 'vet';
@@ -512,6 +523,15 @@ const PetClinicalRecord = () => {
         <Tabs id="clinical-tabs" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="relative">
             <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-1 px-1">
+              {historiaTabEnabled && (
+                <TabsTrigger
+                  value="historia"
+                  className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
+                >
+                  <Clock className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+                  Historia
+                </TabsTrigger>
+              )}
               <TabsTrigger
                 value="resumen"
                 className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
@@ -566,6 +586,14 @@ const PetClinicalRecord = () => {
             </TabsList>
             <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-background to-transparent pointer-events-none sm:hidden" />
           </div>
+
+          {historiaTabEnabled && (
+            <TabsContent value="historia" className="mt-4">
+              <Suspense fallback={<TabLoadingSkeleton />}>
+                <HistoriaTimelineView petId={pet.id} petName={pet.name} />
+              </Suspense>
+            </TabsContent>
+          )}
 
           <TabsContent value="resumen" className="mt-4 space-y-4">
             <Suspense fallback={<TabLoadingSkeleton />}>
