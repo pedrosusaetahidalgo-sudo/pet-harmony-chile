@@ -10,7 +10,7 @@
 > **Dependencias**:
 > - Extension `vector` (pgvector) habilitada en Supabase — confirmado 2026-04-23 por Pedro ✅
 > - Edge functions nose-print-embed + nose-print-match (Fase 1)
-> - Modelo biométrico: API Petnow (trial) o modelo open source MobileNetV3 + fine-tuning
+> - Modelo biométrico: **SigLIP2-base de Google** (`google/siglip2-base-patch16-224`) — decisión 2026-04-24 tras testeo comparativo (ver §2.2 bis)
 > - Postura pública: [POSTURA_BIOMETRIA_2026_04_23.md](../docs-raiz/pitch/POSTURA_BIOMETRIA_2026_04_23.md)
 
 ---
@@ -107,8 +107,31 @@ Frente a competidores (Chewy, Petnow Korea, Petco LoveLost, apps chilenas locale
 1. Validar auth (caller debe ser owner del pet o admin)
 2. Decodificar imágenes, normalizar (resize 224×224, channel RGB)
 3. Llamar a modelo:
-   - **Opción A (Fase 1 inicial)**: API comercial Petnow (`POST https://api.petnow.io/v1/embeddings`) en modo trial → $0 hasta 100 req/mes
-   - **Opción B (Fase 1 maduro)**: modelo propio MobileNetV3 fine-tuned en CVPR 2022 Pet Biometric dataset, inferencia serverless con `@tensorflow/tfjs-node` o vía edge function Python (Deno soporta Python via WebAssembly)
+   - **Modelo elegido (confirmado 2026-04-24)**: `google/siglip2-base-patch16-224` (SigLIP2 Google, 400M params, 768 dims)
+   - Inferencia: Python edge function o container serverless (runpod, fly.io) llamando a HuggingFace Inference API o modelo local
+   - Preprocesamiento: crop central cuadrado (min lado), **sin augmentation** (probado, empeora)
+   - Alternativas: Petnow API ($0.0005/match) solo si SigLIP2 falla en validacion con pastores suizos hermanos
+
+### 2.2.bis Comparativa empirica de modelos (2026-04-24 con 6 fotos de Ema)
+
+Testeado con script `scripts/nose_print_compare_models.py` y `scripts/nose_print_siglip2_optimized.py`:
+
+| Modelo | Same-pet mean | Stdev | Time/img (CPU) | Veredicto |
+|---|---|---|---|---|
+| MobileNetV3-base | 0.691 | 0.09 | 0.5s | Insuficiente |
+| DINOv2-base | 0.835 | 0.065 | 1.5s | Marginal |
+| DINOv2-large | 0.892 | 0.031 | 4.4s | Aceptable |
+| SigLIP v1-base | 0.898 | 0.033 | 1.4s | Aceptable |
+| **SigLIP2-base** | **0.923** | **0.020** | **1.1s** | **ELEGIDO** |
+| Ensemble SigLIP2 + DINOv2 | 0.843 | 0.040 | ~5s | Peor (promediar dilute) |
+| SigLIP2 + crop 60% + aug | 0.870 | 0.050 | ~2s | Peor (crop pequeño pierde contexto) |
+
+**Conclusion**: SigLIP2 sin optimizaciones adicionales es Pareto-optimo (mejor accuracy + mas rapido + mas consistente). Ensemble y augmentation empeoran cuando ya estamos en zona alta.
+
+**Pendiente test definitivo 2026-04-25**: 3 pastores suizos hermanos (caso peor de discriminacion) + 1 gato + 26 fotos totales. Si SigLIP2 distingue entre los 3 hermanos con separacion cross-pet vs same-pet >0.10, adoptamos SigLIP2 sin fine-tuning. Si falla, alternativas:
+1. Fine-tuning SigLIP2 con Pet Biometric Challenge 2022 dataset
+2. Paradigma distinto: SuperPoint + LightGlue (matching puntual, no embedding global)
+3. Petnow API comercial
 4. Cada imagen genera 1 embedding de 512 floats. Promediar los 3 → 1 embedding consolidado
 5. Quality score: similitud promedio entre los 3 embeddings originales (debe ser >0.92 — si no, al menos una foto es de otra mascota o mal capturada)
 6. Guardar en `nose_prints(pet_id, embedding, short_hash, quality_score, captured_at)`
