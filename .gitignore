@@ -71,3 +71,7 @@ ios/App/App/GoogleService-Info.plist
 *.mobileprovision
 *.p12
 *.cer
+
+# Refactor Maestro 2026-04-23: fotos de validacion nose print (privadas)
+_pending/nose_print_test_photos/
+.venv-nose-print/
