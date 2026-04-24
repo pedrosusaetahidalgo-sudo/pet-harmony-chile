@@ -173,3 +173,8 @@ verify_jwt = false
 
 [functions.notify-vet-share]
 verify_jwt = false
+
+# Refactor Maestro 2026-04-24 — Pet ID Card (Trinidad pilar 1)
+# verify_jwt = false porque la edge fn valida auth manual con RLS
+[functions.generate-pet-id-card]
+verify_jwt = false
