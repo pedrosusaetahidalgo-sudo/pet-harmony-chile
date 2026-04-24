@@ -19,6 +19,7 @@
 | [04_ANGELES_VC_LATAM.md](04_ANGELES_VC_LATAM.md) | **Angels / VC LATAM** | Pitch pre-seed USD $150K SAFE |
 | [05_HOGARES_DE_ADOPCION.md](05_HOGARES_DE_ADOPCION.md) | **Refugios / ONGs / rescatistas** | Onboarding de hogares de adopcion a la red |
 | [06_PAW_PARTNERS.md](06_PAW_PARTNERS.md) | **Tiendas / servicios aliados** | Barter de descuentos por visibilidad (Paw Partners) |
+| [07_ROBERTO_CAMHI.md](07_ROBERTO_CAMHI.md) | **Roberto Camhi (llamada 1:1)** | Chuleta para llamada telefonica — Mapcity / Founder Institute / Start-Up Chile / CORFO |
 
 ---
 
