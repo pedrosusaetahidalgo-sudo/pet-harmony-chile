@@ -139,6 +139,242 @@ export const FEATURE_FLAGS = {
    * DESACTIVADO hasta implementar el util + boton.
    */
   ICS_EXPORT: false,
+
+  // ══════════════════════════════════════════════════════════════════════
+  // REFACTOR MAESTRO 2026-04-23 — docs-raiz/planes/REFACTOR_MAESTRO_2026_04_23.md
+  // Estos flags colapsan el frankenstein y pivotan la app alrededor de la
+  // trinidad: Pet ID Card + Huella Nasal + Ficha Medica con Timeline.
+  //
+  // Estado inicial: casi todos en FALSE hasta que cada componente este
+  // implementado y verificado. Rollout gradual por flag.
+  // ══════════════════════════════════════════════════════════════════════
+
+  // ── Fase 0 (0-30d): Unificar eje ──
+
+  /**
+   * Home rediseñado como "Mi mascota hoy" en foco (refactor maestro §5.2.2).
+   * Antes del flag: dashboard con multiples widgets genericos.
+   * Despues: 1 mascota en foco, siguiente accion pendiente, timeline corto.
+   */
+  HOME_PET_FOCUS: false,
+
+  /**
+   * BottomTab colapsado a 4 ejes: Mascota / Calendario / Vets / Yo
+   * (refactor maestro §5.2.1). Gamificacion pasa a seccion secundaria en "Yo".
+   */
+  BOTTOM_TAB_V2: false,
+
+  /**
+   * Sidebar colapsado a 3 grupos default (Mascotas, Red, Yo) + resto oculto
+   * bajo "Mas" (refactor maestro §5.2.4). Reduce overwhelm visual.
+   */
+  SIDEBAR_COLLAPSED: false,
+
+  /**
+   * Onboarding minimal de 3 pasos tras signup (refactor maestro §5.3):
+   * foto+nombre+especie / nose print opcional / chip opcional con mensaje.
+   * No pide 20 campos al primer ingreso.
+   */
+  ONBOARDING_V2_MINIMAL: false,
+
+  /**
+   * Paw Points canonizados: solo por acciones de cuidado real
+   * (refactor maestro §5.4). Se elimina ruido de gamificacion descontextualizada.
+   */
+  PAW_POINTS_CANONICAL: false,
+
+  /**
+   * Paw Game visible como feature prominente (home/bottomtab).
+   * POR DEFAULT: false → queda accesible solo desde sidebar colapsado.
+   */
+  PAWGAME_PROMINENT: false,
+
+  /**
+   * Tab "Historia" como default en ficha clinica (refactor maestro §5.2.3).
+   * Timeline cronologico visual con filtros por 10 categorias canonicas.
+   * Requiere migracion pet_timeline_events aplicada.
+   */
+  FICHA_HISTORIA_TAB: false,
+
+  /**
+   * Pet ID Card — cedula digital de la mascota con QR al dashboard publico
+   * (refactor maestro §2.4.1). Trinidad pilar 1.
+   * Requiere migracion pet_id_cards aplicada.
+   */
+  PET_ID_CARD_V1: false,
+
+  /**
+   * Timeline unificado con 10 categorias canonicas
+   * (refactor maestro §2.4.3). Feed cronologico de toda la vida de la mascota.
+   * Requiere migracion pet_timeline_events aplicada.
+   */
+  TIMELINE_CATEGORIES: false,
+
+  /**
+   * Audio notes desde el dueño (no solo desde vet) — (refactor maestro §2.6.2).
+   * Tutor graba consulta/observacion → IA estructura → evento timeline.
+   * Requiere migracion owner_audio_notes + extension process-consultation-transcript.
+   */
+  OWNER_AUDIO_NOTES: false,
+
+  /**
+   * Quick Actions Hub — widget one-tap en Home (refactor maestro §2.7).
+   * 6 acciones mas usadas con captura automatica de metadata.
+   */
+  QUICK_ACTIONS_HUB: false,
+
+  /**
+   * Cascada: al aplicar vacuna, crear automaticamente reminder de proximo refuerzo
+   * (refactor maestro §2.8.3). Ya existe logica parcial en triggers DB.
+   */
+  CASCADE_AUTO_REMINDERS: true,
+
+  /**
+   * Cascada: generar automaticamente share card al cumpleaños
+   * (refactor maestro §2.8.3). Usa birth_date + genera imagen compartible.
+   */
+  CASCADE_BIRTHDAY_AUTO: false,
+
+  // ── Fase 1 (30-90d): Moat emergente ──
+
+  /**
+   * Nose print MVP — captura + matching biometrico (refactor maestro §6.2).
+   * Trinidad pilar 2. Rollout gradual 10% → 50% → 100%.
+   * Requiere pgvector habilitado + migracion nose_prints aplicada + edge fns.
+   */
+  NOSE_PRINT_ENABLED: false,
+
+  /**
+   * Integrar captura nose print en onboarding de mascota.
+   * Activar solo cuando NOSE_PRINT_ENABLED haya pasado validacion.
+   */
+  NOSE_PRINT_ONBOARDING: false,
+
+  /**
+   * Ruta publica /nose-scan para encontrar mascotas perdidas.
+   * Activar al final de Fase 1 con masa de nose prints suficiente.
+   */
+  NOSE_PRINT_PUBLIC_SCAN: false,
+
+  /**
+   * Paw Passport — PDF narrativo + share card exportable
+   * (refactor maestro §6.3). Viralidad de la historia de vida.
+   */
+  PAW_PASSPORT: false,
+
+  /**
+   * Descuentos en partners retail para Paw Members
+   * (refactor maestro §6.4). Solo activar cuando 1+ partner firmado.
+   */
+  PARTNER_DISCOUNTS: false,
+
+  /**
+   * Landings SEO publicas /insights/* con data agregada anonima
+   * (refactor maestro §6.5). Requiere masa critica (>1k mascotas).
+   */
+  PUBLIC_INSIGHTS: false,
+
+  /**
+   * Memorial compartible — share card viral cuando muere mascota
+   * (refactor maestro §6.6). Momento emocional + signups de amigos del dueño.
+   */
+  MEMORIAL_SHARE: false,
+
+  /**
+   * Follow-up automatico post-adopcion 30/90 dias
+   * (refactor maestro §6.7). Loop retention para refugios.
+   */
+  SHELTER_FOLLOWUP: false,
+
+  /**
+   * Tracking GPS background de paseos con consent
+   * (refactor maestro §2.7.2). Requiere permisos background iOS/Android.
+   */
+  WALK_GPS_TRACKING: false,
+
+  /**
+   * Cascada: alerta cuando peso baja 10%+ en 30 dias
+   * (refactor maestro §2.8.3).
+   */
+  CASCADE_WEIGHT_ALERTS: false,
+
+  // ── Fase 2 (90-365d): Producto invisible ──
+
+  /**
+   * Seguros embebidos en la app con aseguradora partner
+   * (refactor maestro §7.2). Motor de revenue B2B mas grande.
+   */
+  EMBEDDED_INSURANCE: false,
+
+  /**
+   * Pharma insights API + dashboard B2B
+   * (refactor maestro §7.3). Monetizacion de data moat anonima.
+   */
+  PHARMA_INSIGHTS_API: false,
+
+  /**
+   * Retail fulfillment comisionado con partners
+   * (refactor maestro §7.4). Requires partners integrados.
+   */
+  RETAIL_FULFILLMENT: false,
+
+  /**
+   * API publica B2B con auth keys y rate limits
+   * (refactor maestro §7.5). Para vets grandes + aseguradoras.
+   */
+  B2B_API: false,
+
+  /**
+   * Scanner fisico en partners — tablet con app de scanning
+   * (refactor maestro §2.8.2). Nice-to-have, no bloquea plan.
+   */
+  PARTNER_SCANNER_API: false,
+
+  /**
+   * Auto-creacion de eventos timeline desde scanner de partner
+   * (refactor maestro §2.8.2).
+   */
+  PARTNER_AUTO_TIMELINE: false,
+
+  /**
+   * Deteccion pasiva de visitas a clinicas via geofencing
+   * (refactor maestro §2.8.1).
+   */
+  PASSIVE_DETECTION_GPS: false,
+
+  /**
+   * Capa de AI que sugiere proxima accion segun contexto
+   * (refactor maestro §2.8.3). Requiere volumen data minimo.
+   */
+  CASCADE_AI_SUGGESTIONS: false,
+
+  /**
+   * Push si no hay actividad en la app 7d
+   * (refactor maestro §2.8.3). Detectar abandono.
+   */
+  CASCADE_INACTIVITY_CHECK: false,
+
+  /**
+   * ML pattern detection sobre 30d+ de data para sugerir rutinas
+   * (refactor maestro §2.8.1). Requiere >1k users con historial.
+   */
+  AI_PATTERN_DETECTION: false,
+
+  /**
+   * Expansion LATAM Mexico — solo si Chile saturado en Y2+
+   * (refactor maestro §7.6).
+   */
+  LATAM_MX: false,
+
+  /**
+   * Expansion LATAM Argentina.
+   */
+  LATAM_AR: false,
+
+  /**
+   * Expansion LATAM Colombia.
+   */
+  LATAM_CO: false,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;
