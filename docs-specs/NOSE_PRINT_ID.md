@@ -10,7 +10,7 @@
 > **Dependencias**:
 > - Extension `vector` (pgvector) habilitada en Supabase — confirmado 2026-04-23 por Pedro ✅
 > - Edge functions nose-print-embed + nose-print-match (Fase 1)
-> - Modelo biométrico: **SigLIP2-base de Google** (`google/siglip2-base-patch16-224`) — decisión 2026-04-24 tras testeo comparativo (ver §2.2 bis)
+> - Modelo biométrico: **DINOv2-large de Google** (`facebook/dinov2-large`) — decisión 2026-04-24 tras testeo comparativo (ver §2.2 bis)
 > - Postura pública: [POSTURA_BIOMETRIA_2026_04_23.md](../docs-raiz/pitch/POSTURA_BIOMETRIA_2026_04_23.md)
 
 ---
@@ -107,31 +107,52 @@ Frente a competidores (Chewy, Petnow Korea, Petco LoveLost, apps chilenas locale
 1. Validar auth (caller debe ser owner del pet o admin)
 2. Decodificar imágenes, normalizar (resize 224×224, channel RGB)
 3. Llamar a modelo:
-   - **Modelo elegido (confirmado 2026-04-24)**: `google/siglip2-base-patch16-224` (SigLIP2 Google, 400M params, 768 dims)
+   - **Modelo elegido (confirmado 2026-04-24)**: `facebook/dinov2-large` (SigLIP2 Google, 400M params, 768 dims)
    - Inferencia: Python edge function o container serverless (runpod, fly.io) llamando a HuggingFace Inference API o modelo local
    - Preprocesamiento: crop central cuadrado (min lado), **sin augmentation** (probado, empeora)
    - Alternativas: Petnow API ($0.0005/match) solo si SigLIP2 falla en validacion con pastores suizos hermanos
 
-### 2.2.bis Comparativa empirica de modelos (2026-04-24 con 6 fotos de Ema)
+### 2.2.bis Comparativa empirica de modelos (actualizada 2026-04-24 test multi-mascota)
 
-Testeado con script `scripts/nose_print_compare_models.py` y `scripts/nose_print_siglip2_optimized.py`:
+**Test definitivo con 7 mascotas reales** (6 perros + 1 gato, 49 fotos totales,
+219 pares same-pet + 957 pares cross-pet). Incluye **3 pastores suizos
+hermanos blancos del mismo padre** — caso peor posible de discriminacion.
 
-| Modelo | Same-pet mean | Stdev | Time/img (CPU) | Veredicto |
+| Modelo | Same Mean | Cross Mean | **Separacion (same - cross)** | Veredicto |
 |---|---|---|---|---|
-| MobileNetV3-base | 0.691 | 0.09 | 0.5s | Insuficiente |
-| DINOv2-base | 0.835 | 0.065 | 1.5s | Marginal |
-| DINOv2-large | 0.892 | 0.031 | 4.4s | Aceptable |
-| SigLIP v1-base | 0.898 | 0.033 | 1.4s | Aceptable |
-| **SigLIP2-base** | **0.923** | **0.020** | **1.1s** | **ELEGIDO** |
-| Ensemble SigLIP2 + DINOv2 | 0.843 | 0.040 | ~5s | Peor (promediar dilute) |
-| SigLIP2 + crop 60% + aug | 0.870 | 0.050 | ~2s | Peor (crop pequeño pierde contexto) |
+| DINOv2-base | 0.675 | 0.290 | **0.385** | Bueno |
+| **DINOv2-large** | **0.718** | **0.272** | **0.445** | **ELEGIDO** |
+| SigLIP-base | 0.890 | 0.799 | 0.091 | Descartado |
+| SigLIP2-base | 0.888 | 0.800 | 0.087 | Descartado |
 
-**Conclusion**: SigLIP2 sin optimizaciones adicionales es Pareto-optimo (mejor accuracy + mas rapido + mas consistente). Ensemble y augmentation empeoran cuando ya estamos en zona alta.
+**Metrica clave = separacion same-pet vs cross-pet**, no same-pet mean aislado.
 
-**Pendiente test definitivo 2026-04-25**: 3 pastores suizos hermanos (caso peor de discriminacion) + 1 gato + 26 fotos totales. Si SigLIP2 distingue entre los 3 hermanos con separacion cross-pet vs same-pet >0.10, adoptamos SigLIP2 sin fine-tuning. Si falla, alternativas:
-1. Fine-tuning SigLIP2 con Pet Biometric Challenge 2022 dataset
-2. Paradigma distinto: SuperPoint + LightGlue (matching puntual, no embedding global)
-3. Petnow API comercial
+**Leccion importante (corrige test de 2026-04-23 con 1 sola mascota)**:
+Con solo Ema (6 fotos, 1 mascota), SigLIP2 aparecia como mejor (0.923 mean).
+Pero eso solo medimos **consistencia intra-mascota**, no capacidad
+discriminativa. Con 7 mascotas se revela la verdad: SigLIP/SigLIP2 ven
+TODAS las narices como similar categoria ("nariz de animal"), sin
+distinguir individuos. Su embedding colapsa biometria.
+
+**Por que DINOv2-large gana**: self-supervised puro, aprende representaciones
+densas sin flattening por categoria. Granularidad biometrica real.
+
+**Con threshold 0.45**:
+- Same-pet >0.50: matching correcto (mayoria pasa)
+- Cross-pet <0.30: rechazo correcto (mayoria pasa)
+- Zona de duda 0.30–0.50: ~5–10% de pares, resolver con mas fotos o
+  verificacion humana
+
+**Modelo final produccion: `facebook/dinov2-large`** (300M params, 1024
+dims, ~4s/img CPU, ~1s/img GPU).
+
+**Opciones de mejora futura (Fase 1 o Fase 2)**:
+1. Crop preciso de nariz con YOLO-pet / MediaPipe Pets antes del embedding
+   (elimina ruido background) — mejora esperada +3-5%
+2. Fine-tuning con Pet Biometric Challenge 2022 dataset — mejora esperada
+   a same>0.90 cross<0.20 (separacion >0.70)
+3. DINOv2-giant (1.1B params) — probar con dataset expandido
+4. Si nada funciona: Petnow API ($0.0005/match, modelo especializado)
 4. Cada imagen genera 1 embedding de 512 floats. Promediar los 3 → 1 embedding consolidado
 5. Quality score: similitud promedio entre los 3 embeddings originales (debe ser >0.92 — si no, al menos una foto es de otra mascota o mal capturada)
 6. Guardar en `nose_prints(pet_id, embedding, short_hash, quality_score, captured_at)`
