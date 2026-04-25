@@ -102,7 +102,9 @@ CREATE POLICY "Owner can manage own pet nose prints"
     )
   );
 
--- Vet con acceso al pet (via pet_vet_links) puede leer nose prints
+-- Vet con acceso al pet (via pet_vet_links → service_providers) puede leer nose prints.
+-- pet_vet_links.provider_id apunta a service_providers.id; el user real del vet
+-- esta en service_providers.user_id.
 DROP POLICY IF EXISTS "Vet with link can read pet nose prints" ON public.nose_prints;
 CREATE POLICY "Vet with link can read pet nose prints"
   ON public.nose_prints
@@ -111,8 +113,9 @@ CREATE POLICY "Vet with link can read pet nose prints"
   USING (
     EXISTS (
       SELECT 1 FROM public.pet_vet_links pvl
+      JOIN public.service_providers sp ON sp.id = pvl.provider_id
       WHERE pvl.pet_id = nose_prints.pet_id
-        AND pvl.vet_user_id = auth.uid()
+        AND sp.user_id = auth.uid()
         AND pvl.status = 'active'
     )
   );

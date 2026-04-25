@@ -120,8 +120,9 @@ CREATE POLICY "Vet with link can read pet nose prints"
   USING (
     EXISTS (
       SELECT 1 FROM public.pet_vet_links pvl
+      JOIN public.service_providers sp ON sp.id = pvl.provider_id
       WHERE pvl.pet_id = nose_prints.pet_id
-        AND pvl.vet_user_id = auth.uid()
+        AND sp.user_id = auth.uid()
         AND pvl.status = 'active'
     )
   );
