@@ -253,7 +253,7 @@ notify-pitch-application/        # Email a Pedro cuando alguien postula via /apl
 
 ## 7. Rutas principales (de src/App.tsx)
 
-### Publicas (sin login) — 22 rutas
+### Publicas (sin login) — 26 rutas
 - `/` -- Landing
 - `/auth` -- Login/registro
 - `/veterinarios` -- Directorio publico vets
@@ -274,6 +274,10 @@ notify-pitch-application/        # Email a Pedro cuando alguien postula via /apl
 - `/qr/:token` -- Landing publica de QR de mascota
 - `/paw-card/:pawCardId` -- Landing publica de Paw Card coleccionable
 - `/medical-share/:token` -- Landing publica de ficha compartida (30 dias)
+- `/memoria/:petId` -- Memorial publico compartible (Refactor Maestro §6.6)
+- `/nose-scan` -- Scan publico de huella nasal para identificar mascota perdida (Fase 1 §6.2, gateado por flag NOSE_PRINT_PUBLIC_SCAN)
+- `/insights` -- Index de insights SEO con stats agregadas (Fase 1 §6.5)
+- `/insights/:slug` -- Landing dinamica con 3 tipos de slugs: `peso-promedio-{breed}-chile` / `mascotas-{species}-chile` / `top-razas-{species}-chile`. Threshold privacy >=50 pets.
 - `/terms`, `/privacy` -- Legales
 - `/faq` -- Preguntas frecuentes (extraidas del landing en rediseno 2026-04-18)
 
@@ -306,6 +310,8 @@ notify-pitch-application/        # Email a Pedro cuando alguien postula via /apl
 - `/upgrade`, `/upgrade/success`, `/upgrade/cancel` -- Upgrade a Premium
 - `/payment-result` -- Resultado unificado Flow (?status=success|failed)
 - `/mis-reservas` -- Mis reservas
+- `/mis-adopciones` -- Procesos de adopcion del adopter (Refactor Adopcion Bloque 2)
+- `/mis-postulaciones` -- Aplicaciones del user (Paw Voice/Company/Pitch). Cierra loop UX
 - `/reportes` -- Reportes semanales
 - `/panel-pro` -- Panel Pro analytics (Premium)
 - `/onboarding-mascota` -- Onboarding minimal dueno
@@ -647,27 +653,29 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 
 ---
 
-## 12. Estado tecnico al cierre 2026-04-16
+## 12. Estado tecnico al cierre 2026-04-25 (post Fase 1)
 
 | Metrica | Valor |
 |---|---|
 | `npx tsc -b` | 0 errores |
-| `npm run lint` | 0 errores (85 warnings a11y) |
-| `npm run test:ci` | 176 tests passed (12 files) |
-| `npm run build` | Pasa (2m 31s) |
-| Bundle principal (index) | ~335 kB / 100 kB gzip |
-| Chunk mas grande (Sentry) | 458 kB / 151 kB gzip |
-| Vendor splitting | 7 chunks (react, query, ui, icons, date, supabase, sentry) |
-| Archivos fuente (src/) | 502+ total (65 pages, 272 components, 68 hooks, 38 libs) |
-| Migraciones | 156+, hasta `20260520000000` (booking V2) + flag `99999999000000_demo_seed_flag` |
-| Edge functions | 28 activas + `_shared/` (6 helpers) |
-| Rutas en App.tsx | 67 paths (18 publicas, 40 protegidas, 3 provider, 2 admin, 4 redirects) |
+| `npm run lint` | 0 errores |
+| `npm run build` | Pasa (~50-70s) |
+| Migraciones | 170+ (incluye 4 SQLs Fase 1: nose_prints VECTOR(1024), pet_id_cards bucket, public_breed_stats, public_species_stats, adoption_followups) |
+| Edge functions | 33+ activas. Nuevas Fase 1: nose-print-embed, nose-print-match, generate-paw-passport, send-adoption-followups |
+| Rutas en App.tsx | 73+ paths (incluye /memoria/:petId, /nose-scan, /insights, /insights/:slug, /mis-adopciones, /mis-postulaciones) |
 | Premium B2C Flow | Vivo con idempotencia + rate limit |
 | Google Calendar | Vivo end-to-end |
 | Sentry | Integrado (@sentry/react 10.47.0) |
 | WhatsApp Cloud API | Codigo listo, pendiente verificacion Meta Business |
 | CRM Leads Vet | Vivo — AdminLeadsCRM + edge fn send-lead-outreach |
 | Booking System V2 | Availability rules, exceptions, audit trail, all_bookings_view |
+| **Trinidad del Corazon** (Refactor Maestro) | Pet ID Card v2 + Owner Audio Notes + Quick Actions Hub |
+| **Nose Print Biometrico** | DINOv2-large 1024 dims via HF Inference API. Threshold 0.55 cosine. pgvector HNSW. /nose-scan publico (gateado por flag NOSE_PRINT_PUBLIC_SCAN) |
+| **Paw Passport** | Edge fn `generate-paw-passport` PDF 8 paginas (tapa+datos+biometria+vacunas+antipara+medicos+contactos+validaciones) |
+| **Memorial viral** | Pagina /memoria/:petId con OG meta + share card 1080x1080 Canvas API |
+| **Refugios completos** | rescue_story + adoption_followups 30/90d trigger + cron edge fn |
+| **Insights SEO** | 3 tipos de slugs (breed/species/breed_rank) + index /insights. Threshold privacy >=50 pets |
+| **Birthday share card** | Banner condicional Home ±14d + Canvas API descargable festiva |
 
 ---
 
@@ -703,10 +711,16 @@ Para tareas especializadas, invocar el subagente correspondiente. **13 agentes a
 
 ---
 
-## 15. Planes ejecutados (2026-04-16)
+## 15. Planes ejecutados (hasta 2026-04-25)
 
 | Plan | Estado | Cambios clave |
 |---|---|---|
+| **Refactor Maestro Fase 0 (2026-04-23)** | Aplicado | Trinidad del Corazon (Pet ID Card + Audio + Quick Actions), 4 tabs ficha clinica (Historia/Cuidados/Identidad/Mas), Memorial viral, Paw Points canonizado, sidebar colapsado, 13 feature flags |
+| **Refactor Maestro Fase 1 (2026-04-25)** | Aplicado | §6.2 Nose Print MVP con DINOv2-large 1024 dims (4 edge fns + componente captura + /nose-scan publico). §6.3 Paw Passport PDF 8 paginas. §6.5 SEO insights v2 con 3 tipos de slugs (breed/species/breed_rank) + /insights index. §6.6 Memorial share card 1080x1080 Canvas API + Birthday share card. §6.7 Refugios rescue_story + adoption_followups 30/90d trigger + cron edge fn |
+| **Refactor Adopcion 2026-04-24** | Aplicado | Bloque 1 (feed unificado /adoption + filtros + 'Me interesa'). Bloque 2 (procesos kanban /shelter/adopciones, timeline /mis-adopciones, onboarding shelter, follow-up automatico) |
+| **6 refactors UX coherence (2026-04-25)** | Aplicado | AddReminderDialog con presets one-tap, QuickActionsHub usa RegisterInterventionSheet, OnboardingQuickFlow con cards especie, DejarReseña stars gigantes, Reminders FAB mobile, MyBookings con BookServiceSheet |
+| **Brand v2 polish (2026-04-25)** | Aplicado | 4 empty states ilustrados (no_appointments/no_notifications/no_conversations/no_paw_cards), hero `/paw-companys`, EmptyState con prop `illustration` |
+| **/mis-postulaciones (2026-04-25)** | Aplicado | Cierra loop UX donde users postulaban (Paw Voice/Company/Pitch) y nunca veían el estado. Hook useMyApplications ya existía + nueva pagina dedicada |
 | Perfeccionamiento clinico/premium | Aplicado | 3 friction points vet, MedicalShare mejorado, PremiumNudge en BreedTips, PawLabsBanner en 6 paginas, Recharts lazy-load |
 | Roles y experiencias | Aplicado | RoleGuard owner-only en gamificacion, routing helpers, contrato documentado |
 | Mascota huerfana re-claim | Aplicado | useAutoClaimByEmail, ClaimPetDialog, AdminPendingPets |

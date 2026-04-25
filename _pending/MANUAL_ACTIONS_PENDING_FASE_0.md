@@ -8,6 +8,42 @@
 
 ---
 
+## 🟢 Estado al 2026-04-25 (cierre día)
+
+**Fase 1 §6 completa en código y desplegada en Supabase.** Pedro confirmó:
+- ✅ 4 SQLs hoy aplicadas: `20260825100000` (bucket pet-id-cards),
+  `20260901000000` (insights v1), `20260901100000` (refugios followup),
+  `20260901200000` (insights v2)
+- ✅ 4 edge fns deployed: `nose-print-match`, `generate-pet-id-card`,
+  `generate-paw-passport`, `send-adoption-followups`
+
+**Pendiente mañana 2026-04-26**:
+1. **Rotar APIs** (incluido `service_role` que se expuso por error en chat).
+2. **Vault: actualizar el secret** con el JWT nuevo:
+   ```sql
+   DELETE FROM vault.secrets WHERE name = 'service_role_key';
+   SELECT vault.create_secret('NUEVO_JWT', 'service_role_key', 'Cron auth');
+   ```
+3. **Schedule cron pg_cron** (después del Vault):
+   ```sql
+   SELECT cron.schedule(
+     'send-adoption-followups-daily',
+     '0 13 * * *',  -- 9am Chile
+     $$ SELECT net.http_post(
+       url := 'https://gwailbjlvevkhwcrovfd.supabase.co/functions/v1/send-adoption-followups',
+       headers := jsonb_build_object(
+         'Authorization', 'Bearer ' || (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'service_role_key' LIMIT 1),
+         'Content-Type', 'application/json'
+       )
+     ); $$
+   );
+   ```
+4. **Test 4 mascotas reales** con nose print desde la app.
+   Si DINOv2-large discrimina hermanos en condiciones reales →
+   activar `NOSE_PRINT_PUBLIC_SCAN=true`.
+
+---
+
 ## ✅ Ya hecho (sesiones previas)
 
 - [x] Backup Supabase completo descargado.
@@ -266,3 +302,4 @@ de `points.ts`. Ahorro estimado: ~1.830 líneas + ~114 kB gzip.
 | 2026-04-24 | Pedro aplicó 4 migraciones iniciales + activó 6 flags. |
 | 2026-04-24 (PM) | Sesión recuperación post-crash: 8 commits con 4 SQLs adopción nuevas + Memorial viral + Paw Points canonical + Trinidad consolidada + nose print v2 outreach. Flags `ADOPTION_*` quedan en false hasta aplicar las 4 SQLs nuevas. |
 | 2026-04-24 (PM+1) | Pedro aplicó las 4 SQLs adopción + activé flags `ADOPTION_*` (commit `dc8c733b`). Arrancamos Fase 1 con nose print: migración pgvector + 2 edge fns + componente captura + ruta /nose-scan. Flags `NOSE_PRINT_*` en false hasta F1.4 (test 4 mascotas). |
+| 2026-04-25 | **Cierre Fase 1 + extras** (9 commits, hasta `c3df7e13`). Refactor 4 tabs ficha, 6 refactors UX, brand v2 polish, Paw Passport PDF + componente, Memorial share card, Refugios rescue_story + followup 30/90d, SEO insights v2 con 3 tipos slugs, /mis-postulaciones, banner cumpleaños Home. Pedro aplicó 4 SQLs + deployó 4 edge fns. Pendiente: rotar APIs + Vault + cron pg_cron + test 4 mascotas mañana. Pedro pegó service_role JWT en chat por error → rotar mañana. |
