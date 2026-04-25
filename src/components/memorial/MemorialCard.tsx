@@ -1,5 +1,8 @@
 import { Card } from '@/components/ui/card';
-import { Heart } from '@/lib/icons';
+import { Heart, Share2 } from '@/lib/icons';
+import { toast } from 'sonner';
+import { isFeatureEnabled } from '@/lib/featureFlags';
+import { trackRefactor, RefactorEvent } from '@/lib/refactorAnalytics';
 
 interface MemorialCardProps {
   pet: {
@@ -44,6 +47,33 @@ export function MemorialCard({ pet, onClick }: MemorialCardProps) {
           <p className="text-xs text-muted-foreground mt-0.5">
             {birthYear} — {passedYear}
           </p>
+        )}
+        {isFeatureEnabled('MEMORIAL_VIRAL') && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              const url = `${window.location.origin}/memoria/${pet.id}`;
+              const title = `En memoria de ${pet.name}`;
+              const text =
+                birthYear && passedYear
+                  ? `Recordando a ${pet.name} (${birthYear}–${passedYear})`
+                  : `Recordando a ${pet.name}`;
+              trackRefactor(RefactorEvent.petIdCardShared, {
+                kind: 'memorial',
+                pet_id: pet.id,
+              });
+              if (navigator.share) {
+                navigator.share({ title, text, url }).catch(() => undefined);
+              } else {
+                navigator.clipboard.writeText(url);
+                toast.success('Link del memorial copiado');
+              }
+            }}
+            className="mt-2 inline-flex items-center gap-1 text-xs text-purple-600 hover:text-purple-700 hover:underline"
+          >
+            <Share2 className="h-3 w-3" /> Compartir memoria
+          </button>
         )}
       </div>
     </Card>
