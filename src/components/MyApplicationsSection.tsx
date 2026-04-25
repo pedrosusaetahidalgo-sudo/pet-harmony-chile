@@ -81,7 +81,13 @@ export function MyApplicationsSection() {
             </Link>
           );
         })}
-        <p className="text-xs text-muted-foreground pt-2">
+        <Link
+          to="/mis-postulaciones"
+          className="text-xs text-purple-700 hover:text-purple-900 hover:underline block pt-2 text-center"
+        >
+          Ver historial completo →
+        </Link>
+        <p className="text-xs text-muted-foreground text-center">
           Recibirás un correo cuando el equipo revise tu postulación.
         </p>
       </CardContent>

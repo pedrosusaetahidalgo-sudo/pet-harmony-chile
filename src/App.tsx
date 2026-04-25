@@ -105,6 +105,7 @@ const NosePrintTest = lazy(() => import('./pages/NosePrintTest'));
 const NoseScan = lazy(() => import('./pages/NoseScan'));
 const InsightsLanding = lazy(() => import('./pages/InsightsLanding'));
 const InsightsIndex = lazy(() => import('./pages/InsightsIndex'));
+const MisPostulaciones = lazy(() => import('./pages/MisPostulaciones'));
 const PawPartners = lazy(() => import('./pages/PawPartners'));
 const PostAdoptionCheckin = lazy(() => import('./pages/PostAdoptionCheckin'));
 const ShelterDashboard = lazy(() => import('./pages/shelter/ShelterDashboard'));
@@ -546,6 +547,20 @@ const App = () => (
                     <ProtectedRoute>
                       <AppLayout>
                         <MisAdopciones />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Refactor 2026-04-25 — Vista unificada de postulaciones del user
+                    (Paw Voice / Paw Company / Pitch via /aplicar). Cierra el loop
+                    UX donde el user postulaba y nunca veia el estado. */}
+                <Route
+                  path="/mis-postulaciones"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <MisPostulaciones />
                       </AppLayout>
                     </ProtectedRoute>
                   }

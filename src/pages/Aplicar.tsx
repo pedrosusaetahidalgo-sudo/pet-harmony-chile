@@ -425,13 +425,16 @@ export default function Aplicar() {
             </p>
             <div className="flex flex-col gap-2 pt-2">
               <Button
-                onClick={() => navigate('/')}
+                onClick={() => navigate('/mis-postulaciones')}
                 className={`${colorClasses.bg} ${colorClasses.hover} text-white`}
               >
+                Ver mis postulaciones
+              </Button>
+              <Button variant="outline" onClick={() => navigate('/')}>
                 Volver al inicio
               </Button>
               <Button variant="ghost" onClick={() => setSubmitted(false)}>
-                Enviar otra postulacion
+                Enviar otra postulación
               </Button>
             </div>
           </CardContent>
