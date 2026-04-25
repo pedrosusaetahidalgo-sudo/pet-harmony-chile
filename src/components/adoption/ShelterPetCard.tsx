@@ -34,6 +34,8 @@ export type ShelterPet = {
   photo_url: string | null;
   bio: string | null;
   birth_date: string | null;
+  /** Historia narrativa del rescate, visible en el dialog de "Me interesa" */
+  rescue_story?: string | null;
 };
 
 interface ShelterPetCardProps {
@@ -183,6 +185,15 @@ export function ShelterPetCard({ pet, shelterSlug }: ShelterPetCardProps) {
               Podés agregar un mensaje (opcional).
             </DialogDescription>
           </DialogHeader>
+
+          {pet.rescue_story && (
+            <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-sm">
+              <p className="text-xs font-semibold text-amber-900 uppercase tracking-wider mb-1">
+                Historia de {pet.name}
+              </p>
+              <p className="text-amber-900 leading-relaxed">{pet.rescue_story}</p>
+            </div>
+          )}
 
           <Textarea
             value={message}

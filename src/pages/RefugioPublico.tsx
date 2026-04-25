@@ -96,7 +96,7 @@ export default function RefugioPublico() {
       if (!shelter?.id) return [];
       const { data } = await supabase
         .from('pets')
-        .select('id, name, species, breed, gender, size, photo_url, bio, birth_date')
+        .select('id, name, species, breed, gender, size, photo_url, bio, birth_date, rescue_story')
         .eq('created_by_shelter_id', shelter.id)
         .is('owner_id', null)
         .is('shelter_adopted_at', null)

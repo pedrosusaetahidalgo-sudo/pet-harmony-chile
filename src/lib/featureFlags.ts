@@ -344,9 +344,12 @@ export const FEATURE_FLAGS = {
 
   /**
    * Landings SEO publicas /insights/* con data agregada anonima
-   * (refactor maestro §6.5). Requiere masa critica (>1k mascotas).
+   * (refactor maestro §6.5). Threshold privacy >=50 pets por raza.
+   * Activado 2026-04-25 (PM): mig 20260901000000_public_insights crea
+   * materialized view + 2 RPCs (list_public_insights y get_public_insight).
+   * La pagina /insights/:slug muestra fallback si no hay masa critica.
    */
-  PUBLIC_INSIGHTS: false,
+  PUBLIC_INSIGHTS: true,
 
   /**
    * Memorial compartible — share card viral cuando muere mascota

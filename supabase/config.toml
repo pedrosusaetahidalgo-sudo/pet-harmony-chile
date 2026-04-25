@@ -189,6 +189,11 @@ verify_jwt = false
 [functions.generate-paw-passport]
 verify_jwt = true
 
+# Refactor Maestro Fase 1 §6.7 — Cron diario de follow-ups post-adopcion 30/90d.
+# verify_jwt = false: la fn corre desde pg_cron, sin user. Usa SERVICE_ROLE_KEY.
+[functions.send-adoption-followups]
+verify_jwt = false
+
 # Refactor Maestro Fase 1 2026-04-24 — Nose Print embedding (Pilar 1 Trinidad).
 # verify_jwt = true: requiere user logueado para insertar nose_print en su pet.
 # RLS valida que el pet sea del owner.
