@@ -32,8 +32,9 @@ import {
   ArrowLeft,
   HandHeart,
 } from 'lucide-react';
-import { isShelterDonationsEnabled } from '@/lib/featureFlags';
+import { isShelterDonationsEnabled, isFeatureEnabled } from '@/lib/featureFlags';
 import { CategoryIcon } from '@/components/CategoryIcon';
+import { ShelterPetCard, type ShelterPet } from '@/components/adoption/ShelterPetCard';
 
 interface PublicShelter {
   id: string;
@@ -84,6 +85,26 @@ export default function RefugioPublico() {
       return (data as PublicShelter) || null;
     },
     enabled: !!slug,
+  });
+
+  // Mascotas reales del refugio (tabla pets con created_by_shelter_id).
+  // Solo se muestra cuando ADOPTION_UNIFIED_FEED esta activo (refactor 2026-04-24).
+  const unifiedFeedEnabled = isFeatureEnabled('ADOPTION_UNIFIED_FEED');
+  const { data: shelterPets } = useQuery<ShelterPet[]>({
+    queryKey: ['public-shelter-pets', shelter?.id],
+    queryFn: async () => {
+      if (!shelter?.id) return [];
+      const { data } = await supabase
+        .from('pets')
+        .select('id, name, species, breed, gender, size, photo_url, bio, birth_date')
+        .eq('created_by_shelter_id', shelter.id)
+        .is('owner_id', null)
+        .is('shelter_adopted_at', null)
+        .order('created_at', { ascending: false })
+        .limit(24);
+      return (data as ShelterPet[]) || [];
+    },
+    enabled: !!shelter?.id && unifiedFeedEnabled,
   });
 
   const { data: posts } = useQuery({
@@ -242,23 +263,44 @@ export default function RefugioPublico() {
           </CardContent>
         </Card>
 
-        {/* Mascotas en adopcion */}
+        {/* Mascotas reales del refugio con boton "Me interesa" — solo cuando flag activo */}
+        {unifiedFeedEnabled && shelterPets && shelterPets.length > 0 && (
+          <div className="mt-8 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold">Mascotas en adopción</h2>
+              <span className="text-xs text-muted-foreground">
+                {shelterPets.length} disponible{shelterPets.length === 1 ? '' : 's'}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+              {shelterPets.map((pet) => (
+                <ShelterPetCard key={pet.id} pet={pet} shelterSlug={shelter.slug || shelter.id} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Mascotas en adopcion (legacy: adoption_posts del user_id del refugio) */}
         <div className="mt-8 space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold">Mascotas disponibles</h2>
+            <h2 className="text-lg font-semibold">
+              {unifiedFeedEnabled ? 'Otras publicaciones' : 'Mascotas disponibles'}
+            </h2>
             <Button variant="ghost" size="sm" asChild>
               <Link to="/adoption">Ver todas</Link>
             </Button>
           </div>
           {!posts || posts.length === 0 ? (
-            <Card>
-              <CardContent className="py-10 text-center space-y-2">
-                <PawPrint className="h-8 w-8 text-muted-foreground mx-auto" />
-                <p className="text-sm text-muted-foreground">
-                  Este refugio aun no tiene mascotas publicadas.
-                </p>
-              </CardContent>
-            </Card>
+            !unifiedFeedEnabled || !shelterPets || shelterPets.length === 0 ? (
+              <Card>
+                <CardContent className="py-10 text-center space-y-2">
+                  <PawPrint className="h-8 w-8 text-muted-foreground mx-auto" />
+                  <p className="text-sm text-muted-foreground">
+                    Este refugio aun no tiene mascotas publicadas.
+                  </p>
+                </CardContent>
+              </Card>
+            ) : null
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
               {posts.map((p) => (

@@ -4,9 +4,14 @@
  *
  * Muestra solo refugios con status='active'. Filtros por comuna y tipo
  * (ong / fundacion / refugio / independiente / municipal).
+ *
+ * Refactor 2026-04-24: cuando ADOPTION_UNIFIED_FEED esta activo, esta ruta
+ * redirige a /adoption?tab=refugios (embudo unico). Sin el flag, sigue
+ * con la UI actual.
  */
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { isFeatureEnabled } from '@/lib/featureFlags';
 import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
@@ -85,6 +90,13 @@ function typeIcon(type: PublicShelter['type']) {
 }
 
 export default function RefugiosHogares() {
+  if (isFeatureEnabled('ADOPTION_UNIFIED_FEED')) {
+    return <Navigate to="/adoption?tab=refugios" replace />;
+  }
+  return <RefugiosHogaresLegacy />;
+}
+
+function RefugiosHogaresLegacy() {
   const [typeFilter, setTypeFilter] = useState<ShelterType>('all');
   const [commune, setCommune] = useState<string>('all');
   const [search, setSearch] = useState('');

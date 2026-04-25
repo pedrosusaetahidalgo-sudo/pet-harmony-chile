@@ -14,6 +14,8 @@ import { useNavigate } from 'react-router-dom';
 import { NewBadge } from '@/components/NewBadge';
 import { EmptyStateIllustration } from '@/components/EmptyStateIllustration';
 import { loadPreferences, rankByMatch, type MatchablePost } from '@/lib/adoptionMatch';
+import { isFeatureEnabled } from '@/lib/featureFlags';
+import { AdoptionUnifiedView } from '@/components/adoption/AdoptionUnifiedView';
 
 // Lazy: estos componentes pesan (forms con react-hook-form, listas con queries
 // propias). Cargarlos bajo demanda reduce el bundle inicial de Adoption.tsx.
@@ -23,6 +25,17 @@ const CreateAdoptionPost = lazy(() =>
 const AdoptionSheltersList = lazy(() => import('@/components/AdoptionSheltersList'));
 
 const Adoption = () => {
+  // Refactor 2026-04-24: cuando ADOPTION_UNIFIED_FEED esta activo, renderizamos
+  // la vista nueva (tabs Mascotas/Refugios + filtros). Cuando no, el flujo legacy
+  // de 4 tabs (Disponibles/Hogares IA/Mis Posts/Me Interesa) sigue intacto.
+  // Ver REFACTOR_ADOPCION_2026_04_24.md.
+  if (isFeatureEnabled('ADOPTION_UNIFIED_FEED')) {
+    return <AdoptionUnifiedView />;
+  }
+  return <AdoptionLegacy />;
+};
+
+const AdoptionLegacy = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isShelter, isShelterLoading } = useActiveRole();
