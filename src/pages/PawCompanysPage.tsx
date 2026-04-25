@@ -111,8 +111,14 @@ export default function PawCompanysPage() {
       />
 
       <div className="container max-w-3xl mx-auto px-4 py-10 space-y-10 animate-fade-in">
-        {/* Hero */}
+        {/* Hero — brand v2 hero illustration */}
         <section className="text-center space-y-3">
+          <img
+            src="/paw-friend-assets-v2/paw_companys_hero.svg"
+            alt=""
+            aria-hidden="true"
+            className="w-full max-w-md mx-auto h-auto mb-2"
+          />
           <Badge
             variant="outline"
             className="bg-amber-50 border-amber-200 text-amber-700 text-[11px]"
