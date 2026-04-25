@@ -104,6 +104,7 @@ const Aplicar = lazy(() => import('./pages/Aplicar'));
 const NosePrintTest = lazy(() => import('./pages/NosePrintTest'));
 const NoseScan = lazy(() => import('./pages/NoseScan'));
 const InsightsLanding = lazy(() => import('./pages/InsightsLanding'));
+const InsightsIndex = lazy(() => import('./pages/InsightsIndex'));
 const PawPartners = lazy(() => import('./pages/PawPartners'));
 const PostAdoptionCheckin = lazy(() => import('./pages/PostAdoptionCheckin'));
 const ShelterDashboard = lazy(() => import('./pages/shelter/ShelterDashboard'));
@@ -1017,7 +1018,8 @@ const App = () => (
 
                 {/* Refactor Maestro Fase 1 §6.5 — Landings SEO con data agregada
                     (peso promedio raza X en Chile, etc). Threshold >=50 pets.
-                    Slug ej: /insights/peso-promedio-golden-retriever-chile */}
+                    Index publico + slug detalle. */}
+                <Route path="/insights" element={<InsightsIndex />} />
                 <Route path="/insights/:slug" element={<InsightsLanding />} />
 
                 {/* Check-in post-adopcion (link desde email del cron) */}

@@ -19,6 +19,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useReminders } from '@/hooks/useReminders';
 import { LINKS } from '@/lib/links';
 import { PetHeroCard } from '@/components/home/PetHeroCard';
+import { BirthdayShareCard } from '@/components/birthday/BirthdayShareCard';
 import { NextActionCard, type NextActionKind } from '@/components/home/NextActionCard';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -42,6 +43,37 @@ interface PetBasic {
   birth_date: string | null;
   photo_url: string | null;
   holo_pattern: string | null;
+}
+
+/** Devuelve true si el cumple esta en ±14 dias respecto al dia de hoy. */
+function isBirthdayWindow(birthDate: string | null): boolean {
+  if (!birthDate) return false;
+  try {
+    const birth = parseISO(birthDate);
+    const today = new Date();
+    // Calcular el cumple de este año
+    const birthThisYear = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
+    const diffDays = Math.abs(differenceInDays(birthThisYear, today));
+    return diffDays <= 14;
+  } catch {
+    return false;
+  }
+}
+
+/** Devuelve "Cumple en X días" / "Cumplió hace X días" / "¡Hoy!" */
+function birthdayLabel(birthDate: string | null): string {
+  if (!birthDate) return '';
+  try {
+    const birth = parseISO(birthDate);
+    const today = new Date();
+    const birthThisYear = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
+    const diffDays = differenceInDays(birthThisYear, today);
+    if (diffDays === 0) return '¡Hoy! 🎉';
+    if (diffDays > 0) return `En ${diffDays} ${diffDays === 1 ? 'día' : 'días'}`;
+    return `Cumplió hace ${Math.abs(diffDays)} ${Math.abs(diffDays) === 1 ? 'día' : 'días'}`;
+  } catch {
+    return '';
+  }
 }
 
 export function HomePetFocusV2() {
@@ -255,6 +287,29 @@ export function HomePetFocusV2() {
           onClick={() => navigate(LINKS.petClinical(selectedPet.id))}
         />
       )}
+
+      {/* Banner cumpleaños (CASCADE_BIRTHDAY_AUTO): aparece cuando faltan <=7 dias
+          o paso <=14 dias del cumple. Reusa Canvas API en BirthdayShareCard. */}
+      {selectedPet &&
+        isFeatureEnabled('CASCADE_BIRTHDAY_AUTO') &&
+        isBirthdayWindow(selectedPet.birth_date) && (
+          <Card className="border-amber-200 bg-gradient-to-br from-amber-50 to-pink-50 p-3">
+            <div className="flex items-center gap-3">
+              <div className="text-3xl">🎂</div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold">¡Cumple de {selectedPet.name}!</p>
+                <p className="text-xs text-muted-foreground">
+                  {birthdayLabel(selectedPet.birth_date)}
+                </p>
+              </div>
+              <BirthdayShareCard
+                petName={selectedPet.name}
+                photoUrl={selectedPet.photo_url}
+                birthDate={selectedPet.birth_date}
+              />
+            </div>
+          </Card>
+        )}
 
       {/* Next action */}
       {nextAction && (

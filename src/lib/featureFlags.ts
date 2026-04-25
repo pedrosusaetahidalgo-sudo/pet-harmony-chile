@@ -295,9 +295,13 @@ export const FEATURE_FLAGS = {
 
   /**
    * Cascada: generar automaticamente share card al cumpleaños
-   * (refactor maestro §2.8.3). Usa birth_date + genera imagen compartible.
+   * (refactor maestro §2.8.3). Usa birth_date + genera imagen compartible
+   * via Canvas API en src/components/birthday/BirthdayShareCard.tsx.
+   * El boton aparece en HomePetFocusV2 cuando faltan <=7 dias o paso
+   * <=14 dias del cumple (window de "celebrable").
+   * Activado 2026-04-25.
    */
-  CASCADE_BIRTHDAY_AUTO: false,
+  CASCADE_BIRTHDAY_AUTO: true,
 
   // ── Fase 1 (30-90d): Moat emergente ──
 
