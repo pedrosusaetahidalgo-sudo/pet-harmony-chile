@@ -11,7 +11,7 @@
  * 4. Mini timeline (ultimos 3 eventos + link a ficha completa)
  * 5. Quick actions secundarias (scroll)
  */
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -29,6 +29,10 @@ import { cn } from '@/lib/utils';
 import { format, differenceInDays, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { usePetHistoryTimeline, TIMELINE_CATEGORY_META } from '@/hooks/usePetHistoryTimeline';
+import { isFeatureEnabled } from '@/lib/featureFlags';
+import { QuickActionsHub } from '@/components/home/QuickActionsHub';
+import { OwnerAudioNoteRecorder } from '@/components/medical/OwnerAudioNoteRecorder';
+import { trackRefactor, RefactorEvent } from '@/lib/refactorAnalytics';
 
 interface PetBasic {
   id: string;
@@ -63,6 +67,15 @@ export function HomePetFocusV2() {
   });
 
   const selectedPet: PetBasic | undefined = pets[selectedPetIdx];
+
+  // Tracking adopcion del flag HOME_PET_FOCUS (refactor maestro analytics)
+  useEffect(() => {
+    if (pets.length === 0) {
+      trackRefactor(RefactorEvent.homePetFocusEmptyState);
+    } else {
+      trackRefactor(RefactorEvent.homePetFocusViewed, { pet_count: pets.length });
+    }
+  }, [pets.length]);
 
   // Recordatorios de la mascota seleccionada
   const { overdueReminders, upcomingReminders } = useReminders();
@@ -296,36 +309,44 @@ export function HomePetFocusV2() {
         </Card>
       )}
 
-      {/* Quick actions secundarias */}
-      {selectedPet && (
-        <Card className="p-3">
-          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-1">
-            Acciones rápidas
-          </h3>
-          <div className="grid grid-cols-4 gap-2">
-            <QuickActionButton
-              icon={<Camera className="h-5 w-5" />}
-              label="Foto"
-              onClick={() => navigate(LINKS.petClinical(selectedPet.id))}
-            />
-            <QuickActionButton
-              icon={<Weight className="h-5 w-5" />}
-              label="Peso"
-              onClick={() => navigate(LINKS.petClinical(selectedPet.id))}
-            />
-            <QuickActionButton
-              icon={<Stethoscope className="h-5 w-5" />}
-              label="Vet"
-              onClick={() => navigate(LINKS.vets())}
-            />
-            <QuickActionButton
-              icon={<Plus className="h-5 w-5" />}
-              label="Otro"
-              onClick={() => navigate(LINKS.petClinical(selectedPet.id))}
-            />
-          </div>
-        </Card>
+      {/* Audio note recorder (refactor maestro §2.6.2) */}
+      {selectedPet && isFeatureEnabled('OWNER_AUDIO_NOTES') && (
+        <OwnerAudioNoteRecorder petId={selectedPet.id} petName={selectedPet.name} />
       )}
+
+      {/* Quick actions: Hub V2 (6 one-tap) cuando flag activo, legacy 4 botones cuando no */}
+      {selectedPet &&
+        (isFeatureEnabled('QUICK_ACTIONS_HUB') ? (
+          <QuickActionsHub petId={selectedPet.id} petName={selectedPet.name} />
+        ) : (
+          <Card className="p-3">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-1">
+              Acciones rápidas
+            </h3>
+            <div className="grid grid-cols-4 gap-2">
+              <QuickActionButton
+                icon={<Camera className="h-5 w-5" />}
+                label="Foto"
+                onClick={() => navigate(LINKS.petClinical(selectedPet.id))}
+              />
+              <QuickActionButton
+                icon={<Weight className="h-5 w-5" />}
+                label="Peso"
+                onClick={() => navigate(LINKS.petClinical(selectedPet.id))}
+              />
+              <QuickActionButton
+                icon={<Stethoscope className="h-5 w-5" />}
+                label="Vet"
+                onClick={() => navigate(LINKS.vets())}
+              />
+              <QuickActionButton
+                icon={<Plus className="h-5 w-5" />}
+                label="Otro"
+                onClick={() => navigate(LINKS.petClinical(selectedPet.id))}
+              />
+            </div>
+          </Card>
+        ))}
     </div>
   );
 }

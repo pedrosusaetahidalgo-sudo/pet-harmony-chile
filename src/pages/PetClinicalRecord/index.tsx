@@ -64,6 +64,14 @@ const HistoriaTimelineView = lazy(() =>
     default: m.HistoriaTimelineView,
   }))
 );
+
+// Refactor Maestro §2.4.1 — tab Identidad con cedula digital (Pet ID Card),
+// pilar 1 de la Trinidad del Corazon. Se monta cuando PET_ID_CARD_V1 activo.
+const PetIdCardSection = lazy(() =>
+  import('@/components/medical/PetIdCardSection').then((m) => ({
+    default: m.PetIdCardSection,
+  }))
+);
 // Lazy tabs: Radix Tabs monta solo el tab activo, así cada chunk se
 // descarga cuando el user hace click. TTI inicial de la ficha clínica
 // baja ~40% (QW-14 auditoría top-tier 2026-04-20).
@@ -180,6 +188,7 @@ const PetClinicalRecord = () => {
   // Refactor Maestro §2.4.3: tab "historia" es default cuando el flag esta ON.
   // Fallback a "resumen" hasta que se active.
   const historiaTabEnabled = isFeatureEnabled('FICHA_HISTORIA_TAB');
+  const petIdCardEnabled = isFeatureEnabled('PET_ID_CARD_V1');
   const [activeTab, setActiveTab] = useState(historiaTabEnabled ? 'historia' : 'resumen');
 
   // ?mode=vet forces vet view (used by provider navigation links)
@@ -319,7 +328,14 @@ const PetClinicalRecord = () => {
   return (
     <div className="min-h-screen bg-background">
       <PageHeader
-        title={`Ficha clinica de ${pet.name}`}
+        // Refactor Maestro §5.5: cuando la vista es del owner y el tab Historia
+        // esta activo, el header se centra en la historia de la mascota.
+        // Vet sigue viendo "Ficha clinica" (profesional). VetFichaView.tsx no se toca.
+        title={
+          viewMode === 'owner' && historiaTabEnabled
+            ? `La historia de ${pet.name}`
+            : `Ficha clinica de ${pet.name}`
+        }
         subtitle={`${pet.species}${pet.breed ? ` · ${pet.breed}` : ''}`}
         actions={
           <div className="flex items-center gap-2">
@@ -532,6 +548,15 @@ const PetClinicalRecord = () => {
                   Historia
                 </TabsTrigger>
               )}
+              {petIdCardEnabled && (
+                <TabsTrigger
+                  value="identidad"
+                  className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
+                >
+                  <Sparkles className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+                  Identidad
+                </TabsTrigger>
+              )}
               <TabsTrigger
                 value="resumen"
                 className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
@@ -591,6 +616,14 @@ const PetClinicalRecord = () => {
             <TabsContent value="historia" className="mt-4">
               <Suspense fallback={<TabLoadingSkeleton />}>
                 <HistoriaTimelineView petId={pet.id} petName={pet.name} />
+              </Suspense>
+            </TabsContent>
+          )}
+
+          {petIdCardEnabled && (
+            <TabsContent value="identidad" className="mt-4">
+              <Suspense fallback={<TabLoadingSkeleton />}>
+                <PetIdCardSection petId={pet.id} />
               </Suspense>
             </TabsContent>
           )}

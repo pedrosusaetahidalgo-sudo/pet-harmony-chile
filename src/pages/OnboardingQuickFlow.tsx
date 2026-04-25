@@ -194,7 +194,9 @@ export default function OnboardingQuickFlow() {
         {/* Header + Progress */}
         <div className="mb-6">
           <div className="flex items-center justify-between mb-2">
-            <h1 className="text-xl font-bold">Agregá a tu mascota</h1>
+            <h1 className="text-xl font-bold">
+              {name ? `Queremos conocer a ${name}` : 'Queremos conocer a tu mascota'}
+            </h1>
             <span className="text-xs text-muted-foreground">Paso {step} de 3</span>
           </div>
           <Progress value={(step / 3) * 100} className="h-1.5" />

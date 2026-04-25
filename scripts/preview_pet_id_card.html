@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Preview Paw ID</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f1f5f9;
+      padding: 24px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 { color: #0f172a; margin-bottom: 4px; }
+    p { color: #64748b; margin-top: 0; }
+    .cards {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+      margin-top: 24px;
+    }
+    .card-wrap {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    .card-wrap h3 { margin: 0 0 12px 0; color: #0f172a; font-size: 14px; }
+    .card-wrap svg { display: block; max-width: 100%; height: auto; }
+  </style>
+</head>
+<body>
+  <h1>Paw ID — Preview con datos dummy</h1>
+  <p>Esto es lo que generaría la edge fn <code>generate-pet-id-card</code>. Los QRs son placeholders.</p>
+
+  <div class="cards">
+    <div class="card-wrap">
+      <h3>FRENTE</h3>
+      <!-- FRENTE_PLACEHOLDER -->
+    </div>
+    <div class="card-wrap">
+      <h3>REVERSO</h3>
+      <!-- REVERSO_PLACEHOLDER -->
+    </div>
+  </div>
+</body>
+</html>
