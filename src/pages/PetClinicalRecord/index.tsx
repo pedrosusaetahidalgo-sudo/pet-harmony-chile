@@ -80,6 +80,14 @@ const NosePrintSection = lazy(() =>
     default: m.NosePrintSection,
   }))
 );
+
+// Refactor 2026-04-25 §FICHA_TABS_V2 — 4 tabs simplificados.
+const TabCuidados = lazy(() =>
+  import('@/components/medical/TabCuidados').then((m) => ({ default: m.TabCuidados }))
+);
+const TabMas = lazy(() =>
+  import('@/components/medical/TabMas').then((m) => ({ default: m.TabMas }))
+);
 // Lazy tabs: Radix Tabs monta solo el tab activo, así cada chunk se
 // descarga cuando el user hace click. TTI inicial de la ficha clínica
 // baja ~40% (QW-14 auditoría top-tier 2026-04-20).
@@ -198,11 +206,26 @@ const PetClinicalRecord = () => {
   const historiaTabEnabled = isFeatureEnabled('FICHA_HISTORIA_TAB');
   const petIdCardEnabled = isFeatureEnabled('PET_ID_CARD_V1');
   const nosePrintEnabled = isFeatureEnabled('NOSE_PRINT_ENABLED');
-  // Si la URL trae ?tab=<id>, respetar (ej: link desde onboarding -> tab identidad)
+  // Refactor 2026-04-25: 4 tabs simplificados (Historia/Cuidados/Identidad/Mas)
+  const tabsV2Enabled = isFeatureEnabled('FICHA_TABS_V2');
+  // Si la URL trae ?tab=<id>, respetar (ej: link desde onboarding -> tab identidad).
+  // En V2, mapear nombres legacy a sus equivalentes nuevos.
   const initialTabFromUrl = searchParams.get('tab');
-  const [activeTab, setActiveTab] = useState(
-    initialTabFromUrl ?? (historiaTabEnabled ? 'historia' : 'resumen')
-  );
+  const LEGACY_TO_V2: Record<string, string> = {
+    resumen: 'cuidados',
+    vacunas: 'cuidados',
+    antiparasitarios: 'cuidados',
+    historial: 'cuidados',
+    alimentacion: 'mas',
+    documentos: 'mas',
+    compartir: 'mas',
+  };
+  const initialTabResolved = tabsV2Enabled
+    ? initialTabFromUrl
+      ? (LEGACY_TO_V2[initialTabFromUrl] ?? initialTabFromUrl)
+      : 'historia'
+    : (initialTabFromUrl ?? (historiaTabEnabled ? 'historia' : 'resumen'));
+  const [activeTab, setActiveTab] = useState(initialTabResolved);
 
   // ?mode=vet forces vet view (used by provider navigation links)
   const forceVetMode = searchParams.get('mode') === 'vet';
@@ -551,79 +574,136 @@ const PetClinicalRecord = () => {
         {/* Tabs — main content navigation */}
         <Tabs id="clinical-tabs" value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="relative">
-            <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-1 px-1">
-              {historiaTabEnabled && (
+            {tabsV2Enabled ? (
+              // V2: 4 tabs simplificados (mobile-first, sin scroll horizontal)
+              <TabsList className="grid grid-cols-4 w-full">
                 <TabsTrigger
                   value="historia"
-                  className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
+                  className="text-xs sm:text-sm min-h-[44px] touch-manipulation"
                 >
-                  <Clock className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+                  <Clock className="h-4 w-4 mr-1 hidden sm:inline-block" />
                   Historia
                 </TabsTrigger>
-              )}
-              {petIdCardEnabled && (
+                <TabsTrigger
+                  value="cuidados"
+                  className="text-xs sm:text-sm min-h-[44px] touch-manipulation"
+                >
+                  <Heart className="h-4 w-4 mr-1 hidden sm:inline-block" />
+                  Cuidados
+                </TabsTrigger>
                 <TabsTrigger
                   value="identidad"
-                  className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
+                  className="text-xs sm:text-sm min-h-[44px] touch-manipulation"
                 >
-                  <Sparkles className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+                  <Sparkles className="h-4 w-4 mr-1 hidden sm:inline-block" />
                   Identidad
                 </TabsTrigger>
-              )}
-              <TabsTrigger
-                value="resumen"
-                className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
-              >
-                <Heart className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
-                Resumen
-              </TabsTrigger>
-              <TabsTrigger
-                value="vacunas"
-                className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
-              >
-                <Syringe className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
-                Vacunas
-              </TabsTrigger>
-              <TabsTrigger
-                value="antiparasitarios"
-                className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
-              >
-                <Bug className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
-                Antiparasitarios
-              </TabsTrigger>
-              <TabsTrigger
-                value="historial"
-                className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
-              >
-                <Clock className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
-                Historial
-              </TabsTrigger>
-              <TabsTrigger
-                value="alimentacion"
-                className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
-              >
-                <Activity className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
-                Habitos
-              </TabsTrigger>
-              <TabsTrigger
-                value="documentos"
-                className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
-              >
-                <FileText className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
-                Documentos
-              </TabsTrigger>
-              {viewMode === 'owner' && (
                 <TabsTrigger
-                  value="compartir"
-                  className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
+                  value="mas"
+                  className="text-xs sm:text-sm min-h-[44px] touch-manipulation"
                 >
-                  <Share2 className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
-                  Compartir
+                  <FileText className="h-4 w-4 mr-1 hidden sm:inline-block" />
+                  Más
                 </TabsTrigger>
-              )}
-            </TabsList>
-            <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-background to-transparent pointer-events-none sm:hidden" />
+              </TabsList>
+            ) : (
+              <>
+                <TabsList className="flex w-full overflow-x-auto snap-x snap-mandatory scrollbar-hide -mx-1 px-1">
+                  {historiaTabEnabled && (
+                    <TabsTrigger
+                      value="historia"
+                      className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
+                    >
+                      <Clock className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+                      Historia
+                    </TabsTrigger>
+                  )}
+                  {petIdCardEnabled && (
+                    <TabsTrigger
+                      value="identidad"
+                      className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
+                    >
+                      <Sparkles className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+                      Identidad
+                    </TabsTrigger>
+                  )}
+                  <TabsTrigger
+                    value="resumen"
+                    className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
+                  >
+                    <Heart className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+                    Resumen
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="vacunas"
+                    className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
+                  >
+                    <Syringe className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+                    Vacunas
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="antiparasitarios"
+                    className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
+                  >
+                    <Bug className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+                    Antiparasitarios
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="historial"
+                    className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
+                  >
+                    <Clock className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+                    Historial
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="alimentacion"
+                    className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
+                  >
+                    <Activity className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+                    Habitos
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="documentos"
+                    className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
+                  >
+                    <FileText className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+                    Documentos
+                  </TabsTrigger>
+                  {viewMode === 'owner' && (
+                    <TabsTrigger
+                      value="compartir"
+                      className="shrink-0 snap-start text-xs sm:text-sm min-h-[40px] touch-manipulation"
+                    >
+                      <Share2 className="h-3.5 w-3.5 mr-1 hidden sm:inline-block" />
+                      Compartir
+                    </TabsTrigger>
+                  )}
+                </TabsList>
+                <div className="absolute right-0 top-0 bottom-0 w-6 bg-gradient-to-l from-background to-transparent pointer-events-none sm:hidden" />
+              </>
+            )}
           </div>
+
+          {/* V2 tab contents (Cuidados + Mas; Historia e Identidad ya estan abajo) */}
+          {tabsV2Enabled && (
+            <>
+              <TabsContent value="cuidados" className="mt-4">
+                <Suspense fallback={<TabLoadingSkeleton />}>
+                  <TabCuidados petId={pet.id} petName={pet.name} />
+                </Suspense>
+              </TabsContent>
+              <TabsContent value="mas" className="mt-4">
+                <Suspense fallback={<TabLoadingSkeleton />}>
+                  <TabMas
+                    pet={pet}
+                    isOwner={viewMode === 'owner'}
+                    viewMode={viewMode}
+                    onRefresh={() => refetchPet()}
+                  />
+                </Suspense>
+              </TabsContent>
+            </>
+          )}
 
           {historiaTabEnabled && (
             <TabsContent value="historia" className="mt-4">

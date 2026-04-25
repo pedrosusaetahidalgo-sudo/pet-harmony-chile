@@ -198,6 +198,24 @@ export const FEATURE_FLAGS = {
   PET_ID_CARD_V1: true,
 
   /**
+   * Ficha clinica con 4 tabs en lugar de 9 (Refactor 2026-04-25).
+   * Cuando true:
+   *   - Tab "Cuidados" reemplaza Vacunas+Antiparasitarios+Historial+Habitos
+   *     con un calendario de intervenciones unificado + boton "+ Registrar"
+   *     con 6 presets one-tap (Vacuna/Antipara/Vet/Peso/Comida/Sintoma).
+   *   - Tab "Identidad" agrupa Pet ID Card + Huella nasal + Documentos.
+   *   - Tab "Mas" agrupa accesos secundarios (Compartir, Memorial, etc).
+   *   - Tabs default: Historia / Cuidados / Identidad / Mas.
+   * Cuando false: 9 tabs legacy (sin cambios).
+   *
+   * Pensado mobile-first: 4 tabs caben sin scroll en pantallas >=320px.
+   * Insight Pedro 2026-04-25: 'no pueden sentirse llenando formularios
+   * constantemente' → presets one-tap reducen friction.
+   * Activado 2026-04-25 (PM) tras feedback Pedro de "muchos tabs".
+   */
+  FICHA_TABS_V2: true,
+
+  /**
    * Refactor flujo adopcion 2026-04-24 (REFACTOR_ADOPCION_2026_04_24.md).
    * Cuando true:
    *   - /adoption con tabs Mascotas/Refugios + filtros (comuna/especie/tamano/edad/urgente)
