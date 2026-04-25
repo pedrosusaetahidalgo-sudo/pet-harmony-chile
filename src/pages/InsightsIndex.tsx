@@ -22,24 +22,44 @@ import { isFeatureEnabled } from '@/lib/featureFlags';
 interface InsightSummary {
   slug: string;
   title: string;
-  breed: string;
-  species: string;
+  kind: 'breed' | 'species' | 'breed_rank';
+  primary_label: string;
   pet_count: number;
-  avg_weight_kg: number;
+  highlight: string;
 }
 
 export default function InsightsIndex() {
   const flagEnabled = isFeatureEnabled('PUBLIC_INSIGHTS');
 
   const { data: insights = [], isLoading } = useQuery({
-    queryKey: ['public-insights-list'],
+    queryKey: ['public-insights-list-v2'],
     enabled: flagEnabled,
     queryFn: async () => {
+      // Intenta RPC v2 (con 3 tipos de slugs). Fallback a v1 si la mig
+      // 20260901200000 todavía no se aplicó.
+      const { data: v2, error: v2Error } = await supabase
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        .rpc('list_public_insights_v2' as any);
+      if (!v2Error && v2) {
+        return v2 as InsightSummary[];
+      }
+      // Fallback a v1 (solo breed)
       const { data, error } = await supabase
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         .rpc('list_public_insights' as any);
       if (error) throw error;
-      return (data as InsightSummary[]) ?? [];
+      // Adaptar v1 al shape v2
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return (data as any[]).map(
+        (row): InsightSummary => ({
+          slug: row.slug,
+          title: row.title,
+          kind: 'breed',
+          primary_label: row.breed,
+          pet_count: row.pet_count,
+          highlight: `${row.avg_weight_kg} kg promedio`,
+        })
+      );
     },
   });
 
@@ -123,19 +143,25 @@ export default function InsightsIndex() {
                 <Card className="hover:shadow-md transition-shadow h-full">
                   <CardContent className="p-4 space-y-2">
                     <div className="flex items-center justify-between">
-                      <p className="text-xs uppercase tracking-wider text-muted-foreground capitalize">
-                        {insight.species}
-                      </p>
+                      <span
+                        className={`text-[10px] uppercase tracking-wider font-medium px-2 py-0.5 rounded-full ${
+                          insight.kind === 'breed'
+                            ? 'bg-purple-100 text-purple-700'
+                            : insight.kind === 'species'
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : 'bg-amber-100 text-amber-700'
+                        }`}
+                      >
+                        {insight.kind === 'breed' && 'Por raza'}
+                        {insight.kind === 'species' && 'Por especie'}
+                        {insight.kind === 'breed_rank' && 'Top razas'}
+                      </span>
                       <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-purple-600 transition-colors" />
                     </div>
                     <h3 className="font-semibold leading-tight">{insight.title}</h3>
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">
-                        {insight.pet_count} {insight.breed}s
-                      </span>
-                      <span className="font-semibold text-purple-700">
-                        ⌀ {insight.avg_weight_kg} kg
-                      </span>
+                      <span className="text-muted-foreground">{insight.pet_count} mascotas</span>
+                      <span className="font-semibold text-purple-700">{insight.highlight}</span>
                     </div>
                   </CardContent>
                 </Card>
