@@ -85,3 +85,12 @@ _pending/datasets/*
 !_pending/datasets/stanford-dogs/
 _pending/datasets/*/*
 !_pending/datasets/*/.gitkeep
+_preview_*.html
+_preview_*.rendered.html
+
+# Privadas: fotos de mascotas reales para tests biometricos / outreach
+_pending/nose_print_test_photos.zip
+_pending/nose_print_test_photos/
+
+# Mensajes de commit temporales (los escribo en archivo y luego git commit -F)
+_pending/COMMIT_MSG_*.txt

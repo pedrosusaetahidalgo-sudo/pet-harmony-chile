@@ -156,32 +156,26 @@ export const FEATURE_FLAGS = {
    * Antes del flag: dashboard con multiples widgets genericos.
    * Despues: 1 mascota en foco, siguiente accion pendiente, timeline corto.
    */
-  HOME_PET_FOCUS: false,
+  HOME_PET_FOCUS: true,
 
   /**
    * BottomTab colapsado a 4 ejes: Mascota / Calendario / Vets / Yo
    * (refactor maestro §5.2.1). Gamificacion pasa a seccion secundaria en "Yo".
    */
-  BOTTOM_TAB_V2: false,
+  BOTTOM_TAB_V2: true,
 
   /**
    * Sidebar colapsado a 3 grupos default (Mascotas, Red, Yo) + resto oculto
    * bajo "Mas" (refactor maestro §5.2.4). Reduce overwhelm visual.
    */
-  SIDEBAR_COLLAPSED: false,
+  SIDEBAR_COLLAPSED: true,
 
   /**
    * Onboarding minimal de 3 pasos tras signup (refactor maestro §5.3):
    * foto+nombre+especie / nose print opcional / chip opcional con mensaje.
    * No pide 20 campos al primer ingreso.
    */
-  ONBOARDING_V2_MINIMAL: false,
-
-  /**
-   * Paw Points canonizados: solo por acciones de cuidado real
-   * (refactor maestro §5.4). Se elimina ruido de gamificacion descontextualizada.
-   */
-  PAW_POINTS_CANONICAL: false,
+  ONBOARDING_V2_MINIMAL: true,
 
   /**
    * Paw Game visible como feature prominente (home/bottomtab).
@@ -194,34 +188,88 @@ export const FEATURE_FLAGS = {
    * Timeline cronologico visual con filtros por 10 categorias canonicas.
    * Requiere migracion pet_timeline_events aplicada.
    */
-  FICHA_HISTORIA_TAB: false,
+  FICHA_HISTORIA_TAB: true,
 
   /**
    * Pet ID Card — cedula digital de la mascota con QR al dashboard publico
    * (refactor maestro §2.4.1). Trinidad pilar 1.
    * Requiere migracion pet_id_cards aplicada.
    */
-  PET_ID_CARD_V1: false,
+  PET_ID_CARD_V1: true,
+
+  /**
+   * Refactor flujo adopcion 2026-04-24 (REFACTOR_ADOPCION_2026_04_24.md).
+   * Cuando true:
+   *   - /adoption con tabs Mascotas/Refugios + filtros (comuna/especie/tamano/edad/urgente)
+   *   - Feed mezcla adoption_posts + pets de refugio en cards uniformes
+   *   - /refugios-hogares redirige a /adoption?tab=refugios
+   *   - /refugios/:slug muestra boton "Me interesa" por mascota
+   * Requiere migracion 20260730000000_unify_adoption_feed.sql aplicada.
+   * NOTA 2026-04-24: queda en false hasta que Pedro aplique la SQL en
+   * Supabase Dashboard. Activar en commit posterior. Ver
+   * _pending/MANUAL_ACTIONS_PENDING_FASE_0.md §1.5.
+   */
+  ADOPTION_UNIFIED_FEED: false,
+
+  /**
+   * Memorial viral (Refactor Maestro §6.7 Fase 1).
+   * Cuando true:
+   *   - Pagina publica /memoria/:petId con OG meta tags (preview bonito en WhatsApp)
+   *   - Boton "Compartir memoria" en MemorialCard (lista /en-memoria)
+   * Visible solo si la mascota tiene passed_away_at + memorial_visibility='public'
+   * o memorial_remembrance_enabled=true.
+   */
+  MEMORIAL_VIRAL: true,
+
+  /**
+   * Paw Points canonizados (Refactor Maestro §5.4).
+   * Cuando true:
+   *   - Acciones de "cuidado real" otorgan puntos: vacunas, peso, vet visit,
+   *     foto mensual, rutinas, OCR carnet, compartir ficha, nose print.
+   *   - Acciones sociales/engagement quedan deprecated (daily_checkin, post_feed,
+   *     follow_user, receive_like, collect_paw_card, complete_reminder_late)
+   *     → siguen siendo callables pero devuelven awarded=false.
+   * Cuando false: comportamiento legacy (todas las acciones otorgan puntos).
+   */
+  PAW_POINTS_CANONICAL: true,
+
+  /**
+   * Refactor flujo adopcion Bloque 2 (procesos con estados + kanban + onboarding).
+   * Cuando true:
+   *   - Cuando un adopter expresa interes con pet_id, refugio puede crear
+   *     adoption_process desde su dashboard
+   *   - /shelter/adopciones muestra kanban con 7 columnas
+   *   - /mis-adopciones muestra timeline al adopter de cada proceso
+   *   - BecomeShelterDialog tiene paso 4 opcional (subir 3 mascotas iniciales)
+   *   - /shelter/dashboard muestra tour la primera vez
+   * Requiere migraciones 20260801000000_adoption_processes.sql,
+   * 20260801000001_shelter_onboarding.sql y
+   * 20260802000000_adoption_interest_to_process_trigger.sql aplicadas.
+   * NOTA 2026-04-24: queda en false hasta que Pedro aplique las 3 SQLs en
+   * Supabase Dashboard. Activar en commit posterior. Ver
+   * _pending/MANUAL_ACTIONS_PENDING_FASE_0.md §1.6-1.8.
+   */
+  ADOPTION_PROCESSES_V1: false,
 
   /**
    * Timeline unificado con 10 categorias canonicas
    * (refactor maestro §2.4.3). Feed cronologico de toda la vida de la mascota.
    * Requiere migracion pet_timeline_events aplicada.
    */
-  TIMELINE_CATEGORIES: false,
+  TIMELINE_CATEGORIES: true,
 
   /**
    * Audio notes desde el dueño (no solo desde vet) — (refactor maestro §2.6.2).
    * Tutor graba consulta/observacion → IA estructura → evento timeline.
    * Requiere migracion owner_audio_notes + extension process-consultation-transcript.
    */
-  OWNER_AUDIO_NOTES: false,
+  OWNER_AUDIO_NOTES: true,
 
   /**
    * Quick Actions Hub — widget one-tap en Home (refactor maestro §2.7).
    * 6 acciones mas usadas con captura automatica de metadata.
    */
-  QUICK_ACTIONS_HUB: false,
+  QUICK_ACTIONS_HUB: true,
 
   /**
    * Cascada: al aplicar vacuna, crear automaticamente reminder de proximo refuerzo
