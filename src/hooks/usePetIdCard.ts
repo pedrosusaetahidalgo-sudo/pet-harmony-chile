@@ -48,13 +48,14 @@ const CARD_SELECT = 'id, card_number, issued_at, default_qr_mode, is_active, ver
 
 async function fetchOwnerProfile(ownerId: string | null) {
   if (!ownerId) return { name: null, phone: null };
+  // profiles.display_name (no full_name; ese era un bug del PR original)
   const { data } = await supabase
     .from('profiles')
-    .select('full_name, phone')
+    .select('display_name, phone')
     .eq('id', ownerId)
     .maybeSingle();
   return {
-    name: (data?.full_name as string) ?? null,
+    name: (data?.display_name as string) ?? null,
     phone: (data?.phone as string) ?? null,
   };
 }
