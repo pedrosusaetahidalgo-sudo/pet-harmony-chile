@@ -184,6 +184,11 @@ verify_jwt = false
 [functions.send-adoption-status-email]
 verify_jwt = false
 
+# Refactor Maestro Fase 1 §6.3 — Paw Passport (PDF multi-pagina exportable).
+# verify_jwt = true: requiere auth para validar ownership del pet.
+[functions.generate-paw-passport]
+verify_jwt = true
+
 # Refactor Maestro Fase 1 2026-04-24 — Nose Print embedding (Pilar 1 Trinidad).
 # verify_jwt = true: requiere user logueado para insertar nose_print en su pet.
 # RLS valida que el pet sea del owner.

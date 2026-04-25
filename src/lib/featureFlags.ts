@@ -329,8 +329,12 @@ export const FEATURE_FLAGS = {
   /**
    * Paw Passport — PDF narrativo + share card exportable
    * (refactor maestro §6.3). Viralidad de la historia de vida.
+   * Activado 2026-04-25 (PM): edge fn generate-paw-passport ya implementada
+   * (8 paginas: tapa + datos + identidad biometrica + vacunas + antipara +
+   * medicos + contactos + validaciones). Boton aparece en tab Identidad
+   * de la ficha cuando flag activo.
    */
-  PAW_PASSPORT: false,
+  PAW_PASSPORT: true,
 
   /**
    * Descuentos en partners retail para Paw Members
@@ -347,8 +351,11 @@ export const FEATURE_FLAGS = {
   /**
    * Memorial compartible — share card viral cuando muere mascota
    * (refactor maestro §6.6). Momento emocional + signups de amigos del dueño.
+   * Activado 2026-04-25 (PM): MemorialShareCard con Canvas API nativa
+   * (sin libs externas) genera imagen 1080x1080 con foto + nombre + fechas
+   * + paleta brand v2. Boton "Descargar imagen" en /memoria/:petId.
    */
-  MEMORIAL_SHARE: false,
+  MEMORIAL_SHARE: true,
 
   /**
    * Follow-up automatico post-adopcion 30/90 dias

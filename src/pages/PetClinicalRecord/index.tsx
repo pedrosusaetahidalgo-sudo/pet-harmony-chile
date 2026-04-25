@@ -81,6 +81,14 @@ const NosePrintSection = lazy(() =>
   }))
 );
 
+// Refactor Maestro Fase 1 §6.3 — Paw Passport PDF exportable.
+// Se monta en tab Identidad cuando PAW_PASSPORT activo.
+const PawPassportSection = lazy(() =>
+  import('@/components/medical/PawPassportSection').then((m) => ({
+    default: m.PawPassportSection,
+  }))
+);
+
 // Refactor 2026-04-25 §FICHA_TABS_V2 — 4 tabs simplificados.
 const TabCuidados = lazy(() =>
   import('@/components/medical/TabCuidados').then((m) => ({ default: m.TabCuidados }))
@@ -206,6 +214,7 @@ const PetClinicalRecord = () => {
   const historiaTabEnabled = isFeatureEnabled('FICHA_HISTORIA_TAB');
   const petIdCardEnabled = isFeatureEnabled('PET_ID_CARD_V1');
   const nosePrintEnabled = isFeatureEnabled('NOSE_PRINT_ENABLED');
+  const pawPassportEnabled = isFeatureEnabled('PAW_PASSPORT');
   // Refactor 2026-04-25: 4 tabs simplificados (Historia/Cuidados/Identidad/Mas)
   const tabsV2Enabled = isFeatureEnabled('FICHA_TABS_V2');
   // Si la URL trae ?tab=<id>, respetar (ej: link desde onboarding -> tab identidad).
@@ -721,6 +730,11 @@ const PetClinicalRecord = () => {
               {nosePrintEnabled && (
                 <Suspense fallback={<TabLoadingSkeleton />}>
                   <NosePrintSection petId={pet.id} petName={pet.name} />
+                </Suspense>
+              )}
+              {pawPassportEnabled && (
+                <Suspense fallback={<TabLoadingSkeleton />}>
+                  <PawPassportSection petId={pet.id} petName={pet.name} />
                 </Suspense>
               )}
             </TabsContent>

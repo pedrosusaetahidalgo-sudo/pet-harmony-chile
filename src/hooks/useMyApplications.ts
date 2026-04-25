@@ -45,8 +45,9 @@ export interface UnifiedApplication {
 }
 
 const PAW_VOICE_COLUMNS = 'id,name,handle,platform,status,created_at,contact_email,user_id';
-const PAW_COMPANY_COLUMNS =
-  'id,company_name,partnership_type,status,is_active,created_at,contact_email';
+// La columna canónica es `name` (no `company_name`). Bug detectado en consola
+// 2026-04-25 — paw_companys?select=company_name devolvía 400.
+const PAW_COMPANY_COLUMNS = 'id,name,partnership_type,status,is_active,created_at,contact_email';
 const PITCH_COLUMNS = 'id,kind,organization_name,contact_name,status,created_at,contact_email';
 
 export function useMyApplications() {
@@ -102,7 +103,7 @@ export function useMyApplications() {
             unified.push({
               id: String(c.id),
               source: 'paw_company',
-              title: `Paw Company · ${String(c.company_name ?? 'Sin nombre')}`,
+              title: `Paw Company · ${String(c.name ?? 'Sin nombre')}`,
               subtitle: c.partnership_type === 'sponsor' ? 'Sponsor' : 'Partner',
               status: (c.status as ApplicationStatus) ?? 'pending',
               createdAt: String(c.created_at ?? ''),

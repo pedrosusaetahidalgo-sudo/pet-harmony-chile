@@ -23,6 +23,8 @@ import { Button } from '@/components/ui/button';
 import { Heart, PawPrint, Share2, Home as HomeIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { trackRefactor, RefactorEvent } from '@/lib/refactorAnalytics';
+import { isFeatureEnabled } from '@/lib/featureFlags';
+import { MemorialShareCard } from '@/components/memorial/MemorialShareCard';
 
 interface PublicMemorial {
   id: string;
@@ -195,14 +197,25 @@ export default function MemoriaPublica() {
           >
             🐾 PAW FRIEND
           </Link>
-          <Button
-            onClick={handleShare}
-            variant="outline"
-            size="sm"
-            className="gap-1 text-rose-600 border-rose-200 hover:bg-rose-50"
-          >
-            <Share2 className="h-3 w-3" /> Compartir
-          </Button>
+          <div className="flex items-center gap-2">
+            {isFeatureEnabled('MEMORIAL_SHARE') && (
+              <MemorialShareCard
+                petName={pet.name}
+                photoUrl={photo || null}
+                birthYear={pet.birth_date ? Number(formatYear(pet.birth_date)) : null}
+                passedYear={pet.passed_away_at ? Number(formatYear(pet.passed_away_at)) : null}
+                bio={pet.memorial_message ?? null}
+              />
+            )}
+            <Button
+              onClick={handleShare}
+              variant="outline"
+              size="sm"
+              className="gap-1 text-rose-600 border-rose-200 hover:bg-rose-50"
+            >
+              <Share2 className="h-3 w-3" /> Compartir
+            </Button>
+          </div>
         </div>
 
         {/* Foto grande central con marco */}
