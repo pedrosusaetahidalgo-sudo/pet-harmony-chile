@@ -2,7 +2,27 @@
 
 > **Propósito:** staging de MDs accionables que aún **no** se han ejecutado (total o parcialmente).
 > **Qué NO vive aquí:** docs vivas ([CLAUDE.md](../CLAUDE.md), [INDEX.md](../INDEX.md), [MAPA_FUNCIONAL_COMPLETO.md](../MAPA_FUNCIONAL_COMPLETO.md), [AGENTS.md](../AGENTS.md), [diagrams/](../diagrams/)), auditorías ([audits/](../audits/)), archivados ([_archive/](../_archive/)).
-> **Última actualización:** 2026-04-21
+> **Última actualización:** 2026-04-24
+
+---
+
+## Refactor Maestro 2026-04-23 (en ejecución)
+
+Plan multifase aprobado y en ejecución activa. Documentos vivos:
+
+| Doc | Propósito |
+|---|---|
+| [docs-raiz/planes/REFACTOR_MAESTRO_2026_04_23.md](../docs-raiz/planes/REFACTOR_MAESTRO_2026_04_23.md) | Plan completo (2.438 líneas, 3 fases). FUENTE DE VERDAD. |
+| [docs-raiz/planes/REFACTOR_ADOPCION_2026_04_24.md](../docs-raiz/planes/REFACTOR_ADOPCION_2026_04_24.md) | Sub-plan A+B+C+D+E flujo adopción (Bloques 1+2). |
+| [MANUAL_ACTIONS_PENDING_FASE_0.md](MANUAL_ACTIONS_PENDING_FASE_0.md) | Checklist de Pedro: 4 SQLs nuevas, deploys, flips de flags. |
+| [LEGACY_CLEANUP_AUDIT_2026_04_24.md](LEGACY_CLEANUP_AUDIT_2026_04_24.md) | Componentes legacy a eliminar tras 2-4 semanas con flags activos. Revisar 2026-05-15. |
+| [HIDDEN_FEATURES_REVIEW_2026_11_23.md](HIDDEN_FEATURES_REVIEW_2026_11_23.md) | Features escondidas con flag, decisión eliminar/reactivar a +6 meses. |
+| [NOSE_PRINT_UX_CAPTURE_IDEA.md](NOSE_PRINT_UX_CAPTURE_IDEA.md) | 3 ideas para mejorar la captura biométrica desde la app (Pilar 1). |
+| [OUTREACH_REFUGIOS_NOSE_PRINT.md](OUTREACH_REFUGIOS_NOSE_PRINT.md) | Outreach a refugios para dataset cross-individuo. |
+
+**Estado al 2026-04-24**: entregables Fase 0 §5.7 completos en código. Bloqueado en
+acciones manuales de Pedro (aplicar 4 SQLs adopción, activar 2 flags `ADOPTION_*`,
+deploy `send-adoption-status-email`). Ver checklist en `MANUAL_ACTIONS_PENDING_FASE_0.md`.
 
 ---
 

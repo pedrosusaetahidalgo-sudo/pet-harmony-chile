@@ -4,12 +4,15 @@
  *
  * Solo se muestra cuando OWNER_AUDIO_NOTES está activo.
  *
- * Flujo MVP (procesamiento IA queda como TODO para edge fn):
+ * Flujo:
  *   1. Click "Grabar observación" → modal con mic
  *   2. Grabación con SpeechRecognition (transcript live)
- *   3. Stop → transcript se inserta como evento timeline + nota persistente
- *   4. (Futuro) Edge fn procesa el transcript con IA y estructura
- *      motivo/diagnostico/tratamiento → updatea timeline event
+ *   3. Stop → transcript va a process-consultation-transcript (callerKind='owner')
+ *      que devuelve {category, title, description, severity, suggested_action}
+ *   4. Insert en pet_timeline_events con categoría sugerida por IA + fallback
+ *      'health' si la edge fn falla (best-effort, no bloquea)
+ *   5. Insert en owner_audio_notes para auditoría persistente
+ *   6. Si severity es 'consult_vet_urgent' o 'consult_vet_soon', toast aclaratorio
  *
  * Reutiliza `useAudioRecorder` (mismo hook que vets).
  */
