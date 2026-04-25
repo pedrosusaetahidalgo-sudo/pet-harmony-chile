@@ -21,6 +21,7 @@ import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { FEATURE_FLAGS } from '@/lib/featureFlags';
 import { buildIcs, downloadIcs, bookingToIcsEvent } from '@/lib/calendar/ics';
+import { BookServiceSheet } from '@/components/bookings/BookServiceSheet';
 
 export default function MyBookings() {
   const { user } = useAuth();
@@ -29,6 +30,7 @@ export default function MyBookings() {
   const [reviewHover, setReviewHover] = useState(0);
   const [reviewComment, setReviewComment] = useState('');
   const [submittingReview, setSubmittingReview] = useState(false);
+  const [bookSheetOpen, setBookSheetOpen] = useState(false);
 
   const handleSubmitReview = async () => {
     if (!user || !reviewBooking || reviewRating === 0) return;
@@ -278,11 +280,13 @@ export default function MyBookings() {
                   Descargar calendario
                 </Button>
               )}
-              <Button asChild size="sm" className="bg-purple-600 hover:bg-purple-700 gap-1.5">
-                <Link to="/veterinarios">
-                  <Plus className="h-4 w-4" />
-                  Agendar nueva cita
-                </Link>
+              <Button
+                size="sm"
+                className="bg-purple-600 hover:bg-purple-700 gap-1.5"
+                onClick={() => setBookSheetOpen(true)}
+              >
+                <Plus className="h-4 w-4" />
+                Reservar
               </Button>
             </div>
           )}
@@ -303,20 +307,12 @@ export default function MyBookings() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-2 justify-center">
                   <Button
-                    asChild
                     size="lg"
                     className="bg-purple-600 hover:bg-purple-700 text-white gap-1.5"
+                    onClick={() => setBookSheetOpen(true)}
                   >
-                    <Link to="/veterinarios">
-                      <Plus className="h-4 w-4" />
-                      Agendar cita
-                    </Link>
-                  </Button>
-                  <Button asChild size="lg" variant="outline" className="gap-1.5">
-                    <Link to="/servicios">
-                      <Stethoscope className="h-4 w-4" />
-                      Ver otros servicios
-                    </Link>
+                    <Plus className="h-4 w-4" />
+                    Reservar servicio
                   </Button>
                 </div>
                 <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-2 text-left max-w-lg mx-auto">
@@ -490,6 +486,21 @@ export default function MyBookings() {
             </div>
           </div>
         </ResponsiveModal>
+
+        {/* FAB mobile-friendly: tap target grande para reservar (refactor 2026-04-25) */}
+        <div className="fixed bottom-20 right-4 z-30 sm:hidden">
+          <Button
+            onClick={() => setBookSheetOpen(true)}
+            size="lg"
+            className="h-14 rounded-full shadow-lg gap-2 bg-purple-600 hover:bg-purple-700"
+          >
+            <Plus className="h-5 w-5" />
+            Reservar
+          </Button>
+        </div>
+
+        {/* Bottom sheet con 4 cards de servicios — punto de entrada unico */}
+        <BookServiceSheet open={bookSheetOpen} onOpenChange={setBookSheetOpen} />
       </div>
     </>
   );

@@ -194,21 +194,22 @@ export default function DejarResena() {
           </CardHeader>
           <CardContent className="space-y-5">
             <form onSubmit={rhfHandleSubmit(onSubmit)} className="space-y-5">
-              {/* Estrellas */}
+              {/* Estrellas — gigantes (refactor 2026-04-25 mobile-first: tap target grande) */}
               <div>
-                <Label className="block mb-2 text-center">Tu calificacion *</Label>
-                <div className="flex justify-center gap-1">
+                <Label className="block mb-3 text-center text-base">¿Cómo fue la atención?</Label>
+                <div className="flex justify-center gap-2">
                   {[1, 2, 3, 4, 5].map((n) => (
                     <button
                       key={n}
                       type="button"
+                      aria-label={`${n} estrella${n === 1 ? '' : 's'}`}
                       onMouseEnter={() => setHover(n)}
                       onMouseLeave={() => setHover(0)}
                       onClick={() => setValue('rating', n, { shouldValidate: true })}
-                      className="p-1"
+                      className="p-2 rounded-lg hover:bg-yellow-50 active:scale-95 transition"
                     >
                       <Star
-                        className={`h-9 w-9 transition ${
+                        className={`h-12 w-12 transition ${
                           n <= (hover || rating)
                             ? 'fill-yellow-400 text-yellow-400'
                             : 'text-slate-300'
@@ -217,6 +218,15 @@ export default function DejarResena() {
                     </button>
                   ))}
                 </div>
+                {rating > 0 && (
+                  <p className="text-center text-sm text-muted-foreground mt-2">
+                    {rating === 5 && '¡Increíble! 🎉'}
+                    {rating === 4 && 'Muy buena 👍'}
+                    {rating === 3 && 'Aceptable'}
+                    {rating === 2 && 'Esperaba más'}
+                    {rating === 1 && 'No la recomendarías'}
+                  </p>
+                )}
                 {errors.rating && (
                   <p className="text-xs text-destructive text-center mt-1">
                     {errors.rating.message}
@@ -224,27 +234,18 @@ export default function DejarResena() {
                 )}
               </div>
 
+              {/* Comentario — único campo de texto, más amigable */}
               <div>
-                <Label htmlFor="title">Titulo (opcional)</Label>
-                <Input
-                  id="title"
-                  {...register('title')}
-                  placeholder="Excelente atencion"
-                  maxLength={100}
-                />
-                {errors.title && (
-                  <p className="text-xs text-destructive mt-1">{errors.title.message}</p>
-                )}
-              </div>
-
-              <div>
-                <Label htmlFor="comment">Tu resena *</Label>
+                <Label htmlFor="comment" className="text-sm">
+                  Contanos en una línea (opcional pero ayuda a otros)
+                </Label>
                 <Textarea
                   id="comment"
                   {...register('comment')}
-                  placeholder="Cuenta tu experiencia con este veterinario..."
-                  rows={5}
+                  placeholder="Atención puntual, paciencia con mi perro..."
+                  rows={3}
                   maxLength={500}
+                  className="mt-1.5"
                 />
                 <div className="flex justify-between mt-1">
                   {errors.comment ? (
@@ -256,11 +257,30 @@ export default function DejarResena() {
                 </div>
               </div>
 
+              {/* Título: solo aparece si el user lo expande (collapsed por default) */}
+              <details className="group">
+                <summary className="text-xs text-muted-foreground cursor-pointer list-none flex items-center gap-1">
+                  <span className="group-open:rotate-90 transition inline-block">▸</span>
+                  Agregar título corto (opcional)
+                </summary>
+                <div className="mt-2">
+                  <Input
+                    id="title"
+                    {...register('title')}
+                    placeholder="Ej: Excelente atención"
+                    maxLength={100}
+                  />
+                  {errors.title && (
+                    <p className="text-xs text-destructive mt-1">{errors.title.message}</p>
+                  )}
+                </div>
+              </details>
+
               <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex gap-2">
                 <AlertCircle className="h-4 w-4 text-amber-600 flex-shrink-0 mt-0.5" />
                 <p className="text-xs text-amber-800">
-                  Esta resena aparecera marcada como "no verificada por reserva" porque viene de una
-                  invitacion directa del veterinario, no de una reserva hecha en Paw Friend.
+                  Esta reseña aparece como "no verificada por reserva" porque viene de invitación
+                  directa, no de una reserva hecha en Paw Friend.
                 </p>
               </div>
 
@@ -270,7 +290,9 @@ export default function DejarResena() {
                     <Loader2 className="h-4 w-4 mr-1 animate-spin" /> Enviando...
                   </>
                 ) : (
-                  'Publicar resena'
+                  <>
+                    <CheckCircle2 className="h-4 w-4 mr-1.5" /> Enviar reseña
+                  </>
                 )}
               </Button>
             </form>

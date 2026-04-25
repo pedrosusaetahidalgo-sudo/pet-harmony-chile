@@ -174,6 +174,23 @@ export default function Reminders() {
         }
       />
 
+      {/* FAB mobile-friendly: tap target grande con label visible (refactor 2026-04-25). */}
+      {hasAnyReminder && (
+        <div className="fixed bottom-20 right-4 z-30 sm:hidden">
+          <Button
+            onClick={() =>
+              userPets.length > 0 ? setShowAddDialog(true) : navigate(LINKS.myPets())
+            }
+            size="lg"
+            className="h-14 rounded-full shadow-lg gap-2 bg-purple-600 hover:bg-purple-700"
+            disabled={!reminderAccess.allowed}
+          >
+            <Plus className="h-5 w-5" />
+            Agregar
+          </Button>
+        </div>
+      )}
+
       <main className="container max-w-4xl mx-auto px-3 py-4 space-y-6 pb-24">
         {showUsageBar && (
           <PremiumNudge

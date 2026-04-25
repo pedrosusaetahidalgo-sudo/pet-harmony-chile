@@ -277,24 +277,36 @@ export default function OnboardingQuickFlow() {
                 />
               </div>
 
-              {/* Especie */}
+              {/* Especie — botones grandes one-tap (refactor 2026-04-25 mobile-first) */}
               <div className="space-y-2">
-                <Label>Especie *</Label>
-                <Select value={species} onValueChange={setSpecies}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="¿Qué es?" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="perro">🐶 Perro</SelectItem>
-                    <SelectItem value="gato">🐱 Gato</SelectItem>
-                    <SelectItem value="conejo">🐰 Conejo</SelectItem>
-                    <SelectItem value="hamster">🐹 Hámster</SelectItem>
-                    <SelectItem value="ave">🐦 Ave</SelectItem>
-                    <SelectItem value="tortuga">🐢 Tortuga</SelectItem>
-                    <SelectItem value="pez">🐟 Pez</SelectItem>
-                    <SelectItem value="otro">🐾 Otro</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label>¿Qué es?</Label>
+                <div className="grid grid-cols-4 gap-2">
+                  {[
+                    { value: 'perro', emoji: '🐶', label: 'Perro' },
+                    { value: 'gato', emoji: '🐱', label: 'Gato' },
+                    { value: 'conejo', emoji: '🐰', label: 'Conejo' },
+                    { value: 'hamster', emoji: '🐹', label: 'Hámster' },
+                    { value: 'ave', emoji: '🐦', label: 'Ave' },
+                    { value: 'tortuga', emoji: '🐢', label: 'Tortuga' },
+                    { value: 'pez', emoji: '🐟', label: 'Pez' },
+                    { value: 'otro', emoji: '🐾', label: 'Otro' },
+                  ].map((s) => (
+                    <button
+                      key={s.value}
+                      type="button"
+                      onClick={() => setSpecies(s.value)}
+                      className={cn(
+                        'flex flex-col items-center justify-center gap-1 p-3 rounded-xl border-2 transition-all',
+                        species === s.value
+                          ? 'border-purple-500 bg-purple-50'
+                          : 'border-border hover:bg-muted'
+                      )}
+                    >
+                      <span className="text-2xl">{s.emoji}</span>
+                      <span className="text-xs font-medium">{s.label}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="flex gap-2 pt-2">

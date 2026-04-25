@@ -1,11 +1,22 @@
-import { useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+/**
+ * AddReminderDialog — bottom sheet con 6 presets one-tap.
+ *
+ * Refactor 2026-04-25: aplicación de la filosofía FICHA_TABS_V2 al flujo
+ * de creación de recordatorios. Reemplaza el form de 4 campos (tipo +
+ * título + fecha + mascota) por:
+ *   1. Step 1: 6 cards one-tap (Vacuna / Antipara / Control vet / Peso /
+ *      Baño / Otro). Cada uno autocompleta tipo+título.
+ *   2. Step 2: solo fecha (default sugerida según preset) + selector de
+ *      mascota si hace falta. Botón "Listo".
+ *
+ * El user pasa de tocar 4 campos a tocar 2-3.
+ *
+ * Backwards compat: mismas props (open, onOpenChange, onSubmit, petId,
+ * pets, trigger). Sin cambios en el contrato del onSubmit.
+ */
+import { useState, cloneElement, isValidElement } from 'react';
+import type { ReactElement } from 'react';
+import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import {
   Select,
   SelectContent,
@@ -16,7 +27,9 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
-import { REMINDER_TYPES } from '@/lib/reminderTypes';
+import { Syringe, Bug, Stethoscope, Scale, Sparkles, Pencil, ArrowLeft } from 'lucide-react';
+import { addDays, addMonths, addYears, format } from 'date-fns';
+import { type ReminderType } from '@/lib/reminderTypes';
 
 interface Pet {
   id: string;
@@ -24,33 +37,97 @@ interface Pet {
 }
 
 interface AddReminderDialogProps {
-  /** Whether the dialog is open (controlled) */
   open: boolean;
-  /** Callback when open state changes */
   onOpenChange: (open: boolean) => void;
-  /** Called with reminder data when user submits */
   onSubmit: (data: { pet_id: string; type: string; title: string; due_date: string }) => void;
-  /**
-   * Fixed pet ID — when provided, the pet selector is hidden
-   * (used from PetClinicalRecord where pet is already known).
-   */
   petId?: string;
-  /**
-   * List of user pets for the pet selector.
-   * Required when `petId` is not provided.
-   */
   pets?: Pet[];
-  /** Optional trigger element (rendered inside DialogTrigger) */
   trigger?: React.ReactNode;
 }
 
-/**
- * Dialog reutilizable para agregar un recordatorio.
- *
- * Dos modos:
- * 1. Con `petId` fijo (ej: ficha clínica) — no muestra selector de mascota.
- * 2. Sin `petId` pero con `pets[]` — muestra selector de mascota.
- */
+interface PresetMeta {
+  key: string;
+  label: string;
+  Icon: typeof Syringe;
+  iconBg: string;
+  iconColor: string;
+  reminderType: ReminderType;
+  defaultTitle: string;
+  /** Días desde hoy para sugerir como due_date */
+  defaultDaysAhead: number;
+}
+
+const PRESETS: PresetMeta[] = [
+  {
+    key: 'vaccine',
+    label: 'Vacuna refuerzo',
+    Icon: Syringe,
+    iconBg: 'bg-purple-50',
+    iconColor: 'text-purple-600',
+    reminderType: 'vaccine',
+    defaultTitle: 'Vacuna refuerzo',
+    defaultDaysAhead: 365,
+  },
+  {
+    key: 'flea',
+    label: 'Antipara mensual',
+    Icon: Bug,
+    iconBg: 'bg-orange-50',
+    iconColor: 'text-orange-600',
+    reminderType: 'flea',
+    defaultTitle: 'Aplicar antiparasitario',
+    defaultDaysAhead: 30,
+  },
+  {
+    key: 'checkup',
+    label: 'Control vet',
+    Icon: Stethoscope,
+    iconBg: 'bg-rose-50',
+    iconColor: 'text-rose-600',
+    reminderType: 'checkup',
+    defaultTitle: 'Control veterinario',
+    defaultDaysAhead: 180,
+  },
+  {
+    key: 'weight',
+    label: 'Pesar',
+    Icon: Scale,
+    iconBg: 'bg-sky-50',
+    iconColor: 'text-sky-600',
+    reminderType: 'weight',
+    defaultTitle: 'Control de peso',
+    defaultDaysAhead: 30,
+  },
+  {
+    key: 'grooming',
+    label: 'Baño',
+    Icon: Sparkles,
+    iconBg: 'bg-teal-50',
+    iconColor: 'text-teal-600',
+    reminderType: 'grooming',
+    defaultTitle: 'Baño / peluquería',
+    defaultDaysAhead: 30,
+  },
+  {
+    key: 'custom',
+    label: 'Otro',
+    Icon: Pencil,
+    iconBg: 'bg-slate-100',
+    iconColor: 'text-slate-600',
+    reminderType: 'custom',
+    defaultTitle: '',
+    defaultDaysAhead: 7,
+  },
+];
+
+function calcDefaultDate(daysAhead: number): string {
+  let date = new Date();
+  if (daysAhead === 365) date = addYears(date, 1);
+  else if (daysAhead >= 30) date = addMonths(date, Math.round(daysAhead / 30));
+  else date = addDays(date, daysAhead);
+  return format(date, 'yyyy-MM-dd');
+}
+
 export function AddReminderDialog({
   open,
   onOpenChange,
@@ -59,95 +136,147 @@ export function AddReminderDialog({
   pets,
   trigger,
 }: AddReminderDialogProps) {
-  const [formData, setFormData] = useState({
-    pet_id: petId ?? '',
-    type: 'vaccine',
-    title: '',
-    due_date: '',
-  });
+  const [step, setStep] = useState<'preset' | 'detail'>('preset');
+  const [selectedPreset, setSelectedPreset] = useState<PresetMeta | null>(null);
+  const [petIdLocal, setPetIdLocal] = useState(petId ?? '');
+  const [titleOverride, setTitleOverride] = useState('');
+  const [dueDate, setDueDate] = useState('');
 
   const needsPetSelector = !petId;
-  const canSubmit =
-    formData.title.trim() !== '' && formData.due_date !== '' && (petId || formData.pet_id !== '');
+  const finalPetId = petId ?? petIdLocal;
+  const finalTitle =
+    selectedPreset?.key === 'custom' ? titleOverride : (selectedPreset?.defaultTitle ?? '');
+  const canSubmit = !!selectedPreset && !!finalPetId && !!dueDate && finalTitle.trim() !== '';
 
-  const handleSubmit = () => {
-    onSubmit({
-      pet_id: petId ?? formData.pet_id,
-      type: formData.type,
-      title: formData.title,
-      due_date: formData.due_date,
-    });
-    onOpenChange(false);
-    setFormData({ pet_id: petId ?? '', type: 'vaccine', title: '', due_date: '' });
+  const reset = () => {
+    setStep('preset');
+    setSelectedPreset(null);
+    setPetIdLocal(petId ?? '');
+    setTitleOverride('');
+    setDueDate('');
   };
 
+  const handleClose = () => {
+    onOpenChange(false);
+    setTimeout(reset, 200);
+  };
+
+  const handlePresetSelect = (preset: PresetMeta) => {
+    setSelectedPreset(preset);
+    setDueDate(calcDefaultDate(preset.defaultDaysAhead));
+    setStep('detail');
+  };
+
+  const handleSubmit = () => {
+    if (!selectedPreset) return;
+    onSubmit({
+      pet_id: finalPetId,
+      type: selectedPreset.reminderType,
+      title: finalTitle,
+      due_date: dueDate,
+    });
+    handleClose();
+  };
+
+  // Si pasan trigger, lo clonamos con onClick que abre el sheet (controlled).
+  const triggerEl = isValidElement(trigger)
+    ? cloneElement(trigger as ReactElement<{ onClick?: () => void }>, {
+        onClick: () => onOpenChange(true),
+      })
+    : null;
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Nuevo Recordatorio</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4 pt-2">
-          {needsPetSelector && pets && pets.length > 0 && (
-            <div className="space-y-2">
-              <Label>Mascota</Label>
-              <Select
-                value={formData.pet_id}
-                onValueChange={(v) => setFormData((d) => ({ ...d, pet_id: v }))}
+    <>
+      {triggerEl}
+      <ResponsiveModal
+        open={open}
+        onOpenChange={onOpenChange}
+        title={step === 'preset' ? 'Nuevo recordatorio' : (selectedPreset?.label ?? 'Detalles')}
+        description={
+          step === 'preset'
+            ? '¿Qué querés recordar? Te dejamos lo más rápido.'
+            : 'Solo fecha y listo. Lo demás ya está prellenado.'
+        }
+      >
+        {step === 'preset' && (
+          <div className="grid grid-cols-3 gap-3 px-4 pb-6">
+            {PRESETS.map((preset) => (
+              <button
+                key={preset.key}
+                type="button"
+                onClick={() => handlePresetSelect(preset)}
+                className={`flex flex-col items-center gap-2 p-4 rounded-xl border-2 border-transparent hover:border-purple-300 transition-all ${preset.iconBg}`}
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Selecciona mascota" />
-                </SelectTrigger>
-                <SelectContent>
-                  {pets.map((p) => (
-                    <SelectItem key={p.id} value={p.id}>
-                      {p.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+                <preset.Icon className={`h-6 w-6 ${preset.iconColor}`} />
+                <span className="text-xs font-medium text-center leading-tight">
+                  {preset.label}
+                </span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {step === 'detail' && selectedPreset && (
+          <div className="space-y-4 px-4 pb-6">
+            {/* Pet selector solo si hace falta */}
+            {needsPetSelector && pets && pets.length > 0 && (
+              <div className="space-y-2">
+                <Label>Mascota</Label>
+                <Select value={petIdLocal} onValueChange={setPetIdLocal}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="¿Para cuál?" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {pets.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>
+                        {p.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            {/* Título: solo editable si es custom */}
+            {selectedPreset.key === 'custom' && (
+              <div className="space-y-2">
+                <Label>¿Qué querés recordar?</Label>
+                <Input
+                  value={titleOverride}
+                  onChange={(e) => setTitleOverride(e.target.value)}
+                  placeholder="Ej: dar pastilla a Kai"
+                  autoFocus
+                />
+              </div>
+            )}
+
+            {/* Fecha (siempre) */}
+            <div className="space-y-2">
+              <Label>¿Cuándo?</Label>
+              <Input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                min={format(new Date(), 'yyyy-MM-dd')}
+              />
+              <p className="text-xs text-muted-foreground">
+                Sugerimos {format(new Date(dueDate), 'd/M/yyyy')}.
+              </p>
             </div>
-          )}
-          <div className="space-y-2">
-            <Label>Tipo</Label>
-            <Select
-              value={formData.type}
-              onValueChange={(v) => setFormData((d) => ({ ...d, type: v }))}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {REMINDER_TYPES.map((rt) => (
-                  <SelectItem key={rt.value} value={rt.value}>
-                    {rt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+
+            {/* Actions */}
+            <div className="flex gap-2 pt-2">
+              <Button variant="outline" onClick={() => setStep('preset')} className="gap-2">
+                <ArrowLeft className="h-4 w-4" />
+                Cambiar
+              </Button>
+              <Button onClick={handleSubmit} disabled={!canSubmit} className="flex-1">
+                Listo
+              </Button>
+            </div>
           </div>
-          <div className="space-y-2">
-            <Label>Título</Label>
-            <Input
-              value={formData.title}
-              onChange={(e) => setFormData((d) => ({ ...d, title: e.target.value }))}
-              placeholder="Ej: Vacuna antirrábica"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Fecha</Label>
-            <Input
-              type="date"
-              value={formData.due_date}
-              onChange={(e) => setFormData((d) => ({ ...d, due_date: e.target.value }))}
-            />
-          </div>
-          <Button className="w-full" disabled={!canSubmit} onClick={handleSubmit}>
-            Crear recordatorio
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+        )}
+      </ResponsiveModal>
+    </>
   );
 }
