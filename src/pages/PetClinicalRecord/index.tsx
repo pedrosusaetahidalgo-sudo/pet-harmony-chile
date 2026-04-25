@@ -72,6 +72,14 @@ const PetIdCardSection = lazy(() =>
     default: m.PetIdCardSection,
   }))
 );
+
+// Refactor Maestro Fase 1 §6.2 — tab Identidad con huella nasal biometrica,
+// pilar 2 de la Trinidad del Corazon. Se monta cuando NOSE_PRINT_ENABLED activo.
+const NosePrintSection = lazy(() =>
+  import('@/components/medical/NosePrintSection').then((m) => ({
+    default: m.NosePrintSection,
+  }))
+);
 // Lazy tabs: Radix Tabs monta solo el tab activo, así cada chunk se
 // descarga cuando el user hace click. TTI inicial de la ficha clínica
 // baja ~40% (QW-14 auditoría top-tier 2026-04-20).
@@ -189,7 +197,12 @@ const PetClinicalRecord = () => {
   // Fallback a "resumen" hasta que se active.
   const historiaTabEnabled = isFeatureEnabled('FICHA_HISTORIA_TAB');
   const petIdCardEnabled = isFeatureEnabled('PET_ID_CARD_V1');
-  const [activeTab, setActiveTab] = useState(historiaTabEnabled ? 'historia' : 'resumen');
+  const nosePrintEnabled = isFeatureEnabled('NOSE_PRINT_ENABLED');
+  // Si la URL trae ?tab=<id>, respetar (ej: link desde onboarding -> tab identidad)
+  const initialTabFromUrl = searchParams.get('tab');
+  const [activeTab, setActiveTab] = useState(
+    initialTabFromUrl ?? (historiaTabEnabled ? 'historia' : 'resumen')
+  );
 
   // ?mode=vet forces vet view (used by provider navigation links)
   const forceVetMode = searchParams.get('mode') === 'vet';
@@ -621,10 +634,15 @@ const PetClinicalRecord = () => {
           )}
 
           {petIdCardEnabled && (
-            <TabsContent value="identidad" className="mt-4">
+            <TabsContent value="identidad" className="mt-4 space-y-4">
               <Suspense fallback={<TabLoadingSkeleton />}>
                 <PetIdCardSection petId={pet.id} />
               </Suspense>
+              {nosePrintEnabled && (
+                <Suspense fallback={<TabLoadingSkeleton />}>
+                  <NosePrintSection petId={pet.id} petName={pet.name} />
+                </Suspense>
+              )}
             </TabsContent>
           )}
 

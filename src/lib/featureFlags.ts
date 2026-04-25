@@ -287,18 +287,24 @@ export const FEATURE_FLAGS = {
    * Nose print MVP — captura + matching biometrico (refactor maestro §6.2).
    * Trinidad pilar 2. Rollout gradual 10% → 50% → 100%.
    * Requiere pgvector habilitado + migracion nose_prints aplicada + edge fns.
+   * Aplicado y deployed 2026-04-24 (PM). Activado para que dueños puedan
+   * capturar huellas (la captura no requiere validacion del matching).
    */
-  NOSE_PRINT_ENABLED: false,
+  NOSE_PRINT_ENABLED: true,
 
   /**
    * Integrar captura nose print en onboarding de mascota.
-   * Activar solo cuando NOSE_PRINT_ENABLED haya pasado validacion.
+   * Activado 2026-04-24 (PM). El paso es opcional con boton "Saltar".
    */
-  NOSE_PRINT_ONBOARDING: false,
+  NOSE_PRINT_ONBOARDING: true,
 
   /**
    * Ruta publica /nose-scan para encontrar mascotas perdidas.
-   * Activar al final de Fase 1 con masa de nose prints suficiente.
+   * QUEDA EN FALSE hasta validar que SigLIP2-base discrimina hermanos
+   * (test cross-pet con 8 mascotas en _pending/nose_print_test_photos/).
+   * Si lo activamos antes y el modelo da falsos positivos, podemos revelar
+   * telefono del dueño equivocado a un extraño que escanee otra mascota.
+   * Activar manualmente despues de F1.4 OK en MANUAL_ACTIONS.
    */
   NOSE_PRINT_PUBLIC_SCAN: false,
 

@@ -169,9 +169,13 @@ export default function OnboardingQuickFlow() {
         description: `${name} ya tiene su perfil. Podés agregar más detalles desde la ficha.`,
       });
 
-      // Si eligió capturar nose print más tarde, va a ficha. Si eligió ahora,
-      // va al flujo de captura (pendiente) — por ahora también a ficha.
-      navigate(LINKS.petClinical(createdPet.id));
+      // Si eligió capturar nose print ahora, redirige a ficha tab Identidad.
+      // El componente NosePrintSection ofrece el boton de captura prominente.
+      // Si eligió "Más tarde", va a la ficha en su tab default.
+      const target = captureNoseLater
+        ? LINKS.petClinical(createdPet.id)
+        : `${LINKS.petClinical(createdPet.id)}?tab=identidad`;
+      navigate(target);
     } catch (err) {
       if (uploadedFilePath) {
         await supabase.storage
