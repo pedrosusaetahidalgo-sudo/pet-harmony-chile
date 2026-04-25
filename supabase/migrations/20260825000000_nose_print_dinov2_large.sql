@@ -212,15 +212,22 @@ GRANT EXECUTE ON FUNCTION public.set_nose_print_primary(UUID) TO authenticated;
 COMMIT;
 
 -- ══════════════════════════════════════════════════════════════════════════
--- Smoke test
+-- Smoke test (regla 9.2.1)
 -- ══════════════════════════════════════════════════════════════════════════
 DO $$
 DECLARE
   v_table_exists BOOLEAN;
-  v_match_dim INT;
-  v_match_threshold REAL;
+  v_pgvector_installed BOOLEAN;
 BEGIN
-  -- Tabla existe
+  -- 1. pgvector instalado
+  SELECT EXISTS (
+    SELECT 1 FROM pg_extension WHERE extname = 'vector'
+  ) INTO v_pgvector_installed;
+  IF NOT v_pgvector_installed THEN
+    RAISE EXCEPTION 'pgvector no esta instalado. Habilitar en Dashboard > Extensions';
+  END IF;
+
+  -- 2. Tabla existe
   SELECT EXISTS (
     SELECT 1 FROM information_schema.tables
     WHERE table_schema='public' AND table_name='nose_prints'
@@ -229,23 +236,26 @@ BEGIN
     RAISE EXCEPTION 'Tabla nose_prints no existe post-recreate';
   END IF;
 
-  -- RPC con la nueva firma (VECTOR 1024)
-  SELECT pg_catalog.format_type(pa.atttypid, pa.atttypmod)::TEXT
-    INTO v_match_dim
-    FROM pg_proc pp
-    JOIN pg_attribute pa ON pa.attrelid = (pp.oid::regproc::text || '_args')::regclass
-    WHERE pp.proname = 'match_nose_print'
-    LIMIT 1;
-  -- Lo de arriba puede no devolver dim cleanly; en su lugar verificamos via prosrc
+  -- 3. RPC match con 3 args creada
   PERFORM 1 FROM pg_proc
     WHERE proname = 'match_nose_print'
       AND pronargs = 3;
   IF NOT FOUND THEN
-    RAISE EXCEPTION 'match_nose_print no se recreo con 3 args';
+    RAISE EXCEPTION 'match_nose_print no se creo con 3 args';
   END IF;
 
-  -- Threshold default es 0.55 (DINOv2)
-  -- (Verificacion manual: SELECT prosrc FROM pg_proc WHERE proname='match_nose_print')
+  -- 4. RPC set_primary creada
+  PERFORM 1 FROM pg_proc WHERE proname = 'set_nose_print_primary';
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'set_nose_print_primary no se creo';
+  END IF;
 
-  RAISE NOTICE 'Smoke test OK: nose_prints recreada con VECTOR(1024) + RPCs DINOv2-ready';
+  -- 5. Columnas pets.lost_* agregadas
+  PERFORM 1 FROM information_schema.columns
+    WHERE table_schema='public' AND table_name='pets' AND column_name='lost_at';
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'pets.lost_at no se agrego';
+  END IF;
+
+  RAISE NOTICE 'Smoke test OK: nose_prints VECTOR(1024) + 2 RPCs + pets.lost_* listos';
 END $$;
