@@ -102,6 +102,7 @@ const RefugioPublico = lazy(() => import('./pages/RefugioPublico'));
 const MemoriaPublica = lazy(() => import('./pages/MemoriaPublica'));
 const Aplicar = lazy(() => import('./pages/Aplicar'));
 const NosePrintTest = lazy(() => import('./pages/NosePrintTest'));
+const NoseScan = lazy(() => import('./pages/NoseScan'));
 const PawPartners = lazy(() => import('./pages/PawPartners'));
 const PostAdoptionCheckin = lazy(() => import('./pages/PostAdoptionCheckin'));
 const ShelterDashboard = lazy(() => import('./pages/shelter/ShelterDashboard'));
@@ -1007,6 +1008,11 @@ const App = () => (
                 {/* Pagina publica de crowdsourcing nose print (Refactor Maestro 2026-04-24) */}
                 {/* Standalone sin layout para captura full-screen. */}
                 <Route path="/nose-print-test" element={<NosePrintTest />} />
+
+                {/* Refactor Maestro Fase 1 §6.2 — Pagina publica para identificar
+                    mascotas perdidas via huella nasal. Sin auth (verify_jwt=false
+                    en la edge fn nose-print-match). */}
+                <Route path="/nose-scan" element={<NoseScan />} />
 
                 {/* Check-in post-adopcion (link desde email del cron) */}
                 <Route

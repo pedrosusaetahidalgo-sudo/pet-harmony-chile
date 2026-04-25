@@ -61,6 +61,14 @@ export const RefactorEvent = {
   onboardingV2Started: 'onboarding_v2.started',
   onboardingV2StepCompleted: 'onboarding_v2.step_completed',
   onboardingV2Completed: 'onboarding_v2.completed',
+
+  // Fase 1: NOSE_PRINT_ENABLED
+  nosePrintCaptureStarted: 'nose_print.capture.started',
+  nosePrintCaptureSaved: 'nose_print.capture.saved',
+  nosePrintCaptureFailed: 'nose_print.capture.failed',
+  nosePrintMatchAttempted: 'nose_print.match.attempted',
+  nosePrintMatchFound: 'nose_print.match.found',
+  nosePrintMatchNotFound: 'nose_print.match.not_found',
 } as const;
 
 export type RefactorEventName = (typeof RefactorEvent)[keyof typeof RefactorEvent];

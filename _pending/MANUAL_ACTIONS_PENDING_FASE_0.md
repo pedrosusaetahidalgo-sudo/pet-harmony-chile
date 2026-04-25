@@ -18,124 +18,117 @@
   - `20260530000000_pet_id_cards.sql`
   - `20260601000000_owner_audio_notes.sql`
 - [x] Tipos Supabase regenerados post-migraciones Fase 0 iniciales.
+- [x] Aplicadas las 4 migraciones Fase 0 adopción 2026-04-24 (commit `dc8c733b`):
+  - `20260730000000_unify_adoption_feed.sql`
+  - `20260801000000_adoption_processes.sql`
+  - `20260801000001_shelter_onboarding.sql`
+  - `20260802000000_adoption_interest_to_process_trigger.sql`
 - [x] Flags activados: `HOME_PET_FOCUS`, `BOTTOM_TAB_V2`, `SIDEBAR_COLLAPSED`,
   `ONBOARDING_V2_MINIMAL`, `FICHA_HISTORIA_TAB`, `PET_ID_CARD_V1`,
   `MEMORIAL_VIRAL`, `PAW_POINTS_CANONICAL`, `OWNER_AUDIO_NOTES`,
-  `QUICK_ACTIONS_HUB`.
+  `QUICK_ACTIONS_HUB`, `ADOPTION_UNIFIED_FEED`, `ADOPTION_PROCESSES_V1`.
 
 ---
 
-## 🔴 Pendientes — Bloque adopción 2026-04-24
+## 🔴 Pendientes — Fase 1 Pilar 1 (Nose Print) — 2026-04-24
 
-Las 4 SQLs y los flags `ADOPTION_UNIFIED_FEED` y `ADOPTION_PROCESSES_V1`
-quedan **EN FALSE** hasta que apliques esto. El código frontend ya está
-mergeado pero gateado por flag, así que prod sigue intacto.
+Nuevo bloque: arrancamos Fase 1 con el sistema biométrico de huella nasal.
+Código mergeado en commit del 2026-04-24 (PM). Bloqueado en 4 cosas que
+solo Pedro puede hacer:
 
-### 1. Migraciones SQL (orden estricto)
+### F1.1. Aplicar migración `20260815000000_nose_print_system.sql`
 
-**Cómo aplicar**: Supabase Dashboard → SQL Editor → nueva query → pegar contenido
-del archivo → Run. Una por una. Verificá que cada una termine sin error antes
-de pasar a la siguiente. Cada una incluye smoke test al final (regla 9.2.1).
-
-#### 1.5. Bloque 1 — Feed unificado de adopción
-
-- **Archivo**: [supabase/migrations/20260730000000_unify_adoption_feed.sql](../supabase/migrations/20260730000000_unify_adoption_feed.sql)
-- **Qué hace**: agrega `pet_id` a `adoption_interests` con CHECK XOR (uno
-  de los dos targets, post o pet). RLS para que shelters vean intereses
-  sobre sus pets. Permite el botón "Me interesa" en `/refugios/:slug`.
+- **Archivo**: [supabase/migrations/20260815000000_nose_print_system.sql](../supabase/migrations/20260815000000_nose_print_system.sql)
+- **Qué hace**:
+  - Crea `CREATE EXTENSION IF NOT EXISTS vector` (pgvector ya estaba habilitado).
+  - Tabla `nose_prints` con `VECTOR(768)` + index HNSW + provider abstraction
+    (huggingface/replicate/local/petnow).
+  - Columnas `pets.lost_at`, `lost_message`, `lost_location` para el flujo
+    de "mascota perdida" (consent gating en `/nose-scan`).
+  - RPC `match_nose_print` con SECURITY DEFINER (cosine similarity).
+  - RPC `set_nose_print_primary` (transaccional, atomic).
+  - RLS: owner gestiona sus pets, vet con link puede leer.
+  - Smoke test al final.
 - **Verificación post-apply**:
   ```sql
-  SELECT column_name FROM information_schema.columns
-    WHERE table_schema='public' AND table_name='adoption_interests'
-      AND column_name IN ('pet_id', 'adoption_post_id');
-  -- Debe listar las 2 columnas
+  SELECT extname FROM pg_extension WHERE extname='vector';
+  SELECT count(*) FROM public.nose_prints; -- 0
+  SELECT proname FROM pg_proc WHERE proname IN ('match_nose_print', 'set_nose_print_primary');
   ```
 
-#### 1.6. Bloque 2.A — Tabla adoption_processes
+### F1.2. Crear secret `HUGGINGFACE_API_KEY` en Supabase
 
-- **Archivo**: [supabase/migrations/20260801000000_adoption_processes.sql](../supabase/migrations/20260801000000_adoption_processes.sql)
-- **Qué hace**: crea tabla `adoption_processes` (7 estados kanban) +
-  trigger `handle_adoption_transfer` que cuando status='transferred' setea
-  `pets.pending_owner_email + token` (reusa flujo `send-pet-invitation`).
-- **Verificación**:
-  ```sql
-  SELECT COUNT(*) FROM public.adoption_processes; -- debe retornar 0
-  SELECT proname FROM pg_proc WHERE proname = 'handle_adoption_transfer';
-  ```
+Vamos con HuggingFace Inference API + SigLIP2-base como provider default
+(0.923 mean en test empírico, 768 dims). Plan B si no discrimina hermanos:
+fine-tune DINOv2-large con triplet loss (notebook `de1a4e27` ya commiteado).
 
-#### 1.7. Bloque 2.B — Onboarding shelter
+1. Crear cuenta gratis en https://huggingface.co/ si no tenés.
+2. Settings → Access Tokens → New token → "read" role → guardar.
+   (Free tier: 30k requests/mes, suficiente para validación.)
+3. Configurar como secret de Supabase:
+   ```bash
+   npx supabase secrets set HUGGINGFACE_API_KEY=hf_xxxxx
+   ```
 
-- **Archivo**: [supabase/migrations/20260801000001_shelter_onboarding.sql](../supabase/migrations/20260801000001_shelter_onboarding.sql)
-- **Qué hace**: agrega columna `adoption_centers.onboarding_completed_at`
-  para mostrar checklist solo la primera vez.
-- **Verificación**:
-  ```sql
-  SELECT column_name FROM information_schema.columns
-    WHERE table_name='adoption_centers' AND column_name='onboarding_completed_at';
-  ```
-
-#### 1.8. Bloque 2.C — Trigger interest → process
-
-- **Archivo**: [supabase/migrations/20260802000000_adoption_interest_to_process_trigger.sql](../supabase/migrations/20260802000000_adoption_interest_to_process_trigger.sql)
-- **Qué hace**: trigger `create_adoption_process_from_interest` que conecta
-  `/refugios/:slug` "Me interesa" con el kanban `/shelter/adopciones`. Cuando
-  un adopter inserta interest con pet_id, auto-crea row en
-  `adoption_processes` con status='interested'. Idempotente (ON CONFLICT
-  pet_id+adopter_user_id DO NOTHING).
-- **Verificación**:
-  ```sql
-  SELECT tgname FROM pg_trigger WHERE tgname='tg_adoption_interest_to_process';
-  ```
-
-### 2. Regenerar tipos TypeScript post-migraciones
-
-Después de aplicar las 4 SQLs, correr en tu terminal:
+### F1.3. Deploy de las 2 edge functions
 
 ```bash
-npx supabase gen types typescript --project-id gwailbjlvevkhwcrovfd > src/integrations/supabase/types.ts
+npx supabase functions deploy nose-print-embed
+npx supabase functions deploy nose-print-match
 ```
 
-Luego:
+### F1.4. Test cross-pet con tus 4 mascotas reales
 
-```bash
-git add src/integrations/supabase/types.ts
-git commit -m "chore(types): regenerate Supabase types post adopcion 2026-04-24"
-git push
+Este es el **gate técnico** antes de activar los flags `NOSE_PRINT_*`:
+
+1. Tomar 5 fotos de la nariz de cada mascota:
+   - 3 pastores suizos hermanos blancos (Kai + 2 hermanos)
+   - 1 gato (Ema)
+2. Probar localmente:
+   - Activar `NOSE_PRINT_ENABLED=true` solo en local (`.env.local`)
+   - Crear las 4 mascotas en tu cuenta de test
+   - Capturar la nariz de cada una con `NosePrintCapture`
+   - Después: foto extra de Kai → `/nose-scan` debe devolverlo con
+     similarity >0.95 y NO confundirlo con sus hermanos.
+3. Reportar resultado:
+   - **Si distingue hermanos** (sim Kai-vs-Kai >0.95, Kai-vs-hermanos <0.85)
+     → activamos en prod gradualmente. ✅
+   - **Si no distingue** → fine-tunear DINOv2-large con el notebook
+     `scripts/finetune_dinov2_nose_v2.ipynb` + dataset que estamos juntando
+     vía outreach refugios. Plan B con timeline 2-4 semanas.
+
+### F1.5. Activar flags Fase 1 (después de F1.4)
+
+Cuando F1.4 esté ✅, editar [src/lib/featureFlags.ts](../src/lib/featureFlags.ts):
+
+```ts
+NOSE_PRINT_ENABLED: true,         // captura desde /onboarding-mascota + ficha
+NOSE_PRINT_ONBOARDING: true,      // mostrar paso opcional en wizard 3 pasos
+NOSE_PRINT_PUBLIC_SCAN: true,     // habilitar /nose-scan publico
 ```
 
-### 3. Deploy edge function `send-adoption-status-email`
+---
+
+## ✅ Bloque adopción 2026-04-24 — APLICADO
+
+Pedro aplicó las 4 SQLs en Supabase Dashboard SQL Editor (2026-04-24 PM).
+Tipos regenerados + flags `ADOPTION_UNIFIED_FEED` y `ADOPTION_PROCESSES_V1`
+activados (commit `dc8c733b`).
+
+**Pendiente operacional**: deploy de la edge fn de email para que los cambios
+de status del kanban refugio disparen notificación al adopter:
 
 ```bash
 npx supabase functions deploy send-adoption-status-email
-```
-
-Verificar que tenga `RESEND_API_KEY` como secret. Si no:
-
-```bash
 npx supabase secrets set RESEND_API_KEY=re_xxxxx
 ```
 
-### 4. Activar los 2 flags pendientes
-
-Una vez que las 4 SQLs estén aplicadas + types regenerados + edge fn deployada,
-editar [src/lib/featureFlags.ts](../src/lib/featureFlags.ts):
-
-```ts
-ADOPTION_UNIFIED_FEED: true,   // línea ~213
-ADOPTION_PROCESSES_V1: true,   // línea ~250
-```
-
-Commit + push:
-
-```bash
-git add src/lib/featureFlags.ts
-git commit -m "feat(flags): activar ADOPTION_UNIFIED_FEED + ADOPTION_PROCESSES_V1 post SQLs"
-git push
-```
+Sin esto, el flujo principal del kanban funciona — solo no se envían emails
+automáticos a los adopters al cambiar status.
 
 ---
 
-## 🟡 Pendientes — Nose print biométrico
+## 🟡 Pendientes — Nose print biométrico (validación dataset crowdsourcing)
 
 ### 5. Validación con fotos reales (cuando tengas las 4 mascotas)
 
@@ -195,3 +188,4 @@ de `points.ts`. Ahorro estimado: ~1.830 líneas + ~114 kB gzip.
 | 2026-04-23 | Archivo creado al arrancar Fase 0 refactor. |
 | 2026-04-24 | Pedro aplicó 4 migraciones iniciales + activó 6 flags. |
 | 2026-04-24 (PM) | Sesión recuperación post-crash: 8 commits con 4 SQLs adopción nuevas + Memorial viral + Paw Points canonical + Trinidad consolidada + nose print v2 outreach. Flags `ADOPTION_*` quedan en false hasta aplicar las 4 SQLs nuevas. |
+| 2026-04-24 (PM+1) | Pedro aplicó las 4 SQLs adopción + activé flags `ADOPTION_*` (commit `dc8c733b`). Arrancamos Fase 1 con nose print: migración pgvector + 2 edge fns + componente captura + ruta /nose-scan. Flags `NOSE_PRINT_*` en false hasta F1.4 (test 4 mascotas). |

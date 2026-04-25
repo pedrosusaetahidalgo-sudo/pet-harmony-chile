@@ -183,3 +183,16 @@ verify_jwt = false
 # Llamada desde frontend cuando shelter cambia status. Valida auth manual con RLS.
 [functions.send-adoption-status-email]
 verify_jwt = false
+
+# Refactor Maestro Fase 1 2026-04-24 — Nose Print embedding (Pilar 1 Trinidad).
+# verify_jwt = true: requiere user logueado para insertar nose_print en su pet.
+# RLS valida que el pet sea del owner.
+[functions.nose-print-embed]
+verify_jwt = true
+
+# Refactor Maestro Fase 1 2026-04-24 — Nose Print matching publico.
+# verify_jwt = false: la pagina /nose-scan es publica para encontrar mascotas
+# perdidas sin necesidad de login. La edge fn usa SECURITY DEFINER en el RPC
+# match_nose_print y aplica consent gating segun lost_at.
+[functions.nose-print-match]
+verify_jwt = false
