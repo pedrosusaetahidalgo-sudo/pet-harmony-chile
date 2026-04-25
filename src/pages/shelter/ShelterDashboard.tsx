@@ -17,6 +17,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/PageHeader';
 import { ShelterMetricsPanel } from '@/components/shelter/ShelterMetricsPanel';
+import { ShelterOnboardingChecklist } from '@/components/shelter/ShelterOnboardingChecklist';
+import { isFeatureEnabled } from '@/lib/featureFlags';
 import {
   Upload,
   Heart,
@@ -152,6 +154,16 @@ export default function ShelterDashboard() {
         onBack={() => navigate('/home')}
       />
       <div className="container max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-6">
+        {/* Onboarding checklist (solo primera vez, behind flag ADOPTION_PROCESSES_V1) */}
+        {isFeatureEnabled('ADOPTION_PROCESSES_V1') &&
+          !(shelter as { onboarding_completed_at?: string | null }).onboarding_completed_at && (
+            <ShelterOnboardingChecklist
+              shelterId={shelter.id}
+              shelterSlug={shelter.slug}
+              petsCount={pets?.length ?? 0}
+            />
+          )}
+
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <StatCard
@@ -203,6 +215,14 @@ export default function ShelterDashboard() {
             title="Editar perfil publico"
             description="Que ve la gente cuando llega a tu refugio."
           />
+          {isFeatureEnabled('ADOPTION_PROCESSES_V1') && (
+            <QuickAction
+              to="/shelter/adopciones"
+              icon={<MessageCircle className="h-5 w-5" />}
+              title="Adopciones en curso"
+              description="Kanban con interesados, visitas y aprobaciones."
+            />
+          )}
         </div>
 
         {/* Descarga PDF catalogo mascotas en custodia (para donantes/prensa) */}

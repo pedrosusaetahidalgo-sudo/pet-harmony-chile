@@ -99,12 +99,15 @@ const OnboardingDuenoMinimal = lazy(() => import('./pages/OnboardingDuenoMinimal
 const OnboardingShelter = lazy(() => import('./pages/OnboardingShelter'));
 const RefugiosHogares = lazy(() => import('./pages/RefugiosHogares'));
 const RefugioPublico = lazy(() => import('./pages/RefugioPublico'));
+const MemoriaPublica = lazy(() => import('./pages/MemoriaPublica'));
 const Aplicar = lazy(() => import('./pages/Aplicar'));
 const NosePrintTest = lazy(() => import('./pages/NosePrintTest'));
 const PawPartners = lazy(() => import('./pages/PawPartners'));
 const PostAdoptionCheckin = lazy(() => import('./pages/PostAdoptionCheckin'));
 const ShelterDashboard = lazy(() => import('./pages/shelter/ShelterDashboard'));
 const ShelterPets = lazy(() => import('./pages/shelter/ShelterPets'));
+const ShelterAdoptionsKanban = lazy(() => import('./pages/shelter/ShelterAdoptionsKanban'));
+const MisAdopciones = lazy(() => import('./pages/MisAdopciones'));
 const ShelterBulkImport = lazy(() => import('./pages/shelter/ShelterBulkImport'));
 const ShelterProfile = lazy(() => import('./pages/shelter/ShelterProfile'));
 const ShelterTransferPet = lazy(() => import('./pages/shelter/ShelterTransferPet'));
@@ -515,6 +518,32 @@ const App = () => (
                           <ShelterTransferPet />
                         </AppLayout>
                       </RoleGuard>
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Refactor adopcion 2026-04-24 (Bloque 2): Kanban de procesos para refugios */}
+                <Route
+                  path="/shelter/adopciones"
+                  element={
+                    <ProtectedRoute>
+                      <RoleGuard requiredRole="shelter" fallback="/onboarding-shelter">
+                        <AppLayout>
+                          <ShelterAdoptionsKanban />
+                        </AppLayout>
+                      </RoleGuard>
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Refactor adopcion 2026-04-24 (Bloque 2): Timeline de procesos para adopters */}
+                <Route
+                  path="/mis-adopciones"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <MisAdopciones />
+                      </AppLayout>
                     </ProtectedRoute>
                   }
                 />
@@ -939,6 +968,18 @@ const App = () => (
                   element={
                     <PublicWithLayoutIfAuth>
                       <RefugioPublico />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
+
+                {/* Memorial viral (Refactor Maestro §6.7): pagina publica
+                    compartible para mascotas fallecidas con memorial_visibility='public'.
+                    OG meta tags para preview en WhatsApp/Instagram/Twitter. */}
+                <Route
+                  path="/memoria/:petId"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <MemoriaPublica />
                     </PublicWithLayoutIfAuth>
                   }
                 />

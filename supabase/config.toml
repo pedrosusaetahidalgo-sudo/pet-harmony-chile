@@ -178,3 +178,8 @@ verify_jwt = false
 # verify_jwt = false porque la edge fn valida auth manual con RLS
 [functions.generate-pet-id-card]
 verify_jwt = false
+
+# Refactor Adopcion Bloque 2 2026-04-24 — Email automation kanban refugio.
+# Llamada desde frontend cuando shelter cambia status. Valida auth manual con RLS.
+[functions.send-adoption-status-email]
+verify_jwt = false
