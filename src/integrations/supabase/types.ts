@@ -214,6 +214,7 @@ export type Database = {
           logo_url: string | null;
           longitude: number | null;
           mission: string | null;
+          onboarding_completed_at: string | null;
           region: string | null;
           rut: string | null;
           slug: string | null;
@@ -247,6 +248,7 @@ export type Database = {
           logo_url?: string | null;
           longitude?: number | null;
           mission?: string | null;
+          onboarding_completed_at?: string | null;
           region?: string | null;
           rut?: string | null;
           slug?: string | null;
@@ -280,6 +282,7 @@ export type Database = {
           logo_url?: string | null;
           longitude?: number | null;
           mission?: string | null;
+          onboarding_completed_at?: string | null;
           region?: string | null;
           rut?: string | null;
           slug?: string | null;
@@ -300,29 +303,32 @@ export type Database = {
       };
       adoption_interests: {
         Row: {
-          adoption_post_id: string;
+          adoption_post_id: string | null;
           created_at: string;
           id: string;
           interested_user_id: string;
           message: string | null;
+          pet_id: string | null;
           status: string;
           updated_at: string;
         };
         Insert: {
-          adoption_post_id: string;
+          adoption_post_id?: string | null;
           created_at?: string;
           id?: string;
           interested_user_id: string;
           message?: string | null;
+          pet_id?: string | null;
           status?: string;
           updated_at?: string;
         };
         Update: {
-          adoption_post_id?: string;
+          adoption_post_id?: string | null;
           created_at?: string;
           id?: string;
           interested_user_id?: string;
           message?: string | null;
+          pet_id?: string | null;
           status?: string;
           updated_at?: string;
         };
@@ -332,6 +338,13 @@ export type Database = {
             columns: ['adoption_post_id'];
             isOneToOne: false;
             referencedRelation: 'adoption_posts';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'adoption_interests_pet_id_fkey';
+            columns: ['pet_id'];
+            isOneToOne: false;
+            referencedRelation: 'pets';
             referencedColumns: ['id'];
           },
         ];
@@ -448,6 +461,79 @@ export type Database = {
           views_count?: number | null;
         };
         Relationships: [];
+      };
+      adoption_processes: {
+        Row: {
+          adopter_user_id: string;
+          approved_at: string | null;
+          created_at: string;
+          id: string;
+          notes_adopter: string | null;
+          notes_shelter: string | null;
+          pet_id: string;
+          rejected_reason: string | null;
+          shelter_id: string;
+          source_interest_id: string | null;
+          status: string;
+          transferred_at: string | null;
+          updated_at: string;
+          visit_date: string | null;
+        };
+        Insert: {
+          adopter_user_id: string;
+          approved_at?: string | null;
+          created_at?: string;
+          id?: string;
+          notes_adopter?: string | null;
+          notes_shelter?: string | null;
+          pet_id: string;
+          rejected_reason?: string | null;
+          shelter_id: string;
+          source_interest_id?: string | null;
+          status?: string;
+          transferred_at?: string | null;
+          updated_at?: string;
+          visit_date?: string | null;
+        };
+        Update: {
+          adopter_user_id?: string;
+          approved_at?: string | null;
+          created_at?: string;
+          id?: string;
+          notes_adopter?: string | null;
+          notes_shelter?: string | null;
+          pet_id?: string;
+          rejected_reason?: string | null;
+          shelter_id?: string;
+          source_interest_id?: string | null;
+          status?: string;
+          transferred_at?: string | null;
+          updated_at?: string;
+          visit_date?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: 'adoption_processes_pet_id_fkey';
+            columns: ['pet_id'];
+            isOneToOne: false;
+            referencedRelation: 'pets';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'adoption_processes_shelter_id_fkey';
+            columns: ['shelter_id'];
+            isOneToOne: false;
+            referencedRelation: 'adoption_centers';
+            referencedColumns: ['id'];
+          },
+          {
+            foreignKeyName: 'adoption_processes_source_interest_id_fkey';
+            columns: ['source_interest_id'];
+            isOneToOne: false;
+            referencedRelation: 'adoption_interests';
+            referencedColumns: ['id'];
+          },
+        ];
       };
       adoption_shelters: {
         Row: {

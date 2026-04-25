@@ -205,11 +205,9 @@ export const FEATURE_FLAGS = {
    *   - /refugios-hogares redirige a /adoption?tab=refugios
    *   - /refugios/:slug muestra boton "Me interesa" por mascota
    * Requiere migracion 20260730000000_unify_adoption_feed.sql aplicada.
-   * NOTA 2026-04-24: queda en false hasta que Pedro aplique la SQL en
-   * Supabase Dashboard. Activar en commit posterior. Ver
-   * _pending/MANUAL_ACTIONS_PENDING_FASE_0.md §1.5.
+   * Aplicada y activada 2026-04-24 (PM).
    */
-  ADOPTION_UNIFIED_FEED: false,
+  ADOPTION_UNIFIED_FEED: true,
 
   /**
    * Memorial viral (Refactor Maestro §6.7 Fase 1).
@@ -245,11 +243,11 @@ export const FEATURE_FLAGS = {
    * Requiere migraciones 20260801000000_adoption_processes.sql,
    * 20260801000001_shelter_onboarding.sql y
    * 20260802000000_adoption_interest_to_process_trigger.sql aplicadas.
-   * NOTA 2026-04-24: queda en false hasta que Pedro aplique las 3 SQLs en
-   * Supabase Dashboard. Activar en commit posterior. Ver
-   * _pending/MANUAL_ACTIONS_PENDING_FASE_0.md §1.6-1.8.
+   * Aplicadas y activado 2026-04-24 (PM). Pendiente: deploy de
+   * supabase/functions/send-adoption-status-email + secret RESEND_API_KEY
+   * para que los cambios de status disparen email al adopter.
    */
-  ADOPTION_PROCESSES_V1: false,
+  ADOPTION_PROCESSES_V1: true,
 
   /**
    * Timeline unificado con 10 categorias canonicas
