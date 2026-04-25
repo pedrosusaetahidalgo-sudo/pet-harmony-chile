@@ -43,7 +43,10 @@ const NOSE_PRINT_PROVIDER = (Deno.env.get('NOSE_PRINT_PROVIDER') ?? 'huggingface
   | 'replicate'
   | 'local';
 const HF_API_KEY = Deno.env.get('HUGGINGFACE_API_KEY');
-const HF_MODEL_ID = Deno.env.get('NOSE_PRINT_MODEL_ID') ?? 'google/siglip2-base-patch16-224';
+// Default actualizado 2026-04-25 a DINOv2-large tras test comparativo
+// (gap 0.3400 vs 0.0733 de SigLIP2-base). DINOv2-large devuelve 1024 dims.
+const HF_MODEL_ID = Deno.env.get('NOSE_PRINT_MODEL_ID') ?? 'facebook/dinov2-large';
+const HF_EMBEDDING_DIM = parseInt(Deno.env.get('NOSE_PRINT_EMBEDDING_DIM') ?? '1024', 10);
 const REPLICATE_API_KEY = Deno.env.get('REPLICATE_API_KEY');
 
 interface EmbedRequest {
@@ -66,11 +69,18 @@ interface EmbedResult {
 // ──────────────────────────────────────────────────────────────────────────
 
 /**
- * HuggingFace Inference API — modelo SigLIP2-base (default).
- * Devuelve embedding de 768 dims (image_features). Free tier: 30k req/mes.
+ * HuggingFace Inference API — modelo configurable (default DINOv2-large).
+ *
+ * Soporta tanto DINOv2 (1024 dims con dinov2-large, 768 con dinov2-base) como
+ * SigLIP2 (768 dims). El response shape varia segun modelo:
+ *   - DINOv2: [batch, seq_len, hidden_dim] o [batch, hidden_dim] (CLS) → flatten/avg
+ *   - SigLIP2: [batch, hidden_dim] (pooler_output) → flatten directo
+ *
+ * Para asegurar consistencia, normalizamos a un vector L2-unitario al final
+ * y validamos contra HF_EMBEDDING_DIM.
  *
  * Endpoint: https://api-inference.huggingface.co/models/{model_id}
- * Para image embeddings con SigLIP2 usamos `feature-extraction` task.
+ * Free tier: 30k req/mes.
  */
 async function embedWithHuggingFace(imageBytes: Uint8Array): Promise<EmbedResult> {
   if (!HF_API_KEY) {
@@ -94,19 +104,51 @@ async function embedWithHuggingFace(imageBytes: Uint8Array): Promise<EmbedResult
   }
 
   const json = await res.json();
-  // HF feature-extraction puede devolver array plano o array anidado segun modelo
-  const flat: number[] = Array.isArray(json[0]) ? json[0] : json;
 
-  if (!Array.isArray(flat) || flat.length !== 768) {
+  // HF feature-extraction puede devolver:
+  //   - [hidden_dim]  (DINOv2 CLS-only o SigLIP2 pooler)
+  //   - [[hidden_dim]] (batch=1)
+  //   - [seq_len, hidden_dim] (DINOv2 con tokens)
+  //   - [[seq_len, hidden_dim]] (batch=1 + tokens)
+  // Estrategia: flatten a 1D, si length > expected → mean pooling sobre patches
+  let flat: number[];
+  // Normalizar nesting hasta llegar a numbers
+  let candidate: unknown = json;
+  while (Array.isArray(candidate) && Array.isArray((candidate as unknown[])[0])) {
+    candidate = (candidate as unknown[])[0];
+  }
+  if (!Array.isArray(candidate)) {
+    throw new Error(`Response shape inesperado (no array): ${typeof candidate}`);
+  }
+  // candidate ahora es [num] o [[num], [num], ...]
+  const first = (candidate as unknown[])[0];
+  if (Array.isArray(first)) {
+    // [seq_len, hidden] → mean pooling sobre seq_len
+    const seqLen = (candidate as number[][]).length;
+    const hiddenDim = (candidate as number[][])[0].length;
+    flat = new Array(hiddenDim).fill(0);
+    for (let i = 0; i < seqLen; i++) {
+      const row = (candidate as number[][])[i];
+      for (let j = 0; j < hiddenDim; j++) flat[j] += row[j];
+    }
+    for (let j = 0; j < hiddenDim; j++) flat[j] /= seqLen;
+  } else {
+    flat = candidate as number[];
+  }
+
+  if (!Array.isArray(flat) || flat.length !== HF_EMBEDDING_DIM) {
     throw new Error(
-      `Embedding shape inesperado: ${Array.isArray(flat) ? flat.length : typeof flat}`
+      `Embedding dim inesperado: got ${Array.isArray(flat) ? flat.length : typeof flat}, expected ${HF_EMBEDDING_DIM}`
     );
   }
 
-  const norm = Math.sqrt(flat.reduce((acc, v) => acc + v * v, 0));
+  // L2 normalize para que cosine similarity = dot product
+  const rawNorm = Math.sqrt(flat.reduce((acc, v) => acc + v * v, 0));
+  const normalized = rawNorm > 0 ? flat.map((v) => v / rawNorm) : flat;
+
   return {
-    embedding: flat,
-    embedding_norm: norm,
+    embedding: normalized,
+    embedding_norm: rawNorm,
     provider: 'huggingface',
     model_id: HF_MODEL_ID,
   };

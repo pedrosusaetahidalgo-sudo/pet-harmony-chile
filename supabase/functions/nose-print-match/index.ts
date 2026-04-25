@@ -46,9 +46,11 @@ const NOSE_PRINT_PROVIDER = (Deno.env.get('NOSE_PRINT_PROVIDER') ?? 'huggingface
   | 'replicate'
   | 'local';
 const HF_API_KEY = Deno.env.get('HUGGINGFACE_API_KEY');
-const HF_MODEL_ID = Deno.env.get('NOSE_PRINT_MODEL_ID') ?? 'google/siglip2-base-patch16-224';
+const HF_MODEL_ID = Deno.env.get('NOSE_PRINT_MODEL_ID') ?? 'facebook/dinov2-large';
+const HF_EMBEDDING_DIM = parseInt(Deno.env.get('NOSE_PRINT_EMBEDDING_DIM') ?? '1024', 10);
 
-const DEFAULT_THRESHOLD = 0.85;
+// Threshold default ajustado a DINOv2-large (vive en ~0.55, no ~0.85 como SigLIP2)
+const DEFAULT_THRESHOLD = parseFloat(Deno.env.get('NOSE_PRINT_THRESHOLD') ?? '0.55');
 const DEFAULT_LIMIT = 3;
 
 interface MatchRequest {
@@ -92,14 +94,43 @@ async function embedImage(imageBytes: Uint8Array): Promise<{
     throw new Error(`HF API ${res.status}: ${(await res.text()).slice(0, 200)}`);
   }
   const json = await res.json();
-  const flat: number[] = Array.isArray(json[0]) ? json[0] : json;
-  if (!Array.isArray(flat) || flat.length !== 768) {
-    throw new Error(`Embedding shape inesperado: ${flat?.length ?? typeof flat}`);
+
+  // Misma logica que en nose-print-embed para soportar DINOv2 + SigLIP2
+  let candidate: unknown = json;
+  while (Array.isArray(candidate) && Array.isArray((candidate as unknown[])[0])) {
+    candidate = (candidate as unknown[])[0];
   }
-  const norm = Math.sqrt(flat.reduce((acc, v) => acc + v * v, 0));
+  if (!Array.isArray(candidate)) {
+    throw new Error(`Response shape inesperado: ${typeof candidate}`);
+  }
+  const first = (candidate as unknown[])[0];
+  let flat: number[];
+  if (Array.isArray(first)) {
+    const seqLen = (candidate as number[][]).length;
+    const hiddenDim = (candidate as number[][])[0].length;
+    flat = new Array(hiddenDim).fill(0);
+    for (let i = 0; i < seqLen; i++) {
+      const row = (candidate as number[][])[i];
+      for (let j = 0; j < hiddenDim; j++) flat[j] += row[j];
+    }
+    for (let j = 0; j < hiddenDim; j++) flat[j] /= seqLen;
+  } else {
+    flat = candidate as number[];
+  }
+
+  if (!Array.isArray(flat) || flat.length !== HF_EMBEDDING_DIM) {
+    throw new Error(
+      `Embedding dim inesperado: got ${flat?.length ?? typeof flat}, expected ${HF_EMBEDDING_DIM}`
+    );
+  }
+
+  // L2 normalize (cosine similarity = dot product de unit vectors)
+  const rawNorm = Math.sqrt(flat.reduce((acc, v) => acc + v * v, 0));
+  const normalized = rawNorm > 0 ? flat.map((v) => v / rawNorm) : flat;
+
   return {
-    embedding: flat,
-    norm,
+    embedding: normalized,
+    norm: rawNorm,
     provider: 'huggingface',
     model_id: HF_MODEL_ID,
   };

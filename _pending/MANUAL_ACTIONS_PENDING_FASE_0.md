@@ -77,35 +77,112 @@ npx supabase functions deploy nose-print-embed
 npx supabase functions deploy nose-print-match
 ```
 
-### F1.4. Test cross-pet con tus 4 mascotas reales
+### F1.X. 🆕 Cambio de modelo SigLIP2 → DINOv2-large 2026-04-25
 
-Este es el **gate técnico** antes de activar los flags `NOSE_PRINT_*`:
+Tras comparativa entre 3 modelos open-source con tu dataset:
 
-1. Tomar 5 fotos de la nariz de cada mascota:
-   - 3 pastores suizos hermanos blancos (Kai + 2 hermanos)
-   - 1 gato (Ema)
-2. Probar localmente:
-   - Activar `NOSE_PRINT_ENABLED=true` solo en local (`.env.local`)
-   - Crear las 4 mascotas en tu cuenta de test
-   - Capturar la nariz de cada una con `NosePrintCapture`
-   - Después: foto extra de Kai → `/nose-scan` debe devolverlo con
-     similarity >0.95 y NO confundirlo con sus hermanos.
-3. Reportar resultado:
-   - **Si distingue hermanos** (sim Kai-vs-Kai >0.95, Kai-vs-hermanos <0.85)
-     → activamos en prod gradualmente. ✅
-   - **Si no distingue** → fine-tunear DINOv2-large con el notebook
-     `scripts/finetune_dinov2_nose_v2.ipynb` + dataset que estamos juntando
-     vía outreach refugios. Plan B con timeline 2-4 semanas.
+| Modelo | dim | intra | inter | gap |
+|---|---|---|---|---|
+| **DINOv2-large** | **1024** | 0.6040 | 0.2641 | **0.3400** 🏆 |
+| DINOv2-base | 768 | 0.6001 | 0.3104 | 0.2897 |
+| SigLIP2-base | 768 | 0.8783 | 0.8050 | 0.0733 |
 
-### F1.5. Activar flags Fase 1 (después de F1.4)
+DINOv2-large es **4.6x mejor** que SigLIP2 en gap. Decisión: cambiar provider.
 
-Cuando F1.4 esté ✅, editar [src/lib/featureFlags.ts](../src/lib/featureFlags.ts):
+**Pasos manuales (F1.X.1 a F1.X.3):**
 
-```ts
-NOSE_PRINT_ENABLED: true,         // captura desde /onboarding-mascota + ficha
-NOSE_PRINT_ONBOARDING: true,      // mostrar paso opcional en wizard 3 pasos
-NOSE_PRINT_PUBLIC_SCAN: true,     // habilitar /nose-scan publico
+#### F1.X.1. Aplicar migración 20260825000000_nose_print_dinov2_large.sql
+
+[supabase/migrations/20260825000000_nose_print_dinov2_large.sql](../supabase/migrations/20260825000000_nose_print_dinov2_large.sql)
+
+DROP+CREATE de la tabla `nose_prints` para cambiar `VECTOR(768)` → `VECTOR(1024)`.
+La migración tiene un safety check: si la tabla NO está vacía, falla. Si Pedro
+ya capturó alguna huella desde la app, hay que decidir migrar manualmente. Por
+ahora la mig fresca no debería tener filas.
+
+#### F1.X.2. Actualizar secrets de Supabase
+
+```bash
+npx supabase secrets set NOSE_PRINT_MODEL_ID=facebook/dinov2-large
+npx supabase secrets set NOSE_PRINT_EMBEDDING_DIM=1024
+npx supabase secrets set NOSE_PRINT_THRESHOLD=0.55
 ```
+
+(El `HUGGINGFACE_API_KEY` existente sigue válido — funciona con cualquier
+modelo de HF.)
+
+#### F1.X.3. Re-deploy edge fns
+
+Las edge fns ya están actualizadas en código para soportar ambos providers
+(handling de response shape de DINOv2 vs SigLIP2). Solo redeploy:
+
+```bash
+npx supabase functions deploy nose-print-embed
+npx supabase functions deploy nose-print-match
+```
+
+---
+
+### F1.4. ✅ Test cross-pet ejecutado 2026-04-24 — resultado 🟡 GO-WITH-FINETUNE
+
+Corrido con 8 mascotas (3 border collie + 3 pastor suizo + mi_gato +
+terrier_chileno), 89 fotos. Reporte completo en
+[_pending/nose_print_siglip2_report_20260424_2358.md](nose_print_siglip2_report_20260424_2358.md).
+
+**Resumen**:
+
+| Métrica | Valor | Objetivo | Status |
+|---|---|---|---|
+| Intra-pet mean | **0.8783** | ≥0.90 | 🟡 |
+| Inter-pet mean | **0.8050** | ≤0.85 | 🟡 |
+| Gap (intra - inter) | **0.0733** | ≥0.10 | 🟡 |
+| Inter-pet **max** (peor caso) | **0.9208** | <intra_min | 🔴 |
+
+**Diagnóstico**:
+- SigLIP2-base capta más la **raza** que la **individualidad** (los 3 pastores
+  suizos blancos juntos suben a 0.87, casi tanto como intra-pet).
+- Casos críticos:
+  - `pastor_suizo_1` vs `pastor_suizo_2`: 0.8674 ⚠️ (hermanos confundibles)
+  - `border_collie_1` vs `pastor_suizo_1`: 0.8520 ⚠️ (cross-raza falsa señal)
+- Inter-max 0.9208 supera incluso el intra-mean 0.88 → riesgo claro de
+  falso positivo en `/nose-scan` público.
+
+**Decisión**:
+- ✅ `NOSE_PRINT_ENABLED=true` y `NOSE_PRINT_ONBOARDING=true` se mantienen
+  activos. La captura sigue siendo útil: cada embedding queda guardado
+  con `provider`+`model_id`, y cuando el modelo mejore, los embeddings
+  viejos se re-procesan o conviven con los nuevos.
+- 🔴 `NOSE_PRINT_PUBLIC_SCAN` queda en **false** hasta fine-tunear. Sin
+  esto, un extraño escaneando una mascota cualquiera podría obtener el
+  teléfono del dueño equivocado.
+
+### F1.5. Plan B activo: fine-tune DINOv2-large con triplet loss
+
+Notebook ya commiteado en [scripts/finetune_dinov2_nose_v2.ipynb](../scripts/finetune_dinov2_nose_v2.ipynb).
+
+**Próximos pasos** (timeline ~2-4 semanas):
+
+1. **Más dataset cross-individuo**: outreach refugios sigue activo
+   ([_pending/OUTREACH_REFUGIOS_NOSE_PRINT.md](OUTREACH_REFUGIOS_NOSE_PRINT.md)).
+   Meta: 30-50 mascotas distintas con 5+ fotos cada una.
+2. **Setup Colab**: subir el notebook + el dataset (`_pending/nose_print_test_photos/`
+   + lo que llegue del outreach) a Google Drive. Colab GPU gratis es
+   suficiente para DINOv2-large + triplet loss.
+3. **Re-correr validación** con el nuevo modelo. Si gap ≥0.15 e intra ≥0.92,
+   activamos `NOSE_PRINT_PUBLIC_SCAN`.
+4. **Subir modelo a HuggingFace** (privado o público) con el nombre que
+   reemplaza `NOSE_PRINT_MODEL_ID` en los secrets de Supabase. La edge fn
+   nose-print-embed lo recoge sin redeploy.
+
+### F1.6. Mientras tanto
+
+- Dueños pueden capturar huellas desde la app — la data se acumula y
+  sirve para el fine-tune.
+- El sistema match interno (vet con `pet_vet_links`) sigue funcionando.
+- Mantener flag `NOSE_PRINT_PUBLIC_SCAN=false` hasta el fine-tune.
+- Si querés activar PUBLIC_SCAN en pre-producción para testing interno,
+  setea threshold alto (`p_threshold = 0.92`) en el llamado al RPC en
+  [supabase/functions/nose-print-match/index.ts](../supabase/functions/nose-print-match/index.ts).
 
 ---
 

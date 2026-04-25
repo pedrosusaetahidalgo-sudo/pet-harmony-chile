@@ -94,3 +94,7 @@ _pending/nose_print_test_photos/
 
 # Mensajes de commit temporales (los escribo en archivo y luego git commit -F)
 _pending/COMMIT_MSG_*.txt
+
+# Logs de runs locales (Python validation, etc) — el reporte .md final si se commitea
+_pending/_*_run*.log
+_pending/_*_run*.txt
