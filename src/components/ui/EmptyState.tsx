@@ -8,6 +8,13 @@ import { useNavigate } from 'react-router-dom';
 export interface EmptyStateProps {
   /** Requerido salvo para variants "loading" / "error", donde es opcional. */
   icon?: LucideIcon | React.ElementType;
+  /**
+   * Path absoluto a un SVG ilustrado del brand v2 (ej:
+   * "/paw-friend-assets-v2/illustrations/empty-states/no_bookings.svg").
+   * Si se pasa, reemplaza al icon. Recomendado para empty states de listas
+   * principales (refactor 2026-04-25 con assets v2).
+   */
+  illustration?: string;
   title: string;
   description?: string;
   action?: React.ReactNode;
@@ -32,6 +39,7 @@ export interface EmptyStateProps {
 
 export function EmptyState({
   icon,
+  illustration,
   title,
   description,
   action,
@@ -43,6 +51,25 @@ export function EmptyState({
   variant = 'default',
 }: EmptyStateProps) {
   const navigate = useNavigate();
+
+  /** Renderiza el visual: SVG ilustrado (brand v2) si se pasa, sino el icon. */
+  const Visual = ({ size = 'lg' }: { size?: 'sm' | 'lg' }) => {
+    if (illustration) {
+      const dim = size === 'sm' ? 'w-32 h-24' : 'w-48 h-36';
+      return (
+        <img src={illustration} alt="" aria-hidden="true" className={cn(dim, 'mx-auto mb-3')} />
+      );
+    }
+    const Icon = icon ?? AlertCircle;
+    if (size === 'sm') {
+      return (
+        <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4 mx-auto">
+          <Icon className="h-7 w-7 text-primary/60" />
+        </div>
+      );
+    }
+    return <Icon className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-40" />;
+  };
 
   const handleAction = () => {
     if (onAction) {
@@ -103,14 +130,11 @@ export function EmptyState({
     );
   }
 
-  // A partir de aquí los variants original requieren icon definido.
-  const Icon = icon ?? AlertCircle;
-
   if (variant === 'card') {
     return (
       <Card className={cn('border-dashed', className)}>
         <CardContent className="flex flex-col items-center justify-center py-12 text-center">
-          <Icon className="h-12 w-12 text-muted-foreground mb-4" />
+          <Visual />
           <h3 className="text-lg font-semibold mb-2">{title}</h3>
           {description && <p className="text-muted-foreground text-sm max-w-md">{description}</p>}
           {action && <div className="mt-4">{action}</div>}
@@ -128,9 +152,7 @@ export function EmptyState({
           className
         )}
       >
-        <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-4">
-          <Icon className="h-7 w-7 text-primary/60" />
-        </div>
+        <Visual size="sm" />
         <p className="font-medium text-sm mb-1">{title}</p>
         {description && (
           <p className="text-xs text-muted-foreground max-w-[260px] mb-4">{description}</p>
@@ -148,7 +170,7 @@ export function EmptyState({
   // default variant
   return (
     <div className={cn('text-center py-12', className)}>
-      <Icon className="h-16 w-16 mx-auto mb-4 text-muted-foreground opacity-40" />
+      <Visual />
       <h3 className="font-semibold text-lg mb-1">{title}</h3>
       {description && (
         <p className="text-sm text-muted-foreground max-w-sm mx-auto mb-4">{description}</p>

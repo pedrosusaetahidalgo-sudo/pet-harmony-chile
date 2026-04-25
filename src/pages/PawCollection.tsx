@@ -448,10 +448,19 @@ const PawCollection = () => {
           </div>
         )}
 
-        {/* Empty state */}
+        {/* Empty state — usa SVG ilustrado del brand v2 cuando no hay filtro */}
         {!isLoading && filtered.length === 0 && (
           <div className="text-center py-16 space-y-4">
-            <Sparkles className="h-12 w-12 text-purple-300/50 mx-auto" />
+            {filter === 'all' ? (
+              <img
+                src="/paw-friend-assets-v2/illustrations/empty-states/no_paw_cards.svg"
+                alt=""
+                aria-hidden="true"
+                className="w-48 h-36 mx-auto"
+              />
+            ) : (
+              <Sparkles className="h-12 w-12 text-purple-300/50 mx-auto" />
+            )}
             <h2 className="text-lg font-semibold">
               {filter === 'all' ? 'Tu coleccion esta vacia' : 'Sin resultados'}
             </h2>

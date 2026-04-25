@@ -297,9 +297,12 @@ export default function MyBookings() {
           ) : !myBookings || myBookings.length === 0 ? (
             <Card>
               <CardContent className="py-10 px-4 text-center">
-                <div className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-purple-50 mb-4">
-                  <Inbox className="h-7 w-7 text-purple-500" />
-                </div>
+                <img
+                  src="/paw-friend-assets-v2/illustrations/empty-states/no_bookings.svg"
+                  alt=""
+                  aria-hidden="true"
+                  className="w-48 h-36 mx-auto mb-3"
+                />
                 <h3 className="font-semibold text-lg mb-1">Aún no tienes reservas</h3>
                 <p className="text-muted-foreground text-sm mb-5 max-w-sm mx-auto">
                   Agenda con un veterinario, paseador, cuidador o peluquero de Paw Friend. Sólo toma

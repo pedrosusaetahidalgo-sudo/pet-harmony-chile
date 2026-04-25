@@ -211,6 +211,7 @@ export default function Reminders() {
 
         {!isLoading && !hasAnyReminder && (
           <EmptyState
+            illustration="/paw-friend-assets-v2/illustrations/empty-states/no_notifications.svg"
             icon={Bell}
             title="Aún no tienes recordatorios"
             description="Crea tu primer recordatorio para no olvidar vacunas, controles ni citas."

@@ -317,6 +317,7 @@ const Chat = () => {
           // usuario; no duplicamos con el empty state principal.
           showNewMessage ? null : (
             <EmptyState
+              illustration="/paw-friend-assets-v2/illustrations/empty-states/no_conversations.svg"
               icon={MessageCircle}
               title="Sin conversaciones"
               description="Empieza una conversación con tu vet o con alguien que sigas."
