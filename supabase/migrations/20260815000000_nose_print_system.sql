@@ -39,12 +39,14 @@ CREATE INDEX IF NOT EXISTS idx_pets_lost_at
   WHERE lost_at IS NOT NULL;
 
 -- 2. Tabla principal
+-- Nota: pgvector vive en schema `extensions` en Supabase, por eso usamos
+-- `extensions.vector` explicito.
 CREATE TABLE IF NOT EXISTS public.nose_prints (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   pet_id UUID NOT NULL REFERENCES public.pets(id) ON DELETE CASCADE,
 
   -- Embedding biometrico
-  embedding VECTOR(768) NOT NULL,
+  embedding extensions.vector(768) NOT NULL,
   embedding_norm REAL,                      -- L2 norm (debug + quality check)
 
   -- Provider abstraction (clave para migracion futura)
@@ -73,7 +75,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS uniq_nose_print_primary_per_pet
 -- Indice HNSW para similarity search (cosine distance)
 CREATE INDEX IF NOT EXISTS idx_nose_prints_embedding_hnsw
   ON public.nose_prints
-  USING hnsw (embedding vector_cosine_ops)
+  USING hnsw (embedding extensions.vector_cosine_ops)
   WITH (m = 16, ef_construction = 64);
 
 CREATE INDEX IF NOT EXISTS idx_nose_prints_pet_id
@@ -129,7 +131,7 @@ CREATE POLICY "Vet with link can read pet nose prints"
 -- SECURITY DEFINER porque tiene que leer toda la tabla, pero solo expone
 -- pet_id y similarity (no embedding ni metadata sensible).
 CREATE OR REPLACE FUNCTION public.match_nose_print(
-  p_embedding VECTOR(768),
+  p_embedding extensions.vector(768),
   p_threshold REAL DEFAULT 0.85,
   p_limit INT DEFAULT 3
 )
@@ -142,7 +144,7 @@ RETURNS TABLE (
 LANGUAGE sql
 STABLE
 SECURITY DEFINER
-SET search_path = public
+SET search_path = public, extensions
 AS $$
   SELECT
     np.pet_id,
@@ -155,8 +157,8 @@ AS $$
   LIMIT p_limit;
 $$;
 
-REVOKE ALL ON FUNCTION public.match_nose_print(VECTOR, REAL, INT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.match_nose_print(VECTOR, REAL, INT)
+REVOKE ALL ON FUNCTION public.match_nose_print(extensions.vector, REAL, INT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.match_nose_print(extensions.vector, REAL, INT)
   TO authenticated, anon;
 -- anon: para que /nose-scan publica funcione sin login (mascota perdida)
 
@@ -170,7 +172,7 @@ CREATE OR REPLACE FUNCTION public.set_nose_print_primary(
 RETURNS VOID
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = public, extensions
 AS $$
 DECLARE
   v_pet_id UUID;

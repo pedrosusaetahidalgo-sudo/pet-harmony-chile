@@ -55,19 +55,25 @@ BEGIN
 END $$;
 
 -- 3. DROP RPCs si existen (dependen del tipo viejo VECTOR(768))
-DROP FUNCTION IF EXISTS public.match_nose_print(VECTOR, REAL, INT);
+-- Cubrimos ambas variantes por si la mig 20260815 las creo con tipo
+-- unqualified `VECTOR` (resuelto a public.vector si se instalo ahi) o
+-- qualified `extensions.vector`.
+DROP FUNCTION IF EXISTS public.match_nose_print(extensions.vector, REAL, INT);
+DROP FUNCTION IF EXISTS public.match_nose_print(public.vector, REAL, INT);
 DROP FUNCTION IF EXISTS public.set_nose_print_primary(UUID);
 
 -- 4. DROP table si existe (sabemos que esta vacia por el check arriba)
 DROP TABLE IF EXISTS public.nose_prints;
 
 -- 5. CREATE con VECTOR(1024)
+-- Nota: pgvector vive en schema `extensions` en Supabase, por eso usamos
+-- `extensions.vector` explicito (en lugar del unqualified `VECTOR`).
 CREATE TABLE public.nose_prints (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   pet_id UUID NOT NULL REFERENCES public.pets(id) ON DELETE CASCADE,
 
   -- Embedding biometrico (DINOv2-large = 1024 dims)
-  embedding VECTOR(1024) NOT NULL,
+  embedding extensions.vector(1024) NOT NULL,
   embedding_norm REAL,
 
   -- Provider abstraction
@@ -93,7 +99,7 @@ CREATE UNIQUE INDEX uniq_nose_print_primary_per_pet
 
 CREATE INDEX idx_nose_prints_embedding_hnsw
   ON public.nose_prints
-  USING hnsw (embedding vector_cosine_ops)
+  USING hnsw (embedding extensions.vector_cosine_ops)
   WITH (m = 16, ef_construction = 64);
 
 CREATE INDEX idx_nose_prints_pet_id ON public.nose_prints(pet_id);
@@ -128,8 +134,11 @@ CREATE POLICY "Vet with link can read pet nose prints"
   );
 
 -- 7. RPC match (VECTOR 1024 + threshold default mas bajo: DINOv2 vive en ~0.55)
+-- Nota: search_path incluye `extensions` para que el operador `<=>` (cosine
+-- distance de pgvector) sea visible. SECURITY DEFINER + search_path explicito
+-- es la forma segura recomendada por Supabase.
 CREATE OR REPLACE FUNCTION public.match_nose_print(
-  p_embedding VECTOR(1024),
+  p_embedding extensions.vector(1024),
   p_threshold REAL DEFAULT 0.55,
   p_limit INT DEFAULT 3
 )
@@ -142,7 +151,7 @@ RETURNS TABLE (
 LANGUAGE sql
 STABLE
 SECURITY DEFINER
-SET search_path = public
+SET search_path = public, extensions
 AS $$
   SELECT
     np.pet_id,
@@ -155,8 +164,8 @@ AS $$
   LIMIT p_limit;
 $$;
 
-REVOKE ALL ON FUNCTION public.match_nose_print(VECTOR, REAL, INT) FROM PUBLIC;
-GRANT EXECUTE ON FUNCTION public.match_nose_print(VECTOR, REAL, INT) TO authenticated, anon;
+REVOKE ALL ON FUNCTION public.match_nose_print(extensions.vector, REAL, INT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.match_nose_print(extensions.vector, REAL, INT) TO authenticated, anon;
 
 COMMENT ON FUNCTION public.match_nose_print IS
   'Similarity search nose_prints (DINOv2-large 1024 dims). Threshold default 0.55 calibrado tras test 2026-04-25 (intra-pet ~0.60, inter-pet ~0.26, gap ~0.34). SECURITY DEFINER porque cruza dueños. Solo expone pet_id+similarity sin embedding ni metadata.';
@@ -168,7 +177,7 @@ CREATE OR REPLACE FUNCTION public.set_nose_print_primary(
 RETURNS VOID
 LANGUAGE plpgsql
 SECURITY DEFINER
-SET search_path = public
+SET search_path = public, extensions
 AS $$
 DECLARE
   v_pet_id UUID;
