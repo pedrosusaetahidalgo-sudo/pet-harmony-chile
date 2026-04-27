@@ -18,7 +18,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, X, Syringe, Scale, Calendar, Cake, Bug } from 'lucide-react';
+import { AlertTriangle, X, Syringe, Scale, Calendar, Cake, Bug, Heart } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import {
@@ -85,6 +85,11 @@ const ALERT_TYPE_META: Record<HealthAlertType, TypeMeta> = {
     icon: Cake,
     ctaLabel: 'Ver cumple',
     buildHref: (petId) => `${LINKS.petClinical(petId)}?tab=historia`,
+  },
+  memorial_anniversary: {
+    icon: Heart,
+    ctaLabel: 'Visitar memorial',
+    buildHref: (petId) => `/memoria/${petId}`,
   },
 };
 

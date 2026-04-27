@@ -47,6 +47,24 @@
    - [supabase/migrations/20260903000000_correlation_compute_rpcs.sql](../supabase/migrations/20260903000000_correlation_compute_rpcs.sql) — 2 RPCs `compute_breed_lifespan_correlation()` + `compute_neuter_age_by_comuna_correlation()`. Pedro las corre desde Admin → Sistema → Correlations (botón Play en cada row).
    - [supabase/migrations/20260903100000_risk_monitor.sql](../supabase/migrations/20260903100000_risk_monitor.sql) — RPC `compute_risk_signals()` que detecta señales de §11 (AI cost spike, consent rate bajo, dropout, edge fn errors, pgvector slow). Banner en Admin → Dashboard si hay signals activos.
    - [supabase/migrations/20260903200000_pet_bootstrap_complete_kpi.sql](../supabase/migrations/20260903200000_pet_bootstrap_complete_kpi.sql) — Trigger AFTER INSERT pets crea evento "Bienvenida" en timeline (§14.bis.3 — timeline no nace vacio) + RPC `count_pets_complete_ficha(p_within_days)` + extiende `master_kpis_daily` con North Star pets_complete_ficha_90d (§14.bis.6).
+   - [supabase/migrations/20260903300000_antiparasitic_overdue_cascade.sql](../supabase/migrations/20260903300000_antiparasitic_overdue_cascade.sql) — RPC `detect_antiparasitic_overdue_alerts()` (5to tipo cascada §2.8.3, cierra el set). Cron diario.
+   - [supabase/migrations/20260903400000_pet_bootstrap_enrichment.sql](../supabase/migrations/20260903400000_pet_bootstrap_enrichment.sql) — extiende trigger create_welcome_timeline_event con eventos derivados: Nacimiento (si birth_date), Microchip (si chip presente, ley 21.020), Esterilizada (si neutered=true). Timeline arranca con hasta 4 eventos.
+   - [supabase/migrations/20260903500000_memorial_anniversary.sql](../supabase/migrations/20260903500000_memorial_anniversary.sql) — RPC `detect_memorial_anniversary_alerts()` + extiende CHECK constraint con tipo `memorial_anniversary`. Recordatorio anual del fallecimiento si memorial_remembrance_enabled=TRUE. §14.bis.4.b "memorial day push". Programar cron diario:
+     ```sql
+     SELECT cron.schedule(
+       'detect-memorial-anniversary-daily',
+       '0 14 * * *',
+       $$ SELECT public.detect_memorial_anniversary_alerts(); $$
+     );
+     -- Y tambien antiparasitic_overdue:
+     SELECT cron.schedule(
+       'detect-antiparasitic-overdue-daily',
+       '0 14 * * *',
+       $$ SELECT public.detect_antiparasitic_overdue_alerts(); $$
+     );
+     ```
+
+**TODO documentado (no urgente)**: Edge fn `generate-memorial-share-image` (§9.2 plan) — requiere Satori/OG rendering en Deno. Mientras tanto, og:image en `/memoria/:petId` apunta a imagen estatica del brand; share card via Canvas API client-side cubre el caso descarga.
 
    Y **deploy 2 edge functions nuevas**:
    ```bash

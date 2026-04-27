@@ -23,7 +23,8 @@ export type HealthAlertType =
   | 'vaccine_overdue'
   | 'no_activity_7d'
   | 'antiparasitic_overdue'
-  | 'birthday_window';
+  | 'birthday_window'
+  | 'memorial_anniversary';
 
 export type HealthAlertSeverity = 'low' | 'medium' | 'high';
 
