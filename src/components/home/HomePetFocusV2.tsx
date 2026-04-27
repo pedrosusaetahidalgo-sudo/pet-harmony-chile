@@ -36,6 +36,7 @@ import { OwnerAudioNoteRecorder } from '@/components/medical/OwnerAudioNoteRecor
 import { InsuranceBanner } from '@/components/insurance/InsuranceBanner';
 import { PetHealthAlertsBanner } from '@/components/home/PetHealthAlertsBanner';
 import { ResearchConsentNudge } from '@/components/home/ResearchConsentNudge';
+import { PetCompletionProgress } from '@/components/home/PetCompletionProgress';
 import { trackRefactor, RefactorEvent } from '@/lib/refactorAnalytics';
 
 interface PetBasic {
@@ -295,6 +296,12 @@ export function HomePetFocusV2() {
           Hoy: weight loss 10%+ en 30d + vaccine_overdue. El trigger/RPC DB
           las crea sola; el banner las muestra. Gateado por CASCADE_WEIGHT_ALERTS. */}
       {selectedPet && <PetHealthAlertsBanner petId={selectedPet.id} />}
+
+      {/* §14.bis.6 owner-side: progreso de la mascota hacia ficha completa.
+          Compact en home (1 linea con progress); full en tab Identidad. */}
+      {selectedPet && (
+        <PetCompletionProgress petId={selectedPet.id} petName={selectedPet.name} compact />
+      )}
 
       {/* Refactor Maestro Fase 2 §7.3 — Nudge sutil de research consent
           para usuarios que nunca decidieron. Auto-dismissable 14d. */}

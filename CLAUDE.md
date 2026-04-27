@@ -661,7 +661,7 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 | `npm run lint` | 0 errores (2 warnings react-refresh en PlanComparisonTable, no bloquean) |
 | `npm run build` | Pasa (~50-70s) + post-build pre-render de 19 rutas SPA |
 | `npm run test:ci` | 377/377 verde |
-| Migraciones | 181+ (11 SQLs Fase 2/3 aplicadas 2026-04-27: research_consent, pet_risk_score, pet_health_alerts, b2b_api_keys, vaccine_overdue_cascade, health_alerts_email_sent, inactivity_birthday_cascades, correlation_insights, b2b_correlation_scopes, master_kpis_view, correlation_compute_rpcs, risk_monitor) |
+| Migraciones | 184+ (14 SQLs Fase 2/3 aplicadas 2026-04-27: research_consent, pet_risk_score, pet_health_alerts, b2b_api_keys, vaccine_overdue_cascade, health_alerts_email_sent, inactivity_birthday_cascades, correlation_insights, b2b_correlation_scopes, master_kpis_view, correlation_compute_rpcs, risk_monitor, pet_bootstrap_complete_kpi, antiparasitic_overdue_cascade, pet_bootstrap_enrichment, memorial_anniversary) |
 | Edge functions | 35+ activas. Nuevas Fase 2/3: `b2b-api` (auth via X-Pawfriend-Api-Key + rate limit per-key + 4 endpoints), `notify-health-alerts` (email severity=high) |
 | Rutas en App.tsx | 73+ paths |
 | Premium B2C Flow | Vivo con idempotencia + rate limit |
@@ -688,6 +688,11 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 | **Fase 3 §13 Master KPIs** | Vista materializada master_kpis_daily con 30+ metricas + AdminMasterKPIs widget con bandas verde/amarillo/rojo + RPC refresh manual |
 | **Fase 3 §9.5 Project Health** | AdminProjectHealth widget con costos vs revenue + burn neto + hitos break-even Y1/Y2/Y3 |
 | **Fase 3 §11 Risk monitor** | RPC compute_risk_signals + AdminRiskMonitor banner al tope del dashboard con 5 señales (AI cost, consent rate, dropout, edge errors, pgvector slow) |
+| **§14.bis.3 Bootstrap pet enriquecido** | Trigger crea hasta 4 eventos al insertar pet (Bienvenida + Nacimiento + Microchip + Esterilizada). Timeline no nace vacio |
+| **§14.bis.3 BreedComparisonCard** | Comparacion social temprana en tab Identidad: peso del pet vs avg de su raza (privacy threshold >=50 pets) |
+| **§14.bis.6 PetCompletionProgress** | Owner-side del North Star: progreso de la mascota individual hacia ficha completa (10 eventos / 3 categorias / Pet ID Card). Compact en /home, full en tab Identidad |
+| **§2.8.3 Cascadas (set 6 tipos)** | weight_loss_30d (trigger sync) + vaccine_overdue + antiparasitic_overdue + no_activity_7d + birthday_window + memorial_anniversary (todas RPC cron) |
+| **§14.bis.4.b Memorial anniversary** | Recordatorio anual del fallecimiento si memorial_remembrance_enabled=true. Filtro: solo si pasaron >=300d (no en duelo activo). Cierra el ciclo emocional del producto |
 
 ---
 

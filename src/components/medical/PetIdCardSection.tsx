@@ -12,6 +12,7 @@ import { toast } from 'sonner';
 import { PetIdCardDisplay } from './PetIdCardDisplay';
 import { PetRiskScoreCard } from './PetRiskScoreCard';
 import { BreedComparisonCard } from './BreedComparisonCard';
+import { PetCompletionProgress } from '@/components/home/PetCompletionProgress';
 import { usePetIdCard } from '@/hooks/usePetIdCard';
 import { trackRefactor, RefactorEvent } from '@/lib/refactorAnalytics';
 import { useEffect } from 'react';
@@ -135,6 +136,9 @@ export function PetIdCardSection({ petId }: PetIdCardSectionProps) {
           la raza tiene >=50 pets en public_breed_stats (privacy). Da valor
           al dueño desde el dia 1. */}
       <BreedComparisonCard petId={petId} petName={data.pet_name} />
+
+      {/* §14.bis.6 owner-side: progreso a ficha completa con CTAs claras */}
+      <PetCompletionProgress petId={petId} petName={data.pet_name} />
     </div>
   );
 }
