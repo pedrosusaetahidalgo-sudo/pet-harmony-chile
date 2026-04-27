@@ -459,6 +459,28 @@ export const FEATURE_FLAGS = {
    * Expansion LATAM Colombia.
    */
   LATAM_CO: false,
+
+  /**
+   * Expansion LATAM Peru (refactor maestro §7.6 pais piloto 4).
+   */
+  LATAM_PE: false,
+
+  /**
+   * Consent opt-in del dueño para que sus datos anonimos se incluyan en
+   * insights agregados vendidos a Pharma / aseguradoras / academia
+   * (refactor maestro §7.3).
+   *
+   * Cuando true:
+   *   - El onboarding muestra un paso opcional con la pregunta
+   *   - El perfil tiene un toggle para cambiar la decision
+   *   - Las RPCs de insights/risk-score filtran por
+   *     profiles.anonymous_data_research_consent = true
+   *
+   * Importante: el flag NO oculta el toggle del perfil — solo controla si
+   * el onboarding ofrece la pregunta. Una vez activado, siempre se respeta
+   * la decision del usuario.
+   */
+  RESEARCH_CONSENT_FLOW: true,
 } as const;
 
 export type FeatureFlag = keyof typeof FEATURE_FLAGS;

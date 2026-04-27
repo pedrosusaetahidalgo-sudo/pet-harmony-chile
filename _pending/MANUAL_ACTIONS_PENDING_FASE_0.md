@@ -18,6 +18,9 @@
   `generate-paw-passport`, `send-adoption-followups`
 
 **Pendiente mañana 2026-04-26**:
+0. **Aplicar 2 migs de Fase 2 scaffolding (2026-04-27)** — ver Supabase Dashboard → SQL Editor:
+   - [supabase/migrations/20260902000000_research_consent.sql](../supabase/migrations/20260902000000_research_consent.sql) — agrega `profiles.anonymous_data_research_consent` + `research_consent_at`. Bloqueante para vender data a Pharma.
+   - [supabase/migrations/20260902100000_pet_risk_score.sql](../supabase/migrations/20260902100000_pet_risk_score.sql) — RPC `calculate_pet_risk_score(pet_id)` para deal con aseguradoras (§7.5). Hoy heuristico, refinar con vet cuando tengamos outcome data.
 1. **Rotar APIs** (incluido `service_role` que se expuso por error en chat).
 2. **Vault: actualizar el secret** con el JWT nuevo:
    ```sql

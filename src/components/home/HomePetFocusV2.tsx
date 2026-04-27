@@ -33,6 +33,7 @@ import { usePetHistoryTimeline, TIMELINE_CATEGORY_META } from '@/hooks/usePetHis
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { QuickActionsHub } from '@/components/home/QuickActionsHub';
 import { OwnerAudioNoteRecorder } from '@/components/medical/OwnerAudioNoteRecorder';
+import { InsuranceBanner } from '@/components/insurance/InsuranceBanner';
 import { trackRefactor, RefactorEvent } from '@/lib/refactorAnalytics';
 
 interface PetBasic {
@@ -285,6 +286,17 @@ export function HomePetFocusV2() {
           healthStatus={healthStatus}
           healthStatusMessage={healthMessage}
           onClick={() => navigate(LINKS.petClinical(selectedPet.id))}
+        />
+      )}
+
+      {/* Refactor Maestro Fase 2 §7.2 — Banner seguros embebidos. Oculto
+          mientras EMBEDDED_INSURANCE = false; cuando un partner aseguradora
+          firme, basta con flippear el flag a true para activarlo en prod. */}
+      {selectedPet && (
+        <InsuranceBanner
+          petId={selectedPet.id}
+          petName={selectedPet.name}
+          hasMinimalProfile={Boolean(selectedPet.breed && selectedPet.birth_date)}
         />
       )}
 
