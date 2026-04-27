@@ -65,6 +65,7 @@ import AdminDataExport from '@/components/admin/AdminDataExport';
 import AdminMigrationsStatus from '@/components/admin/AdminMigrationsStatus';
 import AdminDeviceCompatibility from '@/components/admin/AdminDeviceCompatibility';
 import AdminTeam from '@/components/admin/AdminTeam';
+import AdminB2BApiKeys from '@/components/admin/AdminB2BApiKeys';
 import AdminErrorLog from '@/components/admin/AdminErrorLog';
 import AdminPendingPets from '@/components/admin/AdminPendingPets';
 import AdminGhostUsers from '@/components/admin/AdminGhostUsers';
@@ -318,6 +319,7 @@ function SystemSection({ sub: propSub, onSubChange }: SubSectionProps) {
           <TabsTrigger value="safety">Seguridad</TabsTrigger>
           <TabsTrigger value="audit">Audit Log</TabsTrigger>
           <TabsTrigger value="team">Equipo</TabsTrigger>
+          <TabsTrigger value="b2b-keys">API B2B</TabsTrigger>
         </TabsList>
         <TabsContent value="config">
           <AdminSettings />
@@ -354,6 +356,9 @@ function SystemSection({ sub: propSub, onSubChange }: SubSectionProps) {
         </TabsContent>
         <TabsContent value="team">
           <AdminTeam />
+        </TabsContent>
+        <TabsContent value="b2b-keys">
+          <AdminB2BApiKeys />
         </TabsContent>
       </Tabs>
     </div>

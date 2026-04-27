@@ -35,6 +35,7 @@ import { QuickActionsHub } from '@/components/home/QuickActionsHub';
 import { OwnerAudioNoteRecorder } from '@/components/medical/OwnerAudioNoteRecorder';
 import { InsuranceBanner } from '@/components/insurance/InsuranceBanner';
 import { PetHealthAlertsBanner } from '@/components/home/PetHealthAlertsBanner';
+import { ResearchConsentNudge } from '@/components/home/ResearchConsentNudge';
 import { trackRefactor, RefactorEvent } from '@/lib/refactorAnalytics';
 
 interface PetBasic {
@@ -291,9 +292,13 @@ export function HomePetFocusV2() {
       )}
 
       {/* Refactor Maestro §2.8.3 — Alertas automaticas (cascadas).
-          Hoy: weight loss 10%+ en 30d. El trigger DB las crea sola; el
-          banner las muestra. Gateado por CASCADE_WEIGHT_ALERTS. */}
+          Hoy: weight loss 10%+ en 30d + vaccine_overdue. El trigger/RPC DB
+          las crea sola; el banner las muestra. Gateado por CASCADE_WEIGHT_ALERTS. */}
       {selectedPet && <PetHealthAlertsBanner petId={selectedPet.id} />}
+
+      {/* Refactor Maestro Fase 2 §7.3 — Nudge sutil de research consent
+          para usuarios que nunca decidieron. Auto-dismissable 14d. */}
+      <ResearchConsentNudge />
 
       {/* Refactor Maestro Fase 2 §7.2 — Banner seguros embebidos. Oculto
           mientras EMBEDDED_INSURANCE = false; cuando un partner aseguradora

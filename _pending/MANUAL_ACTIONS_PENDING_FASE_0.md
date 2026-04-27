@@ -18,17 +18,26 @@
   `generate-paw-passport`, `send-adoption-followups`
 
 **Pendiente mañana 2026-04-26**:
-0. **Aplicar 4 migs de Fase 2 scaffolding (2026-04-27)** — ver Supabase Dashboard → SQL Editor:
-   - [supabase/migrations/20260902000000_research_consent.sql](../supabase/migrations/20260902000000_research_consent.sql) — agrega `profiles.anonymous_data_research_consent` + `research_consent_at`. Bloqueante para vender data a Pharma.
-   - [supabase/migrations/20260902100000_pet_risk_score.sql](../supabase/migrations/20260902100000_pet_risk_score.sql) — RPC `calculate_pet_risk_score(pet_id)` para deal con aseguradoras (§7.5). Hoy heuristico, refinar con vet cuando tengamos outcome data.
-   - [supabase/migrations/20260902200000_pet_health_alerts.sql](../supabase/migrations/20260902200000_pet_health_alerts.sql) — tabla `pet_health_alerts` + trigger weight loss 10%+ en 30d. Activa la cascada §2.8.3 sin ruido visual hasta que el trigger detecte algo real.
-   - [supabase/migrations/20260902300000_b2b_api_keys.sql](../supabase/migrations/20260902300000_b2b_api_keys.sql) — tablas `b2b_api_keys` + `b2b_api_usage` + 4 RPCs (hash, verify, increment, create). Permite generar keys en 30s desde SQL Editor cuando aparezca primer cliente B2B.
+0. **Aplicar 5 migs de Fase 2 scaffolding (2026-04-27)** — ver Supabase Dashboard → SQL Editor:
+   - [supabase/migrations/20260902000000_research_consent.sql](../supabase/migrations/20260902000000_research_consent.sql) — agrega `profiles.anonymous_data_research_consent` + `research_consent_at`. Bloqueante para vender data a Pharma. ✅ Aplicada.
+   - [supabase/migrations/20260902100000_pet_risk_score.sql](../supabase/migrations/20260902100000_pet_risk_score.sql) — RPC `calculate_pet_risk_score(pet_id)` para deal con aseguradoras (§7.5). ✅ Aplicada.
+   - [supabase/migrations/20260902200000_pet_health_alerts.sql](../supabase/migrations/20260902200000_pet_health_alerts.sql) — tabla `pet_health_alerts` + trigger weight loss 10%+ en 30d. ✅ Aplicada.
+   - [supabase/migrations/20260902300000_b2b_api_keys.sql](../supabase/migrations/20260902300000_b2b_api_keys.sql) — tablas `b2b_api_keys` + `b2b_api_usage` + 4 RPCs. ✅ Aplicada.
+   - [supabase/migrations/20260902400000_vaccine_overdue_cascade.sql](../supabase/migrations/20260902400000_vaccine_overdue_cascade.sql) — RPC `detect_vaccine_overdue_alerts()`. Programar cron diario:
+     ```sql
+     SELECT cron.schedule(
+       'detect-vaccine-overdue-daily',
+       '0 14 * * *',  -- 10am Chile
+       $$ SELECT public.detect_vaccine_overdue_alerts(); $$
+     );
+     ```
 
    Y **deploy edge function nueva**:
    ```bash
    npx supabase functions deploy b2b-api
    ```
    No requiere secrets adicionales — usa `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` (ya existentes).
+   Para gestionar las API keys desde la app: **Admin → Sistema → API B2B**.
 1. **Rotar APIs** (incluido `service_role` que se expuso por error en chat).
 2. **Vault: actualizar el secret** con el JWT nuevo:
    ```sql
