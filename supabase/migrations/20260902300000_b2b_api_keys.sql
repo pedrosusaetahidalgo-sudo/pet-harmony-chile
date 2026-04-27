@@ -88,10 +88,12 @@ CREATE TABLE IF NOT EXISTS public.b2b_api_usage (
 CREATE INDEX IF NOT EXISTS idx_b2b_api_usage_key_hour
   ON public.b2b_api_usage(api_key_id, hour_bucket DESC);
 
--- Cleanup: borra rows > 7 dias (no necesitamos historial detallado)
-CREATE INDEX IF NOT EXISTS idx_b2b_api_usage_cleanup
-  ON public.b2b_api_usage(hour_bucket)
-  WHERE hour_bucket < NOW() - INTERVAL '7 days';
+-- Indice secundario para cleanup mensual (DELETE WHERE hour_bucket < ...).
+-- No usamos predicado parcial con NOW() porque NOW() es STABLE y Postgres
+-- exige funciones IMMUTABLE en predicados de indice. El indice completo en
+-- hour_bucket es barato y soporta tanto el cleanup como queries de admin.
+CREATE INDEX IF NOT EXISTS idx_b2b_api_usage_hour_bucket
+  ON public.b2b_api_usage(hour_bucket);
 
 ALTER TABLE public.b2b_api_usage ENABLE ROW LEVEL SECURITY;
 -- Sin policies para clients; solo SECURITY DEFINER de las RPCs accede
