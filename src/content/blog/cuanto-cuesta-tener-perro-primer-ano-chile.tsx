@@ -67,8 +67,10 @@ function Calculator() {
       </div>
 
       {/* Tamaño */}
-      <div className="mb-4">
-        <label className="block text-xs font-semibold text-slate-700 mb-2">Tamaño del perro</label>
+      <fieldset className="mb-4">
+        <legend className="block text-xs font-semibold text-slate-700 mb-2">
+          Tamaño del perro
+        </legend>
         <div className="grid grid-cols-3 gap-2">
           {(['chico', 'mediano', 'grande'] as Size[]).map((s) => (
             <button
@@ -85,13 +87,13 @@ function Calculator() {
             </button>
           ))}
         </div>
-      </div>
+      </fieldset>
 
       {/* Lifestyle */}
-      <div className="mb-4">
-        <label className="block text-xs font-semibold text-slate-700 mb-2">
+      <fieldset className="mb-4">
+        <legend className="block text-xs font-semibold text-slate-700 mb-2">
           Estilo de alimentación y cuidados
-        </label>
+        </legend>
         <div className="grid grid-cols-3 gap-2">
           {(['basic', 'medium', 'premium'] as Lifestyle[]).map((l) => (
             <button
@@ -112,15 +114,20 @@ function Calculator() {
           Básico: alimento supermercado · Medio: alimento premium + peluquería · Premium: alimento
           super-premium + peluquería frecuente
         </p>
-      </div>
+      </fieldset>
 
       {/* Esterilización */}
       <div className="mb-5">
-        <label className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
+        <label
+          className="flex items-center gap-2 text-sm text-slate-700 cursor-pointer"
+          htmlFor="cost-steril"
+        >
           <input
+            id="cost-steril"
             type="checkbox"
             checked={steril}
             onChange={(e) => setSteril(e.target.checked)}
+            aria-label="Incluir esterilizacion en el primer ano"
             className="h-4 w-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500"
           />
           Incluir esterilización en el primer año

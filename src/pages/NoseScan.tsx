@@ -245,6 +245,7 @@ export default function NoseScan() {
                 type="file"
                 accept="image/*"
                 className="hidden"
+                aria-label="Subir foto de huella nasal"
                 onChange={handleFileUpload}
               />
             </div>
@@ -257,14 +258,17 @@ export default function NoseScan() {
         {phase === 'capturing' && (
           <Card className="overflow-hidden">
             <div className="relative bg-black aspect-square">
-              <canvas ref={canvasRef} className="hidden" />
+              <canvas ref={canvasRef} className="hidden" aria-label="Captura de huella nasal" />
               <video
                 ref={videoRef}
                 autoPlay
                 playsInline
                 muted
+                aria-label="Vista de camara para escanear huella nasal"
                 className="w-full h-full object-cover"
-              />
+              >
+                <track kind="captions" />
+              </video>
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <div className="w-2/3 aspect-square rounded-full border-4 border-white/60 shadow-[0_0_0_999px_rgba(0,0,0,0.4)]" />
               </div>

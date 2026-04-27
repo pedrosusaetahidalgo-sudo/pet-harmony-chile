@@ -253,6 +253,7 @@ export default function OnboardingQuickFlow() {
                         type="file"
                         accept="image/*"
                         className="hidden"
+                        aria-label="Subir foto de la mascota"
                         onChange={handleFileChange}
                       />
                     </label>
@@ -273,7 +274,6 @@ export default function OnboardingQuickFlow() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Kai, Luna, Rocky..."
-                  autoFocus
                 />
               </div>
 

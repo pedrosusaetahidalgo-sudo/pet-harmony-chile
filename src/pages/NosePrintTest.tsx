@@ -484,8 +484,11 @@ export default function NosePrintTest() {
                     autoPlay
                     playsInline
                     muted
+                    aria-label="Vista de camara para captura de huella nasal"
                     className="w-full h-full object-cover"
-                  />
+                  >
+                    <track kind="captions" />
+                  </video>
                   {/* Overlay circular guia */}
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                     <div
@@ -515,7 +518,7 @@ export default function NosePrintTest() {
                     </p>
                   </div>
                 </div>
-                <canvas ref={canvasRef} className="hidden" />
+                <canvas ref={canvasRef} className="hidden" aria-label="Buffer de captura" />
               </CardContent>
             </Card>
           )}

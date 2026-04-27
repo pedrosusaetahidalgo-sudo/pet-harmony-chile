@@ -245,8 +245,17 @@ export function NosePrintCapture({
       <Card className="overflow-hidden">
         <div className="relative bg-black aspect-square">
           {/* Hidden canvas for capture */}
-          <canvas ref={canvasRef} className="hidden" />
-          <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+          <canvas ref={canvasRef} className="hidden" aria-label="Buffer de captura" />
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            aria-label={`Camara para huella nasal de ${petName}`}
+            className="w-full h-full object-cover"
+          >
+            <track kind="captions" />
+          </video>
           {/* Overlay guia: circulo donde centrar la nariz */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <div className="w-2/3 aspect-square rounded-full border-4 border-white/60 shadow-[0_0_0_999px_rgba(0,0,0,0.4)]" />

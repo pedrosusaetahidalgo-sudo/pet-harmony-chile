@@ -37,8 +37,14 @@ export function AdoptionFiltersBar({
   return (
     <div className="flex flex-wrap items-end gap-2 sm:gap-3 p-3 bg-muted/30 rounded-xl">
       <div className="flex-1 min-w-[140px]">
-        <label className="text-xs text-muted-foreground mb-1 block">Comuna</label>
+        <label
+          htmlFor="adoption-filter-comuna"
+          className="text-xs text-muted-foreground mb-1 block"
+        >
+          Comuna
+        </label>
         <Input
+          id="adoption-filter-comuna"
           type="text"
           placeholder="Ej: Providencia"
           value={filters.comuna ?? ''}
@@ -48,12 +54,17 @@ export function AdoptionFiltersBar({
       </div>
 
       <div className="min-w-[120px]">
-        <label className="text-xs text-muted-foreground mb-1 block">Especie</label>
+        <label
+          htmlFor="adoption-filter-species"
+          className="text-xs text-muted-foreground mb-1 block"
+        >
+          Especie
+        </label>
         <Select
           value={filters.species ?? ALL_VALUE}
           onValueChange={(v) => update({ species: v === ALL_VALUE ? undefined : v })}
         >
-          <SelectTrigger className="h-9">
+          <SelectTrigger id="adoption-filter-species" className="h-9">
             <SelectValue placeholder="Todas" />
           </SelectTrigger>
           <SelectContent>
@@ -66,12 +77,14 @@ export function AdoptionFiltersBar({
       </div>
 
       <div className="min-w-[120px]">
-        <label className="text-xs text-muted-foreground mb-1 block">Tamaño</label>
+        <label htmlFor="adoption-filter-size" className="text-xs text-muted-foreground mb-1 block">
+          Tamaño
+        </label>
         <Select
           value={filters.size ?? ALL_VALUE}
           onValueChange={(v) => update({ size: v === ALL_VALUE ? undefined : v })}
         >
-          <SelectTrigger className="h-9">
+          <SelectTrigger id="adoption-filter-size" className="h-9">
             <SelectValue placeholder="Todos" />
           </SelectTrigger>
           <SelectContent>
@@ -84,12 +97,14 @@ export function AdoptionFiltersBar({
       </div>
 
       <div className="min-w-[120px]">
-        <label className="text-xs text-muted-foreground mb-1 block">Edad</label>
+        <label htmlFor="adoption-filter-age" className="text-xs text-muted-foreground mb-1 block">
+          Edad
+        </label>
         <Select
           value={filters.ageBucket ?? ALL_VALUE}
           onValueChange={(v) => update({ ageBucket: v === ALL_VALUE ? undefined : v })}
         >
-          <SelectTrigger className="h-9">
+          <SelectTrigger id="adoption-filter-age" className="h-9">
             <SelectValue placeholder="Todas" />
           </SelectTrigger>
           <SelectContent>
@@ -104,12 +119,17 @@ export function AdoptionFiltersBar({
 
       {!hideSourceFilter && (
         <div className="min-w-[140px]">
-          <label className="text-xs text-muted-foreground mb-1 block">Origen</label>
+          <label
+            htmlFor="adoption-filter-source"
+            className="text-xs text-muted-foreground mb-1 block"
+          >
+            Origen
+          </label>
           <Select
             value={filters.sourceFilter ?? 'all'}
             onValueChange={(v) => update({ sourceFilter: v as AdoptionFilters['sourceFilter'] })}
           >
-            <SelectTrigger className="h-9">
+            <SelectTrigger id="adoption-filter-source" className="h-9">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>

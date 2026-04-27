@@ -1480,6 +1480,7 @@ export default function AdminSalaInversion() {
                       key={route.id}
                       className="border-b border-slate-100 last:border-0 hover:bg-slate-50/50 transition-colors"
                     >
+                      {/* eslint-disable-next-line jsx-a11y/control-has-associated-label -- celda de tabla con icono+texto, no es control interactivo */}
                       <td className="py-3 pl-4 sm:pl-0 pr-4">
                         <div className="flex items-center gap-2.5">
                           <div

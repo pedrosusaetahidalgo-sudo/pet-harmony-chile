@@ -387,6 +387,7 @@ export function ProviderBookingsInbox({ providerId }: ProviderBookingsInboxProps
           providerId={providerId}
           serviceType={rescheduleTarget.service_type}
           currentScheduledAt={rescheduleTarget.scheduled_date}
+          // eslint-disable-next-line jsx-a11y/aria-role -- `role` es prop custom de RescheduleDialog, no atributo ARIA
           role="provider"
           onSuccess={() => setRescheduleTarget(null)}
         />

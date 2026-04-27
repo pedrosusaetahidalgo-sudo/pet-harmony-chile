@@ -323,9 +323,11 @@ function ProcessDialog({
 
         <div className="space-y-3">
           <div>
-            <label className="text-xs font-medium mb-1 block">Estado</label>
+            <label htmlFor="adoption-process-status" className="text-xs font-medium mb-1 block">
+              Estado
+            </label>
             <Select value={status} onValueChange={(v) => setStatus(v as AdoptionProcessStatus)}>
-              <SelectTrigger>
+              <SelectTrigger id="adoption-process-status">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -340,8 +342,11 @@ function ProcessDialog({
 
           {status === 'visit_scheduled' && (
             <div>
-              <label className="text-xs font-medium mb-1 block">Fecha y hora de visita</label>
+              <label htmlFor="adoption-process-visit" className="text-xs font-medium mb-1 block">
+                Fecha y hora de visita
+              </label>
               <Input
+                id="adoption-process-visit"
                 type="datetime-local"
                 value={visitDate}
                 onChange={(e) => setVisitDate(e.target.value)}
@@ -351,8 +356,11 @@ function ProcessDialog({
 
           {status === 'rejected' && (
             <div>
-              <label className="text-xs font-medium mb-1 block">Motivo del rechazo</label>
+              <label htmlFor="adoption-process-reason" className="text-xs font-medium mb-1 block">
+                Motivo del rechazo
+              </label>
               <Textarea
+                id="adoption-process-reason"
                 value={rejectedReason}
                 onChange={(e) => setRejectedReason(e.target.value)}
                 placeholder="Por qué no avanza esta adopción..."
@@ -362,8 +370,11 @@ function ProcessDialog({
           )}
 
           <div>
-            <label className="text-xs font-medium mb-1 block">Notas internas</label>
+            <label htmlFor="adoption-process-notes" className="text-xs font-medium mb-1 block">
+              Notas internas
+            </label>
             <Textarea
+              id="adoption-process-notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Notas para tu equipo o para el adoptante..."

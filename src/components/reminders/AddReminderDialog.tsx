@@ -245,7 +245,6 @@ export function AddReminderDialog({
                   value={titleOverride}
                   onChange={(e) => setTitleOverride(e.target.value)}
                   placeholder="Ej: dar pastilla a Kai"
-                  autoFocus
                 />
               </div>
             )}

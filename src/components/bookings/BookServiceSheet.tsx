@@ -82,6 +82,7 @@ export function BookServiceSheet({ open, onOpenChange }: BookServiceSheetProps) 
           <button
             key={s.key}
             type="button"
+            aria-label={`Buscar ${s.label.toLowerCase()}`}
             onClick={() => {
               navigate(s.to);
               onOpenChange(false);
