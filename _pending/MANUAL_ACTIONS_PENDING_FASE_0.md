@@ -32,12 +32,45 @@
      );
      ```
 
-   Y **deploy edge function nueva**:
+   - [supabase/migrations/20260902500000_health_alerts_email_sent.sql](../supabase/migrations/20260902500000_health_alerts_email_sent.sql) — agrega `email_sent_at` a pet_health_alerts + indice partial para acelerar el cron de notify.
+
+   Y **deploy 2 edge functions nuevas**:
    ```bash
    npx supabase functions deploy b2b-api
+   npx supabase functions deploy notify-health-alerts
    ```
-   No requiere secrets adicionales — usa `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` (ya existentes).
-   Para gestionar las API keys desde la app: **Admin → Sistema → API B2B**.
+   No requieren secrets adicionales — usan `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` (ya existentes). `notify-health-alerts` usa `RESEND_API_KEY` (ya configurado para otros emails).
+
+   Y programar **2 crones nuevos** (con Vault + service_role_key):
+   ```sql
+   -- Cascada vaccine_overdue (RPC, 9am Chile)
+   SELECT cron.schedule(
+     'detect-vaccine-overdue-daily',
+     '0 13 * * *',
+     $$ SELECT public.detect_vaccine_overdue_alerts(); $$
+   );
+
+   -- Email severity=high (edge fn, 9am Chile despues del cron anterior)
+   SELECT cron.schedule(
+     'notify-health-alerts-daily',
+     '15 13 * * *',  -- 15 min despues del scan
+     $$ SELECT net.http_post(
+       url := 'https://gwailbjlvevkhwcrovfd.supabase.co/functions/v1/notify-health-alerts',
+       headers := jsonb_build_object(
+         'Authorization', 'Bearer ' || (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'service_role_key' LIMIT 1),
+         'Content-Type', 'application/json'
+       )
+     ); $$
+   );
+   ```
+
+   Para gestionar las API keys B2B desde la app: **Admin → Sistema → API B2B**.
+
+   **Auditoria features existentes 2026-04-27**: ver
+   [_pending/AUDITORIA_FEATURES_2026_04_27.md](AUDITORIA_FEATURES_2026_04_27.md)
+   con matriz §2.10 ejecutada (9 pilares activos, 5 refactorizadas, 12
+   escondidas correctamente, 7 Fase 2 dormidas). 6 acciones derivadas
+   pendientes (la mas urgente: revisar `PRO_ANALYTICS` flag).
 1. **Rotar APIs** (incluido `service_role` que se expuso por error en chat).
 2. **Vault: actualizar el secret** con el JWT nuevo:
    ```sql

@@ -1,6 +1,26 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-21 (PlanComparisonTable B2C/B2B)
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-27 (Fase 2 scaffolding)
+    %% Cambios 2026-04-27 (Refactor Maestro Fase 2 §7 scaffolding):
+    %%   - §7.3 Pharma research consent: profiles.anonymous_data_research_consent
+    %%     + ResearchConsentDialog en /profile + paso 4 opcional en
+    %%     OnboardingQuickFlow + ResearchConsentNudge en /home cuando NULL.
+    %%   - §7.5 Risk score B2B: RPC calculate_pet_risk_score + PetRiskScoreCard
+    %%     visible en tab Identidad de la ficha clinica.
+    %%   - §2.8.3 Cascadas (ambient computing): tabla pet_health_alerts +
+    %%     trigger weight_loss_30d (sync) + RPC vaccine_overdue (cron) +
+    %%     PetHealthAlertsBanner en /home con CTAs por tipo +
+    %%     edge fn notify-health-alerts (email severity=high).
+    %%   - §7.5 API B2B v1: edge fn b2b-api con auth via X-Pawfriend-Api-Key,
+    %%     tablas b2b_api_keys/usage, AdminB2BApiKeys panel admin.
+    %%   - §7.2 InsuranceBanner: oculto behind EMBEDDED_INSURANCE=false hasta
+    %%     firmar partner aseguradora.
+    %%   - SEO sitemap: 14 rutas estaticas + bloque INSIGHTS_DYNAMIC injectable
+    %%     en build-time via post-build-spa-routes.mjs.
+    %%   - AdminFase1Widget: KPIs Fase 1 (nose prints, memoriales, passports,
+    %%     follow-up rate, insights publicados) en Admin → Dashboard.
+    %% ============================================================
+    %% Historico 2026-04-21 (PlanComparisonTable B2C/B2B)
     %% Cambios 2026-04-21:
     %%   - Componente unico PlanComparisonTable (B2C + B2B vet) en src/components/pricing/.
     %%   - /paw-member muestra tabla Gratis vs Paw Member con banner "NO desbloquea features".
@@ -745,4 +765,101 @@ flowchart TD
         GATE_BULK["bulk-import-pets: vet B2B requires clinic_starter/pro_max"]
         GATE_FEAT["useDirectoryVets: ordena featured_until DESC primero"]
         GATE_ANALYTICS["ProDashboard banner si provider_free; chip basic/advanced si pago"]
+    end
+
+    %% ============ FASE 2 §7.3 RESEARCH CONSENT (Pharma data) ============
+    subgraph FASE2_CONSENT["FASE 2 §7.3 — RESEARCH CONSENT (Pharma)"]
+        direction TB
+        CONS_COL["profiles.anonymous_data_research_consent (NULL/TRUE/FALSE)"]
+        CONS_ONB["OnboardingQuickFlow paso 4 opcional"]
+        CONS_NUDGE["ResearchConsentNudge en /home (si NULL, dismissable 14d)"]
+        CONS_TOGGLE["ProfileSettingsList: 'Datos para investigacion'"]
+        CONS_DIALOG["ResearchConsentDialog (lenguaje claro, 2 botones simetricos)"]
+        CONS_HOOK["useResearchConsent (read + mutation)"]
+
+        CONS_ONB -. paso 4 .-> CONS_DIALOG
+        CONS_NUDGE -. CTA Saber mas .-> CONS_DIALOG
+        CONS_TOGGLE -. click .-> CONS_DIALOG
+        CONS_DIALOG -. update .-> CONS_HOOK
+        CONS_HOOK -. UPDATE .-> CONS_COL
+    end
+
+    %% ============ FASE 2 §7.5 RISK SCORE (Aseguradoras) ============
+    subgraph FASE2_RISK["FASE 2 §7.5 — RISK SCORE B2B"]
+        direction TB
+        RISK_RPC["RPC calculate_pet_risk_score(pet_id) SECURITY DEFINER"]
+        RISK_FACTORS["Factores: edad / esterilizada / microchip / vacunas / antiparasitario / cronicas"]
+        RISK_CARD["PetRiskScoreCard en tab Identidad ficha clinica"]
+        RISK_HOOK["useRiskScore"]
+        RISK_API["b2b-api endpoint risk_score (futuro, requiere consent)"]
+
+        RISK_RPC --> RISK_FACTORS
+        RISK_HOOK --> RISK_RPC
+        RISK_CARD --> RISK_HOOK
+        RISK_API -. cuando deal aseguradora .-> RISK_RPC
+    end
+
+    %% ============ FASE 2 §2.8.3 CASCADAS (ambient computing) ============
+    subgraph FASE2_CASCADAS["FASE 2 §2.8.3 — CASCADAS PROACTIVAS"]
+        direction TB
+        ALERTS_TABLE[("pet_health_alerts: pet_id, alert_type, severity, message, dismissed_at, email_sent_at")]
+        TRIG_WEIGHT["Trigger weight_loss_30d (BEFORE UPDATE pets.weight)"]
+        RPC_VACCINE["RPC detect_vaccine_overdue_alerts() — cron diario 9am"]
+        BANNER["PetHealthAlertsBanner en /home con icon+CTA por tipo"]
+        BANNER_CTA["vaccine→agendar / weight→registrar / antipara→aplicar / no_act→volver / cumple→ver"]
+        EMAIL_FN["edge fn notify-health-alerts (cron diario, severity=high)"]
+        EMAIL_RESEND["Resend API send to owner_email"]
+
+        TRIG_WEIGHT --> ALERTS_TABLE
+        RPC_VACCINE --> ALERTS_TABLE
+        ALERTS_TABLE --> BANNER
+        BANNER --> BANNER_CTA
+        ALERTS_TABLE -. severity=high AND email_sent_at IS NULL .-> EMAIL_FN
+        EMAIL_FN --> EMAIL_RESEND
+        EMAIL_FN -. mark sent .-> ALERTS_TABLE
+    end
+
+    %% ============ FASE 2 §7.5 API B2B v1 ============
+    subgraph FASE2_B2B_API["FASE 2 §7.5 — API B2B v1"]
+        direction TB
+        B2B_KEYS_TABLE[("b2b_api_keys: hash, prefix, tier, scopes, rate_limit")]
+        B2B_USAGE_TABLE[("b2b_api_usage: api_key_id, hour_bucket, request_count")]
+        B2B_FN["edge fn b2b-api"]
+        B2B_AUTH["Auth: X-Pawfriend-Api-Key header"]
+        B2B_VERIFY["RPC verify_b2b_api_key (SHA256 hash compare)"]
+        B2B_RATE["RPC increment_b2b_api_usage (atomic per-hour)"]
+        B2B_ENDPOINTS["Endpoints v1: breed_stats, species_stats (threshold pet_count>=50)"]
+        B2B_ADMIN["AdminB2BApiKeys panel: crear/listar/revocar (RPC create_b2b_api_key admin-only)"]
+
+        B2B_FN --> B2B_AUTH
+        B2B_AUTH --> B2B_VERIFY
+        B2B_VERIFY --> B2B_KEYS_TABLE
+        B2B_VERIFY --> B2B_RATE
+        B2B_RATE --> B2B_USAGE_TABLE
+        B2B_RATE -. allowed .-> B2B_ENDPOINTS
+        B2B_ADMIN --> B2B_KEYS_TABLE
+    end
+
+    %% ============ FASE 2 §7.2 INSURANCE BANNER (oculto) ============
+    subgraph FASE2_INSURANCE["FASE 2 §7.2 — SEGUROS EMBEBIDOS (oculto behind flag)"]
+        direction TB
+        INS_FLAG["EMBEDDED_INSURANCE flag (false hasta firmar partner)"]
+        INS_BANNER["InsuranceBanner en HomePetFocusV2 (solo si flag=true Y ficha minima)"]
+        INS_DISMISS["Dismissable 30d via localStorage por petId"]
+        INS_FUTURE["/seguros/cotizar/:petId (no creada — se crea al firmar partner)"]
+
+        INS_FLAG -. true .-> INS_BANNER
+        INS_BANNER --> INS_FUTURE
+        INS_BANNER --> INS_DISMISS
+    end
+
+    %% ============ FASE 1 OBSERVABILIDAD (Admin Dashboard) ============
+    subgraph FASE2_ADMIN["ADMIN OBSERVABILIDAD + B2B"]
+        direction TB
+        ADMIN_FASE1["AdminFase1Widget en Dashboard (KPIs Fase 1)"]
+        ADMIN_KPIS["nose prints / memoriales / passports / follow-up rate / insights publicados"]
+        ADMIN_B2B_TAB["Admin → Sistema → API B2B"]
+
+        ADMIN_FASE1 --> ADMIN_KPIS
+        ADMIN_B2B_TAB --> B2B_ADMIN
     end

@@ -212,3 +212,9 @@ verify_jwt = false
 # La edge fn verifica la key contra b2b_api_keys y aplica rate limit per-key.
 [functions.b2b-api]
 verify_jwt = false
+
+# Refactor Maestro Fase 2 §2.8.3 — Email a dueño cuando alerta severity='high'.
+# verify_jwt = false: corre desde pg_cron sin user. Usa SERVICE_ROLE_KEY
+# para auth. Idempotente via email_sent_at.
+[functions.notify-health-alerts]
+verify_jwt = false
