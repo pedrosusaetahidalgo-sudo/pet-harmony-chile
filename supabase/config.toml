@@ -224,3 +224,15 @@ verify_jwt = false
 # verify_jwt = false: corre desde pg_cron sin user.
 [functions.run-all-cascades]
 verify_jwt = false
+
+# Refactor Maestro §6.4 — Validar Paw Member para descuento en partner.
+# verify_jwt = false: la auth es la API key del partner (X-Pawfriend-Api-Key),
+# no JWT del user. Stub mode si scope partner_discount_validate falta.
+[functions.partner-discount-validate]
+verify_jwt = false
+
+# Refactor Maestro §7.2 — Pre-llenar cotizacion seguro con ficha del pet.
+# verify_jwt = true: requiere user logueado. Usa RLS en pets para validar
+# ownership. Retorna 503 si no hay partner aseguradora activo.
+[functions.insurance-prefill-quote]
+verify_jwt = true

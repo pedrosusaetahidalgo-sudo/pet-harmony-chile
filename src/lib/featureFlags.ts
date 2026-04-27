@@ -184,6 +184,19 @@ export const FEATURE_FLAGS = {
   PAWGAME_PROMINENT: false,
 
   /**
+   * Acceso a /misiones desde sidebar (refactor maestro §10).
+   * Accesible pero secundario — alineado con plan que pone gamificacion
+   * en sidebar colapsado, no en home/bottomtab.
+   */
+  PAWGAME_MISSIONS: true,
+
+  /**
+   * Acceso a /paw-game (mini-juego) desde sidebar (refactor maestro §10).
+   * Accesible pero secundario.
+   */
+  PAWGAME_ARCADE: true,
+
+  /**
    * Tab "Historia" como default en ficha clinica (refactor maestro §5.2.3).
    * Timeline cronologico visual con filtros por 10 categorias canonicas.
    * Requiere migracion pet_timeline_events aplicada.

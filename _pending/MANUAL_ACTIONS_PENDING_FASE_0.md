@@ -53,10 +53,16 @@
    - [supabase/migrations/20260903600000_ficha_complete_milestone.sql](../supabase/migrations/20260903600000_ficha_complete_milestone.sql) — RPC `claim_ficha_complete_milestone(pet_id)` idempotente DB-side. Otorga 50 paw_points + crea evento timeline cuando pet cruza North Star §14.bis.6 (>=10 eventos / >=3 cats / Pet ID Card). Frontend lo llama desde `PetCompletionProgress` cuando detecta is_complete=true.
    - [supabase/migrations/20260903700000_partner_integrations.sql](../supabase/migrations/20260903700000_partner_integrations.sql) — scaffolding §7.4 retail + §7.2 insurance. Tablas `partner_integrations` (config deal) + `partner_events` (referrals/scans/fulfillment) + RPC `record_partner_event()` + vista `partner_mrr_summary`. Cuando aparezca primer partner Pedro inserta row + emite events. RLS admin only.
 
-   Y **deploy edge fn nueva**:
+   Y **deploy 3 edge fns nuevas**:
    ```bash
    npx supabase functions deploy run-all-cascades
+   npx supabase functions deploy partner-discount-validate
+   npx supabase functions deploy insurance-prefill-quote
    ```
+
+   - `partner-discount-validate`: §6.4 — endpoint para que partners (Mathiesen, Kiwoko) validen Paw Member desde su POS. Auth via X-Pawfriend-Api-Key + scope `partner_discount_validate`. Audit-trail en partner_events.
+   - `insurance-prefill-quote`: §7.2 — pre-llena cotizacion con ficha + risk score. Stub si no hay partner aseguradora activo (devuelve 503).
+
    Reemplaza 6 crones separados con 1 cron unico:
    ```sql
    SELECT cron.schedule(
