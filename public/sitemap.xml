@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- Landing principal -->
   <url>
     <loc>https://pawfriend.cl/</loc>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
+
+  <!-- Directorios y landings B2B/B2C -->
   <url>
     <loc>https://pawfriend.cl/veterinarios</loc>
     <changefreq>daily</changefreq>
@@ -19,6 +22,72 @@
     <loc>https://pawfriend.cl/registro-veterinario</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/precios-veterinarios</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/refugios-hogares</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/paw-partners</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <!-- Modelo + alianzas -->
+  <url>
+    <loc>https://pawfriend.cl/paw-core</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/paw-companys</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/paw-voices</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/donaciones</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/aplicar</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <!-- Refactor Maestro Fase 1 §6.5 — index SEO de insights -->
+  <url>
+    <loc>https://pawfriend.cl/insights</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
+  <!-- Faq + legales (publicos) -->
+  <url>
+    <loc>https://pawfriend.cl/faq</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/privacy</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/terms</loc>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 
   <!-- Comunas de Santiago -->
@@ -41,6 +110,13 @@
   <url><loc>https://pawfriend.cl/veterinarios/comuna/huechuraba</loc><priority>0.7</priority></url>
   <url><loc>https://pawfriend.cl/veterinarios/comuna/estacion-central</loc><priority>0.7</priority></url>
 
+  <!-- Precios por comuna (top 5 por busqueda) -->
+  <url><loc>https://pawfriend.cl/precios-veterinarios/comuna/santiago</loc><priority>0.7</priority></url>
+  <url><loc>https://pawfriend.cl/precios-veterinarios/comuna/las-condes</loc><priority>0.7</priority></url>
+  <url><loc>https://pawfriend.cl/precios-veterinarios/comuna/providencia</loc><priority>0.7</priority></url>
+  <url><loc>https://pawfriend.cl/precios-veterinarios/comuna/nunoa</loc><priority>0.7</priority></url>
+  <url><loc>https://pawfriend.cl/precios-veterinarios/comuna/maipu</loc><priority>0.7</priority></url>
+
   <!-- Especialidades -->
   <url><loc>https://pawfriend.cl/veterinarios/especialidad/medicina-general</loc><priority>0.7</priority></url>
   <url><loc>https://pawfriend.cl/veterinarios/especialidad/cirugia</loc><priority>0.7</priority></url>
@@ -54,4 +130,10 @@
   <url><loc>https://pawfriend.cl/veterinarios/especialidad/odontologia</loc><priority>0.7</priority></url>
   <url><loc>https://pawfriend.cl/veterinarios/especialidad/vacunacion</loc><priority>0.7</priority></url>
   <url><loc>https://pawfriend.cl/veterinarios/especialidad/esterilizacion</loc><priority>0.7</priority></url>
+
+  <!-- Refactor Maestro Fase 1 §6.5: insights dinamicos. El bloque se reemplaza
+       en build-time por scripts/post-build-spa-routes.mjs si VITE_SUPABASE_URL
+       esta seteada y la RPC list_public_insights_v2 devuelve resultados. -->
+  <!-- INSIGHTS_DYNAMIC -->
+  <!-- /INSIGHTS_DYNAMIC -->
 </urlset>

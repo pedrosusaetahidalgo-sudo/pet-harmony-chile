@@ -78,6 +78,28 @@ serve(
 
       if (error) throw error;
 
+      // Traer slugs publicos de insights (Refactor Maestro Fase 1 §6.5).
+      // Si la mig 20260901200000 no esta aplicada, la RPC no existe y caemos
+      // al except sin romper el sitemap.
+      let insightSlugs: string[] = [];
+      try {
+        // El cliente Supabase no tiene tipos generados aqui; cast a unknown
+        // para evitar el genérico estricto. El payload se valida arriba.
+        const rpc = (
+          supabase as unknown as {
+            rpc: (name: string) => Promise<{ data: { slug?: string }[] | null; error: unknown }>;
+          }
+        ).rpc;
+        const { data: insights, error: insightsErr } = await rpc('list_public_insights_v2');
+        if (!insightsErr && Array.isArray(insights)) {
+          insightSlugs = insights
+            .map((i) => i.slug)
+            .filter((s): s is string => typeof s === 'string' && s.length > 0);
+        }
+      } catch {
+        // RPC ausente (mig no aplicada) — sitemap sigue funcionando sin insights
+      }
+
       const urls: string[] = [];
 
       // Páginas estáticas
@@ -86,10 +108,17 @@ serve(
       urls.push(url(SITE + '/para-veterinarios', 'weekly', '0.9'));
       urls.push(url(SITE + '/registro-veterinario', 'monthly', '0.7'));
       urls.push(url(SITE + '/precios-veterinarios', 'weekly', '0.9'));
+      urls.push(url(SITE + '/refugios-hogares', 'weekly', '0.8'));
+      urls.push(url(SITE + '/paw-partners', 'weekly', '0.7'));
       urls.push(url(SITE + '/blog', 'weekly', '0.8'));
       urls.push(url(SITE + '/transparencia', 'weekly', '0.8'));
       urls.push(url(SITE + '/donaciones', 'weekly', '0.8'));
       urls.push(url(SITE + '/paw-core', 'monthly', '0.7'));
+      urls.push(url(SITE + '/paw-companys', 'monthly', '0.7'));
+      urls.push(url(SITE + '/paw-voices', 'monthly', '0.7'));
+      urls.push(url(SITE + '/aplicar', 'monthly', '0.6'));
+      urls.push(url(SITE + '/insights', 'weekly', '0.8'));
+      urls.push(url(SITE + '/faq', 'monthly', '0.6'));
 
       // Blog posts
       for (const p of BLOG_POSTS) {
@@ -118,6 +147,11 @@ serve(
           ? new Date(v.updated_at).toISOString().split('T')[0]
           : undefined;
         urls.push(url(`${SITE}/veterinarios/${v.slug}`, 'weekly', '0.8', lastmod));
+      }
+
+      // Insights dinámicos (Refactor Maestro Fase 1 §6.5)
+      for (const slug of insightSlugs) {
+        urls.push(url(`${SITE}/insights/${slug}`, 'weekly', '0.7'));
       }
 
       const xml = `<?xml version="1.0" encoding="UTF-8"?>

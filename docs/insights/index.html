@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Paw Friend" />
+    <meta name="theme-color" content="#9333EA" />
+
+    <!-- Preconnect a orígenes críticos — reduce handshake TLS del 1er request.
+         Fonts: primera pintada tipográfica. Supabase: primera query. Flow:
+         destino del checkout al hacer click en donar / upgrade. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://gwailbjlvevkhwcrovfd.supabase.co" crossorigin />
+    <link rel="dns-prefetch" href="https://gwailbjlvevkhwcrovfd.supabase.co" />
+    <link rel="dns-prefetch" href="https://www.flow.cl" />
+
+    <!-- Favicons (brand kit v2, 2026-04-20). Paths legacy en raiz se mantienen
+         como fallback para clientes con cache viejo. -->
+    <link rel="icon" type="image/svg+xml" href="/paw-friend-assets-v2/logo/paw_friend_icon_principal.svg" />
+    <link rel="icon" type="image/png" sizes="96x96" href="/paw-friend-assets-v2/favicon/favicon_96.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/paw-friend-assets-v2/favicon/favicon_48.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/paw-friend-assets-v2/favicon/favicon_32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/paw-friend-assets-v2/favicon/favicon_16.png" />
+    <link rel="icon" type="image/x-icon" href="/paw-friend-assets-v2/favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/paw-friend-assets-v2/favicon/apple_touch_icon_180.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <title>Paw Friend — La salud de tu peludo, en un solo lugar. Y siempre gratis.</title>
+    <meta name="description" content="Ficha clínica digital, veterinarios verificados por comuna, recordatorios y comunidad pet lover. Hecho en Chile, gratis para siempre." />
+    <meta name="author" content="Paw Friend" />
+
+    <meta property="og:title" content="Paw Friend — La salud de tu peludo, en un solo lugar." />
+    <meta property="og:description" content="Ficha clínica que cualquier vet puede leer, directorio verificado por comuna, recordatorios. Hecho en Chile, gratis para siempre." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://pawfriend.cl" />
+    <meta property="og:image" content="https://pawfriend.cl/paw-friend-assets-v2/social/og_image_1200x630.png" />
+    <meta property="og:locale" content="es_CL" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Paw Friend — La salud de tu peludo, en un solo lugar." />
+    <meta name="twitter:description" content="Ficha clínica que cualquier vet puede leer, vets verificados por comuna, recordatorios. Hecho en Chile, gratis para siempre." />
+    <meta name="twitter:image" content="https://pawfriend.cl/paw-friend-assets-v2/social/og_image_1200x630.png" />
+
+    <!-- Preload del video hero (mejora LCP en desktop). En mobile el video se carga lazy. -->
+    <link rel="preload" as="video" type="video/mp4" href="/videos/hero-pet.mp4" media="(min-width: 768px)" />
+    <script type="module" crossorigin src="/assets/index-BjWAobBT.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/ui-vendor-B8KOeZ17.js">
+    <link rel="modulepreload" crossorigin href="/assets/recharts-vendor-CobKRieo.js">
+    <link rel="modulepreload" crossorigin href="/assets/query-vendor-DaTwqJdk.js">
+    <link rel="modulepreload" crossorigin href="/assets/react-vendor-ppG5x3Of.js">
+    <link rel="modulepreload" crossorigin href="/assets/icons-vendor-r3QEots8.js">
+    <link rel="modulepreload" crossorigin href="/assets/supabase-vendor-DYwWVd9b.js">
+    <link rel="modulepreload" crossorigin href="/assets/date-vendor-DRyGOPlm.js">
+    <link rel="modulepreload" crossorigin href="/assets/leaflet-vendor-Bt-OSg9d.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-No4tRh1L.css">
+  </head>
+
+  <body>
+    <!-- GitHub Pages SPA redirect handler -->
+    <script>
+      (function(l) {
+        if (l.search[1] === '/') {
+          var decoded = l.search.slice(1).split('&').map(function(s) {
+            return s.replace(/~and~/g, '&')
+          }).join('?');
+          window.history.replaceState(null, null,
+            l.pathname.slice(0, -1) + decoded + l.hash
+          );
+        }
+      }(window.location))
+    </script>
+    <div id="root"></div>
+  </body>
+</html>
