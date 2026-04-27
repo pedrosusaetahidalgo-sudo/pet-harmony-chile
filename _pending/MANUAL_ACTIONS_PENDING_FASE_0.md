@@ -49,7 +49,10 @@
    - [supabase/migrations/20260903200000_pet_bootstrap_complete_kpi.sql](../supabase/migrations/20260903200000_pet_bootstrap_complete_kpi.sql) — Trigger AFTER INSERT pets crea evento "Bienvenida" en timeline (§14.bis.3 — timeline no nace vacio) + RPC `count_pets_complete_ficha(p_within_days)` + extiende `master_kpis_daily` con North Star pets_complete_ficha_90d (§14.bis.6).
    - [supabase/migrations/20260903300000_antiparasitic_overdue_cascade.sql](../supabase/migrations/20260903300000_antiparasitic_overdue_cascade.sql) — RPC `detect_antiparasitic_overdue_alerts()` (5to tipo cascada §2.8.3, cierra el set). Cron diario.
    - [supabase/migrations/20260903400000_pet_bootstrap_enrichment.sql](../supabase/migrations/20260903400000_pet_bootstrap_enrichment.sql) — extiende trigger create_welcome_timeline_event con eventos derivados: Nacimiento (si birth_date), Microchip (si chip presente, ley 21.020), Esterilizada (si neutered=true). Timeline arranca con hasta 4 eventos.
-   - [supabase/migrations/20260903500000_memorial_anniversary.sql](../supabase/migrations/20260903500000_memorial_anniversary.sql) — RPC `detect_memorial_anniversary_alerts()` + extiende CHECK constraint con tipo `memorial_anniversary`. Recordatorio anual del fallecimiento si memorial_remembrance_enabled=TRUE. §14.bis.4.b "memorial day push". Programar cron diario:
+   - [supabase/migrations/20260903500000_memorial_anniversary.sql](../supabase/migrations/20260903500000_memorial_anniversary.sql) — RPC `detect_memorial_anniversary_alerts()` + extiende CHECK constraint con tipo `memorial_anniversary`. Recordatorio anual del fallecimiento si memorial_remembrance_enabled=TRUE. §14.bis.4.b "memorial day push".
+   - [supabase/migrations/20260903600000_ficha_complete_milestone.sql](../supabase/migrations/20260903600000_ficha_complete_milestone.sql) — RPC `claim_ficha_complete_milestone(pet_id)` idempotente DB-side. Otorga 50 paw_points + crea evento timeline cuando pet cruza North Star §14.bis.6 (>=10 eventos / >=3 cats / Pet ID Card). Frontend lo llama desde `PetCompletionProgress` cuando detecta is_complete=true.
+
+   Programar crones diarios:
      ```sql
      SELECT cron.schedule(
        'detect-memorial-anniversary-daily',

@@ -17,6 +17,7 @@
  * El progreso es invitación, no requirimiento. La ficha "incompleta"
  * sigue siendo útil — Pet ID Card, share, todo funciona igual.
  */
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -24,7 +25,13 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { CheckCircle2, Sparkles, ArrowRight } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePetCompletionStatus } from '@/hooks/usePetCompletionStatus';
+import { pickCompletionTone } from '@/lib/completion';
 import { LINKS } from '@/lib/links';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const sb = supabase as any;
 
 interface Props {
   petId: string;
@@ -36,18 +43,45 @@ interface Props {
 export function PetCompletionProgress({ petId, petName, compact = false }: Props) {
   const navigate = useNavigate();
   const { data, isLoading } = usePetCompletionStatus(petId);
+  const claimAttempted = useRef(false);
+
+  // §14.bis.6 owner-side: cuando is_complete=true, intentar claim del milestone.
+  // El RPC es idempotente DB-side — si ya se otorgo antes, devuelve already_awarded=true
+  // y no contamina toast. Solo dispara una vez por mount via claimAttempted ref.
+  useEffect(() => {
+    if (!data?.is_complete || claimAttempted.current) return;
+    claimAttempted.current = true;
+
+    void (async () => {
+      try {
+        const { data: result, error } = await sb.rpc('claim_ficha_complete_milestone', {
+          p_pet_id: petId,
+        });
+        if (error) {
+          console.warn('[PetCompletionProgress] claim error', error);
+          return;
+        }
+        const row = (
+          result as Array<{ already_awarded: boolean; points_awarded: number; qualifies: boolean }>
+        )?.[0];
+        if (row && !row.already_awarded && row.points_awarded > 0) {
+          // Primera vez que cruza el threshold — celebrar
+          toast.success(`¡${petName} tiene ficha completa! 🎉`, {
+            description: `+${row.points_awarded} Paw Points por completar el norte del proyecto.`,
+            duration: 6000,
+          });
+        }
+      } catch (err) {
+        console.warn('[PetCompletionProgress] claim threw', err);
+      }
+    })();
+  }, [data?.is_complete, petId, petName]);
 
   if (isLoading) return <Skeleton className={compact ? 'h-12 w-full' : 'h-32 w-full'} />;
   if (!data) return null;
 
-  // Determinar tone segun progreso
-  const tone = data.is_complete
-    ? 'complete'
-    : data.progress_pct >= 80
-      ? 'near'
-      : data.progress_pct >= 30
-        ? 'progress'
-        : 'starting';
+  // Determinar tone segun progreso (lógica pura testeable)
+  const tone = pickCompletionTone(data.is_complete, data.progress_pct);
 
   const toneColors = {
     complete: 'border-emerald-200 bg-gradient-to-br from-emerald-50 to-green-50',

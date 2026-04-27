@@ -160,6 +160,70 @@ if (SUPABASE_URL && SUPABASE_KEY) {
   } catch (err) {
     console.warn(`[spa-routes] Error fetcheando insights dinamicos: ${err.message}`);
   }
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // Slugs Fase 3 §2.9: correlation_definitions con status='published'
+  // ─────────────────────────────────────────────────────────────────────────
+  try {
+    const corrRes = await fetch(`${SUPABASE_URL}/rest/v1/correlation_definitions?status=eq.published&select=slug`, {
+      method: 'GET',
+      headers: {
+        apikey: SUPABASE_KEY,
+        Authorization: `Bearer ${SUPABASE_KEY}`,
+      },
+    });
+
+    if (!corrRes.ok) {
+      console.warn(
+        `[spa-routes] correlation_definitions HTTP ${corrRes.status}. ` +
+          `Sin slugs Fase 3. (Probablemente la mig 20260902700000 no esta aplicada o no hay published.)`
+      );
+    } else {
+      const correlations = await corrRes.json();
+      const corrSlugs = Array.isArray(correlations)
+        ? correlations.map((c) => c.slug).filter(Boolean)
+        : [];
+
+      let corrCreated = 0;
+      for (const slug of corrSlugs) {
+        const dir = join(DOCS, 'insights-pro', slug);
+        const file = join(dir, 'index.html');
+        mkdirSync(dir, { recursive: true });
+        writeFileSync(file, html);
+        corrCreated += 1;
+      }
+      if (corrSlugs.length > 0) {
+        console.log(`[spa-routes] Generados ${corrCreated} index.html para insights-pro/<slug>`);
+
+        // Append al sitemap
+        if (existsSync(SITEMAP)) {
+          const sitemap = readFileSync(SITEMAP, 'utf8');
+          const block = [
+            '  <!-- CORRELATIONS_DYNAMIC -->',
+            ...corrSlugs.map(
+              (s) =>
+                `  <url><loc>https://pawfriend.cl/insights-pro/${s}</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`
+            ),
+            '  <!-- /CORRELATIONS_DYNAMIC -->',
+          ].join('\n');
+
+          const updated = sitemap.includes('<!-- CORRELATIONS_DYNAMIC -->')
+            ? sitemap.replace(
+                /  <!-- CORRELATIONS_DYNAMIC -->[\s\S]*?<!-- \/CORRELATIONS_DYNAMIC -->/,
+                block
+              )
+            : sitemap.replace('</urlset>', `\n${block}\n</urlset>`);
+
+          writeFileSync(SITEMAP, updated);
+          console.log(`[spa-routes] Sitemap actualizado con ${corrSlugs.length} correlations`);
+        }
+      } else {
+        console.log('[spa-routes] 0 correlations published — esperando datos');
+      }
+    }
+  } catch (err) {
+    console.warn(`[spa-routes] Error fetcheando correlations: ${err.message}`);
+  }
 } else {
-  console.log('[spa-routes] Sin VITE_SUPABASE_URL/KEY → omitiendo slugs dinamicos de insights');
+  console.log('[spa-routes] Sin VITE_SUPABASE_URL/KEY → omitiendo slugs dinamicos');
 }

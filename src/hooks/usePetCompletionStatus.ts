@@ -15,6 +15,11 @@
  */
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import {
+  COMPLETION_CATEGORY_TARGET,
+  COMPLETION_EVENT_TARGET,
+  computeCompletionStatus,
+} from '@/lib/completion';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
@@ -56,27 +61,18 @@ export function usePetCompletionStatus(petId: string | undefined) {
       const categoryCount = categoriesPresent.length;
       const hasIdCard = (idCardRes.count ?? 0) > 0;
 
-      const eventTarget = 10;
-      const categoryTarget = 3;
-      const missingCategories = Math.max(0, categoryTarget - categoryCount);
-
-      const isComplete = eventCount >= eventTarget && categoryCount >= categoryTarget && hasIdCard;
-
-      // Progreso por dimension (cap 100% cada una)
-      const eventPct = Math.min(100, (eventCount / eventTarget) * 100);
-      const categoryPct = Math.min(100, (categoryCount / categoryTarget) * 100);
-      const idCardPct = hasIdCard ? 100 : 0;
-      const progressPct = Math.round((eventPct + categoryPct + idCardPct) / 3);
+      // Lógica pura extraída a src/lib/completion.ts para test isolation
+      const status = computeCompletionStatus({ eventCount, categoryCount, hasIdCard });
 
       return {
         event_count: eventCount,
         category_count: categoryCount,
         has_id_card: hasIdCard,
-        event_target: eventTarget,
-        category_target: categoryTarget,
-        is_complete: isComplete,
-        progress_pct: progressPct,
-        missing_categories: missingCategories,
+        event_target: COMPLETION_EVENT_TARGET,
+        category_target: COMPLETION_CATEGORY_TARGET,
+        is_complete: status.isComplete,
+        progress_pct: status.progressPct,
+        missing_categories: status.missingCategories,
         categories_present: categoriesPresent,
       };
     },

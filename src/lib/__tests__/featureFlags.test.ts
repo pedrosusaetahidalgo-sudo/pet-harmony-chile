@@ -32,3 +32,37 @@ describe('isFeatureEnabled', () => {
     expect(isFeatureEnabled('LOST_PETS_SECTION')).toBe(false);
   });
 });
+
+describe('Fase 2/3 flags (Refactor Maestro 2026-04-27)', () => {
+  it('Fase 2 partner-dependent flags estan en false (esperan deals)', () => {
+    expect(FEATURE_FLAGS.EMBEDDED_INSURANCE).toBe(false);
+    expect(FEATURE_FLAGS.PHARMA_INSIGHTS_API).toBe(false);
+    expect(FEATURE_FLAGS.RETAIL_FULFILLMENT).toBe(false);
+    expect(FEATURE_FLAGS.B2B_API).toBe(false);
+  });
+
+  it('LATAM expansion flags estan en false hasta Y2+', () => {
+    expect(FEATURE_FLAGS.LATAM_MX).toBe(false);
+    expect(FEATURE_FLAGS.LATAM_AR).toBe(false);
+    expect(FEATURE_FLAGS.LATAM_CO).toBe(false);
+    expect(FEATURE_FLAGS.LATAM_PE).toBe(false);
+  });
+
+  it('Cascadas activas (§2.8.3 ambient computing)', () => {
+    expect(FEATURE_FLAGS.CASCADE_WEIGHT_ALERTS).toBe(true);
+    expect(FEATURE_FLAGS.CASCADE_INACTIVITY_CHECK).toBe(true);
+    expect(FEATURE_FLAGS.CASCADE_BIRTHDAY_AUTO).toBe(true);
+  });
+
+  it('Research consent flow esta on (Pharma deal pre-req §7.3)', () => {
+    expect(FEATURE_FLAGS.RESEARCH_CONSENT_FLOW).toBe(true);
+  });
+
+  it('Cascadas Fase 2+ avanzadas (AI / GPS / scanner) en false', () => {
+    expect(FEATURE_FLAGS.CASCADE_AI_SUGGESTIONS).toBe(false);
+    expect(FEATURE_FLAGS.AI_PATTERN_DETECTION).toBe(false);
+    expect(FEATURE_FLAGS.WALK_GPS_TRACKING).toBe(false);
+    expect(FEATURE_FLAGS.PARTNER_SCANNER_API).toBe(false);
+    expect(FEATURE_FLAGS.PASSIVE_DETECTION_GPS).toBe(false);
+  });
+});
