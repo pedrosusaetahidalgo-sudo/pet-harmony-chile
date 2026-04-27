@@ -379,8 +379,13 @@ export const FEATURE_FLAGS = {
   /**
    * Cascada: alerta cuando peso baja 10%+ en 30 dias
    * (refactor maestro §2.8.3).
+   * Activado 2026-04-27: trigger DB y tabla pet_health_alerts en
+   * mig 20260902200000. PetHealthAlertsBanner lo lee desde HomePetFocusV2.
+   * El banner solo aparece si hay alertas no-dismissed para el pet
+   * activo, asi que activar el flag no genera ruido visual hasta que el
+   * trigger detecte algo real.
    */
-  CASCADE_WEIGHT_ALERTS: false,
+  CASCADE_WEIGHT_ALERTS: true,
 
   // ── Fase 2 (90-365d): Producto invisible ──
 

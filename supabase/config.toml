@@ -206,3 +206,9 @@ verify_jwt = true
 # match_nose_print y aplica consent gating segun lost_at.
 [functions.nose-print-match]
 verify_jwt = false
+
+# Refactor Maestro Fase 2 §7.5 — API publica B2B con auth via X-Pawfriend-Api-Key.
+# verify_jwt = false: la auth es la API key custom (header), no Supabase JWT.
+# La edge fn verifica la key contra b2b_api_keys y aplica rate limit per-key.
+[functions.b2b-api]
+verify_jwt = false

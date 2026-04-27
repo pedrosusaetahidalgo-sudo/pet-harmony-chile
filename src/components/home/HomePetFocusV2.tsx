@@ -34,6 +34,7 @@ import { isFeatureEnabled } from '@/lib/featureFlags';
 import { QuickActionsHub } from '@/components/home/QuickActionsHub';
 import { OwnerAudioNoteRecorder } from '@/components/medical/OwnerAudioNoteRecorder';
 import { InsuranceBanner } from '@/components/insurance/InsuranceBanner';
+import { PetHealthAlertsBanner } from '@/components/home/PetHealthAlertsBanner';
 import { trackRefactor, RefactorEvent } from '@/lib/refactorAnalytics';
 
 interface PetBasic {
@@ -288,6 +289,11 @@ export function HomePetFocusV2() {
           onClick={() => navigate(LINKS.petClinical(selectedPet.id))}
         />
       )}
+
+      {/* Refactor Maestro §2.8.3 — Alertas automaticas (cascadas).
+          Hoy: weight loss 10%+ en 30d. El trigger DB las crea sola; el
+          banner las muestra. Gateado por CASCADE_WEIGHT_ALERTS. */}
+      {selectedPet && <PetHealthAlertsBanner petId={selectedPet.id} />}
 
       {/* Refactor Maestro Fase 2 §7.2 — Banner seguros embebidos. Oculto
           mientras EMBEDDED_INSURANCE = false; cuando un partner aseguradora

@@ -31,7 +31,18 @@ import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { Upload, X, ArrowLeft, ArrowRight, Camera, Shield, Check, PawPrint } from '@/lib/icons';
+import {
+  Upload,
+  X,
+  ArrowLeft,
+  ArrowRight,
+  Camera,
+  Shield,
+  ShieldCheck,
+  Check,
+  PawPrint,
+} from '@/lib/icons';
+import { isFeatureEnabled } from '@/lib/featureFlags';
 import { ImageCropDialog } from '@/components/ImageCropDialog';
 import {
   compressImage,
@@ -47,12 +58,17 @@ import { cn } from '@/lib/utils';
 import type { Database } from '@/integrations/supabase/types';
 
 type PetInsert = Database['public']['Tables']['pets']['Insert'];
-type Step = 1 | 2 | 3;
+type Step = 1 | 2 | 3 | 4;
 
 export default function OnboardingQuickFlow() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  // Paso 4 (research consent) solo aparece si el flag esta activo. Cuando no,
+  // el wizard sigue siendo de 3 pasos como antes.
+  const consentStepEnabled = isFeatureEnabled('RESEARCH_CONSENT_FLOW');
+  const totalSteps = consentStepEnabled ? 4 : 3;
 
   const [step, setStep] = useState<Step>(1);
 
@@ -69,6 +85,9 @@ export default function OnboardingQuickFlow() {
 
   // Paso 3 — opcional (chip)
   const [microchip, setMicrochip] = useState('');
+
+  // Paso 4 — opcional (research consent). null = no decidio aun.
+  const [researchConsent, setResearchConsent] = useState<boolean | null>(null);
 
   const [submitting, setSubmitting] = useState(false);
 
@@ -160,9 +179,27 @@ export default function OnboardingQuickFlow() {
         properties: { species, source: 'onboarding_quick_flow' },
       });
 
+      // Si llegamos al paso 4 y el dueño tomo decision sobre research consent,
+      // la guardamos en profiles. Si no decidio (NULL) no escribimos nada
+      // — sigue como NULL y se le puede preguntar despues desde /profile.
+      if (researchConsent !== null) {
+        const { error: consentError } = await supabase
+          .from('profiles')
+          .update({
+            anonymous_data_research_consent: researchConsent,
+            research_consent_at: new Date().toISOString(),
+          } as Record<string, unknown>)
+          .eq('id', user.id);
+        if (consentError) {
+          // No fatal: la mascota ya esta creada. Solo log.
+          logger.warn('[OnboardingQuickFlow] research consent save failed', consentError);
+        }
+      }
+
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: ['pets'] }),
         queryClient.invalidateQueries({ queryKey: ['user-pets'] }),
+        queryClient.invalidateQueries({ queryKey: ['research-consent', user.id] }),
       ]);
 
       toast.success('¡Mascota agregada!', {
@@ -201,9 +238,11 @@ export default function OnboardingQuickFlow() {
             <h1 className="text-xl font-bold">
               {name ? `Queremos conocer a ${name}` : 'Queremos conocer a tu mascota'}
             </h1>
-            <span className="text-xs text-muted-foreground">Paso {step} de 3</span>
+            <span className="text-xs text-muted-foreground">
+              Paso {step} de {totalSteps}
+            </span>
           </div>
-          <Progress value={(step / 3) * 100} className="h-1.5" />
+          <Progress value={(step / totalSteps) * 100} className="h-1.5" />
         </div>
 
         {/* Paso 1 — Foto + Nombre + Especie */}
@@ -452,6 +491,99 @@ export default function OnboardingQuickFlow() {
 
               <div className="flex gap-2 pt-2">
                 <Button variant="outline" onClick={() => setStep(2)} className="flex-1">
+                  <ArrowLeft className="h-4 w-4 mr-1" /> Atrás
+                </Button>
+                {consentStepEnabled ? (
+                  <Button
+                    onClick={() => setStep(4)}
+                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  >
+                    Continuar <ArrowRight className="h-4 w-4 ml-1" />
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleFinish}
+                    disabled={submitting}
+                    className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  >
+                    {submitting ? 'Creando...' : 'Crear mascota'}
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Paso 4 — Research consent (opcional). Refactor Maestro Fase 2 §7.3 */}
+        {step === 4 && consentStepEnabled && (
+          <Card>
+            <CardContent className="pt-6 space-y-4">
+              <div>
+                <h2 className="text-lg font-semibold mb-1 flex items-center gap-2">
+                  <ShieldCheck className="h-5 w-5 text-emerald-600" />
+                  Una pregunta opcional
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  Paw Friend es gratis para vos. Para sostenerlo, vendemos insights agregados
+                  anonimos a laboratorios y aseguradoras que cuidan mascotas.
+                </p>
+              </div>
+
+              <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm">
+                <p className="font-medium text-emerald-900 mb-1">¿Qué significa "anonimo"?</p>
+                <ul className="space-y-1 text-emerald-800 list-disc pl-5 text-xs">
+                  <li>Tu nombre y contacto NO se comparten nunca.</li>
+                  <li>
+                    Tampoco el nombre de {name || 'tu mascota'} ni su foto. Solo data agregada
+                    (raza, peso, edad, comuna).
+                  </li>
+                  <li>Solo se usa cuando hay 50+ mascotas con la misma característica.</li>
+                </ul>
+              </div>
+
+              <div className="space-y-2">
+                <button
+                  type="button"
+                  onClick={() => setResearchConsent(true)}
+                  className={cn(
+                    'w-full p-3 rounded-xl border-2 text-left transition-colors',
+                    researchConsent === true
+                      ? 'border-emerald-500 bg-emerald-50'
+                      : 'border-slate-200 hover:border-emerald-300'
+                  )}
+                >
+                  <p className="font-medium text-sm">
+                    {researchConsent === true && '✓ '}Sumar mi data anonima
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Tu aporte indirecto sostiene la app gratis para todos.
+                  </p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setResearchConsent(false)}
+                  className={cn(
+                    'w-full p-3 rounded-xl border-2 text-left transition-colors',
+                    researchConsent === false
+                      ? 'border-slate-500 bg-slate-50'
+                      : 'border-slate-200 hover:border-slate-300'
+                  )}
+                >
+                  <p className="font-medium text-sm">
+                    {researchConsent === false && '✓ '}No participar
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Tu data nunca se va a usar en estudios. Podes cambiar despues.
+                  </p>
+                </button>
+              </div>
+
+              <p className="text-[11px] text-muted-foreground italic">
+                Es 100% opcional. Podes saltar este paso o cambiar la decision desde tu perfil.
+              </p>
+
+              <div className="flex gap-2 pt-2">
+                <Button variant="outline" onClick={() => setStep(3)} className="flex-1">
                   <ArrowLeft className="h-4 w-4 mr-1" /> Atrás
                 </Button>
                 <Button
