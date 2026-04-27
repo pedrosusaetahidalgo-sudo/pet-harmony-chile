@@ -33,6 +33,8 @@
      ```
 
    - [supabase/migrations/20260902500000_health_alerts_email_sent.sql](../supabase/migrations/20260902500000_health_alerts_email_sent.sql) — agrega `email_sent_at` a pet_health_alerts + indice partial para acelerar el cron de notify.
+   - [supabase/migrations/20260902600000_inactivity_birthday_cascades.sql](../supabase/migrations/20260902600000_inactivity_birthday_cascades.sql) — RPCs `detect_inactive_user_alerts` (no_activity_7d, ventana 7-30d sin login) + `detect_birthday_window_alerts` (cumple ±7d).
+   - [supabase/migrations/20260902700000_correlation_insights.sql](../supabase/migrations/20260902700000_correlation_insights.sql) — Fase 3 §2.9. Tablas `correlation_definitions` + `correlation_observations` + RPC `get_correlation_insights` con threshold k-anonymity >=50. Seed con 6 correlaciones del plan §2.9.1 en estado 'draft'. El moat de data — esperando volumen.
 
    Y **deploy 2 edge functions nuevas**:
    ```bash
@@ -41,7 +43,7 @@
    ```
    No requieren secrets adicionales — usan `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` (ya existentes). `notify-health-alerts` usa `RESEND_API_KEY` (ya configurado para otros emails).
 
-   Y programar **2 crones nuevos** (con Vault + service_role_key):
+   Y programar **4 crones nuevos** (con Vault + service_role_key):
    ```sql
    -- Cascada vaccine_overdue (RPC, 9am Chile)
    SELECT cron.schedule(
@@ -50,7 +52,21 @@
      $$ SELECT public.detect_vaccine_overdue_alerts(); $$
    );
 
-   -- Email severity=high (edge fn, 9am Chile despues del cron anterior)
+   -- Cascada inactividad 7d (RPC, 10am Chile)
+   SELECT cron.schedule(
+     'detect-inactive-users-daily',
+     '0 14 * * *',
+     $$ SELECT public.detect_inactive_user_alerts(); $$
+   );
+
+   -- Cascada cumpleanos (RPC, 10am Chile)
+   SELECT cron.schedule(
+     'detect-birthday-window-daily',
+     '0 14 * * *',
+     $$ SELECT public.detect_birthday_window_alerts(); $$
+   );
+
+   -- Email severity=high (edge fn, 9am Chile despues del cron de scan)
    SELECT cron.schedule(
      'notify-health-alerts-daily',
      '15 13 * * *',  -- 15 min despues del scan

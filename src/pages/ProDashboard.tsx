@@ -45,6 +45,7 @@ import {
 } from '@/lib/icons';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/hooks/useAuth';
+import { useIsAdmin } from '@/hooks/useIsAdmin';
 import { supabase } from '@/integrations/supabase/client';
 import { usePlan } from '@/hooks/usePlan';
 import { useProAnalytics, type AnalyticsPeriod } from '@/hooks/useProAnalytics';
@@ -117,6 +118,7 @@ interface Pet {
 export default function ProDashboard() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isAdmin } = useIsAdmin();
   const { isPremium, checkAccess } = usePlan();
   const { isProvider } = useActiveRole();
   const { data: providerPlanCtx } = useProviderPlan();
@@ -285,13 +287,19 @@ export default function ProDashboard() {
     }
   };
 
-  if (!isFeatureEnabled('PRO_ANALYTICS')) {
+  // Plan §2.10.2 dice esconder Panel Pro de B2C — solo provider o admin
+  // pueden verlo. La auditoria 2026-04-27 detecto que estaba visible para
+  // owners. Hoy: provider lo usa para sus stats reales, admin para preview;
+  // owner no-admin no-provider ve fallback.
+  const canSeePanelPro = isFeatureEnabled('PRO_ANALYTICS') && (isProvider || isAdmin);
+
+  if (!canSeePanelPro) {
     return (
       <div className="container max-w-4xl mx-auto p-4 md:p-6 text-center py-20">
         <Crown className="h-12 w-12 text-purple-300 mx-auto mb-4" />
         <h2 className="text-lg font-bold text-muted-foreground">Próximamente</h2>
         <p className="text-sm text-muted-foreground mt-2">
-          El Panel Pro de analytics estará disponible pronto.
+          El Panel Pro de analytics está disponible solo para profesionales.
         </p>
       </div>
     );

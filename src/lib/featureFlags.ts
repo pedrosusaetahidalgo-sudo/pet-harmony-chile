@@ -440,8 +440,11 @@ export const FEATURE_FLAGS = {
   /**
    * Push si no hay actividad en la app 7d
    * (refactor maestro §2.8.3). Detectar abandono.
+   * Activado 2026-04-27: RPC detect_inactive_user_alerts() en mig
+   * 20260902600000. Banner ya soporta el tipo en PetHealthAlertsBanner.
+   * Cron pendiente programar por Pedro.
    */
-  CASCADE_INACTIVITY_CHECK: false,
+  CASCADE_INACTIVITY_CHECK: true,
 
   /**
    * ML pattern detection sobre 30d+ de data para sugerir rutinas
