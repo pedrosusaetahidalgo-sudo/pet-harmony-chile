@@ -46,6 +46,10 @@ interface MasterKpis {
   users_active_30d: number;
   pets_active: number;
   pets_memorial: number;
+  // §14.bis.6 NORTH STAR
+  pets_complete_ficha_90d: number;
+  pets_eligible_90d: number;
+  completion_rate_90d_pct: number;
   // Fase 1
   pets_with_nose_print: number;
   passports_generated_total: number;
@@ -250,6 +254,46 @@ export default function AdminMasterKPIs() {
           </Button>
         </div>
       </div>
+
+      {/* §14.bis.6 NORTH STAR — siempre visible al tope */}
+      <Card className="border-purple-500/40 bg-purple-500/10">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm flex items-center gap-2">
+            <Target className="h-4 w-4 text-purple-400" /> North Star (§14.bis.6)
+          </CardTitle>
+          <p className="text-[11px] text-muted-foreground">
+            Mascotas con ficha completa al dia 90 ({'>='}10 eventos timeline en {'>='}3 categorias +
+            Pet ID Card). Threshold proyecto sano: {'>'}50%. {'<'}20% = friccion clinica en captura.
+          </p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+            <KpiCard
+              label="Completion rate 90d"
+              value={`${data.completion_rate_90d_pct}%`}
+              target=">50%"
+              hint={`${data.pets_complete_ficha_90d} de ${data.pets_eligible_90d} elegibles`}
+              tone={
+                data.completion_rate_90d_pct >= 50
+                  ? 'good'
+                  : data.completion_rate_90d_pct >= 20
+                    ? 'warn'
+                    : 'bad'
+              }
+            />
+            <KpiCard
+              label="Pets ficha completa"
+              value={data.pets_complete_ficha_90d}
+              hint="creadas en ultimos 90d"
+            />
+            <KpiCard
+              label="Pets elegibles"
+              value={data.pets_eligible_90d}
+              hint="universo de denominador"
+            />
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Volumen base */}
       {(section === 'all' || section === 'fase0') && (

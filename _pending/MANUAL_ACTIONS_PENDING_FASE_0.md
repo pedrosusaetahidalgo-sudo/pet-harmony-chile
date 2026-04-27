@@ -46,6 +46,7 @@
      ```
    - [supabase/migrations/20260903000000_correlation_compute_rpcs.sql](../supabase/migrations/20260903000000_correlation_compute_rpcs.sql) — 2 RPCs `compute_breed_lifespan_correlation()` + `compute_neuter_age_by_comuna_correlation()`. Pedro las corre desde Admin → Sistema → Correlations (botón Play en cada row).
    - [supabase/migrations/20260903100000_risk_monitor.sql](../supabase/migrations/20260903100000_risk_monitor.sql) — RPC `compute_risk_signals()` que detecta señales de §11 (AI cost spike, consent rate bajo, dropout, edge fn errors, pgvector slow). Banner en Admin → Dashboard si hay signals activos.
+   - [supabase/migrations/20260903200000_pet_bootstrap_complete_kpi.sql](../supabase/migrations/20260903200000_pet_bootstrap_complete_kpi.sql) — Trigger AFTER INSERT pets crea evento "Bienvenida" en timeline (§14.bis.3 — timeline no nace vacio) + RPC `count_pets_complete_ficha(p_within_days)` + extiende `master_kpis_daily` con North Star pets_complete_ficha_90d (§14.bis.6).
 
    Y **deploy 2 edge functions nuevas**:
    ```bash

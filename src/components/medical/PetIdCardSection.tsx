@@ -11,6 +11,7 @@ import { Loader2, Sparkles, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { PetIdCardDisplay } from './PetIdCardDisplay';
 import { PetRiskScoreCard } from './PetRiskScoreCard';
+import { BreedComparisonCard } from './BreedComparisonCard';
 import { usePetIdCard } from '@/hooks/usePetIdCard';
 import { trackRefactor, RefactorEvent } from '@/lib/refactorAnalytics';
 import { useEffect } from 'react';
@@ -129,6 +130,11 @@ export function PetIdCardSection({ petId }: PetIdCardSectionProps) {
           Se renderiza solo si la mig 20260902100000 esta aplicada y la RPC
           devuelve resultados (silent fail si no). */}
       <PetRiskScoreCard petId={petId} />
+
+      {/* §14.bis.3 Tensión 3: comparacion social temprana. Solo aparece si
+          la raza tiene >=50 pets en public_breed_stats (privacy). Da valor
+          al dueño desde el dia 1. */}
+      <BreedComparisonCard petId={petId} petName={data.pet_name} />
     </div>
   );
 }

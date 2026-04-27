@@ -653,7 +653,7 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 
 ---
 
-## 12. Estado tecnico al cierre 2026-04-27 (post Fase 1 + Fase 2 scaffolding)
+## 12. Estado tecnico al cierre 2026-04-27 (post Fase 1 + Fase 2 + Fase 3 scaffolding)
 
 | Metrica | Valor |
 |---|---|
@@ -661,8 +661,8 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 | `npm run lint` | 0 errores (2 warnings react-refresh en PlanComparisonTable, no bloquean) |
 | `npm run build` | Pasa (~50-70s) + post-build pre-render de 19 rutas SPA |
 | `npm run test:ci` | 377/377 verde |
-| Migraciones | 175+ (5 SQLs Fase 2 scaffolding 2026-04-27: research_consent, pet_risk_score, pet_health_alerts, b2b_api_keys, vaccine_overdue_cascade) |
-| Edge functions | 34+ activas. Nueva Fase 2: `b2b-api` (auth via X-Pawfriend-Api-Key + rate limit per-key) |
+| Migraciones | 181+ (11 SQLs Fase 2/3 aplicadas 2026-04-27: research_consent, pet_risk_score, pet_health_alerts, b2b_api_keys, vaccine_overdue_cascade, health_alerts_email_sent, inactivity_birthday_cascades, correlation_insights, b2b_correlation_scopes, master_kpis_view, correlation_compute_rpcs, risk_monitor) |
+| Edge functions | 35+ activas. Nuevas Fase 2/3: `b2b-api` (auth via X-Pawfriend-Api-Key + rate limit per-key + 4 endpoints), `notify-health-alerts` (email severity=high) |
 | Rutas en App.tsx | 73+ paths |
 | Premium B2C Flow | Vivo con idempotencia + rate limit |
 | Google Calendar | Vivo end-to-end |
@@ -682,8 +682,12 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 | **Fase 2 §7.3 Pharma research consent** | profiles.anonymous_data_research_consent + paso 4 opcional en OnboardingQuickFlow + ResearchConsentNudge en /home + toggle en /profile |
 | **Fase 2 §7.5 + §8.4.5 Risk score** | RPC calculate_pet_risk_score(pet_id) MVP heuristico + PetRiskScoreCard visible en tab Identidad de la ficha |
 | **Fase 2 §2.8.3 Cascadas (ambient computing)** | pet_health_alerts + 2 cascadas activas: weight_loss_30d (trigger sync) + vaccine_overdue (RPC + cron). UI con CTAs especificos por tipo |
-| **Fase 2 §7.5 API B2B v1** | Edge fn b2b-api con X-Pawfriend-Api-Key + tablas b2b_api_keys/usage + 4 RPCs + AdminB2BApiKeys panel para crear/listar/revocar sin SQL |
+| **Fase 2 §7.5 API B2B v1** | Edge fn b2b-api con X-Pawfriend-Api-Key + tablas b2b_api_keys/usage + 4 endpoints (breed_stats, species_stats, correlation_catalog, correlation_insights) + AdminB2BApiKeys panel |
 | **Fase 2 §7.2 Insurance scaffold** | InsuranceBanner componente listo en HomePetFocusV2, oculto behind EMBEDDED_INSURANCE=false hasta firmar partner |
+| **Fase 3 §2.9 Correlation insights moat** | Tablas correlation_definitions + correlation_observations + 6 seeds + 2 RPCs compute (breed_lifespan + neuter_age_by_comuna) + AdminCorrelations panel + endpoint b2b-api |
+| **Fase 3 §13 Master KPIs** | Vista materializada master_kpis_daily con 30+ metricas + AdminMasterKPIs widget con bandas verde/amarillo/rojo + RPC refresh manual |
+| **Fase 3 §9.5 Project Health** | AdminProjectHealth widget con costos vs revenue + burn neto + hitos break-even Y1/Y2/Y3 |
+| **Fase 3 §11 Risk monitor** | RPC compute_risk_signals + AdminRiskMonitor banner al tope del dashboard con 5 señales (AI cost, consent rate, dropout, edge errors, pgvector slow) |
 
 ---
 
@@ -725,7 +729,8 @@ Para tareas especializadas, invocar el subagente correspondiente. **13 agentes a
 |---|---|---|
 | **Refactor Maestro Fase 0 (2026-04-23)** | Aplicado | Trinidad del Corazon (Pet ID Card + Audio + Quick Actions), 4 tabs ficha clinica (Historia/Cuidados/Identidad/Mas), Memorial viral, Paw Points canonizado, sidebar colapsado, 13 feature flags |
 | **Refactor Maestro Fase 1 (2026-04-25)** | Aplicado | §6.2 Nose Print MVP con DINOv2-large 1024 dims (4 edge fns + componente captura + /nose-scan publico). §6.3 Paw Passport PDF 8 paginas. §6.5 SEO insights v2 con 3 tipos de slugs (breed/species/breed_rank) + /insights index. §6.6 Memorial share card 1080x1080 Canvas API + Birthday share card. §6.7 Refugios rescue_story + adoption_followups 30/90d trigger + cron edge fn |
-| **Refactor Maestro Fase 2 scaffolding (2026-04-27)** | Aplicado | §7.3 research consent (column profiles + dialog + step en onboarding + nudge en /home). §7.5 + §8.4.5 risk score (RPC + PetRiskScoreCard en ficha). §2.8.3 cascadas (pet_health_alerts + 2 tipos: weight_loss_30d trigger + vaccine_overdue cron). §7.5 API B2B v1 (edge fn b2b-api con auth via X-Pawfriend-Api-Key + tablas keys/usage + AdminB2BApiKeys panel). §7.2 InsuranceBanner (oculto behind EMBEDDED_INSURANCE=false hasta firmar partner). Nudge consent en /home. AdminFase1Widget con KPIs Fase 1. SEO sitemap completo (14 rutas + insights dinamicos). 27→2 lint a11y warnings |
+| **Refactor Maestro Fase 2 scaffolding (2026-04-27)** | Aplicado | §7.3 research consent (column profiles + dialog + step en onboarding + nudge en /home). §7.5 + §8.4.5 risk score (RPC + PetRiskScoreCard en ficha). §2.8.3 cascadas (pet_health_alerts + 4 tipos: weight_loss, vaccine_overdue, no_activity_7d, birthday_window + email severity=high). §7.5 API B2B v1 (edge fn b2b-api con auth via X-Pawfriend-Api-Key + 4 endpoints + AdminB2BApiKeys panel). §7.2 InsuranceBanner (oculto behind EMBEDDED_INSURANCE=false). Nudge consent en /home. AdminFase1Widget con KPIs Fase 1. SEO sitemap completo. 27→2 lint a11y warnings |
+| **Refactor Maestro Fase 3 scaffolding (2026-04-27)** | Aplicado | §2.9 moat de data: correlation_definitions + correlation_observations + 6 seeds + 2 compute RPCs (breed_lifespan, neuter_age_by_comuna) + AdminCorrelations panel con boton Play + endpoint b2b-api correlation_insights/catalog. §13 master KPIs view con 30+ metricas + AdminMasterKPIs widget con tone por meta. §9.5 AdminProjectHealth con costos vs revenue + burn neto + hitos break-even. §11 risk monitor con 5 signals + banner critico al tope del admin dashboard. Auditoria features §2.10 ejecutada. PRO_ANALYTICS gate isProvider OR isAdmin |
 | **Refactor Adopcion 2026-04-24** | Aplicado | Bloque 1 (feed unificado /adoption + filtros + 'Me interesa'). Bloque 2 (procesos kanban /shelter/adopciones, timeline /mis-adopciones, onboarding shelter, follow-up automatico) |
 | **6 refactors UX coherence (2026-04-25)** | Aplicado | AddReminderDialog con presets one-tap, QuickActionsHub usa RegisterInterventionSheet, OnboardingQuickFlow con cards especie, DejarReseña stars gigantes, Reminders FAB mobile, MyBookings con BookServiceSheet |
 | **Brand v2 polish (2026-04-25)** | Aplicado | 4 empty states ilustrados (no_appointments/no_notifications/no_conversations/no_paw_cards), hero `/paw-companys`, EmptyState con prop `illustration` |
