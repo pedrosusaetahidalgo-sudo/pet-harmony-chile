@@ -34,7 +34,16 @@
 
    - [supabase/migrations/20260902500000_health_alerts_email_sent.sql](../supabase/migrations/20260902500000_health_alerts_email_sent.sql) — agrega `email_sent_at` a pet_health_alerts + indice partial para acelerar el cron de notify.
    - [supabase/migrations/20260902600000_inactivity_birthday_cascades.sql](../supabase/migrations/20260902600000_inactivity_birthday_cascades.sql) — RPCs `detect_inactive_user_alerts` (no_activity_7d, ventana 7-30d sin login) + `detect_birthday_window_alerts` (cumple ±7d).
-   - [supabase/migrations/20260902700000_correlation_insights.sql](../supabase/migrations/20260902700000_correlation_insights.sql) — Fase 3 §2.9. Tablas `correlation_definitions` + `correlation_observations` + RPC `get_correlation_insights` con threshold k-anonymity >=50. Seed con 6 correlaciones del plan §2.9.1 en estado 'draft'. El moat de data — esperando volumen.
+   - [supabase/migrations/20260902700000_correlation_insights.sql](../supabase/migrations/20260902700000_correlation_insights.sql) — Fase 3 §2.9. Tablas `correlation_definitions` + `correlation_observations` + RPC `get_correlation_insights` con threshold k-anonymity >=50. Seed con 6 correlaciones del plan §2.9.1 en estado 'draft'.
+   - [supabase/migrations/20260902800000_b2b_correlation_scopes.sql](../supabase/migrations/20260902800000_b2b_correlation_scopes.sql) — actualiza scopes default de `create_b2b_api_key`: research agrega `correlation_catalog`, enterprise agrega `correlation_insights`.
+   - [supabase/migrations/20260902900000_master_kpis_view.sql](../supabase/migrations/20260902900000_master_kpis_view.sql) — vista materializada `master_kpis_daily` con KPIs §13 + RPC `refresh_master_kpis()`. Programar cron diario:
+     ```sql
+     SELECT cron.schedule(
+       'refresh-master-kpis-daily',
+       '0 10 * * *',  -- 6am Chile
+       $$ REFRESH MATERIALIZED VIEW public.master_kpis_daily; $$
+     );
+     ```
 
    Y **deploy 2 edge functions nuevas**:
    ```bash

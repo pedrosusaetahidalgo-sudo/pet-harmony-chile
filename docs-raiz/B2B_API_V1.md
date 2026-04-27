@@ -21,8 +21,8 @@ después solo se ve el prefix.
 | Tier | Rate limit | Scopes default |
 |---|---|---|
 | `free` | 100 req/h | `breed_stats` |
-| `research` | 1.000 req/h | `breed_stats`, `species_stats` |
-| `enterprise` | 10.000 req/h | `breed_stats`, `species_stats`, `risk_score` (futuro) |
+| `research` | 1.000 req/h | `breed_stats`, `species_stats`, `correlation_catalog` |
+| `enterprise` | 10.000 req/h | + `correlation_insights`, `risk_score` (futuro) |
 
 Rate limit es por API key, ventana móvil de 1 hora. Al exceder devolvemos
 `429 Too Many Requests` con headers `X-RateLimit-Remaining`, `Retry-After`.
@@ -89,6 +89,58 @@ El cuerpo decide qué endpoint llamar (`{ endpoint, params }`):
 
 **Response**: incluye `count_male`, `count_female`, `count_neutered`,
 `distinct_breeds`.
+
+### `correlation_catalog` — listar correlaciones disponibles
+
+Sin params. Devuelve todas las `correlation_definitions` con
+`status='published'` (las en draft/computing/archived no aparecen).
+
+**Response**:
+```json
+{
+  "endpoint": "correlation_catalog",
+  "count": 2,
+  "correlations": [
+    {
+      "id": "uuid",
+      "slug": "razas-mas-longevas-chile-vs-mundo",
+      "question": "Cuales razas viven mas tiempo en Chile?",
+      "category": "longevity",
+      "input_dimensions": ["breed", "comuna_zone"],
+      "output_metric": "years_lived",
+      "status": "published"
+    }
+  ]
+}
+```
+
+### `correlation_insights` — observaciones de una correlación
+
+**Params**:
+
+| Campo | Tipo | Default | Descripción |
+|---|---|---|---|
+| `definition_id` | UUID | — | (Required) ID de una correlation_definition publicada |
+| `min_sample_size` | int | 50 | Threshold privacy. Floor 50. |
+
+**Response**:
+```json
+{
+  "endpoint": "correlation_insights",
+  "definition_id": "uuid",
+  "threshold_privacy": 50,
+  "count": 3,
+  "observations": [
+    {
+      "bucket": { "breed": "Golden Retriever", "comuna_zone": "norte" },
+      "sample_size": 87,
+      "output_value": 11.2,
+      "output_stddev": 1.8,
+      "confidence_level": "medium"
+    }
+  ]
+}
+```
 
 ### `risk_score` — futuro
 

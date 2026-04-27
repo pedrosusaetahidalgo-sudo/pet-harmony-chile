@@ -66,6 +66,8 @@ import AdminMigrationsStatus from '@/components/admin/AdminMigrationsStatus';
 import AdminDeviceCompatibility from '@/components/admin/AdminDeviceCompatibility';
 import AdminTeam from '@/components/admin/AdminTeam';
 import AdminB2BApiKeys from '@/components/admin/AdminB2BApiKeys';
+import AdminCorrelations from '@/components/admin/AdminCorrelations';
+import AdminMasterKPIs from '@/components/admin/AdminMasterKPIs';
 import AdminErrorLog from '@/components/admin/AdminErrorLog';
 import AdminPendingPets from '@/components/admin/AdminPendingPets';
 import AdminGhostUsers from '@/components/admin/AdminGhostUsers';
@@ -320,6 +322,8 @@ function SystemSection({ sub: propSub, onSubChange }: SubSectionProps) {
           <TabsTrigger value="audit">Audit Log</TabsTrigger>
           <TabsTrigger value="team">Equipo</TabsTrigger>
           <TabsTrigger value="b2b-keys">API B2B</TabsTrigger>
+          <TabsTrigger value="correlations">Correlations</TabsTrigger>
+          <TabsTrigger value="master-kpis">Master KPIs</TabsTrigger>
         </TabsList>
         <TabsContent value="config">
           <AdminSettings />
@@ -359,6 +363,12 @@ function SystemSection({ sub: propSub, onSubChange }: SubSectionProps) {
         </TabsContent>
         <TabsContent value="b2b-keys">
           <AdminB2BApiKeys />
+        </TabsContent>
+        <TabsContent value="correlations">
+          <AdminCorrelations />
+        </TabsContent>
+        <TabsContent value="master-kpis">
+          <AdminMasterKPIs />
         </TabsContent>
       </Tabs>
     </div>

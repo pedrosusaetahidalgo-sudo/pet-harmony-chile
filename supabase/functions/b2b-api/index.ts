@@ -177,9 +177,15 @@ serve(
     if (endpoint === 'species_stats') {
       return handleSpeciesStats(supabase, body.params ?? {});
     }
+    if (endpoint === 'correlation_insights') {
+      return handleCorrelationInsights(supabase, body.params ?? {});
+    }
+    if (endpoint === 'correlation_catalog') {
+      return handleCorrelationCatalog(supabase);
+    }
 
     return errorResponse(`Unknown endpoint '${endpoint}'`, 400, {
-      available: ['breed_stats', 'species_stats'],
+      available: ['breed_stats', 'species_stats', 'correlation_insights', 'correlation_catalog'],
     });
   })
 );
@@ -249,5 +255,96 @@ async function handleSpeciesStats(
     threshold_privacy: minPetCount,
     count: (data ?? []).length,
     rows: (data ?? []) as SpeciesStatsRow[],
+  });
+}
+
+// --------------------------------------------------------------------------
+// Correlation insights — Refactor Maestro Fase 3 §2.9
+// --------------------------------------------------------------------------
+
+interface CorrelationDefinitionRow {
+  id: string;
+  slug: string;
+  question: string;
+  category: string;
+  input_dimensions: string[];
+  output_metric: string;
+  status: string;
+}
+
+interface CorrelationObservationRow {
+  bucket: Record<string, unknown>;
+  sample_size: number;
+  output_value: number;
+  output_stddev: number | null;
+  confidence_level: string | null;
+}
+
+async function handleCorrelationCatalog(
+  supabase: ReturnType<typeof createClient>
+): Promise<Response> {
+  // Solo definitions status='published' son visibles para clientes B2B.
+  // El catalogo completo (incluye drafts) solo es visible desde admin panel.
+  const { data, error } = await supabase
+    .from('correlation_definitions')
+    .select('id, slug, question, category, input_dimensions, output_metric, status')
+    .eq('status', 'published')
+    .order('category');
+
+  if (error) {
+    return errorResponse(`Database error: ${error.message}`, 500);
+  }
+
+  return jsonResponse({
+    endpoint: 'correlation_catalog',
+    count: (data ?? []).length,
+    correlations: (data ?? []) as CorrelationDefinitionRow[],
+  });
+}
+
+async function handleCorrelationInsights(
+  supabase: ReturnType<typeof createClient>,
+  params: Record<string, unknown>
+): Promise<Response> {
+  const definitionId = typeof params.definition_id === 'string' ? params.definition_id : null;
+  if (!definitionId) {
+    return errorResponse(
+      "Param 'definition_id' (UUID) is required. Use endpoint 'correlation_catalog' to list available definitions.",
+      400
+    );
+  }
+
+  const minSampleSize =
+    typeof params.min_sample_size === 'number' ? Math.max(50, params.min_sample_size) : 50;
+
+  // RPC ya enforza threshold k-anonymity floor 50 + status='published'.
+  // El cliente Supabase no tiene tipos generados aqui — cast a unknown
+  // y a la firma minima necesaria para no usar any.
+  const rpcCaller = (
+    supabase as unknown as {
+      rpc: (
+        name: string,
+        args: Record<string, unknown>
+      ) => Promise<{ data: unknown[] | null; error: { message: string } | null }>;
+    }
+  ).rpc;
+  const { data, error } = await rpcCaller('get_correlation_insights', {
+    p_definition_id: definitionId,
+    p_min_sample_size: minSampleSize,
+  });
+
+  if (error) {
+    return errorResponse(`RPC error: ${error.message}`, 500);
+  }
+
+  // Si la definition no existe o no esta publicada, devuelve array vacio
+  // (no exponemos diferencia entre "no existe" vs "no publicada" para no
+  // dar mas info de la cuenta).
+  return jsonResponse({
+    endpoint: 'correlation_insights',
+    definition_id: definitionId,
+    threshold_privacy: minSampleSize,
+    count: (data ?? []).length,
+    observations: (data ?? []) as CorrelationObservationRow[],
   });
 }
