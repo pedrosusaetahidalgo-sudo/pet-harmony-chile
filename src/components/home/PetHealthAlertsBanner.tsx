@@ -18,10 +18,14 @@
 import { useNavigate } from 'react-router-dom';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, X } from 'lucide-react';
+import { AlertTriangle, X, Syringe, Scale, Calendar, Cake, Bug } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { isFeatureEnabled } from '@/lib/featureFlags';
-import { usePetHealthAlerts, type HealthAlertSeverity } from '@/hooks/usePetHealthAlerts';
+import {
+  usePetHealthAlerts,
+  type HealthAlertSeverity,
+  type HealthAlertType,
+} from '@/hooks/usePetHealthAlerts';
 import { LINKS } from '@/lib/links';
 
 interface Props {
@@ -47,6 +51,43 @@ const SEVERITY_STYLES: Record<HealthAlertSeverity, { card: string; icon: string;
     },
   };
 
+// Cada tipo de alerta tiene su icono y CTA contextual hacia la pestaña
+// que el dueño necesita para resolverla. El message viene de la DB; aqui
+// solo decidimos donde lo mandamos cuando hace clic.
+type TypeMeta = {
+  icon: typeof AlertTriangle;
+  ctaLabel: string;
+  buildHref: (petId: string) => string;
+};
+
+const ALERT_TYPE_META: Record<HealthAlertType, TypeMeta> = {
+  vaccine_overdue: {
+    icon: Syringe,
+    ctaLabel: 'Agendar vacuna',
+    buildHref: (petId) => `${LINKS.petClinical(petId)}?tab=cuidados&focus=vacunas`,
+  },
+  weight_loss_30d: {
+    icon: Scale,
+    ctaLabel: 'Registrar peso',
+    buildHref: (petId) => `${LINKS.petClinical(petId)}?tab=cuidados&focus=peso`,
+  },
+  no_activity_7d: {
+    icon: Calendar,
+    ctaLabel: 'Volver a la app',
+    buildHref: (petId) => `${LINKS.petClinical(petId)}?tab=historia`,
+  },
+  antiparasitic_overdue: {
+    icon: Bug,
+    ctaLabel: 'Aplicar antiparasitario',
+    buildHref: (petId) => `${LINKS.petClinical(petId)}?tab=cuidados&focus=antiparasitarios`,
+  },
+  birthday_window: {
+    icon: Cake,
+    ctaLabel: 'Ver cumple',
+    buildHref: (petId) => `${LINKS.petClinical(petId)}?tab=historia`,
+  },
+};
+
 export function PetHealthAlertsBanner({ petId }: Props) {
   const navigate = useNavigate();
   const flagOn = isFeatureEnabled('CASCADE_WEIGHT_ALERTS');
@@ -58,10 +99,16 @@ export function PetHealthAlertsBanner({ petId }: Props) {
     <div className="space-y-2">
       {alerts.map((alert) => {
         const style = SEVERITY_STYLES[alert.severity];
+        const meta = ALERT_TYPE_META[alert.alert_type] ?? {
+          icon: AlertTriangle,
+          ctaLabel: 'Ver ficha',
+          buildHref: (petId: string) => `${LINKS.petClinical(petId)}?tab=cuidados`,
+        };
+        const Icon = meta.icon;
         return (
           <Card key={alert.id} className={cn('p-3', style.card)}>
             <div className="flex items-start gap-3">
-              <AlertTriangle className={cn('h-5 w-5 shrink-0 mt-0.5', style.icon)} />
+              <Icon className={cn('h-5 w-5 shrink-0 mt-0.5', style.icon)} />
               <div className="flex-1 min-w-0">
                 <p className={cn('text-[10px] uppercase tracking-wider font-semibold', style.icon)}>
                   {style.label}
@@ -71,10 +118,10 @@ export function PetHealthAlertsBanner({ petId }: Props) {
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => navigate(`${LINKS.petClinical(alert.pet_id)}?tab=cuidados`)}
+                    onClick={() => navigate(meta.buildHref(alert.pet_id))}
                     className="h-7 text-xs"
                   >
-                    Ver ficha
+                    {meta.ctaLabel}
                   </Button>
                   <Button
                     size="sm"

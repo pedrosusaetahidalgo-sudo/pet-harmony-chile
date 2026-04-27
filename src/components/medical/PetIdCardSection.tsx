@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Sparkles, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { PetIdCardDisplay } from './PetIdCardDisplay';
+import { PetRiskScoreCard } from './PetRiskScoreCard';
 import { usePetIdCard } from '@/hooks/usePetIdCard';
 import { trackRefactor, RefactorEvent } from '@/lib/refactorAnalytics';
 import { useEffect } from 'react';
@@ -101,26 +102,33 @@ export function PetIdCardSection({ petId }: PetIdCardSectionProps) {
   }
 
   return (
-    <PetIdCardDisplay
-      data={data}
-      qrMode="emergency"
-      interactive
-      onDownload={() => toast.info('Descarga PDF próximamente')}
-      onShare={() => {
-        trackRefactor(RefactorEvent.petIdCardShared);
-        if (navigator.share) {
-          navigator
-            .share({
-              title: `Cédula de ${data.pet_name}`,
-              text: `Cédula digital de ${data.pet_name} en Paw Friend`,
-              url: `${window.location.origin}/qr/${data.card_number}`,
-            })
-            .catch(() => undefined);
-        } else {
-          navigator.clipboard.writeText(`${window.location.origin}/qr/${data.card_number}`);
-          toast.success('Link copiado al portapapeles');
-        }
-      }}
-    />
+    <div className="space-y-4">
+      <PetIdCardDisplay
+        data={data}
+        qrMode="emergency"
+        interactive
+        onDownload={() => toast.info('Descarga PDF próximamente')}
+        onShare={() => {
+          trackRefactor(RefactorEvent.petIdCardShared);
+          if (navigator.share) {
+            navigator
+              .share({
+                title: `Cédula de ${data.pet_name}`,
+                text: `Cédula digital de ${data.pet_name} en Paw Friend`,
+                url: `${window.location.origin}/qr/${data.card_number}`,
+              })
+              .catch(() => undefined);
+          } else {
+            navigator.clipboard.writeText(`${window.location.origin}/qr/${data.card_number}`);
+            toast.success('Link copiado al portapapeles');
+          }
+        }}
+      />
+      {/* Refactor Maestro Fase 2 §7.5 — Score de salud heuristico que ademas
+          es la base del deal con aseguradoras (B2B API risk_score endpoint).
+          Se renderiza solo si la mig 20260902100000 esta aplicada y la RPC
+          devuelve resultados (silent fail si no). */}
+      <PetRiskScoreCard petId={petId} />
+    </div>
   );
 }

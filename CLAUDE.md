@@ -1,7 +1,7 @@
 # Paw Friend -- Manual operativo para Claude Code
 
 > Este archivo es la fuente de verdad para cualquier agente o asistente IA que trabaje en este repositorio.
-> Actualizado: 2026-04-16.
+> Actualizado: 2026-04-27.
 
 ---
 
@@ -653,29 +653,37 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 
 ---
 
-## 12. Estado tecnico al cierre 2026-04-25 (post Fase 1)
+## 12. Estado tecnico al cierre 2026-04-27 (post Fase 1 + Fase 2 scaffolding)
 
 | Metrica | Valor |
 |---|---|
 | `npx tsc -b` | 0 errores |
-| `npm run lint` | 0 errores |
-| `npm run build` | Pasa (~50-70s) |
-| Migraciones | 170+ (incluye 4 SQLs Fase 1: nose_prints VECTOR(1024), pet_id_cards bucket, public_breed_stats, public_species_stats, adoption_followups) |
-| Edge functions | 33+ activas. Nuevas Fase 1: nose-print-embed, nose-print-match, generate-paw-passport, send-adoption-followups |
-| Rutas en App.tsx | 73+ paths (incluye /memoria/:petId, /nose-scan, /insights, /insights/:slug, /mis-adopciones, /mis-postulaciones) |
+| `npm run lint` | 0 errores (2 warnings react-refresh en PlanComparisonTable, no bloquean) |
+| `npm run build` | Pasa (~50-70s) + post-build pre-render de 19 rutas SPA |
+| `npm run test:ci` | 377/377 verde |
+| Migraciones | 175+ (5 SQLs Fase 2 scaffolding 2026-04-27: research_consent, pet_risk_score, pet_health_alerts, b2b_api_keys, vaccine_overdue_cascade) |
+| Edge functions | 34+ activas. Nueva Fase 2: `b2b-api` (auth via X-Pawfriend-Api-Key + rate limit per-key) |
+| Rutas en App.tsx | 73+ paths |
 | Premium B2C Flow | Vivo con idempotencia + rate limit |
 | Google Calendar | Vivo end-to-end |
 | Sentry | Integrado (@sentry/react 10.47.0) |
 | WhatsApp Cloud API | Codigo listo, pendiente verificacion Meta Business |
 | CRM Leads Vet | Vivo — AdminLeadsCRM + edge fn send-lead-outreach |
 | Booking System V2 | Availability rules, exceptions, audit trail, all_bookings_view |
+| SEO sitemap | public/sitemap.xml con 14 rutas estaticas + bloque INSIGHTS_DYNAMIC injectable en build-time |
 | **Trinidad del Corazon** (Refactor Maestro) | Pet ID Card v2 + Owner Audio Notes + Quick Actions Hub |
-| **Nose Print Biometrico** | DINOv2-large 1024 dims via HF Inference API. Threshold 0.55 cosine. pgvector HNSW. /nose-scan publico (gateado por flag NOSE_PRINT_PUBLIC_SCAN) |
+| **Nose Print Biometrico** | DINOv2-large 1024 dims via HF Inference API. Threshold 0.55 cosine. pgvector HNSW. /nose-scan publico (gateado por flag NOSE_PRINT_PUBLIC_SCAN). PAUSADO 2026-04-27 esperando proveedor |
 | **Paw Passport** | Edge fn `generate-paw-passport` PDF 8 paginas (tapa+datos+biometria+vacunas+antipara+medicos+contactos+validaciones) |
 | **Memorial viral** | Pagina /memoria/:petId con OG meta + share card 1080x1080 Canvas API |
 | **Refugios completos** | rescue_story + adoption_followups 30/90d trigger + cron edge fn |
-| **Insights SEO** | 3 tipos de slugs (breed/species/breed_rank) + index /insights. Threshold privacy >=50 pets |
+| **Insights SEO** | 3 tipos de slugs (breed/species/breed_rank) + index /insights. Threshold privacy >=50 pets. Sitemap incluye slugs publicos |
 | **Birthday share card** | Banner condicional Home ±14d + Canvas API descargable festiva |
+| **Admin observabilidad Fase 1** | AdminFase1Widget con KPIs (nose prints, memoriales, passports, follow-up rate, insights publicados) |
+| **Fase 2 §7.3 Pharma research consent** | profiles.anonymous_data_research_consent + paso 4 opcional en OnboardingQuickFlow + ResearchConsentNudge en /home + toggle en /profile |
+| **Fase 2 §7.5 + §8.4.5 Risk score** | RPC calculate_pet_risk_score(pet_id) MVP heuristico + PetRiskScoreCard visible en tab Identidad de la ficha |
+| **Fase 2 §2.8.3 Cascadas (ambient computing)** | pet_health_alerts + 2 cascadas activas: weight_loss_30d (trigger sync) + vaccine_overdue (RPC + cron). UI con CTAs especificos por tipo |
+| **Fase 2 §7.5 API B2B v1** | Edge fn b2b-api con X-Pawfriend-Api-Key + tablas b2b_api_keys/usage + 4 RPCs + AdminB2BApiKeys panel para crear/listar/revocar sin SQL |
+| **Fase 2 §7.2 Insurance scaffold** | InsuranceBanner componente listo en HomePetFocusV2, oculto behind EMBEDDED_INSURANCE=false hasta firmar partner |
 
 ---
 
@@ -711,12 +719,13 @@ Para tareas especializadas, invocar el subagente correspondiente. **13 agentes a
 
 ---
 
-## 15. Planes ejecutados (hasta 2026-04-25)
+## 15. Planes ejecutados (hasta 2026-04-27)
 
 | Plan | Estado | Cambios clave |
 |---|---|---|
 | **Refactor Maestro Fase 0 (2026-04-23)** | Aplicado | Trinidad del Corazon (Pet ID Card + Audio + Quick Actions), 4 tabs ficha clinica (Historia/Cuidados/Identidad/Mas), Memorial viral, Paw Points canonizado, sidebar colapsado, 13 feature flags |
 | **Refactor Maestro Fase 1 (2026-04-25)** | Aplicado | §6.2 Nose Print MVP con DINOv2-large 1024 dims (4 edge fns + componente captura + /nose-scan publico). §6.3 Paw Passport PDF 8 paginas. §6.5 SEO insights v2 con 3 tipos de slugs (breed/species/breed_rank) + /insights index. §6.6 Memorial share card 1080x1080 Canvas API + Birthday share card. §6.7 Refugios rescue_story + adoption_followups 30/90d trigger + cron edge fn |
+| **Refactor Maestro Fase 2 scaffolding (2026-04-27)** | Aplicado | §7.3 research consent (column profiles + dialog + step en onboarding + nudge en /home). §7.5 + §8.4.5 risk score (RPC + PetRiskScoreCard en ficha). §2.8.3 cascadas (pet_health_alerts + 2 tipos: weight_loss_30d trigger + vaccine_overdue cron). §7.5 API B2B v1 (edge fn b2b-api con auth via X-Pawfriend-Api-Key + tablas keys/usage + AdminB2BApiKeys panel). §7.2 InsuranceBanner (oculto behind EMBEDDED_INSURANCE=false hasta firmar partner). Nudge consent en /home. AdminFase1Widget con KPIs Fase 1. SEO sitemap completo (14 rutas + insights dinamicos). 27→2 lint a11y warnings |
 | **Refactor Adopcion 2026-04-24** | Aplicado | Bloque 1 (feed unificado /adoption + filtros + 'Me interesa'). Bloque 2 (procesos kanban /shelter/adopciones, timeline /mis-adopciones, onboarding shelter, follow-up automatico) |
 | **6 refactors UX coherence (2026-04-25)** | Aplicado | AddReminderDialog con presets one-tap, QuickActionsHub usa RegisterInterventionSheet, OnboardingQuickFlow con cards especie, DejarReseña stars gigantes, Reminders FAB mobile, MyBookings con BookServiceSheet |
 | **Brand v2 polish (2026-04-25)** | Aplicado | 4 empty states ilustrados (no_appointments/no_notifications/no_conversations/no_paw_cards), hero `/paw-companys`, EmptyState con prop `illustration` |
