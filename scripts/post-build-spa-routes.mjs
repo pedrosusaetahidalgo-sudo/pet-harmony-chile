@@ -68,6 +68,8 @@ const PUBLIC_ROUTES = [
   'aplicar',
   // Refactor Maestro Fase 1 §6.5 — index SEO de insights
   'insights',
+  // Refactor Maestro Fase 3 §2.9 — index publico de correlations
+  'insights-pro',
 ];
 
 let created = 0;

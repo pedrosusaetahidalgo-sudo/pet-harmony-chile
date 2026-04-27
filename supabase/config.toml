@@ -218,3 +218,9 @@ verify_jwt = false
 # para auth. Idempotente via email_sent_at.
 [functions.notify-health-alerts]
 verify_jwt = false
+
+# Refactor Maestro §2.8.3 — Pipeline unificado de cascadas.
+# Reemplaza 6 crones separados (5 RPCs + notify-emails) con 1 cron unico.
+# verify_jwt = false: corre desde pg_cron sin user.
+[functions.run-all-cascades]
+verify_jwt = false

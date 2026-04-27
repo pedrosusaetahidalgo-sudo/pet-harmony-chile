@@ -51,6 +51,27 @@
    - [supabase/migrations/20260903400000_pet_bootstrap_enrichment.sql](../supabase/migrations/20260903400000_pet_bootstrap_enrichment.sql) — extiende trigger create_welcome_timeline_event con eventos derivados: Nacimiento (si birth_date), Microchip (si chip presente, ley 21.020), Esterilizada (si neutered=true). Timeline arranca con hasta 4 eventos.
    - [supabase/migrations/20260903500000_memorial_anniversary.sql](../supabase/migrations/20260903500000_memorial_anniversary.sql) — RPC `detect_memorial_anniversary_alerts()` + extiende CHECK constraint con tipo `memorial_anniversary`. Recordatorio anual del fallecimiento si memorial_remembrance_enabled=TRUE. §14.bis.4.b "memorial day push".
    - [supabase/migrations/20260903600000_ficha_complete_milestone.sql](../supabase/migrations/20260903600000_ficha_complete_milestone.sql) — RPC `claim_ficha_complete_milestone(pet_id)` idempotente DB-side. Otorga 50 paw_points + crea evento timeline cuando pet cruza North Star §14.bis.6 (>=10 eventos / >=3 cats / Pet ID Card). Frontend lo llama desde `PetCompletionProgress` cuando detecta is_complete=true.
+   - [supabase/migrations/20260903700000_partner_integrations.sql](../supabase/migrations/20260903700000_partner_integrations.sql) — scaffolding §7.4 retail + §7.2 insurance. Tablas `partner_integrations` (config deal) + `partner_events` (referrals/scans/fulfillment) + RPC `record_partner_event()` + vista `partner_mrr_summary`. Cuando aparezca primer partner Pedro inserta row + emite events. RLS admin only.
+
+   Y **deploy edge fn nueva**:
+   ```bash
+   npx supabase functions deploy run-all-cascades
+   ```
+   Reemplaza 6 crones separados con 1 cron unico:
+   ```sql
+   SELECT cron.schedule(
+     'run-all-cascades-daily',
+     '0 13 * * *',  -- 9am Chile
+     $$ SELECT net.http_post(
+       url := 'https://gwailbjlvevkhwcrovfd.supabase.co/functions/v1/run-all-cascades',
+       headers := jsonb_build_object(
+         'Authorization', 'Bearer ' || (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'service_role_key' LIMIT 1),
+         'Content-Type', 'application/json'
+       )
+     ); $$
+   );
+   ```
+   Ya no necesitas los crones individuales `detect-vaccine-overdue`, `detect-inactive-users`, `detect-birthday-window`, `detect-antiparasitic-overdue`, `detect-memorial-anniversary`, `notify-health-alerts` — todos los corre `run-all-cascades` en serie.
 
    Programar crones diarios:
      ```sql

@@ -106,6 +106,7 @@ const NoseScan = lazy(() => import('./pages/NoseScan'));
 const InsightsLanding = lazy(() => import('./pages/InsightsLanding'));
 const InsightsIndex = lazy(() => import('./pages/InsightsIndex'));
 const CorrelationLanding = lazy(() => import('./pages/CorrelationLanding'));
+const InsightsProIndex = lazy(() => import('./pages/InsightsProIndex'));
 const MisPostulaciones = lazy(() => import('./pages/MisPostulaciones'));
 const PawPartners = lazy(() => import('./pages/PawPartners'));
 const PostAdoptionCheckin = lazy(() => import('./pages/PostAdoptionCheckin'));
@@ -1038,9 +1039,10 @@ const App = () => (
                 <Route path="/insights" element={<InsightsIndex />} />
                 <Route path="/insights/:slug" element={<InsightsLanding />} />
 
-                {/* Refactor Maestro Fase 3 §2.9 — Landing publica para
+                {/* Refactor Maestro Fase 3 §2.9 — Index + landing publica para
                     correlation_definitions con status=published. Threshold
                     k>=50 + consent opt-in inline en RPC. */}
+                <Route path="/insights-pro" element={<InsightsProIndex />} />
                 <Route path="/insights-pro/:slug" element={<CorrelationLanding />} />
 
                 {/* Check-in post-adopcion (link desde email del cron) */}
