@@ -14,6 +14,7 @@ import AdminMRRChart from '@/components/admin/AdminMRRChart';
 import AdminComunaGap from '@/components/admin/AdminComunaGap';
 import AdminAdoptionFunnel from '@/components/admin/AdminAdoptionFunnel';
 import AdminFase1Widget from '@/components/admin/AdminFase1Widget';
+import { AdminRiskMonitor } from '@/components/admin/AdminRiskMonitor';
 import AdminPulsoDiario from '@/components/admin/AdminPulsoDiario';
 import { BookingPulseWidget } from '@/components/admin/BookingPulseWidget';
 import { NotificationDeliveryWidget } from '@/components/admin/NotificationDeliveryWidget';
@@ -710,6 +711,9 @@ export default function AdminDashboard() {
   // ── Render ─────────────────────────────────────────────
   return (
     <div className="space-y-6">
+      {/* ── Risk monitor §11: solo se renderiza si hay signals activos ── */}
+      <AdminRiskMonitor />
+
       {/* ── North Star Plan 90d (INIT-03): NSM + 5 KPIs top ── */}
       <AdminNorthStarHeader />
 

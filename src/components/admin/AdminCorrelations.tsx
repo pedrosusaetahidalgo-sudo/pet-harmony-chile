@@ -37,7 +37,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { TrendingUp, Edit2 } from 'lucide-react';
+import { TrendingUp, Edit2, Play } from 'lucide-react';
 import { toast } from 'sonner';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -110,6 +110,43 @@ export default function AdminCorrelations() {
       toast.success('Correlacion actualizada');
       queryClient.invalidateQueries({ queryKey: ['admin-correlations'] });
       setEditing(null);
+    },
+    onError: (err) => {
+      toast.error(`Error: ${err instanceof Error ? err.message : 'desconocido'}`);
+    },
+  });
+
+  // Mapping slug → RPC compute. Solo las correlations con compute RPC
+  // implementado pueden recomputarse. Las otras 4 del seed esperan features
+  // que no existen aun (GPS, food_type, surgery outcomes).
+  const COMPUTE_RPC_BY_SLUG: Record<string, string> = {
+    'razas-mas-longevas-chile-vs-mundo': 'compute_breed_lifespan_correlation',
+    'edad-esterilizacion-por-comuna-chile': 'compute_neuter_age_by_comuna_correlation',
+  };
+
+  const compute = useMutation({
+    mutationFn: async (slug: string) => {
+      const rpcName = COMPUTE_RPC_BY_SLUG[slug];
+      if (!rpcName) {
+        throw new Error('Esta correlacion no tiene compute RPC implementada todavia');
+      }
+      const { data, error } = await sb.rpc(rpcName);
+      if (error) throw error;
+      const row = (
+        data as Array<{
+          buckets_inserted: number;
+          buckets_below_threshold: number;
+          total_pets_scanned: number;
+        }>
+      )[0];
+      return row;
+    },
+    onSuccess: (result) => {
+      toast.success(
+        `Computado: ${result.buckets_inserted} buckets publicables, ${result.buckets_below_threshold} debajo de threshold (n<50)`,
+        { duration: 5000 }
+      );
+      queryClient.invalidateQueries({ queryKey: ['admin-correlations'] });
     },
     onError: (err) => {
       toast.error(`Error: ${err instanceof Error ? err.message : 'desconocido'}`);
@@ -205,14 +242,23 @@ export default function AdminCorrelations() {
                     </p>
                   )}
                 </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setEditing(row)}
-                  className="shrink-0"
-                >
-                  <Edit2 className="h-3.5 w-3.5" />
-                </Button>
+                <div className="flex flex-col gap-1 shrink-0">
+                  {COMPUTE_RPC_BY_SLUG[row.slug] && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => compute.mutate(row.slug)}
+                      disabled={compute.isPending}
+                      title="Recomputar observations desde data real"
+                      className="text-purple-600 hover:text-purple-700 hover:bg-purple-50"
+                    >
+                      <Play className="h-3.5 w-3.5" />
+                    </Button>
+                  )}
+                  <Button variant="ghost" size="sm" onClick={() => setEditing(row)}>
+                    <Edit2 className="h-3.5 w-3.5" />
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}

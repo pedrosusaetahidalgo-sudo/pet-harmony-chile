@@ -68,6 +68,7 @@ import AdminTeam from '@/components/admin/AdminTeam';
 import AdminB2BApiKeys from '@/components/admin/AdminB2BApiKeys';
 import AdminCorrelations from '@/components/admin/AdminCorrelations';
 import AdminMasterKPIs from '@/components/admin/AdminMasterKPIs';
+import AdminProjectHealth from '@/components/admin/AdminProjectHealth';
 import AdminErrorLog from '@/components/admin/AdminErrorLog';
 import AdminPendingPets from '@/components/admin/AdminPendingPets';
 import AdminGhostUsers from '@/components/admin/AdminGhostUsers';
@@ -324,6 +325,7 @@ function SystemSection({ sub: propSub, onSubChange }: SubSectionProps) {
           <TabsTrigger value="b2b-keys">API B2B</TabsTrigger>
           <TabsTrigger value="correlations">Correlations</TabsTrigger>
           <TabsTrigger value="master-kpis">Master KPIs</TabsTrigger>
+          <TabsTrigger value="project-health">Health $</TabsTrigger>
         </TabsList>
         <TabsContent value="config">
           <AdminSettings />
@@ -369,6 +371,9 @@ function SystemSection({ sub: propSub, onSubChange }: SubSectionProps) {
         </TabsContent>
         <TabsContent value="master-kpis">
           <AdminMasterKPIs />
+        </TabsContent>
+        <TabsContent value="project-health">
+          <AdminProjectHealth />
         </TabsContent>
       </Tabs>
     </div>
