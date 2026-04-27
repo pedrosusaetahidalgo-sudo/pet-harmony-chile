@@ -13,6 +13,7 @@ import AdminActivationFunnelWidget from '@/components/admin/AdminActivationFunne
 import AdminMRRChart from '@/components/admin/AdminMRRChart';
 import AdminComunaGap from '@/components/admin/AdminComunaGap';
 import AdminAdoptionFunnel from '@/components/admin/AdminAdoptionFunnel';
+import AdminFase1Widget from '@/components/admin/AdminFase1Widget';
 import AdminPulsoDiario from '@/components/admin/AdminPulsoDiario';
 import { BookingPulseWidget } from '@/components/admin/BookingPulseWidget';
 import { NotificationDeliveryWidget } from '@/components/admin/NotificationDeliveryWidget';
@@ -726,6 +727,9 @@ export default function AdminDashboard() {
 
       {/* ── Embudo adopción: shelter onboarding → transfer ── */}
       <AdminAdoptionFunnel />
+
+      {/* ── Fase 1 Refactor Maestro: nose print, memorial, passport, etc ── */}
+      <AdminFase1Widget />
 
       {/* ── Pulso Diario: monitor auto-pilotado (audit-cron-daily) ── */}
       <AdminPulsoDiario />
