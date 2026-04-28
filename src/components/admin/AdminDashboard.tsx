@@ -36,10 +36,6 @@ import {
   Star,
   Activity,
   ShieldAlert,
-  Server,
-  Database,
-  Zap,
-  CheckCircle,
   Heart,
 } from '@/lib/icons';
 import {
@@ -58,7 +54,7 @@ import {
   ResponsiveContainer,
   Legend,
 } from 'recharts';
-import { format, subDays, subMonths } from 'date-fns';
+import { format, subDays } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 // ── Helpers ──────────────────────────────────────────────
@@ -153,7 +149,6 @@ export default function AdminDashboard() {
   const weekAgo = subDays(now, 7);
   const twoWeeksAgo = subDays(now, 14);
   const monthAgo = subDays(now, 30);
-  const twoMonthsAgo = subMonths(now, 2);
 
   // ── KPI: Active users (7d) with sparkline + delta ──
   const { data: activeUsersData, isLoading: l1 } = useQuery({

@@ -8,7 +8,6 @@ import {
   Share2,
   MessageSquare,
   Calendar,
-  Loader2,
   Clock,
   Phone,
   Award,
@@ -21,8 +20,6 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';

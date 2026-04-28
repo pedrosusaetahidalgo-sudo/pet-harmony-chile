@@ -127,9 +127,11 @@ export function AddMedicalRecord({
   const { data: veterinarias } = useQuery({
     queryKey: ['places-veterinarias'],
     queryFn: async () => {
+      // Sprint 1 P1 PERF-003: select narrow. Solo id/name/address consumido
+      // por el SelectItem del form.
       const { data, error } = await supabase
         .from('places')
-        .select('*')
+        .select('id, name, address')
         .eq('place_type', 'veterinaria');
 
       if (error) throw error;

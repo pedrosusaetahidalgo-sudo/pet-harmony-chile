@@ -9,7 +9,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
@@ -30,13 +29,11 @@ import {
   Search,
   Phone,
   Mail,
-  ExternalLink,
   Instagram,
   MapPin,
   Star,
   Send,
   CheckCircle2,
-  XCircle,
   Clock,
   MessageSquare,
   Users,
@@ -63,8 +60,8 @@ import {
 } from '@/hooks/useLeadsVets';
 // E.3 auditoria top-tier 2026-04-21: constantes + sub-componentes
 // extraidos a subfolder ./leadsCRM/ para reducir el god component (-244L).
-import { ESTADOS, REGISTRO_VET_URL, TEMPLATES } from './leadsCRM/constants';
-import { StatCard, PrioridadBadge, EstadoBadge, LeadRow } from './leadsCRM/components';
+import { ESTADOS, TEMPLATES } from './leadsCRM/constants';
+import { StatCard, PrioridadBadge, LeadRow } from './leadsCRM/components';
 
 // ── Wrapper con tabs ────────────────────────────────────
 
