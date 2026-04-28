@@ -692,3 +692,54 @@ La duplicación entre los dos Dialogs es mayor (~150 LoC entre handlers, post-su
 **Test files nuevos (5)**: 2 specs E2E + 3 unit. **Test count delta**: +30 tests unit (de 28 originales a 58, ~2× cobertura).
 
 — Sprint 0 + Sprint 1 (8 batches) cerrados, 2026-04-28.
+
+---
+
+## 🧹 Sprint 1 — noveno batch ejecutado (cleanup imports muertos top 10)
+
+| ID | Resumen | Archivos |
+|---|---|---|
+| **ARCH-002 fase 3-4** | Limpieza manual de imports/vars muertos en top 10 archivos restantes. AdminAnalytics, AdminBookingsPanel, useProAnalytics, useServiceProviders, Auth (bug colateral: `description` calculada en catch nunca pasada a toast.error → fixeado), Community, MedicalShare, MyBookings, OnboardingVetMinimal, VetClinicalTimeline, AddMedicalRecord. **268 → 198 errores TS6133 (-70, -26%)**. Cumulativo desde batch 8: -25% extra. Falta wire-up de `eslint-plugin-unused-imports` en eslint.config.js (acción manual #16). | 10 archivos |
+| **PERF-003 narrow** | `ChatConversation` consolidado: 3 casts narrow→full row con `as unknown as Parameters<typeof setX>[0]` (state global types vs narrow select). | 1 archivo |
+
+— Sprint 1 batch 9 cerrado y pusheado (commit `611b2019`).
+
+---
+
+## 🧹 Sprint 1 — décimo batch (Web Vitals + PERF-003 amplio + 30 tests unit)
+
+| ID | Resumen | Archivos |
+|---|---|---|
+| **PERF (nuevo)** | **Web Vitals nativos**: [src/lib/webVitals.ts](../src/lib/webVitals.ts) ~150 LoC con `PerformanceObserver` Web API (sin package `web-vitals`). Trackea LCP/CLS/INP/TTFB con thresholds web.dev/vitals oficiales (good/needs-improvement/poor) y los reenvía a `track({ event: 'web_vital' })` → PostHog. Llamado 1x desde `main.tsx` post-render. | 2 archivos (1 nuevo) |
+| **PERF-003 hot path** | 5 selects narrowed: `useNotifications` (7 cols), **`useDirectoryVets` list view (16 cols vs 40+, win mayor: 12 rows × pagina × ~5KB/row)**, `useAvailableSlots` (rules + exceptions), `useMedicalDocuments` (13 cols), `useRoutines` (pet_routines + routine_completions). | 5 archivos |
+| **Tests unit (+30)** | [webVitals.test.ts](../src/lib/__tests__/webVitals.test.ts) (12 tests rating thresholds) + [analytics.test.ts](../src/lib/__tests__/analytics.test.ts) (18 tests `scrubTokenizedUrl` privacy + `normalizeAnalyticsPath`). Suite total: **423 → 453 (+30, todo verde)**. | 2 test files |
+
+### Verificación post-batch 10
+
+- `npx tsc -b` → **0 errores**.
+- `npm run lint` → **0 errores** (3 warnings legacy preexistentes).
+- `npx vitest run` → **453/453 tests verde** (33 test files).
+
+### 🔢 Conteo final del día (10 batches)
+
+**51 hallazgos cerrados en código** (11 P0 + 40 P1/P2):
+
+| Categoría | Items |
+|---|---|
+| Sprint 0 P0 | 11 |
+| Sprint 1 batch 1 | 7 |
+| Sprint 1 batch 2 | 7 |
+| Sprint 1 batch 3 | 4 |
+| Sprint 1 batch 4 cleanup | 3 |
+| Sprint 1 batch 5 refinement | 3 |
+| Sprint 1 batch 6 deep cleanup | 4 |
+| Sprint 1 batch 7 DRY | 1 |
+| Sprint 1 batch 8 deep + tests | 3 |
+| Sprint 1 batch 9 cleanup top 10 | 3 |
+| Sprint 1 batch 10 Web Vitals + PERF-003 + tests | 5 |
+
+**Source files nuevos del día (9)**: `toast.ts`, `errors.ts`, `cron-auth.ts`, `wizard-footer.tsx`, `useRoleActivation.ts`, **`webVitals.ts`**, `ExportarMisDatos.tsx`, `happy-path-owner.spec.ts`, `rls-cross-user.spec.ts`.
+
+**Test files nuevos (7)**: 2 E2E + 5 unit. Cobertura unit: **28 → 453 tests** (~16x).
+
+— Sprint 0 + Sprint 1 (10 batches) cerrados, 2026-04-28.
