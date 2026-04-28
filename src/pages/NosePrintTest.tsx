@@ -39,6 +39,7 @@ import { Camera, Check, Heart, AlertCircle, RefreshCw, Upload } from '@/lib/icon
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { errorMessageForUser } from '@/lib/errors';
 
 type Phase =
   | 'form'
@@ -281,7 +282,7 @@ export default function NosePrintTest() {
       setPhase('done');
       toast.success('¡Gracias por tu contribución!');
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error desconocido';
+      const message = errorMessageForUser(err);
       setError(message);
       setPhase('review');
     }
@@ -327,7 +328,7 @@ export default function NosePrintTest() {
           {phase === 'form' && (
             <Card>
               <CardHeader>
-                <CardTitle>Contanos sobre vos y tu mascota</CardTitle>
+                <CardTitle>Cuéntanos sobre ti y tu mascota</CardTitle>
                 <p className="text-xs text-muted-foreground">
                   Solo para investigación. No compartimos tus datos.
                 </p>
@@ -527,10 +528,10 @@ export default function NosePrintTest() {
           {phase === 'review' && (
             <Card>
               <CardHeader>
-                <CardTitle>Revisá tus capturas</CardTitle>
+                <CardTitle>Revisa tus capturas</CardTitle>
                 <p className="text-xs text-muted-foreground">
                   {frames.length} fotos capturadas. Si están borrosas o no se ve bien la nariz,
-                  podés repetir.
+                  puedes repetir.
                 </p>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -597,8 +598,8 @@ export default function NosePrintTest() {
                 <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
                   <Heart className="h-6 w-6 mx-auto text-purple-600 mb-2" />
                   <p className="text-xs text-purple-900">
-                    Paw Friend busca reemplazar el chip implantado por biometría no invasiva. Vos
-                    acabás de contribuir al dataset chileno más grande de narices de mascotas.
+                    Paw Friend busca reemplazar el chip implantado por biometría no invasiva. Tú
+                    acabas de contribuir al dataset chileno más grande de narices de mascotas.
                   </p>
                 </div>
                 <Button variant="outline" className="w-full" onClick={restart}>

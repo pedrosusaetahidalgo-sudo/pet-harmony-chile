@@ -77,34 +77,36 @@ const ChatConversation = () => {
     try {
       setLoading(true);
 
-      // Load conversation
+      // Sprint 1 P1 PERF-003: select narrow.
       const { data: convData, error: convError } = await supabase
         .from('conversations')
-        .select('*')
+        .select('id, participant1_id, participant2_id, created_at, last_message_at')
         .eq('id', conversationId)
         .maybeSingle();
 
       if (convError) throw convError;
 
-      setConversation(convData);
+      // Cast intencional: narrow query devuelve subset; la UI solo lee campos
+      // del select. Sprint 1 P1 PERF-003.
+      setConversation(convData as unknown as Parameters<typeof setConversation>[0]);
 
       // Get other user ID
       const otherUserId =
         convData.participant1_id === user?.id ? convData.participant2_id : convData.participant1_id;
 
-      // Load other user profile
+      // Load other user profile (Sprint 1 P1 PERF-003: narrow).
       const { data: profileData } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, display_name, avatar_url')
         .eq('id', otherUserId)
         .maybeSingle();
 
-      setOtherUser(profileData);
+      setOtherUser(profileData as unknown as Parameters<typeof setOtherUser>[0]);
 
-      // Load messages
+      // Load messages (Sprint 1 P1 PERF-003: narrow).
       const { data: messagesData, error: messagesError } = await supabase
         .from('messages')
-        .select('*')
+        .select('id, conversation_id, sender_id, content, read_at, created_at')
         .eq('conversation_id', conversationId)
         .order('created_at', { ascending: true });
 
@@ -114,7 +116,9 @@ const ChatConversation = () => {
       markAsRead();
     } catch (error) {
       logger.error('Error loading conversation:', error);
-      toast.error('Algo salió mal', { description: 'No se pudo cargar la conversación' });
+      toast.error('No pudimos cargar la conversación', {
+        description: 'Inténtalo de nuevo en unos segundos.',
+      });
       navigate('/chat');
     } finally {
       setLoading(false);
@@ -148,7 +152,9 @@ const ChatConversation = () => {
       inputRef.current?.focus();
     } catch (error) {
       logger.error('Error sending message:', error);
-      toast.error('Algo salió mal', { description: 'No se pudo enviar el mensaje' });
+      toast.error('No pudimos enviar el mensaje', {
+        description: 'Inténtalo de nuevo en unos segundos.',
+      });
     }
   };
 

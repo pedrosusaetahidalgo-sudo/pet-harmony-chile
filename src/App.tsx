@@ -46,6 +46,7 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const DeleteAccount = lazy(() => import('./pages/DeleteAccount'));
+const ExportarMisDatos = lazy(() => import('./pages/ExportarMisDatos'));
 const UserProfile = lazy(() => import('./pages/UserProfile'));
 // Checkout eliminado en pivot médico
 const PaymentResult = lazy(() => import('./pages/PaymentResult'));
@@ -1173,6 +1174,18 @@ const App = () => (
                 <Route path="/blog" element={<BlogIndex />} />
                 <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route path="/delete-account" element={<DeleteAccount />} />
+                {/* Sprint 1 P1 COMP-002: derecho ARCO de portabilidad. Pagina protegida
+                    que llama a RPC export_user_data y entrega JSON descargable. */}
+                <Route
+                  path="/profile/exportar-mis-datos"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <ExportarMisDatos />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>

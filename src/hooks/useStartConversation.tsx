@@ -55,7 +55,9 @@ export const useStartConversation = () => {
       navigate(`/chat/${conv.id}`);
     } catch (error) {
       logger.error('Error starting conversation:', error);
-      toast.error('Algo salió mal', { description: 'No se pudo iniciar la conversación' });
+      toast.error('No pudimos iniciar la conversación', {
+        description: 'Inténtalo de nuevo en unos segundos.',
+      });
     } finally {
       setLoading(false);
     }

@@ -14,14 +14,36 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useMyBookingsV2 } from '@/hooks/useMyBookingsV2';
+import { useCancelBooking } from '@/hooks/useBookingMutations';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { Label } from '@/components/ui/label';
 import { format, startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
 import { formatBookingDate, formatTimeRange } from '@/lib/format';
-import { Calendar, CalendarDays, CheckCircle2, Inbox, Star, Plus, Stethoscope } from '@/lib/icons';
+import {
+  Calendar,
+  CalendarDays,
+  CheckCircle2,
+  Inbox,
+  Star,
+  Plus,
+  Stethoscope,
+  X,
+} from '@/lib/icons';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
 import { FEATURE_FLAGS } from '@/lib/featureFlags';
 import { buildIcs, downloadIcs, bookingToIcsEvent } from '@/lib/calendar/ics';
 import { BookServiceSheet } from '@/components/bookings/BookServiceSheet';
+import type { BookingType, BookingStatus } from '@/lib/bookingStateMachine';
 
 export default function MyBookings() {
   const { user } = useAuth();
@@ -31,6 +53,13 @@ export default function MyBookings() {
   const [reviewComment, setReviewComment] = useState('');
   const [submittingReview, setSubmittingReview] = useState(false);
   const [bookSheetOpen, setBookSheetOpen] = useState(false);
+
+  // Sprint 0 P0 FEAT-013: cancelar booking. La RPC + state machine + optimistic
+  // updates + Google Calendar cleanup ya viven en useCancelBooking; faltaba el
+  // entry point en la UI del dueno.
+  const [cancelBooking, setCancelBooking] = useState<any>(null);
+  const [cancelReason, setCancelReason] = useState('');
+  const cancelMutation = useCancelBooking();
 
   const handleSubmitReview = async () => {
     if (!user || !reviewBooking || reviewRating === 0) return;
@@ -431,6 +460,25 @@ export default function MyBookings() {
                               Reseña
                             </Button>
                           )}
+                          {/* Sprint 0 P0 FEAT-013: boton cancelar.
+                              Visible solo si la reserva es futura y no esta en
+                              estado terminal (cancelado / completado / no_show).
+                              La RPC valida grace period 12h server-side. */}
+                          {!isPast &&
+                            displayStatus !== 'cancelado' &&
+                            displayStatus !== 'completado' &&
+                            displayStatus !== 'no_show' && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50 h-7 px-2"
+                                onClick={() => setCancelBooking(booking)}
+                                disabled={cancelMutation.isPending}
+                              >
+                                <X className="h-3 w-3 mr-1" />
+                                Cancelar
+                              </Button>
+                            )}
                         </div>
                       </div>
                     </CardContent>
@@ -504,6 +552,97 @@ export default function MyBookings() {
 
         {/* Bottom sheet con 4 cards de servicios — punto de entrada unico */}
         <BookServiceSheet open={bookSheetOpen} onOpenChange={setBookSheetOpen} />
+
+        {/* Sprint 0 P0 FEAT-013: dialog de cancelacion.
+            La RPC server-side valida grace 12h y, fuera del plazo, exige razon
+            (mensaje user-friendly desde useCancelBooking). */}
+        <AlertDialog
+          open={!!cancelBooking}
+          onOpenChange={(open) => {
+            if (!open) {
+              setCancelBooking(null);
+              setCancelReason('');
+            }
+          }}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>¿Cancelar esta reserva?</AlertDialogTitle>
+              <AlertDialogDescription>
+                {cancelBooking?.service_slots?.slot_date && (
+                  <>
+                    {formatBookingDate(cancelBooking.service_slots.slot_date)}
+                    {cancelBooking.service_slots.start_time && (
+                      <>
+                        {' · '}
+                        {formatTimeRange(
+                          cancelBooking.service_slots.start_time,
+                          cancelBooking.service_slots.end_time
+                        )}
+                      </>
+                    )}
+                    {' con '}
+                    {cancelBooking.provider?.profiles?.display_name ?? 'el proveedor'}.
+                    <br />
+                  </>
+                )}
+                Si faltan menos de 12 horas, te pediremos un motivo.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="space-y-2">
+              <Label htmlFor="cancel-reason" className="text-sm">
+                Motivo (opcional dentro del plazo, requerido fuera)
+              </Label>
+              <Textarea
+                id="cancel-reason"
+                value={cancelReason}
+                onChange={(e) => setCancelReason(e.target.value)}
+                placeholder="Ej: surgió un imprevisto, mi mascota se siente mejor, etc."
+                rows={3}
+                maxLength={300}
+              />
+            </div>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={cancelMutation.isPending}>Volver</AlertDialogCancel>
+              <AlertDialogAction
+                disabled={cancelMutation.isPending}
+                className="bg-red-600 hover:bg-red-700"
+                onClick={() => {
+                  if (!cancelBooking) return;
+                  // V2 bookings traen booking_type explicito; V1 son legacy
+                  // bookings table → asumimos 'vet' (caso 99% en MyBookings).
+                  const bookingType: BookingType =
+                    (cancelBooking.booking_type as BookingType | undefined) ?? 'vet';
+                  // currentStatus: V2 usa .status, V1 usa payment_status que
+                  // mapea distinto. Si payment_status es 'pendiente' tratamos
+                  // como 'pendiente'; si es 'paid' como 'confirmado'.
+                  const rawStatus =
+                    cancelBooking._source === 'v2'
+                      ? cancelBooking.status
+                      : cancelBooking.payment_status === 'paid'
+                        ? 'confirmado'
+                        : 'pendiente';
+                  cancelMutation.mutate(
+                    {
+                      bookingId: cancelBooking.id,
+                      bookingType,
+                      currentStatus: rawStatus as BookingStatus,
+                      reason: cancelReason.trim() || undefined,
+                    },
+                    {
+                      onSettled: () => {
+                        setCancelBooking(null);
+                        setCancelReason('');
+                      },
+                    }
+                  );
+                }}
+              >
+                {cancelMutation.isPending ? 'Cancelando...' : 'Sí, cancelar'}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </>
   );

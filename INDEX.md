@@ -30,7 +30,7 @@
 | [audits/FEEDBACK_VET_SOFIA_2026_04_13.md](audits/FEEDBACK_VET_SOFIA_2026_04_13.md) | Feedback de vet beta tester (Sofia) | Despues de cada sesion con Sofia |
 | [audits/COMPETENCIA_2026_04_08.md](audits/COMPETENCIA_2026_04_08.md) | Analisis competitivo Chile | Cada 3-6 meses o cuando aparezca competidor nuevo |
 | [audits/CROSS_PLATFORM_COMPATIBILITY.md](audits/CROSS_PLATFORM_COMPATIBILITY.md) | Compatibilidad multiplataforma (iOS, Android, Web, Chrome) | Cada cambio de CSS/JS moderno o API de browser |
-| [docs-raiz/planes/SUGERENCIAS_COMPLETAS_2026_04_16.md](docs-raiz/planes/SUGERENCIAS_COMPLETAS_2026_04_16.md) | 49 sugerencias en 10 categorias (seguridad, perf, UX, DB, testing, etc.) | Cada sesion de auditoria |
+| [_archive/docs-raiz-snapshots-2026-04/SUGERENCIAS_COMPLETAS_2026_04_16.md](_archive/docs-raiz-snapshots-2026-04/SUGERENCIAS_COMPLETAS_2026_04_16.md) | (archivado 2026-04-28) Snapshot de 49 sugerencias 04-16, superado por AUDITORIA_PAWFRIEND_2026-04-27 | Histórico |
 
 ---
 
@@ -125,7 +125,7 @@ Resumen de items activos:
 | [docs-raiz/planes/REFACTOR_MAESTRO_2026_04_23.md](docs-raiz/planes/REFACTOR_MAESTRO_2026_04_23.md) | Plan maestro 2026-04-23: 3 fases (Fase 0 unificar eje 0-30d / Fase 1 nose print + paw passport 30-90d / Fase 2 monetización seguros+pharma+retail). 2.438 lineas. **FUENTE DE VERDAD** del refactor en curso | **Fase 0 ✅, Fase 1 §6 ✅, Fase 2 scaffolding ✅, Fase 3 §2.9 ✅, §14.bis acciones ✅ (al 2026-04-27)**. 14 migraciones aplicadas, 35+ edge fns, 6 admin paneles nuevos (Fase 1 KPIs, B2B keys, Correlations, Master KPIs, Project Health, Risk Monitor). Pendiente Pedro: rotar APIs + Vault + 7 crones pg_cron + test 4 mascotas DINOv2 nose-print. Ver [_pending/MANUAL_ACTIONS_PENDING_FASE_0.md](_pending/MANUAL_ACTIONS_PENDING_FASE_0.md) |
 | [_pending/AUDITORIA_FEATURES_2026_04_27.md](_pending/AUDITORIA_FEATURES_2026_04_27.md) | Ejecucion §2.10 matriz de evaluacion: 9 pilares activos / 5 refactorizadas / 12 escondidas / 7 Fase 2 dormidas. 6 acciones derivadas | Activo — 1 accion (PRO_ANALYTICS gate) ya ejecutada 2026-04-27 |
 | [docs-raiz/B2B_API_V1.md](docs-raiz/B2B_API_V1.md) | Documentacion del API B2B v1 (auth via X-Pawfriend-Api-Key + 4 endpoints + 3 tiers) | Listo, esperando primer deal |
-| [docs-raiz/planes/REFACTOR_ADOPCION_2026_04_24.md](docs-raiz/planes/REFACTOR_ADOPCION_2026_04_24.md) | Sub-plan A+B+C+D+E flujo adopcion: feed unificado + filtros + boton "Me interesa" + procesos kanban + onboarding shelter + rescue_story + follow-up 30/90d | ✅ Ejecutado 100% (Bloque 1+2 + Fase 1 §6.7 con followups). Flags `ADOPTION_UNIFIED_FEED` y `ADOPTION_PROCESSES_V1` activos. |
+| [_archive/docs-raiz-snapshots-2026-04/REFACTOR_ADOPCION_2026_04_24.md](_archive/docs-raiz-snapshots-2026-04/REFACTOR_ADOPCION_2026_04_24.md) | (archivado 2026-04-28) Sub-plan A+B+C+D+E flujo adopción ya 100% ejecutado | Histórico — ver flags `ADOPTION_UNIFIED_FEED` y `ADOPTION_PROCESSES_V1` |
 | [docs-raiz/planes/PRODUCT_SYSTEM_COHERENCE_MASTER_PLAN.md](docs-raiz/planes/PRODUCT_SYSTEM_COHERENCE_MASTER_PLAN.md) | Plan maestro 2026-04-21: coherencia booking + preventive care + navegacion + adopciones + wiring + Beta Labs. 43 secciones + 15 apendices, evidencia linea por linea | Ejecutado 100% (Dia 1 + Dia 2 + Fase Final + Fase 6 archivados en `_archive/`) |
 | [docs-raiz/planes/BOOKING_SYSTEM_MASTER_PLAN.md](docs-raiz/planes/BOOKING_SYSTEM_MASTER_PLAN.md) | Plan maestro booking 2026-04-21: 16 brechas. P0 (B2, B3, B8) ejecutados. B5-B16 (P1/P2) pendientes | Activo — P0 ejecutados, P1/P2 pendientes |
 | [docs-raiz/planes/DOCUMENTS_AND_EMAILS_REDESIGN_MASTER_PLAN.md](docs-raiz/planes/DOCUMENTS_AND_EMAILS_REDESIGN_MASTER_PLAN.md) | Rediseno documental y emails: Fase 1 ejecutada (fundacion + 5 templates). Fases 2-4 pendientes | Activo — Fase 1 completa |
@@ -165,7 +165,7 @@ Resumen de items activos:
 | [docs-raiz/pitch/PITCH_DECK.md](docs-raiz/pitch/PITCH_DECK.md) | 13 slides narrativos originales con notas fundador | Fuente narrativa original |
 | [docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md](docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md) | Output 2 meses vs equipo expertos: 320 hrs = ~4.800 hrs = USD 720K-1,44M | Evidencia velocidad/eficiencia |
 | [docs-raiz/pitch/CONSOLIDADO_2026_04_18.md](docs-raiz/pitch/CONSOLIDADO_2026_04_18.md) | Snapshot tecnico verificado (tsc, lint, tests, build) | Evidencia tecnica data room |
-| [INVENTARIO_APP_2026_04_17.md](INVENTARIO_APP_2026_04_17.md) | Inventario de features funcionales | Scope producto |
+| [_archive/INVENTARIO_APP_2026_04_17.md](_archive/INVENTARIO_APP_2026_04_17.md) | Inventario de features funcionales (snapshot pre-Sprint 0/1, ver AUDITORIA_PAWFRIEND_2026-04-27.md sec 1) | Scope producto histórico |
 | [sales/PITCH_VET_CORTO.md](sales/PITCH_VET_CORTO.md) | Pitch comercial 1-pager para clinicas | Outbound B2B vets |
 
 ---

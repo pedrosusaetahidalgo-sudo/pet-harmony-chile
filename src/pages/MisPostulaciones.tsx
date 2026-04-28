@@ -51,7 +51,7 @@ export default function MisPostulaciones() {
               <FileText className="h-12 w-12 text-muted-foreground mx-auto" />
               <h2 className="font-semibold text-lg">Aún no postulaste a nada</h2>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
-                Si querés sumar tu empresa, ser Paw Voice o aplicar a financiamiento, empezá desde
+                Si quieres sumar tu empresa, ser Paw Voice o aplicar a financiamiento, empieza desde
                 la página de aplicaciones.
               </p>
               <div className="flex flex-wrap gap-2 justify-center pt-2">

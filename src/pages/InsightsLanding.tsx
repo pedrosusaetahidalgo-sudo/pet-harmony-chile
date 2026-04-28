@@ -172,7 +172,7 @@ export default function InsightsLanding() {
           <h1 className="text-2xl font-bold">Aún no tenemos suficiente data</h1>
           <p className="text-muted-foreground">
             Para publicar este insight necesitamos al menos 50 mascotas de esa raza registradas. Si
-            agregás la tuya, ayudás a que esta página exista.
+            agregas la tuya, ayudas a que esta página exista.
           </p>
           <div className="flex gap-2 justify-center">
             <Button asChild>
@@ -352,13 +352,13 @@ export default function InsightsLanding() {
           <CardContent className="p-5 text-center space-y-2">
             <p className="text-sm font-medium">
               {data.kind === 'breed'
-                ? `¿Tenés un ${data.breed}?`
+                ? `¿Tienes un ${data.breed}?`
                 : data.kind === 'species'
-                  ? `¿Tenés un ${data.species}?`
+                  ? `¿Tienes un ${data.species}?`
                   : `¿Tu mascota es ${data.species}?`}
             </p>
             <p className="text-xs text-muted-foreground max-w-md mx-auto">
-              Agregá a tu mascota a Paw Friend gratis y ayudás a que estos insights sean cada vez
+              Agrega a tu mascota a Paw Friend gratis y ayudas a que estos insights sean cada vez
               más precisos.
             </p>
             <Button asChild size="sm" className="bg-purple-600 hover:bg-purple-700">

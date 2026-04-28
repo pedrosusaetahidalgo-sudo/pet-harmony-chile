@@ -110,8 +110,10 @@ export const useReminders = () => {
       });
     },
     onError: (error: Error) => {
-      toast.error('Algo salió mal', {
-        description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
+      toast.error('No pudimos guardar el recordatorio', {
+        description:
+          describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
+          'Inténtalo de nuevo en unos segundos.',
       });
     },
   });

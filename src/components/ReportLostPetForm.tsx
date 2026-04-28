@@ -73,8 +73,8 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
 
   const onSubmit = async (data: FormData) => {
     if (!user) {
-      toast.error('Algo salió mal', {
-        description: 'Debes iniciar sesión para reportar una mascota',
+      toast.error('Inicia sesión para reportar una mascota', {
+        description: 'Tu reporte se guardará al volver.',
       });
       return;
     }
@@ -127,8 +127,8 @@ const ReportLostPetForm = ({ onSuccess }: ReportLostPetFormProps) => {
       onSuccess();
     } catch (error) {
       logger.error('Error creating report:', error);
-      toast.error('Algo salió mal', {
-        description: 'No se pudo crear el reporte. Intenta nuevamente.',
+      toast.error('No pudimos crear el reporte', {
+        description: 'Inténtalo de nuevo en unos segundos.',
       });
     } finally {
       setLoading(false);

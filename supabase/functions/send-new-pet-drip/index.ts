@@ -14,6 +14,7 @@
  * Origen: Plan 90d — onboarding activación owner post-creación mascota.
  */
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { requireCronAuth } from '../_shared/cron-auth.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { withTelemetry } from '../_shared/telemetry.ts';
 
@@ -87,14 +88,14 @@ function buildStageContent(
         cta: { text: 'Subir carnet de vacunas', url: `https://pawfriend.cl/ficha/${petId}` },
         tipHeading: 'Bonus tip',
         tipBody:
-          'Si tenés veterinario de cabecera, compartile la ficha digital. Tu vet accede al instante vía link, sin apps ni registros. Un WhatsApp menos.',
+          'Si tienes veterinario de cabecera, compártele la ficha digital. Tu vet accede al instante vía link, sin apps ni registros. Un WhatsApp menos.',
       };
     case 7:
       return {
         subject: `Descarga el PDF de ${petName} — joya de Paw Friend`,
         headerTitle: `Día 7 con ${petName}`,
         headerSubtitle: 'El feature que más vale',
-        body: `Hola ${firstName}, llevas una semana con ${petName} en Paw Friend. Te dejo el tip más importante:\n\nDescarga el PDF de la ficha médica. Es un PDF profesional con todo el historial, carátula, fotos y timeline. Úsalo:\n\n• En una urgencia nocturna si vas a un veterinario nuevo.\n• Si viajas fuera de Santiago.\n• Como respaldo ante cualquier cambio de veterinario.\n\nTres toques y lo tenés en tu celular.`,
+        body: `Hola ${firstName}, llevas una semana con ${petName} en Paw Friend. Te dejo el tip más importante:\n\nDescarga el PDF de la ficha médica. Es un PDF profesional con todo el historial, carátula, fotos y timeline. Úsalo:\n\n• En una urgencia nocturna si vas a un veterinario nuevo.\n• Si viajas fuera de Santiago.\n• Como respaldo ante cualquier cambio de veterinario.\n\nTres toques y lo tienes en tu celular.`,
         cta: { text: 'Descargar PDF ahora', url: `https://pawfriend.cl/ficha/${petId}` },
         tipHeading: '¿Qué más?',
         tipBody:
@@ -157,6 +158,10 @@ async function handle(req: Request): Promise<Response> {
   if (req.method !== 'POST') {
     return errorResponse('Method not allowed', 405);
   }
+
+  // Sprint 1 P1 SEC-007: bloquea envio masivo desde caller no autorizado.
+  const authError = requireCronAuth(req);
+  if (authError) return authError;
 
   const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL');

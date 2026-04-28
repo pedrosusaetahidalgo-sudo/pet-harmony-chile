@@ -25,7 +25,7 @@ const TermsOfService = () => {
           <Card className="border-purple-100 shadow-lg">
             <CardHeader>
               <CardTitle className="text-3xl">Términos y Condiciones de Uso</CardTitle>
-              <p className="text-muted-foreground">Última actualización: 19 de abril de 2026</p>
+              <p className="text-muted-foreground">Última actualización: 28 de abril de 2026</p>
             </CardHeader>
             <CardContent className="space-y-6">
               <section>
@@ -190,8 +190,11 @@ const TermsOfService = () => {
                     avanzadas de gestión profesional detalladas en <code>/para-veterinarios</code>.
                   </li>
                   <li>
-                    Paw Friend emite boleta electrónica (servicio) por cada pago, conforme a las
-                    normas del SII.
+                    Las boletas electrónicas de servicio (conforme a las normas del SII) se emiten
+                    por <strong>SUSAETA GARNHAM SOFTWARE ENGINEERING SpA</strong> (RUT 78.328.659-9)
+                    de forma manual dentro de las 48 horas hábiles desde el pago. Para solicitar el
+                    reenvío de tu boleta, escribe a <code>hola@pawfriend.cl</code> indicando el ID
+                    de la transacción Flow.
                   </li>
                   <li>
                     Aplica derecho de retracto dentro de los primeros 10 días del cobro, conforme a

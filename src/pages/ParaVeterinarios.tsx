@@ -105,7 +105,7 @@ const FEATURES = [
   {
     icon: Shield,
     title: 'Vinculaciones seguras',
-    desc: 'Los dueños te autorizan explicitamente. Tu clinica ve solo lo que vos autorizaste. RLS estricta.',
+    desc: 'Los dueños te autorizan explicitamente. Tu clinica ve solo lo que tu autorizaste. RLS estricta.',
     color: 'teal',
   },
 ];
@@ -651,11 +651,11 @@ export default function ParaVeterinarios() {
           </div>
           <VetOnboardingInlineForm />
           <p className="text-xs text-center text-purple-200/70 mt-6">
-            ¿Ya tenes cuenta?{' '}
+            ¿Ya tienes cuenta?{' '}
             <Link to="/auth" className="underline hover:text-white">
               Iniciar sesion
             </Link>{' '}
-            · ¿Queres completar tu perfil ahora?{' '}
+            · ¿Quieres completar tu perfil ahora?{' '}
             <Link to="/registro-veterinario" className="underline hover:text-white">
               Ir al registro
             </Link>

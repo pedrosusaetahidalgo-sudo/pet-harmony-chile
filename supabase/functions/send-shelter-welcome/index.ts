@@ -99,7 +99,7 @@ function buildEmailHtml(shelterName: string, contactName: string, dashboardUrl: 
 
   return renderEmail({
     title: `¡Bienvenidos a Paw Friend, ${shelterName}!`,
-    preheader: `Tu refugio ya es parte de la red. Carga tus primeras mascotas y empezá en 10 minutos.`,
+    preheader: `Tu refugio ya es parte de la red. Carga tus primeras mascotas y empieza en 10 minutos.`,
     body,
     width: 'wide',
   });

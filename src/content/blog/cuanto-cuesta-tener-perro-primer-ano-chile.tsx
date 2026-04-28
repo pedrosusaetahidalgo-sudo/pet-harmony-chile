@@ -442,7 +442,7 @@ export default function Post() {
       </ol>
 
       <p>
-        Si las 5 respuestas son sí, podés adoptar o comprar responsablemente. Si alguna es dudosa,
+        Si las 5 respuestas son sí, puedes adoptar o comprar responsablemente. Si alguna es dudosa,
         mejor esperar. La mascota queda por 15 años; la decisión requiere claridad.
       </p>
 

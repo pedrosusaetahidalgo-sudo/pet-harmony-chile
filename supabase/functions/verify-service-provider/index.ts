@@ -264,11 +264,16 @@ Verificar: 1) Es título universitario/certificado veterinaria? 2) Nombre legibl
 
 JSON: {"is_vet_title":true/false,"document_name":"o null","name_match":true/false,"confidence":0-100,"reason":"breve"}`;
 
+  // Sprint 0 P0 AI-002: pasamos modelo explicito. Antes dependiamos del default
+  // 'claude-sonnet-4-6' en _shared/ai-base.ts:164. Si alguien cambiaba el default
+  // a haiku para ahorrar costos, esta verificacion clinica se degradaba en
+  // silencio. Hoy explicito → la decision de modelo viaja con la llamada.
   const aiResponse = await callClaude({
     systemPrompt,
     userMessage: 'Analiza este documento y verifica si es un título de veterinario válido.',
     maxTokens: 400,
     temperature: 0.1,
+    model: 'claude-sonnet-4-6',
     images: [{ type: 'base64', media_type: mediaType, data: imageBase64 }],
   });
 

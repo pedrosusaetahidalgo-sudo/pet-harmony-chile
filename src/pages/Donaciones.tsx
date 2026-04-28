@@ -32,6 +32,7 @@ import { AdSlot } from '@/components/AdSlot';
 import { cn } from '@/lib/utils';
 import { track, EVENTS } from '@/lib/analytics';
 import { FEATURE_FLAGS, isFeatureEnabled } from '@/lib/featureFlags';
+import { errorMessageForUser } from '@/lib/errors';
 import {
   DONATION_PRESETS,
   DONATION_MIN_CLP,
@@ -172,7 +173,7 @@ export default function Donaciones() {
       if (!url) throw new Error('Respuesta invalida del servidor de pagos');
       window.location.href = url;
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      const msg = errorMessageForUser(err);
       toast.error('No pudimos iniciar la donacion', { description: msg });
       setLoading(false);
     }
@@ -310,7 +311,7 @@ export default function Donaciones() {
               Queremos que sepas algo: <b>detras de esto hay alguien como tu</b>, que ama a los
               animales, que los quiere cuidar, y que lo va a hacer con un poquito de ayuda tuya. No
               somos una empresa gigante — somos una persona peluda mas, con las mismas ganas de que
-              a ningun peludito le falte nada.
+              a ningun peludo le falte nada.
             </p>
           </CardContent>
         </Card>

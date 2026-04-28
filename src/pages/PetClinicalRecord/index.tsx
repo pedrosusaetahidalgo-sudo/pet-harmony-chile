@@ -13,11 +13,9 @@ import {
   Share2,
   AlertTriangle,
   Dog,
-  Calendar,
   Activity,
   Clipboard,
   Clock,
-  Download,
   Plus,
   Syringe,
   Camera,
@@ -45,13 +43,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 import type { PetData } from './types';
 import { ClinicalRecordSkeleton, PetHeader } from './shared';
@@ -135,7 +127,6 @@ import { AddReminderDialog } from '@/components/reminders/AddReminderDialog';
 import { MedicalSummaryButton } from '@/components/medical/MedicalSummaryButton';
 import { AddMedicalRecord } from '@/components/AddMedicalRecord';
 import { VaccinationCardOCR } from '@/components/onboarding/VaccinationCardOCR';
-import { FileDown } from '@/lib/icons';
 import { VetActionsBar } from './VetActionsBar';
 import { VetQuickNotes } from '@/components/provider/VetQuickNotes';
 import { VetFichaView } from './VetFichaView';

@@ -107,17 +107,17 @@ export function ShelterOnboardingChecklist({
         {!collapsed && (
           <>
             <p className="text-sm text-muted-foreground mb-4">
-              Cuatro pasos para arrancar. Andá completando a tu ritmo.
+              Cuatro pasos para arrancar. Ve completando a tu ritmo.
             </p>
 
             <ol className="space-y-3">
               <ChecklistItem
                 step={1}
                 done={hasPets}
-                title="Subí tus primeras mascotas"
+                title="Sube tus primeras mascotas"
                 description={
                   hasPets
-                    ? `Tenés ${petsCount} mascota${petsCount === 1 ? '' : 's'} cargada${petsCount === 1 ? '' : 's'}.`
+                    ? `Tienes ${petsCount} mascota${petsCount === 1 ? '' : 's'} cargada${petsCount === 1 ? '' : 's'}.`
                     : 'Una a una o usando el bulk import (CSV/Excel).'
                 }
                 action={
@@ -139,10 +139,10 @@ export function ShelterOnboardingChecklist({
               <ChecklistItem
                 step={2}
                 done={!!profileUrl && hasPets}
-                title="Compartí tu perfil público"
+                title="Comparte tu perfil público"
                 description={
                   profileUrl
-                    ? 'Mostrá tu refugio a quien te siga en redes.'
+                    ? 'Muestra tu refugio a quien te siga en redes.'
                     : 'Tu perfil va a estar listo cuando completes la información del refugio.'
                 }
                 action={

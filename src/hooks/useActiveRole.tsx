@@ -15,7 +15,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
 
-type ActiveRole = 'owner' | 'provider' | 'shelter';
+export type ActiveRole = 'owner' | 'provider' | 'shelter';
 
 interface ActiveRoleCtx {
   role: ActiveRole;

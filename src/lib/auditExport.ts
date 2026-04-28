@@ -26,7 +26,13 @@
  * NO es necesario tocar la funcion `generateAuditExport` para cambios normales.
  * ============================================================================
  */
-import * as XLSX from 'xlsx';
+// Sprint 1 P1 PERF-001 (2026-04-28): xlsx (~400KB gzipped) ya no es import
+// estatico. Se cargas via dynamic import solo cuando generateAuditExport()
+// efectivamente corre (admin clickea "Exportar"). Esto saca el peso del
+// chunk admin para los runs que solo abren el panel sin exportar.
+//
+// Tipo solo para satisfacer TS sin importar runtime.
+type XlsxModule = typeof import('xlsx');
 import { supabase } from '@/integrations/supabase/client';
 import { BREEDS_BY_SPECIES } from '@/lib/breeds';
 import { COMUNAS_SANTIAGO } from '@/lib/locations';
@@ -2273,6 +2279,9 @@ export async function generateAuditExport(
   const readme = buildReadmeSheet(exportType, filters, userEmail, sheets, totalRows, errors);
 
   report('Generando archivo Excel...', 92);
+
+  // PERF-001: lazy-load xlsx solo cuando efectivamente exportamos.
+  const XLSX: XlsxModule = await import('xlsx');
 
   // 4. Create workbook
   const wb = XLSX.utils.book_new();

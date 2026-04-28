@@ -19,6 +19,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Download, Loader2, Users, PawPrint, Briefcase, Heart } from '@/lib/icons';
 import { toast } from 'sonner';
+import { errorMessageForUser } from '@/lib/errors';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
@@ -157,7 +158,7 @@ export default function AdminDataExport() {
         description: `paw-friend-${key}-${today}.csv`,
       });
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Error desconocido';
+      const message = errorMessageForUser(err);
       toast.error(`No se pudo exportar ${EXPORTERS[key].label}`, { description: message });
     } finally {
       setLoading(null);

@@ -127,7 +127,7 @@ export default function InsightsIndex() {
               <h2 className="font-semibold text-lg">Todavía no hay insights publicados</h2>
               <p className="text-sm text-muted-foreground max-w-md mx-auto">
                 Necesitamos al menos 50 mascotas de la misma raza registradas para publicar un
-                insight. Si agregás la tuya, ayudás a que estos datos existan.
+                insight. Si agregas la tuya, ayudas a que estos datos existan.
               </p>
               <Button asChild className="bg-purple-600 hover:bg-purple-700">
                 <Link to="/auth?next=/onboarding-mascota">Agregar mi mascota</Link>

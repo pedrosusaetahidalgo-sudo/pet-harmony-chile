@@ -75,8 +75,8 @@ export function useAISkill<TInput, TOutput>(options: AISkillOptions<TInput, TOut
       }
 
       setState((s) => ({ ...s, isLoading: false, error: lastError }));
-      toast.error('Algo salió mal', {
-        description: `No se pudo completar ${skillLabel}. Intenta de nuevo.`,
+      toast.error(`No pudimos completar ${skillLabel}`, {
+        description: 'Inténtalo de nuevo en unos segundos.',
       });
       return null;
     },

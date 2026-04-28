@@ -7,6 +7,7 @@
  * Origen: Lote C auditoría E2E pre-launch 2026-04-20.
  */
 
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
@@ -15,7 +16,9 @@ import { PROVIDER_PLANS, type ProviderPlanId, formatCLP } from '@/lib/plans';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sparkles, ArrowRight, Zap } from '@/lib/icons';
+import { Sparkles, ArrowRight, Zap, X } from '@/lib/icons';
+
+const PREMIUM_TO_CLINIC_DISMISS_KEY = 'pf_premium_to_clinic_dismissed_at';
 
 export function UpgradePlanBanner() {
   const { user } = useAuth();
@@ -42,7 +45,37 @@ export function UpgradePlanBanner() {
   if (!provider) return null;
   const currentPlan = provider.provider_plan ?? 'provider_free';
 
-  // No mostrar banner si ya está en plan pagado y vigente
+  // Sprint 1 P1 BIZ-008 (2026-04-28): upsell visible Premium → Clinica.
+  // Antes solo habia banner free → premium. Ahora un vet ya en Premium ve
+  // un nudge dismissable a "Empresarial" si trabaja con mas vets, o si su
+  // clinica necesita carga masiva / multi-sucursal. Threshold sin metricas:
+  // todos los Premium ven el nudge una vez, dismiss localStorage.
+  if (currentPlan === 'provider_premium') {
+    const expiresSoon =
+      provider.plan_expires_at &&
+      new Date(provider.plan_expires_at).getTime() - Date.now() < 7 * 24 * 60 * 60 * 1000;
+    if (expiresSoon) {
+      return (
+        <Card className="border-amber-300 bg-amber-50/60">
+          <CardContent className="p-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-2 text-sm">
+              <Sparkles className="h-4 w-4 text-amber-600" />
+              <span>
+                Tu plan <strong>{PROVIDER_PLANS[currentPlan].name}</strong> vence pronto (
+                {new Date(provider.plan_expires_at!).toLocaleDateString('es-CL')}).
+              </span>
+            </div>
+            <Button asChild size="sm" variant="outline">
+              <Link to="/provider/upgrade">Renovar</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      );
+    }
+    return <PremiumToClinicNudge />;
+  }
+
+  // No mostrar banner si ya está en plan clinic/pro_max y vigente
   if (currentPlan !== 'provider_free') {
     const expiresSoon =
       provider.plan_expires_at &&
@@ -101,6 +134,72 @@ export function UpgradePlanBanner() {
         <Button asChild size="sm" className="shrink-0 gap-1">
           <Link to="/provider/upgrade">
             Ver planes
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
+
+/**
+ * Sprint 1 P1 BIZ-008 (2026-04-28): nudge para vets en Premium que pueden
+ * subir a Clinica. El plan Clinica esta escondido del pricing publico (modelo
+ * v2) pero los vets ya activos en Paw Friend deberian saber que existe.
+ *
+ * Dismiss: localStorage. Si el vet lo cierra, no vuelve a aparecer en 90
+ * dias. Si en 90 dias todavia esta en Premium, reaparece — la cuenta sigue
+ * elegible.
+ */
+function PremiumToClinicNudge() {
+  const [dismissed, setDismissed] = useState(() => {
+    try {
+      const ts = localStorage.getItem(PREMIUM_TO_CLINIC_DISMISS_KEY);
+      if (!ts) return false;
+      const dismissedAt = new Date(ts).getTime();
+      if (!Number.isFinite(dismissedAt)) return false;
+      const ninetyDays = 90 * 24 * 60 * 60 * 1000;
+      return Date.now() - dismissedAt < ninetyDays;
+    } catch {
+      return false;
+    }
+  });
+
+  if (dismissed) return null;
+
+  const handleDismiss = () => {
+    try {
+      localStorage.setItem(PREMIUM_TO_CLINIC_DISMISS_KEY, new Date().toISOString());
+    } catch {
+      // ignorar (modo privado)
+    }
+    setDismissed(true);
+  };
+
+  return (
+    <Card className="relative border-fuchsia-200 bg-gradient-to-br from-fuchsia-50/60 to-purple-50/40">
+      <button
+        type="button"
+        onClick={handleDismiss}
+        aria-label="Cerrar"
+        className="absolute top-2 right-2 p-1 rounded-full hover:bg-white/60 text-muted-foreground hover:text-foreground"
+      >
+        <X className="h-3.5 w-3.5" />
+      </button>
+      <CardContent className="p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 pr-10">
+        <div className="p-2 rounded-lg bg-fuchsia-100 shrink-0">
+          <Sparkles className="h-5 w-5 text-fuchsia-600" />
+        </div>
+        <div className="flex-1 space-y-1 min-w-0">
+          <h3 className="font-semibold text-sm">¿Trabajas con más vets en tu clínica?</h3>
+          <p className="text-xs text-muted-foreground">
+            Plan Empresarial: 3+ seats, carga masiva CSV, multi-sucursal y comisiones a medida.
+            Cotizamos según tu equipo.
+          </p>
+        </div>
+        <Button asChild size="sm" variant="outline" className="shrink-0 gap-1">
+          <Link to="/aplicar?tipo=vet&segmento=clinica&fuente=dashboard">
+            Conocer más
             <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </Button>

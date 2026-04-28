@@ -23,6 +23,7 @@ import { PlanComparisonTableVet } from '@/components/pricing/PlanComparisonTable
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Check } from '@/lib/icons';
+import { errorMessageForUser } from '@/lib/errors';
 
 export default function ProviderUpgrade() {
   const { user } = useAuth();
@@ -86,7 +87,7 @@ export default function ProviderUpgrade() {
       }
       toast.error('Respuesta inesperada del servidor de pagos');
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      const msg = errorMessageForUser(err);
       toast.error(msg);
     } finally {
       setProcessingPlan(null);

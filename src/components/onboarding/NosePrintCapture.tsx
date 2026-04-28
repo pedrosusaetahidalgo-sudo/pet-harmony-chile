@@ -27,6 +27,7 @@ import { Camera, Loader2, AlertTriangle, Check, X, RotateCw } from 'lucide-react
 import { toast } from 'sonner';
 import { trackRefactor, RefactorEvent } from '@/lib/refactorAnalytics';
 import { cn } from '@/lib/utils';
+import { errorMessageForUser } from '@/lib/errors';
 
 interface NosePrintCaptureProps {
   petId: string;
@@ -88,7 +89,7 @@ export function NosePrintCapture({
       setPhase('capturing');
       trackRefactor(RefactorEvent.nosePrintCaptureStarted, { pet_id: petId });
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      const msg = errorMessageForUser(err);
       setError(`No pudimos acceder a la cámara: ${msg}. Verificá permisos del navegador.`);
       setPhase('error');
     }
@@ -180,7 +181,7 @@ export function NosePrintCapture({
       setPhase('done');
       onSuccess?.(json.nose_print_id);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      const msg = errorMessageForUser(err);
       setError(`No pudimos guardar la huella: ${msg}`);
       setPhase('error');
     }

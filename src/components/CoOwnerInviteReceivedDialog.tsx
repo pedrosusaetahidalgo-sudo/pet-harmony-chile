@@ -186,7 +186,7 @@ export function CoOwnerInviteReceivedDialog() {
           </AlertDialogTitle>
           <AlertDialogDescription className="text-center">
             Vas a aparecer como <strong>{ROLE_LABELS[invitation.role]}</strong> y podrás ver la
-            ficha clínica. Podes rechazar si no reconocés esta invitación.
+            ficha clínica. Puedes rechazar si no reconoces esta invitación.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

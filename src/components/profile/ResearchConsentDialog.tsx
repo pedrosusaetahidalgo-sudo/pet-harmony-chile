@@ -52,7 +52,7 @@ export function ResearchConsentDialog({ open, onOpenChange }: ResearchConsentDia
             Tu data anonima puede sostener Paw Friend
           </DialogTitle>
           <DialogDescription className="text-left">
-            Paw Friend es y va a seguir siendo gratis para vos. Para sostenerlo, vendemos insights
+            Paw Friend es y va a seguir siendo gratis para ti. Para sostenerlo, vendemos insights
             agregados anonimos a empresas que cuidan mascotas (laboratorios farmaceuticos,
             aseguradoras, universidades).
           </DialogDescription>
@@ -82,13 +82,13 @@ export function ResearchConsentDialog({ open, onOpenChange }: ResearchConsentDia
           {consent !== null && decidedAt && (
             <p className="text-xs text-muted-foreground italic">
               Decidiste {consent ? 'aceptar' : 'no participar'} el{' '}
-              {format(new Date(decidedAt), "d 'de' MMMM yyyy", { locale: es })}. Podés cambiarlo
-              ahora si querés.
+              {format(new Date(decidedAt), "d 'de' MMMM yyyy", { locale: es })}. Puedes cambiarlo
+              ahora si quieres.
             </p>
           )}
 
           <p className="text-xs text-muted-foreground">
-            Esta decision es opcional y no afecta nada de la app. Podes cambiarla cuando quieras
+            Esta decisión es opcional y no afecta nada de la app. Puedes cambiarla cuando quieras
             desde tu perfil.
           </p>
         </div>

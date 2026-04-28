@@ -196,7 +196,7 @@ export default function PostAdoptionCheckin() {
             <h1 className="text-2xl font-display font-semibold">¡Gracias!</h1>
             <p className="text-sm text-muted-foreground">
               Tu respuesta nos ayuda a cerrar el ciclo de la adopcion y aporta data de calidad al
-              refugio. Si hay algo en que podamos ayudarte, escribinos a{' '}
+              refugio. Si hay algo en que podamos ayudarte, escríbenos a{' '}
               <strong>pedrosusaeta@pawfriend.cl</strong>.
             </p>
             {pet && (

@@ -29,6 +29,10 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [displayName, setDisplayName] = useState('');
+  // Sprint 1 P1 COMP-005: marketing consent separado del consent de uso. Ley
+  // 19.628 + Reglamento 21.719 piden opt-in explicito y separado para
+  // promos/newsletters. Default: false (opt-in real, no opt-out).
+  const [marketingConsent, setMarketingConsent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [confirmationSent, setConfirmationSent] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
@@ -165,6 +169,10 @@ const Auth = () => {
           emailRedirectTo: redirectUrl,
           data: {
             display_name: displayName.trim() || generateDefaultName(),
+            // Sprint 1 P1 COMP-005: viaja como user_metadata. El trigger
+            // public.handle_new_user (mig 20260907000000) lo lee y persiste
+            // en profiles.marketing_email_consent.
+            marketing_email_consent: marketingConsent,
           },
         },
       });
@@ -283,10 +291,11 @@ const Auth = () => {
         description: 'Te enviamos un enlace para restablecer tu contraseña.',
       });
     } catch (error: unknown) {
-      toast.error('Algo salió mal', {
+      // Sprint 1 P2 LOC-MICROCOPY: copy especifico por accion.
+      toast.error('No pudimos enviar el correo de recuperación', {
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
-          'No se pudo enviar el correo de recuperación.',
+          'Inténtalo de nuevo en unos segundos.',
       });
     } finally {
       setLoading(false);
@@ -712,6 +721,29 @@ const Auth = () => {
                       <p className="text-sm text-destructive">{fieldErrors.password}</p>
                     )}
                   </div>
+
+                  {/* Sprint 1 P1 COMP-005: marketing consent separado.
+                      Ley 19.628 / Reglamento 21.719 exigen consentimiento
+                      explicito y diferenciado para email marketing. Default
+                      desmarcado (opt-in real). El consent de uso de la app
+                      se acepta al hacer "Crear Cuenta" (T&C en LegalFooter). */}
+                  <div className="flex items-start gap-2 pt-1">
+                    <input
+                      id="signup-marketing-consent"
+                      type="checkbox"
+                      checked={marketingConsent}
+                      onChange={(e) => setMarketingConsent(e.target.checked)}
+                      className="mt-1 h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-2 focus:ring-purple-500 focus:ring-offset-0"
+                    />
+                    <label
+                      htmlFor="signup-marketing-consent"
+                      className="text-xs text-muted-foreground leading-snug cursor-pointer"
+                    >
+                      Quiero recibir tips de cuidado, novedades y descuentos de Paw Friend por
+                      email. Puedes darte de baja cuando quieras.
+                    </label>
+                  </div>
+
                   <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? 'Creando cuenta...' : 'Crear Cuenta'}
                   </Button>

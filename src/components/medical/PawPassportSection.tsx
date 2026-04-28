@@ -22,6 +22,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, BookOpen, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { trackRefactor, RefactorEvent } from '@/lib/refactorAnalytics';
+import { errorMessageForUser } from '@/lib/errors';
 
 interface PawPassportSectionProps {
   petId: string;
@@ -71,7 +72,7 @@ export function PawPassportSection({ petId, petName }: PawPassportSectionProps) 
       trackRefactor(RefactorEvent.petIdCardGenerated, { kind: 'passport', pet_id: petId });
       toast.success(`Pasaporte de ${petName} descargado`);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      const msg = errorMessageForUser(err);
       toast.error(`No pudimos generar el pasaporte: ${msg}`);
     } finally {
       setGenerating(false);

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { errorMessageForUser } from '@/lib/errors';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -74,7 +75,7 @@ export function PawVoiceApplyForm() {
         description: 'Te respondemos en 48 horas a tu correo.',
       });
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      const msg = errorMessageForUser(err);
       if (msg.toLowerCase().includes('duplicate') || msg.includes('slug')) {
         toast.error('Ya existe un Paw Voice con ese nombre', {
           description: 'Intenta con un handle distinto.',

@@ -13,6 +13,7 @@ import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Cake, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { errorMessageForUser } from '@/lib/errors';
 
 interface BirthdayShareCardProps {
   petName: string;
@@ -161,7 +162,7 @@ export function BirthdayShareCard({ petName, photoUrl, birthDate }: BirthdayShar
       document.body.removeChild(link);
       toast.success(`Imagen de cumpleaños de ${petName} descargada 🎂`);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      const msg = errorMessageForUser(err);
       toast.error(`No pudimos generar la imagen: ${msg}`);
     } finally {
       setGenerating(false);

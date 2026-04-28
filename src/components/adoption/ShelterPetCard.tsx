@@ -182,7 +182,7 @@ export function ShelterPetCard({ pet, shelterSlug }: ShelterPetCardProps) {
             <DialogTitle>Expresar interés en {pet.name}</DialogTitle>
             <DialogDescription>
               El refugio va a recibir una notificación con tu interés y se va a contactar contigo.
-              Podés agregar un mensaje (opcional).
+              Puedes agregar un mensaje (opcional).
             </DialogDescription>
           </DialogHeader>
 
@@ -198,7 +198,7 @@ export function ShelterPetCard({ pet, shelterSlug }: ShelterPetCardProps) {
           <Textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Contale al refugio por qué te interesa esta mascota, dónde vivís, si tenés otras mascotas, etc."
+            placeholder="Cuéntale al refugio por qué te interesa esta mascota, dónde vives, si tienes otras mascotas, etc."
             rows={4}
             maxLength={500}
           />

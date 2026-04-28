@@ -7,32 +7,25 @@ import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
+// Sprint 1 P1 ARCH-002 (2026-04-28): imports lucide limpiados.
+// Removidos por noUnusedLocals: Star, Shield, Crown, Stethoscope, MessageCircle,
+// Search, Home, ShoppingBag, ArrowRight, Lock.
 import {
   Trophy,
-  Star,
   Target,
   Gift,
   Award,
   Zap,
   Heart,
   Sparkles,
-  Shield,
-  Crown,
   PawPrint,
   Calendar,
   MapPin,
-  Stethoscope,
   Dog,
   Users,
-  MessageCircle,
   Camera,
   BookOpen,
   Syringe,
-  Search,
-  Home,
-  ShoppingBag,
-  ArrowRight,
-  Lock,
   Flame,
 } from '@/lib/icons';
 import { supabase } from '@/integrations/supabase/client';
@@ -235,23 +228,23 @@ const PawGame = () => {
     try {
       setLoading(true);
 
-      // Load user guardian progress
+      // Sprint 1 P1 PERF-003: select narrow segun UserProgress interface.
       const { data: progressData } = await supabase
         .from('user_guardian_progress')
-        .select('*')
+        .select(
+          'id, user_id, total_paw_points, current_level, current_level_points, streak_days, last_activity_date'
+        )
         .eq('user_id', user?.id)
         .maybeSingle();
 
-      // If no progress exists, try to create it
-      let activeProgress = progressData;
-      if (!activeProgress) {
-        const { data: newProgress } = await supabase
-          .from('user_guardian_progress')
-          .insert({ user_id: user?.id })
-          .select()
-          .maybeSingle();
-        activeProgress = newProgress;
-      }
+      // Sprint 0 P0 FEAT-008: NO auto-crear fila al pisar la ruta. Antes el
+      // mount insertaba un user_guardian_progress vacio para cada visitante,
+      // contaminando la DB con miles de filas (choca con principio "producto
+      // invisible"). Ahora la fila se crea lazy desde el RPC award_paw_points
+      // (`INSERT ... ON CONFLICT DO UPDATE`) la primera vez que el dueno hace
+      // una accion real (gana puntos, completa mision). Mientras tanto, el
+      // componente trabaja con el default in-memory definido abajo.
+      const activeProgress = progressData;
 
       // Set a default progress if DB operations failed
       setUserProgress(
@@ -267,10 +260,12 @@ const PawGame = () => {
           } as UserProgress)
       );
 
-      // Load guardian levels
+      // Load guardian levels (PERF-003 narrow).
       const { data: levelsData } = await supabase
         .from('guardian_levels')
-        .select('*')
+        .select(
+          'id, level_number, level_name, min_points, max_points, badge_icon, bonus_multiplier, description'
+        )
         .order('level_number', { ascending: true });
 
       const level = activeProgress?.current_level || 1;
@@ -290,10 +285,12 @@ const PawGame = () => {
 
       setMissions(missionsData || []);
 
-      // Load badges
+      // Load badges (PERF-003 narrow segun PawBadge interface).
       const { data: badgesData } = await supabase
         .from('paw_badges')
-        .select('*')
+        .select(
+          'id, badge_key, name, description, category, unlock_condition, unlock_value, points_bonus, rarity, icon'
+        )
         .order('category', { ascending: true });
 
       setBadges(badgesData || []);

@@ -58,9 +58,13 @@ const AdoptionLegacy = () => {
       // AdoptionPostCard no consume post.profiles (solo
       // interest.profiles que tiene su propia query). Removemos el
       // join y quedamos con select(*) simple.
+      // Sprint 1 P1 PERF-003 (2026-04-28): select narrow.
+      // Columnas que efectivamente consume AdoptionPostCard + filtros del tab.
       let query = supabase
         .from('adoption_posts')
-        .select('*')
+        .select(
+          'id, user_id, pet_name, species, breed, gender, age_years, age_months, description, temperament, photos, location, status, good_with_cats, good_with_dogs, good_with_kids, interests_count, views_count, created_at'
+        )
         .order('created_at', { ascending: false });
 
       if (selectedTab === 'my-posts') {
@@ -137,7 +141,7 @@ const AdoptionLegacy = () => {
                   ¿Tienes un hogar o refugio de adopcion?
                 </h3>
                 <p className="text-xs text-purple-700/80">
-                  Registrate gratis: carga masiva, ficha medica, transferencia al adoptante.
+                  Regístrate gratis: carga masiva, ficha médica, transferencia al adoptante.
                 </p>
               </div>
               <ArrowRight className="h-5 w-5 text-purple-600 group-hover:translate-x-1 transition" />

@@ -120,7 +120,9 @@ const UserProfile = () => {
       loadProfileData();
     } catch (error) {
       logger.error('Error toggling follow:', error);
-      toast.error('Algo salió mal', { description: 'No se pudo actualizar el seguimiento' });
+      toast.error('No pudimos actualizar el seguimiento', {
+        description: 'Inténtalo de nuevo en unos segundos.',
+      });
     } finally {
       setFollowLoading(false);
     }
@@ -135,16 +137,17 @@ const UserProfile = () => {
     try {
       setLoading(true);
 
-      // Campos públicos del perfil (nunca exponer whatsapp, plan, admin, etc.)
-      const profileQuery = isOwnProfile
-        ? supabase.from('profiles').select('*').eq('id', userId).maybeSingle()
-        : supabase
-            .from('profiles')
-            .select(
-              'id, display_name, avatar_url, bio, location, level, points, total_posts, total_reviews, total_adoptions, total_bookings, created_at'
-            )
-            .eq('id', userId)
-            .maybeSingle();
+      // Campos públicos del perfil (nunca exponer whatsapp, plan, admin, etc.).
+      // Sprint 1 P1 PERF-003: aun el isOwnProfile usa narrow — el perfil
+      // muestra los mismos cards independiente del owner. Si en el futuro la
+      // UI propia muestra mas datos, agregar aqui los campos especificos.
+      const profileQuery = supabase
+        .from('profiles')
+        .select(
+          'id, display_name, avatar_url, bio, location, level, points, total_posts, total_reviews, total_adoptions, total_bookings, created_at'
+        )
+        .eq('id', userId)
+        .maybeSingle();
       const { data: profileData } = await profileQuery;
 
       setProfile(profileData as ProfileRow | null);
@@ -171,20 +174,17 @@ const UserProfile = () => {
         following_count: followingRes.count || 0,
       });
 
-      // Mascotas: solo datos públicos (nunca datos médicos, microchip, emergencia)
-      const petsQuery = isOwnProfile
-        ? supabase
-            .from('pets')
-            .select('*')
-            .eq('owner_id', userId)
-            .eq('lifecycle_status', 'active')
-            .order('created_at', { ascending: false })
-        : supabase
-            .from('pets')
-            .select('id, name, species, breed, photo_url, gender, birth_date, bio, personality')
-            .eq('owner_id', userId)
-            .eq('lifecycle_status', 'active')
-            .order('created_at', { ascending: false });
+      // Mascotas: solo datos públicos (nunca datos médicos, microchip,
+      // emergencia). Sprint 1 P1 PERF-003: ambos paths usan narrow ahora — el
+      // perfil renderiza los mismos cards de mascota independiente del owner.
+      // Datos sensibles (medical_notes, microchip, emergency_*) NO entran en
+      // la pagina /user/:id; se acceden desde la ficha clinica /ficha/:petId.
+      const petsQuery = supabase
+        .from('pets')
+        .select('id, name, species, breed, photo_url, gender, birth_date, bio, personality')
+        .eq('owner_id', userId)
+        .eq('lifecycle_status', 'active')
+        .order('created_at', { ascending: false });
       const { data: petsData } = await petsQuery;
 
       setPets((petsData || []) as PetRow[]);
@@ -199,7 +199,9 @@ const UserProfile = () => {
       setPosts(postsData || []);
     } catch (error) {
       logger.error('Error loading profile:', error);
-      toast.error('Algo salió mal', { description: 'No se pudo cargar la información del perfil' });
+      toast.error('No pudimos cargar el perfil', {
+        description: 'Recarga la página o inténtalo en unos segundos.',
+      });
     } finally {
       setLoading(false);
     }

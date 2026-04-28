@@ -65,10 +65,10 @@ const ReportUserDialog = ({ targetUserId, trigger }: ReportUserDialogProps) => {
       setReportType('spam');
     } catch (error: unknown) {
       logger.error('Error reporting user:', error);
-      toast.error('Algo salió mal', {
+      toast.error('No pudimos enviar el reporte', {
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
-          'No se pudo enviar el reporte',
+          'Inténtalo de nuevo en unos segundos.',
       });
     } finally {
       setIsSubmitting(false);

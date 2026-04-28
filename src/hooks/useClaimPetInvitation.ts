@@ -3,6 +3,7 @@ import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { track, EVENTS } from '@/lib/analytics';
 
 /**
  * Hook que procesa el query param ?invitation=TOKEN
@@ -31,6 +32,11 @@ export function useClaimPetInvitation() {
 
         if (error) {
           console.error('Claim pet RPC error:', error);
+          // Sprint 1 P1 FEAT-010: track failure para medir conversion del loop viral.
+          track({
+            event: EVENTS.PET_CLAIM_FAILED,
+            properties: { error_code: 'rpc_error', message: error.message ?? null },
+          });
           toast.error('Error al procesar la invitación');
           return;
         }
@@ -43,6 +49,12 @@ export function useClaimPetInvitation() {
         };
 
         if (!result.success) {
+          // Sprint 1 P1 FEAT-010: track cada modo de fallo. Permite separar
+          // tokens expirados (UX issue) de "ya reclamada" (race / duplicado).
+          track({
+            event: EVENTS.PET_CLAIM_FAILED,
+            properties: { error_code: result.error ?? 'unknown' },
+          });
           switch (result.error) {
             case 'invalid_token':
               toast.error('El enlace de invitación no es válido o ya expiró');
@@ -59,10 +71,21 @@ export function useClaimPetInvitation() {
           return;
         }
 
+        // Sprint 1 P1 FEAT-010: success — track loop viral (vet → dueno → vet).
+        // vet_linked flag permite medir que % de invitaciones cierran el loop
+        // owner+vet, vs reclamacion solo del dueno.
+        track({
+          event: EVENTS.PET_CLAIMED,
+          properties: { vet_linked: !!result.vet_linked },
+        });
         const vetMsg = result.vet_linked ? ' Tu veterinario ya tiene acceso a la ficha.' : '';
         toast.success(`¡${result.pet_name} ahora es tuya!${vetMsg}`);
       } catch (err) {
         console.error('useClaimPetInvitation error:', err);
+        track({
+          event: EVENTS.PET_CLAIM_FAILED,
+          properties: { error_code: 'exception' },
+        });
         toast.error('Error al procesar la invitación');
       } finally {
         const newParams = new URLSearchParams(searchParams);

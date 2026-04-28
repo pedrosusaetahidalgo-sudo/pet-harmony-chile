@@ -103,7 +103,7 @@ export interface FooterOptions {
    */
   note?: string;
   /**
-   * Segunda línea (por ej. "Si no reconocés esto, podés ignorarlo").
+   * Segunda línea (por ej. "Si no reconoces esto, puedes ignorarlo").
    */
   secondary?: string;
   /**

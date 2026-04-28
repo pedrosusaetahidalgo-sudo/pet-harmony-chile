@@ -481,7 +481,7 @@ serve(
               color: TEXT_DARK,
             });
             const contactText = s.contact_email || s.contact_phone || 'Contactar refugio';
-            page.drawText(`Contactanos: ${contactText}`, {
+            page.drawText(`Contáctanos: ${contactText}`, {
               x: MARGIN + 16,
               y: y - 260,
               size: 9,

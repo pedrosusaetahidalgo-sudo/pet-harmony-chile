@@ -220,7 +220,7 @@ export default function Post() {
         </li>
         <li>
           <strong>Empieza con BARF comercial</strong> antes de hacerlo casero. Marcas chilenas
-          tienen control de calidad. Una vez que manejas el tema, puedes hacer casero si querés
+          tienen control de calidad. Una vez que manejas el tema, puedes hacer casero si quieres
           ahorrar.
         </li>
         <li>

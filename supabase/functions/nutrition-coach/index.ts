@@ -90,11 +90,9 @@ serve(async (req) => {
     const allergies = [pet.allergies_food, pet.allergies_medication].filter(Boolean);
     const conditions = Array.isArray(pet.chronic_conditions) ? pet.chronic_conditions : [];
 
+    // Bloque ESTATICO del system: identico en cada call → cacheable (TTL 5 min,
+    // ~90% ahorro en input tokens cuando hay >1 call por usuario en 5 min).
     const systemPrompt = `Eres el coach nutricional de Paw Friend, una app chilena de salud de mascotas.
-
-## PACIENTE
-${ctx}${allergies.length ? `\nAlergias: ${allergies.join(', ')}` : ''}${conditions.length ? `\nCondiciones cronicas: ${conditions.join(', ')}` : ''}
-Etapa de vida: ${ageYears <= 1 ? 'cachorro/gatito' : ageYears >= 8 ? 'senior' : 'adulto'}
 
 ## ROL
 Orientas al dueño sobre alimentacion apropiada. NO recetas medicamentos ni suplementos — solo orientacion alimentaria general.
@@ -123,12 +121,21 @@ Gatos: cebolla, ajo, chocolate, cafeina, alcohol, uvas/pasas, leche de vaca (lac
 ## FORMATO (JSON sin markdown)
 {"plan":{"food_type":"seco|humedo|mixto","daily_portions":"descripcion","frequency":"veces al dia","hydration":"recomendacion"},"forbidden_foods":["alimento 1"],"safe_treats":["snack 1"],"allergy_warnings":["advertencia"],"vet_referral_needed":false,"vet_referral_reason":null,"tip":"1 tip practico personalizado","disclaimer":"Orientacion nutricional general. Para dietas terapeuticas, consulta a tu veterinario."}`;
 
+    // Bloque DINAMICO: contexto del paciente cambia por call → fuera del cache.
+    // Sprint 0 P0 AI-005: antes el contexto vivia dentro de systemPrompt y rompia
+    // el cache hit en cada llamada. Ahora pasa por dynamicSystemText → callClaude
+    // lo concatena como segundo bloque system sin cache_control.
+    const dynamicPetBlock = `## PACIENTE
+${ctx}${allergies.length ? `\nAlergias: ${allergies.join(', ')}` : ''}${conditions.length ? `\nCondiciones cronicas: ${conditions.join(', ')}` : ''}
+Etapa de vida: ${ageYears <= 1 ? 'cachorro/gatito' : ageYears >= 8 ? 'senior' : 'adulto'}`;
+
     const userMsg = question
       ? `Pregunta del dueño: "${String(question).slice(0, 300)}"\nGenera orientacion nutricional personalizada.`
       : `Genera un plan nutricional general para ${pet.name}.`;
 
     const raw = await callClaude({
       systemPrompt,
+      dynamicSystemText: dynamicPetBlock,
       userMessage: userMsg,
       maxTokens: 500,
       temperature: 0.3,

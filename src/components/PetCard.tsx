@@ -115,7 +115,9 @@ const PetCard = ({
       }
     } catch (error) {
       logger.error('Error toggling like:', error);
-      toast.error('Algo salió mal', { description: 'No se pudo procesar tu like' });
+      toast.error('No pudimos procesar tu like', {
+        description: 'Inténtalo de nuevo en unos segundos.',
+      });
     }
   };
 

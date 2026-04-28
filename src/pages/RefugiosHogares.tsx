@@ -194,7 +194,7 @@ function RefugiosHogaresLegacy() {
             </div>
             <div className="pt-3">
               <Button asChild className="bg-purple-600 hover:bg-purple-700">
-                <Link to="/onboarding-shelter">¿Tienes un refugio? Registrate gratis</Link>
+                <Link to="/onboarding-shelter">¿Tienes un refugio? Regístrate gratis</Link>
               </Button>
             </div>
           </div>

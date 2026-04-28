@@ -68,12 +68,22 @@ export function HeroVideo({ compact = false }: { compact?: boolean }) {
         >
           <div className="relative aspect-[9/19.5] w-full">
             {reducedMotion ? (
-              <img
-                src="/paw-friend-assets-v2/social/og_image.jpg"
-                alt="Paw Friend"
-                className="h-full w-full object-cover"
-                loading="eager"
-              />
+              // Sprint 1 P1 PERF-005 (2026-04-28): webp primario + jpg fallback.
+              // El browser elige webp si lo soporta (~30% mas chico). Si Pedro
+              // todavia no genero el webp (cwebp og_image.jpg -q 80 -o
+              // og_image.webp), el img cae al jpg sin error.
+              <picture>
+                <source srcSet="/paw-friend-assets-v2/social/og_image.webp" type="image/webp" />
+                <img
+                  src="/paw-friend-assets-v2/social/og_image.jpg"
+                  alt="Paw Friend"
+                  className="h-full w-full object-cover"
+                  loading="eager"
+                  fetchPriority="high"
+                  width="540"
+                  height="1170"
+                />
+              </picture>
             ) : (
               <video
                 ref={videoRef}

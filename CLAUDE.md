@@ -385,7 +385,7 @@ Ver `INDEX.md` para el indice completo con reglas de actualizacion.
 | `diagrams/FLUJOS_MERMAID.md` | Diagramas individuales por modulo |
 | `audits/AUDITORIA_UX_COMPLETA_2026_04_14.md` | Auditoria UX completa (reemplaza reporte 04-11) |
 | `audits/FEATURES_INCOMPLETAS_2026_04_14.md` | 28 features con gaps detectados |
-| `docs-raiz/planes/SUGERENCIAS_COMPLETAS_2026_04_16.md` | 49 sugerencias en 10 categorias (seguridad, perf, UX, DB, etc.) |
+| `_archive/docs-raiz-snapshots-2026-04/SUGERENCIAS_COMPLETAS_2026_04_16.md` | (archivado 2026-04-28) 49 sugerencias snapshot, superado por AUDITORIA_PAWFRIEND_2026-04-27 |
 | `audits/OPTIMIZACION_COSTOS_2026_04_12.md` | Analisis de costos operativos y plan de eficiencia |
 | `audits/COMPETENCIA_2026_04_08.md` | Analisis competitivo Chile |
 | `audits/CROSS_PLATFORM_COMPATIBILITY.md` | Compatibilidad multiplataforma (iOS, Android, Web) |

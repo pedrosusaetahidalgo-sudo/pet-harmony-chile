@@ -18,6 +18,7 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { withTelemetry } from '../_shared/telemetry.ts';
+import { requireCronAuth } from '../_shared/cron-auth.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -74,7 +75,7 @@ function buildEmailHtml(ownerName: string, petName: string, daysAway: number): s
       </a>. Leo cada mensaje.
     </p>
     <p style="margin:0 0 20px;font-size:14px;line-height:1.6;color:#4b5563">
-      Si fue solo que te olvidaste, acá está la ficha de ${escapeHtml(petName)} esperando:
+      Si fue solo que te olvidaste, aquí está la ficha de ${escapeHtml(petName)} esperando:
     </p>
     <div style="text-align:center;margin:24px 0">
       <a href="https://pawfriend.cl/home"
@@ -83,7 +84,7 @@ function buildEmailHtml(ownerName: string, petName: string, daysAway: number): s
       </a>
     </div>
     <p style="margin:16px 0 0;font-size:12px;color:#9ca3af;line-height:1.5;text-align:center">
-      Si no querés recibir más estos mensajes, responde a este email con "STOP" y te saco de
+      Si no quieres recibir más estos mensajes, responde a este email con "STOP" y te saco de
       la lista. Nunca más.
     </p>
   </td></tr>
@@ -101,6 +102,10 @@ async function handle(req: Request): Promise<Response> {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // Sprint 1 P1 SEC-007: bloquea spam de "te extranamos" desde caller no autorizado.
+  const authError = requireCronAuth(req);
+  if (authError) return authError;
 
   const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
   const SUPABASE_URL = Deno.env.get('SUPABASE_URL');

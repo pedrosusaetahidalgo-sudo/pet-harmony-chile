@@ -68,7 +68,8 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
 
     const error = validateImageFile(file);
     if (error) {
-      toast.error('Algo salio mal', { description: error });
+      // Sprint 1 P2 LOC-MICROCOPY: validacion de archivo, no error generico.
+      toast.error('Revisa la imagen', { description: error });
       return;
     }
 
@@ -84,8 +85,8 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
       setImageFile(finalFile);
       setImagePreview(URL.createObjectURL(finalFile));
     } catch (err: unknown) {
-      toast.error('Algo salio mal', {
-        description: (err as Error)?.message || 'Error al procesar imagen',
+      toast.error('No pudimos procesar la imagen', {
+        description: (err as Error)?.message || 'Inténtalo con otra foto en unos segundos.',
       });
     }
   };
@@ -117,12 +118,16 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
     e.preventDefault();
 
     if (!user) {
-      toast.error('Algo salió mal', { description: 'Debes iniciar sesión para publicar' });
+      toast.error('Inicia sesión para publicar', {
+        description: 'Tu publicación se guardará al volver.',
+      });
       return;
     }
 
     if (!content.trim()) {
-      toast.error('Algo salió mal', { description: 'Escribe algo para publicar' });
+      toast.error('Escribe algo para publicar', {
+        description: 'Cuéntanos qué quieres compartir.',
+      });
       return;
     }
 

@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -82,32 +82,23 @@ export const MedicalDocumentsTab = ({ petId, petName }: MedicalDocumentsTabProps
     documentsByType,
     isLoading,
     error: documentsError,
-    uploadDocument,
-    isUploading,
     deleteDocument,
-    isDeleting,
     getDownloadUrl,
     downloadAllAsZip,
     isGeneratingZip,
   } = useMedicalDocuments(petId);
 
-  const {
-    tokens,
-    createShareToken,
-    isCreating: isCreatingShare,
-    getShareUrl,
-    revokeToken,
-  } = useMedicalSharing(petId);
+  const { createShareToken, isCreating: isCreatingShare, getShareUrl } = useMedicalSharing(petId);
 
   const handleDownload = async (document: MedicalDocument) => {
     try {
       const url = await getDownloadUrl(document);
       await downloadFile(url, document.title || 'documento');
     } catch (error) {
-      toast.error('Algo salió mal', {
+      toast.error('No pudimos descargar el documento', {
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
-          'No se pudo descargar el documento',
+          'Inténtalo de nuevo en unos segundos.',
       });
     }
   };
@@ -121,10 +112,10 @@ export const MedicalDocumentsTab = ({ petId, petName }: MedicalDocumentsTabProps
         mimeType: document.mime_type,
       });
     } catch (error) {
-      toast.error('Algo salió mal', {
+      toast.error('No pudimos abrir el documento', {
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
-          'No se pudo abrir el documento',
+          'Inténtalo de nuevo en unos segundos.',
       });
     }
   };

@@ -52,7 +52,9 @@ export function ReviewForm({
     });
 
     if (error) {
-      toast.error('Algo salió mal', { description: 'No se pudo publicar la reseña' });
+      toast.error('No pudimos publicar la reseña', {
+        description: 'Inténtalo de nuevo en unos segundos.',
+      });
       setIsSubmitting(false);
       return;
     }

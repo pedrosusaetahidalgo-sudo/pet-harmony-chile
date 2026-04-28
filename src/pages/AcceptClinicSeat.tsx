@@ -8,6 +8,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { errorMessageForUser } from '@/lib/errors';
 import { useAuth } from '@/hooks/useAuth';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -55,7 +56,7 @@ export default function AcceptClinicSeat() {
       void data;
     } catch (err) {
       setStatus('error');
-      setErrorMsg(err instanceof Error ? err.message : 'Error desconocido');
+      setErrorMsg(errorMessageForUser(err));
     } finally {
       setAccepting(false);
     }

@@ -60,10 +60,10 @@ const BlockUserButton = ({
       queryClient.invalidateQueries({ queryKey: ['follows', user.id, targetUserId] });
     } catch (error: unknown) {
       logger.error('Error blocking user:', error);
-      toast.error('Algo salió mal', {
+      toast.error('No pudimos bloquear al usuario', {
         description:
           describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]) ||
-          'No se pudo bloquear al usuario',
+          'Inténtalo de nuevo en unos segundos.',
       });
     } finally {
       setIsBlocking(false);

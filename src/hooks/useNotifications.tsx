@@ -71,7 +71,9 @@ export function useNotifications() {
       queryClient.invalidateQueries({ queryKey: ['notifications'] });
     },
     onError: () => {
-      toast.error('Algo salió mal', { description: 'No se pudieron marcar las notificaciones' });
+      toast.error('No pudimos marcar tus notificaciones', {
+        description: 'Inténtalo de nuevo en unos segundos.',
+      });
     },
   });
 

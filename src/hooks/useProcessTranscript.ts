@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { errorMessageForUser } from '@/lib/errors';
 import type { VetNoteType } from './useVetClinicalNotes';
 
 export interface ConsultationSummary {
@@ -63,7 +64,7 @@ export function useProcessTranscript() {
       setData(summary);
       return summary;
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Error desconocido';
+      const message = errorMessageForUser(err);
       setError(message);
       return null;
     } finally {

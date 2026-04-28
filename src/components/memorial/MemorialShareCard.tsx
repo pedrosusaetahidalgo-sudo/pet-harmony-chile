@@ -13,6 +13,7 @@ import { useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Image as ImageIcon, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { errorMessageForUser } from '@/lib/errors';
 
 interface MemorialShareCardProps {
   petName: string;
@@ -185,7 +186,7 @@ export function MemorialShareCard({
       document.body.removeChild(link);
       toast.success(`Imagen de ${petName} descargada`);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      const msg = errorMessageForUser(err);
       toast.error(`No pudimos generar la imagen: ${msg}`);
     } finally {
       setGenerating(false);

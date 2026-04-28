@@ -206,6 +206,21 @@ async function sendEmail(opts: { to: string; subject: string; html: string }): P
   return result.ok;
 }
 
+// Sprint 1 P1 SEC-008 (2026-04-28): tightening de seguridad.
+//
+// Antes: aceptaba cualquier application_id y disparaba email Resend + Slack +
+// Discord, permitiendo enumeracion + abuse de quota.
+//
+// Ahora exigimos las DOS condiciones:
+//   1. El caller envia `confirmation_email` en el body que coincide con
+//      contact_email del application_id. Esto bloquea enumeracion pura.
+//   2. El application_id se creo en los ultimos 10 minutos. Bloquea abuse
+//      retroactivo (replay para spammear admin con re-notificaciones).
+//
+// El path legitimo (frontend POST justo despues del INSERT en /aplicar) cumple
+// ambas: el usuario acaba de tipear su email y de crear la fila.
+const RECENT_WINDOW_MINUTES = 10;
+
 serve(
   withTelemetry('notify-pitch-application', async (req) => {
     if (req.method === 'OPTIONS') {
@@ -213,9 +228,12 @@ serve(
     }
 
     try {
-      const { application_id } = await req.json();
+      const { application_id, confirmation_email } = await req.json();
       if (!application_id || typeof application_id !== 'string') {
         return errorResponse('application_id is required', 400);
+      }
+      if (!confirmation_email || typeof confirmation_email !== 'string') {
+        return errorResponse('confirmation_email is required', 400);
       }
 
       const supabaseAdmin = createClient(
@@ -233,6 +251,21 @@ serve(
 
       if (error || !app) {
         return errorResponse('Application not found', 404);
+      }
+
+      // Verifica que el caller conoce el email de quien postulo.
+      if (
+        confirmation_email.trim().toLowerCase() !== (app.contact_email || '').trim().toLowerCase()
+      ) {
+        // Misma respuesta que "not found" — no revelar si el id existe.
+        return errorResponse('Application not found', 404);
+      }
+
+      // Verifica que el application_id es reciente.
+      const createdAt = new Date(app.created_at).getTime();
+      const ageMinutes = (Date.now() - createdAt) / 60_000;
+      if (!Number.isFinite(ageMinutes) || ageMinutes > RECENT_WINDOW_MINUTES) {
+        return errorResponse('Notification window expired', 410);
       }
 
       const label = KIND_LABELS[app.kind] || app.kind;

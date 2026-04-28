@@ -1,15 +1,12 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
-import { LINKS } from '@/lib/links';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Plus, Heart, PawPrint, MessageCircle, Star, Trophy, FileText, Users } from '@/lib/icons';
+import { Plus, Heart, PawPrint, MessageCircle, Users } from '@/lib/icons';
 import { getRarity, type Rarity } from '@/components/PetCardCompact';
 // Collapsible removed — memorial section always visible
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { toast } from 'sonner';
 import {
@@ -32,7 +29,7 @@ import { PawCardFlippable } from '@/components/paw-cards/PawCardFlippable';
 import { PawCardMemorial } from '@/components/paw-cards/PawCardMemorial';
 import { ShareWithVetModal } from '@/components/medical/ShareWithVetModal';
 import { SharePetAccessModal } from '@/components/medical/SharePetAccessModal';
-import { useSharedPets, ROLE_LABELS, type CoOwnerRole, type SharedPet } from '@/hooks/useCoOwners';
+import { useSharedPets, ROLE_LABELS, type SharedPet } from '@/hooks/useCoOwners';
 import type { HoloPattern } from '@/lib/paw-cards';
 import { generatePawCardId, getBreedHoloPattern } from '@/lib/paw-cards';
 

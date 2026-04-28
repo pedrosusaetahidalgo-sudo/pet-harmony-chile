@@ -76,9 +76,12 @@ export default function RefugioPublico() {
     queryKey: ['public-shelter', slug],
     queryFn: async () => {
       if (!slug) return null;
+      // Sprint 1 P1 PERF-003: select narrow con los campos del interface PublicShelter.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data } = await (supabase.from('adoption_centers' as any) as any)
-        .select('*')
+        .select(
+          'id, user_id, legal_name, type, mission, commune, region, address, contact_email, contact_phone, website, social_media, logo_url, banner_url, slug, animal_types, capacity, verified, accepts_donations, total_pets_adopted, total_pets_in_care'
+        )
         .eq('slug', slug)
         .eq('status', 'active')
         .maybeSingle();

@@ -79,10 +79,10 @@ export default function MedicalShare() {
 
   const loadSharedData = async (shareToken: string) => {
     try {
-      // 1. Validar token
+      // 1. Validar token (Sprint 1 P1 PERF-003: select narrow vs *).
       const { data: tokenData, error: tokenErr } = await supabase
         .from('medical_share_tokens')
-        .select('*')
+        .select('id, pet_id, owner_id, is_revoked, expires_at, last_accessed_at')
         .eq('token', shareToken)
         .maybeSingle();
 

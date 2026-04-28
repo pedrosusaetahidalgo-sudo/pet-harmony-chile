@@ -236,3 +236,10 @@ verify_jwt = false
 # ownership. Retorna 503 si no hay partner aseguradora activo.
 [functions.insurance-prefill-quote]
 verify_jwt = true
+
+# Sprint 1 P1 BIZ-006 (2026-04-28) — Cron de recordatorios de renovacion Flow.
+# Mientras Flow Plus no tiene auto-renewal, esta fn manda email "Tu plan vence
+# en X dias" 1x/dia. verify_jwt=false; usa requireCronAuth en el codigo
+# (Sprint 1 P1 SEC-007).
+[functions.flow-renewal-reminders-cron]
+verify_jwt = false

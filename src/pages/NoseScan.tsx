@@ -22,6 +22,7 @@ import { Link } from 'react-router-dom';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { trackRefactor, RefactorEvent } from '@/lib/refactorAnalytics';
 import { cn } from '@/lib/utils';
+import { errorMessageForUser } from '@/lib/errors';
 
 type Phase = 'intro' | 'capturing' | 'review' | 'searching' | 'results' | 'error';
 
@@ -163,7 +164,7 @@ export default function NoseScan() {
 
       setPhase('results');
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      const msg = errorMessageForUser(err);
       setError(`No pudimos buscar: ${msg}`);
       setPhase('error');
     }
@@ -184,7 +185,7 @@ export default function NoseScan() {
           <h1 className="text-lg font-semibold">Próximamente</h1>
           <p className="text-sm text-muted-foreground">
             El escáner público de huella nasal estará disponible pronto. Si encontraste una mascota
-            perdida, escribinos a hola@pawfriend.cl.
+            perdida, escríbenos a hola@pawfriend.cl.
           </p>
           <Button asChild variant="outline">
             <Link to="/">Volver al inicio</Link>

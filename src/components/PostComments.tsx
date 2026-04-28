@@ -104,7 +104,9 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
       toast('Comentario publicado', { description: 'Tu comentario se ha agregado correctamente' });
     } catch (error) {
       logger.error('Error posting comment:', error);
-      toast.error('Algo salió mal', { description: 'No se pudo publicar el comentario' });
+      toast.error('No pudimos publicar el comentario', {
+        description: 'Inténtalo de nuevo en unos segundos.',
+      });
     } finally {
       setSubmitting(false);
     }
@@ -119,7 +121,9 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
       toast('Comentario eliminado', { description: 'El comentario se ha eliminado correctamente' });
     } catch (error) {
       logger.error('Error deleting comment:', error);
-      toast.error('Algo salió mal', { description: 'No se pudo eliminar el comentario' });
+      toast.error('No pudimos eliminar el comentario', {
+        description: 'Inténtalo de nuevo en unos segundos.',
+      });
     }
   };
 

@@ -1,5 +1,4 @@
 import { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -11,13 +10,9 @@ import {
   Pill,
   Activity,
   Shield,
-  Scale,
   ChevronDown,
   User,
   Phone,
-  Stethoscope,
-  FileText,
-  Mic,
   ClipboardList,
   Info,
 } from '@/lib/icons';
@@ -48,7 +43,6 @@ export function VetFichaView({
   shareTokenId,
   onGeneratePDF,
 }: VetFichaViewProps) {
-  const navigate = useNavigate();
   const vitalsRef = useRef<HTMLDivElement>(null);
 
   const age = pet.birth_date ? calculateAge(pet.birth_date) : null;

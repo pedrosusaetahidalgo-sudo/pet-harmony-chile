@@ -322,16 +322,21 @@ export const FEATURE_FLAGS = {
    * Nose print MVP — captura + matching biometrico (refactor maestro §6.2).
    * Trinidad pilar 2. Rollout gradual 10% → 50% → 100%.
    * Requiere pgvector habilitado + migracion nose_prints aplicada + edge fns.
-   * Aplicado y deployed 2026-04-24 (PM). Activado para que dueños puedan
-   * capturar huellas (la captura no requiere validacion del matching).
+   *
+   * PAUSADO 2026-04-28 (Sprint 0 P0 FEAT-017): SigLIP2-base 0.445 gap insuficiente,
+   * fine-tune no mejoro, riesgo legal de revelar dueno equivocado, opex sin
+   * revenue de respaldo. El microchip Ley 21.020 + QR de la Pet ID Card cubren
+   * ~90% del use-case "mascota perdida". Mantenemos codigo y tablas (regla
+   * "esconder, no eliminar") para reactivar en Fase 3 cuando haya partner pharma
+   * que financie fine-tune o volumen para entrenar propio.
    */
-  NOSE_PRINT_ENABLED: true,
+  NOSE_PRINT_ENABLED: false,
 
   /**
    * Integrar captura nose print en onboarding de mascota.
-   * Activado 2026-04-24 (PM). El paso es opcional con boton "Saltar".
+   * PAUSADO 2026-04-28 junto con NOSE_PRINT_ENABLED (FEAT-017).
    */
-  NOSE_PRINT_ONBOARDING: true,
+  NOSE_PRINT_ONBOARDING: false,
 
   /**
    * Ruta publica /nose-scan para encontrar mascotas perdidas.

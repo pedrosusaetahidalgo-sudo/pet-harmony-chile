@@ -78,10 +78,10 @@ function EmptyState() {
         <div className="inline-flex h-14 w-14 rounded-full bg-purple-100 items-center justify-center">
           <Heart className="h-7 w-7 text-purple-600" />
         </div>
-        <h3 className="font-semibold">Aún no tenés procesos de adopción</h3>
+        <h3 className="font-semibold">Aún no tienes procesos de adopción</h3>
         <p className="text-sm text-muted-foreground max-w-sm mx-auto">
           Cuando expreses interés en una mascota de un refugio, vas a poder seguir el proceso desde
-          acá.
+          aquí.
         </p>
         <Button asChild className="bg-purple-600 hover:bg-purple-700 mt-2">
           <Link to="/adoption">

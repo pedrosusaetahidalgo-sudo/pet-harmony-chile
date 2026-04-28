@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { errorMessageForUser } from '@/lib/errors';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -69,7 +70,7 @@ export function PawCompanyApplyForm() {
         description: 'Te respondemos en 48 horas.',
       });
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      const msg = errorMessageForUser(err);
       if (msg.toLowerCase().includes('duplicate') || msg.includes('slug')) {
         toast.error('Ya existe una Paw Company con ese nombre', {
           description: 'Si es tu empresa, escríbenos a pedrosusaeta@pawfriend.cl.',

@@ -308,8 +308,8 @@ serve(
           lost: isLost,
           owner_contact: ownerContact,
           message: isLost
-            ? `${pet.name} está reportada como perdida. ${pet.lost_message ?? 'Por favor contactá al dueño'}.`
-            : `${pet.name} tiene dueño. Si la encontraste, escribinos a hola@pawfriend.cl con el código del match para coordinar.`,
+            ? `${pet.name} está reportada como perdida. ${pet.lost_message ?? 'Por favor contacta al dueño'}.`
+            : `${pet.name} tiene dueño. Si la encontraste, escríbenos a hola@pawfriend.cl con el código del match para coordinar.`,
         };
       })
       .filter((m): m is ResultMatch => m !== null);

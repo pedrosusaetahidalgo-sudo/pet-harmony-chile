@@ -159,7 +159,7 @@ export default function Post() {
           emergencia propio. Probabilidad de gasto mayor &lt; 5% en primeros 5 años.
         </li>
         <li>
-          <strong>Tienes ahorros líquidos &gt;$2M CLP disponibles</strong>. Si podés cubrir la peor
+          <strong>Tienes ahorros líquidos &gt;$2M CLP disponibles</strong>. Si puedes cubrir la peor
           cirugía de tu bolsillo, el seguro es solo transferencia a aseguradora (ellos siempre ganan
           a largo plazo — es su modelo).
         </li>

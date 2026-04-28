@@ -96,14 +96,14 @@ serve(
   <p>Hola,</p>
   <p>${
     fu.kind === '30d'
-      ? `Ya cumplió un mes con vos ${pet.name}. ¿Cómo se está adaptando?`
-      : `${pet.name} ya lleva 3 meses con vos. ¡Eso es un montón!`
+      ? `Ya cumplió un mes contigo, ${pet.name}. ¿Cómo se está adaptando?`
+      : `${pet.name} ya lleva 3 meses contigo. ¡Eso es un montón!`
   }</p>
-  <p>Nos encantaría saber cómo va y si necesitás ayuda con algo:</p>
+  <p>Nos encantaría saber cómo va y si necesitas ayuda con algo:</p>
   <p style="text-align:center;margin:24px 0">
     <a href="${APP_URL}/mis-adopciones" style="background:#7c3aed;color:#fff;padding:12px 24px;border-radius:8px;text-decoration:none;display:inline-block">Contar cómo va ${pet.name}</a>
   </p>
-  <p style="font-size:13px;color:#6b7280">Si tenés cualquier duda, escribinos a hola@pawfriend.cl. Estamos para ayudar.</p>
+  <p style="font-size:13px;color:#6b7280">Si tienes cualquier duda, escríbenos a hola@pawfriend.cl. Estamos para ayudar.</p>
   <hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0"/>
   <p style="font-size:11px;color:#9ca3af;text-align:center">Paw Friend · pawfriend.cl</p>
 </div>`;

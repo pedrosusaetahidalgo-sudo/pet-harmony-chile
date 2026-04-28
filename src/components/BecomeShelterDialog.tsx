@@ -9,12 +9,10 @@
  * 2026-04-20: auto-activo, verificacion admin posterior).
  */
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useActiveRole } from '@/hooks/useActiveRole';
+import { useRoleActivation } from '@/hooks/useRoleActivation';
 import { SANTIAGO_COMUNAS } from '@/lib/vetDirectory';
 import {
   Dialog,
@@ -42,10 +40,9 @@ import {
   Landmark,
   Users,
   ArrowRight,
-  ArrowLeft,
-  Loader2,
   CheckCircle2,
 } from 'lucide-react';
+import { WizardFooter } from '@/components/ui/wizard-footer';
 
 type ShelterType = 'ong' | 'fundacion' | 'refugio' | 'independiente' | 'municipal';
 
@@ -122,9 +119,10 @@ interface Props {
 
 export function BecomeShelterDialog({ open, onOpenChange }: Props) {
   const { user } = useAuth();
-  const { setRole } = useActiveRole();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  // Sprint 1 P2 ARCH-003: hook compartido encapsula post-submit (invalidate +
+  // setRole + close + toast + navigate). Antes este Dialog tenia 5 lineas
+  // duplicadas con BecomeProviderDialog para hacer lo mismo.
+  const activateRole = useRoleActivation();
 
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
@@ -186,11 +184,12 @@ export function BecomeShelterDialog({ open, onOpenChange }: Props) {
 
       if (error) throw error;
 
-      await queryClient.invalidateQueries({ queryKey: ['is-shelter-role'] });
-      setRole('shelter');
-      onOpenChange(false);
-      toast.success('¡Bienvenido! Tu refugio ya esta activo en Paw Friend.');
-      navigate('/shelter/dashboard');
+      await activateRole('shelter', {
+        successMessage: '¡Bienvenido! Tu refugio ya esta activo en Paw Friend.',
+        navigateTo: '/shelter/dashboard',
+        invalidateQueryKeys: [['is-shelter-role']],
+        onClose: () => onOpenChange(false),
+      });
     } catch (err: unknown) {
       const msg =
         err instanceof Error ? err.message : 'No pudimos crear tu refugio. Intenta de nuevo.';
@@ -398,14 +397,14 @@ export function BecomeShelterDialog({ open, onOpenChange }: Props) {
               </div>
             </div>
 
-            <div className="flex justify-between gap-3 pt-2">
-              <Button type="button" variant="outline" onClick={() => setStep(0)}>
-                <ArrowLeft className="h-4 w-4 mr-1" /> Atras
-              </Button>
-              <Button disabled={!canContinueStep2} onClick={() => setStep(2)}>
-                Continuar <ArrowRight className="h-4 w-4 ml-1" />
-              </Button>
-            </div>
+            <WizardFooter
+              mode="next"
+              backLabel="Atras"
+              nextLabel="Continuar"
+              onBack={() => setStep(0)}
+              onPrimary={() => setStep(2)}
+              primaryDisabled={!canContinueStep2}
+            />
           </div>
         )}
 
@@ -477,25 +476,16 @@ export function BecomeShelterDialog({ open, onOpenChange }: Props) {
               </label>
             </div>
 
-            <div className="flex justify-between gap-3 pt-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setStep(1)}
-                disabled={submitting}
-              >
-                <ArrowLeft className="h-4 w-4 mr-1" /> Atras
-              </Button>
-              <Button onClick={handleSubmit} disabled={submitting || !canSubmit}>
-                {submitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-1 animate-spin" /> Creando...
-                  </>
-                ) : (
-                  'Activar mi refugio'
-                )}
-              </Button>
-            </div>
+            <WizardFooter
+              mode="submit"
+              backLabel="Atras"
+              loadingLabel="Creando..."
+              submitLabel="Activar mi refugio"
+              loading={submitting}
+              primaryDisabled={!canSubmit}
+              onBack={() => setStep(1)}
+              onPrimary={handleSubmit}
+            />
           </div>
         )}
       </DialogContent>

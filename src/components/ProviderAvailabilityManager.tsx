@@ -164,7 +164,9 @@ export const ProviderAvailabilityManager = ({
       loadAvailability();
     } catch (error) {
       logger.error('Error syncing calendar:', error);
-      toast.error('Algo salió mal', { description: 'No se pudo sincronizar con Google Calendar' });
+      toast.error('No pudimos sincronizar con Google Calendar', {
+        description: 'Verifica tu conexión y vuelve a intentar en unos segundos.',
+      });
     } finally {
       setSyncingCalendar(false);
     }
@@ -214,7 +216,9 @@ export const ProviderAvailabilityManager = ({
       loadAvailability();
     } catch (error) {
       logger.error('Error saving availability:', error);
-      toast.error('Algo salió mal', { description: 'No se pudo guardar la disponibilidad' });
+      toast.error('No pudimos guardar tu disponibilidad', {
+        description: 'Inténtalo de nuevo en unos segundos.',
+      });
     } finally {
       setSaving(false);
     }
@@ -242,7 +246,9 @@ export const ProviderAvailabilityManager = ({
       loadAvailability();
     } catch (error) {
       logger.error('Error deleting availability:', error);
-      toast.error('Algo salió mal', { description: 'No se pudo eliminar la disponibilidad' });
+      toast.error('No pudimos eliminar la disponibilidad', {
+        description: 'Inténtalo de nuevo en unos segundos.',
+      });
     } finally {
       setSaving(false);
     }

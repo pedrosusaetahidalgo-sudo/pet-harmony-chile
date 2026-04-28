@@ -101,7 +101,7 @@ export function NotificationPrefsSection() {
             <Bell className="h-4 w-4 text-primary" />
             Notificaciones
           </CardTitle>
-          <CardDescription>Elegí cómo querés que te avisemos</CardDescription>
+          <CardDescription>Elige cómo quieres que te avisemos</CardDescription>
         </CardHeader>
         <CardContent className="space-y-3">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -120,7 +120,7 @@ export function NotificationPrefsSection() {
           Notificaciones
         </CardTitle>
         <CardDescription>
-          Elegí cómo querés que te avisemos. Podes cambiar esto cuando quieras.
+          Elige cómo quieres que te avisemos. Puedes cambiar esto cuando quieras.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">

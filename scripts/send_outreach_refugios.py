@@ -76,7 +76,8 @@ WEBSITE = "https://pawfriend.cl"
 SECONDS_BETWEEN_SENDS = 30
 
 # ── Lista de destinatarios (sólo emails verificables) ────────────────────────
-RECIPIENTS = [
+# Tanda 1 (enviada 2026-04-27 17:17-17:20 UTC) — 5 refugios originales
+ALREADY_SENT = [
     {
         "refugio": "Proanimal",
         "email": "contacto@proanimal.cl",
@@ -123,6 +124,90 @@ RECIPIENTS = [
         "personalizado": (
             "Sé que son una operación más chica y eso a veces es ventaja: deciden rápido, "
             "hablan directo. Por eso los contacto sin armar mucho proceso."
+        ),
+    },
+]
+
+# Tanda 2 (pending — refugios chilenos adicionales descubiertos via search)
+RECIPIENTS = [
+    {
+        "refugio": "Fundación Ayuda Callejeros",
+        "email": "ayuda.callejerosong@gmail.com",
+        "saludo": "equipo de Fundación Ayuda Callejeros",
+        "personalizado": (
+            "Sé del trabajo que hacen rescatando perros en situación de calle. Justamente "
+            "para callejeros sin chip, identificarlos por nariz cuando vuelven a aparecer "
+            "puede marcar la diferencia entre reubicarlos o que pasen meses sin reconocer."
+        ),
+    },
+    {
+        "refugio": "Refugio Animal Cascada",
+        "email": "contact@refugioanimalcascada.org",
+        "saludo": "equipo del Refugio Animal Cascada",
+        "personalizado": (
+            "Veo que trabajan en Cajón del Maipo con rescate y rehabilitación. Si tienen "
+            "registro fotográfico de los animales que pasan por las distintas etapas de "
+            "rehabilitación, eso es exactamente lo que necesito para entrenar el modelo."
+        ),
+    },
+    {
+        "refugio": "Fundación EDRA",
+        "email": "Socios@edra.cl",
+        "saludo": "equipo de EDRA",
+        "personalizado": (
+            "Conozco el trabajo de defensa y rescate animal que hacen. Para animales que "
+            "pasan por rescate y luego se reubican, identificarlos visualmente entre "
+            "etapas puede sumar mucho al seguimiento."
+        ),
+    },
+    {
+        "refugio": "Refugio Dhermes",
+        "email": "dhermeshermanosmenores@gmail.com",
+        "saludo": "equipo de Dhermes",
+        "personalizado": (
+            "Vi que rescatan perros en Viña y los van fotografiando en el proceso de "
+            "adopción, eso es justo el tipo de material que sirve para entrenar el modelo: "
+            "el mismo perro en distintos momentos."
+        ),
+    },
+    {
+        "refugio": "Fundación Dolz",
+        "email": "fundaciongatodolz@gmail.com",
+        "saludo": "equipo de Fundación Dolz",
+        "personalizado": (
+            "El sistema funciona igual de bien con gatos — la nariz del gato también es "
+            "única, como una huella digital. Si tienen archivo fotográfico de los gatos "
+            "que han pasado por ustedes, organizado por animal, eso me ayudaría muchísimo."
+        ),
+    },
+    {
+        "refugio": "Refugio Patitas Sin Hogar",
+        "email": "Refugiopatitasinhogar@gmail.com",
+        "saludo": "equipo de Patitas Sin Hogar",
+        "personalizado": (
+            "Veo que llevan tiempo rescatando perros en la Octava Región. La cantidad de "
+            "animales que han pasado por ustedes seguro tiene un archivo fotográfico que "
+            "puede ser oro para entrenar el sistema."
+        ),
+    },
+    {
+        "refugio": "Fundación Animalia",
+        "email": "contacto@animalia.cl",
+        "saludo": "equipo de Animalia",
+        "personalizado": (
+            "Conozco el trabajo que hacen en Santiago con rescate y adopciones. Las fichas "
+            "con foto al ingreso y en distintos momentos del animal son justo el tipo de "
+            "material que sirve para que el modelo aprenda."
+        ),
+    },
+    {
+        "refugio": "Fundación Alma Chile",
+        "email": "contacto@fundacionalmachile.com",
+        "saludo": "equipo de Fundación Alma",
+        "personalizado": (
+            "Veo que están en Paine y mantienen seguimiento de los animales que rescatan. "
+            "Si tienen archivo fotográfico organizado por animal, justamente eso es lo que "
+            "el modelo necesita para discriminar entre individuos."
         ),
     },
 ]

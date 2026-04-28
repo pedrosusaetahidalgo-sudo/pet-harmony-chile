@@ -30,6 +30,7 @@ import {
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { markOnboardingComplete } from '@/hooks/useOnboardingStatus';
 import { toast } from 'sonner';
 import {
   Upload,
@@ -44,6 +45,8 @@ import {
 } from '@/lib/icons';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { ImageCropDialog } from '@/components/ImageCropDialog';
+import { VaccinationCardOCR } from '@/components/onboarding/VaccinationCardOCR';
+import { FileText } from '@/lib/icons';
 import {
   compressImage,
   compressedToFile,
@@ -90,6 +93,14 @@ export default function OnboardingQuickFlow() {
   const [researchConsent, setResearchConsent] = useState<boolean | null>(null);
 
   const [submitting, setSubmitting] = useState(false);
+
+  // Sprint 1 P1 FEAT-002: post-creacion mostramos un step opcional para subir
+  // el carnet de vacunas (OCR). Restaura la propuesta de valor "ficha completa
+  // sin tipear" del modelo v2. Si el dueno salta, va directo a la ficha como
+  // antes; si sube, el componente VaccinationCardOCR escribe los registros y
+  // luego salimos.
+  const [createdPetId, setCreatedPetId] = useState<string | null>(null);
+  const [postRedirectTarget, setPostRedirectTarget] = useState<string | null>(null);
 
   const step1Valid = !!photoFile && name.trim().length >= 2 && !!species;
 
@@ -162,7 +173,10 @@ export default function OnboardingQuickFlow() {
         paw_card_id: pawCardData.pawCardId,
         holo_pattern: pawCardData.holoPattern,
         microchip_number: microchip.trim() || null,
-        is_public: true,
+        // Sprint 0 P0 SEC-002: la mascota nace privada por default. La fuga
+        // historica era pets.is_public DEFAULT true + policy publica. La mig
+        // 20260906000000 corrige el default; aqui evitamos el override explicito.
+        is_public: false,
       };
 
       const { data: createdPet, error: insertError } = await supabase
@@ -202,17 +216,31 @@ export default function OnboardingQuickFlow() {
         queryClient.invalidateQueries({ queryKey: ['research-consent', user.id] }),
       ]);
 
+      // Sprint 0 P0 FEAT-001: marcar onboarding completo. Antes el wizard
+      // creaba la mascota pero no marcaba el funnel, lo que rompia el tracking
+      // de useOnboardingStatus + metricas de activation.
+      try {
+        await markOnboardingComplete(user.id);
+      } catch (err) {
+        // No fatal: la mascota ya existe. Solo log.
+        logger.warn('[OnboardingQuickFlow] markOnboardingComplete failed', err);
+      }
+
       toast.success('¡Mascota agregada!', {
-        description: `${name} ya tiene su perfil. Podés agregar más detalles desde la ficha.`,
+        description: `${name} ya tiene su perfil. Puedes agregar más detalles desde la ficha.`,
       });
 
       // Si eligió capturar nose print ahora, redirige a ficha tab Identidad.
-      // El componente NosePrintSection ofrece el boton de captura prominente.
       // Si eligió "Más tarde", va a la ficha en su tab default.
       const target = captureNoseLater
         ? LINKS.petClinical(createdPet.id)
         : `${LINKS.petClinical(createdPet.id)}?tab=identidad`;
-      navigate(target);
+
+      // Sprint 1 P1 FEAT-002: en lugar de navegar inmediato, mostramos el step
+      // opcional de OCR carnet de vacunas. El dueno puede subir el carnet (que
+      // crea registros automaticamente) o saltar para ir a la ficha.
+      setCreatedPetId(createdPet.id);
+      setPostRedirectTarget(target);
     } catch (err) {
       if (uploadedFilePath) {
         await supabase.storage
@@ -228,6 +256,53 @@ export default function OnboardingQuickFlow() {
       setSubmitting(false);
     }
   };
+
+  // Sprint 1 P1 FEAT-002: vista post-creacion con OCR opcional. Aparece tras
+  // crear la mascota; el dueno puede subir el carnet de vacunas o saltar.
+  if (createdPetId && postRedirectTarget) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 px-4 py-6">
+        <div className="container max-w-md mx-auto">
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <h1 className="text-xl font-bold">¡{name} ya tiene su perfil!</h1>
+              <span className="text-xs text-muted-foreground">Paso bonus</span>
+            </div>
+            <Progress value={100} className="h-1.5" />
+          </div>
+
+          <Card className="mb-3">
+            <CardContent className="pt-6 space-y-4">
+              <div className="flex items-start gap-3">
+                <div className="h-10 w-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
+                  <FileText className="h-5 w-5" />
+                </div>
+                <div>
+                  <h2 className="text-base font-semibold mb-1">¿Tienes el carnet de vacunas?</h2>
+                  <p className="text-sm text-muted-foreground">
+                    Súbelo una vez y la IA arma todo el historial automáticamente. Toma 30 segundos.
+                    Si no lo tienes a mano, puedes hacerlo después desde la ficha.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <VaccinationCardOCR petId={createdPetId} onSaved={() => navigate(postRedirectTarget)} />
+
+          <div className="flex justify-center pt-4">
+            <Button
+              variant="ghost"
+              onClick={() => navigate(postRedirectTarget)}
+              className="text-muted-foreground"
+            >
+              Saltar, lo hago después
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 px-4 py-6">
@@ -299,7 +374,7 @@ export default function OnboardingQuickFlow() {
                   )}
                   {!photoPreview && (
                     <p className="text-xs text-muted-foreground">
-                      Cualquier foto clara sirve. Podés ajustar después.
+                      Cualquier foto clara sirve. Puedes ajustar después.
                     </p>
                   )}
                 </div>
@@ -388,7 +463,7 @@ export default function OnboardingQuickFlow() {
                   <div>
                     <p className="text-sm font-semibold text-purple-900">¿Capturar ahora?</p>
                     <p className="text-xs text-purple-700 mt-0.5">
-                      Toma ~30 segundos. Podés hacerlo después desde la ficha clínica si preferís.
+                      Toma ~30 segundos. Puedes hacerlo después desde la ficha clínica si prefieres.
                     </p>
                   </div>
                 </div>
@@ -431,7 +506,7 @@ export default function OnboardingQuickFlow() {
                     {captureNoseLater && <Check className="h-4 w-4 ml-auto text-purple-600" />}
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Podés hacerlo cuando quieras desde la ficha clínica.
+                    Puedes hacerlo cuando quieras desde la ficha clínica.
                   </p>
                 </button>
               </div>
@@ -478,14 +553,14 @@ export default function OnboardingQuickFlow() {
                   id="microchip"
                   value={microchip}
                   onChange={(e) => setMicrochip(e.target.value.replace(/\D/g, '').slice(0, 15))}
-                  placeholder="Dejá vacío si no tiene"
+                  placeholder="Deja vacío si no tiene"
                   inputMode="numeric"
                   pattern="\d{15}"
                   maxLength={15}
                 />
                 <p className="text-[10px] text-muted-foreground">
-                  Estándar ISO 11784/11785. Podés agregarlo después desde la ficha si ahora no lo
-                  tenés a mano.
+                  Estándar ISO 11784/11785. Puedes agregarlo después desde la ficha si ahora no lo
+                  tienes a mano.
                 </p>
               </div>
 
@@ -524,7 +599,7 @@ export default function OnboardingQuickFlow() {
                   Una pregunta opcional
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  Paw Friend es gratis para vos. Para sostenerlo, vendemos insights agregados
+                  Paw Friend es gratis para ti. Para sostenerlo, vendemos insights agregados
                   anonimos a laboratorios y aseguradoras que cuidan mascotas.
                 </p>
               </div>
@@ -573,13 +648,13 @@ export default function OnboardingQuickFlow() {
                     {researchConsent === false && '✓ '}No participar
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    Tu data nunca se va a usar en estudios. Podes cambiar despues.
+                    Tu data nunca se va a usar en estudios. Puedes cambiar después.
                   </p>
                 </button>
               </div>
 
               <p className="text-[11px] text-muted-foreground italic">
-                Es 100% opcional. Podes saltar este paso o cambiar la decision desde tu perfil.
+                Es 100% opcional. Puedes saltar este paso o cambiar la decisión desde tu perfil.
               </p>
 
               <div className="flex gap-2 pt-2">

@@ -10,17 +10,31 @@
           "/medical-share/*",
           "/veterinarios/*",
           "/refugios/*",
+          "/refugios-hogares",
+          "/precios-veterinarios/*",
+          "/memoria/*",
+          "/insights",
+          "/insights/*",
+          "/insights-pro",
+          "/insights-pro/*",
+          "/nose-scan",
+          "/post-adoption/*",
+          "/blog",
+          "/blog/*",
           "/paw-member",
           "/paw-member/*",
+          "/paw-support",
           "/donaciones",
           "/transparencia",
+          "/paw-core",
           "/paw-companys",
           "/paw-voices",
           "/paw-partners",
           "/aplicar",
           "/resena/*",
           "NOT /admin",
-          "NOT /admin/*"
+          "NOT /admin/*",
+          "NOT /auth"
         ]
       }
     ]

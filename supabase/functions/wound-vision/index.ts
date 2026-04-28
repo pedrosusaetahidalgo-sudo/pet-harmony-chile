@@ -209,16 +209,22 @@ Evaluas fotos de heridas, lesiones o condiciones visibles en mascotas para orien
       );
     }
 
+    // Sprint 0 P0 AI-001: fallback conservador. Antes urgency='amarillo' (Monitorear)
+    // podia minimizar emergencias reales (quemadura, herida abierta) cuando Claude
+    // alucinaba o el JSON.parse fallaba. Ahora derivamos a 'naranja' con copy
+    // que pide foto nueva o consulta cercana — nunca tranquiliza por error.
     const fallback = {
-      description: 'No se pudo evaluar la imagen correctamente.',
-      urgency: 'amarillo' as const,
-      urgency_label: 'Monitorear',
+      description:
+        'No pudimos analizar la imagen con confianza. Mejor que un veterinario la revise.',
+      urgency: 'naranja' as const,
+      urgency_label: 'Consulta pronto',
       observations: [],
-      recommended_action: 'Consulta a tu veterinario para una evaluación presencial.',
+      recommended_action:
+        'Sube una foto nueva con mejor luz y enfoque, o consulta a un veterinario en las próximas horas si la herida luce profunda, sangra o tu mascota está incómoda.',
       show_directory: true,
       image_quality: 'insuficiente' as const,
       disclaimer:
-        'Evaluación visual orientativa. No reemplaza el examen presencial de un veterinario.',
+        'Evaluación visual orientativa. No reemplaza el examen presencial de un veterinario. Cuando dudamos, preferimos pedirte que consultes.',
     };
 
     // Parse JSON from response

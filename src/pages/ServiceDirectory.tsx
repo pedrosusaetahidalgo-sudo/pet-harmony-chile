@@ -472,10 +472,14 @@ const ServiceDirectory = () => {
     try {
       setLoading(true);
 
-      // Query service_providers filtered by primary_service_type
+      // Sprint 1 P1 PERF-003 (2026-04-28): select narrow. Antes traia todos
+      // los ~30 campos de service_providers; ahora solo los que el directorio
+      // necesita para listar + abrir el card de detalle.
       const { data: providersData, error } = await supabase
         .from('service_providers')
-        .select('*')
+        .select(
+          'id, user_id, business_name, display_name, avatar_url, bio, commune, is_verified, rating, total_services_completed, experience_years, license_number, specialties, services_offered, service_areas, base_price_clp, price_from, emergency_available, mobile_service, accepts_cats, accepts_dogs, accepts_long_hair'
+        )
         .eq('primary_service_type', config.primaryServiceType)
         .eq('status', 'approved')
         .eq('is_directory_visible', true)
@@ -534,8 +538,8 @@ const ServiceDirectory = () => {
       }
     } catch (error) {
       logger.error('Error loading data:', error);
-      toast.error('Algo salió mal', {
-        description: `No se pudo cargar la información de ${config.listTabLabel.toLowerCase()}`,
+      toast.error(`No pudimos cargar ${config.listTabLabel.toLowerCase()}`, {
+        description: 'Recarga la página o inténtalo en unos segundos.',
       });
     } finally {
       setLoading(false);

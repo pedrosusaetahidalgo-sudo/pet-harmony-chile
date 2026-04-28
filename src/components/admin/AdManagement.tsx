@@ -104,7 +104,8 @@ const AdManagement = () => {
       resetForm();
     },
     onError: (error: unknown) => {
-      toast.error('Algo salio mal', {
+      // Sprint 1 P2 LOC-MICROCOPY: copy especifico por accion en vez de generico.
+      toast.error('No pudimos crear el anuncio', {
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
       });
     },
@@ -122,7 +123,7 @@ const AdManagement = () => {
       resetForm();
     },
     onError: (error: unknown) => {
-      toast.error('Algo salio mal', {
+      toast.error('No pudimos actualizar el anuncio', {
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
       });
     },
@@ -139,7 +140,7 @@ const AdManagement = () => {
       setDeleteTarget(null);
     },
     onError: (error: unknown) => {
-      toast.error('Algo salio mal', {
+      toast.error('No pudimos eliminar el anuncio', {
         description: describeSupabaseError(error as Parameters<typeof describeSupabaseError>[0]),
       });
       setDeleteTarget(null);

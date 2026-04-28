@@ -173,8 +173,8 @@ export function EditProfileDrawer({
 
     if (error) {
       logger.error('Error saving profile:', error);
-      toast.error('Algo salio mal', {
-        description: 'No se pudo guardar el perfil. Intenta de nuevo.',
+      toast.error('No pudimos guardar tu perfil', {
+        description: 'Inténtalo de nuevo en unos segundos.',
       });
     } else {
       toast('Perfil guardado', { description: 'Tus cambios se han guardado correctamente.' });

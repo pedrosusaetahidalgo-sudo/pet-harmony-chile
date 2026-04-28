@@ -246,7 +246,7 @@ export const TAGLINE = {
   vet: 'La plataforma veterinaria de Chile',
   shelter: 'La red de refugios con ficha que viaja con la mascota',
   admin: 'Panel interno — Paw Friend',
-  donation: 'Gracias a vos, Paw Friend sigue siendo gratis',
+  donation: 'Gracias a ti, Paw Friend sigue siendo gratis',
   share: 'La ficha medica de tu mascota, compartida',
 } as const;
 

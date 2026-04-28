@@ -191,7 +191,7 @@ export function HomePetFocusV2() {
         healthMessage: 'Empezando la historia',
         nextAction: {
           kind: 'suggestion' as NextActionKind,
-          title: 'Agregá el primer evento a la historia',
+          title: 'Agrega el primer evento a la historia',
           description: 'Una foto, un paseo, una consulta. Empezamos juntos.',
           ctaLabel: 'Agregar',
           onAction: () => navigate(LINKS.petClinical(selectedPet.id)),
@@ -233,7 +233,7 @@ export function HomePetFocusV2() {
         </div>
         <h1 className="text-2xl font-bold mb-2">Bienvenido a Paw Friend</h1>
         <p className="text-muted-foreground mb-6">
-          Agregá tu primera mascota para empezar a guardar su historia.
+          Agrega tu primera mascota para empezar a guardar su historia.
         </p>
         <Button size="lg" onClick={() => navigate(LINKS.addPet())} className="gap-2">
           <Plus className="h-5 w-5" />

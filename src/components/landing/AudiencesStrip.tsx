@@ -87,7 +87,7 @@ export function AudiencesStrip() {
             estas?
           </h2>
           <p className="mt-4 text-base text-muted-foreground md:text-lg">
-            Desde dueños hasta veterinarios, refugios, empresas y creadores — hay un lugar para vos
+            Desde dueños hasta veterinarios, refugios, empresas y creadores — hay un lugar para ti
             en la red.
           </p>
         </div>

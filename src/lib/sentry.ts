@@ -24,6 +24,68 @@ function flush() {
   _queue.length = 0;
 }
 
+// Sprint 1 P1 SEC-013 (2026-04-28): scrub PII antes de enviar a Sentry US.
+// Cumplimiento Ley 19.628: email, RUT, telefono y direccion son datos
+// personales y no deben salir del territorio sin justificacion. Sentry usa
+// nuestro proyecto en infra US, asi que aplicamos un beforeSend que limpia
+// los campos sensibles. Si dejamos algo, los logs siguen siendo utiles
+// (URL, stack, event_id) sin exponer al usuario.
+const PII_KEY_PATTERNS = [
+  /email/i,
+  /rut/i,
+  /phone/i,
+  /tel(efono)?/i,
+  /address/i,
+  /direccion/i,
+  /password/i,
+  /token/i,
+  /api[_-]?key/i,
+  /authorization/i,
+];
+// Patrones de valor que se reemplazan in-place por '[scrubbed]':
+//   - emails: foo@bar.com
+//   - RUT chilenos: 12.345.678-9 / 12345678-K
+//   - telefonos chilenos +56 9 XXXX XXXX o 9 XXXX XXXX
+//   - JWT tokens (3 grupos base64 separados por punto)
+const PII_VALUE_PATTERNS: Array<[RegExp, string]> = [
+  [/[\w.+-]+@[\w-]+\.[\w.-]+/g, '[email-scrubbed]'],
+  [/\b\d{1,2}\.?\d{3}\.?\d{3}-[\dkK]\b/g, '[rut-scrubbed]'],
+  [/\+?56[\s-]?9[\s-]?\d{4}[\s-]?\d{4}/g, '[phone-scrubbed]'],
+  [/\beyJ[\w-]+\.[\w-]+\.[\w-]+\b/g, '[jwt-scrubbed]'],
+];
+
+function scrubString(s: string): string {
+  let out = s;
+  for (const [pattern, replacement] of PII_VALUE_PATTERNS) {
+    out = out.replace(pattern, replacement);
+  }
+  return out;
+}
+
+function isPIIKey(key: string): boolean {
+  return PII_KEY_PATTERNS.some((p) => p.test(key));
+}
+
+// Recursivamente limpia un objeto Sentry. Conservador: si una key matchea PII
+// la marca como '[scrubbed]'; si el valor es string lo pasa por scrubString.
+// No mutar input — devolvemos copia limpia.
+function scrubValue(value: unknown, depth = 0): unknown {
+  if (depth > 6) return '[max-depth]';
+  if (value == null) return value;
+  if (typeof value === 'string') return scrubString(value);
+  if (typeof value !== 'object') return value;
+  if (Array.isArray(value)) return value.map((v) => scrubValue(v, depth + 1));
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+    if (isPIIKey(k)) {
+      out[k] = '[scrubbed]';
+    } else {
+      out[k] = scrubValue(v, depth + 1);
+    }
+  }
+  return out;
+}
+
 function loadSentry() {
   if (_sentry) return;
   import('@sentry/react').then((mod) => {
@@ -45,6 +107,47 @@ function loadSentry() {
       // Bajado de 0.5 a 0.1 (INIT-12): menos replays por error, menos
       // egress + menos riesgo de llegar a tier pago de Sentry.
       replaysOnErrorSampleRate: 0.1,
+      // Scrub PII antes de enviar a Sentry US (Sprint 1 P1 SEC-013).
+      beforeSend(event) {
+        try {
+          if (event.request) event.request = scrubValue(event.request) as typeof event.request;
+          if (event.user) {
+            // Mantener user.id (identificador interno) pero limpiar email/username.
+            event.user = {
+              id: event.user.id,
+              ip_address: undefined,
+            };
+          }
+          if (event.extra) event.extra = scrubValue(event.extra) as typeof event.extra;
+          if (event.contexts) event.contexts = scrubValue(event.contexts) as typeof event.contexts;
+          if (event.breadcrumbs) {
+            event.breadcrumbs = event.breadcrumbs.map((b) => scrubValue(b) as typeof b);
+          }
+          if (event.message) event.message = scrubString(event.message);
+          if (event.exception?.values) {
+            event.exception.values = event.exception.values.map((v) => ({
+              ...v,
+              value: v.value ? scrubString(v.value) : v.value,
+            }));
+          }
+        } catch {
+          // Si el scrub falla, mejor descartar el evento que enviarlo crudo.
+          return null;
+        }
+        return event;
+      },
+      beforeBreadcrumb(breadcrumb) {
+        // Limpia breadcrumbs sincronos (navegacion, console, fetch). Los
+        // valores pueden contener URLs con tokens en query string.
+        try {
+          if (breadcrumb.message) breadcrumb.message = scrubString(breadcrumb.message);
+          if (breadcrumb.data)
+            breadcrumb.data = scrubValue(breadcrumb.data) as typeof breadcrumb.data;
+        } catch {
+          return null;
+        }
+        return breadcrumb;
+      },
     });
     _sentry = mod;
     flush();

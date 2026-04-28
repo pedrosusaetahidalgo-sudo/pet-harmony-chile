@@ -296,7 +296,8 @@ const AddPetLegacy = () => {
     if (formData.weight) {
       const w = parseFloat(formData.weight);
       if (w <= 0) {
-        toast.error('Algo salió mal', { description: 'El peso debe ser mayor a 0' });
+        // Sprint 1 P2 LOC-MICROCOPY: validacion no es "error", es feedback de campo.
+        toast.error('Revisa el peso', { description: 'El peso debe ser mayor a 0 kg.' });
         return;
       }
       // Warning (no bloqueante) para pesos fuera de rango esperado por especie
@@ -322,8 +323,8 @@ const AddPetLegacy = () => {
       const birth = new Date(formData.birth_date + 'T00:00:00');
       const now = new Date();
       if (birth > now) {
-        toast.error('Algo salió mal', {
-          description: 'La fecha de nacimiento no puede ser en el futuro',
+        toast.error('Revisa la fecha de nacimiento', {
+          description: 'La fecha de nacimiento no puede ser en el futuro.',
         });
         return;
       }
@@ -350,8 +351,8 @@ const AddPetLegacy = () => {
 
     // Validate adoption_date if provided
     if (formData.adoption_date && new Date(formData.adoption_date) > new Date()) {
-      toast.error('Algo salió mal', {
-        description: 'La fecha de adopción no puede ser en el futuro',
+      toast.error('Revisa la fecha de adopción', {
+        description: 'La fecha de adopción no puede ser en el futuro.',
       });
       return;
     }
@@ -654,11 +655,11 @@ const AddPetLegacy = () => {
           } catch (inviteErr) {
             logger.error('[AddPet] co-owner invite failed', inviteErr);
             toast('La mascota se creó, pero no pudimos enviar la invitación', {
-              description: 'Podes invitar a esta persona más tarde desde la ficha de la mascota.',
+              description: 'Puedes invitar a esta persona más tarde desde la ficha de la mascota.',
             });
           }
         } else if (emailOk && normalizedEmail === user.email?.toLowerCase()) {
-          toast('No podes invitarte a vos mismo', {
+          toast('No puedes invitarte a ti mismo', {
             description: 'Usamos el email de otra persona para el co-acceso.',
           });
         }
@@ -1195,7 +1196,7 @@ const AddPetLegacy = () => {
                   <div className="flex-1">
                     <CardTitle className="text-base">Compartir con otra persona</CardTitle>
                     <CardDescription>
-                      Podés invitar a tu pareja, familia o cuidador a ver la ficha
+                      Puedes invitar a tu pareja, familia o cuidador a ver la ficha
                     </CardDescription>
                   </div>
                   <Switch

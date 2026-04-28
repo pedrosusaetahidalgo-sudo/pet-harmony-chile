@@ -191,9 +191,15 @@ const Maps = () => {
   const { data: adoptionPosts } = useQuery({
     queryKey: ['map-adoption-posts'],
     queryFn: async () => {
+      // Sprint 1 P1 PERF-003: select narrow. Antes traia todo (~20+ cols).
+      // Marker render solo usa id/lat/lng/species/size; los popovers que se
+      // abren al click leen los campos de AdoptionPostCard (mismo set que
+      // /adoption feed).
       const { data: posts, error } = await supabase
         .from('adoption_posts')
-        .select('*')
+        .select(
+          'id, user_id, pet_name, species, breed, gender, age_years, age_months, description, photos, location, status, latitude, longitude, size'
+        )
         .eq('status', 'disponible');
       if (error) throw error;
       if (!posts || posts.length === 0) return [];

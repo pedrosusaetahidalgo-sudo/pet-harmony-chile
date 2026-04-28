@@ -1,55 +1,66 @@
-import { useState, useEffect, useMemo } from "react";
-import { useAuth } from "@/hooks/useAuth";
-import { useAdoptionShelters, AdoptionShelter } from "@/hooks/useAdoptionShelters";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { 
-  Sparkles, MapPin, Search, Filter, Building2, Dog, Cat, 
-  Loader2, RefreshCw, Map as MapIcon, List, Navigation,
-  ExternalLink, MessageCircle
-} from "@/lib/icons";
-import { MapContainer, TileLayer, Marker, Popup, CircleMarker } from "react-leaflet";
-import { shelterIcon, OSM_TILE_URL, OSM_ATTRIBUTION } from "@/lib/leafletConfig";
-import ShelterDetailCard from "@/components/maps/ShelterDetailCard";
-import { logger } from "@/lib/logger";
+import { useState, useEffect, useMemo } from 'react';
+import { useAdoptionShelters, AdoptionShelter } from '@/hooks/useAdoptionShelters';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import {
+  Sparkles,
+  MapPin,
+  Search,
+  Building2,
+  Dog,
+  Cat,
+  Loader2,
+  RefreshCw,
+  Map as MapIcon,
+  List,
+} from '@/lib/icons';
+import { MapContainer, TileLayer, Marker, Popup, CircleMarker } from 'react-leaflet';
+import { shelterIcon, OSM_TILE_URL, OSM_ATTRIBUTION } from '@/lib/leafletConfig';
+import ShelterDetailCard from '@/components/maps/ShelterDetailCard';
+import { logger } from '@/lib/logger';
 
 const defaultCenter: [number, number] = [-33.4489, -70.6693];
 
 const typeLabels: Record<string, string> = {
-  ong: "ONG",
-  fundacion: "Fundación",
-  refugio: "Refugio",
-  independiente: "Casa de Acogida",
+  ong: 'ONG',
+  fundacion: 'Fundación',
+  refugio: 'Refugio',
+  independiente: 'Casa de Acogida',
 };
 
 const typeColors: Record<string, string> = {
-  ong: "#10b981",
-  fundacion: "#3b82f6",
-  refugio: "#8b5cf6",
-  independiente: "#f59e0b",
+  ong: '#10b981',
+  fundacion: '#3b82f6',
+  refugio: '#8b5cf6',
+  independiente: '#f59e0b',
 };
 
 const AdoptionSheltersList = () => {
-  const { user } = useAuth();
-  const { shelters, isLoading, generateShelters, filterShelters, getCommunes, hasNoShelters } = useAdoptionShelters();
-  
-  const [viewMode, setViewMode] = useState<"map" | "list">("map");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedType, setSelectedType] = useState("all");
-  const [selectedAnimal, setSelectedAnimal] = useState("all");
-  const [selectedCommune, setSelectedCommune] = useState("all");
+  const { shelters, isLoading, generateShelters, filterShelters, getCommunes, hasNoShelters } =
+    useAdoptionShelters();
+
+  const [viewMode, setViewMode] = useState<'map' | 'list'>('map');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedType, setSelectedType] = useState('all');
+  const [selectedAnimal, setSelectedAnimal] = useState('all');
+  const [selectedCommune, setSelectedCommune] = useState('all');
   const [selectedShelter, setSelectedShelter] = useState<AdoptionShelter | null>(null);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   // Get user location
   useEffect(() => {
-    if ("geolocation" in navigator) {
+    if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setUserLocation({
@@ -57,7 +68,7 @@ const AdoptionSheltersList = () => {
             lng: position.coords.longitude,
           });
         },
-        (error) => logger.error("Error getting location:", error)
+        (error) => logger.error('Error getting location:', error)
       );
     }
   }, []);
@@ -84,7 +95,15 @@ const AdoptionSheltersList = () => {
     }
 
     return filtered;
-  }, [shelters, selectedType, selectedAnimal, selectedCommune, searchQuery, userLocation, filterShelters]);
+  }, [
+    shelters,
+    selectedType,
+    selectedAnimal,
+    selectedCommune,
+    searchQuery,
+    userLocation,
+    filterShelters,
+  ]);
 
   // Map markers (Leaflet)
   const markers = useMemo(() => {
@@ -157,7 +176,8 @@ const AdoptionSheltersList = () => {
     <div className="space-y-4">
       {/* AI disclaimer */}
       <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4 text-sm text-amber-800">
-        <span className="font-medium">Nota:</span> Estos refugios fueron generados con inteligencia artificial como referencia. Verifica la información antes de contactar.
+        <span className="font-medium">Nota:</span> Estos refugios fueron generados con inteligencia
+        artificial como referencia. Verifica la información antes de contactar.
       </div>
 
       {/* Header with AI badge */}
@@ -177,7 +197,9 @@ const AdoptionSheltersList = () => {
           onClick={handleGenerateShelters}
           disabled={generateShelters.isPending}
         >
-          <RefreshCw className={`h-4 w-4 mr-2 ${generateShelters.isPending ? "animate-spin" : ""}`} />
+          <RefreshCw
+            className={`h-4 w-4 mr-2 ${generateShelters.isPending ? 'animate-spin' : ''}`}
+          />
           Actualizar
         </Button>
       </div>
@@ -235,17 +257,17 @@ const AdoptionSheltersList = () => {
       {/* View toggle */}
       <div className="flex gap-2">
         <Button
-          variant={viewMode === "map" ? "default" : "outline"}
+          variant={viewMode === 'map' ? 'default' : 'outline'}
           size="sm"
-          onClick={() => setViewMode("map")}
+          onClick={() => setViewMode('map')}
         >
           <MapIcon className="h-4 w-4 mr-2" />
           Mapa
         </Button>
         <Button
-          variant={viewMode === "list" ? "default" : "outline"}
+          variant={viewMode === 'list' ? 'default' : 'outline'}
           size="sm"
-          onClick={() => setViewMode("list")}
+          onClick={() => setViewMode('list')}
         >
           <List className="h-4 w-4 mr-2" />
           Lista
@@ -253,14 +275,14 @@ const AdoptionSheltersList = () => {
       </div>
 
       {/* Map View */}
-      {viewMode === "map" && (
+      {viewMode === 'map' && (
         <div className="relative">
-          <div style={{ width: "100%", height: "400px" }} className="rounded-lg overflow-hidden">
+          <div style={{ width: '100%', height: '400px' }} className="rounded-lg overflow-hidden">
             <MapContainer
               center={mapCenter}
               zoom={11}
               scrollWheelZoom={true}
-              style={{ width: "100%", height: "100%" }}
+              style={{ width: '100%', height: '100%' }}
             >
               <TileLayer attribution={OSM_ATTRIBUTION} url={OSM_TILE_URL} />
               {markers.map((marker) => (
@@ -281,7 +303,7 @@ const AdoptionSheltersList = () => {
                 <CircleMarker
                   center={[userLocation.lat, userLocation.lng]}
                   radius={8}
-                  pathOptions={{ color: "#fff", fillColor: "#4F46E5", fillOpacity: 1, weight: 3 }}
+                  pathOptions={{ color: '#fff', fillColor: '#4F46E5', fillOpacity: 1, weight: 3 }}
                 />
               )}
             </MapContainer>
@@ -306,7 +328,7 @@ const AdoptionSheltersList = () => {
       )}
 
       {/* List View */}
-      {viewMode === "list" && (
+      {viewMode === 'list' && (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filteredShelters.map((shelter) => (
             <Card
@@ -318,7 +340,7 @@ const AdoptionSheltersList = () => {
                 <div className="flex items-start gap-3">
                   <div
                     className="p-2 rounded-lg shrink-0"
-                    style={{ backgroundColor: typeColors[shelter.type] || "#8b5cf6" }}
+                    style={{ backgroundColor: typeColors[shelter.type] || '#8b5cf6' }}
                   >
                     <Building2 className="h-5 w-5 text-white" />
                   </div>
@@ -347,7 +369,7 @@ const AdoptionSheltersList = () => {
                 <div className="flex flex-wrap gap-1 mt-3">
                   {shelter.animal_types?.map((type) => (
                     <Badge key={type} variant="secondary" className="text-xs gap-1">
-                      {type === "perro" ? <Dog className="h-2 w-2" /> : <Cat className="h-2 w-2" />}
+                      {type === 'perro' ? <Dog className="h-2 w-2" /> : <Cat className="h-2 w-2" />}
                       {type}
                     </Badge>
                   ))}
@@ -368,7 +390,9 @@ const AdoptionSheltersList = () => {
       {filteredShelters.length === 0 && (
         <Card className="p-8 text-center">
           <Search className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-          <p className="text-muted-foreground">No se encontraron refugios con los filtros seleccionados</p>
+          <p className="text-muted-foreground">
+            No se encontraron refugios con los filtros seleccionados
+          </p>
         </Card>
       )}
 

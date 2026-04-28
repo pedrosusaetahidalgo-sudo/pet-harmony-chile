@@ -90,7 +90,11 @@ export function VetOnboardingInlineForm() {
       if (data?.id) {
         try {
           await supabase.functions.invoke('notify-pitch-application', {
-            body: { application_id: data.id },
+            body: {
+              application_id: data.id,
+              // SEC-008: confirma que el caller conoce el email del postulante.
+              confirmation_email: form.email.trim().toLowerCase(),
+            },
           });
         } catch {
           /* silent */

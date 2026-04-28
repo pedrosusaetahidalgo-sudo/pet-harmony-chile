@@ -39,10 +39,13 @@ export default function Reportes() {
     queryKey: ['all-reports', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
+      // Sprint 1 P1 PERF-003: select narrow segun ReportRow interface arriba.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const { data } = await (supabase as any)
         .from('periodic_reports')
-        .select('*')
+        .select(
+          'id, report_type, period_start, period_end, content_jsonb, pdf_url, viewed_at, created_at'
+        )
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(50);

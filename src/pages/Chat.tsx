@@ -121,9 +121,11 @@ const Chat = () => {
 
       // Load profiles
       if (participantIds.size > 0) {
+        // Sprint 1 P1 PERF-003: solo lo que la lista de chats muestra
+        // (avatar + nombre). Nada de plan/admin/PII.
         const { data: profilesData } = await supabase
           .from('profiles')
-          .select('*')
+          .select('id, display_name, avatar_url')
           .in('id', Array.from(participantIds));
 
         const profilesMap = new Map();

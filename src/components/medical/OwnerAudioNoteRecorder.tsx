@@ -235,7 +235,7 @@ export function OwnerAudioNoteRecorder({
         <div className="flex-1 min-w-0">
           <p className="font-medium text-sm">Grabar observación</p>
           <p className="text-xs text-muted-foreground">
-            Hablá lo que viste en {petName} y queda en su historia
+            Habla lo que viste en {petName} y queda en su historia
           </p>
         </div>
         <Sparkles className="h-4 w-4 text-purple-400 shrink-0" />
@@ -260,9 +260,9 @@ export function OwnerAudioNoteRecorder({
           <DialogHeader>
             <DialogTitle>Grabar observación de {petName}</DialogTitle>
             <DialogDescription>
-              {phase === 'idle' && 'Hablá libremente lo que querés dejar registrado.'}
+              {phase === 'idle' && 'Habla libremente lo que quieres dejar registrado.'}
               {phase === 'recording' && 'Estoy escuchando…'}
-              {phase === 'review' && 'Revisá la transcripción antes de guardar.'}
+              {phase === 'review' && 'Revisa la transcripción antes de guardar.'}
             </DialogDescription>
           </DialogHeader>
 
@@ -270,7 +270,7 @@ export function OwnerAudioNoteRecorder({
             <div className="flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded text-sm text-amber-900">
               <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
               <div>
-                Tu navegador no soporta grabación de voz. Usá Chrome o Edge desde el celular.
+                Tu navegador no soporta grabación de voz. Usa Chrome o Edge desde el celular.
               </div>
             </div>
           )}

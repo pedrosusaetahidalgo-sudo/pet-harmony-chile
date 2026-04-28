@@ -431,6 +431,13 @@ export function PlanComparisonTableVet({
                       <span className="text-xs text-muted-foreground">/mes</span>
                     )}
                   </div>
+                  {/* Sprint 1 P1 BIZ-010 (2026-04-28): claridad IVA. Los precios
+                      en Chile se publican con IVA incluido por convencion B2C.
+                      Para B2B (vets), explicitamos para evitar sorpresas en
+                      facturacion contable. */}
+                  {plan.monthlyPrice > 0 && (
+                    <p className="text-[10px] text-muted-foreground mt-0.5">IVA incluido</p>
+                  )}
                   {plan.yearlyMonthly > 0 && plan.yearlyMonthly < plan.monthlyPrice && (
                     <p className="text-[11px] text-muted-foreground mt-0.5">
                       {formatCLP(plan.yearlyMonthly)}/mes en plan anual
@@ -609,7 +616,7 @@ export function PlanComparisonTableVet({
                     }
                   }}
                 >
-                  Contactanos
+                  Contáctanos
                 </Button>
               </div>
             </CardContent>

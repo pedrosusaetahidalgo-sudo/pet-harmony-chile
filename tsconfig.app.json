@@ -16,6 +16,12 @@
 
     /* Linting */
     "strict": false,
+    /* Sprint 1 P1 ARCH-002 (2026-04-28): intentamos habilitar
+     * `noUnusedLocals: true` — reportó 268 errores TS6133. Limpieza manual
+     * de top 5 archivos (AppSidebar, MyPets, MedicalDocumentsTab,
+     * AdoptionSheltersList, VetFichaView) bajó a ~221 (-47). Restantes
+     * requieren `eslint-plugin-unused-imports` para auto-fix. Ver acción
+     * manual #16 en SPRINT_0_EJECUTADO_2026_04_28.md. */
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noImplicitAny": false,

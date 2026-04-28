@@ -219,7 +219,7 @@ export default function Post() {
       <h2>Zoonosis — por qué te afecta a ti también</h2>
       <p>
         Algunos parásitos internos (toxocara, giardia, equinococo) pueden transmitirse de mascota a
-        humano, especialmente a niños. Desparasitar a tu mascota también te protege a vos y tu
+        humano, especialmente a niños. Desparasitar a tu mascota también te protege a ti y tu
         familia.
       </p>
       <p>Factores de riesgo zoonosis:</p>

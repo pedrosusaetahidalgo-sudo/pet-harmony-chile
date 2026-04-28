@@ -16,7 +16,10 @@ import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { z } from 'zod';
-import * as XLSX from 'xlsx';
+// Sprint 1 P1 PERF-001 (2026-04-28): xlsx (~400KB gzipped) lazy-loaded solo
+// cuando el usuario elige un archivo. Evita inflar el chunk de la ruta
+// /shelter/bulk-import en su carga inicial.
+type XlsxModule = typeof import('xlsx');
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { useShelter } from '@/hooks/useShelter';
@@ -186,6 +189,8 @@ export default function ShelterBulkImport() {
     setResult(null);
     setFilename(file.name);
     try {
+      // PERF-001: lazy-load xlsx solo al elegir archivo.
+      const XLSX: XlsxModule = await import('xlsx');
       const buf = await file.arrayBuffer();
       const wb = XLSX.read(buf, { type: 'array' });
       const ws = wb.Sheets[wb.SheetNames[0]];

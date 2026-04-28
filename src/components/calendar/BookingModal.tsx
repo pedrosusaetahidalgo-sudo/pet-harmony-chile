@@ -112,7 +112,9 @@ export function BookingModal({ slot, open, onClose }: Props) {
       setStep('success');
       toast('Reserva confirmada!', { description: '+10 puntos ganados' });
     } catch {
-      toast.error('Algo salió mal', { description: 'No se pudo completar la reserva' });
+      toast.error('No pudimos completar la reserva', {
+        description: 'Inténtalo de nuevo en unos segundos.',
+      });
       setStep('form');
     }
   };

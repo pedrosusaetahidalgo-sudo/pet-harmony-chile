@@ -60,7 +60,7 @@ const TEMPLATES: Record<Exclude<Status, 'interested'>, EmailTemplate> = {
       <p><strong>${shelterName}</strong> te contactó por tu interés en adoptar a <strong>${petName}</strong>.</p>
       ${notes ? `<p style="background:#f3f4f6;padding:12px;border-radius:6px"><em>"${notes}"</em></p>` : ''}
       <p>El siguiente paso suele ser agendar una visita. Atento a su mensaje por WhatsApp o correo.</p>
-      <p>Podés ver el estado del proceso en <a href="https://pawfriend.cl/mis-adopciones">tu cuenta de Paw Friend</a>.</p>
+      <p>Puedes ver el estado del proceso en <a href="https://pawfriend.cl/mis-adopciones">tu cuenta de Paw Friend</a>.</p>
     `,
   },
   visit_scheduled: {
@@ -71,7 +71,7 @@ const TEMPLATES: Record<Exclude<Status, 'interested'>, EmailTemplate> = {
       <p><strong>${shelterName}</strong> agendó una visita para que conozcas a <strong>${petName}</strong>.</p>
       ${visitDate ? `<p style="background:#ede9fe;padding:12px;border-radius:6px;color:#5b21b6"><strong>📅 ${visitDate}</strong></p>` : ''}
       ${notes ? `<p><em>${notes}</em></p>` : ''}
-      <p>Si necesitas reagendar, contactá directamente al refugio.</p>
+      <p>Si necesitas reagendar, contacta directamente al refugio.</p>
       <p>Detalles del proceso en <a href="https://pawfriend.cl/mis-adopciones">tu cuenta</a>.</p>
     `,
   },
@@ -83,7 +83,7 @@ const TEMPLATES: Record<Exclude<Status, 'interested'>, EmailTemplate> = {
       <p><strong>${shelterName}</strong> registró que ya tuviste tu visita con <strong>${petName}</strong>.</p>
       <p>Ahora ellos están evaluando si pueden avanzar contigo. Te avisamos apenas tomen una decisión.</p>
       ${notes ? `<p><em>${notes}</em></p>` : ''}
-      <p>Mientras, podés ver el proceso en <a href="https://pawfriend.cl/mis-adopciones">tu cuenta</a>.</p>
+      <p>Mientras, puedes ver el proceso en <a href="https://pawfriend.cl/mis-adopciones">tu cuenta</a>.</p>
     `,
   },
   approved: {
@@ -108,18 +108,18 @@ const TEMPLATES: Record<Exclude<Status, 'interested'>, EmailTemplate> = {
           ? `<p style="background:#fef2f2;padding:12px;border-radius:6px;border-left:3px solid #dc2626"><strong>Motivo:</strong> ${rejectedReason}</p>`
           : ''
       }
-      <p>Sabemos que no es la noticia que esperabas. En Paw Friend hay muchas mascotas esperando hogar — podés <a href="https://pawfriend.cl/adoption">explorar otras opciones</a>.</p>
+      <p>Sabemos que no es la noticia que esperabas. En Paw Friend hay muchas mascotas esperando hogar — puedes <a href="https://pawfriend.cl/adoption">explorar otras opciones</a>.</p>
       <p>Gracias por considerar la adopción.</p>
     `,
   },
   transferred: {
     subject: '🐾 ¡${pet} ya es tuyo!',
-    preheader: 'Reclamá la ficha clínica',
+    preheader: 'Reclama la ficha clínica',
     body: ({ petName, shelterName, adopterName }) => `
       <p>Hola ${adopterName},</p>
       <p style="font-size:18px;color:#16a34a"><strong>¡${petName} ya es oficialmente tuyo!</strong> 🐾</p>
       <p><strong>${shelterName}</strong> completó la transferencia. Te enviamos un correo aparte con el link para reclamar la ficha clínica completa de ${petName} en tu cuenta.</p>
-      <p>Si no te llegó, revisá la carpeta de spam o ingresá a <a href="https://pawfriend.cl/mis-adopciones">tu cuenta</a>.</p>
+      <p>Si no te llegó, revisa la carpeta de spam o ingresa a <a href="https://pawfriend.cl/mis-adopciones">tu cuenta</a>.</p>
       <p>Gracias por darle un hogar.</p>
     `,
   },
@@ -164,7 +164,7 @@ function renderHtml(template: EmailTemplate, params: Parameters<EmailTemplate['b
           </tr>
           <tr>
             <td style="padding:18px 28px;background:#f9fafb;color:#6b7280;font-size:12px;border-top:1px solid #e5e7eb">
-              Este correo es parte de tu proceso de adopción en Paw Friend. Si no esperabas este mensaje, podés ignorarlo o responder este correo y te ayudamos.
+              Este correo es parte de tu proceso de adopción en Paw Friend. Si no esperabas este mensaje, puedes ignorarlo o responder este correo y te ayudamos.
               <br><br>
               <a href="https://pawfriend.cl" style="color:#7c3aed">pawfriend.cl</a>
             </td>

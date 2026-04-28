@@ -105,7 +105,7 @@ export function buildInvitationEmail(opts: InvitationEmailOptions): string {
       note: isShelter
         ? `${petName} te envio este correo con la ayuda del refugio y de`
         : `${petName} te envio este correo con la ayuda de su vet y de`,
-      secondary: `Si no reconoces a ${petName}, podes ignorar este correo sin problema.`,
+      secondary: `Si no reconoces a ${petName}, puedes ignorar este correo sin problema.`,
     }),
   ].join('');
 
@@ -138,11 +138,11 @@ const ROLE_COPY: Record<CoOwnerRole, { label: string; scope: string }> = {
   caretaker: {
     label: 'Cuidador/a',
     scope:
-      'Podes ver la ficha y agregar notas de cuidado (paseo, comida, comportamiento, incidentes).',
+      'Puedes ver la ficha y agregar notas de cuidado (paseo, comida, comportamiento, incidentes).',
   },
   trainer: {
     label: 'Entrenador/a',
-    scope: 'Podes ver la ficha y registrar rutinas de entrenamiento + progreso.',
+    scope: 'Puedes ver la ficha y registrar rutinas de entrenamiento + progreso.',
   },
 };
 
@@ -181,7 +181,7 @@ export function buildCoOwnerInviteEmail(opts: CoOwnerInviteOptions): string {
       body: roleCopy.scope,
     }),
     bulletList({
-      label: 'En Paw Friend tenes',
+      label: 'En Paw Friend tienes',
       items: [
         { icon: '📋', text: 'Ficha clinica completa accesible desde el celular' },
         { icon: '🔔', text: 'Recordatorios de vacunas, controles y medicacion' },
@@ -192,10 +192,10 @@ export function buildCoOwnerInviteEmail(opts: CoOwnerInviteOptions): string {
     cta({
       text: '🐾 Aceptar invitacion',
       url: actionUrl,
-      hint: 'Si no tenes cuenta, podras crearla desde ese link · Es gratis',
+      hint: 'Si no tienes cuenta, podrás crearla desde ese link · Es gratis',
     }),
     paragraph({
-      text: `Podes aceptar o rechazar esta invitacion. ${inviterName} puede revocar tu acceso en cualquier momento.`,
+      text: `Puedes aceptar o rechazar esta invitación. ${inviterName} puede revocar tu acceso en cualquier momento.`,
       align: 'center',
       muted: true,
       size: 'sm',
@@ -203,7 +203,7 @@ export function buildCoOwnerInviteEmail(opts: CoOwnerInviteOptions): string {
     spacer('md'),
     emailFooter({
       note: `Te envio este correo Paw Friend en nombre de ${inviterName}.`,
-      secondary: `Si no reconoces a ${inviterName} o ${petName}, podes ignorar este correo sin problema.`,
+      secondary: `Si no reconoces a ${inviterName} o ${petName}, puedes ignorar este correo sin problema.`,
     }),
   ].join('');
 

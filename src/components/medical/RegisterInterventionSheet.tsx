@@ -283,7 +283,7 @@ export function RegisterInterventionSheet({
       }
       description={
         step === 'type'
-          ? '¿Qué pasó? Elegí una y te pedimos lo mínimo.'
+          ? '¿Qué pasó? Elige una y te pedimos lo mínimo.'
           : 'Solo lo esencial. Lo demás se completa solo.'
       }
     >
@@ -312,7 +312,7 @@ export function RegisterInterventionSheet({
                 <Label>¿Qué vacuna?</Label>
                 <Select value={preset} onValueChange={setPreset}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Elegí una" />
+                    <SelectValue placeholder="Elige una" />
                   </SelectTrigger>
                   <SelectContent>
                     {VACCINE_PRESETS.map((p) => (
@@ -340,7 +340,7 @@ export function RegisterInterventionSheet({
                 <Label>¿Qué producto?</Label>
                 <Select value={preset} onValueChange={setPreset}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Elegí uno" />
+                    <SelectValue placeholder="Elige uno" />
                   </SelectTrigger>
                   <SelectContent>
                     {DEWORMING_PRESETS.map((p) => (

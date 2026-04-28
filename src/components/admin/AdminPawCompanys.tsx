@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { errorMessageForUser } from '@/lib/errors';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -201,7 +202,7 @@ export default function AdminPawCompanys() {
       toast.success(editing ? 'Sponsor actualizado' : 'Sponsor creado');
       setOpen(false);
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      const msg = errorMessageForUser(err);
       toast.error('No se pudo guardar', { description: msg });
     }
   }
@@ -211,7 +212,7 @@ export default function AdminPawCompanys() {
       await del.mutateAsync(id);
       toast.success('Sponsor eliminado');
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Error desconocido';
+      const msg = errorMessageForUser(err);
       toast.error('No se pudo eliminar', { description: msg });
     }
   }

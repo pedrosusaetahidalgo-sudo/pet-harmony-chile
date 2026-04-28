@@ -194,7 +194,7 @@ export function AddReminderDialog({
         title={step === 'preset' ? 'Nuevo recordatorio' : (selectedPreset?.label ?? 'Detalles')}
         description={
           step === 'preset'
-            ? '¿Qué querés recordar? Te dejamos lo más rápido.'
+            ? '¿Qué quieres recordar? Te dejamos lo más rápido.'
             : 'Solo fecha y listo. Lo demás ya está prellenado.'
         }
       >
@@ -240,7 +240,7 @@ export function AddReminderDialog({
             {/* Título: solo editable si es custom */}
             {selectedPreset.key === 'custom' && (
               <div className="space-y-2">
-                <Label>¿Qué querés recordar?</Label>
+                <Label>¿Qué quieres recordar?</Label>
                 <Input
                   value={titleOverride}
                   onChange={(e) => setTitleOverride(e.target.value)}

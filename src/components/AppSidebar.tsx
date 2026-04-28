@@ -17,12 +17,10 @@ import {
   Activity,
   Users,
   Scissors,
-  Lock,
   Sparkles,
   Trophy,
   Droplets,
   Star,
-  Eye,
   Stethoscope,
   Bell,
   BarChart3,
@@ -43,8 +41,7 @@ import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { useSidebarTutorial } from '@/hooks/useSidebarTutorial';
 import { SidebarTutorialDialog } from '@/components/SidebarTutorialDialog';
-import { getTutorialBySection, SECTION_ORDER, type SectionKey } from '@/lib/sidebarTutorialContent';
-import { Badge } from '@/components/ui/badge';
+import { getTutorialBySection, type SectionKey } from '@/lib/sidebarTutorialContent';
 import { PremiumBadge } from '@/components/PremiumBadge';
 import { usePlan } from '@/hooks/usePlan';
 import { RoleToggle } from '@/components/RoleToggle';
@@ -169,37 +166,11 @@ const exploreSubgroups: ExploreSubgroup[] = [
   },
 ];
 
-// Legacy section maps kept for tutorial system compatibility
-const healthItems = coreOwnerItems;
-
-/** Mapeo sección → items (kept for tutorial dialog) */
-const SECTION_ITEMS: Record<SectionKey, typeof healthItems> = {
-  salud: coreOwnerItems,
-  descubrir: [
-    { title: 'Buscar vet', url: '/veterinarios', icon: Search },
-    { title: 'Servicios', url: '/servicios', icon: Briefcase },
-    { title: 'Mapa', url: '/maps', icon: MapIcon },
-    { title: 'Banco de sangre', url: '/donantes-sangre', icon: Droplets },
-  ],
-  comunidad: [
-    { title: 'Feed', url: '/feed', icon: Activity },
-    { title: 'Comunidad', url: '/comunidad', icon: Users },
-    { title: 'Mensajes', url: '/chat', icon: MessageSquare },
-  ],
-  pawlabs: [
-    { title: 'Paw Game', url: '/paw-game', icon: Gamepad2 },
-    { title: 'Misiones', url: '/misiones', icon: Star },
-    { title: 'Coleccion', url: '/paw-collection', icon: Trophy },
-  ],
-};
-
-/** Mapeo sección → label */
-const SECTION_LABELS: Record<SectionKey, string> = {
-  salud: 'Salud',
-  descubrir: 'Descubrir',
-  comunidad: 'Comunidad',
-  pawlabs: 'Paw Labs',
-};
+// SECTION_ITEMS / SECTION_LABELS eliminados 2026-04-28 (Sprint 1 ARCH-002):
+// quedaron como dead code tras el reordenamiento v3 que los reemplazo por
+// renderizado por seccion in-place. Si vuelve a hacer falta el mapping para
+// un tutorial dialog futuro, recuperar de git history (último uso real fue
+// pre-2026-04-17).
 
 // Secciones profesionales (modo provider)
 const providerConsultItems = [
@@ -289,10 +260,8 @@ export function AppSidebar() {
   const {
     loaded: tutorialLoaded,
     isAllComplete,
-    isSectionUnlocked,
     completeSection,
     dismissAll,
-    nextPendingSection,
   } = useSidebarTutorial();
 
   const [activeTutorial, setActiveTutorial] = useState<SectionKey | null>(null);
@@ -324,7 +293,6 @@ export function AppSidebar() {
     enabled: !!user?.id,
     staleTime: 5 * 60 * 1000,
   });
-  const hasPets = sidebarData?.hasPets ?? false;
   const isGroomer = sidebarData?.isGroomer ?? false;
   const providerSlug = sidebarData?.providerSlug ?? null;
 
@@ -339,11 +307,6 @@ export function AppSidebar() {
   };
 
   const isActive = (path: string) => currentPath === path;
-
-  /** Click en un item de sección bloqueada → abre tutorial */
-  const handleLockedClick = (sectionKey: SectionKey) => {
-    setActiveTutorial(sectionKey);
-  };
 
   const handleTutorialComplete = () => {
     if (activeTutorial) {

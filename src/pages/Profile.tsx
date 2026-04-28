@@ -84,7 +84,12 @@ const Profile = () => {
       setLoading(true);
 
       const [profileRes, petsRes, statsRes, postsRes, notifRes] = await Promise.all([
-        supabase.from('profiles').select('*').eq('id', user!.id).maybeSingle(),
+        // Sprint 1 P1 PERF-003: select narrow segun ProfileData interface arriba.
+        supabase
+          .from('profiles')
+          .select('avatar_url, display_name, is_premium, bio, location')
+          .eq('id', user!.id)
+          .maybeSingle(),
         supabase
           .from('pets')
           .select('id, name, species, breed, photo_url, birth_date')
@@ -107,7 +112,12 @@ const Profile = () => {
           },
         })),
         supabase.from('posts').select('id', { count: 'exact', head: true }).eq('user_id', user!.id),
-        supabase.from('notification_preferences').select('*').eq('user_id', user!.id).maybeSingle(),
+        // Sprint 1 P1 PERF-003: solo los 3 campos que el componente usa.
+        supabase
+          .from('notification_preferences')
+          .select('push_enabled, reminder_notifications, social_notifications')
+          .eq('user_id', user!.id)
+          .maybeSingle(),
       ]);
 
       setProfile(profileRes.data as ProfileData | null);
@@ -147,7 +157,9 @@ const Profile = () => {
       }
     } catch (error) {
       logger.error('Error loading profile:', error);
-      toast.error('Algo salió mal', { description: 'No se pudo cargar la información del perfil' });
+      toast.error('No pudimos cargar tu perfil', {
+        description: 'Recarga la página o inténtalo de nuevo en unos segundos.',
+      });
     } finally {
       setLoading(false);
     }

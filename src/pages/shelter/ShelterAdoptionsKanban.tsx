@@ -425,7 +425,7 @@ function EmptyState() {
         </div>
         <h3 className="font-semibold">Sin procesos de adopción todavía</h3>
         <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-          Cuando un adoptante exprese interés en una de tus mascotas, aparecerá acá. Vas a poder
+          Cuando un adoptante exprese interés en una de tus mascotas, aparecerá aquí. Vas a poder
           mover el proceso desde "Interesado" hasta "Transferido".
         </p>
       </CardContent>

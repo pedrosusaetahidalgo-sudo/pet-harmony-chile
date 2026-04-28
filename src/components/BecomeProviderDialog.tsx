@@ -5,12 +5,10 @@
  * Los demás tienen un flujo simplificado (bio + comuna + precio).
  */
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { useActiveRole } from '@/hooks/useActiveRole';
+import { useRoleActivation } from '@/hooks/useRoleActivation';
 import { VET_SPECIALTIES, SANTIAGO_COMUNAS, COMUNAS_POR_ZONA } from '@/lib/vetDirectory';
 import { GROOMER_SERVICES } from '@/hooks/useGroomerProfile';
 import {
@@ -36,14 +34,13 @@ import {
   Building2,
   Home as HomeIcon,
   ArrowRight,
-  ArrowLeft,
-  Loader2,
   CheckCircle2,
   Dog,
   Scissors,
   GraduationCap,
   Heart,
 } from 'lucide-react';
+import { WizardFooter } from '@/components/ui/wizard-footer';
 
 type ServiceType = 'veterinarian' | 'grooming' | 'dog_walker' | 'dogsitter' | 'trainer';
 type ProviderType = 'individual' | 'home_visit' | 'clinic';
@@ -125,9 +122,8 @@ interface Props {
 
 export function BecomeProviderDialog({ open, onOpenChange }: Props) {
   const { user } = useAuth();
-  const { setRole } = useActiveRole();
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
+  // Sprint 1 P2 ARCH-003: hook compartido encapsula post-submit.
+  const activateRole = useRoleActivation();
 
   // Step: 0=service type, 1=vet business type (vet only), 2=profile form
   const [step, setStep] = useState(0);
@@ -270,15 +266,14 @@ export function BecomeProviderDialog({ open, onOpenChange }: Props) {
         );
       }
 
-      await queryClient.invalidateQueries({ queryKey: ['is-provider-role'] });
-      await queryClient.invalidateQueries({ queryKey: ['my-provider-profile'] });
-
-      setRole('provider');
-      onOpenChange(false);
-      toast.success(
-        '¡Bienvenido como profesional! Completa tu perfil para aparecer en el directorio.'
-      );
-      navigate('/provider/dashboard');
+      // Sprint 1 P2 ARCH-003: hook compartido (5 lineas duplicadas → 1).
+      await activateRole('provider', {
+        successMessage:
+          '¡Bienvenido como profesional! Completa tu perfil para aparecer en el directorio.',
+        navigateTo: '/provider/dashboard',
+        invalidateQueryKeys: [['is-provider-role'], ['my-provider-profile']],
+        onClose: () => onOpenChange(false),
+      });
     } catch (err: unknown) {
       const msg =
         err instanceof Error
@@ -386,14 +381,13 @@ export function BecomeProviderDialog({ open, onOpenChange }: Props) {
                 </button>
               );
             })}
-            <div className="flex justify-between gap-3 pt-2">
-              <Button type="button" variant="outline" onClick={() => setStep(0)}>
-                <ArrowLeft className="h-4 w-4 mr-1" /> Atrás
-              </Button>
-              <Button disabled={!providerType} onClick={handleNextFromVetType}>
-                Continuar <ArrowRight className="h-4 w-4 ml-1" />
-              </Button>
-            </div>
+            <WizardFooter
+              mode="next"
+              nextLabel="Continuar"
+              onBack={() => setStep(0)}
+              onPrimary={handleNextFromVetType}
+              primaryDisabled={!providerType}
+            />
           </div>
         )}
 
@@ -580,20 +574,15 @@ export function BecomeProviderDialog({ open, onOpenChange }: Props) {
             </div>
 
             {/* Actions */}
-            <div className="flex justify-between gap-3 pt-2">
-              <Button type="button" variant="outline" onClick={handleBack} disabled={submitting}>
-                <ArrowLeft className="h-4 w-4 mr-1" /> Atrás
-              </Button>
-              <Button onClick={handleSubmitProfile} disabled={submitting || !canSubmit()}>
-                {submitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-1 animate-spin" /> Creando...
-                  </>
-                ) : (
-                  'Registrarme como profesional'
-                )}
-              </Button>
-            </div>
+            <WizardFooter
+              mode="submit"
+              loadingLabel="Creando..."
+              submitLabel="Registrarme como profesional"
+              loading={submitting}
+              primaryDisabled={!canSubmit()}
+              onBack={handleBack}
+              onPrimary={handleSubmitProfile}
+            />
           </div>
         )}
       </DialogContent>

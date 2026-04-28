@@ -175,7 +175,7 @@ export default function Post() {
         </li>
         <li>
           <strong>No llevar documentación al mostrar foto.</strong> Cuando alguien cree que la
-          encontró, tenés que demostrar que es tuya. La ficha médica con foto + chip + tu nombre es
+          encontró, tienes que demostrar que es tuya. La ficha médica con foto + chip + tu nombre es
           prueba sólida.
         </li>
       </ol>

@@ -155,6 +155,11 @@ export const EVENTS = {
   PET_PROFILE_VIEWED: 'pet_profile_viewed',
   CLINICAL_RECORD_VIEWED: 'clinical_record_viewed',
   CLINICAL_PDF_DOWNLOADED: 'clinical_pdf_downloaded',
+  // QR claim viral loop (Sprint 1 P1 FEAT-010 · 2026-04-28).
+  // Se dispara cuando un dueno acepta una invitacion de pet via ?invitation=TOKEN.
+  // success: pet reclamada; failure: token invalido/expirado/ya reclamada por otro.
+  PET_CLAIMED: 'pet_claimed',
+  PET_CLAIM_FAILED: 'pet_claim_failed',
 
   // Medical
   MEDICAL_RECORD_ADDED: 'medical_record_added',
@@ -322,25 +327,59 @@ export function track({ event, properties, userId }: TrackEvent): void {
 /**
  * Identify a user across all analytics providers.
  */
+/**
+ * Sprint 1 P1 SEC-014 (2026-04-28): identify() ahora respeta consent.
+ *
+ * Antes: enviaba email plano + provider + created_at a PostHog (US) sin
+ * gating, violando el principio "datos sensibles no salen sin consent
+ * explicito" (Ley 19.628).
+ *
+ * Ahora:
+ *   - Sin consent: pasamos solo el userId (UUID Supabase, anonimo). Ningun
+ *     trait sensible. PostHog/Firebase pueden seguir contando MAU sin saber
+ *     quien es la persona.
+ *   - Con consent: pasamos los traits completos (email para soporte, etc).
+ *
+ * El consent vive en localStorage `pf_cookie_consent === 'accepted'` (web)
+ * o iOS ATT (nativo). Importamos `hasTrackingConsent` lazy para evitar ciclo
+ * de imports.
+ */
+function getTrackingConsent(): boolean {
+  // Lazy import para no crear ciclo (CookieConsentBanner usa @/lib/icons que
+  // carga muchas cosas). En SSR/test, default a false (mas conservador).
+  if (typeof window === 'undefined') return false;
+  try {
+    // En nativo iOS ATT decide; en web depende del banner. Si la key no
+    // existe (banner pendiente), todavía NO hay consent.
+    return localStorage.getItem('pf_cookie_consent') === 'accepted';
+  } catch {
+    return false;
+  }
+}
+
 export function identify(userId: string, traits?: Record<string, unknown>): void {
+  const consentGranted = getTrackingConsent();
+  // Sin consent: solo userId (anonimo a nivel data center). PII queda local.
+  const safeTraits = consentGranted ? traits : undefined;
+
   if (IS_DEV) {
-    logger.debug('[Analytics] Identify:', userId, traits);
+    logger.debug('[Analytics] Identify:', userId, safeTraits, { consentGranted });
   }
 
   // PostHog
   if (POSTHOG_KEY) {
     if (_posthog) {
       try {
-        _posthog.identify(userId, traits);
+        _posthog.identify(userId, safeTraits);
       } catch {
         // Best effort
       }
     } else {
-      _queue.push({ type: 'identify', args: [userId, traits] });
+      _queue.push({ type: 'identify', args: [userId, safeTraits] });
     }
   }
 
-  // Firebase
+  // Firebase: solo userId (Firebase no recibe traits en setUserId).
   setFirebaseUserId(userId);
 }
 
