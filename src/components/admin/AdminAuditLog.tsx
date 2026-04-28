@@ -106,16 +106,6 @@ function getActionLabel(action: string): string {
 
 type DateRange = '7d' | '30d' | 'all';
 
-interface AuditEntry {
-  id: string;
-  action: string;
-  target_type: string | null;
-  target_id: string | null;
-  details: Record<string, unknown>;
-  created_at: string;
-  admin_name: string;
-}
-
 export default function AdminAuditLog() {
   const [textFilter, setTextFilter] = useState('');
   const [dateRange, setDateRange] = useState<DateRange>('all');

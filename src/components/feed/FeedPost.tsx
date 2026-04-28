@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { useFeedActions } from '@/hooks/useFeedActions';
@@ -36,7 +35,6 @@ interface FeedPostCardProps {
 
 export function FeedPostCard({ post, onHashtagClick }: FeedPostCardProps) {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const { toggleLike, toggleSave, reportPost, deletePost } = useFeedActions();
   const [showComments, setShowComments] = useState(false);
   const [showReport, setShowReport] = useState(false);

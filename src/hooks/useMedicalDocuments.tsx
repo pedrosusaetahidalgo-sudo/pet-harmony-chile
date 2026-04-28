@@ -120,7 +120,7 @@ export const useMedicalDocuments = (petId?: string) => {
       const filePath = `${user.id}/${params.petId}/${fileName}`;
 
       // Upload to Supabase Storage
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('medical-documents')
         .upload(filePath, params.file, {
           contentType: params.file.type,
@@ -128,9 +128,6 @@ export const useMedicalDocuments = (petId?: string) => {
         });
 
       if (uploadError) throw uploadError;
-
-      // Get public URL (will be signed URL)
-      const { data: urlData } = supabase.storage.from('medical-documents').getPublicUrl(filePath);
 
       // Insert record in database
       const { data, error } = await supabase

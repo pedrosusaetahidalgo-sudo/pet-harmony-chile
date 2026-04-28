@@ -120,7 +120,7 @@ export const UploadMedicalDocumentDialog = ({
 
       onSuccess?.();
       onOpenChange(false);
-    } catch (error) {
+    } catch {
       // Error handled in hook
     }
   };

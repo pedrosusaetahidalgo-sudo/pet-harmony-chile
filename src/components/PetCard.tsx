@@ -80,7 +80,7 @@ const PetCard = ({
         .maybeSingle();
 
       setLiked(!!data);
-    } catch (error) {
+    } catch {
       // No like found
     }
   };

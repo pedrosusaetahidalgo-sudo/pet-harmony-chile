@@ -26,7 +26,6 @@ import { Heart, MapPin, Calendar, MessageCircle, Eye, Check, PawPrint } from '@/
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useStartConversation } from '@/hooks/useStartConversation';
-import { useNavigate } from 'react-router-dom';
 import { logger } from '@/lib/logger';
 
 interface AdoptionPostCardProps {
@@ -38,7 +37,6 @@ interface AdoptionPostCardProps {
 
 export function AdoptionPostCard({ post, onUpdate, isOwner }: AdoptionPostCardProps) {
   const { user } = useAuth();
-  const navigate = useNavigate();
   const { startConversation } = useStartConversation();
   const [showInterestDialog, setShowInterestDialog] = useState(false);
   const [showMessagesDialog, setShowMessagesDialog] = useState(false);

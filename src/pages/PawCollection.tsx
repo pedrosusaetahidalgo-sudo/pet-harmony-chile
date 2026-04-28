@@ -164,7 +164,7 @@ function QRScanner({ onClose }: { onClose: () => void }) {
             // QR not detected in this frame — ignore
           }
         );
-      } catch (err) {
+      } catch {
         if (mounted) {
           setError('No se pudo acceder a la camara. Verifica los permisos en tu navegador.');
         }

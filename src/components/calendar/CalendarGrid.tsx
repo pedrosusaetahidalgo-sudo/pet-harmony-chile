@@ -15,12 +15,6 @@ import {
 } from 'date-fns';
 import { es } from 'date-fns/locale';
 
-interface EventDots {
-  routine?: boolean;
-  reminder?: boolean;
-  booking?: boolean;
-}
-
 interface Props {
   currentMonth: Date;
   selectedDate: Date;

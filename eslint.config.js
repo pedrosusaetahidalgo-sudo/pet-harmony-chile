@@ -47,4 +47,14 @@ export default tseslint.config(
       "jsx-a11y/label-has-for": "off",
     },
   },
+  // Sprint 1 P1 ARCH-002 (2026-04-28): override para tests E2E.
+  // Los `test.skip()` con bodies TODO destructuran params (page, request) que
+  // se usaran cuando se implemente. No silenciar oblige a renombrar a `_page`
+  // y revertir el rename al implementar — ruido sin valor.
+  {
+    files: ["e2e/**/*.{ts,tsx}", "**/__tests__/**/*.{ts,tsx}", "**/*.{spec,test}.{ts,tsx}"],
+    rules: {
+      "unused-imports/no-unused-vars": "off",
+    },
+  }
 );

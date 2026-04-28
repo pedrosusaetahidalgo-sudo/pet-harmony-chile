@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { formatCLP } from '@/lib/format';
 // Sprint 1 P1 ARCH-002: removidos Cell, Pie, PieChart no usados.
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
@@ -106,7 +105,6 @@ interface Pet {
 
 // ─── Main component ────────────────────────────────────────────
 export default function ProDashboard() {
-  const navigate = useNavigate();
   const { user } = useAuth();
   const { isAdmin } = useIsAdmin();
   const { isPremium, checkAccess } = usePlan();

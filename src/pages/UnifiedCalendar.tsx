@@ -105,13 +105,13 @@ export default function UnifiedCalendar() {
 
   const petId = filterPetId === 'all' ? undefined : filterPetId;
 
-  const { events, eventsForDate, datesWithEvents } = useUnifiedCalendar(
+  const { eventsForDate, datesWithEvents } = useUnifiedCalendar(
     currentMonth.getFullYear(),
     currentMonth.getMonth(),
     petId
   );
 
-  const { completeToday, skipToday, addRoutine } = useRoutines();
+  const { completeToday, addRoutine } = useRoutines();
   const { addReminder } = useReminders();
 
   // Dialogs para crear desde calendario

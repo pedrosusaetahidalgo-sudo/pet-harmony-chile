@@ -125,7 +125,7 @@ export const MedicalDocumentsTab = ({ petId, petName }: MedicalDocumentsTabProps
 
     try {
       await deleteDocument(documentId);
-    } catch (error) {
+    } catch {
       // Error handled in hook
     }
   };
@@ -136,7 +136,7 @@ export const MedicalDocumentsTab = ({ petId, petName }: MedicalDocumentsTabProps
       if (result?.download_url) {
         await downloadFile(result.download_url, 'documentos_medicos.zip');
       }
-    } catch (error) {
+    } catch {
       // Error handled in hook
     }
   };
@@ -150,7 +150,7 @@ export const MedicalDocumentsTab = ({ petId, petName }: MedicalDocumentsTabProps
       await navigator.clipboard.writeText(shareUrl);
 
       toast('Listo', { description: 'Compártelo con tu veterinario. Vence en 30 días.' });
-    } catch (error) {
+    } catch {
       // Error handled in hook
     }
   };

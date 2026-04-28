@@ -1,5 +1,4 @@
 import { useState, useCallback, lazy, Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { PageHeader } from '@/components/PageHeader';
 import { useAuth } from '@/hooks/useAuth';
 import { useFeedPosts, type FeedPost } from '@/hooks/useFeedPosts';
@@ -41,7 +40,6 @@ type FeedTab = 'all' | 'following' | 'popular' | 'explore';
 const Feed = () => {
   const { user } = useAuth();
   const { filterBlocked } = useBlockedUsers();
-  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState<FeedTab>('all');
   const [searchQuery, setSearchQuery] = useState('');

@@ -199,7 +199,7 @@ async function verifyVeterinarian(
   notes: string,
   documentUrls: string[],
   provider: Record<string, unknown> | null,
-  supabaseAdmin: ReturnType<typeof createClient>
+  _supabaseAdmin: ReturnType<typeof createClient>
 ): Promise<VerificationResult> {
   if (documentUrls.length === 0) {
     return {
@@ -327,8 +327,8 @@ async function verifyVetWithoutOCR(
   displayName: string,
   bio: string,
   hasPhoto: boolean,
-  notes: string,
-  provider: Record<string, unknown> | null
+  _notes: string,
+  _provider: Record<string, unknown> | null
 ): Promise<VerificationResult> {
   // For PDFs or failed downloads, evaluate based on profile + notes only
   // Cannot auto-approve without document verification

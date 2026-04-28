@@ -60,11 +60,6 @@ interface Pet {
   photo_url: string | null;
 }
 
-interface TimeSlot {
-  time: string;
-  available: boolean;
-}
-
 interface ProviderData {
   id: string;
   user_id: string;

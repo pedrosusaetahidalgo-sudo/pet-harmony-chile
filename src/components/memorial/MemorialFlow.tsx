@@ -43,7 +43,7 @@ export function MemorialFlow({ petId, petName, onComplete, onCancel }: MemorialF
       if (error) throw error;
 
       setStep('done');
-    } catch (err) {
+    } catch {
       toast.error('No pudimos guardar este momento. Intenta de nuevo.');
     } finally {
       setLoading(false);
