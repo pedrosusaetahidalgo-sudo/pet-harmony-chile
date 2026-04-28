@@ -10,7 +10,6 @@ import {
   type ActorRole,
   getBookingTable,
   canTransition,
-  statusToEventType,
 } from '@/lib/bookingStateMachine';
 
 // ── Optimistic helpers ──────────────────────────────────────

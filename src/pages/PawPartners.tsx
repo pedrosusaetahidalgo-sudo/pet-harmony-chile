@@ -20,7 +20,6 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Heart,
-  Megaphone,
   Search,
   Loader2,
   ArrowRight,

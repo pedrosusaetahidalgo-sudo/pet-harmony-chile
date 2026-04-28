@@ -1,15 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import {
-  startOfMonth,
-  endOfMonth,
-  subMonths,
-  eachDayOfInterval,
-  format,
-  parseISO,
-  isWithinInterval,
-} from 'date-fns';
+import { startOfMonth, endOfMonth, subMonths, eachDayOfInterval, format, parseISO } from 'date-fns';
 import type { AnalyticsPeriod } from './useProAnalytics';
 
 interface OrderItemRow {

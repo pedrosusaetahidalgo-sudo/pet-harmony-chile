@@ -1,7 +1,6 @@
 import { useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LINKS } from '@/lib/links';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Heart, FileText, Pencil, Trash2, PawPrint, Sparkles, Share2, Users } from '@/lib/icons';

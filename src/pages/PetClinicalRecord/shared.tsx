@@ -20,11 +20,9 @@ import {
   Clipboard,
   Activity,
   Pill,
-  FileText,
   Scissors,
   Scan,
   TestTube,
-  Weight,
   Cpu,
 } from '@/lib/icons';
 import { Card, CardContent } from '@/components/ui/card';

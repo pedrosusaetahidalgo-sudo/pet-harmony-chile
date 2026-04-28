@@ -5,7 +5,6 @@
  * con foto grande, nombre, edad, Paw Card holo sutil + status de salud.
  */
 import { Card } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { Heart, Check, AlertTriangle } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 

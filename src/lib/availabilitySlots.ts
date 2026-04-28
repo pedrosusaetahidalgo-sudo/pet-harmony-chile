@@ -3,7 +3,7 @@
  * Pure functions — no Supabase dependency.
  */
 
-import { addMinutes, format, parse, isAfter, isBefore, isSameDay, getDay } from 'date-fns';
+import { addMinutes, format, parse, isAfter, getDay } from 'date-fns';
 
 export interface AvailabilityRule {
   id: string;

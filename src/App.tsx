@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense } from 'react';
 import { Toaster as Sonner } from '@/components/ui/sonner';
 import { CookieConsentBanner } from '@/components/CookieConsentBanner';
 import { TooltipProvider } from '@/components/ui/tooltip';

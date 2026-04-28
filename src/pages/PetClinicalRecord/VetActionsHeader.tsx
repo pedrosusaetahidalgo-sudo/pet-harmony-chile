@@ -7,16 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import {
-  Mic,
-  FileText,
-  Calendar,
-  Download,
-  Sparkles,
-  MoreHorizontal,
-  Heart,
-  Syringe,
-} from '@/lib/icons';
+import { Mic, FileText, Calendar, Download, Sparkles, MoreHorizontal, Heart } from '@/lib/icons';
 import { VetNoteEditor } from '@/components/provider/VetNoteEditor';
 import { ConsultationRecorderModal } from '@/components/provider/ConsultationRecorderModal';
 import { QuickScheduleForm } from '@/components/provider/QuickScheduleForm';

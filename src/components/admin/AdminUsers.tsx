@@ -9,7 +9,6 @@ import { toast } from 'sonner';
 import {
   Eye,
   Search,
-  Shield,
   ShieldOff,
   UserCog,
   ChevronLeft,
@@ -19,7 +18,6 @@ import {
   PawPrint,
   Crown,
   Users,
-  AlertCircle,
 } from '@/lib/icons';
 import {
   Table,

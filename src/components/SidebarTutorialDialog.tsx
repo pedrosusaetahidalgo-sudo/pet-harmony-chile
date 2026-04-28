@@ -8,7 +8,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowRight, ArrowLeft, CheckCircle2, Lightbulb, Sparkles } from '@/lib/icons';
+import { ArrowRight, ArrowLeft, CheckCircle2, Lightbulb } from '@/lib/icons';
 import { cn } from '@/lib/utils';
 import type { SectionTutorial } from '@/lib/sidebarTutorialContent';
 

@@ -21,7 +21,7 @@ import {
   type PawVoice,
   type PawVoiceStatus,
 } from '@/hooks/usePawVoices';
-import { Megaphone, Check, X, Sparkles, Trash2, ExternalLink, User } from '@/lib/icons';
+import { Check, X, Sparkles, Trash2, ExternalLink, User } from '@/lib/icons';
 import { CategoryIcon } from '@/components/CategoryIcon';
 
 const STATUS_LABEL: Record<PawVoiceStatus, string> = {

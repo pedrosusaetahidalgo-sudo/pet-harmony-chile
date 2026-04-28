@@ -18,12 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import {
-  Dialog as ReportDialog,
-  DialogContent as ReportDialogContent,
-  DialogHeader as ReportDialogHeader,
-  DialogTitle as ReportDialogTitle,
-} from '@/components/ui/dialog';
+
 import { Button } from '@/components/ui/button';
 
 const REPORT_REASONS = [

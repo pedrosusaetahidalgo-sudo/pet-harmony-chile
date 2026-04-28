@@ -1,6 +1,5 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { PawPrint, Plus } from '@/lib/icons';
 import { useNavigate } from 'react-router-dom';
 import { LINKS } from '@/lib/links';

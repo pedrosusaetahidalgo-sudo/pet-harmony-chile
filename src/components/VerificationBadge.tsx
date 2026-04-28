@@ -1,17 +1,11 @@
-import { Badge } from "@/components/ui/badge";
-import { 
-  Shield, 
-  CheckCircle2, 
-  Award, 
-  ShieldCheck,
-  BadgeCheck
-} from "@/lib/icons";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from '@/components/ui/badge';
+import { CheckCircle2, Award, ShieldCheck, BadgeCheck } from '@/lib/icons';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface VerificationBadgeProps {
   isVerified: boolean;
-  type?: "compact" | "full" | "icon-only";
-  providerType?: "dog_walker" | "dogsitter" | "veterinarian" | "trainer";
+  type?: 'compact' | 'full' | 'icon-only';
+  providerType?: 'dog_walker' | 'dogsitter' | 'veterinarian' | 'trainer';
   totalReviews?: number;
   totalServices?: number;
   className?: string;
@@ -19,47 +13,47 @@ interface VerificationBadgeProps {
 
 export const VerificationBadge = ({
   isVerified,
-  type = "full",
+  type = 'full',
   providerType,
   totalReviews = 0,
   totalServices = 0,
-  className = ""
+  className = '',
 }: VerificationBadgeProps) => {
   const getVerificationLevel = () => {
     if (!isVerified) return null;
-    if (totalReviews >= 50 && totalServices >= 100) return "elite";
-    if (totalReviews >= 20 && totalServices >= 50) return "top";
-    if (totalReviews >= 5 && totalServices >= 10) return "trusted";
-    return "verified";
+    if (totalReviews >= 50 && totalServices >= 100) return 'elite';
+    if (totalReviews >= 20 && totalServices >= 50) return 'top';
+    if (totalReviews >= 5 && totalServices >= 10) return 'trusted';
+    return 'verified';
   };
 
   const level = getVerificationLevel();
 
   const levelConfig = {
     elite: {
-      label: "Élite",
+      label: 'Élite',
       icon: Award,
-      color: "bg-gradient-to-r from-amber-500 to-yellow-400 text-white",
-      description: "Proveedor élite con historial excepcional"
+      color: 'bg-gradient-to-r from-amber-500 to-yellow-400 text-white',
+      description: 'Proveedor élite con historial excepcional',
     },
     top: {
-      label: "Top Proveedor",
+      label: 'Top Proveedor',
       icon: ShieldCheck,
-      color: "bg-gradient-to-r from-purple-600 to-pink-500 text-white",
-      description: "Uno de los mejores proveedores de la plataforma"
+      color: 'bg-gradient-to-r from-purple-600 to-pink-500 text-white',
+      description: 'Uno de los mejores proveedores de la plataforma',
     },
     trusted: {
-      label: "Confiable",
+      label: 'Confiable',
       icon: BadgeCheck,
-      color: "bg-gradient-to-r from-blue-600 to-cyan-500 text-white",
-      description: "Proveedor verificado con buenas reseñas"
+      color: 'bg-gradient-to-r from-blue-600 to-cyan-500 text-white',
+      description: 'Proveedor verificado con buenas reseñas',
     },
     verified: {
-      label: "Verificado",
+      label: 'Verificado',
       icon: CheckCircle2,
-      color: "bg-primary/10 text-primary",
-      description: "Identidad y credenciales verificadas"
-    }
+      color: 'bg-primary/10 text-primary',
+      description: 'Identidad y credenciales verificadas',
+    },
   };
 
   if (!isVerified || !level) {
@@ -69,7 +63,7 @@ export const VerificationBadge = ({
   const config = levelConfig[level];
   const Icon = config.icon;
 
-  if (type === "icon-only") {
+  if (type === 'icon-only') {
     return (
       <TooltipProvider>
         <Tooltip>
@@ -87,7 +81,7 @@ export const VerificationBadge = ({
     );
   }
 
-  if (type === "compact") {
+  if (type === 'compact') {
     return (
       <TooltipProvider>
         <Tooltip>
@@ -111,7 +105,7 @@ export const VerificationBadge = ({
         <Icon className="h-3 w-3 mr-1" />
         {config.label}
       </Badge>
-      {level === "elite" && (
+      {level === 'elite' && (
         <Badge variant="outline" className="bg-amber-50 border-amber-200 text-amber-700">
           <Award className="h-3 w-3 mr-1" />
           {totalServices}+ servicios

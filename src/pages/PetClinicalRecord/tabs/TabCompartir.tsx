@@ -1,6 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
-import { Share2, Link2, Copy, Trash2, MessageCircle, Download, ChevronDown } from '@/lib/icons';
+import { Link2, Copy, Trash2, MessageCircle, Download, ChevronDown } from '@/lib/icons';
 import { QRCodeSVG } from 'qrcode.react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';

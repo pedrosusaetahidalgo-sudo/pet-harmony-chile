@@ -1,5 +1,3 @@
-import type { LucideIcon } from 'lucide-react';
-
 /**
  * Contenido del tutorial guiado por sección del sidebar.
  * Cada sección tiene múltiples pasos que el usuario recorre antes de

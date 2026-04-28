@@ -3,10 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { ScrollArea } from '@/components/ui/scroll-area';
 // Sprint 1 P1 ARCH-002 (2026-04-28): imports lucide limpiados.
 // Removidos por noUnusedLocals: Star, Shield, Crown, Stethoscope, MessageCircle,
 // Search, Home, ShoppingBag, ArrowRight, Lock.

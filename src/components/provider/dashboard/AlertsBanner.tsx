@@ -1,4 +1,4 @@
-import { AlertTriangle, Clock, FileText, Link2 } from '@/lib/icons';
+import { Clock, FileText, Link2 } from '@/lib/icons';
 import { Badge } from '@/components/ui/badge';
 
 interface AlertsBannerProps {

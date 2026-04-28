@@ -1,11 +1,21 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import {
-  Home, MapPin, Globe, Phone, Mail, Instagram, Facebook,
-  Dog, Cat, Sparkles, ExternalLink, MessageCircle, Building2
-} from "@/lib/icons";
-import { openExternalUrl } from "@/lib/nativeNavigation";
+  MapPin,
+  Globe,
+  Phone,
+  Mail,
+  Instagram,
+  Facebook,
+  Dog,
+  Cat,
+  Sparkles,
+  ExternalLink,
+  MessageCircle,
+  Building2,
+} from '@/lib/icons';
+import { openExternalUrl } from '@/lib/nativeNavigation';
 
 interface ShelterDetailCardProps {
   shelter: {
@@ -31,17 +41,17 @@ interface ShelterDetailCardProps {
 }
 
 const typeLabels: Record<string, string> = {
-  ong: "ONG",
-  fundacion: "Fundación",
-  refugio: "Refugio",
-  independiente: "Casa de Acogida",
+  ong: 'ONG',
+  fundacion: 'Fundación',
+  refugio: 'Refugio',
+  independiente: 'Casa de Acogida',
 };
 
 const typeColors: Record<string, string> = {
-  ong: "bg-green-500",
-  fundacion: "bg-blue-500",
-  refugio: "bg-purple-500",
-  independiente: "bg-amber-500",
+  ong: 'bg-green-500',
+  fundacion: 'bg-blue-500',
+  refugio: 'bg-purple-500',
+  independiente: 'bg-amber-500',
 };
 
 const ShelterDetailCard = ({ shelter, compact = false }: ShelterDetailCardProps) => {
@@ -63,11 +73,11 @@ const ShelterDetailCard = ({ shelter, compact = false }: ShelterDetailCardProps)
     return (
       <div className="space-y-2">
         <div className="flex items-start gap-2">
-          <div className={`p-2 rounded-lg ${typeColors[shelter.type] || "bg-primary"}`}>
+          <div className={`p-2 rounded-lg ${typeColors[shelter.type] || 'bg-primary'}`}>
             <Building2 className="h-4 w-4 text-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <Badge className={`text-xs mb-1 ${typeColors[shelter.type] || "bg-primary"}`}>
+            <Badge className={`text-xs mb-1 ${typeColors[shelter.type] || 'bg-primary'}`}>
               {typeLabels[shelter.type] || shelter.type}
             </Badge>
             <h3 className="font-semibold text-sm truncate">{shelter.name}</h3>
@@ -82,7 +92,11 @@ const ShelterDetailCard = ({ shelter, compact = false }: ShelterDetailCardProps)
         <div className="flex flex-wrap gap-1">
           {shelter.animal_types?.map((type) => (
             <Badge key={type} variant="secondary" className="text-xs">
-              {type === "perro" ? <Dog className="h-2 w-2 mr-1" /> : <Cat className="h-2 w-2 mr-1" />}
+              {type === 'perro' ? (
+                <Dog className="h-2 w-2 mr-1" />
+              ) : (
+                <Cat className="h-2 w-2 mr-1" />
+              )}
               {type}
             </Badge>
           ))}
@@ -97,7 +111,9 @@ const ShelterDetailCard = ({ shelter, compact = false }: ShelterDetailCardProps)
 
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
           <MapPin className="h-3 w-3" />
-          <span className="truncate">{shelter.commune}, {shelter.city}</span>
+          <span className="truncate">
+            {shelter.commune}, {shelter.city}
+          </span>
         </div>
 
         <div className="flex gap-2 pt-1">
@@ -117,7 +133,7 @@ const ShelterDetailCard = ({ shelter, compact = false }: ShelterDetailCardProps)
 
   return (
     <Card className="overflow-hidden">
-      <div className={`p-4 ${typeColors[shelter.type] || "bg-primary"} text-white`}>
+      <div className={`p-4 ${typeColors[shelter.type] || 'bg-primary'} text-white`}>
         <div className="flex items-center gap-3">
           <div className="p-3 bg-white/20 rounded-xl">
             <Building2 className="h-6 w-6" />
@@ -146,7 +162,7 @@ const ShelterDetailCard = ({ shelter, compact = false }: ShelterDetailCardProps)
           <div className="flex flex-wrap gap-2">
             {shelter.animal_types?.map((type) => (
               <Badge key={type} variant="secondary" className="gap-1">
-                {type === "perro" ? <Dog className="h-3 w-3" /> : <Cat className="h-3 w-3" />}
+                {type === 'perro' ? <Dog className="h-3 w-3" /> : <Cat className="h-3 w-3" />}
                 {type.charAt(0).toUpperCase() + type.slice(1)}
               </Badge>
             ))}
@@ -181,7 +197,9 @@ const ShelterDetailCard = ({ shelter, compact = false }: ShelterDetailCardProps)
           <MapPin className="h-4 w-4 text-primary mt-0.5" />
           <div>
             <p>{shelter.address}</p>
-            <p className="text-muted-foreground">{shelter.commune}, {shelter.city}</p>
+            <p className="text-muted-foreground">
+              {shelter.commune}, {shelter.city}
+            </p>
           </div>
         </div>
 
@@ -206,42 +224,48 @@ const ShelterDetailCard = ({ shelter, compact = false }: ShelterDetailCardProps)
           {shelter.website && (
             <div className="flex items-center gap-2">
               <Globe className="h-4 w-4 text-primary" />
-              <a href={shelter.website} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                {shelter.website.replace(/^https?:\/\//, "")}
+              <a
+                href={shelter.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                {shelter.website.replace(/^https?:\/\//, '')}
               </a>
             </div>
           )}
         </div>
 
         {/* Social Media */}
-        {shelter.social_media && (shelter.social_media.instagram || shelter.social_media.facebook) && (
-          <div className="flex gap-2">
-            {shelter.social_media.instagram && (
-              <Button variant="outline" size="sm" asChild>
-                <a
-                  href={`https://instagram.com/${shelter.social_media.instagram.replace("@", "")}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Instagram className="h-4 w-4 mr-2" />
-                  Instagram
-                </a>
-              </Button>
-            )}
-            {shelter.social_media.facebook && (
-              <Button variant="outline" size="sm" asChild>
-                <a
-                  href={`https://facebook.com/${shelter.social_media.facebook}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Facebook className="h-4 w-4 mr-2" />
-                  Facebook
-                </a>
-              </Button>
-            )}
-          </div>
-        )}
+        {shelter.social_media &&
+          (shelter.social_media.instagram || shelter.social_media.facebook) && (
+            <div className="flex gap-2">
+              {shelter.social_media.instagram && (
+                <Button variant="outline" size="sm" asChild>
+                  <a
+                    href={`https://instagram.com/${shelter.social_media.instagram.replace('@', '')}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Instagram className="h-4 w-4 mr-2" />
+                    Instagram
+                  </a>
+                </Button>
+              )}
+              {shelter.social_media.facebook && (
+                <Button variant="outline" size="sm" asChild>
+                  <a
+                    href={`https://facebook.com/${shelter.social_media.facebook}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Facebook className="h-4 w-4 mr-2" />
+                    Facebook
+                  </a>
+                </Button>
+              )}
+            </div>
+          )}
 
         {/* Actions */}
         <div className="flex gap-2 pt-2">

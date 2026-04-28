@@ -1,7 +1,6 @@
 /* eslint-disable react-refresh/only-export-components -- helpers conviven con el componente */
 import {
   CheckCircle2,
-  Circle,
   SkipForward,
   MoreVertical,
   Pause,
@@ -27,7 +26,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/lib/utils';
 import { Routine, RoutineCompletion, ROUTINE_CATEGORIES } from '@/hooks/useRoutines';
-import { format } from 'date-fns';
 
 const DAY_LABELS = ['D', 'L', 'M', 'Mi', 'J', 'V', 'S'];
 

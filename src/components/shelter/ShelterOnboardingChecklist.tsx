@@ -22,7 +22,6 @@ import { Badge } from '@/components/ui/badge';
 import {
   Upload,
   Share2,
-  Heart,
   CheckCircle2,
   X,
   ArrowRight,

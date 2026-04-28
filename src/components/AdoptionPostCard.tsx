@@ -22,7 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Heart, MapPin, Calendar, MessageCircle, Eye, Check, X, PawPrint } from '@/lib/icons';
+import { Heart, MapPin, Calendar, MessageCircle, Eye, Check, PawPrint } from '@/lib/icons';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useStartConversation } from '@/hooks/useStartConversation';

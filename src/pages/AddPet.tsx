@@ -31,7 +31,6 @@ import {
   compressedToFile,
   validateImageFile,
   IMAGE_PRESETS,
-  MIN_DIMENSIONS,
 } from '@/lib/imageUtils';
 import { Badge } from '@/components/ui/badge';
 import { describeSupabaseError } from '@/lib/supabaseErrors';

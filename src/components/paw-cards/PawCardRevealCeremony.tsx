@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { PawPrint, Sparkles, Star, Crown, X } from '@/lib/icons';
-import { HOLO_PATTERN_MAP, HOLO_TIER_LABELS } from '@/lib/paw-cards';
+import { PawPrint, Sparkles, Star, X } from '@/lib/icons';
+import { HOLO_PATTERN_MAP } from '@/lib/paw-cards';
 import { getRarity, RARITY_LABELS } from '@/components/PetCardCompact';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Heart } from '@/lib/icons';

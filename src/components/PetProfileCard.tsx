@@ -1,8 +1,8 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { MapPin, User } from "@/lib/icons";
-import { useNavigate } from "react-router-dom";
+import { Card, CardContent } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { User } from '@/lib/icons';
+import { useNavigate } from 'react-router-dom';
 
 interface PetProfileCardProps {
   id: string;
@@ -58,9 +58,7 @@ export function PetProfileCard({
           <div className="flex items-start justify-between mb-2">
             <div className="flex-1">
               <h3 className="font-bold text-lg truncate">{name}</h3>
-              <p className="text-sm text-muted-foreground">
-                {breed || species}
-              </p>
+              <p className="text-sm text-muted-foreground">{breed || species}</p>
             </div>
           </div>
 
@@ -73,28 +71,18 @@ export function PetProfileCard({
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-muted-foreground truncate">
-                Dueño: {ownerName}
-              </p>
+              <p className="text-xs text-muted-foreground truncate">Dueño: {ownerName}</p>
             </div>
           </div>
 
           {/* Bio */}
-          {bio && (
-            <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
-              {bio}
-            </p>
-          )}
+          {bio && <p className="text-sm text-muted-foreground mb-3 line-clamp-2">{bio}</p>}
 
           {/* Personality Tags */}
           {personality.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {personality.slice(0, 3).map((trait, index) => (
-                <Badge
-                  key={index}
-                  variant="secondary"
-                  className="text-xs px-2 py-0.5"
-                >
+                <Badge key={index} variant="secondary" className="text-xs px-2 py-0.5">
                   {trait}
                 </Badge>
               ))}

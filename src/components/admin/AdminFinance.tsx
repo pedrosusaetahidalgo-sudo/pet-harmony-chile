@@ -10,9 +10,7 @@ import { toast } from 'sonner';
 import {
   DollarSign,
   CreditCard,
-  TrendingDown,
   AlertTriangle,
-  Users,
   RefreshCw,
   ArrowUpRight,
   ArrowDownRight,

@@ -8,8 +8,6 @@ import {
   Star,
   CheckCircle2,
   Award,
-  Clock,
-  DollarSign,
   Users,
   Calendar,
   MessageCircle,

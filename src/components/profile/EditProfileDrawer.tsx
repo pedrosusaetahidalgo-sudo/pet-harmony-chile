@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
-import { Save, Loader2, Upload, Camera } from '@/lib/icons';
+import { Save, Loader2, Camera } from '@/lib/icons';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { ComboboxWithOther } from '@/components/ui/combobox-with-other';
 import { COMUNAS_SANTIAGO } from '@/lib/locations';
@@ -20,7 +20,6 @@ import {
   compressedToFile,
   validateImageFile,
   IMAGE_PRESETS,
-  MIN_DIMENSIONS,
 } from '@/lib/imageUtils';
 
 interface EditProfileDrawerProps {

@@ -11,7 +11,6 @@ import {
   getBookingTable,
   getProviderColumn,
 } from '@/lib/bookingStateMachine';
-import type { BookingStatus, ActorRole } from '@/lib/bookingStateMachine';
 
 describe('Booking state machine: valid transitions', () => {
   // Happy path: pendiente → confirmado → en_curso → completado

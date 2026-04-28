@@ -1,7 +1,6 @@
 import { SidebarTrigger } from '@/components/ui/sidebar';
 import {
   Heart,
-  PawPrint,
   Bell,
   Crown,
   Clock,
@@ -14,7 +13,6 @@ import {
   Trophy,
   Flame,
 } from '@/lib/icons';
-import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';

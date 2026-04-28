@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
-import { Button } from '@/components/ui/button';
-import { ImagePlus, X, Loader2 } from '@/lib/icons';
+import { ImagePlus, X } from '@/lib/icons';
 import { toast } from 'sonner';
 import {
   compressImage,

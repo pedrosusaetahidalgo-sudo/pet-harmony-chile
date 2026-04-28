@@ -16,7 +16,6 @@ import {
   Coins,
   Gift,
   ExternalLink,
-  Building2,
 } from '@/lib/icons';
 import { format } from 'date-fns';
 import { CategoryIcon } from '@/components/CategoryIcon';

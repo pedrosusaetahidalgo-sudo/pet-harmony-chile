@@ -14,7 +14,6 @@ import {
   PawPrint,
   ShieldCheck,
   Handshake,
-  Store,
 } from '@/lib/icons';
 import type { LucideIcon } from 'lucide-react';
 import { PageHeader } from '@/components/PageHeader';

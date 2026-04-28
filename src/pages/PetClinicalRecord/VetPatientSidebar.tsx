@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, Upload, UtensilsCrossed } from '@/lib/icons';
+import { FileText, UtensilsCrossed } from '@/lib/icons';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { VetVitalsCard } from './VetVitalsCard';

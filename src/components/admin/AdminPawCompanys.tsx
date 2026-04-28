@@ -43,17 +43,7 @@ import {
   type PawCompanyStatus,
   type PawCompanyTier,
 } from '@/hooks/usePawCompanys';
-import {
-  Plus,
-  Pencil,
-  Trash2,
-  Building2,
-  ExternalLink,
-  Sparkles,
-  PawPrint,
-  Check,
-  X,
-} from '@/lib/icons';
+import { Plus, Pencil, Trash2, ExternalLink, PawPrint, Check, X } from '@/lib/icons';
 import { formatCLP } from '@/lib/format';
 import { CategoryIcon } from '@/components/CategoryIcon';
 

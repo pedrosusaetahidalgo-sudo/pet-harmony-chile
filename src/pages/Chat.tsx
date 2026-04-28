@@ -1,7 +1,7 @@
 import { PageHeader } from '@/components/PageHeader';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { MessageSquare, MessageCircle, Search } from '@/lib/icons';
+import { MessageCircle, Search } from '@/lib/icons';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';

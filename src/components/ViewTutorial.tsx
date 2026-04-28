@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Sheet,
@@ -8,7 +7,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { HelpCircle, ChevronRight } from '@/lib/icons';
+import { HelpCircle } from '@/lib/icons';
 
 interface TutorialStep {
   title: string;

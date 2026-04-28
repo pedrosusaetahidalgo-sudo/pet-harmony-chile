@@ -38,7 +38,6 @@ import {
   Inbox,
   ExternalLink,
   Copy,
-  UserPlus,
   MapPin,
   Phone,
 } from '@/lib/icons';

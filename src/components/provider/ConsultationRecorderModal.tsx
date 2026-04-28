@@ -3,7 +3,7 @@ import { ResponsiveModal } from '@/components/ui/responsive-modal';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Mic, MicOff, Square, Pause, Play, Loader2, AlertTriangle, Sparkles } from '@/lib/icons';
+import { Mic, Square, Pause, Play, Loader2, AlertTriangle, Sparkles } from '@/lib/icons';
 import { toast } from 'sonner';
 import { useAudioRecorder } from '@/hooks/useAudioRecorder';
 import { useProcessTranscript, type ConsultationSummary } from '@/hooks/useProcessTranscript';

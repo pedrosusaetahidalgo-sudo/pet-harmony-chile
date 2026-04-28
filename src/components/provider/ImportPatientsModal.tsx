@@ -11,7 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Upload, FileText, Download, Loader2, AlertTriangle, CheckCircle2, X } from '@/lib/icons';
+import { Upload, FileText, Download, Loader2, AlertTriangle, CheckCircle2 } from '@/lib/icons';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import {

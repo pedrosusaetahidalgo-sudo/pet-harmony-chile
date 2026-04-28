@@ -13,8 +13,6 @@ import {
   Syringe,
   Dog,
   Stethoscope,
-  Calendar,
-  TrendingUp,
   ArrowRight,
 } from '@/lib/icons';
 import { supabase } from '@/integrations/supabase/client';

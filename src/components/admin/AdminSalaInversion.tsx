@@ -16,7 +16,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import AdminEmptyState from '@/components/admin/ui/AdminEmptyState';
 import { formatCLPCompact } from '@/lib/format';
@@ -35,12 +34,10 @@ import {
   FINANCING_DEFAULT,
   FINANCING_STATUS_LABEL,
   LEAD_STAGES,
-  type DataRoomItem,
   type FinancingRoute,
 } from './salaInversion/constants';
 import {
   formatNumber,
-  clampPct,
   computeTier,
   loadChecklist,
   saveChecklist,

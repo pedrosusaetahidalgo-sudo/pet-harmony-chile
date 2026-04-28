@@ -22,7 +22,7 @@ import {
   AlertCircle,
 } from '@/lib/icons';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 
 import { QuickActionsBar, type DashboardPeriod } from './dashboard/QuickActionsBar';
 import { ProviderBookingsInbox } from './ProviderBookingsInbox';
@@ -31,7 +31,6 @@ import { InteractiveMetricCard } from './dashboard/InteractiveMetricCard';
 import { ClinicalTab } from './dashboard/ClinicalTab';
 import { BusinessTab } from './dashboard/BusinessTab';
 import { PatientsTab } from './dashboard/PatientsTab';
-import { ActivityFeed } from './dashboard/ActivityFeed';
 import { PendingVetLinksCard } from './PendingVetLinksCard';
 import { NewPatientForm } from './NewPatientForm';
 import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
