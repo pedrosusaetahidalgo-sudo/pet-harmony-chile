@@ -243,18 +243,24 @@ ORDER BY name;
 -- ──────────────────────────────────────────────────────────────────────────
 -- Cualquier tabla con RLS habilitado pero 0 policies = inaccesible.
 -- Cualquier tabla con datos sensibles SIN RLS = leak abierto.
+-- Vista pg_policies expone columnas: schemaname, tablename, policyname, ...
 SELECT
   c.relname AS table_name,
-  CASE WHEN c.relrowsecurity THEN '🔒 RLS on' ELSE '⚠️ RLS OFF' END AS rls_status,
-  COUNT(p.polname) AS policy_count,
+  CASE
+    WHEN c.relrowsecurity AND COUNT(p.policyname) = 0 THEN '🚨 RLS on SIN policies'
+    WHEN c.relrowsecurity THEN '🔒 RLS on'
+    ELSE '⚠️ RLS OFF'
+  END AS rls_status,
+  COUNT(p.policyname) AS policy_count,
   pg_size_pretty(pg_total_relation_size(c.oid)) AS size
 FROM pg_class c
-LEFT JOIN pg_policies p ON p.tablename=c.relname AND p.schemaname='public'
-WHERE c.relkind='r'
-  AND c.relnamespace='public'::regnamespace
+LEFT JOIN pg_policies p
+  ON p.tablename = c.relname AND p.schemaname = 'public'
+WHERE c.relkind = 'r'
+  AND c.relnamespace = 'public'::regnamespace
   AND c.relname NOT LIKE 'pg_%'
 GROUP BY c.relname, c.relrowsecurity, c.oid
-ORDER BY policy_count ASC, c.relname;
+ORDER BY rls_status DESC, policy_count ASC, c.relname;
 
 -- ──────────────────────────────────────────────────────────────────────────
 -- 9. TABLAS DEPRECATED — siguen existiendo?
