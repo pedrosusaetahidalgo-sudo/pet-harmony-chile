@@ -3,16 +3,31 @@
  * (E.1 auditoria top-tier 2026-04-20). Sin logica: solo data.
  */
 
-// ── Plan 90 dias ────────────────────────────────────────────
+// ── Plan 90 dias (modelo v2 post-Roberto Camhi 2026-04-22) ──────────────
+// El dueno NUNCA paga; la metrica "premium_b2c" antes era objetivo de
+// conversion a Paw Member ($3.990/mes voluntario). En modelo v2 sigue
+// siendo proxy NPS (cuantos duenos quieren apoyar voluntariamente) pero
+// NO es revenue core. Revenue real viene de pharma + seguros + retail.
+// Meta bajada a 30 (de 100) — proxy NPS, no driver ARR.
 export const TARGETS_90D = {
-  premium_b2c: 100,
+  /** Paw Member voluntario (proxy NPS, no revenue core) */
+  premium_b2c: 30,
   paying_b2b: 20,
+  /** MRR proviene de B2B vets + Paw Companys + futuros pilotos pharma */
   mrr_clp: 1_900_000,
-  retention_d30_pct: 30,
+  retention_d30_pct: 35,
+  /** Vets activos creando fichas (gratis) — leading indicator del moat ficha */
+  vets_active_min: 50,
+  /** Fichas con OCR completado (% de pets con vacunas escaneadas) */
+  fichas_ocr_pct: 30,
+  /** Research consent opt-in % — pre-requisito Pharma deals */
+  research_consent_pct: 25,
   wau_min: 500,
-  // Canal comunitario: donaciones one-shot via Flow + sponsors Paw Companys.
+  /** Paw Support (ex-donaciones) — proxy NPS */
   donations_clp: 500_000,
   paw_companys: 3,
+  /** Pilotos pharma firmados (Centrovet/Virbac primero) — empieza mes 4-6 */
+  pharma_pilots: 0,
   willingness_yes_pct: 40,
   rating_avg: 4.3,
 };

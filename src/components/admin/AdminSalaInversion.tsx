@@ -649,7 +649,7 @@ export default function AdminSalaInversion() {
     lines.push(`MRR B2C,${northStar?.mrrB2C ?? 0}`);
     lines.push(`MRR B2B,${northStar?.mrrB2B ?? 0}`);
     lines.push(`ARR,${northStar?.arr ?? 0}`);
-    lines.push(`Premium B2C,${northStar?.premiumCount ?? 0}`);
+    lines.push(`Paw Member voluntario,${northStar?.premiumCount ?? 0}`);
     lines.push(`Clinicas B2B pagando,${northStar?.b2bCount ?? 0}`);
     lines.push(`MAU,${northStar?.mau ?? 0}`);
     lines.push(`WAU,${northStar?.wau ?? 0}`);
@@ -658,7 +658,7 @@ export default function AdminSalaInversion() {
     lines.push('');
     lines.push('=== Metas 90d ===');
     lines.push(
-      `Premium B2C,${northStar?.premiumCount ?? 0},${TARGETS_90D.premium_b2c},${Math.round(((northStar?.premiumCount ?? 0) / TARGETS_90D.premium_b2c) * 100)}%`
+      `Paw Member voluntario,${northStar?.premiumCount ?? 0},${TARGETS_90D.premium_b2c},${Math.round(((northStar?.premiumCount ?? 0) / TARGETS_90D.premium_b2c) * 100)}%`
     );
     lines.push(
       `Clinicas B2B pagas,${northStar?.b2bCount ?? 0},${TARGETS_90D.paying_b2b},${Math.round(((northStar?.b2bCount ?? 0) / TARGETS_90D.paying_b2b) * 100)}%`
@@ -796,11 +796,11 @@ export default function AdminSalaInversion() {
               loading={nsLoading}
             />
             <KpiCard
-              title="Premium B2C activos"
+              title="Paw Member voluntario"
               value={northStar?.premiumCount ?? 0}
               icon={Crown}
               tone="gold"
-              description={`${formatCLPCompact(northStar?.mrrB2C ?? 0)} MRR B2C`}
+              description={`${formatCLPCompact(northStar?.mrrB2C ?? 0)} MRR · proxy NPS, no revenue core`}
               loading={nsLoading}
               to="/admin?section=finance"
             />
@@ -870,7 +870,7 @@ export default function AdminSalaInversion() {
           <CardContent className="space-y-4 pt-2">
             <MetaRow
               icon={Crown}
-              label="Premium B2C pagos"
+              label="Paw Member voluntario (proxy NPS)"
               current={northStar?.premiumCount ?? 0}
               target={TARGETS_90D.premium_b2c}
             />
@@ -1044,7 +1044,7 @@ export default function AdminSalaInversion() {
                   </div>
                   <p className="text-sm font-semibold text-slate-900">Sin ingresos aun</p>
                   <p className="text-xs text-slate-500 mt-1">
-                    Reactivar Premium y cerrar primera clinica B2B
+                    Cerrar primera clinica B2B + primer Paw Company + outreach Pharma
                   </p>
                 </div>
               ) : (
@@ -1622,12 +1622,12 @@ export default function AdminSalaInversion() {
             <div className="text-sm text-slate-700 leading-relaxed">
               <p className="font-semibold text-slate-900">Proxima revision del plan: mes 1</p>
               <p className="mt-1 text-slate-600">
-                Si O1 (reactivar Premium) y O2 (20 B2B pagas) no avanzan, ajustar metas antes de
-                postular. Ver{' '}
+                Modelo v2: si O1 (50 vets activos creando fichas) y O2 (3 Paw Companys) no avanzan,
+                ajustar metas antes de postular. Pilotos pharma arrancan mes 4-6. Ver{' '}
                 <code className="text-brand-700 bg-white px-1.5 py-0.5 rounded border border-brand-100 font-mono text-xs">
-                  project_vc_plan_2026_04_18.md
+                  docs-raiz/pitch/MODELO_V2_2026_04_22.md
                 </code>{' '}
-                en memoria para contexto completo.
+                para contexto completo.
               </p>
             </div>
           </CardContent>

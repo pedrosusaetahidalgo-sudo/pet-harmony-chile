@@ -15,15 +15,13 @@ import {
   PawPrint,
   FileText,
   Search,
-  Stethoscope,
-  CheckCircle2,
-  Sparkles,
   Dog,
   Cat,
 } from '@/lib/icons';
 import type { LucideIcon } from 'lucide-react';
 import { describeSupabaseError } from '@/lib/supabaseErrors';
 import { generatePawCardData } from '@/hooks/useHoloPattern';
+import { VaccinationCardOCR } from '@/components/onboarding/VaccinationCardOCR';
 
 type Species = 'perro' | 'gato' | 'otro';
 type AgeRange = 'cachorro' | 'joven' | 'adulto' | 'senior';
@@ -42,7 +40,7 @@ function approximateBirthDate(age: AgeRange): string {
   return d.toISOString().split('T')[0];
 }
 
-const STEP_LABELS = ['Agrega tu mascota', 'Ficha medica', 'Busca veterinario'];
+const STEP_LABELS = ['Agrega tu mascota', 'Carnet de vacunas', 'Busca veterinario'];
 
 const OnboardingDuenoMinimal = () => {
   const { user } = useAuth();
@@ -298,68 +296,48 @@ const OnboardingDuenoMinimal = () => {
           </>
         )}
 
-        {/* ============ STEP 2: Medical record value prop ============ */}
+        {/* ============ STEP 2: OCR push del carnet de vacunas (modelo v2) ============
+            En vez de un pitch decorativo de la ficha, este paso le pide al dueño
+            que suba el carnet UNA vez para que el OCR lo extraiga automaticamente.
+            Con eso la ficha arranca completa sin que el dueño escriba nada manual.
+            Skip valido — sigue al paso 3. */}
         {step === 2 && (
           <>
             <CardHeader className="text-center pb-2">
               <div className="mx-auto w-14 h-14 rounded-full bg-emerald-100 flex items-center justify-center mb-3">
-                <FileText className="h-7 w-7 text-emerald-600" />
+                <Camera className="h-7 w-7 text-emerald-600" />
               </div>
-              <CardTitle className="text-2xl">La ficha medica digital</CardTitle>
+              <CardTitle className="text-2xl">¿Tienes el carnet de vacunas?</CardTitle>
               <CardDescription>
-                Tu mascota tendra su ficha medica digital completa, accesible desde cualquier
-                dispositivo.
+                Súbelo una vez y leemos vacunas, antiparasitarios y veterinario por ti. Sin tipear.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-5">
-              {/* Value props */}
-              <div className="space-y-3">
-                {[
-                  {
-                    icon: Stethoscope,
-                    title: 'Historial clinico completo',
-                    desc: 'Vacunas, consultas, examenes, cirugias — todo en un solo lugar.',
-                  },
-                  {
-                    icon: Sparkles,
-                    title: 'PDF descargable',
-                    desc: 'Genera un PDF profesional de la ficha para compartir con cualquier veterinario.',
-                  },
-                  {
-                    icon: CheckCircle2,
-                    title: 'Siempre actualizada',
-                    desc: 'Tu veterinario puede agregar datos directamente desde Paw Friend.',
-                  },
-                ].map((item) => (
-                  <div
-                    key={item.title}
-                    className="flex gap-3 items-start p-3 bg-slate-50 rounded-xl"
-                  >
-                    <div className="flex-shrink-0 w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center">
-                      <item.icon className="h-4.5 w-4.5 text-emerald-600" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-slate-800">{item.title}</p>
-                      <p className="text-xs text-slate-500">{item.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              {/* OCR component — solo si la pet ya fue creada */}
+              {petCreated && createdPetId ? (
+                <VaccinationCardOCR
+                  petId={createdPetId}
+                  onSaved={() => {
+                    toast.success('Carnet procesado. Ya está en la ficha de ' + name + '.');
+                  }}
+                />
+              ) : (
+                <div className="p-4 bg-slate-50 rounded-xl text-center text-sm text-slate-500">
+                  Primero crea a tu mascota en el paso 1.
+                </div>
+              )}
 
-              {/* Preview hint */}
+              {/* Skip + ver ficha */}
               {petCreated && createdPetId && (
-                <div className="p-4 bg-purple-50 rounded-xl border border-purple-100 text-center">
-                  <p className="text-sm text-purple-700 font-medium mb-2">
-                    Ya creaste a {name}. Puedes ver su ficha ahora mismo.
-                  </p>
+                <div className="space-y-2 pt-2 border-t border-slate-100">
                   <Button
-                    variant="outline"
+                    variant="ghost"
                     size="sm"
                     onClick={async () => {
                       if (user?.id) await markOnboardingComplete(user.id, queryClient);
                       navigate(`/ficha/${createdPetId}`);
                     }}
-                    className="text-purple-700 border-purple-300 hover:bg-purple-100"
+                    className="w-full text-purple-700 hover:bg-purple-50"
                   >
                     <FileText className="h-4 w-4 mr-1" /> Ver ficha de {name}
                   </Button>
@@ -385,7 +363,7 @@ const OnboardingDuenoMinimal = () => {
                 onClick={skipAll}
                 className="w-full text-xs text-slate-400 hover:text-slate-600 transition-colors"
               >
-                Omitir
+                No tengo carnet ahora — saltar
               </button>
             </CardContent>
           </>
