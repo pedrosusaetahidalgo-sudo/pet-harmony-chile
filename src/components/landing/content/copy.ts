@@ -130,7 +130,7 @@ export const HEADER = {
     { label: 'Veterinarios publicos', href: '/veterinarios', cta: false },
     // Item con cta=true se renderiza como boton destacado en LandingHeader.
     { label: '¿Eres vet?', href: '/para-veterinarios', cta: true },
-    { label: 'Apoyar', href: '/donaciones', cta: false },
+    { label: 'Apoyar', href: '/paw-support', cta: false },
     { label: 'Nuestra historia', href: '/paw-core', cta: false },
   ] as ReadonlyArray<{ label: string; href: string; cta: boolean }>,
   ctaAuth: 'Iniciar sesión',
@@ -158,7 +158,7 @@ export const FOOTER = {
     {
       title: 'Comunidad',
       links: [
-        { label: 'Donaciones', href: '/donaciones' },
+        { label: 'Paw Support', href: '/paw-support' },
         { label: 'Transparencia', href: '/transparencia' },
         { label: 'Paw Voices (creadores)', href: '/paw-voices' },
         { label: 'Paw Companys (empresas)', href: '/paw-companys' },

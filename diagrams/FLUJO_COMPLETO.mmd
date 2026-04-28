@@ -1,7 +1,15 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-27 (Fase 2 scaffolding)
-    %% Cambios 2026-04-27 (Refactor Maestro Fase 2 §7 scaffolding):
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-27 (Modelo v2 + Fase 2 scaffolding)
+    %% Cambios 2026-04-27 (modelo v2 post-Roberto Camhi 2026-04-22):
+    %%   - Modelo de monetizacion: 6 motores (v1) -> 3 ancla pharma+seguros+retail
+    %%     + 2 soporte (Paw Companys + Paw Support). Vet = canal de adquisicion.
+    %%     El dueno NUNCA paga. Paralelismo Mapcity.
+    %%   - PAGOS: ahora "PAW MEMBER (voluntario)" — no desbloquea features.
+    %%   - /donaciones reframed como /paw-support (alias 3 meses).
+    %%   - Tier Clinica/Pro Max escondido del pricing publico.
+    %%   - /explorar nuevo: hub opt-in para Paw Labs (Comunidad/Adopciones/etc).
+    %% Cambios previos 2026-04-27 (Refactor Maestro Fase 2 §7 scaffolding):
     %%   - §7.3 Pharma research consent: profiles.anonymous_data_research_consent
     %%     + ResearchConsentDialog en /profile + paso 4 opcional en
     %%     OnboardingQuickFlow + ResearchConsentNudge en /home cuando NULL.
@@ -432,11 +440,11 @@ flowchart TD
         FEED_USER --> FEED_FOLLOW["Follow / Block / Report"]
     end
 
-    %% ============ PAGOS ============
-    subgraph PAGOS["PAGOS PREMIUM"]
+    %% ============ PAGOS (modelo v2: voluntario, no desbloquea features) ============
+    subgraph PAGOS["PAGOS PAW MEMBER (voluntario)"]
         direction TB
-        UPGRADE["Upgrade /upgrade"]
-        UPGRADE --> PAY_SELECT["Mensual $3.990 | Anual $39.900"]
+        UPGRADE["Paw Member /paw-member"]
+        UPGRADE --> PAY_SELECT["Mensual $3.990 | Anual $39.900 (badge cosmetico)"]
         PAY_SELECT --> PAY_FLOW["flow-create-subscription"]
         PAY_FLOW --> PAY_REDIRECT["Redirige a Flow.cl"]
         PAY_REDIRECT --> PAY_RESULT{"Resultado"}
@@ -444,7 +452,7 @@ flowchart TD
         PAY_RESULT -->|Cancela| UPG_CANCEL["/upgrade/cancel"]
         PAY_WH --> PAY_RESULT_PAGE["/payment-result ?status=success"]
         PAY_RESULT_PAGE --> UPG_OK["/upgrade/success"]
-        UPG_OK --> PAY_UNLOCK["Desbloquea: ilimitadas + PDF + compartir"]
+        UPG_OK --> PAY_UNLOCK["Activa: badge Paw Member + descuentos Paw Partners (NO desbloquea features)"]
         UPG_CANCEL --> UPGRADE
     end
 
@@ -604,7 +612,7 @@ flowchart TD
     subgraph PAW_CORE["PAW CORE /paw-core"]
         direction TB
         PC_VISION["Vision + Mision + Valores"]
-        PC_MOTORS["6 motores monetizacion"]
+        PC_MOTORS["Modelo v2: 3 ancla pharma+seguros+retail + 2 soporte"]
         PC_FUTURE["Ideas futuras (Paw Crypto, LatAm, ONG)"]
         PC_VISION --> PC_MOTORS --> PC_FUTURE
     end
