@@ -96,11 +96,18 @@ WITH expected(name) AS (
     -- Nose print
     ('nose_prints'),
     -- Insights / Paw Voices
-    ('paw_voices'), ('breed_stats')
+    -- public_breed_stats es materialized view (mig 20260901000000), no tabla
+    ('paw_voices'), ('public_breed_stats')
 )
 SELECT
   e.name AS expected_table,
   CASE WHEN c.oid IS NOT NULL THEN '✅ existe' ELSE '❌ FALTA' END AS status,
+  CASE c.relkind
+    WHEN 'r' THEN 'tabla'
+    WHEN 'm' THEN 'matview'
+    WHEN 'v' THEN 'view'
+    ELSE NULL
+  END AS kind,
   -- pg_size_pretty(NULL) y pg_total_relation_size(NULL) devuelven NULL,
   -- asi que no rompe si la tabla no existe.
   pg_size_pretty(pg_total_relation_size(c.oid)) AS size
@@ -108,7 +115,7 @@ FROM expected e
 LEFT JOIN pg_class c
   ON c.relnamespace = 'public'::regnamespace
   AND c.relname = e.name
-  AND c.relkind = 'r'
+  AND c.relkind IN ('r', 'm', 'v')  -- tablas + materialized views + views
 ORDER BY status DESC, e.name;
 
 -- ──────────────────────────────────────────────────────────────────────────
