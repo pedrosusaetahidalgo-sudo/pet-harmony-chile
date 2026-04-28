@@ -24,10 +24,8 @@ import {
   TrendingUp,
   Star,
   Phone,
-  Activity,
-  Users,
-  Target,
-  Gamepad2,
+  Compass,
+  ChevronRight,
 } from '@/lib/icons';
 import { getGreeting } from '@/lib/format';
 import { useGamification } from '@/hooks/useGamification';
@@ -886,66 +884,30 @@ function HomeLegacyDashboard() {
         </>
       )}
 
-      {/* === Explorar: discoverability de features ocultas === */}
+      {/* === Explorar más: opt-in a Paw Labs (modelo v2 producto invisible) ===
+          Antes: 4 cards inline (Feed/Comunidad/Misiones/Paw Game) en home.
+          Después: un solo CTA que lleva a /explorar (hub agrupado).
+          El home se mantiene en foco médico (ficha + recordatorios + urgencia
+          + directorio); las features experimentales viven en /explorar. */}
       {pets.length > 0 && (
-        <section aria-label="Explorar" className="space-y-3">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
-            Explorar
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {(
-              [
-                {
-                  label: 'Feed',
-                  desc: 'Fotos y consejos',
-                  Icon: Activity,
-                  to: '/feed',
-                  color: 'text-blue-600',
-                  bg: 'bg-blue-50',
-                },
-                {
-                  label: 'Comunidad',
-                  desc: 'Grupos por raza',
-                  Icon: Users,
-                  to: '/comunidad',
-                  color: 'text-teal-600',
-                  bg: 'bg-teal-50',
-                },
-                {
-                  label: 'Misiones',
-                  desc: 'Gana PawPoints',
-                  Icon: Target,
-                  to: '/misiones',
-                  color: 'text-amber-600',
-                  bg: 'bg-amber-50',
-                },
-                {
-                  label: 'Paw Game',
-                  desc: 'Mini-juego',
-                  Icon: Gamepad2,
-                  to: '/paw-game',
-                  color: 'text-purple-600',
-                  bg: 'bg-purple-50',
-                },
-              ] as const
-            ).map((item) => (
-              <Card
-                key={item.to}
-                className="cursor-pointer hover:shadow-md transition-shadow border-gray-200"
-                onClick={() => navigate(item.to)}
-              >
-                <CardContent className="p-3 text-center space-y-1.5">
-                  <div
-                    className={`mx-auto w-10 h-10 rounded-full ${item.bg} flex items-center justify-center`}
-                  >
-                    <item.Icon className={`h-5 w-5 ${item.color}`} />
-                  </div>
-                  <p className="text-xs font-semibold">{item.label}</p>
-                  <p className="text-[10px] text-muted-foreground">{item.desc}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+        <section aria-label="Explorar más">
+          <Card
+            className="cursor-pointer hover:shadow-md transition-shadow border-purple-200/70 bg-gradient-to-br from-purple-50/40 to-fuchsia-50/30"
+            onClick={() => navigate('/explorar')}
+          >
+            <CardContent className="p-4 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center shrink-0">
+                <Compass className="h-5 w-5 text-purple-600" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold">Explorar más</p>
+                <p className="text-[11px] text-muted-foreground leading-tight">
+                  Comunidad, adopciones, donantes de sangre, mapa pet-friendly, misiones y más.
+                </p>
+              </div>
+              <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+            </CardContent>
+          </Card>
         </section>
       )}
 

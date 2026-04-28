@@ -67,6 +67,7 @@ const PawMemberCancel = lazy(() => import('./pages/PawMemberCancel'));
 const ProviderUpgradeSuccess = lazy(() => import('./pages/ProviderUpgradeSuccess'));
 const ProviderUpgradeCancel = lazy(() => import('./pages/ProviderUpgradeCancel'));
 const Donaciones = lazy(() => import('./pages/Donaciones'));
+const Explorar = lazy(() => import('./pages/Explorar'));
 const Transparencia = lazy(() => import('./pages/Transparencia'));
 const PawCore = lazy(() => import('./pages/PawCore'));
 const PawVoicesPage = lazy(() => import('./pages/PawVoices'));
@@ -302,6 +303,20 @@ const App = () => (
                     <ProtectedRoute>
                       <AppLayout>
                         <Home />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                {/* /explorar — hub de Paw Labs (modelo v2 producto invisible).
+                    Agrupa Feed/Comunidad/Adopcion/Donantes/Memorial/Mapa/
+                    Misiones/Paw Cards/Paw Game como opt-in. El home se mantiene
+                    en foco medico (ficha + recordatorios + urgencia + vets). */}
+                <Route
+                  path="/explorar"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <Explorar />
                       </AppLayout>
                     </ProtectedRoute>
                   }
