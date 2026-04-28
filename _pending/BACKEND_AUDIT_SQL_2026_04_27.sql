@@ -98,8 +98,12 @@ WITH expected(name) AS (
 SELECT
   e.name AS expected_table,
   CASE WHEN t.table_name IS NOT NULL THEN '✅ existe' ELSE '❌ FALTA' END AS status,
-  pg_size_pretty(pg_total_relation_size(('public.' || e.name)::regclass))
-    FILTER (WHERE t.table_name IS NOT NULL) AS size
+  -- Subquery contra pg_class: NULL si la tabla no existe (no rompe).
+  (SELECT pg_size_pretty(pg_total_relation_size(c.oid))
+     FROM pg_class c
+    WHERE c.relnamespace = 'public'::regnamespace
+      AND c.relname = e.name
+    LIMIT 1) AS size
 FROM expected e
 LEFT JOIN information_schema.tables t
   ON t.table_schema='public' AND t.table_name=e.name
