@@ -97,16 +97,15 @@ WITH expected(name) AS (
 )
 SELECT
   e.name AS expected_table,
-  CASE WHEN t.table_name IS NOT NULL THEN '✅ existe' ELSE '❌ FALTA' END AS status,
-  -- Subquery contra pg_class: NULL si la tabla no existe (no rompe).
-  (SELECT pg_size_pretty(pg_total_relation_size(c.oid))
-     FROM pg_class c
-    WHERE c.relnamespace = 'public'::regnamespace
-      AND c.relname = e.name
-    LIMIT 1) AS size
+  CASE WHEN c.oid IS NOT NULL THEN '✅ existe' ELSE '❌ FALTA' END AS status,
+  -- pg_size_pretty(NULL) y pg_total_relation_size(NULL) devuelven NULL,
+  -- asi que no rompe si la tabla no existe.
+  pg_size_pretty(pg_total_relation_size(c.oid)) AS size
 FROM expected e
-LEFT JOIN information_schema.tables t
-  ON t.table_schema='public' AND t.table_name=e.name
+LEFT JOIN pg_class c
+  ON c.relnamespace = 'public'::regnamespace
+  AND c.relname = e.name
+  AND c.relkind = 'r'
 ORDER BY status DESC, e.name;
 
 -- ──────────────────────────────────────────────────────────────────────────
@@ -260,15 +259,22 @@ ORDER BY policy_count ASC, c.relname;
 -- Mig 20260903900000 renombro 4 a _deprecated_20260427.
 -- Drop definitivo programado para 2026-10-04 (6 meses).
 SELECT
-  table_name,
-  pg_size_pretty(pg_total_relation_size(('public.' || table_name)::regclass)) AS size,
-  -- Si nadie las ha tocado en N dias, candidatas a drop
-  (SELECT n_live_tup FROM pg_stat_user_tables s
-    WHERE s.relname=t.table_name AND s.schemaname='public') AS rows_live
-FROM information_schema.tables t
-WHERE table_schema='public'
-  AND (table_name LIKE '%_deprecated%' OR table_name LIKE '%_legacy%')
-ORDER BY table_name;
+  c.relname AS table_name,
+  pg_size_pretty(pg_total_relation_size(c.oid)) AS size,
+  s.n_live_tup AS rows_live,
+  s.last_autovacuum,
+  CASE
+    WHEN s.last_autovacuum < NOW() - INTERVAL '90 days'
+      OR s.last_autovacuum IS NULL THEN '🟢 candidata DROP definitivo'
+    ELSE '⏳ esperar mas tiempo'
+  END AS recomendacion
+FROM pg_class c
+LEFT JOIN pg_stat_user_tables s
+  ON s.relname = c.relname AND s.schemaname = 'public'
+WHERE c.relnamespace = 'public'::regnamespace
+  AND c.relkind = 'r'
+  AND (c.relname LIKE '%_deprecated%' OR c.relname LIKE '%_legacy%')
+ORDER BY c.relname;
 
 -- ──────────────────────────────────────────────────────────────────────────
 -- 10. TABLAS HUERFANAS — sospechosas (segun §9.0.bis del refactor)
