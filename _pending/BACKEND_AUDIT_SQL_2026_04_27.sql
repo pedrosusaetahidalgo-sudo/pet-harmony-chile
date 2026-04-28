@@ -53,7 +53,10 @@ ORDER BY extname;
 -- Lista las ultimas 30 aplicadas. En el repo hay 312 SQLs en
 -- supabase/migrations/. Comparar manualmente con `ls supabase/migrations/`
 -- para detectar pendientes.
-SELECT version, name, statements::text[] IS NOT NULL AS has_statements
+SELECT
+  version,
+  name,
+  COALESCE(array_length(statements, 1), 0) AS num_statements
 FROM supabase_migrations.schema_migrations
 ORDER BY version DESC
 LIMIT 30;
@@ -320,37 +323,45 @@ ORDER BY seq_tup_read DESC
 LIMIT 20;
 
 -- ──────────────────────────────────────────────────────────────────────────
--- 12. EDGE FUNCTIONS LOG (ultimas 7 dias) — error rate
+-- 12. ERROR LOGS — health rate ultimos 7 dias
 -- ──────────────────────────────────────────────────────────────────────────
--- Tabla error_logs (mig 20260528 + log-error edge fn).
--- Health score por edge function.
+-- Schema (mig 20260512000000_error_logs_table.sql):
+--   source IN (frontend|edge_function|database|external)
+--   severity IN (error|warning|critical)
+--   resolved BOOLEAN
 SELECT
   source,
-  COUNT(*) AS errors_7d,
-  COUNT(*) FILTER (WHERE level='error')   AS errors_real,
-  COUNT(*) FILTER (WHERE level='warn')    AS warns,
-  MAX(created_at)                         AS last_seen
+  COUNT(*) AS total_7d,
+  COUNT(*) FILTER (WHERE severity='critical') AS criticos,
+  COUNT(*) FILTER (WHERE severity='error')    AS errors,
+  COUNT(*) FILTER (WHERE severity='warning')  AS warnings,
+  COUNT(*) FILTER (WHERE NOT resolved)        AS sin_resolver,
+  MAX(created_at)                              AS last_seen
 FROM error_logs
 WHERE created_at > NOW() - INTERVAL '7 days'
 GROUP BY source
-ORDER BY errors_real DESC NULLS LAST
+ORDER BY criticos DESC, errors DESC NULLS LAST
 LIMIT 30;
 
 -- ──────────────────────────────────────────────────────────────────────────
--- 13. NOTIFICATION_ATTEMPTS — dedup health
+-- 13. NOTIFICATION_ATTEMPTS — dedup + delivery health
 -- ──────────────────────────────────────────────────────────────────────────
+-- Schema (mig 20260612000001_notification_attempts.sql):
+--   booking_type, booking_id, reminder_type, channel
+--   status IN (queued|sent|delivered|failed|skipped|read)
+--   attempted_at, delivered_at, read_at
 -- Si delivered/sent/read son 0 hace dias, push roto.
--- Si failed sube mucho, problema con FCM/Resend.
+-- Si failed sube mucho, problema con FCM/Resend/WhatsApp.
 SELECT
   status,
   channel,
   COUNT(*) AS total_7d,
   COUNT(DISTINCT booking_id) AS bookings_distintos,
-  MAX(created_at) AS ultima_actividad
+  MAX(attempted_at) AS ultima_actividad
 FROM notification_attempts
-WHERE created_at > NOW() - INTERVAL '7 days'
+WHERE attempted_at > NOW() - INTERVAL '7 days'
 GROUP BY status, channel
-ORDER BY status, channel;
+ORDER BY channel, status;
 
 -- ──────────────────────────────────────────────────────────────────────────
 -- 14. SUBSCRIPTIONS SHAPE (modelo v2 = "Paw Member voluntario")
@@ -371,12 +382,12 @@ ORDER BY plan_type, status;
 -- Modelo v2: Clinica/Pro Max no deberian aparecer en pricing publico.
 -- Pero sigue siendo asignable manualmente. Verificar quien tiene cada plan.
 SELECT
-  plan_id,
+  provider_plan,
   COUNT(*) AS providers,
   COUNT(*) FILTER (WHERE status='active') AS activos
 FROM service_providers
-WHERE plan_id IS NOT NULL
-GROUP BY plan_id
+WHERE provider_plan IS NOT NULL
+GROUP BY provider_plan
 ORDER BY providers DESC;
 
 -- ──────────────────────────────────────────────────────────────────────────
@@ -418,28 +429,39 @@ ORDER BY bucket DESC;
 -- ──────────────────────────────────────────────────────────────────────────
 -- 18. NOSE PRINTS — ¿cuántas mascotas registraron biometría?
 -- ──────────────────────────────────────────────────────────────────────────
+-- Schema (mig 20260825000000_nose_print_dinov2_large.sql):
+--   embedding extensions.vector(1024), provider TEXT, model_id TEXT,
+--   is_primary BOOLEAN, captured_at TIMESTAMPTZ, created_at TIMESTAMPTZ
 SELECT
-  COUNT(DISTINCT pet_id) AS pets_con_nose_print,
-  COUNT(*)                AS total_embeddings,
-  COUNT(*) FILTER (WHERE is_primary=TRUE) AS primarios,
-  AVG(embedding_dim::int) FILTER (WHERE embedding_dim IS NOT NULL) AS dim_avg,
-  MIN(created_at) AS primer_scan,
-  MAX(created_at) AS ultimo_scan
+  COUNT(DISTINCT pet_id)                   AS pets_con_nose_print,
+  COUNT(*)                                  AS total_embeddings,
+  COUNT(*) FILTER (WHERE is_primary=TRUE)   AS primarios,
+  COUNT(DISTINCT provider)                  AS providers_distintos,
+  COUNT(DISTINCT model_id)                  AS modelos_distintos,
+  MODE() WITHIN GROUP (ORDER BY model_id)   AS modelo_mas_usado,
+  MIN(captured_at)                          AS primer_scan,
+  MAX(captured_at)                          AS ultimo_scan
 FROM nose_prints;
 
 -- ──────────────────────────────────────────────────────────────────────────
 -- 19. CASCADAS HEALTH — ¿se están creando alerts?
 -- ──────────────────────────────────────────────────────────────────────────
+-- Schema (mig 20260902200000_pet_health_alerts.sql):
+--   alert_type IN (weight_loss_30d|vaccine_overdue|no_activity_7d|
+--                  antiparasitic_overdue|birthday_window|memorial_anniversary)
+--   severity IN (low|medium|high)
+--   dismissed_at, dismissed_by (NO acknowledged_at)
+--   email_sent_at (mig 20260902500000)
 SELECT
-  type,
+  alert_type,
   severity,
   COUNT(*) AS total,
   COUNT(*) FILTER (WHERE created_at > NOW() - INTERVAL '7 days') AS ultimos_7d,
   COUNT(*) FILTER (WHERE email_sent_at IS NOT NULL)               AS email_enviado,
-  COUNT(*) FILTER (WHERE acknowledged_at IS NOT NULL)             AS reconocidos
+  COUNT(*) FILTER (WHERE dismissed_at IS NOT NULL)                AS dismissed
 FROM pet_health_alerts
-GROUP BY type, severity
-ORDER BY type, severity;
+GROUP BY alert_type, severity
+ORDER BY alert_type, severity;
 
 -- ──────────────────────────────────────────────────────────────────────────
 -- 20. AUDIT TABLE HEALTH — ritual mensual (§9.0.bis.4)
