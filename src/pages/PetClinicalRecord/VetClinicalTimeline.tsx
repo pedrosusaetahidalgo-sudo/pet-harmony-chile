@@ -4,7 +4,6 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { supabase } from '@/integrations/supabase/client';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -13,7 +12,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Mic, Pencil, Calendar, ChevronDown, Paperclip, Stethoscope, FileText } from '@/lib/icons';
+import { Mic, Calendar, ChevronDown, Paperclip, Stethoscope, FileText } from '@/lib/icons';
 import { getRecordTypeIcon, getRecordTypeBadgeClass } from './shared';
 import type { VetClinicalNote } from '@/hooks/useVetClinicalNotes';
 
@@ -38,9 +37,6 @@ interface VetClinicalTimelineProps {
   petId: string;
   vetNotes: VetClinicalNote[];
 }
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const sb = supabase as any;
 
 const TYPE_FILTER_OPTIONS = [
   { value: 'all', label: 'Todos' },
@@ -91,8 +87,9 @@ export function VetClinicalTimeline({ petId, vetNotes }: VetClinicalTimelineProp
       });
     }
 
-    // Add medical records (avoid duplicates by checking titles)
-    const noteIds = new Set(vetNotes?.map((n) => n.id) || []);
+    // Add medical records (sin dedup actual — ARCH-002 cleanup eliminó noteIds
+    // que estaba declarado pero nunca consumido; si se necesita dedup futuro,
+    // reintroducir y usarlo en el push de abajo).
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     for (const rec of (medicalRecords || []) as any[]) {
       items.push({

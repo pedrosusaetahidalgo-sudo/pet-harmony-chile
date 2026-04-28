@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import { Dog, Mail, Shield, Stethoscope, Heart } from '@/lib/icons';
+import { Mail, Shield, Stethoscope, Heart } from '@/lib/icons';
 import { FaFacebook } from 'react-icons/fa';
 import { LegalFooter } from '@/components/LegalFooter';
 import { GoogleSignInButton } from '@/components/GoogleSignInButton';
@@ -194,13 +194,15 @@ const Auth = () => {
       }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
+      // Sprint 1 ARCH-002 (2026-04-28): bug latente — antes la description se
+      // calculaba pero NUNCA se pasaba al toast. Ahora sí.
       let description = message;
       if (message.includes('already registered')) {
         description = 'Este email ya está registrado. Intenta iniciar sesión.';
       } else if (message.includes('password')) {
         description = 'La contraseña debe tener al menos 6 caracteres.';
       }
-      toast.error('Error al crear cuenta');
+      toast.error('Error al crear cuenta', { description });
     } finally {
       setLoading(false);
     }
@@ -261,6 +263,7 @@ const Auth = () => {
       }
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
+      // Sprint 1 ARCH-002: mismo bug latente fixeado.
       let description = message;
       if (message.includes('Invalid login credentials')) {
         description = 'Email o contraseña incorrectos.';
@@ -268,7 +271,7 @@ const Auth = () => {
         description =
           'Debes confirmar tu email antes de iniciar sesión. Revisa tu bandeja de entrada.';
       }
-      toast.error('Error al iniciar sesión');
+      toast.error('Error al iniciar sesión', { description });
     } finally {
       setLoading(false);
     }

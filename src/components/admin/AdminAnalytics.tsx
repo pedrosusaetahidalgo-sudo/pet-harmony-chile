@@ -40,7 +40,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from 'recharts';
-import { format, subDays, subMonths, startOfMonth, differenceInMonths } from 'date-fns';
+import { format, subDays, subMonths, startOfMonth } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { track, EVENTS } from '@/lib/analytics';
@@ -68,7 +68,6 @@ export default function AdminAnalytics() {
 
   const now = new Date();
   const rangeStart = subDays(now, rangeDays);
-  const monthAgo = subDays(now, 30);
 
   // ── Traffic KPIs ──
   const { data: trafficKpis, isLoading: l1 } = useQuery({
@@ -457,10 +456,7 @@ export default function AdminAnalytics() {
           const monthKey = format(relativeMonth, 'yyyy-MM');
           const activeCount = cohortUsers.filter((u) => {
             if (!u.updated_at) return false;
-            const updatedMonth = format(new Date(u.updated_at), 'yyyy-MM');
-            // User was active if their updated_at is >= this month
             const updatedDate = new Date(u.updated_at);
-            const monthEnd = new Date(relativeMonth.getFullYear(), relativeMonth.getMonth() + 1, 0);
             return updatedDate >= relativeMonth && format(updatedDate, 'yyyy-MM') === monthKey;
           }).length;
 

@@ -8,9 +8,7 @@ import {
   Download,
   FileText,
   Heart,
-  Loader2,
   PawPrint,
-  Phone,
   Scale,
   Shield,
   Stethoscope,
@@ -22,7 +20,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Separator } from '@/components/ui/separator';
 import { supabase } from '@/integrations/supabase/client';
 import { PublicHeader, PublicFooter } from '@/components/layouts/PublicLayout';
 import { logger } from '@/lib/logger';

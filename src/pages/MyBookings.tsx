@@ -28,18 +28,8 @@ import {
 import { Label } from '@/components/ui/label';
 import { format, startOfWeek, endOfWeek, isWithinInterval, parseISO } from 'date-fns';
 import { formatBookingDate, formatTimeRange } from '@/lib/format';
-import {
-  Calendar,
-  CalendarDays,
-  CheckCircle2,
-  Inbox,
-  Star,
-  Plus,
-  Stethoscope,
-  X,
-} from '@/lib/icons';
+import { Calendar, CalendarDays, CheckCircle2, Star, Plus, X } from '@/lib/icons';
 import { toast } from 'sonner';
-import { Link } from 'react-router-dom';
 import { FEATURE_FLAGS } from '@/lib/featureFlags';
 import { buildIcs, downloadIcs, bookingToIcsEvent } from '@/lib/calendar/ics';
 import { BookServiceSheet } from '@/components/bookings/BookServiceSheet';

@@ -121,15 +121,19 @@ export function useAvailableSlots({
       // Se mantiene para que la app funcione mientras Pedro despliega
       // las migraciones 20260725000003 + 20260725000004.
       const [rulesRes, exceptionsRes, bookingsRes] = await Promise.all([
+        // Sprint 1 P1 PERF-003: select explicito alineado con AvailabilityRule.
+        // String literal en una sola linea para que Supabase infiera el shape.
         supabase
           .from('provider_availability_rules')
-          .select('*')
+          .select(
+            'id, provider_id, day_of_week, start_time, end_time, service_type, slot_duration_minutes, buffer_minutes, capacity, is_active'
+          )
           .eq('provider_id', providerId)
           .eq('is_active', true),
 
         supabase
           .from('provider_availability_exceptions')
-          .select('*')
+          .select('id, provider_id, exception_date, exception_type, start_time, end_time, reason')
           .eq('provider_id', providerId)
           .gte('exception_date', dateFrom)
           .lte('exception_date', dateTo),

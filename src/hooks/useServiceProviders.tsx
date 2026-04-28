@@ -10,7 +10,7 @@
  * La función DB get_or_create_service_provider también usa 'pending' (migración 20260416200000).
  */
 
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './useAuth';
@@ -107,9 +107,8 @@ export const SERVICE_TYPE_ICONS: Record<ServiceType, string> = {
  * Hook principal para gestión de proveedores
  */
 export const useServiceProviders = () => {
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
-
+  // Sprint 1 ARCH-002 (2026-04-28): user/queryClient eliminados, eran scope
+  // huérfano (los que se usan estan en useMyProviderProfile abajo).
   // Obtener todos los proveedores aprobados
   const {
     data: providers,

@@ -86,9 +86,12 @@ export const useRoutines = (filterPetId?: string) => {
     queryKey: ['pet-routines', user?.id, filterPetId],
     queryFn: async () => {
       if (!user) return [];
+      // PERF-003: select explicito alineado con interface Routine.
       let query = supabase
         .from('pet_routines')
-        .select('*, pets(name, species, photo_url)')
+        .select(
+          'id, pet_id, owner_id, category, title, description, icon, days_of_week, time_of_day, duration_minutes, notify_before_minutes, notify_channels, is_active, starts_on, ends_on, created_at, updated_at, pets(name, species, photo_url)'
+        )
         .eq('owner_id', user.id)
         .order('time_of_day', { ascending: true });
 
@@ -98,7 +101,9 @@ export const useRoutines = (filterPetId?: string) => {
 
       const { data, error } = await query;
       if (error) throw error;
-      return (data || []) as Routine[];
+      // Cast through unknown: pets() puede ser objeto o array segun la version
+      // de tipos generados; el shape runtime es siempre objeto unico (1:1 FK).
+      return (data || []) as unknown as Routine[];
     },
     enabled: !!user,
     staleTime: 2 * 60 * 1000,
@@ -115,7 +120,7 @@ export const useRoutines = (filterPetId?: string) => {
       if (routineIds.length === 0) return [];
       const { data, error } = await supabase
         .from('routine_completions')
-        .select('*')
+        .select('id, routine_id, completed_date, completed_at, notes, skipped, skip_reason')
         .in('routine_id', routineIds)
         .gte('completed_date', weekStart)
         .lte('completed_date', weekEnd);

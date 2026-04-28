@@ -18,7 +18,18 @@ export function useDirectoryVets(filters: DirectoryVetFilters) {
     queryKey: ['directory-vets', filters],
     initialPageParam: 0,
     queryFn: async ({ pageParam }) => {
-      let query = sb.from('service_providers').select('*').eq('is_directory_visible', true);
+      // Sprint 1 P1 PERF-003 (2026-04-28): solo columnas que VetCard renderiza.
+      // Antes select('*') traia 40+ columnas/row × 12 rows = ~5KB innecesarios.
+      // El detail page (useDirectoryVetBySlug) sigue trayendo todo.
+      let query = sb
+        .from('service_providers')
+        .select(
+          'id, user_id, slug, display_name, avatar_url, is_verified, ' +
+            'provider_type, commune, service_areas, specialties, ' +
+            'avg_rating, total_reviews, price_from, ' +
+            'opening_hours, emergency_available, featured_until'
+        )
+        .eq('is_directory_visible', true);
 
       if (filters.search && filters.search.trim()) {
         query = query.ilike('display_name', `%${filters.search.trim()}%`);
@@ -49,7 +60,9 @@ export function useDirectoryVets(filters: DirectoryVetFilters) {
         .range(from, to);
 
       if (error) throw error;
-      return (data ?? []) as ServiceProviderRow[];
+      // Cast a la forma completa: VetCard solo lee columnas listadas arriba,
+      // las restantes quedan undefined (no usadas en list view).
+      return (data ?? []) as unknown as ServiceProviderRow[];
     },
     getNextPageParam: (lastPage, allPages) =>
       lastPage.length === PAGE_SIZE ? allPages.length : undefined,

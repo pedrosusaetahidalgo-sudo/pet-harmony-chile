@@ -71,9 +71,12 @@ export const useMedicalDocuments = (petId?: string) => {
     queryFn: async () => {
       if (!petId) return [];
 
+      // PERF-003: select explicito alineado con MedicalDocument.
       const { data, error } = await supabase
         .from('medical_documents')
-        .select('*')
+        .select(
+          'id, pet_id, owner_id, type, title, file_url, mime_type, file_size, issued_at, notes, uploaded_by_role, created_at, updated_at'
+        )
         .eq('pet_id', petId)
         .order('issued_at', { ascending: false, nullsFirst: false })
         .order('created_at', { ascending: false });

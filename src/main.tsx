@@ -4,6 +4,7 @@ import { ThemeProvider } from 'next-themes';
 import { initSentry } from './lib/sentry';
 import { initAnalytics } from './lib/analytics';
 import { initConsoleInterceptor } from './lib/consoleInterceptor';
+import { initWebVitals } from './lib/webVitals';
 import { logger } from './lib/logger';
 import App from './App.tsx';
 import './index.css';
@@ -13,6 +14,7 @@ import './lib/leafletConfig';
 initSentry();
 initAnalytics();
 initConsoleInterceptor();
+initWebVitals();
 
 window.addEventListener('unhandledrejection', (event) => {
   logger.error('Unhandled promise rejection:', event.reason);

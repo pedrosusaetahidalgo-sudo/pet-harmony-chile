@@ -82,10 +82,6 @@ export function useProAnalytics({ petId, period }: UseProAnalyticsParams) {
 
       const range = getDateRange(period);
       const prevRange = getPreviousRange(period);
-      const rangeStart = format(range.start, 'yyyy-MM-dd');
-      const rangeEnd = format(range.end, 'yyyy-MM-dd');
-      const prevStart = format(prevRange.start, 'yyyy-MM-dd');
-      const prevEnd = format(prevRange.end, 'yyyy-MM-dd');
 
       // Fetch reminders (completed in period)
       let remindersQ = (supabase as any)

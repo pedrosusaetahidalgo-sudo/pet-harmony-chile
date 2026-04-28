@@ -28,7 +28,7 @@ export function useNotifications() {
       if (!userId) return [];
       const { data, error } = await supabase
         .from('notifications')
-        .select('*')
+        .select('id, type, title, body, action_url, is_read, created_at')
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(20);
