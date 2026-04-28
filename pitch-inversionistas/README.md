@@ -53,7 +53,7 @@
 ### Para actualizar metricas antes de cada pitch
 
 1. Abrir `/admin?section=sala-inversion` en produccion.
-2. Copiar numeros reales: usuarios, MRR, Premium activos, Paw Companys, donaciones totales.
+2. Copiar numeros reales: MAU, vets activos, fichas con OCR, research consent opt-in %, Paw Companys, Paw Support totales.
 3. Reemplazar `[DATO]` en [CONSOLIDADO_INVERSIONISTAS.md](CONSOLIDADO_INVERSIONISTAS.md) seccion 5.
 4. Actualizar los mismos numeros en [PRESENTACION.html](PRESENTACION.html) si hay meeting crucial.
 5. **Regla de oro**: nunca mostrar metrica inventada. Si es 0, mostrar 0 con contexto.
@@ -64,7 +64,7 @@
 
 | Mes | Accion |
 |---|---|
-| **Mes 1-2** | Reactivar Premium B2C, conseguir primeras 20 B2B pagas, cerrar 3 Paw Companys. |
+| **Mes 1-2** | Lanzar producto invisible, conseguir 50-80 vets activos creando fichas (gratis), cerrar 3 Paw Companys. |
 | **Mes 3** | Primer outreach a angels LATAM (Platanus, Magma) con [04_ANGELES_VC_LATAM.md](04_ANGELES_VC_LATAM.md). |
 | **Mes 4** | Postular **Start-Up Chile Ignite** con [02_START_UP_CHILE.md](02_START_UP_CHILE.md). |
 | **Mes 5-6** | Postular **CORFO SSAF-I** con [01_CORFO_SSAF-I.md](01_CORFO_SSAF-I.md). Outreach sistematico a empresas pet-friendly con [03_PAW_COMPANYS_EMPRESAS.md](03_PAW_COMPANYS_EMPRESAS.md). |
@@ -79,7 +79,7 @@
 2. **No inventar numeros** — si MRR es $500, decir $500. Explicar contexto.
 3. **No esconder que usas IA** — es un moat, no una debilidad.
 4. **No mezclar audiencias** — no enviar deck de CORFO a un angel LATAM, y viceversa.
-5. **No cambiar los 4 componentes del producto** durante el pitch — ficha + directorio + comunidad + donaciones es el core, no pivotear.
+5. **No cambiar los 4 componentes del producto** durante el pitch — ficha + directorio + comunidad + Paw Support es el core, no pivotear.
 
 ---
 

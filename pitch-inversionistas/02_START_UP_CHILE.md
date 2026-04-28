@@ -12,7 +12,7 @@
 
 ## 1. Pitch en 60 segundos (obligatorio en SUP-CL)
 
-> *Somos Paw Friend: la ficha medica digital de tu mascota, conectada con tu veterinario. Hoy 7 de cada 10 hogares chilenos tienen mascota, pero viven con el carnet en la guantera del auto. Construimos en 2 meses lo que equipos de 6 personas tardan 12 meses, gracias a IA como co-engineer. Tenemos producto vivo en pawfriend.cl, directorio publico de vets con SEO, ficha PDF descargable, y un modelo hibrido de 6 motores de ingresos que incluye donaciones trazables a refugios. Amamos las mascotas y queremos que Paw Friend sea accesible para cada hogar de Chile y LATAM Andino.*
+> *Somos Paw Friend: la ficha medica digital de tu mascota, conectada con tu veterinario. Hoy 7 de cada 10 hogares chilenos tienen mascota, pero viven con el carnet en la guantera del auto. Construimos en 2 meses lo que equipos de 6 personas tardan 12 meses, gracias a IA como co-engineer. Tenemos producto vivo en pawfriend.cl, directorio publico de vets con SEO, ficha PDF descargable, y un modelo de revenue B2B (pharma + seguros + retail) que mantiene el producto **100% gratis para el dueno**. Amamos las mascotas y queremos que Paw Friend sea accesible para cada hogar de Chile y LATAM Andino.*
 
 ---
 
@@ -133,11 +133,11 @@ Una **ficha clinica digital con PDF descargable** + **directorio publico de vete
 | Contenido SEO veterinario | $2.000 | Guias "como elegir vet en [comuna]", blog comunidad |
 | **TOTAL** | **$15.000** | |
 
-### Hitos comprometidos SUP-CL (9 meses)
+### Hitos comprometidos SUP-CL (9 meses) — modelo v2
 
-- Mes 1-3: Apps iOS + Android publicadas + 100 Premium + 20 clinicas pagas.
-- Mes 4-6: Marca registrada INAPI + 500 Premium + 10 Paw Companys.
-- Mes 7-9: Primer piloto LATAM + ARR USD $100K.
+- Mes 1-3: Apps iOS + Android publicadas + 1.000 MAU + 50 vets activos creando fichas (gratis) + 3 Paw Companys.
+- Mes 4-6: Marca registrada INAPI + 5.000 MAU + 150 vets activos + 5 Paw Companys + **primer deal pharma piloto** (Centrovet o Virbac).
+- Mes 7-9: Primer piloto LATAM + ARR USD $100-200K (pharma + seguros) + 8.000 MAU.
 
 ---
 

@@ -246,7 +246,8 @@ export const SHEET_DEFINITIONS: SheetDefinition[] = [
       'id, user_id, plan_type, status, start_date, end_date, payment_amount_clp, auto_renew, cancelled_at, cancellation_reason, created_at',
     dateField: 'created_at',
     enabled: true,
-    description: 'Suscripciones Premium B2C (Flow.cl)',
+    description:
+      'Suscripciones Paw Member voluntario (Flow.cl) — modelo v2: badge cosmetico, no desbloquea features',
   },
   {
     id: 'orders',

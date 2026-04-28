@@ -12,7 +12,7 @@
 
 ## Resumen ejecutivo (1 parrafo)
 
-Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas, conecta a duenos con veterinarios a traves de un directorio publico con pricing transparente, y canaliza donaciones trazables hacia refugios. Construida en 2 meses por un ingeniero chileno con asistencia de IA (Claude), alcanza alcance funcional equivalente a USD $720K-$1,44M de desarrollo tradicional. Modelo B2C + B2B + B2B2C con 6 motores de ingresos, meta de USD $500K ARR en 12 meses y piloto LATAM en mes 7+.
+Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas, conecta a duenos con veterinarios a traves de un directorio publico con pricing transparente, y canaliza aportes trazables hacia refugios. Construida en 2 meses por un ingeniero chileno con asistencia de IA (Claude), alcanza alcance funcional equivalente a USD $720K-$1,44M de desarrollo tradicional. **Modelo v2 (post-mentoria Roberto Camhi 2026-04-22)**: el dueno NUNCA paga, el vet es canal de adquisicion gratuito, y el revenue viene de **3 pilares ancla B2B** (pharma + seguros + retail) + **2 soporte** (Paw Companys empresas + Paw Support voluntario). Meta ARR USD $300-500K en 12 meses, USD $940K-$2.1M en 18 meses, piloto LATAM en mes 12+.
 
 ---
 
@@ -88,27 +88,47 @@ Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas,
 
 ---
 
-## 4. Modelo de negocio
+## 4. Modelo de negocio (modelo v2 post-Roberto Camhi 2026-04-22)
 
-### 4.1. Seis motores de ingresos
+> **Paralelismo Mapcity**: Mapcity no le cobraba a las tiendas — le cobraba a
+> Equifax, bancos e inmobiliarias por acceso a la data. Paw Friend no le cobra
+> al vet ni al dueno — le cobra a pharma, seguros y retail por acceso a la
+> ficha clinica longitudinal.
 
-| Motor | Ticket | Rol estrategico |
+### 4.1. Tres pilares ancla + dos soporte
+
+| # | Pilar | Quien paga | Modelo | Ticket anual | Activacion |
+|---|---|---|---|---|---|
+| 1 | **Pharma animal** | Centrovet (Agrosuper), Virbac, Zoetis Chile | Sponsored reminders + data deals + contenido | USD $20-500K / brand | Mes 4-6 |
+| 2 | **Seguros pet** | Sura, BCI, Mapfre, Consorcio | Afiliado 10-20% + white-label ficha | USD $500K-1M a escala | Mes 6-9 |
+| 3 | **Retail pet** | Master Dog (Agrosuper), Falabella Pet, Puppis | Afiliado 3-10% + suscripcion alimento | USD $50-200 / usuario activo-ano | Mes 8-12 |
+| 4 | **Paw Companys** | Empresas pet-friendly + corporates | Sponsorship badge + SaaS bienestar animal | USD $600-1.8K/mes/corporate | Vivo |
+| 5 | **Paw Support** | Duenos voluntariamente | Pago voluntario (reframe legal Ley 19.885) | Residual, alto NPS | Reframe en curso |
+
+### 4.2. B2C dueno — gratis sin caps
+
+- **Cero features de pago**. Mascotas ilimitadas, PDF, ficha compartida,
+  recordatorios, calendario, OCR, asistente IA — todo gratis para siempre.
+- **Paw Member ($3.990/mes opcional)**: badge cosmetico + descuentos Paw Partners.
+  Proxy NPS, no revenue core.
+
+### 4.3. B2B vet — canal de adquisicion, no revenue center
+
+- Plan Basica ($0 / 5 pacientes) y Premium ($9.900 / vet individual) visibles.
+- Plan Clinica/Pro Max **escondidos** del pricing publico ("Empresarial — contactanos").
+- *El vet no paga porque su valor esta en construir la ficha. El activo es la ficha.*
+
+### 4.4. Unit economics v2 a escala (50k MAU, mes 18 post-seed)
+
+| Motor | Conversion / deals | ARR estimado |
 |---|---|---|
-| Premium B2C | $3.990 CLP/mes | Base recurrente dueno |
-| B2B Vet Free | $0 + 12% comision | Adquisicion + directorio |
-| B2B Vet Premium | $9.900 CLP/mes | Vet individual |
-| B2B Vet Pro Max | $29.900 CLP/mes | Clinicas medianas |
-| Paw Companys | $49.900-$199.900 CLP/mes | Sponsorship B2B2C |
-| Marketplace booking | 0-12% comision | Escala con uso |
-| Donaciones | Voluntarias | Proxy NPS + refugios |
-
-### 4.2. Unit economics
-
-- ARPU blended: **USD $15-20/mes**.
-- LTV: **USD $300-500** (12-24 meses).
-- CAC organico: **USD $15-30**.
-- Payback: **2-4 meses**.
-- LTV/CAC: **>10×**.
+| Pharma (3 brands) | 3 deals activos | USD $300-600K |
+| Seguros (2 aseguradoras) | 5% conv = 2.500 polizas | USD $200-500K |
+| Retail (2 retailers) | 10% conv activos | USD $250-500K |
+| Paw Companys | 20 empresas | USD $120-240K |
+| Paw Support | Voluntario | USD $20-50K |
+| Long-tail (data/gobierno) | 1-2 deals | USD $50-200K |
+| **Total ARR proyectado** | | **USD $940K - $2.1M** |
 
 ---
 

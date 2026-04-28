@@ -216,13 +216,13 @@ export default function Donaciones() {
   return (
     <div className="relative min-h-screen overflow-hidden">
       <Helmet>
-        <title>Donaciones — Ayuda a mantener Paw Friend gratis</title>
+        <title>Paw Support — Apoya a Paw Friend</title>
         <meta
           name="description"
-          content="Paw Friend es un proyecto hecho en Chile por amantes de las mascotas. Con tu donacion ayudamos a que siga gratis para toda la comunidad peluda."
+          content="Paw Friend es un proyecto hecho en Chile por amantes de las mascotas. Con tu apoyo ayudamos a que siga gratis para toda la comunidad peluda. Modelo Mapcity: el dueno nunca paga."
         />
       </Helmet>
-      <PageHeader title="Donaciones" onBack={() => navigate('/home')} />
+      <PageHeader title="Paw Support" onBack={() => navigate('/home')} />
 
       <div
         aria-hidden

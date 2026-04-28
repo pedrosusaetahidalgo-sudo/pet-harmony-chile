@@ -367,28 +367,27 @@ export default function AdminFinance() {
           Aparece solo si hay problemas; discreto en modo sano. */}
       <PaymentEventsFailedWidget />
 
-      {/* Modelo de monetizacion hibrido — recordatorio al admin */}
+      {/* Modelo v2 (post-Roberto Camhi) — recordatorio al admin */}
       <Card className="border-violet-500/30 bg-gradient-to-br from-violet-950/60 to-fuchsia-950/40">
         <CardContent className="p-4 text-xs text-slate-200 space-y-2">
           <div className="flex items-center gap-2 text-sm font-semibold text-violet-200">
             <Heart className="h-4 w-4 text-fuchsia-400 fill-fuchsia-400" />
-            Modelo de monetización (2026-04-19)
+            Modelo v2 (post-Roberto Camhi 2026-04-22)
           </div>
           <p className="text-slate-300/90 leading-relaxed">
-            Paw Friend opera con <b>6 motores</b> de revenue: donaciones voluntarias, Paw Member
-            (membresía opcional B2C), planes vet Free/Premium/Pro Max, Paw Companys (sponsors
-            empresariales), Paw Voices (creadores aliados) y publicidad contratada. Esta vista sigue
-            mostrando MRR + pagos Flow; las <b>donaciones</b> aparecen en{' '}
-            <code>Sala de Inversión</code> y{' '}
+            <b>Modelo Mapcity: el dueño NUNCA paga</b>. Revenue B2B en 3 pilares ancla — pharma
+            (Centrovet, Virbac, Zoetis), seguros (Sura, BCI, Mapfre), retail (Master Dog, Falabella
+            Pet) — más Paw Companys (sponsors empresas) y Paw Support (apoyo voluntario,
+            ex-donaciones). Vet = canal de adquisición gratuito. Esta vista muestra MRR + pagos Flow
+            actuales; los <b>aportes voluntarios</b> aparecen en <code>Sala de Inversión</code> y{' '}
             <code>
               Content {'>'} Feedback {'>'} Donaciones
             </code>
-            .
+            . Pilotos pharma/seguros/retail mes 4-12 post-seed.
           </p>
           <p className="text-[11px] italic text-slate-400">
-            Nota fiscal: mientras la cuenta Flow siga a nombre personal del fundador, las donaciones{' '}
-            <b>no aparecen</b> como revenue SpA. Migrar a cuenta SpA (Mach/Tenpo/Prex) para
-            consolidar contabilidad.
+            SpA SUSAETA GARNHAM SOFTWARE ENGINEERING constituida 2026-04-17. Migración cuenta Flow a
+            nombre SpA en curso para consolidar contabilidad.
           </p>
         </CardContent>
       </Card>

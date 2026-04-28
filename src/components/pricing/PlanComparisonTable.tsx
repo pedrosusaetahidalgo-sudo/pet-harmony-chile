@@ -336,6 +336,15 @@ export interface PlanComparisonTableVetProps {
   disabledPlanIds?: ProviderPlanId[];
   /** Leyenda opcional bajo los CTAs. */
   footerNote?: string;
+  /**
+   * Modelo v2: si true, oculta planes con `publicVisible=false` (Clinica + Pro Max)
+   * y muestra una tarjeta "Empresarial — contactanos" en su lugar. Activar en
+   * `/para-veterinarios`. Mantener false en flows logueados (provider upgrade,
+   * admin) que necesitan ver todos los planes.
+   */
+  publicOnly?: boolean;
+  /** Callback cuando el usuario clickea "Contactanos" en la tarjeta Empresarial. */
+  onEnterpriseContact?: () => void;
 }
 
 export function PlanComparisonTableVet({
@@ -347,12 +356,23 @@ export function PlanComparisonTableVet({
   ctaDisabled,
   disabledPlanIds,
   footerNote,
+  publicOnly,
+  onEnterpriseContact,
 }: PlanComparisonTableVetProps) {
   const disabledSet = new Set(disabledPlanIds ?? []);
+  const visiblePlans = publicOnly
+    ? PLAN_ORDER.filter((id) => PROVIDER_PLANS[id].publicVisible !== false)
+    : PLAN_ORDER;
+  const hasHiddenPlans = publicOnly && visiblePlans.length < PLAN_ORDER.length;
   return (
     <div className="space-y-3">
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {PLAN_ORDER.map((planId) => {
+      <div
+        className={cn(
+          'grid gap-4 md:grid-cols-2',
+          hasHiddenPlans ? 'lg:grid-cols-3' : 'lg:grid-cols-4'
+        )}
+      >
+        {visiblePlans.map((planId) => {
           const plan = PROVIDER_PLANS[planId];
           const isCurrent = planId === currentPlanId;
           const isRecommended =
@@ -514,6 +534,87 @@ export function PlanComparisonTableVet({
             </Card>
           );
         })}
+
+        {/* Tarjeta Empresarial — solo en publicOnly cuando hay planes ocultos */}
+        {hasHiddenPlans && (
+          <Card className="relative flex flex-col border-dashed border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-fuchsia-500/5">
+            <CardContent className="p-5 flex-1 flex flex-col">
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <div>
+                  <h3 className="font-semibold text-lg">Empresarial</h3>
+                  <p className="text-[11px] text-muted-foreground uppercase tracking-wide">
+                    Clinica con varios vets
+                  </p>
+                </div>
+                <span aria-hidden className="text-xl">
+                  🏢
+                </span>
+              </div>
+
+              <div className="mt-1 mb-4">
+                <div className="flex items-baseline gap-1">
+                  <span className="text-2xl font-bold">A medida</span>
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  Cotizacion segun seats + sucursales
+                </p>
+              </div>
+
+              <div className="rounded-md p-3 mb-3 border bg-primary/5 border-primary/20">
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-primary mb-1">
+                  Para clinicas establecidas
+                </p>
+                <p className="text-[11px] text-muted-foreground mb-2 leading-relaxed">
+                  Pack de seats multiples, carga masiva CSV, multi-sucursal, branding completo,
+                  priority support y comisiones a medida.
+                </p>
+                <ul className="space-y-1 text-[11px]">
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-primary mt-0.5">+</span>
+                    <span>
+                      <strong>3+ vets</strong> bajo una misma cuenta
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-primary mt-0.5">+</span>
+                    <span>
+                      <strong>Carga masiva</strong> de pacientes (CSV/Excel)
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-primary mt-0.5">+</span>
+                    <span>
+                      <strong>Multi-sucursal</strong> + branding completo
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-1.5">
+                    <span className="text-primary mt-0.5">+</span>
+                    <span>
+                      Comisiones <strong>3% o 0%</strong> segun volumen
+                    </span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="mt-auto">
+                <Button
+                  className="w-full"
+                  variant="default"
+                  onClick={() => {
+                    if (onEnterpriseContact) {
+                      onEnterpriseContact();
+                    } else {
+                      window.location.href =
+                        '/aplicar?tipo=vet&segmento=clinica&fuente=para-veterinarios';
+                    }
+                  }}
+                >
+                  Contactanos
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </div>
       {footerNote && <p className="text-xs text-center text-muted-foreground">{footerNote}</p>}
     </div>

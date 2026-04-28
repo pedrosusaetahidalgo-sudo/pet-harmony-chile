@@ -4,8 +4,14 @@
 > **Ronda**: pre-seed **USD $150K SAFE** con cap **USD $1,2M post-money**.
 > **Stage**: producto en produccion, pre-traccion comercial, founder solo + co-founder en pipeline.
 >
-> Ultima revision: 2026-04-19.
+> Ultima revision: 2026-04-27 (modelo v2 post-Roberto Camhi).
 > Contacto: pedrosusaeta@pawfriend.cl
+>
+> **⚠️ Modelo v2 vigente desde 2026-04-22**. Ver [`docs-raiz/pitch/MODELO_V2_2026_04_22.md`](../docs-raiz/pitch/MODELO_V2_2026_04_22.md).
+> Cambios clave: dueno NUNCA paga, vet = canal de adquisicion (no revenue),
+> 3 pilares ancla (pharma + seguros + retail). Paralelismo Mapcity:
+> *"Mapcity no le cobraba a las tiendas — le cobraba a Equifax y bancos
+> por acceso a la data."*
 
 ---
 
@@ -68,7 +74,8 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 
 - **Claude IA** reduce time-to-market de 14 meses a 2. Capital de ronda se usa en GTM, no en building.
 - **Costos variables <USD $100/mes** = runway largo con poco capital.
-- **Modelo hibrido 6 motores** reduce dependencia de un solo vertical.
+- **3 pilares ancla** (pharma + seguros + retail) reducen dependencia de un solo cliente.
+- **Modelo Mapcity-style**: el dueno nunca paga, B2B paga por acceso a la ficha longitudinal.
 - **Paw Companys** abre un eje de revenue no correlacionado (CSR empresarial).
 
 ---
@@ -160,6 +167,16 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 - SOM 3 anos Chile solo: USD $1,5M ARR (techo).
 - LATAM Andino: USD $2,5B TAM.
 - Plan de expansion pais #2 en mes 7.
+
+### "¿Y si Petify (u otro) los ataca con un freemium?"
+
+- Petify hoy cobra **USD $0.50/mascota/mes hasta que se elimine** = modelo extractivo opuesto.
+- Si Petify pivotea a freemium pierden ARR existente y siguen sin moat de ficha longitudinal.
+- Paw Friend tiene **2 anos de ventaja arquitectonica**: research consent opt-in, b2b-api keys,
+  partner_integrations, correlation_definitions ya en produccion. Construir el moat pharma
+  desde cero toma minimo 18-24 meses.
+- **Modelo Mapcity (no le cobras al usuario, le cobras al que quiere data) es estructuralmente
+  superior**: gratuidad real captura el 90% del mercado que Petify pierde por friction.
 - Stack portable: multi-region en Supabase, Capacitor cross-platform.
 
 ### "¿Que pasa si QVET activa Chile?"
@@ -168,11 +185,13 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 - Paw Friend tiene **moats que QVET no tiene**: directorio SEO publico, B2C integrado, Paw Companys.
 - Onboarding vet Paw Friend: 5 min. QVET: horas + sesion comercial.
 
-### "¿Donaciones no distraen del revenue core?"
+### "¿Paw Support (donaciones) no distrae del revenue core?"
 
-- Donaciones son **proxy de NPS monetizable**, no revenue core.
-- Paw Companys (recurrente) es el motor comunitario real.
-- Costo de operar donaciones: marginal (infraestructura Flow ya pagada).
+- **Paw Support es proxy de NPS monetizable**, no revenue core.
+- Revenue core viene de **3 pilares ancla**: pharma, seguros, retail.
+- Reframe legal (Roberto Camhi 2026-04-22): "donacion" en Chile activa Ley 19.885 (donatarios, SII, credito tributario). Por eso lo llamamos **"pago voluntario por servicio"** — Paw Support.
+- Paw Companys (recurrente B2B) es el motor comunitario real, no Paw Support.
+- Costo de operar Paw Support: marginal (infraestructura Flow ya pagada).
 
 ### "¿Que hace si Claude cierra o sube mucho precio?"
 
@@ -214,38 +233,43 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 
 ---
 
-## 8. Plan post-inversion (6 meses)
+## 8. Plan post-inversion (6 meses) — modelo v2
 
 ### Mes 1
 
-- Firmar co-founder comercial.
+- Firmar co-founder comercial / clinico.
 - Publicar apps iOS + Android.
-- Activar Premium B2C agresivo (Meta Ads + SEO directorio).
+- Lanzar **producto invisible** (home dueno con ficha + recordatorios + urgencia).
+- Onboarding 4 campos + push OCR carnet vacunacion.
 - Contratar engineer full-stack.
 
 ### Mes 2
 
-- Dashboard de cohortes + retencion en vivo.
+- Dashboard de cohortes + retencion en vivo + research consent opt-in tracking.
 - Cerrar primeros 3 Paw Companys (alimento, pet shop, seguro).
-- Meta: 200 Premium + 30 B2B pagas.
+- Meta: **2.000 MAU + 80 vets activos creando fichas + 30% fichas con OCR completado**.
 
 ### Mes 3
 
-- Contratar SDR para outreach B2B sistematico.
+- Contratar SDR/BD para outreach **pharma** (Centrovet, Virbac).
 - Publicar convenio con refugio aliado.
 - Postular CORFO SSAF-I (USD $28K cofinanciamiento).
+- Iniciar conversaciones con primera farmaceutica.
 
 ### Mes 4
 
-- 500 Premium + 60 B2B + 5 Paw Companys.
+- **5.000 MAU + 150 vets activos + 5 Paw Companys**.
 - Postular Start-Up Chile Ignite (USD $15K).
-- Preparar docs para piloto regional.
+- **Primer deal pharma firmado (USD $20-50K piloto 6 meses)**: sponsored reminder MVP.
+- Preparar docs para piloto regional + outreach a Sura Pet / BCI Seguros.
 
 ### Mes 5-6
 
-- 1.000 Premium + 100 B2B + 10 Paw Companys.
+- **8.000-10.000 MAU + 200 vets activos + 8 Paw Companys**.
+- 1-2 brands pharma activos = MRR USD $5-15K.
+- MVP afiliado seguros con Sura o BCI.
 - Seleccionar pais #2 (Peru o Colombia).
-- Preparar Seed: metricas defendibles para USD $1-2M.
+- Preparar Seed: metricas defendibles para USD $1-2M (ARR runrate USD $300-500K proyectado mes 12).
 
 ---
 

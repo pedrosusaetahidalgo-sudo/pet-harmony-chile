@@ -146,7 +146,7 @@ export default function PawCore() {
           </CardContent>
         </Card>
 
-        {/* 6 motores de sostenibilidad */}
+        {/* Modelo v2: pilares ancla + soporte */}
         <Card className="bg-gradient-to-br from-amber-50 to-rose-50 dark:from-amber-950/20 dark:to-rose-950/20 border-amber-200/60">
           <CardContent className="p-5 space-y-4">
             <div className="flex items-center gap-2">
@@ -154,58 +154,63 @@ export default function PawCore() {
               <h2 className="font-semibold text-lg">Cómo nos sostenemos</h2>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              5 motores de monetización + 3 tipos de alianzas. Ninguno bloquea features del lado
-              dueño — todos son opcionales o del lado profesional. La app es y va a seguir siendo
-              gratis.
+              <b>Modelo Mapcity</b>: el dueño NUNCA paga. Pharma, seguros y retail pagan por acceso
+              a la ficha clínica longitudinal. Sumamos Paw Companys y apoyo voluntario de quienes
+              quieran. La app es y va a seguir siendo gratis.
             </p>
             <div className="grid sm:grid-cols-2 gap-3">
               <MotorTile
+                icon={<Bot className="h-4 w-4 text-blue-600" />}
+                title="Pharma animal"
+                text="Centrovet, Virbac, Zoetis: sponsored reminders + research deals + contenido educacional. Ancla mes 4-6."
+              />
+              <MotorTile
                 icon={<Heart className="h-4 w-4 text-rose-500 fill-rose-500" />}
-                title="Donaciones"
-                text="Aportes voluntarios desde $500 a $500k. 10 días para devolución."
-                action={{ label: 'Ver /donaciones', onClick: () => navigate('/donaciones') }}
+                title="Seguros pet"
+                text="Sura, BCI, Mapfre: afiliado 10-20% sobre prima + ficha como canal de claims. Mes 6-9."
               />
               <MotorTile
-                icon={<Sparkles className="h-4 w-4 text-violet-500" />}
-                title="Paw Member"
-                text="Membresía mensual voluntaria, solo badge. Sin features exclusivas."
-              />
-              <MotorTile
-                icon={<Users className="h-4 w-4 text-sky-500" />}
-                title="Planes Vet"
-                text="Free (5 pacientes), Premium $9.9k, Pro Max $29.9k. B2B real."
-                action={{
-                  label: 'Ver /para-veterinarios',
-                  onClick: () => navigate('/para-veterinarios'),
-                }}
+                icon={<Trophy className="h-4 w-4 text-yellow-600" />}
+                title="Retail pet"
+                text="Master Dog, Falabella Pet: afiliado 3-10% + suscripción alimento + ads contextuales. Mes 8-12."
               />
               <MotorTile
                 icon={<Building2 className="h-4 w-4 text-amber-600" />}
                 title="Paw Companys"
-                text="Empresas sponsor con aporte mensual. Badge + grid público en /donaciones."
+                text="Empresas sponsor con aporte mensual. Badge + grid público + reporte de impacto."
                 action={{
                   label: 'Ver /paw-companys',
                   onClick: () => navigate('/paw-companys'),
                 }}
               />
               <MotorTile
+                icon={<Heart className="h-4 w-4 text-pink-500" />}
+                title="Paw Support"
+                text="Apoyo voluntario del dueño que quiera. Trazabilidad pública a refugios."
+                action={{ label: 'Ver /donaciones', onClick: () => navigate('/donaciones') }}
+              />
+              <MotorTile
                 icon={<Megaphone className="h-4 w-4 text-fuchsia-500" />}
                 title="Paw Voices"
-                text="Creadores peludos que amplifican la misión desde sus redes."
+                text="Creadores peludos que amplifican la misión desde sus redes (barter)."
                 action={{
                   label: 'Ver /paw-voices',
                   onClick: () => navigate('/paw-voices'),
                 }}
               />
               <MotorTile
-                icon={<Trophy className="h-4 w-4 text-yellow-600" />}
-                title="Paw Partners"
-                text="Tiendas, accesorios, comida, restaurantes y seguros que ofrecen descuentos a Paw Members. Publicidad gratuita a cambio."
+                icon={<Sparkles className="h-4 w-4 text-violet-500" />}
+                title="Paw Member (opcional)"
+                text="Insignia voluntaria + descuentos Paw Partners. NO desbloquea features. Proxy NPS."
               />
               <MotorTile
-                icon={<Trophy className="h-4 w-4 text-yellow-600" />}
-                title="Publicidad transparente"
-                text="Slots de banners claramente etiquetados 'Patrocinado' (SERNAC). No vendemos tus datos personales."
+                icon={<Users className="h-4 w-4 text-sky-500" />}
+                title="Vets B2B"
+                text="Canal de adquisición gratuito (Básica $0, Premium $9.9k). Clínica/Pro Max on-demand."
+                action={{
+                  label: 'Ver /para-veterinarios',
+                  onClick: () => navigate('/para-veterinarios'),
+                }}
               />
             </div>
           </CardContent>

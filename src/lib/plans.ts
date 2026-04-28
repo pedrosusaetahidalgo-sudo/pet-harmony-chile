@@ -222,6 +222,14 @@ export interface ProviderPlanConfig {
   yearlyMonthly: number;
   commissionRate: number;
   features: ProviderPlanFeatures;
+  /**
+   * Modelo v2 (post-Roberto Camhi 2026-04-22): si false, el plan no aparece
+   * en pricing publico (`/para-veterinarios`). Sigue asignable manualmente
+   * desde admin, sigue funcionando si una cuenta lo tiene. Track Clinica
+   * se vende como "Empresarial — contactanos" para no posicionar Paw Friend
+   * como SaaS clinico (vet = canal de adquisicion, no revenue center).
+   */
+  publicVisible: boolean;
 }
 
 export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
@@ -240,6 +248,7 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
     yearlyPrice: 0,
     yearlyMonthly: 0,
     commissionRate: 10,
+    publicVisible: true,
     features: {
       max_clients: 5,
       max_bookings_per_month: 10,
@@ -272,6 +281,7 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
     yearlyPrice: 99000,
     yearlyMonthly: 8250,
     commissionRate: 5,
+    publicVisible: true,
     features: {
       max_clients: -1,
       max_bookings_per_month: -1,
@@ -305,6 +315,7 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
     yearlyPrice: 199000,
     yearlyMonthly: 16583,
     commissionRate: 3,
+    publicVisible: false, // modelo v2: escondido del pricing publico ("Empresarial — contactanos")
     features: {
       max_clients: 500,
       max_bookings_per_month: -1,
@@ -337,6 +348,7 @@ export const PROVIDER_PLANS: Record<ProviderPlanId, ProviderPlanConfig> = {
     yearlyPrice: 299000,
     yearlyMonthly: 24900,
     commissionRate: 0,
+    publicVisible: false, // modelo v2: escondido del pricing publico ("Empresarial — contactanos")
     features: {
       max_clients: -1,
       max_bookings_per_month: -1,

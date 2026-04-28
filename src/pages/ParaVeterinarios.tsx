@@ -533,7 +533,8 @@ export default function ParaVeterinarios() {
             onCta={scrollToForm}
             ctaLabel={(planId) => (planId === 'provider_free' ? 'Empezar gratis' : 'Postular')}
             recommendedPlanId="provider_premium"
-            footerNote="Los precios son referenciales post-lanzamiento. Durante el lanzamiento todos los planes tienen todo incluido gratis."
+            publicOnly
+            footerNote="Los precios son referenciales post-lanzamiento. Durante el lanzamiento todos los planes tienen todo incluido gratis. ¿Eres una clinica con varios vets? Toca 'Empresarial' arriba."
           />
         </div>
       </section>

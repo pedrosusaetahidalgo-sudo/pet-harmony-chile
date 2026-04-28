@@ -3,8 +3,15 @@
 > **Fuente de verdad unica** para pitches, data rooms, postulaciones a fondos publicos
 > y reuniones con empresas interesadas en sponsor.
 >
-> Ultima revision: **2026-04-19**.
+> Ultima revision: **2026-04-27** (modelo v2 post-Roberto Camhi).
 > Responsable: Paw Founder · pedrosusaeta@pawfriend.cl
+>
+> **⚠️ Modelo v2 vigente desde 2026-04-22**. Ver [`docs-raiz/pitch/MODELO_V2_2026_04_22.md`](../docs-raiz/pitch/MODELO_V2_2026_04_22.md)
+> para el documento canonico. Cambios clave vs v1:
+> - **Dueno NUNCA paga** (Premium B2C eliminado, USER_PREMIUM=false en codigo)
+> - **Vet = canal de adquisicion**, no revenue center (planes Clinica escondidos)
+> - **3 pilares ancla** = pharma + seguros + retail (en vez de 5 motores con Premium)
+> - **Donaciones → Paw Support** (reframe legal Ley 19.885)
 
 ---
 
@@ -15,7 +22,7 @@
 3. [La solucion](#3-la-solucion)
 4. [Producto en vivo (2026-04-19)](#4-producto-en-vivo)
 5. [Traccion y signals unicos](#5-traccion-y-signals-unicos)
-6. [Modelo de negocio (6 motores)](#6-modelo-de-negocio-6-motores)
+6. [Modelo de negocio (modelo v2)](#6-modelo-de-negocio-modelo-v2-post-roberto-camhi)
 7. [Mercado y timing](#7-mercado-y-timing)
 8. [Competencia y moats](#8-competencia-y-moats)
 9. [Apalancamiento fundador + IA](#9-apalancamiento-fundador--ia)
@@ -78,7 +85,7 @@ Paw Friend es la carta de amor de un ingeniero chileno a cada perro, gato, conej
 1. **Ficha clinica + PDF descargable** (la joya). Vacunas, consultas, Feline Grimace Scale, compartir con token 30 dias, OCR de carnet.
 2. **Directorio publico de vets** con pricing CLP transparente por comuna y especialidad. SEO optimizado. Unico en Chile.
 3. **Agenda + recordatorios + resenas** end-to-end. Cierra el loop dueno ↔ clinica.
-4. **Paw Voices + donaciones trazables**. Muralla publica de mensajes reales, aportes via Flow, dashboard de transparencia, Paw Companys con badge empresarial.
+4. **Paw Voices + Paw Support trazables**. Muralla publica de mensajes reales, aportes via Flow, dashboard de transparencia, Paw Companys con badge empresarial.
 
 ### Diferenciadores defendibles
 
@@ -115,7 +122,7 @@ Paw Friend es la carta de amor de un ingeniero chileno a cada perro, gato, conej
 - OCR carnet de vacunacion (IA)
 - Recordatorios cronologicos + calendario unificado
 - Directorio publico de vets (SEO por comuna + especialidad)
-- `/donaciones` publico con Paw Voices y Paw Companys
+- `/paw-support` (ex-`/donaciones`) publico con Paw Voices y Paw Companys
 - Paw Points (gamificacion vinculada a salud real)
 
 ### Core B2B (veterinarios)
@@ -131,7 +138,7 @@ Paw Friend es la carta de amor de un ingeniero chileno a cada perro, gato, conej
 
 - **Sala de Inversion en vivo** — este deck nace de ahi
 - **Pulso Diario** + auto-fixers + health score de edge functions
-- Monitoreo de donaciones y feedback ratings en tiempo real
+- Monitoreo de Paw Support y feedback ratings en tiempo real
 - CRM de leads veterinarios + outreach automatizado
 
 ### Stack tecnico
@@ -148,60 +155,112 @@ React 18 + Vite + TypeScript + Tailwind + Supabase (Postgres + Edge Functions + 
 
 | Metrica | Hoy | Meta 90d | Meta 12m |
 |---|---|---|---|
-| Usuarios totales | `[DATO]` | 2.000 | 15.000 |
-| MAU | `[DATO]` | 500 | 5.000 |
-| Premium B2C activos | `[DATO]` | 100 | 800 |
-| Clinicas B2B pagando | `[DATO]` | 20 | 150 |
-| MRR (CLP) | `[DATO]` | $1.9M | $15M |
-| ARR run-rate (USD) | `[DATO]` | $24K | $190K |
-| Retention D30 | `[DATO]` | 30% | 40% |
-| Donaciones totales (CLP) | `[DATO]` | $500K | $5M |
-| Donantes unicos | `[DATO]` | 50 | 500 |
-| Paw Companys activos | `[DATO]` | 3 | 15 |
+| Usuarios totales | `[DATO]` | 2.000 | 20.000 |
+| MAU | `[DATO]` | 1.000 | 15.000 |
+| Vets activos creando fichas | `[DATO]` | 50 | 300 |
+| Fichas con OCR completado | `[DATO]` | 30% | 60% |
+| Pacientes con >=10 eventos timeline | `[DATO]` | 100 | 3.000 |
+| Research consent opt-in % | `[DATO]` | 25% | 40% |
+| Paw Companys activos | `[DATO]` | 3 | 12 |
+| Pharma deals piloto | 0 | 0 | 1-3 |
+| ARR run-rate pilotos (USD) | `[DATO]` | $0 | $100-300K |
+| Paw Support total (CLP) | `[DATO]` | $500K | $5M |
+| Aportantes unicos | `[DATO]` | 50 | 500 |
 | Rating app | `[DATO]`/5 | 4.3/5 | 4.5/5 |
-| Willingness-to-pay (yes) | `[DATO]`% | 40% | 55% |
+| Retention D30 | `[DATO]` | 35% | 50% |
 
 ### Signals unicos (no los tiene ningun competidor)
 
-1. **Willingness-to-pay medido** — el widget de feedback pregunta explicitamente "¿Pagarias por esta app?". Yes/maybe/no como predictor de conversion Premium.
-2. **Techo emocional medido** — las donaciones voluntarias miden cuantos duenos aportan sin contraparte directa. Proxy NPS monetizable.
-3. **Feedback iterativo real** — Sofia (vet) y Paloma (duena) probaron en iPhone y Android, cada ajuste esta documentado en commits reales.
+1. **Research consent opt-in rate** — porcentaje de duenos que aceptan compartir
+   data agregada anonima para research. Leading indicator del moat pharma:
+   sin consent, no hay deals.
+2. **Pacientes con ficha completa** (>=10 eventos timeline) — proxy de "ficha
+   longitudinal valiosa" que pharma/seguros pagaran por acceder.
+3. **Techo emocional medido** — Paw Support voluntario mide cuantos duenos
+   aportan sin contraparte directa. Proxy NPS monetizable.
+4. **Feedback iterativo real** — Sofia (vet) y Paloma (duena) probaron en iPhone
+   y Android, cada ajuste documentado en commits reales.
 
 ---
 
-## 6. Modelo de negocio (6 motores)
+## 6. Modelo de negocio (modelo v2 post-Roberto Camhi)
 
-**Modelo hibrido**: no dependemos de un solo pilar. Cada motor tiene su momento, audiencia y moat.
+> **Paralelismo Mapcity**: *Mapcity no le cobraba a cada tienda chilena por
+> georreferenciar — le cobraba a Equifax, bancos e inmobiliarias por acceso a
+> la data. Paw Friend no le cobra al vet ni al dueno — le cobra a pharma,
+> seguros y retail por acceso a la ficha clinica longitudinal.*
 
-### Tabla maestra
+**Principio guia**: *Producto invisible.* El dueno promedio chileno abre la app
+4 veces al ano. Si disenamos para power users, perdemos al 90% del mercado.
+**El dueno nunca paga** → no se va → la ficha se enriquece sola → pharma/seguros/
+retail pagan por acceso. Loop coherente.
 
-| Motor | Tipo | Ticket | Comision | Rol estrategico |
-|---|---|---|---|---|
-| **Premium B2C** | SaaS dueno | $3.990 CLP/mes · $39.900/ano | — | Base recurrente mas ancha |
-| **B2B Vet Free** | SaaS vet | $0 | 12% | Adquisicion + directorio publico |
-| **B2B Vet Premium** | SaaS vet | $9.900 CLP/mes | 10% | Sweet spot vets individuales |
-| **B2B Vet Pro Max** | SaaS vet | $29.900 CLP/mes | 0% | Clinicas medianas con volumen |
-| **Paw Companys** | B2B2C sponsor | $49.900-$199.900 CLP/mes | — | Sponsorship empresarial + aval social |
-| **Marketplace** | Comision booking | 0-12% | — | Upside sin fijo, escala con uso |
-| **Donaciones** | Voluntarias | $100 CLP = 10 Paw Points | — | Proxy NPS + colchon a refugios |
+### Pilares ancla (80% del revenue proyectado)
 
-### Unit economics (conservador)
+| # | Pilar | Quien paga | Modelo | Ticket anual | Activacion |
+|---|---|---|---|---|---|
+| 1 | **Pharma animal** | Centrovet (Agrosuper), Virbac, Zoetis, MSD, Elanco, Boehringer | Sponsored reminders + data deals agregados + contenido educacional | USD $20-500K / brand | Mes 4-6 post-seed |
+| 2 | **Seguros pet** | Sura, BCI, Mapfre, Consorcio, emergentes | Afiliado 10-20% sobre prima + white-label ficha + canal de claims | USD $500K-1M a escala (5% conv sobre 50k MAU) | Mes 6-9 |
+| 3 | **Retail pet** | Master Dog (Agrosuper), Falabella Pet, Puppis, Agrogarden | Afiliado 3-10% + suscripcion alimento integrada + ads contextuales | USD $50-200 / usuario activo-ano | Mes 8-12 |
 
-| Metrica | Valor | Comentario |
+### Pilares soporte (estabilizan + dan narrativa)
+
+| # | Pilar | Quien paga | Modelo | Ticket | Estado |
+|---|---|---|---|---|---|
+| 4 | **Paw Companys** | Empresas pet-friendly + corporates con benefits | Sponsorship badge + SaaS bienestar animal ($1-3 USD/empleado/mes) | USD $600-1.8K/mes/corporate | Vivo |
+| 5 | **Paw Support** (ex-donaciones) | Duenos voluntariamente | Pago voluntario + aporte a refugios trazable | Residual, alto en NPS | Reframe en curso |
+
+### Long-tail (mes 12+)
+
+| # | Pilar | Quien paga | Modelo | Ticket | Timing |
+|---|---|---|---|---|---|
+| 6 | **Data agregada anonima** | SAG, Minsal, academia (UACh, UNAB), pharma R&D | Licensing con consent opt-in | USD $50-500K / deal | Mes 18+ (50k+ fichas) |
+| 7 | **Gobierno / municipios** | Las Condes, Providencia, Subdere | White-label registro digital Ley 21.020 | USD $10-50K / municipio | Mes 12+ |
+| 8 | **Publicidad programatica** | Brands pet + adjacentes | CPM residual | Marginal | Mes 12+ con escala MAU |
+
+### B2C dueno — gratis sin caps
+
+- **Cero features de pago**. Mascotas ilimitadas, PDF descargable, ficha compartida,
+  recordatorios, calendario, OCR, asistente IA, insights. Todo gratis para siempre.
+- **Paw Member ($3.990/mes opcional)**: badge cosmetico + acceso a descuentos de Paw Partners.
+  No desbloquea features funcionales. No es revenue core (proxy NPS).
+- Feature flag `USER_PREMIUM=false` en codigo confirma: no hay paywall B2C.
+
+### B2B vet — canal de adquisicion, no revenue center
+
+> *El vet no paga por el software porque su valor esta en construir la ficha.
+> El activo es la ficha. Quien paga es quien quiere acceder a la mascota a traves
+> de ella.*
+
+| Plan | Precio | Visible en pricing publico |
 |---|---|---|
-| ARPU blended subs | USD $15-20/mes | Mix B2C + B2B |
-| Ticket donacion promedio | `[DATO live]` | Dashboard admin |
-| LTV estimado | USD $300-500 | 12-24 meses |
-| CAC organico | USD $15-30 | Outreach founder, SEO directorio |
-| Payback | 2-4 meses | — |
-| LTV/CAC | **>10×** | Consistente con SaaS SMB CL |
+| **Basica** | $0 / 5 pacientes | Si — punto de entrada |
+| **Premium** | $9.900 CLP/mes | Si — vet freelance/domicilio opcional |
+| **Clinica Starter** | $19.900 CLP/mes | NO — "Empresarial — contactanos" |
+| **Pro Max** | $29.900 CLP/mes | NO — on demand |
 
-### Por que este pricing
+### Unit economics v2 a escala (50k MAU, mes 18 post-seed)
 
-- Premium B2C a **"Netflix pet"** (precio accesible, gratis 2 mascotas).
-- B2B Individual ataca vets chicos que **hoy no pagan PMS**.
-- Techo alto (Clinica Pro) captura clinicas >5 vets.
-- Paw Companys abre eje independiente: presupuesto CSR empresarial que hoy se pierde en ads tradicionales.
+| Motor | Deals/conversion | ARR estimado |
+|---|---|---|
+| Pharma (3 brands) | 3 deals activos | USD $300-600K |
+| Seguros (2 aseguradoras) | 5% conv = 2.500 polizas | USD $200-500K |
+| Retail (2 retailers) | 10% conv activos | USD $250-500K |
+| Paw Companys | 20 empresas | USD $120-240K |
+| Paw Support | voluntario | USD $20-50K |
+| Long-tail (data/gobierno) | 1-2 deals | USD $50-200K |
+| **Total ARR proyectado** | | **USD $940K - $2.1M** |
+
+vs modelo v1 vet-centrico (techo USD $400-600K ARR) → delta **2-4×** con el mismo
+producto, solo reorientando quien paga.
+
+### Por que este modelo gana
+
+- **Dueno gratis sin caps** = retencion alta + ficha enriquecida = activo defendible.
+- **Pharma/seguros/retail** = bolsillo profundo, ticket recurrente, B2B con LTV multi-anual.
+- **Paw Companys** = aval social + revenue recurrente sin canibalizar nada.
+- **Vet gratis** = canal de adquisicion sin friccion comercial (Roberto: *"vets no son motor de revenue, tienen demanda excedida y estan chatos de vendors"*).
+- **Producto invisible** = onboarding 4 campos + OCR + recordatorios automaticos = el dueno promedio (4 visitas/ano) queda feliz, ficha se enriquece sola.
 
 ---
 
@@ -247,17 +306,28 @@ React 18 + Vite + TypeScript + Tailwind + Supabase (Postgres + Edge Functions + 
 
 | Competidor | Amenaza | Nuestra jugada |
 |---|---|---|
+| **Petify** | **Modelo extractivo opuesto**: USD $0.50/mascota/mes hasta eliminar (~$11.000 CLP/año por 2 mascotas; 30× mascotas refugio = inviable) | **Contraposicionamiento directo**: "dueno nunca paga". Modelo Mapcity captura el 90% que Petify deja en la mesa por friction. Petify ARR techo USD $300K vs Paw Friend USD $940K-2.1M a misma escala (2-7×) |
 | **QVET** | Alta 18-24m — entran a Chile | Ganar vet chico chileno antes con onboarding 5 min |
 | **Petsy** | Media — overlap B2C | Directorio SEO + plan B2B + Paw Companys |
 | **CuidaPet** | Baja — solo vet a domicilio | No compite en ficha ni B2B |
 | **WhatsApp + Instagram** | Alta (real) — 80% de vets chicos | "WhatsApp con memoria": onboarding + recordatorios |
+
+### Por que el modelo Petify valida la tesis pero pierde el 90% del mercado
+
+- Petify cobrando $11.000 CLP/año por 2 mascotas **confirma que el dolor existe** (gente paga por ficha digital).
+- Pero $0.50/mascota/mes es friction real en Chile. El 90% prefiere WhatsApp gratis.
+- Incentivos perversos del modelo Petify:
+  - Mas mascotas = mas cobro → castiga a multi-pet owners (40% de hogares pet en Chile tienen >=2 mascotas).
+  - "Hasta que se elimine" presiona a borrar fichas para dejar de pagar → choca con memorial.
+  - Refugios (10-50 mascotas en rotacion) quedan fuera del modelo.
+- Paw Friend captura el 90% que Petify deja afuera + monetiza con B2B de bolsillo profundo.
 
 ### 5 Moats
 
 1. **Directorio SEO publico** — `/veterinarios/[comuna]/[slug]`. Nadie mas lo tiene B2C.
 2. **Pricing CLP transparente + onboarding rapido**.
 3. **Integracion dueno ↔ vet end-to-end** — reserva + ficha + resena.
-4. **Paw Companys + donaciones trazables** — aval social imposible de copiar.
+4. **Paw Companys + Paw Support trazables** — aval social imposible de copiar.
 5. **Costos home-made** — producto artesanal + IA. Quema baja = runway largo.
 
 ---
@@ -312,7 +382,7 @@ Claude escribe el **que** (boilerplate, migraciones, tests). El founder puso el 
 
 - Pricing CL realista con datos de mercado local.
 - Regla 9.8 de proteccion de datos reales en produccion (ver `CLAUDE.md`).
-- Pivote a donaciones + Paw Companys como tercer motor.
+- Pivote a Paw Support + Paw Companys como tercer motor.
 - Feedback iterativo real con Sofia y Paloma.
 - Copia en tuteo chileno (no argentino, no espanol).
 - Modelo de roles duales dueno ↔ vet con switching inline.
@@ -361,42 +431,52 @@ Claude escribe el **que** (boilerplate, migraciones, tests). El founder puso el 
 
 ---
 
-## 11. Roadmap 18 meses
+## 11. Roadmap 18 meses (modelo v2)
 
-**Objetivo**: ARR USD $500K en 12 meses, USD $1M en 18 meses → Seed readiness.
+**Objetivo**: ARR USD $300-500K en mes 12 (pilotos pharma + seguros) → ARR USD $940K-2.1M en mes 18 → Seed readiness.
 
-### Fase 1 — Mes 1-3: Primeras ventas + primeros Paw Companys
+### Fase 1 — Mes 1-3: Producto invisible + escala MAU
 
-- Reactivar Premium B2C → meta **100 pagos**.
-- Outreach a 500 vets chilenos → cerrar **20 clinicas pagas**.
+- Lanzar **producto invisible** (home dueno con ficha + recordatorios + urgencia + directorio).
+- Onboarding 4 campos + OCR carnet vacunacion empujado post-onboarding.
+- Outreach a 500 vets chilenos → **50 vets activos creando fichas (gratis)**.
 - Cerrar **3 Paw Companys** (pet shop, alimento, seguro).
-- Publicar dashboard de transparencia de donaciones.
-- Cerrar co-founder comercial.
-- Esconder Paw Labs (gamificacion experimental) del pitch.
+- Reframe `/donaciones` → `/paw-support` + dashboard de transparencia.
+- Mover Paw Labs a `/explorar` (opt-in escondido).
+- Cerrar co-founder comercial/clinico.
 
-### Fase 2 — Mes 4-6: Consolidacion Chile
+### Fase 2 — Mes 4-6: Primer piloto Pharma
 
-- Escalar a **500 Premium + 60 clinicas + 10 Paw Companys**.
+- **5.000 MAU + 150 vets activos + 5 Paw Companys**.
+- Primer contacto **Centrovet (Agrosuper)** o **Virbac Chile** → MVP sponsored reminder.
 - Postular **CORFO SSAF-I** (USD $28K) + **Start-Up Chile Ignite** (USD $15K).
-- Contratar SDR (ventas B2B) + 1 engineer.
-- Primer caso de exito B2B documentado (video + metricas).
-- Convenio formal con refugio aliado.
+- Contratar 1 engineer + 1 BD (pharma/seguros).
+- **Primer deal pharma firmado**: USD $20-50K piloto 6 meses.
+- Caso de exito B2B documentado (video + metricas vet beta).
 
-### Fase 3 — Mes 7-12: Piloto LATAM
+### Fase 3 — Mes 7-12: Pharma escala + piloto Seguros
 
-- Definir pais #2 (Peru o Colombia).
-- **2.000 Premium + 150 clinicas + 20 Paw Companys** (Chile) + primer piloto en pais #2.
-- Pre-seed angel LATAM cerrado (USD $100-200K).
-- Roadmap Seed para mes 18.
+- **15.000 MAU + 300 vets activos + 10 Paw Companys**.
+- 2-3 brands pharma activos = USD $100-300K ARR.
+- Primer contacto **Sura Pet** + **BCI Seguros** → MVP afiliado poliza.
+- Pre-seed angel LATAM cerrado (USD $150-300K).
+- Roadmap Seed mes 18-24.
 
-### Hitos cuantitativos
+### Fase 4 — Mes 13-18: Seguros consolidado + piloto Retail
 
-| Mes | MRR (USD) | ARR (USD) | Paw Companys | Donaciones (CLP) |
-|---|---|---|---|---|
-| 3 | $2K | $24K | 3 | $500K |
-| 6 | $8K | $96K | 10 | $2M |
-| 12 | $40K | $500K | 20 | $5M |
-| 18 | $80K | $1M | 30+ | $10M+ |
+- **50.000 MAU + 500 vets activos + 15-20 Paw Companys**.
+- 2 aseguradoras activas = USD $200-500K ARR.
+- Primer contacto **Master Dog (Agrosuper)** + **Falabella Pet** → MVP afiliado retail.
+- Long-tail: primer deal data agregada con academia (UACh/UNAB).
+
+### Hitos cuantitativos (modelo v2)
+
+| Mes | MAU | Vets activos | Pharma deals | Seguros conv | ARR (USD) | Paw Companys | Paw Support (CLP) |
+|---|---|---|---|---|---|---|---|
+| 3 | 1.000 | 50 | 0 | 0 | $0 | 3 | $500K |
+| 6 | 5.000 | 150 | 1 piloto | 0 | $20-50K | 5 | $2M |
+| 12 | 15.000 | 300 | 2-3 | 1 piloto | $300-500K | 10 | $5M |
+| 18 | 50.000 | 500 | 3 | 2 | $940K-2.1M | 20 | $10M+ |
 
 ---
 
@@ -442,12 +522,12 @@ Claude escribe el **que** (boilerplate, migraciones, tests). El founder puso el 
 
 ### Principio operativo
 
-Paw Friend es un proyecto chico. Costos variables **<USD $100/mes**. Cualquier excedente de donaciones y sponsorship se destina a refugios y campanas de callejeros → adopciones.
+Paw Friend es un proyecto chico. Costos variables **<USD $100/mes**. Cualquier excedente de Paw Support y sponsorship se destina a refugios y campanas de callejeros → adopciones.
 
 ### Flujo de trazabilidad
 
 1. Donacion via Flow (dueno) o sponsorship recurrente (Paw Company).
-2. Admin en `/admin?section=content&sub=feedback&tab=donaciones` muestra cada aporte.
+2. Admin en `/admin?section=content&sub=feedback&tab=donaciones` (key DB interna) muestra cada aporte.
 3. Dashboard publico (roadmap mes 3): total recaudado, destinado, pendiente, por causa.
 4. Paw Voices: muralla publica de mensajes de duenos que aportaron — aval social real.
 
@@ -475,7 +555,7 @@ Paw Friend es un proyecto chico. Costos variables **<USD $100/mes**. Cualquier e
 | Fundador solo | Co-founder en pipeline, cierre como condicion del angel |
 | Mercado chico Chile | Plan LATAM expansion mes 7+ |
 | Baja frecuencia B2C | Recordatorios + reportes semanales + Premium vinculado a salud real |
-| Donaciones dependen de goodwill | Paw Companys (recurrente) > donaciones (one-shot) |
+| Paw Support depende de goodwill | Paw Companys (recurrente) + pharma deals (B2B fijo) > Paw Support (one-shot) |
 | Dependencia de IA (Claude) | Modelo portable (OpenAI, Gemini), prompts versionados |
 | Dependencia de Flow.cl | Webpay como alternativa en roadmap post-seed |
 

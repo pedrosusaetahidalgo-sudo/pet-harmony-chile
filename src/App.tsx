@@ -875,9 +875,20 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
-                {/* /donaciones — página pública. Donaciones.tsx ya redirige a /auth
-                    si el user anónimo hace click en donar. El resto (muralla,
-                    transparencia, Paw Companys grid) se lee sin login. */}
+                {/* /paw-support y /donaciones — página pública (alias post modelo v2
+                    2026-04-22, "Paw Support" reemplaza "donaciones" en UI publica
+                    para evitar Ley 19.885 de donatarios. /donaciones se mantiene
+                    como ruta hermana 3 meses para no romper backlinks externos.
+                    Mismo componente: Donaciones.tsx ya redirige a /auth si el user
+                    anónimo hace click en aportar). */}
+                <Route
+                  path="/paw-support"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <Donaciones />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
                 <Route
                   path="/donaciones"
                   element={

@@ -2,7 +2,7 @@
 
 > Pegar este bloque como "memoria" o primer mensaje al iniciar una conversacion
 > con una IA externa que NO tiene acceso al repo. Cubre producto, stack,
-> monetizacion, roles y estado tecnico al 2026-04-22.
+> monetizacion, roles y estado tecnico al 2026-04-27.
 >
 > Actualizado: 2026-04-22 (tras Content Studio v2 + batch 14 bugs post-smoke
 > + Apple Sign-In end-to-end + limpieza repo).
@@ -48,22 +48,41 @@
 
 No hay: Zustand, Redux, Next.js.
 
-## 3. Modelo de negocio (pivot 2026-04-19)
+## 3. Modelo de negocio v2 (post-Roberto Camhi 2026-04-22)
 
-Norte: app **100% gratis** para dueños de mascota. Monetizacion opcional
-y ninguna feature clinica detras de paywall.
+Norte: el dueno **NUNCA paga**. Producto invisible. Modelo **estilo Mapcity**:
+no le cobras a la tienda — le cobras a Equifax/bancos por acceso a la data.
+Aqui: no le cobras al dueno ni al vet — le cobras a pharma/seguros/retail
+por acceso a la ficha clinica longitudinal.
 
-**5 motores de monetizacion**:
-1. **Donaciones voluntarias** en `/donaciones`.
-2. **Paw Member** ($3.990/mes o $39.900/año) — badge 💛 + descuentos de
-   alianzas. No desbloquea features.
-3. **B2B Veterinarios individuales**:
-   - Basica $0/mes, 10% comision, 5 pacientes, 1 seat.
-   - Premium $9.900/mes, 5% comision, ilimitado, 1 seat.
-4. **B2B Veterinarias (clinicas)**:
-   - Clinica $19.900/mes, 3% comision, 500 pacientes, 3 seats, bulk import.
-   - Pro Max $29.900/mes, 0% comision, ilimitado seats, multi-branch.
-5. **Publicidad** con partners (solo si hay volumen).
+Validacion competitiva: **Petify** cobra USD $0.50/mascota/mes hasta eliminar
+(modelo extractivo) → captura el ~10% que paga, deja el 90% afuera. Paw Friend
+modelo v2 captura el 100% del mercado y monetiza B2B.
+
+**Pilares ancla** (80% del revenue, mes 4-12 post-seed):
+1. **Pharma animal** — Centrovet (Agrosuper), Virbac, Zoetis, MSD. Sponsored
+   reminders + data deals + contenido. USD $20-500K / brand.
+2. **Seguros pet** — Sura, BCI, Mapfre, Consorcio. Afiliado 10-20% sobre prima
+   + white-label ficha. USD $500K-1M a escala.
+3. **Retail pet** — Master Dog, Falabella Pet, Puppis. Afiliado 3-10% +
+   suscripcion alimento. USD $50-200 / usuario activo-ano.
+
+**Pilares soporte**:
+4. **Paw Companys** — empresas pet-friendly + corporates con benefits.
+   Sponsorship badge + SaaS bienestar animal ($1-3 USD/empleado/mes).
+5. **Paw Support** (ex-donaciones) — pago voluntario del dueno. Reframe legal
+   (Ley 19.885). Residual, alto NPS.
+
+**Long-tail (mes 12+)**: data agregada anonima (consent opt-in), gobierno
+(Ley 21.020), publicidad programatica.
+
+**B2C dueno** — TODO gratis sin caps (`USER_PREMIUM=false`). Paw Member
+$3.990/mes opcional = badge cosmetico + descuentos Paw Partners. No
+desbloquea features.
+
+**B2B vet** — canal de adquisicion, no revenue center. Pricing publico
+solo Basica $0 + Premium $9.900. Clinica/Pro Max escondidos como
+"Empresarial — contactanos".
 
 **3 alianzas**:
 - **Paw Voices**: creadores/influencers peludos (barter exposicion).
@@ -71,6 +90,8 @@ y ninguna feature clinica detras de paywall.
 - **Paw Partners**: tiendas/servicios con descuentos a Paw Members.
 
 Tabla compartida `paw_companys` con `partnership_type ∈ {sponsor, partner}`.
+
+Fuente de verdad: [docs-raiz/pitch/MODELO_V2_2026_04_22.md](pitch/MODELO_V2_2026_04_22.md).
 
 ## 4. 4 roles / 4 tipos de clientes
 

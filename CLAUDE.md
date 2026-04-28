@@ -107,21 +107,43 @@ AGENTS.md              # Config para agentes IA (Cursor, Copilot, etc.)
 
 ---
 
-## 5. Modelo de negocio FINAL (2026-04-19 — aspiracion 100% gratis B2C)
+## 5. Modelo de negocio v2 (post-Roberto Camhi 2026-04-22)
 
-**Norte del proyecto**: que Paw Friend sea gratis para dueños y 100%
-opcional en todo. La monetización es lo que permite sostener la
-operación sin condicionar la experiencia del dueño de mascota.
+> **Fuente de verdad**: [docs-raiz/pitch/MODELO_V2_2026_04_22.md](docs-raiz/pitch/MODELO_V2_2026_04_22.md).
+> Este documento resume; ese tiene todos los detalles + plan de consolidacion.
 
-### Los 5 tipos de monetización
+**Norte del proyecto**: el dueno **NUNCA paga**. Producto invisible. La
+monetizacion viene de **B2B con bolsillo profundo** (pharma + seguros + retail)
+que pagan por acceso a la ficha clinica longitudinal.
 
-| # | Motor | Quien paga | Obligatorio? | Cuando se activa |
+> **Paralelismo Mapcity**: Mapcity no le cobraba a las tiendas — le cobraba a
+> Equifax y bancos por acceso a la data. Paw Friend no le cobra al vet ni al
+> dueno — le cobra a pharma, seguros y retail por acceso a la ficha.
+
+**Validacion competitiva**: Petify cobra USD $0.50/mascota/mes hasta eliminar
+(modelo extractivo) → captura el 10% que paga, deja el 90% del mercado en la
+mesa. Paw Friend (modelo Mapcity) captura el 100% del mercado y monetiza B2B.
+
+### Pilares ancla (80% del revenue)
+
+| # | Pilar | Quien paga | Modelo | Activacion |
 |---|---|---|---|---|
-| 1 | **Donaciones voluntarias** | Dueños que quieran aportar | Opcional siempre | Siempre disponible en /donaciones |
-| 2 | **Paw Member** ($3.990/mes) | Dueños que quieran sostener | Opcional | Badge 💛 + acceso a descuentos de alianzas |
-| 3 | **B2B Vets (3 tiers)** | Vets individuales | Solo para escalar | Cuando supera 5 pacientes o necesita features pro |
-| 4 | **B2B Veterinarias** (clínicas) | Clínicas con varias sucursales | Solo para escalar | Tier Pro Max ($29.900) es el plan "veterinaria" |
-| 5 | **Publicidad** | Partners | Solo si hay flujo | Si cruzamos N MAU que justifique slots |
+| 1 | **Pharma animal** | Centrovet (Agrosuper), Virbac, Zoetis, MSD | Sponsored reminders + data deals + contenido | Mes 4-6 post-seed |
+| 2 | **Seguros pet** | Sura, BCI, Mapfre, Consorcio | Afiliado + white-label ficha | Mes 6-9 |
+| 3 | **Retail pet** | Master Dog, Falabella Pet, Puppis | Afiliado + suscripcion alimento + ads contextuales | Mes 8-12 |
+
+### Pilares soporte
+
+| # | Pilar | Quien paga | Modelo |
+|---|---|---|---|
+| 4 | **Paw Companys** | Empresas pet-friendly + corporates | Sponsorship badge + SaaS bienestar animal |
+| 5 | **Paw Support** (ex-donaciones) | Duenos voluntariamente | Pago voluntario + aporte refugios trazable. Reframe legal Ley 19.885 |
+
+### Long-tail (mes 12+)
+
+- **Data agregada anonimizada**: SAG, Minsal, academia con consent opt-in.
+- **Gobierno/municipios**: white-label registro digital Ley 21.020.
+- **Publicidad programatica**: residual con escala MAU.
 
 ### Las 3 alianzas
 
@@ -145,30 +167,39 @@ campo `partnership_type` ∈ {'sponsor', 'partner'} (mig 20260611000000).
 4. **Tiendas/accesorios/restaurantes/seguros** — relación Paw Partner:
    publicidad gratuita a cambio de descuentos para Paw Members.
 
-### B2C (dueños) — TODO GRATIS, sin features exclusivas
+### B2C (dueños) — TODO GRATIS para siempre
 
 | Plan | Precio | Features | Badge |
 |---|---|---|---|
-| Gratis | $0 | Todo disponible (PDF, ficha compartida, mascotas ilimitadas, IA, analytics) | — |
-| Paw Member (opcional) | $3.990/mes o $39.900/año | Mismos features + badge + acceso a descuentos de alianzas | 💛 Paw Member |
+| Gratis | $0 | TODO disponible (PDF, ficha compartida, mascotas ilimitadas, IA, OCR, asistente, insights) | — |
+| Paw Member (opcional) | $3.990/mes o $39.900/año | Mismos features + badge + descuentos de Paw Partners. **No desbloquea features funcionales.** Proxy NPS, no revenue core | 💛 Paw Member |
 
+Feature flag `USER_PREMIUM=false` en codigo confirma: no hay paywall B2C activo.
 El id interno en DB sigue siendo `premium` (no romper). UI muestra "Paw Member".
 
-### B2B (vets + veterinarias) — 4 tiers en 2 tracks
+### B2B (vets + veterinarias) — canal de adquisicion, no revenue center
 
-**Track INDIVIDUAL** (veterinario profesional solo):
+> *El vet no paga por el software porque su valor esta en construir la ficha.
+> El activo es la ficha. Quien paga es quien quiere acceder a la mascota a traves
+> de ella.* — Roberto Camhi 2026-04-22.
+
+**Track INDIVIDUAL** (publico en `/para-veterinarios`):
 
 | Plan | Precio/mes | Comisión | Pacientes | Seats | Multi-branch | Bulk import |
 |---|---|---|---|---|---|---|
 | Básica | $0 | 10% | 5 | 1 | No | No |
 | Premium ⭐ | $9.900 | 5% | Ilimitado | 1 | No | No |
 
-**Track CLÍNICA** (veterinaria con varios profesionales):
+**Track CLÍNICA** (escondido del pricing publico — "Empresarial — contactanos"):
 
 | Plan | Precio/mes | Comisión | Pacientes | Seats | Multi-branch | Bulk import |
 |---|---|---|---|---|---|---|
 | Clínica 🏥 | $19.900 | 3% | 500 | 3 vets | No | **Sí** (CSV/Excel) |
 | Pro Max 👑 | $29.900 | 0% | Ilimitado | Ilimitado | Sí | Sí |
+
+`/para-veterinarios` muestra solo Basica + Premium + tarjeta "Empresarial".
+IDs internos `provider_clinic_starter` y `provider_pro_max` se mantienen en
+codigo y DB (asignables manualmente desde admin), no aparecen en pricing publico.
 
 IDs internos:
 - `provider_free` → Básica (individual)
@@ -208,9 +239,10 @@ Orden de prioridad en la búsqueda de financiamiento:
 
 ### Aviso fiscal operacional
 
-Cuenta de Flow a nombre personal del fundador (no SpA). Riesgo fiscal
-mientras no se migre a cuenta SpA. Pedro plan a migrar via Tenpo/Mach/
-Prex. Ver memoria `project_session_2026_04_19_pivot_monetizacion.md`.
+SpA SUSAETA GARNHAM SOFTWARE ENGINEERING constituida 2026-04-17 (RUT
+78.328.659-9, inicio SII Luis Pasteur 6111 Dp 201, Vitacura). Migracion
+de cuenta Flow a nombre SpA en curso. Ver memoria
+[project_pivot_modelo_v2_2026_04_22.md](C:\Users\psusa\.claude\projects\c--Users-psusa-Desktop-pet-harmony-chile-main\memory\project_pivot_modelo_v2_2026_04_22.md).
 
 ---
 

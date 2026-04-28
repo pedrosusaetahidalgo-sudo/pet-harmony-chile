@@ -172,24 +172,28 @@ para una Seed Series.
 
 | Metrica | Hoy | Meta 90d | Meta 12m |
 |---|---|---|---|
-| Usuarios totales | `[DATO]` | 2.000 | 15.000 |
-| MAU | `[DATO]` | 500 | 5.000 |
-| Premium B2C activos | `[DATO]` | 100 | 800 |
-| Clinicas B2B pagando | `[DATO]` | 20 | 150 |
-| MRR (CLP) | `[DATO]` | $1.9M | $15M |
-| ARR run-rate (USD) | `[DATO]` | $24K | $190K |
-| Retention D30 | `[DATO]` | 30% | 40% |
-| **Donaciones totales (CLP)** | `[DATO]` | $500K | $5M |
-| **Donantes unicos** | `[DATO]` | 50 | 500 |
-| **Paw Companys activos** | `[DATO]` | 3 | 15 |
+| Usuarios totales | `[DATO]` | 2.000 | 20.000 |
+| MAU | `[DATO]` | 1.000 | 15.000 |
+| Vets activos creando fichas | `[DATO]` | 50 | 300 |
+| Fichas con OCR completado | `[DATO]` | 30% | 60% |
+| Pacientes con >=10 eventos timeline | `[DATO]` | 100 | 3.000 |
+| Research consent opt-in % | `[DATO]` | 25% | 40% |
+| Paw Companys activos | `[DATO]` | 3 | 12 |
+| Pharma deals piloto | 0 | 0 | 1-3 |
+| ARR run-rate pilotos (USD) | `[DATO]` | $0 | $100-300K |
+| **Paw Support total (CLP)** | `[DATO]` | $500K | $5M |
+| **Aportantes unicos** | `[DATO]` | 50 | 500 |
 | **Rating app (feedback)** | `[DATO]`/5 | 4.3/5 | 4.5/5 |
-| **Willingness-to-pay (yes)** | `[DATO]`% | 40% | 55% |
+| Retention D30 | `[DATO]` | 35% | 50% |
 
-**Signal de mercado unico** (nuevo desde 2026-04-18):
-- El widget de feedback pregunta explicitamente "¿Pagarias por esta app?". La distribucion
-  yes/maybe/no es un predictor de conversion Premium que ni Petsy ni QVET tienen.
-- El flujo de donaciones mide el techo emocional: cuantos duenos, sin contraparte directa,
-  aportan por la causa Paw Friend. Es un proxy de NPS monetizable.
+**Signal de mercado unico**:
+- **Research consent opt-in rate** (nuevo §7.3): porcentaje de duenos que aceptan
+  compartir data agregada anonima para research. Es leading indicator del moat
+  pharma — sin consent, no hay deals.
+- **Pacientes con ficha completa** (>=10 eventos en timeline): proxy de "ficha
+  longitudinal valiosa" que pharma/seguros pagaran por acceder.
+- El flujo de Paw Support mide el techo emocional: cuantos duenos, sin contraparte
+  directa, aportan por la causa Paw Friend. Es proxy NPS monetizable.
 
 **Historia qualitativa** (usar si numeros son bajos):
 - Beta tester real vet Sofia → feedback incorporado (vacunas con lote, seccion antiparasitarios).
@@ -203,45 +207,79 @@ para una Seed Series.
 
 ---
 
-## Slide 8 — Modelo de negocio
+## Slide 8 — Modelo de negocio (v2 post-Roberto Camhi 2026-04-22)
 
-**Titulo**: *SaaS con tres motores de revenue y un marketplace de reservas.*
+**Titulo**: *El dueno nunca paga. Pharma, seguros y retail pagan por acceso a la ficha.*
 
-**B2C — Premium dueno** (`src/lib/plans.ts`):
-- Gratis: 2 mascotas, 3 recordatorios, ficha basica.
-- **Premium $3.990 CLP/mes** ($39.900 anual): mascotas ilimitadas, PDF descargable,
-  compartir ficha, reportes semanales IA, sin ads.
+> **Paralelismo Mapcity**: *Mapcity no le cobraba a cada tienda chilena por
+> georreferenciar — le cobraba a Equifax, bancos e inmobiliarias por acceso a la
+> data. Paw Friend no le cobra al vet ni al dueno — le cobra a pharma, seguros
+> y retail por acceso a la ficha clinica longitudinal.*
 
-**B2B — SaaS vet**:
-- Gratis: 15 clientes, directorio publico, 2 invitaciones.
-- **Individual $9.900 CLP/mes**: 100 clientes, transcripcion audio, analytics basico.
-- **Clinica Basica $29.900 CLP/mes**: 500 clientes, multi-vet, featured position.
-- **Clinica Pro $59.900 CLP/mes**: ilimitado, multi-branch, 0% comision, API.
+**Principio guia**: *Producto invisible.* Si el producto es invisible, el dueno
+no se va. Si no se va, la ficha se enriquece sola (OCR + vet + IA + recordatorios).
+Si la ficha se enriquece, pharma/seguros/retail pagan por acceso. Si ellos pagan,
+el dueno **nunca** paga. Loop coherente.
 
-**B2B2C — Paw Companys (nuevo)**:
-- Empresas pet-friendly (alimentos, pet shops, seguros) pagan sponsorship recurrente
-  para aparecer con badge en `/donaciones` y secciones comunitarias.
-- Ticket esperado: **$49.900-$199.900 CLP/mes**.
-- Excedente sobre costos operacionales va a refugios con trazabilidad publica (dashboard).
-- Moat: aval social + impacto medible, no ads tradicionales.
+### Pilares ancla (80% del revenue proyectado)
 
-**Marketplace booking**: comision 0-10% segun plan vet.
+| # | Pilar | Quien paga | Modelo | Ticket anual | Activacion |
+|---|---|---|---|---|---|
+| 1 | **Pharma animal** | Centrovet (Agrosuper), Virbac, Zoetis, MSD, Elanco, Boehringer | Sponsored reminders + data deals agregados + contenido educacional | USD $20-500K / brand | Mes 4-6 post-seed |
+| 2 | **Seguros pet** | Sura, BCI, Mapfre, Consorcio, emergentes | Afiliado 10-20% sobre prima + white-label ficha + canal de claims | USD $500K-1M a escala (5% conv sobre 50k MAU) | Mes 6-9 |
+| 3 | **Retail pet** | Master Dog (Agrosuper), Falabella Pet, Puppis | Afiliado 3-10% + suscripcion alimento + ads contextuales | USD $50-200 / usuario activo-ano | Mes 8-12 |
 
-**Donaciones voluntarias via Flow**: no es revenue core. Es proxy de NPS monetizable y
-colchon operacional. Excedente se destina a causas (refugios).
+### Pilares soporte (estabilizan + dan narrativa)
 
-**Unit economics** (estimacion post-reactivacion, actualizar con datos reales):
-- ARPU blended (subs): ~USD $15-20/mes.
-- Ticket donacion promedio: `[DATO]` CLP (dato live del admin).
-- LTV estimado: USD $300-500 (12-24 meses).
-- CAC organico: USD $15-30 (outreach fundador).
-- **Payback**: 2-4 meses. LTV/CAC **>10x**.
+| # | Pilar | Quien paga | Modelo | Ticket | Estado |
+|---|---|---|---|---|---|
+| 4 | **Paw Companys** | Empresas pet-friendly + corporates con benefits | Sponsorship badge + SaaS bienestar animal ($1-3 USD/empleado/mes) | USD $600-1.8K/mes/corporate | Vivo |
+| 5 | **Paw Support** (ex-donaciones) | Duenos voluntariamente | Pago voluntario + aporte a refugios trazable | Residual, alto en NPS | Reframe en curso |
 
-**Por que este pricing**:
-- Premium B2C precio "Netflix pet" accesible.
-- B2B Individual ataca vets chicos que hoy no pagan PMS.
-- Techo alto (Clinica Pro) captura valor de clinicas >5 vets.
-- Paw Companys abre un eje independiente: empresas con presupuesto CSR que hoy donan mal.
+### B2C dueno — gratis sin caps
+
+- **Cero features de pago**. Mascotas ilimitadas, PDF descargable, ficha compartida,
+  recordatorios, calendario, OCR, asistente IA — todo gratis para siempre.
+- **Paw Member ($3.990/mes opcional)**: badge cosmetico + acceso a descuentos de Paw Partners.
+  No desbloquea features funcionales. No es revenue core (proxy NPS).
+- Feature flag `USER_PREMIUM=false` confirma: no hay paywall B2C activo.
+
+### B2B vet — canal de adquisicion, no revenue center
+
+> *El vet no paga por el software porque su valor esta en construir la ficha.
+> El activo es la ficha. Quien paga es quien quiere acceder a la mascota a traves
+> de ella.*
+
+- **Plan Basica ($0)**: vet individual, 5 pacientes. Punto de entrada.
+- **Plan Premium ($9.900/mes)**: vet freelance/domicilio, opcional. Ingreso residual.
+- **Plan Clinica/Pro Max**: **escondidos del pricing publico**. On demand via "Empresarial — contactanos".
+
+### Long-tail (mes 12-18+)
+
+- **Data agregada anonimizada**: SAG, Minsal, academia (UACh, UNAB), pharma R&D. USD $50-500K/deal.
+- **Gobierno/municipios**: Las Condes, Providencia, Subdere — white-label registro digital Ley 21.020. USD $10-50K/municipio.
+- **Publicidad programatica**: residual con escala MAU.
+
+### Unit economics v2 a escala (50k MAU, mes 18 post-seed)
+
+| Motor | Deals/conversion | ARR estimado |
+|---|---|---|
+| Pharma (3 brands) | 3 deals activos | USD $300-600K |
+| Seguros (2 aseguradoras) | 5% conv = 2.500 polizas | USD $200-500K |
+| Retail (2 retailers) | 10% conv activos | USD $250-500K |
+| Paw Companys | 20 empresas | USD $120-240K |
+| Paw Support | voluntario | USD $20-50K |
+| Long-tail (data/gobierno) | 1-2 deals | USD $50-200K |
+| **Total ARR proyectado** | | **USD $940K - $2.1M** |
+
+vs modelo v1 vet-centrico (techo USD $400-600K ARR) → delta **2-4×** con el mismo
+producto, solo reorientando quien paga.
+
+**Por que este modelo gana**:
+- Dueno gratis sin caps = retencion alta + ficha enriquecida = activo defendible.
+- Pharma/seguros/retail = bolsillo profundo, ticket recurrente, B2B con LTV multi-anual.
+- Paw Companys = aval social + revenue recurrente sin canibalizar nada.
+- Vet gratis = canal de adquisicion sin friccion comercial.
 
 ---
 
@@ -259,6 +297,12 @@ colchon operacional. Excedente se destina a causas (refugios).
 
 **Competidores clave**:
 
+- **Petify** (modelo extractivo opuesto): cobra **USD 0.50/mascota/mes hasta que la elimines**.
+  Para 2 mascotas = ~$11.000 CLP/año. Para refugios con 30 mascotas = inviable. Incentivo
+  perverso: borrar fichas para dejar de pagar (rompe memorial + historial). Nuestra jugada:
+  contraposicionamiento directo — *"Mientras Petify te cobra por cada mascota, en Paw Friend
+  la ficha es gratis para siempre. Pagamos con pharma/seguros/retail (modelo Mapcity), no
+  con tu bolsillo."*
 - **QVET** (amenaza alta 18-24m): espanol, 8.000 clientes declarados, sin comercial local,
   sin precio publico. *Nuestra jugada: ganar vet chico chileno antes de que activen Chile.*
 - **Petsy** (overlap B2C 1:1): iOS publicada, marketplace a domicilio. *Nuestro moat:
@@ -267,13 +311,19 @@ colchon operacional. Excedente se destina a causas (refugios).
 - **WhatsApp + Instagram** (competidor real, 80% de vets chicos). *Atacamos con "WhatsApp con
   memoria": onboarding 5 min + recordatorios automaticos.*
 
+**Por que el modelo Petify valida nuestra tesis pero deja en la mesa al 90% del mercado**:
+- Petify cobrando $11.000 CLP/año por 2 mascotas confirma que el dolor existe (gente paga por ficha digital).
+- Pero ese $0.50/mes es friction real en Chile. El 90% del mercado prefiere WhatsApp gratis.
+- Paw Friend captura ese 90% con producto gratis + monetiza con B2B de bolsillo profundo (pharma > USD $20-500K/brand).
+- **Petify ARR maximo techo realista**: 50k mascotas × $6/año = USD $300K. **Paw Friend modelo v2 a misma escala**: USD $940K-2.1M (2-7×).
+
 **Moats**:
-1. Directorio SEO publico (`/veterinarios/[comuna]/[slug]`) — nadie mas lo tiene B2C.
-2. Pricing CLP transparente + onboarding rapido — QVET/VetPraxis no lo hacen.
-3. Integracion dueno ↔ vet end-to-end (reserva + ficha + resena) — ni Petsy ni CuidaPet cierran el loop.
-4. **Paw Companys + donaciones trazables** — aval social y dashboard de transparencia que
-   ningun competidor ofrece. Convierte CSR empresarial en canal de crecimiento.
-5. **Costos home-made**: producto artesanal hecho por una persona + IA. Quema baja = runway largo.
+1. **Dueno gratis sin caps para siempre** — ningun competidor con modelo extractivo (Petify) puede igualarlo sin destruir su revenue.
+2. Directorio SEO publico (`/veterinarios/[comuna]/[slug]`) — nadie mas lo tiene B2C.
+3. Pricing CLP transparente + onboarding rapido — QVET/VetPraxis no lo hacen.
+4. Integracion dueno ↔ vet end-to-end (reserva + ficha + resena) — ni Petsy ni CuidaPet cierran el loop.
+5. **Paw Companys + Paw Support trazable** — aval social y dashboard de transparencia que ningun competidor ofrece. CSR empresarial como canal de crecimiento.
+6. **Costos home-made**: producto artesanal hecho por una persona + IA. Quema baja = runway largo.
 
 ---
 
@@ -314,31 +364,34 @@ colchon operacional. Excedente se destina a causas (refugios).
 
 **Titulo**: *Como llegamos a USD $500K ARR en 12 meses.*
 
-**Fase 1 (mes 1-3) — Primeras ventas + primeros Paw Companys**:
-- Reactivar Premium B2C → meta 100 pagos.
-- Outreach a 500 vets chilenos → cerrar 20 clinicas pagas.
+**Fase 1 (mes 1-3) — Producto invisible + escala MAU**:
+- Lanzar producto invisible (home dueno con ficha + recordatorios + urgencia).
+- Onboarding 4 campos + OCR carnet vacunacion empujado.
+- Outreach a 500 vets chilenos → 50 vets activos creando fichas (gratis).
 - Cerrar 3 primeros Paw Companys (pet shop, alimento, seguro) con badge publico.
-- Publicar dashboard de transparencia de donaciones.
-- Amputar scope Paw Labs (esconder gamificacion experimental en pitch).
+- Publicar dashboard de transparencia Paw Support.
+- Amputar scope Paw Labs (mover a `/explorar` opt-in).
 - Cerrar co-founder comercial.
 
-**Fase 2 (mes 4-6) — Consolidacion Chile**:
-- Escalar a 500 Premium + 60 clinicas + 10 Paw Companys.
+**Fase 2 (mes 4-6) — Primer piloto Pharma**:
+- 5.000 MAU + 150 vets activos + 5 Paw Companys.
+- Primer contacto Centrovet (Agrosuper) o Virbac Chile → MVP sponsored reminder.
 - Postular CORFO SSAF-I (USD $28K) + Start-Up Chile Ignite (USD $15K).
-- Contratar SDR (ventas B2B) + 1 engineer.
-- Primer caso de exito B2B documentado + video + convenio con refugio aliado.
+- Contratar 1 engineer + 1 BD (pharma/seguros).
+- Primer deal pharma firmado: USD $20-50K piloto 6 meses.
 
-**Fase 3 (mes 7-12) — Piloto LATAM**:
-- Definir pais #2 (Peru o Colombia).
-- 2.000 Premium + 150 clinicas + 20 Paw Companys (Chile) + primer piloto pais #2.
-- Pre-seed angel LATAM cerrado (USD $100-200K).
-- Roadmap Seed para mes 18.
+**Fase 3 (mes 7-12) — Pharma escala + piloto Seguros**:
+- 15.000 MAU + 300 vets activos + 10 Paw Companys.
+- 2-3 brands pharma activos = USD $100-300K ARR.
+- Primer contacto Sura Pet + BCI Seguros → MVP afiliado poliza.
+- Pre-seed angel LATAM cerrado (USD $150-300K).
+- Roadmap Seed mes 18-24.
 
 **Hitos cuantitativos**:
-- Mes 3: MRR USD $2K + 3 Paw Companys + $500K CLP donaciones.
-- Mes 6: MRR USD $8K + 10 Paw Companys + $2M CLP donaciones.
-- Mes 12: MRR USD $40K (ARR $500K) + 20 Paw Companys + $5M CLP donaciones.
-- Mes 18: MRR USD $80K (ARR $1M) → levantar Seed con Platanus/Magma/Kaszek.
+- Mes 3: 1.000 MAU + 50 vets activos + 3 Paw Companys + $500K CLP Paw Support.
+- Mes 6: 5.000 MAU + 1 deal pharma + 5 Paw Companys + $2M CLP Paw Support.
+- Mes 12: 15.000 MAU + 3 deals pharma + 1 piloto seguros = ARR USD $300-500K + 10 Paw Companys.
+- Mes 18: 50.000 MAU + 3 pharma + 2 seguros + 1 retail = ARR USD $940K-2.1M → levantar Seed con Platanus/Magma/Kaszek.
 
 ---
 
@@ -363,9 +416,9 @@ colchon operacional. Excedente se destina a causas (refugios).
 | Infraestructura + buffer | 10% | $15K | Supabase Pro, Sentry, PostHog, buffer |
 
 **Hitos con este capital**:
-- Mes 6: MRR USD $8K + 10 Paw Companys + CORFO aprobado.
-- Mes 12: MRR USD $40K + co-founder + piloto LATAM listo.
-- Mes 18: Seed readiness (ARR USD $1M).
+- Mes 6: 5.000 MAU + 1 deal pharma piloto + 5 Paw Companys + CORFO aprobado.
+- Mes 12: 15.000 MAU + 3 pharma + 1 piloto seguros = ARR USD $300-500K + co-founder cerrado.
+- Mes 18: 50.000 MAU + pilotos retail + Seed readiness (ARR USD $940K-2.1M).
 
 **Por que este ticket**:
 - Suficiente para 12-14 meses de runway.

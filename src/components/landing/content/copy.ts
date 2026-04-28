@@ -80,7 +80,7 @@ export const ALMA = {
   body: 'Paw Friend lo construye una persona en Chile, apoyada por IA, con la convicción de que la salud de un peludo no debería ser un privilegio. Sin VC presionando, sin exit forzado, sin gates ocultos.',
   sustainTitle: 'Cómo nos sostenemos',
   sustainBody:
-    '5 motores opcionales: donaciones voluntarias, Paw Member ($3.990/mes badge-only), planes para vets, Paw Companys (sponsors empresas), Paw Voices (creators). Ninguno bloquea features para dueños.',
+    'Modelo Mapcity: el dueño nunca paga. Pharma, seguros y retail pagan por acceso a la ficha clínica. Sumamos Paw Companys (sponsors empresas) y Paw Support (apoyo voluntario). Ninguna feature está bloqueada para dueños.',
   quote:
     'Lo hago porque mis peludos me cambiaron la vida. Quiero que esto siga gratis para siempre, para los peludos de toda Latinoamérica.',
   quoteAuthor: 'Paw Founder',
