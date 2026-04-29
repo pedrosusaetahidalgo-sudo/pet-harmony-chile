@@ -254,3 +254,9 @@ verify_jwt = false
 
 [functions.paw-shield-identify]
 verify_jwt = false
+
+# Cron diario que borra imagenes archivadas con expires_at <= NOW().
+# Spec: docs-raiz/PAW_SHIELD_DATA_ARCHIVE.md
+# Auth: requireCronAuth (X-Cron-Secret o Bearer SERVICE_ROLE).
+[functions.paw-shield-archive-cleanup]
+verify_jwt = false

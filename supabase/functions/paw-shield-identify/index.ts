@@ -45,6 +45,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { withTelemetry } from '../_shared/telemetry.ts';
 import { getCorsHeaders, handleCorsOptions } from '../_shared/cors.ts';
 import { identifyByImage, type PetifySpecies } from '../_shared/petify-client.ts';
+import { archivePawShieldImage } from '../_shared/paw-shield-archive.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -115,6 +116,19 @@ serve(
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+
+    // ── Archivar imagen del scan (best-effort, pre-Petify) ──
+    // Identify es publico → no hay owner ni consent explicito. Archivamos con
+    // consent=false (retencion 30d) para auditoria + posible training si el
+    // dueno se descubre y opta in despues.
+    await archivePawShieldImage(supabase, {
+      imageBlob: blob,
+      petId: null,
+      ownerId: null,
+      captureKind: 'identify',
+      species: body.species,
+      consentForTraining: false,
+    });
 
     // ── Identify via Petify ──
     let matches: Array<{ id: string; score: number; metadata: string }>;

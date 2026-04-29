@@ -39,6 +39,7 @@ import {
   PetifyError,
   type PetifySpecies,
 } from '../_shared/petify-client.ts';
+import { archivePawShieldImage, loadPetMetadataForArchive } from '../_shared/paw-shield-archive.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
 const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
@@ -53,6 +54,15 @@ interface RegisterRequest {
   species: PetifySpecies;
   breed?: string;
   images_base64: string[];
+  /**
+   * Opt-in del dueno para archivar imagenes para training futuro.
+   * Si true: imagenes se conservan indefinido en bucket paw-shield-archive.
+   * Si false (default): imagenes se borran a los 30 dias por cron.
+   * Spec: docs-raiz/PAW_SHIELD_DATA_ARCHIVE.md
+   */
+  archive_consent?: boolean;
+  /** Sharpness Laplacian de cada frame (debug + training meta). */
+  sharpness_per_frame?: number[];
 }
 
 function base64ToBlob(base64: string): Blob {
@@ -204,6 +214,44 @@ serve(
       fingerprint_count: blobs.length,
       metadata: { species: body.species, breed: body.breed ?? null },
     });
+
+    // ── Persistir consent + archivar imagenes (best-effort, pre-Petify) ─
+    const archiveConsent = body.archive_consent === true;
+    if (archiveConsent) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any)
+        .from('pets')
+        .update({
+          paw_shield_data_archive_consent: true,
+          paw_shield_data_archive_consent_at: new Date().toISOString(),
+        })
+        .eq('id', body.pet_id);
+    }
+
+    const petMeta = await loadPetMetadataForArchive(supabase, body.pet_id);
+    // El consent efectivo es: lo que el usuario marco AHORA (UI explicita) o
+    // lo que tenia guardado de antes. Si marca false ahora se respeta tal cual.
+    const effectiveConsent = archiveConsent || petMeta.consentForTraining;
+
+    // Archivar cada frame ANTES de mandar a Petify (asi quedan los originales
+    // aunque Petify haga lo suyo con ellos).
+    for (let i = 0; i < blobs.length; i++) {
+      await archivePawShieldImage(supabase, {
+        imageBlob: blobs[i],
+        petId: body.pet_id,
+        ownerId: userId,
+        captureKind: 'enrollment',
+        frameIndex: i,
+        species: body.species,
+        breed: body.breed ?? petMeta.breed ?? null,
+        ageMonths: petMeta.ageMonths ?? null,
+        weightKg: petMeta.weightKg ?? null,
+        comuna: petMeta.comuna ?? null,
+        sharpnessLaplacian: body.sharpness_per_frame?.[i] ?? null,
+        accepted: true,
+        consentForTraining: effectiveConsent,
+      });
+    }
 
     // ── Fase 1: Identify ANTES de crear (anti-duplicado) ──────────────
     try {

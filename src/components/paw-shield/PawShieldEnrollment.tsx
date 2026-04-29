@@ -21,6 +21,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Camera, Loader2, ShieldCheck, AlertTriangle, RefreshCw } from '@/lib/icons';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -87,6 +88,7 @@ export function PawShieldEnrollment({
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [retries, setRetries] = useState(0);
   const [response, setResponse] = useState<RegisterResponse | null>(null);
+  const [archiveConsent, setArchiveConsent] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -129,12 +131,15 @@ export function PawShieldEnrollment({
   const register = useMutation({
     mutationFn: async (frames: ExtractedFrame[]) => {
       const images_base64 = frames.map((f) => frameToJpegBase64(f.canvas, 0.85));
+      const sharpness_per_frame = frames.map((f) => f.sharpness);
       const { data, error } = await supabase.functions.invoke('paw-shield-register', {
         body: {
           pet_id: petId,
           species: petSpecies,
           breed: petBreed,
           images_base64,
+          sharpness_per_frame,
+          archive_consent: archiveConsent,
         },
       });
       if (error) throw error;
@@ -346,6 +351,25 @@ export function PawShieldEnrollment({
             <li>Solo necesitamos un video de 3 segundos del hocico.</li>
             <li>Sin costo. Sin que {petName} tenga que aprender nada.</li>
           </ul>
+
+          <div className="rounded-lg border bg-muted/30 p-3 flex items-start gap-3">
+            <Checkbox
+              id="archive-consent"
+              checked={archiveConsent}
+              onCheckedChange={(v) => setArchiveConsent(v === true)}
+              className="mt-0.5"
+            />
+            <label
+              htmlFor="archive-consent"
+              className="text-xs leading-relaxed cursor-pointer text-muted-foreground"
+            >
+              Quiero ayudar a Paw Friend a mejorar la identificacion de mascotas chilenas. Las
+              imagenes se conservan <strong>anonimizadas</strong> (sin tu nombre ni telefono) para
+              entrenar nuestro proximo modelo. Podes revocar este permiso en cualquier momento desde
+              tu perfil.
+            </label>
+          </div>
+
           <div className="flex gap-2">
             <Button onClick={close} variant="outline" className="flex-1">
               Despues

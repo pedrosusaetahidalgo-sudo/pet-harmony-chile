@@ -24,6 +24,7 @@ import { EditProfileDrawer } from '@/components/profile/EditProfileDrawer';
 import { BecomeProviderCTA } from '@/components/BecomeProviderCTA';
 import { OfferServicesBanner } from '@/components/OfferServicesBanner';
 import { MyApplicationsSection } from '@/components/MyApplicationsSection';
+import { PawShieldPrivacyCard } from '@/components/paw-shield/PawShieldPrivacyCard';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { useActiveRole } from '@/hooks/useActiveRole';
@@ -239,6 +240,11 @@ const Profile = () => {
             Se auto-esconde si el usuario no ha postulado a nada. Plan
             PRODUCT_SYSTEM_COHERENCE_MASTER_PLAN §33.4. ── */}
       <MyApplicationsSection />
+
+      {/* ── Bloque C.4: Privacidad Paw Shield archive (ARCO Ley 19.628).
+            Se auto-esconde si el user no tiene mascotas con consent. Spec:
+            docs-raiz/PAW_SHIELD_DATA_ARCHIVE.md. ── */}
+      <PawShieldPrivacyCard />
 
       {/* ── Bloque D: Social Mini-bar ── */}
       <Card>
