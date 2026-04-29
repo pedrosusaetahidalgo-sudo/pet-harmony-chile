@@ -31,6 +31,9 @@ import { format, differenceInDays, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { usePetHistoryTimeline, TIMELINE_CATEGORY_META } from '@/hooks/usePetHistoryTimeline';
 import { isFeatureEnabled } from '@/lib/featureFlags';
+import { PetLoginButton } from '@/components/paw-shield/PetLoginButton';
+import { VaccineRenewalNudge } from '@/components/home/VaccineRenewalNudge';
+import { BirthdayCouponsCard } from '@/components/birthday/BirthdayCouponsCard';
 import { QuickActionsHub } from '@/components/home/QuickActionsHub';
 import { OwnerAudioNoteRecorder } from '@/components/medical/OwnerAudioNoteRecorder';
 import { InsuranceBanner } from '@/components/insurance/InsuranceBanner';
@@ -273,6 +276,12 @@ export function HomePetFocusV2() {
             <Plus className="h-4 w-4" />
             <span className="text-sm">Otra</span>
           </button>
+          {/* Pet Login: scan biometrico para abrir ficha directo. Solo si
+              user tiene >=2 mascotas con Paw Shield activo. Ver
+              docs-raiz/PAW_SHIELD_IDEAS_BANK.md §7 (RICE 180). */}
+          <div className="shrink-0">
+            <PetLoginButton />
+          </div>
         </div>
       )}
 
@@ -340,6 +349,12 @@ export function HomePetFocusV2() {
             </div>
           </Card>
         )}
+
+      {/* Birthday coupons biometricos (#12 RICE 149) — auto-esconde fuera de window */}
+      {selectedPet && <BirthdayCouponsCard petId={selectedPet.id} petName={selectedPet.name} />}
+
+      {/* Vaccine renewal nudge: 30d antes de vencer (#13 RICE 162) */}
+      {selectedPet && <VaccineRenewalNudge petId={selectedPet.id} petName={selectedPet.name} />}
 
       {/* Next action */}
       {nextAction && (

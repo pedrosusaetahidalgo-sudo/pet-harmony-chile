@@ -38,6 +38,7 @@ import {
   PawPrint,
 } from '@/lib/icons';
 import { isFeatureEnabled } from '@/lib/featureFlags';
+import { OnboardingScanCheck } from '@/components/paw-shield/OnboardingScanCheck';
 import { ImageCropDialog } from '@/components/ImageCropDialog';
 import { VaccinationCardOCR } from '@/components/onboarding/VaccinationCardOCR';
 import { FileText } from '@/lib/icons';
@@ -95,6 +96,12 @@ export default function OnboardingQuickFlow() {
   // luego salimos.
   const [createdPetId, setCreatedPetId] = useState<string | null>(null);
   const [postRedirectTarget, setPostRedirectTarget] = useState<string | null>(null);
+
+  // Pre-scan opcional (Onboarding express con scan #1 RICE 168). Solo si flag
+  // PAW_SHIELD_PETIFY=true. El componente hace skip si flag off.
+  // Si user salta o no hay match, avanzamos al wizard tradicional.
+  const preScanEnabled = isFeatureEnabled('PAW_SHIELD_PETIFY');
+  const [showPreScan, setShowPreScan] = useState(preScanEnabled);
 
   const step1Valid = !!photoFile && name.trim().length >= 2 && !!species;
 
@@ -330,6 +337,19 @@ export default function OnboardingQuickFlow() {
               Saltar, lo hago después
             </Button>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Onboarding express con scan (#1 RICE 168) — chequeo opcional pre-wizard.
+  // Si flag PAW_SHIELD_PETIFY=true, mostramos pantalla de scan antes del
+  // formulario. Si user skipea o no hay match, avanzamos al wizard.
+  if (showPreScan && preScanEnabled) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-pink-50 px-4 py-6">
+        <div className="container max-w-md mx-auto">
+          <OnboardingScanCheck onSkip={() => setShowPreScan(false)} />
         </div>
       </div>
     );

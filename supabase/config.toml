@@ -266,3 +266,9 @@ verify_jwt = false
 # Llamado desde AdminPitchApplications tras approve_b2b_api_application.
 [functions.send-b2b-welcome]
 verify_jwt = false
+
+# Vet check-in biometrico (#2 RICE 126). Endpoint publico con auth via
+# X-Vet-Api-Key header. Mascota llega → vet escanea hocico → ficha abre auto.
+# Scope: solo pacientes con booking historico con el vet.
+[functions.vet-checkin-identify]
+verify_jwt = false

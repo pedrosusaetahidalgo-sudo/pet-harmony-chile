@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Paw Friend · Vet Check-in Widget · Demo</title>
+  <meta name="robots" content="noindex" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #faf5ff 0%, #f0fdfa 100%);
+      margin: 0;
+      padding: 32px 16px;
+      color: #1a102b;
+    }
+    .container { max-width: 720px; margin: 0 auto; }
+    h1 { font-family: 'Fredoka', system-ui; font-size: 28px; margin: 0 0 8px; }
+    .lead { color: #6b21a8; margin: 0 0 24px; font-size: 14px; }
+    .panel {
+      background: white;
+      border: 1px solid #e9d5ff;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(147,51,234,0.06);
+    }
+    label { display: block; font-size: 12px; font-weight: 700; color: #6b21a8; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+    input, select {
+      width: 100%; padding: 10px 12px; font: inherit; border: 1px solid #d8b4fe;
+      border-radius: 8px; background: #faf5ff;
+    }
+    button {
+      background: #9333ea; color: white; border: none; padding: 12px 20px;
+      border-radius: 10px; font: inherit; font-weight: 700; cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #7e22ce; }
+    button:disabled { background: #c4b5fd; cursor: not-allowed; }
+    button.secondary { background: white; color: #6b21a8; border: 1px solid #d8b4fe; }
+    button.secondary:hover { background: #faf5ff; }
+    video { width: 100%; max-width: 480px; border-radius: 12px; background: black; aspect-ratio: 1; object-fit: cover; }
+    .video-wrap { position: relative; display: flex; justify-content: center; }
+    .video-wrap::after {
+      content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 180px; height: 180px; border: 4px solid rgba(255,255,255,0.6); border-radius: 50%;
+      pointer-events: none;
+    }
+    .result {
+      padding: 16px; border-radius: 12px; font-size: 14px; line-height: 1.6;
+    }
+    .result.matched { background: #d1fae5; border: 1px solid #6ee7b7; color: #064e3b; }
+    .result.error { background: #fee2e2; border: 1px solid #fca5a5; color: #7f1d1d; }
+    .result.warning { background: #fef3c7; border: 1px solid #fcd34d; color: #78350f; }
+    .pet-card { display: flex; gap: 12px; align-items: center; }
+    .pet-photo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+    .docs {
+      font-size: 13px; line-height: 1.7; color: #475569;
+    }
+    .docs h2 { font-size: 16px; color: #1a102b; margin: 20px 0 8px; }
+    .docs pre { background: #0f172a; color: #e2e8f0; padding: 14px; border-radius: 8px; font-size: 12px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🐾 Paw Friend · Vet Check-in Widget</h1>
+    <p class="lead">
+      Demo standalone. Pega la API key de tu clínica y escanea el hocico
+      del paciente para abrir su ficha clínica automáticamente.
+    </p>
+
+    <div class="panel">
+      <label for="apiKey">Tu API key (pf_vet_...)</label>
+      <input id="apiKey" type="password" placeholder="pf_vet_..." autocomplete="off" />
+    </div>
+
+    <div class="panel">
+      <div class="video-wrap">
+        <video id="video" autoplay playsinline muted></video>
+      </div>
+      <div style="display: flex; gap: 8px; margin-top: 16px;">
+        <button id="startBtn" class="secondary">Encender cámara</button>
+        <button id="captureBtn" disabled>Capturar y verificar</button>
+      </div>
+    </div>
+
+    <div id="result" style="display: none;"></div>
+
+    <div class="panel docs">
+      <h2>Cómo integrar en tu software</h2>
+      <p>El endpoint público es:</p>
+      <pre>POST https://gwailbjlvevkhwcrovfd.functions.supabase.co/vet-checkin-identify
+
+Headers:
+  X-Vet-Api-Key: pf_vet_...
+  Content-Type: application/json
+
+Body:
+{
+  "species": "DOG" | "CAT",
+  "image_base64": "data:image/jpeg;base64,..."
+}
+
+Response 200:
+{
+  "status": "matched" | "no_match" | "low_confidence" | "not_authorized",
+  "pet": { id, name, species, breed, photo_url, owner_name, owner_phone },
+  "score": 96.2,
+  "ficha_url": "https://pawfriend.cl/ficha/{id}?mode=vet"
+}</pre>
+      <p>
+        Pedinos tu API key escribiendo a
+        <a href="mailto:pawfriendcl@gmail.com">pawfriendcl@gmail.com</a>.
+        Tier free: 200 req/h. Solo identificas pacientes que tienen
+        booking histórico con tu clínica.
+      </p>
+    </div>
+  </div>
+
+<script>
+const ENDPOINT = 'https://gwailbjlvevkhwcrovfd.functions.supabase.co/vet-checkin-identify';
+let stream = null;
+
+const $api = document.getElementById('apiKey');
+const $video = document.getElementById('video');
+const $start = document.getElementById('startBtn');
+const $capture = document.getElementById('captureBtn');
+const $result = document.getElementById('result');
+
+$start.onclick = async () => {
+  if (stream) {
+    stream.getTracks().forEach(t => t.stop());
+    stream = null;
+    $video.srcObject = null;
+    $start.textContent = 'Encender cámara';
+    $capture.disabled = true;
+    return;
+  }
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
+      audio: false,
+    });
+    $video.srcObject = stream;
+    $start.textContent = 'Apagar cámara';
+    $capture.disabled = false;
+  } catch (e) {
+    showResult('error', 'No pudimos acceder a la cámara. Revisa permisos.');
+  }
+};
+
+$capture.onclick = async () => {
+  const apiKey = $api.value.trim();
+  if (!apiKey.startsWith('pf_vet_')) {
+    showResult('error', 'API key inválida. Debe empezar con <code>pf_vet_</code>');
+    return;
+  }
+  if (!stream) return;
+
+  $capture.disabled = true;
+  $capture.textContent = 'Verificando...';
+
+  const canvas = document.createElement('canvas');
+  canvas.width = $video.videoWidth || 720;
+  canvas.height = $video.videoHeight || 720;
+  canvas.getContext('2d').drawImage($video, 0, 0, canvas.width, canvas.height);
+  const base64 = canvas.toDataURL('image/jpeg', 0.85);
+
+  try {
+    const resp = await fetch(ENDPOINT, {
+      method: 'POST',
+      headers: { 'X-Vet-Api-Key': apiKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ species: 'DOG', image_base64: base64 }),
+    });
+    const data = await resp.json();
+
+    if (resp.status === 401) {
+      showResult('error', 'API key inválida o revocada. Pedinos una nueva.');
+    } else if (data.status === 'matched' || data.status === 'low_confidence') {
+      const pet = data.pet;
+      showResult('matched', `
+        <div class="pet-card">
+          ${pet.photo_url ? `<img class="pet-photo" src="${pet.photo_url}" alt="${pet.name}" />` : ''}
+          <div>
+            <p style="font-size: 18px; font-weight: 700; margin: 0;">${pet.name}</p>
+            <p style="margin: 2px 0; font-size: 13px;">${pet.species} ${pet.breed ? '· ' + pet.breed : ''}</p>
+            <p style="margin: 2px 0; font-size: 12px; color: #475569;">Match: ${data.score}/100</p>
+            ${pet.owner_name ? `<p style="margin: 2px 0; font-size: 12px;">Dueño: ${pet.owner_name}${pet.owner_phone ? ' · ' + pet.owner_phone : ''}</p>` : ''}
+          </div>
+        </div>
+        <div style="margin-top: 12px;">
+          <a href="${data.ficha_url}" target="_blank" style="display: inline-block; padding: 10px 18px; background: #047857; color: white; border-radius: 8px; text-decoration: none; font-weight: 700;">
+            Abrir ficha clínica →
+          </a>
+        </div>
+      `);
+    } else if (data.status === 'no_match') {
+      showResult('warning', 'No encontramos coincidencia. Probemos con foto más nítida del hocico.');
+    } else if (data.status === 'not_authorized') {
+      showResult('warning', 'Mascota encontrada pero no está en tu lista de pacientes. Necesitas que el dueño te asigne como vet primero.');
+    } else {
+      showResult('error', data.error || 'Error desconocido.');
+    }
+  } catch (e) {
+    showResult('error', `Error de conexión: ${e.message}`);
+  } finally {
+    $capture.disabled = false;
+    $capture.textContent = 'Capturar y verificar';
+  }
+};
+
+function showResult(kind, html) {
+  $result.className = 'panel result ' + kind;
+  $result.innerHTML = html;
+  $result.style.display = 'block';
+}
+</script>
+</body>
+</html>
