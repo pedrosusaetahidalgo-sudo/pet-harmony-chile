@@ -949,8 +949,14 @@ function SummaryCard({
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────
+function escapeCSVValue(v: string): string {
+  // RFC 4180: quotear si contiene coma, comilla o salto de linea.
+  if (/[",\n\r]/.test(v)) return '"' + v.replace(/"/g, '""') + '"';
+  return v;
+}
+
 function downloadCSV(rows: string[][], filename: string) {
-  const csv = rows.map((r) => r.join(',')).join('\n');
+  const csv = rows.map((r) => r.map(escapeCSVValue).join(',')).join('\r\n');
   const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
