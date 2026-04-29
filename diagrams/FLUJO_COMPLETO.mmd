@@ -1,6 +1,19 @@
 flowchart TD
     %% ============================================================
-    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-27 (Modelo v2 + Fase 2 scaffolding)
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-28 (Sprint 0+1 cierre auditoria)
+    %% Cambios 2026-04-28 (Sprint 0+1 — 53 hallazgos cerrados):
+    %%   - SEC-002: pets.is_public DEFAULT false (cierra fuga Ley 19.628).
+    %%   - COMP-002: /exportar-mis-datos (RPC export_user_data SECURITY DEFINER).
+    %%   - COMP-005: profiles.marketing_email_consent + handle_new_user.
+    %%   - SEC-007: requireCronAuth shared secret en 5 cron edge fns.
+    %%   - SEC-013: Sentry beforeSend scrub PII (email, RUT, phone +56, JWT).
+    %%   - SEC-014: PostHog identify gated by pf_cookie_consent === 'accepted'.
+    %%   - FEAT-001: markOnboardingComplete en OnboardingQuickFlow.
+    %%   - FEAT-004: /onboarding-vet smart redirect (era pitch decorativo).
+    %%   - FEAT-013: cancel booking en /mis-reservas (RPC cancel_reschedule_booking).
+    %%   - BIZ-006: flow-renewal-reminders-cron + last_renewal_reminder_at.
+    %%   - PERF Web Vitals nativos (LCP/CLS/INP/TTFB) → PostHog.
+    %% Cambios 2026-04-27 (Modelo v2 + Fase 2 scaffolding)
     %% Cambios 2026-04-27 (modelo v2 post-Roberto Camhi 2026-04-22):
     %%   - Modelo de monetizacion: 6 motores (v1) -> 3 ancla pharma+seguros+retail
     %%     + 2 soporte (Paw Companys + Paw Support). Vet = canal de adquisicion.
@@ -172,14 +185,16 @@ flowchart TD
 
     AUTH_SUPA --> FIRST{"Primera vez?"}
     FIRST -->|"Dueno nuevo"| ONB_D["Onboarding mascota 3 pasos: mascota + salud + ubicacion"]
-    FIRST -->|"Vet nuevo"| ONB_V["Onboarding vet 3 pasos: perfil + clinica + como funciona"]
+    FIRST -->|"Vet nuevo"| ONB_V["/onboarding-vet smart redirect (FEAT-004 2026-04-28)"]
     FIRST -->|"Ya tiene cuenta"| REDIR{"Redirect"}
     REDIR -->|"returnTo"| REDIR_DEST["Pagina solicitada"]
     REDIR -->|Proveedor| VET_DASH
     REDIR -->|Con mascotas| HOME
     REDIR -->|Sin mascotas| ONB_D
     ONB_D --> HOME
-    ONB_V --> VET_DASH
+    ONB_V -->|"tiene service_providers row"| VET_DASH
+    ONB_V -->|"NO tiene record"| PARA_VET_LAND["/para-veterinarios + BecomeProviderDialog"]
+    PARA_VET_LAND --> VET_DASH
     PUB_REG --> VET_DASH
 
     %% ============ HOME DASHBOARD ============
@@ -368,6 +383,9 @@ flowchart TD
     GCAL_CONNECT --> GCAL_OAUTH["OAuth Google"]
     GCAL_OAUTH --> GCAL_TOKEN["refresh_token"]
     GCAL_TOKEN --> GCAL_SYNC
+    %% Derechos ARCO Ley 19.628 — Sprint 0 P0 COMP-002 (2026-04-28)
+    PROFILE --> EXPORT_DATA["/exportar-mis-datos: portabilidad JSON"]
+    PROFILE --> DELETE_ACCT["/delete-account: derecho a cancelacion"]
 
     %% ============ BOTTOM TAB BAR OWNER (mobile) v3 ============
     subgraph BOTTOMBAR_OWNER["BOTTOM TAB BAR OWNER (mobile)"]
