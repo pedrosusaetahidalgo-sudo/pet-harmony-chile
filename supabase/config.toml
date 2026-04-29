@@ -98,6 +98,9 @@ verify_jwt = false
 [functions.send-lead-outreach]
 verify_jwt = false
 
+[functions.send-b2b-outreach]
+verify_jwt = false
+
 [functions.symptom-triage]
 verify_jwt = false
 

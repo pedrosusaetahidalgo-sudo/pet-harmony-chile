@@ -93,6 +93,7 @@ const AdminExports = lazy(() => import('@/components/admin/AdminExports'));
 const AdminPawCompanys = lazy(() => import('@/components/admin/AdminPawCompanys'));
 const AdminPawVoices = lazy(() => import('@/components/admin/AdminPawVoices'));
 const AdminAdvertisements = lazy(() => import('@/components/admin/AdminAdvertisements'));
+const AdminB2BOutreach = lazy(() => import('@/components/admin/AdminB2BOutreach'));
 const AdminSalaInversion = lazy(() => import('@/components/admin/AdminSalaInversion'));
 const AdminAnalytics = lazy(() => import('@/components/admin/AdminAnalytics'));
 const AdminFeedback = lazy(() => import('@/components/admin/AdminFeedback'));
@@ -292,6 +293,7 @@ function CommercialSection({ sub: propSub, onSubChange }: SubSectionProps) {
         <TabsList className="flex flex-wrap gap-1 h-auto">
           <TabsTrigger value="paw-companys">Paw Companys</TabsTrigger>
           <TabsTrigger value="paw-voices">Paw Voices</TabsTrigger>
+          <TabsTrigger value="b2b-outreach">Outreach B2B</TabsTrigger>
           <TabsTrigger value="advertisements">Publicidad</TabsTrigger>
           <TabsTrigger value="ads">Anuncios (legacy)</TabsTrigger>
           <TabsTrigger value="partners">Partners (legacy)</TabsTrigger>
@@ -301,6 +303,9 @@ function CommercialSection({ sub: propSub, onSubChange }: SubSectionProps) {
         </TabsContent>
         <TabsContent value="paw-voices">
           <AdminPawVoices />
+        </TabsContent>
+        <TabsContent value="b2b-outreach">
+          <AdminB2BOutreach />
         </TabsContent>
         <TabsContent value="advertisements">
           <AdminAdvertisements />
