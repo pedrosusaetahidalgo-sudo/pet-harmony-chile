@@ -2,7 +2,7 @@
 
 > Todos estos documentos deben mantenerse actualizados con cada cambio relevante.
 > Si modificas rutas, navegacion, flujos, planes o features: actualiza el documento correspondiente.
-> Ultima revision: 2026-04-18.
+> Ultima revision: 2026-04-29.
 
 ---
 
@@ -124,7 +124,13 @@ Resumen de items activos:
 |---|---|---|
 | [docs-raiz/planes/REFACTOR_MAESTRO_2026_04_23.md](docs-raiz/planes/REFACTOR_MAESTRO_2026_04_23.md) | Plan maestro 2026-04-23: 3 fases (Fase 0 unificar eje 0-30d / Fase 1 nose print + paw passport 30-90d / Fase 2 monetización seguros+pharma+retail). 2.438 lineas. **FUENTE DE VERDAD** del refactor en curso | **Fase 0 ✅, Fase 1 §6 ✅, Fase 2 scaffolding ✅, Fase 3 §2.9 ✅, §14.bis acciones ✅ (al 2026-04-27)**. 14 migraciones aplicadas, 35+ edge fns, 6 admin paneles nuevos (Fase 1 KPIs, B2B keys, Correlations, Master KPIs, Project Health, Risk Monitor). Pendiente Pedro: rotar APIs + Vault + 7 crones pg_cron + test 4 mascotas DINOv2 nose-print. Ver [_pending/MANUAL_ACTIONS_PENDING_FASE_0.md](_pending/MANUAL_ACTIONS_PENDING_FASE_0.md) |
 | [_pending/AUDITORIA_FEATURES_2026_04_27.md](_pending/AUDITORIA_FEATURES_2026_04_27.md) | Ejecucion §2.10 matriz de evaluacion: 9 pilares activos / 5 refactorizadas / 12 escondidas / 7 Fase 2 dormidas. 6 acciones derivadas | Activo — 1 accion (PRO_ANALYTICS gate) ya ejecutada 2026-04-27 |
-| [docs-raiz/B2B_API_V1.md](docs-raiz/B2B_API_V1.md) | Documentacion del API B2B v1 (auth via X-Pawfriend-Api-Key + 4 endpoints + 3 tiers) | Listo, esperando primer deal |
+| [docs-raiz/B2B_API_V1.md](docs-raiz/B2B_API_V1.md) | Documentacion del API B2B v1 (auth via X-Pawfriend-Api-Key + 4 endpoints + 3 tiers) | Listo, esperando primer deal. Onboarding flow `/aplicar?tipo=b2b_api` + `/b2b` portal + email automatico (commit d86f0af6) |
+| [docs-raiz/PAW_SHIELD_DATA_ARCHIVE.md](docs-raiz/PAW_SHIELD_DATA_ARCHIVE.md) | Spec archivado de imagenes Paw Shield para entrenar modelo propio (consent ARCO + cron lifecycle 30d) | **Implementada 2026-04-29 (commit f180e5fe)** — falta Pedro aplicar mig 20260911 + deploy edge fn cleanup |
+| [docs-raiz/PAW_SHIELD_PLAYBOOK.md](docs-raiz/PAW_SHIELD_PLAYBOOK.md) | Playbook estrategia Paw Shield · control costos Petify · features owner/vet/refugio | Activo. Pricing actualizado 3 tiers (Basic $0.50/Pro $0.75/Enterprise contact) |
+| [docs-raiz/PAW_SHIELD_IDEAS_BANK.md](docs-raiz/PAW_SHIELD_IDEAS_BANK.md) | Banco de 24 ideas RICE-priorizadas para explotar biometria + breed_profile + pet_food_preferences | Activo, lista para implementar mañana |
+| [docs-raiz/REVENUE_MASTER_PLAN_2026.md](docs-raiz/REVENUE_MASTER_PLAN_2026.md) | Plan revenue master 2026: 5 motores B2B + ARR Y1/Y3 conservador/optimista | Activo |
+| [docs-raiz/BRAND_SYSTEM_2026.md](docs-raiz/BRAND_SYSTEM_2026.md) | Brand System 2026 consolidado: paletas (app + 11 pitches) + tipografia + logos + iconos + numeros canonicos compartidos | **NUEVO 2026-04-29** · Reemplaza `pawfriend-omnichannel-brand-assets-and-prompts.md` (archivado) y `BRAND_KIT_PITCHES.md` (marcado superseded) |
+| [docs-raiz/ASSETS_GENERATION_PLAN.md](docs-raiz/ASSETS_GENERATION_PLAN.md) | Master ejecutable: prompts ready-to-paste por asset + IA recomendada + status de wire-up (sec 14) | **NUEVO 2026-04-29** · Companion ejecutable de BRAND_SYSTEM. La mayoria del backlog ya esta en `public/brand-assets/` (commit 700d8e70) |
 | [_archive/docs-raiz-snapshots-2026-04/REFACTOR_ADOPCION_2026_04_24.md](_archive/docs-raiz-snapshots-2026-04/REFACTOR_ADOPCION_2026_04_24.md) | (archivado 2026-04-28) Sub-plan A+B+C+D+E flujo adopción ya 100% ejecutado | Histórico — ver flags `ADOPTION_UNIFIED_FEED` y `ADOPTION_PROCESSES_V1` |
 | [docs-raiz/planes/PRODUCT_SYSTEM_COHERENCE_MASTER_PLAN.md](docs-raiz/planes/PRODUCT_SYSTEM_COHERENCE_MASTER_PLAN.md) | Plan maestro 2026-04-21: coherencia booking + preventive care + navegacion + adopciones + wiring + Beta Labs. 43 secciones + 15 apendices, evidencia linea por linea | Ejecutado 100% (Dia 1 + Dia 2 + Fase Final + Fase 6 archivados en `_archive/`) |
 | [docs-raiz/planes/BOOKING_SYSTEM_MASTER_PLAN.md](docs-raiz/planes/BOOKING_SYSTEM_MASTER_PLAN.md) | Plan maestro booking 2026-04-21: 16 brechas. P0 (B2, B3, B8) ejecutados. B5-B16 (P1/P2) pendientes | Activo — P0 ejecutados, P1/P2 pendientes |

@@ -2,8 +2,32 @@
 
 > Documento de referencia: cada modulo, sus archivos, flujo end-to-end y oportunidades de mejora.
 > Generado: 2026-04-10. Verificado contra el codigo real.
-> Ultima sync de metricas: 2026-04-17 (reordenamiento v3 aplicado).
+> Ultima sync: 2026-04-29 (B2B onboarding + Paw Shield archive + brand v2 wire-up).
 > Anotaciones de rol: owner (O), provider (P), admin (A), compartido (O+P).
+
+---
+
+## Changelog 2026-04-29 — B2B onboarding + Paw Shield archive + brand v2
+
+**Nuevas paginas / componentes**:
+- `/b2b` ([B2BPortal.tsx](src/pages/B2BPortal.tsx)) — portal publico con docs + tiers + self-stats por API key (RPC `get_b2b_self_stats`).
+- `/aplicar?tipo=b2b_api` — nuevo kind en form de postulaciones publicas.
+- [PawShieldOverviewCard.tsx](src/components/paw-shield/PawShieldOverviewCard.tsx) — vista transversal en `/profile` con todas las mascotas y su estado biometrico.
+- [PawShieldPrivacyCard.tsx](src/components/paw-shield/PawShieldPrivacyCard.tsx) — toggle revoke ARCO consent en `/profile`.
+- [BrandBadge.tsx](src/components/BrandBadge.tsx) — componente reusable para badges artisticos (paw_member, paw_voice, paw_company, vet_verified).
+- [AdminPawShieldKPIs.tsx](src/components/admin/AdminPawShieldKPIs.tsx) — widget admin con cohort + COGS Petify estimado + alerta visual si excede $1k/mes.
+
+**Nuevas edge fns**:
+- `paw-shield-archive-cleanup` — cron diario que borra imagenes con `expires_at <= NOW()`.
+- `send-b2b-welcome` — email transaccional al partner B2B post-approve con API key + docs.
+
+**Migraciones a aplicar (Pedro)**:
+- `20260911000000_paw_shield_data_archive.sql` (bucket + tabla + RPC revoke/stats).
+- `20260912000000_b2b_api_application_flow.sql` (kind b2b_api + RPC approve_b2b_api_application + RPC get_b2b_self_stats).
+
+**Brand v2 wire-up**: empty states (MyPets/Reminders/Maps/Feed), badges (vet_verified en DirectorioVets + PerfilVetPublico, paw_member en `/paw-member` hero), 4 onboarding step illustrations, INSIGHTS_DASHBOARDS_MOCK con dashboards Bronze/Silver/Gold reales.
+
+**Subprocesadores Privacy Policy** actualizados: agregados Petify (PetNow) + Supabase Storage para Paw Shield archive opt-in.
 
 ---
 

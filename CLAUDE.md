@@ -251,7 +251,7 @@ de cuenta Flow a nombre SpA en curso. Ver memoria
 
 ---
 
-## 6. Edge Functions activas (29 + _shared)
+## 6. Edge Functions activas (38+ + _shared)
 
 ```
 _shared/                         # Helpers compartidos (ai-base, cors, flow-utils, prompt-utils, rate-limit, payment-gateway)
@@ -284,13 +284,18 @@ send-whatsapp-reminder/          # WhatsApp (pendiente verificacion Meta)
 verify-service-provider/         # Verificacion IA de proveedor
 verify-vet-document/             # Verificacion vet IA-assisted
 notify-pitch-application/        # Email a Pedro cuando alguien postula via /aplicar (any tipo)
+paw-shield-register/             # Petify register + dedup + archive (consent opt-in)
+paw-shield-identify/             # Petify identify 1:N publica para /nose-scan + archive
+paw-shield-archive-cleanup/      # Cron diario: borra imagenes archive con expires_at <= now
+send-b2b-welcome/                # Email transaccional al partner B2B post-approve con API key
+b2b-api/                         # 4 endpoints publicos B2B (breed_stats, species_stats, correlations, risk_score)
 ```
 
 ---
 
 ## 7. Rutas principales (de src/App.tsx)
 
-### Publicas (sin login) — 26 rutas
+### Publicas (sin login) — 27 rutas
 - `/` -- Landing
 - `/auth` -- Login/registro
 - `/veterinarios` -- Directorio publico vets

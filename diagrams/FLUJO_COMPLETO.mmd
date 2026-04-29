@@ -1,5 +1,13 @@
 flowchart TD
     %% ============================================================
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-29 (B2B onboarding + Paw Shield archive + brand v2 wire-up)
+    %% Cambios 2026-04-29:
+    %%   - Ruta publica /b2b (B2BPortal) con docs + self-stats via API key.
+    %%   - /aplicar?tipo=b2b_api flow: form publico → admin approve con tier picker → RPC approve_b2b_api_application → email automatico via send-b2b-welcome edge fn.
+    %%   - Paw Shield Data Archive: bucket privado paw-shield-archive + tabla paw_shield_archive + cron daily cleanup. Consent opt-in en PawShieldEnrollment + toggle revoke en /profile.
+    %%   - PawShieldOverviewCard transversal en /profile + AdminPawShieldKPIs widget con COGS Petify monitoring.
+    %%   - Auto-open Paw Shield enrollment desde ?activate=paw-shield (cierra loop onboarding).
+    %%   - Brand v2 wire-up: BrandBadge component, EmptyStateIllustration extendido, vet_verified badge en directorio + perfil publico, 4 onboarding step illustrations.
     %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-28 (Sprint 0+1 cierre auditoria)
     %% Cambios 2026-04-28 (Sprint 0+1 — 53 hallazgos cerrados):
     %%   - SEC-002: pets.is_public DEFAULT false (cierra fuga Ley 19.628).
