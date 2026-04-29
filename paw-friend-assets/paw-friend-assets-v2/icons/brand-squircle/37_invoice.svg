@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Boleta">
+  <title>Boleta</title>
+  <rect width="200" height="200" rx="40" ry="40" fill="#9333EA"/>
+  <path d="M 60 46 L 140 46 L 140 158 L 130 150 L 120 158 L 110 150 L 100 158 L 90 150 L 80 158 L 70 150 L 60 158 Z" fill="#fff"/>
+  <g stroke="#9333EA" stroke-width="3" stroke-linecap="round">
+    <line x1="72" y1="74" x2="128" y2="74"/>
+    <line x1="72" y1="92" x2="128" y2="92"/>
+    <line x1="72" y1="110" x2="110" y2="110"/>
+  </g>
+  <g transform="translate(122 116)">
+    <circle r="14" fill="none" stroke="#ec4899" stroke-width="2.5"/>
+    <circle r="9" fill="none" stroke="#ec4899" stroke-width="1.5"/>
+    <path d="M -4 0 L -1 4 L 5 -4" fill="none" stroke="#ec4899" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

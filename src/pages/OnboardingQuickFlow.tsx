@@ -284,6 +284,42 @@ export default function OnboardingQuickFlow() {
 
           <VaccinationCardOCR petId={createdPetId} onSaved={() => navigate(postRedirectTarget)} />
 
+          {/* Paw Shield nudge opcional — gateado por flag PAW_SHIELD_PETIFY.
+              Lleva al usuario a la ficha tab Identidad donde puede activar la
+              biometria de hocico. No bloquea el flow. */}
+          {isFeatureEnabled('PAW_SHIELD_PETIFY') && (
+            <Card className="mt-3 border-purple-200 bg-gradient-to-br from-purple-50 to-white">
+              <CardContent className="pt-6 space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="h-10 w-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shrink-0">
+                    <Shield className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h2 className="text-base font-semibold mb-1">
+                      ¿Quieres activar Paw Shield para {name}?
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      Si {name} se pierde, otros pueden encontrarlo escaneando su hocico. Es gratis,
+                      sin contrato y opcional. Toma 30 segundos.
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  onClick={() =>
+                    navigate(
+                      `${postRedirectTarget}${postRedirectTarget.includes('?') ? '&' : '?'}activate=paw-shield`
+                    )
+                  }
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                  size="sm"
+                >
+                  <ShieldCheck className="h-4 w-4 mr-1.5" />
+                  Activar Paw Shield
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
           <div className="flex justify-center pt-4">
             <Button
               variant="ghost"

@@ -14,6 +14,7 @@ import AdminMRRChart from '@/components/admin/AdminMRRChart';
 import AdminComunaGap from '@/components/admin/AdminComunaGap';
 import AdminAdoptionFunnel from '@/components/admin/AdminAdoptionFunnel';
 import AdminFase1Widget from '@/components/admin/AdminFase1Widget';
+import { AdminPawShieldKPIs } from '@/components/admin/AdminPawShieldKPIs';
 import { AdminRiskMonitor } from '@/components/admin/AdminRiskMonitor';
 import AdminPulsoDiario from '@/components/admin/AdminPulsoDiario';
 import { BookingPulseWidget } from '@/components/admin/BookingPulseWidget';
@@ -729,6 +730,9 @@ export default function AdminDashboard() {
 
       {/* ── Fase 1 Refactor Maestro: nose print, memorial, passport, etc ── */}
       <AdminFase1Widget />
+
+      {/* ── Paw Shield · Petify monitoring + COGS estimado ── */}
+      <AdminPawShieldKPIs />
 
       {/* ── Pulso Diario: monitor auto-pilotado (audit-cron-daily) ── */}
       <AdminPulsoDiario />

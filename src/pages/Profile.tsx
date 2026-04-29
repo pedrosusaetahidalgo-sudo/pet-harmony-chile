@@ -24,6 +24,7 @@ import { EditProfileDrawer } from '@/components/profile/EditProfileDrawer';
 import { BecomeProviderCTA } from '@/components/BecomeProviderCTA';
 import { OfferServicesBanner } from '@/components/OfferServicesBanner';
 import { MyApplicationsSection } from '@/components/MyApplicationsSection';
+import { PawShieldOverviewCard } from '@/components/paw-shield/PawShieldOverviewCard';
 import { PawShieldPrivacyCard } from '@/components/paw-shield/PawShieldPrivacyCard';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -241,7 +242,12 @@ const Profile = () => {
             PRODUCT_SYSTEM_COHERENCE_MASTER_PLAN §33.4. ── */}
       <MyApplicationsSection />
 
-      {/* ── Bloque C.4: Privacidad Paw Shield archive (ARCO Ley 19.628).
+      {/* ── Bloque C.4: Paw Shield overview transversal (todas las mascotas
+            con su estado biometrico + CTA a la ficha). Solo si flag
+            PAW_SHIELD_PETIFY=true. ── */}
+      <PawShieldOverviewCard />
+
+      {/* ── Bloque C.5: Privacidad Paw Shield archive (ARCO Ley 19.628).
             Se auto-esconde si el user no tiene mascotas con consent. Spec:
             docs-raiz/PAW_SHIELD_DATA_ARCHIVE.md. ── */}
       <PawShieldPrivacyCard />

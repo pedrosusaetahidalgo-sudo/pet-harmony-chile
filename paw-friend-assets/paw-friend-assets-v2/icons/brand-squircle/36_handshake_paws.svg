@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Alianza patas">
+  <title>Alianza</title>
+  <rect width="200" height="200" rx="40" ry="40" fill="#10b981"/>
+  <g fill="#fff" stroke="#10b981" stroke-width="2.5" stroke-linejoin="round">
+    <path d="M 38 100 L 58 92 C 70 88, 82 92, 92 102 L 100 110 L 92 118 C 82 128, 70 132, 58 128 L 38 120 Z"/>
+    <path d="M 162 100 L 142 92 C 130 88, 118 92, 108 102 L 100 110 L 108 118 C 118 128, 130 132, 142 128 L 162 120 Z"/>
+  </g>
+  <g fill="#10b981">
+    <circle cx="46" cy="86" r="4"/>
+    <circle cx="54" cy="78" r="3.5"/>
+    <circle cx="64" cy="76" r="3.5"/>
+    <circle cx="154" cy="86" r="4"/>
+    <circle cx="146" cy="78" r="3.5"/>
+    <circle cx="136" cy="76" r="3.5"/>
+  </g>
+  <g fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".5">
+    <path d="M 100 60 L 96 50"/>
+    <path d="M 110 64 L 116 56"/>
+    <path d="M 88 64 L 82 56"/>
+  </g>
+</svg>

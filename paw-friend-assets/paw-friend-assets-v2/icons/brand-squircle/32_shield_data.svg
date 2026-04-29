@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Datos protegidos">
+  <title>Datos protegidos</title>
+  <rect width="200" height="200" rx="40" ry="40" fill="#9333EA"/>
+  <path d="M 100 48 L 56 64 L 56 108 C 56 134, 76 154, 100 162 C 124 154, 144 134, 144 108 L 144 64 Z" fill="#fff"/>
+  <path d="M 88 100 L 88 92 A 12 12 0 0 1 112 92 L 112 100" fill="none" stroke="#9333EA" stroke-width="3" stroke-linecap="round"/>
+  <rect x="84" y="100" width="32" height="24" rx="4" fill="#9333EA"/>
+  <circle cx="100" cy="112" r="2.5" fill="#fff"/>
+  <path d="M 158 44 L 162 54 L 172 58 L 162 62 L 158 72 L 154 62 L 144 58 L 154 54 Z" fill="#fde047"/>
+</svg>

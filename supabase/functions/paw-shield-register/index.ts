@@ -49,6 +49,16 @@ const DUPLICATE_SCORE_THRESHOLD = 92;
 /** Si gap top1-top2 < este valor, es ambiguo (perros hermanos). */
 const AMBIGUOUS_GAP_THRESHOLD = 5;
 
+// ── Circuit breaker config ────────────────────────────────────────────
+/** Max enrollments por usuario por dia (anti-abuso). */
+const RATE_LIMIT_PER_USER_24H = parseInt(Deno.env.get('PAW_SHIELD_RATE_LIMIT_USER_24H') ?? '5', 10);
+/**
+ * Global cap: si pets activos en Petify > este numero, bloqueamos nuevos
+ * registros (proteccion contra runaway costs). 0 = sin limite.
+ * Default 100k = ~$75k USD/mes COGS Petify Pro tier — circuito de seguridad.
+ */
+const GLOBAL_PET_CAP = parseInt(Deno.env.get('PAW_SHIELD_GLOBAL_PET_CAP') ?? '100000', 10);
+
 interface RegisterRequest {
   pet_id: string;
   species: PetifySpecies;
@@ -194,6 +204,81 @@ serve(
         }),
         { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // ── Circuit breaker 1: rate limit per-user 24h ─────────────────────
+    try {
+      const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { count: recentAttempts } = await (supabase as any)
+        .from('paw_shield_events')
+        .select('id', { count: 'exact', head: true })
+        .eq('owner_id', userId)
+        .eq('event_type', 'register_success')
+        .gte('created_at', since);
+
+      if ((recentAttempts ?? 0) >= RATE_LIMIT_PER_USER_24H) {
+        await logEvent(supabase, {
+          pet_id: body.pet_id,
+          owner_id: userId,
+          event_type: 'register_rate_limited',
+          error_code: 'RATE_LIMIT_USER',
+          error_message: `${recentAttempts}/${RATE_LIMIT_PER_USER_24H} enrollments in last 24h`,
+        });
+        return new Response(
+          JSON.stringify({
+            status: 'rate_limited',
+            error: `Limite de ${RATE_LIMIT_PER_USER_24H} activaciones de Paw Shield por dia. Intenta manana.`,
+          }),
+          {
+            status: 429,
+            headers: {
+              ...corsHeaders,
+              'Content-Type': 'application/json',
+              'Retry-After': '86400',
+            },
+          }
+        );
+      }
+    } catch (e) {
+      // Fail-open en rate limit (no bloqueamos por error de DB).
+      console.warn('[paw-shield-register] rate limit check fallo, sigo:', e);
+    }
+
+    // ── Circuit breaker 2: global pet cap ──────────────────────────────
+    if (GLOBAL_PET_CAP > 0) {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { count: globalActive } = await (supabase as any)
+          .from('pets')
+          .select('id', { count: 'exact', head: true })
+          .not('petify_pet_id', 'is', null);
+
+        if ((globalActive ?? 0) >= GLOBAL_PET_CAP) {
+          await logEvent(supabase, {
+            pet_id: body.pet_id,
+            owner_id: userId,
+            event_type: 'register_global_cap',
+            error_code: 'GLOBAL_CAP',
+            error_message: `${globalActive}/${GLOBAL_PET_CAP} active pets`,
+          });
+          return new Response(
+            JSON.stringify({
+              status: 'service_unavailable',
+              error:
+                'Paw Shield esta temporalmente al limite. Estamos negociando capacidad adicional. Intenta mas tarde.',
+            }),
+            {
+              status: 503,
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            }
+          );
+        }
+      } catch (e) {
+        // Fail-open: si el query falla, dejamos pasar (pet cap es proteccion
+        // soft, no esencial).
+        console.warn('[paw-shield-register] global cap check fallo, sigo:', e);
+      }
     }
 
     // Convert base64 → Blobs.

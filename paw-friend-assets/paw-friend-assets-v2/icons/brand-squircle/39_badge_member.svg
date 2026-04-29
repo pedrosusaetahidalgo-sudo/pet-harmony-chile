@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Paw Member badge">
+  <title>Paw Member</title>
+  <defs>
+    <linearGradient id="g39" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#eab308"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="40" ry="40" fill="url(#g39)"/>
+  <g fill="#fde047">
+    <path d="M 78 50 L 86 60 L 100 48 L 114 60 L 122 50 L 122 64 L 78 64 Z"/>
+    <circle cx="78" cy="50" r="3"/>
+    <circle cx="100" cy="48" r="3"/>
+    <circle cx="122" cy="50" r="3"/>
+  </g>
+  <path d="M 100 72 L 64 84 L 64 120 C 64 138, 80 152, 100 158 C 120 152, 136 138, 136 120 L 136 84 Z" fill="#fff"/>
+  <g fill="#9333EA" transform="translate(72 88) scale(0.082)">
+    <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+    <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+    <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+    <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+    <ellipse cx="340" cy="430" rx="155" ry="135"/>
+  </g>
+</svg>

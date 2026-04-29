@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Mapa veterinarios">
+  <title>Mapa veterinarios</title>
+  <rect width="200" height="200" rx="40" ry="40" fill="#10b981"/>
+  <path d="M 100 50 C 76 50, 56 70, 56 94 C 56 124, 100 158, 100 158 C 100 158, 144 124, 144 94 C 144 70, 124 50, 100 50 Z" fill="#fff"/>
+  <circle cx="100" cy="92" r="22" fill="#10b981"/>
+  <g fill="#fff" transform="translate(83 75) scale(0.05)">
+    <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+    <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+    <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+    <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+    <ellipse cx="340" cy="430" rx="155" ry="135"/>
+  </g>
+  <ellipse cx="100" cy="166" rx="14" ry="3" fill="#000" opacity=".15"/>
+</svg>

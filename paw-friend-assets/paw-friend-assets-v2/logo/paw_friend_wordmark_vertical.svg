@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" role="img" aria-label="Paw Friend wordmark vertical">
+  <title>Paw Friend — vertical lockup</title>
+  <defs>
+    <mask id="hc-vert">
+      <rect width="400" height="500" fill="white"/>
+      <path d="M 200 168 C 196 162, 188 156, 184 150 C 180 144, 181 137, 188 135 C 192 134, 196 137, 200 141 C 204 137, 208 134, 212 135 C 219 137, 220 144, 216 150 C 212 156, 204 162, 200 168 Z" fill="black"/>
+    </mask>
+  </defs>
+  <g transform="translate(80 30)">
+    <path d="M 120 0 C 192 0, 240 36, 240 120 C 240 204, 192 240, 120 240 C 48 240, 0 204, 0 120 C 0 36, 48 0, 120 0 Z" fill="#9333EA"/>
+    <g fill="#fff" transform="scale(0.353)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+    </g>
+    <ellipse cx="120" cy="152" rx="55" ry="48" fill="#fff" mask="url(#hc-vert)"/>
+  </g>
+  <g transform="translate(200 350)" text-anchor="middle">
+    <text font-family="Fredoka, sans-serif" font-size="56" font-weight="600" letter-spacing="-1.5">
+      <tspan fill="#6B21A8">paw</tspan><tspan fill="#9333EA" font-weight="500"> friend</tspan>
+    </text>
+  </g>
+  <text x="200" y="395" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" fill="#9333EA" letter-spacing="3">HECHO EN CHILE</text>
+</svg>
