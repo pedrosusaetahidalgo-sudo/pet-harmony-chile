@@ -97,13 +97,14 @@ BEGIN
   END IF;
 END $$;
 
--- ─── pet_timeline_events (pet_id, event_date DESC) ───
--- Hot query: ficha clinica timeline.
+-- ─── pet_timeline_events (pet_id, event_at DESC) ───
+-- Hot query: ficha clinica timeline. Columna canonica es `event_at`
+-- (TIMESTAMPTZ del evento), no `event_date`.
 DO $$
 BEGIN
   IF to_regclass('public.pet_timeline_events') IS NOT NULL THEN
     CREATE INDEX IF NOT EXISTS idx_pet_timeline_events_pet_date
-      ON public.pet_timeline_events (pet_id, event_date DESC);
+      ON public.pet_timeline_events (pet_id, event_at DESC);
   END IF;
 END $$;
 
