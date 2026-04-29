@@ -12,7 +12,7 @@
 
 ## Resumen ejecutivo (1 parrafo)
 
-Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas, conecta a duenos con veterinarios a traves de un directorio publico con pricing transparente, y canaliza aportes trazables hacia refugios. Construida en 2 meses por un ingeniero chileno con asistencia de IA (Claude), alcanza alcance funcional equivalente a USD $720K-$1,44M de desarrollo tradicional. **Modelo v2 (post-mentoria Roberto Camhi 2026-04-22)**: el dueno NUNCA paga, el vet es canal de adquisicion gratuito, y el revenue viene de **3 pilares ancla B2B** (pharma + seguros + retail) + **2 soporte** (Paw Companys empresas + Paw Support voluntario). Meta ARR USD $300-500K en 12 meses, USD $940K-$2.1M en 18 meses, piloto LATAM en mes 12+.
+Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas, conecta a duenos con veterinarios a traves de un directorio publico con pricing transparente, y canaliza aportes trazables hacia refugios. Construida en 2 meses por un ingeniero chileno con asistencia de IA (Claude), alcanza alcance funcional equivalente a USD $720K-$1,44M de desarrollo tradicional. **Modelo v2 (2026-04-22)**: el dueno NUNCA paga, el vet es canal de adquisicion gratuito, y el revenue viene de **3 pilares ancla B2B** (pharma + seguros + retail) + **2 soporte** (Paw Companys empresas + Paw Support voluntario). Meta ARR USD $300-500K en 12 meses, USD $940K-$2.1M en 18 meses, piloto LATAM en mes 12+.
 
 ---
 
@@ -88,7 +88,7 @@ Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas,
 
 ---
 
-## 4. Modelo de negocio (modelo v2 post-Roberto Camhi 2026-04-22)
+## 4. Modelo de negocio (modelo v2 2026-04-22)
 
 > **Paralelismo Mapcity**: Mapcity no le cobraba a las tiendas — le cobraba a
 > Equifax, bancos e inmobiliarias por acceso a la data. Paw Friend no le cobra

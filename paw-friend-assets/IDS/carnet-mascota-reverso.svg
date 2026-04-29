@@ -1,0 +1,70 @@
+<svg width="400" height="250" viewBox="0 0 400 250" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>Carnet de mascota Paw Friend - reverso</title>
+  <desc>Reverso del carnet con registro de vacunas, alertas medicas, callout de contacto en caso de extravio y linea de firma.</desc>
+
+  <defs>
+    <pattern id="paws-back" x="0" y="0" width="44" height="44" patternUnits="userSpaceOnUse">
+      <g opacity="0.05" fill="#1D9E75">
+        <ellipse cx="6" cy="22" rx="1.8" ry="2.4"/>
+        <ellipse cx="12" cy="16" rx="1.8" ry="2.4"/>
+        <ellipse cx="18" cy="16" rx="1.8" ry="2.4"/>
+        <ellipse cx="24" cy="22" rx="1.8" ry="2.4"/>
+        <ellipse cx="15" cy="28" rx="4.5" ry="3.5"/>
+      </g>
+    </pattern>
+  </defs>
+
+  <rect x="0" y="0" width="400" height="250" rx="14" fill="#FFFBF5" stroke="#D9CFB8" stroke-width="0.5"/>
+  <rect x="0" y="0" width="400" height="250" rx="14" fill="url(#paws-back)"/>
+  <rect x="6" y="6" width="388" height="238" rx="10" fill="none" stroke="#1D9E75" stroke-width="0.5" opacity="0.4"/>
+  <rect x="9" y="9" width="382" height="232" rx="8" fill="none" stroke="#1D9E75" stroke-width="0.3" opacity="0.3"/>
+
+  <path d="M 6 14 Q 6 6 14 6 L 386 6 Q 394 6 394 14 L 394 36 L 6 36 Z" fill="#1D9E75"/>
+  <path d="M 6 14 Q 6 6 14 6 L 386 6 Q 394 6 394 14 L 394 18 L 6 18 Z" fill="#FFFFFF" opacity="0.12"/>
+
+  <g transform="translate(16, 11)" fill="#FFFBF5">
+    <ellipse cx="3" cy="11" rx="2.2" ry="2.8"/>
+    <ellipse cx="9" cy="6" rx="2.2" ry="2.8"/>
+    <ellipse cx="15" cy="6" rx="2.2" ry="2.8"/>
+    <ellipse cx="21" cy="11" rx="2.2" ry="2.8"/>
+    <ellipse cx="12" cy="18" rx="5.5" ry="4.5"/>
+  </g>
+  <text x="48" y="24" fill="#FFFBF5" font-family="system-ui, sans-serif" font-size="12" font-weight="500">PAW FRIEND</text>
+  <text x="380" y="24" fill="#FFFBF5" font-family="system-ui, sans-serif" font-size="11" text-anchor="end">Reverso · Back</text>
+
+  <text x="20" y="52" font-family="system-ui, sans-serif" font-size="11" font-weight="500" fill="#0F6E56" letter-spacing="0.5">REGISTRO DE VACUNAS · VACCINATION RECORD</text>
+
+  <rect x="20" y="58" width="360" height="14" fill="#1D9E7515"/>
+  <g font-family="system-ui, sans-serif" font-size="11" fill="#0F6E56" font-weight="500">
+    <text x="26" y="68">Fecha / Date</text>
+    <text x="116" y="68">Vacuna / Vaccine</text>
+    <text x="226" y="68">Lote / Batch</text>
+    <text x="306" y="68">Vet</text>
+  </g>
+  <line x1="20" y1="72" x2="380" y2="72" stroke="#1D9E75" stroke-width="0.5"/>
+  <line x1="20" y1="90" x2="380" y2="90" stroke="#B4B2A9" stroke-width="0.3"/>
+  <line x1="20" y1="108" x2="380" y2="108" stroke="#B4B2A9" stroke-width="0.3"/>
+  <line x1="20" y1="126" x2="380" y2="126" stroke="#B4B2A9" stroke-width="0.3"/>
+  <line x1="110" y1="58" x2="110" y2="126" stroke="#B4B2A9" stroke-width="0.3"/>
+  <line x1="220" y1="58" x2="220" y2="126" stroke="#B4B2A9" stroke-width="0.3"/>
+  <line x1="300" y1="58" x2="300" y2="126" stroke="#B4B2A9" stroke-width="0.3"/>
+
+  <text x="20" y="142" font-family="system-ui, sans-serif" font-size="11" font-weight="500" fill="#993C1D" letter-spacing="0.5">ALERTAS MÉDICAS · MEDICAL ALERTS</text>
+  <text x="20" y="158" font-family="system-ui, sans-serif" font-size="11" fill="#888780">Alergias / Allergies</text>
+  <line x1="20" y1="168" x2="380" y2="168" stroke="#B4B2A9" stroke-width="0.5"/>
+  <text x="20" y="180" font-family="system-ui, sans-serif" font-size="11" fill="#888780">Condiciones / Conditions</text>
+  <line x1="20" y1="190" x2="380" y2="190" stroke="#B4B2A9" stroke-width="0.5"/>
+
+  <g transform="translate(20, 198)">
+    <rect x="0" y="0" width="180" height="34" rx="3" fill="#FAEEDA" stroke="#BA7517" stroke-width="0.5"/>
+    <text x="8" y="14" font-family="system-ui, sans-serif" font-size="11" font-weight="500" fill="#854F0B">Si me encuentras / If found</text>
+    <text x="8" y="28" font-family="system-ui, sans-serif" font-size="11" fill="#854F0B">+56 9 _____ _____</text>
+  </g>
+
+  <g transform="translate(210, 198)">
+    <text x="0" y="14" font-family="system-ui, sans-serif" font-size="11" fill="#888780">Firma tutor / Owner signature</text>
+    <line x1="0" y1="30" x2="170" y2="30" stroke="#B4B2A9" stroke-width="0.5"/>
+  </g>
+
+  <text x="20" y="244" font-family="system-ui, sans-serif" font-size="11" fill="#888780">Documento interno · Paw Friend Chile · pawfriend.cl</text>
+</svg>

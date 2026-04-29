@@ -4,7 +4,7 @@
 > **Ronda**: pre-seed **USD $150K SAFE** con cap **USD $1,2M post-money**.
 > **Stage**: producto en produccion, pre-traccion comercial, founder solo + co-founder en pipeline.
 >
-> Ultima revision: 2026-04-27 (modelo v2 post-Roberto Camhi).
+> Ultima revision: 2026-04-27 (modelo v2 2026-04-22).
 > Contacto: pedrosusaeta@pawfriend.cl
 >
 > **⚠️ Modelo v2 vigente desde 2026-04-22**. Ver [`docs-raiz/pitch/MODELO_V2_2026_04_22.md`](../docs-raiz/pitch/MODELO_V2_2026_04_22.md).
@@ -189,7 +189,7 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 
 - **Paw Support es proxy de NPS monetizable**, no revenue core.
 - Revenue core viene de **3 pilares ancla**: pharma, seguros, retail.
-- Reframe legal (Roberto Camhi 2026-04-22): "donacion" en Chile activa Ley 19.885 (donatarios, SII, credito tributario). Por eso lo llamamos **"pago voluntario por servicio"** — Paw Support.
+- Reframe legal (insight 2026-04-22): "donacion" en Chile activa Ley 19.885 (donatarios, SII, credito tributario). Por eso lo llamamos **"pago voluntario por servicio"** — Paw Support.
 - Paw Companys (recurrente B2B) es el motor comunitario real, no Paw Support.
 - Costo de operar Paw Support: marginal (infraestructura Flow ya pagada).
 

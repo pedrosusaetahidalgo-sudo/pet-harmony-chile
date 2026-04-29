@@ -10,7 +10,7 @@
 
 ### El dueño nunca paga. Punto.
 
-> Modelo v2 post-Roberto Camhi: "Producto invisible. Mapcity no le cobraba a las tiendas, le cobraba a Equifax."
+> Modelo v2 (insight estrategico 2026-04-22): "Producto invisible. Mapcity no le cobraba a las tiendas, le cobraba a Equifax."
 
 **Por qué se mantiene**:
 1. Mercado chileno: 70% del NSE C-D no pagaría suscripción mensual por su mascota.

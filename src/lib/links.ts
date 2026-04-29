@@ -122,7 +122,7 @@ export const LINKS = {
   pawCore: () => '/paw-core',
   /** Membresía voluntaria (badge, sin features extra) */
   pawMember: () => '/paw-member',
-  /** Paw Support — apoyo voluntario del dueño (modelo v2 post-Roberto Camhi
+  /** Paw Support — apoyo voluntario del dueño (modelo v2 2026-04-22
    *  2026-04-22, reemplaza "Donaciones" en UI pública). La ruta /donaciones
    *  sigue viva como alias 3 meses para no romper backlinks. */
   pawSupport: () => '/paw-support',

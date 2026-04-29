@@ -1,0 +1,150 @@
+<svg width="600" height="450" viewBox="0 0 600 450" xmlns="http://www.w3.org/2000/svg" role="img">
+  <title>Pasaporte de mascota Paw Friend - abierto</title>
+  <desc>Pasaporte de mascota abierto a doble pagina con datos de la mascota, tutor, veterinario, espacio para timbre y campos editables.</desc>
+
+  <defs>
+    <pattern id="paws-pp" x="0" y="0" width="44" height="44" patternUnits="userSpaceOnUse">
+      <g opacity="0.05" fill="#1D9E75">
+        <ellipse cx="6" cy="22" rx="1.8" ry="2.4"/>
+        <ellipse cx="12" cy="16" rx="1.8" ry="2.4"/>
+        <ellipse cx="18" cy="16" rx="1.8" ry="2.4"/>
+        <ellipse cx="24" cy="22" rx="1.8" ry="2.4"/>
+        <ellipse cx="15" cy="28" rx="4.5" ry="3.5"/>
+      </g>
+    </pattern>
+  </defs>
+
+  <rect x="0" y="0" width="600" height="450" rx="6" fill="#FFFBF5" stroke="#D9CFB8" stroke-width="0.5"/>
+  <rect x="0" y="0" width="600" height="450" rx="6" fill="url(#paws-pp)"/>
+  <rect x="10" y="10" width="580" height="430" rx="3" fill="none" stroke="#1D9E75" stroke-width="0.5" opacity="0.4"/>
+  <rect x="14" y="14" width="572" height="422" rx="2" fill="none" stroke="#1D9E75" stroke-width="0.3" opacity="0.3"/>
+  <rect x="298" y="14" width="4" height="422" fill="#D9CFB8" opacity="0.6"/>
+  <line x1="300" y1="14" x2="300" y2="436" stroke="#B4B2A9" stroke-width="0.5"/>
+
+  <rect x="22" y="22" width="270" height="56" rx="4" fill="#1D9E75"/>
+  <rect x="22" y="22" width="270" height="6" rx="4" fill="#FFFFFF" opacity="0.15"/>
+  <g transform="translate(36, 38)" fill="#FFFBF5">
+    <ellipse cx="4" cy="14" rx="2.8" ry="3.6"/>
+    <ellipse cx="11" cy="8" rx="2.8" ry="3.6"/>
+    <ellipse cx="19" cy="8" rx="2.8" ry="3.6"/>
+    <ellipse cx="26" cy="14" rx="2.8" ry="3.6"/>
+    <ellipse cx="15" cy="22" rx="7" ry="5.5"/>
+  </g>
+  <text x="78" y="46" fill="#FFFBF5" font-family="system-ui, sans-serif" font-size="14" font-weight="500">PAW FRIEND</text>
+  <text x="78" y="62" fill="#FFFBF5" font-family="system-ui, sans-serif" font-size="11">Pasaporte de mascota · Pet passport</text>
+  <text x="78" y="74" fill="#FFFBF5" font-family="system-ui, sans-serif" font-size="11">Edición 2026 · Chile</text>
+
+  <text x="22" y="100" font-family="system-ui, sans-serif" font-size="11" font-weight="500" fill="#0F6E56" letter-spacing="1">DATOS DE LA MASCOTA · PET DETAILS</text>
+  <line x1="22" y1="108" x2="282" y2="108" stroke="#1D9E75" stroke-width="0.5"/>
+
+  <rect x="22" y="120" width="110" height="142" rx="3" fill="#F1EFE8" stroke="#B4B2A9" stroke-width="0.5"/>
+  <g stroke="#5F5E5A" stroke-width="0.8" fill="none">
+    <path d="M 22 126 L 22 120 L 28 120"/>
+    <path d="M 126 120 L 132 120 L 132 126"/>
+    <path d="M 22 256 L 22 262 L 28 262"/>
+    <path d="M 126 262 L 132 262 L 132 256"/>
+  </g>
+  <g transform="translate(57, 175)" fill="#B4B2A9">
+    <ellipse cx="6" cy="16" rx="3" ry="4"/>
+    <ellipse cx="14" cy="10" rx="3" ry="4"/>
+    <ellipse cx="22" cy="10" rx="3" ry="4"/>
+    <ellipse cx="30" cy="16" rx="3" ry="4"/>
+    <ellipse cx="18" cy="26" rx="8" ry="6"/>
+  </g>
+
+  <g font-family="system-ui, sans-serif" fill="#5F5E5A">
+    <text x="142" y="132" font-size="11" fill="#888780">Nombre / Name</text>
+    <line x1="142" y1="142" x2="282" y2="142" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="142" y="160" font-size="11" fill="#888780">Especie / Species</text>
+    <line x1="142" y1="170" x2="282" y2="170" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="142" y="188" font-size="11" fill="#888780">Raza / Breed</text>
+    <line x1="142" y1="198" x2="282" y2="198" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="142" y="216" font-size="11" fill="#888780">Sexo / Sex</text>
+    <line x1="142" y1="226" x2="220" y2="226" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="232" y="216" font-size="11" fill="#888780">Color</text>
+    <line x1="232" y1="226" x2="282" y2="226" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="142" y="244" font-size="11" fill="#888780">Esterilizado / Neutered</text>
+    <line x1="142" y1="254" x2="282" y2="254" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="22" y="282" font-size="11" fill="#888780">Fecha nacimiento / Date of birth</text>
+    <line x1="22" y1="292" x2="150" y2="292" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="162" y="282" font-size="11" fill="#888780">Peso / Weight</text>
+    <line x1="162" y1="292" x2="282" y2="292" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="22" y="310" font-size="11" fill="#888780">N° microchip / Microchip ID</text>
+    <line x1="22" y1="320" x2="282" y2="320" stroke="#B4B2A9" stroke-width="0.5"/>
+    <text x="22" y="338" font-size="11" fill="#888780">Señas particulares / Distinguishing marks</text>
+    <line x1="22" y1="350" x2="282" y2="350" stroke="#B4B2A9" stroke-width="0.5"/>
+    <line x1="22" y1="368" x2="282" y2="368" stroke="#B4B2A9" stroke-width="0.5"/>
+  </g>
+
+  <text x="22" y="408" font-family="system-ui, sans-serif" font-size="11" fill="#888780">Documento de identificación interno · Paw Friend Chile</text>
+  <text x="22" y="424" font-family="system-ui, sans-serif" font-size="11" fill="#B4B2A9">No reemplaza documentación sanitaria oficial</text>
+  <text x="282" y="424" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" font-weight="500" fill="#5F5E5A">2 / 16</text>
+
+  <g transform="translate(300, 0)">
+    <g transform="translate(218, 28)">
+      <circle cx="32" cy="32" r="32" fill="none" stroke="#1D9E75" stroke-width="1.5" opacity="0.5"/>
+      <circle cx="32" cy="32" r="28" fill="none" stroke="#1D9E75" stroke-width="0.5" opacity="0.5"/>
+      <circle cx="32" cy="32" r="22" fill="#1D9E75" opacity="0.08"/>
+      <g transform="translate(15, 16)" fill="#0F6E56">
+        <ellipse cx="4" cy="18" rx="3.5" ry="4.5"/>
+        <ellipse cx="12" cy="10" rx="3.5" ry="4.5"/>
+        <ellipse cx="22" cy="10" rx="3.5" ry="4.5"/>
+        <ellipse cx="30" cy="18" rx="3.5" ry="4.5"/>
+        <ellipse cx="17" cy="28" rx="9" ry="7"/>
+      </g>
+    </g>
+
+    <text x="22" y="46" font-family="system-ui, sans-serif" font-size="11" font-weight="500" fill="#0F6E56" letter-spacing="1">DATOS DEL TUTOR · OWNER</text>
+    <line x1="22" y1="54" x2="200" y2="54" stroke="#1D9E75" stroke-width="0.5"/>
+
+    <g font-family="system-ui, sans-serif" fill="#5F5E5A">
+      <text x="22" y="72" font-size="11" fill="#888780">Nombre completo / Full name</text>
+      <line x1="22" y1="82" x2="282" y2="82" stroke="#B4B2A9" stroke-width="0.5"/>
+      <text x="22" y="100" font-size="11" fill="#888780">RUT</text>
+      <line x1="22" y1="110" x2="148" y2="110" stroke="#B4B2A9" stroke-width="0.5"/>
+      <text x="160" y="100" font-size="11" fill="#888780">Teléfono / Phone</text>
+      <line x1="160" y1="110" x2="282" y2="110" stroke="#B4B2A9" stroke-width="0.5"/>
+      <text x="22" y="128" font-size="11" fill="#888780">Email / Correo</text>
+      <line x1="22" y1="138" x2="282" y2="138" stroke="#B4B2A9" stroke-width="0.5"/>
+      <text x="22" y="156" font-size="11" fill="#888780">Dirección / Address</text>
+      <line x1="22" y1="166" x2="282" y2="166" stroke="#B4B2A9" stroke-width="0.5"/>
+      <text x="22" y="184" font-size="11" fill="#888780">Comuna y región / City and region</text>
+      <line x1="22" y1="194" x2="282" y2="194" stroke="#B4B2A9" stroke-width="0.5"/>
+    </g>
+
+    <text x="22" y="220" font-family="system-ui, sans-serif" font-size="11" font-weight="500" fill="#0F6E56" letter-spacing="1">VETERINARIO · VET ON RECORD</text>
+    <line x1="22" y1="228" x2="200" y2="228" stroke="#1D9E75" stroke-width="0.5"/>
+
+    <g font-family="system-ui, sans-serif" fill="#5F5E5A">
+      <text x="22" y="246" font-size="11" fill="#888780">Profesional / Veterinarian</text>
+      <line x1="22" y1="256" x2="282" y2="256" stroke="#B4B2A9" stroke-width="0.5"/>
+      <text x="22" y="274" font-size="11" fill="#888780">Clínica / Clinic</text>
+      <line x1="22" y1="284" x2="148" y2="284" stroke="#B4B2A9" stroke-width="0.5"/>
+      <text x="160" y="274" font-size="11" fill="#888780">Tel. clínica</text>
+      <line x1="160" y1="284" x2="282" y2="284" stroke="#B4B2A9" stroke-width="0.5"/>
+    </g>
+
+    <g transform="translate(150, 296)">
+      <rect x="0" y="0" width="132" height="68" rx="3" fill="#FFFFFF" stroke="#B4B2A9" stroke-width="0.5" stroke-dasharray="3 3"/>
+      <text x="66" y="32" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#888780">Timbre y firma</text>
+      <text x="66" y="46" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#888780">veterinario</text>
+    </g>
+
+    <g font-family="system-ui, sans-serif" fill="#5F5E5A">
+      <text x="22" y="312" font-size="11" fill="#993C1D">Emergencia · Emergency</text>
+      <line x1="22" y1="322" x2="138" y2="322" stroke="#D85A30" stroke-width="0.5"/>
+      <text x="22" y="340" font-size="11" fill="#888780">Teléfono / Phone</text>
+      <line x1="22" y1="350" x2="138" y2="350" stroke="#B4B2A9" stroke-width="0.5"/>
+    </g>
+
+    <line x1="22" y1="382" x2="282" y2="382" stroke="#1D9E75" stroke-width="0.3" opacity="0.5"/>
+    <g font-family="system-ui, sans-serif" fill="#5F5E5A">
+      <text x="22" y="398" font-size="11" fill="#888780">Emitido / Issued</text>
+      <text x="22" y="412" font-size="11">________</text>
+      <text x="148" y="398" font-size="11" fill="#888780">Vence / Expires</text>
+      <text x="148" y="412" font-size="11">________</text>
+    </g>
+
+    <text x="282" y="424" text-anchor="end" font-family="system-ui, sans-serif" font-size="11" font-weight="500" fill="#5F5E5A">3 / 16</text>
+  </g>
+</svg>

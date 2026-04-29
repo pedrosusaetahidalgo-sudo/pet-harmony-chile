@@ -1,114 +1,140 @@
-# Paw Friend — Folder de pitch para inversionistas
+# Paw Friend — Pitch Folder · Indice maestro
 
-> **Set consolidado** para postulaciones, reuniones con fondos, y outreach a empresas sponsors.
-> Cada documento esta adaptado a una audiencia especifica.
+> **Set consolidado** de pitch decks por audiencia. Cada HTML es un deck navegable con teclado (`←` `→` `F` `P`). Cada MD es un brief detallado.
 >
-> Ultima revision: 2026-04-19.
+> Última revision: 2026-04-29.
 
 ---
 
-## Contenido del folder
+## Pitch decks HTML (presentables)
 
-| Archivo | Audiencia | Uso |
+| Deck | Audiencia | Slides |
 |---|---|---|
-| [PRESENTACION.html](PRESENTACION.html) | Todos | **Presentacion visual autocontenida** — abrir en navegador o imprimir a PDF |
-| [CONSOLIDADO_INVERSIONISTAS.md](CONSOLIDADO_INVERSIONISTAS.md) | Todos | **Fuente de verdad unificada** — narrativa + datos + todas las secciones |
-| [01_CORFO_SSAF-I.md](01_CORFO_SSAF-I.md) | **CORFO** | Postulacion a SSAF-I (USD $28K) |
-| [02_START_UP_CHILE.md](02_START_UP_CHILE.md) | **Start-Up Chile** | Postulacion a Ignite (USD $15K equity-free) |
-| [03_PAW_COMPANYS_EMPRESAS.md](03_PAW_COMPANYS_EMPRESAS.md) | **Empresas pet-friendly** | Pitch B2B2C para sponsors recurrentes |
-| [04_ANGELES_VC_LATAM.md](04_ANGELES_VC_LATAM.md) | **Angels / VC LATAM** | Pitch pre-seed USD $150K SAFE |
-| [05_HOGARES_DE_ADOPCION.md](05_HOGARES_DE_ADOPCION.md) | **Refugios / ONGs / rescatistas** | Onboarding de hogares de adopcion a la red |
-| [06_PAW_PARTNERS.md](06_PAW_PARTNERS.md) | **Tiendas / servicios aliados** | Barter de descuentos por visibilidad (Paw Partners) |
-| [07_ROBERTO_CAMHI.md](07_ROBERTO_CAMHI.md) | **Roberto Camhi (llamada 1:1)** | Chuleta para llamada telefonica — Mapcity / Founder Institute / Start-Up Chile / CORFO |
+| [PITCH_INVESTORS_LIVE.html](PITCH_INVESTORS_LIVE.html) | **Master generico** — cualquier inversionista | 13 |
+| [PITCH_FONDOS.html](PITCH_FONDOS.html) ⭐ | **CORFO + Start-Up Chile + Angeles/VC** (con tabs por audiencia) | 9 |
+| [PITCH_PHARMA.html](PITCH_PHARMA.html) | **Pharma animal** — Centrovet · Virbac · Zoetis · MSD | 8 |
+| [PITCH_ASEGURADORAS.html](PITCH_ASEGURADORAS.html) ⭐ | **Pet insurance** — Sura · BCI · Mapfre · Consorcio | 8 |
+| [PITCH_RETAIL.html](PITCH_RETAIL.html) ⭐ | **Retail pet** — Master Dog · Falabella · Puppis · Pet Star | 8 |
+| [PITCH_GOBIERNO.html](PITCH_GOBIERNO.html) ⭐ | **Municipios + SAG + Subdere** (Ley 21.020) | 8 |
+| [PITCH_BANCOS.html](PITCH_BANCOS.html) ⭐ | **Banca retail** — BCI · Santander · Itau · BancoEstado · Falabella | 8 |
+| [PITCH_EDIFICIOS.html](PITCH_EDIFICIOS.html) ⭐ | **Inmobiliarias + administradoras + HOAs** | 8 |
+| [PITCH_LONGTAIL.html](PITCH_LONGTAIL.html) ⭐ | **B2B residual** — aerolineas · hoteles · academia · hardware · plataformas · cremacion | 8 |
+| [PITCH_REFUGIOS_PARTNERS.html](PITCH_REFUGIOS_PARTNERS.html) ⭐ | **Refugios + Paw Partners** (alianzas no-pago) | 6 |
+| [INSIGHTS_DASHBOARDS_MOCK.html](INSIGHTS_DASHBOARDS_MOCK.html) ⭐ | **Apendice transversal** — data room visual | 10 |
+
+⭐ = creado o reescrito 2026-04-29.
 
 ---
 
-## Como usar este folder
+## Briefs MD (talking points · ask especifico)
 
-### Para una reunion con inversionista (en persona o Zoom)
+| Brief | Para usar junto con |
+|---|---|
+| [01_CORFO_SSAF-I.md](01_CORFO_SSAF-I.md) | `PITCH_FONDOS.html` (tab CORFO) |
+| [02_START_UP_CHILE.md](02_START_UP_CHILE.md) | `PITCH_FONDOS.html` (tab Start-Up) |
+| [03_PAW_COMPANYS_EMPRESAS.md](03_PAW_COMPANYS_EMPRESAS.md) | `PRESENTACION_COMPANYS.html` |
+| [04_ANGELES_VC_LATAM.md](04_ANGELES_VC_LATAM.md) | `PITCH_FONDOS.html` (tab Angels/VC) |
+| [05_HOGARES_DE_ADOPCION.md](05_HOGARES_DE_ADOPCION.md) | `PITCH_REFUGIOS_PARTNERS.html` |
+| [06_PAW_PARTNERS.md](06_PAW_PARTNERS.md) | `PITCH_REFUGIOS_PARTNERS.html` |
 
-1. Abrir **[PRESENTACION.html](PRESENTACION.html)** en el navegador (doble click al archivo).
-2. Modo pantalla completa (F11).
-3. Navegar seccion a seccion o dejar scrollear.
-4. Tener **[CONSOLIDADO_INVERSIONISTAS.md](CONSOLIDADO_INVERSIONISTAS.md)** abierto en otra pestana para responder preguntas.
-5. Abrir `/admin?section=sala-inversion` en otra pestana para mostrar metricas en vivo.
+## Decks de presentacion legacy (publica)
 
-### Para enviar por correo antes de la reunion
+| Deck | Audiencia |
+|---|---|
+| [PRESENTACION.html](PRESENTACION.html) | Master historico (puede archivarse) |
+| [PRESENTACION_COMPANYS.html](PRESENTACION_COMPANYS.html) | Empresas Paw Company sponsors |
+| [PRESENTACION_VOICES.html](PRESENTACION_VOICES.html) | Creadores Paw Voices |
+| [PRESENTACION_PARTNERS.html](PRESENTACION_PARTNERS.html) | Partners legacy |
 
-- **Angel / VC LATAM**: enviar PDF exportado desde `PRESENTACION.html` (Ctrl+P → Guardar como PDF) + link al GitHub.
-- **CORFO**: adjuntar [01_CORFO_SSAF-I.md](01_CORFO_SSAF-I.md) convertido a PDF + carta de intencion.
-- **Start-Up Chile**: adjuntar [02_START_UP_CHILE.md](02_START_UP_CHILE.md) + video pitch 60s grabado.
-- **Empresa sponsor (Paw Company)**: adjuntar [03_PAW_COMPANYS_EMPRESAS.md](03_PAW_COMPANYS_EMPRESAS.md) convertido a PDF.
+## Documentacion transversal
 
-### Para imprimir el deck como PDF
+| Archivo | Para |
+|---|---|
+| [CONSOLIDADO_INVERSIONISTAS.md](CONSOLIDADO_INVERSIONISTAS.md) | Fuente de verdad unificada — narrativa + datos |
+| [BRAND_KIT_PITCHES.md](BRAND_KIT_PITCHES.md) ⭐ | Paletas + assets a generar (Claude Web) por cada pitch |
+| [PRESENTACION_AUDIENCE_NOTES.md](PRESENTACION_AUDIENCE_NOTES.md) | Notas de tono por audiencia |
 
-```bash
-# En Chrome/Edge, abrir PRESENTACION.html
-# Ctrl+P (Cmd+P en Mac)
-# Destino: Guardar como PDF
-# Opciones: papel carta, margenes ninguno, graficos de fondo activado
-# Guardar como: Paw_Friend_Deck_2026_04_19.pdf
-```
+## Assets
 
-### Para actualizar metricas antes de cada pitch
+| Folder | Contenido |
+|---|---|
+| [assets/IDS/](assets/IDS/) | Carnet frente/reverso · Paw Passport · preview combinado (SVG) |
+
+---
+
+## Como usar (cheat sheet)
+
+### Para una reunión presencial / Zoom
+
+1. Abrir el deck HTML correspondiente a la audiencia (doble clic).
+2. Modo pantalla completa (tecla `F`).
+3. Navegar con `←` / `→`.
+4. Si la audiencia pide profundidad técnica → abrir [INSIGHTS_DASHBOARDS_MOCK.html](INSIGHTS_DASHBOARDS_MOCK.html) en otra pestaña.
+5. Demo en vivo del producto en otra pestaña.
+
+### Para enviar por correo
+
+1. Abrir el deck HTML.
+2. `Ctrl+P` (Cmd+P en Mac) → Guardar como PDF.
+3. Margenes ninguno · graficos de fondo activado · papel carta horizontal.
+4. Adjuntar PDF + brief MD correspondiente (ver tabla "Briefs MD").
+
+### Para actualizar metricas pre-pitch
 
 1. Abrir `/admin?section=sala-inversion` en produccion.
-2. Copiar numeros reales: MAU, vets activos, fichas con OCR, research consent opt-in %, Paw Companys, Paw Support totales.
-3. Reemplazar `[DATO]` en [CONSOLIDADO_INVERSIONISTAS.md](CONSOLIDADO_INVERSIONISTAS.md) seccion 5.
-4. Actualizar los mismos numeros en [PRESENTACION.html](PRESENTACION.html) si hay meeting crucial.
-5. **Regla de oro**: nunca mostrar metrica inventada. Si es 0, mostrar 0 con contexto.
+2. Copiar numeros reales (no inventar).
+3. Si la metrica diverge del valor canonico en `BRAND_KIT_PITCHES.md` seccion 4 → actualizar TODOS los HTMLs en el mismo commit.
 
 ---
 
-## Flujo sugerido de postulaciones (cronograma)
+## Flujo cronologico de pitches (90 dias post-launch)
 
 | Mes | Accion |
 |---|---|
-| **Mes 1-2** | Lanzar producto invisible, conseguir 50-80 vets activos creando fichas (gratis), cerrar 3 Paw Companys. |
-| **Mes 3** | Primer outreach a angels LATAM (Platanus, Magma) con [04_ANGELES_VC_LATAM.md](04_ANGELES_VC_LATAM.md). |
-| **Mes 4** | Postular **Start-Up Chile Ignite** con [02_START_UP_CHILE.md](02_START_UP_CHILE.md). |
-| **Mes 5-6** | Postular **CORFO SSAF-I** con [01_CORFO_SSAF-I.md](01_CORFO_SSAF-I.md). Outreach sistematico a empresas pet-friendly con [03_PAW_COMPANYS_EMPRESAS.md](03_PAW_COMPANYS_EMPRESAS.md). |
-| **Mes 7-9** | Cerrar pre-seed USD $150K. Continuar outreach Paw Companys. |
-| **Mes 10-12** | Ejecutar roadmap con capital. Preparar Seed. |
+| **Mes 0 (pre-launch)** | Outreach a 13 refugios chilenos (en curso). Outreach Petify (en curso). Definir SpA Flow (en curso). |
+| **Mes 1** | Lanzar producto. Conseguir 50-80 vets activos. Cerrar 3 Paw Companys. |
+| **Mes 2** | Postular Start-Up Chile Ignite (`PITCH_FONDOS.html` tab Start-Up + brief). |
+| **Mes 3** | Postular CORFO SSAF-I (`PITCH_FONDOS.html` tab CORFO + brief). Outreach pharma (Centrovet, Virbac) con `PITCH_PHARMA.html`. |
+| **Mes 4-5** | Outreach aseguradoras (Sura, BCI). Outreach retail (Master Dog). Outreach municipio piloto. |
+| **Mes 6** | Cerrar pre-seed USD $150K via angeles LATAM. Cerrar 1-2 pilotos B2B firmados. |
+| **Mes 7-9** | Ejecutar pilotos. Outreach banca + edificios. Long-tail oportunista. |
+| **Mes 10-12** | Convertir pilotos a contratos anuales. Preparar Seed con tracción. |
 
 ---
 
-## Que NO hacer
+## Reglas de oro
 
-1. **No pedir NDA** a inversionistas — nadie firma antes de decidir si les interesa.
-2. **No inventar numeros** — si MRR es $500, decir $500. Explicar contexto.
-3. **No esconder que usas IA** — es un moat, no una debilidad.
-4. **No mezclar audiencias** — no enviar deck de CORFO a un angel LATAM, y viceversa.
-5. **No cambiar los 4 componentes del producto** durante el pitch — ficha + directorio + comunidad + Paw Support es el core, no pivotear.
+1. **No pedir NDA** a inversionistas antes de decidir si les interesa.
+2. **No inventar numeros** — si MRR es $0, decir $0 + contexto.
+3. **No esconder uso de IA** — es moat, no debilidad.
+4. **No mezclar audiencias** — no enviar deck de CORFO a un angel LATAM y viceversa.
+5. **No cambiar el modelo durante el pitch** — el dueno NUNCA paga, B2B paga.
+6. **Sincronizar numeros canonicos** — ver [BRAND_KIT_PITCHES.md seccion 4](BRAND_KIT_PITCHES.md#4-numeros-canonicos-compartidos).
 
 ---
 
 ## Que SI hacer
 
-1. **Ensayar en 3 minutos** (pitch corto) y 10 minutos (deep). Si no cabe en 3, la historia no esta clara.
-2. **Preparar 10 preguntas incomodas** (ver seccion 7 de [04_ANGELES_VC_LATAM.md](04_ANGELES_VC_LATAM.md)).
+1. **Ensayar 3 min** (pitch corto) y **10 min** (deep). Si no cabe en 3, la historia no está clara.
+2. **Preparar 10 preguntas incomodas** (ver seccion 7 de `04_ANGELES_VC_LATAM.md`).
 3. **Actualizar metricas en vivo** antes de cada meeting.
-4. **Mostrar Paw Voices en vivo** — cierre emocional mas fuerte.
-5. **Cerrar con ask explicito** — nunca quedarse en "y bueno, esto es".
+4. **Mostrar producto vivo** — la demo siempre cierra mejor que el deck.
+5. **Cerrar con ask explicito** — nunca terminar en "y bueno, eso es".
 6. **Documentar cada reunion**: a quien pitcheaste, feedback, proximos pasos.
 
 ---
 
-## Actualizacion de este folder
+## Mantenimiento
 
-Este folder se actualiza:
-
-- **Post-reunion** con inversionista → agregar feedback al consolidado.
-- **Post-milestone** (cada ronda, cada 100 clientes) → actualizar numeros en todos los docs.
-- **Post-commit mayor** → validar que la narrativa tecnica sigue alineada.
-- **Cada 3 meses** → snapshot completo + refresh de comparables.
+- **Post-reunion** con inversionista → agregar feedback al `CONSOLIDADO_INVERSIONISTAS.md`.
+- **Post-milestone** (cada ronda, cada hito de tracción) → actualizar numeros canonicos en TODOS los pitches en un solo commit.
+- **Cada 30-60 dias** → revisar [BRAND_KIT_PITCHES.md](BRAND_KIT_PITCHES.md) y refrescar lo que haga falta.
 
 ---
 
 ## Contacto
 
 **Paw Founder** · Paw Friend
-pedrosusaeta@pawfriend.cl
+✉️ pawfriendcl@gmail.com · 🌐 pawfriend.cl
 SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9
 Luis Pasteur 6111 Dp 201, Vitacura, Santiago
-pawfriend.cl · Repositorio disponible bajo NDA

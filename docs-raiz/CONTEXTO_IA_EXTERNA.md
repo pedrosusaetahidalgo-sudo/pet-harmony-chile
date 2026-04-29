@@ -7,7 +7,7 @@
 > **Uso principal**: auditorias de next-level, roadmap strategico,
 > revision de decks, sparring de decisiones de producto/negocio.
 >
-> Ultima revision: **2026-04-27** (cierre pivot modelo v2 post-Roberto Camhi
+> Ultima revision: **2026-04-27** (cierre pivot modelo v2 2026-04-22
 > + Petify contraposicionamiento). Para detalle tecnico exhaustivo, fuente
 > de verdad sigue siendo `CLAUDE.md` + `INDEX.md` + `MAPA_FUNCIONAL_COMPLETO.md`
 > + `diagrams/FLUJO_COMPLETO.mmd` (no los tienes pero existen en el repo).
@@ -47,7 +47,7 @@
 
 **No hay**: Zustand, Redux, Next.js, zod standalone (zod via `@hookform/resolvers`).
 
-## 3. Modelo de negocio v2 (post-Roberto Camhi 2026-04-22)
+## 3. Modelo de negocio v2 (2026-04-22)
 
 > **Norte**: el dueno **NUNCA paga**. Producto invisible. Modelo **estilo Mapcity**:
 > Mapcity no le cobraba a la tienda — le cobraba a Equifax/bancos por acceso a la
@@ -91,7 +91,7 @@ captura el 100% del mercado y monetiza B2B. Cálculos CLP: 1 mascota ~$460/mes, 
 ### B2B vet — canal de adquisicion, no revenue center
 
 > *El vet no paga porque su valor esta en construir la ficha. El activo es la ficha.
-> Quien paga es quien quiere acceder a la mascota a traves de ella.* — Roberto Camhi
+> Quien paga es quien quiere acceder a la mascota a traves de ella.* — founder Mapcity
 
 | Plan | Precio | Visible en `/para-veterinarios` |
 |---|---|---|
@@ -253,7 +253,7 @@ Todas envueltas con `withTelemetry` (2026-04-17).
 ## 14. Lecciones aprendidas (no volver a tropezar)
 
 - **Premium B2C reactivacion**: 2 intentos previos (2026-04-08 + 2026-04-19) sin tracción. Pivot v2 lo descartó como motor — ahora es Paw Member voluntario badge-only.
-- **Vets no son motor de revenue**: feedback Roberto Camhi 2026-04-22 (founder Mapcity). Tienen demanda excedida, pocos para mucha demanda, chatos de vendors.
+- **Vets no son motor de revenue**: feedback estrategico (founder Mapcity). Tienen demanda excedida, pocos para mucha demanda, chatos de vendors.
 - **"Donaciones" activa Ley 19.885**: reframe a "Paw Support" (pago voluntario por servicio).
 - **Triggers plpgsql lazy-validation**: 4 incidentes en producción por refs a columnas inexistentes. Regla 9.2.1 obligatoria.
 - **JWT en `cron.schedule` literal**: incidente 2026-04-20. Vault obligatorio.

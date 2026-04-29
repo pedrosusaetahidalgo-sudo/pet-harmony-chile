@@ -22,7 +22,7 @@ import { isFeatureEnabled } from '@/lib/featureFlags';
  *
  * Antes: el home del dueño mostraba Feed/Comunidad/Misiones/Paw Game
  * directamente en la sección "Explorar", contaminando el foco médico.
- * Después (modelo v2 post-Roberto Camhi 2026-04-22): el home se
+ * Después (modelo v2 2026-04-22): el home se
  * mantiene en ficha + recordatorios + urgencia + directorio. Las
  * features experimentales (Paw Labs) viven aquí en /explorar como
  * opt-in: el usuario que las quiera, las activa con un click.

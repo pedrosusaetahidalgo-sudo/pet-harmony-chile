@@ -3,7 +3,7 @@
 > **Fuente de verdad unica** para pitches, data rooms, postulaciones a fondos publicos
 > y reuniones con empresas interesadas en sponsor.
 >
-> Ultima revision: **2026-04-27** (modelo v2 post-Roberto Camhi).
+> Ultima revision: **2026-04-27** (modelo v2 2026-04-22).
 > Responsable: Paw Founder · pedrosusaeta@pawfriend.cl
 >
 > **⚠️ Modelo v2 vigente desde 2026-04-22**. Ver [`docs-raiz/pitch/MODELO_V2_2026_04_22.md`](../docs-raiz/pitch/MODELO_V2_2026_04_22.md)
@@ -183,7 +183,7 @@ React 18 + Vite + TypeScript + Tailwind + Supabase (Postgres + Edge Functions + 
 
 ---
 
-## 6. Modelo de negocio (modelo v2 post-Roberto Camhi)
+## 6. Modelo de negocio (modelo v2 2026-04-22)
 
 > **Paralelismo Mapcity**: *Mapcity no le cobraba a cada tienda chilena por
 > georreferenciar — le cobraba a Equifax, bancos e inmobiliarias por acceso a

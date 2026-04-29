@@ -207,7 +207,7 @@ para una Seed Series.
 
 ---
 
-## Slide 8 — Modelo de negocio (v2 post-Roberto Camhi 2026-04-22)
+## Slide 8 — Modelo de negocio (v2 2026-04-22)
 
 **Titulo**: *El dueno nunca paga. Pharma, seguros y retail pagan por acceso a la ficha.*
 

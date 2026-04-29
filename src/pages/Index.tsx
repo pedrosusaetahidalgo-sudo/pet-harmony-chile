@@ -23,7 +23,7 @@ import { RichFooter } from '@/components/landing/RichFooter';
  *
  * Cambios estructurales vs v2 (2026-04-13):
  * - Componentes movidos a `src/components/landing/` (1 por sección).
- * - Copy alineado al modelo v2 (post-Roberto Camhi 2026-04-22): Paw Member
+ * - Copy alineado al modelo v2 (2026-04-22): Paw Member
  *   voluntario, gratis para siempre, revenue B2B (pharma + seguros + retail).
  * - Eliminados testimonios y logos ficticios (riesgo de credibilidad).
  * - Hero usa video real (`hero-pet.mp4`) en lugar de mockup CSS-only.

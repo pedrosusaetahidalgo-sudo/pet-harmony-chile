@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend · Data Room Visual · Insights & Dashboards Mock</title>
+  <meta name="description" content="Mocks visuales de los dashboards y reportes B2B de Paw Friend. Pharma, aseguradoras, retail, banca, gobierno." />
+  <meta name="theme-color" content="#0f172a" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0f172a; --ink-soft: #1e293b; --ink-deeper: #020617;
+      --line: #1e293b; --line-soft: #334155;
+      --paper: #f8fafc; --paper-100: #f1f5f9; --paper-200: #e2e8f0;
+      --gold: #eab308; --gold-light: #fde047; --gold-soft: #fef9c3;
+      --emerald: #10b981; --emerald-light: #34d399; --emerald-soft: #d1fae5;
+      --pharma: #ec4899; --pharma-soft: #fce7f3;
+      --insure: #0369a1; --insure-soft: #e0f2fe;
+      --retail: #ea580c; --retail-soft: #ffedd5;
+      --gov: #15803d; --gov-soft: #dcfce7;
+      --bank: #0f172a; --bank-soft: #f1f5f9;
+      --build: #475569;
+      --mesh-1: rgba(234,179,8,0.18); --mesh-2: rgba(16,185,129,0.18);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: var(--ink-deeper); color: white; }
+    body.light-slide { background: var(--paper); color: var(--ink); }
+    .deck { position: relative; height: 100vh; width: 100vw; overflow: hidden; }
+    .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.08); z-index: 100; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold) 0%, var(--emerald) 50%, var(--pharma) 100%); transition: width 0.5s ease; }
+    .slide { position: absolute; inset: 0; padding: 5vh 5vw; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s; overflow-y: auto; }
+    .slide.active { opacity: 1; visibility: visible; }
+    .slide.dark { background: linear-gradient(135deg, var(--ink-deeper) 0%, var(--ink) 50%, var(--ink-soft) 100%); color: white; }
+    .slide.light { background: linear-gradient(135deg, var(--paper) 0%, var(--paper-100) 100%); color: var(--ink); }
+    .slide.cover { background: radial-gradient(circle at 30% 40%, #1e293b 0%, var(--ink-deeper) 70%); color: white; }
+    .mesh { position: absolute; inset: 0; opacity: 0.5; pointer-events: none; background:
+      radial-gradient(circle at 18% 28%, var(--mesh-1), transparent 38%),
+      radial-gradient(circle at 82% 72%, var(--mesh-2), transparent 38%); }
+    .slide-content { position: relative; z-index: 2; max-width: 1320px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .slide-label { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; padding: 6px 12px; border-radius: 999px; margin-bottom: 14px; align-self: flex-start; }
+    .slide.dark .slide-label, .slide.cover .slide-label { color: var(--gold-light); background: rgba(234,179,8,0.15); border: 1px solid rgba(234,179,8,0.4); }
+    .slide.light .slide-label { color: var(--ink-soft); background: var(--paper-100); border: 1px solid var(--paper-200); }
+    .slide-label.lp { color: var(--pharma) !important; background: var(--pharma-soft) !important; border-color: var(--pharma) !important; }
+    .slide-label.li { color: var(--insure) !important; background: var(--insure-soft) !important; border-color: var(--insure) !important; }
+    .slide-label.lr { color: var(--retail) !important; background: var(--retail-soft) !important; border-color: var(--retail) !important; }
+    .slide-label.lg { color: var(--gov) !important; background: var(--gov-soft) !important; border-color: var(--gov) !important; }
+    .slide-label.lb { color: var(--ink) !important; background: var(--gold-soft) !important; border-color: var(--gold) !important; }
+    .headline { font-family: 'Fredoka', sans-serif; font-size: clamp(26px, 3.4vw, 44px); font-weight: 700; line-height: 1.12; margin: 0 0 10px; letter-spacing: -0.02em; }
+    .subhead { font-size: clamp(13px, 1.4vw, 16px); line-height: 1.55; opacity: 0.85; max-width: 880px; margin-bottom: 14px; }
+    .counter { position: fixed; bottom: 16px; right: 22px; font-size: 12px; font-weight: 700; opacity: 0.6; z-index: 100; }
+    .hint { position: fixed; bottom: 16px; left: 22px; font-size: 11px; font-weight: 600; opacity: 0.5; z-index: 100; }
+    .hint kbd { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin: 0 2px; font-family: monospace; }
+    body.light-slide .hint kbd { background: rgba(0,0,0,0.06); }
+    .tag-proj { font-size: 9px; padding: 2px 7px; background: rgba(234,179,8,0.18); color: var(--gold); border-radius: 4px; font-weight: 800; vertical-align: middle; margin-left: 6px; letter-spacing: 0.06em; }
+    .slide.dark .tag-proj, .slide.cover .tag-proj { background: rgba(253,224,71,0.15); color: var(--gold-light); }
+    .tag-real { font-size: 9px; padding: 2px 7px; background: rgba(16,185,129,0.18); color: var(--emerald); border-radius: 4px; font-weight: 800; vertical-align: middle; margin-left: 6px; letter-spacing: 0.06em; }
+    .slide.dark .tag-real, .slide.cover .tag-real { background: rgba(52,211,153,0.15); color: var(--emerald-light); }
+
+    /* Dashboard mock cards */
+    .dashboard { display: grid; gap: 14px; }
+    .card { background: white; color: var(--ink); border-radius: 14px; padding: 18px; box-shadow: 0 10px 28px rgba(15,23,42,0.08); }
+    .slide.dark .card, .slide.cover .card { background: rgba(255,255,255,0.06); color: white; box-shadow: 0 18px 40px rgba(0,0,0,0.4); }
+    .card .ch { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; }
+    .card .ct { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.7; }
+    .card .cv { font-family: 'Fredoka', sans-serif; font-weight: 800; }
+    .card-mini { display: grid; gap: 4px; }
+    .card-mini .num { font-family: 'Fredoka', sans-serif; font-size: 30px; font-weight: 800; line-height: 1; }
+    .card-mini .lbl { font-size: 11px; opacity: 0.7; }
+    .delta-up { color: var(--emerald); font-size: 12px; font-weight: 700; }
+    .delta-down { color: #ef4444; font-size: 12px; font-weight: 700; }
+    .row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed rgba(0,0,0,0.08); font-size: 13px; }
+    .slide.dark .row, .slide.cover .row { border-bottom-color: rgba(255,255,255,0.1); }
+    .row:last-child { border-bottom: none; }
+    .row .lbl { opacity: 0.8; }
+    .row .v { font-weight: 700; }
+    .bar { height: 8px; background: rgba(15,23,42,0.08); border-radius: 999px; overflow: hidden; margin-top: 4px; }
+    .slide.dark .bar, .slide.cover .bar { background: rgba(255,255,255,0.1); }
+    .bar > div { height: 100%; border-radius: 999px; }
+    .table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .table th { padding: 8px 10px; text-align: left; font-weight: 800; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.7; border-bottom: 1px solid rgba(15,23,42,0.1); }
+    .slide.dark .table th, .slide.cover .table th { border-bottom-color: rgba(255,255,255,0.15); }
+    .table td { padding: 8px 10px; border-bottom: 1px dashed rgba(15,23,42,0.06); }
+    .slide.dark .table td, .slide.cover .table td { border-bottom-color: rgba(255,255,255,0.08); }
+    .id-img { max-width: 100%; border-radius: 14px; box-shadow: 0 18px 36px rgba(0,0,0,0.4); }
+    .slide.light .id-img { box-shadow: 0 14px 30px rgba(15,23,42,0.18); }
+
+    .mono { font-family: 'JetBrains Mono', monospace; }
+    .pillg { display: inline-block; padding: 2px 8px; background: var(--gov-soft); color: var(--gov); font-size: 10px; font-weight: 800; border-radius: 4px; }
+    .pillp { display: inline-block; padding: 2px 8px; background: var(--pharma-soft); color: var(--pharma); font-size: 10px; font-weight: 800; border-radius: 4px; }
+    .pilli { display: inline-block; padding: 2px 8px; background: var(--insure-soft); color: var(--insure); font-size: 10px; font-weight: 800; border-radius: 4px; }
+    .pillr { display: inline-block; padding: 2px 8px; background: var(--retail-soft); color: var(--retail); font-size: 10px; font-weight: 800; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div class="progress"><div class="progress-fill" id="progressFill" style="width: 9%"></div></div>
+  <div class="deck" id="deck">
+
+    <!-- 1 — COVER -->
+    <section class="slide cover active" data-num="1">
+      <div class="mesh"></div>
+      <div class="slide-content">
+        <span class="slide-label">Data room visual · mocks de dashboards</span>
+        <h1 class="headline" style="font-size: clamp(34px, 4.5vw, 60px);">
+          Lo que <span style="background: linear-gradient(135deg, var(--gold-light), var(--emerald-light)); -webkit-background-clip: text; background-clip: text; color: transparent;">cualquier partner</span><br>
+          ve cuando se sienta con nosotros.
+        </h1>
+        <p class="subhead" style="font-size: 16px; max-width: 800px;">
+          Cada slide es un mock de un dashboard real. <strong>Verde = ya construido</strong> en la app
+          (tablas, edge fns, vistas). <strong>Amarillo = proyectado</strong> al cohort de Junio 2026 (50.000 pets).
+          Sirve como apendice visual de cualquier pitch.
+        </p>
+        <div style="display: flex; gap: 10px; margin-top: 20px; font-size: 12px;">
+          <span class="tag-real">REAL</span><span style="opacity: 0.85;">existe en producto hoy</span>
+          <span style="opacity: 0.4;">·</span>
+          <span class="tag-proj">PROYECCION</span><span style="opacity: 0.85;">al cohort proyectado de lanzamiento</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 — MASTER KPIs -->
+    <section class="slide light" data-num="2">
+      <div class="slide-content">
+        <span class="slide-label lb">📊 Master KPIs · view interna</span>
+        <h2 class="headline" style="color: var(--ink);">
+          Master KPIs Daily <span class="tag-real">REAL</span>
+        </h2>
+        <p class="subhead">
+          Vista materializada <code>master_kpis_daily</code> ya en producto. 30+ metricas con bandas verde / amarillo / rojo.
+          Refresh manual via RPC. Visible en Admin &gt; KPIs.
+        </p>
+        <div class="dashboard" style="grid-template-columns: repeat(4, 1fr); margin-top: 12px;">
+          <div class="card card-mini"><div class="num" style="color: var(--emerald);">2.847</div><div class="lbl">Pets activos</div><div class="delta-up">↑ 12% vs ayer</div></div>
+          <div class="card card-mini"><div class="num" style="color: var(--gold);">381</div><div class="lbl">Vets registrados</div><div class="delta-up">↑ 4 hoy</div></div>
+          <div class="card card-mini"><div class="num" style="color: var(--pharma);">1.244</div><div class="lbl">Eventos clinicos / dia</div><div class="delta-up">↑ 8%</div></div>
+          <div class="card card-mini"><div class="num" style="color: var(--insure);">68%</div><div class="lbl">Pets con ficha &gt;3 eventos</div><div class="delta-up">North Star ↑</div></div>
+        </div>
+        <div class="dashboard" style="grid-template-columns: 1.4fr 1fr; margin-top: 14px;">
+          <div class="card">
+            <div class="ch"><div class="ct">Activacion · ultimos 30 dias</div><div class="cv" style="color: var(--emerald);">+38%</div></div>
+            <div class="row"><div class="lbl">Onboarding completo (4 pasos)</div><div class="v">82%</div></div>
+            <div class="bar"><div style="width: 82%; background: var(--emerald);"></div></div>
+            <div class="row"><div class="lbl">Pet ID Card generada</div><div class="v">71%</div></div>
+            <div class="bar"><div style="width: 71%; background: var(--gold);"></div></div>
+            <div class="row"><div class="lbl">Recordatorio creado</div><div class="v">64%</div></div>
+            <div class="bar"><div style="width: 64%; background: var(--pharma);"></div></div>
+            <div class="row"><div class="lbl">Paw Shield activado (opt-in)</div><div class="v">21%</div></div>
+            <div class="bar"><div style="width: 21%; background: var(--insure);"></div></div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ct">Risk monitor · senales</div><div class="cv" style="color: var(--emerald);">5/5 ok</div></div>
+            <div class="row"><div class="lbl">AI cost · Haiku ratio</div><div class="v" style="color: var(--emerald);">62% ✓</div></div>
+            <div class="row"><div class="lbl">Marketing consent rate</div><div class="v" style="color: var(--emerald);">71% ✓</div></div>
+            <div class="row"><div class="lbl">Onboarding dropout</div><div class="v" style="color: var(--gold);">18% ⚠</div></div>
+            <div class="row"><div class="lbl">Edge fn errors / dia</div><div class="v" style="color: var(--emerald);">3 ✓</div></div>
+            <div class="row"><div class="lbl">pgvector p95 latencia</div><div class="v" style="color: var(--emerald);">82ms ✓</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 — PHARMA dashboard -->
+    <section class="slide light" data-num="3">
+      <div class="slide-content">
+        <span class="slide-label lp">💊 Pharma · cohort ready</span>
+        <h2 class="headline" style="color: var(--ink);">
+          Cohort para una campana de antiparasitario <span class="tag-proj">PROYECCION</span>
+        </h2>
+        <p class="subhead">
+          Como ve un product manager pharma su cohort. Filtros por especie, raza, edad, peso, comuna y consent. Endpoint b2b-api real.
+        </p>
+        <div class="dashboard" style="grid-template-columns: 1fr 1.2fr; margin-top: 8px;">
+          <div class="card">
+            <div class="ch"><div class="ct">Filtros activos</div><span class="pillp">VIRBAC · Q3</span></div>
+            <div class="row"><div class="lbl">Especie</div><div class="v">Perro</div></div>
+            <div class="row"><div class="lbl">Razas (top 3)</div><div class="v">Pastor Suizo · Labrador · Mestizo</div></div>
+            <div class="row"><div class="lbl">Edad</div><div class="v">2-7 anos</div></div>
+            <div class="row"><div class="lbl">Peso</div><div class="v">15-40 kg</div></div>
+            <div class="row"><div class="lbl">Comuna</div><div class="v">RM completa</div></div>
+            <div class="row"><div class="lbl">Pharma research consent</div><div class="v" style="color: var(--emerald);">Si (opt-in)</div></div>
+            <hr style="margin: 12px 0; border: none; border-top: 1px dashed var(--paper-200);" />
+            <div class="row"><div class="lbl"><strong>Cohort match</strong></div><div class="v" style="color: var(--pharma); font-size: 22px;">~12.400 pets</div></div>
+            <div class="row"><div class="lbl">Antiparasitario hace &gt;6m</div><div class="v">68%</div></div>
+            <div class="row"><div class="lbl">Comuna Top 1 · Las Condes</div><div class="v">21%</div></div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ct">Conversion estimada · campana</div><span class="pillp">SPONSORED REMINDER</span></div>
+            <table class="table">
+              <thead><tr><th>Concepto</th><th style="text-align:right;">Conservador</th><th style="text-align:right;">Optimista</th></tr></thead>
+              <tbody>
+                <tr><td>Reminders enviados</td><td style="text-align:right;">12.400</td><td style="text-align:right;">12.400</td></tr>
+                <tr><td>Open rate</td><td style="text-align:right;">38%</td><td style="text-align:right;">52%</td></tr>
+                <tr><td>Click-through</td><td style="text-align:right;">9%</td><td style="text-align:right;">15%</td></tr>
+                <tr><td>Compras antiparasitario</td><td style="text-align:right;">~420</td><td style="text-align:right;">~960</td></tr>
+                <tr><td>Pharma fee (CPM equiv)</td><td style="text-align:right;">$3.5k USD</td><td style="text-align:right;">$3.5k USD</td></tr>
+                <tr style="background: var(--pharma-soft); color: var(--pharma); font-weight: 700;"><td>CAC efectivo / unidad</td><td style="text-align:right;">$8.3 USD</td><td style="text-align:right;">$3.6 USD</td></tr>
+              </tbody>
+            </table>
+            <div style="margin-top: 12px; padding: 10px; background: var(--pharma-soft); border-radius: 8px; font-size: 11px; color: var(--pharma);">
+              <strong>Paw Shield validation:</strong> 91% del cohort tiene Paw Shield activado → seguimiento longitudinal del impacto real.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 — INSURE underwriting -->
+    <section class="slide light" data-num="4">
+      <div class="slide-content">
+        <span class="slide-label li">🛡️ Aseguradoras · underwriting</span>
+        <h2 class="headline" style="color: var(--ink);">
+          Underwriting + anti-fraude para una solicitud <span class="tag-real">REAL+</span><span class="tag-proj">PROYECCION</span>
+        </h2>
+        <p class="subhead">
+          Endpoint b2b-api ya construido. Datos de pet + ficha real + biometria. Mock con cohort proyectado.
+        </p>
+        <div class="dashboard" style="grid-template-columns: 1fr 1.4fr; margin-top: 8px;">
+          <div class="card">
+            <div class="ch"><div class="ct">Solicitud</div><span class="pilli">SURA · pet#42189</span></div>
+            <div class="row"><div class="lbl">Pet</div><div class="v">Kai · Pastor Suizo · M · 4a · 32kg</div></div>
+            <div class="row"><div class="lbl">Comuna</div><div class="v">Vitacura</div></div>
+            <div class="row"><div class="lbl">Microchip</div><div class="v mono" style="font-size: 12px;">982 000 412 789 014</div></div>
+            <div class="row"><div class="lbl">Paw Shield biometria</div><div class="v" style="color: var(--emerald);">✓ Verificado · 100% match</div></div>
+            <div class="row"><div class="lbl">Ficha clinica</div><div class="v">8 eventos · 2 vacunas · 1 esterilizacion</div></div>
+            <div class="row"><div class="lbl">Pre-existentes detectados</div><div class="v" style="color: var(--gold);">Otitis recurrente (2 episodios)</div></div>
+            <hr style="margin: 12px 0; border: none; border-top: 1px dashed var(--paper-200);" />
+            <div class="row"><div class="lbl"><strong>Risk score</strong></div><div class="v" style="color: var(--insure); font-size: 20px;">68 / 100</div></div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ct">Pricing modelado</div><span class="pilli">PLAN PREMIUM</span></div>
+            <table class="table">
+              <thead><tr><th>Concepto</th><th style="text-align:right;">Cohort base</th><th style="text-align:right;">Pet#42189</th></tr></thead>
+              <tbody>
+                <tr><td>Frecuencia claim/ano</td><td style="text-align:right;">0.42</td><td style="text-align:right;">0.51</td></tr>
+                <tr><td>Severity media</td><td style="text-align:right;">$180k CLP</td><td style="text-align:right;">$210k CLP</td></tr>
+                <tr><td>Pre-existente otitis</td><td style="text-align:right;">14% del cohort</td><td style="text-align:right; color: var(--gold);">SI</td></tr>
+                <tr><td>Comuna factor</td><td style="text-align:right;">1.0x</td><td style="text-align:right;">1.08x (Vitacura)</td></tr>
+                <tr style="background: var(--insure-soft); font-weight: 800; color: var(--insure);"><td>Prima sugerida</td><td style="text-align:right;">$24.900</td><td style="text-align:right;">$28.400</td></tr>
+              </tbody>
+            </table>
+            <div style="margin-top: 12px; padding: 10px; background: var(--emerald-soft); border-radius: 8px; font-size: 11px; color: var(--gov);">
+              <strong>Anti-fraude validacion:</strong> al recibir un claim, escaneo de hocico confirma que es la misma mascota asegurada en &lt; 5 segundos.
+              Imposible asegurar al "primo" cuando fallece el asegurado.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 — RETAIL recommendation -->
+    <section class="slide light" data-num="5">
+      <div class="slide-content">
+        <span class="slide-label lr">🛒 Retail · recomendacion contextual</span>
+        <h2 class="headline" style="color: var(--ink);">
+          Cart promedio +28% con personalizacion mascota <span class="tag-proj">PROYECCION</span>
+        </h2>
+        <p class="subhead">
+          API recomendacion: <code>POST /b2b/recommend</code> con pet_id → top-N productos. Bundles automaticos por edad/raza/condicion.
+        </p>
+        <div class="dashboard" style="grid-template-columns: 1.2fr 1fr; margin-top: 8px;">
+          <div class="card">
+            <div class="ch"><div class="ct">Recomendacion · Pet#42189</div><span class="pillr">MASTER DOG · LIVE</span></div>
+            <table class="table">
+              <thead><tr><th>SKU</th><th>Match</th><th style="text-align:right;">Precio</th></tr></thead>
+              <tbody>
+                <tr><td><strong>🥇 Royal Canin Maxi Adult 15kg</strong><br><span style="opacity: 0.7;">Optimo para Pastor Suizo 32kg</span></td><td style="color: var(--emerald);">98%</td><td style="text-align:right; font-weight: 700;">$52.900</td></tr>
+                <tr><td>🥈 Pro Plan Optiage 15kg</td><td style="color: var(--emerald);">91%</td><td style="text-align:right;">$48.900</td></tr>
+                <tr><td>🥉 Hills Active Adult 15kg</td><td style="color: var(--emerald);">89%</td><td style="text-align:right;">$54.900</td></tr>
+                <tr><td>Galleta dentaria Greenies 12u</td><td style="color: var(--gold);">Bundle</td><td style="text-align:right;">$8.900</td></tr>
+                <tr><td>Bravecto Plus 1000mg</td><td style="color: var(--gold);">Trigger antiparasitario</td><td style="text-align:right;">$22.500</td></tr>
+              </tbody>
+            </table>
+            <div style="margin-top: 12px; padding: 10px; background: var(--retail-soft); border-radius: 8px; font-size: 11px; color: var(--retail);">
+              <strong>Auto-replenish smart:</strong> 15kg / 38 dias = pre-pedido cada 36 dias. CLV +3.2x vs compra puntual.
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ct">Conversion · cohort piloto</div><span class="pillr">90 DIAS</span></div>
+            <div class="row"><div class="lbl">Pets piloto</div><div class="v">2.400</div></div>
+            <div class="row"><div class="lbl">Cart promedio sin recomendacion</div><div class="v">$52k</div></div>
+            <div class="row"><div class="lbl">Cart promedio con recomendacion</div><div class="v" style="color: var(--retail);">$67k <span class="delta-up">+28%</span></div></div>
+            <div class="row"><div class="lbl">Conversion bundle "cachorro"</div><div class="v">41%</div></div>
+            <div class="row"><div class="lbl">Suscripcion alimento activada</div><div class="v">18%</div></div>
+            <hr style="margin: 12px 0; border: none; border-top: 1px dashed var(--paper-200);" />
+            <div class="row"><div class="lbl"><strong>Revenue retailer / mes</strong></div><div class="v" style="color: var(--retail); font-size: 18px;">~$8M CLP</div></div>
+            <div class="row"><div class="lbl">Comision Paw Friend 12%</div><div class="v">$960k CLP</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 — GOBIERNO compliance -->
+    <section class="slide light" data-num="6">
+      <div class="slide-content">
+        <span class="slide-label lg">🏛️ Gobierno · compliance Ley 21.020</span>
+        <h2 class="headline" style="color: var(--ink);">
+          Reporte mensual SAG + Concejo Municipal automatico <span class="tag-real">REAL</span>
+        </h2>
+        <p class="subhead">
+          Multi-tenant. Cada comuna ve su cohort, registro digital ciudadano, ferias esterilizacion. Reportes generados via edge fn cron.
+        </p>
+        <div class="dashboard" style="grid-template-columns: 1fr 1fr 1fr; margin-top: 8px;">
+          <div class="card">
+            <div class="ch"><div class="ct">Comuna piloto</div><span class="pillg">FUNDADOR</span></div>
+            <div class="row"><div class="lbl">Habitantes</div><div class="v">~18.500</div></div>
+            <div class="row"><div class="lbl">Mascotas registradas</div><div class="v" style="color: var(--gov);">4.230</div></div>
+            <div class="row"><div class="lbl">Penetracion vs estimado</div><div class="v">~60%</div></div>
+            <div class="row"><div class="lbl">Ultimo registro</div><div class="v mono" style="font-size: 11px;">hace 14 min</div></div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ct">Compliance Ley 21.020</div><span class="pillg">VS NACIONAL</span></div>
+            <div class="row"><div class="lbl">Microchip</div><div class="v" style="color: var(--gov);">90% ✓</div></div>
+            <div class="bar"><div style="width: 90%; background: var(--gov);"></div></div>
+            <div class="row"><div class="lbl">Esterilizadas</div><div class="v" style="color: var(--gov);">69% ✓</div></div>
+            <div class="bar"><div style="width: 69%; background: var(--gov);"></div></div>
+            <div class="row"><div class="lbl">Antirrabica al dia</div><div class="v" style="color: var(--gov);">83% ✓</div></div>
+            <div class="bar"><div style="width: 83%; background: var(--gov);"></div></div>
+            <div class="row"><div class="lbl">Paw Shield biometria</div><div class="v" style="color: var(--gold);">51% ⚠</div></div>
+            <div class="bar"><div style="width: 51%; background: var(--gold);"></div></div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ct">Acciones del mes</div><span class="pillg">SEPT 2026</span></div>
+            <div class="row"><div class="lbl">Ferias esterilizacion</div><div class="v">3</div></div>
+            <div class="row"><div class="lbl">Pets esterilizados gratis</div><div class="v">142</div></div>
+            <div class="row"><div class="lbl">Vacunaciones masivas</div><div class="v">2</div></div>
+            <div class="row"><div class="lbl">Sanciones aplicadas (1 UF)</div><div class="v">7</div></div>
+            <div class="row"><div class="lbl">Reportes a SAG</div><div class="v" style="color: var(--gov);">automaticos ✓</div></div>
+            <hr style="margin: 12px 0; border: none; border-top: 1px dashed var(--paper-200);" />
+            <div class="row"><div class="lbl"><strong>Tiempo ahorrado</strong></div><div class="v" style="color: var(--gov);">~120 hrs/mes</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 — CORRELATION MOAT -->
+    <section class="slide dark" data-num="7">
+      <div class="mesh"></div>
+      <div class="slide-content">
+        <span class="slide-label">🧬 Correlation moat · datos unicos en Chile</span>
+        <h2 class="headline">
+          La data <span style="background: linear-gradient(135deg, var(--gold-light), var(--emerald-light)); -webkit-background-clip: text; background-clip: text; color: transparent;">que nadie mas tiene</span> <span class="tag-real">REAL</span>
+        </h2>
+        <p class="subhead">
+          Tablas <code>correlation_definitions</code> + <code>correlation_observations</code> con 6 seeds + 2 RPCs compute. AdminCorrelations panel.
+          Endpoint b2b-api <code>/correlation_insights</code>.
+        </p>
+        <div class="dashboard" style="grid-template-columns: 1fr 1fr; margin-top: 8px;">
+          <div class="card">
+            <div class="ch"><div class="ct" style="opacity: 0.85;">Breed Lifespan · expectativa por raza</div><div class="cv" style="color: var(--gold-light);">RPC compute</div></div>
+            <table class="table">
+              <thead><tr><th>Raza</th><th style="text-align:right;">Esperanza media</th><th style="text-align:right;">N pets</th></tr></thead>
+              <tbody>
+                <tr><td>Pastor Aleman</td><td style="text-align:right;">10.2 anos</td><td style="text-align:right;">387</td></tr>
+                <tr><td>Pastor Suizo</td><td style="text-align:right;">11.1 anos</td><td style="text-align:right;">152</td></tr>
+                <tr><td>Labrador</td><td style="text-align:right;">12.0 anos</td><td style="text-align:right;">621</td></tr>
+                <tr><td>Mestizo (mediano)</td><td style="text-align:right;">13.4 anos</td><td style="text-align:right;">1.482</td></tr>
+                <tr><td>Chihuahua</td><td style="text-align:right;">14.1 anos</td><td style="text-align:right;">288</td></tr>
+              </tbody>
+            </table>
+            <div style="margin-top: 10px; font-size: 11px; opacity: 0.8;">📌 Privacy threshold: solo razas con &gt;= 50 pets son publicables.</div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ct" style="opacity: 0.85;">Edad esterilizacion · por comuna</div><div class="cv" style="color: var(--gold-light);">RPC compute</div></div>
+            <table class="table">
+              <thead><tr><th>Comuna</th><th style="text-align:right;">Edad media</th><th style="text-align:right;">% esterilizados</th></tr></thead>
+              <tbody>
+                <tr><td>Las Condes</td><td style="text-align:right;">11 meses</td><td style="text-align:right;">78%</td></tr>
+                <tr><td>Vitacura</td><td style="text-align:right;">9 meses</td><td style="text-align:right;">82%</td></tr>
+                <tr><td>Providencia</td><td style="text-align:right;">12 meses</td><td style="text-align:right;">71%</td></tr>
+                <tr><td>Nunoa</td><td style="text-align:right;">14 meses</td><td style="text-align:right;">62%</td></tr>
+                <tr><td>La Florida</td><td style="text-align:right;">22 meses</td><td style="text-align:right;">38%</td></tr>
+              </tbody>
+            </table>
+            <div style="margin-top: 10px; font-size: 11px; opacity: 0.8;">📌 Insight directo para campanas de educacion ciudadana + targeting pharma.</div>
+          </div>
+        </div>
+        <div style="margin-top: 18px; padding: 14px 18px; background: rgba(234,179,8,0.1); border-left: 3px solid var(--gold); border-radius: 8px; font-size: 13px; line-height: 1.6;">
+          🔬 <strong>Por que es defendible:</strong> esta data no se compra ni se extrapola. Se construye con vets reales registrando
+          eventos reales en mascotas reales con consent opt-in. Replicarlo cuesta 2-3 anos de operacion local.
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 — PET ID + PASAPORTE -->
+    <section class="slide light" data-num="8">
+      <div class="slide-content">
+        <span class="slide-label">🪪 Lo que recibe el dueno · entregables visuales <span class="tag-real">REAL</span></span>
+        <h2 class="headline" style="color: var(--ink);">
+          Cada partner B2B aterriza en <span style="color: var(--ink);">documentos fisicos</span> reconocibles.
+        </h2>
+        <p class="subhead">
+          Carnet (frente + reverso) + Paw Passport PDF de 8 paginas. Co-branding posible: tu logo arriba.
+        </p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 12px; align-items: start;">
+          <div style="text-align: center;">
+            <img src="assets/IDS/carnet-mascota-frente.svg" alt="Carnet frente" class="id-img" style="max-width: 100%;">
+            <div style="margin-top: 8px; font-size: 12px; color: var(--ink); font-weight: 700;">Carnet · frente</div>
+            <div style="font-size: 11px; opacity: 0.7;">Foto + datos + QR + microchip</div>
+          </div>
+          <div style="text-align: center;">
+            <img src="assets/IDS/carnet-mascota-reverso.svg" alt="Carnet reverso" class="id-img" style="max-width: 100%;">
+            <div style="margin-top: 8px; font-size: 12px; color: var(--ink); font-weight: 700;">Carnet · reverso</div>
+            <div style="font-size: 11px; opacity: 0.7;">Vacunas + contactos + sello</div>
+          </div>
+          <div style="text-align: center;">
+            <img src="assets/IDS/pasaporte-mascota.svg" alt="Pasaporte mascota" class="id-img" style="max-width: 100%;">
+            <div style="margin-top: 8px; font-size: 12px; color: var(--ink); font-weight: 700;">Paw Passport · pagina 1</div>
+            <div style="font-size: 11px; opacity: 0.7;">8 paginas · biometria · clinico</div>
+          </div>
+        </div>
+        <div style="margin-top: 16px; padding: 12px 18px; background: var(--paper-100); border-radius: 8px; font-size: 13px; line-height: 1.6;">
+          📌 <strong>Co-branding:</strong> el espacio del header verde puede ser tu marca + Paw Friend en piloto.
+          Producido en SVG escalable + PDF imprimible. El dueno descarga, imprime y lo lleva al vet.
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 — STACK TECNICO -->
+    <section class="slide dark" data-num="9">
+      <div class="mesh"></div>
+      <div class="slide-content">
+        <span class="slide-label">⚙️ Stack tecnico · que existe ya</span>
+        <h2 class="headline">
+          La fontaneria <span style="background: linear-gradient(135deg, var(--gold-light), var(--emerald-light)); -webkit-background-clip: text; background-clip: text; color: transparent;">esta puesta</span> <span class="tag-real">REAL</span>
+        </h2>
+        <div class="dashboard" style="grid-template-columns: 1fr 1fr; margin-top: 12px;">
+          <div class="card">
+            <div class="ch"><div class="ct" style="opacity: 0.85;">B2B API · endpoints en produccion</div></div>
+            <table class="table">
+              <thead><tr><th>Endpoint</th><th>Metodo</th><th>Auth</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">/b2b/breed_stats</td><td>GET</td><td>X-Pawfriend-Api-Key</td></tr>
+                <tr><td class="mono">/b2b/species_stats</td><td>GET</td><td>X-Pawfriend-Api-Key</td></tr>
+                <tr><td class="mono">/b2b/correlation_catalog</td><td>GET</td><td>X-Pawfriend-Api-Key</td></tr>
+                <tr><td class="mono">/b2b/correlation_insights</td><td>GET</td><td>X-Pawfriend-Api-Key</td></tr>
+              </tbody>
+            </table>
+            <div style="margin-top: 10px; font-size: 11px; opacity: 0.8;">📌 Tablas <code>b2b_api_keys</code> + <code>b2b_api_usage</code> con quotas + AdminB2BApiKeys panel.</div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ct" style="opacity: 0.85;">Tablas / vistas clave</div></div>
+            <table class="table">
+              <thead><tr><th>Objeto</th><th>Para</th></tr></thead>
+              <tbody>
+                <tr><td class="mono">master_kpis_daily</td><td>30+ KPIs view materializada</td></tr>
+                <tr><td class="mono">correlation_observations</td><td>Insights compute output</td></tr>
+                <tr><td class="mono">pet_health_alerts</td><td>Cascadas ambient computing</td></tr>
+                <tr><td class="mono">paw_shield_events</td><td>Audit biometria</td></tr>
+                <tr><td class="mono">pet_risk_scores</td><td>RPC calculate_pet_risk_score</td></tr>
+                <tr><td class="mono">adoption_centers</td><td>Refugios + bulk import</td></tr>
+                <tr><td class="mono">paw_companys</td><td>Sponsor + Partner</td></tr>
+                <tr><td class="mono">pitch_applications</td><td>Form publico /aplicar</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div style="margin-top: 16px; padding: 14px 18px; background: rgba(16,185,129,0.1); border-left: 3px solid var(--emerald); border-radius: 8px; font-size: 13px; line-height: 1.6;">
+          ✅ <strong>189+ migraciones SQL</strong> · 36+ edge functions · 587 tests verdes · `strictNullChecks: true` · Sentry integrado · PII scrub · cron-auth shared secret. <strong>Production-grade desde el dia 1</strong>.
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 — CIERRE -->
+    <section class="slide cover" data-num="10">
+      <div class="mesh"></div>
+      <div class="slide-content">
+        <span class="slide-label">Pidete una demo en vivo</span>
+        <h2 class="headline" style="font-size: clamp(34px, 4.5vw, 60px);">
+          Esto es <span style="background: linear-gradient(135deg, var(--gold-light), var(--emerald-light)); -webkit-background-clip: text; background-clip: text; color: transparent;">solo el mock</span>.<br>
+          La demo en vivo es mas potente.
+        </h2>
+        <p class="subhead" style="font-size: 16px; max-width: 760px;">
+          Te conectamos a una sesion de 30 minutos donde corremos las queries, generamos un cohort de tu interes,
+          escaneamos un hocico y entregamos el output como si ya fuera tu cliente.
+        </p>
+        <div style="margin-top: 32px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap; font-size: 14px;">
+          <span>🌐 <a href="https://pawfriend.cl" style="color: var(--gold-light); text-decoration: none; font-weight: 700;" target="_blank">pawfriend.cl</a></span>
+          <span>✉️ <a href="mailto:pawfriendcl@gmail.com" style="color: var(--gold-light); text-decoration: none; font-weight: 700;">pawfriendcl@gmail.com</a></span>
+          <span style="opacity: 0.85;">📍 Hecho en Chile · Lanzamiento Junio 2026</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="counter" id="counter">1 / 10</div>
+  <div class="hint" id="hint"><kbd>←</kbd><kbd>→</kbd> navegar <kbd>F</kbd> full <kbd>P</kbd> imprimir</div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressFill = document.getElementById('progressFill');
+    const counter = document.getElementById('counter');
+    const total = slides.length;
+    let current = 0;
+    function show(i) {
+      i = Math.max(0, Math.min(total - 1, i));
+      slides.forEach((s, k) => s.classList.toggle('active', k === i));
+      current = i;
+      progressFill.style.width = ((i + 1) / total * 100) + '%';
+      counter.textContent = `${i + 1} / ${total}`;
+      document.body.classList.toggle('light-slide', slides[i].classList.contains('light'));
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') show(current + 1);
+      else if (e.key === 'ArrowLeft') show(current - 1);
+      else if (e.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.();
+      else if (e.key.toLowerCase() === 'p') window.print();
+    });
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      const x = e.clientX / window.innerWidth;
+      show(x > 0.5 ? current + 1 : current - 1);
+    });
+    show(0);
+  </script>
+</body>
+</html>

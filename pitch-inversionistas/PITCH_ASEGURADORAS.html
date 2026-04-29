@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend para Aseguradoras · Sura · BCI · Mapfre · Consorcio</title>
+  <meta name="description" content="Paw Friend: ficha clinica longitudinal + biometria de mascotas, lista para suscripcion de seguros pet con anti-fraude embebido." />
+  <meta name="theme-color" content="#0369a1" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-50: #f0f9ff; --brand-100: #e0f2fe; --brand-200: #bae6fd; --brand-300: #7dd3fc;
+      --brand-400: #38bdf8; --brand-500: #0ea5e9; --brand-600: #0284c7; --brand-700: #0369a1;
+      --brand-800: #075985; --brand-900: #0c4a6e;
+      --trust: #1e40af; --gold: #eab308; --gold-light: #fde047;
+      --medical: #10b981; --alert: #ef4444; --ink: #0f172a;
+      --insure: #0369a1; --insure-soft: #e0f2fe;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #050b14; color: white; }
+    body.light-slide { background: var(--brand-50); color: var(--ink); }
+    .deck { position: relative; height: 100vh; width: 100vw; overflow: hidden; }
+    .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.08); z-index: 100; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--brand-400) 0%, var(--brand-600) 50%, var(--gold) 100%); transition: width 0.5s ease; }
+    .slide { position: absolute; inset: 0; padding: 6vh 6vw; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s; overflow-y: auto; }
+    .slide.active { opacity: 1; visibility: visible; }
+    .slide.dark { background: linear-gradient(135deg, #050b14 0%, #0c4a6e 50%, #075985 100%); color: white; }
+    .slide.light { background: linear-gradient(135deg, var(--brand-50) 0%, var(--brand-100) 100%); color: var(--ink); }
+    .slide.grad { background: linear-gradient(135deg, #0c4a6e 0%, #0369a1 50%, #38bdf8 100%); color: white; }
+    .slide.insure-grad { background: linear-gradient(135deg, #1e3a8a 0%, #0369a1 50%, #38bdf8 100%); color: white; }
+    .mesh-bg { position: absolute; inset: 0; opacity: 0.4; pointer-events: none; background:
+      radial-gradient(circle at 20% 30%, rgba(56,189,248,0.4), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(30,64,175,0.4), transparent 40%); }
+    .slide-content { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .slide-label { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: var(--gold-light); padding: 6px 12px; background: rgba(234,179,8,0.15); border: 1px solid rgba(234,179,8,0.4); border-radius: 999px; margin-bottom: 18px; align-self: flex-start; }
+    .slide.light .slide-label { color: var(--brand-700); background: var(--brand-100); border-color: var(--brand-300); }
+    .headline { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 4vw, 52px); font-weight: 700; line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
+    .gradient-text { background: linear-gradient(135deg, var(--gold-light) 0%, var(--brand-300) 50%, white 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .subhead { font-size: clamp(14px, 1.5vw, 18px); line-height: 1.5; opacity: 0.85; max-width: 800px; margin-bottom: 18px; }
+    .counter { position: fixed; bottom: 18px; right: 24px; font-size: 12px; font-weight: 700; opacity: 0.6; z-index: 100; }
+    .hint { position: fixed; bottom: 18px; left: 24px; font-size: 11px; font-weight: 600; opacity: 0.5; z-index: 100; }
+    .hint kbd { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin: 0 2px; font-family: monospace; }
+    body.light-slide .hint kbd { background: rgba(0,0,0,0.06); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .stat-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px; text-align: center; }
+    .slide.light .stat-card { background: white; border-color: var(--brand-200); box-shadow: 0 8px 24px rgba(3,105,161,0.06); }
+    .stat-num { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 3vw, 44px); font-weight: 800; color: var(--brand-300); line-height: 1; }
+    .slide.light .stat-num { color: var(--brand-700); }
+    .stat-label { font-size: 11px; opacity: 0.75; margin-top: 8px; line-height: 1.4; }
+    .quote-box { padding: 22px 28px; background: rgba(56,189,248,0.08); border-left: 4px solid var(--brand-400); border-radius: 10px; font-style: italic; margin: 18px 0; }
+    .slide.light .quote-box { background: var(--brand-100); border-left-color: var(--brand-600); }
+    .ask-box { background: white; color: var(--ink); padding: 28px; border-radius: 18px; box-shadow: 0 30px 80px rgba(0,0,0,0.3); margin-top: 16px; }
+    .ask-box h3 { color: var(--brand-700); font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+    .ask-box .price { font-family: 'Fredoka', sans-serif; font-size: 56px; font-weight: 800; color: var(--ink); line-height: 1; }
+    .ask-box .price-sub { font-size: 14px; color: #6b7280; margin-top: 6px; }
+    .feature-row { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .slide.light .feature-row { border-bottom-color: var(--brand-100); }
+    .feature-row:last-child { border-bottom: none; }
+    .feature-row .icon { font-size: 24px; flex-shrink: 0; }
+    .feature-row strong { display: block; margin-bottom: 4px; }
+    .feature-row span { font-size: 13px; opacity: 0.8; line-height: 1.5; }
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }
+    .data-table th { padding: 10px 14px; background: rgba(56,189,248,0.15); text-align: left; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .data-table td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .slide.light .data-table th { background: var(--insure-soft); color: var(--brand-700); }
+    .slide.light .data-table td { border-bottom-color: var(--brand-100); }
+    .badge-trust { display: inline-block; padding: 4px 10px; background: var(--trust); color: white; font-size: 11px; font-weight: 800; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="progress"><div class="progress-fill" id="progressFill" style="width: 12%"></div></div>
+  <div class="deck" id="deck">
+
+    <!-- 1 — COVER -->
+    <section class="slide insure-grad active" data-num="1">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Pitch · Aseguradoras · Pet Insurance Chile</span>
+        <h1 class="headline" style="font-size: clamp(36px, 5vw, 68px);">
+          Suscribir un seguro pet<br>
+          deberia tomar <span class="gradient-text">3 minutos</span>,<br>
+          no 3 semanas.
+        </h1>
+        <p class="subhead" style="font-size: 18px; max-width: 760px; opacity: 0.95;">
+          Paw Friend te entrega ficha clinica longitudinal + identidad biometrica
+          permanente + consent de pago digital, listas para integrar en tu funnel.
+          Bajamos el costo de adquisicion y eliminamos el fraude por sustitucion.
+        </p>
+        <div style="display: flex; gap: 18px; align-items: center; margin-top: 22px; opacity: 0.85; font-size: 13px;">
+          <span>🛡️ Paw Shield biometria 100% accuracy</span>
+          <span>•</span>
+          <span>📋 Ficha clinica real (no autodeclarada)</span>
+          <span>•</span>
+          <span>🇨🇱 Hecho en Chile</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 — EL PROBLEMA -->
+    <section class="slide dark" data-num="2">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">El problema · pet insurance en Chile</span>
+        <h2 class="headline">
+          El mercado pet insurance chileno crece, pero <span class="gradient-text">la suscripcion sigue rota</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card">
+            <div class="stat-num">~3%</div>
+            <div class="stat-label">penetracion seguros pet<br>en Chile (vs 25% UK)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">14-21d</div>
+            <div class="stat-label">tiempo promedio<br>de underwriting hoy</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">8-12%</div>
+            <div class="stat-label">de claims con<br>fraude por sustitucion sospechado</div>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 28px;">
+          "Nuestro problema no es vender el seguro: es que el dueno se aburre
+          en el formulario, los pre-existentes los autodeclara mal y cuando hay
+          un claim grande no podemos validar si es la misma mascota que aseguramos."
+          <div style="margin-top: 8px; font-style: normal; font-size: 12px; opacity: 0.7;">— Patron observado en pricing teams pet insurance LATAM</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 — LO QUE OFRECEMOS -->
+    <section class="slide light" data-num="3">
+      <div class="slide-content">
+        <span class="slide-label">Nuestra propuesta · datos + biometria + consent</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Convertimos tu funnel pet insurance en <span style="color: var(--brand-600);">3 pasos digitales</span>.
+        </h2>
+        <div class="grid-2" style="margin-top: 24px;">
+          <div>
+            <div class="feature-row">
+              <div class="icon">🛡️</div>
+              <div><strong>Identidad biometrica permanente (Paw Shield)</strong>
+                <span>Cada mascota tiene una huella nasal verificada en Petify (100% accuracy con 3 fotos). Anti-fraude por sustitucion: imposible asegurar al "primo" cuando el asegurado fallece.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">📋</div>
+              <div><strong>Ficha clinica longitudinal verificable</strong>
+                <span>Vacunas, antiparasitarios, condiciones cronicas, peso, dietas. Validada por vet, no autodeclarada. Underwriting en minutos.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">💳</div>
+              <div><strong>Pago digital y suscripcion embedded</strong>
+                <span>Flow.cl integrado. Pagos recurrentes mensual/anual sin friccion. Cancelacion compliant Ley 21.398.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">📊</div>
+              <div><strong>Geo + raza + edad para pricing dinamico</strong>
+                <span>Cohorts reales: 50.000+ pets en Chile con segmentacion por comuna, raza y condicion.</span></div>
+            </div>
+          </div>
+          <div class="ask-box" style="background: linear-gradient(160deg, white 0%, var(--brand-50) 100%);">
+            <h3>Mock dashboard suscripcion</h3>
+            <div style="font-size: 13px; color: #6b7280; margin-bottom: 8px;">Cohort: Labradores adultos · RM</div>
+            <div class="price" style="font-size: 48px; color: var(--brand-700);">$24.900</div>
+            <div class="price-sub">prima mensual sugerida (modelo)</div>
+            <hr style="margin: 16px 0; border: none; border-top: 1px dashed var(--brand-200);" />
+            <div style="font-size: 12px; line-height: 1.7; color: #475569;">
+              <div>📈 Frecuencia claim/ano · <strong>0.42</strong></div>
+              <div>💰 Severity media · <strong>$180k CLP</strong></div>
+              <div>🦴 Top 3 condiciones · <strong>otitis · displasia · obesidad</strong></div>
+              <div>🏥 Vet cluster · <strong>Las Condes (38%) · Vitacura (22%) · Providencia (18%)</strong></div>
+              <div>🛡️ Paw Shield activo · <strong>91% del cohort</strong></div>
+            </div>
+            <div style="margin-top: 14px; padding: 10px; background: var(--brand-100); border-radius: 8px; font-size: 11px; color: var(--brand-800);">
+              <strong>Loss ratio modelado:</strong> 58% (vs 72% sector hoy en Chile)
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 — 4 productos -->
+    <section class="slide dark" data-num="4">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Productos · 4 modos de integracion</span>
+        <h2 class="headline">
+          No te vendemos solo data. Te <span class="gradient-text">embebemos en el flujo</span>.
+        </h2>
+        <div class="grid-4" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🔌</div>
+            <strong style="display: block; margin-top: 8px;">API underwriting</strong>
+            <span style="font-size: 12px; opacity: 0.8;">Endpoint con perfil de riesgo en tiempo real (raza/edad/comuna/historial)</span>
+          </div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🤝</div>
+            <strong style="display: block; margin-top: 8px;">Afiliado in-app</strong>
+            <span style="font-size: 12px; opacity: 0.8;">CTA "Asegurar a Kai" en /home y ficha clinica. Comision por contratacion.</span></div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🏷️</div>
+            <strong style="display: block; margin-top: 8px;">White-label ficha</strong>
+            <span style="font-size: 12px; opacity: 0.8;">Tu marca + nuestra ficha clinica para tus asegurados. Retencion +35%.</span></div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🛡️</div>
+            <strong style="display: block; margin-top: 8px;">Anti-fraude claims</strong>
+            <span style="font-size: 12px; opacity: 0.8;">Match biometrico al momento del claim. Verificas que es la mascota asegurada.</span></div>
+        </div>
+        <div style="margin-top: 32px; padding: 18px 24px; background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3); border-radius: 12px;">
+          <strong style="color: var(--gold-light);">📌 Caso de uso ancla:</strong>
+          <span style="font-size: 14px; opacity: 0.9; margin-left: 8px;">
+            Reaseguro o cliente final escanea hocico al momento del claim → match con base Paw Shield → confirmacion de identidad en <strong>< 5 segundos</strong>. Adios a las "verificaciones presenciales" de 3 dias.
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 — PRICING -->
+    <section class="slide light" data-num="5">
+      <div class="slide-content">
+        <span class="slide-label">Pricing · 3 tiers</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Inversion clara, ROI medible.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--brand-600); letter-spacing: 0.1em; text-transform: uppercase;">Starter</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 38px; font-weight: 800; color: var(--ink); line-height: 1; margin-top: 6px;">$2.500<span style="font-size: 14px; opacity: 0.6;"> USD/mes</span></div>
+            <ul style="margin-top: 12px; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>API underwriting (10k requests/mes)</li>
+              <li>Banner afiliado in-app</li>
+              <li>Reporte trimestral</li>
+            </ul>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px; border: 2px solid var(--brand-600); position: relative;">
+            <span style="position: absolute; top: -10px; right: 14px; background: var(--brand-600); color: white; font-size: 10px; padding: 3px 10px; border-radius: 999px; font-weight: 800;">RECOMENDADO</span>
+            <div style="font-size: 11px; font-weight: 800; color: var(--brand-600); letter-spacing: 0.1em; text-transform: uppercase;">Pro</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 38px; font-weight: 800; color: var(--ink); line-height: 1; margin-top: 6px;">$4.500<span style="font-size: 14px; opacity: 0.6;"> USD/mes</span></div>
+            <ul style="margin-top: 12px; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>Todo Starter +</li>
+              <li>API anti-fraude claims</li>
+              <li>Cohort dashboards mensuales</li>
+              <li>White-label ficha clinica (50k pets)</li>
+            </ul>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--brand-600); letter-spacing: 0.1em; text-transform: uppercase;">Enterprise</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 38px; font-weight: 800; color: var(--ink); line-height: 1; margin-top: 6px;">$8k+<span style="font-size: 14px; opacity: 0.6;"> USD/mes</span></div>
+            <ul style="margin-top: 12px; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>Todo Pro +</li>
+              <li>SLA 99.9% + soporte dedicado</li>
+              <li>Integracion core bancario</li>
+              <li>Co-development de productos</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 28px;">
+          <strong>ROI tipico:</strong> con loss ratio de 58% (vs 72% sector) y CAC de $35k CLP por suscriptor (vs $90k sector),
+          el Pro se paga con <strong>~50 polizas adicionales/mes</strong>.
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 — DIFERENCIACION -->
+    <section class="slide dark" data-num="6">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Por que nosotros · vs alternativas</span>
+        <h2 class="headline">
+          La unica plataforma chilena con <span class="gradient-text">ficha clinica viva + biometria validada</span>.
+        </h2>
+        <table class="data-table" style="margin-top: 24px;">
+          <thead>
+            <tr>
+              <th>Capacidad</th>
+              <th>Encuestas / brokers</th>
+              <th>Apps pet generales</th>
+              <th>Paw Friend</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Identidad biometrica permanente</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: var(--medical); font-weight: 800;">Si (100% accuracy)</td>
+            </tr>
+            <tr>
+              <td>Ficha clinica validada por vet</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #fbbf24;">Parcial (autodeclarada)</td>
+              <td style="color: var(--medical); font-weight: 800;">Si (vet directo)</td>
+            </tr>
+            <tr>
+              <td>Cohorts longitudinales por raza/comuna</td>
+              <td style="color: #fbbf24;">Snapshot anual</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: var(--medical); font-weight: 800;">Real-time</td>
+            </tr>
+            <tr>
+              <td>Anti-fraude por sustitucion</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: var(--medical); font-weight: 800;">Si</td>
+            </tr>
+            <tr>
+              <td>Pago recurrente embedded</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #fbbf24;">Variable</td>
+              <td style="color: var(--medical); font-weight: 800;">Flow.cl integrado</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top: 24px; font-size: 14px; opacity: 0.85;">
+          🏗️ <strong>Modelo Mapcity:</strong> el dueno nunca paga, los datos son nuestros, nosotros monetizamos B2B.
+          Eso significa que tu cohort no es un "panel pequeno autoseleccionado" sino la base completa de mascotas activas en Chile.
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 — PILOTO 90 DIAS -->
+    <section class="slide light" data-num="7">
+      <div class="slide-content">
+        <span class="slide-label">Piloto · 90 dias · all-in</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Probemos juntos en 90 dias <span style="color: var(--brand-600);">por $6k USD all-in</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 32px;">📅</div>
+            <strong style="display: block; margin-top: 12px;">Mes 1 · Setup</strong>
+            <span style="font-size: 13px; opacity: 0.85;">Integracion API + onboarding equipo claims + definicion KPIs.</span>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 32px;">🚀</div>
+            <strong style="display: block; margin-top: 12px;">Mes 2 · Live</strong>
+            <span style="font-size: 13px; opacity: 0.85;">CTA en /home + ficha + 1 cohort dashboard de tu eleccion.</span>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 32px;">📊</div>
+            <strong style="display: block; margin-top: 12px;">Mes 3 · Validacion</strong>
+            <span style="font-size: 13px; opacity: 0.85;">Reporte de leads + CAC + loss ratio modelado vs el actual de tu cartera.</span>
+          </div>
+        </div>
+        <div class="ask-box" style="margin-top: 32px; background: linear-gradient(160deg, white 0%, var(--brand-50) 100%);">
+          <h3>Que pides para empezar</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 12px;">
+            <div>
+              <div class="price" style="color: var(--brand-700);">$6.000 USD</div>
+              <div class="price-sub">all-in 90 dias · sin permanencia</div>
+              <div style="margin-top: 12px; font-size: 13px; color: #475569;">
+                Despues elegimos: <strong>Starter $2.5k/mes</strong>, <strong>Pro $4.5k/mes</strong> o nos despedimos.
+              </div>
+            </div>
+            <div style="font-size: 13px; color: #475569; line-height: 1.8;">
+              <strong style="color: var(--ink);">Que recibes:</strong>
+              <ul style="padding-left: 18px; margin-top: 6px;">
+                <li>API underwriting + sandbox</li>
+                <li>1 cohort live (raza · comuna · edad)</li>
+                <li>Dashboard mensual</li>
+                <li>1 reunion semanal con founder</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 — CTA FINAL -->
+    <section class="slide insure-grad" data-num="8">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Conversacion · proximos pasos</span>
+        <h2 class="headline" style="font-size: clamp(34px, 4.5vw, 60px);">
+          Demo de 30 minutos.<br>
+          <span class="gradient-text">Decidamos en frio</span> si vale la pena.
+        </h2>
+        <p class="subhead" style="font-size: 17px; max-width: 780px;">
+          Te muestro live el dashboard de un cohort real (anonimizado), corremos
+          un anti-fraude check con foto de hocico, y discutimos si el piloto Q3
+          tiene sentido para tu cartera.
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 28px;">
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📅</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 1</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">30min de demo<br>(remoto)</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🛡️</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 2</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Anti-fraude<br>live demo</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🤝</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 3</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Decidimos piloto<br>o nos despedimos</div>
+          </div>
+        </div>
+        <div style="margin-top: 36px; display: flex; gap: 24px; justify-content: center; align-items: center; flex-wrap: wrap; font-size: 14px;">
+          <span>🌐 <a href="https://pawfriend.cl" style="color: var(--gold-light); text-decoration: none; font-weight: 700;" target="_blank">pawfriend.cl</a></span>
+          <span>✉️ <a href="mailto:pawfriendcl@gmail.com" style="color: var(--gold-light); text-decoration: none; font-weight: 700;">pawfriendcl@gmail.com</a></span>
+          <span style="opacity: 0.85;">📍 Hecho en Chile · Lanzamiento Junio 2026</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="counter" id="counter">1 / 8</div>
+  <div class="hint" id="hint"><kbd>←</kbd><kbd>→</kbd> navegar <kbd>F</kbd> full <kbd>P</kbd> imprimir</div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressFill = document.getElementById('progressFill');
+    const counter = document.getElementById('counter');
+    const total = slides.length;
+    let current = 0;
+    function show(i) {
+      i = Math.max(0, Math.min(total - 1, i));
+      slides.forEach((s, k) => s.classList.toggle('active', k === i));
+      current = i;
+      progressFill.style.width = ((i + 1) / total * 100) + '%';
+      counter.textContent = `${i + 1} / ${total}`;
+      document.body.classList.toggle('light-slide', slides[i].classList.contains('light'));
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') show(current + 1);
+      else if (e.key === 'ArrowLeft') show(current - 1);
+      else if (e.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.();
+      else if (e.key.toLowerCase() === 'p') window.print();
+    });
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      const x = e.clientX / window.innerWidth;
+      show(x > 0.5 ? current + 1 : current - 1);
+    });
+    show(0);
+  </script>
+</body>
+</html>

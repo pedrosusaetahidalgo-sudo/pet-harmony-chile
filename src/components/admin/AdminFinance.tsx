@@ -365,12 +365,12 @@ export default function AdminFinance() {
           Aparece solo si hay problemas; discreto en modo sano. */}
       <PaymentEventsFailedWidget />
 
-      {/* Modelo v2 (post-Roberto Camhi) — recordatorio al admin */}
+      {/* Modelo v2 (2026-04-22) — recordatorio al admin */}
       <Card className="border-violet-500/30 bg-gradient-to-br from-violet-950/60 to-fuchsia-950/40">
         <CardContent className="p-4 text-xs text-slate-200 space-y-2">
           <div className="flex items-center gap-2 text-sm font-semibold text-violet-200">
             <Heart className="h-4 w-4 text-fuchsia-400 fill-fuchsia-400" />
-            Modelo v2 (post-Roberto Camhi 2026-04-22)
+            Modelo v2 (2026-04-22)
           </div>
           <p className="text-slate-300/90 leading-relaxed">
             <b>Modelo Mapcity: el dueño NUNCA paga</b>. Revenue B2B en 3 pilares ancla — pharma

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend · Pitch Fondos · CORFO · Start-Up Chile · Angeles · VC LATAM</title>
+  <meta name="description" content="Paw Friend: pitch unificado para fondos publicos, aceleradoras y capital privado. Modelo, traccion, equipo, ask." />
+  <meta name="theme-color" content="#9333ea" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-50: #faf5ff; --brand-100: #f3e8ff; --brand-200: #e9d5ff; --brand-300: #d8b4fe;
+      --brand-400: #c084fc; --brand-500: #a855f7; --brand-600: #9333ea; --brand-700: #7e22ce;
+      --brand-800: #6b21a8; --brand-900: #581c87;
+      --gold: #eab308; --gold-light: #fde047; --gold-soft: #fef9c3;
+      --emerald: #10b981; --emerald-light: #34d399;
+      --alert: #ef4444; --ink: #1a102b;
+      --capital: #9333ea;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #0a0612; color: white; }
+    body.light-slide { background: var(--brand-50); color: var(--ink); }
+    .deck { position: relative; height: 100vh; width: 100vw; overflow: hidden; }
+    .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.08); z-index: 100; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--brand-500) 0%, var(--gold) 50%, var(--emerald) 100%); transition: width 0.5s ease; }
+    .slide { position: absolute; inset: 0; padding: 6vh 6vw; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s; overflow-y: auto; }
+    .slide.active { opacity: 1; visibility: visible; }
+    .slide.dark { background: linear-gradient(135deg, #0a0612 0%, #1a102b 50%, #581c87 100%); color: white; }
+    .slide.light { background: linear-gradient(135deg, var(--brand-50) 0%, var(--brand-100) 100%); color: var(--ink); }
+    .slide.cap-grad { background: linear-gradient(135deg, #581c87 0%, #9333ea 50%, #eab308 100%); color: white; }
+    .mesh-bg { position: absolute; inset: 0; opacity: 0.4; pointer-events: none; background:
+      radial-gradient(circle at 20% 30%, rgba(234,179,8,0.3), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(168,85,247,0.4), transparent 40%); }
+    .slide-content { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .slide-label { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: var(--gold-light); padding: 6px 12px; background: rgba(234,179,8,0.15); border: 1px solid rgba(234,179,8,0.4); border-radius: 999px; margin-bottom: 18px; align-self: flex-start; }
+    .slide.light .slide-label { color: var(--brand-700); background: var(--brand-100); border-color: var(--brand-300); }
+    .headline { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 4vw, 52px); font-weight: 700; line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
+    .gradient-text { background: linear-gradient(135deg, var(--gold-light) 0%, var(--brand-300) 50%, white 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .subhead { font-size: clamp(14px, 1.5vw, 18px); line-height: 1.5; opacity: 0.85; max-width: 800px; margin-bottom: 18px; }
+    .counter { position: fixed; bottom: 18px; right: 24px; font-size: 12px; font-weight: 700; opacity: 0.6; z-index: 100; }
+    .hint { position: fixed; bottom: 18px; left: 24px; font-size: 11px; font-weight: 600; opacity: 0.5; z-index: 100; }
+    .hint kbd { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin: 0 2px; font-family: monospace; }
+    body.light-slide .hint kbd { background: rgba(0,0,0,0.06); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .stat-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px; text-align: center; }
+    .slide.light .stat-card { background: white; border-color: var(--brand-200); box-shadow: 0 8px 24px rgba(147,51,234,0.06); }
+    .stat-num { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 3vw, 44px); font-weight: 800; color: var(--gold-light); line-height: 1; }
+    .slide.light .stat-num { color: var(--brand-600); }
+    .stat-label { font-size: 11px; opacity: 0.75; margin-top: 8px; line-height: 1.4; }
+    .quote-box { padding: 22px 28px; background: rgba(234,179,8,0.08); border-left: 4px solid var(--gold); border-radius: 10px; font-style: italic; margin: 18px 0; }
+    .slide.light .quote-box { background: var(--gold-soft); }
+    .ask-tabs { display: flex; gap: 8px; margin-top: 18px; flex-wrap: wrap; }
+    .ask-tab { padding: 10px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .ask-tab.active { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+    .slide.light .ask-tab { background: white; border-color: var(--brand-200); color: var(--ink); }
+    .slide.light .ask-tab.active { background: var(--brand-600); color: white; border-color: var(--brand-600); }
+    .ask-panel { display: none; padding: 24px; background: white; color: var(--ink); border-radius: 14px; margin-top: 12px; box-shadow: 0 18px 40px rgba(15,23,42,0.18); }
+    .ask-panel.active { display: block; }
+    .ask-panel h4 { color: var(--brand-700); font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+    .ask-panel .num { font-family: 'Fredoka', sans-serif; font-size: 38px; font-weight: 800; color: var(--ink); line-height: 1; }
+    .ask-panel .nsub { font-size: 13px; color: #6b7280; margin-top: 4px; margin-bottom: 12px; }
+    .ask-panel ul { padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569; }
+    .label-proj { font-size: 10px; padding: 2px 8px; background: rgba(234,179,8,0.18); color: var(--gold); border-radius: 4px; font-weight: 700; vertical-align: middle; margin-left: 6px; }
+    .slide.dark .label-proj, .slide.cap-grad .label-proj { background: rgba(253,224,71,0.18); color: var(--gold-light); }
+    .feature-row { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .slide.light .feature-row { border-bottom-color: var(--brand-100); }
+    .feature-row:last-child { border-bottom: none; }
+    .feature-row .icon { font-size: 24px; flex-shrink: 0; }
+    .feature-row strong { display: block; margin-bottom: 4px; }
+    .feature-row span { font-size: 13px; opacity: 0.8; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div class="progress"><div class="progress-fill" id="progressFill" style="width: 9%"></div></div>
+  <div class="deck" id="deck">
+
+    <!-- 1 — COVER -->
+    <section class="slide cap-grad active" data-num="1">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Pitch · Fondos · CORFO · Start-Up Chile · Angeles · VC</span>
+        <h1 class="headline" style="font-size: clamp(36px, 5vw, 68px);">
+          Paw Friend.<br>
+          La <span class="gradient-text">infraestructura digital</span><br>
+          de la mascota chilena.
+        </h1>
+        <p class="subhead" style="font-size: 18px; max-width: 760px; opacity: 0.95;">
+          Chile tiene 5 millones de mascotas y 0 plataforma. Construimos la
+          ficha clinica longitudinal + identidad biometrica + monetizacion B2B
+          para 6 verticales. <strong>El dueno nunca paga</strong>. Modelo Mapcity.
+        </p>
+        <div style="display: flex; gap: 18px; align-items: center; margin-top: 22px; opacity: 0.85; font-size: 13px;">
+          <span>🇨🇱 Hecho en Chile</span>
+          <span>•</span>
+          <span>🛡️ Paw Shield · biometria validada</span>
+          <span>•</span>
+          <span>📅 Lanzamiento Junio 2026</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 — PROBLEMA + MERCADO -->
+    <section class="slide dark" data-num="2">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Problema · mercado · oportunidad</span>
+        <h2 class="headline">
+          El mercado pet chileno crece 10% anual. <span class="gradient-text">La data no</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card">
+            <div class="stat-num">5M</div>
+            <div class="stat-label">mascotas en Chile<br>(perros + gatos)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">74%</div>
+            <div class="stat-label">hogares con<br>al menos una mascota</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">~$1.2M</div>
+            <div class="stat-label">CLP/ano gasto medio<br>por mascota</div>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 28px;">
+          <strong>Tres problemas no resueltos en Chile:</strong>
+          (1) la ficha clinica vive en papel/pdf;
+          (2) la identidad de la mascota se pierde con el chip o la foto;
+          (3) pharma, seguros y retail venden a ciegas porque no hay base.
+          <br><br>
+          <strong>Tres problemas — una sola plataforma.</strong>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 — SOLUCION -->
+    <section class="slide light" data-num="3">
+      <div class="slide-content">
+        <span class="slide-label">Solucion · 3 capas integradas</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Paw Friend <span style="color: var(--brand-600);">no es una app</span>. Es 3 capas.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--brand-600); letter-spacing: 0.1em; text-transform: uppercase;">Capa 1 · Capture</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 24px; font-weight: 700; margin-top: 6px;">App Paw Friend</div>
+            <p style="font-size: 13px; line-height: 1.7; color: #475569; margin-top: 8px;">
+              Dueno gratis. Vet gratis (en plan basico). Refugio gratis. Onboarding emocional + ficha clinica + recordatorios + comunidad.
+              <strong>El dueno nunca paga</strong>. Modelo Mapcity.
+            </p>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px; border: 2px solid var(--brand-600);">
+            <div style="font-size: 11px; font-weight: 800; color: var(--brand-600); letter-spacing: 0.1em; text-transform: uppercase;">Capa 2 · Identity</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 24px; font-weight: 700; margin-top: 6px;">Paw Shield</div>
+            <p style="font-size: 13px; line-height: 1.7; color: #475569; margin-top: 8px;">
+              Biometria de hocico (Petify). Identidad permanente, no se pierde, anti-fraude. Validado 100% top-1 con 3 fotos en
+              <strong>test interno con 8 mascotas reales</strong>. La capa que hace al activo defensible.
+            </p>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--brand-600); letter-spacing: 0.1em; text-transform: uppercase;">Capa 3 · Monetize</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 24px; font-weight: 700; margin-top: 6px;">B2B Multi-Pillar</div>
+            <p style="font-size: 13px; line-height: 1.7; color: #475569; margin-top: 8px;">
+              6 motores de revenue: pharma · aseguradoras · retail · gobierno · banca · edificios. + long-tail.
+              Cada motor tiene pitch dedicado, pricing claro, piloto definido.
+            </p>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 28px;">
+          <strong>Por que el dueno no paga:</strong> es la unica forma de capturar el 100% del mercado.
+          Petify (validacion competitiva) cobra USD 0.50/pet/mes y captura el 10%. Nosotros capturamos el 100% y monetizamos B2B.
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 — TRACCION -->
+    <section class="slide dark" data-num="4">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Traccion · que tenemos hoy</span>
+        <h2 class="headline">
+          Pre-launch <span class="gradient-text">no es pre-producto</span>.
+        </h2>
+        <div class="grid-2" style="margin-top: 28px;">
+          <div>
+            <div class="feature-row">
+              <div class="icon">⚙️</div>
+              <div><strong>Producto end-to-end construido</strong>
+                <span>App iOS + Android + Web. 73+ rutas. 36+ edge fns. 189+ migraciones SQL. 587 tests verdes. Lanzamiento Junio 2026.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">🛡️</div>
+              <div><strong>Paw Shield validado</strong>
+                <span>100% top-1 accuracy con 3 fotos contra 8 pets reales (8 razas distintas). Petify integrado. UNIQUE constraint anti-duplicado en DB.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">📊</div>
+              <div><strong>Stack de monetizacion listo</strong>
+                <span>API B2B v1 deployed con 4 endpoints + auth + master_kpis_daily view + correlation_observations + 6 seeds.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">👩‍⚕️</div>
+              <div><strong>Beta privada con vet real</strong>
+                <span>Sofia Rosi (vet) probando producto activo con feedback iterativo. 14 funcionalidades clinicas validadas.</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="feature-row">
+              <div class="icon">🤝</div>
+              <div><strong>Pipeline B2B inicial</strong>
+                <span>13 refugios chilenos contactados (outreach abierto), email a Petify enviado, RFP path para Centrovet pendiente Q3.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">📋</div>
+              <div><strong>Compliance Ley 19.628 + 21.719</strong>
+                <span>Privacy Policy completa con subprocesadores, ARCO RPC export_user_data, marketing consent, RLS audit pasado.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">🏢</div>
+              <div><strong>Estructura legal lista</strong>
+                <span>SUSAETA GARNHAM SOFTWARE ENGINEERING SpA constituida (RUT 78.328.659-9, abr 2026). Inicio SII formalizado.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">🎬</div>
+              <div><strong>Content Studio operativo</strong>
+                <span>Pipeline propio Satori + Remotion + ElevenLabs Pro + Midjourney. 4 campanas preparadas. Costo marginal por reel.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 — APALANCAMIENTO + EQUIPO -->
+    <section class="slide light" data-num="5">
+      <div class="slide-content">
+        <span class="slide-label">Equipo · apalancamiento founder + IA</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          1 founder + IA = <span style="color: var(--brand-600);">15x el tiempo</span> de un equipo tradicional.
+        </h2>
+        <div class="grid-2" style="margin-top: 24px;">
+          <div>
+            <p style="font-size: 15px; line-height: 1.7;">
+              <strong>Pedro Susaeta</strong> (Paw Founder) — ingeniero, fundador SpA. <strong>320 horas</strong> de
+              construccion vs ~4.800 horas estimadas para un equipo tradicional. <strong>15x mas rapido, 32-65x menor costo</strong>.
+            </p>
+            <p style="font-size: 14px; line-height: 1.7; margin-top: 14px; opacity: 0.85;">
+              Esto no es magia. Es Claude Code + Claude Opus + workflow agresivo de subagentes y memoria persistente.
+              El producto que estas viendo es el resultado de un solo founder operando como un equipo de 8.
+              Es replicable y escalable a equipo cuando lleguen mas funciones criticas.
+            </p>
+            <div style="margin-top: 18px; padding: 14px 18px; background: var(--brand-100); border-radius: 10px; font-size: 13px; color: var(--brand-800);">
+              <strong>Plan de equipo Y1 post-financiamiento:</strong> +1 PM, +1 sales B2B, +1 vet liaison, +1 desarrollador iOS senior.
+              Founder se mantiene en producto + tech.
+            </div>
+          </div>
+          <div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+              <thead>
+                <tr style="background: var(--brand-100);">
+                  <th style="padding: 10px 14px; text-align: left; font-weight: 800; font-size: 11px; text-transform: uppercase; color: var(--brand-700);">Metrica</th>
+                  <th style="padding: 10px 14px; text-align: right; font-weight: 800; font-size: 11px; text-transform: uppercase; color: var(--brand-700);">Equipo trad.</th>
+                  <th style="padding: 10px 14px; text-align: right; font-weight: 800; font-size: 11px; text-transform: uppercase; color: var(--brand-700);">Founder + IA</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td style="padding: 10px 14px; border-bottom: 1px solid var(--brand-100);">Horas a MVP</td><td style="text-align: right; padding: 10px 14px;">~4.800</td><td style="text-align: right; padding: 10px 14px; font-weight: 700; color: var(--brand-700);">320</td></tr>
+                <tr><td style="padding: 10px 14px; border-bottom: 1px solid var(--brand-100);">Costo equivalente USD</td><td style="text-align: right; padding: 10px 14px;">~$240k</td><td style="text-align: right; padding: 10px 14px; font-weight: 700; color: var(--brand-700);">~$3.7-7k</td></tr>
+                <tr><td style="padding: 10px 14px; border-bottom: 1px solid var(--brand-100);">Tiempo calendario</td><td style="text-align: right; padding: 10px 14px;">12-18m</td><td style="text-align: right; padding: 10px 14px; font-weight: 700; color: var(--brand-700);">7m</td></tr>
+                <tr><td style="padding: 10px 14px;">Iteracion / dia</td><td style="text-align: right; padding: 10px 14px;">1-2 PRs</td><td style="text-align: right; padding: 10px 14px; font-weight: 700; color: var(--brand-700);">8-12 PRs</td></tr>
+              </tbody>
+            </table>
+            <div style="margin-top: 14px; padding: 12px 16px; background: rgba(16,185,129,0.1); border-left: 3px solid var(--emerald); font-size: 12px; line-height: 1.6;">
+              📌 <strong>Tesis de inversion:</strong> apalancamiento founder + IA es el moat antes que un equipo grande sea necesario.
+              Cada dolar que entra hoy compra mas producto que el mismo dolar en una startup tradicional.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 — REVENUE PLAN -->
+    <section class="slide dark" data-num="6">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Revenue Master Plan · Y1-Y3 <span class="label-proj">PROYECCION</span></span>
+        <h2 class="headline">
+          ARR conservador Y1: <span class="gradient-text">$120k USD</span>. Optimista: <span class="gradient-text">$420k USD</span>.
+        </h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 24px; font-size: 13px;">
+          <thead>
+            <tr style="background: rgba(234,179,8,0.15);">
+              <th style="padding: 10px 14px; text-align: left; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em;">Motor</th>
+              <th style="padding: 10px 14px; text-align: right; font-weight: 800; font-size: 11px; text-transform: uppercase;">Y1 conservador</th>
+              <th style="padding: 10px 14px; text-align: right; font-weight: 800; font-size: 11px; text-transform: uppercase;">Y1 optimista</th>
+              <th style="padding: 10px 14px; text-align: right; font-weight: 800; font-size: 11px; text-transform: uppercase;">Y3 base (USD)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08);">Pharma animal</td><td style="text-align: right; padding: 10px 14px;">$36k</td><td style="text-align: right; padding: 10px 14px;">$120k</td><td style="text-align: right; padding: 10px 14px; font-weight: 700; color: var(--gold-light);">$480k</td></tr>
+            <tr><td style="padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08);">Aseguradoras</td><td style="text-align: right; padding: 10px 14px;">$30k</td><td style="text-align: right; padding: 10px 14px;">$90k</td><td style="text-align: right; padding: 10px 14px; font-weight: 700; color: var(--gold-light);">$360k</td></tr>
+            <tr><td style="padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08);">Retail pet</td><td style="text-align: right; padding: 10px 14px;">$24k</td><td style="text-align: right; padding: 10px 14px;">$80k</td><td style="text-align: right; padding: 10px 14px; font-weight: 700; color: var(--gold-light);">$300k</td></tr>
+            <tr><td style="padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08);">Gobierno + SAG</td><td style="text-align: right; padding: 10px 14px;">$12k</td><td style="text-align: right; padding: 10px 14px;">$60k</td><td style="text-align: right; padding: 10px 14px; font-weight: 700; color: var(--gold-light);">$220k</td></tr>
+            <tr><td style="padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08);">Banca + edificios</td><td style="text-align: right; padding: 10px 14px;">$10k</td><td style="text-align: right; padding: 10px 14px;">$40k</td><td style="text-align: right; padding: 10px 14px; font-weight: 700; color: var(--gold-light);">$180k</td></tr>
+            <tr><td style="padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08);">Long-tail (6 verticales)</td><td style="text-align: right; padding: 10px 14px;">$8k</td><td style="text-align: right; padding: 10px 14px;">$30k</td><td style="text-align: right; padding: 10px 14px; font-weight: 700; color: var(--gold-light);">$280k</td></tr>
+            <tr style="background: rgba(255,255,255,0.06); font-weight: 800;"><td style="padding: 12px 14px;">TOTAL ARR</td><td style="text-align: right; padding: 12px 14px;">$120k</td><td style="text-align: right; padding: 12px 14px;">$420k</td><td style="text-align: right; padding: 12px 14px; color: var(--gold-light);">$1.82M</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top: 18px; font-size: 12px; opacity: 0.75; line-height: 1.5;">
+          📌 Proyeccion. No hay revenue real recurrente todavia. Y1 cuenta desde Junio 2026 (lanzamiento). Modelo detallado en
+          <a href="../docs-raiz/REVENUE_MASTER_PLAN_2026.md" style="color: var(--gold-light); text-decoration: underline;">REVENUE_MASTER_PLAN_2026.md</a>.
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 — ASK CON TABS -->
+    <section class="slide light" data-num="7">
+      <div class="slide-content">
+        <span class="slide-label">Ask · que pedimos · 3 audiencias</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Tres asks <span style="color: var(--brand-600);">para tres audiencias</span>.
+        </h2>
+        <div class="ask-tabs" id="askTabs">
+          <div class="ask-tab active" data-tab="corfo">CORFO SSAF-I</div>
+          <div class="ask-tab" data-tab="startup">Start-Up Chile Ignite</div>
+          <div class="ask-tab" data-tab="angels">Angeles · VC LATAM</div>
+        </div>
+        <div class="ask-panel active" data-panel="corfo">
+          <h4>CORFO SSAF-I · Cofinanciamiento estatal</h4>
+          <div class="num">$25M CLP</div>
+          <div class="nsub">cofinanciamiento (75%) · contrapartida $8.3M (25%) · 12-18 meses</div>
+          <ul>
+            <li><strong>Linea aplicable:</strong> SSAF-I (innovacion). Brief detallado en 01_CORFO_SSAF-I.md</li>
+            <li><strong>Uso:</strong> validacion comercial 6 verticales B2B + escalamiento producto + sueldo founder hasta MRR $1k</li>
+            <li><strong>Hitos:</strong> 3 contratos B2B firmados Q3 2026 + 5.000 pets en plataforma + 1 vet liaison contratado</li>
+            <li><strong>Por que ahora:</strong> producto end-to-end listo, falta validacion comercial. CORFO es la fit perfecta</li>
+          </ul>
+        </div>
+        <div class="ask-panel" data-panel="startup">
+          <h4>Start-Up Chile Ignite · Aceleracion equity-free</h4>
+          <div class="num">$15-25M CLP</div>
+          <div class="nsub">equity-free + soft landing + comunidad · 6 meses</div>
+          <ul>
+            <li><strong>Programa aplicable:</strong> Ignite. Brief detallado en 02_START_UP_CHILE.md</li>
+            <li><strong>Tesis fit:</strong> hardcore tech (biometria + IA) + impacto regional + escalable LATAM</li>
+            <li><strong>Demo Day:</strong> presentamos con 3 pilotos B2B firmados + 10k pets en plataforma</li>
+            <li><strong>Por que ahora:</strong> ventana abierta + producto demostrable + caso anclado en Ley 21.020</li>
+          </ul>
+        </div>
+        <div class="ask-panel" data-panel="angels">
+          <h4>Angeles · VC LATAM · Capital privado pre-seed</h4>
+          <div class="num">USD $150k</div>
+          <div class="nsub">cap USD $1.2M · SAFE · 18 meses runway</div>
+          <ul>
+            <li><strong>Estructura:</strong> SAFE post-money con cap $1.2M USD. Brief detallado en 04_ANGELES_VC_LATAM.md</li>
+            <li><strong>Uso:</strong> 60% sales B2B + 25% producto (mobile + biometria) + 15% sueldo founder market-rate</li>
+            <li><strong>Hitos a Y1:</strong> ARR $120k conservador / $420k optimista. 50.000 pets en plataforma. 3+ contratos pharma/seguros firmados</li>
+            <li><strong>Quien encaja:</strong> angels LATAM con tesis pet/vertical SaaS. NO unicornio, SI cash flow defendible Y2-Y3</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 — POR QUE AHORA + RIESGOS -->
+    <section class="slide dark" data-num="8">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Por que ahora · y los riesgos</span>
+        <h2 class="headline">
+          Una <span class="gradient-text">ventana de 18 meses</span>.
+        </h2>
+        <div class="grid-2" style="margin-top: 28px;">
+          <div>
+            <strong style="color: var(--gold-light); font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em;">Por que ahora</strong>
+            <ul style="margin-top: 14px; padding-left: 20px; font-size: 14px; line-height: 1.8;">
+              <li>Ley 21.020 obliga a 345 municipios a registrar (sin sistema)</li>
+              <li>Petify (vendor biometria) entra a Chile en 2026 — es nuestro infraestructura, no competidor</li>
+              <li>Pharma + seguros buscan vertical pet hace 3 anos sin proveedor</li>
+              <li>74% hogares con mascota + crecimiento 10% anual del gasto</li>
+              <li>Ningun competidor local con ficha clinica longitudinal</li>
+            </ul>
+          </div>
+          <div>
+            <strong style="color: var(--alert); font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em;">Riesgos honestos</strong>
+            <ul style="margin-top: 14px; padding-left: 20px; font-size: 14px; line-height: 1.8;">
+              <li><strong>Adquisicion B2C:</strong> dependemos del boca a boca + vets + content. Mitigacion: Content Studio operativo + 13 refugios pipeline</li>
+              <li><strong>Concentracion B2B:</strong> 3 motores grandes. Mitigacion: long-tail con 6 verticales adicionales</li>
+              <li><strong>Costo Petify:</strong> USD 0.50/pet/mes si activamos por defecto. Mitigacion: opt-in obligatorio + descuento por volumen</li>
+              <li><strong>Ciclos de venta largos B2B:</strong> 6-12 meses pharma/seguros. Mitigacion: piloto barato 90d, viral via vet</li>
+              <li><strong>Founder unico:</strong> bus factor. Mitigacion: equipo Y1 + documentacion exhaustiva</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 24px;">
+          <strong>Decision honesta:</strong> no somos un unicornio en formacion. Somos una infraestructura B2B
+          rentable y defendible para un mercado especifico. Si eso encaja con tu tesis, hablemos.
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 — CTA -->
+    <section class="slide cap-grad" data-num="9">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Conversacion · proximos pasos</span>
+        <h2 class="headline" style="font-size: clamp(34px, 4.5vw, 60px);">
+          Demo de 30 minutos.<br>
+          Despues, <span class="gradient-text">decidimos</span>.
+        </h2>
+        <p class="subhead" style="font-size: 17px; max-width: 780px;">
+          Te muestro live el producto, el dashboard B2B y los 3 motores con mayor traccion.
+          Cerramos con un term sheet preliminar o nos despedimos. Sin presentaciones eternas.
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 28px;">
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📅</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 1</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">30min demo<br>+ Q&A</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📊</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 2</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Data room<br>+ ref calls</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🤝</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 3</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Term sheet<br>en 14 dias</div>
+          </div>
+        </div>
+        <div style="margin-top: 36px; display: flex; gap: 24px; justify-content: center; align-items: center; flex-wrap: wrap; font-size: 14px;">
+          <span>🌐 <a href="https://pawfriend.cl" style="color: var(--gold-light); text-decoration: none; font-weight: 700;" target="_blank">pawfriend.cl</a></span>
+          <span>✉️ <a href="mailto:pawfriendcl@gmail.com" style="color: var(--gold-light); text-decoration: none; font-weight: 700;">pawfriendcl@gmail.com</a></span>
+          <span style="opacity: 0.85;">📍 Hecho en Chile · Lanzamiento Junio 2026</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="counter" id="counter">1 / 9</div>
+  <div class="hint" id="hint"><kbd>←</kbd><kbd>→</kbd> navegar <kbd>F</kbd> full <kbd>P</kbd> imprimir</div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressFill = document.getElementById('progressFill');
+    const counter = document.getElementById('counter');
+    const total = slides.length;
+    let current = 0;
+    function show(i) {
+      i = Math.max(0, Math.min(total - 1, i));
+      slides.forEach((s, k) => s.classList.toggle('active', k === i));
+      current = i;
+      progressFill.style.width = ((i + 1) / total * 100) + '%';
+      counter.textContent = `${i + 1} / ${total}`;
+      document.body.classList.toggle('light-slide', slides[i].classList.contains('light'));
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') show(current + 1);
+      else if (e.key === 'ArrowLeft') show(current - 1);
+      else if (e.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.();
+      else if (e.key.toLowerCase() === 'p') window.print();
+    });
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      if (e.target.classList.contains('ask-tab')) return;
+      const x = e.clientX / window.innerWidth;
+      show(x > 0.5 ? current + 1 : current - 1);
+    });
+    document.querySelectorAll('.ask-tab').forEach(tab => {
+      tab.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const target = tab.getAttribute('data-tab');
+        document.querySelectorAll('.ask-tab').forEach(t => t.classList.toggle('active', t === tab));
+        document.querySelectorAll('.ask-panel').forEach(p => p.classList.toggle('active', p.getAttribute('data-panel') === target));
+      });
+    });
+    show(0);
+  </script>
+</body>
+</html>

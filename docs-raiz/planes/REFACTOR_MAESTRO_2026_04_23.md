@@ -1,7 +1,7 @@
 # Refactor Maestro Paw Friend — Plan 2026-04-23
 
 > **Fuente de verdad** del pivote completo de producto, modelo de negocio y arquitectura.
-> Elaborado tras conversación estratégica con Pedro (2026-04-23) post-insights de Roberto Camhi (2026-04-22).
+> Elaborado tras conversación estratégica con Pedro (2026-04-23) post-insights de un mentor experimentado (2026-04-22).
 > **Estado**: Plan aprobado conceptualmente, ejecución por horizontes. Nada aplicado aún.
 > **Owner**: Paw Founder (Pedro)
 > **IA de referencia**: Claude Opus 4.7 (1M)
@@ -117,7 +117,7 @@ Regla de oro (ya documentada en [featureFlags.ts:4-7](../../src/lib/featureFlags
 | Prueba | Muchas features | Un artefacto: **el Paw Passport exportable** |
 | Diferenciador | Chilena, gratis, completa | **Biometría nasal primaria + historia completa + ética** |
 
-### 2.3. Alineación con Roberto Camhi (modelo v2)
+### 2.3. Alineación con un mentor experimentado (modelo v2)
 
 Roberto dijo "producto invisible, vets=canal, revenue real de Pharma+Seguros+Retail, clínica escondido". Este plan **no cambia esa tesis — la hace ejecutable**.
 
@@ -1367,7 +1367,7 @@ Esta es una decisión ética y estratégica:
 
 - **Ética**: la app es para cuidar mascotas. Cobrarle al dueño por cuidar mejor a su mascota es cobrarle por el amor. No va.
 - **Estratégica**: masa de usuarios gratis = data moat. Data moat = revenue B2B a largo plazo. Cobrar B2C mata adopción y mata el moat.
-- **Alineación con Roberto Camhi**: "producto invisible" — el modelo de negocio nunca está visible para el dueño.
+- **Alineación con un mentor experimentado**: "producto invisible" — el modelo de negocio nunca está visible para el dueño.
 - **Diferenciación**: Chewy, Mars, Petnow tienen todos algún pricing al dueño. Paw Friend no. Esto es pelea ganable con Pharma/Seguros/Retail como indicados.
 
 ### 8.2. Qué se ELIMINA/ESCONDE del modelo previo
@@ -2221,7 +2221,7 @@ export const FEATURE_FLAGS = {
 | Apple Developer account activa | Pedro (en proceso) | 2026-06-15 |
 | Meta Business Verification aprobada | Pedro (esperando) | 2026-06-30 |
 | Primer contacto partner retail | Pedro | 2026-06-01 |
-| Pitch a Roberto Camhi versión refinada | Pedro | 2026-04-30 |
+| Pitch a un mentor experimentado versión refinada | Pedro | 2026-04-30 |
 | Legal review postura biométrica | Pedro contrata | 2026-05-10 |
 
 ---
@@ -2427,7 +2427,7 @@ El plan tal como está es ejecutable con 1 persona + IA durante 6 meses si hay r
 
 | Fecha | Evento |
 |---|---|
-| 2026-04-22 | Roberto Camhi pitch → modelo v2 (producto invisible, vets=canal) |
+| 2026-04-22 | un mentor experimentado pitch → modelo v2 (producto invisible, vets=canal) |
 | 2026-04-23 | Pedro expresa "frankenstein feeling", pide plan maestro refactor |
 | 2026-04-23 | Conversación extendida sobre data moat, nose print, partners, expansión |
 | 2026-04-23 | Claude Opus 4.7 genera este documento |

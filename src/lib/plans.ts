@@ -223,7 +223,7 @@ export interface ProviderPlanConfig {
   commissionRate: number;
   features: ProviderPlanFeatures;
   /**
-   * Modelo v2 (post-Roberto Camhi 2026-04-22): si false, el plan no aparece
+   * Modelo v2 (2026-04-22): si false, el plan no aparece
    * en pricing publico (`/para-veterinarios`). Sigue asignable manualmente
    * desde admin, sigue funcionando si una cuenta lo tiene. Track Clinica
    * se vende como "Empresarial — contactanos" para no posicionar Paw Friend

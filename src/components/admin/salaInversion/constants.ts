@@ -3,7 +3,7 @@
  * (E.1 auditoria top-tier 2026-04-20). Sin logica: solo data.
  */
 
-// ── Plan 90 dias (modelo v2 post-Roberto Camhi 2026-04-22) ──────────────
+// ── Plan 90 dias (modelo v2 2026-04-22) ──────────────
 // El dueno NUNCA paga; la metrica "premium_b2c" antes era objetivo de
 // conversion a Paw Member ($3.990/mes voluntario). En modelo v2 sigue
 // siendo proxy NPS (cuantos duenos quieren apoyar voluntariamente) pero
