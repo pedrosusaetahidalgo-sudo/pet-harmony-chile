@@ -89,9 +89,26 @@ function flushPostHogQueue() {
  * Initialize all analytics providers. Call once at app start (e.g. in main.tsx).
  */
 export async function initAnalytics(): Promise<void> {
+  // 2026-04-30: gate por cookie consent en web. En native el ATT/Android
+  // privacy lo maneja el OS asi que se inicializa siempre.
+  // El banner llama initAnalytics() de nuevo cuando el user da consent.
+  let consentOK = true;
+  try {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      const isWeb = typeof navigator !== 'undefined' && !navigator.userAgent.includes('Capacitor');
+      if (isWeb) {
+        const consent = localStorage.getItem('pf_cookie_consent');
+        consentOK = consent === 'accepted';
+      }
+    }
+  } catch {
+    // SSR o storage bloqueado: por defecto no trackear
+    consentOK = false;
+  }
+
   // PostHog — skip en dev para evitar contaminar prod con eventos de localhost.
   // Opt-in con VITE_POSTHOG_ENABLE_IN_DEV=1 si algun dia se quiere debuggear.
-  if (!_posthogInitAttempted) {
+  if (!_posthogInitAttempted && consentOK) {
     _posthogInitAttempted = true;
 
     const enableInDev = import.meta.env.VITE_POSTHOG_ENABLE_IN_DEV === '1';
@@ -129,11 +146,11 @@ export async function initAnalytics(): Promise<void> {
     }
   }
 
-  // Firebase Analytics
-  await initFirebaseAnalytics();
-
-  // Meta Pixel (web only)
-  initMetaPixel();
+  // Firebase Analytics + Meta Pixel solo si hay consent (web). Native usa ATT.
+  if (consentOK) {
+    await initFirebaseAnalytics();
+    initMetaPixel();
+  }
 }
 
 // Key events to track

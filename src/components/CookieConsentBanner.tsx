@@ -4,8 +4,12 @@ import { Button } from '@/components/ui/button';
 import { isWeb } from '@/lib/platform';
 
 const CONSENT_KEY = 'pf_cookie_consent';
+// 2026-04-30: incluir PostHog en HAS_TRACKING. Cierra hallazgo del
+// production readiness doc: "PostHog lo trackea sin consent banner".
 const HAS_TRACKING = Boolean(
-  import.meta.env.VITE_META_PIXEL_ID || import.meta.env.VITE_FIREBASE_API_KEY
+  import.meta.env.VITE_META_PIXEL_ID ||
+  import.meta.env.VITE_FIREBASE_API_KEY ||
+  import.meta.env.VITE_POSTHOG_KEY
 );
 
 type ConsentState = 'pending' | 'accepted' | 'rejected';
@@ -26,11 +30,25 @@ export const CookieConsentBanner = () => {
   const handleAccept = () => {
     localStorage.setItem(CONSENT_KEY, 'accepted');
     setConsent('accepted');
+    // Re-init analytics ahora que tenemos consent (PostHog/Meta/Firebase
+    // estaban gateados en el primer load).
+    import('@/lib/analytics').then((m) => m.initAnalytics?.()).catch(() => {});
   };
 
   const handleReject = () => {
     localStorage.setItem(CONSENT_KEY, 'rejected');
     setConsent('rejected');
+    // Si por alguna razon PostHog ya estaba activo (race condition pre-banner),
+    // forzar opt-out. Best-effort: si la lib no esta cargada, no pasa nada.
+    import('posthog-js')
+      .then((m) => {
+        try {
+          m.default.opt_out_capturing?.();
+        } catch {
+          // posthog no inicializado, OK
+        }
+      })
+      .catch(() => {});
   };
 
   // Don't show on native, if already decided, or if no tracking is configured
