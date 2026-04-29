@@ -27,13 +27,28 @@ El modelo de monetización debe diseñarse para **maximizar identifies sobre la 
 4. **Cleanup automático**: pets con cuenta inactiva >12 meses → DELETE en Petify (sale de billing siguiente ciclo). Cron mensual.
 5. **Cuenta cerrada por dueño**: `DELETE /v2/pets/{id}` inmediato → fuera de billing en 1 ciclo. ARCO compliance + cost saving.
 
+### Pricing Petify oficial (2026-04-29)
+
+| Tier | Precio | Features |
+|---|---|---|
+| **Basic** | **$0.50 USD/pet/mes** | Biometric registration · verification · data management · admin dashboard. **NO incluye lost pet recovery (1:N).** |
+| **Pro** | **$0.75 USD/pet/mes** | Basic + **Lost pet recovery** (1:N identify) — necesario para `/nose-scan` publico de Paw Friend |
+| **Premium** | **Contact Sales** | Pro + QR check-in |
+
+> Para Paw Shield necesitamos **Pro tier $0.75/pet/mes** porque sin lost pet
+> recovery la propuesta de valor "encontre un perro perdido, escanealo y te
+> dice quien es el dueno" no funciona.
+
 ### Métrica clave
 
 ```
-Costo Petify mensual = pets_registered_activos × $1.50 USD
+Costo Petify mensual = pets_registered_activos × $0.75 USD (Pro tier)
 Revenue B2B asociado = pharma + seguros + retail + identify-as-a-service
 
 Salud del modelo: revenue / costo > 5x
+
+Proyeccion COGS Y1 (50.000 pets · 25% activacion opt-in):
+  12.500 pets × $0.75 = $9.375/mes = ~$112k USD/ano
 ```
 
 ---
@@ -249,8 +264,8 @@ Estos contenidos hoy NO existen en el internet chileno — somos los únicos que
 
 | Métrica | Target Q1 | Target Q4 |
 |---|---|---|
-| % pets con Paw Shield activo | 15% | 30% |
-| Costo Petify mensual | <$200 USD | <$3k USD |
+| % pets con Paw Shield activo | 15% | 25-30% |
+| Costo Petify mensual (Pro tier $0.75/pet) | <$300 USD | <$4.5k USD |
 | Identifies/mes (free) | 1k | 50k |
 | Lost-and-found recoveries reportadas | 1 | 10/mes |
 | B2B deals activos (pharma+seguros+retail) | 0 | 3 |

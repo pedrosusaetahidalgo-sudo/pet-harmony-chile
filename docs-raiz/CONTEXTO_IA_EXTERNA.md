@@ -56,10 +56,12 @@
 
 ### Validacion competitiva — Petify
 
-Petify (competidor) cobra **USD $0,50/mascota/mes hasta que se elimine** (modelo extractivo).
-Captura el ~10% que paga, deja el 90% del mercado afuera por friction. Paw Friend modelo v2
-captura el 100% del mercado y monetiza B2B. Cálculos CLP: 1 mascota ~$460/mes, 2 mascotas
-~$11.000/año, refugios con 30 mascotas = inviable. Refuerza moat de "gratis para siempre".
+Petify cobra al dueno: **Basic USD $0,50/pet/mes** (registro + verificacion + admin),
+**Pro USD $0,75/pet/mes** (suma lost pet recovery 1:N) o **Premium contact-sales** (suma QR check-in).
+Modelo extractivo: captura el ~10% que paga, deja el 90% del mercado afuera por friction. Paw Friend modelo v2
+captura el 100% del mercado y monetiza B2B. Cálculos CLP Pro tier: 1 mascota ~$690/mes, 2 mascotas
+~$16.500/año, refugios con 30 mascotas = inviable. **Petify es nuestro proveedor de biometria**
+(Pro tier $0.75/pet/mes absorbido por revenue B2B), no competidor primario. Refuerza moat de "gratis para siempre".
 
 ### Pilares ancla (80% del revenue, mes 4-12 post-seed)
 
@@ -259,7 +261,7 @@ Todas envueltas con `withTelemetry` (2026-04-17).
 - **JWT en `cron.schedule` literal**: incidente 2026-04-20. Vault obligatorio.
 - **`verify_jwt` flip en bloque**: incidente 2026-04-20, romper 28 fns simultaneo. Hacer 1 a 1 con smoke.
 - **Vite manualChunks por path src**: causa circular deps. Solo vendors.
-- **Petify modelo extractivo**: USD $0,50/mascota/mes hasta eliminar. Captura el 10% que paga, deja el 90% afuera. Incentivo perverso (eliminar fichas para dejar de pagar choca con memorial).
+- **Petify modelo extractivo**: Basic USD $0,50/pet/mes · Pro USD $0,75/pet/mes (suma lost pet recovery) · Premium contact-sales (suma QR check-in), hasta eliminar. Captura el 10% que paga, deja el 90% afuera. Incentivo perverso (eliminar fichas para dejar de pagar choca con memorial). **Petify es nuestro proveedor**, no competidor primario.
 
 ## 15. Areas conocidas con deuda tecnica (sospechas)
 

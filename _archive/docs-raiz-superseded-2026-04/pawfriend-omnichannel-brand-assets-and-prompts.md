@@ -1,5 +1,11 @@
-# Paw Friend — Omnichannel Brand Assets & Prompts
+# Paw Friend — Omnichannel Brand Assets & Prompts (SUPERSEDED)
 
+> ⚠️ **SUPERSEDED 2026-04-29.** Consolidado en:
+> - [docs-raiz/BRAND_SYSTEM_2026.md](../../docs-raiz/BRAND_SYSTEM_2026.md) (Brand System unificado app + 11 pitches)
+> - [docs-raiz/ASSETS_GENERATION_PLAN.md](../../docs-raiz/ASSETS_GENERATION_PLAN.md) (master ejecutable de prompts por asset + IA recomendada)
+>
+> Se mantiene aqui como referencia historica.
+>
 > **Estado:** Guía maestra del asset system omnicanal.
 > **Versión:** 2026-04-19.
 > **Dueño:** Paw Founder.

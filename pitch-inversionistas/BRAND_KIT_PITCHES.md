@@ -1,4 +1,10 @@
-# Brand Kit · Pitches Paw Friend
+# Brand Kit · Pitches Paw Friend (SUPERSEDED · ver consolidado)
+
+> ⚠️ **SUPERSEDED 2026-04-29.** Este doc se consolido en:
+> - [docs-raiz/BRAND_SYSTEM_2026.md](../docs-raiz/BRAND_SYSTEM_2026.md) — Brand System unificado app + 11 pitches (paletas dialectos en seccion 4 + numeros canonicos en seccion 8)
+> - [docs-raiz/ASSETS_GENERATION_PLAN.md](../docs-raiz/ASSETS_GENERATION_PLAN.md) — master ejecutable de prompts por asset + IA recomendada
+>
+> Se mantiene aqui como referencia rapida de paletas por pitch. La fuente de verdad es BRAND_SYSTEM_2026.md.
 
 Guia de paletas, tipografia y assets a generar (Claude Web / Gamma / Figma) para
 cada pitch del folder [pitch-inversionistas/](.). El objetivo es que cada

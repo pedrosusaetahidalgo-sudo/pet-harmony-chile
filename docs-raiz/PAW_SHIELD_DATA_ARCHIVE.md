@@ -24,7 +24,7 @@ resultado) para:
 
 ## 2. Por que importa
 
-- Petify cobra por mascota/mes. Tener nuestro propio modelo = independencia tecnologica + costos marginales.
+- Petify cobra por mascota/mes (**Basic $0.50 / Pro $0.75 / Premium contact-sales** USD/pet/mes — ver [PAW_SHIELD_PLAYBOOK.md](PAW_SHIELD_PLAYBOOK.md)). Tener nuestro propio modelo = independencia tecnologica + costos marginales.
 - El dataset chileno (razas locales como quiltro/mestizo, terrier chileno, ovejero magallanico) es unico y dificil de replicar.
 - Las imagenes capturadas son de hocicos en condiciones reales (no laboratorio), lo cual es exactamente lo que un modelo de produccion necesita.
 - Construye un **moat de datos** progresivo: cada pet enrollado sube ~3-4 fotos. Con 50.000 pets en plataforma, son ~180.000 imagenes etiquetadas de hocicos chilenos.

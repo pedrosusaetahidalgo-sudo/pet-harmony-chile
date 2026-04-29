@@ -120,9 +120,14 @@ que pagan por acceso a la ficha clinica longitudinal.
 > Equifax y bancos por acceso a la data. Paw Friend no le cobra al vet ni al
 > dueno — le cobra a pharma, seguros y retail por acceso a la ficha.
 
-**Validacion competitiva**: Petify cobra USD $0.50/mascota/mes hasta eliminar
-(modelo extractivo) → captura el 10% que paga, deja el 90% del mercado en la
-mesa. Paw Friend (modelo Mapcity) captura el 100% del mercado y monetiza B2B.
+**Validacion competitiva**: Petify cobra al dueno directamente — Basic
+**USD $0.50/pet/mes** (registro + verificacion + admin dashboard) · Pro
+**USD $0.75/pet/mes** (suma lost pet recovery 1:N) · Premium contact-sales
+(suma QR check-in). Modelo extractivo → captura el 10% que paga, deja el
+90% del mercado en la mesa. Paw Friend (modelo Mapcity) captura el 100%
+del mercado y monetiza B2B. **Petify es nuestro proveedor de biometria, no
+competidor primario**: para que `/nose-scan` publico funcione necesitamos
+Pro tier $0.75. Por eso Paw Shield es **opt-in** obligatorio (controla el COGS).
 
 ### Pilares ancla (80% del revenue)
 

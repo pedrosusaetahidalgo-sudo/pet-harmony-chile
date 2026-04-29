@@ -170,7 +170,7 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 
 ### "¿Y si Petify (u otro) los ataca con un freemium?"
 
-- Petify hoy cobra **USD $0.50/mascota/mes hasta que se elimine** = modelo extractivo opuesto.
+- Petify hoy cobra al dueno: **Basic USD $0.50/pet/mes · Pro USD $0.75/pet/mes (suma lost pet recovery) · Premium contact-sales (suma QR check-in)** — modelo extractivo opuesto. Y Petify es **nuestro proveedor de biometria** (Pro tier $0.75/pet/mes absorbido por revenue B2B), no nuestro competidor primario.
 - Si Petify pivotea a freemium pierden ARR existente y siguen sin moat de ficha longitudinal.
 - Paw Friend tiene **2 anos de ventaja arquitectonica**: research consent opt-in, b2b-api keys,
   partner_integrations, correlation_definitions ya en produccion. Construir el moat pharma

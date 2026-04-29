@@ -306,7 +306,7 @@ producto, solo reorientando quien paga.
 
 | Competidor | Amenaza | Nuestra jugada |
 |---|---|---|
-| **Petify** | **Modelo extractivo opuesto**: USD $0.50/mascota/mes hasta eliminar (~$11.000 CLP/año por 2 mascotas; 30× mascotas refugio = inviable) | **Contraposicionamiento directo**: "dueno nunca paga". Modelo Mapcity captura el 90% que Petify deja en la mesa por friction. Petify ARR techo USD $300K vs Paw Friend USD $940K-2.1M a misma escala (2-7×) |
+| **Petify** | **Modelo extractivo opuesto**: Basic USD $0.50/pet/mes (registro+verificacion+admin) · Pro USD $0.75/pet/mes (suma lost pet recovery 1:N) · Premium contact-sales (suma QR check-in) — todos cobrados al dueno hasta que se elimine la mascota (~$16.500 CLP/ano Pro tier por 2 mascotas; 30× mascotas refugio = inviable) | **Contraposicionamiento directo**: "dueno nunca paga". Modelo Mapcity captura el 90% que Petify deja en la mesa por friction. **Petify es nuestro proveedor de biometria** (Pro tier $0.75/pet absorbido por revenue B2B), no competidor primario. Petify ARR techo USD $300K vs Paw Friend USD $940K-2.1M a misma escala (2-7×) |
 | **QVET** | Alta 18-24m — entran a Chile | Ganar vet chico chileno antes con onboarding 5 min |
 | **Petsy** | Media — overlap B2C | Directorio SEO + plan B2B + Paw Companys |
 | **CuidaPet** | Baja — solo vet a domicilio | No compite en ficha ni B2B |
@@ -315,7 +315,7 @@ producto, solo reorientando quien paga.
 ### Por que el modelo Petify valida la tesis pero pierde el 90% del mercado
 
 - Petify cobrando $11.000 CLP/año por 2 mascotas **confirma que el dolor existe** (gente paga por ficha digital).
-- Pero $0.50/mascota/mes es friction real en Chile. El 90% prefiere WhatsApp gratis.
+- Pero $0.50-0.75/pet/mes es friction real en Chile. El 90% prefiere WhatsApp gratis.
 - Incentivos perversos del modelo Petify:
   - Mas mascotas = mas cobro → castiga a multi-pet owners (40% de hogares pet en Chile tienen >=2 mascotas).
   - "Hasta que se elimine" presiona a borrar fichas para dejar de pagar → choca con memorial.

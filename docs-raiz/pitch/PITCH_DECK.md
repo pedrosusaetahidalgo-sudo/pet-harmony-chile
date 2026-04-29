@@ -297,9 +297,9 @@ producto, solo reorientando quien paga.
 
 **Competidores clave**:
 
-- **Petify** (modelo extractivo opuesto): cobra **USD 0.50/mascota/mes hasta que la elimines**.
-  Para 2 mascotas = ~$11.000 CLP/año. Para refugios con 30 mascotas = inviable. Incentivo
-  perverso: borrar fichas para dejar de pagar (rompe memorial + historial). Nuestra jugada:
+- **Petify** (modelo extractivo opuesto): cobra al dueno **Basic USD 0.50/pet/mes (registro + verificacion + admin) · Pro USD 0.75/pet/mes (suma lost pet recovery 1:N) · Premium contact-sales (suma QR check-in)**, hasta que se elimine la mascota.
+  Para 2 mascotas en Pro tier = ~$16.500 CLP/año. Para refugios con 30 mascotas = inviable. Incentivo
+  perverso: borrar fichas para dejar de pagar (rompe memorial + historial). **Petify es nuestro proveedor** de biometria (Pro tier $0.75/pet absorbido por revenue B2B), no competidor primario. Nuestra jugada:
   contraposicionamiento directo — *"Mientras Petify te cobra por cada mascota, en Paw Friend
   la ficha es gratis para siempre. Pagamos con pharma/seguros/retail (modelo Mapcity), no
   con tu bolsillo."*
@@ -312,8 +312,8 @@ producto, solo reorientando quien paga.
   memoria": onboarding 5 min + recordatorios automaticos.*
 
 **Por que el modelo Petify valida nuestra tesis pero deja en la mesa al 90% del mercado**:
-- Petify cobrando $11.000 CLP/año por 2 mascotas confirma que el dolor existe (gente paga por ficha digital).
-- Pero ese $0.50/mes es friction real en Chile. El 90% del mercado prefiere WhatsApp gratis.
+- Petify cobrando $11.000-16.500 CLP/ano por 2 mascotas (Basic vs Pro) confirma que el dolor existe (gente paga por ficha digital).
+- Pero ese $0.50-0.75/pet/mes es friction real en Chile. El 90% del mercado prefiere WhatsApp gratis.
 - Paw Friend captura ese 90% con producto gratis + monetiza con B2B de bolsillo profundo (pharma > USD $20-500K/brand).
 - **Petify ARR maximo techo realista**: 50k mascotas × $6/año = USD $300K. **Paw Friend modelo v2 a misma escala**: USD $940K-2.1M (2-7×).
 

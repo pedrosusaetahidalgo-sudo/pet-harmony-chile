@@ -16,7 +16,7 @@
 1. Mercado chileno: 70% del NSE C-D no pagaría suscripción mensual por su mascota.
 2. Conversion a $0 = 10x más que conversion a $3.990/mes.
 3. Volumen masivo (500k MAU en Y3) = palanca para B2B.
-4. Diferenciador absoluto vs Petify ($0.50/mes) y otros.
+4. Diferenciador absoluto vs Petify (Basic $0.50/pet/mes · Pro $0.75/pet/mes · Premium contact-sales) y otros modelos extractivos.
 
 ### B2B paga porque la data + acceso a la mascota valen más que el costo de la app.
 
