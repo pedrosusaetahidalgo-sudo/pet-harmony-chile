@@ -9,7 +9,6 @@ import {
   addPetSchema,
   newPatientSchema,
   reportLostPetSchema,
-  onboardingVetSchema,
 } from '../schemas';
 
 describe('safeText', () => {
@@ -223,32 +222,5 @@ describe('reportLostPetSchema', () => {
   });
 });
 
-describe('onboardingVetSchema', () => {
-  it('accepts valid vet onboarding', () => {
-    const result = onboardingVetSchema.safeParse({
-      displayName: 'Dra. Sofia Rosi',
-      providerType: 'individual',
-    });
-    expect(result.success).toBe(true);
-  });
-
-  it('rejects displayName under 3 chars', () => {
-    expect(
-      onboardingVetSchema.safeParse({ displayName: 'Dr', providerType: 'individual' }).success
-    ).toBe(false);
-  });
-
-  it('rejects invalid providerType', () => {
-    expect(
-      onboardingVetSchema.safeParse({ displayName: 'Dra. Test', providerType: 'hospital' }).success
-    ).toBe(false);
-  });
-
-  it('accepts all valid providerTypes', () => {
-    ['individual', 'clinic', 'home_visit'].forEach((t) => {
-      expect(
-        onboardingVetSchema.safeParse({ displayName: 'Dra. Test', providerType: t }).success
-      ).toBe(true);
-    });
-  });
-});
+// onboardingVetSchema tests eliminados 2026-04-28 (FEAT-004): el schema fue
+// removido junto con OnboardingVetMinimal — la pagina ahora es un redirect.

@@ -25,7 +25,7 @@ const PrivacyPolicy = () => {
           <Card className="border-purple-100 shadow-lg">
             <CardHeader>
               <CardTitle className="text-3xl">Política de Privacidad</CardTitle>
-              <p className="text-muted-foreground">Última actualización: 19 de abril de 2026</p>
+              <p className="text-muted-foreground">Última actualización: 28 de abril de 2026</p>
             </CardHeader>
             <CardContent className="space-y-6">
               <section>
@@ -113,31 +113,198 @@ const PrivacyPolicy = () => {
               </section>
 
               <section>
-                <h2 className="text-2xl font-semibold mb-3">5. Sus Derechos</h2>
+                <h2 className="text-2xl font-semibold mb-3">5. Sus Derechos (ARCO + Ley 21.719)</h2>
                 <p className="text-muted-foreground mb-2">
-                  De acuerdo con la Ley N° 19.628 de Protección de Datos Personales de Chile, usted
-                  tiene derecho a:
+                  De acuerdo con la <strong>Ley N° 19.628</strong> de Protección de Datos Personales
+                  de Chile y la <strong>Ley N° 21.719</strong> sobre Marco de Ciberseguridad, tienes
+                  derechos ARCO sobre tus datos:
                 </p>
                 <ul className="list-disc list-inside text-muted-foreground ml-4 space-y-1">
-                  <li>Acceder a sus datos personales</li>
-                  <li>Rectificar datos inexactos o incompletos</li>
-                  <li>Cancelar o eliminar sus datos</li>
-                  <li>Oponerse al tratamiento de sus datos</li>
-                  <li>Solicitar la portabilidad de sus datos</li>
+                  <li>
+                    <strong>Acceder:</strong> conocer qué datos tuyos tenemos. Puedes descargarlos
+                    en formato JSON desde <code>/exportar-mis-datos</code>.
+                  </li>
+                  <li>
+                    <strong>Rectificar:</strong> corregir datos inexactos o incompletos desde tu
+                    perfil o contactando soporte.
+                  </li>
+                  <li>
+                    <strong>Cancelar:</strong> eliminar tu cuenta y todos tus datos asociados desde{' '}
+                    <code>/delete-account</code>. La eliminación es definitiva en 30 días.
+                  </li>
+                  <li>
+                    <strong>Oponerte:</strong> rechazar el tratamiento de tus datos para fines
+                    específicos (analítica, marketing) desde la configuración de notificaciones.
+                  </li>
+                  <li>
+                    <strong>Portar:</strong> exportar tus datos en formato estructurado (JSON) para
+                    moverlos a otro servicio.
+                  </li>
                 </ul>
                 <p className="text-muted-foreground mt-2">
-                  Para ejercer estos derechos, puede contactarnos a través de la aplicación o por
-                  email.
+                  Conforme a la <strong>Ley 21.719 (Marco de Ciberseguridad)</strong>, en caso de
+                  incidente de seguridad que comprometa tus datos personales, te notificaremos
+                  dentro del plazo legal aplicable (72 horas para incidentes graves) y reportaremos
+                  a la Agencia Nacional de Ciberseguridad cuando corresponda.
+                </p>
+                <p className="text-muted-foreground mt-2">
+                  Para ejercer estos derechos, contáctanos a <code>pedrosusaeta@pawfriend.cl</code>{' '}
+                  o usa los flujos automáticos de la app. Respondemos en un máximo de 5 días
+                  hábiles.
                 </p>
               </section>
 
               <section>
                 <h2 className="text-2xl font-semibold mb-3">6. Retención de Datos</h2>
-                <p className="text-muted-foreground">
-                  Conservamos su información personal mientras su cuenta esté activa o según sea
-                  necesario para proporcionar servicios. Los datos se eliminan cuando cierra su
-                  cuenta, excepto cuando debamos conservarlos por obligaciones legales o para
-                  resolver disputas.
+                <p className="text-muted-foreground mb-2">
+                  Aplicamos retención mínima por tipo de dato. Tras los plazos descritos, los datos
+                  se eliminan automáticamente o se anonimizan irreversiblemente:
+                </p>
+                <ul className="list-disc list-inside text-muted-foreground ml-4 space-y-1">
+                  <li>
+                    <strong>Cuenta y perfil (email, nombre, foto):</strong> mientras la cuenta esté
+                    activa. Tras solicitud de eliminación: 30 días en cola de borrado y luego se
+                    purgan permanentemente.
+                  </li>
+                  <li>
+                    <strong>Mascotas y ficha clínica:</strong> mientras la cuenta esté activa o
+                    hasta que la mascota sea marcada como fallecida y pasen 12 meses (memorial
+                    permanente con consentimiento del dueño).
+                  </li>
+                  <li>
+                    <strong>Mensajes y feed social:</strong> mientras la cuenta esté activa. Al
+                    cerrar cuenta, contenido público pasa a anónimo (no se borra para preservar
+                    contexto de otros usuarios).
+                  </li>
+                  <li>
+                    <strong>Pagos y donaciones:</strong> 7 años por exigencia tributaria del SII
+                    chileno (Decreto Ley 825). No se borra al cerrar cuenta.
+                  </li>
+                  <li>
+                    <strong>Logs de error y telemetría:</strong> 90 días. PII enmascarada antes de
+                    persistir (emails, RUT, teléfonos +56).
+                  </li>
+                  <li>
+                    <strong>Eventos de analítica anónima:</strong> 24 meses. No se vinculan a tu
+                    identidad sin tu consentimiento explícito.
+                  </li>
+                  <li>
+                    <strong>Backups encriptados:</strong> 35 días en frío. Tras eso se sobrescriben
+                    en rotación.
+                  </li>
+                </ul>
+              </section>
+
+              <section>
+                <h2 className="text-2xl font-semibold mb-3">
+                  6.1. Subprocesadores (terceros con acceso a datos)
+                </h2>
+                <p className="text-muted-foreground mb-2">
+                  Para operar Paw Friend usamos servicios de terceros que pueden procesar tus datos
+                  como encargados de tratamiento bajo nuestras instrucciones. Solo reciben los datos
+                  mínimos necesarios para su función:
+                </p>
+                <div className="overflow-x-auto">
+                  <table className="text-sm w-full border-collapse">
+                    <thead>
+                      <tr className="border-b border-purple-100 text-left">
+                        <th className="py-2 pr-4 font-semibold">Proveedor</th>
+                        <th className="py-2 pr-4 font-semibold">Función</th>
+                        <th className="py-2 font-semibold">Datos accedidos</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-muted-foreground">
+                      <tr className="border-b border-purple-50">
+                        <td className="py-2 pr-4">
+                          <strong>Supabase</strong> (US)
+                        </td>
+                        <td className="py-2 pr-4">Base de datos + auth + storage</td>
+                        <td className="py-2">Email, perfil, mascotas, ficha clínica, mensajes</td>
+                      </tr>
+                      <tr className="border-b border-purple-50">
+                        <td className="py-2 pr-4">
+                          <strong>GitHub Pages</strong> (US)
+                        </td>
+                        <td className="py-2 pr-4">Hosting de la app web (estático)</td>
+                        <td className="py-2">IP del navegador (logs estándar HTTP)</td>
+                      </tr>
+                      <tr className="border-b border-purple-50">
+                        <td className="py-2 pr-4">
+                          <strong>Flow.cl</strong> (Chile)
+                        </td>
+                        <td className="py-2 pr-4">Procesamiento de pagos</td>
+                        <td className="py-2">Email, monto, ID de transacción (sin tarjetas)</td>
+                      </tr>
+                      <tr className="border-b border-purple-50">
+                        <td className="py-2 pr-4">
+                          <strong>Resend</strong> (US)
+                        </td>
+                        <td className="py-2 pr-4">Envío de emails transaccionales</td>
+                        <td className="py-2">Email, contenido del mensaje (recordatorios, etc.)</td>
+                      </tr>
+                      <tr className="border-b border-purple-50">
+                        <td className="py-2 pr-4">
+                          <strong>PostHog</strong> (US/EU)
+                        </td>
+                        <td className="py-2 pr-4">Analítica de uso (con consentimiento)</td>
+                        <td className="py-2">
+                          Eventos anónimos. Email solo si das consentimiento explícito al banner.
+                        </td>
+                      </tr>
+                      <tr className="border-b border-purple-50">
+                        <td className="py-2 pr-4">
+                          <strong>Firebase Analytics</strong> (Google, US)
+                        </td>
+                        <td className="py-2 pr-4">Métricas mobile (Android/iOS)</td>
+                        <td className="py-2">Identificador de dispositivo, eventos in-app</td>
+                      </tr>
+                      <tr className="border-b border-purple-50">
+                        <td className="py-2 pr-4">
+                          <strong>Sentry</strong> (US)
+                        </td>
+                        <td className="py-2 pr-4">Monitoreo de errores en producción</td>
+                        <td className="py-2">
+                          Stacktrace + URL (con tokens enmascarados, sin emails ni RUT)
+                        </td>
+                      </tr>
+                      <tr className="border-b border-purple-50">
+                        <td className="py-2 pr-4">
+                          <strong>Anthropic (Claude API)</strong> (US)
+                        </td>
+                        <td className="py-2 pr-4">Asistente IA y análisis de imágenes</td>
+                        <td className="py-2">
+                          Texto/imagen de la consulta (sin email vinculado, no usado para training)
+                        </td>
+                      </tr>
+                      <tr className="border-b border-purple-50">
+                        <td className="py-2 pr-4">
+                          <strong>Google Calendar API</strong> (US)
+                        </td>
+                        <td className="py-2 pr-4">Sync de citas (opcional, requiere OAuth)</td>
+                        <td className="py-2">
+                          Solo datos de la cita (mascota, vet, fecha) — solo si lo conectas
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 pr-4">
+                          <strong>Hugging Face Inference API</strong> (US/EU)
+                        </td>
+                        <td className="py-2 pr-4">
+                          Procesamiento de embeddings biométricos (huella nasal)
+                        </td>
+                        <td className="py-2">
+                          Imagen de hocico recortada — sin asociación a la mascota en el
+                          procesamiento
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-muted-foreground mt-3">
+                  Todos los subprocesadores firmaron acuerdos de tratamiento de datos (DPA) o sus
+                  términos contractuales equivalentes. La lista se actualiza si agregamos o
+                  removemos proveedores; te avisamos con 30 días de anticipación cuando un cambio
+                  afecte el procesamiento de tus datos.
                 </p>
               </section>
 

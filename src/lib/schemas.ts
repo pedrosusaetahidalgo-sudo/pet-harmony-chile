@@ -173,20 +173,7 @@ export const reportLostPetSchema = z.object({
 });
 export type ReportLostPetFormData = z.infer<typeof reportLostPetSchema>;
 
-// --- OnboardingVetMinimal schema ---
-
-export const onboardingVetSchema = z.object({
-  displayName: safeText(100).refine(
-    (v) => v.length >= 3,
-    'Tu nombre debe tener al menos 3 caracteres'
-  ),
-  commune: optionalText(100),
-  specialties: z.array(z.string()).optional(),
-  providerType: z.enum(['individual', 'clinic', 'home_visit']),
-  clinicName: optionalText(200),
-  address: optionalText(300),
-  whatsapp: optionalText(20),
-  schedule: optionalText(200),
-  bio: z.string().trim().max(500, 'Maximo 500 caracteres').optional().or(z.literal('')),
-});
-export type OnboardingVetFormData = z.infer<typeof onboardingVetSchema>;
+// onboardingVetSchema — eliminado 2026-04-28 (FEAT-004).
+// /onboarding-vet ahora es un redirect (no usa formularios), por lo que el
+// schema no tiene callsite. Si vuelve un wizard real, recrear desde
+// `BecomeProviderDialog` que sigue siendo la fuente de verdad B2B.
