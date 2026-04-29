@@ -105,6 +105,7 @@ const MemoriaPublica = lazy(() => import('./pages/MemoriaPublica'));
 const Aplicar = lazy(() => import('./pages/Aplicar'));
 const B2BPortal = lazy(() => import('./pages/B2BPortal'));
 const InsuranceQuotes = lazy(() => import('./pages/InsuranceQuotes'));
+const RetailStore = lazy(() => import('./pages/RetailStore'));
 const NosePrintTest = lazy(() => import('./pages/NosePrintTest'));
 const NoseScan = lazy(() => import('./pages/NoseScan'));
 const InsightsLanding = lazy(() => import('./pages/InsightsLanding'));
@@ -1071,6 +1072,29 @@ const App = () => (
                     <ProtectedRoute>
                       <AppLayout>
                         <InsuranceQuotes />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+
+                {/* Retail store (Motor #3 Refactor Maestro Fase 2 §7.4). Catalogo
+                    de partners con descuento Paw Member + tracking de clicks. */}
+                <Route
+                  path="/tienda/:petId"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <RetailStore />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/tienda/:petId/:partnerSlug"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <RetailStore />
                       </AppLayout>
                     </ProtectedRoute>
                   }

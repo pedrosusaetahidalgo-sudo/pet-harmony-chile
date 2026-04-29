@@ -16,6 +16,7 @@ import AdminAdoptionFunnel from '@/components/admin/AdminAdoptionFunnel';
 import AdminFase1Widget from '@/components/admin/AdminFase1Widget';
 import { AdminPawShieldKPIs } from '@/components/admin/AdminPawShieldKPIs';
 import { AdminInsurancePartners } from '@/components/admin/AdminInsurancePartners';
+import { AdminRetailPartners } from '@/components/admin/AdminRetailPartners';
 import { AdminRiskMonitor } from '@/components/admin/AdminRiskMonitor';
 import AdminPulsoDiario from '@/components/admin/AdminPulsoDiario';
 import { BookingPulseWidget } from '@/components/admin/BookingPulseWidget';
@@ -737,6 +738,9 @@ export default function AdminDashboard() {
 
       {/* ── Insurance partners + leads (Refactor §7.2) ── */}
       <AdminInsurancePartners />
+
+      {/* ── Retail partners + KPIs clicks (Refactor §7.4) ── */}
+      <AdminRetailPartners />
 
       {/* ── Pulso Diario: monitor auto-pilotado (audit-cron-daily) ── */}
       <AdminPulsoDiario />

@@ -34,6 +34,7 @@ import { isFeatureEnabled } from '@/lib/featureFlags';
 import { PetLoginButton } from '@/components/paw-shield/PetLoginButton';
 import { VaccineRenewalNudge } from '@/components/home/VaccineRenewalNudge';
 import { BirthdayCouponsCard } from '@/components/birthday/BirthdayCouponsCard';
+import { RetailRecommendationsCard } from '@/components/retail/RetailRecommendationsCard';
 import { QuickActionsHub } from '@/components/home/QuickActionsHub';
 import { OwnerAudioNoteRecorder } from '@/components/medical/OwnerAudioNoteRecorder';
 import { InsuranceBanner } from '@/components/insurance/InsuranceBanner';
@@ -355,6 +356,12 @@ export function HomePetFocusV2() {
 
       {/* Vaccine renewal nudge: 30d antes de vencer (#13 RICE 162) */}
       {selectedPet && <VaccineRenewalNudge petId={selectedPet.id} petName={selectedPet.name} />}
+
+      {/* Retail partners recommendations (Motor #3 §7.4). Solo si flag
+          RETAIL_FULFILLMENT=true y hay partners activos para el cohort. */}
+      {selectedPet && (
+        <RetailRecommendationsCard petId={selectedPet.id} petName={selectedPet.name} />
+      )}
 
       {/* Next action */}
       {nextAction && (
