@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend · 7 Motores B2B construidos · Estado 2026-04-30</title>
+  <meta name="description" content="Los 7 motores del Revenue Master Plan tienen codigo end-to-end listo. Pendiente solo activacion comercial." />
+  <meta name="theme-color" content="#9333ea" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fredoka:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-50: #faf5ff; --brand-100: #f3e8ff; --brand-200: #e9d5ff; --brand-500: #a855f7;
+      --brand-600: #9333ea; --brand-700: #7e22ce; --brand-800: #6b21a8; --brand-900: #581c87;
+      --gold: #eab308; --gold-light: #fde047; --gold-soft: #fef9c3;
+      --emerald: #10b981; --emerald-light: #34d399;
+      --pharma: #ec4899; --insure: #0369a1; --retail: #ea580c;
+      --gov: #15803d; --bank: #facc15; --build: #475569; --tail: #7c3aed;
+      --ink: #1a102b; --paper: #faf5ff;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #0a0612; color: white; }
+    body.light-slide { background: var(--paper); color: var(--ink); }
+    .deck { position: relative; height: 100vh; width: 100vw; overflow: hidden; }
+    .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.08); z-index: 100; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--brand-500) 0%, var(--gold) 50%, var(--emerald) 100%); transition: width 0.5s ease; }
+    .slide { position: absolute; inset: 0; padding: 5vh 5vw; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s; overflow-y: auto; }
+    .slide.active { opacity: 1; visibility: visible; }
+    .slide.dark { background: linear-gradient(135deg, #0a0612 0%, #1a102b 50%, #581c87 100%); color: white; }
+    .slide.light { background: linear-gradient(135deg, var(--brand-50) 0%, var(--brand-100) 100%); color: var(--ink); }
+    .slide.cap-grad { background: linear-gradient(135deg, #0a0612 0%, #581c87 50%, #ec4899 100%); color: white; }
+    .mesh { position: absolute; inset: 0; opacity: 0.4; pointer-events: none; background:
+      radial-gradient(circle at 20% 30%, rgba(168,85,247,0.4), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(234,179,8,0.3), transparent 40%); }
+    .slide-content { position: relative; z-index: 2; max-width: 1320px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .slide-label { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: var(--gold-light); padding: 6px 12px; background: rgba(234,179,8,0.15); border: 1px solid rgba(234,179,8,0.4); border-radius: 999px; margin-bottom: 14px; align-self: flex-start; }
+    .slide.light .slide-label { color: var(--brand-700); background: var(--brand-100); border-color: var(--brand-300); }
+    .headline { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 4vw, 52px); font-weight: 700; line-height: 1.1; margin: 0 0 14px; letter-spacing: -0.02em; }
+    .gradient-text { background: linear-gradient(135deg, var(--gold-light) 0%, var(--emerald-light) 50%, var(--brand-300) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .subhead { font-size: clamp(13px, 1.4vw, 17px); line-height: 1.55; opacity: 0.85; max-width: 850px; margin-bottom: 14px; }
+    .counter { position: fixed; bottom: 16px; right: 22px; font-size: 12px; font-weight: 700; opacity: 0.6; z-index: 100; }
+    .hint { position: fixed; bottom: 16px; left: 22px; font-size: 11px; font-weight: 600; opacity: 0.5; z-index: 100; }
+    .hint kbd { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin: 0 2px; font-family: monospace; }
+    body.light-slide .hint kbd { background: rgba(0,0,0,0.06); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .stat-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 18px; }
+    .slide.light .stat-card { background: white; border-color: var(--brand-200); box-shadow: 0 6px 18px rgba(147,51,234,0.06); }
+    .stat-num { font-family: 'Fredoka', sans-serif; font-size: clamp(26px, 2.6vw, 38px); font-weight: 800; line-height: 1; }
+    .stat-num.gold { color: var(--gold-light); }
+    .slide.light .stat-num.gold { color: var(--gold); }
+    .stat-num.green { color: var(--emerald-light); }
+    .slide.light .stat-num.green { color: var(--emerald); }
+    .stat-label { font-size: 11px; opacity: 0.75; margin-top: 6px; line-height: 1.4; }
+    .motor { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 18px; }
+    .slide.light .motor { background: white; border-color: var(--brand-200); box-shadow: 0 6px 18px rgba(147,51,234,0.06); }
+    .motor-h { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .motor-h .num { font-family: 'Fredoka'; font-size: 24px; font-weight: 800; opacity: 0.6; }
+    .motor-h .name { font-family: 'Fredoka'; font-size: 17px; font-weight: 700; flex: 1; }
+    .motor-h .badge { font-size: 9px; padding: 2px 7px; border-radius: 4px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+    .badge.live { background: rgba(16,185,129,0.18); color: var(--emerald-light); }
+    .slide.light .badge.live { background: #d1fae5; color: #064e3b; }
+    .badge.inbound { background: rgba(56,189,248,0.18); color: #7dd3fc; }
+    .slide.light .badge.inbound { background: #dbeafe; color: #1e40af; }
+    .badge.seed { background: rgba(234,179,8,0.18); color: var(--gold-light); }
+    .slide.light .badge.seed { background: #fef3c7; color: #78350f; }
+    .motor-route { font-family: 'JetBrains Mono', monospace; font-size: 11px; opacity: 0.75; margin-bottom: 8px; }
+    .motor-desc { font-size: 12px; line-height: 1.5; opacity: 0.8; margin-bottom: 8px; }
+    .motor-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+    .motor-tag { font-size: 10px; padding: 2px 8px; background: rgba(255,255,255,0.08); border-radius: 999px; opacity: 0.85; }
+    .slide.light .motor-tag { background: var(--brand-100); color: var(--brand-700); }
+    .quote-box { padding: 18px 22px; background: rgba(234,179,8,0.08); border-left: 4px solid var(--gold); border-radius: 10px; font-style: italic; margin: 14px 0; font-size: 14px; line-height: 1.6; }
+    .slide.light .quote-box { background: var(--gold-soft); }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 13px; }
+    th { padding: 8px 12px; background: rgba(168,85,247,0.15); text-align: left; font-weight: 800; font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; }
+    td { padding: 8px 12px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .slide.light th { background: var(--brand-100); color: var(--brand-700); }
+    .slide.light td { border-bottom-color: var(--brand-100); }
+  </style>
+</head>
+<body>
+  <div class="progress"><div class="progress-fill" id="progressFill" style="width: 11%"></div></div>
+  <div class="deck" id="deck">
+
+    <!-- 1 — COVER -->
+    <section class="slide cap-grad active" data-num="1">
+      <div class="mesh"></div>
+      <div class="slide-content">
+        <span class="slide-label">Estado al 2026-04-30 · Cierre Revenue Master Plan</span>
+        <h1 class="headline" style="font-size: clamp(34px, 4.8vw, 64px);">
+          Los <span class="gradient-text">7 motores</span> de revenue<br>
+          ya están construidos.
+        </h1>
+        <p class="subhead" style="font-size: 17px; opacity: 0.95;">
+          No es proyección. No es scaffold. Cada motor tiene tablas + RPCs +
+          edge functions + UI + admin panel + flag de activación. La única
+          variable pendiente es <strong>cerrar contratos comerciales</strong>.
+        </p>
+        <div class="grid-4" style="margin-top: 28px;">
+          <div class="stat-card">
+            <div class="stat-num gold">7/7</div>
+            <div class="stat-label">Motores con código end-to-end</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num gold">197+</div>
+            <div class="stat-label">Migraciones SQL aplicables</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num gold">42+</div>
+            <div class="stat-label">Edge functions activas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num gold">78+</div>
+            <div class="stat-label">Rutas en producto</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 — RESUMEN GRID -->
+    <section class="slide light" data-num="2">
+      <div class="slide-content">
+        <span class="slide-label">Vista panorámica · 7 motores</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Cada motor con su <span style="color: var(--brand-600);">ruta · status · seed</span>.
+        </h2>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th><th>Motor</th><th>Ruta / Endpoint</th><th>Status</th><th>Seed inicial</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>1</td><td><strong>Pharma B2B</strong></td><td><code>/b2b</code> + <code>/aplicar?tipo=b2b_api</code></td><td><span class="badge live">Live</span></td><td>API + onboarding auto-issue</td></tr>
+            <tr><td>2</td><td><strong>Aseguradoras</strong></td><td><code>/cotizar-seguro/:petId</code></td><td><span class="badge live">Live</span></td><td>Sura · BCI · Mapfre</td></tr>
+            <tr><td>3</td><td><strong>Retail</strong></td><td><code>/tienda/:petId/:partnerSlug</code></td><td><span class="badge live">Live</span></td><td>Master Dog · Puppis · Pet Star</td></tr>
+            <tr><td>4</td><td><strong>Gobierno</strong></td><td><code>/aplicar?tipo=gobierno_municipio</code></td><td><span class="badge inbound">Inbound</span></td><td>Pitch SAG / municipios</td></tr>
+            <tr><td>5</td><td><strong>Banca</strong></td><td><code>/aplicar?tipo=banca</code></td><td><span class="badge inbound">Inbound</span></td><td>Pitch BCI/Santander/Itaú</td></tr>
+            <tr><td>6</td><td><strong>Edificios</strong></td><td><code>/aplicar?tipo=edificios</code></td><td><span class="badge inbound">Inbound</span></td><td>Pitch admins/inmobiliarias</td></tr>
+            <tr><td>7</td><td><strong>Long-tail</strong></td><td><code>/aplicar?tipo=longtail</code></td><td><span class="badge inbound">Inbound</span></td><td>Aerolíneas/academia/hardware</td></tr>
+          </tbody>
+        </table>
+        <div class="quote-box">
+          <strong>Live</strong> = quote + lead capture en vivo (#1-3). <strong>Inbound</strong> = formulario público estructurado + email automático al pipeline (#4-7).
+          La diferencia es por la naturaleza del ciclo de venta, no por madurez técnica.
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 — MOTORES LIVE (1-3) -->
+    <section class="slide dark" data-num="3">
+      <div class="mesh"></div>
+      <div class="slide-content">
+        <span class="slide-label">Motores LIVE con quote/transacción en vivo</span>
+        <h2 class="headline">
+          <span class="gradient-text">#1-3</span> · listos para escalar el día que firmes.
+        </h2>
+        <div class="grid-3" style="margin-top: 22px;">
+          <div class="motor">
+            <div class="motor-h"><span class="num" style="color: var(--pharma);">#1</span><span class="name">Pharma B2B</span><span class="badge live">Live</span></div>
+            <div class="motor-route">/b2b · /aplicar?tipo=b2b_api</div>
+            <div class="motor-desc">API pública con auth <code>X-Pawfriend-Api-Key</code>. 4 endpoints (breed_stats / species_stats / correlation_insights / risk_score). 3 tiers (free/research/enterprise). Onboarding auto-issue con email automático con la key.</div>
+            <div class="motor-tags">
+              <span class="motor-tag">b2b_api_keys</span><span class="motor-tag">b2b_api_usage</span><span class="motor-tag">send-b2b-welcome</span>
+            </div>
+          </div>
+          <div class="motor">
+            <div class="motor-h"><span class="num" style="color: var(--insure);">#2</span><span class="name">Aseguradoras</span><span class="badge live">Live</span></div>
+            <div class="motor-route">/cotizar-seguro/:petId</div>
+            <div class="motor-desc">Quote real-time (reusa <code>calculate_pet_risk_score</code> que ya tenemos). Compara 3 partners en paralelo. Lead capture + email automático al partner con risk score + ficha del pet.</div>
+            <div class="motor-tags">
+              <span class="motor-tag">insurance_partners</span><span class="motor-tag">insurance_quotes</span><span class="motor-tag">insurance_leads</span><span class="motor-tag">request-insurance-quote</span>
+            </div>
+          </div>
+          <div class="motor">
+            <div class="motor-h"><span class="num" style="color: var(--retail);">#3</span><span class="name">Retail</span><span class="badge live">Live</span></div>
+            <div class="motor-route">/tienda/:petId/:partnerSlug</div>
+            <div class="motor-desc">Catálogo filtrado por mascota (raza/edad/peso). Tracking de clicks server-side (RPC <code>track_retail_click</code>). Descuento Paw Member visible. URL del partner se abre con <code>?ref=pawfriend</code> para attribution.</div>
+            <div class="motor-tags">
+              <span class="motor-tag">retail_partners</span><span class="motor-tag">retail_clicks</span><span class="motor-tag">retail_partner_stats</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 — MOTORES INBOUND (4-7) -->
+    <section class="slide light" data-num="4">
+      <div class="slide-content">
+        <span class="slide-label">Motores INBOUND · lead capture estructurado</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          <span style="color: var(--brand-600);">#4-7</span> · ciclos B2B largos con form público.
+        </h2>
+        <p class="subhead" style="color: #475569;">
+          Cada uno tiene su pitch deck dedicado en <code>pitch-inversionistas/</code>. El form público recoge campos estructurados específicos del vertical (cargo, volumen, timing, tier de interés) y dispara email automático a Pedro con el lead listo para trabajar.
+        </p>
+        <div class="grid-4" style="margin-top: 16px;">
+          <div class="motor">
+            <div class="motor-h"><span class="num" style="color: var(--gov);">#4</span><span class="name">Gobierno</span><span class="badge inbound">Inbound</span></div>
+            <div class="motor-route">tipo=gobierno_municipio</div>
+            <div class="motor-desc" style="color: #475569;">Ley 21.020 white-label. Plan Comuna $3M / Comuna Pro $6M / Region a medida.</div>
+          </div>
+          <div class="motor">
+            <div class="motor-h"><span class="num" style="color: var(--bank); -webkit-text-fill-color: var(--bank);">#5</span><span class="name">Banca</span><span class="badge inbound">Inbound</span></div>
+            <div class="motor-route">tipo=banca</div>
+            <div class="motor-desc" style="color: #475569;">Tarjeta co-branded · Crédito vet · Seguro pet · Cuenta sueldo. Tier $5k/$15k+RS/$40k+ USD.</div>
+          </div>
+          <div class="motor">
+            <div class="motor-h"><span class="num" style="color: var(--build);">#6</span><span class="name">Edificios</span><span class="badge inbound">Inbound</span></div>
+            <div class="motor-route">tipo=edificios</div>
+            <div class="motor-desc" style="color: #475569;">Registro digital pet-friendly. $80k CLP/mes edificio o $50k/mes/edificio admin.</div>
+          </div>
+          <div class="motor">
+            <div class="motor-h"><span class="num" style="color: var(--tail);">#7</span><span class="name">Long-tail</span><span class="badge inbound">Inbound</span></div>
+            <div class="motor-route">tipo=longtail</div>
+            <div class="motor-desc" style="color: #475569;">Aerolíneas + hoteles + academia + hardware + plataformas + cremación.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 — ARR PROYECCIÓN -->
+    <section class="slide dark" data-num="5">
+      <div class="mesh"></div>
+      <div class="slide-content">
+        <span class="slide-label">Proyección ARR · vista bottom-up</span>
+        <h2 class="headline">
+          Y1 conservador <span class="gradient-text">$120k USD</span> · optimista <span class="gradient-text">$420k USD</span>.
+        </h2>
+        <table>
+          <thead>
+            <tr><th>Motor</th><th style="text-align:right;">Y1 cons.</th><th style="text-align:right;">Y1 opt.</th><th style="text-align:right;">Y3 base</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>#1 Pharma B2B</td><td style="text-align:right;">$36k</td><td style="text-align:right;">$120k</td><td style="text-align:right;color:var(--gold-light);font-weight:700;">$480k</td></tr>
+            <tr><td>#2 Aseguradoras</td><td style="text-align:right;">$30k</td><td style="text-align:right;">$90k</td><td style="text-align:right;color:var(--gold-light);font-weight:700;">$360k</td></tr>
+            <tr><td>#3 Retail</td><td style="text-align:right;">$24k</td><td style="text-align:right;">$80k</td><td style="text-align:right;color:var(--gold-light);font-weight:700;">$300k</td></tr>
+            <tr><td>#4 Gobierno + SAG</td><td style="text-align:right;">$12k</td><td style="text-align:right;">$60k</td><td style="text-align:right;color:var(--gold-light);font-weight:700;">$220k</td></tr>
+            <tr><td>#5 Banca + #6 Edificios</td><td style="text-align:right;">$10k</td><td style="text-align:right;">$40k</td><td style="text-align:right;color:var(--gold-light);font-weight:700;">$180k</td></tr>
+            <tr><td>#7 Long-tail (6 verticales)</td><td style="text-align:right;">$8k</td><td style="text-align:right;">$30k</td><td style="text-align:right;color:var(--gold-light);font-weight:700;">$280k</td></tr>
+            <tr style="background: rgba(255,255,255,0.06); font-weight: 800;">
+              <td>TOTAL ARR</td>
+              <td style="text-align:right;">$120k</td>
+              <td style="text-align:right;">$420k</td>
+              <td style="text-align:right;color:var(--gold-light);">$1.82M</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="quote-box" style="margin-top: 18px;">
+          <strong>Diferencia clave vs antes:</strong> hasta hace 1 semana este eran números en un pitch. Ahora cada motor tiene su ruta funcionando, tablas creadas, RPCs validadas, admin panel y flag de activación. La auditoría pasa de "valida proyección" a "valida cuándo activar cada flag".
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 — STACK QUE LO HACE POSIBLE -->
+    <section class="slide light" data-num="6">
+      <div class="slide-content">
+        <span class="slide-label">Stack técnico · qué se construyó esta semana</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          197 migraciones · 42 edge fns · 78 rutas · <span style="color: var(--brand-600);">y subiendo</span>.
+        </h2>
+        <div class="grid-2" style="margin-top: 18px;">
+          <div>
+            <h3 style="font-size: 14px; font-weight: 800; color: var(--brand-700); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;">Migraciones nuevas (motors)</h3>
+            <table style="font-size: 12px;">
+              <tbody>
+                <tr><td><code>20260911</code> paw_shield_data_archive</td></tr>
+                <tr><td><code>20260912</code> b2b_api_application_flow</td></tr>
+                <tr><td><code>20260913</code> birthday_coupons</td></tr>
+                <tr><td><code>20260914</code> vet_checkin_keys</td></tr>
+                <tr><td><code>20260915</code> insurance_motor</td></tr>
+                <tr><td><code>20260916</code> retail_motor</td></tr>
+                <tr><td><code>20260917</code> b2b_inbound_kinds</td></tr>
+                <tr><td><code>20260918</code> rls_hardening</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <h3 style="font-size: 14px; font-weight: 800; color: var(--brand-700); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px;">Edge fns + componentes</h3>
+            <table style="font-size: 12px;">
+              <tbody>
+                <tr><td>fn <code>send-b2b-welcome</code></td></tr>
+                <tr><td>fn <code>vet-checkin-identify</code></td></tr>
+                <tr><td>fn <code>request-insurance-quote</code></td></tr>
+                <tr><td>fn <code>paw-shield-archive-cleanup</code> (cron)</td></tr>
+                <tr><td>page <code>InsuranceQuotes.tsx</code></td></tr>
+                <tr><td>page <code>RetailStore.tsx</code></td></tr>
+                <tr><td>page <code>B2BPortal.tsx</code></td></tr>
+                <tr><td>admin <code>AdminRevenueDashboard.tsx</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 16px;">
+          <strong>Auditado:</strong> <a href="../docs-raiz/AUDITORIA_RLS_2026_04_30.md" style="color: var(--brand-700);">RLS audit completa</a> de las 9 tablas + 12 RPCs nuevas con migración de hardening (4 hallazgos cerrados).
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 — QUE FALTA -->
+    <section class="slide dark" data-num="7">
+      <div class="mesh"></div>
+      <div class="slide-content">
+        <span class="slide-label">Qué falta · roadmap honesto</span>
+        <h2 class="headline">
+          Código <span class="gradient-text">listo</span>. Activación comercial <span class="gradient-text">por hacer</span>.
+        </h2>
+        <div class="grid-2" style="margin-top: 20px;">
+          <div class="motor">
+            <h3 style="font-size: 14px; color: var(--gold-light); font-weight: 800; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.06em;">✅ Hecho (cierre 2026-04-30)</h3>
+            <ul style="font-size: 13px; line-height: 1.8; padding-left: 18px;">
+              <li>7 motores end-to-end con tablas + RPCs + edge fns + UI</li>
+              <li>Admin panel consolidado (AdminRevenueDashboard)</li>
+              <li>Auditoría RLS + hardening migración</li>
+              <li>11 pitch decks B2B en <code>pitch-inversionistas/</code></li>
+              <li>Brand v2 wire-up completo (badges, illustrations, dashboards)</li>
+              <li>Paw Shield (Petify) integration completa</li>
+              <li>Compliance Ley 19.628 + 21.719 (privacy + ARCO)</li>
+            </ul>
+          </div>
+          <div class="motor">
+            <h3 style="font-size: 14px; color: var(--gold-light); font-weight: 800; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.06em;">⏳ Por activar comercialmente</h3>
+            <ul style="font-size: 13px; line-height: 1.8; padding-left: 18px;">
+              <li>Firmar 1+ aseguradora (activar <code>EMBEDDED_INSURANCE</code>)</li>
+              <li>Firmar 1+ retailer (activar <code>RETAIL_FULFILLMENT</code>)</li>
+              <li>Firmar contrato comercial Petify (activar <code>PAW_SHIELD_PETIFY</code>)</li>
+              <li>Pipeline outbound a Centrovet / Virbac (motor #1)</li>
+              <li>Pipeline a 5 municipios fundadores (motor #4)</li>
+              <li>Migración Flow.cl a SpA (legal/fiscal)</li>
+              <li>Lanzamiento producto Junio 2026</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 18px; font-style: normal;">
+          <strong>Decisión honesta:</strong> el código está. Si firmamos 1 partner por motor en los próximos 6 meses, llegamos al ARR conservador Y1 ($120k). Si cerramos 2-3 por motor, llegamos al optimista ($420k). El cuello de botella ya no es ingeniería — es venta B2B.
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 — CTA FINAL -->
+    <section class="slide cap-grad" data-num="8">
+      <div class="mesh"></div>
+      <div class="slide-content">
+        <span class="slide-label">Conversación · próximos pasos</span>
+        <h2 class="headline" style="font-size: clamp(34px, 4.5vw, 60px);">
+          Demo <span class="gradient-text">en vivo</span> de cualquier motor.<br>
+          Decidimos <span class="gradient-text">en frío</span>.
+        </h2>
+        <p class="subhead" style="font-size: 16px; max-width: 760px;">
+          30 minutos. Te muestro la ruta funcionando, te explico el flag de activación,
+          y te paso el pitch deck dedicado del motor de tu interés. Cerramos con propuesta
+          o nos despedimos.
+        </p>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📅</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 1</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">30min demo +<br>Q&A del motor</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📊</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 2</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Pitch deck +<br>cohort dashboard</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🤝</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 3</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Term sheet o<br>nos despedimos</div>
+          </div>
+        </div>
+        <div style="margin-top: 32px; display: flex; gap: 24px; justify-content: center; align-items: center; flex-wrap: wrap; font-size: 14px;">
+          <span>🌐 <a href="https://pawfriend.cl" style="color: var(--gold-light); text-decoration: none; font-weight: 700;" target="_blank">pawfriend.cl</a></span>
+          <span>✉️ <a href="mailto:pawfriendcl@gmail.com" style="color: var(--gold-light); text-decoration: none; font-weight: 700;">pawfriendcl@gmail.com</a></span>
+          <span style="opacity: 0.85;">📍 Hecho en Chile · Lanzamiento Junio 2026</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="counter" id="counter">1 / 8</div>
+  <div class="hint" id="hint"><kbd>←</kbd><kbd>→</kbd> navegar <kbd>F</kbd> full <kbd>P</kbd> imprimir</div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressFill = document.getElementById('progressFill');
+    const counter = document.getElementById('counter');
+    const total = slides.length;
+    let current = 0;
+    function show(i) {
+      i = Math.max(0, Math.min(total - 1, i));
+      slides.forEach((s, k) => s.classList.toggle('active', k === i));
+      current = i;
+      progressFill.style.width = ((i + 1) / total * 100) + '%';
+      counter.textContent = `${i + 1} / ${total}`;
+      document.body.classList.toggle('light-slide', slides[i].classList.contains('light'));
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') show(current + 1);
+      else if (e.key === 'ArrowLeft') show(current - 1);
+      else if (e.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.();
+      else if (e.key.toLowerCase() === 'p') window.print();
+    });
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      const x = e.clientX / window.innerWidth;
+      show(x > 0.5 ? current + 1 : current - 1);
+    });
+    show(0);
+  </script>
+</body>
+</html>
