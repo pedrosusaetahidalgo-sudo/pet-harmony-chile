@@ -138,10 +138,15 @@ export default function NoseScan() {
     trackRefactor(RefactorEvent.nosePrintMatchAttempted);
 
     try {
-      const res = await fetch(`${SUPABASE_URL}/functions/v1/nose-print-match`, {
+      // Paw Shield · Petify (2026-04-29). Reemplaza el modelo propio DINOv2.
+      // Test interno: 100% top-1 con 3 fotos registradas por pet.
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/paw-shield-identify`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image_base64: imageBase64, threshold: 0.85, limit: 3 }),
+        body: JSON.stringify({
+          image_base64: imageBase64,
+          species: 'DOG', // TODO: detectar especie desde la foto o pedir al usuario
+        }),
       });
 
       if (!res.ok) {
@@ -149,8 +154,34 @@ export default function NoseScan() {
         throw new Error((body as { error?: string }).error || `HTTP ${res.status}`);
       }
 
-      const json = (await res.json()) as { ok: boolean; matches: MatchResult[] };
-      const found = json.matches ?? [];
+      const json = (await res.json()) as {
+        status: 'match' | 'ambiguous' | 'no_match' | 'service_error';
+        matches?: Array<{
+          pet_id: string;
+          pet_name: string;
+          pet_photo_url: string | null;
+          species: string;
+          score: number;
+          comuna?: string | null;
+        }>;
+      };
+
+      // Adaptamos la nueva respuesta al MatchResult legacy del UI.
+      const found: MatchResult[] = (json.matches ?? []).map((m) => ({
+        pet_id: m.pet_id,
+        similarity: m.score / 100, // Petify devuelve 0-100, UI legacy usa 0-1
+        pet: {
+          name: m.pet_name,
+          species: m.species,
+          breed: null,
+          photo_url: m.pet_photo_url,
+        },
+        lost: false, // hint: requiere cruzar con lost_pets en una iteracion futura
+        message:
+          json.status === 'ambiguous'
+            ? 'Hay varias mascotas parecidas. Revisa cada una.'
+            : 'Encontramos una coincidencia.',
+      }));
       setMatches(found);
 
       if (found.length > 0) {

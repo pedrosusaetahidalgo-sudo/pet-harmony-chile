@@ -89,6 +89,15 @@ const NosePrintSection = lazy(() =>
   }))
 );
 
+// Paw Shield · Petify (2026-04-29) — biometria de hocico opt-in. Reemplaza
+// NosePrintSection (modelo propio DINOv2 pausado). Se monta en tab Identidad
+// cuando PAW_SHIELD_PETIFY activo.
+const PawShieldStatusCard = lazy(() =>
+  import('@/components/paw-shield/PawShieldStatusCard').then((m) => ({
+    default: m.PawShieldStatusCard,
+  }))
+);
+
 // Refactor Maestro Fase 1 §6.3 — Paw Passport PDF exportable.
 // Se monta en tab Identidad cuando PAW_PASSPORT activo.
 const PawPassportSection = lazy(() =>
@@ -221,6 +230,7 @@ const PetClinicalRecord = () => {
   const historiaTabEnabled = isFeatureEnabled('FICHA_HISTORIA_TAB');
   const petIdCardEnabled = isFeatureEnabled('PET_ID_CARD_V1');
   const nosePrintEnabled = isFeatureEnabled('NOSE_PRINT_ENABLED');
+  const pawShieldEnabled = isFeatureEnabled('PAW_SHIELD_PETIFY');
   const pawPassportEnabled = isFeatureEnabled('PAW_PASSPORT');
   // Refactor 2026-04-25: 4 tabs simplificados (Historia/Cuidados/Identidad/Mas)
   const tabsV2Enabled = isFeatureEnabled('FICHA_TABS_V2');
@@ -740,6 +750,16 @@ const PetClinicalRecord = () => {
               <Suspense fallback={<TabLoadingSkeleton />}>
                 <PetIdCardSection petId={pet.id} />
               </Suspense>
+              {pawShieldEnabled && (
+                <Suspense fallback={<TabLoadingSkeleton />}>
+                  <PawShieldStatusCard
+                    petId={pet.id}
+                    petName={pet.name}
+                    petSpecies={pet.species}
+                    petBreed={pet.breed ?? undefined}
+                  />
+                </Suspense>
+              )}
               {nosePrintEnabled && (
                 <Suspense fallback={<TabLoadingSkeleton />}>
                   <NosePrintSection petId={pet.id} petName={pet.name} />

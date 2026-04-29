@@ -243,3 +243,14 @@ verify_jwt = true
 # (Sprint 1 P1 SEC-007).
 [functions.flow-renewal-reminders-cron]
 verify_jwt = false
+
+# Paw Shield · Petify integration (2026-04-29).
+# Reemplaza nose-print-embed/match (modelo propio DINOv2 que daba ~random)
+# con Petify (PetNow) que en test interno dio 100% top-1 con 3 fotos por pet.
+# verify_jwt=false; ambas fns validan JWT internamente o son publicas
+# (paw-shield-identify es publica para flow /nose-scan).
+[functions.paw-shield-register]
+verify_jwt = false
+
+[functions.paw-shield-identify]
+verify_jwt = false

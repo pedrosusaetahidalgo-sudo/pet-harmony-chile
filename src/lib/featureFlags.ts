@@ -325,28 +325,52 @@ export const FEATURE_FLAGS = {
    *
    * PAUSADO 2026-04-28 (Sprint 0 P0 FEAT-017): SigLIP2-base 0.445 gap insuficiente,
    * fine-tune no mejoro, riesgo legal de revelar dueno equivocado, opex sin
-   * revenue de respaldo. El microchip Ley 21.020 + QR de la Pet ID Card cubren
-   * ~90% del use-case "mascota perdida". Mantenemos codigo y tablas (regla
-   * "esconder, no eliminar") para reactivar en Fase 3 cuando haya partner pharma
-   * que financie fine-tune o volumen para entrenar propio.
+   * revenue de respaldo.
+   *
+   * REEMPLAZADO 2026-04-29 por Paw Shield (Petify integration). Test interno:
+   * 100% top-1 con 3 fotos por pet. Ver `PAW_SHIELD_PETIFY` flag debajo.
+   * El codigo legacy (nose-print-embed/match + nose_print_embeddings table)
+   * queda preservado por 6 meses como backstop antes de drop final.
    */
   NOSE_PRINT_ENABLED: false,
 
   /**
    * Integrar captura nose print en onboarding de mascota.
-   * PAUSADO 2026-04-28 junto con NOSE_PRINT_ENABLED (FEAT-017).
+   * PAUSADO 2026-04-28. Reemplazado por flow opt-in PawShieldEnrollment
+   * accesible desde Pet ID Card (no en onboarding inicial).
    */
   NOSE_PRINT_ONBOARDING: false,
 
   /**
    * Ruta publica /nose-scan para encontrar mascotas perdidas.
-   * QUEDA EN FALSE hasta validar que SigLIP2-base discrimina hermanos
-   * (test cross-pet con 8 mascotas en _pending/nose_print_test_photos/).
-   * Si lo activamos antes y el modelo da falsos positivos, podemos revelar
-   * telefono del dueño equivocado a un extraño que escanee otra mascota.
-   * Activar manualmente despues de F1.4 OK en MANUAL_ACTIONS.
+   * Reemplazado backend a Paw Shield · Petify (2026-04-29).
+   * Activar cuando haya >=20 pets registrados con Paw Shield para que
+   * el match identify tenga base util (ahora vacio = no_match siempre).
    */
   NOSE_PRINT_PUBLIC_SCAN: false,
+
+  /**
+   * PAW SHIELD · PETIFY — biometria de hocico via PetNow B2B API.
+   *
+   * Reemplaza el modelo propio DINOv2/SigLIP2 (memoria
+   * project_nose_print_master_plan.md) que daba ~random.
+   * Petify test interno (8 mascotas reales): 100% top-1 con 3 fotos por pet.
+   *
+   * Modelo de negocio: opt-in. Pet creado por defecto SIN Paw Shield.
+   * Dueno activa explicitamente desde Pet ID Card → captura video 3 seg →
+   * 3 fingerprints registrados en Petify. Dueno NO paga (modelo v2).
+   *
+   * Cuando ON:
+   *   - Aparece tarjeta "Activar Paw Shield" en tab Identidad de la ficha.
+   *   - PawShieldEnrollment componente captura video 3s + extract 3 frames.
+   *   - paw-shield-register edge fn maneja dedup + create + addFingerprints.
+   *   - paw-shield-identify edge fn (publica) usado por /nose-scan.
+   *
+   * Costo Petify: ~$1.50 USD/pet/mes en tier estandar (1k-10k pets).
+   * Reduce 70-75% vs activacion default porque solo ~25-30% de duenos lo
+   * activan (los preocupados por extravio).
+   */
+  PAW_SHIELD_PETIFY: false,
 
   /**
    * Paw Passport — PDF narrativo + share card exportable

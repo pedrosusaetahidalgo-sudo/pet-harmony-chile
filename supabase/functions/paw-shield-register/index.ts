@@ -1,0 +1,370 @@
+/**
+ * paw-shield-register · Edge Function
+ *
+ * Registra una mascota en Petify (PetNow) con biometría de hocico.
+ * Implementa la política anti-duplicado server-side: antes de crear el pet
+ * en Petify, busca si ya existe (1:N identify). Si match >= 92 con gap >= 5,
+ * devuelve `duplicate_detected` con info del pet existente para que la UI
+ * abra el flow de claim (en vez de crear duplicado).
+ *
+ * Branding: "Paw Shield" — feature opt-in del modelo v2 (dueño no paga,
+ * pero solo activa Petify quien quiere protección por extravío).
+ *
+ * Request:
+ * {
+ *   pet_id: string,           // UUID interno de pets.id
+ *   species: 'DOG' | 'CAT',
+ *   breed?: string,
+ *   images_base64: string[]   // 3 frames extraidos del video 3s
+ * }
+ *
+ * Response (200 success):
+ * {
+ *   status: 'registered' | 'duplicate_detected' | 'ambiguous_match' | 'low_quality',
+ *   petify_pet_id?: string,
+ *   fingerprint_count?: number,
+ *   matches?: Array<{ id, score, metadata }>
+ * }
+ *
+ * Auth: requiere user JWT — el caller debe ser dueño del pet_id.
+ */
+
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { withTelemetry } from '../_shared/telemetry.ts';
+import { getCorsHeaders, handleCorsOptions } from '../_shared/cors.ts';
+import {
+  identifyByImage,
+  registerPetWithFingerprints,
+  PetifyError,
+  type PetifySpecies,
+} from '../_shared/petify-client.ts';
+
+const SUPABASE_URL = Deno.env.get('SUPABASE_URL') ?? '';
+const SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
+
+/** Score umbral para considerar duplicado certero. */
+const DUPLICATE_SCORE_THRESHOLD = 92;
+/** Si gap top1-top2 < este valor, es ambiguo (perros hermanos). */
+const AMBIGUOUS_GAP_THRESHOLD = 5;
+
+interface RegisterRequest {
+  pet_id: string;
+  species: PetifySpecies;
+  breed?: string;
+  images_base64: string[];
+}
+
+function base64ToBlob(base64: string): Blob {
+  // Acepta tanto data URLs ("data:image/jpeg;base64,...") como raw base64.
+  const cleaned = base64.includes(',') ? base64.split(',')[1] : base64;
+  const binary = atob(cleaned);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new Blob([bytes], { type: 'image/jpeg' });
+}
+
+async function logEvent(
+  supabase: ReturnType<typeof createClient>,
+  fields: {
+    pet_id: string | null;
+    owner_id: string | null;
+    event_type: string;
+    petify_pet_id?: string | null;
+    fingerprint_count?: number | null;
+    match_top_score?: number | null;
+    match_gap?: number | null;
+    error_code?: string | null;
+    error_message?: string | null;
+    metadata?: Record<string, unknown> | null;
+  }
+) {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase as any).from('paw_shield_events').insert(fields);
+  } catch (e) {
+    console.error('[paw-shield-register] logEvent fallo (best-effort):', e);
+  }
+}
+
+serve(
+  withTelemetry('paw-shield-register', async (req) => {
+    if (req.method === 'OPTIONS') return handleCorsOptions(req);
+    const corsHeaders = getCorsHeaders(req);
+
+    if (req.method !== 'POST') {
+      return new Response(JSON.stringify({ error: 'method not allowed' }), {
+        status: 405,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Auth: extraer user del JWT.
+    const authHeader = req.headers.get('Authorization') ?? '';
+    if (!authHeader.startsWith('Bearer ')) {
+      return new Response(JSON.stringify({ error: 'unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const supabase = createClient(SUPABASE_URL, SERVICE_ROLE_KEY, {
+      auth: { persistSession: false },
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const { data: userData } = await supabase.auth.getUser();
+    const userId = userData?.user?.id;
+    if (!userId) {
+      return new Response(JSON.stringify({ error: 'invalid token' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Body validation.
+    let body: RegisterRequest;
+    try {
+      body = await req.json();
+    } catch {
+      return new Response(JSON.stringify({ error: 'invalid JSON' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (!body.pet_id || !body.species || !Array.isArray(body.images_base64)) {
+      return new Response(JSON.stringify({ error: 'missing required fields' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    if (body.species !== 'DOG' && body.species !== 'CAT') {
+      return new Response(JSON.stringify({ error: 'species must be DOG or CAT' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    if (body.images_base64.length < 1 || body.images_base64.length > 5) {
+      return new Response(JSON.stringify({ error: 'images_base64 must have 1-5 items' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    // Verificar que el pet pertenece al user (RLS + double-check).
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data: pet, error: petErr } = await (supabase as any)
+      .from('pets')
+      .select('id, owner_id, name, species, petify_pet_id')
+      .eq('id', body.pet_id)
+      .maybeSingle();
+
+    if (petErr || !pet) {
+      return new Response(JSON.stringify({ error: 'pet not found' }), {
+        status: 404,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (pet.owner_id !== userId) {
+      return new Response(JSON.stringify({ error: 'not your pet' }), {
+        status: 403,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    if (pet.petify_pet_id) {
+      // Ya registrado — UI debe llamar al endpoint de "addFingerprints" si quiere
+      // sumar mas. Devolvemos el estado actual sin reintentar (idempotencia).
+      return new Response(
+        JSON.stringify({
+          status: 'already_registered',
+          petify_pet_id: pet.petify_pet_id,
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Convert base64 → Blobs.
+    let blobs: Blob[];
+    try {
+      blobs = body.images_base64.map(base64ToBlob);
+    } catch (e) {
+      return new Response(JSON.stringify({ error: 'invalid base64 image', detail: String(e) }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    await logEvent(supabase, {
+      pet_id: body.pet_id,
+      owner_id: userId,
+      event_type: 'register_attempt',
+      fingerprint_count: blobs.length,
+      metadata: { species: body.species, breed: body.breed ?? null },
+    });
+
+    // ── Fase 1: Identify ANTES de crear (anti-duplicado) ──────────────
+    try {
+      const matches = await identifyByImage(body.species, blobs[0]);
+
+      if (matches.length > 0) {
+        const top = matches[0];
+        const second = matches[1];
+        const gap = second ? top.score - second.score : 100;
+
+        if (top.score >= DUPLICATE_SCORE_THRESHOLD) {
+          if (gap >= AMBIGUOUS_GAP_THRESHOLD) {
+            // Match certero → duplicado.
+            await logEvent(supabase, {
+              pet_id: body.pet_id,
+              owner_id: userId,
+              event_type: 'duplicate_detected',
+              petify_pet_id: top.id,
+              match_top_score: top.score,
+              match_gap: gap,
+            });
+            return new Response(
+              JSON.stringify({
+                status: 'duplicate_detected',
+                existing_petify_pet_id: top.id,
+                top_score: top.score,
+                gap,
+                metadata: top.metadata,
+                message:
+                  'Esta mascota ya esta registrada en Paw Shield. Si es tuya, podes reclamarla con el dueno actual.',
+              }),
+              {
+                status: 200,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              }
+            );
+          } else {
+            // Score alto pero gap bajo → ambiguo (hermanos misma camada).
+            await logEvent(supabase, {
+              pet_id: body.pet_id,
+              owner_id: userId,
+              event_type: 'ambiguous_match',
+              match_top_score: top.score,
+              match_gap: gap,
+              metadata: { top3: matches.slice(0, 3) },
+            });
+            return new Response(
+              JSON.stringify({
+                status: 'ambiguous_match',
+                candidates: matches.slice(0, 3),
+                message:
+                  'Encontramos mascotas muy parecidas (probablemente hermanos). Confirma si tu mascota es alguna de ellas o registrala como nueva.',
+              }),
+              {
+                status: 200,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              }
+            );
+          }
+        }
+      }
+    } catch (err) {
+      // Si identify falla, NO bloqueamos el register (loggeamos y seguimos).
+      // La regla anti-duplicado es "best effort" si Petify se cae para identify.
+      console.warn('[paw-shield-register] identify pre-check fallo, sigo:', err);
+    }
+
+    // ── Fase 2: Register en Petify ─────────────────────────────────────
+    try {
+      const { petifyPetId, fingerprintCount } = await registerPetWithFingerprints({
+        species: body.species,
+        breed: body.breed,
+        metadata: {
+          pawfriend_pet_id: body.pet_id,
+          pawfriend_pet_name: pet.name,
+          owner_id: userId,
+        },
+        images: blobs,
+      });
+
+      // ── Fase 3: Update pets table (atomico, server-side) ────────────
+      const quality = fingerprintCount >= 3 ? 'high' : 'low';
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error: updateErr } = await (supabase as any)
+        .from('pets')
+        .update({
+          petify_pet_id: petifyPetId,
+          petify_registered_at: new Date().toISOString(),
+          petify_fingerprint_count: fingerprintCount,
+          petify_quality: quality,
+          nose_print_pending: false,
+        })
+        .eq('id', body.pet_id);
+
+      if (updateErr) {
+        // Update fallo despues de Petify OK → estado inconsistente.
+        // Logueamos para soporte, pero no rollback Petify (el pet alla queda
+        // registrado y sera idempotente en el siguiente intento).
+        console.error('[paw-shield-register] update pets fallo post-Petify:', updateErr);
+        await logEvent(supabase, {
+          pet_id: body.pet_id,
+          owner_id: userId,
+          event_type: 'register_failed',
+          petify_pet_id: petifyPetId,
+          error_code: 'DB_UPDATE_FAILED',
+          error_message: updateErr.message,
+        });
+        return new Response(
+          JSON.stringify({
+            status: 'partial_failure',
+            petify_pet_id: petifyPetId,
+            error: 'pet registered in Petify but our DB update failed. Contact support.',
+          }),
+          {
+            status: 500,
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
+      }
+
+      await logEvent(supabase, {
+        pet_id: body.pet_id,
+        owner_id: userId,
+        event_type: 'register_success',
+        petify_pet_id: petifyPetId,
+        fingerprint_count: fingerprintCount,
+      });
+
+      return new Response(
+        JSON.stringify({
+          status: 'registered',
+          petify_pet_id: petifyPetId,
+          fingerprint_count: fingerprintCount,
+          quality,
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    } catch (err) {
+      const isPetifyErr = err instanceof PetifyError;
+      const errorCode = isPetifyErr ? err.code : null;
+      const errorMessage = err instanceof Error ? err.message : String(err);
+
+      await logEvent(supabase, {
+        pet_id: body.pet_id,
+        owner_id: userId,
+        event_type: 'register_failed',
+        error_code: errorCode,
+        error_message: errorMessage.slice(0, 500),
+      });
+
+      return new Response(
+        JSON.stringify({
+          status: 'failed',
+          error_code: errorCode,
+          error: errorMessage.slice(0, 300),
+        }),
+        {
+          status: isPetifyErr && err.status >= 400 && err.status < 500 ? 400 : 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
+    }
+  })
+);
