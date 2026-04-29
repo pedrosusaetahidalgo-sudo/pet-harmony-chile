@@ -94,6 +94,7 @@ const AdminPawCompanys = lazy(() => import('@/components/admin/AdminPawCompanys'
 const AdminPawVoices = lazy(() => import('@/components/admin/AdminPawVoices'));
 const AdminAdvertisements = lazy(() => import('@/components/admin/AdminAdvertisements'));
 const AdminB2BOutreach = lazy(() => import('@/components/admin/AdminB2BOutreach'));
+const AdminPartnerBilling = lazy(() => import('@/components/admin/AdminPartnerBilling'));
 const AdminSalaInversion = lazy(() => import('@/components/admin/AdminSalaInversion'));
 const AdminAnalytics = lazy(() => import('@/components/admin/AdminAnalytics'));
 const AdminFeedback = lazy(() => import('@/components/admin/AdminFeedback'));
@@ -279,6 +280,26 @@ function GamificationSection({ sub: propSub, onSubChange }: SubSectionProps) {
         </TabsContent>
         <TabsContent value="missions">
           <AdminMissions />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
+function FinanceSection({ sub: propSub, onSubChange }: SubSectionProps) {
+  const [sub, setSub] = useSubState('overview', propSub, onSubChange);
+  return (
+    <div className="space-y-4">
+      <Tabs value={sub} onValueChange={setSub}>
+        <TabsList className="flex flex-wrap gap-1 h-auto">
+          <TabsTrigger value="overview">Resumen</TabsTrigger>
+          <TabsTrigger value="partner-billing">Facturacion partners</TabsTrigger>
+        </TabsList>
+        <TabsContent value="overview">
+          <AdminFinance />
+        </TabsContent>
+        <TabsContent value="partner-billing">
+          <AdminPartnerBilling />
         </TabsContent>
       </Tabs>
     </div>
@@ -688,7 +709,7 @@ const Admin = () => {
       case 'users':
         return <UsersSection sub={subFromUrl} onSubChange={handleSubChange} />;
       case 'finance':
-        return <AdminFinance />;
+        return <FinanceSection sub={subFromUrl} onSubChange={handleSubChange} />;
       case 'content':
         return <ContentSection sub={subFromUrl} onSubChange={handleSubChange} />;
       case 'gamification':
