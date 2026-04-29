@@ -701,7 +701,7 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 
 ---
 
-## 12. Estado tecnico al cierre 2026-04-28 (post Sprint 0 + Sprint 1 cierre auditoria)
+## 12. Estado tecnico al cierre 2026-04-30 (Revenue Master Plan completo · 7 motores)
 
 | Metrica | Valor |
 |---|---|
@@ -710,9 +710,9 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 | `npm run build` | Pasa (~2-3min) + post-build pre-render de 20 rutas SPA |
 | `npm run test:ci` | **587/587 verde** (de 28 originales, ~21x crecimiento) |
 | **Bundle inicial** | Admin **149KB** (era 511KB, **-71%**) · ProviderDashboard **63KB** (era 103KB, **-39%**) · Home **55KB** (era 88KB, **-37%**) · xlsx separado (429KB chunk lazy) · -425KB total saved |
-| Migraciones | 189+ (Sprint 0+1: pets_default_private SEC-002, marketing_consent COMP-005, export_user_data_rpc COMP-002, subscriptions_renewal_reminder BIZ-006, flow_renewal_reminders_cron) |
-| Edge functions | 36+ activas. Nuevas Sprint 1: `flow-renewal-reminders-cron` (BIZ-006). Hardened con `requireCronAuth`: 5 cron fns (audit-cron-daily, run-all-cascades, notify-health-alerts, send-inactive-user-reminder, send-pet-birthday-greeting, send-new-pet-drip) |
-| Rutas en App.tsx | 73+ paths |
+| Migraciones | 197+ (Sprint 0+1 + revenue motors 20260911-20260918: paw_shield_data_archive, b2b_api_application_flow, birthday_coupons, vet_checkin_keys, insurance_motor, retail_motor, b2b_inbound_kinds, rls_hardening) |
+| Edge functions | 42+ activas. Nuevas 2026-04-29/30: `paw-shield-archive-cleanup`, `send-b2b-welcome`, `vet-checkin-identify`, `request-insurance-quote`. Hardened con `requireCronAuth`: 5 cron fns |
+| Rutas en App.tsx | 78+ paths (incluye `/b2b`, `/cotizar-seguro/:petId`, `/tienda/:petId/:partnerSlug`, `/aplicar?tipo=<14 kinds>`) |
 | Premium B2C Flow | Vivo con idempotencia + rate limit |
 | Google Calendar | Vivo end-to-end |
 | Sentry | Integrado (@sentry/react 10.47.0) |
@@ -742,6 +742,14 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 | **§14.bis.6 PetCompletionProgress** | Owner-side del North Star: progreso de la mascota individual hacia ficha completa (10 eventos / 3 categorias / Pet ID Card). Compact en /home, full en tab Identidad |
 | **§2.8.3 Cascadas (set 6 tipos)** | weight_loss_30d (trigger sync) + vaccine_overdue + antiparasitic_overdue + no_activity_7d + birthday_window + memorial_anniversary (todas RPC cron) |
 | **§14.bis.4.b Memorial anniversary** | Recordatorio anual del fallecimiento si memorial_remembrance_enabled=true. Filtro: solo si pasaron >=300d (no en duelo activo). Cierra el ciclo emocional del producto |
+| **🚀 Revenue Master Plan · 7 motores B2B (cierre 2026-04-30)** | Los 7 motores del [REVENUE_MASTER_PLAN_2026.md](docs-raiz/REVENUE_MASTER_PLAN_2026.md) tienen **código end-to-end listo** · solo activación comercial pendiente: |
+| #1 Pharma B2B | API + portal `/b2b` + onboarding auto-issue (`/aplicar?tipo=b2b_api` → admin approve → email automático con key). 3 tiers · 4 endpoints (breed_stats, species_stats, correlation_insights, risk_score). Tablas: b2b_api_keys, b2b_api_usage |
+| #2 Aseguradoras | `/cotizar-seguro/:petId` quote real-time (reusa `calculate_pet_risk_score`) + lead capture + email automático al partner. Edge fn `request-insurance-quote`. Seed: Sura/BCI/Mapfre. AdminInsurancePartners. Flag `EMBEDDED_INSURANCE` |
+| #3 Retail | `/tienda/:petId/:partnerSlug` con catálogo filtrado por mascota + tracking de clicks + descuento Paw Member. RPC `track_retail_click`. Seed: Master Dog/Puppis/Pet Star. AdminRetailPartners. Flag `RETAIL_FULFILLMENT` |
+| #4-7 Inbound B2B | 4 kinds nuevos en `/aplicar`: gobierno_municipio, banca, edificios, longtail. Cada uno con form structured + extraFields + email a Pedro vía `notify-pitch-application`. Pitch decks dedicados existían |
+| **AdminRevenueDashboard** | Vista consolidada en /admin con KPIs de los 7 motores + COGS Petify estimado + ARR vs targets Y1 ($120k conservador / $420k optimista) |
+| **Top 5 ideas RICE Paw Shield** | #7 Pet Login (PetLoginScanner+Button en /home) · #1 Onboarding express scan (OnboardingScanCheck pre-step) · #13 Vacuna nudge (VaccineRenewalNudge card) · #12 Birthday coupons (`birthday_coupon_partners` table + `list_active_birthday_coupons` RPC) · #2 Vet check-in widget (`vet-checkin-identify` edge fn + `/vet-widget-demo.html`) |
+| **RLS Hardening (mig 20260918)** | Auditoría 2026-04-30 cerró 4 hallazgos: paw_shield_archive_stats admin-gate, drop owner_insert spam vectors en insurance_leads y retail_clicks, retail_partner_stats RAISE EXCEPTION. Doc: [AUDITORIA_RLS_2026_04_30.md](docs-raiz/AUDITORIA_RLS_2026_04_30.md) |
 
 ---
 

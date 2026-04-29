@@ -17,6 +17,7 @@ import AdminFase1Widget from '@/components/admin/AdminFase1Widget';
 import { AdminPawShieldKPIs } from '@/components/admin/AdminPawShieldKPIs';
 import { AdminInsurancePartners } from '@/components/admin/AdminInsurancePartners';
 import { AdminRetailPartners } from '@/components/admin/AdminRetailPartners';
+import { AdminRevenueDashboard } from '@/components/admin/AdminRevenueDashboard';
 import { AdminRiskMonitor } from '@/components/admin/AdminRiskMonitor';
 import AdminPulsoDiario from '@/components/admin/AdminPulsoDiario';
 import { BookingPulseWidget } from '@/components/admin/BookingPulseWidget';
@@ -729,6 +730,9 @@ export default function AdminDashboard() {
 
       {/* ── Embudo adopción: shelter onboarding → transfer ── */}
       <AdminAdoptionFunnel />
+
+      {/* ── Revenue Master Plan · vista consolidada 7 motores ── */}
+      <AdminRevenueDashboard />
 
       {/* ── Fase 1 Refactor Maestro: nose print, memorial, passport, etc ── */}
       <AdminFase1Widget />
