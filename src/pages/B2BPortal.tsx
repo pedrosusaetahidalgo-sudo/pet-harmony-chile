@@ -12,7 +12,7 @@
  * No requiere auth Supabase. La autenticacion del portal se hace con la API
  * key misma (validacion server-side via SHA256 hash match).
  */
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -25,6 +25,9 @@ import { Loader2, Database, ArrowRight, Building2 } from '@/lib/icons';
 import { KeyRound, Code2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+
+// Lazy chart para evitar inflar el bundle del portal publico.
+const UsageTimelineChart = lazy(() => import('@/components/b2b/UsageTimelineChart'));
 
 interface SelfStats {
   name: string;
@@ -244,6 +247,15 @@ export default function B2BPortal() {
                 </div>
                 <div className="text-xs text-muted-foreground pt-2 border-t">
                   <strong>Scopes activos:</strong> {stats.scopes.join(', ')}
+                </div>
+                {/* Timeline chart 24h */}
+                <div className="pt-3 border-t">
+                  <p className="text-xs font-semibold text-muted-foreground mb-2">
+                    Uso ultimas 24 horas
+                  </p>
+                  <Suspense fallback={<div className="h-32 bg-muted/30 rounded animate-pulse" />}>
+                    <UsageTimelineChart apiKey={apiKey} />
+                  </Suspense>
                 </div>
               </div>
             )}
