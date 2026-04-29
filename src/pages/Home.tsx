@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, memo } from 'react';
+import { useState, useEffect, useMemo, memo, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
@@ -42,23 +42,41 @@ import { NextBookingCard } from '@/components/home/NextBookingCard';
 import { WeekActivitiesCard } from '@/components/home/WeekActivitiesCard';
 import { CareStreakCard } from '@/components/home/CareStreakCard';
 import { PetsHealthPanel } from '@/components/home/PetsHealthPanel';
-import { PWAInstallPrompt } from '@/components/PWAInstallPrompt';
+// PWAInstallPrompt + CoOwnerInviteReceivedDialog + NamePromptDialog son
+// dialogs que solo se montan condicionalmente (instalacion PWA, invitacion
+// co-dueno, prompt de nombre primer-login). Lazy save ~500L del initial.
+const PWAInstallPrompt = lazy(() =>
+  import('@/components/PWAInstallPrompt').then((m) => ({ default: m.PWAInstallPrompt }))
+);
 // AnalyticsPreviewCard and PetWellnessPreview removed from home — accessible via /panel-pro
 import { isGenericDisplayName } from '@/lib/format';
-import { NamePromptDialog } from '@/components/NamePromptDialog';
+const NamePromptDialog = lazy(() =>
+  import('@/components/NamePromptDialog').then((m) => ({ default: m.NamePromptDialog }))
+);
 import { computeHealthScore } from '@/lib/health-score';
 import { getRarity } from '@/components/PetCardCompact';
 import { RARITY_BORDER_STYLES } from '@/lib/paw-cards';
 import { Skeleton } from '@/components/ui/skeleton';
 import { usePendingReviewCount } from '@/hooks/usePendingReviews';
 import { usePublicDonationStats } from '@/hooks/usePublicDonations';
-import { CoOwnerInviteReceivedDialog } from '@/components/CoOwnerInviteReceivedDialog';
+const CoOwnerInviteReceivedDialog = lazy(() =>
+  import('@/components/CoOwnerInviteReceivedDialog').then((m) => ({
+    default: m.CoOwnerInviteReceivedDialog,
+  }))
+);
 import { formatDistanceToNowStrict, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useActiveRole } from '@/hooks/useActiveRole';
-import ProviderDashboard from '@/components/provider/ProviderDashboard';
+// Sprint 1 P1 ARCH-001 fase 2 (2026-04-28): ProviderDashboard lazy.
+// Solo se renderiza si role === 'provider'. Owners no descargan los 341L
+// + tabs negocio/clinico/pacientes/reservas que arrastra ProviderDashboard.
+const ProviderDashboard = lazy(() => import('@/components/provider/ProviderDashboard'));
 import { isFeatureEnabled } from '@/lib/featureFlags';
-import { HomePetFocusV2 } from '@/components/home/HomePetFocusV2';
+// HomePetFocusV2 lazy: 459L con muchos sub-widgets. Solo se carga si flag
+// HOME_PET_FOCUS y role !== 'provider'.
+const HomePetFocusV2 = lazy(() =>
+  import('@/components/home/HomePetFocusV2').then((m) => ({ default: m.HomePetFocusV2 }))
+);
 
 interface Pet {
   id: string;
@@ -190,10 +208,24 @@ const PetSwitcherAvatar = memo(function PetSwitcherAvatar({
 // Home PetFocus V2 (Refactor Maestro 2026-04-23 §5.2.2) segun el flag.
 // El switch esta en un wrapper aparte para evitar violar rules-of-hooks
 // (el legacy tiene 30+ hooks que no deben ser condicionales).
+function HomeLoadingFallback() {
+  return (
+    <div className="container mx-auto p-4 space-y-4">
+      <Skeleton className="h-32 w-full" />
+      <Skeleton className="h-48 w-full" />
+      <Skeleton className="h-24 w-full" />
+    </div>
+  );
+}
+
 export default function Home() {
   const { role } = useActiveRole();
   if (isFeatureEnabled('HOME_PET_FOCUS') && role !== 'provider') {
-    return <HomePetFocusV2 />;
+    return (
+      <Suspense fallback={<HomeLoadingFallback />}>
+        <HomePetFocusV2 />
+      </Suspense>
+    );
   }
   return <HomeLegacyDashboard />;
 }
@@ -378,7 +410,9 @@ function HomeLegacyDashboard() {
   if (role === 'provider') {
     return (
       <div className="container max-w-6xl mx-auto p-4 md:p-6">
-        <ProviderDashboard />
+        <Suspense fallback={<HomeLoadingFallback />}>
+          <ProviderDashboard />
+        </Suspense>
       </div>
     );
   }
@@ -521,15 +555,20 @@ function HomeLegacyDashboard() {
         </div>
       </div>
 
-      <NamePromptDialog
-        open={showNamePrompt}
-        currentName=""
-        onDone={(newName) => {
-          setShowNamePrompt(false);
-          setProfile((prev) => (prev ? { ...prev, display_name: newName } : prev));
-          localStorage.setItem('pf_name_prompt_dismissed', '1');
-        }}
-      />
+      {/* NamePromptDialog: lazy. open=false → no descarga. */}
+      {showNamePrompt && (
+        <Suspense fallback={null}>
+          <NamePromptDialog
+            open={showNamePrompt}
+            currentName=""
+            onDone={(newName) => {
+              setShowNamePrompt(false);
+              setProfile((prev) => (prev ? { ...prev, display_name: newName } : prev));
+              localStorage.setItem('pf_name_prompt_dismissed', '1');
+            }}
+          />
+        </Suspense>
+      )}
       <TrialWelcomeOverlay />
       <TrialBanner />
       <HomeOnboardingHints hasPets={pets.length > 0} />
@@ -553,7 +592,9 @@ function HomeLegacyDashboard() {
       {pets.length > 0 && <PawFriendPicks />}
 
       {/* PWA install prompt contextual (solo user con 3+ sesiones, no standalone) */}
-      <PWAInstallPrompt />
+      <Suspense fallback={null}>
+        <PWAInstallPrompt />
+      </Suspense>
 
       {/* === Empty state === */}
       {pets.length === 0 && (
@@ -911,7 +952,9 @@ function HomeLegacyDashboard() {
       <ViewTutorial {...TUTORIALS.home} />
 
       {/* Dialog aceptar/rechazar invitación co-owner (2026-04-21) */}
-      <CoOwnerInviteReceivedDialog />
+      <Suspense fallback={null}>
+        <CoOwnerInviteReceivedDialog />
+      </Suspense>
     </div>
   );
 }

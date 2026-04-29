@@ -29,12 +29,6 @@ import {
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { PetAssistant } from '@/components/ai/PetAssistant';
-import { SymptomTriage } from '@/components/ai/SymptomTriage';
-import { NutritionCoach } from '@/components/ai/NutritionCoach';
-import { WoundVision } from '@/components/ai/WoundVision';
-import { ConsultationPrep } from '@/components/ai/ConsultationPrep';
-import { MemorialFlow } from '@/components/memorial/MemorialFlow';
 import {
   Select,
   SelectContent,
@@ -44,6 +38,28 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+
+// Sprint 1 P1 ARCH-001 fase 2 (2026-04-28): herramientas IA + memorial lazy.
+// 5 AI tools (~1200L total) que solo entran cuando user abre uno especifico.
+// MemorialFlow (200L) se renderiza solo en estado 'fallecido'.
+const PetAssistant = lazy(() =>
+  import('@/components/ai/PetAssistant').then((m) => ({ default: m.PetAssistant }))
+);
+const SymptomTriage = lazy(() =>
+  import('@/components/ai/SymptomTriage').then((m) => ({ default: m.SymptomTriage }))
+);
+const NutritionCoach = lazy(() =>
+  import('@/components/ai/NutritionCoach').then((m) => ({ default: m.NutritionCoach }))
+);
+const WoundVision = lazy(() =>
+  import('@/components/ai/WoundVision').then((m) => ({ default: m.WoundVision }))
+);
+const ConsultationPrep = lazy(() =>
+  import('@/components/ai/ConsultationPrep').then((m) => ({ default: m.ConsultationPrep }))
+);
+const MemorialFlow = lazy(() =>
+  import('@/components/memorial/MemorialFlow').then((m) => ({ default: m.MemorialFlow }))
+);
 
 import type { PetData } from './types';
 import { ClinicalRecordSkeleton, PetHeader } from './shared';
@@ -467,41 +483,47 @@ const PetClinicalRecord = () => {
         {viewMode === 'owner' && (
           <>
             {showAssistant ? (
-              <PetAssistant
-                petId={pet.id}
-                petName={pet.name}
-                onClose={() => setShowAssistant(false)}
-              />
+              <Suspense fallback={<TabLoadingSkeleton />}>
+                <PetAssistant
+                  petId={pet.id}
+                  petName={pet.name}
+                  onClose={() => setShowAssistant(false)}
+                />
+              </Suspense>
             ) : activeAITool !== 'none' ? (
-              <div className="space-y-2">
-                {activeAITool === 'triage' && (
-                  <SymptomTriage
-                    petId={pet.id}
-                    petName={pet.name}
-                    onClose={() => setActiveAITool('none')}
-                    onShowDirectory={() => navigate('/veterinarios')}
-                  />
-                )}
-                {activeAITool === 'nutrition' && (
-                  <NutritionCoach petId={pet.id} petName={pet.name} />
-                )}
-                {activeAITool === 'wound' && (
-                  <WoundVision
-                    petId={pet.id}
-                    petName={pet.name}
-                    onShowDirectory={() => navigate('/veterinarios')}
-                  />
-                )}
-                {activeAITool === 'prep' && <ConsultationPrep petId={pet.id} petName={pet.name} />}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-xs"
-                  onClick={() => setActiveAITool('none')}
-                >
-                  Volver a herramientas
-                </Button>
-              </div>
+              <Suspense fallback={<TabLoadingSkeleton />}>
+                <div className="space-y-2">
+                  {activeAITool === 'triage' && (
+                    <SymptomTriage
+                      petId={pet.id}
+                      petName={pet.name}
+                      onClose={() => setActiveAITool('none')}
+                      onShowDirectory={() => navigate('/veterinarios')}
+                    />
+                  )}
+                  {activeAITool === 'nutrition' && (
+                    <NutritionCoach petId={pet.id} petName={pet.name} />
+                  )}
+                  {activeAITool === 'wound' && (
+                    <WoundVision
+                      petId={pet.id}
+                      petName={pet.name}
+                      onShowDirectory={() => navigate('/veterinarios')}
+                    />
+                  )}
+                  {activeAITool === 'prep' && (
+                    <ConsultationPrep petId={pet.id} petName={pet.name} />
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs"
+                    onClick={() => setActiveAITool('none')}
+                  >
+                    Volver a herramientas
+                  </Button>
+                </div>
+              </Suspense>
             ) : (
               <Card className="border-indigo-100 bg-gradient-to-r from-indigo-50/80 via-purple-50/60 to-pink-50/40 overflow-hidden">
                 <CardContent className="p-3 sm:p-4">
@@ -828,15 +850,17 @@ const PetClinicalRecord = () => {
         {viewMode === 'owner' && showMemorialFlow && (
           <Dialog open={showMemorialFlow} onOpenChange={setShowMemorialFlow}>
             <DialogContent className="max-w-lg">
-              <MemorialFlow
-                petId={pet.id}
-                petName={pet.name}
-                onComplete={() => {
-                  setShowMemorialFlow(false);
-                  navigate('/en-memoria');
-                }}
-                onCancel={() => setShowMemorialFlow(false)}
-              />
+              <Suspense fallback={<TabLoadingSkeleton />}>
+                <MemorialFlow
+                  petId={pet.id}
+                  petName={pet.name}
+                  onComplete={() => {
+                    setShowMemorialFlow(false);
+                    navigate('/en-memoria');
+                  }}
+                  onCancel={() => setShowMemorialFlow(false)}
+                />
+              </Suspense>
             </DialogContent>
           </Dialog>
         )}
