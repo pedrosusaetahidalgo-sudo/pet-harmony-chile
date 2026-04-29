@@ -26,8 +26,8 @@
 | [audits/CONTEXTO_REVISION_COMPLETA.txt](audits/CONTEXTO_REVISION_COMPLETA.txt) | Snapshot tecnico completo (464 archivos, 28 fns, 156 mig, 67 rutas) | Cada sesion de auditoria mayor |
 | [audits/AUDITORIA_UX_COMPLETA_2026_04_14.md](audits/AUDITORIA_UX_COMPLETA_2026_04_14.md) | Auditoria UX completa con severidad por item | Despues de cambios UX grandes |
 | [audits/FEATURES_INCOMPLETAS_2026_04_14.md](audits/FEATURES_INCOMPLETAS_2026_04_14.md) | 28 features con gaps detectados | Cuando se completen features |
-| [audits/OPTIMIZACION_COSTOS_2026_04_12.md](audits/OPTIMIZACION_COSTOS_2026_04_12.md) | Analisis de costos operativos + plan de eficiencia | Cuando cambien edge functions o infra de costos |
-| [audits/FEEDBACK_VET_SOFIA_2026_04_13.md](audits/FEEDBACK_VET_SOFIA_2026_04_13.md) | Feedback de vet beta tester (Sofia) | Despues de cada sesion con Sofia |
+| ~~`audits/OPTIMIZACION_COSTOS_2026_04_12.md`~~ → archivado en `_archive/superseded-by-plan-v5/` 2026-04-29 | Superado por [docs-raiz/PETIFY_COGS_CONTINGENCY_2026_04_29.md](docs-raiz/PETIFY_COGS_CONTINGENCY_2026_04_29.md) |  |
+| ~~`audits/FEEDBACK_VET_SOFIA_2026_04_13.md`~~ → archivado en `_archive/superseded-by-plan-v5/` 2026-04-29 | Items ejecutados en Sprint 0+1 (vacunas con lote/serie, antiparasitarios) |  |
 | [audits/COMPETENCIA_2026_04_08.md](audits/COMPETENCIA_2026_04_08.md) | Analisis competitivo Chile | Cada 3-6 meses o cuando aparezca competidor nuevo |
 | [audits/CROSS_PLATFORM_COMPATIBILITY.md](audits/CROSS_PLATFORM_COMPATIBILITY.md) | Compatibilidad multiplataforma (iOS, Android, Web, Chrome) | Cada cambio de CSS/JS moderno o API de browser |
 | [docs-raiz/PRODUCTION_READINESS_2026_04_30.md](docs-raiz/PRODUCTION_READINESS_2026_04_30.md) | Production readiness checklist post 7 motores Revenue Master Plan. 13 areas verde/amarillo/rojo. Para auditor externo con 30 min | Cada cierre de sprint mayor |
@@ -191,7 +191,7 @@ Resumen de items activos:
 | [pitch-inversionistas/04_ANGELES_VC_LATAM.md](pitch-inversionistas/04_ANGELES_VC_LATAM.md) | Pitch pre-seed USD $150K SAFE + preguntas incomodas preparadas + lista angels Tier 1-3 | Platanus, Magma, Kaszek |
 | [docs-raiz/pitch/PITCH_DECK.md](docs-raiz/pitch/PITCH_DECK.md) | 13 slides narrativos originales con notas fundador | Fuente narrativa original |
 | [docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md](docs-raiz/pitch/APALANCAMIENTO_FUNDADOR_IA.md) | Output 2 meses vs equipo expertos: 320 hrs = ~4.800 hrs = USD 720K-1,44M | Evidencia velocidad/eficiencia |
-| [docs-raiz/pitch/CONSOLIDADO_2026_04_18.md](docs-raiz/pitch/CONSOLIDADO_2026_04_18.md) | Snapshot tecnico verificado (tsc, lint, tests, build) | Evidencia tecnica data room |
+| ~~`docs-raiz/pitch/CONSOLIDADO_2026_04_18.md`~~ → archivado en `_archive/superseded-by-plan-v5/` 2026-04-29 | Snapshot pre-Plan v5 superado por [docs-raiz/MODELO_FINANCIERO_2026_04_29.md](docs-raiz/MODELO_FINANCIERO_2026_04_29.md) + [docs-raiz/PITCH_DECK_V2_2026_04_29.md](docs-raiz/PITCH_DECK_V2_2026_04_29.md) | Histórico data room |
 | [_archive/INVENTARIO_APP_2026_04_17.md](_archive/INVENTARIO_APP_2026_04_17.md) | Inventario de features funcionales (snapshot pre-Sprint 0/1, ver AUDITORIA_PAWFRIEND_2026-04-27.md sec 1) | Scope producto histórico |
 | [sales/PITCH_VET_CORTO.md](sales/PITCH_VET_CORTO.md) | Pitch comercial 1-pager para clinicas | Outbound B2B vets |
 

@@ -441,10 +441,12 @@ Ver `INDEX.md` para el indice completo con reglas de actualizacion.
 | `audits/AUDITORIA_UX_COMPLETA_2026_04_14.md` | Auditoria UX completa (reemplaza reporte 04-11) |
 | `audits/FEATURES_INCOMPLETAS_2026_04_14.md` | 28 features con gaps detectados |
 | `_archive/docs-raiz-snapshots-2026-04/SUGERENCIAS_COMPLETAS_2026_04_16.md` | (archivado 2026-04-28) 49 sugerencias snapshot, superado por AUDITORIA_PAWFRIEND_2026-04-27 |
-| `audits/OPTIMIZACION_COSTOS_2026_04_12.md` | Analisis de costos operativos y plan de eficiencia |
+| `_archive/superseded-by-plan-v5/OPTIMIZACION_COSTOS_2026_04_12.md` | (archivado 2026-04-29) Pre-Plan v5, superado por `docs-raiz/PETIFY_COGS_CONTINGENCY_2026_04_29.md` |
 | `audits/COMPETENCIA_2026_04_08.md` | Analisis competitivo Chile |
 | `audits/CROSS_PLATFORM_COMPATIBILITY.md` | Compatibilidad multiplataforma (iOS, Android, Web) |
-| `audits/FEEDBACK_VET_SOFIA_2026_04_13.md` | Feedback de vet beta tester Sofia |
+| `_archive/superseded-by-plan-v5/FEEDBACK_VET_SOFIA_2026_04_13.md` | (archivado 2026-04-29) Items ejecutados Sprint 0+1 (vacunas + antiparasitarios) |
+| `_archive/superseded-by-plan-v5/FEEDBACK_PALO_2026_04_16.md` | (archivado 2026-04-29) 6 bugs fixeados |
+| `_archive/superseded-by-plan-v5/playbook.md` | (archivado 2026-04-29) Hormozi diagnosis pre-pivot v2.1, items absorbidos por Plan v5 |
 | `docs-specs/` | Specs de features pendientes (ver INDEX.md para listado) |
 | `_pending/` | Plans y blueprints pendientes de ejecutar (ver _pending/README.md) |
 | `_archive/` | 47 documentos ya ejecutados o superados |
