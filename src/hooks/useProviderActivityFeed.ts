@@ -1,4 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/**
+ * @deprecated 2026-04-29 — Sin imports activos en codebase.
+ * Candidato a eliminación post-launch (ver docs/audit/cleanup-fase1.md).
+ * Si lo necesitás, verificá primero con git blame qué feature del provider
+ * dashboard lo usaba y si la lógica es duplicada con useVetAnalytics.
+ */
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';

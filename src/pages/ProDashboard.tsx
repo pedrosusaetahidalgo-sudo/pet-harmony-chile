@@ -45,6 +45,7 @@ import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { LockedOverlay } from '@/components/analytics/LockedOverlay';
 import { ProUpgradeCTA } from '@/components/analytics/ProUpgradeCTA';
+import { PremiumGate } from '@/components/PremiumGate';
 import { track, EVENTS } from '@/lib/analytics';
 import { isFeatureEnabled } from '@/lib/featureFlags';
 import { format, parseISO } from 'date-fns';
@@ -645,225 +646,248 @@ export default function ProDashboard() {
   }
 
   // ─── Owner view ────────────────────────────────────────────────
+  // Sprint v5 Opcion 3: gate de toda la vista owner. Free → upsell card; Paw Member/Manada/Admin → contenido completo.
   return (
-    <div className="container max-w-6xl mx-auto p-4 md:p-6 space-y-4 animate-fade-in">
-      {/* Header + Filters */}
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="font-display font-semibold text-2xl md:text-3xl tracking-tight flex items-center gap-2">
-            <BarChart3 className="h-6 w-6 text-purple-600" />
-            Panel Pro
-          </h1>
-          <p className="text-sm text-muted-foreground">Analytics detallados de tus mascotas</p>
-        </div>
-        <div className="flex gap-2">
-          <Select value={selectedPetId} onValueChange={handlePetChange}>
-            <SelectTrigger className="w-[140px] h-8 text-xs">
-              <SelectValue placeholder="Mascota" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">Todas</SelectItem>
-              {(pets || []).map((pet) => (
-                <SelectItem key={pet.id} value={pet.id}>
-                  {pet.name}
-                </SelectItem>
+    <div className="container max-w-6xl mx-auto p-4 md:p-6 animate-fade-in">
+      <PremiumGate
+        feature="insights_pro"
+        title="Insights Pro · Panel de analytics"
+        description="Comparativos de actividad, gráficos detallados de bienestar y exportación PDF/CSV de la salud de tus mascotas."
+      >
+        <div className="space-y-4">
+          {/* Header + Filters */}
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div>
+              <h1 className="font-display font-semibold text-2xl md:text-3xl tracking-tight flex items-center gap-2">
+                <BarChart3 className="h-6 w-6 text-purple-600" />
+                Panel Pro
+              </h1>
+              <p className="text-sm text-muted-foreground">Analytics detallados de tus mascotas</p>
+            </div>
+            <div className="flex gap-2">
+              <Select value={selectedPetId} onValueChange={handlePetChange}>
+                <SelectTrigger className="w-[140px] h-8 text-xs">
+                  <SelectValue placeholder="Mascota" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Todas</SelectItem>
+                  {(pets || []).map((pet) => (
+                    <SelectItem key={pet.id} value={pet.id}>
+                      {pet.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select value={period} onValueChange={handlePeriodChange}>
+                <SelectTrigger className="w-[150px] h-8 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(PERIOD_LABELS).map(([key, label]) => (
+                    <SelectItem key={key} value={key}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          {!isPremium && <ProUpgradeCTA variant="banner" context="pro_dashboard_header" />}
+
+          {/* Summary KPIs */}
+          {ownerLoading ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="h-20 rounded-xl" />
               ))}
-            </SelectContent>
-          </Select>
-          <Select value={period} onValueChange={handlePeriodChange}>
-            <SelectTrigger className="w-[150px] h-8 text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(PERIOD_LABELS).map(([key, label]) => (
-                <SelectItem key={key} value={key}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+            </div>
+          ) : ownerAnalytics ? (
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <SummaryCard
+                icon={CheckCircle2}
+                iconColor="text-purple-500"
+                label="Recordatorios"
+                value={ownerAnalytics.summary.remindersCompleted}
+              />
+              <SummaryCard
+                icon={Stethoscope}
+                iconColor="text-teal-500"
+                label="Visitas vet"
+                value={ownerAnalytics.summary.vetVisits}
+              />
+              <SummaryCard
+                icon={Syringe}
+                iconColor="text-amber-500"
+                label="Vacunas"
+                value={ownerAnalytics.summary.vaccinesGiven}
+              />
+              <SummaryCard
+                icon={Heart}
+                iconColor="text-green-500"
+                label="Bienestar"
+                value={ownerAnalytics.summary.wellnessScore}
+                suffix="/100"
+              />
+            </div>
+          ) : null}
 
-      {!isPremium && <ProUpgradeCTA variant="banner" context="pro_dashboard_header" />}
+          {/* Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+            <div className="lg:col-span-3 space-y-4">
+              {/* Activity chart */}
+              <LockedOverlay
+                locked={!analyticsAccess.allowed}
+                title="Gráfico de actividad mensual"
+                description="Ve tu actividad día a día con tu plan Premium"
+              >
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <Activity className="h-4 w-4 text-purple-600" />
+                      Actividad del período
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {ownerAnalytics && ownerAnalytics.activityTimeline.length > 1 ? (
+                      <ChartContainer
+                        config={ownerActivityConfig}
+                        className="h-[220px] w-full aspect-auto"
+                      >
+                        <AreaChart
+                          data={ownerAnalytics.activityTimeline}
+                          margin={{ top: 5, right: 5, bottom: 0, left: -20 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                          <XAxis
+                            dataKey="date"
+                            tickFormatter={formatDate}
+                            tick={{ fontSize: 11 }}
+                          />
+                          <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
+                          <ChartTooltip content={<ChartTooltipContent />} />
+                          <defs>
+                            <linearGradient id="fillRemindersChart" x1="0" y1="0" x2="0" y2="1">
+                              <stop
+                                offset="5%"
+                                stopColor="var(--color-reminders)"
+                                stopOpacity={0.3}
+                              />
+                              <stop
+                                offset="95%"
+                                stopColor="var(--color-reminders)"
+                                stopOpacity={0}
+                              />
+                            </linearGradient>
+                            <linearGradient id="fillVisitsChart" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="var(--color-visits)" stopOpacity={0.3} />
+                              <stop offset="95%" stopColor="var(--color-visits)" stopOpacity={0} />
+                            </linearGradient>
+                          </defs>
+                          <Area
+                            type="monotone"
+                            dataKey="reminders"
+                            stroke="var(--color-reminders)"
+                            strokeWidth={2}
+                            fill="url(#fillRemindersChart)"
+                            dot={false}
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="visits"
+                            stroke="var(--color-visits)"
+                            strokeWidth={2}
+                            fill="url(#fillVisitsChart)"
+                            dot={false}
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="vaccines"
+                            stroke="var(--color-vaccines)"
+                            strokeWidth={2}
+                            fill="transparent"
+                            dot={false}
+                          />
+                        </AreaChart>
+                      </ChartContainer>
+                    ) : (
+                      <div className="h-[220px] flex items-center justify-center text-sm text-muted-foreground">
+                        Sin datos para este período
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </LockedOverlay>
 
-      {/* Summary KPIs */}
-      {ownerLoading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-20 rounded-xl" />
-          ))}
-        </div>
-      ) : ownerAnalytics ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          <SummaryCard
-            icon={CheckCircle2}
-            iconColor="text-purple-500"
-            label="Recordatorios"
-            value={ownerAnalytics.summary.remindersCompleted}
-          />
-          <SummaryCard
-            icon={Stethoscope}
-            iconColor="text-teal-500"
-            label="Visitas vet"
-            value={ownerAnalytics.summary.vetVisits}
-          />
-          <SummaryCard
-            icon={Syringe}
-            iconColor="text-amber-500"
-            label="Vacunas"
-            value={ownerAnalytics.summary.vaccinesGiven}
-          />
-          <SummaryCard
-            icon={Heart}
-            iconColor="text-green-500"
-            label="Bienestar"
-            value={ownerAnalytics.summary.wellnessScore}
-            suffix="/100"
-          />
-        </div>
-      ) : null}
+              {/* Period comparison */}
+              <LockedOverlay
+                locked={!analyticsAccess.allowed}
+                title="Comparativo entre períodos"
+                description="Compara la actividad entre meses con tu plan Premium"
+              >
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-purple-600" />
+                      Comparativo de períodos
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {ownerAnalytics ? (
+                      <OwnerComparisonChart analytics={ownerAnalytics} />
+                    ) : (
+                      <div className="h-[200px] flex items-center justify-center text-sm text-muted-foreground">
+                        Sin datos para comparar
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </LockedOverlay>
+            </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-        <div className="lg:col-span-3 space-y-4">
-          {/* Activity chart */}
-          <LockedOverlay
-            locked={!analyticsAccess.allowed}
-            title="Gráfico de actividad mensual"
-            description="Ve tu actividad día a día con tu plan Premium"
-          >
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-purple-600" />
-                  Actividad del período
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {ownerAnalytics && ownerAnalytics.activityTimeline.length > 1 ? (
-                  <ChartContainer
-                    config={ownerActivityConfig}
-                    className="h-[220px] w-full aspect-auto"
-                  >
-                    <AreaChart
-                      data={ownerAnalytics.activityTimeline}
-                      margin={{ top: 5, right: 5, bottom: 0, left: -20 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                      <XAxis dataKey="date" tickFormatter={formatDate} tick={{ fontSize: 11 }} />
-                      <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                      <ChartTooltip content={<ChartTooltipContent />} />
-                      <defs>
-                        <linearGradient id="fillRemindersChart" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="var(--color-reminders)" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="var(--color-reminders)" stopOpacity={0} />
-                        </linearGradient>
-                        <linearGradient id="fillVisitsChart" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="var(--color-visits)" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="var(--color-visits)" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <Area
-                        type="monotone"
-                        dataKey="reminders"
-                        stroke="var(--color-reminders)"
-                        strokeWidth={2}
-                        fill="url(#fillRemindersChart)"
-                        dot={false}
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="visits"
-                        stroke="var(--color-visits)"
-                        strokeWidth={2}
-                        fill="url(#fillVisitsChart)"
-                        dot={false}
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="vaccines"
-                        stroke="var(--color-vaccines)"
-                        strokeWidth={2}
-                        fill="transparent"
-                        dot={false}
-                      />
-                    </AreaChart>
-                  </ChartContainer>
-                ) : (
-                  <div className="h-[220px] flex items-center justify-center text-sm text-muted-foreground">
-                    Sin datos para este período
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </LockedOverlay>
-
-          {/* Period comparison */}
-          <LockedOverlay
-            locked={!analyticsAccess.allowed}
-            title="Comparativo entre períodos"
-            description="Compara la actividad entre meses con tu plan Premium"
-          >
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-purple-600" />
-                  Comparativo de períodos
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {ownerAnalytics ? (
-                  <OwnerComparisonChart analytics={ownerAnalytics} />
-                ) : (
-                  <div className="h-[200px] flex items-center justify-center text-sm text-muted-foreground">
-                    Sin datos para comparar
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </LockedOverlay>
+            {/* Right sidebar */}
+            <div className="lg:col-span-2 space-y-4">
+              {/* Export */}
+              <LockedOverlay
+                locked={!exportAccess.allowed}
+                title="Exportar reportes"
+                description="Descarga con el plan Premium"
+              >
+                <Card>
+                  <CardContent className="py-4 space-y-3">
+                    <div>
+                      <p className="text-sm font-semibold">Descargar reporte</p>
+                      <p className="text-xs text-muted-foreground">
+                        Exporta los datos de este período
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleExport('pdf')}
+                        className="gap-1.5 flex-1"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                        PDF
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleExport('csv')}
+                        className="gap-1.5 flex-1"
+                      >
+                        <Download className="h-3.5 w-3.5" />
+                        CSV
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </LockedOverlay>
+            </div>
+          </div>
         </div>
-
-        {/* Right sidebar */}
-        <div className="lg:col-span-2 space-y-4">
-          {/* Export */}
-          <LockedOverlay
-            locked={!exportAccess.allowed}
-            title="Exportar reportes"
-            description="Descarga con el plan Premium"
-          >
-            <Card>
-              <CardContent className="py-4 space-y-3">
-                <div>
-                  <p className="text-sm font-semibold">Descargar reporte</p>
-                  <p className="text-xs text-muted-foreground">Exporta los datos de este período</p>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleExport('pdf')}
-                    className="gap-1.5 flex-1"
-                  >
-                    <Download className="h-3.5 w-3.5" />
-                    PDF
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleExport('csv')}
-                    className="gap-1.5 flex-1"
-                  >
-                    <Download className="h-3.5 w-3.5" />
-                    CSV
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </LockedOverlay>
-        </div>
-      </div>
+      </PremiumGate>
     </div>
   );
 }

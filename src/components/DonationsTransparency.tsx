@@ -87,7 +87,7 @@ export function DonationsTransparency({ className }: DonationsTransparencyProps)
           />
           <KpiTile
             icon={<Users className="h-4 w-4 text-violet-500" />}
-            label="Donantes"
+            label="Aportantes"
             value={data.donors_total.toLocaleString('es-CL')}
             sub={`${data.donors_month} este mes`}
           />

@@ -617,7 +617,7 @@ export function AppSidebar() {
                 'dark:hover:from-pink-900/50 dark:hover:via-rose-900/40 dark:hover:to-amber-900/40',
                 'transition-colors'
               )}
-              aria-label="Apoyar Paw Friend con una donacion"
+              aria-label="Apoyar Paw Friend con un aporte"
             >
               <Heart className="h-3.5 w-3.5 flex-shrink-0 fill-pink-500 text-pink-500" />
               <span>Apoyar Paw Friend</span>

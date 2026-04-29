@@ -42,7 +42,7 @@ function htmlTemplate(name: string, amount: number, message: string | null) {
       tagline: TAGLINE.donation,
     }),
     paragraph(
-      `Soy Pedro, la persona detras de Paw Friend. Leer que alguien como tu decidio donar $${formatted} CLP me hace el dia.`
+      `Soy Pedro, la persona detras de Paw Friend. Leer que alguien como tu decidio aportar $${formatted} CLP me hace el dia.`
     ),
     paragraph(
       'Quiero que sepas algo: detras de esta app hay alguien como tu — que ama a los animales, que los quiere cuidar, y que lo va a hacer con un poquito de ayuda tuya. No es una empresa gigante, es un humano peludo mas.'
@@ -78,13 +78,13 @@ function htmlTemplate(name: string, amount: number, message: string | null) {
     }),
     spacer('md'),
     emailFooter({
-      note: 'Si no fuiste tu quien hizo esta donacion, respondenos y lo revisamos.',
+      note: 'Si no fuiste tu quien hizo este aporte, respondenos y lo revisamos.',
     }),
   ].join('');
 
   return renderEmail({
     title: `Gracias por tu aporte a Paw Friend, ${sigName}`,
-    preheader: `Tu donacion de $${formatted} CLP ya llego. Este correo es un gracias humano, no automático.`,
+    preheader: `Tu aporte de $${formatted} CLP ya llego. Este correo es un gracias humano, no automático.`,
     body,
   });
 }
@@ -95,7 +95,7 @@ function textTemplate(name: string, amount: number, message: string | null) {
   return [
     `Gracias, ${sigName}.`,
     '',
-    `Soy Pedro, detras de Paw Friend. Tu donacion de $${formatted} CLP ayuda muchisimo.`,
+    `Soy Pedro, detras de Paw Friend. Tu aporte de $${formatted} CLP ayuda muchisimo.`,
     'Es un proyecto home-made en Chile. Cada aporte voluntario nos permite seguir gratis.',
     message ? `\nTu mensaje: "${message}"` : '',
     '',

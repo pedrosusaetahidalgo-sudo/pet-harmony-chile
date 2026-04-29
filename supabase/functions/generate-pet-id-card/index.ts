@@ -28,6 +28,7 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { getCorsHeaders, handleCorsOptions } from '../_shared/cors.ts';
+import { withTelemetry } from '../_shared/telemetry.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -526,283 +527,287 @@ function renderBackSvg(data: PetIdCardData): string {
 // ────────────────────────────────────────────────────────────────────────
 // Handler principal
 // ────────────────────────────────────────────────────────────────────────
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') return handleCorsOptions(req);
-  const cors = getCorsHeaders(req);
+Deno.serve(
+  withTelemetry('generate-pet-id-card', async (req) => {
+    if (req.method === 'OPTIONS') return handleCorsOptions(req);
+    const cors = getCorsHeaders(req);
 
-  try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Missing auth' }), {
-        status: 401,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const body = await req.json();
-    const { pet_id, force_regenerate = false } = body as {
-      pet_id: string;
-      force_regenerate?: boolean;
-    };
-
-    if (!pet_id) {
-      return new Response(JSON.stringify({ error: 'pet_id required' }), {
-        status: 400,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Client con user auth (respeta RLS)
-    const userClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
-      global: { headers: { Authorization: authHeader } },
-    });
-
-    const {
-      data: { user },
-      error: userErr,
-    } = await userClient.auth.getUser();
-    if (userErr || !user) {
-      return new Response(JSON.stringify({ error: 'Invalid auth' }), {
-        status: 401,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Admin client para operaciones sensibles (bypass RLS pero validado por auth arriba)
-    const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
-
-    // Cargar datos de la mascota + owner
-    const { data: pet, error: petErr } = await admin
-      .from('pets')
-      .select(
-        'id, owner_id, name, species, breed, birth_date, gender, neutered, color, microchip_number, chip_registry, photo_url, blood_type, allergies, chronic_conditions, emergency_vet_name, emergency_vet_phone, weight, weight_history, current_medications, vaccination_status, diet_brand, diet_type'
-      )
-      .eq('id', pet_id)
-      .maybeSingle();
-
-    if (petErr || !pet) {
-      return new Response(JSON.stringify({ error: 'Pet not found' }), {
-        status: 404,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Verificar que el caller es owner o co-owner con permiso
-    const isOwner = pet.owner_id === user.id;
-    if (!isOwner) {
-      const { data: coOwner } = await admin
-        .from('pet_co_owners')
-        .select('permissions')
-        .eq('pet_id', pet_id)
-        .eq('user_id', user.id)
-        .eq('status', 'accepted')
-        .maybeSingle();
-
-      if (!coOwner || !(coOwner.permissions ?? []).includes('edit_pet')) {
-        return new Response(JSON.stringify({ error: 'Forbidden' }), {
-          status: 403,
+    try {
+      const authHeader = req.headers.get('Authorization');
+      if (!authHeader) {
+        return new Response(JSON.stringify({ error: 'Missing auth' }), {
+          status: 401,
           headers: { ...cors, 'Content-Type': 'application/json' },
         });
       }
-    }
 
-    // Owner profile para nombre/telefono en el reverso
-    const { data: ownerProfile } = await admin
-      .from('profiles')
-      .select('display_name, phone')
-      .eq('id', pet.owner_id)
-      .maybeSingle();
+      const body = await req.json();
+      const { pet_id, force_regenerate = false } = body as {
+        pet_id: string;
+        force_regenerate?: boolean;
+      };
 
-    // Buscar si ya existe card activa
-    const { data: existingCard } = await admin
-      .from('pet_id_cards')
-      .select('id, card_number, version, svg_url, png_url, pdf_url, is_active')
-      .eq('pet_id', pet_id)
-      .eq('is_active', true)
-      .maybeSingle();
+      if (!pet_id) {
+        return new Response(JSON.stringify({ error: 'pet_id required' }), {
+          status: 400,
+          headers: { ...cors, 'Content-Type': 'application/json' },
+        });
+      }
 
-    // Si existe y no se fuerza regenerar, retornar el existente
-    if (existingCard && !force_regenerate) {
-      return new Response(
-        JSON.stringify({
-          card_number: existingCard.card_number,
-          version: existingCard.version,
-          svg_url: existingCard.svg_url,
-          png_url: existingCard.png_url,
-          pdf_url: existingCard.pdf_url,
-          regenerated: false,
-        }),
-        { status: 200, headers: { ...cors, 'Content-Type': 'application/json' } }
-      );
-    }
+      // Client con user auth (respeta RLS)
+      const userClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+        global: { headers: { Authorization: authHeader } },
+      });
 
-    // Nose print hash si existe
-    const { data: nosePrint } = await admin
-      .from('nose_prints' as 'pet_id_cards') // Cast porque la tabla puede no existir aun en types
-      .select('short_hash')
-      .eq('pet_id', pet_id)
-      .eq('is_primary', true)
-      .maybeSingle()
-      .then((r) => r)
-      .catch(() => ({ data: null }));
+      const {
+        data: { user },
+        error: userErr,
+      } = await userClient.auth.getUser();
+      if (userErr || !user) {
+        return new Response(JSON.stringify({ error: 'Invalid auth' }), {
+          status: 401,
+          headers: { ...cors, 'Content-Type': 'application/json' },
+        });
+      }
 
-    // Generar card_number si es nueva card
-    let cardNumber: string;
-    let version: number;
-    if (existingCard) {
-      cardNumber = existingCard.card_number;
-      version = existingCard.version + 1;
-      // Desactivar la anterior
-      await admin.from('pet_id_cards').update({ is_active: false }).eq('id', existingCard.id);
-    } else {
-      const { data: newNumber } = await admin.rpc('generate_pet_id_card_number');
-      cardNumber = newNumber as unknown as string;
-      version = 1;
-    }
+      // Admin client para operaciones sensibles (bypass RLS pero validado por auth arriba)
+      const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
-    // Resúmenes derivados (solo si hay valor, sin saturar la cédula)
-    const weightHistory =
-      (pet.weight_history as Array<{ weight: number; date: string }> | null) ?? [];
-    const lastWeightEntry =
-      weightHistory.length > 0 ? weightHistory[weightHistory.length - 1] : null;
+      // Cargar datos de la mascota + owner
+      const { data: pet, error: petErr } = await admin
+        .from('pets')
+        .select(
+          'id, owner_id, name, species, breed, birth_date, gender, neutered, color, microchip_number, chip_registry, photo_url, blood_type, allergies, chronic_conditions, emergency_vet_name, emergency_vet_phone, weight, weight_history, current_medications, vaccination_status, diet_brand, diet_type'
+        )
+        .eq('id', pet_id)
+        .maybeSingle();
 
-    const meds =
-      (pet.current_medications as Array<{ name?: string; dosage?: string }> | null) ?? [];
-    const medsSummary =
-      meds.length > 0
-        ? meds
-            .slice(0, 2)
-            .map((m) => m.name)
-            .filter(Boolean)
-            .join(', ') + (meds.length > 2 ? '…' : '')
-        : null;
+      if (petErr || !pet) {
+        return new Response(JSON.stringify({ error: 'Pet not found' }), {
+          status: 404,
+          headers: { ...cors, 'Content-Type': 'application/json' },
+        });
+      }
 
-    const dietParts = [pet.diet_brand, pet.diet_type].filter(Boolean);
-    const dietSummary = dietParts.length > 0 ? dietParts.join(' · ') : null;
+      // Verificar que el caller es owner o co-owner con permiso
+      const isOwner = pet.owner_id === user.id;
+      if (!isOwner) {
+        const { data: coOwner } = await admin
+          .from('pet_co_owners')
+          .select('permissions')
+          .eq('pet_id', pet_id)
+          .eq('user_id', user.id)
+          .eq('status', 'accepted')
+          .maybeSingle();
 
-    // Vencimiento: 5 años desde emisión (estándar cédula chilena)
-    const now = new Date();
-    const expiresAt = new Date(now);
-    expiresAt.setFullYear(expiresAt.getFullYear() + 5);
+        if (!coOwner || !(coOwner.permissions ?? []).includes('edit_pet')) {
+          return new Response(JSON.stringify({ error: 'Forbidden' }), {
+            status: 403,
+            headers: { ...cors, 'Content-Type': 'application/json' },
+          });
+        }
+      }
 
-    const cardData: PetIdCardData = {
-      pet_id,
-      card_number: cardNumber,
-      pet_name: pet.name,
-      species: pet.species,
-      breed: pet.breed,
-      birth_date: pet.birth_date,
-      gender: pet.gender,
-      neutered: pet.neutered,
-      color: pet.color,
-      microchip_number: pet.microchip_number,
-      chip_registry: (pet as { chip_registry?: string | null }).chip_registry ?? null,
-      photo_url: pet.photo_url,
-      blood_type: pet.blood_type,
-      allergies: Array.isArray(pet.allergies)
-        ? pet.allergies.join(', ')
-        : (pet.allergies as string | null),
-      chronic_conditions: Array.isArray(pet.chronic_conditions)
-        ? pet.chronic_conditions.join(', ')
-        : (pet.chronic_conditions as string | null),
-      emergency_vet_name: pet.emergency_vet_name,
-      emergency_vet_phone: pet.emergency_vet_phone,
-      owner_name: ownerProfile?.display_name ?? null,
-      owner_phone: (ownerProfile as { phone?: string | null } | null)?.phone ?? null,
-      emergency_contact_alt: null, // futuro: campo dedicado en pets
-      weight_kg: (pet.weight as number | null) ?? lastWeightEntry?.weight ?? null,
-      weight_date: lastWeightEntry?.date ?? null,
-      vaccination_status: pet.vaccination_status,
-      current_medications_summary: medsSummary,
-      diet_summary: dietSummary,
-      nose_print_hash: (nosePrint as { short_hash?: string } | null)?.short_hash ?? null,
-      issued_at: now.toISOString(),
-      expires_at: expiresAt.toISOString(),
-    };
+      // Owner profile para nombre/telefono en el reverso
+      const { data: ownerProfile } = await admin
+        .from('profiles')
+        .select('display_name, phone')
+        .eq('id', pet.owner_id)
+        .maybeSingle();
 
-    // Generar SVGs
-    const frontSvg = renderFrontSvg(cardData);
-    const backSvg = renderBackSvg(cardData);
+      // Buscar si ya existe card activa
+      const { data: existingCard } = await admin
+        .from('pet_id_cards')
+        .select('id, card_number, version, svg_url, png_url, pdf_url, is_active')
+        .eq('pet_id', pet_id)
+        .eq('is_active', true)
+        .maybeSingle();
 
-    // Upload a storage
-    const timestamp = Date.now();
-    const basePath = `${pet_id}/v${version}_${timestamp}`;
+      // Si existe y no se fuerza regenerar, retornar el existente
+      if (existingCard && !force_regenerate) {
+        return new Response(
+          JSON.stringify({
+            card_number: existingCard.card_number,
+            version: existingCard.version,
+            svg_url: existingCard.svg_url,
+            png_url: existingCard.png_url,
+            pdf_url: existingCard.pdf_url,
+            regenerated: false,
+          }),
+          { status: 200, headers: { ...cors, 'Content-Type': 'application/json' } }
+        );
+      }
 
-    const [frontUpload, backUpload] = await Promise.all([
-      admin.storage
+      // Nose print hash si existe
+      const { data: nosePrint } = await admin
+        .from('nose_prints' as 'pet_id_cards') // Cast porque la tabla puede no existir aun en types
+        .select('short_hash')
+        .eq('pet_id', pet_id)
+        .eq('is_primary', true)
+        .maybeSingle()
+        .then((r) => r)
+        .catch(() => ({ data: null }));
+
+      // Generar card_number si es nueva card
+      let cardNumber: string;
+      let version: number;
+      if (existingCard) {
+        cardNumber = existingCard.card_number;
+        version = existingCard.version + 1;
+        // Desactivar la anterior
+        await admin.from('pet_id_cards').update({ is_active: false }).eq('id', existingCard.id);
+      } else {
+        const { data: newNumber } = await admin.rpc('generate_pet_id_card_number');
+        cardNumber = newNumber as unknown as string;
+        version = 1;
+      }
+
+      // Resúmenes derivados (solo si hay valor, sin saturar la cédula)
+      const weightHistory =
+        (pet.weight_history as Array<{ weight: number; date: string }> | null) ?? [];
+      const lastWeightEntry =
+        weightHistory.length > 0 ? weightHistory[weightHistory.length - 1] : null;
+
+      const meds =
+        (pet.current_medications as Array<{ name?: string; dosage?: string }> | null) ?? [];
+      const medsSummary =
+        meds.length > 0
+          ? meds
+              .slice(0, 2)
+              .map((m) => m.name)
+              .filter(Boolean)
+              .join(', ') + (meds.length > 2 ? '…' : '')
+          : null;
+
+      const dietParts = [pet.diet_brand, pet.diet_type].filter(Boolean);
+      const dietSummary = dietParts.length > 0 ? dietParts.join(' · ') : null;
+
+      // Vencimiento: 5 años desde emisión (estándar cédula chilena)
+      const now = new Date();
+      const expiresAt = new Date(now);
+      expiresAt.setFullYear(expiresAt.getFullYear() + 5);
+
+      const cardData: PetIdCardData = {
+        pet_id,
+        card_number: cardNumber,
+        pet_name: pet.name,
+        species: pet.species,
+        breed: pet.breed,
+        birth_date: pet.birth_date,
+        gender: pet.gender,
+        neutered: pet.neutered,
+        color: pet.color,
+        microchip_number: pet.microchip_number,
+        chip_registry: (pet as { chip_registry?: string | null }).chip_registry ?? null,
+        photo_url: pet.photo_url,
+        blood_type: pet.blood_type,
+        allergies: Array.isArray(pet.allergies)
+          ? pet.allergies.join(', ')
+          : (pet.allergies as string | null),
+        chronic_conditions: Array.isArray(pet.chronic_conditions)
+          ? pet.chronic_conditions.join(', ')
+          : (pet.chronic_conditions as string | null),
+        emergency_vet_name: pet.emergency_vet_name,
+        emergency_vet_phone: pet.emergency_vet_phone,
+        owner_name: ownerProfile?.display_name ?? null,
+        owner_phone: (ownerProfile as { phone?: string | null } | null)?.phone ?? null,
+        emergency_contact_alt: null, // futuro: campo dedicado en pets
+        weight_kg: (pet.weight as number | null) ?? lastWeightEntry?.weight ?? null,
+        weight_date: lastWeightEntry?.date ?? null,
+        vaccination_status: pet.vaccination_status,
+        current_medications_summary: medsSummary,
+        diet_summary: dietSummary,
+        nose_print_hash: (nosePrint as { short_hash?: string } | null)?.short_hash ?? null,
+        issued_at: now.toISOString(),
+        expires_at: expiresAt.toISOString(),
+      };
+
+      // Generar SVGs
+      const frontSvg = renderFrontSvg(cardData);
+      const backSvg = renderBackSvg(cardData);
+
+      // Upload a storage
+      const timestamp = Date.now();
+      const basePath = `${pet_id}/v${version}_${timestamp}`;
+
+      const [frontUpload, backUpload] = await Promise.all([
+        admin.storage
+          .from(BUCKET_NAME)
+          .upload(`${basePath}_front.svg`, new Blob([frontSvg], { type: 'image/svg+xml' }), {
+            contentType: 'image/svg+xml',
+            upsert: true,
+          }),
+        admin.storage
+          .from(BUCKET_NAME)
+          .upload(`${basePath}_back.svg`, new Blob([backSvg], { type: 'image/svg+xml' }), {
+            contentType: 'image/svg+xml',
+            upsert: true,
+          }),
+      ]);
+
+      if (frontUpload.error || backUpload.error) {
+        console.error('Storage upload error:', frontUpload.error || backUpload.error);
+        return new Response(
+          JSON.stringify({
+            error: 'Failed to upload SVGs',
+            details: frontUpload.error?.message || backUpload.error?.message,
+          }),
+          { status: 500, headers: { ...cors, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const { data: frontPub } = admin.storage
         .from(BUCKET_NAME)
-        .upload(`${basePath}_front.svg`, new Blob([frontSvg], { type: 'image/svg+xml' }), {
-          contentType: 'image/svg+xml',
-          upsert: true,
-        }),
-      admin.storage
+        .getPublicUrl(`${basePath}_front.svg`);
+      const { data: backPub } = admin.storage
         .from(BUCKET_NAME)
-        .upload(`${basePath}_back.svg`, new Blob([backSvg], { type: 'image/svg+xml' }), {
-          contentType: 'image/svg+xml',
-          upsert: true,
-        }),
-    ]);
+        .getPublicUrl(`${basePath}_back.svg`);
 
-    if (frontUpload.error || backUpload.error) {
-      console.error('Storage upload error:', frontUpload.error || backUpload.error);
-      return new Response(
-        JSON.stringify({
-          error: 'Failed to upload SVGs',
-          details: frontUpload.error?.message || backUpload.error?.message,
-        }),
-        { status: 500, headers: { ...cors, 'Content-Type': 'application/json' } }
-      );
-    }
+      // PNG y PDF: generacion deferida. Por ahora apuntamos a las SVG como fallback.
+      // TODO: agregar canvas server-side (@resvg/resvg-wasm) para PNG y PDF (pdf-lib)
+      const svgUrl = frontPub.publicUrl;
+      const pngUrl = frontPub.publicUrl; // placeholder — cliente puede rasterizar
+      const pdfUrl = backPub.publicUrl; // placeholder — futuro: combinar front+back en 1 PDF
 
-    const { data: frontPub } = admin.storage
-      .from(BUCKET_NAME)
-      .getPublicUrl(`${basePath}_front.svg`);
-    const { data: backPub } = admin.storage.from(BUCKET_NAME).getPublicUrl(`${basePath}_back.svg`);
-
-    // PNG y PDF: generacion deferida. Por ahora apuntamos a las SVG como fallback.
-    // TODO: agregar canvas server-side (@resvg/resvg-wasm) para PNG y PDF (pdf-lib)
-    const svgUrl = frontPub.publicUrl;
-    const pngUrl = frontPub.publicUrl; // placeholder — cliente puede rasterizar
-    const pdfUrl = backPub.publicUrl; // placeholder — futuro: combinar front+back en 1 PDF
-
-    // Insertar fila pet_id_cards
-    const { error: insertErr } = await admin.from('pet_id_cards').insert({
-      pet_id,
-      card_number: cardNumber,
-      version,
-      is_active: true,
-      svg_url: svgUrl,
-      png_url: pngUrl,
-      pdf_url: pdfUrl,
-      metadata: cardData as unknown as Record<string, unknown>,
-      default_qr_mode: 'emergency',
-    });
-
-    if (insertErr) {
-      console.error('Insert error:', insertErr);
-      return new Response(
-        JSON.stringify({ error: 'Failed to save card', details: insertErr.message }),
-        { status: 500, headers: { ...cors, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    return new Response(
-      JSON.stringify({
+      // Insertar fila pet_id_cards
+      const { error: insertErr } = await admin.from('pet_id_cards').insert({
+        pet_id,
         card_number: cardNumber,
         version,
+        is_active: true,
         svg_url: svgUrl,
         png_url: pngUrl,
         pdf_url: pdfUrl,
-        regenerated: !!existingCard,
-      }),
-      { status: 200, headers: { ...cors, 'Content-Type': 'application/json' } }
-    );
-  } catch (err) {
-    console.error('generate-pet-id-card error:', err);
-    const message = err instanceof Error ? err.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
-    });
-  }
-});
+        metadata: cardData as unknown as Record<string, unknown>,
+        default_qr_mode: 'emergency',
+      });
+
+      if (insertErr) {
+        console.error('Insert error:', insertErr);
+        return new Response(
+          JSON.stringify({ error: 'Failed to save card', details: insertErr.message }),
+          { status: 500, headers: { ...cors, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({
+          card_number: cardNumber,
+          version,
+          svg_url: svgUrl,
+          png_url: pngUrl,
+          pdf_url: pdfUrl,
+          regenerated: !!existingCard,
+        }),
+        { status: 200, headers: { ...cors, 'Content-Type': 'application/json' } }
+      );
+    } catch (err) {
+      console.error('generate-pet-id-card error:', err);
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      return new Response(JSON.stringify({ error: message }), {
+        status: 500,
+        headers: { ...getCorsHeaders(req), 'Content-Type': 'application/json' },
+      });
+    }
+  })
+);

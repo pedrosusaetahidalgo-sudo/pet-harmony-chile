@@ -10,7 +10,7 @@ interface PremiumNudgeProps {
   title: string;
   /** Descripción opcional. */
   description: string;
-  /** Texto del CTA. Default cambia segun el pivot: "Apoyar Paw Friend". */
+  /** Texto del CTA. Default 2026-04-29: "Activa Paw Member". */
   ctaText?: string;
   /** Card completa o inline compacto. */
   variant?: 'card' | 'inline';
@@ -24,27 +24,22 @@ interface PremiumNudgeProps {
 }
 
 /**
- * PremiumNudge → DonateNudge (2026-04-19 pivot).
+ * Refactor 2026-04-29 (Plan v5 Opción 3): vuelve a ser Paw Member upsell soft.
+ * Aparece AL LADO de un feature ya usado o gratis. Para BLOQUEAR uso, usar
+ * `PremiumGate` (componente hermano).
  *
- * Antes decía "Hazte Premium $3.990/mes" y bloqueaba implícitamente el
- * acceso a features premium. Con el pivot a "app 100% gratis + donaciones
- * voluntarias + Paw Member opcional", este componente se transforma en
- * un recordatorio amable post-uso: "¿te sirvió? considera apoyar".
+ * - No bloquea: queda al lado/después del feature, como invitación.
+ * - Copy dirige a `/paw-member` (página oficial del plan B2C).
+ * - Paleta rosa/violeta (comunidad), icono Heart (amor, no status).
  *
- * Cambios clave vs versión antigua:
- * - No bloquea: aparece AL LADO o DESPUÉS de un feature ya usado.
- * - Copy dirige a `/donaciones` o `/paw-member`, no a `/upgrade`.
- * - Paleta rosa/violeta (comunidad) en vez de purple premium.
- * - Icono Heart (amor) en vez de Crown (status).
- *
- * La prop `ctaText` acepta override para personalizar. Los 11 archivos que
- * lo usan pueden seguir pasando los mismos props.
+ * La prop `ctaText` acepta override. Los 11 archivos que lo usan siguen
+ * pasando los mismos props sin romper.
  */
 export function PremiumNudge({
   feature,
   title,
   description,
-  ctaText = 'Apoyar Paw Friend',
+  ctaText = 'Activa Paw Member',
   variant = 'card',
 }: PremiumNudgeProps) {
   const navigate = useNavigate();
@@ -52,9 +47,9 @@ export function PremiumNudge({
   const handleClick = () => {
     track({
       event: EVENTS.PRO_PANEL_UPGRADE_CTA_CLICKED,
-      properties: { source: `donate_nudge_${feature}` },
+      properties: { source: `paw_member_nudge_${feature}` },
     });
-    navigate('/donaciones');
+    navigate('/paw-member');
   };
 
   if (variant === 'inline') {
@@ -70,7 +65,7 @@ export function PremiumNudge({
           onClick={handleClick}
           className="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white text-xs h-7 px-2 flex-shrink-0"
         >
-          Apoyar
+          Activar
         </Button>
       </div>
     );
@@ -89,8 +84,8 @@ export function PremiumNudge({
       </div>
 
       <p className="text-[11px] text-muted-foreground italic leading-snug">
-        Paw Friend es gratis y lo mantenemos con aportes voluntarios. Si te sirve, puedes ayudarnos
-        con lo que quieras. Sin suscripciones, sin paywalls.
+        Paw Member desbloquea Paw Shield, Paw Passport, Insights Pro y más. $3.990/mes · cancelable
+        cuando quieras.
       </p>
 
       <Button

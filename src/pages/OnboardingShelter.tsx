@@ -72,8 +72,8 @@ export default function OnboardingShelter() {
           />
           <FeatureCard
             icon={<HandHeart className="h-5 w-5" />}
-            title="Donaciones dirigidas"
-            description="La comunidad podra donar directamente a tu causa. Proximamente activo."
+            title="Aportes dirigidos"
+            description="La comunidad podra aportar directamente a tu causa. Proximamente activo."
           />
         </div>
 

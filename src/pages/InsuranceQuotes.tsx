@@ -324,9 +324,16 @@ export default function InsuranceQuotes() {
       )}
 
       <Card className="bg-amber-50 border-amber-200">
-        <CardContent className="p-4 text-xs leading-relaxed text-amber-900">
-          <strong>Precios referenciales</strong> · La cotizacion final la entrega cada aseguradora
-          tras evaluar la ficha completa. Paw Friend no vende seguros — solo conecta.
+        <CardContent className="p-4 text-xs leading-relaxed text-amber-900 space-y-1.5">
+          <p>
+            <strong>Piloto en marcha · proximamente</strong> · Estamos en negociacion con
+            aseguradoras chilenas. Las cotizaciones que ves son referenciales y se ajustan al firmar
+            contrato definitivo con cada partner.
+          </p>
+          <p>
+            <strong>Precios referenciales</strong> · La cotizacion final la entrega cada aseguradora
+            tras evaluar la ficha completa. Paw Friend no vende seguros — solo conecta.
+          </p>
         </CardContent>
       </Card>
 

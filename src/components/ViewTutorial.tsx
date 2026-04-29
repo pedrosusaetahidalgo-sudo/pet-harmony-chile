@@ -109,9 +109,9 @@ export const TUTORIALS = {
           'Usa los botones inferiores para navegar: Mis Mascotas, Servicios (veterinarios y más), Agenda y Perfil.',
       },
       {
-        title: 'Todo gratis para dueños',
+        title: 'Lo esencial gratis para siempre',
         description:
-          'PDF descargable, compartir ficha, asistente IA, mascotas ilimitadas — todo está gratis para siempre. Si quieres apoyar el proyecto, hay donaciones y Paw Member voluntario ($3.990/mes solo badge).',
+          'Plan Free ($0): ficha clínica, recordatorios, calendario, OCR del carnet y directorio de vets — hasta 2 mascotas. Si quieres más, hay 2 planes opcionales: Paw Member ($3.990/mes, hasta 4 mascotas, suma Paw Shield + Paw Passport + Insights Pro + audio IA + descuentos Paw Partners) y Manada ($9.990/mes, hasta 5 mascotas, suma exclusivos + early access + aporte $2.000/mes a fondo refugios).',
       },
     ],
   },
@@ -123,7 +123,7 @@ export const TUTORIALS = {
       {
         title: 'Agregar mascota',
         description:
-          'Toca el botón "+" para crear una nueva mascota. Necesitas nombre, especie y foto. Puedes agregar todas las mascotas que quieras, sin límite.',
+          'Toca el botón "+" para crear una nueva mascota. Necesitas nombre, especie y foto. El plan Free incluye hasta 2 mascotas; Paw Member sube a 4 y Manada a 5.',
       },
       {
         title: 'Paw Card',

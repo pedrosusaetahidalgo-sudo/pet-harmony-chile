@@ -76,7 +76,7 @@ function buildEmailHtml(shelterName: string, contactName: string, dashboardUrl: 
         },
         {
           icon: '💛',
-          text: 'Activa donaciones dirigidas si quieren recibir aportes (opcional, cuando la plataforma lo habilite).',
+          text: 'Activa aportes dirigidos si quieren recibirlos (opcional, cuando la plataforma lo habilite).',
         },
       ],
     }),

@@ -511,7 +511,7 @@ function HomeLegacyDashboard() {
                     type="button"
                     onClick={() => navigate(LINKS.donaciones())}
                     className="underline decoration-dotted underline-offset-2 hover:text-pink-600 transition-colors"
-                    title="Ver donaciones y transparencia"
+                    title="Ver aportes y transparencia"
                   >
                     {publicDonationStats.donors_total.toLocaleString('es-CL')} tutores sosteniendo
                   </button>

@@ -37,6 +37,7 @@ import { BirthdayCouponsCard } from '@/components/birthday/BirthdayCouponsCard';
 import { RetailRecommendationsCard } from '@/components/retail/RetailRecommendationsCard';
 import { QuickActionsHub } from '@/components/home/QuickActionsHub';
 import { OwnerAudioNoteRecorder } from '@/components/medical/OwnerAudioNoteRecorder';
+import { PremiumGate } from '@/components/PremiumGate';
 import { InsuranceBanner } from '@/components/insurance/InsuranceBanner';
 import { PetHealthAlertsBanner } from '@/components/home/PetHealthAlertsBanner';
 import { ResearchConsentNudge } from '@/components/home/ResearchConsentNudge';
@@ -416,9 +417,16 @@ export function HomePetFocusV2() {
         </Card>
       )}
 
-      {/* Audio note recorder (refactor maestro §2.6.2) */}
+      {/* Audio note recorder (refactor maestro §2.6.2) — Paw Member only */}
       {selectedPet && isFeatureEnabled('OWNER_AUDIO_NOTES') && (
-        <OwnerAudioNoteRecorder petId={selectedPet.id} petName={selectedPet.name} />
+        <PremiumGate
+          feature="audio_notes_ai"
+          variant="banner"
+          title="Notas de voz con IA"
+          description={`Grabá lo que viste en ${selectedPet.name} y la IA la transcribe + categoriza en su historia clínica.`}
+        >
+          <OwnerAudioNoteRecorder petId={selectedPet.id} petName={selectedPet.name} />
+        </PremiumGate>
       )}
 
       {/* Quick actions: Hub V2 (6 one-tap) cuando flag activo, legacy 4 botones cuando no */}

@@ -174,7 +174,7 @@ export default function Donaciones() {
       window.location.href = url;
     } catch (err) {
       const msg = errorMessageForUser(err);
-      toast.error('No pudimos iniciar la donacion', { description: msg });
+      toast.error('No pudimos iniciar el aporte', { description: msg });
       setLoading(false);
     }
   };
@@ -192,7 +192,7 @@ export default function Donaciones() {
     return (
       <div className="relative min-h-screen overflow-hidden">
         <Helmet>
-          <title>Gracias por tu donación — Paw Friend</title>
+          <title>Gracias por tu aporte — Paw Friend</title>
         </Helmet>
         <PageHeader title="Gracias" onBack={() => navigate('/home')} />
         <div className="container max-w-xl mx-auto px-4 py-16 text-center space-y-5">
@@ -203,7 +203,7 @@ export default function Donaciones() {
             ¡Gracias, de verdad!
           </h1>
           <p className="text-muted-foreground">
-            Tu donación ayuda a que Paw Friend siga siendo gratis para miles de tutores peludos en
+            Tu aporte ayuda a que Paw Friend siga siendo gratis para miles de tutores peludos en
             Chile. Vamos a actualizar la meta en los próximos días.
           </p>
           <Button onClick={() => navigate('/home')} className="mt-4">
@@ -220,7 +220,7 @@ export default function Donaciones() {
         <title>Paw Support — Apoya a Paw Friend</title>
         <meta
           name="description"
-          content="Paw Friend es un proyecto hecho en Chile por amantes de las mascotas. Con tu apoyo ayudamos a que siga gratis para toda la comunidad peluda. Modelo Mapcity: el dueno nunca paga."
+          content="Paw Friend es un proyecto hecho en Chile por amantes de las mascotas. Con tu apoyo ayudamos a que lo esencial siga gratis para toda la comunidad peluda. Modelo Mapcity: el grueso lo pagan pharma, seguros y retail; los dueños solo pagan si quieren features avanzadas."
         />
       </Helmet>
       <PageHeader title="Paw Support" onBack={() => navigate('/home')} />
@@ -258,7 +258,7 @@ export default function Donaciones() {
             Home-made en Chile
           </Badge>
           <h1 className="font-display font-semibold text-4xl md:text-5xl leading-[1.08] tracking-tight">
-            Si las donaciones alcanzan,
+            Si los aportes alcanzan,
             <br />
             <span className="bg-brand-gold-gradient bg-clip-text text-transparent">
               Paw Friend sigue gratis.
@@ -297,7 +297,7 @@ export default function Donaciones() {
                 <CheckCircle className="h-4 w-4 text-emerald-500 mt-0.5 shrink-0" />
                 <span>
                   Nunca vamos a bloquear features core (ficha clinica, PDF, directorio de vets) para
-                  presionarte a donar.
+                  presionarte a aportar.
                 </span>
               </li>
             </ul>
@@ -373,7 +373,7 @@ export default function Donaciones() {
             </ul>
             <p className="text-[11px] text-muted-foreground italic pt-1">
               Esto es una hoja de ruta honesta, no una promesa con letra chica. Si Paw Friend crece
-              gracias a donantes y partners, publicamos donde va cada peso.
+              gracias a aportantes y partners, publicamos donde va cada peso.
             </p>
           </CardContent>
         </Card>
@@ -390,8 +390,8 @@ export default function Donaciones() {
               peludo) que amplifiquen la mision.
             </p>
             <p className="text-sm text-foreground/80">
-              Donar es <b>una</b> forma de ayudar, pero hay otras igual de valiosas. Si sientes que
-              Paw Friend te representa, puedes aportar sin gastar un peso:
+              Aportar es <b>una</b> forma de ayudar, pero hay otras igual de valiosas. Si sientes
+              que Paw Friend te representa, puedes aportar sin gastar un peso:
             </p>
             <ul className="text-sm space-y-2 text-foreground/80">
               <li className="flex gap-2 items-start">
@@ -511,7 +511,7 @@ export default function Donaciones() {
                   <div className="flex items-center gap-2">
                     <Heart className="h-4 w-4 text-purple-600" />
                     <span className="text-sm font-semibold text-purple-900">
-                      Dirigir la donacion a un refugio
+                      Dirigir el aporte a un refugio
                     </span>
                   </div>
                   {beneficiaryShelterId && (
@@ -617,7 +617,7 @@ export default function Donaciones() {
                 </label>
                 <input
                   id="donation-donor-name"
-                  aria-label="Nombre o apodo del donante"
+                  aria-label="Nombre o apodo del aportante"
                   type="text"
                   value={donorName}
                   onChange={(e) => setDonorName(e.target.value.slice(0, 80))}
@@ -667,7 +667,7 @@ export default function Donaciones() {
               ) : (
                 <Heart className="h-4 w-4 mr-2 fill-current" />
               )}
-              Donar{' '}
+              Aportar{' '}
               {validAmount
                 ? beneficiaryShelter
                   ? `$${amount.toLocaleString('es-CL')} a ${beneficiaryShelter.legal_name}`
@@ -698,7 +698,7 @@ export default function Donaciones() {
             Home-made · Chile · Para los peludos amigos
           </p>
           <p className="text-[11px]">
-            Si no puedes donar hoy, igual puedes ayudar compartiendo Paw Friend con otro tutor
+            Si no puedes aportar hoy, igual puedes ayudar compartiendo Paw Friend con otro tutor
             peludo. Gracias por estar aca 💛
           </p>
         </section>
@@ -716,7 +716,7 @@ export default function Donaciones() {
             </li>
             <li>
               <b>No son deducibles de impuestos.</b> Paw Friend SpA es una empresa comercial y no
-              está inscrita como donataria en el registro del SII (Ley 19.885 sobre donaciones con
+              está inscrita como donataria en el registro del SII (Ley 19.885 sobre aportes con
               beneficios tributarios).
             </li>
             <li>

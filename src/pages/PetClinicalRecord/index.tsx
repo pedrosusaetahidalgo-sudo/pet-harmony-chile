@@ -65,6 +65,7 @@ import type { PetData } from './types';
 import { ClinicalRecordSkeleton, PetHeader } from './shared';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { isFeatureEnabled } from '@/lib/featureFlags';
+import { PremiumGate } from '@/components/PremiumGate';
 // Refactor Maestro §2.4.3 — tab Historia (timeline unificado 10 categorias),
 // pilar 3 de la Trinidad del Corazon. Se monta cuando FICHA_HISTORIA_TAB activo.
 const HistoriaTimelineView = lazy(() =>
@@ -751,14 +752,20 @@ const PetClinicalRecord = () => {
                 <PetIdCardSection petId={pet.id} />
               </Suspense>
               {pawShieldEnabled && (
-                <Suspense fallback={<TabLoadingSkeleton />}>
-                  <PawShieldStatusCard
-                    petId={pet.id}
-                    petName={pet.name}
-                    petSpecies={pet.species}
-                    petBreed={pet.breed ?? undefined}
-                  />
-                </Suspense>
+                <PremiumGate
+                  feature="paw_shield"
+                  title="Paw Shield · biometría anti-pérdida"
+                  description={`Registra la huella nasal de ${pet.name}. Si se pierde, cualquier persona puede escanearla en /nose-scan y devolverla a casa.`}
+                >
+                  <Suspense fallback={<TabLoadingSkeleton />}>
+                    <PawShieldStatusCard
+                      petId={pet.id}
+                      petName={pet.name}
+                      petSpecies={pet.species}
+                      petBreed={pet.breed ?? undefined}
+                    />
+                  </Suspense>
+                </PremiumGate>
               )}
               {nosePrintEnabled && (
                 <Suspense fallback={<TabLoadingSkeleton />}>
@@ -766,9 +773,15 @@ const PetClinicalRecord = () => {
                 </Suspense>
               )}
               {pawPassportEnabled && (
-                <Suspense fallback={<TabLoadingSkeleton />}>
-                  <PawPassportSection petId={pet.id} petName={pet.name} />
-                </Suspense>
+                <PremiumGate
+                  feature="paw_passport"
+                  title="Paw Passport · pasaporte oficial PDF"
+                  description={`Pasaporte de 8 páginas con identidad, vacunas, antiparasitarios y datos médicos de ${pet.name}. Ideal para viajes, vets externos y refugios.`}
+                >
+                  <Suspense fallback={<TabLoadingSkeleton />}>
+                    <PawPassportSection petId={pet.id} petName={pet.name} />
+                  </Suspense>
+                </PremiumGate>
               )}
             </TabsContent>
           )}

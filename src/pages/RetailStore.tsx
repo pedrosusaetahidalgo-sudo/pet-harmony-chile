@@ -254,6 +254,18 @@ export default function RetailStore() {
           </CardContent>
         </Card>
       )}
+
+      <Card className="bg-amber-50 border-amber-200">
+        <CardContent className="p-4 text-xs leading-relaxed text-amber-900">
+          <strong>Piloto en marcha · proximamente</strong> · Estamos integrando catalogos con
+          tiendas chilenas. Los descuentos y links que ves son referenciales hasta firmar contrato
+          definitivo con cada partner. Si tu tienda quiere sumarse:{' '}
+          <a href="/aplicar?tipo=paw_partners" className="font-bold underline">
+            postular como Paw Partner
+          </a>
+          .
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -271,7 +271,7 @@ export default function ParaVeterinarios() {
           name: '¿Los dueños pagan por usar Paw Friend?',
           acceptedAnswer: {
             '@type': 'Answer',
-            text: 'No. Paw Friend es gratis para dueños de mascotas. Nuestra monetizacion son los planes para vets y donaciones voluntarias.',
+            text: 'No. Paw Friend es gratis para dueños de mascotas. Nuestra monetizacion son los planes para vets y aportes voluntarios.',
           },
         },
       ],

@@ -118,7 +118,7 @@ export default function PawCore() {
               <ValueRow
                 icon={<Sprout className="h-5 w-5 text-emerald-600" />}
                 title="Sostenible por comunidad"
-                text="Modelo voluntario: si las donaciones alcanzan, seguimos gratis. Sin VC hostiles, sin presión de exit."
+                text="Modelo voluntario: si los aportes alcanzan, seguimos gratis. Sin VC hostiles, sin presión de exit."
               />
               <ValueRow
                 icon={<Heart className="h-5 w-5 text-amber-500 fill-amber-500" />}
@@ -127,8 +127,8 @@ export default function PawCore() {
               />
               <ValueRow
                 icon={<Unlock className="h-5 w-5 text-violet-600" />}
-                title="Gratis y abierto"
-                text="Ficha clínica, PDF, directorio de vets, mapa — todo disponible sin membresía, sin gates, para siempre."
+                title="Lo esencial gratis para siempre"
+                text="Ficha clínica, recordatorios, calendario, OCR, directorio de vets y mapa — todo en el plan Free, para siempre. Paw Member y Manada son opcionales para quien quiera features avanzadas."
               />
               <ValueRow
                 icon={<Home className="h-5 w-5 text-rose-500" />}
@@ -152,9 +152,11 @@ export default function PawCore() {
               <h2 className="font-semibold text-lg">Cómo nos sostenemos</h2>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              <b>Modelo Mapcity</b>: el dueño NUNCA paga. Pharma, seguros y retail pagan por acceso
-              a la ficha clínica longitudinal. Sumamos Paw Companys y apoyo voluntario de quienes
-              quieran. La app es y va a seguir siendo gratis.
+              <b>Modelo Mapcity</b>: el grueso del revenue lo aportan pharma, seguros y retail por
+              acceso a la ficha clínica longitudinal — los pilares ancla a escala. Para los dueños
+              es freemium: lo esencial es gratis para siempre y los planes Paw Member ($3.990/mes) y
+              Manada ($9.990/mes con aporte a refugios) son opcionales. Sumamos Paw Companys y apoyo
+              voluntario de quienes quieran.
             </p>
             <div className="grid sm:grid-cols-2 gap-3">
               <MotorTile
@@ -185,7 +187,7 @@ export default function PawCore() {
                 icon={<Heart className="h-4 w-4 text-pink-500" />}
                 title="Paw Support"
                 text="Apoyo voluntario del dueño que quiera. Trazabilidad pública a refugios."
-                action={{ label: 'Ver /donaciones', onClick: () => navigate('/donaciones') }}
+                action={{ label: 'Ver aportes', onClick: () => navigate('/donaciones') }}
               />
               <MotorTile
                 icon={<Megaphone className="h-4 w-4 text-fuchsia-500" />}
@@ -198,8 +200,8 @@ export default function PawCore() {
               />
               <MotorTile
                 icon={<Sparkles className="h-4 w-4 text-violet-500" />}
-                title="Paw Member (opcional)"
-                text="Insignia voluntaria + descuentos Paw Partners. NO desbloquea features. Proxy NPS."
+                title="Paw Member · Manada (opcional)"
+                text="Freemium B2C 3 tiers. Free $0 (lo esencial). Paw Member $3.990/mes (Paw Shield, Paw Passport, Insights Pro, audio IA, descuentos). Manada $9.990/mes (suma exclusivos + early access + $2.000/mes a fondo refugios)."
               />
               <MotorTile
                 icon={<Users className="h-4 w-4 text-sky-500" />}

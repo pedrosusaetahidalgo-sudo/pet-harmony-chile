@@ -64,7 +64,7 @@ const COST_BREAKDOWN = [
 ];
 
 const COMMITMENTS = [
-  'Todo el core de Paw Friend es gratis para dueños de mascotas. Siempre.',
+  'Lo esencial de Paw Friend es gratis para dueños de mascotas, para siempre. Los planes Paw Member ($3.990/mes) y Manada ($9.990/mes) son opcionales y desbloquean features avanzadas — pero el plan Free incluye ficha clínica, recordatorios, calendario, OCR y directorio de vets.',
   'No vendemos datos. Ni los tuyos, ni los de tu mascota, ni los de tu vet.',
   'Solo mostramos % de avance hacia la meta anual, no el monto total recaudado.',
   'Si hay excedente, publicamos en esta página a qué refugio se derivó y el comprobante.',
@@ -175,7 +175,7 @@ export default function Transparencia() {
         <section className="space-y-4">
           <header className="flex items-center gap-2">
             <FileText className="h-5 w-5 text-primary" />
-            <h2 className="text-xl font-semibold">Últimas donaciones públicas</h2>
+            <h2 className="text-xl font-semibold">Últimos aportes públicos</h2>
           </header>
           {isLoading ? (
             <div className="grid gap-2 md:grid-cols-2">
@@ -211,7 +211,7 @@ export default function Transparencia() {
           ) : (
             <Card className="border-dashed">
               <CardContent className="p-6 text-center text-sm text-muted-foreground">
-                Aún no hay donaciones públicas. Cuando alguien aporte y elija hacerlo público,
+                Aún no hay aportes públicos. Cuando alguien aporte y elija hacerlo público,
                 aparecerá aquí.
               </CardContent>
             </Card>

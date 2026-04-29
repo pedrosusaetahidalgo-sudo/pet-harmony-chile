@@ -234,7 +234,7 @@ export default function ShelterDashboard() {
                 Reporte PDF de mascotas en custodia
               </h3>
               <p className="text-xs text-muted-foreground">
-                Util para compartir con donantes, medios o adoptantes. Incluye foto, edad,
+                Util para compartir con aportantes, medios o adoptantes. Incluye foto, edad,
                 descripcion y como contactarte.
               </p>
             </div>

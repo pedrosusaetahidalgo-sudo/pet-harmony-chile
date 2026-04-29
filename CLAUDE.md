@@ -107,14 +107,26 @@ AGENTS.md              # Config para agentes IA (Cursor, Copilot, etc.)
 
 ---
 
-## 5. Modelo de negocio v2 (post-Roberto Camhi 2026-04-22)
+## 5. Modelo de negocio v2.1 (post-Roberto Camhi 2026-04-22 + Plan v5 Opcion 3 2026-04-29)
 
 > **Fuente de verdad**: [docs-raiz/pitch/MODELO_V2_2026_04_22.md](docs-raiz/pitch/MODELO_V2_2026_04_22.md).
 > Este documento resume; ese tiene todos los detalles + plan de consolidacion.
+>
+> **Pivot 2026-04-29 (Plan v5 Opcion 3)**: el principio "el dueno NUNCA paga"
+> se ajusta a "el dueno **paga solo si quiere features avanzadas**". Razon:
+> Petify USD 0.75/mascota/mes lineal por opt-in Paw Shield rompe la viabilidad
+> del modelo 100% gratis para todos sin partners B2B firmados todavia. Freemium
+> B2C de 3 tiers (Free / Paw Member / Manada) cubre el COGS biometrico y da
+> margen para esperar firma pharma/seguros/retail sin quemar runway.
+> Mantiene el spirit Mapcity en B2B (donde sigue el grueso del ARR proyectado a escala).
 
-**Norte del proyecto**: el dueno **NUNCA paga**. Producto invisible. La
-monetizacion viene de **B2B con bolsillo profundo** (pharma + seguros + retail)
-que pagan por acceso a la ficha clinica longitudinal.
+**Norte del proyecto**: producto invisible para el dueno flojo. Free tier
+genéroso con lo esencial (ficha + recordatorios + Pet ID Card). **Paw Member
+$3.990/mes** desbloquea Paw Shield (Petify) + features premium reales —
+target conversion 15%. **Manada $9.990/mes** para hogares grandes (5 mascotas)
+con $2.000/mes a Fondo Paw Friend Refugios. Monetizacion B2B (pharma + seguros
++ retail) sigue siendo el grueso a escala — el freemium B2C es el puente que
+cubre el COGS Petify mientras llegamos.
 
 > **Paralelismo Mapcity**: Mapcity no le cobraba a las tiendas — le cobraba a
 > Equifax y bancos por acceso a la data. Paw Friend no le cobra al vet ni al
@@ -163,8 +175,11 @@ campo `partnership_type` ∈ {'sponsor', 'partner'} (mig 20260611000000).
 
 ### Los 4 tipos de clientes
 
-1. **Dueños de mascotas** — usuario central. Todo gratis. Membresía Paw
-   Member y donaciones son 100% opcionales.
+1. **Dueños de mascotas** — usuario central. Free tier genéroso (2
+   mascotas, ficha completa, recordatorios). Paw Member ($3.990/mes)
+   desbloquea Paw Shield + features premium. Manada ($9.990/mes) para
+   hogares con 5 mascotas + aporte automático a refugios. Aportes
+   voluntarios al fondo Paw Friend siempre opcionales.
 2. **Veterinarios** — individuales. Plan Básica ($0, 5 pacientes) cubre
    vets con poco volumen. Premium/Pro Max solo para escalar.
 3. **Personas que ofrecen servicios de mascotas no-vet** — walkers,
@@ -172,15 +187,37 @@ campo `partnership_type` ∈ {'sponsor', 'partner'} (mig 20260611000000).
 4. **Tiendas/accesorios/restaurantes/seguros** — relación Paw Partner:
    publicidad gratuita a cambio de descuentos para Paw Members.
 
-### B2C (dueños) — TODO GRATIS para siempre
+### B2C (dueños) — Freemium 3 tiers (post-2026-04-29)
 
-| Plan | Precio | Features | Badge |
-|---|---|---|---|
-| Gratis | $0 | TODO disponible (PDF, ficha compartida, mascotas ilimitadas, IA, OCR, asistente, insights) | — |
-| Paw Member (opcional) | $3.990/mes o $39.900/año | Mismos features + badge + descuentos de Paw Partners. **No desbloquea features funcionales.** Proxy NPS, no revenue core | 💛 Paw Member |
+| Plan | Precio | Mascotas | Badge | Features clave |
+|---|---|---|---|---|
+| **Free** | $0 | 2 | — | Ficha clinica completa, recordatorios, calendario, OCR (5/mes), Pet ID Card basica, QR, memorial, adoption, directorio vets, gamificacion opt-in. **Sin** Paw Shield, **sin** Paw Passport, **sin** Insights Pro, **sin** audio IA |
+| **Paw Member** | $3.990/mes · $39.900/ano (17% off) | 4 | 💛 | Todo Free + **Paw Shield biometrico (Petify)** + **Paw Passport PDF** + **Insights Pro** + **Audio notes con transcripcion IA** + **Reportes >30d** + **Compartir ficha 1 ano** + descuentos Paw Partners |
+| **Manada** | $9.990/mes · $99.900/ano (17% off) | 5 | 👑 | Todo Paw Member + descuentos Paw Partners exclusivos + soporte prioritario + early access + badge Manada + **$2.000/mes al Fondo Paw Friend Refugios** |
 
-Feature flag `USER_PREMIUM=false` en codigo confirma: no hay paywall B2C activo.
-El id interno en DB sigue siendo `premium` (no romper). UI muestra "Paw Member".
+Feature flag `USER_PREMIUM=true` activa el paywall (debe flipearse en
+[src/lib/featureFlags.ts](src/lib/featureFlags.ts) cuando termine wire de
+PremiumGate en componentes premium — pendiente). El id DB del tier Paw
+Member sigue siendo `'premium'` (no renombrar columna SQL — regla 9.7).
+La UI usa "Paw Member"; resolvemos via `normalizePlanId()` en
+[src/lib/plans.ts](src/lib/plans.ts).
+
+**Componentes paywall**:
+- [src/components/PremiumGate.tsx](src/components/PremiumGate.tsx) — bloqueador hard
+  con upsell card. Usar para envolver features premium reales (Paw Shield,
+  Passport, Insights Pro, Audio IA, Reportes, mascota 3+).
+- [src/components/PremiumNudge.tsx](src/components/PremiumNudge.tsx) — sugerencia
+  soft (no bloquea, aparece al lado del feature).
+
+**Manada Fondo Refugios**: el $2.000/mes del tier Manada va al Fondo Paw
+Friend Refugios. Quien hace la donacion legal es Paw Friend SpA (no el user)
+para evitar Ley 19.885 de donatarios — Art. 31 N°7 LIR aplica para SpA.
+Tablas: `manada_refugio_preferences`, `manada_fondo_pool`, `manada_aportes_log`
+(mig 20260929000000). UI muestra "tu plan apoya el Fondo Paw Friend Refugios"
+sin emitir recibo legal al user.
+
+**Conversion target**: 15% Paw Member · 1-2% Manada del total MAU. Ver
+modelo financiero F7 en docs-raiz/.
 
 ### B2B (vets + veterinarias) — canal de adquisicion, no revenue center
 
@@ -224,13 +261,15 @@ priority support y branding completo.
 ### Rutas del modelo
 
 - `/paw-core` — visión, misión, valores, 5 motores, ideas futuras.
-- `/paw-member` — página personal del user con aporte total, equivalente
-  mensual, historial, descuentos de alianzas.
-- `/donaciones` — aportes + muralla + grid Paw Companys + transparencia.
+- `/paw-member` — pricing 3 tiers (Free, Paw Member, Manada secundario)
+  + dashboard del user (impacto Manada al Fondo Refugios, badge, descuentos).
+- `/paw-support` — aportes voluntarios + muralla + grid Paw Companys + transparencia.
+- `/aportes` y `/donaciones` — alias 301 → `/paw-support`.
 - `/paw-companys` — landing empresas con form aplicación.
 - `/paw-voices` — landing creadores con form aplicación.
+- `/paw-partners` — directorio público de tiendas/servicios aliados.
 - `/para-veterinarios` — pricing B2B.
-- `/upgrade` → redirige a `/paw-member` (Premium B2C descontinuado).
+- `/upgrade` → redirige a `/paw-member`.
 
 ### Fondos y capital
 

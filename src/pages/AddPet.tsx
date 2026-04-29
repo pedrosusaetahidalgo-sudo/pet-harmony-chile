@@ -47,7 +47,7 @@ import {
 import { SelectWithOther } from '@/components/ui/select-with-other';
 import { ComboboxWithOther } from '@/components/ui/combobox-with-other';
 import { useCanAddPet } from '@/hooks/useCanAddPet';
-import { Sparkles, Crown } from '@/lib/icons';
+import { PremiumGate } from '@/components/PremiumGate';
 import { PageHeader } from '@/components/PageHeader';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
 import { VaccinationCardOCR } from '@/components/onboarding/VaccinationCardOCR';
@@ -143,7 +143,12 @@ const AddPetLegacy = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { reward } = useOrganicRewards();
-  const { can: canAddPet, reason: blockReason, isLoading: checkingLimit } = useCanAddPet();
+  const {
+    can: canAddPet,
+    reason: blockReason,
+    isLoading: checkingLimit,
+    petCount,
+  } = useCanAddPet();
 
   // Modo edición: cargar datos existentes
   useEffect(() => {
@@ -741,81 +746,22 @@ const AddPetLegacy = () => {
   }
 
   // Paywall: solo aplica en modo create. Edit nunca se bloquea.
-  // Esta card es red de seguridad: el flujo normal intercepta antes y manda directo a /upgrade.
+  // Sprint v5 Opcion 3 (2026-04-29): usa PremiumGate canonico con feature='max_pets'
+  // y currentUsage = petCount. Free puede 2 mascotas; con la 3ra → upsell card.
   if (!isEdit && !checkingLimit && !canAddPet && blockReason === 'premium_required') {
     return (
-      <div className="relative min-h-[calc(100vh-4rem)]">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10"
-          style={{
-            background:
-              'radial-gradient(ellipse 80% 50% at 50% 0%, hsl(45 100% 92% / 0.6), transparent 60%)',
-          }}
-        />
-        <div className="container px-4 py-12 max-w-xl mx-auto animate-fade-in">
-          <Card className="border-2 border-premium/30 bg-premium-gradient-soft shadow-premium">
-            <div
-              aria-hidden
-              className="absolute inset-x-0 top-0 h-1 bg-premium-gradient rounded-t-lg"
-            />
-            <CardHeader className="text-center pt-8">
-              <div className="mx-auto mb-4 relative">
-                <div className="absolute inset-0 rounded-full bg-premium-gradient blur-xl opacity-50" />
-                <div className="relative h-14 w-14 mx-auto rounded-full bg-premium-gradient flex items-center justify-center shadow-premium">
-                  <Crown className="h-7 w-7 text-premium-foreground" strokeWidth={2.5} />
-                </div>
-              </div>
-              <CardTitle className="text-2xl">
-                Agrega todas las mascotas que{' '}
-                <span className="bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">
-                  quieras
-                </span>
-              </CardTitle>
-              <CardDescription className="text-base mt-2 leading-relaxed">
-                Paw Friend es gratis para todos. Puedes agregar todas las mascotas que necesites,
-                con ficha clínica completa, recordatorios ilimitados y exportación PDF. Si te sirve,
-                apóyanos con un aporte voluntario.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              <div className="rounded-xl border border-premium/30 bg-card/70 backdrop-blur-sm p-4 space-y-3 text-sm">
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Plan mensual</span>
-                  <span className="font-bold">$3.990 / mes</span>
-                </div>
-                <div className="h-px bg-premium/20" />
-                <div className="flex items-center justify-between">
-                  <span className="flex items-center gap-1.5">
-                    Plan anual
-                    <Sparkles className="h-3 w-3 text-premium" />
-                  </span>
-                  <span className="font-bold bg-premium-gradient bg-clip-text text-transparent">
-                    $39.900 / año
-                  </span>
-                </div>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => navigate(LINKS.myPets())}
-                  className="w-full sm:flex-1 h-12"
-                >
-                  Volver
-                </Button>
-                <Button
-                  type="button"
-                  onClick={() => navigate('/upgrade')}
-                  className="w-full sm:flex-1 h-12 bg-premium-gradient hover:opacity-90 text-premium-foreground border-0 shadow-premium font-semibold"
-                >
-                  <Crown className="h-4 w-4 mr-2" />
-                  Ver planes Premium
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+      <div className="container px-4 py-12 max-w-xl mx-auto animate-fade-in">
+        <PremiumGate
+          feature="max_pets"
+          currentUsage={petCount}
+          title="Mascotas adicionales"
+          description={`Tu plan gratis incluye 2 mascotas. Con Paw Member sumás más mascotas, Paw Shield biométrico, Paw Passport PDF y descuentos Paw Partners.`}
+        >
+          {/* Si llegamos aquí con plan que desbloquea, simplemente recargamos a /add-pet limpio. */}
+          <div className="text-center py-8">
+            <Button onClick={() => navigate(LINKS.addPet())}>Continuar agregando mascota</Button>
+          </div>
+        </PremiumGate>
       </div>
     );
   }

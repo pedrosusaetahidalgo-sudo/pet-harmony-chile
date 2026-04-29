@@ -68,7 +68,7 @@ const getServiceIcon = (serviceType: string | null) => {
 const categories = [
   { key: 'all', label: 'Todos', icon: ShoppingBag },
   { key: 'discount', label: 'Descuentos', icon: Percent },
-  { key: 'donation', label: 'Donaciones', icon: Heart },
+  { key: 'donation', label: 'Aportes', icon: Heart },
   { key: 'visual', label: 'Cosméticos', icon: Sparkles },
   { key: 'premium', label: 'Exclusivo', icon: Crown },
 ];
@@ -131,7 +131,7 @@ export const PawShopRewards = ({ userPoints, userId, onPurchase }: PawShopReward
       toast.success('¡Premio canjeado! 🎉', {
         description:
           reward.category === 'donation'
-            ? 'Tu donación ayudará a refugios aliados'
+            ? 'Tu aporte ayudará a refugios aliados'
             : 'Puedes ver tus canjes en tu perfil',
       });
 
@@ -244,7 +244,7 @@ export const PawShopRewards = ({ userPoints, userId, onPurchase }: PawShopReward
             Canjea tus PawPoints por premios reales
           </h3>
           <p className="text-xs text-muted-foreground max-w-md mx-auto">
-            Cuida a tus mascotas, completa misiones y canjea por descuentos en vets, donaciones a
+            Cuida a tus mascotas, completa misiones y canjea por descuentos en vets, aportes a
             refugios, badges exclusivos y más.
           </p>
           <p className="text-[10px] text-purple-600 mt-2 font-medium">

@@ -8,6 +8,7 @@ import { FileText, Download, Eye } from '@/lib/icons';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { LiveMonthlyReport } from '@/components/reports/LiveMonthlyReport';
+import { PremiumGate } from '@/components/PremiumGate';
 
 const REPORT_TYPE_LABELS: Record<string, string> = {
   owner_weekly: 'Resumen semanal',
@@ -82,90 +83,96 @@ export default function Reportes() {
         </h1>
       </div>
 
-      {/* Reporte en vivo del mes en curso (siempre visible, se actualiza al consultar) */}
-      <LiveMonthlyReport />
+      <PremiumGate
+        feature="reports_history_days"
+        title="Reportes históricos completos"
+        description="Resumenes semanales y mensuales con tendencias de salud, vacunas, peso y bienestar de tus mascotas. Free ve los últimos 30 días; Paw Member desbloquea el histórico completo."
+      >
+        {/* Reporte en vivo del mes en curso (siempre visible, se actualiza al consultar) */}
+        <LiveMonthlyReport />
 
-      {/* Historial de reportes periódicos (PDF descargables generados por cron) */}
-      <div className="pt-2">
-        <div className="flex items-center justify-between mb-2">
-          <h2 className="text-sm font-semibold text-muted-foreground">Resúmenes anteriores</h2>
-          {reports && reports.length > 0 && (
-            <Badge variant="outline" className="text-[10px]">
-              {reports.length} {reports.length === 1 ? 'reporte' : 'reportes'}
-            </Badge>
-          )}
+        {/* Historial de reportes periódicos (PDF descargables generados por cron) */}
+        <div className="pt-2">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="text-sm font-semibold text-muted-foreground">Resúmenes anteriores</h2>
+            {reports && reports.length > 0 && (
+              <Badge variant="outline" className="text-[10px]">
+                {reports.length} {reports.length === 1 ? 'reporte' : 'reportes'}
+              </Badge>
+            )}
+          </div>
         </div>
-      </div>
 
-      {!reports || reports.length === 0 ? (
-        <Card>
-          <CardContent className="p-6 text-center">
-            <FileText className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">
-              Los resúmenes semanales y mensuales se generan automáticamente. El próximo llegará
-              este domingo.
-            </p>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="space-y-3">
-          {reports.map((report) => {
-            const content = report.content_jsonb as Record<string, unknown> | null;
-            const highlights: string[] = (content?.highlights as string[]) || [];
-            const isUnread = !report.viewed_at;
+        {!reports || reports.length === 0 ? (
+          <Card>
+            <CardContent className="p-6 text-center">
+              <FileText className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground">
+                Los resúmenes semanales y mensuales se generan automáticamente. El próximo llegará
+                este domingo.
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="space-y-3">
+            {reports.map((report) => {
+              const content = report.content_jsonb as Record<string, unknown> | null;
+              const highlights: string[] = (content?.highlights as string[]) || [];
+              const isUnread = !report.viewed_at;
 
-            return (
-              <Card
-                key={report.id}
-                className={`transition-all hover:shadow-md ${isUnread ? 'border-l-4 border-l-purple-600' : ''}`}
-              >
-                <CardHeader className="pb-2">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-sm font-semibold">
-                      {REPORT_TYPE_LABELS[report.report_type] || report.report_type}
-                    </CardTitle>
-                    <div className="flex items-center gap-2">
-                      {isUnread && (
-                        <Badge
-                          variant="secondary"
-                          className="text-[10px] bg-purple-100 text-purple-700"
-                        >
-                          Nuevo
-                        </Badge>
-                      )}
-                      <span className="text-xs text-muted-foreground">
-                        {format(parseISO(report.period_start), 'd MMM', { locale: es })} –{' '}
-                        {format(parseISO(report.period_end), 'd MMM yyyy', { locale: es })}
-                      </span>
+              return (
+                <Card
+                  key={report.id}
+                  className={`transition-all hover:shadow-md ${isUnread ? 'border-l-4 border-l-purple-600' : ''}`}
+                >
+                  <CardHeader className="pb-2">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-sm font-semibold">
+                        {REPORT_TYPE_LABELS[report.report_type] || report.report_type}
+                      </CardTitle>
+                      <div className="flex items-center gap-2">
+                        {isUnread && (
+                          <Badge
+                            variant="secondary"
+                            className="text-[10px] bg-purple-100 text-purple-700"
+                          >
+                            Nuevo
+                          </Badge>
+                        )}
+                        <span className="text-xs text-muted-foreground">
+                          {format(parseISO(report.period_start), 'd MMM', { locale: es })} –{' '}
+                          {format(parseISO(report.period_end), 'd MMM yyyy', { locale: es })}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {highlights.slice(0, 3).map((h, i) => (
-                    <p key={i} className="text-sm text-foreground">
-                      {h}
-                    </p>
-                  ))}
-                  <div className="flex gap-2 pt-1">
-                    {isUnread && (
-                      <Button size="sm" variant="ghost" onClick={() => markViewed(report.id)}>
-                        <Eye className="h-3 w-3 mr-1" /> Marcar como leído
-                      </Button>
-                    )}
-                    {report.pdf_url && (
-                      <Button size="sm" variant="outline" asChild>
-                        <a href={report.pdf_url} target="_blank" rel="noopener noreferrer">
-                          <Download className="h-3 w-3 mr-1" /> PDF
-                        </a>
-                      </Button>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
-      )}
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    {highlights.slice(0, 3).map((h, i) => (
+                      <p key={i} className="text-sm text-foreground">
+                        {h}
+                      </p>
+                    ))}
+                    <div className="flex gap-2 pt-1">
+                      {isUnread && (
+                        <Button size="sm" variant="ghost" onClick={() => markViewed(report.id)}>
+                          <Eye className="h-3 w-3 mr-1" /> Marcar como leído
+                        </Button>
+                      )}
+                      {report.pdf_url && (
+                        <Button size="sm" variant="outline" asChild>
+                          <a href={report.pdf_url} target="_blank" rel="noopener noreferrer">
+                            <Download className="h-3 w-3 mr-1" /> PDF
+                          </a>
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+      </PremiumGate>
     </div>
   );
 }

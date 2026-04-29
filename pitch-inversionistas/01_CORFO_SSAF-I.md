@@ -12,7 +12,7 @@
 
 ## Resumen ejecutivo (1 parrafo)
 
-Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas, conecta a duenos con veterinarios a traves de un directorio publico con pricing transparente, y canaliza aportes trazables hacia refugios. Construida en 2 meses por un ingeniero chileno con asistencia de IA (Claude), alcanza alcance funcional equivalente a USD $720K-$1,44M de desarrollo tradicional. **Modelo v2 (2026-04-22)**: el dueno NUNCA paga, el vet es canal de adquisicion gratuito, y el revenue viene de **3 pilares ancla B2B** (pharma + seguros + retail) + **2 soporte** (Paw Companys empresas + Paw Support voluntario). Meta ARR USD $300-500K en 12 meses, USD $940K-$2.1M en 18 meses, piloto LATAM en mes 12+.
+Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas, conecta a duenos con veterinarios a traves de un directorio publico con pricing transparente, y canaliza aportes trazables hacia refugios. Construida en 2 meses por un ingeniero chileno con asistencia de IA (Claude), alcanza alcance funcional equivalente a USD $720K-$1,44M de desarrollo tradicional. **Modelo v2.1 (Plan v5 Opcion 3, 2026-04-29)**: freemium B2C 3 tiers para dueños (Free $0 / Paw Member $3.990/mes / Manada $9.990/mes con aporte refugios), vet como canal de adquisicion gratuito, y el grueso del revenue a escala viene de **3 pilares ancla B2B** (pharma + seguros + retail) + **2 soporte** (Paw Companys empresas + Paw Support voluntario). Meta ARR USD $300-500K en 12 meses, USD $940K-$2.1M en 18 meses, piloto LATAM en mes 12+.
 
 ---
 
@@ -105,12 +105,16 @@ Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas,
 | 4 | **Paw Companys** | Empresas pet-friendly + corporates | Sponsorship badge + SaaS bienestar animal | USD $600-1.8K/mes/corporate | Vivo |
 | 5 | **Paw Support** | Duenos voluntariamente | Pago voluntario (reframe legal Ley 19.885) | Residual, alto NPS | Reframe en curso |
 
-### 4.2. B2C dueno — gratis sin caps
+### 4.2. B2C dueno — freemium 3 tiers (Plan v5 Opcion 3, 2026-04-29)
 
-- **Cero features de pago**. Mascotas ilimitadas, PDF, ficha compartida,
-  recordatorios, calendario, OCR, asistente IA — todo gratis para siempre.
-- **Paw Member ($3.990/mes opcional)**: badge cosmetico + descuentos Paw Partners.
-  Proxy NPS, no revenue core.
+- **Free ($0, 2 mascotas)**: ficha clinica, PDF, ficha compartida, recordatorios,
+  calendario, OCR, asistente IA, directorio de vets — lo esencial gratis para siempre.
+- **Paw Member ($3.990/mes, 4 mascotas)**: + Paw Shield biometria + Paw Passport PDF +
+  Insights Pro + audio notes IA + reportes >30d + descuentos Paw Partners + badge 💛.
+  Cubre el COGS Petify (USD $0,75/mascota/mes opt-in). Conversion target 13%.
+- **Manada ($9.990/mes, 5 mascotas)**: + descuentos exclusivos + soporte prioritario +
+  early access + badge 👑 + **$2.000/mes a Fondo Paw Friend Refugios** (Paw Friend SpA
+  es quien dona, evita Ley 19.885). Conversion target 1-2%.
 
 ### 4.3. B2B vet — canal de adquisicion, no revenue center
 

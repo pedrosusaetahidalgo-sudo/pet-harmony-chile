@@ -50,7 +50,7 @@ export function PawVoicesWall({ limit = 24, className }: PawVoicesWallProps) {
           </span>
         </h2>
         <p className="text-sm text-muted-foreground max-w-xl mx-auto">
-          Cada donación pública es una voz peluda que deja escrito por qué Paw Friend merece seguir
+          Cada aporte público es una voz peluda que deja escrito por qué Paw Friend merece seguir
           aquí. Sin ellos, esto no avanza.
         </p>
       </header>
@@ -90,7 +90,7 @@ export function PawVoicesWall({ limit = 24, className }: PawVoicesWallProps) {
       </div>
 
       <p className="text-center text-[11px] text-muted-foreground italic">
-        ¿Quieres aparecer aquí? Marca "quiero que mi mensaje sea público" al donar.
+        ¿Quieres aparecer aquí? Marca "quiero que mi mensaje sea público" al aportar.
       </p>
     </section>
   );

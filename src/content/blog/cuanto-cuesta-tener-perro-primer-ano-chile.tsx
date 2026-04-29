@@ -176,8 +176,8 @@ export default function Post() {
       <h3>Adopción vs compra</h3>
       <ul>
         <li>
-          <strong>Adopción</strong> en refugio: $0 - $50.000 (donación sugerida). Suele venir con
-          chip + esterilización + vacunas iniciales. Ahorro potencial ~$300.000.
+          <strong>Adopción</strong> en refugio: $0 - $50.000 (aporte sugerido). Suele venir con chip
+          + esterilización + vacunas iniciales. Ahorro potencial ~$300.000.
         </li>
         <li>
           <strong>Compra en criadero</strong> responsable: $400.000 - $2.500.000 según raza. No

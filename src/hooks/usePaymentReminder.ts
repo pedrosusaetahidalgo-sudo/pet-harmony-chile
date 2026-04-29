@@ -1,3 +1,9 @@
+/**
+ * @deprecated 2026-04-29 — Sin imports activos en codebase.
+ * Candidato a eliminación post-launch (ver docs/audit/cleanup-fase1.md).
+ * Si lo necesitás, verificá primero con git blame qué flujo de cobro vet
+ * lo usaba y si fue reemplazado por la integración Flow.cl directa.
+ */
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';

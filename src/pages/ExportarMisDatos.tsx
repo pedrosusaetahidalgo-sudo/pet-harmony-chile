@@ -102,7 +102,7 @@ export default function ExportarMisDatos() {
                 <li>Historial clínico, vacunas, antiparasitarios y consultas</li>
                 <li>Recordatorios y eventos del timeline</li>
                 <li>Reservas con veterinarios (V1 + V2)</li>
-                <li>Aportes monetarios (donaciones / Paw Member)</li>
+                <li>Aportes monetarios (aportes voluntarios / Paw Member)</li>
                 <li>Postulaciones que hayas enviado vía /aplicar</li>
               </ul>
             </div>

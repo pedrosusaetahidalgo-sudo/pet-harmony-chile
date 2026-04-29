@@ -65,7 +65,7 @@ export function DonorBadge({ userId, size = 'md', className }: DonorBadgeProps) 
         <TooltipContent>
           <div className="text-xs space-y-0.5">
             <div className="font-semibold">Sostiene Paw Friend 💛</div>
-            {sinceFmt && <div className="text-muted-foreground">Donante desde {sinceFmt}</div>}
+            {sinceFmt && <div className="text-muted-foreground">Aportante desde {sinceFmt}</div>}
             {data.donation_count > 1 && (
               <div className="text-muted-foreground">{data.donation_count} aportes</div>
             )}

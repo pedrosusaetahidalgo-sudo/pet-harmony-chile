@@ -4,12 +4,12 @@
 > **Ronda**: pre-seed **USD $150K SAFE** con cap **USD $1,2M post-money**.
 > **Stage**: producto en produccion, pre-traccion comercial, founder solo + co-founder en pipeline.
 >
-> Ultima revision: 2026-04-27 (modelo v2 2026-04-22).
+> Ultima revision: 2026-04-29 (modelo v2.1 — Plan v5 Opcion 3).
 > Contacto: pedrosusaeta@pawfriend.cl
 >
-> **⚠️ Modelo v2 vigente desde 2026-04-22**. Ver [`docs-raiz/pitch/MODELO_V2_2026_04_22.md`](../docs-raiz/pitch/MODELO_V2_2026_04_22.md).
-> Cambios clave: dueno NUNCA paga, vet = canal de adquisicion (no revenue),
-> 3 pilares ancla (pharma + seguros + retail). Paralelismo Mapcity:
+> **⚠️ Modelo v2.1 vigente desde 2026-04-29** (Plan v5 Opcion 3). Ver [`docs-raiz/pitch/MODELO_V2_2026_04_22.md`](../docs-raiz/pitch/MODELO_V2_2026_04_22.md) con el addendum 2026-04-29.
+> Cambios clave: freemium B2C 3 tiers (Free $0 · Paw Member $3.990/mes · Manada $9.990/mes con aporte refugios), vet = canal de adquisicion (no revenue),
+> 3 pilares ancla B2B = pharma + seguros + retail (motor de escala). Paralelismo Mapcity:
 > *"Mapcity no le cobraba a las tiendas — le cobraba a Equifax y bancos
 > por acceso a la data."*
 
@@ -74,8 +74,8 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 
 - **Claude IA** reduce time-to-market de 14 meses a 2. Capital de ronda se usa en GTM, no en building.
 - **Costos variables <USD $100/mes** = runway largo con poco capital.
-- **3 pilares ancla** (pharma + seguros + retail) reducen dependencia de un solo cliente.
-- **Modelo Mapcity-style**: el dueno nunca paga, B2B paga por acceso a la ficha longitudinal.
+- **3 pilares ancla B2B** (pharma + seguros + retail) reducen dependencia de un solo cliente.
+- **Modelo Mapcity-style**: el grueso a escala lo paga B2B por acceso a la ficha longitudinal. Para el dueno hay freemium 3 tiers (Free $0 · Member $3.990 · Manada $9.990) — el Free cubre lo esencial para siempre y los planes pagos absorben el COGS biometrico Petify.
 - **Paw Companys** abre un eje de revenue no correlacionado (CSR empresarial).
 
 ---

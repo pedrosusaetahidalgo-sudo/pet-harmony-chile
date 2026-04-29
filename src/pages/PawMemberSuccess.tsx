@@ -20,7 +20,7 @@ const PAW_MEMBER_PERKS = [
   'Badge Paw Member 💛 en tu perfil',
   'Tu aporte mensual visible en /paw-member',
   'Acceso a descuentos de alianzas (Paw Partners)',
-  'Reconocimiento público en muralla de donantes',
+  'Reconocimiento público en muralla de aportantes',
 ];
 
 export default function PawMemberSuccess() {

@@ -3,15 +3,15 @@
 > **Fuente de verdad unica** para pitches, data rooms, postulaciones a fondos publicos
 > y reuniones con empresas interesadas en sponsor.
 >
-> Ultima revision: **2026-04-27** (modelo v2 2026-04-22).
+> Ultima revision: **2026-04-29** (modelo v2.1 — Plan v5 Opcion 3).
 > Responsable: Paw Founder · pedrosusaeta@pawfriend.cl
 >
-> **⚠️ Modelo v2 vigente desde 2026-04-22**. Ver [`docs-raiz/pitch/MODELO_V2_2026_04_22.md`](../docs-raiz/pitch/MODELO_V2_2026_04_22.md)
-> para el documento canonico. Cambios clave vs v1:
-> - **Dueno NUNCA paga** (Premium B2C eliminado, USER_PREMIUM=false en codigo)
-> - **Vet = canal de adquisicion**, no revenue center (planes Clinica escondidos)
-> - **3 pilares ancla** = pharma + seguros + retail (en vez de 5 motores con Premium)
-> - **Donaciones → Paw Support** (reframe legal Ley 19.885)
+> **⚠️ Modelo v2.1 vigente desde 2026-04-29** (Plan v5 Opcion 3). Ver [`docs-raiz/pitch/MODELO_V2_2026_04_22.md`](../docs-raiz/pitch/MODELO_V2_2026_04_22.md)
+> con el addendum 2026-04-29 para el documento canonico. Cambios clave vs v1:
+> - **Freemium B2C 3 tiers**: Free $0 (lo esencial) · Paw Member $3.990/mes · Manada $9.990/mes (suma aporte $2K/mes a refugios). Cubre el COGS biometrico Petify (USD $0,75/mascota/mes opt-in).
+> - **B2B Mapcity en pharma + seguros + retail** sigue siendo el motor de escala (grueso del ARR a 50k MAU).
+> - **Vet = canal de adquisicion**, no revenue center (planes Clinica escondidos).
+> - **Donaciones → Paw Support / Manada** (reframe legal Ley 19.885: Paw Friend SpA es quien dona, no el usuario).
 
 ---
 
@@ -192,8 +192,9 @@ React 18 + Vite + TypeScript + Tailwind + Supabase (Postgres + Edge Functions + 
 
 **Principio guia**: *Producto invisible.* El dueno promedio chileno abre la app
 4 veces al ano. Si disenamos para power users, perdemos al 90% del mercado.
-**El dueno nunca paga** → no se va → la ficha se enriquece sola → pharma/seguros/
-retail pagan por acceso. Loop coherente.
+**El dueno paga solo si quiere features avanzadas** (freemium 3 tiers; el plan
+Free cubre lo esencial para siempre) → no se va → la ficha se enriquece sola →
+pharma/seguros/retail pagan por acceso a escala. Loop coherente.
 
 ### Pilares ancla (80% del revenue proyectado)
 
@@ -218,13 +219,12 @@ retail pagan por acceso. Loop coherente.
 | 7 | **Gobierno / municipios** | Las Condes, Providencia, Subdere | White-label registro digital Ley 21.020 | USD $10-50K / municipio | Mes 12+ |
 | 8 | **Publicidad programatica** | Brands pet + adjacentes | CPM residual | Marginal | Mes 12+ con escala MAU |
 
-### B2C dueno — gratis sin caps
+### B2C dueno — freemium 3 tiers (Plan v5 Opcion 3)
 
-- **Cero features de pago**. Mascotas ilimitadas, PDF descargable, ficha compartida,
-  recordatorios, calendario, OCR, asistente IA, insights. Todo gratis para siempre.
-- **Paw Member ($3.990/mes opcional)**: badge cosmetico + acceso a descuentos de Paw Partners.
-  No desbloquea features funcionales. No es revenue core (proxy NPS).
-- Feature flag `USER_PREMIUM=false` en codigo confirma: no hay paywall B2C.
+- **Free ($0, hasta 2 mascotas)**: ficha clinica, recordatorios, calendario, OCR del carnet, Pet ID Card basica, QR, memorial, adoption, directorio vets. Lo esencial gratis para siempre. Conversion target 85%.
+- **Paw Member ($3.990/mes, hasta 4 mascotas)**: + Paw Shield biometria + Paw Passport PDF + Insights Pro + audio notes IA + reportes >30d + descuentos Paw Partners + badge 💛. Conversion target 13%. Cubre el COGS Petify (USD $0,75/mascota/mes opt-in).
+- **Manada ($9.990/mes, hasta 5 mascotas)**: + descuentos exclusivos + soporte prioritario + early access + badge 👑 + **$2.000/mes a Fondo Paw Friend Refugios** (Paw Friend SpA es quien dona, no el usuario — evita la Ley 19.885). Conversion target 1-2%.
+- A escala el grueso del ARR sigue siendo B2B (pharma + seguros + retail). Freemium B2C es el puente que sostiene el COGS biometrico hasta firmar partners B2B.
 
 ### B2B vet — canal de adquisicion, no revenue center
 

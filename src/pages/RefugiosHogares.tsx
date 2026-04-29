@@ -371,7 +371,7 @@ function ShelterCard({ shelter }: { shelter: PublicShelter }) {
           )}
           {shelter.accepts_donations && (
             <Badge variant="outline" className="text-[10px] border-purple-300 text-purple-700">
-              <Heart className="h-2.5 w-2.5 mr-1" /> Acepta donaciones
+              <Heart className="h-2.5 w-2.5 mr-1" /> Acepta aportes
             </Badge>
           )}
           {animalLabel && (

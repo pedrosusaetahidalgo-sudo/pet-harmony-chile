@@ -332,7 +332,7 @@ const Profile = () => {
               <Sparkles className="h-3 w-3 text-amber-500" />
             </div>
             <p className="text-xs text-muted-foreground leading-snug">
-              Ver tu aporte, historial de donaciones y descuentos de alianzas.
+              Ver tu aporte, historial de aportes y descuentos de alianzas.
             </p>
           </div>
           <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />

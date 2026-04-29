@@ -29,6 +29,7 @@ import {
   type PDFPage,
 } from 'https://esm.sh/pdf-lib@1.17.1';
 import { getCorsHeaders, handleCorsOptions } from '../_shared/cors.ts';
+import { withTelemetry } from '../_shared/telemetry.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_SERVICE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -926,210 +927,212 @@ function drawStampsPage(
 // ───────────────────────────────────────────────────────────────────────────
 // HANDLER PRINCIPAL
 // ───────────────────────────────────────────────────────────────────────────
-serve(async (req) => {
-  if (req.method === 'OPTIONS') return handleCorsOptions(req);
-  const cors = getCorsHeaders(req);
+serve(
+  withTelemetry('generate-paw-passport', async (req) => {
+    if (req.method === 'OPTIONS') return handleCorsOptions(req);
+    const cors = getCorsHeaders(req);
 
-  try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) {
-      return new Response(JSON.stringify({ error: 'Missing auth' }), {
-        status: 401,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const body = await req.json();
-    const pet_id = body.pet_id as string;
-    if (!pet_id) {
-      return new Response(JSON.stringify({ error: 'pet_id required' }), {
-        status: 400,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const userClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
-      global: { headers: { Authorization: authHeader } },
-    });
-
-    const {
-      data: { user },
-      error: userErr,
-    } = await userClient.auth.getUser();
-    if (userErr || !user) {
-      return new Response(JSON.stringify({ error: 'Invalid auth' }), {
-        status: 401,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      });
-    }
-
-    const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
-
-    // Datos pet
-    const { data: pet, error: petErr } = await admin
-      .from('pets')
-      .select('*')
-      .eq('id', pet_id)
-      .maybeSingle();
-
-    if (petErr || !pet) {
-      return new Response(JSON.stringify({ error: 'Pet not found' }), {
-        status: 404,
-        headers: { ...cors, 'Content-Type': 'application/json' },
-      });
-    }
-
-    // Verificar permisos (owner o co-owner)
-    if (pet.owner_id !== user.id) {
-      const { data: coOwner } = await admin
-        .from('pet_co_owners')
-        .select('permissions')
-        .eq('pet_id', pet_id)
-        .eq('user_id', user.id)
-        .eq('status', 'accepted')
-        .maybeSingle();
-      if (!coOwner) {
-        return new Response(JSON.stringify({ error: 'Forbidden' }), {
-          status: 403,
+    try {
+      const authHeader = req.headers.get('Authorization');
+      if (!authHeader) {
+        return new Response(JSON.stringify({ error: 'Missing auth' }), {
+          status: 401,
           headers: { ...cors, 'Content-Type': 'application/json' },
         });
       }
-    }
 
-    // Owner profile
-    const { data: ownerProfile } = await admin
-      .from('profiles')
-      .select('display_name, phone')
-      .eq('id', pet.owner_id)
-      .maybeSingle();
-
-    // Pet ID Card (para card_number compartido)
-    const { data: idCard } = await admin
-      .from('pet_id_cards')
-      .select('card_number')
-      .eq('pet_id', pet_id)
-      .eq('is_active', true)
-      .maybeSingle();
-
-    // Vacunas
-    const { data: vaccines } = await admin
-      .from('vaccinations')
-      .select('vaccine_name, date_administered, lot_number, vet_name, next_due_date')
-      .eq('pet_id', pet_id)
-      .order('date_administered', { ascending: false })
-      .limit(20);
-
-    // Antiparasitarios
-    const { data: deworming } = await admin
-      .from('deworming_records')
-      .select('product_name, date_administered, next_due_date, vet_name')
-      .eq('pet_id', pet_id)
-      .order('date_administered', { ascending: false })
-      .limit(20);
-
-    // Photo bytes
-    let photoBytes: Uint8Array | null = null;
-    if (pet.photo_url) {
-      try {
-        const r = await fetch(pet.photo_url);
-        if (r.ok) photoBytes = new Uint8Array(await r.arrayBuffer());
-      } catch {
-        photoBytes = null;
+      const body = await req.json();
+      const pet_id = body.pet_id as string;
+      if (!pet_id) {
+        return new Response(JSON.stringify({ error: 'pet_id required' }), {
+          status: 400,
+          headers: { ...cors, 'Content-Type': 'application/json' },
+        });
       }
+
+      const userClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY, {
+        global: { headers: { Authorization: authHeader } },
+      });
+
+      const {
+        data: { user },
+        error: userErr,
+      } = await userClient.auth.getUser();
+      if (userErr || !user) {
+        return new Response(JSON.stringify({ error: 'Invalid auth' }), {
+          status: 401,
+          headers: { ...cors, 'Content-Type': 'application/json' },
+        });
+      }
+
+      const admin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
+
+      // Datos pet
+      const { data: pet, error: petErr } = await admin
+        .from('pets')
+        .select('*')
+        .eq('id', pet_id)
+        .maybeSingle();
+
+      if (petErr || !pet) {
+        return new Response(JSON.stringify({ error: 'Pet not found' }), {
+          status: 404,
+          headers: { ...cors, 'Content-Type': 'application/json' },
+        });
+      }
+
+      // Verificar permisos (owner o co-owner)
+      if (pet.owner_id !== user.id) {
+        const { data: coOwner } = await admin
+          .from('pet_co_owners')
+          .select('permissions')
+          .eq('pet_id', pet_id)
+          .eq('user_id', user.id)
+          .eq('status', 'accepted')
+          .maybeSingle();
+        if (!coOwner) {
+          return new Response(JSON.stringify({ error: 'Forbidden' }), {
+            status: 403,
+            headers: { ...cors, 'Content-Type': 'application/json' },
+          });
+        }
+      }
+
+      // Owner profile
+      const { data: ownerProfile } = await admin
+        .from('profiles')
+        .select('display_name, phone')
+        .eq('id', pet.owner_id)
+        .maybeSingle();
+
+      // Pet ID Card (para card_number compartido)
+      const { data: idCard } = await admin
+        .from('pet_id_cards')
+        .select('card_number')
+        .eq('pet_id', pet_id)
+        .eq('is_active', true)
+        .maybeSingle();
+
+      // Vacunas
+      const { data: vaccines } = await admin
+        .from('vaccinations')
+        .select('vaccine_name, date_administered, lot_number, vet_name, next_due_date')
+        .eq('pet_id', pet_id)
+        .order('date_administered', { ascending: false })
+        .limit(20);
+
+      // Antiparasitarios
+      const { data: deworming } = await admin
+        .from('deworming_records')
+        .select('product_name, date_administered, next_due_date, vet_name')
+        .eq('pet_id', pet_id)
+        .order('date_administered', { ascending: false })
+        .limit(20);
+
+      // Photo bytes
+      let photoBytes: Uint8Array | null = null;
+      if (pet.photo_url) {
+        try {
+          const r = await fetch(pet.photo_url);
+          if (r.ok) photoBytes = new Uint8Array(await r.arrayBuffer());
+        } catch {
+          photoBytes = null;
+        }
+      }
+
+      // Construir data
+      const now = new Date();
+      const expires = new Date(now);
+      expires.setFullYear(expires.getFullYear() + 5);
+
+      const data: PassportData = {
+        pet_id,
+        card_number: idCard?.card_number || `PF-TMP-${pet_id.slice(0, 8).toUpperCase()}`,
+        pet_name: pet.name,
+        species: pet.species,
+        breed: pet.breed,
+        birth_date: pet.birth_date,
+        gender: pet.gender,
+        neutered: pet.neutered,
+        color: pet.color,
+        microchip_number: pet.microchip_number,
+        chip_registry: pet.chip_registry,
+        photo_url: pet.photo_url,
+        blood_type: pet.blood_type,
+        allergies: pet.allergies,
+        chronic_conditions: pet.chronic_conditions,
+        current_medications: pet.current_medications,
+        weight: pet.weight,
+        weight_history: pet.weight_history,
+        vaccination_status: pet.vaccination_status,
+        emergency_vet_name: pet.emergency_vet_name,
+        emergency_vet_phone: pet.emergency_vet_phone,
+        preferred_clinic: pet.preferred_clinic,
+        owner_name: ownerProfile?.display_name ?? null,
+        owner_phone: (ownerProfile as { phone?: string | null } | null)?.phone ?? null,
+        nose_print_hash: null, // futuro
+        issued_at: now.toISOString(),
+        expires_at: expires.toISOString(),
+        vaccines:
+          (vaccines || []).map((v: Record<string, unknown>) => ({
+            vaccine_name: (v.vaccine_name as string) || '',
+            date: (v.date_administered as string) || '',
+            lot: (v.lot_number as string) || null,
+            vet: (v.vet_name as string) || null,
+            next_due: (v.next_due_date as string) || null,
+          })) ?? [],
+        deworming:
+          (deworming || []).map((d: Record<string, unknown>) => ({
+            product: (d.product_name as string) || '',
+            date: (d.date_administered as string) || '',
+            next_due: (d.next_due_date as string) || null,
+            vet: (d.vet_name as string) || null,
+          })) ?? [],
+      };
+
+      // Crear PDF
+      const doc = await PDFDocument.create();
+      doc.setTitle(`Paw Passport — ${data.pet_name}`);
+      doc.setAuthor('Paw Friend');
+      doc.setSubject('Pasaporte de Mascota');
+      doc.setKeywords(['mascota', 'paw friend', 'pasaporte', 'chile']);
+      doc.setProducer('Paw Friend pawfriend.cl');
+
+      const fonts = {
+        bold: await doc.embedFont(StandardFonts.HelveticaBold),
+        regular: await doc.embedFont(StandardFonts.Helvetica),
+        italic: await doc.embedFont(StandardFonts.HelveticaOblique),
+      };
+
+      // A5 portrait (148×210mm = 419.5×595.3 pts) — usamos el preset
+      const pageSize = PageSizes.A5;
+
+      // Páginas
+      drawCover(doc.addPage(pageSize), fonts);
+      await drawDataPage(doc, doc.addPage(pageSize), data, fonts, photoBytes);
+      drawBiometricPage(doc.addPage(pageSize), data, fonts);
+      drawVaccinesPage(doc.addPage(pageSize), data, fonts);
+      drawMedicalCriticalPage(doc.addPage(pageSize), data, fonts);
+      drawEmergencyPage(doc.addPage(pageSize), data, fonts);
+      drawStampsPage(doc.addPage(pageSize), fonts);
+
+      const pdfBytes = await doc.save();
+
+      return new Response(pdfBytes, {
+        status: 200,
+        headers: {
+          ...cors,
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': `attachment; filename="paw-passport-${data.pet_name.replace(/\s+/g, '_')}.pdf"`,
+        },
+      });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Unknown error';
+      console.error('generate-paw-passport error:', msg);
+      return new Response(JSON.stringify({ error: msg }), {
+        status: 500,
+        headers: { ...cors, 'Content-Type': 'application/json' },
+      });
     }
-
-    // Construir data
-    const now = new Date();
-    const expires = new Date(now);
-    expires.setFullYear(expires.getFullYear() + 5);
-
-    const data: PassportData = {
-      pet_id,
-      card_number: idCard?.card_number || `PF-TMP-${pet_id.slice(0, 8).toUpperCase()}`,
-      pet_name: pet.name,
-      species: pet.species,
-      breed: pet.breed,
-      birth_date: pet.birth_date,
-      gender: pet.gender,
-      neutered: pet.neutered,
-      color: pet.color,
-      microchip_number: pet.microchip_number,
-      chip_registry: pet.chip_registry,
-      photo_url: pet.photo_url,
-      blood_type: pet.blood_type,
-      allergies: pet.allergies,
-      chronic_conditions: pet.chronic_conditions,
-      current_medications: pet.current_medications,
-      weight: pet.weight,
-      weight_history: pet.weight_history,
-      vaccination_status: pet.vaccination_status,
-      emergency_vet_name: pet.emergency_vet_name,
-      emergency_vet_phone: pet.emergency_vet_phone,
-      preferred_clinic: pet.preferred_clinic,
-      owner_name: ownerProfile?.display_name ?? null,
-      owner_phone: (ownerProfile as { phone?: string | null } | null)?.phone ?? null,
-      nose_print_hash: null, // futuro
-      issued_at: now.toISOString(),
-      expires_at: expires.toISOString(),
-      vaccines:
-        (vaccines || []).map((v: Record<string, unknown>) => ({
-          vaccine_name: (v.vaccine_name as string) || '',
-          date: (v.date_administered as string) || '',
-          lot: (v.lot_number as string) || null,
-          vet: (v.vet_name as string) || null,
-          next_due: (v.next_due_date as string) || null,
-        })) ?? [],
-      deworming:
-        (deworming || []).map((d: Record<string, unknown>) => ({
-          product: (d.product_name as string) || '',
-          date: (d.date_administered as string) || '',
-          next_due: (d.next_due_date as string) || null,
-          vet: (d.vet_name as string) || null,
-        })) ?? [],
-    };
-
-    // Crear PDF
-    const doc = await PDFDocument.create();
-    doc.setTitle(`Paw Passport — ${data.pet_name}`);
-    doc.setAuthor('Paw Friend');
-    doc.setSubject('Pasaporte de Mascota');
-    doc.setKeywords(['mascota', 'paw friend', 'pasaporte', 'chile']);
-    doc.setProducer('Paw Friend pawfriend.cl');
-
-    const fonts = {
-      bold: await doc.embedFont(StandardFonts.HelveticaBold),
-      regular: await doc.embedFont(StandardFonts.Helvetica),
-      italic: await doc.embedFont(StandardFonts.HelveticaOblique),
-    };
-
-    // A5 portrait (148×210mm = 419.5×595.3 pts) — usamos el preset
-    const pageSize = PageSizes.A5;
-
-    // Páginas
-    drawCover(doc.addPage(pageSize), fonts);
-    await drawDataPage(doc, doc.addPage(pageSize), data, fonts, photoBytes);
-    drawBiometricPage(doc.addPage(pageSize), data, fonts);
-    drawVaccinesPage(doc.addPage(pageSize), data, fonts);
-    drawMedicalCriticalPage(doc.addPage(pageSize), data, fonts);
-    drawEmergencyPage(doc.addPage(pageSize), data, fonts);
-    drawStampsPage(doc.addPage(pageSize), fonts);
-
-    const pdfBytes = await doc.save();
-
-    return new Response(pdfBytes, {
-      status: 200,
-      headers: {
-        ...cors,
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="paw-passport-${data.pet_name.replace(/\s+/g, '_')}.pdf"`,
-      },
-    });
-  } catch (e) {
-    const msg = e instanceof Error ? e.message : 'Unknown error';
-    console.error('generate-paw-passport error:', msg);
-    return new Response(JSON.stringify({ error: msg }), {
-      status: 500,
-      headers: { ...cors, 'Content-Type': 'application/json' },
-    });
-  }
-});
+  })
+);

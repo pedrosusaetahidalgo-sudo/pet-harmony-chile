@@ -12,7 +12,7 @@
 
 ## 1. Pitch en 60 segundos (obligatorio en SUP-CL)
 
-> *Somos Paw Friend: la ficha medica digital de tu mascota, conectada con tu veterinario. Hoy 7 de cada 10 hogares chilenos tienen mascota, pero viven con el carnet en la guantera del auto. Construimos en 2 meses lo que equipos de 6 personas tardan 12 meses, gracias a IA como co-engineer. Tenemos producto vivo en pawfriend.cl, directorio publico de vets con SEO, ficha PDF descargable, y un modelo de revenue B2B (pharma + seguros + retail) que mantiene el producto **100% gratis para el dueno**. Amamos las mascotas y queremos que Paw Friend sea accesible para cada hogar de Chile y LATAM Andino.*
+> *Somos Paw Friend: la ficha medica digital de tu mascota, conectada con tu veterinario. Hoy 7 de cada 10 hogares chilenos tienen mascota, pero viven con el carnet en la guantera del auto. Construimos en 2 meses lo que equipos de 6 personas tardan 12 meses, gracias a IA como co-engineer. Tenemos producto vivo en pawfriend.cl, directorio publico de vets con SEO, ficha PDF descargable, y un modelo **freemium 3 tiers** para dueños (Free $0 / Paw Member $3.990/mes / Manada $9.990/mes con aporte refugios) sostenido a escala por **revenue B2B Mapcity** (pharma + seguros + retail) — **lo esencial es gratis para siempre** y nadie queda fuera por no poder pagar. Amamos las mascotas y queremos que Paw Friend sea accesible para cada hogar de Chile y LATAM Andino.*
 
 ---
 

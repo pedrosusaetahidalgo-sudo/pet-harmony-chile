@@ -235,9 +235,9 @@ export default function ShelterProfile() {
                 className="mt-0.5"
               />
               <label htmlFor="accepts_donations" className="text-sm cursor-pointer flex-1">
-                <span className="font-semibold">Aceptar donaciones dirigidas</span>
+                <span className="font-semibold">Aceptar aportes dirigidos</span>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  La comunidad podra donar directamente a tu causa (proximamente activo).
+                  La comunidad podra aportar directamente a tu causa (proximamente activo).
                 </p>
               </label>
             </div>

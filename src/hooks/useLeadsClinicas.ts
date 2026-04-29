@@ -1,5 +1,10 @@
 /**
  * Hook para gestión de leads de clínicas veterinarias (schema leads).
+ *
+ * @deprecated 2026-04-29 — Sin imports activos en codebase.
+ * Candidato a eliminación post-launch (ver docs/audit/cleanup-fase1.md).
+ * Si lo necesitás, verificá primero con git blame qué feature lo usaba y
+ * si la lógica es duplicada con otro hook activo (ej: useLeadsVets).
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';

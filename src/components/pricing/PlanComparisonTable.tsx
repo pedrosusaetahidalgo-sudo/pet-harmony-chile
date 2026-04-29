@@ -3,9 +3,9 @@
  * planes en los momentos de eleccion de membresia.
  *
  * Dos variantes:
- *   - `PlanComparisonTableB2C`: Gratis vs Paw Member. Deja cristalino que
- *     Paw Member NO desbloquea features de app — solo badge + acceso a
- *     descuentos de alianzas (Paw Partners, Paw Companys).
+ *   - `PlanComparisonTableB2C` (LEGACY, no se usa en runtime — reemplazado
+ *     por `Tier3Pricing.tsx` con freemium 3 tiers Free/Paw Member/Manada
+ *     desde Plan v5 Opcion 3, 2026-04-29).
  *   - `PlanComparisonTableVet`: 4 tiers (Basica / Premium / Clinica / Pro Max)
  *     con "que ganas al subir aqui" + collapsible "ver todas las features".
  *
@@ -48,7 +48,7 @@ const B2C_CORE_FEATURES: string[] = [
 const B2C_MEMBER_EXTRAS: { emoji: string; text: string }[] = [
   { emoji: '💛', text: 'Badge Paw Member publico en tu perfil' },
   { emoji: '🎁', text: 'Acceso a descuentos de Paw Partners (tiendas, comida, accesorios)' },
-  { emoji: '✨', text: 'Reconocimiento en la muralla publica de donantes' },
+  { emoji: '✨', text: 'Reconocimiento en la muralla publica de aportantes' },
   { emoji: '🙏', text: 'Soporte prioritario por correo' },
 ];
 
@@ -172,7 +172,7 @@ export function PlanComparisonTableB2C({
                 onClick={onDonate}
                 className="underline font-medium text-violet-700 hover:text-violet-900 dark:text-violet-300"
               >
-                Hacer una donacion unica
+                Hacer un aporte unico
               </button>
             </p>
           </div>

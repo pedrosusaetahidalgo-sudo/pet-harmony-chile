@@ -10,14 +10,16 @@
  * - Tuteo chileno (tú, tienes, puedes).
  * - "Peludo" en lugar de "mascota" donde se pueda (sin abusar).
  * - Cero claims sin respaldo (CLAUDE.md §6.8 del masterplan).
- * - Promesa "gratis para siempre" alineada con pivot 2026-04-19.
+ * - Modelo freemium 3 tiers (Plan v5 Opcion 3, addendum 2026-04-29):
+ *   Free $0 · Paw Member $3.990/mes · Manada $9.990/mes.
+ *   Lo esencial es gratis para siempre; lo avanzado es opcional.
  */
 
 export const HERO = {
-  badge: 'Hecho en Chile · Gratis para siempre',
+  badge: 'Hecho en Chile · Lo esencial gratis para siempre',
   h1Lead: 'La salud de tu peludo,',
   h1Highlight: 'en un solo lugar.',
-  h1Tail: 'Y siempre gratis.',
+  h1Tail: 'Empieza gratis.',
   sub: 'Ficha clínica que cualquier vet puede leer. Veterinarios verificados cerca de ti. Recordatorios. Y una comunidad pet lover que empuja parejo.',
   ctaPrimary: 'Crear cuenta gratis',
   ctaPrimaryAuth: 'Ir al inicio',
@@ -80,9 +82,9 @@ export const ALMA = {
   body: 'Paw Friend lo construye una persona en Chile, apoyada por IA, con la convicción de que la salud de un peludo no debería ser un privilegio. Sin VC presionando, sin exit forzado, sin gates ocultos.',
   sustainTitle: 'Cómo nos sostenemos',
   sustainBody:
-    'Modelo Mapcity: el dueño nunca paga. Pharma, seguros y retail pagan por acceso a la ficha clínica. Sumamos Paw Companys (sponsors empresas) y Paw Support (apoyo voluntario). Ninguna feature está bloqueada para dueños.',
+    'Modelo Mapcity: el grueso lo pagan pharma, seguros y retail por acceso a la ficha clínica. Para los dueños es freemium: lo esencial es gratis para siempre y solo pagan si quieren features avanzadas (Paw Member $3.990/mes o Manada $9.990/mes con aporte a refugios). Sumamos Paw Companys (sponsors empresas) y Paw Support (apoyo voluntario).',
   quote:
-    'Lo hago porque mis peludos me cambiaron la vida. Quiero que esto siga gratis para siempre, para los peludos de toda Latinoamérica.',
+    'Lo hago porque mis peludos me cambiaron la vida. Quiero que la salud de un peludo nunca sea un privilegio, en Chile y en toda Latinoamérica.',
   quoteAuthor: 'Paw Founder',
   cta: 'Conoce nuestra historia',
 } as const;
@@ -108,7 +110,7 @@ export const COMMUNITY = {
   badge: 'Comunidad pet lover',
   h2Lead: 'Si amas a los animales,',
   h2Highlight: 'hay un rol para ti',
-  sub: 'Paw Friend lo hacemos porque queremos. Para que siga gratis, necesitamos comunidad.',
+  sub: 'Paw Friend lo hacemos porque queremos. Para que lo esencial siga gratis, necesitamos comunidad.',
   closer: 'Sin exclusividad, sin letra chica. Solo amor por los peludos.',
 } as const;
 

@@ -47,7 +47,7 @@ const DEFAULT_ALT: Record<EmptyStateKind, string> = {
   medical_records: 'Sin registros medicos',
   notifications: 'Sin notificaciones',
   paw_cards: 'Sin Paw Cards',
-  donations: 'Sin donaciones todavia',
+  donations: 'Sin aportes todavia',
   feed: 'Feed vacio',
   missions: 'Sin misiones disponibles',
   pets_yet: 'Agrega tu primera mascota',

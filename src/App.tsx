@@ -76,8 +76,10 @@ const PawVoicesPage = lazy(() => import('./pages/PawVoices'));
 const PawCompanysPage = lazy(() => import('./pages/PawCompanysPage'));
 const PawMember = lazy(() => import('./pages/PawMember'));
 const Servicios = lazy(() => import('./pages/Servicios'));
-// Peluqueria.tsx eliminada — groomers ahora son tab nativo en /services/groomers
-const GroomerProfileEdit = lazy(() => import('./pages/GroomerProfileEdit'));
+// Peluqueria.tsx eliminada — groomers ahora son tab nativo en /services/groomers.
+// GroomerProfileEdit eliminado 2026-04-29 (Plan v5 cleanup #5): la ruta
+// /peluquero/perfil legacy ahora redirige a /provider/profile-edit (donde
+// editan los proveedores genericos, incluyendo groomers).
 const DirectorioVets = lazy(() => import('./pages/DirectorioVets'));
 const PerfilVetPublico = lazy(() => import('./pages/PerfilVetPublico'));
 const Demo = lazy(() => import('./pages/Demo'));
@@ -610,15 +612,14 @@ const App = () => (
                     </ProtectedRoute>
                   }
                 />
+                {/* /peluquero/perfil legacy redirect (Plan v5 cleanup #5,
+                    2026-04-29): groomers ahora son tab nativo en
+                    /services/groomers y editan su perfil profesional
+                    desde /provider/profile-edit como cualquier otro
+                    proveedor. */}
                 <Route
                   path="/peluquero/perfil"
-                  element={
-                    <ProtectedRoute>
-                      <AppLayout>
-                        <GroomerProfileEdit />
-                      </AppLayout>
-                    </ProtectedRoute>
-                  }
+                  element={<Navigate to="/provider/profile-edit" replace />}
                 />
                 {/* /services/vets era ruta fantasma (caia en ServiceDirectory
                     por el :type), pero el directorio canonico de vets es
@@ -712,6 +713,9 @@ const App = () => (
                   }
                 />
                 <Route path="/settings" element={<Navigate to="/profile" replace />} />
+                {/* /aportes — alias 301 a /paw-support (ruta canónica post modelo v2,
+                    rename "donaciones"→"aportes" en UI publica 2026-04-29). */}
+                <Route path="/aportes" element={<Navigate to="/paw-support" replace />} />
                 <Route
                   path="/en-memoria"
                   element={

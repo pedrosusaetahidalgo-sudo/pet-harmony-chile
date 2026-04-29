@@ -52,6 +52,7 @@ y `X-Cron-Secret: <tu valor>`, body `{}`. Schedule en formato cron expression.
 | 13 | `weekly-owner-reports` | `0 21 * * 0` (domingo 6pm Chile) | `/generate-weekly-owner-reports` | Reportes semanales dueños |
 | 14 | `weekly-vet-reports` | `0 22 * * 0` (domingo 7pm Chile) | `/generate-weekly-vet-reports` | Reportes semanales vets |
 | 15 | `backup-weekly-snapshot` | `0 5 * * 0` (domingo 2am Chile) | `/backup-weekly-snapshot` | Snapshot semanal (si existe) |
+| 16 | `manada-pool-monthly-close` | `0 3 1 * *` (1ro de mes 00:00 Chile) | RPC interna (no HTTP) | Cierre pool aportes Manada → Fondo Refugios. Plan v5 Opción 3. Ya registrado por mig 20260929000001 si pg_cron habilitado |
 
 **URL base**: `https://gwailbjlvevkhwcrovfd.supabase.co/functions/v1`
 
@@ -88,6 +89,8 @@ DECLARE
     ["send-inactive-user-reminder","0 20 * * 3","send-inactive-user-reminder"],
     ["weekly-owner-reports",     "0 21 * * 0", "generate-weekly-owner-reports"],
     ["weekly-vet-reports",       "0 22 * * 0", "generate-weekly-vet-reports"]
+    -- nota: manada-pool-monthly-close NO va aqui (es RPC interna, no HTTP).
+    -- La mig 20260929000001 ya lo registra automaticamente si pg_cron esta on.
   ]'::JSONB;
   v_job JSONB;
   v_name TEXT;

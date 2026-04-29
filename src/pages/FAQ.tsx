@@ -20,7 +20,7 @@ import { Bell, ArrowLeft } from '@/lib/icons';
 const FAQ_ITEMS = [
   {
     q: '¿Cuánto cuesta usar Paw Friend?',
-    a: 'Es gratis para dueños. Para siempre. Sin límite de mascotas, sin gates ocultos. Si quieres apoyar el proyecto puedes hacerte Paw Member ($3.990/mes voluntario, mismas features + badge 💛) o donar lo que sientas justo en /donaciones.',
+    a: 'Lo esencial es gratis para siempre: ficha clínica, recordatorios, calendario, OCR del carnet, Pet ID Card básica, QR, memorial y directorio de vets. Si quieres features avanzadas hay 2 planes opcionales: Paw Member ($3.990/mes, hasta 4 mascotas, suma Paw Shield biométrico, Paw Passport PDF, Insights Pro, audio notes IA y descuentos de Paw Partners) y Manada ($9.990/mes, hasta 5 mascotas, suma soporte prioritario, descuentos exclusivos, early access y aporta $2.000/mes a un fondo para refugios). El plan Free permite hasta 2 mascotas.',
   },
   {
     q: '¿Cómo encuentro un veterinario?',
@@ -36,15 +36,19 @@ const FAQ_ITEMS = [
   },
   {
     q: '¿Qué es Paw Member?',
-    a: 'Es una membresía 100% voluntaria. NO desbloquea features extra (todo es gratis). Es para dueños que quieren sostener el proyecto activamente. Reciben badge 💛 y acceso a descuentos de empresas aliadas (Paw Partners).',
+    a: 'Es la membresía intermedia ($3.990/mes). Te suma features avanzadas que el plan Free no trae: Paw Shield (identificación biométrica por huella nasal), Paw Passport PDF, Insights Pro (estadísticas de tu peludo), audio notes con IA, reportes médicos extendidos (>30 días) y descuentos en Paw Partners aliados. Más el badge 💛. Es opcional: si te basta el plan Free, sigue siendo tuyo.',
+  },
+  {
+    q: '¿Y el plan Manada?',
+    a: 'Manada ($9.990/mes) es para hogares con varios peludos (hasta 5 mascotas) o para quienes quieren apoyar el ecosistema. Suma todo lo de Paw Member más descuentos exclusivos, soporte prioritario, early access a features y un badge 👑. Además, $2.000 de tu cuota mensual van a un fondo Paw Friend Refugios que reparte entre hogares de adopción aliados — Paw Friend SpA es quien dona, así no entras al marco fiscal de la Ley 19.885.',
   },
   {
     q: '¿Quién está detrás del proyecto?',
     a: 'Paw Friend es un proyecto home-made: lo construye una persona en Chile, apoyada por IA, sin VC presionando. Todo el modelo de sostenibilidad está documentado en /paw-core.',
   },
   {
-    q: '¿Puedo donar?',
-    a: 'Sí, en /donaciones. Cada aporte se traduce en Paw Points y se reconoce públicamente. La transparencia del uso de fondos también vive en /donaciones.',
+    q: '¿Puedo aportar?',
+    a: 'Sí, en /paw-support. Cada aporte se traduce en Paw Points y se reconoce públicamente. La transparencia del uso de fondos también vive en /paw-support.',
   },
   {
     q: '¿Qué es Paw Voices? ¿Y Paw Companys?',
@@ -67,7 +71,7 @@ export default function FAQ() {
         <title>Preguntas frecuentes — Paw Friend</title>
         <meta
           name="description"
-          content="Resolvemos las dudas más comunes sobre Paw Friend: pricing, privacidad, vets, donaciones y modelo del proyecto."
+          content="Resolvemos las dudas más comunes sobre Paw Friend: pricing, privacidad, vets, aportes y modelo del proyecto."
         />
         <link rel="canonical" href="https://pawfriend.cl/faq" />
       </Helmet>

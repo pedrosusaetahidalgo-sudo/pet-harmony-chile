@@ -110,9 +110,7 @@ const TermsOfService = () => {
               </section>
 
               <section>
-                <h2 className="text-2xl font-semibold mb-3">
-                  8.1. Donaciones y Aportes Voluntarios
-                </h2>
+                <h2 className="text-2xl font-semibold mb-3">8.1. Aportes Voluntarios</h2>
                 <p className="text-muted-foreground mb-2">
                   Paw Friend permite realizar aportes voluntarios a través de la página{' '}
                   <code>/donaciones</code>. Estos aportes se rigen por las siguientes condiciones:
@@ -153,24 +151,29 @@ const TermsOfService = () => {
                   8.2. Membresía voluntaria "Paw Member"
                 </h2>
                 <p className="text-muted-foreground mb-2">
-                  Paw Friend ofrece una membresía voluntaria recurrente denominada{' '}
-                  <strong>Paw Member</strong>
-                  ($3.990 CLP mensuales o $39.900 CLP anuales) destinada a usuarios que deseen
-                  sostener el proyecto de forma periódica.
+                  Paw Friend ofrece dos planes opcionales recurrentes para tutores:{' '}
+                  <strong>Paw Member</strong> ($3.990 CLP mensuales o $39.900 CLP anuales, hasta 4
+                  mascotas) y <strong>Manada</strong> ($9.990 CLP mensuales, hasta 5 mascotas). El
+                  plan <strong>Free</strong> ($0, hasta 2 mascotas) seguirá disponible para siempre
+                  con lo esencial: ficha clínica, recordatorios, calendario, OCR del carnet y
+                  directorio de vets.
                 </p>
                 <ul className="list-disc list-inside text-muted-foreground ml-4 space-y-1.5">
                   <li>
-                    La membresía <strong>no desbloquea funcionalidades exclusivas</strong>. Paw
-                    Friend seguirá siendo gratuito para todos los tutores, con todas las funciones
-                    disponibles sin restricciones.
+                    <strong>Paw Member</strong> desbloquea features avanzadas (Paw Shield
+                    biométrico, Paw Passport PDF, Insights Pro, audio notes con IA, reportes médicos
+                    extendidos) y descuentos en Paw Partners, además del badge 💛 de reconocimiento.
                   </li>
                   <li>
-                    La membresía otorga un badge visual de reconocimiento ("Paw Member") en el
-                    perfil, como agradecimiento público al apoyo.
+                    <strong>Manada</strong> incluye todo lo de Paw Member más descuentos exclusivos,
+                    soporte prioritario, early access, badge 👑 y un aporte mensual de $2.000 CLP a
+                    un fondo Paw Friend Refugios. La donación a refugios la realiza Paw Friend SpA
+                    como entidad jurídica, no el tutor directamente.
                   </li>
                   <li>
                     El usuario puede cancelar la membresía en cualquier momento desde su perfil. El
-                    cobro se detiene al cierre del período en curso.
+                    cobro se detiene al cierre del período en curso y conserva acceso hasta esa
+                    fecha.
                   </li>
                   <li>Aplican las mismas condiciones de devolución de la sección 8.1.</li>
                 </ul>
@@ -181,8 +184,8 @@ const TermsOfService = () => {
                 <p className="text-muted-foreground mb-2">
                   Paw Friend ofrece tres planes para veterinarios y clínicas profesionales:
                   <strong> Free</strong>, <strong>Premium</strong> y <strong>Pro Max</strong>. A
-                  diferencia de las donaciones y la membresía Paw Member, estos planes constituyen
-                  una relación comercial con contraprestación definida.
+                  diferencia de los aportes y la membresía Paw Member, estos planes constituyen una
+                  relación comercial con contraprestación definida.
                 </p>
                 <ul className="list-disc list-inside text-muted-foreground ml-4 space-y-1.5">
                   <li>

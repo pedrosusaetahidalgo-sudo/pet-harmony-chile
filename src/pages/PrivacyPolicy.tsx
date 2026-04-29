@@ -177,7 +177,7 @@ const PrivacyPolicy = () => {
                     contexto de otros usuarios).
                   </li>
                   <li>
-                    <strong>Pagos y donaciones:</strong> 7 años por exigencia tributaria del SII
+                    <strong>Pagos y aportes:</strong> 7 años por exigencia tributaria del SII
                     chileno (Decreto Ley 825). No se borra al cerrar cuenta.
                   </li>
                   <li>
@@ -354,10 +354,10 @@ const PrivacyPolicy = () => {
 
               <section>
                 <h2 className="text-2xl font-semibold mb-3">
-                  8.1. Procesamiento de Pagos y Donaciones
+                  8.1. Procesamiento de Pagos y Aportes
                 </h2>
                 <p className="text-muted-foreground mb-2">
-                  Los pagos de servicios, membresías y donaciones se procesan a través de{' '}
+                  Los pagos de servicios, membresías y aportes se procesan a través de{' '}
                   <strong>Flow.cl</strong>, un proveedor externo certificado. Paw Friend recibe
                   únicamente los datos mínimos necesarios para registrar la transacción:
                 </p>
@@ -365,7 +365,9 @@ const PrivacyPolicy = () => {
                   <li>ID de transacción y token de Flow</li>
                   <li>Monto, fecha y estado del pago</li>
                   <li>Correo electrónico del usuario (solo si está autenticado)</li>
-                  <li>Nombre y mensaje opcionales del donante (si el usuario elige incluirlos)</li>
+                  <li>
+                    Nombre y mensaje opcionales del aportante (si el usuario elige incluirlos)
+                  </li>
                 </ul>
                 <p className="text-muted-foreground mt-2">
                   <strong>No almacenamos</strong> datos de tarjetas de crédito, débito, CVV ni

@@ -331,8 +331,14 @@ export const FEATURE_FLAGS = {
    * 100% top-1 con 3 fotos por pet. Ver `PAW_SHIELD_PETIFY` flag debajo.
    * El codigo legacy (nose-print-embed/match + nose_print_embeddings table)
    * queda preservado por 6 meses como backstop antes de drop final.
+   *
+   * REACTIVADO 2026-04-29 PM (Pedro decision Checkpoint 1, Plan v5 Fase 1):
+   * activado para que `/nose-scan` funcione con backend Paw Shield · Petify.
+   * Pre-condicion: `PAW_SHIELD_PETIFY` debe estar tambien en true y la API
+   * key de Petify en Secrets debe ser PROD (no TEST). Ver acciones manuales
+   * en docs/audit/cleanup-fase1.md.
    */
-  NOSE_PRINT_ENABLED: false,
+  NOSE_PRINT_ENABLED: true,
 
   /**
    * Integrar captura nose print en onboarding de mascota.
@@ -346,8 +352,12 @@ export const FEATURE_FLAGS = {
    * Reemplazado backend a Paw Shield · Petify (2026-04-29).
    * Activar cuando haya >=20 pets registrados con Paw Shield para que
    * el match identify tenga base util (ahora vacio = no_match siempre).
+   *
+   * ACTIVADO 2026-04-29 PM (Pedro decision Checkpoint 1, Plan v5 Fase 1):
+   * con backend Petify activo, /nose-scan ya funciona end-to-end. Si la
+   * base es chica al inicio, devolvera no_match — comportamiento esperado.
    */
-  NOSE_PRINT_PUBLIC_SCAN: false,
+  NOSE_PRINT_PUBLIC_SCAN: true,
 
   /**
    * PAW SHIELD · PETIFY — biometria de hocico via PetNow B2B API.
@@ -369,6 +379,21 @@ export const FEATURE_FLAGS = {
    * Costo Petify: ~$1.50 USD/pet/mes en tier estandar (1k-10k pets).
    * Reduce 70-75% vs activacion default porque solo ~25-30% de duenos lo
    * activan (los preocupados por extravio).
+   *
+   * Pedro confirmó 2026-04-29 PM (Checkpoint 1, Plan v5 Fase 1, Opcion A)
+   * que SI activamos Paw Shield con Petify. PERO la API key sigue siendo
+   * TEST en Supabase Secrets. Si flipeamos a true ahora, los enrollments
+   * en producción se guardan en sandbox de Petify y se pierden cuando
+   * roten a PROD → mascotas reales quedan huérfanas. Por eso el flag
+   * sigue en false hasta que Pedro confirme:
+   *   1. API key Petify PROD en Supabase Secrets (reemplaza TEST).
+   *   2. Billing $0.75-1.50 USD/pet/mes contractual con PetNow firmado.
+   *   3. Smoke test register + identify end-to-end con 1 mascota real.
+   * Cuando los 3 estén ✓ → flipear este flag a true.
+   * Mientras tanto, Paw Member sigue siendo válido como tier paid: las
+   * otras features (Paw Passport, Insights Pro, Audio IA, Reportes >30d,
+   * descuentos partners, multi-pet) ya están desbloqueadas con el plan.
+   * Ver docs/audit/cleanup-fase1.md.
    */
   PAW_SHIELD_PETIFY: false,
 
@@ -385,8 +410,12 @@ export const FEATURE_FLAGS = {
   /**
    * Descuentos en partners retail para Paw Members
    * (refactor maestro §6.4). Solo activar cuando 1+ partner firmado.
+   *
+   * ACTIVADO 2026-04-29 PM como DEMO (Pedro decision Checkpoint 1, Plan v5
+   * Fase 1). UI con disclaimer "proximamente" hasta firmar primer partner.
+   * Ver docs/audit/cleanup-fase1.md.
    */
-  PARTNER_DISCOUNTS: false,
+  PARTNER_DISCOUNTS: true,
 
   /**
    * Landings SEO publicas /insights/* con data agregada anonima
@@ -434,8 +463,13 @@ export const FEATURE_FLAGS = {
   /**
    * Seguros embebidos en la app con aseguradora partner
    * (refactor maestro §7.2). Motor de revenue B2B mas grande.
+   *
+   * ACTIVADO 2026-04-29 PM como DEMO (Pedro decision Checkpoint 1, Plan v5
+   * Fase 1). UI con disclaimer "proximamente" hasta firmar primer partner.
+   * Permite mostrar el motor en pitch + landing. Lead capture sigue activo
+   * via edge fn request-insurance-quote (notifica admin + partner mail dummy).
    */
-  EMBEDDED_INSURANCE: false,
+  EMBEDDED_INSURANCE: true,
 
   /**
    * Pharma insights API + dashboard B2B
@@ -446,8 +480,13 @@ export const FEATURE_FLAGS = {
   /**
    * Retail fulfillment comisionado con partners
    * (refactor maestro §7.4). Requires partners integrados.
+   *
+   * ACTIVADO 2026-04-29 PM como DEMO (Pedro decision Checkpoint 1, Plan v5
+   * Fase 1). UI con disclaimer "proximamente" hasta firmar primer partner.
+   * Tracking de clicks sigue activo (RPC track_retail_click) — util como
+   * primera senal de demanda al firmar partner real.
    */
-  RETAIL_FULFILLMENT: false,
+  RETAIL_FULFILLMENT: true,
 
   /**
    * API publica B2B con auth keys y rate limits

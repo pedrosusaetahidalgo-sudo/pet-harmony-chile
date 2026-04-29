@@ -56,7 +56,7 @@ const MOBILE_NAV_SECTIONS: MobileNavSection[] = [
       {
         icon: Heart,
         label: 'Apoyar',
-        subtitle: 'Donaciones y Paw Member',
+        subtitle: 'Aportes y Paw Member',
         href: '/donaciones',
       },
       {

@@ -2,8 +2,95 @@
 
 > Documento de referencia: cada modulo, sus archivos, flujo end-to-end y oportunidades de mejora.
 > Generado: 2026-04-10. Verificado contra el codigo real.
-> Ultima sync: 2026-04-30 (Motores Revenue Master Plan completos: #1 Pharma · #2 Insurance · #3 Retail · #4-7 Inbound B2B + 5 ideas RICE Paw Shield).
+> Ultima sync: **2026-04-29** (Plan v5 Opcion 3 ejecutado: pivot freemium B2C 3 tiers — Free/Paw Member/Manada — con paywall real PremiumGate wireado en 6 features premium + Manada Fondo Refugios).
 > Anotaciones de rol: owner (O), provider (P), admin (A), compartido (O+P).
+
+---
+
+## Changelog 2026-04-29 — Plan v5 Opcion 3 (pivot freemium 3 tiers)
+
+**Modelo B2C v2.1**: pivot del modelo v2 estricto ("dueno NUNCA paga") a v2.1
+("dueno paga features avanzadas") via freemium B2C de 3 tiers. Razon: COGS
+Petify USD 0.75/mascota Shield activada/mes rompia viabilidad sin partners
+B2B firmados.
+
+**Nuevo paywall real**:
+- Tier Free ($0, 2 mascotas): ficha clinica, recordatorios, calendario, OCR
+  limitado, Pet ID Card basica, QR, memorial, adoption, directorio vets.
+  Sin Paw Shield, Paw Passport, Insights Pro, Audio IA, Reportes >30d.
+- Tier Paw Member ($3.990/mes · $39.900/ano, 4 mascotas): Free + features
+  premium reales. Target conversion 13%.
+- Tier Manada ($9.990/mes · $99.900/ano, 5 mascotas): Paw Member + descuentos
+  exclusivos + soporte prioritario + early access + $2.000/mes a Fondo Paw
+  Friend Refugios (donado por SpA, evita Ley 19.885). Target conversion 2%.
+
+**Componentes nuevos**:
+- [src/components/PremiumGate.tsx](src/components/PremiumGate.tsx) — paywall
+  hard component con upsell card.
+- [src/components/pricing/Tier3Pricing.tsx](src/components/pricing/Tier3Pricing.tsx)
+  — 3 cards Free/Paw Member/Manada con CTA Flow.cl.
+- [src/hooks/useIsManada.ts](src/hooks/useIsManada.ts) — detecta sub Manada.
+- [src/hooks/useManadaAporteSummary.ts](src/hooks/useManadaAporteSummary.ts)
+  — total aportado lifetime + refugio elegido.
+- [src/pages/PawMember.tsx](src/pages/PawMember.tsx) refactor dual mode (free
+  → pricing 3 tiers, member → dashboard con Manada Impact section).
+
+**6 features con PremiumGate wireado**:
+- `paw_shield` en tab Identidad ficha (PetClinicalRecord/index.tsx:753)
+- `paw_passport` en mismo tab Identidad (PetClinicalRecord/index.tsx:780)
+- `audio_notes_ai` en HomePetFocusV2 (banner inline)
+- `insights_pro` en ProDashboard owner view
+- `reports_history_days` en /reportes page-level
+- `max_pets` en AddPet (free con 2 pets → upsell)
+
+**Backend nuevo**:
+- Mig 20260929000000_manada_fondo_refugios.sql — 3 tablas
+  (`manada_refugio_preferences`, `manada_fondo_pool`, `manada_aportes_log`)
+  + 3 RPCs (`set_manada_refugio_preference`, `get_manada_aporte_summary`,
+  `get_manada_fondo_transparency`).
+- Mig 20260929000001_manada_pool_close_cron.sql — RPC
+  `close_manada_pool_for_previous_month` + cron mensual `manada-pool-monthly-close`.
+- Edge fn `flow-create-subscription` actualizada: acepta `paw_manada_monthly`
+  ($9.990) y `paw_manada_yearly` ($99.900). Mapea a `plan_type='paw_manada'`
+  en DB (sin sufijo, ciclo se distingue por `payment_amount_clp`).
+- Edge fn `flow-webhook` actualizada: detecta Manada, activa subscription,
+  INSERT en `manada_aportes_log` con $2.000 (mensual) o $24.000 (anual
+  prorrateado). Idempotencia via UNIQUE `flow_charge_id`.
+- 3 edge fns con `withTelemetry` wrap nuevo: `consultation-prep`,
+  `generate-paw-passport`, `generate-pet-id-card`.
+
+**Speech consistency sweep** (17 archivos): copy alineado al modelo v2.1
+en landing, FAQ, decks pitch, T&C, emails, Tier3Pricing.
+
+**Flag flips**:
+- `EMBEDDED_INSURANCE`, `RETAIL_FULFILLMENT`, `PARTNER_DISCOUNTS` → true
+  (con disclaimer "piloto en marcha · proximamente" en UI).
+- `NOSE_PRINT_ENABLED`, `NOSE_PRINT_PUBLIC_SCAN` → true.
+- `PAW_SHIELD_PETIFY` → false (revertido — Petify API key sigue TEST,
+  enrollments en producción se perderian al rotar PROD).
+- `USER_PREMIUM` → pendiente flipear a true por Pedro cuando QA paywall valide.
+
+**Renames UI**: 25 archivos donde "donaciones/donar/donante" → "aportes/
+aportar/aportante". Tabla DB `donations` se mantiene (regla 9.7). Ruta
+`/aportes` agregada como alias 301 a `/paw-support`.
+
+**Cleanup**:
+- Ruta `/peluquero/perfil` → redirect 301 a `/provider/profile-edit`
+  (groomers son tab nativo en `/services/groomers` desde 2026-04-17).
+- 3 hooks marcados `@deprecated` (useLeadsClinicas, useProviderActivityFeed,
+  usePaymentReminder).
+
+**Docs estrategicos creados** (10 docs en docs-raiz/):
+- MODELO_FINANCIERO_2026_04_29.md (FX 905 + sensibilidad)
+- CAP_TABLE_VALUACION_2026_04_29.md (USD 150k pre-seed + termsheet SAFE)
+- PATH_MRR_2026_04_29.md (8 hitos accionables M$ MRR)
+- BETA_CRITERIA_2026_04_29.md (cohorte 4-6 sem pre-launch)
+- POLISH_QA_E2E_2026_04_29.md (matriz QA 6 flujos criticos)
+- LEGAL_REVIEW_2026_04_29.md (compliance Ley 21.719/19.628 + abogado externo)
+- PITCH_DECK_V2_2026_04_29.md (12 slides definitivos)
+- MANIFESTO_PAW_FRIEND_2026_04_29.md (identidad verbal canonica)
+- OUTREACH_TEMPLATES_B2B_2026_04_29.md (7 motores templates)
+- PETIFY_COGS_CONTINGENCY_2026_04_29.md (Plan A/B/C/D escala)
 
 ---
 
@@ -150,7 +237,8 @@ RoleGuard, edge functions, migraciones SQL, Admin panel.
 | Paw Game, Misiones, Coleccion | O | RoleGuard(owner) |
 | Adopcion, Donantes Sangre, Memorial | O (Labs) | ProtectedRoute |
 | Admin Panel | A | AdminRoute |
-| Analytics Pro, Reportes | O | ProtectedRoute (100% gratis; era PremiumGate antes del pivot 2026-04-19) |
+| Analytics Pro, Reportes | O | ProtectedRoute + PremiumGate (Plan v5 Opcion 3 reactivo paywall 2026-04-29 — feature `insights_pro` y `reports_history_days` requieren Paw Member) |
+| Paw Shield, Paw Passport, Audio IA, 3+ mascotas | O | ProtectedRoute + PremiumGate (Plan v5 — todas requieren Paw Member o Manada) |
 
 ---
 
@@ -403,11 +491,25 @@ Calendario unificado:
   → Tap evento → marcar completado o navegar a detalle
 ```
 
-### Restricciones por plan
-| Feature | Gratis | Premium |
-|---|---|---|
-| Rutinas por mascota | 3 | Ilimitadas |
-| Calendario unificado | Solo hoy | Mes completo |
+### Restricciones por plan (post Plan v5 Opcion 3, 2026-04-29)
+| Feature | Free | Paw Member | Manada |
+|---|---|---|---|
+| Mascotas | 2 | 4 | 5 |
+| Rutinas por mascota | -1 (ilimitadas) | -1 | -1 |
+| Calendario unificado | Mes completo | Mes completo | Mes completo |
+| Recordatorios | -1 (ilimitados) | -1 | -1 |
+| OCR scans/mes | 5 | -1 (ilimitado) | -1 |
+| AI vet assistant/mes | 10 | -1 (ilimitado) | -1 |
+| Paw Shield biometrico | ❌ | ✅ | ✅ |
+| Paw Passport PDF | ❌ | ✅ | ✅ |
+| Insights Pro | ❌ | ✅ | ✅ |
+| Audio notes con IA | ❌ | ✅ | ✅ |
+| Reportes historicos | 30d | -1 (todo) | -1 |
+| Compartir ficha | 30d expira | 365d | 365d |
+| Descuentos Paw Partners | none | basic | exclusive |
+| Soporte prioritario | ❌ | ❌ | ✅ |
+| Early access features | ❌ | ❌ | ✅ |
+| Aporte mensual a refugio | $0 | $0 | $2.000/mes |
 
 ---
 
@@ -689,36 +791,75 @@ Usuario abre PetAssistant (desde ficha clinica o home)
 ## 10. PAGOS Y PLANES <a id="10-pagos"></a>
 
 ```
-Pagos
+Pagos (post Plan v5 Opcion 3, 2026-04-29)
 ├── Paginas
-│   ├── src/pages/Upgrade.tsx                         # Seleccion de plan
-│   ├── src/pages/UpgradeSuccess.tsx                  # Exito
-│   ├── src/pages/UpgradeCancel.tsx                   # Cancelacion
+│   ├── src/pages/PawMember.tsx                       # Dual mode: pricing 3 tiers (free) | dashboard (member)
+│   ├── src/pages/PawMemberSuccess.tsx                # Confirmacion post-Flow
+│   ├── src/pages/PawMemberCancel.tsx                 # Cancelacion Flow
 │   └── src/pages/PaymentResult.tsx                   # Resultado generico
+├── Componentes
+│   ├── src/components/pricing/Tier3Pricing.tsx       # 3 cards (Free/Paw Member/Manada secundaria) + FAQs
+│   ├── src/components/PremiumGate.tsx                # Paywall hard con upsell card (CTA /paw-member)
+│   └── src/components/PremiumNudge.tsx               # Sugerencia soft (no bloquea, navega a /paw-member)
 ├── Hooks
-│   └── src/hooks/usePlan.tsx                         # Plan actual + limites
+│   ├── src/hooks/usePlan.tsx                         # Plan actual + limites (canAccess wrapped)
+│   ├── src/hooks/useIsPawMember.ts                   # Detecta sub Paw Member activa
+│   ├── src/hooks/useIsManada.ts                      # Detecta sub Manada activa (NUEVO 2026-04-29)
+│   └── src/hooks/useManadaAporteSummary.ts           # Total aportado lifetime + refugio elegido (NUEVO)
 ├── Librerias
-│   └── src/lib/plans.ts                              # Definiciones de planes + precios
+│   └── src/lib/plans.ts                              # 3 tiers (free/premium/paw_manada) + helpers
+│                                                     # - normalizePlanId (alias DB↔UI)
+│                                                     # - getPlanLabel (con badge)
+│                                                     # - getRefugioAporteClp (Manada $2.000)
+│                                                     # - findMinUpgradePlan (canAccess upgrade target)
 ├── Edge Functions
-│   ├── supabase/functions/flow-create-subscription/   # Crear suscripcion Flow.cl
-│   ├── supabase/functions/flow-webhook/               # Webhook de Flow.cl
-│   └── supabase/functions/_shared/payment-gateway.ts  # Utilidades pago
+│   ├── supabase/functions/flow-create-subscription/  # Crear suscripcion (acepta paw_manada_monthly/yearly)
+│   ├── supabase/functions/flow-webhook/              # Webhook (Manada → INSERT manada_aportes_log)
+│   └── supabase/functions/_shared/payment-gateway.ts # Utilidades pago
 └── Migraciones
-    ├── supabase/migrations/20260413000000_premium_b2c_flow.sql
-    └── supabase/migrations/20260414000000_flow_hardening.sql
+    ├── supabase/migrations/20260413000000_premium_b2c_flow.sql        # B2C v1
+    ├── supabase/migrations/20260414000000_flow_hardening.sql          # Idempotency
+    ├── supabase/migrations/20260929000000_manada_fondo_refugios.sql   # Plan v5: 3 tablas + 3 RPCs
+    └── supabase/migrations/20260929000001_manada_pool_close_cron.sql  # Plan v5: cron mensual
 ```
 
-### Flujo end-to-end
+### Flujo end-to-end (post Plan v5 Opcion 3, 2026-04-29)
 ```
-Paw Member (B2C voluntario, 2026-04-19+):
-/paw-member → PlanComparisonTableB2C (Gratis vs Paw Member $3.990)
-  → Banner honesto: "NO desbloquea features — solo badge + alianzas"
-  → Click "Hacerme Paw Member" → /donaciones?frecuencia=monthly
-  → flow-create-donation edge function (recurring)
-  → Flow.cl → webhook → is_premium=true + badge 💛
-  → La app sigue 100% gratis para todos (no caps, no gates).
+Paw Member B2C (3 tiers freemium real):
+/paw-member → Tier3Pricing (Free/Paw Member/Manada — Manada secundaria)
+  ├── Free user → ve PRICING con 3 cards
+  └── Paw Member o Manada → ve DASHBOARD activo (Manada Impact section si aplica)
 
-Upgrade B2B Vet:
+Upgrade Free → Paw Member:
+  → Click "Activa Paw Member · $3.990/mes"
+  → flow-create-subscription con plan='monthly' (o 'yearly')
+  → Flow.cl → webhook → apply_premium RPC
+  → subscription.plan_type='premium' + status='active'
+  → 6 features wireadas con PremiumGate desbloquean automatico
+  → (badge 💛 Paw Member)
+
+Upgrade Free → Manada:
+  → Click "Activa Manada · $9.990/mes"
+  → flow-create-subscription con plan='paw_manada_monthly' (o 'paw_manada_yearly')
+  → Flow.cl → webhook → activacion + INSERT manada_aportes_log $2.000
+  → subscription.plan_type='paw_manada' + status='active'
+  → Mismas features Paw Member + descuentos exclusivos + soporte prioritario
+  → User ve dashboard "Tu impacto" con total aportado al Fondo Refugios
+  → (badge 👑 Manada)
+
+PremiumGate wireado en 6 features:
+  → Free user click feature gated → ve card upsell con CTA a /paw-member
+  → Tracking event `pro_panel_upgrade_cta_clicked` con source feature
+
+Manada Fondo Refugios (cron mensual):
+  → Dia 1 de cada mes 03:00 UTC: cron close_manada_pool
+  → Crea manada_fondo_pool row del mes anterior
+  → Asigna pool_id a aportes del periodo
+  → Pedro (admin) consulta SELECT pool WHERE status='pending'
+  → Ejecuta transferencia bancaria a refugios (manual al inicio)
+  → UPDATE pool status='distributed' + distributed_at
+
+Upgrade B2B Vet (sin cambios v2.1):
 /provider/upgrade → PlanComparisonTableVet (4 tiers)
   → Click "Activar" → flow-create-subscription
   → Flow.cl → webhook → provider_plan updated
@@ -726,12 +867,13 @@ Upgrade B2B Vet:
 ```
 
 ### Oportunidades de mejora
-- **Trial 7 dias** de Premium
-- **Planes anuales** con descuento (definidos en plans.ts pero no expuestos en UI)
-- **Planes B2B** en UI (actualmente solo B2C visible)
-- **Dashboard de suscripcion** (ver plan actual, proxima facturacion, cancelar)
-- **Cupones de descuento**
-- **Facturacion** (boleta/factura electronica Chile)
+- **Trial 7 dias** de Paw Member o Manada
+- **Cupones de descuento** (codigo promo)
+- **Facturacion electronica Chile** (configurar SII via Flow.cl o sistema externo Defontana/Bsale)
+- **Self-serve cancelacion** (hoy: link a `pawfriendcl@gmail.com`)
+- **Re-billing intelligence** (recuperar tarjetas expiradas antes de churn)
+- **Pricing experiments** (A/B test $2.990 vs $3.990 para validar elasticidad)
+- **Dashboard externo partner-facing** (Sura/BCI ven sus leads, pharma ven sus impressions)
 
 ---
 

@@ -254,12 +254,12 @@ export default function RefugioPublico() {
                   <div>
                     <p className="text-sm font-semibold text-purple-900">Apoya esta causa</p>
                     <p className="text-xs text-purple-700/80">
-                      Puedes hacer una donacion dirigida a {shelter.legal_name}.
+                      Puedes hacer un aporte dirigido a {shelter.legal_name}.
                     </p>
                   </div>
                 </div>
                 <Button asChild size="sm" className="bg-purple-600 hover:bg-purple-700">
-                  <Link to={`/donaciones?refugio=${shelter.id}`}>Donar</Link>
+                  <Link to={`/donaciones?refugio=${shelter.id}`}>Aportar</Link>
                 </Button>
               </div>
             )}

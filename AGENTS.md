@@ -94,21 +94,39 @@ NO existen: `npm run test`, `npm run typecheck`.
 
 ---
 
-## Pricing
+## Pricing (post Plan v5 Opcion 3, 2026-04-29)
 
-### B2C
-| Plan | Mensual | Anual |
-|---|---|---|
-| Gratis | $0 | $0 |
-| Premium | $3.990 | $39.900 |
+### B2C — freemium 3 tiers con paywall real
+| Plan | Mensual | Anual | Mascotas | Conv target |
+|---|---|---|---|---|
+| Free | $0 | $0 | 2 | 85% MAU |
+| Paw Member 💛 | $3.990 | $39.900 | 4 | 13% (15% pagantes) |
+| Manada 👑 | $9.990 | $99.900 | 5 | 1-2% MAU |
 
-### B2B
-| Plan | Mensual | Comision |
-|---|---|---|
-| Gratis | $0 | 10% |
-| Individual | $9.900 | 12% |
-| Clinica Basica | $29.900 | 10% |
-| Clinica Pro | $59.900 | 0% |
+**Paw Member** desbloquea Paw Shield biometrico + Paw Passport PDF +
+Insights Pro + Audio notes IA + Reportes >30d + descuentos Paw Partners
+basic. Componente paywall: `PremiumGate.tsx`.
+
+**Manada** = Paw Member + descuentos exclusivos + soporte prioritario +
+early access + badge + **$2.000/mes a Fondo Paw Friend Refugios**
+(donacion legal hecha por SpA, evita Ley 19.885).
+
+DB: `subscriptions.plan_type IN ('free', 'premium', 'paw_manada')`. La UI
+muestra "Paw Member" pero el id DB es `'premium'` por compat. Helper
+`normalizePlanId()` mapea entre los dos.
+
+### B2B Vets
+| Plan | Mensual | Comision | Visibilidad |
+|---|---|---|---|
+| Basica (`provider_free`) | $0 | 10% | Publico en /para-veterinarios |
+| Premium (`provider_premium`) ⭐ | $9.900 | 5% | Publico |
+| Clinica (`provider_clinic_starter`) 🏥 | $19.900 | 3% | Escondido (modelo v2: "Empresarial — contactanos") |
+| Pro Max (`provider_pro_max`) 👑 | $29.900 | 0% | Escondido |
+
+### B2B Inbound (7 motores Revenue Master Plan)
+- Pharma · Aseguradoras · Retail · Paw Companys · Gobierno · Banca · Edificios + Long-tail academia
+- Tickets USD 50k-500k/ano segun motor
+- Templates outreach: [docs-raiz/OUTREACH_TEMPLATES_B2B_2026_04_29.md](docs-raiz/OUTREACH_TEMPLATES_B2B_2026_04_29.md)
 
 ---
 

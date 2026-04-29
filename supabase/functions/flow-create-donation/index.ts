@@ -122,7 +122,7 @@ serve(
       const params: Record<string, string> = {
         apiKey: FLOW_API_KEY,
         commerceOrder,
-        subject: 'Donacion a Paw Friend',
+        subject: 'Aporte a Paw Friend',
         currency: 'CLP',
         amount: String(amount),
         email: userEmail,
@@ -185,7 +185,7 @@ serve(
       const msg = error instanceof Error ? error.message : String(error);
       console.error('[flow-create-donation] error', msg);
       return new Response(
-        JSON.stringify({ error: 'No se pudo iniciar la donacion. Intenta en unos minutos.' }),
+        JSON.stringify({ error: 'No se pudo iniciar el aporte. Intenta en unos minutos.' }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
       );
     }

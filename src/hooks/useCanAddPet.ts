@@ -1,12 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { LINKS } from "@/lib/links";
+import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+import { LINKS } from '@/lib/links';
 
 type CanAddPetResult = {
   can: boolean;
-  reason?: "grandfathered" | "premium" | "free_slot" | "premium_required" | "forbidden";
+  reason?: 'grandfathered' | 'premium' | 'free_slot' | 'premium_required' | 'forbidden';
   pet_count: number;
 };
 
@@ -20,10 +20,10 @@ export function useCanAddPet() {
   const { user } = useAuth();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ["can-add-pet", user?.id],
+    queryKey: ['can-add-pet', user?.id],
     enabled: !!user?.id,
     queryFn: async (): Promise<CanAddPetResult> => {
-      const { data, error } = await supabase.rpc("can_add_pet", { p_user_id: user!.id });
+      const { data, error } = await supabase.rpc('can_add_pet', { p_user_id: user!.id });
       if (error) throw error;
       return data as unknown as CanAddPetResult;
     },
@@ -55,8 +55,8 @@ export function useGoToAddPet() {
       navigate(LINKS.addPet());
       return;
     }
-    if (!can && reason === "premium_required") {
-      navigate("/upgrade");
+    if (!can && reason === 'premium_required') {
+      navigate('/paw-member');
       return;
     }
     navigate(LINKS.addPet());

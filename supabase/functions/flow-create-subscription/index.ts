@@ -1,16 +1,23 @@
 /**
  * Edge Function: flow-create-subscription
  *
- * Crea un pago en Flow.cl. Soporta 2 tracks:
- *  - B2C (Paw Member): plan 'monthly' ($3.990) o 'yearly' ($39.900).
- *  - B2B (Vet providers): plan 'provider_premium' ($9.900), 'provider_clinic_starter'
- *    ($19.900) o 'provider_pro_max' ($29.900). Ciclo mensual implicito.
+ * Crea un pago en Flow.cl. Soporta 3 tracks:
+ *  - B2C Paw Member: plan 'monthly' ($3.990) o 'yearly' ($39.900).
+ *  - B2C Manada: plan 'paw_manada_monthly' ($9.990) o 'paw_manada_yearly'
+ *    ($99.900). De cada cobro, $2.000 (o $24.000 anual) se destinan al
+ *    Fondo Paw Friend Refugios (procesado en flow-webhook). Plan v5
+ *    Opcion 3 ejecutado 2026-04-29.
+ *  - B2B (Vet providers): plan 'provider_premium' ($9.900),
+ *    'provider_clinic_starter' ($19.900) o 'provider_pro_max' ($29.900).
  *
- * Body: { plan: 'monthly' | 'yearly' | 'provider_premium' | 'provider_clinic_starter' | 'provider_pro_max' }
+ * Body: { plan: '<plan_id_alguno_de_los_anteriores>' }
  * Resp: { url: string, token: string } | { error }
  *
  * Al confirmar pago, flow-webhook actualiza:
- *  - B2C → donations.status='paid' (Paw Member badge)
+ *  - B2C Paw Member → donations.status='paid' (Paw Member badge) +
+ *    subscriptions.plan_type='premium'
+ *  - B2C Manada → subscriptions.plan_type='paw_manada' + INSERT
+ *    en manada_aportes_log con amount_clp=2000 y flow_charge_id
  *  - B2B → service_providers.provider_plan + plan_started_at + plan_expires_at
  */
 
@@ -31,6 +38,9 @@ const PRICES: Record<string, number> = {
   // B2C Paw Member
   monthly: 3990,
   yearly: 39900,
+  // B2C Manada (Plan v5 Opcion 3, 2026-04-29)
+  paw_manada_monthly: 9990,
+  paw_manada_yearly: 99900,
   // B2B Vet providers (mensual)
   provider_premium: 9900,
   provider_clinic_starter: 19900,
@@ -38,10 +48,24 @@ const PRICES: Record<string, number> = {
 };
 
 const B2B_PLANS = new Set(['provider_premium', 'provider_clinic_starter', 'provider_pro_max']);
+const MANADA_PLANS = new Set(['paw_manada_monthly', 'paw_manada_yearly']);
+
+/**
+ * Mapea el plan request al plan_type que se guarda en `subscriptions`.
+ * Manada en cualquier ciclo (mensual/anual) se guarda como 'paw_manada'
+ * para que las RPCs como get_manada_aporte_summary y useIsManada filtren
+ * sin LIKE. El monto distingue ciclo (payment_amount_clp).
+ */
+function getDbPlanType(plan: string): string {
+  if (MANADA_PLANS.has(plan)) return 'paw_manada';
+  return plan;
+}
 
 const PLAN_SUBJECTS: Record<string, string> = {
   monthly: 'Paw Friend — Paw Member mensual',
   yearly: 'Paw Friend — Paw Member anual',
+  paw_manada_monthly: 'Paw Friend — Plan Manada mensual',
+  paw_manada_yearly: 'Paw Friend — Plan Manada anual',
   provider_premium: 'Paw Friend — Plan Premium vet',
   provider_clinic_starter: 'Paw Friend — Plan Clínica',
   provider_pro_max: 'Paw Friend — Plan Pro Max',
@@ -117,12 +141,14 @@ serve(
       const plan = body?.plan as string | undefined;
       if (!plan || !(plan in PRICES)) {
         throw new Error(
-          "Invalid plan: must be 'monthly', 'yearly', 'provider_premium', 'provider_clinic_starter' or 'provider_pro_max'"
+          "Invalid plan: must be 'monthly', 'yearly', 'paw_manada_monthly', 'paw_manada_yearly', 'provider_premium', 'provider_clinic_starter' or 'provider_pro_max'"
         );
       }
       const amount = PRICES[plan];
       const isB2B = B2B_PLANS.has(plan);
-      const orderType = isB2B ? 'b2b_vet' : 'b2c_paw_member';
+      const isManada = MANADA_PLANS.has(plan);
+      const dbPlanType = getDbPlanType(plan);
+      const orderType = isB2B ? 'b2b_vet' : isManada ? 'b2c_manada' : 'b2c_paw_member';
 
       // Para B2B verificamos que el user tenga un service_providers row activo
       if (isB2B) {
@@ -136,19 +162,25 @@ serve(
         }
       }
 
-      // Idempotencia: si ya existe una subscription pendiente reciente (<5 min), reutilizar
+      // Idempotencia: si ya existe una subscription pendiente reciente (<5 min), reutilizar.
+      // Para Manada matcheamos por dbPlanType ('paw_manada') porque las subs
+      // de Manada tanto mensual como anual se guardan con plan_type='paw_manada'
+      // (ciclo se distingue por payment_amount_clp). Para los demas planes,
+      // plan_type === plan request.
       const { data: existingPending } = await supabase
         .from('subscriptions')
-        .select('payment_provider_id')
+        .select('payment_provider_id, payment_amount_clp')
         .eq('user_id', userId)
-        .eq('plan_type', plan)
+        .eq('plan_type', dbPlanType)
         .eq('status', 'pending')
         .gt('start_date', new Date(Date.now() - 5 * 60 * 1000).toISOString())
         .order('start_date', { ascending: false })
         .limit(1)
         .maybeSingle();
 
-      if (existingPending?.payment_provider_id) {
+      // Solo reusar si el pending matchea el monto exacto (Manada mensual vs anual
+      // usan el mismo plan_type pero distinto payment_amount_clp).
+      if (existingPending?.payment_provider_id && existingPending.payment_amount_clp === amount) {
         console.log(
           '[flow-create-subscription] reusing pending subscription',
           existingPending.payment_provider_id
@@ -162,11 +194,19 @@ serve(
         );
       }
 
-      const orderPrefix = isB2B ? 'PFB2B' : 'PF';
+      const orderPrefix = isB2B ? 'PFB2B' : isManada ? 'PFMAN' : 'PF';
       const commerceOrder = `${orderPrefix}-${userId.slice(0, 8)}-${Date.now()}`;
 
-      // Optional contexto que se nos devuelve en el callback (Flow lo pasa al webhook)
-      const optional = JSON.stringify({ user_id: userId, plan, order_type: orderType });
+      // Optional contexto que se nos devuelve en el callback (Flow lo pasa al webhook).
+      // Incluye db_plan_type para que el webhook sepa si es Manada y dispare
+      // el INSERT en manada_aportes_log.
+      const optional = JSON.stringify({
+        user_id: userId,
+        plan,
+        order_type: orderType,
+        db_plan_type: dbPlanType,
+        is_manada: isManada,
+      });
 
       // URLs de retorno limpias (Lote D auditoría pre-launch 2026-04-20, Opción B).
       // Legacy /upgrade/success y /upgrade/cancel redirigen via 301 a /paw-member/*
@@ -217,11 +257,14 @@ serve(
       }
 
       // Registramos un subscription pendiente para tener trazabilidad.
-      // Tanto B2C (monthly/yearly) como B2B (provider_*) usan la misma tabla
-      // con order_type como discriminador (agregado en mig 20260712040000).
+      // Tanto B2C como B2B usan la misma tabla con order_type como discriminador.
+      // Manada (paw_manada_monthly/yearly) se guarda con plan_type='paw_manada'
+      // (sin sufijo) — el ciclo se distingue por payment_amount_clp ($9.990 vs
+      // $99.900). Asi las RPCs y useIsManada filtran por plan_type='paw_manada'
+      // sin LIKE.
       await supabase.from('subscriptions').insert({
         user_id: userId,
-        plan_type: plan,
+        plan_type: dbPlanType,
         order_type: orderType,
         status: 'pending',
         start_date: new Date().toISOString(),

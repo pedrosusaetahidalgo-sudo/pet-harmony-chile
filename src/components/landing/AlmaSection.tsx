@@ -16,7 +16,7 @@ import { ALMA } from './content/copy';
 import { RevealSection } from './RevealSection';
 
 const SUSTAIN = [
-  { icon: Heart, label: 'Donaciones voluntarias', color: 'text-rose-500 bg-rose-50' },
+  { icon: Heart, label: 'Aportes voluntarios', color: 'text-rose-500 bg-rose-50' },
   { icon: PawPrint, label: 'Paw Member ($3.990 voluntario)', color: 'text-amber-600 bg-amber-50' },
   { icon: Stethoscope, label: 'Planes para vets', color: 'text-emerald-600 bg-emerald-50' },
   { icon: Building2, label: 'Paw Companys (sponsors)', color: 'text-orange-600 bg-orange-50' },
@@ -181,7 +181,7 @@ function FounderPlaceholder() {
             <p className="text-[10px] font-semibold uppercase tracking-wider text-rose-600">
               Modelo
             </p>
-            <p className="text-xs font-bold text-foreground">Gratis para siempre</p>
+            <p className="text-xs font-bold text-foreground">Lo esencial gratis</p>
           </div>
         </div>
       </div>

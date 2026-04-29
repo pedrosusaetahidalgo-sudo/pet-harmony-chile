@@ -176,23 +176,27 @@ serve(
 
       // ───────────────────────────────────────────────────────────────
 
-      // Parsear optional: necesitamos distinguir donacion vs subscription
+      // Parsear optional: necesitamos distinguir donacion/aporte vs subscription
       let userId: string | null = null;
       let plan: string | null = null;
       let paymentType: string | null = null;
       let orderType: string | null = null;
+      let dbPlanType: string | null = null;
       try {
         const optional = JSON.parse(statusJson.optional ?? '{}');
         userId = optional.user_id ?? null;
         plan = optional.plan ?? null;
         paymentType = optional.type ?? null;
         orderType = optional.order_type ?? null;
+        dbPlanType = optional.db_plan_type ?? null;
       } catch {
         // ignorar
       }
 
       const isDonation = paymentType === 'donation';
       const isB2B = orderType === 'b2b_vet';
+      const isManada =
+        orderType === 'b2c_manada' || plan === 'paw_manada_monthly' || plan === 'paw_manada_yearly';
 
       // status: 1=pendiente, 2=pagada, 3=rechazada, 4=anulada
       if (statusCode !== 2) {
@@ -324,6 +328,91 @@ serve(
           .eq('status', 'pending');
 
         console.log('[flow-webhook] b2b vet plan activated', { userId, plan, amount, token });
+        await markOutcome('ok');
+        return new Response('ok', { status: 200 });
+      }
+
+      // ─────────────────────────────────────────────────────────────────
+      // B2C MANADA (Plan v5 Opcion 3, 2026-04-29)
+      // Activa la suscripcion paw_manada + INSERTa en manada_aportes_log
+      // con $2.000 al Fondo Paw Friend Refugios (mensual). Para anual,
+      // el aporte equivalente se prorratea: $24.000 al cobrar el ano.
+      // El cron mensual `close_manada_pool_for_previous_month` (futuro)
+      // consolida el pool. Pedro (admin) hace transferencia bancaria a
+      // refugios.
+      // ─────────────────────────────────────────────────────────────────
+      if (isManada) {
+        const validManadaPlans = ['paw_manada_monthly', 'paw_manada_yearly'];
+        if (!plan || !validManadaPlans.includes(plan)) {
+          console.error('[flow-webhook] invalid Manada plan', plan);
+          await markOutcome('skipped', `invalid Manada plan: ${plan}`);
+          return new Response('invalid Manada plan', { status: 400 });
+        }
+
+        const isYearly = plan === 'paw_manada_yearly';
+        const now = new Date();
+        const expiresAt = new Date(now.getTime() + (isYearly ? 365 : 30) * 24 * 60 * 60 * 1000);
+        // Aporte al fondo: $2.000/mes mensual o $24.000/ano (12 x $2.000) en el cobro anual
+        const aporteClp = isYearly ? 24000 : 2000;
+
+        // Activar la subscription (plan_type='paw_manada' setteado al insert)
+        const { error: subErr } = await supabaseAdmin
+          .from('subscriptions')
+          .update({
+            status: 'active',
+            start_date: now.toISOString(),
+            end_date: expiresAt.toISOString(),
+          })
+          .eq('payment_provider_id', token)
+          .eq('status', 'pending');
+
+        if (subErr) {
+          console.error('[flow-webhook] manada subscription update failed', subErr);
+          await markOutcome('failed', subErr.message);
+          return new Response('manada update failed', { status: 500 });
+        }
+
+        // Buscar el refugio elegido (si tiene preferencia)
+        let shelterId: string | null = null;
+        try {
+          const { data: prefRow } = await supabaseAdmin
+            .from('manada_refugio_preferences')
+            .select('preferred_shelter_id')
+            .eq('user_id', userId)
+            .maybeSingle();
+          shelterId = prefRow?.preferred_shelter_id ?? null;
+        } catch (prefErr) {
+          console.warn('[flow-webhook] manada preferred shelter lookup failed', prefErr);
+        }
+
+        // INSERT en manada_aportes_log con UNIQUE(flow_charge_id) para idempotencia
+        const { error: aporteErr } = await supabaseAdmin.from('manada_aportes_log').insert({
+          user_id: userId,
+          shelter_id_at_charge: shelterId,
+          amount_clp: aporteClp,
+          flow_charge_id: token,
+          charged_at: now.toISOString(),
+        });
+
+        if (aporteErr) {
+          // Si conflict UNIQUE, es un duplicate webhook ya procesado a este nivel
+          const isConflict =
+            aporteErr.code === '23505' || /duplicate key/i.test(aporteErr.message ?? '');
+          if (!isConflict) {
+            console.error('[flow-webhook] manada_aportes_log insert failed', aporteErr);
+            // No fallar el webhook entero — la subscription ya esta activa.
+            // Pedro puede backfillear el log manualmente si hace falta.
+          }
+        }
+
+        console.log('[flow-webhook] manada plan activated + aporte logged', {
+          userId,
+          plan,
+          amount,
+          aporteClp,
+          shelterId,
+          token,
+        });
         await markOutcome('ok');
         return new Response('ok', { status: 200 });
       }
