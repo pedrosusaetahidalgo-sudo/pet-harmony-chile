@@ -1,108 +1,85 @@
-# Paw Friend assets v2 — Tanda P0 (27 SVGs · master-aligned)
+# Paw Friend assets v2 — bundle completo
 
-**Generado:** 29 abr 2026 · **Bundle size:** 109 KB
+**102 SVGs · 7 documentos · 21 secciones del brief cubiertas**  
+Bundle alineado al master icon + wordmark de referencia.
 
-## Construcción master (verificada)
+## Master spec aplicada en todos los SVGs
 
-Todos los assets que muestran el isotipo Paw Friend usan estos parámetros canónicos
-extraídos del archivo master `paw_friend_icon_principal.svg`:
+- **Squircle iOS** (no rect rx): `M 340 40 C 540 40, 640 140, 640 340 ...`
+- **Fondo:** `#9333EA` sólido (excepto variantes gold/investor)
+- **Patitas:** 4 elipses con rotaciones específicas en `cx=200/288/392/480 cy=270/180`
+- **Pad central:** elipse `cx=340 cy=430 rx=155 ry=135` con corazón vaciado por mask
+- **Wordmark:** "paw" Fredoka 600 #6B21A8 + "friend" Fredoka 500 #9333EA
+- **Tipografía:** Fredoka (display) · Plus Jakarta Sans (body) · JetBrains Mono (mono)
 
-```
-viewBox: 680×680
-squircle path: M 340 40 C 540 40, 640 140, 640 340 C 640 540, 540 640, 340 640
-               C 140 640, 40 540, 40 340 C 40 140, 140 40, 340 40 Z
-fondo: #9333EA  (sólido — NO gradient salvo gold/investor)
-mark fill: #FFFFFF
-
-toes (4 ellipses):
-  cx=200 cy=270 rx=55 ry=68  rotate(-22)
-  cx=288 cy=180 rx=50 ry=62  rotate(-10)
-  cx=392 cy=180 rx=50 ry=62  rotate(10)
-  cx=480 cy=270 rx=55 ry=68  rotate(22)
-
-main pad: ellipse cx=340 cy=430 rx=155 ry=135  (con mask heart-cutout)
-
-heart (negative space):
-  M 340 480 C 332 470, 318 460, 310 450 C 302 440, 305 425, 318 422
-  C 327 420, 335 425, 340 432 C 345 425, 353 420, 362 422
-  C 375 425, 378 440, 370 450 C 362 460, 348 470, 340 480 Z
-
-wordmark:
-  "paw"     Fredoka 600  fill=#6B21A8  letter-spacing=-1.5
-  "friend"  Fredoka 500  fill=#9333EA  letter-spacing=-1.5
-```
-
-## Estructura de archivos
+## Estructura
 
 ```
 paw-friend-assets-v2/
-├── logo/                                      [§3.1]
-│   ├── paw_friend_mark_square.svg             (680×680 · master con squircle)
-│   ├── paw_friend_wordmark_vertical.svg       (400×500 · mark + paw friend stacked)
-│   ├── paw_friend_lockup_tagline.svg          (800×200 · horizontal + tagline)
-│   ├── paw_friend_icon_gold.svg               (680×680 · gold gradient para Member)
-│   └── paw_friend_sticker.svg                 (680×680 · outline only / monocroma)
-│
-├── icons/brand-squircle/                      [§3.2 · 200×200 rx 40]
-│   ├── 31_donation.svg                        (gold gradient · paw + heart)
-│   ├── 32_shield_data.svg                     (purple · escudo + candado + chispa)
-│   ├── 33_ai_brain.svg                        (purple · cerebro + circuito + estrella)
-│   ├── 34_map_pin_paw.svg                     (emerald · pin con master paw inside)
-│   ├── 35_pdf_record.svg                      (purple · doc esquina doblada + tag PDF)
-│   ├── 36_handshake_paws.svg                  (emerald · 2 patas estrechadas)
-│   ├── 37_invoice.svg                         (purple · recibo + sello rosa)
-│   ├── 38_shelter.svg                         (emerald · casa chueca + master paw)
-│   ├── 39_badge_member.svg                    (gold gradient · escudo + crown + master paw)
-│   └── 40_qr_code_paw.svg                     (purple · QR + master paw central)
-│
-├── public/favicon/
-│   └── favicon.svg                            (32×32 · iOS-style squircle path)              [§3.4]
-│
-├── public/brand-assets/store-listings/
-│   ├── app-store/icon_1024.svg                (1024×1024 sólido · sin clip · iOS aplica máscara)  [§5.1]
-│   ├── play-store/feature_graphic_1024x500.svg (split panel + phone mockup ficha)             [§5.5]
-│   └── splash/                                                                                [§5.3]
-│       ├── splash_iphone_1290x2796.svg
-│       ├── splash_iphone_1170x2532.svg
-│       ├── splash_ipad_2048x2732.svg
-│       ├── splash_android_1080x1920.svg
-│       ├── splash_android_1440x2560.svg
-│       └── splash_tablet_1600x2560.svg
-│
-├── android/                                   [§5.2]
-│   ├── adaptive-foreground/adaptive_foreground.svg  (432×432 · master mark en safe-zone)
-│   └── adaptive-background/adaptive_background.svg  (432×432 · sólido #9333EA)
-│
-└── public/brand-assets/presentations/investor-kit/
-    └── deck_cover_investors.svg               (1920×1080 · gradient cinematográfico)         [§7.1]
+├── logo/                           # §3.1 — 5 variantes
+├── icons/
+│   ├── brand-squircle/             # §3.2 — 10 iconos concepto
+│   └── categories/                 # §3.3 — 4 audiences B2B
+├── public/
+│   ├── favicon/                    # §3.4
+│   └── brand-assets/
+│       ├── illustrations/
+│       │   ├── hero/               # §4.1
+│       │   ├── empty-states/       # §4.2 — 6
+│       │   └── onboarding/         # §4.3 — 5
+│       ├── badges/                 # §4.4 — 4 seals
+│       ├── mockups/dashboards/     # §4.5 — Bronze/Silver/Gold
+│       ├── store-listings/
+│       │   ├── app-store/          # §5.1 + §5.4 — icon + 6 screenshots
+│       │   ├── play-store/         # §5.5 + §5.6 — feature + 8 screenshots
+│       │   └── splash/             # §5.3 — 6 splash
+│       ├── social/
+│       │   ├── instagram/feed/     # §6.1 — 6
+│       │   ├── instagram/stories/  # §6.2 — 4
+│       │   ├── tiktok/             # §6.3 — 4
+│       │   ├── youtube/            # §6.4 — 4
+│       │   ├── whatsapp/           # §6.5 — 9
+│       │   └── facebook/           # §6.6 — 3
+│       ├── presentations/
+│       │   ├── investor-kit/       # §7.1 — deck cover
+│       │   ├── partner-kit/        # §7.4 + §7.5 — one-pager HTML + banner
+│       │   └── paw-voice-kit/      # §7.6 — 4 assets creator
+│       ├── press-kit/              # §8.1 — release MD + fact sheet HTML + quotes + B2B emails
+│       ├── email-templates/        # §9.1 + §9.2 — welcome + newsletter
+│       └── patterns/               # §10.1 — 3 patterns
+└── android/
+    ├── adaptive-foreground/        # §5.2
+    └── adaptive-background/        # §5.2
 ```
 
-## Notas críticas de exportación
+## Notas importantes
 
-### iOS App Icon (`icon_1024.svg`)
-- **Submission requiere PNG.** El SVG es `1024×1024` SÓLIDO sin clip path porque iOS 17+ aplica
-  su propia máscara squircle automáticamente. NO incluir esquinas redondeadas.
-- Convertir: `rsvg-convert -w 1024 -h 1024 icon_1024.svg > icon_1024.png` (instalar `librsvg2-bin`)
-  o abrir en Sketch/Figma → exportar PNG.
+- **App Store + Play Store screenshots** son **templates** — la zona dashed
+  reservada (736×1376 iOS / 544×904 Android) es donde va la captura real
+  de la app cuando esté lista.
+- **Email templates** entregados como **HTML email-safe** (table layout +
+  inline styles) en lugar de MJML. El brief sugería MJML pero el HTML
+  generado es directamente usable y ya tiene los breakpoints + fallbacks
+  Arial/Helvetica para Outlook/Gmail/Apple Mail.
+- **Founder photos + product screenshots reales** del press kit (§8.1
+  punto 5 y 6) requieren captura real — quedan fuera del scope generativo.
+- **Variables** en emails: `{{name}}`, `{{pet_name}}`, `{{email}}`, `{{month}}`.
+- **Variables** en B2B emails: `{{contacto}}`, `{{empresa}}`, `{{calendar_link}}`,
+  `{{deck_link}}`.
 
-### Android Adaptive Icon
-- `adaptive_foreground.svg` lleva el mark dentro de la safe-zone 264×264 centrada.
-- `adaptive_background.svg` es solo color sólido (Android compone los dos via launcher mask).
-- Importar ambos via Android Studio → Image Asset Studio → Adaptive icon.
+## Datos canónicos legales
 
-### Splash screens
-- Cada SVG tiene aspect-ratio nativo del device target — convertir a PNG en su resolución exacta.
-- Para Capacitor: ubicar PNGs en `resources/splash/` y ejecutar `npx capacitor-resources`.
+- Razón social: SUSAETA GARNHAM SOFTWARE ENGINEERING SpA
+- RUT: 78.328.659-9
+- Founder: Paw Founder
+- Sede: Vitacura, Santiago de Chile
+- Fundación: 2026
+- URL: pawfriend.cl
+- Contacto: pawfriendcl@gmail.com
+- Stack: React + TypeScript + Vite + Supabase + Capacitor
+- Lanzamiento: junio 2026
+- Seed: USD $150k cap $1.2M
 
-### Favicon
-- Reemplazar `public/favicon.svg` directo en el repo.
-- Generar adicionalmente `favicon.ico` 32×32 + `apple-touch-icon.png` 180×180 desde el SVG.
+---
 
-## Pendientes — siguientes olas
-
-| Ola | Sección | Output | Tiempo |
-|---|---|---|---|
-| 2 | §3.3 audience icons + §4.4 badges seals + §4.2 empty states | 14 SVGs | 60 min |
-| 3 | §4.1 hero + §4.3 onboarding + §4.5 dashboards | 9 SVGs (más complejos) | 90 min |
-| 4 | §6.1 IG feed + §6.2 IG stories + §6.3 TikTok | 14 SVGs | 75 min |
-| 5 | §6.4 YouTube + §6.5 WhatsApp + §6.6 Facebook | 16 SVGs | 75 min |
+Hecho en Chile · Sostenido por la comunidad B2B

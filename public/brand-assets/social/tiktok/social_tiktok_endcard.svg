@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="TikTok end card">
+  <title>TikTok end card</title>
+  <defs>
+    <radialGradient id="tte" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#3b0764"/>
+    </radialGradient>
+    <radialGradient id="tteg" cx="50%" cy="50%" r="40%">
+      <stop offset="0%" stop-color="#fde047" stop-opacity=".5"/>
+      <stop offset="100%" stop-color="#fde047" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#tte)"/>
+  <!-- Gold pulse rings around mark -->
+  <g transform="translate(540 800)">
+    <circle r="380" fill="url(#tteg)"/>
+    <circle r="280" fill="none" stroke="#fde047" stroke-width="2" opacity=".4"/>
+    <circle r="320" fill="none" stroke="#fde047" stroke-width="1" opacity=".25"/>
+    <!-- Big mark -->
+    <g transform="scale(0.7) translate(-340 -340)">
+      <g fill="#fff">
+        <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+        <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+        <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+        <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+        <ellipse cx="340" cy="430" rx="155" ry="135"/>
+      </g>
+    </g>
+  </g>
+  <text x="540" y="1380" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="76" letter-spacing="-2">
+    <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+  </text>
+  <text x="540" y="1450" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="22" fill="#fde047" opacity=".75">pawfriend.cl</text>
+  <!-- Bottom CTA -->
+  <g transform="translate(540 1640)">
+    <rect x="-260" y="-50" width="520" height="100" rx="50" fill="#fde047"/>
+    <text y="14" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="38" fill="#581c87">Descargar la app</text>
+  </g>
+</svg>

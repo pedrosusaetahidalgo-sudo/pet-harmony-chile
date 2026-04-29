@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1005" role="img" aria-label="FB event">
+  <title>FB event</title>
+  <defs>
+    <radialGradient id="fbe" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="55%" stop-color="#7e22ce"/>
+      <stop offset="100%" stop-color="#3b0764"/>
+    </radialGradient>
+    <radialGradient id="fbe-glow" cx="78%" cy="22%" r="40%">
+      <stop offset="0%" stop-color="#fde047" stop-opacity=".3"/>
+      <stop offset="100%" stop-color="#fde047" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1005" fill="url(#fbe)"/>
+  <rect width="1920" height="1005" fill="url(#fbe-glow)"/>
+  <text x="160" y="180" font-family="Fredoka, sans-serif" font-weight="500" font-size="28" fill="#fde047" letter-spacing="6">EVENTO · LANZAMIENTO</text>
+  <g transform="translate(160 260)">
+    <text font-family="Fredoka, sans-serif" font-weight="600" font-size="120" fill="#fff" letter-spacing="-3">
+      <tspan x="0">Paw Friend</tspan>
+      <tspan x="0" dy="140" fill="#fde047">junio 2026</tspan>
+    </text>
+    <text x="0" y="600" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="28" fill="#e9d5ff">Lanzamiento oficial · Vitacura, Santiago · 18:00 hrs</text>
+  </g>
+  <!-- Big mark right -->
+  <g transform="translate(1500 502) scale(0.6) translate(-340 -340)">
+    <g fill="#fff" opacity=".4">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+  </g>
+  <text x="1840" y="950" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="20" fill="#fde047" opacity=".7">pawfriend.cl/lanzamiento</text>
+</svg>

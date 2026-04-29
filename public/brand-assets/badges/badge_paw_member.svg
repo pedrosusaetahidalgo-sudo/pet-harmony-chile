@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Paw Member badge">
+  <title>Paw Member</title>
+  <defs>
+    <linearGradient id="bm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#eab308"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="36" ry="36" fill="url(#bm)"/>
+  <text x="100" y="46" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="11" fill="#fde047" letter-spacing="3">MEMBER</text>
+  <g fill="#fff" transform="translate(48 70) scale(0.15)">
+    <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+    <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+    <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+    <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+    <ellipse cx="340" cy="430" rx="155" ry="135"/>
+  </g>
+  <text x="100" y="184" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7" fill="#fde047" opacity=".7" letter-spacing="2">PAW FRIEND</text>
+</svg>

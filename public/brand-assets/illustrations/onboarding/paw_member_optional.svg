@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-label="Paw Member opcional">
+  <title>Paw Member opcional</title>
+  <defs>
+    <linearGradient id="pmo-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#faf5ff"/>
+      <stop offset="100%" stop-color="#fef3c7"/>
+    </linearGradient>
+    <linearGradient id="pmo-bd" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#eab308"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#pmo-bg)"/>
+  <ellipse cx="300" cy="360" rx="120" ry="10" fill="#9333EA" opacity=".15"/>
+  <g transform="translate(300 180)">
+    <!-- Big member badge -->
+    <rect x="-70" y="-90" width="140" height="160" rx="22" fill="url(#pmo-bd)"/>
+    <text x="0" y="-66" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="11" fill="#fde047" letter-spacing="3">MEMBER</text>
+    <g fill="#fff" transform="translate(-32 -50) scale(0.094)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="0" y="58" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="8" fill="#fde047" opacity=".75" letter-spacing="2">PAW FRIEND</text>
+    <!-- Heart accent -->
+    <path d="M 80 -94 C 76 -98, 68 -98, 64 -90 C 60 -98, 52 -98, 48 -94 C 44 -88, 52 -78, 64 -68 C 76 -78, 84 -88, 80 -94 Z" fill="#ec4899"/>
+  </g>
+  <!-- "No gracias OK" hint -->
+  <g transform="translate(300 330)">
+    <rect x="-90" y="-18" width="180" height="36" rx="18" fill="#fff" stroke="#9333EA" stroke-width="2" stroke-dasharray="4 3"/>
+    <text x="0" y="6" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="14" fill="#9333EA">opcional · "no gracias" OK</text>
+  </g>
+</svg>

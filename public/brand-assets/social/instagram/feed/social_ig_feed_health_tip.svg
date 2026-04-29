@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="IG feed — health tip">
+  <title>IG feed health tip</title>
+  <rect width="1080" height="1080" fill="#faf5ff"/>
+  <rect x="60" y="60" width="960" height="900" rx="32" fill="#fff" stroke="#e9d5ff" stroke-width="3"/>
+  <!-- Big icon -->
+  <g transform="translate(540 240)">
+    <rect x="-90" y="-90" width="180" height="180" rx="40" fill="#9333EA"/>
+    <g fill="#fff" transform="scale(0.21) translate(-340 -340)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+  </g>
+  <text x="540" y="450" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="20" fill="#9333EA" letter-spacing="3">TIP DE SALUD</text>
+  <text x="540" y="510" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="46" fill="#1a102b" letter-spacing="-1.5">3 vacunas que no fallan</text>
+  <!-- Bullets -->
+  <g transform="translate(160 600)" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" fill="#1a102b">
+    <g transform="translate(0 0)">
+      <circle r="14" fill="#10b981"/>
+      <path d="M -7 0 L -2 6 L 8 -6" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="34" y="8" font-weight="600">Antirrábica · obligatoria anual</text>
+    </g>
+    <g transform="translate(0 80)">
+      <circle r="14" fill="#10b981"/>
+      <path d="M -7 0 L -2 6 L 8 -6" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="34" y="8" font-weight="600">Séxtuple · cubre 6 enfermedades</text>
+    </g>
+    <g transform="translate(0 160)">
+      <circle r="14" fill="#10b981"/>
+      <path d="M -7 0 L -2 6 L 8 -6" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="34" y="8" font-weight="600">Bordetella · si va a guardería</text>
+    </g>
+  </g>
+  <text x="540" y="900" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#9333EA">Guarda este post · @pawfriend_cl</text>
+</svg>

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="WA catalog — Paw Member">
+  <title>WA catalog Paw Member</title>
+  <defs>
+    <linearGradient id="wam" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#faf5ff"/>
+      <stop offset="100%" stop-color="#fef3c7"/>
+    </linearGradient>
+    <linearGradient id="wamg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#eab308"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#wam)"/>
+  <rect x="40" y="40" width="1000" height="900" rx="32" fill="#fff" stroke="#fde047" stroke-width="3"/>
+  <text x="540" y="160" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="22" fill="#eab308" letter-spacing="3">PAW MEMBER · OPCIONAL</text>
+  <text x="540" y="226" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="58" fill="#1a102b" letter-spacing="-2">Soporta el ecosistema</text>
+  <!-- Big member badge -->
+  <g transform="translate(540 540)">
+    <rect x="-160" y="-200" width="320" height="380" rx="32" fill="url(#wamg)"/>
+    <text x="0" y="-150" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="18" fill="#fde047" letter-spacing="3">MEMBER</text>
+    <g fill="#fff" transform="translate(-72 -120) scale(0.21)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="0" y="148" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="12" fill="#fde047" opacity=".75" letter-spacing="2">PAW FRIEND</text>
+  </g>
+  <text x="540" y="868" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="20" fill="#1a102b">3 meses gratis · cancela cuando quieras</text>
+  <g transform="translate(60 1020)">
+    <g fill="#9333EA" transform="scale(0.05)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="50" y="32" font-family="Fredoka, sans-serif" font-size="22" letter-spacing="-1.5">
+      <tspan fill="#6B21A8" font-weight="600">paw</tspan><tspan fill="#9333EA" font-weight="500"> friend</tspan>
+    </text>
+    <text x="900" y="32" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" fill="#9333EA" opacity=".7">pawfriend.cl</text>
+  </g>
+</svg>

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1640 664" role="img" aria-label="FB cover">
+  <title>FB cover</title>
+  <defs>
+    <linearGradient id="fbc" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#3b0764"/>
+    </linearGradient>
+    <pattern id="fbc-paws" x="0" y="0" width="160" height="160" patternUnits="userSpaceOnUse">
+      <g fill="#fff" opacity=".05" transform="translate(40 40) scale(0.1)">
+        <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+        <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+        <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+        <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+        <ellipse cx="340" cy="430" rx="155" ry="135"/>
+      </g>
+    </pattern>
+  </defs>
+  <rect width="1640" height="664" fill="url(#fbc)"/>
+  <rect width="1640" height="664" fill="url(#fbc-paws)"/>
+  <!-- Profile pic safe spot left (avoid this area bg detail) -->
+  <circle cx="200" cy="540" r="80" fill="#fff" opacity=".05"/>
+  <!-- Content centered, avoid bottom 110px on mobile -->
+  <g transform="translate(820 280)" text-anchor="middle">
+    <g fill="#fff" transform="translate(0 -180) scale(0.3) translate(-340 -340)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text y="90" font-family="Fredoka, sans-serif" font-size="78" letter-spacing="-2.5">
+      <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+    </text>
+    <text y="130" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="20" fill="#e9d5ff">La ficha médica de tu mascota · gratis · hecho en Chile</text>
+  </g>
+</svg>

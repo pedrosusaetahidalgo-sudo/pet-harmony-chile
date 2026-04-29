@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1290 2796" role="img" aria-label="Paw Friend splash">
+  <title>Paw Friend — splash 1290x2796</title>
+  <defs>
+    <mask id="hc-splash_iphone_1290x2796">
+      <rect width="1290" height="2796" fill="white"/>
+      <ellipse cx="645.0" cy="1409.9" rx="13.3" ry="13.3" fill="white"/>
+      <path d="M 645.0 1416.0 c -3.79 -4.74, -10.43 -9.49, -14.23 -14.23 c -3.79 -4.74, -2.37 -11.86, 3.79 -13.28 c 4.27 -0.95, 8.06 1.42, 10.43 4.74 c 2.37 -3.32, 6.17 -5.69, 10.43 -4.74 c 6.17 1.42, 7.59 8.54, 3.79 13.28 c -3.79 4.74, -10.43 9.49, -14.23 14.23 z" fill="black"/>
+    </mask>
+  </defs>
+  <rect width="1290" height="2796" fill="#9333EA"/>
+  <g fill="#fff">
+    <ellipse cx="578.6" cy="1316.4" rx="26.1" ry="32.2" transform="rotate(-22 578.6 1316.4)"/>
+    <ellipse cx="620.3" cy="1273.7" rx="23.7" ry="29.4" transform="rotate(-10 620.3 1273.7)"/>
+    <ellipse cx="669.7" cy="1273.7" rx="23.7" ry="29.4" transform="rotate(10 669.7 1273.7)"/>
+    <ellipse cx="711.4" cy="1316.4" rx="26.1" ry="32.2" transform="rotate(22 711.4 1316.4)"/>
+    <ellipse cx="645.0" cy="1392.3" rx="73.5" ry="64.0" mask="url(#hc-splash_iphone_1290x2796)"/>
+  </g>
+  <text x="645.0" y="1588.3" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="51.6" letter-spacing="-1.5">
+    <tspan fill="#e9d5ff" font-weight="600">paw</tspan><tspan fill="#fff" font-weight="500"> friend</tspan>
+  </text>
+</svg>

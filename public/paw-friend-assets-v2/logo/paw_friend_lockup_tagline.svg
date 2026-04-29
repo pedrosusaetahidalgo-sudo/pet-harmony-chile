@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 200" role="img" aria-label="Paw Friend lockup with tagline">
+  <title>Paw Friend — lockup with tagline</title>
+  <defs>
+    <mask id="hc-lock">
+      <rect width="800" height="200" fill="white"/>
+      <path d="M 80 118 C 76 113, 70 108, 66 104 C 62 100, 63 94, 69 93 C 73 92, 77 94, 80 97 C 83 94, 87 92, 91 93 C 97 94, 98 100, 94 104 C 90 108, 84 113, 80 118 Z" fill="black"/>
+    </mask>
+  </defs>
+  <g transform="translate(30 30)">
+    <path d="M 70 0 C 112 0, 140 21, 140 70 C 140 119, 112 140, 70 140 C 28 140, 0 119, 0 70 C 0 21, 28 0, 70 0 Z" fill="#9333EA"/>
+    <g fill="#fff" transform="scale(0.206)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+    </g>
+    <ellipse cx="70" cy="89" rx="32" ry="28" fill="#fff" mask="url(#hc-lock)"/>
+  </g>
+  <text x="200" y="100" font-family="Fredoka, sans-serif" font-size="64" font-weight="600" letter-spacing="-1.5">
+    <tspan fill="#6B21A8">paw</tspan><tspan fill="#9333EA" font-weight="500"> friend</tspan>
+  </text>
+  <text x="200" y="138" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="20" fill="#581c87">La ficha médica de tu mascota</text>
+</svg>

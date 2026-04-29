@@ -29,6 +29,7 @@ import { formatCLP } from '@/lib/format';
 import { PageHeader } from '@/components/PageHeader';
 import { DonorBadge } from '@/components/DonorBadge';
 import { PawMemberBadge } from '@/components/PawMemberBadge';
+import { BrandBadge } from '@/components/BrandBadge';
 import { PlanComparisonTableB2C } from '@/components/pricing/PlanComparisonTable';
 import { cn } from '@/lib/utils';
 
@@ -86,16 +87,8 @@ export default function PawMember() {
               aria-hidden
               className="absolute -top-8 -right-8 h-32 w-32 rounded-full bg-gradient-to-br from-violet-300/40 to-fuchsia-300/30 blur-2xl pointer-events-none"
             />
-            {/* Logo distintivo: circulo con gradiente + paw + corazon + sparkles */}
-            <div className="relative mx-auto w-24 h-24 rounded-full bg-gradient-to-br from-violet-500 via-fuchsia-500 to-amber-500 flex items-center justify-center shadow-lg ring-4 ring-white dark:ring-slate-900">
-              <PawPrint className="h-10 w-10 text-white fill-white" />
-              <span className="absolute -top-1 -right-1 h-7 w-7 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center shadow">
-                <Heart className="h-4 w-4 text-rose-500 fill-rose-500" />
-              </span>
-              <span className="absolute -bottom-1 -left-1 h-6 w-6 rounded-full bg-white dark:bg-slate-900 flex items-center justify-center shadow">
-                <Sparkles className="h-3.5 w-3.5 text-amber-500" />
-              </span>
-            </div>
+            {/* Insignia oficial Paw Member del brand kit v2. */}
+            <BrandBadge kind="paw_member" size="lg" className="mx-auto drop-shadow-xl" />
 
             <div className="space-y-1">
               <Badge className="bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white border-0">

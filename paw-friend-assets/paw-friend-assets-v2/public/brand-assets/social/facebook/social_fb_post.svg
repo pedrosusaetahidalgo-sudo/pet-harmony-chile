@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" role="img" aria-label="FB post">
+  <title>FB post</title>
+  <defs>
+    <linearGradient id="fbp" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#581c87"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="url(#fbp)"/>
+  <text x="80" y="180" font-family="Fredoka, sans-serif" font-weight="500" font-size="22" fill="#fde047" letter-spacing="4">PARA DUEÑOS DE MASCOTAS</text>
+  <g transform="translate(80 240)">
+    <text font-family="Fredoka, sans-serif" font-weight="600" font-size="78" fill="#fff" letter-spacing="-2.5">
+      <tspan x="0">Tu peludo merece</tspan>
+      <tspan x="0" dy="92">su carnet médico</tspan>
+      <tspan x="0" dy="92" fill="#fde047">en tu celular.</tspan>
+    </text>
+  </g>
+  <g transform="translate(80 880)">
+    <rect width="380" height="80" rx="40" fill="#fde047"/>
+    <text x="190" y="52" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="28" fill="#581c87">Descargar gratis →</text>
+  </g>
+  <g transform="translate(80 1140)">
+    <g fill="#fff" transform="scale(0.054)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="56" y="34" font-family="Fredoka, sans-serif" font-size="28" letter-spacing="-1.5">
+      <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+    </text>
+  </g>
+</svg>

@@ -10,12 +10,20 @@ import { useState } from 'react';
 import { cn } from '@/lib/utils';
 
 export type EmptyStateKind =
+  // V1 (paw-friend-assets-v2/illustrations/empty-states/)
   | 'appointments'
   | 'bookings'
   | 'conversations'
   | 'medical_records'
   | 'notifications'
-  | 'paw_cards';
+  | 'paw_cards'
+  // V2 brand-assets/illustrations/empty-states/ (2026-04-29)
+  | 'donations'
+  | 'feed'
+  | 'missions'
+  | 'pets_yet'
+  | 'reminders'
+  | 'vets_nearby';
 
 const ILLUSTRATION_PATH: Record<EmptyStateKind, string> = {
   appointments: '/paw-friend-assets-v2/illustrations/empty-states/no_appointments.svg',
@@ -24,6 +32,12 @@ const ILLUSTRATION_PATH: Record<EmptyStateKind, string> = {
   medical_records: '/paw-friend-assets-v2/illustrations/empty-states/no_medical_records.svg',
   notifications: '/paw-friend-assets-v2/illustrations/empty-states/no_notifications.svg',
   paw_cards: '/paw-friend-assets-v2/illustrations/empty-states/no_paw_cards.svg',
+  donations: '/brand-assets/illustrations/empty-states/no_donations.svg',
+  feed: '/brand-assets/illustrations/empty-states/no_feed.svg',
+  missions: '/brand-assets/illustrations/empty-states/no_missions.svg',
+  pets_yet: '/brand-assets/illustrations/empty-states/no_pets_yet.svg',
+  reminders: '/brand-assets/illustrations/empty-states/no_reminders.svg',
+  vets_nearby: '/brand-assets/illustrations/empty-states/no_vets_nearby.svg',
 };
 
 const DEFAULT_ALT: Record<EmptyStateKind, string> = {
@@ -33,6 +47,12 @@ const DEFAULT_ALT: Record<EmptyStateKind, string> = {
   medical_records: 'Sin registros medicos',
   notifications: 'Sin notificaciones',
   paw_cards: 'Sin Paw Cards',
+  donations: 'Sin donaciones todavia',
+  feed: 'Feed vacio',
+  missions: 'Sin misiones disponibles',
+  pets_yet: 'Agrega tu primera mascota',
+  reminders: 'Sin recordatorios',
+  vets_nearby: 'Sin vets cerca',
 };
 
 interface Props {

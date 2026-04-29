@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 500" role="img" aria-label="Paw Friend Play Store feature graphic">
+  <title>Paw Friend — Play Store feature</title>
+  <defs>
+    <linearGradient id="fg-l" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+    <linearGradient id="fg-r" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#581c87"/>
+      <stop offset="100%" stop-color="#3b0764"/>
+    </linearGradient>
+    <pattern id="paws-pat" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse">
+      <g fill="#fff" opacity=".06" transform="translate(20 20) scale(0.06)">
+        <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+        <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+        <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+        <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+        <ellipse cx="340" cy="430" rx="155" ry="135"/>
+      </g>
+    </pattern>
+    <mask id="hc-feat">
+      <rect width="1024" height="500" fill="white"/>
+      <path d="M 760 198 C 758 196, 754 194, 752 191 C 750 189, 751 185, 754 184 C 757 184, 759 185, 760 187 C 761 185, 763 184, 766 184 C 769 185, 770 189, 768 191 C 766 194, 762 196, 760 198 Z" fill="black"/>
+    </mask>
+  </defs>
+
+  <rect width="1024" height="500" fill="url(#fg-r)"/>
+  <rect width="1024" height="500" fill="url(#paws-pat)"/>
+  <rect width="410" height="500" fill="url(#fg-l)"/>
+  <rect width="410" height="500" fill="url(#paws-pat)"/>
+
+  <!-- Mini mark left -->
+  <g transform="translate(40 50)">
+    <path d="M 30 0 C 60 0, 80 16, 80 50 C 80 84, 60 100, 30 100 C 0 100, -20 84, -20 50 C -20 16, 0 0, 30 0 Z" transform="translate(20 0)" fill="#fff" opacity=".15"/>
+    <g fill="#fff" transform="scale(0.118)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+  </g>
+
+  <!-- Wordmark left panel -->
+  <text x="40" y="240" font-family="Fredoka, sans-serif" font-size="48" letter-spacing="-1.5">
+    <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+  </text>
+  <text x="40" y="280" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="20" fill="#fde047">La ficha médica de tu mascota</text>
+  <text x="40" y="380" font-family="'Plus Jakarta Sans', sans-serif" font-weight="700" font-size="18" fill="#fff">Gratis. Hecho en Chile.</text>
+  <g transform="translate(40 400)">
+    <circle r="3" fill="#fde047"/>
+    <circle cx="14" r="3" fill="#10b981"/>
+    <circle cx="28" r="3" fill="#fff"/>
+  </g>
+
+  <!-- Phone mockup right -->
+  <g transform="translate(620 50)">
+    <rect x="0" y="0" width="280" height="400" rx="36" fill="#1a102b" stroke="#2d1b54" stroke-width="3"/>
+    <rect x="8" y="8" width="264" height="384" rx="30" fill="#faf5ff"/>
+    <rect x="118" y="14" width="44" height="8" rx="4" fill="#1a102b"/>
+
+    <!-- header -->
+    <rect x="20" y="38" width="240" height="48" rx="14" fill="#9333EA"/>
+    <g fill="#fff" transform="translate(36 50) scale(0.04)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="76" y="68" font-family="Fredoka, sans-serif" font-weight="600" font-size="14" fill="#fff">Mi peludo · Kai</text>
+
+    <!-- pet card -->
+    <rect x="20" y="100" width="240" height="80" rx="14" fill="#fff" stroke="#e9d5ff" stroke-width="2"/>
+    <circle cx="56" cy="140" r="22" fill="#eab308"/>
+    <g fill="#fff" transform="translate(40 124) scale(0.046)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="92" y="132" font-family="Fredoka, sans-serif" font-weight="600" font-size="13" fill="#1a102b">Kai</text>
+    <text x="92" y="148" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="10" fill="#6b21a8">Mestizo · 4 años</text>
+    <text x="92" y="164" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="9" fill="#10b981">● Vacunas al día</text>
+
+    <text x="32" y="206" font-family="Fredoka, sans-serif" font-weight="600" font-size="11" fill="#1a102b">Próximas vacunas</text>
+    <g font-family="'Plus Jakarta Sans', sans-serif" font-size="10" fill="#1a102b">
+      <g transform="translate(32 224)">
+        <circle r="6" fill="#10b981"/>
+        <path d="M -3 0 L -1 2 L 3 -2" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <text x="14" y="3" font-weight="500">Antirrábica</text>
+        <text x="200" y="3" text-anchor="end" fill="#9333EA" font-weight="600">12 mar</text>
+      </g>
+      <g transform="translate(32 246)">
+        <circle r="6" fill="#10b981"/>
+        <path d="M -3 0 L -1 2 L 3 -2" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <text x="14" y="3" font-weight="500">Séxtuple</text>
+        <text x="200" y="3" text-anchor="end" fill="#9333EA" font-weight="600">28 mar</text>
+      </g>
+      <g transform="translate(32 268)">
+        <circle r="6" fill="#fde047"/>
+        <text x="14" y="3" font-weight="500">Desparasitar</text>
+        <text x="200" y="3" text-anchor="end" fill="#eab308" font-weight="600">próx.</text>
+      </g>
+    </g>
+
+    <rect x="20" y="320" width="240" height="44" rx="22" fill="#9333EA"/>
+    <text x="140" y="346" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="14" fill="#fff">Compartir ficha PDF</text>
+
+    <rect x="100" y="380" width="80" height="4" rx="2" fill="#1a102b" opacity=".3"/>
+  </g>
+
+  <text x="984" y="478" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" fill="#fff" opacity=".7">pawfriend.cl</text>
+</svg>

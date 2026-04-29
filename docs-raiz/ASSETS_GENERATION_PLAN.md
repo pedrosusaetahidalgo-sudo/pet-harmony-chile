@@ -1,5 +1,15 @@
 # Paw Friend · Assets Generation Plan (master ejecutable)
 
+> **🟢 Estado 2026-04-29 PM:** Pedro genero la mayoria de los assets de §3-7.
+> Todos los SVGs estan en:
+> - `public/brand-assets/` (servidos publicamente: badges, illustrations,
+>   mockups dashboards, social IG/FB/TT/YT/WA, store-listings, presentations,
+>   patterns, press-kit, email-templates)
+> - `public/paw-friend-assets-v2/` (logos, iconos brand-squircle, categorias,
+>   android adaptive, splash, favicon)
+>
+> Lista de status detallado en seccion 14 al final.
+>
 > **Que es esto:** master detallado para generar **todos** los assets pendientes
 > de Paw Friend (app + 11 pitches + redes + stores + email + press + investor +
 > partner kits). Cada asset tiene **IA recomendada** + **prompt ready-to-paste**
@@ -1075,6 +1085,92 @@ PITCH HTML (estado actual)
 
 **Recomendacion personal:** Opcion A para launch. Pasa el MD a un disenador
 solo si no cumples el cronograma.
+
+---
+
+## 14. Status de assets (snapshot 2026-04-29 PM)
+
+### ✅ Generados y montados en repo (Pedro 2026-04-29)
+
+**Logos** — `public/paw-friend-assets-v2/logo/`
+- `paw_friend_mark_square.svg` · `paw_friend_wordmark_vertical.svg` ·
+  `paw_friend_lockup_tagline.svg` · `paw_friend_icon_gold.svg` · `paw_friend_sticker.svg`
+
+**Iconos brand squircle** — `public/paw-friend-assets-v2/icons/brand-squircle/`
+- 31_donation · 32_shield_data · 33_ai_brain · 34_map_pin_paw · 35_pdf_record ·
+  36_handshake_paws · 37_invoice · 38_shelter · 39_badge_member · 40_qr_code_paw
+  + extras 43_leash · 46_grooming · 48_home_base · 49_heart_monitoring ·
+  51_trophy_pets · 52_gift · 53_camera_pet · 54_settings · 55_bell · 56_shield
+
+**Iconos categoria audiencia B2B** — `public/paw-friend-assets-v2/icons/categories/`
+- icon_pharma · icon_insurance · icon_retail · icon_government
+
+**Badges** — `public/brand-assets/badges/`
+- badge_paw_member · badge_paw_voice · badge_paw_company · badge_vet_verified
+
+**Illustrations empty states** — `public/brand-assets/illustrations/empty-states/`
+- no_pets_yet · no_reminders · no_feed · no_vets_nearby · no_donations · no_missions
+
+**Illustrations onboarding** — `public/brand-assets/illustrations/onboarding/`
+- welcome · add_pet · first_record · vet_directory · paw_member_optional
+
+**Hero landing** — `public/brand-assets/illustrations/hero/`
+- hero_landing_main.svg
+
+**Mockups dashboards** — `public/brand-assets/mockups/dashboards/`
+- dashboard_bronze · dashboard_silver · dashboard_gold
+
+**Patterns** — `public/brand-assets/patterns/`
+- pattern_paw_dots · pattern_brand_noise · pattern_gradient_mesh
+
+**Investor kit** — `public/brand-assets/presentations/investor-kit/`
+- deck_cover_investors
+
+**Partner kit** — `public/brand-assets/presentations/partner-kit/`
+- partnership_banner
+
+**Paw Voice creator kit** — `public/brand-assets/presentations/paw-voice-kit/`
+- paw_voice_badge_gold · paw_voice_badge_rose · promo_card_share · reel_template_review
+
+**Press kit** — `public/brand-assets/press-kit/`
+- press_release_template.md · fact_sheet_one_pager.html · quotes_bank.md ·
+  b2b_outreach_emails.md
+
+**Email templates** — `public/brand-assets/email-templates/`
+- welcome_transactional.html · newsletter_monthly.html
+
+**Social media** — `public/brand-assets/social/`
+- Instagram feed (6) · Instagram stories (4) · TikTok (3 cover + endcard) ·
+  YouTube (3 thumbs + banner) · Facebook (cover + post + event) ·
+  WhatsApp (5 catalog + 4 status)
+
+**Store listings** — `public/brand-assets/store-listings/`
+- App Store: icon_1024 + 6 screenshots
+- Play Store: feature_graphic_1024x500 + 8 screenshots
+- Splash: 6 variantes (iPhone/iPad/Android/tablet)
+
+**Android adaptive** — `public/paw-friend-assets-v2/android/`
+- adaptive-foreground · adaptive-background (SVG; Pedro convierte a XML
+  Vector Drawable o PNG por densidad via Android Studio)
+
+**Favicon refresh** — `public/favicon.svg` (actualizado)
+
+### 📦 Wire-up en codigo (2026-04-29 PM)
+
+- ✅ `EmptyStateIllustration` extendido con 6 kinds nuevos
+  (donations / feed / missions / pets_yet / reminders / vets_nearby)
+- ✅ `BrandBadge` componente nuevo · `kind=paw_member|paw_voice|paw_company|vet_verified`
+- ✅ `PawMember.tsx` usa BrandBadge size="lg" en hero (reemplaza logo improvisado)
+- ✅ `INSIGHTS_DASHBOARDS_MOCK.html` slide nuevo con dashboards Bronze/Silver/Gold
+
+### ⏳ Pendiente — wire-up adicional (priorizar segun necesidad)
+
+- App Store + Play Store screenshots ya existen en SVG; falta export a PNG
+  + subir a App Store Connect / Play Console (Pedro manual).
+- App preview video iOS + Play Store promo video (content-studio existente).
+- Founder photo profesional (Pedro foto propia con Kai/Ema).
+- B2B outreach email templates personalizados con datos finales (Pedro
+  ajusta `b2b_outreach_emails.md` segun cuenta a contactar).
 
 ---
 

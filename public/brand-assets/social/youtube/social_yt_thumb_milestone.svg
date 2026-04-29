@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-label="YT thumb — milestone">
+  <title>YT thumb milestone</title>
+  <defs>
+    <linearGradient id="ytm" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="50%" stop-color="#ec4899"/>
+      <stop offset="100%" stop-color="#eab308"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="#1a102b"/>
+  <!-- Confetti -->
+  <g>
+    <rect x="120" y="80" width="14" height="6" rx="2" fill="#fde047" transform="rotate(20 127 83)"/>
+    <rect x="220" y="160" width="12" height="5" rx="2" fill="#ec4899" transform="rotate(-30 226 162)"/>
+    <rect x="1080" y="120" width="14" height="6" rx="2" fill="#10b981" transform="rotate(45 1087 123)"/>
+    <rect x="1160" y="240" width="12" height="5" rx="2" fill="#fde047" transform="rotate(-15 1166 242)"/>
+    <rect x="80" y="540" width="12" height="5" rx="2" fill="#ec4899" transform="rotate(15 86 542)"/>
+    <rect x="1140" y="580" width="14" height="6" rx="2" fill="#10b981" transform="rotate(-25 1147 583)"/>
+    <circle cx="180" cy="320" r="4" fill="#fde047"/>
+    <circle cx="1100" cy="440" r="4" fill="#ec4899"/>
+    <circle cx="240" cy="660" r="4" fill="#10b981"/>
+    <circle cx="1080" cy="80" r="4" fill="#9333EA" opacity=".7"/>
+  </g>
+  <!-- Big number -->
+  <text x="640" y="480" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="380" fill="url(#ytm)" letter-spacing="-12">1.000</text>
+  <text x="640" y="180" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="36" fill="#fde047" letter-spacing="6">CELEBRAMOS</text>
+  <text x="640" y="600" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="64" fill="#fff" letter-spacing="-2">peludos en Paw Friend</text>
+  <!-- Brand bottom -->
+  <g transform="translate(80 660)">
+    <g fill="#fff" transform="scale(0.054)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="56" y="34" font-family="Fredoka, sans-serif" font-size="28" letter-spacing="-1.5">
+      <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+    </text>
+  </g>
+</svg>

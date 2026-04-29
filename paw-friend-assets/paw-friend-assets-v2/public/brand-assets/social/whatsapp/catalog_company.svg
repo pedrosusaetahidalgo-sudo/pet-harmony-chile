@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="WA catalog — Paw Company">
+  <title>WA catalog Paw Company</title>
+  <rect width="1080" height="1080" fill="#581c87"/>
+  <rect x="40" y="40" width="1000" height="900" rx="32" fill="#3b0764" stroke="#9333EA" stroke-width="3"/>
+  <text x="540" y="160" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="22" fill="#fde047" letter-spacing="3">PAW COMPANY · B2B</text>
+  <text x="540" y="226" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="58" fill="#fff" letter-spacing="-2">Visibilidad medible</text>
+  <text x="540" y="290" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="58" fill="#fde047" letter-spacing="-2">en tu barrio</text>
+  <!-- 3 tier badges -->
+  <g transform="translate(540 580)">
+    <g transform="translate(-280 0)">
+      <rect x="-100" y="-100" width="200" height="200" rx="20" fill="#9333EA"/>
+      <text x="0" y="-60" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="11" fill="#fde047" letter-spacing="3">BRONZE</text>
+      <circle cy="-10" r="32" fill="#cd7f32"/>
+      <text y="60" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="20" fill="#fff">1-2 ub.</text>
+      <text y="86" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" fill="#e9d5ff">$59k/mes</text>
+    </g>
+    <g>
+      <rect x="-100" y="-110" width="200" height="220" rx="20" fill="#9333EA" stroke="#fde047" stroke-width="2"/>
+      <text x="0" y="-70" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="11" fill="#fde047" letter-spacing="3">SILVER</text>
+      <circle cy="-20" r="36" fill="#9ca3af"/>
+      <text y="60" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="20" fill="#fff">3-5 ub.</text>
+      <text y="86" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" fill="#fde047">$149k/mes</text>
+    </g>
+    <g transform="translate(280 0)">
+      <rect x="-100" y="-100" width="200" height="200" rx="20" fill="#9333EA"/>
+      <text x="0" y="-60" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="11" fill="#fde047" letter-spacing="3">GOLD</text>
+      <circle cy="-10" r="32" fill="#eab308"/>
+      <text y="60" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="20" fill="#fff">6+ ub.</text>
+      <text y="86" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="14" fill="#e9d5ff">$299k/mes</text>
+    </g>
+  </g>
+  <text x="540" y="888" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="20" fill="#fde047">Reach · conversión · trazabilidad</text>
+  <g transform="translate(60 1020)">
+    <g fill="#fff" transform="scale(0.05)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="50" y="32" font-family="Fredoka, sans-serif" font-size="22" letter-spacing="-1.5">
+      <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+    </text>
+    <text x="900" y="32" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" fill="#fde047" opacity=".7">pawfriend.cl/companys</text>
+  </g>
+</svg>

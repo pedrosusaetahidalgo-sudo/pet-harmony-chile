@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Paw Voice gold badge">
+  <title>Paw Voice — gold</title>
+  <defs>
+    <linearGradient id="pvg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#eab308"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="36" ry="36" fill="url(#pvg)"/>
+  <text x="100" y="46" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="10" fill="#fde047" letter-spacing="3">PAW VOICE · OFICIAL</text>
+  <g fill="#fff">
+    <rect x="84" y="64" width="32" height="56" rx="16"/>
+    <path d="M 66 110 C 66 134, 84 148, 100 148 C 116 148, 134 134, 134 110" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+    <line x1="100" y1="148" x2="100" y2="164" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+    <line x1="84" y1="166" x2="116" y2="166" stroke="#fff" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <text x="100" y="186" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7" fill="#fde047" opacity=".7" letter-spacing="2">PAW FRIEND</text>
+</svg>

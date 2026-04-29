@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-label="YT thumb — testimonial">
+  <title>YT thumb testimonial</title>
+  <defs>
+    <radialGradient id="ytte" cx="30%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#3b0764"/>
+    </radialGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#ytte)"/>
+  <!-- Face placeholder circle -->
+  <g transform="translate(280 360)">
+    <circle r="240" fill="#fff" opacity=".12"/>
+    <circle r="220" fill="none" stroke="#fde047" stroke-width="3" stroke-dasharray="8 8"/>
+    <circle r="180" fill="#fff" opacity=".25"/>
+    <text y="6" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="20" fill="#fff" opacity=".55">foto vet</text>
+    <text y="34" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="14" fill="#fff" opacity=".4">360 × 360</text>
+  </g>
+  <!-- Big yellow quote -->
+  <text x="540" y="220" font-family="Fredoka, sans-serif" font-weight="600" font-size="220" fill="#fde047" opacity=".4">"</text>
+  <g transform="translate(560 320)">
+    <text font-family="Fredoka, sans-serif" font-weight="600" font-size="78" fill="#fff" letter-spacing="-2.5">
+      <tspan x="0">Mis pacientes</tspan>
+      <tspan x="0" dy="92">llegan con su</tspan>
+      <tspan x="0" dy="92" fill="#fde047">ficha completa</tspan>
+    </text>
+  </g>
+  <!-- Bottom credit -->
+  <g transform="translate(560 670)">
+    <text font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="22" fill="#fde047">— Dra. Sofía B.</text>
+    <text x="0" y="26" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="16" fill="#e9d5ff">Veterinaria · Providencia</text>
+  </g>
+  <!-- Brand top right -->
+  <g transform="translate(1100 50)">
+    <g fill="#fff" transform="scale(0.044)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="46" y="22" font-family="Fredoka, sans-serif" font-size="20" letter-spacing="-1.5">
+      <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+    </text>
+  </g>
+</svg>

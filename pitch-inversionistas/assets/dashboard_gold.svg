@@ -1,0 +1,192 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Paw Companys dashboard gold">
+  <title>Dashboard Paw Companys — gold</title>
+  <defs>
+    <linearGradient id="db-gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#eab308"/>
+    </linearGradient>
+  </defs>
+
+  <!-- BG -->
+  <rect width="1200" height="800" fill="#faf5ff"/>
+
+  <!-- Header -->
+  <rect width="1200" height="80" fill="url(#db-gold)"/>
+  <g transform="translate(40 26)">
+    <g fill="#fff" transform="scale(0.044)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="44" y="22" font-family="Fredoka, sans-serif" font-size="22" letter-spacing="-1.5">
+      <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+    </text>
+    <text x="44" y="38" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="11" fill="#fde047" letter-spacing="2">DASHBOARD COMPANYS · GOLD</text>
+  </g>
+  <text x="1160" y="50" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="11" fill="#fde047" opacity=".7">Q2 2026</text>
+
+  <!-- KPIs row title -->
+  <text x="60" y="118" font-family="Fredoka, sans-serif" font-weight="600" font-size="14" fill="#581c87" letter-spacing="-0.5">KPIs trimestrales</text>
+
+  <g transform="translate(60 130)">
+    <rect width="240" height="100" rx="12" fill="#fff" stroke="#e9d5ff" stroke-width="1.5"/>
+    <text x="20" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="11" fill="#9333EA" letter-spacing="1.5">UBICACIONES</text>
+    <text x="20" y="68" font-family="Fredoka, sans-serif" font-weight="600" font-size="32" fill="#eab308">7</text>
+    <text x="20" y="86" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="10" fill="#6b21a8">activas exclusivas</text>
+  </g>
+  <g transform="translate(330 130)">
+    <rect width="240" height="100" rx="12" fill="#fff" stroke="#e9d5ff" stroke-width="1.5"/>
+    <text x="20" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="11" fill="#9333EA" letter-spacing="1.5">REACH MENSUAL</text>
+    <text x="20" y="68" font-family="Fredoka, sans-serif" font-weight="600" font-size="32" fill="#9333EA">9.4K</text>
+    <text x="20" y="86" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="10" fill="#6b21a8">Paw Members alcanzados</text>
+  </g>
+  <g transform="translate(600 130)">
+    <rect width="240" height="100" rx="12" fill="#fff" stroke="#e9d5ff" stroke-width="1.5"/>
+    <text x="20" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="11" fill="#9333EA" letter-spacing="1.5">CONVERSIÓN</text>
+    <text x="20" y="68" font-family="Fredoka, sans-serif" font-weight="600" font-size="32" fill="#10b981">18.2%</text>
+    <text x="20" y="86" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="10" fill="#6b21a8">click → visita</text>
+  </g>
+  <g transform="translate(870 130)">
+    <rect width="240" height="100" rx="12" fill="#fff" stroke="#e9d5ff" stroke-width="1.5"/>
+    <text x="20" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="11" fill="#9333EA" letter-spacing="1.5">SHELTERS TRAZADOS</text>
+    <text x="20" y="68" font-family="Fredoka, sans-serif" font-weight="600" font-size="32" fill="#eab308">6</text>
+    <text x="20" y="86" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="10" fill="#6b21a8">donaciones reportadas</text>
+  </g>
+
+  <!-- Sections -->
+  <text x="60" y="270" font-family="Fredoka, sans-serif" font-weight="600" font-size="16" fill="#581c87">Mapa &amp; ubicaciones</text>
+  <rect x="60" y="290" width="640" height="260" rx="12" fill="#fff" stroke="#e9d5ff" stroke-width="1.5"/>
+  <!-- Mini map preview -->
+  <rect x="80" y="310" width="220" height="220" rx="8" fill="#e9d5ff"/>
+  <g stroke="#9333EA" stroke-width="1" opacity=".4" fill="none">
+    <path d="M 90 410 Q 200 380, 290 430"/>
+    <path d="M 120 320 L 180 470 L 280 320"/>
+  </g>
+  <g fill="#9333EA">
+    <circle cx="120" cy="390" r="5"/>
+    <circle cx="190" cy="420" r="5"/>
+    <circle cx="240" cy="370" r="5"/>
+  </g>
+
+  <g transform="translate(80 360)">
+    <circle cx="12" cy="12" r="6" fill="#10b981"/>
+    <text x="28" y="16" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="13" fill="#1a102b">Vitacura</text>
+    <text x="28" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="11" fill="#9333EA">Activa · top barrio</text>
+    <text x="540" y="22" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" fill="#9333EA" font-weight="600">+62%</text>
+  </g>
+  <g transform="translate(80 404)">
+    <circle cx="12" cy="12" r="6" fill="#10b981"/>
+    <text x="28" y="16" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="13" fill="#1a102b">Las Condes</text>
+    <text x="28" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="11" fill="#9333EA">Activa · exclusivo</text>
+    <text x="540" y="22" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" fill="#9333EA" font-weight="600">+44%</text>
+  </g>
+  <g transform="translate(80 448)">
+    <circle cx="12" cy="12" r="6" fill="#10b981"/>
+    <text x="28" y="16" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="13" fill="#1a102b">Providencia</text>
+    <text x="28" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="11" fill="#9333EA">Activa · exclusivo</text>
+    <text x="540" y="22" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" fill="#9333EA" font-weight="600">+35%</text>
+  </g>
+  <g transform="translate(80 492)">
+    <circle cx="12" cy="12" r="6" fill="#10b981"/>
+    <text x="28" y="16" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="13" fill="#1a102b">Ñuñoa</text>
+    <text x="28" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="11" fill="#9333EA">Activa</text>
+    <text x="540" y="22" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" fill="#9333EA" font-weight="600">+22%</text>
+  </g>
+  <g transform="translate(80 536)">
+    <circle cx="12" cy="12" r="6" fill="#10b981"/>
+    <text x="28" y="16" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="13" fill="#1a102b">La Reina</text>
+    <text x="28" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="11" fill="#9333EA">Activa</text>
+    <text x="540" y="22" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" fill="#9333EA" font-weight="600">+18%</text>
+  </g>
+  <g transform="translate(80 580)">
+    <circle cx="12" cy="12" r="6" fill="#10b981"/>
+    <text x="28" y="16" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="13" fill="#1a102b">Lo Barnechea</text>
+    <text x="28" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="11" fill="#9333EA">Activa</text>
+    <text x="540" y="22" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" fill="#9333EA" font-weight="600">+11%</text>
+  </g>
+  <g transform="translate(80 624)">
+    <circle cx="12" cy="12" r="6" fill="#10b981"/>
+    <text x="28" y="16" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="13" fill="#1a102b">Macul</text>
+    <text x="28" y="32" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="11" fill="#9333EA">Onboarding</text>
+    <text x="540" y="22" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" fill="#9333EA" font-weight="600">+5%</text>
+  </g>
+
+  <text x="60" y="600" font-family="Fredoka, sans-serif" font-weight="600" font-size="16" fill="#581c87">Trazabilidad shelters</text>
+  <g transform="translate(0 620)">
+    <g transform="translate(80 0)">
+    <rect width="210" height="60" rx="10" fill="#fff" stroke="#e9d5ff" stroke-width="1.5"/>
+    <circle cx="20" cy="30" r="10" fill="#10b981"/>
+    <path d="M 16 30 L 19 33 L 24 28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="28" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="12" fill="#1a102b">Refugio Patitas</text>
+    <text x="38" y="44" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="10" fill="#6b21a8">trazabilidad activa</text>
+  </g>
+  <g transform="translate(310 0)">
+    <rect width="210" height="60" rx="10" fill="#fff" stroke="#e9d5ff" stroke-width="1.5"/>
+    <circle cx="20" cy="30" r="10" fill="#10b981"/>
+    <path d="M 16 30 L 19 33 L 24 28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="28" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="12" fill="#1a102b">Hogar Animal</text>
+    <text x="38" y="44" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="10" fill="#6b21a8">trazabilidad activa</text>
+  </g>
+  <g transform="translate(540 0)">
+    <rect width="210" height="60" rx="10" fill="#fff" stroke="#e9d5ff" stroke-width="1.5"/>
+    <circle cx="20" cy="30" r="10" fill="#10b981"/>
+    <path d="M 16 30 L 19 33 L 24 28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="28" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="12" fill="#1a102b">Refugio Maipú</text>
+    <text x="38" y="44" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="10" fill="#6b21a8">trazabilidad activa</text>
+  </g>
+  <g transform="translate(770 0)">
+    <rect width="210" height="60" rx="10" fill="#fff" stroke="#e9d5ff" stroke-width="1.5"/>
+    <circle cx="20" cy="30" r="10" fill="#10b981"/>
+    <path d="M 16 30 L 19 33 L 24 28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="28" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="12" fill="#1a102b">Casa Animal CL</text>
+    <text x="38" y="44" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="10" fill="#6b21a8">trazabilidad activa</text>
+  </g>
+  <g transform="translate(1000 0)">
+    <rect width="210" height="60" rx="10" fill="#fff" stroke="#e9d5ff" stroke-width="1.5"/>
+    <circle cx="20" cy="30" r="10" fill="#10b981"/>
+    <path d="M 16 30 L 19 33 L 24 28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="28" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="12" fill="#1a102b">San Bernardo</text>
+    <text x="38" y="44" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="10" fill="#6b21a8">trazabilidad activa</text>
+  </g>
+  <g transform="translate(1230 0)">
+    <rect width="210" height="60" rx="10" fill="#fff" stroke="#e9d5ff" stroke-width="1.5"/>
+    <circle cx="20" cy="30" r="10" fill="#10b981"/>
+    <path d="M 16 30 L 19 33 L 24 28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="38" y="28" font-family="'Plus Jakarta Sans', sans-serif" font-weight="600" font-size="12" fill="#1a102b">Refugio Sur</text>
+    <text x="38" y="44" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="10" fill="#6b21a8">trazabilidad activa</text>
+  </g>
+  </g>
+
+  <g transform="translate(720 290)">
+    <rect width="420" height="260" rx="12" fill="#fff" stroke="#fde047" stroke-width="2"/>
+    <text x="20" y="34" font-family="Fredoka, sans-serif" font-weight="600" font-size="14" fill="#581c87">Co-branding · exclusividad barrio</text>
+    <text x="20" y="54" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="11" fill="#6b21a8">Único partner del barrio con presencia premium</text>
+    <g transform="translate(40 90)">
+      <rect width="160" height="140" rx="14" fill="url(#db-gold)"/>
+      <text x="80" y="22" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="9" fill="#fde047" letter-spacing="3">EXCLUSIVO</text>
+      <g fill="#fff" transform="translate(54 32) scale(0.078)">
+        <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+        <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+        <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+        <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+        <ellipse cx="340" cy="430" rx="155" ry="135"/>
+      </g>
+      <text x="80" y="124" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="7" fill="#fde047" opacity=".7" letter-spacing="2">PAW FRIEND</text>
+    </g>
+    <g transform="translate(220 90)">
+      <text font-family="Fredoka, sans-serif" font-weight="600" font-size="13" fill="#1a102b">Beneficios Gold</text>
+      <g font-family="'Plus Jakarta Sans', sans-serif" font-size="11" fill="#1a102b">
+        <g transform="translate(0 24)"><circle cx="6" cy="0" r="3" fill="#10b981"/><text x="16" y="4">Featured premium</text></g>
+        <g transform="translate(0 44)"><circle cx="6" cy="0" r="3" fill="#10b981"/><text x="16" y="4">Co-branding visible</text></g>
+        <g transform="translate(0 64)"><circle cx="6" cy="0" r="3" fill="#10b981"/><text x="16" y="4">Exclusividad barrio</text></g>
+        <g transform="translate(0 84)"><circle cx="6" cy="0" r="3" fill="#10b981"/><text x="16" y="4">Reporte mensual</text></g>
+        <g transform="translate(0 104)"><circle cx="6" cy="0" r="3" fill="#10b981"/><text x="16" y="4">Newsletter integrado</text></g>
+      </g>
+    </g>
+  </g>
+
+  <!-- Footer -->
+  <text x="60" y="780" font-family="'JetBrains Mono', monospace" font-size="10" fill="#9333EA" opacity=".55">paw companys · GOLD · datos trazables · pawfriend.cl</text>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Paw Friend iOS app icon">
+  <title>Paw Friend — iOS app icon</title>
+  <defs>
+    <mask id="hc-ios">
+      <rect width="1024" height="1024" fill="white"/>
+      <path d="M 512 723 C 500 708, 479 693, 467 678 C 455 663, 458 641, 477 637 C 491 634, 503 641, 512 651 C 521 641, 533 634, 547 637 C 566 641, 569 663, 557 678 C 545 693, 524 708, 512 723 Z" fill="black"/>
+    </mask>
+  </defs>
+  <rect width="1024" height="1024" fill="#9333EA"/>
+  <g fill="#fff" transform="translate(512 512) scale(1.506) translate(-340 -340)">
+    <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+    <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+    <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+    <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+  </g>
+  <ellipse cx="512" cy="647" rx="233" ry="203" fill="#fff" mask="url(#hc-ios)"/>
+</svg>

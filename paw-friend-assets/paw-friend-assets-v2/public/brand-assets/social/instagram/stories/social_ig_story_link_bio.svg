@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="IG story — link in bio">
+  <title>IG story link in bio</title>
+  <rect width="1080" height="1920" fill="#9333EA"/>
+  <!-- Pet silhouette -->
+  <g transform="translate(540 720)" fill="#fde047">
+    <ellipse cx="0" cy="100" rx="180" ry="140"/>
+    <circle cx="-30" cy="-80" r="120"/>
+    <path d="M -120 -150 L -100 -210 L -70 -150 Z"/>
+    <path d="M 60 -150 L 80 -210 L 30 -150 Z"/>
+  </g>
+  <g transform="translate(540 720)" fill="#1a102b">
+    <circle cx="-66" cy="-90" r="9"/>
+    <circle cx="14" cy="-90" r="9"/>
+    <ellipse cx="-26" cy="-50" rx="20" ry="14" fill="#fff"/>
+    <circle cx="-26" cy="-58" r="5"/>
+  </g>
+  <text x="540" y="1200" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="68" fill="#fff" letter-spacing="-2">Descarga tu</text>
+  <text x="540" y="1280" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="68" fill="#fde047" letter-spacing="-2">ficha gratis</text>
+  <text x="540" y="1360" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="32" fill="#e9d5ff">link en la bio ↑</text>
+  <!-- CTA sticker zone -->
+  <g transform="translate(540 1500)">
+    <rect x="-220" y="-60" width="440" height="120" rx="60" fill="#fde047"/>
+    <text y="14" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="32" fill="#581c87">Descargar app</text>
+  </g>
+  <g transform="translate(60 1620)">
+    <g fill="#fff" transform="scale(0.05)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="50" y="32" font-family="Fredoka, sans-serif" font-size="20" letter-spacing="-1.5">
+      <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+    </text>
+  </g>
+</svg>

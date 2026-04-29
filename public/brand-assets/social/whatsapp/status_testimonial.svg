@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="WA status — testimonial">
+  <title>WA status testimonial</title>
+  <defs>
+    <radialGradient id="wst" cx="50%" cy="50%" r="80%">
+      <stop offset="0%" stop-color="#7e22ce"/>
+      <stop offset="100%" stop-color="#0a0118"/>
+    </radialGradient>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#wst)"/>
+  <text x="540" y="380" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="280" fill="#fde047" opacity=".25">"</text>
+  <g transform="translate(540 760)" text-anchor="middle">
+    <text font-family="Fredoka, sans-serif" font-weight="600" font-size="64" fill="#fff" letter-spacing="-1.5">
+      <tspan x="0">Mota tiene su</tspan>
+      <tspan x="0" dy="80">historia clínica</tspan>
+      <tspan x="0" dy="80">en mi celular.</tspan>
+      <tspan x="0" dy="80">Por fin.</tspan>
+    </text>
+  </g>
+  <g transform="translate(540 1380)">
+    <circle r="44" fill="#fff" opacity=".12"/>
+    <circle r="36" fill="none" stroke="#fde047" stroke-width="2" stroke-dasharray="4 4"/>
+    <text y="100" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="28" fill="#fff">— Sofía B.</text>
+    <text y="138" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="20" fill="#fde047">Veterinaria · Providencia</text>
+  </g>
+  <g transform="translate(60 1820)">
+    <g fill="#fff" transform="scale(0.05)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="50" y="32" font-family="Fredoka, sans-serif" font-size="22" letter-spacing="-1.5">
+      <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+    </text>
+  </g>
+</svg>

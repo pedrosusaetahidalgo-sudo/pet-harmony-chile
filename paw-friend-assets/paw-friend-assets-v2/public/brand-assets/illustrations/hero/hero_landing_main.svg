@@ -1,0 +1,174 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="Paw Friend hero landing illustration">
+  <title>Paw Friend hero landing</title>
+  <defs>
+    <radialGradient id="hsky" cx="50%" cy="0%" r="80%">
+      <stop offset="0%" stop-color="#fde047" stop-opacity=".4"/>
+      <stop offset="40%" stop-color="#a855f7" stop-opacity=".5"/>
+      <stop offset="100%" stop-color="#581c87" stop-opacity=".15"/>
+    </radialGradient>
+    <linearGradient id="hph" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#581c87"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="800" height="600" fill="#faf5ff"/>
+  <rect width="800" height="600" fill="url(#hsky)"/>
+  <!-- Floor -->
+  <line x1="0" y1="500" x2="800" y2="500" stroke="#9333EA" stroke-width="1.5" opacity=".3"/>
+  <ellipse cx="400" cy="540" rx="240" ry="20" fill="#9333EA" opacity=".15"/>
+
+  <!-- Subtle paw prints background -->
+  <g fill="#9333EA" opacity=".05">
+    <g transform="translate(80 100) scale(0.07)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <g transform="translate(660 70) scale(0.05) rotate(20 340 340)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <g transform="translate(720 380) scale(0.06)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+  </g>
+
+  <!-- Dog left (mestizo chileno, sentado) -->
+  <g transform="translate(180 380)">
+    <!-- shadow -->
+    <ellipse cx="0" cy="120" rx="80" ry="10" fill="#9333EA" opacity=".15"/>
+    <!-- body sitting -->
+    <path d="M -50 60 Q -60 0, -30 -40 Q 30 -60, 50 0 Q 60 80, 30 100 L -30 100 Q -50 100, -50 60 Z" fill="#fde047"/>
+    <!-- head -->
+    <circle cx="-10" cy="-50" r="46" fill="#fde047"/>
+    <!-- ears (paradas) -->
+    <path d="M -50 -76 L -40 -110 L -28 -82 Z" fill="#eab308"/>
+    <path d="M 24 -76 L 16 -110 L 6 -82 Z" fill="#eab308"/>
+    <!-- snout -->
+    <ellipse cx="-2" cy="-34" rx="18" ry="14" fill="#fff"/>
+    <ellipse cx="-2" cy="-44" rx="5" ry="4" fill="#1a102b"/>
+    <!-- eyes -->
+    <circle cx="-26" cy="-58" r="4.5" fill="#1a102b"/>
+    <circle cx="6" cy="-58" r="4.5" fill="#1a102b"/>
+    <circle cx="-25" cy="-59" r="1.5" fill="#fff"/>
+    <circle cx="7" cy="-59" r="1.5" fill="#fff"/>
+    <!-- subtle smile -->
+    <path d="M -8 -28 Q -2 -22 4 -28" fill="none" stroke="#1a102b" stroke-width="2" stroke-linecap="round"/>
+    <!-- collar -->
+    <path d="M -36 -10 Q -10 6, 16 -8" fill="none" stroke="#9333EA" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="-10" cy="2" r="4" fill="#eab308"/>
+    <!-- front paws -->
+    <ellipse cx="-32" cy="98" rx="14" ry="10" fill="#fde047"/>
+    <ellipse cx="20" cy="98" rx="14" ry="10" fill="#fde047"/>
+    <!-- tail wagging behind -->
+    <path d="M 50 20 Q 80 0, 86 -30" fill="none" stroke="#eab308" stroke-width="14" stroke-linecap="round"/>
+  </g>
+
+  <!-- Phone center (diagonal -8°) -->
+  <g transform="translate(400 320) rotate(-8)">
+    <!-- shadow -->
+    <ellipse cx="20" cy="200" rx="120" ry="12" fill="#1a102b" opacity=".18"/>
+    <!-- phone body -->
+    <rect x="-90" y="-200" width="180" height="380" rx="28" fill="#1a102b"/>
+    <rect x="-84" y="-194" width="168" height="368" rx="22" fill="#faf5ff"/>
+    <!-- notch -->
+    <rect x="-22" y="-186" width="44" height="6" rx="3" fill="#1a102b"/>
+
+    <!-- screen header -->
+    <rect x="-72" y="-160" width="144" height="36" rx="10" fill="#9333EA"/>
+    <g fill="#fff" transform="translate(-66 -154) scale(0.03)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="-44" y="-138" font-family="Fredoka, sans-serif" font-weight="600" font-size="11" fill="#fff">Mi peludo · Kai</text>
+
+    <!-- Pet card -->
+    <rect x="-72" y="-110" width="144" height="60" rx="10" fill="#fff" stroke="#e9d5ff" stroke-width="2"/>
+    <circle cx="-50" cy="-80" r="14" fill="#eab308"/>
+    <text x="-30" y="-86" font-family="Fredoka, sans-serif" font-weight="600" font-size="10" fill="#1a102b">Kai</text>
+    <text x="-30" y="-72" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="8" fill="#6b21a8">Mestizo · 4 años</text>
+    <text x="-30" y="-58" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="7" fill="#10b981">● Vacunas al día</text>
+
+    <!-- Vaccine list with green ticks -->
+    <g transform="translate(-72 -30)">
+      <text font-family="Fredoka, sans-serif" font-weight="600" font-size="9" fill="#1a102b">Vacunas</text>
+      <g transform="translate(0 16)">
+        <circle r="6" fill="#10b981"/>
+        <path d="M -3 0 L -1 2 L 3 -2" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <text x="14" y="3" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" fill="#1a102b" font-weight="500">Antirrábica</text>
+      </g>
+      <g transform="translate(0 36)">
+        <circle r="6" fill="#10b981"/>
+        <path d="M -3 0 L -1 2 L 3 -2" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <text x="14" y="3" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" fill="#1a102b" font-weight="500">Séxtuple</text>
+      </g>
+      <g transform="translate(0 56)">
+        <circle r="6" fill="#10b981"/>
+        <path d="M -3 0 L -1 2 L 3 -2" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <text x="14" y="3" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" fill="#1a102b" font-weight="500">Bordetella</text>
+      </g>
+    </g>
+
+    <!-- Share PDF CTA -->
+    <rect x="-72" y="100" width="144" height="32" rx="16" fill="#9333EA"/>
+    <text x="0" y="120" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="11" fill="#fff">Compartir ficha PDF</text>
+
+    <!-- home indicator -->
+    <rect x="-30" y="160" width="60" height="3" rx="1.5" fill="#1a102b" opacity=".25"/>
+  </g>
+
+  <!-- Cat right (tranquilo, sentado) -->
+  <g transform="translate(620 410)">
+    <ellipse cx="0" cy="80" rx="60" ry="8" fill="#9333EA" opacity=".15"/>
+    <!-- body -->
+    <ellipse cx="0" cy="20" rx="38" ry="46" fill="#fff" stroke="#1a102b" stroke-width="1.5"/>
+    <!-- chest stripe -->
+    <ellipse cx="0" cy="30" rx="14" ry="22" fill="#e9d5ff" opacity=".5"/>
+    <!-- head -->
+    <circle cx="0" cy="-30" r="32" fill="#fff" stroke="#1a102b" stroke-width="1.5"/>
+    <!-- ears triangular -->
+    <path d="M -28 -50 L -24 -80 L -14 -56 Z" fill="#fff" stroke="#1a102b" stroke-width="1.5" stroke-linejoin="round"/>
+    <path d="M 28 -50 L 24 -80 L 14 -56 Z" fill="#fff" stroke="#1a102b" stroke-width="1.5" stroke-linejoin="round"/>
+    <!-- ear interiors -->
+    <path d="M -22 -52 L -22 -68 L -16 -56 Z" fill="#ec4899" opacity=".5"/>
+    <path d="M 22 -52 L 22 -68 L 16 -56 Z" fill="#ec4899" opacity=".5"/>
+    <!-- eyes (closed gentle) -->
+    <path d="M -14 -32 Q -10 -28 -6 -32" fill="none" stroke="#1a102b" stroke-width="2" stroke-linecap="round"/>
+    <path d="M 6 -32 Q 10 -28 14 -32" fill="none" stroke="#1a102b" stroke-width="2" stroke-linecap="round"/>
+    <!-- nose -->
+    <path d="M -3 -22 L 3 -22 L 0 -18 Z" fill="#ec4899"/>
+    <!-- mouth -->
+    <path d="M 0 -16 L 0 -12 M 0 -12 Q -3 -10 -5 -10 M 0 -12 Q 3 -10 5 -10" fill="none" stroke="#1a102b" stroke-width="1.2" stroke-linecap="round"/>
+    <!-- whiskers -->
+    <line x1="-18" y1="-22" x2="-32" y2="-26" stroke="#1a102b" stroke-width="0.8"/>
+    <line x1="-18" y1="-18" x2="-32" y2="-18" stroke="#1a102b" stroke-width="0.8"/>
+    <line x1="18" y1="-22" x2="32" y2="-26" stroke="#1a102b" stroke-width="0.8"/>
+    <line x1="18" y1="-18" x2="32" y2="-18" stroke="#1a102b" stroke-width="0.8"/>
+    <!-- tail curling -->
+    <path d="M 36 30 Q 60 40, 50 70" fill="none" stroke="#fff" stroke-width="14" stroke-linecap="round"/>
+    <path d="M 36 30 Q 60 40, 50 70" fill="none" stroke="#1a102b" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- front paws -->
+    <ellipse cx="-14" cy="64" rx="8" ry="6" fill="#fff" stroke="#1a102b" stroke-width="1.5"/>
+    <ellipse cx="14" cy="64" rx="8" ry="6" fill="#fff" stroke="#1a102b" stroke-width="1.5"/>
+  </g>
+
+  <!-- Floating sparkles -->
+  <g fill="#eab308">
+    <path d="M 100 60 L 104 70 L 114 74 L 104 78 L 100 88 L 96 78 L 86 74 L 96 70 Z" opacity=".5"/>
+    <path d="M 700 240 L 703 248 L 711 251 L 703 254 L 700 262 L 697 254 L 689 251 L 697 248 Z" opacity=".55"/>
+  </g>
+</svg>

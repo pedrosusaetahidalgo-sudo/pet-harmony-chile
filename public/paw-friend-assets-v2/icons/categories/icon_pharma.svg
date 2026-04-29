@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Pharma audience">
+  <title>Pharma</title>
+  <defs>
+    <linearGradient id="ph" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#831843"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="40" ry="40" fill="url(#ph)"/>
+  <g transform="translate(100 100) rotate(-30)">
+    <rect x="-44" y="-22" width="44" height="44" rx="22" fill="#fff"/>
+    <rect x="0" y="-22" width="44" height="44" rx="22" fill="#fde047"/>
+    <line x1="0" y1="-22" x2="0" y2="22" stroke="#831843" stroke-width="2"/>
+  </g>
+  <g fill="#fff" opacity=".6">
+    <g transform="translate(40 50) scale(0.024)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <g transform="translate(150 152) scale(0.024)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+  </g>
+</svg>

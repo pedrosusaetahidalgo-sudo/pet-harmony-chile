@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 2560" role="img" aria-label="Paw Friend splash">
+  <title>Paw Friend — splash 1600x2560</title>
+  <defs>
+    <mask id="hc-splash_tablet_1600x2560">
+      <rect width="1600" height="2560" fill="white"/>
+      <ellipse cx="800.0" cy="1294.7" rx="16.5" ry="16.5" fill="white"/>
+      <path d="M 800.0 1302.4 c -4.71 -5.88, -12.94 -11.76, -17.65 -17.65 c -4.71 -5.88, -2.94 -14.71, 4.71 -16.47 c 5.29 -1.18, 10.0 1.76, 12.94 5.88 c 2.94 -4.12, 7.65 -7.06, 12.94 -5.88 c 7.65 1.76, 9.41 10.59, 4.71 16.47 c -4.71 5.88, -12.94 11.76, -17.65 17.65 z" fill="black"/>
+    </mask>
+  </defs>
+  <rect width="1600" height="2560" fill="#9333EA"/>
+  <g fill="#fff">
+    <ellipse cx="717.6" cy="1178.8" rx="32.4" ry="40.0" transform="rotate(-22 717.6 1178.8)"/>
+    <ellipse cx="769.4" cy="1125.9" rx="29.4" ry="36.5" transform="rotate(-10 769.4 1125.9)"/>
+    <ellipse cx="830.6" cy="1125.9" rx="29.4" ry="36.5" transform="rotate(10 830.6 1125.9)"/>
+    <ellipse cx="882.4" cy="1178.8" rx="32.4" ry="40.0" transform="rotate(22 882.4 1178.8)"/>
+    <ellipse cx="800.0" cy="1272.9" rx="91.2" ry="79.4" mask="url(#hc-splash_tablet_1600x2560)"/>
+  </g>
+  <text x="800.0" y="1516.0" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="64.0" letter-spacing="-1.5">
+    <tspan fill="#e9d5ff" font-weight="600">paw</tspan><tspan fill="#fff" font-weight="500"> friend</tspan>
+  </text>
+</svg>

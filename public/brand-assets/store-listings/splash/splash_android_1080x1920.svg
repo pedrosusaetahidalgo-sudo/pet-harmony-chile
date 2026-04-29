@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="Paw Friend splash">
+  <title>Paw Friend — splash 1080x1920</title>
+  <defs>
+    <mask id="hc-splash_android_1080x1920">
+      <rect width="1080" height="1920" fill="white"/>
+      <ellipse cx="540.0" cy="969.9" rx="11.1" ry="11.1" fill="white"/>
+      <path d="M 540.0 975.1 c -3.18 -3.97, -8.74 -7.94, -11.91 -11.91 c -3.18 -3.97, -1.99 -9.93, 3.18 -11.12 c 3.57 -0.79, 6.75 1.19, 8.74 3.97 c 1.99 -2.78, 5.16 -4.76, 8.74 -3.97 c 5.16 1.19, 6.35 7.15, 3.18 11.12 c -3.18 3.97, -8.74 7.94, -11.91 11.91 z" fill="black"/>
+    </mask>
+  </defs>
+  <rect width="1080" height="1920" fill="#9333EA"/>
+  <g fill="#fff">
+    <ellipse cx="484.4" cy="891.7" rx="21.8" ry="27.0" transform="rotate(-22 484.4 891.7)"/>
+    <ellipse cx="519.4" cy="856.0" rx="19.9" ry="24.6" transform="rotate(-10 519.4 856.0)"/>
+    <ellipse cx="560.6" cy="856.0" rx="19.9" ry="24.6" transform="rotate(10 560.6 856.0)"/>
+    <ellipse cx="595.6" cy="891.7" rx="21.8" ry="27.0" transform="rotate(22 595.6 891.7)"/>
+    <ellipse cx="540.0" cy="955.2" rx="61.5" ry="53.6" mask="url(#hc-splash_android_1080x1920)"/>
+  </g>
+  <text x="540.0" y="1119.3" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="43.2" letter-spacing="-1.5">
+    <tspan fill="#e9d5ff" font-weight="600">paw</tspan><tspan fill="#fff" font-weight="500"> friend</tspan>
+  </text>
+</svg>

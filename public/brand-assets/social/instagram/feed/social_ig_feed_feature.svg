@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="IG feed — feature">
+  <title>IG feed feature</title>
+  <defs>
+    <linearGradient id="igf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#581c87"/>
+    </linearGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#igf)"/>
+  <g transform="translate(60 140)">
+    <text font-family="Fredoka, sans-serif" font-weight="500" font-size="22" fill="#fde047" letter-spacing="3">NUEVO · FEATURE</text>
+    <text y="80" font-family="Fredoka, sans-serif" font-weight="600" font-size="68" fill="#fff" letter-spacing="-2">La ficha PDF</text>
+    <text y="148" font-family="Fredoka, sans-serif" font-weight="600" font-size="68" fill="#fde047" letter-spacing="-2">en 1 click</text>
+  </g>
+  <!-- Screenshot placeholder -->
+  <g transform="translate(540 620)">
+    <rect x="-200" y="-280" width="400" height="560" rx="32" fill="#1a102b"/>
+    <rect x="-190" y="-270" width="380" height="540" rx="24" fill="#faf5ff"/>
+    <text y="0" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="14" fill="#9333EA" opacity=".4">screenshot</text>
+    <text y="20" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="10" fill="#9333EA" opacity=".3">aquí</text>
+  </g>
+  <g transform="translate(60 1020)">
+    <g fill="#fff" transform="scale(0.05)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="50" y="32" font-family="Fredoka, sans-serif" font-size="22" letter-spacing="-1.5">
+      <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+    </text>
+    <text x="900" y="32" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" fill="#fff" opacity=".7">@pawfriend_cl</text>
+  </g>
+</svg>

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-label="Directorio de vets">
+  <title>Directorio de vets</title>
+  <rect width="600" height="400" fill="#faf5ff"/>
+  <!-- Map base -->
+  <g transform="translate(50 60)">
+    <rect width="500" height="300" rx="16" fill="#fff" stroke="#9333EA" stroke-width="3"/>
+    <!-- Roads -->
+    <g stroke="#e9d5ff" stroke-width="6" stroke-linecap="round" fill="none">
+      <path d="M 40 200 Q 200 160, 460 220"/>
+      <path d="M 100 80 L 200 240 L 380 60"/>
+      <path d="M 250 280 L 280 100"/>
+    </g>
+    <!-- Tree dots -->
+    <g fill="#10b981" opacity=".4">
+      <circle cx="80" cy="100" r="8"/>
+      <circle cx="420" cy="80" r="10"/>
+      <circle cx="380" cy="260" r="9"/>
+      <circle cx="140" cy="240" r="7"/>
+    </g>
+    <!-- Generic gray pins -->
+    <g>
+      <g transform="translate(120 130)">
+        <path d="M 0 -20 C -8 -20, -14 -14, -14 -6 C -14 6, 0 22, 0 22 C 0 22, 14 6, 14 -6 C 14 -14, 8 -20, 0 -20 Z" fill="#9ca3af"/>
+        <circle cx="0" cy="-6" r="6" fill="#fff"/>
+      </g>
+      <g transform="translate(380 180)">
+        <path d="M 0 -20 C -8 -20, -14 -14, -14 -6 C -14 6, 0 22, 0 22 C 0 22, 14 6, 14 -6 C 14 -14, 8 -20, 0 -20 Z" fill="#9ca3af"/>
+        <circle cx="0" cy="-6" r="6" fill="#fff"/>
+      </g>
+      <g transform="translate(420 100)">
+        <path d="M 0 -20 C -8 -20, -14 -14, -14 -6 C -14 6, 0 22, 0 22 C 0 22, 14 6, 14 -6 C 14 -14, 8 -20, 0 -20 Z" fill="#9ca3af"/>
+        <circle cx="0" cy="-6" r="6" fill="#fff"/>
+      </g>
+    </g>
+    <!-- Featured Paw Friend pin (big) -->
+    <g transform="translate(250 160)">
+      <circle r="50" fill="#9333EA" opacity=".18"/>
+      <circle r="38" fill="#9333EA" opacity=".25"/>
+      <path d="M 0 -34 C -16 -34, -28 -22, -28 -8 C -28 12, 0 40, 0 40 C 0 40, 28 12, 28 -8 C 28 -22, 16 -34, 0 -34 Z" fill="#9333EA"/>
+      <circle cx="0" cy="-8" r="14" fill="#fff"/>
+      <g fill="#9333EA" transform="translate(-7 -15) scale(0.04)">
+        <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+        <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+        <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+        <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+        <ellipse cx="340" cy="430" rx="155" ry="135"/>
+      </g>
+    </g>
+  </g>
+</svg>

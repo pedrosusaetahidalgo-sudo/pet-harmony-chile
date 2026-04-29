@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2560 1440" role="img" aria-label="YT channel banner">
+  <title>YT channel banner</title>
+  <defs>
+    <linearGradient id="ytb" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="50%" stop-color="#7e22ce"/>
+      <stop offset="100%" stop-color="#3b0764"/>
+    </linearGradient>
+    <radialGradient id="ytb-glow" cx="80%" cy="20%" r="40%">
+      <stop offset="0%" stop-color="#fde047" stop-opacity=".25"/>
+      <stop offset="100%" stop-color="#fde047" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="ytb-paws" x="0" y="0" width="200" height="200" patternUnits="userSpaceOnUse">
+      <g fill="#fff" opacity=".045" transform="translate(60 60) scale(0.12)">
+        <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+        <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+        <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+        <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+        <ellipse cx="340" cy="430" rx="155" ry="135"/>
+      </g>
+    </pattern>
+  </defs>
+  <rect width="2560" height="1440" fill="url(#ytb)"/>
+  <rect width="2560" height="1440" fill="url(#ytb-paws)"/>
+  <rect width="2560" height="1440" fill="url(#ytb-glow)"/>
+
+  <!-- Safe zone guides (subtle, will not be visible on most devices) -->
+  <rect x="507" y="508" width="1546" height="423" fill="none" stroke="#fde047" stroke-width="2" stroke-dasharray="20 16" opacity=".25"/>
+
+  <!-- Content INSIDE safe zone (center 1546×423 area) -->
+  <g transform="translate(1280 720)">
+    <!-- Mark left -->
+    <g transform="translate(-560 -120)">
+      <path d="M 120 0 C 200 0, 240 38, 240 120 C 240 202, 200 240, 120 240 C 40 240, 0 202, 0 120 C 0 38, 40 0, 120 0 Z" fill="#fff"/>
+      <g fill="#9333EA" transform="translate(40 38) scale(0.246)">
+        <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+        <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+        <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+        <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+        <ellipse cx="340" cy="430" rx="155" ry="135"/>
+      </g>
+    </g>
+    <!-- Wordmark center -->
+    <text x="-260" y="-30" font-family="Fredoka, sans-serif" font-size="120" letter-spacing="-3">
+      <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+    </text>
+    <text x="-260" y="40" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="32" fill="#e9d5ff">La ficha médica de tu mascota · gratis</text>
+    <text x="-260" y="100" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="22" fill="#fde047" letter-spacing="3">CANAL OFICIAL · HECHO EN CHILE</text>
+    <!-- Bullet markers -->
+    <g transform="translate(-260 150)" fill="#fde047" opacity=".7">
+      <circle r="6"/>
+      <circle cx="24" r="4"/>
+      <circle cx="44" r="3"/>
+    </g>
+  </g>
+
+  <!-- Avoid bottom-right (timestamp area) — keep blank -->
+  <text x="120" y="1380" font-family="'JetBrains Mono', monospace" font-size="22" fill="#fde047" opacity=".55">pawfriend.cl</text>
+</svg>

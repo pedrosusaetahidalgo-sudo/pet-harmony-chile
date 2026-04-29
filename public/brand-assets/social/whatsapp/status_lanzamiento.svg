@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="WA status — lanzamiento">
+  <title>WA status lanzamiento</title>
+  <defs>
+    <radialGradient id="wsl" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="100%" stop-color="#3b0764"/>
+    </radialGradient>
+  </defs>
+  <rect width="1080" height="1920" fill="url(#wsl)"/>
+  <text x="540" y="380" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="28" fill="#fde047" letter-spacing="6">YA DISPONIBLE</text>
+  <g transform="translate(540 800) scale(0.6) translate(-340 -340)">
+    <g fill="#fff">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+  </g>
+  <text x="540" y="1180" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="80" letter-spacing="-2">
+    <tspan fill="#fff">paw</tspan><tspan fill="#fde047"> friend</tspan>
+  </text>
+  <text x="540" y="1260" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="32" fill="#e9d5ff">La ficha médica de tu mascota</text>
+  <g transform="translate(540 1500)">
+    <rect x="-260" y="-50" width="520" height="100" rx="50" fill="#fde047"/>
+    <text y="14" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="34" fill="#581c87">Descargar gratis →</text>
+  </g>
+  <text x="540" y="1700" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="22" fill="#fde047" opacity=".7">pawfriend.cl</text>
+</svg>

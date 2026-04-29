@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="IG feed — data stat">
+  <title>IG feed data stat</title>
+  <rect width="1080" height="1080" fill="#faf5ff"/>
+  <defs>
+    <linearGradient id="igds" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#eab308"/>
+    </linearGradient>
+  </defs>
+  <text x="540" y="220" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="22" fill="#9333EA" letter-spacing="3">EN CHILE</text>
+  <text x="540" y="540" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="280" fill="url(#igds)" letter-spacing="-12">68%</text>
+  <text x="540" y="660" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="42" fill="#1a102b" letter-spacing="-1">de los hogares</text>
+  <text x="540" y="710" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="42" fill="#1a102b" letter-spacing="-1">tiene mascota</text>
+  <text x="540" y="800" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="18" fill="#9333EA" opacity=".7">Fuente: Cadem 2025</text>
+  <g transform="translate(60 1020)">
+    <g fill="#9333EA" transform="scale(0.05)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="50" y="32" font-family="Fredoka, sans-serif" font-size="22" letter-spacing="-1.5">
+      <tspan fill="#6B21A8" font-weight="600">paw</tspan><tspan fill="#9333EA" font-weight="500"> friend</tspan>
+    </text>
+    <text x="900" y="32" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" fill="#9333EA" opacity=".7">@pawfriend_cl</text>
+  </g>
+</svg>
