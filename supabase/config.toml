@@ -116,6 +116,9 @@ verify_jwt = false
 [functions.audit-cron-daily]
 verify_jwt = false
 
+[functions.risk-signals-alert-cron]
+verify_jwt = false
+
 [functions.flow-create-donation]
 verify_jwt = false
 
