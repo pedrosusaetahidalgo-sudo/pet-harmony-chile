@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<title>Paw Friend — Partner kit · 1-pager</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 0; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; color: #1a102b; background: #faf5ff; }
+  .page { width: 210mm; min-height: 297mm; padding: 18mm 16mm; background: #fff; margin: 0 auto; position: relative; overflow: hidden; }
+  .page::before { content: ''; position: absolute; top: 0; right: 0; width: 70mm; height: 70mm; background: radial-gradient(circle at top right, rgba(147,51,234,.15), transparent 70%); pointer-events: none; }
+
+  /* Header */
+  header { display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: 2px solid #e9d5ff; }
+  .mark { width: 56px; height: 56px; border-radius: 12px; background: #9333EA; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .mark svg { width: 36px; height: 36px; }
+  .brand { font-family: Fredoka, sans-serif; font-size: 22px; letter-spacing: -1.2px; }
+  .brand .paw { color: #6B21A8; font-weight: 600; }
+  .brand .friend { color: #9333EA; font-weight: 500; }
+  .tagline { font-size: 11px; color: #6b21a8; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
+  .doc-meta { margin-left: auto; text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #9333EA; opacity: .65; line-height: 1.5; }
+
+  /* Hook */
+  .hook { margin: 24px 0 18px; }
+  .eyebrow { font-family: Fredoka, sans-serif; font-weight: 500; font-size: 11px; color: #9333EA; letter-spacing: 3px; text-transform: uppercase; }
+  .hook h1 { font-family: Fredoka, sans-serif; font-weight: 600; font-size: 28px; line-height: 1.15; letter-spacing: -1px; margin-top: 6px; color: #1a102b; }
+  .hook h1 .accent { color: #9333EA; }
+
+  /* Two-column blocks */
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+  .block { padding: 14px 16px; border-radius: 10px; background: #faf5ff; border: 1px solid #e9d5ff; }
+  .block.purple { background: linear-gradient(135deg, #9333EA, #581c87); color: #fff; border: none; }
+  .block.gold { background: linear-gradient(135deg, #fef3c7, #fde047); border-color: #fcd34d; }
+  .block h3 { font-family: Fredoka, sans-serif; font-weight: 600; font-size: 13px; letter-spacing: -.3px; margin-bottom: 6px; }
+  .block.purple h3 { color: #fde047; }
+  .block ul { list-style: none; }
+  .block li { font-size: 11px; line-height: 1.55; padding-left: 14px; position: relative; margin-top: 4px; }
+  .block li::before { content: '●'; position: absolute; left: 0; color: #9333EA; font-size: 8px; top: 2px; }
+  .block.purple li::before { color: #fde047; }
+  .block.gold li::before { color: #b45309; }
+
+  /* Use case box */
+  .use-case { padding: 14px 18px; border-left: 3px solid #eab308; background: #fef3c7; border-radius: 0 8px 8px 0; margin: 16px 0; }
+  .use-case h3 { font-family: Fredoka, sans-serif; font-weight: 600; font-size: 13px; color: #92400e; }
+  .use-case p { font-size: 10.5px; line-height: 1.55; color: #1a102b; margin-top: 4px; }
+
+  /* CTA */
+  .cta-block { background: linear-gradient(135deg, #9333EA, #3b0764); color: #fff; padding: 22px 24px; border-radius: 12px; margin: 18px 0 12px; display: flex; align-items: center; gap: 18px; }
+  .cta-block .arrow { font-family: Fredoka, sans-serif; font-weight: 600; font-size: 36px; color: #fde047; }
+  .cta-block h2 { font-family: Fredoka, sans-serif; font-weight: 600; font-size: 18px; letter-spacing: -.5px; }
+  .cta-block p { font-size: 11px; margin-top: 4px; opacity: .9; }
+  .cta-block .url { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 12px; color: #fde047; margin-top: 6px; display: inline-block; padding: 4px 10px; background: rgba(0,0,0,.25); border-radius: 4px; }
+
+  /* Footer */
+  footer { position: absolute; bottom: 12mm; left: 16mm; right: 16mm; display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid #e9d5ff; font-family: 'JetBrains Mono', monospace; font-size: 8px; color: #9333EA; opacity: .55; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="mark">
+      <svg viewBox="0 0 680 680" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#fff">
+          <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+          <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+          <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+          <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+          <ellipse cx="340" cy="430" rx="155" ry="135"/>
+        </g>
+      </svg>
+    </div>
+    <div>
+      <div class="brand"><span class="paw">paw</span><span class="friend"> friend</span></div>
+      <div class="tagline">PAW PARTNERS · KIT 2026</div>
+    </div>
+    <div class="doc-meta">
+      Q2 2026<br/>
+      v1.0 · 1 página<br/>
+      pawfriend.cl
+    </div>
+  </header>
+
+  <section class="hook">
+    <div class="eyebrow">PAW PARTNERS</div>
+    <h1>¿Tienes una <span class="accent">tienda, café, paseador o vet pet-friendly</span><br/>en Chile?<br/>Hagámonos partners.</h1>
+  </section>
+
+  <div class="grid">
+    <div class="block purple">
+      <h3>↑ Lo que te ofrecemos</h3>
+      <ul>
+        <li>Perfil destacado en el mapa de Paw Friend</li>
+        <li>Aparición en el newsletter del barrio (mensual)</li>
+        <li>Featured en directorio según rotación</li>
+        <li>Badge "Paw Partner" oficial visible para 1.000+ dueños activos</li>
+        <li>Sin contrato · sin exclusividad · sin pago</li>
+      </ul>
+    </div>
+    <div class="block gold">
+      <h3>↓ Lo que te pedimos</h3>
+      <ul>
+        <li>Descuento exclusivo a Paw Members: 10% al 25%</li>
+        <li>Mostrar el badge en tu vidriera o redes</li>
+        <li>Renovación voluntaria cada 6 meses (te avisamos)</li>
+        <li>Reportar uso del descuento (formulario simple)</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="use-case">
+    <h3>Caso de uso real</h3>
+    <p><strong>"Café Maipo"</strong> ofrece 15% off en bebida + 1 galleta gratis para perro a Paw Members. A cambio, aparece destacado en el mapa de Vitacura · Las Condes. Resultado primeros 3 meses: 38 visitas trazadas, 11 nuevos clientes recurrentes. <em>Sin pagar un peso por la visibilidad.</em></p>
+  </div>
+
+  <div class="grid">
+    <div class="block">
+      <h3>Ideal para</h3>
+      <ul>
+        <li>Cafés y restaurantes pet-friendly</li>
+        <li>Tiendas de mascotas independientes</li>
+        <li>Peluquerías caninas y guarderías</li>
+        <li>Paseadores y entrenadores</li>
+        <li>Veterinarias en planes Free</li>
+      </ul>
+    </div>
+    <div class="block">
+      <h3>Quiénes son nuestros usuarios</h3>
+      <ul>
+        <li>Dueños de mascotas en RM, Concepción, Valparaíso</li>
+        <li>Tickets promedio sobre la mediana del barrio</li>
+        <li>Perfil: profesionales 25-45, alta intención de gasto</li>
+        <li>Buscan recomendaciones cercanas y verificadas</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="cta-block">
+    <div class="arrow">→</div>
+    <div>
+      <h2>Aplicar como Paw Partner</h2>
+      <p>Formulario corto · respondemos en 48 hrs · sin compromisos</p>
+      <span class="url">pawfriend.cl/aplicar?tipo=paw_partners</span>
+    </div>
+  </div>
+
+  <footer>
+    <span>SUSAETA GARNHAM SOFTWARE ENGINEERING SpA · RUT 78.328.659-9</span>
+    <span>pawfriendcl@gmail.com · pawfriend.cl/partners</span>
+  </footer>
+
+</div>
+</body>
+</html>

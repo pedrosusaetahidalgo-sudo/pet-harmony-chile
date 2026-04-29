@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-label="Gradient mesh pattern">
+  <title>Gradient mesh</title>
+  <defs>
+    <radialGradient id="gm1" cx="20%" cy="30%" r="50%">
+      <stop offset="0%" stop-color="#9333EA" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#9333EA" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gm2" cx="80%" cy="20%" r="45%">
+      <stop offset="0%" stop-color="#eab308" stop-opacity=".7"/>
+      <stop offset="100%" stop-color="#eab308" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gm3" cx="50%" cy="85%" r="60%">
+      <stop offset="0%" stop-color="#ec4899" stop-opacity=".6"/>
+      <stop offset="100%" stop-color="#ec4899" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gm4" cx="90%" cy="70%" r="40%">
+      <stop offset="0%" stop-color="#581c87" stop-opacity=".8"/>
+      <stop offset="100%" stop-color="#581c87" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="800" fill="#3b0764"/>
+  <rect width="1200" height="800" fill="url(#gm1)"/>
+  <rect width="1200" height="800" fill="url(#gm2)"/>
+  <rect width="1200" height="800" fill="url(#gm3)"/>
+  <rect width="1200" height="800" fill="url(#gm4)"/>
+</svg>

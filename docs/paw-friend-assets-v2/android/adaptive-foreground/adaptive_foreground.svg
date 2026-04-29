@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432 432" role="img" aria-label="Paw Friend adaptive foreground">
+  <title>Paw Friend — adaptive foreground</title>
+  <defs>
+    <mask id="hc-fg">
+      <rect width="432" height="432" fill="white"/>
+      <path d="M 216 270 C 211 264, 203 258, 198 252 C 193 246, 195 238, 202 237 C 207 236, 212 238, 216 242 C 220 238, 225 236, 230 237 C 237 238, 239 246, 234 252 C 229 258, 221 264, 216 270 Z" fill="black"/>
+    </mask>
+  </defs>
+  <g fill="#fff" transform="translate(84 84) scale(0.388)">
+    <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+    <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+    <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+    <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+  </g>
+  <ellipse cx="216" cy="251" rx="60" ry="52" fill="#fff" mask="url(#hc-fg)"/>
+</svg>

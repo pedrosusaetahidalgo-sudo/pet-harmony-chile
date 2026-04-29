@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-label="Primera ficha">
+  <title>Primera ficha</title>
+  <rect width="600" height="400" fill="#faf5ff"/>
+  <ellipse cx="300" cy="360" rx="140" ry="10" fill="#9333EA" opacity=".15"/>
+  <g transform="translate(300 200)">
+    <!-- Document -->
+    <path d="M -90 -120 L 60 -120 L 110 -70 L 110 110 L -90 110 Z" fill="#fff" stroke="#9333EA" stroke-width="3"/>
+    <path d="M 60 -120 L 60 -70 L 110 -70 Z" fill="#e9d5ff" stroke="#9333EA" stroke-width="3"/>
+    <!-- Header strip -->
+    <rect x="-70" y="-100" width="120" height="20" rx="4" fill="#9333EA"/>
+    <!-- paw inside header -->
+    <g fill="#fff" transform="translate(-66 -98) scale(0.024)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <!-- Content lines -->
+    <g stroke="#9333EA" stroke-width="3" stroke-linecap="round" opacity=".55">
+      <line x1="-70" y1="-50" x2="60" y2="-50"/>
+      <line x1="-70" y1="-32" x2="80" y2="-32"/>
+      <line x1="-70" y1="-14" x2="50" y2="-14"/>
+    </g>
+    <!-- Vaccine entries -->
+    <g transform="translate(-70 14)">
+      <circle r="8" fill="#10b981"/>
+      <path d="M -4 0 L -1 3 L 4 -3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="20" y1="0" x2="120" y2="0" stroke="#9333EA" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+    </g>
+    <g transform="translate(-70 42)">
+      <circle r="8" fill="#10b981"/>
+      <path d="M -4 0 L -1 3 L 4 -3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="20" y1="0" x2="100" y2="0" stroke="#9333EA" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+    </g>
+    <g transform="translate(-70 70)">
+      <circle r="8" fill="#10b981"/>
+      <path d="M -4 0 L -1 3 L 4 -3" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="20" y1="0" x2="80" y2="0" stroke="#9333EA" stroke-width="3" stroke-linecap="round" opacity=".55"/>
+    </g>
+    <!-- Big check overlay -->
+    <g transform="translate(120 -140)">
+      <circle r="38" fill="#10b981"/>
+      <path d="M -16 0 L -4 14 L 18 -12" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+</svg>

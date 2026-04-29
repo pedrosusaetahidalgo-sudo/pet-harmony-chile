@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" role="img" aria-label="Paw Voice reel review template">
+  <title>Paw Voice reel review template</title>
+  <defs>
+    <linearGradient id="rtr-top" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#000" stop-opacity=".7"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="rtr-btm" x1="0%" y1="100%" x2="0%" y2="0%">
+      <stop offset="0%" stop-color="#000" stop-opacity=".75"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Video placeholder bg -->
+  <rect width="1080" height="1920" fill="#1a102b"/>
+  <rect x="40" y="40" width="1000" height="1840" rx="24" fill="#581c87" opacity=".4" stroke="#9333EA" stroke-width="2" stroke-dasharray="12 8"/>
+  <text x="540" y="980" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="20" fill="#fff" opacity=".4">video aquí</text>
+
+  <!-- Top overlay: eyebrow -->
+  <rect width="1080" height="320" fill="url(#rtr-top)"/>
+  <g transform="translate(80 180)">
+    <circle r="10" fill="#fde047"/>
+    <text x="24" y="5" font-family="Fredoka, sans-serif" font-weight="500" font-size="22" fill="#fde047" letter-spacing="3">PAW VOICE · OFICIAL</text>
+  </g>
+  <text x="80" y="240" font-family="Fredoka, sans-serif" font-weight="600" font-size="64" fill="#fff" letter-spacing="-2">Mi review honesto</text>
+
+  <!-- Bottom overlay: CTA + brand -->
+  <rect y="1500" width="1080" height="420" fill="url(#rtr-btm)"/>
+  <g transform="translate(80 1700)">
+    <g fill="#fff" transform="scale(0.13)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="120" y="50" font-family="Fredoka, sans-serif" font-size="36" letter-spacing="-1.5">
+      <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+    </text>
+  </g>
+  <g transform="translate(540 1830)">
+    <rect x="-200" y="-32" width="400" height="64" rx="32" fill="#fde047"/>
+    <text y="8" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="24" fill="#581c87">Descarga gratis →</text>
+  </g>
+</svg>

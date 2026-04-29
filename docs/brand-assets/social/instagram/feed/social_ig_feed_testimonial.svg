@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="IG feed — testimonial">
+  <title>IG feed testimonial</title>
+  <defs>
+    <radialGradient id="igt" cx="30%" cy="30%" r="80%">
+      <stop offset="0%" stop-color="#a855f7" stop-opacity=".6"/>
+      <stop offset="100%" stop-color="#3b0764"/>
+    </radialGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#igt)"/>
+  <text x="80" y="220" font-family="Fredoka, sans-serif" font-weight="600" font-size="280" fill="#fde047" opacity=".25">"</text>
+  <g transform="translate(120 380)">
+    <text font-family="Fredoka, sans-serif" font-weight="500" font-size="56" fill="#fff" letter-spacing="-1">
+      <tspan x="0">Por fin tengo</tspan>
+      <tspan x="0" dy="72">la ficha de Mota</tspan>
+      <tspan x="0" dy="72">en mi celular.</tspan>
+    </text>
+  </g>
+  <g transform="translate(120 760)">
+    <circle r="44" fill="#fff" opacity=".12"/>
+    <circle r="36" fill="none" stroke="#fde047" stroke-width="2" stroke-dasharray="3 3"/>
+    <text x="76" y="-4" font-family="Fredoka, sans-serif" font-weight="600" font-size="22" fill="#fff">Sofía B.</text>
+    <text x="76" y="22" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="16" fill="#fde047">Veterinaria · Providencia</text>
+  </g>
+  <g transform="translate(60 1020)">
+    <g fill="#fff" transform="scale(0.05)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="50" y="32" font-family="Fredoka, sans-serif" font-size="22" letter-spacing="-1.5">
+      <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+    </text>
+    <text x="900" y="32" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" fill="#fff" opacity=".7">@pawfriend_cl</text>
+  </g>
+</svg>

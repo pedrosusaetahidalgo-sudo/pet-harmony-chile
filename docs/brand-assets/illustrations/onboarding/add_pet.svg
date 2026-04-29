@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-label="Agrega tu peludo">
+  <title>Agrega tu peludo</title>
+  <rect width="600" height="400" fill="#faf5ff"/>
+  <ellipse cx="300" cy="360" rx="120" ry="10" fill="#9333EA" opacity=".15"/>
+  <g transform="translate(300 200)">
+    <!-- Big dotted circle -->
+    <circle r="120" fill="none" stroke="#9333EA" stroke-width="4" stroke-dasharray="8 8" opacity=".4"/>
+    <circle r="120" fill="#fff" opacity=".6"/>
+    <!-- Master paw mark inside -->
+    <g fill="#9333EA" transform="scale(0.22) translate(-340 -340)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <!-- Plus button overlay -->
+    <g transform="translate(80 80)">
+      <circle r="28" fill="#9333EA"/>
+      <line x1="-12" y1="0" x2="12" y2="0" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+      <line x1="0" y1="-12" x2="0" y2="12" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+    </g>
+  </g>
+  <g fill="#eab308">
+    <path d="M 110 110 L 113 118 L 121 121 L 113 124 L 110 132 L 107 124 L 99 121 L 107 118 Z" opacity=".5"/>
+    <path d="M 480 270 L 483 278 L 491 281 L 483 284 L 480 292 L 477 284 L 469 281 L 477 278 Z" opacity=".5"/>
+  </g>
+</svg>

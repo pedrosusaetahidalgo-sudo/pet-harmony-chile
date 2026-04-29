@@ -1,11 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="AI brain">
-  <title>Inteligencia artificial veterinaria</title>
-  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
-  <path d="M100 55 C118 55, 135 65, 140 82 C148 88, 150 98, 145 108 C148 118, 145 128, 135 132 C132 140, 122 145, 112 142 C105 148, 95 148, 88 142 C78 145, 68 140, 65 132 C55 128, 52 118, 55 108 C50 98, 52 88, 60 82 C65 65, 82 55, 100 55 Z" fill="#FFFFFF"/>
-  <circle cx="85" cy="95" r="4" fill="#9333EA"/>
-  <circle cx="115" cy="95" r="4" fill="#9333EA"/>
-  <line x1="85" y1="95" x2="100" y2="115" stroke="#9333EA" stroke-width="2" stroke-linecap="round"/>
-  <line x1="115" y1="95" x2="100" y2="115" stroke="#9333EA" stroke-width="2" stroke-linecap="round"/>
-  <circle cx="100" cy="115" r="4" fill="#9333EA"/>
-  <path d="M150 45 L154 52 L161 54 L154 56 L150 63 L146 56 L139 54 L146 52 Z" fill="#EAB308"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Inteligencia AI">
+  <title>Inteligencia AI</title>
+  <rect width="200" height="200" rx="40" ry="40" fill="#9333EA"/>
+  <g fill="#fff">
+    <path d="M 100 60 C 84 60, 70 70, 70 86 C 60 88, 56 98, 60 108 C 56 118, 64 130, 76 130 C 80 138, 90 142, 100 138 L 100 60 Z"/>
+    <path d="M 100 60 C 116 60, 130 70, 130 86 C 140 88, 144 98, 140 108 C 144 118, 136 130, 124 130 C 120 138, 110 142, 100 138 L 100 60 Z"/>
+  </g>
+  <g fill="none" stroke="#9333EA" stroke-width="2.2" stroke-linecap="round">
+    <path d="M 84 86 L 100 92 L 116 86"/>
+    <path d="M 100 92 L 100 124"/>
+    <path d="M 86 110 L 114 110"/>
+  </g>
+  <g fill="#9333EA">
+    <circle cx="100" cy="92" r="2.4"/>
+    <circle cx="100" cy="110" r="2.4"/>
+  </g>
+  <path d="M 152 56 L 156 64 L 164 68 L 156 72 L 152 80 L 148 72 L 140 68 L 148 64 Z" fill="#fde047"/>
 </svg>

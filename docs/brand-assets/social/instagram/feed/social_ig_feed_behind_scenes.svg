@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="IG feed — behind scenes">
+  <title>IG feed behind scenes</title>
+  <defs>
+    <radialGradient id="igbs" cx="50%" cy="60%" r="80%">
+      <stop offset="0%" stop-color="#3b0764"/>
+      <stop offset="100%" stop-color="#0a0118"/>
+    </radialGradient>
+  </defs>
+  <rect width="1080" height="1080" fill="url(#igbs)"/>
+  <g fill="#9333EA" opacity=".3">
+    <ellipse cx="200" cy="200" rx="180" ry="180" filter="blur(40px)"/>
+    <ellipse cx="900" cy="800" rx="220" ry="220" filter="blur(50px)"/>
+  </g>
+  <text x="540" y="240" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="22" fill="#fde047" letter-spacing="3">DESDE EL TALLER</text>
+  <g transform="translate(120 340)">
+    <text font-family="Fredoka, sans-serif" font-weight="600" font-size="48" fill="#fff" letter-spacing="-1.5">
+      <tspan x="0">Llevo 6 meses</tspan>
+      <tspan x="0" dy="64">construyendo Paw Friend</tspan>
+      <tspan x="0" dy="64">solo, con IA, en Santiago.</tspan>
+    </text>
+  </g>
+  <text x="120" y="700" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="20" fill="#fde047">— Paw Founder</text>
+  <text x="120" y="740" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="16" fill="#e9d5ff" opacity=".75">Sin VC, sin oficina, con un Mac y mucho café.</text>
+  <g transform="translate(60 1020)">
+    <g fill="#fff" transform="scale(0.05)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="50" y="32" font-family="Fredoka, sans-serif" font-size="22" letter-spacing="-1.5">
+      <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+    </text>
+    <text x="900" y="32" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" fill="#fff" opacity=".7">@pawfriend_cl</text>
+  </g>
+</svg>

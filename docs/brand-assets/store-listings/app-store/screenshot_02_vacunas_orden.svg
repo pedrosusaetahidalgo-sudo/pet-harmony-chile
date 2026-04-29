@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1242 2688" role="img" aria-label="App Store screenshot 02_vacunas_orden">
+  <title>App Store screenshot · 02_vacunas_orden</title>
+  <defs>
+    <linearGradient id="bg-02_vacunas_orden" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#581c87"/>
+    </linearGradient>
+    <radialGradient id="blob-02_vacunas_orden" cx="20%" cy="100%" r="80%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity=".4"/>
+      <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1242" height="2688" fill="url(#bg-02_vacunas_orden)"/>
+  <rect width="1242" height="2688" fill="url(#blob-02_vacunas_orden)"/>
+
+  <!-- Top safe zone (80px) -->
+  <!-- Headline section ~ 380 px -->
+  <g transform="translate(80 220)">
+    <text font-family="Fredoka, sans-serif" font-weight="500" font-size="34" fill="#10b981" letter-spacing="6">PAW FRIEND</text>
+    <text x="0" y="120" font-family="Fredoka, sans-serif" font-weight="600" font-size="98" fill="#fff" letter-spacing="-3.5">Vacunas, control,</text>
+    <text x="0" y="234" font-family="Fredoka, sans-serif" font-weight="600" font-size="98" fill="#10b981" letter-spacing="-3.5">medicamentos</text>
+  </g>
+
+  <!-- Phone screenshot placeholder zone (centered, dashed) -->
+  <g transform="translate(621 1320)">
+    <rect x="-380" y="-700" width="760" height="1400" rx="60" fill="#1a102b"/>
+    <rect x="-368" y="-688" width="736" height="1376" rx="48" fill="#faf5ff" stroke="#10b981" stroke-width="3" stroke-dasharray="14 10"/>
+    <text x="0" y="-20" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="34" fill="#9333EA" opacity=".5">screenshot</text>
+    <text x="0" y="20" text-anchor="middle" font-family="'JetBrains Mono', monospace" font-size="22" fill="#9333EA" opacity=".4">app aquí · 736 × 1376</text>
+  </g>
+
+  <!-- Subhead + CTA bottom -->
+  <g transform="translate(621 2300)" text-anchor="middle">
+    <text font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="36" fill="#10b981">todo en orden</text>
+  </g>
+
+  <!-- Bottom brand strip (avoids 80 px safe zone bottom) -->
+  <g transform="translate(80 2548)">
+    <g fill="#fff" transform="scale(0.064)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="64" y="38" font-family="Fredoka, sans-serif" font-size="36" letter-spacing="-1.5">
+      <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#10b981" font-weight="500"> friend</tspan>
+    </text>
+    <text x="1082" y="38" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="22" fill="#10b981" opacity=".7">pawfriend.cl</text>
+  </g>
+</svg>

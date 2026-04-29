@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2048 2732" role="img" aria-label="Paw Friend splash">
+  <title>Paw Friend — splash 2048x2732</title>
+  <defs>
+    <mask id="hc-splash_ipad_2048x2732">
+      <rect width="2048" height="2732" fill="white"/>
+      <ellipse cx="1024.0" cy="1384.8" rx="21.1" ry="21.1" fill="white"/>
+      <path d="M 1024.0 1394.6 c -6.02 -7.53, -16.56 -15.06, -22.59 -22.59 c -6.02 -7.53, -3.76 -18.82, 6.02 -21.08 c 6.78 -1.51, 12.8 2.26, 16.56 7.53 c 3.76 -5.27, 9.79 -9.04, 16.56 -7.53 c 9.79 2.26, 12.05 13.55, 6.02 21.08 c -6.02 7.53, -16.56 15.06, -22.59 22.59 z" fill="black"/>
+    </mask>
+  </defs>
+  <rect width="2048" height="2732" fill="#9333EA"/>
+  <g fill="#fff">
+    <ellipse cx="918.6" cy="1236.5" rx="41.4" ry="51.2" transform="rotate(-22 918.6 1236.5)"/>
+    <ellipse cx="984.8" cy="1168.7" rx="37.6" ry="46.7" transform="rotate(-10 984.8 1168.7)"/>
+    <ellipse cx="1063.2" cy="1168.7" rx="37.6" ry="46.7" transform="rotate(10 1063.2 1168.7)"/>
+    <ellipse cx="1129.4" cy="1236.5" rx="41.4" ry="51.2" transform="rotate(22 1129.4 1236.5)"/>
+    <ellipse cx="1024.0" cy="1357.0" rx="116.7" ry="101.6" mask="url(#hc-splash_ipad_2048x2732)"/>
+  </g>
+  <text x="1024.0" y="1668.0" text-anchor="middle" font-family="Fredoka, sans-serif" font-size="81.9" letter-spacing="-1.5">
+    <tspan fill="#e9d5ff" font-weight="600">paw</tspan><tspan fill="#fff" font-weight="500"> friend</tspan>
+  </text>
+</svg>

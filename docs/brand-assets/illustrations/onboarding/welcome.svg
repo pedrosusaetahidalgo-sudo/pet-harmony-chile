@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" role="img" aria-label="Bienvenido a Paw Friend">
+  <title>Bienvenido a Paw Friend</title>
+  <defs>
+    <radialGradient id="wbg" cx="50%" cy="40%" r="70%">
+      <stop offset="0%" stop-color="#faf5ff"/>
+      <stop offset="100%" stop-color="#e9d5ff"/>
+    </radialGradient>
+  </defs>
+  <rect width="600" height="400" fill="url(#wbg)"/>
+  <ellipse cx="300" cy="360" rx="160" ry="14" fill="#9333EA" opacity=".15"/>
+
+  <!-- Brand mark big squircle -->
+  <g transform="translate(180 50)">
+    <path d="M 60 0 C 96 0, 120 18, 120 60 C 120 102, 96 120, 60 120 C 24 120, 0 102, 0 60 C 0 18, 24 0, 60 0 Z" fill="#9333EA"/>
+    <g fill="#fff" transform="translate(12 14) scale(0.14)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+  </g>
+
+  <!-- Pet waving (cat) -->
+  <g transform="translate(380 200)">
+    <ellipse cx="0" cy="20" rx="50" ry="40" fill="#fde047"/>
+    <circle cx="-6" cy="-20" r="34" fill="#fde047"/>
+    <!-- ears -->
+    <path d="M -36 -34 L -28 -52 L -20 -34 Z" fill="#eab308"/>
+    <path d="M 16 -34 L 24 -52 L 8 -34 Z" fill="#eab308"/>
+    <!-- eyes -->
+    <ellipse cx="-18" cy="-22" rx="3" ry="6" fill="#1a102b"/>
+    <ellipse cx="6" cy="-22" rx="3" ry="6" fill="#1a102b"/>
+    <!-- nose -->
+    <path d="M -8 -10 L -2 -10 L -5 -6 Z" fill="#ec4899"/>
+    <!-- whiskers -->
+    <line x1="-26" y1="-8" x2="-40" y2="-12" stroke="#1a102b" stroke-width="1"/>
+    <line x1="-26" y1="-4" x2="-40" y2="-4" stroke="#1a102b" stroke-width="1"/>
+    <line x1="14" y1="-8" x2="28" y2="-12" stroke="#1a102b" stroke-width="1"/>
+    <line x1="14" y1="-4" x2="28" y2="-4" stroke="#1a102b" stroke-width="1"/>
+    <!-- waving paw -->
+    <ellipse cx="48" cy="-20" rx="10" ry="14" transform="rotate(35 48 -20)" fill="#eab308"/>
+  </g>
+
+  <!-- Wordmark below -->
+  <g transform="translate(300 320)" text-anchor="middle">
+    <text font-family="Fredoka, sans-serif" font-size="36" letter-spacing="-1.5">
+      <tspan fill="#6B21A8" font-weight="600">paw</tspan><tspan fill="#9333EA" font-weight="500"> friend</tspan>
+    </text>
+  </g>
+  <!-- sparkles -->
+  <g fill="#eab308">
+    <path d="M 80 100 L 84 110 L 94 114 L 84 118 L 80 128 L 76 118 L 66 114 L 76 110 Z" opacity=".55"/>
+    <path d="M 510 260 L 513 268 L 521 271 L 513 274 L 510 282 L 507 274 L 499 271 L 507 268 Z" opacity=".55"/>
+  </g>
+</svg>

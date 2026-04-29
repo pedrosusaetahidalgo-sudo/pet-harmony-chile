@@ -1,9 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Data shield">
-  <title>Privacidad de datos</title>
-  <rect x="10" y="10" width="180" height="180" rx="40" fill="#9333EA"/>
-  <path d="M100 50 L135 65 L135 110 C135 130, 120 145, 100 155 C80 145, 65 130, 65 110 L65 65 Z" fill="#FFFFFF"/>
-  <rect x="85" y="95" width="30" height="26" rx="4" fill="#9333EA"/>
-  <path d="M92 95 L92 88 C92 82, 95 78, 100 78 C105 78, 108 82, 108 88 L108 95" fill="none" stroke="#9333EA" stroke-width="5" stroke-linecap="round"/>
-  <circle cx="100" cy="108" r="3" fill="#FFFFFF"/>
-  <path d="M155 48 L162 42 L162 53 L155 59 Z" fill="#EAB308"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Datos protegidos">
+  <title>Datos protegidos</title>
+  <rect width="200" height="200" rx="40" ry="40" fill="#9333EA"/>
+  <path d="M 100 48 L 56 64 L 56 108 C 56 134, 76 154, 100 162 C 124 154, 144 134, 144 108 L 144 64 Z" fill="#fff"/>
+  <path d="M 88 100 L 88 92 A 12 12 0 0 1 112 92 L 112 100" fill="none" stroke="#9333EA" stroke-width="3" stroke-linecap="round"/>
+  <rect x="84" y="100" width="32" height="24" rx="4" fill="#9333EA"/>
+  <circle cx="100" cy="112" r="2.5" fill="#fff"/>
+  <path d="M 158 44 L 162 54 L 172 58 L 162 62 L 158 72 L 154 62 L 144 58 L 154 54 Z" fill="#fde047"/>
 </svg>

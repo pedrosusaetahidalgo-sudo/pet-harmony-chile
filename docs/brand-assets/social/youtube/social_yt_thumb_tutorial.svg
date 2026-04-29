@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" role="img" aria-label="YT thumb — tutorial">
+  <title>YT thumb tutorial</title>
+  <defs>
+    <linearGradient id="ytt" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#3b0764"/>
+    </linearGradient>
+    <linearGradient id="ytty" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#eab308"/>
+    </linearGradient>
+  </defs>
+  <rect width="1280" height="720" fill="url(#ytt)"/>
+  <!-- Stripe accent left -->
+  <rect width="22" height="720" fill="#fde047"/>
+  <!-- Massive headline -->
+  <g transform="translate(80 240)">
+    <text font-family="Fredoka, sans-serif" font-weight="600" font-size="98" fill="#fff" letter-spacing="-3">
+      <tspan x="0">Crea tu ficha</tspan>
+      <tspan x="0" dy="110" fill="url(#ytty)">en 60 seg</tspan>
+    </text>
+  </g>
+  <!-- Phone mockup right -->
+  <g transform="translate(960 360) rotate(-6)">
+    <rect x="-130" y="-260" width="260" height="520" rx="32" fill="#1a102b"/>
+    <rect x="-122" y="-252" width="244" height="504" rx="24" fill="#faf5ff"/>
+    <rect x="-100" y="-220" width="200" height="40" rx="8" fill="#9333EA"/>
+    <g fill="#fff" transform="translate(-94 -212) scale(0.026)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <rect x="-100" y="-160" width="200" height="80" rx="10" fill="#fff" stroke="#e9d5ff" stroke-width="2"/>
+    <circle cx="-72" cy="-120" r="20" fill="#eab308"/>
+    <text x="-44" y="-130" font-family="Fredoka, sans-serif" font-weight="600" font-size="14" fill="#1a102b">Kai</text>
+    <text x="-44" y="-114" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" fill="#6b21a8">Mestizo · 4a</text>
+    <text x="-44" y="-98" font-family="'Plus Jakarta Sans', sans-serif" font-size="9" fill="#10b981" font-weight="500">● Vacunas al día</text>
+    <rect x="-100" y="-60" width="200" height="46" rx="23" fill="#9333EA"/>
+    <text x="0" y="-30" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="14" fill="#fff">Compartir PDF</text>
+  </g>
+  <!-- Bottom brand strip -->
+  <g transform="translate(80 660)">
+    <g fill="#fff" transform="scale(0.054)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="56" y="34" font-family="Fredoka, sans-serif" font-size="28" letter-spacing="-1.5">
+      <tspan fill="#fff" font-weight="600">paw</tspan><tspan fill="#fde047" font-weight="500"> friend</tspan>
+    </text>
+  </g>
+</svg>

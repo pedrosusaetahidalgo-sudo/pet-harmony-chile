@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Government audience">
+  <title>Gobierno</title>
+  <defs>
+    <linearGradient id="gv" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a8a"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" rx="40" ry="40" fill="url(#gv)"/>
+  <g fill="#fff">
+    <path d="M 50 80 L 100 50 L 150 80 L 150 88 L 50 88 Z"/>
+    <rect x="56" y="92" width="8" height="56"/>
+    <rect x="80" y="92" width="8" height="56"/>
+    <rect x="112" y="92" width="8" height="56"/>
+    <rect x="136" y="92" width="8" height="56"/>
+    <rect x="50" y="148" width="100" height="8"/>
+    <rect x="46" y="156" width="108" height="6"/>
+  </g>
+  <circle cx="148" cy="148" r="14" fill="#10b981"/>
+  <path d="M 142 148 L 146 152 L 154 144" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <g fill="#fde047" transform="translate(60 162) scale(0.022)">
+    <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+    <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+    <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+    <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+    <ellipse cx="340" cy="430" rx="155" ry="135"/>
+  </g>
+</svg>

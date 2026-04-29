@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1080" role="img" aria-label="WA catalog — ficha">
+  <title>WA catalog ficha</title>
+  <rect width="1080" height="1080" fill="#faf5ff"/>
+  <rect x="40" y="40" width="1000" height="900" rx="32" fill="#fff" stroke="#e9d5ff" stroke-width="3"/>
+  <!-- Title -->
+  <text x="540" y="160" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="500" font-size="22" fill="#9333EA" letter-spacing="3">FICHA MÉDICA</text>
+  <text x="540" y="226" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="60" fill="#1a102b" letter-spacing="-2">Toda su historia · 1 click</text>
+  <!-- Document illustration -->
+  <g transform="translate(540 540)">
+    <rect x="-200" y="-180" width="400" height="360" rx="16" fill="#9333EA"/>
+    <rect x="-180" y="-160" width="320" height="40" rx="6" fill="#fff" opacity=".9"/>
+    <g fill="#9333EA" transform="translate(-160 -150) scale(0.026)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <g stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".55">
+      <line x1="-160" y1="-100" x2="120" y2="-100"/>
+      <line x1="-160" y1="-70" x2="100" y2="-70"/>
+      <line x1="-160" y1="-40" x2="80" y2="-40"/>
+    </g>
+    <g transform="translate(-160 0)" font-family="'Plus Jakarta Sans', sans-serif" font-size="16" fill="#fff" font-weight="500">
+      <g transform="translate(0 0)"><circle r="8" fill="#10b981"/><path d="M -4 0 L -1 3 L 4 -3" stroke="#fff" stroke-width="1.8" fill="none"/><text x="20" y="6">Antirrábica</text></g>
+      <g transform="translate(0 32)"><circle r="8" fill="#10b981"/><path d="M -4 0 L -1 3 L 4 -3" stroke="#fff" stroke-width="1.8" fill="none"/><text x="20" y="6">Séxtuple</text></g>
+      <g transform="translate(0 64)"><circle r="8" fill="#10b981"/><path d="M -4 0 L -1 3 L 4 -3" stroke="#fff" stroke-width="1.8" fill="none"/><text x="20" y="6">Bordetella</text></g>
+      <g transform="translate(0 96)"><circle r="8" fill="#fde047"/><text x="20" y="6">Próx.: desparasitar</text></g>
+    </g>
+  </g>
+  <text x="540" y="850" text-anchor="middle" font-family="Fredoka, sans-serif" font-weight="600" font-size="32" fill="#9333EA">Compártela como PDF</text>
+  <text x="540" y="892" text-anchor="middle" font-family="'Plus Jakarta Sans', sans-serif" font-weight="400" font-size="20" fill="#6b21a8">desde la app, en el chat con tu vet</text>
+  <g transform="translate(60 1020)">
+    <g fill="#9333EA" transform="scale(0.05)">
+      <ellipse cx="200" cy="270" rx="55" ry="68" transform="rotate(-22 200 270)"/>
+      <ellipse cx="288" cy="180" rx="50" ry="62" transform="rotate(-10 288 180)"/>
+      <ellipse cx="392" cy="180" rx="50" ry="62" transform="rotate(10 392 180)"/>
+      <ellipse cx="480" cy="270" rx="55" ry="68" transform="rotate(22 480 270)"/>
+      <ellipse cx="340" cy="430" rx="155" ry="135"/>
+    </g>
+    <text x="50" y="32" font-family="Fredoka, sans-serif" font-size="22" letter-spacing="-1.5">
+      <tspan fill="#6B21A8" font-weight="600">paw</tspan><tspan fill="#9333EA" font-weight="500"> friend</tspan>
+    </text>
+    <text x="900" y="32" text-anchor="end" font-family="'JetBrains Mono', monospace" font-size="13" fill="#9333EA" opacity=".7">pawfriend.cl</text>
+  </g>
+</svg>
