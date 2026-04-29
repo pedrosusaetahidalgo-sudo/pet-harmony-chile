@@ -233,8 +233,15 @@ export const SHADOW = {
 export const ASSETS = {
   logoIcon: 'https://pawfriend.cl/paw-friend-assets-v2/logo/pwa_icon_512.png',
   logoIcon192: 'https://pawfriend.cl/paw-friend-assets-v2/logo/pwa_icon_192.png',
-  wordmark:
-    'https://pawfriend.cl/paw-friend-assets-v2/logo/paw_friend_wordmark_horizontal.svg',
+  wordmark: 'https://pawfriend.cl/paw-friend-assets-v2/logo/paw_friend_wordmark_horizontal.svg',
+  // Brand badges artisticos (2026-04-29 brand kit v2). Usar en emails para
+  // Paw Members, Paw Voices, Paw Companys, vets verificados.
+  badgePawMember: 'https://pawfriend.cl/brand-assets/badges/badge_paw_member.svg',
+  badgePawVoice: 'https://pawfriend.cl/brand-assets/badges/badge_paw_voice.svg',
+  badgePawCompany: 'https://pawfriend.cl/brand-assets/badges/badge_paw_company.svg',
+  badgeVetVerified: 'https://pawfriend.cl/brand-assets/badges/badge_vet_verified.svg',
+  // Patterns para hero cards en emails emocionales (donaciones, gracias, memorial).
+  patternGradientMesh: 'https://pawfriend.cl/brand-assets/patterns/pattern_gradient_mesh.svg',
   siteUrl: 'https://pawfriend.cl',
 } as const;
 

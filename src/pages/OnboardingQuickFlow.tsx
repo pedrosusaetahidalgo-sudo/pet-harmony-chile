@@ -354,6 +354,13 @@ export default function OnboardingQuickFlow() {
         {step === 1 && (
           <Card>
             <CardContent className="pt-6 space-y-4">
+              <img
+                src="/brand-assets/illustrations/onboarding/welcome.svg"
+                alt=""
+                aria-hidden="true"
+                className="w-40 h-28 mx-auto -mt-2 mb-1"
+                loading="eager"
+              />
               <div>
                 <h2 className="text-lg font-semibold mb-1">Lo básico</h2>
                 <p className="text-sm text-muted-foreground">
@@ -477,6 +484,13 @@ export default function OnboardingQuickFlow() {
         {step === 2 && (
           <Card>
             <CardContent className="pt-6 space-y-4">
+              <img
+                src="/brand-assets/illustrations/onboarding/add_pet.svg"
+                alt=""
+                aria-hidden="true"
+                className="w-40 h-28 mx-auto -mt-2 mb-1"
+                loading="lazy"
+              />
               <div>
                 <h2 className="text-lg font-semibold mb-1">Huella nasal</h2>
                 <p className="text-sm text-muted-foreground">
@@ -560,6 +574,13 @@ export default function OnboardingQuickFlow() {
         {step === 3 && (
           <Card>
             <CardContent className="pt-6 space-y-4">
+              <img
+                src="/brand-assets/illustrations/onboarding/first_record.svg"
+                alt=""
+                aria-hidden="true"
+                className="w-40 h-28 mx-auto -mt-2 mb-1"
+                loading="lazy"
+              />
               <div>
                 <h2 className="text-lg font-semibold mb-1">Microchip (opcional)</h2>
                 <p className="text-sm text-muted-foreground">
@@ -623,6 +644,13 @@ export default function OnboardingQuickFlow() {
         {step === 4 && consentStepEnabled && (
           <Card>
             <CardContent className="pt-6 space-y-4">
+              <img
+                src="/brand-assets/illustrations/onboarding/paw_member_optional.svg"
+                alt=""
+                aria-hidden="true"
+                className="w-40 h-28 mx-auto -mt-2 mb-1"
+                loading="lazy"
+              />
               <div>
                 <h2 className="text-lg font-semibold mb-1 flex items-center gap-2">
                   <ShieldCheck className="h-5 w-5 text-emerald-600" />

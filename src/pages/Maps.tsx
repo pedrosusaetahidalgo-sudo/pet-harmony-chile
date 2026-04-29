@@ -877,7 +877,13 @@ const Maps = () => {
         {filteredMarkers.length === 0 && (
           <div className="absolute inset-0 z-[999] flex items-center justify-center pointer-events-none">
             <div className="bg-white/90 backdrop-blur-sm rounded-2xl px-6 py-5 shadow-lg text-center pointer-events-auto max-w-xs">
-              <MapPin className="h-10 w-10 text-muted-foreground/50 mx-auto mb-3" />
+              <img
+                src="/brand-assets/illustrations/empty-states/no_vets_nearby.svg"
+                alt=""
+                aria-hidden="true"
+                className="w-32 h-24 mx-auto mb-2"
+                loading="lazy"
+              />
               <p className="text-sm font-medium text-foreground">
                 No hay servicios en esta zona todavía
               </p>

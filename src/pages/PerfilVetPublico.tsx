@@ -392,10 +392,16 @@ export default function PerfilVetPublico() {
             )}
 
             <div className="flex-1 text-center md:text-left">
-              <h1 className="font-display font-semibold text-3xl md:text-4xl text-purple-900 tracking-tight">
-                {v.display_name}
+              <h1 className="font-display font-semibold text-3xl md:text-4xl text-purple-900 tracking-tight flex items-center gap-2 justify-center md:justify-start flex-wrap">
+                <span>{v.display_name}</span>
                 {v.is_verified && (
-                  <span className="ml-2 text-blue-500 text-base align-middle">✓ Verificado</span>
+                  <img
+                    src="/brand-assets/badges/badge_vet_verified.svg"
+                    alt="Veterinario verificado"
+                    title="Veterinario verificado por Paw Friend"
+                    className="h-7 w-7 md:h-8 md:w-8"
+                    loading="lazy"
+                  />
                 )}
               </h1>
               {(v as { excellence_badge_at?: string | null }).excellence_badge_at && (

@@ -36,12 +36,23 @@ const STATES = {
 export function FeedEmptyState({ type, onAction }: FeedEmptyStateProps) {
   const state = STATES[type];
   const Icon = state.icon;
+  const showIllustration = type === 'all' || type === 'explore';
 
   return (
     <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
-      <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center mb-4">
-        <Icon className="h-10 w-10 text-muted-foreground" />
-      </div>
+      {showIllustration ? (
+        <img
+          src="/brand-assets/illustrations/empty-states/no_feed.svg"
+          alt=""
+          aria-hidden="true"
+          className="w-44 h-32 mb-3"
+          loading="lazy"
+        />
+      ) : (
+        <div className="h-20 w-20 rounded-full bg-muted flex items-center justify-center mb-4">
+          <Icon className="h-10 w-10 text-muted-foreground" />
+        </div>
+      )}
       <h3 className="text-lg font-semibold mb-1">{state.title}</h3>
       <p className="text-sm text-muted-foreground max-w-xs mb-4">{state.description}</p>
       {state.actionLabel && onAction && (

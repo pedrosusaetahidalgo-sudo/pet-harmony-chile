@@ -384,6 +384,7 @@ const MyPets = () => {
 
       {pets.length === 0 ? (
         <EmptyState
+          illustration="/brand-assets/illustrations/empty-states/no_pets_yet.svg"
           icon={PawPrint}
           title="Agrega tu primera mascota"
           description="Crea el perfil de tu mascota para llevar su ficha clínica, recibir recordatorios automáticos y reservar con veterinarios."

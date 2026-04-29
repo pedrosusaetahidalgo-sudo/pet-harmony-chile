@@ -395,9 +395,17 @@ function VetCard({ vet, attendsToday }: { vet: Vet; attendsToday?: boolean }) {
 
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between gap-2 mb-1">
-              <h3 className="font-semibold text-lg text-purple-900 truncate">
-                {vet.display_name}
-                {vet.is_verified && <span className="ml-1 text-blue-500">✓</span>}
+              <h3 className="font-semibold text-lg text-purple-900 truncate flex items-center gap-1.5">
+                <span className="truncate">{vet.display_name}</span>
+                {vet.is_verified && (
+                  <img
+                    src="/brand-assets/badges/badge_vet_verified.svg"
+                    alt="Veterinario verificado"
+                    title="Veterinario verificado"
+                    className="h-5 w-5 flex-shrink-0"
+                    loading="lazy"
+                  />
+                )}
               </h3>
               <div className="flex gap-1 shrink-0">
                 {vet.opening_hours && (
