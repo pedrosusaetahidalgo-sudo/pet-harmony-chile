@@ -104,6 +104,7 @@ const RefugioPublico = lazy(() => import('./pages/RefugioPublico'));
 const MemoriaPublica = lazy(() => import('./pages/MemoriaPublica'));
 const Aplicar = lazy(() => import('./pages/Aplicar'));
 const B2BPortal = lazy(() => import('./pages/B2BPortal'));
+const InsuranceQuotes = lazy(() => import('./pages/InsuranceQuotes'));
 const NosePrintTest = lazy(() => import('./pages/NosePrintTest'));
 const NoseScan = lazy(() => import('./pages/NoseScan'));
 const InsightsLanding = lazy(() => import('./pages/InsightsLanding'));
@@ -1059,6 +1060,19 @@ const App = () => (
                     <PublicWithLayoutIfAuth>
                       <B2BPortal />
                     </PublicWithLayoutIfAuth>
+                  }
+                />
+
+                {/* Cotizar seguro pet (Refactor Maestro Fase 2 §7.2). Requiere
+                    auth para validar ownership de la mascota + risk score. */}
+                <Route
+                  path="/cotizar-seguro/:petId"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <InsuranceQuotes />
+                      </AppLayout>
+                    </ProtectedRoute>
                   }
                 />
 

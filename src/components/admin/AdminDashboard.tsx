@@ -15,6 +15,7 @@ import AdminComunaGap from '@/components/admin/AdminComunaGap';
 import AdminAdoptionFunnel from '@/components/admin/AdminAdoptionFunnel';
 import AdminFase1Widget from '@/components/admin/AdminFase1Widget';
 import { AdminPawShieldKPIs } from '@/components/admin/AdminPawShieldKPIs';
+import { AdminInsurancePartners } from '@/components/admin/AdminInsurancePartners';
 import { AdminRiskMonitor } from '@/components/admin/AdminRiskMonitor';
 import AdminPulsoDiario from '@/components/admin/AdminPulsoDiario';
 import { BookingPulseWidget } from '@/components/admin/BookingPulseWidget';
@@ -733,6 +734,9 @@ export default function AdminDashboard() {
 
       {/* ── Paw Shield · Petify monitoring + COGS estimado ── */}
       <AdminPawShieldKPIs />
+
+      {/* ── Insurance partners + leads (Refactor §7.2) ── */}
+      <AdminInsurancePartners />
 
       {/* ── Pulso Diario: monitor auto-pilotado (audit-cron-daily) ── */}
       <AdminPulsoDiario />

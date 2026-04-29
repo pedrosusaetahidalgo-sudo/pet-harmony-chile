@@ -101,7 +101,7 @@ export function InsuranceBanner({ petId, petName, hasMinimalProfile }: Insurance
           className="bg-emerald-600 hover:bg-emerald-700"
           onClick={handleClick}
         >
-          <Link to={`/seguros/cotizar/${petId}`}>Cotizar</Link>
+          <Link to={`/cotizar-seguro/${petId}`}>Cotizar</Link>
         </Button>
         <button
           type="button"

@@ -272,3 +272,9 @@ verify_jwt = false
 # Scope: solo pacientes con booking historico con el vet.
 [functions.vet-checkin-identify]
 verify_jwt = false
+
+# Insurance lead capture (Refactor Maestro Fase 2 §7.2). El dueno completa
+# form en /cotizar-seguro/:petId → crea insurance_leads + email al partner.
+# Auth: requiere user JWT (la fn valida ownership de la quote).
+[functions.request-insurance-quote]
+verify_jwt = false
