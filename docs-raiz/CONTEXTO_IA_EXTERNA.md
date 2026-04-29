@@ -1,294 +1,562 @@
 # Contexto Paw Friend para IA externa (Perplexity / Claude.ai / ChatGPT / Gemini)
 
-> Pegar este bloque como "memoria" o primer mensaje al iniciar una conversacion
-> con una IA externa que NO tiene acceso al repo. Cubre producto, stack,
-> modelo v2, roles, restricciones y estado tecnico al **2026-04-27**.
+> Pegar este bloque como "memoria" o primer mensaje al iniciar conversación con
+> una IA externa que NO tiene acceso al repo. Cubre producto, stack, modelo
+> v2.1 (post Plan v5 Opción 3), roles, restricciones, estado técnico y tareas
+> pendientes.
 >
-> **Uso principal**: auditorias de next-level, roadmap strategico,
-> revision de decks, sparring de decisiones de producto/negocio.
+> **Última revisión: 2026-04-29** (cierre Plan v5 Opción 3 freemium 3 tiers +
+> 8 mejoras adicionales + audit cleanup).
 >
-> Ultima revision: **2026-04-27** (cierre pivot modelo v2 2026-04-22
-> + Petify contraposicionamiento). Para detalle tecnico exhaustivo, fuente
-> de verdad sigue siendo `CLAUDE.md` + `INDEX.md` + `MAPA_FUNCIONAL_COMPLETO.md`
-> + `diagrams/FLUJO_COMPLETO.mmd` (no los tienes pero existen en el repo).
+> **Fuente de verdad detallada** en el repo (alguien con acceso debería leer):
+> `CLAUDE.md` · `MAPA_FUNCIONAL_COMPLETO.md` · `INDEX.md` ·
+> `docs-raiz/MODELO_FINANCIERO_2026_04_29.md` (números canónicos) ·
+> `docs-raiz/MANIFESTO_PAW_FRIEND_2026_04_29.md` (identidad verbal) ·
+> `docs-raiz/PITCH_DECK_V2_2026_04_29.md` (12 slides definitivos).
 
 ---
 
-## 1. Identidad del proyecto
+## 1. Identidad
 
-- **Producto**: Paw Friend, app para dueños de mascotas en Chile + LATAM.
-  Ficha clinica digital + directorio publico de veterinarios + reservas +
-  refugios/adopcion + comunidad + memorial + nose print biometrico.
+- **Producto**: Paw Friend — ficha clínica longitudinal del 100% del mercado pet
+  chileno + directorio público de veterinarios + reservas + refugios/adopción
+  + Paw Shield biométrico (Petify) opt-in + Paw Passport PDF + memorial.
+- **One-liner**: *"La ficha clínica longitudinal del 100% del mercado pet chileno.
+  Modelo Mapcity en pet-tech."*
+- **Tagline público**: *"Tu mascota, sin tareas"*.
 - **Dominio**: pawfriend.cl (deploy desde `docs/` a GitHub Pages).
-- **Fundador**: alias publico "Paw Founder". Dev solo + IA (Claude Code) como co-engineer.
-- **Empresa**: SpA "SUSAETA GARNHAM SOFTWARE ENGINEERING" (RUT 78.328.659-9).
-  Domicilio SII: Luis Pasteur 6111 Dp 201, Vitacura. Constituida 2026-04-17.
-- **Lanzamiento publico**: 1 junio 2026 (modo autonomo, Flow $100 real).
+- **Repo**: `github.com/pedrosusaetahidalgo-sudo/pet-harmony-chile`, branch `main`.
+- **Empresa**: SpA SUSAETA GARNHAM SOFTWARE ENGINEERING · RUT 78.328.659-9 ·
+  Vitacura · constituida 2026-04-17.
+- **Fundador**: alias público "Paw Founder". Solo + IA (Claude Code) =
+  **15× output equipo equivalente** (USD 720k-1.4M valor desarrollo capitalizado,
+  documentado).
+- **Lanzamiento público**: **1 junio 2026**.
 - **Mascotas reales en prod**: Kai (pastor suizo) + Ema (gata).
 
-## 2. Stack tecnico (verificable en `package.json`)
+---
 
-| Capa | Tecnologia |
+## 2. Modelo de negocio v2.1 — CRÍTICO entender la evolución
+
+### Cómo llegamos al modelo actual
+
+- **v1 (pre-2026-04-22)**: B2C Premium $3.990 con feature unlock + B2B vets
+  como revenue center. **Descartado** por feedback estratégico.
+- **v2 (2026-04-22, post-Roberto Camhi founder Mapcity)**: el dueño NUNCA paga.
+  Modelo Mapcity B2B (pharma + seguros + retail). Vets canal, no revenue.
+  "Donaciones" → "Paw Support" (reframe Ley 19.885).
+- **v2.1 (2026-04-29, Plan v5 Opción 3)**: el dueño paga **sólo si quiere
+  features avanzadas**. Razón: Petify USD 0.75/pet/mes lineal rompe viabilidad
+  sin partners B2B firmados todavía. **Freemium B2C 3 tiers como puente** que
+  cubre COGS Petify mientras llegamos a partners.
+
+### Pricing canónico actual (v2.1)
+
+| Plan | Precio | Mascotas | Conversion target | Margen contribution |
+|---|---|---|---|---|
+| **Free** | $0 | 2 | 85% MAU | -$41 (subsidiado por upgrades) |
+| **Paw Member** 💛 | $3.990/mes · $39.900/año (17% off) | 4 | **13%** | **86%** ($3.437) |
+| **Manada** 👑 | $9.990/mes · $99.900/año (17% off) | 5 | 1-2% | 62% ($6.181) + $2.000 a refugios |
+
+### Componente paywall
+
+`src/components/PremiumGate.tsx` wireado en **6 features premium**:
+- `paw_shield` — biometría nasal (Petify)
+- `paw_passport` — PDF 8 páginas compartible
+- `audio_notes_ai` — transcripción IA consultas owner
+- `insights_pro` — analytics avanzado per-pet
+- `reports_history_days` — histórico >30 días
+- `max_pets` — 3+ mascotas (free tope = 2)
+
+### Manada Fondo Refugios (diferenciador único)
+
+Plan Manada cobra $9.990/mes. **$2.000 directo a Fondo Paw Friend Refugios**.
+
+**Diseño legal**: la donación efectiva la hace **Paw Friend SpA** (no el user
+directamente). Esto evita activar Ley 19.885 de donatarios (que exigiría
+recibos al donante, calificación SII, etc). SpA usa Art. 31 N°7 LIR (deducible
+para personas jurídicas) — más simple operacionalmente. UI muestra "tu plan
+apoya el Fondo Paw Friend Refugios" sin emitir recibo legal al user.
+
+Tablas: `manada_refugio_preferences`, `manada_fondo_pool`, `manada_aportes_log`
+(mig `20260929000000_manada_fondo_refugios.sql`). Cron mensual cierre pool día
+1 03:00 UTC (mig `20260929000001_manada_pool_close_cron.sql`).
+
+### B2B 7 motores Mapcity (donde está el grueso a escala)
+
+Código end-to-end ready, esperando primer deal firmado.
+
+| # | Motor | Quién paga | Ticket anual | Activación |
+|---|---|---|---|---|
+| 1 | **Pharma animal** | Centrovet (Agrosuper), Virbac, Zoetis, MSD | USD 50-200k/brand | Mes 4-6 post-launch |
+| 2 | **Seguros pet** | Sura, BCI, Mapfre, Consorcio | USD 200-500k | Mes 6-9 |
+| 3 | **Retail pet** | Master Dog, Falabella Pet, Puppis | USD 250-500k | Mes 8-12 |
+| 4 | **Paw Companys** | Empresas pet-friendly | USD 600-1.800/mes/corporate | **Vivo** |
+| 5 | **Gobierno municipal** | Las Condes, Providencia, Vitacura, Subdere (Ley 21.020) | USD 10-50k | Mes 12+ |
+| 6 | **Banca + Edificios** | BancoEstado, BCI, inmobiliarias | Long-tail | Mes 18+ |
+| 7 | **Long-tail** | Academia veterinaria, data deals, ads programáticos | USD 5-50k | Continuo |
+
+### B2B Vets — canal de adquisición, NO revenue center
+
+| Plan | Precio | `publicVisible` |
+|---|---|---|
+| Básica (`provider_free`) | $0 / 5 pacientes | ✅ |
+| Premium (`provider_premium`) ⭐ | $9.900/mes | ✅ |
+| Clínica (`provider_clinic_starter`) 🏥 | $19.900/mes | ❌ "Empresarial — contáctanos" |
+| Pro Max (`provider_pro_max`) 👑 | $29.900/mes | ❌ |
+
+> *"El vet no paga porque su valor está en construir la ficha. El activo es la
+> ficha. Quien paga es quien quiere acceder a la mascota a través de ella."*
+> — Roberto Camhi (founder Mapcity), 2026-04-22.
+
+### ARR proyectado (FX USD/CLP = 905 declarado único)
+
+| Escala MAU | ARR USD/año | EBITDA USD/año | % margen |
+|---|---|---|---|
+| 1.000 | $9k | $2k | 22% ✅ |
+| 10.000 | $175k | $120k | 69% ✅ |
+| 50.000 | $1.37M | $1.25M | 91% ✅ |
+| 100.000 | $3.07M | $2.84M | 92% ✅ |
+
+Sensibilidad: aguanta FX hasta CLP 1.100 sin romper margen. Aguanta Petify x2
+sin romper. Si conversión real cae a 5% Paw Member + 0.5% Manada (peor caso),
+B2B sigue cubriendo: a 100k MAU genera USD 2.17M aún con B2C colapsado.
+
+### Capital ask pre-seed
+
+USD 150.000 = **CORFO SSAF-I $28k (subsidio) + Start-Up Chile Ignite $15k
+(equity-free) + Angel SAFE $107k** (cap USD 1.2M post-money + discount 20%).
+Pre-money sugerida USD 600k-1.2M base. Dilución founder 8-15%.
+
+Hitos para Series A (Q3 2027): MRR ≥ USD 30k · MAU ≥ 15k · 2 partners B2B
+firmados · conv Paw Member ≥ 13% · NPS ≥ 40.
+
+---
+
+## 3. Stack técnico (verificable en `package.json`)
+
+| Capa | Tecnología |
 |---|---|
 | Frontend | React 18 + TypeScript 5.8 + Vite 5 (plugin react-swc) |
 | UI | Tailwind 3 + shadcn/ui (Radix + CVA) + lucide-react + Recharts 2 |
 | Estado servidor | @tanstack/react-query 5 |
-| Forms | react-hook-form 7 + zod 3 |
+| Forms | react-hook-form 7 + zod 3 (via @hookform/resolvers) |
 | Rutas | react-router-dom 6 |
 | Backend | Supabase (Postgres + Auth + Edge Functions Deno + Storage) — proyecto `gwailbjlvevkhwcrovfd` |
-| Pagos | **Flow.cl** (NO Webpay). Edge fns `flow-create-subscription`, `flow-webhook`, `flow-create-donation` |
+| Pagos | **Flow.cl** (NO Webpay). Edge fns: `flow-create-subscription`, `flow-webhook`, `flow-create-donation` |
 | Mobile | Capacitor 7 (Android compilable, iOS Sign-In end-to-end) |
 | Observabilidad | Sentry + PostHog + Firebase Analytics + `withTelemetry` wrapper en todas las edge fns |
-| Testing | Vitest 393/393 + Playwright (E2E) |
-| Vector DB | pgvector (DINOv2-large 1024 dims para nose print) |
-| Auth social | Apple Sign-In end-to-end · Google OAuth · Meta pendiente decision Consumer/Empresa |
+| Testing | Vitest 587 verde + Playwright (E2E) |
+| Vector DB | pgvector (DINOv2-large 1024 dims para nose print propio · pausado 2026-04-28) |
+| Biometría comercial | **Petify (PetNow)** API — proveedor B2B opt-in. Hoy TEST key, falta PROD |
+| IA | Anthropic Claude (asistente, OCR, breed-tips, transcripción, bereavement) |
 | Mapas | Leaflet + react-leaflet 4.2.1 |
-| IA | Anthropic Claude (asistente, OCR, breed-tips, transcripcion, bereavement) |
 
-**No hay**: Zustand, Redux, Next.js, zod standalone (zod via `@hookform/resolvers`).
-
-## 3. Modelo de negocio v2 (2026-04-22)
-
-> **Norte**: el dueno **NUNCA paga**. Producto invisible. Modelo **estilo Mapcity**:
-> Mapcity no le cobraba a la tienda — le cobraba a Equifax/bancos por acceso a la
-> data. Paw Friend no le cobra al dueno ni al vet — le cobra a pharma/seguros/
-> retail por acceso a la ficha clinica longitudinal.
-
-### Validacion competitiva — Petify
-
-Petify cobra al dueno: **Basic USD $0,50/pet/mes** (registro + verificacion + admin),
-**Pro USD $0,75/pet/mes** (suma lost pet recovery 1:N) o **Premium contact-sales** (suma QR check-in).
-Modelo extractivo: captura el ~10% que paga, deja el 90% del mercado afuera por friction. Paw Friend modelo v2
-captura el 100% del mercado y monetiza B2B. Cálculos CLP Pro tier: 1 mascota ~$690/mes, 2 mascotas
-~$16.500/año, refugios con 30 mascotas = inviable. **Petify es nuestro proveedor de biometria**
-(Pro tier $0.75/pet/mes absorbido por revenue B2B), no competidor primario. Refuerza moat de "gratis para siempre".
-
-### Pilares ancla (80% del revenue, mes 4-12 post-seed)
-
-1. **Pharma animal** — Centrovet (Agrosuper), Virbac, Zoetis, MSD, Elanco, Boehringer.
-   Sponsored reminders + data deals + contenido. **USD $20-500K / brand**.
-2. **Seguros pet** — Sura, BCI, Mapfre, Consorcio. Afiliado 10-20% sobre prima
-   + white-label ficha. **USD $500K-1M a escala**.
-3. **Retail pet** — Master Dog, Falabella Pet, Puppis. Afiliado 3-10% +
-   suscripcion alimento. **USD $50-200 / usuario activo-año**.
-
-### Pilares soporte
-
-4. **Paw Companys** — empresas pet-friendly + corporates. Sponsorship badge +
-   SaaS bienestar animal ($1-3 USD/empleado/mes). USD $600-1.800/mes/corporate.
-5. **Paw Support** (ex-donaciones, reframe Ley 19.885) — apoyo voluntario del
-   dueno. Residual, alto NPS.
-
-### Long-tail (mes 12+)
-
-6. Data agregada anonima (consent opt-in) → SAG, Minsal, academia.
-7. Gobierno / municipios (Ley 21.020) — white-label registro digital.
-8. Publicidad programatica residual.
-
-### B2C dueño — gratis sin caps para siempre
-
-- `USER_PREMIUM=false` (feature flag canonico). NO hay paywall activo.
-- **Paw Member** ($3.990/mes opcional): badge cosmetico + descuentos Paw Partners. **NO desbloquea features**. Proxy NPS, no revenue core.
-
-### B2B vet — canal de adquisicion, no revenue center
-
-> *El vet no paga porque su valor esta en construir la ficha. El activo es la ficha.
-> Quien paga es quien quiere acceder a la mascota a traves de ella.* — founder Mapcity
-
-| Plan | Precio | Visible en `/para-veterinarios` |
-|---|---|---|
-| Básica | $0 / 5 pacientes | Sí |
-| Premium | $9.900/mes | Sí |
-| Clínica Starter | $19.900/mes | **No** (publicVisible=false en `plans.ts`) |
-| Pro Max | $29.900/mes | **No** (on demand "Empresarial — contáctanos") |
-
-### Unit economics v2 a escala (50k MAU, mes 18 post-seed)
-
-| Motor | Conversion / deals | ARR estimado |
-|---|---|---|
-| Pharma (3 brands) | 3 deals activos | USD $300-600K |
-| Seguros (2 aseguradoras) | 5% conv = 2.500 polizas | USD $200-500K |
-| Retail (2 retailers) | 10% conv activos | USD $250-500K |
-| Paw Companys | 20 empresas | USD $120-240K |
-| Paw Support | Voluntario | USD $20-50K |
-| Long-tail (data/gobierno) | 1-2 deals | USD $50-200K |
-| **Total ARR proyectado** | | **USD $940K - $2.1M** |
-
-vs modelo v1 vet-centrico (techo USD $400-600K ARR) → delta **2-4×**.
-
-## 4. 4 roles / 4 tipos de clientes
-
-1. **Owner** (dueño) — default. Experiencia entretenida. Todo gratis sin caps.
-2. **Provider** (vet/profesional individual) — dashboard clinico, agenda, pacientes. Sin gamificacion.
-3. **Shelter** (refugio/hogar de adopcion) — dashboard operativo, bulk import, transferencia al adoptante. Cuenta gratis siempre.
-4. **Admin** — panel interno (`admin_access.is_active=true`).
-
-Un usuario puede tener doble rol. Toggle en Header. Persiste en `localStorage` `pf_active_role`. Hook `useActiveRole()`.
-
-## 5. Producto invisible (modelo v2)
-
-> **Hipotesis**: el dueno promedio chileno abre la app **4 veces al año**. Si
-> diseñamos para power users perdemos al 90% del mercado. Si diseñamos para
-> "el dueno flojo", los power users igual lo usan.
-
-**Regla operativa**: *si no suma al dueno flojo, no entra al core.*
-
-- **Home dueno**: foco en ficha + recordatorios + urgencia + directorio de vets cercanos. Un solo CTA "Explorar más" → `/explorar` (hub opt-in).
-- **Onboarding**: 4 campos (nombre + especie + edad + foto). Paso 2 push OCR carnet de vacunas → ficha arranca completa sin tipear.
-- **`/explorar`** — hub opt-in para Paw Labs (Comunidad / Adopciones / Donantes de sangre / Memorial / Mapa pet-friendly / Feed / Misiones / Paw Cards / Paw Game). Cada tile respeta su feature flag.
-- **BottomTabBar V2** (mobile): 4 tabs (Mascota / Calendario / Vets / Yo). Sin gamificacion en navegacion principal.
-
-## 6. Rutas clave (~73 rutas activas)
-
-- **Públicas (26)**: `/`, `/auth`, `/veterinarios`, `/veterinarios/:slug`, `/precios-veterinarios`, `/para-veterinarios`, `/refugios-hogares`, `/refugios/:slug`, `/paw-partners`, `/aplicar`, `/paw-support` (canonica) + `/donaciones` (alias 3 meses), `/paw-voices`, `/paw-companys`, `/paw-core`, `/qr/:token`, `/paw-card/:pawCardId`, `/medical-share/:token`, `/memoria/:petId`, `/nose-scan` (gateado), `/insights`, `/insights/:slug`, `/resena/:token`, `/faq`, legales.
-- **Protegidas (40+)**: `/home`, `/feed`, `/my-pets`, `/ficha/:petId`, `/calendario`, `/rutinas`, `/explorar` (hub Paw Labs), `/chat`, `/profile`, `/paw-member`, `/reportes`, `/panel-pro`, `/mis-reservas`, `/mis-postulaciones`, `/mis-adopciones`, `/onboarding-mascota`, `/onboarding-vet`, `/onboarding-shelter`, `/insights-pro`, etc.
-- **Provider (3)**: `/provider/dashboard`, `/provider/pacientes`, `/provider/profile-edit`.
-- **Shelter (varios)**: `/shelter/dashboard`, `/shelter/bulk-import`, `/shelter/transfer/:petId`, etc.
-- **Admin (2)**: `/admin`, `/demo`.
-
-## 7. Edge Functions activas (35+ + _shared)
-
-- **Pagos**: `flow-create-subscription`, `flow-webhook`, `flow-create-donation`.
-- **IA**: `pet-assistant`, `breed-tips`, `bereavement-assistant`, `ocr-vaccination-card`, `medical-suggestions`, `generate-medical-summary`, `generate-medical-zip`, `process-consultation-transcript`.
-- **Operacion vet**: `create-patient`, `send-pet-invitation`, `send-lead-outreach`, `generate-vet-patient-summary`, `generate-weekly-vet-reports`, `verify-vet-document`, `verify-service-provider`, `moderate-service-promotion`.
-- **Owner**: `generate-weekly-owner-reports`, `reminder-cron`, `send-whatsapp-reminder`.
-- **Push/notifs**: `send-push-notification` (disparada desde triggers SQL de booking).
-- **Google Calendar**: 4 fns (`oauth-init`, `callback`, `disconnect`, `sync`).
-- **Plataforma**: `log-error`, `generate-sitemap`, `generate-shelters`, `notify-pitch-application`.
-- **Refactor Maestro Fase 1-3**: `nose-print-embed`, `nose-print-match`, `generate-pet-id-card`, `generate-paw-passport`, `send-adoption-followups`, `b2b-api`, `notify-health-alerts`, `run-all-cascades`, `partner-discount-validate`, `insurance-prefill-quote`.
-
-Todas envueltas con `withTelemetry` (2026-04-17).
-
-## 8. Refactor Maestro 2026-04-23 (Fase 0/1/2/3 ejecutadas)
-
-- **Trinidad del Corazon**: Pet ID Card v2 + Owner Audio Notes + Quick Actions Hub.
-- **Ficha clinica**: 4 tabs (Historia / Cuidados / Identidad / Más) en lugar de 9 legacy.
-- **Memorial viral**: `/memoria/:petId` con OG meta + share card 1080x1080 Canvas API.
-- **Paw Points canonizado**: trigger `award_points` defensivo + ledger en `paw_point_transactions`.
-- **Sidebar colapsado** + 13 feature flags activos.
-- **Nose Print biometrico**: DINOv2-large 1024 dims via HF Inference API. Threshold 0.55 cosine. pgvector HNSW. `/nose-scan` publico (gateado por flag `NOSE_PRINT_PUBLIC_SCAN`). **Pausado 2026-04-27** esperando proveedor.
-- **Paw Passport PDF** 8 paginas (tapa + datos + biometria + vacunas + antipara + medicos + contactos + validaciones).
-- **Refugios completos**: rescue_story + adoption_followups 30/90d trigger + cron edge fn.
-- **Insights SEO v2**: 3 tipos de slugs (breed/species/breed_rank). Threshold privacy >=50 pets.
-- **Birthday share card**: banner condicional Home ±14d + Canvas API descargable.
-- **Cascadas (ambient computing) §2.8.3**: 6 tipos (`weight_loss_30d`, `vaccine_overdue`, `antiparasitic_overdue`, `no_activity_7d`, `birthday_window`, `memorial_anniversary`). Pipeline unificado `run-all-cascades` (1 cron en lugar de 7).
-- **Research consent §7.3** (pre-req Pharma deals): `profiles.anonymous_data_research_consent` + nudge `/home`.
-- **Risk score §7.5 + §8.4.5**: RPC `calculate_pet_risk_score(pet_id)` + `PetRiskScoreCard` en tab Identidad.
-- **B2B API v1**: edge fn `b2b-api` con `X-Pawfriend-Api-Key` + 4 endpoints (breed_stats, species_stats, correlation_catalog, correlation_insights). `AdminB2BApiKeys` panel.
-- **Correlation insights moat §2.9**: tablas `correlation_definitions` + `correlation_observations` + 6 seeds + 2 RPCs compute.
-- **Master KPIs §13**: vista materializada `master_kpis_daily` con 30+ métricas.
-- **Risk monitor §11**: RPC `compute_risk_signals` + banner Admin con 5 señales.
-- **§14.bis Bootstrap pet enriquecido**: trigger crea hasta 4 eventos al insertar pet (Bienvenida + Nacimiento + Microchip + Esterilizada).
-- **§14.bis BreedComparisonCard**: comparacion social temprana en tab Identidad.
-- **§14.bis PetCompletionProgress**: North Star owner-side (>=10 eventos / >=3 cats / Pet ID Card).
-- **§2.4.3 Auto-sync timeline**: 4 triggers que sincronizan medical_records / pet_reminders / vet_bookings / routine_completions → pet_timeline_events.
-
-## 9. Notificaciones (prefs granulares + dedup)
-
-- Tabla `user_notification_prefs`: 3 categorias (`transactional`, `reminders`, `marketing`) × 3 canales (`push`, `email`, `whatsapp`). Default permisivo para transactional.
-- `user_can_receive_notification(user_id, category, channel)` — toda logica de envio (triggers SQL, edge fns, crons) la chequea antes.
-- `notification_attempts` con UNIQUE `(booking_type, booking_id, reminder_type, channel)` → dedup automatico.
-
-## 10. Reglas criticas (overrides)
-
-- `docs/` es **output de build** (`npm run build`). Nunca editar a mano.
-- Migraciones SQL en `supabase/migrations/` con timestamp; las aplica Pedro manualmente via Supabase Dashboard. **Nunca** `DROP TABLE` ni `DELETE FROM` sin `WHERE` en tablas con datos de usuarios.
-- **Proteger datos de usuarios existentes** (regla 9.7 CLAUDE.md): migrar al cambiar esquema, defaults en columnas NOT NULL, fallback al renombrar keys de localStorage.
-- **Triggers plpgsql con smoke inline** (regla 9.2.1): toda mig que crea/modifica trigger plpgsql DEBE incluir un `DO $$ ... $$` con ROLLBACK que lo ejercite. plpgsql es lazy-validation; sin smoke el trigger se crea "ok" y explota meses despues. Incidentes documentados: `sync_vaccination_status`, `notify_adoption_interest`, `create_default_reminders_for_new_pet`, `award_points`.
-- Copy en **espanol chileno** (tuteo: tú/tienes/puedes). NO voseo argentino. NO vosotros español. Términos: "comuna", "ficha clinica", "recordatorio".
-- Nunca pegar API keys/JWTs en chat ni en commits.
-- Nunca flipear `verify_jwt` en bloque en >1 edge fn a la vez (incidente 2026-04-20).
-- Nunca hardcodear JWTs en `cron.schedule`; usar vault `current_setting('app.settings.service_role_key')`.
-- `diagrams/FLUJO_COMPLETO.mmd` es fuente de verdad unica del flujo end-to-end (un solo bloque Mermaid pegable en mermaid.live).
-- Política "esconder, no eliminar": features detrás de feature flag `false`. Revisión a +6 meses (`_pending/HIDDEN_FEATURES_REVIEW_2026_10_27.md`).
-- PowerShell no soporta heredoc bash (Pedro corre Windows).
-- Comandos Supabase CLI siempre con `npx` (`npx supabase ...`).
-
-## 11. Métricas del repo (al 2026-04-27)
-
-| Métrica | Valor |
-|---|---|
-| Commits en `main` | 718 |
-| Migraciones SQL | 312 |
-| Edge functions | 65 (incluye `_shared`) |
-| Páginas | 106 |
-| Componentes React | 431 |
-| Hooks custom | 105 |
-| Rutas activas | ~73 |
-| Tests Vitest | 393/393 verde |
-| Tests Playwright | 336/336 verde |
-| `npx tsc -b` | 0 errores |
-| `npm run lint` | 0 errores (2 warnings react-refresh preexistentes) |
-| Build | ~50-70s + pre-render 19 rutas SPA |
-
-## 12. North Star + KPIs operativos
-
-- **North Star Owner-side**: pets con >=10 eventos timeline / >=3 categorias / Pet ID Card claimed.
-- **Leading indicator del moat Pharma**: `research_consent_opt_in_rate` (sin consent, no hay deals).
-- **KPIs operacionales** (`AdminMasterKPIs` widget):
-  - MAU / WAU / DAU
-  - Vets activos creando fichas (gratis)
-  - Fichas con OCR completado %
-  - Pacientes con ficha completa (proxy "ficha longitudinal valiosa")
-  - Paw Companys activos
-  - Pharma deals piloto (objetivo mes 4-6)
-  - ARR runrate (USD)
-  - Retention D30 / D90
-  - Rating app
-- **Risk monitor §11**: 5 señales (AI cost spike, consent rate bajo, dropout, edge fn errors, pgvector slow).
-
-## 13. Pendientes operacionales (al 2026-04-27)
-
-- **Acciones manuales Pedro** (solo Pedro, no IA):
-  - **Rotar service_role JWT** (expuesto por error en chat 04-25, urgente).
-  - **Vault**: actualizar secret con JWT nuevo.
-  - **Cron pg_cron**: schedule `run-all-cascades-daily` (reemplaza 6 crones individuales) + `send-adoption-followups-daily`.
-  - **Test 4 mascotas DINOv2** desde la app + activar `NOSE_PRINT_PUBLIC_SCAN=true` si discrimina hermanos.
-- **Stores**:
-  - Apple Sign-In end-to-end (✅). Apple Developer + assets stores en setup.
-  - Meta WhatsApp: bloqueado decidiendo Consumer vs Empresa.
-  - Google Play Console: espera reverificacion carnet.
-- **Operacion**:
-  - Migrar cuenta Flow a SpA (riesgo fiscal de cuenta personal del fundador). Plan: Tenpo/Mach/Prex.
-  - Decidir lanzamiento 1 junio 2026 (modo autonomo, Flow $100 real).
-
-## 14. Lecciones aprendidas (no volver a tropezar)
-
-- **Premium B2C reactivacion**: 2 intentos previos (2026-04-08 + 2026-04-19) sin tracción. Pivot v2 lo descartó como motor — ahora es Paw Member voluntario badge-only.
-- **Vets no son motor de revenue**: feedback estrategico (founder Mapcity). Tienen demanda excedida, pocos para mucha demanda, chatos de vendors.
-- **"Donaciones" activa Ley 19.885**: reframe a "Paw Support" (pago voluntario por servicio).
-- **Triggers plpgsql lazy-validation**: 4 incidentes en producción por refs a columnas inexistentes. Regla 9.2.1 obligatoria.
-- **JWT en `cron.schedule` literal**: incidente 2026-04-20. Vault obligatorio.
-- **`verify_jwt` flip en bloque**: incidente 2026-04-20, romper 28 fns simultaneo. Hacer 1 a 1 con smoke.
-- **Vite manualChunks por path src**: causa circular deps. Solo vendors.
-- **Petify modelo extractivo**: Basic USD $0,50/pet/mes · Pro USD $0,75/pet/mes (suma lost pet recovery) · Premium contact-sales (suma QR check-in), hasta eliminar. Captura el 10% que paga, deja el 90% afuera. Incentivo perverso (eliminar fichas para dejar de pagar choca con memorial). **Petify es nuestro proveedor**, no competidor primario.
-
-## 15. Areas conocidas con deuda tecnica (sospechas)
-
-- **Bundle size**: ~335kB / 100kB gzip. PlanComparisonTable tiene 2 react-refresh warnings preexistentes.
-- **Premium-related code legacy**: `subscriptions` table sigue diciendo `plan_type='premium'` aunque la UI lo muestra como Paw Member. Refactor cosmético no urgente.
-- **AdminSalaInversion `northStar.premiumCount`**: misma situación — internal name premium pero externa label "Paw Member voluntario".
-- **`premium_b2c` key en CSV exports**: mantenido por compat histórica.
-- **TARGETS_90D**: re-baseline post-pivot v2 hecho 2026-04-27. KPIs nuevos (vets_active, fichas_ocr_pct, research_consent_pct, pharma_pilots) sin tracking de progreso histórico todavía.
-- **HTMLs decks legacy**: 5 mejorados en pivot v2, pero hay HTMLs de marketing en `docs-raiz/marketing/` que son históricos y no se actualizaron.
-- **Tablas `_deprecated_20260427`**: 4 tablas renombradas en mig `20260903900000_rename_orphan_tables.sql`. Drop definitivo en 2026-10-04 si nada las usa.
-- **Mobile launch**: pendiente de Pedro completar Apple Developer + Google Play Console + Meta verif.
-- **OnboardingQuickFlow vs OnboardingDuenoMinimal**: dos componentes onboarding existen. La ruta `/onboarding-mascota` apunta a Minimal. QuickFlow legacy (revisar).
-
-## 16. Documentos clave del repo (para citar a la IA externa)
-
-- **Producto / arquitectura**: `CLAUDE.md`, `MAPA_FUNCIONAL_COMPLETO.md`, `INDEX.md`.
-- **Modelo v2**: `docs-raiz/pitch/MODELO_V2_2026_04_22.md` (fuente de verdad).
-- **Refactor Maestro**: `docs-raiz/planes/REFACTOR_MAESTRO_2026_04_23.md`.
-- **Diagrama flujo**: `diagrams/FLUJO_COMPLETO.mmd`.
-- **Decks inversionistas**: `pitch-inversionistas/CONSOLIDADO_INVERSIONISTAS.md` + 6 docs por audiencia.
-- **Petify contraposicionamiento**: en memoria persistente del agente.
-- **Roadmap 90d**: `docs-raiz/planes/PLAN_EXITO_90D_*.md` (28 iniciativas RICE).
-- **Auditoria features**: `_pending/AUDITORIA_FEATURES_2026_04_27.md`.
-- **Hidden features review**: `_pending/HIDDEN_FEATURES_REVIEW_2026_10_27.md` (6 candidatas a eliminar).
-- **Acciones manuales Pedro**: `_pending/MANUAL_ACTIONS_PENDING_FASE_0.md`.
+NO hay: Zustand, Redux, Next.js, zod standalone (zod via @hookform/resolvers).
 
 ---
 
-**Uso típico**: pega este contexto + agrega el prompt específico de auditoría
-(ver `docs-raiz/PROMPT_AUDITORIA_NEXT_LEVEL.md` o tu propio prompt).
+## 4. 4 roles de usuario
+
+1. **Owner** (dueño) — default. Free $0 / Paw Member $3.990 / Manada $9.990.
+   Experiencia entretenida con gamificación opt-in.
+2. **Provider** (vet/profesional individual) — Básica gratis · Premium $9.900 ·
+   Clínica/Pro Max escondidos. Dashboard clínico, sin gamificación.
+3. **Shelter** (refugio/hogar adopción) — cuenta gratis siempre. Dashboard
+   operativo + bulk import + transferencia adoptante.
+4. **Admin** — panel interno (`admin_access.is_active=true`).
+
+Doble rol soportado. Toggle Header. Persiste `localStorage` `pf_active_role`.
+Hook `useActiveRole()`.
+
+---
+
+## 5. Producto invisible (principio guía v2)
+
+> El dueño promedio chileno abre la app **4 veces al año**. Si diseñamos para
+> power users perdemos al 90% del mercado. Si diseñamos para "el dueño flojo",
+> los power users igual lo usan.
+
+**Regla operativa**: si no suma al dueño flojo, no entra al core.
+
+- **Home pet-focus**: ficha + recordatorios + urgencia + directorio vets cercanos.
+- **Onboarding 4 campos**: nombre + especie + edad + foto. Paso 2 OCR carnet
+  vacunas → ficha completa sin tipear.
+- **`/explorar`** hub opt-in para Paw Labs (Comunidad / Adopción / Donantes /
+  Memorial / Mapa / Misiones / Paw Cards / Paw Game). Cada tile gateado por
+  feature flag.
+- **BottomTabBar V2 mobile**: 4 tabs (Mascota / Calendario / Vets / Yo). Sin
+  gamificación en navegación principal.
+
+---
+
+## 6. Rutas principales (~78 activas)
+
+**Públicas (~27)**: `/`, `/auth`, `/veterinarios/*`, `/precios-veterinarios/*`,
+`/para-veterinarios`, `/refugios-hogares`, `/refugios/:slug`, `/paw-partners`,
+`/aplicar`, `/paw-support` (canónica) + alias `/aportes` + `/donaciones`,
+`/paw-voices`, `/paw-companys`, `/paw-core`, `/qr/:token`, `/paw-card/:id`,
+`/medical-share/:token`, `/memoria/:petId`, `/nose-scan` (gateado por flag),
+`/insights`, `/insights/:slug`, `/b2b`, `/cotizar-seguro/:petId`,
+`/tienda/:petId/:partnerSlug`, `/resena/:token`, `/faq`, `/blog`, legales.
+
+**Protegidas (~40)**: `/home`, `/feed`, `/my-pets`, `/ficha/:petId`,
+`/calendario`, `/rutinas`, `/explorar`, `/chat`, `/profile`,
+`/paw-member` (dual mode: pricing 3 tiers para free / dashboard Manada Impact
+para member), `/reportes`, `/panel-pro`, `/mis-reservas`, `/mis-postulaciones`,
+`/mis-adopciones`, `/onboarding-*`, `/profile/exportar-mis-datos`,
+`/profile/mis-datos-compartidos`.
+
+**Provider (3)**: `/provider/dashboard`, `/provider/pacientes`,
+`/provider/profile-edit`.
+
+**Shelter**: `/shelter/dashboard`, `/shelter/bulk-import`,
+`/shelter/transfer/:petId`, etc.
+
+**Admin (2)**: `/admin`, `/demo`.
+
+---
+
+## 7. Edge Functions activas (~42)
+
+**Pagos** (Plan v5 actualizadas):
+- `flow-create-subscription` — acepta `monthly`/`yearly`/`paw_manada_monthly`/
+  `paw_manada_yearly`/`provider_*`. Mapea Manada a `plan_type='paw_manada'`.
+- `flow-webhook` — detecta Manada → INSERT en `manada_aportes_log` con $2.000
+  (mensual) o $24.000 (anual prorrateado) + idempotencia via UNIQUE
+  `flow_charge_id`.
+- `flow-create-donation` — aportes voluntarios.
+
+**IA**: `pet-assistant`, `breed-tips`, `bereavement-assistant`,
+`ocr-vaccination-card`, `medical-suggestions`, `process-consultation-transcript`,
+`consultation-prep`.
+
+**Documentos**: `generate-medical-summary`, `generate-medical-zip`,
+`generate-paw-passport`, `generate-pet-id-card`.
+
+**Vet ops**: `create-patient`, `send-pet-invitation`, `send-lead-outreach`,
+`verify-vet-document`, `verify-service-provider`, `moderate-service-promotion`.
+
+**Owner ops**: `generate-weekly-owner-reports`, `reminder-cron`,
+`send-whatsapp-reminder`.
+
+**Cascadas (ambient computing)**: `run-all-cascades` (orquestador de 6 tipos),
+`notify-health-alerts`.
+
+**Refugios**: `send-adoption-followups` (30/90d).
+
+**Biometría Paw Shield**: `paw-shield-register`, `paw-shield-identify`,
+`paw-shield-archive-cleanup`.
+
+**B2B**: `b2b-api`, `request-insurance-quote`, `notify-pitch-application`,
+`partner-discount-validate`, `insurance-prefill-quote`, `vet-checkin-identify`,
+`send-b2b-welcome`.
+
+**Plataforma**: `log-error`, `generate-sitemap`, `audit-cron-daily`,
+`risk-signals-alert-cron`, `backup-weekly-snapshot`.
+
+**Google Calendar**: 4 fns OAuth flow.
+
+Todas envueltas con `withTelemetry`.
+
+---
+
+## 8. Migraciones SQL clave (~199 totales)
+
+**Plan v5 (2026-04-29) — las 2 nuevas críticas**:
+- `20260929000000_manada_fondo_refugios.sql` — 3 tablas
+  (`manada_refugio_preferences`, `manada_fondo_pool`, `manada_aportes_log`)
+  + 3 RPCs (`set_manada_refugio_preference`, `get_manada_aporte_summary`,
+  `get_manada_fondo_transparency`) + smoke catalog test.
+- `20260929000001_manada_pool_close_cron.sql` — RPC
+  `close_manada_pool_for_previous_month` + cron mensual día 1 03:00 UTC.
+
+---
+
+## 9. Reglas críticas (overrides — nunca violar)
+
+1. **`docs/` es output de build** (`npm run build`). Nunca editar a mano.
+2. **Migraciones SQL**: timestamp prefix. Pedro las aplica manualmente via
+   Supabase Dashboard. **Nunca DROP TABLE / DELETE FROM sin WHERE** en tablas
+   con datos de usuarios.
+3. **Triggers plpgsql con smoke inline** (regla 9.2.1): toda mig que
+   crea/modifica trigger plpgsql DEBE incluir `DO $$ ... $$` con ROLLBACK que
+   lo ejercite. Plpgsql es lazy-validation; sin smoke el trigger se crea "OK"
+   y explota meses después.
+4. **Proteger datos usuarios existentes** (regla 9.7): migrar al cambiar
+   esquema, defaults en columnas NOT NULL nuevas, fallback al renombrar keys
+   localStorage.
+5. **Copy en español chileno** (tuteo: tú/tienes/puedes). NO voseo argentino.
+   NO vosotros español. Términos: "comuna", "ficha clínica", "recordatorio",
+   "Paw Friend", "Aportes" (NO "donaciones" en UI pública).
+6. **Nunca pegar API keys/JWTs en chat ni commits**.
+7. **Nunca flipear `verify_jwt` en bloque** (incidente 2026-04-20: romper 28
+   fns simultáneo). Hacer 1 a 1 con smoke.
+8. **Nunca hardcodear JWTs en `cron.schedule`**; usar
+   `current_setting('app.settings.service_role_key')`.
+9. **`diagrams/FLUJO_COMPLETO.mmd`**: fuente de verdad única flujo end-to-end.
+   Un solo bloque Mermaid pegable en mermaid.live.
+10. **Política "esconder, no eliminar"** features: behind feature flag false.
+    Revisión a +6 meses (`_pending/HIDDEN_FEATURES_REVIEW_*.md`).
+11. **PowerShell no soporta heredoc bash** (Pedro corre Windows). Usar
+    `git commit -F archivo.txt` para mensajes multilínea.
+12. **Comandos Supabase CLI siempre con `npx`** (`npx supabase ...`).
+13. **DB tabla `donations` NO renombrar** aunque UI diga "Aportes" (regla 9.7).
+14. **DB columna `subscriptions.plan_type`** acepta `'free' | 'premium' |
+    'paw_manada'`. UI muestra "Paw Member" para `'premium'` via
+    `normalizePlanId()`. Manada (mensual/anual) se guarda con
+    `plan_type='paw_manada'` (sin sufijo); ciclo se distingue por
+    `payment_amount_clp` ($9.990 vs $99.900).
+15. **Petify TEST → PROD**: NO flipear `PAW_SHIELD_PETIFY=true` con TEST key
+    (los enrollments en producción quedan en sandbox y se pierden al rotar).
+
+---
+
+## 10. Acciones manuales pendientes Pedro (al 2026-04-29)
+
+### 🔥 Crítico pre-launch (1 junio 2026)
+
+1. **Aplicar 2 migs SQL** desde Supabase Dashboard:
+   - `supabase/migrations/20260929000000_manada_fondo_refugios.sql`
+   - `supabase/migrations/20260929000001_manada_pool_close_cron.sql`
+2. **Re-deploy 5 edge fns**:
+   ```
+   npx supabase functions deploy flow-create-subscription
+   npx supabase functions deploy flow-webhook
+   npx supabase functions deploy consultation-prep
+   npx supabase functions deploy generate-paw-passport
+   npx supabase functions deploy generate-pet-id-card
+   ```
+3. **Activar pg_cron extension** + verificar `subscriptions_plan_type_check`
+   acepta `'paw_manada'`.
+4. **Migración Flow.cl → SpA SUSAETA GARNHAM** (URGENTE — riesgo fiscal de
+   suscripciones recurrentes a cuenta personal). Plan: Tenpo / Mach / Prex.
+
+### Cuando esté listo
+
+5. **API Petify PROD** → reemplazar TEST key en Supabase Secrets → flipear
+   `PAW_SHIELD_PETIFY=true` en `src/lib/featureFlags.ts`.
+6. **QA paywall validado** → flipear `USER_PREMIUM=true`.
+
+### Comercial / Legal / Beta
+
+7. **Abogado chileno** (CLP 500k-1.5M) — review T&C + Privacy + 3 docs legales
+   borradores en `docs-raiz/legal/`.
+8. **Reclutar cohorte beta**: 30+ tutores reales + 5+ vets + 2 refugios + 1
+   clínica. Hito 1 PATH_MRR.
+9. **Pitch a Roberto Camhi** segundo pase con
+   `pawfriend.cl/pitch/inversionistas.html` v2.1 (15 slides).
+10. **Outreach B2B** con `OUTREACH_TEMPLATES_B2B_2026_04_29.md` (Centrovet +
+    Sura primero).
+11. **2FA admin** en cuenta Pedro.
+12. **Marca INAPI**: consultar disponibilidad "Paw Friend" + "Paw Shield"
+    (clases 9, 35, 42, 44).
+
+---
+
+## 11. Lecciones aprendidas (no volver a tropezar)
+
+- **Premium B2C reactivación**: 2 intentos previos sin tracción (2026-04-08 +
+  2026-04-19). v2.1 lo reactivó con feature unlock REAL (no solo badge) —
+  pendiente validar conversión 13% target.
+- **Vets no son motor de revenue**: feedback Roberto Camhi 2026-04-22. Tienen
+  demanda excedida, son pocos para mucha demanda, chatos de vendors.
+- **"Donaciones" activa Ley 19.885 de donatarios**: reframe a "Aportes" / "Paw
+  Support". Manada Fondo Refugios via SpA evita el problema (donación legal la
+  hace persona jurídica, no user).
+- **Triggers plpgsql lazy-validation**: 4 incidentes históricos por refs a
+  columnas inexistentes. Regla 9.2.1 obligatoria.
+- **JWT en `cron.schedule` literal**: incidente 2026-04-20. Vault obligatorio.
+- **`verify_jwt` flip en bloque**: incidente 2026-04-20.
+- **Vite manualChunks por path src**: causa circular deps. Solo vendors.
+- **Petify modelo extractivo** (USD 0.50-0.75/pet/mes al dueño): captura 10%,
+  deja 90% afuera. Refuerza moat Paw Friend modelo Mapcity (capturamos 100%).
+- **Petify TEST→PROD**: flipear flag con TEST key rompe enrollments al rotar.
+- **`subscriptions.plan_type`** es la columna real (NO `plan_id`). Error
+  histórico fixed en mig 20260929000000.
+- **Manada anual prorratea aporte refugio**: $24.000 en cobro anual = $2.000/mes
+  equivalente al fondo.
+
+---
+
+## 12. Documentos canónicos del repo
+
+### Docs vivos (sincronizados con código real)
+
+- `CLAUDE.md` — manual operativo principal, sec 5 modelo v2.1.
+- `MAPA_FUNCIONAL_COMPLETO.md` — mapa modular + changelog 2026-04-29 (~80 líneas).
+- `AGENTS.md` — config para IA agents externos (Cursor, Copilot, etc.).
+- `INDEX.md` — índice maestro docs.
+- `README.md` — presentación pública.
+- `diagrams/FLUJO_COMPLETO.mmd` — flujo end-to-end Mermaid.
+
+### Docs estratégicos Plan v5 (canónicos para conversaciones)
+
+- `docs-raiz/MODELO_FINANCIERO_2026_04_29.md` — FX 905 + sensibilidad + EBITDA
+  por escala (1k → 100k MAU).
+- `docs-raiz/CAP_TABLE_VALUACION_2026_04_29.md` — pre-seed USD 150k +
+  termsheet SAFE + 8 angels Tier 2-3 LatAm.
+- `docs-raiz/PATH_MRR_2026_04_29.md` — 8 hitos accionables M$ MRR mes 6.
+- `docs-raiz/BETA_CRITERIA_2026_04_29.md` — cohorte 4-6 sem pre-launch +
+  métricas no-vanity + criterios beta→público.
+- `docs-raiz/POLISH_QA_E2E_2026_04_29.md` — matriz QA 6 flujos críticos.
+- `docs-raiz/LEGAL_REVIEW_2026_04_29.md` — Ley 21.719/19.628 + tributario SpA
+  + checklist abogado externo.
+- `docs-raiz/PITCH_DECK_V2_2026_04_29.md` — **12 slides definitivos canónicos**.
+- `docs-raiz/MANIFESTO_PAW_FRIEND_2026_04_29.md` — identidad verbal + tono +
+  pitches 30s/1min.
+- `docs-raiz/OUTREACH_TEMPLATES_B2B_2026_04_29.md` — templates email/LinkedIn
+  para 7 motores B2B.
+- `docs-raiz/PETIFY_COGS_CONTINGENCY_2026_04_29.md` — Plan A/B/C/D según
+  volumen Shield activado.
+
+### Docs legales borradores (esperan abogado externo)
+
+- `docs-raiz/legal/POLITICA_USO_ACEPTABLE_2026_04_29.md`
+- `docs-raiz/legal/DPA_TEMPLATE_2026_04_29.md` (subprocesadores)
+- `docs-raiz/legal/CONTRATO_B2B_PRO_MAX_TEMPLATE_2026_04_29.md` (clínicas)
+
+### Pitch decks públicos HTML (deployed `pawfriend.cl/pitch/`)
+
+- `inversionistas.html` — **15 slides v2.1** (slide 9 nuevo "Moat B2B" con
+  dashboards bronze/silver/gold + tabla EBITDA + ARR escalas + ask USD 150k).
+- `companys.html` — empresas sponsor.
+- `voices.html` — creadores Paw Voices.
+- `partners.html` — tiendas aliadas.
+- `investors-live.html` — proyección 5 años v2.1 (USD 90k Y1 → USD 11M Y5
+  LATAM-5 optimista).
+
+### Modelo v2 origen
+
+- `docs-raiz/pitch/MODELO_V2_2026_04_22.md` — pivot Roberto Camhi + addendum
+  2026-04-29 con freemium 3 tiers.
+
+### Operacionales
+
+- `_pending/CRONS_SETUP_PENDIENTE.md` — 16 cron jobs (incl. nuevo
+  `manada-pool-monthly-close`).
+- `docs/audit/cleanup-fase1.md` — operacional consolidado sesión Plan v5.
+- `_pending/UX_POLISH_BACKLOG.md` — items UX-01 al UX-12 post-launch.
+- `_pending/SINTESIS_2026_04_30.md` — síntesis post 7 motores Revenue Master Plan.
+
+---
+
+## 13. Métricas del repo (al 2026-04-29 post-Plan v5)
+
+| Métrica | Valor |
+|---|---|
+| Commits en `main` | ~720 |
+| Migraciones SQL | ~199 |
+| Edge functions | ~42 |
+| Páginas | ~107 |
+| Componentes React | ~440 |
+| Hooks custom | ~107 |
+| Rutas activas | ~78 |
+| Tests Vitest | 587 verde |
+| Tests Playwright | 336 verde |
+| `npx tsc -b` | 0 errores |
+| `_archive/superseded-by-plan-v5/` | 6 docs archivados 2026-04-29 |
+
+---
+
+## 14. North Star + KPIs operativos
+
+- **North Star Owner**: pets con ≥10 eventos timeline / ≥3 categorías / Pet ID
+  Card claimed.
+- **Leading indicator del moat Pharma**:
+  `profiles.anonymous_data_research_consent` opt-in rate. Sin consent, no hay
+  deals.
+- **KPIs canónicos** (`AdminMasterKPIs` widget):
+  - MAU / WAU / DAU
+  - Vets activos creando fichas
+  - Conversión Free → Paw Member (target **13%**)
+  - Conversión Free → Manada (target **1-2%**)
+  - ARR runrate USD
+  - Retention D30 / D90
+  - Churn mensual Paw Member / Manada
+  - Manada Fondo Refugios acumulado (CLP)
+  - Pharma deals piloto firmados
+  - Rating app stores
+- **Risk monitor §11**: 5 señales (AI cost spike, consent rate bajo, dropout,
+  edge fn errors, pgvector slow).
+
+---
+
+## 15. Áreas con deuda técnica conocida
+
+- **Bundle inicial**: <500 KB gzip target. Admin -71% post Sprint 0+1.
+- **Premium-related code legacy**: `subscriptions.plan_type='premium'` aunque
+  UI muestra "Paw Member". Refactor cosmético no urgente — `normalizePlanId()`
+  resuelve.
+- **OnboardingQuickFlow vs OnboardingDuenoMinimal**: 2 componentes existen.
+  Ruta `/onboarding-mascota` apunta a Minimal. QuickFlow legacy.
+- **Tablas `_deprecated_20260427`**: 4 tablas renombradas en mig
+  `20260903900000_rename_orphan_tables.sql`. Drop definitivo 8 junio 2026 si
+  nada las usa.
+- **Mobile launch**: pendiente Apple Developer + Google Play Console + Meta
+  verif.
+- **Sample-dashboard.html**: linkeado desde companys.html. Verificar alineado
+  con v2.1 (TODO Pedro).
+- **Petify TEST key**: bloqueante para activar `PAW_SHIELD_PETIFY=true`.
+- **9 hooks "huérfanos" del agente backend audit**: 9 falsos positivos
+  detectados (en realidad tienen imports activos). Solo 3 hooks marcados como
+  `@deprecated 2026-04-29`: `useLeadsClinicas`, `useProviderActivityFeed`,
+  `usePaymentReminder`.
+
+---
+
+## 16. Conversaciones típicas con IA externa
+
+### Auditoría / sparring estratégico
+
+> *"Acabo de pivotar a freemium 3 tiers (Plan v5 Opción 3). Conversión target
+> 13% Paw Member + 2% Manada. ¿Es realista para mercado pet Chile? ¿Qué
+> benchmarks tengo? ¿Cómo testearía pricing?"*
+
+### Revisión de pitch
+
+> *"Voy a presentar a Roberto Camhi (founder Mapcity, mentor angel). Acá está
+> mi deck: pawfriend.cl/pitch/inversionistas.html. ¿Qué slides necesito
+> reforzar? ¿Qué objeciones esperar?"*
+
+### Análisis competitivo
+
+> *"Petify cobra USD 0.75/pet/mes a dueños directo, capta el 10% que paga.
+> Yo uso modelo Mapcity B2B (pharma+seguros+retail pagan, dueño no). ¿Cómo se
+> compara con apps similares en LATAM/US? ¿Hay riesgo que Petify cambie modelo?"*
+
+### Decisiones de producto
+
+> *"PremiumGate wireado en 6 features (Paw Shield, Passport, Insights Pro,
+> Audio IA, Reportes >30d, max_pets). ¿Cuál sacaría del paywall si conversión
+> falla? ¿Cuál pondría más arriba en el funnel?"*
+
+### Modelo financiero
+
+> *"FX 905. Petify USD 0.75/pet/mes. Conv Paw Member 13% + Manada 2%. EBITDA
+> a 100k MAU = USD 2.84M (92% margen). ¿Sensibilidad realista? ¿Qué break-even
+> debería preguntarme un angel?"*
+
+---
+
+## 17. Cómo usar este contexto
+
+1. **Pegá este bloque completo** como primer mensaje a la IA externa
+   (Perplexity, Claude.ai, ChatGPT, Gemini).
+2. **Agregá tu prompt específico**: auditoría, sparring de decisión, revisión
+   de pitch, modelo financiero, etc.
+3. **No esperes que la IA vea el repo**. Cuando necesites detalles técnicos
+   específicos, **citá el doc canónico** por path completo (ej:
+   `docs-raiz/MODELO_FINANCIERO_2026_04_29.md`).
+4. **Si te pide info que falta**: la IA debe pedirte explícitamente "necesito
+   ver X archivo" antes de inventar.
+5. **Mantenelo actualizado**: este doc se reescribe en cada pivot mayor (v1 →
+   v2 → v2.1). Próximo update probable: post primer deal B2B firmado o
+   post-launch con métricas reales.
+
+---
+
+**Versión**: 3.0 (v2.1 freemium 3 tiers consolidado) ·
+**Fecha**: 2026-04-29 ·
+**Próxima revisión sugerida**: post primer deal B2B firmado o post-launch
+métricas reales (julio-agosto 2026).
