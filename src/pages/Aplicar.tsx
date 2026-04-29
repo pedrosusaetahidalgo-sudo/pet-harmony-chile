@@ -40,6 +40,7 @@ type Kind =
   | 'paw_partners'
   | 'vet'
   | 'paw_voices'
+  | 'b2b_api'
   | 'otro';
 
 interface KindConfig {
@@ -255,6 +256,63 @@ const KIND_CONFIG: Record<Kind, KindConfig> = {
     subhead: 'Conversacion privada con inversionistas. No va a directorio publico.',
     categoryIcon: 'investor',
     color: 'purple',
+  },
+  b2b_api: {
+    label: 'API B2B',
+    eyebrow: 'Aseguradoras · Pharma · Academia · Universidades',
+    headline: 'Acceso programatico a Paw Friend (API B2B)',
+    subhead:
+      'Stats agregadas de raza, especies, correlaciones y risk score sobre cohort chileno. Free tier 100 req/h, research 1.000 req/h, enterprise a medida.',
+    categoryIcon: 'investor',
+    color: 'teal',
+    orgLabel: 'Empresa o institucion',
+    extraFields: [
+      {
+        key: 'use_case',
+        label: 'Caso de uso',
+        type: 'select',
+        options: [
+          'Underwriting / pricing seguros',
+          'Investigacion academica',
+          'Pharma R&D / marketing',
+          'Retail recomendacion productos',
+          'Plataforma agregadora pet',
+          'Otro',
+        ],
+        required: true,
+      },
+      {
+        key: 'tier_requested',
+        label: 'Tier de interes',
+        type: 'select',
+        options: [
+          'Free (100 req/h, breed_stats)',
+          'Research (1.000 req/h)',
+          'Enterprise (a conversar)',
+        ],
+        required: true,
+      },
+      {
+        key: 'expected_volume',
+        label: 'Volumen estimado de requests/mes',
+        type: 'text',
+        placeholder: 'Ej: 50.000',
+      },
+      {
+        key: 'integration_timeline',
+        label: 'Tiempo estimado para integrar',
+        type: 'select',
+        options: ['Esta semana', '< 1 mes', '1-3 meses', '> 3 meses'],
+      },
+      {
+        key: 'data_use_description',
+        label: 'Descripcion del uso de datos (1-2 parrafos)',
+        type: 'textarea',
+        placeholder:
+          'Cohort de Pastor Aleman para validar correlaciones de displasia con peso/edad en investigacion de tesis doctoral...',
+        required: true,
+      },
+    ],
   },
   otro: {
     label: 'Otra propuesta',

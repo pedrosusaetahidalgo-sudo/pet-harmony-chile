@@ -42,6 +42,7 @@ type Kind =
   | 'paw_partners'
   | 'vet'
   | 'paw_voices'
+  | 'b2b_api'
   | 'otro';
 
 type Status = 'submitted' | 'in_review' | 'approved' | 'rejected' | 'contacted';
@@ -74,6 +75,7 @@ const KIND_LABELS: Record<Kind, string> = {
   paw_partners: 'Paw Partner',
   vet: 'Veterinario',
   paw_voices: 'Paw Voice',
+  b2b_api: 'B2B API',
   otro: 'Otro',
 };
 
@@ -93,6 +95,8 @@ export default function AdminPitchApplications() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [detailApp, setDetailApp] = useState<PitchApp | null>(null);
   const [notesDraft, setNotesDraft] = useState('');
+  const [b2bTier, setB2bTier] = useState<'free' | 'research' | 'enterprise'>('free');
+  const [b2bIssuedKey, setB2bIssuedKey] = useState<{ plain: string; prefix: string } | null>(null);
 
   const { data: applications, isLoading } = useQuery<PitchApp[]>({
     queryKey: ['admin-pitch-applications', statusFilter, kindFilter],
@@ -154,6 +158,44 @@ export default function AdminPitchApplications() {
       setDetailApp(null);
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Error al aprobar');
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const approveB2BApi = async (
+    app: PitchApp,
+    notes: string,
+    tier: 'free' | 'research' | 'enterprise'
+  ) => {
+    setBusyId(app.id);
+    try {
+      const { data, error } = await supabase.rpc('approve_b2b_api_application', {
+        p_application_id: app.id,
+        p_tier: tier,
+        p_admin_notes: notes || null,
+      });
+      if (error) throw error;
+      const arr =
+        (data as Array<{
+          api_key_id: string;
+          plain_key: string;
+          prefix: string;
+          partner_name: string;
+          partner_email: string;
+        }> | null) ?? [];
+      const row = arr[0];
+      if (!row) {
+        toast.error('Error: la RPC no devolvio key');
+        return;
+      }
+      setB2bIssuedKey({ plain: row.plain_key, prefix: row.prefix });
+      toast.success('API key emitida', {
+        description: `Copia la key (visible solo ahora) y enviala a ${row.partner_email}.`,
+      });
+      await refresh();
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Error al aprobar B2B API');
     } finally {
       setBusyId(null);
     }
@@ -262,7 +304,15 @@ export default function AdminPitchApplications() {
       )}
 
       {/* Detalle modal */}
-      <Dialog open={!!detailApp} onOpenChange={(o) => !o && setDetailApp(null)}>
+      <Dialog
+        open={!!detailApp}
+        onOpenChange={(o) => {
+          if (!o) {
+            setDetailApp(null);
+            setB2bIssuedKey(null);
+          }
+        }}
+      >
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{detailApp ? KIND_LABELS[detailApp.kind] : ''}</DialogTitle>
@@ -350,8 +400,71 @@ export default function AdminPitchApplications() {
                 />
               </div>
 
+              {/* Plain key emitida (solo visible 1 vez en este modal) */}
+              {b2bIssuedKey && detailApp.kind === 'b2b_api' && (
+                <div className="rounded-lg border-2 border-green-500 bg-green-50 p-4 space-y-2">
+                  <p className="text-sm font-semibold text-green-900">
+                    🔑 API key emitida (visible solo ahora · copia y envia al partner)
+                  </p>
+                  <div className="flex gap-2">
+                    <Input
+                      readOnly
+                      value={b2bIssuedKey.plain}
+                      className="font-mono text-xs"
+                      onFocus={(e) => e.currentTarget.select()}
+                    />
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        navigator.clipboard.writeText(b2bIssuedKey.plain);
+                        toast.success('Copiada al portapapeles');
+                      }}
+                    >
+                      Copiar
+                    </Button>
+                  </div>
+                  <p className="text-xs text-green-800">
+                    Prefix guardado: <code>{b2bIssuedKey.prefix}</code>. Despues de cerrar este
+                    modal, solo veras el prefix.
+                  </p>
+                </div>
+              )}
+
+              {/* Tier picker para b2b_api antes de aprobar */}
+              {detailApp.kind === 'b2b_api' && detailApp.status !== 'approved' && (
+                <div className="rounded-lg border bg-purple-50 p-3 space-y-2">
+                  <label className="text-xs font-semibold text-purple-900">Tier al aprobar</label>
+                  <Select
+                    value={b2bTier}
+                    onValueChange={(v) => setB2bTier(v as 'free' | 'research' | 'enterprise')}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="free">Free · 100 req/h · breed_stats</SelectItem>
+                      <SelectItem value="research">
+                        Research · 1.000 req/h · +species_stats
+                      </SelectItem>
+                      <SelectItem value="enterprise">
+                        Enterprise · 10.000 req/h · +risk_score
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
               <div className="flex flex-wrap gap-2 pt-2 border-t">
-                {detailApp.status !== 'approved' && (
+                {detailApp.status !== 'approved' && detailApp.kind === 'b2b_api' && (
+                  <Button
+                    onClick={() => approveB2BApi(detailApp, notesDraft, b2bTier)}
+                    disabled={busyId === detailApp.id}
+                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    <CheckCircle2 className="h-4 w-4 mr-1" /> Aprobar y emitir API key
+                  </Button>
+                )}
+                {detailApp.status !== 'approved' && detailApp.kind !== 'b2b_api' && (
                   <Button
                     onClick={() => approve(detailApp, notesDraft)}
                     disabled={busyId === detailApp.id}

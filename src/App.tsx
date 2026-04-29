@@ -103,6 +103,7 @@ const RefugiosHogares = lazy(() => import('./pages/RefugiosHogares'));
 const RefugioPublico = lazy(() => import('./pages/RefugioPublico'));
 const MemoriaPublica = lazy(() => import('./pages/MemoriaPublica'));
 const Aplicar = lazy(() => import('./pages/Aplicar'));
+const B2BPortal = lazy(() => import('./pages/B2BPortal'));
 const NosePrintTest = lazy(() => import('./pages/NosePrintTest'));
 const NoseScan = lazy(() => import('./pages/NoseScan'));
 const InsightsLanding = lazy(() => import('./pages/InsightsLanding'));
@@ -1047,6 +1048,16 @@ const App = () => (
                   element={
                     <PublicWithLayoutIfAuth>
                       <Aplicar />
+                    </PublicWithLayoutIfAuth>
+                  }
+                />
+
+                {/* Portal B2B publico: tiers, endpoints, self-stats por API key */}
+                <Route
+                  path="/b2b"
+                  element={
+                    <PublicWithLayoutIfAuth>
+                      <B2BPortal />
                     </PublicWithLayoutIfAuth>
                   }
                 />
