@@ -387,7 +387,14 @@ export function PawShieldEnrollment({
   return (
     <Card className="max-w-md mx-auto overflow-hidden">
       <div className="relative bg-black aspect-video">
-        <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          aria-label="Vista previa de camara para enrollment de huella nasal"
+          className="w-full h-full object-cover"
+        />
         {/* Circulo guia */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="w-48 h-48 rounded-full border-4 border-white/60 shadow-lg" />

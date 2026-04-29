@@ -736,6 +736,7 @@ const Auth = () => {
                       type="checkbox"
                       checked={marketingConsent}
                       onChange={(e) => setMarketingConsent(e.target.checked)}
+                      aria-label="Acepto recibir tips de cuidado, novedades y descuentos de Paw Friend por email"
                       className="mt-1 h-4 w-4 rounded border-gray-300 text-purple-600 focus:ring-2 focus:ring-purple-500 focus:ring-offset-0"
                     />
                     <label

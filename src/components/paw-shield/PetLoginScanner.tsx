@@ -263,6 +263,7 @@ export function PetLoginScanner({ open, onOpenChange, ownedPets }: PetLoginScann
                 autoPlay
                 playsInline
                 muted
+                aria-label="Vista previa de camara para login con huella nasal"
                 className="w-full h-full object-cover"
               />
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

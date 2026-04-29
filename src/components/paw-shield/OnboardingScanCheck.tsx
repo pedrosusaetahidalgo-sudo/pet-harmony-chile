@@ -256,7 +256,14 @@ export function OnboardingScanCheck({ onSkip, onDuplicate }: OnboardingScanCheck
   return (
     <Card className="max-w-md mx-auto overflow-hidden">
       <div className="relative bg-black aspect-square">
-        <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          aria-label="Vista previa de camara para scan de huella nasal"
+          className="w-full h-full object-cover"
+        />
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <div className="w-44 h-44 rounded-full border-4 border-white/60 shadow-lg" />
         </div>

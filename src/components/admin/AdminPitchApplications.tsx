@@ -474,7 +474,12 @@ export default function AdminPitchApplications() {
               {/* Tier picker para b2b_api antes de aprobar */}
               {detailApp.kind === 'b2b_api' && detailApp.status !== 'approved' && (
                 <div className="rounded-lg border bg-purple-50 p-3 space-y-2">
-                  <label className="text-xs font-semibold text-purple-900">Tier al aprobar</label>
+                  <label
+                    htmlFor="b2b-tier-select"
+                    className="text-xs font-semibold text-purple-900"
+                  >
+                    Tier al aprobar
+                  </label>
                   <Select
                     value={b2bTier}
                     onValueChange={(v) => setB2bTier(v as 'free' | 'research' | 'enterprise')}
