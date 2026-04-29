@@ -1,0 +1,95 @@
+name: Deploy to GitHub Pages
+
+# Cierra el bloqueante 🔴 #3 del production readiness doc 2026-04-30:
+# "build manual desde laptop. Si Pedro está enfermo o sin internet,
+# no se puede deployar fix urgente."
+#
+# Este workflow:
+# 1. Se dispara en push a main (excepto cuando solo cambia docs/)
+# 2. Corre npm ci + tsc + build
+# 3. Si el build cambia docs/, commitea de vuelta con [skip ci]
+#    → GitHub Pages auto-deploya desde docs/ al refresh
+#
+# Beneficios:
+# - Pedro puede pushear desde mobile/tablet sin compilar local
+# - Hotfixes urgentes desde GitHub web editor + workflow auto-builds
+# - Build siempre consistente (mismo Node version)
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      # Evita loop infinito: si el commit ya viene del workflow (solo docs/),
+      # no re-disparar.
+      - 'docs/**'
+      - '*.md'
+      - 'docs-raiz/**'
+      - '_archive/**'
+      - '_pending/**'
+      - 'pitch-inversionistas/**'
+
+  # Permite trigger manual desde GitHub UI (Actions tab > Deploy > Run workflow)
+  workflow_dispatch:
+
+# Permisos: el GITHUB_TOKEN default no puede commitear back. Necesitamos write.
+permissions:
+  contents: write
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false # No cancelar deploys en flight, finalizar el actual
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Necesario para que git commit funcione despues
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Type check
+        run: npx tsc -b
+
+      - name: Build production
+        run: npm run build
+        env:
+          NODE_OPTIONS: '--max-old-space-size=4096'
+
+      - name: Check if docs/ changed
+        id: check_changes
+        run: |
+          if [[ -n $(git status --porcelain docs/) ]]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "✓ docs/ has changes, will commit"
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "✓ docs/ is up to date, no commit needed"
+          fi
+
+      - name: Commit docs/ back
+        if: steps.check_changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/
+          git commit -m "build: rebuild docs/ from ${GITHUB_SHA::7} [skip ci]"
+          git push origin main
+
+      - name: Summary
+        run: |
+          echo "## Deploy summary" >> $GITHUB_STEP_SUMMARY
+          echo "- Commit: ${GITHUB_SHA::7}" >> $GITHUB_STEP_SUMMARY
+          echo "- Docs changed: ${{ steps.check_changes.outputs.changed }}" >> $GITHUB_STEP_SUMMARY
+          echo "- GitHub Pages will auto-refresh from docs/ in 1-2 min" >> $GITHUB_STEP_SUMMARY
