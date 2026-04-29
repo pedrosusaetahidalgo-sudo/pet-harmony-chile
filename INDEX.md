@@ -2,7 +2,7 @@
 
 > Todos estos documentos deben mantenerse actualizados con cada cambio relevante.
 > Si modificas rutas, navegacion, flujos, planes o features: actualiza el documento correspondiente.
-> Ultima revision: 2026-04-29.
+> Ultima revision: 2026-04-30.
 
 ---
 
@@ -128,7 +128,7 @@ Resumen de items activos:
 | [docs-raiz/PAW_SHIELD_DATA_ARCHIVE.md](docs-raiz/PAW_SHIELD_DATA_ARCHIVE.md) | Spec archivado de imagenes Paw Shield para entrenar modelo propio (consent ARCO + cron lifecycle 30d) | **Implementada 2026-04-29 (commit f180e5fe)** — falta Pedro aplicar mig 20260911 + deploy edge fn cleanup |
 | [docs-raiz/PAW_SHIELD_PLAYBOOK.md](docs-raiz/PAW_SHIELD_PLAYBOOK.md) | Playbook estrategia Paw Shield · control costos Petify · features owner/vet/refugio | Activo. Pricing actualizado 3 tiers (Basic $0.50/Pro $0.75/Enterprise contact) |
 | [docs-raiz/PAW_SHIELD_IDEAS_BANK.md](docs-raiz/PAW_SHIELD_IDEAS_BANK.md) | Banco de 24 ideas RICE-priorizadas para explotar biometria + breed_profile + pet_food_preferences | Activo, lista para implementar mañana |
-| [docs-raiz/REVENUE_MASTER_PLAN_2026.md](docs-raiz/REVENUE_MASTER_PLAN_2026.md) | Plan revenue master 2026: 5 motores B2B + ARR Y1/Y3 conservador/optimista | Activo |
+| [docs-raiz/REVENUE_MASTER_PLAN_2026.md](docs-raiz/REVENUE_MASTER_PLAN_2026.md) | Plan revenue master 2026: 7 motores B2B + ARR Y1/Y3 conservador/optimista | **Codigo end-to-end de los 7 motores listo** (commit c19608b6 al 2026-04-30) — solo activacion comercial pendiente |
 | [docs-raiz/BRAND_SYSTEM_2026.md](docs-raiz/BRAND_SYSTEM_2026.md) | Brand System 2026 consolidado: paletas (app + 11 pitches) + tipografia + logos + iconos + numeros canonicos compartidos | **NUEVO 2026-04-29** · Reemplaza `pawfriend-omnichannel-brand-assets-and-prompts.md` (archivado) y `BRAND_KIT_PITCHES.md` (marcado superseded) |
 | [docs-raiz/ASSETS_GENERATION_PLAN.md](docs-raiz/ASSETS_GENERATION_PLAN.md) | Master ejecutable: prompts ready-to-paste por asset + IA recomendada + status de wire-up (sec 14) | **NUEVO 2026-04-29** · Companion ejecutable de BRAND_SYSTEM. La mayoria del backlog ya esta en `public/brand-assets/` (commit 700d8e70) |
 | [_archive/docs-raiz-snapshots-2026-04/REFACTOR_ADOPCION_2026_04_24.md](_archive/docs-raiz-snapshots-2026-04/REFACTOR_ADOPCION_2026_04_24.md) | (archivado 2026-04-28) Sub-plan A+B+C+D+E flujo adopción ya 100% ejecutado | Histórico — ver flags `ADOPTION_UNIFIED_FEED` y `ADOPTION_PROCESSES_V1` |

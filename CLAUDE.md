@@ -289,6 +289,8 @@ paw-shield-identify/             # Petify identify 1:N publica para /nose-scan +
 paw-shield-archive-cleanup/      # Cron diario: borra imagenes archive con expires_at <= now
 send-b2b-welcome/                # Email transaccional al partner B2B post-approve con API key
 b2b-api/                         # 4 endpoints publicos B2B (breed_stats, species_stats, correlations, risk_score)
+vet-checkin-identify/            # Vet checkin biometrico via X-Vet-Api-Key (Motor #2 idea RICE 126)
+request-insurance-quote/         # Insurance lead capture · email partner + admin (Motor #2 revenue)
 ```
 
 ---
@@ -311,7 +313,11 @@ b2b-api/                         # 4 endpoints publicos B2B (breed_stats, specie
 - `/refugios-hogares` -- Directorio publico refugios / hogares de adopcion
 - `/refugios/:slug` -- Perfil publico refugio (SEO)
 - `/paw-partners` -- Directorio publico Paw Partners (tiendas/servicios aliados con descuentos)
-- `/aplicar` -- Form de postulacion generico (tipos: corfo, startup_chile, paw_companys, angels_vc, refugio, paw_partners, vet, paw_voices, otro)
+- `/aplicar` -- Form de postulacion generico (tipos: corfo, startup_chile, paw_companys, angels_vc, refugio, paw_partners, vet, paw_voices, b2b_api, gobierno_municipio, banca, edificios, longtail, otro)
+- `/b2b` -- Portal B2B publico con docs + tiers + self-stats por API key
+- `/cotizar-seguro/:petId` -- Cotizacion seguros aseguradoras partners (Motor #2)
+- `/tienda/:petId` y `/tienda/:petId/:partnerSlug` -- Retail store con descuentos (Motor #3)
+- `/vet-widget-demo.html` -- Demo standalone para vet check-in widget
 - `/resena/:token` -- Dejar resena publica
 - `/qr/:token` -- Landing publica de QR de mascota
 - `/paw-card/:pawCardId` -- Landing publica de Paw Card coleccionable

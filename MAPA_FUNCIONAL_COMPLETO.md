@@ -2,8 +2,40 @@
 
 > Documento de referencia: cada modulo, sus archivos, flujo end-to-end y oportunidades de mejora.
 > Generado: 2026-04-10. Verificado contra el codigo real.
-> Ultima sync: 2026-04-29 (B2B onboarding + Paw Shield archive + brand v2 wire-up).
+> Ultima sync: 2026-04-30 (Motores Revenue Master Plan completos: #1 Pharma · #2 Insurance · #3 Retail · #4-7 Inbound B2B + 5 ideas RICE Paw Shield).
 > Anotaciones de rol: owner (O), provider (P), admin (A), compartido (O+P).
+
+---
+
+## Changelog 2026-04-30 — Motores Revenue Master Plan completos
+
+**Motor #2 Aseguradoras** — `/cotizar-seguro/:petId`
+- Mig 20260915: insurance_partners + insurance_quotes + insurance_leads
+- RPC compute_insurance_quote (reusa calculate_pet_risk_score)
+- Edge fn request-insurance-quote (lead capture + email partner + admin)
+- [InsuranceQuotes.tsx](src/pages/InsuranceQuotes.tsx) + [AdminInsurancePartners.tsx](src/components/admin/AdminInsurancePartners.tsx)
+- Seed: Sura Pet · BCI Pet · Mapfre Pet (inactivos)
+
+**Motor #3 Retail** — `/tienda/:petId/:partnerSlug?`
+- Mig 20260916: retail_partners + retail_clicks
+- RPCs list_active_retail_partners + track_retail_click + retail_partner_stats
+- [RetailStore.tsx](src/pages/RetailStore.tsx) + [RetailRecommendationsCard.tsx](src/components/retail/RetailRecommendationsCard.tsx) + [AdminRetailPartners.tsx](src/components/admin/AdminRetailPartners.tsx)
+- Seed: Master Dog · Puppis · Pet Star (inactivos)
+
+**Motores #4-7 Inbound B2B** — `/aplicar?tipo=<kind>`
+- Mig 20260917: 4 kinds nuevos en pitch_applications.kind CHECK constraint
+- gobierno_municipio (Motor #4 Gobierno · Ley 21.020)
+- banca (Motor #5 BCI · Santander · Itau · BancoEstado · Falabella)
+- edificios (Motor #6 inmobiliarias · administradoras · HOAs)
+- longtail (Motor #7 aerolineas · academia · hardware · plataformas · cremacion)
+- Aplicar.tsx + AdminPitchApplications + notify-pitch-application extendidos
+
+**Top 5 ideas RICE Paw Shield** (commit 3cc36c0c)
+- #7 Pet Login: PetLoginScanner + PetLoginButton en /home
+- #1 Onboarding scan: OnboardingScanCheck pre-step en /add-pet
+- #13 Vaccine renewal nudge: VaccineRenewalNudge card en /home
+- #12 Birthday coupons: tabla birthday_coupon_partners + BirthdayCouponsCard
+- #2 Vet check-in: vet-checkin-identify edge fn + tablas vet_api_keys/log + /vet-widget-demo.html
 
 ---
 

@@ -1,5 +1,11 @@
 flowchart TD
     %% ============================================================
+    %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-30 (Motores Revenue Master Plan completos)
+    %% Cambios 2026-04-30:
+    %%   - Motor #2 Insurance end-to-end: /cotizar-seguro/:petId con quote real-time + lead capture + email automatico al partner. Tablas insurance_partners + insurance_quotes + insurance_leads. RPC compute_insurance_quote (reusa calculate_pet_risk_score). Edge fn request-insurance-quote. AdminInsurancePartners.
+    %%   - Motor #3 Retail: /tienda/:petId/:partnerSlug con catalogo filtrado por mascota + tracking de clicks + descuento Paw Member. Tablas retail_partners + retail_clicks. RPCs list_active_retail_partners + track_retail_click + retail_partner_stats. RetailRecommendationsCard en /home. AdminRetailPartners.
+    %%   - Motores #4-7 Inbound B2B: 4 kinds nuevos en /aplicar (gobierno_municipio + banca + edificios + longtail). Pitch decks dedicados ya existian. Cierra los 7 motores del Revenue Master Plan.
+    %%   - Top 5 ideas RICE Paw Shield: Pet Login (#7), Onboarding express scan (#1), Vacuna nudge (#13), Birthday coupons (#12), Vet check-in widget (#2 con vet-checkin-identify edge fn).
     %% FLUJO COMPLETO PAW FRIEND — Actualizado 2026-04-29 (B2B onboarding + Paw Shield archive + brand v2 wire-up)
     %% Cambios 2026-04-29:
     %%   - Ruta publica /b2b (B2BPortal) con docs + self-stats via API key.
