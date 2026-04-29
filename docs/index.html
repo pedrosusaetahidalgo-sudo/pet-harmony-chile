@@ -12,6 +12,26 @@
     <meta name="apple-mobile-web-app-title" content="Paw Friend" />
     <meta name="theme-color" content="#9333EA" />
 
+    <!--
+      Content Security Policy (CSP) — defensive XSS hardening.
+      2026-04-30: cierra hallazgo amarillo del production readiness doc.
+
+      Decisiones:
+      - default-src 'self': bloquea cualquier recurso no listado abajo
+      - script-src 'self' 'unsafe-inline': inline scripts necesarios para el
+        SPA redirect handler + Vite import.meta. 'unsafe-eval' NO incluido
+        (Vite produccion no lo necesita).
+      - connect-src: Supabase + Flow + PostHog + Sentry + Anthropic
+        (b2b-api edge fn) + GitHub Pages dominios + apis usadas
+      - img-src 'self' data: blob: https:: imagenes pet upload + assets externos
+      - frame-src: Flow checkout + YouTube embeds (futuro Paw Voices)
+      - upgrade-insecure-requests: forzar HTTPS para todo
+
+      Si rompe algo en prod, hay que ajustar la directiva relevante.
+      Test en dev: navegador devtools console mostrara CSP violations.
+    -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://us.i.posthog.com https://us-assets.i.posthog.com https://www.googletagmanager.com https://connect.facebook.net https://*.firebase.com https://*.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://gwailbjlvevkhwcrovfd.supabase.co wss://gwailbjlvevkhwcrovfd.supabase.co https://www.flow.cl https://us.i.posthog.com https://us-assets.i.posthog.com https://*.sentry.io https://*.ingest.sentry.io https://*.firebase.com https://*.googleapis.com https://api.anthropic.com https://www.facebook.com; frame-src 'self' https://www.flow.cl https://www.youtube.com https://player.vimeo.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://www.flow.cl; upgrade-insecure-requests" />
+
     <!-- Preconnect a orígenes críticos — reduce handshake TLS del 1er request.
          Fonts: primera pintada tipográfica. Supabase: primera query. Flow:
          destino del checkout al hacer click en donar / upgrade. -->
@@ -50,16 +70,16 @@
 
     <!-- Preload del video hero (mejora LCP en desktop). En mobile el video se carga lazy. -->
     <link rel="preload" as="video" type="video/mp4" href="/videos/hero-pet.mp4" media="(min-width: 768px)" />
-    <script type="module" crossorigin src="/assets/index-DQmBvzjY.js"></script>
+    <script type="module" crossorigin src="/assets/index-Cr2dpo3C.js"></script>
     <link rel="modulepreload" crossorigin href="/assets/ui-vendor-HPwniia5.js">
     <link rel="modulepreload" crossorigin href="/assets/recharts-vendor-ewQCLwVj.js">
     <link rel="modulepreload" crossorigin href="/assets/query-vendor-BaTf7QyW.js">
     <link rel="modulepreload" crossorigin href="/assets/react-vendor-CdRuZFg3.js">
-    <link rel="modulepreload" crossorigin href="/assets/icons-vendor-BKockWcV.js">
+    <link rel="modulepreload" crossorigin href="/assets/icons-vendor-CCnTbVQF.js">
     <link rel="modulepreload" crossorigin href="/assets/supabase-vendor-Bmzy1EPV.js">
     <link rel="modulepreload" crossorigin href="/assets/date-vendor-CfAVJJZg.js">
     <link rel="modulepreload" crossorigin href="/assets/leaflet-vendor-4_-FHbyx.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-C4i3Os16.css">
+    <link rel="stylesheet" crossorigin href="/assets/index-CqVZdaSC.css">
   </head>
 
   <body>
@@ -76,6 +96,6 @@
         }
       }(window.location))
     </script>
-    <div id="root"></div>
+    <div id="root"></div>
   </body>
 </html>
