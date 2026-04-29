@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect } from 'react';
 
 /**
  * En mobile, cuando el teclado virtual aparece, los inputs pueden quedar
@@ -14,16 +14,18 @@ export function useScrollOnFocus(containerRef?: React.RefObject<HTMLElement | nu
       const target = e.target as HTMLElement | null;
       if (!target) return;
       const tag = target.tagName;
-      if (tag !== "INPUT" && tag !== "TEXTAREA" && tag !== "SELECT") return;
+      if (tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT') return;
 
       // Esperar a que el teclado virtual se abra (~300ms en la mayoría de dispositivos)
       setTimeout(() => {
-        target.scrollIntoView({ behavior: "smooth", block: "center" });
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 350);
     };
 
+    // Cast a EventListener: addEventListener no acepta listeners narrowed
+    // a FocusEvent. Runtime es identico (FocusEvent extends Event).
     const el = containerRef?.current ?? document;
-    el.addEventListener("focusin", handleFocusIn);
-    return () => el.removeEventListener("focusin", handleFocusIn);
+    el.addEventListener('focusin', handleFocusIn as EventListener);
+    return () => el.removeEventListener('focusin', handleFocusIn as EventListener);
   }, [containerRef]);
 }

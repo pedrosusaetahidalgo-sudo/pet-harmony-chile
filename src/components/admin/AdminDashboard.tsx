@@ -435,7 +435,7 @@ export default function AdminDashboard() {
       if (!data?.length) return [];
 
       const counts: Record<string, number> = {};
-      data.forEach((b) => {
+      data.forEach((b: { service_type: string | null }) => {
         const type = b.service_type || 'otro';
         counts[type] = (counts[type] || 0) + 1;
       });
@@ -618,7 +618,7 @@ export default function AdminDashboard() {
         })
       );
 
-      (recentBookings ?? []).forEach((b) =>
+      ((recentBookings as Array<Record<string, string>>) ?? []).forEach((b) =>
         items.push({
           type: 'booking',
           label: `Reserva: ${b.service_type || 'servicio'}`,

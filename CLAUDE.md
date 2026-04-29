@@ -685,16 +685,17 @@ Los modulos **Paw Labs** muestran un banner `<PawLabsBanner>` indicando que esta
 
 ---
 
-## 12. Estado tecnico al cierre 2026-04-27 (post Fase 1 + Fase 2 + Fase 3 scaffolding)
+## 12. Estado tecnico al cierre 2026-04-28 (post Sprint 0 + Sprint 1 cierre auditoria)
 
 | Metrica | Valor |
 |---|---|
-| `npx tsc -b` | 0 errores |
-| `npm run lint` | 0 errores (2 warnings react-refresh en PlanComparisonTable, no bloquean) |
-| `npm run build` | Pasa (~50-70s) + post-build pre-render de 19 rutas SPA |
-| `npm run test:ci` | 377/377 verde |
-| Migraciones | 184+ (14 SQLs Fase 2/3 aplicadas 2026-04-27: research_consent, pet_risk_score, pet_health_alerts, b2b_api_keys, vaccine_overdue_cascade, health_alerts_email_sent, inactivity_birthday_cascades, correlation_insights, b2b_correlation_scopes, master_kpis_view, correlation_compute_rpcs, risk_monitor, pet_bootstrap_complete_kpi, antiparasitic_overdue_cascade, pet_bootstrap_enrichment, memorial_anniversary) |
-| Edge functions | 35+ activas. Nuevas Fase 2/3: `b2b-api` (auth via X-Pawfriend-Api-Key + rate limit per-key + 4 endpoints), `notify-health-alerts` (email severity=high) |
+| `npx tsc -b` | 0 errores **con `strictNullChecks: true`** (Sprint 1 batch 16) |
+| `npm run lint` | 0 errores · 59 warnings residuales (de 227 originales, -74%) |
+| `npm run build` | Pasa (~2-3min) + post-build pre-render de 20 rutas SPA |
+| `npm run test:ci` | **587/587 verde** (de 28 originales, ~21x crecimiento) |
+| **Bundle inicial** | Admin **149KB** (era 511KB, **-71%**) · ProviderDashboard **63KB** (era 103KB, **-39%**) · Home **55KB** (era 88KB, **-37%**) · xlsx separado (429KB chunk lazy) · -425KB total saved |
+| Migraciones | 189+ (Sprint 0+1: pets_default_private SEC-002, marketing_consent COMP-005, export_user_data_rpc COMP-002, subscriptions_renewal_reminder BIZ-006, flow_renewal_reminders_cron) |
+| Edge functions | 36+ activas. Nuevas Sprint 1: `flow-renewal-reminders-cron` (BIZ-006). Hardened con `requireCronAuth`: 5 cron fns (audit-cron-daily, run-all-cascades, notify-health-alerts, send-inactive-user-reminder, send-pet-birthday-greeting, send-new-pet-drip) |
 | Rutas en App.tsx | 73+ paths |
 | Premium B2C Flow | Vivo con idempotencia + rate limit |
 | Google Calendar | Vivo end-to-end |
@@ -760,10 +761,11 @@ Para tareas especializadas, invocar el subagente correspondiente. **13 agentes a
 
 ---
 
-## 15. Planes ejecutados (hasta 2026-04-27)
+## 15. Planes ejecutados (hasta 2026-04-28)
 
 | Plan | Estado | Cambios clave |
 |---|---|---|
+| **Sprint 0 + Sprint 1 cierre auditoria 2026-04-28** | Aplicado (17 batches en 1 dia) | **57 hallazgos cerrados** en codigo: 11 P0 (SEC-002 fuga Ley 19.628, COMP-002 ARCO, FEAT-001 onboarding, TEST-002/003 E2E + RLS) + 46 P1/P2. Tests 28→587 (+21x). Bundle inicial -425KB (Admin -71%, ProviderDashboard -39%, Home -37.5%). `strictNullChecks: true` activado. ARCH-001 lazy chunks en 4 god components. ARCH-002 cleanup imports/vars (227→59 warnings). ARCH-003 DRY refactor (wizard-footer + useRoleActivation). 5 migraciones SQL preparadas. Web Vitals nativos. Sentry/PostHog PII scrub. cron-auth shared secret en 5 edge fns. SEC-012 Privacy Policy completa con subprocesadores + Ley 21.719. FEAT-004 /onboarding-vet smart redirect |
 | **Refactor Maestro Fase 0 (2026-04-23)** | Aplicado | Trinidad del Corazon (Pet ID Card + Audio + Quick Actions), 4 tabs ficha clinica (Historia/Cuidados/Identidad/Mas), Memorial viral, Paw Points canonizado, sidebar colapsado, 13 feature flags |
 | **Refactor Maestro Fase 1 (2026-04-25)** | Aplicado | §6.2 Nose Print MVP con DINOv2-large 1024 dims (4 edge fns + componente captura + /nose-scan publico). §6.3 Paw Passport PDF 8 paginas. §6.5 SEO insights v2 con 3 tipos de slugs (breed/species/breed_rank) + /insights index. §6.6 Memorial share card 1080x1080 Canvas API + Birthday share card. §6.7 Refugios rescue_story + adoption_followups 30/90d trigger + cron edge fn |
 | **Refactor Maestro Fase 2 scaffolding (2026-04-27)** | Aplicado | §7.3 research consent (column profiles + dialog + step en onboarding + nudge en /home). §7.5 + §8.4.5 risk score (RPC + PetRiskScoreCard en ficha). §2.8.3 cascadas (pet_health_alerts + 4 tipos: weight_loss, vaccine_overdue, no_activity_7d, birthday_window + email severity=high). §7.5 API B2B v1 (edge fn b2b-api con auth via X-Pawfriend-Api-Key + 4 endpoints + AdminB2BApiKeys panel). §7.2 InsuranceBanner (oculto behind EMBEDDED_INSURANCE=false). Nudge consent en /home. AdminFase1Widget con KPIs Fase 1. SEO sitemap completo. 27→2 lint a11y warnings |

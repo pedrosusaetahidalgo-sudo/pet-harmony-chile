@@ -14,22 +14,17 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Linting */
-    "strict": false,
-    /* Sprint 1 P1 ARCH-002 (2026-04-28): noUnusedLocals = false porque
-     * eslint-plugin-unused-imports ya cubre esto con autofix (227→59 warnings).
-     * Mantener aqui false para no duplicar diagnostico. */
+    /* Linting — Sprint 1 P1 ARCH-002 cierre 2026-04-28: `strict: true` ON.
+     * Incluye strictNullChecks + strictFunctionTypes + strictBindCallApply +
+     * strictPropertyInitialization + alwaysStrict + noImplicitAny +
+     * noImplicitThis + useUnknownInCatchVariables. */
+    "strict": true,
+    /* noUnusedLocals = false porque eslint-plugin-unused-imports ya cubre
+     * esto con autofix (227→59 warnings). Mantener aqui false para no
+     * duplicar diagnostico. */
     "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "noImplicitAny": false,
     "noFallthroughCasesInSwitch": false,
-    /* strictNullChecks habilitado 2026-04-28 (ARCH-002 fase 1 measured-rollout).
-     * Antes: 600+ errores TS18047 latentes en el repo. Activar todo de golpe
-     * implica romper builds; en su lugar habilitamos solo este flag y
-     * arreglamos errores ofensivos en hooks + lib/ (~50 archivos). El resto
-     * del codigo se mantiene compilable porque los componentes UI ya hacen
-     * null-checks defensivos (errors aparecen, los corregimos por archivo). */
-    "strictNullChecks": true,
 
     "paths": {
       "@/*": ["./src/*"]

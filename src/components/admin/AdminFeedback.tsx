@@ -490,11 +490,10 @@ export default function AdminFeedback() {
                           color: '#e2e8f0',
                           fontSize: 12,
                         }}
-                        formatter={(
-                          value: number,
-                          _name: string,
-                          props: { payload: { count: number } }
-                        ) => [`${value} (${props.payload.count} ratings)`, 'Promedio']}
+                        formatter={(value, _name, props) => {
+                          const count = (props as { payload?: { count?: number } })?.payload?.count;
+                          return [`${value} (${count ?? 0} ratings)`, 'Promedio'];
+                        }}
                       />
                       <Line
                         type="monotone"
@@ -549,11 +548,10 @@ export default function AdminFeedback() {
                           color: '#e2e8f0',
                           fontSize: 12,
                         }}
-                        formatter={(
-                          value: number,
-                          _name: string,
-                          props: { payload: { count: number } }
-                        ) => [`${value} (${props.payload.count} ratings)`, 'Promedio']}
+                        formatter={(value, _name, props) => {
+                          const count = (props as { payload?: { count?: number } })?.payload?.count;
+                          return [`${value} (${count ?? 0} ratings)`, 'Promedio'];
+                        }}
                       />
                       <Line
                         type="monotone"

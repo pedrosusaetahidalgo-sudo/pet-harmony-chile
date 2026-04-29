@@ -180,9 +180,9 @@ export function useProAnalytics({ petId, period }: UseProAnalyticsParams) {
         const dayStr = format(day, 'yyyy-MM-dd');
         return {
           date: dayStr,
-          reminders: completedReminders.filter((r) => r.date === dayStr).length,
-          visits: vetVisits.filter((v) => v.date === dayStr).length,
-          vaccines: vaccines.filter((v) => v.date === dayStr).length,
+          reminders: completedReminders.filter((r: { date: string }) => r.date === dayStr).length,
+          visits: vetVisits.filter((v: { date: string }) => v.date === dayStr).length,
+          vaccines: vaccines.filter((v: { date: string }) => v.date === dayStr).length,
         };
       });
 

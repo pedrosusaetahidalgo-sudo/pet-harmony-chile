@@ -81,7 +81,9 @@ const providerTypeConfig = {
     ringColor: 'ring-orange-500/20',
     badgeColor: 'bg-orange-500/10 text-orange-700',
   },
-  groomer: {
+  // Bug fix 2026-04-28 (Sprint 1 ARCH-002): la prop providerType acepta
+  // 'grooming' (no 'groomer'). Renombrado para que el lookup matchee.
+  grooming: {
     title: 'Peluquero',
     priceLabel: 'servicio',
     totalLabel: 'citas',

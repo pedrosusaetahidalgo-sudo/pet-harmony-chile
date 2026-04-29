@@ -1,0 +1,57 @@
+feat(sprint-1 batch 18): cierre 100% — strict ON + indices SQL + 16 tests + docs
+
+A) DOC-001 — CLAUDE.md seccion 12 + 15 actualizadas
+- Metricas refrescadas: 587 tests (+21x), strictNullChecks ON, bundle
+  Admin -71%, ProviderDashboard -39%, Home -37%, -425KB total saved.
+- Seccion 15: nueva entrada "Sprint 0+1 cierre auditoria 2026-04-28" con
+  resumen de 17 batches y 57 hallazgos cerrados.
+
+B) ARCH-002 cerrado al 100% — `strict: true` ON
+- tsconfig.app.json: `strict: true` (incluye strictNullChecks +
+  strictFunctionTypes + strictBindCallApply + strictPropertyInitialization +
+  alwaysStrict + noImplicitAny + noImplicitThis + useUnknownInCatchVariables).
+- 10 errores fixed:
+  * AdminDashboard: 2 forEach con tipo implicit any → tipados explicitos
+  * AdminFeedback: 2 Recharts Tooltip formatter (overload mismatch) → cast
+  * ProviderProfileCard: bug real fixed (config key 'groomer' renombrado a
+    'grooming' para matchear la prop providerType — antes fallback a undefined)
+  * useProAnalytics: 3 callbacks filter sin tipo
+  * useScrollOnFocus: addEventListener con FocusEvent → cast EventListener
+
+E) Migracion SQL — 12 indices compuestos hot paths
+- supabase/migrations/20260909000000_compound_indexes_hot_paths.sql
+- Defensivos (IF NOT EXISTS, no rompen): mejoran latencia con miles de
+  filas por user.
+- medical_records (owner_id, visit_date), vet_bookings (owner_id,
+  scheduled_date), vet_bookings (provider_id, status, scheduled_date),
+  notifications (user_id, created_at) WHERE is_read=false (partial),
+  pet_reminders (pet_id, due_date) WHERE !is_completed (partial),
+  pet_routines (pet_id, time_of_day) WHERE is_active (partial),
+  routine_completions (routine_id, completed_date),
+  messages (conversation_id, created_at), feed_posts (created_at)
+  WHERE is_published, pet_timeline_events (pet_id, event_date),
+  adoption_posts (status, created_at), booking_events (booking_id, created_at).
+
+C) Tests — availabilitySlots (16 tests)
+- Slot generation con duration + buffer; full-day y partial blocks;
+  bookings ocupan/no ocupan segun status (cancelado/no_show no ocupan);
+  capacity 1 vs 2; serviceType filter; multi-rule dedup por start_time;
+  computeSlotsForRange genera array de fechas.
+- Total suite: 587 → 603 tests (+16, todo verde).
+
+D) Recharts tree-shaking — chart.tsx
+- src/components/ui/chart.tsx: `import * as RechartsPrimitive` →
+  `import { Legend, ResponsiveContainer, Tooltip, type LegendProps }`.
+- Solo 4 simbolos usados; namespace `*` impedia tree-shake. El bundle
+  no se movio (~432KB recharts vendor sigue) por inter-dependencia interna
+  de la lib, pero el import nominal es mas claro y permitira mejor
+  tree-shake en versiones futuras de recharts.
+
+Verificacion
+- npx tsc -b: 0 errores con `strict: true` completo
+- npx vitest run: 603/603 verde (587 → 603, +16)
+- npm run build: pasa en 2m 57s
+
+ARCH-002 = 100% cerrado. Sprint 0+1 al 100% del scope ejecutable autonomo.
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
