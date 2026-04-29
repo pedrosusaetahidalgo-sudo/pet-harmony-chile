@@ -47,6 +47,7 @@ const TermsOfService = lazy(() => import('./pages/TermsOfService'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
 const DeleteAccount = lazy(() => import('./pages/DeleteAccount'));
 const ExportarMisDatos = lazy(() => import('./pages/ExportarMisDatos'));
+const MisDatosCompartidos = lazy(() => import('./pages/MisDatosCompartidos'));
 const UserProfile = lazy(() => import('./pages/UserProfile'));
 // Checkout eliminado en pivot médico
 const PaymentResult = lazy(() => import('./pages/PaymentResult'));
@@ -1231,6 +1232,18 @@ const App = () => (
                     <ProtectedRoute>
                       <AppLayout>
                         <ExportarMisDatos />
+                      </AppLayout>
+                    </ProtectedRoute>
+                  }
+                />
+                {/* Compliance Ley 21.719: panel de transparencia datos compartidos
+                    con partners B2B (aseguradoras, pharma, biometria, vets). */}
+                <Route
+                  path="/profile/mis-datos-compartidos"
+                  element={
+                    <ProtectedRoute>
+                      <AppLayout>
+                        <MisDatosCompartidos />
                       </AppLayout>
                     </ProtectedRoute>
                   }

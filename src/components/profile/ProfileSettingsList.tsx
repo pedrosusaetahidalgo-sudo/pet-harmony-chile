@@ -81,6 +81,12 @@ export function ProfileSettingsList({
       onClick: () => navigate(LINKS.privacy()),
     },
     {
+      icon: Shield,
+      label: 'Mis datos compartidos con partners',
+      onClick: () => navigate('/profile/mis-datos-compartidos'),
+      iconColor: 'text-blue-600',
+    },
+    {
       icon: ShieldCheck,
       label:
         consent === true
