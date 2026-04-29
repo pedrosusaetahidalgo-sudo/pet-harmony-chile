@@ -2,27 +2,18 @@
 
 > **Propósito:** staging de MDs accionables que aún **no** se han ejecutado (total o parcialmente).
 > **Qué NO vive aquí:** docs vivas ([CLAUDE.md](../CLAUDE.md), [INDEX.md](../INDEX.md), [MAPA_FUNCIONAL_COMPLETO.md](../MAPA_FUNCIONAL_COMPLETO.md), [AGENTS.md](../AGENTS.md), [diagrams/](../diagrams/)), auditorías ([audits/](../audits/)), archivados ([_archive/](../_archive/)).
-> **Última actualización:** 2026-04-24
+> **Última actualización:** 2026-04-28
 
 ---
 
-## Refactor Maestro 2026-04-23 (en ejecución)
+## Sprint 0 + Sprint 1 cierre auditoria — 2026-04-28 ✅
 
-Plan multifase aprobado y en ejecución activa. Documentos vivos:
+17 batches, 57 hallazgos cerrados. Bitácora + auditoria E2E + manual actions
+Fase 0 archivados en [_archive/sprint-0-1-2026-04-28/](../_archive/sprint-0-1-2026-04-28/).
 
-| Doc | Propósito |
-|---|---|
-| [docs-raiz/planes/REFACTOR_MAESTRO_2026_04_23.md](../docs-raiz/planes/REFACTOR_MAESTRO_2026_04_23.md) | Plan completo (2.438 líneas, 3 fases). FUENTE DE VERDAD. |
-| [docs-raiz/planes/REFACTOR_ADOPCION_2026_04_24.md](../docs-raiz/planes/REFACTOR_ADOPCION_2026_04_24.md) | Sub-plan A+B+C+D+E flujo adopción (Bloques 1+2). |
-| [MANUAL_ACTIONS_PENDING_FASE_0.md](MANUAL_ACTIONS_PENDING_FASE_0.md) | Checklist de Pedro: 4 SQLs nuevas, deploys, flips de flags. |
-| [LEGACY_CLEANUP_AUDIT_2026_04_24.md](LEGACY_CLEANUP_AUDIT_2026_04_24.md) | Componentes legacy a eliminar tras 2-4 semanas con flags activos. Revisar 2026-05-15. |
-| [HIDDEN_FEATURES_REVIEW_2026_11_23.md](HIDDEN_FEATURES_REVIEW_2026_11_23.md) | Features escondidas con flag, decisión eliminar/reactivar a +6 meses. |
-| [NOSE_PRINT_UX_CAPTURE_IDEA.md](NOSE_PRINT_UX_CAPTURE_IDEA.md) | 3 ideas para mejorar la captura biométrica desde la app (Pilar 1). |
-| [OUTREACH_REFUGIOS_NOSE_PRINT.md](OUTREACH_REFUGIOS_NOSE_PRINT.md) | Outreach a refugios para dataset cross-individuo. |
-
-**Estado al 2026-04-24**: entregables Fase 0 §5.7 completos en código. Bloqueado en
-acciones manuales de Pedro (aplicar 4 SQLs adopción, activar 2 flags `ADOPTION_*`,
-deploy `send-adoption-status-email`). Ver checklist en `MANUAL_ACTIONS_PENDING_FASE_0.md`.
+**Pendiente Pedro (manual)**: 6 SQLs aplicar (5 ya OK, falta el último), redeploy
+edge fns con cron-auth, smoke test 1 vet, validar AASA, generar og_image.webp,
+crear E2E_TEST_EMAIL_B, decisión SII largo (OpenFactura/Bsale).
 
 ---
 
@@ -49,9 +40,10 @@ deploy `send-adoption-status-email`). Ver checklist en `MANUAL_ACTIONS_PENDING_F
 | 8 | [CONSOLIDACION_MOBILE.md](CONSOLIDACION_MOBILE.md) | Plan mobile | 🟡 Media-baja | Pendiente — Capacitor iOS/Android consolidation |
 | 9 | [testing-virtual-user-blueprint.md](testing-virtual-user-blueprint.md) | Blueprint QA | 🟡 Media-baja | Pendiente — Playwright virtual user agent |
 | 10 | [migrations/PLAN_GOOGLE_PLACES_MIGRATION.md](migrations/PLAN_GOOGLE_PLACES_MIGRATION.md) | Migración | 🟡 Media-baja | Cost-gated — requiere decisión sobre costos Google Places |
-| 11 | [feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md](feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md) | Feedback | 🟡 Media-baja | 8/9 done — solo pendiente: localizador tiendas (P4 futuro) + grupos comunidad MVP (P1 scope grande) |
-| 12 | [tooling/](tooling/) | Plan producción | 🟡 Baja | Plan 8 semanas — entra cuando producto esté estable |
-| 13 | [auditoria-e2e/05-PLAN_EJECUCION.md](auditoria-e2e/05-PLAN_EJECUCION.md) | Plan QA E2E | 🟡 Media-baja | Pendiente — plan de ejecución derivado de auditoría E2E de onboardings |
+| 11 | [tooling/](tooling/) | Plan producción | 🟡 Baja | Plan 8 semanas — entra cuando producto esté estable. 19% completion |
+| 12 | [HIDDEN_FEATURES_REVIEW_2026_10_27.md](HIDDEN_FEATURES_REVIEW_2026_10_27.md) | Review programada | 🟡 Baja | Revisión a +6m de features con flag false. Decidir mantener/eliminar |
+| 13 | [HIDDEN_FEATURES_REVIEW_2026_11_23.md](HIDDEN_FEATURES_REVIEW_2026_11_23.md) | Review programada | 🟡 Baja | Iteración +1m de la review anterior |
+| 14 | [PLAN_NEXT_LVL_MASTER.md](PLAN_NEXT_LVL_MASTER.md) | Plan futuro | 🟡 Baja | Master plan de mejoras — entra post-launch |
 
 ---
 
@@ -67,6 +59,11 @@ deploy `send-adoption-status-email`). Ver checklist en `MANUAL_ACTIONS_PENDING_F
 
 | Documento | Razón | Fecha |
 |---|---|---|
+| `_pending/AUDITORIA_FEATURES_2026_04_27.md` → `_archive/sprint-0-1-2026-04-28/` | Snapshot Refactor Maestro §2.10, superado por Sprint 0+1 cierre | 2026-04-28 |
+| `_pending/MANUAL_ACTIONS_PENDING_FASE_0.md` → `_archive/sprint-0-1-2026-04-28/` | Fase 0 ejecutada (4 SQLs aplicadas, 4 edge fns deployed) | 2026-04-28 |
+| `_pending/SPRINT_0_EJECUTADO_2026_04_28.md` → `_archive/sprint-0-1-2026-04-28/` | Bitacora 17 batches, 57 hallazgos cerrados | 2026-04-28 |
+| `_pending/auditoria-e2e/` (8 archivos) → `_archive/sprint-0-1-2026-04-28/` | Lotes A-I ejecutados (auditoria E2E pre-launch) | 2026-04-28 |
+| `_pending/feedback/FEEDBACK_USUARIO_REAL_2026_04_10.md` → `_archive/sprint-0-1-2026-04-28/` | Feedback Palo integrado | 2026-04-28 |
 | `dual-role-toggle-blueprint.md` → `_archive/` | 100% ejecutado: toggle header/mobile, BottomTabBar/Sidebar condicionales, RoleGuard, BecomeProviderCTA | 2026-04-13 |
 | `profile-redesign-blueprint.md` → `_archive/` | 90%+ ejecutado: 6 bloques verticales, pets carousel, settings integrado, BecomeProviderCTA | 2026-04-13 |
 | `REVISION_PROVIDER_PROFILE_EDIT.md` → `_archive/` | Ejecutado: renombrado a "Tu perfil en el directorio", preview card en vivo, MisPreciosEditor reordenado | 2026-04-13 |

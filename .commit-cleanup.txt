@@ -1,0 +1,42 @@
+chore(cleanup): -96MB qa-analysis + 14 MDs obsoletos archivados
+
+qa-analysis/ ELIMINADO (-96 MB, 462 archivos)
+- Outputs OCR + frames de un análisis de video del 2026-04-11 que no
+  tiene caller actual. El repo no necesita arrastrar este peso.
+
+audits/ — historicos archivados a _archive/
+- next-level/ (12 MDs auditoría 2026-04-14 con 5 agentes paralelos)
+  → _archive/audits-next-level-2026-04-14/. Superada por
+  AUDITORIA_PAWFRIEND_2026-04-27.
+- AUDITORIA_UX_COMPLETA_2026_04_14.md (mismo período).
+- FEATURES_INCOMPLETAS_2026_04_14.md (mismo período).
+- CONTEXTO_REVISION_COMPLETA.txt (snapshot 2026-04-15).
+- run-2026-04-17/ y run-2026-04-18/ (logs typecheck/lint/test antiguos)
+  → _archive/audits-runs-*. Logs históricos sin valor recurrente.
+
+audits/ ahora solo 5 MDs vivos referenciables: COMPETENCIA_2026_04_08,
+CROSS_PLATFORM_COMPATIBILITY, FEEDBACK_PALO_2026_04_16,
+FEEDBACK_VET_SOFIA_2026_04_13, OPTIMIZACION_COSTOS_2026_04_12.
+
+docs-raiz/planes/ — ejecutados archivados
+- PLAN_MAESTRO_EJECUTABLE.md (2026-04-16, superado).
+- PRODUCT_SYSTEM_COHERENCE_MASTER_PLAN.md (100% ejecutado per
+  CLAUDE.md §15 entry).
+
+docs-raiz/planes/ ahora 8 MDs vivos: BOOKING_SYSTEM_MASTER_PLAN,
+DOCUMENTS_AND_EMAILS_REDESIGN_MASTER_PLAN, FUNDRAISING_TRACKER,
+HUGGINGFACE_INTEGRATIONS_PLAN, INSTAGRAM_IMPLEMENTATION_PLAN,
+PLAN_EXITO_90D_*, REFACTOR_MAESTRO_2026_04_23.
+
+Resumen total cleanup
+- 154 → ~140 MDs activos
+- 96 MB liberados (qa-analysis/)
+- 14 MDs archivados (no eliminados, en _archive/ por si se referencian)
+- _pending/ y docs-vivos/ READMEs actualizados.
+
+Verificación
+- npx tsc -b: 0 errores
+- npx vitest run: 603/603 verde
+- Estructura: top-level 8 MDs canonicos, audits/ 5 vivos, planes/ 8 vivos.
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
