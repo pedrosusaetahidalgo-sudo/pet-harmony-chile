@@ -71,6 +71,58 @@
     <priority>0.7</priority>
   </url>
 
+  <!-- Pitch decks B2B (SEO + indexable Google + LinkedIn share) -->
+  <url>
+    <loc>https://pawfriend.cl/pitch-inversionistas/PITCH_7_MOTORES_CONSTRUIDOS.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/pitch-inversionistas/PITCH_PHARMA.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/pitch-inversionistas/PITCH_ASEGURADORAS.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/pitch-inversionistas/PITCH_RETAIL.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/pitch-inversionistas/PITCH_GOBIERNO.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/pitch-inversionistas/PITCH_BANCOS.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/pitch-inversionistas/PITCH_EDIFICIOS.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/pitch-inversionistas/PITCH_LONGTAIL.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/pitch-inversionistas/PITCH_REFUGIOS_PARTNERS.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://pawfriend.cl/pitch-inversionistas/PRESENTACION.html</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
   <!-- Refactor Maestro Fase 1 §6.5 — index SEO de insights -->
   <url>
     <loc>https://pawfriend.cl/insights</loc>
