@@ -45,6 +45,10 @@ const KIND_LABELS: Record<string, string> = {
   vet: 'Veterinario',
   paw_voices: 'Paw Voice (Creador)',
   b2b_api: 'B2B API',
+  gobierno_municipio: 'Gobierno · Municipio',
+  banca: 'Banco',
+  edificios: 'Edificio · Inmobiliaria',
+  longtail: 'B2B Long-tail',
   otro: 'Otro',
 };
 

@@ -43,6 +43,10 @@ type Kind =
   | 'vet'
   | 'paw_voices'
   | 'b2b_api'
+  | 'gobierno_municipio'
+  | 'banca'
+  | 'edificios'
+  | 'longtail'
   | 'otro';
 
 type Status = 'submitted' | 'in_review' | 'approved' | 'rejected' | 'contacted';
@@ -76,6 +80,10 @@ const KIND_LABELS: Record<Kind, string> = {
   vet: 'Veterinario',
   paw_voices: 'Paw Voice',
   b2b_api: 'B2B API',
+  gobierno_municipio: 'Gobierno · Municipio',
+  banca: 'Banco',
+  edificios: 'Edificio · Inmobiliaria',
+  longtail: 'B2B Long-tail',
   otro: 'Otro',
 };
 

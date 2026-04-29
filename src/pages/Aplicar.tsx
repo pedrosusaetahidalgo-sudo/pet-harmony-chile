@@ -41,6 +41,10 @@ type Kind =
   | 'vet'
   | 'paw_voices'
   | 'b2b_api'
+  | 'gobierno_municipio'
+  | 'banca'
+  | 'edificios'
+  | 'longtail'
   | 'otro';
 
 interface KindConfig {
@@ -311,6 +315,202 @@ const KIND_CONFIG: Record<Kind, KindConfig> = {
         placeholder:
           'Cohort de Pastor Aleman para validar correlaciones de displasia con peso/edad en investigacion de tesis doctoral...',
         required: true,
+      },
+    ],
+  },
+  gobierno_municipio: {
+    label: 'Gobierno · Municipio',
+    eyebrow: 'Municipios · SAG · Subdere · Ley 21.020',
+    headline: 'Registro digital de mascotas para tu municipio',
+    subhead:
+      'White-label de Paw Friend para que tu municipio cumpla Ley 21.020 sin licitar. Plataforma multitenant + reporte SAG automatico + biometria.',
+    categoryIcon: 'investor',
+    color: 'teal',
+    orgLabel: 'Municipio / Institucion',
+    extraFields: [
+      {
+        key: 'institucion_tipo',
+        label: 'Tipo de institucion',
+        type: 'select',
+        options: ['Municipio', 'SAG', 'Subdere', 'Ministerio', 'Region', 'Otra'],
+        required: true,
+      },
+      {
+        key: 'comuna_o_region',
+        label: 'Comuna / Region',
+        type: 'text',
+        required: true,
+      },
+      {
+        key: 'mascotas_aprox',
+        label: 'Mascotas registradas aprox.',
+        type: 'text',
+        placeholder: 'Ej: 4.500',
+      },
+      {
+        key: 'cargo',
+        label: 'Tu cargo',
+        type: 'text',
+        placeholder: 'Director Tenencia Responsable',
+        required: true,
+      },
+      {
+        key: 'tier_interes',
+        label: 'Plan de interes',
+        type: 'select',
+        options: [
+          'Comuna ($3M CLP/ano hasta 10k pets)',
+          'Comuna Pro ($6M CLP/ano ilimitado)',
+          'Region / Nacional (a medida)',
+          'A conversar',
+        ],
+      },
+    ],
+  },
+  banca: {
+    label: 'Banco',
+    eyebrow: 'Banca retail · Loyalty pet-friendly',
+    headline: 'Verticalpet-friendly para tu banco',
+    subhead:
+      'Tarjeta co-branded + credito vet + seguros co-branded + cuenta sueldo pet. La proxima vertical de loyalty bancario.',
+    categoryIcon: 'investor',
+    color: 'amber',
+    orgLabel: 'Banco / Institucion financiera',
+    extraFields: [
+      {
+        key: 'cargo',
+        label: 'Tu cargo',
+        type: 'text',
+        placeholder: 'Head of Loyalty / Innovacion',
+        required: true,
+      },
+      {
+        key: 'producto_interes',
+        label: 'Producto de interes',
+        type: 'select',
+        options: [
+          'Tarjeta co-branded',
+          'Credito vet preaprobado',
+          'Seguro pet co-branded',
+          'Cuenta sueldo pet (vertical completa)',
+          'Embed light (sponsorship in-app)',
+          'A conversar',
+        ],
+        required: true,
+      },
+      {
+        key: 'volumen_clientes',
+        label: 'Tamano cartera (aprox)',
+        type: 'text',
+        placeholder: 'Ej: 500.000 cuentas activas',
+      },
+      {
+        key: 'timing',
+        label: 'Timing estimado',
+        type: 'select',
+        options: ['Q2 actual', 'Q3-Q4', 'Y1 proximo', 'Sin urgencia'],
+      },
+    ],
+  },
+  edificios: {
+    label: 'Edificio · Inmobiliaria',
+    eyebrow: 'Edificios · administradoras · HOAs',
+    headline: 'Registro digital pet-friendly para tu edificio',
+    subhead:
+      'Registro residentes + reglamento aplicable + biometria + red de servicios pet local. Operacion ordenada y diferencial del activo.',
+    categoryIcon: 'partner',
+    color: 'teal',
+    orgLabel: 'Edificio / Administradora / Inmobiliaria',
+    extraFields: [
+      {
+        key: 'tipo_organizacion',
+        label: 'Tipo de organizacion',
+        type: 'select',
+        options: [
+          'Edificio individual',
+          'Administradora multi-edificio',
+          'Inmobiliaria',
+          'HOA / Comunidad',
+          'Otra',
+        ],
+        required: true,
+      },
+      {
+        key: 'comuna',
+        label: 'Comuna',
+        type: 'text',
+        required: true,
+      },
+      {
+        key: 'unidades_aprox',
+        label: 'Unidades / departamentos aprox.',
+        type: 'text',
+        placeholder: 'Ej: 150 unidades',
+      },
+      {
+        key: 'edificios_aprox',
+        label: 'Edificios bajo administracion (si aplica)',
+        type: 'text',
+        placeholder: 'Ej: 12',
+      },
+      {
+        key: 'tier_interes',
+        label: 'Plan de interes',
+        type: 'select',
+        options: [
+          'Edificio ($80k CLP/mes)',
+          'Administradora ($50k CLP/mes/edificio)',
+          'White-label inmobiliaria',
+          'A conversar',
+        ],
+      },
+    ],
+  },
+  longtail: {
+    label: 'B2B Long-tail',
+    eyebrow: 'Aerolineas · hoteles · academia · hardware · plataformas',
+    headline: 'Integracion B2B con Paw Friend',
+    subhead:
+      'Para verticales no cubiertas por nuestros pitches principales: aerolineas/hoteles pet, academia/research, hardware IoT, plataformas servicios pet, cremacion.',
+    categoryIcon: 'investor',
+    color: 'purple',
+    orgLabel: 'Empresa / Institucion',
+    extraFields: [
+      {
+        key: 'vertical',
+        label: 'Vertical',
+        type: 'select',
+        options: [
+          'Aerolineas / Travel pet',
+          'Hoteles pet-friendly',
+          'Academia / Research / Universidad',
+          'Hardware IoT (smart pet door, GPS, comedero)',
+          'Plataforma pet sitters / walkers',
+          'Cementerio / Cremacion',
+          'Banco de sangre / Hospital 24/7',
+          'Otra',
+        ],
+        required: true,
+      },
+      {
+        key: 'caso_uso',
+        label: 'Caso de uso especifico',
+        type: 'textarea',
+        placeholder:
+          'Ej: queremos validar microchip + vacuna antirrabica al check-in de pasajeros con mascota...',
+        required: true,
+      },
+      {
+        key: 'volumen_estimado',
+        label: 'Volumen estimado',
+        type: 'text',
+        placeholder: 'Ej: 200 vuelos pet/mes · 50 pasajeros/mes',
+      },
+      {
+        key: 'timing',
+        label: 'Timing integracion',
+        type: 'select',
+        options: ['< 30 dias', '1-3 meses', '> 3 meses', 'Sin urgencia'],
       },
     ],
   },

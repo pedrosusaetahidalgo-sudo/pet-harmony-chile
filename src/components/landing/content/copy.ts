@@ -177,8 +177,12 @@ export const FOOTER = {
     {
       title: 'B2B',
       links: [
-        { label: 'API B2B (aseguradoras · pharma · academia)', href: '/b2b' },
-        { label: 'Solicitar API key', href: '/aplicar?tipo=b2b_api' },
+        { label: 'API B2B (data · stats agregadas)', href: '/b2b' },
+        { label: 'Aseguradoras', href: '/aplicar?tipo=b2b_api' },
+        { label: 'Gobierno · Municipios (Ley 21.020)', href: '/aplicar?tipo=gobierno_municipio' },
+        { label: 'Bancos · Loyalty pet-friendly', href: '/aplicar?tipo=banca' },
+        { label: 'Edificios · Inmobiliarias', href: '/aplicar?tipo=edificios' },
+        { label: 'Long-tail (aerolineas · academia · hardware)', href: '/aplicar?tipo=longtail' },
       ],
     },
     {
