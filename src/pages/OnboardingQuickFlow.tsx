@@ -305,11 +305,12 @@ export default function OnboardingQuickFlow() {
                   </div>
                 </div>
                 <Button
-                  onClick={() =>
-                    navigate(
-                      `${postRedirectTarget}${postRedirectTarget.includes('?') ? '&' : '?'}activate=paw-shield`
-                    )
-                  }
+                  onClick={() => {
+                    // Aseguramos que ?tab=identidad este siempre, asi PawShieldStatusCard
+                    // (que vive en ese tab) reaccione al ?activate=paw-shield.
+                    const base = postRedirectTarget.split('?')[0];
+                    navigate(`${base}?tab=identidad&activate=paw-shield`);
+                  }}
                   className="w-full bg-purple-600 hover:bg-purple-700 text-white"
                   size="sm"
                 >

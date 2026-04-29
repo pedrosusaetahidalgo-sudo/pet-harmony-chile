@@ -260,3 +260,9 @@ verify_jwt = false
 # Auth: requireCronAuth (X-Cron-Secret o Bearer SERVICE_ROLE).
 [functions.paw-shield-archive-cleanup]
 verify_jwt = false
+
+# Email transaccional al partner B2B con su API key recien emitida.
+# Auth: admin-only (verifica admin_access table internamente).
+# Llamado desde AdminPitchApplications tras approve_b2b_api_application.
+[functions.send-b2b-welcome]
+verify_jwt = false

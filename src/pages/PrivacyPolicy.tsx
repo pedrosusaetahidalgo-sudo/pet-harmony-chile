@@ -285,7 +285,7 @@ const PrivacyPolicy = () => {
                           Solo datos de la cita (mascota, vet, fecha) — solo si lo conectas
                         </td>
                       </tr>
-                      <tr>
+                      <tr className="border-b border-purple-50">
                         <td className="py-2 pr-4">
                           <strong>Hugging Face Inference API</strong> (US/EU)
                         </td>
@@ -295,6 +295,31 @@ const PrivacyPolicy = () => {
                         <td className="py-2">
                           Imagen de hocico recortada — sin asociación a la mascota en el
                           procesamiento
+                        </td>
+                      </tr>
+                      <tr className="border-b border-purple-50">
+                        <td className="py-2 pr-4">
+                          <strong>Petify (PetNow)</strong> (Corea / US)
+                        </td>
+                        <td className="py-2 pr-4">
+                          Identidad biométrica de hocico (Paw Shield · opt-in)
+                        </td>
+                        <td className="py-2">
+                          Imagen de hocico + metadata anónima (especie, raza). Solo si activas Paw
+                          Shield. Acuerdo comercial B2B v2.
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="py-2 pr-4">
+                          <strong>Supabase Storage</strong> (US)
+                        </td>
+                        <td className="py-2 pr-4">
+                          Archivo opt-in de imágenes Paw Shield para mejora del modelo
+                        </td>
+                        <td className="py-2">
+                          Solo si das consent explícito en el flujo de activación. Imágenes
+                          anonimizadas (sin nombre/teléfono asociado). Borrado automático en 30 días
+                          si revocas (Ley 19.628 ARCO).
                         </td>
                       </tr>
                     </tbody>

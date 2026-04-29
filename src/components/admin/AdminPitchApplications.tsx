@@ -191,8 +191,41 @@ export default function AdminPitchApplications() {
       }
       setB2bIssuedKey({ plain: row.plain_key, prefix: row.prefix });
       toast.success('API key emitida', {
-        description: `Copia la key (visible solo ahora) y enviala a ${row.partner_email}.`,
+        description: `Enviando email de bienvenida a ${row.partner_email}...`,
       });
+
+      // Disparar email transaccional al partner via send-b2b-welcome edge fn.
+      // Best-effort: si el email falla, la key ya esta emitida — el admin
+      // puede copiarla del modal (visible una sola vez) y mandar manual.
+      try {
+        const { data: emailResult, error: emailError } = await supabase.functions.invoke(
+          'send-b2b-welcome',
+          {
+            body: {
+              api_key_id: row.api_key_id,
+              plain_key: row.plain_key,
+              partner_email: row.partner_email,
+              partner_name: row.partner_name,
+              tier,
+            },
+          }
+        );
+        if (emailError) {
+          throw emailError;
+        }
+        const sent = (emailResult as { sent?: boolean } | null)?.sent === true;
+        if (sent) {
+          toast.success(`Email enviado a ${row.partner_email}`);
+        } else {
+          toast.warning('Email no se pudo enviar — copia la key manualmente del modal');
+        }
+      } catch (emailErr) {
+        console.error('[approveB2BApi] send-b2b-welcome fallo:', emailErr);
+        toast.warning('Email automatico fallo — copia la key del modal y mandala manual', {
+          description: emailErr instanceof Error ? emailErr.message : 'unknown error',
+        });
+      }
+
       await refresh();
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : 'Error al aprobar B2B API');

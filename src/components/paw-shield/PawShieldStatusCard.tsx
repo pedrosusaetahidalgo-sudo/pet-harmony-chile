@@ -13,7 +13,8 @@
  *
  * Solo se renderiza si feature flag PAW_SHIELD_PETIFY=true.
  */
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -45,6 +46,7 @@ export function PawShieldStatusCard({
   petBreed,
 }: PawShieldStatusCardProps) {
   const [enrollmentOpen, setEnrollmentOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
 
   const { data: pet, isLoading } = useQuery<PetShieldRow | null>({
@@ -63,6 +65,22 @@ export function PawShieldStatusCard({
     staleTime: 60_000,
     enabled: isFeatureEnabled('PAW_SHIELD_PETIFY'),
   });
+
+  // Auto-abrir el dialog si el caller paso ?activate=paw-shield (ej: nudge
+  // del onboarding post-creacion, banner Home). Solo abre si el pet aun
+  // no tiene Paw Shield activado, y limpia el param para no re-abrir si
+  // el dueno cierra el dialog.
+  const shouldAutoOpen = searchParams.get('activate') === 'paw-shield';
+  useEffect(() => {
+    if (!shouldAutoOpen) return;
+    if (!isFeatureEnabled('PAW_SHIELD_PETIFY')) return;
+    if (pet?.petify_pet_id) return; // ya activado, no re-abrir
+    setEnrollmentOpen(true);
+    // Limpiar el param para que no se vuelva a disparar al re-render.
+    const next = new URLSearchParams(searchParams);
+    next.delete('activate');
+    setSearchParams(next, { replace: true });
+  }, [shouldAutoOpen, pet?.petify_pet_id, searchParams, setSearchParams]);
 
   if (!isFeatureEnabled('PAW_SHIELD_PETIFY')) return null;
   if (isLoading) {

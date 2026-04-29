@@ -175,6 +175,13 @@ export const FOOTER = {
       ],
     },
     {
+      title: 'B2B',
+      links: [
+        { label: 'API B2B (aseguradoras · pharma · academia)', href: '/b2b' },
+        { label: 'Solicitar API key', href: '/aplicar?tipo=b2b_api' },
+      ],
+    },
+    {
       title: 'Sobre Paw Friend',
       links: [
         { label: 'Paw Core (visión)', href: '/paw-core' },

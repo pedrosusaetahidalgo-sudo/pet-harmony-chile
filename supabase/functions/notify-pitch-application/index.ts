@@ -44,6 +44,7 @@ const KIND_LABELS: Record<string, string> = {
   paw_partners: 'Paw Partner (Tienda/Servicio)',
   vet: 'Veterinario',
   paw_voices: 'Paw Voice (Creador)',
+  b2b_api: 'B2B API',
   otro: 'Otro',
 };
 
