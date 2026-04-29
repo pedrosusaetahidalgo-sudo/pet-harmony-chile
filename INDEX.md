@@ -30,6 +30,10 @@
 | [audits/FEEDBACK_VET_SOFIA_2026_04_13.md](audits/FEEDBACK_VET_SOFIA_2026_04_13.md) | Feedback de vet beta tester (Sofia) | Despues de cada sesion con Sofia |
 | [audits/COMPETENCIA_2026_04_08.md](audits/COMPETENCIA_2026_04_08.md) | Analisis competitivo Chile | Cada 3-6 meses o cuando aparezca competidor nuevo |
 | [audits/CROSS_PLATFORM_COMPATIBILITY.md](audits/CROSS_PLATFORM_COMPATIBILITY.md) | Compatibilidad multiplataforma (iOS, Android, Web, Chrome) | Cada cambio de CSS/JS moderno o API de browser |
+| [docs-raiz/PRODUCTION_READINESS_2026_04_30.md](docs-raiz/PRODUCTION_READINESS_2026_04_30.md) | Production readiness checklist post 7 motores Revenue Master Plan. 13 areas verde/amarillo/rojo. Para auditor externo con 30 min | Cada cierre de sprint mayor |
+| [docs-raiz/AUDITORIA_RLS_2026_04_30.md](docs-raiz/AUDITORIA_RLS_2026_04_30.md) | Auditoria RLS post-implementacion 7 motores. Cubre 9 tablas + 12 RPCs SECURITY DEFINER. Mig 20260918 cierra 4 hallazgos | Despues de cada batch de migs nuevas con RLS |
+| [docs-raiz/BUNDLE_SNAPSHOT_2026_04_30.md](docs-raiz/BUNDLE_SNAPSHOT_2026_04_30.md) | Snapshot bundle prod post motores: top 15 chunks, comparacion pre/post, web vitals targets, quick wins | Cada cambio mayor de deps o build |
+| [docs-raiz/WHISPER_SPIKE_2026_04_30.md](docs-raiz/WHISPER_SPIKE_2026_04_30.md) | Spike eval HF Whisper vs Web Speech vs OpenAI Audio. Recomendacion postpone hasta primer deal B2B con triggers explicitos | Cuando se firme primer deal B2B con MRR >=$2k |
 | [_archive/docs-raiz-snapshots-2026-04/SUGERENCIAS_COMPLETAS_2026_04_16.md](_archive/docs-raiz-snapshots-2026-04/SUGERENCIAS_COMPLETAS_2026_04_16.md) | (archivado 2026-04-28) Snapshot de 49 sugerencias 04-16, superado por AUDITORIA_PAWFRIEND_2026-04-27 | Histórico |
 
 ---
@@ -82,6 +86,8 @@ Resumen de items activos:
 | 6 | [testing-virtual-user-blueprint.md](_pending/testing-virtual-user-blueprint.md) | Testing Playwright | Media |
 | 7 | [FEATURE_AI_WEB_SEARCH_UPGRADE.md](_pending/features/FEATURE_AI_WEB_SEARCH_UPGRADE.md) | Feature | Media |
 | 8 | [auditoria-e2e/](_pending/auditoria-e2e/) | Auditoría E2E onboardings pre-launch 1 junio 2026 (30 ONBDs + plan de lotes A-I en ejecución) | Alta — en curso |
+| 9 | [SINTESIS_2026_04_30.md](_pending/SINTESIS_2026_04_30.md) | Cierre del loop de docs viejos post 7 motores Revenue Master Plan. Memoria del estado para auditor externo | Activo — referencia |
+| 10 | [OUTREACH_PROSPECTS_SEED.md](_pending/OUTREACH_PROSPECTS_SEED.md) | Seed de 70 emails B2B corporativos para usar con AdminB2BOutreach | Activo — listo para batch |
 
 ---
 
@@ -228,6 +234,8 @@ Documentos ya ejecutados o superados. Conservan valor historico pero no son acci
 | `FEATURE_MEDICAL_PDF_UPGRADE.md` | Logo, verificacion, word-wrap implementados |
 | `BUG_FICHA_CLINICA_PDF_URL.md` | Fix ejecutado |
 | `BUG_GROOMERS_GRADIENT_CRASH.md` | Fix confirmado |
+| `PROPUESTAS_FUNCIONALIDADES_2026_04_11.md` | Las 8 propuestas P1-P8 ya implementadas o descartadas (verificado 2026-04-30) |
+| `PLAN_NEXT_LVL_MASTER_2026_04_xx.md` | Master plan ejecutado al 95% (11 de 12 entregables). CHANGELOG_PROPOSED no aporta vs git log |
 | `AUDIT_SIDEBAR_PANELS.md` | Sidebar reorganizado |
 | `AUDIT_LOVABLE_LEGACY.md` | Limpieza legacy completada |
 | `embedded-analytics-options.md` | Opciones evaluadas, decision tomada |
