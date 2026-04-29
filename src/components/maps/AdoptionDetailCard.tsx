@@ -114,7 +114,7 @@ const AdoptionDetailCard = ({ post, compact = false }: AdoptionDetailCardProps) 
 
         <div className="flex items-center gap-2 text-xs">
           <Avatar className="h-5 w-5">
-            <AvatarImage src={post.profiles?.avatar_url} />
+            <AvatarImage src={post.profiles?.avatar_url ?? undefined} />
             <AvatarFallback>{post.profiles?.display_name?.charAt(0) || 'U'}</AvatarFallback>
           </Avatar>
           <span className="text-muted-foreground truncate">
@@ -228,7 +228,7 @@ const AdoptionDetailCard = ({ post, compact = false }: AdoptionDetailCardProps) 
           </div>
           <div className="flex items-center gap-2">
             <Avatar className="h-5 w-5">
-              <AvatarImage src={post.profiles?.avatar_url} />
+              <AvatarImage src={post.profiles?.avatar_url ?? undefined} />
               <AvatarFallback>{post.profiles?.display_name?.charAt(0) || 'U'}</AvatarFallback>
             </Avatar>
             <span>{post.profiles?.display_name || 'Usuario'}</span>

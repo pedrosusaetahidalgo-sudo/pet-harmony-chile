@@ -296,7 +296,7 @@ const Chat = () => {
                       tabIndex={0}
                     >
                       <Avatar className="h-10 w-10">
-                        <AvatarImage src={followedUser.avatar_url} />
+                        <AvatarImage src={followedUser.avatar_url ?? undefined} />
                         <AvatarFallback className="bg-warm-gradient text-white">
                           {followedUser.display_name?.[0] || '?'}
                         </AvatarFallback>
@@ -350,7 +350,7 @@ const Chat = () => {
                   <CardContent className="p-3 sm:p-4">
                     <div className="flex items-center gap-3">
                       <Avatar className="h-12 w-12 sm:h-14 sm:w-14 ring-2 ring-primary/20 flex-shrink-0">
-                        <AvatarImage src={otherUser?.avatar_url} />
+                        <AvatarImage src={otherUser?.avatar_url ?? undefined} />
                         <AvatarFallback className="bg-warm-gradient text-white text-sm">
                           {(() => {
                             if (otherUser?.display_name) {

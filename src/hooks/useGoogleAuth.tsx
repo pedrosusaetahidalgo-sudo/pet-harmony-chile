@@ -76,6 +76,10 @@ export const useGoogleAuth = () => {
    */
   const handleNativeGoogleAuth = async (): Promise<GoogleAuthResult> => {
     try {
+      // GoogleAuth es lazy-imported (puede ser null si initGoogleAuth fallo).
+      if (!GoogleAuth) {
+        throw new Error('Google Auth no esta inicializado en este dispositivo');
+      }
       // Sign in with Google native SDK
       const googleUser = await GoogleAuth.signIn();
 

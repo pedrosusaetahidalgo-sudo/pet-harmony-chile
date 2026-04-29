@@ -85,6 +85,11 @@ const ChatConversation = () => {
         .maybeSingle();
 
       if (convError) throw convError;
+      if (!convData) {
+        // Conversation no encontrada / borrada / sin permisos por RLS.
+        navigate('/chat');
+        return;
+      }
 
       // Cast intencional: narrow query devuelve subset; la UI solo lee campos
       // del select. Sprint 1 P1 PERF-003.
@@ -186,7 +191,7 @@ const ChatConversation = () => {
         onBack={() => navigate('/chat')}
         actions={
           <Avatar className="h-9 w-9 ring-2 ring-primary/20">
-            <AvatarImage src={otherUser?.avatar_url} />
+            <AvatarImage src={otherUser?.avatar_url ?? undefined} />
             <AvatarFallback className="bg-warm-gradient text-white">
               {otherUser?.display_name?.[0] || '?'}
             </AvatarFallback>

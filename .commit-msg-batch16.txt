@@ -1,0 +1,39 @@
+feat(sprint-1 batch 16): ARCH-001 lazy chunks + ARCH-002 strictNullChecks
+
+ARCH-001 — Admin.tsx chunk -71% (511 KB → 149 KB)
+- src/pages/Admin.tsx: 39 imports estaticos → lazy. Solo AdminDashboard
+  (default tab) sigue eager. Cada tab admin ahora es chunk separado:
+  AdminUsers, AdminFinance, AdminB2BApiKeys, AdminCorrelations, etc.
+  Tab que no se visita = chunk que no se descarga. El Suspense boundary
+  ya existente cubre el render condicional.
+
+ARCH-001 — ProviderDashboard chunk -39% (103 KB → 63 KB)
+- src/components/provider/ProviderDashboard.tsx: 3 widgets pesados lazy.
+  * BusinessTab (335L con Recharts) → solo cuando user clickea tab Negocio.
+  * ProviderBookingsInbox (397L) → solo en tab Reservas.
+  * NewPatientForm (393L) → solo cuando se abre dialog.
+  Wrapper `.then(m => ({ default: m.X }))` por named exports. ClinicalTab
+  + PatientsTab quedan eager (23L + 50L, ya pequenos).
+
+ARCH-002 — strictNullChecks habilitado
+- tsconfig.app.json: `strictNullChecks: true`. Detecto 30 callsites con
+  null/undefined leak — fixed todos:
+  * 19 archivos: `value ?? undefined` para Supabase null → React props undefined.
+  * AddPet: payload tipado como PetUpdate + cast a PetInsert al .insert().
+  * SlotCard: guard provider?.avg_rating !== undefined.
+  * ServiceDirectory: extract solo campos requeridos en lugar de spread.
+  * useInfiniteScroll: cast RefObject explicit por incompat react@18.3.
+  * useAISkill: cast body a Record<string, unknown>.
+  * useGoogleAuth: null check de GoogleAuth lazy-imported.
+  * ChatConversation: null check + redirect si conversation no existe.
+  * DejarResena: guard provider antes de submit.
+  * standalone/AnalyticsDashboard: 3 arrays `never[]` tipados explicitos.
+
+Verificacion
+- npx tsc -b: 0 errores con strictNullChecks ON
+- npx vitest run: 587/587 verde
+- npm run build: pasa en 2m 7s con 20 SPA routes pre-renderizadas
+- Bundle delta: Admin -362KB, ProviderDashboard -40KB (-402KB total
+  inicial admin/vet)
+
+Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>

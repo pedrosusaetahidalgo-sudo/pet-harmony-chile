@@ -63,18 +63,20 @@ export function ProviderDirectoryCard() {
   }
 
   const p = provider;
+  // Supabase devuelve `null` en columnas opcionales, pero
+  // calculateProfileCompleteness espera `undefined`. Normalizamos con `??`.
   const completeness = calculateProfileCompleteness({
-    display_name: p.display_name,
-    bio: p.bio,
-    specialties: p.specialties,
-    service_areas: p.service_areas,
-    commune: p.commune,
-    license_number: p.license_number,
-    experience_years: p.experience_years,
-    price_from: p.price_from,
-    avatar_url: p.avatar_url,
-    public_email: p.public_email,
-    public_phone: p.public_phone,
+    display_name: p.display_name ?? undefined,
+    bio: p.bio ?? undefined,
+    specialties: p.specialties ?? undefined,
+    service_areas: p.service_areas ?? undefined,
+    commune: p.commune ?? undefined,
+    license_number: p.license_number ?? undefined,
+    experience_years: p.experience_years ?? undefined,
+    price_from: p.price_from ?? undefined,
+    avatar_url: p.avatar_url ?? undefined,
+    public_email: p.public_email ?? undefined,
+    public_phone: p.public_phone ?? undefined,
   });
 
   const isVisible = !!p.is_directory_visible;
@@ -152,7 +154,7 @@ export function ProviderDirectoryCard() {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: p.display_name,
+          title: p.display_name ?? undefined,
           text: shareMessage,
           url: profileUrl,
         });
@@ -183,7 +185,7 @@ export function ProviderDirectoryCard() {
             {p.avatar_url ? (
               <img
                 src={p.avatar_url}
-                alt={p.display_name}
+                alt={p.display_name ?? undefined}
                 loading="lazy"
                 className="w-14 h-14 rounded-full object-cover border-2 border-purple-100"
               />

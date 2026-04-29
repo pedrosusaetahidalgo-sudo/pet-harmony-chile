@@ -242,7 +242,18 @@ const ServiceReviewsSection = ({
               <EnhancedReviewCard
                 key={review.id}
                 reviewType={getReviewType()}
-                review={review}
+                // owner.display_name/avatar_url vienen de Supabase como string|null;
+                // EnhancedReviewCard los acepta como `string | undefined`. Normalizamos.
+                review={{
+                  ...review,
+                  owner: review.owner
+                    ? {
+                        id: review.owner.id,
+                        display_name: review.owner.display_name ?? undefined,
+                        avatar_url: review.owner.avatar_url ?? undefined,
+                      }
+                    : undefined,
+                }}
                 providerId={providerId}
                 isProvider={isProvider}
               />

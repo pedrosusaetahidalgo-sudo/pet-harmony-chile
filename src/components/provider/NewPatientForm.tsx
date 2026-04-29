@@ -318,7 +318,7 @@ export function NewPatientForm({ onCreated }: NewPatientFormProps) {
                 <Label>Color</Label>
                 <SelectWithOther
                   options={[...PET_COLORS]}
-                  value={colorValue}
+                  value={colorValue ?? ''}
                   onValueChange={(v) => setValue('color', v)}
                   placeholder="Selecciona color"
                   otherPlaceholder="Describe el color..."

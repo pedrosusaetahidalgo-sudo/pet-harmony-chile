@@ -239,7 +239,7 @@ const UserProfile = () => {
           <CardContent className="p-4 sm:p-6 md:p-8">
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-8 items-start sm:items-center">
               <Avatar className="h-20 w-20 sm:h-24 sm:w-24 md:h-32 md:w-32 ring-4 ring-primary/20 mx-auto sm:mx-0">
-                <AvatarImage src={profile?.avatar_url} />
+                <AvatarImage src={profile?.avatar_url ?? undefined} />
                 <AvatarFallback className="bg-warm-gradient text-white text-2xl sm:text-3xl font-bold">
                   {profile?.display_name?.[0] || 'U'}
                 </AvatarFallback>

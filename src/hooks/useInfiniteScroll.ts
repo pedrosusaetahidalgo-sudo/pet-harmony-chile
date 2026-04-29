@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, type RefObject } from 'react';
 
 interface UseInfiniteScrollOptions {
   hasNextPage: boolean | undefined;
@@ -12,8 +12,12 @@ export function useInfiniteScroll({
   isFetchingNextPage,
   fetchNextPage,
   rootMargin = '400px',
-}: UseInfiniteScrollOptions) {
-  const sentinelRef = useRef<HTMLDivElement | null>(null);
+}: UseInfiniteScrollOptions): RefObject<HTMLDivElement> {
+  // React 18.3 infiere `RefObject<T | null>` de `useRef<T>(null)` (overload
+  // resolution) — incompatible con `<div ref={...}>` que pide `Ref<T>`.
+  // Cast unico aqui para que las dos callsites (Feed, FeedExplore) no
+  // tengan que castear individualmente.
+  const sentinelRef = useRef<HTMLDivElement>(null) as RefObject<HTMLDivElement>;
 
   const handleIntersect = useCallback(
     (entries: IntersectionObserverEntry[]) => {

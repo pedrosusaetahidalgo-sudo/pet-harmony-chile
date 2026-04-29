@@ -76,7 +76,7 @@ const MOCK_PETS = [
 
 // Daily activity for the current month (30 days)
 function generateDailyActivity() {
-  const data = [];
+  const data: Array<{ date: string; reminders: number; visitas: number; vacunas: number }> = [];
   const now = new Date();
   for (let i = 29; i >= 0; i--) {
     const date = new Date(now);
@@ -121,7 +121,7 @@ const PERIOD_COMPARISON = [
 ];
 
 const HEALTH_TIMELINE = (() => {
-  const data = [];
+  const data: Array<{ month: string; salud: number; actividad: number; bienestar: number }> = [];
   for (let i = 5; i >= 0; i--) {
     const month = new Date();
     month.setMonth(month.getMonth() - i);
@@ -175,7 +175,7 @@ const RECENT_EVENTS = [
 ];
 
 const VET_BOOKINGS_TIMELINE = (() => {
-  const data = [];
+  const data: Array<{ date: string; reservas: number; ingresos: number }> = [];
   for (let i = 29; i >= 0; i--) {
     const date = new Date();
     date.setDate(date.getDate() - i);

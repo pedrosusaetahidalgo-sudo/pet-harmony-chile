@@ -38,49 +38,61 @@ import {
   CommandItem,
 } from '@/components/ui/command';
 
-// Section components
+// Sprint 1 P1 ARCH-001 (2026-04-28): TODOS los Admin* lazy-loaded.
+//
+// Antes: 39 imports estaticos colapsaban en chunk Admin-*.js de ~512KB.
+// Pedro abre /admin → descarga TODO de una sola vez aunque solo use 1 tab.
+//
+// Ahora: solo `AdminDashboard` (default tab) carga eager. Los otros 38
+// componentes son chunks separados que entran on-demand al hacer click
+// en su tab. Tab que no se visita = chunk que no se descarga.
+//
+// El Suspense boundary en `<Suspense fallback={<SectionFallback />}>...`
+// (linea ~830) ya cubre el render condicional, no requiere cambios.
 import AdminDashboard from '@/components/admin/AdminDashboard';
-import AdminServiceProviders from '@/components/admin/AdminServiceProviders';
-import AdminProviders from '@/components/admin/AdminProviders';
-import AdminVetsAtChurnRisk from '@/components/admin/AdminVetsAtChurnRisk';
-import AdminShelters from '@/components/admin/AdminShelters';
-import AdminVetVerifications from '@/components/admin/AdminVetVerifications';
-import AdminUsers from '@/components/admin/AdminUsers';
-import AdminVerificationRequests from '@/components/admin/AdminVerificationRequests';
-import AdminFinance from '@/components/admin/AdminFinance';
-import AdminModeration from '@/components/admin/AdminModeration';
-import AdminServicePromotions from '@/components/admin/AdminServicePromotions';
-import AdminRewards from '@/components/admin/AdminRewards';
-import AdminMissions from '@/components/admin/AdminMissions';
-import AdManagement from '@/components/admin/AdManagement';
-import AdminPartnerSubmissions from '@/components/admin/AdminPartnerSubmissions';
-import AdminSettings from '@/components/admin/AdminSettings';
-import AdminPitchApplications from '@/components/admin/AdminPitchApplications';
-import AdminPostAdoptionCheckins from '@/components/admin/AdminPostAdoptionCheckins';
-import AdminSafetyLogs from '@/components/admin/AdminSafetyLogs';
-import AdminAuditLog from '@/components/admin/AdminAuditLog';
-import AdminSystemHealth from '@/components/admin/AdminSystemHealth';
-import AdminDataQuality from '@/components/admin/AdminDataQuality';
-import AdminDataExport from '@/components/admin/AdminDataExport';
-import AdminMigrationsStatus from '@/components/admin/AdminMigrationsStatus';
-import AdminDeviceCompatibility from '@/components/admin/AdminDeviceCompatibility';
-import AdminTeam from '@/components/admin/AdminTeam';
-import AdminB2BApiKeys from '@/components/admin/AdminB2BApiKeys';
-import AdminCorrelations from '@/components/admin/AdminCorrelations';
-import AdminMasterKPIs from '@/components/admin/AdminMasterKPIs';
-import AdminProjectHealth from '@/components/admin/AdminProjectHealth';
-import AdminErrorLog from '@/components/admin/AdminErrorLog';
-import AdminPendingPets from '@/components/admin/AdminPendingPets';
-import AdminGhostUsers from '@/components/admin/AdminGhostUsers';
-import AdminLeadsCRM from '@/components/admin/AdminLeadsCRM';
-import AdminBookingsPanel from '@/components/admin/AdminBookingsPanel';
-import AdminExports from '@/components/admin/AdminExports';
-import AdminPawCompanys from '@/components/admin/AdminPawCompanys';
-import AdminPawVoices from '@/components/admin/AdminPawVoices';
-import AdminAdvertisements from '@/components/admin/AdminAdvertisements';
 
-// Heavy sections lazy-loaded para no inflar el chunk inicial de /admin
-// (AdminSalaInversion + AdminAnalytics usan Recharts; AdminFeedback es grande).
+const AdminServiceProviders = lazy(() => import('@/components/admin/AdminServiceProviders'));
+const AdminProviders = lazy(() => import('@/components/admin/AdminProviders'));
+const AdminVetsAtChurnRisk = lazy(() => import('@/components/admin/AdminVetsAtChurnRisk'));
+const AdminShelters = lazy(() => import('@/components/admin/AdminShelters'));
+const AdminVetVerifications = lazy(() => import('@/components/admin/AdminVetVerifications'));
+const AdminUsers = lazy(() => import('@/components/admin/AdminUsers'));
+const AdminVerificationRequests = lazy(
+  () => import('@/components/admin/AdminVerificationRequests')
+);
+const AdminFinance = lazy(() => import('@/components/admin/AdminFinance'));
+const AdminModeration = lazy(() => import('@/components/admin/AdminModeration'));
+const AdminServicePromotions = lazy(() => import('@/components/admin/AdminServicePromotions'));
+const AdminRewards = lazy(() => import('@/components/admin/AdminRewards'));
+const AdminMissions = lazy(() => import('@/components/admin/AdminMissions'));
+const AdManagement = lazy(() => import('@/components/admin/AdManagement'));
+const AdminPartnerSubmissions = lazy(() => import('@/components/admin/AdminPartnerSubmissions'));
+const AdminSettings = lazy(() => import('@/components/admin/AdminSettings'));
+const AdminPitchApplications = lazy(() => import('@/components/admin/AdminPitchApplications'));
+const AdminPostAdoptionCheckins = lazy(
+  () => import('@/components/admin/AdminPostAdoptionCheckins')
+);
+const AdminSafetyLogs = lazy(() => import('@/components/admin/AdminSafetyLogs'));
+const AdminAuditLog = lazy(() => import('@/components/admin/AdminAuditLog'));
+const AdminSystemHealth = lazy(() => import('@/components/admin/AdminSystemHealth'));
+const AdminDataQuality = lazy(() => import('@/components/admin/AdminDataQuality'));
+const AdminDataExport = lazy(() => import('@/components/admin/AdminDataExport'));
+const AdminMigrationsStatus = lazy(() => import('@/components/admin/AdminMigrationsStatus'));
+const AdminDeviceCompatibility = lazy(() => import('@/components/admin/AdminDeviceCompatibility'));
+const AdminTeam = lazy(() => import('@/components/admin/AdminTeam'));
+const AdminB2BApiKeys = lazy(() => import('@/components/admin/AdminB2BApiKeys'));
+const AdminCorrelations = lazy(() => import('@/components/admin/AdminCorrelations'));
+const AdminMasterKPIs = lazy(() => import('@/components/admin/AdminMasterKPIs'));
+const AdminProjectHealth = lazy(() => import('@/components/admin/AdminProjectHealth'));
+const AdminErrorLog = lazy(() => import('@/components/admin/AdminErrorLog'));
+const AdminPendingPets = lazy(() => import('@/components/admin/AdminPendingPets'));
+const AdminGhostUsers = lazy(() => import('@/components/admin/AdminGhostUsers'));
+const AdminLeadsCRM = lazy(() => import('@/components/admin/AdminLeadsCRM'));
+const AdminBookingsPanel = lazy(() => import('@/components/admin/AdminBookingsPanel'));
+const AdminExports = lazy(() => import('@/components/admin/AdminExports'));
+const AdminPawCompanys = lazy(() => import('@/components/admin/AdminPawCompanys'));
+const AdminPawVoices = lazy(() => import('@/components/admin/AdminPawVoices'));
+const AdminAdvertisements = lazy(() => import('@/components/admin/AdminAdvertisements'));
 const AdminSalaInversion = lazy(() => import('@/components/admin/AdminSalaInversion'));
 const AdminAnalytics = lazy(() => import('@/components/admin/AdminAnalytics'));
 const AdminFeedback = lazy(() => import('@/components/admin/AdminFeedback'));

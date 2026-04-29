@@ -68,7 +68,7 @@ export function SlotCard({ slot, onBook }: Props) {
                 <Clock className="h-3 w-3" />
                 {slot.start_time?.slice(0, 5)} - {slot.end_time?.slice(0, 5)}
               </span>
-              {provider?.avg_rating > 0 && (
+              {provider && provider.avg_rating !== undefined && provider.avg_rating > 0 && (
                 <span className="flex items-center gap-1">
                   <StarRating rating={Math.round(provider.avg_rating)} size="sm" />
                   <span>({provider.total_reviews})</span>

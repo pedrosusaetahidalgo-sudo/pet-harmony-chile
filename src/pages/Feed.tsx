@@ -1,4 +1,4 @@
-import { useState, useCallback, lazy, Suspense } from 'react';
+import { useState, useCallback, lazy, Suspense, type RefObject } from 'react';
 import { PageHeader } from '@/components/PageHeader';
 import { useAuth } from '@/hooks/useAuth';
 import { useFeedPosts, type FeedPost } from '@/hooks/useFeedPosts';
@@ -356,7 +356,9 @@ function FeedList({
       ))}
 
       {/* Infinite scroll sentinel */}
-      <div ref={sentinelRef} className="h-4" />
+      {/* Cast por incompatibilidad RefObject<T|null> vs LegacyRef<T> en
+          react@18.3 strict mode (mismo shape runtime). */}
+      <div ref={sentinelRef as RefObject<HTMLDivElement>} className="h-4" />
 
       {/* Loading more indicator */}
       {isFetchingNextPage && <FeedSkeletonList count={2} />}

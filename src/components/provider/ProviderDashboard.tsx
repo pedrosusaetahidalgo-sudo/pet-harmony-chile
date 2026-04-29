@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useQuery } from '@tanstack/react-query';
@@ -24,21 +24,42 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Card, CardContent } from '@/components/ui/card';
 
+// Components ligeros: import eager.
 import { QuickActionsBar, type DashboardPeriod } from './dashboard/QuickActionsBar';
-import { ProviderBookingsInbox } from './ProviderBookingsInbox';
 import { AlertsBanner } from './dashboard/AlertsBanner';
 import { InteractiveMetricCard } from './dashboard/InteractiveMetricCard';
-import { ClinicalTab } from './dashboard/ClinicalTab';
-import { BusinessTab } from './dashboard/BusinessTab';
-import { PatientsTab } from './dashboard/PatientsTab';
+import { ClinicalTab } from './dashboard/ClinicalTab'; // 23L, eager
+import { PatientsTab } from './dashboard/PatientsTab'; // 50L, eager
 import { PendingVetLinksCard } from './PendingVetLinksCard';
-import { NewPatientForm } from './NewPatientForm';
 import { ViewTutorial, TUTORIALS } from '@/components/ViewTutorial';
 import { Next24hCard } from './Next24hCard';
 import { MiniProfileCard } from './dashboard/MiniProfileCard';
 import { VetExposureTips } from './dashboard/VetExposureTips';
 import { GoogleCalendarStatusBanner } from '@/components/GoogleCalendarStatusBanner';
 import { UpgradePlanBanner } from './dashboard/UpgradePlanBanner';
+
+// Sprint 1 P1 ARCH-001 (2026-04-28): tabs pesados + dialogs lazy-loaded.
+//   - BusinessTab (335L) usa Recharts → entra solo si user clickea tab "Negocio".
+//   - ProviderBookingsInbox (397L) → solo en tab "Reservas".
+//   - NewPatientForm (393L) → solo cuando se abre dialog "Agregar paciente".
+// Wrapper `.then(m => ({ default: m.X }))` necesario para named exports.
+const BusinessTab = lazy(() =>
+  import('./dashboard/BusinessTab').then((m) => ({ default: m.BusinessTab }))
+);
+const ProviderBookingsInbox = lazy(() =>
+  import('./ProviderBookingsInbox').then((m) => ({ default: m.ProviderBookingsInbox }))
+);
+const NewPatientForm = lazy(() =>
+  import('./NewPatientForm').then((m) => ({ default: m.NewPatientForm }))
+);
+
+function TabFallback() {
+  return (
+    <div className="flex items-center justify-center p-12">
+      <Loader2 className="h-6 w-6 animate-spin text-purple-600" />
+    </div>
+  );
+}
 
 // formatCLP imported from @/lib/format
 
@@ -228,7 +249,9 @@ const ProviderDashboard = () => {
         <TabsContent value="reservas" className="mt-3">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             <div className="lg:col-span-2">
-              <ProviderBookingsInbox providerId={stats.providerId} />
+              <Suspense fallback={<TabFallback />}>
+                <ProviderBookingsInbox providerId={stats.providerId ?? undefined} />
+              </Suspense>
             </div>
             <div className="lg:col-span-1">
               <VetExposureTips
@@ -248,12 +271,14 @@ const ProviderDashboard = () => {
         </TabsContent>
 
         <TabsContent value="negocio" className="mt-3">
-          <BusinessTab
-            stats={stats}
-            vetSummary={vetAnalytics?.summary ?? null}
-            bookingsTimeline={vetAnalytics?.bookingsTimeline ?? []}
-            serviceBreakdown={vetAnalytics?.serviceBreakdown ?? []}
-          />
+          <Suspense fallback={<TabFallback />}>
+            <BusinessTab
+              stats={stats}
+              vetSummary={vetAnalytics?.summary ?? null}
+              bookingsTimeline={vetAnalytics?.bookingsTimeline ?? []}
+              serviceBreakdown={vetAnalytics?.serviceBreakdown ?? []}
+            />
+          </Suspense>
         </TabsContent>
 
         <TabsContent value="pacientes" className="mt-3">
@@ -304,7 +329,9 @@ const ProviderDashboard = () => {
           <DialogHeader>
             <DialogTitle>Nuevo paciente</DialogTitle>
           </DialogHeader>
-          <NewPatientForm onCreated={() => setShowNewPatient(false)} />
+          <Suspense fallback={<TabFallback />}>
+            <NewPatientForm onCreated={() => setShowNewPatient(false)} />
+          </Suspense>
         </DialogContent>
       </Dialog>
     </div>

@@ -84,7 +84,7 @@ const MapPinPopup = ({ type, data, distance, userLocation, onClose }: MapPinPopu
   };
 
   const handleViewDetails = () => {
-    if (type === 'service') {
+    if (type === 'service' && data.user_id) {
       navigate(LINKS.userProfile(data.user_id));
     } else if (type === 'lost') {
       navigate(LINKS.maps());

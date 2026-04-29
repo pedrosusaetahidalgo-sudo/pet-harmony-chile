@@ -295,7 +295,7 @@ export default function AdminVetVerifications() {
                       {vet.avatar_url ? (
                         <img
                           src={vet.avatar_url}
-                          alt={vet.display_name}
+                          alt={vet.display_name ?? undefined}
                           className="w-14 h-14 rounded-full object-cover border border-slate-700"
                         />
                       ) : (
@@ -496,7 +496,7 @@ export default function AdminVetVerifications() {
                     {vet.avatar_url ? (
                       <img
                         src={vet.avatar_url}
-                        alt={vet.display_name}
+                        alt={vet.display_name ?? undefined}
                         className="w-8 h-8 rounded-full object-cover border border-slate-700"
                       />
                     ) : (

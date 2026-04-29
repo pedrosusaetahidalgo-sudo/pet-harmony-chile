@@ -280,7 +280,7 @@ export default function PerfilVetPublico() {
     const text = `Mira el perfil de ${v?.display_name} en Paw Friend 🐾`;
     if (navigator.share) {
       try {
-        await navigator.share({ title: v?.display_name, text, url });
+        await navigator.share({ title: v?.display_name ?? undefined, text, url });
         return;
       } catch {
         /* user cancelled */
@@ -382,7 +382,7 @@ export default function PerfilVetPublico() {
             {v.avatar_url ? (
               <img
                 src={v.avatar_url}
-                alt={v.display_name}
+                alt={v.display_name ?? undefined}
                 className="w-32 h-32 rounded-full object-cover border-4 border-purple-200 mx-auto md:mx-0"
               />
             ) : (

@@ -117,7 +117,7 @@ export default function DejarResena() {
                 {provider?.avatar_url ? (
                   <img
                     src={provider.avatar_url}
-                    alt={provider.display_name}
+                    alt={provider.display_name ?? undefined}
                     loading="lazy"
                     className="w-20 h-20 rounded-full object-cover border-2 border-purple-100"
                   />
@@ -152,6 +152,10 @@ export default function DejarResena() {
   }
 
   const onSubmit = async (data: ReviewFormData) => {
+    if (!provider) {
+      toast.error('No pudimos cargar al profesional. Intenta recargar la pagina.');
+      return;
+    }
     try {
       await submit.mutateAsync({
         invitation_id: invitation.id,
@@ -180,7 +184,7 @@ export default function DejarResena() {
               {provider?.avatar_url ? (
                 <img
                   src={provider.avatar_url}
-                  alt={provider.display_name}
+                  alt={provider.display_name ?? undefined}
                   className="w-20 h-20 rounded-full object-cover border-2 border-purple-100"
                 />
               ) : (

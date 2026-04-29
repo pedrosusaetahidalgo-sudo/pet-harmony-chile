@@ -33,8 +33,12 @@ export function useAISkill<TInput, TOutput>(options: AISkillOptions<TInput, TOut
       let lastError: string | null = null;
       for (let attempt = 0; attempt <= maxRetries; attempt++) {
         try {
+          // Body cast a Record<string, unknown>: TInput es generico y no
+          // matchea exactamente FunctionsInvokeOptions['body']. En runtime
+          // Supabase serializa con JSON.stringify; los callsites de useAISkill
+          // siempre pasan objetos (no Blob/Stream), por eso el cast es seguro.
           const { data, error } = await supabase.functions.invoke(functionName, {
-            body: input,
+            body: input as Record<string, unknown>,
           });
 
           if (error) throw new Error(error.message || 'Error al conectar con el servicio');

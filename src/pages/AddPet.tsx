@@ -400,13 +400,19 @@ const AddPetLegacy = () => {
 
       // Core columns (exist since initial migration)
       type PetInsert = Database['public']['Tables']['pets']['Insert'];
+      type PetUpdate = Database['public']['Tables']['pets']['Update'];
+      // En insert (!isEdit) generamos paw_card siempre. En update no incluimos
+      // estos campos para no sobreescribir la card existente.
       const pawCardData = !isEdit ? generatePawCardData() : null;
-      const payload: PetInsert = {
+      // Tipamos como Update (mas permisivo que Insert: paw_card_id opcional)
+      // y cast a Insert al hacer .insert() abajo cuando pawCardData esta presente.
+      const payload: PetUpdate = {
         owner_id: user.id,
         name: formData.name,
         species: formData.species,
-        paw_card_id: pawCardData?.pawCardId ?? undefined,
-        holo_pattern: pawCardData?.holoPattern ?? undefined,
+        ...(pawCardData
+          ? { paw_card_id: pawCardData.pawCardId, holo_pattern: pawCardData.holoPattern }
+          : {}),
         breed: formData.breed || null,
         birth_date: formData.birth_date || null,
         gender: formData.gender || null,
@@ -504,9 +510,11 @@ const AddPetLegacy = () => {
       setDuplicateBypass(false);
 
       // Insert + devolver id en una sola llamada (evita race condition con SELECT por nombre)
+      // Cast a PetInsert: en este path (!isEdit) pawCardData siempre es no-null,
+      // por lo que paw_card_id esta presente en el payload (lo verifica el spread arriba).
       const { data: createdPet, error: insertError } = await supabase
         .from('pets')
-        .insert(payload)
+        .insert(payload as PetInsert)
         .select('id')
         .single();
 

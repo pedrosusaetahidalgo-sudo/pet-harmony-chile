@@ -182,7 +182,7 @@ const AdManagement = () => {
       ad_link: ad.ad_link,
       placement: ad.placement,
       category: ad.category,
-      is_active: ad.is_active,
+      is_active: ad.is_active ?? false,
       priority: ad.priority || 0,
       start_date: ad.start_date ? ad.start_date.split('T')[0] : '',
       end_date: ad.end_date ? ad.end_date.split('T')[0] : '',

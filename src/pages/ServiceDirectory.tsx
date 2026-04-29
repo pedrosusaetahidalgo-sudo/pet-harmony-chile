@@ -750,9 +750,19 @@ const ServiceDirectory = () => {
                 <ProviderProfileCard
                   key={provider.id}
                   provider={{
-                    ...provider,
+                    // Extraemos solo los campos que ProviderProfileCard usa, evitando
+                    // que el spread arrastre `bio: string | null` etc. que TS strict
+                    // marca como conflicto contra `bio?: string`.
+                    id: provider.id,
+                    user_id: provider.user_id,
+                    bio: provider.bio ?? undefined,
+                    commune: provider.commune,
+                    service_areas: provider.service_areas,
+                    total_reviews: provider.total_reviews,
+                    is_verified: provider.is_verified ?? undefined,
+                    experience_years: provider.experience_years ?? undefined,
                     profiles: {
-                      display_name: provider.display_name,
+                      display_name: provider.display_name ?? 'Profesional',
                       avatar_url: provider.avatar_url,
                     },
                     _rating: provider.rating || 0,
@@ -861,7 +871,6 @@ const ServiceDirectory = () => {
                   rating: selectedProvider.rating || 5,
                   total_reviews: selectedProvider.total_reviews || 0,
                   price: getProviderPrice(selectedProvider),
-                  services: null,
                 }
               : null
           }

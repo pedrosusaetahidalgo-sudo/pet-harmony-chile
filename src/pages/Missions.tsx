@@ -232,7 +232,7 @@ const Missions = () => {
         <div className="mb-6">
           <AchievementSelector
             achievements={achievements}
-            activeTitle={activeTitle}
+            activeTitle={activeTitle ?? null}
             onSelect={(title) => setActiveTitle.mutate(title)}
           />
         </div>

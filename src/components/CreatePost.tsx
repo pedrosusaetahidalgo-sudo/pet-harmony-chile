@@ -135,7 +135,7 @@ export function CreatePost({ onSuccess }: CreatePostProps) {
     let uploadedFilePath: string | null = null;
 
     try {
-      let imageUrl = null;
+      let imageUrl: string | null = null;
       if (imageFile) {
         try {
           const uploadResult = await uploadImage();

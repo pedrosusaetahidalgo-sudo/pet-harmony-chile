@@ -155,7 +155,7 @@ export function CancelBookingDialog({
           <Button
             variant="destructive"
             onClick={handleCancel}
-            disabled={cancelBooking.isPending || (reasonRequired && !reason.trim())}
+            disabled={cancelBooking.isPending || !!(reasonRequired && !reason.trim())}
           >
             {cancelBooking.isPending ? 'Cancelando...' : 'Confirmar cancelacion'}
           </Button>

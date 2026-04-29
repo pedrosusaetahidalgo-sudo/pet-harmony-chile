@@ -145,7 +145,7 @@ export function PostComments({ postId, onCommentAdded }: PostCommentsProps) {
           comments.map((comment) => (
             <div key={comment.id} className="flex gap-2 group">
               <Avatar className="h-8 w-8">
-                <AvatarImage src={comment.profiles?.avatar_url} />
+                <AvatarImage src={comment.profiles?.avatar_url ?? undefined} />
                 <AvatarFallback className="bg-warm-gradient text-white text-xs">
                   {comment.profiles?.display_name?.[0] || 'U'}
                 </AvatarFallback>
