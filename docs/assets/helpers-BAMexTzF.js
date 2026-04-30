@@ -1,1 +1,0 @@
-import{a}from"./date-vendor-CfAVJJZg.js";import{e}from"./index-4hNrZ8xp.js";function f(t){return a(new Date(t),"d 'de' MMMM, yyyy",{locale:e})}function n(t){return a(new Date(t),"dd/MM/yyyy")}export{n as a,f};
