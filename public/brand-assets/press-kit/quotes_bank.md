@@ -28,7 +28,7 @@
 
 ---
 
-## 4 · Sobre el moat del modelo Mapcity
+## 4 · Sobre el moat del modelo B2B de acceso a la ficha
 
 > "Cuando una veterinaria está en el mapa de Paw Friend con sus reseñas, sus horarios y su WhatsApp directo, no se va. Mientras más vets entran, más útil es para el dueño, y mientras más dueños usan la app, más vale para el siguiente partner que entra. Eso es nuestro foso."
 
