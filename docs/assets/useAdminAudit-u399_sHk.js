@@ -1,0 +1,1 @@
+import{u as e,s as n}from"./index-BI99WP66.js";function d(){const{user:t}=e();return{logAction:async(i,a,s,r)=>{if(t)try{await n.from("admin_audit_log").insert({admin_user_id:t.id,action:i,target_type:a,target_id:s,details:r??{}})}catch{}}}}export{d as u};
