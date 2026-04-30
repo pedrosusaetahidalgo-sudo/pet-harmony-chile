@@ -2,25 +2,26 @@ import { FEATURE_FLAGS } from '@/lib/featureFlags';
 
 /**
  * 2026-04-29 — Pivot a freemium real (Opcion 3 del Checkpoint 1, Plan v5).
- * 2026-04-30 — Reanalisis: Paw Shield reposicionado a EXCLUSIVO Manada para
- * controlar COGS Petify USD 0.75/mascota/mes. Paw Member queda con Passport,
- * Insights Pro, Audio IA, Reportes >30d (sin COGS externo, margen ~95%).
+ * 2026-04-30 — Reanalisis (paso 1): Paw Shield reposicionado a EXCLUSIVO Manada.
+ * 2026-04-30 — Opcion C (paso 2): Paw Shield FUERA del modelo consumer. Petify
+ * deja de ser feature de cualquier tier B2C. Razon: COGS lineal externo en
+ * single-vendor foreign envenena valuacion VC y bloquea launch sin firma de
+ * billing PROD. La biometria queda como infra dormida en el repo (regla
+ * "esconder, no borrar") por si en el futuro un partner B2B la financia
+ * (ej: Sura paga la captacion como parte del seguro). Para el dueno, "si se
+ * pierde lo encontras" lo cubren QR + microchip + Pet ID Card en plan Free.
  *
- * Modelo B2C v3.1:
+ * Modelo B2C v3.2 (Opcion C):
  *   Free       — 2 mascotas, ficha clinica completa, recordatorios, OCR, Pet ID
- *                Card basica, QR, memorial, adoption, directorio vets.
+ *                Card + QR, memorial, adoption, directorio vets.
  *   Paw Member — $3.990/mes o $39.900/ano. 4 mascotas. Desbloquea Paw Passport
  *                PDF, Insights Pro, Audio notes IA, Reportes >30d, Compartir
- *                ficha 1 ano, descuentos Paw Partners. SIN Paw Shield.
+ *                ficha 1 ano, descuentos Paw Partners. Sin COGS externo,
+ *                margen ~99%.
  *   Manada     — $9.990/mes o $99.900/ano. 5 mascotas. Todo Paw Member +
- *                Paw Shield biometrico (Petify) EXCLUSIVO + descuentos
- *                exclusivos + soporte prioritario + early access + badge
- *                Manada + $2.000/mes a Fondo Paw Friend Refugios.
- *
- * Razon: el costo Petify USD 0.75/mascota/mes lineal en Paw Member (15%
- * conversion target × 30% opt-in) rompia margen a 100k MAU. Solo Manada
- * (1-2% conversion) tiene margen suficiente para absorber el COGS biometrico
- * sin sacrificar el bottom-line.
+ *                descuentos exclusivos + soporte prioritario + early access +
+ *                badge Manada + $2.000/mes a Fondo Paw Friend Refugios. Sin
+ *                COGS externo, margen ~62% (solo aporte refugios).
  *
  * IDs DB:
  *   'free'       (sin cambio)
@@ -133,8 +134,8 @@ export const PLANS: Record<PlanId, PlanConfig> = {
   // ────────────────────────── PAW MEMBER (DB id 'premium') ──────────────
   // Tier paid real con feature unlock SIN COGS externo. Target conversion
   // 13-15%. $3.990/mes o $39.900/ano (17% off). Hasta 4 mascotas. Paw Shield
-  // queda EXCLUSIVO Manada (reanalisis 2026-04-30) — el COGS Petify lineal
-  // solo cabe en el tier con margen suficiente.
+  // FUERA del modelo consumer (Opcion C, 2026-04-30) — Petify dormido como
+  // infra reactivable solo si un partner B2B lo financia.
   premium: {
     id: 'premium',
     name: 'Paw Member',
@@ -161,9 +162,9 @@ export const PLANS: Record<PlanId, PlanConfig> = {
       pro_analytics: true,
       analytics_export: true,
       reports_history_days: -1,
-      // Paw Shield EXCLUSIVO Manada (controla COGS Petify USD 0.75/pet/mes)
+      // Paw Shield/biometria FUERA del modelo consumer (Opcion C 2026-04-30)
       paw_shield: false,
-      // Resto de premium features ON (sin COGS externo, margen ~95%)
+      // Premium features sin COGS externo (margen ~99%)
       paw_passport: true,
       insights_pro: true,
       audio_notes_ai: true,
@@ -172,13 +173,12 @@ export const PLANS: Record<PlanId, PlanConfig> = {
     },
   },
   // ────────────────────────── MANADA ──────────────────────────
-  // Para hogares con muchas mascotas + corazon refugio + power users que
-  // quieren biometria. $9.990/mes o $99.900/ano (17% off). 5 mascotas. Todo
-  // Paw Member + Paw Shield biometrico (Petify) EXCLUSIVO + descuentos
+  // Para hogares con muchas mascotas + corazon refugio. $9.990/mes o
+  // $99.900/ano (17% off). 5 mascotas. Todo Paw Member + descuentos
   // exclusivos + soporte prioritario + early access + badge + $2.000/mes que
   // Paw Friend SpA destina al Fondo Refugios. Target conversion 1-2%. Seccion
-  // secundaria en /paw-member, no pricing principal. Es el unico tier con
-  // margen para absorber el COGS Petify USD 0.75/mascota/mes lineal.
+  // secundaria en /paw-member, no pricing principal. Sin COGS externo (Opcion C
+  // 2026-04-30: biometria Petify fuera del modelo consumer).
   paw_manada: {
     id: 'paw_manada',
     name: 'Manada',
@@ -205,7 +205,8 @@ export const PLANS: Record<PlanId, PlanConfig> = {
       pro_analytics: true,
       analytics_export: true,
       reports_history_days: -1,
-      paw_shield: true,
+      // Paw Shield/biometria FUERA del modelo consumer (Opcion C 2026-04-30)
+      paw_shield: false,
       paw_passport: true,
       insights_pro: true,
       audio_notes_ai: true,

@@ -306,8 +306,8 @@ export default function OnboardingQuickFlow() {
                       ¿Quieres activar Paw Shield para {name}?
                     </h2>
                     <p className="text-sm text-muted-foreground">
-                      Si {name} se pierde, otros pueden encontrarlo escaneando su hocico. Disponible
-                      con el plan Manada — toma 30 segundos activarlo.
+                      Si {name} se pierde, otros pueden encontrarlo escaneando su hocico. Toma 30
+                      segundos.
                     </p>
                   </div>
                 </div>

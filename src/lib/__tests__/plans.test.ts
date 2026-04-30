@@ -34,12 +34,12 @@ describe('PLANS', () => {
     expect(PLANS.free.features.export_pdf).toBe(true);
   });
 
-  // Reanalisis 2026-04-30: Paw Shield reposicionado a EXCLUSIVO Manada para
-  // controlar COGS Petify USD 0.75/mascota/mes lineal.
-  it('paw_shield is OFF en free y premium, solo ON en manada', () => {
+  // Opcion C (2026-04-30): Paw Shield FUERA del modelo consumer entero.
+  // Petify dormido como infra reactivable solo si un partner B2B lo financia.
+  it('paw_shield is OFF en los 3 tiers (Petify fuera del modelo consumer)', () => {
     expect(PLANS.free.features.paw_shield).toBe(false);
     expect(PLANS.premium.features.paw_shield).toBe(false);
-    expect(PLANS.paw_manada.features.paw_shield).toBe(true);
+    expect(PLANS.paw_manada.features.paw_shield).toBe(false);
   });
 
   it('paw_passport sigue ON en premium y manada (sin COGS externo)', () => {
@@ -80,19 +80,20 @@ describe('canAccess', () => {
     expect(within.allowed).toBe(true);
   });
 
-  // Reanalisis 2026-04-30: paw_shield bloqueado en premium, requiere paw_manada.
-  it('paw_shield requiere upgrade a Manada (no Paw Member)', () => {
+  // Opcion C (2026-04-30): paw_shield bloqueado en los 3 tiers — fuera del
+  // modelo consumer entero. canAccess fallback findMinUpgradePlan retorna
+  // 'premium' como sugerencia default cuando no hay plan que tenga la feature
+  // (no rompe — solo asegura que el gate este cerrado).
+  it('paw_shield bloqueado en los 3 tiers (consumer no tiene biometria)', () => {
     if (FEATURE_FLAGS.USER_PREMIUM) {
       const free = canAccess('free', 'paw_shield');
       expect(free.allowed).toBe(false);
-      expect(free.upgradeRequired).toBe('paw_manada');
 
       const premium = canAccess('premium', 'paw_shield');
       expect(premium.allowed).toBe(false);
-      expect(premium.upgradeRequired).toBe('paw_manada');
 
       const manada = canAccess('paw_manada', 'paw_shield');
-      expect(manada.allowed).toBe(true);
+      expect(manada.allowed).toBe(false);
     }
   });
 

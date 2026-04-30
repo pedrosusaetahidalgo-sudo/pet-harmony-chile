@@ -201,7 +201,7 @@ export default function PawCore() {
               <MotorTile
                 icon={<Sparkles className="h-4 w-4 text-violet-500" />}
                 title="Paw Member · Manada (opcional)"
-                text="Freemium B2C 3 tiers. Free $0 (lo esencial). Paw Member $3.990/mes (Paw Passport, Insights Pro, audio IA, reportes, descuentos). Manada $9.990/mes (suma Paw Shield biométrico exclusivo + descuentos exclusivos + early access + $2.000/mes a fondo refugios)."
+                text="Freemium B2C 3 tiers. Free $0 (lo esencial). Paw Member $3.990/mes (Paw Passport, Insights Pro, audio IA, reportes históricos, descuentos). Manada $9.990/mes (suma descuentos exclusivos + soporte prioritario + early access + $2.000/mes a fondo refugios)."
               />
               <MotorTile
                 icon={<Users className="h-4 w-4 text-sky-500" />}

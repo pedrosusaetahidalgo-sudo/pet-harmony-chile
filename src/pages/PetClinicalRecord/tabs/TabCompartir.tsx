@@ -191,7 +191,7 @@ export function TabCompartir({ petId, petName }: { petId: string; petName: strin
             <CardContent className="space-y-4 pt-0">
               {shareLimitReached && (
                 <PremiumNudge
-                  feature="share_clinical"
+                  feature="share_clinical_days"
                   title="Compartir con vets"
                   description="Puedes compartir la ficha con todos los vets que necesites, sin límite. Si te sirve, apóyanos."
                   variant="inline"

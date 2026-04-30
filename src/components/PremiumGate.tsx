@@ -7,9 +7,14 @@
  *   - PremiumNudge es soft (aparece AL LADO de un feature gratis, sugiere apoyo).
  *   - PremiumGate es hard (bloquea contenido, fuerza upgrade para acceder).
  *
+ * Feature key (string): debe matchear EXACTAMENTE una key de PLANS.*.features
+ * en plans.ts. Si no matchea, canAccess() devuelve allowed=true por fallthrough
+ * (NO bloquea). Para evitar bugs como share_clinical vs share_clinical_days,
+ * pasa el key tipado o copia desde el JSDoc de plans.ts.
+ *
  * Uso:
- *   <PremiumGate feature="paw_shield" title="Paw Shield biométrico" desc="...">
- *     <PawShieldEnrollment />
+ *   <PremiumGate feature="paw_passport" title="Paw Passport" desc="...">
+ *     <PawPassportButton />
  *   </PremiumGate>
  *
  * Si el user es admin, free con flag USER_PREMIUM=false, o tiene un tier que
@@ -148,7 +153,6 @@ export function PremiumGate({
             {upgradeRequired === 'paw_manada' && (
               <>
                 <li>Todo lo de Paw Member</li>
-                <li>Paw Shield biométrico exclusivo (huella nasal anti-pérdida)</li>
                 <li>Hasta 5 mascotas</li>
                 <li>Descuentos Paw Partners exclusivos</li>
                 <li>Soporte prioritario · Early access</li>

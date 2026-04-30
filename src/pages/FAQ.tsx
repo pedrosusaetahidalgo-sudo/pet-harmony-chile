@@ -20,7 +20,7 @@ import { Bell, ArrowLeft } from '@/lib/icons';
 const FAQ_ITEMS = [
   {
     q: '¿Cuánto cuesta usar Paw Friend?',
-    a: 'Lo esencial es gratis para siempre: ficha clínica, recordatorios, calendario, OCR del carnet, Pet ID Card básica, QR, memorial y directorio de vets. Si quieres features avanzadas hay 2 planes opcionales: Paw Member ($3.990/mes, hasta 4 mascotas, suma Paw Passport PDF, Insights Pro, audio notes IA, reportes históricos y descuentos de Paw Partners) y Manada ($9.990/mes, hasta 5 mascotas, suma Paw Shield biométrico exclusivo, soporte prioritario, descuentos exclusivos, early access y aporta $2.000/mes a un fondo para refugios). El plan Free permite hasta 2 mascotas.',
+    a: 'Lo esencial es gratis para siempre: ficha clínica, recordatorios, calendario, OCR del carnet, Pet ID Card básica, QR, memorial y directorio de vets. Si quieres features avanzadas hay 2 planes opcionales: Paw Member ($3.990/mes, hasta 4 mascotas, suma Paw Passport PDF, Insights Pro, audio notes IA, reportes históricos y descuentos de Paw Partners) y Manada ($9.990/mes, hasta 5 mascotas, suma soporte prioritario, descuentos exclusivos, early access y aporta $2.000/mes a un fondo para refugios). El plan Free permite hasta 2 mascotas.',
   },
   {
     q: '¿Cómo encuentro un veterinario?',
@@ -36,11 +36,11 @@ const FAQ_ITEMS = [
   },
   {
     q: '¿Qué es Paw Member?',
-    a: 'Es la membresía intermedia ($3.990/mes). Te suma features avanzadas que el plan Free no trae: Paw Passport PDF compartible, Insights Pro (estadísticas de tu peludo), audio notes con IA, reportes médicos extendidos (>30 días) y descuentos en Paw Partners aliados. Más el badge 💛. Es opcional: si te basta el plan Free, sigue siendo tuyo. Paw Shield biométrico es exclusivo del plan Manada.',
+    a: 'Es la membresía intermedia ($3.990/mes). Te suma features avanzadas que el plan Free no trae: Paw Passport PDF compartible, Insights Pro (estadísticas de tu peludo), audio notes con IA, reportes médicos extendidos (>30 días) y descuentos en Paw Partners aliados. Más el badge 💛. Es opcional: si te basta el plan Free, sigue siendo tuyo.',
   },
   {
     q: '¿Y el plan Manada?',
-    a: 'Manada ($9.990/mes) es para hogares con varios peludos (hasta 5 mascotas), para quienes quieren la identificación biométrica de su mascota o para quienes quieren apoyar el ecosistema. Suma todo lo de Paw Member, además Paw Shield biométrico exclusivo (huella nasal anti-pérdida), descuentos exclusivos, soporte prioritario, early access a features y un badge 👑. Además, $2.000 de tu cuota mensual van a un fondo Paw Friend Refugios que reparte entre hogares de adopción aliados — Paw Friend SpA es quien dona, así no entras al marco fiscal de la Ley 19.885.',
+    a: 'Manada ($9.990/mes) es para hogares con varios peludos (hasta 5 mascotas) o para quienes quieren apoyar el ecosistema. Suma todo lo de Paw Member más descuentos exclusivos, soporte prioritario, early access a features y un badge 👑. Además, $2.000 de tu cuota mensual van a un fondo Paw Friend Refugios que reparte entre hogares de adopción aliados — Paw Friend SpA es quien dona, así no entras al marco fiscal de la Ley 19.885.',
   },
   {
     q: '¿Quién está detrás del proyecto?',
