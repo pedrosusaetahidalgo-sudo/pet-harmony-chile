@@ -1,9 +1,11 @@
 # Paw Friend — Infraestructura Digital de la Mascota Chilena
 
 Plataforma freemium 3 tiers para dueños + 7 motores B2B de acceso a la ficha.
-Ficha clínica digital + directorio veterinario + biometría Paw Shield +
+Ficha clínica digital + directorio veterinario + Pet ID Card + QR público +
 APIs B2B + cotizador seguros + retail con descuentos + lead capture B2B
-para gobierno, banca, edificios y long-tail.
+para gobierno, banca, edificios y long-tail. Biometría Paw Shield (Petify)
+queda como infra dormida (Opción C 2026-04-30, fuera del modelo consumer)
+reactivable solo con financiamiento B2B.
 
 **Estado al 2026-04-30:** los 7 motores del Revenue Master Plan tienen
 código end-to-end listo · pendiente activación comercial. Ver
@@ -120,11 +122,11 @@ vs targets Y1 conservador ($120k USD) / optimista ($420k USD).
 | `request-insurance-quote` | #2 Lead capture aseguradoras + email partner |
 | `vet-checkin-identify` | Vet check-in widget con `X-Vet-Api-Key` |
 
-**Paw Shield (biometría Petify):**
-| Función | Propósito |
-|---|---|
-| `paw-shield-register` / `paw-shield-identify` | Enrollment + identify 1:N |
-| `paw-shield-archive-cleanup` | Cron lifecycle de imágenes archivadas |
+**Paw Shield (biometría Petify) — DORMIDO Opción C 2026-04-30:**
+| Función | Propósito | Estado |
+|---|---|---|
+| `paw-shield-register` / `paw-shield-identify` | Enrollment + identify 1:N | Dormido tras flag `PAW_SHIELD_PETIFY=false`. Reactivable solo con partner B2B-funded. |
+| `paw-shield-archive-cleanup` | Cron lifecycle de imágenes archivadas | Idem |
 
 ## Documentación
 

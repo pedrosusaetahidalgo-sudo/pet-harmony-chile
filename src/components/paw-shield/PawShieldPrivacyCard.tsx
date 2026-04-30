@@ -31,6 +31,7 @@ import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { logger } from '@/lib/logger';
+import { isFeatureEnabled } from '@/lib/featureFlags';
 
 interface PetWithConsent {
   id: string;
@@ -47,9 +48,15 @@ export function PawShieldPrivacyCard() {
   const qc = useQueryClient();
   const [confirmOpen, setConfirmOpen] = useState(false);
 
+  // Opción C 2026-04-30: Paw Shield fuera del modelo consumer. Si nunca se
+  // activó la feature en el cohort de este user, no hay imágenes archivadas
+  // y este card es ruido visual. Esconder si flag PAW_SHIELD_PETIFY=false.
+  const pawShieldEnabled = isFeatureEnabled('PAW_SHIELD_PETIFY');
+
   // Mascotas del user con info de consent.
   const { data: pets, isLoading: petsLoading } = useQuery({
     queryKey: ['paw-shield-consent-pets', user?.id],
+    enabled: pawShieldEnabled && !!user?.id,
     queryFn: async () => {
       if (!user?.id) return [];
       const { data, error } = await supabase
@@ -59,12 +66,12 @@ export function PawShieldPrivacyCard() {
       if (error) throw error;
       return (data ?? []) as PetWithConsent[];
     },
-    enabled: !!user?.id,
   });
 
   // Conteo de imagenes archivadas del user.
   const { data: imagesCount, isLoading: imagesLoading } = useQuery({
     queryKey: ['paw-shield-archive-count', user?.id],
+    enabled: pawShieldEnabled && !!user?.id,
     queryFn: async () => {
       if (!user?.id) return 0;
       const { data, error } = await supabase
@@ -77,7 +84,6 @@ export function PawShieldPrivacyCard() {
       }
       return (data as ArchiveCountRow[] | null)?.length ?? 0;
     },
-    enabled: !!user?.id,
   });
 
   const revoke = useMutation({
@@ -100,6 +106,9 @@ export function PawShieldPrivacyCard() {
       });
     },
   });
+
+  // Opción C 2026-04-30: si flag dormido, no renderizar este card.
+  if (!pawShieldEnabled) return null;
 
   const consentingPets = pets?.filter((p) => p.paw_shield_data_archive_consent) ?? [];
   const hasAnyConsent = consentingPets.length > 0 || (imagesCount ?? 0) > 0;
