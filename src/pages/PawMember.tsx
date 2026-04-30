@@ -319,6 +319,19 @@ export default function PawMember() {
                       <Skeleton className="h-20 rounded-lg" />
                       <Skeleton className="h-20 rounded-lg" />
                     </div>
+                  ) : (manadaSummary?.aportes_count ?? 0) === 0 ? (
+                    <div className="rounded-lg border bg-white/70 dark:bg-slate-900/40 p-4 text-center space-y-2">
+                      <Shield className="h-8 w-8 text-amber-500 mx-auto" />
+                      <p className="text-sm font-semibold">Tu primer aporte llegará a fin de mes</p>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Acabas de unirte a Manada. Cada mes,{' '}
+                        <strong>
+                          {formatCLP(PLANS.paw_manada.manadaRefugioAporteClp)} de tu plan
+                        </strong>{' '}
+                        van al Fondo Paw Friend Refugios. Aquí verás el detalle cuando se cierre el
+                        primer pool mensual.
+                      </p>
+                    </div>
                   ) : (
                     <>
                       <div className="grid grid-cols-2 gap-3">

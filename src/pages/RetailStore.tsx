@@ -20,7 +20,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, ShoppingBag, ExternalLink } from '@/lib/icons';
+import { ArrowLeft, ShoppingBag, ExternalLink, AlertCircle } from '@/lib/icons';
 import { Tag } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -185,6 +185,22 @@ export default function RetailStore() {
       <Button onClick={() => navigate(-1)} variant="ghost" size="sm">
         <ArrowLeft className="h-4 w-4 mr-1.5" /> Volver
       </Button>
+
+      {/* UX-12: Disclaimer permanente al tope (no solo al final). El user
+          debe saber DESDE EL INICIO que los catálogos son referenciales y
+          se ajustan al firmar contrato comercial con cada retailer. */}
+      <div
+        role="status"
+        className="rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-950/30 p-3 flex items-start gap-2.5"
+      >
+        <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-300 flex-shrink-0 mt-0.5" />
+        <div className="text-xs text-amber-900 dark:text-amber-100 leading-relaxed">
+          <strong>Piloto en marcha · catálogos referenciales.</strong> Estamos integrando con
+          retailers chilenos (Master Dog, Puppis, Pet Star). Los descuentos y precios se ajustan al
+          firmar contrato comercial con cada partner. Hasta entonces, los links te llevan al sitio
+          oficial del retailer.
+        </div>
+      </div>
 
       <div className="text-center space-y-1.5 py-3">
         <ShoppingBag className="h-10 w-10 mx-auto text-orange-600" />

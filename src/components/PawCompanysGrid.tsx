@@ -1,10 +1,11 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ExternalLink, Sparkles, PawPrint, Crown } from '@/lib/icons';
+import { ExternalLink, Sparkles, PawPrint, Crown, Building2 } from '@/lib/icons';
 import { usePublicPawCompanys } from '@/hooks/usePawCompanys';
 import { cn } from '@/lib/utils';
 import { CategoryIcon } from '@/components/CategoryIcon';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const TIER_STYLES: Record<
   'bronze' | 'silver' | 'gold',
@@ -51,7 +52,26 @@ export function PawCompanysGrid({ className }: PawCompanysGridProps) {
     );
   }
 
-  if (!data || data.length === 0) return null;
+  if (!data || data.length === 0) {
+    return (
+      <section className={cn('space-y-3', className)} aria-label="Paw Companys">
+        <header className="text-center space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 text-xs font-medium text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/40 px-3 py-1 rounded-full">
+            <Sparkles className="h-3.5 w-3.5" />
+            Paw Companys · empresas con corazón peludo
+          </div>
+        </header>
+        <EmptyState
+          variant="compact"
+          icon={Building2}
+          title="Buscamos las primeras Paw Companys"
+          description="Aún no hay empresas patrocinadoras públicas. ¿Tu empresa quiere ser la primera en aparecer aquí?"
+          actionLabel="Postular mi empresa"
+          actionUrl="/aplicar?tipo=paw_companys"
+        />
+      </section>
+    );
+  }
 
   return (
     <section className={cn('space-y-4', className)} aria-label="Paw Companys">

@@ -33,7 +33,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Shield, Loader2, ArrowLeft, CheckCircle2 } from '@/lib/icons';
+import { Shield, Loader2, ArrowLeft, CheckCircle2, AlertCircle } from '@/lib/icons';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
@@ -218,6 +218,22 @@ export default function InsuranceQuotes() {
         <Button onClick={() => navigate(-1)} variant="ghost" size="sm">
           <ArrowLeft className="h-4 w-4 mr-1.5" /> Volver
         </Button>
+      </div>
+
+      {/* UX-12: Disclaimer permanente al tope (no solo al final). Visibilidad
+          de credibilidad: el user debe saber DESDE EL INICIO que las
+          cotizaciones son referenciales hasta firma comercial. */}
+      <div
+        role="status"
+        className="rounded-lg border border-amber-300 bg-amber-50 dark:bg-amber-950/30 p-3 flex items-start gap-2.5"
+      >
+        <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-300 flex-shrink-0 mt-0.5" />
+        <div className="text-xs text-amber-900 dark:text-amber-100 leading-relaxed">
+          <strong>Piloto en marcha · cotizaciones referenciales.</strong> Estamos en negociación con
+          aseguradoras chilenas (Sura, BCI, Mapfre). Las primas se ajustan al firmar contrato
+          definitivo con cada partner. No hay cobro automático: solo solicitas que el partner te
+          contacte.
+        </div>
       </div>
 
       <div className="text-center space-y-1.5 py-3">

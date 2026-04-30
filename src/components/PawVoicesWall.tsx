@@ -4,6 +4,7 @@ import { Heart, PawPrint, Quote } from '@/lib/icons';
 import { formatRelative, formatCLPCompact } from '@/lib/format';
 import { usePublicDonations } from '@/hooks/usePublicDonations';
 import { cn } from '@/lib/utils';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 interface PawVoicesWallProps {
   limit?: number;
@@ -34,7 +35,30 @@ export function PawVoicesWall({ limit = 24, className }: PawVoicesWallProps) {
     );
   }
 
-  if (!data || data.length === 0) return null;
+  if (!data || data.length === 0) {
+    return (
+      <section className={cn('space-y-3', className)} aria-label="Muralla de Paw Voices">
+        <header className="text-center space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 text-xs font-medium text-violet-600 dark:text-violet-300 bg-violet-50 dark:bg-violet-950/40 px-3 py-1 rounded-full">
+            <PawPrint className="h-3.5 w-3.5" />
+            Paw Voices · muralla de apoyos
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold">
+            Sé la{' '}
+            <span className="bg-gradient-to-r from-violet-500 to-fuchsia-500 bg-clip-text text-transparent">
+              primera voz peluda
+            </span>
+          </h2>
+        </header>
+        <EmptyState
+          variant="compact"
+          icon={Quote}
+          title="Aún no hay aportes públicos"
+          description="Cuando hagas tu primer aporte y marques 'quiero que mi mensaje sea público', tu voz aparecerá aquí para inspirar a otros."
+        />
+      </section>
+    );
+  }
 
   return (
     <section className={cn('space-y-4', className)} aria-label="Muralla de Paw Voices">

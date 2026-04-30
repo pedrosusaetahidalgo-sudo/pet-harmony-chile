@@ -9,6 +9,7 @@ import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { LiveMonthlyReport } from '@/components/reports/LiveMonthlyReport';
 import { PremiumGate } from '@/components/PremiumGate';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const REPORT_TYPE_LABELS: Record<string, string> = {
   owner_weekly: 'Resumen semanal',
@@ -104,15 +105,12 @@ export default function Reportes() {
         </div>
 
         {!reports || reports.length === 0 ? (
-          <Card>
-            <CardContent className="p-6 text-center">
-              <FileText className="h-10 w-10 text-muted-foreground mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">
-                Los resúmenes semanales y mensuales se generan automáticamente. El próximo llegará
-                este domingo.
-              </p>
-            </CardContent>
-          </Card>
+          <EmptyState
+            variant="card"
+            illustration="/paw-friend-assets-v2/illustrations/empty-states/no_notifications.svg"
+            title="Aún no hay reportes"
+            description="Los resúmenes semanales y mensuales se generan automáticamente con datos de tu mascota. El próximo llegará este domingo. Mientras, podés ver el reporte en vivo del mes en curso arriba."
+          />
         ) : (
           <div className="space-y-3">
             {reports.map((report) => {

@@ -4,6 +4,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { User, ExternalLink, Sparkles, Megaphone } from '@/lib/icons';
 import { usePublicPawVoices } from '@/hooks/usePawVoices';
 import { cn } from '@/lib/utils';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 const PLATFORM_LABEL: Record<string, string> = {
   instagram: 'Instagram',
@@ -53,7 +54,28 @@ export function PawVoicesGrid({ className, limit }: PawVoicesGridProps) {
     );
   }
 
-  if (!data || data.length === 0) return null;
+  if (!data || data.length === 0) {
+    return (
+      <section className={cn('space-y-3', className)} aria-label="Paw Voices">
+        <header className="text-center space-y-1.5">
+          <div className="inline-flex items-center gap-1.5 text-xs font-medium text-violet-700 dark:text-violet-300 bg-violet-50 dark:bg-violet-950/40 px-3 py-1 rounded-full">
+            <Megaphone className="h-3.5 w-3.5" />
+            Paw Voices · red de creadores peludos
+          </div>
+        </header>
+        <EmptyState
+          variant="compact"
+          icon={Megaphone}
+          title="Buscamos las primeras voces peludas"
+          description="Aún no hay creadores en la red. ¿Compartes Paw Friend con tu comunidad? Sé el primero en aparecer aquí."
+          actionLabel="Aplicar como Paw Voice"
+          onAction={() =>
+            document.getElementById('aplicar')?.scrollIntoView({ behavior: 'smooth' })
+          }
+        />
+      </section>
+    );
+  }
 
   const voices = typeof limit === 'number' ? data.slice(0, limit) : data;
 
