@@ -211,10 +211,9 @@ para una Seed Series.
 
 **Titulo**: *El dueno nunca paga. Pharma, seguros y retail pagan por acceso a la ficha.*
 
-> **Paralelismo Mapcity**: *Mapcity no le cobraba a cada tienda chilena por
-> georreferenciar — le cobraba a Equifax, bancos e inmobiliarias por acceso a la
-> data. Paw Friend no le cobra al vet ni al dueno — le cobra a pharma, seguros
-> y retail por acceso a la ficha clinica longitudinal.*
+> **Tesis core**: *El activo no es la app — es la ficha clinica longitudinal.
+> Paw Friend no le cobra al vet ni al dueno por construirla. Le cobra a pharma,
+> seguros y retail por acceso a esa cohorte con consent ARCO.*
 
 **Principio guia**: *Producto invisible.* Si el producto es invisible, el dueno
 no se va. Si no se va, la ficha se enriquece sola (OCR + vet + IA + recordatorios).
@@ -301,8 +300,8 @@ producto, solo reorientando quien paga.
   Para 2 mascotas en Pro tier = ~$16.500 CLP/año. Para refugios con 30 mascotas = inviable. Incentivo
   perverso: borrar fichas para dejar de pagar (rompe memorial + historial). **Petify es nuestro proveedor** de biometria (Pro tier $0.75/pet absorbido por revenue B2B), no competidor primario. Nuestra jugada:
   contraposicionamiento directo — *"Mientras Petify te cobra por cada mascota, en Paw Friend
-  la ficha es gratis para siempre. Pagamos con pharma/seguros/retail (modelo Mapcity), no
-  con tu bolsillo."*
+  la ficha es gratis para siempre. Pagan pharma/seguros/retail por acceso, no
+  tu bolsillo."*
 - **QVET** (amenaza alta 18-24m): espanol, 8.000 clientes declarados, sin comercial local,
   sin precio publico. *Nuestra jugada: ganar vet chico chileno antes de que activen Chile.*
 - **Petsy** (overlap B2C 1:1): iOS publicada, marketplace a domicilio. *Nuestro moat:

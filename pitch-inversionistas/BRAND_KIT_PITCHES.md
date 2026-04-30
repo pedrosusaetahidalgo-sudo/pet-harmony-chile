@@ -324,7 +324,7 @@ Mockups clave:
 
 ### 3.4 Diagramas explicativos (1080x720 SVG)
 
-- "Modelo Mapcity" (cliente final no paga, B2B paga por acceso)
+- "Modelo B2B de acceso a la ficha" (cliente final no paga, B2B paga por acceso a la cohorte)
 - "Modelo de monetizacion B2B" (6 motores en grid con peso de revenue)
 - "Apalancamiento founder + IA" (15x faster · 32-65x cheaper)
 - "Roadmap Y1-Y3 ARR" (curva conservadora vs optimista)

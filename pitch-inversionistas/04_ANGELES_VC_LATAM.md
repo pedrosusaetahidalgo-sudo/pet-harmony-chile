@@ -9,9 +9,9 @@
 >
 > **⚠️ Modelo v2.1 vigente desde 2026-04-29** (Plan v5 Opcion 3). Ver [`docs-raiz/pitch/MODELO_V2_2026_04_22.md`](../docs-raiz/pitch/MODELO_V2_2026_04_22.md) con el addendum 2026-04-29.
 > Cambios clave: freemium B2C 3 tiers (Free $0 · Paw Member $3.990/mes · Manada $9.990/mes con aporte refugios), vet = canal de adquisicion (no revenue),
-> 3 pilares ancla B2B = pharma + seguros + retail (motor de escala). Paralelismo Mapcity:
-> *"Mapcity no le cobraba a las tiendas — le cobraba a Equifax y bancos
-> por acceso a la data."*
+> 3 pilares ancla B2B = pharma + seguros + retail (motor de escala). Tesis core:
+> *"El activo no es la app — es la ficha clinica longitudinal. Pagan quienes
+> quieren acceso a esa cohorte (pharma, seguros, retail)."*
 
 ---
 
@@ -75,7 +75,7 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 - **Claude IA** reduce time-to-market de 14 meses a 2. Capital de ronda se usa en GTM, no en building.
 - **Costos variables <USD $100/mes** = runway largo con poco capital.
 - **3 pilares ancla B2B** (pharma + seguros + retail) reducen dependencia de un solo cliente.
-- **Modelo Mapcity-style**: el grueso a escala lo paga B2B por acceso a la ficha longitudinal. Para el dueno hay freemium 3 tiers (Free $0 · Member $3.990 · Manada $9.990) — el Free cubre lo esencial para siempre y los planes pagos absorben el COGS biometrico Petify.
+- **Modelo B2B de acceso a la ficha**: el grueso a escala lo paga B2B por acceso a la ficha longitudinal. Para el dueno hay freemium 3 tiers (Free $0 · Member $3.990 · Manada $9.990) — el Free cubre lo esencial para siempre y los planes pagos absorben el COGS biometrico Petify.
 - **Paw Companys** abre un eje de revenue no correlacionado (CSR empresarial).
 
 ---
@@ -175,7 +175,7 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 - Paw Friend tiene **2 anos de ventaja arquitectonica**: research consent opt-in, b2b-api keys,
   partner_integrations, correlation_definitions ya en produccion. Construir el moat pharma
   desde cero toma minimo 18-24 meses.
-- **Modelo Mapcity (no le cobras al usuario, le cobras al que quiere data) es estructuralmente
+- **Modelo B2B de acceso a la ficha (no le cobras al usuario, le cobras al que quiere data) es estructuralmente
   superior**: gratuidad real captura el 90% del mercado que Petify pierde por friction.
 - Stack portable: multi-region en Supabase, Capacitor cross-platform.
 

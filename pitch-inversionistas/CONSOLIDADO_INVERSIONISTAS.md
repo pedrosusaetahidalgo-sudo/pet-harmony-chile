@@ -9,7 +9,7 @@
 > **⚠️ Modelo v2.1 vigente desde 2026-04-29** (Plan v5 Opcion 3). Ver [`docs-raiz/pitch/MODELO_V2_2026_04_22.md`](../docs-raiz/pitch/MODELO_V2_2026_04_22.md)
 > con el addendum 2026-04-29 para el documento canonico. Cambios clave vs v1:
 > - **Freemium B2C 3 tiers**: Free $0 (lo esencial) · Paw Member $3.990/mes · Manada $9.990/mes (suma aporte $2K/mes a refugios). Cubre el COGS biometrico Petify (USD $0,75/mascota/mes opt-in).
-> - **B2B Mapcity en pharma + seguros + retail** sigue siendo el motor de escala (grueso del ARR a 50k MAU).
+> - **B2B de acceso a la ficha en pharma + seguros + retail** sigue siendo el motor de escala (grueso del ARR a 50k MAU).
 > - **Vet = canal de adquisicion**, no revenue center (planes Clinica escondidos).
 > - **Donaciones → Paw Support / Manada** (reframe legal Ley 19.885: Paw Friend SpA es quien dona, no el usuario).
 
@@ -22,7 +22,7 @@
 3. [La solucion](#3-la-solucion)
 4. [Producto en vivo (2026-04-19)](#4-producto-en-vivo)
 5. [Traccion y signals unicos](#5-traccion-y-signals-unicos)
-6. [Modelo de negocio (modelo v2)](#6-modelo-de-negocio-modelo-v2-post-roberto-camhi)
+6. [Modelo de negocio (modelo v2)](#6-modelo-de-negocio-modelo-v2-post-pivot-2026-04-22)
 7. [Mercado y timing](#7-mercado-y-timing)
 8. [Competencia y moats](#8-competencia-y-moats)
 9. [Apalancamiento fundador + IA](#9-apalancamiento-fundador--ia)
@@ -183,12 +183,11 @@ React 18 + Vite + TypeScript + Tailwind + Supabase (Postgres + Edge Functions + 
 
 ---
 
-## 6. Modelo de negocio (modelo v2 2026-04-22)
+## 6. Modelo de negocio (modelo v2 post-pivot 2026-04-22)
 
-> **Paralelismo Mapcity**: *Mapcity no le cobraba a cada tienda chilena por
-> georreferenciar — le cobraba a Equifax, bancos e inmobiliarias por acceso a
-> la data. Paw Friend no le cobra al vet ni al dueno — le cobra a pharma,
-> seguros y retail por acceso a la ficha clinica longitudinal.*
+> **Tesis core**: *El activo no es la app — es la ficha clinica longitudinal.
+> Paw Friend no le cobra al vet ni al dueno por construirla. Le cobra a pharma,
+> seguros y retail por acceso a esa cohorte con consent ARCO.*
 
 **Principio guia**: *Producto invisible.* El dueno promedio chileno abre la app
 4 veces al ano. Si disenamos para power users, perdemos al 90% del mercado.
@@ -259,7 +258,7 @@ producto, solo reorientando quien paga.
 - **Dueno gratis sin caps** = retencion alta + ficha enriquecida = activo defendible.
 - **Pharma/seguros/retail** = bolsillo profundo, ticket recurrente, B2B con LTV multi-anual.
 - **Paw Companys** = aval social + revenue recurrente sin canibalizar nada.
-- **Vet gratis** = canal de adquisicion sin friccion comercial (Roberto: *"vets no son motor de revenue, tienen demanda excedida y estan chatos de vendors"*).
+- **Vet gratis** = canal de adquisicion sin friccion comercial (tesis pivot 2026-04-22: vets no son motor de revenue — tienen demanda excedida y estan chatos de vendors).
 - **Producto invisible** = onboarding 4 campos + OCR + recordatorios automaticos = el dueno promedio (4 visitas/ano) queda feliz, ficha se enriquece sola.
 
 ---
@@ -306,7 +305,7 @@ producto, solo reorientando quien paga.
 
 | Competidor | Amenaza | Nuestra jugada |
 |---|---|---|
-| **Petify** | **Modelo extractivo opuesto**: Basic USD $0.50/pet/mes (registro+verificacion+admin) · Pro USD $0.75/pet/mes (suma lost pet recovery 1:N) · Premium contact-sales (suma QR check-in) — todos cobrados al dueno hasta que se elimine la mascota (~$16.500 CLP/ano Pro tier por 2 mascotas; 30× mascotas refugio = inviable) | **Contraposicionamiento directo**: "dueno nunca paga". Modelo Mapcity captura el 90% que Petify deja en la mesa por friction. **Petify es nuestro proveedor de biometria** (Pro tier $0.75/pet absorbido por revenue B2B), no competidor primario. Petify ARR techo USD $300K vs Paw Friend USD $940K-2.1M a misma escala (2-7×) |
+| **Petify** | **Modelo extractivo opuesto**: Basic USD $0.50/pet/mes (registro+verificacion+admin) · Pro USD $0.75/pet/mes (suma lost pet recovery 1:N) · Premium contact-sales (suma QR check-in) — todos cobrados al dueno hasta que se elimine la mascota (~$16.500 CLP/ano Pro tier por 2 mascotas; 30× mascotas refugio = inviable) | **Contraposicionamiento directo**: "dueno nunca paga la base". Modelo B2B de acceso a la ficha captura el 90% que Petify deja en la mesa por friction. **Petify es nuestro proveedor de biometria** (Pro tier $0.75/pet absorbido por revenue B2B + Manada), no competidor primario. Petify ARR techo USD $300K vs Paw Friend USD $940K-2.1M a misma escala (2-7×) |
 | **QVET** | Alta 18-24m — entran a Chile | Ganar vet chico chileno antes con onboarding 5 min |
 | **Petsy** | Media — overlap B2C | Directorio SEO + plan B2B + Paw Companys |
 | **CuidaPet** | Baja — solo vet a domicilio | No compite en ficha ni B2B |

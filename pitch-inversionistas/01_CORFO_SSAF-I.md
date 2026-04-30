@@ -90,10 +90,9 @@ Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas,
 
 ## 4. Modelo de negocio (modelo v2 2026-04-22)
 
-> **Paralelismo Mapcity**: Mapcity no le cobraba a las tiendas — le cobraba a
-> Equifax, bancos e inmobiliarias por acceso a la data. Paw Friend no le cobra
-> al vet ni al dueno — le cobra a pharma, seguros y retail por acceso a la
-> ficha clinica longitudinal.
+> **Tesis core**: el activo no es la app — es la ficha clinica longitudinal.
+> Paw Friend no le cobra al vet ni al dueno por construirla. Le cobra a pharma,
+> seguros y retail por acceso a esa cohorte con consent ARCO.
 
 ### 4.1. Tres pilares ancla + dos soporte
 

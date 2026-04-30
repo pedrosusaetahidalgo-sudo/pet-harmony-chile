@@ -19,15 +19,16 @@
 ║   La ficha clínica longitudinal del 100%         ║
 ║   del mercado pet chileno.                       ║
 ║                                                  ║
-║   Modelo Mapcity en pet-tech: el dueño no        ║
-║   paga, paga quien quiere acceder a él.          ║
+║   El dueño no paga porque el activo no es la     ║
+║   app — es la ficha. Pagan pharma, seguros y     ║
+║   retail por acceso a esa cohorte.               ║
 ║                                                  ║
 ║   Pre-seed CL · 2026-06 launch · pawfriend.cl   ║
 ║                                                  ║
 ╚══════════════════════════════════════════════════╝
 ```
 
-**One-liner**: La ficha clínica longitudinal del 100% del mercado pet chileno. Modelo Mapcity en pet-tech.
+**One-liner**: La ficha clínica longitudinal del 100% del mercado pet chileno. El activo es la ficha, no la app — pagan quienes quieren acceso a esa cohorte (pharma, seguros, retail).
 
 ---
 
@@ -59,7 +60,7 @@
 
 2. **Paw Shield** (huella nasal biométrica vía Petify) — identificador único anti-extravío, **diferenciador único en Chile**.
 
-3. **Modelo Mapcity**: el dueño no paga (free + freemium opcional). **Pharma + seguros + retail pagan** por acceso a la ficha agregada anonimizada con consent.
+3. **Modelo B2B de acceso a la ficha**: el dueño no paga (free + freemium opcional). **Pharma + seguros + retail pagan** por acceso a la ficha agregada anonimizada con consent.
 
 **Por qué el moat es real**:
 
@@ -125,7 +126,7 @@
 
 **Manada incluye $2.000/mes a Fondo Paw Friend Refugios** (donado por SpA, no user — diseño legal anti-Ley 19.885).
 
-**B2B Mapcity (revenue principal a escala)**:
+**B2B de acceso a la ficha (revenue principal a escala)**:
 
 | Pilar | Quién paga | Ticket anual | Activación |
 |---|---|---|---|
@@ -153,7 +154,7 @@
 
 - **Sofia (vet)**: beta tester desde marzo 2026. Feedback: "vacunas con lote/serie, antiparasitarios con recordatorio". Implementado.
 - **Palo (tutor iPhone)**: feedback usabilidad. 6 bugs fixeados.
-- **Roberto Camhi** (founder Mapcity, mentor FI/Start-Up Chile/CORFO): pitch 1:1 2026-04-22. 3 insights aplicados (vets ≠ revenue, donaciones legal, no cargar al usuario).
+- **Pivot estratégico 2026-04-22**: 3 insights aplicados (vets ≠ revenue, donaciones legal vía SpA Art. 31 N°7 LIR, paywall solo para features avanzadas).
 - **13 refugios chilenos contactados** (outreach 2026-04-27) para Paw Shield Data Archive.
 - **Producto deployed**: pawfriend.cl + iOS/Android compilable.
 - **Compliance verificado**: Ley 21.719 + 19.628 + ARCO.
@@ -163,7 +164,7 @@
 - 503 commits, 587 tests, 197 migraciones SQL, 42 edge functions, 78 rutas
 - Apalancamiento documentado: **15x output equipo equivalente** (USD 720k-1.4M valor desarrollo capitalizado).
 
-**Quote textual** ([Roberto Camhi 2026-04-22](C:\Users\psusa\.claude\projects\c--Users-psusa-Desktop-pet-harmony-chile-main\memory\project_pivot_modelo_v2_2026_04_22.md)):
+**Tesis core post-pivot 2026-04-22**:
 > *"El vet no paga por el software porque su valor está en construir la ficha. El activo es la ficha. Quien paga es quien quiere acceder a la mascota a través de ella."*
 
 ---
@@ -180,7 +181,7 @@
                             │
                             │
    ←────────────────────────┼────────────────────────→
-   Modelo extractivo dueño  │  Modelo Mapcity B2B
+   Modelo extractivo dueño  │  Modelo B2B acceso a ficha
                             │
                             │
    Vetstoria ──────────     │  ─── (espacio vacío en CL)
@@ -191,7 +192,7 @@
                     Producto vertical estrecho
 ```
 
-**Posicionamiento Paw Friend**: cuadrante superior derecho — producto SaaS profundo + modelo Mapcity B2B.
+**Posicionamiento Paw Friend**: cuadrante superior derecho — producto SaaS profundo + modelo B2B de acceso a la ficha.
 
 **Vs Petify (Chile)**:
 - Petify cobra USD 0.50-0.75/mascota/mes al dueño directo. Captura 10% del mercado dispuesto a pagar.
@@ -203,7 +204,7 @@
 **Vs Vetstoria/Provet Cloud (UK/global)**:
 - B2B vet management. Cero producto B2C. Caro para mercado chileno.
 
-**Espacio vacío que ocupamos**: producto B2C profundo + B2B Mapcity en LatAm.
+**Espacio vacío que ocupamos**: producto B2C profundo + B2B de acceso a la ficha en LatAm.
 
 ---
 
@@ -244,7 +245,6 @@
 | Mes 24 | BD lead B2B | 0.5% |
 
 **Asesores ya activos**:
-- Roberto Camhi (founder Mapcity, mentor) — warm intro a angels Tier 2.
 - Sofia (vet) — referencia vertical veterinario.
 
 ---
@@ -299,15 +299,14 @@ Detalle completo: [CAP_TABLE_VALUACION_2026_04_29.md](CAP_TABLE_VALUACION_2026_0
 
 ### Por qué este equipo
 
-1. **Founder con track BI/data 5+ años** — entiende monetización de data (modelo Mapcity).
+1. **Founder con track BI/data 5+ años** — entiende monetización de data agregada (consent ARCO + agregaciones por raza/comuna/edad).
 2. **Producto vivo de 8 meses** — no es PPT, es 503 commits + 587 tests + 197 migs.
 3. **Compliance pre-resuelto** (Ley 21.719 + 19.628 + ARCO) — barrera de entrada para competidores.
-4. **Paralelismo Mapcity directo**: founder Mapcity (Roberto Camhi) es mentor activo del founder.
 
 ### Por qué Paw Friend ganará
 
 1. **Free + Freemium = 100% del mercado capturado**. Petify captura 10%, deja 90% en la mesa.
-2. **Modelo Mapcity B2B = ARR 5-10x SaaS clásico vet**.
+2. **Modelo B2B de acceso a la ficha = ARR 5-10x SaaS clásico vet**.
 3. **Compliance + biometría = moat regulatorio + producto** difícil de replicar.
 4. **LatAm expansion path** ya mapeado — Chile es laboratorio.
 
