@@ -22,7 +22,8 @@
   chileno + directorio público de veterinarios + reservas + refugios/adopción
   + Paw Shield biométrico (Petify) opt-in + Paw Passport PDF + memorial.
 - **One-liner**: *"La ficha clínica longitudinal del 100% del mercado pet chileno.
-  Modelo Mapcity en pet-tech."*
+  El dueño no paga porque el activo no es la app — es la ficha. Pagan pharma,
+  seguros y retail por acceso a esa cohorte."*
 - **Tagline público**: *"Tu mascota, sin tareas"*.
 - **Dominio**: pawfriend.cl (deploy desde `docs/` a GitHub Pages).
 - **Repo**: `github.com/pedrosusaetahidalgo-sudo/pet-harmony-chile`, branch `main`.
@@ -42,13 +43,20 @@
 
 - **v1 (pre-2026-04-22)**: B2C Premium $3.990 con feature unlock + B2B vets
   como revenue center. **Descartado** por feedback estratégico.
-- **v2 (2026-04-22, post-Roberto Camhi founder Mapcity)**: el dueño NUNCA paga.
-  Modelo Mapcity B2B (pharma + seguros + retail). Vets canal, no revenue.
-  "Donaciones" → "Paw Support" (reframe Ley 19.885).
+- **v2 (2026-04-22, post-pivot estratégico con mentor advisor off-record)**:
+  el dueño NUNCA paga. Modelo B2B de acceso a la ficha (pharma + seguros +
+  retail). Vets canal, no revenue. "Donaciones" → "Paw Support" (reframe
+  Ley 19.885).
 - **v2.1 (2026-04-29, Plan v5 Opción 3)**: el dueño paga **sólo si quiere
   features avanzadas**. Razón: Petify USD 0.75/pet/mes lineal rompe viabilidad
   sin partners B2B firmados todavía. **Freemium B2C 3 tiers como puente** que
   cubre COGS Petify mientras llegamos a partners.
+- **Reanálisis 2026-04-30**: la narrativa "Mapcity" se desancla — fue analogía
+  retórica heredada, no estrategia. El modelo se sostiene por sus propios
+  méritos: el activo es la ficha clínica longitudinal, no la app. Paw Shield
+  biométrico se reposiciona como **exclusivo de Manada** (único tier con
+  margen para absorber USD 0.75/mes COGS). Paw Member queda con Passport +
+  Insights + Audio IA + Reportes (sin COGS externo, margen ~95%).
 
 ### Pricing canónico actual (v2.1)
 
@@ -82,7 +90,7 @@ Tablas: `manada_refugio_preferences`, `manada_fondo_pool`, `manada_aportes_log`
 (mig `20260929000000_manada_fondo_refugios.sql`). Cron mensual cierre pool día
 1 03:00 UTC (mig `20260929000001_manada_pool_close_cron.sql`).
 
-### B2B 7 motores Mapcity (donde está el grueso a escala)
+### B2B 7 motores de acceso a la ficha (donde está el grueso a escala)
 
 Código end-to-end ready, esperando primer deal firmado.
 
@@ -107,7 +115,7 @@ Código end-to-end ready, esperando primer deal firmado.
 
 > *"El vet no paga porque su valor está en construir la ficha. El activo es la
 > ficha. Quien paga es quien quiere acceder a la mascota a través de ella."*
-> — Roberto Camhi (founder Mapcity), 2026-04-22.
+> — Tesis core post-pivot 2026-04-22.
 
 ### ARR proyectado (FX USD/CLP = 905 declarado único)
 
@@ -344,7 +352,7 @@ Todas envueltas con `withTelemetry`.
    borradores en `docs-raiz/legal/`.
 8. **Reclutar cohorte beta**: 30+ tutores reales + 5+ vets + 2 refugios + 1
    clínica. Hito 1 PATH_MRR.
-9. **Pitch a Roberto Camhi** segundo pase con
+9. **Pitch a inversionistas chilenos** con
    `pawfriend.cl/pitch/inversionistas.html` v2.1 (15 slides).
 10. **Outreach B2B** con `OUTREACH_TEMPLATES_B2B_2026_04_29.md` (Centrovet +
     Sura primero).
@@ -359,7 +367,7 @@ Todas envueltas con `withTelemetry`.
 - **Premium B2C reactivación**: 2 intentos previos sin tracción (2026-04-08 +
   2026-04-19). v2.1 lo reactivó con feature unlock REAL (no solo badge) —
   pendiente validar conversión 13% target.
-- **Vets no son motor de revenue**: feedback Roberto Camhi 2026-04-22. Tienen
+- **Vets no son motor de revenue**: tesis post-pivot 2026-04-22. Tienen
   demanda excedida, son pocos para mucha demanda, chatos de vendors.
 - **"Donaciones" activa Ley 19.885 de donatarios**: reframe a "Aportes" / "Paw
   Support". Manada Fondo Refugios via SpA evita el problema (donación legal la
@@ -370,7 +378,7 @@ Todas envueltas con `withTelemetry`.
 - **`verify_jwt` flip en bloque**: incidente 2026-04-20.
 - **Vite manualChunks por path src**: causa circular deps. Solo vendors.
 - **Petify modelo extractivo** (USD 0.50-0.75/pet/mes al dueño): captura 10%,
-  deja 90% afuera. Refuerza moat Paw Friend modelo Mapcity (capturamos 100%).
+  deja 90% afuera. Refuerza moat Paw Friend (capturamos 100% via B2B).
 - **Petify TEST→PROD**: flipear flag con TEST key rompe enrollments al rotar.
 - **`subscriptions.plan_type`** es la columna real (NO `plan_id`). Error
   histórico fixed en mig 20260929000000.
@@ -428,7 +436,7 @@ Todas envueltas con `withTelemetry`.
 
 ### Modelo v2 origen
 
-- `docs-raiz/pitch/MODELO_V2_2026_04_22.md` — pivot Roberto Camhi + addendum
+- `docs-raiz/pitch/MODELO_V2_2026_04_22.md` — pivot estratégico 2026-04-22 + addendum
   2026-04-29 con freemium 3 tiers.
 
 ### Operacionales
@@ -515,15 +523,16 @@ Todas envueltas con `withTelemetry`.
 
 ### Revisión de pitch
 
-> *"Voy a presentar a Roberto Camhi (founder Mapcity, mentor angel). Acá está
-> mi deck: pawfriend.cl/pitch/inversionistas.html. ¿Qué slides necesito
+> *"Voy a presentar a un angel chileno con red en CORFO/Founder Institute. Acá
+> está mi deck: pawfriend.cl/pitch/inversionistas.html. ¿Qué slides necesito
 > reforzar? ¿Qué objeciones esperar?"*
 
 ### Análisis competitivo
 
 > *"Petify cobra USD 0.75/pet/mes a dueños directo, capta el 10% que paga.
-> Yo uso modelo Mapcity B2B (pharma+seguros+retail pagan, dueño no). ¿Cómo se
-> compara con apps similares en LATAM/US? ¿Hay riesgo que Petify cambie modelo?"*
+> Yo uso modelo B2B de acceso a la ficha (pharma+seguros+retail pagan, dueño
+> Free o freemium opcional). ¿Cómo se compara con apps similares en LATAM/US?
+> ¿Hay riesgo que Petify cambie modelo?"*
 
 ### Decisiones de producto
 

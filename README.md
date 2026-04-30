@@ -1,6 +1,6 @@
 # Paw Friend — Infraestructura Digital de la Mascota Chilena
 
-Plataforma con dueño 100% gratis + 7 motores B2B (modelo Mapcity).
+Plataforma freemium 3 tiers para dueños + 7 motores B2B de acceso a la ficha.
 Ficha clínica digital + directorio veterinario + biometría Paw Shield +
 APIs B2B + cotizador seguros + retail con descuentos + lead capture B2B
 para gobierno, banca, edificios y long-tail.

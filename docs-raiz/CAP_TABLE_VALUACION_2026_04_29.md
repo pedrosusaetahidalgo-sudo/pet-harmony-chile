@@ -65,7 +65,7 @@ CORFO + Start-Up Chile son grants no diluyentes — no afectan equity.
 
 1. **Producto vivo** (no PPT): 78 rutas, 197 migs SQL, 42 edge fns, 587 tests verde, código end-to-end de 7 motores Revenue Master Plan.
 2. **Apalancamiento founder + IA documentado**: 320 hrs founder = ~4.800 hrs equipo equivalente = USD 720k-1.44M valor de desarrollo capitalizable. Fuente: [APALANCAMIENTO_FUNDADOR_IA.md](pitch/APALANCAMIENTO_FUNDADOR_IA.md).
-3. **Modelo Mapcity reproducible**: paralelismo con caso de éxito chileno conocido por inversionistas (Mapcity vendió a Equifax).
+3. **Modelo B2B de acceso a la ficha reproducible**: el activo es la ficha clínica longitudinal, no la app. Pagan pharma/seguros/retail por acceso con consent ARCO.
 4. **Compliance Ley 21.719 + 19.628 cumplido** (pre-seed startups raras lo tienen).
 5. **SpA constituida + cuenta Flow lista** = bajo riesgo administrativo.
 6. **Tracción inicial Beta**: Sofia (vet) + Palo (tutor) + 13 refugios en outreach.
@@ -166,12 +166,12 @@ Si los 7 hitos cumplen → Series A USD 1-2M con post-money USD 5-10M es realist
 
 **Respuesta**:
 - TAM Chile: ~6M mascotas × USD 100/año gasto promedio = USD 600M/año.
-- Modelo Mapcity: NO necesita el 100% del mercado — solo el 1-2% capturado vía B2B (pharma + seguros + retail) genera ARR USD 2-3M/año a 100k MAU.
+- Modelo B2B de acceso a la ficha: NO necesita el 100% del mercado — solo el 1-2% capturado vía B2B (pharma + seguros + retail) genera ARR USD 2-3M/año a 100k MAU.
 - Expansión LatAm año 3: México + Argentina + Colombia × 6 = USD 3.6B TAM combinado.
 
 ### Objeción: "Petify es un competidor"
 
-**Respuesta**: Petify es proveedor (B2B API), NO competidor. Ellos cobran al dueño directo ($0.50-0.75/pet/mes); nosotros usamos su API como subprocesador y monetizamos B2B (modelo Mapcity). Es complementario, no canibalízación.
+**Respuesta**: Petify es proveedor (B2B API), NO competidor. Ellos cobran al dueño directo ($0.50-0.75/pet/mes); nosotros usamos su API como subprocesador y monetizamos B2B (acceso a la ficha por pharma/seguros/retail). Es complementario, no canibalízación.
 
 ### Objeción: "Si pharma tarda en firmar, ¿qué pasa?"
 
@@ -188,11 +188,9 @@ Si los 7 hitos cumplen → Series A USD 1-2M con post-money USD 5-10M es realist
 
 ## 8. Lista corta angels Tier 2-3 LatAm a contactar
 
-> Memoria [Roberto Camhi pitch 1:1](C:\Users\psusa\.claude\projects\c--Users-psusa-Desktop-pet-harmony-chile-main\memory\project_roberto_camhi_pitch.md) ya guió primer pitch 2026-04-22.
-
 | Angel/VC | Tier | País | Tickets típicos | Conexión |
 |---|---|---|---|---|
-| Roberto Camhi | 1 (mentor) | CL | $30-100k | ✅ Warm intro madrastra Cote |
+| Angel chileno Tier 1 (warm intro red personal) | 1 | CL | $30-100k | Warm intro pendiente confirmar |
 | Platanus Ventures | 2 | CL | $100-500k | Pitch público a través de form |
 | Magma Partners | 2 | CL | $100-300k | Pitch público |
 | Kaszek | 1 | LatAm | $1M+ | Demasiado grande, postpone Series A |
@@ -202,7 +200,7 @@ Si los 7 hitos cumplen → Series A USD 1-2M con post-money USD 5-10M es realist
 | ChileGlobal Angels | 3 | CL | $30-100k | Network founder |
 
 **Estrategia**:
-1. Roberto Camhi primero (warm) — feedback + intro a 2-3 angels Tier 2.
+1. Angel chileno Tier 1 vía warm intro red personal — feedback + intro a 2-3 angels Tier 2.
 2. Platanus + Magma público (Chile, conocen mercado pet) — meses 1-2 post-launch con métricas.
 3. Si no cierra en CL: FJ Labs + ChileGlobal Angels meses 3-4.
 4. Kaszek/Cathay solo en Series A con MRR > $30k.

@@ -2,7 +2,7 @@
 
 > Generado durante ejecución de [pawfriend-prompt-v5.md Fase 7](../pawfriend-prompt-v5.md).
 > **FX único declarado**: USD 1 = CLP 905 (Pedro confirmó 2026-04-29).
-> **Modelo**: v2.1 freemium B2C 3 tiers + B2B 7 motores Mapcity.
+> **Modelo**: v2.1 freemium B2C 3 tiers + B2B 7 motores de acceso a la ficha.
 > **Horizonte de proyección**: 12 / 24 / 36 meses post-launch (1 junio 2026).
 
 ---
@@ -239,7 +239,7 @@ Valuación pre-money sugerida: USD 600k - 1.2M (cap table razonable post-seed). 
 | Petify + 2x precio | Baja-media | Medio | Plan B: entrenar modelo propio (ya en marcha — outreach refugios + Paw Shield Data Archive) |
 | FX > 1.100 | Media | Bajo | Subir pricing CLP proporcionalmente |
 | Pharma no firma a tiempo | Alta | Medio | B2C freemium cubre operación. Acelerar Centrovet/Virbac outreach |
-| Roberto Camhi pivote vuelve | Baja | Alto | Modelo v2.1 documentado, decks reescritos |
+| Pivote estratégico vuelve | Baja | Alto | Modelo v2.1 documentado, decks reescritos |
 | Competidor entra al mercado Chile | Media | Medio | Moat: ficha clínica longitudinal + Paw Shield biometría + B2B alianzas |
 
 ---

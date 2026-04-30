@@ -10,7 +10,7 @@
 
 ### El dueño nunca paga. Punto.
 
-> Modelo v2 (insight estrategico 2026-04-22): "Producto invisible. Mapcity no le cobraba a las tiendas, le cobraba a Equifax."
+> Modelo v2 (insight estratégico 2026-04-22): producto invisible para el dueño flojo. El activo es la ficha clínica longitudinal, no la app. Pagan quienes quieren acceso a esa cohorte: pharma, seguros, retail.
 
 **Por qué se mantiene**:
 1. Mercado chileno: 70% del NSE C-D no pagaría suscripción mensual por su mascota.
@@ -22,7 +22,7 @@
 
 - 1 deal pharma = 100x más MRR que 1.000 dueños pagando.
 - 1 deal aseguradora = 50x más LTV que 5.000 Paw Members.
-- Se cumple el principio **Mapcity**: cobramos a quien quiere acceso a la cohorte, no a la cohorte.
+- Se cumple el principio core: cobramos a quien quiere acceso a la cohorte, no a la cohorte.
 
 ---
 

@@ -850,7 +850,7 @@ una, espanol chileno, naturales (no marketing copy):
 1. Sobre por que el dueno no paga.
 2. Sobre como un founder + IA lleva el producto a 15x speed.
 3. Sobre Paw Shield biometria.
-4. Sobre el moat del modelo Mapcity.
+4. Sobre el moat del modelo B2B de acceso a la ficha.
 5. Sobre Chile como mercado.
 ```
 

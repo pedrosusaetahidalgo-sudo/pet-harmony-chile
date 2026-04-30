@@ -67,10 +67,9 @@ anonimizada.
 **El dueño nunca paga por features básicas. Las marcas pagan por acceso
 con respeto.**
 
-Es el modelo Mapcity. Ellos no le cobraron a las tiendas chilenas por
-georreferenciar — le cobraron a Equifax y los bancos por la data.
-Nosotros no le cobramos al dueño ni al vet por la ficha. Le cobramos a
-quien quiere acceder a la mascota a través de ella.
+El activo no es la app — es la ficha clínica longitudinal. No le
+cobramos al dueño ni al vet por construirla. Le cobramos a quien quiere
+acceder a la mascota a través de ella.
 
 ---
 
@@ -138,7 +137,7 @@ sistema. Win-win sin extracción.
 | Veterinario | Vet, veterinario | Doctor (sin matiz) |
 | Refugio | Refugio, hogar de adopción | Perrera, fundación genérica |
 | Ficha clínica | Ficha clínica, historial médico | Expediente |
-| Modelo | Modelo Mapcity, B2B | "Disrupción", "innovación" |
+| Modelo | B2B de acceso a la ficha | "Disrupción", "innovación" |
 
 ### Frases que repetimos
 
@@ -183,7 +182,7 @@ cambia o el dueño se muda. **Esto reemplazamos.**
 ### Apps mascotas genéricas
 
 Recordatorios sin ficha, gamificación sin medicina. Producto plano.
-**Nosotros somos la capa profunda + la capa B2B Mapcity.**
+**Nosotros somos la capa profunda + la capa B2B de acceso a la ficha.**
 
 ---
 
@@ -213,9 +212,6 @@ SUSAETA GARNHAM SOFTWARE ENGINEERING SpA constituida 2026-04-17.
 Mascotas: Kai (perro pastor suizo) y Ema (gata). Hechos reales que
 prueban en sus mascotas cada feature antes de soltar al público.
 
-**Roberto Camhi**, mentor. Founder de Mapcity. Su feedback gatilló el
-pivot v2 en abril 2026.
-
 **Sofia Rosi**, vet beta tester. Primera veterinaria que confió. Su
 feedback definió las features de vacunas, antiparasitarios, lote/serie.
 
@@ -240,7 +236,7 @@ M$ MRR · 1 piloto pharma firmado · primera ronda pre-seed cerrada.
 30k MAU · USD 30k MRR · decisión Series A.
 
 ### 2028+ — Expansión LatAm
-México · Argentina · Colombia. Mismo modelo Mapcity.
+México · Argentina · Colombia. Mismo modelo B2B de acceso a la ficha.
 
 ---
 
@@ -248,12 +244,13 @@ México · Argentina · Colombia. Mismo modelo Mapcity.
 
 > *"Paw Friend es la ficha clínica longitudinal de mascotas en Chile.
 > El dueño no paga por las features básicas — gratis para siempre. Si
-> quiere features avanzadas como Paw Shield biométrico anti-extravío,
+> quiere Paw Passport PDF, Insights Pro, Audio IA y Reportes históricos,
 > Paw Member $3.990/mes. Si tiene cinco mascotas o un corazón refugio,
-> Manada $9.990 con $2.000 mensuales al fondo de refugios. Las marcas
-> grandes — pharma, seguros, retail — pagan por acceso con consent ARCO.
-> Modelo Mapcity aplicado al pet-tech. Hecho en Chile por una persona y
-> la IA en 8 meses. Lanzamiento 1 de junio 2026."*
+> Manada $9.990 con Paw Shield biométrico anti-extravío exclusivo y
+> $2.000 mensuales al fondo de refugios. Las marcas grandes — pharma,
+> seguros, retail — pagan por acceso con consent ARCO. El activo es la
+> ficha, no la app. Hecho en Chile por una persona y la IA en 8 meses.
+> Lanzamiento 1 de junio 2026."*
 
 ---
 
@@ -271,10 +268,10 @@ México · Argentina · Colombia. Mismo modelo Mapcity.
 > sponsored reminders, data agregada, integración API, white-label para
 > aseguradoras y municipios.*
 >
-> *Modelo Mapcity aplicado a pet-tech: el dueño no paga por la
-> infraestructura, paga quien quiere acceder a él. Diferencia con Petify
-> (que cobra USD 0.75/mascota directo al dueño y captura solo el 10%
-> dispuesto a pagar) y con PetDesk/Vetster (vet-only, sin layer B2B).*
+> *Tesis: el dueño no paga por la infraestructura, paga quien quiere
+> acceder a él. Diferencia con Petify (que cobra USD 0.75/mascota directo
+> al dueño y captura solo el 10% dispuesto a pagar) y con PetDesk/Vetster
+> (vet-only, sin layer B2B).*
 >
 > *Construido en Chile por una persona y la IA: 503 commits, 587 tests,
 > 197 migraciones SQL, 42 edge functions en 8 meses. Apalancamiento

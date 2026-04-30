@@ -7,10 +7,10 @@
 >
 > **Objetivo**: sparring honesto sobre app, flujo, monetización, riesgos, y
 > si existe mejor camino que el actualmente elegido (modelo v2.1 freemium
-> 3 tiers + B2B Mapcity).
+> 3 tiers + B2B 7 motores de acceso a la ficha).
 >
-> **Versión**: 1.0 · **Fecha**: 2026-04-30 ·
-> **Próximo update**: post primer pitch a Roberto Camhi con feedback aplicado.
+> **Versión**: 1.1 · **Fecha**: 2026-04-30 ·
+> **Próximo update**: post primer pitch a inversionista chileno con feedback aplicado.
 
 ---
 
@@ -28,8 +28,8 @@ Tu trabajo es hacer **sparring estratégico crítico**, no validación.
    razón solo porque construyó el producto.
 3. **Trade-offs explícitos** en cada propuesta. No "podrías hacer X" sin
    "el costo de hacer X vs el camino actual es Y".
-4. **Cita comparables reales** cuando aplique (apps pet-tech LatAm/US, casos
-   Mapcity, modelos freemium consumer software). Si no conoces el comparable
+4. **Cita comparables reales** cuando aplique (apps pet-tech LatAm/US,
+   modelos freemium consumer software). Si no conoces el comparable
    exacto, dilo.
 5. **NO inventes datos**. Si necesitás un número específico (ej: ARPU pet-tech
    en LatAm) y no lo sabés con certeza, decí "no tengo dato confiable, mejor
@@ -64,7 +64,8 @@ App pet-tech para dueños chilenos: ficha clínica longitudinal + directorio
 vets + reservas + refugios + biometría opt-in (Petify) + memorial.
 
 **One-liner**: "La ficha clínica longitudinal del 100% del mercado pet
-chileno. Modelo Mapcity en pet-tech."
+chileno. El dueño no paga porque el activo no es la app — es la ficha.
+Pagan pharma, seguros y retail por acceso a esa cohorte."
 
 **Lanzamiento**: 1 junio 2026 (~1 mes desde hoy).
 
@@ -78,7 +79,7 @@ chileno. Modelo Mapcity en pet-tech."
 
 **Conversión target**: 13% Paw Member + 1-2% Manada.
 
-**B2B Mapcity** (donde está el grueso a escala):
+**B2B de acceso a la ficha** (donde está el grueso a escala):
 1. Pharma (Centrovet, Virbac, Zoetis) — USD 50-200k/brand/año
 2. Seguros (Sura, BCI, Mapfre) — USD 200-500k/año
 3. Retail (Master Dog, Falabella, Puppis) — USD 250-500k/año
@@ -212,7 +213,7 @@ Decisión actual: Paw Shield, Paw Passport, Insights Pro, Audio IA, Reportes
 
 ---
 
-### C. Monetización B2B Mapcity
+### C. Monetización B2B de acceso a la ficha
 
 #### C.1 — 7 motores B2B — ¿priorización correcta?
 
@@ -246,12 +247,12 @@ Pregunta central: ¿pharma firma piloto USD 50-200k con 5-10k MAU, o exigen
 
 #### C.3 — Vets como canal vs revenue
 
-Decisión actual: vets no pagan por software (Plan Básica $0). Tesis Mapcity:
+Decisión actual: vets no pagan por software (Plan Básica $0). Tesis core:
 "el vet construye la ficha, quien paga es quien quiere acceder".
 
 **Cuestionar**:
 - ¿Es correcto NO cobrar vets cuando PetDesk/Vetster cobran USD 100-300/mes?
-- ¿Pierdo revenue B2B fácil por dogma del modelo Mapcity?
+- ¿Pierdo revenue B2B fácil por dogma del modelo "vet = canal"?
 - ¿Hay un híbrido: vets básico free + Premium $9.900 con valor REAL para
   vets (no solo "destacado")?
 
@@ -302,7 +303,7 @@ Pausado. Outreach a 13 refugios chilenos para captar más data.
 (SaaS B2B clásico, $99-299/mes/clínica) sin app dueño?
 
 - Pros: pricing simple, sales B2B medible, sin dependencia Petify
-- Contras: pierde moat de data agregada (sin user data, no hay ARR Mapcity)
+- Contras: pierde moat de data agregada (sin user data, no hay ARR B2B de acceso a ficha)
 - ¿Vale más una salida $5M con B2B SaaS que Series A con freemium consumer?
 
 #### E.2 — Marketplace puro (no SaaS)
@@ -389,18 +390,17 @@ Lanzamiento 1 junio 2026. Hoy 30 abril 2026.
 
 ---
 
-### H. Pitch a Roberto Camhi (founder Mapcity, mentor)
+### H. Pitch a inversionista chileno Tier 1
 
 Voy a presentar el deck `pawfriend.cl/pitch/inversionistas.html` (15 slides
-v2.1). Roberto fue quien gatilló el pivot v2 → freemium con feedback
-estratégico 22 abril.
+v2.1) a un angel chileno con red en CORFO/Founder Institute/Start-Up Chile.
 
 **Cuestionar**:
 - ¿Qué slide hay que reforzar SI O SÍ antes de la reunión?
-- ¿Qué pregunta incómoda es más probable que haga (founder Mapcity)?
-- ¿Qué número/dato Roberto buscaría en primer 30 segundos?
-- ¿Cómo presentarle el cambio de v2 → v2.1 (freemium 3 tiers) sin que sienta
-  que lo desautorizé al introducir el paywall que él inicialmente desaconsejó?
+- ¿Qué pregunta incómoda es más probable que haga un angel chileno experimentado?
+- ¿Qué número/dato un inversor con track record buscaría en primer 30 segundos?
+- ¿Cómo presentar la evolución v2 → v2.1 (freemium 3 tiers) si el inversor
+  pregunta por qué se introdujo paywall en un modelo que arrancó "dueño nunca paga"?
 
 ---
 
@@ -435,7 +435,7 @@ Si querés profundizar en algún punto, citá estos archivos por path completo
 - `docs-raiz/POLISH_QA_E2E_2026_04_29.md` — matriz QA flujos críticos
 - `docs-raiz/LEGAL_REVIEW_2026_04_29.md` — Ley 21.719 + 19.628
 - `docs-raiz/PITCH_DECK_V2_2026_04_29.md` — 12 slides definitivos
-- `docs-raiz/pitch/MODELO_V2_2026_04_22.md` — pivot Roberto Camhi origen
+- `docs-raiz/pitch/MODELO_V2_2026_04_22.md` — pivot estratégico 2026-04-22 origen
 
 ---
 

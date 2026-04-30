@@ -258,10 +258,10 @@
 > 3. **RLS hardening + compliance** que un auditor de Sura/BCI puede
 >    revisar y aprobar sin pivots.
 
-> El moat comercial es **el modelo Mapcity** ("dueño nunca paga, B2B
-> bolsillo profundo paga por acceso") que captura el 100% del mercado
-> mientras Petify (modelo extractivo cobrando al dueño) solo captura
-> el 10% que paga.
+> El moat comercial es el **modelo B2B de acceso a la ficha** ("dueño
+> nunca paga por la base, B2B bolsillo profundo paga por acceso") que
+> captura el 100% del mercado mientras Petify (modelo extractivo cobrando
+> al dueño) solo captura el 10% que paga.
 
 ---
 

@@ -18,9 +18,10 @@
 ### 1.1 Quien somos
 
 Paw Friend es la **infraestructura digital de la mascota chilena**. El dueno
-nunca paga: ficha clinica, recordatorios, comunidad y biometria son gratis.
-La monetizacion es B2B: pharma + seguros + retail + gobierno + banca + edificios
-+ refugios + paw partners + long-tail. Modelo Mapcity.
+no paga por lo esencial: ficha clinica, recordatorios, comunidad. La biometria
+Paw Shield queda en el plan Manada para controlar COGS. La monetizacion es
+B2B de acceso a la ficha: pharma + seguros + retail + gobierno + banca +
+edificios + refugios + paw partners + long-tail.
 
 ### 1.2 Tono visual
 

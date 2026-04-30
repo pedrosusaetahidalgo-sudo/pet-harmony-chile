@@ -19,8 +19,9 @@ Hola [NOMBRE],
 
 Soy Pedro Susaeta, founder de Paw Friend (pawfriend.cl). Estamos
 construyendo la ficha clínica longitudinal del 100% del mercado pet
-chileno. Lo que Mapcity hizo con georreferenciación de tiendas, nosotros
-estamos haciendo con el historial veterinario completo de cada mascota.
+chileno. El activo es la ficha — el historial veterinario completo de
+cada mascota — y nuestro modelo es B2B: pharma, seguros y retail pagan
+por acceso con consent ARCO.
 
 Hoy llevamos [X tutores activos / Y vets registrados] y crecemos [Z%
 mensual]. La data agregada anonimizada (con consent opt-in del dueño)
@@ -39,8 +40,8 @@ Para [CENTROVET/VIRBAC/ZOETIS], esto significa:
 3. Insights de mercado real sobre adherencia a sus productos.
 
 Modelo de negocio: contrato anual USD 50-200k según scope. NO cobramos
-al tutor — el modelo es Mapcity puro. Las marcas chilenas que entran
-primero capturan el moat de data por años.
+al tutor por la ficha — pagan las marcas que quieren acceso. Las marcas
+chilenas que entran primero capturan el moat de data por años.
 
 ¿Tendrías 30 minutos esta semana o la próxima para mostrarte el portal
 B2B + dashboard agregado live? Te puedo enviar el deck antes si lo
@@ -57,8 +58,8 @@ pawfriend.cl/pitch/inversionistas.html
 
 ```
 Hola [NOMBRE], tengo Paw Friend (pawfriend.cl) — ficha clínica
-longitudinal de mascotas con [X usuarios activos]. Modelo Mapcity
-aplicado a pet-tech: tutor no paga, pharma sí.
+longitudinal de mascotas con [X usuarios activos]. Modelo B2B de
+acceso a la ficha: tutor no paga, pharma sí.
 
 ¿Tendrías 30 min para ver el portal B2B y discutir piloto en
 [CENTROVET/VIRBAC/ZOETIS]?

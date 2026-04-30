@@ -58,7 +58,7 @@ La navegación lo muestra: 5 tabs inferiores + sidebar con 6 grupos + Home con d
 
 Paw Friend se construyó en 6 meses con tracción vertiginosa: cada feedback de beta testers (Sofia, Paloma) + cada idea estratégica (gamificación, social, refugios) se implementó. El resultado: **producto promiscuo con features buenas pero sin norte**. Es el patrón clásico de startup en fase pre-PMF.
 
-El pivote de 2026-04-19 (B2C gratis + 6 motores) y el de Roberto (producto invisible, vets=canal) apuntaron en la dirección correcta pero no colapsaron la UI. Hoy el código, las rutas, el sidebar y el BottomTab siguen reflejando la "super app" inicial.
+El pivote de 2026-04-19 (B2C gratis + 6 motores) y el del 2026-04-22 (producto invisible, vets=canal) apuntaron en la dirección correcta pero no colapsaron la UI. Hoy el código, las rutas, el sidebar y el BottomTab siguen reflejando la "super app" inicial.
 
 ### 1.3. Lo que funciona y no se toca
 
@@ -117,9 +117,9 @@ Regla de oro (ya documentada en [featureFlags.ts:4-7](../../src/lib/featureFlags
 | Prueba | Muchas features | Un artefacto: **el Paw Passport exportable** |
 | Diferenciador | Chilena, gratis, completa | **Biometría nasal primaria + historia completa + ética** |
 
-### 2.3. Alineación con un mentor experimentado (modelo v2)
+### 2.3. Alineación con la tesis core (modelo v2)
 
-Roberto dijo "producto invisible, vets=canal, revenue real de Pharma+Seguros+Retail, clínica escondido". Este plan **no cambia esa tesis — la hace ejecutable**.
+Tesis core post-pivot 2026-04-22: producto invisible, vets=canal, revenue real de Pharma+Seguros+Retail, clínica escondido. Este plan **no cambia esa tesis — la hace ejecutable**.
 
 La ficha completa es el producto invisible. Los insights que genera son el activo vendible a Pharma/Seguros/Retail. El nose print es la llave que abre el canal físico (retail, vets, refugios). El dueño nunca ve el modelo de negocio. Ve a su mascota cuidada.
 
@@ -2413,7 +2413,7 @@ El plan tal como está es ejecutable con 1 persona + IA durante 6 meses si hay r
 
 ## 15. Referencias y docs relacionados
 
-- [docs-raiz/pitch/MODELO_V2_2026_04_22.md](../pitch/MODELO_V2_2026_04_22.md) — Modelo v2 Roberto
+- [docs-raiz/pitch/MODELO_V2_2026_04_22.md](../pitch/MODELO_V2_2026_04_22.md) — Modelo v2 (pivot 2026-04-22)
 - [docs-specs/NOSE_PRINT_ID.md](../../docs-specs/NOSE_PRINT_ID.md) — Spec biometría (a reescribir)
 - [CLAUDE.md](../../CLAUDE.md) — Manual operativo del repo
 - [src/lib/featureFlags.ts](../../src/lib/featureFlags.ts) — Sistema flags vigente
