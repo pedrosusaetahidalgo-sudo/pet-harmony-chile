@@ -84,8 +84,8 @@ export function PremiumNudge({
       </div>
 
       <p className="text-[11px] text-muted-foreground italic leading-snug">
-        Paw Member desbloquea Paw Shield, Paw Passport, Insights Pro y más. $3.990/mes · cancelable
-        cuando quieras.
+        Paw Member desbloquea Paw Passport, Insights Pro, Audio IA y más. $3.990/mes · cancelable
+        cuando quieras. Paw Shield biométrico es exclusivo del plan Manada.
       </p>
 
       <Button

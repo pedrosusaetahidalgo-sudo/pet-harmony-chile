@@ -17,7 +17,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Check, Heart, Sparkles, Crown, Loader2, Shield, FileText, BarChart3 } from '@/lib/icons';
+import { Check, Heart, Sparkles, Crown, Loader2, FileText, BarChart3 } from '@/lib/icons';
 import { PLANS, formatCLP, type PlanId } from '@/lib/plans';
 import { cn } from '@/lib/utils';
 
@@ -42,7 +42,6 @@ const FREE_FEATURES: string[] = [
 ];
 
 const PAW_MEMBER_EXTRAS: { icon: React.ComponentType<{ className?: string }>; text: string }[] = [
-  { icon: Shield, text: 'Paw Shield biometrico (huella nasal anti-perdida)' },
   { icon: FileText, text: 'Paw Passport PDF compartible (8 paginas)' },
   { icon: BarChart3, text: 'Insights Pro · data agregada de tu raza/comuna' },
   { icon: Sparkles, text: 'Audio notes con transcripcion IA' },
@@ -52,6 +51,7 @@ const PAW_MEMBER_EXTRAS: { icon: React.ComponentType<{ className?: string }>; te
 
 const MANADA_EXTRAS: string[] = [
   'Todo lo de Paw Member',
+  'Paw Shield biometrico exclusivo (huella nasal anti-perdida)',
   'Hasta 5 mascotas',
   'Descuentos Paw Partners exclusivos',
   'Soporte prioritario',
@@ -79,8 +79,8 @@ export function Tier3Pricing({ onActivate, processingPlan, currentPlanId }: Tier
           para sacarle todo a Paw Friend
         </h2>
         <p className="text-sm text-muted-foreground max-w-xl mx-auto">
-          Lo basico es gratis para siempre. Paw Member desbloquea Paw Shield, Paw Passport e
-          Insights Pro.
+          Lo basico es gratis para siempre. Paw Member desbloquea Paw Passport e Insights Pro. Paw
+          Shield biometrico es exclusivo de Manada.
         </p>
       </div>
 
@@ -259,7 +259,7 @@ export function Tier3Pricing({ onActivate, processingPlan, currentPlanId }: Tier
           <div className="space-y-3 text-sm">
             <FaqItem
               q="¿Tengo que pagar para usar Paw Friend?"
-              a="No. El plan Gratis es para siempre y cubre lo esencial: ficha clinica completa, recordatorios, OCR de carnet, hasta 2 mascotas. Paw Member es opcional y desbloquea Paw Shield biometrico, Paw Passport PDF e Insights Pro."
+              a="No. El plan Gratis es para siempre y cubre lo esencial: ficha clinica completa, recordatorios, OCR de carnet, hasta 2 mascotas. Paw Member es opcional y desbloquea Paw Passport PDF, Insights Pro y Audio IA. Paw Shield biometrico es exclusivo del plan Manada."
             />
             <FaqItem
               q="¿Puedo cancelar cuando quiera?"

@@ -138,7 +138,6 @@ export function PremiumGate({
           <ul className="space-y-0.5 list-disc list-inside text-[11px]">
             {upgradeRequired === 'premium' && (
               <>
-                <li>Paw Shield biométrico (huella nasal anti-perdida)</li>
                 <li>Paw Passport PDF compartible</li>
                 <li>Insights Pro (data agregada de tu raza/comuna)</li>
                 <li>Audio notes con transcripción IA</li>
@@ -149,6 +148,7 @@ export function PremiumGate({
             {upgradeRequired === 'paw_manada' && (
               <>
                 <li>Todo lo de Paw Member</li>
+                <li>Paw Shield biométrico exclusivo (huella nasal anti-pérdida)</li>
                 <li>Hasta 5 mascotas</li>
                 <li>Descuentos Paw Partners exclusivos</li>
                 <li>Soporte prioritario · Early access</li>

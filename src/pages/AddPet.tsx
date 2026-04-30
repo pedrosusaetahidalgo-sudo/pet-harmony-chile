@@ -755,7 +755,7 @@ const AddPetLegacy = () => {
           feature="max_pets"
           currentUsage={petCount}
           title="Mascotas adicionales"
-          description={`Tu plan gratis incluye 2 mascotas. Con Paw Member sumás más mascotas, Paw Shield biométrico, Paw Passport PDF y descuentos Paw Partners.`}
+          description={`Tu plan gratis incluye 2 mascotas. Con Paw Member sumás más mascotas, Paw Passport PDF, Insights Pro, Audio IA y descuentos Paw Partners. Paw Shield biométrico es exclusivo del plan Manada.`}
         >
           {/* Si llegamos aquí con plan que desbloquea, simplemente recargamos a /add-pet limpio. */}
           <div className="text-center py-8">

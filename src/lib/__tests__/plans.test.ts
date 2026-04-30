@@ -17,17 +17,34 @@ describe('PLANS', () => {
     expect(PLANS.premium.monthlyPrice).toBe(3990);
   });
 
-  it('premium plan has unlimited pets (-1)', () => {
-    expect(PLANS.premium.features.max_pets).toBe(-1);
+  // Modelo v2.1 (2026-04-29 Plan v5 Opcion 3): freemium 3 tiers con caps reales.
+  it('free plan permite 2 mascotas', () => {
+    expect(PLANS.free.features.max_pets).toBe(2);
   });
 
-  // 2026-04-19: B2C 100% gratis — free tiene los mismos features que premium.
-  it('free plan also has unlimited pets (B2C 100% gratis)', () => {
-    expect(PLANS.free.features.max_pets).toBe(-1);
+  it('premium plan permite 4 mascotas', () => {
+    expect(PLANS.premium.features.max_pets).toBe(4);
+  });
+
+  it('manada plan permite 5 mascotas', () => {
+    expect(PLANS.paw_manada.features.max_pets).toBe(5);
   });
 
   it('free plan has PDF export enabled (joya de la corona disponible para todos)', () => {
     expect(PLANS.free.features.export_pdf).toBe(true);
+  });
+
+  // Reanalisis 2026-04-30: Paw Shield reposicionado a EXCLUSIVO Manada para
+  // controlar COGS Petify USD 0.75/mascota/mes lineal.
+  it('paw_shield is OFF en free y premium, solo ON en manada', () => {
+    expect(PLANS.free.features.paw_shield).toBe(false);
+    expect(PLANS.premium.features.paw_shield).toBe(false);
+    expect(PLANS.paw_manada.features.paw_shield).toBe(true);
+  });
+
+  it('paw_passport sigue ON en premium y manada (sin COGS externo)', () => {
+    expect(PLANS.premium.features.paw_passport).toBe(true);
+    expect(PLANS.paw_manada.features.paw_passport).toBe(true);
   });
 });
 
@@ -48,9 +65,35 @@ describe('canAccess', () => {
     }
   });
 
-  it('allows premium user unlimited pets', () => {
-    const result = canAccess('premium', 'max_pets', 100);
-    expect(result.allowed).toBe(true);
+  it('premium user puede tener hasta 4 mascotas', () => {
+    const within = canAccess('premium', 'max_pets', 3);
+    expect(within.allowed).toBe(true);
+    if (FEATURE_FLAGS.USER_PREMIUM) {
+      const atLimit = canAccess('premium', 'max_pets', 4);
+      expect(atLimit.allowed).toBe(false);
+      expect(atLimit.upgradeRequired).toBe('paw_manada');
+    }
+  });
+
+  it('manada user puede tener hasta 5 mascotas', () => {
+    const within = canAccess('paw_manada', 'max_pets', 4);
+    expect(within.allowed).toBe(true);
+  });
+
+  // Reanalisis 2026-04-30: paw_shield bloqueado en premium, requiere paw_manada.
+  it('paw_shield requiere upgrade a Manada (no Paw Member)', () => {
+    if (FEATURE_FLAGS.USER_PREMIUM) {
+      const free = canAccess('free', 'paw_shield');
+      expect(free.allowed).toBe(false);
+      expect(free.upgradeRequired).toBe('paw_manada');
+
+      const premium = canAccess('premium', 'paw_shield');
+      expect(premium.allowed).toBe(false);
+      expect(premium.upgradeRequired).toBe('paw_manada');
+
+      const manada = canAccess('paw_manada', 'paw_shield');
+      expect(manada.allowed).toBe(true);
+    }
   });
 
   it('blocks free user from PDF export (when premium enabled)', () => {

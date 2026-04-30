@@ -111,7 +111,7 @@ export const TUTORIALS = {
       {
         title: 'Lo esencial gratis para siempre',
         description:
-          'Plan Free ($0): ficha clínica, recordatorios, calendario, OCR del carnet y directorio de vets — hasta 2 mascotas. Si quieres más, hay 2 planes opcionales: Paw Member ($3.990/mes, hasta 4 mascotas, suma Paw Shield + Paw Passport + Insights Pro + audio IA + descuentos Paw Partners) y Manada ($9.990/mes, hasta 5 mascotas, suma exclusivos + early access + aporte $2.000/mes a fondo refugios).',
+          'Plan Free ($0): ficha clínica, recordatorios, calendario, OCR del carnet y directorio de vets — hasta 2 mascotas. Si quieres más, hay 2 planes opcionales: Paw Member ($3.990/mes, hasta 4 mascotas, suma Paw Passport + Insights Pro + audio IA + reportes históricos + descuentos Paw Partners) y Manada ($9.990/mes, hasta 5 mascotas, suma Paw Shield biométrico exclusivo + descuentos exclusivos + early access + aporte $2.000/mes a fondo refugios).',
       },
     ],
   },

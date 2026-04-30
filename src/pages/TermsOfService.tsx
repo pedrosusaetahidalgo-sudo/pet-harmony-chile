@@ -160,15 +160,16 @@ const TermsOfService = () => {
                 </p>
                 <ul className="list-disc list-inside text-muted-foreground ml-4 space-y-1.5">
                   <li>
-                    <strong>Paw Member</strong> desbloquea features avanzadas (Paw Shield
-                    biométrico, Paw Passport PDF, Insights Pro, audio notes con IA, reportes médicos
-                    extendidos) y descuentos en Paw Partners, además del badge 💛 de reconocimiento.
+                    <strong>Paw Member</strong> desbloquea features avanzadas (Paw Passport PDF,
+                    Insights Pro, audio notes con IA, reportes médicos extendidos) y descuentos en
+                    Paw Partners, además del badge 💛 de reconocimiento.
                   </li>
                   <li>
-                    <strong>Manada</strong> incluye todo lo de Paw Member más descuentos exclusivos,
-                    soporte prioritario, early access, badge 👑 y un aporte mensual de $2.000 CLP a
-                    un fondo Paw Friend Refugios. La donación a refugios la realiza Paw Friend SpA
-                    como entidad jurídica, no el tutor directamente.
+                    <strong>Manada</strong> incluye todo lo de Paw Member más Paw Shield biométrico
+                    exclusivo, descuentos exclusivos, soporte prioritario, early access, badge 👑 y
+                    un aporte mensual de $2.000 CLP a un fondo Paw Friend Refugios. La donación a
+                    refugios la realiza Paw Friend SpA como entidad jurídica, no el tutor
+                    directamente.
                   </li>
                   <li>
                     El usuario puede cancelar la membresía en cualquier momento desde su perfil. El
