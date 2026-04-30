@@ -236,6 +236,32 @@ export default function MisDatosCompartidos() {
       } finally {
         setRevokingId(null);
       }
+    } else if (event.category === 'aseguradora_lead') {
+      // RPC revoke_insurance_lead — soft-delete con limpieza de PII (mig 20260930)
+      const leadId = event.details.id as string | undefined;
+      if (!leadId) {
+        toast.error('No se pudo identificar el lead a revocar');
+        return;
+      }
+      setRevokingId(leadId);
+      try {
+        const { error } = await sb.rpc('revoke_insurance_lead', {
+          p_lead_id: leadId,
+          p_reason: 'Revocado por el titular vía /mis-datos-compartidos',
+        });
+        if (error) throw error;
+        toast.success('Cotización revocada', {
+          description:
+            'El partner ya no recibirá tu contacto. Si ya te llamaron, escribinos a pawfriendcl@gmail.com.',
+        });
+        refetch();
+      } catch (err) {
+        toast.error('Error revocando lead', {
+          description: err instanceof Error ? err.message : 'Intenta de nuevo',
+        });
+      } finally {
+        setRevokingId(null);
+      }
     }
   };
 
@@ -296,6 +322,7 @@ export default function MisDatosCompartidos() {
           <CategoryEventsCard
             category="aseguradora_lead"
             events={eventsByCategory.aseguradora_lead || []}
+            onRevoke={handleRevoke}
           />
           <CategoryEventsCard
             category="pharma_research_consent"
