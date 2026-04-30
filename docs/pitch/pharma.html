@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend para Pharma · Centrovet · Virbac · Zoetis · MSD</title>
+  <meta name="description" content="Paw Friend: la primera plataforma chilena con biometria validada de mascotas. Pitch para pharma animal." />
+  <meta name="theme-color" content="#9333ea" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-50: #faf5ff; --brand-100: #f3e8ff; --brand-200: #e9d5ff;
+      --brand-500: #a855f7; --brand-600: #9333ea; --brand-700: #7e22ce; --brand-800: #6b21a8; --brand-900: #581c87;
+      --gold: #eab308; --gold-light: #fde047; --gold-soft: #fef3c7;
+      --medical: #10b981; --alert: #ef4444; --ink: #1a102b;
+      --pharma: #ec4899; --pharma-soft: #fce7f3;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #0a0612; color: white; }
+    body.light-slide { background: #faf5ff; color: var(--ink); }
+    .deck { position: relative; height: 100vh; width: 100vw; overflow: hidden; }
+    .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.08); z-index: 100; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--pharma) 0%, var(--brand-500) 50%, var(--gold) 100%); transition: width 0.5s ease; }
+    .slide { position: absolute; inset: 0; padding: 6vh 6vw; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s; overflow-y: auto; }
+    .slide.active { opacity: 1; visibility: visible; }
+    .slide.dark { background: linear-gradient(135deg, #0a0612 0%, #1a102b 50%, #581c87 100%); color: white; }
+    .slide.light { background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); color: var(--ink); }
+    .slide.grad { background: linear-gradient(135deg, #581c87 0%, #9333ea 50%, #ec4899 100%); color: white; }
+    .slide.pharma-grad { background: linear-gradient(135deg, #831843 0%, #ec4899 50%, #fbcfe8 100%); color: white; }
+    .mesh-bg { position: absolute; inset: 0; opacity: 0.4; pointer-events: none; background:
+      radial-gradient(circle at 20% 30%, rgba(236,72,153,0.4), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(168,85,247,0.4), transparent 40%); }
+    .slide-content { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .slide-label { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: var(--gold-light); padding: 6px 12px; background: rgba(234,179,8,0.15); border: 1px solid rgba(234,179,8,0.4); border-radius: 999px; margin-bottom: 18px; align-self: flex-start; }
+    .slide.light .slide-label { color: var(--brand-700); background: var(--brand-100); border-color: var(--brand-300); }
+    .headline { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 4vw, 52px); font-weight: 700; line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
+    .gradient-text { background: linear-gradient(135deg, var(--gold-light) 0%, var(--pharma) 50%, var(--brand-400) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .subhead { font-size: clamp(14px, 1.5vw, 18px); line-height: 1.5; opacity: 0.85; max-width: 800px; margin-bottom: 18px; }
+    .counter { position: fixed; bottom: 18px; right: 24px; font-size: 12px; font-weight: 700; opacity: 0.6; z-index: 100; }
+    .hint { position: fixed; bottom: 18px; left: 24px; font-size: 11px; font-weight: 600; opacity: 0.5; z-index: 100; }
+    .hint kbd { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin: 0 2px; font-family: monospace; }
+    body.light-slide .hint kbd { background: rgba(0,0,0,0.06); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .stat-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px; text-align: center; }
+    .slide.light .stat-card { background: white; border-color: var(--brand-200); }
+    .stat-num { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 3vw, 44px); font-weight: 800; color: var(--gold-light); line-height: 1; }
+    .slide.light .stat-num { color: var(--pharma); }
+    .stat-label { font-size: 11px; opacity: 0.75; margin-top: 8px; line-height: 1.4; }
+    .quote-box { padding: 22px 28px; background: rgba(234,179,8,0.08); border-left: 4px solid var(--gold); border-radius: 10px; font-style: italic; margin: 18px 0; }
+    .slide.light .quote-box { background: var(--gold-soft); }
+    .ask-pharma { background: white; color: var(--ink); padding: 28px; border-radius: 18px; box-shadow: 0 30px 80px rgba(0,0,0,0.3); margin-top: 16px; }
+    .ask-pharma h3 { color: var(--pharma); font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+    .ask-pharma .price { font-family: 'Fredoka', sans-serif; font-size: 56px; font-weight: 800; color: var(--ink); line-height: 1; }
+    .ask-pharma .price-sub { font-size: 14px; color: #6b7280; margin-top: 6px; }
+    .feature-row { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .slide.light .feature-row { border-bottom-color: var(--brand-100); }
+    .feature-row:last-child { border-bottom: none; }
+    .feature-row .icon { font-size: 24px; flex-shrink: 0; }
+    .feature-row strong { display: block; margin-bottom: 4px; }
+    .feature-row span { font-size: 13px; opacity: 0.8; line-height: 1.5; }
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }
+    .data-table th { padding: 10px 14px; background: rgba(236,72,153,0.15); text-align: left; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .data-table td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .slide.light .data-table th { background: var(--pharma-soft); color: var(--pharma); }
+    .slide.light .data-table td { border-bottom-color: var(--brand-100); }
+    .badge-roi { display: inline-block; padding: 4px 10px; background: var(--medical); color: white; font-size: 11px; font-weight: 800; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <div class="progress"><div class="progress-fill" id="progressFill" style="width: 10%"></div></div>
+  <div class="deck" id="deck">
+
+    <!-- SLIDE 1 — COVER -->
+    <section class="slide pharma-grad active" data-num="1">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Pitch · Pharma Animal</span>
+        <h1 class="headline" style="font-size: clamp(36px, 5vw, 68px);">
+          La primera plataforma chilena<br>
+          con <span class="gradient-text">biometria validada</span><br>
+          de mascotas.
+        </h1>
+        <p class="subhead" style="font-size: 18px; max-width: 760px; opacity: 0.95;">
+          50.000 pets longitudinales con identidad biometrica permanente,
+          ficha clinica real, geo-segmentacion y consent pharma activo.
+          Tu campana digital deja de adivinar.
+        </p>
+        <div style="display: flex; gap: 18px; align-items: center; margin-top: 22px; opacity: 0.8; font-size: 13px;">
+          <span>🐾 Hecho en Chile</span>
+          <span>•</span>
+          <span>🛡️ Paw Shield · 100% accuracy validado</span>
+          <span>•</span>
+          <span>📊 Data lista para Q3 2026</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 2 — EL PROBLEMA QUE TIENEN -->
+    <section class="slide dark" data-num="2">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">El problema · pharma animal hoy</span>
+        <h2 class="headline">
+          Tu mejor data de mascotas en Chile <span class="gradient-text">vino de una encuesta</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card">
+            <div class="stat-num">~$8M</div>
+            <div class="stat-label">CLP/ano gasto promedio<br>en estudios de mercado pet</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">12-18m</div>
+            <div class="stat-label">latencia entre encuesta<br>y data accionable</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">±15%</div>
+            <div class="stat-label">error declarativo:<br>"si, vacuno a tiempo"</div>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 28px;">
+          "Sabemos cuántos perros hay en cada comuna por <strong>extrapolación INE</strong>.
+          No sabemos cuántos tienen vacuna anti-rrábica al día, qué marca de
+          alimento comen realmente, ni cuándo cambian de dieta.
+          Diseñamos campañas a ciegas." — Brand manager pharma, conversación off-record 2025.
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 3 — LO QUE TENEMOS -->
+    <section class="slide light" data-num="3">
+      <div class="mesh-bg" style="opacity: 0.3;"></div>
+      <div class="slide-content">
+        <span class="slide-label">Lo que ofrecemos</span>
+        <h2 class="headline">
+          Una <span class="gradient-text">cohorte real</span>, biometricamente validada,
+          actualizada en vivo.
+        </h2>
+        <div class="grid-2" style="margin-top: 22px;">
+          <div>
+            <div class="feature-row">
+              <span class="icon">🛡️</span>
+              <div>
+                <strong>Paw Shield: identidad biométrica (add-on B2B-funded)</strong>
+                <span>Cada pet puede tener un fingerprint único de su hocico (Petify · 100% accuracy en test interno con 8 mascotas reales). Hoy la biometría está fuera del modelo consumer (Opción C 2026-04-30) — disponible como add-on que financia el partner pharma que la quiere para validar trazabilidad longitudinal de adherencia en su cohort. Por defecto trabajamos sobre microchip + ficha clínica vet validada.</span>
+              </div>
+            </div>
+            <div class="feature-row">
+              <span class="icon">📅</span>
+              <div>
+                <strong>Ficha clínica longitudinal</strong>
+                <span>Vacunas con fecha + lote, antiparasitarios con marca y frecuencia, peso histórico, alergias, condiciones crónicas, visitas vet con diagnóstico real.</span>
+              </div>
+            </div>
+            <div class="feature-row">
+              <span class="icon">📍</span>
+              <div>
+                <strong>Geo-segmentación nivel comuna</strong>
+                <span>Cada pet tiene comuna del dueño. Filtras por raza × edad × estado vacunal × comuna. Tu campaña digital deja de ser "Chile" y pasa a ser "Pastor Suizo adulto en Vitacura sin antiparasitario externo".</span>
+              </div>
+            </div>
+            <div class="feature-row">
+              <span class="icon">✅</span>
+              <div>
+                <strong>Consent pharma opt-in</strong>
+                <span>Solo dueños que aceptaron compartir data agregada. Cumple Ley 19.628 + 21.719. K-anonymity ≥50 garantizado.</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.08);">
+              <div style="font-size: 11px; font-weight: 800; color: var(--pharma); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px;">Sample · Dashboard pharma</div>
+              <div style="font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: 14px;">Pastor Suizo Adulto · Region Metropolitana</div>
+              <table class="data-table">
+                <tr><th>Métrica</th><th>Valor</th></tr>
+                <tr><td>Pets activos</td><td><strong>1.347</strong></td></tr>
+                <tr><td>Sin antirrábica vigente</td><td><strong style="color: var(--alert);">312 (23%)</strong></td></tr>
+                <tr><td>Antipulgas externo &gt;90d</td><td><strong style="color: var(--alert);">478 (35%)</strong></td></tr>
+                <tr><td>Marca antiparasitario lider</td><td><strong>Bravecto (47%)</strong></td></tr>
+                <tr><td>Comuna top concentracion</td><td><strong>Las Condes (18%)</strong></td></tr>
+                <tr><td>Edad media</td><td><strong>4.2 años</strong></td></tr>
+              </table>
+              <div style="margin-top: 12px; font-size: 11px; color: #6b7280; font-style: italic;">
+                * Mock con datos sinteticos representativos. Producto real disponible Q3 2026.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 4 — PRODUCTO PHARMA -->
+    <section class="slide dark" data-num="4">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Que les vendemos</span>
+        <h2 class="headline">
+          4 productos pharma <span class="gradient-text">listos para Q3 2026</span>.
+        </h2>
+        <div class="grid-4" style="margin-top: 22px;">
+          <div class="stat-card" style="background: rgba(236,72,153,0.12); border-color: rgba(236,72,153,0.3); text-align: left;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--gold-light); text-transform: uppercase;">Producto 1</div>
+            <div style="font-size: 18px; font-weight: 800; margin-top: 6px;">Targeted ad campaigns</div>
+            <div style="font-size: 12px; opacity: 0.8; margin-top: 8px;">Push contextual o banner in-app dirigido por raza × comuna × estado vacunal. CTR 3-5x vs publicidad genérica.</div>
+            <div class="badge-roi" style="margin-top: 10px;">$0.5-2 USD CPC</div>
+          </div>
+          <div class="stat-card" style="background: rgba(236,72,153,0.12); border-color: rgba(236,72,153,0.3); text-align: left;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--gold-light); text-transform: uppercase;">Producto 2</div>
+            <div style="font-size: 18px; font-weight: 800; margin-top: 6px;">Sponsored reminders</div>
+            <div style="font-size: 12px; opacity: 0.8; margin-top: 8px;">"Antiparasitario de Kai vence el 15. Bravecto disponible en tu vet más cercano." Push con marca embedded.</div>
+            <div class="badge-roi" style="margin-top: 10px;">$1-3 USD/push</div>
+          </div>
+          <div class="stat-card" style="background: rgba(236,72,153,0.12); border-color: rgba(236,72,153,0.3); text-align: left;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--gold-light); text-transform: uppercase;">Producto 3</div>
+            <div style="font-size: 18px; font-weight: 800; margin-top: 6px;">Real-world data deals</div>
+            <div style="font-size: 12px; opacity: 0.8; margin-top: 8px;">Acceso anonimizado a dataset longitudinal: prevalencia patologías, share marca, frecuencia compra.</div>
+            <div class="badge-roi" style="margin-top: 10px;">$30-80k USD/año</div>
+          </div>
+          <div class="stat-card" style="background: rgba(236,72,153,0.12); border-color: rgba(236,72,153,0.3); text-align: left;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--gold-light); text-transform: uppercase;">Producto 4</div>
+            <div style="font-size: 18px; font-weight: 800; margin-top: 6px;">Co-marketing en feed</div>
+            <div style="font-size: 12px; opacity: 0.8; margin-top: 8px;">Posts editoriales sponsored: "Pastor Suizo + leishmaniasis en zona costera". Educativo + brand association.</div>
+            <div class="badge-roi" style="margin-top: 10px;">$5-10 USD/CPM</div>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 28px; background: rgba(16,185,129,0.1); border-color: var(--medical);">
+          <strong style="color: #34d399;">Caso real medible:</strong> "Tu campaña anti-pulgas Bravecto en Pastor Suizo de
+          Vitacura/Las Condes — <strong>312 dueños calificados</strong>. Click-through esperado: 8% vs 2% en publicidad
+          genérica = <strong>4x conversion</strong>."
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 5 — PRICING -->
+    <section class="slide light" data-num="5">
+      <div class="mesh-bg" style="opacity: 0.3;"></div>
+      <div class="slide-content">
+        <span class="slide-label">Pricing</span>
+        <h2 class="headline">
+          Tier dashboard custom: <span class="gradient-text">$2-5k USD/mes</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 22px;">
+          <div class="stat-card" style="background: white; padding: 26px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--pharma); text-transform: uppercase;">Starter</div>
+            <div class="stat-num" style="margin-top: 8px;">$2k</div>
+            <div class="stat-label">USD/mes</div>
+            <ul style="text-align: left; margin-top: 14px; font-size: 13px; line-height: 1.7; padding-left: 18px;">
+              <li>1 dashboard segmentado custom</li>
+              <li>Update mensual</li>
+              <li>Hasta 1 categoría producto</li>
+              <li>Hasta 3 segmentos geo</li>
+            </ul>
+          </div>
+          <div class="stat-card" style="background: linear-gradient(180deg, var(--pharma-soft), white); padding: 26px; border: 2px solid var(--pharma); position: relative;">
+            <div style="position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--pharma); color: white; padding: 4px 12px; border-radius: 999px; font-size: 10px; font-weight: 800;">RECOMENDADO</div>
+            <div style="font-size: 11px; font-weight: 800; color: var(--pharma); text-transform: uppercase;">Pro</div>
+            <div class="stat-num" style="margin-top: 8px;">$3.5k</div>
+            <div class="stat-label">USD/mes</div>
+            <ul style="text-align: left; margin-top: 14px; font-size: 13px; line-height: 1.7; padding-left: 18px;">
+              <li>3 dashboards custom</li>
+              <li>Update semanal</li>
+              <li>Múltiples categorías</li>
+              <li>Sponsored reminders incluidos (5k/mes)</li>
+              <li>Data export CSV</li>
+            </ul>
+          </div>
+          <div class="stat-card" style="background: white; padding: 26px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--pharma); text-transform: uppercase;">Enterprise</div>
+            <div class="stat-num" style="margin-top: 8px;">$5k+</div>
+            <div class="stat-label">USD/mes negociable</div>
+            <ul style="text-align: left; margin-top: 14px; font-size: 13px; line-height: 1.7; padding-left: 18px;">
+              <li>Dashboards ilimitados</li>
+              <li>API directa</li>
+              <li>Real-world data deals incluidos</li>
+              <li>Co-marketing brief mensual</li>
+              <li>Soporte dedicado</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 6 — DIFERENCIA -->
+    <section class="slide dark" data-num="6">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Por que ahora · por que nosotros</span>
+        <h2 class="headline">
+          La unica plataforma con cohorte <span class="gradient-text">biometrica + ficha clinica + geo</span> en LATAM.
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; margin-top: 22px;">
+          <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px;">
+            <div style="font-size: 12px; font-weight: 800; color: var(--gold-light); text-transform: uppercase; margin-bottom: 8px;">vs Encuestas tradicionales</div>
+            <ul style="font-size: 13px; line-height: 1.7; padding-left: 18px;">
+              <li>Latencia: ellos 12-18m, nosotros tiempo real</li>
+              <li>Costo: ellos $5-8M CLP/estudio, nosotros $2-5k USD/mes</li>
+              <li>Validacion: declarativo vs biometrico</li>
+              <li>Granularidad: regional vs comuna</li>
+            </ul>
+          </div>
+          <div style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 20px;">
+            <div style="font-size: 12px; font-weight: 800; color: var(--gold-light); text-transform: uppercase; margin-bottom: 8px;">vs Apps competidoras LATAM</div>
+            <ul style="font-size: 13px; line-height: 1.7; padding-left: 18px;">
+              <li>Petify (subprocesador biometrico opcional, no competidor): cobra al dueno Basic $0.50 / Pro $0.75 USD/pet/mes → 10% adopcion. Nuestra app es freemium (lo basico gratis para siempre) y la biometria queda dormida (Opcion C 2026-04-30) — reactivable solo si tu como pharma lo pides como parte del piloto y financias el COGS Petify</li>
+              <li>Petlove Brasil: marketplace, no ficha clinica</li>
+              <li>Conexa: agenda vet, no biometria ni datos pharma</li>
+              <li>Nosotros: unicos con biometria + ficha + opt-in pharma</li>
+            </ul>
+          </div>
+        </div>
+        <div style="margin-top: 24px; padding: 18px; background: rgba(234,179,8,0.1); border-left: 4px solid var(--gold); border-radius: 8px;">
+          <strong style="color: var(--gold-light); font-size: 14px;">El moat:</strong>
+          <p style="margin-top: 6px; font-size: 14px; line-height: 1.6;">
+            Cada dueño que activa Paw Shield genera identidad permanente. Nuestra data se vuelve más
+            valiosa con cada pet × cada visita vet × cada compra retail tracked. Un competidor que entre
+            mañana arranca de cero, pero la cohorte ya esta longitudinalmente trackada.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 7 — PILOTO -->
+    <section class="slide grad" data-num="7">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Como empezamos</span>
+        <h2 class="headline">
+          Piloto de <span class="gradient-text">90 dias</span>: 1 dashboard, 1 categoria, $5k USD total.
+        </h2>
+        <div class="grid-2" style="margin-top: 28px; align-items: flex-start;">
+          <div>
+            <h3 style="font-size: 18px; font-weight: 800; color: var(--gold-light); margin-bottom: 14px;">Dia 1-30 · Setup</h3>
+            <ul style="font-size: 14px; line-height: 1.8; padding-left: 20px;">
+              <li>Definimos categoria (anti-parasitario / vacuna / dieta especifica)</li>
+              <li>Identificamos cohorte target (raza × edad × geo)</li>
+              <li>Diseno dashboard custom con tu marca</li>
+              <li>Onboarding consent pharma a la cohorte target</li>
+            </ul>
+            <h3 style="font-size: 18px; font-weight: 800; color: var(--gold-light); margin-top: 24px; margin-bottom: 14px;">Dia 31-60 · Activacion</h3>
+            <ul style="font-size: 14px; line-height: 1.8; padding-left: 20px;">
+              <li>Lanzamos sponsored reminders al segmento target</li>
+              <li>Tracking de CTR + conversion en tiempo real</li>
+              <li>1 reporte semanal personalizado</li>
+            </ul>
+            <h3 style="font-size: 18px; font-weight: 800; color: var(--gold-light); margin-top: 24px; margin-bottom: 14px;">Dia 61-90 · Validacion</h3>
+            <ul style="font-size: 14px; line-height: 1.8; padding-left: 20px;">
+              <li>Comparativa vs benchmark digital tradicional</li>
+              <li>Decision: scale o reset</li>
+              <li>Si scale → contrato anual con descuento de piloto</li>
+            </ul>
+          </div>
+          <div class="ask-pharma">
+            <h3>Inversion piloto</h3>
+            <div class="price">$5.000</div>
+            <div class="price-sub">USD · 90 dias all-in (setup + dashboard + 5k pushes)</div>
+            <hr style="margin: 16px 0; border: none; border-top: 1px solid #e5e7eb;" />
+            <div style="font-size: 13px; color: #6b7280; line-height: 1.6;">
+              <strong style="color: var(--ink);">Si scale:</strong> contrato anual desde $25k USD/año (ahorro ~30% vs mensual).
+            </div>
+            <div style="margin-top: 16px; padding: 12px; background: var(--pharma-soft); border-radius: 8px; font-size: 13px;">
+              <strong style="color: var(--pharma);">Riesgo cero para ti:</strong> si los KPIs del piloto no superan tu canal digital actual, te devolvemos el 50% y recuperamos el dashboard.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 8 — ASK -->
+    <section class="slide pharma-grad" data-num="8">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">El ask</span>
+        <h2 class="headline">
+          30 minutos. Te muestro <span class="gradient-text">la cohorte real</span>.
+        </h2>
+        <p class="subhead" style="font-size: 18px; margin-top: 12px;">
+          No hablemos en abstracto. Si nos das 30 minutos, te muestro el dashboard
+          live para tu categoria con la data sintetica representativa, y discutimos
+          si el piloto de 90 dias hace sentido para tu Q3.
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 32px;">
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📅</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 1</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">30min de demo<br>(remoto o presencial)</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📊</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 2</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Sample dashboard<br>de tu categoria</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🤝</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 3</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Decidimos piloto<br>o nos despedimos</div>
+          </div>
+        </div>
+        <div style="margin-top: 36px; display: flex; gap: 24px; justify-content: center; align-items: center; flex-wrap: wrap; font-size: 14px;">
+          <span>🌐 <a href="https://pawfriend.cl" style="color: var(--gold-light); text-decoration: none; font-weight: 700;" target="_blank">pawfriend.cl</a></span>
+          <span>✉️ <a href="mailto:pawfriendcl@gmail.com" style="color: var(--gold-light); text-decoration: none; font-weight: 700;">pawfriendcl@gmail.com</a></span>
+          <span style="opacity: 0.85;">📍 Hecho en Chile · Lanzamiento Junio 2026</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="counter" id="counter">1 / 8</div>
+  <div class="hint" id="hint"><kbd>←</kbd><kbd>→</kbd> navegar <kbd>F</kbd> full <kbd>P</kbd> imprimir</div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressFill = document.getElementById('progressFill');
+    const counter = document.getElementById('counter');
+    const total = slides.length;
+    let current = 0;
+    function show(i) {
+      i = Math.max(0, Math.min(total - 1, i));
+      slides.forEach((s, k) => s.classList.toggle('active', k === i));
+      current = i;
+      progressFill.style.width = ((i + 1) / total * 100) + '%';
+      counter.textContent = `${i + 1} / ${total}`;
+      document.body.classList.toggle('light-slide', slides[i].classList.contains('light'));
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') show(current + 1);
+      else if (e.key === 'ArrowLeft') show(current - 1);
+      else if (e.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.();
+      else if (e.key.toLowerCase() === 'p') window.print();
+    });
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      const x = e.clientX / window.innerWidth;
+      show(x > 0.5 ? current + 1 : current - 1);
+    });
+    show(0);
+  </script>
+</body>
+</html>

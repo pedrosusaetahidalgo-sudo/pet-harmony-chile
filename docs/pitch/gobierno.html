@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend para Gobierno · Municipios · SAG · Ley 21.020</title>
+  <meta name="description" content="Paw Friend: registro digital de mascotas Ley 21.020 white-label para municipios y SAG. Cumplimiento, fiscalizacion y reduccion de costos." />
+  <meta name="theme-color" content="#1e3a8a" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-50: #eff6ff; --brand-100: #dbeafe; --brand-200: #bfdbfe; --brand-300: #93c5fd;
+      --brand-400: #60a5fa; --brand-500: #3b82f6; --brand-600: #2563eb; --brand-700: #1d4ed8;
+      --brand-800: #1e40af; --brand-900: #1e3a8a;
+      --green: #15803d; --green-light: #4ade80; --green-soft: #dcfce7;
+      --gold: #d97706; --gold-light: #fbbf24;
+      --medical: #10b981; --alert: #dc2626; --ink: #0a1330;
+      --gov: #1e3a8a; --gov-soft: #dbeafe;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #050816; color: white; }
+    body.light-slide { background: var(--brand-50); color: var(--ink); }
+    .deck { position: relative; height: 100vh; width: 100vw; overflow: hidden; }
+    .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.08); z-index: 100; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--green) 0%, var(--brand-600) 50%, var(--gold-light) 100%); transition: width 0.5s ease; }
+    .slide { position: absolute; inset: 0; padding: 6vh 6vw; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s; overflow-y: auto; }
+    .slide.active { opacity: 1; visibility: visible; }
+    .slide.dark { background: linear-gradient(135deg, #050816 0%, #1e3a8a 50%, #1e40af 100%); color: white; }
+    .slide.light { background: linear-gradient(135deg, var(--brand-50) 0%, var(--brand-100) 100%); color: var(--ink); }
+    .slide.gov-grad { background: linear-gradient(135deg, #0a1330 0%, #1e40af 50%, #15803d 100%); color: white; }
+    .mesh-bg { position: absolute; inset: 0; opacity: 0.4; pointer-events: none; background:
+      radial-gradient(circle at 20% 30%, rgba(21,128,61,0.4), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(30,64,175,0.4), transparent 40%); }
+    .slide-content { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .slide-label { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: var(--green-light); padding: 6px 12px; background: rgba(74,222,128,0.12); border: 1px solid rgba(74,222,128,0.4); border-radius: 999px; margin-bottom: 18px; align-self: flex-start; }
+    .slide.light .slide-label { color: var(--gov); background: var(--gov-soft); border-color: var(--brand-300); }
+    .headline { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 4vw, 52px); font-weight: 700; line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
+    .gradient-text { background: linear-gradient(135deg, var(--green-light) 0%, var(--brand-300) 50%, white 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .subhead { font-size: clamp(14px, 1.5vw, 18px); line-height: 1.5; opacity: 0.85; max-width: 800px; margin-bottom: 18px; }
+    .counter { position: fixed; bottom: 18px; right: 24px; font-size: 12px; font-weight: 700; opacity: 0.6; z-index: 100; }
+    .hint { position: fixed; bottom: 18px; left: 24px; font-size: 11px; font-weight: 600; opacity: 0.5; z-index: 100; }
+    .hint kbd { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin: 0 2px; font-family: monospace; }
+    body.light-slide .hint kbd { background: rgba(0,0,0,0.06); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .stat-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px; text-align: center; }
+    .slide.light .stat-card { background: white; border-color: var(--brand-200); box-shadow: 0 8px 24px rgba(30,64,175,0.06); }
+    .stat-num { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 3vw, 44px); font-weight: 800; color: var(--green-light); line-height: 1; }
+    .slide.light .stat-num { color: var(--green); }
+    .stat-label { font-size: 11px; opacity: 0.75; margin-top: 8px; line-height: 1.4; }
+    .quote-box { padding: 22px 28px; background: rgba(74,222,128,0.08); border-left: 4px solid var(--green); border-radius: 10px; font-style: italic; margin: 18px 0; }
+    .slide.light .quote-box { background: var(--green-soft); }
+    .ask-box { background: white; color: var(--ink); padding: 28px; border-radius: 18px; box-shadow: 0 30px 80px rgba(0,0,0,0.3); margin-top: 16px; }
+    .ask-box h3 { color: var(--gov); font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+    .ask-box .price { font-family: 'Fredoka', sans-serif; font-size: 56px; font-weight: 800; color: var(--ink); line-height: 1; }
+    .ask-box .price-sub { font-size: 14px; color: #6b7280; margin-top: 6px; }
+    .feature-row { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .slide.light .feature-row { border-bottom-color: var(--brand-100); }
+    .feature-row:last-child { border-bottom: none; }
+    .feature-row .icon { font-size: 24px; flex-shrink: 0; }
+    .feature-row strong { display: block; margin-bottom: 4px; }
+    .feature-row span { font-size: 13px; opacity: 0.8; line-height: 1.5; }
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }
+    .data-table th { padding: 10px 14px; background: rgba(74,222,128,0.15); text-align: left; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .data-table td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .slide.light .data-table th { background: var(--green-soft); color: var(--green); }
+    .slide.light .data-table td { border-bottom-color: var(--brand-100); }
+  </style>
+</head>
+<body>
+  <div class="progress"><div class="progress-fill" id="progressFill" style="width: 12%"></div></div>
+  <div class="deck" id="deck">
+
+    <!-- 1 — COVER -->
+    <section class="slide gov-grad active" data-num="1">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Pitch · Gobierno · Municipios · SAG</span>
+        <h1 class="headline" style="font-size: clamp(36px, 5vw, 68px);">
+          La Ley 21.020 dejo de ser <span class="gradient-text">papel y Excel</span>.
+        </h1>
+        <p class="subhead" style="font-size: 18px; max-width: 760px; opacity: 0.95;">
+          Paw Friend entrega registro digital de tenencia responsable, esterilizacion,
+          microchip y rabia, listo para que tu municipio o SAG cumpla la ley sin
+          montar un equipo de TI. White-label, multilingue, integrable.
+        </p>
+        <div style="display: flex; gap: 18px; align-items: center; margin-top: 22px; opacity: 0.85; font-size: 13px;">
+          <span>🏛️ Cumplimiento Ley 21.020</span>
+          <span>•</span>
+          <span>🛡️ Biometria permanente (Paw Shield)</span>
+          <span>•</span>
+          <span>🇨🇱 Hecho en Chile</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 — PROBLEMA -->
+    <section class="slide dark" data-num="2">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">El problema · municipios + SAG hoy</span>
+        <h2 class="headline">
+          La Ley 21.020 obliga a registrar. <span class="gradient-text">El registro no existe</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card">
+            <div class="stat-num">345</div>
+            <div class="stat-label">municipios con<br>obligacion legal</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">< 25%</div>
+            <div class="stat-label">tienen sistema digital<br>(el resto, Excel o papel)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">$0</div>
+            <div class="stat-label">presupuesto anual<br>asignado en la mayoria</div>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 28px;">
+          "La Ley nos obliga a registrar microchip, esterilizacion y vacuna antirrabica.
+          Lo hacemos en planillas. Cuando viene fiscalizacion, no sabemos cuantos perros
+          tenemos en la comuna ni cuales estan al dia. Cada inscripcion presencial cuesta
+          $4-6k CLP en tiempo de funcionario."
+          <div style="margin-top: 8px; font-style: normal; font-size: 12px; opacity: 0.7;">— Patron observado en municipios RM</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 — PROPUESTA -->
+    <section class="slide light" data-num="3">
+      <div class="slide-content">
+        <span class="slide-label">Nuestra propuesta · registro digital + identidad</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Tu registro municipal en <span style="color: var(--green);">3 minutos</span>, no 3 visitas.
+        </h2>
+        <div class="grid-2" style="margin-top: 24px;">
+          <div>
+            <div class="feature-row">
+              <div class="icon">📋</div>
+              <div><strong>Registro digital ciudadano</strong>
+                <span>El vecino registra a su mascota desde el celular. Microchip, esterilizacion, rabia, foto. Sin venir presencial.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">🛡️</div>
+              <div><strong>Identidad biometrica (add-on B2B-funded)</strong>
+                <span>Paw Shield (huella nasal Petify · 100% accuracy validada). Hoy fuera del modelo consumer (Opcion C 2026-04-30) — disponible como add-on para municipios que quieran activar registro biometrico ciudadano (vos financias el COGS Petify $0,75/pet/mes como parte del programa de tenencia responsable). Por defecto: microchip + Pet ID Card + QR publico.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">📊</div>
+              <div><strong>Dashboard fiscalizacion</strong>
+                <span>Cuantos chips, cuantas esterilizaciones, cuantas rabias por sector. Reportes para SAG y Concejo Municipal automaticos.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">🤝</div>
+              <div><strong>Integracion vet privados + ferias</strong>
+                <span>El vet inscribe directo en su consulta. Las ferias de esterilizacion sincronizan en vivo.</span></div>
+            </div>
+          </div>
+          <div class="ask-box" style="background: linear-gradient(160deg, white 0%, var(--brand-50) 100%);">
+            <h3>Mock dashboard municipal</h3>
+            <div style="font-size: 13px; color: #6b7280; margin-bottom: 8px;">Ejemplo: Comuna piloto · 18.500 habitantes</div>
+            <hr style="margin: 10px 0; border: none; border-top: 1px dashed var(--brand-200);" />
+            <div style="font-size: 13px; line-height: 1.8; color: #475569;">
+              <div>🐾 Mascotas registradas · <strong>4.230</strong></div>
+              <div>📌 Con microchip · <strong>3.812 (90%)</strong></div>
+              <div>✂️ Esterilizadas · <strong>2.940 (69%)</strong></div>
+              <div>💉 Vacuna antirrabica al dia · <strong>3.500 (83%)</strong></div>
+              <div>🛡️ Paw Shield biometria · <strong>2.150 (51%)</strong></div>
+              <div>🏥 Vets registrados activos · <strong>14</strong></div>
+            </div>
+            <hr style="margin: 14px 0; border: none; border-top: 1px dashed var(--brand-200);" />
+            <div style="font-size: 11px; padding: 8px 12px; background: var(--green-soft); border-radius: 8px; color: var(--green);">
+              <strong>Compliance Ley 21.020:</strong> 90% chip · 69% esterilizadas · 83% rabia. <strong>Sobre el promedio nacional.</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 — productos -->
+    <section class="slide dark" data-num="4">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Productos · 3 modos de adoption</span>
+        <h2 class="headline">
+          De plataforma <span class="gradient-text">simple a soberania de datos</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🌱</div>
+            <strong style="display: block; margin-top: 8px;">Plan Comuna · SaaS</strong>
+            <span style="font-size: 12px; opacity: 0.85;">Plataforma multitenant. Tu logo, tu dominio (subdomain), tu reporte SAG. Lanzamiento en 30 dias.</span>
+          </div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🏛️</div>
+            <strong style="display: block; margin-top: 8px;">Plan Region · API + Brand</strong>
+            <span style="font-size: 12px; opacity: 0.85;">Multiples comunas bajo gobernanza regional. Integracion con sistemas existentes (transparencia activa).</span></div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🇨🇱</div>
+            <strong style="display: block; margin-top: 8px;">Plan Nacional · SAG / Subdere</strong>
+            <span style="font-size: 12px; opacity: 0.85;">White-label completo. Soberania de datos en Chile. Integracion API con CIRPA, Registro Civil, Registro Vehiculo.</span></div>
+        </div>
+        <div style="margin-top: 32px; padding: 18px 24px; background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.3); border-radius: 12px;">
+          <strong style="color: var(--green-light);">📌 Caso de uso ancla:</strong>
+          <span style="font-size: 14px; opacity: 0.9; margin-left: 8px;">
+            Feria comunal de esterilizacion → vet de turno escanea chip o registra ahi mismo en app → al fin del dia, reporte completo: cuantas esterilizaciones, sector, especie, edad. <strong>0 papel, 0 transcripcion, 0 errores.</strong>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 — PRICING -->
+    <section class="slide light" data-num="5">
+      <div class="slide-content">
+        <span class="slide-label">Inversion publica · 3 tiers</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Costo por mascota registrada: <span style="color: var(--green);">< $200 CLP/ano</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--gov); letter-spacing: 0.1em; text-transform: uppercase;">Comuna</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 38px; font-weight: 800; color: var(--ink); line-height: 1; margin-top: 6px;">$3M <span style="font-size: 14px; opacity: 0.6;">CLP/ano</span></div>
+            <ul style="margin-top: 12px; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>Hasta 10.000 mascotas</li>
+              <li>App ciudadano + dashboard</li>
+              <li>Reportes SAG automaticos</li>
+              <li>Soporte standard</li>
+            </ul>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px; border: 2px solid var(--green); position: relative;">
+            <span style="position: absolute; top: -10px; right: 14px; background: var(--green); color: white; font-size: 10px; padding: 3px 10px; border-radius: 999px; font-weight: 800;">RECOMENDADO</span>
+            <div style="font-size: 11px; font-weight: 800; color: var(--gov); letter-spacing: 0.1em; text-transform: uppercase;">Comuna Pro</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 38px; font-weight: 800; color: var(--ink); line-height: 1; margin-top: 6px;">$6M <span style="font-size: 14px; opacity: 0.6;">CLP/ano</span></div>
+            <ul style="margin-top: 12px; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>Mascotas ilimitadas</li>
+              <li>Paw Shield biometria incluido</li>
+              <li>Integracion vets locales</li>
+              <li>Capacitacion equipo + soporte premium</li>
+            </ul>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--gov); letter-spacing: 0.1em; text-transform: uppercase;">Region / Nacional</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 38px; font-weight: 800; color: var(--ink); line-height: 1; margin-top: 6px;">A medida</div>
+            <ul style="margin-top: 12px; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>Multi-tenant gobernanza regional</li>
+              <li>Integracion CIRPA + Civil</li>
+              <li>Soberania datos en Chile</li>
+              <li>Co-development</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 28px;">
+          <strong>Comparativo:</strong> licitacion tradicional para sistema similar = <strong>$80-150M CLP setup + $20M/ano</strong>.
+          Nuestro modelo SaaS sale en mes 1 sin licitacion (tope licitacion menor &lt; 1.000 UTM).
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 — DIFERENCIACION + COMPLIANCE -->
+    <section class="slide dark" data-num="6">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Compliance + diferenciacion</span>
+        <h2 class="headline">
+          Compliance Ley 19.628 + 21.719 + 21.020 <span class="gradient-text">de fabrica</span>.
+        </h2>
+        <table class="data-table" style="margin-top: 24px;">
+          <thead>
+            <tr>
+              <th>Capacidad</th>
+              <th>Sistema actual (Excel/papel)</th>
+              <th>Licitacion tradicional</th>
+              <th>Paw Friend</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Identidad biometrica permanente</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: var(--medical); font-weight: 800;">Si</td>
+            </tr>
+            <tr>
+              <td>App ciudadano (registro self-service)</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #fbbf24;">Variable</td>
+              <td style="color: var(--medical); font-weight: 800;">iOS + Android + Web</td>
+            </tr>
+            <tr>
+              <td>Reporte SAG/Subdere automatico</td>
+              <td style="color: #94a3b8;">Manual mensual</td>
+              <td style="color: #fbbf24;">Trimestral</td>
+              <td style="color: var(--medical); font-weight: 800;">Real-time</td>
+            </tr>
+            <tr>
+              <td>Cumplimiento Ley 19.628 + 21.719</td>
+              <td style="color: #ef4444;">Riesgo</td>
+              <td style="color: #fbbf24;">Variable</td>
+              <td style="color: var(--medical); font-weight: 800;">Auditado</td>
+            </tr>
+            <tr>
+              <td>Tiempo de implementacion</td>
+              <td style="color: #94a3b8;">Status quo</td>
+              <td style="color: #ef4444;">9-18 meses + licitacion</td>
+              <td style="color: var(--medical); font-weight: 800;">30 dias</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 7 — PILOTO 6 MESES -->
+    <section class="slide light" data-num="7">
+      <div class="slide-content">
+        <span class="slide-label">Piloto · comuna fundadora</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Piloto 6 meses por <span style="color: var(--green);">$1.2M CLP all-in</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 32px;">📅</div>
+            <strong style="display: block; margin-top: 12px;">Mes 1 · Setup</strong>
+            <span style="font-size: 13px; opacity: 0.85;">Subdomain + branding + capacitacion equipo + carga datos historicos.</span>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 32px;">🚀</div>
+            <strong style="display: block; margin-top: 12px;">Mes 2-5 · Live</strong>
+            <span style="font-size: 13px; opacity: 0.85;">Lanzamiento ciudadano + integracion vets + ferias esterilizacion.</span>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 32px;">📊</div>
+            <strong style="display: block; margin-top: 12px;">Mes 6 · Reporte</strong>
+            <span style="font-size: 13px; opacity: 0.85;">Compliance Ley 21.020 antes y despues. Decision de continuar.</span>
+          </div>
+        </div>
+        <div class="ask-box" style="margin-top: 32px; background: linear-gradient(160deg, white 0%, var(--brand-50) 100%);">
+          <h3>Que pides para empezar</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 12px;">
+            <div>
+              <div class="price" style="color: var(--green);">$1.2M CLP</div>
+              <div class="price-sub">all-in 6 meses · contrato menor</div>
+              <div style="margin-top: 12px; font-size: 13px; color: #475569;">
+                Sin licitacion (bajo 1.000 UTM). Despues plan Comuna $3M o Comuna Pro $6M anual.
+              </div>
+            </div>
+            <div style="font-size: 13px; color: #475569; line-height: 1.8;">
+              <strong style="color: var(--ink);">Que recibes:</strong>
+              <ul style="padding-left: 18px; margin-top: 6px;">
+                <li>Plataforma branded</li>
+                <li>App ciudadano</li>
+                <li>Capacitacion 4 funcionarios</li>
+                <li>Reporte SAG mensual</li>
+                <li>Soporte semanal</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 — CTA -->
+    <section class="slide gov-grad" data-num="8">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Conversacion · proximos pasos</span>
+        <h2 class="headline" style="font-size: clamp(34px, 4.5vw, 60px);">
+          30 minutos con tu equipo<br>
+          de <span class="gradient-text">Tenencia Responsable o Higiene Ambiental</span>.
+        </h2>
+        <p class="subhead" style="font-size: 17px; max-width: 780px;">
+          Te muestro live el dashboard de fiscalizacion, una inscripcion ciudadana
+          end-to-end y el reporte SAG. Cerramos con propuesta firme para el piloto comuna.
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 28px;">
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📅</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 1</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Demo + dashboard<br>de tu comuna</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📋</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 2</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Propuesta firme<br>(contrato menor)</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🚀</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 3</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Lanzamiento<br>en 30 dias</div>
+          </div>
+        </div>
+        <div style="margin-top: 36px; display: flex; gap: 24px; justify-content: center; align-items: center; flex-wrap: wrap; font-size: 14px;">
+          <span>🌐 <a href="https://pawfriend.cl" style="color: var(--green-light); text-decoration: none; font-weight: 700;" target="_blank">pawfriend.cl</a></span>
+          <span>✉️ <a href="mailto:pawfriendcl@gmail.com" style="color: var(--green-light); text-decoration: none; font-weight: 700;">pawfriendcl@gmail.com</a></span>
+          <span style="opacity: 0.85;">📍 Hecho en Chile · Lanzamiento Junio 2026</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="counter" id="counter">1 / 8</div>
+  <div class="hint" id="hint"><kbd>←</kbd><kbd>→</kbd> navegar <kbd>F</kbd> full <kbd>P</kbd> imprimir</div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressFill = document.getElementById('progressFill');
+    const counter = document.getElementById('counter');
+    const total = slides.length;
+    let current = 0;
+    function show(i) {
+      i = Math.max(0, Math.min(total - 1, i));
+      slides.forEach((s, k) => s.classList.toggle('active', k === i));
+      current = i;
+      progressFill.style.width = ((i + 1) / total * 100) + '%';
+      counter.textContent = `${i + 1} / ${total}`;
+      document.body.classList.toggle('light-slide', slides[i].classList.contains('light'));
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') show(current + 1);
+      else if (e.key === 'ArrowLeft') show(current - 1);
+      else if (e.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.();
+      else if (e.key.toLowerCase() === 'p') window.print();
+    });
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      const x = e.clientX / window.innerWidth;
+      show(x > 0.5 ? current + 1 : current - 1);
+    });
+    show(0);
+  </script>
+</body>
+</html>

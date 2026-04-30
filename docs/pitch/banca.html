@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend para Banca · BCI · Santander · Itau · BancoEstado · Falabella</title>
+  <meta name="description" content="Paw Friend: vertical pet-friendly para programas de loyalty bancarios. Cuentas, creditos veterinarios, seguros co-branded." />
+  <meta name="theme-color" content="#0f172a" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-50: #f8fafc; --brand-100: #f1f5f9; --brand-200: #e2e8f0; --brand-300: #cbd5e1;
+      --brand-700: #334155; --brand-800: #1e293b; --brand-900: #0f172a;
+      --gold: #ca8a04; --gold-light: #facc15; --gold-bright: #fde047; --gold-soft: #fef9c3;
+      --emerald: #047857; --emerald-light: #34d399;
+      --medical: #10b981; --alert: #ef4444; --ink: #020617;
+      --bank: #0f172a; --bank-soft: #f1f5f9;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #020617; color: white; }
+    body.light-slide { background: var(--brand-50); color: var(--ink); }
+    .deck { position: relative; height: 100vh; width: 100vw; overflow: hidden; }
+    .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.08); z-index: 100; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--gold) 0%, var(--gold-light) 50%, var(--emerald-light) 100%); transition: width 0.5s ease; }
+    .slide { position: absolute; inset: 0; padding: 6vh 6vw; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s; overflow-y: auto; }
+    .slide.active { opacity: 1; visibility: visible; }
+    .slide.dark { background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e293b 100%); color: white; }
+    .slide.light { background: linear-gradient(135deg, var(--brand-50) 0%, var(--brand-100) 100%); color: var(--ink); }
+    .slide.bank-grad { background: linear-gradient(135deg, #020617 0%, #1e293b 50%, #0f172a 100%); color: white; }
+    .slide.gold-grad { background: linear-gradient(135deg, #0f172a 0%, #ca8a04 50%, #facc15 100%); color: white; }
+    .mesh-bg { position: absolute; inset: 0; opacity: 0.4; pointer-events: none; background:
+      radial-gradient(circle at 20% 30%, rgba(250,204,21,0.3), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(4,120,87,0.3), transparent 40%); }
+    .slide-content { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .slide-label { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: var(--gold-bright); padding: 6px 12px; background: rgba(234,179,8,0.15); border: 1px solid rgba(234,179,8,0.4); border-radius: 999px; margin-bottom: 18px; align-self: flex-start; }
+    .slide.light .slide-label { color: var(--gold); background: var(--gold-soft); border-color: var(--gold-light); }
+    .headline { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 4vw, 52px); font-weight: 700; line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
+    .gradient-text { background: linear-gradient(135deg, var(--gold-bright) 0%, var(--emerald-light) 50%, white 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .subhead { font-size: clamp(14px, 1.5vw, 18px); line-height: 1.5; opacity: 0.85; max-width: 800px; margin-bottom: 18px; }
+    .counter { position: fixed; bottom: 18px; right: 24px; font-size: 12px; font-weight: 700; opacity: 0.6; z-index: 100; }
+    .hint { position: fixed; bottom: 18px; left: 24px; font-size: 11px; font-weight: 600; opacity: 0.5; z-index: 100; }
+    .hint kbd { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin: 0 2px; font-family: monospace; }
+    body.light-slide .hint kbd { background: rgba(0,0,0,0.06); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .stat-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px; text-align: center; }
+    .slide.light .stat-card { background: white; border-color: var(--brand-200); box-shadow: 0 8px 24px rgba(15,23,42,0.06); }
+    .stat-num { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 3vw, 44px); font-weight: 800; color: var(--gold-light); line-height: 1; }
+    .slide.light .stat-num { color: var(--gold); }
+    .stat-label { font-size: 11px; opacity: 0.75; margin-top: 8px; line-height: 1.4; }
+    .quote-box { padding: 22px 28px; background: rgba(250,204,21,0.08); border-left: 4px solid var(--gold); border-radius: 10px; font-style: italic; margin: 18px 0; }
+    .slide.light .quote-box { background: var(--gold-soft); }
+    .ask-box { background: white; color: var(--ink); padding: 28px; border-radius: 18px; box-shadow: 0 30px 80px rgba(0,0,0,0.3); margin-top: 16px; }
+    .ask-box h3 { color: var(--bank); font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+    .ask-box .price { font-family: 'Fredoka', sans-serif; font-size: 56px; font-weight: 800; color: var(--ink); line-height: 1; }
+    .ask-box .price-sub { font-size: 14px; color: #6b7280; margin-top: 6px; }
+    .feature-row { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .slide.light .feature-row { border-bottom-color: var(--brand-200); }
+    .feature-row:last-child { border-bottom: none; }
+    .feature-row .icon { font-size: 24px; flex-shrink: 0; }
+    .feature-row strong { display: block; margin-bottom: 4px; }
+    .feature-row span { font-size: 13px; opacity: 0.8; line-height: 1.5; }
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }
+    .data-table th { padding: 10px 14px; background: rgba(250,204,21,0.15); text-align: left; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .data-table td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .slide.light .data-table th { background: var(--gold-soft); color: var(--gold); }
+    .slide.light .data-table td { border-bottom-color: var(--brand-200); }
+    .id-mock { max-width: 100%; height: auto; border-radius: 14px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); display: block; }
+    .slide.light .id-mock { box-shadow: 0 18px 40px rgba(15,23,42,0.18); }
+  </style>
+</head>
+<body>
+  <div class="progress"><div class="progress-fill" id="progressFill" style="width: 11%"></div></div>
+  <div class="deck" id="deck">
+
+    <!-- 1 — COVER -->
+    <section class="slide gold-grad active" data-num="1">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Pitch · Banca retail · Loyalty pet-friendly</span>
+        <h1 class="headline" style="font-size: clamp(36px, 5vw, 68px);">
+          La proxima vertical<br>
+          de loyalty bancario<br>
+          tiene <span class="gradient-text">cuatro patas</span>.
+        </h1>
+        <p class="subhead" style="font-size: 18px; max-width: 760px; opacity: 0.95;">
+          74% de los hogares chilenos tienen al menos una mascota. Tu cliente
+          gasta en alimento, vet y seguros antes que en si mismo. Paw Friend
+          te embebe en ese gasto con una experiencia digital que el cliente
+          ya quiere usar.
+        </p>
+        <div style="display: flex; gap: 18px; align-items: center; margin-top: 22px; opacity: 0.85; font-size: 13px;">
+          <span>💳 Tarjeta pet-friendly</span>
+          <span>•</span>
+          <span>🏥 Credito veterinario</span>
+          <span>•</span>
+          <span>🛡️ Seguro pet co-branded</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 — PROBLEMA -->
+    <section class="slide dark" data-num="2">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">El problema · loyalty bancario hoy</span>
+        <h2 class="headline">
+          Tu programa de puntos da <span class="gradient-text">descuentos en lo que igual ibas a comprar</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card">
+            <div class="stat-num">74%</div>
+            <div class="stat-label">hogares Chile<br>con mascota</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">~$1.2M</div>
+            <div class="stat-label">CLP/ano gasto medio<br>por mascota (estimado)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">< 3%</div>
+            <div class="stat-label">de ese gasto pasa<br>por tu producto bancario</div>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 28px;">
+          "Llevamos 5 anos buscando una vertical emocional que vaya mas alla de
+          viajes y supermercado. Mascotas es el lugar logico — pero ningun
+          banco la ha resuelto bien porque no existe la base de datos del cliente
+          y su mascota."
+          <div style="margin-top: 8px; font-style: normal; font-size: 12px; opacity: 0.7;">— Patron observado en CMOs banca retail Chile</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 — PROPUESTA + ID MOCK -->
+    <section class="slide light" data-num="3">
+      <div class="slide-content">
+        <span class="slide-label">Nuestra propuesta · loyalty con cara y nombre</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          La <span style="color: var(--gold);">cuenta corriente</span> de tu cliente, con un <span style="color: var(--emerald);">carnet para Kai</span>.
+        </h2>
+        <div class="grid-2" style="margin-top: 24px;">
+          <div>
+            <div class="feature-row">
+              <div class="icon">💳</div>
+              <div><strong>Tarjeta pet-friendly co-branded</strong>
+                <span>Logo banco + Paw Friend + foto de la mascota. Cashback en categorias pet (alimento, vet, accesorios).</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">🏥</div>
+              <div><strong>Credito veterinario instantaneo</strong>
+                <span>"Tu perro entro a urgencia. Quieres dividir el gasto en 6 cuotas?" Aprobacion en la app, embebido en /home Paw Friend.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">🛡️</div>
+              <div><strong>Seguro pet co-branded</strong>
+                <span>Underwriting con ficha clinica real. Tu marca, nuestra data. Loss ratio modelado 58% vs 72% sector.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">🎁</div>
+              <div><strong>Programa de puntos pet</strong>
+                <span>Puntos canjeables por consultas vet, alimento, paw cards. Engagement medido en "veces que abre la app por mes".</span></div>
+            </div>
+          </div>
+          <div style="text-align: center;">
+            <img src="assets/IDS/carnet-mascota-frente.svg" alt="Carnet de mascota Paw Friend co-branded" class="id-mock" style="max-width: 380px; margin: 0 auto;">
+            <div style="font-size: 12px; color: #6b7280; margin-top: 12px; font-style: italic;">Carnet co-branded: tu logo + Paw Friend + identidad biometrica.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 — productos -->
+    <section class="slide dark" data-num="4">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Productos · 4 verticales bancarias</span>
+        <h2 class="headline">
+          De <span class="gradient-text">tarjeta a credito a seguros a inversion</span>.
+        </h2>
+        <div class="grid-4" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">💳</div>
+            <strong style="display: block; margin-top: 8px;">Tarjeta co-branded</strong>
+            <span style="font-size: 12px; opacity: 0.8;">Cashback 3-5% pet · sticker de tu logo + Paw Friend · diseno emocional</span>
+          </div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🏥</div>
+            <strong style="display: block; margin-top: 8px;">Credito vet</strong>
+            <span style="font-size: 12px; opacity: 0.8;">Linea preaprobada por perfil de mascota. Activable en urgencia desde app.</span>
+          </div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🛡️</div>
+            <strong style="display: block; margin-top: 8px;">Seguro pet</strong>
+            <span style="font-size: 12px; opacity: 0.8;">White-label con tu compania de seguros (interna o partner)</span>
+          </div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">📈</div>
+            <strong style="display: block; margin-top: 8px;">Cuenta sueldo pet</strong>
+            <span style="font-size: 12px; opacity: 0.8;">Onboarding emocional para abrir cuenta corriente. Foto de mascota como avatar.</span>
+          </div>
+        </div>
+        <div style="margin-top: 32px; padding: 18px 24px; background: rgba(250,204,21,0.1); border: 1px solid rgba(250,204,21,0.3); border-radius: 12px;">
+          <strong style="color: var(--gold-bright);">📌 Caso de uso ancla:</strong>
+          <span style="font-size: 14px; opacity: 0.9; margin-left: 8px;">
+            Cliente abre Paw Friend para ver vacunas de su perro → ve banner "Tu banco te ofrece $400k de credito vet preaprobado" → activa en 2 taps.
+            <strong>Ese flujo no existe hoy en ningun banco.</strong>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 — PRICING -->
+    <section class="slide light" data-num="5">
+      <div class="slide-content">
+        <span class="slide-label">Modelo · sponsorship + revenue share</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          3 modos: <span style="color: var(--gold);">embed light</span> · <span style="color: var(--emerald);">co-brand</span> · <span style="color: var(--brand-900);">vertical completa</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase;">Embed Light</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 36px; font-weight: 800; color: var(--ink); line-height: 1; margin-top: 6px;">$5k <span style="font-size: 14px; opacity: 0.6;">USD/mes</span></div>
+            <ul style="margin-top: 12px; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>Banner sponsor en /home + footer</li>
+              <li>Newsletter co-branded mensual</li>
+              <li>Reporte trimestral leads</li>
+            </ul>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px; border: 2px solid var(--gold); position: relative;">
+            <span style="position: absolute; top: -10px; right: 14px; background: var(--gold); color: white; font-size: 10px; padding: 3px 10px; border-radius: 999px; font-weight: 800;">RECOMENDADO</span>
+            <div style="font-size: 11px; font-weight: 800; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase;">Co-Brand</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 36px; font-weight: 800; color: var(--ink); line-height: 1; margin-top: 6px;">$15k <span style="font-size: 14px; opacity: 0.6;">USD/mes + RS</span></div>
+            <ul style="margin-top: 12px; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>Tarjeta co-branded</li>
+              <li>Credito vet integrado</li>
+              <li>Seguro co-branded</li>
+              <li>Revenue share 1.5% por activacion</li>
+            </ul>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase;">Vertical Completa</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 36px; font-weight: 800; color: var(--ink); line-height: 1; margin-top: 6px;">$40k+ <span style="font-size: 14px; opacity: 0.6;">USD/mes</span></div>
+            <ul style="margin-top: 12px; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>White-label completo</li>
+              <li>API core bancario</li>
+              <li>Cuenta sueldo pet</li>
+              <li>Equipo dedicado + SLA</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 28px;">
+          <strong>ROI tipico Co-Brand:</strong> 2.000 tarjetas activadas/ano + 400 creditos vet + 200 seguros = ~$180k USD revenue/ano para el banco.
+          Tu inversion se paga con <strong>el primer trimestre</strong>.
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 — DIFERENCIACION -->
+    <section class="slide dark" data-num="6">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Por que nosotros · vs alternativas</span>
+        <h2 class="headline">
+          La unica vertical pet con <span class="gradient-text">data viva + experiencia digital lista</span>.
+        </h2>
+        <table class="data-table" style="margin-top: 24px;">
+          <thead>
+            <tr>
+              <th>Capacidad</th>
+              <th>Programa puntos generico</th>
+              <th>Convenio retailer</th>
+              <th>Paw Friend</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Identidad emocional cliente-mascota</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: var(--medical); font-weight: 800;">Si (foto, ficha, eventos)</td>
+            </tr>
+            <tr>
+              <td>App con uso semanal del cliente</td>
+              <td style="color: #fbbf24;">Mensual</td>
+              <td style="color: #94a3b8;">Esporadico</td>
+              <td style="color: var(--medical); font-weight: 800;">Diaria/semanal</td>
+            </tr>
+            <tr>
+              <td>Trigger emocional para conversion</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: var(--medical); font-weight: 800;">Vet · vacuna · cumple · urgencia</td>
+            </tr>
+            <tr>
+              <td>Underwriting credito/seguro pet</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: var(--medical); font-weight: 800;">Ficha clinica real</td>
+            </tr>
+            <tr>
+              <td>Tiempo a producto en mercado</td>
+              <td style="color: #fbbf24;">Status quo</td>
+              <td style="color: #ef4444;">12-18m</td>
+              <td style="color: var(--medical); font-weight: 800;">90 dias</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 7 — PILOTO -->
+    <section class="slide light" data-num="7">
+      <div class="slide-content">
+        <span class="slide-label">Piloto · 6 meses · co-brand</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Probemos co-brand <span style="color: var(--gold);">por $30k USD all-in</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 32px;">📅</div>
+            <strong style="display: block; margin-top: 12px;">Mes 1-2 · Setup</strong>
+            <span style="font-size: 13px; opacity: 0.85;">Diseno tarjeta + integracion API + pricing credito vet + KPIs.</span>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 32px;">🚀</div>
+            <strong style="display: block; margin-top: 12px;">Mes 3-5 · Live</strong>
+            <span style="font-size: 13px; opacity: 0.85;">Activacion in-app + push targeted + medicion conversion.</span>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 32px;">📊</div>
+            <strong style="display: block; margin-top: 12px;">Mes 6 · Reporte</strong>
+            <span style="font-size: 13px; opacity: 0.85;">Activaciones + uso + revenue. Decidimos pasar a Vertical Completa.</span>
+          </div>
+        </div>
+        <div class="ask-box" style="margin-top: 32px; background: linear-gradient(160deg, white 0%, var(--brand-50) 100%);">
+          <h3>Que pides para empezar</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 12px;">
+            <div>
+              <div class="price" style="color: var(--gold);">$30k USD</div>
+              <div class="price-sub">all-in 6 meses + revenue share 1.5%</div>
+              <div style="margin-top: 12px; font-size: 13px; color: #475569;">
+                Despues elegimos: <strong>Co-Brand $15k/mes</strong>, <strong>Vertical $40k+/mes</strong>, o nos despedimos.
+              </div>
+            </div>
+            <div style="font-size: 13px; color: #475569; line-height: 1.8;">
+              <strong style="color: var(--ink);">Que recibes:</strong>
+              <ul style="padding-left: 18px; margin-top: 6px;">
+                <li>Tarjeta co-branded</li>
+                <li>Credito vet API</li>
+                <li>Cohort dashboard</li>
+                <li>Founder + 1 PM dedicado</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 — CTA -->
+    <section class="slide gold-grad" data-num="8">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Conversacion · proximos pasos</span>
+        <h2 class="headline" style="font-size: clamp(34px, 4.5vw, 60px);">
+          30 minutos con tu equipo<br>
+          de <span class="gradient-text">Loyalty o Innovacion</span>.
+        </h2>
+        <p class="subhead" style="font-size: 17px; max-width: 780px;">
+          Te muestro live el flujo cliente: ve a su perro en /home → activa credito vet → paga consulta → recibe puntos.
+          Cerramos con propuesta de co-brand piloto.
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 28px;">
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📅</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 1</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">30min demo<br>+ flujo cliente</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">💳</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 2</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Mock tarjeta<br>+ scoring credito</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🚀</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 3</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Piloto co-brand<br>en 90 dias</div>
+          </div>
+        </div>
+        <div style="margin-top: 36px; display: flex; gap: 24px; justify-content: center; align-items: center; flex-wrap: wrap; font-size: 14px;">
+          <span>🌐 <a href="https://pawfriend.cl" style="color: var(--gold-bright); text-decoration: none; font-weight: 700;" target="_blank">pawfriend.cl</a></span>
+          <span>✉️ <a href="mailto:pawfriendcl@gmail.com" style="color: var(--gold-bright); text-decoration: none; font-weight: 700;">pawfriendcl@gmail.com</a></span>
+          <span style="opacity: 0.85;">📍 Hecho en Chile · Lanzamiento Junio 2026</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="counter" id="counter">1 / 8</div>
+  <div class="hint" id="hint"><kbd>←</kbd><kbd>→</kbd> navegar <kbd>F</kbd> full <kbd>P</kbd> imprimir</div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressFill = document.getElementById('progressFill');
+    const counter = document.getElementById('counter');
+    const total = slides.length;
+    let current = 0;
+    function show(i) {
+      i = Math.max(0, Math.min(total - 1, i));
+      slides.forEach((s, k) => s.classList.toggle('active', k === i));
+      current = i;
+      progressFill.style.width = ((i + 1) / total * 100) + '%';
+      counter.textContent = `${i + 1} / ${total}`;
+      document.body.classList.toggle('light-slide', slides[i].classList.contains('light'));
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') show(current + 1);
+      else if (e.key === 'ArrowLeft') show(current - 1);
+      else if (e.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.();
+      else if (e.key.toLowerCase() === 'p') window.print();
+    });
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      const x = e.clientX / window.innerWidth;
+      show(x > 0.5 ? current + 1 : current - 1);
+    });
+    show(0);
+  </script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend para Retail Pet · Master Dog · Falabella · Puppis · Pet Star</title>
+  <meta name="description" content="Paw Friend: shelf de productos pet con recomendacion contextual basada en raza, edad, condicion y comuna." />
+  <meta name="theme-color" content="#ea580c" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-50: #fff7ed; --brand-100: #ffedd5; --brand-200: #fed7aa; --brand-300: #fdba74;
+      --brand-400: #fb923c; --brand-500: #f97316; --brand-600: #ea580c; --brand-700: #c2410c;
+      --brand-800: #9a3412; --brand-900: #7c2d12;
+      --coral: #fb7185; --coral-soft: #ffe4e6;
+      --gold: #eab308; --gold-light: #fde047;
+      --medical: #10b981; --alert: #ef4444; --ink: #1c0701;
+      --retail: #ea580c; --retail-soft: #ffedd5;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #1c0701; color: white; }
+    body.light-slide { background: var(--brand-50); color: var(--ink); }
+    .deck { position: relative; height: 100vh; width: 100vw; overflow: hidden; }
+    .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.08); z-index: 100; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--coral) 0%, var(--brand-500) 50%, var(--gold) 100%); transition: width 0.5s ease; }
+    .slide { position: absolute; inset: 0; padding: 6vh 6vw; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s; overflow-y: auto; }
+    .slide.active { opacity: 1; visibility: visible; }
+    .slide.dark { background: linear-gradient(135deg, #1c0701 0%, #7c2d12 50%, #9a3412 100%); color: white; }
+    .slide.light { background: linear-gradient(135deg, var(--brand-50) 0%, var(--brand-100) 100%); color: var(--ink); }
+    .slide.grad { background: linear-gradient(135deg, #7c2d12 0%, #ea580c 50%, #fbbf24 100%); color: white; }
+    .slide.retail-grad { background: linear-gradient(135deg, #9a3412 0%, #ea580c 50%, #fb7185 100%); color: white; }
+    .mesh-bg { position: absolute; inset: 0; opacity: 0.4; pointer-events: none; background:
+      radial-gradient(circle at 20% 30%, rgba(251,113,133,0.4), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(234,88,12,0.4), transparent 40%); }
+    .slide-content { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .slide-label { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: var(--gold-light); padding: 6px 12px; background: rgba(234,179,8,0.15); border: 1px solid rgba(234,179,8,0.4); border-radius: 999px; margin-bottom: 18px; align-self: flex-start; }
+    .slide.light .slide-label { color: var(--brand-700); background: var(--brand-100); border-color: var(--brand-300); }
+    .headline { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 4vw, 52px); font-weight: 700; line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
+    .gradient-text { background: linear-gradient(135deg, var(--gold-light) 0%, var(--coral) 50%, var(--brand-300) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .subhead { font-size: clamp(14px, 1.5vw, 18px); line-height: 1.5; opacity: 0.85; max-width: 800px; margin-bottom: 18px; }
+    .counter { position: fixed; bottom: 18px; right: 24px; font-size: 12px; font-weight: 700; opacity: 0.6; z-index: 100; }
+    .hint { position: fixed; bottom: 18px; left: 24px; font-size: 11px; font-weight: 600; opacity: 0.5; z-index: 100; }
+    .hint kbd { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin: 0 2px; font-family: monospace; }
+    body.light-slide .hint kbd { background: rgba(0,0,0,0.06); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .stat-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px; text-align: center; }
+    .slide.light .stat-card { background: white; border-color: var(--brand-200); box-shadow: 0 8px 24px rgba(234,88,12,0.06); }
+    .stat-num { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 3vw, 44px); font-weight: 800; color: var(--gold-light); line-height: 1; }
+    .slide.light .stat-num { color: var(--brand-600); }
+    .stat-label { font-size: 11px; opacity: 0.75; margin-top: 8px; line-height: 1.4; }
+    .quote-box { padding: 22px 28px; background: rgba(251,113,133,0.08); border-left: 4px solid var(--coral); border-radius: 10px; font-style: italic; margin: 18px 0; }
+    .slide.light .quote-box { background: var(--coral-soft); border-left-color: var(--retail); }
+    .ask-box { background: white; color: var(--ink); padding: 28px; border-radius: 18px; box-shadow: 0 30px 80px rgba(0,0,0,0.3); margin-top: 16px; }
+    .ask-box h3 { color: var(--retail); font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+    .ask-box .price { font-family: 'Fredoka', sans-serif; font-size: 56px; font-weight: 800; color: var(--ink); line-height: 1; }
+    .ask-box .price-sub { font-size: 14px; color: #6b7280; margin-top: 6px; }
+    .feature-row { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .slide.light .feature-row { border-bottom-color: var(--brand-100); }
+    .feature-row:last-child { border-bottom: none; }
+    .feature-row .icon { font-size: 24px; flex-shrink: 0; }
+    .feature-row strong { display: block; margin-bottom: 4px; }
+    .feature-row span { font-size: 13px; opacity: 0.8; line-height: 1.5; }
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }
+    .data-table th { padding: 10px 14px; background: rgba(251,113,133,0.15); text-align: left; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .data-table td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .slide.light .data-table th { background: var(--retail-soft); color: var(--retail); }
+    .slide.light .data-table td { border-bottom-color: var(--brand-100); }
+  </style>
+</head>
+<body>
+  <div class="progress"><div class="progress-fill" id="progressFill" style="width: 12%"></div></div>
+  <div class="deck" id="deck">
+
+    <!-- 1 — COVER -->
+    <section class="slide retail-grad active" data-num="1">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Pitch · Retail Pet · Pet Specialty</span>
+        <h1 class="headline" style="font-size: clamp(36px, 5vw, 68px);">
+          La gondola pet en Chile<br>
+          se vende <span class="gradient-text">a ciegas</span>.<br>
+          Nosotros la iluminamos.
+        </h1>
+        <p class="subhead" style="font-size: 18px; max-width: 760px; opacity: 0.95;">
+          50.000 pets con raza, edad, peso, condicion y comuna. Recomendamos
+          el alimento, el snack, la cama, el juguete o el medicamento correcto
+          en el momento correcto. Tu carrito promedio sube 28%.
+        </p>
+        <div style="display: flex; gap: 18px; align-items: center; margin-top: 22px; opacity: 0.85; font-size: 13px;">
+          <span>🛒 Recomendacion contextual</span>
+          <span>•</span>
+          <span>🔁 Suscripcion alimento embedded</span>
+          <span>•</span>
+          <span>📍 Geo-segmentacion comuna</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 — PROBLEMA -->
+    <section class="slide dark" data-num="2">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">El problema · retail pet hoy</span>
+        <h2 class="headline">
+          Tu mejor segmentacion sigue siendo <span class="gradient-text">"perro grande" o "gato"</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card">
+            <div class="stat-num">2.3x</div>
+            <div class="stat-label">CAC online en pet retail<br>vs hace 3 anos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">~14%</div>
+            <div class="stat-label">cart abandonment<br>por mala recomendacion</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">< 8%</div>
+            <div class="stat-label">de tus clientes vuelven<br>antes de 60 dias</div>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 28px;">
+          "Tenemos catalogo enorme pero la gente compra el mismo alimento que vio
+          en el supermercado. No sabemos si su perro es un Pastor Suizo de 4
+          anos con sobrepeso o un cachorro Labrador. La gondola es la misma para
+          todos."
+          <div style="margin-top: 8px; font-style: normal; font-size: 12px; opacity: 0.7;">— Patron observado en pet retail Chile</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 — LO QUE OFRECEMOS -->
+    <section class="slide light" data-num="3">
+      <div class="slide-content">
+        <span class="slide-label">Nuestra propuesta · personalizacion + recurrencia</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Convertimos tu catalogo en una <span style="color: var(--retail);">recomendacion personalizada</span>.
+        </h2>
+        <div class="grid-2" style="margin-top: 24px;">
+          <div>
+            <div class="feature-row">
+              <div class="icon">🎯</div>
+              <div><strong>Recomendacion contextual por mascota</strong>
+                <span>API que recibe pet_id y devuelve top-N productos relevantes (alimento por edad/raza, antiparasitario por peso, snack por condicion).</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">🔁</div>
+              <div><strong>Suscripcion alimento auto-replenish</strong>
+                <span>Calculamos consumo real (peso x raza x edad) y pre-pedimos antes que se acabe. CLV +3.2x vs compra puntual.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">📦</div>
+              <div><strong>Bundles automaticos</strong>
+                <span>Bundle "cachorro labrador 0-6m" con alimento + juguete dentaria + cama + antiparasitario. Conversion +41%.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">📍</div>
+              <div><strong>Geo + comuna para inventario</strong>
+                <span>Sabemos en que comuna vive cada perfil. Stock smart en tus tiendas fisicas + envio same-day rentable.</span></div>
+            </div>
+          </div>
+          <div class="ask-box" style="background: linear-gradient(160deg, white 0%, var(--brand-50) 100%);">
+            <h3>Mock recomendacion</h3>
+            <div style="font-size: 13px; color: #6b7280; margin-bottom: 8px;">Pet: Kai · Pastor Suizo · 4 anos · 32kg · Vitacura</div>
+            <hr style="margin: 10px 0; border: none; border-top: 1px dashed var(--brand-200);" />
+            <div style="font-size: 13px; line-height: 1.7;">
+              <div>🥇 <strong>Royal Canin Maxi Adult 15kg</strong> · $52.900 <span style="color: var(--medical); font-weight: 700;">(98% match)</span></div>
+              <div>🥈 <strong>Pro Plan Optiage 15kg</strong> · $48.900 <span style="color: var(--medical); font-weight: 700;">(91% match)</span></div>
+              <div>🥉 <strong>Hills Active Adult 15kg</strong> · $54.900 <span style="color: var(--medical); font-weight: 700;">(89% match)</span></div>
+            </div>
+            <hr style="margin: 14px 0; border: none; border-top: 1px dashed var(--brand-200);" />
+            <div style="font-size: 12px; line-height: 1.7; color: #475569;">
+              <div>📅 <strong>Auto-replenish:</strong> cada 38 dias</div>
+              <div>🦴 <strong>Bundle sugerido:</strong> alimento + dentaria + antiparasitario · $68.500</div>
+              <div>💰 <strong>Cart promedio:</strong> $52k → <strong style="color: var(--medical);">$67k (+28%)</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 — productos -->
+    <section class="slide dark" data-num="4">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Productos · 4 modos de integracion</span>
+        <h2 class="headline">
+          De API simple a <span class="gradient-text">marketplace embedded</span>.
+        </h2>
+        <div class="grid-4" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🔌</div>
+            <strong style="display: block; margin-top: 8px;">API recomendacion</strong>
+            <span style="font-size: 12px; opacity: 0.8;">Tu e-commerce te conecta a nuestro motor: pet_id → top-N productos.</span>
+          </div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🛒</div>
+            <strong style="display: block; margin-top: 8px;">Shop in-app</strong>
+            <span style="font-size: 12px; opacity: 0.8;">Marketplace dentro de Paw Friend con tus SKUs. Comision por venta.</span>
+          </div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🔁</div>
+            <strong style="display: block; margin-top: 8px;">Suscripcion alimento</strong>
+            <span style="font-size: 12px; opacity: 0.8;">Auto-replenish con tu marca. Pago Flow.cl. Comision recurrente.</span>
+          </div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">📊</div>
+            <strong style="display: block; margin-top: 8px;">Insights de cohort</strong>
+            <span style="font-size: 12px; opacity: 0.8;">Que se compra, donde y por que. Reportes mensuales accionables.</span>
+          </div>
+        </div>
+        <div style="margin-top: 32px; padding: 18px 24px; background: rgba(251,113,133,0.12); border: 1px solid rgba(251,113,133,0.3); border-radius: 12px;">
+          <strong style="color: var(--coral);">📌 Caso de uso ancla:</strong>
+          <span style="font-size: 14px; opacity: 0.9; margin-left: 8px;">
+            Onboarding de mascota → calculamos racion diaria → CTA "Quieres recibir el alimento ideal cada mes con 12% off?" → suscripcion en 2 taps. <strong>Conversion benchmark interno: 18%.</strong>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 — PRICING -->
+    <section class="slide light" data-num="5">
+      <div class="slide-content">
+        <span class="slide-label">Modelo · revenue share + suscripcion</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Pagas por resultado, no por consultoria.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--retail); letter-spacing: 0.1em; text-transform: uppercase;">Affiliate</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 36px; font-weight: 800; color: var(--ink); line-height: 1; margin-top: 6px;">8-12% <span style="font-size: 14px; opacity: 0.6;">/ venta</span></div>
+            <ul style="margin-top: 12px; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>API recomendacion + link out a tu store</li>
+              <li>Sin minimum</li>
+              <li>Reporte mensual</li>
+            </ul>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px; border: 2px solid var(--retail); position: relative;">
+            <span style="position: absolute; top: -10px; right: 14px; background: var(--retail); color: white; font-size: 10px; padding: 3px 10px; border-radius: 999px; font-weight: 800;">RECOMENDADO</span>
+            <div style="font-size: 11px; font-weight: 800; color: var(--retail); letter-spacing: 0.1em; text-transform: uppercase;">Marketplace</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 36px; font-weight: 800; color: var(--ink); line-height: 1; margin-top: 6px;">15% <span style="font-size: 14px; opacity: 0.6;">/ venta + $2k USD setup</span></div>
+            <ul style="margin-top: 12px; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>Shop embedded en Paw Friend</li>
+              <li>Pago Flow integrado</li>
+              <li>Suscripcion alimento</li>
+              <li>Cohort dashboard</li>
+            </ul>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--retail); letter-spacing: 0.1em; text-transform: uppercase;">Brand Partner</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 36px; font-weight: 800; color: var(--ink); line-height: 1; margin-top: 6px;">$3k+ <span style="font-size: 14px; opacity: 0.6;">USD/mes</span></div>
+            <ul style="margin-top: 12px; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>Todo Marketplace +</li>
+              <li>Sponsored slots prioritarios</li>
+              <li>Co-marketing newsletter</li>
+              <li>Insights exclusivos cohort</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 28px;">
+          <strong>ROI tipico Marketplace:</strong> con cart promedio $67k CLP y 800 ordenes/mes,
+          tu revenue share queda en <strong>~$8M CLP/mes</strong> netos antes de costo del producto. Cubre setup en mes 1.
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 — DIFERENCIACION -->
+    <section class="slide dark" data-num="6">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Por que nosotros · vs alternativas</span>
+        <h2 class="headline">
+          Tu cliente esta dentro de Paw Friend <span class="gradient-text">cuando decide</span> que comprar.
+        </h2>
+        <table class="data-table" style="margin-top: 24px;">
+          <thead>
+            <tr>
+              <th>Capacidad</th>
+              <th>Marketplace generico</th>
+              <th>Programa fidelizacion</th>
+              <th>Paw Friend</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Personalizacion por mascota individual</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #fbbf24;">Por especie</td>
+              <td style="color: var(--medical); font-weight: 800;">Si (raza+edad+peso+condicion)</td>
+            </tr>
+            <tr>
+              <td>Suscripcion auto-replenish smart</td>
+              <td style="color: #fbbf24;">Manual</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: var(--medical); font-weight: 800;">Calculo de consumo real</td>
+            </tr>
+            <tr>
+              <td>Trigger por evento clinico</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: var(--medical); font-weight: 800;">Vacuna · esterilizacion · diagnostico</td>
+            </tr>
+            <tr>
+              <td>Geo-segmentacion comuna</td>
+              <td style="color: #fbbf24;">Por region</td>
+              <td style="color: #fbbf24;">Por tienda</td>
+              <td style="color: var(--medical); font-weight: 800;">Comuna + barrio</td>
+            </tr>
+            <tr>
+              <td>Cliente cautivo dentro del flujo</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #fbbf24;">App propia</td>
+              <td style="color: var(--medical); font-weight: 800;">Si (uso semanal)</td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top: 24px; font-size: 14px; opacity: 0.85;">
+          📌 <strong>Diferencia clave:</strong> en Paw Friend el cliente ya esta gastando atencion en su mascota
+          (ficha clinica, recordatorios, comunidad). El producto correcto en el momento correcto convierte solo.
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 — PILOTO -->
+    <section class="slide light" data-num="7">
+      <div class="slide-content">
+        <span class="slide-label">Piloto · 60 dias · revenue share puro</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Sin setup fee. Solo si <span style="color: var(--retail);">vendes, ganamos</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 32px;">📅</div>
+            <strong style="display: block; margin-top: 12px;">Sem 1-2 · Setup</strong>
+            <span style="font-size: 13px; opacity: 0.85;">Catalogo SKUs + integracion API + 1 categoria piloto (ej: alimento adulto).</span>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 32px;">🚀</div>
+            <strong style="display: block; margin-top: 12px;">Sem 3-6 · Live</strong>
+            <span style="font-size: 13px; opacity: 0.85;">CTAs en /home, ficha y onboarding. Tracking de conversion.</span>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 32px;">📊</div>
+            <strong style="display: block; margin-top: 12px;">Sem 7-8 · Reporte</strong>
+            <span style="font-size: 13px; opacity: 0.85;">CAC, AOV, conversion, suscripcion vs venta puntual. Decidimos.</span>
+          </div>
+        </div>
+        <div class="ask-box" style="margin-top: 32px; background: linear-gradient(160deg, white 0%, var(--brand-50) 100%);">
+          <h3>Que pides para empezar</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 12px;">
+            <div>
+              <div class="price" style="color: var(--retail);">$0 setup</div>
+              <div class="price-sub">solo revenue share 12% · 60 dias</div>
+              <div style="margin-top: 12px; font-size: 13px; color: #475569;">
+                Despues elegimos: <strong>Affiliate 8-12%</strong>, <strong>Marketplace 15% + setup</strong> o <strong>Brand Partner $3k/mes</strong>.
+              </div>
+            </div>
+            <div style="font-size: 13px; color: #475569; line-height: 1.8;">
+              <strong style="color: var(--ink);">Que necesitamos:</strong>
+              <ul style="padding-left: 18px; margin-top: 6px;">
+                <li>Feed de SKUs (CSV o API)</li>
+                <li>Inventario y precios actualizados</li>
+                <li>Logistica integrada (tu)</li>
+                <li>1 contacto comercial dedicado</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 — CTA -->
+    <section class="slide retail-grad" data-num="8">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Conversacion · proximos pasos</span>
+        <h2 class="headline" style="font-size: clamp(34px, 4.5vw, 60px);">
+          Demo de 30 minutos.<br>
+          <span class="gradient-text">Tu carrito promedio</span> sube en mes 2.
+        </h2>
+        <p class="subhead" style="font-size: 17px; max-width: 780px;">
+          Te muestro live una recomendacion contextual con 3 pets reales,
+          el motor de suscripcion y un cohort dashboard de tu categoria.
+          Cerramos con el piloto sin setup.
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 28px;">
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📅</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 1</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Demo + sample<br>de tu categoria</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🛒</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 2</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Setup catalogo<br>+ 1 categoria</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🚀</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 3</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Live + revenue<br>share 60 dias</div>
+          </div>
+        </div>
+        <div style="margin-top: 36px; display: flex; gap: 24px; justify-content: center; align-items: center; flex-wrap: wrap; font-size: 14px;">
+          <span>🌐 <a href="https://pawfriend.cl" style="color: var(--gold-light); text-decoration: none; font-weight: 700;" target="_blank">pawfriend.cl</a></span>
+          <span>✉️ <a href="mailto:pawfriendcl@gmail.com" style="color: var(--gold-light); text-decoration: none; font-weight: 700;">pawfriendcl@gmail.com</a></span>
+          <span style="opacity: 0.85;">📍 Hecho en Chile · Lanzamiento Junio 2026</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="counter" id="counter">1 / 8</div>
+  <div class="hint" id="hint"><kbd>←</kbd><kbd>→</kbd> navegar <kbd>F</kbd> full <kbd>P</kbd> imprimir</div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressFill = document.getElementById('progressFill');
+    const counter = document.getElementById('counter');
+    const total = slides.length;
+    let current = 0;
+    function show(i) {
+      i = Math.max(0, Math.min(total - 1, i));
+      slides.forEach((s, k) => s.classList.toggle('active', k === i));
+      current = i;
+      progressFill.style.width = ((i + 1) / total * 100) + '%';
+      counter.textContent = `${i + 1} / ${total}`;
+      document.body.classList.toggle('light-slide', slides[i].classList.contains('light'));
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') show(current + 1);
+      else if (e.key === 'ArrowLeft') show(current - 1);
+      else if (e.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.();
+      else if (e.key.toLowerCase() === 'p') window.print();
+    });
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      const x = e.clientX / window.innerWidth;
+      show(x > 0.5 ? current + 1 : current - 1);
+    });
+    show(0);
+  </script>
+</body>
+</html>
