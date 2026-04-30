@@ -28,7 +28,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Send, Mail, AlertCircle, CheckCircle2, Building2 } from 'lucide-react';
+import {
+  Send,
+  Mail,
+  AlertCircle,
+  CheckCircle2,
+  Building2,
+  ClipboardPaste,
+  Eye,
+} from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { toast } from 'sonner';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -42,6 +57,52 @@ type AudienceKind =
   | 'banca'
   | 'edificios'
   | 'longtail';
+
+/**
+ * Seed CSV por audiencia — extraído de _pending/OUTREACH_PROSPECTS_SEED.md.
+ * Botón "Pegar seed" del textarea inserta esta lista directo. Pedro debe
+ * verificar/personalizar los emails antes de enviar.
+ */
+const AUDIENCE_SEEDS: Record<AudienceKind, string> = {
+  pharma: `contacto@centrovet.cl, , Centrovet (Agrosuper)
+info@virbac.cl, , Virbac Chile
+contacto@msd-salud-animal.cl, , MSD Salud Animal
+zoetis.chile@zoetis.com, , Zoetis Chile
+contacto@drag-pharma.cl, , Drag Pharma
+contacto@elanco.com, , Elanco Animal Health
+info@boehringer-ingelheim.cl, , Boehringer Ingelheim
+contacto@bayer.cl, , Bayer Animal Health`,
+  seguros: `contacto@sura.cl, , Sura Seguros
+contacto@bci-seguros.cl, , BCI Seguros
+seguros@mapfre.cl, , Mapfre Chile
+contacto@consorcio.cl, , Consorcio
+contacto@hdi.cl, , HDI Seguros
+contacto@security.cl, , Security Seguros
+contacto@penta.cl, , Penta Security`,
+  retail: `contacto@masterdog.cl, , Master Dog
+contacto@puppis.cl, , Puppis
+contacto@petstar.cl, , Pet Star
+contacto@falabella.com, , Falabella Pet
+contacto@petlovers.cl, , Pet Lovers
+contacto@kingdog.cl, , King Dog
+ventas@maxipet.cl, , Maxipet`,
+  gobierno: `tenenciaresponsable@lascondes.cl, , Municipalidad Las Condes
+mascotas@vitacura.cl, , Municipalidad Vitacura
+tenenciaresponsable@providencia.cl, , Municipalidad Providencia
+contacto@nunoa.cl, , Municipalidad Ñuñoa
+mascotas@subdere.gov.cl, , SUBDERE`,
+  banca: `contacto@santander.cl, , Banco Santander
+contacto@bci.cl, , BCI Personas
+contacto@itau.cl, , Itaú Chile
+contacto@bancofalabella.cl, , Banco Falabella
+contacto@bancoestado.cl, , BancoEstado`,
+  edificios: `contacto@inmobiliariamanquehue.cl, , Inmobiliaria Manquehue
+contacto@paz.cl, , PAZ Inmobiliaria
+contacto@actual.cl, , Actual Inmobiliaria`,
+  longtail: `contacto@latam.com, , LATAM Cargo (mascotas)
+contacto@uautonoma.cl, , Universidad Autónoma (Vet)
+contacto@uss.cl, , Universidad San Sebastián (Vet)`,
+};
 
 const AUDIENCE_LABELS: Record<AudienceKind, { label: string; subject: string }> = {
   pharma: {
@@ -116,8 +177,17 @@ export default function AdminB2BOutreach() {
   const [customSubject, setCustomSubject] = useState('');
   const [customIntro, setCustomIntro] = useState('');
   const [results, setResults] = useState<OutreachResult[] | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
 
   const recipients = parseRecipients(recipientsRaw);
+
+  const pasteSeed = () => {
+    const seed = AUDIENCE_SEEDS[audience];
+    setRecipientsRaw(seed);
+    toast.info(
+      `${seed.split('\n').length} prospectos de ${audience} cargados. Verifica los emails antes de enviar.`
+    );
+  };
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ['b2b_outreach_stats'],
@@ -233,7 +303,19 @@ export default function AdminB2BOutreach() {
           </div>
 
           <div>
-            <Label>Recipients (uno por linea, formato: email, nombre, empresa)</Label>
+            <div className="flex items-center justify-between mb-1.5">
+              <Label>Recipients (uno por linea, formato: email, nombre, empresa)</Label>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={pasteSeed}
+                className="h-7 text-xs"
+              >
+                <ClipboardPaste className="size-3 mr-1" />
+                Pegar seed {audience}
+              </Button>
+            </div>
             <Textarea
               value={recipientsRaw}
               onChange={(e) => setRecipientsRaw(e.target.value)}
@@ -253,17 +335,27 @@ export default function AdminB2BOutreach() {
           </div>
 
           {/* Preview */}
-          <div className="p-3 rounded-lg bg-muted/30 border">
-            <div className="text-xs uppercase font-semibold text-muted-foreground mb-1">
-              Preview
+          <div className="p-3 rounded-lg bg-muted/30 border space-y-1">
+            <div className="flex items-center justify-between">
+              <div className="text-xs uppercase font-semibold text-muted-foreground">Preview</div>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                onClick={() => setPreviewOpen(true)}
+                className="h-6 text-xs"
+              >
+                <Eye className="size-3 mr-1" />
+                Ver email completo
+              </Button>
             </div>
             <div className="text-sm">
               <strong>Subject:</strong> {previewSubject}
             </div>
-            <div className="text-sm mt-1">
+            <div className="text-sm">
               <strong>From:</strong> Pedro Susaeta — Paw Friend &lt;hola@pawfriend.cl&gt;
             </div>
-            <div className="text-sm mt-1">
+            <div className="text-sm">
               <strong>CTA:</strong> /aplicar?tipo=
               {audience === 'pharma'
                 ? 'b2b_api'
@@ -289,6 +381,82 @@ export default function AdminB2BOutreach() {
           </Button>
         </CardContent>
       </Card>
+
+      {/* Dialog preview HTML completo del email — UX-B 2026-04-30 */}
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Preview email — {AUDIENCE_LABELS[audience].label}</DialogTitle>
+            <DialogDescription>
+              Asi se ve el email que recibira cada recipient. CTA va a /aplicar con audience
+              correspondiente.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="border rounded-lg p-4 space-y-3 bg-white text-sm">
+            <div className="border-b pb-2 space-y-1">
+              <div>
+                <strong>Para:</strong> {recipients[0]?.email ?? '[primer recipient]'}
+              </div>
+              <div>
+                <strong>Asunto:</strong> {previewSubject}
+              </div>
+              <div className="text-xs text-muted-foreground">
+                De: Pedro Susaeta — Paw Friend &lt;hola@pawfriend.cl&gt;
+              </div>
+            </div>
+            <div className="space-y-2 leading-relaxed">
+              <p>Hola{recipients[0]?.contact_name ? ` ${recipients[0].contact_name}` : ''},</p>
+              {customIntro ? (
+                <p className="whitespace-pre-wrap">{customIntro}</p>
+              ) : (
+                <p>
+                  {audience === 'pharma' &&
+                    'Construimos la infraestructura digital de la mascota chilena. Hoy operamos con código end-to-end listo en 7 motores B2B, y el motor #1 es nuestra API pública para pharma animal con 4 endpoints (breed_stats, species_stats, correlations, risk_score).'}
+                  {audience === 'seguros' &&
+                    'Construimos un cotizador embebido + lead capture de seguros pet con risk score real por raza/edad/comuna. Conectamos directo a tu funnel sin friccion.'}
+                  {audience === 'retail' &&
+                    'Construimos un canal de adquisicion contextual: catalogos personalizados por mascota (raza, edad, condicion) con tracking de conversion y descuento exclusivo Paw Member.'}
+                  {audience === 'gobierno' &&
+                    'Construimos infraestructura digital para implementar Ley 21.020 (tenencia responsable): registro mascota desde celular, microchip, esterilizacion, biometria opcional. Sin papel.'}
+                  {audience === 'banca' &&
+                    'Construimos un beneficio diferencial para clientes con mascota: ficha clinica longitudinal + descuentos partners + Paw Member badge. Plug-and-play en tu app de cliente.'}
+                  {audience === 'edificios' &&
+                    'Construimos registro digital de mascotas para comunidades: cada nuevo arriendo/venta = registro 5min via QR, datos a la administracion + reglamento aceptado.'}
+                  {audience === 'longtail' &&
+                    'Construimos integracion vertical para servicios pet-adjacent. Cada uno tiene su propio fit: aerolineas → docs viaje, academia → research consent, refugios → bulk import.'}
+                </p>
+              )}
+              <div className="bg-purple-50 border border-purple-200 rounded p-3 my-3">
+                <div className="font-semibold text-purple-900 mb-1">¿Te interesa? CTA:</div>
+                <a
+                  href={`https://pawfriend.cl/aplicar?tipo=${
+                    audience === 'pharma'
+                      ? 'b2b_api'
+                      : audience === 'gobierno'
+                        ? 'gobierno_municipio'
+                        : audience
+                  }`}
+                  className="text-purple-700 underline text-xs break-all"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  https://pawfriend.cl/aplicar?tipo=
+                  {audience === 'pharma'
+                    ? 'b2b_api'
+                    : audience === 'gobierno'
+                      ? 'gobierno_municipio'
+                      : audience}
+                </a>
+              </div>
+              <p className="text-xs text-muted-foreground border-t pt-2">
+                — Pedro Susaeta · Founder Paw Friend
+                <br />
+                pawfriend.cl · pedrosusaeta@pawfriend.cl
+              </p>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Results */}
       {results && (
