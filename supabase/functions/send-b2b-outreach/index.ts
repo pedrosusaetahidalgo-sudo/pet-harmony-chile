@@ -110,11 +110,11 @@ const AUDIENCE_CONFIG: Record<
   pharma: {
     subject: 'Pre-launch: la ficha clínica longitudinal de las mascotas chilenas, ¿les sirve?',
     preheader:
-      'API con consent ARCO + 4 endpoints listos. Lanzamiento 1 junio. Busco 1-2 partners pharma early.',
+      'API con consent ARCO + 4 endpoints listos. Lanzamiento próximo. Busco 1-2 partners pharma early.',
     headline:
-      'Construí la infraestructura digital de mascotas chilenas. Lanzo 1 junio. Antes de eso, ¿les sirve a ustedes?',
+      'Construí la infraestructura digital de mascotas chilenas. Lanzamiento próximo. Antes de eso, ¿les sirve a ustedes?',
     pitch:
-      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena, RUT 78.328.659-9). Construí en 8 meses la ficha clínica longitudinal del 100% del mercado pet chileno. Lanzo soft 1 junio 2026 con cohorte beta cerrada. Antes de abrir al público, busco 1-2 partners pharma early para validar el motor #1: API B2B con datos agregados anonimizados + consent ARCO.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena, RUT 78.328.659-9). Construí en 8 meses la ficha clínica longitudinal del 100% del mercado pet chileno. Estamos próximos a lanzar (cohorte beta cerrada en marcha). Antes de abrir al público, busco 1-2 partners pharma early para validar el motor #1: API B2B con datos agregados anonimizados + consent ARCO.',
     bullets: [
       'Qué ganan ustedes: targeting de campañas con segmentación raza/edad/comuna real (no panel autoseleccionado), validación de eficacia con cohort longitudinal, detección temprana de sub-poblaciones con condiciones específicas.',
       'Qué ganamos nosotros: validar pricing pharma + 1 case study para abrir conversación con Sura/Centrovet adicionales + tener un partner que crezca con nosotros desde mes 0.',
@@ -127,11 +127,11 @@ const AUDIENCE_CONFIG: Record<
   },
   seguros: {
     subject: 'Pre-launch: cotizador pet insurance embebido + risk score real, ¿les sirve?',
-    preheader: 'Lanzamiento 1 junio. Busco 1 aseguradora early para validar distribución B2B2C.',
+    preheader: 'Lanzamiento próximo. Busco 1 aseguradora early para validar distribución B2B2C.',
     headline:
-      'Construí un cotizador pet insurance con risk score real. Lanzo 1 junio. Antes, ¿les sirve a ustedes?',
+      'Construí un cotizador pet insurance con risk score real. Lanzamiento próximo. Antes, ¿les sirve a ustedes?',
     pitch:
-      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). En 8 meses construí la primera distribución B2B2C de seguros pet en Chile: el dueño abre la ficha de su mascota, ve cotizaciones en tiempo real de aseguradoras partner, pide contacto, ustedes reciben lead transaccional. Lanzo soft 1 junio con beta cerrada. Antes busco 1 partner aseguradora early.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). En 8 meses construí la primera distribución B2B2C de seguros pet en Chile: el dueño abre la ficha de su mascota, ve cotizaciones en tiempo real de aseguradoras partner, pide contacto, ustedes reciben lead transaccional. Estamos próximos a lanzar (cohorte beta cerrada en marcha). Antes busco 1 partner aseguradora early.',
     bullets: [
       'Qué ganan ustedes: distribución B2B2C en contexto (el owner ya tiene la mascota cargada con peso/raza/condiciones, no autoreporte). Risk score precomputado por raza/edad/comuna. Lead transaccional vía email automático.',
       'Qué ganamos nosotros: validar la mecánica con un partner real + tener case study para abrir conversación con BCI/Mapfre/Consorcio + revenue share de la primera póliza vendida.',
@@ -144,11 +144,11 @@ const AUDIENCE_CONFIG: Record<
   },
   retail: {
     subject: 'Pre-launch: canal de adquisición contextual para retail pet, ¿les sirve?',
-    preheader: 'Lanzamiento 1 junio. Busco 1-2 retailers para validar afiliado contextual.',
+    preheader: 'Lanzamiento próximo. Busco 1-2 retailers para validar afiliado contextual.',
     headline:
-      'Construí un canal de adquisición contextual para retail pet. Lanzo 1 junio. ¿Les sirve a ustedes?',
+      'Construí un canal de adquisición contextual para retail pet. Lanzamiento próximo. ¿Les sirve a ustedes?',
     pitch:
-      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). En 8 meses construí el catálogo retail más contextual del mercado pet chileno: cada producto se filtra automáticamente por especie + raza + edad + peso de la mascota del dueño. Lanzo soft 1 junio con beta cerrada. Antes busco 1-2 retailers early para validar la mecánica.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). En 8 meses construí el catálogo retail más contextual del mercado pet chileno: cada producto se filtra automáticamente por especie + raza + edad + peso de la mascota del dueño. Estamos próximos a lanzar (cohorte beta cerrada en marcha). Antes busco 1-2 retailers early para validar la mecánica.',
     bullets: [
       'Qué ganan ustedes: leads atribuibles con tracking real (no Google Analytics — RPC track_retail_click con SECURITY DEFINER), descuento contextual a Paw Members (tier que paga $3.990/mes), reporte mensual de attribution.',
       'Qué ganamos nosotros: validar el modelo de revenue share con un retailer real + tener un partner que aporta inventario + tener case study para abrir conversación con cadenas más grandes.',
@@ -161,11 +161,11 @@ const AUDIENCE_CONFIG: Record<
   },
   gobierno: {
     subject: 'Pre-launch: registro digital Ley 21.020 listo, ¿le sirve a su municipio?',
-    preheader: 'Lanzamiento 1 junio. Busco 1-2 municipios early para validar implementación.',
+    preheader: 'Lanzamiento próximo. Busco 1-2 municipios early para validar implementación.',
     headline:
       'La Ley 21.020 los obliga a tener registro digital de mascotas. Lo construí. ¿Les sirve?',
     pitch:
-      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). La Ley 21.020 (tenencia responsable) obliga a las municipalidades a llevar registro de mascotas con microchip, vacunas y tenedor responsable. Ningún municipio chileno lo tiene digital y centralizado. Nosotros sí — está en producción end-to-end. Lanzo soft 1 junio. Antes busco 1-2 municipios early.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). La Ley 21.020 (tenencia responsable) obliga a las municipalidades a llevar registro de mascotas con microchip, vacunas y tenedor responsable. Ningún municipio chileno lo tiene digital y centralizado. Nosotros sí — está en producción end-to-end. Estoy próximo a lanzar. Antes busco 1-2 municipios early.',
     bullets: [
       'Qué ganan ustedes: cumplimiento Ley 21.020 sin construir nada. Dashboard de cobertura por barrio (vacunas, esterilización, microchip). Reportes para SAG/Subdere automatizados. Onboarding ciudadano gratis.',
       'Qué ganamos nosotros: validar el modelo B2G con 1-2 municipios early + tener case study Las Condes/Vitacura/Providencia para abrir conversación con Subdere + escala nacional.',
@@ -178,10 +178,10 @@ const AUDIENCE_CONFIG: Record<
   },
   banca: {
     subject: 'Pre-launch: Paw Member como benefit diferencial para sus clientes premium',
-    preheader: 'Lanzamiento 1 junio. Busco 1 banco early para validar co-branding.',
+    preheader: 'Lanzamiento próximo. Busco 1 banco early para validar co-branding.',
     headline: 'Construí Paw Member como benefit corporativo. ¿Les sirve para diferenciar?',
     pitch:
-      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). El segmento premium chileno gasta USD 1.500/año en sus mascotas (referencia INE + comparables LatAm). La banca compite por ese segmento con benefits emocionales: viajes, gastronomía, cine. Falta uno: la mascota. Lo construí. Lanzo soft 1 junio. Antes busco 1 banco early.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). El segmento premium chileno gasta USD 1.500/año en sus mascotas (referencia INE + comparables LatAm). La banca compite por ese segmento con benefits emocionales: viajes, gastronomía, cine. Falta uno: la mascota. Lo construí. Estoy próximo a lanzar. Antes busco 1 banco early.',
     bullets: [
       'Qué ganan ustedes: benefit emocional con LTV alto, white-label co-branding (tarjeta + landing), engagement metrics mensual por segmento, costo predecible (cuota fija anual por cliente activo).',
       'Qué ganamos nosotros: validar el modelo de banca con 1 partner early + tener case study para abrir conversación con BCI/Itau/Falabella + ingreso recurrente garantizado vía contrato anual.',
@@ -194,11 +194,11 @@ const AUDIENCE_CONFIG: Record<
   },
   edificios: {
     subject: 'Pre-launch: registro digital de mascotas para sus edificios pet-friendly',
-    preheader: 'Lanzamiento 1 junio. Busco 1-2 administradoras early para validar SaaS comunidad.',
+    preheader: 'Lanzamiento próximo. Busco 1-2 administradoras early para validar SaaS comunidad.',
     headline:
       'Construí el SaaS para edificios pet-friendly que falta. ¿Les sirve a sus comunidades?',
     pitch:
-      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). Edificios pet-friendly hoy llevan el registro en Excel o WhatsApp. Hay 50.000+ unidades pet-friendly en Chile y crece 10% anual. Construí el SaaS dedicado en 8 meses. Lanzo soft 1 junio. Antes busco 1-2 administradoras o inmobiliarias early.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). Edificios pet-friendly hoy llevan el registro en Excel o WhatsApp. Hay 50.000+ unidades pet-friendly en Chile y crece 10% anual. Construí el SaaS dedicado en 8 meses. Estoy próximo a lanzar. Antes busco 1-2 administradoras o inmobiliarias early.',
     bullets: [
       'Qué ganan ustedes: cobertura compliance vacunas/esterilización por comunidad, reglamento digital con firma electrónica, reducción de conflictos vecinales (data en lugar de "el perro que ladra"), branding propio.',
       'Qué ganamos nosotros: validar el modelo SaaS B2B con 1-2 partners early + tener case study para escalar a Manquehue/PAZ/Actual + ingreso recurrente predecible (cuota mensual por unidad).',
@@ -211,11 +211,11 @@ const AUDIENCE_CONFIG: Record<
   },
   longtail: {
     subject: 'Pre-launch: alianza vertical pet-adjacent, ¿les hace sentido?',
-    preheader: 'Lanzamiento 1 junio. Acuerdos custom rápidos: data, distribución, co-marketing.',
+    preheader: 'Lanzamiento próximo. Acuerdos custom rápidos: data, distribución, co-marketing.',
     headline:
       'Si tu empresa toca el ecosistema mascota sin ser pharma/seguro/retail tradicional, hablemos.',
     pitch:
-      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). Hay un long-tail de empresas que tocan el ecosistema mascota: aerolíneas (Latam Cargo), academias veterinarias (UAutónoma, USS), fundaciones privadas, ferias pet, agroindustria, hardware vet. Construí Paw Friend en 8 meses con código modular. Lanzo soft 1 junio. Antes busco alianzas verticales rápidas.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). Hay un long-tail de empresas que tocan el ecosistema mascota: aerolíneas (Latam Cargo), academias veterinarias (UAutónoma, USS), fundaciones privadas, ferias pet, agroindustria, hardware vet. Construí Paw Friend en 8 meses con código modular. Estoy próximo a lanzar. Antes busco alianzas verticales rápidas.',
     bullets: [
       'Qué ganan ustedes: acceso a la audiencia pet chilena vía la app, co-marketing en feed/newsletter, métricas agregadas de tu vertical, integración técnica modular.',
       'Qué ganamos nosotros: distribución, contenido educativo, eventos físicos, expansión de uso casos. No buscamos cheque.',
