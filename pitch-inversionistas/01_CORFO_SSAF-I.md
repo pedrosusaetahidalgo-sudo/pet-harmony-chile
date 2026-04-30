@@ -108,9 +108,10 @@ Paw Friend es una plataforma chilena que digitaliza la ficha medica de mascotas,
 
 - **Free ($0, 2 mascotas)**: ficha clinica, PDF, ficha compartida, recordatorios,
   calendario, OCR, asistente IA, directorio de vets — lo esencial gratis para siempre.
-- **Paw Member ($3.990/mes, 4 mascotas)**: + Paw Shield biometria + Paw Passport PDF +
-  Insights Pro + audio notes IA + reportes >30d + descuentos Paw Partners + badge 💛.
-  Cubre el COGS Petify (USD $0,75/mascota/mes opt-in). Conversion target 13%.
+- **Paw Member ($3.990/mes, 4 mascotas)**: + Paw Passport PDF + Insights Pro + audio
+  notes IA + reportes >30d + descuentos Paw Partners + badge 💛. Sin COGS externo
+  (margen ~99%). Conversion target 13%. Biometria Paw Shield queda fuera del modelo
+  consumer (Opcion C 2026-04-30, codigo dormido reactivable B2B-funded).
 - **Manada ($9.990/mes, 5 mascotas)**: + descuentos exclusivos + soporte prioritario +
   early access + badge 👑 + **$2.000/mes a Fondo Paw Friend Refugios** (Paw Friend SpA
   es quien dona, evita Ley 19.885). Conversion target 1-2%.

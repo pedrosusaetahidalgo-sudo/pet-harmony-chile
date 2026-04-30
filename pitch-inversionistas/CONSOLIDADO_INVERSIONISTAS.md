@@ -221,7 +221,7 @@ pharma/seguros/retail pagan por acceso a escala. Loop coherente.
 ### B2C dueno — freemium 3 tiers (Plan v5 Opcion 3)
 
 - **Free ($0, hasta 2 mascotas)**: ficha clinica, recordatorios, calendario, OCR del carnet, Pet ID Card basica, QR, memorial, adoption, directorio vets. Lo esencial gratis para siempre. Conversion target 85%.
-- **Paw Member ($3.990/mes, hasta 4 mascotas)**: + Paw Shield biometria + Paw Passport PDF + Insights Pro + audio notes IA + reportes >30d + descuentos Paw Partners + badge 💛. Conversion target 13%. Cubre el COGS Petify (USD $0,75/mascota/mes opt-in).
+- **Paw Member ($3.990/mes, hasta 4 mascotas)**: + Paw Passport PDF + Insights Pro + audio notes IA + reportes >30d + descuentos Paw Partners + badge 💛. Conversion target 13%. Sin COGS externo (margen ~99%). Biometria Paw Shield (Petify) fuera del modelo consumer (Opcion C 2026-04-30) — codigo dormido en repo, reactivable solo con financiamiento B2B futuro.
 - **Manada ($9.990/mes, hasta 5 mascotas)**: + descuentos exclusivos + soporte prioritario + early access + badge 👑 + **$2.000/mes a Fondo Paw Friend Refugios** (Paw Friend SpA es quien dona, no el usuario — evita la Ley 19.885). Conversion target 1-2%.
 - A escala el grueso del ARR sigue siendo B2B (pharma + seguros + retail). Freemium B2C es el puente que sostiene el COGS biometrico hasta firmar partners B2B.
 

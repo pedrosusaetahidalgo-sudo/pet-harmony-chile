@@ -298,7 +298,7 @@ producto, solo reorientando quien paga.
 
 - **Petify** (modelo extractivo opuesto): cobra al dueno **Basic USD 0.50/pet/mes (registro + verificacion + admin) · Pro USD 0.75/pet/mes (suma lost pet recovery 1:N) · Premium contact-sales (suma QR check-in)**, hasta que se elimine la mascota.
   Para 2 mascotas en Pro tier = ~$16.500 CLP/año. Para refugios con 30 mascotas = inviable. Incentivo
-  perverso: borrar fichas para dejar de pagar (rompe memorial + historial). **Petify es nuestro proveedor** de biometria (Pro tier $0.75/pet absorbido por revenue B2B), no competidor primario. Nuestra jugada:
+  perverso: borrar fichas para dejar de pagar (rompe memorial + historial). **Petify quedo fuera del modelo consumer** (Opcion C 2026-04-30): infra biometrica dormida en repo, reactivable solo si un partner B2B (ej: aseguradora) la financia. Nuestra jugada:
   contraposicionamiento directo — *"Mientras Petify te cobra por cada mascota, en Paw Friend
   la ficha es gratis para siempre. Pagan pharma/seguros/retail por acceso, no
   tu bolsillo."*

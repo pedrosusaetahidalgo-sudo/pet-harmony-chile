@@ -58,7 +58,7 @@
 
 1. **Ficha clínica completa** que viaja con la mascota (no con el vet) — vacunas, antiparasitarios, peso, condiciones, historial OCR carnet.
 
-2. **Paw Shield** (huella nasal biométrica vía Petify) — identificador único anti-extravío, **diferenciador único en Chile**.
+2. **Pet ID Card + QR público** — identificador único de cada mascota, gratis para todos. Si se pierde, cualquier persona escanea el QR y contacta al dueño. (Paw Shield biométrico opcional B2B-funded futuro: infra dormida en repo, reactivable solo si una aseguradora financia la captación.)
 
 3. **Modelo B2B de acceso a la ficha**: el dueño no paga (free + freemium opcional). **Pharma + seguros + retail pagan** por acceso a la ficha agregada anonimizada con consent.
 
@@ -77,7 +77,7 @@
 | Pantalla | Qué muestra |
 |---|---|
 | Home pet-focus | Mascota en foco, próxima acción pendiente, timeline corto |
-| Ficha clínica 4 tabs | Historia · Cuidados · Identidad · Más (timeline + Pet ID Card + Paw Shield) |
+| Ficha clínica 4 tabs | Historia · Cuidados · Identidad · Más (timeline + Pet ID Card + QR) |
 | /paw-member pricing | 3 tiers Free/Member/Manada visibles |
 
 **Stack técnico verificado**:
@@ -87,7 +87,7 @@
 - 587 tests verde, RLS hardening 768 policies, telemetría centralizada
 - Pagos Flow.cl integrados, OAuth Google/Apple/Facebook
 
-**Ya funcional**: Pet ID Card + ficha completa + recordatorios + calendario + adopción + memorial + directorio vets + Paw Shield (Petify) opt-in + Paw Passport PDF.
+**Ya funcional**: Pet ID Card + ficha completa + recordatorios + calendario + adopción + memorial + directorio vets + Paw Passport PDF.
 
 ---
 
@@ -135,7 +135,7 @@
 | **Retail** | Master Dog, Falabella Pet, Puppis | USD 250-500k | Mes 8-12 |
 | **Paw Companys** | Empresas pet-friendly | USD 600-1.8k/mes | Ya vivo |
 
-**COGS clave**: Petify USD 0.75/mascota Paw Shield activado/mes. **Solo opt-in** — controla COGS lineal.
+**COGS clave**: ninguno externo en consumer (Opción C 2026-04-30). Paw Member margen ~99%, Manada ~80% (con $2.000/mes refugios). Petify queda como infra dormida reactivable solo con financiamiento B2B futuro.
 
 **EBITDA proyectado**:
 
@@ -155,7 +155,7 @@
 - **Sofia (vet)**: beta tester desde marzo 2026. Feedback: "vacunas con lote/serie, antiparasitarios con recordatorio". Implementado.
 - **Palo (tutor iPhone)**: feedback usabilidad. 6 bugs fixeados.
 - **Pivot estratégico 2026-04-22**: 3 insights aplicados (vets ≠ revenue, donaciones legal vía SpA Art. 31 N°7 LIR, paywall solo para features avanzadas).
-- **13 refugios chilenos contactados** (outreach 2026-04-27) para Paw Shield Data Archive.
+- **13 refugios chilenos contactados** (outreach 2026-04-27) — relación se mantiene como canal de adquisición y voluntariado, no como source de training biométrico (Opción C: biometría dormida).
 - **Producto deployed**: pawfriend.cl + iOS/Android compilable.
 - **Compliance verificado**: Ley 21.719 + 19.628 + ARCO.
 

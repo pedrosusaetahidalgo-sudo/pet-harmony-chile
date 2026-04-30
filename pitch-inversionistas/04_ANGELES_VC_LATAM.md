@@ -75,7 +75,7 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 - **Claude IA** reduce time-to-market de 14 meses a 2. Capital de ronda se usa en GTM, no en building.
 - **Costos variables <USD $100/mes** = runway largo con poco capital.
 - **3 pilares ancla B2B** (pharma + seguros + retail) reducen dependencia de un solo cliente.
-- **Modelo B2B de acceso a la ficha**: el grueso a escala lo paga B2B por acceso a la ficha longitudinal. Para el dueno hay freemium 3 tiers (Free $0 · Member $3.990 · Manada $9.990) — el Free cubre lo esencial para siempre y los planes pagos absorben el COGS biometrico Petify.
+- **Modelo B2B de acceso a la ficha**: el grueso a escala lo paga B2B por acceso a la ficha longitudinal. Para el dueno hay freemium 3 tiers (Free $0 · Member $3.990 · Manada $9.990) — el Free cubre lo esencial para siempre y los planes pagos suman features avanzadas sin COGS externo (margen ~99%). Biometria Paw Shield (Petify) fuera del modelo consumer (Opcion C 2026-04-30).
 - **Paw Companys** abre un eje de revenue no correlacionado (CSR empresarial).
 
 ---
@@ -170,7 +170,7 @@ Version original 13 slides con notas del fundador: **[../docs-raiz/pitch/PITCH_D
 
 ### "¿Y si Petify (u otro) los ataca con un freemium?"
 
-- Petify hoy cobra al dueno: **Basic USD $0.50/pet/mes · Pro USD $0.75/pet/mes (suma lost pet recovery) · Premium contact-sales (suma QR check-in)** — modelo extractivo opuesto. Y Petify es **nuestro proveedor de biometria** (Pro tier $0.75/pet/mes absorbido por revenue B2B), no nuestro competidor primario.
+- Petify hoy cobra al dueno: **Basic USD $0.50/pet/mes · Pro USD $0.75/pet/mes (suma lost pet recovery) · Premium contact-sales (suma QR check-in)** — modelo extractivo opuesto. Petify dejo de ser parte de nuestro modelo consumer (Opcion C 2026-04-30); el codigo queda dormido como infra reactivable solo si un partner B2B (ej: aseguradora) financia la captacion biometrica.
 - Si Petify pivotea a freemium pierden ARR existente y siguen sin moat de ficha longitudinal.
 - Paw Friend tiene **2 anos de ventaja arquitectonica**: research consent opt-in, b2b-api keys,
   partner_integrations, correlation_definitions ya en produccion. Construir el moat pharma
