@@ -44,12 +44,61 @@ interface OutreachRequest {
   recipients: OutreachRecipient[];
   custom_subject?: string;
   custom_intro?: string;
+  /**
+   * Si true: NO envía a recipients reales. Reemplaza el destinatario por
+   * TEST_EMAIL (correo del founder) y agrega "[TEST]" al subject. Permite
+   * ver el email exacto que recibirá cada partner antes del batch real.
+   * Cada recipient se envía como email separado al test_email para validar
+   * personalización (greeting con nombre, company, etc.).
+   */
+  test_mode?: boolean;
 }
 
+/** Email destino cuando test_mode=true. Override via OUTREACH_TEST_EMAIL env. */
+const TEST_EMAIL = Deno.env.get('OUTREACH_TEST_EMAIL') || 'pedro.susaeta.hidalgo@gmail.com';
+
+/**
+ * Dedupe recipients por dominio. Si hay 2+ emails del mismo dominio
+ * preserva solo el primero. Razón: enviar 2 correos al mismo dominio el
+ * mismo día = pinta como spam → baja sender reputation Resend → riesgo
+ * bloqueo DKIM/SPF.
+ */
+function dedupeByDomain(recipients: OutreachRecipient[]): {
+  unique: OutreachRecipient[];
+  duplicates: { email: string; reason: string }[];
+} {
+  const seenDomains = new Map<string, OutreachRecipient>();
+  const duplicates: { email: string; reason: string }[] = [];
+
+  for (const r of recipients) {
+    if (!r.email || !r.email.includes('@')) continue;
+    const domain = r.email.split('@')[1].toLowerCase().trim();
+    if (seenDomains.has(domain)) {
+      duplicates.push({
+        email: r.email,
+        reason: `dominio ${domain} ya cubierto por ${seenDomains.get(domain)?.email}`,
+      });
+    } else {
+      seenDomains.set(domain, r);
+    }
+  }
+  return { unique: Array.from(seenDomains.values()), duplicates };
+}
+
+/**
+ * Copy reescrito 2026-04-30 (Pedro decision pre-launch outreach):
+ * - Tono honesto: "estoy buscando partners pre-launch" (no "tenemos miles
+ *   de users", porque no tenemos publico todavía).
+ * - Hook fuerte: que ganan ELLOS, qué ganamos NOSOTROS, tradeoff explicito.
+ * - CTA suave: 30 min call sin compromiso, no "firma ya".
+ * - Disclaimer pre-launch para evitar overselling.
+ * - Tildes castellano chileno (tú/podés/podemos).
+ */
 const AUDIENCE_CONFIG: Record<
   AudienceKind,
   {
     subject: string;
+    preheader: string;
     headline: string;
     pitch: string;
     bullets: string[];
@@ -59,110 +108,123 @@ const AUDIENCE_CONFIG: Record<
   }
 > = {
   pharma: {
-    subject:
-      'Paw Friend — acceso programatico a la ficha clinica longitudinal de mascotas chilenas',
-    headline: 'API B2B con datos agregados de salud animal',
+    subject: 'Pre-launch: la ficha clínica longitudinal de las mascotas chilenas, ¿les sirve?',
+    preheader:
+      'API con consent ARCO + 4 endpoints listos. Lanzamiento 1 junio. Busco 1-2 partners pharma early.',
+    headline:
+      'Construí la infraestructura digital de mascotas chilenas. Lanzo 1 junio. Antes de eso, ¿les sirve a ustedes?',
     pitch:
-      'Construimos la infraestructura digital de la mascota chilena. Hoy operamos con codigo end-to-end listo en 7 motores B2B, y el motor #1 es nuestra API publica para pharma animal con 4 endpoints (breed_stats, species_stats, correlations, risk_score).',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena, RUT 78.328.659-9). Construí en 8 meses la ficha clínica longitudinal del 100% del mercado pet chileno. Lanzo soft 1 junio 2026 con cohorte beta cerrada. Antes de abrir al público, busco 1-2 partners pharma early para validar el motor #1: API B2B con datos agregados anonimizados + consent ARCO.',
     bullets: [
-      'Auth via X-Pawfriend-Api-Key, onboarding self-service en /aplicar?tipo=b2b_api',
-      'Datos agregados anonimizados con consent opt-in del owner (Ley 19.628 + 21.719)',
-      'Pricing B2B de acceso a la ficha: el dueno no paga por la base, vos pagas por acceso',
-      'Casos de uso: targeting de campanas, validacion de eficacia, deteccion de sub-poblaciones',
+      'Qué ganan ustedes: targeting de campañas con segmentación raza/edad/comuna real (no panel autoseleccionado), validación de eficacia con cohort longitudinal, detección temprana de sub-poblaciones con condiciones específicas.',
+      'Qué ganamos nosotros: validar pricing pharma + 1 case study para abrir conversación con Sura/Centrovet adicionales + tener un partner que crezca con nosotros desde mes 0.',
+      'Cómo funciona: 4 endpoints públicos (breed_stats, species_stats, correlations, risk_score) con auth X-Pawfriend-Api-Key. Onboarding self-service. SLA 99.5%.',
+      'Compliance pre-resuelto: Ley 19.628 + 21.719 + ARCO + DPA template listo. SpA constituida. No tengo que pedir permiso de privacy a nadie — lo tengo.',
     ],
-    cta_text: 'Postular a programa partner pharma',
+    cta_text: 'Pedir 30 min call (sin compromiso)',
     cta_url: 'https://pawfriend.cl/aplicar?tipo=b2b_api',
-    deck_url: 'https://pawfriend.cl/pitch-inversionistas/01_PHARMA_B2B.html',
+    deck_url: 'https://pawfriend.cl/pitch/pharma.html',
   },
   seguros: {
-    subject: 'Paw Friend — distribucion white-label de seguros para mascotas con risk score real',
-    headline: 'Cotizador embebido + lead capture + risk score por raza',
+    subject: 'Pre-launch: cotizador pet insurance embebido + risk score real, ¿les sirve?',
+    preheader: 'Lanzamiento 1 junio. Busco 1 aseguradora early para validar distribución B2B2C.',
+    headline:
+      'Construí un cotizador pet insurance con risk score real. Lanzo 1 junio. Antes, ¿les sirve a ustedes?',
     pitch:
-      'Tenemos 3 motores activos para aseguradoras pet en Chile (Sura, BCI, Mapfre seed). Cotizador integrado en la ficha clinica con risk score basado en raza/edad/condiciones, lead capture transaccional con email automatico al partner, y data agregada para validacion de portafolio.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). En 8 meses construí la primera distribución B2B2C de seguros pet en Chile: el dueño abre la ficha de su mascota, ve cotizaciones en tiempo real de aseguradoras partner, pide contacto, ustedes reciben lead transaccional. Lanzo soft 1 junio con beta cerrada. Antes busco 1 partner aseguradora early.',
     bullets: [
-      'Cotizador en /cotizar-seguro/:petId — owner ya tiene la mascota cargada',
-      'Risk score precomputado: edad, especie, raza, esterilizacion, condiciones cronicas',
-      'Lead capture vivo: form -> email transaccional -> CRM partner',
-      'Distribucion B2B2C (no Marsh ni broker tradicional): el owner recibe el pitch en contexto',
+      'Qué ganan ustedes: distribución B2B2C en contexto (el owner ya tiene la mascota cargada con peso/raza/condiciones, no autoreporte). Risk score precomputado por raza/edad/comuna. Lead transaccional vía email automático.',
+      'Qué ganamos nosotros: validar la mecánica con un partner real + tener case study para abrir conversación con BCI/Mapfre/Consorcio + revenue share de la primera póliza vendida.',
+      'Cómo funciona: cotizador en /cotizar-seguro/:petId, lead capture transaccional, RPC compute_insurance_quote con factores actuariales reales, todo en producción end-to-end.',
+      'Anti-fraude (upside): la biometría Paw Shield (Petify, 100% accuracy validada) está dormida en consumer pero reactivable B2B-funded — ustedes pagan COGS y nosotros activamos en su cohort.',
     ],
-    cta_text: 'Postular como aseguradora partner',
+    cta_text: 'Pedir 30 min call (sin compromiso)',
     cta_url: 'https://pawfriend.cl/aplicar?tipo=seguros',
-    deck_url: 'https://pawfriend.cl/pitch-inversionistas/02_ASEGURADORAS.html',
+    deck_url: 'https://pawfriend.cl/pitch/aseguradoras.html',
   },
   retail: {
-    subject: 'Paw Friend — canal de adquisicion contextual para retail pet',
-    headline: 'Catalogo personalizado + tracking de clicks + revenue share',
+    subject: 'Pre-launch: canal de adquisición contextual para retail pet, ¿les sirve?',
+    preheader: 'Lanzamiento 1 junio. Busco 1-2 retailers para validar afiliado contextual.',
+    headline:
+      'Construí un canal de adquisición contextual para retail pet. Lanzo 1 junio. ¿Les sirve a ustedes?',
     pitch:
-      'Master Dog, Puppis y Pet Star ya estan seed en nuestra base. La mecanica es simple: el owner abre la ficha de su mascota, ve el catalogo de productos partner con descuento Paw Member, hace click, partner recibe el lead atribuido + revenue share de la conversion.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). En 8 meses construí el catálogo retail más contextual del mercado pet chileno: cada producto se filtra automáticamente por especie + raza + edad + peso de la mascota del dueño. Lanzo soft 1 junio con beta cerrada. Antes busco 1-2 retailers early para validar la mecánica.',
     bullets: [
-      'Catalogo en /tienda/:petId/:partnerSlug — contextual a especie/raza/edad',
-      'Click tracking via SECURITY DEFINER RPC (anti-spam by design)',
-      'Revenue share configurable por SKU + partner',
-      'Reportes de attribution mensual + dashboard partner',
+      'Qué ganan ustedes: leads atribuibles con tracking real (no Google Analytics — RPC track_retail_click con SECURITY DEFINER), descuento contextual a Paw Members (tier que paga $3.990/mes), reporte mensual de attribution.',
+      'Qué ganamos nosotros: validar el modelo de revenue share con un retailer real + tener un partner que aporta inventario + tener case study para abrir conversación con cadenas más grandes.',
+      'Cómo funciona: el owner abre la ficha de su mascota → ve productos con descuento Paw Member → click trackeado → su retailer recibe el lead atribuido + revenue share de la conversión.',
+      'Sin marketplace fee: no soy MercadoLibre. No cobro 15% de cada venta. Mi modelo es revenue share configurable por SKU + setup mensual fijo. Tu logística + checkout siguen siendo tuyos.',
     ],
-    cta_text: 'Postular como retail partner',
+    cta_text: 'Pedir 30 min call (sin compromiso)',
     cta_url: 'https://pawfriend.cl/aplicar?tipo=retail',
-    deck_url: 'https://pawfriend.cl/pitch-inversionistas/03_RETAIL.html',
+    deck_url: 'https://pawfriend.cl/pitch/retail.html',
   },
   gobierno: {
-    subject: 'Paw Friend — registro digital Ley 21.020 white-label para municipios',
-    headline: 'Infraestructura digital para tenencia responsable',
+    subject: 'Pre-launch: registro digital Ley 21.020 listo, ¿le sirve a su municipio?',
+    preheader: 'Lanzamiento 1 junio. Busco 1-2 municipios early para validar implementación.',
+    headline:
+      'La Ley 21.020 los obliga a tener registro digital de mascotas. Lo construí. ¿Les sirve?',
     pitch:
-      'La Ley 21.020 obliga a las municipalidades a llevar un registro de mascotas con microchip, vacunas y tenedor responsable. Ningun municipio chileno tiene esto digital y centralizado. Nosotros si — lo tenemos en produccion para owners que se inscriben voluntariamente.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). La Ley 21.020 (tenencia responsable) obliga a las municipalidades a llevar registro de mascotas con microchip, vacunas y tenedor responsable. Ningún municipio chileno lo tiene digital y centralizado. Nosotros sí — está en producción end-to-end. Lanzo soft 1 junio. Antes busco 1-2 municipios early.',
     bullets: [
-      'Ficha clinica longitudinal con vacunas, microchip, esterilizacion',
-      'Geolocalizacion por comuna + reportes de cobertura',
-      'Modelo B2G: el municipio paga la implementacion, el ciudadano usa gratis',
-      'Onboarding masivo: bulk import desde Excel, validacion via veterinario partner',
+      'Qué ganan ustedes: cumplimiento Ley 21.020 sin construir nada. Dashboard de cobertura por barrio (vacunas, esterilización, microchip). Reportes para SAG/Subdere automatizados. Onboarding ciudadano gratis.',
+      'Qué ganamos nosotros: validar el modelo B2G con 1-2 municipios early + tener case study Las Condes/Vitacura/Providencia para abrir conversación con Subdere + escala nacional.',
+      'Cómo funciona: ciudadano se inscribe gratis vía pawfriend.cl, registra mascota con microchip, ficha clínica vivienda, geolocalización por comuna. Municipio paga la implementación + soporte.',
+      'No es Excel + WhatsApp: es SaaS chileno con boleta + SpA + cumplimiento ARCO. La data del ciudadano es del ciudadano (Ley 21.719). Ustedes solo ven los datos del ciudadano que vive en su comuna.',
     ],
-    cta_text: 'Solicitar demo municipal',
+    cta_text: 'Pedir 30 min call (sin compromiso)',
     cta_url: 'https://pawfriend.cl/aplicar?tipo=gobierno_municipio',
-    deck_url: 'https://pawfriend.cl/pitch-inversionistas/04_GOBIERNO.html',
+    deck_url: 'https://pawfriend.cl/pitch/gobierno.html',
   },
   banca: {
-    subject: 'Paw Friend — beneficio diferencial para clientes premium con mascota',
-    headline: 'Suscripcion Paw Member como benefit corporativo',
+    subject: 'Pre-launch: Paw Member como benefit diferencial para sus clientes premium',
+    preheader: 'Lanzamiento 1 junio. Busco 1 banco early para validar co-branding.',
+    headline: 'Construí Paw Member como benefit corporativo. ¿Les sirve para diferenciar?',
     pitch:
-      'Los bancos premium (Santander, BCI, Itau, Falabella) compiten por segmentar clientes high-value con beneficios reales. La mascota es un activo emocional con alto LTV de gasto (USD 1.5k/ano promedio en Chile). Nosotros entregamos la membership completa.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). El segmento premium chileno gasta USD 1.500/año en sus mascotas (referencia INE + comparables LatAm). La banca compite por ese segmento con benefits emocionales: viajes, gastronomía, cine. Falta uno: la mascota. Lo construí. Lanzo soft 1 junio. Antes busco 1 banco early.',
     bullets: [
-      'Paw Member: ficha clinica premium + descuentos retail + acceso prioritario vets',
-      'White-label para co-branding (tarjeta + landing)',
-      'Reporte mensual de uso por segmento (engagement metrics)',
-      'Tier de banca empresarial: empleados con mascota + benefit corporativo',
+      'Qué ganan ustedes: benefit emocional con LTV alto, white-label co-branding (tarjeta + landing), engagement metrics mensual por segmento, costo predecible (cuota fija anual por cliente activo).',
+      'Qué ganamos nosotros: validar el modelo de banca con 1 partner early + tener case study para abrir conversación con BCI/Itau/Falabella + ingreso recurrente garantizado vía contrato anual.',
+      'Cómo funciona: cliente premium recibe Paw Member gratis vía su tarjeta. Accede a ficha clínica completa, descuentos retail partners, acceso prioritario a vets. La banca paga una cuota fija por cliente activo.',
+      'Tier B2B empresarial (upside): empleados con mascota + benefit corporativo. Misma mecánica, B2B en lugar de B2C.',
     ],
-    cta_text: 'Solicitar partnership banca',
+    cta_text: 'Pedir 30 min call (sin compromiso)',
     cta_url: 'https://pawfriend.cl/aplicar?tipo=banca',
-    deck_url: 'https://pawfriend.cl/pitch-inversionistas/05_BANCA.html',
+    deck_url: 'https://pawfriend.cl/pitch/banca.html',
   },
   edificios: {
-    subject: 'Paw Friend — registro digital de mascotas para comunidades pet-friendly',
-    headline: 'SaaS B2B para inmobiliarias y administradoras de edificios',
+    subject: 'Pre-launch: registro digital de mascotas para sus edificios pet-friendly',
+    preheader: 'Lanzamiento 1 junio. Busco 1-2 administradoras early para validar SaaS comunidad.',
+    headline:
+      'Construí el SaaS para edificios pet-friendly que falta. ¿Les sirve a sus comunidades?',
     pitch:
-      'Edificios pet-friendly hoy llevan el registro de mascotas en Excel o WhatsApp. Nosotros entregamos un SaaS dedicado: cada propietario registra su mascota con ficha clinica + microchip + comportamiento, la administracion tiene dashboard global, y los vecinos ven solo lo publico.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). Edificios pet-friendly hoy llevan el registro en Excel o WhatsApp. Hay 50.000+ unidades pet-friendly en Chile y crece 10% anual. Construí el SaaS dedicado en 8 meses. Lanzo soft 1 junio. Antes busco 1-2 administradoras o inmobiliarias early.',
     bullets: [
-      'Onboarding por edificio: codigo de invitacion + branding propio',
-      'Reglamento digital + firmas de aceptacion automatizadas',
-      'Reportes de cobertura de vacunas + esterilizacion (compliance)',
-      'Modelo SaaS: $X CLP/unidad/mes facturado a la administracion',
+      'Qué ganan ustedes: cobertura compliance vacunas/esterilización por comunidad, reglamento digital con firma electrónica, reducción de conflictos vecinales (data en lugar de "el perro que ladra"), branding propio.',
+      'Qué ganamos nosotros: validar el modelo SaaS B2B con 1-2 partners early + tener case study para escalar a Manquehue/PAZ/Actual + ingreso recurrente predecible (cuota mensual por unidad).',
+      'Cómo funciona: cada edificio recibe código de invitación con branding. Propietarios registran mascota gratis. Administración tiene dashboard global. Vecinos ven solo lo público.',
+      'Diferencia con apps de comunidad genéricas: nosotros entendemos pet (vacunas, microchip, comportamiento, esterilización). EdiFy/Mediakit no.',
     ],
-    cta_text: 'Solicitar partnership inmobiliario',
+    cta_text: 'Pedir 30 min call (sin compromiso)',
     cta_url: 'https://pawfriend.cl/aplicar?tipo=edificios',
-    deck_url: 'https://pawfriend.cl/pitch-inversionistas/06_EDIFICIOS.html',
+    deck_url: 'https://pawfriend.cl/pitch/edificios.html',
   },
   longtail: {
-    subject: 'Paw Friend — alianza vertical para empresas pet-adjacent',
-    headline: 'Aerolineas, academias vet, refugios privados, y mas',
+    subject: 'Pre-launch: alianza vertical pet-adjacent, ¿les hace sentido?',
+    preheader: 'Lanzamiento 1 junio. Acuerdos custom rápidos: data, distribución, co-marketing.',
+    headline:
+      'Si tu empresa toca el ecosistema mascota sin ser pharma/seguro/retail tradicional, hablemos.',
     pitch:
-      'Hay un long-tail de empresas que tocan el ecosistema mascota sin ser pharma/seguro/retail tradicional: aerolineas (Latam Cargo), academias veterinarias, fundaciones privadas, ferias pet, agroindustria. Para todas tenemos un modulo dedicado de partnership.',
+      'Soy Pedro Susaeta, founder de Paw Friend (SpA chilena). Hay un long-tail de empresas que tocan el ecosistema mascota: aerolíneas (Latam Cargo), academias veterinarias (UAutónoma, USS), fundaciones privadas, ferias pet, agroindustria, hardware vet. Construí Paw Friend en 8 meses con código modular. Lanzo soft 1 junio. Antes busco alianzas verticales rápidas.',
     bullets: [
-      'Acuerdos custom: data, distribucion, eventos, training',
-      'Co-marketing en feed + newsletter Paw Friend',
-      'Acceso a metricas agregadas de tu vertical especifico',
-      'Ejecucion rapida: pitch -> firma -> integracion en <30 dias',
+      'Qué ganan ustedes: acceso a la audiencia pet chilena vía la app, co-marketing en feed/newsletter, métricas agregadas de tu vertical, integración técnica modular.',
+      'Qué ganamos nosotros: distribución, contenido educativo, eventos físicos, expansión de uso casos. No buscamos cheque.',
+      'Cómo funciona: pitch — firma — integración en <30 días. Acuerdos custom: data deals, distribución, eventos, training, co-branding.',
+      'Sin compromiso largo: la mayoría de los acuerdos long-tail son trimestrales con opción a renovar. Probamos juntos, medimos, decidimos.',
     ],
-    cta_text: 'Postular partnership vertical',
+    cta_text: 'Pedir 30 min call (sin compromiso)',
     cta_url: 'https://pawfriend.cl/aplicar?tipo=longtail',
-    deck_url: 'https://pawfriend.cl/pitch-inversionistas/PITCH_7_MOTORES_CONSTRUIDOS.html',
+    deck_url: 'https://pawfriend.cl/pitch/inversionistas.html',
   },
 };
 
@@ -170,7 +232,8 @@ function buildEmailHTML(
   audience: AudienceKind,
   contactName: string,
   company: string,
-  customIntro?: string
+  customIntro?: string,
+  isTest?: boolean
 ): string {
   const cfg = AUDIENCE_CONFIG[audience];
 
@@ -182,35 +245,48 @@ function buildEmailHTML(
 
   const intro = customIntro || cfg.pitch;
 
+  // Banner test si test_mode=true. Asi cuando Pedro recibe el test sabe
+  // exactamente qué iban a recibir los recipients reales.
+  const testBanner = isTest
+    ? `<div style="background:#fef3c7;border:1px solid #f59e0b;padding:12px 16px;border-radius:8px;margin-bottom:24px;font-size:13px;color:#78350f;">
+        <strong>⚠️ MODO TEST</strong> — Este email se envió a TEST_EMAIL en lugar del recipient real.
+        Recipient original: <strong>${contactName || 'sin nombre'}</strong> ${company ? `· ${company}` : ''}.
+      </div>`
+    : '';
+
   const body = [
+    testBanner,
     emailHeader({
       variant: 'logo',
       tagline: TAGLINE.b2b ?? 'Infraestructura digital de la mascota chilena',
     }),
     paragraph(greeting),
-    paragraph(`<strong>${cfg.headline}</strong>`),
+    paragraph(`<strong style="font-size:17px;line-height:1.4;">${cfg.headline}</strong>`),
     paragraph(intro),
     bulletList({
-      items: cfg.bullets.map((b) => ({ icon: '✓', text: b })),
+      items: cfg.bullets.map((b) => ({ icon: '→', text: b })),
     }),
     cta({
       text: cfg.cta_text,
       url: cfg.cta_url,
-      hint: `Pitch deck completo: <a href="${cfg.deck_url}" style="color:inherit;text-decoration:underline;">${cfg.deck_url}</a>`,
+      hint: `O revisá el deck completo primero: <a href="${cfg.deck_url}" style="color:inherit;text-decoration:underline;">${cfg.deck_url}</a><br>App en vivo: <a href="https://pawfriend.cl" style="color:inherit;text-decoration:underline;">pawfriend.cl</a>`,
     }),
     paragraph(
-      'Si te interesa coordinar una llamada de 30 min para una demo en vivo, responde este correo y te paso disponibilidad esta semana.'
+      'Si te hace sentido, respondé este correo con disponibilidad y agendamos 30 min esta semana o la próxima. Sin compromiso, sin firma, solo conversar. Si no es para ustedes ahora, también vale — agradezco la honestidad.'
     ),
-    paragraph('— Pedro Susaeta, Paw Friend'),
+    paragraph(
+      '— Pedro Susaeta, founder<br>Paw Friend · SpA SUSAETA GARNHAM SOFTWARE ENGINEERING<br>RUT 78.328.659-9 · Santiago, Chile'
+    ),
     emailFooter({
-      note: 'Recibes este correo porque tu rol corresponde a una de las verticales B2B objetivo del producto.',
-      secondary: 'Si no deseas recibir mas correos, responde con "No me contacten".',
+      note: 'Recibís este correo porque tu rol o empresa corresponde a una vertical donde Paw Friend está buscando partners pre-launch. Es un envío único — no estás en una lista de marketing recurrente.',
+      secondary:
+        'Si preferís no recibir más correos de Paw Friend, respondé con "remover" y te saco de la lista.',
     }),
   ].join('');
 
   return renderEmail({
-    title: cfg.subject,
-    preheader: cfg.headline,
+    title: (isTest ? '[TEST] ' : '') + cfg.subject,
+    preheader: cfg.preheader,
     body,
     width: 'wide',
   });
@@ -261,7 +337,7 @@ Deno.serve(
       }
 
       const body: OutreachRequest = await req.json();
-      const { audience, recipients, custom_subject, custom_intro } = body;
+      const { audience, recipients, custom_subject, custom_intro, test_mode } = body;
 
       if (!audience || !AUDIENCE_CONFIG[audience]) {
         return new Response(JSON.stringify({ error: 'audience invalido' }), {
@@ -284,14 +360,23 @@ Deno.serve(
         });
       }
 
+      // Dedupe por dominio (anti-spam): 1 email por empresa.
+      const { unique: uniqueRecipients, duplicates } = dedupeByDomain(recipients);
+
       const cfg = AUDIENCE_CONFIG[audience];
-      const subject = custom_subject || cfg.subject;
+      const baseSubject = custom_subject || cfg.subject;
+      const subject = test_mode ? `[TEST] ${baseSubject}` : baseSubject;
 
       let enviados = 0;
       let errores = 0;
       const resultados: { email: string; status: string; detail?: string }[] = [];
 
-      for (const recipient of recipients) {
+      // Reportar duplicados como skipped antes de enviar.
+      for (const dup of duplicates) {
+        resultados.push({ email: dup.email, status: 'skipped_dedupe', detail: dup.reason });
+      }
+
+      for (const recipient of uniqueRecipients) {
         if (!recipient.email || !recipient.email.includes('@')) {
           errores++;
           resultados.push({ email: recipient.email || 'sin email', status: 'skipped' });
@@ -311,8 +396,13 @@ Deno.serve(
             audience,
             recipient.contact_name || '',
             recipient.company || '',
-            custom_intro
+            custom_intro,
+            test_mode === true
           );
+
+          // En test_mode el destinatario real es TEST_EMAIL pero el preview
+          // muestra el contact_name/company del recipient original.
+          const actualTo = test_mode ? TEST_EMAIL : recipient.email;
 
           const emailRes = await fetch('https://api.resend.com/emails', {
             method: 'POST',
@@ -323,7 +413,7 @@ Deno.serve(
             body: JSON.stringify({
               from: 'Pedro Susaeta — Paw Friend <hola@pawfriend.cl>',
               reply_to: ['pedrosusaeta@pawfriend.cl'],
-              to: [recipient.email],
+              to: [actualTo],
               subject,
               html: htmlEmail,
               text: cfg.pitch,
@@ -332,24 +422,30 @@ Deno.serve(
 
           if (emailRes.ok) {
             enviados++;
-            resultados.push({ email: recipient.email, status: 'sent' });
+            resultados.push({
+              email: recipient.email,
+              status: test_mode ? 'sent_to_test' : 'sent',
+              detail: test_mode ? `redirected to ${TEST_EMAIL}` : undefined,
+            });
 
-            // Log en tabla outreach_log si existe
-            await supabaseAdmin
-              .from('b2b_outreach_log')
-              .insert({
-                audience,
-                recipient_email: recipient.email,
-                recipient_name: recipient.contact_name || null,
-                recipient_company: recipient.company || null,
-                subject,
-                sent_by: user.id,
-                status: 'sent',
-              })
-              .then(() => {})
-              .catch(() => {
-                // Tabla no existe aun, no es bloqueante
-              });
+            // Log en tabla outreach_log SOLO si NO es test mode.
+            if (!test_mode) {
+              await supabaseAdmin
+                .from('b2b_outreach_log')
+                .insert({
+                  audience,
+                  recipient_email: recipient.email,
+                  recipient_name: recipient.contact_name || null,
+                  recipient_company: recipient.company || null,
+                  subject: baseSubject,
+                  sent_by: user.id,
+                  status: 'sent',
+                })
+                .then(() => {})
+                .catch(() => {
+                  // Tabla no existe aun, no es bloqueante
+                });
+            }
           } else {
             const errDetail = await emailRes.text();
             errores++;
@@ -369,6 +465,10 @@ Deno.serve(
           enviados,
           errores,
           total: recipients.length,
+          unique_after_dedupe: uniqueRecipients.length,
+          duplicates_skipped: duplicates.length,
+          test_mode: test_mode === true,
+          test_email: test_mode ? TEST_EMAIL : null,
           audience,
           resultados,
         }),

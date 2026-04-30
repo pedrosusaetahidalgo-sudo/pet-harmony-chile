@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend B2B Long-Tail · Aerolineas · Hoteles · Academia · Hardware · Plataformas</title>
+  <meta name="description" content="Paw Friend: APIs y plataforma para 6 verticales pet residuales pero estrategicas." />
+  <meta name="theme-color" content="#7c3aed" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-50: #faf5ff; --brand-100: #f3e8ff; --brand-200: #e9d5ff; --brand-300: #d8b4fe;
+      --brand-500: #a855f7; --brand-600: #9333ea; --brand-700: #7e22ce; --brand-800: #6b21a8; --brand-900: #581c87;
+      --teal: #14b8a6; --teal-light: #5eead4; --teal-soft: #ccfbf1;
+      --gold: #eab308; --gold-light: #fde047;
+      --medical: #10b981; --alert: #ef4444; --ink: #1a102b;
+      --tail: #7c3aed;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #0a0612; color: white; }
+    body.light-slide { background: var(--brand-50); color: var(--ink); }
+    .deck { position: relative; height: 100vh; width: 100vw; overflow: hidden; }
+    .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.08); z-index: 100; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal) 0%, var(--brand-500) 50%, var(--gold) 100%); transition: width 0.5s ease; }
+    .slide { position: absolute; inset: 0; padding: 6vh 6vw; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s; overflow-y: auto; }
+    .slide.active { opacity: 1; visibility: visible; }
+    .slide.dark { background: linear-gradient(135deg, #0a0612 0%, #1a102b 50%, #4c1d95 100%); color: white; }
+    .slide.light { background: linear-gradient(135deg, var(--brand-50) 0%, var(--brand-100) 100%); color: var(--ink); }
+    .slide.tail-grad { background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 50%, #14b8a6 100%); color: white; }
+    .mesh-bg { position: absolute; inset: 0; opacity: 0.4; pointer-events: none; background:
+      radial-gradient(circle at 20% 30%, rgba(94,234,212,0.3), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(168,85,247,0.4), transparent 40%); }
+    .slide-content { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .slide-label { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: var(--teal-light); padding: 6px 12px; background: rgba(94,234,212,0.12); border: 1px solid rgba(94,234,212,0.4); border-radius: 999px; margin-bottom: 18px; align-self: flex-start; }
+    .slide.light .slide-label { color: var(--brand-700); background: var(--brand-100); border-color: var(--brand-300); }
+    .headline { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 4vw, 52px); font-weight: 700; line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
+    .gradient-text { background: linear-gradient(135deg, var(--teal-light) 0%, var(--gold-light) 50%, var(--brand-300) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .subhead { font-size: clamp(14px, 1.5vw, 18px); line-height: 1.5; opacity: 0.85; max-width: 800px; margin-bottom: 18px; }
+    .counter { position: fixed; bottom: 18px; right: 24px; font-size: 12px; font-weight: 700; opacity: 0.6; z-index: 100; }
+    .hint { position: fixed; bottom: 18px; left: 24px; font-size: 11px; font-weight: 600; opacity: 0.5; z-index: 100; }
+    .hint kbd { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin: 0 2px; font-family: monospace; }
+    body.light-slide .hint kbd { background: rgba(0,0,0,0.06); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .grid-6 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .stat-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px; text-align: center; }
+    .slide.light .stat-card { background: white; border-color: var(--brand-200); box-shadow: 0 8px 24px rgba(124,58,237,0.06); }
+    .stat-num { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 3vw, 44px); font-weight: 800; color: var(--teal-light); line-height: 1; }
+    .slide.light .stat-num { color: var(--brand-600); }
+    .stat-label { font-size: 11px; opacity: 0.75; margin-top: 8px; line-height: 1.4; }
+    .quote-box { padding: 22px 28px; background: rgba(94,234,212,0.08); border-left: 4px solid var(--teal); border-radius: 10px; font-style: italic; margin: 18px 0; }
+    .slide.light .quote-box { background: var(--teal-soft); }
+    .ask-box { background: white; color: var(--ink); padding: 28px; border-radius: 18px; box-shadow: 0 30px 80px rgba(0,0,0,0.3); margin-top: 16px; }
+    .ask-box h3 { color: var(--tail); font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+    .ask-box .price { font-family: 'Fredoka', sans-serif; font-size: 56px; font-weight: 800; color: var(--ink); line-height: 1; }
+    .ask-box .price-sub { font-size: 14px; color: #6b7280; margin-top: 6px; }
+    .vertical-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px; }
+    .slide.light .vertical-card { background: white; border-color: var(--brand-200); box-shadow: 0 6px 18px rgba(124,58,237,0.05); }
+    .vertical-card .vh { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .vertical-card .vh .ico { font-size: 26px; }
+    .vertical-card .vh .name { font-family: 'Fredoka', sans-serif; font-size: 18px; font-weight: 700; }
+    .vertical-card .desc { font-size: 12px; opacity: 0.85; line-height: 1.55; }
+    .vertical-card .deal { display: inline-block; margin-top: 10px; padding: 4px 10px; background: rgba(94,234,212,0.18); color: var(--teal-light); font-size: 11px; font-weight: 700; border-radius: 999px; }
+    .slide.light .vertical-card .deal { background: var(--teal-soft); color: var(--teal); }
+  </style>
+</head>
+<body>
+  <div class="progress"><div class="progress-fill" id="progressFill" style="width: 12%"></div></div>
+  <div class="deck" id="deck">
+
+    <!-- 1 — COVER -->
+    <section class="slide tail-grad active" data-num="1">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Pitch · B2B Long-Tail · 6 verticales</span>
+        <h1 class="headline" style="font-size: clamp(36px, 5vw, 68px);">
+          Las verticales <span class="gradient-text">chicas</span><br>
+          que juntas<br>
+          son <span class="gradient-text">grandes</span>.
+        </h1>
+        <p class="subhead" style="font-size: 18px; max-width: 760px; opacity: 0.95;">
+          Aerolineas, hoteles, academia, smart hardware, plataformas de servicios y
+          cementerios pet. Cada vertical sola pesa 5-8% de nuestro revenue. Juntas
+          son el 30% — y son nuestra defensa contra concentracion en pharma + seguros + retail.
+        </p>
+        <div style="display: flex; gap: 18px; align-items: center; margin-top: 22px; opacity: 0.85; font-size: 13px;">
+          <span>✈️ Travel pet</span>
+          <span>•</span>
+          <span>🎓 Academia</span>
+          <span>•</span>
+          <span>📡 Hardware IoT</span>
+          <span>•</span>
+          <span>🤝 Pet platforms</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 — POR QUE LONG-TAIL -->
+    <section class="slide dark" data-num="2">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Por que importa el long-tail</span>
+        <h2 class="headline">
+          Concentrar revenue en 3 industrias <span class="gradient-text">es un riesgo</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card">
+            <div class="stat-num">~30%</div>
+            <div class="stat-label">de ARR proyectado<br>desde long-tail (Y3)</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">6</div>
+            <div class="stat-label">verticales independientes<br>= riesgo distribuido</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">~$80k</div>
+            <div class="stat-label">USD ARR/vertical<br>en escenario base</div>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 28px;">
+          <strong>Tesis:</strong> ningun cliente pesa mas del 12% del revenue total. La concentracion la
+          tienen los gigantes (Centrovet, Sura, Master Dog). El long-tail es nuestra defensa contra
+          que un solo gigante mueva la silla.
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 — LAS 6 VERTICALES -->
+    <section class="slide light" data-num="3">
+      <div class="slide-content">
+        <span class="slide-label">Las 6 verticales · oportunidad</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Cada una resuelve <span style="color: var(--brand-600);">un dolor concreto</span>.
+        </h2>
+        <div class="grid-6" style="margin-top: 24px;">
+          <div class="vertical-card">
+            <div class="vh"><span class="ico">✈️</span><span class="name">Aerolineas + hoteles</span></div>
+            <div class="desc">LATAM, Sky, JetSmart, NH, Marriott. Validan chip + vacuna antirrabica + comportamiento. Reducen rechazos en mostrador.</div>
+            <span class="deal">$8-15k USD/ano</span>
+          </div>
+          <div class="vertical-card">
+            <div class="vh"><span class="ico">🎓</span><span class="name">Academia + research</span></div>
+            <div class="desc">U. Chile Vet, U. Mayor, INIA. Datasets agregados anonimizados, co-publicacion de papers.</div>
+            <span class="deal">$30-100k USD/ano + grants</span>
+          </div>
+          <div class="vertical-card">
+            <div class="vh"><span class="ico">📡</span><span class="name">Smart hardware IoT</span></div>
+            <div class="desc">Sure Petcare, Tractive, comederos automaticos. Integracion API. Co-branding.</div>
+            <span class="deal">$2-5k USD/mes/partner</span>
+          </div>
+          <div class="vertical-card">
+            <div class="vh"><span class="ico">🤝</span><span class="name">Plataformas de servicios</span></div>
+            <div class="desc">Pet sitters, walkers, trainers locales. Ficha clinica como diferenciador. Background check.</div>
+            <span class="deal">15% comision + $1k setup</span>
+          </div>
+          <div class="vertical-card">
+            <div class="vh"><span class="ico">🌹</span><span class="name">Cementerios + cremacion</span></div>
+            <div class="desc">Memorial Paw Friend → upsell a servicios funerarios. Comision por referido.</div>
+            <span class="deal">10% comision</span>
+          </div>
+          <div class="vertical-card">
+            <div class="vh"><span class="ico">🏥</span><span class="name">Bancos de sangre + 24/7</span></div>
+            <div class="desc">Red de donantes pet, notificaciones de urgencia. Suscripcion institucional.</div>
+            <span class="deal">$1.5-3k USD/mes</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 — ANCLA: TRAVEL -->
+    <section class="slide dark" data-num="4">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Vertical ancla · travel pet</span>
+        <h2 class="headline">
+          ¿Sabes cuanto pierde una aerolinea <span class="gradient-text">por rechazos en mostrador</span>?
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card">
+            <div class="stat-num">12%</div>
+            <div class="stat-label">de pasajeros con mascota<br>tienen problema documental</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">40 min</div>
+            <div class="stat-label">tiempo medio de demora<br>en check-in pet</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">~$120</div>
+            <div class="stat-label">USD costo aerolinea<br>por rechazo en mostrador</div>
+          </div>
+        </div>
+        <div style="margin-top: 28px; padding: 18px 24px; background: rgba(94,234,212,0.1); border: 1px solid rgba(94,234,212,0.3); border-radius: 12px;">
+          <strong style="color: var(--teal-light);">📌 Producto:</strong>
+          <span style="font-size: 14px; opacity: 0.9; margin-left: 8px;">
+            "Paw Travel Pass" — el dueno entra a Paw Friend, su mascota tiene chip + vacuna antirrabica + ficha clinica completa
+            → genera codigo travel pre-validado para la aerolinea/hotel. Check-in en <strong>30 segundos</strong>. Aerolinea paga
+            <strong>$8-15k USD/año</strong> por integracion API + co-branding.
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 — ANCLA: ACADEMIA -->
+    <section class="slide light" data-num="5">
+      <div class="slide-content">
+        <span class="slide-label">Vertical ancla · academia + research</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          La academia chilena <span style="color: var(--brand-600);">no tiene cohorts longitudinales</span>.
+        </h2>
+        <div class="grid-2" style="margin-top: 24px;">
+          <div>
+            <div class="quote-box" style="background: var(--brand-100);">
+              "En medicina veterinaria publicamos basicamente con datos extranjeros porque
+              no tenemos cohorts chilenos confiables. Las tesis de pregrado se hacen con
+              <strong>n &lt; 100</strong>. Si tuvieramos acceso a 50.000+ pets longitudinales chilenos,
+              podriamos sacar 10 papers al ano."
+              <div style="margin-top: 8px; font-style: normal; font-size: 12px; opacity: 0.7;">— Patron observado en investigadores de medicina veterinaria UCh / U. Mayor</div>
+            </div>
+            <p style="margin-top: 18px; font-size: 14px; line-height: 1.6;">
+              Nuestro consent opt-in para research cubre exactamente este uso. <strong>50.000 pets x ficha real</strong>
+              es uno de los datasets pet mas grandes de LATAM disponible bajo acuerdo academico.
+            </p>
+          </div>
+          <div class="ask-box" style="background: linear-gradient(160deg, white 0%, var(--brand-50) 100%);">
+            <h3>Programa academico</h3>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 36px; font-weight: 800; color: var(--ink); line-height: 1;">$30-100k <span style="font-size: 14px; opacity: 0.6;">USD/ano</span></div>
+            <div class="price-sub">por convenio · grants posibles</div>
+            <hr style="margin: 14px 0; border: none; border-top: 1px dashed var(--brand-200);" />
+            <ul style="padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>Datasets agregados anonimizados</li>
+              <li>Acceso a cohort viva (refresh trimestral)</li>
+              <li>Co-publicacion de papers</li>
+              <li>Tesis de pregrado / postgrado supervisadas</li>
+              <li>Cumplimiento Ley 19.628 + 21.719 + consent ARCO</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 — MODELO COMPARTIDO -->
+    <section class="slide dark" data-num="6">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Modelo compartido · 4 patrones</span>
+        <h2 class="headline">
+          Las 6 verticales <span class="gradient-text">comparten 4 modos</span> de monetizacion.
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 28px;">
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🔌</div>
+            <strong style="display: block; margin-top: 8px;">API Integration</strong>
+            <span style="font-size: 12px; opacity: 0.85;">Pago mensual por endpoint. Travel pass, lookup biometria, ficha clinica.</span>
+          </div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">📊</div>
+            <strong style="display: block; margin-top: 8px;">Data License</strong>
+            <span style="font-size: 12px; opacity: 0.85;">Datasets agregados con consent. Pago por convenio anual. Academia + research.</span>
+          </div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🤝</div>
+            <strong style="display: block; margin-top: 8px;">Affiliate / Comision</strong>
+            <span style="font-size: 12px; opacity: 0.85;">% de venta por servicio referido. Cementerios, plataformas servicios, hoteles.</span>
+          </div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🛒</div>
+            <strong style="display: block; margin-top: 8px;">Marketplace embedded</strong>
+            <span style="font-size: 12px; opacity: 0.85;">Hardware IoT con co-branding. Tu producto dentro del flujo de Paw Friend.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 — PROYECCION ARR -->
+    <section class="slide light" data-num="7">
+      <div class="slide-content">
+        <span class="slide-label">Proyeccion · ARR long-tail</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Y3 conservador: <span style="color: var(--tail);">$280k USD ARR</span> · <strong>solo del long-tail</strong>.
+        </h2>
+        <table style="width: 100%; border-collapse: collapse; margin-top: 24px; font-size: 13px;">
+          <thead>
+            <tr style="background: var(--brand-100);">
+              <th style="padding: 10px 14px; text-align: left; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--brand-700);">Vertical</th>
+              <th style="padding: 10px 14px; text-align: right; font-weight: 800; font-size: 11px; text-transform: uppercase; color: var(--brand-700);">Y1 (USD)</th>
+              <th style="padding: 10px 14px; text-align: right; font-weight: 800; font-size: 11px; text-transform: uppercase; color: var(--brand-700);">Y2 (USD)</th>
+              <th style="padding: 10px 14px; text-align: right; font-weight: 800; font-size: 11px; text-transform: uppercase; color: var(--brand-700);">Y3 (USD)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding: 10px 14px; border-bottom: 1px solid var(--brand-100);">Aerolineas + hoteles</td><td style="text-align: right; padding: 10px 14px;">8k</td><td style="text-align: right; padding: 10px 14px;">35k</td><td style="text-align: right; padding: 10px 14px; font-weight: 700;">85k</td></tr>
+            <tr><td style="padding: 10px 14px; border-bottom: 1px solid var(--brand-100);">Academia + research</td><td style="text-align: right; padding: 10px 14px;">15k</td><td style="text-align: right; padding: 10px 14px;">45k</td><td style="text-align: right; padding: 10px 14px; font-weight: 700;">80k</td></tr>
+            <tr><td style="padding: 10px 14px; border-bottom: 1px solid var(--brand-100);">Hardware IoT</td><td style="text-align: right; padding: 10px 14px;">5k</td><td style="text-align: right; padding: 10px 14px;">25k</td><td style="text-align: right; padding: 10px 14px; font-weight: 700;">50k</td></tr>
+            <tr><td style="padding: 10px 14px; border-bottom: 1px solid var(--brand-100);">Plataformas de servicios</td><td style="text-align: right; padding: 10px 14px;">3k</td><td style="text-align: right; padding: 10px 14px;">12k</td><td style="text-align: right; padding: 10px 14px; font-weight: 700;">35k</td></tr>
+            <tr><td style="padding: 10px 14px; border-bottom: 1px solid var(--brand-100);">Cementerios + cremacion</td><td style="text-align: right; padding: 10px 14px;">2k</td><td style="text-align: right; padding: 10px 14px;">8k</td><td style="text-align: right; padding: 10px 14px; font-weight: 700;">18k</td></tr>
+            <tr><td style="padding: 10px 14px; border-bottom: 1px solid var(--brand-100);">Bancos sangre + 24/7</td><td style="text-align: right; padding: 10px 14px;">2k</td><td style="text-align: right; padding: 10px 14px;">5k</td><td style="text-align: right; padding: 10px 14px; font-weight: 700;">12k</td></tr>
+            <tr style="background: var(--brand-50); font-weight: 800;"><td style="padding: 12px 14px;">TOTAL LONG-TAIL</td><td style="text-align: right; padding: 12px 14px;">$35k</td><td style="text-align: right; padding: 12px 14px;">$130k</td><td style="text-align: right; padding: 12px 14px; color: var(--tail);">$280k</td></tr>
+          </tbody>
+        </table>
+        <div class="quote-box" style="margin-top: 18px;">
+          <strong>Diversificacion:</strong> 6 cuentas pequenas/medianas en lugar de 1 grande. Mas trabajo comercial, pero mucho menos riesgo.
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 — CTA -->
+    <section class="slide tail-grad" data-num="8">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Conversacion · proximos pasos</span>
+        <h2 class="headline" style="font-size: clamp(34px, 4.5vw, 60px);">
+          Buscamos <span class="gradient-text">1 partner ancla</span><br>
+          por vertical en 2026.
+        </h2>
+        <p class="subhead" style="font-size: 17px; max-width: 780px;">
+          Si trabajas en aerolinea, hotel, universidad, hardware pet, plataforma de servicios o cementerios pet,
+          tenemos una propuesta a medida. Empieza con un contrato anual chico, escala segun trafico real.
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 28px;">
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📅</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 1</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">30min · entendamos<br>tu caso de uso</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📋</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 2</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Propuesta a medida<br>en 5 dias</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🚀</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 3</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Live<br>en 60-90 dias</div>
+          </div>
+        </div>
+        <div style="margin-top: 36px; display: flex; gap: 24px; justify-content: center; align-items: center; flex-wrap: wrap; font-size: 14px;">
+          <span>🌐 <a href="https://pawfriend.cl" style="color: var(--gold-light); text-decoration: none; font-weight: 700;" target="_blank">pawfriend.cl</a></span>
+          <span>✉️ <a href="mailto:pawfriendcl@gmail.com" style="color: var(--gold-light); text-decoration: none; font-weight: 700;">pawfriendcl@gmail.com</a></span>
+          <span style="opacity: 0.85;">📍 Hecho en Chile · Lanzamiento Junio 2026</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="counter" id="counter">1 / 8</div>
+  <div class="hint" id="hint"><kbd>←</kbd><kbd>→</kbd> navegar <kbd>F</kbd> full <kbd>P</kbd> imprimir</div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressFill = document.getElementById('progressFill');
+    const counter = document.getElementById('counter');
+    const total = slides.length;
+    let current = 0;
+    function show(i) {
+      i = Math.max(0, Math.min(total - 1, i));
+      slides.forEach((s, k) => s.classList.toggle('active', k === i));
+      current = i;
+      progressFill.style.width = ((i + 1) / total * 100) + '%';
+      counter.textContent = `${i + 1} / ${total}`;
+      document.body.classList.toggle('light-slide', slides[i].classList.contains('light'));
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') show(current + 1);
+      else if (e.key === 'ArrowLeft') show(current - 1);
+      else if (e.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.();
+      else if (e.key.toLowerCase() === 'p') window.print();
+    });
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      const x = e.clientX / window.innerWidth;
+      show(x > 0.5 ? current + 1 : current - 1);
+    });
+    show(0);
+  </script>
+</body>
+</html>

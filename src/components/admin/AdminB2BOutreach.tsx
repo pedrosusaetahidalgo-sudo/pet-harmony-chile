@@ -59,49 +59,140 @@ type AudienceKind =
   | 'longtail';
 
 /**
- * Seed CSV por audiencia — extraído de _pending/OUTREACH_PROSPECTS_SEED.md.
- * Botón "Pegar seed" del textarea inserta esta lista directo. Pedro debe
- * verificar/personalizar los emails antes de enviar.
+ * Seed CSV por audiencia — directorio B2B segmentado y expandido 2026-04-30.
+ * Cada audience tiene sub-segmentos (líneas con `#` son comentarios visuales,
+ * los parsea correctamente parseRecipients porque no contienen "@").
+ *
+ * Verificación crítica antes de enviar:
+ *  1. Pedro debe verificar que el email general (contacto@, info@) sea el
+ *     correcto del dominio (a veces son ventas@, comercial@, etc).
+ *  2. Idealmente buscar contacto humano en LinkedIn (BD Manager, Marketing
+ *     Manager, Country Manager) y reemplazar el email genérico.
+ *  3. Dedupe automático en edge fn por dominio = enviar 1 sola vez por
+ *     empresa aunque haya varios emails listados para el mismo dominio.
  */
 const AUDIENCE_SEEDS: Record<AudienceKind, string> = {
-  pharma: `contacto@centrovet.cl, , Centrovet (Agrosuper)
-info@virbac.cl, , Virbac Chile
-contacto@msd-salud-animal.cl, , MSD Salud Animal
+  pharma: `# Multinacionales pharma animal (sales cycle 6-12m)
 zoetis.chile@zoetis.com, , Zoetis Chile
-contacto@drag-pharma.cl, , Drag Pharma
+info@virbac.cl, , Virbac Chile
+contacto@msd-salud-animal.cl, , MSD Salud Animal Chile
+contacto@bayer.cl, , Bayer Animal Health
 contacto@elanco.com, , Elanco Animal Health
 info@boehringer-ingelheim.cl, , Boehringer Ingelheim
-contacto@bayer.cl, , Bayer Animal Health`,
-  seguros: `contacto@sura.cl, , Sura Seguros
+contacto@ceva.cl, , Ceva Salud Animal
+contacto@vetoquinol.cl, , Vetoquinol Chile
+
+# Locales y distribuidores chilenos
+contacto@centrovet.cl, , Centrovet (Agrosuper)
+contacto@drag-pharma.cl, , Drag Pharma Chile
+ventas@vetpharma.cl, , Vetpharma
+contacto@veterquimica.cl, , Veterquimica
+ventas@andinaquimica.cl, , Andina Quimica Pet
+contacto@laboratorioslch.cl, , Laboratorios Chile (Pet)`,
+
+  seguros: `# Aseguradoras tradicionales con linea pet (cualquier ramo)
+contacto@sura.cl, , Sura Seguros Chile
 contacto@bci-seguros.cl, , BCI Seguros
 seguros@mapfre.cl, , Mapfre Chile
-contacto@consorcio.cl, , Consorcio
-contacto@hdi.cl, , HDI Seguros
+contacto@consorcio.cl, , Consorcio Seguros
+contacto@hdi.cl, , HDI Seguros Chile
 contacto@security.cl, , Security Seguros
-contacto@penta.cl, , Penta Security`,
-  retail: `contacto@masterdog.cl, , Master Dog
-contacto@puppis.cl, , Puppis
-contacto@petstar.cl, , Pet Star
+contacto@penta.cl, , Penta Security
+contacto@chilenaconsolidada.cl, , Chilena Consolidada
+
+# Insurtech / emergentes / pet-specific
+hola@petsyseguros.cl, , Petsy Seguros (insurtech pet)
+hello@mascolife.cl, , Mascolife Chile
+hola@patitasseguro.cl, , Patitas Seguro
+contacto@tenpo.cl, , Tenpo Insurtech`,
+
+  retail: `# Cadenas grandes multi-categoria con vertical pet
 contacto@falabella.com, , Falabella Pet
+mascotas@cencosud.cl, , Cencosud Pet (Jumbo + Easy)
+contacto@ripley.cl, , Ripley Mascotas
+contacto@walmart.cl, , Walmart Chile (Petshop)
+
+# Especialistas pet retail
+contacto@masterdog.cl, , Master Dog (Agrosuper)
+contacto@puppis.cl, , Puppis Chile
+contacto@petstar.cl, , Pet Star
 contacto@petlovers.cl, , Pet Lovers
 contacto@kingdog.cl, , King Dog
-ventas@maxipet.cl, , Maxipet`,
-  gobierno: `tenenciaresponsable@lascondes.cl, , Municipalidad Las Condes
+ventas@maxipet.cl, , Maxipet Chile
+
+# E-commerce + nuevos
+ventas@mascotawow.cl, , MascotaWow
+hola@petbrunch.cl, , Pet Brunch (premium)
+contacto@petfit.cl, , PetFit Chile`,
+
+  gobierno: `# Municipios RM premium (alta probabilidad piloto)
+tenenciaresponsable@lascondes.cl, , Municipalidad Las Condes
 mascotas@vitacura.cl, , Municipalidad Vitacura
 tenenciaresponsable@providencia.cl, , Municipalidad Providencia
+contacto@lobarnechea.cl, , Municipalidad Lo Barnechea
 contacto@nunoa.cl, , Municipalidad Ñuñoa
-mascotas@subdere.gov.cl, , SUBDERE`,
-  banca: `contacto@santander.cl, , Banco Santander
-contacto@bci.cl, , BCI Personas
+contacto@launiserena.cl, , Municipalidad La Reina
+
+# Municipios RM volume (presupuesto + escala)
+contacto@maipu.cl, , Municipalidad Maipú
+contacto@puentealto.cl, , Municipalidad Puente Alto
+contacto@laflorida.cl, , Municipalidad La Florida
+
+# Nacional
+mascotas@subdere.gov.cl, , SUBDERE (Tenencia Responsable)
+contacto@sag.gob.cl, , SAG (Servicio Agrícola Ganadero)`,
+
+  banca: `# Banca premium (segmento high-LTV)
+mascotas@santander.cl, , Banco Santander Select
+contacto@bci.cl, , BCI Personas Premium
 contacto@itau.cl, , Itaú Chile
+contacto@scotiabank.cl, , Scotiabank Chile
+
+# Banca masiva (volumen)
 contacto@bancofalabella.cl, , Banco Falabella
-contacto@bancoestado.cl, , BancoEstado`,
-  edificios: `contacto@inmobiliariamanquehue.cl, , Inmobiliaria Manquehue
+contacto@bancoripley.cl, , Banco Ripley
+contacto@bancoestado.cl, , BancoEstado
+
+# Fintech / wallet (B2B2C alta velocidad)
+contacto@mach.cl, , MACH (BCI)
+contacto@tenpo.cl, , Tenpo Wallet
+contacto@mercadopago.cl, , Mercado Pago Chile`,
+
+  edificios: `# Inmobiliarias grandes (cobertura nacional)
+contacto@inmobiliariamanquehue.cl, , Inmobiliaria Manquehue
 contacto@paz.cl, , PAZ Inmobiliaria
-contacto@actual.cl, , Actual Inmobiliaria`,
-  longtail: `contacto@latam.com, , LATAM Cargo (mascotas)
-contacto@uautonoma.cl, , Universidad Autónoma (Vet)
-contacto@uss.cl, , Universidad San Sebastián (Vet)`,
+contacto@actual.cl, , Actual Inmobiliaria
+contacto@almagro.cl, , Almagro
+contacto@socovesa.cl, , Socovesa
+
+# Administradoras (volumen unidades)
+contacto@adminco.cl, , Adminco
+contacto@admvalores.cl, , ADM Administracion
+contacto@casavalor.cl, , Casavalor
+
+# Comunidades premium pet-friendly (HOAs grandes)
+admin@laciudadempresarial.cl, , Ciudad Empresarial Adm
+contacto@piedrarojaadm.cl, , Piedra Roja Administracion`,
+
+  longtail: `# Aerolineas (transporte mascotas)
+contacto@latamcargo.com, , LATAM Cargo (Pet Travel)
+contacto@skyairline.com, , Sky Airline (Mascotas)
+
+# Academia veterinaria (research + curriculum)
+veterinaria@uautonoma.cl, , U. Autónoma de Chile (Vet)
+veterinaria@uss.cl, , U. San Sebastián (Vet)
+veterinaria@umayor.cl, , U. Mayor (Vet)
+veterinaria@ubo.cl, , U. Bernardo O'Higgins (Vet)
+veterinaria@uchile.cl, , U. de Chile (Favet)
+
+# Pet food premium (co-marketing y data deals)
+contacto@royalcanin.cl, , Royal Canin Chile
+chile@hillspet.com, , Hill's Pet Nutrition
+contacto@purina.cl, , Purina Pro Plan Chile
+
+# Hardware + tech pet (integración)
+hola@petsafe.cl, , PetSafe Chile
+contacto@furbo.cl, , Furbo Latam`,
 };
 
 const AUDIENCE_LABELS: Record<AudienceKind, { label: string; subject: string }> = {
@@ -181,11 +272,23 @@ export default function AdminB2BOutreach() {
 
   const recipients = parseRecipients(recipientsRaw);
 
+  // Calcular dominios unicos (post-dedupe que hace edge fn)
+  const uniqueDomains = new Set(
+    recipients
+      .map((r) => r.email?.split('@')[1]?.toLowerCase().trim())
+      .filter((d): d is string => !!d)
+  );
+  const duplicateCount = recipients.length - uniqueDomains.size;
+
   const pasteSeed = () => {
     const seed = AUDIENCE_SEEDS[audience];
     setRecipientsRaw(seed);
+    const lines = seed
+      .split('\n')
+      .filter((l) => l.trim() && !l.trim().startsWith('#'))
+      .filter((l) => l.includes('@'));
     toast.info(
-      `${seed.split('\n').length} prospectos de ${audience} cargados. Verifica los emails antes de enviar.`
+      `${lines.length} prospectos de ${audience} cargados. Verifica los emails antes de enviar.`
     );
   };
 
@@ -200,21 +303,41 @@ export default function AdminB2BOutreach() {
   });
 
   const sendMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (testMode: boolean = false) => {
       const { data, error } = await sb.functions.invoke('send-b2b-outreach', {
         body: {
           audience,
           recipients,
           custom_subject: customSubject || undefined,
           custom_intro: customIntro || undefined,
+          test_mode: testMode,
         },
       });
       if (error) throw error;
-      return data;
+      return { ...data, _testMode: testMode } as {
+        enviados: number;
+        errores: number;
+        resultados: OutreachResult[];
+        unique_after_dedupe?: number;
+        duplicates_skipped?: number;
+        test_email?: string | null;
+        _testMode: boolean;
+      };
     },
-    onSuccess: (data: { enviados: number; errores: number; resultados: OutreachResult[] }) => {
+    onSuccess: (data) => {
       setResults(data.resultados);
-      toast.success(`${data.enviados} enviados, ${data.errores} errores`);
+      if (data._testMode) {
+        toast.success(
+          `Test enviado: ${data.enviados} email(s) llegaron a tu correo. Revisa la bandeja antes de batch real.`,
+          { duration: 8000 }
+        );
+      } else {
+        const dedupeMsg =
+          data.duplicates_skipped && data.duplicates_skipped > 0
+            ? ` · ${data.duplicates_skipped} duplicados de dominio skippeados`
+            : '';
+        toast.success(`${data.enviados} enviados${dedupeMsg}, ${data.errores} errores`);
+      }
       queryClient.invalidateQueries({ queryKey: ['b2b_outreach_stats'] });
     },
     onError: (err: Error) => {
@@ -323,15 +446,32 @@ export default function AdminB2BOutreach() {
               rows={8}
               className="font-mono text-sm"
             />
-            <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground">
+            <div className="flex items-center gap-2 mt-1 text-xs text-muted-foreground flex-wrap">
               <Building2 className="size-3" />
               {recipients.length} recipient{recipients.length === 1 ? '' : 's'} parseados
+              <span className="opacity-60">·</span>
+              <span className={duplicateCount > 0 ? 'text-amber-600 font-medium' : ''}>
+                {uniqueDomains.size} dominio{uniqueDomains.size === 1 ? '' : 's'} único
+                {uniqueDomains.size === 1 ? '' : 's'}
+              </span>
+              {duplicateCount > 0 && (
+                <Badge variant="outline" className="ml-1 border-amber-400 text-amber-700">
+                  {duplicateCount} duplicado{duplicateCount === 1 ? '' : 's'} se descartará
+                  {duplicateCount === 1 ? '' : 'n'}
+                </Badge>
+              )}
               {recipients.length > 100 && (
                 <Badge variant="destructive" className="ml-2">
                   Max 100 por batch
                 </Badge>
               )}
             </div>
+            <p className="text-[10px] text-muted-foreground mt-1.5 leading-relaxed">
+              <strong>Anti-spam:</strong> el edge fn deduplica por dominio antes de enviar. Si hay
+              <code className="mx-1">info@x.cl</code> y <code className="mx-1">ventas@x.cl</code>{' '}
+              solo se envía al primero. Líneas con <code className="mx-1">#</code> son comentarios
+              visuales — se ignoran.
+            </p>
           </div>
 
           {/* Preview */}
@@ -365,20 +505,58 @@ export default function AdminB2BOutreach() {
             </div>
           </div>
 
-          <Button
-            onClick={() => sendMutation.mutate()}
-            disabled={sendMutation.isPending || recipients.length === 0 || recipients.length > 100}
-            className="w-full"
-          >
-            {sendMutation.isPending ? (
-              <>Enviando...</>
-            ) : (
-              <>
-                <Mail className="size-4 mr-2" />
-                Enviar a {recipients.length} {recipients.length === 1 ? 'partner' : 'partners'}
-              </>
-            )}
-          </Button>
+          {/* Botones envío: TEST primero (a tu correo), luego REAL */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => sendMutation.mutate(true)}
+              disabled={
+                sendMutation.isPending || recipients.length === 0 || recipients.length > 100
+              }
+              className="w-full"
+            >
+              {sendMutation.isPending ? (
+                <>Enviando...</>
+              ) : (
+                <>
+                  <Eye className="size-4 mr-2" />
+                  Enviar test a mi correo
+                </>
+              )}
+            </Button>
+            <Button
+              onClick={() => {
+                if (
+                  !confirm(
+                    `Vas a enviar ${uniqueDomains.size} email(s) reales a partners de ${audience}. ¿Confirmar?\n\nRecuerda: 1 correo por dominio. Los duplicados (${duplicateCount}) se descartan automáticamente.`
+                  )
+                ) {
+                  return;
+                }
+                sendMutation.mutate(false);
+              }}
+              disabled={
+                sendMutation.isPending || recipients.length === 0 || recipients.length > 100
+              }
+              className="w-full"
+            >
+              {sendMutation.isPending ? (
+                <>Enviando...</>
+              ) : (
+                <>
+                  <Mail className="size-4 mr-2" />
+                  Enviar real a {uniqueDomains.size}{' '}
+                  {uniqueDomains.size === 1 ? 'partner' : 'partners'}
+                </>
+              )}
+            </Button>
+          </div>
+          <p className="text-[11px] text-muted-foreground text-center -mt-1">
+            Flujo recomendado: <strong>1)</strong> Pegar seed · <strong>2)</strong> Verificar emails
+            ·<strong> 3)</strong> Enviar test a tu correo · <strong>4)</strong> Revisar visualmente
+            ·<strong> 5)</strong> Enviar real
+          </p>
         </CardContent>
       </Card>
 

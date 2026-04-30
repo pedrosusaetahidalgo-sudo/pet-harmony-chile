@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="es-CL">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paw Friend para Edificios · Inmobiliarias · Administradoras · HOAs</title>
+  <meta name="description" content="Paw Friend: registro digital de mascotas residentes para edificios pet-friendly. Reglamento interno, cumplimiento, comunidad." />
+  <meta name="theme-color" content="#475569" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --brand-50: #f8fafc; --brand-100: #f1f5f9; --brand-200: #e2e8f0; --brand-300: #cbd5e1;
+      --brand-500: #64748b; --brand-600: #475569; --brand-700: #334155; --brand-800: #1e293b; --brand-900: #0f172a;
+      --lime: #84cc16; --lime-light: #bef264; --lime-soft: #ecfccb;
+      --gold: #eab308; --gold-light: #fde047;
+      --medical: #10b981; --alert: #ef4444; --ink: #020617;
+      --building: #475569; --building-soft: #f1f5f9;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; overflow: hidden; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; background: #020617; color: white; }
+    body.light-slide { background: var(--brand-50); color: var(--ink); }
+    .deck { position: relative; height: 100vh; width: 100vw; overflow: hidden; }
+    .progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: rgba(255,255,255,0.08); z-index: 100; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--lime) 0%, var(--brand-500) 50%, var(--gold) 100%); transition: width 0.5s ease; }
+    .slide { position: absolute; inset: 0; padding: 6vh 6vw; display: flex; flex-direction: column; opacity: 0; visibility: hidden; transition: opacity 0.5s ease, visibility 0.5s; overflow-y: auto; }
+    .slide.active { opacity: 1; visibility: visible; }
+    .slide.dark { background: linear-gradient(135deg, #020617 0%, #1e293b 50%, #334155 100%); color: white; }
+    .slide.light { background: linear-gradient(135deg, var(--brand-50) 0%, var(--brand-100) 100%); color: var(--ink); }
+    .slide.build-grad { background: linear-gradient(135deg, #1e293b 0%, #475569 50%, #84cc16 100%); color: white; }
+    .mesh-bg { position: absolute; inset: 0; opacity: 0.4; pointer-events: none; background:
+      radial-gradient(circle at 20% 30%, rgba(132,204,22,0.3), transparent 40%),
+      radial-gradient(circle at 80% 70%, rgba(71,85,105,0.4), transparent 40%); }
+    .slide-content { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; width: 100%; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .slide-label { display: inline-block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.18em; color: var(--lime-light); padding: 6px 12px; background: rgba(132,204,22,0.15); border: 1px solid rgba(132,204,22,0.4); border-radius: 999px; margin-bottom: 18px; align-self: flex-start; }
+    .slide.light .slide-label { color: var(--brand-700); background: var(--lime-soft); border-color: var(--lime); }
+    .headline { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 4vw, 52px); font-weight: 700; line-height: 1.1; margin: 0 0 16px; letter-spacing: -0.02em; }
+    .gradient-text { background: linear-gradient(135deg, var(--lime-light) 0%, white 50%, var(--gold-light) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .subhead { font-size: clamp(14px, 1.5vw, 18px); line-height: 1.5; opacity: 0.85; max-width: 800px; margin-bottom: 18px; }
+    .counter { position: fixed; bottom: 18px; right: 24px; font-size: 12px; font-weight: 700; opacity: 0.6; z-index: 100; }
+    .hint { position: fixed; bottom: 18px; left: 24px; font-size: 11px; font-weight: 600; opacity: 0.5; z-index: 100; }
+    .hint kbd { background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin: 0 2px; font-family: monospace; }
+    body.light-slide .hint kbd { background: rgba(0,0,0,0.06); }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .stat-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 20px; text-align: center; }
+    .slide.light .stat-card { background: white; border-color: var(--brand-200); box-shadow: 0 8px 24px rgba(71,85,105,0.06); }
+    .stat-num { font-family: 'Fredoka', sans-serif; font-size: clamp(28px, 3vw, 44px); font-weight: 800; color: var(--lime-light); line-height: 1; }
+    .slide.light .stat-num { color: var(--brand-600); }
+    .stat-label { font-size: 11px; opacity: 0.75; margin-top: 8px; line-height: 1.4; }
+    .quote-box { padding: 22px 28px; background: rgba(132,204,22,0.08); border-left: 4px solid var(--lime); border-radius: 10px; font-style: italic; margin: 18px 0; }
+    .slide.light .quote-box { background: var(--lime-soft); }
+    .ask-box { background: white; color: var(--ink); padding: 28px; border-radius: 18px; box-shadow: 0 30px 80px rgba(0,0,0,0.3); margin-top: 16px; }
+    .ask-box h3 { color: var(--building); font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+    .ask-box .price { font-family: 'Fredoka', sans-serif; font-size: 56px; font-weight: 800; color: var(--ink); line-height: 1; }
+    .ask-box .price-sub { font-size: 14px; color: #6b7280; margin-top: 6px; }
+    .feature-row { display: flex; align-items: flex-start; gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .slide.light .feature-row { border-bottom-color: var(--brand-200); }
+    .feature-row:last-child { border-bottom: none; }
+    .feature-row .icon { font-size: 24px; flex-shrink: 0; }
+    .feature-row strong { display: block; margin-bottom: 4px; }
+    .feature-row span { font-size: 13px; opacity: 0.8; line-height: 1.5; }
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: 13px; }
+    .data-table th { padding: 10px 14px; background: rgba(132,204,22,0.15); text-align: left; font-weight: 800; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .data-table td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .slide.light .data-table th { background: var(--lime-soft); color: var(--brand-700); }
+    .slide.light .data-table td { border-bottom-color: var(--brand-200); }
+    .id-mock { max-width: 100%; height: auto; border-radius: 14px; box-shadow: 0 30px 60px rgba(0,0,0,0.4); display: block; }
+    .slide.light .id-mock { box-shadow: 0 18px 40px rgba(15,23,42,0.18); }
+  </style>
+</head>
+<body>
+  <div class="progress"><div class="progress-fill" id="progressFill" style="width: 11%"></div></div>
+  <div class="deck" id="deck">
+
+    <!-- 1 — COVER -->
+    <section class="slide build-grad active" data-num="1">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Pitch · Edificios · Inmobiliarias · Administradoras</span>
+        <h1 class="headline" style="font-size: clamp(36px, 5vw, 68px);">
+          Tu edificio es <span class="gradient-text">pet-friendly</span><br>
+          en el papel.<br>
+          Hagamoslo real.
+        </h1>
+        <p class="subhead" style="font-size: 18px; max-width: 760px; opacity: 0.95;">
+          Registro digital de mascotas residentes, reglamento interno aplicable,
+          identidad biometrica y red de servicios pet (vet, paseador, peluqueria)
+          para los habitantes. Una herramienta de retencion + diferenciacion del activo.
+        </p>
+        <div style="display: flex; gap: 18px; align-items: center; margin-top: 22px; opacity: 0.85; font-size: 13px;">
+          <span>📋 Registro residentes + reglamento</span>
+          <span>•</span>
+          <span>🛡️ Biometria pet</span>
+          <span>•</span>
+          <span>🤝 Red de servicios local</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 — PROBLEMA -->
+    <section class="slide dark" data-num="2">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">El problema · administracion edificio hoy</span>
+        <h2 class="headline">
+          "Pet-friendly" hoy es una etiqueta. <span class="gradient-text">Atras hay un caos operativo</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card">
+            <div class="stat-num">~8.000</div>
+            <div class="stat-label">edificios RM<br>con regimen pet-friendly</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">< 15%</div>
+            <div class="stat-label">tienen registro<br>actualizado de mascotas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-num">37%</div>
+            <div class="stat-label">conflictos vecinales<br>relacionados a mascotas</div>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 28px;">
+          "La regla dice que cada departamento puede tener un perro pequeno o
+          dos gatos. La realidad: hay un San Bernardo en el 1204. Cuando alguien
+          reclama, no tenemos como saber. Las multas de 1 UF no se aplican porque
+          no hay registro."
+          <div style="margin-top: 8px; font-style: normal; font-size: 12px; opacity: 0.7;">— Patron observado en administradoras Las Condes / Vitacura / Nunoa</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 — PROPUESTA + ID MOCK -->
+    <section class="slide light" data-num="3">
+      <div class="slide-content">
+        <span class="slide-label">Nuestra propuesta · registro + identidad + red</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Convertimos "pet-friendly" en <span style="color: var(--lime);">una operacion ordenada</span>.
+        </h2>
+        <div class="grid-2" style="margin-top: 24px;">
+          <div>
+            <div class="feature-row">
+              <div class="icon">📋</div>
+              <div><strong>Registro residentes obligatorio</strong>
+                <span>Todo nuevo arriendo o venta = registro mascota en 5 min via QR. Datos a la administracion + reglamento aceptado.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">🛡️</div>
+              <div><strong>Identidad biometrica (add-on opcional)</strong>
+                <span>Paw Shield (huella nasal Petify) hoy fuera del modelo consumer (Opcion C 2026-04-30). Si la administracion del edificio quiere registro biometrico, va como add-on financiado por la inmobiliaria. Por defecto: microchip + Pet ID Card + QR publico — si una mascota se pierde en el subterraneo, cualquier vecino la identifica con su celular.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">📐</div>
+              <div><strong>Reglamento aplicable digital</strong>
+                <span>Tamano permitido, areas comunes, obligaciones. Si vulneras, la administracion ve la alerta. Multas con respaldo.</span></div>
+            </div>
+            <div class="feature-row">
+              <div class="icon">🏥</div>
+              <div><strong>Red de servicios pet del barrio</strong>
+                <span>Vet, paseador, peluqueria con descuento exclusivo residentes. Tu edificio ofrece valor real, no solo metros cuadrados.</span></div>
+            </div>
+          </div>
+          <div style="text-align: center;">
+            <img src="assets/IDS/carnet-mascota-frente.svg" alt="Carnet residente con QR" class="id-mock" style="max-width: 360px; margin: 0 auto;">
+            <div style="font-size: 12px; color: #6b7280; margin-top: 12px; font-style: italic;">Carnet residente con QR vinculado al edificio. La conserjeria lo escanea en 1 segundo.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 — productos -->
+    <section class="slide dark" data-num="4">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Productos · 3 modos de implementacion</span>
+        <h2 class="headline">
+          De edificio individual a <span class="gradient-text">portafolio inmobiliario completo</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🏢</div>
+            <strong style="display: block; margin-top: 8px;">Edificio Individual</strong>
+            <span style="font-size: 12px; opacity: 0.85;">Plan basico para 1 edificio. Setup en 7 dias. Conserjeria capacitada.</span>
+          </div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🏘️</div>
+            <strong style="display: block; margin-top: 8px;">Administradora Multi-Edificio</strong>
+            <span style="font-size: 12px; opacity: 0.85;">Dashboard centralizado para 10+ edificios. Reportes consolidados, KPIs por edificio.</span></div>
+          <div class="stat-card" style="text-align: left;">
+            <div style="font-size: 28px;">🏗️</div>
+            <strong style="display: block; margin-top: 8px;">Inmobiliaria · Branding Premium</strong>
+            <span style="font-size: 12px; opacity: 0.85;">White-label en proyectos nuevos. "Edificio pet-friendly certificado Paw Friend" como sello marketing.</span></div>
+        </div>
+        <div style="margin-top: 32px; padding: 18px 24px; background: rgba(132,204,22,0.1); border: 1px solid rgba(132,204,22,0.3); border-radius: 12px;">
+          <strong style="color: var(--lime-light);">📌 Caso de uso ancla:</strong>
+          <span style="font-size: 14px; opacity: 0.9; margin-left: 8px;">
+            Nuevo arrendatario llega → la administracion le manda QR de registro → el dueno escanea, registra mascota, acepta reglamento, recibe descuento al vet del barrio.
+            <strong>Onboarding pet del edificio en 3 minutos.</strong>
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 — PRICING -->
+    <section class="slide light" data-num="5">
+      <div class="slide-content">
+        <span class="slide-label">Inversion · 3 tiers</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Un cafe al mes <span style="color: var(--lime);">por departamento</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--brand-700); letter-spacing: 0.1em; text-transform: uppercase;">Edificio</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 36px; font-weight: 800; color: var(--ink); line-height: 1; margin-top: 6px;">$80k <span style="font-size: 14px; opacity: 0.6;">CLP/mes</span></div>
+            <ul style="margin-top: 12px; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>1 edificio (hasta 200 unidades)</li>
+              <li>Registro residentes + reglamento</li>
+              <li>Conserjeria scanner</li>
+              <li>Soporte standard</li>
+            </ul>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px; border: 2px solid var(--lime); position: relative;">
+            <span style="position: absolute; top: -10px; right: 14px; background: var(--lime); color: white; font-size: 10px; padding: 3px 10px; border-radius: 999px; font-weight: 800;">RECOMENDADO</span>
+            <div style="font-size: 11px; font-weight: 800; color: var(--brand-700); letter-spacing: 0.1em; text-transform: uppercase;">Administradora</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 36px; font-weight: 800; color: var(--ink); line-height: 1; margin-top: 6px;">$50k <span style="font-size: 14px; opacity: 0.6;">CLP/mes/edificio</span></div>
+            <ul style="margin-top: 12px; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>Multi-edificio (5+ con descuento)</li>
+              <li>Dashboard consolidado</li>
+              <li>Paw Shield biometria (add-on B2B-funded opcional)</li>
+              <li>Capacitacion conserjeria</li>
+            </ul>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 11px; font-weight: 800; color: var(--brand-700); letter-spacing: 0.1em; text-transform: uppercase;">Inmobiliaria White-Label</div>
+            <div style="font-family: 'Fredoka', sans-serif; font-size: 36px; font-weight: 800; color: var(--ink); line-height: 1; margin-top: 6px;">A medida</div>
+            <ul style="margin-top: 12px; padding-left: 18px; font-size: 13px; line-height: 1.8; color: #475569;">
+              <li>Branding completo</li>
+              <li>Integracion APIs internas</li>
+              <li>Sello "pet-friendly certificado"</li>
+              <li>Co-marketing</li>
+            </ul>
+          </div>
+        </div>
+        <div class="quote-box" style="margin-top: 28px;">
+          <strong>ROI tipico:</strong> en un edificio de 150 deptos con 90 mascotas, el plan Administradora cuesta $50k/mes
+          = $556 CLP/mascota/mes. Multas evitadas + reputacion + retencion arrendatarios cubren la inversion en mes 2.
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 — DIFERENCIACION -->
+    <section class="slide dark" data-num="6">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Por que nosotros · vs alternativas</span>
+        <h2 class="headline">
+          La unica solucion que <span class="gradient-text">cuida la operacion + el activo + el residente</span>.
+        </h2>
+        <table class="data-table" style="margin-top: 24px;">
+          <thead>
+            <tr>
+              <th>Capacidad</th>
+              <th>Registro Excel</th>
+              <th>App admin generica (Edipro/etc)</th>
+              <th>Paw Friend</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Identidad biometrica permanente</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: var(--medical); font-weight: 800;">Si</td>
+            </tr>
+            <tr>
+              <td>Reglamento pet aplicable digital</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #fbbf24;">Texto plano</td>
+              <td style="color: var(--medical); font-weight: 800;">Reglas + alerts</td>
+            </tr>
+            <tr>
+              <td>Red servicios pet del barrio</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: var(--medical); font-weight: 800;">Vet · paseador · peluqueria</td>
+            </tr>
+            <tr>
+              <td>Onboarding nuevo residente</td>
+              <td style="color: #ef4444;">Manual papel</td>
+              <td style="color: #fbbf24;">Generico</td>
+              <td style="color: var(--medical); font-weight: 800;">QR + 3 min</td>
+            </tr>
+            <tr>
+              <td>Sello marketing pet-friendly</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: #94a3b8;">No</td>
+              <td style="color: var(--medical); font-weight: 800;">Certificado co-branded</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 7 — PILOTO -->
+    <section class="slide light" data-num="7">
+      <div class="slide-content">
+        <span class="slide-label">Piloto · 3 edificios · 4 meses</span>
+        <h2 class="headline" style="color: var(--brand-900);">
+          Empecemos con <span style="color: var(--lime);">3 edificios fundadores</span>.
+        </h2>
+        <div class="grid-3" style="margin-top: 28px;">
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 32px;">📅</div>
+            <strong style="display: block; margin-top: 12px;">Mes 1 · Setup</strong>
+            <span style="font-size: 13px; opacity: 0.85;">Configuracion 3 edificios + capacitacion conserjeria + carga datos historicos.</span>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 32px;">🚀</div>
+            <strong style="display: block; margin-top: 12px;">Mes 2-3 · Live</strong>
+            <span style="font-size: 13px; opacity: 0.85;">Onboarding residentes + activacion red de servicios + medicion uso.</span>
+          </div>
+          <div class="stat-card" style="text-align: left; padding: 24px;">
+            <div style="font-size: 32px;">📊</div>
+            <strong style="display: block; margin-top: 12px;">Mes 4 · Decision</strong>
+            <span style="font-size: 13px; opacity: 0.85;">Adopcion residentes + multas evitadas + NPS administracion. Decidimos rollout.</span>
+          </div>
+        </div>
+        <div class="ask-box" style="margin-top: 32px; background: linear-gradient(160deg, white 0%, var(--brand-50) 100%);">
+          <h3>Que pides para empezar</h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 12px;">
+            <div>
+              <div class="price" style="color: var(--lime);">$600k CLP</div>
+              <div class="price-sub">all-in 3 edificios · 4 meses</div>
+              <div style="margin-top: 12px; font-size: 13px; color: #475569;">
+                Despues plan Edificio $80k/mes o Administradora $50k/mes/edificio en rollout.
+              </div>
+            </div>
+            <div style="font-size: 13px; color: #475569; line-height: 1.8;">
+              <strong style="color: var(--ink);">Que recibes:</strong>
+              <ul style="padding-left: 18px; margin-top: 6px;">
+                <li>Plataforma branded (3 edificios)</li>
+                <li>QR codes + capacitacion conserjeria</li>
+                <li>Red de servicios pet local</li>
+                <li>Reportes mensuales</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 — CTA -->
+    <section class="slide build-grad" data-num="8">
+      <div class="mesh-bg"></div>
+      <div class="slide-content">
+        <span class="slide-label">Conversacion · proximos pasos</span>
+        <h2 class="headline" style="font-size: clamp(34px, 4.5vw, 60px);">
+          30 minutos contigo<br>
+          y <span class="gradient-text">2 administradores</span>.
+        </h2>
+        <p class="subhead" style="font-size: 17px; max-width: 780px;">
+          Te muestro live el dashboard de un edificio piloto, una inscripcion residente
+          end-to-end y como aplica el reglamento. Cerramos con propuesta firme para 3 edificios fundadores.
+        </p>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 28px;">
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📅</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 1</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Demo + dashboard<br>de un edificio piloto</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">📋</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 2</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Acuerdo 3 edificios<br>fundadores</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.12); border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🚀</div>
+            <div style="font-size: 14px; font-weight: 700;">Step 3</div>
+            <div style="font-size: 12px; opacity: 0.85; margin-top: 4px;">Live<br>en 7 dias</div>
+          </div>
+        </div>
+        <div style="margin-top: 36px; display: flex; gap: 24px; justify-content: center; align-items: center; flex-wrap: wrap; font-size: 14px;">
+          <span>🌐 <a href="https://pawfriend.cl" style="color: var(--lime-light); text-decoration: none; font-weight: 700;" target="_blank">pawfriend.cl</a></span>
+          <span>✉️ <a href="mailto:pawfriendcl@gmail.com" style="color: var(--lime-light); text-decoration: none; font-weight: 700;">pawfriendcl@gmail.com</a></span>
+          <span style="opacity: 0.85;">📍 Hecho en Chile · Lanzamiento Junio 2026</span>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="counter" id="counter">1 / 8</div>
+  <div class="hint" id="hint"><kbd>←</kbd><kbd>→</kbd> navegar <kbd>F</kbd> full <kbd>P</kbd> imprimir</div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const progressFill = document.getElementById('progressFill');
+    const counter = document.getElementById('counter');
+    const total = slides.length;
+    let current = 0;
+    function show(i) {
+      i = Math.max(0, Math.min(total - 1, i));
+      slides.forEach((s, k) => s.classList.toggle('active', k === i));
+      current = i;
+      progressFill.style.width = ((i + 1) / total * 100) + '%';
+      counter.textContent = `${i + 1} / ${total}`;
+      document.body.classList.toggle('light-slide', slides[i].classList.contains('light'));
+    }
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') show(current + 1);
+      else if (e.key === 'ArrowLeft') show(current - 1);
+      else if (e.key.toLowerCase() === 'f') document.documentElement.requestFullscreen?.();
+      else if (e.key.toLowerCase() === 'p') window.print();
+    });
+    document.addEventListener('click', (e) => {
+      if (e.target.closest('a')) return;
+      const x = e.clientX / window.innerWidth;
+      show(x > 0.5 ? current + 1 : current - 1);
+    });
+    show(0);
+  </script>
+</body>
+</html>
