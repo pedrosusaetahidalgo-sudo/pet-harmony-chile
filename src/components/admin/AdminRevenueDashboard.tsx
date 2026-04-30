@@ -22,6 +22,7 @@ import { TrendingUp, Shield, ShoppingBag, Building2, Globe, DollarSign } from '@
 import { Banknote, Landmark, KeyRound } from 'lucide-react';
 import { subDays } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { AdminMotorsHealth } from '@/components/admin/AdminMotorsHealth';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const sb = supabase as any;
@@ -293,6 +294,9 @@ export function AdminRevenueDashboard() {
 
   return (
     <div className="space-y-4">
+      {/* Paquete E Observabilidad — Salud de motores B2B */}
+      <AdminMotorsHealth />
+
       {/* Header con resumen ARR + COGS */}
       <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
         <CardHeader>
