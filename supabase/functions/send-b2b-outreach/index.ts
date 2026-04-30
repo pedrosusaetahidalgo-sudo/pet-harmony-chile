@@ -67,7 +67,7 @@ const AUDIENCE_CONFIG: Record<
     bullets: [
       'Auth via X-Pawfriend-Api-Key, onboarding self-service en /aplicar?tipo=b2b_api',
       'Datos agregados anonimizados con consent opt-in del owner (Ley 19.628 + 21.719)',
-      'Pricing modelo Mapcity: el dueno nunca paga, vos pagas por acceso a la ficha',
+      'Pricing B2B de acceso a la ficha: el dueno no paga por la base, vos pagas por acceso',
       'Casos de uso: targeting de campanas, validacion de eficacia, deteccion de sub-poblaciones',
     ],
     cta_text: 'Postular a programa partner pharma',

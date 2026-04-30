@@ -373,11 +373,11 @@ export default function AdminFinance() {
             Modelo v2 (2026-04-22)
           </div>
           <p className="text-slate-300/90 leading-relaxed">
-            <b>Modelo Mapcity: el dueño NUNCA paga</b>. Revenue B2B en 3 pilares ancla — pharma
-            (Centrovet, Virbac, Zoetis), seguros (Sura, BCI, Mapfre), retail (Master Dog, Falabella
-            Pet) — más Paw Companys (sponsors empresas) y Paw Support (apoyo voluntario,
-            ex-donaciones). Vet = canal de adquisición gratuito. Esta vista muestra MRR + pagos Flow
-            actuales; los <b>aportes voluntarios</b> aparecen en <code>Sala de Inversión</code> y{' '}
+            <b>El dueño no paga por la base</b>. Revenue B2B en 3 pilares ancla — pharma (Centrovet,
+            Virbac, Zoetis), seguros (Sura, BCI, Mapfre), retail (Master Dog, Falabella Pet) — más
+            Paw Companys (sponsors empresas) y Paw Support (apoyo voluntario, ex-donaciones). Vet =
+            canal de adquisición gratuito. Esta vista muestra MRR + pagos Flow actuales; los{' '}
+            <b>aportes voluntarios</b> aparecen en <code>Sala de Inversión</code> y{' '}
             <code>
               Content {'>'} Feedback {'>'} Donaciones
             </code>

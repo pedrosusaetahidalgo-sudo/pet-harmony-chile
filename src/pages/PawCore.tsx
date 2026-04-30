@@ -152,11 +152,11 @@ export default function PawCore() {
               <h2 className="font-semibold text-lg">Cómo nos sostenemos</h2>
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              <b>Modelo Mapcity</b>: el grueso del revenue lo aportan pharma, seguros y retail por
-              acceso a la ficha clínica longitudinal — los pilares ancla a escala. Para los dueños
-              es freemium: lo esencial es gratis para siempre y los planes Paw Member ($3.990/mes) y
-              Manada ($9.990/mes con aporte a refugios) son opcionales. Sumamos Paw Companys y apoyo
-              voluntario de quienes quieran.
+              <b>Modelo B2B de acceso a la ficha</b>: el grueso del revenue lo aportan pharma,
+              seguros y retail por acceso a la ficha clínica longitudinal — los pilares ancla a
+              escala. Para los dueños es freemium: lo esencial es gratis para siempre y los planes
+              Paw Member ($3.990/mes) y Manada ($9.990/mes con aporte a refugios) son opcionales.
+              Sumamos Paw Companys y apoyo voluntario de quienes quieran.
             </p>
             <div className="grid sm:grid-cols-2 gap-3">
               <MotorTile

@@ -220,7 +220,7 @@ export default function Donaciones() {
         <title>Paw Support — Apoya a Paw Friend</title>
         <meta
           name="description"
-          content="Paw Friend es un proyecto hecho en Chile por amantes de las mascotas. Con tu apoyo ayudamos a que lo esencial siga gratis para toda la comunidad peluda. Modelo Mapcity: el grueso lo pagan pharma, seguros y retail; los dueños solo pagan si quieren features avanzadas."
+          content="Paw Friend es un proyecto hecho en Chile por amantes de las mascotas. Con tu apoyo ayudamos a que lo esencial siga gratis para toda la comunidad peluda. El grueso del revenue lo pagan pharma, seguros y retail por acceso a la ficha; los dueños solo pagan si quieren features avanzadas."
         />
       </Helmet>
       <PageHeader title="Paw Support" onBack={() => navigate('/home')} />
