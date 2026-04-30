@@ -19,9 +19,10 @@
 
 Paw Friend es la **infraestructura digital de la mascota chilena**. El dueno
 no paga por lo esencial: ficha clinica, recordatorios, comunidad. La biometria
-Paw Shield queda en el plan Manada para controlar COGS. La monetizacion es
-B2B de acceso a la ficha: pharma + seguros + retail + gobierno + banca +
-edificios + refugios + paw partners + long-tail.
+Paw Shield (Petify) quedo fuera del modelo consumer (Opcion C 2026-04-30) —
+codigo dormido en repo, reactivable solo con financiamiento B2B. La
+monetizacion es B2B de acceso a la ficha: pharma + seguros + retail +
+gobierno + banca + edificios + refugios + paw partners + long-tail.
 
 ### 1.2 Tono visual
 
@@ -300,9 +301,7 @@ Pendientes (P0 para launch · 10 iconos): ver §6 de [ASSETS_GENERATION_PLAN.md]
 | ARR Y3 base | **$1.82M USD** | PROYECCION |
 | Ronda inicial seed | **USD $150k cap $1.2M USD SAFE** | Real (en busqueda) |
 | Apalancamiento founder + IA | **320 hrs vs 4.800 hrs · 15x · 32-65x menor costo** | Real |
-| Petify pricing (proveedor biometria) | **Basic $0.50 · Pro $0.75 · Premium contact-sales** USD/pet/mes | Real (verificado pricing page Petify) |
-| Petify tier para Paw Shield | **Pro $0.75 USD/pet/mes** (necesario para lost pet recovery 1:N en `/nose-scan`) | Real |
-| Paw Shield COGS proyectado Y1 (25% activacion · 50k pets) | **~$112k USD/ano** | PROYECCION |
+| Petify pricing (proveedor biometria, dormido Opcion C 2026-04-30) | **Basic $0.50 · Pro $0.75 · Premium contact-sales** USD/pet/mes | Real (verificado pricing page Petify) — solo aplicaria si un partner B2B reactiva Paw Shield financiado |
 
 **Etiquetado en mocks:**
 - Tag verde `REAL` → existe en producto / DB / file system hoy.

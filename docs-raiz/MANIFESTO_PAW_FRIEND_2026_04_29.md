@@ -48,9 +48,8 @@ calendario, OCR de carnet, Pet ID Card, QR, memorial, directorio vets.
 2 mascotas. Sin trampas.
 
 Si quiere features avanzadas, puede pagar **Paw Member** ($3.990/mes):
-Paw Shield biométrico, Paw Passport PDF, Insights Pro, Audio notes con
-IA, reportes históricos completos, hasta 4 mascotas, descuentos en
-partners.
+Paw Passport PDF compartible, Insights Pro, Audio notes con IA, reportes
+históricos completos, hasta 4 mascotas, descuentos en partners.
 
 Si tiene un hogar grande o un corazón refugio, **Manada** ($9.990/mes):
 todo lo anterior + soporte prioritario + descuentos exclusivos +
@@ -162,12 +161,15 @@ sistema. Win-win sin extracción.
 
 ## 6. Cómo nos paramos frente a competencia
 
-### Petify (proveedor, no competidor)
+### Petify (potencial proveedor B2B-funded, no competidor)
 
-Petify es nuestro **subprocesador biométrico**. Capturan el 10% del
+Petify es un **subprocesador biométrico de hocico**. Capturan el 10% del
 mercado dispuesto a pagar USD 0.50-0.75/mascota directo. Nosotros
 capturamos el 100% del mercado vía freemium B2C + monetizamos B2B.
-Misma tecnología, modelo distinto. **Respeto profesional.**
+La biometría no es parte del modelo consumer (Opción C 2026-04-30): el
+código está dormido en repo, reactivable solo si un partner B2B (ej:
+una aseguradora) financia la captación como parte de su producto.
+**Respeto profesional, modelo distinto.**
 
 ### PetDesk / Vetster / Vetstoria (US/UK/global)
 
@@ -246,10 +248,10 @@ México · Argentina · Colombia. Mismo modelo B2B de acceso a la ficha.
 > El dueño no paga por las features básicas — gratis para siempre. Si
 > quiere Paw Passport PDF, Insights Pro, Audio IA y Reportes históricos,
 > Paw Member $3.990/mes. Si tiene cinco mascotas o un corazón refugio,
-> Manada $9.990 con Paw Shield biométrico anti-extravío exclusivo y
-> $2.000 mensuales al fondo de refugios. Las marcas grandes — pharma,
-> seguros, retail — pagan por acceso con consent ARCO. El activo es la
-> ficha, no la app. Hecho en Chile por una persona y la IA en 8 meses.
+> Manada $9.990 con descuentos exclusivos, soporte prioritario y $2.000
+> mensuales al fondo de refugios. Las marcas grandes — pharma, seguros,
+> retail — pagan por acceso con consent ARCO. El activo es la ficha,
+> no la app. Hecho en Chile por una persona y la IA en 8 meses.
 > Lanzamiento 1 de junio 2026."*
 
 ---

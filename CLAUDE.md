@@ -107,33 +107,40 @@ AGENTS.md              # Config para agentes IA (Cursor, Copilot, etc.)
 
 ---
 
-## 5. Modelo de negocio v2.1 (post-pivot 2026-04-22 + Plan v5 Opcion 3 2026-04-29 + Reanalisis 2026-04-30)
+## 5. Modelo de negocio v2.1 (post-pivot 2026-04-22 + Plan v5 Opcion 3 2026-04-29 + Reanalisis 2026-04-30 Opcion C)
 
 > **Fuente de verdad**: [docs-raiz/pitch/MODELO_V2_2026_04_22.md](docs-raiz/pitch/MODELO_V2_2026_04_22.md).
 > Este documento resume; ese tiene todos los detalles + plan de consolidacion.
 >
 > **Pivot 2026-04-29 (Plan v5 Opcion 3)**: el principio "el dueno NUNCA paga"
-> se ajusta a "el dueno **paga solo si quiere features avanzadas**". Razon:
-> Petify USD 0.75/mascota/mes lineal por opt-in Paw Shield rompe la viabilidad
-> del modelo 100% gratis para todos sin partners B2B firmados todavia. Freemium
-> B2C de 3 tiers (Free / Paw Member / Manada) cubre el COGS biometrico y da
-> margen para esperar firma pharma/seguros/retail sin quemar runway.
+> se ajusta a "el dueno **paga solo si quiere features avanzadas**". Freemium
+> B2C de 3 tiers (Free / Paw Member / Manada) como puente mientras llegan
+> partners B2B (pharma/seguros/retail).
 >
-> **Reanalisis 2026-04-30**: la narrativa "Mapcity" se desancla — fue analogia
-> retorica heredada, no estrategia. El modelo se sostiene por sus propios
-> meritos: el activo es la ficha clinica longitudinal, no la app. Paw Shield
-> biometrico (Petify) se reposiciona como **exclusivo de Manada** (el unico tier
-> con margen para absorber USD 0.75/mes COGS). Paw Member queda con Paw Passport
-> + Insights Pro + Audio IA + Reportes >30d (sin COGS externo).
+> **Reanalisis 2026-04-30 paso 1**: la narrativa "Mapcity" se desancla — fue
+> analogia retorica heredada, no estrategia. El modelo se sostiene por sus
+> propios meritos: el activo es la ficha clinica longitudinal, no la app.
+>
+> **Reanalisis 2026-04-30 paso 2 (Opcion C)**: Paw Shield biometrico (Petify)
+> sale del modelo consumer entero. COGS lineal externo en single-vendor
+> foreign envenena valuacion VC y bloquea launch sin firma de billing PROD.
+> Paw Member queda con Paw Passport + Insights Pro + Audio IA + Reportes
+> >30d + descuentos partners (margen ~99%, sin COGS externo). Manada queda
+> con todo lo de Paw Member + descuentos exclusivos + soporte prioritario +
+> early access + $2.000/mes a refugios. Codigo Petify dormido en repo (regla
+> "esconder, no borrar") por si un partner B2B lo financia en el futuro
+> (ej: Sura paga la captacion como parte del seguro). El "si se pierde lo
+> encontras" lo cubren QR + microchip + Pet ID Card en plan Free.
 
 **Norte del proyecto**: producto invisible para el dueno flojo. Free tier
 genéroso con lo esencial (ficha + recordatorios + Pet ID Card + QR). **Paw
 Member $3.990/mes** desbloquea Paw Passport PDF + Insights Pro + Audio IA +
-Reportes >30d — features premium reales sin COGS externo, target conversion
-15%. **Manada $9.990/mes** para hogares grandes (5 mascotas) + Paw Shield
-biometrico exclusivo + $2.000/mes a Fondo Paw Friend Refugios. Monetizacion
-B2B (pharma + seguros + retail) sigue siendo el grueso a escala — el freemium
-B2C es el puente.
+Reportes >30d + descuentos Paw Partners — features premium reales sin COGS
+externo, target conversion 13-15%. **Manada $9.990/mes** para hogares
+grandes (5 mascotas) + descuentos exclusivos + soporte prioritario + early
+access + $2.000/mes a Fondo Paw Friend Refugios. Monetizacion B2B (pharma
++ seguros + retail) sigue siendo el grueso a escala — el freemium B2C es
+el puente.
 
 > **Tesis core**: el dueño no paga porque el activo no es la app — es la
 > ficha clinica longitudinal. Pagan quienes quieren acceso a esa cohorte:
@@ -185,10 +192,10 @@ campo `partnership_type` ∈ {'sponsor', 'partner'} (mig 20260611000000).
 
 1. **Dueños de mascotas** — usuario central. Free tier genéroso (2
    mascotas, ficha completa, recordatorios). Paw Member ($3.990/mes)
-   desbloquea Passport + Insights + Audio IA + Reportes (sin COGS externo).
-   Manada ($9.990/mes) para hogares con 5 mascotas + Paw Shield biometrico
-   exclusivo + aporte automático a refugios. Aportes voluntarios al fondo
-   Paw Friend siempre opcionales.
+   desbloquea Passport + Insights + Audio IA + Reportes (sin COGS externo,
+   margen ~99%). Manada ($9.990/mes) para hogares con 5 mascotas +
+   descuentos exclusivos + soporte prioritario + aporte automático a
+   refugios. Aportes voluntarios al fondo Paw Friend siempre opcionales.
 2. **Veterinarios** — individuales. Plan Básica ($0, 5 pacientes) cubre
    vets con poco volumen. Premium/Pro Max solo para escalar.
 3. **Personas que ofrecen servicios de mascotas no-vet** — walkers,
@@ -196,13 +203,21 @@ campo `partnership_type` ∈ {'sponsor', 'partner'} (mig 20260611000000).
 4. **Tiendas/accesorios/restaurantes/seguros** — relación Paw Partner:
    publicidad gratuita a cambio de descuentos para Paw Members.
 
-### B2C (dueños) — Freemium 3 tiers (post-2026-04-29 + reanalisis 2026-04-30)
+### B2C (dueños) — Freemium 3 tiers (post-2026-04-29 + Opcion C 2026-04-30)
 
 | Plan | Precio | Mascotas | Badge | Features clave |
 |---|---|---|---|---|
-| **Free** | $0 | 2 | — | Ficha clinica completa, recordatorios, calendario, OCR (5/mes), Pet ID Card basica, QR, memorial, adoption, directorio vets, gamificacion opt-in. **Sin** Paw Shield, **sin** Paw Passport, **sin** Insights Pro, **sin** audio IA |
-| **Paw Member** | $3.990/mes · $39.900/ano (17% off) | 4 | 💛 | Todo Free + **Paw Passport PDF** + **Insights Pro** + **Audio notes con transcripcion IA** + **Reportes >30d** + **Compartir ficha 1 ano** + descuentos Paw Partners. Sin COGS externo, margen ~95% |
-| **Manada** | $9.990/mes · $99.900/ano (17% off) | 5 | 👑 | Todo Paw Member + **Paw Shield biometrico (Petify) exclusivo** + descuentos Paw Partners exclusivos + soporte prioritario + early access + badge Manada + **$2.000/mes al Fondo Paw Friend Refugios** |
+| **Free** | $0 | 2 | — | Ficha clinica completa, recordatorios, calendario, OCR (5/mes), Pet ID Card basica, QR, memorial, adoption, directorio vets, gamificacion opt-in. **Sin** Paw Passport, **sin** Insights Pro, **sin** audio IA |
+| **Paw Member** | $3.990/mes · $39.900/ano (17% off) | 4 | 💛 | Todo Free + **Paw Passport PDF** + **Insights Pro** + **Audio notes con transcripcion IA** + **Reportes >30d** + **Compartir ficha 1 ano** + descuentos Paw Partners. Sin COGS externo, margen ~99% |
+| **Manada** | $9.990/mes · $99.900/ano (17% off) | 5 | 👑 | Todo Paw Member + descuentos Paw Partners exclusivos + soporte prioritario + early access + badge Manada + **$2.000/mes al Fondo Paw Friend Refugios** |
+
+> **Paw Shield (Petify) fuera del modelo consumer (Opcion C 2026-04-30)**:
+> el codigo, edge fns y componentes de biometria de hocico (PawShieldEnrollment,
+> PawShieldStatusCard, paw-shield-register/identify, /nose-scan) quedan dormidos
+> tras los flags `PAW_SHIELD_PETIFY=false` y `NOSE_PRINT_PUBLIC_SCAN`. Reactivar
+> requiere firma de partner B2B que financie el COGS USD 0.75/pet/mes (ej: una
+> aseguradora que pague la captacion como parte del seguro de mascota), no
+> consumer paywall.
 
 Feature flag `USER_PREMIUM=true` activa el paywall (debe flipearse en
 [src/lib/featureFlags.ts](src/lib/featureFlags.ts) cuando termine wire de
@@ -214,7 +229,9 @@ La UI usa "Paw Member"; resolvemos via `normalizePlanId()` en
 **Componentes paywall**:
 - [src/components/PremiumGate.tsx](src/components/PremiumGate.tsx) — bloqueador hard
   con upsell card. Usar para envolver features premium reales (Passport, Insights
-  Pro, Audio IA, Reportes, mascota 3+ → Paw Member). Paw Shield gateado a Manada.
+  Pro, Audio IA, Reportes, mascota 3+ → Paw Member; mascota 5+ → Manada). El
+  feature key debe matchear EXACTAMENTE una key de `PLANS.*.features` en
+  plans.ts; si no matchea, canAccess fallback no bloquea.
 - [src/components/PremiumNudge.tsx](src/components/PremiumNudge.tsx) — sugerencia
   soft (no bloquea, aparece al lado del feature).
 

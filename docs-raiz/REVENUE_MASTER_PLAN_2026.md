@@ -1,8 +1,8 @@
 # Paw Friend · Plan Maestro de Ingresos 2026
 
-> **Fecha**: 2026-04-29
-> **Pregunta de Pedro**: "¿Cómo realmente explotamos Paw Shield + toda la app para generar ingresos manteniendo dueño = $0?"
-> **Respuesta corta**: Paw Shield no es el motor — es la **llave** que activa los 5 motores de revenue B2B que ya tenías diseñados en el modelo v2.
+> **Fecha**: 2026-04-29 · **Actualizado 2026-04-30 (Opción C)**
+> **Pregunta original de Pedro**: "¿Cómo realmente explotamos toda la app para generar ingresos manteniendo dueño = $0?"
+> **Respuesta corta**: el activo es la ficha clínica longitudinal con consent ARCO. Los 5 motores B2B se sostienen sobre ella, NO sobre Paw Shield. Paw Shield biométrico (Petify) era una palanca amplificadora pero quedó **dormida en repo** tras la decisión Opción C 2026-04-30 (fuera del modelo consumer). Cada motor abajo incluye una nota condicional "**Upside si Paw Shield se reactiva B2B-funded**" que aplica solo si un partner B2B (ej: una aseguradora) financia el COGS Petify USD 0.75/pet/mes como parte de su producto.
 
 ---
 
@@ -26,9 +26,9 @@
 
 ---
 
-## 2. Los 5 motores de revenue B2B (post-Petify)
+## 2. Los 5 motores de revenue B2B (post-Opción C)
 
-> Cada motor se enciende **gracias** a Paw Shield. Antes era idea; ahora es palanca medible.
+> Cada motor se sostiene sobre **la ficha clínica longitudinal con consent ARCO**, no sobre Paw Shield. La biometría es upside opcional reactivable solo con financiamiento B2B.
 
 ### Motor 1 — **Pharma Animal** ($60-150k USD ARR año 1)
 
@@ -40,7 +40,7 @@
 - **Real-world data deals**: "Te vendemos acceso anonimizado a 50k pets longitudinales con vacuna timeline real" → $30-50k USD/año por dataset.
 - **Co-marketing en feed social**: post sponsored "Pastor Suizo + leishmaniasis en zona costera" → $5-10/CPM.
 
-**Cómo Paw Shield lo amplifica**:
+**Upside si Paw Shield se reactiva B2B-funded** (Opción C dormido):
 - Verificación de identidad real → no fraude en métricas (un Kai = un Kai).
 - Dataset longitudinal asegura **misma mascota a través del tiempo** (sin biometría no puedes garantizar que las visitas vet sean del mismo perro).
 - Pharma paga premium por data validada biométricamente.
@@ -60,7 +60,7 @@
 - **Actuarial data**: incidencia real de patologías por raza, comuna, edad → ajuste de pricing de pólizas → $40-80k USD/año por dataset.
 - **White-label ficha clínica**: aseguradora ofrece "Paw Friend incluido en tu póliza" → ellos pagan suscripción enterprise.
 
-**Cómo Paw Shield lo amplifica**:
+**Upside si Paw Shield se reactiva B2B-funded** (Opción C dormido):
 - **Anti-fraude**: aseguradora paga premium porque biometría es prueba forense (chip se puede falsear, hocico no).
 - Cada póliza tiene un pet único biométricamente identificado → fin de "póliza prestada entre 2 mascotas".
 
@@ -79,7 +79,7 @@
 - **Scan-to-discount integration** (PAW_SHIELD_IDEAS_BANK #4): tiendas pagan fee mensual por integrar el scan de loyalty + descuento. $30-100k CLP/mes/tienda.
 - **Targeted ads contextuales**: anuncio de premium food aparece solo a dueños de pets adultos large breed → CPC más alto, conversion 3x.
 
-**Cómo Paw Shield lo amplifica**:
+**Upside si Paw Shield se reactiva B2B-funded** (Opción C dormido):
 - **Loyalty robusto**: imposible falsificar visitas (solo Kai puede ser Kai).
 - **Data de comportamiento real de compra**: en lugar de "user buys X", sabemos "Pastor Suizo de 5 años en Vitacura compra Royal Canin → switch a Pro Plan a los 6 años".
 - **Bundle inteligente**: tienda crea ofertas data-driven sabiendo el perfil exacto del pet que entra.
@@ -99,14 +99,14 @@
 - **Reportes mensuales B2B**: "Tu clínica vs benchmark Vitacura: tickets, retención, NPS, especialidades" → upsell a Pro Max.
 - **Lead generation Paw Companys**: vet pop-ups en directorio público → $1-3k CLP/lead calificado.
 
-**Cómo Paw Shield lo amplifica**:
+**Upside si Paw Shield se reactiva B2B-funded** (Opción C dormido):
 - **Diferenciador único** vs vet software competidor: "ningún otro tiene check-in biométrico".
 - **Cross-validación**: vet sabe que la mascota que viene es la del registro (anti-fraude en visitas).
 - **Captura natural de pacientes "fantasma"**: pet sin ficha → oportunidad de captura para Paw Friend.
 
 **Plan**:
 - **Q3 2026**: 30 vets activos en Premium + 5 clínicas en Pro Max.
-- **Q4 2026**: lanzar widget check-in (post Petify firmado).
+- **Q4 2026**: lanzar widget check-in (condicional a reactivación Paw Shield B2B-funded).
 - **Y2**: 100 vets + 15 clínicas = $80-200k USD ARR.
 
 ### Motor 5 — **Gobierno + Municipios + SAG** ($30-100k USD ARR año 2)
@@ -119,7 +119,7 @@
 - **Anti-robo refugios** (PAW_SHIELD_IDEAS_BANK #3): integración con red de refugios + alertas a comuna.
 - **Prevención de zoonosis**: rabia, leptospirosis tracking en zonas rurales → SAG como cliente.
 
-**Cómo Paw Shield lo amplifica**:
+**Upside si Paw Shield se reactiva B2B-funded** (Opción C dormido):
 - **Validación cruzada chip + biometría** = doble factor que ningún otro registro tiene.
 - **Detección de mascotas robadas + reimplantadas con chip nuevo**: solo nosotros podemos detectarlo.
 

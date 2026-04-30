@@ -20,7 +20,9 @@
 
 - **Producto**: Paw Friend — ficha clínica longitudinal del 100% del mercado pet
   chileno + directorio público de veterinarios + reservas + refugios/adopción
-  + Paw Shield biométrico (Petify) opt-in + Paw Passport PDF + memorial.
+  + Pet ID Card con QR + Paw Passport PDF + memorial. Biometría Paw Shield
+  (Petify) en repo pero dormida tras flag (Opción C 2026-04-30, fuera del
+  modelo consumer).
 - **One-liner**: *"La ficha clínica longitudinal del 100% del mercado pet chileno.
   El dueño no paga porque el activo no es la app — es la ficha. Pagan pharma,
   seguros y retail por acceso a esa cohorte."*
@@ -48,28 +50,31 @@
   retail). Vets canal, no revenue. "Donaciones" → "Paw Support" (reframe
   Ley 19.885).
 - **v2.1 (2026-04-29, Plan v5 Opción 3)**: el dueño paga **sólo si quiere
-  features avanzadas**. Razón: Petify USD 0.75/pet/mes lineal rompe viabilidad
-  sin partners B2B firmados todavía. **Freemium B2C 3 tiers como puente** que
-  cubre COGS Petify mientras llegamos a partners.
-- **Reanálisis 2026-04-30**: la narrativa "Mapcity" se desancla — fue analogía
-  retórica heredada, no estrategia. El modelo se sostiene por sus propios
-  méritos: el activo es la ficha clínica longitudinal, no la app. Paw Shield
-  biométrico se reposiciona como **exclusivo de Manada** (único tier con
-  margen para absorber USD 0.75/mes COGS). Paw Member queda con Passport +
-  Insights + Audio IA + Reportes (sin COGS externo, margen ~95%).
+  features avanzadas**. **Freemium B2C 3 tiers como puente** mientras llegan
+  partners B2B (pharma + seguros + retail).
+- **Reanálisis 2026-04-30 paso 1**: la narrativa "Mapcity" se desancla —
+  fue analogía retórica heredada, no estrategia. El modelo se sostiene por
+  sus propios méritos: el activo es la ficha clínica longitudinal, no la app.
+- **Reanálisis 2026-04-30 paso 2 (Opción C)**: Paw Shield biométrico (Petify)
+  sale del modelo consumer entero. COGS lineal externo en single-vendor
+  foreign envenena valuación VC y bloquea launch sin firma de billing PROD.
+  Paw Member queda con Passport + Insights Pro + Audio IA + Reportes (margen
+  ~99%, sin COGS externo). Manada queda con todo lo de Paw Member + descuentos
+  exclusivos + soporte prioritario + early access + $2.000/mes refugios.
+  Código Petify dormido en repo (regla "esconder, no borrar") por si un
+  partner B2B lo financia en el futuro.
 
-### Pricing canónico actual (v2.1)
+### Pricing canónico actual (v2.1 + Opción C)
 
 | Plan | Precio | Mascotas | Conversion target | Margen contribution |
 |---|---|---|---|---|
 | **Free** | $0 | 2 | 85% MAU | -$41 (subsidiado por upgrades) |
-| **Paw Member** 💛 | $3.990/mes · $39.900/año (17% off) | 4 | **13%** | **86%** ($3.437) |
-| **Manada** 👑 | $9.990/mes · $99.900/año (17% off) | 5 | 1-2% | 62% ($6.181) + $2.000 a refugios |
+| **Paw Member** 💛 | $3.990/mes · $39.900/año (17% off) | 4 | **13%** | **~99%** sin COGS externo |
+| **Manada** 👑 | $9.990/mes · $99.900/año (17% off) | 5 | 1-2% | ~80% + $2.000 a refugios |
 
 ### Componente paywall
 
-`src/components/PremiumGate.tsx` wireado en **6 features premium**:
-- `paw_shield` — biometría nasal (Petify)
+`src/components/PremiumGate.tsx` wireado en features premium (post Opción C):
 - `paw_passport` — PDF 8 páginas compartible
 - `audio_notes_ai` — transcripción IA consultas owner
 - `insights_pro` — analytics avanzado per-pet

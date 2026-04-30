@@ -13,7 +13,6 @@
 
 | Concepto | Costo unitario | Cuándo se incurre |
 |---|---|---|
-| **Petify Pro tier** (Paw Shield) | USD 0,75 / mascota activa / mes | Por mascota con Paw Shield activado mensualmente |
 | Supabase Pro plan | USD 25 / mes | Mensual fijo (Pedro confirmó 2026-04-29) |
 | Hosting frontend (Vercel/GitHub Pages) | USD 0 | GitHub Pages para SPA + bandwidth gratis |
 | Dominio + DNS (Namecheap) | CLP ~30.000 / año | ≈ CLP 2.500/mes |
@@ -21,6 +20,12 @@
 | Google Cloud (OCR, etc) | USD ~5-30 / mes | Variable según uso IA |
 | Sentry, PostHog | USD 0 (free tier) | Si excedemos free → ~USD 26/mes Sentry, ~USD 0 PostHog hasta 1M events |
 | Procesamiento Flow.cl | 2,9% + IVA por transacción | Por cobro Premium |
+
+> **Opción C (2026-04-30)**: Petify Pro tier (USD 0,75/mascota/mes) está fuera
+> del modelo consumer. Código dormido en repo, reactivable solo si un partner
+> B2B financia el COGS. La fila Petify se quita de la tabla de costos variables
+> consumer; las proyecciones de la sección 2 se simplifican (margen ~99% Paw
+> Member, ~80% Manada con aporte refugios).
 
 ### 1.2 Conversión freemium B2C (Plan v5 Opción 3)
 
@@ -32,13 +37,18 @@
 
 Pedro target 10-20% pagantes — usamos 15% como escenario base, 10% conservador, 20% optimista.
 
-### 1.3 Petify opt-in dentro de cada tier
+### 1.3 Petify opt-in dentro de cada tier (DESACTIVADO Opción C 2026-04-30)
 
-| Tier | % opt-in Paw Shield (asunción) | Mascotas promedio que activan |
+> Sección legacy del Plan v5 v1, mantenida como referencia histórica. En Opción
+> C, Paw Shield está fuera del modelo consumer y los % opt-in no aplican. Si
+> un partner B2B reactiva la biometría en el futuro, la tabla se reescribe en
+> base al modelo de financiamiento del partner (no consumer).
+
+| Tier | % opt-in (legacy, no aplica hoy) | Mascotas promedio |
 |---|---|---|
-| Free | 0% (no tiene acceso) | 0 |
-| Paw Member | 30% (los preocupados por extravío) | 1.2 mascotas/4 disponibles |
-| Manada | 60% (hogares grandes activistas) | 3 mascotas/5 disponibles |
+| Free | 0% | 0 |
+| Paw Member | 0% (Opción C) | 0 |
+| Manada | 0% (Opción C) | 0 |
 
 ### 1.4 Otras asunciones operacionales
 
@@ -236,11 +246,11 @@ Valuación pre-money sugerida: USD 600k - 1.2M (cap table razonable post-seed). 
 | Riesgo | Probabilidad | Impacto | Mitigación |
 |---|---|---|---|
 | Conversión Paw Member < 5% | Media | Alto | Iterar pricing, A/B test paywall placement, mejorar onboarding upsell |
-| Petify + 2x precio | Baja-media | Medio | Plan B: entrenar modelo propio (ya en marcha — outreach refugios + Paw Shield Data Archive) |
+| Petify cambia ToS / sube precio | Baja | Bajo | Opción C 2026-04-30: Paw Shield fuera del modelo consumer. Si un partner B2B reactiva la biometría, el riesgo se traslada al partner |
 | FX > 1.100 | Media | Bajo | Subir pricing CLP proporcionalmente |
 | Pharma no firma a tiempo | Alta | Medio | B2C freemium cubre operación. Acelerar Centrovet/Virbac outreach |
 | Pivote estratégico vuelve | Baja | Alto | Modelo v2.1 documentado, decks reescritos |
-| Competidor entra al mercado Chile | Media | Medio | Moat: ficha clínica longitudinal + Paw Shield biometría + B2B alianzas |
+| Competidor entra al mercado Chile | Media | Medio | Moat: ficha clínica longitudinal + B2B alianzas (pharma, seguros, retail) + compliance Ley 21.719 pre-resuelto |
 
 ---
 
