@@ -8,9 +8,13 @@
 
 ## Pitch decks HTML (presentables)
 
+> **Deck único inversionistas (deployed)**: [pawfriend.cl/pitch/inversionistas.html](https://pawfriend.cl/pitch/inversionistas.html)
+> · 15 slides v2.1 + Opción C 2026-04-30 · para angels/CORFO/Start-Up Chile/mentor/cualquier inversionista. Fuente: [public/pitch/inversionistas.html](../public/pitch/inversionistas.html).
+
+### Decks por vertical B2B (no inversionistas)
+
 | Deck | Audiencia | Slides |
 |---|---|---|
-| [PITCH_INVESTORS_LIVE.html](PITCH_INVESTORS_LIVE.html) | **Master generico** — cualquier inversionista | 13 |
 | [PITCH_FONDOS.html](PITCH_FONDOS.html) ⭐ | **CORFO + Start-Up Chile + Angeles/VC** (con tabs por audiencia) | 9 |
 | [PITCH_PHARMA.html](PITCH_PHARMA.html) | **Pharma animal** — Centrovet · Virbac · Zoetis · MSD | 8 |
 | [PITCH_ASEGURADORAS.html](PITCH_ASEGURADORAS.html) ⭐ | **Pet insurance** — Sura · BCI · Mapfre · Consorcio | 8 |
@@ -37,14 +41,17 @@
 | [05_HOGARES_DE_ADOPCION.md](05_HOGARES_DE_ADOPCION.md) | `PITCH_REFUGIOS_PARTNERS.html` |
 | [06_PAW_PARTNERS.md](06_PAW_PARTNERS.md) | `PITCH_REFUGIOS_PARTNERS.html` |
 
-## Decks de presentacion legacy (publica)
+## Decks por vertical no-inversionista
 
 | Deck | Audiencia |
 |---|---|
-| [PRESENTACION.html](PRESENTACION.html) | Master historico (puede archivarse) |
 | [PRESENTACION_COMPANYS.html](PRESENTACION_COMPANYS.html) | Empresas Paw Company sponsors |
 | [PRESENTACION_VOICES.html](PRESENTACION_VOICES.html) | Creadores Paw Voices |
-| [PRESENTACION_PARTNERS.html](PRESENTACION_PARTNERS.html) | Partners legacy |
+| [PRESENTACION_PARTNERS.html](PRESENTACION_PARTNERS.html) | Partners alianza barter |
+
+## Decks archivados 2026-04-30
+
+`PRESENTACION.html`, `PITCH_INVESTORS_LIVE.html`, `PITCH_7_MOTORES_CONSTRUIDOS.html` y `public/pitch/investors-live.html` consolidados al deck único [pawfriend.cl/pitch/inversionistas.html](https://pawfriend.cl/pitch/inversionistas.html). Movidos a [_archive/old-decks-2026-04-30/](../_archive/old-decks-2026-04-30/).
 
 ## Documentacion transversal
 

@@ -439,7 +439,7 @@ Detalle por canal en [ASSETS_GENERATION_PLAN.md seccion 6](ASSETS_GENERATION_PLA
 
 | Deck HTML | Audiencia | Slides | Estado |
 |---|---|---|---|
-| [PITCH_INVESTORS_LIVE.html](../pitch-inversionistas/PITCH_INVESTORS_LIVE.html) | Master generico cualquier inversionista | 13 | ✅ Live |
+| [pawfriend.cl/pitch/inversionistas.html](https://pawfriend.cl/pitch/inversionistas.html) | Deck unico inversionistas (deployed) | 15 | ✅ Live v2.1 + Opcion C |
 | [PITCH_FONDOS.html](../pitch-inversionistas/PITCH_FONDOS.html) | CORFO + Start-Up Chile + Angels/VC (con tabs) | 9 | ✅ Live |
 | [PITCH_PHARMA.html](../pitch-inversionistas/PITCH_PHARMA.html) | Pharma animal | 8 | ✅ Live |
 | [PITCH_ASEGURADORAS.html](../pitch-inversionistas/PITCH_ASEGURADORAS.html) | Pet insurance | 8 | ✅ Live |

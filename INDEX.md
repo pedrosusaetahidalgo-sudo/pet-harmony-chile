@@ -183,7 +183,7 @@ Resumen de items activos:
 
 | Documento | Que contiene | Uso |
 |---|---|---|
-| [pitch-inversionistas/PRESENTACION.html](pitch-inversionistas/PRESENTACION.html) | **Presentacion visual** autocontenida con paleta Paw Friend (morado brand + dorado + verde medical). Imprimible a PDF | Reunion en vivo o PDF para envio |
+| [pawfriend.cl/pitch/inversionistas.html](https://pawfriend.cl/pitch/inversionistas.html) | **Deck unico inversionistas** (15 slides v2.1 + Opcion C 2026-04-30) — fuente: [public/pitch/inversionistas.html](public/pitch/inversionistas.html) | Para angels/CORFO/Start-Up Chile/mentor/cualquier inversionista |
 | [pitch-inversionistas/CONSOLIDADO_INVERSIONISTAS.md](pitch-inversionistas/CONSOLIDADO_INVERSIONISTAS.md) | Fuente de verdad unificada: narrativa emocional + datos + todas las secciones | Deep read + preparacion de pitch |
 | [pitch-inversionistas/01_CORFO_SSAF-I.md](pitch-inversionistas/01_CORFO_SSAF-I.md) | Postulacion CORFO SSAF-I (USD $28K) con ejes de innovacion, impacto, exportacion | CORFO |
 | [pitch-inversionistas/02_START_UP_CHILE.md](pitch-inversionistas/02_START_UP_CHILE.md) | Postulacion Start-Up Chile Ignite (USD $15K equity-free) con foco impacto CL | Start-Up Chile |

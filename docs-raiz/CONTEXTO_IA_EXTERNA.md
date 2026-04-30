@@ -436,7 +436,8 @@ Todas envueltas con `withTelemetry`.
 - `companys.html` — empresas sponsor.
 - `voices.html` — creadores Paw Voices.
 - `partners.html` — tiendas aliadas.
-- `investors-live.html` — proyección 5 años v2.1 (USD 90k Y1 → USD 11M Y5
+- (deck único inversionistas en `inversionistas.html` 15 slides v2.1)
+  proyección 5 años (USD 90k Y1 → USD 11M Y5
   LATAM-5 optimista).
 
 ### Modelo v2 origen
