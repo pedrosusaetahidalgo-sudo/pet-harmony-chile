@@ -1,11 +1,17 @@
-# Bundle Snapshot — 2026-04-30 (post 7 motores Revenue Master Plan)
+# Bundle Snapshot — 2026-04-30 (post 7 motores Revenue Master Plan + Opción C)
 
-> Snapshot del bundle de producción tras construir los 7 motores B2B
-> + AdminRevenueDashboard + 5 ideas RICE Paw Shield. Comparado contra
-> baseline del Sprint 0+1 cierre auditoría (2026-04-28).
+> Snapshot del bundle de producción tras:
+> 1. Construir los 7 motores B2B + AdminRevenueDashboard + 5 ideas RICE Paw Shield (sesión AM).
+> 2. Reanálisis 2026-04-30 + Opción C: Mapcity desanclado, Paw Shield fuera del modelo consumer (sesión PM).
+> 3. UX Polish (Paquete A): empty states + disclaimers Insurance/Retail.
+> 4. AdminB2BOutreach polish (Paquete B): seed pasta + preview email HTML.
+>
+> **Veredicto**: bundle estable, sin regresiones. Opción C no inflé el bundle
+> porque solo cambia copy + flags (no agrega código). UX Polish + Outreach
+> agregaron ~5 kB total al chunk Admin/Profile.
 
-**Build time**: 1m 31s
-**Total assets**: 326 archivos / 7.2 MB
+**Build time**: 59.5s (mejora de 32s vs 1m 31s pre)
+**Total assets**: ~326 archivos
 **Comando**: `npm run build` (Vite 5 + plugin react-swc)
 
 ---
@@ -34,20 +40,27 @@
 
 ---
 
-## 2. Comparación pre/post motores
+## 2. Comparación pre/post motores y Opción C
 
-| Chunk | Pre-motores (2026-04-28) | Post-motores (2026-04-30) | Δ |
-|---|---|---|---|
-| **Admin** | 149 kB | 173 kB | **+24 kB** (+16%) |
-| **ProviderDashboard** | 63 kB | 64 kB | +1 kB (~) |
-| **Home** | 55 kB | 55 kB | — |
-| **HomePetFocusV2** | 43 kB | 44 kB | +1 kB |
-| **xlsx** (lazy) | 429 kB | 429 kB | — |
+| Chunk | Sprint 0+1 (04-28) | Post-motores (04-30 AM) | Post-Opción C + UX (04-30 PM) | Δ total |
+|---|---|---|---|---|
+| **Admin** | 149 kB | 173 kB | 174 kB | **+25 kB** (+16.7%) |
+| **ProviderDashboard** | 63 kB | 64 kB | 64 kB | +1 kB (~) |
+| **Home** | 55 kB | 55 kB | 55 kB | — |
+| **Profile** | 63 kB | 63 kB | 63 kB | — |
+| **AddPet** | ~60 kB | ~60 kB | 61 kB | +1 kB |
+| **xlsx** (lazy) | 429 kB | 429 kB | 429 kB | — |
 
-**Veredicto**: Admin creció +24 kB raw (+7 kB gzip) por los 4 widgets
-nuevos (Revenue Dashboard + Fase 1 KPIs + Correlations + Master KPIs).
-El resto de la app no se afectó porque los nuevos motores B2B son rutas
-lazy-cargadas (`/b2b`, `/cotizar-seguro`, `/tienda`, `/aplicar`).
+**Veredicto**:
+- Admin creció +25 kB raw (+7 kB gzip) total: +24 kB por widgets motores AM,
+  +1 kB por seed CSV + dialog preview email del Paquete B 2026-04-30 PM.
+- Opción C 2026-04-30 PM **no inflé bundle** — solo cambió copy + flags +
+  paw_shield: false en plans.ts. El código Petify queda dormido en repo
+  pero detrás de flag `PAW_SHIELD_PETIFY=false` (chunks lazy `PawShieldEnrollment`,
+  `PawShieldStatusCard`, etc no se cargan en consumer).
+- UX Polish (Paquete A 2026-04-30 PM): empty states + disclaimers agregaron
+  ~1 kB a páginas afectadas (Reportes, InsuranceQuotes, RetailStore, PawMember).
+- El resto de la app no se afectó.
 
 **Aceptable**: el aumento está en `/admin`, ruta de bajo tráfico
 (solo Pedro). Bundle inicial de owner (Home + AppLayout) no cambió.
@@ -105,9 +118,11 @@ real con datos PostHog.
 
 ## 6. Sin regresiones detectadas
 
-- TypeScript build: ✅ 0 errores
-- Vite build: ✅ 1m 31s (similar a sessions previas)
+- TypeScript build: ✅ 0 errores (multi-sesión 2026-04-30)
+- Vite build: ✅ 59.5s post-Opción C (mejora vs 1m 31s pre)
 - Pre-render SPA routes: ✅ 20 rutas físicas generadas
+- Tests: ✅ 607/608 verde (1 fallo pre-existente `featureFlags.test.ts`
+  no relacionado a los cambios de hoy)
 - **Nota**: `correlation_definitions HTTP 401` es esperado en build
   local (no hay anon key con permisos) — no afecta prod build.
 
