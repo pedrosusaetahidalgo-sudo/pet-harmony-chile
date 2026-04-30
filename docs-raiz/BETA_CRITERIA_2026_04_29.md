@@ -23,8 +23,8 @@
 - **Onboarding completion rate**: % de signups que completan onboarding minimal (4 campos) y suben 1 mascota. **Target ≥ 70%**.
 - **First valuable action**: % que llega a uno de:
   - Crear ficha clínica con ≥ 1 dato (vacuna, peso, antiparasitario)
-  - Activar Paw Shield (si aplica)
   - Configurar 1 recordatorio
+  - Generar Pet ID Card + QR
   - **Target ≥ 60% de los que completan onboarding**.
 
 ### 2.2 Retención (medir semana 2 y 4)
@@ -44,13 +44,16 @@
 - **Bug rate**: bugs reportados por user activo en beta. **Target ≤ 1 bug crítico/user/semana**.
 - **Feature requests** (categorizar): cuántos pidieron cosas que no están vs cosas que están y no encontraron.
 
-### 2.5 Uso real Paw Shield (Petify)
+### 2.5 Uso real Paw Shield (Petify) — DORMIDO Opción C 2026-04-30
 
-(Solo si Pedro flipea `PAW_SHIELD_PETIFY=true` con API PROD)
+> Biometría fuera del modelo consumer. Estas métricas se reactivan solo si
+> un partner B2B (aseguradora, pharma, municipio) financia la captación
+> biométrica en su cohort y `PAW_SHIELD_PETIFY=true` se flipea con API PROD.
+> Mantener la sección como referencia para esa eventual reactivación.
 
-- **Activación**: % de Paw Member/Manada que activan Paw Shield. Target 30%+.
-- **Match success rate** en `/nose-scan`: % de scans que devuelven match correcto vs falso positivo. Target ≥ 90% sobre la base que ya tenemos enrolled.
-- **Tiempo medio enrollment**: target ≤ 2 minutos (3 fotos del hocico).
+- **Activación**: % del cohort B2B-funded que activa Paw Shield. Target 30%+ (legacy).
+- **Match success rate** en `/nose-scan`: ≥ 90% (legacy).
+- **Tiempo medio enrollment**: ≤ 2 minutos (legacy).
 
 ---
 
@@ -80,13 +83,12 @@
 ### 4.1 Producto — bloqueantes
 
 - [ ] **0 bugs críticos** en flujos críticos (auth, signup, ficha clínica, recordatorios, calendario, paywall checkout Flow).
-- [ ] **6 flujos críticos pasan E2E test** sin errores:
+- [ ] **5 flujos críticos pasan E2E test** sin errores (Opción C 2026-04-30: Paw Shield enrollment fuera del consumer):
   1. Onboarding tutor (signup → primera mascota → primer recordatorio)
   2. Onboarding vet (signup → perfil → disponibilidad)
-  3. Paw Shield enrollment (si activo) y `/nose-scan` con match
-  4. Suscripción Paw Member o Manada via Flow.cl + activación de features
-  5. Recuperación de mascota perdida (QR + ficha pública)
-  6. Ficha clínica (creación, edición, share con vet, RLS por dueño)
+  3. Suscripción Paw Member o Manada via Flow.cl + activación de features
+  4. Recuperación de mascota perdida (QR + ficha pública)
+  5. Ficha clínica (creación, edición, share con vet, RLS por dueño)
 - [ ] **Lighthouse ≥ 90** performance + accesibilidad en top 5 páginas.
 - [ ] **Bundle inicial < 500 KB gzipped**.
 - [ ] **0 placeholders visibles a usuarios reales**. Seed con datos chilenos.
@@ -102,7 +104,7 @@
 
 - [ ] **T&C + Política de privacidad** revisados por abogado chileno (ver Fase 5 Legal).
 - [ ] **Ley 21.719 + 19.628** compliance verificado.
-- [ ] **API Petify PROD operativa** si flag `PAW_SHIELD_PETIFY=true` (sino mantener flag false).
+- [ ] Flag `PAW_SHIELD_PETIFY=false` (Opción C 2026-04-30: biometría dormida hasta partner B2B-funded). Si flipea a true sin partner firmado → bloqueante de launch.
 - [ ] **Cuenta Flow.cl migrada a SpA** (riesgo fiscal pendiente).
 
 ### 4.4 Operacional — bloqueantes
@@ -157,7 +159,7 @@ Antes del launch, capturar **3-5 testimonios escritos** + **1-2 video cortos** d
 | Cohorte beta muy pequeña (< 30 tutores) | Aceptar y ajustar: foco en cualitativo profundo > cuantitativo amplio |
 | Conversión paywall < 5% durante beta | Iterar pricing (¿bajar a $2.990?) o features split (¿agregar más al free?) |
 | Bugs críticos día 0 launch | Tener rollback plan: feature flag para desactivar paywall si quema |
-| Petify no listo para 1 junio | Lanzar sin Paw Shield activo. Free + Paw Member básico (sin biometría). Activar después |
+| Petify reactivación pendiente | Default Opción C 2026-04-30: lanzar SIN Paw Shield. Reactivar después solo si partner B2B firma billing |
 | Vets beta no recomiendan | Iterar onboarding vet, ajustar copy, validar valor con entrevistas |
 
 ---

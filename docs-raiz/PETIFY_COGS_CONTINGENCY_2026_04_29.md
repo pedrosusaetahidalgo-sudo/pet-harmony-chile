@@ -1,7 +1,12 @@
 # Paw Friend — Plan Contingency Petify COGS (2026-04-29)
 
-> Doc operacional para gestionar el riesgo de costo lineal Petify
-> USD 0.75/mascota Shield activada/mes a medida que crece el volumen.
+> ⚠️ **SUPERSEDED por Opción C 2026-04-30**: la biometría Paw Shield quedó
+> fuera del modelo consumer. El COGS Petify lineal $0,75/pet/mes ya no
+> aplica en el modelo de negocio actual (Paw Member margen ~99%, Manada
+> ~80% sin COGS biométrico). Este plan de contingencia se reactiva SOLO si
+> un partner B2B financia la biometría en su cohort y queremos modelar el
+> umbral económico. Mantener como **referencia histórica del razonamiento**
+> que llevó a Opción C.
 >
 > Acompaña [MODELO_FINANCIERO_2026_04_29.md](MODELO_FINANCIERO_2026_04_29.md)
 > y la memoria [project_nose_print_master_plan](C:\Users\psusa\.claude\projects\c--Users-psusa-Desktop-pet-harmony-chile-main\memory\project_nose_print_master_plan.md).

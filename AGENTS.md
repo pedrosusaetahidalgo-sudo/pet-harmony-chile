@@ -103,13 +103,18 @@ NO existen: `npm run test`, `npm run typecheck`.
 | Paw Member 💛 | $3.990 | $39.900 | 4 | 13% (15% pagantes) |
 | Manada 👑 | $9.990 | $99.900 | 5 | 1-2% MAU |
 
-**Paw Member** desbloquea Paw Shield biometrico + Paw Passport PDF +
-Insights Pro + Audio notes IA + Reportes >30d + descuentos Paw Partners
-basic. Componente paywall: `PremiumGate.tsx`.
+**Paw Member** desbloquea Paw Passport PDF + Insights Pro + Audio notes IA +
+Reportes >30d + descuentos Paw Partners basic. Sin COGS externo (margen
+~99%). Componente paywall: `PremiumGate.tsx`.
 
 **Manada** = Paw Member + descuentos exclusivos + soporte prioritario +
 early access + badge + **$2.000/mes a Fondo Paw Friend Refugios**
 (donacion legal hecha por SpA, evita Ley 19.885).
+
+**Paw Shield biometrico (Petify)**: FUERA del modelo consumer (Opcion C
+2026-04-30). Codigo dormido en repo tras flag `PAW_SHIELD_PETIFY=false`.
+Reactivable solo si un partner B2B (aseguradora, pharma, municipio)
+financia el COGS Petify $0.75/pet/mes como parte de su producto.
 
 DB: `subscriptions.plan_type IN ('free', 'premium', 'paw_manada')`. La UI
 muestra "Paw Member" pero el id DB es `'premium'` por compat. Helper

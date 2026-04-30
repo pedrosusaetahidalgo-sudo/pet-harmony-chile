@@ -91,7 +91,7 @@
 
 | Mes | Accion |
 |---|---|
-| **Mes 0 (pre-launch)** | Outreach a 13 refugios chilenos (en curso). Outreach Petify (en curso). Definir SpA Flow (en curso). |
+| **Mes 0 (pre-launch)** | Outreach a 13 refugios chilenos (en curso). Definir SpA Flow (en curso). Petify queda como integración dormida (Opción C 2026-04-30, biometría fuera del consumer · reactivable B2B-funded vía partnership con aseguradora). |
 | **Mes 1** | Lanzar producto. Conseguir 50-80 vets activos. Cerrar 3 Paw Companys. |
 | **Mes 2** | Postular Start-Up Chile Ignite (`PITCH_FONDOS.html` tab Start-Up + brief). |
 | **Mes 3** | Postular CORFO SSAF-I (`PITCH_FONDOS.html` tab CORFO + brief). Outreach pharma (Centrovet, Virbac) con `PITCH_PHARMA.html`. |

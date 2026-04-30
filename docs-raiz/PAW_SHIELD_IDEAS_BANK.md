@@ -1,10 +1,14 @@
 # Paw Shield · Banco de ideas explotables
 
-> **Fecha**: 2026-04-29
+> ⚠️ **DORMIDO desde 2026-04-30 (Opción C)**: la biometría Paw Shield está
+> fuera del modelo consumer. Las 24 ideas RICE-priorizadas siguen siendo
+> válidas como roadmap para una eventual reactivación B2B-funded. Mantener
+> como **catálogo de upside** que se aplica solo si un partner (aseguradora,
+> pharma, municipio) financia el COGS Petify y activa la biometría en su
+> cohort.
+>
+> **Fecha original**: 2026-04-29
 > **Complementa**: [PAW_SHIELD_PLAYBOOK.md](./PAW_SHIELD_PLAYBOOK.md) (estrategia general).
-> **Propósito**: catálogo accionable de ideas que aprovechan la biometría
-> Petify para generar **data, revenue, promociones dirigidas, insights**.
-> Cada idea trae: concepto, quién paga, riesgo, prioridad RICE.
 
 ---
 

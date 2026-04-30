@@ -14,15 +14,22 @@
 Petify USD 0.75/mascota Shield activada/mes rompia viabilidad sin partners
 B2B firmados.
 
-**Nuevo paywall real**:
+**Nuevo paywall real (post-Opción C 2026-04-30)**:
 - Tier Free ($0, 2 mascotas): ficha clinica, recordatorios, calendario, OCR
   limitado, Pet ID Card basica, QR, memorial, adoption, directorio vets.
-  Sin Paw Shield, Paw Passport, Insights Pro, Audio IA, Reportes >30d.
-- Tier Paw Member ($3.990/mes · $39.900/ano, 4 mascotas): Free + features
-  premium reales. Target conversion 13%.
+  Sin Paw Passport, Insights Pro, Audio IA, Reportes >30d.
+- Tier Paw Member ($3.990/mes · $39.900/ano, 4 mascotas): Free + Paw Passport
+  PDF + Insights Pro + Audio notes IA + Reportes >30d + descuentos Paw
+  Partners. Sin COGS externo (margen ~99%). Target conversion 13%.
 - Tier Manada ($9.990/mes · $99.900/ano, 5 mascotas): Paw Member + descuentos
   exclusivos + soporte prioritario + early access + $2.000/mes a Fondo Paw
   Friend Refugios (donado por SpA, evita Ley 19.885). Target conversion 2%.
+
+**Paw Shield biometrico (Petify) FUERA del modelo consumer (Opcion C 2026-04-30)**:
+- `paw_shield: false` en los 3 tiers en plans.ts.
+- Codigo Petify (4 edge fns + componentes captura + DB) dormido tras flag
+  `PAW_SHIELD_PETIFY=false`. Reactivable solo si un partner B2B financia
+  el COGS Petify $0.75/pet/mes como parte de su producto.
 
 **Componentes nuevos**:
 - [src/components/PremiumGate.tsx](src/components/PremiumGate.tsx) — paywall
@@ -35,13 +42,15 @@ B2B firmados.
 - [src/pages/PawMember.tsx](src/pages/PawMember.tsx) refactor dual mode (free
   → pricing 3 tiers, member → dashboard con Manada Impact section).
 
-**6 features con PremiumGate wireado**:
-- `paw_shield` en tab Identidad ficha (PetClinicalRecord/index.tsx:753)
-- `paw_passport` en mismo tab Identidad (PetClinicalRecord/index.tsx:780)
+**Features con PremiumGate wireado** (post-Opción C):
+- `paw_shield` gate sigue wireado en tab Identidad (PetClinicalRecord/index.tsx:756)
+  pero plans.ts tiene paw_shield=false en los 3 tiers → bloquea siempre
+- `paw_passport` en mismo tab Identidad (PetClinicalRecord/index.tsx:777)
 - `audio_notes_ai` en HomePetFocusV2 (banner inline)
 - `insights_pro` en ProDashboard owner view
 - `reports_history_days` en /reportes page-level
 - `max_pets` en AddPet (free con 2 pets → upsell)
+- `share_clinical_days` en TabCompartir (fix 2026-04-30: era `share_clinical` no-op)
 
 **Backend nuevo**:
 - Mig 20260929000000_manada_fondo_refugios.sql — 3 tablas

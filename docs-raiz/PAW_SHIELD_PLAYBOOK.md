@@ -1,7 +1,13 @@
 # Paw Shield · Playbook estratégico
 
-> **Fecha**: 2026-04-29
-> **Estado**: integración con Petify (PetNow) implementada en código, flag `PAW_SHIELD_PETIFY=false` hasta firmar contrato comercial.
+> ⚠️ **DORMIDO desde 2026-04-30 (Opción C)**: la biometría Paw Shield queda
+> fuera del modelo consumer. El código Petify sigue intacto en repo
+> (componentes + 4 edge fns + tablas DB) tras flag `PAW_SHIELD_PETIFY=false`.
+> Reactivable solo si un partner B2B (ej: aseguradora, pharma, municipio)
+> financia el COGS Petify $0,75/pet/mes como parte de su producto. Este
+> playbook queda como **referencia histórica** para esa eventual reactivación.
+>
+> **Fecha original**: 2026-04-29
 > **Resultado test**: 100% top-1 accuracy con 3 fotos por mascota (8 mascotas reales).
 
 ---

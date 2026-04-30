@@ -52,22 +52,28 @@
 
 ---
 
-## Flujo 3 — Paw Shield biométrico (Petify)
+## Flujo 3 — Paw Shield biométrico (Petify) — DORMIDO Opción C 2026-04-30
 
-`Activar Paw Shield desde ficha → enrollment → public scan match`
+> Biometría fuera del modelo consumer. Este flujo NO se testea para launch
+> 1 junio 2026. El código (4 edge fns + componentes captura + DB) queda
+> intacto en repo, reactivable solo si un partner B2B financia el COGS
+> Petify. La matriz QA original se mantiene como **referencia técnica**
+> para esa eventual reactivación.
+
+`Activar Paw Shield desde ficha → enrollment → public scan match` (legacy)
 
 | Paso | Acción | Estado esperado | Riesgos |
 |---|---|---|---|
-| 3.1 | Free user entra a tab Identidad ficha → ve PremiumGate "Paw Shield" | Card upsell a Paw Member | ✅ wireado |
-| 3.2 | Upgrade a Paw Member → ve `PawShieldStatusCard` activable | Botón "Activar Paw Shield" visible | Requiere PAW_SHIELD_PETIFY=true |
+| 3.1 | Free user entra a tab Identidad ficha | NO ve PremiumGate "Paw Shield" en Opción C (flag `PAW_SHIELD_PETIFY=false` esconde toda la sección) | ✅ |
+| 3.2 | Si flag se reactiva con partner B2B firmado | `PawShieldStatusCard` visible solo en cohort financiado | Requiere PAW_SHIELD_PETIFY=true + billing partner |
 | 3.3 | Click "Activar" → captura video 3 seg del hocico | 3 frames extraídos | Camera permissions iOS/Android |
-| 3.4 | Edge fn `paw-shield-register` envía a Petify API | Petify retorna pet_id biométrico | **Bloqueante**: API key TEST → enrollments se pierden al rotar PROD |
+| 3.4 | Edge fn `paw-shield-register` envía a Petify API | Petify retorna pet_id biométrico | API key PROD requerida |
 | 3.5 | Foto raw + embedding archivado (opt-in consent) | `paw_shield_data_archive` row | Privacy ARCO |
 | 3.6 | Persona externa entra a `/nose-scan` (sin auth) | Captura foto del hocico de mascota perdida | Verify_jwt=false en edge fn |
 | 3.7 | Edge fn `paw-shield-identify` → match Petify | Devuelve owner contact si match score > threshold | Threshold a calibrar |
 | 3.8 | UI muestra match con disclaimer | Owner contactado vía link/email | Privacy: no exponer email directo |
 
-**Estado actual**: ❌ **bloqueado por Petify API TEST**. Flag PAW_SHIELD_PETIFY=false hasta tener PROD key. Este flujo NO se puede testear hasta entonces.
+**Estado actual launch 1 junio 2026**: ⏸️ **Dormido por decisión de modelo** (Opción C 2026-04-30). NO se incluye en QA pre-launch.
 
 ---
 
@@ -101,9 +107,9 @@
 | 5.2 | Owner imprime/comparte QR de la mascota → `/qr/:token` | Pública sin auth | qr token único |
 | 5.3 | Persona externa escanea QR | Landing pública con datos relevantes (foto, contacto, recompensa opcional) | Privacy: solo info necesaria |
 | 5.4 | Persona contacta vía WhatsApp / Phone | Link `wa.me/56...` directo | Verificar phone en DB |
-| 5.5 | Alternativa: persona escanea hocico en `/nose-scan` | Match contra base Paw Shield | Bloqueado por Petify TEST |
+| 5.5 | Alternativa: persona escanea hocico en `/nose-scan` | Match contra base Paw Shield | DORMIDO Opción C (biometría fuera del consumer) |
 
-**Estado actual**: ⚠️ flujo QR funciona; flujo `/nose-scan` bloqueado por Petify.
+**Estado actual**: ✅ flujo QR funciona end-to-end; flujo `/nose-scan` dormido por Opción C 2026-04-30 (no es bloqueante de launch).
 
 ---
 
@@ -156,8 +162,8 @@ Para cada componente principal, validar que existen los 4 estados:
 |---|---|---|---|---|
 | `flow-create-subscription` | ✅ pending reuse 5min | ✅ withTelemetry | service_role | ✅ |
 | `flow-webhook` | ✅ payment_events PK | ✅ withTelemetry | service_role | ✅ |
-| `paw-shield-register` | ✅ dedup via Petify | ✅ withTelemetry | service_role | ⚠️ blocked TEST |
-| `paw-shield-identify` | N/A read-only | ✅ withTelemetry | verify_jwt=false | ⚠️ blocked TEST |
+| `paw-shield-register` | ✅ dedup via Petify | ✅ withTelemetry | service_role | ⏸️ dormido Opción C (no testear pre-launch) |
+| `paw-shield-identify` | N/A read-only | ✅ withTelemetry | verify_jwt=false | ⏸️ dormido Opción C (no testear pre-launch) |
 | `generate-medical-summary` | N/A read-only | ✅ withTelemetry | service_role | ✅ |
 | `generate-paw-passport` | N/A read-only | ✅ withTelemetry (recién) | service_role | ✅ |
 | `consultation-prep` | N/A | ✅ withTelemetry (recién) | service_role | ✅ |
@@ -200,7 +206,7 @@ Top 5 páginas más visitadas — meta ≥ 90 performance + accessibility:
 3. [ ] Activar pg_cron extension si no está
 4. [ ] Smoke test E2E flujos 1, 2, 4, 6 con account beta
 5. [ ] Activar `USER_PREMIUM=true` y validar PremiumGates en producción
-6. [ ] Cuando Petify PROD ready: activar `PAW_SHIELD_PETIFY=true` + smoke flujo 3
+6. [ ] **Dormido Opción C 2026-04-30**: `PAW_SHIELD_PETIFY=true` solo cuando partner B2B firme billing — NO bloqueante de launch
 7. [ ] Lighthouse audit en top 5 páginas
 8. [ ] Revisión legal completa por abogado externo
 

@@ -1,10 +1,13 @@
 # Paw Shield · Data Archive para entrenamiento propio
 
-> Plan de archivado de imagenes capturadas via Paw Shield para entrenar
-> un modelo propio en el futuro (alternativa o complemento a Petify).
-> **Estado:** spec aprobada · pendiente de implementacion en codigo.
+> ⚠️ **DORMIDO desde 2026-04-30 (Opción C)**: la biometría Paw Shield quedó
+> fuera del modelo consumer. La tabla `paw_shield_data_archive` y el cron
+> `paw-shield-archive-cleanup` siguen en repo intactos. Este spec se
+> reactiva solo si un partner B2B financia la captación biométrica en su
+> cohort y eso genera flujo de imágenes para training propio. Mantener como
+> **referencia histórica**.
 
-Fecha: 2026-04-29.
+Fecha original: 2026-04-29.
 Autor: Paw Founder.
 Relacionado: [PAW_SHIELD_PLAYBOOK.md](PAW_SHIELD_PLAYBOOK.md), [memoria nose print master plan](C:\Users\psusa\.claude\projects\c--Users-psusa-Desktop-pet-harmony-chile-main\memory\project_nose_print_master_plan.md).
 
