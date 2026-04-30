@@ -102,6 +102,16 @@ const AUDIENCE_CONFIG: Record<
     headline: string;
     pitch: string;
     bullets: string[];
+    /**
+     * Oferta Founder Partner: incentivo para quienes se sumen ANTES del
+     * lanzamiento. Cierra el deal con escasez real (lock por segmento) +
+     * pricing/revenue preferente + co-branding. 4 líneas, formato consistente:
+     *  1. Exclusividad por segmento durante X meses
+     *  2. Pricing/revenue preferente
+     *  3. Co-branding / naming / case study
+     *  4. Onboarding dedicado white-glove
+     */
+    founder_offer: string[];
     cta_text: string;
     cta_url: string;
     deck_url: string;
@@ -121,6 +131,12 @@ const AUDIENCE_CONFIG: Record<
       'Cómo funciona: 4 endpoints públicos (breed_stats, species_stats, correlations, risk_score) con auth X-Pawfriend-Api-Key. Onboarding self-service. SLA 99.5%.',
       'Compliance pre-resuelto: Ley 19.628 + 21.719 + ARCO + DPA template listo. SpA constituida. No tengo que pedir permiso de privacy a nadie — lo tengo.',
     ],
+    founder_offer: [
+      'Exclusividad por categoría terapéutica durante 12 meses post-launch (ej: solo tu marca en antiparasitarios sponsored reminders).',
+      'Pricing fundador: 50% off durante el primer año + lock garantizado de pricing por 24 meses adicionales.',
+      'Naming en case study oficial Paw Friend + co-branding en comunicaciones a la comunidad veterinaria.',
+      'Onboarding white-glove: integración API en 2 semanas con soporte directo del founder + acceso a data agregada con 30 días de anticipación al público.',
+    ],
     cta_text: 'Pedir 30 min call (sin compromiso)',
     cta_url: 'https://pawfriend.cl/aplicar?tipo=b2b_api',
     deck_url: 'https://pawfriend.cl/pitch/pharma.html',
@@ -137,6 +153,12 @@ const AUDIENCE_CONFIG: Record<
       'Qué ganamos nosotros: validar la mecánica con un partner real + tener case study para abrir conversación con BCI/Mapfre/Consorcio + revenue share de la primera póliza vendida.',
       'Cómo funciona: cotizador en /cotizar-seguro/:petId, lead capture transaccional, RPC compute_insurance_quote con factores actuariales reales, todo en producción end-to-end.',
       'Anti-fraude (upside): la biometría Paw Shield (Petify, 100% accuracy validada) está dormida en consumer pero reactivable B2B-funded — ustedes pagan COGS y nosotros activamos en su cohort.',
+    ],
+    founder_offer: [
+      'Exclusividad como única aseguradora visible en el cotizador durante 6 meses post-launch (ningún competidor aparece en /cotizar-seguro/ a tus potenciales asegurados).',
+      'Revenue share fundador: 30% de comisión sobre prima primer año (vs 15% standard) durante todos los leads cerrados en los primeros 12 meses.',
+      'Co-branding del cotizador: "Paw Friend × [Tu marca]" + landing dedicada para tus clientes existentes.',
+      'Onboarding white-glove: setup de risk score con tus factores actuariales + dashboard partner + integración a tu CRM en 3 semanas.',
     ],
     cta_text: 'Pedir 30 min call (sin compromiso)',
     cta_url: 'https://pawfriend.cl/aplicar?tipo=seguros',
@@ -155,6 +177,12 @@ const AUDIENCE_CONFIG: Record<
       'Cómo funciona: el owner abre la ficha de su mascota → ve productos con descuento Paw Member → click trackeado → su retailer recibe el lead atribuido + revenue share de la conversión.',
       'Sin marketplace fee: no soy MercadoLibre. No cobro 15% de cada venta. Mi modelo es revenue share configurable por SKU + setup mensual fijo. Tu logística + checkout siguen siendo tuyos.',
     ],
+    founder_offer: [
+      'Posición destacada en /tienda durante 12 meses post-launch (tu logo aparece primero en home retail antes que cualquier otro retailer).',
+      'Setup gratis durante el primer año + revenue share preferente (te quedas con más margen que partners post-launch).',
+      'Colección colaborativa "Master Dog × Paw Friend" (o equivalente) con landing dedicada + push a Paw Members.',
+      'Onboarding white-glove: catálogo cargado en 2 semanas + tracking de conversión configurado + reportes mensuales personalizados.',
+    ],
     cta_text: 'Pedir 30 min call (sin compromiso)',
     cta_url: 'https://pawfriend.cl/aplicar?tipo=retail',
     deck_url: 'https://pawfriend.cl/pitch/retail.html',
@@ -172,6 +200,12 @@ const AUDIENCE_CONFIG: Record<
       'Cómo funciona: ciudadano se inscribe gratis vía pawfriend.cl, registra mascota con microchip, ficha clínica vivienda, geolocalización por comuna. Municipio paga la implementación + soporte.',
       'No es Excel + WhatsApp: es SaaS chileno con boleta + SpA + cumplimiento ARCO. La data del ciudadano es del ciudadano (Ley 21.719). Ustedes solo ven los datos del ciudadano que vive en su comuna.',
     ],
+    founder_offer: [
+      'Municipio Founder: ser el primer municipio referente en Chile con Ley 21.020 100% digital (caso de éxito ante Subdere, Contraloría, otros municipios).',
+      'Implementación gratis durante el primer año + soporte dedicado del founder + tarifa preferente blindada por 36 meses.',
+      'Co-branding "Las Condes × Paw Friend" (o el municipio que firme) en toda comunicación pública del registro digital + ferias municipales.',
+      'Onboarding white-glove: bulk import de mascotas existentes + capacitación a personal + integración con SAG en 4 semanas.',
+    ],
     cta_text: 'Pedir 30 min call (sin compromiso)',
     cta_url: 'https://pawfriend.cl/aplicar?tipo=gobierno_municipio',
     deck_url: 'https://pawfriend.cl/pitch/gobierno.html',
@@ -187,6 +221,12 @@ const AUDIENCE_CONFIG: Record<
       'Qué ganamos nosotros: validar el modelo de banca con 1 partner early + tener case study para abrir conversación con BCI/Itau/Falabella + ingreso recurrente garantizado vía contrato anual.',
       'Cómo funciona: cliente premium recibe Paw Member gratis vía su tarjeta. Accede a ficha clínica completa, descuentos retail partners, acceso prioritario a vets. La banca paga una cuota fija por cliente activo.',
       'Tier B2B empresarial (upside): empleados con mascota + benefit corporativo. Misma mecánica, B2B en lugar de B2C.',
+    ],
+    founder_offer: [
+      'Exclusividad por segmento durante 12 meses: si entran como banca premium, ningún otro banco premium aparece en Paw Friend hasta que termine el lock.',
+      'Pricing fundador: cuota por cliente activo congelada por 36 meses (sin alza inflacionaria) + setup gratis primer año.',
+      'Tarjeta co-branded "[Banco] × Paw Member" + landing dedicada para tu base premium + push a Paw Members existentes con beneficio cruzado.',
+      'Onboarding white-glove: integración con tu app de cliente vía API + reportes mensuales personalizados de engagement por segmento.',
     ],
     cta_text: 'Pedir 30 min call (sin compromiso)',
     cta_url: 'https://pawfriend.cl/aplicar?tipo=banca',
@@ -205,6 +245,12 @@ const AUDIENCE_CONFIG: Record<
       'Cómo funciona: cada edificio recibe código de invitación con branding. Propietarios registran mascota gratis. Administración tiene dashboard global. Vecinos ven solo lo público.',
       'Diferencia con apps de comunidad genéricas: nosotros entendemos pet (vacunas, microchip, comportamiento, esterilización). EdiFy/Mediakit no.',
     ],
+    founder_offer: [
+      'Inmobiliaria Founder: las primeras 100 unidades de su portafolio activadas gratis durante 12 meses (sin tope de unidades en pet-friendly).',
+      'Pricing fundador: cuota fija por unidad/mes congelada por 24 meses + revenue share sobre Paw Member que viva en tu edificio.',
+      'Branding propio en cada edificio: tu logo + colores + reglamento personalizado por proyecto + caso de éxito conjunto en prensa inmobiliaria.',
+      'Onboarding white-glove: integración con tu sistema de administración + capacitación a conserjes + soporte directo del founder.',
+    ],
     cta_text: 'Pedir 30 min call (sin compromiso)',
     cta_url: 'https://pawfriend.cl/aplicar?tipo=edificios',
     deck_url: 'https://pawfriend.cl/pitch/edificios.html',
@@ -221,6 +267,12 @@ const AUDIENCE_CONFIG: Record<
       'Qué ganamos nosotros: distribución, contenido educativo, eventos físicos, expansión de uso casos. No buscamos cheque.',
       'Cómo funciona: pitch — firma — integración en <30 días. Acuerdos custom: data deals, distribución, eventos, training, co-branding.',
       'Sin compromiso largo: la mayoría de los acuerdos long-tail son trimestrales con opción a renovar. Probamos juntos, medimos, decidimos.',
+    ],
+    founder_offer: [
+      'Founder Partner vertical: primer y único acuerdo en tu nicho específico (aerolínea pet, academia vet, etc.) durante 12 meses post-launch.',
+      'Setup + integración técnica gratis durante el piloto + tarifa preferente en el contrato comercial post-piloto.',
+      'Co-marketing en feed Paw Friend + newsletter mensual + naming en todas las comunicaciones del partnership.',
+      'Onboarding white-glove: el founder acompaña cada paso de la integración hasta tener primera tracción medible.',
     ],
     cta_text: 'Pedir 30 min call (sin compromiso)',
     cta_url: 'https://pawfriend.cl/aplicar?tipo=longtail',
@@ -254,6 +306,26 @@ function buildEmailHTML(
       </div>`
     : '';
 
+  // Bloque destacado "Founder Partner Offer" — incentivo escasez para
+  // quienes se sumen ANTES del lanzamiento (lock por segmento + pricing
+  // preferente + co-branding). Renderizado como card dorado distintivo.
+  const founderOfferBlock = `
+    <div style="margin: 28px 0; border: 2px solid #eab308; background: linear-gradient(135deg, #fef9c3 0%, #fef3c7 100%); border-radius: 12px; padding: 18px 20px;">
+      <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+        <span style="font-size: 20px;">🏆</span>
+        <strong style="font-size: 14px; color: #78350f; text-transform: uppercase; letter-spacing: 0.05em;">
+          Oferta Founder Partner — sólo pre-launch
+        </strong>
+      </div>
+      <p style="margin: 0 0 12px 0; font-size: 13px; color: #78350f; line-height: 1.5;">
+        Esta oferta aplica únicamente a partners que firmen carta de intención <strong>antes del lanzamiento público</strong>. Una vez que abrimos al mundo, el contrato comercial pasa a tarifa standard y la exclusividad por segmento ya no se garantiza.
+      </p>
+      <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #1a1a1a; line-height: 1.6;">
+        ${cfg.founder_offer.map((line) => `<li style="margin-bottom: 6px;">${line}</li>`).join('')}
+      </ul>
+    </div>
+  `;
+
   const body = [
     testBanner,
     emailHeader({
@@ -266,6 +338,7 @@ function buildEmailHTML(
     bulletList({
       items: cfg.bullets.map((b) => ({ icon: '→', text: b })),
     }),
+    founderOfferBlock,
     cta({
       text: cfg.cta_text,
       url: cfg.cta_url,
