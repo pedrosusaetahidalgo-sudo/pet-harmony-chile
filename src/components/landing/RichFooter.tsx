@@ -111,7 +111,7 @@ export function RichFooter() {
               }}
             />
             <span className="text-[10px] font-medium tracking-wide text-muted-foreground group-hover:text-foreground">
-              Operado por SGSE · Susaeta Garnham Software Engineering
+              Operado por SGSE · Susaeta Garnham Software Engineering SpA · RUT 78.328.659-9
             </span>
           </a>
         </div>

@@ -33,11 +33,16 @@ describe('isFeatureEnabled', () => {
   });
 });
 
-describe('Fase 2/3 flags (Refactor Maestro 2026-04-27)', () => {
-  it('Fase 2 partner-dependent flags estan en false (esperan deals)', () => {
-    expect(FEATURE_FLAGS.EMBEDDED_INSURANCE).toBe(false);
+describe('Fase 2/3 flags (Refactor Maestro 2026-04-27 + Plan v5 2026-04-29)', () => {
+  it('Fase 2 motors revenue: ON como DEMO con disclaimer (2026-04-29)', () => {
+    // Pedro decision Plan v5 Checkpoint 1: motores ON con disclaimer
+    // "proximamente" hasta firmar primer partner. Lead capture activo.
+    expect(FEATURE_FLAGS.EMBEDDED_INSURANCE).toBe(true);
+    expect(FEATURE_FLAGS.RETAIL_FULFILLMENT).toBe(true);
+  });
+
+  it('B2B API + Pharma Insights API esperan firmar partner (false)', () => {
     expect(FEATURE_FLAGS.PHARMA_INSIGHTS_API).toBe(false);
-    expect(FEATURE_FLAGS.RETAIL_FULFILLMENT).toBe(false);
     expect(FEATURE_FLAGS.B2B_API).toBe(false);
   });
 

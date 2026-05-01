@@ -68,6 +68,47 @@
     .slide.light .data-table th { background: var(--pharma-soft); color: var(--pharma); }
     .slide.light .data-table td { border-bottom-color: var(--brand-100); }
     .badge-roi { display: inline-block; padding: 4px 10px; background: var(--medical); color: white; font-size: 11px; font-weight: 800; border-radius: 6px; }
+
+    /* Mobile responsive */
+    @media (max-width: 1024px) {
+      .slide { padding: 5vh 32px; }
+      .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    }
+    @media (max-width: 768px) {
+      .slide { padding: 32px 20px; justify-content: flex-start; }
+      .slide-content { justify-content: flex-start; padding: 8px 0 32px; }
+      .headline { font-size: 26px !important; line-height: 1.18 !important; }
+      .slide .headline[style*="clamp(36px"] { font-size: 30px !important; }
+      .subhead { font-size: 14px !important; line-height: 1.55 !important; }
+      .slide-label { font-size: 10px; letter-spacing: 0.14em; margin-bottom: 12px; }
+      .grid-2 { grid-template-columns: 1fr !important; gap: 18px !important; align-items: stretch !important; }
+      .grid-3 { grid-template-columns: 1fr !important; gap: 12px !important; }
+      .grid-4 { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+      .stat-card { padding: 14px; }
+      .stat-num { font-size: 26px !important; }
+      .stat-label { font-size: 11px; }
+      .quote-box { padding: 14px 16px; font-size: 14px; margin: 14px 0; }
+      .feature-row { padding: 10px 0; gap: 10px; }
+      .feature-row .icon { font-size: 20px; }
+      .feature-row strong { font-size: 14px; }
+      .feature-row span { font-size: 12.5px; line-height: 1.5; }
+      .ask-pharma { padding: 18px; }
+      .ask-pharma .price { font-size: 38px; }
+      .data-table { font-size: 12px; display: block; overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+      .data-table th, .data-table td { padding: 7px 10px; }
+      img { max-width: 100% !important; height: auto !important; }
+      .counter, .hint { font-size: 10px; }
+      .hint { display: none; }
+      /* CTA rows con flex y gap colapsan a columna */
+      .slide-content > div[style*="display: flex"][style*="gap"][style*="flex-wrap"] { gap: 8px !important; }
+    }
+    @media (max-width: 480px) {
+      .slide { padding: 28px 16px; }
+      .headline { font-size: 22px !important; }
+      .slide .headline[style*="clamp(36px"] { font-size: 26px !important; }
+      .grid-4 { grid-template-columns: 1fr !important; }
+      .ask-pharma .price { font-size: 32px; }
+    }
   </style>
 </head>
 <body>

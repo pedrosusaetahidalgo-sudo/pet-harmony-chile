@@ -422,10 +422,17 @@ const PrivacyPolicy = () => {
               </section>
 
               <section>
-                <h2 className="text-2xl font-semibold mb-3">11. Contacto</h2>
+                <h2 className="text-2xl font-semibold mb-3">
+                  11. Responsable del tratamiento y contacto
+                </h2>
                 <p className="text-muted-foreground">
-                  Para cualquier consulta sobre el tratamiento de tus datos, ejercer tus derechos o
-                  reportar anuncios inapropiados, escríbenos a{' '}
+                  El responsable del tratamiento de tus datos personales es{' '}
+                  <strong>SUSAETA GARNHAM SOFTWARE ENGINEERING SpA</strong> (RUT 78.328.659-9),
+                  domiciliada en Luis Pasteur 6111 Dp 201, Vitacura, Región Metropolitana, Chile.
+                </p>
+                <p className="text-muted-foreground mt-2">
+                  Para cualquier consulta sobre el tratamiento de tus datos, ejercer tus derechos
+                  ARCO (Ley 19.628 + Ley 21.719) o reportar anuncios inapropiados, escríbenos a{' '}
                   <code>pedrosusaeta@pawfriend.cl</code>.
                 </p>
                 <p className="text-muted-foreground mt-2">
