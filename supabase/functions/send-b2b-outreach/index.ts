@@ -484,7 +484,9 @@ Deno.serve(
               Authorization: `Bearer ${RESEND_API_KEY}`,
             },
             body: JSON.stringify({
-              from: 'Pedro Susaeta — Paw Friend <hola@pawfriend.cl>',
+              // from: dominio verificado en Resend. Mantener pawfriend.cl
+              // sin caracteres no-ASCII en el display name (RFC 5322).
+              from: 'Paw Friend <hola@pawfriend.cl>',
               reply_to: ['pedrosusaeta@pawfriend.cl'],
               to: [actualTo],
               subject,
