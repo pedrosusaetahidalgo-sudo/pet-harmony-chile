@@ -101,6 +101,27 @@ AUDIENCE_LABELS = {
     "longtail": "Outreach Vertical — Pre-launch",
 }
 
+# CTAs por audience: form de aplicación + pitch deck dedicado.
+CTA_FORM_URLS = {
+    "pharma": "https://pawfriend.cl/aplicar?tipo=b2b_api",
+    "seguros": "https://pawfriend.cl/aplicar?tipo=b2b_api",
+    "retail": "https://pawfriend.cl/aplicar?tipo=b2b_api",
+    "gobierno": "https://pawfriend.cl/aplicar?tipo=gobierno_municipio",
+    "banca": "https://pawfriend.cl/aplicar?tipo=banca",
+    "edificios": "https://pawfriend.cl/aplicar?tipo=edificios",
+    "longtail": "https://pawfriend.cl/aplicar?tipo=longtail",
+}
+
+CTA_DECK_URLS = {
+    "pharma": "https://pawfriend.cl/pitch/pharma.html",
+    "seguros": "https://pawfriend.cl/pitch/aseguradoras.html",
+    "retail": "https://pawfriend.cl/pitch/retail.html",
+    "gobierno": "https://pawfriend.cl/pitch/gobierno.html",
+    "banca": "https://pawfriend.cl/pitch/banca.html",
+    "edificios": "https://pawfriend.cl/pitch/edificios.html",
+    "longtail": "https://pawfriend.cl/pitch/longtail.html",
+}
+
 SUBJECTS = {
     "pharma": "Hola — soy Pedro de Paw Friend, busco partners pharma pre-launch",
     "seguros": "Hola — soy Pedro de Paw Friend, busco aseguradora partner pre-launch",
@@ -362,6 +383,8 @@ WhatsApp: {WHATSAPP}
     personalizado_html = _highlight_html(personalizado)
 
     audience_label = AUDIENCE_LABELS.get(audience, "")
+    cta_form = CTA_FORM_URLS.get(audience, "https://pawfriend.cl")
+    cta_deck = CTA_DECK_URLS.get(audience, "https://pawfriend.cl")
 
     html = f"""<html><body style="margin:0;padding:0;background:#f6f7f9;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1a1a">
 <table border="0" cellpadding="0" cellspacing="0" width="100%" style="background:#f6f7f9;padding:32px 16px">
@@ -400,9 +423,23 @@ WhatsApp: {WHATSAPP}
             {personalizado_html}
           </div>
 
-          <p style="margin:0 0 24px 0">{cierre}</p>
+          <p style="margin:0 0 20px 0">{cierre}</p>
 
-          <p style="margin:0 0 8px 0;color:#666">Saludos,</p>
+          <!-- CTAs -->
+          <table border="0" cellpadding="0" cellspacing="0" style="margin:24px 0 28px 0">
+            <tr>
+              <td style="padding-right:10px">
+                <a href="{cta_form}" style="display:inline-block;background:#7c3aed;color:#fff;padding:12px 22px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;letter-spacing:0.01em">📅 Agendar 30 min</a>
+              </td>
+              <td>
+                <a href="{cta_deck}" style="display:inline-block;background:#fff;color:#7c3aed;padding:12px 22px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;border:1.5px solid #7c3aed">📄 Ver el deck completo</a>
+              </td>
+            </tr>
+          </table>
+
+          <p style="margin:0 0 8px 0;color:#666;font-size:13px">O respondé este correo directamente — todo llega a mí.</p>
+
+          <p style="margin:18px 0 8px 0;color:#666">Saludos,</p>
 
           <!-- Firma -->
           <table border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-top:14px;border-top:1px solid #ececec;padding-top:18px">
